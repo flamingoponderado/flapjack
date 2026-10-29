@@ -142,12 +142,21 @@ theorem evaluate_eval_related {C F : Type} (env : FlatSem.Environment FlatSem.Va
     (names : List (Option Flapjack.Basis.Pure.MlString.MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
-    (argsSim : EvalSim env names values source target args.reverse)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
     (decsSim : ∀ (decs : List FlatLang.Exp) (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
       StateRel next nextTarget → FlatProps.noMatDecs decs = true →
       (FlatSem.evaluateDecs next decs).2 ≠ some (.abort .typeError) → DecUnitSim next nextTarget decs)
     (notTypeError : (FlatSem.evaluate env source [.app trace (.src .eval) args]).2 ≠ .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace (.src .eval) args] := by
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [evaluate_eval]
+    cases run : FlatSem.evaluate env source args.reverse with
+    | mk next result =>
+      cases result <;> simp_all
+  have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
   simp only [compile, compileExps_reverse] at argsSim
   simp only [compile, compileExps, compileExp, compileOp] at ⊢

@@ -11,12 +11,19 @@ theorem evaluate_lenEq {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (names : List (Option MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (expected : Nat) (argument : FlatLang.Exp)
-    (argSim : EvalSim env names values source target [argument])
+    (argSim : (FlatSem.evaluate env source [argument]).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target [argument])
     (notTypeError : (FlatSem.evaluate env source [.app trace (.lenEq expected) [argument]]).2 ≠
       .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace (.lenEq expected) [argument]] := by
   have flatFix := (FlatSem.fixClock_evaluations env source [argument] argument []).1
   have closFix := ClosSem.fixClock_evaluate [compileExp names argument] values target
+  have argsNotTypeError : (FlatSem.evaluate env source [argument]).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [List.reverse_singleton, flatFix, failure]
+  have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps, compileExp, compileOp, List.reverse_singleton] at argSim ⊢
   rw [FlatSem.evaluate] at notTypeError ⊢
@@ -51,12 +58,19 @@ theorem evaluate_tagLenEq {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (names : List (Option MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (tag expected : Nat) (argument : FlatLang.Exp)
-    (argSim : EvalSim env names values source target [argument])
+    (argSim : (FlatSem.evaluate env source [argument]).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target [argument])
     (notTypeError : (FlatSem.evaluate env source [.app trace (.tagLenEq tag expected) [argument]]).2 ≠
       .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace (.tagLenEq tag expected) [argument]] := by
   have flatFix := (FlatSem.fixClock_evaluations env source [argument] argument []).1
   have closFix := ClosSem.fixClock_evaluate [compileExp names argument] values target
+  have argsNotTypeError : (FlatSem.evaluate env source [argument]).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [List.reverse_singleton, flatFix, failure]
+  have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps, compileExp, compileOp, List.reverse_singleton] at argSim ⊢
   rw [FlatSem.evaluate] at notTypeError ⊢

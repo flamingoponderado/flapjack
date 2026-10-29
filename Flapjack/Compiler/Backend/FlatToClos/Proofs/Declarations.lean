@@ -37,12 +37,20 @@ theorem unitValue_target (target : ClosSem.Value) (related : ValueRel FlatSem.un
 hypothesis for the remaining declarations. -/
 theorem evaluate_decs_cons {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
     (declaration : FlatLang.Exp) (rest : List FlatLang.Exp)
-    (firstSim : EvalSim ⟨[]⟩ [] [] source target [declaration])
+    (firstSim : (FlatSem.evaluate ⟨[]⟩ source [declaration]).2 ≠ .err (.abort .typeError) →
+      EvalSim ⟨[]⟩ [] [] source target [declaration])
     (restSim : ∀ (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
       StateRel next nextTarget →
       (FlatSem.evaluateDecs next rest).2 ≠ some (.abort .typeError) → DecSim next nextTarget rest)
     (notTypeError : (FlatSem.evaluateDecs source (declaration :: rest)).2 ≠ some (.abort .typeError)) :
     DecSim source target (declaration :: rest) := by
+  have firstNotTypeError : (FlatSem.evaluate ⟨[]⟩ source [declaration]).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluateDecs_cons]
+    unfold FlatSem.evaluateDec
+    simp only [failure]
+  have firstSim := firstSim firstNotTypeError
   unfold EvalSim at firstSim
   unfold DecSim
   simp only [compileDecs, compile, compileExps] at firstSim ⊢
@@ -119,12 +127,20 @@ theorem evaluate_decs_unit_nil {C F : Type} (source : FlatSem.State C F) (target
 /-- Compose one declaration with the remaining unit-terminated sequence. -/
 theorem evaluate_decs_unit_cons {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
     (declaration : FlatLang.Exp) (rest : List FlatLang.Exp)
-    (firstSim : EvalSim ⟨[]⟩ [] [] source target [declaration])
+    (firstSim : (FlatSem.evaluate ⟨[]⟩ source [declaration]).2 ≠ .err (.abort .typeError) →
+      EvalSim ⟨[]⟩ [] [] source target [declaration])
     (restSim : ∀ (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
       StateRel next nextTarget →
       (FlatSem.evaluateDecs next rest).2 ≠ some (.abort .typeError) → DecUnitSim next nextTarget rest)
     (notTypeError : (FlatSem.evaluateDecs source (declaration :: rest)).2 ≠ some (.abort .typeError)) :
     DecUnitSim source target (declaration :: rest) := by
+  have firstNotTypeError : (FlatSem.evaluate ⟨[]⟩ source [declaration]).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluateDecs_cons]
+    unfold FlatSem.evaluateDec
+    simp only [failure]
+  have firstSim := firstSim firstNotTypeError
   unfold EvalSim at firstSim
   unfold DecUnitSim
   simp only [compileDecs, compile, compileExps, List.cons_append] at firstSim ⊢

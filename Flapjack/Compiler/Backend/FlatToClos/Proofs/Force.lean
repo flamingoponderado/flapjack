@@ -34,7 +34,8 @@ theorem evaluate_force {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (names : List (Option MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
-    (argsSim : EvalSim env names values source target args.reverse)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
     (bodySim : ∀ (sourceValue : FlatSem.Value) (targetValue : ClosSem.Value)
         (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
       ValueRel sourceValue targetValue → StateRel next nextTarget →
@@ -45,10 +46,16 @@ theorem evaluate_force {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (notTypeError : (FlatSem.evaluate env source [.app trace (.src (.thunkOp .forceThunk)) args]).2 ≠
       .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace (.src (.thunkOp .forceThunk)) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate, flatFix]
+    simp only [failure]
+  have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
   simp only [compile, compileExps_reverse] at argsSim
   simp only [compile, compileExps, compileExp, compileOp] at ⊢
-  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
   rw [FlatSem.evaluate, flatFix] at notTypeError ⊢
   rw [ClosSem.evaluate, ClosSem.fixClock_evaluate]
   cases flatArgs : FlatSem.evaluate env source args.reverse with
