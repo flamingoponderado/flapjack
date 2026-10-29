@@ -320,6 +320,10 @@ run_probe clos_sem_word_probeScript.sml clos_sem_word_probe.out \
   word_app_typed byte_add_wrap byte_negative byte_too_large byte_asr word_from_negative word_to_byte byte_compare byte_alt_compare word_add word_shift \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe clos_sem_install_probeScript.sml clos_sem_install_probe.out \
+  bytes_typed words_typed install_typed clock_typed clock_bound_typed wrong_arity one_arg \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe cake_flat_sem_thunk_probeScript.sml cake_flat_sem_thunk_probe.out \
   thunk_type thunk_dest thunk_update thunk_bad valid_thunk ref_flag bad_index ordinary_ref nonlocation update_value update_nested \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
