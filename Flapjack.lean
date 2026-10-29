@@ -503,6 +503,7 @@ import Flapjack.Compiler.Backend.ClosInterp.Proofs.Simulation
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterCases
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterCall
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterRaise
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterTick
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
