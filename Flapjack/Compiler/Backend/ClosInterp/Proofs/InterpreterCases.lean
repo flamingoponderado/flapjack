@@ -208,4 +208,95 @@ theorem interpreter_correct_variable {C F : Type} (trace : BackendCommon.Tra) (i
     refine ⟨2 * index + 2, target, ?_, related⟩
     simpa [toConstant, equal] using interpreter_variable index env target bound positive
 
+
+/-- An encoded global read has the same result as the original global read. -/
+theorem interpreter_global {C F : Type} (index : Nat) (env : List ClosSem.Value)
+    (state : ClosSem.State C F) :
+    ClosSem.evaluate [closInterpreterBody]
+      [ClosSem.makeConst (toConstant (.op .none (.globOp (.global index)) [])),
+        .block 0 [], ClosSem.listToValue env] state =
+      ClosSem.evaluate [.op .none (.globOp (.global index)) []] env state := by
+  have nonnegative : ¬ ((index : Int) < 0) := by
+    have bound : 0 ≤ (index : Int) := Int.natCast_nonneg _
+    omega
+  simp [closInterpreterBody, interpreterIsCase_eq, interpreterVar_eq, interpreterGetEl_eq,
+    interpreterCons_eq, interpreterApp_eq, toConstant, toConstantOp, ClosSem.makeConst,
+    ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyGlobal, ClosSem.applyBlock, ClosSem.asBool,
+    ClosSem.boolValue, BackendCommon.trueTag, BackendCommon.falseTag, nonnegative]
+
+
+/-- Global-read case of the interpreter simulation. -/
+theorem interpreter_correct_global {C F : Type} (trace : BackendCommon.Tra) (index : Nat)
+    (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (run : ClosSem.evaluate [.op trace (.globOp (.global index)) []] env source = (result, sourceFinal))
+    (_valid : canInterpret (.op trace (.globOp (.global index)) []) = true)
+    (_assumption : InterpAssum C F source.clock) (related : StateRel source target)
+    (notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ extra targetFinal,
+      ClosSem.evaluate [closInterpreterBody]
+        [ClosSem.makeConst (toConstant (.op trace (.globOp (.global index)) [])),
+          .block 0 [], ClosSem.listToValue env] { target with clock := extra + target.clock } = (result, targetFinal) ∧
+      StateRel sourceFinal targetFinal := by
+  have globals : source.globals = target.globals := related.1.2.2.2.2.2.2.2.1
+  cases found : (ClosSem.getGlobal index source.globals).join with
+  | none =>
+    simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyGlobal, found] at run
+    exact (notTypeError run.1.symm).elim
+  | some value =>
+    simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyGlobal, found] at run
+    rcases run with ⟨rfl, rfl⟩
+    refine ⟨0, target, ?_, related⟩
+    rw [show ClosSem.makeConst (toConstant (.op trace (.globOp (.global index)) [])) =
+      ClosSem.makeConst (toConstant (.op .none (.globOp (.global index)) [])) by rfl]
+    have targetFound : (ClosSem.getGlobal index target.globals).join = some value := by
+      simpa only [← globals] using found
+    have targetRun : ClosSem.evaluate [.op .none (.globOp (.global index)) []] env target =
+        (.val [value], target) := by
+      simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyGlobal, targetFound]
+    simpa using (interpreter_global index env target).trans targetRun
+
+
+/-- Constant-block case of the interpreter simulation. -/
+theorem interpreter_correct_block_constant {C F : Type} (trace : BackendCommon.Tra) (constant : ClosLang.Const)
+    (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (run : ClosSem.evaluate [.op trace (.blockOp (.constant constant)) []] env source = (result, sourceFinal))
+    (_valid : canInterpret (.op trace (.blockOp (.constant constant)) []) = true)
+    (_assumption : InterpAssum C F source.clock) (related : StateRel source target)
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ extra targetFinal,
+      ClosSem.evaluate [closInterpreterBody]
+        [ClosSem.makeConst (toConstant (.op trace (.blockOp (.constant constant)) [])),
+          .block 0 [], ClosSem.listToValue env] { target with clock := extra + target.clock } = (result, targetFinal) ∧
+      StateRel sourceFinal targetFinal := by
+  have sourceRun : ClosSem.evaluate [.op trace (.blockOp (.constant constant)) []] env source =
+      (.val [ClosSem.makeConst constant], source) := by
+    simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock]
+  rw [sourceRun] at run
+  cases run
+  refine ⟨0, target, ?_, related⟩
+  simpa [toConstant] using interpreter_block_constant constant env target
+
+/-- Nullary-constructor case of the interpreter simulation. -/
+theorem interpreter_correct_nullary_constructor {C F : Type} (trace : BackendCommon.Tra) (tag : Nat)
+    (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (run : ClosSem.evaluate [.op trace (.blockOp (.cons tag)) []] env source = (result, sourceFinal))
+    (_valid : canInterpret (.op trace (.blockOp (.cons tag)) []) = true)
+    (_assumption : InterpAssum C F source.clock) (related : StateRel source target)
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ extra targetFinal,
+      ClosSem.evaluate [closInterpreterBody]
+        [ClosSem.makeConst (toConstant (.op trace (.blockOp (.cons tag)) [])),
+          .block 0 [], ClosSem.listToValue env] { target with clock := extra + target.clock } = (result, targetFinal) ∧
+      StateRel sourceFinal targetFinal := by
+  have sourceRun : ClosSem.evaluate [.op trace (.blockOp (.cons tag)) []] env source =
+      (.val [.block tag []], source) := by
+    simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock]
+  rw [sourceRun] at run
+  cases run
+  refine ⟨0, target, ?_, related⟩
+  simpa [toConstant] using interpreter_nullary_constructor tag env target
+
 end Flapjack.Compiler.Backend.ClosInterp
