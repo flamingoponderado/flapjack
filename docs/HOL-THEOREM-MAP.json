@@ -1,5 +1,21 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "term",
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean",
+    "lean_name": "Term",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Constructor types compared against the source datatype; complete carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "dt_test_def",
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean",
+    "lean_name": "dtTest",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed source captured in flat_pattern_install_relation_probe.out; complete literal and term carrier review remains pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "ALOOKUP_rel_MAP_same",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
