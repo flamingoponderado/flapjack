@@ -543,6 +543,21 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
   --compile-cases 35 --rich-cases 35 --config-cases 15
 ```
 
+A separate run on 2026-10-29 matched 150 type, 80 S-expression, 150 nested,
+100 lexical, 100 token, 100 raw-byte, 100 declaration, and 100 pattern and
+handler cases, together with 515 option-validation cases. It also matched
+complete RISC-V output for 25 generated programs, 25 diverse programs, and 10
+backend-option cases. Reproduce it with:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-seed 613221 --edge-seed 982734 --compile-seed 314559 \
+  --type-cases 150 --sexp-cases 80 --structured-cases 150 --lex-cases 100 \
+  --token-cases 100 --raw-byte-cases 100 --declaration-cases 100 \
+  --handler-cases 100 --byte-cases 0 --config-error-cases 40 \
+  --compile-cases 25 --rich-cases 25 --config-cases 10
+```
+
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
 output for 27 benchmark programs from the pinned CakeML submodule with captured
 original-compiler output. It checks the source revision and source hashes before
