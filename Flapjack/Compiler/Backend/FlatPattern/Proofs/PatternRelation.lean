@@ -151,4 +151,123 @@ theorem pmatch_con_related {C F : Type} (n : Nat) (source target : FlatSem.State
   | litv _ | closure _ _ _ | recclosure _ _ _ | loc _ _ | vectorv _ =>
     simp [FlatSem.pmatch] at safe
 
+/-- One list step preserves matches, non-matches and later type errors.
+The premises are the two recursive simulations. -/
+theorem pmatchList_cons_related {C F : Type} (n : Nat) (source target : FlatSem.State C F)
+    (pattern : FlatLang.Pat) (patterns : List FlatLang.Pat) (value value' : Value)
+    (values values' : List Value) (bindings bindings' : List (VarN × Value))
+    (envs : aLookupRel (fun key => decNameToNum key < n) ValueRel bindings bindings')
+    (safe : FlatSem.pmatchList source (pattern :: patterns) (value :: values) bindings ≠ .typeError)
+    (head : FlatSem.pmatch source pattern value bindings ≠ .typeError →
+      MatchRel n (FlatSem.pmatch source pattern value bindings)
+        (FlatSem.pmatch target pattern value' bindings'))
+    (tail : ∀ left right, aLookupRel (fun key => decNameToNum key < n) ValueRel left right →
+      FlatSem.pmatchList source patterns values left ≠ .typeError →
+      MatchRel n (FlatSem.pmatchList source patterns values left)
+        (FlatSem.pmatchList target patterns values' right)) :
+    MatchRel n (FlatSem.pmatchList source (pattern :: patterns) (value :: values) bindings)
+      (FlatSem.pmatchList target (pattern :: patterns) (value' :: values') bindings') := by
+  cases sourceHead : FlatSem.pmatch source pattern value bindings with
+  | typeError => simp [FlatSem.pmatchList, sourceHead] at safe
+  | «match» next =>
+    have heads := head (by simp [sourceHead])
+    cases targetHead : FlatSem.pmatch target pattern value' bindings' with
+    | typeError => simp [sourceHead, targetHead, MatchRel] at heads
+    | noMatch => simp [sourceHead, targetHead, MatchRel] at heads
+    | «match» next' =>
+      have envsNext : aLookupRel (fun key => decNameToNum key < n) ValueRel next next' := by
+        simpa [sourceHead, targetHead, MatchRel] using heads
+      have tailSafe : FlatSem.pmatchList source patterns values next ≠ .typeError := by
+        simpa [FlatSem.pmatchList, sourceHead] using safe
+      simpa [FlatSem.pmatchList, sourceHead, targetHead] using tail next next' envsNext tailSafe
+  | noMatch =>
+    have heads := head (by simp [sourceHead])
+    cases targetHead : FlatSem.pmatch target pattern value' bindings' with
+    | typeError => simp [sourceHead, targetHead, MatchRel] at heads
+    | «match» _ => simp [sourceHead, targetHead, MatchRel] at heads
+    | noMatch =>
+      have tailSafe : FlatSem.pmatchList source patterns values bindings ≠ .typeError := by
+        cases h : FlatSem.pmatchList source patterns values bindings <;>
+          simp_all [FlatSem.pmatchList]
+      have tails := tail bindings bindings' envs tailSafe
+      cases h : FlatSem.pmatchList source patterns values bindings <;>
+        cases h' : FlatSem.pmatchList target patterns values' bindings' <;>
+        simp_all [FlatSem.pmatchList, MatchRel]
+
+mutual
+/-- Pattern matching preserves related results when the source does not raise
+a type error. This uses the proof-side value relation pending its HOL review. -/
+theorem pmatch_related {C F : Type} (cfg : Config) (n : Nat) (source target : FlatSem.State C F)
+    (pattern : FlatLang.Pat) (value value' : Value) (bindings bindings' : List (VarN × Value))
+    (states : StateRel cfg source target) (values : ValueRel value value')
+    (envs : aLookupRel (fun key => decNameToNum key < n) ValueRel bindings bindings')
+    (safe : FlatSem.pmatch source pattern value bindings ≠ .typeError) :
+    MatchRel n (FlatSem.pmatch source pattern value bindings)
+      (FlatSem.pmatch target pattern value' bindings') := by
+  cases pattern with
+  | pvar name => exact pmatch_var_related n source target name value value' bindings bindings' values envs
+  | pany => exact pmatch_any_related n source target value value' bindings bindings' envs
+  | plit lit => exact pmatch_lit_related n source target lit value value' bindings bindings' values envs safe
+  | pas pattern name =>
+    apply pmatch_as_related n source target pattern name value value' bindings bindings'
+    apply pmatch_related cfg n source target pattern value value' _ _ states values
+    · exact aLookupRel_cons _ _ _ _ _ _ _ (fun _ => values) envs
+    · simpa [FlatSem.pmatch] using safe
+  | pref pattern =>
+    apply pmatch_ref_related cfg n source target pattern value value' bindings bindings' states values safe
+    intro left right related innerSafe
+    exact pmatch_related cfg n source target pattern left right bindings bindings' states related envs innerSafe
+  | pcon stamp patterns =>
+    apply pmatch_con_related n source target stamp patterns value value' bindings bindings' values safe
+    intro left right related innerSafe
+    exact pmatchList_related cfg n source target patterns left right bindings bindings' states related envs innerSafe
+termination_by sizeOf pattern
+
+/-- The companion simulation for a list of patterns and related values. -/
+theorem pmatchList_related {C F : Type} (cfg : Config) (n : Nat) (source target : FlatSem.State C F)
+    (patterns : List FlatLang.Pat) (values values' : List Value) (bindings bindings' : List (VarN × Value))
+    (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
+    (envs : aLookupRel (fun key => decNameToNum key < n) ValueRel bindings bindings')
+    (safe : FlatSem.pmatchList source patterns values bindings ≠ .typeError) :
+    MatchRel n (FlatSem.pmatchList source patterns values bindings)
+      (FlatSem.pmatchList target patterns values' bindings') := by
+  cases patterns with
+  | nil =>
+    cases related with
+    | nil => simpa [FlatSem.pmatchList, MatchRel] using envs
+    | cons _ _ => simp [FlatSem.pmatchList] at safe
+  | cons pattern patterns =>
+    cases related with
+    | nil => simp [FlatSem.pmatchList] at safe
+    | @cons value value' values values' headRel tailRel =>
+      apply pmatchList_cons_related n source target pattern patterns value value' values values' bindings bindings' envs safe
+      · intro headSafe
+        exact pmatch_related cfg n source target pattern value value' bindings bindings' states headRel envs headSafe
+      · intro left right envsNext tailSafe
+        exact pmatchList_related cfg n source target patterns values values' left right states tailRel envsNext tailSafe
+termination_by sizeOf patterns
+end
+
+/-- Existential form of the single-pattern and pattern-list simulations.
+The relations are the current proof-side translations, so this is not yet
+tagged as a reviewed port of the HOL theorem. -/
+theorem pmatch_simulation {C F : Type} (cfg : Config) (n : Nat) :
+    (∀ (source : FlatSem.State C F) pattern value bindings result target value' bindings',
+      FlatSem.pmatch source pattern value bindings = result → result ≠ .typeError →
+      StateRel cfg source target → ValueRel value value' →
+      aLookupRel (fun key => decNameToNum key < n) ValueRel bindings bindings' →
+      ∃ result', FlatSem.pmatch target pattern value' bindings' = result' ∧ MatchRel n result result') ∧
+    (∀ (source : FlatSem.State C F) patterns values bindings result target values' bindings',
+      FlatSem.pmatchList source patterns values bindings = result → result ≠ .typeError →
+      StateRel cfg source target → List.Forall₂ ValueRel values values' →
+      aLookupRel (fun key => decNameToNum key < n) ValueRel bindings bindings' →
+      ∃ result', FlatSem.pmatchList target patterns values' bindings' = result' ∧ MatchRel n result result') := by
+  constructor
+  · intro source pattern value bindings result target value' bindings' resultEq safe states values envs
+    subst result
+    exact ⟨_, rfl, pmatch_related cfg n source target pattern value value' bindings bindings' states values envs safe⟩
+  · intro source patterns values bindings result target values' bindings' resultEq safe states related envs
+    subst result
+    exact ⟨_, rfl, pmatchList_related cfg n source target patterns values values' bindings bindings' states related envs safe⟩
+
 end Flapjack.Compiler.Backend.FlatPattern
