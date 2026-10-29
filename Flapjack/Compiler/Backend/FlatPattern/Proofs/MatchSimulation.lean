@@ -1,13 +1,13 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.HandleBranch
+import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateLength
 
-/-! Composition of the match-expression cases. Singleton-result preservation
-and the evaluator's HOL correspondence remain open prerequisites. -/
+/-! Composition of the match-expression cases. The evaluator's HOL
+correspondence remains pending review. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- The successful evaluation of an expression yields exactly one value.
-This prerequisite must be proved for the full flat evaluator. -/
+/-- The successful evaluation of an expression yields exactly one value. -/
 def SingletonSuccess {C F : Type} (expression : FlatLang.Exp) : Prop :=
   ∀ (env : FlatSem.Environment FlatSem.Value) (state next : FlatSem.State C F) (values : List FlatSem.Value),
     FlatSem.evaluate env state [expression] = (next, .val values) → ∃ value, values = [value]
@@ -70,8 +70,7 @@ theorem compileExp_mat_bound (cfg : Config) (trace : BackendCommon.Tra)
         | mk rowFlag compiledRows => simp [compileExp, first, matchResult]
 
 /-- Match-expression simulation given the scrutinee and branch induction
-hypotheses and singleton-result preservation for the scrutinee. The latter is
-an open evaluator prerequisite, so this is not yet the full HOL case. -/
+hypotheses and singleton-result preservation for the scrutinee. -/
 theorem compile_mat_simulation_of_singleton {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
     (scrutinee : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
     (singleton : SingletonSuccess (C := C) (F := F) scrutinee)
@@ -162,5 +161,26 @@ theorem compile_mat_simulation_of_singleton {C F : Type} (cfg stateCfg : Config)
               sourceEnv targetEnv value value' bindings pattern body sourceResult n scrutineeRun targetRun fixedStates
               valueRel envs (by dsimp [generated] at *; omega) rowResult distinct sourceBody bodyIH
           exact ⟨targetFinal, targetResult', targetRun', finalRel, resultRel⟩
+
+/-- Every scrutinee has the singleton-result property in the current evaluator. -/
+theorem singletonSuccess {C F : Type} (expression : FlatLang.Exp) : SingletonSuccess (C := C) (F := F) expression := by
+  intro env state next values run
+  have length := FlatSem.evaluate_singleton_length env state next expression values run
+  cases values with
+  | nil => simp at length
+  | cons value rest =>
+    cases rest with
+    | nil => exact ⟨value, rfl⟩
+    | cons first rest => simp at length
+
+/-- Match expressions satisfy the forward simulation when their scrutinee and
+row bodies satisfy their induction hypotheses. The evaluator and relations
+remain pending HOL correspondence review. -/
+theorem compile_mat_simulation {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
+    (scrutinee : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
+    (scrutineeIH : ExpressionSimulation (C := C) (F := F) cfg stateCfg scrutinee)
+    (bodiesIH : ∀ pattern body, (pattern, body) ∈ rows → ExpressionSimulation (C := C) (F := F) cfg stateCfg body) :
+    ExpressionSimulation (C := C) (F := F) cfg stateCfg (.mat trace scrutinee rows) :=
+  compile_mat_simulation_of_singleton cfg stateCfg trace scrutinee rows (singletonSuccess scrutinee) scrutineeIH bodiesIH
 
 end Flapjack.Compiler.Backend.FlatPattern
