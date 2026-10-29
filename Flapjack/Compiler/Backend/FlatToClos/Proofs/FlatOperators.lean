@@ -293,7 +293,7 @@ theorem evaluate_operator {C F : Type} (env : FlatSem.Environment FlatSem.Value)
       EvalSim nextEnv newNames newValues (FlatSem.decClock next) (ClosSem.decClock 1 nextTarget) [body])
     (forceSim : ∀ (sourceValue : FlatSem.Value) (targetValue : ClosSem.Value)
         (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      ValueRel sourceValue targetValue → StateRel next nextTarget → next.clock ≤ source.clock →
+      op = .src (.thunkOp .forceThunk) → ValueRel sourceValue targetValue → StateRel next nextTarget → next.clock ≤ source.clock →
       (FlatSem.evaluate ⟨[(ofString "f", sourceValue)]⟩ next
         [FlatSem.appUnit (.varLocal .none (ofString "f"))]).2 ≠ .err (.abort .typeError) →
       EvalSim ⟨[(ofString "f", sourceValue)]⟩ [some (ofString "f")] [targetValue] next nextTarget
@@ -306,7 +306,9 @@ theorem evaluate_operator {C F : Type} (env : FlatSem.Environment FlatSem.Value)
   cases op with
   | src op =>
     exact evaluate_sourceOp env names values source target trace op args states argsSim
-      operandSim charInnerSim wordInnerSim bodySim forceSim decsSim notTypeError
+      operandSim charInnerSim wordInnerSim bodySim
+      (fun sv tv next nextTarget equal => forceSim sv tv next nextTarget (by cases equal; rfl))
+      decsSim notTypeError
   | globalVarAlloc count => exact evaluate_flatOp env names values source target trace _ args 0 rfl states argsSim notTypeError
   | globalVarInit index => exact evaluate_flatOp env names values source target trace _ args 1 rfl states argsSim notTypeError
   | globalVarLookup index => exact evaluate_flatOp env names values source target trace _ args 0 rfl states argsSim notTypeError

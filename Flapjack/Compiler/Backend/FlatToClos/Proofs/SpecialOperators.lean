@@ -194,7 +194,7 @@ theorem evaluate_sourceOp {C F : Type} (env : FlatSem.Environment FlatSem.Value)
       EvalSim nextEnv newNames newValues (FlatSem.decClock next) (ClosSem.decClock 1 nextTarget) [body])
     (forceSim : ∀ (sourceValue : FlatSem.Value) (targetValue : ClosSem.Value)
         (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      ValueRel sourceValue targetValue → StateRel next nextTarget → next.clock ≤ source.clock →
+      op = .thunkOp .forceThunk → ValueRel sourceValue targetValue → StateRel next nextTarget → next.clock ≤ source.clock →
       (FlatSem.evaluate ⟨[(ofString "f", sourceValue)]⟩ next
         [FlatSem.appUnit (.varLocal .none (ofString "f"))]).2 ≠ .err (.abort .typeError) →
       EvalSim ⟨[(ofString "f", sourceValue)]⟩ [some (ofString "f")] [targetValue] next nextTarget
@@ -209,6 +209,7 @@ theorem evaluate_sourceOp {C F : Type} (env : FlatSem.Environment FlatSem.Value)
   · exact evaluate_application_any env names values source target trace args argsSim operandSim bodySim states notTypeError
   · exact evaluate_assignment_any env names values source target trace args argsSim operandSim states notTypeError
   · exact evaluate_eval_related env names values source target trace args argsSim decsSim notTypeError
-  · exact evaluate_force env names values source target trace args argsSim forceSim notTypeError
+  · exact evaluate_force env names values source target trace args argsSim
+      (fun sourceValue targetValue next nextTarget => forceSim sourceValue targetValue next nextTarget rfl) notTypeError
 
 end Flapjack.Compiler.Backend.FlatToClos
