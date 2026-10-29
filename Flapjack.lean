@@ -458,6 +458,8 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockOperations
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockExpressions
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
 import Flapjack.Misc.Location
 import Flapjack.Compiler.Backend.BackendCommon.Operators
