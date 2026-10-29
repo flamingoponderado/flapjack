@@ -1,3 +1,5 @@
+`clos_sem_word_probe.out` captures the typed closure word dispatcher and representative edge cases. Some HOL `some`-choice and word expressions remain unreduced in the capture; `Flapjack/Test/ClosSemWordParity.lean` checks the Lean cases and explicitly identifies which observations reduce in HOL. The floating-point model and complete correspondence remain subject to their stated review and assumptions.
+
 `clos_sem_call_probe.out` captures typed closure application and its length theorem, plus partial, over-applied, direct-location, and recursive-closure examples. `Flapjack/Test/ClosSemCallParity.lean` checks corresponding Lean cases; HOL prints an unreduced arbitrary out-of-range `EL` in the invalid-index observation, while the branch itself returns `NONE`. The proof-side definitions and theorem remain pending correspondence review.
 
 `clos_sem_int_probe.out` captures the typed closure integer operation and signed division, remainder, zero-divisor, and bounded-comparison cases. `Flapjack/Test/ClosSemIntParity.lean` kernel-checks those concrete observations. These cases do not establish general integer-operation correspondence.
