@@ -5,8 +5,67 @@ import Flapjack.Compiler.Backend.FlatPattern.BindingsTotal
 /-! Evaluation steps for compiled pattern bindings. These proofs use the
 unreviewed clocked evaluator and are not tagged as HOL theorem ports. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
+open Flapjack
 open Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (storeLookup)
+
+/-- A binding work list's expressions must evaluate purely whenever their
+generated keys are used and the generated-name interval is preserved. -/
+def BindingInputs {C F : Type} (lower upper : Nat) (used : NumSet)
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
+    (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (values : List FlatSem.Value) : Prop :=
+  List.Forall₂ (fun item value => ∀ env2,
+    (sptLookup item.2.1 used).isSome = true →
+    aLookupRel (fun name => lower < decNameToNum name ∧ decNameToNum name < upper) Eq env2.v env.v →
+    FlatSem.evaluate env2 state [item.2.2] = (state, .val [value])) todo values
+
+/-- Inserting a key cannot remove any existing key from a numeric set. -/
+theorem sptInsert_preserves_presence (used : NumSet) (inserted key : Nat)
+    (present : (sptLookup key used).isSome = true) :
+    (sptLookup key (sptInsert inserted () used)).isSome = true := by
+  by_cases same : key = inserted
+  · subst key
+    simp [sptLookup_sptInsert_same]
+  · simpa [sptLookup_sptInsert_ne inserted key () used same] using present
+
+/-- The head expression of a variable-binding work list evaluates purely:
+the compiler inserts its key into the used set. -/
+theorem bindingInputs_var_head {C F : Type} (lower upper key : Nat) (used : NumSet)
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
+    (name : VarN) (expression : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (value : FlatSem.Value) (values : List FlatSem.Value)
+    (inputs : BindingInputs lower upper (sptInsert key () used) env state
+      ((.pvar name, key, expression) :: rest) (value :: values)) :
+    FlatSem.evaluate env state [expression] = (state, .val [value]) := by
+  cases inputs with
+  | cons head _ =>
+    apply head env
+    · simp [sptLookup_sptInsert_same]
+    · exact aLookupRel_refl _ _ _ (by intros; rfl)
+
+/-- After evaluating a variable binding, the remaining inputs retain their
+pure-evaluation premise in the environment extended by that binding. -/
+theorem bindingInputs_var_tail {C F : Type} (lower upper key : Nat) (used : NumSet)
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
+    (name : VarN) (expression : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (value : FlatSem.Value) (values : List FlatSem.Value)
+    (nameBound : decNameToNum name < lower)
+    (inputs : BindingInputs lower upper (sptInsert key () used) env state
+      ((.pvar name, key, expression) :: rest) (value :: values)) :
+    BindingInputs lower upper used { env with v := (name, value) :: env.v } state rest values := by
+  cases inputs with
+  | cons _ tail =>
+    induction tail with
+    | nil => exact .nil
+    | @cons item itemValue rest values head tail ih =>
+      apply List.Forall₂.cons
+      · intro env2 present related
+        apply head env2 (sptInsert_preserves_presence used key item.2.1 present)
+        apply ((aLookupRel_cons_false (fun n => lower < decNameToNum n ∧ decNameToNum n < upper)
+          Eq name value env2.v env.v).2 ?_).1 related
+        intro selected
+        omega
+      · exact ih
 
 /-- Projecting a reference whose contents are present is a pure evaluation
 step for the generated `el 0` expression. -/
