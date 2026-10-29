@@ -96,6 +96,24 @@ theorem evaluate_lit {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     | exact EvalResultRel.value (.cons (ValueRel.word64 _) .nil)
     | exact EvalResultRel.value (.cons (ValueRel.float64 _) .nil)
 
+/-- Nullary tuples and constructors evaluate to related closure blocks. -/
+theorem evaluate_con_nil {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (stamp : Option (FlatLang.CtorId × FlatLang.TypeId))
+    (states : StateRel source target) :
+    EvalSim env names values source target [.con trace stamp []] := by
+  cases stamp with
+  | none =>
+    simp [EvalSim, compile, compileExps, compileExp, smartCons, FlatSem.evaluate,
+      ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock, states,
+      EvalResultRel.value (.cons (ValueRel.tuple .nil) .nil)]
+  | some stamp =>
+    obtain ⟨tag, typeId⟩ := stamp
+    simp [EvalSim, compile, compileExps, compileExp, smartCons, FlatSem.evaluate,
+      ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock, states,
+      EvalResultRel.value (.cons (ValueRel.con .nil) .nil)]
+
 /-- A match-free flat function compiles to a related unary closure when the
 target supports unary calls. -/
 theorem evaluate_fn {C F : Type} (env : FlatSem.Environment FlatSem.Value)
@@ -240,6 +258,55 @@ theorem evaluate_if {C F : Type} (env : FlatSem.Environment FlatSem.Value)
               · simpa [EvalSim, compile, compileExps] using branchSim.1 next nextTarget states notTypeError
               · simpa [EvalSim, compile, compileExps] using branchSim.2 next nextTarget states notTypeError
           | cons _ _ => simp at length
+
+/-- A single variable handler binds the raised value in both environments.
+This is the handler shape admitted by the flat no-match condition. -/
+theorem evaluate_handle {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (name : MlString) (body handler : FlatLang.Exp)
+    (environments : EnvRel env names values)
+    (bodySim : EvalSim env names values source target [body])
+    (handlerSim : ∀ (sourceValue : FlatSem.Value) (targetValue : ClosSem.Value)
+        (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
+      ValueRel sourceValue targetValue → StateRel next nextTarget →
+      EnvRel { env with v := (name, sourceValue) :: env.v } (some name :: names) (targetValue :: values) →
+      (FlatSem.evaluate { env with v := (name, sourceValue) :: env.v } next [handler]).2 ≠
+        .err (.abort .typeError) →
+      EvalSim { env with v := (name, sourceValue) :: env.v } (some name :: names)
+        (targetValue :: values) next nextTarget [handler])
+    (notTypeError : (FlatSem.evaluate env source [.handle trace body [(.pvar name, handler)]]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.handle trace body [(.pvar name, handler)]] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source [body] body []).1
+  have closFix := ClosSem.fixClock_evaluate [compileExp names body] values target
+  unfold EvalSim at bodySim ⊢
+  simp only [compile, compileExps, compileExp] at bodySim ⊢
+  rw [FlatSem.evaluate, flatFix] at notTypeError ⊢
+  rw [ClosSem.evaluate, closFix]
+  cases flatRun : FlatSem.evaluate env source [body] with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate [compileExp names body] values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at bodySim notTypeError ⊢
+      rcases bodySim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | value related => exact ⟨states, .value related⟩
+      | raise related =>
+        rename_i sourceValue targetValue
+        have selected : FlatSem.selectRow next [(.pvar name, handler)] sourceValue sourceValue =
+            .ok ([(name, sourceValue)], handler) := by
+          simp [FlatSem.selectRow, FlatSem.pmatchRows, FlatSem.pmatch, FlatLang.patBindings]
+        repeat' first | split at notTypeError | simp_all
+        repeat' first | split | simp_all
+        all_goals simp_all [FlatSem.selectRow, FlatSem.pmatchRows, FlatSem.pmatch, FlatLang.patBindings]
+        rcases selected with ⟨selectedBindings, selectedBody⟩
+        obtain ⟨bindingsEq, bodyEq⟩ := ‹_ ∧ _›
+        subst_vars
+        have nextEnv := envRel_cons (name := name) environments related
+        simpa [EvalSim, compile, compileExps] using
+          handlerSim _ _ next nextTarget related states nextEnv notTypeError
 
 /-- Compose singleton and tail simulations for a nonempty tail. The tail
 induction hypothesis is used only when the tail does not end in a source
