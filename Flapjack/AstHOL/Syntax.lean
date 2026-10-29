@@ -128,4 +128,14 @@ private def everyExpFuns (predicate : Exp → Bool) (funs : List (VarN × VarN �
 termination_by sizeOf funs
 end
 
+/-- The recursive function-list traversal is the standard pointwise list
+test. This is infrastructure for proofs that inspect `everyExp` on letrec. -/
+theorem everyExpFuns_eq_all (predicate : Exp → Bool) (funs : List (VarN × VarN × Exp)) :
+    everyExpFuns predicate funs = funs.all (fun (_, _, expr) => everyExp predicate expr) := by
+  induction funs with
+  | nil => simp [everyExpFuns]
+  | cons head tail ih =>
+    obtain ⟨name, arg, expr⟩ := head
+    simp [everyExpFuns, ih]
+
 end Flapjack.AstHOL

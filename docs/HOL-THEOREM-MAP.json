@@ -1,6 +1,38 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+    "hol_name": "evaluate_lift_let",
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_lift_let_anonymous",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Anonymous Let case; original typed statement captured in source_let_proof_probe.out. Evaluator and carrier correspondence remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+    "hol_name": "evaluate_lift_let",
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_lift_let_named",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Named Let case; original typed statement captured in source_let_proof_probe.out. Evaluator and carrier correspondence remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+    "hol_name": "evaluate_lift_let",
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_lift_let_letrec",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Letrec case; original typed statement captured in source_let_proof_probe.out. Evaluator and carrier correspondence remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+    "hol_name": "evaluate_lift_let",
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_lift_let",
+    "statement_status": "pending_statement_review",
+    "reviewer": "The assembled statement retains the original evaluation, non-type-error and successful-lifting hypotheses. Original typed statement captured in source_let_proof_probe.out; evaluator and carrier correspondence remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
     "hol_name": "lift_lets_is_prefix",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs.lean",
     "lean_name": "liftLets_isPrefix",

@@ -51,7 +51,7 @@
 
 `source_to_flat_store_relation_probe.out` captures the original typed store and state relation rules, including independently typed compiler and FFI parameters. Lean's store-case and state-shape equivalences expose the same four store constructors and reserved flat-store slot, conditional on its preliminary value relation; they do not establish that relation's HOL correspondence.
 
-`source_let_proof_probe.out` captures the inferred types of the original source let-lifting prefix, evaluation, and semantics theorems and replays the local module/local lemma. The prefix and module/local prerequisites are kernel-checked in Lean pending source review; evaluation and semantics preservation remain open.
+`source_let_proof_probe.out` captures the inferred types of the original source let-lifting prefix, evaluation, and semantics theorems and replays the local module/local lemma. Lean kernel-checks the prefix, module/local, and single-step evaluation statements pending source and evaluator review; repeated lifting and semantics preservation remain open.
 
 `source_to_flat_global_env_probe.out` captures the original global environment's value-list and finite-map field types, constructor tags and map conditions, including pattern-stamp prerequisites, their independent polymorphic types and empty-map observations. The map witnesses check Lean representation roundtrips; they do not establish the value relation or pass correctness.
 
