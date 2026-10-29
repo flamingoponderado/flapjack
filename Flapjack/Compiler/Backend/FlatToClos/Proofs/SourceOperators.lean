@@ -6,9 +6,10 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordShifts
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EqualityExpressions
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.ThunkOperations
 
 /-! Dispatcher for ordinary source operators in the proof-side simulation.
-The special application, assignment, dynamic installation, and thunk cases
+The special application, assignment, dynamic installation, and thunk forcing cases
 require additional induction hypotheses. This is not a reviewed HOL port. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL Flapjack.Basis.Pure.MlString
@@ -21,6 +22,8 @@ inductive DirectSourceOp : AstHOL.Op → Prop where
   | shift (width : WordSize) (shift : Flapjack.Shift) (amount : Nat) : DirectSourceOp (.shift width shift amount)
   | test (test : Test) (typ : PrimType) : DirectSourceOp (.test test typ)
   | ffi (name : MlString) : DirectSourceOp (.ffi name)
+  | allocThunk (mode : ThunkMode) : DirectSourceOp (.thunkOp (.allocThunk mode))
+  | updateThunk (mode : ThunkMode) : DirectSourceOp (.thunkOp (.updateThunk mode))
   | equality : DirectSourceOp .equality
   | opref : DirectSourceOp .opref
   | aw8alloc : DirectSourceOp .aw8alloc
@@ -79,6 +82,8 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
   | shift width shift amount => exact evaluate_wordShift env names values source target trace width shift amount args argsSim notTypeError
   | test test typ => exact evaluate_primitiveTest env names values source target trace test typ args argsSim notTypeError
   | ffi name => exact evaluate_ffi env names values source target trace name args argsSim notTypeError
+  | allocThunk mode => exact evaluate_allocThunk env names values source target trace mode args argsSim notTypeError
+  | updateThunk mode => exact evaluate_updateThunk env names values source target trace mode args argsSim notTypeError
   | equality => exact evaluate_polymorphicEquality env names values source target trace args argsSim notTypeError
   | opref => exact evaluate_ref env names values source target trace args argsSim notTypeError
   | aw8alloc => exact evaluate_allocByteArray env names values source target trace args argsSim notTypeError
