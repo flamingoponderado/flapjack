@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.FlatApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveComparison
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveThunk
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveAccess
 
 /-! Source-primitive applications in the proof-side pattern simulation. The
 evaluator and relations remain pending HOL correspondence review. -/
@@ -239,6 +240,10 @@ inductive CoveredSourcePrimitive : Op → Prop where
   | aallocFixed : CoveredSourcePrimitive .aallocFixed
   | aalloc : CoveredSourcePrimitive .aalloc
   | aw8alloc : CoveredSourcePrimitive .aw8alloc
+  | alength : CoveredSourcePrimitive .alength
+  | aw8length : CoveredSourcePrimitive .aw8length
+  | aupdate (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .aupdateUnsafe else .aupdate)
+  | asub (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .asubUnsafe else .asub)
   | ffi (name : Flapjack.Basis.Pure.MlString.MlString) : CoveredSourcePrimitive (.ffi name)
   | allocThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.allocThunk mode))
   | updateThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.updateThunk mode))
@@ -250,9 +255,18 @@ theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config)
     (op : Op) (args : List FlatLang.Exp) (covered : CoveredSourcePrimitive op)
     (argumentsIH : ∀ expression ∈ args, ExpressionSimulation (C := C) (F := F) cfg stateCfg expression) :
     ExpressionSimulation (C := C) (F := F) cfg stateCfg (.app trace (.src op) args) := by
-  have notCall : op ≠ .opapp := by cases covered <;> simp
-  have notEval : op ≠ .eval := by cases covered <;> simp
-  have notForce : op ≠ .thunkOp .forceThunk := by cases covered <;> simp
+  have notCall : op ≠ .opapp := by
+    cases covered <;> simp
+    case aupdate unsafeOp => cases unsafeOp <;> simp
+    case asub unsafeOp => cases unsafeOp <;> simp
+  have notEval : op ≠ .eval := by
+    cases covered <;> simp
+    case aupdate unsafeOp => cases unsafeOp <;> simp
+    case asub unsafeOp => cases unsafeOp <;> simp
+  have notForce : op ≠ .thunkOp .forceThunk := by
+    cases covered <;> simp
+    case aupdate unsafeOp => cases unsafeOp <;> simp
+    case asub unsafeOp => cases unsafeOp <;> simp
   apply compile_simpleSourceApp_simulation cfg stateCfg trace op args notCall notEval notForce argumentsIH
   intro source target sourceFinal values values' result states related run
   cases covered with
@@ -265,6 +279,10 @@ theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config)
   | aallocFixed => exact doApp_arrayFixed_complete stateCfg source target sourceFinal values values' result states related run
   | aalloc => exact doApp_arrayAlloc_complete stateCfg source target sourceFinal values values' result states related run
   | aw8alloc => exact doApp_byteArrayAlloc_complete stateCfg source target sourceFinal values values' result states related run
+  | alength => exact doApp_arrayLength_complete stateCfg source target sourceFinal values values' result states related run
+  | aw8length => exact doApp_byteArrayLength_complete stateCfg source target sourceFinal values values' result states related run
+  | aupdate unsafeOp => exact doApp_arrayUpdate_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
+  | asub unsafeOp => exact doApp_arrayRead_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
   | ffi name => exact doApp_ffi_related stateCfg source target sourceFinal name values values' result states related run
   | allocThunk mode => exact doApp_thunkAlloc_related stateCfg source target sourceFinal mode values values' result states related run
   | updateThunk mode => exact doApp_thunkUpdate_related stateCfg source target sourceFinal mode values values' result states related run
