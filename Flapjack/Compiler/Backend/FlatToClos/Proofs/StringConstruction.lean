@@ -154,4 +154,118 @@ theorem evaluate_stringImplode {C F : Type} (env : FlatSem.Environment FlatSem.V
                 FlatSem.doAppData, decoded, ClosSem.doApp, targetApplied, states,
                 EvalResultRel.value (.cons resultRel .nil)]
 
+/-- A successfully concatenated flat list has related closure byte vectors
+whose flattened bytes are the source result. -/
+theorem valuesToString_related {source : List FlatSem.Value} {target : List ClosSem.Value}
+    (related : List.Forall₂ ValueRel source target) (result : MlString)
+    (decoded : FlatSem.valuesToString source = some result) :
+    ∃ chunks : List (List HolChar), target = chunks.map ClosSem.Value.byteVector ∧
+      result.explode = chunks.flatten := by
+  induction related generalizing result with
+  | nil =>
+    simp [FlatSem.valuesToString] at decoded
+    subst result
+    exact ⟨[], rfl, by simp [ofString, MlString.explode]⟩
+  | cons head tail ih =>
+    cases head <;> simp [FlatSem.valuesToString] at decoded
+    case string value =>
+      rename_i sourceTail targetTail
+      cases tailDecoded : FlatSem.valuesToString sourceTail with
+      | none => simp [tailDecoded] at decoded
+      | some rest =>
+        simp [tailDecoded] at decoded
+        subst result
+        obtain ⟨chunks, targetEq, bytesEq⟩ := ih rest tailDecoded
+        refine ⟨value.explode :: chunks, ?_, ?_⟩
+        · simp [targetEq]
+        · cases value
+          cases rest
+          simp_all [MlString.concat, MlString.explode]
+
+/-- String concatenation rejects any argument count other than one. -/
+theorem stringConcat_wrong_arity {C F : Type} (state : FlatSem.State C F)
+    (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
+    (FlatSem.applyResult state (.src .strcat) args).2 = .err (.abort .typeError) := by
+  cases args with
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData]
+  | cons first rest =>
+    cases rest with
+    | nil => simp at wrong
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData]
+
+/-- String concatenation preserves related string bytes after evaluating arbitrary
+argument lists, provided the source application avoids a type error. -/
+theorem evaluate_stringConcat {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (argSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .strcat) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src .strcat) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argSim := argSim argsNotTypeError
+  unfold EvalSim at argSim ⊢
+  simp only [compile, compileExps_reverse] at argSim
+  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argSim ⊢
+      rcases argSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src .strcat) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        have length : sourceArgs.length = 1 := by
+          by_contra wrong
+          apply resultShape
+          apply stringConcat_wrong_arity
+          simpa using wrong
+        cases related with
+        | nil => simp at length
+        | cons head tail =>
+          cases tail with
+          | cons _ _ => simp at length
+          | nil =>
+            simp only [List.reverse_singleton] at resultShape
+            rename_i sourceValue targetValue
+            cases decoded : FlatSem.valueToList sourceValue with
+            | none =>
+              simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                FlatSem.doAppData, decoded] at resultShape
+            | some items =>
+              cases joined : FlatSem.valuesToString items with
+              | none =>
+                simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                  FlatSem.doAppData, decoded, joined] at resultShape
+              | some result =>
+                obtain ⟨targetItems, targetDecoded, itemRel⟩ := valueToList_related sourceValue targetValue items head decoded
+                obtain ⟨chunks, targetEq, bytesEq⟩ := valuesToString_related itemRel result joined
+                rw [targetEq] at targetDecoded
+                have targetApplied := ClosSem.applyMemory_concatByteVectors nextTarget targetValue chunks targetDecoded
+                have resultRel : ValueRel (.litv (.strLit result)) (.byteVector chunks.flatten) := by
+                  simpa [bytesEq] using (ValueRel.string result)
+                simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                  FlatSem.doAppData, decoded, joined, ClosSem.doApp, targetApplied, states,
+                  EvalResultRel.value (.cons resultRel .nil)]
+
 end Flapjack.Compiler.Backend.FlatToClos

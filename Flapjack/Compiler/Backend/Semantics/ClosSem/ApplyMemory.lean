@@ -175,4 +175,18 @@ theorem applyMemory_fromCharList {C F : Type} (state : State C F) (value : Value
     applyMemory .fromListByte [value] state = some (.byteVector chars, state) := by
   simp [applyMemory, decoded, byteNumbers_charEncoding]
 
+private theorem byteVectors_encoded (chunks : List (List (BitVec 8))) :
+    byteVectors (chunks.map Value.byteVector) = some chunks := by
+  induction chunks with
+  | nil => rfl
+  | cons first rest ih => simp [byteVectors, ih]
+
+/-- Decoding a list of byte vectors yields their flattened concatenation.
+This is a Lean helper for the flat-to-closure simulation. -/
+theorem applyMemory_concatByteVectors {C F : Type} (state : State C F) (value : Value)
+    (chunks : List (List (BitVec 8)))
+    (decoded : valueToList value = some (chunks.map Value.byteVector)) :
+    applyMemory .concatByteVec [value] state = some (.byteVector chunks.flatten, state) := by
+  simp [applyMemory, decoded, byteVectors_encoded]
+
 end Flapjack.Compiler.Backend.ClosSem
