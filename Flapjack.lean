@@ -295,6 +295,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyClock
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
 import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
