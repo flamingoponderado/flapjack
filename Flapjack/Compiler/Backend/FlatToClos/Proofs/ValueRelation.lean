@@ -158,6 +158,15 @@ theorem envRel_cons {env names values name source target}
     refine ⟨target', ?_, targetRelated⟩
     simpa [nameIndex, same] using targetFound
 
+/-- An unnamed binding consumes a target slot without adding a source name. -/
+theorem envRel_skip {env names values} (related : EnvRel env names values) (target : ClosSem.Value) :
+    EnvRel env (none :: names) (target :: values) := by
+  apply (envRel_iff_lookup _ _ _).2
+  intro name value found
+  obtain ⟨target', targetFound, targetRelated⟩ :=
+    (envRel_iff_lookup env names values).1 related name value found
+  exact ⟨target', by simpa [nameIndex] using targetFound, targetRelated⟩
+
 /-- Extending with a related ordered prefix preserves the environment
 relation, including duplicate-name shadowing. -/
 theorem envRel_append {env names values entries targets}

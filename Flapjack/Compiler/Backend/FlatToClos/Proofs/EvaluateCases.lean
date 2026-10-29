@@ -17,6 +17,35 @@ inductive EvalResultRel : Result (List FlatSem.Value) FlatSem.Value →
       EvalResultRel (.err (.raise source)) (.err (.raise target))
   | abort (error : Abort) : EvalResultRel (.err (.abort error)) (.err (.abort error))
 
+/-- A flat Boolean accepted by `doIf` selects the same closure branch. -/
+theorem doIf_related (source : FlatSem.Value) (target : ClosSem.Value) (branch : Bool)
+    (related : ValueRel source target) (selected : FlatSem.doIf source true false = some branch) :
+    ClosSem.asBool target = some branch := by
+  cases related <;> simp [FlatSem.doIf] at selected
+  case con values =>
+    cases values with
+    | nil =>
+      rename_i tag typeId
+      cases typeId with
+      | none => simp at selected
+      | some typeId =>
+        simp [BackendCommon.trueTag, BackendCommon.falseTag] at selected
+        split_ifs at selected <;> simp_all [ClosSem.asBool]
+        split_ifs at selected <;> simp_all
+    | cons _ _ => simp at selected
+
+/-- Choosing expressions factors through the Boolean observation. -/
+theorem doIf_asBool (value : FlatSem.Value) (yes no : FlatLang.Exp) :
+    FlatSem.doIf value yes no = (FlatSem.doIf value true false).map (fun b => if b then yes else no) := by
+  cases value <;> simp [FlatSem.doIf]
+  case conv stamp fields =>
+    cases stamp with
+    | none => rfl
+    | some pair =>
+      obtain ⟨tag, typeId⟩ := pair
+      cases typeId <;> cases fields <;> simp
+      all_goals split_ifs <;> rfl
+
 /-- Evaluation of a flat expression list and its translation preserves the
 proof-side state and result relations. -/
 def EvalSim {C F : Type} (env : FlatSem.Environment FlatSem.Value)
@@ -109,6 +138,107 @@ theorem evaluate_raise {C F : Type} (env : FlatSem.Environment FlatSem.Value)
         | cons head tail =>
           cases tail with
           | nil => exact ⟨states, .raise head⟩
+          | cons _ _ => simp at length
+
+/-- A let binding extends the related environments and composes the bound
+expression with the body's induction hypothesis. -/
+theorem evaluate_let {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (name : Option MlString) (first body : FlatLang.Exp)
+    (environments : EnvRel env names values)
+    (firstSim : EvalSim env names values source target [first])
+    (bodySim : ∀ (sourceValue : FlatSem.Value) (targetValue : ClosSem.Value)
+        (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
+      ValueRel sourceValue targetValue → StateRel next nextTarget →
+      let nextEnv := { env with v := match name with
+        | none => env.v | some key => (key, sourceValue) :: env.v }
+      EnvRel nextEnv (name :: names) (targetValue :: values) →
+      (FlatSem.evaluate nextEnv next [body]).2 ≠ .err (.abort .typeError) →
+      EvalSim nextEnv (name :: names) (targetValue :: values) next nextTarget [body])
+    (notTypeError : (FlatSem.evaluate env source [.let_ trace name first body]).2 ≠ .err (.abort .typeError)) :
+    EvalSim env names values source target [.let_ trace name first body] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source [first] first []).1
+  have closFix := ClosSem.fixClock_evaluate [compileExp names first] values target
+  unfold EvalSim at firstSim ⊢
+  simp only [compile, compileExps, compileExp] at firstSim ⊢
+  rw [FlatSem.evaluate, flatFix] at notTypeError ⊢
+  rw [ClosSem.evaluate, closFix]
+  cases flatRun : FlatSem.evaluate env source [first] with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate [compileExp names first] values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at firstSim notTypeError ⊢
+      rcases firstSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        have length := FlatSem.evaluate_singleton_length env source next first _ flatRun
+        cases related with
+        | nil => simp at length
+        | cons head tail =>
+          cases tail with
+          | nil =>
+            rename_i flatHead closHead
+            simp at notTypeError ⊢
+            cases name with
+            | none =>
+              have nextEnv := envRel_skip environments closHead
+              simpa [EvalSim, compile, compileExps] using bodySim _ _ next nextTarget head states nextEnv notTypeError
+            | some key =>
+              have nextEnv := envRel_cons (name := key) environments head
+              simpa [EvalSim, compile, compileExps] using bodySim _ _ next nextTarget head states nextEnv notTypeError
+          | cons _ _ => simp at length
+
+/-- A related Boolean condition selects the same branch in both evaluators. -/
+theorem evaluate_if {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (condition yes no : FlatLang.Exp)
+    (conditionSim : EvalSim env names values source target [condition])
+    (branchSim : ∀ (branch : Bool) (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
+      StateRel next nextTarget →
+      (FlatSem.evaluate env next [if branch then yes else no]).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values next nextTarget [if branch then yes else no])
+    (notTypeError : (FlatSem.evaluate env source [.if_ trace condition yes no]).2 ≠ .err (.abort .typeError)) :
+    EvalSim env names values source target [.if_ trace condition yes no] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source [condition] condition []).1
+  have closFix := ClosSem.fixClock_evaluate [compileExp names condition] values target
+  unfold EvalSim at conditionSim ⊢
+  simp only [compile, compileExps, compileExp] at conditionSim ⊢
+  rw [FlatSem.evaluate, flatFix] at notTypeError ⊢
+  rw [ClosSem.evaluate, closFix]
+  cases flatRun : FlatSem.evaluate env source [condition] with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate [compileExp names condition] values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at conditionSim notTypeError ⊢
+      rcases conditionSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        have length := FlatSem.evaluate_singleton_length env source next condition _ flatRun
+        cases related with
+        | nil => simp at length
+        | cons head tail =>
+          cases tail with
+          | nil =>
+            rename_i flatHead closHead
+            simp at notTypeError ⊢
+            cases choice : FlatSem.doIf flatHead true false with
+            | none =>
+              have actualChoice : FlatSem.doIf flatHead yes no = none := by rw [doIf_asBool, choice]; rfl
+              split at notTypeError <;> simp_all
+            | some branch =>
+              have targetChoice := doIf_related flatHead closHead branch head choice
+              have actualChoice : FlatSem.doIf flatHead yes no = some (if branch then yes else no) := by
+                rw [doIf_asBool, choice]
+                rfl
+              cases branch <;> split at notTypeError <;> simp_all
+              · simpa [EvalSim, compile, compileExps] using branchSim.1 next nextTarget states notTypeError
+              · simpa [EvalSim, compile, compileExps] using branchSim.2 next nextTarget states notTypeError
           | cons _ _ => simp at length
 
 /-- Compose singleton and tail simulations for a nonempty tail. The tail
