@@ -408,4 +408,21 @@ theorem patsToCode_correct (refs : HolFiniteMapExact Nat Term) (value : Term)
     exact patToGuard_correct refs value pattern [] value patternSafe rfl
   · exact safe
 
+/-- The complete pattern compiler is correct if its exhaustiveness analysis
+is sound for the reordered rows. The outstanding source theorem establishes
+that premise; this conditional lemma is not a port of the source result. -/
+theorem comp_correct_of_exhaustiveness (refs : HolFiniteMapExact Nat Term) (value : Term)
+    (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none)
+    (exhaustiveSound : PatternExh.exhRows (moveConstUp rows) = true →
+      matchRows refs (moveConstUp rows) value ≠ some .failure) :
+    dtEval refs value (comp rows) = matchRows refs rows value := by
+  have movedEq := matchRows_moveConstUp refs value rows safe
+  have movedSafe : matchRows refs (moveConstUp rows) value ≠ none := by rw [movedEq]; exact safe
+  by_cases exhaustive : PatternExh.exhRows (moveConstUp rows) = true
+  · obtain ⟨insertedSafe, insertedEq⟩ := matchRows_insertAny refs value (moveConstUp rows) movedSafe
+    have codeEq := patsToCode_correct refs value (insertAny (moveConstUp rows)) insertedSafe
+    simpa [comp, exhaustive, insertedEq (exhaustiveSound exhaustive), movedEq] using codeEq
+  · have codeEq := patsToCode_correct refs value (moveConstUp rows) movedSafe
+    simpa [comp, exhaustive, movedEq] using codeEq
+
 end Flapjack.Compiler.Backend.PatternComp

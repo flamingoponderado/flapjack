@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.PatternSemantics
 
-/-! Pattern-exhaustiveness matrix transformations. The recursive matrix
-decision procedure and its termination proof remain open. -/
+/-! Pattern-exhaustiveness matrix transformations. The total recursive
+decision procedure is defined in the `Exhaustive` module. -/
 namespace Flapjack.Compiler.Backend.PatternExh
 open PatternSemantics
 
