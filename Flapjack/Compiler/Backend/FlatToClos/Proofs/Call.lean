@@ -78,7 +78,7 @@ theorem evaluate_call_related {C F : Type} (source : FlatSem.State C F) (target 
     (argumentRel : ValueRel argument targetArgument)
     (applied : FlatSem.doOpApp [function, argument] = some (nextEnv, body))
     (bodySim : ∀ (names : List (Option MlString)) (env : List ClosSem.Value),
-      EnvRel nextEnv names env → FlatProps.noMat body = true →
+      source.clock ≠ 0 → EnvRel nextEnv names env → FlatProps.noMat body = true →
       StateRel (FlatSem.decClock source) (ClosSem.decClock 1 target) →
       (FlatSem.evaluate nextEnv (FlatSem.decClock source) [body]).2 ≠ .err (.abort .typeError) →
       EvalSim nextEnv names env (FlatSem.decClock source) (ClosSem.decClock 1 target) [body])
@@ -99,6 +99,6 @@ theorem evaluate_call_related {C F : Type} (source : FlatSem.State C F) (target 
   · have targetNonzero : target.clock ≠ 0 := by omega
     simp only [zero, targetNonzero, ↓reduceIte] at notTypeError ⊢
     simpa [EvalSim, compile, compileExps] using
-      bodySim names env envRel safe (stateRel_decClock states) notTypeError
+      bodySim names env zero envRel safe (stateRel_decClock states) notTypeError
 
 end Flapjack.Compiler.Backend.FlatToClos

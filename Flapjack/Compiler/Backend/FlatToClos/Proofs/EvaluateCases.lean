@@ -259,7 +259,7 @@ theorem evaluate_let {C F : Type} (env : FlatSem.Environment FlatSem.Value)
       EvalSim env names values source target [first])
     (bodySim : ∀ (sourceValue : FlatSem.Value) (targetValue : ClosSem.Value)
         (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      ValueRel sourceValue targetValue → StateRel next nextTarget →
+      ValueRel sourceValue targetValue → StateRel next nextTarget → next.clock ≤ source.clock →
       let nextEnv := { env with v := match name with
         | none => env.v | some key => (key, sourceValue) :: env.v }
       EnvRel nextEnv (name :: names) (targetValue :: values) →
@@ -300,10 +300,12 @@ theorem evaluate_let {C F : Type} (env : FlatSem.Environment FlatSem.Value)
             cases name with
             | none =>
               have nextEnv := envRel_skip environments closHead
-              simpa [EvalSim, compile, compileExps] using bodySim _ _ next nextTarget head states nextEnv notTypeError
+              have bound := FlatSem.evaluate_clock_spec.1 env source next [first] _ flatRun
+              simpa [EvalSim, compile, compileExps] using bodySim _ _ next nextTarget head states bound nextEnv notTypeError
             | some key =>
               have nextEnv := envRel_cons (name := key) environments head
-              simpa [EvalSim, compile, compileExps] using bodySim _ _ next nextTarget head states nextEnv notTypeError
+              have bound := FlatSem.evaluate_clock_spec.1 env source next [first] _ flatRun
+              simpa [EvalSim, compile, compileExps] using bodySim _ _ next nextTarget head states bound nextEnv notTypeError
           | cons _ _ => simp at length
 
 /-- A related Boolean condition selects the same branch in both evaluators. -/
@@ -314,7 +316,7 @@ theorem evaluate_if {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (conditionSim : (FlatSem.evaluate env source [condition]).2 ≠ .err (.abort .typeError) →
       EvalSim env names values source target [condition])
     (branchSim : ∀ (branch : Bool) (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      StateRel next nextTarget →
+      StateRel next nextTarget → next.clock ≤ source.clock →
       (FlatSem.evaluate env next [if branch then yes else no]).2 ≠ .err (.abort .typeError) →
       EvalSim env names values next nextTarget [if branch then yes else no])
     (notTypeError : (FlatSem.evaluate env source [.if_ trace condition yes no]).2 ≠ .err (.abort .typeError)) :
@@ -359,8 +361,10 @@ theorem evaluate_if {C F : Type} (env : FlatSem.Environment FlatSem.Value)
                 rw [doIf_asBool, choice]
                 rfl
               cases branch <;> split at notTypeError <;> simp_all
-              · simpa [EvalSim, compile, compileExps] using branchSim.1 next nextTarget states notTypeError
-              · simpa [EvalSim, compile, compileExps] using branchSim.2 next nextTarget states notTypeError
+              · have bound := FlatSem.evaluate_clock_spec.1 env source next [condition] _ flatRun
+                simpa [EvalSim, compile, compileExps] using branchSim.1 next nextTarget states bound notTypeError
+              · have bound := FlatSem.evaluate_clock_spec.1 env source next [condition] _ flatRun
+                simpa [EvalSim, compile, compileExps] using branchSim.2 next nextTarget states bound notTypeError
           | cons _ _ => simp at length
 
 /-- A single variable handler binds the raised value in both environments.
@@ -374,7 +378,7 @@ theorem evaluate_handle {C F : Type} (env : FlatSem.Environment FlatSem.Value)
       EvalSim env names values source target [body])
     (handlerSim : ∀ (sourceValue : FlatSem.Value) (targetValue : ClosSem.Value)
         (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      ValueRel sourceValue targetValue → StateRel next nextTarget →
+      ValueRel sourceValue targetValue → StateRel next nextTarget → next.clock ≤ source.clock →
       EnvRel { env with v := (name, sourceValue) :: env.v } (some name :: names) (targetValue :: values) →
       (FlatSem.evaluate { env with v := (name, sourceValue) :: env.v } next [handler]).2 ≠
         .err (.abort .typeError) →
@@ -416,8 +420,9 @@ theorem evaluate_handle {C F : Type} (env : FlatSem.Environment FlatSem.Value)
         obtain ⟨bindingsEq, bodyEq⟩ := ‹_ ∧ _›
         subst_vars
         have nextEnv := envRel_cons (name := name) environments related
+        have bound := FlatSem.evaluate_clock_spec.1 env source next [body] _ flatRun
         simpa [EvalSim, compile, compileExps] using
-          handlerSim _ _ next nextTarget related states nextEnv notTypeError
+          handlerSim _ _ next nextTarget related states bound nextEnv notTypeError
 
 /-- Compose singleton and tail simulations for a nonempty tail. The tail
 induction hypothesis is used only when the tail does not end in a source
@@ -429,6 +434,7 @@ theorem evaluate_cons {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (firstSim : (FlatSem.evaluate env source [first]).2 ≠ .err (.abort .typeError) →
       EvalSim env names values source target [first])
     (tailSim : ∀ (source' : FlatSem.State C F) (target' : ClosSem.State C F), StateRel source' target' →
+      source'.clock ≤ source.clock →
       (FlatSem.evaluate env source' (second :: rest)).2 ≠ .err (.abort .typeError) →
       EvalSim env names values source' target' (second :: rest))
     (notTypeError : (FlatSem.evaluate env source (first :: second :: rest)).2 ≠ .err (.abort .typeError)) :
@@ -465,7 +471,8 @@ theorem evaluate_cons {C F : Type} (env : FlatSem.Environment FlatSem.Value)
             have tailNot : (FlatSem.evaluate env next (second :: rest)).2 ≠ .err (.abort .typeError) := by
               intro bad
               simp [bad] at notTypeError
-            have tailRelated := tailSim next nextTarget states tailNot
+            have bound := FlatSem.evaluate_clock_spec.1 env source next [first] _ flatRun
+            have tailRelated := tailSim next nextTarget states bound tailNot
             simp only [EvalSim, compile, compileExps] at tailRelated
             cases flatTail : FlatSem.evaluate env next (second :: rest) with
             | mk final flatResult =>

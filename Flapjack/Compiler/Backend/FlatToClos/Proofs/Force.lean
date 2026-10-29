@@ -38,7 +38,7 @@ theorem evaluate_force {C F : Type} (env : FlatSem.Environment FlatSem.Value)
       EvalSim env names values source target args.reverse)
     (bodySim : ∀ (sourceValue : FlatSem.Value) (targetValue : ClosSem.Value)
         (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      ValueRel sourceValue targetValue → StateRel next nextTarget →
+      ValueRel sourceValue targetValue → StateRel next nextTarget → next.clock ≤ source.clock →
       (FlatSem.evaluate ⟨[(ofString "f", sourceValue)]⟩ next
         [FlatSem.appUnit (.varLocal .none (ofString "f"))]).2 ≠ .err (.abort .typeError) →
       EvalSim ⟨[(ofString "f", sourceValue)]⟩ [some (ofString "f")] [targetValue] next nextTarget
@@ -89,7 +89,8 @@ theorem evaluate_force {C F : Type} (env : FlatSem.Environment FlatSem.Value)
                     [FlatSem.appUnit (.varLocal .none (ofString "f"))]).2 ≠ .err (.abort .typeError) := by
                   intro bad
                   simp [bad] at notTypeError
-                have generated := bodySim sourceValue targetValue next nextTarget payloadRel states generatedNot
+                have bound := FlatSem.evaluate_clock_spec.1 env source next args.reverse _ flatArgs
+                have generated := bodySim sourceValue targetValue next nextTarget payloadRel states bound generatedNot
                 simp only [EvalSim, compile_force_application] at generated
                 cases flatBody : FlatSem.evaluate ⟨[(ofString "f", sourceValue)]⟩ next
                     [FlatSem.appUnit (.varLocal .none (ofString "f"))] with

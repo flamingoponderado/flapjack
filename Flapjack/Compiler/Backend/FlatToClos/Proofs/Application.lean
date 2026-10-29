@@ -12,13 +12,13 @@ theorem evaluate_application {C F : Type} (env : FlatSem.Environment FlatSem.Val
     (trace : BackendCommon.Tra) (function argument : FlatLang.Exp)
     (argumentSim : EvalSim env names values source target [argument])
     (functionSim : ∀ (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      StateRel next nextTarget →
+      StateRel next nextTarget → next.clock ≤ source.clock →
       (FlatSem.evaluate env next [function]).2 ≠ .err (.abort .typeError) →
       EvalSim env names values next nextTarget [function])
     (bodySim : ∀ (next : FlatSem.State C F) (nextTarget : ClosSem.State C F)
         (nextEnv : FlatSem.Environment FlatSem.Value) (body : FlatLang.Exp)
         (newNames : List (Option MlString)) (newValues : List ClosSem.Value),
-      EnvRel nextEnv newNames newValues → FlatProps.noMat body = true →
+      next.clock ≤ source.clock → next.clock ≠ 0 → EnvRel nextEnv newNames newValues → FlatProps.noMat body = true →
       StateRel (FlatSem.decClock next) (ClosSem.decClock 1 nextTarget) →
       (FlatSem.evaluate nextEnv (FlatSem.decClock next) [body]).2 ≠ .err (.abort .typeError) →
       EvalSim nextEnv newNames newValues (FlatSem.decClock next) (ClosSem.decClock 1 nextTarget) [body])
@@ -57,7 +57,8 @@ theorem evaluate_application {C F : Type} (env : FlatSem.Environment FlatSem.Val
             have functionNot : (FlatSem.evaluate env next [function]).2 ≠ .err (.abort .typeError) := by
               intro bad
               simp [bad] at notTypeError
-            have functionRelated := functionSim next nextTarget argStates functionNot
+            have argBound := FlatSem.evaluate_clock_spec.1 env source next [argument] _ flatArg
+            have functionRelated := functionSim next nextTarget argStates argBound functionNot
             simp only [EvalSim, compile, compileExps] at functionRelated
             rw [ClosSem.fixClock_evaluate]
             cases flatFunction : FlatSem.evaluate env next [function] with
@@ -84,8 +85,11 @@ theorem evaluate_application {C F : Type} (env : FlatSem.Environment FlatSem.Val
                       | some pair =>
                         obtain ⟨nextEnv, body⟩ := pair
                         simp [applied] at notTypeError ⊢
+                        have funBound := FlatSem.evaluate_clock_spec.1 env next after [function] _ flatFunction
+                        have afterBound : after.clock ≤ source.clock := le_trans funBound argBound
                         exact evaluate_call_related after afterTarget sourceFunction targetFunction sourceArg targetArg
-                          nextEnv body funStates head argRel applied (bodySim after afterTarget nextEnv body) notTypeError
+                          nextEnv body funStates head argRel applied
+                          (fun newNames newValues => bodySim after afterTarget nextEnv body newNames newValues afterBound) notTypeError
           | cons _ _ => simp at length
 
 end Flapjack.Compiler.Backend.FlatToClos

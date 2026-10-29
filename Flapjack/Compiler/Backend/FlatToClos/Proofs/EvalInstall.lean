@@ -93,7 +93,7 @@ theorem eval_install_related {C F : Type} (source : FlatSem.State C F) (target :
     (run : FlatSem.doEval sourceValues source.evalConfig = some (decs, config, value))
     (states : StateRel source target) (values : List.Forall₂ ValueRel sourceValues targetValues)
     (decsSim : ∀ (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      StateRel next nextTarget → FlatProps.noMatDecs decs = true →
+      StateRel next nextTarget → next.clock < source.clock → FlatProps.noMatDecs decs = true →
       (FlatSem.evaluateDecs next decs).2 ≠ some (.abort .typeError) → DecUnitSim next nextTarget decs)
     (notTypeError : (runFlatEval source config decs).2 ≠ .err (.abort .typeError)) :
     StateRel (runFlatEval source config decs).1 (runInstalled targetValues target).2 ∧
@@ -118,7 +118,10 @@ theorem eval_install_related {C F : Type} (source : FlatSem.State C F) (target :
         some (.abort .typeError) := by
       intro bad
       simp [bad] at notTypeError
-    have simulated := decsSim _ _ rel safe decsNot
+    have clockLess : (FlatSem.decClock { source with evalConfig := config }).clock < source.clock := by
+      simp [FlatSem.decClock]
+      omega
+    have simulated := decsSim _ _ rel clockLess safe decsNot
     simp only [DecUnitSim] at simulated
     cases flatRun : FlatSem.evaluateDecs (FlatSem.decClock { source with evalConfig := config }) decs with
     | mk last flatResult =>
@@ -145,7 +148,7 @@ theorem evaluate_eval_related {C F : Type} (env : FlatSem.Environment FlatSem.Va
     (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
       EvalSim env names values source target args.reverse)
     (decsSim : ∀ (decs : List FlatLang.Exp) (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      StateRel next nextTarget → FlatProps.noMatDecs decs = true →
+      StateRel next nextTarget → next.clock < source.clock → FlatProps.noMatDecs decs = true →
       (FlatSem.evaluateDecs next decs).2 ≠ some (.abort .typeError) → DecUnitSim next nextTarget decs)
     (notTypeError : (FlatSem.evaluate env source [.app trace (.src .eval) args]).2 ≠ .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace (.src .eval) args] := by
@@ -178,7 +181,9 @@ theorem evaluate_eval_related {C F : Type} (env : FlatSem.Environment FlatSem.Va
         | some result =>
           obtain ⟨decs, config, value⟩ := result
           simp only [run] at notTypeError ⊢
+          have bound := FlatSem.evaluate_clock_spec.1 env source next args.reverse _ flatRun
           exact eval_install_related next nextTarget _ _ decs config value run states
-            (List.rel_reverse related) (decsSim decs) notTypeError
+            (List.rel_reverse related)
+            (fun after afterTarget related smaller => decsSim decs after afterTarget related (by omega)) notTypeError
 
 end Flapjack.Compiler.Backend.FlatToClos

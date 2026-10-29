@@ -273,7 +273,7 @@ theorem evaluate_operator {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
       EvalSim env names values source target args.reverse)
     (operandSim : ∀ (expression : FlatLang.Exp) (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      expression ∈ args → StateRel next nextTarget →
+      expression ∈ args → StateRel next nextTarget → next.clock ≤ source.clock →
       (FlatSem.evaluate env next [expression]).2 ≠ .err (.abort .typeError) →
       EvalSim env names values next nextTarget [expression])
     (charInnerSim : ∀ innerTrace inner,
@@ -287,19 +287,19 @@ theorem evaluate_operator {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (bodySim : ∀ (next : FlatSem.State C F) (nextTarget : ClosSem.State C F)
         (nextEnv : FlatSem.Environment FlatSem.Value) (body : FlatLang.Exp)
         (newNames : List (Option MlString)) (newValues : List ClosSem.Value),
-      EnvRel nextEnv newNames newValues → FlatProps.noMat body = true →
+      next.clock ≤ source.clock → next.clock ≠ 0 → EnvRel nextEnv newNames newValues → FlatProps.noMat body = true →
       StateRel (FlatSem.decClock next) (ClosSem.decClock 1 nextTarget) →
       (FlatSem.evaluate nextEnv (FlatSem.decClock next) [body]).2 ≠ .err (.abort .typeError) →
       EvalSim nextEnv newNames newValues (FlatSem.decClock next) (ClosSem.decClock 1 nextTarget) [body])
     (forceSim : ∀ (sourceValue : FlatSem.Value) (targetValue : ClosSem.Value)
         (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      ValueRel sourceValue targetValue → StateRel next nextTarget →
+      ValueRel sourceValue targetValue → StateRel next nextTarget → next.clock ≤ source.clock →
       (FlatSem.evaluate ⟨[(ofString "f", sourceValue)]⟩ next
         [FlatSem.appUnit (.varLocal .none (ofString "f"))]).2 ≠ .err (.abort .typeError) →
       EvalSim ⟨[(ofString "f", sourceValue)]⟩ [some (ofString "f")] [targetValue] next nextTarget
         [FlatSem.appUnit (.varLocal .none (ofString "f"))])
     (decsSim : ∀ (decs : List FlatLang.Exp) (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      StateRel next nextTarget → FlatProps.noMatDecs decs = true →
+      StateRel next nextTarget → next.clock < source.clock → FlatProps.noMatDecs decs = true →
       (FlatSem.evaluateDecs next decs).2 ≠ some (.abort .typeError) → DecUnitSim next nextTarget decs)
     (notTypeError : (FlatSem.evaluate env source [.app trace op args]).2 ≠ .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace op args] := by

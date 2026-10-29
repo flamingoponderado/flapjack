@@ -33,7 +33,8 @@ theorem evaluate_assignment {C F : Type} (env : FlatSem.Environment FlatSem.Valu
     (valueSim : (FlatSem.evaluate env source [value]).2 ≠ .err (.abort .typeError) →
       EvalSim env names values source target [value])
     (referenceSim : ∀ (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      StateRel next nextTarget → (FlatSem.evaluate env next [reference]).2 ≠ .err (.abort .typeError) →
+      StateRel next nextTarget → next.clock ≤ source.clock →
+      (FlatSem.evaluate env next [reference]).2 ≠ .err (.abort .typeError) →
       EvalSim env names values next nextTarget [reference])
     (notTypeError : (FlatSem.evaluate env source [.app trace (.src .opassign) [reference, value]]).2 ≠
       .err (.abort .typeError)) :
@@ -84,7 +85,8 @@ theorem evaluate_assignment {C F : Type} (env : FlatSem.Environment FlatSem.Valu
             have refNot : (FlatSem.evaluate env next [reference]).2 ≠ .err (.abort .typeError) := by
               intro bad
               simp [bad] at notTypeError
-            have refRelated := referenceSim next nextTarget states refNot
+            have bound := FlatSem.evaluate_clock_spec.1 env source next [value] _ flatValue
+            have refRelated := referenceSim next nextTarget states bound refNot
             simp only [EvalSim, compile, compileExps] at refRelated
             cases flatRef : FlatSem.evaluate env next [reference] with
             | mk after flatRefResult =>
