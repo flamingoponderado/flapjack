@@ -336,6 +336,10 @@ run_probe source_let_proof_probeScript.sml source_let_proof_probe.out \
   lift_prefix lift_modules_locals lift_single_evaluation lift_all_evaluation compile_declarations compile_semantics \
   "$cake_dir/compiler/backend/proofs/source_letProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe source_evaluate_decs_probeScript.sml source_evaluate_decs_probe.out \
+  evaluate_decs_cons evaluate_decs_append \
+  "$cake_dir/semantics/proofs/evaluatePropsScript.sml" "$cake_dir/semantics/proofs"
+
 run_probe source_to_flat_init_probeScript.sml source_to_flat_init_probe.out \
   eval_state_ok type_entries constructor_entries initial_env initial_next initial_global_inv initial_global_imp initial_env_ok initial_types_ok keep_global_allocation elimination_keep incremental_nonempty flat_initial_state flat_semantics compile_flat compile incremental_compile evaluated_entries evaluated_next incremental_empty \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"

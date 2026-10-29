@@ -1,5 +1,29 @@
 [
   {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_decs_cons",
+    "lean_path": "Flapjack/EvaluateProps/Declarations.lean",
+    "lean_name": "evaluateDecs_cons",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in source_evaluate_decs_probe.out. Clocked evaluator and carrier correspondence remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_decs_append",
+    "lean_path": "Flapjack/EvaluateProps/Declarations.lean",
+    "lean_name": "evaluateDecs_append",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in source_evaluate_decs_probe.out. Clocked evaluator and carrier correspondence remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+    "hol_name": "evaluate_lift_lets",
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Repeated.lean",
+    "lean_name": "evaluate_lift_lets",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in source_let_proof_probe.out. The source run, non-type-error condition and successful lifting are retained; evaluator and carrier correspondence remain pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
     "hol_name": "evaluate_lift_let",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Evaluate.lean",

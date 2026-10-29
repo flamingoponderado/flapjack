@@ -302,6 +302,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingFold
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreValueRelCases
 import Flapjack.Compiler.Backend.SourceLet.Proofs
 import Flapjack.Compiler.Backend.SourceLet.Proofs.Evaluate
+import Flapjack.Compiler.Backend.SourceLet.Proofs.Repeated
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
