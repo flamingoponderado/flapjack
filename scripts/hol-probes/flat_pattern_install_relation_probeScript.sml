@@ -71,3 +71,6 @@ val _ = show_thm "pattern_exh_rows_sound=" pattern_exhTheory.exh_rows_thm;
 val _ = show_thm "flat_selected_pattern_match=" flatPropsTheory.pmatch_rows_IMP_pmatch;
 val _ = show_thm "flat_compile_exps_evaluate=" flat_patternProofTheory.compile_exps_evaluate;
 val _ = show_thm "flat_evaluate_length=" flatPropsTheory.evaluate_length;
+val _ = show_thm "flat_value_to_bytes_relation=" flatPropsTheory.simple_val_rel_v_to_bytes;
+val _ = show_thm "flat_value_to_words_relation=" flatPropsTheory.simple_val_rel_v_to_words;
+val _ = show_thm "flat_do_eval_simulation=" flat_patternProofTheory.do_eval_thm;
