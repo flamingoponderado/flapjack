@@ -333,6 +333,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.ExpressionList
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.FunctionApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.DynamicEvaluation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.DeclarationEvaluation
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkRelation
 import Flapjack.Compiler.Backend.PatternSemantics.Semantics
 import Flapjack.Compiler.Backend.PatternComp.Proofs.RowSelection
 import Flapjack.Compiler.Backend.PatternComp.Proofs.GuardCompilation
