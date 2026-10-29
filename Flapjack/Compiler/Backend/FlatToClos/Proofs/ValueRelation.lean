@@ -82,4 +82,98 @@ theorem listToValue_related {source target} (related : List.Forall₂ ValueRel s
   | nil => exact .con .nil
   | cons head tail ih => exact .con (.cons head (.cons ih .nil))
 
+/-- Decoding a related flat list yields a related closure list. This uses the
+proof-side relation, whose HOL correspondence remains under review. -/
+theorem valueToList_related (source : FlatSem.Value) (target : ClosSem.Value)
+    (sourceValues : List FlatSem.Value) (related : ValueRel source target)
+    (decoded : FlatSem.valueToList source = some sourceValues) :
+    ∃ targetValues, ClosSem.valueToList target = some targetValues ∧
+      List.Forall₂ ValueRel sourceValues targetValues := by
+  cases source with
+  | conv stamp fields =>
+    cases stamp with
+    | none => simp [FlatSem.valueToList] at decoded
+    | some stamp =>
+      obtain ⟨tag, typeId⟩ := stamp
+      cases fields with
+      | nil =>
+        simp only [FlatSem.valueToList] at decoded
+        split at decoded
+        · rename_i tags
+          simp only [Option.some.injEq] at decoded
+          subst sourceValues
+          cases related with
+          | con values =>
+            cases values
+            exact ⟨[], by simp [ClosSem.valueToList, tags.1], .nil⟩
+        · simp at decoded
+      | cons head rest =>
+        cases rest with
+        | nil => simp [FlatSem.valueToList] at decoded
+        | cons tail rest =>
+          cases rest with
+          | cons extra rest => simp [FlatSem.valueToList] at decoded
+          | nil =>
+            simp only [FlatSem.valueToList] at decoded
+            split at decoded
+            · rename_i tags
+              cases tailDecoded : FlatSem.valueToList tail with
+              | none => simp [tailDecoded] at decoded
+              | some tailValues =>
+                simp [tailDecoded] at decoded
+                subst sourceValues
+                cases related with
+                | con values =>
+                  cases values with
+                  | cons headRel restRel =>
+                    cases restRel with
+                    | cons tailRel endRel =>
+                      cases endRel
+                      obtain ⟨targetTail, targetDecoded, tailRelated⟩ :=
+                        valueToList_related tail _ tailValues tailRel tailDecoded
+                      refine ⟨_, ?_, .cons headRel tailRelated⟩
+                      simp [ClosSem.valueToList, tags.1, targetDecoded]
+            · simp at decoded
+  | litv | closure | recclosure | loc | vectorv =>
+    simp [FlatSem.valueToList] at decoded
+termination_by sizeOf source
+
+/-- A related binding can be pushed onto both environments, preserving
+shadowing and de Bruijn indices. This is proof-side infrastructure. -/
+theorem envRel_cons {env names values name source target}
+    (related : EnvRel env names values) (head : ValueRel source target) :
+    EnvRel { env with v := (name, source) :: env.v } (some name :: names) (target :: values) := by
+  apply (envRel_iff_lookup _ _ _).2
+  intro key value found
+  by_cases same : key = name
+  · subst key
+    simp at found
+    subst value
+    exact ⟨target, by simp [nameIndex], head⟩
+  · have previous : env.v.lookup key = some value := by
+      have different : (key == name) = false := by simp [same]
+      simpa [List.lookup_cons, different] using found
+    obtain ⟨target', targetFound, targetRelated⟩ :=
+      (envRel_iff_lookup env names values).1 related key value previous
+    refine ⟨target', ?_, targetRelated⟩
+    simpa [nameIndex, same] using targetFound
+
+/-- Extending with a related ordered prefix preserves the environment
+relation, including duplicate-name shadowing. -/
+theorem envRel_append {env names values entries targets}
+    (related : EnvRel env names values)
+    (prefixRelated : List.Forall₂ ValueRel (entries.map Prod.snd) targets) :
+    EnvRel { env with v := entries ++ env.v }
+      (entries.map (fun entry => some entry.1) ++ names) (targets ++ values) := by
+  induction entries generalizing targets with
+  | nil =>
+    cases prefixRelated
+    exact related
+  | cons entry rest ih =>
+    cases entry with
+    | mk name source =>
+      cases prefixRelated with
+      | cons head tail =>
+        simpa using envRel_cons (ih tail) head
+
 end Flapjack.Compiler.Backend.FlatToClos
