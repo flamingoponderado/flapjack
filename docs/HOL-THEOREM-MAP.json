@@ -1,5 +1,29 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "simple_basic_val_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
+    "lean_name": "simpleBasicValRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; evaluator, value and store carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "v_container_xs_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
+    "lean_name": "valueContainerXs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; evaluator, value and store carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "sv_rel_def",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreRelation.lean",
+    "lean_name": "storeValueRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; evaluator, value and store carrier correspondence remain pending review."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
     "hol_name": "pure_cc_def",
     "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",

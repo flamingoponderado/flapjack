@@ -59,7 +59,7 @@
 
 `source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These local lemmas are not exported by the HOL theory; this capture does not replay their proofs.
 
-`flat_pattern_install_relation_probe.out` captures inferred types for pure backend compiler/oracle transformations, the FlatPattern installation relation, and the pass's program-semantics theorem.
+`flat_pattern_install_relation_probe.out` captures inferred types for pure backend compiler/oracle transformations, FlatPattern installation, value and state relations, and the pass's program-semantics theorem.
 
 `source_evaluate_decs_probe.out` captures the original typed equations for declaration evaluation over a head and an appended list. Lean checks corresponding statements; the underlying clocked evaluator and its carriers still require correspondence review.
 

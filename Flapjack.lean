@@ -24,6 +24,9 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateApp
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleInduction
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.InstallRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ConfigIrrelevance
+import Flapjack.Compiler.Backend.FlatProps.ValueBasics
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.StateRelation
 import Flapjack.SemanticPrimitivesHOL.Control
 import Flapjack.SemanticPrimitivesHOL.Array
 import Flapjack.SemanticPrimitivesHOL.Primitives
