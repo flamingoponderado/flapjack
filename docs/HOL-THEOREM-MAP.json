@@ -107613,5 +107613,77 @@
     "lean_name": "badThunkUpdate",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex source comparison: The result holds exactly for evaluated mode and a thunk inspection result other than NotThunk. Typed original equations and matched outcomes are captured in cake_flat_sem_thunk_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "ref",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
+    "lean_name": "Ref",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "v",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
+    "lean_name": "Value",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "get_global_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
+    "lean_name": "getGlobal",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "Boolv_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
+    "lean_name": "boolValue",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "Unit_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
+    "lean_name": "unitValue",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "v_to_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
+    "lean_name": "valueToList",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "list_to_v_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
+    "lean_name": "listToValue",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "do_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
+    "lean_name": "doEq",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "do_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
+    "lean_name": "doEqList",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
   }
 ]

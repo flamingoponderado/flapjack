@@ -277,6 +277,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternSimulation
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalLookup
 import Flapjack.Compiler.Backend.Semantics.FlatSem
+import Flapjack.Compiler.Backend.Semantics.ClosSem
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
