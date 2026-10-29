@@ -244,12 +244,14 @@ inductive CoveredSourcePrimitive : Op → Prop where
   | aw8length : CoveredSourcePrimitive .aw8length
   | aupdate (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .aupdateUnsafe else .aupdate)
   | asub (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .asubUnsafe else .asub)
+  | aw8sub (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .aw8subUnsafe else .aw8sub)
+  | aw8update (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .aw8updateUnsafe else .aw8update)
   | ffi (name : Flapjack.Basis.Pure.MlString.MlString) : CoveredSourcePrimitive (.ffi name)
   | allocThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.allocThunk mode))
   | updateThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.updateThunk mode))
 
 /-- Arithmetic, conversion, shift, typed comparison, references, array
-allocation, FFI and explicit thunk applications simulate their compiled
+operations, FFI and explicit thunk applications simulate their compiled
 expressions using only argument induction hypotheses. -/
 theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
     (op : Op) (args : List FlatLang.Exp) (covered : CoveredSourcePrimitive op)
@@ -259,14 +261,20 @@ theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config)
     cases covered <;> simp
     case aupdate unsafeOp => cases unsafeOp <;> simp
     case asub unsafeOp => cases unsafeOp <;> simp
+    case aw8sub unsafeOp => cases unsafeOp <;> simp
+    case aw8update unsafeOp => cases unsafeOp <;> simp
   have notEval : op ≠ .eval := by
     cases covered <;> simp
     case aupdate unsafeOp => cases unsafeOp <;> simp
     case asub unsafeOp => cases unsafeOp <;> simp
+    case aw8sub unsafeOp => cases unsafeOp <;> simp
+    case aw8update unsafeOp => cases unsafeOp <;> simp
   have notForce : op ≠ .thunkOp .forceThunk := by
     cases covered <;> simp
     case aupdate unsafeOp => cases unsafeOp <;> simp
     case asub unsafeOp => cases unsafeOp <;> simp
+    case aw8sub unsafeOp => cases unsafeOp <;> simp
+    case aw8update unsafeOp => cases unsafeOp <;> simp
   apply compile_simpleSourceApp_simulation cfg stateCfg trace op args notCall notEval notForce argumentsIH
   intro source target sourceFinal values values' result states related run
   cases covered with
@@ -283,6 +291,8 @@ theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config)
   | aw8length => exact doApp_byteArrayLength_complete stateCfg source target sourceFinal values values' result states related run
   | aupdate unsafeOp => exact doApp_arrayUpdate_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
   | asub unsafeOp => exact doApp_arrayRead_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
+  | aw8sub unsafeOp => exact doApp_byteArrayRead_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
+  | aw8update unsafeOp => exact doApp_byteArrayUpdate_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
   | ffi name => exact doApp_ffi_related stateCfg source target sourceFinal name values values' result states related run
   | allocThunk mode => exact doApp_thunkAlloc_related stateCfg source target sourceFinal mode values values' result states related run
   | updateThunk mode => exact doApp_thunkUpdate_related stateCfg source target sourceFinal mode values values' result states related run

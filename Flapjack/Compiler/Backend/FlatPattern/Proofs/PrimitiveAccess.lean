@@ -171,4 +171,108 @@ theorem doApp_arrayRead_complete {C F : Type} (cfg : Config) (source target sour
         | litv _ | conv _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
           cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
 
+
+/-- Byte-array reads preserve arbitrary successful primitive results. -/
+theorem doApp_byteArrayRead_complete {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
+    (unsafeOp : Bool) (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
+    (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
+    (run : FlatSem.doApp source (.src (if unsafeOp then .aw8subUnsafe else .aw8sub)) values = some (sourceFinal, result)) :
+    ∃ targetFinal result', FlatSem.doApp target (.src (if unsafeOp then .aw8subUnsafe else .aw8sub)) values' =
+      some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+  cases related with
+  | nil => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+  | @cons loc loc' tail tail' locRel rest =>
+    cases rest with
+    | nil => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+    | @cons idx idx' tail tail' idxRel rest =>
+      cases rest with
+      | cons _ _ => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+      | nil =>
+        cases loc with
+        | loc flag address =>
+          have eq := (valueRel_loc flag address loc').1 locRel
+          subst loc'
+          cases idx with
+          | litv literal =>
+            have eq := (valueRel_lit literal idx').1 idxRel
+            subst idx'
+            cases literal with
+            | intLit index =>
+              cases found : storeLookup address source.refs with
+              | none => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, found] at run
+              | some entry =>
+                cases entry with
+                | w8array items =>
+                  have unequal : (Op.aw8sub == Op.aw8subUnsafe) = false := by decide
+                  have read : FlatSem.readIndexed source unsafeOp items index (.litv ∘ Lit.word8) = some (sourceFinal, result) := by
+                    cases unsafeOp <;> simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, found, unequal] using run
+                  have stateEq := readIndexed_state source sourceFinal unsafeOp items index (.litv ∘ Lit.word8) result read
+                  subst sourceFinal
+                  obtain ⟨targetRun, resultRel⟩ := doApp_byteArrayRead_related cfg source target unsafeOp flag address index items result states found run
+                  exact ⟨target, result, targetRun, states, resultRel⟩
+                | refv _ | varray _ | thunk _ _ =>
+                  cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, found] at run
+            | word8 _ | word64 _ | char _ | strLit _ | float64 _ =>
+              cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+          | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+            cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+        | litv _ | conv _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+          cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+
+/-- Byte-array updates preserve arbitrary successful primitive results. -/
+theorem doApp_byteArrayUpdate_complete {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
+    (unsafeOp : Bool) (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
+    (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
+    (run : FlatSem.doApp source (.src (if unsafeOp then .aw8updateUnsafe else .aw8update)) values = some (sourceFinal, result)) :
+    ∃ targetFinal result', FlatSem.doApp target (.src (if unsafeOp then .aw8updateUnsafe else .aw8update)) values' =
+      some (targetFinal, result') ∧ StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+  cases related with
+  | nil => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+  | @cons loc loc' tail tail' locRel rest =>
+    cases rest with
+    | nil => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+    | @cons idx idx' tail tail' idxRel rest =>
+      cases rest with
+      | nil => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+      | @cons value value' tail tail' valueRel rest =>
+        cases rest with
+        | cons _ _ => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+        | nil =>
+          cases loc with
+          | loc flag address =>
+            have eq := (valueRel_loc flag address loc').1 locRel
+            subst loc'
+            cases idx with
+            | litv literal =>
+              have eq := (valueRel_lit literal idx').1 idxRel
+              subst idx'
+              cases literal with
+              | intLit index =>
+                cases value with
+                | litv literal =>
+                  have eq := (valueRel_lit literal value').1 valueRel
+                  subst value'
+                  cases literal with
+                  | word8 byte =>
+                    cases found : storeLookup address source.refs with
+                    | none => cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, found] at run
+                    | some entry =>
+                      cases entry with
+                      | w8array bytes =>
+                        obtain ⟨targetFinal, targetRun, finalStates, results⟩ :=
+                          doApp_byteArrayUpdate_related cfg source target sourceFinal unsafeOp flag address index bytes byte result states found run
+                        exact ⟨targetFinal, result, targetRun, finalStates, results⟩
+                      | refv _ | varray _ | thunk _ _ =>
+                        cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, found] at run
+                  | intLit _ | word64 _ | char _ | strLit _ | float64 _ =>
+                    cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+                | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+                  cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+              | word8 _ | word64 _ | char _ | strLit _ | float64 _ =>
+                cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+            | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+              cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+          | litv _ | conv _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+            cases unsafeOp <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+
 end Flapjack.Compiler.Backend.FlatPattern
