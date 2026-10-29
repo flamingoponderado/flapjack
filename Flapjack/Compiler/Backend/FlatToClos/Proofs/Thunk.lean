@@ -49,6 +49,18 @@ theorem destThunk_related (source : FlatSem.Value) (target : ClosSem.Value)
   | int | char | string | word8 | word64 | float64 | tuple | con | vector | closure | recclosure =>
     exact .notThunk
 
+/-- Thunk inspection also agrees for arbitrary related argument lists. -/
+theorem destThunk_list_related (source : List FlatSem.Value) (target : List ClosSem.Value)
+    (refs : Store FlatSem.Value) (targetRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
+    (values : List.Forall₂ ValueRel source target) (stores : StoreRel refs targetRefs) :
+    ThunkResultRel (FlatSem.destThunk source refs) (ClosSem.destThunk target targetRefs) := by
+  cases values with
+  | nil => exact .notThunk
+  | cons first rest =>
+    cases rest with
+    | nil => exact destThunk_related _ _ refs targetRefs first stores
+    | cons _ _ => simpa [FlatSem.destThunk, ClosSem.destThunk] using ThunkResultRel.notThunk
+
 /-- Related values agree on whether an evaluated thunk update is invalid. -/
 theorem badThunkUpdate_related (mode : Flapjack.AstHOL.ThunkMode)
     (source : FlatSem.Value) (target : ClosSem.Value)
@@ -104,5 +116,82 @@ theorem updateThunk_related (refs : Store FlatSem.Value)
   refine ⟨?_, ?_, storeRel_setThunk refs targetRefs index _ .evaluated source target stores found values⟩
   · simp [FlatSem.updateThunk, safe, storeAssign, found, storeValueSameType]
   · simp [ClosSem.updateThunk, targetSafe, ClosSem.storeThunk, targetFound]
+
+/-- Invert a successful flat thunk update: the target is a writable thunk,
+and the replacement is a single non-thunk value. -/
+theorem updateThunk_success_parts (targets : List FlatSem.Value) (refs updated : Store FlatSem.Value)
+    (values : List FlatSem.Value) (run : FlatSem.updateThunk targets refs values = some updated) :
+    ∃ index old value, targets = [.loc false index] ∧ values = [value] ∧
+      refs[index]? = some (.thunk .notEvaluated old) ∧
+      FlatSem.destThunk [value] refs = .notThunk ∧
+      updated = refs.set index (.thunk .evaluated value) := by
+  cases targets with
+  | nil => simp [FlatSem.updateThunk] at run
+  | cons target rest =>
+    cases rest with
+    | cons first rest => simp [FlatSem.updateThunk] at run
+    | nil =>
+      cases values with
+      | nil => simp [FlatSem.updateThunk] at run
+      | cons value rest =>
+        cases rest with
+        | cons first rest => simp [FlatSem.updateThunk] at run
+        | nil =>
+          cases target <;> simp [FlatSem.updateThunk] at run
+          case loc flag index =>
+            cases flag with
+            | true => simp at run
+            | false =>
+              cases safe : FlatSem.destThunk [value] refs with
+              | badRef | isThunk => simp [safe] at run
+              | notThunk =>
+                cases found : refs[index]? with
+                | none => simp [safe, storeAssign, found] at run
+                | some old =>
+                  cases old with
+                  | refv | w8array | varray => simp [safe, storeAssign, found, storeValueSameType] at run
+                  | thunk mode old =>
+                    cases mode with
+                    | evaluated => simp [safe, storeAssign, found, storeValueSameType] at run
+                    | notEvaluated =>
+                      simp [safe, storeAssign, found, storeValueSameType] at run
+                      exact ⟨index, old, value, rfl, rfl, found, safe, run.symm⟩
+
+/-- Any successful flat thunk update has a corresponding successful closure
+update, preserving the store relation. -/
+theorem updateThunk_success_related (targets : List FlatSem.Value) (targetTargets : List ClosSem.Value)
+    (refs updated : Store FlatSem.Value) (targetRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
+    (values : List FlatSem.Value) (targetValues : List ClosSem.Value)
+    (targetsRel : List.Forall₂ ValueRel targets targetTargets)
+    (valuesRel : List.Forall₂ ValueRel values targetValues) (stores : StoreRel refs targetRefs)
+    (run : FlatSem.updateThunk targets refs values = some updated) :
+    ∃ targetUpdated, ClosSem.updateThunk targetTargets targetRefs targetValues = some targetUpdated ∧
+      StoreRel updated targetUpdated := by
+  obtain ⟨index, old, value, rfl, rfl, found, safe, rfl⟩ := updateThunk_success_parts targets refs updated values run
+  cases targetsRel with
+  | cons targetRel targetTail =>
+    cases targetTail
+    cases targetRel with
+    | loc =>
+      cases valuesRel with
+      | cons valueRel valueTail =>
+        cases valueTail
+        obtain ⟨_, targetRun, related⟩ := updateThunk_related refs targetRefs index old value _ stores valueRel found safe
+        exact ⟨_, targetRun, related⟩
+
+/-- A successful flat thunk update can be mirrored in the closure state. -/
+theorem stateRel_updateThunk {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (sourceTargets : List FlatSem.Value) (targetTargets : List ClosSem.Value)
+    (sourceValues : List FlatSem.Value) (targetValues : List ClosSem.Value) (updated : Store FlatSem.Value)
+    (states : StateRel source target) (targetsRel : List.Forall₂ ValueRel sourceTargets targetTargets)
+    (valuesRel : List.Forall₂ ValueRel sourceValues targetValues)
+    (run : FlatSem.updateThunk sourceTargets source.refs sourceValues = some updated) :
+    ∃ targetUpdated, ClosSem.updateThunk targetTargets target.refs targetValues = some targetUpdated ∧
+      StateRel { source with refs := updated } { target with refs := targetUpdated } := by
+  obtain ⟨targetUpdated, targetRun, stores⟩ :=
+    updateThunk_success_related sourceTargets targetTargets source.refs updated target.refs sourceValues targetValues
+      targetsRel valuesRel states.2.2.2.1 run
+  rcases states with ⟨maxApp, ffi, clock, _, globals, values, install⟩
+  exact ⟨targetUpdated, targetRun, maxApp, ffi, clock, stores, globals, values, install⟩
 
 end Flapjack.Compiler.Backend.FlatToClos

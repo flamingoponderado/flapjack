@@ -455,6 +455,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Declarations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvalInstall
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockOperations
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
 import Flapjack.Misc.Location
