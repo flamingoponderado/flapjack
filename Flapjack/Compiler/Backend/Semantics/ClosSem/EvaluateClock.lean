@@ -254,4 +254,222 @@ theorem evaluate_app_clock_le {C F : Type} (env : List Value) (state : State C F
   intro value values next _
   exact evaluateApp_clock_le location value values next
 
+/-- Ordinary primitive execution cannot increase the clock. -/
+theorem ordinaryOp_clock {C F : Type} (op : ClosLang.Op) (values : List Value)
+    (state : State C F) :
+    ((match doApp op values state with
+     | .err error => (.err error, state)
+     | .val (value, next) => (.val [value], next) : EvalResult C F)).2.clock ≤ state.clock := by
+  cases run : doApp op values state with
+  | err error => simp
+  | val pair =>
+    obtain ⟨value, next⟩ := pair
+    simpa [run] using doApp_success_clock op values state value next run
+
+/-- An ordinary primitive expression cannot increase the clock. Installation
+and forcing have separate evaluation clauses. -/
+theorem evaluate_ordinaryOp_clock {C F : Type} (env : List Value) (state : State C F)
+    (trace : BackendCommon.Tra) (op : ClosLang.Op) (args : List ClosLang.Exp)
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk) :
+    (evaluate [.op trace op args] env state).2.clock ≤ state.clock := by
+  have bound := fixClock_clock_le state (evaluate args env state)
+  rw [evaluate.eq_def]
+  dsimp only
+  generalize h : fixClock state (evaluate args env state) = evaluated at *
+  obtain ⟨result, next⟩ := evaluated
+  change next.clock ≤ state.clock at bound
+  cases result with
+  | err error => exact bound
+  | val values =>
+    cases op with
+    | install => exact (notInstall rfl).elim
+    | thunkOp operation =>
+      cases operation with
+      | forceThunk => exact (notForce rfl).elim
+      | allocThunk mode => exact Nat.le_trans (ordinaryOp_clock (.thunkOp (.allocThunk mode)) values.reverse next) bound
+      | updateThunk mode => exact Nat.le_trans (ordinaryOp_clock (.thunkOp (.updateThunk mode)) values.reverse next) bound
+    | label n => exact Nat.le_trans (ordinaryOp_clock (.label n) values.reverse next) bound
+    | ffi name => exact Nat.le_trans (ordinaryOp_clock (.ffi name) values.reverse next) bound
+    | intOp op => exact Nat.le_trans (ordinaryOp_clock (.intOp op) values.reverse next) bound
+    | wordOp op => exact Nat.le_trans (ordinaryOp_clock (.wordOp op) values.reverse next) bound
+    | blockOp op => exact Nat.le_trans (ordinaryOp_clock (.blockOp op) values.reverse next) bound
+    | globOp op => exact Nat.le_trans (ordinaryOp_clock (.globOp op) values.reverse next) bound
+    | memOp op => exact Nat.le_trans (ordinaryOp_clock (.memOp op) values.reverse next) bound
+
+/-- Forcing a thunk cannot increase the clock; an unevaluated thunk invokes
+the previously bounded closure-application expression. -/
+theorem evaluate_force_clock_le {C F : Type} (env : List Value) (state : State C F)
+    (trace : BackendCommon.Tra) (args : List ClosLang.Exp) :
+    (evaluate [.op trace (.thunkOp .forceThunk) args] env state).2.clock ≤ state.clock := by
+  have bound := fixClock_clock_le state (evaluate args env state)
+  rw [evaluate]
+  generalize h : fixClock state (evaluate args env state) = evaluated at *
+  obtain ⟨result, next⟩ := evaluated
+  change next.clock ≤ state.clock at bound
+  cases result with
+  | err error => exact bound
+  | val values =>
+    dsimp only
+    cases inspected : destThunk values next.refs with
+    | badRef | notThunk => simpa [inspected] using bound
+    | isThunk mode value =>
+      cases mode with
+      | evaluated => simpa [inspected] using bound
+      | notEvaluated =>
+        have forceBound := evaluate_app_clock_le [value] next .none none (.var .none 0)
+          [.op .none (.blockOp (.cons 0)) []]
+        change (evaluate [appUnit (.var .none 0)] [value] next).2.clock ≤ next.clock at forceBound
+        generalize forceRun : evaluate [appUnit (.var .none 0)] [value] next = forced at *
+        obtain ⟨forcedResult, last⟩ := forced
+        have lastBound : last.clock ≤ state.clock := by
+          apply Nat.le_trans _ bound
+          exact forceBound
+        cases forcedResult with
+        | err error => simpa [inspected, forceRun] using lastBound
+        | val forcedValues =>
+          cases update : updateThunk values last.refs forcedValues with
+          | none => simpa [inspected, forceRun, update] using lastBound
+          | some refs => simpa [inspected, forceRun, update] using lastBound
+
+/-- Dynamic installation preserves the clock bound if the installed code
+does at every smaller clock. -/
+theorem evaluate_install_clock_step {C F : Type} (env : List Value) (state : State C F)
+    (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (installedClock : ∀ (program : List ClosLang.Exp) (next : State C F),
+      next.clock < state.clock → (evaluate program [] next).2.clock ≤ next.clock) :
+    (evaluate [.op trace .install args] env state).2.clock ≤ state.clock := by
+  have bound := fixClock_clock_le state (evaluate args env state)
+  rw [evaluate]
+  generalize h : fixClock state (evaluate args env state) = evaluated at *
+  obtain ⟨result, next⟩ := evaluated
+  change next.clock ≤ state.clock at bound
+  cases result with
+  | err error => exact bound
+  | val values =>
+    dsimp only
+    cases installRun : doInstall values.reverse next with
+    | mk installResult installedState =>
+      cases installResult with
+      | err error =>
+        have clock := doInstall_clock_le values.reverse next installedState _ installRun
+        simpa [installRun] using Nat.le_trans clock bound
+      | val program =>
+        have clock := doInstall_success_clock values.reverse next installedState program installRun
+        have smaller : installedState.clock < state.clock := by omega
+        have programBound := installedClock program installedState smaller
+        generalize programRun : evaluate program [] installedState = evaluatedProgram at *
+        obtain ⟨programResult, last⟩ := evaluatedProgram
+        have lastBound : last.clock ≤ state.clock := Nat.le_trans programBound (Nat.le_of_lt smaller)
+        cases programResult <;> simpa [installRun, programRun] using lastBound
+
+/-- The proof-side closure evaluator never increases its clock. The
+unbounded evaluator and its carriers remain pending HOL correspondence review. -/
+theorem evaluate_clock_le {C F : Type} (expressions : List ClosLang.Exp) (env : List Value) (state : State C F) :
+    (evaluate expressions env state).2.clock ≤ state.clock := by
+  have allRanks : ∀ clock weight : Nat, ∀ (expressions : List ClosLang.Exp)
+      (env : List Value) (state : State C F), state.clock = clock → expsWeight expressions = weight →
+      (evaluate expressions env state).2.clock ≤ state.clock := by
+    intro clock
+    induction clock using Nat.strongRecOn with
+    | ind clock clockIH =>
+      intro weight
+      induction weight using Nat.strongRecOn with
+      | ind weight weightIH =>
+        have exprIH : ∀ (expressions : List ClosLang.Exp) (env : List Value) (state : State C F),
+            state.clock ≤ clock → expsWeight expressions < weight →
+            (evaluate expressions env state).2.clock ≤ state.clock := by
+          intro expressions env state clockLe weightLt
+          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
+          · exact clockIH state.clock clockLt (expsWeight expressions) expressions env state rfl rfl
+          · exact weightIH (expsWeight expressions) weightLt expressions env state clockEq rfl
+        have smaller : ∀ (expressions : List ClosLang.Exp) (env : List Value) (state : State C F),
+            state.clock < clock → (evaluate expressions env state).2.clock ≤ state.clock := by
+          intro expressions env state clockLt
+          exact clockIH state.clock clockLt (expsWeight expressions) expressions env state rfl rfl
+        intro expressions env state stateClock measure
+        cases expressions with
+        | nil => simp [evaluate]
+        | cons first rest =>
+          cases rest with
+          | cons second tail =>
+            apply evaluate_list_clock_step
+            intro next nextBound
+            apply exprIH (second :: tail) env next (by omega)
+            simp only [expsWeight] at measure ⊢
+            omega
+          | nil =>
+            cases first with
+            | var trace index => simp [evaluate]; split <;> simp
+            | fn name location selected arity body =>
+              rw [evaluate.eq_def]
+              dsimp only
+              split <;> simp_all
+              split <;> simp_all
+            | raise trace body =>
+              apply evaluate_raise_clock_step
+              apply exprIH [body] env state (by omega)
+              simp only [expsWeight, expWeight] at measure ⊢
+              omega
+            | handle trace body handler =>
+              apply evaluate_handle_clock_step
+              intro value next nextBound
+              apply exprIH [handler] (value :: env) next (by omega)
+              simp only [expsWeight, expWeight] at measure ⊢
+              omega
+            | «let» trace bindings body =>
+              apply evaluate_let_clock_step
+              intro newEnv next nextBound
+              apply exprIH [body] newEnv next (by omega)
+              simp only [expsWeight, expWeight] at measure ⊢
+              omega
+            | ifThenElse trace condition yes no =>
+              apply evaluate_if_clock_step
+              · intro next nextBound
+                apply exprIH [yes] env next (by omega)
+                simp only [expsWeight, expWeight] at measure ⊢
+                omega
+              · intro next nextBound
+                apply exprIH [no] env next (by omega)
+                simp only [expsWeight, expWeight] at measure ⊢
+                omega
+            | letrec names location selected functions body =>
+              apply evaluate_letrec_clock_step
+              intro newEnv
+              apply exprIH [body] newEnv state (by omega)
+              simp only [expsWeight, expWeight] at measure ⊢
+              omega
+            | tick trace body =>
+              apply evaluate_tick_clock_step
+              by_cases zero : state.clock = 0
+              · apply exprIH [body] env (decClock 1 state) (by simp [decClock]; omega)
+                simp only [expsWeight, expWeight] at measure ⊢
+                omega
+              · apply smaller [body] env (decClock 1 state)
+                simp [decClock]
+                omega
+            | call trace ticks location args =>
+              apply evaluate_call_clock_step
+              intro body values next nextLt
+              exact smaller [body] values next (by omega)
+            | app trace location function args => exact evaluate_app_clock_le env state trace location function args
+            | op trace op args =>
+              cases op with
+              | install =>
+                apply evaluate_install_clock_step
+                intro program next nextLt
+                exact smaller program [] next (by omega)
+              | thunkOp operation =>
+                cases operation with
+                | forceThunk => exact evaluate_force_clock_le env state trace args
+                | allocThunk mode => exact evaluate_ordinaryOp_clock env state trace _ args (by simp) (by simp)
+                | updateThunk mode => exact evaluate_ordinaryOp_clock env state trace _ args (by simp) (by simp)
+              | label n => exact evaluate_ordinaryOp_clock env state trace _ args (by simp) (by simp)
+              | ffi n => exact evaluate_ordinaryOp_clock env state trace _ args (by simp) (by simp)
+              | intOp x => exact evaluate_ordinaryOp_clock env state trace _ args (by simp) (by simp)
+              | wordOp x => exact evaluate_ordinaryOp_clock env state trace _ args (by simp) (by simp)
+              | blockOp x => exact evaluate_ordinaryOp_clock env state trace _ args (by simp) (by simp)
+              | globOp x => exact evaluate_ordinaryOp_clock env state trace _ args (by simp) (by simp)
+              | memOp x => exact evaluate_ordinaryOp_clock env state trace _ args (by simp) (by simp)
+  exact allRanks state.clock (expsWeight expressions) expressions env state rfl rfl
+
 end Flapjack.Compiler.Backend.ClosSem
