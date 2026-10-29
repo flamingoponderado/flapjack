@@ -217,4 +217,164 @@ theorem doEval_state_simulation {C F : Type} (cfg : Config) (source target : Fla
       declarations sourceConfig result run
   exact ⟨targetConfig, result, targetRun, stateRel_update_install cfg source target sourceConfig targetConfig states configs, resultRel⟩
 
+/-- Invalid dynamic-compiler inputs cause a type error. -/
+theorem evaluate_eval_bad {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (state next : FlatSem.State C F) (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (values : List FlatSem.Value) (argsRun : FlatSem.evaluate env state args.reverse = (next, .val values))
+    (decoded : FlatSem.doEval values.reverse next.evalConfig = none) :
+    FlatSem.evaluate env state [.app trace (.src .eval) args] =
+      ({ next with clock := min state.clock next.clock }, .err (.abort .typeError)) := by
+  simp [FlatSem.evaluate, argsRun, FlatSem.fixClock, decoded]
+
+/-- A successful installation at zero clock times out before declarations run. -/
+theorem evaluate_eval_timeout {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (state next : FlatSem.State C F) (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (values : List FlatSem.Value) (declarations : List FlatLang.Exp) (config : FlatSem.InstallConfig C) (result : FlatSem.Value)
+    (argsRun : FlatSem.evaluate env state args.reverse = (next, .val values))
+    (decoded : FlatSem.doEval values.reverse next.evalConfig = some (declarations, config, result))
+    (zero : min state.clock next.clock = 0) :
+    FlatSem.evaluate env state [.app trace (.src .eval) args] =
+      ({ next with clock := min state.clock next.clock, evalConfig := config }, .err (.abort .timeoutError)) := by
+  simp [FlatSem.evaluate, argsRun, FlatSem.fixClock, decoded, zero]
+
+/-- A successful installation with remaining clock evaluates its declarations
+and returns either their error or the installation result. -/
+theorem evaluate_eval_declarations {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (state next final : FlatSem.State C F) (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (values : List FlatSem.Value) (declarations : List FlatLang.Exp) (config : FlatSem.InstallConfig C) (result : FlatSem.Value)
+    (outcome : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value))
+    (argsRun : FlatSem.evaluate env state args.reverse = (next, .val values))
+    (decoded : FlatSem.doEval values.reverse next.evalConfig = some (declarations, config, result))
+    (nonzero : min state.clock next.clock ≠ 0)
+    (declsRun : FlatSem.evaluateDecs
+      (FlatSem.decClock { next with clock := min state.clock next.clock, evalConfig := config }) declarations = (final, outcome)) :
+    FlatSem.evaluate env state [.app trace (.src .eval) args] =
+      (final, match outcome with | none => .val [result] | some error => .err error) := by
+  cases outcome <;> simp [FlatSem.evaluate, argsRun, FlatSem.fixClock, decoded, nonzero, declsRun]
+
+/-- Dynamic evaluation simulates installed declarations using the
+smaller-clock declaration induction hypothesis. -/
+theorem compile_eval_simulation_at_clock {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
+    (args : List FlatLang.Exp) (clock : Nat)
+    (argumentsIH : ∀ expression ∈ args, ExpressionSimulation (C := C) (F := F) cfg stateCfg expression)
+    (decsIH : ∀ (source target sourceFinal : FlatSem.State C F) (declarations : List FlatLang.Exp)
+      (outcome : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value)),
+      source.clock < clock → FlatSem.evaluateDecs source declarations = (sourceFinal, outcome) →
+      StateRel stateCfg source target → outcome ≠ some (.abort .typeError) →
+      ∃ targetFinal targetOutcome, FlatSem.evaluateDecs target (declarations.map (compileDec stateCfg)) =
+        (targetFinal, targetOutcome) ∧ StateRel stateCfg sourceFinal targetFinal ∧ optionRel FlatErrorRel outcome targetOutcome) :
+    ∀ (sourceEnv targetEnv : FlatSem.Environment FlatSem.Value) (source target sourceFinal : FlatSem.State C F)
+      (sourceResult : Result (List FlatSem.Value) FlatSem.Value) (n : Nat),
+      source.clock = clock →
+      FlatSem.evaluate sourceEnv source [.app trace (.src .eval) args] = (sourceFinal, sourceResult) →
+      EnvRel n sourceEnv targetEnv → StateRel stateCfg source target →
+      (compileExp cfg (.app trace (.src .eval) args)).1 < n →
+      sourceResult ≠ .err (.abort .typeError) →
+      ∃ targetFinal targetResult,
+        FlatSem.evaluate targetEnv target [(compileExp cfg (.app trace (.src .eval) args)).2.2] =
+          (targetFinal, targetResult) ∧ StateRel stateCfg sourceFinal targetFinal ∧ FlatResultRel sourceResult targetResult := by
+  intro sourceEnv targetEnv source target sourceFinal sourceResult n clockEq sourceEval envs states bound safe
+  have argsBound : (compileExps cfg args).1 < n := by simpa [compileExp_app] using bound
+  have reversedBound := compileExps_reverse_bound cfg args n argsBound
+  have reversedIH : ∀ expression ∈ args.reverse, ExpressionSimulation (C := C) (F := F) cfg stateCfg expression := by
+    intro expression member
+    exact argumentsIH expression (by simpa using member)
+  have argsSim := compileExps_simulation cfg stateCfg args.reverse reversedIH
+  have compiledReverse : (compileExps cfg args.reverse).2.2 = (compileExps cfg args).2.2.reverse := by
+    simp [compileExps_rows, List.map_reverse]
+  cases argsRun : FlatSem.evaluate sourceEnv source args.reverse with
+  | mk sourceNext argsResult =>
+    have argsSafe : argsResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst argsResult
+      have outer := evaluate_app_args_error sourceEnv source sourceNext trace (.src .eval) args (.abort .typeError) argsRun
+      rw [sourceEval] at outer
+      exact safe (congrArg Prod.snd outer)
+    obtain ⟨targetNext, targetArgsResult, targetArgsRun, nextStates, related⟩ := argsSim
+      sourceEnv targetEnv source target sourceNext argsResult n argsRun envs states reversedBound argsSafe
+    cases related with
+    | error errorsRel =>
+      rename_i leftError rightError
+      have sourceOuter := evaluate_app_args_error sourceEnv source sourceNext trace (.src .eval) args leftError argsRun
+      have targetOuter := evaluate_app_args_error targetEnv target targetNext trace (.src .eval)
+        (compileExps cfg args).2.2 rightError (by simpa [compiledReverse] using targetArgsRun)
+      have equal := sourceEval.symm.trans sourceOuter
+      cases equal
+      exact ⟨_, _, by simpa [compileExp_app] using targetOuter,
+        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, .error errorsRel⟩
+    | values valuesRel =>
+      rename_i sourceValues targetValues
+      let sourceFixed := { sourceNext with clock := min source.clock sourceNext.clock }
+      let targetFixed := { targetNext with clock := min target.clock targetNext.clock }
+      have fixedStates : StateRel stateCfg sourceFixed targetFixed :=
+        stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates
+      cases decoded : FlatSem.doEval sourceValues.reverse sourceNext.evalConfig with
+      | none =>
+        have bad := evaluate_eval_bad sourceEnv source sourceNext trace args sourceValues argsRun decoded
+        rw [sourceEval] at bad
+        exact (safe (congrArg Prod.snd bad)).elim
+      | some payload =>
+        obtain ⟨declarations, sourceConfig, result⟩ := payload
+        obtain ⟨targetConfig, targetValue, targetDecoded, installedStates, valueRel⟩ :=
+          doEval_state_simulation stateCfg sourceFixed targetFixed sourceValues.reverse targetValues.reverse fixedStates
+            (valueRel_reverse valuesRel) declarations sourceConfig result decoded
+        have targetClock : targetFixed.clock = sourceFixed.clock := fixedStates.1
+        by_cases zero : sourceFixed.clock = 0
+        · have targetZero : targetFixed.clock = 0 := by omega
+          have sourceOuter := evaluate_eval_timeout sourceEnv source sourceNext trace args sourceValues declarations
+            sourceConfig result argsRun decoded zero
+          have targetOuter := evaluate_eval_timeout targetEnv target targetNext trace (compileExps cfg args).2.2 targetValues
+            (declarations.map (compileDec stateCfg)) targetConfig targetValue
+            (by simpa [compiledReverse] using targetArgsRun) targetDecoded targetZero
+          have equal := sourceEval.symm.trans sourceOuter
+          cases equal
+          exact ⟨_, _, by simpa [compileExp_app] using targetOuter, installedStates, .error (.abort .timeoutError)⟩
+        · have targetNonzero : targetFixed.clock ≠ 0 := by omega
+          let sourceInstalled := { sourceFixed with evalConfig := sourceConfig }
+          let targetInstalled := { targetFixed with evalConfig := targetConfig }
+          have smaller : (FlatSem.decClock sourceInstalled).clock < clock := by
+            have clamped := Nat.min_le_left source.clock sourceNext.clock
+            have positive : 0 < min source.clock sourceNext.clock := Nat.pos_of_ne_zero zero
+            simp only [FlatSem.decClock, sourceInstalled, sourceFixed]
+            omega
+          have declStates := stateRel_decClock stateCfg sourceInstalled targetInstalled installedStates
+          cases declsRun : FlatSem.evaluateDecs (FlatSem.decClock sourceInstalled) declarations with
+          | mk sourceLast outcome =>
+            have outcomeSafe : outcome ≠ some (.abort .typeError) := by
+              intro bad
+              subst outcome
+              have sourceOuter := evaluate_eval_declarations sourceEnv source sourceNext sourceLast trace args sourceValues
+                declarations sourceConfig result (some (.abort .typeError)) argsRun decoded zero declsRun
+              rw [sourceEval] at sourceOuter
+              exact safe (congrArg Prod.snd sourceOuter)
+            obtain ⟨targetLast, targetOutcome, targetDeclsRun, finalRel, outcomeRel⟩ := decsIH
+              (FlatSem.decClock sourceInstalled) (FlatSem.decClock targetInstalled) sourceLast declarations outcome
+              smaller declsRun declStates outcomeSafe
+            cases outcome with
+            | none =>
+              cases targetOutcome with
+              | some error => simp [optionRel] at outcomeRel
+              | none =>
+                have sourceOuter := evaluate_eval_declarations sourceEnv source sourceNext sourceLast trace args sourceValues
+                  declarations sourceConfig result none argsRun decoded zero declsRun
+                have targetOuter := evaluate_eval_declarations targetEnv target targetNext targetLast trace (compileExps cfg args).2.2
+                  targetValues (declarations.map (compileDec stateCfg)) targetConfig targetValue none
+                  (by simpa [compiledReverse] using targetArgsRun) targetDecoded targetNonzero targetDeclsRun
+                have equal := sourceEval.symm.trans sourceOuter
+                cases equal
+                exact ⟨targetLast, _, by simpa [compileExp_app] using targetOuter, finalRel, .values (.cons valueRel .nil)⟩
+            | some error =>
+              cases targetOutcome with
+              | none => simp [optionRel] at outcomeRel
+              | some targetError =>
+                have errorsRel : FlatErrorRel error targetError := by simpa [optionRel] using outcomeRel
+                have sourceOuter := evaluate_eval_declarations sourceEnv source sourceNext sourceLast trace args sourceValues
+                  declarations sourceConfig result (some error) argsRun decoded zero declsRun
+                have targetOuter := evaluate_eval_declarations targetEnv target targetNext targetLast trace (compileExps cfg args).2.2
+                  targetValues (declarations.map (compileDec stateCfg)) targetConfig targetValue (some targetError)
+                  (by simpa [compiledReverse] using targetArgsRun) targetDecoded targetNonzero targetDeclsRun
+                have equal := sourceEval.symm.trans sourceOuter
+                cases equal
+                exact ⟨targetLast, _, by simpa [compileExp_app] using targetOuter, finalRel, .error errorsRel⟩
+
 end Flapjack.Compiler.Backend.FlatPattern
