@@ -25,7 +25,8 @@ private theorem todoWeight_append (xs ys : List (FlatLang.Pat × FlatLang.Exp)) 
   | nil => simp [todoWeight]
   | cons x xs ih => cases x; simp [todoWeight, ih, Nat.add_assoc]
 
-private def children (t : Tra) (v : FlatLang.Exp) (j : Nat) : List FlatLang.Pat →
+/-- Generate indexed projections for the constructor's subpatterns. -/
+def children (t : Tra) (v : FlatLang.Exp) (j : Nat) : List FlatLang.Pat →
     List (FlatLang.Pat × FlatLang.Exp)
   | [] => []
   | p :: ps => (p, .app t (.el j) [v]) :: children t v (j + 1) ps
