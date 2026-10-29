@@ -473,7 +473,9 @@ constructors, an array update after tabulation, and a curried closure. It
 also compares complete assembly for a caught out-of-bounds array access and
 word shifts through the top bit of a 64-bit word. Nested list and tuple
 patterns, signed division and remainder, and addition of a large integer
-through a function are also checked with observable outputs. It
+through a function are also checked with observable outputs. Further cases
+cover a character roundtrip at 255, concatenated lists, paired signed division
+and remainder, and byte-word bitwise AND. It
 also checks a string-bearing datatype branch, recursive list construction and
 folding, a 255-byte array update, vector concatenation, a curried closure that
 captures a tuple-derived value, and nested recursive list matches. It
