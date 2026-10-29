@@ -436,4 +436,25 @@ theorem evaluate_copyByteArrayToByteArray {C F : Type} (env : FlatSem.Environmen
                                       simpa using copyByteArrayToByteArray_body_related next nextTarget trace values
                                         src dst srcPointer pointer srcFlag flag offset length dstOffset states srcFound dstFound
 
+/-- The byte-copy and XOR operator family preserves the proof-side evaluator
+simulation. This packages the five expression cases for a future general
+operator theorem; it is not a reviewed port of HOL's `op_byte_copy`. -/
+theorem evaluate_byteCopy {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp) (op : Flapjack.AstHOL.Op)
+    (copyOp : op = .copyStrAw8 ∨ op = .copyAw8Str ∨ op = .copyAw8Aw8 ∨
+      op = .copyStrStr ∨ op = .xorAw8StrUnsafe)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src op) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src op) args] := by
+  rcases copyOp with rfl | rfl | rfl | rfl | rfl
+  · exact evaluate_copyStringToByteArray env names values source target trace args argsSim notTypeError
+  · exact evaluate_copyByteArray env names values source target trace args argsSim notTypeError
+  · exact evaluate_copyByteArrayToByteArray env names values source target trace args argsSim notTypeError
+  · exact evaluate_copyString env names values source target trace args argsSim notTypeError
+  · exact evaluate_xorByteArray env names values source target trace args argsSim notTypeError
+
 end Flapjack.Compiler.Backend.FlatToClos
