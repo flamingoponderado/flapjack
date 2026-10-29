@@ -163,4 +163,73 @@ theorem evaluate_nonNumericArith {C F : Type} (env : FlatSem.Environment FlatSem
   · exact argsSim
   · exact notTypeError
 
+/-- Every Boolean arithmetic operation other than negation rejects its
+arguments in the source evaluator. -/
+theorem boolArith_rejects {C F : Type} (state : FlatSem.State C F) (action : Arith)
+    (invalid : action ≠ .not) (args : List FlatSem.Value) :
+    (FlatSem.applyResult state (.src (.arith action .boolT)) args).2 = .err (.abort .typeError) := by
+  cases action <;> simp_all [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+    FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+
+/-- A rejected Boolean arithmetic operation simulates the source expression for arbitrary
+argument lists whenever the source does not report a type error. -/
+theorem evaluate_rejectedBoolArith {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option Flapjack.Basis.Pure.MlString.MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (action : Arith) (invalid : action ≠ .not)
+    (args : List FlatLang.Exp)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src (.arith action .boolT)) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src (.arith action .boolT)) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argsSim := argsSim argsNotTypeError
+  unfold EvalSim at argsSim ⊢
+  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps_reverse] at argsSim
+  rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argsSim ⊢
+      rcases argsSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src (.arith action .boolT)) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        exact False.elim (resultShape (boolArith_rejects next action invalid sourceArgs.reverse))
+
+/-- Every Boolean arithmetic expression preserves the proof-side evaluation
+relation, whether it is negation or a rejected operation. -/
+theorem evaluate_boolArith {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (action : Arith) (args : List FlatLang.Exp)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src (.arith action .boolT)) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src (.arith action .boolT)) args] := by
+  by_cases supported : action = .not
+  · subst action
+    exact evaluate_boolNot env names values source target trace args argsSim notTypeError
+  · exact evaluate_rejectedBoolArith env names values source target trace action supported args argsSim notTypeError
+
 end Flapjack.Compiler.Backend.FlatToClos
