@@ -455,6 +455,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordOperations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordShifts
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Conversions
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.RejectedConversions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallDecoding
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Install
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.SmartCons
