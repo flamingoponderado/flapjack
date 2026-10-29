@@ -513,6 +513,24 @@ option matrix). `--type-seed`, `--edge-seed`, and
 general parity. Set `--raw-byte-cases=1536` to compare each byte in all
 three contexts under both output modes; larger counts add random byte strings.
 
+An additional reproducible run on 2026-10-29 matched the pinned compiler for
+400 type, 200 S-expression, 500 nested, 250 lexical, 300 token, 500 raw-byte,
+and 400 declaration cases. A separate run matched complete RISC-V output for
+35 generated programs, 35 diverse programs, and 15 backend-option cases:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-seed 31987 --edge-seed 810212 --type-cases 400 --sexp-cases 200 \
+  --byte-cases 0 --structured-cases 500 --lex-cases 250 --token-cases 300 \
+  --raw-byte-cases 500 --declaration-cases 400 --config-error-cases 0 \
+  --compile-cases 0 --rich-cases 0 --config-cases 0
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --compile-seed 710032 --edge-seed 915312 --type-cases 0 --sexp-cases 0 \
+  --byte-cases 0 --structured-cases 0 --lex-cases 0 --token-cases 0 \
+  --raw-byte-cases 0 --declaration-cases 0 --config-error-cases 0 \
+  --compile-cases 35 --rich-cases 35 --config-cases 15
+```
+
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
 output for 27 benchmark programs from the pinned CakeML submodule with captured
 original-compiler output. It checks the source revision and source hashes before
