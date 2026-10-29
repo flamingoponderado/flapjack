@@ -302,6 +302,7 @@ import Flapjack.Test.FlatElim
 import Flapjack.Test.ClosSemIntParity
 import Flapjack.Test.ClosSemCallParity
 import Flapjack.Test.ClosSemWordParity
+import Flapjack.Test.ClosSemThunkParity
 import Flapjack.Test.FlatElimValueGlobals
 import Flapjack.Test.CakeMLControlFlowParity
 import Flapjack.Test.CakeMLRiscVPartial

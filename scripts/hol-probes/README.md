@@ -1,3 +1,5 @@
+`clos_sem_thunk_probe.out` captures typed closure thunk operations and missing, flagged, array, valid-update, repeated-update and nested-thunk observations. `Flapjack/Test/ClosSemThunkParity.lean` replays the concrete cases; the proof-side store relation connects flat and closure thunk inspection and successful updates, pending cross-language review.
+
 `clos_sem_install_probe.out` captures typed closure installation, payload decoders and clock theorems, along with invalid-arity observations. Lean checks decoder uniqueness, related flat-to-closure payloads and installation clock facts; finite-map and semantic correspondence remain pending.
 
 `clos_sem_word_probe.out` captures the typed closure word dispatcher and representative edge cases. Some HOL `some`-choice and word expressions remain unreduced in the capture; `Flapjack/Test/ClosSemWordParity.lean` checks the Lean cases and explicitly identifies which observations reduce in HOL. The floating-point model and complete correspondence remain subject to their stated review and assumptions.
