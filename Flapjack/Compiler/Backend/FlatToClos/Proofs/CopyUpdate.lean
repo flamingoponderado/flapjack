@@ -99,6 +99,55 @@ theorem evaluate_copyByteAw8_outOfBounds {C F : Type} (state : ClosSem.State C F
           ClosSem.doIntApp, ClosSem.applyMemory, ClosSem.applyBlock, ClosSem.boolValue,
           ClosSem.asBool, BackendCommon.falseTag, lengthNeg, offsetNeg, srcInvalid]
 
+
+/-- Reading a related source byte-array slot is equivalent to reading a
+byte vector with those contents, even when the source and destination alias. -/
+theorem evaluate_copyByteAw8_ref {C F : Type} (state : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (env : List ClosSem.Value) (src dst : List HolChar)
+    (srcPointer dstPointer : Nat) (srcFlag dstFlag : Bool) (offset length dstOffset : Int)
+    (found : state.refs.lookup srcPointer = some (.byteArray src))
+    (dstFound : state.refs.lookup dstPointer = some (.byteArray dst)) :
+    ClosSem.evaluate [copyByteAw8 trace]
+      (.number dstOffset :: .refPtr dstFlag dstPointer :: .number length :: .number offset ::
+        .refPtr srcFlag srcPointer :: env) state =
+    ClosSem.evaluate [copyByteAw8 trace]
+      (.number dstOffset :: .refPtr dstFlag dstPointer :: .number length :: .number offset ::
+        .byteVector src :: env) state := by
+  change ClosSem.evaluate
+    [.ifThenElse trace (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 2])
+      (.raise trace (.op trace (.blockOp (.cons 3)) []))
+      (.ifThenElse trace (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 3])
+        (.raise trace (.op trace (.blockOp (.cons 3)) []))
+        (.ifThenElse trace (.op trace (.memOp (.boundsCheckByte true))
+          [.op trace (.intOp .add) [.var trace 2, .var trace 3], .var trace 4])
+          (.ifThenElse trace (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 0])
+            (.raise trace (.op trace (.blockOp (.cons 3)) []))
+            (.ifThenElse trace (.op trace (.memOp (.boundsCheckByte true))
+              [.op trace (.intOp .add) [.var trace 2, .var trace 0], .var trace 1])
+              (.op trace (.memOp (.copyByte false))
+                [.var trace 0, .var trace 1, .var trace 2, .var trace 3, .var trace 4])
+              (.raise trace (.op trace (.blockOp (.cons 3)) []))))
+          (.raise trace (.op trace (.blockOp (.cons 3)) []))))]
+    (.number dstOffset :: .refPtr dstFlag dstPointer :: .number length :: .number offset :: .refPtr srcFlag srcPointer :: env) state = _
+  change _ = ClosSem.evaluate
+    [.ifThenElse trace (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 2])
+      (.raise trace (.op trace (.blockOp (.cons 3)) []))
+      (.ifThenElse trace (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 3])
+        (.raise trace (.op trace (.blockOp (.cons 3)) []))
+        (.ifThenElse trace (.op trace (.memOp (.boundsCheckByte true))
+          [.op trace (.intOp .add) [.var trace 2, .var trace 3], .var trace 4])
+          (.ifThenElse trace (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 0])
+            (.raise trace (.op trace (.blockOp (.cons 3)) []))
+            (.ifThenElse trace (.op trace (.memOp (.boundsCheckByte true))
+              [.op trace (.intOp .add) [.var trace 2, .var trace 0], .var trace 1])
+              (.op trace (.memOp (.copyByte false))
+                [.var trace 0, .var trace 1, .var trace 2, .var trace 3, .var trace 4])
+              (.raise trace (.op trace (.blockOp (.cons 3)) []))))
+          (.raise trace (.op trace (.blockOp (.cons 3)) []))))]
+    (.number dstOffset :: .refPtr dstFlag dstPointer :: .number length :: .number offset :: .byteVector src :: env) state
+  simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric,
+    ClosSem.doIntApp, ClosSem.applyMemory, found, dstFound]
+
 /-- A failed range check makes the source copy fail before it writes. -/
 theorem copyArray_update_none_of_invalid (src dst : List HolChar) (offset length dstOffset : Int)
     (bad : ¬(0 ≤ offset ∧ 0 ≤ length ∧ 0 ≤ dstOffset ∧
@@ -160,6 +209,38 @@ theorem copyStringToByteArray_body_related {C F : Type} (source : FlatSem.State 
     simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
       FlatSem.doAppData, FlatSem.doAppCopy, found, failed, FlatSem.boundsFailure, body, states,
       EvalResultRel.raise exception]
+
+/-- Byte-array copies preserve related stores and results. The source and
+destination pointers may coincide; both reads use the original store. -/
+theorem copyByteArrayToByteArray_body_related {C F : Type} (source : FlatSem.State C F)
+    (target : ClosSem.State C F) (trace : BackendCommon.Tra) (env : List ClosSem.Value)
+    (src dst : List HolChar) (srcPointer dstPointer : Nat) (srcFlag dstFlag : Bool)
+    (offset length dstOffset : Int) (states : StateRel source target)
+    (srcFound : storeLookup srcPointer source.refs = some (.w8array src))
+    (dstFound : storeLookup dstPointer source.refs = some (.w8array dst)) :
+    let flat := FlatSem.applyResult source (.src .copyAw8Aw8)
+      [.loc srcFlag srcPointer, .litv (.intLit offset), .litv (.intLit length),
+        .loc dstFlag dstPointer, .litv (.intLit dstOffset)]
+    let clos := ClosSem.evaluate [copyByteAw8 trace]
+      (.number dstOffset :: .refPtr dstFlag dstPointer :: .number length :: .number offset ::
+        .refPtr srcFlag srcPointer :: env) target
+    StateRel flat.1 clos.2 ∧ EvalResultRel flat.2 clos.1 := by
+  have targetSrc := lookup_byteArray states srcFound
+  have targetDst := lookup_byteArray states dstFound
+  have closEq := evaluate_copyByteAw8_ref target trace env src dst srcPointer dstPointer
+    srcFlag dstFlag offset length dstOffset targetSrc targetDst
+  have flatEq : FlatSem.applyResult source (.src .copyAw8Aw8)
+      [.loc srcFlag srcPointer, .litv (.intLit offset), .litv (.intLit length),
+        .loc dstFlag dstPointer, .litv (.intLit dstOffset)] =
+      FlatSem.applyResult source (.src .copyStrAw8)
+      [.litv (.strLit (.implode src)), .litv (.intLit offset), .litv (.intLit length),
+        .loc dstFlag dstPointer, .litv (.intLit dstOffset)] := by
+    simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+      FlatSem.doAppData, FlatSem.doAppCopy, srcFound, dstFound]
+    cases copyArray (src, offset) length (some (dst, dstOffset)) <;> simp
+  rw [flatEq, closEq]
+  simpa using copyStringToByteArray_body_related source target trace env (.implode src) dst
+    dstPointer dstFlag offset length dstOffset states dstFound
 
 /-- A string-to-byte-array copy requires exactly five arguments. -/
 theorem copyStringToByteArray_wrong_arity {C F : Type} (state : FlatSem.State C F)
@@ -254,5 +335,105 @@ theorem evaluate_copyStringToByteArray {C F : Type} (env : FlatSem.Environment F
                                 case w8array dst =>
                                   simpa using copyStringToByteArray_body_related next nextTarget trace values
                                     value dst pointer flag offset length dstOffset states found
+
+
+/-- A byte-array-to-byte-array copy requires exactly five arguments. -/
+theorem copyByteArrayToByteArray_wrong_arity {C F : Type} (state : FlatSem.State C F)
+    (args : List FlatSem.Value) (wrong : args.length ≠ 5) :
+    (FlatSem.applyResult state (.src .copyAw8Aw8) args).2 = .err (.abort .typeError) := by
+  rcases args with _ | ⟨a, _ | ⟨b, _ | ⟨c, _ | ⟨d, _ | ⟨e, _ | ⟨f, rest⟩⟩⟩⟩⟩⟩
+  all_goals simp_all [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+    FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy]
+
+/-- The checked byte-array-to-byte-array copy simulates argument evaluation,
+range checks, and store updates whenever the source avoids a type error. -/
+theorem evaluate_copyByteArrayToByteArray {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .copyAw8Aw8) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src .copyAw8Aw8) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argsSim := argsSim argsNotTypeError
+  unfold EvalSim at argsSim ⊢
+  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps_reverse] at argsSim
+  rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argsSim ⊢
+      rcases argsSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src .copyAw8Aw8) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        have argLength : sourceArgs.length = 5 := by
+          by_contra wrong
+          apply resultShape
+          apply copyByteArrayToByteArray_wrong_arity
+          simpa using wrong
+        cases related with
+        | nil => simp at argLength
+        | cons dstOffsetRel tail =>
+          cases tail with
+          | nil => simp at argLength
+          | cons pointerRel tail =>
+            cases tail with
+            | nil => simp at argLength
+            | cons lengthRel tail =>
+              cases tail with
+              | nil => simp at argLength
+              | cons offsetRel tail =>
+                cases tail with
+                | nil => simp at argLength
+                | cons srcPointerRel tail =>
+                  cases tail with
+                  | cons _ _ => simp at argLength
+                  | nil =>
+                    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at resultShape
+                    cases srcPointerRel <;>
+                      simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+                        FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at resultShape
+                    case loc srcFlag srcPointer =>
+                      cases offsetRel <;> try simp at resultShape
+                      case int offset =>
+                        cases lengthRel <;> try simp at resultShape
+                        case int length =>
+                          cases pointerRel <;> try simp at resultShape
+                          case loc flag pointer =>
+                            cases dstOffsetRel <;> try simp at resultShape
+                            case int dstOffset =>
+                              cases srcFound : storeLookup srcPointer next.refs with
+                              | none => simp [srcFound] at resultShape
+                              | some srcEntry =>
+                                cases srcEntry <;> simp [srcFound] at resultShape
+                                case w8array src =>
+                                  cases dstFound : storeLookup pointer next.refs with
+                                  | none => simp [dstFound] at resultShape
+                                  | some dstEntry =>
+                                    cases dstEntry <;> simp [dstFound] at resultShape
+                                    case w8array dst =>
+                                      simpa using copyByteArrayToByteArray_body_related next nextTarget trace values
+                                        src dst srcPointer pointer srcFlag flag offset length dstOffset states srcFound dstFound
 
 end Flapjack.Compiler.Backend.FlatToClos
