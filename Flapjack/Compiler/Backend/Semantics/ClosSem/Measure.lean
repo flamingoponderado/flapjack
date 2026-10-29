@@ -43,6 +43,12 @@ theorem expWeight_pos (exp : ClosLang.Exp) : 0 < expWeight exp := by
     cases op <;> try (simp [expWeight] <;> omega)
     case thunkOp operation => cases operation <;> simp [expWeight] <;> omega
 
+/-- Primitive arguments are strictly lighter than their enclosing operation. -/
+theorem opWeight_gt (trace : BackendCommon.Tra) (op : ClosLang.Op) (args : List ClosLang.Exp) :
+    expsWeight args < 1 + expWeight (.op trace op args) := by
+  cases op <;> try (simp [expWeight] <;> omega)
+  case thunkOp operation => cases operation <;> simp [expWeight] <;> omega
+
 /-- Apply an expression to unit when forcing a thunk. -/
 def appUnit (expression : ClosLang.Exp) : ClosLang.Exp :=
   .app .none none expression [.op .none (.blockOp (.cons 0)) []]

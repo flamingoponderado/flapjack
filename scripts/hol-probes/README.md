@@ -1,4 +1,4 @@
-`clos_sem_evaluate_probe.out` captures the typed closure evaluator and variable, conditional, exception, timeout and closure-call observations. `Flapjack/Test/ClosSemEvaluateParity.lean` replays those cases with an extra recursion bound. The HOL-shaped unbounded evaluator and correspondence remain open.
+`clos_sem_evaluate_probe.out` captures the typed closure evaluator and variable, conditional, exception, timeout and closure-call observations. `Flapjack/Test/ClosSemEvaluateParity.lean` replays those cases with both the extra-bound evaluator and the clocked unbounded evaluator. Full evaluator and carrier correspondence remain open.
 
 `clos_sem_memory_probe.out` captures closure array, byte-update, overlap-copy and byte-bounds observations. `Flapjack/Test/ClosSemMemoryParity.lean` replays them, except that the HOL byte-update capture retains an unreduced word-existence condition. The assembled dispatcher and finite-map correspondence remain pending review.
 
