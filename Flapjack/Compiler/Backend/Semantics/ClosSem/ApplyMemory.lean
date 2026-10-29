@@ -162,4 +162,17 @@ noncomputable def applyMemory {C F : Type} (op : ClosLang.MemOp) (args : List Va
   | .configGC, [.number _, .number _] => result unitValue
   | _, _ => none
 
+private theorem byteNumbers_charEncoding (chars : List (BitVec 8)) :
+    byteNumbers (chars.map (fun byte => .number byte.toNat)) = some chars := by
+  induction chars with
+  | nil => rfl
+  | cons first rest ih => simp [byteNumbers, intToByte_toNat, ih]
+
+/-- Decoding a closure character list constructs the corresponding byte
+vector. This is a Lean helper for the flat-to-closure simulation. -/
+theorem applyMemory_fromCharList {C F : Type} (state : State C F) (value : Value) (chars : List (BitVec 8))
+    (decoded : valueToList value = some (chars.map (fun byte => .number byte.toNat))) :
+    applyMemory .fromListByte [value] state = some (.byteVector chars, state) := by
+  simp [applyMemory, decoded, byteNumbers_charEncoding]
+
 end Flapjack.Compiler.Backend.ClosSem
