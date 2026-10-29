@@ -231,4 +231,130 @@ theorem valueComparisonSim_literals (left right : Flapjack.AstHOL.Lit) :
   cases right
   simpa using result
 
+/-- Constructor comparisons that do not recurse preserve every successful
+result, including unequal tags and field-list lengths. -/
+theorem valueComparisonSim_conv_no_rec
+    (a b : Option (FlatLang.CtorId × FlatLang.TypeId)) (xs ys : List FlatSem.Value)
+    (different : ¬(a = b ∧ xs.length = ys.length)) :
+    ValueComparisonSim (.conv a xs) (.conv b ys) := by
+  intro t₁ t₂ v first second result
+  cases a with
+  | none =>
+    cases b with
+    | none =>
+      cases first with
+      | tuple first =>
+        cases second with
+        | tuple second =>
+          have len₁ := related_length first
+          have len₂ := related_length second
+          simp_all [FlatSem.doEq, FlatSem.ctorSameType, ClosSem.doEq]
+    | some stamp => simp [FlatSem.doEq, FlatSem.ctorSameType] at result
+  | some stamp₁ =>
+    cases b with
+    | none => simp [FlatSem.doEq, FlatSem.ctorSameType] at result
+    | some stamp₂ =>
+      obtain ⟨tag₁, type₁⟩ := stamp₁
+      obtain ⟨tag₂, type₂⟩ := stamp₂
+      cases first with
+      | con first =>
+        cases second with
+        | con second =>
+          have len₁ := related_length first
+          have len₂ := related_length second
+          by_cases tags : tag₁ = tag₂ <;> by_cases types : type₁ = type₂ <;>
+            simp_all [FlatSem.doEq, FlatSem.ctorSameType, ClosSem.doEq]
+
+/-- Unequal vector lengths determine the comparison without inspecting elements. -/
+theorem valueComparisonSim_vector_no_rec (xs ys : List FlatSem.Value)
+    (different : xs.length ≠ ys.length) : ValueComparisonSim (.vectorv xs) (.vectorv ys) := by
+  intro t₁ t₂ b first second result
+  cases first with
+  | vector first =>
+    cases second with
+    | vector second =>
+      have len₁ := related_length first
+      have len₂ := related_length second
+      simp_all [FlatSem.doEq, ClosSem.doEq]
+
+/-- A false head comparison terminates the list comparison. -/
+theorem listComparisonSim_cons_false {s₁ s₂ : FlatSem.Value} {xs ys : List FlatSem.Value}
+    (headSim : ValueComparisonSim s₁ s₂) (h : FlatSem.doEq s₁ s₂ = .val false) :
+    ListComparisonSim (s₁ :: xs) (s₂ :: ys) := by
+  intro t₁ t₂ b first second result
+  cases first with
+  | cons head tail =>
+    cases second with
+    | cons head₂ tail₂ =>
+      have targetEq := headSim _ _ false head head₂ h
+      simpa [FlatSem.doEqList, ClosSem.doEqList, h, targetEq] using result
+
+/-- A source type error cannot be a successful list comparison. -/
+theorem listComparisonSim_cons_error {s₁ s₂ : FlatSem.Value} {xs ys : List FlatSem.Value}
+    (h : FlatSem.doEq s₁ s₂ = .typeError) : ListComparisonSim (s₁ :: xs) (s₂ :: ys) := by
+  intro t₁ t₂ b first second result
+  simp [FlatSem.doEqList, h] at result
+
+/-- Successful polymorphic equality comparisons are preserved for related
+values and lists. This proof-side statement awaits HOL correspondence review. -/
+theorem doEq_simulation :
+    (∀ a b, ValueComparisonSim a b) ∧ (∀ xs ys, ListComparisonSim xs ys) := by
+  refine FlatSem.doEq.mutual_induct ValueComparisonSim ListComparisonSim ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · intro a b _; exact valueComparisonSim_literals a b
+  · intro a b _; exact valueComparisonSim_literals a b
+  · intro a x b y _; exact valueComparisonSim_locations a b x y
+  · intro a x b y _; exact valueComparisonSim_locations a b x y
+  · intro a xs b ys _ ih
+    cases a with
+    | none =>
+      cases b with
+      | none => exact valueComparisonSim_tuple ih
+      | some stamp =>
+        intro t₁ t₂ result first second h
+        simp [FlatSem.doEq, FlatSem.ctorSameType] at h
+    | some stamp₁ =>
+      cases b with
+      | none =>
+        intro t₁ t₂ result first second h
+        simp [FlatSem.doEq, FlatSem.ctorSameType] at h
+      | some stamp₂ =>
+        obtain ⟨tag₁, type₁⟩ := stamp₁
+        obtain ⟨tag₂, type₂⟩ := stamp₂
+        exact valueComparisonSim_con tag₁ tag₂ type₁ type₂ ih
+  · intro a xs b ys diff _; exact valueComparisonSim_conv_no_rec a b xs ys diff
+  · intro a xs b ys diff _; exact valueComparisonSim_conv_no_rec a b xs ys diff
+  · intro xs ys _ ih; exact valueComparisonSim_vector ih
+  · intro xs ys diff; exact valueComparisonSim_vector_no_rec xs ys diff
+  · intro a n body b m body₂; exact valueComparisonSim_closures a b n m body body₂
+  · intro a n body b funs m; exact valueComparisonSim_closure_rec a b n m body funs
+  · intro a funs n b m body; exact valueComparisonSim_rec_closure a b n m body funs
+  · intro a funs₁ n b funs₂ m; exact valueComparisonSim_rec_rec a b n m funs₁ funs₂
+  · intro left right noLit noLoc noCon noVector noCC noCR noRC noRR
+    intro target₁ target₂ b first second result
+    cases left <;> cases right
+    all_goals first
+      | exact False.elim (noLit _ _ rfl rfl)
+      | exact False.elim (noLoc _ _ _ _ rfl rfl)
+      | exact False.elim (noCon _ _ _ _ rfl rfl)
+      | exact False.elim (noVector _ _ rfl rfl)
+      | exact False.elim (noCC _ _ _ _ _ _ rfl rfl)
+      | exact False.elim (noCR _ _ _ _ _ _ rfl rfl)
+      | exact False.elim (noRC _ _ _ _ _ _ rfl rfl)
+      | exact False.elim (noRR _ _ _ _ _ _ rfl rfl)
+      | simp [FlatSem.doEq] at result
+  · exact listComparisonSim_nil_nil
+  · intro x xs y ys h ih; exact listComparisonSim_cons_false ih h
+  · intro x xs y ys _ ih tail; exact listComparisonSim_cons ih tail
+  · intro x xs y ys h _; exact listComparisonSim_cons_error h
+  · intro first second nonempty noCons
+    cases first with
+    | nil =>
+      cases second with
+      | nil => exact False.elim (nonempty rfl rfl)
+      | cons y ys => exact listComparisonSim_nil_cons y ys
+    | cons x xs =>
+      cases second with
+      | nil => exact listComparisonSim_cons_nil x xs
+      | cons y ys => exact False.elim (noCons x xs y ys rfl rfl)
+
 end Flapjack.Compiler.Backend.FlatToClos
