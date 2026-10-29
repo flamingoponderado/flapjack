@@ -297,4 +297,174 @@ theorem evaluate_checkedByteUpdate {C F : Type} (env : FlatSem.Environment FlatS
                         case w8array bytes =>
                           simpa [storeLookup] using checkedByteUpdate_body_related next nextTarget trace values pointer flag bytes index byte states found
 
+/-- The emitted checked value-array write updates the target for a valid index. -/
+theorem evaluate_checkedArrayUpdate_inBounds {C F : Type} (state : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (env : List ClosSem.Value) (pointer : Nat) (flag : Bool)
+    (items : List ClosSem.Value) (index : Int) (value : ClosSem.Value)
+    (found : state.refs.lookup pointer = some (.valueArray items))
+    (nonnegative : ¬index < 0) (bound : index.toNat < items.length) :
+    ClosSem.evaluate
+      [.ifThenElse trace
+        (.op trace (.memOp .boundsCheckArray) [.var trace 1, .var trace 2])
+        (.op trace (.memOp .update) [.var trace 0, .var trace 1, .var trace 2])
+        (.raise trace (.op trace (.blockOp (.cons 3)) []))]
+      (value :: .number index :: .refPtr flag pointer :: env) state =
+      (.val [ClosSem.unitValue], { state with refs := state.refs.updateEq (pointer, .valueArray (items.set index.toNat value)) }) := by
+  have valid : 0 ≤ index ∧ index < (items.length : Int) := by omega
+  have notBound : ¬items.length ≤ index.toNat := by omega
+  simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyMemory,
+    ClosSem.boolValue, ClosSem.asBool, BackendCommon.trueTag, found, valid, nonnegative, notBound]
+
+/-- The emitted checked value-array write raises Subscript outside bounds. -/
+theorem evaluate_checkedArrayUpdate_outOfBounds {C F : Type} (state : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (env : List ClosSem.Value) (pointer : Nat) (flag : Bool)
+    (items : List ClosSem.Value) (index : Int) (value : ClosSem.Value)
+    (found : state.refs.lookup pointer = some (.valueArray items))
+    (bad : index < 0 ∨ items.length ≤ index.toNat) :
+    ClosSem.evaluate
+      [.ifThenElse trace
+        (.op trace (.memOp .boundsCheckArray) [.var trace 1, .var trace 2])
+        (.op trace (.memOp .update) [.var trace 0, .var trace 1, .var trace 2])
+        (.raise trace (.op trace (.blockOp (.cons 3)) []))]
+      (value :: .number index :: .refPtr flag pointer :: env) state =
+        (.err (.raise (.block 3 [])), state) := by
+  have invalid : ¬(0 ≤ index ∧ index < (items.length : Int)) := by omega
+  simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyMemory, ClosSem.applyBlock,
+    ClosSem.boolValue, ClosSem.asBool, BackendCommon.falseTag, found, invalid]
+
+/-- The checked value-array write's emitted body simulates the flat
+operation at every index and preserves the state relation. -/
+theorem checkedArrayUpdate_body_related {C F : Type} (source : FlatSem.State C F)
+    (target : ClosSem.State C F) (trace : BackendCommon.Tra) (env : List ClosSem.Value)
+    (pointer : Nat) (flag : Bool) (items : List FlatSem.Value) (index : Int)
+    (value : FlatSem.Value) (targetValue : ClosSem.Value)
+    (states : StateRel source target) (found : source.refs[pointer]? = some (.varray items))
+    (valueRel : ValueRel value targetValue) :
+    let flat := FlatSem.applyResult source (.src .aupdate) [.loc flag pointer, .litv (.intLit index), value]
+    let clos := ClosSem.evaluate
+      [.ifThenElse trace
+        (.op trace (.memOp .boundsCheckArray) [.var trace 1, .var trace 2])
+        (.op trace (.memOp .update) [.var trace 0, .var trace 1, .var trace 2])
+        (.raise trace (.op trace (.blockOp (.cons 3)) []))]
+      (targetValue :: .number index :: .refPtr flag pointer :: env) target
+    StateRel flat.1 clos.2 ∧ EvalResultRel flat.2 clos.1 := by
+  obtain ⟨targetItems, targetFound, related⟩ := lookup_array states found
+  have sameLength := related.length_eq
+  have exception : ValueRel FlatSem.subscriptExnV (.block 3 []) := .con .nil
+  by_cases negative : index < 0
+  · have body := evaluate_checkedArrayUpdate_outOfBounds target trace env pointer flag targetItems index targetValue targetFound (Or.inl negative)
+    simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+      FlatSem.updateIndexed, FlatSem.boundsFailure, storeLookup, found, negative, body, states,
+      EvalResultRel.raise exception]
+  · by_cases bound : index.toNat < items.length
+    · have targetBound : index.toNat < targetItems.length := by omega
+      have targetBody := evaluate_checkedArrayUpdate_inBounds target trace env pointer flag targetItems index targetValue targetFound negative targetBound
+      have notBound : ¬items.length ≤ index.toNat := by omega
+      have newRelated := valueList_set_related related index.toNat bound value targetValue valueRel
+      have newStores := storeRel_setArray source.refs target.refs pointer items _ _ states.2.2.2.1 found newRelated
+      have newStates : StateRel { source with refs := source.refs.set pointer (.varray (items.set index.toNat value)) }
+          { target with refs := target.refs.updateEq (pointer, .valueArray (targetItems.set index.toNat targetValue)) } := by
+        rcases states with ⟨maxApp, ffi, clock, _, globals, values, install⟩
+        exact ⟨maxApp, ffi, clock, newStores, globals, values, install⟩
+      simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+        FlatSem.updateIndexed, storeLookup, found, negative, notBound, storeAssign, storeValueSameType,
+        targetBody, newStates]
+      exact .value (.cons (.tuple .nil) .nil)
+    · have bad : items.length ≤ index.toNat := by omega
+      have targetBad : targetItems.length ≤ index.toNat := by omega
+      have body := evaluate_checkedArrayUpdate_outOfBounds target trace env pointer flag targetItems index targetValue targetFound (Or.inr targetBad)
+      simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+        FlatSem.updateIndexed, FlatSem.boundsFailure, storeLookup, found, negative, bad, body, states,
+        EvalResultRel.raise exception]
+
+
+/-- Checked value-array writes reject argument counts other than three. -/
+theorem checkedArrayUpdate_wrong_arity {C F : Type} (state : FlatSem.State C F)
+    (args : List FlatSem.Value) (wrong : args.length ≠ 3) :
+    (FlatSem.applyResult state (.src .aupdate) args).2 = .err (.abort .typeError) := by
+  cases args with
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+  | cons first rest =>
+    cases rest with
+    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+    | cons second rest =>
+      cases rest with
+      | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+      | cons third rest =>
+        cases rest with
+        | nil => simp at wrong
+        | cons fourth rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+
+/-- Checked value-array updates simulate the source expression for arbitrary
+argument lists whenever the source does not report a type error. -/
+theorem evaluate_checkedArrayUpdate {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option Flapjack.Basis.Pure.MlString.MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .aupdate) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src .aupdate) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argsSim := argsSim argsNotTypeError
+  unfold EvalSim at argsSim ⊢
+  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps_reverse] at argsSim
+  rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argsSim ⊢
+      rcases argsSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src .aupdate) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        have length : sourceArgs.length = 3 := by
+          by_contra wrong
+          apply resultShape
+          apply checkedArrayUpdate_wrong_arity
+          simpa using wrong
+        cases related with
+        | nil => simp at length
+        | cons valueRel tail =>
+          cases tail with
+          | nil => simp at length
+          | cons indexRel tail =>
+            cases tail with
+            | nil => simp at length
+            | cons pointerRel tail =>
+              cases tail with
+              | cons _ _ => simp at length
+              | nil =>
+                simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at resultShape
+                cases pointerRel <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+                  FlatSem.doAppMemory] at resultShape
+                case loc flag pointer =>
+                  cases indexRel <;> try (simp_all)
+                  case int index =>
+                    cases found : storeLookup pointer next.refs with
+                    | none => simp [found] at resultShape
+                    | some entry =>
+                      cases entry <;> simp [found] at resultShape
+                      case varray items =>
+                        simpa [storeLookup] using checkedArrayUpdate_body_related next nextTarget trace values pointer flag items index _ _ states found valueRel
+
 end Flapjack.Compiler.Backend.FlatToClos
