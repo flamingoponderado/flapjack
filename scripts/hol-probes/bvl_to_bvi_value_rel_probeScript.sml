@@ -20,6 +20,23 @@ val _ = show "aux_code_installed_APPEND_replay=" aux_code_installed_APPEND_repla
 val _ = show "aux_code_installed_subspt=" aux_code_installed_subspt;
 val _ = show "isVar_def=" bvlPropsTheory.isVar_def;
 val _ = show "bVarBound_def=" bvlPropsTheory.bVarBound_def;
+val bEval_bVarBound_replay = prove (``!xs vs s env.
+  bvlProps$bVarBound (LENGTH vs) xs ==>
+  (bvlSem$evaluate (xs,vs ++ env,s) = bvlSem$evaluate (xs,vs,s))``,
+  recInduct bvlSemTheory.evaluate_ind \\ REPEAT STRIP_TAC
+  \\ full_simp_tac(srw_ss())[bvlSemTheory.evaluate_def,bvlPropsTheory.bVarBound_def]
+  \\ TRY (BasicProvers.EVERY_CASE_TAC \\ full_simp_tac(srw_ss())[ADD1] \\ NO_TAC)
+  THEN1 (`n < LENGTH env + LENGTH env'` by DECIDE_TAC
+         \\ full_simp_tac(srw_ss())[rich_listTheory.EL_APPEND1])
+  THEN1 (BasicProvers.EVERY_CASE_TAC \\ full_simp_tac(srw_ss())[]
+         \\ FIRST_X_ASSUM MATCH_MP_TAC
+         \\ IMP_RES_TAC bvlPropsTheory.evaluate_IMP_LENGTH
+         \\ full_simp_tac(srw_ss())[AC ADD_COMM ADD_ASSOC])
+  THEN1 (gvs [] \\ rpt (PURE_CASE_TAC \\ gvs [])
+         \\ gvs [oneline bvlSemTheory.dest_thunk_def, AllCaseEqs(), EL_APPEND]));
+val _ = show "bEval_bVarBound_replay=" bEval_bVarBound_replay;
+val _ = show "EVERY_isVar_evaluate_Rval_MEM=" EVERY_isVar_evaluate_Rval_MEM;
+val _ = show "evaluate_Var_list=" bvlPropsTheory.evaluate_Var_list;
 val _ = show "let_ok_def=" bvl_handleProofTheory.let_ok_def;
 val _ = show "handle_ok_def=" bvl_handleProofTheory.handle_ok_def;
 val _ = show "handle_ok_CONS=" bvl_handleProofTheory.handle_ok_CONS;
