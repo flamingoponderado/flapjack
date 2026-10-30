@@ -34,6 +34,7 @@ val _ = show "must_inline=" bvl_inlineTheory.must_inline_def;
 val _ = show "tick_inline_all=" bvl_inlineTheory.tick_inline_all_def;
 val _ = show "tick_compile_prog=" bvl_inlineTheory.tick_compile_prog_def;
 val _ = show "tick_inline_all_names=" bvl_inlineProofTheory.tick_inline_all_names;
+val _ = show "tick_compile_prog_res_range=" bvl_inlineProofTheory.tick_compile_prog_res_range;
 val _ = show "in_cc=" bvl_inlineProofTheory.in_cc_def;
 val _ = show "in_state_rel=" bvl_inlineProofTheory.in_state_rel_def;
 val _ = show "evaluate_inline=" bvl_inlineProofTheory.evaluate_inline;

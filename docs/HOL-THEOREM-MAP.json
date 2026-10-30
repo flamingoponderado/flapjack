@@ -109203,5 +109203,13 @@
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the If/If expression-relation case, preserving the original hypotheses, target existential and final state relation. The condition and selected-branch induction hypotheses have the same simulation shape, with branch choice quantifying both source branches; evaluateMono transports the chosen relation after condition evaluation. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ProgramCache.lean",
+    "hol_name": "tick_compile_prog_res_range",
+    "lean_name": "tickCompileProgResRange",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed tick_compile_prog_res_range in bvl_inline_state_rel_probe.out: input and output programs have numeric labels and arities, all code carriers are the original sparse tree, and the conjunction retains the compile result, distinct input labels, initial-cache subspt and empty intersection between base domain and input labels. The conclusion is the original final-cache subspt of the left-biased union with fromAList output. HOL sets are predicates: Lean's intersection-empty premise is equality of the corresponding membership predicate to False."
   }
 ]
