@@ -478,6 +478,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
 import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyClock
+import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyCode
 import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyEvents
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateClockShift
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEvents

@@ -106,6 +106,8 @@ val _ = example "build_collision_ref=" ``FLOOKUP (SND (bvlSem$do_build_const [cl
 val _ = show "do_app=" bvlSemTheory.do_app_def;
 val _ = show "do_app_const=" bvlSemTheory.do_app_const;
 val _ = show "bvl_do_app_err=" bvlPropsTheory.do_app_err;
+val _ = show "bvl_do_app_with_code=" bvlPropsTheory.do_app_with_code;
+val _ = show "bvl_do_app_with_code_err_not_install=" bvlPropsTheory.do_app_with_code_err_not_Install;
 val _ = show "bvl_do_app_change_clock=" bvlPropsTheory.do_app_change_clock;
 val _ = show "bvl_do_app_change_clock_err=" bvlPropsTheory.do_app_change_clock_err;
 val _ = show "bvl_do_app_io_events_mono=" bvlPropsTheory.do_app_io_events_mono;

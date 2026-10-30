@@ -108652,4 +108652,29 @@
     ],
     "reviewer": "Compared the complete typed original relation in bvl_inline_state_rel_probe.out, with independent compiler configuration and FFI types: t is s with code mapped by (I ## HD o remove_ticks singleton), compiler replaced by t.compile, and every oracle program mapped the same way; s.compile is t.compile composed with that program map. The kernel-checked removeTicksSing_equivalence establishes the singleton HD equals removeTicksSing, and sptMap retains the source sparse-tree shape. The local canonical state witness covers refs only; the relation adds no other assumptions."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/ApplyCode.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "hol_name": "do_app_with_code",
+    "lean_name": "doAppWithCode",
+    "reviewer": "Compared the full typed HOL implication in bvl_sem_values_probe.out. The source success and non-Install conjunction, source-domain subset of replacement-domain premise, result value and all three replacement fields match. sptDomain is the exact sparse-tree lookup domain; the local canonical witness covers refs only. Compiler and FFI types remain independent, and doApp inherits the floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/ApplyCode.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "hol_name": "do_app_with_code_err_not_Install",
+    "lean_name": "doAppWithCodeErr",
+    "reviewer": "Compared the full typed HOL implication in bvl_sem_values_probe.out. The error and non-Install conjunction, replacement-domain subset of source-domain or non-type-error condition, same error conclusion and three replacement fields agree. sptDomain is the sparse-tree lookup domain; the local canonical witness covers refs only. Compiler and FFI types remain independent, and doApp inherits the floating-point real-carrier assumptions."
+  }
 ]
