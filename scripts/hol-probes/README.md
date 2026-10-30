@@ -186,6 +186,8 @@ the complete carrier correspondence remains under review.
 
 `bignum_mini_types_probe.out` records the source types of all sixteen mini-language constructors. Regenerate with `HOL_PROBE_ONLY=bignum_mini_types_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`source_to_flat_compile_globals_probe.out` records the typed original primitive-bag and four-conjunct expression global-initialization invariants. Regenerate with `HOL_PROBE_ONLY=source_to_flat_compile_globals_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `full_cake_word_probe.out` captures the original `data_to_word$compile_0` result for the empty CakeML program, including fixed stubs, generated bignum stubs, function arities and bodies, under the restricted settings and a 64-bit RISC-V assembly configuration. Its whole-program comparison ends before word-to-word optimization and the final RISC-V result.
 
 `full_inline_cake_word_probe.out` repeats that complete word-stage comparison after original BVI wrapper inlining and tick removal; earlier BVL/BVI optimizations are still omitted.

@@ -1,5 +1,17 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "op_gbag_astOp_to_flatOp",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileGlobals.lean", "lean_name": "opGlobalBag_astOpToFlatOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5633-5637 and typed theorem capture source_to_flat_compile_globals_probe.out. Input is the complete ast op carrier; astOpToFlatOp returns either the source-wrapped operator or El 0, and opGlobalBag is empty for both. HOL num bag is num -> num, the same Nat -> Nat carrier used by GlobalBag."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_exp_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileGlobals.lean", "lean_name": "compileExp_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four quantified conjuncts in source lines 5639-5672 with typed capture source_to_flat_compile_globals_probe.out. Trace is a list of MlString, environment and all source/flat expression, pattern and function carriers match the corresponding tagged syntax. HOL num bags are num -> num; EVERY is pointwise list membership. Lean's rowGlobals and funGlobals helpers are proved equal to elistGlobals of the same source projections. All expression cases, including Eval, AallocEmpty, Env_id, annotations and recursive bodies, are kernel-checked. This invariant is not the source-to-flat simulation theorem."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/WordBignum/Compile.lean", "lean_name": "compile",
     "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
