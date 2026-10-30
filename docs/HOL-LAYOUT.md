@@ -44,6 +44,7 @@ the cited name occurs in one of the two syntactic forms.
 
 | HOL script | Lean counterpart |
 | --- | --- |
+| `compiler/backend/presLangScript.sml` | `Flapjack/Compiler/Backend/PresLang/Config.lean` and `Flapjack/Compiler/Backend/PresLang/Source.lean` (source-stage explorer display; representation review and explorer wiring remain open) |
 | `semantics/tokensScript.sml` | `Flapjack/CakeParser/Tokens.lean` |
 | `semantics/lexer_funScript.sml` | `Flapjack/CakeParser/Lexer.lean` |
 | `compiler/inference/infer_tScript.sml` | `Flapjack/Compiler/Inference/InferT.lean` and `Flapjack/Compiler/Inference/InferT/Display.lean` (inference types and rendering; source review pending) |
