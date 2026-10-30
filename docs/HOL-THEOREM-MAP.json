@@ -109133,5 +109133,25 @@
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the singleton Tick/Tick relation case, with original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus the body induction hypothesis with that same shape. The local witness covers refs only and the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineEvaluation.lean",
+    "hol_name": "evaluate_inline",
+    "lean_name": "evaluateInline_raise",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the singleton Raise/Raise case, retaining the original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus a body induction hypothesis of the same shape. The canonical witness covers refs only; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateTicks.lean",
+    "hol_name": "evaluate_mk_tick",
+    "lean_name": "evaluateMkTick",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed evaluate_mk_tick in bvl_inline_state_rel_probe.out: arbitrary expression, environment, state and natural tick count; clock smaller than the count yields timeout with zero clock, otherwise evaluation of the body at exactly the decremented clock. Compiler and FFI carrier types remain independent; the canonical witness covers refs only and the evaluator inherits floating-point real-carrier assumptions."
   }
 ]

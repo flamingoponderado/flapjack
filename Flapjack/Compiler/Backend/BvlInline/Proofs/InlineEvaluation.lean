@@ -87,4 +87,48 @@ theorem evaluateInline_tick {C F : Type} (limit : Nat) (body body' : Bvl.Exp)
         (by simpa [decClock] using bodyRel) bodyRun notTypeError
       exact ⟨targetFinal, by simpa [evaluateTuple, evaluate, targetNonzero] using targetRun, finalRel⟩
 
+/-- The Raise case of the inlining simulation, using the original body
+induction hypothesis. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "evaluate_inline"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateInline_raise {C F : Type} (limit : Nat) (body body' : Bvl.Exp)
+    (env : List BvlSem.Value)
+    (bodyIH : ∀ (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
+      (result : Result (List BvlSem.Value) BvlSem.Value),
+      inStateRel limit source target → ExpRel source.code [body] [body'] →
+      evaluateTuple ([body], env, source) = (result, final) →
+      result ≠ .err (.abort .typeError) →
+      ∃ targetFinal, evaluateTuple ([body'], env, target) = (result, targetFinal) ∧
+        inStateRel limit final targetFinal)
+    (source final : Flapjack.Compiler.Backend.BvlSem.State (Spt (Nat × Bvl.Exp) × C) F)
+    (target : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : Result (List BvlSem.Value) BvlSem.Value)
+    (related : inStateRel limit source target)
+    (expressions : ExpRel source.code [.raise body] [.raise body'])
+    (run : evaluateTuple ([.raise body], env, source) = (result, final))
+    (notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ targetFinal, evaluateTuple ([.raise body'], env, target) = (result, targetFinal) ∧
+      inStateRel limit final targetFinal := by
+  cases expressions with
+  | raise bodyRel =>
+    simp only [evaluateTuple] at run
+    rw [evaluate] at run
+    cases bodyRun : evaluate [body] env source with
+    | mk bodyResult bodyFinal =>
+      rw [bodyRun] at run
+      have bodyNotType : bodyResult ≠ .err (.abort .typeError) := by
+        cases bodyResult with
+        | val values => simp
+        | err error =>
+          simp at run
+          rcases run with ⟨rfl, _⟩
+          exact notTypeError
+      obtain ⟨targetFinal, targetRun, finalRel⟩ := bodyIH source bodyFinal target bodyResult
+        related bodyRel (by simpa [evaluateTuple] using bodyRun) bodyNotType
+      change evaluate [body'] env target = _ at targetRun
+      refine ⟨targetFinal, ?_, ?_⟩
+      · rw [evaluateTuple, evaluate, targetRun]
+        cases bodyResult <;> simp_all
+      · cases bodyResult <;> simp_all
+
 end Flapjack.Compiler.Backend.BvlInline.Proofs
