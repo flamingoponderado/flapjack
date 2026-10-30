@@ -1,5 +1,5 @@
 `flat_to_clos_globals_probe.out` captures typed closure global-write and safety
-definitions and the SmartCons preservation lemmas. Regenerate with
+definitions, SmartCons preservation lemmas, and flat-to-closure global bag theorems. Regenerate with
 `HOL_PROBE_ONLY=flat_to_clos_globals_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `backend_oracle_monotonic_probe.out` records typed state-oracle definitions and

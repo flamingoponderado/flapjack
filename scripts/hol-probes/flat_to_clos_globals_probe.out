@@ -4,3 +4,7 @@ esgc_free=(∀(v1 :num) (v0 :tra). esgc_free (Var v0 v1 :closLang$exp)) ∧ (∀
 elist_globals_empty=∀(es :closLang$exp list). elist_globals es = ({||} :num -> num) ⇔ ∀(e :closLang$exp). MEM e es ⇒ set_globals e = ({||} :num -> num)
 smartcons_globals=set_globals (SmartCons (t :tra) (tag :num) (xs :closLang$exp list)) = elist_globals xs
 smartcons_esgc=esgc_free (SmartCons (t :tra) (tag :num) (xs :closLang$exp list)) ⇔ EVERY esgc_free xs
+bag_image_definition=∀(f :β -> α) (b :β -> num). BAG_IMAGE f b = (λ(e :α). (let (sb :β -> num) = BAG_FILTER (λ(e0 :β). f e0 = e) b in if FINITE_BAG sb then BAG_CARD sb else (1 :num)))
+compile_globals=∀(m :mlstring option list) (e :exp list). EVERY no_Mat e ⇒ elist_globals (compile m e) = BAG_IMAGE SUC (elist_globals e)
+compile_decs_globals=∀(decs :exp list). no_Mat_decs decs ⇒ elist_globals (compile_decs decs) = BAG_IMAGE SUC (elist_globals decs)
+compile_eq_globals=compile (m :mlstring option list) (exps :exp list) = (exps' :closLang$exp list) ∧ EVERY no_Mat exps ⇒ elist_globals exps' = BAG_IMAGE SUC (elist_globals exps)

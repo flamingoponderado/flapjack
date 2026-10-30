@@ -1,5 +1,23 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_set_globals",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileGlobals.lean", "lean_name": "compile_setGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared original source lines 2280-2363 and inferred types in flat_to_clos_globals_probe.out. The original EVERY no_Mat premise is expressed by membership quantification with the Bool predicate equal to true. The list-valued compile result has the same closure expression carrier. shiftGlobalBag expresses BAG_IMAGE SUC on num multiplicity bags: zero has no preimage and a positive key has the unique predecessor, so the filtered bag is finite and has exactly that predecessor multiplicity. The proof covers every expression case including both eliminated conversion pairs, arithmetic, global operations, and recursive bodies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_eq_set_globals",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileGlobals.lean", "lean_name": "compileEq_setGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared original source lines 2280-2363 and inferred types in flat_to_clos_globals_probe.out. The original compile output equality and EVERY no_Mat conjunction are preserved, with the same source and closure expression-list carriers. shiftGlobalBag expresses BAG_IMAGE SUC on num multiplicity bags: zero has no preimage and a positive key has the unique predecessor, so the filtered bag is finite and has exactly that predecessor multiplicity. The proof covers every expression case including both eliminated conversion pairs, arithmetic, global operations, and recursive bodies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_decs_set_globals",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileGlobals.lean", "lean_name": "compileDecs_setGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared original source lines 2280-2363 and inferred types in flat_to_clos_globals_probe.out. The original no_Mat_decs premise and the compile_decs list result are preserved. shiftGlobalBag expresses BAG_IMAGE SUC on num multiplicity bags: zero has no preimage and a positive key has the unique predecessor, so the filtered bag is finite and has exactly that predecessor multiplicity. The proof covers every expression case including both eliminated conversion pairs, arithmetic, global operations, and recursive bodies."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "op_gbag_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Globals.lean", "lean_name": "opGlobalBag",
     "statement_status": "reviewed_exact",
