@@ -88,3 +88,17 @@ val _ = example "word64_to_byte=" ``bvlSem$do_word_app (closLang$WordFromWord T)
   [bvlSem$Word64 (511w:word64)]``;
 val _ = example "word64_from_negative=" ``bvlSem$do_word_app closLang$WordFromInt
   [bvlSem$Number (~1)]``;
+val _ = show "do_part=" bvlSemTheory.do_part_def;
+val _ = show "do_build=" bvlSemTheory.do_build_def;
+val _ = show "do_build_const=" bvlSemTheory.do_build_const_def;
+val _ = typ "do_part_type=" ``bvlSem$do_part``;
+val _ = typ "do_build_type=" ``bvlSem$do_build``;
+val _ = example "build_empty=" ``FST (bvlSem$do_build_const [] FEMPTY)``;
+val _ = example "build_nested=" ``FST (bvlSem$do_build_const
+  [closLang$Int 7; closLang$Int 9; closLang$Con 20 [0;1]] FEMPTY)``;
+val _ = example "build_string_value=" ``FST (bvlSem$do_build_const [closLang$Str «ab»] FEMPTY)``;
+val _ = example "build_string_ref=" ``FLOOKUP (SND (bvlSem$do_build_const [closLang$Str «ab»] FEMPTY)) 0``;
+val _ = example "build_collision_value=" ``FST (bvlSem$do_build_const [closLang$Str «x»]
+  (FEMPTY |+ (0,bvlSem$ValueArray [])))``;
+val _ = example "build_collision_ref=" ``FLOOKUP (SND (bvlSem$do_build_const [closLang$Str «x»]
+  (FEMPTY |+ (0,bvlSem$ValueArray [])))) 1``;

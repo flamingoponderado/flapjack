@@ -63,3 +63,14 @@ word8_add=case some((w1 :word8),(w2 :word8)). (255 :int) = ((&w2n w1) :int) ∧ 
 word8_invalid=case some((w1 :word8),(w2 :word8)). (256 :int) = ((&w2n w1) :int) ∧ (2 :int) = ((&w2n w2) :int) of (NONE :(word8 # word8) option) => (NONE :v option) | SOME (w1,w2) => SOME (Number ((&w2n (w1 + w2)) :int) :v)
 word64_to_byte=SOME (Number ((&w2n (w2w (511w :word64) :word8)) :int) :v)
 word64_from_negative=SOME (Word64 (-(1w :word64)) :v)
+do_part=(∀(m :num -> v) (i :int) (refs :num |-> v ref). do_part m (Int i :const_part) refs = ((Number i :v),refs)) ∧ (∀(m :num -> v) (w :word64) (refs :num |-> v ref). do_part m (W64 w :const_part) refs = ((Word64 w :v),refs)) ∧ (∀(m :num -> v) (t :num) (ns :num list) (refs :num |-> v ref). do_part m (Con t ns :const_part) refs = (Block t (MAP m ns),refs)) ∧ ∀(m :num -> v) (t :mlstring) (refs :num |-> v ref). do_part m (Str t) refs = (let (ptr :num) = LEAST(ptr :num). ptr ∉ FDOM refs; (bytes :word8 list) = MAP ((n2w :num -> word8) ∘ ORD) (explode t) in ((RefPtr T ptr :v),refs⟨ptr ↦ (ByteArray T bytes :v ref)⟩))
+do_build=(∀(m :num -> v) (i :num) (refs :num |-> v ref). do_build m i ([] :const_part list) refs = (m (i − (1 :num)),refs)) ∧ ∀(m :num -> v) (i :num) (p :const_part) (rest :const_part list) (refs :num |-> v ref). do_build m i (p::rest) refs = (let ((x :v),(refs1 :num |-> v ref)) = do_part m p refs in do_build m⦇i ↦ x⦈ (i + (1 :num)) rest refs1)
+do_build_const=∀(xs :const_part list) (refs :num |-> v ref). do_build_const xs refs = do_build (λ(x :num). (Number (0 :int) :v)) (0 :num) xs refs
+do_part_type=:(num -> v) -> const_part -> (num |-> v ref) -> v # (num |-> v ref)
+do_build_type=:(num -> v) -> num -> const_part list -> (num |-> v ref) -> v # (num |-> v ref)
+build_empty=(Number (0 :int) :v)
+build_nested=Block (20 :num) [(Number (7 :int) :v); (Number (9 :int) :v)]
+build_string_value=(RefPtr T (0 :num) :v)
+build_string_ref=SOME (ByteArray T [(97w :word8); (98w :word8)] :v ref)
+build_collision_value=(RefPtr T (1 :num) :v)
+build_collision_ref=SOME (ByteArray T [(120w :word8)] :v ref)

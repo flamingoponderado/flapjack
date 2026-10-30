@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
 
 /-! Kernel replay of representative original BVL semantic observations. -/
@@ -77,5 +78,45 @@ example : doWordApp (.wordOpw .w8 .add) [.number 255, .number 2] = some (.number
 example : doWordApp (.wordOpw .w8 .add) [.number 256, .number 2] = none := by rfl
 example : doWordApp (.wordFromWord true) [.word64 511] = some (.number 255) := by rfl
 example : doWordApp .wordFromInt [.number (-1)] = some (.word64 (-1)) := by rfl
+
+private def emptyRefs : Flapjack.HolFiniteMapExact Nat (Ref Value) := Flapjack.HolFiniteMapExact.empty
+
+example : (doBuildConst [] emptyRefs).1 = .number 0 := by simp [doBuildConst, doBuild]
+
+example : (doBuildConst [.int 7, .int 9, .con 20 [0, 1]] emptyRefs).1 =
+    .block 20 [.number 7, .number 9] := by simp [doBuildConst, doBuild, doPart]
+
+example : (doBuildConst [.str (Flapjack.Basis.Pure.MlString.ofString "ab")] emptyRefs).1 =
+    .refPtr true 0 := by
+  have fresh : leastUnusedRef emptyRefs = 0 := leastUnusedRef_eq_zero emptyRefs rfl
+  simp [doBuildConst, doBuild, doPart, fresh]
+
+example : (doBuildConst [.str (Flapjack.Basis.Pure.MlString.ofString "ab")] emptyRefs).2.lookup 0 =
+    some (.byteArray true [97, 98]) := by
+  have fresh : leastUnusedRef emptyRefs = 0 := leastUnusedRef_eq_zero emptyRefs rfl
+  simp [doBuildConst, doBuild, doPart, fresh, Flapjack.HolFiniteMapExact.lookup_updateEq,
+    Flapjack.FUPDATE_HOL, Flapjack.Basis.Pure.MlString.ofString,
+    Flapjack.Basis.Pure.MlString.MlString.explode]
+
+private def occupiedZero : Flapjack.HolFiniteMapExact Nat (Ref Value) :=
+  emptyRefs.updateEq (0, .valueArray [])
+
+private theorem occupiedZero_fresh : leastUnusedRef occupiedZero = 1 := by
+  apply leastUnusedRef_eq
+  · simp [occupiedZero, emptyRefs, Flapjack.HolFiniteMapExact.lookup_updateEq,
+      Flapjack.FUPDATE_HOL, Flapjack.HolFiniteMapExact.empty]
+  · intro n hn
+    have : n = 0 := by omega
+    subst n
+    simp [occupiedZero, emptyRefs, Flapjack.HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL]
+
+example : (doBuildConst [.str (Flapjack.Basis.Pure.MlString.ofString "x")] occupiedZero).1 =
+    .refPtr true 1 := by simp [doBuildConst, doBuild, doPart, occupiedZero_fresh]
+
+example : (doBuildConst [.str (Flapjack.Basis.Pure.MlString.ofString "x")] occupiedZero).2.lookup 1 =
+    some (.byteArray true [120]) := by
+  simp [doBuildConst, doBuild, doPart, occupiedZero_fresh, Flapjack.HolFiniteMapExact.lookup_updateEq,
+    Flapjack.FUPDATE_HOL, Flapjack.Basis.Pure.MlString.ofString,
+    Flapjack.Basis.Pure.MlString.MlString.explode]
 
 end Flapjack.Test.BvlSemValuesParity
