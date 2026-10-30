@@ -1,11 +1,9 @@
 import Flapjack.Compiler.Backend.WordBignum.Helpers
 import Flapjack.Compiler.Backend.WordBignum.Equality
 
-/-! Fuel-bounded mini-language compilation. The fuel parameter and generic
-mini carrier differ from HOL's total compiler, so these infrastructure
-definitions are not tagged as source ports. The captured mini-program is used
-by the production compiler; the shallow-to-deep generator and cross-language
-correctness remain open. -/
+/-! Mini-language compilation. The fuelled helpers are Flapjack infrastructure;
+the total entry point has the source carrier and source-shaped equations. The
+shallow-to-deep generator and cross-language correctness remain open. -/
 namespace Flapjack.Compiler.Backend.WordBignum
 
 abbrev CodeEntry (width : Nat) := Mini (BitVec width) × Nat × WordLangProgHOL (BitVec width)
@@ -109,7 +107,10 @@ def compileBounded {width : Nat} [NeZero width] (fuel n l i : Nat) (cs : CodeAcc
   | none => compileFuel (max fuel (miniBudget code + 1)) n l i cs code
 
 /-- Total mini compilation with a structural bound. The default is unreachable:
-`compileFuel_succeeds` proves the structural traversal always returns a result. -/
+`compileFuel_succeeds` proves the structural traversal always returns a result.
+The source-shaped equations are checked in `Proofs/CompileEquations`. -/
+@[hol "cakeml/compiler/backend/word_bignumScript.sml" "compile_def"
+  (words_as_type_indexed_bitvec)]
 def compile {width : Nat} [NeZero width] (n l i : Nat) (cs : CodeAcc width)
     (code : MiniHOL width) : WordLangProgHOL (BitVec width) × Nat × Nat × CodeAcc width :=
   (compileFuel (miniBudget code + 1) n l i cs code).getD (.skip, l, i, cs)

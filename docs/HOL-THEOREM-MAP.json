@@ -1,5 +1,11 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Compile.lean", "lean_name": "compile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared all pinned word_bignumScript.sml:503-568 clauses and the inferred compile type in bignum_compile_probe.out: one positive alpha word dimension is BitVec width, with the same naturals, mini carrier, code-entry triples, accumulator and result products. Proofs/CompileEquations kernel-checks every source constructor equation; CompileTotal and FuelMonotone show the executable structural traversal always succeeds and its result is independent of fuel. Proofs/Lookup establishes first-match equality using miniEq_iff. Reviewed helper definitions preserve fixed word5 Temp, cutsets, shifts, immediates and register ordering. The result is executed for the captured mc_iop_code; the shallow-to-deep generator and semantic correctness remain separate."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "mini",
     "lean_path": "Flapjack/Compiler/Backend/WordBignum/Mini.lean", "lean_name": "MiniHOL",
     "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
