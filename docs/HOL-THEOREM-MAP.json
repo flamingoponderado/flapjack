@@ -110428,5 +110428,37 @@
   "statement_status": "reviewed_exact",
   "lean_name": "compileList",
   "reviewer": "Compared the list clauses of the typed original mutual definition in bvi_let_compile_probe.out: the empty list and recursive head-and-tail traversal call compileSing with the unchanged environment and offset."
+},
+{
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "lean_path": "Flapjack/Misc/AppList.lean",
+  "hol_name": "SmartAppend_def",
+  "lean_name": "smartAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every typed original constructor case in bvl_to_bvi_compile_probe.out: either Nil disappears and otherwise the original ordered Append node is retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceSing.lean",
+  "hol_name": "compile_aux_def",
+  "lean_name": "compileAuxSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original in bvl_to_bvi_compile_probe.out: the input is a tuple and its arity type is independently polymorphic. The original List singleton, exact generated label and source compile_exp body are retained; HOL compile_exp_eq in bvi_let_compile_probe.out identifies that body with compileSing [] 0."
+},
+{
+  "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceSing.lean",
+  "hol_name": "compile_exps_sing_def",
+  "lean_name": "compileSingSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed original singleton clauses in bvl_to_bvi_compile_probe.out, including the left-associated SmartAppend tree, source argument count, fresh names, destination mapping and original AppList carrier. The executed traversal has not yet been proved to match this source-shaped definition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceSing.lean",
+  "hol_name": "compile_exps_sing_def",
+  "lean_name": "compileListSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original list clauses in bvl_to_bvi_compile_probe.out: Nil for the empty traversal, then source-order single-expression conversion and SmartAppend of auxiliary trees with threaded name state."
 }
 ]

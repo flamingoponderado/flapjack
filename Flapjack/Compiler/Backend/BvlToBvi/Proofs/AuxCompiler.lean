@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BvlToBvi.Compile
+import Flapjack.Compiler.Backend.BvlToBvi.SourceSing
 import Flapjack.Compiler.Backend.BviLet.Proofs.SourceAgreement
 
 /-! Agreement of auxiliary-code generation with the total let optimizer. -/
@@ -12,6 +13,13 @@ theorem compileAuxFuel_eq_source (fuel k args : Nat) (body : Bvi.Exp) :
       some [(bvlNumStubs + bvlToBviNamespaces * k + 1, args,
         BviLet.compileSing [] 0 body)] := by
   simp [compileAuxFuel, BviLet.compileBounded_eq_compileSing]
+
+/-- The executed auxiliary list is precisely the flattening of the
+source-shaped auxiliary tree, for every optimizer fuel. -/
+theorem compileAuxFuel_eq_flattened (fuel k args : Nat) (body : Bvi.Exp) :
+    compileAuxFuel fuel k args body =
+      some (appListAppend (compileAuxSource (k, args, body))) := by
+  simp [compileAuxFuel_eq_source, compileAuxSource, appListAppend, appendAux]
 
 /-- Once expression conversion returns, the production function entry uses
 the same total let optimizer, independently of its optimizer fuel. The

@@ -40,6 +40,13 @@ def appendAux {α : Type} : AppList α → List α → List α
 @[hol "cakeml/misc/miscScript.sml" "append_def"]
 def appListAppend {α : Type} (values : AppList α) : List α := appendAux values []
 
+/-- Concatenate auxiliary-code trees while omitting empty tree nodes. -/
+@[hol "cakeml/misc/miscScript.sml" "SmartAppend_def"]
+def smartAppend {α : Type} : AppList α → AppList α → AppList α
+  | .nil, right => right
+  | left, .nil => left
+  | left, right => .append left right
+
 /-- HOL `append_aux_thm`: `!l xs. append_aux l xs = append_aux l [] ++ xs`. -/
 @[hol "cakeml/misc/miscScript.sml" "append_aux_thm"]
 theorem appendAux_thm {α : Type} (values : AppList α) (suffix : List α) :
@@ -65,6 +72,22 @@ theorem appListAppend_thm {α : Type} (left right : AppList α) (entries : List 
     rfl
   · simp [appListAppend, appendAux]
   · rfl
+
+/-- Flattening a smart append preserves left-to-right list concatenation. -/
+theorem appListAppend_smartAppend {α : Type} (left right : AppList α) :
+    appListAppend (smartAppend left right) = appListAppend left ++ appListAppend right := by
+  cases left with
+  | nil => simp [smartAppend, appListAppend, appendAux]
+  | list values =>
+    cases right with
+    | nil => simp [smartAppend, appListAppend, appendAux]
+    | list other => exact (appListAppend_thm (.list values) (.list other) []).1
+    | append left right => exact (appListAppend_thm (.list values) (.append left right) []).1
+  | append first second =>
+    cases right with
+    | nil => simp [smartAppend, appListAppend, appendAux]
+    | list values => exact (appListAppend_thm (.append first second) (.list values) []).1
+    | append third fourth => exact (appListAppend_thm (.append first second) (.append third fourth) []).1
 
 /-- Flatten the leading `AppList` of a `(AppList α × Bool × Nat)` (the shape of
 HOL `flatten`'s result) with `misc$append`. -/

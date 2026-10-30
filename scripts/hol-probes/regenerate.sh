@@ -561,6 +561,10 @@ run_probe bvl_const_frontend_probeScript.sml bvl_const_frontend_probe.out \
 run_probe bvl_const_rel_probeScript.sml bvl_const_rel_probe.out \
   value_rel env_rel env_rel_length env_rel_LLOOKUP_NONE_replay env_rel_LOOKUP_SOME_replay evaluate_delete_var_Rerr_SING evaluate_delete_var_Rerr_replay evaluate_delete_var_Rval_replay dest_simple_eq_replay case_op_const_eq_replay SmartOp2_thm_replay SmartOp_flip_thm_replay SmartOp1_thm evaluate_env_rel "$cake_dir/compiler/backend/proofs/bvl_constProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe bvl_to_bvi_compile_probeScript.sml bvl_to_bvi_compile_probe.out \
+  smart_append_def compile_aux_def compile_exps_sing_def compile_exps_sing compile_aux_example compile_tree_example \
+  "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+
 run_probe bvi_let_compile_probeScript.sml bvi_let_compile_probe.out \
   compile_sing_def compile_sing compile_exp_def compile_exp_eq compile_tail compile_vars compile_empty \
   "$cake_dir/compiler/backend/bvi_letScript.sml" "$cake_dir/compiler/backend"
