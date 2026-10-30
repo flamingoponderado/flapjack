@@ -1,4 +1,5 @@
 load "bvl_to_bviProofTheory";
+load "bviPropsTheory";
 load "preamble";
 open preamble bvl_to_bviProofTheory bvlSemTheory;
 val _ = Globals.linewidth := 1000000;
@@ -36,3 +37,6 @@ val _ = show "state_rel_FLOOKUP_MutBlock=" state_rel_FLOOKUP_MutBlock;
 val _ = show "state_rel_FLOOKUP_Thunk=" state_rel_FLOOKUP_Thunk;
 val _ = show "bv_ok_def=" bv_ok_def;
 val _ = show "bv_ok_Unit=" bv_ok_Unit;
+val _ = show "state_ok_def=" state_ok_def;
+val _ = show "bvi_inc_clock_def=" bviPropsTheory.inc_clock_def;
+val _ = show "bvi_inc_clock_ZERO=" bviPropsTheory.inc_clock_ZERO;

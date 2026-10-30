@@ -110544,5 +110544,38 @@
   "hol_name": "state_rel_FLOOKUP_Thunk",
   "lean_name": "stateRel_thunk",
   "reviewer": "Compared the typed original theorem in bvl_to_bvi_value_rel_probe.out: the thunk mode is unchanged and its value is relocated."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/StateOk.lean",
+  "hol_name": "state_ok_def",
+  "lean_name": "stateOk",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared the typed original state_ok_def in bvl_to_bvi_value_rel_probe.out: each optional global is checked, value-array elements and thunk contents require bvOk, and all other reference cells are unrestricted. bvOkList_iff connects the source EVERY clause to the local recursion. The state uses the canonical finite-map refs roundtrip."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviPropsScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviProps/Clock.lean",
+  "hol_name": "inc_clock_def",
+  "lean_name": "incClock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared the typed original in bvl_to_bvi_value_rel_probe.out: only the clock field changes, by addition of the natural allowance; the state retains the canonical finite-map refs field."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviPropsScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviProps/Clock.lean",
+  "hol_name": "inc_clock_ZERO",
+  "lean_name": "incClock_zero",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared the typed original in bvl_to_bvi_value_rel_probe.out: incrementing a polymorphic BVI state by zero returns that state, with the canonical refs roundtrip."
 }
 ]

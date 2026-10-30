@@ -21,3 +21,6 @@ state_rel_FLOOKUP_MutBlock=(state_rel (b :num -> num) (s :(num # α, β) bvlSem$
 state_rel_FLOOKUP_Thunk=(state_rel (b :num -> num) (s :(num # α, β) bvlSem$state) (t :(α, β) state) :bool) ∧ FLOOKUP s.refs (ptr :num) = SOME (Thunk (m :thunk_mode) (v :v) :v ref) ⇒ FLOOKUP t.refs (b ptr) = SOME (Thunk m (adjust_bv b v) :v ref)
 bv_ok_def=(∀(refs :num |-> v ref) (r :num) (l :bool). bv_ok refs (RefPtr l r :v) ⇔ r ∈ FDOM refs) ∧ (∀(vs :v list) (tag :num) (refs :num |-> v ref). bv_ok refs (Block tag vs) ⇔ EVERY (λ(a :v). bv_ok refs a) vs) ∧ (∀(v2 :int) (refs :num |-> v ref). bv_ok refs (Number v2 :v) ⇔ T) ∧ (∀(v3 :word64) (refs :num |-> v ref). bv_ok refs (Word64 v3 :v) ⇔ T) ∧ ∀(v6 :num) (refs :num |-> v ref). bv_ok refs (CodePtr v6) ⇔ T
 bv_ok_Unit=bv_ok (refs :num |-> v ref) Unit
+state_ok_def=∀(s :(γ, 'ffi) bvlSem$state). state_ok s ⇔ EVERY (λ(x :v option). case x of (NONE :v option) => T | SOME v => bv_ok s.refs v) s.globals ∧ ∀(k :num). case FLOOKUP s.refs k of (NONE :v ref option) => T | SOME (ValueArray vs :v ref) => EVERY (bv_ok s.refs) vs | SOME (ByteArray v14 v15 :v ref) => T | SOME (Thunk v16 v :v ref) => bv_ok s.refs v | SOME (MutBlock v18 v19 v20 v21 v22) => T
+bvi_inc_clock_def=∀(n :num) (s :(γ, 'ffi) state). inc_clock n s = s with clock := s.clock + n
+bvi_inc_clock_ZERO=∀(s :(α, β) state). inc_clock (0 :num) s = s
