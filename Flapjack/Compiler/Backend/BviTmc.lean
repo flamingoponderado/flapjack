@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Bvi.Syntax
+import Flapjack.Compiler.Backend.Bvi.Budget
 import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
 import Flapjack.HolRef
 
@@ -33,6 +34,13 @@ def pureFuel : Nat → Nat → Exp → Option Bool
       | .op op xs => if pureOp op xs then all xs else pure false
       | _ => pure false
 
+/-- Retry exhausted purity checks with a structural bound while preserving
+all results computed with the original fuel. -/
+def pureBounded (fuel n : Nat) (e : Exp) : Option Bool :=
+  match pureFuel fuel n e with
+  | some result => some result
+  | none => pureFuel (max fuel (expBudget e + 1)) n e
+
 private def shiftVars (n : Nat) (xs : List Nat) := xs.map (· + n)
 
 /-- Shift every variable index in a call-block skeleton. -/
@@ -65,9 +73,9 @@ mutual
           match ← extractListFuel fuel n loc childTag args with
           | none => pure none
           | some (_, .inl _) =>
-              if ← pureFuel fuel n e then pure (some ([e], .inl [0])) else pure none
+              if ← pureBounded fuel n e then pure (some ([e], .inl [0])) else pure none
           | some (bs, .inr cb) => pure (some (bs, .inr (.callBlock tag [] cb [])))
-      | _ => if ← pureFuel fuel n e then pure (some ([e], .inl [0])) else pure none
+      | _ => if ← pureBounded fuel n e then pure (some ([e], .inl [0])) else pure none
 
   /-- Extract arguments from right to left, preserving source binding order. -/
   def extractListFuel : Nat → Nat → Nat → Nat → List Exp → Option (Option Extract)
