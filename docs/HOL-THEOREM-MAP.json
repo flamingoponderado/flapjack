@@ -110305,5 +110305,29 @@
     "refs"
   ],
   "reviewer": "Compared with typed original equation and inferred polymorphic result in bvi_sem_state_probe.out. Four input values, both decoders and length checks, source-domain disjointness and distinct code names, callback, shifted oracle, returned buffers, code-tree union and error cases are preserved. The BVL decoders have separately checked choice-characterization witnesses. The local canonical state roundtrip witnesses refs; code remains an Spt tree. Full BVI dispatcher and evaluator correspondence remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxCode.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "aux_code_installed_def",
+  "lean_name": "auxCodeInstalled",
+  "reviewer": "Compared with the typed original capture in bvl_to_bvi_value_rel_probe.out: keys are natural numbers, the two payload types are independently polymorphic, and recursive lookup and conjunction match. The code carrier is the source-shaped Spt tree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxCode.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "aux_code_installed_APPEND",
+  "lean_name": "auxCodeInstalled_append",
+  "reviewer": "Compared with the typed replay of the local original lemma in bvl_to_bvi_value_rel_probe.out. The independently polymorphic payload types, append premise and two installation conclusions match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxCode.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "aux_code_installed_subspt",
+  "lean_name": "auxCodeInstalled_subspt",
+  "reviewer": "Compared with the typed original theorem in bvl_to_bvi_value_rel_probe.out and the source subspt definition: the installation and sparse-tree extension premises imply the same installation conclusion. The payload types remain independent."
 }
 ]

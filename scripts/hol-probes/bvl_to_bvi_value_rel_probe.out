@@ -2,3 +2,6 @@ adjust_bv_def=(∀(i :int) (b :num -> num). adjust_bv b (Number i :v) = (Number 
 adjust_bv_Unit=adjust_bv (x :num -> num) Unit = Unit
 adjust_bv_Boolv=adjust_bv (x :num -> num) (Boolv (b :bool) :v) = (Boolv b :v)
 adjust_nested=adjust_bv (λ(n :num). n + (5 :num)) (Block (7 :num) [(Number (-(3 :int)) :v); (RefPtr T (2 :num) :v); CodePtr (3 :num); Block (8 :num) [(RefPtr F (9 :num) :v)]]) = Block (7 :num) [(Number (-(3 :int)) :v); (RefPtr T (7 :num) :v); CodePtr (84 :num); Block (8 :num) [(RefPtr F (14 :num) :v)]]
+aux_code_installed=(∀(t :(α # β) sptree$num_map). aux_code_installed ([] :(num # α # β) list) t ⇔ T) ∧ ∀(t :(α # β) sptree$num_map) (rest :(num # α # β) list) (name :num) (body :β) (arg_count :α). aux_code_installed ((name,arg_count,body)::rest) t ⇔ lookup name t = SOME (arg_count,body) ∧ aux_code_installed rest t
+aux_code_installed_APPEND_replay=∀(xs :(num # α # β) list) (ys :(num # α # β) list) (code :(α # β) sptree$num_map). aux_code_installed (xs ++ ys) code ⇒ aux_code_installed xs code ∧ aux_code_installed ys code
+aux_code_installed_subspt=∀(x :(num # α # β) list) (c1 :(α # β) sptree$num_map) (c2 :(α # β) sptree$num_map). aux_code_installed x c1 ∧ subspt c1 c2 ⇒ aux_code_installed x c2
