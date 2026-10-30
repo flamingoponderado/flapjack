@@ -109700,7 +109700,7 @@
     "hol_name": "compile_sing_def",
     "lean_name": "compileSing",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared every inferred typed original singleton clause in bvl_handle_frontend_probe.out, including empty lets, handler size, Force out-of-range behavior, and force-thunk pattern matching. The proof of general equality with production compileBounded remains open; selected original output observations are replayed for both traversals."
+    "reviewer": "Compared every inferred typed original singleton clause in bvl_handle_frontend_probe.out, including empty lets, handler size, Force out-of-range behavior, and force-thunk pattern matching. compileBounded_eq proves the production retry returns this source result for any fuel; selected original output observations are replayed for both traversals."
   },
   {
     "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
@@ -109708,6 +109708,6 @@
     "hol_name": "compile_sing_def",
     "lean_name": "compileList",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed nil and cons clauses in bvl_handle_frontend_probe.out, including result order, mk_Union, size addition, and conjunction. General correspondence with production compileListFuel remains open."
+    "reviewer": "Compared the typed nil and cons clauses in bvl_handle_frontend_probe.out, including result order, mk_Union, size addition, and conjunction. The list component of compileFuel_eq proves every successful production compileListFuel result agrees with the source traversal."
   }
 ]

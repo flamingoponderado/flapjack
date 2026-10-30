@@ -105,7 +105,8 @@ def simplifyBounded (fuel : Nat) (e : Exp) : Option Exp :=
   | some result => some result
   | none => simplifyFuel (max fuel (expBudget e + 1)) e
 
-private def zero : Exp := .op (.intOp (.const 0)) []
+/-- The zero expression emitted for an out-of-range variable. -/
+def zero : Exp := .op (.intOp (.const 0)) []
 
 /-- Avoid introducing an empty let. -/
 @[hol "cakeml/compiler/backend/bvl_handleScript.sml" "SmartLet_def"]

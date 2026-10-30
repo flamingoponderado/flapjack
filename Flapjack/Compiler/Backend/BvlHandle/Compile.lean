@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.BvlHandle
 
-/-! Total source-shaped singleton and list handler compilation. -/
+/-! Total source-shaped singleton and list handler compilation. The executed
+bounded traversal is proved equal in `Proofs/CompileProduction`. -/
 namespace Flapjack.Compiler.Backend.BvlHandle
 open Bvl DbVars
 
