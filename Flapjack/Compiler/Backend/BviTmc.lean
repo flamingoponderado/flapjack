@@ -3,8 +3,9 @@ import Flapjack.Compiler.Backend.Bvi.Budget
 import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
 import Flapjack.HolRef
 
-/-! Fuel-bounded executable infrastructure for BVI tail-modulo-constructor
-lowering. The source totality proofs and correctness theorem remain unported. -/
+/-! Executable infrastructure for BVI tail-modulo-constructor lowering.
+`Proofs.Total` proves structural traversal bounds for the checked code;
+source correspondence and the correctness theorem remain unported. -/
 namespace Flapjack.Compiler.Backend.BviTmc
 open Bvi
 
@@ -101,12 +102,20 @@ mutual
           | _ => pure none
 end
 
+/-- Preserve successful extraction and retry exhausted operand traversals
+with a structural bound. The inner `none` remains the pass's ordinary
+decision that extraction is not applicable. -/
+def extractListBounded (fuel n loc tag : Nat) (xs : List Exp) : Option (Option Extract) :=
+  match extractListFuel fuel n loc tag xs with
+  | some result => some result
+  | none => extractListFuel (max fuel (listBudget xs + 1)) n loc tag xs
+
 /-- Extract a direct recursive call or a constructor containing one. -/
 def toBlockFuel (fuel n loc : Nat) (e : Exp) : Option (Option (List Exp × CallBlock)) := do
   match e with
   | .call ticks dest args handler => pure (callToBlock loc ticks dest args handler)
   | .op (.blockOp (.cons tag)) xs =>
-      match ← extractListFuel fuel n loc tag xs with
+      match ← extractListBounded fuel n loc tag xs with
       | some (bs, .inr cb) => pure (some (bs, cb))
       | _ => pure none
   | _ => pure none
@@ -186,11 +195,18 @@ def compileExpFuel (fuel loc next arity : Nat) (e : Exp) : Option (Option (Exp �
   | none => pure none
   | some wrapper => pure (some (wrapper, ← rewriteWorkerFuel fuel loc next arity (arity + 1) arity e))
 
+/-- Retry exhausted TMC conversion using a structural bound, preserving the
+ordinary inner `none` decision and every previously successful result. -/
+def compileExpBounded (fuel loc next arity : Nat) (e : Exp) : Option (Option (Exp × Exp)) :=
+  match compileExpFuel fuel loc next arity e with
+  | some result => some result
+  | none => compileExpFuel (max fuel (expBudget e + 1)) loc next arity e
+
 /-- Compile functions in order, allocating worker locations in source order. -/
 def compileEachFuel (fuel : Nat) : Nat → List (Nat × Nat × Exp) → Option (Nat × List (Nat × Nat × Exp))
   | next, [] => some (next, [])
   | next, (loc, arity, body) :: rest => do
-      match ← compileExpFuel fuel loc next arity body with
+      match ← compileExpBounded fuel loc next arity body with
       | none =>
           let (next, rest) ← compileEachFuel fuel next rest
           pure (next, (loc, arity, body) :: rest)
