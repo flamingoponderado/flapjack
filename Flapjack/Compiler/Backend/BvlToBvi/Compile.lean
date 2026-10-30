@@ -1,13 +1,14 @@
 import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 import Flapjack.Compiler.Backend.BvlToBvi.Stubs
 import Flapjack.Compiler.Backend.BviLet.Compile
+import Flapjack.Compiler.Backend.BvlToBvi.Budget
 
 /-! Checked BVL-to-BVI expression conversion. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi
 
 private abbrev Aux := List (Nat × Nat × Bvi.Exp)
 
-private def compileAuxFuel (fuel k args : Nat) (body : Bvi.Exp) : Option Aux := do
+def compileAuxFuel (fuel k args : Nat) (body : Bvi.Exp) : Option Aux := do
   let body ← BviLet.compileBounded fuel [] 0 body
   pure [(bvlNumStubs + bvlToBviNamespaces * k + 1, args, body)]
 
@@ -70,12 +71,19 @@ def compileListFuel : Nat → Nat → Nat → List Bvl.Exp → Option (List Bvi.
       pure (x :: xs, a ++ b, n)
 end
 
+/-- Preserve successful traversals and retry exhausted ones with a structural
+bound. The BVI let optimizer has its own independently proved bound. -/
+def compileBounded (fuel optFuel n : Nat) (exp : Bvl.Exp) : Option (Bvi.Exp × Aux × Nat) :=
+  match compileFuel fuel optFuel n exp with
+  | some result => some result
+  | none => compileFuel (max fuel (expBudget exp + 1)) optFuel n exp
+
 /-- Compile one labeled function and its auxiliary functions. The BVI let
 optimization and expression conversion share the explicit checked bounds. -/
 def compileSingleFuel (fuel optFuel n : Nat) (p : Nat × Nat × Bvl.Exp) :
     Option (List (Nat × Nat × Bvi.Exp) × Nat) := do
   let (name, args, exp) := p
-  let (exp, aux, n) ← compileFuel fuel optFuel n exp
+  let (exp, aux, n) ← compileBounded fuel optFuel n exp
   let exp ← BviLet.compileBounded optFuel [] 0 exp
   pure ((bvlNumStubs + bvlToBviNamespaces * name, args, exp) :: aux, n)
 
