@@ -109523,5 +109523,31 @@
     "lean_name": "headLetOp",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the inferred typed source declaration in bvl_inline_state_rel_probe.out. The original singleton equality uses HOL HD; holHd retains HOL's unspecified empty-list behavior, and let_op on a singleton is nonempty."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/VarListEvaluate.lean",
+    "hol_name": "var_list_IMP_evaluate",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "hol_line": 1449,
+    "lean_name": "varListEvaluate",
+    "reviewer": "Compared the typed original local proof replay in bvl_inline_state_rel_probe.out. The expression list, independently supplied BVL expression list used only for the length test, value lists, generic compiler and FFI state carriers, original conjunction and result/state equality match; this binding covers the general consecutive variable list beginning at the prefix length and evaluates to the entire value segment in prefix ++ values ++ env. The local canonical state roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/VarListEvaluate.lean",
+    "hol_name": "var_list_IMP_evaluate",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "hol_line": 1468,
+    "lean_name": "varListEvaluate_zero",
+    "reviewer": "Compared the typed original local proof replay in bvl_inline_state_rel_probe.out. The expression list, independently supplied BVL expression list used only for the length test, value lists, generic compiler and FFI state carriers, original conjunction and result/state equality match; this binding covers the zero-based specialization and values ++ env. The local canonical state roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
   }
 ]

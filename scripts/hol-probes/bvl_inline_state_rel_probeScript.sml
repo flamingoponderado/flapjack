@@ -365,6 +365,35 @@ val in_evaluate_Call = prove(
   metis_tac [evaluate_initial_state,in_state_rel_def]);
 
 val _ = show "in_evaluate_Call_replay=" in_evaluate_Call;
+val var_list_IMP_evaluate = prove(
+  ``!a2 a1 l (xs :bvl$exp list) (s :('a, 'b) state).
+      var_list (LENGTH a1) l xs /\ LENGTH xs = LENGTH a2 ==>
+      evaluate (l,a1++a2++env,s) = (Rval a2,s)``,
+  Induct THEN1
+   (fs [APPEND_NIL,var_list_def]
+    \\ Cases_on `l` \\ fs [var_list_def,evaluate_def]
+    \\ Cases_on `h` \\ fs [var_list_def,evaluate_def])
+  \\ Cases_on `xs` \\ fs [LENGTH]
+  \\ Cases_on `l` \\ fs [var_list_def]
+  \\ Cases_on `h'` \\ fs [var_list_def]
+  \\ once_rewrite_tac [evaluate_CONS]
+  \\ fs [evaluate_def,EL_LENGTH_APPEND] \\ rw []
+  \\ simp_tac std_ss [GSYM APPEND_ASSOC,APPEND]
+  \\ first_x_assum (qspec_then `a1 ++ [h']` mp_tac)
+  \\ fs [] \\ rw [] \\ res_tac
+  \\ full_simp_tac std_ss [GSYM APPEND_ASSOC,APPEND]
+  \\ fs [EL_LENGTH_APPEND]);
+
+val _ = show "var_list_IMP_evaluate_general_replay=" var_list_IMP_evaluate;
+val var_list_IMP_evaluate = prove(
+  ``var_list 0 l xs /\ LENGTH (xs:bvl$exp list) = LENGTH a ==>
+    evaluate (l,a++env,(s :('a, 'b) state)) = (Rval a,s)``,
+  rw []
+  \\ match_mp_tac (Q.SPECL [`xs`,`[]`] var_list_IMP_evaluate
+       |> SIMP_RULE std_ss [APPEND,LENGTH])
+  \\ asm_exists_tac \\ fs []);
+
+val _ = show "var_list_IMP_evaluate_zero_replay=" var_list_IMP_evaluate;
 val do_app_lemma_replay = prove (do_app_lemma_goal,
   Cases_on `op = Install` THEN1
    (rw [] \\ fs [do_app_def]
