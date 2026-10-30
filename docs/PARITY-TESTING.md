@@ -529,6 +529,18 @@ Set `--annotation-cases=320` to exhaust the annotation matrix; its order is
 shuffled deterministically from `--edge-seed`, and its entries include both
 successful programs and diagnostic errors.
 
+On 2026-10-30, a further 28 complete-output comparisons matched the pinned
+compiler (12 generated programs, 12 diverse programs and four backend option
+combinations):
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --compile-seed 862135 --edge-seed 33421 --type-cases 0 --sexp-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --declaration-cases 0 --handler-cases 0 --annotation-cases 0 --byte-cases 0 \
+  --config-error-cases 0 --compile-cases 12 --rich-cases 12 --config-cases 4
+```
+
 Another 2026-10-30 run compared complete RISC-V assembly and stderr for 20
 generated programs, 20 diverse programs and six backend option combinations;
 all matched the pinned executable. Reproduce it with:

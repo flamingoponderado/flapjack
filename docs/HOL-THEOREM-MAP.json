@@ -1,5 +1,35 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_decode_pos",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_decodePos",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. Position decoding preserves an empty global bag."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_decode_test",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_decodeTest",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. Both atomic test forms preserve an empty global bag."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_decode_guard",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_decodeGuard",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. Every guard constructor preserves an empty global bag."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_compile_pat_bindings",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_compilePatBindings",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. EVERY requires an empty bag for every expression in the pattern, natural, expression worklist. The output global bag is exactly the continuation bag."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_naive_pattern_match",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_naivePatternMatch",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 1952-2023 and inferred types in flat_pattern_global_flag_probe.out. Global bags have the HOL num -> num carrier, and traces, expression, pattern and decision carriers match the tagged syntax. EVERY is represented by membership quantification over pattern-expression pairs, with an empty bag required of each second component."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "esgc_free_compile_pats",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean",

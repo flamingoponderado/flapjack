@@ -34,3 +34,8 @@ val _ = show_thm "esgc_bindings=" flat_patternProofTheory.esgc_free_compile_pat_
 val _ = show_thm "esgc_naive_match=" flat_patternProofTheory.esgc_free_naive_pattern_match;
 val _ = show_thm "esgc_naive_matches=" flat_patternProofTheory.esgc_free_naive_pattern_matches;
 val _ = show_thm "esgc_compile_pats=" flat_patternProofTheory.esgc_free_compile_pats;
+val _ = show_thm "globals_decode_pos=" flat_patternProofTheory.set_globals_decode_pos;
+val _ = show_thm "globals_decode_test=" flat_patternProofTheory.set_globals_decode_test;
+val _ = show_thm "globals_decode_guard=" flat_patternProofTheory.set_globals_decode_guard;
+val _ = show_thm "globals_bindings=" flat_patternProofTheory.set_globals_compile_pat_bindings;
+val _ = show_thm "globals_naive_match=" flat_patternProofTheory.set_globals_naive_pattern_match;
