@@ -597,6 +597,7 @@ import Flapjack.Compiler.Backend.BackendPasses.Bvi
 import Flapjack.Compiler.Backend.BackendPasses.Data
 import Flapjack.Compiler.Backend.BackendPasses.Word
 import Flapjack.Compiler.Backend.BackendPasses.WordOptimise
+import Flapjack.Compiler.Backend.BackendPasses.Stack
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.SecLabelOk
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory

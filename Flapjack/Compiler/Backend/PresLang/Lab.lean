@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.PresLang.Asm
 import Flapjack.Compiler.Backend.PresLang.Clos
 import Flapjack.Compiler.Backend.LabLang
+import Flapjack.Compiler.Backend.LabSem.State
 
 /-! Labelled-assembly explorer display, following the `lab_*_to_display_def`
 and `lab_to_strs_def` definitions in `presLangScript.sml`. The representation
@@ -15,6 +16,36 @@ abbrev Operation (width : Nat) := LabLang.AsmWithLab Cmp (WordRegImm (BitVec wid
 abbrev Instruction (width : Nat) := LabLang.AsmOrCbw (AsmData width) WordMemOp (WordLangAddr (BitVec width))
 abbrev Line (width : Nat) := LabLang.Line (Instruction width) (Operation width) (BitVec width)
 abbrev Section (width : Nat) := LabLang.Section (Line width)
+
+private def assemblyFromHol {width : Nat} [NeZero width] : HolAsm width → AsmData width
+  | .inst i => .inst i.toWordLangInst
+  | .jump w => .jump w
+  | .jumpCmp c r imm w => .jumpCmp c r imm.toWordRegImm w
+  | .call w => .call w
+  | .jumpReg r => .jumpReg r
+  | .loc r w => .loc r w
+
+private def operationFromHol {width : Nat} [NeZero width] :
+    LabLang.AsmWithLab Cmp (HolRegImm width) MlString → Operation width
+  | .jump target => .jump target
+  | .jumpCmp c r imm target => .jumpCmp c r imm.toWordRegImm target
+  | .call target => .call target
+  | .locValue r target => .locValue r target
+  | .callFFI name => .callFFI name
+  | .install => .install
+  | .halt => .halt
+
+private def lineFromHol {width : Nat} [NeZero width] : LabSem.LabLineHOL width → Line width
+  | .label s n len => .label s n len
+  | .asm (.asmi inst) encoded len => .asm (.asmi (assemblyFromHol inst)) encoded len
+  | .asm (.cbw a b) encoded len => .asm (.cbw a b) encoded len
+  | .asm (.shareMem op r addr) encoded len => .asm (.shareMem op r addr.toWordLangAddr) encoded len
+  | .labAsm op pos encoded len => .labAsm (operationFromHol op) pos encoded len
+
+/-- Convert the source-shaped labelled program through the existing checked
+assembly payload codecs, retaining labels and encoding metadata. -/
+def fromHol {width : Nat} [NeZero width] (program : LabSem.LabProgHOL width) : List (Section width) :=
+  program.map fun sec => ⟨sec.sectionId, sec.lines.map lineFromHol⟩
 
 private def item (name : String) (xs : List DisplayExpr) : DisplayExpr := .item none name xs
 private def number (n : Nat) : DisplayExpr := .string (toString n)

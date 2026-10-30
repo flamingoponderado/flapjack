@@ -15,6 +15,9 @@ spec.loader.exec_module(parity)
 
 # Each program makes the computed result observable through an output call.
 CASES = {
+    'explore_frontend': 'datatype t = A | B int; fun f x = case x of A => ~1 | B n => n; val x = f (B 7);',
+    'explore_basis': 'val _ = print "x";',
+    'explore_no_optimisations': 'fun f x = x; val y = f 3;',
     'list_take_length': 'val _ = print_int (List.length (List.take [1,2,3] 2));',
     'list_drop_length': 'val _ = print_int (List.length (List.drop [1,2,3] 1));',
     'let_tuple_pattern': 'fun f x = let val (a,b) = x in a+b end; val _ = print_int (f (4,5));',
@@ -129,6 +132,9 @@ CASES = {
 }
 
 CASE_ARGS = {
+    'explore_frontend': ['--explore', '--exclude_prelude=true'],
+    'explore_basis': ['--explore'],
+    'explore_no_optimisations': ['--explore', '--exclude_prelude=true', '--multi=false', '--known=false', '--call=false'],
     'basis_simple_allocator': ['--reg_alg=0'],
     'basis_generational_gc': ['--gc=gen100'],
     'basis_without_closure_optimisations': ['--multi=false', '--known=false', '--call=false'],
@@ -177,8 +183,8 @@ def main():
         rows = {name: run(args.record_reference, source, name) for name, source in CASES.items()}
         for name, row in rows.items():
             expected_exit = 1 if name in ERROR_CASES else 0
-            is_types = any(flag in CASE_ARGS.get(name, [])
-                           for flag in ('--types', '--print_sexp', '--explore'))
+            is_types = (any(flag in CASE_ARGS.get(name, []) for flag in ('--types', '--print_sexp')) or
+                        (name in ERROR_CASES and '--explore' in CASE_ARGS.get(name, [])))
             if (row['exit_code'] != expected_exit or
                     (row['stdout_bytes'] != 0 if is_types else row['stdout_bytes'] == 0) or
                     (row['stderr_bytes'] == 0 if is_types else row['stderr_bytes'] != 0)):
@@ -200,10 +206,6 @@ def main():
         if got != want:
             raise SystemExit(f'{name}: output mismatch\nexpected {want}\nactual   {got}')
         print(f'{name}: complete stdout, stderr and exit status match pinned CakeML', flush=True)
-    unsupported = subprocess.run([str(args.cake), '--target=riscv', '--explore', '--exclude_prelude=true'],
-                                 input=b'val x = 1;', stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
-    if unsupported.returncode != 2 or unsupported.stdout or b'unsupported option: --explore' not in unsupported.stderr:
-        raise SystemExit('successful explore mode must remain explicitly unsupported until its output is ported')
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ import Flapjack.CakeHelp
 import Flapjack.CakeFeatures
 import Flapjack.CakeParser.FromSexp.Ast
 import Flapjack.CakeParser.ToSexp
+import Flapjack.Compiler.Backend.BackendPasses.Stack
 
 /-! Experimental CakeML source-to-RISC-V command. The frontend and backend
 are still bounded ports, the original diagnostics and full CLI are incomplete,
@@ -332,9 +333,9 @@ private def parseInput (options : Options) (fuel : Nat) (source : List HolChar) 
       | some decls => .success decls
   else Flapjack.CakeParser.Frontend.parseSourceFuel fuel fuel source
 
-/-- Run the currently supported CakeML frontend and backend options. This is
-Flapjack CLI infrastructure, not a port of the full HOL compiler driver. -/
-def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedSourceResult := Id.run do
+/-- Construct the backend settings shared by normal compilation and explorer
+capture. This is Flapjack CLI infrastructure. -/
+private def backendConfig (options : Options) : Backend.Config := Id.run do
   let base := RiscVConfig.riscvBackendConfigExecutable
   let maxApp := options.maxApp.getD base.closConf.maxApp
   let inlineFactor := options.inlineFactor.getD ClosKnown.defaultInlineFactor
@@ -342,7 +343,7 @@ def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedS
     (ClosKnown.defaultMaxBodySize maxApp inlineFactor)
   let knownConf := if options.known.getD base.closConf.knownConf.isSome then
     some (ClosKnown.mkConfig maxBodySize inlineFactor) else none
-  let config := { base with
+  return { base with
     closConf := { base.closConf with
       doMti := options.multi.getD base.closConf.doMti
       doCall := options.call.getD base.closConf.doCall
@@ -366,6 +367,11 @@ def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedS
       jump := options.jump.getD base.stackConf.jump
       perfCalls := options.perfCallgraph.getD base.stackConf.perfCalls }
     labConf := { base.labConf with hashSize := options.hashSize.getD base.labConf.hashSize } }
+
+/-- Run the currently supported CakeML frontend and backend options. This is
+Flapjack CLI infrastructure, not a port of the full HOL compiler driver. -/
+def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedSourceResult := Id.run do
+  let config := backendConfig options
   let fuel := sourceFuel source
   match parseInput options fuel source with
   | .exhausted => return .parseExhausted
@@ -402,6 +408,50 @@ private def outputOnlyBytes (options : Options) (source : List HolChar) :
       Flapjack.CakeParser.Sexp.render (Flapjack.CakeParser.ToSexp.program full)
   else
     return []
+
+/-- Run the configured explorer passes and write each completed group in
+original order. Parsing and inference errors are handled by the caller before
+this function; bounded compilation failures remain explicit. -/
+private def exploreBytes (options : Options) (source : List HolChar) : IO UInt32 := do
+  let fuel := sourceFuel source
+  let .success decls := parseInput options fuel source | do
+    IO.eprintln "cake: parser or lexer exhausted its execution bound"
+    return 1
+  let full := if options.excludePrelude then decls else Flapjack.Basis.BasisProg.basis ++ decls
+  let config := backendConfig options
+  let asm := Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig
+  let dataConf := { config.dataConf with hasFpOps := decide (1 < asm.fpRegCount), hasFpTern := false }
+  let config := { config with dataConf := dataConf }
+  let front := BackendPasses.captureFrontend config.sourceConf full
+  let some clos := BackendPasses.captureClosure fuel config.closConf front.closure | do
+    IO.eprintln "cake: compiler backend could not compile this program"
+    return 1
+  let some bvi := BackendPasses.captureBvi fuel config.bvlConf clos | do
+    IO.eprintln "cake: compiler backend could not compile this program"
+    return 1
+  let some data := BackendPasses.captureData fuel bvi | do
+    IO.eprintln "cake: compiler backend could not compile this program"
+    return 1
+  let some word := BackendPasses.captureWord64 dataConf data | do
+    IO.eprintln "cake: compiler backend could not compile this program"
+    return 1
+  let optimised := BackendPasses.captureWordOptimise asm config.wordToWordConf word
+  let stack := BackendPasses.captureStack asm config optimised
+  let assembled := LabToTarget.compileLab asm config.labConf stack.filtered
+  let stdout ← IO.getStdout
+  let write (bytes : List HolChar) : IO Unit :=
+    stdout.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
+  write (BackendPasses.frontendReportBytes front)
+  write (BackendPasses.closureReportBytes clos)
+  write (BackendPasses.bviReportBytes bvi)
+  write (BackendPasses.dataReportBytes data)
+  write (BackendPasses.wordReportBytes word)
+  write (BackendPasses.wordOptimiseReportBytes optimised)
+  write (BackendPasses.stackReportBytes stack)
+  if assembled.isNone then
+    IO.eprint "### ERROR: assembly error\nProgram exited with nonzero exit code.\n"
+    return 1
+  return 0
 
 def main (args : List String) : IO UInt32 := do
   if args.contains "--repl" || args.contains "--candle" then
@@ -487,8 +537,7 @@ def main (args : List String) : IO UInt32 := do
       some (outputOnlyBytes options chars) else none
     if let some (.ok bytes) := typeOutput then
       if options.explore && !options.onlyTypes && !options.onlySexp then
-        IO.eprintln s!"cake: unsupported option: --explore\n{usage}"
-        return 2
+        return ← exploreBytes options chars
       let stderr ← IO.getStderr
       stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
       return 0

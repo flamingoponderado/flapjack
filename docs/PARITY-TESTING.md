@@ -484,8 +484,11 @@ also checks that
 order, including parse and type failures.
 It also checks `--print_sexp` output for declarations, modules, byte escapes,
 the full prelude, S-expression input, and parse and type errors. The `--explore`
-cases verify parse and type errors before backend exploration;
-successful exploration remains unsupported. Use
+cases verify parse and type errors before backend exploration and compare the
+complete output of successful RISC-V explorations through lab filtering, with
+and without the standard prelude and with closure optimizations disabled.
+The separate `scripts/check-cake-*-explore.py` checks compare each stage group
+against the pinned executable. Use
 `--check-reference /path/to/pinned/cake` to rerun the original alongside
 Flapjack, or `--record-reference /path/to/pinned/cake` to regenerate captures;
 both commands verify the reported CakeML and HOL revisions. These finite
