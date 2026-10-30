@@ -262,7 +262,7 @@ run_probe clos_to_bvl_recursive_types_probeScript.sml clos_to_bvl_recursive_type
   "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvl_inline_state_rel_probeScript.sml bvl_inline_state_rel_probe.out \
-  state_rel evaluate_remove_ticks do_app_lemma_typed_goal do_app_lemma_replay \
+  state_rel evaluate_remove_ticks remove_ticks_cc remove_ticks_co evaluate_compile_prog do_app_lemma_typed_goal do_app_lemma_replay \
   "$cake_dir/compiler/backend/proofs/bvl_inlineProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe bvl_remove_ticks_probeScript.sml bvl_remove_ticks_probe.out \

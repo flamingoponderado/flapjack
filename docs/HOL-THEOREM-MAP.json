@@ -108838,4 +108838,33 @@
     "lean_name": "evaluateRemoveTicks",
     "reviewer": "Compared the complete typed original evaluate_remove_ticks theorem in bvl_inline_state_rel_probe.out: arbitrary clock, expression list, environment, source and optimized states, result and final state; the conjunction of state relation, clock equality and optimized evaluation implies existence of an extra clock and source final state with the same result and related final state. All source cases are assembled by strong induction on clock and expression weight, without extra success or target-evaluation hypotheses. Compiler and FFI types remain independent, and the local canonical witness covers refs only; evaluator operations inherit floating-point real-carrier assumptions."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CompileProg.lean",
+    "hol_name": "remove_ticks_cc_def",
+    "lean_name": "removeTicksCc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source in bvl_inline_state_rel_probe.out: compiler configuration, program label, arity and result are four independent type variables. The adapter maps only each BVL expression through removeTicksSing, equal to HD of singleton removeTicks by the checked singleton equivalence, before calling the original compiler."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CompileProg.lean",
+    "hol_name": "remove_ticks_co_def",
+    "lean_name": "removeTicksCo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source in bvl_inline_state_rel_probe.out: configuration, program label and arity are independent type variables. The adapter keeps configuration, labels and arities and maps each body using the checked singleton tick-removal equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CompileProg.lean",
+    "hol_name": "evaluate_compile_prog",
+    "lean_name": "evaluateCompileProg",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed original implication in bvl_inline_state_rel_probe.out: the optimized initial entry-point evaluation implies existence of additional clock and a source final state with the same result and identical FFI. Code mapping preserves the exact Spt carrier; the oracle and compiler adapters retain the source composition and mapped bodies. The compiler and FFI variables are independent; the local canonical witness covers refs only. The evaluator inherits floating-point real-carrier assumptions."
+  }
 ]
