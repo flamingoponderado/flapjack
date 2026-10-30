@@ -109769,5 +109769,23 @@
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the typed replay of the original local proof in bvl_const_rel_probe.out. Arbitrary expression list, environment, independent compiler and FFI state parameters, non-type-error hypothesis and equality of result and final state match. The source MAP delete_var is the executed Lean list map. The local canonical roundtrip witnesses refs; the reviewed evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Extract.lean",
+    "hol_name": "extract_def",
+    "lean_name": "extractSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred polymorphic suffix-list type and all original clauses in bvl_const_frontend_probe.out: Var uses the list length plus one, integer constants ignore argument expressions, empty Cons is retained, and every other input returns None. extractList_cons proves the production extractor returns the same result for every expression and suffix."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/DeleteVar.lean",
+    "hol_name": "evaluate_delete_var_Rval",
+    "lean_name": "evaluate_deleteVar_list_success",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the inferred typed replay of the entire original local proof in bvl_const_rel_probe.out. The original successful evaluation, arbitrary related source and target environments, independent compiler/FFI state parameters, existential output values, exact final state and extracted-annotation environment relation are preserved. The untagged envRel and valueRel bodies were separately compared with their captured source equations, including their universally quantified state using this same State carrier. The local roundtrip witnesses refs and the evaluator inherits floating-point real-carrier assumptions."
   }
 ]

@@ -43,4 +43,36 @@ val evaluate_delete_var_Rerr_replay = prove (``
   \\ fs [evaluate_def,do_app_def,do_int_app_def] \\ rw []
   \\ fs[AllCaseEqs()]);
 val _ = show "evaluate_delete_var_Rerr_replay=" evaluate_delete_var_Rerr_replay;
+val evaluate_delete_var_Rval_replay = prove (``
+  !xs env2 s a r ax env.
+    evaluate (xs,env2,s:('c,'ffi) bvlSem$state) = (Rval a,r) /\
+    env_rel (:'c) (:'ffi) ax env env2 ==>
+    ?b. evaluate (MAP delete_var xs,env2,s) = (Rval b,r) /\
+        env_rel (:'c) (:'ffi) (extract_list xs ++ ax) (a ++ env) (b ++ env2)``,
+  Induct \\ fs [env_rel_def,extract_list_def]
+  \\ once_rewrite_tac [evaluate_CONS]
+  \\ rw [] \\ Cases_on `evaluate ([h],env2,s)` \\ fs []
+  THEN1 (imp_res_tac evaluate_IMP_LENGTH \\ Cases_on `a` \\ fs [])
+  \\ Cases_on `q` \\ fs []
+  \\ Cases_on `?i. h = Var i` \\ fs []
+  THEN1
+   (rw [] \\ fs [delete_var_def,evaluate_def,do_app_def,do_int_app_def]
+   \\ gvs[AllCaseEqs()]
+    \\ res_tac \\ fs [extract_def,env_rel_def] \\ rw []
+    \\ fs [v_rel_def,LLOOKUP_EQ_EL]
+    \\ imp_res_tac evaluate_IMP_LENGTH \\ fs []
+    \\ fs [GSYM ADD1,ADD_CLAUSES,EL_APPEND2])
+  \\ `delete_var h = h` by (Cases_on `h` \\ fs [delete_var_def]) \\ fs []
+  \\ Cases_on `evaluate (xs,env2,r')` \\ fs [] \\ Cases_on `q` \\ fs []
+  \\ res_tac \\ fs [] \\ rw []
+  \\ Cases_on `extract h xs` \\ fs [env_rel_def]
+  \\ imp_res_tac evaluate_SING \\ rw [] \\ fs []
+  \\ Cases_on `h` \\ fs [extract_def]
+  \\ rename1 `bvl_const$extract (Op opp ll) _ = SOME xx`
+  \\ Cases_on `opp` \\ fs [extract_def]
+  >| map Cases_on [`i`,`b'`] \\ fs [extract_def] \\ rw []
+  \\ every_case_tac \\ fs []
+  \\ fs [v_rel_def,NULL_EQ,evaluate_def,do_app_def,oneline do_int_app_def]
+  \\ gvs[AllCaseEqs()]);
+val _ = show "evaluate_delete_var_Rval_replay=" evaluate_delete_var_Rval_replay;
 val _ = show "evaluate_env_rel=" evaluate_env_rel;
