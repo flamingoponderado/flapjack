@@ -103,6 +103,14 @@ val _ = example "build_collision_value=" ``FST (bvlSem$do_build_const [closLang$
 val _ = example "build_collision_ref=" ``FLOOKUP (SND (bvlSem$do_build_const [closLang$Str «x»]
   (FEMPTY |+ (0,bvlSem$ValueArray [])))) 1``;
 val _ = typ "do_app_type=" ``bvlSem$do_app``;
+val _ = show "v_to_bytes=" bvlSemTheory.v_to_bytes_def;
+val _ = show "v_to_words=" bvlSemTheory.v_to_words_def;
+val _ = typ "v_to_bytes_type=" ``bvlSem$v_to_bytes``;
+val _ = typ "v_to_words_type=" ``bvlSem$v_to_words``;
+val _ = example "install_words=" ``bvlSem$v_to_words
+  (bvlSem$list_to_v [bvlSem$Word64 (1w:word64); bvlSem$Word64 (2w:word64)])``;
+val _ = example "install_bytes=" ``bvlSem$v_to_bytes
+  (bvlSem$list_to_v [bvlSem$Number 1; bvlSem$Number 255])``;
 val base_state = ``((ARB:(unit,unit) bvlSem$state) with
   <|globals := [SOME (bvlSem$Number 10); SOME (bvlSem$Number 20)];
     refs := FEMPTY |+ (0,bvlSem$ValueArray [bvlSem$Number 7; bvlSem$Number 9])|>)``;

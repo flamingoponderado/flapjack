@@ -1,27 +1,20 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyMemory
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 
 /-! BVL installation and primitive application. -/
 namespace Flapjack.Compiler.Backend.BvlSem
 open Flapjack.SemanticPrimitivesHOL
 
-private def wordValues : List Value → Option (List (BitVec 64))
-  | [] => some []
-  | .word64 word :: values => do
-    let rest ← wordValues values
-    pure (word :: rest)
-  | _ => none
-
 /-- Source-shaped installation, including code-domain and oracle checks.
-This is Flapjack infrastructure pending source review of the choice-based
-value decoders and the complete dispatcher; it is not yet a tagged HOL port. -/
+This is Flapjack infrastructure pending source review of the decoders against
+HOL's choice operator and of the complete dispatcher; it is not yet a tagged HOL port. -/
 noncomputable def doInstall {C F : Type} (args : List Value) (s : State C F) :
     Result (Value × State C F) Value := by
   classical
   let fail : Result (Value × State C F) Value := .err (.abort .typeError)
   exact match args with
   | [v1, v2] =>
-    match (valueToList v1).bind byteNumbers, (valueToList v2).bind wordValues with
+    match valueToBytes v1, valueToWords v2 with
     | some bytes, some data =>
       let (cfg, progs) := s.compileOracle 0
       let newOracle := fun n => s.compileOracle (n + 1)

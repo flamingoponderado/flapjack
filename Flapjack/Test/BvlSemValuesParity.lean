@@ -205,4 +205,12 @@ example {C F : Type} (s : State C F)
     (evaluate [.call 1 (some 4) [.var 0]] [.number 7] s).2.clock = 1 := by
   simp [evaluate, fixClock, findCode, code, clock, decClock]
 
+example : valueToBytes (listToValue [.number 1, .number 255]) = some [1, 255] := by
+  rw [valueToBytes_eq_some, valueToList_listToValue]
+  rfl
+
+example : valueToWords (listToValue [.word64 1, .word64 2]) = some [1, 2] := by
+  rw [valueToWords_eq_some, valueToList_listToValue]
+  rfl
+
 end Flapjack.Test.BvlSemValuesParity

@@ -75,6 +75,12 @@ build_string_ref=SOME (ByteArray T [(97w :word8); (98w :word8)] :v ref)
 build_collision_value=(RefPtr T (1 :num) :v)
 build_collision_ref=SOME (ByteArray T [(120w :word8)] :v ref)
 do_app_type=:closLang$op -> v list -> (α, β) state -> (v # (α, β) state, v) result
+v_to_bytes=∀(lv :v). v_to_bytes lv = some(ns :word8 list). v_to_list lv = SOME (MAP (Number ∘ $& ∘ (w2n :word8 -> num)) ns)
+v_to_words=∀(lv :v). v_to_words lv = some(ns :word64 list). v_to_list lv = SOME (MAP Word64 ns)
+v_to_bytes_type=:v -> word8 list option
+v_to_words_type=:v -> word64 list option
+install_words=some(ns :word64 list). [(Word64 (1w :word64) :v); (Word64 (2w :word64) :v)] = MAP Word64 ns
+install_bytes=some(ns :word8 list). [(Number (1 :int) :v); (Number (255 :int) :v)] = MAP (Number ∘ $& ∘ (w2n :word8 -> num)) ns
 app_global=SOME (Number (10 :int) :v)
 app_global_dynamic=SOME (Number (20 :int) :v)
 app_set_overwrite=SOME (Number (42 :int) :v)
