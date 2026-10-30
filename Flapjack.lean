@@ -563,6 +563,8 @@ import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 import Flapjack.Compiler.Backend.BvlToBvi.Stubs
 import Flapjack.Compiler.Backend.BviLet.Compile
 import Flapjack.Compiler.Backend.BviLet.Proofs.Total
+import Flapjack.Compiler.Backend.BviLet.Proofs.SourceAgreement
+import Flapjack.Test.BviLetSourceParity
 import Flapjack.Compiler.Backend.BvlToBvi.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Total
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values

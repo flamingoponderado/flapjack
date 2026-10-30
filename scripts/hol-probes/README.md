@@ -9193,3 +9193,5 @@ correspondence remains a separate obligation.
 dependency analyses, Eval detection, and elimination state relations, with
 sample closure and tuple lookups. The Lean relation ports remain pending full
 carrier and dependency review.
+
+`bvi_let_compile_probe.out` captures the typed original single-expression and list optimizer equations, the entry-point correspondence, and tail-position, variable-propagation, and empty-let examples. `Flapjack/Test/BviLetSourceParity.lean` replays these observations. Regenerate with `HOL_PROBE_ONLY=bvi_let_compile_probeScript.sml scripts/hol-probes/regenerate.sh`.

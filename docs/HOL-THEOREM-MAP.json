@@ -110412,5 +110412,21 @@
     "refs"
   ],
   "reviewer": "Compared every typed source case in bvl_to_bvi_value_rel_probe.out: pointer membership is lookup presence, blocks recursively require EVERY child, and numbers, words and code pointers are unrestricted. bvOkList_iff checks the list recursion against membership quantification. The local parameter witness records the canonical finite-map roundtrip."
+},
+{
+  "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BviLet/SourceSing.lean",
+  "hol_name": "compile_sing_def",
+  "statement_status": "reviewed_exact",
+  "lean_name": "compileSing",
+  "reviewer": "Compared the typed original mutual equations in bvi_let_compile_probe.out, including all constructors, variable offset lookup, empty let, nonempty tail-position conversion using LAST and BUTLAST, ordinary let, handler environment and multi-return continuation. The structurally sufficient-fuel agreement with the executable is proved; arbitrary low-fuel success remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BviLet/SourceSing.lean",
+  "hol_name": "compile_sing_def",
+  "statement_status": "reviewed_exact",
+  "lean_name": "compileList",
+  "reviewer": "Compared the list clauses of the typed original mutual definition in bvi_let_compile_probe.out: the empty list and recursive head-and-tail traversal call compileSing with the unchanged environment and offset."
 }
 ]

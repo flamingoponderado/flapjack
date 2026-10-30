@@ -561,6 +561,10 @@ run_probe bvl_const_frontend_probeScript.sml bvl_const_frontend_probe.out \
 run_probe bvl_const_rel_probeScript.sml bvl_const_rel_probe.out \
   value_rel env_rel env_rel_length env_rel_LLOOKUP_NONE_replay env_rel_LOOKUP_SOME_replay evaluate_delete_var_Rerr_SING evaluate_delete_var_Rerr_replay evaluate_delete_var_Rval_replay dest_simple_eq_replay case_op_const_eq_replay SmartOp2_thm_replay SmartOp_flip_thm_replay SmartOp1_thm evaluate_env_rel "$cake_dir/compiler/backend/proofs/bvl_constProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe bvi_let_compile_probeScript.sml bvi_let_compile_probe.out \
+  compile_sing_def compile_sing compile_exp_def compile_exp_eq compile_tail compile_vars compile_empty \
+  "$cake_dir/compiler/backend/bvi_letScript.sml" "$cake_dir/compiler/backend"
+
 run_probe bvl_to_bvi_value_rel_probeScript.sml bvl_to_bvi_value_rel_probe.out \
   adjust_bv_def adjust_bv_Unit adjust_bv_Boolv adjust_nested aux_code_installed aux_code_installed_APPEND_replay aux_code_installed_subspt isVar_def bVarBound_def let_ok_def handle_ok_def handle_ok_CONS handle_ok_EVERY handle_good handle_bad names_ok_def state_rel_def state_rel_FLOOKUP_byteArray state_rel_FLOOKUP_valueArray state_rel_FLOOKUP_MutBlock state_rel_FLOOKUP_Thunk bv_ok_def bv_ok_Unit "$cake_dir/compiler/backend/proofs/bvl_to_bviProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
