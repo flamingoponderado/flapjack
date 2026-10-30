@@ -1,3 +1,7 @@
+`flat_to_clos_globals_probe.out` captures typed closure global-write and safety
+definitions and the SmartCons preservation lemmas. Regenerate with
+`HOL_PROBE_ONLY=flat_to_clos_globals_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `backend_oracle_monotonic_probe.out` records typed state-oracle definitions and
 the generic invariant-based ordering theorem. Regenerate with
 `HOL_PROBE_ONLY=backend_oracle_monotonic_probeScript.sml scripts/hol-probes/regenerate.sh`.

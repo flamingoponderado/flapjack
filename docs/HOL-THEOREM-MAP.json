@@ -1,5 +1,47 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "op_gbag_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Globals.lean", "lean_name": "opGlobalBag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all operator cases and typed capture: only GlobOp SetGlobal contributes a singleton bag, all others are empty. HOL bags are num -> num multiplicity functions. Typed original captured in flat_to_clos_globals_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "set_globals_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Globals.lean", "lean_name": "setGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all eleven original expression clauses and typed carriers. Body and list bag union order, fixed syntax constructors, and mapped recursive-function bodies agree; funGlobals_eq_elist proves the helper equals the source map. Typed original captured in flat_to_clos_globals_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "set_globals_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Globals.lean", "lean_name": "elistGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the nil and cons clauses in the typed original mutual definition. Nat multiplicities and union order agree. Typed original captured in flat_to_clos_globals_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "esgc_free_def", "hol_line": 1836,
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Globals.lean", "lean_name": "esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the definition at line 1836 and typed capture: every expression constructor, EVERY traversal, Fn body empty bag and Letrec body bag and continuation agree. funGlobals_eq_elist and esgcFreeList_iff establish the helper equivalences. Typed original captured in flat_to_clos_globals_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "elist_globals_empty",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/GlobalInvariants.lean", "lean_name": "elistGlobals_empty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original quantified list and membership equivalence with the typed HOL theorem; bag equality and list membership are unchanged. Typed original captured in flat_to_clos_globals_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "set_globals_SmartCons",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_smartCons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared original typed theorem: for all trace, tag and expression list, SmartCons preserves the exact bag. The proof handles empty, nonconstant and folded-constant branches. Typed original captured in flat_to_clos_globals_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "esgc_free_SmartCons",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_smartCons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared original typed theorem: esgc_free of SmartCons is equivalent to EVERY esgc_free on its input. esgcFreeList_iff proves the structural list helper expresses EVERY. Typed original captured in flat_to_clos_globals_probe.out."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "state_co_def",
     "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "stateCo",
     "statement_status": "reviewed_exact",
