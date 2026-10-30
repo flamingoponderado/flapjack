@@ -15,8 +15,8 @@ open Flapjack.Basis.Pure.MlString
 
 /-- Assemble a prepared closure program with its application, force and
 initialization stubs. The caller supplies the result of HOL's `compile_common`;
-that preprocessing and the success of checked expression lowering remain
-unproved, so this is not the full HOL `compile` definition. -/
+checked expression lowering succeeds by `Proofs/Total.lean`, but correspondence
+of preprocessing remains unproved, so this is not the full HOL `compile` definition. -/
 def compilePrepared? (original current : Config) (es : List ClosLang.Exp)
     (prog : List (Nat × Nat × ClosLang.Exp)) :
     Option (Config × List (Nat × Nat × Bvl.Exp) × Spt MlString) := do

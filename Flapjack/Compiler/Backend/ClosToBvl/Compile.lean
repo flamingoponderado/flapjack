@@ -8,8 +8,8 @@ private abbrev Aux := List (Nat × Nat × Bvl.Exp)
 
 mutual
 /-- Flapjack's checked expression converter follows the source singleton
-clauses. Failure records the checked recursive-layout precondition; it is not
-yet a port of HOL's total `compile_exp_sing`. -/
+clauses. Its recursive-layout check always succeeds for the generated input,
+as proved in `Proofs/Total.lean`; HOL correspondence remains under review. -/
 def compileExp? (maxApp : Nat) : ClosLang.Exp → Aux → Option (Bvl.Exp × Aux)
   | .var _ v, aux => some (.var v, aux)
   | .ifThenElse _ x y z, aux => do
@@ -103,7 +103,7 @@ decreasing_by all_goals simp_wf <;> omega
 end
 
 /-- Compile each labeled expression and append its generated auxiliary code.
-This checked wrapper inherits the failure case of `compileExpList?`. -/
+The checked wrapper succeeds for every program by `compileProg_succeeds`. -/
 def compileProg? (maxApp : Nat) (prog : List (Nat × Nat × ClosLang.Exp)) :
     Option (List (Nat × Nat × Bvl.Exp)) := do
   let (exps, aux) ← compileExpList? maxApp (prog.map (fun (_, _, exp) => exp)) []

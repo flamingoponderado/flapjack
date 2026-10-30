@@ -416,6 +416,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Compile
 import Flapjack.Compiler.Backend.BvlJump
 import Flapjack.Compiler.Backend.ClosToBvl.Stubs
 import Flapjack.Compiler.Backend.ClosToBvl.Prepared
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Total
 import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.ClosAnnotate.Free
 import Flapjack.Compiler.Backend.ClosAnnotate.Shift
