@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recheck the source and flat explorer examples against pinned CakeML."""
+"""Recheck the source, flat and closure explorer examples against pinned CakeML."""
 import argparse
 import importlib.util
 import subprocess
@@ -32,6 +32,22 @@ FLAT_EXPECTED = (
     b'   ((Pvar x) (app (GlobalVarInit 2) (var_local x))))\n\n'
 )
 
+CLOS_EXPECTED = (
+    b'(dec\n   (let\n      ((b <- (op AllocGlobal (op (Const 1)))) (a <- (op (Cons 0))))\n'
+    b'      (op (SetGlobal 0) (var a))))\n\n'
+    b'(dec\n   (let\n      ((a <-\n            (let\n               ()\n'
+    b'               (op AllocGlobal (op (Const 3))))))\n      (op (Cons 0))))\n\n'
+    b'(dec (op (SetGlobal 1) (op Ref (op (Cons 0)))))\n\n'
+    b'(dec\n   (letrec<f> none none\n      ((a (b)\n            (let\n               ((c <- (var b)))\n'
+    b'               (if (op (TagLenEq 0 0) (var c))\n                  (op (Const ~1))\n'
+    b'                  (let\n                     ((d <- (op El (op (Const 0)) (var c))))\n'
+    b'                     (let\n                        ((e <- (var d)))\n                        (var e)))))))\n'
+    b'      (op (SetGlobal 2) (var a))))\n\n'
+    b'(dec\n   (let\n      ((a <-\n            (app none (op (Global 2))\n'
+    b'               (op (Constant (ConstCons 0 ((ConstInt 7))))))))\n'
+    b'      (let\n         ((b <- (var a)))\n         (op (SetGlobal 3) (var b)))))\n\n'
+)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -49,6 +65,10 @@ def main():
             if flat not in result.stdout:
                 raise SystemExit(f'original flat-stage output mismatch for {source!r}')
             print('original flat-stage output matches', flush=True)
+            clos = b'# after flat_to_clos\n\n' + CLOS_EXPECTED + b'# after clos_mti\n\n'
+            if clos not in result.stdout:
+                raise SystemExit(f'original closure-stage output mismatch for {source!r}')
+            print('original closure-stage output matches', flush=True)
         print(f'original source-stage output matches: {source!r}', flush=True)
 
 

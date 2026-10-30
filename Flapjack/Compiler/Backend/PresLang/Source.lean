@@ -34,7 +34,7 @@ def ident : Ident MlString MlString → DisplayExpr
   | .short n => item "Short" [text n]
   | .long n i => item "Long" [text n, ident i]
 
-private def integerText (i : Int) : String :=
+def integerText (i : Int) : String :=
   if i < 0 then "~" ++ toString i.natAbs else toString i
 
 /-- Display a source literal, including CakeML's unescaped character form. -/
@@ -64,7 +64,7 @@ def pattern : Pat → DisplayExpr
   | .pref p => item "Pref" [pattern p]
   | .ptannot p t => item "Ptannot" [pattern p, astType t]
 
-private def wordSize : WordSize → DisplayExpr
+def wordSize : WordSize → DisplayExpr
   | .w8 => .string "W8" | .w64 => .string "W64"
 
 private def primType : PrimType → DisplayExpr
@@ -80,23 +80,23 @@ private def arithmetic : Arith → DisplayExpr
   | .not => .string "Not" | .abs => .string "Abs" | .sqrt => .string "Sqrt"
   | .fma => .string "FMA"
 
-private def comparison : Opb → DisplayExpr
+def comparison : Opb → DisplayExpr
   | .lt => .string "Lt" | .gt => .string "Gt"
   | .leq => .string "Leq" | .geq => .string "Geq"
 
-private def test : Test → DisplayExpr
+def test : Test → DisplayExpr
   | .equal => .string "Equal"
   | .compare c => item "Compare" [comparison c]
   | .altCompare c => item "AltCompare" [comparison c]
 
-private def shift : Shift → DisplayExpr
+def shift : Shift → DisplayExpr
   | .lsl => .string "Lsl" | .lsr => .string "Lsr"
   | .asr => .string "Asr" | .ror => .string "Ror"
 
 private def thunkMode : ThunkMode → DisplayExpr
   | .evaluated => .string "Evaluated" | .notEvaluated => .string "NotEvaluated"
 
-private def thunk : ThunkOp → DisplayExpr
+def thunk : ThunkOp → DisplayExpr
   | .allocThunk m => item "AllocThunk" [thunkMode m]
   | .updateThunk m => item "UpdateThunk" [thunkMode m]
   | .forceThunk => .string "ForceThunk"
