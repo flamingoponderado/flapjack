@@ -579,6 +579,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ValueOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.RelocationOk
 import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyCode
 import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyClockShift
+import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShiftCases
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BuildOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ApplyOk
