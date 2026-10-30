@@ -109132,7 +109132,7 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the singleton Tick/Tick relation case, with original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus the body induction hypothesis with that same shape. The local witness covers refs only and the evaluator inherits floating-point real-carrier assumptions."
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the singleton Tick/Tick relation case, with original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus the body induction hypothesis with that same shape. The local witness covers refs only and the evaluator inherits floating-point real-carrier assumptions. The body induction hypothesis is scoped to source states with a strictly smaller clock, as in the evaluator recursion."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
@@ -109142,7 +109142,7 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the singleton Raise/Raise case, retaining the original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus a body induction hypothesis of the same shape. The canonical witness covers refs only; the evaluator inherits floating-point real-carrier assumptions."
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the singleton Raise/Raise case, retaining the original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus a body induction hypothesis of the same shape. The canonical witness covers refs only; the evaluator inherits floating-point real-carrier assumptions. The recursive induction hypotheses are scoped to source states whose clocks do not exceed the current source clock, as ensured by evaluator clock monotonicity."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
@@ -109172,7 +109172,7 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the nonempty-head/nonempty-tail list relation case. It retains the original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus head and tail induction hypotheses of that same shape. evaluateMono and subsptExpRel transport the tail relation across the source head evaluation. The witness covers refs only and the evaluator inherits floating-point real-carrier assumptions."
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the nonempty-head/nonempty-tail list relation case. It retains the original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus head and tail induction hypotheses of that same shape. evaluateMono and subsptExpRel transport the tail relation across the source head evaluation. The witness covers refs only and the evaluator inherits floating-point real-carrier assumptions. The recursive induction hypotheses are scoped to source states whose clocks do not exceed the current source clock, as ensured by evaluator clock monotonicity."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
@@ -109182,7 +109182,7 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the Let/Let expression-relation case, preserving the original state relation, expression relation, source evaluation, non-type-error premise, existential target evaluation and final relation, with binding and body induction hypotheses of the same shape. The body environment retains the original values ++ env order, and evaluateMono transports its relation through binding evaluation. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions."
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the Let/Let expression-relation case, preserving the original state relation, expression relation, source evaluation, non-type-error premise, existential target evaluation and final relation, with binding and body induction hypotheses of the same shape. The body environment retains the original values ++ env order, and evaluateMono transports its relation through binding evaluation. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions. The recursive induction hypotheses are scoped to source states whose clocks do not exceed the current source clock, as ensured by evaluator clock monotonicity."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
@@ -109192,7 +109192,7 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the Handle/Handle expression-relation case, with original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus body and handler induction hypotheses. A raised value is prepended to the handler environment and evaluateMono transports the handler relation after body evaluation. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions."
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the Handle/Handle expression-relation case, with original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus body and handler induction hypotheses. A raised value is prepended to the handler environment and evaluateMono transports the handler relation after body evaluation. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions. The recursive induction hypotheses are scoped to source states whose clocks do not exceed the current source clock, as ensured by evaluator clock monotonicity."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
@@ -109202,7 +109202,7 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the If/If expression-relation case, preserving the original hypotheses, target existential and final state relation. The condition and selected-branch induction hypotheses have the same simulation shape, with branch choice quantifying both source branches; evaluateMono transports the chosen relation after condition evaluation. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions."
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the If/If expression-relation case, preserving the original hypotheses, target existential and final state relation. The condition and selected-branch induction hypotheses have the same simulation shape, with branch choice quantifying both source branches; evaluateMono transports the chosen relation after condition evaluation. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions. The recursive induction hypotheses are scoped to source states whose clocks do not exceed the current source clock, as ensured by evaluator clock monotonicity."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
@@ -109238,7 +109238,7 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: the Op/Op expression-relation case retains the source and target operator and argument relation, source evaluation, non-type-error premise, existential target evaluation and final relation. The argument induction hypothesis has the same simulation shape, and the complete in_do_app_lemma covers Install as well as all other operators. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions."
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: the Op/Op expression-relation case retains the source and target operator and argument relation, source evaluation, non-type-error premise, existential target evaluation and final relation. The argument induction hypothesis has the same simulation shape, and the complete in_do_app_lemma covers Install as well as all other operators. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions. The recursive induction hypotheses are scoped to source states whose clocks do not exceed the current source clock, as ensured by evaluator clock monotonicity."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
@@ -109258,7 +109258,7 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared the typed evaluate_inline statement and the Call/Call branch of its source proof. The case retains the original source and target Call expressions, relation and source-evaluation premises, non-type-error side condition, target existential and final relation. The argument induction hypothesis has the same simulation shape; the body induction hypothesis uses the original clock decrease after argument evaluation and applies to the body found in source and target code. The canonical reference-store roundtrip witnesses refs; evaluation inherits floating-point real-carrier assumptions."
+    "reviewer": "Compared the typed evaluate_inline statement and the Call/Call branch of its source proof. The case retains the original source and target Call expressions, relation and source-evaluation premises, non-type-error side condition, target existential and final relation. The argument induction hypothesis has the same simulation shape; the body induction hypothesis uses the original clock decrease after argument evaluation and applies to the body found in source and target code. The canonical reference-store roundtrip witnesses refs; evaluation inherits floating-point real-carrier assumptions. The argument induction hypothesis is specialized to the current related states; the body induction hypothesis retains the actual clock decrease."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
@@ -109414,6 +109414,18 @@
       "refs"
     ],
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared typed evaluate_inline and the original inlined Call/Let proof case. The expression relation fixes the target Let to the cached body wrapped in ticks; the original source evaluation, state relation, no-type-error premise, target existential and final relation are preserved. Argument and body induction hypotheses use the original recursive evaluations and clock decrease. The proof transports the cached lookup and body relation across argument evaluation and applies the complete evaluate_expand_env theorem to the target body. The canonical reference-store witness covers refs; evaluation inherits floating-point real-carrier assumptions."
+    "reviewer": "Compared typed evaluate_inline and the original inlined Call/Let proof case. The expression relation fixes the target Let to the cached body wrapped in ticks; the original source evaluation, state relation, no-type-error premise, target existential and final relation are preserved. Argument and body induction hypotheses use the original recursive evaluations and clock decrease. The proof transports the cached lookup and body relation across argument evaluation and applies the complete evaluate_expand_env theorem to the target body. The canonical reference-store witness covers refs; evaluation inherits floating-point real-carrier assumptions. The argument induction hypothesis is specialized to the current related states; the body induction hypothesis retains the actual clock decrease."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineFull.lean",
+    "hol_name": "evaluate_inline",
+    "lean_name": "evaluateInline",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the full typed evaluate_inline in bvl_inline_state_rel_probe.out with the source theorem: the numeric limit, expression lists, environment, cache-paired source configuration, target configuration, common FFI carrier, result and final source state retain the original types and quantified scope. The conjunction contains exactly the in_state_rel, exp_rel, source evaluation and non-type-error premises; the conclusion existentially supplies target evaluation and the final state relation. The proof assembles every original expression-relation case by clock and expression-weight induction. The canonical BVL reference-store roundtrip witnesses refs; the evaluator inherits the floating-point real-carrier assumptions."
   }
 ]

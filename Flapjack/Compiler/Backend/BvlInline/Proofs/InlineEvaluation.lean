@@ -3,8 +3,7 @@ import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineCall
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull
 
-/-! Cases of the BVL inlining evaluator simulation. The full theorem also
-requires the remaining recursive expression cases. -/
+/-! Structural cases of the BVL inlining evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps Flapjack.SemanticPrimitivesHOL
 
@@ -56,15 +55,15 @@ hypothesis with the original relation and non-type-error premises. -/
   (fmap_as_finite_support := [refs])]
 theorem evaluateInline_tick {C F : Type} (limit : Nat) (body body' : Bvl.Exp)
     (env : List BvlSem.Value)
-    (bodyIH : ∀ (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
-      (result : Result (List BvlSem.Value) BvlSem.Value),
-      inStateRel limit source target → ExpRel source.code [body] [body'] →
-      evaluateTuple ([body], env, source) = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      ∃ targetFinal, evaluateTuple ([body'], env, target) = (result, targetFinal) ∧
-        inStateRel limit final targetFinal)
     (source final : Flapjack.Compiler.Backend.BvlSem.State (Spt (Nat × Bvl.Exp) × C) F)
     (target : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (bodyIH : ∀ (s last : State (Spt (Nat × Bvl.Exp) × C) F) (t : State C F)
+      (res : Result (List BvlSem.Value) BvlSem.Value),
+      s.clock < source.clock → inStateRel limit s t → ExpRel s.code [body] [body'] →
+      evaluateTuple ([body], env, s) = (res, last) →
+      res ≠ .err (.abort .typeError) →
+      ∃ targetFinal, evaluateTuple ([body'], env, t) = (res, targetFinal) ∧
+        inStateRel limit last targetFinal)
     (result : Result (List BvlSem.Value) BvlSem.Value)
     (related : inStateRel limit source target)
     (expressions : ExpRel source.code [.tick body] [.tick body'])
@@ -84,7 +83,7 @@ theorem evaluateInline_tick {C F : Type} (limit : Nat) (body body' : Bvl.Exp)
       have bodyRun : evaluateTuple ([body], env, decClock 1 source) = (result, final) := by
         simpa [evaluateTuple, evaluate, zero] using run
       obtain ⟨targetFinal, targetRun, finalRel⟩ := bodyIH (decClock 1 source) final
-        (decClock 1 target) result (inStateRel_decClock limit 1 source target related)
+        (decClock 1 target) result (by simp [decClock]; omega) (inStateRel_decClock limit 1 source target related)
         (by simpa [decClock] using bodyRel) bodyRun notTypeError
       exact ⟨targetFinal, by simpa [evaluateTuple, evaluate, targetNonzero] using targetRun, finalRel⟩
 
@@ -94,15 +93,15 @@ induction hypothesis. -/
   (fmap_as_finite_support := [refs])]
 theorem evaluateInline_raise {C F : Type} (limit : Nat) (body body' : Bvl.Exp)
     (env : List BvlSem.Value)
-    (bodyIH : ∀ (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
-      (result : Result (List BvlSem.Value) BvlSem.Value),
-      inStateRel limit source target → ExpRel source.code [body] [body'] →
-      evaluateTuple ([body], env, source) = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      ∃ targetFinal, evaluateTuple ([body'], env, target) = (result, targetFinal) ∧
-        inStateRel limit final targetFinal)
     (source final : Flapjack.Compiler.Backend.BvlSem.State (Spt (Nat × Bvl.Exp) × C) F)
     (target : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (bodyIH : ∀ (s last : State (Spt (Nat × Bvl.Exp) × C) F) (t : State C F)
+      (res : Result (List BvlSem.Value) BvlSem.Value),
+      s.clock ≤ source.clock → inStateRel limit s t → ExpRel s.code [body] [body'] →
+      evaluateTuple ([body], env, s) = (res, last) →
+      res ≠ .err (.abort .typeError) →
+      ∃ targetFinal, evaluateTuple ([body'], env, t) = (res, targetFinal) ∧
+        inStateRel limit last targetFinal)
     (result : Result (List BvlSem.Value) BvlSem.Value)
     (related : inStateRel limit source target)
     (expressions : ExpRel source.code [.raise body] [.raise body'])
@@ -125,7 +124,7 @@ theorem evaluateInline_raise {C F : Type} (limit : Nat) (body body' : Bvl.Exp)
           rcases run with ⟨rfl, _⟩
           exact notTypeError
       obtain ⟨targetFinal, targetRun, finalRel⟩ := bodyIH source bodyFinal target bodyResult
-        related bodyRel (by simpa [evaluateTuple] using bodyRun) bodyNotType
+        (Nat.le_refl _) related bodyRel (by simpa [evaluateTuple] using bodyRun) bodyNotType
       change evaluate [body'] env target = _ at targetRun
       refine ⟨targetFinal, ?_, ?_⟩
       · rw [evaluateTuple, evaluate, targetRun]
@@ -139,22 +138,22 @@ tail induction hypotheses and preservation of the source code tree. -/
 theorem evaluateInline_cons {C F : Type} (limit : Nat)
     (first second first' second' : Bvl.Exp) (rest rest' : List Bvl.Exp)
     (env : List BvlSem.Value)
-    (headIH : ∀ (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
-      (result : Result (List BvlSem.Value) BvlSem.Value),
-      inStateRel limit source target → ExpRel source.code [first] [first'] →
-      evaluateTuple ([first], env, source) = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      ∃ targetFinal, evaluateTuple ([first'], env, target) = (result, targetFinal) ∧
-        inStateRel limit final targetFinal)
-    (tailIH : ∀ (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
-      (result : Result (List BvlSem.Value) BvlSem.Value),
-      inStateRel limit source target → ExpRel source.code (second :: rest) (second' :: rest') →
-      evaluateTuple (second :: rest, env, source) = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      ∃ targetFinal, evaluateTuple (second' :: rest', env, target) = (result, targetFinal) ∧
-        inStateRel limit final targetFinal)
     (source final : Flapjack.Compiler.Backend.BvlSem.State (Spt (Nat × Bvl.Exp) × C) F)
     (target : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (headIH : ∀ (s last : State (Spt (Nat × Bvl.Exp) × C) F) (t : State C F)
+      (res : Result (List BvlSem.Value) BvlSem.Value),
+      s.clock ≤ source.clock → inStateRel limit s t → ExpRel s.code [first] [first'] →
+      evaluateTuple ([first], env, s) = (res, last) →
+      res ≠ .err (.abort .typeError) →
+      ∃ targetFinal, evaluateTuple ([first'], env, t) = (res, targetFinal) ∧
+        inStateRel limit last targetFinal)
+    (tailIH : ∀ (s last : State (Spt (Nat × Bvl.Exp) × C) F) (t : State C F)
+      (res : Result (List BvlSem.Value) BvlSem.Value),
+      s.clock ≤ source.clock → inStateRel limit s t → ExpRel s.code (second :: rest) (second' :: rest') →
+      evaluateTuple (second :: rest, env, s) = (res, last) →
+      res ≠ .err (.abort .typeError) →
+      ∃ targetFinal, evaluateTuple (second' :: rest', env, t) = (res, targetFinal) ∧
+        inStateRel limit last targetFinal)
     (result : Result (List BvlSem.Value) BvlSem.Value)
     (related : inStateRel limit source target)
     (expressions : ExpRel source.code (first :: second :: rest) (first' :: second' :: rest'))
@@ -169,6 +168,9 @@ theorem evaluateInline_cons {C F : Type} (limit : Nat)
     cases headRun : evaluate [first] env source with
     | mk headResult middle =>
       rw [headRun] at run
+      have clockBound : middle.clock ≤ source.clock := by
+        have h := evaluate_clock_le [first] env source
+        simpa [headRun] using h
       have headNotType : headResult ≠ .err (.abort .typeError) := by
         cases headResult with
         | val values => simp
@@ -178,7 +180,7 @@ theorem evaluateInline_cons {C F : Type} (limit : Nat)
           exact notTypeError
       have headTuple : evaluateTuple ([first], env, source) = (headResult, middle) := headRun
       obtain ⟨targetMiddle, targetHead, middleRel⟩ :=
-        headIH source middle target headResult related headRel headTuple headNotType
+        headIH source middle target headResult (Nat.le_refl _) related headRel headTuple headNotType
       change evaluate [first'] env target = _ at targetHead
       cases headResult with
       | err error =>
@@ -199,7 +201,7 @@ theorem evaluateInline_cons {C F : Type} (limit : Nat)
               rcases run with ⟨rfl, _⟩
               exact notTypeError
           obtain ⟨targetFinal, targetTail, finalRel⟩ := tailIH middle tailFinal targetMiddle tailResult
-            middleRel tailRel' (by simpa [evaluateTuple] using tailRun) tailNotType
+            clockBound middleRel tailRel' (by simpa [evaluateTuple] using tailRun) tailNotType
           change evaluate (second' :: rest') env targetMiddle = _ at targetTail
           refine ⟨targetFinal, ?_, ?_⟩
           · rw [evaluateTuple, evaluate, fixClock_evaluate, targetHead, targetTail]
@@ -212,23 +214,23 @@ induction hypotheses across possible code growth. -/
   (fmap_as_finite_support := [refs])]
 theorem evaluateInline_let {C F : Type} (limit : Nat)
     (bindings bindings' : List Bvl.Exp) (body body' : Bvl.Exp) (env : List BvlSem.Value)
-    (bindingsIH : ∀ (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
-      (result : Result (List BvlSem.Value) BvlSem.Value),
-      inStateRel limit source target → ExpRel source.code bindings bindings' →
-      evaluateTuple (bindings, env, source) = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      ∃ targetFinal, evaluateTuple (bindings', env, target) = (result, targetFinal) ∧
-        inStateRel limit final targetFinal)
-    (bodyIH : ∀ (bodyEnv : List BvlSem.Value)
-      (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
-      (result : Result (List BvlSem.Value) BvlSem.Value),
-      inStateRel limit source target → ExpRel source.code [body] [body'] →
-      evaluateTuple ([body], bodyEnv, source) = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      ∃ targetFinal, evaluateTuple ([body'], bodyEnv, target) = (result, targetFinal) ∧
-        inStateRel limit final targetFinal)
     (source final : Flapjack.Compiler.Backend.BvlSem.State (Spt (Nat × Bvl.Exp) × C) F)
     (target : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (bindingsIH : ∀ (s last : State (Spt (Nat × Bvl.Exp) × C) F) (t : State C F)
+      (res : Result (List BvlSem.Value) BvlSem.Value),
+      s.clock ≤ source.clock → inStateRel limit s t → ExpRel s.code bindings bindings' →
+      evaluateTuple (bindings, env, s) = (res, last) →
+      res ≠ .err (.abort .typeError) →
+      ∃ targetFinal, evaluateTuple (bindings', env, t) = (res, targetFinal) ∧
+        inStateRel limit last targetFinal)
+    (bodyIH : ∀ (bodyEnv : List BvlSem.Value)
+      (s last : State (Spt (Nat × Bvl.Exp) × C) F) (t : State C F)
+      (res : Result (List BvlSem.Value) BvlSem.Value),
+      s.clock ≤ source.clock → inStateRel limit s t → ExpRel s.code [body] [body'] →
+      evaluateTuple ([body], bodyEnv, s) = (res, last) →
+      res ≠ .err (.abort .typeError) →
+      ∃ targetFinal, evaluateTuple ([body'], bodyEnv, t) = (res, targetFinal) ∧
+        inStateRel limit last targetFinal)
     (result : Result (List BvlSem.Value) BvlSem.Value)
     (related : inStateRel limit source target)
     (expressions : ExpRel source.code [.let bindings body] [.let bindings' body'])
@@ -243,6 +245,9 @@ theorem evaluateInline_let {C F : Type} (limit : Nat)
     cases bindingsRun : evaluate bindings env source with
     | mk bindingsResult middle =>
       rw [bindingsRun] at run
+      have clockBound : middle.clock ≤ source.clock := by
+        have h := evaluate_clock_le bindings env source
+        simpa [bindingsRun] using h
       have bindingsNotType : bindingsResult ≠ .err (.abort .typeError) := by
         cases bindingsResult with
         | val values => simp
@@ -252,7 +257,7 @@ theorem evaluateInline_let {C F : Type} (limit : Nat)
           exact notTypeError
       have bindingsTuple : evaluateTuple (bindings, env, source) = (bindingsResult, middle) := bindingsRun
       obtain ⟨targetMiddle, targetBindings, middleRel⟩ :=
-        bindingsIH source middle target bindingsResult related bindingsRel bindingsTuple bindingsNotType
+        bindingsIH source middle target bindingsResult (Nat.le_refl _) related bindingsRel bindingsTuple bindingsNotType
       change evaluate bindings' env target = _ at targetBindings
       cases bindingsResult with
       | err error =>
@@ -265,7 +270,7 @@ theorem evaluateInline_let {C F : Type} (limit : Nat)
         have bodyRun : evaluateTuple ([body], values ++ env, middle) = (result, final) := by
           simpa [evaluateTuple] using run
         obtain ⟨targetFinal, targetBody, finalRel⟩ := bodyIH (values ++ env) middle final targetMiddle
-          result middleRel bodyRel' bodyRun notTypeError
+          result clockBound middleRel bodyRel' bodyRun notTypeError
         change evaluate [body'] (values ++ env) targetMiddle = _ at targetBody
         exact ⟨targetFinal, by rw [evaluateTuple, evaluate, fixClock_evaluate, targetBindings]; exact targetBody, finalRel⟩
 
@@ -275,23 +280,23 @@ handler and transporting its relation across code growth. -/
   (fmap_as_finite_support := [refs])]
 theorem evaluateInline_handle {C F : Type} (limit : Nat)
     (body handler body' handler' : Bvl.Exp) (env : List BvlSem.Value)
-    (bodyIH : ∀ (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
-      (result : Result (List BvlSem.Value) BvlSem.Value),
-      inStateRel limit source target → ExpRel source.code [body] [body'] →
-      evaluateTuple ([body], env, source) = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      ∃ targetFinal, evaluateTuple ([body'], env, target) = (result, targetFinal) ∧
-        inStateRel limit final targetFinal)
-    (handlerIH : ∀ (handlerEnv : List BvlSem.Value)
-      (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
-      (result : Result (List BvlSem.Value) BvlSem.Value),
-      inStateRel limit source target → ExpRel source.code [handler] [handler'] →
-      evaluateTuple ([handler], handlerEnv, source) = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      ∃ targetFinal, evaluateTuple ([handler'], handlerEnv, target) = (result, targetFinal) ∧
-        inStateRel limit final targetFinal)
     (source final : Flapjack.Compiler.Backend.BvlSem.State (Spt (Nat × Bvl.Exp) × C) F)
     (target : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (bodyIH : ∀ (s last : State (Spt (Nat × Bvl.Exp) × C) F) (t : State C F)
+      (res : Result (List BvlSem.Value) BvlSem.Value),
+      s.clock ≤ source.clock → inStateRel limit s t → ExpRel s.code [body] [body'] →
+      evaluateTuple ([body], env, s) = (res, last) →
+      res ≠ .err (.abort .typeError) →
+      ∃ targetFinal, evaluateTuple ([body'], env, t) = (res, targetFinal) ∧
+        inStateRel limit last targetFinal)
+    (handlerIH : ∀ (handlerEnv : List BvlSem.Value)
+      (s last : State (Spt (Nat × Bvl.Exp) × C) F) (t : State C F)
+      (res : Result (List BvlSem.Value) BvlSem.Value),
+      s.clock ≤ source.clock → inStateRel limit s t → ExpRel s.code [handler] [handler'] →
+      evaluateTuple ([handler], handlerEnv, s) = (res, last) →
+      res ≠ .err (.abort .typeError) →
+      ∃ targetFinal, evaluateTuple ([handler'], handlerEnv, t) = (res, targetFinal) ∧
+        inStateRel limit last targetFinal)
     (result : Result (List BvlSem.Value) BvlSem.Value)
     (related : inStateRel limit source target)
     (expressions : ExpRel source.code [.handle body handler] [.handle body' handler'])
@@ -306,6 +311,9 @@ theorem evaluateInline_handle {C F : Type} (limit : Nat)
     cases bodyRun : evaluate [body] env source with
     | mk bodyResult middle =>
       rw [bodyRun] at run
+      have clockBound : middle.clock ≤ source.clock := by
+        have h := evaluate_clock_le [body] env source
+        simpa [bodyRun] using h
       have bodyNotType : bodyResult ≠ .err (.abort .typeError) := by
         intro bad
         subst bodyResult
@@ -313,7 +321,7 @@ theorem evaluateInline_handle {C F : Type} (limit : Nat)
         exact notTypeError run.1.symm
       have bodyTuple : evaluateTuple ([body], env, source) = (bodyResult, middle) := bodyRun
       obtain ⟨targetMiddle, targetBody, middleRel⟩ :=
-        bodyIH source middle target bodyResult related bodyRel bodyTuple bodyNotType
+        bodyIH source middle target bodyResult (Nat.le_refl _) related bodyRel bodyTuple bodyNotType
       change evaluate [body'] env target = _ at targetBody
       cases bodyResult with
       | val values =>
@@ -332,7 +340,7 @@ theorem evaluateInline_handle {C F : Type} (limit : Nat)
           have handlerRun : evaluateTuple ([handler], value :: env, middle) = (result, final) := by
             simpa [evaluateTuple] using run
           obtain ⟨targetFinal, targetHandler, finalRel⟩ := handlerIH (value :: env) middle final targetMiddle
-            result middleRel handlerRel' handlerRun notTypeError
+            result clockBound middleRel handlerRel' handlerRun notTypeError
           change evaluate [handler'] (value :: env) targetMiddle = _ at targetHandler
           exact ⟨targetFinal, by rw [evaluateTuple, evaluate, fixClock_evaluate, targetBody]; exact targetHandler,
             finalRel⟩
@@ -343,23 +351,23 @@ branch induction hypotheses after any source-code growth. -/
   (fmap_as_finite_support := [refs])]
 theorem evaluateInline_if {C F : Type} (limit : Nat)
     (condition yes no condition' yes' no' : Bvl.Exp) (env : List BvlSem.Value)
-    (conditionIH : ∀ (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
-      (result : Result (List BvlSem.Value) BvlSem.Value),
-      inStateRel limit source target → ExpRel source.code [condition] [condition'] →
-      evaluateTuple ([condition], env, source) = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      ∃ targetFinal, evaluateTuple ([condition'], env, target) = (result, targetFinal) ∧
-        inStateRel limit final targetFinal)
-    (branchIH : ∀ (choice : Bool) (source final : State (Spt (Nat × Bvl.Exp) × C) F)
-      (target : State C F) (result : Result (List BvlSem.Value) BvlSem.Value),
-      inStateRel limit source target →
-      ExpRel source.code [if choice then yes else no] [if choice then yes' else no'] →
-      evaluateTuple ([if choice then yes else no], env, source) = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      ∃ targetFinal, evaluateTuple ([if choice then yes' else no'], env, target) = (result, targetFinal) ∧
-        inStateRel limit final targetFinal)
     (source final : Flapjack.Compiler.Backend.BvlSem.State (Spt (Nat × Bvl.Exp) × C) F)
     (target : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (conditionIH : ∀ (s last : State (Spt (Nat × Bvl.Exp) × C) F) (t : State C F)
+      (res : Result (List BvlSem.Value) BvlSem.Value),
+      s.clock ≤ source.clock → inStateRel limit s t → ExpRel s.code [condition] [condition'] →
+      evaluateTuple ([condition], env, s) = (res, last) →
+      res ≠ .err (.abort .typeError) →
+      ∃ targetFinal, evaluateTuple ([condition'], env, t) = (res, targetFinal) ∧
+        inStateRel limit last targetFinal)
+    (branchIH : ∀ (choice : Bool) (s last : State (Spt (Nat × Bvl.Exp) × C) F)
+      (t : State C F) (res : Result (List BvlSem.Value) BvlSem.Value),
+      s.clock ≤ source.clock → inStateRel limit s t →
+      ExpRel s.code [if choice then yes else no] [if choice then yes' else no'] →
+      evaluateTuple ([if choice then yes else no], env, s) = (res, last) →
+      res ≠ .err (.abort .typeError) →
+      ∃ targetFinal, evaluateTuple ([if choice then yes' else no'], env, t) = (res, targetFinal) ∧
+        inStateRel limit last targetFinal)
     (result : Result (List BvlSem.Value) BvlSem.Value)
     (related : inStateRel limit source target)
     (expressions : ExpRel source.code [.ifThenElse condition yes no] [.ifThenElse condition' yes' no'])
@@ -374,6 +382,9 @@ theorem evaluateInline_if {C F : Type} (limit : Nat)
     cases conditionRun : evaluate [condition] env source with
     | mk conditionResult middle =>
       rw [conditionRun] at run
+      have clockBound : middle.clock ≤ source.clock := by
+        have h := evaluate_clock_le [condition] env source
+        simpa [conditionRun] using h
       have conditionNotType : conditionResult ≠ .err (.abort .typeError) := by
         cases conditionResult with
         | val values => simp
@@ -383,7 +394,7 @@ theorem evaluateInline_if {C F : Type} (limit : Nat)
           exact notTypeError
       have conditionTuple : evaluateTuple ([condition], env, source) = (conditionResult, middle) := conditionRun
       obtain ⟨targetMiddle, targetCondition, middleRel⟩ :=
-        conditionIH source middle target conditionResult related conditionRel conditionTuple conditionNotType
+        conditionIH source middle target conditionResult (Nat.le_refl _) related conditionRel conditionTuple conditionNotType
       change evaluate [condition'] env target = _ at targetCondition
       cases conditionResult with
       | err error =>
@@ -403,7 +414,7 @@ theorem evaluateInline_if {C F : Type} (limit : Nat)
             simp [boolRun] at run
             have branchRel := subsptExpRel source.code middle.code [no] [no'] growth noRel
             obtain ⟨targetFinal, targetBranch, finalRel⟩ := branchIH false middle final targetMiddle result
-              middleRel branchRel (by simpa [evaluateTuple] using run) notTypeError
+              clockBound middleRel branchRel (by simpa [evaluateTuple] using run) notTypeError
             change evaluate [no'] env targetMiddle = _ at targetBranch
             refine ⟨targetFinal, ?_, finalRel⟩
             rw [evaluateTuple, evaluate, fixClock_evaluate, targetCondition]
@@ -412,7 +423,7 @@ theorem evaluateInline_if {C F : Type} (limit : Nat)
             simp [boolRun] at run
             have branchRel := subsptExpRel source.code middle.code [yes] [yes'] growth yesRel
             obtain ⟨targetFinal, targetBranch, finalRel⟩ := branchIH true middle final targetMiddle result
-              middleRel branchRel (by simpa [evaluateTuple] using run) notTypeError
+              clockBound middleRel branchRel (by simpa [evaluateTuple] using run) notTypeError
             change evaluate [yes'] env targetMiddle = _ at targetBranch
             refine ⟨targetFinal, ?_, finalRel⟩
             rw [evaluateTuple, evaluate, fixClock_evaluate, targetCondition]
@@ -423,15 +434,15 @@ theorem evaluateInline_if {C F : Type} (limit : Nat)
   (fmap_as_finite_support := [refs])]
 theorem evaluateInline_op {C F : Type} (limit : Nat)
     (op : ClosLang.Op) (args args' : List Bvl.Exp) (env : List BvlSem.Value)
-    (argsIH : ∀ (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
-      (result : Result (List BvlSem.Value) BvlSem.Value),
-      inStateRel limit source target → ExpRel source.code args args' →
-      evaluateTuple (args, env, source) = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      ∃ targetFinal, evaluateTuple (args', env, target) = (result, targetFinal) ∧
-        inStateRel limit final targetFinal)
     (source final : Flapjack.Compiler.Backend.BvlSem.State (Spt (Nat × Bvl.Exp) × C) F)
     (target : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (argsIH : ∀ (s last : State (Spt (Nat × Bvl.Exp) × C) F) (t : State C F)
+      (res : Result (List BvlSem.Value) BvlSem.Value),
+      s.clock ≤ source.clock → inStateRel limit s t → ExpRel s.code args args' →
+      evaluateTuple (args, env, s) = (res, last) →
+      res ≠ .err (.abort .typeError) →
+      ∃ targetFinal, evaluateTuple (args', env, t) = (res, targetFinal) ∧
+        inStateRel limit last targetFinal)
     (result : Result (List BvlSem.Value) BvlSem.Value)
     (related : inStateRel limit source target)
     (expressions : ExpRel source.code [.op op args] [.op op args'])
@@ -454,7 +465,7 @@ theorem evaluateInline_op {C F : Type} (limit : Nat)
           rcases run with ⟨rfl, _⟩
           exact notTypeError
       obtain ⟨targetMiddle, targetArgs, middleRel⟩ := argsIH source middle target argsResult
-        related argsRel (by simpa [evaluateTuple] using argsRun) argsNotType
+        (Nat.le_refl _) related argsRel (by simpa [evaluateTuple] using argsRun) argsNotType
       change evaluate args' env target = _ at targetArgs
       cases argsResult with
       | err error =>

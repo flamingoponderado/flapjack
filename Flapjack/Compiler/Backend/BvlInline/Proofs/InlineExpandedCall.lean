@@ -20,11 +20,11 @@ theorem evaluateInline_inlineCall {C F : Type} (limit ticks name : Nat)
     (args args' : List Bvl.Exp) (inlined : Bvl.Exp) (env : List BvlSem.Value)
     (source final : Flapjack.Compiler.Backend.BvlSem.State (Spt (Nat × Bvl.Exp) × C) F)
     (target : Flapjack.Compiler.Backend.BvlSem.State C F)
-    (argsIH : ∀ (s last : State (Spt (Nat × Bvl.Exp) × C) F) (t : State C F)
+    (argsIH : ∀ (last : State (Spt (Nat × Bvl.Exp) × C) F)
       (res : Result (List BvlSem.Value) BvlSem.Value),
-      inStateRel limit s t → ExpRel s.code args args' →
-      evaluateTuple (args, env, s) = (res, last) → res ≠ .err (.abort .typeError) →
-      ∃ targetLast, evaluateTuple (args', env, t) = (res, targetLast) ∧ inStateRel limit last targetLast)
+      ExpRel source.code args args' →
+      evaluateTuple (args, env, source) = (res, last) → res ≠ .err (.abort .typeError) →
+      ∃ targetLast, evaluateTuple (args', env, target) = (res, targetLast) ∧ inStateRel limit last targetLast)
     (bodyIH : ∀ (middle last : State (Spt (Nat × Bvl.Exp) × C) F) (targetMiddle : State C F)
       (values : List BvlSem.Value) (body body' : Bvl.Exp)
       (res : Result (List BvlSem.Value) BvlSem.Value),
@@ -35,7 +35,7 @@ theorem evaluateInline_inlineCall {C F : Type} (limit ticks name : Nat)
       ∃ targetLast, evaluateTuple ([body'], values, decClock (ticks + 1) targetMiddle) = (res, targetLast) ∧
         inStateRel limit last targetLast)
     (result : Result (List BvlSem.Value) BvlSem.Value)
-    (related : inStateRel limit source target)
+    (_related : inStateRel limit source target)
     (expressions : ExpRel source.code [.call ticks (some name) args] [.let args' inlined])
     (run : evaluateTuple ([.call ticks (some name) args], env, source) = (result, final))
     (notTypeError : result ≠ .err (.abort .typeError)) :
@@ -60,7 +60,7 @@ theorem evaluateInline_inlineCall {C F : Type} (limit ticks name : Nat)
           rcases run with ⟨rfl, _⟩
           exact notTypeError
       obtain ⟨targetMiddle, targetArgs, middleRel⟩ :=
-        argsIH source middle target argsResult related argsRel argsRun argsNotType
+        argsIH middle argsResult argsRel argsRun argsNotType
       change evaluate args' env target = _ at targetArgs
       cases argsResult with
       | err error =>
