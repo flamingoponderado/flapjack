@@ -15,6 +15,13 @@ spec.loader.exec_module(parity)
 
 # Each program makes the computed result observable through an output call.
 CASES = {
+    'list_take_length': 'val _ = print_int (List.length (List.take [1,2,3] 2));',
+    'list_drop_length': 'val _ = print_int (List.length (List.drop [1,2,3] 1));',
+    'let_tuple_pattern': 'fun f x = let val (a,b) = x in a+b end; val _ = print_int (f (4,5));',
+    'basis_simple_allocator': 'fun f x = x + 1; val _ = print_int (f 5);',
+    'basis_generational_gc': 'fun f x = x + 1; val _ = print_int (f 5);',
+    'basis_without_closure_optimisations': 'fun f x = x + 1; val _ = print_int (f 5);',
+    'basis_skip_inference': 'fun f x = x + 1; val _ = print_int (f 5);',
     'string_pattern': 'fun f s = case s of "abc" => 1 | _ => 0; val _ = print_int (f "abc");',
     'large_integer_pattern': 'fun f n = case n of 2305843009213693952 => 1 | _ => 0; val _ = print_int (f 2305843009213693952);',
     'array_update_and_sub': 'val a = Array.array 3 1; val _ = Array.update a 1 4; val _ = print_int (Array.sub a 1);',
@@ -122,6 +129,10 @@ CASES = {
 }
 
 CASE_ARGS = {
+    'basis_simple_allocator': ['--reg_alg=0'],
+    'basis_generational_gc': ['--gc=gen100'],
+    'basis_without_closure_optimisations': ['--multi=false', '--known=false', '--call=false'],
+    'basis_skip_inference': ['--skip_type_inference=true'],
     'types_before_print_sexp': ['--types', '--print_sexp', '--exclude_prelude=true'],
     'print_sexp_before_types': ['--print_sexp', '--types', '--exclude_prelude=true'],
     'types_before_explore': ['--types', '--explore', '--exclude_prelude=true'],
@@ -166,7 +177,8 @@ def main():
         rows = {name: run(args.record_reference, source, name) for name, source in CASES.items()}
         for name, row in rows.items():
             expected_exit = 1 if name in ERROR_CASES else 0
-            is_types = name in CASE_ARGS
+            is_types = any(flag in CASE_ARGS.get(name, [])
+                           for flag in ('--types', '--print_sexp', '--explore'))
             if (row['exit_code'] != expected_exit or
                     (row['stdout_bytes'] != 0 if is_types else row['stdout_bytes'] == 0) or
                     (row['stderr_bytes'] == 0 if is_types else row['stderr_bytes'] != 0)):
