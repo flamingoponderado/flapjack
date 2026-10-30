@@ -217,6 +217,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Config
 import Flapjack.Compiler.Backend.ClosKnown.Config
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.MergeTotal
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.ZeroInlineTotal
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftTotal
 import Flapjack.Compiler.Backend.ClosOp.Proofs.EqMeasure
 import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartTotal

@@ -29,6 +29,12 @@ private def input : List ClosLang.Exp :=
    .op .none (.globOp (.setGlobal 2)) [.op .none (.intOp (.const 5)) []],
    .op .none (.globOp (.global 2)) []]
 
+-- Zero initial fuel forces the production retry with inlining disabled.
+#guard match knownListBounded 0 (mkConfig 8 0)
+    [.op .none (.intOp (.const 5)) []] [] .ln with
+  | some ([(.op .none (.intOp (.const 5)) [], .int 5)], .ln) => true
+  | _ => false
+
 #guard match compileFuel 100 (some (mkConfig 8 2)) input with
   | some (some config,
       [.let .none [.fn name (some 4) none 1 (.var .none 0)]

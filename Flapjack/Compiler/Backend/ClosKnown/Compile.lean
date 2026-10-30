@@ -69,7 +69,7 @@ private def ticks (trace : BackendCommon.Tra) : Nat → Nat → Exp → Exp
   | _, 0, e => e
   | index, n + 1, e => ticks trace (index + 1) n (.tick (BackendCommon.mkCons trace index) e)
 
-private def noInline (loc : Nat) (fns : List (Nat × Exp)) : List ValApprox :=
+def noInline (loc : Nat) (fns : List (Nat × Exp)) : List ValApprox :=
   (fns.zip (List.range fns.length)).map fun ((arity, _), i) => .closNoInline (loc + 2 * i) arity
 
 mutual
@@ -149,13 +149,23 @@ mutual
       pure ((x, a) :: xs, globals)
 end
 
+/-- Retry traversal with a structural bound when inlining is disabled. -/
+def knownListBounded (fuel : Nat) (c : Config) (xs : List Exp) (env : List ValApprox)
+    (globals : Spt ValApprox) : Option (List (Exp × ValApprox) × Spt ValApprox) :=
+  match knownListFuel fuel c xs env globals with
+  | some result => some result
+  | none =>
+    if c.inlineFactor = 0 then
+      knownListFuel (max fuel (ClosLang.listBudget xs + 1)) c xs env globals
+    else none
+
 /-- Apply free-variable cleanup, approximation, tick removal and let-op cleanup. -/
 def compileFuel (fuel : Nat) (config : Option Config) (es : List Exp) : Option (Option Config × List Exp) := do
   match config with
   | none => pure (none, es)
   | some c =>
       let es ← es.mapM (ClosFvs.removeBounded fuel 0)
-      let (es, globals) ← knownListFuel fuel c es [] .ln
+      let (es, globals) ← knownListBounded fuel c es [] .ln
       let es ← es.mapM fun (e, _) => do
         let e ← ClosTicks.removeBounded fuel e
         ClosLetop.compileBounded fuel e
