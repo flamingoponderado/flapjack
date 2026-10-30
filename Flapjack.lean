@@ -571,6 +571,7 @@ import Flapjack.Compiler.Backend.BviLet.Proofs.Let
 import Flapjack.Compiler.Backend.BviLet.Proofs.LetLast
 import Flapjack.Compiler.Backend.BviLet.Proofs.Cases
 import Flapjack.Compiler.Backend.BviLet.Proofs.Calls
+import Flapjack.Compiler.Backend.BviLet.Proofs.Simulation
 import Flapjack.Test.BviLetSourceParity
 import Flapjack.Compiler.Backend.BvlToBvi.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Total
