@@ -110294,5 +110294,16 @@
   "lean_name": "smallEnoughInt",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared with the typed original equation captured in bvi_sem_state_probe.out: the argument is an integer, both bounds are inclusive, and the constants and conjunction match exactly. This definition is used by the BVI-specific dispatcher; full dispatcher and evaluator correspondence remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/Install.lean",
+  "hol_name": "do_install_def",
+  "lean_name": "doInstall",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared with typed original equation and inferred polymorphic result in bvi_sem_state_probe.out. Four input values, both decoders and length checks, source-domain disjointness and distinct code names, callback, shifted oracle, returned buffers, code-tree union and error cases are preserved. The BVL decoders have separately checked choice-characterization witnesses. The local canonical state roundtrip witnesses refs; code remains an Spt tree. Full BVI dispatcher and evaluator correspondence remain open."
 }
 ]
