@@ -110777,5 +110777,65 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its ThunkOp for both allocation and update, retaining the actual reference update and validity of the stored argument case. It retains the original source-state and argument validity and successful application premises, all three conclusions and independent state carrier types. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/BlockOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_cons",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its BlockOp Cons for arbitrary tags and argument lists case. It retains the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment. bvOkList_iff relates the original EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/BlockOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_consExtend",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its BlockOp ConsExtend including its original bounds and nonzero-total guard and the selected slice of the valid block case. It retains the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment. bvOkList_iff relates the original EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/BlockOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_elemAt",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its BlockOp ElemAt for both direct blocks and value arrays in the source reference store case. It retains the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment. bvOkList_iff relates the original EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/BlockOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_listAppend",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its BlockOp ListAppend with both actual source list decodings and list construction case. It retains the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment. bvOkList_iff relates the original EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/BlockOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_fromList",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its BlockOp FromList with the actual source list decoding and arbitrary output tag case. It retains the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment. bvOkList_iff relates the original EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
 }
 ]
