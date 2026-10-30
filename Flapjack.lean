@@ -592,6 +592,7 @@ import Flapjack.Compiler.Backend.PresLang.Lab
 import Flapjack.Compiler.Backend.PresLang.Word
 import Flapjack.Compiler.Backend.PresLang.Stack
 import Flapjack.Compiler.Backend.BackendPasses.Frontend
+import Flapjack.Compiler.Backend.BackendPasses.Closure
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.SecLabelOk
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
@@ -2617,6 +2618,7 @@ import Flapjack.Test.CakeLabDisplayParity
 import Flapjack.Test.CakeWordDisplayParity
 import Flapjack.Test.CakeStackDisplayParity
 import Flapjack.Test.CakeFrontendStagesParity
+import Flapjack.Test.CakeClosureStagesParity
 import Flapjack.CakeParser.FromSexp
 import Flapjack.CakeParser.FromSexp.Operators
 import Flapjack.CakeParser.FromSexp.Ast
