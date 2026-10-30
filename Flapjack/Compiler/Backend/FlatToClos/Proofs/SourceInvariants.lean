@@ -1,9 +1,17 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileSafety
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileFlatGlobals
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.NoMat
 
 /-! Composition of source-to-flat and flat-to-closure invariants. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
+
+/-- Flapjack composition: source compilation produces pre-MTI closure code,
+including the interpreter initializer. This follows from the flat-to-closure
+invariant and is not a port of a single HOL theorem. -/
+theorem sourceCompileProg_noMti (cfg : SourceToFlat.Config) (ds : List AstHOL.Dec) :
+    ∀ e ∈ compileProg (SourceToFlat.compileTotal cfg ds).2, ClosProps.noMti e :=
+  compileProg_noMti _
 
 /-- Flapjack composition: the normal source-to-closure path always produces
 closure-safe code, including the attached interpreter. This follows from the

@@ -1,5 +1,17 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "no_mti_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/NoMti.lean", "lean_name": "noMti",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all expression clauses at source lines 417-445 and inferred types in flat_to_clos_globals_probe.out, including the distinct trace and name carriers, the optional locations and free-variable lists, unary applications and functions, and the arity constraint on recursive function bodies. noMtiList_iff and noMtiFuns_iff relate the structural helpers to the original EVERY clauses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "no_mti_SmartCons",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/NoMti.lean", "lean_name": "noMti_smartCons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2472-2480 and typed capture in flat_to_clos_globals_probe.out. The closure expression and list carriers agree, and the HOL Boolean equality is expressed as an iff with membership quantification for EVERY. The proof covers empty, nonconstant and folded-constant branches."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_prog_set_globals",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "compileProg_setGlobals",
     "statement_status": "reviewed_exact",

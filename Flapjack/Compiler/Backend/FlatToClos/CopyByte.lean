@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
 
 /-! Closure expressions for checked byte-copy operations. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -48,6 +49,14 @@ theorem copyByteAw8_globalSafe (t : Tra) :
     Flapjack.Compiler.Backend.ClosProps.esgcFree (copyByteAw8 t) := by
   simp [copyByteAw8, copyChecks, subscriptRaise,
     Flapjack.Compiler.Backend.ClosProps.esgcFree, Flapjack.Compiler.Backend.ClosProps.esgcFreeList]
+
+/-- Flapjack helper: the generated string-copy checks use pre-MTI syntax. -/
+theorem copyByteStr_noMti (t : Tra) : ClosProps.noMti (copyByteStr t) := by
+  simp [copyByteStr, copyChecks, subscriptRaise, ClosProps.noMti, ClosProps.noMtiList]
+
+/-- Flapjack helper: the generated array-copy checks use pre-MTI syntax. -/
+theorem copyByteAw8_noMti (t : Tra) : ClosProps.noMti (copyByteAw8 t) := by
+  simp [copyByteAw8, copyChecks, subscriptRaise, ClosProps.noMti, ClosProps.noMtiList]
 
 /-- Flapjack helper: string-copy checks contribute no global writes. -/
 theorem copyByteStr_noGlobals (t : Tra) :

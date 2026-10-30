@@ -22,3 +22,5 @@ val _ = show "insert_interp_esgc=" clos_interpProofTheory.insert_interp_esgc_fre
 val _ = show "inc_compile_esgc=" flat_to_closProofTheory.FST_inc_compile_esgc_free;
 val _ = show "inc_compile_globals=" flat_to_closProofTheory.FST_inc_compile_set_globals;
 val _ = show "compile_prog_globals=" flat_to_closProofTheory.compile_prog_set_globals;
+val _ = show "no_mti_def=" closPropsTheory.no_mti_def;
+val _ = show "no_mti_smartcons=" flat_to_closProofTheory.no_mti_SmartCons;
