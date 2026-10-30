@@ -108518,4 +108518,29 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared both original list clauses and inferred exp-list type in flat_pattern_global_flag_probe.out. Empty lists are true and cons combines noMat of the head with the recursive result."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/ApplyClock.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed original implication in bvl_sem_values_probe.out: arbitrary clock replacement preserves the same success value and updates only the result state clock, or preserves the same error. State compiler and FFI carriers remain independent. The local canonical witness covers refs only; doApp inherits floating-point real-carrier assumptions.",
+    "hol_name": "do_app_change_clock",
+    "lean_name": "doAppChangeClock"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/ApplyClock.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed original implication in bvl_sem_values_probe.out: arbitrary clock replacement preserves the same success value and updates only the result state clock, or preserves the same error. State compiler and FFI carriers remain independent. The local canonical witness covers refs only; doApp inherits floating-point real-carrier assumptions.",
+    "hol_name": "do_app_change_clock_err",
+    "lean_name": "doAppChangeClockErr"
+  }
 ]
