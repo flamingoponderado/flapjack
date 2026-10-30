@@ -16,3 +16,8 @@ val _ = (print "compile_no_mat="; print_term (concl source_to_flatProofTheory.co
 val _ = (print "inc_compile_no_mat="; print_term (concl source_to_flatProofTheory.inc_compile_no_Mat); print "\n");
 val _ = (print "num_bindings="; print_term (concl source_to_flatProofTheory.num_bindings_def); print "\n");
 val _ = (print "compile_decs_num_bindings="; print_term (concl source_to_flatProofTheory.compile_decs_num_bindings); print "\n");
+val _ = (print "set_globals_make_varls="; print_term (concl source_to_flatProofTheory.set_globals_make_varls); print "\n");
+val _ = (print "compile_decs_elist_globals="; print_term (concl source_to_flatProofTheory.compile_decs_elist_globals); print "\n");
+val _ = (print "compile_flat_sub_bag="; print_term (concl source_to_flatProofTheory.compile_flat_sub_bag); print "\n");
+val _ = (print "compile_globals_distinct="; print_term (concl source_to_flatProofTheory.compile_globals_BAG_ALL_DISTINCT); print "\n");
+val _ = (print "inc_compile_globals_distinct="; print_term (concl source_to_flatProofTheory.inc_compile_globals_BAG_ALL_DISTINCT); print "\n");

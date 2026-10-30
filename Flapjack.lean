@@ -240,6 +240,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileExp
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileGlobals
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileDecGlobals
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindingCount
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindingGlobals
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileFlatGlobals
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindLocals
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnv

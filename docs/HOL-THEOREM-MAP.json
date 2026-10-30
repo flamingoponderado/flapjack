@@ -1,5 +1,35 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "set_globals_make_varls",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingGlobals.lean", "lean_name": "setGlobals_makeVarls",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5675-5688. bindingRangeBag is the multiplicity function of MAP (start +) (List.range count), corresponding to HOL LIST_TO_BAG over MAP and COUNT_LIST; all argument carriers and the expression-bag equality agree. Typed original theorem captured in source_to_flat_compile_globals_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_decs_elist_globals",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingGlobals.lean", "lean_name": "compileDecs_elistGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5833-5872. The complete compile_decs tuple equality is retained and the output bag is exactly the consecutive range starting at next.vidx with length SUM MAP num_bindings. The proof uses the checked counter-growth and expression-bag invariants. Typed original theorem captured in source_to_flat_compile_globals_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_flat_sub_bag",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingGlobals.lean", "lean_name": "compileFlat_subBag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5874-5883. HOL subbag on num -> num is the same pointwise natural-number inequality; the proof composes flat elimination and pattern compilation bounds. Typed original theorem captured in source_to_flat_compile_globals_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_globals_BAG_ALL_DISTINCT",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingGlobals.lean", "lean_name": "compile_globals_distinct",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5889-5904 and HOL bagScript BAG_ALL_DISTINCT definition: the original no-duplicate condition is exactly forall key, bag key <= 1. All source inputs and the compile second component agree. Typed original theorem captured in source_to_flat_compile_globals_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "inc_compile_globals_BAG_ALL_DISTINCT",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingGlobals.lean", "lean_name": "incCompile_globals_distinct",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5906 onward and HOL bagScript BAG_ALL_DISTINCT definition. The environment identifier is a pair of naturals and the second component of the original incremental compilation is used, with the same pointwise multiplicity bound. Typed original theorem captured in source_to_flat_compile_globals_probe.out."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "num_bindings_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingCount.lean", "lean_name": "numBindings",
     "statement_status": "reviewed_exact",
