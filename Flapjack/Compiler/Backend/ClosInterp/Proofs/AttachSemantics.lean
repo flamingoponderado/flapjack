@@ -94,7 +94,7 @@ theorem attachInterpreter_terminating_observations {C F : Type} (expressions : L
 
 /-- The interpreter insertion simulation preserves all proof-side behavior
 once the evaluator's clock-indexed event traces are known to be monotone.
-The trace monotonicity obligations remain to be established separately. -/
+The unconditional trace monotonicity result is applied below. -/
 theorem attachInterpreter_semantics_of_trace_monotonicity {C F : Type} (expressions : List ClosLang.Exp)
     (ffi : HolFfiState F) (maxApp : Nat) (oracle : ClosSem.CompileOracle C)
     (compiler : ClosSem.Compiler C) (oracleSafe : ∀ index, (oracle index).2.2 = [])
@@ -125,17 +125,20 @@ theorem attachInterpreter_semantics_of_trace_monotonicity {C F : Type} (expressi
   exact ⟨extra, targetFinal, by simpa [Nat.add_comm] using targetRun, ffiEq⟩
 
 /-- Interpreter attachment preserves the proof-side closure observations,
-including divergence, when the source does not fail. The evaluator and
-state-carrier correspondence to HOL remains under review. -/
+including divergence, when the source does not fail. The hypotheses and
+equality direction follow `semantics_attach_interpreter`; this result is
+untagged because correspondence of the evaluator and state carriers with HOL
+has not yet been established. -/
 theorem attachInterpreter_semantics {C F : Type} (expressions : List ClosLang.Exp)
     (ffi : HolFfiState F) (maxApp : Nat) (oracle : ClosSem.CompileOracle C)
-    (compiler : ClosSem.Compiler C) (oracleSafe : ∀ index, (oracle index).2.2 = [])
-    (positive : 1 ≤ maxApp)
+    (compiler : ClosSem.Compiler C)
     (sourceNoFail : ClosSem.semantics ffi maxApp HolFiniteMapExact.empty oracle
-      (pureCc insertProgram compiler) (attachInterpreter expressions) ≠ .fail) :
-    ClosSem.semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc insertProgram compiler) (attachInterpreter expressions) =
-      ClosSem.semantics ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle) compiler (attachInterpreter expressions) := by
-  apply attachInterpreter_semantics_of_trace_monotonicity expressions ffi maxApp oracle compiler oracleSafe positive sourceNoFail
+      (pureCc insertProgram compiler) (attachInterpreter expressions) ≠ .fail)
+    (assumptions : (∀ index, (oracle index).2.2 = []) ∧ 0 < maxApp) :
+    ClosSem.semantics ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle) compiler (attachInterpreter expressions) =
+      ClosSem.semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc insertProgram compiler) (attachInterpreter expressions) := by
+  symm
+  apply attachInterpreter_semantics_of_trace_monotonicity expressions ffi maxApp oracle compiler assumptions.1 assumptions.2 sourceNoFail
   · exact ClosSem.evaluate_initial_ioEvents_mono ffi maxApp HolFiniteMapExact.empty oracle
       (pureCc insertProgram compiler) (attachInterpreter expressions)
   · exact ClosSem.evaluate_initial_ioEvents_mono ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle)
