@@ -1714,6 +1714,43 @@ End
             finally:
                 checker_globals["ROOT"] = original_root
 
+    def test_fmap_as_finite_support_qualified_same_named_imports(self):
+        checker_globals = CHECKER["fmap_as_finite_support_errors"].__globals__
+        original_root = checker_globals["ROOT"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            folder = root / "Flapjack" / "Demo"
+            folder.mkdir(parents=True)
+            (folder / "First.lean").write_text(
+                "namespace Demo.First\nstructure State where\n  refs : HolFiniteMapExact Nat Nat\nend Demo.First\n",
+                encoding="utf-8")
+            (folder / "Second.lean").write_text(
+                "namespace Demo.Second\nstructure State where\n  refs : Nat → Option Nat\nend Demo.Second\n",
+                encoding="utf-8")
+            consumer = folder / "Consumer.lean"
+            consumer.write_text("import Flapjack.Demo.First\nimport Flapjack.Demo.Second\n", encoding="utf-8")
+            checker_globals["ROOT"] = root
+            try:
+                lines = [
+                    "theorem holFmapAsFiniteSupportWitness (s : Demo.First.State) :",
+                    "    Demo.First.State.ofBroad (Demo.First.State.toBroad s) = s := by rfl",
+                ]
+                check = lambda signature: CHECKER["fmap_as_finite_support_errors"](
+                    lines, ("refs",), "Flapjack/Demo/Consumer.lean", signature)
+                self.assertEqual(check("def f (s : Demo.First.State) := s"), [])
+                self.assertTrue(check("def f (s : State) := s"))
+                self.assertTrue(check("def f (s : Demo.Second.State) := s"))
+                self.assertTrue(check("def f (s : Fake.Demo.First.State) := s"))
+                shadow = ["structure State where", "  refs : HolFiniteMapExact Nat Nat", *lines]
+                self.assertTrue(CHECKER["fmap_as_finite_support_errors"](
+                    shadow, ("refs",), "Flapjack/Demo/Consumer.lean", "def f (s : Demo.First.State) := s"))
+                with (folder / "First.lean").open("a", encoding="utf-8") as first:
+                    first.write("namespace Other\nstructure State where\n  refs : Nat → Option Nat\nend Other\n")
+                CHECKER["imported_structure_field_types"].cache_clear()
+                self.assertTrue(check("def f (s : Demo.First.State) := s"))
+            finally:
+                checker_globals["ROOT"] = original_root
+
     def test_combined_fmap_words_qualifiers_with_imported_owner(self):
         """A real imported-owner + evaluator-local witness + both qualifiers.
 

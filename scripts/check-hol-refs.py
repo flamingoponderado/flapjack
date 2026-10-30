@@ -1283,6 +1283,28 @@ def fmap_as_finite_support_errors(
             named.extend((name, types) for name, _source, _names, types in named_imported)
             if len(named) == 1:
                 owning, owner_types = named[0]
+            elif len(named) > 1:
+                # Several imported modules can declare a carrier with the same
+                # leaf name (for example BvlSem.State and ClosSem.State).
+                # Resolve only an explicit full source namespace; do not guess
+                # from module paths or accept a locally shadowing carrier.
+                qualified = []
+                for name, source, _names, types in named_imported:
+                    if name in local_candidates:
+                        continue
+                    owner_names = _qualified_word_owner_names(source, name, str(ROOT))
+                    # The field parser is keyed by leaf name, so two same-named
+                    # carriers in one file cannot be disambiguated safely.
+                    if len(owner_names) != 1:
+                        continue
+                    full = next(iter(owner_names))
+                    if "." in full and re.search(
+                        rf"(?<![A-Za-z0-9_'.]){re.escape(full)}(?![A-Za-z0-9_'.])",
+                        declaration_text,
+                    ):
+                        qualified.append((name, types, source, full))
+                if len(qualified) == 1:
+                    owning, owner_types = qualified[0][:2]
         elif len(local_candidates) == 1:
             owning = local_candidates[0]
             owner_types = local_types.get(owning, {})

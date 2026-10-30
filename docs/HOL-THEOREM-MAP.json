@@ -1,5 +1,12 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "do_install_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Apply.lean", "lean_name": "doInstall",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared the complete typed definition and inferred v list -> (alpha,beta) state -> (v # (alpha,beta) state,gamma) result in bvl_sem_values_probe.out; the error payload gamma remains independent of both state parameters and v. The reviewed decoders equal the HOL choice predicates. Lookup absence for each program label is equivalent to source domain disjointness, Nodup of labels to ALL_DISTINCT; compiler output, nonempty program, byte/data equality, next-oracle configuration, tree union/fromAList and shift by one follow the source. The canonical finite-support witness covers refs only; code retains Spt. Lean checks a successful installation and the captured bad-arity error."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "v_to_bytes_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Conversions.lean", "lean_name": "valueToBytes",
     "statement_status": "reviewed_exact",

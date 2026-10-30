@@ -1,17 +1,26 @@
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
+import Flapjack.HolRef
 
 /-! BVL installation and primitive application. -/
 namespace Flapjack.Compiler.Backend.BvlSem
 open Flapjack.SemanticPrimitivesHOL
 
+namespace InstallCarrier
+/-- Canonical finite-map state representation roundtrip for installation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end InstallCarrier
+
 /-- Install code only when the decoded buffers and shifted compiler oracle
-agree with the callback, preserving the original disjointness checks. The
-source-shaped definition remains untagged because the finite-map reference
-checker cannot yet distinguish the imported BVL `State` from other imported
-structures with the same name and `refs` field. -/
-noncomputable def doInstall {C F R : Type} (args : List Value) (s : State C F) :
-    Result (Value × State C F) R := by
+agree with the callback, preserving the original disjointness checks. -/
+@[hol "cakeml/compiler/backend/semantics/bvlSemScript.sml" "do_install_def"
+  (fmap_as_finite_support := [refs])]
+noncomputable def doInstall {C F R : Type} (args : List Value)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    Result (Value × Flapjack.Compiler.Backend.BvlSem.State C F) R := by
   classical
   let fail : Result (Value × State C F) R := .err (.abort .typeError)
   exact match args with
