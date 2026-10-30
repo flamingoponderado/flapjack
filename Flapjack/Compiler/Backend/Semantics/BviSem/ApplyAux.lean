@@ -29,8 +29,9 @@ noncomputable def doAppAux {C F : Type} (op : ClosLang.Op) (args : List Value)
   | .globOp (.global index), [] => do
     let ptr ← s.global
     let .valueArray values ← s.refs.lookup ptr | none
-    let value ← values[index]?
-    result value
+    match values[index]? with
+    | none => none
+    | some value => result value
   | .globOp (.global _), _ => none
   | .globOp (.setGlobal index), [value] => do
     let ptr ← s.global

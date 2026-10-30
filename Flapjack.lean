@@ -525,6 +525,8 @@ import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyAux
 import Flapjack.Compiler.Backend.Semantics.BviSem.Install
 import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
 import Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyClock
+import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply

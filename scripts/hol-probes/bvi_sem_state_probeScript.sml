@@ -41,6 +41,9 @@ val _ = show "install_bad_arity=" (EVAL ``bviSem$do_install [] (s:('c,'ffi) bviS
 val _ = show "bvi_to_bvl=" bviSemTheory.bvi_to_bvl_def;
 val _ = show "do_app=" bviSemTheory.do_app_def;
 val _ = typ "do_app_type=" ``bviSem$do_app``;
+val _ = show "do_app_const=" bviSemTheory.do_app_const;
+val _ = show "evaluate_clock=" bviSemTheory.evaluate_clock;
+val _ = show "fix_clock_evaluate=" bviSemTheory.fix_clock_evaluate;
 val _ = typ "evaluate_type=" ``bviSem$evaluate``;
 val _ = show "eval_var=" (EVAL ``bviSem$evaluate ([bvi$Var 0], [bvlSem$Number 3], (s:('c,'ffi) bviSem$state))``);
 val _ = show "eval_return=" (EVAL ``bviSem$evaluate ([bvi$Return []], [], (s:('c,'ffi) bviSem$state))``);

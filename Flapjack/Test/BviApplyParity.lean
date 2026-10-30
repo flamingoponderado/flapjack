@@ -16,11 +16,11 @@ example {C F : Type} (s : BviState C F) :
 
 example {C F : Type} (s : BviState C F) :
     doApp (.intOp (.const 5)) [] s = .val (.number 5, s) := by
-  simp [doApp, doAppAux, smallEnoughInt]
+  simp [doApp, doAppFallback, doAppAux, smallEnoughInt]
 
 example {C F : Type} (s : BviState C F) :
     doApp (.intOp .add) [.number 2, .number 3] s = .val (.number 5, s) := by
-  simp [doApp, doAppAux, BvlSem.doApp, applyNumeric, doIntApp, fromBvl_toBvl]
+  simp [doApp, doAppFallback, doAppAux, BvlSem.doApp, applyNumeric, doIntApp, fromBvl_toBvl]
 
 /-- Installation rejects incorrect declared lengths before invoking the oracle. -/
 example {C F R : Type} (s : BviState C F) :

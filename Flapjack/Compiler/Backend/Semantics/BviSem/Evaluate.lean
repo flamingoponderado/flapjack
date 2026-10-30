@@ -18,6 +18,12 @@ private def typeError {C F : Type} (state : BviState C F) : EvalResult C F :=
 private def timeoutError {C F : Type} (state : BviState C F) : EvalResult C F :=
   (.err (.abort .timeoutError), state)
 
+@[simp] private theorem typeError_eq {C F : Type} (state : BviState C F) :
+    typeError state = (.err (.abort .typeError), state) := rfl
+
+@[simp] private theorem timeoutError_eq {C F : Type} (state : BviState C F) :
+    timeoutError state = (.err (.abort .timeoutError), state) := rfl
+
 /-- Clocked, source-shaped BVI evaluation. This remains untagged while the
 primitive dispatcher and arbitrary-state bridge await source qualification,
 and until the evaluator's termination and clock clauses are reviewed against

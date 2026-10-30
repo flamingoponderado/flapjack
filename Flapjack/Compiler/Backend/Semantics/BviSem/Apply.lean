@@ -28,6 +28,18 @@ theorem fromBvl_toBvl {C F : Type} (s : BviState C F) : fromBvl (toBvl s) s = s 
   cases s
   rfl
 
+/-- Dispatch a non-install operation through the BVI-specific cases or BVL
+fallback. This is Flapjack infrastructure for the source dispatcher. -/
+noncomputable def doAppFallback {C F : Type} (op : ClosLang.Op) (args : List Value) (s : BviState C F) :
+    Flapjack.SemanticPrimitivesHOL.Result (Value × BviState C F) ExnOrRet :=
+  match doAppAux op args s with
+    | none => .err (.abort .typeError)
+    | some (some pair) => .val pair
+    | some none => match BvlSem.doApp op args (toBvl s) with
+      | .val (value, next) => .val (value, fromBvl next s)
+      | .err (.abort error) => .err (.abort error)
+      | .err (.raise value) => .err (.raise (.exn value))
+
 /-- The complete BVI primitive dispatcher. This follows `do_app_def` but is
 untagged until the two state-carrier representations and the delegated
 primitive correspondence have been reviewed together. -/
@@ -35,12 +47,6 @@ noncomputable def doApp {C F : Type} (op : ClosLang.Op) (args : List Value) (s :
     Flapjack.SemanticPrimitivesHOL.Result (Value × BviState C F) ExnOrRet :=
   match op with
   | .install => doInstall args s
-  | _ => match doAppAux op args s with
-    | none => .err (.abort .typeError)
-    | some (some pair) => .val pair
-    | some none => match BvlSem.doApp op args (toBvl s) with
-      | .val (value, next) => .val (value, fromBvl next s)
-      | .err (.abort error) => .err (.abort error)
-      | .err (.raise value) => .err (.raise (.exn value))
+  | _ => doAppFallback op args s
 
 end Flapjack.Compiler.Backend.BviSem
