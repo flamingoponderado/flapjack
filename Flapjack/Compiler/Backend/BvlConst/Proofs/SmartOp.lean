@@ -27,6 +27,35 @@ theorem simple_eq (expression : Bvl.Exp) (n : Int) :
       cases operation <;> try simp
       case const value => cases args <;> simp
 
+/-- The binary-operation recognizer succeeds exactly for a constant second
+operand. The local original is captured by a typed HOL proof replay. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "case_op_const_eq"]
+theorem opConst_eq (expression : Bvl.Exp) (result : ClosLang.Op × Bvl.Exp × Int) :
+    opConst expression = some result ↔
+      ∃ op x n, result = (op, x, n) ∧
+        expression = .op op [x, .op (.intOp (.const n)) []] := by
+  cases expression <;> try simp [opConst]
+  case op op args =>
+    cases args with
+    | nil => simp
+    | cons x tail =>
+      cases tail with
+      | nil => simp
+      | cons y rest =>
+        cases rest with
+        | cons z rest => simp
+        | nil =>
+          cases y <;> try simp
+          case op inner operands =>
+            cases inner <;> try simp
+            case intOp operation =>
+              cases operation <;> try simp
+              case const n =>
+                cases operands <;> simp
+                constructor
+                · intro eq; exact ⟨op, x, n, eq.symm, rfl, rfl, rfl⟩
+                · rintro ⟨_, _, _, eq, rfl, rfl, rfl⟩; exact eq.symm
+
 /-- The unary operation rewrite preserves the original evaluation whenever
 that evaluation is not a type error. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "SmartOp1_thm"
@@ -167,5 +196,178 @@ theorem smartOpFlip_correct {C F : Type} (op op' : ClosLang.Op)
         simp [smartOpFlip, simple] at flipped
         rcases flipped with ⟨rfl, rfl, rfl⟩
         exact (evaluate_arithmetic_flip n x' env state).2.2.symm.trans run
+
+/-- Division case of the binary rewrite correctness theorem. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "SmartOp2_thm"
+  (fmap_as_finite_support := [refs])]
+theorem smartOp2_div_correct {C F : Type} (x y : Bvl.Exp) (env : List Value)
+    (state final : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (run : evaluateTuple ([.op (.intOp .div) [x, y]], env, state) = (result, final))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    evaluateTuple ([smartOp2 (.intOp .div, x, y)], env, state) = (result, final) := by
+  cases hx : simple x with
+  | none => simpa [smartOp2, hx] using run
+  | some a =>
+    cases hy : simple y with
+    | none => simpa [smartOp2, hx, hy] using run
+    | some b =>
+      have ex := (simple_eq x a).1 hx
+      have ey := (simple_eq y b).1 hy
+      subst x
+      subst y
+      by_cases zero : a = 0
+      · simpa [smartOp2, simple, zero] using run
+      · simp [evaluateTuple, evaluate, fixClock, doApp, applyNumeric, doIntApp, zero] at run
+        rcases run with ⟨rfl, rfl⟩
+        simp only [smartOp2, simple, beq_iff_eq, if_neg zero]
+        change evaluateTuple ([.op (.intOp (.const (b.fdiv a))) []], env, state) = _
+        exact evaluate_intConst (b.fdiv a) env state
+
+/-- Remainder case of the binary rewrite correctness theorem. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "SmartOp2_thm"
+  (fmap_as_finite_support := [refs])]
+theorem smartOp2_mod_correct {C F : Type} (x y : Bvl.Exp) (env : List Value)
+    (state final : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (run : evaluateTuple ([.op (.intOp .mod) [x, y]], env, state) = (result, final))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    evaluateTuple ([smartOp2 (.intOp .mod, x, y)], env, state) = (result, final) := by
+  cases hx : simple x with
+  | none => simpa [smartOp2, hx] using run
+  | some a =>
+    cases hy : simple y with
+    | none => simpa [smartOp2, hx, hy] using run
+    | some b =>
+      have ex := (simple_eq x a).1 hx
+      have ey := (simple_eq y b).1 hy
+      subst x
+      subst y
+      by_cases zero : a = 0
+      · simpa [smartOp2, simple, zero] using run
+      · simp [evaluateTuple, evaluate, fixClock, doApp, applyNumeric, doIntApp, zero] at run
+        rcases run with ⟨rfl, rfl⟩
+        simp only [smartOp2, simple, beq_iff_eq, if_neg zero]
+        change evaluateTuple ([.op (.intOp (.const (b.fmod a))) []], env, state) = _
+        exact evaluate_intConst (b.fmod a) env state
+
+/-- Less-than case of the binary rewrite correctness theorem. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "SmartOp2_thm"
+  (fmap_as_finite_support := [refs])]
+theorem smartOp2_less_correct {C F : Type} (x y : Bvl.Exp) (env : List Value)
+    (state final : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (run : evaluateTuple ([.op (.intOp .less) [x, y]], env, state) = (result, final))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    evaluateTuple ([smartOp2 (.intOp .less, x, y)], env, state) = (result, final) := by
+  cases hx : simple x with
+  | none => simpa [smartOp2, hx] using run
+  | some a =>
+    cases hy : simple y with
+    | none => simpa [smartOp2, hx, hy] using run
+    | some b =>
+      have ex := (simple_eq x a).1 hx
+      have ey := (simple_eq y b).1 hy
+      subst x
+      subst y
+      by_cases h : b < a
+      · simp [smartOp2, simple, BvlConst.bool, evaluateTuple, evaluate, fixClock,
+          doApp, applyNumeric, doIntApp, applyBlock, boolValue, BackendCommon.boolToTag,
+          BackendCommon.trueTag, h] at run ⊢
+        exact run
+      · simp [smartOp2, simple, BvlConst.bool, evaluateTuple, evaluate, fixClock,
+          doApp, applyNumeric, doIntApp, applyBlock, boolValue, BackendCommon.boolToTag,
+          BackendCommon.falseTag, h] at run ⊢
+        exact run
+
+
+/-- Less-or-equal case of the binary rewrite correctness theorem. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "SmartOp2_thm"
+  (fmap_as_finite_support := [refs])]
+theorem smartOp2_lessEq_correct {C F : Type} (x y : Bvl.Exp) (env : List Value)
+    (state final : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (run : evaluateTuple ([.op (.intOp .lessEq) [x, y]], env, state) = (result, final))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    evaluateTuple ([smartOp2 (.intOp .lessEq, x, y)], env, state) = (result, final) := by
+  cases hx : simple x with
+  | none => simpa [smartOp2, hx] using run
+  | some a =>
+    cases hy : simple y with
+    | none => simpa [smartOp2, hx, hy] using run
+    | some b =>
+      have ex := (simple_eq x a).1 hx
+      have ey := (simple_eq y b).1 hy
+      subst x
+      subst y
+      by_cases h : b ≤ a
+      · simp [smartOp2, simple, BvlConst.bool, evaluateTuple, evaluate, fixClock,
+          doApp, applyNumeric, doIntApp, applyBlock, boolValue, BackendCommon.boolToTag,
+          BackendCommon.trueTag, h] at run ⊢
+        exact run
+      · simp [smartOp2, simple, BvlConst.bool, evaluateTuple, evaluate, fixClock,
+          doApp, applyNumeric, doIntApp, applyBlock, boolValue, BackendCommon.boolToTag,
+          BackendCommon.falseTag, h] at run ⊢
+        exact run
+
+
+/-- Greater-than case of the binary rewrite correctness theorem. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "SmartOp2_thm"
+  (fmap_as_finite_support := [refs])]
+theorem smartOp2_greater_correct {C F : Type} (x y : Bvl.Exp) (env : List Value)
+    (state final : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (run : evaluateTuple ([.op (.intOp .greater) [x, y]], env, state) = (result, final))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    evaluateTuple ([smartOp2 (.intOp .greater, x, y)], env, state) = (result, final) := by
+  cases hx : simple x with
+  | none => simpa [smartOp2, hx] using run
+  | some a =>
+    cases hy : simple y with
+    | none => simpa [smartOp2, hx, hy] using run
+    | some b =>
+      have ex := (simple_eq x a).1 hx
+      have ey := (simple_eq y b).1 hy
+      subst x
+      subst y
+      by_cases h : b > a
+      · simp [smartOp2, simple, BvlConst.bool, evaluateTuple, evaluate, fixClock,
+          doApp, applyNumeric, doIntApp, applyBlock, boolValue, BackendCommon.boolToTag,
+          BackendCommon.trueTag, h] at run ⊢
+        exact run
+      · simp [smartOp2, simple, BvlConst.bool, evaluateTuple, evaluate, fixClock,
+          doApp, applyNumeric, doIntApp, applyBlock, boolValue, BackendCommon.boolToTag,
+          BackendCommon.falseTag, h] at run ⊢
+        exact run
+
+
+/-- Greater-or-equal case of the binary rewrite correctness theorem. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "SmartOp2_thm"
+  (fmap_as_finite_support := [refs])]
+theorem smartOp2_greaterEq_correct {C F : Type} (x y : Bvl.Exp) (env : List Value)
+    (state final : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (run : evaluateTuple ([.op (.intOp .greaterEq) [x, y]], env, state) = (result, final))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    evaluateTuple ([smartOp2 (.intOp .greaterEq, x, y)], env, state) = (result, final) := by
+  cases hx : simple x with
+  | none => simpa [smartOp2, hx] using run
+  | some a =>
+    cases hy : simple y with
+    | none => simpa [smartOp2, hx, hy] using run
+    | some b =>
+      have ex := (simple_eq x a).1 hx
+      have ey := (simple_eq y b).1 hy
+      subst x
+      subst y
+      by_cases h : b ≥ a
+      · simp [smartOp2, simple, BvlConst.bool, evaluateTuple, evaluate, fixClock,
+          doApp, applyNumeric, doIntApp, applyBlock, boolValue, BackendCommon.boolToTag,
+          BackendCommon.trueTag, h] at run ⊢
+        exact run
+      · simp [smartOp2, simple, BvlConst.bool, evaluateTuple, evaluate, fixClock,
+          doApp, applyNumeric, doIntApp, applyBlock, boolValue, BackendCommon.boolToTag,
+          BackendCommon.falseTag, h] at run ⊢
+        exact run
 
 end Flapjack.Compiler.Backend.BvlConst.Proofs

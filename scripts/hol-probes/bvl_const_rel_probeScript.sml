@@ -3,6 +3,7 @@ load "preamble";
 open preamble bvl_constProofTheory bvl_constTheory bvlSemTheory bvlPropsTheory;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+val _ = temp_delsimps ["NORMEQ_CONV"];
 fun show label th = if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show "value_rel=" v_rel_def;
@@ -82,6 +83,46 @@ val dest_simple_eq_replay = prove (``
   \\ Cases_on `i` \\ fs [dest_simple_def,NULL_EQ]
   \\ eq_tac \\ rw [] \\ rw []);
 val _ = show "dest_simple_eq_replay=" dest_simple_eq_replay;
+val case_op_const_eq_replay = prove (``
+  case_op_const exp = SOME x <=>
+  (?op x1 n2. x = (op, x1, n2) /\ (exp = Op op [x1; Op (IntOp (Const n2)) []]))``,
+  Cases_on `exp` \\ fs [case_op_const_def, NULL_EQ] \\
+  every_case_tac \\
+  eq_tac \\ rw []);
+val _ = show "case_op_const_eq_replay=" case_op_const_eq_replay;
+val SmartOp2_thm_replay = prove (``
+  evaluate ([Op op [x1;x2]],env,s) = (res,s2) /\
+  res <> Rerr (Rabort Rtype_error) ==>
+  evaluate ([SmartOp2 (op,x1,x2)],env,s) = (res,s2)``,
+  simp [SmartOp2_def] \\
+  reverse (Cases_on `op = BlockOp Equal`)
+  >- (
+    rpt TOP_CASE_TAC \\
+    fs [dest_simple_eq_replay, case_op_const_eq_replay] \\
+    rveq \\ disch_then strip_assume_tac \\
+    qpat_x_assum `evaluate _ = _` mp_tac \\
+    fs [dest_simple_eq_replay, case_op_const_eq_replay] \\
+    simp [evaluate_def, do_app_def] \\
+    fsrw_tac [DNF_ss] [case_eq_thms] \\ rw [] \\
+    imp_res_tac evaluate_SING \\ fs [] \\ rveq \\
+    rpt (first_x_assum (fn h => MAP_FIRST (fn th => fn g =>
+      mp_tac (MATCH_MP th h) g) (CONJUNCTS do_int_app_eq_some))) \\ rw [] \\
+    simp [do_int_app_def] \\
+    intLib.COOPER_TAC ORELSE metis_tac [
+      intLib.COOPER_PROVE ``!(a : int) b. 0 <= a /\ a < &b ==> Num a < b``])
+  \\ fs []
+  \\ every_case_tac \\ fs []
+  \\ fs [dest_simple_eq_replay] \\ rveq
+  \\ fs [evaluate_def,do_app_def,oneline do_int_app_def]
+  \\ rw []
+  \\ qpat_x_assum `_ = (res,_)` mp_tac
+  \\ CASE_TAC \\ fs []
+  \\ Cases_on `q`
+  \\ imp_res_tac evaluate_SING \\ fs [do_eq_def]
+  \\ TRY (Cases_on `d1`) \\ fs [do_eq_def]
+  \\ rw [] \\ fs []
+  \\ eq_tac \\ fs []);
+val _ = show "SmartOp2_thm_replay=" SmartOp2_thm_replay;
 val SmartOp_flip_thm_replay = prove (``
   (op', x1', x2') = SmartOp_flip op x1 x2 /\
   evaluate ([Op op [x1; x2]], env, s) = (res, s2) /\

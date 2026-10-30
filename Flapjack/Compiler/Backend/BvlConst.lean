@@ -16,7 +16,9 @@ def bool (b : Bool) : Exp := .op (.blockOp (.cons (if b then 1 else 0))) []
 def simple : Exp → Option Int
   | .op (.intOp (.const n)) [] => some n
   | _ => none
-private def opConst : Exp → Option (Op × Exp × Int)
+/-- Recognize a binary operation whose second operand is an integer constant. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "case_op_const_def"]
+def opConst : Exp → Option (Op × Exp × Int)
   | .op op [x, .op (.intOp (.const n)) []] => some (op, x, n)
   | _ => none
 private def add (x y : Exp) : Exp := .op (.intOp .add) [x, y]
@@ -81,8 +83,10 @@ def smartOpFlip (op : Op) (x y : Exp) : Op × Exp × Exp :=
     | some n, .intOp .sub => (Op.intOp .add, y, const (-n))
     | _, _ => (op, x, y)
 
-private def smart2 (op : Op) (x y : Exp) : Exp :=
-  let (op, x, y) := smartOpFlip op x y
+/-- Apply the source binary operation rewrites to an already-oriented tuple. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "SmartOp2_def"]
+def smartOp2 (input : Op × Exp × Exp) : Exp :=
+  let (op, x, y) := input
   match op with
   | .intOp .add => mkAdd x y
   | .intOp .sub => mkSub x y
@@ -114,6 +118,9 @@ private def smart2 (op : Op) (x y : Exp) : Exp :=
       | some n => if n < 0 then .op op [x, y] else .op (.blockOp (.elemAt n.toNat)) [y]
       | none => .op op [x, y]
   | _ => .op op [x, y]
+
+private def smart2 (op : Op) (x y : Exp) : Exp :=
+  smartOp2 (smartOpFlip op x y)
 
 /-- Apply the source's unary constant-equality rewrite. -/
 @[hol "cakeml/compiler/backend/bvl_constScript.sml" "SmartOp1_def"]

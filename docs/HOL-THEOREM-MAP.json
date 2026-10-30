@@ -109716,7 +109716,7 @@
     "hol_name": "SmartOp_def",
     "lean_name": "smartOp",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed SmartOp, SmartOp1, SmartOp2, SmartOp_flip, dest_simple and case_op_const captures in bvl_const_frontend_probe.out with the executed implementation. The singleton case calls reviewed smartOp1 and the binary helper now calls reviewed smartOpFlip, preserving both original branches. The default case, all add/subtract/multiply folding branches, reversed division and comparison operands, zero divisors, EqualConst and element-index cases match. Lean Int.fdiv/fmod implement the source floor operations; the signed oracle observations cover all sign combinations."
+    "reviewer": "Compared the typed SmartOp, SmartOp1, SmartOp2, SmartOp_flip, dest_simple and case_op_const captures in bvl_const_frontend_probe.out with the executed implementation. The refactored binary helper applies reviewed smartOp2 to reviewed smartOpFlip, matching the original composition; the unary case calls smartOp1. All arithmetic folding branches, reversed division and comparison operands, zero divisors, EqualConst and element-index cases match. Lean Int.fdiv/fmod implement the source floor operations; the signed oracle observations cover all sign combinations."
   },
   {
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
@@ -109839,5 +109839,89 @@
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the typed replay of the original local proof in bvl_const_rel_probe.out. All original operation/operand variables, source flip equality, arbitrary environment, independent compiler and FFI state carriers, original result and final state, evaluation hypothesis and non-type-error condition are preserved. The Lean proof derives a stronger helper for the arithmetic cases but retains the original theorem statement. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst.lean",
+    "hol_name": "case_op_const_def",
+    "lean_name": "opConst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source equation in bvl_const_frontend_probe.out. A binary Op is recognized only when its second operand is an argument-free integer constant, returning the operation, first operand and integer. All other cases return None; the production rewrite helpers use this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst.lean",
+    "hol_name": "SmartOp2_def",
+    "lean_name": "smartOp2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed SmartOp2 equation in bvl_const_frontend_probe.out and the underlying source helper definitions with the executed Lean branches: constant recognition, nested add/subtract/multiply rewrites, division and remainder with zero-divisor defaults, all four comparisons, Equal and element access. Its input is the original operation/expression/expression tuple. The executable SmartOp applies this definition to the reviewed flip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOp.lean",
+    "hol_name": "case_op_const_eq",
+    "lean_name": "opConst_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed replay of the original local theorem in bvl_const_rel_probe.out, including the arbitrary tuple result and the existential operation, first expression and integer. The second operand must be an integer constant with no arguments."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOp.lean",
+    "hol_name": "SmartOp2_thm",
+    "lean_name": "smartOp2_div_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Division case of the typed original local theorem replayed in bvl_const_rel_probe.out. The arbitrary operands, environment, compiler and FFI state types, original result and final state, evaluation and non-type-error hypotheses are unchanged. The source floor division and zero-divisor default are retained. This case alone does not establish the full binary theorem. The local state roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOp.lean",
+    "hol_name": "SmartOp2_thm",
+    "lean_name": "smartOp2_mod_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Remainder case of the typed original local theorem replayed in bvl_const_rel_probe.out, preserving all source hypotheses and result/state equality. The source floor remainder and zero-divisor default are retained. This case alone does not establish the full binary theorem. The local state roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOp.lean",
+    "hol_name": "SmartOp2_thm",
+    "lean_name": "smartOp2_less_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Less-than case of the typed original local theorem replayed in bvl_const_rel_probe.out, preserving all source hypotheses and result/state equality. The source operand order and Boolean tags are retained. This case alone does not establish the full binary theorem. The local state roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOp.lean",
+    "hol_name": "SmartOp2_thm",
+    "lean_name": "smartOp2_lessEq_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Less-or-equal case of the typed original local theorem replayed in bvl_const_rel_probe.out, preserving all source hypotheses and result/state equality. The source operand order and Boolean tags are retained. This case alone does not establish the full binary theorem. The local state roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOp.lean",
+    "hol_name": "SmartOp2_thm",
+    "lean_name": "smartOp2_greater_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Greater-than case of the typed original local theorem replayed in bvl_const_rel_probe.out, preserving all source hypotheses and result/state equality. The source operand order and Boolean tags are retained. This case alone does not establish the full binary theorem. The local state roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOp.lean",
+    "hol_name": "SmartOp2_thm",
+    "lean_name": "smartOp2_greaterEq_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Greater-or-equal case of the typed original local theorem replayed in bvl_const_rel_probe.out, preserving all source hypotheses and result/state equality. The source operand order and Boolean tags are retained. This case alone does not establish the full binary theorem. The local state roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
   }
 ]
