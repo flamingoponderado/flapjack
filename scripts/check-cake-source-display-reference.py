@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recheck the source, flat and closure explorer examples against pinned CakeML."""
+"""Recheck source through BVI explorer examples against pinned CakeML."""
 import argparse
 import importlib.util
 import subprocess
@@ -48,6 +48,34 @@ CLOS_EXPECTED = (
     b'      (let\n         ((b <- (var a)))\n         (op (SetGlobal 3) (var b)))))\n\n'
 )
 
+BVL_STUB = (
+    b'(func bvl_stub@31 (h g f e d c b a)\n'
+    b'   (let\n      (i <- (op (ElemAt 2) (var a)))\n'
+    b'      (call none (var h) (var g) (var f) (var e) (var d)\n'
+    b'         (var c) (var b) (op (ElemAt 3) (var a)) (var i)\n'
+    b'         (op (ElemAt 0) (var i)))))\n\n'
+)
+
+BVI_STUB = (
+    b'(func AllocGlobal@62 (a)\n   (let\n      (b <- (op GlobalsPtr))\n'
+    b'      (let\n         (c <- (op El (op (Const 0)) (var b)))\n'
+    b'         (let\n            (d <- (op Add (var c) (var a)))\n'
+    b'            (let\n               (e <- (op Length (var b)))\n'
+    b'               (let\n                  (f <- (op Update (var d) (op (Const 0)) (var b)))\n'
+    b'                  (if (op Less (var e) (var d)) (var f)\n'
+    b'                     (let\n                        (g <- (op RefArray (op (Const 0)) (op Add (var d) (var d))))\n'
+    b'                        (let\n                           (h <- (op SetGlobalsPtr (var g)))\n'
+    b'                           (call CopyGlobals@63 (var g) (var b)\n'
+    b'                              (op Sub (op (Const 1)) (var e))))))))))))\n\n'
+)
+
+BVI_START = (
+    b'(func start@64 ()\n   (let\n      (a <- (op RefArray (op (Const 0)) (op (Const 3))))\n'
+    b'      (let\n         (b <- (op Update (op (Const 1)) (op (Const 0)) (var a)))\n'
+    b'         (let\n            (c <- (op SetGlobalsPtr (var a)))\n'
+    b'            (call bvl_init@296 (handler d -> (var d)))))))\n\n'
+)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -69,6 +97,11 @@ def main():
             if clos not in result.stdout:
                 raise SystemExit(f'original closure-stage output mismatch for {source!r}')
             print('original closure-stage output matches', flush=True)
+            bvl = result.stdout.split(b'# after clos_to_bvl\n\n', 1)[1].split(b'# after bvl_inline', 1)[0]
+            bvi = result.stdout.split(b'# after bvl_to_bvi\n\n', 1)[1].split(b'# after bvi_tailrec', 1)[0]
+            if not bvl.startswith(BVL_STUB) or not bvi.startswith(BVI_STUB) or BVI_START not in bvi:
+                raise SystemExit(f'original BVL or BVI output mismatch for {source!r}')
+            print('original BVL and BVI runtime stubs match', flush=True)
         print(f'original source-stage output matches: {source!r}', flush=True)
 
 
