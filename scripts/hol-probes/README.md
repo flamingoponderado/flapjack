@@ -1,3 +1,9 @@
+`backend_oracle_monotonic_probe.out` records typed state-oracle definitions and
+the generic invariant-based ordering theorem. Regenerate with
+`HOL_PROBE_ONLY=backend_oracle_monotonic_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The typed source-to-flat oracle ordering theorem is captured in
+`source_to_flat_compile_globals_probe.out`.
+
 `cake_explore_frontend.json` records the byte length and digest of the six-stage source-to-closure explorer prefix emitted by the pinned CakeML executable. `scripts/check-cake-source-display-reference.py` rechecks it against that executable, and `Flapjack/Test/CakeFrontendStagesParity.lean` compares the complete captured output with the Lean pipeline. `cake_explore_closure.json` records the following six closure-through-BVL stages, `cake_explore_bvi.json` records the seven stages from BVL optimization through BVI, `cake_explore_data.json` records the four DataLang stages, `cake_explore_word.json` records the initial WordLang stage, `cake_explore_word_optimise.json` records the ten subsequent word stages, and `cake_explore_stack.json` records the seven stack-through-lab stages. Their `scripts/check-cake-*-explore.py` scripts compare full bytes with the pinned executable and invoke Lake, so run them sequentially with Lake builds. These are parity evidence, not proofs of cross-language equivalence.
 
 `clos_to_bvl_recursive_types_probe.out` captures the typed HOL signatures and

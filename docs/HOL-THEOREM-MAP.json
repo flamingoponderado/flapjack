@@ -1,5 +1,35 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "state_co_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "stateCo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared original definition and typed backend_oracle_monotonic_probe.out: oracle index, source state, output state, configuration, input and output are independently polymorphic; result retains the configuration and the second compiler result."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "oracle_monotonic_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "oracleMonotonic",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed HOL definition: both step and initial clauses quantify over Nat oracle indices and the same generic identifier type. HOL sets and relations are predicates; the source conjunction of three step premises is expressed as curried implications."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "is_state_oracle_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "isStateOracle",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed HOL definition: states, configurations, programs, outputs are independent types; each next state is the first component of the preceding incremental compiler result."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "oracle_monotonic_state_with_inv",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "oracleMonotonic_stateWithInv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every original premise and conclusion and independently typed state, config, input, output carriers in backend_oracle_monotonic_probe.out. The proof maintains the invariant and nondecreasing counter, then orders earlier and later identifier sets."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "monotonic_globals_state_co_compile",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalOracle.lean", "lean_name": "monotonicGlobals_stateCoCompile",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5928 onward and typed source_to_flat_compile_globals_probe.out: the external input payload and oracle configuration have independent polymorphic types. The compile result and initial oracle-state equalities and is_state_oracle premise are retained. shiftedGlobalWrites is IMAGE SUC of SET_OF_BAG, with BAG_IN equivalent to positive Nat multiplicity; the initial set additionally contains zero. The proof discharges original slot bounds from declaration global bags and counter growth."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "set_globals_make_varls",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingGlobals.lean", "lean_name": "setGlobals_makeVarls",
     "statement_status": "reviewed_exact",
