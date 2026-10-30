@@ -456,6 +456,7 @@ import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineExpandedCall
 import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineFull
 import Flapjack.Compiler.Backend.BvlInline.Proofs.InitialState
 import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineSemantics
+import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpProduction
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateTicks
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateExpandEnv
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull

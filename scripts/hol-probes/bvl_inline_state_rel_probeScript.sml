@@ -52,6 +52,14 @@ val _ = show "tick_inline_generic_cache=" (EVAL ``bvl_inline$tick_inline_sing
   (sptree$insert 3 (T, bvl$Var 8) sptree$LN) (bvl$Call 2 (SOME 3) [bvl$Var 1])``);
 val _ = show "tick_inline_uncached=" (EVAL ``bvl_inline$tick_inline_sing
   (sptree$LN : (bool # bvl$exp) sptree$num_map) (bvl$Call 2 (SOME 3) [bvl$Var 1])``);
+val _ = show "var_list=" bvl_inlineTheory.var_list_def;
+val _ = show "dest_op=" bvl_inlineTheory.dest_op_def;
+val _ = show "let_op=" bvl_inlineTheory.let_op_def;
+val _ = show "let_op_one_def=" bvl_inlineTheory.let_op_one_def;
+val _ = show "let_op_one=" bvl_inlineTheory.let_op_one;
+val _ = show "let_op_sing_def=" bvl_inlineTheory.let_op_sing_def;
+val _ = show "HD_let_op=" bvl_inlineProofTheory.HD_let_op;
+val _ = show "LENGTH_let_op=" bvl_inlineProofTheory.LENGTH_let_op;
 val do_app_lemma_goal = ``
   bvl_inlineProof$state_rel t' r ==>
     case bvlSem$do_app op (REVERSE a) r of

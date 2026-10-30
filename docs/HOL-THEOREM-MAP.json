@@ -109451,5 +109451,77 @@
     "hol_name": "in_evaluate_Call",
     "lean_name": "inEvaluateCall",
     "reviewer": "Compared the typed original local proof replay in bvl_inline_state_rel_probe.out, including the simplification of the compiler and oracle equalities in the exported evaluate_initial_state binding. The statement preserves the original initial Call, shared environment and initial FFI, cache-paired source configuration, in_cc and in_co adapters, initial-cache equation, distinct program labels and non-type-error premise; its existential conclusion gives the target evaluation and equality of final FFI states. The original source and target program trees use the sparse-tree carrier. The local roundtrip witnesses refs; evaluation inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/LetOp.lean",
+    "hol_name": "var_list_def",
+    "lean_name": "varListHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source declaration in bvl_inline_state_rel_probe.out. The original second list has independent polymorphic element type, retained in Lean. Recursive clauses compare consecutive numeric variable indices and reject all length and constructor mismatches; varList_eq_HOL proves agreement with the executed indexed test."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/LetOp.lean",
+    "hol_name": "dest_op_def",
+    "lean_name": "destOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source declaration in bvl_inline_state_rel_probe.out. The operator constructor and polymorphic argument-list carrier match, including the original zero-based variable test and None for every other expression."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/LetOp.lean",
+    "hol_name": "let_op_one_def",
+    "lean_name": "letOpOne",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source declaration in bvl_inline_state_rel_probe.out. Compared every typed singleton traversal clause, including recursive Let, the original dest_op choice, and all constructor payloads. letOpBounded_eq proves the executed bounded traversal returns this total source result for every fuel."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/LetOp.lean",
+    "hol_name": "let_op_one_def",
+    "lean_name": "letOpList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source declaration in bvl_inline_state_rel_probe.out. Compared the typed list traversal clauses: empty list remains empty and cons applies let_op_one to its head and recursively to its tail."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/LetOp.lean",
+    "hol_name": "let_op_def",
+    "lean_name": "letOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source declaration in bvl_inline_state_rel_probe.out. Compared all list and singleton clauses of let_op: the letOpList traversal realizes the same expressions, singleton HD is always defined, and the recursive Let performs the same dest_op choice."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/LetOp.lean",
+    "hol_name": "let_op_sing_def",
+    "lean_name": "letOpSing",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source declaration in bvl_inline_state_rel_probe.out. Compared the typed singleton selector and its exact IntOp Const 0 fallback expression; the fallback remains explicit even though the list traversal produces a singleton."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/LetOp.lean",
+    "hol_name": "let_op_one",
+    "lean_name": "letOpOne_equivalence",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source declaration in bvl_inline_state_rel_probe.out. The original conjunction universally relates singleton let_op to let_op_one and let_op_list to let_op; both conjuncts have the original expression/list carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOp.lean",
+    "hol_name": "LENGTH_let_op",
+    "lean_name": "lengthLetOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source declaration in bvl_inline_state_rel_probe.out. The theorem universally states equality of the original let_op output and input list lengths."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOp.lean",
+    "hol_name": "HD_let_op",
+    "lean_name": "headLetOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source declaration in bvl_inline_state_rel_probe.out. The original singleton equality uses HOL HD; holHd retains HOL's unspecified empty-list behavior, and let_op on a singleton is nonempty."
   }
 ]

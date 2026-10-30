@@ -145,7 +145,7 @@ def removeTicksFuel : Nat → Exp → Option Exp
       | .op op xs => do pure (.op op (← xs.mapM visit))
       | .call _ dest xs => do pure (.call 0 dest (← xs.mapM visit))
 
-private def varList (xs : List Exp) (arity : Nat) : Bool :=
+def varList (xs : List Exp) (arity : Nat) : Bool :=
   xs.length == arity && (xs.zip (List.range arity)).all fun (x, n) =>
     match x with | .var m => m == n | _ => false
 
