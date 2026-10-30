@@ -1,5 +1,10 @@
 evaluate_code_mono=∀(xs :bvi$exp list) (env :v list) (s1 :(α, β) state) (vs :(v list, exn_or_ret) result) (s2 :(α, β) state). (evaluate (xs,env,s1) :(v list, exn_or_ret) result # (α, β) state) = (vs,s2) ⇒ subspt s1.code s2.code
 evaluate_global_mono=∀(xs :bvi$exp list) (env :v list) (s :(α, β) state) (res :(v list, exn_or_ret) result) (t :(α, β) state). (evaluate (xs,env,s) :(v list, exn_or_ret) result # (α, β) state) = (res,t) ⇒ IS_SOME s.global ⇒ IS_SOME t.global
+inc_clock_ADD=inc_clock (n :num) (inc_clock (m :num) (s :(α, β) state)) = inc_clock (n + m) s
+dec_clock_inv_clock=¬((t1 :(α, β) state).clock < (ticks :num) + (1 :num)) ⇒ dec_clock (ticks + (1 :num)) (inc_clock (c :num) t1) = inc_clock c (dec_clock (ticks + (1 :num)) t1)
+do_app_change_clock=(do_app (op :closLang$op) (args :v list) (s1 :(α, β) state) :(v # (α, β) state, exn_or_ret) result) = (Rval ((res :v),(s2 :(α, β) state)) :(v # (α, β) state, exn_or_ret) result) ⇒ (do_app op args (s1 with clock := (ck :num)) :(v # (α, β) state, exn_or_ret) result) = (Rval (res,s2 with clock := ck) :(v # (α, β) state, exn_or_ret) result)
+do_app_change_clock_err=(do_app (op :closLang$op) (vs :v list) (s :(α, β) state) :(v # (α, β) state, exn_or_ret) result) = (Rerr (e :exn_or_ret error_result) :(v # (α, β) state, exn_or_ret) result) ⇒ (do_app op vs (s with clock := (c :num)) :(v # (α, β) state, exn_or_ret) result) = (Rerr e :(v # (α, β) state, exn_or_ret) result)
+evaluate_inv_clock=∀(xs :bvi$exp list) (env :v list) (t1 :(α, β) state) (res :(v list, exn_or_ret) result) (t2 :(α, β) state) (n :num). (evaluate (xs,env,t1) :(v list, exn_or_ret) result # (α, β) state) = (res,t2) ∧ res ≠ (Rerr (Rabort Rtimeout_error :exn_or_ret error_result) :(v list, exn_or_ret) result) ⇒ (evaluate (xs,env,inc_clock n t1) :(v list, exn_or_ret) result # (α, β) state) = (res,inc_clock n t2)
 exn_type=:v -> exn_or_ret
 ret_type=:v list -> exn_or_ret
 result_type=:(v list, exn_or_ret) result -> (v list, exn_or_ret) result

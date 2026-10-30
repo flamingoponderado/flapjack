@@ -110944,5 +110944,27 @@
     "refs"
   ],
   "reviewer": "Compared the typed original local theorem replay in bvl_to_bvi_value_rel_probe.out: arbitrary relocation functions agreeing on every key in the given reference domain yield equal adjusted well-formed values. The quantifier order and both premises match; the local canonical finite-map parameter witness establishes the lookup roundtrip. The proof recurses through nested blocks and reference pointers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviPropsScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviProps/Clock.lean",
+  "hol_name": "inc_clock_ADD",
+  "lean_name": "incClock_add",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared the typed original in bvi_sem_state_probe.out: two nested allowances compose as inc_clock (n + m) on an arbitrary polymorphic BVI state. Compiler and FFI state types remain independent and the same-module canonical state roundtrip covers refs."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviPropsScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviProps/Clock.lean",
+  "hol_name": "dec_clock_inv_clock",
+  "lean_name": "decClock_incClock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared the typed original in bvi_sem_state_probe.out: when the original clock covers ticks + 1, decrementing that budget commutes with an arbitrary added allowance. Compiler and FFI state types remain independent and the same-module canonical state roundtrip covers refs."
 }
 ]

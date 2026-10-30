@@ -8,6 +8,11 @@ fun show label th = if null (hyp th) then (print label; print_term (concl th); p
   else raise Fail (label ^ " has hypotheses");
 val _ = show "evaluate_code_mono=" bviPropsTheory.evaluate_code_mono;
 val _ = show "evaluate_global_mono=" bviPropsTheory.evaluate_global_mono;
+val _ = show "inc_clock_ADD=" bviPropsTheory.inc_clock_ADD;
+val _ = show "dec_clock_inv_clock=" bviPropsTheory.dec_clock_inv_clock;
+val _ = show "do_app_change_clock=" bviPropsTheory.do_app_change_clock;
+val _ = show "do_app_change_clock_err=" bviPropsTheory.do_app_change_clock_err;
+val _ = show "evaluate_inv_clock=" bviPropsTheory.evaluate_inv_clock;
 val _ = typ "exn_type=" ``bviSem$Exn``;
 val _ = typ "ret_type=" ``bviSem$Ret``;
 val _ = typ "result_type=" ``λ(x:bviSem$bvi_result). x``;

@@ -23,6 +23,27 @@ theorem incClock_zero {C F : Type} (s : BviSem.BviState C F) : incClock 0 s = s 
   cases s
   simp [incClock]
 
+/-- Two clock allowances combine by addition. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "inc_clock_ADD"
+  (fmap_as_finite_support := [refs])]
+theorem incClock_add {C F : Type} (n m : Nat)
+    (s : Flapjack.Compiler.Backend.BviSem.BviState C F) :
+    incClock n (incClock m s) = incClock (n + m) s := by
+  cases s
+  simp [incClock, Nat.add_comm, Nat.add_left_comm]
+
+/-- Decrementing an available call budget commutes with an added allowance. -/
+@[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "dec_clock_inv_clock"
+  (fmap_as_finite_support := [refs])]
+theorem decClock_incClock {C F : Type} (s : Flapjack.Compiler.Backend.BviSem.BviState C F)
+    (ticks extra : Nat) (available : ¬s.clock < ticks + 1) :
+    BviSem.decClock (ticks + 1) (incClock extra s) =
+      incClock extra (BviSem.decClock (ticks + 1) s) := by
+  cases s
+  simp only [incClock, BviSem.decClock] at *
+  congr 1
+  omega
+
 /-- Decrementing a nonzero clock commutes with an added allowance. -/
 @[hol "cakeml/compiler/backend/semantics/bviPropsScript.sml" "dec_clock_inv_clock1"
   (fmap_as_finite_support := [refs])]
