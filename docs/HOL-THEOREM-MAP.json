@@ -109259,5 +109259,161 @@
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the typed evaluate_inline statement and the Call/Call branch of its source proof. The case retains the original source and target Call expressions, relation and source-evaluation premises, non-type-error side condition, target existential and final relation. The argument induction hypothesis has the same simulation shape; the body induction hypothesis uses the original clock decrease after argument evaluation and applies to the body found in source and target code. The canonical reference-store roundtrip witnesses refs; evaluation inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateExpandEnv.lean",
+    "hol_name": "evaluate_expand_env",
+    "lean_name": "evaluateExpandEnv_nil",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_expand_env and its original proof in bvl_inline_state_rel_probe.out: empty expression list. The no-type-error premise and equality between the suffix-extended and original evaluations are preserved, with only the corresponding recursive induction hypotheses for case pieces. The canonical reference-store roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateExpandEnv.lean",
+    "hol_name": "evaluate_expand_env",
+    "lean_name": "evaluateExpandEnv_var",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_expand_env and its original proof in bvl_inline_state_rel_probe.out: Var, where a non-type-error lookup is inside the original prefix. The no-type-error premise and equality between the suffix-extended and original evaluations are preserved, with only the corresponding recursive induction hypotheses for case pieces. The canonical reference-store roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateExpandEnv.lean",
+    "hol_name": "evaluate_expand_env",
+    "lean_name": "evaluateExpandEnv_force",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_expand_env and its original proof in bvl_inline_state_rel_probe.out: Force, whose thunk lookup remains in the original prefix and whose recursive call uses its own argument environment. The no-type-error premise and equality between the suffix-extended and original evaluations are preserved, with only the corresponding recursive induction hypotheses for case pieces. The canonical reference-store roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateExpandEnv.lean",
+    "hol_name": "evaluate_expand_env",
+    "lean_name": "evaluateExpandEnv_tick",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_expand_env and its original proof in bvl_inline_state_rel_probe.out: Tick, with the body induction hypothesis at the decremented clock. The no-type-error premise and equality between the suffix-extended and original evaluations are preserved, with only the corresponding recursive induction hypotheses for case pieces. The canonical reference-store roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateExpandEnv.lean",
+    "hol_name": "evaluate_expand_env",
+    "lean_name": "evaluateExpandEnv_raise",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_expand_env and its original proof in bvl_inline_state_rel_probe.out: Raise, using the body induction hypothesis. The no-type-error premise and equality between the suffix-extended and original evaluations are preserved, with only the corresponding recursive induction hypotheses for case pieces. The canonical reference-store roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateExpandEnv.lean",
+    "hol_name": "evaluate_expand_env",
+    "lean_name": "evaluateExpandEnv_op",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_expand_env and its original proof in bvl_inline_state_rel_probe.out: Op, using the argument induction hypothesis before the same primitive application. The no-type-error premise and equality between the suffix-extended and original evaluations are preserved, with only the corresponding recursive induction hypotheses for case pieces. The canonical reference-store roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateExpandEnv.lean",
+    "hol_name": "evaluate_expand_env",
+    "lean_name": "evaluateExpandEnv_call",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_expand_env and its original proof in bvl_inline_state_rel_probe.out: Call, using the argument induction hypothesis before the same code lookup and callee evaluation. The no-type-error premise and equality between the suffix-extended and original evaluations are preserved, with only the corresponding recursive induction hypotheses for case pieces. The canonical reference-store roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateExpandEnv.lean",
+    "hol_name": "evaluate_expand_env",
+    "lean_name": "evaluateExpandEnv_let",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_expand_env and its original proof in bvl_inline_state_rel_probe.out: Let, using induction on bindings and on the body at the reached state, with the same bound-value prefix. The no-type-error premise and equality between the suffix-extended and original evaluations are preserved, with only the corresponding recursive induction hypotheses for case pieces. The canonical reference-store roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateExpandEnv.lean",
+    "hol_name": "evaluate_expand_env",
+    "lean_name": "evaluateExpandEnv_cons",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_expand_env and its original proof in bvl_inline_state_rel_probe.out: non-singleton expression list, using head and tail induction hypotheses at the reached state. The no-type-error premise and equality between the suffix-extended and original evaluations are preserved, with only the corresponding recursive induction hypotheses for case pieces. The canonical reference-store roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateExpandEnv.lean",
+    "hol_name": "evaluate_expand_env",
+    "lean_name": "evaluateExpandEnv_handle",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_expand_env and its original proof in bvl_inline_state_rel_probe.out: Handle, using body and raised-handler induction hypotheses at the reached state. The no-type-error premise and equality between the suffix-extended and original evaluations are preserved, with only the corresponding recursive induction hypotheses for case pieces. The canonical reference-store roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateExpandEnv.lean",
+    "hol_name": "evaluate_expand_env",
+    "lean_name": "evaluateExpandEnv_if",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_expand_env and its original proof in bvl_inline_state_rel_probe.out: If, using condition and selected-branch induction hypotheses at the reached state. The no-type-error premise and equality between the suffix-extended and original evaluations are preserved, with only the corresponding recursive induction hypotheses for case pieces. The canonical reference-store roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateExpandEnv.lean",
+    "hol_name": "evaluate_expand_env",
+    "lean_name": "evaluateExpandEnv",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_expand_env and its original proof in bvl_inline_state_rel_probe.out: complete theorem, assembled by clock and expression-weight induction. The no-type-error premise and equality between the suffix-extended and original evaluations are preserved, with only the corresponding recursive induction hypotheses for case pieces. The canonical reference-store roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineExpandedCall.lean",
+    "hol_name": "evaluate_inline",
+    "lean_name": "evaluateInline_inlineCall",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared typed evaluate_inline and the original inlined Call/Let proof case. The expression relation fixes the target Let to the cached body wrapped in ticks; the original source evaluation, state relation, no-type-error premise, target existential and final relation are preserved. Argument and body induction hypotheses use the original recursive evaluations and clock decrease. The proof transports the cached lookup and body relation across argument evaluation and applies the complete evaluate_expand_env theorem to the target body. The canonical reference-store witness covers refs; evaluation inherits floating-point real-carrier assumptions."
   }
 ]
