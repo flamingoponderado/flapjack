@@ -573,6 +573,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCompiler
 import Flapjack.Test.BvlToBviSourceParity
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Names
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.StateRel
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign

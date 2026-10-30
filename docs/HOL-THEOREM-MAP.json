@@ -110484,5 +110484,65 @@
   "hol_name": "compile_inc_def",
   "lean_name": "compileIncSource",
   "reviewer": "Compared the typed original in bvl_to_bvi_compile_probe.out: input program and output code types, fresh-name counter, original program tree traversal, and final flattening all match. ProgramAgreement proves the executed retry produces the same result for every fuel."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/StateRel.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "State.refs",
+    "BviState.refs"
+  ],
+  "hol_name": "state_rel_def",
+  "lean_name": "stateRel",
+  "reviewer": "Compared every conjunct with the typed original state_rel_def in bvl_to_bvi_value_rel_probe.out: domain injection and reference cases, FFI, optional global pointer and padded array, clock, compiler and oracle, seven stubs, names and each compiled body. The source singleton conversion and compile_exp are rewritten using captured compile_exps_sing and compile_exp_eq; compileIncSource preserves the source incremental compiler. State.refs and BviState.refs are canonical finite maps with checked state roundtrips; code uses literal Spt trees."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/StateRel.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "State.refs",
+    "BviState.refs"
+  ],
+  "hol_name": "state_rel_FLOOKUP_byteArray",
+  "lean_name": "stateRel_byteArray",
+  "reviewer": "Compared the typed original theorem in bvl_to_bvi_value_rel_probe.out: related source and target states and source byte-array lookup imply the unchanged target lookup at the relocated key."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/StateRel.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "State.refs",
+    "BviState.refs"
+  ],
+  "hol_name": "state_rel_FLOOKUP_valueArray",
+  "lean_name": "stateRel_valueArray",
+  "reviewer": "Compared the typed original theorem in bvl_to_bvi_value_rel_probe.out: the value-array lookup maps every value through adjustBv at the relocated key."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/StateRel.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "State.refs",
+    "BviState.refs"
+  ],
+  "hol_name": "state_rel_FLOOKUP_MutBlock",
+  "lean_name": "stateRel_mutBlock",
+  "reviewer": "Compared the typed original theorem in bvl_to_bvi_value_rel_probe.out: all mutable-block fields are unchanged at the relocated key."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/StateRel.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "State.refs",
+    "BviState.refs"
+  ],
+  "hol_name": "state_rel_FLOOKUP_Thunk",
+  "lean_name": "stateRel_thunk",
+  "reviewer": "Compared the typed original theorem in bvl_to_bvi_value_rel_probe.out: the thunk mode is unchanged and its value is relocated."
 }
 ]
