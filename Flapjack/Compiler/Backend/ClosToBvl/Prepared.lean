@@ -50,8 +50,8 @@ def compileNoOpts? (c : Config) (es : List ClosLang.Exp) :
   compilePrepared? c current es prog
 
 /-- Checked closure compilation with multi-argument introduction enabled or
-disabled. Known-function and call optimizations are still rejected, and the
-multi-argument traversal can fail when its explicit fuel is exhausted. -/
+disabled. Known-function and call optimizations are still rejected; the
+multi-argument traversal has a proved sufficient structural retry bound. -/
 def compileMtiOnlyFuel? (fuel : Nat) (c : Config) (es : List ClosLang.Exp) :
     Option (Config × List (Nat × Nat × Bvl.Exp) × Spt MlString) := do
   let es' ← ClosMti.compileFuel fuel c.doMti c.maxApp es

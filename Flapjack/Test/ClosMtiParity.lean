@@ -29,7 +29,10 @@ open Flapjack.Compiler.Backend Flapjack.Basis.Pure.MlString
   | some [.fn name none none 3 (.var .none 0), .app .none none (.var .none 0)
       [.var .none 3, .var .none 1, .var .none 2]] => decide (name = ofString "f")
   | _ => false
-#guard (ClosMti.compileFuel 0 true 5 [.var .none 0]).isNone
+#guard (ClosMti.introMultiFuel 0 5 (.var .none 0)).isNone
+#guard match ClosMti.compileFuel 0 true 5 [.var .none 0] with
+  | some [.var .none 0] => true
+  | _ => false
 #guard match ClosMti.compileFuel 0 false 5 [.var .none 0] with
   | some [.var .none 0] => true
   | _ => false

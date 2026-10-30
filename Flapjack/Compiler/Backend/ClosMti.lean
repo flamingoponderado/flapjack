@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosLang.Syntax
+import Flapjack.Compiler.Backend.ClosLang.Budget
 import Flapjack.HolRef
 
 /-! Multi-argument closure introduction. -/
@@ -51,8 +52,15 @@ def introMultiFuel : Nat → Nat → Exp → Option Exp
       | .letrec t loc fvs funs body => do pure (.letrec t loc fvs funs (← visit body))
       | .op t op xs => do pure (.op t op (← xs.mapM visit))
 
+/-- Preserve successful multi-argument introduction and retry exhaustion with
+a structural traversal budget. -/
+def introMultiBounded (fuel maxApp : Nat) (e : Exp) : Option Exp :=
+  match introMultiFuel fuel maxApp e with
+  | some result => some result
+  | none => introMultiFuel (max fuel (expBudget e + 1)) maxApp e
+
 /-- Apply the checked traversal to every expression when enabled. -/
 def compileFuel (fuel : Nat) (enabled : Bool) (maxApp : Nat) (es : List Exp) : Option (List Exp) :=
-  if enabled then es.mapM (introMultiFuel fuel maxApp) else some es
+  if enabled then es.mapM (introMultiBounded fuel maxApp) else some es
 
 end Flapjack.Compiler.Backend.ClosMti
