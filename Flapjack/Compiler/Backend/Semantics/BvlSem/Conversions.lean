@@ -55,7 +55,9 @@ theorem valueToWords_eq_some (value : Value) (words : List (BitVec 64)) :
     valueToWords value = some words ↔ valueToList value = some (words.map Value.word64) := by
   simp [valueToWords, Option.bind_eq_some_iff, wordValues_eq_some]
 
-private theorem option_eq_holChoice {α : Type} (decoded : Option α) (P : α → Prop)
+/-- A deterministic option characterized by a predicate equals HOL's guarded
+choice of a witness of that predicate. -/
+theorem option_eq_holChoice {α : Type} (decoded : Option α) (P : α → Prop)
     (characterization : ∀ x, decoded = some x ↔ P x) : decoded = Flapjack.holOptionSome P := by
   cases choice : Flapjack.holOptionSome P with
   | none =>

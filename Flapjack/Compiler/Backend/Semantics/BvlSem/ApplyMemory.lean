@@ -15,7 +15,8 @@ def byteNumbers : List Value → Option (List (BitVec 8))
     pure (byte :: rest)
   | _ => none
 
-private def byteArrays (refs : HolFiniteMapExact Nat (Ref Value)) : List Value → Option (List (List (BitVec 8)))
+/-- Decode a list of pointers to immutable byte arrays. -/
+def byteArrays (refs : HolFiniteMapExact Nat (Ref Value)) : List Value → Option (List (List (BitVec 8)))
   | [] => some []
   | .refPtr true ptr :: values => do
     let .byteArray true bytes ← refs.lookup ptr | none

@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
+import Flapjack.Compiler.Backend.Semantics.BvlSem.MemoryChoice
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
 
 /-! Kernel replay of representative original BVL semantic observations. -/
@@ -212,6 +213,21 @@ example : valueToBytes (listToValue [.number 1, .number 255]) = some [1, 255] :=
 example : valueToWords (listToValue [.word64 1, .word64 2]) = some [1, 2] := by
   rw [valueToWords_eq_some, valueToList_listToValue]
   rfl
+
+example (refs : Flapjack.HolFiniteMapExact Nat (Ref Value))
+    (first : refs.lookup 2 = some (.byteArray true [1, 2]))
+    (second : refs.lookup 3 = some (.byteArray true [3])) :
+    byteArrayChunks refs (listToValue [.refPtr true 2, .refPtr true 3]) = some [[1, 2], [3]] := by
+  simp [byteArrayChunks, valueToList_listToValue, byteArrays, first, second]
+
+example (refs : Flapjack.HolFiniteMapExact Nat (Ref Value)) :
+    byteArrayChunks refs (listToValue [.refPtr false 2]) = none := by
+  simp [byteArrayChunks, valueToList_listToValue, byteArrays]
+
+example (refs : Flapjack.HolFiniteMapExact Nat (Ref Value))
+    (mutable : refs.lookup 2 = some (.byteArray false [1])) :
+    byteArrayChunks refs (listToValue [.refPtr true 2]) = none := by
+  simp [byteArrayChunks, valueToList_listToValue, byteArrays, mutable]
 
 example {C F R : Type} (s : State C F) :
     doInstall (R := R) [] s = .err (.abort .typeError) := by simp [doInstall]
