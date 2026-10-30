@@ -518,12 +518,14 @@ handlers. It also compares generated type and datatype declarations, pattern con
 handlers and constructor scopes, type annotations across value, function,
 local, expression and datatype contexts with the standard basis enabled, and successful compilation with
 combinations of backend options, including allocator 3 and explicitly sized
-generational garbage collection. It also compares a matrix of malformed and
+generational garbage collection. Nine fixed integration programs exercise mutable
+arrays, large integer factorial, list append, exceptions, string concatenation,
+floating point, mutual recursion, and vectors. It also compares a matrix of malformed and
 valid flag values and generated combinations, including duplicate flags and
 configuration-error precedence. Case counts can be changed with
 `--type-cases`, `--sexp-cases`, `--structured-cases`, `--lex-cases`,
 `--byte-cases`, `--raw-byte-cases`, `--declaration-cases`, `--handler-cases`, `--annotation-cases`, `--compile-cases`,
-`--rich-cases`, `--explore-cases`, `--token-cases`, `--config-cases`, and `--config-error-cases` (zero skips the
+`--rich-cases`, `--integration-cases`, `--explore-cases`, `--token-cases`, `--config-cases`, and `--config-error-cases` (zero skips the
 option matrix). `--type-seed`, `--edge-seed`, and
 `--compile-seed` select reproducible random inputs. These samples do not prove
 general parity. Set `--raw-byte-cases=1536` to compare each byte in all

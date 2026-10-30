@@ -64,6 +64,20 @@ HANDLER_EXPRESSIONS = ["x", "y", "A", "B x", "True", "False", "0", "~1", "[]", "
 ANNOTATION_TYPES = ["int", "bool", "int list", "int -> bool", "int ref", "int * bool", "'a", "unknown"]
 ANNOTATION_EXPRESSIONS = ["1", "true", "[]", "fn x => x", "ref 1", "(1,true)", '"foo"', "raise Bind"]
 
+# These are complete source-to-assembly comparisons, not just parser examples.
+# Keep the original executable as the oracle, including stdout, stderr and exit code.
+INTEGRATION_PROGRAMS = [
+    'val b = Word8Array.array 8 (Word8.fromInt 7); val _ = Word8Array.update b 2 (Word8.fromInt 255); val _ = print_int (Word8.toInt (Word8Array.sub b 2));',
+    'val a = Array.array 4 9; val _ = Array.update a 2 11; val _ = print_int (Array.sub a 2);',
+    'fun fact n = if n = 0 then 1 else n * fact (n-1); val _ = print (Int.toString (fact 30));',
+    'val a = [1,2,3] @ [4,5]; val _ = print_int (List.length a);',
+    'exception E int; fun f x = if x = 0 then raise E 7 else 4; val _ = print_int ((f 0) handle E n => n);',
+    'val _ = print (String.concat ["abc", "def", "ghi"]);',
+    'val x = Double.sqrt (Double.fromInt 4); val _ = print_int (Double.toInt x);',
+    'fun even n = if n = 0 then True else odd (n-1) and odd n = if n = 0 then False else even (n-1); val _ = if even 8 then print "true" else print "false";',
+    'val a = Vector.fromList [1,2,3]; val _ = print_int (Vector.sub a 2);',
+]
+
 
 def annotation_programs():
     """Cross type and expression annotations through five binding contexts."""
@@ -277,6 +291,8 @@ def main():
                         help="diverse programs comparing complete explorer reports")
     parser.add_argument("--rich-cases", type=int, default=20,
                         help="well-typed programs exercising diverse compiler passes")
+    parser.add_argument("--integration-cases", type=int, default=len(INTEGRATION_PROGRAMS),
+                        help="handwritten end-to-end compiler cases (maximum %(default)s)")
     parser.add_argument("--declaration-cases", type=int, default=100,
                         help="generated datatype, exception, type and namespace cases")
     parser.add_argument("--handler-cases", type=int, default=100,
@@ -305,11 +321,14 @@ def main():
     parser.add_argument("--timeout", type=int, default=90)
     args = parser.parse_args()
     if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.explore_cases < 0 or args.sexp_cases < 0 or
+            not 0 <= args.integration_cases <= len(INTEGRATION_PROGRAMS) or
             args.declaration_cases < 0 or args.handler_cases < 0 or not 0 <= args.annotation_cases <= 320 or
             args.config_cases < 0 or args.config_error_cases < 0 or
             args.structured_cases < 0 or args.lex_cases < 0 or args.token_cases < 0 or args.raw_byte_cases < 0 or
             not 0 <= args.byte_cases <= 256 or args.timeout <= 0):
-        parser.error("case counts must be nonnegative, annotation-cases at most 320, byte-cases at most 256, and timeout positive")
+        parser.error("case counts must be nonnegative, integration-cases at most "
+                     f"{len(INTEGRATION_PROGRAMS)}, annotation-cases at most 320, "
+                     "byte-cases at most 256, and timeout positive")
     parity.check_pinned_reference(args.reference)
     types_rng = random.Random(args.type_seed)
     for _ in range(args.type_cases):
@@ -392,6 +411,9 @@ def main():
     for _ in range(args.rich_cases):
         compare(args.reference, args.cake, [], rich_program(compile_rng), args.timeout, True)
     print(f"{args.rich_cases} diverse programs match complete pinned RISC-V output", flush=True)
+    for source in INTEGRATION_PROGRAMS[:args.integration_cases]:
+        compare(args.reference, args.cake, [], source, args.timeout, True)
+    print(f"{args.integration_cases} integration programs match complete pinned RISC-V output", flush=True)
     explore_rng = random.Random(args.compile_seed)
     for _ in range(args.explore_cases):
         compare(args.reference, args.cake, ["--explore"], rich_program(explore_rng), args.timeout, True)
