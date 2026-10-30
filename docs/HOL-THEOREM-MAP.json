@@ -1,5 +1,11 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_prog_set_globals",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "compileProg_setGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2364-2372 and inferred types in flat_to_clos_globals_probe.out. The match-free premise and closure-expression list result match. The first pointwise bag is the singleton zero; shiftGlobalBag implements BAG_IMAGE SUC, with zero having no preimage and each successor having its unique predecessor multiplicity. The initializer proof checks both interpreter-installation branches."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "FST_inc_compile_set_globals",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "incCompileDecs_setGlobals",
     "statement_status": "reviewed_exact",

@@ -163,6 +163,23 @@ private theorem compileInit_safe (b : Bool) : ClosProps.esgcFree (ClosInterp.com
     ClosInterp.interpreterVar_eq, ClosProps.esgcFree, ClosProps.esgcFreeList,
     interpreterNoWrites]
 
+private theorem compileInit_globals (b : Bool) :
+    ClosProps.setGlobals (ClosInterp.compileInit b) = fun key => if key = 0 then 1 else 0 := by
+  cases b <;> funext key <;>
+    simp [ClosInterp.compileInit, ClosInterp.interpreterCons_eq, ClosInterp.interpreterVar_eq,
+      ClosProps.setGlobals, ClosProps.elistGlobals, ClosProps.opGlobalBag,
+      interpreterNoWrites, unionGlobalBag, emptyGlobalBag]
+
+/-- Attaching the interpreter initializes global slot zero once and preserves
+the shifted writes of the compiled declarations. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_prog_set_globals"]
+theorem compileProg_setGlobals (ds : List FlatLang.Exp) (noMat : FlatProps.noMatDecs ds = true) :
+    ClosProps.elistGlobals (compileProg ds) =
+      unionGlobalBag (fun key => if key = 0 then 1 else 0)
+        (shiftGlobalBag (FlatProps.elistGlobals ds)) := by
+  simp [compileProg, ClosInterp.attachInterpreter, ClosProps.elistGlobals,
+    compileInit_globals, compileDecs_setGlobals ds noMat]
+
 /-- Interpreter attachment preserves the closure-safety invariant. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_prog_esgc_free"]
 theorem compileProg_esgcFree (ds : List FlatLang.Exp)
