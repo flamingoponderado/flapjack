@@ -1,5 +1,17 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "v_to_bytes_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Conversions.lean", "lean_name": "valueToBytes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source definition and v -> word8 list option carrier in bvl_sem_values_probe.out. The BVL value carrier and valueToList are constructor-for-constructor ports. valueToBytes_eq_some proves the successful result is exactly the source MAP of Number composed with integer injection and word8-to-natural conversion; valueToBytes_eq_holChoice proves equality, including failure, to the guarded HOL choice operator. The proof-side installation dispatcher uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "v_to_words_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Conversions.lean", "lean_name": "valueToWords",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source definition and v -> word64 list option carrier in bvl_sem_values_probe.out. The BVL value carrier and valueToList are constructor-for-constructor ports. valueToWords_eq_some proves the successful result is exactly the source MAP Word64 predicate; valueToWords_eq_holChoice proves equality, including failure, to the guarded HOL choice operator. The proof-side installation dispatcher uses this definition."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "do_word_app_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Word.lean", "lean_name": "doWordApp",
     "statement_status": "reviewed_exact",

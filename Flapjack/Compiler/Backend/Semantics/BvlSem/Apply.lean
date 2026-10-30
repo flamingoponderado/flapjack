@@ -6,8 +6,8 @@ namespace Flapjack.Compiler.Backend.BvlSem
 open Flapjack.SemanticPrimitivesHOL
 
 /-- Source-shaped installation, including code-domain and oracle checks.
-This is Flapjack infrastructure pending source review of the decoders against
-HOL's choice operator and of the complete dispatcher; it is not yet a tagged HOL port. -/
+This is Flapjack infrastructure pending review of the complete dispatcher and
+installation state transitions; it is not yet a tagged HOL port. -/
 noncomputable def doInstall {C F : Type} (args : List Value) (s : State C F) :
     Result (Value × State C F) Value := by
   classical
