@@ -4,7 +4,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
 
 /-! Kernel replay of representative original BVL semantic observations. -/
@@ -175,5 +175,28 @@ example {C F : Type} (s : State C F)
     (refs : s.refs.lookup 2 = some (.byteArray false [1, 2, 3])) :
     (applyMemory (.boundsCheckByte true) [.refPtr true 2, .number 3] s).map Prod.fst =
       some (boolValue true) := by simp [applyMemory, refs]
+
+example {C F : Type} (s : State C F) :
+    (evaluate [.var 0] [.number 7] s).1 = .val [.number 7] := by
+  simp [evaluate]
+
+example {C F : Type} (s : State C F) :
+    (evaluate [.let [.var 0, .var 1] (.var 1)] [.number 7, .number 9] s).1 =
+      .val [.number 9] := by
+  simp [evaluate, fixClock]
+
+example {C F : Type} (s : State C F) :
+    (evaluate [.handle (.raise (.var 0)) (.var 0)] [.number 7] s).1 =
+      .val [.number 7] := by
+  simp [evaluate, fixClock]
+
+example {C F : Type} (s : State C F) :
+    (evaluate [.op (.blockOp (.cons 4)) [.var 0, .var 1]] [.number 7, .number 9] s).1 =
+      .val [.block 4 [.number 9, .number 7]] := by
+  simp [evaluate, fixClock, doApp, applyBlock]
+
+example {C F : Type} (s : State C F) (clock : s.clock = 0) :
+    (evaluate [.tick (.var 0)] [.number 7] s).1 = .err (.abort .timeoutError) := by
+  simp [evaluate, clock]
 
 end Flapjack.Test.BvlSemValuesParity

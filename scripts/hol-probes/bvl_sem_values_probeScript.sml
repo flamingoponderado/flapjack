@@ -132,3 +132,14 @@ val _ = example "app_byte_update=" ``case bvlSem$do_app (closLang$MemOp UpdateBy
   Rval (_,s) => FLOOKUP s.refs 3 | _ => NONE``;
 val _ = example "app_byte_bounds=" ``case bvlSem$do_app (closLang$MemOp (BoundsCheckByte T))
   [bvlSem$RefPtr T 2; bvlSem$Number 3] ^byte_state of Rval (v,_) => SOME v | _ => NONE``;
+val _ = typ "evaluate_type=" ``bvlSem$evaluate``;
+val _ = example "eval_var=" ``FST (bvlSem$evaluate ([bvl$Var 0], [bvlSem$Number 7], ^base_state))``;
+val _ = example "eval_let=" ``FST (bvlSem$evaluate
+  ([bvl$Let [bvl$Var 0; bvl$Var 1] (bvl$Var 1)], [bvlSem$Number 7; bvlSem$Number 9], ^base_state))``;
+val _ = example "eval_handle=" ``FST (bvlSem$evaluate
+  ([bvl$Handle (bvl$Raise (bvl$Var 0)) (bvl$Var 0)], [bvlSem$Number 7], ^base_state))``;
+val _ = example "eval_op_reverse=" ``FST (bvlSem$evaluate
+  ([bvl$Op (closLang$BlockOp (Cons 4)) [bvl$Var 0; bvl$Var 1]],
+   [bvlSem$Number 7; bvlSem$Number 9], ^base_state))``;
+val _ = example "eval_tick_timeout=" ``FST (bvlSem$evaluate
+  ([bvl$Tick (bvl$Var 0)], [bvlSem$Number 7], ^base_state with clock := 0))``;
