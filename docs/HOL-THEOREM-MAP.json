@@ -1,5 +1,65 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "ref",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Value.lean", "lean_name": "Ref",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four constructors and inferred generic payloads in bvl_sem_values_probe.out: byte arrays retain the Boolean and fixed word8 list; thunks and mutable blocks retain their source field order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "v",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Value.lean", "lean_name": "Value",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all five original constructors and inferred types in bvl_sem_values_probe.out, including fixed word64, recursive value lists, code pointers and flagged reference pointers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "Boolv_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Value.lean", "lean_name": "boolValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original Boolean parameter and block encoding in bvl_sem_values_probe.out; boolToTag has the original false and true tags."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "Unit_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Value.lean", "lean_name": "unitValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original nullary tuple block and its typed value carrier; the original tuple_tag is zero."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "v_to_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Value.lean", "lean_name": "valueToList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed original branches in bvl_sem_values_probe.out: nil, two-element cons and all malformed inputs agree, including recursive failure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "list_to_v_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Value.lean", "lean_name": "listToValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed original clauses and original nil and cons tags in bvl_sem_values_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "isClos_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Value.lean", "lean_name": "isClosure",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original polymorphic list carrier, both closure tags 30 and 31, and the nonempty condition in bvl_sem_values_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "do_int_app_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Int.lean", "lean_name": "doIntApp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed source clause in bvl_sem_values_probe.out, including arity and non-number fallbacks, zero divisors and small-constant bounds. Signed examples for positive and negative divisors replay the original floor division and remainder."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "add_args_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "addArgs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed original closure, recursive-closure and fallback clauses in bvl_sem_values_probe.out, including prefix order and value carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "get_num_args_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "getNumArgs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed original closure, recursive-closure and fallback clauses in bvl_sem_values_probe.out. The recursive case retains HOL total EL through holEl, including unspecified out-of-range behavior."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_exps_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/SourceExps.lean", "lean_name": "compileExpsHOL",
     "statement_status": "reviewed_exact",

@@ -261,6 +261,10 @@ run_probe clos_to_bvl_recursive_types_probeScript.sml clos_to_bvl_recursive_type
   recc_lets_type build_recc_lets_type recc_lets_example build_recc_lets_example compile_exp_sing_def compile_exp_sing_type compile_exp_list_type compile_prog_def compile_prog_type compile_exps_def compile_exps_type compile_exp_sing_eq \
   "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
 
+run_probe bvl_sem_values_probeScript.sml bvl_sem_values_probe.out \
+  value_array_type byte_array_type thunk_type mut_block_type number_type word_type block_type code_ptr_type ref_ptr_type bool_value unit_value value_to_list list_to_value is_closure int_app add_args get_num_args int_app_type negative_div negative_mod negative_divisor_div negative_divisor_mod zero_div list_roundtrip bad_list \
+  "$cake_dir/compiler/backend/proofs/clos_to_bvlProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe source_to_flat_opassign_probeScript.sml source_to_flat_opassign_probe.out \
   source_assign_typed flat_assign_typed source_bad_typed flat_bad_typed \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/proofs"
