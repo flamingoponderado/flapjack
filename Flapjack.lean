@@ -239,6 +239,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileExp
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileGlobals
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileDecGlobals
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileFlatGlobals
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindLocals
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnv
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
@@ -365,6 +366,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.CompiledMatch
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.NoMat
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalInvariants
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalBounds
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalSafety
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.NoMat
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchBranch
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.HandleBranch

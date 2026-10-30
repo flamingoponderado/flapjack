@@ -1,5 +1,35 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "compile_exp_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalSafety.lean", "lean_name": "compileExp_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the pinned HOL statement and inferred types captured in flat_pattern_global_flag_probe.out. The three conjuncts preserve the original compilation tuple equality and safety conjunction for expression, list and match rows; EVERY is pointwise membership, and the row predicate observes the second component."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "compile_decs_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalSafety.lean", "lean_name": "compileDecs_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the pinned HOL statement and inferred types captured in flat_pattern_global_flag_probe.out. The premise and conclusion are EVERY on source and mapped compiled declaration lists, expressed by membership quantification."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_flat_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileFlatGlobals.lean", "lean_name": "compileFlat_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the pinned HOL statement and inferred types captured in source_to_flat_compile_globals_probe.out. The original compilation equality and input EVERY conjunction entail EVERY on its output; FlatElim and FlatPattern preservation are composed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileFlatGlobals.lean", "lean_name": "compile_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the pinned HOL statement and inferred types captured in source_to_flat_compile_globals_probe.out. The original full compile second component is safe for every member; the executed total pass composes compileProg with compileFlatTotal."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "inc_compile_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileFlatGlobals.lean", "lean_name": "incCompile_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the pinned HOL statement and inferred types captured in source_to_flat_compile_globals_probe.out. The original incremental compile second component is safe for every member, with environment identifier as a pair of naturals."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "compile_exp_set_globals",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalBounds.lean", "lean_name": "compileExp_setGlobals",
     "statement_status": "reviewed_exact",

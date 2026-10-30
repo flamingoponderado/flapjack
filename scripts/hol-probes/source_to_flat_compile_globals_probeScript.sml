@@ -9,3 +9,6 @@ val _ = (print "make_varls_theorem="; print_term (concl source_to_flatProofTheor
 val _ = (print "compile_decs_theorem="; print_term (concl source_to_flatProofTheory.compile_decs_esgc_free); print "\n");
 val _ = (print "compile_prog_theorem="; print_term (concl source_to_flatProofTheory.compile_prog_esgc_free); print "\n");
 val _ = (print "inc_compile_prog_theorem="; print_term (concl source_to_flatProofTheory.inc_compile_prog_esgc_free); print "\n");
+val _ = (print "compile_flat_esgc="; print_term (concl source_to_flatProofTheory.compile_flat_esgc_free); print "\n");
+val _ = (print "compile_full_esgc="; print_term (concl source_to_flatProofTheory.compile_esgc_free); print "\n");
+val _ = (print "inc_compile_full_esgc="; print_term (concl source_to_flatProofTheory.inc_compile_esgc_free); print "\n");
