@@ -445,6 +445,7 @@ import Flapjack.Compiler.Backend.BvlInline.Proofs.RecursionProduction
 import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramProduction
 import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramCache
 import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramRelation
+import Flapjack.Compiler.Backend.BvlInline.Proofs.InstallCode
 import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineStateRel
 import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineApply
 import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineEvaluation
