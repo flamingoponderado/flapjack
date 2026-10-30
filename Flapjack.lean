@@ -471,6 +471,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateLength
+import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyCode
 import Flapjack.Compiler.Backend.Semantics.BvlSem.MemoryChoice
 import Flapjack.Test.BvlSemValuesParity

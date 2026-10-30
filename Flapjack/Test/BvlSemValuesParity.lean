@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
+import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 import Flapjack.Compiler.Backend.Semantics.BvlSem.MemoryChoice
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
 
@@ -180,6 +181,11 @@ example {C F : Type} (s : State C F)
 example {C F : Type} (s : State C F) :
     (evaluate [.var 0] [.number 7] s).1 = .val [.number 7] := by
   simp [evaluate]
+
+example {C F : Type} (s : State C F)
+    (thunk : s.refs.lookup 1 = some (.thunk .evaluated (.number 7))) :
+    (evaluateTuple ([.force 9 0], [.refPtr false 1], s)).1 = .val [.number 7] := by
+  simp [evaluateTuple, evaluate, destThunk, thunk]
 
 example {C F : Type} (s : State C F) :
     (evaluate [.let [.var 0, .var 1] (.var 1)] [.number 7, .number 9] s).1 =

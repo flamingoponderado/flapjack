@@ -174,6 +174,9 @@ val _ = example "app_thunk_update=" ``case bvlSem$do_app (closLang$ThunkOp (Upda
 val _ = example "app_thunk_bad_flag=" ``case bvlSem$do_app (closLang$ThunkOp (UpdateThunk Evaluated))
   [bvlSem$RefPtr T 1; bvlSem$Number 7] ^thunk_state of Rerr (Rabort Rtype_error) => T | _ => F``;
 val _ = typ "evaluate_type=" ``bvlSem$evaluate``;
+val _ = show "evaluate_final=" bvlSemTheory.evaluate_def;
+val _ = show "evaluate_clock=" bvlSemTheory.evaluate_clock;
+val _ = show "fix_clock_evaluate=" bvlSemTheory.fix_clock_evaluate;
 val _ = example "eval_var=" ``FST (bvlSem$evaluate ([bvl$Var 0], [bvlSem$Number 7], ^base_state))``;
 val _ = example "eval_let=" ``FST (bvlSem$evaluate
   ([bvl$Let [bvl$Var 0; bvl$Var 1] (bvl$Var 1)], [bvlSem$Number 7; bvlSem$Number 9], ^base_state))``;
@@ -190,3 +193,6 @@ val _ = example "eval_call=" ``FST (bvlSem$evaluate
   ([bvl$Call 1 (SOME 4) [bvl$Var 0]], [bvlSem$Number 7], ^call_state))``;
 val _ = example "eval_call_clock=" ``(SND (bvlSem$evaluate
   ([bvl$Call 1 (SOME 4) [bvl$Var 0]], [bvlSem$Number 7], ^call_state))).clock``;
+val _ = example "eval_force_evaluated=" ``FST (bvlSem$evaluate
+  ([bvl$Force 9 0], [bvlSem$RefPtr F 1],
+    ^base_state with refs := FEMPTY |+ (1,bvlSem$Thunk Evaluated (bvlSem$Number 7))))``;

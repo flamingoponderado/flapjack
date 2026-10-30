@@ -1,5 +1,26 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "evaluate_def", "hol_line": 596,
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/EvaluateHOL.lean", "lean_name": "evaluateTuple",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the source termination definition at line 596 and the inferred tuple type and rebound equations in bvl_sem_values_probe.out. evaluateTuple preserves the source input triple and result pair; its curried helper implements all expression, exception, timeout, direct and indirect call, thunk force, reversed primitive argument and state transitions. Its fixClock uses the same source clamp; fixClock_evaluate proves each clamp is inert as in the source rebound. evaluate_singleton establishes that HD is only observed for nonempty successful singleton results. refs uses the canonical finite-support witness; globals and code retain lists and Spt. The dispatcher is separately reviewed and floating-point operations inherit its documented real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/EvaluateHOL.lean", "lean_name": "evaluateClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the captured typed HOL theorem: the only hypothesis is the complete evaluation equality, and the result clock is bounded by the input clock. The same state carrier and independent compiler/FFI parameters are quantified; the local roundtrip witness covers refs. The theorem uses the reviewed evaluator and inherits its floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "fix_clock_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/EvaluateHOL.lean", "lean_name": "fixClockEvaluate",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the captured typed HOL theorem: the source clamp applied to evaluation is equal to that evaluation without extra premises. The same tuple, result, independent state parameters, minimum clock update and canonical refs carrier are retained; the local witness is the BVL state roundtrip. The theorem uses the reviewed evaluator and inherits its floating-point real-carrier assumptions."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "do_app_const",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/ApplyCode.lean", "lean_name": "doApp_state_frame",
     "statement_status": "reviewed_fmap_as_finite_support",
