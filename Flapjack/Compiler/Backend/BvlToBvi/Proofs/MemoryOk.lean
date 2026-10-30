@@ -141,4 +141,39 @@ theorem doApp_ok_el {C F : Type}
        simp_all [stateOk, bvOkList_iff]
        grind)
 
+/-- Complete memory-operation case of primitive application. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "do_app_ok"
+  (fmap_as_finite_support := [refs])]
+theorem doApp_ok_memory {C F : Type} (op : ClosLang.MemOp)
+    (args env : List Value) (s t : Flapjack.Compiler.Backend.BvlSem.State C F) (value : Value)
+    (ok : stateOk s) (argsOk : bvOkList s.refs args)
+    (run : doApp (.memOp op) args s = .val (value, t)) :
+    stateOk t ∧ bvOk t.refs value ∧ (bvOkList s.refs env → bvOkList t.refs env) := by
+  have subset := BvlProps.doApp_refs_mono (.memOp op) args s t value run
+  have preserve := fun envOk => bvOkList_domain_mono s.refs env t.refs envOk subset
+  have hval : BvlSem.applyMemory op args s = some (value, t) := by
+    simp only [doApp] at run
+    cases h : BvlSem.applyMemory op args s <;> simp_all
+  cases op with
+  | ref => exact doApp_ok_ref args env s t value ok argsOk run
+  | refArray => exact doApp_ok_refArray args env s t value ok argsOk run
+  | update => exact doApp_ok_update args env s t value ok argsOk run
+  | el => exact doApp_ok_el args env s t value ok argsOk run
+  | _ =>
+    unfold BvlSem.applyMemory at hval
+    repeat' first | split at hval | contradiction
+    all_goals simp_all [bvOk, bvOkList, BvlSem.boolValue, BvlSem.unitValue]
+    all_goals try (rcases hval with ⟨rfl, _⟩; simp [bvOk, bvOkList])
+    all_goals try (rcases hval with ⟨rfl, _⟩; apply listToValue_ok; simp [bvOk])
+    all_goals try simp only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at hval
+    all_goals repeat' first
+      | (rcases hval with ⟨rfl, rfl⟩
+         constructor
+         · first | exact stateOk_updateByteArray s _ _ _ ok | exact ok
+         · simp [bvOk, bvOkList, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL])
+      | (obtain ⟨_, _, hval⟩ := hval
+         try simp only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at hval)
+      | simp only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at hval
+      | split at hval
+
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
