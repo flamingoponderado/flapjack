@@ -447,6 +447,7 @@ import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineStateRel
 import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineApply
 import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineEvaluation
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateTicks
+import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull
 import Flapjack.Compiler.Backend.BvlInline.Proofs.Semantics
 import Flapjack.Compiler.Backend.BviInline.Proofs.Total
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal

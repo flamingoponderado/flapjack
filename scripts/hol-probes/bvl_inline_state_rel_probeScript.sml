@@ -38,6 +38,7 @@ val _ = show "in_cc=" bvl_inlineProofTheory.in_cc_def;
 val _ = show "in_state_rel=" bvl_inlineProofTheory.in_state_rel_def;
 val _ = show "evaluate_inline=" bvl_inlineProofTheory.evaluate_inline;
 val _ = show "evaluate_mk_tick=" bvlPropsTheory.evaluate_mk_tick;
+val _ = show "evaluate_mono=" bvlPropsTheory.evaluate_mono;
 val _ = show "in_co=" bvl_inlineProofTheory.in_co_def;
 val _ = show "MAP_FST_tick_inline_all=" bvl_inlineProofTheory.MAP_FST_tick_inline_all;
 val _ = show "do_app_Rval_swap=" bvlPropsTheory.do_app_Rval_swap;
