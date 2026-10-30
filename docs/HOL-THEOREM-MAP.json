@@ -1,5 +1,26 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "evaluate_CONS",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateList.lean", "lean_name": "evaluateCons",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed theorem in bvl_sem_values_probe.out: evaluate the singleton head first, propagate either error state unchanged, then evaluate the tail in the resulting state and prepend HD of the singleton result. The source tuple evaluator and canonical refs witness are retained; the singleton length theorem makes HD defined. The evaluator's floating-point real-carrier assumptions are inherited."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "evaluate_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateList.lean", "lean_name": "evaluateAppend",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed source theorem and quantifier order in bvl_sem_values_probe.out. Both sides evaluate the first list before the second, thread its state, concatenate successful results, and propagate either error with its state. The source tuple evaluator and canonical refs witness are retained; floating-point real-carrier assumptions are inherited."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "evaluate_SNOC",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateList.lean", "lean_name": "evaluateSnoc",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed source theorem and quantifier order in bvl_sem_values_probe.out. HOL SNOC is Lean list append with a singleton; both evaluate the prefix and final expression in order and concatenate successful result lists, with unchanged error propagation. The source tuple evaluator and canonical refs witness are retained; floating-point real-carrier assumptions are inherited."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "evaluate_LENGTH", "hol_line": 225,
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateLength.lean", "lean_name": "evaluateLength",
     "statement_status": "reviewed_fmap_as_finite_support",
