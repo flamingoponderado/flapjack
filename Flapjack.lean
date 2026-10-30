@@ -477,6 +477,7 @@ import Flapjack.Compiler.Backend.BvlConst.Proofs.ArithmeticMul
 import Flapjack.Compiler.Backend.BvlConst.Proofs.SmartOpCorrect
 import Flapjack.Compiler.Backend.BvlConst.Proofs.Variables
 import Flapjack.Compiler.Backend.BvlConst.Proofs.Sequence
+import Flapjack.Compiler.Backend.BvlConst.Proofs.Control
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateTicks
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateExpandEnv
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull
