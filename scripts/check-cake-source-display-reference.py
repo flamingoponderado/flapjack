@@ -92,6 +92,15 @@ DATA_STUB = (
     b'            (call none CopyGlobals@63 (12 1 15) none)))))\n\n'
 )
 
+LAB_PREFIX = (
+    b'(_Init@0\n   (asm (Arith (Binop Or 1 13 (Reg 13))))\n'
+    b'   (asm (Arith (Binop Sub 1 1 (Reg 11))))\n'
+    b'   (asm (Arith (Shift Lsr 1 1 (Imm 0x4))))\n'
+    b'   (asm (Arith (Shift Lsl 1 1 (Imm 0x3))))\n'
+    b'   (asm (Arith (Binop Add 1 1 (Reg 11))))\n'
+    b'   (asm (Const 5 0x7F8))\n'
+)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -122,6 +131,12 @@ def main():
             if not data.startswith(DATA_STUB):
                 raise SystemExit(f'original data-stage output mismatch for {source!r}')
             print('original data-stage runtime stub matches', flush=True)
+            lab = result.stdout.split(b'# after stack_to_lab\n\n', 1)[1]
+            if (not lab.startswith(LAB_PREFIX) or
+                    b'(jump_cmp (Lower 12 (Reg 11)) _Init@0 3)' not in lab or
+                    b'(label _Init@0 2)\n   (jump _Init@0 4)' not in lab):
+                raise SystemExit(f'original lab-stage output mismatch for {source!r}')
+            print('original lab-stage instruction and branch examples match', flush=True)
         print(f'original source-stage output matches: {source!r}', flush=True)
 
 
