@@ -1,0 +1,4 @@
+adjust_bv_def=(∀(i :int) (b :num -> num). adjust_bv b (Number i :v) = (Number i :v)) ∧ (∀(w :word64) (b :num -> num). adjust_bv b (Word64 w :v) = (Word64 w :v)) ∧ (∀(r :num) (l :bool) (b :num -> num). adjust_bv b (RefPtr l r :v) = (RefPtr l (b r) :v)) ∧ (∀(c :num) (b :num -> num). adjust_bv b (CodePtr c) = CodePtr (bvl_num_stubs + bvl_to_bvi_namespaces * c)) ∧ ∀(vs :v list) (tag :num) (b :num -> num). adjust_bv b (Block tag vs) = Block tag (MAP (λ(a :v). adjust_bv b a) vs)
+adjust_bv_Unit=adjust_bv (x :num -> num) Unit = Unit
+adjust_bv_Boolv=adjust_bv (x :num -> num) (Boolv (b :bool) :v) = (Boolv b :v)
+adjust_nested=adjust_bv (λ(n :num). n + (5 :num)) (Block (7 :num) [(Number (-(3 :int)) :v); (RefPtr T (2 :num) :v); CodePtr (3 :num); Block (8 :num) [(RefPtr F (9 :num) :v)]]) = Block (7 :num) [(Number (-(3 :int)) :v); (RefPtr T (7 :num) :v); CodePtr (84 :num); Block (8 :num) [(RefPtr F (14 :num) :v)]]

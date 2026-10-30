@@ -538,6 +538,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlProps.FindCode
 import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyCode
 import Flapjack.Compiler.Backend.Semantics.BvlSem.MemoryChoice
 import Flapjack.Test.BvlSemValuesParity
+import Flapjack.Test.BvlToBviValueParity
 import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.ClosAnnotate.Free
 import Flapjack.Compiler.Backend.ClosAnnotate.Shift
@@ -548,6 +549,7 @@ import Flapjack.Compiler.Backend.BviLet.Compile
 import Flapjack.Compiler.Backend.BviLet.Proofs.Total
 import Flapjack.Compiler.Backend.BvlToBvi.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Total
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign

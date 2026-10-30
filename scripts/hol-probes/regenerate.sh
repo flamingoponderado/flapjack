@@ -561,6 +561,9 @@ run_probe bvl_const_frontend_probeScript.sml bvl_const_frontend_probe.out \
 run_probe bvl_const_rel_probeScript.sml bvl_const_rel_probe.out \
   value_rel env_rel env_rel_length env_rel_LLOOKUP_NONE_replay env_rel_LOOKUP_SOME_replay evaluate_delete_var_Rerr_SING evaluate_delete_var_Rerr_replay evaluate_delete_var_Rval_replay dest_simple_eq_replay case_op_const_eq_replay SmartOp2_thm_replay SmartOp_flip_thm_replay SmartOp1_thm evaluate_env_rel "$cake_dir/compiler/backend/proofs/bvl_constProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe bvl_to_bvi_value_rel_probeScript.sml bvl_to_bvi_value_rel_probe.out \
+  adjust_bv_def adjust_bv_Unit adjust_bv_Boolv adjust_nested "$cake_dir/compiler/backend/proofs/bvl_to_bviProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe bvi_tailrec_frontend_probeScript.sml bvi_tailrec_frontend_probe.out \
   decisions cases tmc analysis rewrites program "$cake_dir/compiler/backend/bvi_tailrecScript.sml" "$cake_dir/compiler/backend"
 

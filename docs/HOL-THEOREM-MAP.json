@@ -110183,5 +110183,29 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Complete operation theorem for arbitrary argument lists of the typed original statement captured in bvl_const_rel_probe.out. Independent compiler and FFI state parameters, evaluation and non-type-error hypotheses, and result/final-state equality match the source without extra premises. The binary theorem is a case of SmartOp_thm. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Values.lean",
+  "hol_name": "adjust_bv_def",
+  "lean_name": "adjustBv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Typed upstream declaration captured in bvl_to_bvi_value_rel_probe.out and compared with the Lean signature and BVL value carrier. All five value constructor clauses, including fixed word64, reference relocation, exact code-label mapping and block recursion. The mutual list helper is proved equal to the source MAP in adjustValues_eq_map. The concrete nested original observation is replayed in BvlToBviValueParity; state and pass relations remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Values.lean",
+  "hol_name": "adjust_bv_Unit",
+  "lean_name": "adjustBv_unit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Typed upstream declaration captured in bvl_to_bvi_value_rel_probe.out and compared with the Lean signature and BVL value carrier. Unconditional preservation of the original unit value. The mutual list helper is proved equal to the source MAP in adjustValues_eq_map. The concrete nested original observation is replayed in BvlToBviValueParity; state and pass relations remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Values.lean",
+  "hol_name": "adjust_bv_Boolv",
+  "lean_name": "adjustBv_bool",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Typed upstream declaration captured in bvl_to_bvi_value_rel_probe.out and compared with the Lean signature and BVL value carrier. Unconditional preservation of both original Boolean values. The mutual list helper is proved equal to the source MAP in adjustValues_eq_map. The concrete nested original observation is replayed in BvlToBviValueParity; state and pass relations remain open."
 }
 ]
