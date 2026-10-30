@@ -3,8 +3,7 @@ import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
 import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Mathlib.Tactic.SplitIfs
 
-/-! Match-freedom facts for generated pattern tests. These proof-side
-lemmas are untagged until their complete HOL source correspondence is reviewed. -/
+/-! Match-freedom facts for generated pattern tests. The compositional helper lemmas are Flapjack proof infrastructure. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.Compiler.Backend.BackendCommon FlatLang PatternCommon PatternSemantics
 
@@ -428,8 +427,60 @@ theorem noMat_compileExp (cfg : Config) (exp : FlatLang.Exp) :
     simpa [compileFuns, eq, eqf, FlatProps.noMatFuns] using And.intro ih ihf
 
 
+private theorem noMat_compileExps (cfg : Config) (exps : List FlatLang.Exp) :
+    ∀ e ∈ (compileExps cfg exps).2.2, FlatProps.noMat e = true := by
+  induction exps with
+  | nil => simp [compileExps]
+  | cons x xs ih =>
+    cases hx : compileExp cfg x with
+    | mk i pair =>
+      obtain ⟨sg, y⟩ := pair
+      cases hxs : compileExps cfg xs with
+      | mk j pair =>
+        obtain ⟨sgs, ys⟩ := pair
+        intro e mem
+        simp only [compileExps, hx, hxs, List.mem_cons] at mem
+        rcases mem with rfl | mem
+        · simpa [hx] using noMat_compileExp cfg x
+        · exact ih e (by simpa [hxs] using mem)
+
+private theorem noMat_compileMatch (cfg : Config) (rows : List (FlatLang.Pat × FlatLang.Exp)) :
+    ∀ row ∈ (compileMatch cfg rows).2.2, FlatProps.noMat row.2 = true := by
+  induction rows with
+  | nil => simp [compileMatch]
+  | cons row rows ih =>
+    obtain ⟨p, x⟩ := row
+    cases hx : compileExp cfg x with
+    | mk i pair =>
+      obtain ⟨sg, y⟩ := pair
+      cases hrs : compileMatch cfg rows with
+      | mk j pair =>
+        obtain ⟨sgs, ys⟩ := pair
+        intro row mem
+        simp only [compileMatch, hx, hrs, List.mem_cons] at mem
+        rcases mem with rfl | mem
+        · simpa [hx] using noMat_compileExp cfg x
+        · exact ih row (by simpa [hrs] using mem)
+
+/-- All three expression-compiler outputs are match-free. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_exp_no_Mat"]
+theorem compileExp_noMat :
+    (∀ cfg exp n sg exp', compileExp cfg exp = (n, sg, exp') → FlatProps.noMat exp' = true) ∧
+    (∀ cfg exps n sg exps', compileExps cfg exps = (n, sg, exps') →
+      ∀ e ∈ exps', FlatProps.noMat e = true) ∧
+    (∀ cfg rows n sg rows', compileMatch cfg rows = (n, sg, rows') →
+      ∀ row ∈ rows', FlatProps.noMat row.2 = true) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro cfg exp n sg exp' eq
+    simpa only [eq] using noMat_compileExp cfg exp
+  · intro cfg exps n sg exps' eq
+    simpa only [eq] using noMat_compileExps cfg exps
+  · intro cfg rows n sg rows' eq
+    simpa only [eq] using noMat_compileMatch cfg rows
+
 /-- Compiling every declaration produces the match-free input expected by
 flat-to-closure compilation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_decs_no_Mat"]
 theorem noMat_compileDecs (cfg : Config) (declarations : List FlatLang.Exp) :
     FlatProps.noMatDecs (declarations.map (compileDec cfg)) = true := by
   induction declarations with

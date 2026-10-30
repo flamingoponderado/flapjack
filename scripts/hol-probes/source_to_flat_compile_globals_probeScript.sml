@@ -12,3 +12,5 @@ val _ = (print "inc_compile_prog_theorem="; print_term (concl source_to_flatProo
 val _ = (print "compile_flat_esgc="; print_term (concl source_to_flatProofTheory.compile_flat_esgc_free); print "\n");
 val _ = (print "compile_full_esgc="; print_term (concl source_to_flatProofTheory.compile_esgc_free); print "\n");
 val _ = (print "inc_compile_full_esgc="; print_term (concl source_to_flatProofTheory.inc_compile_esgc_free); print "\n");
+val _ = (print "compile_no_mat="; print_term (concl source_to_flatProofTheory.compile_no_Mat); print "\n");
+val _ = (print "inc_compile_no_mat="; print_term (concl source_to_flatProofTheory.inc_compile_no_Mat); print "\n");

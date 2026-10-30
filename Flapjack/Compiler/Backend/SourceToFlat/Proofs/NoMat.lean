@@ -1,11 +1,11 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.NoMat
 
-/-! Match-freedom at the source-to-flat pass boundary. These are
-Flapjack-side consequences of the pattern compiler, not reviewed HOL ports. -/
+/-! Match-freedom at the source-to-flat pass boundary. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
 /-- The normal source-to-flat path produces match-free declarations. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_no_Mat"]
 theorem noMat_compileTotal (cfg : Config) (program : List AstHOL.Dec) :
     FlatProps.noMatDecs (compileTotal cfg program).2 = true := by
   unfold compileTotal
@@ -15,6 +15,7 @@ theorem noMat_compileTotal (cfg : Config) (program : List AstHOL.Dec) :
       FlatPattern.noMat_compileDecs next.patternCfg (FlatElim.removeFlatProgTotal code)
 
 /-- The incremental path also produces match-free declarations. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "inc_compile_no_Mat"]
 theorem noMat_incCompile (envId : Nat × Nat) (cfg : Config) (program : List AstHOL.Dec) :
     FlatProps.noMatDecs (incCompile envId cfg program).2 = true := by
   unfold incCompile

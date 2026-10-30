@@ -1,5 +1,29 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "compile_exp_no_Mat",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean", "lean_name": "compileExp_noMat",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original source and typed capture flat_pattern_global_flag_probe.out. All three quantified conjuncts retain compiler tuple equalities and no_Mat conclusions for expressions, expression lists and row bodies. HOL EVERY is expressed by list membership; HOL booleans are represented by equality to Lean true."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "compile_decs_no_Mat",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean", "lean_name": "noMat_compileDecs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original source and typed capture flat_pattern_global_flag_probe.out. The original no_Mat_decs conclusion holds for exactly the mapped compile_dec list."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_no_Mat",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/NoMat.lean", "lean_name": "noMat_compileTotal",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original source and typed capture source_to_flat_compile_globals_probe.out. The full source-to-flat compile second component satisfies no_Mat_decs; compileTotal is the tagged total pass."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "inc_compile_no_Mat",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/NoMat.lean", "lean_name": "noMat_incCompile",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original source and typed capture source_to_flat_compile_globals_probe.out. The incremental compile second component satisfies no_Mat_decs, for the same pair of natural environment identifiers."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "idx_range_shrink",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
@@ -107972,15 +107996,15 @@
     "hol_name": "no_Mat_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/NoMat.lean",
     "lean_name": "noMat",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source cases compared; inferred HOL types and complete imported syntax carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all eleven original clauses and inferred types in flat_pattern_global_flag_probe.out. The FlatLang expression and pattern constructors retain original arities and fields. For Handle, the single Pvar row case computes the same body conjunction and all other row shapes are false; list and recursive-function EVERY predicates use equivalent structural Bool helpers."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "no_Mat_decs_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/NoMat.lean",
     "lean_name": "noMatDecs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source cases compared; inferred HOL types and complete imported syntax carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both original list clauses and inferred exp-list type in flat_pattern_global_flag_probe.out. Empty lists are true and cons combines noMat of the head with the recursive result."
   }
 ]

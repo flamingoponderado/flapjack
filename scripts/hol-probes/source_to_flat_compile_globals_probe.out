@@ -7,3 +7,5 @@ inc_compile_prog_theorem=EVERY esgc_free (SND (inc_compile_prog (env_id :num # n
 compile_flat_esgc=compile_flat (cfg :flat_pattern$config) (ds :exp list) = (ds' :exp list) ∧ EVERY esgc_free ds ⇒ EVERY esgc_free ds'
 compile_full_esgc=EVERY esgc_free (SND (compile (c :config) (p :dec list)))
 inc_compile_full_esgc=EVERY esgc_free (SND (inc_compile (env_id :num # num) (c :config) (p :dec list)))
+compile_no_mat=no_Mat_decs (SND (compile (c :config) (prog :dec list)))
+inc_compile_no_mat=no_Mat_decs (SND (inc_compile (env_id :num # num) (c :config) (prog :dec list)))

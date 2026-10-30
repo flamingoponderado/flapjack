@@ -45,3 +45,7 @@ val _ = show_thm "compile_global_bounds=" flat_patternProofTheory.compile_exp_se
 val _ = show_thm "compile_decs_global_bounds=" flat_patternProofTheory.compile_decs_elist_globals;
 val _ = show_thm "compile_exp_esgc=" flat_patternProofTheory.compile_exp_esgc_free;
 val _ = show_thm "compile_decs_esgc=" flat_patternProofTheory.compile_decs_esgc_free;
+val _ = show_thm "no_mat_definition=" flatPropsTheory.no_Mat_def;
+val _ = show_thm "no_mat_decs_definition=" flatPropsTheory.no_Mat_decs_def;
+val _ = show_thm "compile_exp_no_mat=" flat_patternProofTheory.compile_exp_no_Mat;
+val _ = show_thm "compile_decs_no_mat=" flat_patternProofTheory.compile_decs_no_Mat;
