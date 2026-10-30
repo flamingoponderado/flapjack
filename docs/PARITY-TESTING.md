@@ -430,9 +430,10 @@ the pinned compiler; both emitted the same 521,616 bytes. A debugger sample foun
 Flapjack worker in repeated list-backed `mUpdate` calls. Two kernel-equal local
 update replacements preserved output but did not improve that end-to-end time,
 so the executed implementation was left unchanged. The array-backed state and
-interval construction in `LinearScan/ProductionState.lean` and
-`LinearScan/ProductionIntervals.lean` are proved to simulate the list-backed
-operations, including failure states. They are preparation for a faster
+interval construction and sorting in `LinearScan/ProductionState.lean`,
+`LinearScan/ProductionIntervals.lean`, and `LinearScan/ProductionSorting.lean`
+are proved to simulate the list-backed operations, including failure states.
+They are preparation for a faster
 allocator; the compiler does not yet execute them. Separate
 `--gc` cases compare no GC, simple GC, generational lists, duplicate options,
 and malformed options.
