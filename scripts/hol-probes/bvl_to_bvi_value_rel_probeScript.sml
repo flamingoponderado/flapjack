@@ -60,3 +60,4 @@ val evaluate_IMP_bv_ok_replay = prove (``!xs env s res t a1 vs.
 val _ = show "evaluate_IMP_bv_ok_replay=" evaluate_IMP_bv_ok_replay;
 val _ = show "find_code_bv_ok=" find_code_bv_ok;
 val _ = show "do_build_ok=" do_build_ok;
+val _ = show "do_app_ok=" do_app_ok;

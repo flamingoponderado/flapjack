@@ -110681,5 +110681,77 @@
     "refs"
   ],
   "reviewer": "Compared the typed original in bvl_to_bvi_value_rel_probe.out: the original equation, state invariant and arbitrary environment validity imply the updated state invariant and returned value validity. Both compiler and FFI state types remain independent. The canonical state roundtrip covers State.refs and refs is the independently quantified output finite map; the source-shaped doBuild retains the actual constant-part order, allocation and reference updates."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ApplyOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_build",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its BlockOp Build for arbitrary constant parts, including the actual resulting reference allocation, using doBuild_ok case; the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment, are retained. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ApplyOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_label",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its Label for arbitrary code index and lookup outcomes case; the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment, are retained. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ApplyOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_install",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its Install for arbitrary decoded payloads and compiler-oracle outcomes case; the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment, are retained. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ApplyOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_ffi",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its FFI for arbitrary mlstring name and returned byte-array update case; the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment, are retained. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ApplyOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_int",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its IntOp for every integer primitive and argument list case; the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment, are retained. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ApplyOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_word",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its WordOp for every fixed-word and floating-point primitive and argument list case; the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment, are retained. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
 }
 ]
