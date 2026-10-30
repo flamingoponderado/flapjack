@@ -110921,5 +110921,17 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the complete typed original do_app_ok in bvl_to_bvi_value_rel_probe.out: the complete operation theorem, with arbitrary source operation and arguments, assembled by cases for every ClosLang.Op constructor. The original state and argument validity and successful doApp hypotheses and all three conclusions, including preservation of an arbitrary prior environment, are retained with independent compiler and FFI types. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/EvaluateAllOk.lean",
+  "hol_name": "evaluate_ok",
+  "lean_name": "evaluateOk",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete typed original in bvl_to_bvi_value_rel_probe.out: evaluation equality, initial state well-formedness and EVERY of the environment imply final state well-formedness, the original result-case predicate (normal list, raised value, other errors), and EVERY of the original environment in the final reference domain. Independent compiler and FFI state types are retained. bvOkList_iff relates the source EVERY predicate, and evaluateTuple is the reviewed source-shaped clocked evaluator. The local canonical state roundtrip covers refs; evaluation inherits the floating-point real-carrier representation. The proof assembles all expression cases using clock-and-size induction and the complete do_app_ok theorem."
 }
 ]

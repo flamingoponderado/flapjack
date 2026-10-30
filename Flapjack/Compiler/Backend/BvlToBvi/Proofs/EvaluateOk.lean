@@ -22,11 +22,11 @@ def evalResultOk (refs : HolFiniteMapExact Nat (Ref Value)) : Result (List Value
   | .err (.abort _) => True
 
 /-- Flapjack's induction-hypothesis form of the source evaluator invariant.
-This quantifies over every input clock; the local case lemmas using it remain
-untagged until they are assembled with the source's clock-and-size induction. -/
-def evalOk {C F : Type} (expressions : List Bvl.Exp) : Prop :=
+The input clock is bounded by the induction limit; this is proof infrastructure
+for the source clock-and-size induction. -/
+def evalOk {C F : Type} (clock : Nat) (expressions : List Bvl.Exp) : Prop :=
   ∀ (env : List Value) (s t : State C F) (result : Result (List Value) Value),
-    evaluate expressions env s = (result, t) → stateOk s → bvOkList s.refs env →
+    s.clock ≤ clock → evaluate expressions env s = (result, t) → stateOk s → bvOkList s.refs env →
     stateOk t ∧ evalResultOk t.refs result ∧ bvOkList t.refs env
 
 /-- Flapjack's clock-bounded induction hypothesis for dynamically selected
@@ -38,15 +38,15 @@ def evalOkBelow {C F : Type} (clock : Nat) : Prop :=
     stateOk t ∧ evalResultOk t.refs result ∧ bvOkList t.refs env
 
 /-- Empty-expression-list case of the BVL evaluator invariant. -/
-theorem evaluateOk_nil {C F : Type} : @evalOk C F [] := by
-  intro env s t result run ok envOk
+theorem evaluateOk_nil {C F : Type} (clock : Nat) : @evalOk C F clock [] := by
+  intro env s t result clockLe run ok envOk
   simp [evaluate] at run
   rcases run with ⟨rfl, rfl⟩
   exact ⟨ok, by simp [evalResultOk, bvOkList], envOk⟩
 
 /-- Variable case of the BVL evaluator invariant. -/
-theorem evaluateOk_var {C F : Type} (index : Nat) : @evalOk C F [.var index] := by
-  intro env s t result run ok envOk
+theorem evaluateOk_var {C F : Type} (clock : Nat) (index : Nat) : @evalOk C F clock [.var index] := by
+  intro env s t result clockLe run ok envOk
   cases lookup : env[index]? with
   | none =>
     simp [evaluate, lookup] at run
@@ -61,25 +61,25 @@ theorem evaluateOk_var {C F : Type} (index : Nat) : @evalOk C F [.var index] := 
 
 /-- Tick case of the BVL evaluator invariant, using the body induction
 hypothesis with the source's decremented clock. -/
-theorem evaluateOk_tick {C F : Type} (body : Bvl.Exp) (ih : @evalOk C F [body]) :
-    @evalOk C F [.tick body] := by
-  intro env s t result run ok envOk
+theorem evaluateOk_tick {C F : Type} (clock : Nat) (body : Bvl.Exp) (ih : @evalOk C F clock [body]) :
+    @evalOk C F clock [.tick body] := by
+  intro env s t result clockLe run ok envOk
   by_cases zero : s.clock = 0
   · simp [evaluate, zero] at run
     rcases run with ⟨rfl, rfl⟩
     exact ⟨ok, trivial, envOk⟩
   · simp only [evaluate, zero, if_false] at run
-    exact ih env (BvlSem.decClock 1 s) t result run
+    exact ih env (BvlSem.decClock 1 s) t result (by simp only [BvlSem.decClock]; omega) run
       ((stateOk_decClock 1 s).2 ok) envOk
 
 /-- Primitive-operation case of the BVL evaluator invariant. -/
-theorem evaluateOk_op {C F : Type} (op : ClosLang.Op) (args : List Bvl.Exp)
-    (ih : @evalOk C F args) : @evalOk C F [.op op args] := by
-  intro env s t result run ok envOk
+theorem evaluateOk_op {C F : Type} (clock : Nat) (op : ClosLang.Op) (args : List Bvl.Exp)
+    (ih : @evalOk C F clock args) : @evalOk C F clock [.op op args] := by
+  intro env s t result clockLe run ok envOk
   rw [evaluate, BvlSem.fixClock_evaluate] at run
   cases argsRun : evaluate args env s with
   | mk argsResult mid =>
-    have prior := ih env s mid argsResult argsRun ok envOk
+    have prior := ih env s mid argsResult clockLe argsRun ok envOk
     rw [argsRun] at run
     cases argsResult with
     | err error =>
@@ -111,14 +111,16 @@ theorem evaluateOk_op {C F : Type} (op : ClosLang.Op) (args : List Bvl.Exp)
           appOk.2.2 prior.2.2⟩
 
 /-- Let case of the BVL evaluator invariant. -/
-theorem evaluateOk_let {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.Exp)
-    (bindingsIH : @evalOk C F bindings) (bodyIH : @evalOk C F [body]) :
-    @evalOk C F [.let bindings body] := by
-  intro env s t result run ok envOk
+theorem evaluateOk_let {C F : Type} (clock : Nat) (bindings : List Bvl.Exp) (body : Bvl.Exp)
+    (bindingsIH : @evalOk C F clock bindings) (bodyIH : @evalOk C F clock [body]) :
+    @evalOk C F clock [.let bindings body] := by
+  intro env s t result clockLe run ok envOk
+  have clockBound := BvlSem.evaluate_clock_le bindings env s
   rw [evaluate, BvlSem.fixClock_evaluate] at run
   cases bindingRun : evaluate bindings env s with
   | mk bindingResult mid =>
-    have prior := bindingsIH env s mid bindingResult bindingRun ok envOk
+    have prior := bindingsIH env s mid bindingResult clockLe bindingRun ok envOk
+    simp only [bindingRun] at clockBound
     rw [bindingRun] at run
     cases bindingResult with
     | err error =>
@@ -132,20 +134,22 @@ theorem evaluateOk_let {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.Exp)
         rcases List.mem_append.mp member with left | right
         · exact (bvOkList_iff _ _).1 prior.2.1 value left
         · exact (bvOkList_iff _ _).1 prior.2.2 value right
-      have bodyOk := bodyIH (values ++ env) mid t result run prior.1 extended
+      have bodyOk := bodyIH (values ++ env) mid t result (by omega) run prior.1 extended
       refine ⟨bodyOk.1, bodyOk.2.1, (bvOkList_iff _ _).2 ?_⟩
       intro value member
       exact (bvOkList_iff _ _).1 bodyOk.2.2 value (List.mem_append_right values member)
 
 /-- Conditional case of the BVL evaluator invariant. -/
-theorem evaluateOk_if {C F : Type} (condition yes no : Bvl.Exp)
-    (conditionIH : @evalOk C F [condition]) (yesIH : @evalOk C F [yes])
-    (noIH : @evalOk C F [no]) : @evalOk C F [.ifThenElse condition yes no] := by
-  intro env s t result run ok envOk
+theorem evaluateOk_if {C F : Type} (clock : Nat) (condition yes no : Bvl.Exp)
+    (conditionIH : @evalOk C F clock [condition]) (yesIH : @evalOk C F clock [yes])
+    (noIH : @evalOk C F clock [no]) : @evalOk C F clock [.ifThenElse condition yes no] := by
+  intro env s t result clockLe run ok envOk
+  have clockBound := BvlSem.evaluate_clock_le [condition] env s
   rw [evaluate, BvlSem.fixClock_evaluate] at run
   cases conditionRun : evaluate [condition] env s with
   | mk conditionResult mid =>
-    have prior := conditionIH env s mid conditionResult conditionRun ok envOk
+    have prior := conditionIH env s mid conditionResult clockLe conditionRun ok envOk
+    simp only [conditionRun] at clockBound
     rw [conditionRun] at run
     cases conditionResult with
     | err error =>
@@ -158,17 +162,17 @@ theorem evaluateOk_if {C F : Type} (condition yes no : Bvl.Exp)
       · simp at run
         rcases run with ⟨rfl, rfl⟩
         exact ⟨prior.1, trivial, prior.2.2⟩
-      · exact yesIH env mid t result run prior.1 prior.2.2
-      · exact noIH env mid t result run prior.1 prior.2.2
+      · exact yesIH env mid t result (by omega) run prior.1 prior.2.2
+      · exact noIH env mid t result (by omega) run prior.1 prior.2.2
 
 /-- Raise case of the BVL evaluator invariant. -/
-theorem evaluateOk_raise {C F : Type} (body : Bvl.Exp) (ih : @evalOk C F [body]) :
-    @evalOk C F [.raise body] := by
-  intro env s t result run ok envOk
+theorem evaluateOk_raise {C F : Type} (clock : Nat) (body : Bvl.Exp) (ih : @evalOk C F clock [body]) :
+    @evalOk C F clock [.raise body] := by
+  intro env s t result clockLe run ok envOk
   rw [evaluate] at run
   cases bodyRun : evaluate [body] env s with
   | mk bodyResult mid =>
-    have prior := ih env s mid bodyResult bodyRun ok envOk
+    have prior := ih env s mid bodyResult clockLe bodyRun ok envOk
     rw [bodyRun] at run
     cases bodyResult with
     | err error =>
@@ -183,14 +187,16 @@ theorem evaluateOk_raise {C F : Type} (body : Bvl.Exp) (ih : @evalOk C F [body])
       exact prior
 
 /-- Exception-handler case of the BVL evaluator invariant. -/
-theorem evaluateOk_handle {C F : Type} (body handler : Bvl.Exp)
-    (bodyIH : @evalOk C F [body]) (handlerIH : @evalOk C F [handler]) :
-    @evalOk C F [.handle body handler] := by
-  intro env s t result run ok envOk
+theorem evaluateOk_handle {C F : Type} (clock : Nat) (body handler : Bvl.Exp)
+    (bodyIH : @evalOk C F clock [body]) (handlerIH : @evalOk C F clock [handler]) :
+    @evalOk C F clock [.handle body handler] := by
+  intro env s t result clockLe run ok envOk
+  have clockBound := BvlSem.evaluate_clock_le [body] env s
   rw [evaluate, BvlSem.fixClock_evaluate] at run
   cases bodyRun : evaluate [body] env s with
   | mk bodyResult mid =>
-    have prior := bodyIH env s mid bodyResult bodyRun ok envOk
+    have prior := bodyIH env s mid bodyResult clockLe bodyRun ok envOk
+    simp only [bodyRun] at clockBound
     rw [bodyRun] at run
     cases bodyResult with
     | val values =>
@@ -207,7 +213,7 @@ theorem evaluateOk_handle {C F : Type} (body handler : Bvl.Exp)
         have extended : bvOkList mid.refs (value :: env) := by
           simp only [bvOkList]
           exact ⟨prior.2.1, prior.2.2⟩
-        have handled := handlerIH (value :: env) mid t result run prior.1 extended
+        have handled := handlerIH (value :: env) mid t result (by omega) run prior.1 extended
         have finalEnv : bvOkList t.refs env := by
           have all := handled.2.2
           simp only [bvOkList] at all
@@ -215,14 +221,16 @@ theorem evaluateOk_handle {C F : Type} (body handler : Bvl.Exp)
         exact ⟨handled.1, handled.2.1, finalEnv⟩
 
 /-- Non-singleton expression-list case of the BVL evaluator invariant. -/
-theorem evaluateOk_cons {C F : Type} (first second : Bvl.Exp) (rest : List Bvl.Exp)
-    (headIH : @evalOk C F [first]) (tailIH : @evalOk C F (second :: rest)) :
-    @evalOk C F (first :: second :: rest) := by
-  intro env s t result run ok envOk
+theorem evaluateOk_cons {C F : Type} (clock : Nat) (first second : Bvl.Exp) (rest : List Bvl.Exp)
+    (headIH : @evalOk C F clock [first]) (tailIH : @evalOk C F clock (second :: rest)) :
+    @evalOk C F clock (first :: second :: rest) := by
+  intro env s t result clockLe run ok envOk
+  have clockBound := BvlSem.evaluate_clock_le [first] env s
   rw [evaluate, BvlSem.fixClock_evaluate] at run
   cases headRun : evaluate [first] env s with
   | mk headResult mid =>
-    have prior := headIH env s mid headResult headRun ok envOk
+    have prior := headIH env s mid headResult clockLe headRun ok envOk
+    simp only [headRun] at clockBound
     rw [headRun] at run
     cases headResult with
     | err error =>
@@ -234,7 +242,7 @@ theorem evaluateOk_cons {C F : Type} (first second : Bvl.Exp) (rest : List Bvl.E
       have valueOk : bvOk mid.refs value := by simpa [evalResultOk, bvOkList] using prior.2.1
       cases tailRun : evaluate (second :: rest) env mid with
       | mk tailResult last =>
-        have tail := tailIH env mid last tailResult tailRun prior.1 prior.2.2
+        have tail := tailIH env mid last tailResult (by omega) tailRun prior.1 prior.2.2
         have subset := BvlProps.evaluate_refs_mono (second :: rest) env mid
         rw [tailRun] at subset
         have valueLast := bvOk_domain_mono mid.refs value last.refs valueOk subset
@@ -252,10 +260,11 @@ theorem evaluateOk_cons {C F : Type} (first second : Bvl.Exp) (rest : List Bvl.E
 
 /-- Call case of the BVL evaluator invariant, with the source clock-bounded
 induction hypothesis for the body selected from code. -/
-theorem evaluateOk_call {C F : Type} (ticks : Nat) (dest : Option Nat)
+theorem evaluateOk_call {C F : Type} (clock : Nat) (ticks : Nat) (dest : Option Nat)
     (args : List Bvl.Exp) (env : List Value) (s : State C F)
-    (argsIH : @evalOk C F args) (bodyIH : @evalOkBelow C F s.clock)
+    (argsIH : @evalOk C F clock args) (bodyIH : @evalOkBelow C F s.clock)
     (t : State C F) (result : Result (List Value) Value)
+    (clockLe : s.clock ≤ clock)
     (run : evaluate [.call ticks dest args] env s = (result, t))
     (ok : stateOk s) (envOk : bvOkList s.refs env) :
     stateOk t ∧ evalResultOk t.refs result ∧ bvOkList t.refs env := by
@@ -263,7 +272,7 @@ theorem evaluateOk_call {C F : Type} (ticks : Nat) (dest : Option Nat)
   rw [evaluate, BvlSem.fixClock_evaluate] at run
   cases argsRun : evaluate args env s with
   | mk argsResult mid =>
-    have prior := argsIH env s mid argsResult argsRun ok envOk
+    have prior := argsIH env s mid argsResult clockLe argsRun ok envOk
     simp only [argsRun] at run clockBound
     cases argsResult with
     | err error =>
