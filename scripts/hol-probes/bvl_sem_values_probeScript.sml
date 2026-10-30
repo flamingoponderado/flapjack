@@ -102,7 +102,27 @@ val _ = example "build_collision_value=" ``FST (bvlSem$do_build_const [closLang$
   (FEMPTY |+ (0,bvlSem$ValueArray [])))``;
 val _ = example "build_collision_ref=" ``FLOOKUP (SND (bvlSem$do_build_const [closLang$Str «x»]
   (FEMPTY |+ (0,bvlSem$ValueArray [])))) 1``;
+val _ = show "do_app=" bvlSemTheory.do_app_def;
+val _ = show "do_app_const=" bvlSemTheory.do_app_const;
 val _ = typ "do_app_type=" ``bvlSem$do_app``;
+val _ = show "copy_array=" semanticPrimitivesTheory.copy_array_def;
+val _ = typ "copy_array_type=" ``semanticPrimitives$copy_array``;
+val _ = show "xor_bytes=" semanticPrimitivesTheory.xor_bytes_def;
+val _ = typ "xor_bytes_type=" ``semanticPrimitives$xor_bytes``;
+val _ = show "str_cmp=" semanticPrimitivesTheory.str_cmp_def;
+val _ = typ "str_cmp_type=" ``semanticPrimitives$str_cmp``;
+val _ = show "mlstring_compare_aux=" mlstringTheory.compare_aux_def;
+val _ = show "mlstring_compare=" mlstringTheory.compare_def;
+val _ = show "mlstring_fast_lt=" mlstringTheory.fast_lt_def;
+val _ = show "mlstring_fast_le=" mlstringTheory.fast_le_def;
+val _ = show "mlstring_fast_gt=" mlstringTheory.fast_gt_def;
+val _ = show "mlstring_fast_ge=" mlstringTheory.fast_ge_def;
+val _ = example "copy_array_inplace=" ``semanticPrimitives$copy_array ([1n;2;3;4],1) 2 (SOME ([9;9;9;9],1))``;
+val _ = example "copy_array_bounds=" ``semanticPrimitives$copy_array ([1n;2],1) 2 NONE``;
+val _ = example "xor_bytes_prefix=" ``semanticPrimitives$xor_bytes [3w] [5w;7w]``;
+val _ = example "xor_bytes_short=" ``semanticPrimitives$xor_bytes [3w;7w] [5w]``;
+val _ = example "str_cmp_fast=" ``semanticPrimitives$str_cmp T Lt «z» «aa»``;
+val _ = example "str_cmp_lex=" ``semanticPrimitives$str_cmp F Lt «z» «aa»``;
 val _ = show "v_to_bytes=" bvlSemTheory.v_to_bytes_def;
 val _ = show "v_to_words=" bvlSemTheory.v_to_words_def;
 val _ = typ "v_to_bytes_type=" ``bvlSem$v_to_bytes``;
@@ -143,6 +163,16 @@ val _ = example "app_byte_update=" ``case bvlSem$do_app (closLang$MemOp UpdateBy
   Rval (_,s) => FLOOKUP s.refs 3 | _ => NONE``;
 val _ = example "app_byte_bounds=" ``case bvlSem$do_app (closLang$MemOp (BoundsCheckByte T))
   [bvlSem$RefPtr T 2; bvlSem$Number 3] ^byte_state of Rval (v,_) => SOME v | _ => NONE``;
+val _ = example "app_ffi_bad_buffers=" ``case bvlSem$do_app (closLang$FFI «x»)
+  [bvlSem$RefPtr T 2; bvlSem$RefPtr T 3] ^byte_state of
+  Rerr (Rabort Rtype_error) => T | _ => F``;
+val thunk_state = ``(^base_state with refs := FEMPTY |+
+  (1,bvlSem$Thunk NotEvaluated (bvlSem$Number 6)))``;
+val _ = example "app_thunk_update=" ``case bvlSem$do_app (closLang$ThunkOp (UpdateThunk Evaluated))
+  [bvlSem$RefPtr F 1; bvlSem$Number 7] ^thunk_state of
+  Rval (_,s) => FLOOKUP s.refs 1 | _ => NONE``;
+val _ = example "app_thunk_bad_flag=" ``case bvlSem$do_app (closLang$ThunkOp (UpdateThunk Evaluated))
+  [bvlSem$RefPtr T 1; bvlSem$Number 7] ^thunk_state of Rerr (Rabort Rtype_error) => T | _ => F``;
 val _ = typ "evaluate_type=" ``bvlSem$evaluate``;
 val _ = example "eval_var=" ``FST (bvlSem$evaluate ([bvl$Var 0], [bvlSem$Number 7], ^base_state))``;
 val _ = example "eval_let=" ``FST (bvlSem$evaluate

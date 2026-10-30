@@ -229,6 +229,25 @@ example (refs : Flapjack.HolFiniteMapExact Nat (Ref Value))
     byteArrayChunks refs (listToValue [.refPtr true 2]) = none := by
   simp [byteArrayChunks, valueToList_listToValue, byteArrays, mutable]
 
+example {C F : Type} (s : State C F)
+    (config : s.refs.lookup 2 = some (.byteArray false [1, 2, 3]))
+    (data : s.refs.lookup 3 = some (.byteArray true [3, 4])) :
+    doApp (.ffi (Flapjack.Basis.Pure.MlString.ofString "x")) [.refPtr true 2, .refPtr true 3] s =
+      .err (.abort .typeError) := by
+  simp [doApp, config, data]
+
+example {C F : Type} (s : State C F)
+    (thunk : s.refs.lookup 1 = some (.thunk .notEvaluated (.number 6))) :
+    (match doApp (.thunkOp (.updateThunk .evaluated)) [.refPtr false 1, .number 7] s with
+      | .val (_, next) => next.refs.lookup 1
+      | .err _ => none) = some (.thunk .evaluated (.number 7)) := by
+  simp [doApp, badThunkUpdate, destThunk, thunk,
+    Flapjack.HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL]
+
+example {C F : Type} (s : State C F) :
+    doApp (.thunkOp (.updateThunk .evaluated)) [.refPtr true 1, .number 7] s =
+      .err (.abort .typeError) := by simp [doApp]
+
 example : byteNaturalList (listToValue [.number 0, .number 255]) = some [0, 255] := by
   rw [byteNaturalList_eq_some, valueToList_listToValue]
   simp

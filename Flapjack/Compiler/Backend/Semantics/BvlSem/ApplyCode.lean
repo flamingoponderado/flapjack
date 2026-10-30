@@ -1,8 +1,17 @@
 import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
+import Flapjack.HolRef
 
 /-! Code and compiler state preservation for BVL primitive application. -/
 namespace Flapjack.Compiler.Backend.BvlSem
 open Flapjack.SemanticPrimitivesHOL
+
+namespace FrameCarrier
+/-- Canonical finite-map state representation roundtrip for the frame theorem. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end FrameCarrier
 
 /-- Global primitives preserve code, compiler, and oracle. -/
 theorem applyGlobal_code {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
@@ -129,11 +138,13 @@ theorem doApp_lookup_code {C F : Type} (op : ClosLang.Op) (args : List Value)
     rw [(doInstall_code args state next value run).1, sptLookup_sptUnion, found]
   · rw [(doApp_code op args state next value install run).1, found]
 
-/-- The proof-side dispatcher satisfies the state-frame shape used by HOL's
-`do_app_const`. This remains untagged until the dispatcher is reviewed as a
-HOL port. -/
+/-- Successful primitive application preserves the clock, and all
+non-installation operations preserve code and compiler callbacks. -/
+@[hol "cakeml/compiler/backend/semantics/bvlSemScript.sml" "do_app_const"
+  (fmap_as_finite_support := [refs])]
 theorem doApp_state_frame {C F : Type} (op : ClosLang.Op) (args : List Value)
-    (state next : State C F) (value : Value) (run : doApp op args state = .val (value, next)) :
+    (state next : Flapjack.Compiler.Backend.BvlSem.State C F) (value : Value)
+    (run : doApp op args state = .val (value, next)) :
     next.clock = state.clock ∧ (op ≠ .install →
       next.code = state.code ∧ next.compile = state.compile ∧ next.compileOracle = state.compileOracle) :=
   ⟨doApp_clock op args state next value run, fun h => doApp_code op args state next value h run⟩

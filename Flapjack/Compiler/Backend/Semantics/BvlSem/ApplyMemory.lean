@@ -24,9 +24,7 @@ def byteArrays (refs : HolFiniteMapExact Nat (Ref Value)) : List Value → Optio
     pure (bytes :: rest)
   | _ => none
 
-/-- Source-shaped memory branches of BVL `do_app`. `none` denotes the source
-type error. The full dispatcher, including installation and FFI, remains a
-separate proof obligation. -/
+/-- Memory branches of BVL `do_app`; `none` denotes the source type error. -/
 noncomputable def applyMemory {C F : Type} (op : ClosLang.MemOp) (args : List Value) (s : State C F) :
     Option (Value × State C F) := by
   let result (value : Value) := some (value, s)

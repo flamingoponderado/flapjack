@@ -1,5 +1,21 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "do_app_const",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/ApplyCode.lean", "lean_name": "doApp_state_frame",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed source theorem in bvl_sem_values_probe.out: the sole hypothesis is successful do_app, the result clock is equal, and non-install operations preserve code, compile and compile_oracle. Lean quantifies the same independent state parameters, operator, arguments and result; the canonical finite-support witness covers refs only. The theorem uses the reviewed dispatcher and inherits its floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "do_app_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Apply.lean", "lean_name": "doApp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the full typed source dispatcher and result type in bvl_sem_values_probe.out. Global, block, memory, integer/word, label, install, FFI, thunk and fallback clauses retain source argument shape, guards, result and updates. The choice-based byte and byte-vector branches are characterized by MemoryChoice; leastUnusedRef uses the least missing canonical-map key, and doBuildConst threads the original component map and refs. Installation and underlying copy, XOR, comparisons, integer, word, equality and FFI definitions have separate reviewed rows. refs uses the canonical finite-support state witness; globals and code retain lists and Spt. Floating-point operations inherit the documented real-carrier assumptions from doWordApp."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "do_install_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Apply.lean", "lean_name": "doInstall",
     "statement_status": "reviewed_fmap_as_finite_support",
@@ -105887,8 +105903,8 @@
     "hol_name": "xor_bytes_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
     "lean_name": "xorBytes",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source equations in bvl_sem_values_probe.out: the result retains the longer right suffix, rejects a shorter right list, and XORs paired word8 elements. Lean uses the same fixed eight-bit carrier; CakeSourceThunkParity replays both representative cases."
   },
   {
     "hol_path": "cakeml/semantics/astScript.sml",
@@ -106370,8 +106386,8 @@
     "hol_name": "copy_array_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Array.lean",
     "lean_name": "copyArray",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed source equation in bvl_sem_values_probe.out: source and destination element type alpha is independent and generic, all three nonnegative and extent checks agree, Int.natAbs is Num o ABS, and take/drop plus concatenation preserve copy order and overlapping source semantics. CakeSourceArrayParity replays valid and invalid bounds."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -106434,8 +106450,8 @@
     "hol_name": "str_cmp_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Compare.lean",
     "lean_name": "strCmp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all eight typed branches and the mlstring compare_aux, compare and fast comparison definitions captured in bvl_sem_values_probe.out. MlString is a byte-list carrier; compareBytes checks unsigned character codes lexicographically with shorter equal-prefix ordering, and fast comparisons order unequal lengths before the same lexical comparison. CakeSourceCompareParity checks both modes and high-byte ordering."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",

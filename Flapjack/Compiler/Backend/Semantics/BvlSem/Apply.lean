@@ -43,10 +43,12 @@ noncomputable def doInstall {C F R : Type} (args : List Value)
     | _, _ => fail
   | _ => fail
 
-/-- Source-shaped BVL primitive dispatcher. It remains untagged until all
-branches have been reviewed against HOL. -/
-noncomputable def doApp {C F : Type} (op : ClosLang.Op) (args : List Value) (s : State C F) :
-    Result (Value × State C F) Value := by
+/-- BVL primitive application, including installation, FFI and thunk cases. -/
+@[hol "cakeml/compiler/backend/semantics/bvlSemScript.sml" "do_app_def"
+  (fmap_as_finite_support := [refs])]
+noncomputable def doApp {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    Result (Value × Flapjack.Compiler.Backend.BvlSem.State C F) Value := by
   classical
   let fail : Result (Value × State C F) Value := .err (.abort .typeError)
   let convert (value : Option (Value × State C F)) := match value with

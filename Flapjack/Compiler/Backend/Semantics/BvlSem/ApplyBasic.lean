@@ -14,8 +14,7 @@ def asBool : Value → Option Bool
   | .block 1 [] => some true
   | _ => none
 
-/-- Source-shaped global branches of BVL `do_app`. `none` denotes the source
-type error; full dispatcher correspondence awaits the remaining branches. -/
+/-- Global branches of BVL `do_app`; `none` denotes the source type error. -/
 def applyGlobal {C F : Type} (op : ClosLang.GlobOp) (args : List Value) (s : State C F) :
     Option (Value × State C F) :=
   match op, args with
@@ -32,8 +31,7 @@ def applyGlobal {C F : Type} (op : ClosLang.GlobOp) (args : List Value) (s : Sta
       some (unitValue, { s with globals := s.globals ++ List.replicate count.toNat none })
   | _, _ => none
 
-/-- Source-shaped block branches of BVL `do_app`. `none` denotes the source
-type error; full dispatcher correspondence awaits the remaining branches. -/
+/-- Block branches of BVL `do_app`; `none` denotes the source type error. -/
 noncomputable def applyBlock {C F : Type} (op : ClosLang.BlockOp) (args : List Value) (s : State C F) :
     Option (Value × State C F) :=
   let result (value : Value) := some (value, s)
