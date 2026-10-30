@@ -109943,5 +109943,101 @@
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Element-access case of the typed original local theorem replayed in bvl_const_rel_probe.out, preserving all source hypotheses and result/state equality. Negative indices retain the original operation; nonnegative indices use ElemAt with the same block, reference lookup, bounds and error behavior. This case alone does not establish the full binary theorem. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
-  }
+  },
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Arithmetic.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_add_nestedAdd_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Arithmetic.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_add_nestedSub_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Arithmetic.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_sub_nestedAdd_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Arithmetic.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_sub_nestedSub_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Arithmetic.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_mul_nestedMul_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Arithmetic.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_add_constants_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Arithmetic.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_sub_constants_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Arithmetic.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_mul_constants_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+}
 ]
