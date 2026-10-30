@@ -131,11 +131,11 @@ def compileFuel (fuel : Nat) (config : Option Config) (es : List Exp) : Option (
   match config with
   | none => pure (none, es)
   | some c =>
-      let es ← es.mapM (ClosFvs.removeFuel fuel 0)
+      let es ← es.mapM (ClosFvs.removeBounded fuel 0)
       let (es, globals) ← knownListFuel fuel c es [] .ln
       let es ← es.mapM fun (e, _) => do
-        let e ← ClosTicks.removeFuel fuel e
-        ClosLetop.compileFuel fuel e
+        let e ← ClosTicks.removeBounded fuel e
+        ClosLetop.compileBounded fuel e
       pure (some { c with valApproxSpt := globals }, es)
 
 end Flapjack.Compiler.Backend.ClosKnown

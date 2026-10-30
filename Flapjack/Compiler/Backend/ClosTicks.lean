@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosLang.Syntax
+import Flapjack.Compiler.Backend.ClosLang.Budget
 
 /-! Bounded infrastructure for the closure tick-removal pass. -/
 namespace Flapjack.Compiler.Backend.ClosTicks
@@ -23,5 +24,11 @@ def removeFuel : Nat → Exp → Option Exp
       | .letrec names loc vs fns body => do
           let fns ← fns.mapM fun (arity, e) => do pure (arity, ← visit e)
           pure (.letrec names loc vs fns (← visit body))
+
+/-- Preserve successful tick removal and retry exhaustion with a structural bound. -/
+def removeBounded (fuel : Nat) (e : Exp) : Option Exp :=
+  match removeFuel fuel e with
+  | some result => some result
+  | none => removeFuel (max fuel (expBudget e + 1)) e
 
 end Flapjack.Compiler.Backend.ClosTicks

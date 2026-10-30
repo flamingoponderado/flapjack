@@ -410,6 +410,9 @@ import Flapjack.Compiler.Backend.BviInline.Proofs.Total
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Total
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.Total
+import Flapjack.Compiler.Backend.ClosFvs.Proofs.Total
+import Flapjack.Compiler.Backend.ClosTicks.Proofs.Total
+import Flapjack.Compiler.Backend.ClosLetop.Proofs.Total
 import Flapjack.Compiler.Backend.SourceToSource
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout

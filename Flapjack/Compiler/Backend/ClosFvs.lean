@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosLang.Syntax
+import Flapjack.Compiler.Backend.ClosLang.Budget
 
 /-! Bounded infrastructure for the closure free-variable cleanup pass. -/
 namespace Flapjack.Compiler.Backend.ClosFvs
@@ -29,5 +30,11 @@ def removeFuel : Nat → Nat → Exp → Option Exp
           let fs ← fns.mapM fun (arity, e) => do
             pure (arity, ← removeFuel fuel (arity + fns.length + captured) e)
           pure (.letrec names loc vs fs (← removeFuel fuel (fns.length + bound) body))
+
+/-- Preserve successful cleanup and retry exhaustion with a structural bound. -/
+def removeBounded (fuel bound : Nat) (e : Exp) : Option Exp :=
+  match removeFuel fuel bound e with
+  | some result => some result
+  | none => removeFuel (max fuel (expBudget e + 1)) bound e
 
 end Flapjack.Compiler.Backend.ClosFvs

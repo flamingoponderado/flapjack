@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosLang.Syntax
+import Flapjack.Compiler.Backend.ClosLang.Budget
 
 /-! Bounded infrastructure for the closure let-operation cleanup pass. -/
 namespace Flapjack.Compiler.Backend.ClosLetop
@@ -33,5 +34,12 @@ def compileFuel : Nat → Exp → Option Exp
       | .letrec names loc vs fns body => do
           let fns ← fns.mapM fun (arity, e) => do pure (arity, ← visit e)
           pure (.letrec names loc vs fns (← visit body))
+
+/-- Preserve successful let-operation cleanup and retry exhaustion with a
+structural bound. -/
+def compileBounded (fuel : Nat) (e : Exp) : Option Exp :=
+  match compileFuel fuel e with
+  | some result => some result
+  | none => compileFuel (max fuel (expBudget e + 1)) e
 
 end Flapjack.Compiler.Backend.ClosLetop
