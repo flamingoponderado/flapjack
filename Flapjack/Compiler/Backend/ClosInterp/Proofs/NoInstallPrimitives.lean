@@ -171,4 +171,38 @@ theorem refsNoInstall_valueArray (refs : HolFiniteMapExact Nat (ClosSem.Ref Clos
     (found : refs.lookup index = some (.valueArray values)) : valuesNoInstall values = true :=
   valid index (.valueArray values) found
 
+/-- Successful memory primitives preserve no-install values and references. -/
+theorem applyMemory_noInstall {C F : Type} (op : ClosLang.MemOp) (args : List ClosSem.Value)
+    (state next : ClosSem.State C F) (value : ClosSem.Value)
+    (argsOk : valuesNoInstall args = true) (refsOk : refsNoInstall state.refs)
+    (run : ClosSem.applyMemory op args state = some (value, next)) :
+    valueNoInstall value = true ∧ refsNoInstall next.refs := by
+  unfold ClosSem.applyMemory at run
+  repeat' split at run
+  all_goals simp_all [valuesNoInstall, valueNoInstall]
+  all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
+  all_goals try (rcases run with ⟨_, _, _, _, rfl, rfl⟩)
+  all_goals try subst value
+  all_goals try (solve | simp_all [valueNoInstall, ClosSem.unitValue, valuesNoInstall])
+  all_goals try (solve | constructor <;> first | exact refsOk | (apply valuesNoInstall_lookup <;> assumption))
+  all_goals try (solve | simp only [valueNoInstall, ClosSem.unitValue, valuesNoInstall, true_and] <;>
+    apply refsNoInstall_update <;> first | exact refsOk | (simp only [refNoInstall] <;> first | trivial | assumption | (apply valuesNoInstall_replicate <;> assumption)))
+  all_goals try (solve | apply listToValue_noInstall <;> exact encodedBytes_noInstall _)
+  all_goals try (solve | exact boolValue_noInstall _)
+  all_goals try (have arrayOk := refsNoInstall_valueArray _ _ _ refsOk (by assumption))
+  all_goals try (solve | constructor <;> first | exact refsOk | (apply valuesNoInstall_lookup <;> assumption))
+  all_goals try (solve | simp only [valueNoInstall, ClosSem.unitValue, valuesNoInstall, true_and] <;>
+    apply refsNoInstall_update <;> first | exact refsOk | (simp only [refNoInstall]; apply valuesNoInstall_set <;> assumption))
+  case h_16 | h_17 | h_19 | h_20 =>
+    rcases run with ⟨entry, _, run⟩
+    cases entry <;> simp_all [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
+    all_goals try (solve | rcases run with ⟨_, _, rfl, rfl⟩ <;>
+      simp_all [valueNoInstall, ClosSem.unitValue, valuesNoInstall] <;>
+      apply refsNoInstall_update <;> simp_all [refNoInstall])
+    all_goals rcases run with ⟨entry, _, run⟩
+    all_goals cases entry <;> simp_all [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
+    all_goals rcases run with ⟨_, _, rfl, rfl⟩
+    all_goals simp_all [valueNoInstall, ClosSem.unitValue, valuesNoInstall]
+    all_goals apply refsNoInstall_update <;> simp_all [refNoInstall]
+
 end Flapjack.Compiler.Backend.ClosInterp
