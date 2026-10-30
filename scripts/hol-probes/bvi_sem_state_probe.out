@@ -1,3 +1,5 @@
+evaluate_code_mono=∀(xs :bvi$exp list) (env :v list) (s1 :(α, β) state) (vs :(v list, exn_or_ret) result) (s2 :(α, β) state). (evaluate (xs,env,s1) :(v list, exn_or_ret) result # (α, β) state) = (vs,s2) ⇒ subspt s1.code s2.code
+evaluate_global_mono=∀(xs :bvi$exp list) (env :v list) (s :(α, β) state) (res :(v list, exn_or_ret) result) (t :(α, β) state). (evaluate (xs,env,s) :(v list, exn_or_ret) result # (α, β) state) = (res,t) ⇒ IS_SOME s.global ⇒ IS_SOME t.global
 exn_type=:v -> exn_or_ret
 ret_type=:v list -> exn_or_ret
 result_type=:(v list, exn_or_ret) result -> (v list, exn_or_ret) result
