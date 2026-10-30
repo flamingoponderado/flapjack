@@ -33,6 +33,27 @@ noncomputable def semantics {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
     | none => .diverge (HolLList.buildLprefixLub (fun trace => ∃ clock,
         trace = HolLList.fromList (evaluate program [] (initialState ffi maxApp code oracle compiler clock)).2.ffi.ioEvents))
 
+/-- Failure occurs exactly when some clocked evaluation reports a type error. -/
+theorem semantics_ne_fail_iff {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (oracle : CompileOracle C)
+    (compiler : Compiler C) (program : List ClosLang.Exp) :
+    semantics ffi maxApp code oracle compiler program ≠ .fail ↔
+      ∀ clock, (evaluate program [] (initialState ffi maxApp code oracle compiler clock)).1 ≠ .err (.abort .typeError) := by
+  classical
+  unfold semantics
+  by_cases failure : ∃ clock, (evaluate program [] (initialState ffi maxApp code oracle compiler clock)).1 = .err (.abort .typeError)
+  · simp [failure]
+  · simp only [failure, if_false]
+    constructor
+    · intro _ clock h
+      exact failure ⟨clock, h⟩
+    · intro _
+      cases chosen : holOptionSome (terminatingObservation ffi maxApp code oracle compiler program) with
+      | none => simp
+      | some behavior =>
+        obtain ⟨_, _, _, _, _, _, shape⟩ := holOptionSome_some chosen
+        simp [shape]
+
 /-- Equal result and FFI observations at every clock give equal factored
 semantics. This is Flapjack-specific congruence for the proof-side evaluator. -/
 theorem semantics_eq_of_same_observations {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
