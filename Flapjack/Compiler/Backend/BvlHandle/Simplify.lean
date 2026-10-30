@@ -1,8 +1,7 @@
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.Helpers
 
-/-! Total source-shaped BVL handler simplification. The executed compiler
-still uses `simplifyBounded`; its correspondence with these definitions is
-not yet proved. -/
+/-! Total source-shaped BVL handler simplification. The executed compiler's
+`simplifyBounded` traversal is proved equal in `Proofs/SimplifyProduction`. -/
 namespace Flapjack.Compiler.Backend.BvlHandle
 open Bvl
 open Flapjack.Compiler.Backend.BvlHandle.Proofs

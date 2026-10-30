@@ -109636,7 +109636,7 @@
     "hol_name": "handle_simp_def",
     "statement_status": "reviewed_exact",
     "lean_name": "handleSimp",
-    "reviewer": "Compared every typed handle_simp constructor equation, including the Handle call to make_handle at depth zero, against the original. The source-shaped traversal is not yet linked to the executed simplifyBounded path."
+    "reviewer": "Compared every typed handle_simp constructor equation, including the Handle call to make_handle at depth zero, against the original. simplifyBounded_eq proves the executed bounded traversal returns this source result for every fuel, including the retry path."
   },
   {
     "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
@@ -109644,7 +109644,7 @@
     "hol_name": "handle_simp_def",
     "statement_status": "reviewed_exact",
     "lean_name": "handleSimpList",
-    "reviewer": "Compared the typed handle_simp_list nil and cons equations with the original. Production correspondence remains open."
+    "reviewer": "Compared the typed handle_simp_list nil and cons equations with the original. The executed bounded traversal is shown equal to this source traversal in SimplifyProduction."
   },
   {
     "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
@@ -109652,6 +109652,6 @@
     "hol_name": "handle_simp_def",
     "statement_status": "reviewed_exact",
     "lean_name": "makeHandle",
-    "reviewer": "Compared the complete typed nested dest_handle_Raise, dest_handle_Let and dest_handle_If equation with every direct-pattern branch; makeHandle_source_equation kernel-checks the equality to that original nested recognizer form. Termination uses the original handle_size body-plus-handler measure. Production correspondence remains open."
+    "reviewer": "Compared the complete typed nested dest_handle_Raise, dest_handle_Let and dest_handle_If equation with every direct-pattern branch; makeHandle_source_equation kernel-checks the equality to that original nested recognizer form. Termination uses the original handle_size body-plus-handler measure. The executed bounded traversal is shown equal to this source traversal in SimplifyProduction."
   }
 ]
