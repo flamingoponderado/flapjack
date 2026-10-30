@@ -24,6 +24,29 @@ def mergeFuel : Nat → ValApprox → ValApprox → Option ValApprox
   | _ + 1, .int a, .int b => some (if a == b then .int a else .other)
   | _ + 1, _, _ => some .other
 
+mutual
+/-- Structural fuel bound for one approximation. -/
+def approxBudget : ValApprox → Nat
+  | .tuple _ xs => 2 + approxListBudget xs
+  | _ => 2
+termination_by a => sizeOf a
+decreasing_by all_goals simp_wf <;> omega
+
+/-- Structural fuel bound for a list of approximations. -/
+def approxListBudget : List ValApprox → Nat
+  | [] => 2
+  | x :: xs => 2 + approxBudget x + approxListBudget xs
+termination_by xs => sizeOf xs
+decreasing_by all_goals simp_wf <;> omega
+end
+
+/-- Preserve a successful merge and retry exhausted tuple traversal with a
+structural bound on the first approximation. -/
+def mergeBounded (fuel : Nat) (a b : ValApprox) : Option ValApprox :=
+  match mergeFuel fuel a b with
+  | some result => some result
+  | none => mergeFuel (max fuel (approxBudget a + 1)) a b
+
 /-- Propagate approximations through original global and constructor operations. -/
 def knownOpFuel (fuel : Nat) (op : Op) (args : List ValApprox) (globals : Spt ValApprox) :
     Option (ValApprox × Spt ValApprox) := do
@@ -32,7 +55,7 @@ def knownOpFuel (fuel : Nat) (op : Op) (args : List ValApprox) (globals : Spt Va
   | .globOp (.setGlobal n), a :: _ =>
       let value ← match sptLookup n globals with
         | none => pure a
-        | some old => mergeFuel fuel old a
+        | some old => mergeBounded fuel old a
       pure (.other, sptInsert n value globals)
   | .blockOp (.cons tag), _ => pure (.tuple tag args, globals)
   | .intOp (.const n), _ => pure (.int n, globals)
@@ -61,7 +84,7 @@ mutual
           let (x, _, globals) ← knownFuel fuel c x env globals
           let (y, a, globals) ← knownFuel fuel c y env globals
           let (z, b, globals) ← knownFuel fuel c z env globals
-          pure (.ifThenElse t x y z, ← mergeFuel fuel a b, globals)
+          pure (.ifThenElse t x y z, ← mergeBounded fuel a b, globals)
       | .let t xs body =>
           let (xs, globals) ← knownListFuel fuel c xs env globals
           let (body, a, globals) ← knownFuel fuel c body (xs.map Prod.snd ++ env) globals
@@ -75,7 +98,7 @@ mutual
       | .handle t x y =>
           let (x, a, globals) ← knownFuel fuel c x env globals
           let (y, b, globals) ← knownFuel fuel c y (.other :: env) globals
-          pure (.handle t x y, ← mergeFuel fuel a b, globals)
+          pure (.handle t x y, ← mergeBounded fuel a b, globals)
       | .call t n dest xs =>
           let (xs, globals) ← knownListFuel fuel c xs env globals
           pure (.call t n dest (xs.map Prod.fst), .other, globals)

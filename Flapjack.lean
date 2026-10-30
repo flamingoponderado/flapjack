@@ -215,6 +215,8 @@ import Flapjack.Compiler.Backend.Bvi.Syntax
 import Flapjack.Compiler.Backend.Bvl.Syntax
 import Flapjack.Compiler.Backend.ClosToBvl.Config
 import Flapjack.Compiler.Backend.ClosKnown.Config
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineTotal
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.MergeTotal
 import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.AstHOL.BackendOperators
 import Flapjack.AstHOL.LitOp

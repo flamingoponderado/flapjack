@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosKnown.Config
 import Flapjack.Compiler.Backend.ClosCall
+import Flapjack.Compiler.Backend.ClosLang.Budget
 
 /-! Bounded infrastructure for the known-closure inlining decision. -/
 namespace Flapjack.Compiler.Backend.ClosKnown
@@ -38,9 +39,21 @@ def containsClosuresFuel : Nat → Exp → Option Bool
       | .op _ _ xs | .call _ _ _ xs => any xs
       | .app _ _ x xs => any (x :: xs)
 
+/-- Preserve successful size checks and retry exhaustion with a structural bound. -/
+def sizeBounded (fuel : Nat) (e : Exp) : Option Nat :=
+  match sizeFuel fuel e with
+  | some result => some result
+  | none => sizeFuel (max fuel (expBudget e + 1)) e
+
+/-- Preserve successful closure tests and retry exhaustion with a structural bound. -/
+def containsClosuresBounded (fuel : Nat) (e : Exp) : Option Bool :=
+  match containsClosuresFuel fuel e with
+  | some result => some result
+  | none => containsClosuresFuel (max fuel (expBudget e + 1)) e
+
 /-- Construct the original closure approximation from its size bound. -/
 def closApproxFuel (fuel maxSize loc arity : Nat) (body : Exp) : Option ValApprox := do
-  let size ← sizeFuel fuel body
+  let size ← sizeBounded fuel body
   pure (if size ≤ maxSize then .clos loc arity body size else .closNoInline loc arity)
 
 /-- Apply the original inlining decision with explicit traversal fuel. -/
@@ -52,7 +65,7 @@ def decideInlineFuel (fuel : Nat) (c : Config) (approx : ValApprox) (loc : Optio
   | .clos target n body size =>
       if arity != n then return .nothing
       if size < c.inlineFactor * (1 + arity) then
-        if !(← containsClosuresFuel fuel body) then
+        if !(← containsClosuresBounded fuel body) then
           if ← ClosCall.closedFuel fuel (.fn (Flapjack.Basis.Pure.MlString.ofString "") none none arity body) then
             return .letInline body
       pure (.annotate target)
