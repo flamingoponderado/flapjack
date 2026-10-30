@@ -1,5 +1,17 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "compile_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2374-2420 and inferred types in flat_to_clos_globals_probe.out. The two EVERY premises and the EVERY conclusion have the same source and closure expression carriers; membership quantification expresses EVERY, and no_Mat is represented as a Bool equal to true. The proof handles conversion elimination, recursive functions and all expression cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_decs_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "compileDecs_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2422-2432 and inferred types in flat_to_clos_globals_probe.out. The EVERY source premise, no_Mat_decs premise and EVERY closure conclusion have the same declaration-list carriers; membership quantification expresses EVERY and no_Mat_decs is represented as a Bool equal to true."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_set_globals",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileGlobals.lean", "lean_name": "compile_setGlobals",
     "statement_status": "reviewed_exact",

@@ -14,3 +14,5 @@ val _ = show "bag_image_definition=" bagTheory.BAG_IMAGE_DEF;
 val _ = show "compile_globals=" flat_to_closProofTheory.compile_set_globals;
 val _ = show "compile_decs_globals=" flat_to_closProofTheory.compile_decs_set_globals;
 val _ = show "compile_eq_globals=" flat_to_closProofTheory.compile_eq_set_globals;
+val _ = show "compile_esgc=" flat_to_closProofTheory.compile_esgc_free;
+val _ = show "compile_decs_esgc=" flat_to_closProofTheory.compile_decs_esgc_free;
