@@ -109050,5 +109050,38 @@
     "lean_name": "tickInlineAllNames",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared typed tick_inline_all_names in bvl_inline_state_rel_probe.out, including its shadowed unused aux binder of an independent polymorphic type: Lean retains that binder as _unused. The other arguments and equality preserve MAP FST of reversed accumulator followed by input program, with the original run hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineStateRel.lean",
+    "hol_name": "in_cc_def",
+    "lean_name": "inCc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed in_cc_def in bvl_inline_state_rel_probe.out: the compiler's input configuration, code payload, data payload, and output configuration are four independent type variables. The initial cache and program are passed through tickCompileProg, and NONE and SOME preserve the original tuple order and updated cache."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineStateRel.lean",
+    "hol_name": "in_co_def",
+    "lean_name": "inCo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed in_co_def in bvl_inline_state_rel_probe.out: oracle index and configuration are independent arbitrary types; each entry runs tickCompileProg on its cache and program, returning the original configuration and transformed program."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineStateRel.lean",
+    "hol_name": "in_state_rel_def",
+    "lean_name": "inStateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared the complete typed in_state_rel_def in bvl_inline_state_rel_probe.out. Source configuration is a sparse-tree cache paired with the target configuration, with one shared FFI type. All nine conjuncts preserve original runtime fields, oracle mapping, cache subspt, compiler adapter, code-domain equality, and per-lookup expression relation. refs is the canonical finite-support BVL state field; the same-module witness is the imported state roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ProgramProduction.lean",
+    "hol_name": "MAP_FST_tick_inline_all",
+    "lean_name": "mapFstTickInlineAll",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed MAP_FST_tick_inline_all in bvl_inline_state_rel_probe.out: the output program of tickInlineAll with empty accumulator has the same first-component list as the input for every limit, numeric cache and program."
   }
 ]

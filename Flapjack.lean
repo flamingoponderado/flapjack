@@ -443,6 +443,7 @@ import Flapjack.Compiler.Backend.BvlInline.Small
 import Flapjack.Compiler.Backend.BvlInline.Proofs.SmallProduction
 import Flapjack.Compiler.Backend.BvlInline.Proofs.RecursionProduction
 import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramProduction
+import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineStateRel
 import Flapjack.Compiler.Backend.BvlInline.Proofs.Semantics
 import Flapjack.Compiler.Backend.BviInline.Proofs.Total
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal

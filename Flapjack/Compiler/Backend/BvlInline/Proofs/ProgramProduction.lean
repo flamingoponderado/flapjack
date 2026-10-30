@@ -57,4 +57,14 @@ theorem tickInlineAllNames {A : Type} (limit : Nat) (cache : Spt (Nat × Exp))
     have result := ih _ _ run
     simpa [List.reverse_cons, List.map_append, List.append_assoc] using result
 
+/-- Program inlining preserves the complete list of entry names. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "MAP_FST_tick_inline_all"]
+theorem mapFstTickInlineAll (limit : Nat) (cache : Spt (Nat × Exp))
+    (program : List (Nat × Nat × Exp)) :
+    (tickInlineAll limit cache program []).2.map Prod.fst = program.map Prod.fst := by
+  cases run : tickInlineAll limit cache program [] with
+  | mk finalCache output =>
+    have names := tickInlineAllNames limit cache program () finalCache output [] run
+    simpa [run] using names.symm
+
 end Flapjack.Compiler.Backend.BvlInline

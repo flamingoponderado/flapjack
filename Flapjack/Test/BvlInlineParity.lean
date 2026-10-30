@@ -3,11 +3,23 @@ import Flapjack.Compiler.Backend.BvlInline.TickInline
 import Flapjack.Compiler.Backend.BvlInline.Small
 import Flapjack.Compiler.Backend.BvlInline.Recursion
 import Flapjack.Compiler.Backend.BvlInline.Program
+import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineStateRel
 
 /-! Replay `bvl_inline_frontend_probe.out` from pinned CakeML/HOL. -/
 namespace Flapjack.Test.BvlInlineParity
 open Flapjack.Compiler.Backend
 open BvlInline
+open BvlInline.Proofs
+
+-- The compiler and oracle adapters retain the independent types seen in the
+-- original typed in_cc and in_co captures.
+example : inCc (C := Bool) (A := Nat) (B := Unit) (D := String) 4
+    (fun _ _ => some (17, (), "next")) (.ln, true) [] =
+    some (17, (), (.ln, "next")) := by
+  simp [inCc, tickCompileProg, tickInlineAll]
+example : inCo (I := Bool) (C := String) 4
+    (fun _ => ((.ln, "config"), [])) true = ("config", []) := by
+  simp [inCo, tickCompileProg, tickInlineAll]
 
 -- Original `mk_tick_zero` and `mk_tick_three` observations from the pinned
 -- bvl_inline_state_rel probe; these use the production tick constructor.
