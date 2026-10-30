@@ -468,6 +468,7 @@ import Flapjack.Compiler.Backend.BvlHandle.Compile
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileProduction
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceProduction
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.ConstantComposition
+import Flapjack.Compiler.Backend.BvlConst.Proofs.Relations
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateTicks
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateExpandEnv
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull
