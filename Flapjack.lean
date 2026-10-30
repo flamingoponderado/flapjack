@@ -460,6 +460,7 @@ import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpProduction
 import Flapjack.Compiler.Backend.BvlInline.Proofs.VarListEvaluate
 import Flapjack.Compiler.Backend.BvlInline.Proofs.MappedApply
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.Helpers
+import Flapjack.Compiler.Backend.BvlHandle.Proofs.HandleOk
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersProduction
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.Simplify
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyProduction
@@ -566,6 +567,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Total
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCode
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Names
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign

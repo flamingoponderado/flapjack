@@ -110329,5 +110329,53 @@
   "hol_name": "aux_code_installed_subspt",
   "lean_name": "auxCodeInstalled_subspt",
   "reviewer": "Compared with the typed original theorem in bvl_to_bvi_value_rel_probe.out and the source subspt definition: the installation and sparse-tree extension premises imply the same installation conclusion. The payload types remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/VarBound.lean",
+  "hol_name": "isVar_def",
+  "lean_name": "isVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every typed source constructor clause captured in bvl_to_bvi_value_rel_probe.out: only Var is true. The complete BVL expression carrier is shared."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/VarBound.lean",
+  "hol_name": "bVarBound_def",
+  "lean_name": "bVarBound",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed source clauses captured in bvl_to_bvi_value_rel_probe.out, including variable and force indices, binding depth changes, list order and all recursive constructors."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/HandleOk.lean",
+  "hol_name": "let_ok_def",
+  "lean_name": "letOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source capture: the sole successful constructor is Let; all bindings must be variables and the body must be bounded by their count."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/HandleOk.lean",
+  "hol_name": "handle_ok_def",
+  "lean_name": "handleOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed source clauses and cases captured in bvl_to_bvi_value_rel_probe.out. In the empty-let case, handleOk_emptyLet kernel-checks that the terminating match is equivalent to the source universal implication. List.all of isVar represents EVERY. The BVL-to-BVI state relation and pass correctness remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/HandleOk.lean",
+  "hol_name": "handle_ok_CONS",
+  "lean_name": "handleOk_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared with the typed original theorem captured in bvl_to_bvi_value_rel_probe.out: for all expressions and lists the head-tail conjunction is equivalent to the original predicate."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Names.lean",
+  "hol_name": "names_ok_def",
+  "lean_name": "namesOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared with the typed original in bvl_to_bvi_value_rel_probe.out: the two sparse-tree payloads, oracle configuration payload, and two program-label payload types are independent. The oracle program predicate, original namespace arithmetic, next-name bound and sparse-tree domain tests agree; EVERY is expressed by membership quantification and sptMem is the source tree-domain predicate. The larger state relation remains open."
 }
 ]

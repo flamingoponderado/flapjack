@@ -17,3 +17,15 @@ val aux_code_installed_APPEND_replay = prove (``!xs ys code.
   Induct \\ fs[APPEND,aux_code_installed_def,FORALL_PROD] \\ METIS_TAC []);
 val _ = show "aux_code_installed_APPEND_replay=" aux_code_installed_APPEND_replay;
 val _ = show "aux_code_installed_subspt=" aux_code_installed_subspt;
+val _ = show "isVar_def=" bvlPropsTheory.isVar_def;
+val _ = show "bVarBound_def=" bvlPropsTheory.bVarBound_def;
+val _ = show "let_ok_def=" bvl_handleProofTheory.let_ok_def;
+val _ = show "handle_ok_def=" bvl_handleProofTheory.handle_ok_def;
+val _ = show "handle_ok_CONS=" bvl_handleProofTheory.handle_ok_CONS;
+val _ = show "handle_ok_EVERY=" bvl_handleProofTheory.handle_ok_EVERY;
+val _ = show "handle_good=" (prove (``bvl_handleProof$handle_ok
+  [bvl$Let [] (bvl$Let [bvl$Var 0] (bvl$Var 0))]``,
+  EVAL_TAC \\ simp[bvl_handleProofTheory.handle_ok_def]));
+val _ = show "handle_bad=" (EVAL ``bvl_handleProof$handle_ok
+  [bvl$Let [] (bvl$Let [bvl$Var 0] (bvl$Var 1))]``);
+val _ = show "names_ok_def=" names_ok_def;
