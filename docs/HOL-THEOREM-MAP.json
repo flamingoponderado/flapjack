@@ -109173,5 +109173,35 @@
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the nonempty-head/nonempty-tail list relation case. It retains the original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus head and tail induction hypotheses of that same shape. evaluateMono and subsptExpRel transport the tail relation across the source head evaluation. The witness covers refs only and the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineEvaluation.lean",
+    "hol_name": "evaluate_inline",
+    "lean_name": "evaluateInline_let",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the Let/Let expression-relation case, preserving the original state relation, expression relation, source evaluation, non-type-error premise, existential target evaluation and final relation, with binding and body induction hypotheses of the same shape. The body environment retains the original values ++ env order, and evaluateMono transports its relation through binding evaluation. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineEvaluation.lean",
+    "hol_name": "evaluate_inline",
+    "lean_name": "evaluateInline_handle",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the Handle/Handle expression-relation case, with original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus body and handler induction hypotheses. A raised value is prepended to the handler environment and evaluateMono transports the handler relation after body evaluation. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineEvaluation.lean",
+    "hol_name": "evaluate_inline",
+    "lean_name": "evaluateInline_if",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the If/If expression-relation case, preserving the original hypotheses, target existential and final state relation. The condition and selected-branch induction hypotheses have the same simulation shape, with branch choice quantifying both source branches; evaluateMono transports the chosen relation after condition evaluation. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions."
   }
 ]
