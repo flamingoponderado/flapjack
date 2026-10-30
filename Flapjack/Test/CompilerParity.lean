@@ -323,6 +323,7 @@ import Flapjack.Test.ClosOpParity
 import Flapjack.Test.WordBignumCompileExpParity
 import Flapjack.Test.WordBignumHelpersParity
 import Flapjack.Test.WordBignumCompileParity
+import Flapjack.Test.WordBignumGenerateParity
 import Flapjack.Test.CakeLexerParity
 import Flapjack.Test.CakePegChecksParity
 import Flapjack.Test.CakePegActionsParity

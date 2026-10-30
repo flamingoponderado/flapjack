@@ -180,6 +180,7 @@ probe_needs_refresh() {
          "$hol_dir/examples/formal-languages/context-free/grammarScript.sml" -nt "$output" ||
          "$hol_dir/examples/formal-languages/context-free/locationScript.sml" -nt "$output" ) ]] ||
     [[ ( "$(basename "$probe")" == bignum_word_probeScript.sml ||
+         "$(basename "$probe")" == bignum_mini_probeScript.sml ||
          "$(basename "$probe")" == full_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_mti_inline_cake_word_probeScript.sml ||
@@ -489,6 +490,8 @@ run_probe bignum_helpers_probeScript.sml bignum_helpers_probe.out \
   address_type temp_in1_type temp_in2_type temp_out_type div_location_type seq_temp_type seq_temp_imm_type seq_temp_imm_not_type load_regs_type save_regs_type seq_index_type div_code_type seq_temp imm_not_reg imm_not_word load_regs save_regs seq_index_32 seq_index_64 div_code "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 run_probe bignum_compile_probeScript.sml bignum_compile_probe.out \
   compile_type has_compiled_type skip continue assign recurse loop_new loop_reused loop_seq load store sub divide delete loop_body swap if_reg if_imm add multiply "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+run_probe bignum_mini_probeScript.sml bignum_mini_probe.out \
+  mini_type generic mini "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 run_probe bignum_word_probeScript.sml bignum_word_probe.out \
   entry "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 

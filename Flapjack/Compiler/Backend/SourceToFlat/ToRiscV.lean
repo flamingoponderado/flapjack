@@ -13,8 +13,8 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 
 /-- Execute the existing RISC-V word optimizer and backend after the checked
 source-to-word route. The caller supplies the symbol-name map: source and
-stub name propagation, the default frontend optimizations, and the generic
-bignum generator are not yet ported here. This partial Flapjack composition
+stub name propagation and the default frontend optimizations are not supplied
+by this route. This partial Flapjack composition
 is not the original whole-compiler definition or a correctness theorem. -/
 def compileCakeToRiscVNoOptsFuel (fuel : Nat) (config : Backend.Config)
     (names : Spt Basis.Pure.MlString.MlString) (decls : List AstHOL.Dec) :
@@ -36,8 +36,8 @@ def backendNames (names : Spt Basis.Pure.MlString.MlString) : Spt Basis.Pure.MlS
     StackAlloc.stubNames () ++ StackRemove.stubNames ())) names
 
 /-- Execute the restricted source-to-RISC-V route with its propagated BVI and
-runtime symbol names. The default frontend optimizations and the generic bignum
-generator are still absent, and no whole-compiler correctness theorem is claimed. -/
+runtime symbol names. The default frontend optimizations are absent, and no
+whole-compiler correctness theorem is claimed. -/
 def compileCakeToRiscVNamedNoOptsFuel (fuel : Nat) (config : Backend.Config)
     (decls : List AstHOL.Dec) : Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
   let asmConf := Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig
@@ -51,8 +51,8 @@ def compileCakeToRiscVNamedNoOptsFuel (fuel : Nat) (config : Backend.Config)
   Backend.fromWord asmConf config (backendNames names) program
 
 /-- Execute the named RISC-V route after the checked multi-argument and BVI
-inlining passes. Other frontend optimizations and the generic bignum generator
-remain missing; this is not the full original compiler or its correctness proof. -/
+inlining passes. Other frontend optimizations remain missing; this is not the
+full original compiler or its correctness proof. -/
 def compileCakeToRiscVInlineFuel (fuel : Nat) (config : Backend.Config)
     (decls : List AstHOL.Dec) : Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
   let asmConf := Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig
@@ -66,7 +66,7 @@ def compileCakeToRiscVInlineFuel (fuel : Nat) (config : Backend.Config)
   Backend.fromWord asmConf config (backendNames names) program
 
 /-- Execute the BVL-optimized, BVI-inlined restricted route through RISC-V.
-Other frontend optimizations and the generic bignum generator remain missing. -/
+Other frontend optimizations remain missing. -/
 def compileCakeToRiscVOptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
     (config : Backend.Config) (decls : List AstHOL.Dec) :
     Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
@@ -80,9 +80,9 @@ def compileCakeToRiscVOptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq :
   let config := { config with wordToWordConf := { config.wordToWordConf with colOracle := col } }
   Backend.fromWord asmConf config (backendNames names) program
 
-/-- Run the configured CakeML AST-to-RISC-V path. The bignum generator is a
-pinned 64-bit snapshot, unsupported cases return `none`, and no whole-compiler
-correctness theorem or final-byte correspondence is claimed. -/
+/-- Run the configured CakeML AST-to-RISC-V path. The bignum mini-program is
+captured from pinned HOL and compiled in Lean; unsupported cases return `none`.
+No whole-compiler correctness theorem or final-byte correspondence is claimed. -/
 def compileCakeToRiscVConfiguredFuel (fuel : Nat) (config : Backend.Config)
     (decls : List AstHOL.Dec) : Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
   let asmConf := Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig

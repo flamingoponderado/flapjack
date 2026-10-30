@@ -4,7 +4,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.ToWord
 
 /-! Capture the initial DataLang-to-WordLang stage from
 `backend_passesScript.sml`. This follows the executable 64-bit backend path,
-including its pinned bignum stubs; the subsequent word optimizations and the
+including its generated bignum stubs; the subsequent word optimizations and the
 complete explorer driver remain to be captured. -/
 namespace Flapjack.Compiler.Backend.BackendPasses
 open Flapjack.Basis.Pure.MlString
@@ -21,7 +21,8 @@ def captureWord64 (config : DataToWord.Config) (data : DataStages) : Option Word
     let (body, _) ← DataToWord.compileControl? (width := 64) config n 2 body
     pure (n, arity + 1, body)
   let fixed ← DataToWord.fixedStubs? config
-  pure ⟨fixed ++ WordBignum.generatedStubs64 ++ functions, data.names⟩
+  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
+  pure ⟨fixed ++ bignum ++ functions, data.names⟩
 
 /-- Render the captured WordLang stage with CakeML's original heading. -/
 def wordReportBytes (stage : WordStage) : List HolChar :=

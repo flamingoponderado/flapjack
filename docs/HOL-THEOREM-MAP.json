@@ -74,7 +74,7 @@
     "lean_name": "compileExp",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Compared pinned word_bignumScript.sml:441-447 and wordLangScript.sml expression constructors. The typed capture bignum_compile_exp_probe.out records alpha exp -> alpha exp; one positive HOL word dimension is represented by BitVec width with NeZero. Binary Op recurses over exactly two operands; Var uses a word5 Temp with modular n2w; Const is preserved; Shift recurses over both operands; all other expressions use Const 0. The probe covers binary, unary, Lookup, Shift and Temp wraparound. This is a proof-side generator component; the production 64-bit snapshot and full generator correctness remain separate."
+    "reviewer": "Compared pinned word_bignumScript.sml:441-447 and wordLangScript.sml expression constructors. The typed capture bignum_compile_exp_probe.out records alpha exp -> alpha exp; one positive HOL word dimension is represented by BitVec width with NeZero. Binary Op recurses over exactly two operands; Var uses a word5 Temp with modular n2w; Const is preserved; Shift recurses over both operands; all other expressions use Const 0. The probe covers binary, unary, Lookup, Shift and Temp wraparound. The executable mini compiler uses this translation with a captured original mini-program; the original shallow-to-deep generator and full correctness remain separate."
   },
   {
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",

@@ -1,8 +1,7 @@
 import Flapjack.Compiler.Backend.WordBignum.CompileExp
 import Flapjack.Compiler.Backend.WordBignum.Mini
 
-/-! Word-code construction helpers for the generic bignum generator. The
-executed compiler still uses the captured 64-bit generated stubs. -/
+/-! Word-code construction helpers for the generic bignum generator. -/
 namespace Flapjack.Compiler.Backend.WordBignum
 
 @[hol "cakeml/compiler/backend/word_bignumScript.sml" "TempIn1_def"]

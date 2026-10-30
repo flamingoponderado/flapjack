@@ -1,8 +1,7 @@
 import Flapjack.Pancake.WordLang
 
 /-! Expression translation used by the word-level bignum generator. The
-production compiler still uses the pinned 64-bit generated stubs; the rest of
-the generic generator and its integration remain open. -/
+original shallow-to-deep generator and full correctness remain open. -/
 namespace Flapjack.Compiler.Backend.WordBignum
 
 /-- Translate source mini-program expressions into word-language expressions.

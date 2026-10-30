@@ -174,13 +174,15 @@ the complete carrier correspondence remains under review.
 
 `fixed_stubs_word_probe.out` captures the complete fixed prefix of the original stub table in source order; the generated bignum suffix is excluded.
 
-`bignum_word_probe.out` captures the 23 original generated bignum stubs at the fixed CakeML location for 64-bit words. `scripts/generate-bignum-word-snapshot.py` renders an executable snapshot from this capture, and the word-oracle generator also produces an exhaustive matching test. This is a target-specific snapshot of pinned HOL output; the generic bignum generator and its correctness theorem remain unported. Regenerate the probe using the pinned CakeML and HOL submodules before regenerating either Lean artifact.
+`bignum_word_probe.out` captures the 23 original generated bignum stubs at the fixed CakeML location for 64-bit words. `scripts/generate-bignum-word-snapshot.py` renders a reference snapshot from this capture, and the word-oracle generator also produces an exhaustive matching test. The executed mini compiler is checked against that oracle; the original shallow-to-deep generator and its correctness theorem remain unported. Regenerate the probe using the pinned CakeML and HOL submodules before regenerating either Lean artifact.
 
 `bignum_compile_exp_probe.out` records the inferred HOL expression-translation type and binary, invalid-arity, lookup, and shift cases. `Flapjack.Test.WordBignumCompileExpParity` replays those cases. Regenerate with `HOL_PROBE_ONLY=bignum_compile_exp_probeScript.sml scripts/hol-probes/regenerate.sh`; this is regression evidence and does not establish generator equivalence.
 
 `bignum_helpers_probe.out` records the source-inferred helper types and register, immediate, complement, load, save, index and division-call observations. `Flapjack.Test.WordBignumHelpersParity` replays the results. Regenerate with `HOL_PROBE_ONLY=bignum_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `bignum_compile_probe.out` records the inferred mini-compiler and cache types and examples for every mini-language constructor, including fresh and reused loop code. `Flapjack.Test.WordBignumCompileParity` replays those results. Regenerate with `HOL_PROBE_ONLY=bignum_compile_probeScript.sml scripts/hol-probes/regenerate.sh`. These examples do not establish general HOL correspondence.
+
+`bignum_mini_probe.out` captures the pinned shallow-to-deep generator's polymorphic `mc_iop_code` result and its 64-bit instance. `scripts/generate-bignum-mini.py` translates the matching captures into Lean; `--check` verifies the generated file. `Flapjack.Test.WordBignumGenerateParity` checks all 23 64-bit word stubs against `bignum_word_probe.out`. Regenerate with `HOL_PROBE_ONLY=bignum_mini_probeScript.sml scripts/hol-probes/regenerate.sh`. The capture and test do not prove the original shallow-to-deep generator or general cross-language equivalence.
 
 `full_cake_word_probe.out` captures the original `data_to_word$compile_0` result for the empty CakeML program, including fixed stubs, generated bignum stubs, function arities and bodies, under the restricted settings and a 64-bit RISC-V assembly configuration. Its whole-program comparison ends before word-to-word optimization and the final RISC-V result.
 

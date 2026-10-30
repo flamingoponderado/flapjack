@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.ToData
 import Flapjack.Compiler.Backend.DataToWord.Control
 import Flapjack.Compiler.Backend.DataToWord.Stubs
 import Flapjack.Compiler.Backend.WordBignum.Generated64
+import Flapjack.Compiler.Backend.WordBignum.Generate
 
 /-! Restricted source-to-word composition. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -41,16 +42,17 @@ def compileCakeToWordNoOptsFuel {width : Nat} [NeZero width]
     compileCakeToWordWithLabelsNoOptsFuel fuel source closure word decls
   pure (source, closure, start, code.map fun (name, args, body, _) => (name, args + 1, body), next)
 
-/-- Add the fixed data-to-word stubs and the pinned 64-bit bignum snapshot to
-the restricted source-to-word composition. This is still partial and stops
-before word-to-word optimization; the generic bignum generator is unported. -/
+/-- Add fixed data-to-word stubs and generated 64-bit bignum stubs to the
+restricted source-to-word composition. This remains partial and stops before
+word-to-word optimization. -/
 def compileCakeToWordWithStubs64NoOptsFuel
     (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
     (word : DataToWord.Config) (decls : List AstHOL.Dec) :
     Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × WordLangProgHOL (BitVec 64)) × Nat) := do
   let (source, closure, start, code, next) ← compileCakeToWordNoOptsFuel fuel source closure word decls
   let fixed ← DataToWord.fixedStubs? word
-  pure (source, closure, start, fixed ++ WordBignum.generatedStubs64 ++ code, next)
+  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
+  pure (source, closure, start, fixed ++ bignum ++ code, next)
 
 /-- As above, retaining the BVI symbol-name map for the backend. -/
 def compileCakeToWordWithStubsAndNames64NoOptsFuel
@@ -61,8 +63,9 @@ def compileCakeToWordWithStubsAndNames64NoOptsFuel
   let (source, closure, start, code, next, names) ←
     compileCakeToWordWithNamesAndLabelsNoOptsFuel fuel source closure word decls
   let fixed ← DataToWord.fixedStubs? word
+  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
   let code := code.map fun (name, args, body, _) => (name, args + 1, body)
-  pure (source, closure, start, fixed ++ WordBignum.generatedStubs64 ++ code, next, names)
+  pure (source, closure, start, fixed ++ bignum ++ code, next, names)
 
 /-- Continue the checked multi-argument and BVI-inlining route to the 64-bit
 word stage. Unsupported data operations and exhausted fuel return `none`. -/
@@ -76,10 +79,11 @@ def compileCakeToWordWithStubsAndNames64InlineFuel
     let (body, _) ← DataToWord.compileControl? (width := 64) word name 2 body
     pure (name, args + 1, body)
   let fixed ← DataToWord.fixedStubs? word
-  pure (source, closure, start, fixed ++ WordBignum.generatedStubs64 ++ code, next, names)
+  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
+  pure (source, closure, start, fixed ++ bignum ++ code, next, names)
 
 /-- Continue the checked BVL-optimized route through 64-bit word lowering.
-Unsupported operations return `none`; the bignum stubs are a pinned snapshot. -/
+Unsupported operations return `none`. -/
 def compileCakeToWord64OptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
     (source : Config) (closure : ClosToBvl.Config) (word : DataToWord.Config)
     (decls : List AstHOL.Dec) :
@@ -91,7 +95,8 @@ def compileCakeToWord64OptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq 
     let (body, _) ← DataToWord.compileControl? (width := 64) word name 2 body
     pure (name, args + 1, body)
   let fixed ← DataToWord.fixedStubs? word
-  pure (source, closure, start, fixed ++ WordBignum.generatedStubs64 ++ code, next, names)
+  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
+  pure (source, closure, start, fixed ++ bignum ++ code, next, names)
 
 /-- Continue the configured BVL/BVI pipeline through 64-bit word lowering. -/
 def compileCakeToWord64ConfiguredFuel (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
@@ -104,6 +109,7 @@ def compileCakeToWord64ConfiguredFuel (fuel : Nat) (source : Config) (closure : 
     let (body, _) ← DataToWord.compileControl? (width := 64) word name 2 body
     pure (name, args + 1, body)
   let fixed ← DataToWord.fixedStubs? word
-  pure (source, closure, bvlConfig, fixed ++ WordBignum.generatedStubs64 ++ code, names)
+  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
+  pure (source, closure, bvlConfig, fixed ++ bignum ++ code, names)
 
 end Flapjack.Compiler.Backend.SourceToFlat
