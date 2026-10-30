@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosLang.Budget
+import Flapjack.Compiler.Backend.ClosOp.EqBudget
 
 /-! Bounded infrastructure for the closure smart-operation pass. -/
 namespace Flapjack.Compiler.Backend.ClosOp
@@ -22,7 +23,7 @@ private def constant : Exp → Option ConstPart
   | _ => none
 private def eqConst (p : ConstPart) (x : Exp) : Exp := .op .none (.blockOp (.equalConst p)) [x]
 
-private def directEq (x y : Exp) : Option Exp :=
+def directEq (x y : Exp) : Option Exp :=
   match intConst x, intConst y with
   | some i, some j => some (mkBool (i == j))
   | some i, none => some (eqConst (.int i) y)
@@ -109,6 +110,13 @@ def eqListFuel : Nat → List (Exp × Exp) → Option (List Exp)
           | none, some _ => eqListFuel fuel [(y, x)]
       pure (first ++ (← eqListFuel fuel rest))
 
+/-- Preserve a successful equality decomposition and retry exhaustion with
+a constructor-based bound. -/
+def eqListBounded (fuel : Nat) (pairs : List (Exp × Exp)) : Option (List Exp) :=
+  match eqListFuel fuel pairs with
+  | some result => some result
+  | none => eqListFuel (max fuel (eqPairsWeight pairs + 1)) pairs
+
 private def conj : List Exp → Exp
   | [] => mkBool true
   | [x] => x
@@ -118,8 +126,8 @@ private def isVar : Exp → Bool
   | .var _ _ => true
   | _ => false
 
-/-- The closure smart constructor, returning `none` only when bounded
-recursive equality decomposition exhausts fuel. -/
+/-- The closure smart constructor, with bounded retries for its recursive
+lifting and equality decomposition. -/
 def smartFuel (fuel : Nat) (trace : BackendCommon.Tra) (op : Op) (xs : List Exp) : Option Exp := do
   let default := Exp.op trace op xs
   match xs with
@@ -139,7 +147,7 @@ def smartFuel (fuel : Nat) (trace : BackendCommon.Tra) (op : Op) (xs : List Exp)
               | none =>
                   let (lifted, _, binds) ← liftBounded fuel [x, y] 0 []
                   match lifted with
-                  | [x, y] => pure (.let .none binds (conj (← eqListFuel fuel [(x, y)])))
+                  | [x, y] => pure (.let .none binds (conj (← eqListBounded fuel [(x, y)])))
                   | _ => pure default
           | _ => pure default
   | _ => pure default

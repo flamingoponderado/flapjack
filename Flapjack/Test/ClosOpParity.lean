@@ -44,4 +44,18 @@ private def cons (tag : Nat) (xs : List ClosLang.Exp) : ClosLang.Exp := .op .non
             (.op .none (.blockOp (.cons 0)) [])) (.op .none (.blockOp (.cons 0)) []))] => true
   | _ => false
 
+-- Exercise the structural retries with nested constructors in both orders.
+#guard (ClosOp.smartFuel 0 .none (.blockOp .equal)
+  [cons 2 [c 3, cons 4 [c 5]], .var .none 5]).isSome
+
+#guard ClosOp.smartFuel 0 .none (.blockOp .equal)
+    [cons 2 [c 3, cons 4 [c 5]], .var .none 5] ==
+  ClosOp.smartFuel 100 .none (.blockOp .equal)
+    [cons 2 [c 3, cons 4 [c 5]], .var .none 5]
+
+#guard ClosOp.smartFuel 0 .none (.blockOp .equal)
+    [.var .none 5, cons 2 [c 3, cons 4 [c 5]]] ==
+  ClosOp.smartFuel 100 .none (.blockOp .equal)
+    [.var .none 5, cons 2 [c 3, cons 4 [c 5]]]
+
 end Flapjack.Test.ClosOpParity

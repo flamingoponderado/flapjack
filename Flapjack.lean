@@ -218,6 +218,8 @@ import Flapjack.Compiler.Backend.ClosKnown.Config
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.MergeTotal
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftTotal
+import Flapjack.Compiler.Backend.ClosOp.Proofs.EqMeasure
+import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartTotal
 import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.AstHOL.BackendOperators
 import Flapjack.AstHOL.LitOp
