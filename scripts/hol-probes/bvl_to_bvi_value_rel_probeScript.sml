@@ -29,3 +29,10 @@ val _ = show "handle_good=" (prove (``bvl_handleProof$handle_ok
 val _ = show "handle_bad=" (EVAL ``bvl_handleProof$handle_ok
   [bvl$Let [] (bvl$Let [bvl$Var 0] (bvl$Var 1))]``);
 val _ = show "names_ok_def=" names_ok_def;
+val _ = show "state_rel_def=" state_rel_def;
+val _ = show "state_rel_FLOOKUP_byteArray=" state_rel_FLOOKUP_byteArray;
+val _ = show "state_rel_FLOOKUP_valueArray=" state_rel_FLOOKUP_valueArray;
+val _ = show "state_rel_FLOOKUP_MutBlock=" state_rel_FLOOKUP_MutBlock;
+val _ = show "state_rel_FLOOKUP_Thunk=" state_rel_FLOOKUP_Thunk;
+val _ = show "bv_ok_def=" bv_ok_def;
+val _ = show "bv_ok_Unit=" bv_ok_Unit;

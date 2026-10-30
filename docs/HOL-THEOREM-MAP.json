@@ -440,7 +440,7 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "state_co_def",
-    "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "stateCo",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/StateCompiler.lean", "lean_name": "stateCo",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared original definition and typed backend_oracle_monotonic_probe.out: oracle index, source state, output state, configuration, input and output are independently polymorphic; result retains the configuration and the second compiler result."
   },
@@ -110377,5 +110377,40 @@
   "lean_name": "namesOk",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared with the typed original in bvl_to_bvi_value_rel_probe.out: the two sparse-tree payloads, oracle configuration payload, and two program-label payload types are independent. The oracle program predicate, original namespace arithmetic, next-name bound and sparse-tree domain tests agree; EVERY is expressed by membership quantification and sptMem is the source tree-domain predicate. The larger state relation remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/StateCompiler.lean",
+  "hol_name": "state_cc_def",
+  "lean_name": "stateCc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original capture in backend_oracle_monotonic_probe.out: input and output incremental states, input and output callback configurations, input and output programs, code and data are all independently polymorphic. The callback failure and success branches preserve the original result shape and state threading; both are replayed in StateCompilerParity."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/StateCompiler.lean",
+  "hol_name": "FST_state_co",
+  "lean_name": "fst_stateCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared with the typed original theorem in backend_oracle_monotonic_probe.out: the oracle index, state, output state, configuration, input and output carriers remain independent and the first projection is unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/StateCompiler.lean",
+  "hol_name": "SND_state_co",
+  "lean_name": "snd_stateCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared with the typed original theorem in backend_oracle_monotonic_probe.out: the oracle index, state, output state, configuration, input and output carriers remain independent and the second projection is the incremental compiler result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Refs.lean",
+  "hol_name": "bv_ok_def",
+  "lean_name": "bvOk",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "refs"
+  ],
+  "reviewer": "Compared every typed source case in bvl_to_bvi_value_rel_probe.out: pointer membership is lookup presence, blocks recursively require EVERY child, and numbers, words and code pointers are unrestricted. bvOkList_iff checks the list recursion against membership quantification. The local parameter witness records the canonical finite-map roundtrip."
 }
 ]

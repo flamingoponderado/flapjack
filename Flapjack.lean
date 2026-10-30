@@ -568,6 +568,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Total
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCode
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Names
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
@@ -1610,6 +1611,8 @@ import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
 import Flapjack.Compiler.Backend.Parmove.InjOnState
 import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
 import Flapjack.Compiler.Backend.BackendProps
+import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+import Flapjack.Test.StateCompilerParity
 import Flapjack.Compiler.Backend.LabToTarget.Interference
 import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
 import Flapjack.Compiler.Backend.LabToTarget.NopSteps

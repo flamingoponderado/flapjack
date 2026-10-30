@@ -511,7 +511,7 @@ run_probe flat_to_clos_globals_probeScript.sml flat_to_clos_globals_probe.out \
   "$cake_dir/compiler/backend/proofs/flat_to_closProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe backend_oracle_monotonic_probeScript.sml backend_oracle_monotonic_probe.out \
-  state_co oracle_monotonic is_state_oracle monotonic_with_invariant \
+  state_co oracle_monotonic is_state_oracle monotonic_with_invariant state_cc FST_state_co SND_state_co state_cc_success state_cc_failure \
   "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe source_to_flat_compile_globals_probeScript.sml source_to_flat_compile_globals_probe.out \
@@ -562,7 +562,7 @@ run_probe bvl_const_rel_probeScript.sml bvl_const_rel_probe.out \
   value_rel env_rel env_rel_length env_rel_LLOOKUP_NONE_replay env_rel_LOOKUP_SOME_replay evaluate_delete_var_Rerr_SING evaluate_delete_var_Rerr_replay evaluate_delete_var_Rval_replay dest_simple_eq_replay case_op_const_eq_replay SmartOp2_thm_replay SmartOp_flip_thm_replay SmartOp1_thm evaluate_env_rel "$cake_dir/compiler/backend/proofs/bvl_constProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe bvl_to_bvi_value_rel_probeScript.sml bvl_to_bvi_value_rel_probe.out \
-  adjust_bv_def adjust_bv_Unit adjust_bv_Boolv adjust_nested aux_code_installed aux_code_installed_APPEND_replay aux_code_installed_subspt isVar_def bVarBound_def let_ok_def handle_ok_def handle_ok_CONS handle_ok_EVERY handle_good handle_bad names_ok_def "$cake_dir/compiler/backend/proofs/bvl_to_bviProofScript.sml" "$cake_dir/compiler/backend/proofs"
+  adjust_bv_def adjust_bv_Unit adjust_bv_Boolv adjust_nested aux_code_installed aux_code_installed_APPEND_replay aux_code_installed_subspt isVar_def bVarBound_def let_ok_def handle_ok_def handle_ok_CONS handle_ok_EVERY handle_good handle_bad names_ok_def state_rel_def state_rel_FLOOKUP_byteArray state_rel_FLOOKUP_valueArray state_rel_FLOOKUP_MutBlock state_rel_FLOOKUP_Thunk bv_ok_def bv_ok_Unit "$cake_dir/compiler/backend/proofs/bvl_to_bviProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe bvi_sem_state_probeScript.sml bvi_sem_state_probe.out \
   exn_type ret_type result_type state_refs_type state_clock_type state_global_type state_compile_type state_oracle_type state_code_type state_ffi_type dec_clock fix_clock initial_state bvl_to_bvi bad_ref_type not_thunk_type is_thunk_type dest_thunk finalise_cons finalise_nonref finalise_missing finalise_cycle finalise_one small_enough_int do_app_aux aux_const_boundary aux_const_large aux_bad_update_fallback do_install do_install_type install_bad_arity bvi_to_bvl do_app do_app_type do_app_const evaluate_clock fix_clock_evaluate evaluate_type eval_var eval_return eval_tick_timeout eval_call_bad_handler eval_force_evaluated eval_let_call_return "$cake_dir/compiler/backend/semantics/bviSemScript.sml" "$cake_dir/compiler/backend/semantics"

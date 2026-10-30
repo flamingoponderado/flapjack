@@ -1,14 +1,8 @@
-import Flapjack.HolRef
+import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 import Mathlib.Data.Set.Lattice
 
 /-! Stateful compiler-oracle ordering properties. -/
 namespace Flapjack.Compiler.Backend.BackendProps
-
-/-- Apply an incremental compiler to the state and program in each oracle entry. -/
-@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "state_co_def"]
-def stateCo {Index S SNext C P Q : Type} (compile : S → P → SNext × Q)
-    (oracle : Index → (S × C) × P) (n : Index) : C × Q :=
-  ((oracle n).1.2, (compile (oracle n).1.1 (oracle n).2).2)
 
 /-- All identifiers in later oracle entries exceed those in earlier entries. -/
 @[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_def"]
