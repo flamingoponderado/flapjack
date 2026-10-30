@@ -539,6 +539,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEvents
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsControl
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsFull
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClock
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockControl
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
