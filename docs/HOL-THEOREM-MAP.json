@@ -109693,5 +109693,21 @@
     "lean_name": "optionalLetLetSing_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the typed original statement in bvl_handle_frontend_probe.out: the list-valued cut equals the singleton lift of the four components of the singleton cut, with all parameters unrestricted."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Compile.lean",
+    "hol_name": "compile_sing_def",
+    "lean_name": "compileSing",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every inferred typed original singleton clause in bvl_handle_frontend_probe.out, including empty lets, handler size, Force out-of-range behavior, and force-thunk pattern matching. The proof of general equality with production compileBounded remains open; selected original output observations are replayed for both traversals."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Compile.lean",
+    "hol_name": "compile_sing_def",
+    "lean_name": "compileList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed nil and cons clauses in bvl_handle_frontend_probe.out, including result order, mk_Union, size addition, and conjunction. General correspondence with production compileListFuel remains open."
   }
 ]

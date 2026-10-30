@@ -29,6 +29,8 @@ val _ = show "LetLet=" bvl_handleTheory.LetLet_def;
 val _ = show "OptionalLetLet=" bvl_handleTheory.OptionalLetLet_def;
 val _ = show "OptionalLetLet_sing=" bvl_handleTheory.OptionalLetLet_sing_def;
 val _ = show "OptionalLetLet_sing_eq=" bvl_handleTheory.OptionalLetLet_sing_eq;
+val _ = show "compile_sing=" bvl_handleTheory.compile_sing_def;
+val _ = show "compile_sing_eq=" bvl_handleTheory.compile_sing_eq;
 load "preamble";
 open preamble bvl_handleTheory;
 val handle_size_non_zero_replay = prove (``0 < handle_size x``,
