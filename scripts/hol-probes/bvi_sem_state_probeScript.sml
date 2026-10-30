@@ -30,3 +30,8 @@ val _ = show "finalise_cycle=" (EVAL ``bviSem$finalise_cons (bvlSem$RefPtr F 1)
   (FEMPTY |+ (1, bvlSem$MutBlock 2 F [] (bvlSem$RefPtr F 1) []))``);
 val _ = show "finalise_one=" (EVAL ``bviSem$finalise_cons (bvlSem$RefPtr F 1)
   (FEMPTY |+ (1, bvlSem$MutBlock 2 F [bvlSem$Number 3] (bvlSem$Number 4) []))``);
+val _ = show "small_enough_int=" backend_commonTheory.small_enough_int_def;
+val _ = show "do_app_aux=" bviSemTheory.do_app_aux_def;
+val _ = show "aux_const_boundary=" (EVAL ``bviSem$do_app_aux (closLang$IntOp (closLang$Const 268435457)) [] (s:('c,'ffi) bviSem$state)``);
+val _ = show "aux_const_large=" (EVAL ``bviSem$do_app_aux (closLang$IntOp (closLang$Const 268435458)) [] (s:('c,'ffi) bviSem$state)``);
+val _ = show "aux_bad_update_fallback=" (EVAL ``bviSem$do_app_aux (closLang$MemOp closLang$UpdateCons) [] (s:('c,'ffi) bviSem$state)``);

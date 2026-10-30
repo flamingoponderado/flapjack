@@ -110286,5 +110286,13 @@
     "refs"
   ],
   "reviewer": "Compared with the typed original source capture bvi_sem_state_probe.out. All source value and reference cases agree, including both thunk modes and pointer flag checks. The parameter roundtrip witness covers the canonical finite map. BVI evaluation and the full pass simulation remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BackendCommon/SmallInt.lean",
+  "hol_name": "small_enough_int_def",
+  "lean_name": "smallEnoughInt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared with the typed original equation captured in bvi_sem_state_probe.out: the argument is an integer, both bounds are inclusive, and the constants and conjunction match exactly. This definition is used by the BVI-specific dispatcher; full dispatcher and evaluator correspondence remain open."
 }
 ]
