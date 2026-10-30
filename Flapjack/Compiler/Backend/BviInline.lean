@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Bvi.Syntax
+import Flapjack.Compiler.Backend.Bvi.Budget
 import Flapjack.Misc.Sptree
 import Flapjack.HolRef
 
@@ -23,8 +24,8 @@ def canonicalWrapper (name arity : Nat) : Exp → Bool
       worker != name && isVars args (List.range arity) && isVars values (List.range rets).reverse
   | _ => false
 
-/-- Flapjack's bounded traversal of the BVI inliner. The total HOL definition
-and its termination argument remain to be ported. -/
+/-- Flapjack's bounded traversal of the BVI inliner. `Proofs.Total` proves a
+sufficient bound; the total HOL definition remains to be ported and reviewed. -/
 def inlineExpFuel : Nat → Spt (Nat × Exp) → Exp → Option Exp
   | 0, _, _ => none
   | fuel + 1, cache, e =>
@@ -71,22 +72,37 @@ def removeTicksFuel : Nat → Exp → Option Exp
       | .letCall rets _ target xs y => do pure (.letCall rets 0 target (← xs.mapM visit) (← visit y))
       | .return xs => do pure (.return (← xs.mapM visit))
 
+/-- Retry an exhausted inlining traversal using a structural budget, retaining
+every result obtained with the original fuel. -/
+def inlineExpBounded (fuel : Nat) (cache : Spt (Nat × Exp)) (e : Exp) : Option Exp :=
+  match inlineExpFuel fuel cache e with
+  | some result => some result
+  | none => inlineExpFuel (max fuel (expBudget e + 1)) cache e
+
+/-- Retry tick removal using a structural budget only if the caller's fuel
+was exhausted. -/
+def removeTicksBounded (fuel : Nat) (e : Exp) : Option Exp :=
+  match removeTicksFuel fuel e with
+  | some result => some result
+  | none => removeTicksFuel (max fuel (expBudget e + 1)) e
+
 /-- Inline program entries in source order, threading the exact sparse cache. -/
 def inlineAllFuel (fuel : Nat) : Spt (Nat × Exp) → List (Nat × Nat × Exp) →
     Option (Spt (Nat × Exp) × List (Nat × Nat × Exp))
   | cache, [] => some (cache, [])
   | cache, (name, arity, body) :: rest => do
-      let body ← inlineExpFuel fuel cache body
+      let body ← inlineExpBounded fuel cache body
       let cache := if canonicalWrapper name arity body then sptInsert name (arity, body) cache else cache
       let (cache, rest) ← inlineAllFuel fuel cache rest
       pure (cache, (name, arity, body) :: rest)
 
-/-- Apply the bounded inliner and tick-removal traversals to a whole program. -/
+/-- Apply the inliner and tick-removal traversals to a whole program. The
+retry wrappers have structurally sufficient bounds proved in `Proofs.Total`. -/
 def compileProgFuel (fuel : Nat) (prog : List (Nat × Nat × Exp)) :
     Option (Spt (Nat × Exp) × List (Nat × Nat × Exp)) := do
   let (cache, prog) ← inlineAllFuel fuel .ln prog
   let prog ← prog.mapM fun (name, arity, body) => do
-    pure (name, arity, ← removeTicksFuel fuel body)
+    pure (name, arity, ← removeTicksBounded fuel body)
   pure (cache, prog)
 
 end Flapjack.Compiler.Backend.BviInline
