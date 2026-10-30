@@ -110588,5 +110588,39 @@
     "refs"
   ],
   "reviewer": "Compared the typed original in bvl_to_bvi_value_rel_probe.out: an arbitrary polymorphic BVI state with nonzero clock and any natural allowance has the same state after decrementing one before or after incrementing. The canonical refs state witness covers the sole finite-map carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ValueOk.lean",
+  "hol_name": "bv_ok_SUBSET_IMP",
+  "lean_name": "bvOk_domain_mono",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "refs",
+    "refs2"
+  ],
+  "reviewer": "Compared with the typed replay of the local original theorem in bvl_to_bvi_value_rel_probe.out: both canonical map parameters have type num to BVL reference cells, source domain inclusion is lookup-presence implication, and the same value remains well formed in the larger domain."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ValueOk.lean",
+  "hol_name": "list_to_v_ok",
+  "lean_name": "listToValue_ok",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "refs"
+  ],
+  "reviewer": "Compared with the typed original in bvl_to_bvi_value_rel_probe.out: EVERY well-formed element implies well-formedness of the same list_to_v encoding. The local finite-map parameter witness establishes the canonical lookup roundtrip."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ValueOk.lean",
+  "hol_name": "list_to_v_ok_APPEND",
+  "lean_name": "listToValue_ok_append",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "refs"
+  ],
+  "reviewer": "Compared with the typed original in bvl_to_bvi_value_rel_probe.out: well-formed encodings of both lists imply well-formedness of their concatenation; no additional premises. The local finite-map parameter witness establishes the canonical lookup roundtrip."
 }
 ]

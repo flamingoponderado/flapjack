@@ -41,3 +41,10 @@ val _ = show "state_ok_def=" state_ok_def;
 val _ = show "bvi_inc_clock_def=" bviPropsTheory.inc_clock_def;
 val _ = show "bvi_inc_clock_ZERO=" bviPropsTheory.inc_clock_ZERO;
 val _ = show "bvi_dec_clock_inv_clock1=" bviPropsTheory.dec_clock_inv_clock1;
+val bv_ok_SUBSET_IMP_replay = prove (``!refs x refs2.
+  bv_ok refs x /\ FDOM refs SUBSET FDOM refs2 ==> bv_ok refs2 x``,
+  HO_MATCH_MP_TAC bv_ok_ind \\ full_simp_tac (srw_ss()) [bv_ok_def]
+  \\ full_simp_tac (srw_ss()) [SUBSET_DEF,EVERY_MEM]);
+val _ = show "bv_ok_SUBSET_IMP_replay=" bv_ok_SUBSET_IMP_replay;
+val _ = show "list_to_v_ok=" list_to_v_ok;
+val _ = show "list_to_v_ok_APPEND=" list_to_v_ok_APPEND;

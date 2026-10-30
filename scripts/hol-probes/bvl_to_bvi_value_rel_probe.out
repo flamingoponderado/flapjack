@@ -25,3 +25,6 @@ state_ok_def=∀(s :(γ, 'ffi) bvlSem$state). state_ok s ⇔ EVERY (λ(x :v opti
 bvi_inc_clock_def=∀(n :num) (s :(γ, 'ffi) state). inc_clock n s = s with clock := s.clock + n
 bvi_inc_clock_ZERO=∀(s :(α, β) state). inc_clock (0 :num) s = s
 bvi_dec_clock_inv_clock1=(t1 :(α, β) state).clock ≠ (0 :num) ⇒ dec_clock (1 :num) (inc_clock (c :num) t1) = inc_clock c (dec_clock (1 :num) t1)
+bv_ok_SUBSET_IMP_replay=∀(refs :num |-> v ref) (x :v) (refs2 :num |-> v ref). bv_ok refs x ∧ FDOM refs ⊆ FDOM refs2 ⇒ bv_ok refs2 x
+list_to_v_ok=∀(xs :v list). EVERY (bv_ok (refs :num |-> v ref)) xs ⇒ bv_ok refs (list_to_v xs)
+list_to_v_ok_APPEND=∀(xs :v list) (ys :v list). bv_ok (refs :num |-> v ref) (list_to_v xs) ∧ bv_ok refs (list_to_v ys) ⇒ bv_ok refs (list_to_v (xs ++ ys))

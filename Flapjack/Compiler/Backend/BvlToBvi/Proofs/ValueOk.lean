@@ -1,0 +1,94 @@
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
+
+/-! Domain monotonicity and list values for BVL-to-BVI well-formedness. -/
+namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
+open Flapjack.Compiler.Backend.BvlSem (Value Ref listToValue)
+
+private def toBroad (refs : HolFiniteMapExact Nat (Ref Value)) : Nat → Option (Ref Value) := refs.lookup
+private def ofBroad (lookup : Nat → Option (Ref Value))
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat (Ref Value) := ⟨lookup, support⟩
+
+/-- Canonical reference-map roundtrip for list-value construction. -/
+theorem holFmapAsFiniteSupportParamWitness_listToValue_ok_refs
+    (refs : HolFiniteMapExact Nat (Ref Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Canonical reference-map roundtrip for concatenated list values. -/
+theorem holFmapAsFiniteSupportParamWitness_listToValue_ok_append_refs
+    (refs : HolFiniteMapExact Nat (Ref Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs := by
+  exact holFmapAsFiniteSupportParamWitness_listToValue_ok_refs refs key
+
+mutual
+/-- Enlarging the reference domain preserves value well-formedness. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "bv_ok_SUBSET_IMP"
+  (fmap_as_finite_support_relation := [refs, refs2])]
+theorem bvOk_domain_mono (refs : HolFiniteMapExact Nat (Ref Value)) (value : Value)
+    (refs2 : HolFiniteMapExact Nat (Ref Value))
+    (ok : bvOk refs value)
+    (subset : ∀ key, refs.lookup key ≠ none → refs2.lookup key ≠ none) :
+    bvOk refs2 value := by
+  cases value with
+  | refPtr flag ptr => simpa [bvOk] using subset ptr (by simpa [bvOk] using ok)
+  | block tag values =>
+    simpa [bvOk] using bvOkList_domain_mono refs values refs2 (by simpa [bvOk] using ok) subset
+  | _ => simp [bvOk]
+termination_by sizeOf value
+
+/-- Domain monotonicity lifted to a list of values. -/
+theorem bvOkList_domain_mono (refs : HolFiniteMapExact Nat (Ref Value)) (values : List Value)
+    (refs2 : HolFiniteMapExact Nat (Ref Value))
+    (ok : bvOkList refs values)
+    (subset : ∀ key, refs.lookup key ≠ none → refs2.lookup key ≠ none) :
+    bvOkList refs2 values := by
+  cases values with
+  | nil => simp [bvOkList]
+  | cons value values =>
+    simp only [bvOkList] at ok ⊢
+    exact ⟨bvOk_domain_mono refs value refs2 ok.1 subset,
+      bvOkList_domain_mono refs values refs2 ok.2 subset⟩
+termination_by sizeOf values
+end
+
+/-- Encoding a list of well-formed values yields a well-formed list value. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "list_to_v_ok"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem listToValue_ok (refs : HolFiniteMapExact Nat (Ref Value)) (values : List Value)
+    (ok : ∀ value ∈ values, bvOk refs value) : bvOk refs (listToValue values) := by
+  have listOk := (bvOkList_iff refs values).2 ok
+  clear ok
+  induction values with
+  | nil => simp [listToValue, bvOk, bvOkList]
+  | cons value values ih =>
+    simp only [bvOkList] at listOk
+    simp [listToValue, bvOk, bvOkList, listOk.1, ih listOk.2]
+
+/-- Well-formedness of an encoded list exactly reflects its elements. -/
+theorem bvOk_listToValue (refs : HolFiniteMapExact Nat (Ref Value)) (values : List Value) :
+    bvOk refs (listToValue values) ↔ bvOkList refs values := by
+  induction values with
+  | nil => simp [listToValue, bvOk, bvOkList]
+  | cons value values ih => simp [listToValue, bvOk, bvOkList, ih]
+
+/-- Concatenating two well-formed encoded lists preserves well-formedness. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "list_to_v_ok_APPEND"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem listToValue_ok_append (refs : HolFiniteMapExact Nat (Ref Value)) (xs ys : List Value)
+    (first : bvOk refs (listToValue xs)) (second : bvOk refs (listToValue ys)) :
+    bvOk refs (listToValue (xs ++ ys)) := by
+  apply listToValue_ok
+  have xok := (bvOkList_iff refs xs).1 ((bvOk_listToValue refs xs).1 first)
+  have yok := (bvOkList_iff refs ys).1 ((bvOk_listToValue refs ys).1 second)
+  intro value member
+  rcases List.mem_append.mp member with inX | inY
+  · exact xok value inX
+  · exact yok value inY
+
+end Flapjack.Compiler.Backend.BvlToBvi.Proofs

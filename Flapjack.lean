@@ -539,6 +539,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+import Flapjack.Compiler.Backend.Semantics.BvlProps.BuildRefs
 import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
 import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyClock
 import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyCode
@@ -574,6 +575,7 @@ import Flapjack.Test.BvlToBviSourceParity
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Names
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.StateRel
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ValueOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCases
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
