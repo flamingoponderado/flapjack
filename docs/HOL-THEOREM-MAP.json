@@ -1,5 +1,41 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_decode_pos",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_decodePos",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. Position recursion preserves the esgc_free premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_decode_test",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_decodeTest",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. Both atomic-test constructors preserve the esgc_free premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_decode_guard",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_decodeGuard",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. All guard constructors preserve the esgc_free premise, including smart conditionals."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_compile_pat_bindings",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_compilePatBindings_hol",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. The conjunction requires the continuation and every expression in the pattern, natural, expression worklist to be esgc_free; the conclusion uses the second component of compile_pat_bindings."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_naive_pattern_match",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_naivePatternMatch_hol",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. EVERY over the mapped second components is rendered as membership quantification."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_naive_pattern_matches",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_naivePatternMatches_hol",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2163-2231 and inferred types in flat_pattern_global_flag_probe.out. Trace, flat expressions, patterns, decision-test and guard carriers match the corresponding definitions. The source premise is EVERY on the input, default, and mapped branch expressions; membership quantification expresses the same condition."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "make_varls_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileDecGlobals.lean", "lean_name": "makeVarls_esgcFree",
     "statement_status": "reviewed_exact",

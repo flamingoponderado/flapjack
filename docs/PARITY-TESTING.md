@@ -529,6 +529,19 @@ Set `--annotation-cases=320` to exhaust the annotation matrix; its order is
 shuffled deterministically from `--edge-seed`, and its entries include both
 successful programs and diagnostic errors.
 
+A separate 2026-10-30 sample matched 1,850 generated parser, type, S-expression,
+lexical, arbitrary-byte, declaration and pattern-handler cases against the pinned
+compiler. It is reproducible with:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-seed 398241 --edge-seed 731095 --compile-seed 623817 \
+  --type-cases 300 --sexp-cases 100 --structured-cases 300 --lex-cases 150 \
+  --token-cases 200 --raw-byte-cases 200 --declaration-cases 300 --handler-cases 300 \
+  --byte-cases 0 --annotation-cases 0 --config-error-cases 0 --compile-cases 0 \
+  --rich-cases 0 --config-cases 0
+```
+
 On 2026-10-30, all 320 annotation cases matched the pinned compiler. The
 following command reproduces that matrix independently of the other generators:
 

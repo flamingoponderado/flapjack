@@ -27,3 +27,9 @@ val _ = show_thm "lookup_relation_fst=" flat_patternProofTheory.ALOOKUP_rel_eq_f
 val _ = show_thm "environment_set_noop=" flat_patternProofTheory.env_set_v_noop;
 val _ = show_thm "binding_fold_evaluation=" flat_patternProofTheory.pat_bindings_evaluate_FOLDR_lemma;
 val _ = show_thm "every_mapi_simple=" flat_patternProofTheory.EVERY_MAPi_simple;
+val _ = show_thm "esgc_decode_pos=" flat_patternProofTheory.esgc_free_decode_pos;
+val _ = show_thm "esgc_decode_test=" flat_patternProofTheory.esgc_free_decode_test;
+val _ = show_thm "esgc_decode_guard=" flat_patternProofTheory.esgc_free_decode_guard;
+val _ = show_thm "esgc_bindings=" flat_patternProofTheory.esgc_free_compile_pat_bindings;
+val _ = show_thm "esgc_naive_match=" flat_patternProofTheory.esgc_free_naive_pattern_match;
+val _ = show_thm "esgc_naive_matches=" flat_patternProofTheory.esgc_free_naive_pattern_matches;
