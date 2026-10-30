@@ -46,8 +46,8 @@ theorem applyMemory_clock {C F : Type} (op : ClosLang.MemOp) (args : List Value)
   all_goals aesop
 
 /-- A successful installation preserves the clock. -/
-theorem doInstall_clock {C F : Type} (args : List Value)
-    (state next : State C F) (value : Value) (run : doInstall args state = .val (value, next)) :
+theorem doInstall_clock {C F R : Type} (args : List Value)
+    (state next : State C F) (value : Value) (run : doInstall (R := R) args state = .val (value, next)) :
     next.clock = state.clock := by
   unfold doInstall at run
   repeat' split at run

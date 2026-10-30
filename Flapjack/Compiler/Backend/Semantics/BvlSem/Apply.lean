@@ -5,13 +5,15 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 namespace Flapjack.Compiler.Backend.BvlSem
 open Flapjack.SemanticPrimitivesHOL
 
-/-- Source-shaped installation, including code-domain and oracle checks.
-This is Flapjack infrastructure pending review of the complete dispatcher and
-installation state transitions; it is not yet a tagged HOL port. -/
-noncomputable def doInstall {C F : Type} (args : List Value) (s : State C F) :
-    Result (Value × State C F) Value := by
+/-- Install code only when the decoded buffers and shifted compiler oracle
+agree with the callback, preserving the original disjointness checks. The
+source-shaped definition remains untagged because the finite-map reference
+checker cannot yet distinguish the imported BVL `State` from other imported
+structures with the same name and `refs` field. -/
+noncomputable def doInstall {C F R : Type} (args : List Value) (s : State C F) :
+    Result (Value × State C F) R := by
   classical
-  let fail : Result (Value × State C F) Value := .err (.abort .typeError)
+  let fail : Result (Value × State C F) R := .err (.abort .typeError)
   exact match args with
   | [v1, v2] =>
     match valueToBytes v1, valueToWords v2 with
@@ -32,8 +34,8 @@ noncomputable def doInstall {C F : Type} (args : List Value) (s : State C F) :
     | _, _ => fail
   | _ => fail
 
-/-- Source-shaped BVL primitive dispatcher. It remains untagged until the
-installation decoders and all branches have been reviewed against HOL. -/
+/-- Source-shaped BVL primitive dispatcher. It remains untagged until all
+branches have been reviewed against HOL. -/
 noncomputable def doApp {C F : Type} (op : ClosLang.Op) (args : List Value) (s : State C F) :
     Result (Value × State C F) Value := by
   classical

@@ -107,6 +107,8 @@ val _ = show "v_to_bytes=" bvlSemTheory.v_to_bytes_def;
 val _ = show "v_to_words=" bvlSemTheory.v_to_words_def;
 val _ = typ "v_to_bytes_type=" ``bvlSem$v_to_bytes``;
 val _ = typ "v_to_words_type=" ``bvlSem$v_to_words``;
+val _ = show "do_install=" bvlSemTheory.do_install_def;
+val _ = typ "do_install_type=" ``bvlSem$do_install``;
 val _ = example "install_words=" ``bvlSem$v_to_words
   (bvlSem$list_to_v [bvlSem$Word64 (1w:word64); bvlSem$Word64 (2w:word64)])``;
 val _ = example "install_bytes=" ``bvlSem$v_to_bytes
@@ -114,6 +116,7 @@ val _ = example "install_bytes=" ``bvlSem$v_to_bytes
 val base_state = ``((ARB:(unit,unit) bvlSem$state) with
   <|globals := [SOME (bvlSem$Number 10); SOME (bvlSem$Number 20)];
     refs := FEMPTY |+ (0,bvlSem$ValueArray [bvlSem$Number 7; bvlSem$Number 9])|>)``;
+val _ = example "install_bad_arity=" ``bvlSem$do_install [] ^base_state``;
 val _ = example "app_global=" ``case bvlSem$do_app (closLang$GlobOp (Global 0)) [] ^base_state of
   Rval (v,_) => SOME v | _ => NONE``;
 val _ = example "app_global_dynamic=" ``case bvlSem$do_app (closLang$GlobOp (Global 0)) [bvlSem$Number 0] ^base_state of

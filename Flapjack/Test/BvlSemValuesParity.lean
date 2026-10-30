@@ -213,4 +213,25 @@ example : valueToWords (listToValue [.word64 1, .word64 2]) = some [1, 2] := by
   rw [valueToWords_eq_some, valueToList_listToValue]
   rfl
 
+example {C F R : Type} (s : State C F) :
+    doInstall (R := R) [] s = .err (.abort .typeError) := by simp [doInstall]
+
+example {C F : Type} (s : State C F) (cfg nextCfg : C)
+    (oracle : s.compileOracle 0 = (cfg, [(4, 1, .var 0)]))
+    (nextOracle : (s.compileOracle 1).1 = nextCfg)
+    (empty : Flapjack.sptLookup 4 s.code = none)
+    (compiled : s.compile cfg [(4, 1, .var 0)] = some ([1], [2], nextCfg)) :
+    doInstall (R := Value) [listToValue [.number 1], listToValue [.word64 2]] s =
+      .val (.codePtr 4, { s with
+        code := Flapjack.sptUnion s.code (Flapjack.sptFromAList [(4, 1, .var 0)])
+        compileOracle := fun n => s.compileOracle (n + 1) }) := by
+  have bytes : valueToBytes (listToValue [.number 1]) = some [1] := by
+    rw [valueToBytes_eq_some, valueToList_listToValue]; rfl
+  have words : valueToWords (listToValue [.word64 2]) = some [2] := by
+    rw [valueToWords_eq_some, valueToList_listToValue]; rfl
+  change valueToWords (listToValue [.word64 2#64]) = some [2#64] at words
+  simp [doInstall, bytes, oracle, nextOracle, empty, compiled]
+  rw [words]
+  simp
+
 end Flapjack.Test.BvlSemValuesParity

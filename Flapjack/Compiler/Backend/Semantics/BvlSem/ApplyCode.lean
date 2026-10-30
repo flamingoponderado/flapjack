@@ -46,8 +46,8 @@ theorem applyMemory_code {C F : Type} (op : ClosLang.MemOp) (args : List Value)
 
 /-- A successful installation unions in the current oracle program, advances
 the oracle once, and leaves the compiler callback unchanged. -/
-theorem doInstall_code {C F : Type} (args : List Value)
-    (state next : State C F) (value : Value) (run : doInstall args state = .val (value, next)) :
+theorem doInstall_code {C F R : Type} (args : List Value)
+    (state next : State C F) (value : Value) (run : doInstall (R := R) args state = .val (value, next)) :
     next.code = sptUnion state.code (sptFromAList (state.compileOracle 0).2) ∧
     next.compile = state.compile ∧
     next.compileOracle = (fun n => state.compileOracle (n + 1)) := by
