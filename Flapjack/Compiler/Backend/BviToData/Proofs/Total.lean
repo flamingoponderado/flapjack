@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.BviToData.Compile
 /-! Structural bounds for the checked BVI-to-data traversal. These results
 are Flapjack infrastructure, not a port of a HOL correctness theorem. -/
 namespace Flapjack.Compiler.Backend.BviToData
+open Bvi
 
 mutual
 theorem compileFuel_succeeds (fuel n : Nat) (env : List Nat) (tail : Bool)

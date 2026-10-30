@@ -8,14 +8,14 @@ namespace Flapjack.Compiler.Backend.BvlToBvi
 private abbrev Aux := List (Nat × Nat × Bvi.Exp)
 
 private def compileAuxFuel (fuel k args : Nat) (body : Bvi.Exp) : Option Aux := do
-  let body ← BviLet.compileFuel fuel [] 0 body
+  let body ← BviLet.compileBounded fuel [] 0 body
   pure [(bvlNumStubs + bvlToBviNamespaces * k + 1, args, body)]
 
 mutual
 /-- Bounded form of expression conversion. Auxiliary code uses a flattened
-list in place of HOL's `SmartAppend` tree. Both traversal and BVI optimizer
-fuel may be exhausted; proofs of sufficient bounds and HOL correspondence are
-still required before this can be used as the total production pass. -/
+list in place of HOL's `SmartAppend` tree. The expression traversal fuel can
+still be exhausted; the BVI let optimizer retries with a proved sufficient
+bound. HOL correspondence remains open. -/
 def compileFuel : Nat → Nat → Nat → Bvl.Exp → Option (Bvi.Exp × Aux × Nat)
   | 0, _, _, _ => none
   | fuel + 1, optFuel, n, exp =>
@@ -76,7 +76,7 @@ def compileSingleFuel (fuel optFuel n : Nat) (p : Nat × Nat × Bvl.Exp) :
     Option (List (Nat × Nat × Bvi.Exp) × Nat) := do
   let (name, args, exp) := p
   let (exp, aux, n) ← compileFuel fuel optFuel n exp
-  let exp ← BviLet.compileFuel optFuel [] 0 exp
+  let exp ← BviLet.compileBounded optFuel [] 0 exp
   pure ((bvlNumStubs + bvlToBviNamespaces * name, args, exp) :: aux, n)
 
 /-- Compile a sequence of labeled functions, preserving source code order. -/

@@ -1,11 +1,11 @@
 import Flapjack.Compiler.Backend.BviLet.Helpers
+import Flapjack.Compiler.Backend.Bvi.Budget
 
 /-! Checked BVI let optimization. -/
 namespace Flapjack.Compiler.Backend.BviLet
 
 /-- Bounded form of the source let optimizer. Fuel exhaustion is explicit;
-the bound and the connection to the source's total definition remain to be
-proved. -/
+`Proofs.Total` proves a sufficient bound. Source correspondence remains open. -/
 def compileFuel : Nat → List Nat → Nat → Bvi.Exp → Option Bvi.Exp
   | 0, _, _, _ => none
   | fuel + 1, env, d, exp =>
@@ -47,5 +47,12 @@ def compileFuel : Nat → List Nat → Nat → Bvi.Exp → Option Bvi.Exp
         let args ← xs.mapM compile
         let body ← compileFuel fuel (List.replicate rets 0 ++ env) d body
         pure (.letCall rets ticks dest args body)
+
+/-- Retry exhausted traversals with a proved structural bound, preserving
+every result obtained with the caller's original budget. -/
+def compileBounded (fuel : Nat) (env : List Nat) (d : Nat) (exp : Bvi.Exp) : Option Bvi.Exp :=
+  match compileFuel fuel env d exp with
+  | some result => some result
+  | none => compileFuel (max fuel (Bvi.expBudget exp + 1)) env d exp
 
 end Flapjack.Compiler.Backend.BviLet
