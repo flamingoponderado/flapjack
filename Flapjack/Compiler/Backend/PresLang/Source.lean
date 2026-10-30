@@ -18,7 +18,8 @@ namespace Flapjack.Compiler.Backend.PresLang.Source
 
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Basis.Pure.MlString
 
-private def byteString (s : MlString) : String :=
+/-- Embed each HOL character as the scalar with the same byte value. -/
+def byteString (s : MlString) : String :=
   String.ofList (s.explode.map (fun b => Char.ofNat b.toNat))
 
 private def text (s : MlString) : DisplayExpr := .string (byteString s)

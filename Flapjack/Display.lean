@@ -15,9 +15,10 @@ ported Pancake helpers below all use `NONE`.
 namespace Flapjack
 
 inductive DisplayTrace where
-  | cons (trace : Option DisplayTrace) (number : Nat)
+  | cons (trace : DisplayTrace) (number : Nat)
   | union (left right : DisplayTrace)
-  | sourceLoc (startLine startColumn endLine endColumn : Int)
+  | sourceLoc (startLine startColumn endLine endColumn : Nat)
+  | none
   deriving Repr
 
 inductive DisplayExpr where

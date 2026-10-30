@@ -582,6 +582,7 @@ import Flapjack.Compiler.Backend.FlatLang
 import Flapjack.NamespaceHOL
 import Flapjack.Compiler.Backend.PresLang.Config
 import Flapjack.Compiler.Backend.PresLang.Source
+import Flapjack.Compiler.Backend.PresLang.Flat
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.SecLabelOk
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
@@ -2599,6 +2600,7 @@ import Flapjack.CakeParser.Sexp
 import Flapjack.CakeParser.SexpPrint
 import Flapjack.Test.CakeSexpParserParity
 import Flapjack.Test.CakeSourceDisplayParity
+import Flapjack.Test.CakeFlatDisplayParity
 import Flapjack.CakeParser.FromSexp
 import Flapjack.CakeParser.FromSexp.Operators
 import Flapjack.CakeParser.FromSexp.Ast

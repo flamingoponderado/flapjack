@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recheck the source-stage examples in CakeSourceDisplayParity against CakeML."""
+"""Recheck the source and flat explorer examples against pinned CakeML."""
 import argparse
 import importlib.util
 import subprocess
@@ -23,18 +23,32 @@ CASES = [
     (b'val x = "\\255";', b'(Dlet (Pvar x) (Lannot (Lit (StrLit \xff))))\n\n'),
 ]
 
+FLAT_EXPECTED = (
+    b'(let none (app (GlobalVarAlloc 3)) (con ConIdNone))\n\n'
+    b'(app (GlobalVarInit 0) (app Opref (con ConIdNone)))\n\n'
+    b'(letrec<>\n   ((f x\n         (mat (var_local x) ((Pcon) (lit)) ((Pcon (Pvar n)) (var_local n)))))\n'
+    b'   (app (GlobalVarInit 1) (var_local f)))\n\n'
+    b'(mat\n   (app Opapp (app (GlobalVarLookup 1)) (con (ConIdTyped 0 2) (lit)))\n'
+    b'   ((Pvar x) (app (GlobalVarInit 2) (var_local x))))\n\n'
+)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('reference', type=Path, help='pinned original CakeML executable')
     args = parser.parse_args()
     parity.check_pinned_reference(args.reference)
-    for source, expected in CASES:
+    for index, (source, expected) in enumerate(CASES):
         result = subprocess.run([str(args.reference), '--target=riscv', '--explore', '--exclude_prelude=true'],
                                 input=source, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
         prefix = b'# original source code\n\n' + expected + b'# after source_let\n\n'
         if result.returncode != 0 or result.stderr or not result.stdout.startswith(prefix):
             raise SystemExit(f'original source-stage output mismatch for {source!r}')
+        if index == 0:
+            flat = b'# after source_to_flat\n\n' + FLAT_EXPECTED + b'# after remove_flat\n\n'
+            if flat not in result.stdout:
+                raise SystemExit(f'original flat-stage output mismatch for {source!r}')
+            print('original flat-stage output matches', flush=True)
         print(f'original source-stage output matches: {source!r}', flush=True)
 
 
