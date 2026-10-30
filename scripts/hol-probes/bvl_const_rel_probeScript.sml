@@ -82,5 +82,23 @@ val dest_simple_eq_replay = prove (``
   \\ Cases_on `i` \\ fs [dest_simple_def,NULL_EQ]
   \\ eq_tac \\ rw [] \\ rw []);
 val _ = show "dest_simple_eq_replay=" dest_simple_eq_replay;
+val SmartOp_flip_thm_replay = prove (``
+  (op', x1', x2') = SmartOp_flip op x1 x2 /\
+  evaluate ([Op op [x1; x2]], env, s) = (res, s2) /\
+  res <> Rerr (Rabort Rtype_error) ==>
+  evaluate ([Op op' [x1'; x2']], env, s) = (res, s2)``,
+  rpt strip_tac \\
+  Cases_on `MEM op [IntOp Add; IntOp Sub; IntOp Mult]` THEN1 (
+    Cases_on `op` \\ fs [] \\
+    Cases_on `dest_simple x1` \\
+    fs [SmartOp_flip_def, dest_simple_eq_replay] \\
+    fs [dest_simple_eq_replay] \\
+    gvs [evaluate_def, do_app_def,oneline do_int_app_def,AllCaseEqs()] \\
+    intLib.COOPER_TAC
+  ) \\
+  Cases_on `op` \\
+  Cases_on `dest_simple x1` \\
+  fs [SmartOp_flip_def]);
+val _ = show "SmartOp_flip_thm_replay=" SmartOp_flip_thm_replay;
 val _ = show "SmartOp1_thm=" SmartOp1_thm;
 val _ = show "evaluate_env_rel=" evaluate_env_rel;

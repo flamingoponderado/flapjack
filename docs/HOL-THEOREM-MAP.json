@@ -109716,7 +109716,7 @@
     "hol_name": "SmartOp_def",
     "lean_name": "smartOp",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed SmartOp, SmartOp1, SmartOp2, SmartOp_flip, dest_simple and case_op_const captures in bvl_const_frontend_probe.out with the executed implementation. The refactored singleton case calls the reviewed smartOp1, preserving the original unary branch. Binary and default cases, operand flip, all add/subtract/multiply folding branches, reversed division and comparison operands, zero divisors, EqualConst and element-index cases match. Lean Int.fdiv/fmod implement the source floor operations; the signed oracle observations cover all sign combinations."
+    "reviewer": "Compared the typed SmartOp, SmartOp1, SmartOp2, SmartOp_flip, dest_simple and case_op_const captures in bvl_const_frontend_probe.out with the executed implementation. The singleton case calls reviewed smartOp1 and the binary helper now calls reviewed smartOpFlip, preserving both original branches. The default case, all add/subtract/multiply folding branches, reversed division and comparison operands, zero divisors, EqualConst and element-index cases match. Lean Int.fdiv/fmod implement the source floor operations; the signed oracle observations cover all sign combinations."
   },
   {
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
@@ -109821,5 +109821,23 @@
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the complete typed source statement in bvl_const_rel_probe.out: arbitrary operation and operand, environment, polymorphic compiler/FFI state, original result and final state, evaluation hypothesis and non-type-error condition are retained. The proof actually establishes the result without using that condition. The local canonical roundtrip witnesses refs; the reviewed evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst.lean",
+    "hol_name": "SmartOp_flip_def",
+    "lean_name": "smartOpFlip",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed source equation in bvl_const_frontend_probe.out. A simple first operand swaps Add and Mult, turns Sub into Add with a negated constant, and leaves every other operation or nonsimple input unchanged. The executed binary helper calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOp.lean",
+    "hol_name": "SmartOp_flip_thm",
+    "lean_name": "smartOpFlip_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed replay of the original local proof in bvl_const_rel_probe.out. All original operation/operand variables, source flip equality, arbitrary environment, independent compiler and FFI state carriers, original result and final state, evaluation hypothesis and non-type-error condition are preserved. The Lean proof derives a stronger helper for the arithmetic cases but retains the original theorem statement. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
   }
 ]

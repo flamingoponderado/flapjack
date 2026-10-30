@@ -72,12 +72,17 @@ private def mkMul (x y : Exp) : Exp :=
       | some (.intOp .mult, a, m), some (.intOp .mult, b, n) => mul (const (n * m)) (mul a b)
       | _, _ => mul x y
 
-private def smart2 (op : Op) (x y : Exp) : Exp :=
-  let (op, x, y) := match simple x, op with
+/-- Orient a simple first operand for the binary arithmetic rewrites. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "SmartOp_flip_def"]
+def smartOpFlip (op : Op) (x y : Exp) : Op × Exp × Exp :=
+  match simple x, op with
     | some _, .intOp .add => (Op.intOp .add, y, x)
     | some _, .intOp .mult => (Op.intOp .mult, y, x)
     | some n, .intOp .sub => (Op.intOp .add, y, const (-n))
     | _, _ => (op, x, y)
+
+private def smart2 (op : Op) (x y : Exp) : Exp :=
+  let (op, x, y) := smartOpFlip op x y
   match op with
   | .intOp .add => mkAdd x y
   | .intOp .sub => mkSub x y
