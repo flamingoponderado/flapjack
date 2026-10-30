@@ -229,6 +229,18 @@ example (refs : Flapjack.HolFiniteMapExact Nat (Ref Value))
     byteArrayChunks refs (listToValue [.refPtr true 2]) = none := by
   simp [byteArrayChunks, valueToList_listToValue, byteArrays, mutable]
 
+example : byteNaturalList (listToValue [.number 0, .number 255]) = some [0, 255] := by
+  rw [byteNaturalList_eq_some, valueToList_listToValue]
+  simp
+
+example : byteNaturalList (listToValue [.number 256]) = none := by
+  simp [byteNaturalList, byteNaturalValues, byteNumbers, valueToList_listToValue,
+    Flapjack.Compiler.Backend.ClosSem.intToByte]
+
+example : byteNaturalList (listToValue [.number (-1)]) = none := by
+  simp [byteNaturalList, byteNaturalValues, byteNumbers, valueToList_listToValue,
+    Flapjack.Compiler.Backend.ClosSem.intToByte]
+
 example {C F R : Type} (s : State C F) :
     doInstall (R := R) [] s = .err (.abort .typeError) := by simp [doInstall]
 
