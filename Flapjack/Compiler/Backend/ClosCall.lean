@@ -1,9 +1,10 @@
 import Flapjack.Compiler.Backend.ClosLang.Pure
 import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.BackendCommon.Trace
+import Flapjack.Compiler.Backend.ClosLang.Budget
 
-/-! Fuel-bounded implementation of the closure-to-direct-call pass. The HOL
-totality and correctness proofs remain unported. -/
+/-! Executable closure-to-direct-call conversion. `Proofs.Total` establishes
+structural traversal bounds; HOL correspondence and correctness remain open. -/
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang DbVars
 
@@ -61,16 +62,25 @@ mutual
       pure (x :: xs, mkUnion a b)
 end
 
+/-- Preserve successful free-variable analysis and retry exhaustion with a
+structural budget. -/
+def freeBounded (fuel : Nat) (e : Exp) : Option (Exp × DbVarSet) :=
+  match freeFuel fuel e with
+  | some result => some result
+  | none => freeFuel (max fuel (expBudget e + 1)) e
+
 /-- Check closure free-variable emptiness without changing the input. -/
 def closedFuel (fuel : Nat) (e : Exp) : Option Bool := do
-  let (_, free) ← freeFuel fuel e
+  let (_, free) ← freeBounded fuel e
   pure (sptToAList (dbToSet free)).isEmpty
 
 abbrev State := NumSet × List (Nat × Nat × Exp)
 
-private def insertEach (loc count : Nat) (state : State) : State :=
+/-- Record successive function locations in the direct-call state. -/
+def insertEach (loc count : Nat) (state : State) : State :=
   ((List.range count).foldl (fun s i => sptInsert (loc + 2 * i) () s) state.1, state.2)
-private def codeList (loc : Nat) (fns : List (Nat × Exp)) (state : State) : State :=
+/-- Add generated function bodies to the direct-call state. -/
+def codeList (loc : Nat) (fns : List (Nat × Exp)) (state : State) : State :=
   (state.1, (fns.zip (List.range fns.length)).foldl
     (fun code ((arity, body), i) => (loc + 2 * i + 1, arity, body) :: code) state.2)
 private def variables (t : BackendCommon.Tra) (arity : Nat) : List Exp :=
@@ -152,8 +162,15 @@ mutual
       pure (x :: xs, state)
 end
 
+/-- Preserve a successful direct-call traversal and retry exhaustion with a
+structural list budget. -/
+def callsListBounded (fuel : Nat) (es : List Exp) (state : State) : Option (List Exp × State) :=
+  match callsListFuel fuel es state with
+  | some result => some result
+  | none => callsListFuel (max fuel (listBudget es + 1)) es state
+
 /-- Apply the bounded closure-call pass when enabled. -/
 def compileFuel (fuel : Nat) (enabled : Bool) (es : List Exp) : Option (List Exp × State) :=
-  if enabled then callsListFuel fuel es (.ln, []) else some (es, (.ln, []))
+  if enabled then callsListBounded fuel es (.ln, []) else some (es, (.ln, []))
 
 end Flapjack.Compiler.Backend.ClosCall

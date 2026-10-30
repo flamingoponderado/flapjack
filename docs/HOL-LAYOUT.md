@@ -82,6 +82,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/clos_interpScript.sml` | `Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean`, `ClosInterp/Optimise.lean` (interpreter attachment, runtime expression and incremental optimization; statement review remains open) |
 | `compiler/backend/clos_numberScript.sml` | `Flapjack/Compiler/Backend/ClosNumber.lean` (closure location numbering and incremental wrapper; statement review remains open) |
 | `compiler/backend/clos_fvsScript.sml` | `Flapjack/Compiler/Backend/ClosFvs.lean` and `ClosFvs/Proofs/Total.lean` (free-variable cleanup with a proved sufficient traversal bound; HOL correspondence remains open) |
+| `compiler/backend/clos_callScript.sml` | `Flapjack/Compiler/Backend/ClosCall.lean` and `ClosCall/Proofs/` (free-variable analysis and direct-call conversion with proved sufficient traversal bounds; HOL correspondence remains open) |
 | `compiler/backend/clos_ticksScript.sml` | `Flapjack/Compiler/Backend/ClosTicks.lean` and `ClosTicks/Proofs/Total.lean` (tick removal with a proved sufficient traversal bound; HOL correspondence remains open) |
 | `compiler/backend/clos_letopScript.sml` | `Flapjack/Compiler/Backend/ClosLetop.lean` and `ClosLetop/Proofs/Total.lean` (let-operation cleanup with a proved sufficient traversal bound; HOL correspondence remains open) |
 | `compiler/backend/pattern_matching/pattern_commonScript.sml` | `Flapjack/Compiler/Backend/PatternCommon.lean` (position and match-result carriers) |
