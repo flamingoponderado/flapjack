@@ -51,6 +51,7 @@ val _ = (print "idx_finish="; print_thm source_to_flatProofTheory.fin_idx_match_
 val _ = (print "orac_next_inner="; print_thm source_to_flatProofTheory.src_orac_next_cfg_inner_def; print "\n");
 val _ = (print "orac_next="; print_thm source_to_flatProofTheory.src_orac_next_cfg_def; print "\n");
 val _ = (print "idx_range="; print_thm source_to_flatProofTheory.idx_range_rel_def; print "\n");
+val _ = (print "idx_range_shrink="; print_thm source_to_flatProofTheory.idx_range_shrink; print "\n");
 val _ = (print "idx_blank="; print_thm source_to_flatProofTheory.idx_range_rel_v_REPLICATE_NONE; print "\n");
 val _ = (print "orac_step="; print_thm source_to_flatProofTheory.src_orac_step_invs_def; print "\n");
 val _ = (print "env_gen_inv="; print_thm source_to_flatProofTheory.env_gen_inv_def; print "\n");

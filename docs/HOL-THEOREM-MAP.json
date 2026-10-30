@@ -1,5 +1,17 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "idx_range_shrink",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "idxRangeRel_shrink",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "reviewer": "Compared source lines 2585-2599 and the typed idx_range_shrink capture in cake_subglobals_probe.out. The optional decoder has an independent result type, the source state and three index components retain their original carriers, and both idxPrev premises and the range conclusion are unchanged. The reviewed idxRangeRel uses canonical finite-support c and tys maps; the same-module witness checks the GlobalEnv roundtrip."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "compile_exp_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalSafety.lean", "lean_name": "compileExp_esgcFree",
     "statement_status": "reviewed_exact",

@@ -139,9 +139,9 @@ def idxRangeRel {C : Type} (interp : Option (Value → Option (Config × C))) (g
     (∀ cn, nextExn ≤ cn → ¬ ∃ key, genv.c.lookup key = some (.exnStamp cn))
 
 /-- Advancing the beginning of a reserved block preserves its disjointness
-from the future and allocated indices. This helper resembles HOL's
-`idx_range_shrink`, but is not yet a reviewed port: an independent typed HOL
-capture and complete carrier comparison remain pending. -/
+from the future and allocated indices. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "idx_range_shrink"
+  (fmap_as_finite_support := [c, tys])]
 theorem idxRangeRel_shrink {C : Type}
     (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)
     (nextType nextExn : Nat) (evalState : Option EvalState)
