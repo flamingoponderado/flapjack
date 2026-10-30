@@ -109103,5 +109103,35 @@
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the full typed do_app_Rerr_swap in bvl_inline_state_rel_probe.out: source and target compiler and FFI types are independent, and the error, non-Install and target-domain-subset-source premises and result match. runtimeFrame is precisely the HOL four-field target update; the canonical witness covers refs only and doApp inherits the floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineEvaluation.lean",
+    "hol_name": "evaluate_inline",
+    "lean_name": "evaluateInline_nil",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the empty-list case, with original state and expression relations, source run and non-type-error premises, and existential target evaluation and final relation. Source configuration is cache paired with target configuration; FFI type is shared. The local witness covers refs only and the evaluator inherits floating-point real-carrier assumptions. The full theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineEvaluation.lean",
+    "hol_name": "evaluate_inline",
+    "lean_name": "evaluateInline_var",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this specializes both related expression lists to the same singleton variable and retains the original relation, source run, non-type-error premise and existential target evaluation/final relation. The refs witness covers only the canonical BVL reference map; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineEvaluation.lean",
+    "hol_name": "evaluate_inline",
+    "lean_name": "evaluateInline_tick",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the singleton Tick/Tick relation case, with original state and expression relations, source run, non-type-error premise, existential target evaluation and final relation, plus the body induction hypothesis with that same shape. The local witness covers refs only and the evaluator inherits floating-point real-carrier assumptions."
   }
 ]
