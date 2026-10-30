@@ -1,9 +1,9 @@
 import Flapjack.Compiler.Backend.Bvi.Syntax
+import Flapjack.Compiler.Backend.Bvi.Budget
 import Flapjack.HolRef
 
-/-! Executable pieces of BVI's tail-recursion optimization. The scan and
-accumulator rewrite are not yet ported; the guarded program traversal rejects
-every case that might require them. -/
+/-! Recursive-call analysis for BVI's tail-recursion optimization. The
+type scan and accumulator rewrite are in `Analysis` and `Rewrite`. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
@@ -29,14 +29,21 @@ def hasRecFuel : Nat → Nat → Exp → Option Bool
           else xs.foldlM (fun found x => if found then pure true else visit x) false
       | _ => pure false
 
-/-- Retain a program only when the original optimizer is disabled or every
-function fails its necessary recursion test. Positive cases return `none`
-until the original type scan and accumulator rewrite have been implemented. -/
+/-- Preserve a successful recursion analysis, retrying exhausted traversals
+with a structural budget. -/
+def hasRecBounded (fuel loc : Nat) (e : Exp) : Option Bool :=
+  match hasRecFuel fuel loc e with
+  | some result => some result
+  | none => hasRecFuel (max fuel (expBudget e + 1)) loc e
+
+/-- Compatibility path that retains a program only when the optimizer is
+disabled or every function fails its necessary recursion test. Positive
+cases return `none`; `Rewrite` provides the full checked rewrite path. -/
 def compileNoRecFuel (fuel : Nat) (enabled : Bool) (next : Nat)
     (code : List (Nat × Nat × Exp)) : Option (Nat × List (Nat × Nat × Exp)) := do
   if !enabled then return (next, code)
   for (loc, _, body) in code do
-    if ← hasRecFuel fuel loc body then failure
+    if ← hasRecBounded fuel loc body then failure
   pure (next, code)
 
 end Flapjack.Compiler.Backend.BviTailrec

@@ -1,8 +1,8 @@
 import Flapjack.Compiler.Backend.BviTailrec
 
 /-! Bounded transcription of the type and operator analysis used by BVI
-tail-recursion elimination. The total HOL functions and the rewrite remain
-unported; `none` denotes exhausted traversal fuel. -/
+tail-recursion elimination. The total HOL functions and correspondence remain
+open; `none` denotes exhausted traversal fuel. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
@@ -18,7 +18,8 @@ inductive AssocOp where
   | plus | times | append | noop
   deriving DecidableEq, BEq
 
-private def opType : AssocOp → ValueType
+/-- Type required by the accumulator operation. -/
+def opType : AssocOp → ValueType
   | .plus | .times => .int
   | .append => .list
   | .noop => .any
@@ -100,11 +101,18 @@ mutual
       | _ => pure false
 end
 
-private def termFuel (fuel : Nat) (ctx : List ValueType) (ty : ValueType) (e : Exp) : Option Bool :=
+def termFuel (fuel : Nat) (ctx : List ValueType) (ty : ValueType) (e : Exp) : Option Bool :=
   match ty with
   | .int => termIntFuel fuel ctx e
   | .list => termAnyFuel fuel ctx true e
   | .any => termAnyFuel fuel ctx false e
+
+/-- Preserve a successful type test, retrying exhausted traversal with a
+structural bound. -/
+def termBounded (fuel : Nat) (ctx : List ValueType) (ty : ValueType) (e : Exp) : Option Bool :=
+  match termFuel fuel ctx ty e with
+  | some result => some result
+  | none => termFuel (max fuel (expBudget e + 1)) ctx ty e
 
 /-- Fuel-bounded check of a candidate operation; this is infrastructure for
 the total source operation, which remains to be ported and reviewed. -/
@@ -114,7 +122,7 @@ def checkOpFuel (fuel : Nat) (ctx : List ValueType) (assoc : AssocOp) (loc : Nat
   | [left, right] =>
       let (left, right) := if assoc != .append && isRec loc left then (right, left) else (left, right)
       if !isRec loc right then return none
-      if ← termFuel fuel ctx (opType assoc) left then return some (.op (toOp assoc) [left, right])
+      if ← termBounded fuel ctx (opType assoc) left then return some (.op (toOp assoc) [left, right])
       pure none
   | _ => pure none
 
@@ -156,7 +164,7 @@ mutual
             let ty := opType assoc
             if (← checkOpFuel fuel ctx assoc loc xs).isSome then
               pure (ctx, ty, false, some assoc)
-            else if ← termFuel fuel ctx ty (.op op xs) then
+            else if ← termBounded fuel ctx ty (.op op xs) then
               match xs with
               | [x, y] => pure (updateContext ty ctx x y, ty, false, none)
               | _ => pure (ctx, .any, false, none)
@@ -172,11 +180,23 @@ mutual
       pure (result :: (← scanListFuel fuel next loc xs))
 end
 
+/-- Retry an exhausted scan with a structural bound. -/
+def scanBounded (fuel : Nat) (ctx : List ValueType) (loc : Nat) (e : Exp) : Option Scan :=
+  match scanFuel fuel ctx loc e with
+  | some result => some result
+  | none => scanFuel (max fuel (expBudget e + 1)) ctx loc e
+
+/-- Retry an exhausted operand scan with a structural list bound. -/
+def scanListBounded (fuel : Nat) (ctx : List ValueType) (loc : Nat) (xs : List Exp) : Option (List Scan) :=
+  match scanListFuel fuel ctx loc xs with
+  | some result => some result
+  | none => scanListFuel (max fuel (listBudget xs + 1)) ctx loc xs
+
 /-- Decide whether the original type analysis selected an accumulator
-operation. Positive decisions still require the unported rewrite. -/
+operation. The checked rewrite is implemented in `Rewrite`. -/
 def checkExpFuel (fuel loc arity : Nat) (e : Exp) : Option (Option AssocOp) := do
-  if !(← hasRecFuel fuel loc e) then return none
-  let (_, ty, _, op) ← scanFuel fuel (List.replicate arity .any) loc e
+  if !(← hasRecBounded fuel loc e) then return none
+  let (_, ty, _, op) ← scanBounded fuel (List.replicate arity .any) loc e
   match op with
   | some o => pure (if ty == opType o then some o else none)
   | none => pure none

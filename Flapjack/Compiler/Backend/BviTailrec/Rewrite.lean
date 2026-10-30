@@ -1,8 +1,8 @@
 import Flapjack.Compiler.Backend.BviTailrec.Analysis
 import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
 
-/-! Fuel-bounded accumulator rewrite for the BVI tail-recursion pass. The
-source's total definitions and its correctness proof remain unported. -/
+/-! Accumulator rewrite for the BVI tail-recursion pass. `Proofs.Total` proves
+sufficient traversal bounds; HOL correspondence and correctness remain open. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
@@ -22,14 +22,14 @@ def rewriteFuel : Nat → Nat → Nat → AssocOp → Nat → List ValueType →
       | .var n => pure (false, .var n)
       | .force l n => pure (false, .force l n)
       | .ifThenElse cond yes no =>
-          let (ctx', _, _, _) ← scanFuel fuel ctx loc cond
+          let (ctx', _, _, _) ← scanBounded fuel ctx loc cond
           let (ry, y) ← rewriteFuel fuel loc next op acc ctx' yes
           let (rn, n) ← rewriteFuel fuel loc next op acc ctx' no
           let y := if ry then y else applyOp op (.var acc) yes
           let n := if rn then n else applyOp op (.var acc) no
           pure (ry || rn, .ifThenElse cond y n)
       | .let xs body =>
-          let scans ← scanListFuel fuel ctx loc xs
+          let scans ← scanListBounded fuel ctx loc xs
           let types := scans.map fun (_, ty, _, _) => ty
           let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ctx
           let (r, body) ← rewriteFuel fuel loc next op (acc + xs.length) (types ++ last) body
@@ -55,13 +55,20 @@ def compileExpFuel (fuel loc next arity : Nat) (e : Exp) : Option (Option (Exp �
       let wrapper := .let ((List.range arity).map .var ++ [identity op]) worker
       pure (some (wrapper, worker))
 
+/-- Preserve a successful rewrite and retry exhausted traversals with a
+structural budget. The inner `none` means no rewrite is applicable. -/
+def compileExpBounded (fuel loc next arity : Nat) (e : Exp) : Option (Option (Exp × Exp)) :=
+  match compileExpFuel fuel loc next arity e with
+  | some result => some result
+  | none => compileExpFuel (max fuel (expBudget e + 1)) loc next arity e
+
 /-- Transform functions in original order and allocate worker labels in the
 source namespace stride. -/
 def compileEachFuel (fuel : Nat) : Nat → List (Nat × Nat × Exp) →
     Option (Nat × List (Nat × Nat × Exp))
   | next, [] => some (next, [])
   | next, (loc, arity, body) :: rest => do
-      match ← compileExpFuel fuel loc next arity body with
+      match ← compileExpBounded fuel loc next arity body with
       | none =>
           let (next, rest) ← compileEachFuel fuel next rest
           pure (next, (loc, arity, body) :: rest)
