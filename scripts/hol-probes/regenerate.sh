@@ -485,6 +485,8 @@ run_probe fixed_stubs_word_probeScript.sml fixed_stubs_word_probe.out \
 
 run_probe bignum_compile_exp_probeScript.sml bignum_compile_exp_probe.out \
   compile_exp_type binary unary lookup shift "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+run_probe bignum_helpers_probeScript.sml bignum_helpers_probe.out \
+  address_type temp_in1_type temp_in2_type temp_out_type div_location_type seq_temp_type seq_temp_imm_type seq_temp_imm_not_type load_regs_type save_regs_type seq_index_type div_code_type seq_temp imm_not_reg imm_not_word load_regs save_regs seq_index_32 seq_index_64 div_code "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 run_probe bignum_word_probeScript.sml bignum_word_probe.out \
   entry "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 

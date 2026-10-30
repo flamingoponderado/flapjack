@@ -1,0 +1,27 @@
+(* Types and representative helper results from the pinned bignum generator. *)
+load "word_bignumTheory"; load "wordsLib";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = Globals.show_types := true;
+fun ty name term = (print (name ^ "="); print_type (type_of term); print "\n");
+fun row name term = (print (name ^ "="); print_term (rhs (concl (EVAL term))); print "\n");
+val _ = ty "address_type" ``word_bignum$In1``;
+val _ = ty "temp_in1_type" ``word_bignum$TempIn1``;
+val _ = ty "temp_in2_type" ``word_bignum$TempIn2``;
+val _ = ty "temp_out_type" ``word_bignum$TempOut``;
+val _ = ty "div_location_type" ``word_bignum$div_location``;
+val _ = ty "seq_temp_type" ``word_bignum$SeqTemp``;
+val _ = ty "seq_temp_imm_type" ``word_bignum$SeqTempImm``;
+val _ = ty "seq_temp_imm_not_type" ``word_bignum$SeqTempImmNot``;
+val _ = ty "load_regs_type" ``word_bignum$LoadRegs``;
+val _ = ty "save_regs_type" ``word_bignum$SaveRegs``;
+val _ = ty "seq_index_type" ``word_bignum$SeqIndex``;
+val _ = ty "div_code_type" ``word_bignum$DivCode``;
+val _ = row "seq_temp" ``word_bignum$SeqTemp 7 33 (wordLang$Skip : 64 wordLang$prog)``;
+val _ = row "imm_not_reg" ``word_bignum$SeqTempImmNot 4 (asm$Reg 33) (wordLang$Skip : 64 wordLang$prog)``;
+val _ = row "imm_not_word" ``word_bignum$SeqTempImmNot 4 (asm$Imm (5w:64 word)) wordLang$Skip``;
+val _ = row "load_regs" ``word_bignum$LoadRegs [0;33] (wordLang$Skip : 64 wordLang$prog)``;
+val _ = row "save_regs" ``word_bignum$SaveRegs [0;33] : 64 wordLang$prog``;
+val _ = row "seq_index_32" ``word_bignum$SeqIndex 3 33 word_bignum$In2 (wordLang$Skip : 32 wordLang$prog)``;
+val _ = row "seq_index_64" ``word_bignum$SeqIndex 3 33 word_bignum$Out (wordLang$Skip : 64 wordLang$prog)``;
+val _ = row "div_code" ``word_bignum$DivCode 1 2 3 4 5 6 7 : 64 wordLang$prog``;

@@ -178,6 +178,8 @@ the complete carrier correspondence remains under review.
 
 `bignum_compile_exp_probe.out` records the inferred HOL expression-translation type and binary, invalid-arity, lookup, and shift cases. `Flapjack.Test.WordBignumCompileExpParity` replays those cases. Regenerate with `HOL_PROBE_ONLY=bignum_compile_exp_probeScript.sml scripts/hol-probes/regenerate.sh`; this is regression evidence and does not establish generator equivalence.
 
+`bignum_helpers_probe.out` records the source-inferred helper types and register, immediate, complement, load, save, index and division-call observations. `Flapjack.Test.WordBignumHelpersParity` replays the results. Regenerate with `HOL_PROBE_ONLY=bignum_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `full_cake_word_probe.out` captures the original `data_to_word$compile_0` result for the empty CakeML program, including fixed stubs, generated bignum stubs, function arities and bodies, under the restricted settings and a 64-bit RISC-V assembly configuration. Its whole-program comparison ends before word-to-word optimization and the final RISC-V result.
 
 `full_inline_cake_word_probe.out` repeats that complete word-stage comparison after original BVI wrapper inlining and tick removal; earlier BVL/BVI optimizations are still omitted.

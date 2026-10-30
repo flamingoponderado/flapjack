@@ -1,5 +1,73 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "address",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Mini.lean", "lean_name": "Address",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Pinned source datatype has exactly In1, In2, Out in that order, with no fields; bignum_helpers_probe.out records the constructor type."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "TempIn1_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Helpers.lean", "lean_name": "tempIn1",
+    "statement_status": "reviewed_exact", "reviewer": "Source Temp 31w uses the fixed word5 store name; typed in bignum_helpers_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "TempIn2_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Helpers.lean", "lean_name": "tempIn2",
+    "statement_status": "reviewed_exact", "reviewer": "Source Temp 30w uses the fixed word5 store name; typed in bignum_helpers_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "TempOut_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Helpers.lean", "lean_name": "tempOut",
+    "statement_status": "reviewed_exact", "reviewer": "Source Temp 29w uses the fixed word5 store name; typed in bignum_helpers_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "div_location_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Helpers.lean", "lean_name": "divLocation",
+    "statement_status": "reviewed_exact", "reviewer": "Source constant is the natural number 23; type captured in bignum_helpers_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "SeqTemp_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Helpers.lean", "lean_name": "seqTemp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source num -> num -> alpha prog -> alpha prog captured in bignum_helpers_probe.out; alpha word dimension becomes positive BitVec width. The lookup uses fixed word5 n2w, and the assignment and sequence retain source order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "SeqTempImm_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Helpers.lean", "lean_name": "seqTempImm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Typed source alpha reg_imm and alpha prog share one positive word width, translated to BitVec width; Reg invokes seqTemp and Imm emits the literal assignment and sequence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "SeqTempImmNot_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Helpers.lean", "lean_name": "seqTempImmNot",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Typed source has one shared positive word width. Reg loads the word5 temporary then XORs the target with complemented zero; Imm assigns the complemented word. Both cases are captured and replayed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "SeqIndex_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Helpers.lean", "lean_name": "seqIndex",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Typed source num -> num -> address -> alpha prog -> alpha prog captured in bignum_helpers_probe.out. Address chooses the source word5 base; n2w register conversion, Add and ShiftN Lsl use the original backend_common word_shift with the same positive width. 32- and 64-bit captures replayed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "DivCode_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Helpers.lean", "lean_name": "divCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Typed source has seven natural inputs and alpha prog result, translated at one positive width. MustTerminate, call cutsets LS()/LN, return labels, argument order, div location 23 and word5 Temp 28 assignment match the original capture."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "LoadRegs_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Helpers.lean", "lean_name": "loadRegs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Typed source num list -> alpha prog -> alpha prog; original empty and cons recursion, n+2 register, fixed word5 n2w and ordered Get sequence retained. Capture covers wraparound."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "SaveRegs_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Helpers.lean", "lean_name": "saveRegs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Typed source num list -> alpha prog; original Skip base, ordered Set sequence, word5 n2w and n+2 Var retained. Capture covers wraparound."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/word_bignumScript.sml",
     "hol_name": "compile_exp_def",
     "lean_path": "Flapjack/Compiler/Backend/WordBignum/CompileExp.lean",
