@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallSimulationFull
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
 
 /-! Interpreter insertion observations for the proof-side closure evaluator.
 The evaluator and its state carriers await HOL correspondence review. -/
@@ -122,5 +123,22 @@ theorem attachInterpreter_semantics_of_trace_monotonicity {C F : Type} (expressi
   obtain ⟨extra, targetFinal, targetRun, ffiEq⟩ :=
     attachInterpreter_initial_observation expressions ffi maxApp clock oracle compiler final result oracleSafe positive run notTypeError
   exact ⟨extra, targetFinal, by simpa [Nat.add_comm] using targetRun, ffiEq⟩
+
+/-- Interpreter attachment preserves the proof-side closure observations,
+including divergence, when the source does not fail. The evaluator and
+state-carrier correspondence to HOL remains under review. -/
+theorem attachInterpreter_semantics {C F : Type} (expressions : List ClosLang.Exp)
+    (ffi : HolFfiState F) (maxApp : Nat) (oracle : ClosSem.CompileOracle C)
+    (compiler : ClosSem.Compiler C) (oracleSafe : ∀ index, (oracle index).2.2 = [])
+    (positive : 1 ≤ maxApp)
+    (sourceNoFail : ClosSem.semantics ffi maxApp HolFiniteMapExact.empty oracle
+      (pureCc insertProgram compiler) (attachInterpreter expressions) ≠ .fail) :
+    ClosSem.semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc insertProgram compiler) (attachInterpreter expressions) =
+      ClosSem.semantics ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle) compiler (attachInterpreter expressions) := by
+  apply attachInterpreter_semantics_of_trace_monotonicity expressions ffi maxApp oracle compiler oracleSafe positive sourceNoFail
+  · exact ClosSem.evaluate_initial_ioEvents_mono ffi maxApp HolFiniteMapExact.empty oracle
+      (pureCc insertProgram compiler) (attachInterpreter expressions)
+  · exact ClosSem.evaluate_initial_ioEvents_mono ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle)
+      compiler (attachInterpreter expressions)
 
 end Flapjack.Compiler.Backend.ClosInterp
