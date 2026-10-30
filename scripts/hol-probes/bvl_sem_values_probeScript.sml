@@ -109,6 +109,8 @@ val _ = show "bvl_do_app_err=" bvlPropsTheory.do_app_err;
 val _ = show "bvl_do_app_change_clock=" bvlPropsTheory.do_app_change_clock;
 val _ = show "bvl_do_app_change_clock_err=" bvlPropsTheory.do_app_change_clock_err;
 val _ = show "bvl_do_app_io_events_mono=" bvlPropsTheory.do_app_io_events_mono;
+val _ = show "bvl_inc_clock=" bvlPropsTheory.inc_clock_def;
+val _ = show "bvl_evaluate_add_clock=" bvlPropsTheory.evaluate_add_clock;
 val _ = show "bvl_find_code_every=" bvlPropsTheory.find_code_EVERY_IMP;
 val _ = typ "do_app_type=" ``bvlSem$do_app``;
 val _ = show "copy_array=" semanticPrimitivesTheory.copy_array_def;

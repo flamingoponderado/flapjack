@@ -108556,4 +108556,28 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the typed HOL implication in bvl_sem_values_probe.out: a successful do_app result entails that the original FFI event list is a prefix of the result state event list. Compiler and FFI types remain independent. The local canonical witness covers refs only, and doApp inherits floating-point real-carrier assumptions. The proof handles returning FFI via callFFIHOL_return_ioEvents_prefix and leaves all other successful primitive branches unchanged in FFI state."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateClockShift.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "hol_name": "inc_clock_def",
+    "lean_name": "incClock",
+    "reviewer": "Compared the typed original clock update in bvl_sem_values_probe.out: the natural-number increment and preservation of every other state field agree. The canonical state witness covers refs only; code remains Spt, and the compiler and FFI type parameters remain independent."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateClockShift.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "hol_name": "evaluate_add_clock",
+    "lean_name": "evaluateAddClock",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed original in bvl_sem_values_probe.out: the paired evaluation equality and non-timeout hypothesis imply, for every additional clock, the same result and the result state with that same increment. evaluateTuple preserves the original tuple and independent compiler/FFI types, incClock is the source update, and the local canonical witness covers refs only. The evaluator inherits its floating-point real-carrier assumptions."
+  }
 ]
