@@ -610,6 +610,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCall
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInt
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileNumeric
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileWord
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileBlock
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
