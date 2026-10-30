@@ -514,6 +514,7 @@ import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterHandle
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterApp
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterCons
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterCorrect
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.InsertionCorrect
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
