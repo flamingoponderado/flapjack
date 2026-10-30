@@ -100,7 +100,7 @@ def compileCakeToWord64ConfiguredFuel (fuel : Nat) (source : Config) (closure : 
       Spt Basis.Pure.MlString.MlString) := do
   let (source, closure, bvlConfig, code, names) ← compileCakeToBviConfiguredFuel fuel source closure bvlConfig decls
   let code ← code.mapM fun (name, args, body) => do
-    let body ← BviToData.compileExpFuel fuel args body
+    let body ← BviToData.compileExpBounded fuel args body
     let (body, _) ← DataToWord.compileControl? (width := 64) word name 2 body
     pure (name, args + 1, body)
   let fixed ← DataToWord.fixedStubs? word

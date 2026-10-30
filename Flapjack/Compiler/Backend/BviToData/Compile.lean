@@ -16,8 +16,8 @@ private def isTailReturn (rets : Nat) : Bvi.Exp → Bool
 
 mutual
 /-- Bounded rendering of the source singleton traversal. Exhaustion is
-explicit; totality, correspondence and the following data optimizations remain
-to be proved or ported. -/
+explicit; a sufficient structural bound is proved in `Proofs.Total`.
+Correspondence to the HOL traversal remains to be reviewed. -/
 def compileFuel : Nat → Nat → List Nat → Bool → List Nat → Bvi.Exp → Option (DataLang.Prog × Nat × Nat)
   | 0, _, _, _, _, _ => none
   | fuel + 1, n, env, tail, live, exp =>
@@ -92,5 +92,34 @@ end
 def compileExpFuel (fuel argc : Nat) (exp : Bvi.Exp) : Option DataLang.Prog := do
   let (prog, _, _) ← compileFuel fuel argc (List.range argc) true [] exp
   pure (optimise prog)
+
+mutual
+/-- A computable structural bound for expression lowering. -/
+def expBudget : Bvi.Exp → Nat
+  | .var _ | .force _ _ => 1
+  | .ifThenElse x y z => 1 + expBudget x + expBudget y + expBudget z
+  | .let xs x => 1 + listBudget xs + expBudget x
+  | .raise x | .tick x => 1 + expBudget x
+  | .return xs | .op _ xs => 1 + listBudget xs
+  | .call _ _ xs none => 1 + listBudget xs
+  | .call _ _ xs (some h) => 1 + listBudget xs + expBudget h
+  | .letCall _ _ _ xs x => 1 + listBudget xs + expBudget x
+termination_by e => sizeOf e
+decreasing_by all_goals simp_wf <;> omega
+
+/-- A computable structural bound for operand traversal. -/
+def listBudget : List Bvi.Exp → Nat
+  | [] => 1
+  | x :: xs => 1 + expBudget x + listBudget xs
+termination_by xs => sizeOf xs
+decreasing_by all_goals simp_wf <;> omega
+end
+
+/-- Preserve successful calls at the supplied fuel, retrying with a structural
+bound if they exhaust it. Other pipeline stages retain their own bounds. -/
+def compileExpBounded (fuel argc : Nat) (exp : Bvi.Exp) : Option DataLang.Prog :=
+  match compileExpFuel fuel argc exp with
+  | some result => some result
+  | none => compileExpFuel (max fuel (expBudget exp + 1)) argc exp
 
 end Flapjack.Compiler.Backend.BviToData
