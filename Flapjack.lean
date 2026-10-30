@@ -532,6 +532,8 @@ import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallRelation
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallSimulation
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallAppRelation
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallSimulationFull
+import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
