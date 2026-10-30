@@ -108906,5 +108906,45 @@
     "lean_name": "expRelRefl",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared typed exp_rel_refl in bvl_inline_state_rel_probe.out: for any sparse-tree code and any BVL expression list, the expression relation holds reflexively, with no premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/TickInline.lean",
+    "hol_name": "tick_inline_sing_def",
+    "lean_name": "tickInlineSing",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed tick_inline_sing_def equations in bvl_inline_state_rel_probe.out: the code tree contains an arbitrary first component paired with a BVL expression, not necessarily a numeric arity. Each BVL constructor, lookup branch, recursive list traversal and SUC-tick cached body matches. The executed fuel-bounded inliner is proved equal to this total function."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/TickInline.lean",
+    "hol_name": "tick_inline_sing_def",
+    "lean_name": "tickInlineList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed nil and cons tick_inline_list equations in bvl_inline_state_rel_probe.out: arbitrary first cache component, exact sparse-tree and BVL expression carriers, and singleton traversal applied to each list element in order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/TickInline.lean",
+    "hol_name": "tick_inline_def",
+    "lean_name": "tickInline",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed tick_inline_def in bvl_inline_state_rel_probe.out, including the arbitrary cache-pair first type: the total mutual singleton/list traversal implements the same nil, nonempty-list and each singleton constructor equation. Its singleton/list equivalence is kernel checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/TickInline.lean",
+    "hol_name": "tick_inline_sing",
+    "lean_name": "tickInlineSing_equivalence",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed tick_inline_sing in bvl_inline_state_rel_probe.out: both universally quantified list/singleton equalities and arbitrary cache-pair first type match."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/TickInlineRel.lean",
+    "hol_name": "exp_rel_tick_inline",
+    "lean_name": "expRelTickInline",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed exp_rel_tick_inline in bvl_inline_state_rel_probe.out: unlike the generic inliner, this theorem's relation fixes cache and source pair first components to num. CacheRelated unfolds to the original universally quantified cache lookup and existential source body relation; the conclusion relates the exact original list to total tick_inline output, without extra premises. The executed bounded inliner is separately shown equal to that output."
   }
 ]

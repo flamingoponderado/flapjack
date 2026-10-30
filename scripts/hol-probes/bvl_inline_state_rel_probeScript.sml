@@ -19,6 +19,14 @@ val _ = show "exp_rel_rules=" bvl_inlineProofTheory.exp_rel_rules;
 val _ = show "subspt_exp_rel=" bvl_inlineProofTheory.subspt_exp_rel;
 val _ = show "exp_rel_swap=" bvl_inlineProofTheory.exp_rel_swap;
 val _ = show "exp_rel_refl=" bvl_inlineProofTheory.exp_rel_refl;
+val _ = show "tick_inline=" bvl_inlineTheory.tick_inline_def;
+val _ = show "tick_inline_sing_def=" bvl_inlineTheory.tick_inline_sing_def;
+val _ = show "tick_inline_sing=" bvl_inlineTheory.tick_inline_sing;
+val _ = show "exp_rel_tick_inline=" bvl_inlineProofTheory.exp_rel_tick_inline;
+val _ = show "tick_inline_generic_cache=" (EVAL ``bvl_inline$tick_inline_sing
+  (sptree$insert 3 (T, bvl$Var 8) sptree$LN) (bvl$Call 2 (SOME 3) [bvl$Var 1])``);
+val _ = show "tick_inline_uncached=" (EVAL ``bvl_inline$tick_inline_sing
+  (sptree$LN : (bool # bvl$exp) sptree$num_map) (bvl$Call 2 (SOME 3) [bvl$Var 1])``);
 val do_app_lemma_goal = ``
   bvl_inlineProof$state_rel t' r ==>
     case bvlSem$do_app op (REVERSE a) r of
