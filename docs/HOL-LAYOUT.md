@@ -44,7 +44,7 @@ the cited name occurs in one of the two syntactic forms.
 
 | HOL script | Lean counterpart |
 | --- | --- |
-| `compiler/backend/backend_passesScript.sml` | `Flapjack/Compiler/Backend/BackendPasses/Frontend.lean`, `BackendPasses/Closure.lean`, `BackendPasses/Bvi.lean`, `BackendPasses/Data.lean` and `BackendPasses/Word.lean` (source through initial WordLang snapshot; subsequent stages and explorer wiring remain open) |
+| `compiler/backend/backend_passesScript.sml` | `Flapjack/Compiler/Backend/BackendPasses/Frontend.lean`, `BackendPasses/Closure.lean`, `BackendPasses/Bvi.lean`, `BackendPasses/Data.lean`, `BackendPasses/Word.lean` and `BackendPasses/WordOptimise.lean` (source through word allocation snapshots; subsequent stages and explorer wiring remain open) |
 | `compiler/backend/presLangScript.sml` | `Flapjack/Compiler/Backend/PresLang/Config.lean`, `PresLang/Source.lean`, `PresLang/Flat.lean`, `PresLang/Clos.lean`, `PresLang/Bvl.lean`, `PresLang/Bvi.lean`, `PresLang/Data.lean`, `PresLang/Asm.lean`, `PresLang/Lab.lean`, `PresLang/Word.lean` and `PresLang/Stack.lean` (explorer display; representation review and explorer wiring remain open) |
 | `semantics/tokensScript.sml` | `Flapjack/CakeParser/Tokens.lean` |
 | `semantics/lexer_funScript.sml` | `Flapjack/CakeParser/Lexer.lean` |
