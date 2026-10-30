@@ -1,5 +1,38 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "fix_clock_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/State.lean", "lean_name": "fixClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared the source equation and inferred type in bvl_sem_values_probe.out. The incoming and returned states each keep independent compiler and FFI types, and the result payload is independent of both; the returned clock is MIN of the two clocks. The canonical state witness covers only refs and code remains Spt."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "find_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Call.lean", "lean_name": "findCode",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both original clauses and inferred types in bvl_sem_values_probe.out. Code entries retain their independently polymorphic payload α and the original sparse-tree carrier. Direct and indirect lookups preserve arity checks; the nonempty guard makes holLast and dropLast agree with HOL LAST and FRONT on the used path. Original direct, indirect and failure examples are kernel-replayed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "dest_thunk_ret",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Thunk.lean", "lean_name": "DestThunkResult",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the three original constructors and inferred IsThunk type in bvl_sem_values_probe.out; the source thunk mode and BVL value carriers match."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "dest_thunk_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Thunk.lean", "lean_name": "destThunk",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared every typed original branch in bvl_sem_values_probe.out: missing references, pointer flags, thunk modes and non-thunk results agree. refs is the canonical finite-support map with a local codec roundtrip; representative cases are kernel-replayed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "bad_thunk_update_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Thunk.lean", "lean_name": "badThunkUpdate",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared the typed original conjunction in bvl_sem_values_probe.out: the mode must be Evaluated and the same inspected value must differ from NotThunk. refs is the canonical finite-support map with a local codec roundtrip."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "dec_clock_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/State.lean", "lean_name": "decClock",
     "statement_status": "reviewed_fmap_as_finite_support",

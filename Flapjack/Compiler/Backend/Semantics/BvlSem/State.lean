@@ -66,4 +66,15 @@ def initialState {C F : Type} (ffi : HolFfiState F) (code : Spt (Nat × Bvl.Exp)
     (oracle : CompileOracle C) (compiler : Compiler C) (clock : Nat) : State C F :=
   ⟨[], HolFiniteMapExact.empty, clock, compiler, oracle, code, ffi⟩
 
+/-- Bound the returned state's clock by the incoming clock. The two states
+and the result retain the independent type parameters inferred by HOL. -/
+@[hol "cakeml/compiler/backend/semantics/bvlSemScript.sml" "fix_clock_def"
+  (fmap_as_finite_support := [refs])]
+def fixClock {C F D G R : Type} (s : State C F) (result : R × State D G) : R × State D G :=
+  (result.1, { result.2 with clock := min s.clock result.2.clock })
+
+/-- Flapjack helper: a fixed result cannot increase the incoming clock. -/
+theorem fixClock_clock_le {C F D G R : Type} (s : State C F) (result : R × State D G) :
+    (fixClock s result).2.clock ≤ s.clock := Nat.min_le_left _ _
+
 end Flapjack.Compiler.Backend.BvlSem

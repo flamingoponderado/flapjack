@@ -1,4 +1,4 @@
-`bvl_sem_values_probe.out` captures the typed original BVL value and reference constructors, integer/list and reference-aware equality operations, state field types, closure argument helpers, and signed-division examples. `Flapjack/Test/BvlSemValuesParity.lean` kernel-replays selected observations; these do not establish the full BVL semantics or pass correctness.
+`bvl_sem_values_probe.out` captures the typed original BVL value and reference constructors, integer/list and reference-aware equality operations, state field types, code lookup, thunk inspection, closure argument helpers, and signed-division examples. `Flapjack/Test/BvlSemValuesParity.lean` kernel-replays selected observations; these do not establish the full BVL semantics or pass correctness.
 
 `clos_to_bvl_recursive_types_probe.out` also records the typed original singleton/list converter and program conversion. The Lean checked converter is proved equal to the original compile_exps and program conversions through the ported singleton/list equivalence; pass semantics remain open.
 

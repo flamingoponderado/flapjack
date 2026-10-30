@@ -40,3 +40,20 @@ state_code_type=:(γ, 'ffi) state -> (num # bvl$exp) sptree$num_map
 state_ffi_type=:(γ, 'ffi) state -> 'ffi ffi_state
 dec_clock=∀(n :num) (s :(α, β) state). dec_clock n s = s with clock := s.clock − n
 initial_state=∀(ffi :β ffi_state) (code :(num # bvl$exp) sptree$num_map) (co :num -> α # (num # num # bvl$exp) list) (cc :α -> (num # num # bvl$exp) list -> (word8 list # word64 list # α) option) (k :num). (initial_state ffi code co cc k :(α, β) state) = <|clock := k; ffi := ffi; code := code; compile := cc; compile_oracle := co; globals := ([] :v option list); refs := (FEMPTY :num |-> v ref)|>
+find_code=(∀(p :num) (args :v list) (code :(num # α) sptree$num_map). (find_code (SOME p) args code :(v list # α) option) = case lookup p code of (NONE :(num # α) option) => (NONE :(v list # α) option) | SOME (arity,exp) => if LENGTH args = arity then SOME (args,exp) else (NONE :(v list # α) option)) ∧ ∀(args :v list) (code :(num # α) sptree$num_map). (find_code (NONE :num option) args code :(v list # α) option) = if args = ([] :v list) then (NONE :(v list # α) option) else case LAST args of (Number v8 :v) => (NONE :(v list # α) option) | (Word64 v9 :v) => (NONE :(v list # α) option) | Block v10 v11 => (NONE :(v list # α) option) | CodePtr loc => (case lookup loc code of (NONE :(num # α) option) => (NONE :(v list # α) option) | SOME (arity,exp) => if LENGTH args = arity + (1 :num) then SOME (FRONT args,exp) else (NONE :(v list # α) option)) | (RefPtr v13 v14 :v) => (NONE :(v list # α) option)
+find_code_type=:num option -> v list -> (num # α) sptree$num_map -> (v list # α) option
+direct_call=SOME ([(Number (10 :int) :v); (Number (20 :int) :v)],(Var (3 :num) :bvl$exp))
+indirect_call=SOME ([(Number (10 :int) :v); (Number (20 :int) :v)],(Var (3 :num) :bvl$exp))
+indirect_bad_arity=(NONE :(v list # bvl$exp) option)
+indirect_bad_pointer=(NONE :(v list # bvl$exp) option)
+indirect_empty=(NONE :(v list # bvl$exp) option)
+dest_thunk=(dest_thunk (RefPtr (b :bool) (ptr :num) :v) (refs :num |-> v ref) :dest_thunk_ret) = (case FLOOKUP refs ptr of (NONE :v ref option) => BadRef | SOME (ValueArray v12 :v ref) => NotThunk | SOME (ByteArray v13 v14 :v ref) => NotThunk | SOME (Thunk Evaluated v :v ref) => if b then BadRef else (IsThunk Evaluated v :dest_thunk_ret) | SOME (Thunk NotEvaluated v :v ref) => if b then BadRef else (IsThunk NotEvaluated v :dest_thunk_ret) | SOME (MutBlock v17 v18 v19 v20 v21) => NotThunk) ∧ (dest_thunk (Number (v4 :int) :v) refs :dest_thunk_ret) = NotThunk ∧ (dest_thunk (Word64 (v5 :word64) :v) refs :dest_thunk_ret) = NotThunk ∧ (dest_thunk (Block (v6 :num) (v7 :v list)) refs :dest_thunk_ret) = NotThunk ∧ (dest_thunk (CodePtr (v8 :num)) refs :dest_thunk_ret) = NotThunk
+dest_thunk_type=:v -> (num |-> v ref) -> dest_thunk_ret
+bad_thunk_update=∀(m :thunk_mode) (v :v) (refs :num |-> v ref). bad_thunk_update m v refs ⇔ m = Evaluated ∧ (dest_thunk v refs :dest_thunk_ret) ≠ NotThunk
+is_thunk_type=:thunk_mode -> v -> dest_thunk_ret
+thunk_good=(IsThunk Evaluated (Number (7 :int) :v) :dest_thunk_ret)
+thunk_bad_flag=BadRef
+thunk_missing=BadRef
+thunk_nonref=NotThunk
+fix_clock=∀(s :(δ, ε) state) (res :α) (s1 :(β, γ) state). fix_clock s (res,s1) = (res,s1 with clock := MIN s.clock s1.clock)
+fix_clock_type=:(α, β) state -> γ # (δ, ε) state -> γ # (δ, ε) state

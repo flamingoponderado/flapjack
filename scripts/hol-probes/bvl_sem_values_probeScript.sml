@@ -55,3 +55,26 @@ val _ = typ "state_code_type=" ``λ(s:('c,'ffi) bvlSem$state). s.code``;
 val _ = typ "state_ffi_type=" ``λ(s:('c,'ffi) bvlSem$state). s.ffi``;
 val _ = show "dec_clock=" bvlSemTheory.dec_clock_def;
 val _ = show "initial_state=" bvlSemTheory.initial_state_def;
+val _ = show "find_code=" bvlSemTheory.find_code_def;
+val _ = typ "find_code_type=" ``bvlSem$find_code``;
+val _ = example "direct_call=" ``bvlSem$find_code (SOME 4) [bvlSem$Number 10; bvlSem$Number 20]
+  (sptree$insert 4 (2,bvl$Var 3) sptree$LN)``;
+val _ = example "indirect_call=" ``bvlSem$find_code NONE [bvlSem$Number 10; bvlSem$Number 20; bvlSem$CodePtr 4]
+  (sptree$insert 4 (2,bvl$Var 3) sptree$LN)``;
+val _ = example "indirect_bad_arity=" ``bvlSem$find_code NONE [bvlSem$Number 10; bvlSem$CodePtr 4]
+  (sptree$insert 4 (2,bvl$Var 3) sptree$LN)``;
+val _ = example "indirect_bad_pointer=" ``bvlSem$find_code NONE [bvlSem$Number 4]
+  (sptree$insert 4 (0,bvl$Var 3) sptree$LN)``;
+val _ = example "indirect_empty=" ``bvlSem$find_code NONE [] (sptree$LN : (num # bvl$exp) sptree$num_map)``;
+val _ = show "dest_thunk=" bvlSemTheory.dest_thunk_def;
+val _ = typ "dest_thunk_type=" ``bvlSem$dest_thunk``;
+val _ = show "bad_thunk_update=" bvlSemTheory.bad_thunk_update_def;
+val _ = typ "is_thunk_type=" ``bvlSem$IsThunk``;
+val _ = example "thunk_good=" ``bvlSem$dest_thunk (bvlSem$RefPtr F 1)
+  (FEMPTY |+ (1,bvlSem$Thunk Evaluated (bvlSem$Number 7)))``;
+val _ = example "thunk_bad_flag=" ``bvlSem$dest_thunk (bvlSem$RefPtr T 1)
+  (FEMPTY |+ (1,bvlSem$Thunk Evaluated (bvlSem$Number 7)))``;
+val _ = example "thunk_missing=" ``bvlSem$dest_thunk (bvlSem$RefPtr F 1) FEMPTY``;
+val _ = example "thunk_nonref=" ``bvlSem$dest_thunk (bvlSem$Number 1) FEMPTY``;
+val _ = show "fix_clock=" bvlSemTheory.fix_clock_def;
+val _ = typ "fix_clock_type=" ``bvlSem$fix_clock``;

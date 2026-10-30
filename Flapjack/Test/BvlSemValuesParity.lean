@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
 
 /-! Kernel replay of representative original BVL semantic observations. -/
@@ -40,5 +42,33 @@ example : doEq (Flapjack.HolFiniteMapExact.empty : Flapjack.HolFiniteMapExact Na
 
 example : doEqList (Flapjack.HolFiniteMapExact.empty : Flapjack.HolFiniteMapExact Nat (Ref Unit))
     [.number 1, .codePtr 0] [.number 2, .codePtr 0] = .val false := by simp [doEqList, doEq]
+
+private def sampleCode : Flapjack.Spt (Nat × Flapjack.Compiler.Backend.Bvl.Exp) :=
+  Flapjack.sptInsert 4 (2, .var 3) .ln
+
+example : findCode (some 4) [.number 10, .number 20] sampleCode =
+    some ([.number 10, .number 20], .var 3) := by
+  simp [findCode, sampleCode, Flapjack.sptLookup_sptInsert_same]
+
+example : findCode none [.number 10, .number 20, .codePtr 4] sampleCode =
+    some ([.number 10, .number 20], .var 3) := by
+  simp [findCode, sampleCode, Flapjack.holLast, Flapjack.sptLookup_sptInsert_same]
+
+example : findCode none [.number 10, .codePtr 4] sampleCode = none := by
+  simp [findCode, sampleCode, Flapjack.holLast, Flapjack.sptLookup_sptInsert_same]
+
+example : findCode none [.number 4] sampleCode = none := by simp [findCode, Flapjack.holLast]
+example : findCode none [] (Flapjack.Spt.ln : Flapjack.Spt (Nat × Unit)) = none := by simp [findCode]
+
+private def sampleThunk : Flapjack.HolFiniteMapExact Nat (Ref Value) :=
+  Flapjack.HolFiniteMapExact.empty.update (1, .thunk .evaluated (.number 7))
+
+example : destThunk (.refPtr false 1) sampleThunk = .isThunk .evaluated (.number 7) := by
+  simp [destThunk, sampleThunk, Flapjack.HolFiniteMapExact.lookup_update, Flapjack.FUPDATE]
+example : destThunk (.refPtr true 1) sampleThunk = .badRef := by
+  simp [destThunk, sampleThunk, Flapjack.HolFiniteMapExact.lookup_update, Flapjack.FUPDATE]
+example : destThunk (.refPtr false 1) Flapjack.HolFiniteMapExact.empty = .badRef := by
+  simp [destThunk, Flapjack.HolFiniteMapExact.empty]
+example : destThunk (.number 1) Flapjack.HolFiniteMapExact.empty = .notThunk := by simp [destThunk]
 
 end Flapjack.Test.BvlSemValuesParity
