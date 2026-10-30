@@ -108543,4 +108543,17 @@
     "hol_name": "do_app_change_clock_err",
     "lean_name": "doAppChangeClockErr"
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "hol_name": "do_app_io_events_mono",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/ApplyEvents.lean",
+    "lean_name": "doApp_ioEvents_prefix",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed HOL implication in bvl_sem_values_probe.out: a successful do_app result entails that the original FFI event list is a prefix of the result state event list. Compiler and FFI types remain independent. The local canonical witness covers refs only, and doApp inherits floating-point real-carrier assumptions. The proof handles returning FFI via callFFIHOL_return_ioEvents_prefix and leaves all other successful primitive branches unchanged in FFI state."
+  }
 ]
