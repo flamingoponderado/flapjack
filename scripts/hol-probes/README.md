@@ -1,3 +1,5 @@
+`cake_explore_frontend.json` records the byte length and digest of the six-stage source-to-closure explorer prefix emitted by the pinned CakeML executable. `scripts/check-cake-source-display-reference.py` rechecks it against that executable, and `Flapjack/Test/CakeFrontendStagesParity.lean` compares the complete captured output with the Lean pipeline. This is parity evidence, not a proof of cross-language equivalence.
+
 `clos_sem_evaluate_probe.out` captures the typed closure evaluator and variable, conditional, exception, timeout and closure-call observations. `Flapjack/Test/ClosSemEvaluateParity.lean` replays those cases with both the extra-bound evaluator and the clocked unbounded evaluator. Full evaluator and carrier correspondence remain open.
 
 `clos_sem_memory_probe.out` captures closure array, byte-update, overlap-copy and byte-bounds observations. `Flapjack/Test/ClosSemMemoryParity.lean` replays them, except that the HOL byte-update capture retains an unreduced word-existence condition. The assembled dispatcher and finite-map correspondence remain pending review.

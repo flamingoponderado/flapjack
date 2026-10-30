@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Recheck source through data explorer examples against pinned CakeML."""
 import argparse
+import hashlib
 import importlib.util
+import json
 import subprocess
 from pathlib import Path
 
@@ -122,6 +124,9 @@ def main():
     parser.add_argument('reference', type=Path, help='pinned original CakeML executable')
     args = parser.parse_args()
     parity.check_pinned_reference(args.reference)
+    fixture = json.loads((ROOT / 'scripts/hol-probes/cake_explore_frontend.json').read_text())
+    if (fixture['cakeml_revision'], fixture['hol_revision']) != (parity.PINNED_REV, parity.HOL_REV):
+        raise SystemExit('unexpected frontend explorer fixture provenance')
     for index, (source, expected) in enumerate(CASES):
         result = subprocess.run([str(args.reference), '--target=riscv', '--explore', '--exclude_prelude=true'],
                                 input=source, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
@@ -129,6 +134,11 @@ def main():
         if result.returncode != 0 or result.stderr or not result.stdout.startswith(prefix):
             raise SystemExit(f'original source-stage output mismatch for {source!r}')
         if index == 0:
+            frontend = result.stdout.split(b'# after clos_mti\n\n', 1)[0]
+            if (source.decode('ascii') != fixture['source'] or len(frontend) != fixture['length'] or
+                    hashlib.sha256(frontend).hexdigest() != fixture['sha256']):
+                raise SystemExit('complete frontend explorer prefix differs from its pinned capture')
+            print('complete six-stage frontend prefix matches', flush=True)
             flat = b'# after source_to_flat\n\n' + FLAT_EXPECTED + b'# after remove_flat\n\n'
             if flat not in result.stdout:
                 raise SystemExit(f'original flat-stage output mismatch for {source!r}')
