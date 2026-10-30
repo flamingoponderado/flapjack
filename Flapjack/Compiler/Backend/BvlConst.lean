@@ -1,8 +1,9 @@
 import Flapjack.Compiler.Backend.Bvl.Syntax
 import Flapjack.Compiler.Backend.BvlToBvi.Budget
 
-/-! Fuel-bounded executable version of the BVL constant pass. The original
-total definitions and their correctness proofs remain to be ported. -/
+/-! Executable helpers and fuel-bounded traversal for the BVL constant pass.
+The total traversal and its executable correspondence are in the `BvlConst`
+submodules; pass-semantics correctness remains open. -/
 namespace Flapjack.Compiler.Backend.BvlConst
 open Bvl BvlToBvi
 open ClosLang (Op)
@@ -107,6 +108,7 @@ private def smart2 (op : Op) (x y : Exp) : Exp :=
   | _ => .op op [x, y]
 
 /-- Apply the source's operation-specific constant rewrites. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "SmartOp_def"]
 def smartOp (op : Op) : List Exp → Exp
   | [x, y] => smart2 op x y
   | [x] => match op, simple x with
@@ -122,11 +124,14 @@ private def extract (e : Exp) (restLength : Nat) : Option Exp :=
   | _ => none
 
 /-- Build the constant environment contributed by a list of let bindings. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "extract_list_def"]
 def extractList : List Exp → List (Option Exp)
   | [] => []
   | x :: xs => extract x xs.length :: extractList xs
 
-private def deleteVar : Exp → Exp
+/-- Replace let-bound variable aliases with the source's zero placeholder. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "delete_var_def"]
+def deleteVar : Exp → Exp
   | .var _ => const 0
   | e => e
 

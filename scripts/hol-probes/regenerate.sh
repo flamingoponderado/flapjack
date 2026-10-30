@@ -556,7 +556,7 @@ run_probe bvl_handle_frontend_probeScript.sml bvl_handle_frontend_probe.out \
   simplify compiled cut seq can_raise dest_handle_Raise dest_handle_Let dest_handle_If handle_adj_vars handle_size handle_simp handle_size_non_zero_replay "$cake_dir/compiler/backend/bvl_handleScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvl_const_frontend_probeScript.sml bvl_const_frontend_probe.out \
-  divs ops compile algebra "$cake_dir/compiler/backend/bvl_constScript.sml" "$cake_dir/compiler/backend"
+  divs ops compile algebra dest_simple case_op_const SmartOp_flip SmartOp2 SmartOp1 SmartOp extract extract_list delete_var compile_sing compile_eq compile_exp compile_exp_eq "$cake_dir/compiler/backend/bvl_constScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvi_tailrec_frontend_probeScript.sml bvi_tailrec_frontend_probe.out \
   decisions cases tmc analysis rewrites program "$cake_dir/compiler/backend/bvi_tailrecScript.sml" "$cake_dir/compiler/backend"

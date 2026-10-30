@@ -109709,5 +109709,45 @@
     "lean_name": "compileList",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the typed nil and cons clauses in bvl_handle_frontend_probe.out, including result order, mk_Union, size addition, and conjunction. The list component of compileFuel_eq proves every successful production compileListFuel result agrees with the source traversal."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst.lean",
+    "hol_name": "SmartOp_def",
+    "lean_name": "smartOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed SmartOp, SmartOp1, SmartOp2, SmartOp_flip, dest_simple and case_op_const captures in bvl_const_frontend_probe.out with the executed implementation. The unary, binary and default cases, operand flip, all add/subtract/multiply folding branches, reversed division and comparison operands, zero divisors, EqualConst and element-index cases match. Lean Int.fdiv/fmod implement the source floor operations; the signed oracle observations cover all sign combinations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst.lean",
+    "hol_name": "extract_list_def",
+    "lean_name": "extractList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed nil and cons equations and full extract cases in bvl_const_frontend_probe.out. The private executable extractor receives the length of the original suffix, its only observation of the polymorphic HOL list, and matches Var, constant, empty Cons and all other cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst.lean",
+    "hol_name": "delete_var_def",
+    "lean_name": "deleteVar",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source clauses in bvl_const_frontend_probe.out: every Var becomes an integer zero constant and every other constructor is unchanged. The executed let transformation calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Compile.lean",
+    "hol_name": "compile_sing_def",
+    "lean_name": "compileSing",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed original singleton clauses in bvl_const_frontend_probe.out, including nested option lookup, variable shifting, Bool tags, let environment extension, exception handler binder, operation dispatch and Force behavior. compileBounded_eq proves that the executed traversal returns this result for any initial fuel."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Compile.lean",
+    "hol_name": "compile_sing_def",
+    "lean_name": "compileList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original list nil and cons equations in bvl_const_frontend_probe.out. mapM_eq_compileList and compileFuel_eq establish agreement of successful executable list traversal with the total source-shaped list recursion."
   }
 ]
