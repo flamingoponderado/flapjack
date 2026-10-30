@@ -108985,6 +108985,46 @@
     "hol_name": "is_small_def",
     "lean_name": "isSmall",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared typed is_small_def in bvl_inline_state_rel_probe.out: the Boolean test is nonzero remaining singleton budget, equal to the original auxiliary-list test by isSmallSing_equivalence. Proofs.SmallProduction proves the executed size budget agrees for every input; the full must_inline predicate still requires its recursion-check correspondence."
+    "reviewer": "Compared typed is_small_def in bvl_inline_state_rel_probe.out: the Boolean test is nonzero remaining singleton budget, equal to the original auxiliary-list test by isSmallSing_equivalence. Proofs.SmallProduction proves the executed size budget agrees for every input; Proofs.RecursionProduction also connects the complete executed cache decision to mustInline."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Recursion.lean",
+    "hol_name": "is_rec_sing_def",
+    "lean_name": "isRecSing",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed is_rec_sing_def expression cases in bvl_inline_state_rel_probe.out: the num call target, BVL constructor carriers and short-circuit order match; a Call tests its destination before its arguments. Proofs.RecursionProduction proves the executed bounded detector returns this result for every input."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Recursion.lean",
+    "hol_name": "is_rec_sing_def",
+    "lean_name": "isRecList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed is_rec_list nil and cons equations in bvl_inline_state_rel_probe.out: empty is false and each singleton is checked before the remainder, with the exact BVL list and num target."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Recursion.lean",
+    "hol_name": "is_rec_def",
+    "lean_name": "isRec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed is_rec_def cases in bvl_inline_state_rel_probe.out. The total singleton/list traversal satisfies its nil, nonempty-list and singleton equations; isRecSing_equivalence checks the original relationship."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Recursion.lean",
+    "hol_name": "is_rec_sing",
+    "lean_name": "isRecSing_equivalence",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed is_rec_sing in bvl_inline_state_rel_probe.out: both universally quantified singleton and list equivalences and the original expression-then-target binder order are retained, with Boolean equality representing HOL iff."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Recursion.lean",
+    "hol_name": "must_inline_def",
+    "lean_name": "mustInline",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed must_inline_def in bvl_inline_state_rel_probe.out: name, limit and expression arguments and the small/nonrecursive conditional are unchanged. Proofs.RecursionProduction proves the executed size and recursion retry decisions equal this predicate for all fuels and inputs."
   }
 ]

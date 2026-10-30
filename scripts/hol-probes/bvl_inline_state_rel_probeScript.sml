@@ -27,6 +27,13 @@ val _ = show "is_small_aux=" bvl_inlineTheory.is_small_aux_def;
 val _ = show "is_small_sing_def=" bvl_inlineTheory.is_small_sing_def;
 val _ = show "is_small_sing=" bvl_inlineTheory.is_small_sing;
 val _ = show "is_small=" bvl_inlineTheory.is_small_def;
+val _ = show "is_rec=" bvl_inlineTheory.is_rec_def;
+val _ = show "is_rec_sing_def=" bvl_inlineTheory.is_rec_sing_def;
+val _ = show "is_rec_sing=" bvl_inlineTheory.is_rec_sing;
+val _ = show "must_inline=" bvl_inlineTheory.must_inline_def;
+val _ = show "must_inline_yes=" (EVAL ``bvl_inline$must_inline 3 5 (bvl$Call 0 (SOME 4) [bvl$Var 1])``);
+val _ = show "must_inline_rec=" (EVAL ``bvl_inline$must_inline 3 5 (bvl$Call 0 (SOME 3) [bvl$Var 1])``);
+val _ = show "must_inline_zero=" (EVAL ``bvl_inline$must_inline 3 0 (bvl$Var 1)``);
 val _ = show "tick_inline_generic_cache=" (EVAL ``bvl_inline$tick_inline_sing
   (sptree$insert 3 (T, bvl$Var 8) sptree$LN) (bvl$Call 2 (SOME 3) [bvl$Var 1])``);
 val _ = show "tick_inline_uncached=" (EVAL ``bvl_inline$tick_inline_sing
