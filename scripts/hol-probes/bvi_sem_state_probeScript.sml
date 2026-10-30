@@ -23,3 +23,10 @@ val _ = typ "bad_ref_type=" ``bviSem$BadRef``;
 val _ = typ "not_thunk_type=" ``bviSem$NotThunk``;
 val _ = typ "is_thunk_type=" ``bviSem$IsThunk``;
 val _ = show "dest_thunk=" bviSemTheory.dest_thunk_def;
+val _ = show "finalise_cons=" bviSemTheory.finalise_cons_def;
+val _ = show "finalise_nonref=" (EVAL ``bviSem$finalise_cons (bvlSem$Number 7) FEMPTY``);
+val _ = show "finalise_missing=" (EVAL ``bviSem$finalise_cons (bvlSem$RefPtr F 3) FEMPTY``);
+val _ = show "finalise_cycle=" (EVAL ``bviSem$finalise_cons (bvlSem$RefPtr F 1)
+  (FEMPTY |+ (1, bvlSem$MutBlock 2 F [] (bvlSem$RefPtr F 1) []))``);
+val _ = show "finalise_one=" (EVAL ``bviSem$finalise_cons (bvlSem$RefPtr F 1)
+  (FEMPTY |+ (1, bvlSem$MutBlock 2 F [bvlSem$Number 3] (bvlSem$Number 4) []))``);
