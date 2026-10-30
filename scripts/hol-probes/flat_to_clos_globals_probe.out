@@ -14,3 +14,4 @@ compile_prog_esgc=∀(decs :exp list). EVERY esgc_free decs ∧ no_Mat_decs decs
 insert_interp_globals=elist_globals (insert_interp (xs :closLang$exp list)) = elist_globals xs
 insert_interp_esgc=EVERY esgc_free (insert_interp (xs :closLang$exp list)) ⇔ EVERY esgc_free xs
 inc_compile_esgc=EVERY esgc_free (decs :exp list) ∧ no_Mat_decs decs ⇒ EVERY esgc_free (FST (inc_compile_decs decs :closLang$exp list # α list))
+inc_compile_globals=∀(decs :exp list). no_Mat_decs decs ⇒ elist_globals (FST (inc_compile_decs decs :closLang$exp list # α list)) = BAG_IMAGE SUC (elist_globals decs)

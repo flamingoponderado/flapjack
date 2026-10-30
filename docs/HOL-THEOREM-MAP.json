@@ -1,5 +1,11 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "FST_inc_compile_set_globals",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "incCompileDecs_setGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2584-2592 and inferred types in flat_to_clos_globals_probe.out. The no_Mat_decs premise, closure list result, arbitrary second pair component and equality of global multiplicity bags match; shiftGlobalBag implements BAG_IMAGE SUC with no multiplicity at zero and each successor having its unique predecessor multiplicity. Interpreter insertion preserves the bag, and the appended unit adds no writes."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml", "hol_name": "elist_globals_insert_interp",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/Globals.lean", "lean_name": "elistGlobals_insertInterp",
     "statement_status": "reviewed_exact",

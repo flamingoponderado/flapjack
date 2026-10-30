@@ -20,3 +20,4 @@ val _ = show "compile_prog_esgc=" flat_to_closProofTheory.compile_prog_esgc_free
 val _ = show "insert_interp_globals=" clos_interpProofTheory.elist_globals_insert_interp;
 val _ = show "insert_interp_esgc=" clos_interpProofTheory.insert_interp_esgc_free;
 val _ = show "inc_compile_esgc=" flat_to_closProofTheory.FST_inc_compile_esgc_free;
+val _ = show "inc_compile_globals=" flat_to_closProofTheory.FST_inc_compile_set_globals;

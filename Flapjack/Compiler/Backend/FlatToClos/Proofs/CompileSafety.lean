@@ -185,4 +185,32 @@ theorem incCompileDecs_esgcFree {α : Type} (ds : List FlatLang.Exp)
     subst e
     simp [esgcFree_smartCons, ClosProps.esgcFreeList]
 
+private theorem elistGlobals_append (xs ys : List ClosLang.Exp) :
+    ClosProps.elistGlobals (xs ++ ys) =
+      unionGlobalBag (ClosProps.elistGlobals xs) (ClosProps.elistGlobals ys) := by
+  induction xs with
+  | nil => funext key; simp [ClosProps.elistGlobals, unionGlobalBag, emptyGlobalBag]
+  | cons x xs ih =>
+    simp only [List.cons_append, ClosProps.elistGlobals, ih]
+    funext key
+    simp only [unionGlobalBag]
+    omega
+
+/-- Incremental compilation shifts the source global-write bag by one. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "FST_inc_compile_set_globals"]
+theorem incCompileDecs_setGlobals {α : Type} (ds : List FlatLang.Exp)
+    (noMat : FlatProps.noMatDecs ds = true) :
+    ClosProps.elistGlobals (incCompileDecs (α := α) ds).1 =
+      shiftGlobalBag (FlatProps.elistGlobals ds) := by
+  have unitGlobals : ClosProps.elistGlobals (compileDecs [.con .none none []]) = emptyGlobalBag := by
+    have h := compileDecs_setGlobals [.con .none none []]
+      (by simp [FlatProps.noMatDecs, FlatProps.noMat, FlatProps.noMatList])
+    have empty : unionGlobalBag emptyGlobalBag emptyGlobalBag = emptyGlobalBag :=
+      (FlatProps.unionGlobalBag_eq_empty _ _).mpr ⟨rfl, rfl⟩
+    simpa [FlatProps.elistGlobals, FlatProps.setGlobals, empty, shiftEmpty] using h
+  simp only [incCompileDecs, ClosInterp.elistGlobals_insertInterp, elistGlobals_append,
+    compileDecs_setGlobals ds noMat, unitGlobals]
+  funext key
+  simp [unionGlobalBag, emptyGlobalBag]
+
 end Flapjack.Compiler.Backend.FlatToClos
