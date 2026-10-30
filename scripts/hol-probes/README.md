@@ -218,7 +218,7 @@ the complete carrier correspondence remains under review.
 
 `bvl_inline_cake_bvi_probe.out` captures the complete BVI result of a nested-function CakeML declaration after those BVL transformations. It omits the BVL handler transformation and other frontend optimizations.
 
-`bvl_handle_frontend_probe.out` captures focused handler simplification and compilation examples, including live-variable packing and the expression-size cutoff, plus typed raise analysis, handler recognition, variable adjustment and size definitions and a replay of the local size-positivity proof. `bvl_handle_cake_bvi_probe.out` captures the complete BVI program for a nested-function declaration after the BVL inlining and handler stages, with constant folding and other frontend optimizations omitted.
+`bvl_handle_frontend_probe.out` captures focused handler simplification and compilation examples, including live-variable packing and the expression-size cutoff, plus typed raise analysis, handler recognition, variable adjustment, size and simplifier definitions and a replay of the local size-positivity proof. `bvl_handle_cake_bvi_probe.out` captures the complete BVI program for a nested-function declaration after the BVL inlining and handler stages, with constant folding and other frontend optimizations omitted.
 
 `bvl_const_frontend_probe.out` captures constant propagation, operation rewrites, and signed floor division and remainder. `bvl_optimized_cake_bvi_probe.out` captures the complete BVI output for the nested-function declaration after the original BVL inlining pipeline, including constant folding, while later optimizations remain omitted.
 

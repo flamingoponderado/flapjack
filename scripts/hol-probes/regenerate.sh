@@ -553,7 +553,7 @@ run_probe bvl_inline_frontend_probeScript.sml bvl_inline_frontend_probe.out \
   inline size letop "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvl_handle_frontend_probeScript.sml bvl_handle_frontend_probe.out \
-  simplify compiled cut seq can_raise dest_handle_Raise dest_handle_Let dest_handle_If handle_adj_vars handle_size handle_size_non_zero_replay "$cake_dir/compiler/backend/bvl_handleScript.sml" "$cake_dir/compiler/backend"
+  simplify compiled cut seq can_raise dest_handle_Raise dest_handle_Let dest_handle_If handle_adj_vars handle_size handle_simp handle_size_non_zero_replay "$cake_dir/compiler/backend/bvl_handleScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvl_const_frontend_probeScript.sml bvl_const_frontend_probe.out \
   divs ops compile algebra "$cake_dir/compiler/backend/bvl_constScript.sml" "$cake_dir/compiler/backend"
