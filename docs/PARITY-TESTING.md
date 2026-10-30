@@ -520,7 +520,7 @@ valid flag values and generated combinations, including duplicate flags and
 configuration-error precedence. Case counts can be changed with
 `--type-cases`, `--sexp-cases`, `--structured-cases`, `--lex-cases`,
 `--byte-cases`, `--raw-byte-cases`, `--declaration-cases`, `--handler-cases`, `--annotation-cases`, `--compile-cases`,
-`--rich-cases`, `--token-cases`, `--config-cases`, and `--config-error-cases` (zero skips the
+`--rich-cases`, `--explore-cases`, `--token-cases`, `--config-cases`, and `--config-error-cases` (zero skips the
 option matrix). `--type-seed`, `--edge-seed`, and
 `--compile-seed` select reproducible random inputs. These samples do not prove
 general parity. Set `--raw-byte-cases=1536` to compare each byte in all
@@ -551,6 +551,20 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
   --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
   --declaration-cases 0 --handler-cases 0 --annotation-cases 0 --byte-cases 0 \
   --config-error-cases 0 --compile-cases 20 --rich-cases 20 --config-cases 6
+```
+
+The optional `--explore-cases` generator compares complete explorer reports
+for the same diverse program templates, using a separate RNG seeded by
+`--compile-seed`. It defaults to zero because basis-enabled reports can exceed
+35 MB each. A 12-case run on 2026-10-30 matched the pinned compiler;
+it can be reproduced with:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --compile-seed 932459 --explore-cases 12 --type-cases 0 --sexp-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --declaration-cases 0 --handler-cases 0 --annotation-cases 0 --byte-cases 0 \
+  --config-error-cases 0 --compile-cases 0 --rich-cases 0 --config-cases 0
 ```
 
 A separate 2026-10-30 sample matched 1,850 generated parser, type, S-expression,
@@ -622,8 +636,8 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
 ```
 
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
-output for 27 benchmark programs from the pinned CakeML submodule with captured
-original-compiler output. It checks the source revision and source hashes before
+output for 28 benchmark programs and three bootstrap hello programs from the pinned
+CakeML submodule with captured original-compiler output. It checks the source revision and source hashes before
 using the captures. Pass `--check-reference /var/tmp/flapjack-pinned-cake` to
 also rerun the pinned compiler, or `--record-reference` with that executable
 to regenerate the captures. The benchmark comparisons are finite regression

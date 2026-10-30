@@ -22,10 +22,21 @@ BENCHMARKS = {
 }
 
 
+# Standalone sources shipped with CakeML outside the main benchmark corpus.
+EXTRA_SOURCES = {
+    "bootstrap/x64/test-hello": "compiler/bootstrap/compilation/x64/64/test-hello.cml",
+    "bootstrap/x64/hello": "compiler/bootstrap/compilation/x64/hello.cml",
+    "bootstrap/arm8/hello": "compiler/bootstrap/compilation/arm8/hello.cml",
+    "cakeml_benchmarks/dummy_contain": "compiler/benchmarks/cakeml_benchmarks/cakeml/dummy_contain.cml",
+}
+
+
 def sources():
     for group, names in BENCHMARKS.items():
         for name in names:
             yield f"{group}/{name}", Path("compiler/benchmarks") / group / "cakeml" / f"{name}.cml"
+    for name, path in EXTRA_SOURCES.items():
+        yield name, Path(path)
 
 
 def digest(data):

@@ -273,6 +273,8 @@ def main():
     parser.add_argument("--cake", type=Path, default=ROOT / ".lake/build/bin/cake")
     parser.add_argument("--type-cases", type=int, default=200)
     parser.add_argument("--compile-cases", type=int, default=20)
+    parser.add_argument("--explore-cases", type=int, default=0,
+                        help="diverse programs comparing complete explorer reports")
     parser.add_argument("--rich-cases", type=int, default=20,
                         help="well-typed programs exercising diverse compiler passes")
     parser.add_argument("--declaration-cases", type=int, default=100,
@@ -302,7 +304,7 @@ def main():
     parser.add_argument("--edge-seed", type=int, default=83219)
     parser.add_argument("--timeout", type=int, default=90)
     args = parser.parse_args()
-    if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.sexp_cases < 0 or
+    if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.explore_cases < 0 or args.sexp_cases < 0 or
             args.declaration_cases < 0 or args.handler_cases < 0 or not 0 <= args.annotation_cases <= 320 or
             args.config_cases < 0 or args.config_error_cases < 0 or
             args.structured_cases < 0 or args.lex_cases < 0 or args.token_cases < 0 or args.raw_byte_cases < 0 or
@@ -390,6 +392,11 @@ def main():
     for _ in range(args.rich_cases):
         compare(args.reference, args.cake, [], rich_program(compile_rng), args.timeout, True)
     print(f"{args.rich_cases} diverse programs match complete pinned RISC-V output", flush=True)
+    explore_rng = random.Random(args.compile_seed)
+    for _ in range(args.explore_cases):
+        compare(args.reference, args.cake, ["--explore"], rich_program(explore_rng), args.timeout, True)
+    if args.explore_cases:
+        print(f"{args.explore_cases} complete explorer reports match pinned CakeML", flush=True)
     config_rng = random.Random(args.compile_seed ^ 7431)
     source = "fun f xs = case xs of [] => [] | x::rest => x::f rest; val a = f [1,2,3];"
     for _ in range(args.config_cases):
