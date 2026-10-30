@@ -5,6 +5,11 @@ namespace Flapjack.Test.BvlInlineParity
 open Flapjack.Compiler.Backend
 open BvlInline
 
+-- Original `mk_tick_zero` and `mk_tick_three` observations from the pinned
+-- bvl_inline_state_rel probe; these use the production tick constructor.
+example : Bvl.mkTick 0 (.var 4) = .var 4 := rfl
+example : Bvl.mkTick 3 (.var 4) = .tick (.tick (.tick (.var 4))) := rfl
+
 #guard match tickInlineAllFuel 100 8 .ln
     [(1, 1, .var 0), (2, 1, .call 2 (some 1) [.var 0]),
      (3, 0, .call 0 (some 3) []), (4, 1, .call 0 (some 3) [.var 0])] with

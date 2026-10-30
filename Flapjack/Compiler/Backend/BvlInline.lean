@@ -10,10 +10,6 @@ namespace Flapjack.Compiler.Backend.BvlInline
 open Bvl
 open BvlToBvi (expBudget listBudget)
 
-private def mkTick : Nat → Exp → Exp
-  | 0, e => e
-  | n + 1, e => .tick (mkTick n e)
-
 /-- Inline calls using the already-processed function cache. -/
 def inlineExpFuel : Nat → Spt (Nat × Exp) → Exp → Option Exp
   | 0, _, _ => none

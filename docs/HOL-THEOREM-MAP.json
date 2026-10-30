@@ -108866,5 +108866,45 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the complete typed original implication in bvl_inline_state_rel_probe.out: the optimized initial entry-point evaluation implies existence of additional clock and a source final state with the same result and identical FFI. Code mapping preserves the exact Spt carrier; the oracle and compiler adapters retain the source composition and mapped bodies. The compiler and FFI variables are independent; the local canonical witness covers refs only. The evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvlScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Bvl/Syntax.lean",
+    "hol_name": "mk_tick_def",
+    "lean_name": "mkTick",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed mk_tick in bvl_inline_state_rel_probe.out: FUNPOW Tick n over BVL expressions is represented by the same zero/successor iteration, with the exact BVL constructor carrier. The executed BVL inliner uses this shared definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ExpRel.lean",
+    "hol_name": "exp_rel",
+    "lean_name": "ExpRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all twelve typed exp_rel rules in bvl_inline_state_rel_probe.out: exact BVL expressions, lists and sparse-tree code, including the nonempty-tail cons condition, same ordinary calls and cached-call inlining to Let with SUC ticks. The inductive relation has exactly the original constructors and premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ExpRel.lean",
+    "hol_name": "subspt_exp_rel",
+    "lean_name": "subsptExpRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed subspt_exp_rel in bvl_inline_state_rel_probe.out: the original sparse-tree submap and relation hypotheses imply the same relation over the extended tree for arbitrary BVL expression lists. sptSubspt renders the original domain and lookup definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ExpRel.lean",
+    "hol_name": "exp_rel_swap",
+    "lean_name": "expRelSwap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed exp_rel_swap in bvl_inline_state_rel_probe.out: pointwise equality of sparse-tree lookups implies equality of expression relations for the same two arbitrary BVL lists. Lean propositional equality represents the original iff."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ExpRel.lean",
+    "hol_name": "exp_rel_refl",
+    "lean_name": "expRelRefl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed exp_rel_refl in bvl_inline_state_rel_probe.out: for any sparse-tree code and any BVL expression list, the expression relation holds reflexively, with no premises."
   }
 ]
