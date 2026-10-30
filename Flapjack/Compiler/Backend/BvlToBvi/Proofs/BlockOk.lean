@@ -168,4 +168,34 @@ theorem doApp_ok_elemAt {C F : Type} (index : Nat)
            simp_all [stateOk, bvOkList_iff]
            grind)
 
+/-- Complete block-operation case of primitive application. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "do_app_ok"
+  (fmap_as_finite_support := [refs])]
+theorem doApp_ok_block {C F : Type} (op : ClosLang.BlockOp)
+    (args env : List Value) (s t : Flapjack.Compiler.Backend.BvlSem.State C F) (value : Value)
+    (ok : stateOk s) (argsOk : bvOkList s.refs args)
+    (run : doApp (.blockOp op) args s = .val (value, t)) :
+    stateOk t ∧ bvOk t.refs value ∧ (bvOkList s.refs env → bvOkList t.refs env) := by
+  have hval : BvlSem.applyBlock op args s = some (value, t) := by
+    simp only [doApp] at run
+    cases h : BvlSem.applyBlock op args s <;> simp_all
+  cases op with
+  | cons tag => exact doApp_ok_cons tag args env s t value ok argsOk run
+  | consExtend tag => exact doApp_ok_consExtend tag args env s t value ok argsOk run
+  | elemAt index => exact doApp_ok_elemAt index args env s t value ok argsOk run
+  | listAppend => exact doApp_ok_listAppend args env s t value ok argsOk run
+  | fromList tag => exact doApp_ok_fromList tag args env s t value ok argsOk run
+  | build parts => exact doApp_ok_build parts args env s t value ok argsOk run
+  | _ =>
+    unfold BvlSem.applyBlock at hval
+    repeat' first | split at hval | contradiction
+    all_goals simp_all [bvOk, bvOkList, BvlSem.boolValue]
+    all_goals try (rcases hval with ⟨rfl, _⟩; simp [bvOk, bvOkList])
+    all_goals simp only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at hval
+    all_goals first
+      | (obtain ⟨_, _, _, _, rfl, rfl⟩ := hval
+         exact ⟨ok, by simp [bvOk, bvOkList], id⟩)
+      | (obtain ⟨_, _, rfl, rfl⟩ := hval
+         exact ⟨ok, by simp [bvOk, bvOkList], id⟩)
+
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
