@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import importlib.util
+import itertools
 import random
 import subprocess
 from pathlib import Path
@@ -60,6 +61,18 @@ HANDLER_PATTERNS = ["x", "_", "A", "A x", "(x,y)", "(x,(y,z))", "x::xs", "[x,y,z
                     "(x : int)", "0", "~1", "True", "False", '#"x"']
 HANDLER_EXPRESSIONS = ["x", "y", "A", "B x", "True", "False", "0", "~1", "[]", "[1,2,3]",
                        "(1,2,3)", "(fn x => x)", "(raise E)", "(raise F 1)"]
+ANNOTATION_TYPES = ["int", "bool", "int list", "int -> bool", "int ref", "int * bool", "'a", "unknown"]
+ANNOTATION_EXPRESSIONS = ["1", "true", "[]", "fn x => x", "ref 1", "(1,true)", '"foo"', "raise Bind"]
+
+
+def annotation_programs():
+    """Cross type and expression annotations through five binding contexts."""
+    for typ, expr in itertools.product(ANNOTATION_TYPES, ANNOTATION_EXPRESSIONS):
+        yield f"val x : {typ} = {expr};"
+        yield f"fun f (x : {typ}) = {expr};"
+        yield f"val x = let val y : {typ} = {expr} in y end;"
+        yield f"val x = ({expr} : {typ});"
+        yield f"datatype t = C {typ}; val x = C {expr};"
 
 
 def type_program(rng):
@@ -266,6 +279,8 @@ def main():
                         help="generated datatype, exception, type and namespace cases")
     parser.add_argument("--handler-cases", type=int, default=100,
                         help="generated pattern, exception handler and constructor scope cases")
+    parser.add_argument("--annotation-cases", type=int, default=100,
+                        help="type annotations in five contexts (maximum 320)")
     parser.add_argument("--config-cases", type=int, default=10,
                         help="successful compilations with generated backend options")
     parser.add_argument("--config-error-cases", type=int, default=100,
@@ -288,10 +303,11 @@ def main():
     parser.add_argument("--timeout", type=int, default=90)
     args = parser.parse_args()
     if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.sexp_cases < 0 or
-            args.declaration_cases < 0 or args.handler_cases < 0 or args.config_cases < 0 or args.config_error_cases < 0 or
+            args.declaration_cases < 0 or args.handler_cases < 0 or not 0 <= args.annotation_cases <= 320 or
+            args.config_cases < 0 or args.config_error_cases < 0 or
             args.structured_cases < 0 or args.lex_cases < 0 or args.token_cases < 0 or args.raw_byte_cases < 0 or
             not 0 <= args.byte_cases <= 256 or args.timeout <= 0):
-        parser.error("case counts must be nonnegative, byte-cases at most 256, and timeout positive")
+        parser.error("case counts must be nonnegative, annotation-cases at most 320, byte-cases at most 256, and timeout positive")
     parity.check_pinned_reference(args.reference)
     types_rng = random.Random(args.type_seed)
     for _ in range(args.type_cases):
@@ -350,6 +366,11 @@ def main():
         mode = handler_rng.choice(["--types", "--print_sexp"])
         compare(args.reference, args.cake, [mode, "--exclude_prelude=true"], source, args.timeout, False)
     print(f"{args.handler_cases} pattern and handler cases match pinned CakeML", flush=True)
+    annotation_cases = list(annotation_programs())
+    random.Random(args.edge_seed ^ 74831).shuffle(annotation_cases)
+    for source in annotation_cases[:args.annotation_cases]:
+        compare(args.reference, args.cake, ["--types"], source, args.timeout, False)
+    print(f"{args.annotation_cases} type annotation cases match pinned CakeML", flush=True)
     if args.config_error_cases:
         option_rng = random.Random(args.edge_seed ^ 344)
         option_cases = [[flag + value] for flag in CONFIG_FLAGS for value in CONFIG_VALUES]
