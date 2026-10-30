@@ -15,6 +15,10 @@ spec.loader.exec_module(parity)
 
 # Each program makes the computed result observable through an output call.
 CASES = {
+    'recursive_array_fill': 'val a = Array.array 8 0; fun fill i = if i = 8 then () else (Array.update a i (i*i); fill (i+1)); val _ = fill 0; val _ = print_int (Array.sub a 7);',
+    'two_captured_closures': 'fun f x = let fun g y = x+y in g end; val a = f 3; val b = f 4; val _ = print_int (a 8 + b 9);',
+    'sequential_reference_calls': 'val r = Ref 1; fun next x = (r := !r + x; !r); val _ = print_int (next 3 + next 4);',
+    'transitive_module_dependency': 'structure A = struct val x = 17; fun f y = x+y; end; structure B = struct val x = A.f 8; end; val _ = print_int B.x;',
     'explore_frontend': 'datatype t = A | B int; fun f x = case x of A => ~1 | B n => n; val x = f (B 7);',
     'explore_basis': 'val _ = print "x";',
     'explore_no_optimisations': 'fun f x = x; val y = f 3;',

@@ -484,6 +484,9 @@ tuple-bearing exception handlers, and division of a negative large integer. It
 also checks a string-bearing datatype branch, recursive list construction and
 folding, a 255-byte array update, vector concatenation, a curried closure that
 captures a tuple-derived value, and nested recursive list matches. It
+also checks recursive array filling, independently captured closures,
+sequential calls that mutate the same reference, and a transitive module
+dependency, each using complete assembly output. It
 also checks that
 `--types` takes precedence over `--print_sexp` and `--explore` in either flag
 order, including parse and type failures.
