@@ -109549,5 +109549,85 @@
     "hol_line": 1468,
     "lean_name": "varListEvaluate_zero",
     "reviewer": "Compared the typed original local proof replay in bvl_inline_state_rel_probe.out. The expression list, independently supplied BVL expression list used only for the length test, value lists, generic compiler and FFI state carriers, original conjunction and result/state equality match; this binding covers the zero-based specialization and values ++ env. The local canonical state roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Helpers.lean",
+    "hol_name": "can_raise_def",
+    "lean_name": "canRaise",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source equations in bvl_handle_frontend_probe.out. The single-expression clauses preserve the exact handling of Let, Handle, Force, Call and ThunkOp ForceThunk; canRaiseBounded_eq proves the executed bounded test returns the original value."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Helpers.lean",
+    "hol_name": "can_raise_def",
+    "lean_name": "canRaiseList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source equations in bvl_handle_frontend_probe.out. The original can_raise1 list clauses are false for nil and the disjunction of the head and tail results for cons."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Helpers.lean",
+    "hol_name": "dest_handle_Raise_def",
+    "lean_name": "destHandleRaise",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source equations in bvl_handle_frontend_probe.out. The original Raise match returns its argument only when it cannot raise, and every other constructor returns None."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Helpers.lean",
+    "hol_name": "dest_handle_Let_def",
+    "lean_name": "destHandleLet",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source equations in bvl_handle_frontend_probe.out. The original Let match returns both its binding list and body exactly when no binding can raise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Helpers.lean",
+    "hol_name": "dest_handle_If_def",
+    "lean_name": "destHandleIf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source equations in bvl_handle_frontend_probe.out. The original safe-condition and exactly-one-raising-branch cases retain INL/INR branch orientation and all None cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Helpers.lean",
+    "hol_name": "handle_adj_vars_def",
+    "lean_name": "handleAdjVars",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source equations in bvl_handle_frontend_probe.out. All source clauses retain binder-depth updates and the distinct Force location and variable index; adjustVarsBounded_eq proves the executed bounded traversal returns this result."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Helpers.lean",
+    "hol_name": "handle_adj_vars_def",
+    "lean_name": "handleAdjVarsList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source equations in bvl_handle_frontend_probe.out. The original handle_adj_vars1 nil and cons clauses recursively adjust every expression at the same depth and shift."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Helpers.lean",
+    "hol_name": "handle_size_def",
+    "lean_name": "handleSize",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source equations in bvl_handle_frontend_probe.out. The original weighted size clauses retain the Handle factor 5, the precise recursive list-size contributions and the Force and Call cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Helpers.lean",
+    "hol_name": "handle_size_def",
+    "lean_name": "handleSizeList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred typed source equations in bvl_handle_frontend_probe.out. The original handle_size1 list clauses use size 1 for nil and 1 plus head and tail size for cons."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/Helpers.lean",
+    "hol_name": "handle_size_non_zero",
+    "lean_name": "handleSize_nonzero",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed replay of the original local proof in bvl_handle_frontend_probe.out: handler size is strictly positive for every BVL expression."
   }
 ]
