@@ -48,3 +48,13 @@ val bv_ok_SUBSET_IMP_replay = prove (``!refs x refs2.
 val _ = show "bv_ok_SUBSET_IMP_replay=" bv_ok_SUBSET_IMP_replay;
 val _ = show "list_to_v_ok=" list_to_v_ok;
 val _ = show "list_to_v_ok_APPEND=" list_to_v_ok_APPEND;
+val _ = show "do_app_refs_SUBSET=" bvlPropsTheory.do_app_refs_SUBSET;
+val _ = show "evaluate_refs_SUBSET=" bvlPropsTheory.evaluate_refs_SUBSET;
+val evaluate_IMP_bv_ok_replay = prove (``!xs env s res t a1 vs.
+  bvlSem$evaluate (xs,env,s) = (res,t) ==>
+  (bv_ok s.refs a1 ==> bv_ok t.refs a1) /\
+  (EVERY (bv_ok s.refs) vs ==> EVERY (bv_ok t.refs) vs)``,
+  REPEAT STRIP_TAC \\ full_simp_tac (srw_ss()) [EVERY_MEM]
+  \\ REPEAT STRIP_TAC \\ RES_TAC
+  \\ IMP_RES_TAC bvlPropsTheory.evaluate_refs_SUBSET \\ IMP_RES_TAC bv_ok_SUBSET_IMP_replay);
+val _ = show "evaluate_IMP_bv_ok_replay=" evaluate_IMP_bv_ok_replay;

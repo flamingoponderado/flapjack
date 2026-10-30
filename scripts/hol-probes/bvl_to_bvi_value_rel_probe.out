@@ -28,3 +28,6 @@ bvi_dec_clock_inv_clock1=(t1 :(α, β) state).clock ≠ (0 :num) ⇒ dec_clock (
 bv_ok_SUBSET_IMP_replay=∀(refs :num |-> v ref) (x :v) (refs2 :num |-> v ref). bv_ok refs x ∧ FDOM refs ⊆ FDOM refs2 ⇒ bv_ok refs2 x
 list_to_v_ok=∀(xs :v list). EVERY (bv_ok (refs :num |-> v ref)) xs ⇒ bv_ok refs (list_to_v xs)
 list_to_v_ok_APPEND=∀(xs :v list) (ys :v list). bv_ok (refs :num |-> v ref) (list_to_v xs) ∧ bv_ok refs (list_to_v ys) ⇒ bv_ok refs (list_to_v (xs ++ ys))
+do_app_refs_SUBSET=(do_app (op :closLang$op) (a :v list) (r :(α, β) bvlSem$state) :(v # (α, β) bvlSem$state, v) result) = (Rval ((q :v),(t :(α, β) bvlSem$state)) :(v # (α, β) bvlSem$state, v) result) ⇒ FDOM r.refs ⊆ FDOM t.refs
+evaluate_refs_SUBSET=(evaluate ((xs :bvl$exp list),(env :v list),(s :(α, β) bvlSem$state)) :(v list, v) result # (α, β) bvlSem$state) = ((res :(v list, v) result),(t :(α, β) bvlSem$state)) ⇒ FDOM s.refs ⊆ FDOM t.refs
+evaluate_IMP_bv_ok_replay=∀(xs :bvl$exp list) (env :v list) (s :(α, β) bvlSem$state) (res :(v list, v) result) (t :(α, β) bvlSem$state) (a1 :v) (vs :v list). (evaluate (xs,env,s) :(v list, v) result # (α, β) bvlSem$state) = (res,t) ⇒ (bv_ok s.refs a1 ⇒ bv_ok t.refs a1) ∧ (EVERY (bv_ok s.refs) vs ⇒ EVERY (bv_ok t.refs) vs)

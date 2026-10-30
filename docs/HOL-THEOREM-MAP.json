@@ -110622,5 +110622,41 @@
     "refs"
   ],
   "reviewer": "Compared with the typed original in bvl_to_bvi_value_rel_probe.out: well-formed encodings of both lists imply well-formedness of their concatenation; no additional premises. The local finite-map parameter witness establishes the canonical lookup roundtrip."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/ApplyRefs.lean",
+  "hol_name": "do_app_refs_SUBSET",
+  "lean_name": "doApp_refs_mono",
+  "reviewer": "Compared the typed original in bvl_to_bvi_value_rel_probe.out: a successful primitive application preserves every key in the source reference domain, including memory updates, constant construction, FFI, thunks and installation. The state uses the canonical refs finite-map roundtrip. The evaluator inherits the floating-point real-carrier representation.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateRefs.lean",
+  "hol_name": "evaluate_refs_SUBSET",
+  "lean_name": "evaluateRefsSubset",
+  "reviewer": "Compared the typed original in bvl_to_bvi_value_rel_probe.out: any returned BVL evaluation result and state preserve the input reference domain. The proof uses the source-shaped clocked evaluator, its established inert clamp and the successful primitive domain theorem; refs use the canonical state roundtrip. The evaluator inherits the floating-point real-carrier representation.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ValueOk.lean",
+  "hol_name": "evaluate_IMP_bv_ok",
+  "lean_name": "evaluateImpBvOk",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared with the typed replay of the local original theorem in bvl_to_bvi_value_rel_probe.out: source evaluation preserves well-formedness of any prior valid value and any prior valid list. Domain growth and bvOkList_iff justify the EVERY formulation; the BVL state uses the canonical refs roundtrip. The evaluator inherits the floating-point real-carrier representation.",
+  "inherits_reals_as_rational_cuts": true
 }
 ]

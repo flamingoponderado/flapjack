@@ -1,8 +1,17 @@
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
+import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateRefs
 
 /-! Domain monotonicity and list values for BVL-to-BVI well-formedness. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value Ref listToValue)
+
+namespace ValueEvaluationCarrier
+/-- Canonical BVL reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end ValueEvaluationCarrier
 
 private def toBroad (refs : HolFiniteMapExact Nat (Ref Value)) : Nat → Option (Ref Value) := refs.lookup
 private def ofBroad (lookup : Nat → Option (Ref Value))
@@ -90,5 +99,20 @@ theorem listToValue_ok_append (refs : HolFiniteMapExact Nat (Ref Value)) (xs ys 
   rcases List.mem_append.mp member with inX | inY
   · exact xok value inX
   · exact yok value inY
+
+/-- Evaluation preserves well-formedness of values that were already valid
+in the input reference domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_IMP_bv_ok"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateImpBvOk {C F : Type} (expressions : List Bvl.Exp) (env : List Value)
+    (source target : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (value : Value) (values : List Value)
+    (run : BvlSem.evaluateTuple (expressions, env, source) = (result, target)) :
+    (bvOk source.refs value → bvOk target.refs value) ∧
+      (bvOkList source.refs values → bvOkList target.refs values) := by
+  have subset := BvlProps.evaluateRefsSubset expressions env source target result run
+  exact ⟨fun ok => bvOk_domain_mono source.refs value target.refs ok subset,
+    fun ok => bvOkList_domain_mono source.refs values target.refs ok subset⟩
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

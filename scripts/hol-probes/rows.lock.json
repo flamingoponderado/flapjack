@@ -111,7 +111,7 @@
     {"bytes": 8071, "out": "bvl_to_bvi_compile_probe.out", "rows": 11, "sha256": "4ded90a991a6eca3a99f16daef8c6840d3d9458b962ef231b1259cfd314b16e3"},
     {"bytes": 808, "out": "bvl_to_bvi_config_probe.out", "rows": 11, "sha256": "83f2b048e742b8aa20fd372ef07f386f03d885bd857bee655ee00e5a675f0596"},
     {"bytes": 910, "out": "bvl_to_bvi_default_probe.out", "rows": 11, "sha256": "1201a0bda2efb4420a1bf8d3bb50db918f8f3f2a191fb195c23deae9d2b7a6d3"},
-    {"bytes": 11359, "out": "bvl_to_bvi_value_rel_probe.out", "rows": 30, "sha256": "554ec04cbb7c4348e8f8b3427df38030fb038708aac35b289b10a54cdefeabc1"},
+    {"bytes": 12166, "out": "bvl_to_bvi_value_rel_probe.out", "rows": 33, "sha256": "10beaab0243c5deffd91fd8ba6c13843e204c0d01b8cdc784070cc03100e3913"},
     {"bytes": 50, "out": "byte_align_probe.out", "rows": 5, "sha256": "ba826808f31edd34c54e4f69e91dfdebf3fe41f9c3673bd5e242fd43039fe0bd"},
     {"bytes": 2288, "out": "byte_copy_word_probe.out", "rows": 1, "sha256": "8ba5411492627a5a94c7d5e483b8418e932b6f32d9b4b9e3b56ce1dd7fc4a262"},
     {"bytes": 5905, "out": "byte_decoder_native_probe.out", "rows": 256, "sha256": "44f3bbd0a7bc444cf7ba72c8285ad9ca1771eb83bcd2724b46c2a7c66126215f"},
