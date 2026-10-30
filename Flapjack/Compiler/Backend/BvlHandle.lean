@@ -107,18 +107,43 @@ def simplifyBounded (fuel : Nat) (e : Exp) : Option Exp :=
 
 private def zero : Exp := .op (.intOp (.const 0)) []
 
+/-- Avoid introducing an empty let. -/
+@[hol "cakeml/compiler/backend/bvl_handleScript.sml" "SmartLet_def"]
+def smartLet (xs : List Exp) (body : Exp) : Exp :=
+  if xs.isEmpty then body else .let xs body
+
 /-- Construct the source pass's environment-packing lets. -/
-def letLet (envSize : Nat) (live : NumSet) (body : Exp) : Exp :=
+@[hol "cakeml/compiler/backend/bvl_handleScript.sml" "LetLet_def"]
+def letLet {α : Type} (envSize : Nat) (live : Spt α) (body : Exp) : Exp :=
   let retained := (List.range envSize).filter fun n => (sptLookup n live).isSome
   let mapping := retained.zip (List.range retained.length)
   let long := (List.range envSize).map fun n =>
     match mapping.lookup n with | some k => .var k | none => zero
-  .let (retained.map .var) (if long.isEmpty then body else .let long body)
+  .let (retained.map .var) (smartLet long body)
 
-private def optionalLetLet (e : Exp) (env : Nat) (live : DbVarSet) (size limit : Nat)
+/-- Cut a singleton compilation result at the source pass's size limit. -/
+@[hol "cakeml/compiler/backend/bvl_handleScript.sml" "OptionalLetLet_sing_def"]
+def optionalLetLetSing (e : Exp) (env : Nat) (live : DbVarSet) (size limit : Nat)
     (noRaise : Bool) : Exp × DbVarSet × Nat × Bool :=
   if size < limit then (e, live, size, noRaise)
   else (.let [] (letLet env (dbToSet live) e), varsFlatten live, 0, noRaise)
+
+/-- List-valued form of the source pass's optional cut. -/
+@[hol "cakeml/compiler/backend/bvl_handleScript.sml" "OptionalLetLet_def"]
+def optionalLetLet (e : Exp) (env : Nat) (live : DbVarSet) (size limit : Nat)
+    (noRaise : Bool) : List Exp × DbVarSet × Nat × Bool :=
+  if size < limit then ([e], live, size, noRaise)
+  else ([.let [] (letLet env (dbToSet live) e)], varsFlatten live, 0, noRaise)
+
+/-- The list-valued optional cut is the singleton lift of its executed form. -/
+@[hol "cakeml/compiler/backend/bvl_handleScript.sml" "OptionalLetLet_sing_eq"]
+theorem optionalLetLetSing_eq (e : Exp) (env : Nat) (live : DbVarSet)
+    (size limit : Nat) (noRaise : Bool) :
+    optionalLetLet e env live size limit noRaise =
+      (fun (d, l, s, nr) => ([d], l, s, nr))
+        (optionalLetLetSing e env live size limit noRaise) := by
+  simp only [optionalLetLet, optionalLetLetSing]
+  split <;> rfl
 
 mutual
   /-- Compile a single simplified expression with live-variable accounting. -/
@@ -134,12 +159,12 @@ mutual
           let (x, lx, sx, nx) ← visit x
           let (y, ly, sy, ny) ← visit y
           let (z, lz, sz, nz) ← visit z
-          pure (optionalLetLet (.ifThenElse x y z) env (mkUnion lx (mkUnion ly lz)) (sx + sy + sz + 1) limit (nx && ny && nz))
+          pure (optionalLetLetSing (.ifThenElse x y z) env (mkUnion lx (mkUnion ly lz)) (sx + sy + sz + 1) limit (nx && ny && nz))
       | .let [] body => visit body
       | .let xs body =>
           let (ys, lx, sx, nx) ← children xs
           let (body, ly, sy, ny) ← compileFuel fuel limit (env + xs.length) body
-          pure (optionalLetLet (.let ys body) env (mkUnion lx (.shift xs.length ly)) (sx + sy + 1) limit (nx && ny))
+          pure (optionalLetLetSing (.let ys body) env (mkUnion lx (.shift xs.length ly)) (sx + sy + 1) limit (nx && ny))
       | .handle x y =>
           let (x, lx, sx, nx) ← visit x
           if nx then return (x, lx, sx, true)
@@ -147,18 +172,18 @@ mutual
           pure (.handle (letLet env (dbToSet lx) x) y, mkUnion lx (.shift 1 ly), sy, ny)
       | .raise x =>
           let (x, live, size, _) ← visit x
-          pure (optionalLetLet (.raise x) env live (size + 1) limit false)
+          pure (optionalLetLetSing (.raise x) env live (size + 1) limit false)
       | .op op xs =>
           let (xs, live, size, nr) ← children xs
           match op with
           | .thunkOp .forceThunk => pure (.op op xs, live, size + 1, false)
-          | _ => pure (optionalLetLet (.op op xs) env live (size + 1) limit nr)
+          | _ => pure (optionalLetLetSing (.op op xs) env live (size + 1) limit nr)
       | .tick x =>
           let (x, live, size, nr) ← visit x
           pure (.tick x, live, size, nr)
       | .call ticks dest xs =>
           let (xs, live, size, _) ← children xs
-          pure (optionalLetLet (.call ticks dest xs) env live (size + 1) limit false)
+          pure (optionalLetLetSing (.call ticks dest xs) env live (size + 1) limit false)
 
   /-- Compile expression lists, retaining the source's union order. -/
   def compileListFuel : Nat → Nat → Nat → List Exp → Option (List Exp × DbVarSet × Nat × Bool)

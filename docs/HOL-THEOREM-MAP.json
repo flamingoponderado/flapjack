@@ -109653,5 +109653,45 @@
     "statement_status": "reviewed_exact",
     "lean_name": "makeHandle",
     "reviewer": "Compared the complete typed nested dest_handle_Raise, dest_handle_Let and dest_handle_If equation with every direct-pattern branch; makeHandle_source_equation kernel-checks the equality to that original nested recognizer form. Termination uses the original handle_size body-plus-handler measure. The executed bounded traversal is shown equal to this source traversal in SimplifyProduction."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle.lean",
+    "hol_name": "SmartLet_def",
+    "lean_name": "smartLet",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original equation in bvl_handle_frontend_probe.out: an empty list returns the body, otherwise the same list and body form a Let. The executed environment packer uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle.lean",
+    "hol_name": "LetLet_def",
+    "lean_name": "letLet",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original equation and polymorphic sparse-tree payload in bvl_handle_frontend_probe.out. letLet_source_equation proves that the executed zip with a range matches the original indexed map, including the retained variables, association lookup, zero defaults and SmartLet."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle.lean",
+    "hol_name": "OptionalLetLet_sing_def",
+    "lean_name": "optionalLetLetSing",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed original equation in bvl_handle_frontend_probe.out. Both branches, limit comparison, db_to_set, ordered tree enumeration and vars_from_list, reset size and no-raise flag match. varsFlatten expands to the original composition; the executable compiler calls this singleton form."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle.lean",
+    "hol_name": "OptionalLetLet_def",
+    "lean_name": "optionalLetLet",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed original equation in bvl_handle_frontend_probe.out: the expressions are singleton lists in both branches and all other components agree with the singleton form. varsFlatten expands to the source's db_to_set, toAList, FST and vars_from_list composition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlHandle.lean",
+    "hol_name": "OptionalLetLet_sing_eq",
+    "lean_name": "optionalLetLetSing_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original statement in bvl_handle_frontend_probe.out: the list-valued cut equals the singleton lift of the four components of the singleton cut, with all parameters unrestricted."
   }
 ]

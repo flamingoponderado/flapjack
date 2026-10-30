@@ -24,6 +24,11 @@ val _ = show "dest_handle_If=" bvl_handleTheory.dest_handle_If_def;
 val _ = show "handle_adj_vars=" bvl_handleTheory.handle_adj_vars_def;
 val _ = show "handle_size=" bvl_handleTheory.handle_size_def;
 val _ = show "handle_simp=" bvl_handleTheory.handle_simp_def;
+val _ = show "SmartLet=" bvl_handleTheory.SmartLet_def;
+val _ = show "LetLet=" bvl_handleTheory.LetLet_def;
+val _ = show "OptionalLetLet=" bvl_handleTheory.OptionalLetLet_def;
+val _ = show "OptionalLetLet_sing=" bvl_handleTheory.OptionalLetLet_sing_def;
+val _ = show "OptionalLetLet_sing_eq=" bvl_handleTheory.OptionalLetLet_sing_eq;
 load "preamble";
 open preamble bvl_handleTheory;
 val handle_size_non_zero_replay = prove (``0 < handle_size x``,
