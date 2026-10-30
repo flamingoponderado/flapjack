@@ -1,5 +1,12 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "do_word_app_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Word.lean", "lean_name": "doWordApp",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared all typed source branches in bvl_sem_values_probe.out: byte and word64 operations, tests, shifts, conversions, floating-point operations and malformed-operand fallback agree. intToByte_iff proves the decoder precisely captures the source unique word8 condition; applyWordOp and fixed-width shifts implement the original operations. Floating-point correspondence inherits the documented HOL real-carrier assumptions."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "fix_clock_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/State.lean", "lean_name": "fixClock",
     "statement_status": "reviewed_fmap_as_finite_support",

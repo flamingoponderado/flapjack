@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
 
 /-! Kernel replay of representative original BVL semantic observations. -/
@@ -70,5 +71,11 @@ example : destThunk (.refPtr true 1) sampleThunk = .badRef := by
 example : destThunk (.refPtr false 1) Flapjack.HolFiniteMapExact.empty = .badRef := by
   simp [destThunk, Flapjack.HolFiniteMapExact.empty]
 example : destThunk (.number 1) Flapjack.HolFiniteMapExact.empty = .notThunk := by simp [destThunk]
+
+example : doWordApp (.wordOpw .w8 .add) [.number 255, .number 2] = some (.number 1) := by
+  rfl
+example : doWordApp (.wordOpw .w8 .add) [.number 256, .number 2] = none := by rfl
+example : doWordApp (.wordFromWord true) [.word64 511] = some (.number 255) := by rfl
+example : doWordApp .wordFromInt [.number (-1)] = some (.word64 (-1)) := by rfl
 
 end Flapjack.Test.BvlSemValuesParity

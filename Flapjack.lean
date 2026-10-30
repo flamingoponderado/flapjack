@@ -457,9 +457,11 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceCompile
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Integer
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Word
 import Flapjack.Test.ClosToBvlRecursive
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
 import Flapjack.Compiler.Backend.Semantics.BvlSem.State
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Call

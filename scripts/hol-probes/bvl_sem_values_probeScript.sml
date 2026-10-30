@@ -78,3 +78,13 @@ val _ = example "thunk_missing=" ``bvlSem$dest_thunk (bvlSem$RefPtr F 1) FEMPTY`
 val _ = example "thunk_nonref=" ``bvlSem$dest_thunk (bvlSem$Number 1) FEMPTY``;
 val _ = show "fix_clock=" bvlSemTheory.fix_clock_def;
 val _ = typ "fix_clock_type=" ``bvlSem$fix_clock``;
+val _ = show "word_app=" bvlSemTheory.do_word_app_def;
+val _ = typ "word_app_type=" ``bvlSem$do_word_app``;
+val _ = example "word8_add=" ``bvlSem$do_word_app (closLang$WordOpw W8 Add)
+  [bvlSem$Number 255; bvlSem$Number 2]``;
+val _ = example "word8_invalid=" ``bvlSem$do_word_app (closLang$WordOpw W8 Add)
+  [bvlSem$Number 256; bvlSem$Number 2]``;
+val _ = example "word64_to_byte=" ``bvlSem$do_word_app (closLang$WordFromWord T)
+  [bvlSem$Word64 (511w:word64)]``;
+val _ = example "word64_from_negative=" ``bvlSem$do_word_app closLang$WordFromInt
+  [bvlSem$Number (~1)]``;
