@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordToWord.ExecutableCompile
 import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
+import Flapjack.Compiler.Backend.LinearScan.ProductionTopLevel
 
 /-! Allocator-parametric executable word-to-word compilation.
 

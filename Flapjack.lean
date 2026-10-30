@@ -602,6 +602,8 @@ import Flapjack.Compiler.Backend.LinearScan.ProductionIntervals
 import Flapjack.Test.LinearScanProductionIntervals
 import Flapjack.Compiler.Backend.LinearScan.ProductionSorting
 import Flapjack.Test.LinearScanProductionSorting
+import Flapjack.Compiler.Backend.LinearScan.ProductionTopLevel
+import Flapjack.Test.LinearScanProductionTop
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.SecLabelOk
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory

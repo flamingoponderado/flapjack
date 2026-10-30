@@ -425,16 +425,15 @@ python3 scripts/check-cake-linear-scan-parity.py --reference /var/tmp/flapjack-p
 
 The script accepts `--alg` and
 `--input` for other settings and source programs. A sampled `--reg_alg=5` run
-on `val x = 1;` took about 69–101 seconds in Flapjack and 0.25–0.46 seconds in
-the pinned compiler; both emitted the same 521,616 bytes. A debugger sample found the
-Flapjack worker in repeated list-backed `mUpdate` calls. Two kernel-equal local
-update replacements preserved output but did not improve that end-to-end time,
-so the executed implementation was left unchanged. The array-backed state and
-interval construction and sorting in `LinearScan/ProductionState.lean`,
-`LinearScan/ProductionIntervals.lean`, and `LinearScan/ProductionSorting.lean`
-are proved to simulate the list-backed operations, including failure states.
-They are preparation for a faster
-allocator; the compiler does not yet execute them. Separate
+on `val x = 1;` took about 11 seconds in Flapjack and 0.44 seconds in the
+pinned compiler; both emitted the same 521,616 bytes. Previous list-backed runs
+took about 69–101 seconds. The array-backed implementation in
+`LinearScan/ProductionState.lean`, `ProductionIntervals.lean`,
+`ProductionSorting.lean`, `ProductionSteps.lean`, and `ProductionTopLevel.lean`
+has a kernel-checked equality to the list-backed allocator, including errors.
+Compiled word-to-word callers use this implementation through that equality;
+the logical allocator definition remains list-backed. A full-prelude linear-scan
+case is also recorded in the pinned CLI suite. Separate
 `--gc` cases compare no GC, simple GC, generational lists, duplicate options,
 and malformed options.
 The suite also checks ignored unrecognized arguments, including the short `-h`
