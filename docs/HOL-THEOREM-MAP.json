@@ -108953,7 +108953,7 @@
     "hol_name": "is_small_sing_def",
     "lean_name": "isSmallSing",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared all typed is_small_sing_def equations in bvl_inline_state_rel_probe.out: exact BVL constructors, natural subtraction, left-to-right checks and immediate exit at zero; variables, Force and Tick cost no budget. This proof-side port is not yet proved equal to the production bounded traversal."
+    "reviewer": "Compared all typed is_small_sing_def equations in bvl_inline_state_rel_probe.out: exact BVL constructors, natural subtraction, left-to-right checks and immediate exit at zero; variables, Force and Tick cost no budget. Proofs.SmallProduction proves that the executed bounded traversal returns the same result for every input."
   },
   {
     "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
@@ -108985,6 +108985,6 @@
     "hol_name": "is_small_def",
     "lean_name": "isSmall",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared typed is_small_def in bvl_inline_state_rel_probe.out: the Boolean test is nonzero remaining singleton budget, equal to the original auxiliary-list test by isSmallSing_equivalence. Production routing remains open."
+    "reviewer": "Compared typed is_small_def in bvl_inline_state_rel_probe.out: the Boolean test is nonzero remaining singleton budget, equal to the original auxiliary-list test by isSmallSing_equivalence. Proofs.SmallProduction proves the executed size budget agrees for every input; the full must_inline predicate still requires its recursion-check correspondence."
   }
 ]

@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.BvlInline.Proofs.SmallTotal
 
 /-! Total source-shaped size check for BVL inlining. The production bounded
-size traversal has not yet been proved equal to these definitions. -/
+traversal is proved equal in `Proofs.SmallProduction`. -/
 namespace Flapjack.Compiler.Backend.BvlInline
 open Bvl
 
