@@ -57,6 +57,16 @@ def stateRel {C F : Type} (relocate : Nat → Nat)
       auxCodeInstalled (appListAppend aux) target.code ∧
       BvlHandle.Proofs.handleOk [body]
 
+/-- Matching clock decrements preserve the state relation. This is Flapjack
+infrastructure derived from the source relation's unchanged fields. -/
+theorem stateRel_decClock {C F : Type} (relocate : Nat → Nat)
+    (source : BvlSem.State (Nat × C) F) (target : BviSem.BviState C F)
+    (related : stateRel relocate source target) (n : Nat) :
+    stateRel relocate (BvlSem.decClock n source) (BviSem.decClock n target) := by
+  simp only [stateRel, BvlSem.decClock, BviSem.decClock] at related ⊢
+  exact ⟨related.1, related.2.1, related.2.2.1,
+    congrArg (fun clock => clock - n) related.2.2.2.1, related.2.2.2.2⟩
+
 /-- Related byte-array cells are unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "state_rel_FLOOKUP_byteArray"
   (fmap_as_finite_support_relation := [State.refs, BviState.refs])]

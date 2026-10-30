@@ -110577,5 +110577,16 @@
     "refs"
   ],
   "reviewer": "Compared the typed original in bvl_to_bvi_value_rel_probe.out: incrementing a polymorphic BVI state by zero returns that state, with the canonical refs roundtrip."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviPropsScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviProps/Clock.lean",
+  "hol_name": "dec_clock_inv_clock1",
+  "lean_name": "decClock_incClock_one",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared the typed original in bvl_to_bvi_value_rel_probe.out: an arbitrary polymorphic BVI state with nonzero clock and any natural allowance has the same state after decrementing one before or after incrementing. The canonical refs state witness covers the sole finite-map carrier."
 }
 ]

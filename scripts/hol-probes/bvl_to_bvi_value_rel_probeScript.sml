@@ -40,3 +40,4 @@ val _ = show "bv_ok_Unit=" bv_ok_Unit;
 val _ = show "state_ok_def=" state_ok_def;
 val _ = show "bvi_inc_clock_def=" bviPropsTheory.inc_clock_def;
 val _ = show "bvi_inc_clock_ZERO=" bviPropsTheory.inc_clock_ZERO;
+val _ = show "bvi_dec_clock_inv_clock1=" bviPropsTheory.dec_clock_inv_clock1;

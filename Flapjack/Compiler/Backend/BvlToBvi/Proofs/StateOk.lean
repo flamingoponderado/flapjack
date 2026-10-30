@@ -22,4 +22,9 @@ def stateOk {C F : Type} (s : Flapjack.Compiler.Backend.BvlSem.State C F) : Prop
     | some (.thunk _ value) => bvOk s.refs value
     | _ => True
 
+/-- Clock decrement does not affect source value well-formedness. This is the
+well-formedness part of the source's local clock lemma. -/
+theorem stateOk_decClock {C F : Type} (n : Nat) (s : BvlSem.State C F) :
+    stateOk (BvlSem.decClock n s) ↔ stateOk s := Iff.rfl
+
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

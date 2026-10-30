@@ -24,3 +24,4 @@ bv_ok_Unit=bv_ok (refs :num |-> v ref) Unit
 state_ok_def=∀(s :(γ, 'ffi) bvlSem$state). state_ok s ⇔ EVERY (λ(x :v option). case x of (NONE :v option) => T | SOME v => bv_ok s.refs v) s.globals ∧ ∀(k :num). case FLOOKUP s.refs k of (NONE :v ref option) => T | SOME (ValueArray vs :v ref) => EVERY (bv_ok s.refs) vs | SOME (ByteArray v14 v15 :v ref) => T | SOME (Thunk v16 v :v ref) => bv_ok s.refs v | SOME (MutBlock v18 v19 v20 v21 v22) => T
 bvi_inc_clock_def=∀(n :num) (s :(γ, 'ffi) state). inc_clock n s = s with clock := s.clock + n
 bvi_inc_clock_ZERO=∀(s :(α, β) state). inc_clock (0 :num) s = s
+bvi_dec_clock_inv_clock1=(t1 :(α, β) state).clock ≠ (0 :num) ⇒ dec_clock (1 :num) (inc_clock (c :num) t1) = inc_clock c (dec_clock (1 :num) t1)
