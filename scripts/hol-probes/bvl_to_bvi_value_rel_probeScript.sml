@@ -62,3 +62,10 @@ val _ = show "find_code_bv_ok=" find_code_bv_ok;
 val _ = show "do_build_ok=" do_build_ok;
 val _ = show "do_app_ok=" do_app_ok;
 val _ = show "evaluate_ok=" evaluate_ok;
+val bv_ok_IMP_adjust_bv_eq_replay = prove (``!b2 a1 b3.
+  bv_ok refs a1 /\ (!a. a IN FDOM refs ==> b2 a = b3 a) ==>
+  adjust_bv b2 a1 = adjust_bv b3 a1``,
+  HO_MATCH_MP_TAC adjust_bv_ind
+  \\ REPEAT STRIP_TAC \\ full_simp_tac(srw_ss())[adjust_bv_def,bv_ok_def]
+  \\ full_simp_tac(srw_ss())[MAP_EQ_f,EVERY_MEM]);
+val _ = show "bv_ok_IMP_adjust_bv_eq_replay=" bv_ok_IMP_adjust_bv_eq_replay;

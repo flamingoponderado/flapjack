@@ -110933,5 +110933,16 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the complete typed original in bvl_to_bvi_value_rel_probe.out: evaluation equality, initial state well-formedness and EVERY of the environment imply final state well-formedness, the original result-case predicate (normal list, raised value, other errors), and EVERY of the original environment in the final reference domain. Independent compiler and FFI state types are retained. bvOkList_iff relates the source EVERY predicate, and evaluateTuple is the reviewed source-shaped clocked evaluator. The local canonical state roundtrip covers refs; evaluation inherits the floating-point real-carrier representation. The proof assembles all expression cases using clock-and-size induction and the complete do_app_ok theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/RelocationOk.lean",
+  "hol_name": "bv_ok_IMP_adjust_bv_eq",
+  "lean_name": "adjustBv_eq_of_ok",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "refs"
+  ],
+  "reviewer": "Compared the typed original local theorem replay in bvl_to_bvi_value_rel_probe.out: arbitrary relocation functions agreeing on every key in the given reference domain yield equal adjusted well-formed values. The quantifier order and both premises match; the local canonical finite-map parameter witness establishes the lookup roundtrip. The proof recurses through nested blocks and reference pointers."
 }
 ]

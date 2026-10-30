@@ -576,6 +576,8 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Names
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.StateRel
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ValueOk
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.RelocationOk
+import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyCode
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BuildOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ApplyOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.GlobalOk
