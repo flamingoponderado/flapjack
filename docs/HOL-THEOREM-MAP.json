@@ -1,5 +1,11 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_prog_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "compileProg_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2434-2443 and inferred types in flat_to_clos_globals_probe.out. The EVERY source premise, no_Mat_decs premise and EVERY closure conclusion retain the original carriers; membership quantification expresses EVERY and no_Mat_decs is represented as Bool equal to true. The attached interpreter initializer is safe in both installation branches, including the interpreter body."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "compile_esgcFree",
     "statement_status": "reviewed_exact",

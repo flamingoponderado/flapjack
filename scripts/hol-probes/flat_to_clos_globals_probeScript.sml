@@ -16,3 +16,4 @@ val _ = show "compile_decs_globals=" flat_to_closProofTheory.compile_decs_set_gl
 val _ = show "compile_eq_globals=" flat_to_closProofTheory.compile_eq_set_globals;
 val _ = show "compile_esgc=" flat_to_closProofTheory.compile_esgc_free;
 val _ = show "compile_decs_esgc=" flat_to_closProofTheory.compile_decs_esgc_free;
+val _ = show "compile_prog_esgc=" flat_to_closProofTheory.compile_prog_esgc_free;

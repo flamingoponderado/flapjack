@@ -495,7 +495,7 @@ run_probe bignum_mini_probeScript.sml bignum_mini_probe.out \
 run_probe bignum_mini_types_probeScript.sml bignum_mini_types_probe.out \
   skip assign delete seq load store if swap add sub mul div loop continue rec loop_body "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 run_probe flat_to_clos_globals_probeScript.sml flat_to_clos_globals_probe.out \
-  op_globals set_globals esgc_free elist_globals_empty smartcons_globals smartcons_esgc bag_image_definition compile_globals compile_decs_globals compile_eq_globals compile_esgc compile_decs_esgc \
+  op_globals set_globals esgc_free elist_globals_empty smartcons_globals smartcons_esgc bag_image_definition compile_globals compile_decs_globals compile_eq_globals compile_esgc compile_decs_esgc compile_prog_esgc \
   "$cake_dir/compiler/backend/proofs/flat_to_closProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe backend_oracle_monotonic_probeScript.sml backend_oracle_monotonic_probe.out \

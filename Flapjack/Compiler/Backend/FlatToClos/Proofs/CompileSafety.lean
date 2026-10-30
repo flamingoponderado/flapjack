@@ -146,4 +146,28 @@ theorem compileDecs_esgcFree (ds : List FlatLang.Exp)
   apply compile_esgcFree [] ds
   exact ⟨premises.1, (noMatList_iff ds).mp (by simpa [FlatProps.noMatDecs_eq_noMatList] using premises.2)⟩
 
+private theorem interpreterNoWrites :
+    ClosProps.setGlobals ClosInterp.closInterpreter = emptyGlobalBag := by
+  funext key
+  simp [ClosInterp.closInterpreter, ClosInterp.closInterpreterBody,
+    ClosInterp.closInterpEl, ClosInterp.closInterpRev,
+    ClosInterp.interpreterVar_eq, ClosInterp.interpreterGetEl_eq,
+    ClosInterp.interpreterCons_eq, ClosInterp.interpreterApp_eq,
+    ClosInterp.interpreterCall_eq, ClosInterp.interpreterCallList_eq,
+    ClosInterp.interpreterIsCase_eq, ClosProps.setGlobals, ClosProps.elistGlobals,
+    ClosProps.funGlobals, ClosProps.opGlobalBag, unionGlobalBag, emptyGlobalBag]
+
+private theorem compileInit_safe (b : Bool) : ClosProps.esgcFree (ClosInterp.compileInit b) := by
+  cases b <;> simp [ClosInterp.compileInit, ClosInterp.interpreterCons_eq,
+    ClosInterp.interpreterVar_eq, ClosProps.esgcFree, ClosProps.esgcFreeList,
+    interpreterNoWrites]
+
+/-- Interpreter attachment preserves the closure-safety invariant. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_prog_esgc_free"]
+theorem compileProg_esgcFree (ds : List FlatLang.Exp)
+    (premises : (∀ e ∈ ds, FlatProps.esgcFree e) ∧ FlatProps.noMatDecs ds = true) :
+    ∀ e ∈ compileProg ds, ClosProps.esgcFree e := by
+  have safe := compileDecs_esgcFree ds premises
+  simpa [compileProg, ClosInterp.attachInterpreter, compileInit_safe] using safe
+
 end Flapjack.Compiler.Backend.FlatToClos

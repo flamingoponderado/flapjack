@@ -10,3 +10,4 @@ compile_decs_globals=∀(decs :exp list). no_Mat_decs decs ⇒ elist_globals (co
 compile_eq_globals=compile (m :mlstring option list) (exps :exp list) = (exps' :closLang$exp list) ∧ EVERY no_Mat exps ⇒ elist_globals exps' = BAG_IMAGE SUC (elist_globals exps)
 compile_esgc=∀(m :mlstring option list) (e :exp list). EVERY esgc_free e ∧ EVERY no_Mat e ⇒ EVERY esgc_free (compile m e)
 compile_decs_esgc=∀(decs :exp list). EVERY esgc_free decs ∧ no_Mat_decs decs ⇒ EVERY esgc_free (compile_decs decs)
+compile_prog_esgc=∀(decs :exp list). EVERY esgc_free decs ∧ no_Mat_decs decs ⇒ EVERY esgc_free (compile_prog decs)
