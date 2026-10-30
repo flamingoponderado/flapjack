@@ -39,3 +39,5 @@ val _ = show_thm "globals_decode_test=" flat_patternProofTheory.set_globals_deco
 val _ = show_thm "globals_decode_guard=" flat_patternProofTheory.set_globals_decode_guard;
 val _ = show_thm "globals_bindings=" flat_patternProofTheory.set_globals_compile_pat_bindings;
 val _ = show_thm "globals_naive_match=" flat_patternProofTheory.set_globals_naive_pattern_match;
+val _ = show_thm "globals_naive_matches=" flat_patternProofTheory.set_globals_naive_pattern_matches;
+val _ = show_thm "globals_compile_pats=" flat_patternProofTheory.set_globals_compile_pats;

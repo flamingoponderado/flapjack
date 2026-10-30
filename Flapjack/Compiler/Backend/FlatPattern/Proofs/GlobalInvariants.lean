@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.NoMat
-import Flapjack.Compiler.Backend.FlatProps.Globals
+import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
 import Mathlib.Tactic.SplitIfs
 
 /-! Global-initialization safety of generated pattern decision expressions. -/
@@ -407,6 +407,39 @@ theorem setGlobals_naivePatternMatch (t : Tra) (xs : List (FlatLang.Pat × FlatL
   intro p e member
   exact safe (p, e) member
 
+private theorem setGlobals_smartIf_le (t : Tra) (c x y : FlatLang.Exp) (key : Nat) :
+    setGlobals (smartIf t c x y) key ≤
+      setGlobals c key + setGlobals x key + setGlobals y key := by
+  cases c <;> simp [smartIf, setGlobals, unionGlobalBag]
+  case con t tag args =>
+    cases tag <;> cases args <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag]
+    case some.nil pair =>
+      obtain ⟨tag, typ⟩ := pair
+      cases typ <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag]
+      all_goals split_ifs <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag]
+
+/-- The generated naive branch chain cannot add global writes. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_naive_pattern_matches"]
+theorem setGlobals_naivePatternMatches (t : Tra) (x : FlatLang.Exp)
+    (ps : List (FlatLang.Pat × FlatLang.Exp)) (dflt : FlatLang.Exp)
+    (safe : setGlobals x = emptyGlobalBag) :
+    ∀ key, setGlobals (naivePatternMatches t x ps dflt) key ≤
+      elistGlobals (dflt :: ps.map Prod.snd) key := by
+  intro key
+  induction ps with
+  | nil => simp [naivePatternMatches, elistGlobals, unionGlobalBag, emptyGlobalBag]
+  | cons row rest ih =>
+    obtain ⟨p, body⟩ := row
+    have guardSafe : setGlobals (naivePatternMatch t [(p, x)]) = emptyGlobalBag := by
+      apply setGlobals_naivePatternMatch
+      simp [safe]
+    have bound := setGlobals_smartIf_le t (naivePatternMatch t [(p, x)]) body
+      (naivePatternMatches t x rest dflt) key
+    simp only [naivePatternMatches]
+    simp only [guardSafe, emptyGlobalBag, Nat.zero_add] at bound
+    simp only [List.map_cons, elistGlobals, unionGlobalBag] at ih ⊢
+    omega
+
 private theorem setGlobals_patternEntries (trace : Tra) (base start : Nat) (patterns : List FlatLang.Pat) :
     ∀ pattern index expression,
       (pattern, index, expression) ∈ (patternEntries trace base start patterns).map Prod.snd →
@@ -542,6 +575,27 @@ theorem esgcFree_decodeDtree (trace : Tra) (branches : Spt FlatLang.Exp) (value 
     · exact ihNo
     · exact esgcFree_smartIf trace _ _ _ (esgcFree_decodeGuard trace value _ valueSafe) ihYes ihNo
 
+/-- Decoding a decision tree preserves empty global bags when every reachable
+branch and the default are global-write-free. -/
+theorem setGlobals_decodeDtree_aux (trace : Tra) (branches : Spt FlatLang.Exp) (value default : FlatLang.Exp) (tree : DTree)
+    (valueSafe : setGlobals value = emptyGlobalBag) (defaultSafe : setGlobals default = emptyGlobalBag)
+    (branchesSafe : ∀ index branch, sptLookup index branches = some branch → setGlobals branch = emptyGlobalBag) :
+    setGlobals (decodeDtree trace branches value default tree) = emptyGlobalBag := by
+  induction tree with
+  | fail => exact defaultSafe
+  | typeFail => simp [decodeDtree, setGlobals]
+  | leaf index =>
+    cases found : sptLookup index branches with
+    | none => simpa [decodeDtree, found] using defaultSafe
+    | some branch => simpa [decodeDtree, found] using branchesSafe index branch found
+  | if_ guard yes no ihYes ihNo =>
+    simp only [decodeDtree]
+    split_ifs
+    · exact ihYes
+    · exact ihNo
+    · exact setGlobals_smartIf trace _ _ _ (setGlobals_decodeGuard trace value _ valueSafe) ihYes ihNo
+
+
 /-- A compiled branch remains global-initialization-safe when its value and body are. -/
 theorem esgcFree_compilePatRhs (trace : Tra) (base : Nat) (value : FlatLang.Exp)
     (pattern : FlatLang.Pat) (body : FlatLang.Exp)
@@ -553,6 +607,13 @@ theorem esgcFree_compilePatRhs (trace : Tra) (base : Nat) (value : FlatLang.Exp)
   obtain ⟨_, _, rfl⟩ := member
   exact valueSafe
 
+
+private theorem setGlobals_compilePatRhs (trace : Tra) (base : Nat) (value : FlatLang.Exp)
+    (pattern : FlatLang.Pat) (body : FlatLang.Exp)
+    (safe : setGlobals value = emptyGlobalBag) :
+    setGlobals (compilePatRhs trace base value (pattern, body)) = setGlobals body := by
+  apply setGlobals_compilePatBindings trace (base + 1) [(pattern, base, value)] body
+  simp [safe]
 
 /-- Every lookup in a branch-table fold is safe if the input tree and all
 inserted expressions are safe. -/
@@ -587,6 +648,85 @@ theorem esgcFree_branchTree (branches : List FlatLang.Exp)
   · intro index branch found
     simp [sptLookup] at found
   · exact branchesSafe
+
+/-- Every lookup in a branch-table fold is safe if the input tree and all
+inserted expressions are safe. -/
+theorem setGlobals_branchFold (branches : List FlatLang.Exp) (start : Nat) (tree : Spt FlatLang.Exp)
+    (treeSafe : ∀ index branch, sptLookup index tree = some branch → setGlobals branch = emptyGlobalBag)
+    (branchesSafe : ∀ branch, branch ∈ branches → setGlobals branch = emptyGlobalBag) :
+    ∀ index branch, sptLookup index (branches.foldl (fun (state : Nat × Spt FlatLang.Exp) item =>
+      (state.1 + 1, sptInsert state.1 item state.2)) (start, tree)).2 = some branch →
+      setGlobals branch = emptyGlobalBag := by
+  induction branches generalizing start tree with
+  | nil => exact treeSafe
+  | cons first rest ih =>
+    simp only [List.foldl_cons]
+    apply ih (start + 1) (sptInsert start first tree)
+    · intro index branch found
+      by_cases equal : index = start
+      · subst index
+        rw [sptLookup_sptInsert_same] at found
+        cases found
+        exact branchesSafe first (by simp)
+      · rw [sptLookup_sptInsert_ne start index first tree equal] at found
+        exact treeSafe index branch found
+    · intro branch member
+      exact branchesSafe branch (by simp [member])
+
+/-- The branch table generated by pattern compilation contains only safe
+expressions when all its inputs are safe. -/
+theorem setGlobals_branchTree (branches : List FlatLang.Exp)
+    (branchesSafe : ∀ branch, branch ∈ branches → setGlobals branch = emptyGlobalBag) :
+    ∀ index branch, sptLookup index (branchTree branches) = some branch → setGlobals branch = emptyGlobalBag := by
+  apply setGlobals_branchFold branches 0 .ln
+  · intro index branch found
+    simp [sptLookup] at found
+  · exact branchesSafe
+
+
+private theorem compiledRows_globals (t : Tra) (i : Nat) (x : FlatLang.Exp)
+    (ps : List (FlatLang.Pat × FlatLang.Exp)) (safe : setGlobals x = emptyGlobalBag) :
+    elistGlobals (List.zip (ps.map Prod.fst) (ps.map (compilePatRhs t i x)) |>.map Prod.snd) =
+      elistGlobals (ps.map Prod.snd) := by
+  induction ps with
+  | nil => rfl
+  | cons row rest ih =>
+    obtain ⟨p, body⟩ := row
+    simp only [List.map_cons, List.zip_cons_cons, elistGlobals]
+    rw [setGlobals_compilePatRhs t i x p body safe, ih]
+
+/-- Pattern compilation bounds global writes by its default and source branches. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_compile_pats"]
+theorem setGlobals_compilePats (cfg : Config) (naive : Bool) (t : Tra) (n : Nat)
+    (x dflt : FlatLang.Exp) (ps : List (FlatLang.Pat × FlatLang.Exp))
+    (safe : (naive = false → elistGlobals (dflt :: ps.map Prod.snd) = emptyGlobalBag) ∧
+      setGlobals x = emptyGlobalBag) :
+    ∀ key, setGlobals (compilePats cfg naive t n x dflt ps) key ≤
+      elistGlobals (dflt :: ps.map Prod.snd) key := by
+  intro key
+  cases naive with
+  | true =>
+    have h := setGlobals_naivePatternMatches t x
+      (List.zip (ps.map Prod.fst) (ps.map (compilePatRhs t n x))) dflt safe.2 key
+    simp only [compilePats, ↓reduceIte]
+    simpa only [elistGlobals, compiledRows_globals t n x ps safe.2] using h
+  | false =>
+    have allEmpty := safe.1 rfl
+    have parts := (elistGlobals_eq_empty (dflt :: ps.map Prod.snd)).mp allEmpty
+    have defaultSafe : setGlobals dflt = emptyGlobalBag := parts dflt (by simp)
+    have branchesSafe : ∀ branch ∈ ps.map (compilePatRhs t n x), setGlobals branch = emptyGlobalBag := by
+      intro branch mem
+      obtain ⟨⟨p, body⟩, hmem, rfl⟩ := List.mem_map.mp mem
+      rw [setGlobals_compilePatRhs t n x p body safe.2]
+      apply parts body
+      simp only [List.mem_cons, List.mem_map]
+      exact Or.inr ⟨(p, body), hmem, rfl⟩
+    have result := setGlobals_decodeDtree_aux t _ x dflt
+      (PatternComp.comp (ps.zipIdx.map fun ((p, _), j) => (encodePat p, j))) safe.2 defaultSafe
+      (setGlobals_branchTree _ branchesSafe)
+    simp only [compilePats, Bool.false_eq_true, ↓reduceIte]
+    rw [result, allEmpty]
+    exact Nat.le_refl _
 
 private theorem esgcFree_zip_right_mem {α β : Type} (xs : List α) (ys : List β) (a : α) (b : β)
     (member : (a, b) ∈ xs.zip ys) : b ∈ ys := by

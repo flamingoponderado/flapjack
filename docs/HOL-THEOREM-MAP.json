@@ -1,5 +1,17 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_naive_pattern_matches",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_naivePatternMatches",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2033-2080 and inferred types captured in flat_pattern_global_flag_probe.out. Global bags have HOL num -> num carrier. The empty scrutinee-bag premise and the bag bound on the naive branch chain match. HOL subbag on num -> num multiplicities is expressed pointwise by forall key."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_compile_pats",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_compilePats",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2033-2080 and inferred types captured in flat_pattern_global_flag_probe.out. Global bags have HOL num -> num carrier. The condition that the branch/default bag is empty when naive is false, together with the empty scrutinee-bag premise, and the original subbag conclusion are preserved. HOL subbag is pointwise natural-number inequality. The checked proof covers the naive and decision-tree branches."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_decode_pos",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_decodePos",
     "statement_status": "reviewed_exact",
