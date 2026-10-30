@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
+import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
 
 /-! Closure expressions for checked byte-copy operations. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -35,5 +36,37 @@ def copyByteAw8 (t : Tra) : ClosLang.Exp :=
         (.op t (.memOp (.copyByte false))
           [.var t 0, .var t 1, .var t 2, .var t 3, .var t 4])
         (subscriptRaise t)))
+
+/-- Flapjack helper: the generated string-copy checks contain no unsafe closure. -/
+theorem copyByteStr_globalSafe (t : Tra) :
+    Flapjack.Compiler.Backend.ClosProps.esgcFree (copyByteStr t) := by
+  simp [copyByteStr, copyChecks, subscriptRaise,
+    Flapjack.Compiler.Backend.ClosProps.esgcFree, Flapjack.Compiler.Backend.ClosProps.esgcFreeList]
+
+/-- Flapjack helper: the generated array-copy checks contain no unsafe closure. -/
+theorem copyByteAw8_globalSafe (t : Tra) :
+    Flapjack.Compiler.Backend.ClosProps.esgcFree (copyByteAw8 t) := by
+  simp [copyByteAw8, copyChecks, subscriptRaise,
+    Flapjack.Compiler.Backend.ClosProps.esgcFree, Flapjack.Compiler.Backend.ClosProps.esgcFreeList]
+
+/-- Flapjack helper: string-copy checks contribute no global writes. -/
+theorem copyByteStr_noGlobals (t : Tra) :
+    Flapjack.Compiler.Backend.ClosProps.setGlobals (copyByteStr t) =
+      Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag := by
+  funext key
+  simp [copyByteStr, copyChecks, subscriptRaise,
+    Flapjack.Compiler.Backend.ClosProps.setGlobals, Flapjack.Compiler.Backend.ClosProps.elistGlobals,
+    Flapjack.Compiler.Backend.ClosProps.opGlobalBag, Flapjack.Compiler.Backend.FlatProps.unionGlobalBag,
+    Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
+
+/-- Flapjack helper: array-copy checks contribute no global writes. -/
+theorem copyByteAw8_noGlobals (t : Tra) :
+    Flapjack.Compiler.Backend.ClosProps.setGlobals (copyByteAw8 t) =
+      Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag := by
+  funext key
+  simp [copyByteAw8, copyChecks, subscriptRaise,
+    Flapjack.Compiler.Backend.ClosProps.setGlobals, Flapjack.Compiler.Backend.ClosProps.elistGlobals,
+    Flapjack.Compiler.Backend.ClosProps.opGlobalBag, Flapjack.Compiler.Backend.FlatProps.unionGlobalBag,
+    Flapjack.Compiler.Backend.FlatProps.emptyGlobalBag]
 
 end Flapjack.Compiler.Backend.FlatToClos
