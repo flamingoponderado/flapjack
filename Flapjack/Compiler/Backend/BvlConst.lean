@@ -1,9 +1,10 @@
 import Flapjack.Compiler.Backend.Bvl.Syntax
+import Flapjack.Compiler.Backend.BvlToBvi.Budget
 
 /-! Fuel-bounded executable version of the BVL constant pass. The original
 total definitions and their correctness proofs remain to be ported. -/
 namespace Flapjack.Compiler.Backend.BvlConst
-open Bvl
+open Bvl BvlToBvi
 open ClosLang (Op)
 
 private def const (n : Int) : Exp := .op (.intOp (.const n)) []
@@ -120,7 +121,8 @@ private def extract (e : Exp) (restLength : Nat) : Option Exp :=
   | .op (.blockOp (.cons t)) [] => some (.op (.blockOp (.cons t)) [])
   | _ => none
 
-private def extractList : List Exp → List (Option Exp)
+/-- Build the constant environment contributed by a list of let bindings. -/
+def extractList : List Exp → List (Option Exp)
   | [] => []
   | x :: xs => extract x xs.length :: extractList xs
 
@@ -160,5 +162,12 @@ def compileFuel : Nat → List (Option Exp) → Exp → Option Exp
           | some (some (.var i)) => some (.force loc (v + i))
           | _ => some (.force loc v)
       | .call t dest xs => do pure (.call t dest (← xs.mapM visit))
+
+/-- Preserve a successful constant-folding traversal and retry exhaustion
+with a structural budget. -/
+def compileBounded (fuel : Nat) (env : List (Option Exp)) (e : Exp) : Option Exp :=
+  match compileFuel fuel env e with
+  | some result => some result
+  | none => compileFuel (max fuel (expBudget e + 1)) env e
 
 end Flapjack.Compiler.Backend.BvlConst

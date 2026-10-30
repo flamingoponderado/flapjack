@@ -1,11 +1,12 @@
 import Flapjack.Compiler.Backend.Bvl.Syntax
 import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.BvlConst
+import Flapjack.Compiler.Backend.BvlToBvi.Budget
 
 /-! Fuel-bounded executable infrastructure for the BVL handler pass. The
 total HOL definitions and termination proofs have not yet been ported. -/
 namespace Flapjack.Compiler.Backend.BvlHandle
-open Bvl DbVars
+open Bvl DbVars BvlToBvi
 
 /-- Whether an expression can raise, before handler simplification. -/
 def canRaiseFuel : Nat → Exp → Option Bool
@@ -40,6 +41,18 @@ def adjustVarsFuel : Nat → Nat → Nat → Exp → Option Exp
       | .force m n => some (.force m (adj n))
       | .call t dest xs => do pure (.call t dest (← xs.mapM visit))
 
+/-- Retry an exhausted raise test with a structural budget. -/
+def canRaiseBounded (fuel : Nat) (e : Exp) : Option Bool :=
+  match canRaiseFuel fuel e with
+  | some result => some result
+  | none => canRaiseFuel (max fuel (expBudget e + 1)) e
+
+/-- Retry exhausted variable adjustment with a structural budget. -/
+def adjustVarsBounded (fuel depth shift : Nat) (e : Exp) : Option Exp :=
+  match adjustVarsFuel fuel depth shift e with
+  | some result => some result
+  | none => adjustVarsFuel (max fuel (expBudget e + 1)) depth shift e
+
 mutual
   /-- Simplify handlers while preserving explicit failure on fuel exhaustion. -/
   def simplifyFuel : Nat → Exp → Option Exp
@@ -63,18 +76,18 @@ mutual
     | fuel + 1, x, handler, depth => do
       match x with
       | .raise r =>
-          if !(← canRaiseFuel fuel r) then
+          if !(← canRaiseBounded fuel r) then
             let handler ← simplifyFuel fuel handler
-            return .let [r] (← adjustVarsFuel fuel 1 depth handler)
+            return .let [r] (← adjustVarsBounded fuel 1 depth handler)
       | .let xs body =>
-          let raises ← xs.foldlM (fun b e => if b then pure true else canRaiseFuel fuel e) false
+          let raises ← xs.foldlM (fun b e => if b then pure true else canRaiseBounded fuel e) false
           if !raises then
             return .let (← xs.mapM (simplifyFuel fuel)) (← makeHandleFuel fuel body handler (depth + xs.length))
       | .ifThenElse c yes no =>
-          let cr ← canRaiseFuel fuel c
+          let cr ← canRaiseBounded fuel c
           if !cr then
-            let yr ← canRaiseFuel fuel yes
-            let nr ← canRaiseFuel fuel no
+            let yr ← canRaiseBounded fuel yes
+            let nr ← canRaiseBounded fuel no
             if yr && !nr then
               return .ifThenElse (← simplifyFuel fuel c) (← makeHandleFuel fuel yes handler depth) (← simplifyFuel fuel no)
             if !yr && nr then
@@ -82,8 +95,15 @@ mutual
       | _ => pure ()
       let x ← simplifyFuel fuel x
       let handler ← simplifyFuel fuel handler
-      pure (.handle x (← adjustVarsFuel fuel 1 depth handler))
+      pure (.handle x (← adjustVarsBounded fuel 1 depth handler))
 end
+
+/-- Preserve successful handler simplification and retry exhaustion with a
+structural budget. -/
+def simplifyBounded (fuel : Nat) (e : Exp) : Option Exp :=
+  match simplifyFuel fuel e with
+  | some result => some result
+  | none => simplifyFuel (max fuel (expBudget e + 1)) e
 
 private def zero : Exp := .op (.intOp (.const 0)) []
 
@@ -150,11 +170,18 @@ mutual
       pure (x :: xs, mkUnion lx ly, sx + sy, nx && ny)
 end
 
+/-- Preserve a successful live-variable compilation and retry exhaustion with
+a structural budget. -/
+def compileBounded (fuel limit env : Nat) (e : Exp) : Option (Exp × DbVarSet × Nat × Bool) :=
+  match compileFuel fuel limit env e with
+  | some result => some result
+  | none => compileFuel (max fuel (expBudget e + 1)) limit env e
+
 /-- Run handler simplification and compilation on an expression. The original
 first runs `bvl_const`; this explicitly restricted entry point omits it. -/
 def compileExpWithoutConstantsFuel (fuel limit arity : Nat) (e : Exp) : Option Exp := do
-  let e ← simplifyFuel fuel e
-  let (e, _, _, _) ← compileFuel fuel limit arity e
+  let e ← simplifyBounded fuel e
+  let (e, _, _, _) ← compileBounded fuel limit arity e
   pure e
 
 /-- Split a sequence at the source pass's exact syntactic boundary. -/
@@ -177,7 +204,7 @@ def compileAnyWithoutConstantsFuel (fuel : Nat) (splitSeq : Bool) (limit arity :
 
 /-- Run constant propagation followed by handler simplification and lowering. -/
 def compileExpFuel (fuel limit arity : Nat) (e : Exp) : Option Exp := do
-  let e ← BvlConst.compileFuel fuel [] e
+  let e ← BvlConst.compileBounded fuel [] e
   compileExpWithoutConstantsFuel fuel limit arity e
 
 /-- Lower the original sequence decomposition, including constant propagation. -/
@@ -192,9 +219,16 @@ def compileSeqsFuel : Nat → Nat → Exp → Option Exp → Option Exp
       | none => pure e
       | some rest => pure (.let [e] (.let [] (.let [] rest)))
 
+/-- Preserve successful sequence compilation and retry exhaustion with a
+structural budget. -/
+def compileSeqsBounded (fuel limit : Nat) (e : Exp) (acc : Option Exp) : Option Exp :=
+  match compileSeqsFuel fuel limit e acc with
+  | some result => some result
+  | none => compileSeqsFuel (max fuel (expBudget e + 1)) limit e acc
+
 /-- Execute the full BVL handler stage with explicit fuel. -/
 def compileAnyFuel (fuel : Nat) (splitSeq : Bool) (limit arity : Nat) (e : Exp) : Option Exp :=
-  if arity == 0 && splitSeq then compileSeqsFuel fuel limit e none
+  if arity == 0 && splitSeq then compileSeqsBounded fuel limit e none
   else compileExpFuel fuel limit arity e
 
 end Flapjack.Compiler.Backend.BvlHandle

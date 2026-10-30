@@ -405,7 +405,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.ToWord
 import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
 import Flapjack.Compiler.Backend.ClosMti
 import Flapjack.Compiler.Backend.BviInline
-import Flapjack.Compiler.Backend.BvlInline.Proofs.Total
+import Flapjack.Compiler.Backend.BvlInline.Proofs.FullTotal
 import Flapjack.Compiler.Backend.BviInline.Proofs.Total
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Total
