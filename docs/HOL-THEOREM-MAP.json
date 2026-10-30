@@ -110245,5 +110245,46 @@
     "refs"
   ],
   "reviewer": "Compared with the typed original source capture bvi_sem_state_probe.out. The universally quantified source update changes only the clock using natural-number subtraction. The local canonical lookup/support roundtrip witnesses refs; code is an Spt tree, not a finite-map function. Full BVI evaluation and compiler correctness remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/State.lean",
+  "hol_name": "initial_state_def",
+  "lean_name": "initialState",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared with the typed original source capture bvi_sem_state_probe.out. The source argument order and all initial fields match, including empty finite references and absent global pointer. BVI evaluation and the full pass simulation remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/State.lean",
+  "hol_name": "fix_clock_def",
+  "lean_name": "fixClock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared with the typed original source capture bvi_sem_state_probe.out. The captured theorem has independent incoming and returned state parameters and an independent result type; all are preserved. BVI evaluation and the full pass simulation remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/Thunk.lean",
+  "hol_name": "dest_thunk_ret",
+  "lean_name": "DestThunkResult",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared with the typed original source capture bvi_sem_state_probe.out. All three source BVI-specific result constructors and their exact payload types are preserved. BVI evaluation and the full pass simulation remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/Thunk.lean",
+  "hol_name": "dest_thunk_def",
+  "lean_name": "destThunk",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "refs"
+  ],
+  "reviewer": "Compared with the typed original source capture bvi_sem_state_probe.out. All source value and reference cases agree, including both thunk modes and pointer flag checks. The parameter roundtrip witness covers the canonical finite map. BVI evaluation and the full pass simulation remain open."
 }
 ]

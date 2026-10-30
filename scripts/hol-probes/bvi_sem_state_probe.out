@@ -9,4 +9,10 @@ state_oracle_type=:(γ, 'ffi) state -> num -> γ # (num # num # bvi$exp) list
 state_code_type=:(γ, 'ffi) state -> (num # bvi$exp) sptree$num_map
 state_ffi_type=:(γ, 'ffi) state -> 'ffi ffi_state
 dec_clock=∀(x :num) (s :(α, β) state). dec_clock x s = s with clock := s.clock − x
+fix_clock=∀(s :(δ, ε) state) (res :α) (s1 :(β, γ) state). fix_clock s (res,s1) = (res,s1 with clock := MIN s.clock s1.clock)
+initial_state=∀(ffi :β ffi_state) (code :(num # bvi$exp) sptree$num_map) (co :num -> α # (num # num # bvi$exp) list) (cc :α -> (num # num # bvi$exp) list -> (word8 list # word64 list # α) option) (k :num). (initial_state ffi code co cc k :(α, β) state) = <|clock := k; ffi := ffi; code := code; compile := cc; compile_oracle := co; refs := (FEMPTY :num |-> v ref); global := (NONE :num option)|>
 bvl_to_bvi=∀(s :(γ, 'ffi) bvlSem$state) (t :(γ, 'ffi) state). bvl_to_bvi s t = t with <|refs := s.refs; clock := s.clock; ffi := s.ffi|>
+bad_ref_type=:dest_thunk_ret
+not_thunk_type=:dest_thunk_ret
+is_thunk_type=:thunk_mode -> v -> dest_thunk_ret
+dest_thunk=(dest_thunk (RefPtr (b :bool) (ptr :num) :v) (refs :num |-> v ref) :dest_thunk_ret) = (case FLOOKUP refs ptr of (NONE :v ref option) => BadRef | SOME (ValueArray v12 :v ref) => NotThunk | SOME (ByteArray v13 v14 :v ref) => NotThunk | SOME (Thunk Evaluated v :v ref) => if b then BadRef else (IsThunk Evaluated v :dest_thunk_ret) | SOME (Thunk NotEvaluated v :v ref) => if b then BadRef else (IsThunk NotEvaluated v :dest_thunk_ret) | SOME (MutBlock v17 v18 v19 v20 v21) => NotThunk) ∧ (dest_thunk (Number (v4 :int) :v) refs :dest_thunk_ret) = NotThunk ∧ (dest_thunk (Word64 (v5 :word64) :v) refs :dest_thunk_ret) = NotThunk ∧ (dest_thunk (Block (v6 :num) (v7 :v list)) refs :dest_thunk_ret) = NotThunk ∧ (dest_thunk (CodePtr (v8 :num)) refs :dest_thunk_ret) = NotThunk

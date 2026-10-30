@@ -16,4 +16,10 @@ val _ = typ "state_oracle_type=" ``λ(s:('c,'ffi) bviSem$state). s.compile_oracl
 val _ = typ "state_code_type=" ``λ(s:('c,'ffi) bviSem$state). s.code``;
 val _ = typ "state_ffi_type=" ``λ(s:('c,'ffi) bviSem$state). s.ffi``;
 val _ = show "dec_clock=" bviSemTheory.dec_clock_def;
+val _ = show "fix_clock=" bviSemTheory.fix_clock_def;
+val _ = show "initial_state=" bviSemTheory.initial_state_def;
 val _ = show "bvl_to_bvi=" bviSemTheory.bvl_to_bvi_def;
+val _ = typ "bad_ref_type=" ``bviSem$BadRef``;
+val _ = typ "not_thunk_type=" ``bviSem$NotThunk``;
+val _ = typ "is_thunk_type=" ``bviSem$IsThunk``;
+val _ = show "dest_thunk=" bviSemTheory.dest_thunk_def;

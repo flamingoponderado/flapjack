@@ -68,6 +68,19 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
 def decClock {C F : Type} (n : Nat) (s : BviState C F) : BviState C F :=
   { s with clock := s.clock - n }
 
+/-- Initial BVI state with empty references and no global pointer. -/
+@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "initial_state_def"
+  (fmap_as_finite_support := [refs])]
+def initialState {C F : Type} (ffi : HolFfiState F) (code : Spt (Nat × Bvi.Exp))
+    (oracle : CompileOracle C) (compiler : Compiler C) (clock : Nat) : BviState C F :=
+  ⟨HolFiniteMapExact.empty, clock, none, compiler, oracle, code, ffi⟩
+
+/-- Clamp the returned state's clock by the incoming clock. -/
+@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "fix_clock_def"
+  (fmap_as_finite_support := [refs])]
+def fixClock {C F D G R : Type} (s : BviState C F) (result : R × BviState D G) : R × BviState D G :=
+  (result.1, { result.2 with clock := min s.clock result.2.clock })
+
 /-- Copy the shared reference, clock and FFI fields from BVL to BVI. This
 follows the source field update but is untagged until the representation
 qualifier can name the references in both state carriers. -/

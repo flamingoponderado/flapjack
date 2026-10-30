@@ -519,6 +519,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
 import Flapjack.Compiler.Backend.Semantics.BvlSem.State
 import Flapjack.Compiler.Backend.Semantics.BviSem.State
+import Flapjack.Compiler.Backend.Semantics.BviSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
