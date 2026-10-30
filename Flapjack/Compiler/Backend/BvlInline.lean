@@ -1,12 +1,14 @@
 import Flapjack.Compiler.Backend.Bvl.Syntax
 import Flapjack.Misc.Sptree
 import Flapjack.Compiler.Backend.BvlHandle
+import Flapjack.Compiler.Backend.BvlToBvi.Budget
 
 /-! Fuel-bounded executable pieces of CakeML's BVL inlining pass. These are
 Flapjack infrastructure until the original total definitions and termination
 arguments have been ported and reviewed. -/
 namespace Flapjack.Compiler.Backend.BvlInline
 open Bvl
+open BvlToBvi (expBudget listBudget)
 
 private def mkTick : Nat → Exp → Exp
   | 0, e => e
@@ -100,14 +102,33 @@ def recursiveFuel : Nat → Nat → Exp → Option Bool
       | .op _ xs => any xs
       | .call _ target xs => if target == some name then pure true else any xs
 
+/-- Preserve successful inlining and retry an exhausted traversal with a
+structural budget. -/
+def inlineExpBounded (fuel : Nat) (cache : Spt (Nat × Exp)) (e : Exp) : Option Exp :=
+  match inlineExpFuel fuel cache e with
+  | some result => some result
+  | none => inlineExpFuel (max fuel (expBudget e + 1)) cache e
+
+/-- Preserve a successful size check and retry an exhausted traversal. -/
+def smallExpBounded (fuel limit : Nat) (e : Exp) : Option Nat :=
+  match smallExpFuel fuel limit e with
+  | some result => some result
+  | none => smallExpFuel (max fuel (expBudget e + 1)) limit e
+
+/-- Preserve a successful recursion check and retry an exhausted traversal. -/
+def recursiveBounded (fuel name : Nat) (e : Exp) : Option Bool :=
+  match recursiveFuel fuel name e with
+  | some result => some result
+  | none => recursiveFuel (max fuel (expBudget e + 1)) name e
+
 /-- Inline entries in order and cache small nonrecursive results. -/
 def tickInlineAllFuel (fuel limit : Nat) : Spt (Nat × Exp) → List (Nat × Nat × Exp) →
     Option (Spt (Nat × Exp) × List (Nat × Nat × Exp))
   | cache, [] => some (cache, [])
   | cache, (name, arity, body) :: rest => do
-      let body ← inlineExpFuel fuel cache body
-      let size ← smallExpFuel fuel limit body
-      let recurs ← if size == 0 then pure false else recursiveFuel fuel name body
+      let body ← inlineExpBounded fuel cache body
+      let size ← smallExpBounded fuel limit body
+      let recurs ← if size == 0 then pure false else recursiveBounded fuel name body
       let cache := if size != 0 && !recurs then sptInsert name (arity, body) cache else cache
       let (cache, rest) ← tickInlineAllFuel fuel limit cache rest
       pure (cache, (name, arity, body) :: rest)
@@ -153,14 +174,27 @@ def letOpFuel : Nat → Exp → Option Exp
       | .op op xs => do pure (.op op (← xs.mapM visit))
       | .call ticks dest xs => do pure (.call ticks dest (← xs.mapM visit))
 
+/-- Retry tick removal with a structural budget if the original budget was
+exhausted. -/
+def removeTicksBounded (fuel : Nat) (e : Exp) : Option Exp :=
+  match removeTicksFuel fuel e with
+  | some result => some result
+  | none => removeTicksFuel (max fuel (expBudget e + 1)) e
+
+/-- Retry let-operation reduction with a structural budget if needed. -/
+def letOpBounded (fuel : Nat) (e : Exp) : Option Exp :=
+  match letOpFuel fuel e with
+  | some result => some result
+  | none => letOpFuel (max fuel (expBudget e + 1)) e
+
 /-- Apply tick inlining, tick removal and let-operation reduction. The
 subsequent `bvl_handle` transformation is not included. -/
 def compileWithoutHandleFuel (fuel limit : Nat) (prog : List (Nat × Nat × Exp)) :
     Option (Spt (Nat × Exp) × List (Nat × Nat × Exp)) := do
   let (cache, prog) ← tickInlineAllFuel fuel limit .ln prog
   let prog ← prog.mapM fun (name, arity, body) => do
-    let body ← removeTicksFuel fuel body
-    pure (name, arity, ← letOpFuel fuel body)
+    let body ← removeTicksBounded fuel body
+    pure (name, arity, ← letOpBounded fuel body)
   pure (cache, prog)
 
 /-- Continue through handler processing without its constant-folding
