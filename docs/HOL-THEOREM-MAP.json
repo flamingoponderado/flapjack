@@ -109427,5 +109427,29 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the full typed evaluate_inline in bvl_inline_state_rel_probe.out with the source theorem: the numeric limit, expression lists, environment, cache-paired source configuration, target configuration, common FFI carrier, result and final source state retain the original types and quantified scope. The conjunction contains exactly the in_state_rel, exp_rel, source evaluation and non-type-error premises; the conclusion existentially supplies target evaluation and the final state relation. The proof assembles every original expression-relation case by clock and expression-weight induction. The canonical BVL reference-store roundtrip witnesses refs; the evaluator inherits the floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InitialState.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "hol_name": "evaluate_initial_state",
+    "lean_name": "evaluateInitialState",
+    "reviewer": "Compared the typed original local proof replay in bvl_inline_state_rel_probe.out, including the simplification of the compiler and oracle equalities in the exported evaluate_initial_state binding. The statement preserves the original initial Call, shared environment and initial FFI, cache-paired source configuration, in_cc and in_co adapters, initial-cache equation, distinct program labels and non-type-error premise; its existential conclusion gives the target evaluation and full final in_state_rel. The original source and target program trees use the sparse-tree carrier. The local roundtrip witnesses refs; evaluation inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InitialState.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "hol_name": "in_evaluate_Call",
+    "lean_name": "inEvaluateCall",
+    "reviewer": "Compared the typed original local proof replay in bvl_inline_state_rel_probe.out, including the simplification of the compiler and oracle equalities in the exported evaluate_initial_state binding. The statement preserves the original initial Call, shared environment and initial FFI, cache-paired source configuration, in_cc and in_co adapters, initial-cache equation, distinct program labels and non-type-error premise; its existential conclusion gives the target evaluation and equality of final FFI states. The original source and target program trees use the sparse-tree carrier. The local roundtrip witnesses refs; evaluation inherits floating-point real-carrier assumptions."
   }
 ]

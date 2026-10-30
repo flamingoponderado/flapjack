@@ -228,6 +228,135 @@ val in_do_app_lemma_replay = prove (in_do_app_lemma_goal,
   \\ fs [in_state_rel_def]
   \\ imp_res_tac do_app_const \\ fs []);
 val _ = show "in_do_app_lemma_replay=" in_do_app_lemma_replay;
+val exp_rel_rw = prove(
+  ``~MEM x (MAP FST prog) ==>
+    exp_rel (union (insert x y (fromAList prog)) acc) [exp] [exp2] =
+    exp_rel (union (fromAList prog) (insert x y acc)) [exp] [exp2]``,
+  strip_tac
+  \\ match_mp_tac exp_rel_swap
+  \\ fs [lookup_union,lookup_insert,lookup_fromAList] \\ strip_tac
+  \\ IF_CASES_TAC \\ fs []
+  \\ every_case_tac \\ fs []
+  \\ imp_res_tac ALOOKUP_MEM
+  \\ fs [MEM_MAP,FORALL_PROD] \\ rfs []
+  \\ Cases_on `x'` \\ rfs []);
+
+val lookup_tick_inline_all = prove(
+  ``!cs0 prog acc.
+      (∀k arity v.
+          lookup k cs0 = SOME (arity,v) ⇒
+          ∃exp.
+            lookup k (union (fromAList prog) acc) = SOME (arity,exp) ∧
+            exp_rel (union (fromAList prog) acc) [exp] [v]) /\
+      DISJOINT (set (MAP FST prog)) (domain cs0) /\
+      DISJOINT (set (MAP FST prog)) (domain acc) /\
+      ALL_DISTINCT (MAP FST prog) ==>
+      ∀k arity exp.
+        lookup k (fromAList prog) = SOME (arity,exp) ⇒
+        ∃exp2.
+          lookup k (fromAList (SND (tick_inline_all limit cs0 prog []))) =
+          SOME (arity,exp2) ∧ exp_rel (union (fromAList prog) acc) [exp] [exp2]``,
+  Induct_on `prog` THEN1 (fs [fromAList_def,lookup_def])
+  \\ fs [FORALL_PROD] \\ rw []
+  \\ qmatch_goalsub_rename_tac `(p1,p2,p3)::_`
+  \\ fs [tick_inline_all_def]
+  \\ once_rewrite_tac [tick_inline_all_acc] \\ fs [UNCURRY]
+  \\ fs [fromAList_def,lookup_insert]
+  \\ IF_CASES_TAC \\ rw []
+  THEN1 (match_mp_tac exp_rel_tick_inline
+         \\ fs [lookup_insert,lookup_union]
+         \\ rw [] \\ fs [GSYM lookup_NONE_domain]
+         \\ first_x_assum drule \\ fs [] \\ strip_tac \\ fs [])
+  \\ fs [] \\ rveq
+  \\ qmatch_goalsub_abbrev_tac `tick_inline_all _ cs1`
+  \\ qpat_x_assum `!x cs. _ ==> _` (qspec_then `cs1` mp_tac)
+  \\ disch_then (qspec_then `insert p1 (p2,p3) acc` mp_tac)
+  \\ fs [PULL_FORALL,AND_IMP_INTRO]
+  \\ disch_then (qspec_then `k` mp_tac) \\ fs [GSYM PULL_FORALL]
+  \\ simp [exp_rel_rw]
+  \\ disch_then match_mp_tac \\ fs []
+  THEN1
+   (unabbrev_all_tac \\ fs [lookup_insert] \\ rw []
+    THEN1
+     (fs [lookup_union,lookup_insert,lookup_fromAList]
+      \\ reverse CASE_TAC \\ fs []
+      THEN1 (Cases_on `x`
+        \\ imp_res_tac ALOOKUP_MEM \\ fs [MEM_MAP,FORALL_PROD] \\ rfs [])
+      \\ match_mp_tac exp_rel_tick_inline
+      \\ rw [] \\ first_x_assum drule
+      \\ IF_CASES_TAC THEN1 fs [GSYM lookup_NONE_domain]
+      \\ fs [case_eq_thms] \\ strip_tac
+      \\ fs [lookup_union,lookup_insert,lookup_fromAList]
+      \\ rfs [exp_rel_rw])
+    \\ rpt strip_tac \\ first_x_assum drule
+    \\ fs [lookup_union,lookup_insert]
+    \\ fs [GSYM lookup_NONE_domain] \\ fs [exp_rel_rw])
+  \\ rpt strip_tac \\ first_x_assum drule
+  \\ fs [lookup_union,lookup_insert]
+  \\ IF_CASES_TAC \\ fs [GSYM lookup_NONE_domain] \\ fs [exp_rel_rw]);
+
+val subspt_tick_inline = prove(
+  ``!prog cs aux.
+      subspt cs (fromAList (REVERSE aux)) /\
+      EVERY (\x. ~(FST x IN domain cs)) prog /\
+      ALL_DISTINCT (MAP FST prog ++ MAP FST aux) ==>
+      subspt (FST (tick_inline_all limit cs prog aux))
+             (fromAList (SND (tick_inline_all limit cs prog aux)))``,
+  Induct \\ fs [tick_inline_all_def,FORALL_PROD] \\ rw []
+  \\ first_x_assum match_mp_tac
+  \\ fs [subspt_lookup,lookup_insert] \\ rw []
+  \\ fs [ALL_DISTINCT_APPEND]
+  \\ res_tac \\ fs []
+  \\ fs [lookup_fromAList,ALOOKUP_APPEND]
+  \\ fs [case_eq_thms,ALOOKUP_NONE,MAP_REVERSE]
+  \\ fs [EVERY_MEM,MEM_MAP] \\ rw [] \\ res_tac \\ metis_tac [])
+
+val evaluate_initial_state = prove(
+  ``evaluate
+     ([Call 0 (SOME start) []],env,
+      initial_state ffi0 (fromAList prog) co cc k) = (res,s2) ∧
+    in_co limit co = co1 /\ in_cc limit cc1 = cc /\
+    FST (FST (co 0)) = FST (tick_compile_prog limit LN prog) /\
+    ALL_DISTINCT (MAP FST prog) /\
+    res ≠ Rerr (Rabort Rtype_error) ⇒
+    ∃t2.
+      evaluate
+        ([Call 0 (SOME start) []],env,
+         initial_state ffi0
+          (fromAList (SND (tick_compile_prog limit LN prog))) co1 cc1 k) =
+        (res,t2) ∧ in_state_rel limit s2 t2``,
+  strip_tac
+  \\ match_mp_tac evaluate_inline
+  \\ qexists_tac `[Call 0 (SOME start) []]`
+  \\ qexists_tac `initial_state ffi0 (fromAList prog) co cc k`
+  \\ fs [exp_rel_refl]
+  \\ fs [in_state_rel_def,initial_state_def,GSYM in_co_def]
+  \\ CONV_TAC (DEPTH_CONV ETA_CONV) \\ fs []
+  \\ fs [tick_compile_prog_def,domain_fromAList,MAP_FST_tick_inline_all]
+  \\ conj_tac
+  THEN1 (match_mp_tac subspt_tick_inline \\ fs [])
+  \\ match_mp_tac (lookup_tick_inline_all
+       |> Q.SPECL [`LN`,`prog`,`LN`] |> SIMP_RULE (srw_ss()) [lookup_def])
+  \\ fs []) |> GEN_ALL |> SIMP_RULE std_ss [];
+
+val _ = show "evaluate_initial_state_replay=" evaluate_initial_state;
+val in_evaluate_Call = prove(
+  ``evaluate
+     ([Call 0 (SOME start) []],env,
+      initial_state ffi0 (fromAList prog) co (in_cc limit cc1) k) = (res,s2) ∧
+    FST (FST (co 0)) = FST (tick_compile_prog limit LN prog) /\
+    ALL_DISTINCT (MAP FST prog) /\
+    res ≠ Rerr (Rabort Rtype_error) ⇒
+    ∃t2.
+      evaluate
+        ([Call 0 (SOME start) []],env,
+         initial_state ffi0
+          (fromAList (SND (tick_compile_prog limit LN prog)))
+            (in_co limit co) cc1 k) =
+        (res,t2) ∧ s2.ffi = t2.ffi``,
+  metis_tac [evaluate_initial_state,in_state_rel_def]);
+
+val _ = show "in_evaluate_Call_replay=" in_evaluate_Call;
 val do_app_lemma_replay = prove (do_app_lemma_goal,
   Cases_on `op = Install` THEN1
    (rw [] \\ fs [do_app_def]
