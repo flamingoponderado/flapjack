@@ -583,6 +583,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ThunkOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BlockOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.MemoryOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ApplyAllOk
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.EvaluateOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCases
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
