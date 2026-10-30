@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileGlobals
 import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.Globals
 
 /-! Closure-safety preservation during flat-to-closure lowering. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -169,5 +170,19 @@ theorem compileProg_esgcFree (ds : List FlatLang.Exp)
     ∀ e ∈ compileProg ds, ClosProps.esgcFree e := by
   have safe := compileDecs_esgcFree ds premises
   simpa [compileProg, ClosInterp.attachInterpreter, compileInit_safe] using safe
+
+/-- Incremental compilation retains closure safety after interpreter insertion. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "FST_inc_compile_esgc_free"]
+theorem incCompileDecs_esgcFree {α : Type} (ds : List FlatLang.Exp)
+    (premises : (∀ e ∈ ds, FlatProps.esgcFree e) ∧ FlatProps.noMatDecs ds = true) :
+    ∀ e ∈ (incCompileDecs (α := α) ds).1, ClosProps.esgcFree e := by
+  apply (ClosInterp.insertInterp_esgcFree _).mpr
+  have safe := compileDecs_esgcFree ds premises
+  intro e member
+  rcases List.mem_append.mp member with member | member
+  · exact safe e member
+  · simp [compileDecs, compile, compileExps, compileExp] at member
+    subst e
+    simp [esgcFree_smartCons, ClosProps.esgcFreeList]
 
 end Flapjack.Compiler.Backend.FlatToClos

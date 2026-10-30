@@ -1,5 +1,23 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml", "hol_name": "elist_globals_insert_interp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/Globals.lean", "lean_name": "elistGlobals_insertInterp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared original source lines 1429-1446 and inferred types in flat_to_clos_globals_probe.out: both sides use the closure-expression list and global bag carriers. The proof covers both whole-expression replacement and the one-level Let fallback."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml", "hol_name": "insert_interp_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/Globals.lean", "lean_name": "insertInterp_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared original source lines 1524-1547 and inferred types in flat_to_clos_globals_probe.out. Both directions of the HOL boolean equality are expressed as an iff between membership-quantified EVERY predicates over the same closure-expression list."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "FST_inc_compile_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "incCompileDecs_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared original source lines 2594-2601 and inferred types in flat_to_clos_globals_probe.out. The source EVERY and no_Mat_decs premises, closure EVERY conclusion and independently polymorphic second pair component match the HOL statement."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_prog_esgc_free",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileSafety.lean", "lean_name": "compileProg_esgcFree",
     "statement_status": "reviewed_exact",
