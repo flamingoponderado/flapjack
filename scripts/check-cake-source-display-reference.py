@@ -109,6 +109,13 @@ WORD_PREFIX = (
     b'               (alloc 1 ({0} {}))))\n         (1 := (Var 2))\n'
 )
 
+STACK_STUBS = (
+    b'(func _Raise@5\n   (seq\n      (22 <- Handler)\n      (stack_set_size 22)\n'
+    b'      skip\n      (22 := stack[0x2])\n      (Handler <- 22)\n'
+    b'      (22 := stack[0x1])\n      (stack_free 3)\n      (raise 22)))\n\n'
+    b'(func _StoreConsts@6\n   (seq\n      (store_consts 22 23)\n      (return 0)))\n\n'
+)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -143,6 +150,10 @@ def main():
             if not word.startswith(WORD_PREFIX):
                 raise SystemExit(f'original word-stage output mismatch for {source!r}')
             print('original word-stage runtime stub prefix matches', flush=True)
+            stack = result.stdout.split(b'# after word_to_stack\n\n', 1)[1]
+            if not stack.startswith(STACK_STUBS):
+                raise SystemExit(f'original stack-stage output mismatch for {source!r}')
+            print('original stack-stage runtime stubs match', flush=True)
             lab = result.stdout.split(b'# after stack_to_lab\n\n', 1)[1]
             if (not lab.startswith(LAB_PREFIX) or
                     b'(jump_cmp (Lower 12 (Reg 11)) _Init@0 3)' not in lab or
