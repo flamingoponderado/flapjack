@@ -142,4 +142,5 @@ val SmartOp_flip_thm_replay = prove (``
   fs [SmartOp_flip_def]);
 val _ = show "SmartOp_flip_thm_replay=" SmartOp_flip_thm_replay;
 val _ = show "SmartOp1_thm=" SmartOp1_thm;
+val _ = show "SmartOp_thm=" SmartOp_thm;
 val _ = show "evaluate_env_rel=" evaluate_env_rel;

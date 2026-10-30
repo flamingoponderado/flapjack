@@ -109954,7 +109954,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -109966,7 +109966,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -109978,7 +109978,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -109990,7 +109990,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -110002,7 +110002,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -110014,7 +110014,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -110026,7 +110026,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -110038,7 +110038,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Arithmetic operand case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -110050,7 +110050,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -110062,7 +110062,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -110074,7 +110074,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -110086,7 +110086,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -110098,7 +110098,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -110110,7 +110110,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -110122,7 +110122,7 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Two nested multiplication operands case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operation and, for the nested case, operand constructors specialize the source theorem; its evaluation and non-type-error hypotheses and result/state equality are unchanged, without extra premises. The proof preserves evaluation order and error/state effects. Other operations and the full theorem assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "Two nested multiplication operands case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operation and, for the nested case, operand constructors specialize the source theorem; its evaluation and non-type-error hypotheses and result/state equality are unchanged, without extra premises. The proof preserves evaluation order and error/state effects. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
@@ -110134,6 +110134,54 @@
     "refs"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "The full multiplication operation with arbitrary operands case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operation and, for the nested case, operand constructors specialize the source theorem; its evaluation and non-type-error hypotheses and result/state equality are unchanged, without extra premises. The proof preserves evaluation order and error/state effects. Other operations and the full theorem assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+  "reviewer": "The full multiplication operation with arbitrary operands case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operation and, for the nested case, operand constructors specialize the source theorem; its evaluation and non-type-error hypotheses and result/state equality are unchanged, without extra premises. The proof preserves evaluation order and error/state effects. The complete binary theorem is assembled in SmartOpCorrect. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOpCorrect.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_add_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Addition operation case of the typed original statement captured in bvl_const_rel_probe.out. Independent compiler and FFI state parameters, evaluation and non-type-error hypotheses, and result/final-state equality match the source without extra premises. The local original theorem is replayed from the source proof. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOpCorrect.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_sub_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Subtraction operation case of the typed original statement captured in bvl_const_rel_probe.out. Independent compiler and FFI state parameters, evaluation and non-type-error hypotheses, and result/final-state equality match the source without extra premises. The local original theorem is replayed from the source proof. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOpCorrect.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Complete binary operation theorem of the typed original statement captured in bvl_const_rel_probe.out. Independent compiler and FFI state parameters, evaluation and non-type-error hypotheses, and result/final-state equality match the source without extra premises. The local original theorem is replayed from the source proof. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOpCorrect.lean",
+  "hol_name": "SmartOp_thm",
+  "lean_name": "smartOp_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Complete operation theorem for arbitrary argument lists of the typed original statement captured in bvl_const_rel_probe.out. Independent compiler and FFI state parameters, evaluation and non-type-error hypotheses, and result/final-state equality match the source without extra premises. The binary theorem is a case of SmartOp_thm. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 }
 ]
