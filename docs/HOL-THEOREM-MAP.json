@@ -1,5 +1,26 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "evaluate_LENGTH", "hol_line": 225,
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateLength.lean", "lean_name": "evaluateLength",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed source theorem in bvl_sem_values_probe.out: all expression lists, environments and polymorphic states are quantified, a successful result has equal expression and value lengths, and errors satisfy True. The source tuple evaluator and canonical refs state are retained; the checked local witness covers refs only. This theorem uses the reviewed evaluator and inherits its floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "evaluate_IMP_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateLength.lean", "lean_name": "evaluateImpLength",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the captured typed HOL implication: its only premise is evaluation returning the given successful values and state, and the conclusion is equality of expression and value lengths in the same direction. The local canonical witness covers refs and the source tuple evaluator is retained. Floating-point real-carrier assumptions are inherited through evaluation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "evaluate_SING",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateLength.lean", "lean_name": "evaluateSing",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the captured typed HOL implication and existential conclusion: a successful evaluation of one expression returns a singleton value list, with no extra hypotheses. The source tuple evaluator and canonical refs witness are retained. Floating-point real-carrier assumptions are inherited through evaluation."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "evaluate_def", "hol_line": 596,
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/EvaluateHOL.lean", "lean_name": "evaluateTuple",
     "statement_status": "reviewed_fmap_as_finite_support",
