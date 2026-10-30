@@ -108593,4 +108593,17 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the complete typed HOL implication in bvl_sem_values_probe.out: any evaluation result and final state have the initial FFI event list as a prefix of the final event list. evaluateTuple retains the source input triple and independent compiler/FFI parameters; the local canonical witness covers refs only. The proof covers all expression forms, including returned FFI calls and forced thunks. The evaluator inherits its floating-point real-carrier assumptions."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "hol_name": "evaluate_add_to_clock_io_events_mono",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateEventsClock.lean",
+    "lean_name": "evaluateAddToClockIoEventsMono",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed HOL statement in bvl_sem_values_probe.out: for arbitrary expressions, environment, state and extra clock, the first evaluation event list is a prefix of the event list from the state with that clock increment. No timeout or evaluation-result premise is added. evaluateTuple and incClock preserve the original source operations and independent compiler/FFI types; the local canonical witness covers refs only. The evaluator inherits its floating-point real-carrier assumptions."
+  }
 ]
