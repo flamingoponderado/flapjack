@@ -29,4 +29,11 @@ inductive Mini (α : Type) where
   | recurse (save names : List Nat)
   | loopBody (body : Mini α)
 
+/-- Positive-width word instance of the source mini-language carrier. The
+generic `Mini` constructor arguments match the HOL datatype in source order;
+the payload word dimension is represented by `BitVec width`. -/
+@[hol "cakeml/compiler/backend/word_bignumScript.sml" "mini"
+  (words_as_type_indexed_bitvec)]
+abbrev MiniHOL (width : Nat) [NeZero width] := Mini (BitVec width)
+
 end Flapjack.Compiler.Backend.WordBignum

@@ -1,5 +1,11 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "mini",
+    "lean_path": "Flapjack/Compiler/Backend/WordBignum/Mini.lean", "lean_name": "MiniHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec", "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared the complete source datatype and the sixteen typed constructor signatures in bignum_mini_types_probe.out. MiniHOL restricts the generic Lean carrier to the single positive BitVec width corresponding to HOL alpha; WordLangExpHOL and WordRegImm payloads share that width. Constructor order, arities, Cmp, Address, natural-register lists and Bool fields match; HOL Rec is named recurse in Lean. The production mini compiler uses this same carrier."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/word_bignumScript.sml", "hol_name": "address",
     "lean_path": "Flapjack/Compiler/Backend/WordBignum/Mini.lean", "lean_name": "Address",
     "statement_status": "reviewed_exact",

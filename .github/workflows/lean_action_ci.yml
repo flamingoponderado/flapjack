@@ -56,6 +56,7 @@ jobs:
           python3 scripts/generate-cake-data-oracles.py --check
           python3 scripts/generate-cake-word-oracles.py --check
           python3 scripts/generate-bignum-word-snapshot.py --check
+          python3 scripts/generate-bignum-mini.py --check
 
       - name: Check CakeML source-to-RISC-V exploratory parity
         # The captures identify their historical original revision; they do not

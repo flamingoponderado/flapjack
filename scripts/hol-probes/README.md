@@ -184,6 +184,8 @@ the complete carrier correspondence remains under review.
 
 `bignum_mini_probe.out` captures the pinned shallow-to-deep generator's polymorphic `mc_iop_code` result and its 64-bit instance. `scripts/generate-bignum-mini.py` translates the matching captures into Lean; `--check` verifies the generated file. `Flapjack.Test.WordBignumGenerateParity` checks all 23 64-bit word stubs against `bignum_word_probe.out`. Regenerate with `HOL_PROBE_ONLY=bignum_mini_probeScript.sml scripts/hol-probes/regenerate.sh`. The capture and test do not prove the original shallow-to-deep generator or general cross-language equivalence.
 
+`bignum_mini_types_probe.out` records the source types of all sixteen mini-language constructors. Regenerate with `HOL_PROBE_ONLY=bignum_mini_types_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `full_cake_word_probe.out` captures the original `data_to_word$compile_0` result for the empty CakeML program, including fixed stubs, generated bignum stubs, function arities and bodies, under the restricted settings and a 64-bit RISC-V assembly configuration. Its whole-program comparison ends before word-to-word optimization and the final RISC-V result.
 
 `full_inline_cake_word_probe.out` repeats that complete word-stage comparison after original BVI wrapper inlining and tick removal; earlier BVL/BVI optimizations are still omitted.
