@@ -462,7 +462,10 @@ basis-enabled programs against complete-output captures from the pinned
 compiler. The cases exercise observable array and byte-array updates, strings,
 closures, exceptions, lists, vectors, integers and words, plus polymorphic trees,
 local and module declarations, recursive list matches, and tuple patterns. It
-also covers list reversal and folding, an array update at the first slot,
+also checks complete no-prelude RISC-V output for mutual recursion, a curried
+conditional, recursive datatypes with mixed constructor arities, and overlapping
+tuple patterns. These successful cases are compared with the pinned executable.
+The suite covers list reversal and folding, an array update at the first slot,
 character extraction, datatype payload matches, substring output, and a local
 function that captures its enclosing argument. It
 also covers short-circuit Boolean control, partial application, constructor

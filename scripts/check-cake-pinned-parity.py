@@ -15,6 +15,10 @@ spec.loader.exec_module(parity)
 
 # Each program makes the computed result observable through an output call.
 CASES = {
+    'no_prelude_mutual_recursion': 'fun even x = case x of [] => True | h::t => odd t and odd x = case x of [] => False | h::t => even t; val n = even [1,2];',
+    'no_prelude_higher_order_conditional': 'val f = fn x => fn y => if x then y else 0; val z = f True 42;',
+    'no_prelude_recursive_mixed_arity': 'datatype t = A | B int | C t t; fun pick x = case x of A => 0 | B n => n | C a b => pick a; val n = pick (C A (B 3));',
+    'no_prelude_overlapping_tuple_patterns': 'fun f x = case x of (0,_) => 3 | (_,0) => 4 | (x,y) => x; val n = f (1,2);',
     'recursive_array_fill': 'val a = Array.array 8 0; fun fill i = if i = 8 then () else (Array.update a i (i*i); fill (i+1)); val _ = fill 0; val _ = print_int (Array.sub a 7);',
     'two_captured_closures': 'fun f x = let fun g y = x+y in g end; val a = f 3; val b = f 4; val _ = print_int (a 8 + b 9);',
     'sequential_reference_calls': 'val r = Ref 1; fun next x = (r := !r + x; !r); val _ = print_int (next 3 + next 4);',
@@ -142,6 +146,10 @@ CASES = {
 }
 
 CASE_ARGS = {
+    'no_prelude_mutual_recursion': ['--exclude_prelude=true'],
+    'no_prelude_higher_order_conditional': ['--exclude_prelude=true'],
+    'no_prelude_recursive_mixed_arity': ['--exclude_prelude=true'],
+    'no_prelude_overlapping_tuple_patterns': ['--exclude_prelude=true'],
     'explore_frontend': ['--explore', '--exclude_prelude=true'],
     'explore_basis': ['--explore'],
     'explore_no_optimisations': ['--explore', '--exclude_prelude=true', '--multi=false', '--known=false', '--call=false'],
