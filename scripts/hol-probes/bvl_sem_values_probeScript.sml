@@ -105,6 +105,8 @@ val _ = example "build_collision_ref=" ``FLOOKUP (SND (bvlSem$do_build_const [cl
   (FEMPTY |+ (0,bvlSem$ValueArray [])))) 1``;
 val _ = show "do_app=" bvlSemTheory.do_app_def;
 val _ = show "do_app_const=" bvlSemTheory.do_app_const;
+val _ = show "bvl_do_app_err=" bvlPropsTheory.do_app_err;
+val _ = show "bvl_find_code_every=" bvlPropsTheory.find_code_EVERY_IMP;
 val _ = typ "do_app_type=" ``bvlSem$do_app``;
 val _ = show "copy_array=" semanticPrimitivesTheory.copy_array_def;
 val _ = typ "copy_array_type=" ``semanticPrimitives$copy_array``;

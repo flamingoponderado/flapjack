@@ -1,5 +1,19 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "find_code_EVERY_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/FindCode.lean", "lean_name": "findCodeEveryImp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared the typed original theorem in bvl_sem_values_probe.out: lookup from the polymorphic BVL state's code returns a value-list and BVL expression, followed by EVERY of the same predicate on input and output argument lists. Direct calls retain all arguments and indirect calls drop the last pointer. The source Spt code carrier and independent state parameters remain unchanged; the local canonical witness covers refs only."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "do_app_err",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/ApplyError.lean", "lean_name": "doAppError",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed source implication in bvl_sem_values_probe.out. The sole premise is the original dispatcher returning an error; the conclusion is type error or an existential mlstring FFI name and final event with the exact operator and error equalities. State compiler and FFI types remain independent, the local canonical witness covers refs only, and the dispatcher inherits its floating-point real-carrier assumptions."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "evaluate_CONS",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateList.lean", "lean_name": "evaluateCons",
     "statement_status": "reviewed_fmap_as_finite_support",
