@@ -2,7 +2,7 @@
 
 `bvl_remove_ticks_probe.out` captures the typed original tick-removal equations and singleton/list equivalence, plus representative nested expressions. The Lean total traversal is proved equal to the production bounded traversal. Regenerate with `HOL_PROBE_ONLY=bvl_remove_ticks_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`bvl_inline_state_rel_probe.out` captures the typed original state relation used for tick-removal correctness, including the compiler callback and oracle types, and replays the source proof of the local primitive simulation lemma with inferred types shown. Regenerate with `HOL_PROBE_ONLY=bvl_inline_state_rel_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`bvl_inline_state_rel_probe.out` captures the typed original state relation and evaluator simulation theorem used for tick-removal correctness, including the compiler callback and oracle types, and replays the source proof of the local primitive simulation lemma with inferred types shown. Regenerate with `HOL_PROBE_ONLY=bvl_inline_state_rel_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `clos_to_bvl_recursive_types_probe.out` also records the typed original singleton/list converter and program conversion. The Lean checked converter is proved equal to the original compile_exps and program conversions through the ported singleton/list equivalence; pass semantics remain open.
 

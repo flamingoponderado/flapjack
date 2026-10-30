@@ -8,6 +8,7 @@ val _ = Globals.show_types := true;
 fun show label th = if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show "state_rel=" bvl_inlineProofTheory.state_rel_def;
+val _ = show "evaluate_remove_ticks=" bvl_inlineProofTheory.evaluate_remove_ticks;
 val do_app_lemma_goal = ``
   bvl_inlineProof$state_rel t' r ==>
     case bvlSem$do_app op (REVERSE a) r of
