@@ -1,5 +1,12 @@
 `cake_explore_frontend.json` records the byte length and digest of the six-stage source-to-closure explorer prefix emitted by the pinned CakeML executable. `scripts/check-cake-source-display-reference.py` rechecks it against that executable, and `Flapjack/Test/CakeFrontendStagesParity.lean` compares the complete captured output with the Lean pipeline. `cake_explore_closure.json` records the following six closure-through-BVL stages, `cake_explore_bvi.json` records the seven stages from BVL optimization through BVI, `cake_explore_data.json` records the four DataLang stages, `cake_explore_word.json` records the initial WordLang stage, `cake_explore_word_optimise.json` records the ten subsequent word stages, and `cake_explore_stack.json` records the seven stack-through-lab stages. Their `scripts/check-cake-*-explore.py` scripts compare full bytes with the pinned executable and invoke Lake, so run them sequentially with Lake builds. These are parity evidence, not proofs of cross-language equivalence.
 
+`clos_to_bvl_recursive_types_probe.out` captures the typed HOL signatures and
+recursive-closure layout examples for `recc_Lets` and `build_recc_lets`.
+`Flapjack.Test.ClosToBvlRecursive` replays the examples for both source-shaped
+and executed checked builders. Regenerate with
+`HOL_PROBE_ONLY=clos_to_bvl_recursive_types_probeScript.sml scripts/hol-probes/regenerate.sh`;
+the complete carrier correspondence remains under review.
+
 `clos_sem_evaluate_probe.out` captures the typed closure evaluator and variable, conditional, exception, timeout and closure-call observations. `Flapjack/Test/ClosSemEvaluateParity.lean` replays those cases with both the extra-bound evaluator and the clocked unbounded evaluator. Full evaluator and carrier correspondence remain open.
 
 `clos_sem_memory_probe.out` captures closure array, byte-update, overlap-copy and byte-bounds observations. `Flapjack/Test/ClosSemMemoryParity.lean` replays them, except that the HOL byte-update capture retains an unreduced word-existence condition. The assembled dispatcher and finite-map correspondence remain pending review.

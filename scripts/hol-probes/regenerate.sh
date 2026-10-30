@@ -256,6 +256,10 @@ run_probe() {
   done
 }
 
+run_probe clos_to_bvl_recursive_types_probeScript.sml clos_to_bvl_recursive_types_probe.out \
+  recc_lets_type build_recc_lets_type recc_lets_example build_recc_lets_example \
+  "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
+
 run_probe source_to_flat_opassign_probeScript.sml source_to_flat_opassign_probe.out \
   source_assign_typed flat_assign_typed source_bad_typed flat_bad_typed \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -561,16 +565,16 @@ run_probe cake_peg_grammar_probeScript.sml cake_peg_grammar_probe.out \
   variable empty "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 
 run_probe cake_ptree_type_probeScript.sml cake_ptree_type_probe.out \
-  type abbrev "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing" "$cake_dir/semantics"
+  type abbrev "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing"
 
 run_probe cake_ptree_pattern_probeScript.sml cake_ptree_pattern_probe.out \
-  list typed literal "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing" "$cake_dir/semantics"
+  list typed literal "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing"
 
 run_probe cake_ptree_expr_probeScript.sml cake_ptree_expr_probe.out \
-  function let case "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing" "$cake_dir/semantics"
+  function let case "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing"
 
 run_probe cake_source_frontend_probeScript.sml cake_source_frontend_probe.out \
-  empty value datatype structure expression "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing" "$cake_dir/semantics"
+  empty value datatype structure expression "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing"
 
 run_probe cake_source_every_exp_probeScript.sml cake_source_every_exp_probe.out \
   type nested clauses funs all_good "$cake_dir/semantics/astScript.sml" "$cake_dir/semantics"
@@ -678,7 +682,7 @@ run_probe cake_word_array_probeScript.sml cake_word_array_probe.out \
   word64 array shift64 shift64_large shift64_asr_large boundsblock wordfrom wordto stringcmp stringcmp_fast fp_cmp_no_hardware fp_bop_no_hardware fp_uop_no_hardware fp_top_no_hardware fp_top_no_ternary equal_large_int equal_negative_int equal_word64 equal_string equal_constructor alloc_thunk_evaluated alloc_thunk_pending force_thunk_tail force_thunk_return force_thunk_bad_header word_from_word_narrow_32 word_from_word_widen_32 word_from_word_narrow_64 word_from_word_widen_64 install_64 install_32 install_bad_arity "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe cake_undefined_diagnostic_probeScript.sml cake_undefined_diagnostic_probe.out \
-  infer constructor type_constructor "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference" "$cake_dir/compiler"
+  infer constructor type_constructor "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
 
 run_probe cake_type_diagnostic_probeScript.sml cake_type_diagnostic_probe.out \
   function nested tuple variable named qualified "$cake_dir/compiler/inference/infer_tScript.sml" "$cake_dir/compiler/inference"

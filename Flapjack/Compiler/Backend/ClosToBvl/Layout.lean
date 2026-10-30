@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Bvl.Syntax
+import Flapjack.Misc.ListEl
 
 /-! Closure-to-BVL code-layout and small instruction constructors. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -46,11 +47,30 @@ def reccLet (n numArgs i : Nat) : Bvl.Exp :=
     (.let [.op (.blockOp (.cons 30)) [.var 0, mkConst (numArgs - 1), mkLabel n]]
       (.let [.op (.memOp .update) [.var 0, mkConst i, .var 1]] (.var 1)))
 
+/-- Source-shaped recursive closure layout. HOL leaves `HD []` unspecified;
+the executed checked builder agrees when enough arities are supplied, as
+proved in `Proofs/Total.lean`. Full carrier correspondence remains under review. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "recc_Lets_def"]
+noncomputable def reccLetsHOL (n : Nat) (args : List Nat) : Nat → Bvl.Exp → Bvl.Exp
+  | 0, body => body
+  | k + 1, body =>
+      .let [reccLet (n + 2 * k) (Flapjack.holHd args) k]
+        (reccLetsHOL n args.tail k body)
+
 /-- Build the first recursive closure, whose environment is already in scope. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "recc_Let0_def"]
 def reccLet0 (n numArgs i : Nat) : Bvl.Exp :=
   .let [.op (.blockOp (.cons 30)) [.var 0, mkConst (numArgs - 1), mkLabel n]]
     (.let [.op (.memOp .update) [.var 0, mkConst i, .var 1]] (.var 1))
+
+/-- Source-shaped initial recursive closure layout, including HOL's
+unspecified empty-list head. The executable checked builder is related for
+the nonempty groups supplied by closure compilation. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "build_recc_lets_def"]
+noncomputable def buildReccLetsHOL (args vs : List Nat) (n len : Nat) (body : Bvl.Exp) : Bvl.Exp :=
+  .let [.let [.op (.memOp .ref) (((args.map fun _ => mkConst 0) ++ (vs.map Bvl.Exp.var)).reverse)]
+    (reccLet0 (n + 2 * (len - 1)) (Flapjack.holHd args.reverse) (len - 1))]
+    (reccLetsHOL n args.reverse.tail (len - 1) body)
 
 /-- Flapjack's checked form of the recursive-closure builder. It reports a
 short argument list instead of selecting HOL's unspecified `HD []`. -/

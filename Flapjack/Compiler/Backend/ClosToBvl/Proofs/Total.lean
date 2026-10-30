@@ -21,6 +21,19 @@ theorem reccLets_succeeds (n : Nat) (args : List Nat) (k : Nat) (body : Bvl.Exp)
       obtain ⟨next, nextEq⟩ := ih rest bound
       exact ⟨.let [reccLet (n + 2 * k) a k] next, by simp [reccLets?, nextEq]⟩
 
+/-- For the bounded arity lists used by compilation, the executed checked
+builder returns the source-shaped layout. -/
+theorem reccLets_checked_eq (n : Nat) (args : List Nat) (k : Nat) (body : Bvl.Exp)
+    (enough : k ≤ args.length) : reccLets? n args k body = some (reccLetsHOL n args k body) := by
+  induction k generalizing args with
+  | zero => cases args <;> rfl
+  | succ k ih =>
+    cases args with
+    | nil => simp at enough
+    | cons a rest =>
+      have bound : k ≤ rest.length := by simpa using enough
+      simp [reccLets?, reccLetsHOL, Flapjack.holHd, ih rest bound]
+
 /-- A nonempty recursive group whose arity count agrees with its size passes
 the checked layout construction. -/
 theorem buildReccLets_succeeds (args vs : List Nat) (n : Nat) (body : Bvl.Exp)
@@ -39,6 +52,22 @@ theorem buildReccLets_succeeds (args vs : List Nat) (n : Nat) (body : Bvl.Exp)
       (vs.map Bvl.Exp.var)).reverse)]
       (reccLet0 (n + 2 * (args.length - 1)) last (args.length - 1))] next, ?_⟩
     simp [buildReccLets?, h, nextEq]
+
+/-- The actual recursive-group builder implements the source definition when
+its argument list is nonempty and the group length is that list's length. -/
+theorem buildReccLets_checked_eq (args vs : List Nat) (n : Nat) (body : Bvl.Exp)
+    (nonempty : args ≠ []) :
+    buildReccLets? args vs n args.length body = some (buildReccLetsHOL args vs n args.length body) := by
+  cases h : args.reverse with
+  | nil =>
+    have : args = [] := by simpa using congrArg List.reverse h
+    exact False.elim (nonempty this)
+  | cons last rest =>
+    have length : args.length = rest.length + 1 := by
+      have := congrArg List.length h
+      simpa using this
+    have bound : args.length - 1 ≤ rest.length := by omega
+    simp [buildReccLets?, buildReccLetsHOL, h, Flapjack.holHd, reccLets_checked_eq n rest _ body bound]
 
 mutual
 /-- The checked expression converter always finds the recursive layout it

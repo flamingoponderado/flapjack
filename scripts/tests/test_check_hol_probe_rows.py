@@ -27,6 +27,19 @@ val _ = print_eval "beta" ``2``;
 
 
 class ProbeRowCheckerTest(unittest.TestCase):
+    def test_label_printers_accept_name_and_literal_equals(self):
+        script = '''fun show label tm = (print label; print_term tm);
+fun capture name tm = (print (name ^ "="); print_term tm);
+fun guard name lit = if lit = name then () else raise Fail (name ^ " missing");
+val _ = show "first=" x;
+val _ = capture "second" y;
+val _ = guard "not_a_row" z;
+val _ = print "\\nend=ok\\n";
+'''
+        labels, printers = ROWS.script_printed_labels(script)
+        self.assertEqual(labels, {"first", "second", "end"})
+        self.assertEqual(printers, {"show", "capture"})
+
     def _typed_rows(self, name="stack_rawcall_conventions_probe.out"):
         statements, signatures = ROWS.TYPED_CAPTURE_CONTRACTS[name]
         return [(label, "∀(p :α prog). P p") for label in statements] + [
