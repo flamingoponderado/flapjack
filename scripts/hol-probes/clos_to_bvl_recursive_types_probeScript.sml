@@ -14,3 +14,6 @@ val _ = (print "compile_exp_sing_type="; print_type (type_of ``clos_to_bvl$compi
 val _ = (print "compile_exp_list_type="; print_type (type_of ``clos_to_bvl$compile_exp_list``); print "\n");
 val _ = (print "compile_prog_def="; print_term (concl clos_to_bvlTheory.compile_prog_def); print "\n");
 val _ = (print "compile_prog_type="; print_type (type_of ``clos_to_bvl$compile_prog``); print "\n");
+val _ = (print "compile_exps_def="; print_term (concl clos_to_bvlTheory.compile_exps_def); print "\n");
+val _ = (print "compile_exps_type="; print_type (type_of ``clos_to_bvl$compile_exps``); print "\n");
+val _ = (print "compile_exp_sing_eq="; print_term (concl clos_to_bvlTheory.compile_exp_sing_eq); print "\n");

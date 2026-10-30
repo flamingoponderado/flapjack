@@ -103,10 +103,9 @@ termination_by xs _ => sizeOf xs
 decreasing_by all_goals simp_wf <;> omega
 end
 
-/-- Source-shaped labeled program compilation, retaining label shifts and
-auxiliary code order. This uses `compileExpListHOL` where HOL `compile_prog`
-uses `compile_exps`; their original HOL equivalence has not yet been ported,
-so this definition is not tagged as the original. -/
+/-- Flapjack's singleton/list reformulation of labeled program compilation.
+The original uses `compile_exps`; `Proofs/ExpsEquivalence.lean` proves the
+two formulations equal, so this helper has no separate HOL reference. -/
 def compileProgHOL (maxApp : Nat) (prog : List (Nat × Nat × ClosLang.Exp)) :
     List (Nat × Nat × Bvl.Exp) :=
   let (exps, aux) := compileExpListHOL maxApp (prog.map (fun (_, _, exp) => exp)) []

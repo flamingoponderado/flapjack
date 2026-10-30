@@ -1,5 +1,23 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_exps_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/SourceExps.lean", "lean_name": "compileExpsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every source clause at lines 402-481 and inferred types in clos_to_bvl_recursive_types_probe.out. compileExps_singleton and compileExps_cons establish the original singleton and multi-element recursion, and compileExpsFuns_eq_map identifies the factored function traversal with compilation of MAP SND. HOL HD is represented by the shared holHd, and auxiliary order, arities, labels, operations and original carriers agree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_exp_sing_eq",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ExpsEquivalence.lean", "lean_name": "compileExpSing_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 586-601 and inferred types in clos_to_bvl_recursive_types_probe.out. Both independent quantified conjuncts, singleton result pairing, expression/list carriers and auxiliary triple lists match the original statement."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_prog_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/SourceExps.lean", "lean_name": "compileProgExpsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 603-607 and inferred types in clos_to_bvl_recursive_types_probe.out. The list-valued compiler, original labeled closure and BVL triple carriers, label shifts and appended auxiliaries match. compileProgExps_map2 establishes that the zip-and-map helper implements the original MAP2; compileProg_checked_eq_original proves the executed checked program converter returns this result."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_exp_sing_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/SourceCompile.lean", "lean_name": "compileExpHOL",
     "statement_status": "reviewed_exact",
