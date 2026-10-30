@@ -110753,5 +110753,29 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its WordOp for every fixed-word and floating-point primitive and argument list case; the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment, are retained. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/GlobalOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_global",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its GlobOp for every global read, write, allocation and unsupported operation; successful reads use membership in the existing global list, writes store a valid argument and allocation adds only uninitialized entries case. It retains the original source-state and argument validity and successful application premises, all three conclusions and independent state carrier types. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ThunkOk.lean",
+  "hol_name": "do_app_ok",
+  "lean_name": "doApp_ok_thunk",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its ThunkOp for both allocation and update, retaining the actual reference update and validity of the stored argument case. It retains the original source-state and argument validity and successful application premises, all three conclusions and independent state carrier types. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. Other operation cases and the assembled theorem remain open."
 }
 ]
