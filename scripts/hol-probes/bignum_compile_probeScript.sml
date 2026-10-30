@@ -1,0 +1,27 @@
+(* Mini-language compiler types and representative source cases. *)
+load "word_bignumTheory"; load "wordsLib";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = Globals.show_types := true;
+fun ty name term = (print (name ^ "="); print_type (type_of term); print "\n");
+fun row name term = (print (name ^ "="); print_term (rhs (concl (EVAL term))); print "\n");
+val _ = ty "compile_type" ``word_bignum$compile``;
+val _ = ty "has_compiled_type" ``word_bignum$has_compiled``;
+val _ = row "skip" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Skip : 64 word_bignum$mini)``;
+val _ = row "continue" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Continue : 64 word_bignum$mini)``;
+val _ = row "assign" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Assign 33 (wordLang$Var 34) : 64 word_bignum$mini)``;
+val _ = row "recurse" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Rec [0;33] [17] : 64 word_bignum$mini)``;
+val _ = row "loop_new" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Loop F [] (word_bignum$Skip : 64 word_bignum$mini))``;
+val _ = row "loop_reused" ``word_bignum$compile 39 2 1 (40,[(word_bignum$Skip,45,wordLang$Skip)]) (word_bignum$Loop F [] (word_bignum$Skip : 64 word_bignum$mini))``;
+val _ = row "loop_seq" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Seq (word_bignum$Loop F [] word_bignum$Skip) (word_bignum$Loop T [3] word_bignum$Skip) : 64 word_bignum$mini)``;
+val _ = row "load" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Load 3 4 word_bignum$In2 : 64 word_bignum$mini)``;
+val _ = row "store" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Store 3 4 : 64 word_bignum$mini)``;
+val _ = row "sub" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Sub 1 2 3 (asm$Imm 5w) (asm$Reg 7) : 64 word_bignum$mini)``;
+val _ = row "divide" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Div 1 2 3 4 5 : 64 word_bignum$mini)``;
+val _ = row "delete" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Delete [1;2] : 64 word_bignum$mini)``;
+val _ = row "loop_body" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$LoopBody word_bignum$Skip : 64 word_bignum$mini)``;
+val _ = row "swap" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Swap : 64 word_bignum$mini)``;
+val _ = row "if_reg" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$If asm$Equal 3 (asm$Reg 4) word_bignum$Skip word_bignum$Continue : 64 word_bignum$mini)``;
+val _ = row "if_imm" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$If asm$Equal 3 (asm$Imm 7w) word_bignum$Skip word_bignum$Continue : 64 word_bignum$mini)``;
+val _ = row "add" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Add 1 2 3 (asm$Imm 5w) (asm$Reg 7) : 64 word_bignum$mini)``;
+val _ = row "multiply" ``word_bignum$compile 39 2 1 (40,[]) (word_bignum$Mul 1 2 3 4 : 64 word_bignum$mini)``;
