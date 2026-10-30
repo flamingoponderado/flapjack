@@ -108639,4 +108639,17 @@
     "lean_name": "removeTicksSing_equivalence",
     "reviewer": "Compared both quantified typed conjuncts in bvl_remove_ticks_probe.out: singleton tick removal equals a singleton of the single-expression traversal, and list traversal equals tick removal on every expression list. No extra hypotheses are present."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "hol_name": "state_rel_def",
+    "hol_line": 15,
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/StateRel.lean",
+    "lean_name": "stateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "reviewer": "Compared the complete typed original relation in bvl_inline_state_rel_probe.out, with independent compiler configuration and FFI types: t is s with code mapped by (I ## HD o remove_ticks singleton), compiler replaced by t.compile, and every oracle program mapped the same way; s.compile is t.compile composed with that program map. The kernel-checked removeTicksSing_equivalence establishes the singleton HD equals removeTicksSing, and sptMap retains the source sparse-tree shape. The local canonical state witness covers refs only; the relation adds no other assumptions."
+  }
 ]

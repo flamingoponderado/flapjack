@@ -261,6 +261,10 @@ run_probe clos_to_bvl_recursive_types_probeScript.sml clos_to_bvl_recursive_type
   recc_lets_type build_recc_lets_type recc_lets_example build_recc_lets_example compile_exp_sing_def compile_exp_sing_type compile_exp_list_type compile_prog_def compile_prog_type compile_exps_def compile_exps_type compile_exp_sing_eq \
   "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
 
+run_probe bvl_inline_state_rel_probeScript.sml bvl_inline_state_rel_probe.out \
+  state_rel \
+  "$cake_dir/compiler/backend/proofs/bvl_inlineProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe bvl_remove_ticks_probeScript.sml bvl_remove_ticks_probe.out \
   remove_ticks_sing remove_ticks remove_ticks_equivalence nested branches \
   "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
