@@ -108946,5 +108946,45 @@
     "lean_name": "expRelTickInline",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared typed exp_rel_tick_inline in bvl_inline_state_rel_probe.out: unlike the generic inliner, this theorem's relation fixes cache and source pair first components to num. CacheRelated unfolds to the original universally quantified cache lookup and existential source body relation; the conclusion relates the exact original list to total tick_inline output, without extra premises. The executed bounded inliner is separately shown equal to that output."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Small.lean",
+    "hol_name": "is_small_sing_def",
+    "lean_name": "isSmallSing",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed is_small_sing_def equations in bvl_inline_state_rel_probe.out: exact BVL constructors, natural subtraction, left-to-right checks and immediate exit at zero; variables, Force and Tick cost no budget. This proof-side port is not yet proved equal to the production bounded traversal."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Small.lean",
+    "hol_name": "is_small_sing_def",
+    "lean_name": "isSmallList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed nil and cons is_small_list equations in bvl_inline_state_rel_probe.out, including zero-budget exits before and after the head and the original return budget in each branch."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Small.lean",
+    "hol_name": "is_small_aux_def",
+    "lean_name": "isSmallAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed is_small_aux_def in bvl_inline_state_rel_probe.out: the mutual list and singleton traversals satisfy its nil, multi-element and all singleton equations. The zero-budget singleton equivalence is kernel checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Small.lean",
+    "hol_name": "is_small_sing",
+    "lean_name": "isSmallSing_equivalence",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed is_small_sing in bvl_inline_state_rel_probe.out: both universally quantified singleton and list equalities, with the original order of expression and budget arguments, are retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Small.lean",
+    "hol_name": "is_small_def",
+    "lean_name": "isSmall",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed is_small_def in bvl_inline_state_rel_probe.out: the Boolean test is nonzero remaining singleton budget, equal to the original auxiliary-list test by isSmallSing_equivalence. Production routing remains open."
   }
 ]

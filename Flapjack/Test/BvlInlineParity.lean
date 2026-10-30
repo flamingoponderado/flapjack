@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.BvlInline
 import Flapjack.Compiler.Backend.BvlInline.TickInline
+import Flapjack.Compiler.Backend.BvlInline.Small
 
 /-! Replay `bvl_inline_frontend_probe.out` from pinned CakeML/HOL. -/
 namespace Flapjack.Test.BvlInlineParity
@@ -30,6 +31,7 @@ private def sized : Bvl.Exp :=
   .let [.var 0, .tick (.var 1)] (.call 0 (some 4) [.var 0])
 #guard [0, 1, 2, 3, 4].map (fun n => smallExpFuel 100 n sized) ==
   [some 0, some 0, some 0, some 1, some 2]
+#guard [0, 1, 2, 3, 4].map (fun n => isSmallSing n sized) == [0, 0, 0, 1, 2]
 #guard match letOpFuel 100 (.let [.var 8, .var 9]
     (.op (.intOp .add) [.var 0, .var 1])) with
   | some (.op (.intOp .add) [.var 8, .var 9]) => true

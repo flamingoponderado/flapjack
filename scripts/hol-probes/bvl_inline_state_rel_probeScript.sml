@@ -23,6 +23,10 @@ val _ = show "tick_inline=" bvl_inlineTheory.tick_inline_def;
 val _ = show "tick_inline_sing_def=" bvl_inlineTheory.tick_inline_sing_def;
 val _ = show "tick_inline_sing=" bvl_inlineTheory.tick_inline_sing;
 val _ = show "exp_rel_tick_inline=" bvl_inlineProofTheory.exp_rel_tick_inline;
+val _ = show "is_small_aux=" bvl_inlineTheory.is_small_aux_def;
+val _ = show "is_small_sing_def=" bvl_inlineTheory.is_small_sing_def;
+val _ = show "is_small_sing=" bvl_inlineTheory.is_small_sing;
+val _ = show "is_small=" bvl_inlineTheory.is_small_def;
 val _ = show "tick_inline_generic_cache=" (EVAL ``bvl_inline$tick_inline_sing
   (sptree$insert 3 (T, bvl$Var 8) sptree$LN) (bvl$Call 2 (SOME 3) [bvl$Var 1])``);
 val _ = show "tick_inline_uncached=" (EVAL ``bvl_inline$tick_inline_sing

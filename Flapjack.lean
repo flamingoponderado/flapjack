@@ -439,6 +439,7 @@ import Flapjack.Compiler.Backend.BvlInline.Proofs.RemoveTicksSimulation
 import Flapjack.Compiler.Backend.BvlInline.Proofs.CompileProg
 import Flapjack.Compiler.Backend.BvlInline.Proofs.ExpRel
 import Flapjack.Compiler.Backend.BvlInline.Proofs.TickInlineRel
+import Flapjack.Compiler.Backend.BvlInline.Small
 import Flapjack.Compiler.Backend.BvlInline.Proofs.Semantics
 import Flapjack.Compiler.Backend.BviInline.Proofs.Total
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
