@@ -108677,4 +108677,18 @@
     "lean_name": "doAppWithCodeErr",
     "reviewer": "Compared the full typed HOL implication in bvl_sem_values_probe.out. The error and non-Install conjunction, replacement-domain subset of source-domain or non-type-error condition, same error conclusion and three replacement fields agree. sptDomain is the sparse-tree lookup domain; the local canonical witness covers refs only. Compiler and FFI types remain independent, and doApp inherits the floating-point real-carrier assumptions."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "hol_name": "do_app_lemma",
+    "hol_line": 30,
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ApplySimulation.lean",
+    "lean_name": "doAppLemma",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exact typed local source statement and replayed its original HOL proof in bvl_inline_state_rel_probe.out. For related states, the case on do_app op (REVERSE args) in the transformed state preserves the identical error or yields an existential related source state and the same value. Compiler and FFI type variables stay independent, no extra premise is present, and the local canonical witness covers refs only. The proof covers installation via equal decoded buffers, compiler output, label uniqueness, disjointness and mapped code union, and inherits the dispatcher floating-point real-carrier assumptions."
+  }
 ]

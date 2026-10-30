@@ -6,6 +6,14 @@ namespace Flapjack.Compiler.Backend.BvlInline.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps
 open Flapjack.SemanticPrimitivesHOL
 
+namespace SimulationCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end SimulationCarrier
+
 /-- Related states have identical code domains. -/
 theorem stateRel_codeDomain {C F : Type} (s t : State C F) (related : stateRel s t) :
     sptDomain t.code = sptDomain s.code := by
@@ -85,5 +93,80 @@ theorem tickRemoved_code_union (code : Spt (Nat × Bvl.Exp))
       (sptFromAList (program.map fun (name, arity, body) => (name, arity, removeTicksSing body))) =
     sptMap (fun (arity, body) => (arity, removeTicksSing body)) (sptUnion code (sptFromAList program)) := by
   rw [sptMap_sptUnion, sptMap_sptFromAList]
+
+/-- Installation simulation under the tick-removal state relation. -/
+theorem doInstallSimulation {C F : Type} (s t : State C F) (related : stateRel s t)
+    (args : List BvlSem.Value) :
+    match doInstall (R := BvlSem.Value) args t with
+    | .err error => doInstall (R := BvlSem.Value) args s = .err error
+    | .val (value, next) => ∃ sourceNext, stateRel sourceNext next ∧
+        doInstall (R := BvlSem.Value) args s = .val (value, sourceNext) := by
+  classical
+  cases args with
+  | nil => simp [doInstall]
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doInstall]
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp [doInstall]
+      | nil =>
+        cases bytesEq : valueToBytes first with
+        | none => simp [doInstall, bytesEq]
+        | some bytes =>
+          cases wordsEq : valueToWords second with
+          | none => simp [doInstall, bytesEq, wordsEq]
+          | some words =>
+            have fields := related.1
+            have compilerEq := related.2
+            rw [fields]
+            clear fields related
+            simp only [doInstall, bytesEq, wordsEq, compilerEq, tickRemoved_program_disjoint,
+              tickRemoved_program_labels]
+            clear compilerEq
+            cases programs : (s.compileOracle 0).2 with
+            | nil =>
+              cases compiled : t.compile (s.compileOracle 0).1 [] with
+              | none => simp [compiled]
+              | some output => rcases output with ⟨bs, ws, cfg⟩; simp [compiled]
+            | cons entry tail =>
+              rcases entry with ⟨name, arity, body⟩
+              simp only [List.map_cons]
+              by_cases valid : (∀ entry ∈ (name, arity, body) :: tail, sptLookup entry.1 s.code = none) ∧
+                  (((name, arity, body) :: tail).map Prod.fst).Nodup
+              · simp only [List.map_cons] at valid
+                simp only [valid]
+                rcases valid with ⟨disjoint, nodup⟩
+                simp only [List.mem_cons, forall_eq_or_imp] at disjoint
+                rcases disjoint with ⟨headFree, tailFree⟩
+                cases compiled : t.compile (s.compileOracle 0).1
+                    ((name, arity, removeTicksSing body) :: tail.map (fun (n, a, b) => (n, a, removeTicksSing b))) with
+                | none => simp_all
+                | some output =>
+                  rcases output with ⟨bs, ws, cfg⟩
+                  by_cases same : bytes = bs ∧ words = ws ∧ (s.compileOracle 1).1 = cfg
+                  · simp_all
+                    rw [if_pos tailFree, if_pos tailFree]
+                    simp [stateRel, ← tickRemoved_code_union]
+                  · simp_all
+                    rw [if_pos tailFree, if_pos tailFree]
+                    have notSame : ¬(bytes = bs ∧ words = ws ∧ (s.compileOracle 1).1 = cfg) := by aesop
+                    rw [if_neg notSame, if_neg notSame]
+              · simp only [List.map_cons] at valid
+                simp only [valid, if_false]
+
+/-- Primitive application is simulated by tick removal, including installation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "do_app_lemma" 30
+  (fmap_as_finite_support := [refs])]
+theorem doAppLemma {C F : Type} (s t : Flapjack.Compiler.Backend.BvlSem.State C F) (related : stateRel s t)
+    (op : ClosLang.Op) (args : List BvlSem.Value) :
+    match doApp op args.reverse t with
+    | .err error => doApp op args.reverse s = .err error
+    | .val (value, next) => ∃ sourceNext, stateRel sourceNext next ∧
+        doApp op args.reverse s = .val (value, sourceNext) := by
+  by_cases install : op = .install
+  · subst op
+    simpa [doApp] using doInstallSimulation s t related args.reverse
+  · exact doAppSimulation_nonInstall s t related op args.reverse install
 
 end Flapjack.Compiler.Backend.BvlInline.Proofs
