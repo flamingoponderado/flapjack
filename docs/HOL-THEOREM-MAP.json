@@ -110658,5 +110658,28 @@
   ],
   "reviewer": "Compared with the typed replay of the local original theorem in bvl_to_bvi_value_rel_probe.out: source evaluation preserves well-formedness of any prior valid value and any prior valid list. Domain growth and bvOkList_iff justify the EVERY formulation; the BVL state uses the canonical refs roundtrip. The evaluator inherits the floating-point real-carrier representation.",
   "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ValueOk.lean",
+  "hol_name": "find_code_bv_ok",
+  "lean_name": "findCode_bvOk",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "refs"
+  ],
+  "reviewer": "Compared the typed original in bvl_to_bvi_value_rel_probe.out: the sparse-tree code payload is independently polymorphic, and any successfully selected argument list inherits EVERY bv_ok from the supplied list with an arbitrary reference map. bvOkList_iff connects the original EVERY predicate with the Lean recursion; the local witness covers the canonical finite-map input."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/BuildOk.lean",
+  "hol_name": "do_build_ok",
+  "lean_name": "doBuild_ok",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "State.refs",
+    "refs"
+  ],
+  "reviewer": "Compared the typed original in bvl_to_bvi_value_rel_probe.out: the original equation, state invariant and arbitrary environment validity imply the updated state invariant and returned value validity. Both compiler and FFI state types remain independent. The canonical state roundtrip covers State.refs and refs is the independently quantified output finite map; the source-shaped doBuild retains the actual constant-part order, allocation and reference updates."
 }
 ]

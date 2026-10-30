@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateRefs
+import Flapjack.Compiler.Backend.Semantics.BvlProps.FindCode
 
 /-! Domain monotonicity and list values for BVL-to-BVI well-formedness. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
@@ -29,6 +30,14 @@ theorem holFmapAsFiniteSupportParamWitness_listToValue_ok_refs
 
 /-- Canonical reference-map roundtrip for concatenated list values. -/
 theorem holFmapAsFiniteSupportParamWitness_listToValue_ok_append_refs
+    (refs : HolFiniteMapExact Nat (Ref Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs := by
+  exact holFmapAsFiniteSupportParamWitness_listToValue_ok_refs refs key
+
+/-- Canonical reference-map roundtrip for code lookup arguments. -/
+theorem holFmapAsFiniteSupportParamWitness_findCode_bvOk_refs
     (refs : HolFiniteMapExact Nat (Ref Value)) (key : Nat) :
     (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
     (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
@@ -114,5 +123,19 @@ theorem evaluateImpBvOk {C F : Type} (expressions : List Bvl.Exp) (env : List Va
   have subset := BvlProps.evaluateRefsSubset expressions env source target result run
   exact ⟨fun ok => bvOk_domain_mono source.refs value target.refs ok subset,
     fun ok => bvOkList_domain_mono source.refs values target.refs ok subset⟩
+
+/-- Arguments selected by a successful code lookup remain well formed in an
+arbitrary reference domain when all supplied arguments are well formed. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "find_code_bv_ok"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem findCode_bvOk {α : Type} (dest : Option Nat) (values args : List Value)
+    (code : Spt (Nat × α)) (body : α)
+    (refs : HolFiniteMapExact Nat (Ref Value))
+    (run : BvlSem.findCode dest values code = some (args, body))
+    (ok : bvOkList refs values) : bvOkList refs args := by
+  apply (bvOkList_iff refs args).2
+  intro value member
+  exact (bvOkList_iff refs values).1 ok value
+    (BvlProps.findCode_args_subset dest values args code body run value member)
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
