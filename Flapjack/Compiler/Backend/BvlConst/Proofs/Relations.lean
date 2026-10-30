@@ -1,15 +1,23 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 import Flapjack.Compiler.Backend.BvlConst
 
 /-! Relations needed for the constant-propagation semantic simulation.
 
 These definitions follow the original value and environment relations but
-are not tagged as HOL ports: the BVL evaluator they quantify over is still
-pending source review, and the finite-map state is hidden in that quantifier.
-The evaluator correspondence and representation qualification remain open.
+are not tagged as HOL ports: their canonical finite-map state is hidden in the
+value-relation quantifier and cannot be named by the current field qualifier.
+The corresponding representation qualification remains open.
 -/
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs
 open Flapjack.Compiler.Backend.BvlSem
+
+namespace DeleteVarCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end DeleteVarCarrier
 
 /-- Relate one propagated expression to its source and transformed values. -/
 noncomputable def valueRel (C F : Type) (expression : Bvl.Exp)
@@ -32,7 +40,7 @@ noncomputable def envRel (C F : Type) : List (Option Bvl.Exp) → List Value →
   | _, _, _ => False
 
 /-- Related environments have equal length. This is untagged because its
-relation inherits the unreviewed BVL evaluator and state representation. -/
+relation hides the canonical finite-map state in its evaluator quantifier. -/
 theorem envRel_length (C F : Type) (annotations : List (Option Bvl.Exp))
     (source target : List Value) (related : envRel C F annotations source target) :
     target.length = source.length := by
@@ -50,7 +58,7 @@ theorem envRel_length (C F : Type) (annotations : List (Option Bvl.Exp))
 
 /-- An annotated lookup yields the relation at the corresponding environment
 suffixes. This follows the original lookup lemma but is untagged for the
-same evaluator and state-representation review gap as `envRel`. -/
+  same hidden state-representation qualification gap as `envRel`. -/
 theorem envRel_lookup_some (C F : Type) (annotations : List (Option Bvl.Exp))
     (source target : List Value) (expression : Bvl.Exp) (index : Nat)
     (related : envRel C F annotations source target)
@@ -82,8 +90,8 @@ theorem envRel_lookup_some (C F : Type) (annotations : List (Option Bvl.Exp))
             simpa [Flapjack.holEl] using ih source target index related.2 lookup
 
 /-- Missing or empty annotations leave the selected values equal, including
-the shared HOL out-of-range value. This is untagged pending the evaluator and
-state-representation review recorded above. -/
+the shared HOL out-of-range value. This is untagged pending the hidden-state
+representation qualification recorded above. -/
 theorem envRel_lookup_none (C F : Type) (annotations : List (Option Bvl.Exp))
     (source target : List Value) (index : Nat)
     (related : envRel C F annotations source target)
@@ -112,14 +120,17 @@ theorem envRel_lookup_none (C F : Type) (annotations : List (Option Bvl.Exp))
             simp only [List.getElem?_cons_succ] at lookup <;>
             simpa [Flapjack.holEl] using ih source target index related.2 lookup
 
-/-- Deleting a variable preserves every non-type-error singleton result.
-This source-shaped lemma remains untagged while the BVL evaluator and its
-finite-map state representation are under review. -/
+/-- Deleting a variable preserves every non-type-error singleton result. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "evaluate_delete_var_Rerr_SING"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_deleteVar_error {C F : Type} (expression : Bvl.Exp)
-    (state final : State C F) (error : Flapjack.SemanticPrimitivesHOL.ErrorResult Value) (env : List Value)
-    (run : evaluate [expression] env state = (.err error, final))
+    (state final : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (error : Flapjack.SemanticPrimitivesHOL.ErrorResult Value) (env : List Value)
+    (run : evaluateTuple ([expression], env, state) = (.err error, final))
     (notTypeError : error ≠ .abort .typeError) :
-    evaluate [BvlConst.deleteVar expression] env state = (.err error, final) := by
+    evaluateTuple ([BvlConst.deleteVar expression], env, state) = (.err error, final) := by
+  change evaluate [expression] env state = (.err error, final) at run
+  change evaluate [BvlConst.deleteVar expression] env state = (.err error, final)
   cases expression with
   | var index =>
     cases lookup : env[index]? with

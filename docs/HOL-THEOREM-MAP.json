@@ -109749,5 +109749,25 @@
     "lean_name": "compileList",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the typed original list nil and cons equations in bvl_const_frontend_probe.out. mapM_eq_compileList and compileFuel_eq establish agreement of successful executable list traversal with the total source-shaped list recursion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Relations.lean",
+    "hol_name": "evaluate_delete_var_Rerr_SING",
+    "lean_name": "evaluate_deleteVar_error",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed original in bvl_const_rel_probe.out: arbitrary expression, environment, independently polymorphic compiler and FFI state carriers, original error and final state, evaluation hypothesis, and exclusion of abort type error are preserved. The conclusion evaluates the source delete_var singleton with exactly the same error and state. The local canonical roundtrip witnesses refs; the reviewed evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/DeleteVar.lean",
+    "hol_name": "evaluate_delete_var_Rerr",
+    "lean_name": "evaluate_deleteVar_list_error",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed replay of the original local proof in bvl_const_rel_probe.out. Arbitrary expression list, environment, independent compiler and FFI state parameters, non-type-error hypothesis and equality of result and final state match. The source MAP delete_var is the executed Lean list map. The local canonical roundtrip witnesses refs; the reviewed evaluator inherits floating-point real-carrier assumptions."
   }
 ]

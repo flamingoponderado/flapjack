@@ -1,6 +1,6 @@
 load "bvl_constProofTheory";
 load "preamble";
-open preamble bvl_constProofTheory;
+open preamble bvl_constProofTheory bvl_constTheory bvlSemTheory bvlPropsTheory;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 fun show label th = if null (hyp th) then (print label; print_term (concl th); print "\n")
@@ -29,4 +29,18 @@ val env_rel_LOOKUP_SOME_replay = prove (``
   \\ Cases_on `h'` \\ fs [env_rel_def]);
 val _ = show "env_rel_LOOKUP_SOME_replay=" env_rel_LOOKUP_SOME_replay;
 val _ = show "evaluate_delete_var_Rerr_SING=" evaluate_delete_var_Rerr_SING;
+val evaluate_delete_var_Rerr_replay = prove (``
+  !xs s r e env2.
+    evaluate (xs,env2,s) = (Rerr e,r) /\
+    e <> Rabort Rtype_error ==>
+    evaluate (MAP bvl_const$delete_var xs,env2,s) = (Rerr e,r)``,
+  Induct \\ fs [] \\ once_rewrite_tac [evaluate_CONS]
+  \\ rw [] \\ every_case_tac \\ fs [] \\ rw []
+  \\ TRY (drule evaluate_delete_var_Rerr_SING \\ fs [])
+  \\ res_tac \\ fs []
+  \\ Cases_on `h` \\ fs [delete_var_def]
+  \\ rw [] \\ fs []
+  \\ fs [evaluate_def,do_app_def,do_int_app_def] \\ rw []
+  \\ fs[AllCaseEqs()]);
+val _ = show "evaluate_delete_var_Rerr_replay=" evaluate_delete_var_Rerr_replay;
 val _ = show "evaluate_env_rel=" evaluate_env_rel;
