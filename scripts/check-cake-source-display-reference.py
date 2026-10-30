@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recheck source through BVI explorer examples against pinned CakeML."""
+"""Recheck source through data explorer examples against pinned CakeML."""
 import argparse
 import importlib.util
 import subprocess
@@ -76,6 +76,22 @@ BVI_START = (
     b'            (call bvl_init@296 (handler d -> (var d)))))))\n\n'
 )
 
+DATA_STUB = (
+    b'(func AllocGlobal@62 (0)\n   (seq\n      skip\n      (1 := GlobalsPtr () none)\n'
+    b'      skip\n      (2 := (Const 0) () none)\n      skip\n      (3 := El (1 2) none)\n'
+    b'      skip\n      skip\n      (4 := Add (0 3) (some {0,1,3}))\n'
+    b'      skip\n      (5 := Length (1) none)\n      skip\n      skip\n'
+    b'      (6 := (Const 0) () none)\n      skip\n      (7 := Update (1 6 4) none)\n'
+    b'      skip\n      skip\n      (8 := Less (4 5) (some {0,1,3,4,5,7}))\n'
+    b'      (if 8 (return (7))\n         (seq\n            skip\n            (10 := (Const 0) () none)\n'
+    b'            skip\n            skip\n            (11 := Add (4 4) (some {0,1,3,4,5,7,10}))\n'
+    b'            (12 := RefArray (11 10) (some {0,1,3,4,5,7,10,11}))\n'
+    b'            skip\n            (13 := SetGlobalsPtr (12) none)\n'
+    b'            skip\n            skip\n            skip\n            (14 := (Const 1) () none)\n'
+    b'            skip\n            (15 := Sub (5 14) (some {0,1,3,4,5,7,12,13,14}))\n'
+    b'            (call none CopyGlobals@63 (12 1 15) none)))))\n\n'
+)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -102,6 +118,10 @@ def main():
             if not bvl.startswith(BVL_STUB) or not bvi.startswith(BVI_STUB) or BVI_START not in bvi:
                 raise SystemExit(f'original BVL or BVI output mismatch for {source!r}')
             print('original BVL and BVI runtime stubs match', flush=True)
+            data = result.stdout.split(b'# after bvi_to_data\n\n', 1)[1]
+            if not data.startswith(DATA_STUB):
+                raise SystemExit(f'original data-stage output mismatch for {source!r}')
+            print('original data-stage runtime stub matches', flush=True)
         print(f'original source-stage output matches: {source!r}', flush=True)
 
 
