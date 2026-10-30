@@ -13,6 +13,14 @@ theorem sourceCompileProg_noMti (cfg : SourceToFlat.Config) (ds : List AstHOL.De
     ∀ e ∈ compileProg (SourceToFlat.compileTotal cfg ds).2, ClosProps.noMti e :=
   compileProg_noMti _
 
+/-- Flapjack composition: incremental source compilation also produces
+pre-MTI closure code. This is not a port of a single HOL theorem. -/
+theorem sourceIncCompile_noMti {α : Type} (envId : Nat × Nat)
+    (cfg : SourceToFlat.Config) (ds : List AstHOL.Dec) :
+    ∀ e ∈ (incCompileDecs (α := α) (SourceToFlat.incCompile envId cfg ds).2).1,
+      ClosProps.noMti e :=
+  incCompileDecs_noMti _
+
 /-- Flapjack composition: the normal source-to-closure path always produces
 closure-safe code, including the attached interpreter. This follows from the
 separate HOL pass invariants and is not a port of a single HOL theorem. -/

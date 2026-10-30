@@ -512,6 +512,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.OperatorGlobals
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileGlobals
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileSafety
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Syntactic
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.SourceInvariants
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Recursive
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
@@ -522,6 +523,8 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Declarations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvalInstall
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
+import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockOperations
@@ -548,6 +551,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Executable
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Semantics
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallPipeline
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.Globals
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoMti
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateBasic
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateEl
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateRev

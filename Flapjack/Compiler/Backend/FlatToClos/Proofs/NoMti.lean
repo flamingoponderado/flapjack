@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatToClos.Compile
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoMti
 import Mathlib.Tactic.Tauto
 
 /-! Pre-multi-argument syntax preserved by flat-to-closure compilation. -/
@@ -157,5 +158,16 @@ theorem compileProg_noMti (ds : List FlatLang.Exp) :
     ∀ e ∈ compileProg ds, noMti e := by
   have safe := compileDecs_noMti ds
   simpa [compileProg, ClosInterp.attachInterpreter, compileInit_noMti] using safe
+
+/-- Flapjack helper: the incremental path produces pre-MTI syntax. The HOL
+theorem additionally states two other syntax properties. -/
+theorem incCompileDecs_noMti {α : Type} (ds : List FlatLang.Exp) :
+    ∀ e ∈ (incCompileDecs (α := α) ds).1, noMti e := by
+  intro e member
+  apply ClosInterp.insertInterp_noMti e _ member
+  intro x sourceMember
+  rcases List.mem_append.mp sourceMember with original | unit
+  · exact compileDecs_noMti ds x original
+  · exact compileDecs_noMti [.con .none none []] x unit
 
 end Flapjack.Compiler.Backend.FlatToClos

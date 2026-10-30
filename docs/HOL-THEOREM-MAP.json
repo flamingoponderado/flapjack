@@ -1,5 +1,47 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml", "hol_name": "insert_interp_no_mti",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoMti.lean", "lean_name": "insertInterp_noMti",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 1499-1522 and inferred types in flat_to_clos_globals_probe.out. The membership and EVERY premises occur in the original order and use the same closure-expression carriers; membership quantification expresses EVERY. Both interpreter-call replacement and the Let fallback are covered."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "contains_App_SOME_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Syntactic.lean", "lean_name": "containsAppSome",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed clauses at source lines 193-228 and flat_to_clos_globals_probe.out. The list recursion and singleton helper express the original empty, multi-element and singleton cases; containsAppSomeFuns_eq_map proves the letrec helper equals the mapped bodies. ForceThunk, location and arity checks match, with original closure carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "every_Fn_vs_NONE_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Syntactic.lean", "lean_name": "everyFnVarsNone",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed clauses at source lines 293-326 and flat_to_clos_globals_probe.out. List recursion and singleton helper express the original clauses; fnVarsNoneFuns_eq_map proves the letrec helper equals the mapped bodies, and both annotation-option fields and expression carriers match."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_syntactic_props",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean", "lean_name": "compile_syntacticProps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2482-2517 and typed capture in flat_to_clos_globals_probe.out. The positive max_app premise precedes the quantified environment and expression list; the three conjuncts, original carriers and EVERY-as-membership formulation match."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_decs_syntactic_props",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean", "lean_name": "compileDecs_syntacticProps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2519-2527 and inferred types in flat_to_clos_globals_probe.out. Declaration and closure list carriers, all three conjuncts, and the positive max_app implication match; membership quantification expresses EVERY."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "compile_prog_syntactic_props",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean", "lean_name": "compileProg_syntacticProps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2556-2568 and inferred types in flat_to_clos_globals_probe.out. All conjuncts, the max_app implication, interpreter-attached program and original carriers agree; membership quantification expresses EVERY."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml", "hol_name": "FST_inc_compile_syntactic_props",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean", "lean_name": "incCompileDecs_syntacticProps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2570-2582 and typed capture in flat_to_clos_globals_probe.out. The three pair components retain the independent type variables alpha, beta and gamma inferred by HOL; the conjuncts, positive max_app implication and EVERY-as-membership formulation agree."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "no_mti_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/NoMti.lean", "lean_name": "noMti",
     "statement_status": "reviewed_exact",
