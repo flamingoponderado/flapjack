@@ -358,7 +358,7 @@ theorem evaluate_ordinaryOp_simulation_step {C F : Type} (trace : BackendCommon.
     (op : ClosLang.Op) (args : List ClosLang.Exp) (env : List ClosSem.Value)
     (source target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value)
     (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
-    (argsIH : ∀ (source target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value),
+    (argsIH : ∀ (target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value),
       ClosSem.evaluate args env source = (result, sourceFinal) → StateRel source target →
       result ≠ .err (.abort .typeError) →
       ∃ extra targetFinal,
@@ -379,7 +379,7 @@ theorem evaluate_ordinaryOp_simulation_step {C F : Type} (trace : BackendCommon.
       subst argsResult
       simp at run
       exact notTypeError run.1.symm
-    obtain ⟨extra, targetMid, targetArgs, midRel⟩ := argsIH source target sourceMid argsResult argsRun related argsNotTypeError
+    obtain ⟨extra, targetMid, targetArgs, midRel⟩ := argsIH target sourceMid argsResult argsRun related argsNotTypeError
     cases argsResult with
     | err error =>
       simp at run

@@ -519,6 +519,8 @@ import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.ForceRelation
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.InstallRelation
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.ApplicationRelation
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.ControlRelation
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.SimulationFull
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig

@@ -124,7 +124,7 @@ induction hypotheses. -/
 theorem evaluate_install_simulation_step {C F : Type} (trace : BackendCommon.Tra)
     (args : List ClosLang.Exp) (env : List ClosSem.Value)
     (source target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value)
-    (argsIH : ∀ (source target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value),
+    (argsIH : ∀ (target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value),
       ClosSem.evaluate args env source = (result, sourceFinal) → StateRel source target →
       result ≠ .err (.abort .typeError) →
       ∃ extra targetFinal,
@@ -155,7 +155,7 @@ theorem evaluate_install_simulation_step {C F : Type} (trace : BackendCommon.Tra
       subst argsResult
       simp at run
       exact notTypeError run.1.symm
-    obtain ⟨argsExtra, targetMid, targetArgs, midRel⟩ := argsIH source target sourceMid argsResult argsRun related argsNotTypeError
+    obtain ⟨argsExtra, targetMid, targetArgs, midRel⟩ := argsIH target sourceMid argsResult argsRun related argsNotTypeError
     cases argsResult with
     | err error =>
       simp at run
