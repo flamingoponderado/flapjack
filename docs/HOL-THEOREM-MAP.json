@@ -110451,7 +110451,7 @@
   "hol_name": "compile_exps_sing_def",
   "lean_name": "compileSingSource",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared all typed original singleton clauses in bvl_to_bvi_compile_probe.out, including the left-associated SmartAppend tree, source argument count, fresh names, destination mapping and original AppList carrier. The executed traversal has not yet been proved to match this source-shaped definition."
+  "reviewer": "Compared all typed original singleton clauses in bvl_to_bvi_compile_probe.out, including the left-associated SmartAppend tree, source argument count, fresh names, destination mapping and original AppList carrier. The executed traversal agrees at sufficient fuel and after an exhausted retry; successful low-fuel agreement remains open."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",

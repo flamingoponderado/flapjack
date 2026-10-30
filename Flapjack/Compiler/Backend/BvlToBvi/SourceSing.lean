@@ -21,8 +21,9 @@ def compileAuxSource {α : Type} (input : Nat × α × Bvi.Exp) : AppList (Nat �
   .list [(bvlNumStubs + bvlToBviNamespaces * k + 1, args, BviLet.compileSing [] 0 body)]
 
 mutual
-/-- Total source-shaped expression conversion. The executed conversion's
-correspondence to this definition remains open. -/
+/-- Total source-shaped expression conversion. The executed traversal agrees
+at sufficient fuel and after an exhausted initial traversal; successful
+low-fuel agreement remains open. -/
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "compile_exps_sing_def"]
 def compileSingSource (n : Nat) : Bvl.Exp → Bvi.Exp × AuxTree × Nat
   | .var v => (.var v, .nil, n)
