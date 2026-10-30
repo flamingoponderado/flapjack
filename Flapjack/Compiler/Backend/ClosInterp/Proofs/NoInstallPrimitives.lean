@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallValues
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
 
 /-! Primitive preservation of the no-install invariant. The evaluator and
 state carriers remain pending HOL correspondence review. -/
@@ -204,5 +205,142 @@ theorem applyMemory_noInstall {C F : Type} (op : ClosLang.MemOp) (args : List Cl
     all_goals rcases run with ⟨_, _, rfl, rfl⟩
     all_goals simp_all [valueNoInstall, ClosSem.unitValue, valuesNoInstall]
     all_goals apply refsNoInstall_update <;> simp_all [refNoInstall]
+
+/-- Every initialized global contains a no-install value. -/
+def globalsNoInstall (globals : List (Option ClosSem.Value)) : Prop :=
+  ∀ entry ∈ globals, ∀ value, entry = some value → valueNoInstall value = true
+
+/-- Updating a global with a safe value preserves the global invariant. -/
+theorem globalsNoInstall_set (globals : List (Option ClosSem.Value)) (index : Nat)
+    (value : ClosSem.Value) (valid : globalsNoInstall globals) (valueOk : valueNoInstall value = true) :
+    globalsNoInstall (globals.set index (some value)) := by
+  induction globals generalizing index with
+  | nil => simp [List.set, globalsNoInstall]
+  | cons head tail ih =>
+    cases index with
+    | zero =>
+      simp only [List.set, globalsNoInstall, List.mem_cons] at *
+      intro entry member v eq
+      rcases member with rfl | member
+      · cases eq; exact valueOk
+      · exact valid entry (Or.inr member) v eq
+    | succ index =>
+      simp only [List.set, globalsNoInstall, List.mem_cons] at *
+      intro entry member v eq
+      rcases member with rfl | member
+      · exact valid _ (Or.inl rfl) v eq
+      · apply ih index (by intro e h; exact valid e (Or.inr h)) entry member v eq
+
+/-- Extending the globals with uninitialized slots preserves the invariant. -/
+theorem globalsNoInstall_append_empty (globals : List (Option ClosSem.Value)) (count : Nat)
+    (valid : globalsNoInstall globals) : globalsNoInstall (globals ++ List.replicate count none) := by
+  intro entry member value eq
+  simp only [List.mem_append, List.mem_replicate] at member
+  rcases member with member | ⟨_, rfl⟩
+  · exact valid entry member value eq
+  · cases eq
+
+/-- Successful global primitives preserve safe values and globals. -/
+theorem applyGlobal_noInstall {C F : Type} (op : ClosLang.GlobOp) (args : List ClosSem.Value)
+    (state next : ClosSem.State C F) (value : ClosSem.Value)
+    (argsOk : valuesNoInstall args = true) (globalsOk : globalsNoInstall state.globals)
+    (run : ClosSem.applyGlobal op args state = some (value, next)) :
+    valueNoInstall value = true ∧ globalsNoInstall next.globals := by
+  unfold ClosSem.applyGlobal at run
+  repeat' split at run
+  all_goals simp_all [valuesNoInstall, valueNoInstall, ClosSem.getGlobal]
+  all_goals try simp_all only [Option.join_eq_some_iff]
+  all_goals try (solve | rcases run with ⟨found, rfl⟩; exact globalsOk _ (List.mem_of_getElem? found) _ rfl)
+  all_goals rcases run with ⟨rfl, rfl⟩
+  all_goals simp only [valueNoInstall, ClosSem.unitValue, valuesNoInstall, true_and]
+  all_goals first | exact globalsNoInstall_set _ _ _ globalsOk argsOk | exact globalsNoInstall_append_empty _ _ globalsOk
+
+/-- Successful global operations leave the reference store unchanged. -/
+theorem applyGlobal_refs {C F : Type} (op : ClosLang.GlobOp) (args : List ClosSem.Value)
+    (state next : ClosSem.State C F) (value : ClosSem.Value)
+    (run : ClosSem.applyGlobal op args state = some (value, next)) : next.refs = state.refs := by
+  unfold ClosSem.applyGlobal at run
+  repeat' split at run
+  all_goals simp_all
+  all_goals (rcases run with ⟨_, rfl⟩; rfl)
+
+/-- Successful block operations leave the state unchanged. -/
+theorem applyBlock_state {C F : Type} (op : ClosLang.BlockOp) (args : List ClosSem.Value)
+    (state next : ClosSem.State C F) (value : ClosSem.Value)
+    (run : ClosSem.applyBlock op args state = some (value, next)) : next = state := by
+  unfold ClosSem.applyBlock at run
+  repeat' split at run
+  all_goals simp_all
+  all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
+  all_goals aesop
+
+/-- Successful numeric operations leave the state unchanged. -/
+theorem applyNumeric_state {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
+    (state next : ClosSem.State C F) (value : ClosSem.Value)
+    (run : ClosSem.applyNumeric op args state = some (value, next)) : next = state := by
+  unfold ClosSem.applyNumeric at run
+  repeat' split at run
+  all_goals simp_all
+
+/-- Successful ordinary primitive applications preserve the no-install
+invariants for their result, globals, and references. -/
+theorem doApp_noInstall {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
+    (state next : ClosSem.State C F) (value : ClosSem.Value)
+    (argsOk : valuesNoInstall args = true) (globalsOk : globalsNoInstall state.globals)
+    (refsOk : refsNoInstall state.refs)
+    (run : ClosSem.doApp op args state = .val (value, next)) :
+    valueNoInstall value = true ∧ globalsNoInstall next.globals ∧ refsNoInstall next.refs := by
+  cases op with
+  | globOp operation =>
+    cases found : ClosSem.applyGlobal operation args state with
+    | none => simp [ClosSem.doApp, found] at run
+    | some pair =>
+      have equal : pair = (value, next) := by simpa [ClosSem.doApp, found] using run
+      subst pair
+      obtain ⟨v, g⟩ := applyGlobal_noInstall operation args state next value argsOk globalsOk found
+      exact ⟨v, g, by simpa [applyGlobal_refs operation args state next value found] using refsOk⟩
+  | blockOp operation =>
+    cases found : ClosSem.applyBlock operation args state with
+    | none => simp [ClosSem.doApp, found] at run
+    | some pair =>
+      have equal : pair = (value, next) := by simpa [ClosSem.doApp, found] using run
+      subst pair
+      have unchanged := applyBlock_state operation args state next value found
+      subst next
+      exact ⟨applyBlock_noInstall operation args state state value argsOk found, globalsOk, refsOk⟩
+  | memOp operation =>
+    cases found : ClosSem.applyMemory operation args state with
+    | none => simp [ClosSem.doApp, found] at run
+    | some pair =>
+      have equal : pair = (value, next) := by simpa [ClosSem.doApp, found] using run
+      subst pair
+      obtain ⟨v, r⟩ := applyMemory_noInstall operation args state next value argsOk refsOk found
+      exact ⟨v, by simpa [applyMemory_globals operation args state next value found] using globalsOk, r⟩
+  | intOp operation =>
+    cases found : ClosSem.applyNumeric (.intOp operation) args state with
+    | none => simp [ClosSem.doApp, found] at run
+    | some pair =>
+      have equal : pair = (value, next) := by simpa [ClosSem.doApp, found] using run
+      subst pair
+      have unchanged := applyNumeric_state (.intOp operation) args state next value found
+      subst next
+      exact ⟨applyNumeric_noInstall (.intOp operation) args state state value found, globalsOk, refsOk⟩
+  | wordOp operation =>
+    cases found : ClosSem.applyNumeric (.wordOp operation) args state with
+    | none => simp [ClosSem.doApp, found] at run
+    | some pair =>
+      have equal : pair = (value, next) := by simpa [ClosSem.doApp, found] using run
+      subst pair
+      have unchanged := applyNumeric_state (.wordOp operation) args state next value found
+      subst next
+      exact ⟨applyNumeric_noInstall (.wordOp operation) args state state value found, globalsOk, refsOk⟩
+  | ffi | thunkOp =>
+    simp only [ClosSem.doApp] at run
+    repeat' split at run
+    all_goals simp_all [valueNoInstall, valuesNoInstall, ClosSem.unitValue]
+    all_goals rcases run with ⟨rfl, rfl⟩
+    all_goals simp only [valueNoInstall, valuesNoInstall, true_and]
+    all_goals exact ⟨globalsOk, refsNoInstall_update _ _ _ refsOk (by simp_all [refNoInstall])⟩
+  | label | install => simp [ClosSem.doApp] at run
 
 end Flapjack.Compiler.Backend.ClosInterp
