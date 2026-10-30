@@ -1,5 +1,29 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "make_varls_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileDecGlobals.lean", "lean_name": "makeVarls_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5690-5696 and typed probe: n and idx are naturals, t is the flat trace and xs a list of mlstring names; the conclusion is the same esgc_free predicate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_decs_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileDecGlobals.lean", "lean_name": "compileDecs_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5704-5717 and typed probe, including all input and output carriers, tuple order, equality premise and EVERY conclusion, represented by membership quantification. The proof covers every declaration constructor."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_prog_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileDecGlobals.lean", "lean_name": "compileProg_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5721-5731 and typed probe: the same compilation equality entails EVERY esgc_free of its output list, represented by membership quantification."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "inc_compile_prog_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileDecGlobals.lean", "lean_name": "incCompileProg_esgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5752-5760 and typed probe: the input environment identifier is a pair of naturals, and EVERY over the second incremental compilation result is represented by membership quantification."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "op_gbag_astOp_to_flatOp",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileGlobals.lean", "lean_name": "opGlobalBag_astOpToFlatOp",
     "statement_status": "reviewed_exact",
