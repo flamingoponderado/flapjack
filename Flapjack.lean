@@ -480,6 +480,7 @@ import Flapjack.Compiler.Backend.BvlConst.Proofs.Sequence
 import Flapjack.Compiler.Backend.BvlConst.Proofs.Control
 import Flapjack.Compiler.Backend.BvlConst.Proofs.Conditional
 import Flapjack.Compiler.Backend.BvlConst.Proofs.Let
+import Flapjack.Compiler.Backend.BvlConst.Proofs.Simulation
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateTicks
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateExpandEnv
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull
