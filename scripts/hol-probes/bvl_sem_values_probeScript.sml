@@ -32,3 +32,26 @@ val _ = example "negative_divisor_mod=" ``bvlSem$do_int_app closLang$Mod [bvlSem
 val _ = example "zero_div=" ``bvlSem$do_int_app closLang$Div [bvlSem$Number 1; bvlSem$Number 0]``;
 val _ = example "list_roundtrip=" ``bvlSem$v_to_list (bvlSem$list_to_v [bvlSem$Number 1; bvlSem$Number 2])``;
 val _ = example "bad_list=" ``bvlSem$v_to_list (bvlSem$Block 1 [])``;
+val _ = show "do_eq=" bvlSemTheory.do_eq_def;
+val _ = typ "do_eq_type=" ``bvlSem$do_eq``;
+val _ = typ "do_eq_list_type=" ``bvlSem$do_eq_list``;
+val _ = example "eq_bytes=" ``bvlSem$do_eq
+  (FEMPTY |+ (1,bvlSem$ByteArray T [5w;6w]) |+ (2,bvlSem$ByteArray T [5w;6w]))
+  (bvlSem$RefPtr T 1) (bvlSem$RefPtr T 2)``;
+val _ = example "eq_bytes_vs_ref=" ``bvlSem$do_eq
+  (FEMPTY |+ (1,bvlSem$ByteArray T [5w]) |+ (2,bvlSem$ByteArray F [5w]))
+  (bvlSem$RefPtr T 1) (bvlSem$RefPtr T 2)``;
+val _ = example "eq_closures=" ``bvlSem$do_eq FEMPTY
+  (bvlSem$Block 30 [bvlSem$CodePtr 3]) (bvlSem$Block 31 [bvlSem$Number 4])``;
+val _ = example "eq_codeptr=" ``bvlSem$do_eq FEMPTY (bvlSem$CodePtr 1) (bvlSem$CodePtr 1)``;
+val _ = example "eq_shortcircuit=" ``bvlSem$do_eq_list FEMPTY
+  [bvlSem$Number 1; bvlSem$CodePtr 0] [bvlSem$Number 2; bvlSem$CodePtr 0]``;
+val _ = typ "state_globals_type=" ``λ(s:('c,'ffi) bvlSem$state). s.globals``;
+val _ = typ "state_refs_type=" ``λ(s:('c,'ffi) bvlSem$state). s.refs``;
+val _ = typ "state_clock_type=" ``λ(s:('c,'ffi) bvlSem$state). s.clock``;
+val _ = typ "state_compile_type=" ``λ(s:('c,'ffi) bvlSem$state). s.compile``;
+val _ = typ "state_oracle_type=" ``λ(s:('c,'ffi) bvlSem$state). s.compile_oracle``;
+val _ = typ "state_code_type=" ``λ(s:('c,'ffi) bvlSem$state). s.code``;
+val _ = typ "state_ffi_type=" ``λ(s:('c,'ffi) bvlSem$state). s.ffi``;
+val _ = show "dec_clock=" bvlSemTheory.dec_clock_def;
+val _ = show "initial_state=" bvlSemTheory.initial_state_def;

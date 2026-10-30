@@ -1,5 +1,40 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "dec_clock_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/State.lean", "lean_name": "decClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared the typed original clock update and generic state parameters in bvl_sem_values_probe.out. Natural subtraction and preservation of all other fields agree. The local state witness covers only the canonical finite-support refs field; code remains the original Spt carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "initial_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/State.lean", "lean_name": "initialState",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared the typed original five arguments, generic compiler and FFI parameters and seven state fields in bvl_sem_values_probe.out. Empty refs use the canonical finite-support empty map; code retains Spt, and callbacks, empty globals and clock are unchanged. The local witness covers only the refs representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "do_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Equality.lean", "lean_name": "doEq",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared all typed original clauses and the independently generic reference payload α in bvl_sem_values_probe.out. Immutable byte-array comparisons, pointer flags, closure blocks, mismatched values and numeric/word cases agree. refs alone uses canonical finite support; the local codec roundtrip witnesses this representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "do_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Equality.lean", "lean_name": "doEqList",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared the typed original list clauses and generic α reference payload in bvl_sem_values_probe.out: equal empty lists, unequal lengths and left-to-right short circuit agree. refs alone uses canonical finite support; the local codec roundtrip witnesses this representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "state",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/State.lean", "lean_name": "State",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared all seven source fields and their independently inferred compiler and FFI type parameters in bvl_sem_values_probe.out. The refs field alone uses canonical finite support with a local broad-state roundtrip; code retains the original num_map as Spt, compiler output uses fixed word8 and word64 lists, and all other carriers and field order agree."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "ref",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Value.lean", "lean_name": "Ref",
     "statement_status": "reviewed_exact",

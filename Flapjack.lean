@@ -460,6 +460,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Integer
 import Flapjack.Test.ClosToBvlRecursive
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
+import Flapjack.Compiler.Backend.Semantics.BvlSem.State
 import Flapjack.Test.BvlSemValuesParity
 import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.ClosAnnotate.Free
