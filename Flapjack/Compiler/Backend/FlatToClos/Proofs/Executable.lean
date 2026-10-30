@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.NoMat
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallPipeline
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
 
 /-! Connecting the proof-side declaration simulation to the initializer used
 by the executed flat-to-closure compilation. This is Flapjack infrastructure;
@@ -176,5 +177,79 @@ theorem sourceCompileProg_production_evaluate_related {C F : Type} [Nonempty C]
   exact production_installConfigRel flatConfig compiler
     (sourcePrecondition_oracle_noMat interp transform source sourceEnv sourceConfig flatConfig declarations precondition)
     production
+
+/-- Compose the source-to-closure simulation with interpreter attachment to
+obtain an execution using the production incremental oracle. The proof-side
+semantic relations still require comparison with their HOL counterparts. -/
+theorem sourceCompileProg_production_observation {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (SourceToFlat.Config × C)))
+    (transform : List AstHOL.Dec → List AstHOL.Dec)
+    (source : State F) (sourceEnv : SemEnv Value) (sourceConfig : SourceToFlat.Config)
+    (flatConfig : FlatSem.InstallConfig C) (compiler : ClosSem.Compiler C)
+    (declarations : List AstHOL.Dec) (maxApp clock : Nat)
+    (precondition : SourceToFlat.FactoredPrecondition interp transform source sourceEnv sourceConfig flatConfig declarations)
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (positive : 0 < maxApp)
+    (production : flatConfig.compile = BackendProps.pureCc incCompileDecs compiler) :
+    ∃ extra result finalTarget,
+      DecResultRel (FlatSem.evaluateDecs (FlatSem.initialState source.ffi clock flatConfig)
+        (SourceToFlat.compileTotal sourceConfig declarations).2).2 result ∧
+      (FlatSem.evaluateDecs (FlatSem.initialState source.ffi clock flatConfig)
+        (SourceToFlat.compileTotal sourceConfig declarations).2).1.ffi = finalTarget.ffi ∧
+      ClosSem.evaluate (compileProg (SourceToFlat.compileTotal sourceConfig declarations).2) []
+        (ClosSem.initialState source.ffi maxApp HolFiniteMapExact.empty
+          (BackendProps.pureCo incCompileDecs ∘ flatConfig.compileOracle) compiler (extra + clock)) =
+        (match result with
+         | .val values => (.val (ClosSem.unitValue :: values), finalTarget)
+         | .err error => (.err error, finalTarget)) := by
+  have sourceSem := SourceToFlat.factoredCompile_semantics interp transform source sourceEnv sourceConfig
+    flatConfig declarations precondition safe
+  have noFail : FlatSem.semantics flatConfig source.ffi (SourceToFlat.compileTotal sourceConfig declarations).2 ≠ .fail := by
+    intro fail
+    rw [fail] at sourceSem
+    exact safe sourceSem
+  have noTypeError : (FlatSem.evaluateDecs (FlatSem.initialState source.ffi clock flatConfig)
+      (SourceToFlat.compileTotal sourceConfig declarations).2).2 ≠ some (.abort .typeError) := by
+    intro error
+    apply noFail
+    simp [FlatSem.semantics, show ∃ k,
+      (FlatSem.evaluateDecs (FlatSem.initialState source.ffi k flatConfig)
+        (SourceToFlat.compileTotal sourceConfig declarations).2).2 = some (.abort .typeError) from ⟨clock, error⟩]
+  obtain ⟨result, intermediate, resultRel, states, run⟩ :=
+    sourceCompileProg_production_evaluate_related interp transform source sourceEnv sourceConfig flatConfig
+      compiler declarations maxApp clock precondition safe positive production
+  let result' := match result with
+    | .val values => Result.val (ClosSem.unitValue :: values)
+    | .err error => Result.err error
+  have targetSafe : result' ≠ .err (.abort .typeError) := by
+    intro failure
+    generalize hflat : (FlatSem.evaluateDecs (FlatSem.initialState source.ffi clock flatConfig)
+      (SourceToFlat.compileTotal sourceConfig declarations).2).2 = flatResult at resultRel noTypeError
+    cases resultRel with
+    | success values => simp [result'] at failure
+    | raise related => simp [result'] at failure
+    | abort error =>
+      have : error = .typeError := by simpa [result'] using failure
+      subst error
+      exact noTypeError rfl
+  have oracleSafe : ∀ index,
+      ((BackendProps.pureCo incCompileDecsProofSide ∘ flatConfig.compileOracle) index).2.2 = [] := by
+    intro index
+    cases h : flatConfig.compileOracle index
+    simp [BackendProps.pureCo, h, incCompileDecsProofSide]
+  have intermediateRun : ClosSem.evaluate
+      (ClosInterp.attachInterpreter (compileDecs (SourceToFlat.compileTotal sourceConfig declarations).2)) []
+      (ClosSem.initialState source.ffi maxApp HolFiniteMapExact.empty
+        (BackendProps.pureCo incCompileDecsProofSide ∘ flatConfig.compileOracle)
+        (BackendProps.pureCc ClosInterp.insertProgram compiler) clock) = (result', intermediate) := by
+    cases result <;> simpa [compileProg, result'] using run
+  obtain ⟨extra, finalTarget, targetRun, ffiEq⟩ :=
+    ClosInterp.attachInterpreter_initial_observation
+      (compileDecs (SourceToFlat.compileTotal sourceConfig declarations).2) source.ffi maxApp clock
+      (BackendProps.pureCo incCompileDecsProofSide ∘ flatConfig.compileOracle) compiler
+      intermediate result' oracleSafe positive intermediateRun targetSafe
+  refine ⟨extra, result, finalTarget, resultRel, ?_, ?_⟩
+  · exact states.2.1.trans ffiEq
+  · cases result <;> simpa [compileProg, result', incrementalOracle_factor] using targetRun
 
 end Flapjack.Compiler.Backend.FlatToClos
