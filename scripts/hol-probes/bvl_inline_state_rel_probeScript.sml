@@ -140,6 +140,93 @@ val local_program_relation_replay = prove (local_program_relation_goal,
 val _ = show "tick_compile_prog_IMP_exp_rel_replay=" local_program_relation_replay;
 val state_rel_alt = state_rel_def;
 val state_rel_def = state_rel_def |> SIMP_RULE (srw_ss()) [state_component_equality,GSYM CONJ_ASSOC];
+val tick_compile_prog_IMP = prove(
+  ``tick_compile_prog limit q0 ((k,prog)::t) = (cs1,prog1) ==>
+    ?p1 vs. prog1 = (k,p1)::vs /\ MAP FST vs = MAP FST t``,
+  Cases_on `prog` \\ strip_tac \\ fs [tick_compile_prog_def]
+  \\ imp_res_tac tick_inline_all_names \\ fs []
+  \\ Cases_on `prog1` \\ fs []
+  \\ Cases_on `h` \\ fs []);
+
+val tick_compile_prog_IMP_exp_rel = local_program_relation_replay;
+val in_do_app_lemma_goal = ``
+  in_state_rel limit s1 t1 ==>
+    case do_app op a s1 of
+    | Rerr err => (err <> Rabort Rtype_error ==> do_app op a t1 = Rerr err)
+    | Rval (v,s2) => ?t2. in_state_rel limit s2 t2 /\
+                          do_app op a t1 = Rval (v,t2)``;
+val _ = (print "in_do_app_lemma_typed_goal="; print_term in_do_app_lemma_goal; print "\n");
+val in_do_app_lemma_replay = prove (in_do_app_lemma_goal,
+  Cases_on `op = Install`
+  THEN1
+   (rw [] \\ fs [do_app_def]
+    \\ every_case_tac \\ fs []
+    \\ fs [case_eq_thms,UNCURRY,do_install_def]
+    \\ rveq \\ fs [PULL_EXISTS]
+    \\ fs [SWAP_REVERSE_SYM] \\ rveq \\ fs []
+    \\ fs [state_rel_def] \\ rveq \\ fs []
+    \\ fs [state_component_equality,in_state_rel_def]
+    \\ fs [shift_seq_def,o_DEF] \\ rfs []
+    \\ Cases_on `s1.compile_oracle 0` \\ fs []
+    \\ Cases_on `r` \\ fs [] \\ Cases_on `h` \\ fs [] \\ rveq \\ fs []
+    \\ PairCases_on `q` \\ fs [domain_union]
+    \\ CONV_TAC (DEPTH_CONV PairRules.PBETA_CONV)
+    \\ fs [domain_fromAList,in_cc_def]
+    \\ pairarg_tac \\ fs [case_eq_thms] \\ rveq \\ fs []
+    \\ qpat_x_assum `_ = FST _` (assume_tac o GSYM) \\ fs []
+    \\ drule tick_compile_prog_IMP \\ strip_tac \\ fs []
+    \\ rveq \\ fs []
+    \\ qpat_abbrev_tac `in1 = (k,prog)::t`
+    \\ qpat_abbrev_tac `in2 = (k,p1)::vs`
+    \\ fs [lookup_union,case_eq_thms]
+    \\ reverse (rw [])
+    THEN1
+     (first_x_assum drule \\ strip_tac \\ fs []
+      \\ match_mp_tac subspt_exp_rel \\ metis_tac [subspt_union])
+    THEN1
+     (reverse (Cases_on `lookup k' t1.code`) \\ fs []
+      THEN1 (fs [domain_lookup,EXTENSION] \\ metis_tac [NOT_SOME_NONE])
+      \\ fs [lookup_fromAList]
+      \\ `DISJOINT (domain q0) (set (MAP FST in1))` by
+       (fs [subspt_def,EXTENSION,DISJOINT_DEF,Abbr`in1`] \\ metis_tac [])
+      \\ `ALL_DISTINCT (MAP FST in1)` by fs [Abbr `in1`]
+      \\ match_mp_tac tick_compile_prog_IMP_exp_rel
+      \\ asm_exists_tac \\ fs []
+      \\ reverse conj_tac
+      THEN1 (unabbrev_all_tac \\ fs [DISJOINT_DEF,EXTENSION] \\ metis_tac [])
+      \\ rw [] \\ fs [subspt_lookup]
+      \\ first_x_assum drule \\ strip_tac
+      \\ rename1 `lookup k2 t1.code = SOME (arity2,v)`
+      \\ Cases_on `lookup k2 s1.code`
+      THEN1 (fs [domain_eq] \\ res_tac \\ fs [])
+      \\ PairCases_on `x` \\ res_tac \\ fs []
+      \\ rveq \\ fs [])
+    \\ drule (tick_compile_prog_res_range |> SIMP_RULE std_ss [])
+    \\ disch_then match_mp_tac \\ fs []
+    \\ unabbrev_all_tac \\ fs []
+    \\ CCONTR_TAC \\ fs [EXTENSION] \\ rveq \\ fs []
+    \\ fs [subspt_def] \\ res_tac
+    \\ fs [DISJOINT_DEF,EXTENSION]
+    \\ metis_tac [])
+  \\ strip_tac \\ reverse (Cases_on `do_app op a s1`) \\ fs []
+  \\ `t1 = t1 with <| globals := s1.globals ;
+                               refs := s1.refs ;
+                               clock := s1.clock ;
+                               ffi := s1.ffi |>` by
+         fs [in_state_rel_def,state_component_equality]
+  \\ pop_assum (fn th => once_rewrite_tac [th])
+  THEN1 (strip_tac \\ match_mp_tac do_app_Rerr_swap \\ fs [in_state_rel_def])
+  \\ rename1 `_ = Rval x`
+  \\ PairCases_on `x` \\ fs []
+  \\ drule (do_app_Rval_swap |> GEN_ALL
+      |> INST_TYPE [alpha|->gamma,beta|->delta,gamma|->alpha,delta|->beta])
+  \\ fs []
+  \\ disch_then (qspec_then `t1` mp_tac)
+  \\ impl_tac THEN1 fs [in_state_rel_def]
+  \\ fs [] \\ disch_then kall_tac
+  \\ fs [in_state_rel_def]
+  \\ imp_res_tac do_app_const \\ fs []);
+val _ = show "in_do_app_lemma_replay=" in_do_app_lemma_replay;
 val do_app_lemma_replay = prove (do_app_lemma_goal,
   Cases_on `op = Install` THEN1
    (rw [] \\ fs [do_app_def]

@@ -109219,5 +109219,25 @@
     "lean_name": "tickCompileProg_related",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete typed goal and original proof replay for the local theorem in bvl_inline_state_rel_probe.out. The program, sparse-tree cache and source carriers, numeric labels and arities, compile equality, input ALOOKUP, distinct labels, cache relation, both DISJOINT premises and existential output lookup and expression relation match. CacheRelated unfolds to the original quantified lookup relation; DISJOINT is rendered pointwise as membership exclusion. The second freshness premise is retained even though the Lean proof does not need it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InstallApply.lean",
+    "hol_name": "in_do_app_lemma",
+    "lean_name": "inDoApp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed local in_do_app_lemma goal and original proof replay in bvl_inline_state_rel_probe.out. Source configuration carries the numeric BVL cache paired with the target configuration; both states share the FFI type. The relation premise and case split preserve the original exception for type errors and require the target result and related successor in the successful case. The imported BVL state uses canonical finite support for refs, witnessed by the same-module roundtrip; code retains the original sparse-tree carrier. The dispatcher inherits the floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineEvaluation.lean",
+    "hol_name": "evaluate_inline",
+    "lean_name": "evaluateInline_op",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: the Op/Op expression-relation case retains the source and target operator and argument relation, source evaluation, non-type-error premise, existential target evaluation and final relation. The argument induction hypothesis has the same simulation shape, and the complete in_do_app_lemma covers Install as well as all other operators. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions."
   }
 ]

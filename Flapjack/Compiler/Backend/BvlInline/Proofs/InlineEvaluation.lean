@@ -1,10 +1,10 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineApply
+import Flapjack.Compiler.Backend.BvlInline.Proofs.InstallApply
 import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineCall
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull
 
-/-! Initial cases of the BVL inlining evaluator simulation. The full theorem
-also requires dynamic installation and the recursive expression cases. -/
+/-! Cases of the BVL inlining evaluator simulation. The full theorem also
+requires the remaining recursive expression cases. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps Flapjack.SemanticPrimitivesHOL
 
@@ -418,10 +418,10 @@ theorem evaluateInline_if {C F : Type} (limit : Nat)
             rw [evaluateTuple, evaluate, fixClock_evaluate, targetCondition]
             simpa [boolRun] using targetBranch
 
-/-- Operator simulation for non-install primitives. This is Flapjack
-infrastructure: the original operator case also covers Install, whose
-simulation is still open. -/
-theorem evaluateInline_op_nonInstall {C F : Type} (limit : Nat)
+/-- The operator case of the inlining simulation, including installation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "evaluate_inline"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateInline_op {C F : Type} (limit : Nat)
     (op : ClosLang.Op) (args args' : List Bvl.Exp) (env : List BvlSem.Value)
     (argsIH : ∀ (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
       (result : Result (List BvlSem.Value) BvlSem.Value),
@@ -430,11 +430,11 @@ theorem evaluateInline_op_nonInstall {C F : Type} (limit : Nat)
       result ≠ .err (.abort .typeError) →
       ∃ targetFinal, evaluateTuple (args', env, target) = (result, targetFinal) ∧
         inStateRel limit final targetFinal)
-    (source final : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
+    (source final : Flapjack.Compiler.Backend.BvlSem.State (Spt (Nat × Bvl.Exp) × C) F)
+    (target : Flapjack.Compiler.Backend.BvlSem.State C F)
     (result : Result (List BvlSem.Value) BvlSem.Value)
     (related : inStateRel limit source target)
     (expressions : ExpRel source.code [.op op args] [.op op args'])
-    (notInstall : op ≠ .install)
     (run : evaluateTuple ([.op op args], env, source) = (result, final))
     (notTypeError : result ≠ .err (.abort .typeError)) :
     ∃ targetFinal, evaluateTuple ([.op op args'], env, target) = (result, targetFinal) ∧
@@ -462,14 +462,19 @@ theorem evaluateInline_op_nonInstall {C F : Type} (limit : Nat)
         rcases run with ⟨rfl, rfl⟩
         exact ⟨targetMiddle, by rw [evaluateTuple, evaluate, fixClock_evaluate, targetArgs], middleRel⟩
       | val values =>
-        have simulated := inDoApp_nonInstall limit middle targetMiddle middleRel op values.reverse notInstall
+        have simulated := inDoApp limit middle targetMiddle middleRel op values.reverse
         cases appRun : doApp op values.reverse middle with
         | err error =>
           simp [appRun] at run simulated
           rcases run with ⟨rfl, rfl⟩
+          have appNotType : error ≠ .abort .typeError := by
+            intro equal
+            subst error
+            exact notTypeError rfl
+          have targetApp := simulated appNotType
           refine ⟨targetMiddle, ?_, middleRel⟩
           rw [evaluateTuple, evaluate, fixClock_evaluate, targetArgs]
-          simp [simulated]
+          simp [targetApp]
         | val pair =>
           obtain ⟨value, next⟩ := pair
           simp [appRun] at run simulated
