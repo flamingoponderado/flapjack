@@ -524,6 +524,7 @@ import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
 import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyAux
 import Flapjack.Compiler.Backend.Semantics.BviSem.Install
 import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+import Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
@@ -548,6 +549,7 @@ import Flapjack.Test.BvlToBviValueParity
 import Flapjack.Test.BviFinaliseParity
 import Flapjack.Test.BviApplyAuxParity
 import Flapjack.Test.BviApplyParity
+import Flapjack.Test.BviEvaluateParity
 import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.ClosAnnotate.Free
 import Flapjack.Compiler.Backend.ClosAnnotate.Shift

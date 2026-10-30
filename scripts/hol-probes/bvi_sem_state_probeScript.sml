@@ -41,3 +41,10 @@ val _ = show "install_bad_arity=" (EVAL ``bviSem$do_install [] (s:('c,'ffi) bviS
 val _ = show "bvi_to_bvl=" bviSemTheory.bvi_to_bvl_def;
 val _ = show "do_app=" bviSemTheory.do_app_def;
 val _ = typ "do_app_type=" ``bviSem$do_app``;
+val _ = typ "evaluate_type=" ``bviSem$evaluate``;
+val _ = show "eval_var=" (EVAL ``bviSem$evaluate ([bvi$Var 0], [bvlSem$Number 3], (s:('c,'ffi) bviSem$state))``);
+val _ = show "eval_return=" (EVAL ``bviSem$evaluate ([bvi$Return []], [], (s:('c,'ffi) bviSem$state))``);
+val _ = show "eval_tick_timeout=" (EVAL ``bviSem$evaluate ([bvi$Tick (bvi$Var 0)], [], (s:('c,'ffi) bviSem$state) with clock := 0)``);
+val _ = show "eval_call_bad_handler=" (EVAL ``bviSem$evaluate ([bvi$Call 0 NONE [] (SOME (bvi$Var 0))], [], (s:('c,'ffi) bviSem$state))``);
+val _ = show "eval_force_evaluated=" (EVAL ``bviSem$evaluate ([bvi$Force 5 0], [bvlSem$RefPtr F 1], (s:('c,'ffi) bviSem$state) with refs := (FEMPTY |+ (1, bvlSem$Thunk Evaluated (bvlSem$Number 7))))``);
+val _ = show "eval_let_call_return=" (EVAL ``bviSem$evaluate ([bvi$LetCall 0 0 0 [] (bvi$Var 0)], [bvlSem$Number 7], (s:('c,'ffi) bviSem$state) with <|clock := 2; code := sptree$LS (0, bvi$Return [])|>)``);
