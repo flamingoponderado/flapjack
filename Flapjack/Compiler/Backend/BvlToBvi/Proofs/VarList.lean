@@ -45,4 +45,33 @@ theorem evaluate_varList_members {C F : Type} (expressions : List Bvl.Exp)
             · exact unchanged
     | _ => simp [isVar] at onlyVars
 
+/-- A variable-only list can fail only with a type error, without changing
+the state. This helper supports the empty-let and handler simulations. -/
+theorem evaluate_varList_error {C F : Type} (expressions : List Bvl.Exp)
+    (env : List Value) (state final : State C F)
+    (error : Flapjack.SemanticPrimitivesHOL.ErrorResult Value)
+    (onlyVars : expressions.all isVar = true)
+    (run : evaluateTuple (expressions, env, state) = (.err error, final)) :
+    error = .abort .typeError ∧ state = final := by
+  induction expressions generalizing state with
+  | nil => simp [evaluateTuple, evaluate] at run
+  | cons head tail ih =>
+    simp only [List.all_cons, Bool.and_eq_true] at onlyVars
+    cases head with
+    | var index =>
+      rw [evaluateCons] at run
+      cases lookup : env[index]? with
+      | none => simpa [evaluateTuple, evaluate, lookup, eq_comm] using run
+      | some value =>
+        simp only [evaluateTuple, evaluate, lookup] at run
+        cases tailRun : evaluate tail env state with
+        | mk tailResult next =>
+          cases tailResult with
+          | val values => simp [tailRun] at run
+          | err tailError =>
+            simp [tailRun] at run
+            rcases run with ⟨rfl, rfl⟩
+            exact ih state onlyVars.2 tailRun
+    | _ => simp [isVar] at onlyVars
+
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

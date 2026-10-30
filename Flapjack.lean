@@ -604,6 +604,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileIfCase
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileLetCase
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BoundEvaluation
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileEmptyLet
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileHandle
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
