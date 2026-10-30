@@ -102,3 +102,33 @@ val _ = example "build_collision_value=" ``FST (bvlSem$do_build_const [closLang$
   (FEMPTY |+ (0,bvlSem$ValueArray [])))``;
 val _ = example "build_collision_ref=" ``FLOOKUP (SND (bvlSem$do_build_const [closLang$Str «x»]
   (FEMPTY |+ (0,bvlSem$ValueArray [])))) 1``;
+val _ = typ "do_app_type=" ``bvlSem$do_app``;
+val base_state = ``((ARB:(unit,unit) bvlSem$state) with
+  <|globals := [SOME (bvlSem$Number 10); SOME (bvlSem$Number 20)];
+    refs := FEMPTY |+ (0,bvlSem$ValueArray [bvlSem$Number 7; bvlSem$Number 9])|>)``;
+val _ = example "app_global=" ``case bvlSem$do_app (closLang$GlobOp (Global 0)) [] ^base_state of
+  Rval (v,_) => SOME v | _ => NONE``;
+val _ = example "app_global_dynamic=" ``case bvlSem$do_app (closLang$GlobOp (Global 0)) [bvlSem$Number 0] ^base_state of
+  Rval (v,_) => SOME v | _ => NONE``;
+val _ = example "app_set_overwrite=" ``case bvlSem$do_app (closLang$GlobOp (SetGlobal 0)) [bvlSem$Number 42] ^base_state of
+  Rval (_,s) => EL 0 s.globals | _ => NONE``;
+val _ = example "app_cons_extend=" ``case bvlSem$do_app (closLang$BlockOp (ConsExtend 3))
+  [bvlSem$Block 9 [bvlSem$Number 5; bvlSem$Number 6]; bvlSem$Number 1; bvlSem$Number 1;
+   bvlSem$Number 2; bvlSem$Number 4] ^base_state of Rval (v,_) => SOME v | _ => NONE``;
+val _ = example "app_array_elem=" ``case bvlSem$do_app (closLang$BlockOp (ElemAt 1))
+  [bvlSem$RefPtr T 0] ^base_state of Rval (v,_) => SOME v | _ => NONE``;
+val _ = example "app_build=" ``case bvlSem$do_app (closLang$BlockOp (Build [closLang$Int 7; closLang$Con 3 [0]]))
+  [] ^base_state of Rval (v,_) => SOME v | _ => NONE``;
+val _ = example "app_int=" ``case bvlSem$do_app (closLang$IntOp Add)
+  [bvlSem$Number 7; bvlSem$Number 8] ^base_state of Rval (v,_) => SOME v | _ => NONE``;
+val byte_state = ``(^base_state with refs := FEMPTY |+
+  (2,bvlSem$ByteArray F [1w;2w;3w]) |+ (3,bvlSem$ByteArray T [3w;4w]))``;
+val _ = example "app_byte_length=" ``case bvlSem$do_app (closLang$MemOp LengthByte)
+  [bvlSem$RefPtr F 2] ^byte_state of Rval (v,_) => SOME v | _ => NONE``;
+val _ = example "app_byte_deref=" ``case bvlSem$do_app (closLang$MemOp DerefByte)
+  [bvlSem$RefPtr T 2; bvlSem$Number 1] ^byte_state of Rval (v,_) => SOME v | _ => NONE``;
+val _ = example "app_byte_update=" ``case bvlSem$do_app (closLang$MemOp UpdateByte)
+  [bvlSem$RefPtr F 3; bvlSem$Number 0; bvlSem$Number 255] ^byte_state of
+  Rval (_,s) => FLOOKUP s.refs 3 | _ => NONE``;
+val _ = example "app_byte_bounds=" ``case bvlSem$do_app (closLang$MemOp (BoundsCheckByte T))
+  [bvlSem$RefPtr T 2; bvlSem$Number 3] ^byte_state of Rval (v,_) => SOME v | _ => NONE``;

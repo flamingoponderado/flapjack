@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
 
 /-! Kernel replay of representative original BVL semantic observations. -/
@@ -118,5 +119,61 @@ example : (doBuildConst [.str (Flapjack.Basis.Pure.MlString.ofString "x")] occup
   simp [doBuildConst, doBuild, doPart, occupiedZero_fresh, Flapjack.HolFiniteMapExact.lookup_updateEq,
     Flapjack.FUPDATE_HOL, Flapjack.Basis.Pure.MlString.ofString,
     Flapjack.Basis.Pure.MlString.MlString.explode]
+
+example {C F : Type} (s : State C F)
+    (globals : s.globals = [some (.number 10), some (.number 20)]) :
+    (applyGlobal (.global 0) [] s).map Prod.fst = some (.number 10) := by
+  simp [applyGlobal, globals]
+
+example {C F : Type} (s : State C F)
+    (globals : s.globals = [some (.number 10), some (.number 20)]) :
+    (applyGlobal (.global 0) [.number 0] s).map Prod.fst = some (.number 20) := by
+  simp [applyGlobal, globals, Flapjack.Compiler.Backend.ClosToBvl.numAddedGlobals]
+
+example {C F : Type} (s : State C F)
+    (globals : s.globals = [some (.number 10), some (.number 20)]) :
+    ((applyGlobal (.setGlobal 0) [.number 42] s).map (fun pair => pair.2.globals[0]?)).join =
+      some (some (.number 42)) := by
+  simp [applyGlobal, globals]
+
+example {C F : Type} (s : State C F) :
+    (applyBlock (.consExtend 3)
+      [.block 9 [.number 5, .number 6], .number 1, .number 1, .number 2, .number 4] s).map Prod.fst =
+      some (.block 3 [.number 4, .number 6]) := by simp [applyBlock]
+
+example {C F : Type} (s : State C F)
+    (refs : s.refs.lookup 0 = some (.valueArray [.number 7, .number 9])) :
+    (applyBlock (.elemAt 1) [.refPtr true 0] s).map Prod.fst = some (.number 9) := by
+  simp [applyBlock, refs]
+
+example {C F : Type} (s : State C F) :
+    (applyBlock (.build [.int 7, .con 3 [0]]) [] s).map Prod.fst =
+      some (.block 3 [.number 7]) := by simp [applyBlock, doBuildConst, doBuild, doPart]
+
+example {C F : Type} (s : State C F) :
+    (applyNumeric (.intOp .add) [.number 7, .number 8] s).map Prod.fst = some (.number 15) := by
+  simp [applyNumeric, doIntApp]
+
+example {C F : Type} (s : State C F)
+    (refs : s.refs.lookup 2 = some (.byteArray false [1, 2, 3])) :
+    (applyMemory .lengthByte [.refPtr false 2] s).map Prod.fst = some (.number 3) := by
+  simp [applyMemory, refs]
+
+example {C F : Type} (s : State C F)
+    (refs : s.refs.lookup 2 = some (.byteArray false [1, 2, 3])) :
+    (applyMemory .derefByte [.refPtr true 2, .number 1] s).map Prod.fst = some (.number 2) := by
+  simp [applyMemory, refs]
+
+example {C F : Type} (s : State C F)
+    (refs : s.refs.lookup 3 = some (.byteArray true [3, 4])) :
+    ((applyMemory .updateByte [.refPtr false 3, .number 0, .number 255] s).map
+      (fun pair => pair.2.refs.lookup 3)).join = some (.byteArray true [255, 4]) := by
+  simp [applyMemory, refs, Flapjack.Compiler.Backend.ClosSem.intToByte,
+    Flapjack.HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL]
+
+example {C F : Type} (s : State C F)
+    (refs : s.refs.lookup 2 = some (.byteArray false [1, 2, 3])) :
+    (applyMemory (.boundsCheckByte true) [.refPtr true 2, .number 3] s).map Prod.fst =
+      some (boolValue true) := by simp [applyMemory, refs]
 
 end Flapjack.Test.BvlSemValuesParity
