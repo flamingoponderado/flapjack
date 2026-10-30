@@ -9,8 +9,11 @@ open Bvl BvlToBvi
 open ClosLang (Op)
 
 private def const (n : Int) : Exp := .op (.intOp (.const n)) []
-private def bool (b : Bool) : Exp := .op (.blockOp (.cons (if b then 1 else 0))) []
-private def simple : Exp → Option Int
+/-- Construct the source Boolean expression. -/
+def bool (b : Bool) : Exp := .op (.blockOp (.cons (if b then 1 else 0))) []
+/-- Recognize an argument-free integer constant. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "dest_simple_def"]
+def simple : Exp → Option Int
   | .op (.intOp (.const n)) [] => some n
   | _ => none
 private def opConst : Exp → Option (Op × Exp × Int)
@@ -107,13 +110,18 @@ private def smart2 (op : Op) (x y : Exp) : Exp :=
       | none => .op op [x, y]
   | _ => .op op [x, y]
 
+/-- Apply the source's unary constant-equality rewrite. -/
+@[hol "cakeml/compiler/backend/bvl_constScript.sml" "SmartOp1_def"]
+def smartOp1 (op : Op) (x : Exp) : Exp :=
+  match op, simple x with
+  | .blockOp (.equalConst (.int a)), some b => bool (b == a)
+  | _, _ => .op op [x]
+
 /-- Apply the source's operation-specific constant rewrites. -/
 @[hol "cakeml/compiler/backend/bvl_constScript.sml" "SmartOp_def"]
 def smartOp (op : Op) : List Exp → Exp
   | [x, y] => smart2 op x y
-  | [x] => match op, simple x with
-      | .blockOp (.equalConst (.int a)), some b => bool (b == a)
-      | _, _ => .op op [x]
+  | [x] => smartOp1 op x
   | xs => .op op xs
 
 private def extract (e : Exp) (restLength : Nat) : Option Exp :=

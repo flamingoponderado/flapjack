@@ -559,7 +559,7 @@ run_probe bvl_const_frontend_probeScript.sml bvl_const_frontend_probe.out \
   divs ops compile algebra dest_simple case_op_const SmartOp_flip SmartOp2 SmartOp1 SmartOp extract extract_list delete_var compile_sing compile_eq compile_exp compile_exp_eq "$cake_dir/compiler/backend/bvl_constScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvl_const_rel_probeScript.sml bvl_const_rel_probe.out \
-  value_rel env_rel env_rel_length env_rel_LLOOKUP_NONE_replay env_rel_LOOKUP_SOME_replay evaluate_delete_var_Rerr_SING evaluate_delete_var_Rerr_replay evaluate_delete_var_Rval_replay evaluate_env_rel "$cake_dir/compiler/backend/proofs/bvl_constProofScript.sml" "$cake_dir/compiler/backend/proofs"
+  value_rel env_rel env_rel_length env_rel_LLOOKUP_NONE_replay env_rel_LOOKUP_SOME_replay evaluate_delete_var_Rerr_SING evaluate_delete_var_Rerr_replay evaluate_delete_var_Rval_replay dest_simple_eq_replay SmartOp1_thm evaluate_env_rel "$cake_dir/compiler/backend/proofs/bvl_constProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe bvi_tailrec_frontend_probeScript.sml bvi_tailrec_frontend_probe.out \
   decisions cases tmc analysis rewrites program "$cake_dir/compiler/backend/bvi_tailrecScript.sml" "$cake_dir/compiler/backend"

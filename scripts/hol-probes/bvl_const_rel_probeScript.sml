@@ -75,4 +75,12 @@ val evaluate_delete_var_Rval_replay = prove (``
   \\ fs [v_rel_def,NULL_EQ,evaluate_def,do_app_def,oneline do_int_app_def]
   \\ gvs[AllCaseEqs()]);
 val _ = show "evaluate_delete_var_Rval_replay=" evaluate_delete_var_Rval_replay;
+val dest_simple_eq_replay = prove (``
+  dest_simple h = SOME y <=> (h = Op (IntOp (Const y)) [])``,
+  Cases_on `h` \\ fs [dest_simple_def]
+  \\ Cases_on `o'` \\ fs [dest_simple_def,NULL_EQ]
+  \\ Cases_on `i` \\ fs [dest_simple_def,NULL_EQ]
+  \\ eq_tac \\ rw [] \\ rw []);
+val _ = show "dest_simple_eq_replay=" dest_simple_eq_replay;
+val _ = show "SmartOp1_thm=" SmartOp1_thm;
 val _ = show "evaluate_env_rel=" evaluate_env_rel;

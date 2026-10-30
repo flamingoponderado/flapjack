@@ -109716,7 +109716,7 @@
     "hol_name": "SmartOp_def",
     "lean_name": "smartOp",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed SmartOp, SmartOp1, SmartOp2, SmartOp_flip, dest_simple and case_op_const captures in bvl_const_frontend_probe.out with the executed implementation. The unary, binary and default cases, operand flip, all add/subtract/multiply folding branches, reversed division and comparison operands, zero divisors, EqualConst and element-index cases match. Lean Int.fdiv/fmod implement the source floor operations; the signed oracle observations cover all sign combinations."
+    "reviewer": "Compared the typed SmartOp, SmartOp1, SmartOp2, SmartOp_flip, dest_simple and case_op_const captures in bvl_const_frontend_probe.out with the executed implementation. The refactored singleton case calls the reviewed smartOp1, preserving the original unary branch. Binary and default cases, operand flip, all add/subtract/multiply folding branches, reversed division and comparison operands, zero divisors, EqualConst and element-index cases match. Lean Int.fdiv/fmod implement the source floor operations; the signed oracle observations cover all sign combinations."
   },
   {
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
@@ -109787,5 +109787,39 @@
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the inferred typed replay of the entire original local proof in bvl_const_rel_probe.out. The original successful evaluation, arbitrary related source and target environments, independent compiler/FFI state parameters, existential output values, exact final state and extracted-annotation environment relation are preserved. The untagged envRel and valueRel bodies were separately compared with their captured source equations, including their universally quantified state using this same State carrier. The local roundtrip witnesses refs and the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst.lean",
+    "hol_name": "dest_simple_def",
+    "lean_name": "simple",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original equations in bvl_const_frontend_probe.out. Only an integer Const with no arguments returns its integer; all other operators, nonempty arguments and expressions return None. The executed SmartOp uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst.lean",
+    "hol_name": "SmartOp1_def",
+    "lean_name": "smartOp1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original equation in bvl_const_frontend_probe.out including dest_EqualInt and dest_simple: an integer EqualConst on an argument-free integer constant returns the source Boolean tag, and all other cases retain the original operation and singleton operand. The executed SmartOp now calls this reviewed definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOp.lean",
+    "hol_name": "dest_simple_eq",
+    "lean_name": "simple_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed replay of the original local proof in bvl_const_rel_probe.out. The recognizer returns Some n iff its entire input expression is the integer Const n with an empty operand list."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/SmartOp.lean",
+    "hol_name": "SmartOp1_thm",
+    "lean_name": "smartOp1_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed source statement in bvl_const_rel_probe.out: arbitrary operation and operand, environment, polymorphic compiler/FFI state, original result and final state, evaluation hypothesis and non-type-error condition are retained. The proof actually establishes the result without using that condition. The local canonical roundtrip witnesses refs; the reviewed evaluator inherits floating-point real-carrier assumptions."
   }
 ]
