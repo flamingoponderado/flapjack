@@ -1,5 +1,17 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "num_bindings_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingCount.lean", "lean_name": "numBindings",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared each declaration case and inferred types in source_to_flat_compile_globals_probe.out. The simple_dlet SOME case counts zero, NONE counts pattern bindings, recursive declarations count functions, modules and locals sum the recursive counts, Denv counts one, and all other cases count zero. numBindingsList_eq_sum proves the structural list helper equals HOL SUM o MAP."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "compile_decs_num_bindings",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindingCount.lean", "lean_name": "compileDecs_numBindings",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 5807-5823 and inferred types in source_to_flat_compile_globals_probe.out: all ten typed inputs and outputs and the five-tuple equality premise are preserved; the conclusion gives the same counter bound and binding sum as the natural-number difference. The proof covers all declaration constructors and nested lists."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "compile_exp_no_Mat",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NoMat.lean", "lean_name": "compileExp_noMat",
     "statement_status": "reviewed_exact",

@@ -14,3 +14,5 @@ val _ = (print "compile_full_esgc="; print_term (concl source_to_flatProofTheory
 val _ = (print "inc_compile_full_esgc="; print_term (concl source_to_flatProofTheory.inc_compile_esgc_free); print "\n");
 val _ = (print "compile_no_mat="; print_term (concl source_to_flatProofTheory.compile_no_Mat); print "\n");
 val _ = (print "inc_compile_no_mat="; print_term (concl source_to_flatProofTheory.inc_compile_no_Mat); print "\n");
+val _ = (print "num_bindings="; print_term (concl source_to_flatProofTheory.num_bindings_def); print "\n");
+val _ = (print "compile_decs_num_bindings="; print_term (concl source_to_flatProofTheory.compile_decs_num_bindings); print "\n");

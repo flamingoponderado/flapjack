@@ -495,7 +495,7 @@ run_probe bignum_mini_probeScript.sml bignum_mini_probe.out \
 run_probe bignum_mini_types_probeScript.sml bignum_mini_types_probe.out \
   skip assign delete seq load store if swap add sub mul div loop continue rec loop_body "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 run_probe source_to_flat_compile_globals_probeScript.sml source_to_flat_compile_globals_probe.out \
-  op_theorem compile_theorem make_varls_theorem compile_decs_theorem compile_prog_theorem inc_compile_prog_theorem compile_flat_esgc compile_full_esgc inc_compile_full_esgc compile_no_mat inc_compile_no_mat "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+  op_theorem compile_theorem make_varls_theorem compile_decs_theorem compile_prog_theorem inc_compile_prog_theorem compile_flat_esgc compile_full_esgc inc_compile_full_esgc compile_no_mat inc_compile_no_mat num_bindings compile_decs_num_bindings "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe bignum_word_probeScript.sml bignum_word_probe.out \
   entry "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 
