@@ -110111,5 +110111,29 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Two-operand arithmetic case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operand constructors specialize the original theorem; the evaluation and non-type-error hypotheses and result/state equality are unchanged, with no additional premises. The proof preserves evaluation order and error/state effects. Other cases and assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/ArithmeticMul.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_mul_mul_mul_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Two nested multiplication operands case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operation and, for the nested case, operand constructors specialize the source theorem; its evaluation and non-type-error hypotheses and result/state equality are unchanged, without extra premises. The proof preserves evaluation order and error/state effects. Other operations and the full theorem assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/ArithmeticMul.lean",
+  "hol_name": "SmartOp2_thm",
+  "lean_name": "smartOp2_mul_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "The full multiplication operation with arbitrary operands case of the typed original local theorem replayed in bvl_const_rel_probe.out. The operation and, for the nested case, operand constructors specialize the source theorem; its evaluation and non-type-error hypotheses and result/state equality are unchanged, without extra premises. The proof preserves evaluation order and error/state effects. Other operations and the full theorem assembly remain open. The local canonical roundtrip witnesses refs; the evaluator inherits floating-point real-carrier assumptions."
 }
 ]
