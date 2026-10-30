@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "esgc_free_compile_pats",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean",
+    "lean_name": "esgcFree_compilePats_hol",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2233-2245 and inferred theorem type in flat_pattern_global_flag_probe.out. Inputs include the same pattern compiler config, Bool mode, traces, natural name index, local mlstring scrutinee, default expression and pattern/body list. EVERY over the mapped row bodies is rendered by membership quantification; there are no additional hypotheses. The proof covers both naive and decision-tree branches."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "esgc_free_decode_pos",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "esgcFree_decodePos",
     "statement_status": "reviewed_exact",

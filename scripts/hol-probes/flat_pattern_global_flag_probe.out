@@ -26,3 +26,4 @@ esgc_decode_guard=esgc_free (exp :exp) ⇒ esgc_free (decode_guard (t :tra) exp 
 esgc_bindings=∀(t :tra) (i :num) (n_bindings :(flatLang$pat # num # exp) list) (exp :exp). esgc_free exp ∧ EVERY (λ((_0 :flatLang$pat),(_1 :num),(v_exp :exp)). esgc_free v_exp) n_bindings ⇒ esgc_free (SND (compile_pat_bindings t i n_bindings exp))
 esgc_naive_match=∀(t :tra) (xs :(flatLang$pat # exp) list). EVERY esgc_free (MAP (SND :flatLang$pat # exp -> exp) xs) ⇒ esgc_free (naive_pattern_match t xs)
 esgc_naive_matches=∀(t :tra) (x :exp) (xs :(flatLang$pat # exp) list) (dflt :exp). EVERY esgc_free (x::dflt::MAP (SND :flatLang$pat # exp -> exp) xs) ⇒ esgc_free (naive_pattern_matches t x xs dflt)
+esgc_compile_pats=esgc_free (dflt :exp) ∧ EVERY esgc_free (MAP (SND :flatLang$pat # exp -> exp) (ps :(flatLang$pat # exp) list)) ⇒ esgc_free (compile_pats (cfg :config) (naive :bool) (t :tra) (N :num) (Var_local (t' :tra) (nm :mlstring)) dflt ps)
