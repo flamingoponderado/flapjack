@@ -101,6 +101,14 @@ LAB_PREFIX = (
     b'   (asm (Const 5 0x7F8))\n'
 )
 
+WORD_PREFIX = (
+    b'(func _FromList@7 (0 2 4 6)\n   (if (Equal 2 (Imm 0x0))\n'
+    b'      (seq\n         (6 := (Op Add (Var 6) (Const 0x2)))\n'
+    b'         (return 0 (6)))\n      (seq\n         (if (Test 2 (Imm 0x1)) skip\n'
+    b'            (seq\n               (1 := (Const 0xFFFFFFFFFFFFFFFF))\n'
+    b'               (alloc 1 ({0} {}))))\n         (1 := (Var 2))\n'
+)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -131,6 +139,10 @@ def main():
             if not data.startswith(DATA_STUB):
                 raise SystemExit(f'original data-stage output mismatch for {source!r}')
             print('original data-stage runtime stub matches', flush=True)
+            word = result.stdout.split(b'# after data_to_word\n\n', 1)[1]
+            if not word.startswith(WORD_PREFIX):
+                raise SystemExit(f'original word-stage output mismatch for {source!r}')
+            print('original word-stage runtime stub prefix matches', flush=True)
             lab = result.stdout.split(b'# after stack_to_lab\n\n', 1)[1]
             if (not lab.startswith(LAB_PREFIX) or
                     b'(jump_cmp (Lower 12 (Reg 11)) _Init@0 3)' not in lab or
