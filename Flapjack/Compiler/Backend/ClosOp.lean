@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
+import Flapjack.Compiler.Backend.ClosLang.Budget
 
 /-! Bounded infrastructure for the closure smart-operation pass. -/
 namespace Flapjack.Compiler.Backend.ClosOp
@@ -9,7 +9,7 @@ private def mkInt (i : Int) : Exp := .op .none (.intOp (.const i)) []
 private def intConst : Exp → Option Int
   | .op _ (.intOp (.const i)) [] => some i
   | _ => none
-private def cons : Exp → Option (Nat × List Exp)
+def cons : Exp → Option (Nat × List Exp)
   | .op _ (.blockOp (.cons tag)) xs => some (tag, xs)
   | _ => none
 private def nil : Exp → Option Nat
@@ -62,7 +62,7 @@ private def consOp (op : Op) (tag : Nat) (xs : List Exp) : Option Exp :=
   | .blockOp (.lenEq len) => some (.let .none xs (mkBool (xs.length == len)))
   | _ => none
 
-private def dontLift (e : Exp) : Bool := (intConst e).isSome || (nil e).isSome || (constant e).isSome
+def dontLift (e : Exp) : Bool := (intConst e).isSome || (nil e).isSome || (constant e).isSome
 
 /-- Lift effectful terms into bindings while traversing constructor children
 in source order. -/
@@ -81,6 +81,13 @@ def liftFuel : Nat → List Exp → Nat → List Exp → Option (List Exp × Nat
         | none =>
             let (xs, next, binds) ← liftFuel fuel xs (n + 1) (binds ++ [x])
             pure (.var .none n :: xs, next, binds)
+
+/-- Preserve a successful traversal and retry exhaustion with structural fuel. -/
+def liftBounded (fuel : Nat) (xs : List Exp) (n : Nat) (binds : List Exp) :
+    Option (List Exp × Nat × List Exp) :=
+  match liftFuel fuel xs n binds with
+  | some result => some result
+  | none => liftFuel (max fuel (listBudget xs + 1)) xs n binds
 
 /-- Produce the source sequence of pure equality checks. -/
 def eqListFuel : Nat → List (Exp × Exp) → Option (List Exp)
@@ -130,7 +137,7 @@ def smartFuel (fuel : Nat) (trace : BackendCommon.Tra) (op : Op) (xs : List Exp)
               match directEq x y with
               | some e => pure e
               | none =>
-                  let (lifted, _, binds) ← liftFuel fuel [x, y] 0 []
+                  let (lifted, _, binds) ← liftBounded fuel [x, y] 0 []
                   match lifted with
                   | [x, y] => pure (.let .none binds (conj (← eqListFuel fuel [(x, y)])))
                   | _ => pure default
