@@ -15,8 +15,8 @@ def compileAuxFuel (fuel k args : Nat) (body : Bvi.Exp) : Option Aux := do
 mutual
 /-- Bounded form of expression conversion. Auxiliary code uses a flattened
 list in place of HOL's `SmartAppend` tree. The expression traversal fuel can
-still be exhausted; the BVI let optimizer retries with a proved sufficient
-bound. HOL correspondence remains open. -/
+still be exhausted; successful traversals and the enclosing retry agree with
+the source-shaped conversion by `Proofs.SourceAgreement`. -/
 def compileFuel : Nat → Nat → Nat → Bvl.Exp → Option (Bvi.Exp × Aux × Nat)
   | 0, _, _, _ => none
   | fuel + 1, optFuel, n, exp =>

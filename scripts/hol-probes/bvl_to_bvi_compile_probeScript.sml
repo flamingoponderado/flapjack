@@ -14,3 +14,9 @@ val _ = show "compile_tree_example=" (EVAL ``compile_exps_sing 0
   (bvl$If (bvl$Let [] (bvl$Let [] (bvl$Var 0)))
     (bvl$Let [] (bvl$Let [] (bvl$Var 0)))
     (bvl$Let [] (bvl$Let [] (bvl$Var 0))))``);
+val _ = show "compile_single_def=" compile_single_def;
+val _ = show "compile_single_eq=" compile_single_eq;
+val _ = show "compile_list_def=" compile_list_def;
+val _ = show "compile_inc_def=" compile_inc_def;
+val _ = show "compile_inc_example=" (EVAL ``compile_inc 0
+  [(1, 2, bvl$Let [] (bvl$Let [] (bvl$Var 0))); (2, 1, bvl$Var 0)]``);
