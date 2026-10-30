@@ -320,6 +320,7 @@ import Flapjack.Test.ClosCallParity
 import Flapjack.Test.ClosKnownHelpersParity
 import Flapjack.Test.ClosKnownParity
 import Flapjack.Test.ClosOpParity
+import Flapjack.Test.WordBignumCompileExpParity
 import Flapjack.Test.CakeLexerParity
 import Flapjack.Test.CakePegChecksParity
 import Flapjack.Test.CakePegActionsParity

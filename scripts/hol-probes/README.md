@@ -176,6 +176,8 @@ the complete carrier correspondence remains under review.
 
 `bignum_word_probe.out` captures the 23 original generated bignum stubs at the fixed CakeML location for 64-bit words. `scripts/generate-bignum-word-snapshot.py` renders an executable snapshot from this capture, and the word-oracle generator also produces an exhaustive matching test. This is a target-specific snapshot of pinned HOL output; the generic bignum generator and its correctness theorem remain unported. Regenerate the probe using the pinned CakeML and HOL submodules before regenerating either Lean artifact.
 
+`bignum_compile_exp_probe.out` records the inferred HOL expression-translation type and binary, invalid-arity, lookup, and shift cases. `Flapjack.Test.WordBignumCompileExpParity` replays those cases. Regenerate with `HOL_PROBE_ONLY=bignum_compile_exp_probeScript.sml scripts/hol-probes/regenerate.sh`; this is regression evidence and does not establish generator equivalence.
+
 `full_cake_word_probe.out` captures the original `data_to_word$compile_0` result for the empty CakeML program, including fixed stubs, generated bignum stubs, function arities and bodies, under the restricted settings and a 64-bit RISC-V assembly configuration. Its whole-program comparison ends before word-to-word optimization and the final RISC-V result.
 
 `full_inline_cake_word_probe.out` repeats that complete word-stage comparison after original BVI wrapper inlining and tick removal; earlier BVL/BVI optimizations are still omitted.

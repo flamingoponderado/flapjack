@@ -483,6 +483,8 @@ run_probe ref_byte_32_word_probeScript.sml ref_byte_32_word_probe.out \
 run_probe fixed_stubs_word_probeScript.sml fixed_stubs_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe bignum_compile_exp_probeScript.sml bignum_compile_exp_probe.out \
+  compile_exp_type binary unary lookup shift "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 run_probe bignum_word_probeScript.sml bignum_word_probe.out \
   entry "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
 

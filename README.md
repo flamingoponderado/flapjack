@@ -58,6 +58,17 @@ byte goldens:
 lake test
 ```
 
+Compile CakeML source to RISC-V assembly with the experimental frontend:
+
+```sh
+lake exe cake --target=riscv < program.cml > program.riscv.S
+```
+
+For output comparisons, pass `--target=riscv` to both compilers. Flapjack's
+`cake` defaults to RISC-V; the pinned upstream `cake` defaults to x86-64,
+which this executable does not support. The tested output comparisons do not
+establish equivalence for all inputs.
+
 Compile a Pancake source file through the source-facing RV64I path:
 
 ```sh
