@@ -109239,5 +109239,25 @@
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: the Op/Op expression-relation case retains the source and target operator and argument relation, source evaluation, non-type-error premise, existential target evaluation and final relation. The argument induction hypothesis has the same simulation shape, and the complete in_do_app_lemma covers Install as well as all other operators. The witness covers refs only; the evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineForce.lean",
+    "hol_name": "evaluate_inline",
+    "lean_name": "evaluateInline_force",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_inline statement and Force branch of its original proof. The case preserves the original identical Force expressions, relation premise, source evaluation, non-type-error premise and existential target evaluation with final relation. Its body induction hypothesis is restricted to the recursive evaluation actually selected by environment lookup, thunk decoding, find_code and a nonzero clock; it retains the original expression relation and non-type-error condition. The source and target reference stores are the canonical finite-support carrier with the local roundtrip witness. The evaluator inherits floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineDirectCall.lean",
+    "hol_name": "evaluate_inline",
+    "lean_name": "evaluateInline_call",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_inline statement and the Call/Call branch of its source proof. The case retains the original source and target Call expressions, relation and source-evaluation premises, non-type-error side condition, target existential and final relation. The argument induction hypothesis has the same simulation shape; the body induction hypothesis uses the original clock decrease after argument evaluation and applies to the body found in source and target code. The canonical reference-store roundtrip witnesses refs; evaluation inherits floating-point real-carrier assumptions."
   }
 ]
