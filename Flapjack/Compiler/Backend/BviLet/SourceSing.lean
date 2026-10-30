@@ -26,9 +26,8 @@ private theorem dropLastBudget (xs : List Exp) : listBudget xs.dropLast ≤ list
     | cons y ys => simp only [List.dropLast, listBudget] at *; omega
 
 mutual
-/-- Source-shaped total single-expression optimizer. Agreement with the
-executed traversal is proved for sufficiently large fuel; the arbitrary-fuel
-production path remains open. -/
+/-- Source-shaped total single-expression optimizer. The executed traversal
+agrees for every initial fuel by `compileBounded_eq_compileSing`. -/
 @[hol "cakeml/compiler/backend/bvi_letScript.sml" "compile_sing_def"]
 def compileSing (env : List Nat) (d : Nat) : Exp → Exp
   | .var v => .var (v + (env[v]?.getD d))

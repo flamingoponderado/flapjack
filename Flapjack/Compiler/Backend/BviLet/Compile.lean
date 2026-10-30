@@ -5,7 +5,8 @@ import Flapjack.Compiler.Backend.Bvi.Budget
 namespace Flapjack.Compiler.Backend.BviLet
 
 /-- Bounded form of the source let optimizer. Fuel exhaustion is explicit;
-`Proofs.Total` proves a sufficient bound. Source correspondence remains open. -/
+`Proofs.SourceAgreement` proves agreement with the source-shaped optimizer
+on every successful traversal. -/
 def compileFuel : Nat → List Nat → Nat → Bvi.Exp → Option Bvi.Exp
   | 0, _, _, _ => none
   | fuel + 1, env, d, exp =>
