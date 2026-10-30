@@ -38,6 +38,8 @@ val _ = show "in_cc=" bvl_inlineProofTheory.in_cc_def;
 val _ = show "in_state_rel=" bvl_inlineProofTheory.in_state_rel_def;
 val _ = show "in_co=" bvl_inlineProofTheory.in_co_def;
 val _ = show "MAP_FST_tick_inline_all=" bvl_inlineProofTheory.MAP_FST_tick_inline_all;
+val _ = show "do_app_Rval_swap=" bvlPropsTheory.do_app_Rval_swap;
+val _ = show "do_app_Rerr_swap=" bvlPropsTheory.do_app_Rerr_swap;
 val _ = show "must_inline_yes=" (EVAL ``bvl_inline$must_inline 3 5 (bvl$Call 0 (SOME 4) [bvl$Var 1])``);
 val _ = show "must_inline_rec=" (EVAL ``bvl_inline$must_inline 3 5 (bvl$Call 0 (SOME 3) [bvl$Var 1])``);
 val _ = show "must_inline_zero=" (EVAL ``bvl_inline$must_inline 3 0 (bvl$Var 1)``);

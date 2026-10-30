@@ -109083,5 +109083,25 @@
     "lean_name": "mapFstTickInlineAll",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared typed MAP_FST_tick_inline_all in bvl_inline_state_rel_probe.out: the output program of tickInlineAll with empty accumulator has the same first-component list as the input for every limit, numeric cache and program."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/ApplyRuntimeFrame.lean",
+    "hol_name": "do_app_Rval_swap",
+    "lean_name": "doAppRvalSwap",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the full typed do_app_Rval_swap in bvl_inline_state_rel_probe.out: source and target compiler and FFI types are four independent variables, and the source success, non-Install and source-domain-subset-target premises are unchanged. runtimeFrame constructs exactly the HOL target update with source globals, refs, clock and ffi; its result has the target compiler type and source FFI type. The local canonical witness covers refs only; doApp inherits the floating-point real-carrier assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/ApplyRuntimeFrame.lean",
+    "hol_name": "do_app_Rerr_swap",
+    "lean_name": "doAppRerrSwap",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the full typed do_app_Rerr_swap in bvl_inline_state_rel_probe.out: source and target compiler and FFI types are independent, and the error, non-Install and target-domain-subset-source premises and result match. runtimeFrame is precisely the HOL four-field target update; the canonical witness covers refs only and doApp inherits the floating-point real-carrier assumptions."
   }
 ]
