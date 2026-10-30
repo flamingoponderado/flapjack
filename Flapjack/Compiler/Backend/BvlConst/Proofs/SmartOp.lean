@@ -140,6 +140,86 @@ theorem evaluate_intOp {C F : Type} (operation : ClosLang.IntOp) (args : List Bv
     | val values => simp only [evaluateTuple, h]; rfl
     | err error => simp only [evaluateTuple, h]
 
+/-- Expand block-operation evaluation after its argument list has run. This
+is Flapjack proof infrastructure for equality rewrites. -/
+theorem evaluate_blockOp {C F : Type} (operation : ClosLang.BlockOp) (args : List Bvl.Exp)
+    (env : List Value) (state : State C F) :
+    evaluateTuple ([.op (.blockOp operation) args], env, state) =
+      match evaluateTuple (args, env, state) with
+      | (.err error, next) => (.err error, next)
+      | (.val values, next) =>
+        match doApp (.blockOp operation) values.reverse next with
+        | .err error => (.err error, next)
+        | .val (value, final) => (.val [value], final) := by
+  change evaluate [.op (.blockOp operation) args] env state = _
+  rw [evaluate, fixClock_evaluate]
+  cases h : evaluate args env state with
+  | mk result next =>
+    cases result with
+    | val values => simp only [evaluateTuple, h]; rfl
+    | err error => simp only [evaluateTuple, h]
+
+/-- Expand memory-operation evaluation after its argument list has run.
+This is Flapjack proof infrastructure for the element-access rewrite. -/
+theorem evaluate_memOp {C F : Type} (operation : ClosLang.MemOp) (args : List Bvl.Exp)
+    (env : List Value) (state : State C F) :
+    evaluateTuple ([.op (.memOp operation) args], env, state) =
+      match evaluateTuple (args, env, state) with
+      | (.err error, next) => (.err error, next)
+      | (.val values, next) =>
+        match doApp (.memOp operation) values.reverse next with
+        | .err error => (.err error, next)
+        | .val (value, final) => (.val [value], final) := by
+  change evaluate [.op (.memOp operation) args] env state = _
+  rw [evaluate, fixClock_evaluate]
+  cases h : evaluate args env state with
+  | mk result next =>
+    cases result with
+    | val values => simp only [evaluateTuple, h]; rfl
+    | err error => simp only [evaluateTuple, h]
+
+/-- Comparing an integer constant to an arbitrary expression agrees with the
+specialized equality operation on that expression, in either operand order.
+This is Flapjack proof infrastructure for the binary source theorem. -/
+theorem evaluate_equal_const {C F : Type} (n : Int) (x : Bvl.Exp)
+    (env : List Value) (state : State C F) :
+    evaluateTuple ([.op (.blockOp .equal) [.op (.intOp (.const n)) [], x]], env, state) =
+        evaluateTuple ([.op (.blockOp (.equalConst (.int n))) [x]], env, state) ∧
+    evaluateTuple ([.op (.blockOp .equal) [x, .op (.intOp (.const n)) []]], env, state) =
+        evaluateTuple ([.op (.blockOp (.equalConst (.int n))) [x]], env, state) := by
+  cases h : evaluateTuple ([x], env, state) with
+  | mk result next =>
+    cases result with
+    | err error => simp [evaluate_blockOp, evaluate_const_cons, evaluate_snoc_const, h]
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluateSing x env state values next h
+      cases value <;>
+        simp [evaluate_blockOp, evaluate_const_cons, evaluate_snoc_const, h,
+          Flapjack.holHd, doApp, applyBlock, doEq]
+      apply congrArg boolValue
+      rename_i a
+      by_cases same : a = n
+      · subst a; rfl
+      · have reverse : n ≠ a := Ne.symm same
+        simp [same, reverse]
+
+/-- A nonnegative constant index gives the same element-access result in the
+memory and specialized block operations. This is a Flapjack proof helper. -/
+theorem evaluate_el_const {C F : Type} (n : Int) (x : Bvl.Exp)
+    (env : List Value) (state : State C F) (nonnegative : ¬ n < 0) :
+    evaluateTuple ([.op (.memOp .el) [.op (.intOp (.const n)) [], x]], env, state) =
+      evaluateTuple ([.op (.blockOp (.elemAt n.toNat)) [x]], env, state) := by
+  cases h : evaluateTuple ([x], env, state) with
+  | mk result next =>
+    cases result with
+    | err error => simp [evaluate_memOp, evaluate_blockOp, evaluate_const_cons, h]
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluateSing x env state values next h
+      cases value <;>
+        simp [evaluate_memOp, evaluate_blockOp, evaluate_const_cons, h,
+          doApp, applyMemory, applyBlock, nonnegative]
+      rfl
+
 /-- Moving a constant across the other operand preserves the three arithmetic
 forms used by the source flip. This is a Flapjack proof helper. -/
 theorem evaluate_arithmetic_flip {C F : Type} (n : Int) (y : Bvl.Exp)
@@ -250,6 +330,60 @@ theorem smartOp2_mod_correct {C F : Type} (x y : Bvl.Exp) (env : List Value)
         simp only [smartOp2, simple, beq_iff_eq, if_neg zero]
         change evaluateTuple ([.op (.intOp (.const (b.fmod a))) []], env, state) = _
         exact evaluate_intConst (b.fmod a) env state
+
+/-- Equality case of the binary rewrite correctness theorem. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "SmartOp2_thm"
+  (fmap_as_finite_support := [refs])]
+theorem smartOp2_equal_correct {C F : Type} (x y : Bvl.Exp) (env : List Value)
+    (state final : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (run : evaluateTuple ([.op (.blockOp .equal) [x, y]], env, state) = (result, final))
+    (notTypeError : result ≠ .err (.abort .typeError)) :
+    evaluateTuple ([smartOp2 (.blockOp .equal, x, y)], env, state) = (result, final) := by
+  cases hx : simple x with
+  | none =>
+    cases hy : simple y with
+    | none => simpa [smartOp2, hx, hy] using run
+    | some b =>
+      have ey := (simple_eq y b).1 hy
+      subst y
+      have rewritten := (evaluate_equal_const b x env state).2.symm.trans run
+      have hc : simple (.op (.intOp (.const b)) []) = some b := rfl
+      simpa only [smartOp2, hx, hc] using rewritten
+  | some a =>
+    have ex := (simple_eq x a).1 hx
+    subst x
+    cases hy : simple y with
+    | none =>
+      have rewritten := (evaluate_equal_const a y env state).1.symm.trans run
+      have hc : simple (.op (.intOp (.const a)) []) = some a := rfl
+      simpa only [smartOp2, hc, hy] using rewritten
+    | some b =>
+      have ey := (simple_eq y b).1 hy
+      subst y
+      have rewritten := (evaluate_equal_const a (.op (.intOp (.const b)) []) env state).1.symm.trans run
+      have unary := smartOp1_correct (.blockOp (.equalConst (.int a)))
+        (.op (.intOp (.const b)) []) env state final result rewritten notTypeError
+      simpa [smartOp2, smartOp1, simple] using unary
+
+/-- Element-access case of the binary rewrite correctness theorem. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "SmartOp2_thm"
+  (fmap_as_finite_support := [refs])]
+theorem smartOp2_el_correct {C F : Type} (x y : Bvl.Exp) (env : List Value)
+    (state final : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (run : evaluateTuple ([.op (.memOp .el) [x, y]], env, state) = (result, final))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    evaluateTuple ([smartOp2 (.memOp .el, x, y)], env, state) = (result, final) := by
+  cases hx : simple x with
+  | none => simpa [smartOp2, hx] using run
+  | some n =>
+    have ex := (simple_eq x n).1 hx
+    subst x
+    by_cases negative : n < 0
+    · simpa [smartOp2, simple, negative] using run
+    · have rewritten := (evaluate_el_const n y env state negative).symm.trans run
+      simpa [smartOp2, simple, negative] using rewritten
 
 /-- Less-than case of the binary rewrite correctness theorem. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "SmartOp2_thm"
