@@ -41,3 +41,5 @@ val _ = show_thm "globals_bindings=" flat_patternProofTheory.set_globals_compile
 val _ = show_thm "globals_naive_match=" flat_patternProofTheory.set_globals_naive_pattern_match;
 val _ = show_thm "globals_naive_matches=" flat_patternProofTheory.set_globals_naive_pattern_matches;
 val _ = show_thm "globals_compile_pats=" flat_patternProofTheory.set_globals_compile_pats;
+val _ = show_thm "compile_global_bounds=" flat_patternProofTheory.compile_exp_set_globals;
+val _ = show_thm "compile_decs_global_bounds=" flat_patternProofTheory.compile_decs_elist_globals;

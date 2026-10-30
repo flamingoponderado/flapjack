@@ -364,6 +364,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.CompiledMatch
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.NoMat
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalInvariants
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalBounds
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.NoMat
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchBranch
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.HandleBranch

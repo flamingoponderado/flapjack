@@ -1,5 +1,17 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "compile_exp_set_globals",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalBounds.lean", "lean_name": "compileExp_setGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2089-2162 and inferred types in flat_pattern_global_flag_probe.out. The carriers and tuple component order agree. All three source conjuncts retain the compiler output tuple equalities and bound global-write multiplicities for expressions, expression lists and mapped match-row bodies. HOL num-bag subbag is pointwise Nat inequality. The proof covers all source constructors, with the flag-dependent optimized match condition discharged from the source flag theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "compile_decs_elist_globals",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalBounds.lean", "lean_name": "compileDecs_elistGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 2089-2162 and inferred types in flat_pattern_global_flag_probe.out. The carriers and tuple component order agree. The same global bag bound holds for MAP compile_dec over declarations; HOL subbag is pointwise Nat inequality."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml", "hol_name": "set_globals_naive_pattern_matches",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean", "lean_name": "setGlobals_naivePatternMatches",
     "statement_status": "reviewed_exact",
