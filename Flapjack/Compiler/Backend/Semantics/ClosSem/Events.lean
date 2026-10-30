@@ -102,6 +102,14 @@ theorem doApp_ioEvents_prefix {C F : Type} (op : ClosLang.Op) (args : List Value
     all_goals apply callFFIHOL_return_ioEvents_prefix <;> assumption
   | label | install => simp [doApp] at run
 
+/-- Ordinary primitive dispatch does not produce a timeout. -/
+theorem doApp_not_timeout {C F : Type} (op : ClosLang.Op) (args : List Value) (state : State C F) :
+    doApp op args state ≠ .err (.abort .timeoutError) := by
+  unfold doApp
+  repeat' split
+  all_goals simp_all
+  all_goals split <;> simp_all
+
 /-- Installation leaves the FFI state unchanged, including on timeout. -/
 theorem doInstall_ffi {C F : Type} (values : List Value) (state next : State C F)
     (result : Result (List ClosLang.Exp) Value) (run : doInstall values state = (result, next)) :
