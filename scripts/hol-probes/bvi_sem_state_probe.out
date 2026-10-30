@@ -1,0 +1,12 @@
+exn_type=:v -> exn_or_ret
+ret_type=:v list -> exn_or_ret
+result_type=:(v list, exn_or_ret) result -> (v list, exn_or_ret) result
+state_refs_type=:(γ, 'ffi) state -> (num |-> v ref)
+state_clock_type=:(γ, 'ffi) state -> num
+state_global_type=:(γ, 'ffi) state -> num option
+state_compile_type=:(γ, 'ffi) state -> γ -> (num # num # bvi$exp) list -> (word8 list # word64 list # γ) option
+state_oracle_type=:(γ, 'ffi) state -> num -> γ # (num # num # bvi$exp) list
+state_code_type=:(γ, 'ffi) state -> (num # bvi$exp) sptree$num_map
+state_ffi_type=:(γ, 'ffi) state -> 'ffi ffi_state
+dec_clock=∀(x :num) (s :(α, β) state). dec_clock x s = s with clock := s.clock − x
+bvl_to_bvi=∀(s :(γ, 'ffi) bvlSem$state) (t :(γ, 'ffi) state). bvl_to_bvi s t = t with <|refs := s.refs; clock := s.clock; ffi := s.ffi|>

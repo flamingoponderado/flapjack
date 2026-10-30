@@ -110207,5 +110207,43 @@
   "lean_name": "adjustBv_bool",
   "statement_status": "reviewed_exact",
   "reviewer": "Typed upstream declaration captured in bvl_to_bvi_value_rel_probe.out and compared with the Lean signature and BVL value carrier. Unconditional preservation of both original Boolean values. The mutual list helper is proved equal to the source MAP in adjustValues_eq_map. The concrete nested original observation is replayed in BvlToBviValueParity; state and pass relations remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/State.lean",
+  "hol_name": "exn_or_ret",
+  "lean_name": "ExnOrRet",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared with the typed original source capture bvi_sem_state_probe.out. Both exception and return constructors use the original BVL value and list carriers. Full BVI evaluation and compiler correctness remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/State.lean",
+  "hol_name": "bvi_result",
+  "lean_name": "BviResult",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared with the typed original source capture bvi_sem_state_probe.out. The result type uses the original list-of-BVL-values success and exn_or_ret error carriers. Full BVI evaluation and compiler correctness remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/State.lean",
+  "hol_name": "state",
+  "lean_name": "BviState",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared with the typed original source capture bvi_sem_state_probe.out. The capture records all seven inferred field types, including exact BVI expression callbacks and oracle, word8/word64 result lists, sparse-tree code and FFI carrier. The local canonical lookup/support roundtrip witnesses refs; code is an Spt tree, not a finite-map function. Full BVI evaluation and compiler correctness remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/State.lean",
+  "hol_name": "dec_clock_def",
+  "lean_name": "decClock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared with the typed original source capture bvi_sem_state_probe.out. The universally quantified source update changes only the clock using natural-number subtraction. The local canonical lookup/support roundtrip witnesses refs; code is an Spt tree, not a finite-map function. Full BVI evaluation and compiler correctness remain open."
 }
 ]
