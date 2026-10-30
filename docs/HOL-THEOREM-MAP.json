@@ -109026,5 +109026,29 @@
     "lean_name": "mustInline",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared typed must_inline_def in bvl_inline_state_rel_probe.out: name, limit and expression arguments and the small/nonrecursive conditional are unchanged. Proofs.RecursionProduction proves the executed size and recursion retry decisions equal this predicate for all fuels and inputs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Program.lean",
+    "hol_name": "tick_inline_all_def",
+    "lean_name": "tickInlineAll",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed tick_inline_all_def in bvl_inline_state_rel_probe.out: numeric labels and arities, sparse-tree cache, reverse accumulator, singleton tick_inline via its checked equivalence, and must_inline cache insertion match each source equation. Proofs.ProgramProduction proves the executed traversal returns the same cache and entries."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Program.lean",
+    "hol_name": "tick_compile_prog_def",
+    "lean_name": "tickCompileProg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed tick_compile_prog_def in bvl_inline_state_rel_probe.out: arbitrary limit, numeric cache and BVL program are passed to tickInlineAll with an empty accumulator. The executed tickInlineAllFuel is proved equal for all fuels and inputs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ProgramProduction.lean",
+    "hol_name": "tick_inline_all_names",
+    "lean_name": "tickInlineAllNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed tick_inline_all_names in bvl_inline_state_rel_probe.out, including its shadowed unused aux binder of an independent polymorphic type: Lean retains that binder as _unused. The other arguments and equality preserve MAP FST of reversed accumulator followed by input program, with the original run hypothesis."
   }
 ]

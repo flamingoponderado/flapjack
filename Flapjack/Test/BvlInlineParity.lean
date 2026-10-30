@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.BvlInline
 import Flapjack.Compiler.Backend.BvlInline.TickInline
 import Flapjack.Compiler.Backend.BvlInline.Small
 import Flapjack.Compiler.Backend.BvlInline.Recursion
+import Flapjack.Compiler.Backend.BvlInline.Program
 
 /-! Replay `bvl_inline_frontend_probe.out` from pinned CakeML/HOL. -/
 namespace Flapjack.Test.BvlInlineParity
@@ -25,6 +26,14 @@ example : tickInlineSing (.ln : Spt (Bool × Bvl.Exp)) (.call 2 (some 3) [.var 1
     [(1, 1, .var 0), (2, 1, .call 2 (some 1) [.var 0]),
      (3, 0, .call 0 (some 3) []), (4, 1, .call 0 (some 3) [.var 0])] with
   | some (_, [(1, 1, .var 0), (2, 1, .let [.var 0] (.tick (.tick (.tick (.var 0))))),
+      (3, 0, .call 0 (some 3) []), (4, 1, .call 0 (some 3) [.var 0])]) => true
+  | _ => false
+
+-- The same original `inline` observation for the total source traversal.
+#guard match tickCompileProg 8 .ln
+    [(1, 1, .var 0), (2, 1, .call 2 (some 1) [.var 0]),
+     (3, 0, .call 0 (some 3) []), (4, 1, .call 0 (some 3) [.var 0])] with
+  | (_, [(1, 1, .var 0), (2, 1, .let [.var 0] (.tick (.tick (.tick (.var 0))))),
       (3, 0, .call 0 (some 3) []), (4, 1, .call 0 (some 3) [.var 0])]) => true
   | _ => false
 
