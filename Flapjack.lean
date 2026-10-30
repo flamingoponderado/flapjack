@@ -432,6 +432,7 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.Total
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.Proofs.FullTotal
+import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
 import Flapjack.Compiler.Backend.BviInline.Proofs.Total
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Total

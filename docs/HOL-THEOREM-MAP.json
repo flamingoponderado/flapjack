@@ -108606,4 +108606,37 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the complete typed HOL statement in bvl_sem_values_probe.out: for arbitrary expressions, environment, state and extra clock, the first evaluation event list is a prefix of the event list from the state with that clock increment. No timeout or evaluation-result premise is added. evaluateTuple and incClock preserve the original source operations and independent compiler/FFI types; the local canonical witness covers refs only. The evaluator inherits its floating-point real-carrier assumptions."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/RemoveTicks.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "remove_ticks_sing_def",
+    "lean_name": "removeTicksSing",
+    "reviewer": "Compared the complete typed mutual source equations in bvl_remove_ticks_probe.out: all nine expression constructors and the empty/cons list cases preserve payloads, remove Tick, and set Call ticks to zero. Bvl.Exp and ClosLang.Op are the source-shaped carriers, including byte-backed MlString. removeTicksFuel_eq proves every successful production fuel traversal returns this same result, and removeTicksBounded_eq proves the retrying executable traversal always returns it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/RemoveTicks.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "remove_ticks_sing_def",
+    "lean_name": "removeTicksList",
+    "reviewer": "Compared the complete typed mutual source equations in bvl_remove_ticks_probe.out: all nine expression constructors and the empty/cons list cases preserve payloads, remove Tick, and set Call ticks to zero. Bvl.Exp and ClosLang.Op are the source-shaped carriers, including byte-backed MlString. removeTicksFuel_eq proves every successful production fuel traversal returns this same result, and removeTicksBounded_eq proves the retrying executable traversal always returns it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/RemoveTicks.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "remove_ticks_def",
+    "lean_name": "removeTicks",
+    "reviewer": "Compared all typed original list and singleton equations in bvl_remove_ticks_probe.out. The Lean list form is the mutual list traversal, whose source equations follow by unfolding and whose singleton and list identity are kernel-checked in removeTicksSing_equivalence; in particular Tick disappears and Call uses zero ticks. No representation qualifier is needed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/RemoveTicks.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "remove_ticks_sing",
+    "lean_name": "removeTicksSing_equivalence",
+    "reviewer": "Compared both quantified typed conjuncts in bvl_remove_ticks_probe.out: singleton tick removal equals a singleton of the single-expression traversal, and list traversal equals tick removal on every expression list. No extra hypotheses are present."
+  }
 ]
