@@ -108801,4 +108801,41 @@
     "lean_name": "evaluateRemoveTicks_if",
     "reviewer": "Compared the if case of the typed original evaluate_remove_ticks statement captured in bvl_inline_state_rel_probe.out. It retains the related-state, original-clock and optimized-evaluation hypotheses and the existential extra-clock/source-final-state conclusion. Its subexpression induction hypotheses include the source proof’s strong-clock induction at intermediate clocks bounded by the original clock; no successful result or target evaluation is assumed. The local canonical witness covers refs only. Compiler and FFI types remain independent; evaluator operations inherit floating-point real-carrier assumptions. This is one source case, not the assembling theorem."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/RemoveTicksSimulation.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluateRemoveTicks_force",
+    "reviewer": "Compared the force case of the typed original evaluate_remove_ticks statement captured in bvl_inline_state_rel_probe.out. It retains the related-state, original-clock and optimized-evaluation hypotheses and the existential extra-clock/source-final-state conclusion. The recursive body hypothesis is the source proof’s strong-clock induction at strictly smaller clocks, with no target evaluation or success premise. The local canonical witness covers refs only. Compiler and FFI types remain independent; the evaluator inherits floating-point real-carrier assumptions. This is one source case, not the assembling theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/RemoveTicksSimulation.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluateRemoveTicks_call",
+    "reviewer": "Compared the call case of the typed original evaluate_remove_ticks statement captured in bvl_inline_state_rel_probe.out. It retains the related-state, original-clock and optimized-evaluation hypotheses and the existential extra-clock/source-final-state conclusion. The recursive body hypothesis is the source proof’s strong-clock induction at strictly smaller clocks, with no target evaluation or success premise. The local canonical witness covers refs only. Compiler and FFI types remain independent; the evaluator inherits floating-point real-carrier assumptions. This is one source case, not the assembling theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/RemoveTicksSimulation.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluateRemoveTicks",
+    "reviewer": "Compared the complete typed original evaluate_remove_ticks theorem in bvl_inline_state_rel_probe.out: arbitrary clock, expression list, environment, source and optimized states, result and final state; the conjunction of state relation, clock equality and optimized evaluation implies existence of an extra clock and source final state with the same result and related final state. All source cases are assembled by strong induction on clock and expression weight, without extra success or target-evaluation hypotheses. Compiler and FFI types remain independent, and the local canonical witness covers refs only; evaluator operations inherit floating-point real-carrier assumptions."
+  }
 ]
