@@ -534,6 +534,8 @@ import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallAppRelation
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallSimulationFull
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
+import Flapjack.Compiler.Backend.Semantics.ClosSem.Events
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEvents
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
