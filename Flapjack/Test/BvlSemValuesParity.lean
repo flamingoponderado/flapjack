@@ -4,7 +4,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
 
 /-! Kernel replay of representative original BVL semantic observations. -/
@@ -198,5 +198,11 @@ example {C F : Type} (s : State C F) :
 example {C F : Type} (s : State C F) (clock : s.clock = 0) :
     (evaluate [.tick (.var 0)] [.number 7] s).1 = .err (.abort .timeoutError) := by
   simp [evaluate, clock]
+
+example {C F : Type} (s : State C F)
+    (code : Flapjack.sptLookup 4 s.code = some (1, .var 0)) (clock : s.clock = 3) :
+    (evaluate [.call 1 (some 4) [.var 0]] [.number 7] s).1 = .val [.number 7] ∧
+    (evaluate [.call 1 (some 4) [.var 0]] [.number 7] s).2.clock = 1 := by
+  simp [evaluate, fixClock, findCode, code, clock, decClock]
 
 end Flapjack.Test.BvlSemValuesParity

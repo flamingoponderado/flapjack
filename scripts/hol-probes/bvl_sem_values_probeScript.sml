@@ -143,3 +143,9 @@ val _ = example "eval_op_reverse=" ``FST (bvlSem$evaluate
    [bvlSem$Number 7; bvlSem$Number 9], ^base_state))``;
 val _ = example "eval_tick_timeout=" ``FST (bvlSem$evaluate
   ([bvl$Tick (bvl$Var 0)], [bvlSem$Number 7], ^base_state with clock := 0))``;
+val call_state = ``(^base_state with <| clock := 3;
+  code := sptree$insert 4 (1,bvl$Var 0) sptree$LN |>)``;
+val _ = example "eval_call=" ``FST (bvlSem$evaluate
+  ([bvl$Call 1 (SOME 4) [bvl$Var 0]], [bvlSem$Number 7], ^call_state))``;
+val _ = example "eval_call_clock=" ``(SND (bvlSem$evaluate
+  ([bvl$Call 1 (SOME 4) [bvl$Var 0]], [bvlSem$Number 7], ^call_state))).clock``;

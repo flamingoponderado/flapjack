@@ -469,6 +469,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
 import Flapjack.Test.BvlSemValuesParity
 import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.ClosAnnotate.Free

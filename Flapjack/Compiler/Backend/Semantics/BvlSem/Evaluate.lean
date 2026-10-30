@@ -23,6 +23,9 @@ private def timeoutError {C F : Type} (state : State C F) : EvalResult C F :=
 @[simp] private theorem timeoutError_eq {C F : Type} (state : State C F) :
     timeoutError state = (.err (.abort .timeoutError), state) := rfl
 
+@[simp] private theorem typeError_eq {C F : Type} (state : State C F) :
+    typeError state = (.err (.abort .typeError), state) := rfl
+
 /-- Clocked, source-shaped BVL evaluation. This proof-side infrastructure is
 untagged until the dispatcher, the use of `holHd` on singleton evaluations,
 and the original clock-clamp elimination have been reviewed against HOL. -/
