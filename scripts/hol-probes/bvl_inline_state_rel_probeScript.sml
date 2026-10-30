@@ -60,6 +60,84 @@ val do_app_lemma_goal = ``
 val _ = (print "do_app_lemma_typed_goal="; print_term do_app_lemma_goal; print "\n");
 open bvlSemTheory bvlPropsTheory bvl_inlineTheory bvl_inlineProofTheory;
 val _ = temp_delsimps ["lift_disj_eq", "lift_imp_disj", "fromAList_def"];
+val tick_inline_all_acc = prove(
+  ``!limit cs t aux.
+      tick_inline_all limit cs t aux =
+        let (cs1,xs) = tick_inline_all limit cs t [] in
+          (cs1, REVERSE aux ++ xs)``,
+  Induct_on `t` \\ fs [tick_inline_all_def] \\ rpt strip_tac
+  \\ PairCases_on `h` \\ simp_tac std_ss  [tick_inline_all_def]
+  \\ pop_assum (fn th => once_rewrite_tac [th])
+  \\ fs [] \\ pairarg_tac \\ fs []);
+
+
+val exp_rel_rw = prove(
+  ``exp_rel (union (union src_code (insert p1 (p2,p3) LN)) (fromAList in1))
+      [exp] [exp2] <=>
+    exp_rel (union src_code (fromAList ((p1,p2,p3)::in1))) [exp] [exp2]``,
+  match_mp_tac exp_rel_swap
+  \\ fs [lookup_union,lookup_insert,fromAList_def,case_eq_thms,lookup_def]
+  \\ Cases_on `lookup k src_code` \\ fs []
+  \\ CCONTR_TAC \\ fs []);
+
+val local_program_relation_goal = ``
+  !limit cs0 in1 cs1 in2 k arity exp src_code.
+      tick_compile_prog limit cs0 in1 = (cs1,in2) /\
+      ALOOKUP in1 k = SOME (arity,exp) /\
+      ALL_DISTINCT (MAP FST in1) /\
+      (!k arity v.
+         lookup k cs0 = SOME (arity,v) ==>
+         ?exp. lookup k src_code = SOME (arity,exp) /\
+               exp_rel src_code [exp] [v]) /\
+      DISJOINT (domain src_code) (set (MAP FST in1)) /\
+      DISJOINT (domain cs0) (set (MAP FST in1)) ==>
+      ∃exp2.
+        ALOOKUP in2 k = SOME (arity,exp2) /\
+        exp_rel (union src_code (fromAList in1)) [exp] [exp2]``;
+val _ = (print "tick_compile_prog_IMP_exp_rel_typed_goal="; print_term local_program_relation_goal; print "\n");
+val local_program_relation_replay = prove (local_program_relation_goal,
+  Induct_on `in1`
+  \\ fs [FORALL_PROD,tick_compile_prog_def,tick_inline_all_def]
+  \\ once_rewrite_tac [tick_inline_all_acc]
+  \\ fs [] \\ rpt gen_tac
+  \\ pairarg_tac \\ fs [] \\ strip_tac \\ rveq
+  \\ fs [] \\ rw [] \\ fs []
+  THEN1
+   (match_mp_tac subspt_exp_rel
+    \\ qexists_tac `src_code`
+    \\ conj_tac THEN1 fs [subspt_lookup,lookup_union]
+    \\ match_mp_tac exp_rel_tick_inline \\ metis_tac [])
+  \\ first_x_assum drule
+  \\ disch_then (qspec_then `k` mp_tac) \\ fs []
+  \\ qmatch_goalsub_rename_tac `(p1,p2,p3) :: in1`
+  \\ disch_then (qspec_then `union src_code (insert p1 (p2,p3) LN)` mp_tac)
+  \\ fs [exp_rel_rw] \\ disch_then match_mp_tac
+  \\ reverse (IF_CASES_TAC \\ fs [])
+  THEN1
+   (fs [DISJOINT_DEF,EXTENSION,domain_union] \\ rw []
+    \\ fs [lookup_union,lookup_insert,lookup_def,case_eq_thms]
+    THEN1
+     (first_x_assum drule \\ strip_tac \\ fs []
+      \\ match_mp_tac (subspt_exp_rel |> ONCE_REWRITE_RULE [CONJ_COMM])
+      \\ asm_exists_tac \\ fs []
+      \\ fs [subspt_lookup,lookup_union])
+    \\ CCONTR_TAC \\ fs [] \\ metis_tac [])
+  \\ reverse (rw [])
+  \\ fs [lookup_insert,case_eq_thms] \\ rveq
+  THEN1
+   (rename1 `must_inline k2 _ _`
+    \\ fs [lookup_union,case_eq_thms,GSYM lookup_NONE_domain]
+    \\ match_mp_tac subspt_exp_rel
+    \\ qexists_tac `src_code`
+    \\ conj_tac THEN1 fs [subspt_lookup,lookup_union]
+    \\ match_mp_tac exp_rel_tick_inline \\ metis_tac [])
+  \\ fs [lookup_union,case_eq_thms,GSYM lookup_NONE_domain,lookup_insert,
+         lookup_def]
+  \\ first_x_assum drule \\ strip_tac \\ fs []
+  \\ match_mp_tac (subspt_exp_rel |> ONCE_REWRITE_RULE [CONJ_COMM])
+  \\ asm_exists_tac \\ fs []
+  \\ fs [subspt_lookup,lookup_union]);
+val _ = show "tick_compile_prog_IMP_exp_rel_replay=" local_program_relation_replay;
 val state_rel_alt = state_rel_def;
 val state_rel_def = state_rel_def |> SIMP_RULE (srw_ss()) [state_component_equality,GSYM CONJ_ASSOC];
 val do_app_lemma_replay = prove (do_app_lemma_goal,

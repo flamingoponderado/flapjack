@@ -109211,5 +109211,13 @@
     "lean_name": "tickCompileProgResRange",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete typed tick_compile_prog_res_range in bvl_inline_state_rel_probe.out: input and output programs have numeric labels and arities, all code carriers are the original sparse tree, and the conjunction retains the compile result, distinct input labels, initial-cache subspt and empty intersection between base domain and input labels. The conclusion is the original final-cache subspt of the left-biased union with fromAList output. HOL sets are predicates: Lean's intersection-empty premise is equality of the corresponding membership predicate to False."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ProgramRelation.lean",
+    "hol_name": "tick_compile_prog_IMP_exp_rel",
+    "lean_name": "tickCompileProg_related",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed goal and original proof replay for the local theorem in bvl_inline_state_rel_probe.out. The program, sparse-tree cache and source carriers, numeric labels and arities, compile equality, input ALOOKUP, distinct labels, cache relation, both DISJOINT premises and existential output lookup and expression relation match. CacheRelated unfolds to the original quantified lookup relation; DISJOINT is rendered pointwise as membership exclusion. The second freshness premise is retained even though the Lean proof does not need it."
   }
 ]
