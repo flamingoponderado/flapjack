@@ -1,5 +1,17 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_exp_sing_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/SourceCompile.lean", "lean_name": "compileExpHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all singleton clauses at source lines 497-578 and inferred types in clos_to_bvl_recursive_types_probe.out. The closure and BVL expression, num and auxiliary triple-list carriers, accumulator order, all operator and recursive-group cases agree. compileExpFunsHOL_eq_map and compileExpFunsHOL_cases prove the factored arity/body traversal and MAP2 produce the original results; buildReccLetsHOL preserves the source total operation. compileExp_checked_eq proves the executed checked converter returns this result."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_exp_sing_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/SourceCompile.lean", "lean_name": "compileExpListHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both list clauses and inferred types in clos_to_bvl_recursive_types_probe.out. The closure and BVL lists and auxiliary triple list retain the original carriers, evaluation order and accumulator threading; compileExpList_checked_eq proves the executed checked list converter returns this result."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml", "hol_name": "insert_interp_no_mti",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoMti.lean", "lean_name": "insertInterp_noMti",
     "statement_status": "reviewed_exact",

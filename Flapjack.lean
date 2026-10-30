@@ -447,10 +447,12 @@ import Flapjack.Compiler.Backend.ClosToBvl.Names
 import Flapjack.Compiler.Backend.ClosNumber
 import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
 import Flapjack.Compiler.Backend.ClosToBvl.Compile
+import Flapjack.Compiler.Backend.ClosToBvl.SourceCompile
 import Flapjack.Compiler.Backend.BvlJump
 import Flapjack.Compiler.Backend.ClosToBvl.Stubs
 import Flapjack.Compiler.Backend.ClosToBvl.Prepared
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Total
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceCompile
 import Flapjack.Test.ClosToBvlRecursive
 import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.ClosAnnotate.Free

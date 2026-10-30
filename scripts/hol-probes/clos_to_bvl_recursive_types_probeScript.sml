@@ -9,3 +9,8 @@ val example = rhs (concl (EVAL ``clos_to_bvl$recc_Lets 4 [1; 2] 2 (bvl$Var 0)``)
 val _ = (print "recc_lets_example="; print_term example; print "\n");
 val group = rhs (concl (EVAL ``clos_to_bvl$build_recc_lets [1; 2] [5] 4 2 (bvl$Var 0)``));
 val _ = (print "build_recc_lets_example="; print_term group; print "\n");
+val _ = (print "compile_exp_sing_def="; print_term (concl clos_to_bvlTheory.compile_exp_sing_def); print "\n");
+val _ = (print "compile_exp_sing_type="; print_type (type_of ``clos_to_bvl$compile_exp_sing``); print "\n");
+val _ = (print "compile_exp_list_type="; print_type (type_of ``clos_to_bvl$compile_exp_list``); print "\n");
+val _ = (print "compile_prog_def="; print_term (concl clos_to_bvlTheory.compile_prog_def); print "\n");
+val _ = (print "compile_prog_type="; print_type (type_of ``clos_to_bvl$compile_prog``); print "\n");

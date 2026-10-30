@@ -1,3 +1,5 @@
+`clos_to_bvl_recursive_types_probe.out` also records the typed original singleton/list converter and program conversion. The Lean checked converter is proved equal to the singleton/list source-shaped conversion; the HOL compile_exps equivalence and pass semantics remain open.
+
 `flat_to_clos_globals_probe.out` captures typed closure global-write and safety
 definitions, SmartCons preservation lemmas, and flat-to-closure global bag theorems. Regenerate with
 `HOL_PROBE_ONLY=flat_to_clos_globals_probeScript.sml scripts/hol-probes/regenerate.sh`.
