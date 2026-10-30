@@ -525,7 +525,7 @@ valid flag values and generated combinations, including duplicate flags and
 configuration-error precedence. Case counts can be changed with
 `--type-cases`, `--sexp-cases`, `--structured-cases`, `--lex-cases`,
 `--byte-cases`, `--raw-byte-cases`, `--declaration-cases`, `--handler-cases`, `--annotation-cases`, `--compile-cases`,
-`--rich-cases`, `--integration-cases`, `--explore-cases`, `--token-cases`, `--config-cases`, and `--config-error-cases` (zero skips the
+`--rich-cases`, `--extended-cases`, `--integration-cases`, `--explore-cases`, `--token-cases`, `--config-cases`, and `--config-error-cases` (zero skips the
 option matrix). `--type-seed`, `--edge-seed`, and
 `--compile-seed` select reproducible random inputs. These samples do not prove
 general parity. Set `--raw-byte-cases=1536` to compare each byte in all
@@ -533,6 +533,21 @@ three contexts under both output modes; larger counts add random byte strings.
 Set `--annotation-cases=320` to exhaust the annotation matrix; its order is
 shuffled deterministically from `--edge-seed`, and its entries include both
 successful programs and diagnostic errors.
+
+The optional `--extended-cases` generator exercises captured mutable references,
+accumulating and nested list recursion, datatype branches, exception handlers,
+and dependent modules. It uses a separate random stream, so existing seeds keep
+their previous generated cases. On 2026-10-30, all 18 cases in the following
+run matched complete pinned RISC-V output, stderr and exit status:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --compile-seed 601924 --extended-cases 18 --type-cases 0 --sexp-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --declaration-cases 0 --handler-cases 0 --annotation-cases 0 --byte-cases 0 \
+  --config-error-cases 0 --compile-cases 0 --rich-cases 0 --config-cases 0 \
+  --integration-cases 0
+```
 
 On 2026-10-30, a further 28 complete-output comparisons matched the pinned
 compiler (12 generated programs, 12 diverse programs and four backend option

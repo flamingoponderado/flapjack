@@ -257,6 +257,28 @@ def rich_program(rng):
     ])
 
 
+def rich_extended_program(rng):
+    """Generate additional stateful, recursive and module-dependent programs."""
+    a, b, c = (rng.randrange(1, 20) for _ in range(3))
+    return rng.choice([
+        f'fun f n = let fun loop xs acc = case xs of [] => acc | x::rest => '
+        f'loop rest (acc+x*n) in loop [{a},{b},{c}] 0 end; val _ = print_int (f {b});',
+        f'datatype result = Ok int | Err int; fun f x = '
+        f'case x of Ok n => n+{a} | Err n => n-{b}; '
+        f'val _ = print_int (f (Err {c}) + f (Ok {a}));',
+        f'fun make n = let val r = Ref n in fn x => (r := !r+x; !r) end; '
+        f'val f = make {a}; val _ = print_int (f {b} + f {c});',
+        f'exception E int; fun f n = ((if n = {a} then raise E {b} else n) '
+        f'handle E x => if x = {b} then {c} else x); val _ = print_int (f {a});',
+        f'structure A = struct val x = {a}; fun f y = x+y; end; '
+        f'structure B = struct val x = A.f {b}; fun f z = A.f (x*z); end; '
+        f'val _ = print_int (B.f {c});',
+        f'fun f xs = case xs of [] => {a} | x::rest => '
+        f'(case rest of [] => x | y::ys => x+y+f ys); '
+        f'val _ = print_int (f [{a},{b},{c}]);',
+    ])
+
+
 def run(executable, options, source, timeout):
     data = source.encode("ascii") if isinstance(source, str) else source
     return subprocess.run([str(executable), "--target=riscv", *options], input=data,
@@ -291,6 +313,8 @@ def main():
                         help="diverse programs comparing complete explorer reports")
     parser.add_argument("--rich-cases", type=int, default=20,
                         help="well-typed programs exercising diverse compiler passes")
+    parser.add_argument("--extended-cases", type=int, default=0,
+                        help="additional stateful, recursive and module-dependent programs")
     parser.add_argument("--integration-cases", type=int, default=len(INTEGRATION_PROGRAMS),
                         help="handwritten end-to-end compiler cases (maximum %(default)s)")
     parser.add_argument("--declaration-cases", type=int, default=100,
@@ -320,7 +344,7 @@ def main():
     parser.add_argument("--edge-seed", type=int, default=83219)
     parser.add_argument("--timeout", type=int, default=90)
     args = parser.parse_args()
-    if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.explore_cases < 0 or args.sexp_cases < 0 or
+    if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.extended_cases < 0 or args.explore_cases < 0 or args.sexp_cases < 0 or
             not 0 <= args.integration_cases <= len(INTEGRATION_PROGRAMS) or
             args.declaration_cases < 0 or args.handler_cases < 0 or not 0 <= args.annotation_cases <= 320 or
             args.config_cases < 0 or args.config_error_cases < 0 or
@@ -411,6 +435,11 @@ def main():
     for _ in range(args.rich_cases):
         compare(args.reference, args.cake, [], rich_program(compile_rng), args.timeout, True)
     print(f"{args.rich_cases} diverse programs match complete pinned RISC-V output", flush=True)
+    extended_rng = random.Random(args.compile_seed ^ 81193)
+    for _ in range(args.extended_cases):
+        compare(args.reference, args.cake, [], rich_extended_program(extended_rng), args.timeout, True)
+    if args.extended_cases:
+        print(f"{args.extended_cases} extended programs match complete pinned RISC-V output", flush=True)
     for source in INTEGRATION_PROGRAMS[:args.integration_cases]:
         compare(args.reference, args.cake, [], source, args.timeout, True)
     print(f"{args.integration_cases} integration programs match complete pinned RISC-V output", flush=True)
