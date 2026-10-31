@@ -688,6 +688,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ByteOps
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteToList
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteStringCmp
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteConstruct
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ByteCopy
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteCopy
 import Flapjack.Test.ClosToBvlRecursive
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
