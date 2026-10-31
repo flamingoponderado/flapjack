@@ -51,6 +51,158 @@ theorem link_frame_invariants (f : HolFiniteMapExact Nat Nat)
   · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different]
   · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
 
+/-- Flapjack infrastructure: after the recursive worker has changed only
+the newly allocated hole, its freshness and hole-preservation guarantees
+also hold for the original heap, allowing the old hole to have changed. -/
+theorem linked_frame_return_invariants (f g : HolFiniteMapExact Nat Nat)
+    (refs nextRefs : HolFiniteMapExact Nat (Ref Value)) (ptr oldTag newTag : Nat)
+    (oldLeft oldRight newLeft newRight : List Value) (initial : Value)
+    (found : refs.lookup ptr = some (.mutBlock oldTag false oldLeft initial oldRight))
+    (fresh : onlyFresh f g ((refs.updateEq (ptr,
+      .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)).updateEq
+        (leastUnusedRef refs, .mutBlock newTag false newLeft (.number 0) newRight)))
+    (unchanged : holesUnchangedExcept f ((refs.updateEq (ptr,
+      .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)).updateEq
+        (leastUnusedRef refs, .mutBlock newTag false newLeft (.number 0) newRight)) nextRefs {leastUnusedRef refs})
+    (still : holesStillNotFinalised f ((refs.updateEq (ptr,
+      .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)).updateEq
+        (leastUnusedRef refs, .mutBlock newTag false newLeft (.number 0) newRight)) nextRefs) :
+    onlyFresh f g refs ∧ holesUnchangedExcept f refs nextRefs {ptr} ∧
+      holesStillNotFinalised f refs nextRefs := by
+  classical
+  have sameDec : Classical.decEq Nat = instDecidableEqNat := by
+    funext a b
+    exact Subsingleton.elim _ _
+  have different : ptr ≠ leastUnusedRef refs := by
+    intro eq
+    subst ptr
+    rw [leastUnusedRef_unused] at found
+    contradiction
+  let first := refs.updateEq (ptr, .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)
+  have newFresh : leastUnusedRef refs ∉ first.domain := by
+    simp [first, HolFiniteMapExact.domain, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
+      Ne.symm different, leastUnusedRef_unused]
+  have reducedUnchanged : holesUnchangedExcept f first nextRefs ∅ := by
+    have h := holesUnchanged_delete_fresh f first nextRefs (leastUnusedRef refs)
+      (.mutBlock newTag false newLeft (.number 0) newRight)
+    rw [sameDec] at h
+    exact h unchanged newFresh
+  have reducedStill : holesStillNotFinalised f first nextRefs := by
+    have h := holesStill_delete f first nextRefs (leastUnusedRef refs) newTag newLeft (.number 0) newRight
+    rw [sameDec] at h
+    exact h still
+  have oldUnchanged : holesUnchangedExcept f refs nextRefs {ptr} := by
+    have h := holesUnchanged_changed f refs nextRefs () ptr oldTag false oldLeft
+      (.refPtr false (leastUnusedRef refs)) oldRight false initial
+    rw [sameDec] at h
+    exact h reducedUnchanged found
+  have oldStill : holesStillNotFinalised f refs nextRefs := by
+    have h := holesStill_delete f refs nextRefs ptr oldTag oldLeft (.refPtr false (leastUnusedRef refs)) oldRight
+    rw [sameDec] at h
+    exact h reducedStill
+  exact ⟨onlyFresh_delete_frame f g refs ptr _ (onlyFresh_delete_frame f g first _ _ fresh), oldUnchanged, oldStill⟩
+
+/-- Flapjack infrastructure: recursion through the newly linked frame keeps
+the original auxiliary hole unfinalised and containing the new frame pointer. -/
+theorem linked_frame_old_hole (f : HolFiniteMapExact Nat Nat)
+    (refs nextRefs : HolFiniteMapExact Nat (Ref Value)) (extras : List Value)
+    (slot ptr idx oldTag newTag : Nat) (oldLeft oldRight newLeft newRight : List Value) (initial : Value)
+    (hole : CallBlockEnvironment.allocHoleHasVal f refs extras slot idx initial)
+    (pointer : holEl slot extras = .refPtr false ptr)
+    (oldFound : refs.lookup ptr = some (.mutBlock oldTag false oldLeft initial oldRight))
+    (unchanged :
+      holesUnchangedExcept f ((refs.updateEq (ptr,
+        .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)).updateEq
+          (leastUnusedRef refs, .mutBlock newTag false newLeft (.number 0) newRight)) nextRefs {leastUnusedRef refs})
+    (still :
+      holesStillNotFinalised f ((refs.updateEq (ptr,
+        .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)).updateEq
+          (leastUnusedRef refs, .mutBlock newTag false newLeft (.number 0) newRight)) nextRefs) :
+    CallBlockEnvironment.allocHoleHasVal f nextRefs extras slot idx (.refPtr false (leastUnusedRef refs)) := by
+  obtain ⟨holePtr, tag, left, right, bound, holePointer, index, small, outside, found⟩ := hole
+  rw [pointer] at holePointer
+  have same : holePtr = ptr := by simpa using holePointer.symm
+  subst holePtr
+  rw [oldFound] at found
+  simp only [Option.some.injEq, Ref.mutBlock.injEq] at found
+  obtain ⟨rfl, _, rfl, _, rfl⟩ := found
+  have found := oldFound
+  have different : ptr ≠ leastUnusedRef refs := by
+    intro eq
+    subst ptr
+    rw [leastUnusedRef_unused] at found
+    contradiction
+  have linkedFound : ((refs.updateEq (ptr,
+      .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)).updateEq
+        (leastUnusedRef refs, .mutBlock newTag false newLeft (.number 0) newRight)).lookup ptr =
+      some (.mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight) := by
+    simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different]
+  obtain ⟨fin, newChild, preserved, unchangedChild⟩ :=
+    unchanged ptr oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight outside linkedFound
+  have sameChild := unchangedChild (by simpa using different)
+  subst newChild
+  have initialNotFinal : holeNotFinalised ((refs.updateEq (ptr,
+      .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)).updateEq
+        (leastUnusedRef refs, .mutBlock newTag false newLeft (.number 0) newRight)) ptr :=
+    ⟨oldTag, oldLeft, .refPtr false (leastUnusedRef refs), oldRight, linkedFound⟩
+  obtain ⟨tag', left', child', right', finalFound⟩ := still ptr outside initialNotFinal
+  rw [preserved] at finalFound
+  simp only [Option.some.injEq, Ref.mutBlock.injEq] at finalFound
+  have notFinal : fin = false := finalFound.2.1
+  subst fin
+  exact ⟨ptr, oldTag, oldLeft, oldRight, bound, pointer, index, small, outside, preserved⟩
+
+/-- Flapjack infrastructure: after recursion, the newly linked frame extends
+the child's mutable-block relation to the enclosing source constructor. The
+old parent hole is removed from the recursive heap before taking that step. -/
+theorem linked_frame_block_relation (f g : HolFiniteMapExact Nat Nat)
+    (oldRefs refs nextRefs : HolFiniteMapExact Nat (Ref Value)) (ptr oldTag newTag : Nat)
+    (oldLeft oldRight newLeft newRight sourceLeft sourceRight : List Value)
+    (sourceChild targetChild : Value)
+    (oldLookup : nextRefs.lookup ptr = some (.mutBlock oldTag false oldLeft
+      (.refPtr false (leastUnusedRef refs)) oldRight))
+    (different : ptr ≠ leastUnusedRef refs) (oldDomain : oldRefs.domain ⊆ refs.domain)
+    (freshOutside : leastUnusedRef refs ∉ mapRange f)
+    (unchanged : holesUnchangedExcept f ((refs.updateEq (ptr,
+      .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)).updateEq
+        (leastUnusedRef refs, .mutBlock newTag false newLeft (.number 0) newRight)) nextRefs {leastUnusedRef refs})
+    (childHole : CallBlockEnvironment.allocHoleHasVal g nextRefs
+      [.refPtr false (leastUnusedRef refs)] 0 newLeft.length targetChild)
+    (childBlocks : mutableBlockRel g oldRefs (nextRefs.eraseEq (leastUnusedRef refs)) sourceChild targetChild)
+    (leftRelated : List.Forall₂ (valueRel g) sourceLeft newLeft)
+    (rightRelated : List.Forall₂ (valueRel g) sourceRight newRight) :
+    mutableBlockRel g oldRefs (nextRefs.eraseEq ptr)
+      (.block newTag (sourceLeft ++ [sourceChild] ++ sourceRight)) (.refPtr false (leastUnusedRef refs)) := by
+  let fresh := leastUnusedRef refs
+  let first := refs.updateEq (ptr, .mutBlock oldTag false oldLeft (.refPtr false fresh) oldRight)
+  have different' : ptr ≠ fresh := different
+  obtain ⟨outsideNext, childLookup⟩ := CallBlockAllocation.wrapper_frame_contents f g first nextRefs fresh
+    newTag newLeft newRight (.number 0) targetChild freshOutside unchanged childHole
+  have oldLookupErased : (nextRefs.eraseEq fresh).lookup ptr =
+      some (.mutBlock oldTag false oldLeft (.refPtr false fresh) oldRight) := by
+    simpa [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, different'] using oldLookup
+  have freshMissing : fresh ∉ (nextRefs.eraseEq fresh).domain := by
+    simp [HolFiniteMapExact.domain, HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL]
+  have freshOld : fresh ∉ oldRefs.domain := by
+    intro present
+    have inRefs := oldDomain present
+    have missing : fresh ∉ refs.domain := by simp [fresh, HolFiniteMapExact.domain, leastUnusedRef_unused]
+    exact missing inRefs
+  have reduced := mutableBlockRel_delete g oldRefs (nextRefs.eraseEq fresh) sourceChild targetChild ptr oldTag
+    oldLeft fresh oldRight childBlocks oldLookupErased freshMissing freshOld outsideNext
+  have eraseComm : (nextRefs.eraseEq fresh).eraseEq ptr = (nextRefs.eraseEq ptr).eraseEq fresh := by
+    apply HolFiniteMapExact.ext_lookup
+    intro key
+    by_cases a : key = ptr <;> by_cases b : key = fresh <;>
+      simp [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, a, b]
+  have inner : mutableBlockRel g oldRefs ((nextRefs.eraseEq ptr).eraseEq fresh) sourceChild targetChild := by
+    simpa only [eraseComm] using reduced
+  have childLookupErased : (nextRefs.eraseEq ptr).lookup fresh =
+      some (.mutBlock newTag false newLeft targetChild newRight) := by
+    simpa [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, Ne.symm different'] using childLookup
+  exact mutableBlockRel_cons g oldRefs (nextRefs.eraseEq ptr) fresh newTag sourceLeft newLeft
+    sourceChild targetChild sourceRight newRight inner leftRelated rightRelated childLookupErased outsideNext freshOld
+
 /-- Flapjack infrastructure: the auxiliary frame's constant-index update
 stores the new frame pointer into an unfinalised old hole and returns unit. -/
 theorem evaluate_update_const {C F : Type} (ptrIndex idx ptr tag : Nat)
