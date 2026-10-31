@@ -514,6 +514,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.HoleRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockRelation
+import Flapjack.Compiler.Backend.BviTmc.Proofs.Allocation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Total
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeNames
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.Total

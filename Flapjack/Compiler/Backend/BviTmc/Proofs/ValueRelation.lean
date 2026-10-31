@@ -231,4 +231,87 @@ theorem listToValue_rel (f : HolFiniteMapExact Nat Nat) (xs ys : List Value)
   | nil => exact .block _ [] [] .nil
   | cons head tail ih => exact .block _ _ _ (.cons head (.cons ih .nil))
 
+private theorem decoded_eq_listToValue (xs : List Value) (source : Value)
+    (decoded : valueToList source = some xs) : source = listToValue xs := by
+  induction xs generalizing source with
+  | nil =>
+    cases source with
+    | block tag args =>
+      cases args with
+      | nil =>
+        by_cases h : tag = BackendCommon.nilTag
+        · subst tag; rfl
+        · simp [valueToList, h] at decoded
+      | cons head tail =>
+        cases tail with
+        | nil => simp [valueToList] at decoded
+        | cons last rest =>
+          cases rest with
+          | nil =>
+            simp only [valueToList] at decoded
+            split at decoded
+            · cases h : valueToList last <;> simp [h] at decoded
+            · simp at decoded
+          | cons third rest => simp [valueToList] at decoded
+    | _ => simp [valueToList] at decoded
+
+  | cons head xs ih =>
+    cases source with
+    | block tag args =>
+      cases args with
+      | nil =>
+        simp only [valueToList] at decoded
+        split at decoded <;> simp at decoded
+      | cons a tail =>
+        cases tail with
+        | nil => simp [valueToList] at decoded
+        | cons last rest =>
+          cases rest with
+          | cons third rest => simp [valueToList] at decoded
+          | nil =>
+            by_cases h : tag = BackendCommon.consTag
+            · simp only [valueToList, h, ↓reduceIte] at decoded
+              cases tailRun : valueToList last with
+              | none => simp [tailRun] at decoded
+              | some tailValues =>
+                simp [tailRun] at decoded
+                obtain ⟨rfl, rfl⟩ := decoded
+                have tailEq := ih last tailRun
+                subst tag
+                simp [listToValue, tailEq]
+            · simp [valueToList, h] at decoded
+    | _ => simp [valueToList] at decoded
+
+
+theorem holFmapAsFiniteSupportParamWitness_valueToList_rel_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+
+/-- Decoding a related list value yields a list of related elements. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_list_v_rel"
+  (fmap_as_finite_support_parameters := [f])]
+theorem valueToList_rel (f : HolFiniteMapExact Nat Nat) (source : Value) (xs : List Value) (target : Value)
+    (decoded : valueToList source = some xs) (related : valueRel f source target) :
+    ∃ ys, valueToList target = some ys ∧ List.Forall₂ (valueRel f) xs ys := by
+  have shape := decoded_eq_listToValue xs source decoded
+  rw [shape] at related
+  clear source decoded shape
+  induction xs generalizing target with
+  | nil =>
+    change valueRel f (.block BackendCommon.nilTag []) target at related
+    cases related with
+    | block tag sourceArgs targetArgs pairs =>
+      cases pairs
+      exact ⟨[], by simp [valueToList], .nil⟩
+  | cons head xs ih =>
+    change valueRel f (.block BackendCommon.consTag [head, listToValue xs]) target at related
+    cases related with
+    | block tag sourceArgs targetArgs pairs =>
+      cases pairs with
+      | cons headRel tailRel =>
+        cases tailRel with
+        | cons lastRel emptyRel =>
+          cases emptyRel
+          obtain ⟨out, outRun, outRel⟩ := ih _ lastRel
+          exact ⟨_, by simp [valueToList, outRun], .cons headRel outRel⟩
+
 end Flapjack.Compiler.Backend.BviTmc
