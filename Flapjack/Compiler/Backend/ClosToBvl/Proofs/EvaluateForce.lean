@@ -234,4 +234,82 @@ theorem evaluate_forceMemoize_related {C F : Type} {f : HolFiniteMapExact Nat Na
   exact ⟨targetNext, evaluate_forceMemoize t targetNext targetThunk targetValue rest targetRun,
     nextState, nextValue, frame, clock⟩
 
+/-- The forcing stub evaluates the same closure application as the compiled
+source unit application, then memoizes its result. -/
+theorem evaluate_forceThunkCode_factor {C F : Type} (t : BvlSem.State C F)
+    (thunk function : BvlSem.Value) :
+    BvlSem.evaluate [forceThunkCode] [thunk, function] t =
+      match BvlSem.evaluate [mkClCall (.var 1) [.var 0]]
+          [BvlSem.unitValue, function, function] t with
+      | (.err error, next) => (.err error, next)
+      | (.val values, next) => BvlSem.evaluate [forceMemoize] (values ++ [thunk, function]) next := by
+  change BvlSem.evaluate [.ifThenElse
+    (.op (.blockOp (.equalConst (.int 0))) [.op (.blockOp (.elemAt 1)) [.var 1]])
+    (.let [.call 0 none [.op (.blockOp (.cons 0)) [], .var 1, .op (.blockOp (.elemAt 0)) [.var 1]]] forceMemoize)
+    (.let [.call 0 (some 0) [.op (.blockOp (.cons 0)) [], .var 1]] forceMemoize)] [thunk, function] t =
+      match BvlSem.evaluate [.ifThenElse
+        (.op (.blockOp (.equalConst (.int 0))) [.op (.blockOp (.elemAt 1)) [.var 1]])
+        (.call 0 none [.var 0, .var 1, .op (.blockOp (.elemAt 0)) [.var 1]])
+        (.call 0 (some 0) [.var 0, .var 1])]
+          [BvlSem.unitValue, function, function] t with
+      | (.err error, next) => (.err error, next)
+      | (.val values, next) => BvlSem.evaluate [forceMemoize] (values ++ [thunk, function]) next
+  conv_lhs => rw [BvlSem.evaluate, BvlSem.fixClock_evaluate]
+  conv_rhs =>
+    pattern BvlSem.evaluate [.ifThenElse _ _ _] _ _
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate]
+  rw [evaluate_force_arity_test]
+  have pairMatch (p : Result (List BvlSem.Value) BvlSem.Value × BvlSem.State C F) :
+      ((match p.1 with
+      | .err error => (.err error, p.2)
+      | .val values => BvlSem.evaluate [forceMemoize] (values ++ [thunk, function]) p.2) :
+        Result (List BvlSem.Value) BvlSem.Value × BvlSem.State C F) =
+      (match p with
+      | (.err error, next) => (.err error, next)
+      | (.val values, next) => BvlSem.evaluate [forceMemoize] (values ++ [thunk, function]) next) := by
+    cases p with
+    | mk result next => cases result <;> rfl
+  split
+  · rfl
+  · split
+    · rfl
+    · conv_lhs => rw [BvlSem.evaluate, BvlSem.fixClock_evaluate]
+      rw [evaluate_force_direct_call]
+      exact pairMatch _
+    · conv_lhs => rw [BvlSem.evaluate, BvlSem.fixClock_evaluate]
+      rw [evaluate_force_generic_call]
+      exact pairMatch _
+
+/-- A successful thunk application is followed by the related source and
+ target memoization updates in the generated forcing stub. -/
+theorem evaluate_forceThunkCode_success_related {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    (s : ClosSem.State C F) (t beforeUpdate : BvlSem.State C F) (states : stateRel f s beforeUpdate)
+    (thunk value : ClosSem.Value) (targetThunk targetFunction targetValue : BvlSem.Value)
+    (call : BvlSem.evaluate [mkClCall (.var 1) [.var 0]]
+      [BvlSem.unitValue, targetFunction, targetFunction] t = (.val [targetValue], beforeUpdate))
+    (thunkRel : vRel s.maxApp f beforeUpdate.refs beforeUpdate.code thunk targetThunk)
+    (valueRel : vRel s.maxApp f beforeUpdate.refs beforeUpdate.code value targetValue)
+    (nextRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
+    (updated : ClosSem.updateThunk [thunk] s.refs [value] = some nextRefs) :
+    ∃ targetNext,
+      BvlSem.evaluate [forceThunkCode] [targetThunk, targetFunction] t = (.val [targetValue], targetNext) ∧
+      stateRel f { s with refs := nextRefs } targetNext ∧
+      vRel s.maxApp f targetNext.refs targetNext.code value targetValue ∧
+      unmappedRefsSubmap beforeUpdate.refs targetNext.refs f f ∧ targetNext.clock = beforeUpdate.clock := by
+  obtain ⟨targetNext, targetRun, nextState, nextValue, frame, clock⟩ :=
+    evaluate_forceMemoize_related s beforeUpdate states thunk value targetThunk targetValue [targetFunction]
+      thunkRel valueRel nextRefs updated
+  refine ⟨targetNext, ?_, nextState, nextValue, frame, clock⟩
+  rw [evaluate_forceThunkCode_factor, call]
+  exact targetRun
+
+/-- An exception or abort from the thunk application is propagated without a
+memoization update. -/
+theorem evaluate_forceThunkCode_error {C F : Type} (t next : BvlSem.State C F)
+    (thunk function : BvlSem.Value) (error : ErrorResult BvlSem.Value)
+    (call : BvlSem.evaluate [mkClCall (.var 1) [.var 0]]
+      [BvlSem.unitValue, function, function] t = (.err error, next)) :
+    BvlSem.evaluate [forceThunkCode] [thunk, function] t = (.err error, next) := by
+  rw [evaluate_forceThunkCode_factor, call]
+
 end Flapjack.Compiler.Backend.ClosToBvl
