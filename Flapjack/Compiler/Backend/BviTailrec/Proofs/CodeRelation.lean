@@ -191,10 +191,146 @@ theorem codeRel_union (x y t s : Spt (Nat × Bvi.Exp))
       exact ⟨lookup_union_right_of_disjoint y s disjoint loc _ originalFound,
         lookup_union_right_of_disjoint y s disjoint workerLoc _ workerFound⟩
 
+/-- Function-list compilation never reduces the number of entries. -/
+theorem compileEachSource_length (next : Nat) (code : List (Nat × Nat × Bvi.Exp)) :
+    code.length ≤ (compileEachSource next code).2.length := by
+  induction code generalizing next with
+  | nil => simp [compileEachSource]
+  | cons entry rest ih =>
+    obtain ⟨loc, arity, body⟩ := entry
+    cases compiled : compileExpSource loc next arity body with
+    | none =>
+      cases tail : compileEachSource next rest with
+      | mk last code =>
+        have h := ih next
+        simp only [tail] at h
+        simpa [compileEachSource, compiled, tail] using h
+    | some pair =>
+      obtain ⟨wrapper, worker⟩ := pair
+      cases tail : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with
+      | mk last code =>
+        have h := ih (next + Flapjack.bvlToBviNamespaces)
+        simp only [tail] at h
+        simp [compileEachSource, compiled, tail]
+        omega
+/-- The next worker label advances by a whole number of namespace steps. -/
+theorem compileEachSource_next_mono (next : Nat) (code : List (Nat × Nat × Bvi.Exp)) :
+    ∃ k, (compileEachSource next code).1 = next + Flapjack.bvlToBviNamespaces * k := by
+  induction code generalizing next with
+  | nil => exact ⟨0, by simp [compileEachSource]⟩
+  | cons entry rest ih =>
+    obtain ⟨loc, arity, body⟩ := entry
+    cases compiled : compileExpSource loc next arity body with
+    | none =>
+      cases tail : compileEachSource next rest with
+      | mk last code =>
+        obtain ⟨k, h⟩ := ih next
+        simp only [tail] at h
+        exact ⟨k, by simpa [compileEachSource, compiled, tail] using h⟩
+    | some pair =>
+      obtain ⟨wrapper, worker⟩ := pair
+      cases tail : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with
+      | mk last code =>
+        obtain ⟨k, h⟩ := ih (next + Flapjack.bvlToBviNamespaces)
+        simp only [tail] at h
+        refine ⟨k + 1, ?_⟩
+        simpa [compileEachSource, compiled, tail, Nat.mul_add, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using h
+/-- Each compiled label is an original label or a fresh worker allocated
+in the namespace interval traversed by compilation. -/
+theorem compileEachSource_mem (code : List (Nat × Nat × Bvi.Exp)) (next label : Nat)
+    (member : label ∈ ((compileEachSource next code).2.map Prod.fst)) :
+    label ∈ code.map Prod.fst ∨
+      (next ≤ label ∧ label < (compileEachSource next code).1 ∧
+        ∃ k, label = next + k * Flapjack.bvlToBviNamespaces) := by
+  induction code generalizing next with
+  | nil => simp [compileEachSource] at member
+  | cons entry rest ih =>
+    obtain ⟨loc, arity, body⟩ := entry
+    cases compiled : compileExpSource loc next arity body with
+    | none =>
+      cases tail : compileEachSource next rest with
+      | mk last output =>
+        have tailIH := ih next
+        simp only [tail] at tailIH
+        simp only [compileEachSource, compiled, tail, List.map_cons, List.mem_cons] at member ⊢
+        rcases member with same | other
+        · exact Or.inl (Or.inl same)
+        · rcases tailIH other with found | new
+          · exact Or.inl (Or.inr found)
+          · exact Or.inr new
+    | some pair =>
+      obtain ⟨wrapper, worker⟩ := pair
+      cases tail : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with
+      | mk last output =>
+        have tailIH := ih (next + Flapjack.bvlToBviNamespaces)
+        simp only [tail] at tailIH
+        have ⟨k, bound⟩ := compileEachSource_next_mono (next + Flapjack.bvlToBviNamespaces) rest
+        simp only [tail] at bound
+        simp only [compileEachSource, compiled, tail, List.map_cons, List.mem_cons] at member ⊢
+        rcases member with same | same | other
+        · exact Or.inl (Or.inl same)
+        · subst label
+          right
+          refine ⟨by omega, ?_, 0, by simp⟩
+          have positive : 0 < Flapjack.bvlToBviNamespaces := by decide
+          omega
+        · rcases tailIH other with found | ⟨lo, hi, j, eq⟩
+          · exact Or.inl (Or.inr found)
+          · right
+            refine ⟨by omega, hi, j + 1, ?_⟩
+            simp only [Nat.add_mul, Nat.one_mul]
+            omega
+
+/-- Compiling a function list retains every original label. -/
+theorem compileEachSource_preserves_labels (code : List (Nat × Nat × Bvi.Exp)) (next label : Nat)
+    (member : label ∈ code.map Prod.fst) :
+    label ∈ (compileEachSource next code).2.map Prod.fst := by
+  induction code generalizing next with
+  | nil => simp at member
+  | cons entry rest ih =>
+    obtain ⟨loc, arity, body⟩ := entry
+    simp only [List.map_cons, List.mem_cons] at member
+    cases compiled : compileExpSource loc next arity body with
+    | none =>
+      cases tail : compileEachSource next rest with
+      | mk last output =>
+        simp only [compileEachSource, compiled, tail, List.map_cons, List.mem_cons]
+        rcases member with same | other
+        · exact Or.inl same
+        · exact Or.inr (by simpa [tail] using ih next other)
+    | some pair =>
+      obtain ⟨wrapper, worker⟩ := pair
+      cases tail : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with
+      | mk last output =>
+        simp only [compileEachSource, compiled, tail, List.map_cons, List.mem_cons]
+        rcases member with same | other
+        · exact Or.inl same
+        · exact Or.inr (Or.inr (by simpa [tail] using ih (next + Flapjack.bvlToBviNamespaces) other))
+
 /-- A name is free if it cannot be reached by advancing the worker namespace. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "free_names_def"]
 def freeNames (next name : Nat) : Prop :=
   ∀ k, next + Flapjack.bvlToBviNamespaces * k ≠ name
+
+/-- A label free from the current worker namespace remains free after any
+number of worker allocations. -/
+theorem freeNames_advance (next name steps : Nat) (free : freeNames next name) :
+    freeNames (next + Flapjack.bvlToBviNamespaces * steps) name := by
+  intro k eq
+  apply free (steps + k)
+  simpa [Nat.mul_add, Nat.add_assoc] using eq
+
+/-- The current worker label itself is not free. -/
+theorem freeNames_ne_current (next name : Nat) (free : freeNames next name) : next ≠ name := by
+  simpa using free 0
+
+/-- Function-list compilation preserves a label's freedom at the resulting
+next worker location. -/
+theorem compileEachSource_preserves_free (next name : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (free : freeNames next name) : freeNames (compileEachSource next code).1 name := by
+  obtain ⟨steps, advance⟩ := compileEachSource_next_mono next code
+  rw [advance]
+  exact freeNames_advance next name steps free
 
 /-- Worker labels use namespace residue two. -/
 def inWorkerNamespace (name : Nat) : Prop := name % Flapjack.bvlToBviNamespaces = 2
