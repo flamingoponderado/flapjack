@@ -538,4 +538,146 @@ theorem doApp_op_rel_ref {C F : Type} (f : HolFiniteMapExact Nat Nat)
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
     BviSem.toBvl, BviSem.fromBvl, tgt]
 
+private theorem allocate_related {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (source : BviState (Nat × C) F) (target : BviState C F) (v w : Ref Value)
+    (states : stateRel f source target) (cells : refRel f v w) :
+    let src := leastUnusedRef source.refs
+    let tgt := leastUnusedRef target.refs
+    let next := f.updateEq (src, tgt)
+    next.lookup src = some tgt ∧
+    stateRel next { source with refs := source.refs.updateEq (src, v) }
+      { target with refs := target.refs.updateEq (tgt, w) } ∧
+    finiteSubmap f next ∧ onlyFresh f next target.refs ∧
+    holesUnchangedExcept f target.refs (target.refs.updateEq (tgt, w)) ∅ ∧
+    holesStillNotFinalised f target.refs (target.refs.updateEq (tgt, w)) := by
+  dsimp only
+  let src := leastUnusedRef source.refs
+  let tgt := leastUnusedRef target.refs
+  have srcFresh : src ∉ source.refs.domain := by simp [HolFiniteMapExact.domain, src, leastUnusedRef_unused]
+  have tgtFresh : tgt ∉ target.refs.domain := by simp [HolFiniteMapExact.domain, tgt, leastUnusedRef_unused]
+  have rangeFresh : tgt ∉ mapRange f := by
+    rintro ⟨key, mapped⟩
+    obtain ⟨_, _, _, found, _⟩ := stateRefRel_lookup f key tgt source.refs target.refs mapped states.1
+    have absent : target.refs.lookup tgt = none := by simpa [HolFiniteMapExact.domain] using tgtFresh
+    rw [absent] at found
+    contradiction
+  have srcMissing : f.lookup src = none := by
+    have absent : src ∉ f.domain := by rw [states.1.1]; exact srcFresh
+    simpa [HolFiniteMapExact.domain] using absent
+  have extension : finiteSubmap f (f.updateEq (src, tgt)) := by
+    intro key item found
+    have different : key ≠ src := by
+      intro equal
+      subst key
+      rw [srcMissing] at found
+      contradiction
+    simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
+  exact stateRel_alloc f source target src tgt v w states srcFresh tgtFresh rangeFresh
+    (refRel_submap f _ v w cells extension)
+
+private theorem replicate_related (f : HolFiniteMapExact Nat Nat) (count : Nat) (v w : Value)
+    (related : valueRel f v w) : List.Forall₂ (valueRel f) (List.replicate count v) (List.replicate count w) := by
+  induction count with
+  | zero => exact .nil
+  | succ count ih => simpa only [List.replicate_succ] using List.Forall₂.cons related ih
+
+/-- Allocating repeated values extends the renaming at both fresh addresses. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_refArray {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp .refArray) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.memOp .refArray)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp .refArray) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+    | cons initial rest =>
+      cases rest with
+      | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | nil =>
+        cases first with
+        | number count =>
+          cases valuesRelated with
+          | @cons a b xs ys countRel tailRel =>
+            cases countRel
+            cases tailRel with
+            | @cons a b xs ys initialRel tailRel =>
+              cases tailRel
+              by_cases nonnegative : count < 0
+              · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, nonnegative] at run
+              · have ⟨mapped, nextStates, submap, fresh, holes, unfinalised⟩ :=
+                  allocate_related f source target (.valueArray (List.replicate count.toNat initial))
+                    (.valueArray (List.replicate count.toNat b)) statesRelated
+                    (.valueArray _ _ (replicate_related f _ initial b initialRel))
+                simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                  BviSem.toBvl, BviSem.fromBvl, nonnegative] at run
+                obtain ⟨rfl, rfl⟩ := run
+                refine ⟨f.updateEq (leastUnusedRef source.refs, leastUnusedRef target.refs),
+                  .refPtr true (leastUnusedRef target.refs),
+                  { target with refs := target.refs.updateEq (leastUnusedRef target.refs, .valueArray (List.replicate count.toNat b)) },
+                  ?_, .refPtr _ _ true mapped, nextStates, submap, fresh, holes, unfinalised⟩
+                simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                  BviSem.toBvl, BviSem.fromBvl, nonnegative]
+        | word64 w => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+        | block tag xs => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+        | codePtr n => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+        | refPtr flag ptr => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+
+/-- Byte-array allocation preserves bytes and maps the fresh pointer. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_refByte {C F : Type} (f : HolFiniteMapExact Nat Nat) (flag : Bool)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp (.refByte flag)) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.memOp (.refByte flag))) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp (.refByte flag)) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+    | cons second rest =>
+      cases rest with
+      | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+      | nil =>
+        cases first <;> cases second <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+        rename_i count byte
+        cases valuesRelated with
+        | @cons a b xs ys countRel tailRel =>
+          cases countRel
+          cases tailRel with
+          | @cons a b xs ys byteRel tailRel =>
+            cases byteRel
+            cases tailRel
+            by_cases negative : count < 0
+            · simp [negative] at run
+            · cases byteValue : ClosSem.intToByte byte with
+              | none => simp [negative, byteValue] at run
+              | some actual =>
+                have ⟨mapped, nextStates, submap, fresh, holes, unfinalised⟩ :=
+                  allocate_related f source target (.byteArray flag (List.replicate count.toNat actual))
+                    (.byteArray flag (List.replicate count.toNat actual)) statesRelated (.byteArray flag _)
+                simp [negative, byteValue] at run
+                obtain ⟨rfl, rfl⟩ := run
+                refine ⟨f.updateEq (leastUnusedRef source.refs, leastUnusedRef target.refs),
+                  .refPtr true (leastUnusedRef target.refs),
+                  { target with refs := target.refs.updateEq (leastUnusedRef target.refs, .byteArray flag (List.replicate count.toNat actual)) },
+                  ?_, .refPtr _ _ true mapped, nextStates, submap, fresh, holes, unfinalised⟩
+                simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, negative, byteValue]
+
 end Flapjack.Compiler.Backend.BviTmc
