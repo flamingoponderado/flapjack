@@ -12,6 +12,147 @@ theorem deleteVar_noMutcons (expression : Bvi.Exp) (safe : noMutcons expression)
     noMutcons (BviLet.deleteVar expression) := by
   cases expression <;> simp_all [BviLet.deleteVar, noMutcons, noMutconsOp, Subtype.forall]
 
+private theorem let_compileList_eq_map (env : List Nat) (d : Nat) (xs : List Bvi.Exp) :
+    BviLet.compileList env d xs = xs.map (BviLet.compileSing env d) := by
+  induction xs with
+  | nil => simp [BviLet.compileList]
+  | cons x xs ih => simp [BviLet.compileList, ih]
+
+private theorem memberBudget (xs : List Bvi.Exp) (e : Bvi.Exp) (member : e ∈ xs) :
+    Bvi.expBudget e < Bvi.listBudget xs := by
+  induction xs with
+  | nil => simp at member
+  | cons x xs ih =>
+    simp only [List.mem_cons] at member
+    simp only [Bvi.listBudget]
+    rcases member with rfl | member
+    · omega
+    · have := ih member; omega
+
+/-- Let propagation preserves the absence of mutable-block allocation. -/
+theorem let_compileSing_noMutcons (env : List Nat) (d : Nat) (expression : Bvi.Exp)
+    (safe : noMutcons expression) : noMutcons (BviLet.compileSing env d expression) := by
+  cases expression with
+  | var v => simp [BviLet.compileSing, noMutcons]
+  | force l v => simp [BviLet.compileSing, noMutcons]
+  | ifThenElse x y z =>
+    have parts : noMutcons x ∧ noMutcons y ∧ noMutcons z := by simpa [noMutcons] using safe
+    simp [BviLet.compileSing, noMutcons, let_compileSing_noMutcons env d x parts.1,
+      let_compileSing_noMutcons env d y parts.2.1, let_compileSing_noMutcons env d z parts.2.2]
+  | raise x =>
+    simpa [BviLet.compileSing, noMutcons] using
+      let_compileSing_noMutcons env d x (by simpa [noMutcons] using safe)
+  | tick x =>
+    simpa [BviLet.compileSing, noMutcons] using
+      let_compileSing_noMutcons env d x (by simpa [noMutcons] using safe)
+  | op op xs =>
+    have parts : noMutconsOp op ∧ ∀ e ∈ xs, noMutcons e := by simpa [noMutcons, Subtype.forall] using safe
+    simp only [BviLet.compileSing, noMutcons, Subtype.forall, let_compileList_eq_map, List.mem_map]
+    refine ⟨parts.1, ?_⟩
+    rintro _ ⟨e, member, rfl⟩
+    exact let_compileSing_noMutcons env d e (parts.2 e member)
+  | «return» xs =>
+    have parts : ∀ e ∈ xs, noMutcons e := by simpa [noMutcons, Subtype.forall] using safe
+    simp only [BviLet.compileSing, noMutcons, Subtype.forall, let_compileList_eq_map, List.mem_map]
+    rintro _ ⟨e, member, rfl⟩
+    exact let_compileSing_noMutcons env d e (parts e member)
+  | call ticks dest xs handler =>
+    cases handler with
+    | none =>
+      have parts : ∀ e ∈ xs, noMutcons e := by simpa [noMutcons, Subtype.forall] using safe
+      simp only [BviLet.compileSing, noMutcons, Subtype.forall, let_compileList_eq_map, List.mem_map]
+      constructor
+      · rintro _ ⟨e, member, rfl⟩
+        exact let_compileSing_noMutcons env d e (parts e member)
+      · trivial
+    | some handler =>
+      have parts : (∀ e ∈ xs, noMutcons e) ∧ noMutcons handler := by
+        simpa [noMutcons, Subtype.forall] using safe
+      simp only [BviLet.compileSing, noMutcons, Subtype.forall, let_compileList_eq_map, List.mem_map]
+      constructor
+      · rintro _ ⟨e, member, rfl⟩
+        exact let_compileSing_noMutcons env d e (parts.1 e member)
+      · exact let_compileSing_noMutcons (0 :: env) d handler parts.2
+  | letCall rets ticks dest xs body =>
+    have parts : (∀ e ∈ xs, noMutcons e) ∧ noMutcons body := by
+      simpa [noMutcons, Subtype.forall] using safe
+    simp only [BviLet.compileSing, noMutcons, Subtype.forall, let_compileList_eq_map, List.mem_map]
+    constructor
+    · rintro _ ⟨e, member, rfl⟩
+      exact let_compileSing_noMutcons env d e (parts.1 e member)
+    · exact let_compileSing_noMutcons (List.replicate rets 0 ++ env) d body parts.2
+  | «let» xs body =>
+    cases xs with
+    | nil =>
+      simpa [BviLet.compileSing, noMutcons] using
+        let_compileSing_noMutcons env d body (by simpa [noMutcons, Subtype.forall] using safe)
+    | cons x xs =>
+      have parts : (∀ e ∈ x :: xs, noMutcons e) ∧ noMutcons body := by
+        simpa [noMutcons, Subtype.forall] using safe
+      have bindingsSafe : ∀ e ∈ BviLet.compileList env d (x :: xs), noMutcons e := by
+        simp only [let_compileList_eq_map, List.mem_map]
+        rintro _ ⟨e, member, rfl⟩
+        exact let_compileSing_noMutcons env d e (parts.1 e member)
+      have mappedSafe : ∀ e ∈ (BviLet.compileList env d (x :: xs)).map BviLet.deleteVar, noMutcons e := by
+        simp only [List.mem_map]
+        rintro _ ⟨e, member, rfl⟩
+        exact deleteVar_noMutcons e (bindingsSafe e member)
+      have bodySafe (env' : List Nat) : noMutcons (BviLet.compileSing env' d body) :=
+        let_compileSing_noMutcons env' d body parts.2
+      cases body with
+      | var v =>
+        by_cases equal : v = xs.length
+        · have lastMem := List.getLast_mem (show x :: xs ≠ [] by simp)
+          have lastSafe := let_compileSing_noMutcons (env.map (xs.length + ·)) (d + xs.length)
+            ((x :: xs).getLast (by simp)) (parts.1 _ lastMem)
+          have frontSafe : ∀ e ∈ BviLet.compileList env d (x :: xs).dropLast, noMutcons e := by
+            simp only [let_compileList_eq_map, List.mem_map]
+            rintro _ ⟨e, member, rfl⟩
+            exact let_compileSing_noMutcons env d e (parts.1 e (List.dropLast_subset _ member))
+          simpa [BviLet.compileSing, equal, noMutcons, Subtype.forall] using And.intro frontSafe lastSafe
+        · simpa [BviLet.compileSing, equal, noMutcons, Subtype.forall] using
+            And.intro mappedSafe (bodySafe (BviLet.extractList (BviLet.compileList env d (x :: xs)) ++ env))
+      | _ =>
+        all_goals simpa [BviLet.compileSing, noMutcons, Subtype.forall] using
+          And.intro mappedSafe (bodySafe (BviLet.extractList (BviLet.compileList env d (x :: xs)) ++ env))
+termination_by Bvi.expBudget expression
+decreasing_by
+  all_goals try (have member' := List.dropLast_subset (x :: xs) member; have := memberBudget (x :: xs) e member')
+  all_goals try (have := memberBudget _ _ member)
+  all_goals try (have := memberBudget (x :: xs) ((x :: xs).getLast (by simp)) (List.getLast_mem (by simp)))
+  all_goals simp_all [Bvi.expBudget, Bvi.listBudget]
+  all_goals omega
+
+/-- The paired single-expression and list preservation property used by
+the original lowering proof. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "bvi_let_compile_no_mutcons"]
+theorem let_compile_noMutcons :
+    (∀ env d expression, noMutcons expression → noMutcons (BviLet.compileSing env d expression)) ∧
+    (∀ env d expressions, (∀ e ∈ expressions, noMutcons e) →
+      ∀ e ∈ BviLet.compileList env d expressions, noMutcons e) := by
+  constructor
+  · exact let_compileSing_noMutcons
+  · intro env d expressions safe
+    simp only [let_compileList_eq_map, List.mem_map]
+    rintro _ ⟨e, member, rfl⟩
+    exact let_compileSing_noMutcons env d e (safe e member)
+
+/-- The source entry point to let propagation preserves the invariant;
+`compile_exp_eq` identifies it with the singleton compiler at empty environment. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "bvi_let_compile_exp_no_mutcons"]
+theorem let_compileExp_noMutcons (expression : Bvi.Exp) (safe : noMutcons expression) :
+    noMutcons (BviLet.compileSing [] 0 expression) :=
+  let_compileSing_noMutcons [] 0 expression safe
+
+/-- Every successful run of the executable let pass preserves the invariant. -/
+theorem let_compileBounded_noMutcons (fuel : Nat) (env : List Nat) (d : Nat)
+    (expression result : Bvi.Exp) (safe : noMutcons expression)
+    (run : BviLet.compileBounded fuel env d expression = some result) : noMutcons result := by
+  rw [BviLet.compileBounded_eq_compileSing] at run
+  have eq := Option.some.inj run
+  rw [← eq]
+  exact let_compileSing_noMutcons env d expression safe
+
 /-- Integer literal lowering never emits mutable-block allocation. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_int_no_mutcons"]
 theorem compileInt_noMutcons (value : Int) : noMutcons (compileInt value) := by
@@ -41,6 +182,183 @@ theorem compileOp_noMutcons (op : ClosLang.Op) (args : List Bvi.Exp)
   rcases member with member | rfl
   · exact safe e member
   · exact zeroSafe
+
+private def auxNoMutcons (aux : AppList (Nat × Nat × Bvi.Exp)) : Prop :=
+  ∀ entry ∈ appListAppend aux, noMutcons entry.2.2
+
+private theorem auxNoMutcons_append {a b : AppList (Nat × Nat × Bvi.Exp)}
+    (ha : auxNoMutcons a) (hb : auxNoMutcons b) : auxNoMutcons (smartAppend a b) := by
+  simp only [auxNoMutcons, appListAppend_smartAppend, List.mem_append] at *
+  intro entry member
+  rcases member with member | member
+  · exact ha entry member
+  · exact hb entry member
+
+private theorem auxNoMutcons_fresh (n arity : Nat) (body : Bvi.Exp) (safe : noMutcons body) :
+    auxNoMutcons (compileAuxSource (n, arity, body)) := by
+  simp [auxNoMutcons, compileAuxSource, appListAppend, appendAux, let_compileExp_noMutcons body safe]
+
+private theorem destLetBudget' (exp : Bvl.Exp) :
+    listBudget (destLet exp).1 ≤ expBudget exp ∧ expBudget (destLet exp).2 ≤ expBudget exp := by
+  cases exp <;> simp [destLet, expBudget, listBudget] <;> omega
+
+mutual
+/-- The source-shaped expression lowering emits a safe expression and safe
+auxiliary functions. -/
+theorem compileSingSource_noMutcons (start : Nat) (exp : Bvl.Exp) :
+    noMutcons (compileSingSource start exp).1 ∧ auxNoMutcons (compileSingSource start exp).2.1 := by
+  cases exp with
+  | var v => simp [compileSingSource, noMutcons, auxNoMutcons, appListAppend, appendAux]
+  | force loc v => simp [compileSingSource, noMutcons, auxNoMutcons, appListAppend, appendAux]
+  | raise x =>
+    rcases h : compileSingSource start x with ⟨converted, aux, next⟩
+    have ih := compileSingSource_noMutcons start x
+    simpa [compileSingSource, h, noMutcons] using ih
+  | tick x =>
+    rcases h : compileSingSource start x with ⟨converted, aux, next⟩
+    have ih := compileSingSource_noMutcons start x
+    simpa [compileSingSource, h, noMutcons] using ih
+  | op op xs =>
+    rcases h : compileListSource start xs with ⟨converted, aux, next⟩
+    have ih := compileListSource_noMutcons start xs
+    simp only [h] at ih
+    simpa [compileSingSource, h] using And.intro (compileOp_noMutcons op converted ih.1) ih.2
+  | call ticks dest xs =>
+    rcases h : compileListSource start xs with ⟨converted, aux, next⟩
+    have ih := compileListSource_noMutcons start xs
+    simpa [compileSingSource, h, noMutcons, Subtype.forall] using ih
+  | ifThenElse x y z =>
+    rcases hx : compileSingSource start x with ⟨x', a, n1⟩
+    rcases hy : compileSingSource n1 y with ⟨y', b, n2⟩
+    rcases hz : compileSingSource n2 z with ⟨z', c, n3⟩
+    have ix := compileSingSource_noMutcons start x
+    have iy := compileSingSource_noMutcons n1 y
+    have iz := compileSingSource_noMutcons n2 z
+    simp only [hx] at ix
+    simp only [hy] at iy
+    simp only [hz] at iz
+    simpa [compileSingSource, hx, hy, hz, noMutcons] using
+      And.intro (And.intro ix.1 (And.intro iy.1 iz.1))
+        (auxNoMutcons_append (auxNoMutcons_append ix.2 iy.2) iz.2)
+  | «let» xs body =>
+    by_cases empty : xs.isEmpty
+    · rcases ha : compileListSource start (destLet body).1 with ⟨args, a, n1⟩
+      rcases hb : compileSingSource n1 (destLet body).2 with ⟨inner, b, n2⟩
+      have ia := compileListSource_noMutcons start (destLet body).1
+      have ib := compileSingSource_noMutcons n1 (destLet body).2
+      simp only [ha] at ia
+      simp only [hb] at ib
+      simpa [compileSingSource, empty, ha, hb, noMutcons, Subtype.forall] using
+        And.intro ia.1 (auxNoMutcons_append (auxNoMutcons_append ia.2 ib.2)
+          (auxNoMutcons_fresh n2 (destLet body).1.length inner ib.1))
+    · rcases ha : compileListSource start xs with ⟨args, a, n1⟩
+      rcases hb : compileSingSource n1 body with ⟨body', b, n2⟩
+      have ia := compileListSource_noMutcons start xs
+      have ib := compileSingSource_noMutcons n1 body
+      simp only [ha] at ia
+      simp only [hb] at ib
+      simpa [compileSingSource, empty, ha, hb, noMutcons, Subtype.forall] using
+        And.intro (And.intro ia.1 ib.1) (auxNoMutcons_append ia.2 ib.2)
+  | handle body handler =>
+    rcases ha : compileListSource start (destLet body).1 with ⟨args, a, n1⟩
+    rcases hb : compileSingSource n1 (destLet body).2 with ⟨inner, b, n2⟩
+    rcases hc : compileSingSource n2 handler with ⟨handler', c, n3⟩
+    have ia := compileListSource_noMutcons start (destLet body).1
+    have ib := compileSingSource_noMutcons n1 (destLet body).2
+    have ic := compileSingSource_noMutcons n2 handler
+    simp only [ha] at ia
+    simp only [hb] at ib
+    simp only [hc] at ic
+    simpa [compileSingSource, ha, hb, hc, noMutcons, Subtype.forall] using
+      And.intro (And.intro ia.1 ic.1)
+        (auxNoMutcons_append (auxNoMutcons_append (auxNoMutcons_append ia.2 ib.2) ic.2)
+          (auxNoMutcons_fresh n3 (destLet body).1.length inner ib.1))
+termination_by expBudget exp
+decreasing_by
+  all_goals try simp only [expBudget]
+  all_goals try (have := destLetBudget' body)
+  all_goals omega
+
+/-- The source-shaped list lowering emits safe expressions and auxiliaries. -/
+theorem compileListSource_noMutcons (start : Nat) (xs : List Bvl.Exp) :
+    (∀ e ∈ (compileListSource start xs).1, noMutcons e) ∧
+      auxNoMutcons (compileListSource start xs).2.1 := by
+  cases xs with
+  | nil => simp [compileListSource, auxNoMutcons, appListAppend, appendAux]
+  | cons x xs =>
+    rcases hx : compileSingSource start x with ⟨converted, a, n1⟩
+    rcases ht : compileListSource n1 xs with ⟨rest, b, n2⟩
+    have ix := compileSingSource_noMutcons start x
+    have it := compileListSource_noMutcons n1 xs
+    simp only [hx] at ix
+    simp only [ht] at it
+    simpa [compileListSource, hx, ht] using
+      And.intro (by simpa using And.intro ix.1 it.1) (auxNoMutcons_append ix.2 it.2)
+termination_by listBudget xs
+decreasing_by all_goals simp only [listBudget]; omega
+end
+
+/-- The single-expression and list lowering clauses emit safe results and
+auxiliaries. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_sing_no_mutcons"]
+theorem compile_exps_sing_noMutcons :
+    (∀ n e c aux n1, compileSingSource n e = (c, aux, n1) →
+      noMutcons c ∧ auxNoMutcons aux) ∧
+    (∀ n es c aux n1, compileListSource n es = (c, aux, n1) →
+      (∀ e ∈ c, noMutcons e) ∧ auxNoMutcons aux) := by
+  constructor
+  · intro n e c aux n1 run
+    simpa only [run] using compileSingSource_noMutcons n e
+  · intro n es c aux n1 run
+    simpa only [run] using compileListSource_noMutcons n es
+
+/-- Each lowered labeled function and its auxiliaries are safe. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_single_no_mutcons"]
+theorem compileSingleSource_noMutcons (n : Nat) (program : Nat × Nat × Bvl.Exp)
+    (code : AppList (Nat × Nat × Bvi.Exp)) (next : Nat)
+    (run : compileSingleSource n program = (code, next)) : auxNoMutcons code := by
+  obtain ⟨name, arity, body⟩ := program
+  rcases h : compileSingSource n body with ⟨converted, aux, final⟩
+  have safe := compileSingSource_noMutcons n body
+  simp only [h] at safe
+  have main : auxNoMutcons (.list [(bvlNumStubs + bvlToBviNamespaces * name, arity,
+      BviLet.compileSing [] 0 converted)]) := by
+    simp [auxNoMutcons, appListAppend, appendAux, let_compileExp_noMutcons converted safe.1]
+  have both := auxNoMutcons_append main safe.2
+  simp [compileSingleSource, h] at run
+  obtain ⟨rfl, _⟩ := run
+  exact both
+
+/-- The list of lowered functions and auxiliaries is safe. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_list_no_mutcons"]
+theorem compileProgramsSource_noMutcons (n : Nat) (program : List (Nat × Nat × Bvl.Exp))
+    (code : AppList (Nat × Nat × Bvi.Exp)) (next : Nat)
+    (run : compileProgramsSource n program = (code, next)) : auxNoMutcons code := by
+  induction program generalizing n code next with
+  | nil =>
+    simp [compileProgramsSource] at run
+    obtain ⟨rfl, _⟩ := run
+    simp [auxNoMutcons, appListAppend, appendAux]
+  | cons entry rest ih =>
+    rcases h : compileSingleSource n entry with ⟨first, middle⟩
+    rcases ht : compileProgramsSource middle rest with ⟨tail, final⟩
+    have firstSafe := compileSingleSource_noMutcons n entry first middle h
+    have tailSafe := ih middle tail final ht
+    have combined := auxNoMutcons_append firstSafe tailSafe
+    simp [compileProgramsSource, h, ht] at run
+    obtain ⟨rfl, _⟩ := run
+    exact combined
+
+/-- Incremental BVL-to-BVI compilation emits only safe function bodies. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_inc_no_mutcons"]
+theorem compileIncSource_noMutcons (n next : Nat) (program : List (Nat × Nat × Bvl.Exp))
+    (code : List (Nat × Nat × Bvi.Exp)) (run : compileIncSource n program = (next, code)) :
+    ∀ entry ∈ code, noMutcons entry.2.2 := by
+  rcases h : compileProgramsSource n program with ⟨tree, final⟩
+  have safe := compileProgramsSource_noMutcons n program tree final h
+  simp [compileIncSource, h] at run
+  obtain ⟨_, rfl⟩ := run
+  exact safe
 
 /-- Every accumulator operator used by tail-recursion rewriting is safe. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "to_op_no_mutcons"]
@@ -387,5 +705,36 @@ theorem stubs_noMutcons (start count : Nat) :
     | apply noMutcons_binary
     | apply noMutcons_nullary
     | simp [noMutcons, noMutconsOp, Subtype.forall]
+
+/-- The production whole-program lowering emits safe stubs and functions. -/
+theorem compileProgFuel_noMutcons (fuel optFuel start counter targetStart targetCounter : Nat)
+    (program : List (Nat × Nat × Bvl.Exp)) (compiled : List (Nat × Nat × Bvi.Exp))
+    (run : compileProgFuel fuel optFuel start counter program = some (targetStart, compiled, targetCounter)) :
+    ∀ entry ∈ compiled, noMutcons entry.2.2 := by
+  have equal := (compileProgFuel_eq_source fuel optFuel start counter program).symm.trans run
+  have codeEq : stubs (bvlNumStubs + bvlToBviNamespaces * start)
+      (globalCountList (program.map (fun (_, _, body) => body))) ++ (compileIncSource counter program).2 = compiled :=
+    congrArg (fun p => p.2.1) (Option.some.inj equal)
+  have lowered := compileIncSource_noMutcons counter (compileIncSource counter program).1 program
+    (compileIncSource counter program).2 (Prod.eta _).symm
+  intro entry member
+  rw [← codeEq, List.mem_append] at member
+  rcases member with stub | body
+  · exact stubs_noMutcons _ _ entry stub
+  · exact lowered entry body
+
+/-- Production lowering followed by tail-recursion satisfies the complete
+syntactic input condition required by TMC. -/
+theorem lowered_tailrec_tmc_inputCondition_complete
+    (fuel optFuel start counter targetStart targetCounter : Nat) (enabled : Bool)
+    (program : List (Nat × Nat × Bvl.Exp)) (lowered output : List (Nat × Nat × Bvi.Exp))
+    (last : Nat) (distinct : (program.map Prod.fst).Nodup)
+    (lowerRun : compileProgFuel fuel optFuel start counter program = some (targetStart, lowered, targetCounter))
+    (tailRun : BviTailrec.compileProgFuel fuel enabled (bvlNumStubs + 2) lowered = some (last, output)) :
+    BviTmc.inputCondition (bvlNumStubs + 3) output := by
+  apply lowered_tailrec_tmc_inputCondition fuel optFuel start counter targetStart targetCounter enabled
+    program lowered output last distinct lowerRun tailRun
+  exact tailrec_compileProgFuel_noMutcons fuel enabled _ last lowered output tailRun
+    (compileProgFuel_noMutcons fuel optFuel start counter targetStart targetCounter program lowered lowerRun)
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
