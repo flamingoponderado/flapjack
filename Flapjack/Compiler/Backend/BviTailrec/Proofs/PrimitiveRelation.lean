@@ -467,6 +467,90 @@ theorem doApp_intConst_error {C F : Type} (number : Int) (args : List Value)
     · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, small] at run
     · simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, small] using run.symm
 
+/-- Byte-array allocation preserves the related reference stores, including
+the fresh reference, initial contents, and mutability flag. -/
+theorem stateRel_doApp_refByte {C F : Type} (flag : Bool) (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.memOp (.refByte flag)) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.memOp (.refByte flag)) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  have refs := (stateRel_const source target related).1
+  cases args with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+  | cons a rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+    | cons b rest =>
+      cases rest with
+      | cons extra xs => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+      | nil =>
+        cases a <;> cases b <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+        rename_i count byte
+        by_cases neg : count < 0
+        · simp [neg] at run
+        · cases converted : ClosSem.intToByte byte with
+          | none => simp [neg, converted] at run
+          | some byteValue =>
+            simp [neg, converted] at run
+            obtain ⟨rfl, rfl⟩ := run
+            let ptr := leastUnusedRef source.refs
+            let entry : Ref Value := Ref.byteArray flag (List.replicate count.toNat byteValue)
+            refine ⟨{ target with refs := source.refs.updateEq (ptr, entry) }, ?_,
+              stateRel_withRefs source target _ related⟩
+            simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, refs, neg, converted, ptr, entry]
+
+/-- Byte-array allocation can fail only with a type error. -/
+theorem doApp_refByte_error {C F : Type} (flag : Bool) (args : List Value)
+    (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.memOp (.refByte flag)) args state = .err error) : error = .abort .typeError := by
+  cases args with
+  | nil => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] using run.symm
+  | cons a rest =>
+    cases rest with
+    | nil => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] using run.symm
+    | cons b rest =>
+      cases rest with
+      | cons extra xs => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] using run.symm
+      | nil =>
+        cases a <;> cases b <;>
+          try (simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] using run.symm)
+        rename_i count byte
+        by_cases neg : count < 0
+        · simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, neg] using run.symm
+        · cases converted : ClosSem.intToByte byte with
+          | none => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, neg, converted] using run.symm
+          | some byteValue => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, neg, converted] at run
+
+/-- Mutable-block allocation chooses the same fresh reference and installs
+the same entry in related reference stores. -/
+theorem stateRel_doApp_mutCons {C F : Type} (tag index : Nat) (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.memOp (.mutCons tag index)) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.memOp (.mutCons tag index)) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  have refs := (stateRel_const source target related).1
+  cases selected : args[index]? with
+  | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, selected] at run
+  | some child =>
+    simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, selected] at run
+    obtain ⟨rfl, rfl⟩ := run
+    let ptr := leastUnusedRef source.refs
+    let entry := Ref.mutBlock tag false (args.take index) child (args.drop (index + 1))
+    refine ⟨{ target with refs := source.refs.updateEq (ptr, entry) }, ?_,
+      stateRel_withRefs source target _ related⟩
+    simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, selected, refs, ptr, entry]
+
+/-- Mutable-block allocation can fail only with a type error. -/
+theorem doApp_mutCons_error {C F : Type} (tag index : Nat) (args : List Value)
+    (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.memOp (.mutCons tag index)) args state = .err error) :
+    error = .abort .typeError := by
+  cases selected : args[index]? with
+  | none => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, selected] using run.symm
+  | some child => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, selected] at run
+
 /-- The BVI global allocation primitive always reports a type error. -/
 theorem doApp_allocGlobal {C F : Type} (args : List Value) (state : BviSem.BviState C F) :
     BviSem.doApp (.globOp .allocGlobal) args state = .err (.abort .typeError) := by

@@ -2980,6 +2980,44 @@ theorem rewriteTail_op_blockFromList {C F : Type} (tag : Nat) (args : List Bvi.E
   · exact doApp_blockFromList_error tag
   · exact hyp
 
+/-- Byte-array allocation preserves the rewrite simulation. -/
+theorem rewriteTail_op_refByte {C F : Type} (flag : Bool) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.memOp (.refByte flag)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp (.refByte flag)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.memOp (.refByte flag)) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_refByte flag
+  · exact doApp_refByte_error flag
+  · exact hyp
+
+/-- Mutable-block allocation preserves the rewrite simulation. -/
+theorem rewriteTail_op_mutCons {C F : Type} (tag index : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.memOp (.mutCons tag index)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp (.mutCons tag index)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.memOp (.mutCons tag index)) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_mutCons tag index
+  · exact doApp_mutCons_error tag index
+  · exact hyp
+
 /-- Complete label-operation case of the source-shaped simulation. -/
 theorem rewriteTail_op_label {C F : Type} (label : Nat) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
