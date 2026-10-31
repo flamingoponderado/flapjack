@@ -653,6 +653,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockInspect
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockInspect
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockBoolean
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockBoolean
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCompare
 import Flapjack.Test.ClosToBvlRecursive
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
