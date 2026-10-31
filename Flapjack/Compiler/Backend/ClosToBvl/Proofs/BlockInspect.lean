@@ -15,6 +15,7 @@ theorem closTagShift_injective : Function.Injective closTagShift := by
 /-- Source block inspections that do not update the state. -/
 inductive BlockInspect where
   | length
+  | elemAt : Nat → BlockInspect
   | lengthEq : Nat → BlockInspect
   | tagEq : Nat → BlockInspect
   | tagLengthEq : Nat → Nat → BlockInspect
@@ -23,16 +24,26 @@ inductive BlockInspect where
 /-- Corresponding closure-language primitive. -/
 def BlockInspect.op : BlockInspect → ClosLang.Op
   | .length => .blockOp .lengthBlock
+  | .elemAt index => .blockOp (.elemAt index)
   | .lengthEq n => .blockOp (.lenEq n)
   | .tagEq n => .blockOp (.tagEq n)
   | .tagLengthEq tag n => .blockOp (.tagLenEq tag n)
+
+private theorem fieldsEnvRel {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {xs : List ClosSem.Value} {ys : List BvlSem.Value}
+    (related : List.Forall₂ (vRel maxApp f refs code) xs ys) : envRel maxApp f refs code xs ys := by
+  induction related with
+  | nil => trivial
+  | cons head tail ih => exact ⟨head, ih⟩
 
 /-- A successful block inspection returns related values and leaves both
 states unchanged. -/
 theorem blockInspect_related {C F : Type} {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     (op : BlockInspect) (tag : Nat) (fields : List ClosSem.Value) (target : BvlSem.Value)
     (s : ClosSem.State C F) (t : BvlSem.State C F)
-    (related : vRel maxApp f t.refs t.code (.block tag fields) target) :
+    (related : vRel maxApp f t.refs t.code (.block tag fields) target)
+    (success : ∃ value next, ClosSem.doApp op.op [.block tag fields] s = .val (value, next)) :
     ∃ sourceValue targetValue,
       ClosSem.doApp op.op [.block tag fields] s = .val (sourceValue, s) ∧
       BvlSem.doApp (compileOp op.op) [target] t = .val (targetValue, t) ∧
@@ -50,6 +61,15 @@ theorem blockInspect_related {C F : Type} {maxApp : Nat} {f : HolFiniteMapExact 
     · rfl
     · simpa [lengths] using (vRel.number (Int.ofNat fields.length) :
         vRel maxApp f t.refs t.code (.number fields.length) (.number fields.length))
+  | elemAt index =>
+    obtain ⟨value, next, run⟩ := success
+    cases found : fields[index]? with
+    | none => simp [BlockInspect.op, ClosSem.doApp, ClosSem.applyBlock, found] at run
+    | some field =>
+      obtain ⟨targetField, targetFound, fieldRel⟩ := envRel_lookup (fieldsEnvRel fieldsRel) found
+      refine ⟨field, targetField, ?_, ?_, fieldRel⟩
+      · simp [BlockInspect.op, ClosSem.doApp, ClosSem.applyBlock, found]
+      · simp [BlockInspect.op, compileOp, BvlSem.doApp, BvlSem.applyBlock, targetFound]
   | lengthEq n =>
     refine ⟨ClosSem.boolValue (fields.length == n), BvlSem.boolValue (targetFields.length == n), ?_, ?_, ?_⟩
     · rfl
@@ -93,7 +113,7 @@ theorem blockInspect_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
   | cons head tail =>
     cases tail
     obtain ⟨sourceValue, targetValue, sourceRun, targetRun, valueRel⟩ :=
-      blockInspect_related op tag fields _ s t head
+      blockInspect_related op tag fields _ s t head ⟨value, next, run⟩
     rw [sourceRun] at run
     cases run
     exact ⟨targetValue, targetRun, rfl, valueRel⟩
@@ -106,7 +126,8 @@ theorem blockInspect_error {C F : Type} (op : BlockInspect) (args : List ClosSem
   | nil => simpa [BlockInspect.op, ClosSem.doApp, ClosSem.applyBlock] using run.symm
   | cons a rest =>
     cases rest with
-    | nil => cases a <;> simp_all [BlockInspect.op, ClosSem.doApp, ClosSem.applyBlock]
+    | nil => cases a <;> simp_all [BlockInspect.op, ClosSem.doApp, ClosSem.applyBlock] <;>
+        split at run <;> simp_all
     | cons b rest => simpa [BlockInspect.op, ClosSem.doApp, ClosSem.applyBlock] using run.symm
 
 /-- Evaluation of an inspection evaluates arguments before dispatch. -/
