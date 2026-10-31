@@ -3,9 +3,10 @@
 
 This is a bounded source-to-assembly differential check, not a correctness
 proof. Both complete outputs, standard errors, and exit statuses must match.
-Generated integer programs must also be accepted. Mutation mode compares
-accepted and rejected inputs alike, including their diagnostics. It needs a
-locally built pinned original compiler; see docs/PARITY-TESTING.md.
+Generated integer programs must also be accepted. Mutation and corpus modes
+compare accepted and rejected inputs alike, including their diagnostics. The
+checker needs a locally built pinned original compiler; see
+docs/PARITY-TESTING.md.
 """
 import argparse
 import hashlib
@@ -16,6 +17,33 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CAKEML_REV = '857f0d98da8f8a3580f34423338e697809308ede'
 HOL_REV = 'a390cbabd3a4521bab4ee20281e3e42933a8a3ae'
+
+# Small source programs covering forms outside the integer-expression fuzzer.
+# Run without the prelude so that unbound names also exercise diagnostics.
+SOURCE_CORPUS = [
+    ('val x = #"a";', 0),
+    ('val x = 0w123;', 0),
+    ('val x = [1,2,3];', 0),
+    ('datatype t = X int | Y;', 0),
+    ('exception E int;', 0),
+    ('fun f x = case x of [] => 0 | h::t => h;', 0),
+    ('fun f x = let fun g y = x in g 4 end;', 0),
+    ('val (x,y) = (1,2);', 0),
+    ('val x = (1 handle _ => 2);', 0),
+    ('val x = "\\000\\255";', 0),
+    ('structure S = struct val x = 3 end;', 0),
+    ('local val x = 3 in val y = x end;', 0),
+    ('fun f (x,y) = x;', 0),
+    ('val x = Word8.fromInt 22;', 1),
+    ('val x = (1, 2, "hello");', 0),
+    ('val x = 999999999999999999999999999999999;', 0),
+    ('val x = ~999999999999999999999999999999999;', 0),
+    ('val x = if true then 1 else 2;', 1),
+    ('val x = ref 1;', 1),
+    ('fun f x = f x;', 0),
+    ('val x = 1 div 0;', 1),
+    ('val a = Array.array (2, 1);', 1),
+]
 
 
 def expression(rng, depth):
@@ -49,8 +77,8 @@ def mutated_source(rng):
     return source[:position] + rng.choice(alphabet) + source[position + 1:]
 
 
-def run(binary, source, timeout, mutations=False):
-    flags = ['--exclude_prelude=true'] if mutations else []
+def run(binary, source, timeout, exclude_prelude=False):
+    flags = ['--exclude_prelude=true'] if exclude_prelude else []
     return subprocess.run([str(binary), '--target=riscv', *flags], input=source.encode('ascii'),
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
 
@@ -62,8 +90,11 @@ def main():
     parser.add_argument('--seed', type=int, default=88411)
     parser.add_argument('--count', type=int, default=30)
     parser.add_argument('--timeout', type=float, default=120)
-    parser.add_argument('--mutations', action='store_true',
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument('--mutations', action='store_true',
                         help='compare mutated source and diagnostics with the prelude excluded')
+    modes.add_argument('--corpus', action='store_true',
+                       help='compare a fixed language-feature corpus with the prelude excluded')
     args = parser.parse_args()
     if args.count < 0 or args.timeout <= 0:
         parser.error('count must be nonnegative and timeout must be positive')
@@ -71,24 +102,26 @@ def main():
     if f'CakeML: {CAKEML_REV}' not in version or f'HOL4:   {HOL_REV}' not in version:
         raise SystemExit('reference compiler does not report the pinned CakeML and HOL revisions')
     rng = random.Random(args.seed)
-    for index in range(args.count):
-        source = (mutated_source(rng) if args.mutations else
+    count = len(SOURCE_CORPUS) if args.corpus else args.count
+    for index in range(count):
+        source = (SOURCE_CORPUS[index][0] if args.corpus else mutated_source(rng) if args.mutations else
                   'fun f x = ' + expression(rng, rng.randrange(1, 4)) + '; val _ = print_int (f 2);')
         try:
-            original = run(args.reference, source, args.timeout, args.mutations)
-            candidate = run(args.cake, source, args.timeout, args.mutations)
+            original = run(args.reference, source, args.timeout, args.mutations or args.corpus)
+            candidate = run(args.cake, source, args.timeout, args.mutations or args.corpus)
         except subprocess.TimeoutExpired as error:
             raise SystemExit(f'case {index}, seed {args.seed}: compiler timed out: {error}\n{source}')
         expected = (original.returncode, original.stdout, original.stderr)
         actual = (candidate.returncode, candidate.stdout, candidate.stderr)
-        if (not args.mutations and original.returncode != 0) or actual != expected:
+        if ((args.corpus and original.returncode != SOURCE_CORPUS[index][1]) or
+                (not (args.mutations or args.corpus) and original.returncode != 0) or actual != expected):
             def describe(result):
                 return (f'exit={result.returncode} stdout_sha256={hashlib.sha256(result.stdout).hexdigest()} '
                         f'stderr={result.stderr!r}')
             raise SystemExit(f'case {index}, seed {args.seed}: output mismatch or rejection\n{source!r}\n'
                              f'original: {describe(original)}\ncandidate: {describe(candidate)}')
         print(f'case {index}: exact output matches', flush=True)
-    print(f'{args.count} cases matched (seed {args.seed})')
+    print(f'{count} cases matched' + ('' if args.corpus else f' (seed {args.seed})'))
 
 
 if __name__ == '__main__':

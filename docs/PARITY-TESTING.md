@@ -423,6 +423,18 @@ timeouts still fail the run. For example:
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --mutations --seed 2377 --count 180
 ```
 
+The same checker has a fixed language-feature corpus covering literals,
+patterns, datatypes, exceptions, local bindings, closures, structures and
+large integers, as well as unbound-name diagnostics with the prelude excluded:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus
+```
+
+It checks each case's expected acceptance or rejection and compares complete
+output and status. It is a finite regression sample, not evidence for all
+programs using those forms.
+
 To recheck the recorded historical outputs when that exact binary is available,
 run `python3 scripts/check-cake-cli-parity.py --check-reference /path/to/cake`.
 `--record-reference /path/to/cake` checks the same provenance before replacing
