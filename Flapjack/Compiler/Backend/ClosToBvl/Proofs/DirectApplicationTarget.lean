@@ -2,7 +2,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateApp
 
 /-! Installed-code facts for known-location closure calls. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
-open Flapjack.SemanticPrimitivesHOL
+open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
 /-- The code pointer in a related recursive closure is its source location,
 shifted by the stub count and the recursive function index. -/
@@ -280,5 +280,324 @@ theorem evaluateApp_direct_simulation_below {C F : Type}
     sourceArgs targetArgs rest application (by simpa using functionRel) (by simpa using argsRel) found targetNonempty
   rw [same]
   exact targetRun
+
+
+/-- Compose argument, function, and known-location call simulations. -/
+theorem evaluatePost_app_direct_success {C F : Type}
+    (s sArgs sFunction sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value) (f : HolFiniteMapExact Nat Nat)
+    (address : Nat) (application : ClosSem.AppKind) (sourceArgs : List ClosLang.Exp) (sourceFunction : ClosLang.Exp)
+    (targetArgs : List Bvl.Exp) (targetFunction : Bvl.Exp) (values : List ClosSem.Value)
+    (function : ClosSem.Value) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (argsRun : ClosSem.evaluate sourceArgs sourceEnv s = (.val values, sArgs))
+    (functionRun : ClosSem.evaluate [sourceFunction] sourceEnv sArgs = (.val [function], sFunction))
+    (selected : ClosSem.destClosure sFunction.maxApp (some address) function values = some application)
+    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv)
+    (argsPost : evaluatePost s sArgs t targetEnv f (.val values) targetArgs)
+    (functionIH : ∀ (tArgs : BvlSem.State C F) (fArgs : HolFiniteMapExact Nat Nat),
+      stateRel fArgs sArgs tArgs → envRel sArgs.maxApp fArgs tArgs.refs tArgs.code sourceEnv targetEnv →
+      codeAnnotations sArgs → sptSubspt t.code tArgs.code →
+      evaluatePost sArgs sFunction tArgs targetEnv fArgs (.val [function]) [targetFunction])
+    (appIH : ∀ (targetValues : List BvlSem.Value) (targetClosure : BvlSem.Value)
+      (tFunction : BvlSem.State C F) (fFunction : HolFiniteMapExact Nat Nat),
+      stateRel fFunction sFunction tFunction → codeAnnotations sFunction →
+      List.Forall₂ (vRel sFunction.maxApp fFunction tFunction.refs tFunction.code) values targetValues →
+      vRel sFunction.maxApp fFunction tFunction.refs tFunction.code function targetClosure →
+      evaluatePost sFunction sFinal tFunction (targetValues ++ [targetClosure] ++ targetEnv) fFunction result
+        [.call (targetValues.length - 1) (some (address + numStubs sFunction.maxApp))
+          ((List.range targetValues.length).map Bvl.Exp.var ++ [.var targetValues.length])]) :
+    evaluatePost s sFinal t targetEnv f result [appTarget s.maxApp (some address) targetArgs targetFunction] := by
+  have maxArgs : sArgs.maxApp = s.maxApp := by
+    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 sourceArgs sourceEnv s
+    rw [argsRun] at h
+    exact h
+  have maxFunction : sFunction.maxApp = sArgs.maxApp := by
+    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [sourceFunction] sourceEnv sArgs
+    rw [functionRun] at h
+    exact h
+  obtain ⟨clock1, argsResult, tArgs, fArgs, targetArgsRun, argsRel, states1, map1, frame1,
+    annotations1, clocks1, growth1, env1⟩ :=
+      evaluatePost_environment s sArgs t sourceEnv targetEnv f (.val values) targetArgs envRelated argsPost
+  cases argsResult with
+  | err error => simp [resultRel] at argsRel
+  | val targetValues =>
+    have argsRel1 : List.Forall₂ (vRel sArgs.maxApp fArgs tArgs.refs tArgs.code) values targetValues := by
+      simpa [resultRel, maxArgs] using argsRel
+    have envArgs : envRel sArgs.maxApp fArgs tArgs.refs tArgs.code sourceEnv targetEnv := by
+      simpa [maxArgs] using env1
+    obtain ⟨clock2, functionResult, tFunction, fFunction, targetFunctionRun, functionRel, states2, map2,
+      frame2, annotations2, clocks2⟩ := functionIH tArgs fArgs states1 envArgs annotations1 growth1
+    cases functionResult with
+    | err error => simp [resultRel] at functionRel
+    | val targetFunctions =>
+      have singleton : List.Forall₂ (vRel sFunction.maxApp fFunction tFunction.refs tFunction.code)
+          [function] targetFunctions := by simpa [resultRel, maxFunction] using functionRel
+      cases singleton with
+      | @cons _ targetClosure _ _ headRel tail =>
+        cases tail
+        have growth2 : sptSubspt tArgs.code tFunction.code :=
+          BvlProps.evaluateMono [targetFunction] targetEnv { tArgs with clock := sArgs.clock + clock2 }
+            (.val [targetClosure]) tFunction targetFunctionRun
+        have argsRel2 : List.Forall₂ (vRel sFunction.maxApp fFunction tFunction.refs tFunction.code)
+            values targetValues := by
+          apply argsRel1.imp
+          intro a b head
+          simpa [maxFunction] using vRel_grow head map2 frame2 growth2
+        obtain ⟨clock3, targetResult, tFinal, fFinal, targetCallRun, related, states3, map3, frame3,
+          annotations3, clocks3⟩ := appIH targetValues targetClosure tFunction fFunction states2 annotations2 argsRel2 headRel
+        have targetLength : targetValues.length = targetArgs.length :=
+          BvlSem.evaluate_length targetArgs targetEnv { t with clock := s.clock + clock1 } tArgs targetValues targetArgsRun
+        have shiftArgs := BvlProps.evaluate_addClock targetArgs targetEnv { t with clock := s.clock + clock1 }
+          tArgs (.val targetValues) (clock2 + clock3) targetArgsRun (by simp)
+        have runArgs : BvlSem.evaluate targetArgs targetEnv { t with clock := s.clock + (clock1 + clock2 + clock3) } =
+            (.val targetValues, { tArgs with clock := sArgs.clock + (clock2 + clock3) }) := by
+          simpa [Nat.add_assoc, clocks1] using shiftArgs
+        have shiftFunction := BvlProps.evaluate_addClock [targetFunction] targetEnv
+          { tArgs with clock := sArgs.clock + clock2 } tFunction (.val [targetClosure]) clock3 targetFunctionRun (by simp)
+        have runFunction : BvlSem.evaluate [targetFunction] targetEnv
+            { tArgs with clock := sArgs.clock + (clock2 + clock3) } =
+            (.val [targetClosure], { tFunction with clock := sFunction.clock + clock3 }) := by
+          simpa [Nat.add_assoc, clocks2] using shiftFunction
+        refine ⟨clock1 + clock2 + clock3, targetResult, tFinal, fFinal, ?_, ?_, states3,
+          relocationSubmap_trans (relocationSubmap_trans map1 map2) map3,
+          unmappedRefsSubmap_trans (unmappedRefsSubmap_trans frame1 frame2) frame3, annotations3, clocks3⟩
+        · obtain ⟨entry, targetFound⟩ := vRel_direct_findCode headRel argsRel2 selected
+          have targetNonempty : targetValues ≠ [] := by
+            intro empty
+            have sourceLength := argsRel2.length_eq
+            have valueEmpty : values = [] := by simpa [empty] using sourceLength
+            cases application with
+            | partialApp value => exact ClosSem.destClosure_direct_not_partial _ _ _ _ _ selected
+            | fullApp body env rest =>
+              have shorter := ClosSem.destClosure_full_remaining_lt sFunction.maxApp (some address)
+                function values env rest body selected
+              simp [valueEmpty] at shorter
+          have targetFound' : BvlSem.findCode (some (address + numStubs s.maxApp))
+              (targetValues ++ [targetClosure]) tFunction.code = some (targetValues ++ [targetClosure], entry) := by
+            simpa [maxFunction, maxArgs] using targetFound
+          rw [evaluate_appTarget_direct _ _ _ _ _ _ _ _ _ _ _ runArgs runFunction (by simpa using targetFound')]
+          have callRun := evaluate_directCall_env { tFunction with clock := sFunction.clock + clock3 }
+            targetValues targetEnv targetClosure (address + numStubs s.maxApp) entry targetNonempty (by simpa using targetFound')
+          rw [maxFunction, maxArgs, callRun] at targetCallRun
+          have count : targetArgs.length - 1 + 1 = targetValues.length := by
+            have positive := List.length_pos_iff.mpr targetNonempty
+            omega
+          simpa [count] using targetCallRun
+        · simpa [maxFunction, maxArgs] using related
+
+
+/-- A nonempty known-location application that avoids a type error must
+select a closure case. -/
+theorem evaluateApp_direct_destClosure_some {C F : Type} (s sFinal : ClosSem.State C F)
+    (address : Nat) (value : ClosSem.Value) (args : List ClosSem.Value)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (nonempty : args ≠ []) (run : ClosSem.evaluateApp (some address) value args s = (result, sFinal))
+    (noType : result ≠ .err (.abort .typeError)) :
+    ∃ application, ClosSem.destClosure s.maxApp (some address) value args = some application := by
+  cases args with
+  | nil => contradiction
+  | cons head tail =>
+    cases selected : ClosSem.destClosure s.maxApp (some address) value (head :: tail) with
+    | none =>
+      rw [ClosSem.evaluateApp, selected] at run
+      change (.err (.abort .typeError), s) = (result, sFinal) at run
+      cases run
+      exact False.elim (noType rfl)
+    | some application => exact ⟨application, rfl⟩
+
+
+/-- A successful direct application expression follows from its bounded subexpressions and closure bodies. -/
+theorem expressionSimulation_app_direct_success_belowBound {C F : Type}
+    (s sArgs sFunction sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (clockBound appBound : Nat)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value) (f : HolFiniteMapExact Nat Nat)
+    (trace : BackendCommon.Tra) (address : Nat) (args : List ClosLang.Exp) (function : ClosLang.Exp)
+    (values : List ClosSem.Value) (functionValue : ClosSem.Value)
+    (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (argsRun : ClosSem.evaluate args sourceEnv s = (.val values, sArgs))
+    (functionRun : ClosSem.evaluate [function] sourceEnv sArgs =
+      (.val [functionValue], sFunction))
+    (run : ClosSem.evaluate [.app trace (some address) function args] sourceEnv s = (result, sFinal))
+    (noType : result ≠ .err (.abort .typeError)) (clockBounded : s.clock < clockBound) (callerBound : s.clock ≤ appBound)
+    (compile : compileExpsHOL s.maxApp [.app trace (some address) function args] aux = (compiled, finalAux))
+    (locations : ClosProps.everyFnLocationSome [.app trace (some address) function args]) (annotations : codeAnnotations s)
+    (vars : ClosProps.everyFnVarsSome [.app trace (some address) function args]) (installed : codeInstalled finalAux t.code)
+    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv) (states : stateRel f s t)
+    (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args)
+    (functionIH : expressionSimulationBelow (C := C) (F := F) clockBound [function])
+    (bodyIH : ∀ body : ClosLang.Exp, expressionSimulationBelow (C := C) (F := F) appBound [body])
+    :
+    evaluatePost s sFinal t targetEnv f result compiled := by
+  have nonempty : args ≠ [] := by
+    intro empty
+    subst args
+    simp [ClosSem.evaluate] at run
+    exact noType run.1.symm
+  have valuesNonempty : values ≠ [] := by
+    intro empty
+    have h := (ClosSem.evaluate_length (C := C) (F := F)).1 args sourceEnv s sArgs values argsRun
+    simp [empty] at h
+    apply nonempty
+    cases args with
+    | nil => rfl
+    | cons head tail => simp at h
+  have appRun : ClosSem.evaluateApp (some address) functionValue values sFunction =
+      (result, sFinal) := by
+    have notEmpty : args.isEmpty = false := by cases args <;> simp_all
+    rw [ClosSem.evaluate] at run
+    simp only [notEmpty, Bool.false_eq_true, ↓reduceIte] at run
+    rw [ClosSem.fixClock_evaluate, argsRun] at run
+    dsimp only at run
+    rw [ClosSem.fixClock_evaluate, functionRun] at run
+    exact run
+  obtain ⟨application, selected⟩ := evaluateApp_direct_destClosure_some sFunction sFinal address functionValue values result valuesNonempty appRun noType
+  cases functionCompile : compileExpHOL s.maxApp function aux with
+  | mk targetFunction middleAux =>
+    cases argsCompile : compileExpListHOL s.maxApp args middleAux with
+    | mk targetArgs lastAux =>
+      have whole := compile_appTarget s.maxApp trace (some address) function args aux middleAux lastAux
+        targetFunction targetArgs functionCompile argsCompile
+      have equal := compile.symm.trans whole
+      cases equal
+      have argsCompiled : compileExpsHOL s.maxApp args middleAux = (targetArgs, finalAux) := by
+        rw [compileExps_eq_list]
+        exact argsCompile
+      have functionCompiled : compileExpsHOL s.maxApp [function] aux = ([targetFunction], middleAux) := by
+        rw [compileExps_eq_list]
+        simp [compileExpListHOL, functionCompile]
+      have functionInstalled : codeInstalled middleAux t.code :=
+        compileExps_codeInstalled s.maxApp args middleAux finalAux targetArgs t.code argsCompiled installed
+      have locationsParts : ClosProps.fnLocationSomeExp function ∧ ClosProps.everyFnLocationSome args := by
+        simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+      have varsParts : ClosProps.fnVarsSomeExp function ∧ ClosProps.everyFnVarsSome args := by
+        simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using vars
+      have argsPost := argsIH s sArgs t sourceEnv targetEnv f middleAux finalAux targetArgs (.val values)
+        clockBounded argsRun (by simp) argsCompiled locationsParts.2 annotations varsParts.2 installed envRelated states
+      apply evaluatePost_app_direct_success s sArgs sFunction sFinal t sourceEnv targetEnv f address application args function
+        targetArgs targetFunction values functionValue result argsRun functionRun selected envRelated argsPost
+      · intro tArgs fArgs statesArgs envArgs annotationsArgs growth
+        have maxApp : sArgs.maxApp = s.maxApp := by
+          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
+          rw [argsRun] at h
+          exact h
+        have argsClock : sArgs.clock < clockBound := by
+          have h := ClosSem.evaluate_clock_le args sourceEnv s
+          rw [argsRun] at h
+          dsimp only at h
+          omega
+        exact functionIH sArgs sFunction tArgs sourceEnv targetEnv fArgs aux middleAux [targetFunction]
+          (.val [functionValue]) argsClock functionRun (by simp)
+          (by simpa [maxApp] using functionCompiled)
+          (by simpa [ClosProps.everyFnLocationSome] using locationsParts.1) annotationsArgs
+          (by simpa [ClosProps.everyFnVarsSome] using varsParts.1)
+          (codeInstalled_subspt functionInstalled growth) envArgs statesArgs
+
+      · intro targetValues targetClosure tFunction fFunction functionStates functionAnnotations argsRel functionRel
+        have functionClock : sFunction.clock ≤ appBound := by
+          have first := ClosSem.evaluate_clock_le args sourceEnv s
+          rw [argsRun] at first
+          have second := ClosSem.evaluate_clock_le [function] sourceEnv sArgs
+          rw [functionRun] at second
+          dsimp only at first second
+          omega
+        exact evaluateApp_direct_simulation_below sFunction sFinal tFunction fFunction address appBound
+          functionValue targetClosure values targetValues targetEnv application result functionClock selected appRun noType
+          functionStates functionAnnotations functionRel argsRel bodyIH
+
+
+
+/-- Known-location applications preserve the bounded simulation. -/
+theorem expressionSimulation_app_direct_case_bounded {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F) (clockBound appBound : Nat)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value) (f : HolFiniteMapExact Nat Nat)
+    (trace : BackendCommon.Tra) (address : Nat) (args : List ClosLang.Exp) (function : ClosLang.Exp)
+    (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (run : ClosSem.evaluate [.app trace (some address) function args] sourceEnv s = (result, sFinal))
+    (noType : result ≠ .err (.abort .typeError)) (clockBounded : s.clock < clockBound) (callerBound : s.clock ≤ appBound)
+    (compile : compileExpsHOL s.maxApp [.app trace (some address) function args] aux = (compiled, finalAux))
+    (locations : ClosProps.everyFnLocationSome [.app trace (some address) function args]) (annotations : codeAnnotations s)
+    (vars : ClosProps.everyFnVarsSome [.app trace (some address) function args]) (installed : codeInstalled finalAux t.code)
+    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv) (states : stateRel f s t)
+    (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args)
+    (functionIH : expressionSimulationBelow (C := C) (F := F) clockBound [function])
+    (bodyIH : ∀ body : ClosLang.Exp, expressionSimulationBelow (C := C) (F := F) appBound [body]) :
+    evaluatePost s sFinal t targetEnv f result compiled := by
+  have nonempty : args ≠ [] := by
+    intro empty
+    subst args
+    simp [ClosSem.evaluate] at run
+    exact noType run.1.symm
+  have notEmpty : args.isEmpty = false := by cases args <;> simp_all
+  cases argsRun : ClosSem.evaluate args sourceEnv s with
+  | mk argsResult sArgs =>
+    cases argsResult with
+    | err error =>
+      have sourceRun := run
+      rw [ClosSem.evaluate] at sourceRun
+      simp only [notEmpty, Bool.false_eq_true, ↓reduceIte] at sourceRun
+      rw [ClosSem.fixClock_evaluate, argsRun] at sourceRun
+      simp only at sourceRun
+      cases sourceRun
+      exact expressionSimulation_app_preCall_error_case_below s sFinal t clockBound sourceEnv targetEnv f trace (some address) args function
+        aux finalAux compiled (.err error) run noType clockBounded (Or.inl ⟨error, argsRun⟩) compile locations annotations vars
+        installed envRelated states argsIH functionIH
+    | val values =>
+      cases functionRun : ClosSem.evaluate [function] sourceEnv sArgs with
+      | mk functionResult sFunction =>
+        cases functionResult with
+        | err error =>
+          have sourceRun := run
+          rw [ClosSem.evaluate] at sourceRun
+          simp only [notEmpty, Bool.false_eq_true, ↓reduceIte] at sourceRun
+          rw [ClosSem.fixClock_evaluate, argsRun] at sourceRun
+          dsimp only at sourceRun
+          rw [ClosSem.fixClock_evaluate, functionRun] at sourceRun
+          simp only at sourceRun
+          cases sourceRun
+          exact expressionSimulation_app_preCall_error_case_below s sFinal t clockBound sourceEnv targetEnv f trace (some address) args function
+            aux finalAux compiled (.err error) run noType clockBounded (Or.inr ⟨values, sArgs, error, argsRun, functionRun⟩)
+            compile locations annotations vars installed envRelated states argsIH functionIH
+        | val functions =>
+          have functionLength : functions.length = 1 := by
+            have h := (ClosSem.evaluate_length (C := C) (F := F)).1 [function] sourceEnv sArgs sFunction functions functionRun
+            simpa using h
+          cases functions with
+          | nil => simp at functionLength
+          | cons functionValue tail =>
+            cases tail with
+            | cons head tail => simp at functionLength
+            | nil =>
+              exact expressionSimulation_app_direct_success_belowBound s sArgs sFunction sFinal t clockBound appBound sourceEnv targetEnv f
+                trace address args function values functionValue aux finalAux compiled result argsRun functionRun run noType clockBounded callerBound
+                compile locations annotations vars installed envRelated states argsIH functionIH bodyIH
+
+
+/-- A known-location application follows from the structural hypotheses at
+the current bound and the closure-body hypothesis at the predecessor bound. -/
+theorem expressionSimulationBelow_directApp_succ {C F : Type} (clockBound : Nat)
+    (trace : BackendCommon.Tra) (address : Nat) (args : List ClosLang.Exp) (function : ClosLang.Exp)
+    (argsIH : expressionSimulationBelow (C := C) (F := F) (clockBound + 1) args)
+    (functionIH : expressionSimulationBelow (C := C) (F := F) (clockBound + 1) [function])
+    (bodyIH : ∀ body : ClosLang.Exp, expressionSimulationBelow (C := C) (F := F) clockBound [body]) :
+    expressionSimulationBelow (C := C) (F := F) (clockBound + 1) [.app trace (some address) function args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noType compile
+    locations annotations vars installed envRelated states
+  exact expressionSimulation_app_direct_case_bounded s sFinal t (clockBound + 1) clockBound
+    sourceEnv targetEnv f trace address args function aux finalAux compiled result run noType clockBounded (by omega)
+    compile locations annotations vars installed envRelated states argsIH functionIH bodyIH
+
+/-- Applications with either inferred or explicit locations share the same
+successor-clock induction hypotheses. -/
+theorem expressionSimulationBelow_app_any_succ {C F : Type} (clockBound : Nat)
+    (trace : BackendCommon.Tra) (location : Option Nat) (args : List ClosLang.Exp) (function : ClosLang.Exp)
+    (argsIH : expressionSimulationBelow (C := C) (F := F) (clockBound + 1) args)
+    (functionIH : expressionSimulationBelow (C := C) (F := F) (clockBound + 1) [function])
+    (bodyIH : ∀ body : ClosLang.Exp, expressionSimulationBelow (C := C) (F := F) clockBound [body]) :
+    expressionSimulationBelow (C := C) (F := F) (clockBound + 1) [.app trace location function args] := by
+  cases location with
+  | none => exact expressionSimulationBelow_app_succ clockBound trace args function argsIH functionIH bodyIH
+  | some address => exact expressionSimulationBelow_directApp_succ clockBound trace address args function argsIH functionIH bodyIH
 
 end Flapjack.Compiler.Backend.ClosToBvl
