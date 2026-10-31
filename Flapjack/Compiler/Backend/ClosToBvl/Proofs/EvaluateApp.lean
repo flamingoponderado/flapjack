@@ -7236,4 +7236,133 @@ theorem evaluatePost_mkClCall_over_compose {C F : Type}
         simpa using continuationRun
       · simpa [maxAppEq] using resultRel
 
+/-- The first saturated body of an overapplied ordinary closure satisfies the
+expression simulation on the related suffixes of the source and target
+arguments. The target entry reads its captured values from the closure block. -/
+theorem evaluatePost_ordinary_over_body {C F : Type}
+    (s sMiddle : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity n : Nat) (captured args : List ClosSem.Value) (fields targetArgs : List BvlSem.Value)
+    (body : ClosLang.Exp) (value : ClosSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (closure : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+      (captured, fields) (.closure (some ptr) [] captured arity body)
+      (.block 30 (.codePtr (ptr + numStubs s.maxApp) :: .number (Int.ofNat (arity - 1)) :: fields)))
+    (capturedRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) captured fields)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (length : targetArgs.length = n + 1) (over : arity < args.length)
+    (bodyRun : ClosSem.evaluate [body] (args.drop (args.length - arity) ++ captured)
+      (ClosSem.decClock arity s) = (.val [value], sMiddle))
+    (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
+    ∃ targetBody,
+      sptLookup (ptr + numStubs s.maxApp) t.code = some (arity + 1,
+        .let ((List.range arity).map Bvl.Exp.var ++ freeLet (.var arity) captured.length) targetBody) ∧
+      evaluatePost (ClosSem.decClock arity s) sMiddle t
+        (targetArgs.drop (n - (arity - 1)) ++
+          [.block 30 (.codePtr (ptr + numStubs s.maxApp) :: .number (Int.ofNat (arity - 1)) :: fields)])
+        f (.val [value])
+        [.let ((List.range arity).map Bvl.Exp.var ++ freeLet (.var arity) captured.length) targetBody] := by
+  cases closure with
+  | @closure _ _ aux targetBody aux1 _ _ _ arityBound positive locations vars compiled installed lookup =>
+    let sourceSuffix := args.drop (args.length - arity)
+    let targetSuffix := targetArgs.drop (n - (arity - 1))
+    let targetClosure := BvlSem.Value.block 30
+      (.codePtr (ptr + numStubs s.maxApp) :: .number (Int.ofNat (arity - 1)) :: fields)
+    have ⟨_, _, suffixRel⟩ := overApp_related_split (vRel s.maxApp f t.refs t.code) args targetArgs
+      arity 0 n (arity - 1) argsRel length (by omega) (by simp) (by simpa using over)
+    have relatedSuffix : List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceSuffix targetSuffix := by
+      simpa [sourceSuffix, targetSuffix] using suffixRel
+    have suffixLength : targetSuffix.length = arity := by
+      dsimp [targetSuffix]
+      simp only [List.length_drop, length]
+      omega
+    have fieldsLength : fields.length = captured.length := capturedRel.length_eq.symm
+    have bodyStates : stateRel f (ClosSem.decClock arity s) t := by
+      exact (stateRel_clock f s t (s.clock - arity)).2.mpr states
+    have bodyEnv : envRel s.maxApp f t.refs t.code (sourceSuffix ++ captured)
+        ((targetSuffix ++ fields) ++ targetSuffix ++ [targetClosure]) := by
+      have tail : envRel s.maxApp f t.refs t.code captured (fields ++ targetSuffix ++ [targetClosure]) := by
+        simpa using envRel_prepend capturedRel (env := []) (targetEnv := targetSuffix ++ [targetClosure]) (by simp [envRel])
+      simpa [List.append_assoc] using envRel_prepend relatedSuffix tail
+    have bodyPost := bodyIH (ClosSem.decClock arity s) sMiddle t (sourceSuffix ++ captured)
+      ((targetSuffix ++ fields) ++ targetSuffix ++ [targetClosure]) f aux aux1 [targetBody] (.val [value])
+      (by simpa [sourceSuffix] using bodyRun) (by simp) (by simpa [ClosSem.decClock] using compiled)
+      locations (by simpa [ClosSem.decClock, codeAnnotations] using annotations) vars installed
+      (by simpa [ClosSem.decClock] using bodyEnv) bodyStates
+    obtain ⟨clock, targetResult, tFinal, fFinal, targetRun, resultRel, finalStates, map, frame,
+      finalAnnotations, finalClock⟩ := bodyPost
+    refine ⟨_, lookup, clock, targetResult, tFinal, fFinal, ?_, resultRel, finalStates, map, frame,
+      finalAnnotations, finalClock⟩
+    have entry := evaluate_closure_entry { t with clock := (ClosSem.decClock arity s).clock + clock }
+      targetSuffix fields 30 (.codePtr (ptr + numStubs s.maxApp)) (.number (Int.ofNat (arity - 1))) targetBody
+    simpa [targetSuffix, targetClosure, suffixLength, fieldsLength] using entry.trans targetRun
+
+/-- An overapplied ordinary closure whose first body returns a value follows
+from the body simulation and the simulation of the remaining application.
+The continuation hypothesis is stated at the generated continuation's
+environment, while the source execution supplies its application result. -/
+theorem evaluateApp_ordinary_over_success {C F : Type}
+    (s sMiddle sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (f : HolFiniteMapExact Nat Nat) (ptr arity n : Nat)
+    (captured args : List ClosSem.Value) (fields targetArgs rest : List BvlSem.Value)
+    (body : ClosLang.Exp) (value : ClosSem.Value) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (closure : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+      (captured, fields) (.closure (some ptr) [] captured arity body)
+      (.block 30 (.codePtr (ptr + numStubs s.maxApp) :: .number (Int.ofNat (arity - 1)) :: fields)))
+    (capturedRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) captured fields)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (length : targetArgs.length = n + 1) (bound : args.length ≤ s.maxApp)
+    (over : arity < args.length) (enough : arity ≤ s.clock)
+    (bodyRun : ClosSem.evaluate [body] (args.drop (args.length - arity) ++ captured)
+      (ClosSem.decClock arity s) = (.val [value], sMiddle))
+    (appRun : ClosSem.evaluateApp none (.closure (some ptr) [] captured arity body) args s = (result, sFinal))
+    (bodyIH : expressionSimulation (C := C) (F := F) [body])
+    (continuationIH : ∀ (targetValue : BvlSem.Value) (tMiddle : BvlSem.State C F)
+      (fMiddle : HolFiniteMapExact Nat Nat),
+      ClosSem.evaluateApp none value (args.take (args.length - arity)) sMiddle = (result, sFinal) →
+      stateRel fMiddle sMiddle tMiddle →
+      vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code value targetValue →
+      relocationSubmap f fMiddle → unmappedRefsSubmap t.refs tMiddle.refs f fMiddle →
+      codeAnnotations sMiddle → sptSubspt t.code tMiddle.code →
+      evaluatePost sMiddle sFinal tMiddle
+        (targetValue :: .number (Int.ofNat (arity - 1)) ::
+          .number (Int.ofNat (arity - 1) - Int.ofNat (n + 1)) ::
+          (targetArgs ++ [.block 30 (.codePtr (ptr + numStubs s.maxApp) ::
+            .number (Int.ofNat (arity - 1)) :: fields)]))
+        fMiddle result [mkClCall (.var 0) ((List.range (n - (arity - 1))).map fun i => .var (i + 3))]) :
+    evaluatePost s sFinal t
+      (targetArgs ++ [.block 30 (.codePtr (ptr + numStubs s.maxApp) ::
+        .number (Int.ofNat (arity - 1)) :: fields)] ++ rest) f result
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  have ⟨arityBound, positive⟩ : arity ≤ s.maxApp ∧ arity ≠ 0 := by
+    cases closure with | closure bound positive _ _ _ _ _ => exact ⟨bound, positive⟩
+  have targetLength : targetArgs.length = args.length := argsRel.length_eq.symm
+  have nBound : n < s.maxApp := by omega
+  have over' : arity - 1 < n := by omega
+  have totalBound : arity - 1 < s.maxApp := by omega
+  have cost : arity - 1 + 1 = arity := by omega
+  have lookupSize : arity - 1 + 2 = arity + 1 := by omega
+  have sourceContinue : ClosSem.evaluateApp none value (args.take (args.length - arity)) sMiddle =
+      (result, sFinal) := by
+    rw [evaluateApp_ordinary_over s ptr arity captured [] args body (by simp; omega) bound (by simpa using over)] at appRun
+    simp only [List.length_nil, Nat.sub_zero, List.append_nil,
+      Nat.not_lt.mpr enough, ↓reduceIte] at appRun
+    rw [ClosSem.fixClock_evaluate, bodyRun] at appRun
+    exact appRun
+  have maxAppEq : sMiddle.maxApp = s.maxApp := by
+    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [body]
+      (args.drop (args.length - arity) ++ captured) (ClosSem.decClock arity s)
+    rw [bodyRun] at h
+    simpa [ClosSem.decClock] using h
+  obtain ⟨targetBody, lookup, bodyPost⟩ := evaluatePost_ordinary_over_body s sMiddle t f ptr arity n
+    captured args fields targetArgs body value states annotations closure capturedRel argsRel length over bodyRun bodyIH
+  have genericLookup := states.2.2.2.2.2.2.2.2.1 n nBound
+  apply evaluatePost_mkClCall_over_compose s sMiddle sFinal t f n (arity - 1) 30
+    (ptr + numStubs s.maxApp) targetArgs fields rest
+    (.let ((List.range arity).map Bvl.Exp.var ++ freeLet (.var arity) captured.length) targetBody)
+    value result length over' totalBound genericLookup (by simpa [lookupSize] using lookup)
+    (by simpa [cost] using enough) maxAppEq (by simpa [cost] using bodyPost)
+  intro targetValue tMiddle fMiddle statesMiddle valueRel map refs annotationsMiddle growth
+  exact continuationIH targetValue tMiddle fMiddle sourceContinue statesMiddle valueRel map refs annotationsMiddle growth
+
 end Flapjack.Compiler.Backend.ClosToBvl
