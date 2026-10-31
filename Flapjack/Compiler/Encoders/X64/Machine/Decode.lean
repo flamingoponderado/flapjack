@@ -14,7 +14,7 @@ the round-trip on every emitted form.
 namespace Flapjack.Compiler.Encoders.X64
 
 /-- The `i`-th byte of a byte list, with a zero default past the end. -/
-def byteListReader (bs : List (BitVec 8)) : Nat → BitVec 8 :=
+abbrev byteListReader (bs : List (BitVec 8)) : Nat → BitVec 8 :=
   fun i => bs.getD i 0
 
 /-- Zero-extended little-endian 32-bit immediate at byte offset `off`. -/
@@ -266,126 +266,81 @@ def decodeSSE (r : Nat → BitVec 8) (off : Nat) (mandatory : Nat)
     else none
   else none
 
-/-- Decode one instruction from a byte reader. -/
-def decode (r : Nat → BitVec 8) : Option (X64Insn × Nat) :=
-  let b0 := (r 0).toNat
-  if b0 = 0x88 then
-    match parseRM r 1 false with
-    | some p =>
-        if p.modBits = 3 then some (.movRR (.z8 false) p.rm.regOf p.regBits, 1 + p.len)
-        else
-          match baseOfRM p.rm with
-          | some (base, disp) => some (.movMR (.z8 false) p.regBits base disp, 1 + p.len)
-          | none => none
-    | none => none
-  else if b0 = 0x89 then
-    match parseRM r 1 false with
-    | some p =>
-        if p.modBits = 3 then some (.movRR .z32 p.rm.regOf p.regBits, 1 + p.len)
-        else
-          match baseOfRM p.rm with
-          | some (base, disp) => some (.movMR .z32 p.regBits base disp, 1 + p.len)
-          | none => none
-    | none => none
-  else if b0 = 0x8B then
-    match parseRM r 1 false with
-    | some p =>
-        if p.modBits = 3 then none
-        else
-          match baseOfRM p.rm with
-          | some (base, disp) => some (.movRM .z32 p.regBits base disp, 1 + p.len)
-          | none => none
-    | none => none
-  else if b0 = 0x01 || b0 = 0x09 || b0 = 0x11 || b0 = 0x19 || b0 = 0x21 ||
-      b0 = 0x29 || b0 = 0x31 || b0 = 0x39 then
-    match binopOfOpcode b0, parseRM r 1 false with
-    | some bop, some p =>
-        if p.modBits = 3 then some (.binopRR bop .z32 p.rm.regOf p.regBits, 1 + p.len)
-        else none
-    | _, _ => none
-  else if b0 = 0x85 then
-    match parseRM r 1 false with
-    | some p =>
-        if p.modBits = 3 then some (.binopRR .ztest .z32 p.rm.regOf p.regBits, 1 + p.len)
-        else none
-    | none => none
-  else if b0 = 0x90 then some (.nop 1, 1)
-  else if b0 = 0xF5 then some (.cmc, 1)
-  else if b0 = 0xE9 then some (.jcc .zAlways (imm32 r 1), 5)
-  else if b0 = 0x7A then some (.jcc .zP (imm8 r 1), 2)
-  else if b0 = 0x05 || b0 = 0x0D || b0 = 0x15 || b0 = 0x1D || b0 = 0x25 ||
-      b0 = 0x2D || b0 = 0x35 || b0 = 0x3D || b0 = 0xA9 then
-    let bop := if b0 = 0x05 then .zadd else if b0 = 0x0D then .zor
-      else if b0 = 0x15 then .zadc else if b0 = 0x1D then .zsbb
-      else if b0 = 0x25 then .zand else if b0 = 0x2D then .zsub
-      else if b0 = 0x35 then .zxor else if b0 = 0x3D then .zcmp else .ztest
-    some (.binopRI bop .z64 0 (imm32 r 1), 5)
-  else if 0xB8 ≤ b0 && b0 ≤ 0xBF then some (.movRI .z32 (b0 - 0xB8) (imm32 r 1), 5)
-  else if 0x40 ≤ b0 && b0 ≤ 0x4F then
-    let rexW := b0 % 16 ≥ 8
-    let rexR := b0 % 8 ≥ 4
-    let rexB := b0 % 2 = 1
-    let op := (r 1).toNat
-    if op = 0x05 || op = 0x0D || op = 0x15 || op = 0x1D || op = 0x25 ||
-        op = 0x2D || op = 0x35 || op = 0x3D || op = 0xA9 then
-      let bop := if op = 0x05 then .zadd else if op = 0x0D then .zor
-        else if op = 0x15 then .zadc else if op = 0x1D then .zsbb
-        else if op = 0x25 then .zand else if op = 0x2D then .zsub
-        else if op = 0x35 then .zxor else if op = 0x3D then .zcmp else .ztest
-      some (.binopRI bop .z64 0 (imm32 r 2), 6)
-    else if op = 0x88 then
+/-- Decode an ALU register-register opcode (`0x01`..`0x39`, `0x85`). -/
+def binopReg (opcode off : Nat) (r : Nat → BitVec 8) (hi : Nat) (rexW rexB : Bool) :
+    Option (X64Insn × Nat) :=
+  let sz := if rexW then ZSize.z64 else ZSize.z32
+  let bop := if opcode = 0x85 then ZBinopName.ztest
+    else if opcode = 0x01 then .zadd else if opcode = 0x09 then .zor
+    else if opcode = 0x11 then .zadc else if opcode = 0x19 then .zsbb
+    else if opcode = 0x21 then .zand else if opcode = 0x29 then .zsub
+    else if opcode = 0x31 then .zxor else .zcmp
+  match parseRM r off rexB with
+  | some p =>
+      if p.modBits = 3 then
+        some (.binopRR bop sz p.rm.regOf (hi + p.regBits), off + p.len)
+      else none
+  | none => none
+
+/-- Decode a `mov` immediate form (`0xB8 + r`). -/
+def movImm (low : Nat) (r : Nat → BitVec 8) (rexB rexW : Bool) : Option (X64Insn × Nat) :=
+  let dst := low + (if rexB then 8 else 0)
+  if rexW then some (.movRI .z64 dst (le64 r 2), 10)
+  else some (.movRI .z32 dst (imm32 r 2), 6)
+
+/-- Decode one instruction whose first byte is a REX prefix. -/
+def decodeRex (r : Nat → BitVec 8) (rexW rexR rexB : Bool) : Option (X64Insn × Nat) :=
+  let op := (r 1).toNat
+  let hi := if rexR then 8 else 0
+  match op with
+  | 0x05 => some (.binopRI .zadd .z64 0 (imm32 r 2), 6)
+  | 0x0D => some (.binopRI .zor .z64 0 (imm32 r 2), 6)
+  | 0x15 => some (.binopRI .zadc .z64 0 (imm32 r 2), 6)
+  | 0x1D => some (.binopRI .zsbb .z64 0 (imm32 r 2), 6)
+  | 0x25 => some (.binopRI .zand .z64 0 (imm32 r 2), 6)
+  | 0x2D => some (.binopRI .zsub .z64 0 (imm32 r 2), 6)
+  | 0x35 => some (.binopRI .zxor .z64 0 (imm32 r 2), 6)
+  | 0x3D => some (.binopRI .zcmp .z64 0 (imm32 r 2), 6)
+  | 0xA9 => some (.binopRI .ztest .z64 0 (imm32 r 2), 6)
+  | 0x88 =>
       match parseRM r 2 rexB with
       | some p =>
-          if p.modBits = 3 then
-            some (.movRR (.z8 true) p.rm.regOf ((if rexR then 8 else 0) + p.regBits), 2 + p.len)
+          if p.modBits = 3 then some (.movRR (.z8 true) p.rm.regOf (hi + p.regBits), 2 + p.len)
           else
             match baseOfRM p.rm with
-            | some (base, disp) =>
-                some (.movMR (.z8 true) ((if rexR then 8 else 0) + p.regBits) base disp,
-                  2 + p.len)
+            | some (base, disp) => some (.movMR (.z8 true) (hi + p.regBits) base disp, 2 + p.len)
             | none => none
       | none => none
-    else if op = 0x89 then
+  | 0x89 =>
       let sz := if rexW then ZSize.z64 else ZSize.z32
       match parseRM r 2 rexB with
       | some p =>
-          if p.modBits = 3 then
-            some (.movRR sz p.rm.regOf ((if rexR then 8 else 0) + p.regBits), 2 + p.len)
+          if p.modBits = 3 then some (.movRR sz p.rm.regOf (hi + p.regBits), 2 + p.len)
           else
             match baseOfRM p.rm with
-            | some (base, disp) =>
-                some (.movMR sz ((if rexR then 8 else 0) + p.regBits) base disp, 2 + p.len)
+            | some (base, disp) => some (.movMR sz (hi + p.regBits) base disp, 2 + p.len)
             | none => none
       | none => none
-    else if op = 0x8B then
+  | 0x8B =>
       let sz := if rexW then ZSize.z64 else ZSize.z32
       match parseRM r 2 rexB with
       | some p =>
           if p.modBits = 3 then none
           else
             match baseOfRM p.rm with
-            | some (base, disp) =>
-                some (.movRM sz ((if rexR then 8 else 0) + p.regBits) base disp, 2 + p.len)
+            | some (base, disp) => some (.movRM sz (hi + p.regBits) base disp, 2 + p.len)
             | none => none
       | none => none
-    else if op = 0x01 || op = 0x09 || op = 0x11 || op = 0x19 || op = 0x21 ||
-        op = 0x29 || op = 0x31 || op = 0x39 then
-      let sz := if rexW then ZSize.z64 else ZSize.z32
-      match binopOfOpcode op, parseRM r 2 rexB with
-      | some bop, some p =>
-          if p.modBits = 3 then
-            some (.binopRR bop sz p.rm.regOf ((if rexR then 8 else 0) + p.regBits), 2 + p.len)
-          else none
-      | _, _ => none
-    else if op = 0x85 then
-      let sz := if rexW then ZSize.z64 else ZSize.z32
-      match parseRM r 2 rexB with
-      | some p =>
-          if p.modBits = 3 then
-            some (.binopRR .ztest sz p.rm.regOf ((if rexR then 8 else 0) + p.regBits), 2 + p.len)
-          else none
-      | none => none
-    else if op = 0x83 then
+  | 0x01 => binopReg 0x01 2 r hi rexW rexB
+  | 0x09 => binopReg 0x09 2 r hi rexW rexB
+  | 0x11 => binopReg 0x11 2 r hi rexW rexB
+  | 0x19 => binopReg 0x19 2 r hi rexW rexB
+  | 0x21 => binopReg 0x21 2 r hi rexW rexB
+  | 0x29 => binopReg 0x29 2 r hi rexW rexB
+  | 0x31 => binopReg 0x31 2 r hi rexW rexB
+  | 0x39 => binopReg 0x39 2 r hi rexW rexB
+  | 0x85 => binopReg 0x85 2 r hi rexW rexB
+  | 0x83 =>
       match parseRM r 2 rexB with
       | some p =>
           match binopOfExt p.regBits with
@@ -395,7 +350,7 @@ def decode (r : Nat → BitVec 8) : Option (X64Insn × Nat) :=
               else none
           | none => none
       | none => none
-    else if op = 0x81 then
+  | 0x81 =>
       match parseRM r 2 rexB with
       | some p =>
           match binopOfExt p.regBits with
@@ -405,7 +360,7 @@ def decode (r : Nat → BitVec 8) : Option (X64Insn × Nat) :=
               else none
           | none => none
       | none => none
-    else if op = 0xC1 then
+  | 0xC1 =>
       match parseRM r 2 rexB with
       | some p =>
           match shiftOfExt p.regBits with
@@ -415,7 +370,7 @@ def decode (r : Nat → BitVec 8) : Option (X64Insn × Nat) :=
               else none
           | none => none
       | none => none
-    else if op = 0xD1 then
+  | 0xD1 =>
       match parseRM r 2 rexB with
       | some p =>
           match shiftOfExt p.regBits with
@@ -424,7 +379,7 @@ def decode (r : Nat → BitVec 8) : Option (X64Insn × Nat) :=
               else none
           | none => none
       | none => none
-    else if op = 0xD3 then
+  | 0xD3 =>
       match parseRM r 2 rexB with
       | some p =>
           match shiftOfExt p.regBits with
@@ -433,7 +388,7 @@ def decode (r : Nat → BitVec 8) : Option (X64Insn × Nat) :=
               else none
           | none => none
       | none => none
-    else if op = 0xF7 then
+  | 0xF7 =>
       match parseRM r 2 rexB with
       | some p =>
           if p.modBits = 3 then
@@ -445,7 +400,7 @@ def decode (r : Nat → BitVec 8) : Option (X64Insn × Nat) :=
               | none => none
           else none
       | none => none
-    else if op = 0xFF then
+  | 0xFF =>
       match parseRM r 2 rexB with
       | some p =>
           if p.modBits = 3 then
@@ -454,20 +409,22 @@ def decode (r : Nat → BitVec 8) : Option (X64Insn × Nat) :=
             | none => none
           else none
       | none => none
-    else if op = 0x8D then
+  | 0x8D =>
       match parseRM r 2 rexB with
       | some p =>
           match p.rm with
-          | .zm none .ripBase disp =>
-              some (.lea .z64 ((if rexR then 8 else 0) + p.regBits) disp, 2 + p.len)
+          | .zm none .ripBase disp => some (.lea .z64 (hi + p.regBits) disp, 2 + p.len)
           | _ => none
       | none => none
-    else if op = 0xB8 || op = 0xB9 || op = 0xBA || op = 0xBB ||
-        op = 0xBC || op = 0xBD || op = 0xBE || op = 0xBF then
-      let dst := (op - 0xB8) + (if rexB then 8 else 0)
-      if rexW then some (.movRI .z64 dst (le64 r 2), 10)
-      else some (.movRI .z32 dst (imm32 r 2), 6)
-    else if op = 0x0F then
+  | 0xB8 => movImm 0 r rexB rexW
+  | 0xB9 => movImm 1 r rexB rexW
+  | 0xBA => movImm 2 r rexB rexW
+  | 0xBB => movImm 3 r rexB rexW
+  | 0xBC => movImm 4 r rexB rexW
+  | 0xBD => movImm 5 r rexB rexW
+  | 0xBE => movImm 6 r rexB rexW
+  | 0xBF => movImm 7 r rexB rexW
+  | 0x0F =>
       let b2 := (r 2).toNat
       if 0x80 ≤ b2 && b2 ≤ 0x8F then
         match condOfCode (b2 - 0x80) with
@@ -487,8 +444,7 @@ def decode (r : Nat → BitVec 8) : Option (X64Insn × Nat) :=
         | some p =>
             match baseOfRM p.rm with
             | some (base, disp) =>
-                some (.movzxRM (.z8 true) .z64 ((if rexR then 8 else 0) + p.regBits) base disp,
-                  3 + p.len)
+                some (.movzxRM (.z8 true) .z64 (hi + p.regBits) base disp, 3 + p.len)
             | none => none
         | none => none
       else if b2 = 0xB7 then
@@ -496,111 +452,189 @@ def decode (r : Nat → BitVec 8) : Option (X64Insn × Nat) :=
         | some p =>
             match baseOfRM p.rm with
             | some (base, disp) =>
-                some (.movzxRM .z16 .z64 ((if rexR then 8 else 0) + p.regBits) base disp,
-                  3 + p.len)
+                some (.movzxRM .z16 .z64 (hi + p.regBits) base disp, 3 + p.len)
             | none => none
         | none => none
       else none
-    else none
-  else if b0 = 0xFF then
-    match parseRM r 1 false with
-    | some p =>
-        if p.modBits = 3 then
-          match group5OfExt p.regBits p.rm.regOf with
-          | some insn => some (insn, 1 + p.len)
-          | none => none
-        else none
-    | none => none
-  else if b0 = 0x66 then
-    let b1 := (r 1).toNat
-    if 0x40 ≤ b1 && b1 ≤ 0x4F then
-      let rexW := b1 % 16 ≥ 8
-      let rexR := b1 % 8 ≥ 4
-      let rexB := b1 % 2 = 1
-      let op := (r 2).toNat
-      if op = 0x0F then decodeSSE r 3 b0 true rexW rexR rexB
-      else if op = 0x89 then
-        match parseRM r 3 rexB with
-        | some p =>
-            if p.modBits = 3 then
-              some (.movRR .z16 p.rm.regOf ((if rexR then 8 else 0) + p.regBits), 3 + p.len)
-            else
-              match baseOfRM p.rm with
-              | some (base, disp) =>
-                  some (.movMR .z16 ((if rexR then 8 else 0) + p.regBits) base disp, 3 + p.len)
-              | none => none
-        | none => none
-      else if op = 0x8B then
-        match parseRM r 3 rexB with
-        | some p =>
-            if p.modBits = 3 then none
-            else
-              match baseOfRM p.rm with
-              | some (base, disp) =>
-                  some (.movRM .z16 ((if rexR then 8 else 0) + p.regBits) base disp, 3 + p.len)
-              | none => none
-        | none => none
-      else none
-    else if b1 = 0x0F then decodeSSE r 2 b0 false false false false
-    else if b1 = 0x89 then
-      match parseRM r 2 false with
+  | _ => none
+
+/-- Decode one instruction whose first byte is not a REX prefix. -/
+def decodeNoRex (r : Nat → BitVec 8) : Option (X64Insn × Nat) :=
+  let b0 := (r 0).toNat
+  match b0 with
+  | 0x88 =>
+      match parseRM r 1 false with
       | some p =>
-          if p.modBits = 3 then some (.movRR .z16 p.rm.regOf p.regBits, 2 + p.len)
+          if p.modBits = 3 then some (.movRR (.z8 false) p.rm.regOf p.regBits, 1 + p.len)
           else
             match baseOfRM p.rm with
-            | some (base, disp) => some (.movMR .z16 p.regBits base disp, 2 + p.len)
+            | some (base, disp) => some (.movMR (.z8 false) p.regBits base disp, 1 + p.len)
             | none => none
       | none => none
-    else if b1 = 0x8B then
-      match parseRM r 2 false with
+  | 0x89 =>
+      match parseRM r 1 false with
+      | some p =>
+          if p.modBits = 3 then some (.movRR .z32 p.rm.regOf p.regBits, 1 + p.len)
+          else
+            match baseOfRM p.rm with
+            | some (base, disp) => some (.movMR .z32 p.regBits base disp, 1 + p.len)
+            | none => none
+      | none => none
+  | 0x8B =>
+      match parseRM r 1 false with
       | some p =>
           if p.modBits = 3 then none
           else
             match baseOfRM p.rm with
-            | some (base, disp) => some (.movRM .z16 p.regBits base disp, 2 + p.len)
+            | some (base, disp) => some (.movRM .z32 p.regBits base disp, 1 + p.len)
             | none => none
       | none => none
-    else none
-  else if b0 = 0xF2 || b0 = 0xF3 then
-    let b1 := (r 1).toNat
-    if 0x40 ≤ b1 && b1 ≤ 0x4F then
-      let rexW := b1 % 16 ≥ 8
-      let rexR := b1 % 8 ≥ 4
-      let rexB := b1 % 2 = 1
-      if (r 2).toNat = 0x0F then decodeSSE r 3 b0 true rexW rexR rexB
+  | 0x01 => binopReg 0x01 1 r 0 false false
+  | 0x09 => binopReg 0x09 1 r 0 false false
+  | 0x11 => binopReg 0x11 1 r 0 false false
+  | 0x19 => binopReg 0x19 1 r 0 false false
+  | 0x21 => binopReg 0x21 1 r 0 false false
+  | 0x29 => binopReg 0x29 1 r 0 false false
+  | 0x31 => binopReg 0x31 1 r 0 false false
+  | 0x39 => binopReg 0x39 1 r 0 false false
+  | 0x85 => binopReg 0x85 1 r 0 false false
+  | 0x90 => some (.nop 1, 1)
+  | 0xF5 => some (.cmc, 1)
+  | 0xE9 => some (.jcc .zAlways (imm32 r 1), 5)
+  | 0x7A => some (.jcc .zP (imm8 r 1), 2)
+  | 0x05 => some (.binopRI .zadd .z64 0 (imm32 r 1), 5)
+  | 0x0D => some (.binopRI .zor .z64 0 (imm32 r 1), 5)
+  | 0x15 => some (.binopRI .zadc .z64 0 (imm32 r 1), 5)
+  | 0x1D => some (.binopRI .zsbb .z64 0 (imm32 r 1), 5)
+  | 0x25 => some (.binopRI .zand .z64 0 (imm32 r 1), 5)
+  | 0x2D => some (.binopRI .zsub .z64 0 (imm32 r 1), 5)
+  | 0x35 => some (.binopRI .zxor .z64 0 (imm32 r 1), 5)
+  | 0x3D => some (.binopRI .zcmp .z64 0 (imm32 r 1), 5)
+  | 0xA9 => some (.binopRI .ztest .z64 0 (imm32 r 1), 5)
+  | 0xB8 => some (.movRI .z32 0 (imm32 r 1), 5)
+  | 0xB9 => some (.movRI .z32 1 (imm32 r 1), 5)
+  | 0xBA => some (.movRI .z32 2 (imm32 r 1), 5)
+  | 0xBB => some (.movRI .z32 3 (imm32 r 1), 5)
+  | 0xBC => some (.movRI .z32 4 (imm32 r 1), 5)
+  | 0xBD => some (.movRI .z32 5 (imm32 r 1), 5)
+  | 0xBE => some (.movRI .z32 6 (imm32 r 1), 5)
+  | 0xBF => some (.movRI .z32 7 (imm32 r 1), 5)
+  | 0xFF =>
+      match parseRM r 1 false with
+      | some p =>
+          if p.modBits = 3 then
+            match group5OfExt p.regBits p.rm.regOf with
+            | some insn => some (insn, 1 + p.len)
+            | none => none
+          else none
+      | none => none
+  | 0x0F =>
+      let b1 := (r 1).toNat
+      if 0x80 ≤ b1 && b1 ≤ 0x8F then
+        match condOfCode (b1 - 0x80) with
+        | some cond => some (.jcc cond (imm32 r 2), 6)
+        | none => none
+      else if 0x90 ≤ b1 && b1 ≤ 0x9F then
+        match parseRM r 2 false with
+        | some p =>
+            match condOfCode (b1 - 0x90) with
+            | some cond =>
+                if p.modBits = 3 then some (.setcc cond false p.rm.regOf, 2 + p.len)
+                else none
+            | none => none
+        | none => none
+      else if b1 = 0xB6 then
+        match parseRM r 2 false with
+        | some p =>
+            match baseOfRM p.rm with
+            | some (base, disp) => some (.movzxRM (.z8 true) .z64 p.regBits base disp, 2 + p.len)
+            | none => none
+        | none => none
+      else if b1 = 0xB7 then
+        match parseRM r 2 false with
+        | some p =>
+            match baseOfRM p.rm with
+            | some (base, disp) => some (.movzxRM .z16 .z64 p.regBits base disp, 2 + p.len)
+            | none => none
+        | none => none
       else none
-    else if b1 = 0x0F then decodeSSE r 2 b0 false false false false
-    else none
-  else if b0 = 0x0F then
-    let b1 := (r 1).toNat
-    if 0x80 ≤ b1 && b1 ≤ 0x8F then
-      match condOfCode (b1 - 0x80) with
-      | some cond => some (.jcc cond (imm32 r 2), 6)
-      | none => none
-    else if 0x90 ≤ b1 && b1 ≤ 0x9F then
-      match parseRM r 2 false with
-      | some p =>
-          match condOfCode (b1 - 0x90) with
-          | some cond =>
-              if p.modBits = 3 then some (.setcc cond false p.rm.regOf, 2 + p.len)
-              else none
+  | 0x66 =>
+      let b1 := (r 1).toNat
+      if 0x40 ≤ b1 && b1 ≤ 0x4F then
+        let rexW := b1 % 16 ≥ 8
+        let rexR := b1 % 8 ≥ 4
+        let rexB := b1 % 2 = 1
+        let op := (r 2).toNat
+        if op = 0x0F then decodeSSE r 3 0x66 true rexW rexR rexB
+        else if op = 0x89 then
+          match parseRM r 3 rexB with
+          | some p =>
+              let hi := if rexR then 8 else 0
+              if p.modBits = 3 then some (.movRR .z16 p.rm.regOf (hi + p.regBits), 3 + p.len)
+              else
+                match baseOfRM p.rm with
+                | some (base, disp) => some (.movMR .z16 (hi + p.regBits) base disp, 3 + p.len)
+                | none => none
           | none => none
-      | none => none
-    else if b1 = 0xB6 then
-      match parseRM r 2 false with
-      | some p =>
-          match baseOfRM p.rm with
-          | some (base, disp) => some (.movzxRM (.z8 true) .z64 p.regBits base disp, 2 + p.len)
+        else if op = 0x8B then
+          match parseRM r 3 rexB with
+          | some p =>
+              let hi := if rexR then 8 else 0
+              if p.modBits = 3 then none
+              else
+                match baseOfRM p.rm with
+                | some (base, disp) => some (.movRM .z16 (hi + p.regBits) base disp, 3 + p.len)
+                | none => none
           | none => none
-      | none => none
-    else if b1 = 0xB7 then
-      match parseRM r 2 false with
-      | some p =>
-          match baseOfRM p.rm with
-          | some (base, disp) => some (.movzxRM .z16 .z64 p.regBits base disp, 2 + p.len)
-          | none => none
-      | none => none
-    else none
-  else none
+        else none
+      else if b1 = 0x0F then decodeSSE r 2 0x66 false false false false
+      else if b1 = 0x89 then
+        match parseRM r 2 false with
+        | some p =>
+            if p.modBits = 3 then some (.movRR .z16 p.rm.regOf p.regBits, 2 + p.len)
+            else
+              match baseOfRM p.rm with
+              | some (base, disp) => some (.movMR .z16 p.regBits base disp, 2 + p.len)
+              | none => none
+        | none => none
+      else if b1 = 0x8B then
+        match parseRM r 2 false with
+        | some p =>
+            if p.modBits = 3 then none
+            else
+              match baseOfRM p.rm with
+              | some (base, disp) => some (.movRM .z16 p.regBits base disp, 2 + p.len)
+              | none => none
+        | none => none
+      else none
+  | 0xF2 =>
+      let b1 := (r 1).toNat
+      if 0x40 ≤ b1 && b1 ≤ 0x4F then
+        let rexW := b1 % 16 ≥ 8
+        let rexR := b1 % 8 ≥ 4
+        let rexB := b1 % 2 = 1
+        if (r 2).toNat = 0x0F then decodeSSE r 3 0xF2 true rexW rexR rexB else none
+      else if b1 = 0x0F then decodeSSE r 2 0xF2 false false false false
+      else none
+  | 0xF3 =>
+      let b1 := (r 1).toNat
+      if 0x40 ≤ b1 && b1 ≤ 0x4F then
+        let rexW := b1 % 16 ≥ 8
+        let rexR := b1 % 8 ≥ 4
+        let rexB := b1 % 2 = 1
+        if (r 2).toNat = 0x0F then decodeSSE r 3 0xF3 true rexW rexR rexB else none
+      else if b1 = 0x0F then decodeSSE r 2 0xF3 false false false false
+      else none
+  | _ =>
+      if 0x40 ≤ b0 && b0 ≤ 0x4F then
+        let rexW := b0 % 16 ≥ 8
+        let rexR := b0 % 8 ≥ 4
+        let rexB := b0 % 2 = 1
+        decodeRex r rexW rexR rexB
+      else none
+
+/-- Decode one instruction from a byte reader. -/
+def decode (r : Nat → BitVec 8) : Option (X64Insn × Nat) :=
+  decodeNoRex r
 
 end Flapjack.Compiler.Encoders.X64

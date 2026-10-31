@@ -257,6 +257,21 @@ theorem le64_bytes (imm : BitVec 64) :
   simp only [hb, le64]
   bv_decide
 
+/-- `le64` reads back eight `e_imm64` bytes at any offset. -/
+theorem le64_at (imm : BitVec 64) (off : Nat) (r : Nat → BitVec 8)
+    (hr : ∀ j, j < 8 → r (off + j) = byte (imm.toNat / 2^(8*j))) :
+    le64 r off = imm := by
+  have e0 : r off = byte (imm.toNat / 2^(8*0)) := by simpa using hr 0 (by omega)
+  have e1 := hr 1 (by omega)
+  have e2 := hr 2 (by omega)
+  have e3 := hr 3 (by omega)
+  have e4 := hr 4 (by omega)
+  have e5 := hr 5 (by omega)
+  have e6 := hr 6 (by omega)
+  have e7 := hr 7 (by omega)
+  simp only [le64, e0, e1, e2, e3, e4, e5, e6, e7]
+  exact le64_bytes imm
+
 /-- `imm32` reads back an `e_imm32` immediate in the signed 32-bit range. -/
 theorem imm32_eImm32 (imm : BitVec 64)
     (h1 : -(2^31 : Int) ≤ imm.toInt) (h2 : imm.toInt < 2^31) :
@@ -264,6 +279,19 @@ theorem imm32_eImm32 (imm : BitVec 64)
   rw [imm32, le32_bytes]
   have := setWidth32_toInt imm h1 h2
   rw [this, BitVec.ofInt_toInt]
+
+/-- `imm32` reads back an `e_imm32` immediate from any offset. -/
+theorem imm32_eImm32_at (imm : BitVec 64) (off : Nat) (r : Nat → BitVec 8)
+    (hr : ∀ j, j < 4 → r (off + j) = byte (imm.toNat / 2^(8*j)))
+    (h1 : -(2^31 : Int) ≤ imm.toInt) (h2 : imm.toInt < 2^31) :
+    imm32 r off = imm := by
+  rw [imm32]
+  have e0 : r off = byte (imm.toNat / 2^(8*0)) := by simpa using hr 0 (by omega)
+  have e1 := hr 1 (by omega)
+  have e2 := hr 2 (by omega)
+  have e3 := hr 3 (by omega)
+  simp only [le32, e0, e1, e2, e3]
+  exact imm32_eImm32 imm h1 h2
 
 /-- `imm8` reads back an `e_imm8` immediate in the signed 8-bit range. -/
 theorem imm8_eImm8 (imm : BitVec 64)
