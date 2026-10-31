@@ -522,6 +522,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.CallRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.VariableEvaluation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureEvaluation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureExtraction
+import Flapjack.Compiler.Backend.BviTmc.Proofs.CallExtraction
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
