@@ -2337,4 +2337,188 @@ theorem expressionSimulation_app_singletonRec_partial_case {C F : Type}
           (by simpa [ClosProps.everyFnVarsSome] using varsParts.1)
           (codeInstalled_subspt functionInstalled growth) envArgs statesArgs
 
+/-- Extending a partial closure with another undersaturated argument prefix
+preserves the value relation and selects the corresponding installed stub. -/
+theorem vRel_partial_extend {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (captured oldArgs newArgs : List ClosSem.Value) (fields oldTargets newTargets : List BvlSem.Value)
+    (original oldClosure newClosure : ClosSem.Value) (targetOriginal : BvlSem.Value) (arity : Nat)
+    (states : stateRel f s t)
+    (envRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) captured fields)
+    (oldRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) oldArgs oldTargets)
+    (newRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) newArgs newTargets)
+    (oldNonempty : oldArgs ≠ []) (combinedBound : (newArgs ++ oldArgs).length < arity)
+    (totalBound : arity - 1 < s.maxApp)
+    (oldAdded : addArgs original oldArgs = some oldClosure)
+    (newAdded : addArgs oldClosure newArgs = some newClosure)
+    (getArgs : getNumArgs original = some arity)
+    (closure : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+      (captured, fields) original targetOriginal) :
+    vRel s.maxApp f t.refs t.code newClosure
+      (.block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1)
+          ((newTargets ++ oldTargets).length - 1)) ::
+        .number (Int.ofNat (arity - 1 - (newArgs ++ oldArgs).length)) ::
+        targetOriginal :: (newTargets ++ oldTargets))) := by
+  have combinedRel : List.Forall₂ (vRel s.maxApp f t.refs t.code)
+      (newArgs ++ oldArgs) (newTargets ++ oldTargets) := List.rel_append newRel oldRel
+  have combinedNonempty : newArgs ++ oldArgs ≠ [] := by
+    intro empty
+    simp only [List.append_eq_nil_iff] at empty
+    exact oldNonempty empty.2
+  have targetLength : (newTargets ++ oldTargets).length = (newArgs ++ oldArgs).length := combinedRel.length_eq.symm
+  have countPositive : 0 < (newArgs ++ oldArgs).length := List.length_pos_iff.mpr combinedNonempty
+  have previousBound : (newTargets ++ oldTargets).length - 1 < arity - 1 := by omega
+  have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) ((newTargets ++ oldTargets).length - 1)
+    ⟨totalBound, previousBound⟩
+  have sizeEq : arity - 1 - ((newTargets ++ oldTargets).length - 1) + 1 =
+      arity - (newArgs ++ oldArgs).length + 1 := by omega
+  have installed' : sptLookup (partialAppFnLocation s.maxApp (arity - 1) ((newTargets ++ oldTargets).length - 1)) t.code =
+      some (arity - (newArgs ++ oldArgs).length + 1,
+        generatePartialAppClosureFn (arity - 1) ((newTargets ++ oldTargets).length - 1)) := by
+    rw [sizeEq] at installed
+    exact installed
+  have added : addArgs original (newArgs ++ oldArgs) = some newClosure := by
+    rw [addArgs_append original oldArgs oldClosure newArgs oldAdded]
+    exact newAdded
+  exact .partialClosure envRel combinedRel combinedNonempty combinedBound installed' added getArgs closure
+
+/-- The branch that extends an already partially applied closure. -/
+def genericAppPartialExisting (maxApp n : Nat) : Bvl.Exp :=
+  match genericAppPartialChoice maxApp n with
+  | .ifThenElse _ _ existing => existing
+  | _ => .var 0
+
+/-- A partial-closure tag selects the extension branch after the generic
+stub's arity test and tick sequence. -/
+theorem evaluate_genericApp_partial_existing {C F : Type} (s : BvlSem.State C F)
+    (maxApp n total : Nat) (args fields : List BvlSem.Value) (ptr : BvlSem.Value)
+    (length : args.length = n + 1) (bound : n + 1 ≤ total) :
+    BvlSem.evaluate [generateGenericApp maxApp n]
+      (args ++ [.block 31 (ptr :: .number (Int.ofNat total) :: fields)]) s =
+    if s.clock < n then (.err (.abort .timeoutError), { s with clock := 0 })
+    else BvlSem.evaluate [genericAppPartialExisting maxApp n]
+      (.number (Int.ofNat total - Int.ofNat (n + 1)) ::
+        (args ++ [.block 31 (ptr :: .number (Int.ofNat total) :: fields)])) (BvlSem.decClock n s) := by
+  rw [evaluate_genericApp_partial_ticks s maxApp n total 31 args fields ptr length bound]
+  split
+  · rfl
+  · obtain ⟨other, shape⟩ := genericAppPartialChoice_shape maxApp n
+    have otherEq : other = genericAppPartialExisting maxApp n := by
+      simp [genericAppPartialExisting, shape]
+    rw [shape, otherEq, BvlSem.evaluate, BvlSem.fixClock_evaluate]
+    have test : BvlSem.evaluate [.op (.blockOp (.tagEq 30)) [.var (n + 2)]]
+        (.number (Int.ofNat total - Int.ofNat (n + 1)) ::
+          (args ++ [.block 31 (ptr :: .number (Int.ofNat total) :: fields)])) (BvlSem.decClock n s) =
+        (.val [BvlSem.boolValue false], BvlSem.decClock n s) := by
+      simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock, ← length]
+    rw [test]
+    simp [BvlSem.boolValue, BackendCommon.boolToTag, BackendCommon.falseTag, BvlSem.asBool]
+
+/-- The existing-partial branch reconstructs the original total arity and
+adds the new arguments to the saved-argument count when computing its slot. -/
+theorem evaluate_existingPartial_index {C F : Type} {α : Type}
+    (maxApp : α) (s : BvlSem.State C F) (rest : List BvlSem.Value)
+    (n remaining saved : Nat) (bound : n < remaining) :
+    BvlSem.evaluate [partialAppFnLocationCode maxApp
+      (.op (.intOp .add) [.var 0, .op (.intOp .add) [mkConst (n + 1), .var 1]])
+      (.op (.intOp .add) [.var 1, mkConst n])]
+      (.number (Int.ofNat saved) :: .number (Int.ofNat (remaining - (n + 1))) :: rest) s =
+    (.val [.number (Int.ofNat (saved + n + (remaining + saved) * (remaining + saved - 1) / 2))], s) := by
+  let env := .number (Int.ofNat saved) :: .number (Int.ofNat (remaining - (n + 1))) :: rest
+  have bound' : n + 1 ≤ remaining := by omega
+  have totalRun : BvlSem.evaluate [.op (.intOp .add)
+      [.var 0, .op (.intOp .add) [mkConst (n + 1), .var 1]]] env s =
+      (.val [.number (Int.ofNat (remaining + saved))], s) := by
+    have sub := Int.ofNat_sub bound'
+    simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyNumeric,
+      BvlSem.doIntApp, mkConst, env]
+    omega
+  have previousRun : BvlSem.evaluate [.op (.intOp .add) [.var 1, mkConst n]]
+      (.number (Int.ofNat (remaining + saved)) :: env) s =
+      (.val [.number (Int.ofNat (saved + n))], s) := by
+    simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyNumeric,
+      BvlSem.doIntApp, mkConst, env, Int.add_comm]
+  exact evaluate_partialAppFnLocationCode_nat maxApp s env _ _ (remaining + saved) (saved + n)
+    (by omega) totalRun previousRun
+
+/-- The existing-partial branch's computed slot retrieves the stub for the
+combined saved-argument count. -/
+theorem evaluate_existingPartial_pointer {C F : Type}
+    (s : BvlSem.State C F) (rest : List BvlSem.Value)
+    (maxApp n remaining saved : Nat) (bound : n < remaining) (totalBound : remaining + saved < maxApp)
+    (global : ClosSem.getGlobal 0 s.globals = some (some (globalTable maxApp))) :
+    BvlSem.evaluate [mkEl (.op (.globOp (.global 0)) [])
+      (partialAppFnLocationCode maxApp
+        (.op (.intOp .add) [.var 0, .op (.intOp .add) [mkConst (n + 1), .var 1]])
+        (.op (.intOp .add) [.var 1, mkConst n]))]
+      (.number (Int.ofNat saved) :: .number (Int.ofNat (remaining - (n + 1))) :: rest) s =
+    (.val [.codePtr (partialAppFnLocation maxApp (remaining + saved) (saved + n))], s) := by
+  apply evaluate_partialApp_global_pointer s _ _ maxApp (remaining + saved) (saved + n)
+    totalBound (by omega) global
+  exact evaluate_existingPartial_index maxApp s rest n remaining saved bound
+
+/-- The body following the saved-argument count in the extension branch. -/
+def genericAppPartialExistingBody (maxApp n : Nat) : Bvl.Exp :=
+  match genericAppPartialExisting maxApp n with
+  | .let _ body => body
+  | _ => .var 0
+
+/-- The extension branch first binds the count of previously saved arguments. -/
+theorem genericAppPartialExisting_shape (maxApp n : Nat) :
+    genericAppPartialExisting maxApp n = .let
+      [.op (.intOp .sub) [mkConst 3, .op (.blockOp .lengthBlock) [.var (n + 2)]]]
+      (genericAppPartialExistingBody maxApp n) := by
+  have fullShape : ∃ normal body, genericAppPartialChoice maxApp n =
+      .ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) normal
+        (.let [.op (.intOp .sub) [mkConst 3, .op (.blockOp .lengthBlock) [.var (n + 2)]]] body) := by
+    unfold genericAppPartialChoice genericAppPartialBranch generateGenericApp
+    change ∃ normal body, stripGenericAppTicks n (genericAppTicks n
+      (.ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) _ _)) = _
+    rw [stripGenericAppTicks_generated]
+    exact ⟨_, _, rfl⟩
+  obtain ⟨normal, body, fullShape⟩ := fullShape
+  have existsLet : ∃ body, genericAppPartialExisting maxApp n = .let
+      [.op (.intOp .sub) [mkConst 3, .op (.blockOp .lengthBlock) [.var (n + 2)]]] body := by
+    refine ⟨body, ?_⟩
+    simp [genericAppPartialExisting, fullShape]
+  obtain ⟨body, existsLet⟩ := existsLet
+  simp [genericAppPartialExistingBody, existsLet]
+
+/-- Entering the extension branch binds the length of the old argument suffix,
+leaving the closure and new arguments available to the constructor. -/
+theorem evaluate_genericAppPartialExisting_enter {C F : Type} (s : BvlSem.State C F)
+    (maxApp n remaining : Nat) (args saved : List BvlSem.Value) (ptr original : BvlSem.Value)
+    (length : args.length = n + 1) :
+    BvlSem.evaluate [genericAppPartialExisting maxApp n]
+      (.number (Int.ofNat (remaining - (n + 1))) ::
+        (args ++ [.block 31 (ptr :: .number (Int.ofNat remaining) :: original :: saved)])) s =
+    BvlSem.evaluate [genericAppPartialExistingBody maxApp n]
+      (.number (Int.ofNat saved.length) :: .number (Int.ofNat (remaining - (n + 1))) ::
+        (args ++ [.block 31 (ptr :: .number (Int.ofNat remaining) :: original :: saved)])) s := by
+  have countRun : BvlSem.evaluate [.op (.intOp .sub)
+      [mkConst 3, .op (.blockOp .lengthBlock) [.var (n + 2)]]]
+      (.number (Int.ofNat (remaining - (n + 1))) ::
+        (args ++ [.block 31 (ptr :: .number (Int.ofNat remaining) :: original :: saved)])) s =
+      (.val [.number (Int.ofNat saved.length)], s) := by
+    simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock,
+      BvlSem.applyNumeric, BvlSem.doIntApp, mkConst, ← length]
+    omega
+  rw [genericAppPartialExisting_shape, BvlSem.evaluate, BvlSem.fixClock_evaluate, countRun]
+  rfl
+
+/-- In the extension branch's bound environment, the generated global-table
+lookup selects the stub for the old and new saved arguments. -/
+theorem evaluate_genericAppPartialExisting_pointer {C F : Type} (s : BvlSem.State C F)
+    (maxApp n remaining : Nat) (args saved : List BvlSem.Value) (ptr original : BvlSem.Value)
+    (bound : n < remaining) (totalBound : remaining + saved.length < maxApp)
+    (global : ClosSem.getGlobal 0 s.globals = some (some (globalTable maxApp))) :
+    BvlSem.evaluate [mkEl (.op (.globOp (.global 0)) [])
+      (partialAppFnLocationCode maxApp
+        (.op (.intOp .add) [.var 0, .op (.intOp .add) [mkConst (n + 1), .var 1]])
+        (.op (.intOp .add) [.var 1, mkConst n]))]
+      (.number (Int.ofNat saved.length) :: .number (Int.ofNat (remaining - (n + 1))) ::
+        (args ++ [.block 31 (ptr :: .number (Int.ofNat remaining) :: original :: saved)])) s =
+      (.val [.codePtr (partialAppFnLocation maxApp (remaining + saved.length) (saved.length + n))], s) :=
+  evaluate_existingPartial_pointer s _ maxApp n remaining saved.length bound totalBound global
+
 end Flapjack.Compiler.Backend.ClosToBvl
