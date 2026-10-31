@@ -5,6 +5,68 @@ import Flapjack.Compiler.Backend.BviInline.Proofs.Total
 namespace Flapjack.Compiler.Backend.BviInline
 open Bvi
 
+/-- Flapjack infrastructure: sufficient fuel makes the executed inliner
+equal the total source-shaped traversal for every cache and expression. -/
+theorem inlineExpFuel_eq_source (fuel : Nat) (cache : Spt (Nat × Exp)) (expression : Exp)
+    (bound : expBudget expression < fuel) : inlineExpFuel fuel cache expression = some (inlineExpSource cache expression) := by
+  induction fuel generalizing expression with
+  | zero => omega
+  | succ fuel ih =>
+    have mapRun : ∀ xs, listBudget xs < fuel →
+        xs.mapM (inlineExpFuel fuel cache) = some (inlineExpsSource cache xs) := by
+      intro xs bound
+      induction xs with
+      | nil => simp [inlineExpsSource]
+      | cons e es tail =>
+        have headBound : expBudget e < fuel := by simp [listBudget] at bound; omega
+        have tailBound : listBudget es < fuel := by simp [listBudget] at bound; omega
+        simp [inlineExpsSource, List.mapM_cons, ih e headBound, tail tailBound]
+    cases expression with
+    | var n => simp [inlineExpFuel, inlineExpSource]
+    | force loc n => simp [inlineExpFuel, inlineExpSource]
+    | ifThenElse x y z =>
+      have bx : expBudget x < fuel := by simp [expBudget] at bound; omega
+      have by' : expBudget y < fuel := by simp [expBudget] at bound; omega
+      have bz : expBudget z < fuel := by simp [expBudget] at bound; omega
+      simp [inlineExpFuel, inlineExpSource, ih x bx, ih y by', ih z bz]
+    | «let» xs body =>
+      have bx : listBudget xs < fuel := by simp [expBudget] at bound; omega
+      have bb : expBudget body < fuel := by simp [expBudget] at bound; omega
+      simp [inlineExpFuel, inlineExpSource, mapRun xs bx, ih body bb]
+    | raise body =>
+      have bb : expBudget body < fuel := by simp [expBudget] at bound; omega
+      simp [inlineExpFuel, inlineExpSource, ih body bb]
+    | tick body =>
+      have bb : expBudget body < fuel := by simp [expBudget] at bound; omega
+      simp [inlineExpFuel, inlineExpSource, ih body bb]
+    | call ticks target xs handler =>
+      cases handler with
+      | none =>
+        have bx : listBudget xs < fuel := by simp [expBudget] at bound; omega
+        cases target with
+        | none => simp [inlineExpFuel, inlineExpSource, mapRun xs bx]
+        | some name =>
+          cases lookup : sptLookup name cache with
+          | none => simp [inlineExpFuel, inlineExpSource, mapRun xs bx, lookup]
+          | some entry =>
+            obtain ⟨arity, body⟩ := entry
+            by_cases length : (inlineExpsSource cache xs).length = arity <;>
+              simp [inlineExpFuel, inlineExpSource, mapRun xs bx, lookup, length]
+      | some body =>
+        have bx : listBudget xs < fuel := by simp [expBudget] at bound; omega
+        have bb : expBudget body < fuel := by simp [expBudget] at bound; omega
+        simp [inlineExpFuel, inlineExpSource, mapRun xs bx, ih body bb]
+    | op op xs =>
+      have bx : listBudget xs < fuel := by simp [expBudget] at bound; omega
+      simp [inlineExpFuel, inlineExpSource, mapRun xs bx]
+    | letCall rets ticks target xs body =>
+      have bx : listBudget xs < fuel := by simp [expBudget] at bound; omega
+      have bb : expBudget body < fuel := by simp [expBudget] at bound; omega
+      simp [inlineExpFuel, inlineExpSource, mapRun xs bx, ih body bb]
+    | «return» xs =>
+      have bx : listBudget xs < fuel := by simp [expBudget] at bound; omega
+      simp [inlineExpFuel, inlineExpSource, mapRun xs bx]
+
 /-- Flapjack infrastructure: sufficient fuel makes the executed tick remover
 equal the total source-shaped traversal on every expression. -/
 theorem removeTicksFuel_eq_source (fuel : Nat) (expression : Exp)
@@ -58,6 +120,89 @@ theorem removeTicksFuel_eq_source (fuel : Nat) (expression : Exp)
     | «return» xs =>
       have bx : listBudget xs < fuel := by simp [expBudget] at bound; omega
       simp [removeTicksFuel, removeTicksSource, mapRun xs bx]
+
+/-- Flapjack infrastructure: every successful bounded inlining run is
+the source-shaped result, including runs below the sufficient budget. -/
+theorem inlineExpFuel_sound (fuel : Nat) (cache : Spt (Nat × Exp)) (expression result : Exp)
+    (run : inlineExpFuel fuel cache expression = some result) : result = inlineExpSource cache expression := by
+  induction fuel generalizing expression result with
+  | zero => simp [inlineExpFuel] at run
+  | succ fuel ih =>
+    have child : ∀ e, inlineExpFuel fuel cache e = some (inlineExpSource cache e) ∨ inlineExpFuel fuel cache e = none := by
+      intro e
+      cases eq : inlineExpFuel fuel cache e with
+      | none => exact Or.inr rfl
+      | some value =>
+        have same := ih e value eq
+        exact Or.inl (congrArg some same)
+    have list : ∀ xs, xs.mapM (inlineExpFuel fuel cache) = some (inlineExpsSource cache xs) ∨
+        xs.mapM (inlineExpFuel fuel cache) = none := by
+      intro xs
+      induction xs with
+      | nil => left; simp [inlineExpsSource]
+      | cons e es tail =>
+        rcases child e with head | head <;> rcases tail with rest | rest
+        · left; simp [List.mapM_cons, inlineExpsSource, head, rest]
+        · right; simp [List.mapM_cons, head, rest]
+        · right; simp [List.mapM_cons, head]
+        · right; simp [List.mapM_cons, head]
+    cases expression with
+    | var n => simpa [inlineExpFuel, inlineExpSource] using run.symm
+    | force loc n => simpa [inlineExpFuel, inlineExpSource] using run.symm
+    | ifThenElse x y z =>
+      rcases child x with hx | hx <;> rcases child y with hy | hy <;> rcases child z with hz | hz <;>
+        simp_all [inlineExpFuel, inlineExpSource]
+    | «let» xs body =>
+      rcases list xs with hx | hx <;> rcases child body with hb | hb <;>
+        simp_all [inlineExpFuel, inlineExpSource]
+    | raise body =>
+      rcases child body with hb | hb <;> simp_all [inlineExpFuel, inlineExpSource]
+    | tick body =>
+      rcases child body with hb | hb <;> simp_all [inlineExpFuel, inlineExpSource]
+    | call ticks target xs handler =>
+      cases handler with
+      | none =>
+        rcases list xs with hx | hx
+        · cases target with
+          | none => simp_all [inlineExpFuel, inlineExpSource]
+          | some name =>
+            cases lookup : sptLookup name cache with
+            | none => simp_all [inlineExpFuel, inlineExpSource]
+            | some entry =>
+              obtain ⟨arity, body⟩ := entry
+              by_cases length : (inlineExpsSource cache xs).length = arity <;>
+                simp_all [inlineExpFuel, inlineExpSource]
+        · simp [inlineExpFuel, hx] at run
+      | some body =>
+        rcases list xs with hx | hx <;> rcases child body with hb | hb <;>
+          simp_all [inlineExpFuel, inlineExpSource]
+    | op op xs => rcases list xs with hx | hx <;> simp_all [inlineExpFuel, inlineExpSource]
+    | letCall rets ticks target xs body =>
+      rcases list xs with hx | hx <;> rcases child body with hb | hb <;>
+        simp_all [inlineExpFuel, inlineExpSource]
+    | «return» xs => rcases list xs with hx | hx <;> simp_all [inlineExpFuel, inlineExpSource]
+
+/-- Flapjack infrastructure: the retrying production inliner always returns
+the total source-shaped result, independently of the initial fuel. -/
+theorem inlineExpBounded_eq_source (fuel : Nat) (cache : Spt (Nat × Exp)) (expression : Exp) :
+    inlineExpBounded fuel cache expression = some (inlineExpSource cache expression) := by
+  cases run : inlineExpFuel fuel cache expression with
+  | none =>
+    have bound : expBudget expression < max fuel (expBudget expression + 1) := by omega
+    simp [inlineExpBounded, run, inlineExpFuel_eq_source _ cache expression bound]
+  | some result =>
+    have same := inlineExpFuel_sound fuel cache expression result run
+    simp [inlineExpBounded, run, same]
+
+/-- Flapjack infrastructure: the executed function-list traversal and its
+threaded cache agree with the source-shaped traversal. -/
+theorem inlineAllFuel_eq_source (fuel : Nat) (cache : Spt (Nat × Exp)) (program : List (Nat × Nat × Exp)) :
+    inlineAllFuel fuel cache program = some (inlineAllSource cache program) := by
+  induction program generalizing cache with
+  | nil => rfl
+  | cons entry rest ih =>
+    obtain ⟨name, arity, body⟩ := entry
+    simp [inlineAllFuel, inlineAllSource, inlineExpBounded_eq_source, ih]
 
 /-- Flapjack infrastructure: every successful bounded tick-removal run is
 the source-shaped result, including runs below the sufficient budget. -/
@@ -152,5 +297,15 @@ theorem compileProgFuel_tick_cleanup (fuel : Nat) (program intermediate : List (
       (fun output => some (cache, output)) = _
   rw [removeTicksProgram_eq_source]
   rfl
+
+/-- Flapjack infrastructure: the executed whole-program inliner and tick
+cleanup return the total source-shaped incremental result. -/
+theorem compileProgFuel_eq_source (fuel : Nat) (program : List (Nat × Nat × Exp)) :
+    compileProgFuel fuel program = some (compileIncSource .ln program) := by
+  have inlineRun := inlineAllFuel_eq_source fuel .ln program
+  cases result : inlineAllSource .ln program with
+  | mk cache intermediate =>
+    have run : inlineAllFuel fuel .ln program = some (cache, intermediate) := by simpa [result] using inlineRun
+    simpa [compileIncSource, result] using compileProgFuel_tick_cleanup fuel program intermediate cache run
 
 end Flapjack.Compiler.Backend.BviInline
