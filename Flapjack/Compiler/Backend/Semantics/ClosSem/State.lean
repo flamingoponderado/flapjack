@@ -27,6 +27,42 @@ structure State (C F : Type) where
   code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)
   maxApp : Nat
 
+/-- Explicit lookup-and-support view of the closure code and reference maps. -/
+structure StateBroad (C F : Type) where
+  globals : List (Option Value)
+  refs : Nat → Option (Ref Value)
+  refsFiniteSupport : ∃ keys : List Nat, ∀ key, refs key ≠ none → key ∈ keys
+  ffi : HolFfiState F
+  clock : Nat
+  compile : Compiler C
+  compileOracle : CompileOracle C
+  code : Nat → Option (Nat × ClosLang.Exp)
+  codeFiniteSupport : ∃ keys : List Nat, ∀ key, code key ≠ none → key ∈ keys
+  maxApp : Nat
+
+/-- Expose the two finite maps as their lookup functions and support witnesses. -/
+def State.toBroad {C F : Type} (s : State C F) : StateBroad C F :=
+  ⟨s.globals, s.refs.lookup, s.refs.finiteSupport, s.ffi, s.clock, s.compile,
+    s.compileOracle, s.code.lookup, s.code.finiteSupport, s.maxApp⟩
+
+/-- Rebuild the closure state using the canonical finite-map carriers. -/
+def State.ofBroad {C F : Type} (s : StateBroad C F) : State C F :=
+  ⟨s.globals, ⟨s.refs, s.refsFiniteSupport⟩, s.ffi, s.clock, s.compile,
+    s.compileOracle, ⟨s.code, s.codeFiniteSupport⟩, s.maxApp⟩
+
+/-- Both finite-map views roundtrip without additional premises. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) := by
+  constructor
+  · intro s; cases s; rfl
+  · intro s
+    cases s with
+    | mk globals refs ffi clock compile oracle code maxApp =>
+      cases refs
+      cases code
+      rfl
+
 /-- Subtract from the closure clock using natural-number subtraction. This
 proof-side operation awaits the finite-map representation review. -/
 def decClock {C F : Type} (n : Nat) (state : State C F) : State C F :=
