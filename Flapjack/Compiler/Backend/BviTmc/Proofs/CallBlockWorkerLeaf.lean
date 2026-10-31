@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockLeaf
+import Flapjack.Compiler.Backend.BviTmc.Proofs.IfWorker
 
 /-! Evaluation of the recursive-call leaf of an optimized call block. -/
 namespace Flapjack.Compiler.Backend.BviTmc.CallBlockWorkerLeaf
@@ -77,6 +78,49 @@ theorem aux_hole_to_worker (f : HolFiniteMapExact Nat Nat)
     ⟨tag, left, child, right, found⟩⟩
   simpa [idxEq] using knownIdx
 
+/-- Flapjack infrastructure: the same allocated hole can be identified by
+any in-bounds environment slot that contains its pointer. -/
+theorem alloc_hole_reindex (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (Ref Value)) (extras extras' : List Value)
+    (i i' idx ptr : Nat) (child : Value)
+    (hole : CallBlockEnvironment.allocHoleHasVal f refs extras i idx child)
+    (pointer : holEl i extras = .refPtr false ptr)
+    (bound' : i' < extras'.length) (pointer' : holEl i' extras' = .refPtr false ptr) :
+    CallBlockEnvironment.allocHoleHasVal f refs extras' i' idx child := by
+  obtain ⟨holePtr, tag, left, right, _, holePointer, index, small, outside, found⟩ := hole
+  rw [pointer] at holePointer
+  have same : holePtr = ptr := by simpa using holePointer.symm
+  subst holePtr
+  exact ⟨ptr, tag, left, right, bound', pointer', index, small, outside, found⟩
+
+/-- Flapjack infrastructure: an arbitrary auxiliary pointer slot supplies the
+worker body with its trailing pointer and index arguments. -/
+theorem aux_hole_to_worker_general (f : HolFiniteMapExact Nat Nat)
+    (sourceArgs targetArgs extras : List Value) (slot ptr idx : Nat)
+    (refs : HolFiniteMapExact Nat (Ref Value)) (child : Value)
+    (sameLength : sourceArgs.length = targetArgs.length)
+    (hole : CallBlockEnvironment.allocHoleHasVal f refs extras slot idx child)
+    (pointer : holEl slot extras = .refPtr false ptr) :
+    holeHasVal f sourceArgs (targetArgs ++ [.refPtr false ptr, .number (Int.ofNat idx)]) refs child ∧
+      holeNotFinalised refs ptr := by
+  have single := alloc_hole_reindex f refs extras [.refPtr false ptr] slot 0 idx ptr child
+    hole pointer (by simp) (by simp [holEl, holHd])
+  exact aux_hole_to_worker f sourceArgs targetArgs ptr idx refs child sameLength single
+
+/-- Flapjack infrastructure: a worker body returns its filled hole to the
+same arbitrary auxiliary pointer slot. -/
+theorem worker_hole_to_aux_general (f : HolFiniteMapExact Nat Nat)
+    (sourceArgs targetArgs extras : List Value) (slot ptr idx : Nat)
+    (refs : HolFiniteMapExact Nat (Ref Value)) (child : Value)
+    (sameLength : sourceArgs.length = targetArgs.length)
+    (hole : holeHasVal f sourceArgs (targetArgs ++ [.refPtr false ptr, .number (Int.ofNat idx)]) refs child)
+    (notFinal : holeNotFinalised refs ptr) (bound : slot < extras.length)
+    (pointer : holEl slot extras = .refPtr false ptr) :
+    CallBlockEnvironment.allocHoleHasVal f refs extras slot idx child := by
+  have single := worker_hole_to_aux f sourceArgs targetArgs ptr idx refs child sameLength hole notFinal
+  exact alloc_hole_reindex f refs [.refPtr false ptr] extras 0 slot idx ptr child
+    single (by simp [holEl, holHd]) bound pointer
+
 /-- Flapjack infrastructure: a worker call evaluates its ordinary arguments,
 then the hole pointer and index, and executes the resolved worker body. The
 worker simulation must still establish the body result and heap relations. -/
@@ -114,5 +158,77 @@ theorem evaluate_optimise_call {C F : Type} (ticks dest : Nat) (indices : List N
       cases payload with
       | exn value => rfl
       | ret values => exact False.elim (noReturn values rfl)
+
+/-- Flapjack infrastructure: an optimized result cannot return from the
+callee if its source result cannot return. -/
+theorem opt_result_no_return (f : HolFiniteMapExact Nat Nat) (source target : BviResult)
+    (related : ResultRelation.optResRel f source target)
+    (sourceNoReturn : ∀ values, source ≠ .err (.raise (.ret values))) :
+    ∀ values, target ≠ .err (.raise (.ret values)) := by
+  intro values eq
+  subst target
+  cases source with
+  | val _ => simp [ResultRelation.optResRel] at related
+  | err error =>
+    cases error with
+    | abort _ => simp [ResultRelation.optResRel, SemanticPrimitivesProps.excRel] at related
+    | raise payload =>
+      cases payload with
+      | exn _ => simp [ResultRelation.optResRel, SemanticPrimitivesProps.excRel, ResultRelation.eorRel] at related
+      | ret values' => exact sourceNoReturn values' rfl
+
+/-- Flapjack infrastructure: the recursive-call auxiliary conclusion follows
+from the smaller-clock worker-body simulation. Argument evaluation and lookup
+are stated separately so this also covers shifted auxiliary environments. -/
+theorem evaluate_aux_call_from_worker {C F : Type} (ticks dest : Nat) (indices : List Nat)
+    (ptrExp idxExp : Bvi.Exp) (env sourceArgs targetArgs extras : List Value)
+    (slot ptr idx : Nat) (f : HolFiniteMapExact Nat Nat) (target : BviState C F)
+    (oldRefs : HolFiniteMapExact Nat (Ref Value)) (body : Bvi.Exp)
+    (sourceResult : BviResult) (sourceFinal : BviState (Nat × C) F) (initial : Value)
+    (sameLength : sourceArgs.length = targetArgs.length)
+    (domain : oldRefs.domain ⊆ target.refs.domain)
+    (hole : CallBlockEnvironment.allocHoleHasVal f target.refs extras slot idx initial)
+    (pointer : holEl slot extras = .refPtr false ptr)
+    (argsRun : evaluate (indices.map Bvi.Exp.var) env target = (.val targetArgs, target))
+    (ptrRun : evaluate [ptrExp] env target = (.val [.refPtr false ptr], target))
+    (idxRun : evaluate [idxExp] env target = (.val [.number (Int.ofNat idx)], target))
+    (found : findCode (some dest) (targetArgs ++ [.refPtr false ptr, .number (Int.ofNat idx)]) target.code =
+      some (targetArgs ++ [.refPtr false ptr, .number (Int.ofNat idx)], body))
+    (enough : ¬target.clock < ticks + 1)
+    (sourceNoReturn : ∀ values, sourceResult ≠ .err (.raise (.ret values)))
+    (worker : IfWorker.WorkerCore body sourceArgs
+      (targetArgs ++ [.refPtr false ptr, .number (Int.ofNat idx)]) f
+      (decClock (ticks + 1) target) ptr sourceResult sourceFinal) :
+    ∃ result next g, evaluate [optimiseCallSource ticks dest indices ptrExp idxExp] env target = (result, next) ∧
+      ResultRelation.optResRel g sourceResult result ∧ stateRel g sourceFinal next ∧
+      finiteSubmap f g ∧ onlyFresh f g target.refs ∧
+      holesUnchangedExcept f target.refs next.refs {ptr} ∧ holesStillNotFinalised f target.refs next.refs ∧
+      ∀ sourceValue, sourceResult = .val [sourceValue] →
+        ∃ targetValue, mutableBlockRel g oldRefs (next.refs.eraseEq ptr) sourceValue targetValue ∧
+          CallBlockEnvironment.allocHoleHasVal f next.refs extras slot idx targetValue := by
+  obtain ⟨result, g, next, run, resultRel, states, extension, fresh, unchanged, still, success⟩ := worker
+  have noReturn := opt_result_no_return g sourceResult result resultRel sourceNoReturn
+  have callRun := evaluate_optimise_call ticks dest indices ptrExp idxExp env target next targetArgs
+    (.refPtr false ptr) (.number (Int.ofNat idx)) body result argsRun ptrRun idxRun found enough run noReturn
+  have initialHole := aux_hole_to_worker_general f sourceArgs targetArgs extras slot ptr idx target.refs initial
+    sameLength hole pointer
+  have outside : ptr ∉ mapRange f := by
+    obtain ⟨_, holePtr, _, _, _, _, ptrEq, _, _, out, _⟩ := initialHole.1
+    have known : holEl sourceArgs.length (targetArgs ++ [.refPtr false ptr, .number (Int.ofNat idx)]) =
+        .refPtr false ptr := by
+      rw [holEl_eq_getElem _ _ (by simp [sameLength])]
+      simp [List.getElem_append_right, sameLength]
+    rw [known] at ptrEq
+    have eq : holePtr = ptr := by simpa using ptrEq.symm
+    simpa [eq] using out
+  have bound : slot < extras.length := by obtain ⟨_, _, _, _, bound, _⟩ := hole; exact bound
+  refine ⟨result, next, g, callRun, resultRel, states, extension, fresh, unchanged, still, ?_⟩
+  intro sourceValue resultEq
+  obtain ⟨targetValue, blocks, hole'⟩ := success sourceValue resultEq
+  have finalNotFinal : holeNotFinalised next.refs ptr := still ptr outside initialHole.2
+  exact ⟨targetValue,
+    MutableBlockOld.mutableBlockRel_old_subset g target.refs (next.refs.eraseEq ptr) sourceValue targetValue oldRefs blocks domain,
+    worker_hole_to_aux_general f sourceArgs targetArgs extras slot ptr idx next.refs targetValue
+      sameLength hole' finalNotFinal bound pointer⟩
 
 end Flapjack.Compiler.Backend.BviTmc.CallBlockWorkerLeaf
