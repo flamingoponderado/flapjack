@@ -306,4 +306,59 @@ theorem compileExpBounded_eq_source (fuel loc next arity : Nat) (e : Exp) :
     dsimp only
     rw [rewriteSingle_eq_source]
 
+/-- Source-shaped expression compilation, with the original list scan and
+rewrite. -/
+def compileExpSource (loc next arity : Nat) (e : Exp) : Option (Exp × Exp) :=
+  match checkExpOriginal loc arity e with
+  | none => none
+  | some op =>
+    let worker := (rewriteSource loc next op arity (List.replicate arity .any) e).2
+    some (letWrap arity (identity op) worker, worker)
+
+/-- Fuel-bounded expression compilation returns the source-shaped result. -/
+theorem compileExpBounded_eq_compileExpSource (fuel loc next arity : Nat) (e : Exp) :
+    compileExpBounded fuel loc next arity e = some (compileExpSource loc next arity e) := by
+  simpa [compileExpSource, letWrap] using compileExpBounded_eq_source fuel loc next arity e
+
+/-- Source-shaped function-list compilation in source order. -/
+def compileEachSource : Nat → List (Nat × Nat × Exp) → Nat × List (Nat × Nat × Exp)
+  | next, [] => (next, [])
+  | next, (loc, arity, body) :: rest =>
+    match compileExpSource loc next arity body with
+    | none =>
+      let (last, compiled) := compileEachSource next rest
+      (last, (loc, arity, body) :: compiled)
+    | some (wrapper, worker) =>
+      let (last, compiled) := compileEachSource (next + Flapjack.bvlToBviNamespaces) rest
+      (last, (loc, arity, wrapper) :: (next, arity + 1, worker) :: compiled)
+
+/-- The executed function-list pass produces the source-shaped list and
+allocates the same worker labels, independently of the supplied fuel. -/
+theorem compileEachFuel_eq_source (fuel next : Nat) (code : List (Nat × Nat × Exp)) :
+    compileEachFuel fuel next code = some (compileEachSource next code) := by
+  induction code generalizing next with
+  | nil => rfl
+  | cons entry rest ih =>
+    obtain ⟨loc, arity, body⟩ := entry
+    cases decision : compileExpSource loc next arity body with
+    | none => simp [compileEachFuel, compileEachSource, compileExpBounded_eq_compileExpSource,
+        decision, ih]
+    | some pair =>
+      obtain ⟨wrapper, worker⟩ := pair
+      simp [compileEachFuel, compileEachSource, compileExpBounded_eq_compileExpSource,
+        decision, ih]
+
+/-- Source-shaped program pass, including the disabled case. -/
+def compileProgSource (enabled : Bool) (next : Nat) (code : List (Nat × Nat × Exp)) :
+    Nat × List (Nat × Nat × Exp) :=
+  if enabled then compileEachSource next code else (next, code)
+
+/-- The complete executed tail-recursion pass produces the source-shaped
+program transformation. This is a compiler-function correspondence, not the
+pass semantic correctness theorem. -/
+theorem compileProgFuel_eq_source (fuel : Nat) (enabled : Bool) (next : Nat)
+    (code : List (Nat × Nat × Exp)) :
+    compileProgFuel fuel enabled next code = some (compileProgSource enabled next code) := by
+  cases enabled <;> simp [compileProgFuel, compileProgSource, compileEachFuel_eq_source]
+
 end Flapjack.Compiler.Backend.BviTailrec

@@ -27,6 +27,16 @@ def pushCall (next : Nat) (op : AssocOp) (acc : Nat) (value : Exp) :
   | some (ticks, _, args, handler) => .call ticks (some next) (args ++ [applyOp op (.var acc) value]) handler
   | none => .var 1234567890
 
+/-- Introduce the accumulator identity after the original arguments. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "let_wrap_def"]
+def letWrap (arity : Nat) (identity body : Exp) : Exp :=
+  .let ((List.range arity).map .var ++ [identity]) body
+
+/-- Construct the auxiliary worker call used by the source pass. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "mk_aux_call_def"]
+def mkAuxCall (loc arity : Nat) (identity : Exp) : Exp :=
+  .call 0 (some loc) (identity :: (List.range arity).map .var) none
+
 /-- Rewrite accumulator candidates, preserving the source's evaluation
 contexts and the original expressions in non-rewritten conditional branches. -/
 def rewriteFuel : Nat → Nat → Nat → AssocOp → Nat → List ValueType → Exp → Option (Bool × Exp)
