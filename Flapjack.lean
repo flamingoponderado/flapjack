@@ -612,7 +612,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileNumeric
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileWord
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileBlock
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileBlockObserve
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileRef
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileRefByte
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
