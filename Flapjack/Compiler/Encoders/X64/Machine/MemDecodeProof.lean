@@ -382,6 +382,7 @@ theorem decode_movRM_z64 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
         · rw [if_pos h2] at h; omega
         · rw [if_neg h2] at h; omega
     rw [if_neg hmod]
+    try simp only [if_true]
     simp only [Option.some.injEq, Prod.mk.injEq]
     constructor
     · simp only [X64Insn.movRM.injEq, true_and, and_true]
@@ -471,12 +472,155 @@ theorem decode_movMR_z64 (src base : Nat) (hs : src < 16) (hb : base < 16)
         · rw [if_pos h2] at h; omega
         · rw [if_neg h2] at h; omega
     rw [if_neg hmod]
+    try simp only [if_true]
     simp only [Option.some.injEq, Prod.mk.injEq]
     constructor
     · simp only [X64Insn.movMR.injEq, true_and, and_true]
       first
       | (rw [Nat.mod_eq_sub_mod hs8, Nat.mod_eq_of_lt (by omega)]; try omega)
       | (rw [Nat.mod_eq_of_lt (by omega)]; try omega)
+    · by_cases h1 : disp = 0 ∧ base % 8 ≠ 5 <;>
+        by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 <;> simp [h1, h2] <;> omega
+
+
+theorem decode_movRM_z32 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
+    (disp : BitVec 64) (hlo : -(2^31 : Int) ≤ disp.toInt) (hhi : disp.toInt < 2^31) :
+    decode (byteListReader (encodeInsn (.movRM .z32 dst base disp))) =
+      some (.movRM .z32 dst base disp,
+        (if 8 ≤ dst ∨ 8 ≤ base then 1 else 0) + 1 +
+          ((if base % 8 = 4 then 1 else 0) +
+            (if disp = 0 ∧ base % 8 ≠ 5 then 1
+             else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 2 else 5))) := by
+  rw [encodeInsn_movRM_z32 dst base hd hb disp hlo hhi]
+  have hmod3 : (if disp = 0 ∧ base % 8 ≠ 5 then 0
+      else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 1 else 2) ≠ 3 := by
+    intro h
+    by_cases h1 : disp = 0 ∧ base % 8 ≠ 5
+    · rw [if_pos h1] at h; omega
+    · rw [if_neg h1] at h
+      by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
+      · rw [if_pos h2] at h; omega
+      · rw [if_neg h2] at h; omega
+  by_cases hd8 : 8 ≤ dst <;> by_cases hb8 : 8 ≤ base
+  · -- dst >= 8, base >= 8: REX 0x45, rexR true, rexB true
+    have hb0 : (byteListReader (movRMZ32Bytes dst base disp) 0).toNat = 69 := by
+      simp [movRMZ32Bytes, byteListReader, byte, hd8, hb8]
+    have hb1 : (byteListReader (movRMZ32Bytes dst base disp) 1).toNat = 0x8B := by
+      simp [movRMZ32Bytes, byteListReader, byte, hd8, hb8]
+    have hpm := parseRM_rmBase_z64 (byte 69) (byte 0x8B) (dst % 8) base (by omega) hb disp hlo hhi
+    have hdt : decide (8 ≤ base) = true := by simp [hb8]
+    rw [hdt] at hpm
+    have hpre : (if 8 ≤ dst ∨ 8 ≤ base then
+        [byte (64 + (if 8 ≤ dst then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 69] := by
+      rw [if_pos (Or.inl hd8), if_pos hd8, if_pos hb8]
+    simp only [decode, decodeNoRex]
+    rw [hb0]
+    simp only [Nat.reduceMod, Nat.reduceLeDiff]
+    try simp only [if_true]
+    simp only [decodeRex, hb1]
+    simp only [movRMZ32Bytes, hpre]
+    simp only [List.singleton_append, decide_true]
+    rw [hpm]
+    simp only [baseOfRM]
+    rw [if_neg hmod3]
+    try simp only [decide_true]
+    rw [if_pos (by rfl : (true && true) = true)]
+    rw [show decide (5 ≥ 8) = false from by decide, show decide (5 ≥ 4) = true from by decide]
+    simp only [if_neg (by decide : ¬ false = true)]
+    try simp only [if_true]
+    simp only [Option.some.injEq, Prod.mk.injEq]
+    constructor
+    · simp only [X64Insn.movRM.injEq, true_and, and_true]
+      rw [Nat.mod_eq_sub_mod hd8, Nat.mod_eq_of_lt (by omega)]
+      omega
+    · by_cases h1 : disp = 0 ∧ base % 8 ≠ 5 <;>
+        by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 <;> simp [h1, h2] <;> omega
+  · -- dst >= 8, base < 8: REX 0x44, rexR true, rexB false
+    have hb0 : (byteListReader (movRMZ32Bytes dst base disp) 0).toNat = 68 := by
+      simp [movRMZ32Bytes, byteListReader, byte, hd8, hb8]
+    have hb1 : (byteListReader (movRMZ32Bytes dst base disp) 1).toNat = 0x8B := by
+      simp [movRMZ32Bytes, byteListReader, byte, hd8, hb8]
+    have hpm := parseRM_rmBase_z64 (byte 68) (byte 0x8B) (dst % 8) base (by omega) hb disp hlo hhi
+    have hdt : decide (8 ≤ base) = false := by simp; omega
+    rw [hdt] at hpm
+    have hpre : (if 8 ≤ dst ∨ 8 ≤ base then
+        [byte (64 + (if 8 ≤ dst then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 68] := by
+      rw [if_pos (Or.inl hd8), if_pos hd8, if_neg hb8]
+    simp only [decode, decodeNoRex]
+    rw [hb0]
+    simp only [Nat.reduceMod, Nat.reduceLeDiff]
+    try simp only [if_true]
+    simp only [decodeRex, hb1]
+    simp only [movRMZ32Bytes, hpre]
+    simp only [List.singleton_append]
+    rw [show decide (0 = 1) = false from by decide]
+    rw [hpm]
+    simp only [baseOfRM]
+    rw [if_neg hmod3]
+    try simp only [decide_true]
+    rw [if_pos (by rfl : (true && true) = true)]
+    rw [show decide (4 ≥ 8) = false from by decide, show decide (4 ≥ 4) = true from by decide]
+    simp only [if_neg (by decide : ¬ false = true)]
+    try simp only [if_true]
+    simp only [Option.some.injEq, Prod.mk.injEq]
+    constructor
+    · simp only [X64Insn.movRM.injEq, true_and, and_true]
+      rw [Nat.mod_eq_sub_mod hd8, Nat.mod_eq_of_lt (by omega)]
+      omega
+    · by_cases h1 : disp = 0 ∧ base % 8 ≠ 5 <;>
+        by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 <;> simp [h1, h2] <;> omega
+  · -- dst < 8, base >= 8: REX 0x41, rexR false, rexB true
+    have hb0 : (byteListReader (movRMZ32Bytes dst base disp) 0).toNat = 65 := by
+      simp [movRMZ32Bytes, byteListReader, byte, hd8, hb8]
+    have hb1 : (byteListReader (movRMZ32Bytes dst base disp) 1).toNat = 0x8B := by
+      simp [movRMZ32Bytes, byteListReader, byte, hd8, hb8]
+    have hpm := parseRM_rmBase_z64 (byte 65) (byte 0x8B) (dst % 8) base (by omega) hb disp hlo hhi
+    have hdt : decide (8 ≤ base) = true := by simp [hb8]
+    rw [hdt] at hpm
+    have hpre : (if 8 ≤ dst ∨ 8 ≤ base then
+        [byte (64 + (if 8 ≤ dst then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 65] := by
+      rw [if_pos (Or.inr hb8), if_neg hd8, if_pos hb8]
+    simp only [decode, decodeNoRex]
+    rw [hb0]
+    simp only [Nat.reduceMod, Nat.reduceLeDiff]
+    try simp only [if_true]
+    simp only [decodeRex, hb1]
+    simp only [movRMZ32Bytes, hpre]
+    simp only [List.singleton_append, decide_true]
+    rw [hpm]
+    simp only [baseOfRM]
+    rw [if_neg hmod3]
+    try simp only [decide_true]
+    rw [if_pos (by rfl : (true && true) = true)]
+    rw [show decide (1 ≥ 8) = false from by decide, show decide (1 ≥ 4) = false from by decide]
+    simp only [if_neg (by decide : ¬ false = true)]
+    try simp only [if_true]
+    simp only [Option.some.injEq, Prod.mk.injEq]
+    constructor
+    · simp only [X64Insn.movRM.injEq, true_and, and_true]
+      rw [Nat.mod_eq_of_lt (by omega)]
+      omega
+    · by_cases h1 : disp = 0 ∧ base % 8 ≠ 5 <;>
+        by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 <;> simp [h1, h2] <;> omega
+  · -- dst < 8, base < 8: no REX, opcode 0x8B at offset 0
+    have hb0 : (byteListReader (movRMZ32Bytes dst base disp) 0).toNat = 0x8B := by
+      simp [movRMZ32Bytes, byteListReader, byte, hd8, hb8]
+    have hpm := parseRM_rmBase_noRex (byte 0x8B) (dst % 8) base (by omega) (by omega) disp hlo hhi
+    have hpre : (if 8 ≤ dst ∨ 8 ≤ base then
+        [byte (64 + (if 8 ≤ dst then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [] := by
+      rw [if_neg (by omega : ¬ (8 ≤ dst ∨ 8 ≤ base))]
+    simp only [decode, decodeNoRex]
+    rw [hb0]
+    simp only [movRMZ32Bytes, hpre, List.nil_append]
+    rw [hpm]
+    simp only [baseOfRM]
+    rw [if_neg hmod3]
+    try simp only [if_true]
+    simp only [Option.some.injEq, Prod.mk.injEq]
+    constructor
+    · simp only [X64Insn.movRM.injEq, true_and, and_true]
+      rw [Nat.mod_eq_of_lt (by omega)]
+      try omega
     · by_cases h1 : disp = 0 ∧ base % 8 ≠ 5 <;>
         by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 <;> simp [h1, h2] <;> omega
 
