@@ -42,7 +42,9 @@ def pureBounded (fuel n : Nat) (e : Exp) : Option Bool :=
   | some result => some result
   | none => pureFuel (max fuel (expBudget e + 1)) n e
 
-private def shiftVars (n : Nat) (xs : List Nat) := xs.map (· + n)
+/-- Shift each variable index by the size of an added environment prefix. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "shift_vars_def"]
+def shiftVars (n : Nat) (xs : List Nat) := xs.map (· + n)
 
 /-- Shift every variable index in a call-block skeleton. -/
 @[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "shift_cb_def"]
@@ -217,5 +219,39 @@ def compileEachFuel (fuel : Nat) : Nat → List (Nat × Nat × Exp) → Option (
 def compileProgFuel (fuel : Nat) (enabled : Bool) (next : Nat)
     (code : List (Nat × Nat × Exp)) : Option (Nat × List (Nat × Nat × Exp)) :=
   if enabled then compileEachFuel fuel next code else some (next, code)
+
+/-- Every variable index is within the given environment size. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "wf_vars_def"]
+def wfVars (n : Nat) (indices : List Nat) : Prop := ∀ index ∈ indices, index < n
+
+/-- The empty list of variables is well formed in any environment. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "wf_vars_empty"]
+theorem wfVars_empty (n : Nat) : wfVars n [] := by simp [wfVars]
+
+/-- Enlarging the environment preserves well-formed indices. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "wf_vars_expand"]
+theorem wfVars_expand (n1 n2 : Nat) (indices : List Nat) (wellFormed : wfVars n1 indices)
+    (bound : n1 ≤ n2) : wfVars n2 indices := by
+  intro index member
+  have := wellFormed index member
+  omega
+
+/-- A prefix shifts all well-formed indices into the enlarged environment. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "wf_vars_shift"]
+theorem wfVars_shift (n1 n2 : Nat) (indices : List Nat) (wellFormed : wfVars n1 indices) :
+    wfVars (n2 + n1) (shiftVars n2 indices) := by
+  intro index member
+  obtain ⟨old, present, rfl⟩ := List.mem_map.mp member
+  have := wellFormed old present
+  omega
+
+/-- Concatenating well-formed index lists preserves their bounds. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "wf_vars_append"]
+theorem wfVars_append (n : Nat) (left right : List Nat) (leftOk : wfVars n left)
+    (rightOk : wfVars n right) : wfVars n (left ++ right) := by
+  intro index member
+  rcases List.mem_append.mp member with inLeft | inRight
+  · exact leftOk index inLeft
+  · exact rightOk index inRight
 
 end Flapjack.Compiler.Backend.BviTmc
