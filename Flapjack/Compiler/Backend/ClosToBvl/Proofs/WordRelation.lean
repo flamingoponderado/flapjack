@@ -98,4 +98,56 @@ theorem fpTop_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
   subst x; subst y; subst z
   exact ⟨_, _, rfl, rfl, .word64 _⟩
 
+/-- Successful word operations produce related results for canonical arguments. -/
+theorem doWordApp_primitives {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (op : ClosLang.WordOp) (args : List ClosSem.Value)
+    (valid : ∀ value ∈ args, wordPrimitive value) (source : ClosSem.Value)
+    (run : ClosSem.doWordApp op args = some source) :
+    ∃ target, BvlSem.doWordApp op (args.map primitiveToBvl) = some target ∧
+      vRel maxApp f refs code source target := by
+  cases op <;> (try cases ‹AstHOL.WordSize›) <;> (try cases ‹AstHOL.Test›) <;> (try cases ‹Bool›) <;>
+    cases args with
+  | nil => simp [ClosSem.doWordApp, ClosSem.doWordAppIntegral] at run
+  | cons a args =>
+    cases args with
+    | nil =>
+      cases a <;> simp_all [wordPrimitive, primitiveToBvl, ClosSem.doWordApp,
+        ClosSem.doWordAppIntegral, BvlSem.doWordApp, BvlSem.doWordAppIntegral]
+      all_goals try (simp only [ClosSem.intToByte] at run ⊢)
+      all_goals repeat' (split at run <;> simp_all)
+      all_goals try (rcases run with ⟨_, rfl⟩)
+      all_goals first | exact vRel.number _ | exact vRel.word64 _
+    | cons b args =>
+      cases args with
+      | nil =>
+        cases a <;> simp_all [wordPrimitive, primitiveToBvl, ClosSem.doWordApp,
+          ClosSem.doWordAppIntegral, BvlSem.doWordApp, BvlSem.doWordAppIntegral] <;>
+          cases b <;> simp_all
+        all_goals try (simp only [ClosSem.intToByte] at run ⊢)
+        all_goals repeat' (split at run <;> simp_all)
+        all_goals try (rcases run with ⟨_, rfl⟩)
+        all_goals first | exact vRel.number _ | exact vRel.word64 _ | exact vRel_bool _
+      | cons c args =>
+        cases args with
+        | nil =>
+          cases a <;> simp_all [wordPrimitive, primitiveToBvl, ClosSem.doWordApp,
+            ClosSem.doWordAppIntegral, BvlSem.doWordApp, BvlSem.doWordAppIntegral] <;>
+            cases b <;> simp_all <;> cases c <;> simp_all
+          all_goals subst source; exact vRel.word64 _
+        | cons d rest => simp [ClosSem.doWordApp, ClosSem.doWordAppIntegral] at run
+
+/-- Successful word primitives preserve the relation for arbitrary related
+argument lists. This includes the shared floating-point model. -/
+theorem doWordApp_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (op : ClosLang.WordOp) (args : List ClosSem.Value) (targets : List BvlSem.Value)
+    (related : List.Forall₂ (vRel maxApp f refs code) args targets)
+    (source : ClosSem.Value) (success : ClosSem.doWordApp op args = some source) :
+    ∃ target, BvlSem.doWordApp op targets = some target ∧ vRel maxApp f refs code source target := by
+  have valid := doWordApp_success_args op args source success
+  have targetEq := related_primitives related valid
+  subst targets
+  exact doWordApp_primitives op args valid source success
+
 end Flapjack.Compiler.Backend.ClosToBvl
