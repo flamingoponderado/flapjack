@@ -6,6 +6,107 @@ source scan and compilation carriers remain subject to HOL review. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi BvlSem
 
+/-- A scan never selects the non-optimizing operator. This is untagged until
+its scan and expression carriers have completed source review. -/
+theorem scanSing_ne_noop (ctx : List ValueType) (loc : Nat) (e : Bvi.Exp) :
+    (scanSing ctx loc e).2.2.2 ≠ some .noop := by
+  cases e with
+  | var n => simp [scanSing.eq_def]
+  | force a n => simp [scanSing.eq_def]
+  | tick body =>
+    rw [scanSing.eq_def]
+    exact scanSing_ne_noop ctx loc body
+  | «let» bindings body =>
+    rw [scanSing.eq_def]
+    dsimp only
+    exact scanSing_ne_noop _ loc body
+  | ifThenElse cond yes no =>
+    rw [scanSing.eq_def]
+    dsimp only
+    cases hy : scanSing (scanSing ctx loc cond).1 loc yes with
+    | mk cy resty =>
+      rcases resty with ⟨ty, branchy, opy⟩
+      cases hn : scanSing (scanSing ctx loc cond).1 loc no with
+      | mk cn restn =>
+        rcases restn with ⟨tn, branchn, opn⟩
+        have iy := scanSing_ne_noop (scanSing ctx loc cond).1 loc yes
+        have ineg := scanSing_ne_noop (scanSing ctx loc cond).1 loc no
+        simp only [hy] at iy
+        simp only [hn] at ineg
+        cases opy <;> cases opn <;> simp_all
+  | op op args =>
+    rw [scanSing.eq_def]
+    dsimp only
+    split <;> split
+    · split <;> split <;> simp_all
+    · split <;> simp_all
+    · intro impossible
+      cases h : fromOp op <;> simp_all [BEq.beq, instBEqAssocOp.beq]
+    · split
+      · split <;> simp_all
+      · simp
+  | raise body => simp [scanSing.eq_def]
+  | «return» args => simp [scanSing.eq_def]
+  | call ticks dest args handler => simp [scanSing.eq_def]
+  | letCall rets ticks dest args body => simp [scanSing.eq_def]
+termination_by sizeOf e
+
+/-- A successful optimization check identifies a non-noop accumulator and
+a matching, non-`any` result type in the singleton scan. -/
+theorem checkExpOriginal_scan (loc arity : Nat) (e : Bvi.Exp) (op : AssocOp)
+    (check : checkExpOriginal loc arity e = some op) :
+    ∃ ctx ty branch, scanExpr (List.replicate arity .any) loc [e] = [(ctx, ty, branch, some op)] ∧
+      ty = opType op ∧ ty ≠ .any ∧ op ≠ .noop := by
+  rw [checkExpOriginal, scanExpr_single] at check
+  cases hrec : hasRec1 loc e <;> simp [hrec] at check
+  rcases hscan : scanSing (List.replicate arity .any) loc e with ⟨ctx, ty, branch, found⟩
+  rw [hscan] at check
+  dsimp only at check
+  cases found with
+  | none => simp at check
+  | some foundOp =>
+    simp only at check
+    split at check
+    · simp only [Option.some.injEq] at check
+      subst foundOp
+      have notNoop := scanSing_ne_noop (List.replicate arity .any) loc e
+      rw [hscan] at notNoop
+      have notOp : op ≠ .noop := by simpa using notNoop
+      have sameType : ty = opType op := by
+        cases ty <;> cases op <;> simp_all [opType, BEq.beq, instBEqValueType.beq, ValueType.ctorIdx]
+      have notAny : ty ≠ .any := by
+        rw [sameType]
+        cases op <;> simp_all [opType]
+      exact ⟨ctx, ty, branch, by rw [scanExpr_single, hscan], sameType, notAny, notOp⟩
+    · simp at check
+
+/-- Every environment satisfies the all-unknown context used when checking a
+function body. -/
+theorem tyRel_replicate_any (values : List Value) :
+    tyRel values (List.replicate values.length .any) := by
+  induction values with
+  | nil => simp [tyRel]
+  | cons value rest ih =>
+    simp only [List.length_cons, List.replicate_succ]
+    exact .cons (by simp) ih
+
+/-- A successful checked function body returns a value satisfying the
+selected accumulator operator's type. -/
+theorem checkExpOriginal_result_type {C F : Type} (loc arity : Nat) (body : Bvi.Exp)
+    (op : AssocOp) (env : List Value) (state next : BviSem.BviState C F) (value : Value)
+    (lengthEq : env.length = arity) (check : checkExpOriginal loc arity body = some op)
+    (run : BviSem.evaluate [body] env state = (.val [value], next)) :
+    valueMatchesType value (opType op) := by
+  obtain ⟨ctx, ty, branch, scan, sameType, _, _⟩ := checkExpOriginal_scan loc arity body op check
+  have envType : tyRel env (List.replicate arity .any) := by
+    simpa [lengthEq] using tyRel_replicate_any env
+  have sound := scanSound_list (List.replicate arity .any) loc [body] env state next [value] envType run
+  rw [scan] at sound
+  simp only [List.map_cons, List.map_nil] at sound
+  subst ty
+  cases sound.2 with
+  | cons head tail => exact head
+
 /-- The source-shaped postcondition for the tail-rewrite simulation. The
 default list head is unreachable when the optimization premise holds, since
 the corresponding source hypothesis requires a singleton expression list. -/
@@ -220,6 +321,23 @@ theorem evaluate_applyOp_var {C F : Type} (op : AssocOp) (acc : Nat)
       | err error => rfl
       | val output => cases output; rfl
 
+/-- Adding the accumulator identity to a well-typed body result preserves its
+result and final state, including propagated errors. -/
+theorem evaluate_applyOp_identity {C F : Type} (op : AssocOp) (acc : Nat)
+    (body : Bvi.Exp) (env : List Value) (state next : BviSem.BviState C F)
+    (result : BviSem.BviResult) (notNoop : op ≠ .noop)
+    (lookup : env[acc]? = some (opIdValue op))
+    (run : BviSem.evaluate [body] env state = (result, next))
+    (typed : ∀ value, result = .val [value] → valueMatchesType value (opType op)) :
+    BviSem.evaluate [applyOp op (.var acc) body] env state = (result, next) := by
+  rw [evaluate_applyOp_var op acc body env state (opIdValue op) lookup, run]
+  cases result with
+  | err error => rfl
+  | val values =>
+    obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton body env state next values run
+    have identity := accumulator_identity_right op value notNoop (typed value rfl)
+    simp [doApp_toOp_pure, identity]
+
 /-- A let binding can be moved outside an accumulator operation by shifting
 the accumulator index past the values bound by the let. -/
 theorem evaluate_applyOp_let {C F : Type} (op : AssocOp) (acc : Nat)
@@ -247,6 +365,76 @@ theorem evaluate_applyOp_let {C F : Type} (op : AssocOp) (acc : Nat)
         simpa using lookup
       dsimp only
       rw [evaluate_applyOp_var op (bindings.length + acc) body (values ++ env) next value shifted]
+
+/-- A related code entry executes the same body result after compilation.
+The recursive simulation hypothesis is the one used for the called body. -/
+theorem evaluate_related_callee {C F : Type} (loc arity : Nat) (body : Bvi.Exp)
+    (env : List Value) (source sourceNext : BviSem.BviState (Nat × C) F)
+    (target : BviSem.BviState C F) (result : BviSem.BviResult)
+    (bodyIH : rewriteTailProperty (C := C) (F := F) [body])
+    (related : stateRel source target) (lengthEq : env.length = arity)
+    (sourceCode : sptLookup loc source.code = some (arity, body))
+    (run : BviSem.evaluate [body] env source = (result, sourceNext))
+    (notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ compiled targetNext, sptLookup loc target.code = some (arity, compiled) ∧
+      BviSem.evaluate [compiled] env target = (result, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  have types : tyRel env (List.replicate arity .any) := by
+    simpa [lengthEq] using tyRel_replicate_any env
+  have codeRelated := stateRel_codeRel source target related
+  cases check : checkExpOriginal loc arity body with
+  | none =>
+    have found := (codeRelated loc arity body .noop sourceCode).1 check
+    have envRelated : envRel .any false arity env env := ⟨⟨[], by simp⟩, by simp⟩
+    have hyp : rewriteTailHyp [body] source env result sourceNext false target arity env loc
+        (List.replicate arity .any) .any :=
+      ⟨run, envRelated, related, types, by simp, notTypeError⟩
+    obtain ⟨targetNext, targetRun, finalRelated, _⟩ :=
+      bodyIH source env result sourceNext false target arity env loc (List.replicate arity .any) .any hyp
+    exact ⟨body, targetNext, found, targetRun, finalRelated⟩
+  | some op =>
+    obtain ⟨scanCtx, scanTy, scanBranch, scan, sameType, notAny, notNoop⟩ :=
+      checkExpOriginal_scan loc arity body op check
+    obtain ⟨workerLoc, codeLookup⟩ := (codeRelated loc arity body op sourceCode).2 check
+    let worker := (rewriteSource loc workerLoc op arity (List.replicate arity .any) body).2
+    let wrapper := letWrap arity (identity op) worker
+    have compiled : compileExpSource loc workerLoc arity body = some (wrapper, worker) := by
+      simp [compileExpSource, check, wrapper, worker]
+    obtain ⟨wrapperFound, workerFound⟩ := codeLookup wrapper worker compiled
+    have optimized : optimizedCode loc arity body workerLoc target.code op :=
+      ⟨wrapper, worker, compiled, check, wrapperFound, workerFound⟩
+    let extended := env ++ [opIdValue op] ++ env
+    have envRelated : envRel (opType op) true arity env extended := by
+      simpa [extended, lengthEq] using envRel_initial op env notNoop
+    have hyp : rewriteTailHyp [body] source env result sourceNext true target arity extended loc
+        (List.replicate arity .any) (opType op) :=
+      ⟨run, envRelated, related, types, by simp, notTypeError⟩
+    obtain ⟨ordinaryNext, ordinaryRun, _, optimizedRun⟩ :=
+      bodyIH source env result sourceNext true target arity extended loc
+        (List.replicate arity .any) (opType op) hyp
+    have req : sptLookup loc source.code = some (arity, body) ∧
+        optimizedCode loc arity body workerLoc target.code op ∧ opType op = opType op ∧
+        (∃ op1 tt resultTy branch,
+          scanExpr (List.replicate arity .any) loc [body] = [(tt, resultTy, branch, some op1)] ∧
+          resultTy ≠ .any ∧ op1 ≠ .noop ∧ opType op1 = opType op) :=
+      ⟨sourceCode, optimized, rfl, op, scanCtx, scanTy, scanBranch, scan, notAny, notNoop, rfl⟩
+    obtain ⟨r, t1, t2, workerRun, appliedRun, finalRelated, _⟩ :=
+      optimizedRun rfl op workerLoc body arity (by simpa only [List.headD_cons] using req)
+    have lookup : extended[arity]? = some (opIdValue op) := by simp [extended, ← lengthEq]
+    have typed : ∀ value, result = .val [value] → valueMatchesType value (opType op) := by
+      intro value eq
+      have sourceRun : BviSem.evaluate [body] env source = (.val [value], sourceNext) := by simpa [eq] using run
+      exact checkExpOriginal_result_type loc arity body op env source sourceNext value lengthEq check sourceRun
+    have identityRun := evaluate_applyOp_identity op arity body extended target ordinaryNext result notNoop
+      lookup ordinaryRun typed
+    simp only [List.headD_cons] at appliedRun workerRun
+    rw [identityRun] at appliedRun
+    have resultEq : r = result := (congrArg Prod.fst appliedRun).symm
+    subst r
+    refine ⟨wrapper, t1, wrapperFound, ?_, finalRelated⟩
+    change BviSem.evaluate [letWrap arity (identity op) worker] env target = _
+    rw [← lengthEq, evaluate_letWrap worker op env target notNoop]
+    exact workerRun
 
 /-- A known accumulator lookup commutes with a tick around its second operand.
 The timeout still occurs before any accumulator operation is dispatched. -/
