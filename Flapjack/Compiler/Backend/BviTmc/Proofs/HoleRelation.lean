@@ -225,4 +225,54 @@ theorem holesStill_rangeUpdate {α β γ : Type} [DecidableEq β] (f : HolFinite
     exact outside ⟨p, mapped⟩
   exact ⟨tag, left, child, right, by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found⟩
 
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_trans_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_trans_g (g : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_trans_h (h : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup h) h.finiteSupport = h := by cases h; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_trans_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_trans_middle (middle : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup middle) middle.finiteSupport = middle := by cases middle; rfl
+
+/-- Freshness composes when the intermediate heap retains its old domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_trans"
+  (fmap_as_finite_support_parameters := [f, g, h, refs, middle])]
+theorem onlyFresh_trans (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat) (h : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (Ref Value)) (middle : HolFiniteMapExact Nat (Ref Value))
+    (first : onlyFresh f g refs) (second : onlyFresh g h middle)
+    (domain : refs.domain ⊆ middle.domain) : onlyFresh f h refs := by
+  intro ptr ⟨new, outside⟩
+  by_cases intermediate : ptr ∈ mapRange g
+  · exact first ptr ⟨intermediate, outside⟩
+  · intro allocated
+    exact second ptr ⟨new, intermediate⟩ (domain allocated)
+
+theorem holFmapAsFiniteSupportParamWitness_holesStill_trans_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesStill_trans_g (g : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesStill_trans_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesStill_trans_middle (middle : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup middle) middle.finiteSupport = middle := by cases middle; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesStill_trans_final (final : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup final) final.finiteSupport = final := by cases final; rfl
+
+/-- Unfinalised-hole preservation composes across fresh map extensions. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_trans"
+  (fmap_as_finite_support_parameters := [f, g, refs, middle, final])]
+theorem holesStill_trans {α : Type} (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (Ref Value)) (middle : HolFiniteMapExact Nat (Ref Value))
+    (final : HolFiniteMapExact Nat (Ref Value)) (_changed : α)
+    (first : holesStillNotFinalised f refs middle) (second : holesStillNotFinalised g middle final)
+    (fresh : onlyFresh f g refs) (_submap : finiteSubmap f g) : holesStillNotFinalised f refs final := by
+  intro ptr outside hole
+  have allocated : ptr ∈ refs.domain := by
+    obtain ⟨tag, left, child, right, found⟩ := hole
+    simp [HolFiniteMapExact.domain, found]
+  have outsideNew := nonFresh_not_in_range f g refs ptr allocated outside fresh
+  exact second ptr outsideNew (first ptr outside hole)
+
 end Flapjack.Compiler.Backend.BviTmc

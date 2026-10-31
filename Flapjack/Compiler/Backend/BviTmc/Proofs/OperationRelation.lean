@@ -2050,4 +2050,50 @@ theorem doApp_op_rel_boolTest {C F : Type} (f : HolFiniteMapExact Nat Nat) (test
                 · intro key item present
                   exact present
 
+/-- Bounds checks return the same boolean for related blocks. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_boundsCheckBlock {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.blockOp .boundsCheckBlock) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.blockOp .boundsCheckBlock)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.blockOp .boundsCheckBlock) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+    | cons second rest =>
+      cases rest with
+      | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+      | nil =>
+        cases first <;> cases second <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux,
+          BvlSem.doApp, BvlSem.applyBlock, BviSem.fromBvl_toBvl] at run
+        rename_i tag fields index
+        cases valuesRelated with
+        | cons blockRel tailRel =>
+          cases blockRel with
+          | block _ _ targetFields fieldsRel =>
+            cases tailRel with
+            | cons indexRel tailRel =>
+              cases indexRel
+              cases tailRel
+              have lengths := List.Forall₂.length_eq fieldsRel
+              obtain ⟨rfl, rfl⟩ := run
+              refine ⟨f, boolValue (decide (0 ≤ index ∧ index < Int.ofNat fields.length)),
+                target, ?_, ?_, statesRelated, ?_, onlyFresh_refl f target.refs,
+                holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+              · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
+                  BviSem.fromBvl_toBvl, lengths]
+              · by_cases h : 0 ≤ index <;> simp [h]
+                all_goals exact .block _ [] [] .nil
+              · intro key item present
+                exact present
+
 end Flapjack.Compiler.Backend.BviTmc
