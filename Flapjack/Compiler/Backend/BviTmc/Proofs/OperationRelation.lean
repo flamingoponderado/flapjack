@@ -1873,4 +1873,181 @@ theorem doApp_op_rel_tagLenEq {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag 
           · intro key item present
             exact present
 
+
+/-- Length tests agree on related blocks. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_lenEq {C F : Type} (f : HolFiniteMapExact Nat Nat) (length : Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.blockOp (.lenEq length)) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.blockOp (.lenEq length))) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.blockOp (.lenEq length)) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+  | cons first rest =>
+    cases rest with
+    | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+    | nil =>
+      cases valuesRelated with
+      | cons firstRel tailRel =>
+        cases tailRel
+        cases firstRel with
+        | number i => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+        | word64 w => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+        | codePtr n => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+        | refPtr a b flag mapped => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+        | block actual xs ys rel =>
+          have lengths := List.Forall₂.length_eq rel
+          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
+            BviSem.fromBvl_toBvl] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨f, boolValue (xs.length == length), target, ?_, .block _ [] [] .nil, statesRelated, ?_,
+            onlyFresh_refl f target.refs, holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+          · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
+              BviSem.fromBvl_toBvl, lengths]
+          · intro key item present
+            exact present
+
+
+/-- Tag tests agree on related blocks. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_tagEq {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag : Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.blockOp (.tagEq tag)) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.blockOp (.tagEq tag))) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.blockOp (.tagEq tag)) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+  | cons first rest =>
+    cases rest with
+    | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+    | nil =>
+      cases valuesRelated with
+      | cons firstRel tailRel =>
+        cases tailRel
+        cases firstRel with
+        | number i => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+        | word64 w => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+        | codePtr n => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+        | refPtr a b flag mapped => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+        | block actual xs ys rel =>
+          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
+            BviSem.fromBvl_toBvl] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨f, boolValue (actual == tag), target, ?_, .block _ [] [] .nil, statesRelated, ?_,
+            onlyFresh_refl f target.refs, holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+          · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
+              BviSem.fromBvl_toBvl]
+          · intro key item present
+            exact present
+
+private theorem asBool_related (f : HolFiniteMapExact Nat Nat) (v w : Value)
+    (related : valueRel f v w) : asBool v = asBool w := by
+  cases related with
+  | number i => rfl
+  | word64 w => rfl
+  | codePtr n => rfl
+  | refPtr n m flag mapped => rfl
+  | block tag xs ys fields =>
+    cases fields <;> simp [asBool]
+
+/-- Boolean negation agrees on related values. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_boolNot {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.blockOp .boolNot) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.blockOp .boolNot)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.blockOp .boolNot) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+  | cons first rest =>
+    cases rest with
+    | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+    | nil =>
+      cases valuesRelated with
+      | @cons a targetFirst xs ys firstRel tailRel =>
+        cases tailRel
+        have same := asBool_related f first targetFirst firstRel
+        cases decoded : asBool first with
+        | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock, decoded] at run
+        | some boolean =>
+          have targetDecoded : asBool targetFirst = some boolean := by rw [← same, decoded]
+          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
+            BviSem.fromBvl_toBvl, decoded] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨f, boolValue (!boolean), target, ?_, .block _ [] [] .nil, statesRelated, ?_,
+            onlyFresh_refl f target.refs, holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+          · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
+              BviSem.fromBvl_toBvl, targetDecoded]
+          · intro key item present
+            exact present
+
+/-- Boolean tests agree on related operands. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_boolTest {C F : Type} (f : HolFiniteMapExact Nat Nat) (test : AstHOL.Test)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.blockOp (.boolTest test)) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.blockOp (.boolTest test))) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.blockOp (.boolTest test)) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+    | cons second rest =>
+      cases rest with
+      | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+      | nil =>
+        cases valuesRelated with
+        | @cons a targetFirst xs ys firstRel tailRel =>
+          cases tailRel with
+          | @cons a targetSecond xs ys secondRel tailRel =>
+            cases tailRel
+            have sameFirst := asBool_related f first targetFirst firstRel
+            have sameSecond := asBool_related f second targetSecond secondRel
+            cases decodedFirst : asBool first with
+            | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock, decodedFirst] at run
+            | some firstBool =>
+              cases decodedSecond : asBool second with
+              | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock, decodedFirst, decodedSecond] at run
+              | some secondBool =>
+                have targetFirstDecoded : asBool targetFirst = some firstBool := by rw [← sameFirst, decodedFirst]
+                have targetSecondDecoded : asBool targetSecond = some secondBool := by rw [← sameSecond, decodedSecond]
+                simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
+                  BviSem.fromBvl_toBvl, decodedFirst, decodedSecond] at run
+                obtain ⟨rfl, rfl⟩ := run
+                refine ⟨f, boolValue (firstBool == secondBool), target, ?_, .block _ [] [] .nil, statesRelated, ?_,
+                  onlyFresh_refl f target.refs, holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+                · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
+                    BviSem.fromBvl_toBvl, targetFirstDecoded, targetSecondDecoded]
+                · intro key item present
+                  exact present
+
 end Flapjack.Compiler.Backend.BviTmc
