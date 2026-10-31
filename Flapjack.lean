@@ -506,6 +506,7 @@ import Flapjack.Compiler.Backend.BvlInline.Proofs.Semantics
 import Flapjack.Compiler.Backend.BviInline.Proofs.Total
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Total
+import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeNames
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.Total
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecCorrespondence
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermCorrespondence
@@ -660,6 +661,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitGlobalsStub
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TailrecNames
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TailrecSemantics
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcNames
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Observations
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Divergence
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.OptimizedProgram
