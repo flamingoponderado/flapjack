@@ -276,4 +276,28 @@ theorem expressionSimulation_call_case {C F : Type} (s sFinal : ClosSem.State C 
         argsCompiled argsLocations annotations argsVars installed envRelated states
     · exact bodyIH
 
+/-- The direct-call case accepts the shared clock-bounded expression
+induction hypothesis for code bodies. The argument-list hypothesis is still
+the unbounded structural premise used by the surrounding expression proof. -/
+theorem expressionSimulation_call_case_below {C F : Type} (s sFinal : ClosSem.State C F)
+    (t : BvlSem.State C F) (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (trace : BackendCommon.Tra) (ticks location : Nat)
+    (args : List ClosLang.Exp) (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (run : ClosSem.evaluate [.call trace ticks location args] sourceEnv s = (result, sFinal))
+    (noTypeError : result ≠ .err (.abort .typeError))
+    (compile : compileExpsHOL s.maxApp [.call trace ticks location args] aux = (compiled, finalAux))
+    (locations : ClosProps.everyFnLocationSome [.call trace ticks location args])
+    (annotations : codeAnnotations s) (varsAnnotated : ClosProps.everyFnVarsSome [.call trace ticks location args])
+    (installed : codeInstalled finalAux t.code) (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv)
+    (states : stateRel f s t) (argsIH : expressionSimulation (C := C) (F := F) args)
+    (bodyIH : ∀ body : ClosLang.Exp, expressionSimulationBelow (C := C) (F := F) s.clock [body]) :
+    evaluatePost s sFinal t targetEnv f result compiled := by
+  apply expressionSimulation_call_case s sFinal t sourceEnv targetEnv f trace ticks location args aux finalAux compiled
+    result run noTypeError compile locations annotations varsAnnotated installed envRelated states argsIH
+  intro body start last targetStart sourceArgs targetValues fMiddle aux' finalAux' targetBody smaller bodyRun
+    bodyCompiled bodyLocations bodyAnnotations bodyVars bodyInstalled bodyEnv bodyStates
+  exact bodyIH body start last targetStart sourceArgs targetValues fMiddle aux' finalAux' [targetBody] result
+    smaller bodyRun noTypeError bodyCompiled bodyLocations bodyAnnotations bodyVars bodyInstalled bodyEnv bodyStates
+
 end Flapjack.Compiler.Backend.ClosToBvl

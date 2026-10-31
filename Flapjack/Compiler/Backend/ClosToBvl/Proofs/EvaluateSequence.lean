@@ -182,6 +182,47 @@ def expressionSimulation {C F : Type} (expressions : List ClosLang.Exp) : Prop :
     envRel s.maxApp f t.refs t.code sourceEnv targetEnv → stateRel f s t →
     evaluatePost s sFinal t targetEnv f result compiled
 
+/-- Expression simulation restricted to source states below a clock bound.
+This Flapjack induction interface is untagged while the source and target
+semantic carriers await correspondence review. -/
+def expressionSimulationBelow {C F : Type} (clockBound : Nat) (expressions : List ClosLang.Exp) : Prop :=
+  ∀ (s sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (aux finalAux : List (Nat × Nat × Bvl.Exp))
+    (compiled : List Bvl.Exp) (result : Result (List ClosSem.Value) ClosSem.Value),
+    s.clock < clockBound → ClosSem.evaluate expressions sourceEnv s = (result, sFinal) →
+    result ≠ .err (.abort .typeError) →
+    compileExpsHOL s.maxApp expressions aux = (compiled, finalAux) →
+    ClosProps.everyFnLocationSome expressions → codeAnnotations s →
+    ClosProps.everyFnVarsSome expressions → codeInstalled finalAux t.code →
+    envRel s.maxApp f t.refs t.code sourceEnv targetEnv → stateRel f s t →
+    evaluatePost s sFinal t targetEnv f result compiled
+
+/-- A simulation valid without a clock restriction is valid below any bound. -/
+theorem expressionSimulation_below {C F : Type} (clockBound : Nat) (expressions : List ClosLang.Exp)
+    (simulation : expressionSimulation (C := C) (F := F) expressions) :
+    expressionSimulationBelow (C := C) (F := F) clockBound expressions := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result _
+  exact simulation s sFinal t sourceEnv targetEnv f aux finalAux compiled result
+
+/-- A simulation below a bound remains available below a smaller bound. -/
+theorem expressionSimulationBelow_mono {C F : Type} (small large : Nat) (expressions : List ClosLang.Exp)
+    (bound : small ≤ large) (simulation : expressionSimulationBelow (C := C) (F := F) large expressions) :
+    expressionSimulationBelow (C := C) (F := F) small expressions := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clock
+  exact simulation s sFinal t sourceEnv targetEnv f aux finalAux compiled result (by omega)
+
+/-- Proving the simulation at every finite clock bound suffices for the
+unrestricted expression simulation. -/
+theorem expressionSimulation_iff_below {C F : Type} (expressions : List ClosLang.Exp) :
+    expressionSimulation (C := C) (F := F) expressions ↔
+      ∀ clockBound, expressionSimulationBelow (C := C) (F := F) clockBound expressions := by
+  constructor
+  · intro simulation clockBound
+    exact expressionSimulation_below clockBound expressions simulation
+  · intro simulation s sFinal t sourceEnv targetEnv f aux finalAux compiled result
+    exact simulation (s.clock + 1) s sFinal t sourceEnv targetEnv f aux finalAux compiled result (by omega)
+
 /-- The nonempty list case of the expression simulation, including the
 original compiler accumulator and code-installation premises. The two
 hypotheses are the source evaluator's head and tail induction hypotheses.
