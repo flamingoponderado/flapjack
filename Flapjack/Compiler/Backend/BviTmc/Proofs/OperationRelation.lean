@@ -369,4 +369,99 @@ theorem doApp_op_rel_setGlobal {C F : Type} (f : HolFiniteMapExact Nat Nat) (ind
                   exact found
               · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal, sourceFound, bound] at run
 
+/-- All global operations satisfy the primitive simulation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_glob {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang.GlobOp)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.globOp op) values source = .val (value, sourceNext))
+    (noMutcons : noMutconsOp (.globOp op)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.globOp op) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases op with
+  | global index => exact doApp_op_rel_global f index values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | setGlobal index => exact doApp_op_rel_setGlobal f index values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | allocGlobal => exact doApp_op_rel_allocGlobal f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | globalsPtr => exact doApp_op_rel_globalsPtr f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | setGlobalsPtr => exact doApp_op_rel_setGlobalsPtr f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+
+private theorem finalise_related_identity (f : HolFiniteMapExact Nat Nat) (v w : Value)
+    (source target : HolFiniteMapExact Nat (Ref Value)) (values : valueRel f v w)
+    (heaps : stateRefRel f source target) :
+    BviSem.finaliseCons v source = some (v, source) ∧ BviSem.finaliseCons w target = some (w, target) := by
+  cases values with
+  | number i => simp [BviSem.finaliseCons]
+  | word64 w => simp [BviSem.finaliseCons]
+  | block tag xs ys related => simp [BviSem.finaliseCons]
+  | codePtr n => simp [BviSem.finaliseCons]
+  | refPtr n m flag mapped =>
+    obtain ⟨sourceCell, targetCell, sourceFound, targetFound, cells⟩ :=
+      stateRefRel_lookup f n m source target mapped heaps
+    cases cells <;> constructor
+    all_goals rw [BviSem.finaliseCons.eq_def]
+    all_goals dsimp only
+    all_goals first | rw [sourceFound] | rw [targetFound]
+
+/-- Finalising a related value leaves both related heaps unchanged, since
+the source heap relation excludes mutable constructor blocks. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_finalise_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, refsNext, nextMap, targetRefsNext])]
+theorem doApp_op_finalise_rel {C F : Type} (v : Value) (refsNext : HolFiniteMapExact Nat (Ref Value))
+    (relatedValue result : Value) (f : HolFiniteMapExact Nat Nat)
+    (source : BviState (Nat × C) F) (target : BviState C F)
+    (run : BviSem.finaliseCons v source.refs = some (result, refsNext))
+    (statesRelated : stateRel f source target) (valuesRelated : valueRel f v relatedValue) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (result' : Value)
+      (targetRefsNext : HolFiniteMapExact Nat (Ref Value)),
+      BviSem.finaliseCons relatedValue target.refs = some (result', targetRefsNext) ∧
+      finiteSubmap f nextMap ∧ valueRel nextMap result result' ∧
+      stateRel nextMap { source with refs := refsNext } { target with refs := targetRefsNext } ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetRefsNext ∅ ∧
+      holesStillNotFinalised f target.refs targetRefsNext := by
+  have ⟨sourceRun, targetRun⟩ := finalise_related_identity f v relatedValue source.refs target.refs valuesRelated statesRelated.1
+  rw [sourceRun] at run
+  cases run
+  refine ⟨f, relatedValue, target.refs, targetRun, ?_, valuesRelated, ?_, onlyFresh_refl f target.refs,
+    holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+  · intro key item found
+    exact found
+  · simpa using statesRelated
+
+/-- The finalise-cons primitive preserves related values and heaps. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_finaliseCons {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp .finaliseCons) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.memOp .finaliseCons)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp .finaliseCons) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+  | cons head tail =>
+    cases tail with
+    | cons next rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+    | nil =>
+      cases valuesRelated with
+      | @cons a b xs ys headRel tailRel =>
+        cases tailRel
+        have ⟨sourceRun, targetRun⟩ := finalise_related_identity f head b source.refs target.refs headRel statesRelated.1
+        simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceRun] at run
+        obtain ⟨rfl, rfl⟩ := run
+        refine ⟨f, b, target, ?_, headRel, statesRelated, ?_, onlyFresh_refl f target.refs,
+          holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+        · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, targetRun]
+        · intro key item found
+          exact found
+
 end Flapjack.Compiler.Backend.BviTmc
