@@ -10,6 +10,48 @@ theorem shiftedTag_notClosure (tag : Nat) (fields : List BvlSem.Value) :
   simp only [BvlSem.isClosure, closTagShift]
   split <;> omega
 
+/-- Whether a closure-language value is a function value. -/
+def sourceIsClosure : ClosSem.Value → Prop
+  | .closure .. | .recclosure .. => True
+  | _ => False
+
+private theorem clRel_sourceIsClosure {maxApp : Nat} {fs : Nat → Prop}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {env : List ClosSem.Value × List BvlSem.Value} {source : ClosSem.Value} {target : BvlSem.Value}
+    (related : clRel maxApp fs refs code env source target) : sourceIsClosure source := by
+  cases related <;> trivial
+
+private theorem addArgs_sourceIsClosure (source result : ClosSem.Value) (args : List ClosSem.Value)
+    (isClosure : sourceIsClosure source) (added : addArgs source args = some result) :
+    sourceIsClosure result := by
+  cases source <;> simp_all [sourceIsClosure, addArgs]
+  all_goals subst result; trivial
+
+/-- The value relation represents exactly the source closure values as BVL
+closure blocks. -/
+theorem vRel_isClosure {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {source : ClosSem.Value} {target : BvlSem.Value}
+    (related : vRel maxApp f refs code source target) :
+    sourceIsClosure source ↔ (∃ tag fields, target = .block tag fields ∧ BvlSem.isClosure tag fields) := by
+  cases related with
+  | number => simp [sourceIsClosure]
+  | word64 => simp [sourceIsClosure]
+  | block fields =>
+    simp only [sourceIsClosure, false_iff, not_exists]
+    intro tag xs ⟨equal, isClosure⟩
+    cases equal
+    exact shiftedTag_notClosure _ _ isClosure
+  | byteVector => simp [sourceIsClosure]
+  | refPtr => simp [sourceIsClosure]
+  | closure env closure =>
+    have sourceClosure : sourceIsClosure source := clRel_sourceIsClosure closure
+    exact ⟨fun _ => ⟨30, _, rfl, by simp [BvlSem.isClosure]⟩, fun _ => sourceClosure⟩
+  | partialClosure env args nonempty bound lookup added arity closure =>
+    have sourceClosure : sourceIsClosure source :=
+      addArgs_sourceIsClosure _ _ _ (clRel_sourceIsClosure closure) added
+    exact ⟨fun _ => ⟨31, _, rfl, by simp [BvlSem.isClosure]⟩, fun _ => sourceClosure⟩
+
 /-- A source reference pointer is mapped to the corresponding target pointer. -/
 theorem vRel_refPtr_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
@@ -90,6 +132,57 @@ theorem doEq_refPtr_byteVector {C F : Type} {f : HolFiniteMapExact Nat Nat}
   have notFrozen : ∀ bs, t.refs.lookup targetPtr ≠ some (.byteArray true bs) :=
     fun bs => states.2.2.2.2.1 ptr targetPtr bs map
   cases flag <;> simp [ClosSem.doEq, BvlSem.doEq, byteLookup]
+
+/-- Source closures and their related target closures compare equal, whether
+ordinary or recursive. -/
+theorem doEq_related_closures {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (a b : ClosSem.Value) (x y : BvlSem.Value)
+    (first : vRel maxApp f refs code a x) (second : vRel maxApp f refs code b y)
+    (closureA : sourceIsClosure a) (closureB : sourceIsClosure b) :
+    ClosSem.doEq a b = BvlSem.doEq refs x y := by
+  obtain ⟨tagA, fieldsA, rfl, isA⟩ := (vRel_isClosure first).mp closureA
+  obtain ⟨tagB, fieldsB, rfl, isB⟩ := (vRel_isClosure second).mp closureB
+  cases a <;> cases b <;> simp_all [sourceIsClosure, ClosSem.doEq, BvlSem.doEq]
+
+/-- Comparing a closure with a non-closure is a type error in both
+representations. -/
+theorem doEq_closure_nonClosure {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (a b : ClosSem.Value) (x y : BvlSem.Value)
+    (first : vRel maxApp f refs code a x) (second : vRel maxApp f refs code b y)
+    (closureA : sourceIsClosure a) (notClosureB : ¬sourceIsClosure b) :
+    ClosSem.doEq a b = BvlSem.doEq refs x y := by
+  obtain ⟨tagA, fieldsA, rfl, isA⟩ := (vRel_isClosure first).mp closureA
+  have notTarget : ¬ ∃ tag fields, y = .block tag fields ∧ BvlSem.isClosure tag fields :=
+    fun h => notClosureB ((vRel_isClosure second).mpr h)
+  cases y with
+  | block tag fields =>
+    have notB : ¬BvlSem.isClosure tag fields := by
+      intro isB
+      exact notTarget ⟨tag, fields, rfl, isB⟩
+    cases a <;> cases b <;> simp_all [sourceIsClosure, ClosSem.doEq, BvlSem.doEq]
+  | number | word64 | codePtr | refPtr =>
+    cases a <;> cases b <;> simp_all [sourceIsClosure, ClosSem.doEq, BvlSem.doEq]
+
+/-- Comparing a non-closure with a closure is also a type error. -/
+theorem doEq_nonClosure_closure {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (a b : ClosSem.Value) (x y : BvlSem.Value)
+    (first : vRel maxApp f refs code a x) (second : vRel maxApp f refs code b y)
+    (notClosureA : ¬sourceIsClosure a) (closureB : sourceIsClosure b) :
+    ClosSem.doEq a b = BvlSem.doEq refs x y := by
+  obtain ⟨tagB, fieldsB, rfl, isB⟩ := (vRel_isClosure second).mp closureB
+  have notTarget : ¬ ∃ tag fields, x = .block tag fields ∧ BvlSem.isClosure tag fields :=
+    fun h => notClosureA ((vRel_isClosure first).mpr h)
+  cases x with
+  | block tag fields =>
+    have notA : ¬BvlSem.isClosure tag fields := by
+      intro isA
+      exact notTarget ⟨tag, fields, rfl, isA⟩
+    cases a <;> cases b <;> simp_all [sourceIsClosure, ClosSem.doEq, BvlSem.doEq]
+  | number | word64 | codePtr | refPtr =>
+    cases a <;> cases b <;> simp_all [sourceIsClosure, ClosSem.doEq, BvlSem.doEq]
 
 /-- Pointwise equality correspondence lifts to the recursive list comparator. -/
 theorem doEqList_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
