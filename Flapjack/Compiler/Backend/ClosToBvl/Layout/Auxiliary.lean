@@ -87,4 +87,28 @@ theorem buildAux_mem (entries : List (Nat × Bvl.Exp)) (i : Nat)
           have eq : i + 2 + 2 * k = i + 2 * (k + 1) := by omega
           exact ⟨item, by simpa only [eq] using found⟩
 
+/-- The indexed generated entry has the input arity and body, not just an
+entry at the expected label. This is Flapjack infrastructure for proving
+installation of mutually recursive closure bodies. -/
+theorem buildAux_index (entries : List (Nat × Bvl.Exp)) (i : Nat)
+    (aux : List (Nat × Nat × Bvl.Exp)) (k arity : Nat) (body : Bvl.Exp)
+    (found : entries[k]? = some (arity, body)) :
+    (i + 2 * k, arity, body) ∈ (buildAux i entries aux).2 := by
+  induction entries generalizing i aux k with
+  | nil => simp at found
+  | cons entry entries ih =>
+    rcases entry with ⟨entryArity, entryBody⟩
+    cases k with
+    | zero =>
+      simp at found
+      rcases found with ⟨rfl, rfl⟩
+      obtain ⟨added, acc⟩ := buildAux_acc entries (i + 2) ((i, entryArity, entryBody) :: aux)
+      simp only [buildAux, acc, Nat.mul_zero, Nat.add_zero]
+      simp
+    | succ k =>
+      simp only [List.getElem?_cons_succ] at found
+      have member := ih (i + 2) ((i, entryArity, entryBody) :: aux) k found
+      have eq : i + 2 + 2 * k = i + 2 * (k + 1) := by omega
+      simpa only [buildAux, eq] using member
+
 end Flapjack.Compiler.Backend.ClosToBvl
