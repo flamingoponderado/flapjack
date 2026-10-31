@@ -616,6 +616,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFromListByte
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileToListByte
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileConcatByte
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CopyGlobalsStub
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileAllocGlobal
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
