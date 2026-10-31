@@ -390,4 +390,203 @@ theorem evaluatePost_forceThunkCode_enter {C F : Type}
   rw [entry]
   simpa [BvlSem.decClock, Nat.add_assoc] using targetRun
 
+/-- Compose a singleton thunk argument simulation with the force-instruction
+simulation, carrying its relocated value and aligning both target clocks. -/
+theorem evaluatePost_force_argument {C F : Type}
+    (s sMiddle sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (args : List ClosLang.Exp) (targetArgs : List Bvl.Exp)
+    (thunk : ClosSem.Value) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (argsRun : ClosSem.evaluate args sourceEnv s = (.val [thunk], sMiddle))
+    (argsPost : evaluatePost s sMiddle t targetEnv f (.val [thunk]) targetArgs)
+    (bodyIH : ∀ (targetThunk : BvlSem.Value) (tMiddle : BvlSem.State C F)
+      (fMiddle : HolFiniteMapExact Nat Nat), stateRel fMiddle sMiddle tMiddle →
+      vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code thunk targetThunk →
+      codeAnnotations sMiddle →
+      evaluatePost sMiddle sFinal tMiddle (targetThunk :: targetEnv) fMiddle result
+        [.force (numStubs s.maxApp - 2) 0]) :
+    evaluatePost s sFinal t targetEnv f result
+      [.let targetArgs (.force (numStubs s.maxApp - 2) 0)] := by
+  have maxApp : sMiddle.maxApp = s.maxApp := by
+    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
+    rw [argsRun] at h
+    exact h
+  obtain ⟨clock1, targetResult, tMiddle, fMiddle, run1, related1, state1, map1, frame1,
+    annotations1, clocks1⟩ := argsPost
+  cases targetResult with
+  | err error => simp [resultRel] at related1
+  | val targetValues =>
+    have thunkRelated : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
+        [thunk] targetValues := by simpa [resultRel, maxApp] using related1
+    cases thunkRelated with
+    | cons thunkRel tail =>
+      cases tail
+      rename_i targetThunk
+      obtain ⟨clock2, result2, tFinal, fFinal, run2, related2, state2, map2, frame2,
+        annotations2, clocks2⟩ := bodyIH targetThunk tMiddle fMiddle state1 thunkRel annotations1
+      have shifted := BvlProps.evaluate_addClock targetArgs targetEnv
+        { t with clock := s.clock + clock1 } tMiddle (.val [targetThunk]) clock2 run1 (by simp)
+      have runArgs : BvlSem.evaluate targetArgs targetEnv
+          { t with clock := s.clock + (clock1 + clock2) } =
+          (.val [targetThunk], { tMiddle with clock := sMiddle.clock + clock2 }) := by
+        simpa [Nat.add_assoc, clocks1] using shifted
+      refine ⟨clock1 + clock2, result2, tFinal, fFinal, ?_, ?_, state2,
+        relocationSubmap_trans map1 map2, unmappedRefsSubmap_trans frame1 frame2, annotations2, clocks2⟩
+      · rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, runArgs]
+        exact run2
+      · simpa [maxApp] using related2
+
+/-- The successful unevaluated-thunk branch follows from simulations of the
+arguments and of the source's recursive unit application. -/
+theorem evaluatePost_force_unevaluated_success {C F : Type}
+    (s sMiddle sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (args : List ClosLang.Exp) (targetArgs : List Bvl.Exp)
+    (thunk function value : ClosSem.Value)
+    (argsRun : ClosSem.evaluate args sourceEnv s = (.val [thunk], sMiddle))
+    (found : ClosSem.destThunk [thunk] sMiddle.refs = .isThunk .notEvaluated function)
+    (appRun : ClosSem.evaluate [ClosSem.appUnit (.var .none 0)] [function] sMiddle = (.val [value], sFinal))
+    (nextRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
+    (updated : ClosSem.updateThunk [thunk] sFinal.refs [value] = some nextRefs)
+    (argsPost : evaluatePost s sMiddle t targetEnv f (.val [thunk]) targetArgs)
+    (appIH : expressionSimulation (C := C) (F := F) [ClosSem.appUnit (.var .none 0)]) :
+    evaluatePost s { sFinal with refs := nextRefs } t targetEnv f (.val [value])
+      [.let targetArgs (.force (numStubs s.maxApp - 2) 0)] := by
+  have maxApp : sMiddle.maxApp = s.maxApp := by
+    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
+    rw [argsRun] at h
+    exact h
+  apply evaluatePost_force_argument s sMiddle _ t sourceEnv targetEnv f args targetArgs thunk _ argsRun argsPost
+  intro targetThunk tMiddle fMiddle states thunkRel annotations
+  obtain ⟨targetFunction, targetFound, functionRel⟩ :=
+    destThunk_isThunk_related sMiddle tMiddle states thunkRel .notEvaluated function found
+  have appPost := appIH sMiddle sFinal tMiddle [function] [targetFunction] fMiddle [] []
+    [.let [.op (.blockOp (.cons 0)) [], .var 0] (mkClCall (.var 1) [.var 0])] (.val [value])
+    appRun (by simp) (compile_force_appUnit sMiddle.maxApp [])
+    (by simp [ClosSem.appUnit, ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp]) annotations
+    (by simp [ClosSem.appUnit, ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp])
+    (by simp [codeInstalled]) (by simpa [envRel] using functionRel) states
+  have stubPost := evaluatePost_forceThunkCode_success sMiddle sFinal tMiddle fMiddle thunk function value
+    targetThunk targetFunction appRun thunkRel appPost nextRefs updated
+  apply evaluatePost_forceThunkCode_enter sMiddle _ tMiddle fMiddle targetThunk targetFunction targetEnv
+    (.val [value]) (numStubs s.maxApp - 2) targetFound ?_ stubPost
+  simpa [maxApp] using states.2.2.2.2.2.2.2.2.2.2.1
+
+/-- Errors from an unevaluated thunk's recursive application propagate through
+argument binding and the target force instruction. -/
+theorem evaluatePost_force_unevaluated_error {C F : Type}
+    (s sMiddle sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (args : List ClosLang.Exp) (targetArgs : List Bvl.Exp)
+    (thunk function : ClosSem.Value) (error : ErrorResult ClosSem.Value)
+    (argsRun : ClosSem.evaluate args sourceEnv s = (.val [thunk], sMiddle))
+    (found : ClosSem.destThunk [thunk] sMiddle.refs = .isThunk .notEvaluated function)
+    (appRun : ClosSem.evaluate [ClosSem.appUnit (.var .none 0)] [function] sMiddle = (.err error, sFinal))
+    (noType : Result.err error ≠ (Result.err (.abort .typeError) : Result (List ClosSem.Value) ClosSem.Value))
+    (argsPost : evaluatePost s sMiddle t targetEnv f (.val [thunk]) targetArgs)
+    (appIH : expressionSimulation (C := C) (F := F) [ClosSem.appUnit (.var .none 0)]) :
+    evaluatePost s sFinal t targetEnv f (.err error)
+      [.let targetArgs (.force (numStubs s.maxApp - 2) 0)] := by
+  have maxApp : sMiddle.maxApp = s.maxApp := by
+    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
+    rw [argsRun] at h
+    exact h
+  apply evaluatePost_force_argument s sMiddle sFinal t sourceEnv targetEnv f args targetArgs thunk _ argsRun argsPost
+  intro targetThunk tMiddle fMiddle states thunkRel annotations
+  obtain ⟨targetFunction, targetFound, functionRel⟩ :=
+    destThunk_isThunk_related sMiddle tMiddle states thunkRel .notEvaluated function found
+  have appPost := appIH sMiddle sFinal tMiddle [function] [targetFunction] fMiddle [] []
+    [.let [.op (.blockOp (.cons 0)) [], .var 0] (mkClCall (.var 1) [.var 0])] (.err error)
+    appRun noType (compile_force_appUnit sMiddle.maxApp [])
+    (by simp [ClosSem.appUnit, ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp]) annotations
+    (by simp [ClosSem.appUnit, ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp])
+    (by simp [codeInstalled]) (by simpa [envRel] using functionRel) states
+  have stubPost := evaluatePost_forceThunkCode_error sMiddle sFinal tMiddle fMiddle targetThunk targetFunction error appPost
+  apply evaluatePost_forceThunkCode_enter sMiddle sFinal tMiddle fMiddle targetThunk targetFunction targetEnv
+    (.err error) (numStubs s.maxApp - 2) targetFound ?_ stubPost
+  simpa [maxApp] using states.2.2.2.2.2.2.2.2.2.2.1
+
+/-- The force expression case follows from the argument simulation and the
+recursive simulation of the source's generated unit application. This
+candidate remains untagged while its semantic carriers are under review. -/
+theorem expressionSimulation_force {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (argsIH : expressionSimulation (C := C) (F := F) args)
+    (appIH : expressionSimulation (C := C) (F := F) [ClosSem.appUnit (.var .none 0)]) :
+    expressionSimulation (C := C) (F := F) [.op trace (.thunkOp .forceThunk) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noType compile
+    locations annotations varsAnnotated installed envRelated states
+  cases argsCompile : compileExpListHOL s.maxApp args aux with
+  | mk targetArgs aux1 =>
+    have argsCompiled : compileExpsHOL s.maxApp args aux = (targetArgs, aux1) := by
+      rw [compileExps_eq_list]
+      exact argsCompile
+    have wholeCompiled : compileExpsHOL s.maxApp [.op trace (.thunkOp .forceThunk) args] aux =
+        ([.let targetArgs (.force (numStubs s.maxApp - 2) 0)], aux1) := by
+      rw [compileExps_eq_list]
+      simp [compileExpListHOL, compileExpHOL, argsCompile]
+    have equal := compile.symm.trans wholeCompiled
+    cases equal
+    have argsLoc : ClosProps.everyFnLocationSome args := by
+      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+    have argsVars : ClosProps.everyFnVarsSome args := by
+      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
+    cases argsRun : ClosSem.evaluate args sourceEnv s with
+    | mk argsResult sMiddle =>
+      cases argsResult with
+      | err error =>
+        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, argsRun] at run
+        simp at run
+        rcases run with ⟨rfl, rfl⟩
+        exact evaluatePost_force_error s sMiddle t targetEnv f targetArgs error
+          (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
+            argsRun noType argsCompiled argsLoc annotations argsVars installed envRelated states)
+      | val values =>
+        obtain ⟨ptr, mode, function, rfl, thunkFound⟩ :=
+          force_source_shape trace args sourceEnv s sMiddle sFinal values result argsRun run noType
+        have found : ClosSem.destThunk [.refPtr false ptr] sMiddle.refs = .isThunk mode function := by
+          simp [ClosSem.destThunk, thunkFound]
+        have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs
+          (.val [.refPtr false ptr]) argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
+        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, argsRun] at run
+        dsimp only at run
+        rw [found] at run
+        cases mode with
+        | evaluated =>
+          simp at run
+          rcases run with ⟨rfl, rfl⟩
+          have maxApp : sMiddle.maxApp = s.maxApp := by
+            have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
+            rw [argsRun] at h
+            exact h
+          exact evaluatePost_force_evaluated s sMiddle t targetEnv f targetArgs _ function argsPost found maxApp
+        | notEvaluated =>
+          dsimp only at run
+          cases appRun : ClosSem.evaluate [ClosSem.appUnit (.var .none 0)] [function] sMiddle with
+          | mk appResult sApp =>
+            rw [appRun] at run
+            cases appResult with
+            | err error =>
+              simp at run
+              rcases run with ⟨rfl, rfl⟩
+              exact evaluatePost_force_unevaluated_error s sMiddle sApp t sourceEnv targetEnv f args targetArgs
+                _ function error argsRun found appRun noType argsPost appIH
+            | val values =>
+              have length := (ClosSem.evaluate_length (C := C) (F := F)).1 _ _ _ _ _ appRun
+              cases values with
+              | nil => simp at length
+              | cons value rest =>
+                cases rest with
+                | cons next rest => simp at length
+                | nil =>
+                  dsimp only at run
+                  cases updated : ClosSem.updateThunk [.refPtr false ptr] sApp.refs [value] with
+                  | none =>
+                    simp [updated] at run
+                    exact False.elim (noType run.1.symm)
+                  | some refs =>
+                    simp [updated] at run
+                    rcases run with ⟨rfl, rfl⟩
+                    exact evaluatePost_force_unevaluated_success s sMiddle sApp t sourceEnv targetEnv f args targetArgs
+                      _ function value argsRun found appRun refs updated argsPost appIH
+
 end Flapjack.Compiler.Backend.ClosToBvl
