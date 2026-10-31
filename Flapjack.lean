@@ -2830,6 +2830,7 @@ import Flapjack.Compiler.Encoders.X64.Machine.Bytes
 import Flapjack.Compiler.Encoders.X64.Machine.Agree
 import Flapjack.Compiler.Encoders.X64.Machine.DecodeProof
 import Flapjack.Compiler.Encoders.X64.Machine.EncodingProof
+import Flapjack.Compiler.Encoders.X64.Machine.MemDecodeProof
 import Flapjack.X64.NativeSource
 import Flapjack.X64.NativeCLIAdapter
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32InstanceExecutable
