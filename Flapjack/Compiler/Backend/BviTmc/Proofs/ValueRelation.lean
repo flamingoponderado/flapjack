@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeRelation
 import Flapjack.Compiler.Backend.BackendCommon.SmallInt
 import Flapjack.Misc.ListEl
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
 
 /-! Value and environment relations for the TMC semantic simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc
@@ -313,5 +314,57 @@ theorem valueToList_rel (f : HolFiniteMapExact Nat Nat) (source : Value) (xs : L
           cases emptyRel
           obtain ⟨out, outRun, outRel⟩ := ih _ lastRel
           exact ⟨_, by simp [valueToList, outRun], .cons headRel outRel⟩
+
+private theorem related_bytes_identity (f : HolFiniteMapExact Nat Nat) (bytes : List (BitVec 8))
+    (values : List Value) (related : List.Forall₂ (valueRel f) (bytes.map (fun b => .number b.toNat)) values) :
+    values = bytes.map (fun b => .number b.toNat) := by
+  induction bytes generalizing values with
+  | nil => cases related; rfl
+  | cons byte bytes ih =>
+    cases related with
+    | cons head tail =>
+      cases head
+      simp only [List.map_cons]
+      congr 1
+      exact ih _ tail
+
+private theorem related_words_identity (f : HolFiniteMapExact Nat Nat) (words : List (BitVec 64))
+    (values : List Value) (related : List.Forall₂ (valueRel f) (words.map Value.word64) values) :
+    values = words.map Value.word64 := by
+  induction words generalizing values with
+  | nil => cases related; rfl
+  | cons word words ih =>
+    cases related with
+    | cons head tail =>
+      cases head
+      simp only [List.map_cons]
+      congr 1
+      exact ih _ tail
+
+theorem holFmapAsFiniteSupportParamWitness_valueToBytes_rel_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+
+/-- Related list values decode to the same byte sequence. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_bytes_v_rel"
+  (fmap_as_finite_support_parameters := [f])]
+theorem valueToBytes_rel (v : Value) (bytes : List (BitVec 8)) (f : HolFiniteMapExact Nat Nat) (v' : Value)
+    (decoded : valueToBytes v = some bytes) (related : valueRel f v v') : valueToBytes v' = some bytes := by
+  have listDecoded := (valueToBytes_eq_some v bytes).mp decoded
+  obtain ⟨values, targetDecoded, valuesRelated⟩ := valueToList_rel f v _ v' listDecoded related
+  have same := related_bytes_identity f bytes values valuesRelated
+  exact (valueToBytes_eq_some v' bytes).mpr (by simpa [same] using targetDecoded)
+
+theorem holFmapAsFiniteSupportParamWitness_valueToWords_rel_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+
+/-- Related list values decode to the same word sequence. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_words_v_rel"
+  (fmap_as_finite_support_parameters := [f])]
+theorem valueToWords_rel (v : Value) (words : List (BitVec 64)) (f : HolFiniteMapExact Nat Nat) (v' : Value)
+    (decoded : valueToWords v = some words) (related : valueRel f v v') : valueToWords v' = some words := by
+  have listDecoded := (valueToWords_eq_some v words).mp decoded
+  obtain ⟨values, targetDecoded, valuesRelated⟩ := valueToList_rel f v _ v' listDecoded related
+  have same := related_words_identity f words values valuesRelated
+  exact (valueToWords_eq_some v' words).mpr (by simpa [same] using targetDecoded)
 
 end Flapjack.Compiler.Backend.BviTmc

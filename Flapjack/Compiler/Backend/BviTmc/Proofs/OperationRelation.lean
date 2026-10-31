@@ -2451,4 +2451,78 @@ theorem doApp_op_rel_thunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : As
   | updateThunk mode => exact doApp_op_rel_updateThunk f mode values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | forceThunk => exact doApp_op_rel_forceThunk f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
 
+/-- External calls receive the same bytes and preserve related heaps and FFI state. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_ffi {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (name : Basis.Pure.MlString.MlString) (values relatedValues : List Value)
+    (source sourceNext : BviState (Nat × C) F) (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.ffi name) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.ffi name)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.ffi name) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  rw [BviTailrec.doApp_ffi_effect] at run
+  cases values with
+  | nil => simp [BviTailrec.ffiEffect] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [BviTailrec.ffiEffect] at run
+    | cons second rest =>
+      cases rest with
+      | cons extra rest => simp [BviTailrec.ffiEffect] at run
+      | nil =>
+        cases first <;> cases second <;> simp [BviTailrec.ffiEffect] at run
+        rename_i configFlag configPtr dataFlag dataPtr
+        cases valuesRelated with
+        | cons configRel tailRel =>
+          cases configRel with
+          | refPtr _ targetConfigPtr _ configMapped =>
+            cases tailRel with
+            | cons dataRel tailRel =>
+              cases dataRel with
+              | refPtr _ targetDataPtr _ dataMapped =>
+                cases tailRel
+                obtain ⟨_, _, sourceConfig, targetConfig, configCells⟩ :=
+                  stateRefRel_lookup f configPtr targetConfigPtr source.refs target.refs configMapped statesRelated.1
+                obtain ⟨_, _, sourceData, targetData, dataCells⟩ :=
+                  stateRefRel_lookup f dataPtr targetDataPtr source.refs target.refs dataMapped statesRelated.1
+                cases configCells with
+                | valueArray xs ys rel => simp [sourceConfig] at run
+                | thunk mode x y rel => simp [sourceConfig] at run
+                | byteArray configMutable config =>
+                  cases configMutable with
+                  | false => simp [sourceConfig] at run
+                  | true =>
+                    cases dataCells with
+                    | valueArray xs ys rel => simp [sourceConfig, sourceData] at run
+                    | thunk mode x y rel => simp [sourceConfig, sourceData] at run
+                    | byteArray dataMutable bytes =>
+                      cases dataMutable with
+                      | true => simp [sourceConfig, sourceData] at run
+                      | false =>
+                        cases outcome : callFFIHOL source.ffi (.extCall name) config bytes with
+                        | final result => simp [sourceConfig, sourceData, outcome] at run
+                        | ret nextFfi updated =>
+                          simp [sourceConfig, sourceData, outcome] at run
+                          obtain ⟨rfl, rfl⟩ := run
+                          have nextStates : stateRel f
+                              { source with refs := source.refs.updateEq (dataPtr, .byteArray false updated), ffi := nextFfi }
+                              { target with refs := target.refs.updateEq (targetDataPtr, .byteArray false updated), ffi := nextFfi } := by
+                            rcases statesRelated with ⟨heap, clock, global, _, oracle, compiler, code, names, inputs, workers, inj⟩
+                            exact ⟨stateRefRel_update f source.refs target.refs dataPtr targetDataPtr _ _ heap inj dataMapped
+                              (.byteArray _ _), clock, global, rfl, oracle, compiler, code, names, inputs, workers, inj⟩
+                          refine ⟨f, unitValue,
+                            { target with refs := target.refs.updateEq (targetDataPtr, .byteArray false updated), ffi := nextFfi },
+                            ?_, .block _ [] [] .nil, nextStates, ?_, onlyFresh_refl f target.refs,
+                            holesUnchanged_rangeUpdate f dataPtr targetDataPtr _ target.refs dataMapped,
+                            holesStill_rangeUpdate f dataPtr targetDataPtr _ target.refs dataMapped⟩
+                          · rw [BviTailrec.doApp_ffi_effect]
+                            simp [BviTailrec.ffiEffect, targetConfig, targetData, statesRelated.2.2.2.1, outcome]
+                          · intro key item present
+                            exact present
+
 end Flapjack.Compiler.Backend.BviTmc
