@@ -332,6 +332,93 @@ theorem compileEachSource_preserves_free (next name : Nat) (code : List (Nat × 
   rw [advance]
   exact freeNames_advance next name steps free
 
+/-- A free label absent from the input cannot be introduced by compilation. -/
+theorem compileEachSource_avoids_free (next name : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (free : freeNames next name) (absent : name ∉ code.map Prod.fst) :
+    name ∉ (compileEachSource next code).2.map Prod.fst := by
+  intro member
+  rcases compileEachSource_mem code next name member with old | ⟨_, _, k, eq⟩
+  · exact absent old
+  · apply free k
+    simpa [Nat.mul_comm] using eq.symm
+
+/-- Any label below the next worker is free. -/
+theorem freeNames_of_lt (next name : Nat) (bound : name < next) : freeNames next name := by
+  intro k eq
+  omega
+
+/-- Every compiled label is free from the resulting worker namespace. -/
+theorem compileEachSource_output_free (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (free : ∀ name ∈ code.map Prod.fst, freeNames next name) :
+    ∀ name ∈ (compileEachSource next code).2.map Prod.fst,
+      freeNames (compileEachSource next code).1 name := by
+  intro name member
+  rcases compileEachSource_mem code next name member with old | ⟨_, bound, _⟩
+  · exact compileEachSource_preserves_free next name code (free name old)
+  · exact freeNames_of_lt _ _ bound
+
+/-- Distinct input labels and free worker names yield distinct compiled labels. -/
+theorem compileEachSource_labels_nodup (code : List (Nat × Nat × Bvi.Exp)) (next : Nat)
+    (unique : (code.map Prod.fst).Nodup)
+    (free : ∀ name ∈ code.map Prod.fst, freeNames next name) :
+    ((compileEachSource next code).2.map Prod.fst).Nodup := by
+  induction code generalizing next with
+  | nil => simp [compileEachSource]
+  | cons entry rest ih =>
+    obtain ⟨loc, arity, body⟩ := entry
+    have unique' : loc ∉ rest.map Prod.fst ∧ (rest.map Prod.fst).Nodup := by
+      simpa using unique
+    have freeLoc : freeNames next loc := free loc (by simp)
+    have freeRest : ∀ name ∈ rest.map Prod.fst, freeNames next name := by
+      intro name member
+      exact free name (by simp [member])
+    cases compiled : compileExpSource loc next arity body with
+    | none =>
+      cases tail : compileEachSource next rest with
+      | mk last output =>
+        have avoidLoc := compileEachSource_avoids_free next loc rest freeLoc unique'.1
+        have distinct := ih next unique'.2 freeRest
+        simpa [compileEachSource, compiled, tail] using (List.nodup_cons.mpr ⟨by simpa [tail] using avoidLoc, by simpa [tail] using distinct⟩ :
+          (loc :: output.map Prod.fst).Nodup)
+    | some pair =>
+      obtain ⟨wrapper, worker⟩ := pair
+      cases tail : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with
+      | mk last output =>
+        have freeRest' : ∀ name ∈ rest.map Prod.fst, freeNames (next + Flapjack.bvlToBviNamespaces) name := by
+          intro name member
+          simpa using freeNames_advance next name 1 (freeRest name member)
+        have locFree : freeNames (next + Flapjack.bvlToBviNamespaces) loc := by
+          simpa using freeNames_advance next loc 1 freeLoc
+        have workerFree : freeNames (next + Flapjack.bvlToBviNamespaces) next := by
+          apply freeNames_of_lt
+          have positive : 0 < Flapjack.bvlToBviNamespaces := by decide
+          omega
+        have workerAbsent : next ∉ rest.map Prod.fst := by
+          intro h
+          exact freeNames_ne_current next next (freeRest next h) rfl
+        have avoidLoc := compileEachSource_avoids_free (next + Flapjack.bvlToBviNamespaces) loc rest locFree unique'.1
+        have avoidWorker := compileEachSource_avoids_free (next + Flapjack.bvlToBviNamespaces) next rest workerFree workerAbsent
+        have distinct := ih (next + Flapjack.bvlToBviNamespaces) unique'.2 freeRest'
+        have neq : loc ≠ next := (freeNames_ne_current next loc freeLoc).symm
+        have all : (loc :: next :: output.map Prod.fst).Nodup := by
+          apply List.nodup_cons.mpr
+          refine ⟨?_, List.nodup_cons.mpr ⟨?_, ?_⟩⟩
+          · simp [neq, tail] at avoidLoc ⊢
+            exact avoidLoc
+          · simpa [tail] using avoidWorker
+          · simpa [tail] using distinct
+        simpa [compileEachSource, compiled, tail] using all
+
+/-- Compiled code keeps distinct labels and leaves every output label free
+from the next worker namespace. -/
+theorem compileEachSource_distinct_and_free (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (unique : (code.map Prod.fst).Nodup)
+    (free : ∀ name ∈ code.map Prod.fst, freeNames next name) :
+    ((compileEachSource next code).2.map Prod.fst).Nodup ∧
+      ∀ name ∈ (compileEachSource next code).2.map Prod.fst,
+        freeNames (compileEachSource next code).1 name :=
+  ⟨compileEachSource_labels_nodup code next unique free, compileEachSource_output_free next code free⟩
+
 /-- Worker labels use namespace residue two. -/
 def inWorkerNamespace (name : Nat) : Prop := name % Flapjack.bvlToBviNamespaces = 2
 
