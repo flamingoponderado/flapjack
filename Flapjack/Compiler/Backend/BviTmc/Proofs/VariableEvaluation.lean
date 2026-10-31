@@ -253,4 +253,108 @@ theorem evaluate_shift_cb_sing {C F : Type} (cb : CallBlock) (loc : Nat) (env : 
       evaluate [callBlockToBvi loc cb] env state := by
   simpa using evaluate_shift_cb cb loc env state [b]
 
+/-- Flapjack infrastructure: evaluating the arguments of a shifted constructor
+frame gives the original argument result, including errors and state changes. -/
+theorem evaluate_shift_frame_args {C F : Type} (loc : Nat) (left right : List Nat)
+    (child : CallBlock) (env : List Value) (state : BviState C F) (prefixValues : List Value) :
+    evaluate ((shiftVars prefixValues.length left).map Bvi.Exp.var ++
+      [callBlockToBvi loc (shiftBlock prefixValues.length child)] ++
+      (shiftVars prefixValues.length right).map Bvi.Exp.var) (prefixValues ++ env) state =
+    evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state := by
+  change evaluateTuple (_, prefixValues ++ env, state) = evaluateTuple (_, env, state)
+  simp only [List.append_assoc]
+  conv_lhs => rw [evaluateAppend]
+  conv_rhs => rw [evaluateAppend]
+  simp only [BviSem.evaluateTuple, evaluate_shift_vars]
+  cases h : evaluate (left.map Bvi.Exp.var) env state with
+  | mk result next =>
+    cases result with
+    | err error => rfl
+    | val values =>
+      have tailEqual : evaluateTuple ([callBlockToBvi loc (shiftBlock prefixValues.length child)] ++
+          (shiftVars prefixValues.length right).map Bvi.Exp.var, prefixValues ++ env, next) =
+          evaluateTuple ([callBlockToBvi loc child] ++ right.map Bvi.Exp.var, env, next) := by
+        conv_lhs => rw [evaluateAppend]
+        conv_rhs => rw [evaluateAppend]
+        simp only [BviSem.evaluateTuple, evaluate_shift_cb, evaluate_shift_vars]
+      change evaluate ([callBlockToBvi loc (shiftBlock prefixValues.length child)] ++
+        (shiftVars prefixValues.length right).map Bvi.Exp.var) (prefixValues ++ env) next =
+        evaluate ([callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env next at tailEqual
+      dsimp only
+      rw [tailEqual]
+
+/-- Flapjack infrastructure for the list simulation: a leading binding is
+added to the reconstructed block after the original frame arguments run. -/
+theorem evaluate_prefixed_frame {C F : Type} (loc tag : Nat) (left right : List Nat)
+    (child : CallBlock) (value : Value) (env : List Value) (state : BviState C F) :
+    evaluate [callBlockToBvi loc (.callBlock tag (0 :: shiftVars 1 left)
+      (shiftBlock 1 child) (shiftVars 1 right))] (value :: env) state =
+      match evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state with
+      | (.err error, next) => (.err error, next)
+      | (.val values, next) => (.val [.block tag (values.reverse ++ [value])], next) := by
+  have argsRun : evaluate (.var 0 :: ((shiftVars 1 left).map Bvi.Exp.var ++
+      [callBlockToBvi loc (shiftBlock 1 child)] ++ (shiftVars 1 right).map Bvi.Exp.var)) (value :: env) state =
+      match evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state with
+      | (.err error, next) => (.err error, next)
+      | (.val values, next) => (.val (value :: values), next) := by
+    change evaluateTuple (_, value :: env, state) = _
+    rw [evaluateCons]
+    simp only [BviSem.evaluateTuple]
+    have head : evaluate [.var 0] (value :: env) state = (.val [value], state) := by simp [BviSem.evaluate]
+    rw [head]
+    dsimp only
+    have tail := evaluate_shift_frame_args loc left right child env state [value]
+    simp only [List.length_singleton, List.singleton_append] at tail
+    rw [tail]
+    cases evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state with
+    | mk result next => cases result <;> rfl
+  simp only [callBlockToBvi, List.map_cons, List.cons_append]
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+  cases evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state with
+  | mk result next =>
+    cases result with
+    | err error => rfl
+    | val values => simp [BviTailrec.doApp_blockCons]
+
+/-- Flapjack infrastructure: a successful reconstructed frame remains a
+constructor when a preceding argument is inserted. -/
+theorem evaluate_prefixed_frame_success {C F : Type} (loc tag : Nat) (left right : List Nat)
+    (child : CallBlock) (value : Value) (env : List Value) (state next : BviState C F)
+    (result : Value) (run : evaluate [callBlockToBvi loc (.callBlock tag left child right)] env state =
+      (.val [result], next)) :
+    ∃ fields, result = .block tag fields ∧
+      evaluate [callBlockToBvi loc (.callBlock tag (0 :: shiftVars 1 left)
+        (shiftBlock 1 child) (shiftVars 1 right))] (value :: env) state =
+        (.val [.block tag (fields ++ [value])], next) := by
+  rw [callBlockToBvi, BviSem.evaluate, BviSem.fixClock_evaluate] at run
+  rw [evaluate_prefixed_frame]
+  cases argsRun : evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++
+      right.map Bvi.Exp.var) env state with
+  | mk argsResult argsState =>
+    simp only [List.append_assoc, List.singleton_append] at argsRun
+    cases argsResult with
+    | err error => simp [argsRun] at run
+    | val values =>
+      simp [argsRun, BviTailrec.doApp_blockCons] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact ⟨values.reverse, rfl, rfl⟩
+
+/-- Flapjack infrastructure: adding a preceding binding preserves errors
+produced by a reconstructed frame. -/
+theorem evaluate_prefixed_frame_error {C F : Type} (loc tag : Nat) (left right : List Nat)
+    (child : CallBlock) (value : Value) (env : List Value) (state next : BviState C F)
+    (error : SemanticPrimitivesHOL.ErrorResult ExnOrRet)
+    (run : evaluate [callBlockToBvi loc (.callBlock tag left child right)] env state = (.err error, next)) :
+    evaluate [callBlockToBvi loc (.callBlock tag (0 :: shiftVars 1 left)
+      (shiftBlock 1 child) (shiftVars 1 right))] (value :: env) state = (.err error, next) := by
+  rw [callBlockToBvi, BviSem.evaluate, BviSem.fixClock_evaluate] at run
+  rw [evaluate_prefixed_frame]
+  cases argsRun : evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++
+      right.map Bvi.Exp.var) env state with
+  | mk argsResult argsState =>
+    simp only [List.append_assoc, List.singleton_append] at argsRun
+    cases argsResult with
+    | err argsError => simpa [argsRun] using run
+    | val values => simp [argsRun, BviTailrec.doApp_blockCons] at run
+
 end Flapjack.Compiler.Backend.BviTmc
