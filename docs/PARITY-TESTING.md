@@ -446,6 +446,10 @@ and multi-argument functions; each is compared over the full assembly output.
 `scripts/check-cake-help.py` separately compares the complete `--help` output
 and its flag precedence with the pinned driver source. Interactive modes remain
 unsupported; their precedence over help is preserved by reporting that limit.
+The pinned compiler also accepts `--version` and prints build-specific CakeML,
+HOL, and Poly/ML provenance on stdout; Flapjack currently reports this option
+as unsupported. Matching its output requires handling the reference compiler's
+build metadata without attributing the reference binary's build to Flapjack.
 The feature-query checks cover every feature in the pinned NEWS file, including
 disabled entries, duplicate flags, and precedence over configuration errors.
 
@@ -679,6 +683,30 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
   --handler-cases 80 --annotation-cases 80 --config-cases 6 \
   --config-error-cases 10 --sexp-cases 40 --byte-cases 30 \
   --structured-cases 80 --lex-cases 80 --token-cases 80 --raw-byte-cases 80
+```
+
+Additional seeds on 2026-10-31 matched 97 complete RISC-V outputs against
+the pinned compiler, including programs compiled with varied optimization and
+backend options. A separate frontend seed matched 900 nested, lexical, token,
+declaration, and handler cases. The following commands reproduce those runs;
+the first command also checks its default frontend and option-validation cases.
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 30 --compile-cases 3 --structured-cases 40 \
+  --edge-seed 19861 --type-seed 19273 --compile-seed 18711 --timeout 35
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 0 --compile-cases 0 --compile-config-cases 0 --rich-cases 0 \
+  --integration-cases 0 --declaration-cases 150 --handler-cases 150 \
+  --annotation-cases 0 --config-cases 0 --config-error-cases 0 --sexp-cases 0 \
+  --byte-cases 0 --structured-cases 300 --lex-cases 150 --token-cases 150 \
+  --raw-byte-cases 0 --edge-seed 249821 --timeout 35
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 0 --compile-cases 12 --compile-config-cases 10 --rich-cases 20 \
+  --integration-cases 0 --declaration-cases 0 --handler-cases 0 \
+  --annotation-cases 0 --config-cases 5 --config-error-cases 0 --sexp-cases 0 \
+  --byte-cases 0 --structured-cases 0 --lex-cases 0 --token-cases 0 \
+  --raw-byte-cases 0 --compile-seed 550103 --timeout 45
 ```
 
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
