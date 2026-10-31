@@ -205,6 +205,58 @@ def checkOpFuel (fuel : Nat) (ctx : List ValueType) (assoc : AssocOp) (loc : Nat
 private abbrev Scan := List ValueType × ValueType × Bool × Option AssocOp
 
 mutual
+  /-- Total source-shaped scan of a single expression. -/
+  @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "scan_expr_sing_def"]
+  def scanSing (ctx : List ValueType) (loc : Nat) : Exp → Scan
+    | .var n | .force _ n => (ctx, ctx[n]?.getD .any, false, none)
+    | .ifThenElse cond yes no =>
+      let (ci, _, _, _) := scanSing ctx loc cond
+      let (ct, tt, _, ot) := scanSing ci loc yes
+      let (ce, te, _, oe) := scanSing ci loc no
+      let op := ot.orElse fun _ => oe
+      let ty := match op with | none => decideType tt te | some o => decideType tt (decideType te (opType o))
+      ((ct.zip ce).map fun (x, y) => decideType x y, ty, oe.isSome, op)
+    | .let xs body =>
+      let scans := scanList ctx loc xs
+      let types := scans.map fun (_, ty, _, _) => ty
+      let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ctx
+      let (out, ty, _, op) := scanSing (types ++ last) loc body
+      (out.drop scans.length, ty, false, op)
+    | .tick body => scanSing ctx loc body
+    | .op op xs =>
+      let assoc := fromOp op
+      if assoc == .noop then
+        if argType op == .int then
+          match xs with
+          | [x, y] => if isConst op then (ctx, .any, false, none)
+              else (updateContext .int ctx x y, .any, false, none)
+          | _ => if isConst op then (ctx, .int, false, none) else (ctx, .any, false, none)
+        else match op, xs with
+          | .blockOp (.cons 0), [] => (ctx, .list, false, none)
+          | _, _ => (ctx, .any, false, none)
+      else
+        let ty := opType assoc
+        if (checkOp ctx assoc loc (.op op xs)).isSome then
+          (ctx, ty, false, some assoc)
+        else if term ctx ty (.op op xs) then
+          match xs with
+          | [x, y] => (updateContext ty ctx x y, ty, false, none)
+          | _ => (ctx, .any, false, none)
+        else (ctx, .any, false, none)
+    | _ => (ctx, .any, false, none)
+  termination_by e => sizeOf e
+
+  /-- Total source-shaped scan of a list, threading the inferred context. -/
+  @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "scan_expr_sing_def"]
+  def scanList (ctx : List ValueType) (loc : Nat) : List Exp → List Scan
+    | [] => []
+    | x :: xs =>
+      let result := scanSing ctx loc x
+      result :: scanList result.1 loc xs
+  termination_by xs => sizeOf xs
+end
+
+mutual
   /-- Analyze one expression in the source evaluation order. -/
   def scanFuel : Nat → List ValueType → Nat → Exp → Option Scan
     | 0, _, _, _ => none
