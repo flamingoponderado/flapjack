@@ -6,11 +6,11 @@ open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
 /-- An empty recursive group reduces to its body after the source capture
 check. This candidate remains untagged pending evaluator and carrier review. -/
-theorem expressionSimulation_letrec_nil {C F : Type}
+theorem expressionSimulationBelow_letrec_nil {C F : Type} (clockBound : Nat)
     (names : List Basis.Pure.MlString.MlString) (location : Option Nat) (selected : Option (List Nat))
-    (body : ClosLang.Exp) (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
-    expressionSimulation (C := C) (F := F) [.letrec names location selected [] body] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    (body : ClosLang.Exp) (bodyIH : expressionSimulationBelow (C := C) (F := F) clockBound [body]) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.letrec names location selected [] body] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases location with
   | none => simp [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] at locations
@@ -31,18 +31,28 @@ theorem expressionSimulation_letrec_nil {C F : Type}
           simpa [ClosSem.evaluate, capture] using run
         have bodyCompiled : compileExpsHOL s.maxApp [body] aux = (compiled, finalAux) := by
           simpa [compileExps_eq_list, compileExpListHOL, compileExpHOL] using compile
-        exact bodyIH s sFinal t sourceEnv targetEnv f aux finalAux compiled result bodyRun noTypeError
+        exact bodyIH s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded bodyRun noTypeError
           bodyCompiled bodyLoc annotations bodyVars installed envRelated states
+
+
+/-- The unrestricted result follows from its bounded form. -/
+theorem expressionSimulation_letrec_nil {C F : Type}
+    (names : List Basis.Pure.MlString.MlString) (location : Option Nat) (selected : Option (List Nat))
+    (body : ClosLang.Exp) (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
+    expressionSimulation (C := C) (F := F) [.letrec names location selected [] body] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  exact expressionSimulationBelow_letrec_nil clockBound names location selected body (expressionSimulation_below clockBound [body] bodyIH)
 
 /-- A singleton recursive group produces a closure with its own code pointer
 in the environment. The function body is installed before the enclosing body
 is evaluated. This candidate remains untagged pending carrier review. -/
-theorem expressionSimulation_letrec_singleton {C F : Type}
+theorem expressionSimulationBelow_letrec_singleton {C F : Type} (clockBound : Nat)
     (names : List Basis.Pure.MlString.MlString) (location : Option Nat) (selected : Option (List Nat))
     (arity : Nat) (functionBody body : ClosLang.Exp)
-    (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
-    expressionSimulation (C := C) (F := F) [.letrec names location selected [(arity, functionBody)] body] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    (bodyIH : expressionSimulationBelow (C := C) (F := F) clockBound [body]) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.letrec names location selected [(arity, functionBody)] body] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases location with
   | none => simp [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] at locations
@@ -113,7 +123,7 @@ theorem expressionSimulation_letrec_singleton {C F : Type}
               have extendedEnv : envRel s.maxApp f t.refs t.code (sourceClosure :: sourceEnv) (targetClosure :: targetEnv) :=
                 ⟨valueRel, envRelated⟩
               have bodyPost := bodyIH s sFinal t (sourceClosure :: sourceEnv) (targetClosure :: targetEnv) f
-                (entry :: auxFunction) finalAux [targetBody] result bodyRun noTypeError bodyCompiled bodyLoc
+                (entry :: auxFunction) finalAux [targetBody] result clockBounded bodyRun noTypeError bodyCompiled bodyLoc
                 annotations bodyVars installed extendedEnv states
               obtain ⟨clock, targetResult, tFinal, fFinal, targetRun, related, state, map, refs, finalAnnotations, clocks⟩ := bodyPost
               have closureRun : BvlSem.evaluate [closureExp] targetEnv { t with clock := s.clock + clock } =
@@ -126,5 +136,16 @@ theorem expressionSimulation_letrec_singleton {C F : Type}
               exact targetRun
       · simp [ClosSem.evaluate, valid] at run
         exact False.elim (noTypeError run.1.symm)
+
+
+/-- The unrestricted result follows from its bounded form. -/
+theorem expressionSimulation_letrec_singleton {C F : Type}
+    (names : List Basis.Pure.MlString.MlString) (location : Option Nat) (selected : Option (List Nat))
+    (arity : Nat) (functionBody body : ClosLang.Exp)
+    (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
+    expressionSimulation (C := C) (F := F) [.letrec names location selected [(arity, functionBody)] body] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  exact expressionSimulationBelow_letrec_singleton clockBound names location selected arity functionBody body (expressionSimulation_below clockBound [body] bodyIH)
 
 end Flapjack.Compiler.Backend.ClosToBvl

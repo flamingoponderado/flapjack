@@ -9,12 +9,12 @@ open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 /-- A mutually recursive source group is simulated by the generated shared
 closure array and the compiled enclosing body. This candidate is untagged
 pending review of the evaluator and state carriers. -/
-theorem expressionSimulation_letrec_mutual {C F : Type}
+theorem expressionSimulationBelow_letrec_mutual {C F : Type} (clockBound : Nat)
     (names : List Basis.Pure.MlString.MlString) (location : Option Nat) (selected : Option (List Nat))
     (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp) (multi : 1 < functions.length)
-    (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
-    expressionSimulation (C := C) (F := F) [.letrec names location selected functions body] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    (bodyIH : expressionSimulationBelow (C := C) (F := F) clockBound [body]) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.letrec names location selected functions body] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases location with
   | none => simp [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] at locations
@@ -91,7 +91,7 @@ theorem expressionSimulation_letrec_mutual {C F : Type}
               have submap : relocationSubmap f f := by intro key value found; exact found
               have nextEnv := envRel_grow_refs envRelated submap frame
               have bodyEnv := envRel_prepend closuresRel nextEnv
-              have bodyPost := bodyIH s sFinal next _ _ f auxRec finalAux [targetBody] result bodyRun noTypeError
+              have bodyPost := bodyIH s sFinal next _ _ f auxRec finalAux [targetBody] result clockBounded bodyRun noTypeError
                 bodyCompiled bodyLoc annotations bodyVars installed bodyEnv nextStates
               obtain ⟨clock, targetResult, tFinal, fFinal, targetRun, related, finalStates, map, refs,
                 finalAnnotations, clocks⟩ := bodyPost
@@ -115,6 +115,17 @@ theorem expressionSimulation_letrec_mutual {C F : Type}
       · simp [ClosSem.evaluate, valid] at run
         exact False.elim (noTypeError run.1.symm)
 
+
+/-- The unrestricted result follows from its bounded form. -/
+theorem expressionSimulation_letrec_mutual {C F : Type}
+    (names : List Basis.Pure.MlString.MlString) (location : Option Nat) (selected : Option (List Nat))
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp) (multi : 1 < functions.length)
+    (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
+    expressionSimulation (C := C) (F := F) [.letrec names location selected functions body] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  exact expressionSimulationBelow_letrec_mutual clockBound names location selected functions body multi (expressionSimulation_below clockBound [body] bodyIH)
+
 /-- All recursive-binding group shapes satisfy the candidate simulation when
 the enclosing body satisfies its induction hypothesis. -/
 theorem expressionSimulation_letrec {C F : Type}
@@ -131,5 +142,22 @@ theorem expressionSimulation_letrec {C F : Type}
       exact expressionSimulation_letrec_singleton names location selected arity functionBody body bodyIH
     | cons second rest =>
       exact expressionSimulation_letrec_mutual names location selected (first :: second :: rest) body (by simp) bodyIH
+
+/-- All recursive-binding group shapes preserve a common clock bound. -/
+theorem expressionSimulationBelow_letrec {C F : Type} (clockBound : Nat)
+    (names : List Basis.Pure.MlString.MlString) (location : Option Nat) (selected : Option (List Nat))
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (bodyIH : expressionSimulationBelow (C := C) (F := F) clockBound [body]) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.letrec names location selected functions body] := by
+  cases functions with
+  | nil => exact expressionSimulationBelow_letrec_nil clockBound names location selected body bodyIH
+  | cons first rest =>
+    cases rest with
+    | nil =>
+      obtain ⟨arity, functionBody⟩ := first
+      exact expressionSimulationBelow_letrec_singleton clockBound names location selected arity functionBody body bodyIH
+    | cons second rest =>
+      exact expressionSimulationBelow_letrec_mutual clockBound names location selected
+        (first :: second :: rest) body (by simp) bodyIH
 
 end Flapjack.Compiler.Backend.ClosToBvl
