@@ -1445,4 +1445,136 @@ theorem doApp_op_rel_derefByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
       holesStillNotFinalised f target.refs targetNext.refs := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
 
+/-- In-place byte copying preserves related heaps for independently mapped
+source and destination pointers, including when the pointers alias. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_copyByte_inPlace {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp (.copyByte false)) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.memOp (.copyByte false))) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp (.copyByte false)) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+    | cons second rest =>
+      cases rest with
+      | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | cons third rest =>
+        cases rest with
+        | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+        | cons fourth rest =>
+          cases rest with
+          | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+          | cons fifth rest =>
+            cases rest with
+            | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+            | nil =>
+              cases first <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+              cases second <;> try simp at run
+              cases third <;> try simp at run
+              cases fourth <;> try simp at run
+              cases fifth <;> simp [BviSem.toBvl] at run
+              rename_i srcFlag src offset count dstFlag dst dstOffset
+              cases valuesRelated with
+              | cons srcRel tailRel =>
+                cases srcRel with
+                | refPtr _ targetSrc _ srcMapped =>
+                  cases tailRel with
+                  | cons offsetRel tailRel =>
+                    cases offsetRel
+                    cases tailRel with
+                    | cons countRel tailRel =>
+                      cases countRel
+                      cases tailRel with
+                      | cons dstRel tailRel =>
+                        cases dstRel with
+                        | refPtr _ targetDst _ dstMapped =>
+                          cases tailRel with
+                          | cons dstOffsetRel tailRel =>
+                            cases dstOffsetRel
+                            cases tailRel
+                            obtain ⟨_, _, sourceFound, targetFound, sourceCells⟩ :=
+                              stateRefRel_lookup f src targetSrc source.refs target.refs srcMapped statesRelated.1
+                            obtain ⟨_, _, destFound, targetDestFound, destCells⟩ :=
+                              stateRefRel_lookup f dst targetDst source.refs target.refs dstMapped statesRelated.1
+                            cases sourceCells with
+                            | valueArray xs ys rel => simp [sourceFound] at run
+                            | thunk mode x y rel => simp [sourceFound] at run
+                            | byteArray sourceFlag sourceBytes =>
+                              cases destCells with
+                              | valueArray xs ys rel => simp [sourceFound, destFound] at run
+                              | thunk mode x y rel => simp [sourceFound, destFound] at run
+                              | byteArray destFlag destBytes =>
+                                cases copied : SemanticPrimitivesHOL.copyArray (sourceBytes, offset) count (some (destBytes, dstOffset)) with
+                                | none => simp [sourceFound, destFound, copied] at run
+                                | some updated =>
+                                  simp [sourceFound, destFound, copied, BviSem.fromBvl] at run
+                                  obtain ⟨rfl, rfl⟩ := run
+                                  have nextRelated : stateRel f
+                                      { source with refs := source.refs.updateEq (dst, .byteArray destFlag updated) }
+                                      { target with refs := target.refs.updateEq (targetDst, .byteArray destFlag updated) } := by
+                                    exact ⟨stateRefRel_update f source.refs target.refs dst targetDst _ _ statesRelated.1
+                                      statesRelated.2.2.2.2.2.2.2.2.2.2 dstMapped (.byteArray _ _), statesRelated.2⟩
+                                  refine ⟨f, unitValue,
+                                    { target with refs := target.refs.updateEq (targetDst, .byteArray destFlag updated) },
+                                    ?_, ?_, nextRelated, ?_, onlyFresh_refl f target.refs,
+                                    holesUnchanged_rangeUpdate f dst targetDst _ target.refs dstMapped,
+                                    holesStill_rangeUpdate f dst targetDst _ target.refs dstMapped⟩
+                                  · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                                      BviSem.toBvl, BviSem.fromBvl, targetFound, targetDestFound, copied]
+                                  · exact .block _ [] [] .nil
+                                  · intro key item present
+                                    exact present
+
+/-- Every memory operation satisfies the source primitive simulation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_mem {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang.MemOp)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp op) values source = .val (value, sourceNext))
+    (noMutcons : noMutconsOp (.memOp op)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp op) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases op with
+  | ref => exact doApp_op_rel_ref f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | update => exact doApp_op_rel_update f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | el => exact doApp_op_rel_el f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | length => exact doApp_op_rel_length f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | lengthByte => exact doApp_op_rel_lengthByte f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | refByte flag => exact doApp_op_rel_refByte f flag values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | refArray => exact doApp_op_rel_refArray f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | derefByte => exact doApp_op_rel_derefByte f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | updateByte => exact doApp_op_rel_updateByte f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | concatByteVec => exact doApp_op_rel_concatByteVec f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | copyByte flag =>
+    cases flag with
+    | false => exact doApp_op_rel_copyByte_inPlace f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+    | true => exact doApp_op_rel_copyByte_new f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | fromListByte => exact doApp_op_rel_fromListByte f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | toListByte => exact doApp_op_rel_toListByte f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | lengthByteVec => exact doApp_op_rel_lengthByteVec f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | derefByteVec => exact doApp_op_rel_derefByteVec f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | stringCmp fast comparison => exact doApp_op_rel_stringCmp f fast comparison values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | xorByte => exact doApp_op_rel_xorByte f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | boundsCheckArray => exact doApp_op_rel_boundsCheckArray f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | boundsCheckByte loose => exact doApp_op_rel_boundsCheckByte f loose values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | mutCons tag index => exact doApp_op_rel_mutCons f tag index values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | updateCons => exact doApp_op_rel_updateCons f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | finaliseCons => exact doApp_op_rel_finaliseCons f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | configGC => exact doApp_op_rel_configGC f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+
 end Flapjack.Compiler.Backend.BviTmc
