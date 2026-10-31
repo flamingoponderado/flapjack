@@ -522,6 +522,132 @@ theorem doApp_refByte_error {C F : Type} (flag : Bool) (args : List Value)
           | none => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, neg, converted] using run.symm
           | some byteValue => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, neg, converted] at run
 
+/-- The result of finalising a mutable block depends only on its input value
+and the shared reference store. -/
+noncomputable def finaliseConsEffect (args : List Value) (refs : HolFiniteMapExact Nat (Ref Value)) :
+    Option (Value × HolFiniteMapExact Nat (Ref Value)) :=
+  match args with
+  | [value] => BviSem.finaliseCons value refs
+  | _ => none
+
+/-- Finalisation updates only the reference store; malformed arguments are
+rejected by the BVL fallback. -/
+theorem doApp_finaliseCons_effect {C F : Type} (args : List Value) (state : BviSem.BviState C F) :
+    BviSem.doApp (.memOp .finaliseCons) args state =
+      match finaliseConsEffect args state.refs with
+      | none => .err (.abort .typeError)
+      | some (value, refs) => .val (value, { state with refs := refs }) := by
+  cases args with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+      BvlSem.applyMemory, finaliseConsEffect]
+  | cons value rest =>
+    cases rest with
+    | cons x xs => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+        BvlSem.applyMemory, finaliseConsEffect]
+    | nil =>
+      simp only [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, finaliseConsEffect]
+      cases result : BviSem.finaliseCons value state.refs with
+      | none => simp
+      | some pair => cases pair; simp
+
+/-- Finalisation preserves related states. -/
+theorem stateRel_doApp_finaliseCons {C F : Type} (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.memOp .finaliseCons) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.memOp .finaliseCons) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  have refs := (stateRel_const source target related).1
+  rw [doApp_finaliseCons_effect] at run ⊢
+  rw [refs]
+  cases effect : finaliseConsEffect args source.refs with
+  | none => simp [effect] at run
+  | some pair =>
+    obtain ⟨result, newRefs⟩ := pair
+    simp [effect] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨{ target with refs := newRefs }, by simp, stateRel_withRefs source target newRefs related⟩
+
+/-- Finalisation reports only type errors. -/
+theorem doApp_finaliseCons_error {C F : Type} (args : List Value) (state : BviSem.BviState C F)
+    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.memOp .finaliseCons) args state = .err error) : error = .abort .typeError := by
+  rw [doApp_finaliseCons_effect] at run
+  cases effect : finaliseConsEffect args state.refs with
+  | none => simpa [effect] using run.symm
+  | some pair => cases pair; simp [effect] at run
+
+/-- The reference-store effect of a mutable-block update. -/
+def updateConsEffect (args : List Value) (refs : HolFiniteMapExact Nat (Ref Value)) :
+    Option (HolFiniteMapExact Nat (Ref Value)) :=
+  match args with
+  | [.refPtr _ ptr, .number index, value] =>
+    match refs.lookup ptr with
+    | some (.mutBlock tag finalised left _ right) =>
+      if index ≠ Int.ofNat left.length ∨ finalised then none
+      else some (refs.updateEq (ptr, .mutBlock tag false left value right))
+    | _ => none
+  | _ => none
+
+/-- Mutable-block updates either fail with a type error or update only the
+reference store. Malformed arguments reach the BVL fallback and fail there. -/
+theorem doApp_updateCons_effect {C F : Type} (args : List Value) (state : BviSem.BviState C F) :
+    BviSem.doApp (.memOp .updateCons) args state =
+      match updateConsEffect args state.refs with
+      | none => .err (.abort .typeError)
+      | some refs => .val (unitValue, { state with refs := refs }) := by
+  cases args with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+      BvlSem.applyMemory, updateConsEffect]
+  | cons a rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+        BvlSem.applyMemory, updateConsEffect]
+    | cons b rest =>
+      cases rest with
+      | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+          BvlSem.applyMemory, updateConsEffect]
+      | cons value rest =>
+        cases rest with
+        | cons x xs => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+            BvlSem.applyMemory, updateConsEffect]
+        | nil =>
+          cases a <;> cases b <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux,
+            BvlSem.doApp, BvlSem.applyMemory, updateConsEffect]
+          rename_i flag ptr index
+          cases found : state.refs.lookup ptr with
+          | none => simp
+          | some entry =>
+            cases entry <;> simp
+            rename_i tag finalised left old right
+            by_cases same : index = Int.ofNat left.length <;> cases finalised <;> simp_all
+
+/-- Mutable-block updates preserve related stores. -/
+theorem stateRel_doApp_updateCons {C F : Type} (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.memOp .updateCons) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.memOp .updateCons) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  have refs := (stateRel_const source target related).1
+  rw [doApp_updateCons_effect] at run ⊢
+  rw [refs]
+  cases effect : updateConsEffect args source.refs with
+  | none => simp [effect] at run
+  | some newRefs =>
+    simp [effect] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨{ target with refs := newRefs }, by simp, stateRel_withRefs source target newRefs related⟩
+
+/-- Mutable-block updates report only type errors. -/
+theorem doApp_updateCons_error {C F : Type} (args : List Value) (state : BviSem.BviState C F)
+    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.memOp .updateCons) args state = .err error) : error = .abort .typeError := by
+  rw [doApp_updateCons_effect] at run
+  cases effect : updateConsEffect args state.refs with
+  | none => simpa [effect] using run.symm
+  | some refs => simp [effect] at run
+
 /-- Mutable-block allocation chooses the same fresh reference and installs
 the same entry in related reference stores. -/
 theorem stateRel_doApp_mutCons {C F : Type} (tag index : Nat) (args : List Value)

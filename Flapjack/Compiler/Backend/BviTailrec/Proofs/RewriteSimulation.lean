@@ -2999,6 +2999,44 @@ theorem rewriteTail_op_refByte {C F : Type} (flag : Bool) (args : List Bvi.Exp)
   · exact doApp_refByte_error flag
   · exact hyp
 
+/-- Mutable-block finalisation preserves the rewrite simulation. -/
+theorem rewriteTail_op_finaliseCons {C F : Type} (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.memOp .finaliseCons) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp .finaliseCons) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.memOp .finaliseCons) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_finaliseCons
+  · exact doApp_finaliseCons_error
+  · exact hyp
+
+/-- Mutable-block updates preserve the rewrite simulation. -/
+theorem rewriteTail_op_updateCons {C F : Type} (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.memOp .updateCons) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp .updateCons) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.memOp .updateCons) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_updateCons
+  · exact doApp_updateCons_error
+  · exact hyp
+
 /-- Mutable-block allocation preserves the rewrite simulation. -/
 theorem rewriteTail_op_mutCons {C F : Type} (tag index : Nat) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
