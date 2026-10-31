@@ -467,6 +467,113 @@ theorem doApp_intConst_error {C F : Type} (number : Int) (args : List Value)
     · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, small] at run
     · simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, small] using run.symm
 
+/-- Reading a global slot depends only on the shared global pointer and
+reference store. -/
+theorem stateRel_doApp_global {C F : Type} (index : Nat) (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (result : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.globOp (.global index)) args source = .val (result, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.globOp (.global index)) args target = .val (result, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  cases args with
+  | cons value rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+  | nil =>
+    have refs := (stateRel_const source target related).1
+    have global := (stateRel_const source target related).2.2.1
+    cases pointer : source.global with
+    | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer] at run
+    | some ptr =>
+      cases found : source.refs.lookup ptr with
+      | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found] at run
+      | some entry =>
+        cases entry with
+        | valueArray values =>
+          cases item : values[index]? with
+          | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found, item] at run
+          | some value =>
+            simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found, item] at run
+            obtain ⟨rfl, rfl⟩ := run
+            exact ⟨target, by simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux,
+              global, refs, pointer, found, item], related⟩
+        | _ => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found] at run
+
+/-- Writing a global slot applies the same reference-store update on both
+sides of the state relation. -/
+theorem stateRel_doApp_setGlobal {C F : Type} (index : Nat) (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (result : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.globOp (.setGlobal index)) args source = .val (result, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.globOp (.setGlobal index)) args target = .val (result, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  cases args with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+  | cons value rest =>
+    cases rest with
+    | cons x xs => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+    | nil =>
+      have refs := (stateRel_const source target related).1
+      have global := (stateRel_const source target related).2.2.1
+      cases pointer : source.global with
+      | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer] at run
+      | some ptr =>
+        cases found : source.refs.lookup ptr with
+        | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found] at run
+        | some entry =>
+          cases entry with
+          | valueArray values =>
+            by_cases bound : index < values.length
+            · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found, bound] at run
+              obtain ⟨rfl, rfl⟩ := run
+              refine ⟨{ target with refs := source.refs.updateEq (ptr, .valueArray (values.set index value)) }, ?_,
+                by simpa [pointer] using (stateRel_withRefs source target
+                  (source.refs.updateEq (ptr, .valueArray (values.set index value))) related)⟩
+              simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, global, refs, pointer, found, bound]
+            · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found, bound] at run
+          | _ => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found] at run
+
+/-- A global-slot write reports only a type error. -/
+theorem doApp_setGlobal_error {C F : Type} (index : Nat) (args : List Value)
+    (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.globOp (.setGlobal index)) args state = .err error) : error = .abort .typeError := by
+  cases args with
+  | nil => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] using run.symm
+  | cons value rest =>
+    cases rest with
+    | cons x xs => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] using run.symm
+    | nil =>
+      cases pointer : state.global with
+      | none => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer] using run.symm
+      | some ptr =>
+        cases found : state.refs.lookup ptr with
+        | none => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found] using run.symm
+        | some entry =>
+          cases entry with
+          | valueArray values =>
+            by_cases bound : index < values.length
+            · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found, bound] at run
+            · simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found, bound] using run.symm
+          | _ => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found] using run.symm
+
+/-- A global-slot read reports only a type error. -/
+theorem doApp_global_error {C F : Type} (index : Nat) (args : List Value)
+    (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.globOp (.global index)) args state = .err error) : error = .abort .typeError := by
+  cases args with
+  | cons value rest => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] using run.symm
+  | nil =>
+    cases pointer : state.global with
+    | none => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer] using run.symm
+    | some ptr =>
+      cases found : state.refs.lookup ptr with
+      | none => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found] using run.symm
+      | some entry =>
+        cases entry with
+        | valueArray values =>
+          cases item : values[index]? with
+          | none => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found, item] using run.symm
+          | some value => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found, item] at run
+        | _ => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, pointer, found] using run.symm
+
 /-- A global-pointer read reports only the source type error. -/
 theorem doApp_globalsPtr_error {C F : Type} (args : List Value)
     (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)

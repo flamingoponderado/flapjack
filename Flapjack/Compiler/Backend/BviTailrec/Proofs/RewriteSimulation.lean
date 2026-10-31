@@ -2926,6 +2926,44 @@ theorem rewriteTail_op_globalsPtr {C F : Type}  (args : List Bvi.Exp)
   · exact doApp_globalsPtr_error
   · exact hyp
 
+/-- Global-slot reads preserve the rewrite simulation through related stores. -/
+theorem rewriteTail_op_global {C F : Type} (index : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.globOp (.global index)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.globOp (.global index)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.globOp (.global index)) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_global index
+  · exact doApp_global_error index
+  · exact hyp
+
+/-- Global-slot writes preserve the rewrite simulation through related stores. -/
+theorem rewriteTail_op_setGlobal {C F : Type} (index : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.globOp (.setGlobal index)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.globOp (.setGlobal index)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.globOp (.setGlobal index)) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_setGlobal index
+  · exact doApp_setGlobal_error index
+  · exact hyp
+
 /-- Complete global-pointer write operation case of the source-shaped simulation. -/
 theorem rewriteTail_op_setGlobalsPtr {C F : Type}  (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
