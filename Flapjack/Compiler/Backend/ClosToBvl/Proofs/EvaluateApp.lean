@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.DirectApplication
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 import Flapjack.Compiler.Backend.BvlJump.Proofs
