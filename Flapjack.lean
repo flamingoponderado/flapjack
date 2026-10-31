@@ -659,6 +659,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitGlobalsStub
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TailrecNames
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TailrecSemantics
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Observations
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Divergence
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.OptimizedProgram
