@@ -622,6 +622,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxNameRange
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstall
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitGlobalsStub
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
