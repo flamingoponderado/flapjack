@@ -3094,6 +3094,33 @@ theorem rewriteTail_op_mutCons {C F : Type} (tag index : Nat) (args : List Bvi.E
   · exact doApp_mutCons_error tag index
   · exact hyp
 
+/-- Thunk allocation and updates preserve the rewrite simulation, including
+error outcomes and reference-store updates. -/
+theorem rewriteTail_op_thunkOp {C F : Type} (operation : AstHOL.ThunkOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.thunkOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.thunkOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  obtain ⟨targetNext, targetRun, targetRelated⟩ :=
+    evaluate_op_related_errors (.thunkOp operation) args source env1 result sourceNext optimized target acc env2 loc ts ty
+      argsIH (stateRel_doApp_thunk operation) (stateRel_doApp_thunk_error operation) hyp
+  apply rewriteTailPost_of_no_scan (.op (.thunkOp operation) args) source env1 result sourceNext
+    optimized target targetNext acc env2 loc ts ty targetRun targetRelated
+  intro tt resultTy branch op1 scan
+  have noChoice : (scanSing ts loc (.op (.thunkOp operation) args)).2.2.2 = none := by
+    rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  rw [scanExpr_single] at scan
+  have scanEq : scanSing ts loc (.op (.thunkOp operation) args) = (tt, resultTy, branch, some op1) := by
+    simpa using scan
+  rw [scanEq] at noChoice
+  simp at noChoice
+
 /-- Complete label-operation case of the source-shaped simulation. -/
 theorem rewriteTail_op_label {C F : Type} (label : Nat) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
@@ -3607,6 +3634,40 @@ theorem rewriteTail_op_memOp {C F : Type} (operation : ClosLang.MemOp) (args : L
     all_goals first
       | exact rewriteTail_op_memory_delegated _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
       | exact rewriteTail_op_memory_rejected _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
+
+/-- Every operation except dynamic installation satisfies the rewrite
+simulation using structural and smaller-clock induction hypotheses. -/
+theorem rewriteTail_op_nonInstall_of_size {C F : Type} (operation : ClosLang.Op) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (structuralIH : ∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op operation args] →
+      rewriteTailProperty (C := C) (F := F) xs)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (notInstall : operation ≠ .install)
+    (hyp : rewriteTailHyp [.op operation args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op operation args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  have argsSmaller : sizeOf args < sizeOf [Bvi.Exp.op operation args] := by
+    simp only [List.cons.sizeOf_spec, List.nil.sizeOf_spec, Bvi.Exp.op.sizeOf_spec]
+    omega
+  have argsIH := structuralIH args argsSmaller
+  cases operation with
+  | label label => exact rewriteTail_op_label label args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | ffi name => exact rewriteTail_op_ffi name args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | intOp op => exact rewriteTail_op_intOp_of_size op args source env1 result sourceNext optimized target acc env2 loc ts ty structuralIH clockIH hyp
+  | wordOp op => exact rewriteTail_op_word op args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | blockOp op => exact rewriteTail_op_blockOp_of_size op args source env1 result sourceNext optimized target acc env2 loc ts ty structuralIH clockIH hyp
+  | globOp op => exact rewriteTail_op_globOp op args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | memOp op => exact rewriteTail_op_memOp op args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | install => exact (notInstall rfl).elim
+  | thunkOp op => exact rewriteTail_op_thunkOp op args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
 
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a

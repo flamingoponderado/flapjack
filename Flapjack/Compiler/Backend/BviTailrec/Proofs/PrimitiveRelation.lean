@@ -825,6 +825,70 @@ theorem doApp_memory_viaBvl_error {C F : Type} (op : ClosLang.MemOp) (args : Lis
   | none => simpa [found] using run.symm
   | some pair => cases pair; simp [found] at run
 
+/-- Thunk application depends only on the reference store and updates only that store. -/
+theorem doApp_thunk_sharedRefs {C D F G : Type} (op : AstHOL.ThunkOp) (args : List Value)
+    (s : BvlSem.State C F) (t : BvlSem.State D G) (refs : t.refs = s.refs) :
+    BvlSem.doApp (.thunkOp op) args t =
+      match BvlSem.doApp (.thunkOp op) args s with
+      | .err error => .err error
+      | .val (value, next) => .val (value, { t with refs := next.refs }) := by
+  simp only [BvlSem.doApp]
+  rw [refs]
+  repeat' split
+  all_goals simp_all
+  all_goals try (cases t; simp_all)
+  all_goals grind
+/-- BVI thunk application delegates to BVL. -/
+theorem doApp_thunk_viaBvl {C F : Type} (op : AstHOL.ThunkOp) (args : List Value) (s : BviSem.BviState C F) :
+    BviSem.doApp (.thunkOp op) args s =
+      match BvlSem.doApp (.thunkOp op) args (BviSem.toBvl s) with
+      | .val (value, next) => .val (value, BviSem.fromBvl next s)
+      | .err (.abort error) => .err (.abort error)
+      | .err (.raise value) => .err (.raise (.exn value)) := by
+  rfl
+/-- Successful thunk operations preserve related BVI states. -/
+theorem stateRel_doApp_thunk {C F : Type} (op : AstHOL.ThunkOp) (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.thunkOp op) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.thunkOp op) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  have refs := (stateRel_const source target related).1
+  have eqRefs : (BviSem.toBvl target).refs = (BviSem.toBvl source).refs := by simpa [BviSem.toBvl] using refs
+  have transfer := doApp_thunk_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl target) eqRefs
+  have self := doApp_thunk_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl source) rfl
+  rw [doApp_thunk_viaBvl op args source] at run
+  rw [doApp_thunk_viaBvl op args target]
+  cases found : BvlSem.doApp (.thunkOp op) args (BviSem.toBvl source) with
+  | err error => cases error <;> simp [found] at run
+  | val pair =>
+    obtain ⟨v, next⟩ := pair
+    rw [found] at self transfer run
+    have nextEq : next = { BviSem.toBvl source with refs := next.refs } := by
+      exact (Prod.mk.inj (SemanticPrimitivesHOL.Result.val.inj self)).2
+    rw [nextEq] at run
+    simp [BviSem.toBvl, BviSem.fromBvl] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨{ target with refs := next.refs }, ?_, stateRel_withRefs source target next.refs related⟩
+    rw [transfer]
+    simp [BviSem.toBvl, BviSem.fromBvl]
+/-- Thunk-operation errors agree in related BVI states. -/
+theorem stateRel_doApp_thunk_error {C F : Type} (op : AstHOL.ThunkOp) (args : List Value)
+    (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet) (related : stateRel source target)
+    (run : BviSem.doApp (.thunkOp op) args source = .err error) :
+    BviSem.doApp (.thunkOp op) args target = .err error := by
+  have refs := (stateRel_const source target related).1
+  have eqRefs : (BviSem.toBvl target).refs = (BviSem.toBvl source).refs := by simpa [BviSem.toBvl] using refs
+  have transfer := doApp_thunk_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl target) eqRefs
+  rw [doApp_thunk_viaBvl op args source] at run
+  rw [doApp_thunk_viaBvl op args target]
+  cases found : BvlSem.doApp (.thunkOp op) args (BviSem.toBvl source) with
+  | err e =>
+    rw [found] at transfer run
+    rw [transfer]
+    cases e <;> simpa using run
+  | val pair => cases pair; simp [found] at run
 /-- Constructing a plain block returns its fields without changing state. -/
 theorem doApp_blockCons {C F : Type} (tag : Nat) (args : List Value) (state : BviSem.BviState C F) :
     BviSem.doApp (.blockOp (.cons tag)) args state = .val (.block tag args, state) := by
