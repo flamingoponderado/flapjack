@@ -707,6 +707,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialState
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ProgramCode
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.StubCode
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberedPrepared
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRejected
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateOrdinary
 import Flapjack.Test.ClosToBvlRecursive
