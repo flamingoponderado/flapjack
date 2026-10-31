@@ -631,6 +631,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRaise
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateTick
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLet
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateIf
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateHandle
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
 import Flapjack.Compiler.Backend.ClosToBvl.Layout.Auxiliary
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Integer
