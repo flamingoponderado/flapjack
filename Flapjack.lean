@@ -618,6 +618,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.StateRel
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ValueOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.RelocationOk
 import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyCode
+import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracle
 import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyClockShift
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShiftCases
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
