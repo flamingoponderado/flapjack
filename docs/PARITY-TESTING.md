@@ -464,7 +464,10 @@ closures, exceptions, lists, vectors, integers and words, plus polymorphic trees
 local and module declarations, recursive list matches, and tuple patterns. It
 also checks complete no-prelude RISC-V output for mutual recursion, a curried
 conditional, recursive datatypes with mixed constructor arities, and overlapping
-tuple patterns. These successful cases are compared with the pinned executable.
+tuple patterns. The suite also checks recursive list and tree constructors with
+TMC enabled, the list case with TMC disabled, and combinations with splitting
+disabled, a zero inline threshold, and three tag bits. These successful cases
+are compared with the pinned executable.
 An additional generated run with `--compile-seed 1937` compared complete
 stdout, stderr, and exit status for eight arithmetic programs, eight diverse
 programs, four extended programs, and three backend-option combinations; all

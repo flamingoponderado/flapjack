@@ -15,6 +15,12 @@ spec.loader.exec_module(parity)
 
 # Each program makes the computed result observable through an output call.
 CASES = {
+    'tmc_list_enabled': 'fun f n = if n = 0 then [] else n::f (n-1); val _ = print_int (List.length (f 9));',
+    'tmc_tree_enabled': 'datatype t = A int | B (t * t); fun f n = if n = 0 then A 0 else B (f (n-1), A n); val _ = print_int (case f 3 of A x => x | B (A x,_) => x | _ => 5);',
+    'tmc_list_disabled': 'fun f n = if n = 0 then [] else n::f (n-1); val _ = print_int (List.length (f 9));',
+    'split_disabled_bindings': 'val x = 1; val y = x+2; val _ = print_int (x+y);',
+    'inline_zero_calls': 'fun f x = x+1; fun g y = f (f y); val _ = print_int (g 4);',
+    'tag_bits_three': 'val _ = print_int (1+2);',
     'no_prelude_recursive_copy': 'fun copy xs = case xs of [] => [] | x::rest => x::copy rest; val z = copy [1,2,3];',
     'no_prelude_recursive_tree_left': 'datatype tree = L int | N tree tree; fun left t = case t of L n => n | N a b => left a; val z = left (N (L 2) (L 3));',
     'no_prelude_boolean_flip': 'fun flip b = if b then False else True; val z = flip True;',
@@ -150,6 +156,12 @@ CASES = {
 }
 
 CASE_ARGS = {
+    'tmc_list_enabled': ['--tmc=true'],
+    'tmc_tree_enabled': ['--tmc=true'],
+    'tmc_list_disabled': ['--tmc=false'],
+    'split_disabled_bindings': ['--split=false'],
+    'inline_zero_calls': ['--inline_size=0'],
+    'tag_bits_three': ['--tag_bits=3'],
     'no_prelude_recursive_copy': ['--exclude_prelude=true'],
     'no_prelude_recursive_tree_left': ['--exclude_prelude=true'],
     'no_prelude_boolean_flip': ['--exclude_prelude=true'],
