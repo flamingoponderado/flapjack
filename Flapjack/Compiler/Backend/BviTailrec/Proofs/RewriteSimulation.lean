@@ -647,6 +647,87 @@ theorem rewriteTail_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetBindings]
           simpa only [List.headD_cons] using applied
 
+/-- A successful direct or indirect call identifies an original code entry.
+Any replacement at that location and arity resolves to the same arguments. -/
+theorem findCode_replacement (dest : Option Nat) (args actual : List Value)
+    (source : Spt (Nat × Bvi.Exp)) (body : Bvi.Exp)
+    (run : findCode dest args source = some (actual, body)) :
+    ∃ loc, sptLookup loc source = some (actual.length, body) ∧
+      ∀ (target : Spt (Nat × Bvi.Exp)) (replacement : Bvi.Exp),
+        sptLookup loc target = some (actual.length, replacement) →
+        findCode dest args target = some (actual, replacement) := by
+  cases dest with
+  | some loc =>
+    cases found : sptLookup loc source with
+    | none => simp [findCode, found] at run
+    | some entry =>
+      obtain ⟨arity, code⟩ := entry
+      by_cases length : args.length = arity
+      · simp [findCode, found, length] at run
+        obtain ⟨rfl, rfl⟩ := run
+        exact ⟨loc, by simpa [length] using found, fun target replacement lookup => by
+          simp [findCode, lookup]⟩
+      · simp [findCode, found, length] at run
+  | none =>
+    cases empty : args.isEmpty with
+    | true => simp [findCode, empty] at run
+    | false =>
+      cases last : Flapjack.holLast args with
+      | codePtr loc =>
+        cases found : sptLookup loc source with
+        | none => simp [findCode, empty, last, found] at run
+        | some entry =>
+          obtain ⟨arity, code⟩ := entry
+          by_cases length : args.length = arity + 1
+          · simp [findCode, empty, last, found, length] at run
+            obtain ⟨rfl, rfl⟩ := run
+            have dropLength : args.dropLast.length = arity := by simp [List.length_dropLast, length]
+            refine ⟨loc, by simpa [dropLength] using found, ?_⟩
+            intro target replacement lookup
+            simp [findCode, empty, last, dropLength, lookup, length]
+          · simp [findCode, empty, last, found, length] at run
+      | _ => simp [findCode, empty, last] at run
+
+/-- A related code tree resolves a successful call to the same arguments,
+with the original body replaced by its compiled counterpart. -/
+theorem codeRel_findCode_replacement (dest : Option Nat) (args actual : List Value)
+    (source target : Spt (Nat × Bvi.Exp)) (body : Bvi.Exp)
+    (related : codeRel source target)
+    (resolved : findCode dest args source = some (actual, body)) :
+    ∃ compiled, findCode dest args target = some (actual, compiled) := by
+  obtain ⟨loc, sourceLookup, resolveReplacement⟩ := findCode_replacement dest args actual source body resolved
+  obtain ⟨compiled, targetLookup⟩ := codeRel_lookup_arity source target related loc actual.length body sourceLookup
+  exact ⟨compiled, resolveReplacement target compiled targetLookup⟩
+
+/-- A resolved direct or indirect call runs the related compiled callee with
+the same arguments after decrementing both related clocks. -/
+theorem evaluate_related_resolved_callee {C F : Type} (dest : Option Nat)
+    (args actual : List Value) (body : Bvi.Exp) (amount : Nat)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (result : BviSem.BviResult)
+    (bodyIH : ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+      rewriteTailHyp [body] (BviSem.decClock amount source) actual result sourceNext
+        optimized target acc env2 loc ts ty →
+      rewriteTailPost [body] (BviSem.decClock amount source) actual result sourceNext
+        optimized target acc env2 loc ts ty)
+    (related : stateRel source target)
+    (resolved : findCode dest args source.code = some (actual, body))
+    (run : BviSem.evaluate [body] actual (BviSem.decClock amount source) = (result, sourceNext))
+    (notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ compiled targetNext, findCode dest args target.code = some (actual, compiled) ∧
+      BviSem.evaluate [compiled] actual (BviSem.decClock amount target) = (result, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  obtain ⟨loc, sourceLookup, resolveReplacement⟩ := findCode_replacement dest args actual source.code body resolved
+  have relatedNext := stateRel_decClock source target amount related
+  have sourceNextLookup : sptLookup loc (BviSem.decClock amount source).code =
+      some (actual.length, body) := by simpa [BviSem.decClock] using sourceLookup
+  obtain ⟨compiled, targetNext, targetLookup, targetRun, finalRelated⟩ :=
+    evaluate_related_callee loc actual.length body actual (BviSem.decClock amount source)
+      sourceNext (BviSem.decClock amount target) result bodyIH relatedNext rfl sourceNextLookup run notTypeError
+  have lookup : sptLookup loc target.code = some (actual.length, compiled) := by
+    simpa [BviSem.decClock] using targetLookup
+  exact ⟨compiled, targetNext, resolveReplacement target.code compiled lookup, targetRun, finalRelated⟩
+
 /-- Force case of the rewrite simulation. The induction hypothesis applies
 to any called body at a strictly smaller clock, as in the source induction. -/
 theorem rewriteTail_force {C F : Type} (place index : Nat)
