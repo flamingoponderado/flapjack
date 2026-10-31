@@ -15,6 +15,10 @@ spec.loader.exec_module(parity)
 
 # Each program makes the computed result observable through an output call.
 CASES = {
+    'no_prelude_recursive_copy': 'fun copy xs = case xs of [] => [] | x::rest => x::copy rest; val z = copy [1,2,3];',
+    'no_prelude_recursive_tree_left': 'datatype tree = L int | N tree tree; fun left t = case t of L n => n | N a b => left a; val z = left (N (L 2) (L 3));',
+    'no_prelude_boolean_flip': 'fun flip b = if b then False else True; val z = flip True;',
+    'no_prelude_higher_order_twice': 'fun twice f x = f (f x); val z = twice (fn x => x) 2;',
     'no_prelude_mutual_recursion': 'fun even x = case x of [] => True | h::t => odd t and odd x = case x of [] => False | h::t => even t; val n = even [1,2];',
     'no_prelude_higher_order_conditional': 'val f = fn x => fn y => if x then y else 0; val z = f True 42;',
     'no_prelude_recursive_mixed_arity': 'datatype t = A | B int | C t t; fun pick x = case x of A => 0 | B n => n | C a b => pick a; val n = pick (C A (B 3));',
@@ -146,6 +150,10 @@ CASES = {
 }
 
 CASE_ARGS = {
+    'no_prelude_recursive_copy': ['--exclude_prelude=true'],
+    'no_prelude_recursive_tree_left': ['--exclude_prelude=true'],
+    'no_prelude_boolean_flip': ['--exclude_prelude=true'],
+    'no_prelude_higher_order_twice': ['--exclude_prelude=true'],
     'no_prelude_mutual_recursion': ['--exclude_prelude=true'],
     'no_prelude_higher_order_conditional': ['--exclude_prelude=true'],
     'no_prelude_recursive_mixed_arity': ['--exclude_prelude=true'],
