@@ -35,4 +35,23 @@ noncomputable def semantics {C F : Type} (ffi : HolFfiState F)
   | none => .diverge (HolLList.buildLprefixLub (fun trace => ∃ clock,
       trace = HolLList.fromList (run clock).2.ffi.ioEvents))
 
+/-- In the absence of a fatal initial result, the observable behavior is
+either a terminating observation or a divergent trace. -/
+theorem semantics_ne_fail_of_noFatalError {C F : Type} (ffi : HolFfiState F)
+    (code : Spt (Nat × Bvi.Exp)) (oracle : CompileOracle C)
+    (compiler : Compiler C) (start : Nat)
+    (noFatal : ¬ ∃ clock error, (evaluateTuple ([.call 0 (some start) [] none], [],
+      initialState ffi code oracle compiler clock)).1 = .err error ∧
+      error ≠ .abort .timeoutError ∧ ∀ event, error ≠ .abort (.ffiError event)) :
+    semantics ffi code oracle compiler start ≠ .fail := by
+  classical
+  unfold semantics
+  simp only [noFatal, if_false]
+  cases selected : holOptionSome (terminatingObservation ffi code oracle compiler start) with
+  | none => simp
+  | some behavior =>
+    have observed := holOptionSome_some selected
+    obtain ⟨_, _, _, outcome, _, _, rfl⟩ := observed
+    simp
+
 end Flapjack.Compiler.Backend.BviSem

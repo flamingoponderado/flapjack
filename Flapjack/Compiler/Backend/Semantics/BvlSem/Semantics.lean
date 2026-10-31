@@ -33,4 +33,16 @@ noncomputable def semantics {C F : Type} (ffi : HolFfiState F)
   | none => .diverge (HolLList.buildLprefixLub (fun trace => ∃ clock,
       trace = HolLList.fromList (run clock).2.ffi.ioEvents))
 
+/-- A non-failing whole-program behavior excludes type errors at every clock. -/
+theorem noTypeError_of_semantics_ne_fail {C F : Type} (ffi : HolFfiState F)
+    (code : Spt (Nat × Bvl.Exp)) (oracle : CompileOracle C)
+    (compiler : Compiler C) (start : Nat)
+    (nonfail : semantics ffi code oracle compiler start ≠ .fail) :
+    ∀ clock, (evaluateTuple ([.call 0 (some start) []], [],
+      initialState ffi code oracle compiler clock)).1 ≠ .err (.abort .typeError) := by
+  intro clock error
+  apply nonfail
+  simp [semantics, show ∃ k, (evaluateTuple ([.call 0 (some start) []], [],
+    initialState ffi code oracle compiler k)).1 = .err (.abort .typeError) from ⟨clock, error⟩]
+
 end Flapjack.Compiler.Backend.BvlSem
