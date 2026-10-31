@@ -60,6 +60,144 @@ theorem scanExpr_list (ctx : List ValueType) (loc : Nat) (xs : List Exp) :
 termination_by sizeOf xs
 end
 
+/-- Refining an operand never changes the context length. -/
+theorem update_length (ty : ValueType) (e : Exp) (ctx : List ValueType) :
+    (update ty e ctx).length = ctx.length := by
+  cases e <;> simp [update]
+  split <;> simp
+
+/-- Refining both operands never changes the context length. -/
+theorem updateContext_length (ty : ValueType) (ctx : List ValueType) (x y : Exp) :
+    (updateContext ty ctx x y).length = ctx.length := by
+  simp [updateContext, update_length]
+
+/-- Scanning operands produces one result per input expression. -/
+theorem scanList_length (ctx : List ValueType) (loc : Nat) (xs : List Exp) :
+    (scanList ctx loc xs).length = xs.length := by
+  induction xs generalizing ctx with
+  | nil => rw [scanList.eq_def]; rfl
+  | cons x xs ih =>
+    rw [scanList.eq_def]
+    simp only [List.length_cons]
+    rw [ih]
+
+/-- The source-shaped list scan preserves the input length. -/
+theorem scanExpr_length (ctx : List ValueType) (loc : Nat) (xs : List Exp) :
+    (scanExpr ctx loc xs).length = xs.length := by
+  rw [scanExpr_list, scanList_length]
+
+/-- A source-shaped singleton scan cannot be empty. -/
+theorem scanExpr_single_ne_nil (ctx : List ValueType) (loc : Nat) (e : Exp) :
+    scanExpr ctx loc [e] ≠ [] := by
+  simp [scanExpr_single]
+
+mutual
+/-- A single scan preserves the length of the inferred context. -/
+theorem scanSing_context_length (ctx : List ValueType) (loc : Nat) (e : Exp) :
+    (scanSing ctx loc e).1.length = ctx.length := by
+  cases e with
+  | ifThenElse cond yes no =>
+    rw [scanSing.eq_def]
+    dsimp only
+    have hc := scanSing_context_length ctx loc cond
+    have hy := scanSing_context_length (scanSing ctx loc cond).1 loc yes
+    have hn := scanSing_context_length (scanSing ctx loc cond).1 loc no
+    simp only [List.length_map, List.length_zip]
+    omega
+  | «let» xs body =>
+    rw [scanSing.eq_def]
+    dsimp only
+    generalize hscans : scanList ctx loc xs = scans
+    cases last : scans.getLast? with
+    | none =>
+      simp only
+      have length := scanSing_context_length
+        ((scans.map fun (_, ty, _, _) => ty) ++ ctx) loc body
+      simp only [List.length_append, List.length_map] at length
+      simp only [List.length_drop]
+      omega
+    | some entry =>
+      have entryLength : entry.1.length = ctx.length := by
+        apply scanList_context_length ctx loc xs entry
+        rw [hscans]
+        exact List.mem_of_getLast? last
+      obtain ⟨a, b, c, d⟩ := entry
+      change a.length = ctx.length at entryLength
+      simp only
+      have length := scanSing_context_length
+        ((scans.map fun (_, ty, _, _) => ty) ++ a) loc body
+      simp only [List.length_append, List.length_map] at length
+      simp only [List.length_drop]
+      omega
+  | tick body =>
+    rw [scanSing.eq_def]
+    exact scanSing_context_length ctx loc body
+  | op op xs =>
+    rw [scanSing.eq_def]
+    dsimp only
+    cases h : fromOp op == .noop with
+    | false =>
+      simp only [Bool.false_eq_true, ↓reduceIte]
+      cases check : (checkOp ctx (fromOp op) loc (.op op xs)).isSome <;>
+        simp only [Bool.false_eq_true, ↓reduceIte]
+      cases termResult : term ctx (opType (fromOp op)) (.op op xs) <;>
+        simp only [Bool.false_eq_true, ↓reduceIte]
+      cases xs with
+      | nil => rfl
+      | cons x xs => cases xs with
+        | nil => rfl
+        | cons y ys => cases ys <;> simp [updateContext_length]
+    | true =>
+      simp only [↓reduceIte]
+      cases arg : argType op == .int <;> simp only [Bool.false_eq_true, ↓reduceIte]
+      · cases xs with
+        | nil =>
+          cases op <;> try rfl
+          case blockOp operation => cases operation <;> (try simp) <;> (try split) <;> rfl
+        | cons x xs => cases xs with
+          | nil =>
+            cases op <;> try rfl
+            case blockOp operation => cases operation <;> (try simp) <;> (try split) <;> rfl
+          | cons y ys =>
+            cases op <;> try rfl
+            case blockOp operation => cases operation <;> (try simp) <;> (try split) <;> rfl
+      · cases xs with
+        | nil => cases c : isConst op <;> simp
+        | cons x xs => cases xs with
+          | nil => cases c : isConst op <;> simp
+          | cons y ys => cases ys <;> cases c : isConst op <;> simp [updateContext_length]
+  | var n => rw [scanSing.eq_def]
+  | force l n => rw [scanSing.eq_def]
+  | raise e => rw [scanSing.eq_def]
+  | call a b c d => rw [scanSing.eq_def]
+  | «return» xs => rw [scanSing.eq_def]
+  | letCall a b c d e => rw [scanSing.eq_def]
+termination_by sizeOf e
+
+/-- Every context in a list scan has the input context's length. -/
+theorem scanList_context_length (ctx : List ValueType) (loc : Nat) (xs : List Exp)
+    (entry : List ValueType × ValueType × Bool × Option AssocOp)
+    (mem : entry ∈ scanList ctx loc xs) : entry.1.length = ctx.length := by
+  cases xs with
+  | nil => rw [scanList.eq_def] at mem; simp at mem
+  | cons x xs =>
+    rw [scanList.eq_def] at mem
+    dsimp only at mem
+    simp only [List.mem_cons] at mem
+    rcases mem with same | tail
+    · subst entry; exact scanSing_context_length ctx loc x
+    · exact (scanList_context_length _ loc xs entry tail).trans (scanSing_context_length ctx loc x)
+termination_by sizeOf xs
+end
+
+/-- Every context produced by the source-shaped list scan has the input
+context's length. -/
+theorem scanExpr_context_length (ctx : List ValueType) (loc : Nat) (xs : List Exp)
+    (entry : List ValueType × ValueType × Bool × Option AssocOp)
+    (mem : entry ∈ scanExpr ctx loc xs) : entry.1.length = ctx.length := by
+  rw [scanExpr_list] at mem
+  exact scanList_context_length ctx loc xs entry mem
+
 /-- Every recognized accumulator operator round-trips to its source BVI
 operation. -/
 theorem toOp_fromOp (op : ClosLang.Op) (recognized : fromOp op ≠ .noop) : toOp (fromOp op) = op := by

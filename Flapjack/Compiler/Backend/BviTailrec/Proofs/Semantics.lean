@@ -68,6 +68,118 @@ theorem tyRel_lookup {env : List Value} {types : List ValueType} (h : tyRel env 
       simp only [List.getElem?_cons_succ] at found ⊢
       exact ih n ty found
 
+/-- A value satisfies the semantic obligations of an inferred type. This is
+Flapjack infrastructure for context-refinement proofs. -/
+def valueMatchesType (value : Value) (ty : ValueType) : Prop :=
+  (ty = .int → ∃ k, value = .number k) ∧
+  (ty = .list → ∃ ys, valueToList value = some ys)
+
+/-- Replacing a context entry by a type known to hold of the corresponding
+environment value preserves the type relation. -/
+theorem tyRel_set {env : List Value} {types : List ValueType} (related : tyRel env types)
+    (n : Nat) (value : Value) (ty : ValueType) (lookup : env[n]? = some value)
+    (typed : valueMatchesType value ty) : tyRel env (types.set n ty) := by
+  induction related generalizing n with
+  | nil => simp at lookup
+  | @cons v t vs ts head tail ih =>
+    cases n with
+    | zero =>
+      simp only [List.getElem?_cons_zero, Option.some.injEq] at lookup
+      subst value
+      simp only [List.set_cons_zero]
+      exact .cons typed tail
+    | succ n =>
+      simp only [List.getElem?_cons_succ] at lookup
+      simp only [List.set_cons_succ]
+      exact .cons head (ih n lookup)
+
+/-- Refining an operand's variable type preserves the environment relation
+when that variable's value satisfies the new type. -/
+theorem tyRel_update {env : List Value} {types : List ValueType} (related : tyRel env types)
+    (ty : ValueType) (e : Bvi.Exp)
+    (sound : ∀ n, e = .var n → ∃ value, env[n]? = some value ∧ valueMatchesType value ty) :
+    tyRel env (update ty e types) := by
+  cases e with
+  | var n =>
+    simp only [update]
+    split
+    · obtain ⟨value, lookup, typed⟩ := sound n rfl
+      exact tyRel_set related n value ty lookup typed
+    · exact related
+  | _ => exact related
+
+/-- Refining both operands preserves the environment relation when their
+variable values satisfy the inferred type. -/
+theorem tyRel_updateContext {env : List Value} {types : List ValueType} (related : tyRel env types)
+    (ty : ValueType) (x y : Bvi.Exp)
+    (soundX : ∀ n, x = .var n → ∃ value, env[n]? = some value ∧ valueMatchesType value ty)
+    (soundY : ∀ n, y = .var n → ∃ value, env[n]? = some value ∧ valueMatchesType value ty) :
+    tyRel env (updateContext ty types x y) := by
+  exact tyRel_update (tyRel_update related ty x soundX) ty y soundY
+
+/-- If an operand evaluates to a value of the inferred type, refining its
+variable entry preserves the type relation. -/
+theorem tyRel_update_of_evaluation {C F : Type} {env : List Value} {types : List ValueType}
+    (related : tyRel env types) (ty : ValueType) (e : Bvi.Exp)
+    (state next : BviSem.BviState C F) (value : Value)
+    (run : BviSem.evaluate [e] env state = (.val [value], next))
+    (typed : valueMatchesType value ty) : tyRel env (update ty e types) := by
+  apply tyRel_update related ty e
+  intro n equal
+  subst e
+  cases lookup : env[n]? with
+  | none => simp [BviSem.evaluate, lookup] at run
+  | some actual =>
+    have same : actual = value := by simpa [BviSem.evaluate, lookup] using congrArg Prod.fst run
+    subst actual
+    exact ⟨value, rfl, typed⟩
+
+/-- The scan's two-operand context refinement remains sound after successful
+evaluations whose results have the inferred type. -/
+theorem tyRel_updateContext_of_evaluation {C F : Type} {env : List Value} {types : List ValueType}
+    (related : tyRel env types) (ty : ValueType) (x y : Bvi.Exp)
+    (stateX nextX stateY nextY : BviSem.BviState C F) (vx vy : Value)
+    (runX : BviSem.evaluate [x] env stateX = (.val [vx], nextX))
+    (runY : BviSem.evaluate [y] env stateY = (.val [vy], nextY))
+    (typedX : valueMatchesType vx ty) (typedY : valueMatchesType vy ty) :
+    tyRel env (updateContext ty types x y) := by
+  exact tyRel_update_of_evaluation
+    (tyRel_update_of_evaluation related ty x stateX nextX vx runX typedX)
+    ty y stateY nextY vy runY typedY
+
+/-- A successful environment lookup has a corresponding type-context entry
+that describes the looked-up value. -/
+theorem tyRel_lookup_value {env : List Value} {types : List ValueType} (related : tyRel env types)
+    (n : Nat) (value : Value) (lookup : env[n]? = some value) :
+    ∃ ty, types[n]? = some ty ∧ valueMatchesType value ty := by
+  have bound : n < types.length := by
+    rw [← tyRel_length related]
+    exact (List.getElem?_eq_some_iff.mp lookup).1
+  have found : types[n]? = some types[n] := by simp [bound]
+  obtain ⟨actual, get, int, list⟩ := tyRel_lookup related n types[n] found
+  have same : actual = value := Option.some.inj (get.symm.trans lookup)
+  subst actual
+  exact ⟨types[n], found, int, list⟩
+
+/-- Variable case of the source scan type-soundness invariant. The evaluator
+is not yet source-reviewed, so this supporting case is untagged. -/
+theorem scanExpr_var_sound {C F : Type} (ts : List ValueType) (loc n : Nat)
+    (env : List Value) (state next : BviSem.BviState C F) (value : Value)
+    (related : tyRel env ts)
+    (run : BviSem.evaluate [.var n] env state = (.val [value], next)) :
+    (∀ entry ∈ scanExpr ts loc [.var n], tyRel env entry.1) ∧
+      tyRel [value] ((scanExpr ts loc [.var n]).map fun (_, ty, _, _) => ty) := by
+  have lookup : env[n]? = some value := by
+    cases get : env[n]? with
+    | none => simp [BviSem.evaluate, get] at run
+    | some actual =>
+      have same : actual = value := by simpa [BviSem.evaluate, get] using congrArg Prod.fst run
+      simp [same]
+  obtain ⟨ty, found, typed⟩ := tyRel_lookup_value related n value lookup
+  rw [scanExpr_single, scanSing.eq_def]
+  simp only [found, Option.getD_some, List.mem_singleton, forall_eq, List.map_cons, List.map_nil]
+  exact ⟨related, .cons typed .nil⟩
+
 /-- Variable case of integer-term evaluation. This is untagged until the
 source evaluator's state and primitive dispatcher have been reviewed. -/
 theorem termInt_var_evaluation {C F : Type} (ts : List ValueType) (n : Nat)

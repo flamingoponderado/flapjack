@@ -55,7 +55,9 @@ def isArith : ClosLang.Op → Bool
 def isRel : ClosLang.Op → Bool
   | .intOp .less | .intOp .lessEq | .intOp .greater | .intOp .greaterEq => true
   | _ => false
-private def argType : ClosLang.Op → ValueType
+/-- Operand type required by each source primitive. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "arg_ty_def"]
+def argType : ClosLang.Op → ValueType
   | .intOp (.const i) => if small i then .int else .any
   | .intOp .add | .intOp .sub | .intOp .mult | .intOp .div | .intOp .mod
   | .intOp .less | .intOp .lessEq | .intOp .greater | .intOp .greaterEq => .int
@@ -67,11 +69,13 @@ def decideType : ValueType → ValueType → ValueType
   | .int, .int => .int
   | .list, .list => .list
   | _, _ => .any
-private def update (ty : ValueType) (e : Exp) (ctx : List ValueType) : List ValueType :=
+/-- Refine an unknown variable type in the current context. -/
+def update (ty : ValueType) (e : Exp) (ctx : List ValueType) : List ValueType :=
   match e with
   | .var n => if ctx[n]? == some .any then ctx.set n ty else ctx
   | _ => ctx
-private def updateContext (ty : ValueType) (ctx : List ValueType) (x y : Exp) : List ValueType :=
+/-- Refine the variables used by two operands in source order. -/
+def updateContext (ty : ValueType) (ctx : List ValueType) (x y : Exp) : List ValueType :=
   update ty y (update ty x ctx)
 
 mutual
