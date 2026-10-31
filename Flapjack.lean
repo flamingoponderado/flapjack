@@ -558,6 +558,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionSafety
 import Flapjack.Compiler.Backend.BviTmc.Proofs.StructuralHypothesis
 import Flapjack.Compiler.Backend.BviTmc.Proofs.StructuralCases
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ForceSimulation
+import Flapjack.Compiler.Backend.BviTmc.Proofs.CallSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
