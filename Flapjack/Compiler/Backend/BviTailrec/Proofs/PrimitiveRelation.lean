@@ -107,6 +107,34 @@ theorem accumulator_associative (op : AssocOp) (x y z : Value)
     all_goals simp [accumulatorApply, hx, hy, hz, valueToList_listToValue, List.append_assoc]
   | noop => contradiction
 
+/-- Reassociation also preserves failure when the recursive result is not
+well typed, provided the two accumulated operands are well typed. -/
+theorem accumulator_associative_partial (op : AssocOp) (x y z : Value)
+    (notNoop : op ≠ .noop) (ty : valueMatchesType y (opType op))
+    (tz : valueMatchesType z (opType op)) :
+    ∃ yz, accumulatorApply op [y, z] = some yz ∧
+      (accumulatorApply op [x, y] >>= fun xy => accumulatorApply op [xy, z]) =
+        accumulatorApply op [x, yz] := by
+  cases op with
+  | plus =>
+    obtain ⟨b, rfl⟩ := ty.1 rfl
+    obtain ⟨c, rfl⟩ := tz.1 rfl
+    refine ⟨.number (b + c), by simp [accumulatorApply, BvlSem.doIntApp], ?_⟩
+    cases x <;> simp [accumulatorApply, BvlSem.doIntApp, Int.add_assoc]
+  | times =>
+    obtain ⟨b, rfl⟩ := ty.1 rfl
+    obtain ⟨c, rfl⟩ := tz.1 rfl
+    refine ⟨.number (b * c), by simp [accumulatorApply, BvlSem.doIntApp], ?_⟩
+    cases x <;> simp [accumulatorApply, BvlSem.doIntApp, Int.mul_assoc]
+  | append =>
+    obtain ⟨ys, hy⟩ := ty.2 rfl
+    obtain ⟨zs, hz⟩ := tz.2 rfl
+    refine ⟨listToValue (ys ++ zs), by simp [accumulatorApply, hy, hz], ?_⟩
+    cases hx : valueToList x with
+    | none => simp [accumulatorApply, hx]
+    | some xs => simp [accumulatorApply, hx, hy, hz, valueToList_listToValue, List.append_assoc]
+  | noop => contradiction
+
 /-- The integer accumulator operations are commutative, as required when
 the source rewrite swaps a recursive left operand. List append is excluded. -/
 theorem accumulator_commutative (op : AssocOp) (x y : Value)

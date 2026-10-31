@@ -23,6 +23,29 @@ def optimizedCode (loc arity : Nat) (body : Bvi.Exp) (workerLoc : Nat)
     sptLookup loc code = some (arity, wrapper) ∧
     sptLookup workerLoc code = some (arity + 1, worker)
 
+/-- An optimized entry installs the exact source-shaped rewritten worker at
+the worker label and arity. -/
+theorem optimizedCode_worker_lookup (loc arity : Nat) (body : Bvi.Exp) (workerLoc : Nat)
+    (code : Spt (Nat × Bvi.Exp)) (op : AssocOp)
+    (optimized : optimizedCode loc arity body workerLoc code op) :
+    sptLookup workerLoc code = some (arity + 1,
+      (rewriteSource loc workerLoc op arity (List.replicate arity .any) body).2) := by
+  obtain ⟨wrapper, worker, compiled, check, _, workerFound⟩ := optimized
+  simp [compileExpSource, check] at compiled
+  obtain ⟨_, rfl⟩ := compiled
+  exact workerFound
+
+/-- The worker lookup resolves the original arguments with their new
+accumulator appended. -/
+theorem optimizedCode_find_worker (loc arity : Nat) (body : Bvi.Exp) (workerLoc : Nat)
+    (code : Spt (Nat × Bvi.Exp)) (op : AssocOp) (args : List Value) (accumulator : Value)
+    (optimized : optimizedCode loc arity body workerLoc code op) (length : args.length = arity) :
+    findCode (some workerLoc) (args ++ [accumulator]) code =
+      some (args ++ [accumulator],
+        (rewriteSource loc workerLoc op arity (List.replicate arity .any) body).2) := by
+  have found := optimizedCode_worker_lookup loc arity body workerLoc code op optimized
+  simp [findCode, found, length]
+
 /-- A positive source check always determines a wrapper and worker for any
 chosen fresh worker location. -/
 theorem compileExpSource_of_check (loc next arity : Nat) (body : Bvi.Exp) (op : AssocOp)

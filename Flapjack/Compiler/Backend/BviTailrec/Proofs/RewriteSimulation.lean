@@ -333,26 +333,24 @@ theorem rewriteTailProperty_var {C F : Type} (n : Nat) :
   intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
   exact rewriteTail_var n source env1 result sourceNext optimized target acc env2 loc ts ty hyp
 
-/-- With a known accumulator, applying an operator first evaluates its other
-operand and dispatches on the resulting values. -/
-theorem evaluate_applyOp_var {C F : Type} (op : AssocOp) (acc : Nat)
+/-- Applying an operator with a state-preserving left operand first evaluates
+the other operand and dispatches on the resulting values. -/
+theorem evaluate_applyOp_pureLeft {C F : Type} (op : AssocOp) (pure : Bvi.Exp)
     (body : Bvi.Exp) (env : List Value) (state : BviSem.BviState C F)
-    (value : Value) (lookup : env[acc]? = some value) :
-    BviSem.evaluate [applyOp op (.var acc) body] env state =
+    (value : Value) (pureRun : BviSem.evaluate [pure] env state = (.val [value], state)) :
+    BviSem.evaluate [applyOp op pure body] env state =
       match BviSem.evaluate [body] env state with
       | (.err error, next) => (.err error, next)
       | (.val values, next) =>
         match BviSem.doApp (toOp op) (values.reverse ++ [value]) next with
         | .err error => (.err error, next)
         | .val (result, last) => (.val [result], last) := by
-  have varRun : BviSem.evaluate [.var acc] env state = (.val [value], state) := by
-    simp [BviSem.evaluate, lookup]
-  have listRun : BviSem.evaluate [.var acc, body] env state =
+  have listRun : BviSem.evaluate [pure, body] env state =
       match BviSem.evaluate [body] env state with
       | (.err error, next) => (.err error, next)
       | (.val values, next) => (.val (value :: values), next) := by
-    have h := BviSem.evaluateConsCons (.var acc) body [] env state
-    simp only [BviSem.evaluateTuple, varRun, Flapjack.holHd] at h
+    have h := BviSem.evaluateConsCons pure body [] env state
+    simp only [BviSem.evaluateTuple, pureRun, Flapjack.holHd] at h
     cases run : BviSem.evaluate [body] env state with
     | mk result last => cases result <;> simpa [run] using h
   simp only [applyOp]
@@ -366,6 +364,21 @@ theorem evaluate_applyOp_var {C F : Type} (op : AssocOp) (acc : Nat)
       cases h : BviSem.doApp (toOp op) (values.reverse ++ [value]) next with
       | err error => rfl
       | val output => cases output; rfl
+
+/-- With a known accumulator, applying an operator first evaluates its other
+operand and dispatches on the resulting values. -/
+theorem evaluate_applyOp_var {C F : Type} (op : AssocOp) (acc : Nat)
+    (body : Bvi.Exp) (env : List Value) (state : BviSem.BviState C F)
+    (value : Value) (lookup : env[acc]? = some value) :
+    BviSem.evaluate [applyOp op (.var acc) body] env state =
+      match BviSem.evaluate [body] env state with
+      | (.err error, next) => (.err error, next)
+      | (.val values, next) =>
+        match BviSem.doApp (toOp op) (values.reverse ++ [value]) next with
+        | .err error => (.err error, next)
+        | .val (result, last) => (.val [result], last) := by
+  apply evaluate_applyOp_pureLeft op (.var acc) body env state value
+  simp [BviSem.evaluate, lookup]
 
 /-- Evaluating a checked pure operand and the current accumulator yields the
 same updated, well-typed accumulator used by the worker call. -/
@@ -454,6 +467,76 @@ theorem checkOp_evaluate {C F : Type} (ctx : List ValueType) (op : AssocOp) (loc
   · rw [direct]
   · rw [swapped]
     exact (evaluate_applyOp_swap_pure op pure recursive env state value notNoop notAppend pureRun).symm
+
+/-- Reassociate a typed pure operand into the current accumulator before
+evaluating the recursive operand. Errors and state changes of that operand
+are preserved. -/
+theorem evaluate_applyOp_reassociate {C F : Type} (op : AssocOp) (acc : Nat)
+    (pure other : Bvi.Exp) (env : List Value) (state : BviSem.BviState C F)
+    (pureValue oldValue : Value) (notNoop : op ≠ .noop)
+    (pureTyped : valueMatchesType pureValue (opType op))
+    (oldTyped : valueMatchesType oldValue (opType op))
+    (lookup : env[acc]? = some oldValue)
+    (pureRun : ∀ s : BviSem.BviState C F, BviSem.evaluate [pure] env s = (.val [pureValue], s)) :
+    BviSem.evaluate [applyOp op (.var acc) (applyOp op pure other)] env state =
+      BviSem.evaluate [applyOp op (applyOp op (.var acc) pure) other] env state := by
+  obtain ⟨newValue, update, _⟩ := accumulator_typed op pureValue oldValue notNoop pureTyped oldTyped
+  have updateRun : BviSem.evaluate [applyOp op (.var acc) pure] env state = (.val [newValue], state) := by
+    rw [evaluate_applyOp_var op acc pure env state oldValue lookup, pureRun state]
+    simp [doApp_toOp_pure, update]
+  rw [evaluate_applyOp_var op acc (applyOp op pure other) env state oldValue lookup]
+  rw [evaluate_applyOp_pureLeft op pure other env state pureValue (pureRun state)]
+  rw [evaluate_applyOp_pureLeft op (applyOp op (.var acc) pure) other env state newValue updateRun]
+  cases otherRun : BviSem.evaluate [other] env state with
+  | mk result middle =>
+    cases result with
+    | err error => rfl
+    | val values =>
+      obtain ⟨otherValue, rfl⟩ := BviSem.evaluate_singleton other env state middle values otherRun
+      obtain ⟨combined, combinedEq, assoc⟩ :=
+        accumulator_associative_partial op otherValue pureValue oldValue notNoop pureTyped oldTyped
+      have sameUpdate : combined = newValue := by rw [update] at combinedEq; simpa using combinedEq.symm
+      subst combined
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append, doApp_toOp_pure]
+      cases first : accumulatorApply op [otherValue, pureValue] with
+      | none =>
+        simp only [first] at assoc
+        rw [← assoc]
+        rfl
+      | some firstValue =>
+        simp only [first] at assoc
+        rw [← assoc]
+        cases final : accumulatorApply op [firstValue, oldValue] <;> rfl
+
+/-- Appending the accumulator update to worker arguments preserves argument
+errors and appends the same well-typed value after successful evaluation. -/
+theorem evaluate_worker_arguments {C F : Type} (op : AssocOp) (acc : Nat)
+    (pure : Bvi.Exp) (args : List Bvi.Exp) (env : List Value) (state : BviSem.BviState C F)
+    (pureValue oldValue : Value) (notNoop : op ≠ .noop)
+    (pureTyped : valueMatchesType pureValue (opType op))
+    (oldTyped : valueMatchesType oldValue (opType op))
+    (lookup : env[acc]? = some oldValue)
+    (pureRun : ∀ s : BviSem.BviState C F, BviSem.evaluate [pure] env s = (.val [pureValue], s)) :
+    ∃ newValue, accumulatorApply op [pureValue, oldValue] = some newValue ∧
+      valueMatchesType newValue (opType op) ∧
+      BviSem.evaluate (args ++ [applyOp op (.var acc) pure]) env state =
+        match BviSem.evaluate args env state with
+        | (.err error, next) => (.err error, next)
+        | (.val values, next) => (.val (values ++ [newValue]), next) := by
+  obtain ⟨newValue, update, typed⟩ := accumulator_typed op pureValue oldValue notNoop pureTyped oldTyped
+  have updateRun (s : BviSem.BviState C F) :
+      BviSem.evaluate [applyOp op (.var acc) pure] env s = (.val [newValue], s) := by
+    rw [evaluate_applyOp_var op acc pure env s oldValue lookup, pureRun s]
+    simp [doApp_toOp_pure, update]
+  refine ⟨newValue, update, typed, ?_⟩
+  have append := BviSem.evaluateAppend args env state [applyOp op (.var acc) pure]
+  simp only [BviSem.evaluateTuple] at append
+  rw [append]
+  cases run : BviSem.evaluate args env state with
+  | mk result next =>
+    cases result with
+    | err error => rfl
+    | val values => simp [updateRun]
 
 /-- A let binding can be moved outside an accumulator operation by shifting
 the accumulator index past the values bound by the let. -/
