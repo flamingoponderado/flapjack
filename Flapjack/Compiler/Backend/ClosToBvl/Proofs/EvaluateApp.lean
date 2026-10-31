@@ -3487,4 +3487,219 @@ theorem evaluate_mkClCall_partial_complete {C F : Type} (s : BvlSem.State C F)
     · have clocks : s.clock - args.length - 1 = s.clock - (args.length + 1) := by omega
       simp [BvlSem.decClock, clocks]
 
+/-- Saturating an ordinary partial closure selects its body with the new
+arguments before the previously saved arguments. -/
+theorem destClosure_ordinary_partial_exact (maxApp ptr arity : Nat)
+    (captured oldArgs newArgs : List ClosSem.Value) (body : ClosLang.Exp)
+    (oldBound : oldArgs.length < arity) (bound : newArgs.length ≤ maxApp)
+    (length : newArgs.length + oldArgs.length = arity) :
+    ClosSem.destClosure maxApp none (.closure (some ptr) oldArgs captured arity body) newArgs =
+      some (.fullApp body (newArgs ++ oldArgs ++ captured) []) := by
+  have take : newArgs.reverse.take (arity - oldArgs.length) = newArgs.reverse := by
+    apply List.take_of_length_le
+    simp only [List.length_reverse]
+    omega
+  have drop : newArgs.reverse.drop (arity - oldArgs.length) = [] := by
+    apply List.drop_eq_nil_of_le
+    simp only [List.length_reverse]
+    omega
+  simp [ClosSem.destClosure, ClosSem.checkLoc, bound, oldBound, length, take, drop, List.append_assoc]
+
+/-- A saturated ordinary partial closure runs its body or times out after
+charging one source tick per newly supplied argument. -/
+theorem evaluateApp_ordinary_partial_exact {C F : Type} (s : ClosSem.State C F)
+    (ptr arity : Nat) (captured oldArgs newArgs : List ClosSem.Value) (body : ClosLang.Exp)
+    (nonempty : newArgs ≠ []) (oldBound : oldArgs.length < arity)
+    (bound : newArgs.length ≤ s.maxApp) (length : newArgs.length + oldArgs.length = arity) :
+    ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) newArgs s =
+      if s.clock < newArgs.length then (.err (.abort .timeoutError), { s with clock := 0 })
+      else
+        let next := ClosSem.fixClock (ClosSem.decClock newArgs.length s)
+          (ClosSem.evaluate [body] (newArgs ++ oldArgs ++ captured) (ClosSem.decClock newArgs.length s))
+        match next.1 with
+        | .val [value] => (.val [value], next.2)
+        | other => (other, next.2) := by
+  have found := destClosure_ordinary_partial_exact s.maxApp ptr arity captured oldArgs newArgs body oldBound bound length
+  cases newArgs with
+  | nil => contradiction
+  | cons head tail =>
+    rw [ClosSem.evaluateApp, found]
+    simp [ClosSem.evaluateApp]
+    split <;> rfl
+
+/-- The completion stub enters an ordinary closure's compiled body with both
+argument groups and captured values, after the target's additional call tick. -/
+theorem evaluate_partialComplete_ordinary_entry {C F : Type} (s : BvlSem.State C F)
+    (maxApp ptr arity : Nat) (fs : Nat → Prop) (captured : List ClosSem.Value) (fields newArgs saved rest : List BvlSem.Value)
+    (sourceBody : ClosLang.Exp) (target : BvlSem.Value)
+    (related : clRel maxApp fs s.refs s.code
+      (captured, fields) (.closure (some ptr) [] captured arity sourceBody) target)
+    (fieldsLength : fields.length = captured.length) (nonempty : newArgs ≠ []) (savedNonempty : saved ≠ [])
+    (length : newArgs.length + saved.length = arity)
+    (stubLookup : sptLookup (partialAppFnLocation maxApp (arity - 1) (saved.length - 1)) s.code =
+      some (newArgs.length + 1, generatePartialAppClosureFn (arity - 1) (saved.length - 1))) :
+    ∃ aux targetBody finalAux,
+      compileExpsHOL maxApp [sourceBody] aux = ([targetBody], finalAux) ∧
+      codeInstalled finalAux s.code ∧
+      sptLookup (ptr + numStubs maxApp) s.code = some (arity + 1,
+        .let ((List.range arity).map Bvl.Exp.var ++ freeLet (.var arity) captured.length) targetBody) ∧
+      BvlSem.evaluate [mkClCall (.var newArgs.length) ((List.range newArgs.length).map Bvl.Exp.var)]
+        (newArgs ++ [.block 31 (.codePtr (partialAppFnLocation maxApp (arity - 1) (saved.length - 1)) ::
+          .number (Int.ofNat (newArgs.length - 1)) :: target :: saved)] ++ rest) s =
+        if s.clock < newArgs.length + 1 then (.err (.abort .timeoutError), { s with clock := 0 })
+        else BvlSem.evaluate [targetBody]
+          (((newArgs ++ saved) ++ fields) ++ (newArgs ++ saved) ++ [target])
+          (BvlSem.decClock (newArgs.length + 1) s) := by
+  cases related with
+  | closure bound positive locations vars compiled installed lookup =>
+    have newPositive : 0 < newArgs.length := List.length_pos_iff.mpr nonempty
+    have savedPositive : 0 < saved.length := List.length_pos_iff.mpr savedNonempty
+    have newCount : arity - 1 - (saved.length - 1) = newArgs.length := by omega
+    have savedCount : saved.length - 1 + 1 = saved.length := by omega
+    refine ⟨_, _, _, compiled, installed, lookup, ?_⟩
+    have callRun := evaluate_mkClCall_partial_complete s (arity - 1) (saved.length - 1) newArgs saved rest
+      (partialAppFnLocation maxApp (arity - 1) (saved.length - 1)) (ptr + numStubs maxApp)
+      (.number (Int.ofNat (arity - 1)) :: fields) _ nonempty newCount savedCount stubLookup
+      (by simpa [length] using lookup)
+    rw [callRun]
+    split
+    · rfl
+    · rw [← fieldsLength, ← length]
+      simpa [List.length_append, List.append_assoc, ← length] using
+        evaluate_closure_entry (BvlSem.decClock (newArgs.length + 1) s) (newArgs ++ saved) fields 30
+          (.codePtr (ptr + numStubs maxApp)) (.number (Int.ofNat (arity - 1))) _
+
+/-- When the source has enough clock, completing an ordinary partial closure
+simulates its body using the target completion stub and closure entry. -/
+theorem evaluatePost_ordinary_partial_exact {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity : Nat) (captured oldArgs newArgs : List ClosSem.Value)
+    (fields oldTargets newTargets rest : List BvlSem.Value) (body : ClosLang.Exp) (original : BvlSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+      (captured, fields) (.closure (some ptr) [] captured arity body) original)
+    (envRel' : List.Forall₂ (vRel s.maxApp f t.refs t.code) captured fields)
+    (oldRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) oldArgs oldTargets)
+    (newRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) newArgs newTargets)
+    (oldNonempty : oldArgs ≠ []) (nonempty : newArgs ≠ [])
+    (length : newArgs.length + oldArgs.length = arity) (enough : newArgs.length ≤ s.clock)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (bodyRun : ClosSem.evaluate [body] (newArgs ++ oldArgs ++ captured) (ClosSem.decClock newArgs.length s) =
+      (result, sFinal)) (noType : result ≠ .err (.abort .typeError))
+    (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
+    evaluatePost s sFinal t
+      (newTargets ++ [.block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) ::
+        .number (Int.ofNat (newTargets.length - 1)) :: original :: oldTargets)] ++ rest) f result
+      [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)] := by
+  have info : arity ≤ s.maxApp ∧ ClosProps.everyFnLocationSome [body] ∧ ClosProps.everyFnVarsSome [body] := by
+    cases related with | closure bound _ locations vars _ _ _ => exact ⟨bound, locations, vars⟩
+  obtain ⟨arityBound, locations, vars⟩ := info
+  have oldLength : oldTargets.length = oldArgs.length := oldRel.length_eq.symm
+  have newLength : newTargets.length = newArgs.length := newRel.length_eq.symm
+  have oldPositive : 0 < oldArgs.length := List.length_pos_iff.mpr oldNonempty
+  have newPositive : 0 < newArgs.length := List.length_pos_iff.mpr nonempty
+  have targetLength : newTargets.length + oldTargets.length = arity := by omega
+  have targetNewNonempty : newTargets ≠ [] := by simp only [← List.length_pos_iff, newLength]; exact newPositive
+  have targetOldNonempty : oldTargets ≠ [] := by simp only [← List.length_pos_iff, oldLength]; exact oldPositive
+  have totalBound : arity - 1 < s.maxApp := by omega
+  have prevBound : oldTargets.length - 1 < arity - 1 := by omega
+  have stubLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) t.code =
+      some (newTargets.length + 1, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
+    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1) ⟨totalBound, prevBound⟩
+    have count : arity - 1 - (oldTargets.length - 1) + 1 = newTargets.length + 1 := by omega
+    simpa [count] using installed
+  obtain ⟨aux, targetBody, finalAux, compiled, installed, sourceLookup, _⟩ :=
+    evaluate_partialComplete_ordinary_entry t s.maxApp ptr arity _ captured fields newTargets oldTargets rest
+      body original related envRel'.length_eq.symm targetNewNonempty targetOldNonempty targetLength stubLookup
+  have bodyStates : stateRel f (ClosSem.decClock newArgs.length s) t := by
+    exact (stateRel_clock f s t (s.clock - newArgs.length)).2.mpr states
+  have bodyEnv : envRel s.maxApp f t.refs t.code (newArgs ++ oldArgs ++ captured)
+      (((newTargets ++ oldTargets) ++ fields) ++ (newTargets ++ oldTargets) ++ [original]) := by
+    have tail : envRel s.maxApp f t.refs t.code captured (fields ++ (newTargets ++ oldTargets) ++ [original]) := by
+      simpa using envRel_prepend envRel' (env := []) (targetEnv := (newTargets ++ oldTargets) ++ [original]) (by simp [envRel])
+    simpa [List.append_assoc] using envRel_prepend (List.rel_append newRel oldRel) tail
+  have bodyPost := bodyIH (ClosSem.decClock newArgs.length s) sFinal t (newArgs ++ oldArgs ++ captured)
+    (((newTargets ++ oldTargets) ++ fields) ++ (newTargets ++ oldTargets) ++ [original]) f aux finalAux [targetBody] result
+    bodyRun noType (by simpa [ClosSem.decClock] using compiled) locations
+    (by simpa [ClosSem.decClock, codeAnnotations] using annotations) vars installed
+    (by simpa [ClosSem.decClock] using bodyEnv) bodyStates
+  obtain ⟨clock, targetResult, tFinal, fFinal, targetRun, resultRel, finalStates, map, frame,
+    finalAnnotations, finalClock⟩ := bodyPost
+  let start : BvlSem.State C F := { t with clock := s.clock + (clock + 1) }
+  have shiftedRelated : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) start.refs start.code
+      (captured, fields) (.closure (some ptr) [] captured arity body) original := by simpa [start] using related
+  have shiftedLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) start.code =
+      some (newTargets.length + 1, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
+    simpa [start] using stubLookup
+  obtain ⟨aux2, targetBody2, finalAux2, compiled2, _, lookup2, callRun⟩ :=
+    evaluate_partialComplete_ordinary_entry start s.maxApp ptr arity _ captured fields newTargets oldTargets rest
+      body original shiftedRelated envRel'.length_eq.symm targetNewNonempty targetOldNonempty targetLength shiftedLookup
+  have targetEq : targetBody2 = targetBody := by
+    have same := sourceLookup.symm.trans lookup2
+    cases same
+    rfl
+  subst targetBody2
+  have enoughTarget : ¬ start.clock < newTargets.length + 1 := by dsimp [start]; omega
+  simp only [if_neg enoughTarget] at callRun
+  have clockEq : s.clock + (clock + 1) - (newTargets.length + 1) = s.clock - newArgs.length + clock := by omega
+  have finalRun : BvlSem.evaluate [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)]
+      (newTargets ++ [.block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) ::
+        .number (Int.ofNat (newTargets.length - 1)) :: original :: oldTargets)] ++ rest) start = (targetResult, tFinal) := by
+    rw [callRun]
+    simpa [start, BvlSem.decClock, ClosSem.decClock, clockEq] using targetRun
+  exact ⟨clock + 1, targetResult, tFinal, fFinal, finalRun, by simpa [ClosSem.decClock] using resultRel,
+    finalStates, map, frame, finalAnnotations, finalClock⟩
+
+/-- With enough source clock, saturating an ordinary partial closure produces
+the result of its selected body. -/
+theorem evaluateApp_ordinary_partial_exact_body {C F : Type} (s sFinal : ClosSem.State C F)
+    (ptr arity : Nat) (captured oldArgs newArgs : List ClosSem.Value) (body : ClosLang.Exp)
+    (nonempty : newArgs ≠ []) (oldBound : oldArgs.length < arity)
+    (bound : newArgs.length ≤ s.maxApp) (length : newArgs.length + oldArgs.length = arity)
+    (enough : newArgs.length ≤ s.clock) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (bodyRun : ClosSem.evaluate [body] (newArgs ++ oldArgs ++ captured) (ClosSem.decClock newArgs.length s) =
+      (result, sFinal)) :
+    ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) newArgs s = (result, sFinal) := by
+  rw [evaluateApp_ordinary_partial_exact s ptr arity captured oldArgs newArgs body nonempty oldBound bound length]
+  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
+  cases result with
+  | err error => rfl
+  | val values => cases values with
+    | nil => rfl
+    | cons value tail => cases tail <;> rfl
+
+/-- The source application and generated target call agree for a saturated
+ordinary partial closure when the source has enough clock. -/
+theorem evaluateApp_ordinary_partial_exact_simulation {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity : Nat) (captured oldArgs newArgs : List ClosSem.Value)
+    (fields oldTargets newTargets rest : List BvlSem.Value) (body : ClosLang.Exp) (original : BvlSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+      (captured, fields) (.closure (some ptr) [] captured arity body) original)
+    (envRel' : List.Forall₂ (vRel s.maxApp f t.refs t.code) captured fields)
+    (oldRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) oldArgs oldTargets)
+    (newRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) newArgs newTargets)
+    (oldNonempty : oldArgs ≠ []) (nonempty : newArgs ≠ [])
+    (length : newArgs.length + oldArgs.length = arity) (enough : newArgs.length ≤ s.clock)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (appRun : ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) newArgs s = (result, sFinal))
+    (noType : result ≠ .err (.abort .typeError)) (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
+    evaluatePost s sFinal t
+      (newTargets ++ [.block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) ::
+        .number (Int.ofNat (newTargets.length - 1)) :: original :: oldTargets)] ++ rest) f result
+      [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)] := by
+  have arityBound : arity ≤ s.maxApp := by cases related with | closure bound _ _ _ _ _ _ => exact bound
+  have positive : 0 < newArgs.length := List.length_pos_iff.mpr nonempty
+  have oldBound : oldArgs.length < arity := by omega
+  have bound : newArgs.length ≤ s.maxApp := by omega
+  cases bodyRun : ClosSem.evaluate [body] (newArgs ++ oldArgs ++ captured) (ClosSem.decClock newArgs.length s) with
+  | mk bodyResult bodyFinal =>
+    have sourceStep := evaluateApp_ordinary_partial_exact_body s bodyFinal ptr arity captured oldArgs newArgs body
+      nonempty oldBound bound length enough bodyResult bodyRun
+    rw [appRun] at sourceStep
+    cases sourceStep
+    exact evaluatePost_ordinary_partial_exact s sFinal t f ptr arity captured oldArgs newArgs fields oldTargets newTargets rest
+      body original states annotations related envRel' oldRel newRel oldNonempty nonempty length enough result bodyRun noType bodyIH
+
 end Flapjack.Compiler.Backend.ClosToBvl
