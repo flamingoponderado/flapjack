@@ -571,6 +571,7 @@ import Flapjack.Test.BviApplyAuxParity
 import Flapjack.Test.BviApplyParity
 import Flapjack.Test.BviEvaluateParity
 import Flapjack.Compiler.Backend.DbVars
+import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 import Flapjack.Compiler.Backend.ClosAnnotate.Free
 import Flapjack.Compiler.Backend.ClosAnnotate.Shift
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis

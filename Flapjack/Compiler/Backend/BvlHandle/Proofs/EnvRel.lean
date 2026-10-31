@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BvlHandle.Compile
+import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 import Flapjack.Compiler.Backend.Semantics.BvlSem.State
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 
@@ -13,6 +14,18 @@ representation. -/
 def envRel (live : DbVarSet) (source target : List Value) : Prop :=
   source.length = target.length ∧
     ∀ index, index < source.length → hasVar index live = true → source[index]? = target[index]?
+
+/-- Flattening live-variable annotations does not change environment agreement. -/
+theorem envRel_flatten (live : DbVarSet) (source target : List Value) :
+    envRel (varsFlatten live) source target ↔ envRel live source target := by
+  simp [envRel, hasVarVarsFlatten]
+
+/-- Materialized live-variable lookup agrees with direct membership. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "IS_SOME_lookup_db_to_set"]
+theorem isSomeLookupDbToSet (n : Nat) (live : DbVarSet) :
+    (sptLookup n (dbToSet live)).isSome = hasVar n live := by
+  rw [dbToSet, lookupDbToSetAcc]
+  cases hasVar n live <;> simp
 
 /-- Related environments have the same length. -/
 theorem envRel_length (live : DbVarSet) (source target : List Value)
