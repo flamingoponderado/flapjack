@@ -1,6 +1,6 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
-import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 
 /-! Location annotations supplied by closure numbering to prepared programs. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -68,6 +68,24 @@ theorem numberedAnnotatedOracle_annotations {C : Type}
   · simpa [stateCo, ClosNumber.ignoreTable] using
       ClosNumber.compileInc_locations (oracle index).1.1 (oracle index).2.1
   · simpa [stateCo, ClosNumber.ignoreTable] using auxLocations index
+
+/-- The numbering states of a consistent incremental oracle are monotone.
+These states can serve as candidate boundaries for future generated code;
+the separate proof that emitted labels lie between them is still required. -/
+theorem numberingOracle_state_monotone {C : Type}
+    (oracle : Nat → (Nat × C) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (state : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) :
+    ∀ {i j}, i ≤ j → (oracle i).1.1 ≤ (oracle j).1.1 := by
+  have step : ∀ i, (oracle i).1.1 ≤ (oracle (i + 1)).1.1 := by
+    intro i
+    have increase := ClosNumber.compileInc_start_lt (oracle i).1.1 (oracle i).2.1
+    have next := state i
+    simp only [ClosNumber.ignoreTable] at next
+    omega
+  intro i j order
+  induction order with
+  | refl => exact Nat.le_refl _
+  | @step j order ih => exact Nat.le_trans ih (step j)
 
 /-- The executable no-optimization closure compiler satisfies the prepared
 entry behavior theorem without separate program-annotation assumptions.

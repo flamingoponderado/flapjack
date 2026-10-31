@@ -53,6 +53,77 @@ decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 end
 
+mutual
+
+/-- Numbering never moves the next available location backwards. -/
+theorem renumber_start_le (expression : Exp) (start : Nat) :
+    start ≤ (renumber start expression).1 := by
+  cases expression with
+  | var trace n => simp [renumber]
+  | ifThenElse trace condition yes no =>
+    simp only [renumber]
+    have a := renumber_start_le condition start
+    have b := renumber_start_le yes (renumber start condition).1
+    have c := renumber_start_le no (renumber (renumber start condition).1 yes).1
+    omega
+  | «let» trace bindings body =>
+    simp only [renumber]
+    have a := renumberList_start_le bindings start
+    have b := renumber_start_le body (renumberList start bindings).1
+    omega
+  | raise trace body => simpa [renumber] using renumber_start_le body start
+  | handle trace body handler =>
+    simp only [renumber]
+    have a := renumber_start_le body start
+    have b := renumber_start_le handler (renumber start body).1
+    omega
+  | tick trace body => simpa [renumber] using renumber_start_le body start
+  | call trace ticks location args => simpa [renumber] using renumberList_start_le args start
+  | app trace location function args =>
+    simp only [renumber]
+    have a := renumber_start_le function start
+    have b := renumberList_start_le args (renumber start function).1
+    omega
+  | fn name location vars arity body =>
+    simp only [renumber]
+    have a := renumber_start_le body start
+    omega
+  | letrec names location vars functions body =>
+    simp only [renumber]
+    have a := renumberFuns_start_le functions start
+    have b := renumber_start_le body ((renumberFuns start functions).1 +
+      2 * (renumberFuns start functions).2.length)
+    omega
+  | op trace op args => simpa [renumber] using renumberList_start_le args start
+termination_by sizeOf expression
+
+theorem renumberList_start_le (expressions : List Exp) (start : Nat) :
+    start ≤ (renumberList start expressions).1 := by
+  cases expressions with
+  | nil => simp [renumberList]
+  | cons first rest =>
+    simp only [renumberList]
+    have a := renumber_start_le first start
+    have b := renumberList_start_le rest (renumber start first).1
+    omega
+termination_by sizeOf expressions
+
+theorem renumberFuns_start_le (functions : List (Nat × Exp)) (start : Nat) :
+    start ≤ (renumberFuns start functions).1 := by
+  cases functions with
+  | nil => simp [renumberFuns]
+  | cons first rest =>
+    cases first with
+    | mk arity body =>
+      simp only [renumberFuns]
+      have a := renumber_start_le body start
+      have b := renumberFuns_start_le rest (renumber start body).1
+      omega
+termination_by sizeOf functions
+decreasing_by all_goals subst_vars; simp_wf <;> omega
+
+end
+
 /-- Closure numbering fills every function-code location, both for expression
 lists and for individual expressions. This source-shaped statement is untagged
 pending typed HOL and numbering-carrier review. -/
@@ -72,6 +143,23 @@ theorem compileInc_locations (start : Nat) (expressions : List Exp) :
   have locations := renumberList_locations expressions
     (let next := start + max expressions.length 1; if next % 2 = 0 then next else next + 1)
   simpa [compileInc, everyFnLocationSome, fnLocationSomeExp] using locations
+
+/-- Incremental numbering reserves at least one entry location and returns a
+strictly larger next location. This is a prerequisite for showing successive
+incremental compilations occupy disjoint location intervals. -/
+theorem compileInc_start_lt (start : Nat) (expressions : List Exp) :
+    start < (compileInc start expressions).1 := by
+  let next := start + max expressions.length 1
+  let aligned := if next % 2 = 0 then next else next + 1
+  have numbered := renumberList_start_le expressions aligned
+  have positive : 1 ≤ max expressions.length 1 := Nat.le_max_right _ _
+  have alignment : next ≤ aligned := by
+    dsimp [aligned]
+    split <;> omega
+  simp only [compileInc]
+  change start < (renumberList aligned expressions).1
+  dsimp [next] at alignment
+  omega
 
 /-- Every member of a location-annotated list is location-annotated. -/
 theorem locations_member (expressions : List Exp) (expression : Exp)
