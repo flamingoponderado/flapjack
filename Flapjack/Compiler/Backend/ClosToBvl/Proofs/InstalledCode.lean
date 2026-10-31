@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosToBvl.SourceExps
+import Flapjack.Compiler.Backend.ClosToBvl.Layout.Auxiliary
 import Flapjack.Compiler.Backend.Semantics.ClosSem
 import Flapjack.Misc.Sptree
 
@@ -9,6 +10,17 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "code_installed_def"]
 def codeInstalled (aux : List (Nat × Nat × Bvl.Exp)) (code : Spt (Nat × Bvl.Exp)) : Prop :=
   ∀ entry ∈ aux, sptLookup entry.1 code = some entry.2
+
+/-- If generated recursive entries and their accumulator are installed,
+the original accumulator is installed as well. -/
+theorem codeInstalled_buildAux (entries : List (Nat × Bvl.Exp)) (i : Nat)
+    (aux : List (Nat × Nat × Bvl.Exp)) (code : Spt (Nat × Bvl.Exp))
+    (installed : codeInstalled (buildAux i entries aux).2 code) : codeInstalled aux code := by
+  obtain ⟨added, result⟩ := buildAux_acc entries i aux
+  intro entry member
+  apply installed entry
+  rw [result]
+  exact List.mem_append_right added member
 
 /-- Recursive closure entry points and the code generated for their bodies are installed. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "closure_code_installed_def"]
