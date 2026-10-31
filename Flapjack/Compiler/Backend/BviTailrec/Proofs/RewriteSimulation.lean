@@ -164,6 +164,14 @@ theorem rewriteTailProperty_through {C F : Type} {xs : List Bvi.Exp}
   intro source env1 result sourceNext optimized target acc env2 loc ts ty _ hyp
   exact ih source env1 result sourceNext optimized target acc env2 loc ts ty hyp
 
+/-- A simulation through a larger clock bound also holds through any smaller
+bound. -/
+theorem rewriteTailPropertyThrough_mono {C F : Type} {xs : List Bvi.Exp} {lower upper : Nat}
+    (bound : lower ≤ upper) (ih : rewriteTailPropertyThrough (C := C) (F := F) upper xs) :
+    rewriteTailPropertyThrough (C := C) (F := F) lower xs := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
+  exact ih source env1 result sourceNext optimized target acc env2 loc ts ty (Nat.le_trans clockBound bound) hyp
+
 /-- Well-founded induction for the rewrite simulation: structural recursion
 stays within the current clock bound, and arbitrary expressions may be used
 at a strictly smaller bound. The step itself remains to be established for all
@@ -279,9 +287,9 @@ theorem lookup_of_envRel (ty : ValueType) (optimized : Bool) (acc n : Nat)
 /-- An accepted pure term has the same value in prefix-related environments
 and leaves each related state unchanged. The recursive simulation hypothesis
 is the source induction hypothesis for the term expression. -/
-theorem term_prefix_simulation {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
+theorem term_prefix_simulation_through {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
     (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (loc : Nat) (termIH : rewriteTailProperty (C := C) (F := F) [e])
+    (loc : Nat) (termIH : rewriteTailPropertyThrough (C := C) (F := F) source.clock [e])
     (accepted : term ctx termTy e = true) (types : tyRel env1 ctx)
     (prefixRel : env1 <+: env2) (related : stateRel source target) :
     ∃ value, (match termTy with
@@ -300,24 +308,40 @@ theorem term_prefix_simulation {C F : Type} (e : Bvi.Exp) (ctx : List ValueType)
   have hyp : rewriteTailHyp [e] source env1 (.val [value]) source false target 0 (env1 ++ suffix)
       loc ctx .any := ⟨sourceRun source, envRelated, related, types, by simp, by simp⟩
   obtain ⟨targetNext, simulated, _, _⟩ :=
-    termIH source env1 (.val [value]) source false target 0 (env1 ++ suffix) loc ctx .any hyp
+    termIH source env1 (.val [value]) source false target 0 (env1 ++ suffix) loc ctx .any (Nat.le_refl _) hyp
   have same : ((.val [value] : BviSem.BviResult), targetNext) = (.val [targetValue], target) :=
     simulated.symm.trans (targetRun target)
   cases same
   exact ⟨value, typed, sourceRun source, targetRun target⟩
 
-/-- A scanned term has one common value in prefix-related environments and
-leaves every source and target state unchanged. -/
-theorem term_prefix_simulation_all {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
+
+/-- The unrestricted term hypothesis supplies the bounded simulation. -/
+theorem term_prefix_simulation {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
     (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
     (loc : Nat) (termIH : rewriteTailProperty (C := C) (F := F) [e])
+    (accepted : term ctx termTy e = true) (types : tyRel env1 ctx)
+    (prefixRel : env1 <+: env2) (related : stateRel source target) :
+    ∃ value, (match termTy with
+      | .int => ∃ integer, value = .number integer
+      | .list => ∃ ys, valueToList value = some ys
+      | .any => True) ∧
+      BviSem.evaluate [e] env1 source = (.val [value], source) ∧
+      BviSem.evaluate [e] env2 target = (.val [value], target) := by
+  exact term_prefix_simulation_through e ctx termTy env1 env2 source target loc (rewriteTailProperty_through termIH _)
+    accepted types prefixRel related
+
+/-- A scanned term has one common value in prefix-related environments and
+leaves every source and target state unchanged. -/
+theorem term_prefix_simulation_all_through {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
+    (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (loc : Nat) (termIH : rewriteTailPropertyThrough (C := C) (F := F) source.clock [e])
     (accepted : term ctx termTy e = true) (types : tyRel env1 ctx)
     (prefixRel : env1 <+: env2) (related : stateRel source target) :
     ∃ value, valueMatchesType value termTy ∧
       (∀ s : BviSem.BviState (Nat × C) F, BviSem.evaluate [e] env1 s = (.val [value], s)) ∧
       (∀ s : BviSem.BviState C F, BviSem.evaluate [e] env2 s = (.val [value], s)) := by
   obtain ⟨value, typed, sourceRun, targetRun⟩ :=
-    term_prefix_simulation e ctx termTy env1 env2 source target loc termIH accepted types prefixRel related
+    term_prefix_simulation_through e ctx termTy env1 env2 source target loc termIH accepted types prefixRel related
   obtain ⟨sourceValue, _, sourceAll⟩ := term_total (C := Nat × C) (F := F) ctx termTy e env1 accepted types
   obtain ⟨suffix, rfl⟩ := prefixRel
   have extTypes := tyRel_prefix_extend env1 ctx suffix types
@@ -338,6 +362,19 @@ theorem term_prefix_simulation_all {C F : Type} (e : Bvi.Exp) (ctx : List ValueT
   · cases termTy <;> simp_all [valueMatchesType]
   · simpa [sourceEq] using sourceAll
   · simpa [targetEq] using targetAll
+
+
+/-- The unrestricted term hypothesis supplies the bounded simulation. -/
+theorem term_prefix_simulation_all {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
+    (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (loc : Nat) (termIH : rewriteTailProperty (C := C) (F := F) [e])
+    (accepted : term ctx termTy e = true) (types : tyRel env1 ctx)
+    (prefixRel : env1 <+: env2) (related : stateRel source target) :
+    ∃ value, valueMatchesType value termTy ∧
+      (∀ s : BviSem.BviState (Nat × C) F, BviSem.evaluate [e] env1 s = (.val [value], s)) ∧
+      (∀ s : BviSem.BviState C F, BviSem.evaluate [e] env2 s = (.val [value], s)) := by
+  exact term_prefix_simulation_all_through e ctx termTy env1 env2 source target loc (rewriteTailProperty_through termIH _)
+    accepted types prefixRel related
 
 /-- An enabled environment relation supplies a well-typed accumulator value. -/
 theorem envRel_accumulator (ty : ValueType) (acc : Nat) (env1 env2 : List Value)
@@ -1489,13 +1526,13 @@ theorem evaluate_worker_candidate_operation {C F : Type}
 /-- When source call arguments fail, the candidate worker and the original
 accumulator expression propagate that failure to states related to the full
 source operation's final state. -/
-theorem evaluate_worker_candidate_argument_error {C F : Type}
+theorem evaluate_worker_candidate_argument_error_through {C F : Type}
     (loc workerLoc ticks acc : Nat) (op : AssocOp) (pure : Bvi.Exp) (args : List Bvi.Exp)
     (env1 env2 : List Value) (source sourceMiddle sourceNext : BviSem.BviState (Nat × C) F)
     (target : BviSem.BviState C F) (ctx : List ValueType) (ty : ValueType)
     (pureValue oldValue : Value) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
     (sourceResult : BviSem.BviResult)
-    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) source.clock args)
     (envRelated : envRel ty true acc env1 env2) (related : stateRel source target)
     (types : tyRel env1 ctx) (notNoop : op ≠ .noop)
     (pureTyped : valueMatchesType pureValue (opType op))
@@ -1527,7 +1564,7 @@ theorem evaluate_worker_candidate_argument_error {C F : Type}
   have argsHyp : rewriteTailHyp args source env1 (.err error) sourceMiddle false target acc env2 loc ctx ty :=
     ⟨argsSource, envRel_disable ty true acc env1 env2 envRelated, related, types, by simp, errorOk⟩
   obtain ⟨targetNext, targetArgs, finalRelated, _⟩ :=
-    argsIH source env1 (.err error) sourceMiddle false target acc env2 loc ctx ty argsHyp
+    argsIH source env1 (.err error) sourceMiddle false target acc env2 loc ctx ty (Nat.le_refl _) argsHyp
   obtain ⟨workerRun, originalRun⟩ :=
     evaluate_worker_call_argument_error loc workerLoc ticks acc op pure args env2 target targetNext
       pureValue oldValue error notNoop pureTyped oldTyped lookup pureTarget targetArgs
@@ -1560,13 +1597,13 @@ theorem evaluate_candidate_arity {C F : Type}
 
 /-- A candidate whose arguments succeed but exhaust the call clock times out
 in related source and target states, including after the accumulator rewrite. -/
-theorem evaluate_worker_candidate_timeout {C F : Type}
+theorem evaluate_worker_candidate_timeout_through {C F : Type}
     (loc arity workerLoc ticks acc : Nat) (body pure : Bvi.Exp) (op : AssocOp)
     (args : List Bvi.Exp) (env1 env2 : List Value)
     (source sourceMiddle sourceNext : BviSem.BviState (Nat × C) F)
     (target : BviSem.BviState C F) (ctx : List ValueType) (ty : ValueType)
     (callArgs : List Value) (pureValue oldValue : Value) (sourceResult : BviSem.BviResult)
-    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) source.clock args)
     (envRelated : envRel ty true acc env1 env2) (related : stateRel source target)
     (types : tyRel env1 ctx) (notNoop : op ≠ .noop)
     (pureTyped : valueMatchesType pureValue (opType op))
@@ -1589,7 +1626,7 @@ theorem evaluate_worker_candidate_timeout {C F : Type}
   have argsHyp : rewriteTailHyp args source env1 (.val callArgs) sourceMiddle false target acc env2 loc ctx ty :=
     ⟨argsSource, envRel_disable ty true acc env1 env2 envRelated, related, types, by simp, by simp⟩
   obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
-    argsIH source env1 (.val callArgs) sourceMiddle false target acc env2 loc ctx ty argsHyp
+    argsIH source env1 (.val callArgs) sourceMiddle false target acc env2 loc ctx ty (Nat.le_refl _) argsHyp
   have sourceCodeMiddle := evaluate_lookup_preserved args env1 source sourceMiddle (.val callArgs)
     loc arity body argsSource sourceCode
   have targetGrowth := BviProps.evaluate_code_mono args env2 target targetMiddle (.val callArgs) targetArgs
@@ -1624,13 +1661,13 @@ def directCallResult (result : BviSem.BviResult) : BviSem.BviResult :=
 
 /-- For a candidate with sufficient clock, the source callee execution
 supplies the smaller-clock induction hypothesis needed by the worker. -/
-theorem evaluate_worker_candidate_enough_clock {C F : Type}
+theorem evaluate_worker_candidate_enough_clock_through {C F : Type}
     (loc arity workerLoc ticks acc : Nat) (body pure : Bvi.Exp) (op : AssocOp)
     (args : List Bvi.Exp) (env1 env2 : List Value)
     (source sourceMiddle sourceNext : BviSem.BviState (Nat × C) F)
     (target : BviSem.BviState C F) (ctx : List ValueType) (ty : ValueType)
     (callArgs : List Value) (pureValue oldValue : Value) (sourceResult : BviSem.BviResult)
-    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) source.clock args)
     (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
       (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
       called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
@@ -1658,7 +1695,7 @@ theorem evaluate_worker_candidate_enough_clock {C F : Type}
   have argsHyp : rewriteTailHyp args source env1 (.val callArgs) sourceMiddle false target acc env2 loc ctx ty :=
     ⟨argsSource, envRel_disable ty true acc env1 env2 envRelated, related, types, by simp, by simp⟩
   obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
-    argsIH source env1 (.val callArgs) sourceMiddle false target acc env2 loc ctx ty argsHyp
+    argsIH source env1 (.val callArgs) sourceMiddle false target acc env2 loc ctx ty (Nat.le_refl _) argsHyp
   have sourceCodeMiddle := evaluate_lookup_preserved args env1 source sourceMiddle (.val callArgs)
     loc arity body argsSource sourceCode
   have targetGrowth := BviProps.evaluate_code_mono args env2 target targetMiddle (.val callArgs) targetArgs
@@ -1719,13 +1756,13 @@ theorem evaluate_worker_candidate_enough_clock {C F : Type}
 
 /-- A checked pure operand and direct recursive call satisfy the worker
 simulation for argument errors, timeouts, and successful callee execution. -/
-theorem evaluate_worker_candidate {C F : Type}
+theorem evaluate_worker_candidate_through {C F : Type}
     (loc arity workerLoc ticks acc : Nat) (body pure : Bvi.Exp) (op : AssocOp)
     (args : List Bvi.Exp) (env1 env2 : List Value)
     (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
     (ctx : List ValueType) (ty : ValueType) (sourceResult : BviSem.BviResult)
-    (argsIH : rewriteTailProperty (C := C) (F := F) args)
-    (termIH : rewriteTailProperty (C := C) (F := F) [pure])
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) source.clock args)
+    (termIH : rewriteTailPropertyThrough (C := C) (F := F) source.clock [pure])
     (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
       (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
       called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
@@ -1744,7 +1781,7 @@ theorem evaluate_worker_candidate {C F : Type}
       BviSem.evaluate [applyOp op (.var acc) (applyOp op pure (.call ticks (some loc) args none))]
         env2 target = (result', t2) ∧ stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
   obtain ⟨pureValue, pureTyped, pureSource, pureTarget⟩ :=
-    term_prefix_simulation_all pure ctx (opType op) env1 env2 source target loc termIH termOk types envRelated.1 related
+    term_prefix_simulation_all_through pure ctx (opType op) env1 env2 source target loc termIH termOk types envRelated.1 related
   obtain ⟨oldValue, lookup, oldTyped⟩ := envRel_accumulator ty acc env1 env2 envRelated
   have oldTyped' : valueMatchesType oldValue (opType op) := by simpa [sameType] using oldTyped
   cases argsRun : BviSem.evaluate args env1 source with
@@ -1752,26 +1789,86 @@ theorem evaluate_worker_candidate {C F : Type}
     cases argsResult with
     | err error =>
       obtain ⟨targetNext, workerRun, appliedRun, finalRelated⟩ :=
-        evaluate_worker_candidate_argument_error loc workerLoc ticks acc op pure args env1 env2 source sourceMiddle
+        evaluate_worker_candidate_argument_error_through loc workerLoc ticks acc op pure args env1 env2 source sourceMiddle
           sourceNext target ctx ty pureValue oldValue error sourceResult argsIH envRelated related types notNoop
           pureTyped oldTyped' lookup (pureSource source) pureTarget argsRun operationSource notTypeError
       exact ⟨.err error, targetNext, targetNext, workerRun, appliedRun, finalRelated, finalRelated⟩
     | val values =>
       by_cases timeout : sourceMiddle.clock < ticks + 1
       · obtain ⟨targetNext, workerRun, appliedRun, finalRelated⟩ :=
-          evaluate_worker_candidate_timeout loc arity workerLoc ticks acc body pure op args env1 env2 source
+          evaluate_worker_candidate_timeout_through loc arity workerLoc ticks acc body pure op args env1 env2 source
             sourceMiddle sourceNext target ctx ty values pureValue oldValue sourceResult argsIH envRelated related
             types notNoop pureTyped oldTyped' lookup (pureSource source) pureTarget argsRun sourceCode optimized
             timeout operationSource notTypeError
         exact ⟨.err (.abort .timeoutError), targetNext, targetNext, workerRun, appliedRun, finalRelated, finalRelated⟩
       · have enoughClock : ticks + 1 ≤ sourceMiddle.clock := by omega
-        exact evaluate_worker_candidate_enough_clock loc arity workerLoc ticks acc body pure op args env1 env2 source
+        exact evaluate_worker_candidate_enough_clock_through loc arity workerLoc ticks acc body pure op args env1 env2 source
           sourceMiddle sourceNext target ctx ty values pureValue oldValue sourceResult argsIH clockIH envRelated related
           types notNoop pureTyped oldTyped' lookup (pureSource source) pureTarget argsRun sourceCode optimized
           enoughClock operationSource notTypeError
 
 /-- A successful source candidate check selects a worker whose execution
 matches the accumulator applied to the original operand order. -/
+theorem evaluate_checked_worker_candidate_through {C F : Type}
+    (loc arity workerLoc acc : Nat) (body e checked : Bvi.Exp) (op : AssocOp)
+    (env1 env2 : List Value) (source sourceNext : BviSem.BviState (Nat × C) F)
+    (target : BviSem.BviState C F) (ctx : List ValueType) (ty : ValueType)
+    (sourceResult : BviSem.BviResult)
+    (subIH : ∀ pure ticks args,
+      (e = applyOp op pure (.call ticks (some loc) args none) ∨
+        (op ≠ .append ∧ e = applyOp op (.call ticks (some loc) args none) pure)) →
+      rewriteTailPropertyThrough (C := C) (F := F) source.clock [pure] ∧ rewriteTailPropertyThrough (C := C) (F := F) source.clock args)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (envRelated : envRel ty true acc env1 env2) (related : stateRel source target)
+    (types : tyRel env1 ctx) (sameType : opType op = ty)
+    (sourceCode : sptLookup loc source.code = some (arity, body))
+    (optimized : optimizedCode loc arity body workerLoc target.code op)
+    (check : checkOp ctx op loc e = some checked)
+    (sourceRun : BviSem.evaluate [e] env1 source = (sourceResult, sourceNext))
+    (notTypeError : sourceResult ≠ .err (.abort .typeError)) :
+    ∃ result' t1 t2,
+      BviSem.evaluate [(rewriteSource loc workerLoc op acc ctx e).2] env2 target = (result', t1) ∧
+      BviSem.evaluate [applyOp op (.var acc) e] env2 target = (result', t2) ∧
+      stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
+  obtain ⟨pure, ticks, args, termOk, notNoop, original, rewrite⟩ :=
+    checkOp_rewrite_worker ctx op loc workerLoc acc e checked check
+  obtain ⟨termIH, argsIH⟩ := subIH pure ticks args original
+  obtain ⟨pureValue, _, pureSource, pureTarget⟩ :=
+    term_prefix_simulation_all_through pure ctx (opType op) env1 env2 source target loc termIH termOk types envRelated.1 related
+  have sourceOrder : BviSem.evaluate [e] env1 source =
+      BviSem.evaluate [applyOp op pure (.call ticks (some loc) args none)] env1 source := by
+    rcases original with direct | ⟨notAppend, swapped⟩
+    · rw [direct]
+    · rw [swapped]
+      exact (evaluate_applyOp_swap_pure op pure (.call ticks (some loc) args none) env1 source
+        pureValue notNoop notAppend pureSource).symm
+  have targetOrder : BviSem.evaluate [e] env2 target =
+      BviSem.evaluate [applyOp op pure (.call ticks (some loc) args none)] env2 target := by
+    rcases original with direct | ⟨notAppend, swapped⟩
+    · rw [direct]
+    · rw [swapped]
+      exact (evaluate_applyOp_swap_pure op pure (.call ticks (some loc) args none) env2 target
+        pureValue notNoop notAppend pureTarget).symm
+  have normalizedSource : BviSem.evaluate [applyOp op pure (.call ticks (some loc) args none)] env1 source =
+      (sourceResult, sourceNext) := sourceOrder.symm.trans sourceRun
+  obtain ⟨result', t1, t2, workerRun, appliedRun, rel1, rel2⟩ :=
+    evaluate_worker_candidate_through loc arity workerLoc ticks acc body pure op args env1 env2 source sourceNext target
+      ctx ty sourceResult argsIH termIH clockIH envRelated related types notNoop sameType termOk sourceCode optimized
+      normalizedSource notTypeError
+  obtain ⟨oldValue, lookup, _⟩ := envRel_accumulator ty acc env1 env2 envRelated
+  refine ⟨result', t1, t2, ?_, ?_, rel1, rel2⟩
+  · simpa [rewrite] using workerRun
+  · rw [evaluate_applyOp_var op acc e env2 target oldValue lookup, targetOrder]
+    rw [evaluate_applyOp_var op acc (applyOp op pure (.call ticks (some loc) args none)) env2 target oldValue lookup]
+      at appliedRun
+    exact appliedRun
+
+
+/-- The unrestricted candidate hypotheses supply the bounded worker proof. -/
 theorem evaluate_checked_worker_candidate {C F : Type}
     (loc arity workerLoc acc : Nat) (body e checked : Bvi.Exp) (op : AssocOp)
     (env1 env2 : List Value) (source sourceNext : BviSem.BviState (Nat × C) F)
@@ -1797,38 +1894,12 @@ theorem evaluate_checked_worker_candidate {C F : Type}
       BviSem.evaluate [(rewriteSource loc workerLoc op acc ctx e).2] env2 target = (result', t1) ∧
       BviSem.evaluate [applyOp op (.var acc) e] env2 target = (result', t2) ∧
       stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
-  obtain ⟨pure, ticks, args, termOk, notNoop, original, rewrite⟩ :=
-    checkOp_rewrite_worker ctx op loc workerLoc acc e checked check
-  obtain ⟨termIH, argsIH⟩ := subIH pure ticks args original
-  obtain ⟨pureValue, _, pureSource, pureTarget⟩ :=
-    term_prefix_simulation_all pure ctx (opType op) env1 env2 source target loc termIH termOk types envRelated.1 related
-  have sourceOrder : BviSem.evaluate [e] env1 source =
-      BviSem.evaluate [applyOp op pure (.call ticks (some loc) args none)] env1 source := by
-    rcases original with direct | ⟨notAppend, swapped⟩
-    · rw [direct]
-    · rw [swapped]
-      exact (evaluate_applyOp_swap_pure op pure (.call ticks (some loc) args none) env1 source
-        pureValue notNoop notAppend pureSource).symm
-  have targetOrder : BviSem.evaluate [e] env2 target =
-      BviSem.evaluate [applyOp op pure (.call ticks (some loc) args none)] env2 target := by
-    rcases original with direct | ⟨notAppend, swapped⟩
-    · rw [direct]
-    · rw [swapped]
-      exact (evaluate_applyOp_swap_pure op pure (.call ticks (some loc) args none) env2 target
-        pureValue notNoop notAppend pureTarget).symm
-  have normalizedSource : BviSem.evaluate [applyOp op pure (.call ticks (some loc) args none)] env1 source =
-      (sourceResult, sourceNext) := sourceOrder.symm.trans sourceRun
-  obtain ⟨result', t1, t2, workerRun, appliedRun, rel1, rel2⟩ :=
-    evaluate_worker_candidate loc arity workerLoc ticks acc body pure op args env1 env2 source sourceNext target
-      ctx ty sourceResult argsIH termIH clockIH envRelated related types notNoop sameType termOk sourceCode optimized
-      normalizedSource notTypeError
-  obtain ⟨oldValue, lookup, _⟩ := envRel_accumulator ty acc env1 env2 envRelated
-  refine ⟨result', t1, t2, ?_, ?_, rel1, rel2⟩
-  · simpa [rewrite] using workerRun
-  · rw [evaluate_applyOp_var op acc e env2 target oldValue lookup, targetOrder]
-    rw [evaluate_applyOp_var op acc (applyOp op pure (.call ticks (some loc) args none)) env2 target oldValue lookup]
-      at appliedRun
-    exact appliedRun
+  apply evaluate_checked_worker_candidate_through loc arity workerLoc acc body e checked op env1 env2
+    source sourceNext target ctx ty sourceResult ?_ clockIH envRelated related types sameType sourceCode
+    optimized check sourceRun notTypeError
+  intro pure ticks args shape
+  obtain ⟨termIH, argsIH⟩ := subIH pure ticks args shape
+  exact ⟨rewriteTailProperty_through termIH _, rewriteTailProperty_through argsIH _⟩
 
 /-- Force case of the rewrite simulation. The induction hypothesis applies
 to any called body at a strictly smaller clock, as in the source induction. -/
@@ -3911,6 +3982,51 @@ theorem rewriteTail_op_accumulator_noOptimization {C F : Type} (assoc : AssocOp)
 a successful candidate uses the worker, while a failed check uses the
 explicit accumulator fallback. The induction hypotheses cover the argument
 list, the selected candidate's subexpressions, and smaller-clock callees. -/
+theorem rewriteTail_op_accumulator_through {C F : Type} (limit : Nat) (assoc : AssocOp)
+    (args : List Bvi.Exp) (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (subIH : ∀ op pure ticks callArgs,
+      (.op (toOp assoc) args = applyOp op pure (.call ticks (some loc) callArgs none) ∨
+        (op ≠ .append ∧ .op (toOp assoc) args = applyOp op (.call ticks (some loc) callArgs none) pure)) →
+      rewriteTailPropertyThrough (C := C) (F := F) limit [pure] ∧ rewriteTailPropertyThrough (C := C) (F := F) limit callArgs)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (toOp assoc) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (toOp assoc) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  obtain ⟨targetNext, ordinary, finalRelated⟩ :=
+    evaluate_op_related_through limit (toOp assoc) args source env1 result sourceNext optimized target acc env2 loc ts ty
+      argsIH (stateRel_doApp_toOp assoc) (doApp_toOp_error_type assoc) clockBound hyp
+  refine ⟨targetNext, ordinary, finalRelated, ?_⟩
+  intro enabled op workerLoc body arity required
+  obtain ⟨sourceCode, optCode, opTypeEq, _⟩ := required
+  have envEnabled : envRel ty true acc env1 env2 := by simpa [enabled] using hyp.2.1
+  cases checked : checkOp ts op loc (.op (toOp assoc) args) with
+  | none =>
+    obtain ⟨value, lookup, _⟩ := envRel_accumulator ty acc env1 env2 envEnabled
+    have fallback := rewriteSource_op_fallback ts loc workerLoc acc op (toOp assoc) args (.inr checked)
+    simpa only [List.headD_cons] using
+      evaluate_rewrite_fallback op loc workerLoc acc ts (.op (toOp assoc) args) env2 sourceNext target targetNext
+        result value lookup ordinary finalRelated fallback
+  | some candidate =>
+    simpa only [List.headD_cons] using
+      evaluate_checked_worker_candidate_through loc arity workerLoc acc body (.op (toOp assoc) args) candidate op
+        env1 env2 source sourceNext target ts ty result
+        (fun pure ticks callArgs shape =>
+          let pair := subIH op pure ticks callArgs shape
+          ⟨rewriteTailPropertyThrough_mono clockBound pair.1, rewriteTailPropertyThrough_mono clockBound pair.2⟩) clockIH envEnabled hyp.2.2.1 hyp.2.2.2.1
+        opTypeEq sourceCode optCode checked hyp.1 hyp.2.2.2.2.2
+
+
+/-- The unrestricted hypotheses supply the bounded accumulator case. -/
 theorem rewriteTail_op_accumulator {C F : Type} (assoc : AssocOp)
     (args : List Bvi.Exp) (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3930,25 +4046,11 @@ theorem rewriteTail_op_accumulator {C F : Type} (assoc : AssocOp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (toOp assoc) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  obtain ⟨targetNext, ordinary, finalRelated⟩ :=
-    evaluate_op_related (toOp assoc) args source env1 result sourceNext optimized target acc env2 loc ts ty
-      argsIH (stateRel_doApp_toOp assoc) (doApp_toOp_error_type assoc) hyp
-  refine ⟨targetNext, ordinary, finalRelated, ?_⟩
-  intro enabled op workerLoc body arity required
-  obtain ⟨sourceCode, optCode, opTypeEq, _⟩ := required
-  have envEnabled : envRel ty true acc env1 env2 := by simpa [enabled] using hyp.2.1
-  cases checked : checkOp ts op loc (.op (toOp assoc) args) with
-  | none =>
-    obtain ⟨value, lookup, _⟩ := envRel_accumulator ty acc env1 env2 envEnabled
-    have fallback := rewriteSource_op_fallback ts loc workerLoc acc op (toOp assoc) args (.inr checked)
-    simpa only [List.headD_cons] using
-      evaluate_rewrite_fallback op loc workerLoc acc ts (.op (toOp assoc) args) env2 sourceNext target targetNext
-        result value lookup ordinary finalRelated fallback
-  | some candidate =>
-    simpa only [List.headD_cons] using
-      evaluate_checked_worker_candidate loc arity workerLoc acc body (.op (toOp assoc) args) candidate op
-        env1 env2 source sourceNext target ts ty result (subIH op) clockIH envEnabled hyp.2.2.1 hyp.2.2.2.1
-        opTypeEq sourceCode optCode checked hyp.1 hyp.2.2.2.2.2
+  apply rewriteTail_op_accumulator_through source.clock assoc args source env1 result sourceNext optimized target
+    acc env2 loc ts ty (rewriteTailProperty_through argsIH _) ?_ clockIH (Nat.le_refl _) hyp
+  intro op pure ticks callArgs shape
+  obtain ⟨termIH, callIH⟩ := subIH op pure ticks callArgs shape
+  exact ⟨rewriteTailProperty_through termIH _, rewriteTailProperty_through callIH _⟩
 
 /-- Complete accumulator-operation case when the source candidate check
 finds no recursive call. -/
@@ -3992,6 +4094,38 @@ theorem rewriteTail_op_accumulator_noCandidate {C F : Type} (assoc : AssocOp)
 /-- Every integer operation satisfies the rewrite simulation. Addition and
 multiplication use the worker-candidate proof; the other operations do not
 select accumulator rewrites. -/
+theorem rewriteTail_op_intOp_through {C F : Type} (limit : Nat) (operation : ClosLang.IntOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (subIH : ∀ op pure ticks callArgs,
+      (.op (.intOp operation) args = applyOp op pure (.call ticks (some loc) callArgs none) ∨
+        (op ≠ .append ∧ .op (.intOp operation) args = applyOp op (.call ticks (some loc) callArgs none) pure)) →
+      rewriteTailPropertyThrough (C := C) (F := F) limit [pure] ∧ rewriteTailPropertyThrough (C := C) (F := F) limit callArgs)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.intOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.intOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  cases operation with
+  | add =>
+    exact rewriteTail_op_accumulator_through limit .plus args source env1 result sourceNext optimized target acc env2 loc ts ty
+      argsIH subIH clockIH clockBound hyp
+  | mult =>
+    exact rewriteTail_op_accumulator_through limit .times args source env1 result sourceNext optimized target acc env2 loc ts ty
+      argsIH subIH clockIH clockBound hyp
+  | _ =>
+    all_goals exact rewriteTail_op_nonAccumulatorInt_through limit _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl clockBound hyp
+
+
+/-- The unrestricted structural hypotheses supply the bounded case. -/
 theorem rewriteTail_op_intOp {C F : Type} (operation : ClosLang.IntOp) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -4011,15 +4145,11 @@ theorem rewriteTail_op_intOp {C F : Type} (operation : ClosLang.IntOp) (args : L
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.intOp operation) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  cases operation with
-  | add =>
-    exact rewriteTail_op_accumulator .plus args source env1 result sourceNext optimized target acc env2 loc ts ty
-      argsIH subIH clockIH hyp
-  | mult =>
-    exact rewriteTail_op_accumulator .times args source env1 result sourceNext optimized target acc env2 loc ts ty
-      argsIH subIH clockIH hyp
-  | _ =>
-    all_goals exact rewriteTail_op_nonAccumulatorInt _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
+  apply rewriteTail_op_intOp_through source.clock operation args source env1 result sourceNext optimized target
+    acc env2 loc ts ty (rewriteTailProperty_through argsIH _) ?_ clockIH (Nat.le_refl _) hyp
+  intro op pure ticks callArgs shape
+  obtain ⟨termIH, callIH⟩ := subIH op pure ticks callArgs shape
+  exact ⟨rewriteTailProperty_through termIH _, rewriteTailProperty_through callIH _⟩
 
 /-- Both subexpressions of a worker candidate are structurally smaller in
 either operand order. -/
@@ -4035,6 +4165,41 @@ theorem candidate_subexpressions_smaller (op : AssocOp) (pure : Bvi.Exp)
 
 /-- Accumulator-operation simulation from a size-based structural induction
 hypothesis, including the list-append accumulator. -/
+theorem rewriteTail_op_accumulator_of_size_through {C F : Type} (limit : Nat) (assoc : AssocOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (structuralIH : ∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op (toOp assoc) args] →
+      rewriteTailPropertyThrough (C := C) (F := F) limit xs)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (toOp assoc) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (toOp assoc) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  have argsSmaller : sizeOf args < sizeOf [Bvi.Exp.op (toOp assoc) args] := by
+    simp only [List.cons.sizeOf_spec, List.nil.sizeOf_spec, Bvi.Exp.op.sizeOf_spec]
+    omega
+  apply rewriteTail_op_accumulator_through limit assoc args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (structuralIH args argsSmaller) ?_ clockIH clockBound hyp
+  intro op pure ticks callArgs shape
+  have smaller := candidate_subexpressions_smaller op pure ticks loc callArgs
+  have bounds : sizeOf [pure] < sizeOf [Bvi.Exp.op (toOp assoc) args] ∧
+      sizeOf callArgs < sizeOf [Bvi.Exp.op (toOp assoc) args] := by
+    rcases shape with direct | ⟨_, swapped⟩
+    · rw [direct]
+      exact smaller.1
+    · rw [swapped]
+      exact smaller.2
+  exact ⟨structuralIH [pure] bounds.1, structuralIH callArgs bounds.2⟩
+
+
+/-- The unrestricted structural hypotheses supply the bounded case. -/
 theorem rewriteTail_op_accumulator_of_size {C F : Type} (assoc : AssocOp) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -4051,15 +4216,39 @@ theorem rewriteTail_op_accumulator_of_size {C F : Type} (assoc : AssocOp) (args 
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (toOp assoc) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  have argsSmaller : sizeOf args < sizeOf [Bvi.Exp.op (toOp assoc) args] := by
+  apply rewriteTail_op_accumulator_of_size_through source.clock assoc args source env1 result sourceNext optimized target acc env2 loc ts ty
+    ?_ clockIH (Nat.le_refl _) hyp
+  intro xs smaller
+  exact rewriteTailProperty_through (structuralIH xs smaller) _
+
+/-- Integer-operation simulation using the ordinary structural induction
+hypothesis for smaller expression lists. -/
+theorem rewriteTail_op_intOp_of_size_through {C F : Type} (limit : Nat) (operation : ClosLang.IntOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (structuralIH : ∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op (.intOp operation) args] →
+      rewriteTailPropertyThrough (C := C) (F := F) limit xs)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.intOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.intOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  have argsSmaller : sizeOf args < sizeOf [Bvi.Exp.op (.intOp operation) args] := by
     simp only [List.cons.sizeOf_spec, List.nil.sizeOf_spec, Bvi.Exp.op.sizeOf_spec]
     omega
-  apply rewriteTail_op_accumulator assoc args source env1 result sourceNext optimized target acc env2 loc ts ty
-    (structuralIH args argsSmaller) ?_ clockIH hyp
+  apply rewriteTail_op_intOp_through limit operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (structuralIH args argsSmaller) ?_ clockIH clockBound hyp
   intro op pure ticks callArgs shape
   have smaller := candidate_subexpressions_smaller op pure ticks loc callArgs
-  have bounds : sizeOf [pure] < sizeOf [Bvi.Exp.op (toOp assoc) args] ∧
-      sizeOf callArgs < sizeOf [Bvi.Exp.op (toOp assoc) args] := by
+  have bounds : sizeOf [pure] < sizeOf [Bvi.Exp.op (.intOp operation) args] ∧
+      sizeOf callArgs < sizeOf [Bvi.Exp.op (.intOp operation) args] := by
     rcases shape with direct | ⟨_, swapped⟩
     · rw [direct]
       exact smaller.1
@@ -4067,8 +4256,8 @@ theorem rewriteTail_op_accumulator_of_size {C F : Type} (assoc : AssocOp) (args 
       exact smaller.2
   exact ⟨structuralIH [pure] bounds.1, structuralIH callArgs bounds.2⟩
 
-/-- Integer-operation simulation using the ordinary structural induction
-hypothesis for smaller expression lists. -/
+
+/-- The unrestricted structural hypotheses supply the bounded case. -/
 theorem rewriteTail_op_intOp_of_size {C F : Type} (operation : ClosLang.IntOp) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -4085,21 +4274,10 @@ theorem rewriteTail_op_intOp_of_size {C F : Type} (operation : ClosLang.IntOp) (
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.intOp operation) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  have argsSmaller : sizeOf args < sizeOf [Bvi.Exp.op (.intOp operation) args] := by
-    simp only [List.cons.sizeOf_spec, List.nil.sizeOf_spec, Bvi.Exp.op.sizeOf_spec]
-    omega
-  apply rewriteTail_op_intOp operation args source env1 result sourceNext optimized target acc env2 loc ts ty
-    (structuralIH args argsSmaller) ?_ clockIH hyp
-  intro op pure ticks callArgs shape
-  have smaller := candidate_subexpressions_smaller op pure ticks loc callArgs
-  have bounds : sizeOf [pure] < sizeOf [Bvi.Exp.op (.intOp operation) args] ∧
-      sizeOf callArgs < sizeOf [Bvi.Exp.op (.intOp operation) args] := by
-    rcases shape with direct | ⟨_, swapped⟩
-    · rw [direct]
-      exact smaller.1
-    · rw [swapped]
-      exact smaller.2
-  exact ⟨structuralIH [pure] bounds.1, structuralIH callArgs bounds.2⟩
+  apply rewriteTail_op_intOp_of_size_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    ?_ clockIH (Nat.le_refl _) hyp
+  intro xs smaller
+  exact rewriteTailProperty_through (structuralIH xs smaller) _
 
 /-- Non-accumulator block operations delegated to BVL preserve the rewrite
 simulation for all their argument and reference-store cases. -/
@@ -4144,6 +4322,38 @@ theorem rewriteTail_op_block_delegated {C F : Type} (operation : ClosLang.BlockO
 
 /-- Every block operation satisfies the rewrite simulation under structural
 and smaller-clock induction hypotheses. -/
+theorem rewriteTail_op_blockOp_of_size_through {C F : Type} (limit : Nat) (operation : ClosLang.BlockOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (structuralIH : ∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op (.blockOp operation) args] →
+      rewriteTailPropertyThrough (C := C) (F := F) limit xs)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.blockOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.blockOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  have argsSmaller : sizeOf args < sizeOf [Bvi.Exp.op (.blockOp operation) args] := by
+    simp only [List.cons.sizeOf_spec, List.nil.sizeOf_spec, Bvi.Exp.op.sizeOf_spec]
+    omega
+  have argsIH := structuralIH args argsSmaller
+  cases operation with
+  | fromList tag => exact rewriteTail_op_blockFromList_through limit tag args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | listAppend => exact rewriteTail_op_accumulator_of_size_through limit .append args source env1 result sourceNext optimized target acc env2 loc ts ty structuralIH clockIH clockBound hyp
+  | _ =>
+    all_goals apply rewriteTail_op_block_delegated_through limit _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH
+    all_goals try (intro tag; simp)
+    all_goals try (simp)
+    all_goals first | exact clockBound | exact hyp
+
+
+/-- The unrestricted structural hypotheses supply the bounded case. -/
 theorem rewriteTail_op_blockOp_of_size {C F : Type} (operation : ClosLang.BlockOp) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -4160,18 +4370,10 @@ theorem rewriteTail_op_blockOp_of_size {C F : Type} (operation : ClosLang.BlockO
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.blockOp operation) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  have argsSmaller : sizeOf args < sizeOf [Bvi.Exp.op (.blockOp operation) args] := by
-    simp only [List.cons.sizeOf_spec, List.nil.sizeOf_spec, Bvi.Exp.op.sizeOf_spec]
-    omega
-  have argsIH := structuralIH args argsSmaller
-  cases operation with
-  | fromList tag => exact rewriteTail_op_blockFromList tag args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
-  | listAppend => exact rewriteTail_op_accumulator_of_size .append args source env1 result sourceNext optimized target acc env2 loc ts ty structuralIH clockIH hyp
-  | _ =>
-    all_goals apply rewriteTail_op_block_delegated _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH
-    all_goals try (intro tag; simp)
-    all_goals try (simp)
-    all_goals exact hyp
+  apply rewriteTail_op_blockOp_of_size_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    ?_ clockIH (Nat.le_refl _) hyp
+  intro xs smaller
+  exact rewriteTailProperty_through (structuralIH xs smaller) _
 
 /-- Memory primitives delegated to BVL preserve the rewrite simulation. -/
 theorem rewriteTail_op_memory_delegated_through {C F : Type} (limit : Nat) (operation : ClosLang.MemOp) (args : List Bvi.Exp)
@@ -4677,6 +4879,24 @@ theorem rewriteTailProperty_of_int_block_through {C F : Type}
   · intro op eq
     subst operation
     exact blockStep limit op args structuralIH clockIH
+
+/-- The rewrite simulation follows by induction on the source clock and
+expression size. This Flapjack formulation still requires comparison with
+the complete HOL theorem statement before it can be tagged as its port. -/
+theorem rewriteTailProperty_all {C F : Type} :
+    ∀ xs, rewriteTailProperty (C := C) (F := F) xs := by
+  apply rewriteTailProperty_of_int_block_through
+  all_goals intro limit op args structuralIH clockIH
+  all_goals intro source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
+  all_goals first
+    | apply rewriteTail_op_intOp_of_size_through limit op args source env1 result sourceNext optimized target
+        acc env2 loc ts ty structuralIH ?_ clockBound hyp
+    | apply rewriteTail_op_blockOp_of_size_through limit op args source env1 result sourceNext optimized target
+        acc env2 loc ts ty structuralIH ?_ clockBound hyp
+  all_goals
+    intro body called values r last smaller opt target' acc' env2' loc' ts' ty' h
+    exact clockIH called.clock (by omega) [body] called values r last opt target' acc' env2' loc' ts' ty'
+      (Nat.le_refl _) h
 
 /-- Assembles singleton expression cases using unrestricted smaller-expression
 and smaller-clock hypotheses. This Flapjack helper is not a HOL theorem port:
