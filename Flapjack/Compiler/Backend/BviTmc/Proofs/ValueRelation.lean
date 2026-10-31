@@ -219,4 +219,16 @@ theorem envRel_strip_extras (f : HolFiniteMapExact Nat Nat) (source target : Lis
         subst second
         exact ⟨xs, ptr, idx, ⟨xs, [], by simp, pairs, by simp⟩, rfl, small⟩
 
+theorem holFmapAsFiniteSupportParamWitness_listToValue_rel_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+
+/-- Encoding lists of related values yields related source list values. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_to_v_v_rel"
+  (fmap_as_finite_support_parameters := [f])]
+theorem listToValue_rel (f : HolFiniteMapExact Nat Nat) (xs ys : List Value)
+    (related : List.Forall₂ (valueRel f) xs ys) : valueRel f (listToValue xs) (listToValue ys) := by
+  induction related with
+  | nil => exact .block _ [] [] .nil
+  | cons head tail ih => exact .block _ _ _ (.cons head (.cons ih .nil))
+
 end Flapjack.Compiler.Backend.BviTmc

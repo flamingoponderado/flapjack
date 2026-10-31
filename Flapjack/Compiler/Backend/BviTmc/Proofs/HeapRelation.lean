@@ -150,7 +150,7 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_alloc_source (source : Ho
 theorem holFmapAsFiniteSupportParamWitness_stateRefRel_alloc_target (target : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
-/-- Fresh source and target allocation extension the pointer map and keeps
+/-- Fresh source and target allocation extends the pointer map and keeps
 the reference heaps related. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_alloc"
   (fmap_as_finite_support_parameters := [f, source, target])]
@@ -194,5 +194,50 @@ theorem stateRefRel_alloc (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMap
         exact rangeFresh i rename
       exact ⟨j, cell, extension i j rename, refRel_submap f (f.updateEq (src, tgt)) old cell cellsRel extension,
         by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using targetFound⟩
+
+theorem holFmapAsFiniteSupportParamWitness_stateRefRel_lookup_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_stateRefRel_lookup_source (source : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup source) source.finiteSupport = source := by cases source; rfl
+theorem holFmapAsFiniteSupportParamWitness_stateRefRel_lookup_target (target : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
+
+/-- Every mapped source pointer resolves to related cells in both heaps. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_lookup"
+  (fmap_as_finite_support_parameters := [f, source, target])]
+theorem stateRefRel_lookup (f : HolFiniteMapExact Nat Nat) (n m : Nat)
+    (source : HolFiniteMapExact Nat (Ref Value)) (target : HolFiniteMapExact Nat (Ref Value))
+    (mapped : f.lookup n = some m) (related : stateRefRel f source target) :
+    ∃ v w, source.lookup n = some v ∧ target.lookup m = some w ∧ refRel f v w := by
+  have member : n ∈ source.domain := by
+    rw [← related.1]
+    simp [HolFiniteMapExact.domain, mapped]
+  cases found : source.lookup n with
+  | none => simp [HolFiniteMapExact.domain, found] at member
+  | some v =>
+    obtain ⟨j, w, rename, cells, targetFound⟩ := related.2 n v found
+    rw [mapped] at rename
+    have equal : m = j := Option.some.inj rename
+    subst j
+    exact ⟨v, w, rfl, targetFound, cells⟩
+
+theorem holFmapAsFiniteSupportParamWitness_fmapInj_lookup_eq_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+
+/-- An injective pointer map identifies target pointers exactly when it
+identifies their source pointers. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_flookup_eq"
+  (fmap_as_finite_support_parameters := [f])]
+theorem fmapInj_lookup_eq (f : HolFiniteMapExact Nat Nat) (n m n' m' : Nat)
+    (injective : fmapInj f) (left : f.lookup n = some m) (right : f.lookup n' = some m') :
+    m = m' ↔ n = n' := by
+  constructor
+  · intro equal
+    subst m'
+    exact injective n n' m ⟨left, right⟩
+  · intro equal
+    subst n'
+    rw [left] at right
+    exact Option.some.inj right
 
 end Flapjack.Compiler.Backend.BviTmc
