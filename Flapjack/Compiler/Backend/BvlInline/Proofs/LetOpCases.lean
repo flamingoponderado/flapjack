@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpState
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+import Flapjack.Compiler.Backend.BvlInline.Proofs.VarListEvaluate
 
 /-! Structural evaluator cases for the let-operation simulation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs
@@ -129,5 +130,111 @@ theorem letOpSimulation_op {C F : Type} (splitSeq : Bool) (limit : Nat)
         simp only [letOp, letOpList, letOpOne] at targetArgs ⊢
         rw [evaluate, fixClock_evaluate, targetArgs]
         simp [targetApp]
+
+/-- Sequencing follows by composing the head and tail simulations. -/
+theorem letOpSimulation_cons {C F : Type} (splitSeq : Bool) (limit : Nat)
+    (first second : Bvl.Exp) (rest : List Bvl.Exp) (env : List Value) (source : State C F)
+    (headIH : letOpSimulation splitSeq limit [first] env source)
+    (tailIH : ∀ state : State C F, state.clock ≤ source.clock →
+      letOpSimulation splitSeq limit (second :: rest) env state) :
+    letOpSimulation splitSeq limit (first :: second :: rest) env source := by
+  intro result final target related run notType
+  rw [evaluate, fixClock_evaluate] at run
+  cases headRun : evaluate [first] env source with
+  | mk headResult middle =>
+    rw [headRun] at run
+    have bound : middle.clock ≤ source.clock := by
+      have clock := evaluate_clock_le [first] env source
+      simpa [headRun] using clock
+    have headNotType : headResult ≠ .err (.abort .typeError) := by
+      cases headResult with
+      | val values => simp
+      | err error =>
+        simp at run
+        rcases run with ⟨rfl, _⟩
+        exact notType
+    obtain ⟨targetMiddle, targetHead, middleRel⟩ := headIH headResult middle target related headRun headNotType
+    simp only [letOp, letOpList] at targetHead
+    cases headResult with
+    | err error =>
+      simp at run
+      rcases run with ⟨rfl, rfl⟩
+      refine ⟨targetMiddle, ?_, middleRel⟩
+      simp only [letOp, letOpList]
+      rw [evaluate, fixClock_evaluate, targetHead]
+    | val values =>
+      cases tailRun : evaluate (second :: rest) env middle with
+      | mk tailResult tailFinal =>
+        rw [tailRun] at run
+        have tailNotType : tailResult ≠ .err (.abort .typeError) := by
+          cases tailResult with
+          | val vals => simp
+          | err error =>
+            simp at run
+            rcases run with ⟨rfl, _⟩
+            exact notType
+        obtain ⟨targetFinal, targetTail, finalRel⟩ :=
+          tailIH middle bound tailResult tailFinal targetMiddle middleRel tailRun tailNotType
+        simp only [letOp, letOpList] at targetTail
+        refine ⟨targetFinal, ?_, ?_⟩
+        · simp only [letOp, letOpList]
+          rw [evaluate, fixClock_evaluate, targetHead, targetTail]
+          cases tailResult <;> simp_all
+        · cases tailResult <;> simp_all
+
+/-- The let-operation peephole has the same evaluation as a let with both
+subexpressions already transformed. -/
+theorem letOp_let_evaluate {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.Exp)
+    (env : List Value) (state : State C F) :
+    evaluate (letOp [.let bindings body]) env state =
+      evaluate [.let (letOp bindings) (letOpOne body)] env state := by
+  simp only [letOp, letOpList, letOpOne]
+  cases transformed : letOpOne body with
+  | op op variables =>
+    simp only [destOp]
+    by_cases valid : varListHOL 0 variables (letOpList bindings) = true
+    · simp only [valid, ↓reduceIte]
+      exact (evaluateLetOpReduction (letOpList bindings) variables op env state valid).symm
+    · simp [valid]
+  | _ => simp [destOp]
+
+/-- The let case composes binding and body simulations; the local peephole
+reduction is valid even when bindings fail. -/
+theorem letOpSimulation_let {C F : Type} (splitSeq : Bool) (limit : Nat)
+    (bindings : List Bvl.Exp) (body : Bvl.Exp) (env : List Value) (source : State C F)
+    (bindingsIH : letOpSimulation splitSeq limit bindings env source)
+    (bodyIH : ∀ (bodyEnv : List Value) (state : State C F), state.clock ≤ source.clock →
+      letOpSimulation splitSeq limit [body] bodyEnv state) :
+    letOpSimulation splitSeq limit [.let bindings body] env source := by
+  intro result final target related run notType
+  rw [evaluate, fixClock_evaluate] at run
+  cases bindingsRun : evaluate bindings env source with
+  | mk bindingsResult middle =>
+    rw [bindingsRun] at run
+    have bound : middle.clock ≤ source.clock := by
+      have clock := evaluate_clock_le bindings env source
+      simpa [bindingsRun] using clock
+    have bindingsNotType : bindingsResult ≠ .err (.abort .typeError) := by
+      cases bindingsResult with
+      | val values => simp
+      | err error =>
+        simp at run
+        rcases run with ⟨rfl, _⟩
+        exact notType
+    obtain ⟨targetMiddle, targetBindings, middleRel⟩ :=
+      bindingsIH bindingsResult middle target related bindingsRun bindingsNotType
+    cases bindingsResult with
+    | err error =>
+      simp at run
+      rcases run with ⟨rfl, rfl⟩
+      refine ⟨targetMiddle, ?_, middleRel⟩
+      rw [letOp_let_evaluate, evaluate, fixClock_evaluate, targetBindings]
+    | val values =>
+      have bodyRun : evaluate [body] (values ++ env) middle = (result, final) := by simpa using run
+      obtain ⟨targetFinal, targetBody, finalRel⟩ :=
+        bodyIH (values ++ env) middle bound result final targetMiddle middleRel bodyRun notType
+      refine ⟨targetFinal, ?_, finalRel⟩
+      rw [letOp_let_evaluate, evaluate, fixClock_evaluate, targetBindings]
+      simpa [letOp, letOpList] using targetBody
 
 end Flapjack.Compiler.Backend.BvlInline.Proofs
