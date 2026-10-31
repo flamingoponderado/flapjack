@@ -7169,4 +7169,71 @@ theorem evaluate_mkClCall_over_continue_generic {C F : Type} (s next : BvlSem.St
     (.number (Int.ofNat total)) (.number (Int.ofNat total - Int.ofNat (n + 1))) returnedBody
     length over different returnedLookup
 
+/-- Compose the saturated target body with the generated overapplication
+continuation. The continuation hypothesis is the application simulation for
+the returned value and the remaining arguments; the body and continuation
+postconditions supply their own target clocks and state extensions. -/
+theorem evaluatePost_mkClCall_over_compose {C F : Type}
+    (s sMiddle sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (f : HolFiniteMapExact Nat Nat) (n total tag address : Nat)
+    (args fields rest : List BvlSem.Value) (body : Bvl.Exp) (value : ClosSem.Value)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (length : args.length = n + 1) (over : total < n) (totalBound : total < s.maxApp)
+    (genericLookup : sptLookup (genericAppFnLocation n) t.code = some (n + 2, generateGenericApp s.maxApp n))
+    (lookup : sptLookup address t.code = some (total + 2, body))
+    (enough : total + 1 ≤ s.clock) (maxAppEq : sMiddle.maxApp = s.maxApp)
+    (bodyPost : evaluatePost (ClosSem.decClock (total + 1) s) sMiddle t
+      (args.drop (n - total) ++ [.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)])
+      f (.val [value]) [body])
+    (continuationIH : ∀ (targetValue : BvlSem.Value) (tMiddle : BvlSem.State C F)
+      (fMiddle : HolFiniteMapExact Nat Nat),
+      stateRel fMiddle sMiddle tMiddle →
+      vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code value targetValue →
+      relocationSubmap f fMiddle → unmappedRefsSubmap t.refs tMiddle.refs f fMiddle →
+      codeAnnotations sMiddle → sptSubspt t.code tMiddle.code →
+      evaluatePost sMiddle sFinal tMiddle
+        (targetValue :: .number (Int.ofNat total) :: .number (Int.ofNat total - Int.ofNat (n + 1)) ::
+          (args ++ [.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)]))
+        fMiddle result [mkClCall (.var 0) ((List.range (n - total)).map fun i => .var (i + 3))]) :
+    evaluatePost s sFinal t
+      (args ++ [.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)] ++ rest) f result
+      [mkClCall (.var args.length) ((List.range args.length).map Bvl.Exp.var)] := by
+  obtain ⟨clock1, targetResult, tMiddle, fMiddle, bodyRun, bodyRel, states1, map1, refs1,
+    annotations1, clocks1⟩ := bodyPost
+  cases targetResult with
+  | err error => simp [resultRel] at bodyRel
+  | val targetValues =>
+    have singleton : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
+        [value] targetValues := by simpa [resultRel, ClosSem.decClock, maxAppEq] using bodyRel
+    cases singleton with
+    | @cons _ targetValue _ _ valueRel tail =>
+      cases tail
+      have growth : sptSubspt t.code tMiddle.code := by
+        exact BvlProps.evaluateMono [body]
+          (args.drop (n - total) ++ [BvlSem.Value.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)])
+          { t with clock := (ClosSem.decClock (total + 1) s).clock + clock1 }
+          (.val [targetValue]) tMiddle bodyRun
+      obtain ⟨clock2, targetFinal, tFinal, fFinal, continuationRun, resultRel, states2, map2,
+        refs2, annotations2, clocks2⟩ :=
+          continuationIH targetValue tMiddle fMiddle states1 valueRel map1 refs1 annotations1 growth
+      have shiftedBody := BvlProps.evaluate_addClock [body]
+        (args.drop (n - total) ++ [.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)])
+        { t with clock := (ClosSem.decClock (total + 1) s).clock + clock1 }
+        tMiddle (.val [targetValue]) clock2 bodyRun (by simp)
+      have bodyShifted : BvlSem.evaluate [body]
+          (args.drop (n - total) ++ [.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)])
+          (BvlSem.decClock (total + 2) { t with clock := s.clock + (clock1 + clock2 + 1) }) =
+          (.val [targetValue], { tMiddle with clock := sMiddle.clock + clock2 }) := by
+        have clockEq : s.clock + (clock1 + clock2 + 1) - (total + 2) =
+            (s.clock - (total + 1) + clock1) + clock2 := by omega
+        simpa [BvlSem.decClock, ClosSem.decClock, clockEq, clocks1] using shiftedBody
+      refine ⟨clock1 + clock2 + 1, targetFinal, tFinal, fFinal, ?_, ?_, states2,
+        relocationSubmap_trans map1 map2, unmappedRefsSubmap_trans refs1 refs2, annotations2, clocks2⟩
+      · rw [evaluate_mkClCall_over_step _ s.maxApp n total tag address args fields rest body length over totalBound
+          (by simpa using genericLookup) (by simpa using lookup)]
+        have targetEnough : ¬s.clock + (clock1 + clock2 + 1) < total + 2 := by omega
+        simp only [targetEnough, ↓reduceIte, bodyShifted]
+        simpa using continuationRun
+      · simpa [maxAppEq] using resultRel
+
 end Flapjack.Compiler.Backend.ClosToBvl
