@@ -214,6 +214,41 @@ theorem compileCommonNoOpts_compiled_labels_below (config current : Config) (exp
     have bounds := compileCommonNoOpts_location_bounds config current expressions program preprocess source sourceMem
     omega
 
+/-- Every label in the sorted prepared output, including application and
+runtime stubs, lies below the next closure location with the stub offset. -/
+theorem compileNoOpts_prepared_labels_below (config current output : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp)) (compiled : List (Nat × Nat × Bvl.Exp))
+    (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (preprocess : compileCommonNoOpts? config expressions = some (current, program))
+    (compile : compileNoOpts? config expressions = some (output, compiled, names))
+    (label : Nat) (member : label ∈ compiled.map Prod.fst) :
+    label < current.nextLoc + numStubs current.maxApp := by
+  have prepared : compilePrepared? config current expressions program = some (output, compiled, names) := by
+    simpa [compileNoOpts?, preprocess] using compile
+  obtain ⟨resultNames, generated⟩ := compilePrepared_entries config current expressions program
+  have equal := Option.some.inj (prepared.symm.trans generated)
+  cases equal
+  obtain ⟨⟨name, arity, body⟩, inSorted, labelEq⟩ := List.mem_map.mp member
+  simp only at labelEq
+  subst label
+  have inOriginal := (codeSort_mem (initialCompiledEntries current.maxApp current.start program)
+    (name, arity, body)).1 inSorted
+  simp only [initialCompiledEntries, List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at inOriginal
+  have lower := compileCommonNoOpts_nextLoc_lower config current expressions program preprocess
+  have stubCount : 2 ≤ numStubs current.maxApp := by simp [numStubs]
+  rcases inOriginal with (stub | force | init) | compiledEntry
+  · have bound := initCode_label_lt current.maxApp name (arity, body) stub
+    omega
+  · cases force
+    omega
+  · cases init
+    omega
+  · have converted : compileProg? current.maxApp program = some (compileProgExpsHOL current.maxApp program) :=
+      compileProg_checked_eq_original current.maxApp program
+    have targetMember : name ∈ (compileProgExpsHOL current.maxApp program).map Prod.fst :=
+      List.mem_map.mpr ⟨(name, arity, body), compiledEntry, rfl⟩
+    exact compileCommonNoOpts_compiled_labels_below config current expressions program _ preprocess converted name targetMember
+
 /-- Stateful numbering supplies locations for each incremental main program;
 annotation then supplies variables and preserves the supplied auxiliary-code
 locations. The auxiliary code is passed through numbering unchanged. -/
@@ -298,7 +333,7 @@ theorem compileNoOpts_tree_semantics {C F : Type} (ffi : HolFfiState F)
       (pureCc (compileInc current.maxApp) targetCompiler) [.call .none 0 current.start []] ≠ .fail)
     (distinct : (compiled.map Prod.fst).Nodup)
     (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
-    (initialBelow : ∀ location ∈ compiled.map Prod.fst, location < boundary 0)
+    (initialBoundary : current.nextLoc + numStubs current.maxApp ≤ boundary 0)
     (futureDistinct : ∀ index, ((compileInc current.maxApp (sourceOracle index).2).map Prod.fst).Nodup)
     (ranges : ∀ index location, location ∈ (compileInc current.maxApp (sourceOracle index).2).map Prod.fst →
       boundary index ≤ location ∧ location < boundary (index + 1))
@@ -314,7 +349,10 @@ theorem compileNoOpts_tree_semantics {C F : Type} (ffi : HolFfiState F)
     simpa [compileNoOpts?, preprocess] using compile
   obtain ⟨locations, varsAnnotated⟩ := compileCommonNoOpts_annotations config current expressions program preprocess
   exact compilePrepared_tree_semantics_of_boundaries ffi config current output expressions program compiled names
-    sourceOracle targetCompiler boundary prepared nonfail distinct locations varsAnnotated monotone initialBelow
+    sourceOracle targetCompiler boundary prepared nonfail distinct locations varsAnnotated monotone
+    (fun location member => Nat.lt_of_lt_of_le
+      (compileNoOpts_prepared_labels_below config current output expressions program compiled names
+        preprocess compile location member) initialBoundary)
     futureDistinct ranges futureAnnotations
 
 /-- No-optimization compilation with the stateful numbering and annotation
@@ -325,20 +363,21 @@ theorem compileNoOpts_numberedOracle_semantics {C F : Type} (ffi : HolFfiState F
     (program : List (Nat × Nat × ClosLang.Exp)) (compiled : List (Nat × Nat × Bvl.Exp))
     (names : Spt Flapjack.Basis.Pure.MlString.MlString)
     (oracle : Nat → (Nat × C) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
-    (targetCompiler : BvlSem.Compiler C) (boundary : Nat → Nat)
+    (targetCompiler : BvlSem.Compiler C)
     (preprocess : compileCommonNoOpts? config expressions = some (current, program))
     (compile : compileNoOpts? config expressions = some (output, compiled, names))
     (nonfail : ClosSem.semantics ffi current.maxApp (initialSourceCode program)
       (pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
       (pureCc (compileInc current.maxApp) targetCompiler) [.call .none 0 current.start []] ≠ .fail)
     (distinct : (compiled.map Prod.fst).Nodup)
-    (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
-    (initialBelow : ∀ location ∈ compiled.map Prod.fst, location < boundary 0)
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (initialState : current.nextLoc ≤ (oracle 0).1.1)
     (futureDistinct : ∀ index, ((compileInc current.maxApp
       ((pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2).map Prod.fst).Nodup)
     (ranges : ∀ index location, location ∈ (compileInc current.maxApp
       ((pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2).map Prod.fst →
-      boundary index ≤ location ∧ location < boundary (index + 1))
+      (oracle index).1.1 + numStubs current.maxApp ≤ location ∧
+        location < (oracle (index + 1)).1.1 + numStubs current.maxApp)
     (auxLocations : ∀ index entry, entry ∈ (oracle index).2.2 →
       ClosProps.everyFnLocationSome [entry.2.2]) :
     BvlSem.semantics ffi (sptFromAList compiled)
@@ -349,7 +388,13 @@ theorem compileNoOpts_numberedOracle_semantics {C F : Type} (ffi : HolFfiState F
         (pureCc (compileInc current.maxApp) targetCompiler) [.call .none 0 current.start []] := by
   apply compileNoOpts_tree_semantics ffi config current output expressions program compiled names
     (pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
-    targetCompiler boundary preprocess compile nonfail distinct monotone initialBelow futureDistinct ranges
-  exact numberedAnnotatedOracle_annotations oracle auxLocations
+    targetCompiler (fun index => (oracle index).1.1 + numStubs current.maxApp)
+    preprocess compile nonfail distinct
+  · intro i j order
+    exact Nat.add_le_add_right (numberingOracle_state_monotone oracle oracleState order) _
+  · exact Nat.add_le_add_right initialState _
+  · exact futureDistinct
+  · exact ranges
+  · exact numberedAnnotatedOracle_annotations oracle auxLocations
 
 end Flapjack.Compiler.Backend.ClosToBvl

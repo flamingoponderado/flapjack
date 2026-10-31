@@ -21,6 +21,18 @@ private theorem insertSequential_before {α : Type} (entries : List α) (start k
     rw [ih (start + 1) (sptInsert start entry tree) (by omega)]
     exact sptLookup_sptInsert_ne start key entry tree (by omega)
 
+/-- Sequential insertion cannot affect a location beyond the inserted range. -/
+private theorem insertSequential_after {α : Type} (entries : List α) (start key : Nat) (tree : Spt α)
+    (after : start + entries.length ≤ key) :
+    sptLookup key (insertSequential entries start tree).2 = sptLookup key tree := by
+  induction entries generalizing start tree with
+  | nil => rfl
+  | cons entry rest ih =>
+    simp only [insertSequential, List.foldl_cons] at ⊢
+    change sptLookup key (insertSequential rest (start + 1) (sptInsert start entry tree)).2 = _
+    rw [ih (start + 1) (sptInsert start entry tree) (by simp only [List.length_cons] at after; omega)]
+    exact sptLookup_sptInsert_ne start key entry tree (by simp only [List.length_cons] at after; omega)
+
 /-- Sequential insertion places each element at its offset from the initial
 location. -/
 private theorem insertSequential_lookup {α : Type} (entries : List α) (start index : Nat) (tree : Spt α)
@@ -102,6 +114,24 @@ private theorem partialStubEntries_length (count : Nat) :
         omega
   have h := congrArg (fun n : Nat => n / 2) (twice count)
   simpa using h
+
+/-- Every generated application stub lies below the two reserved runtime
+stub labels. -/
+theorem initCode_label_lt (maxApp label : Nat) (entry : Nat × Bvl.Exp)
+    (member : (label, entry) ∈ sptToAList (initCode maxApp)) :
+    label < numStubs maxApp - 2 := by
+  let generic := (List.range maxApp).map (fun i => (i + 2, generateGenericApp maxApp i))
+  let entries := generic ++ partialStubEntries maxApp
+  have entryLength : entries.length = numStubs maxApp - 2 := by
+    simp [entries, generic, partialStubEntries_length, numStubs]
+  by_contra notBelow
+  have after : 0 + entries.length ≤ label := by omega
+  have absent := insertSequential_after entries 0 label (.ln) after
+  have lookup : sptLookup label (initCode maxApp) = some entry := (sptMemToAList _ _ _).1 member
+  have absent' : sptLookup label (initCode maxApp) = none := by
+    simpa [initCode, insertSequential, entries, generic, partialStubEntries] using absent
+  rw [absent'] at lookup
+  contradiction
 
 /-- Each partial-application stub is installed at its triangularly indexed
 location. This Flapjack helper omits the redundant positive-`maxApp` premise
