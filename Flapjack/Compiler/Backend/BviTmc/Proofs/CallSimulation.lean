@@ -247,4 +247,140 @@ theorem call_handler_source_result {C F : Type} (ticks destination : Nat) (args 
       | exn value => simpa using run
       | ret values => exact False.elim (noReturn values rfl)
 
+/-- Flapjack infrastructure: simulation of a direct call whose callee raises
+and whose handler runs. The intermediate evaluations select this case; the
+target evaluations and frame properties follow from the induction hypotheses. -/
+theorem evaluate_call_handled_exception {C F : Type} (loc ticks destination : Nat)
+    (args : List Bvi.Exp) (handler body : Bvi.Exp)
+    (source middle bodyFinal final : BviState (Nat × C) F) (target : BviState C F)
+    (env1 env2 callArgs : List Value) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
+    (values : List Value) (raised : Value) (result : BviResult)
+    (run : evaluate [.call ticks (some destination) args (some handler)] env1 source = (result, final))
+    (notTypeError : result ≠ .err (.abort .typeError))
+    (safe : noMutcons (.call ticks (some destination) args (some handler)))
+    (environments : envRel opt f env1 env2) (states : stateRel f source target)
+    (argsRun : evaluate args env1 source = (.val values, middle))
+    (found : findCode (some destination) values middle.code = some (callArgs, body))
+    (enough : ¬middle.clock < ticks + 1)
+    (bodyRun : evaluate [body] callArgs (decClock (ticks + 1) middle) = (.err (.raise (.exn raised)), bodyFinal))
+    (handlerRun : evaluate [handler] (raised :: env1) bodyFinal = (result, final))
+    (weightIH : SmallerWeightIH (C := C) (F := F) source.clock
+      (expsWeight [.call ticks (some destination) args (some handler)]))
+    (clockIH : SmallerClockIH (C := C) (F := F) source.clock) :
+    Core [.call ticks (some destination) args (some handler)] env2 f target result final := by
+  have sourceResult := call_handler_source_result ticks destination args handler body env1 callArgs
+    source middle bodyFinal final final values raised result result run notTypeError argsRun found enough bodyRun handlerRun
+  have noReturn := sourceResult.2
+  rw [noMutcons.eq_def] at safe
+  dsimp only at safe
+  have argsSafe : ∀ e ∈ args, noMutcons e := fun e member => safe.1 ⟨e, member⟩
+  have handlerSafe : noMutcons handler := safe.2
+  have argsWeight : expsWeight args < expsWeight [.call ticks (some destination) args (some handler)] := by
+    simp [BviSem.expsWeight, BviSem.expWeight]
+    omega
+  obtain ⟨middleTarget, g, targetArgsResult, targetArgsRun, argsRelated, middleStates,
+    extension, fresh, unchanged, still⟩ :=
+    (weightIH args source target env1 env2 false f loc (.val values) middle (Nat.le_refl _) argsWeight
+      argsRun argsSafe (envRel_relax opt f env1 env2 environments) states (by simp) (by simp)).1
+  cases targetArgsResult with
+  | err error => simp [resultRel] at argsRelated
+  | val values' =>
+    obtain ⟨bodySafe, callArgs', body', bodyLoc, targetFound, callEnv, _, changed⟩ :=
+      findCode_rel g values values' middle middleTarget (some destination) callArgs body found argsRelated middleStates
+    have targetEnough : ¬middleTarget.clock < ticks + 1 := by simpa [middleStates.2.1] using enough
+    have argsClock := BviSem.evaluate_clock_le args env1 source
+    rw [argsRun] at argsClock
+    dsimp only at argsClock
+    have smaller : (decClock (ticks + 1) middle).clock < source.clock := by
+      simp [BviSem.decClock]
+      omega
+    have decStates : stateRel g (decClock (ticks + 1) middle) (decClock (ticks + 1) middleTarget) := by
+      simpa [BviSem.decClock, middleStates.2.1] using
+        stateRel_with_clock (middle.clock - (ticks + 1)) g middle middleTarget middleStates
+    have bodyPost := clockIH body (decClock (ticks + 1) middle) (decClock (ticks + 1) middleTarget)
+      callArgs callArgs' false g bodyLoc (.err (.raise (.exn raised))) bodyFinal smaller bodyRun bodySafe callEnv decStates (by simp)
+    have bodyCore : Core [body'] callArgs' g (decClock (ticks + 1) middleTarget)
+        (.err (.raise (.exn raised))) bodyFinal := by
+      by_cases same : body = body'
+      · subst body'; exact bodyPost.1
+      · obtain ⟨workerLoc, optimized, rewrite⟩ := changed same
+        exact (bodyPost.2 workerLoc optimized).1 body' rewrite
+    have bodyClock : (decClock (ticks + 1) middle).clock ≤ source.clock := Nat.le_of_lt smaller
+    obtain ⟨next, h, raisedTarget, targetBodyRun, bodyExtension, bodyFresh, bodyUnchanged, bodyStill, handlerPost⟩ :=
+      evaluate_call_handler_from_weight loc ticks destination args handler body body' source
+        (decClock (ticks + 1) middle) bodyFinal (decClock (ticks + 1) middleTarget)
+        callArgs callArgs' env1 env2 opt f g raised result final bodyRun bodyClock bodyCore handlerRun
+        notTypeError handlerSafe environments extension weightIH
+    obtain ⟨last, k, targetResult, targetHandlerRun, related, lastStates, handlerExtension,
+      handlerFresh, handlerUnchanged, handlerStill⟩ := handlerPost.1
+    have targetNoReturn := ForceSimulation.related_no_return k result targetResult related noReturn
+    have argsDomain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetArgsRun
+    have bodyDomain := BviProps.evaluate_refs_subset [body'] callArgs' (decClock (ticks + 1) middleTarget) next
+      (.err (.raise (.exn raisedTarget))) targetBodyRun
+    have firstExtension : finiteSubmap f h := fun key value present => bodyExtension key value (extension key value present)
+    have firstFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh argsDomain
+    have firstUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅
+      unchanged bodyUnchanged fresh extension
+    have firstStill := holesStill_trans f g target.refs middleTarget.refs next.refs () still bodyStill fresh extension
+    have allExtension : finiteSubmap f k := fun key value present => handlerExtension key value (firstExtension key value present)
+    have allFresh := onlyFresh_trans f h k target.refs next.refs firstFresh handlerFresh
+      (Set.Subset.trans argsDomain bodyDomain)
+    have allUnchanged := holesUnchanged_trans f h target.refs next.refs last.refs ∅
+      firstUnchanged handlerUnchanged firstFresh firstExtension
+    have allStill := holesStill_trans f h target.refs next.refs last.refs () firstStill handlerStill firstFresh firstExtension
+    refine ⟨last, k, targetResult, ?_, related, lastStates, allExtension, allFresh, allUnchanged, allStill⟩
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgsRun]
+    simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, targetFound, targetEnough]
+    rw [BviSem.fixClock_evaluate, targetBodyRun]
+    simp only
+    rw [targetHandlerRun]
+    cases targetResult with
+    | val values => rfl
+    | err error =>
+      cases error with
+      | abort reason => rfl
+      | raise payload =>
+        cases payload with
+        | exn value => rfl
+        | ret values => exact False.elim (targetNoReturn values rfl)
+
+/-- Flapjack infrastructure: the non-extracted worker and wrapper obligations
+for a direct call whose callee raises and whose handler runs. -/
+theorem evaluate_call_handled_exception_non_extracted {C F : Type} (loc ticks destination : Nat)
+    (args : List Bvi.Exp) (handler body : Bvi.Exp)
+    (source middle bodyFinal final : BviState (Nat × C) F) (target : BviState C F)
+    (env1 env2 callArgs : List Value) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
+    (values : List Value) (raised : Value) (result : BviResult)
+    (run : evaluate [.call ticks (some destination) args (some handler)] env1 source = (result, final))
+    (notTypeError : result ≠ .err (.abort .typeError))
+    (safe : noMutcons (.call ticks (some destination) args (some handler)))
+    (environments : envRel opt f env1 env2) (states : stateRel f source target)
+    (argsRun : evaluate args env1 source = (.val values, middle))
+    (found : findCode (some destination) values middle.code = some (callArgs, body))
+    (enough : ¬middle.clock < ticks + 1)
+    (bodyRun : evaluate [body] callArgs (decClock (ticks + 1) middle) = (.err (.raise (.exn raised)), bodyFinal))
+    (handlerRun : evaluate [handler] (raised :: env1) bodyFinal = (result, final))
+    (notExtracted : toBlockSource env1.length loc (.call ticks (some destination) args (some handler)) = none)
+    (weightIH : SmallerWeightIH (C := C) (F := F) source.clock
+      (expsWeight [.call ticks (some destination) args (some handler)]))
+    (clockIH : SmallerClockIH (C := C) (F := F) source.clock) :
+    SingletonPost (.call ticks (some destination) args (some handler)) source target env1 env2 opt f loc result final := by
+  have core := evaluate_call_handled_exception loc ticks destination args handler body source middle bodyFinal
+    final target env1 env2 callArgs opt f values raised result run notTypeError safe environments states
+    argsRun found enough bodyRun handlerRun weightIH clockIH
+  refine ⟨core, ?_⟩
+  intro locOpt _code
+  constructor
+  · intro wrapper rewrite
+    simp [rewriteWrapperSource] at rewrite
+  · intro optTrue holePtr c hole notFinal pointer
+    have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
+    obtain ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩ := core
+    obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
+      FillHole.evaluate_fill_hole (.call ticks (some destination) args (some handler)) f g env1 env2 source
+        final target next result targetResult c holePtr run targetRun optEnv states extension related hole
+        notFinal unchanged still fresh nextStates pointer
+    simp only [rewriteWorkerSource, notExtracted]
+    exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
+
 end Flapjack.Compiler.Backend.BviTmc.CallSimulation
