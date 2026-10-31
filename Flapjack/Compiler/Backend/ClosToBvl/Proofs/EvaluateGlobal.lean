@@ -60,11 +60,11 @@ theorem evaluatePost_global_success {C F : Type} (s sMiddle sLast : ClosSem.Stat
 /-- The global-read expression case follows from the argument-list
 induction hypothesis. This candidate remains untagged pending review of the
 semantic carriers and the assembled pass theorem. -/
-theorem expressionSimulation_global {C F : Type} (trace : BackendCommon.Tra)
+theorem expressionSimulationBelow_global {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
     (index : Nat) (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.globOp (.global index)) args] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.op trace (.globOp (.global index)) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases argsCompile : compileExpListHOL s.maxApp args aux with
   | mk targetArgs aux1 =>
@@ -91,14 +91,14 @@ theorem expressionSimulation_global {C F : Type} (trace : BackendCommon.Tra)
         rcases run with ⟨rfl, rfl⟩
         exact evaluatePost_global_error s sMiddle t targetEnv f index targetArgs error
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
-            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+            clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
         have maxApp : sMiddle.maxApp = s.maxApp := by
           have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
           rw [argsRun] at h
           exact h
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
-          argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
+          clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         cases appRun : ClosSem.doApp (.globOp (.global index)) values.reverse sMiddle with
         | err error =>
           have errorEq := global_read_error index values.reverse sMiddle error appRun
@@ -111,6 +111,17 @@ theorem expressionSimulation_global {C F : Type} (trace : BackendCommon.Tra)
           simp [appRun] at run
           rcases run with ⟨rfl, rfl⟩
           exact evaluatePost_global_success s sMiddle last t targetEnv f index targetArgs values value argsPost appRun maxApp
+
+
+/-- The unrestricted result follows by choosing a bound for each source state. -/
+theorem expressionSimulation_global {C F : Type} (trace : BackendCommon.Tra)
+    (index : Nat) (args : List ClosLang.Exp)
+    (argsIH : expressionSimulation (C := C) (F := F) args) :
+    expressionSimulation (C := C) (F := F) [.op trace (.globOp (.global index)) args] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  apply expressionSimulationBelow_global clockBound trace index args
+  exact expressionSimulation_below clockBound args argsIH
 
 /-- Argument errors propagate through global allocation. -/
 theorem evaluatePost_alloc_error {C F : Type} (s sFinal : ClosSem.State C F)
@@ -158,11 +169,11 @@ theorem evaluatePost_alloc_success {C F : Type} (s sMiddle sLast : ClosSem.State
 /-- The global-allocation expression case follows from the argument-list
 induction hypothesis. This candidate remains untagged pending review of the
 semantic carriers and the assembled pass theorem. -/
-theorem expressionSimulation_alloc {C F : Type} (trace : BackendCommon.Tra)
+theorem expressionSimulationBelow_alloc {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
     (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.globOp .allocGlobal) args] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.op trace (.globOp .allocGlobal) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases argsCompile : compileExpListHOL s.maxApp args aux with
   | mk targetArgs aux1 =>
@@ -189,14 +200,14 @@ theorem expressionSimulation_alloc {C F : Type} (trace : BackendCommon.Tra)
         rcases run with ⟨rfl, rfl⟩
         exact evaluatePost_alloc_error s sMiddle t targetEnv f targetArgs error
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
-            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+            clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
         have maxApp : sMiddle.maxApp = s.maxApp := by
           have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
           rw [argsRun] at h
           exact h
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
-          argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
+          clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         cases appRun : ClosSem.doApp (.globOp .allocGlobal) values.reverse sMiddle with
         | err error =>
           have errorEq := global_alloc_error values.reverse sMiddle error appRun
@@ -209,6 +220,17 @@ theorem expressionSimulation_alloc {C F : Type} (trace : BackendCommon.Tra)
           simp [appRun] at run
           rcases run with ⟨rfl, rfl⟩
           exact evaluatePost_alloc_success s sMiddle last t targetEnv f targetArgs values value argsPost appRun maxApp
+
+
+/-- The unrestricted result follows by choosing a bound for each source state. -/
+theorem expressionSimulation_alloc {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp)
+    (argsIH : expressionSimulation (C := C) (F := F) args) :
+    expressionSimulation (C := C) (F := F) [.op trace (.globOp .allocGlobal) args] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  apply expressionSimulationBelow_alloc clockBound trace args
+  exact expressionSimulation_below clockBound args argsIH
 
 /-- Argument errors propagate through a global write. -/
 theorem evaluatePost_setGlobal_error {C F : Type} (s sFinal : ClosSem.State C F)
@@ -268,11 +290,11 @@ theorem evaluatePost_setGlobal_success {C F : Type} (s sMiddle sLast : ClosSem.S
 /-- The global-write expression case follows from the argument-list
 induction hypothesis. This candidate remains untagged pending review of the
 semantic carriers and the assembled pass theorem. -/
-theorem expressionSimulation_setGlobal {C F : Type} (trace : BackendCommon.Tra)
+theorem expressionSimulationBelow_setGlobal {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
     (index : Nat) (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.globOp (.setGlobal index)) args] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.op trace (.globOp (.setGlobal index)) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases argsCompile : compileExpListHOL s.maxApp args aux with
   | mk targetArgs aux1 =>
@@ -299,14 +321,14 @@ theorem expressionSimulation_setGlobal {C F : Type} (trace : BackendCommon.Tra)
         rcases run with ⟨rfl, rfl⟩
         exact evaluatePost_setGlobal_error s sMiddle t targetEnv f index targetArgs error
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
-            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+            clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
         have maxApp : sMiddle.maxApp = s.maxApp := by
           have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
           rw [argsRun] at h
           exact h
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
-          argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
+          clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         cases appRun : ClosSem.doApp (.globOp (.setGlobal index)) values.reverse sMiddle with
         | err error =>
           have errorEq := global_set_error index values.reverse sMiddle error appRun
@@ -319,5 +341,16 @@ theorem expressionSimulation_setGlobal {C F : Type} (trace : BackendCommon.Tra)
           simp [appRun] at run
           rcases run with ⟨rfl, rfl⟩
           exact evaluatePost_setGlobal_success s sMiddle last t targetEnv f index targetArgs values value argsPost appRun maxApp
+
+
+/-- The unrestricted result follows by choosing a bound for each source state. -/
+theorem expressionSimulation_setGlobal {C F : Type} (trace : BackendCommon.Tra)
+    (index : Nat) (args : List ClosLang.Exp)
+    (argsIH : expressionSimulation (C := C) (F := F) args) :
+    expressionSimulation (C := C) (F := F) [.op trace (.globOp (.setGlobal index)) args] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  apply expressionSimulationBelow_setGlobal clockBound trace index args
+  exact expressionSimulation_below clockBound args argsIH
 
 end Flapjack.Compiler.Backend.ClosToBvl

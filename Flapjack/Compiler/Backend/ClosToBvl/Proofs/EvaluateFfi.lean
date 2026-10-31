@@ -92,11 +92,11 @@ theorem evaluatePost_ffi_call {C F : Type} (s sMiddle sLast : ClosSem.State C F)
 /-- The foreign-call expression case follows from the argument-list
 induction hypothesis. This candidate is untagged pending semantic-carrier
 review and assembly of the pass theorem. -/
-theorem expressionSimulation_ffi {C F : Type} (trace : BackendCommon.Tra)
+theorem expressionSimulationBelow_ffi {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
     (name : MlString) (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.ffi name) args] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.op trace (.ffi name) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases argsCompile : compileExpListHOL s.maxApp args aux with
   | mk targetArgs aux1 =>
@@ -123,14 +123,25 @@ theorem expressionSimulation_ffi {C F : Type} (trace : BackendCommon.Tra)
         rcases run with ⟨rfl, rfl⟩
         exact evaluatePost_ffi_error s sMiddle t targetEnv f name targetArgs error
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
-            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+            clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
         have maxApp : sMiddle.maxApp = s.maxApp := by
           have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
           rw [argsRun] at h
           exact h
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
-          argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
+          clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         exact evaluatePost_ffi_call s sMiddle sFinal t targetEnv f name targetArgs values result argsPost run noTypeError maxApp
+
+
+/-- The unrestricted result follows by choosing a bound for each source state. -/
+theorem expressionSimulation_ffi {C F : Type} (trace : BackendCommon.Tra)
+    (name : MlString) (args : List ClosLang.Exp)
+    (argsIH : expressionSimulation (C := C) (F := F) args) :
+    expressionSimulation (C := C) (F := F) [.op trace (.ffi name) args] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  apply expressionSimulationBelow_ffi clockBound trace name args
+  exact expressionSimulation_below clockBound args argsIH
 
 end Flapjack.Compiler.Backend.ClosToBvl

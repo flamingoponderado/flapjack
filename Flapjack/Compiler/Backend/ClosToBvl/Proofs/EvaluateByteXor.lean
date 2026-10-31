@@ -62,11 +62,11 @@ theorem evaluatePost_xorByte_success {C F : Type} (s sMiddle sLast : ClosSem.Sta
 /-- The byte XOR expression case follows from the argument-list
 induction hypothesis. This candidate remains untagged pending review of the
 semantic carriers and the assembled pass theorem. -/
-theorem expressionSimulation_xorByte {C F : Type} (trace : BackendCommon.Tra)
+theorem expressionSimulationBelow_xorByte {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
     (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.memOp .xorByte) args] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.op trace (.memOp .xorByte) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases argsCompile : compileExpListHOL s.maxApp args aux with
   | mk targetArgs aux1 =>
@@ -93,14 +93,14 @@ theorem expressionSimulation_xorByte {C F : Type} (trace : BackendCommon.Tra)
         rcases run with ⟨rfl, rfl⟩
         exact evaluatePost_xorByte_error s sMiddle t targetEnv f targetArgs error
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
-            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+            clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
         have maxApp : sMiddle.maxApp = s.maxApp := by
           have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
           rw [argsRun] at h
           exact h
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
-          argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
+          clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         cases appRun : ClosSem.doApp (.memOp .xorByte) values.reverse sMiddle with
         | err error =>
           have errorEq := xorByte_error values.reverse sMiddle error appRun
@@ -114,5 +114,16 @@ theorem expressionSimulation_xorByte {C F : Type} (trace : BackendCommon.Tra)
           rcases run with ⟨rfl, rfl⟩
           exact evaluatePost_xorByte_success s sMiddle last t targetEnv f targetArgs values value argsPost appRun maxApp
 
+
+
+/-- The unrestricted result follows by choosing a bound for each source state. -/
+theorem expressionSimulation_xorByte {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp)
+    (argsIH : expressionSimulation (C := C) (F := F) args) :
+    expressionSimulation (C := C) (F := F) [.op trace (.memOp .xorByte) args] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  apply expressionSimulationBelow_xorByte clockBound trace args
+  exact expressionSimulation_below clockBound args argsIH
 
 end Flapjack.Compiler.Backend.ClosToBvl

@@ -81,11 +81,11 @@ theorem evaluatePost_constant_error {C F : Type} (s sFinal : ClosSem.State C F)
 /-- The constant expression case for arbitrary argument lists. The argument
 induction hypothesis and the relations are the existing simulation candidates,
 which remain subject to HOL semantic-carrier review. -/
-theorem expressionSimulation_constant {C F : Type} (trace : BackendCommon.Tra)
+theorem expressionSimulationBelow_constant {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
     (constant : ClosLang.Const) (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.blockOp (.constant constant)) args] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.op trace (.blockOp (.constant constant)) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases argsCompile : compileExpListHOL s.maxApp args aux with
   | mk targetArgs aux1 =>
@@ -112,14 +112,14 @@ theorem expressionSimulation_constant {C F : Type} (trace : BackendCommon.Tra)
         rcases run with ⟨rfl, rfl⟩
         exact evaluatePost_constant_error s sMiddle t targetEnv f constant targetArgs error
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
-            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+            clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
         have maxApp : sMiddle.maxApp = s.maxApp := by
           have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
           rw [argsRun] at h
           exact h
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
-          argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
+          clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         cases values with
         | nil =>
           simp [ClosSem.doApp, ClosSem.applyBlock] at run
@@ -129,5 +129,16 @@ theorem expressionSimulation_constant {C F : Type} (trace : BackendCommon.Tra)
           simp [ClosSem.doApp, ClosSem.applyBlock] at run
           rcases run with ⟨rfl, rfl⟩
           exact False.elim (noTypeError rfl)
+
+
+/-- The unrestricted result follows by choosing a bound for each source state. -/
+theorem expressionSimulation_constant {C F : Type} (trace : BackendCommon.Tra)
+    (constant : ClosLang.Const) (args : List ClosLang.Exp)
+    (argsIH : expressionSimulation (C := C) (F := F) args) :
+    expressionSimulation (C := C) (F := F) [.op trace (.blockOp (.constant constant)) args] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  apply expressionSimulationBelow_constant clockBound trace constant args
+  exact expressionSimulation_below clockBound args argsIH
 
 end Flapjack.Compiler.Backend.ClosToBvl

@@ -66,10 +66,10 @@ theorem evaluatePost_ref_success {C F : Type} (s sMiddle : ClosSem.State C F)
 /-- The reference-allocation expression case follows from the argument-list
 induction hypothesis. This candidate is untagged pending carrier review and
 assembly of the pass theorem. -/
-theorem expressionSimulation_ref {C F : Type} (trace : BackendCommon.Tra)
-    (args : List ClosLang.Exp) (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.memOp .ref) args] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+theorem expressionSimulationBelow_ref {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.op trace (.memOp .ref) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases argsCompile : compileExpListHOL s.maxApp args aux with
   | mk targetArgs aux1 =>
@@ -96,17 +96,27 @@ theorem expressionSimulation_ref {C F : Type} (trace : BackendCommon.Tra)
         rcases run with ⟨rfl, rfl⟩
         exact evaluatePost_ref_error s sMiddle t targetEnv f targetArgs error
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
-            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+            clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
         have maxApp : sMiddle.maxApp = s.maxApp := by
           have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
           rw [argsRun] at h
           exact h
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
-          argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
+          clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         simp [ClosSem.doApp, ClosSem.applyMemory] at run
         rcases run with ⟨rfl, rfl⟩
         exact evaluatePost_ref_success s sMiddle t targetEnv f targetArgs values argsPost maxApp
+
+
+/-- The unrestricted result follows by choosing a bound for each source state. -/
+theorem expressionSimulation_ref {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (argsIH : expressionSimulation (C := C) (F := F) args) :
+    expressionSimulation (C := C) (F := F) [.op trace (.memOp .ref) args] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  apply expressionSimulationBelow_ref clockBound trace args
+  exact expressionSimulation_below clockBound args argsIH
 
 /-- Argument errors propagate through repeated-array allocation. -/
 theorem evaluatePost_refArray_error {C F : Type} (s sFinal : ClosSem.State C F)
@@ -173,11 +183,11 @@ theorem evaluatePost_refArray_success {C F : Type} (s sMiddle sLast : ClosSem.St
 /-- The repeated-array allocation expression case follows from the argument-list
 induction hypothesis. This candidate remains untagged pending review of the
 semantic carriers and the assembled pass theorem. -/
-theorem expressionSimulation_refArray {C F : Type} (trace : BackendCommon.Tra)
+theorem expressionSimulationBelow_refArray {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
     (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.memOp .refArray) args] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.op trace (.memOp .refArray) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases argsCompile : compileExpListHOL s.maxApp args aux with
   | mk targetArgs aux1 =>
@@ -204,14 +214,14 @@ theorem expressionSimulation_refArray {C F : Type} (trace : BackendCommon.Tra)
         rcases run with ⟨rfl, rfl⟩
         exact evaluatePost_refArray_error s sMiddle t targetEnv f targetArgs error
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
-            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+            clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
         have maxApp : sMiddle.maxApp = s.maxApp := by
           have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
           rw [argsRun] at h
           exact h
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
-          argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
+          clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         cases appRun : ClosSem.doApp (.memOp .refArray) values.reverse sMiddle with
         | err error =>
           have errorEq := refArray_error values.reverse sMiddle error appRun
@@ -225,6 +235,17 @@ theorem expressionSimulation_refArray {C F : Type} (trace : BackendCommon.Tra)
           rcases run with ⟨rfl, rfl⟩
           exact evaluatePost_refArray_success s sMiddle last t targetEnv f targetArgs values value argsPost appRun maxApp
 
+
+
+/-- The unrestricted result follows by choosing a bound for each source state. -/
+theorem expressionSimulation_refArray {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp)
+    (argsIH : expressionSimulation (C := C) (F := F) args) :
+    expressionSimulation (C := C) (F := F) [.op trace (.memOp .refArray) args] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  apply expressionSimulationBelow_refArray clockBound trace args
+  exact expressionSimulation_below clockBound args argsIH
 
 /-- Argument errors propagate through mutable-byte allocation. -/
 theorem evaluatePost_refByte_error {C F : Type} (s sFinal : ClosSem.State C F)
@@ -293,11 +314,11 @@ theorem evaluatePost_refByte_success {C F : Type} (s sMiddle sLast : ClosSem.Sta
 /-- The mutable-byte allocation expression case follows from the argument-list
 induction hypothesis. This candidate remains untagged pending review of the
 semantic carriers and the assembled pass theorem. -/
-theorem expressionSimulation_refByte {C F : Type} (trace : BackendCommon.Tra)
+theorem expressionSimulationBelow_refByte {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
     (args : List ClosLang.Exp)
-    (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.memOp (.refByte false)) args] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.op trace (.memOp (.refByte false)) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases argsCompile : compileExpListHOL s.maxApp args aux with
   | mk targetArgs aux1 =>
@@ -324,14 +345,14 @@ theorem expressionSimulation_refByte {C F : Type} (trace : BackendCommon.Tra)
         rcases run with ⟨rfl, rfl⟩
         exact evaluatePost_refByte_error s sMiddle t targetEnv f targetArgs error
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
-            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+            clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
         have maxApp : sMiddle.maxApp = s.maxApp := by
           have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
           rw [argsRun] at h
           exact h
         have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
-          argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
+          clockBounded argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
         cases appRun : ClosSem.doApp (.memOp (.refByte false)) values.reverse sMiddle with
         | err error =>
           have errorEq := refByte_error values.reverse sMiddle error appRun
@@ -345,6 +366,17 @@ theorem expressionSimulation_refByte {C F : Type} (trace : BackendCommon.Tra)
           rcases run with ⟨rfl, rfl⟩
           exact evaluatePost_refByte_success s sMiddle last t targetEnv f targetArgs values value argsPost appRun maxApp
 
+
+
+/-- The unrestricted result follows by choosing a bound for each source state. -/
+theorem expressionSimulation_refByte {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp)
+    (argsIH : expressionSimulation (C := C) (F := F) args) :
+    expressionSimulation (C := C) (F := F) [.op trace (.memOp (.refByte false)) args] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  apply expressionSimulationBelow_refByte clockBound trace args
+  exact expressionSimulation_below clockBound args argsIH
 
 /-- Argument errors propagate even for the unsupported allocation flag. -/
 theorem evaluatePost_refByteTrue_error {C F : Type} (s sFinal : ClosSem.State C F)
@@ -361,10 +393,10 @@ theorem evaluatePost_refByteTrue_error {C F : Type} (s sFinal : ClosSem.State C 
 
 /-- The unsupported source allocation flag always gives a type error after
 successful argument evaluation; argument errors still propagate. -/
-theorem expressionSimulation_refByteTrue {C F : Type} (trace : BackendCommon.Tra)
-    (args : List ClosLang.Exp) (argsIH : expressionSimulation (C := C) (F := F) args) :
-    expressionSimulation (C := C) (F := F) [.op trace (.memOp (.refByte true)) args] := by
-  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+theorem expressionSimulationBelow_refByteTrue {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.op trace (.memOp (.refByte true)) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
     locations annotations varsAnnotated installed envRelated states
   cases argsCompile : compileExpListHOL s.maxApp args aux with
   | mk targetArgs aux1 =>
@@ -391,9 +423,19 @@ theorem expressionSimulation_refByteTrue {C F : Type} (trace : BackendCommon.Tra
         rcases run with ⟨rfl, rfl⟩
         exact evaluatePost_refByteTrue_error s sMiddle t targetEnv f targetArgs error
           (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
-            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+            clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
       | val values =>
         simp [ClosSem.doApp, ClosSem.applyMemory] at run
         exact False.elim (noTypeError run.1.symm)
+
+
+/-- The unrestricted result follows by choosing a bound for each source state. -/
+theorem expressionSimulation_refByteTrue {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (argsIH : expressionSimulation (C := C) (F := F) args) :
+    expressionSimulation (C := C) (F := F) [.op trace (.memOp (.refByte true)) args] := by
+  apply (expressionSimulation_iff_below _).2
+  intro clockBound
+  apply expressionSimulationBelow_refByteTrue clockBound trace args
+  exact expressionSimulation_below clockBound args argsIH
 
 end Flapjack.Compiler.Backend.ClosToBvl
