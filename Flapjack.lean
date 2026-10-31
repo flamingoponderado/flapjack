@@ -505,6 +505,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull
 import Flapjack.Compiler.Backend.BvlInline.Proofs.Semantics
 import Flapjack.Compiler.Backend.BviInline.Proofs.Total
 import Flapjack.Compiler.Backend.BviInline.Proofs.SourceCorrespondence
+import Flapjack.Compiler.Backend.BviInline.Proofs.ExpRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureCorrespondence
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
