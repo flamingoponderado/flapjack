@@ -1546,6 +1546,160 @@ theorem evaluate_worker_candidate_timeout {C F : Type}
   exact ⟨{ targetMiddle with clock := 0 }, workerRun, originalRun,
     by simpa [stateEq] using stateRel_withClock sourceMiddle targetMiddle 0 middleRelated⟩
 
+/-- Direct calls reject a return raised by their callee. -/
+def directCallResult (result : BviSem.BviResult) : BviSem.BviResult :=
+  match result with
+  | .err (.raise (.ret _)) => .err (.abort .typeError)
+  | other => other
+
+/-- For a candidate with sufficient clock, the source callee execution
+supplies the smaller-clock induction hypothesis needed by the worker. -/
+theorem evaluate_worker_candidate_enough_clock {C F : Type}
+    (loc arity workerLoc ticks acc : Nat) (body pure : Bvi.Exp) (op : AssocOp)
+    (args : List Bvi.Exp) (env1 env2 : List Value)
+    (source sourceMiddle sourceNext : BviSem.BviState (Nat × C) F)
+    (target : BviSem.BviState C F) (ctx : List ValueType) (ty : ValueType)
+    (callArgs : List Value) (pureValue oldValue : Value) (sourceResult : BviSem.BviResult)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (envRelated : envRel ty true acc env1 env2) (related : stateRel source target)
+    (types : tyRel env1 ctx) (notNoop : op ≠ .noop)
+    (pureTyped : valueMatchesType pureValue (opType op))
+    (oldTyped : valueMatchesType oldValue (opType op)) (lookup : env2[acc]? = some oldValue)
+    (pureSource : BviSem.evaluate [pure] env1 source = (.val [pureValue], source))
+    (pureTarget : ∀ s : BviSem.BviState C F, BviSem.evaluate [pure] env2 s = (.val [pureValue], s))
+    (argsSource : BviSem.evaluate args env1 source = (.val callArgs, sourceMiddle))
+    (sourceCode : sptLookup loc source.code = some (arity, body))
+    (optimized : optimizedCode loc arity body workerLoc target.code op)
+    (enoughClock : ticks + 1 ≤ sourceMiddle.clock)
+    (operationSource : BviSem.evaluate [applyOp op pure (.call ticks (some loc) args none)] env1 source =
+      (sourceResult, sourceNext)) (notTypeError : sourceResult ≠ .err (.abort .typeError)) :
+    ∃ result' t1 t2,
+      BviSem.evaluate [.call ticks (some workerLoc) (args ++ [applyOp op (.var acc) pure]) none]
+        env2 target = (result', t1) ∧
+      BviSem.evaluate [applyOp op (.var acc) (applyOp op pure (.call ticks (some loc) args none))]
+        env2 target = (result', t2) ∧ stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
+  have lengthEq := evaluate_candidate_arity loc arity ticks body pure op args env1 source sourceMiddle sourceNext
+    callArgs pureValue sourceResult pureSource argsSource sourceCode operationSource notTypeError
+  have argsHyp : rewriteTailHyp args source env1 (.val callArgs) sourceMiddle false target acc env2 loc ctx ty :=
+    ⟨argsSource, envRel_disable ty true acc env1 env2 envRelated, related, types, by simp, by simp⟩
+  obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
+    argsIH source env1 (.val callArgs) sourceMiddle false target acc env2 loc ctx ty argsHyp
+  have sourceCodeMiddle := evaluate_lookup_preserved args env1 source sourceMiddle (.val callArgs)
+    loc arity body argsSource sourceCode
+  have targetGrowth := BviProps.evaluate_code_mono args env2 target targetMiddle (.val callArgs) targetArgs
+  have optimizedMiddle := optimizedCode_subspt loc arity body workerLoc target.code targetMiddle.code op
+    optimized targetGrowth
+  have argsClock := BviSem.evaluate_clock_le args env1 source
+  rw [argsSource] at argsClock
+  have small : (BviSem.decClock (ticks + 1) sourceMiddle).clock < source.clock := by
+    simp only [BviSem.decClock]
+    simp only at argsClock
+    omega
+  have noTimeout : ¬sourceMiddle.clock < ticks + 1 := by omega
+  cases bodyRun : BviSem.evaluate [body] callArgs (BviSem.decClock (ticks + 1) sourceMiddle) with
+  | mk bodyResult bodyNext =>
+    have callShape : BviSem.evaluate [.call ticks (some loc) args none] env1 source =
+        (directCallResult bodyResult, bodyNext) := by
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsSource]
+      simp only [Option.isNone_some, Option.isSome_none, Bool.false_and, Bool.false_eq_true, ↓reduceIte,
+        findCode, sourceCodeMiddle, lengthEq, noTimeout]
+      rw [BviSem.fixClock_evaluate, bodyRun]
+      unfold directCallResult
+      cases bodyResult with
+      | val values => rfl
+      | err error => cases error with
+        | abort reason => rfl
+        | raise payload => cases payload <;> rfl
+    have bodyNotType : bodyResult ≠ .err (.abort .typeError) := by
+      intro bad
+      have run := operationSource
+      rw [evaluate_applyOp_pureLeft op pure (.call ticks (some loc) args none) env1 source pureValue pureSource,
+        callShape, bad] at run
+      simp only [directCallResult] at run
+      apply notTypeError
+      exact (congrArg Prod.fst run).symm
+    have noReturn : ∀ values, bodyResult ≠ .err (.raise (.ret values)) := by
+      intro values bad
+      have run := operationSource
+      rw [evaluate_applyOp_pureLeft op pure (.call ticks (some loc) args none) env1 source pureValue pureSource,
+        callShape, bad] at run
+      simp only [directCallResult] at run
+      apply notTypeError
+      exact (congrArg Prod.fst run).symm
+    have callSource : BviSem.evaluate [.call ticks (some loc) args none] env1 source = (bodyResult, bodyNext) := by
+      rw [callShape]
+      unfold directCallResult
+      cases bodyResult with
+      | val values => rfl
+      | err error => cases error with
+        | abort reason => rfl
+        | raise payload => cases payload with
+          | exn value => rfl
+          | ret values => exact (noReturn values rfl).elim
+    exact evaluate_worker_candidate_operation loc arity workerLoc ticks acc body pure op args env1 env2
+      source sourceMiddle bodyNext sourceNext target targetMiddle callArgs pureValue oldValue bodyResult sourceResult
+      (clockIH body (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult bodyNext small)
+      middleRelated lengthEq sourceCodeMiddle optimizedMiddle notNoop pureTyped oldTyped lookup pureSource pureTarget
+      targetArgs enoughClock bodyRun callSource operationSource bodyNotType noReturn
+
+/-- A checked pure operand and direct recursive call satisfy the worker
+simulation for argument errors, timeouts, and successful callee execution. -/
+theorem evaluate_worker_candidate {C F : Type}
+    (loc arity workerLoc ticks acc : Nat) (body pure : Bvi.Exp) (op : AssocOp)
+    (args : List Bvi.Exp) (env1 env2 : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (ctx : List ValueType) (ty : ValueType) (sourceResult : BviSem.BviResult)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (termIH : rewriteTailProperty (C := C) (F := F) [pure])
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (envRelated : envRel ty true acc env1 env2) (related : stateRel source target)
+    (types : tyRel env1 ctx) (notNoop : op ≠ .noop) (sameType : opType op = ty)
+    (termOk : term ctx (opType op) pure = true)
+    (sourceCode : sptLookup loc source.code = some (arity, body))
+    (optimized : optimizedCode loc arity body workerLoc target.code op)
+    (operationSource : BviSem.evaluate [applyOp op pure (.call ticks (some loc) args none)] env1 source =
+      (sourceResult, sourceNext)) (notTypeError : sourceResult ≠ .err (.abort .typeError)) :
+    ∃ result' t1 t2,
+      BviSem.evaluate [.call ticks (some workerLoc) (args ++ [applyOp op (.var acc) pure]) none]
+        env2 target = (result', t1) ∧
+      BviSem.evaluate [applyOp op (.var acc) (applyOp op pure (.call ticks (some loc) args none))]
+        env2 target = (result', t2) ∧ stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
+  obtain ⟨pureValue, pureTyped, pureSource, pureTarget⟩ :=
+    term_prefix_simulation_all pure ctx (opType op) env1 env2 source target loc termIH termOk types envRelated.1 related
+  obtain ⟨oldValue, lookup, oldTyped⟩ := envRel_accumulator ty acc env1 env2 envRelated
+  have oldTyped' : valueMatchesType oldValue (opType op) := by simpa [sameType] using oldTyped
+  cases argsRun : BviSem.evaluate args env1 source with
+  | mk argsResult sourceMiddle =>
+    cases argsResult with
+    | err error =>
+      obtain ⟨targetNext, workerRun, appliedRun, finalRelated⟩ :=
+        evaluate_worker_candidate_argument_error loc workerLoc ticks acc op pure args env1 env2 source sourceMiddle
+          sourceNext target ctx ty pureValue oldValue error sourceResult argsIH envRelated related types notNoop
+          pureTyped oldTyped' lookup (pureSource source) pureTarget argsRun operationSource notTypeError
+      exact ⟨.err error, targetNext, targetNext, workerRun, appliedRun, finalRelated, finalRelated⟩
+    | val values =>
+      by_cases timeout : sourceMiddle.clock < ticks + 1
+      · obtain ⟨targetNext, workerRun, appliedRun, finalRelated⟩ :=
+          evaluate_worker_candidate_timeout loc arity workerLoc ticks acc body pure op args env1 env2 source
+            sourceMiddle sourceNext target ctx ty values pureValue oldValue sourceResult argsIH envRelated related
+            types notNoop pureTyped oldTyped' lookup (pureSource source) pureTarget argsRun sourceCode optimized
+            timeout operationSource notTypeError
+        exact ⟨.err (.abort .timeoutError), targetNext, targetNext, workerRun, appliedRun, finalRelated, finalRelated⟩
+      · have enoughClock : ticks + 1 ≤ sourceMiddle.clock := by omega
+        exact evaluate_worker_candidate_enough_clock loc arity workerLoc ticks acc body pure op args env1 env2 source
+          sourceMiddle sourceNext target ctx ty values pureValue oldValue sourceResult argsIH clockIH envRelated related
+          types notNoop pureTyped oldTyped' lookup (pureSource source) pureTarget argsRun sourceCode optimized
+          enoughClock operationSource notTypeError
+
 /-- Force case of the rewrite simulation. The induction hypothesis applies
 to any called body at a strictly smaller clock, as in the source induction. -/
 theorem rewriteTail_force {C F : Type} (place index : Nat)
