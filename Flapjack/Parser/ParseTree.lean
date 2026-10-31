@@ -175,13 +175,13 @@ def tryRule (p : P Trees) : P Trees :=
   p <|> pure []
 
 /--
-`mksubtree`: wrap a rule's trees in one node. The node's range comes from the
-tokens the rule consumed, which is upstream's `ptree_list_loc` whenever the
-children cover the rule.
+`mksubtree`: wrap a rule's trees in one node. The source calculates its
+range from retained children, so consumed punctuation and keywords that are
+not children do not contribute to it.
 -/
 def subtree (nonterminal : Nonterminal) (p : P Trees) : P Trees := fun s =>
   match spanned p s with
-  | (some (children, locs), s') => (some [.nd nonterminal children locs], s')
+  | (some (children, _), s') => (some [.nd nonterminal children (listLoc children)], s')
   | (none, s') => (none, s')
 
 end P

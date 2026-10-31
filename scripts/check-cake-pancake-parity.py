@@ -11,8 +11,7 @@ parity = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(parity)
 
 # Include real compiler output, FFI ordering, globals and warning-producing
-# programs; --no_warn lets the last group be compared before warning locations
-# are represented by Flapjack's static checker.
+# programs, comparing the complete warning output separately below.
 CASES = [
     ('Flapjack/Test/OriginalPancake/empty_locals.pnk', []),
     ('Flapjack/Test/OriginalPancake/hello.pnk', []),
@@ -48,11 +47,28 @@ def main():
         if results[0] != results[1]:
             raise SystemExit(f'{path} {options}: exit status or complete output differs')
         print(f'{path} {options}: complete output matches pinned CakeML', flush=True)
-    source = (ROOT / 'Flapjack/Test/OriginalPancake/f01189_ffi_stub_order.pnk').read_bytes()
-    result = subprocess.run([str(args.cake), '--target=riscv', '--pancake'], input=source,
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
-    if result.returncode != 2 or result.stdout or b'warning diagnostics are not yet supported' not in result.stderr:
-        raise SystemExit('Pancake warnings must not be silently discarded')
+    diagnostic_cases = [
+        (b'fun 1 main() { return missing; }\n', []),
+        (b'fun 1 main() { return missing; }\n', ['--no_warn']),
+        (b'fun 1 main() { return 0; var x = 1; }\n', []),
+        (b'fun 1 main() { return 0; var x = 1; }\n', ['--no_warn']),
+        (b'fun 1 main() { return foo(); }', []),
+        (b'fun 1 main() { break; }', []),
+        (b'fun 1 main() { continue; }', []),
+        (b'fun 1 main() { var x = 1; var x = 2; return x; }', []),
+        (b'fun 1 main() { return 0; missing(); }', []),
+        (b'fun 1 main() { return 0; missing(); }', ['--no_warn']),
+        ((ROOT / 'Flapjack/Test/OriginalPancake/f01189_ffi_stub_order.pnk').read_bytes(), []),
+    ]
+    for source, options in diagnostic_cases:
+        results = []
+        for executable in (args.reference, args.cake):
+            result = subprocess.run([str(executable), '--target=riscv', '--pancake', *options],
+                                    input=source, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+            results.append((result.returncode, result.stdout, result.stderr))
+        if results[0] != results[1]:
+            raise SystemExit(f'Pancake diagnostic differs for {source[:80]!r} {options}')
+        print(f'Pancake diagnostic matches pinned CakeML: {source[:60]!r} {options}', flush=True)
     for options in (['--target=bad'], ['--target=bad', '--sexp=bad'],
                     ['--target=riscv', '--sexp=bad', '--exclude_prelude=bad'],
                     ['--target=riscv', '--reg_alg=bad', '--gc=bad']):

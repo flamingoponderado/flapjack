@@ -17,6 +17,13 @@ namespace Flapjack.CakeMain
 open Flapjack.Compiler.Backend Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.Basis.Pure.MlString
 
+/-- Render a Pancake static diagnostic using the original driver's headings. -/
+def pancakeStaticDiagnostic : Flapjack.StatErr → String
+  | .scope message => "### ERROR: scope error\n" ++ message ++ "\n"
+  | .warning message => "# WARNING:\n" ++ message ++ "\n"
+  | .general message => "### ERROR: static error\n" ++ message ++ "\n"
+  | .shape message => "### ERROR: shape error\n" ++ message ++ "\n"
+
 structure Options where
   excludePrelude : Bool := false
   skipTypeInference : Bool := false
@@ -505,6 +512,17 @@ def main (args : List String) : IO UInt32 := do
       let some source := String.fromUTF8? input | do
         IO.eprintln "cake: non-UTF-8 Pancake source is not yet supported"
         return 2
+      let warnings ← match Flapjack.Parser.parseTopDecs (fun value => BitVec.ofInt 64 value) source true with
+        | .error _ => pure []
+        | .ok declarations =>
+          let (result, warnings) := Flapjack.staticCheck declarations
+          match result with
+          | .ok _ => pure warnings
+          | .error error => do
+            IO.eprint (pancakeStaticDiagnostic error ++
+              (if options.noWarn then "" else String.join (warnings.map pancakeStaticDiagnostic)) ++
+              "Program exited with nonzero exit code.\n")
+            return 1
       let base := RiscVConfig.pancakeRiscVBackendConfig
       let config := { base with
         wordToWordConf := { base.wordToWordConf with regAlg := options.regAlg.getD base.wordToWordConf.regAlg }
@@ -515,14 +533,15 @@ def main (args : List String) : IO UInt32 := do
         IO.eprintln "cake: Pancake parse and static diagnostics are not yet supported"
         return 2
       | .ok out =>
-        if !options.noWarn && !out.warnings.isEmpty then
-          IO.eprintln "cake: Pancake warning diagnostics are not yet supported; use --no_warn"
-          return 2
         match out.artifact with
         | none =>
-          IO.eprintln "cake: Pancake backend compilation failed"
-          return 2
+          IO.eprint ("### ERROR: assembly error\n" ++
+            (if options.noWarn then "" else String.join (warnings.map pancakeStaticDiagnostic)) ++
+            "Program exited with nonzero exit code.\n")
+          return 1
         | some (bytes, bitmaps, config) =>
+          if !options.noWarn then
+            IO.eprint (String.join (warnings.map pancakeStaticDiagnostic))
           let output := Flapjack.RiscV.NativeCLI.assembly out.declarations bytes bitmaps config
           if options.mainReturn then
             let config := { config with
