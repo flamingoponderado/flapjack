@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosToBvl.SourceExps
 import Flapjack.Compiler.Backend.ClosToBvl.Layout.Auxiliary
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
 import Flapjack.Compiler.Backend.Semantics.ClosSem
 import Flapjack.Misc.Sptree
 
@@ -20,6 +21,21 @@ theorem codeInstalled_buildAux (entries : List (Nat × Bvl.Exp)) (i : Nat)
   intro entry member
   apply installed entry
   rw [result]
+  exact List.mem_append_right added member
+
+/-- Installed output auxiliary code also installs the input accumulator. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_IMP_code_installed"]
+theorem compileExps_codeInstalled (maxApp : Nat) (expressions : List ClosLang.Exp)
+    (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
+    (code : Spt (Nat × Bvl.Exp))
+    (run : compileExpsHOL maxApp expressions aux = (compiled, finalAux))
+    (installed : codeInstalled finalAux code) : codeInstalled aux code := by
+  have invariant := compileExps_acc maxApp expressions aux
+  rw [run] at invariant
+  obtain ⟨_, added, finalEq⟩ := invariant
+  intro entry member
+  apply installed entry
+  rw [finalEq]
   exact List.mem_append_right added member
 
 /-- Recursive closure entry points and the code generated for their bodies are installed. -/
