@@ -367,4 +367,55 @@ theorem valueToWords_rel (v : Value) (words : List (BitVec 64)) (f : HolFiniteMa
   have same := related_words_identity f words values valuesRelated
   exact (valueToWords_eq_some v' words).mpr (by simpa [same] using targetDecoded)
 
+theorem holFmapAsFiniteSupportParamWitness_envRel_el_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+
+/-- Related environments have related entries at every source index. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_el"
+  (fmap_as_finite_support_parameters := [f])]
+theorem envRel_el (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : List Value) (index : Nat)
+    (related : envRel opt f source target) (bound : index < source.length) :
+    valueRel f (holEl index source) (holEl index target) := by
+  obtain ⟨front, extras, rfl, entries, _⟩ := related
+  have frontBound : index < front.length := by simpa [← entries.length_eq] using bound
+  have targetBound : index < (front ++ extras).length := by simp; omega
+  rw [holEl_eq_getElem index source bound, holEl_eq_getElem index (front ++ extras) targetBound]
+  have entry := (List.forall₂_iff_get.mp entries).2 index bound frontBound
+  simpa [List.getElem_append_left, frontBound] using entry
+
+/-- Dropping the last entry preserves a pointwise list relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_front"]
+theorem listRel_front {α β : Type} (r : α → β → Prop) (xs : List α) (ys : List β)
+    (related : List.Forall₂ r xs ys) : List.Forall₂ r xs.dropLast ys.dropLast := by
+  induction related with
+  | nil => exact .nil
+  | @cons a b xs ys head tail ih =>
+    cases tail with
+    | nil => exact .nil
+    | cons next rest =>
+      simpa [List.dropLast] using List.Forall₂.cons head ih
+
+/-- The last entries of nonempty related lists are related. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_last"]
+theorem listRel_last {α β : Type} [Nonempty α] [Nonempty β] (r : α → β → Prop)
+    (xs : List α) (ys : List β) (related : List.Forall₂ r xs ys) (nonempty : xs ≠ []) :
+    r (holLast xs) (holLast ys) := by
+  induction related with
+  | nil => contradiction
+  | @cons a b xs ys head tail ih =>
+    cases tail with
+    | nil => simpa [holLast] using head
+    | @cons c d xs ys next rest =>
+      simpa [holLast] using ih (by simp)
+
+theorem holFmapAsFiniteSupportParamWitness_listRel_envRel_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+
+/-- Pointwise-related values form a non-optimised related environment. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_env_rel"
+  (fmap_as_finite_support_parameters := [f])]
+theorem listRel_envRel (f : HolFiniteMapExact Nat Nat) (source target : List Value)
+    (related : List.Forall₂ (valueRel f) source target) : envRel false f source target := by
+  exact ⟨target, [], by simp, related, by simp⟩
+
 end Flapjack.Compiler.Backend.BviTmc

@@ -581,4 +581,39 @@ theorem compileEachSource_install_worker_bound (next : Nat) (code : List (Nat ×
       exact (outside entry filtered inWorker).elim
   · exact upper
 
+/-- A transformed function has its wrapper and worker at the related code
+locations. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "optimised_code_def"]
+def optimisedCode (loc workerLoc : Nat) (source target : Spt (Nat × Bvi.Exp)) : Prop :=
+  ∃ arity body wrapper worker,
+    sptLookup loc source = some (arity, body) ∧
+    sptLookup loc target = some (arity, wrapper) ∧
+    sptLookup workerLoc target = some (arity + 2, worker) ∧
+    rewriteWrapperSource loc workerLoc arity body = some wrapper ∧
+    rewriteWorkerSource loc workerLoc arity (arity + 1) arity body = worker
+
+/-- Related code either retains the source body or contains a wrapper with
+its corresponding worker. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "code_rel_cases"]
+theorem codeRel_cases (loc arity : Nat) (body : Bvi.Exp) (source target : Spt (Nat × Bvi.Exp))
+    (found : sptLookup loc source = some (arity, body)) (related : codeRel source target) :
+    noMutcons body ∧ ∃ workerLoc body', sptLookup loc target = some (arity, body') ∧
+      (body ≠ body' → optimisedCode loc workerLoc source target ∧
+        rewriteWrapperSource loc workerLoc arity body = some body') := by
+  obtain ⟨safe, workerLoc, unchanged, transformed⟩ := related loc arity body found
+  refine ⟨safe, ?_⟩
+  cases decision : compileExpSource loc workerLoc arity body with
+  | none =>
+    exact ⟨workerLoc, body, unchanged decision, fun different => (different rfl).elim⟩
+  | some result =>
+    obtain ⟨wrapper, worker⟩ := result
+    have ⟨targetFound, workerFound⟩ := transformed wrapper worker decision
+    cases wrapperRun : rewriteWrapperSource loc workerLoc arity body with
+    | none => simp [compileExpSource, wrapperRun] at decision
+    | some actual =>
+      simp [compileExpSource, wrapperRun] at decision
+      obtain ⟨rfl, rfl⟩ := decision
+      refine ⟨workerLoc, actual, targetFound, fun _ => ?_⟩
+      exact ⟨⟨arity, body, actual, _, found, targetFound, workerFound, wrapperRun, rfl⟩, wrapperRun⟩
+
 end Flapjack.Compiler.Backend.BviTmc

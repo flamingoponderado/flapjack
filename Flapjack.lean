@@ -518,6 +518,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.Allocation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.BuildRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ThunkRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.InstallRelation
+import Flapjack.Compiler.Backend.BviTmc.Proofs.CallRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
