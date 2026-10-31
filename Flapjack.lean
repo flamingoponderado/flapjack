@@ -540,6 +540,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockOld
 import Flapjack.Compiler.Backend.BviTmc.Proofs.IfWorker
 import Flapjack.Compiler.Backend.BviTmc.Proofs.IfAssembly
 import Flapjack.Compiler.Backend.BviTmc.Proofs.LetAssembly
+import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
