@@ -188,4 +188,41 @@ theorem holesUnchanged_trans (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapEx
     second ptr tag middleFinalised left middleChild right outsideNew middleFound
   exact ⟨finalFinalised, finalChild, finalFound, fun unchanged => (same1 unchanged).trans (same2 unchanged)⟩
 
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_rangeUpdate_f {α β : Type}
+    (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_rangeUpdate_refs {β γ : Type}
+    (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+
+/-- Updating a mapped location cannot change a mutable hole outside the map range. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_frange_update"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem holesUnchanged_rangeUpdate {α β γ : Type} [DecidableEq β] (f : HolFiniteMapExact α β)
+    (p : α) (key : β) (value : Ref γ) (refs : HolFiniteMapExact β (Ref γ))
+    (mapped : f.lookup p = some key) : holesUnchangedExcept f refs (refs.updateEq (key, value)) ∅ := by
+  intro ptr tag finalised left child right outside found
+  have different : ptr ≠ key := by
+    intro equal
+    subst ptr
+    exact outside ⟨p, mapped⟩
+  exact ⟨finalised, child, by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found,
+    fun _ => rfl⟩
+
+theorem holFmapAsFiniteSupportParamWitness_holesStill_rangeUpdate_f {α β : Type}
+    (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesStill_rangeUpdate_refs {β γ : Type}
+    (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+
+/-- Updating a mapped location preserves unfinalised holes outside the map range. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_frange_update"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem holesStill_rangeUpdate {α β γ : Type} [DecidableEq β] (f : HolFiniteMapExact α β)
+    (p : α) (key : β) (value : Ref γ) (refs : HolFiniteMapExact β (Ref γ))
+    (mapped : f.lookup p = some key) : holesStillNotFinalised f refs (refs.updateEq (key, value)) := by
+  intro ptr outside ⟨tag, left, child, right, found⟩
+  have different : ptr ≠ key := by
+    intro equal
+    subst ptr
+    exact outside ⟨p, mapped⟩
+  exact ⟨tag, left, child, right, by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found⟩
+
 end Flapjack.Compiler.Backend.BviTmc

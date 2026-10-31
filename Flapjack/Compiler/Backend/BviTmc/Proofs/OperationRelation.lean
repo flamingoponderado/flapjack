@@ -235,4 +235,138 @@ theorem doApp_op_rel_allocGlobal {C F : Type} (f : HolFiniteMapExact Nat Nat)
       holesStillNotFinalised f target.refs targetNext.refs := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
 
+private theorem related_getElem (f : HolFiniteMapExact Nat Nat) {xs ys : List Value}
+    (related : List.Forall₂ (valueRel f) xs ys) (index : Nat) (x : Value)
+    (found : xs[index]? = some x) : ∃ y, ys[index]? = some y ∧ valueRel f x y := by
+  induction related generalizing index with
+  | nil => simp at found
+  | @cons a b xs ys head tail ih =>
+    cases index with
+    | zero =>
+      simp at found
+      subst x
+      exact ⟨b, rfl, head⟩
+    | succ index =>
+      simp only [List.getElem?_cons_succ] at found ⊢
+      exact ih index found
+
+private theorem related_set (f : HolFiniteMapExact Nat Nat) {xs ys : List Value}
+    (related : List.Forall₂ (valueRel f) xs ys) (index : Nat) (x y : Value)
+    (valuesRelated : valueRel f x y) : List.Forall₂ (valueRel f) (xs.set index x) (ys.set index y) := by
+  induction related generalizing index with
+  | nil => simp
+  | cons head tail ih =>
+    cases index with
+    | zero => simpa using List.Forall₂.cons valuesRelated tail
+    | succ index => simpa using List.Forall₂.cons head (ih index)
+
+/-- Reading a global follows the translated pointer into related arrays. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_global {C F : Type} (f : HolFiniteMapExact Nat Nat) (index : Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.globOp (.global index)) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.globOp (.global index))) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.globOp (.global index)) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | cons head tail => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+  | nil =>
+    cases valuesRelated
+    cases sourceGlobal : source.global with
+    | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal] at run
+    | some ptr =>
+      cases targetGlobal : target.global with
+      | none => simp [stateRel, sourceGlobal, targetGlobal] at statesRelated
+      | some targetPtr =>
+        have mapped : f.lookup ptr = some targetPtr := by
+          simpa [sourceGlobal, targetGlobal] using statesRelated.2.2.1
+        obtain ⟨sourceCell, targetCell, sourceFound, targetFound, cells⟩ :=
+          stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+        cases cells with
+        | byteArray b bytes =>
+          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal, sourceFound] at run
+        | thunk mode x y rel =>
+          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal, sourceFound] at run
+        | valueArray xs ys rel =>
+          cases element : xs[index]? with
+          | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal, sourceFound, element] at run
+          | some found =>
+            have ⟨found', targetElement, valuesRel⟩ := related_getElem f rel index found element
+            simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal, sourceFound, element] at run
+            obtain ⟨rfl, rfl⟩ := run
+            refine ⟨f, found', target, ?_, valuesRel, statesRelated, ?_, onlyFresh_refl f target.refs,
+              holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+            · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, targetGlobal, targetFound, targetElement]
+            · intro key item found
+              exact found
+
+/-- Writing a global updates related arrays while preserving separate holes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_setGlobal {C F : Type} (f : HolFiniteMapExact Nat Nat) (index : Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.globOp (.setGlobal index)) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.globOp (.setGlobal index))) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.globOp (.setGlobal index)) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+  | cons head tail =>
+    cases tail with
+    | cons next rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+    | nil =>
+      cases valuesRelated with
+      | @cons a b xs ys headRel tailRel =>
+        cases tailRel
+        cases sourceGlobal : source.global with
+        | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal] at run
+        | some ptr =>
+          cases targetGlobal : target.global with
+          | none => simp [stateRel, sourceGlobal, targetGlobal] at statesRelated
+          | some targetPtr =>
+            have mapped : f.lookup ptr = some targetPtr := by
+              simpa [sourceGlobal, targetGlobal] using statesRelated.2.2.1
+            obtain ⟨sourceCell, targetCell, sourceFound, targetFound, cells⟩ :=
+              stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+            cases cells with
+            | byteArray b bytes =>
+              simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal, sourceFound] at run
+            | thunk mode x y rel =>
+              simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal, sourceFound] at run
+            | valueArray xs ys rel =>
+              by_cases bound : index < xs.length
+              · have bound' : index < ys.length := by simpa [List.Forall₂.length_eq rel] using bound
+                simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal, sourceFound, bound] at run
+                obtain ⟨rfl, rfl⟩ := run
+                have nextRelated : stateRel f
+                    { source with refs := source.refs.updateEq (ptr, .valueArray (xs.set index head)) }
+                    { target with refs := target.refs.updateEq (targetPtr, .valueArray (ys.set index b)) } := by
+                  exact ⟨stateRefRel_update f source.refs target.refs ptr targetPtr _ _ statesRelated.1
+                    statesRelated.2.2.2.2.2.2.2.2.2.2 mapped (.valueArray _ _ (related_set f rel index _ _ headRel)),
+                    statesRelated.2⟩
+                have nextRelated' : stateRel f
+                    { source with global := some ptr, refs := source.refs.updateEq (ptr, .valueArray (xs.set index head)) }
+                    { target with refs := target.refs.updateEq (targetPtr, .valueArray (ys.set index b)) } := by
+                  simpa [sourceGlobal] using nextRelated
+                refine ⟨f, unitValue, { target with refs := target.refs.updateEq (targetPtr, .valueArray (ys.set index b)) },
+                  ?_, ?_, nextRelated', ?_, onlyFresh_refl f target.refs,
+                  holesUnchanged_rangeUpdate f ptr targetPtr _ target.refs mapped,
+                  holesStill_rangeUpdate f ptr targetPtr _ target.refs mapped⟩
+                · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, targetGlobal, targetFound, bound']
+                · exact .block _ [] [] .nil
+                · intro key item found
+                  exact found
+              · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal, sourceFound, bound] at run
+
 end Flapjack.Compiler.Backend.BviTmc
