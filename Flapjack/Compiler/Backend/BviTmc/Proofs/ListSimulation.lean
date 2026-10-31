@@ -30,6 +30,7 @@ theorem evaluate_cons_cons {C F : Type} (first second : Bvi.Exp) (rest : List Bv
     (headIH : ∀ r mid, evaluate [first] env1 source = (r, mid) →
       r ≠ .err (.abort .typeError) → Core [first] env2 f target r mid)
     (tailIH : ∀ r mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
+      (∃ value, evaluate [first] env1 source = (.val [value], mid)) →
       evaluate (second :: rest) env1 mid = (r, final) →
       envRel false g env1 env2 → stateRel g mid t →
       r ≠ .err (.abort .typeError) → Core (second :: rest) env2 g t r final) :
@@ -81,7 +82,7 @@ theorem evaluate_cons_cons {C F : Type} (first second : Bvi.Exp) (rest : List Bv
           subst tailFinal
           obtain ⟨last, h, tailTargetResult, tailTargetRun, tailRel, lastStates,
             secondExtension, secondFresh, secondUnchanged, secondStill⟩ :=
-            tailIH tailResult middle g middleTarget tailRun
+            tailIH tailResult middle g middleTarget ⟨headValue, headRun⟩ tailRun
               (envRel_submap false f g env1 env2 environments firstExtension) middleStates tailSafe
           have extension : finiteSubmap f h := by
             intro key value found; exact secondExtension key value (firstExtension key value found)
