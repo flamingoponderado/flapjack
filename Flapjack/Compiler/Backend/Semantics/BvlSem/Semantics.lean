@@ -45,4 +45,24 @@ theorem noTypeError_of_semantics_ne_fail {C F : Type} (ffi : HolFfiState F)
   simp [semantics, show ∃ k, (evaluateTuple ([.call 0 (some start) []], [],
     initialState ffi code oracle compiler k)).1 = .err (.abort .typeError) from ⟨clock, error⟩]
 
+/-- If the whole-program semantics terminates, its result is one of the
+initial evaluator's terminating observations. -/
+theorem terminatingObservation_of_semantics_eq_terminate {C F : Type} (ffi : HolFfiState F)
+    (code : Spt (Nat × Bvl.Exp)) (oracle : CompileOracle C)
+    (compiler : Compiler C) (start : Nat) (outcome : HolOutcome) (events : List HolIoEvent)
+    (terminates : semantics ffi code oracle compiler start = .terminate outcome events) :
+    terminatingObservation ffi code oracle compiler start (.terminate outcome events) := by
+  classical
+  unfold semantics at terminates
+  by_cases bad : ∃ clock, (evaluateTuple ([.call 0 (some start) []], [],
+      initialState ffi code oracle compiler clock)).1 = .err (.abort .typeError)
+  · simp [bad] at terminates
+  · simp only [bad, if_false] at terminates
+    cases selected : holOptionSome (terminatingObservation ffi code oracle compiler start) with
+    | none => simp [selected] at terminates
+    | some behavior =>
+      have observed := holOptionSome_some selected
+      simp only [selected] at terminates
+      simpa [terminates] using observed
+
 end Flapjack.Compiler.Backend.BvlSem

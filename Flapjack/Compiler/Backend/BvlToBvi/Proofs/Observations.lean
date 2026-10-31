@@ -129,4 +129,40 @@ theorem compileProgFuel_terminatingObservation {C F : Type}
       | abort reason => cases reason <;> simp_all [mapSimulationResult]
   · simpa [ffiEq] using behaviorEq
 
+/-- Executed BVL-to-BVI compilation preserves a terminating whole-program
+behavior under the compiler's source well-formedness conditions. The
+divergence case requires additional clock-indexed trace-prefix results. -/
+theorem compileProgFuel_semantics_of_terminates {C F : Type}
+    (fuel optFuel start counter : Nat) (ffi : HolFfiState F)
+    (programs : List (Nat × Nat × Bvl.Exp))
+    (oracle : BvlSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C)
+    (targetStart targetNextName : Nat) (targetProgram : List (Nat × Nat × Bvi.Exp))
+    (compiled : compileProgFuel fuel optFuel start counter programs = some (targetStart, targetProgram, targetNextName))
+    (distinct : (programs.map Prod.fst).Nodup)
+    (handlers : BvlHandle.Proofs.handleOk (programs.map (fun (_, _, body) => body)))
+    (oracleHandlers : ∀ index, BvlHandle.Proofs.handleOk ((oracle index).2.map (fun (_, _, body) => body)))
+    (counterBound : targetNextName ≤ (oracle 0).1.1)
+    (outcome : HolOutcome) (events : List HolIoEvent)
+    (terminates : BvlSem.semantics ffi (sptFromAList programs) oracle
+      (BackendProps.stateCc compileIncSource compiler) start = .terminate outcome events) :
+    BviSem.semantics ffi (sptFromAList targetProgram)
+      (BackendProps.stateCo compileIncSource oracle) compiler targetStart =
+    BvlSem.semantics ffi (sptFromAList programs) oracle
+      (BackendProps.stateCc compileIncSource compiler) start := by
+  have nonfail : BvlSem.semantics ffi (sptFromAList programs) oracle
+      (BackendProps.stateCc compileIncSource compiler) start ≠ .fail := by
+    rw [terminates]; intro impossible; cases impossible
+  have noTypeError := BvlSem.noTypeError_of_semantics_ne_fail ffi (sptFromAList programs)
+    oracle (BackendProps.stateCc compileIncSource compiler) start nonfail
+  have noFatal := compileProgFuel_noFatalError fuel optFuel start counter ffi programs oracle compiler
+    targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError
+  have sourceObserved := BvlSem.terminatingObservation_of_semantics_eq_terminate ffi
+    (sptFromAList programs) oracle (BackendProps.stateCc compileIncSource compiler) start outcome events terminates
+  have targetObserved := compileProgFuel_terminatingObservation fuel optFuel start counter ffi programs oracle compiler
+    targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError
+    (.terminate outcome events) sourceObserved
+  rw [terminates]
+  exact BviSem.semantics_eq_of_terminatingObservation ffi (sptFromAList targetProgram)
+    (BackendProps.stateCo compileIncSource oracle) compiler targetStart _ noFatal targetObserved
+
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
