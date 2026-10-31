@@ -42,7 +42,9 @@ def toOp : AssocOp → ClosLang.Op
   | .noop => .intOp .mod
 
 private def small (i : Int) : Bool := -268435457 ≤ i && i ≤ 268435457
-private def isConst : ClosLang.Op → Bool
+/-- Recognize source small-integer constants. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_const_def"]
+def isConst : ClosLang.Op → Bool
   | .intOp (.const i) => small i
   | _ => false
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_arith_def"]
