@@ -233,4 +233,70 @@ theorem updateThunk_error {C F : Type} (mode : AstHOL.ThunkMode) (args : List Cl
                   | evaluated => simpa [good, found] using run.symm
                   | notEvaluated => simp [good, found] at run
 
+/-- Inspecting a related source thunk finds the same mode and a related
+payload in the target store. -/
+theorem destThunk_isThunk_related {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+    {source : ClosSem.Value} {target : BvlSem.Value}
+    (related : vRel s.maxApp f t.refs t.code source target)
+    (mode : AstHOL.ThunkMode) (value : ClosSem.Value)
+    (found : ClosSem.destThunk [source] s.refs = .isThunk mode value) :
+    ∃ targetValue, BvlSem.destThunk target t.refs = .isThunk mode targetValue ∧
+      vRel s.maxApp f t.refs t.code value targetValue := by
+  cases source with
+  | refPtr flag ptr =>
+    cases flag with
+    | true =>
+      cases h : s.refs.lookup ptr with
+      | none => simp [ClosSem.destThunk, h] at found
+      | some cell => cases cell <;> simp [ClosSem.destThunk, h] at found
+    | false =>
+      cases h : s.refs.lookup ptr with
+      | none => simp [ClosSem.destThunk, h] at found
+      | some cell =>
+        cases cell with
+        | valueArray values => simp [ClosSem.destThunk, h] at found
+        | byteArray bytes => simp [ClosSem.destThunk, h] at found
+        | thunk oldMode oldValue =>
+          simp [ClosSem.destThunk, h] at found
+          rcases found with ⟨rfl, rfl⟩
+          obtain ⟨targetPtr, rfl, mapped⟩ := vRel_refPtr_inv related
+          obtain ⟨targetValue, targetFound, valueRel⟩ :=
+            stateRel_thunk_lookup s t states ptr targetPtr oldMode oldValue mapped h
+          exact ⟨targetValue, by simp [BvlSem.destThunk, targetFound], valueRel⟩
+  | _ => simp [ClosSem.destThunk] at found
+
+/-- A successful source thunk inspection can only inspect one correctly
+flagged reference to a thunk cell. -/
+theorem destThunk_isThunk_shape (values : List ClosSem.Value)
+    (refs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
+    (mode : AstHOL.ThunkMode) (value : ClosSem.Value)
+    (found : ClosSem.destThunk values refs = .isThunk mode value) :
+    ∃ ptr, values = [.refPtr false ptr] ∧ refs.lookup ptr = some (.thunk mode value) := by
+  cases values with
+  | nil => simp [ClosSem.destThunk] at found
+  | cons first rest =>
+    cases rest with
+    | cons second rest => simp [ClosSem.destThunk] at found
+    | nil =>
+      cases first <;> simp only [ClosSem.destThunk] at found
+      all_goals try contradiction
+      case refPtr flag ptr =>
+        cases flag with
+        | true =>
+          cases h : refs.lookup ptr with
+          | none => simp [h] at found
+          | some cell => cases cell <;> simp [h] at found
+        | false =>
+          cases h : refs.lookup ptr with
+          | none => simp [h] at found
+          | some cell =>
+            cases cell with
+            | valueArray values => simp [h] at found
+            | byteArray bytes => simp [h] at found
+            | thunk oldMode oldValue =>
+              simp [h] at found
+              rcases found with ⟨rfl, rfl⟩
+              exact ⟨ptr, rfl, h⟩
+
 end Flapjack.Compiler.Backend.ClosToBvl
