@@ -620,6 +620,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureRelation
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Oracle
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.StateRelation
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Integer
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Word
 import Flapjack.Test.ClosToBvlRecursive
