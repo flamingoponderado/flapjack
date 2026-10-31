@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermExtension
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
 import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracleEval
 
 /-! Cases of the source tail-recursion rewrite simulation. The evaluator,
 source scan and compilation carriers remain subject to HOL review. -/
@@ -5252,5 +5253,61 @@ theorem compileProgFuel_disabled_semantics {C F : Type}
     have pairEq : (next, program) = (last, compiled) := by simpa [compileProgFuel] using compiledEq
     exact congrArg Prod.snd pairEq
   rw [same]
+
+/-- Removing an identity pass from the incremental compiler adapters
+preserves BVI behavior. The evaluator and state carriers remain under HOL
+review, so this source-shaped theorem is not yet tagged. -/
+theorem semantics_identity_adapter {C D F : Type} (ffi : HolFfiState F)
+    (code : Spt (Nat × Bvi.Exp)) (oracle : BviSem.CompileOracle (C × D))
+    (compiler : BviSem.Compiler D) (start : Nat)
+    (notFail : BviSem.semantics ffi code oracle
+      (BackendProps.stateCc (fun c p => (c, p)) compiler) start ≠ .fail) :
+    BviSem.semantics ffi code oracle (BackendProps.stateCc (fun c p => (c, p)) compiler) start =
+      BviSem.semantics ffi code (BackendProps.stateCo (fun c p => (c, p)) oracle) compiler start := by
+  apply semantics_eq_of_initial_projections
+  intro clock
+  have noType := semantics_ne_fail_no_type_error ffi code oracle
+    (BackendProps.stateCc (fun c p => (c, p)) compiler) start notFail clock
+  have initialOk := BviProps.adjustOracleOk_identity_initial ffi code oracle compiler clock
+  cases run : BviSem.evaluate [.call 0 (some start) [] none] []
+      (BviSem.initialState ffi code oracle (BackendProps.stateCc (fun c p => (c, p)) compiler) clock) with
+  | mk result next =>
+    have notType : result ≠ .err (.abort .typeError) := by simpa [run] using noType
+    obtain ⟨adjusted, _⟩ := BviProps.evaluate_adjustOracle compiler Prod.snd
+      [.call 0 (some start) [] none] [] _ next result run notType initialOk
+    rw [BviProps.adjustOracle_identity_initial] at adjusted
+    simp [adjusted, BviProps.adjustOracle]
+
+/-- The production tail-recursion program pass preserves BVI behavior in
+both enabled and disabled modes, with its incremental compiler and oracle
+adapters. This remains untagged pending the HOL carrier comparison. -/
+theorem compileProgFuel_semantics {C F : Type}
+    (fuel : Nat) (enabled : Bool) (next : Nat) (program : List (Nat × Nat × Bvi.Exp))
+    (ffi : HolFfiState F) (oracle : BviSem.CompileOracle (Nat × C))
+    (compiler : BviSem.Compiler C) (start last : Nat) (compiled : List (Nat × Nat × Bvi.Exp))
+    (condition : inputCondition next program)
+    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
+    (workerBound : ∀ n, n ∈ compiled.map Prod.fst → inWorkerNamespace n → n < (oracle 0).1.1)
+    (compiledEq : compileProgFuel fuel enabled next program = some (last, compiled))
+    (notFail : BviSem.semantics ffi (sptFromAList program) oracle
+      (BackendProps.stateCc (compileProgSource enabled) compiler) start ≠ .fail) :
+    BviSem.semantics ffi (sptFromAList program) oracle
+        (BackendProps.stateCc (compileProgSource enabled) compiler) start =
+      BviSem.semantics ffi (sptFromAList compiled)
+        (BackendProps.stateCo (compileProgSource enabled) oracle) compiler start := by
+  cases enabled with
+  | false =>
+    have passEq : compileProgSource false = (fun c p => (c, p)) := by funext c p; rfl
+    rw [passEq] at notFail ⊢
+    have same : program = compiled := by
+      have pairEq : (next, program) = (last, compiled) := by simpa [compileProgFuel] using compiledEq
+      exact congrArg Prod.snd pairEq
+    subst compiled
+    exact semantics_identity_adapter ffi (sptFromAList program) oracle compiler start notFail
+  | true =>
+    have passEq : compileProgSource true = compileEachSource := by funext c p; rfl
+    rw [passEq] at notFail ⊢
+    exact compileProgFuel_enabled_semantics fuel next program ffi oracle compiler start last compiled
+      condition oracleCondition workerBound compiledEq notFail
 
 end Flapjack.Compiler.Backend.BviTailrec
