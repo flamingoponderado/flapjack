@@ -339,4 +339,186 @@ theorem letCall {C F : Type} (rets ticks destination : Nat) (args : List Bvi.Exp
                     rw [BviSem.fixClock_evaluate, dec, sourceCallee]
                     simp [length]
 
+/-- Flapjack infrastructure: handled calls restore ticks in arguments,
+callees, and handlers, including errors raised by any of those stages. -/
+theorem callSome {C F : Type} (ticks destination : Nat) (args : List Bvi.Exp)
+    (handler : Bvi.Exp) (env : List Value) (target : BviState C F) (argsIH : Property args env target)
+    (calleeIH : ∀ values middle, evaluate (removeTicksListSource args) env target = (.val values, middle) →
+      ∀ callArgs callee, BvlSem.findCode (some destination) values middle.code = some (callArgs, removeTicksSource callee) →
+        middle.clock ≠ 0 → Property [callee] callArgs (BviSem.decClock 1 middle))
+    (handlerIH : ∀ value (last : BviState C F), last.clock ≤ target.clock → Property [handler] (value :: env) last) :
+    Property [.call ticks (some destination) args (some handler)] env target := by
+  intro source result targetNext states run
+  cases argsRun : evaluate (removeTicksListSource args) env target with
+  | mk argsResult middle =>
+    obtain ⟨argsExtra, sourceMiddle, sourceArgs, middleRel⟩ := argsIH source argsResult middle states argsRun
+    cases argsResult with
+    | err error =>
+      have targetEq : (.err error, middle) = (result, targetNext) := by
+        have h := run
+        simp only [removeTicksListSource, removeTicksSource] at h
+        rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+        exact h
+      obtain ⟨rfl, rfl⟩ := targetEq.symm
+      refine ⟨argsExtra, sourceMiddle, ?_, middleRel⟩
+      rw [evaluate, BviSem.fixClock_evaluate, sourceArgs]
+      rfl
+    | val values =>
+      have codes := findCode_removeStateRel sourceMiddle middle middleRel (some destination) values
+      cases codeFound : BvlSem.findCode (some destination) values sourceMiddle.code with
+      | none =>
+        have targetCode : BvlSem.findCode (some destination) values middle.code = none := by simpa [codeFound] using codes
+        have targetEq : (.err (.abort .typeError), middle) = (result, targetNext) := by
+          have h := run
+          simp only [removeTicksListSource, removeTicksSource] at h
+          rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+          simpa [targetCode] using h
+        obtain ⟨rfl, rfl⟩ := targetEq.symm
+        refine ⟨argsExtra, sourceMiddle, ?_, middleRel⟩
+        rw [evaluate, BviSem.fixClock_evaluate, sourceArgs]
+        simp [codeFound]
+      | some pair =>
+        obtain ⟨callArgs, callee⟩ := pair
+        have targetCode : BvlSem.findCode (some destination) values middle.code =
+            some (callArgs, removeTicksSource callee) := by simpa [codeFound] using codes
+        by_cases zero : middle.clock = 0
+        · have sourceZero : sourceMiddle.clock = 0 := by rw [← middleRel.2.1, zero]
+          have targetEq : (.err (.abort .timeoutError), { middle with clock := 0 }) = (result, targetNext) := by
+            have h := run
+            simp only [removeTicksListSource, removeTicksSource] at h
+            rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+            simpa [targetCode, zero] using h
+          obtain ⟨rfl, rfl⟩ := targetEq.symm
+          refine ⟨argsExtra, { sourceMiddle with clock := 0 }, ?_,
+            removeStateRel_with_clock sourceMiddle middle middleRel 0⟩
+          rw [evaluate, BviSem.fixClock_evaluate, sourceArgs]
+          simp [codeFound, sourceZero]
+        · have sourceNonzero : sourceMiddle.clock ≠ 0 := by simpa [middleRel.2.1] using zero
+          cases calleeRun : evaluate [removeTicksSource callee] callArgs (BviSem.decClock 1 middle) with
+          | mk calleeResult last =>
+            have cleanCallee : evaluate (removeTicksListSource [callee]) callArgs (BviSem.decClock 1 middle) =
+                (calleeResult, last) := by simpa [removeTicksListSource] using calleeRun
+            obtain ⟨calleeExtra, sourceLast, sourceCallee, lastRel⟩ :=
+              calleeIH values middle argsRun callArgs callee targetCode zero
+                (BviSem.decClock 1 sourceMiddle) calleeResult last
+                (removeStateRel_decClock sourceMiddle middle middleRel 1) cleanCallee
+            have targetPrefix : evaluate (removeTicksListSource [.call ticks (some destination) args (some handler)]) env target =
+                handleCallResult (removeTicksSource handler) env (callResult calleeResult last) := by
+              simp only [removeTicksListSource, removeTicksSource]
+              rw [evaluate_handled_as_plain 0 destination _ _ env target middle values argsRun]
+              rw [evaluate, BviSem.fixClock_evaluate, argsRun]
+              simp only [Option.isNone_some, Option.isSome_none, Bool.false_and, Bool.false_eq_true,
+                ↓reduceIte, targetCode, Nat.zero_add, Nat.lt_one_iff, zero]
+              rw [BviSem.fixClock_evaluate, calleeRun]
+              cases calleeResult with
+              | val values => rfl
+              | err error => cases error with
+                | abort reason => rfl
+                | raise payload => cases payload <;> rfl
+            rw [targetPrefix] at run
+            have baseSource : evaluate [.call ticks (some destination) args (some handler)] env
+                { source with clock := source.clock + (argsExtra + (ticks + calleeExtra)) } =
+                handleCallResult handler env (callResult calleeResult sourceLast) := by
+              have shifted := BviProps.evaluate_addClock args env { source with clock := source.clock + argsExtra }
+                sourceMiddle (.val values) (ticks + calleeExtra) sourceArgs (by simp)
+              have combined : evaluate args env { source with clock := source.clock + (argsExtra + (ticks + calleeExtra)) } =
+                  (.val values, { sourceMiddle with clock := sourceMiddle.clock + (ticks + calleeExtra) }) := by
+                simpa [Nat.add_assoc] using shifted
+              have enough : ¬sourceMiddle.clock + (ticks + calleeExtra) < ticks + 1 := by omega
+              have dec : BviSem.decClock (ticks + 1) { sourceMiddle with clock := sourceMiddle.clock + (ticks + calleeExtra) } =
+                  { BviSem.decClock 1 sourceMiddle with clock := (BviSem.decClock 1 sourceMiddle).clock + calleeExtra } := by
+                simp [BviSem.decClock]; omega
+              rw [evaluate_handled_as_plain ticks destination args handler env _ _ values combined]
+              rw [evaluate, BviSem.fixClock_evaluate, combined]
+              simp only [Option.isNone_some, Option.isSome_none, Bool.false_and, Bool.false_eq_true,
+                ↓reduceIte, codeFound, enough]
+              rw [BviSem.fixClock_evaluate, dec, sourceCallee]
+              cases calleeResult with
+              | val values => rfl
+              | err error => cases error with
+                | abort reason => rfl
+                | raise payload => cases payload <;> rfl
+            cases calleeResult with
+            | val returned =>
+              simp only [handleCallResult, callResult, Prod.mk.injEq] at run
+              obtain ⟨rfl, rfl⟩ := run.symm
+              exact ⟨argsExtra + (ticks + calleeExtra), sourceLast,
+                by simpa [handleCallResult, callResult] using baseSource, lastRel⟩
+            | err error =>
+              cases error with
+              | abort reason =>
+                simp only [handleCallResult, callResult, Prod.mk.injEq] at run
+                obtain ⟨rfl, rfl⟩ := run.symm
+                exact ⟨argsExtra + (ticks + calleeExtra), sourceLast,
+                  by simpa [handleCallResult, callResult] using baseSource, lastRel⟩
+              | raise payload =>
+                cases payload with
+                | ret returned =>
+                  simp only [handleCallResult, callResult, Prod.mk.injEq] at run
+                  obtain ⟨rfl, rfl⟩ := run.symm
+                  exact ⟨argsExtra + (ticks + calleeExtra), sourceLast,
+                    by simpa [handleCallResult, callResult] using baseSource, lastRel⟩
+                | exn value =>
+                  cases handlerRun : evaluate [removeTicksSource handler] (value :: env) last with
+                  | mk handlerResult final =>
+                    have argsClock := BviSem.evaluate_clock_le (removeTicksListSource args) env target
+                    rw [argsRun] at argsClock
+                    simp only at argsClock
+                    have calleeClock := BviSem.evaluate_clock_le [removeTicksSource callee] callArgs (BviSem.decClock 1 middle)
+                    rw [calleeRun] at calleeClock
+                    have lastClock : last.clock ≤ target.clock := by
+                      simp only [BviSem.decClock] at calleeClock
+                      omega
+                    have cleanHandler : evaluate (removeTicksListSource [handler]) (value :: env) last =
+                        (handlerResult, final) := by simpa [removeTicksListSource] using handlerRun
+                    obtain ⟨handlerExtra, sourceFinal, sourceHandler, finalRel⟩ :=
+                      handlerIH value last lastClock sourceLast handlerResult final lastRel cleanHandler
+                    have shiftedCallee := BviProps.evaluate_addClock [callee] callArgs
+                      { BviSem.decClock 1 sourceMiddle with clock := (BviSem.decClock 1 sourceMiddle).clock + calleeExtra }
+                      sourceLast (.err (.raise (.exn value))) handlerExtra sourceCallee (by simp)
+                    let extra := ticks + calleeExtra + handlerExtra
+                    have shifted := BviProps.evaluate_addClock args env { source with clock := source.clock + argsExtra }
+                      sourceMiddle (.val values) extra sourceArgs (by simp)
+                    have combined : evaluate args env { source with clock := source.clock + (argsExtra + extra) } =
+                        (.val values, { sourceMiddle with clock := sourceMiddle.clock + extra }) := by simpa [Nat.add_assoc] using shifted
+                    have enough : ¬sourceMiddle.clock + extra < ticks + 1 := by dsimp [extra]; omega
+                    have dec : BviSem.decClock (ticks + 1) { sourceMiddle with clock := sourceMiddle.clock + extra } =
+                        { { BviSem.decClock 1 sourceMiddle with clock := (BviSem.decClock 1 sourceMiddle).clock + calleeExtra } with
+                          clock := (BviSem.decClock 1 sourceMiddle).clock + calleeExtra + handlerExtra } := by
+                      simp [BviSem.decClock, extra]; omega
+                    have sourcePrefix : evaluate [.call ticks (some destination) args (some handler)] env
+                        { source with clock := source.clock + (argsExtra + extra) } =
+                        handleCallResult handler env (.err (.raise (.exn value)),
+                          { sourceLast with clock := sourceLast.clock + handlerExtra }) := by
+                      rw [evaluate_handled_as_plain ticks destination args handler env _ _ values combined]
+                      rw [evaluate, BviSem.fixClock_evaluate, combined]
+                      simp only [Option.isNone_some, Option.isSome_none, Bool.false_and, Bool.false_eq_true,
+                        ↓reduceIte, codeFound, enough]
+                      rw [BviSem.fixClock_evaluate, dec, shiftedCallee]
+                    cases handlerResult with
+                    | val returned =>
+                      simp [handleCallResult, callResult, handlerRun] at run
+                      obtain ⟨rfl, rfl⟩ := run.symm
+                      exact ⟨argsExtra + extra, sourceFinal,
+                        by simpa [handleCallResult, sourceHandler] using sourcePrefix, finalRel⟩
+                    | err error =>
+                      cases error with
+                      | abort reason =>
+                        simp [handleCallResult, callResult, handlerRun] at run
+                        obtain ⟨rfl, rfl⟩ := run.symm
+                        exact ⟨argsExtra + extra, sourceFinal,
+                          by simpa [handleCallResult, sourceHandler] using sourcePrefix, finalRel⟩
+                      | raise payload =>
+                        cases payload with
+                        | exn raised =>
+                          simp [handleCallResult, callResult, handlerRun] at run
+                          obtain ⟨rfl, rfl⟩ := run.symm
+                          exact ⟨argsExtra + extra, sourceFinal,
+                            by simpa [handleCallResult, sourceHandler] using sourcePrefix, finalRel⟩
+                        | ret returned =>
+                          simp [handleCallResult, callResult, handlerRun] at run
+                          obtain ⟨rfl, rfl⟩ := run.symm
+                          exact ⟨argsExtra + extra, sourceFinal,
+                            by simpa [handleCallResult, sourceHandler] using sourcePrefix, finalRel⟩
+
 end Flapjack.Compiler.Backend.BviInline.RemoveTicksCases
