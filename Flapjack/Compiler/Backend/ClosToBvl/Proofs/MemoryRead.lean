@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCons
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
 
 /-! Mutable reference lookup for the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -362,6 +362,153 @@ theorem memoryBoundsArray_error {C F : Type} (args : List ClosSem.Value)
     (run : ClosSem.doApp (.memOp .boundsCheckArray) args s = .err error) : error = .abort .typeError := by
   simp only [ClosSem.doApp] at run
   cases h : ClosSem.applyMemory .boundsCheckArray args s <;> simp [h] at run
+  exact run.symm
+
+/-- Bounds checks on immutable vectors and mutable byte arrays agree with the
+corresponding BVL byte-array check, including the inclusive variant. -/
+theorem memoryBoundsByte_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    (loose : Bool) (args : List ClosSem.Value) (targets : List BvlSem.Value)
+    (s next : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+    (related : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targets)
+    (value : ClosSem.Value) (run : ClosSem.doApp (.memOp (.boundsCheckByte loose)) args s = .val (value, next)) :
+    ∃ target, BvlSem.doApp (.memOp (.boundsCheckByte loose)) targets t = .val (target, t) ∧
+      next = s ∧ vRel s.maxApp f t.refs t.code value target := by
+  cases args with
+  | nil => simp [ClosSem.doApp, ClosSem.applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [ClosSem.doApp, ClosSem.applyMemory] at run
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp [ClosSem.doApp, ClosSem.applyMemory] at run
+      | nil =>
+        cases first <;> cases second <;> simp only [ClosSem.doApp, ClosSem.applyMemory] at run
+        all_goals try contradiction
+        case byteVector.number bytes index =>
+          cases related with
+          | cons firstRel tail =>
+            cases tail with
+            | cons secondRel tail =>
+              cases tail
+              obtain ⟨targetPtr, rfl, found⟩ := vRel_byteVector_inv firstRel
+              have secondEq := vRel_number_inv secondRel
+              subst_vars
+              simp at run
+              rcases run with ⟨rfl, rfl⟩
+              let bound := decide (0 ≤ index ∧ if loose then index ≤ Int.ofNat bytes.length else index < Int.ofNat bytes.length)
+              refine ⟨BvlSem.boolValue bound, ?_, rfl, ?_⟩
+              · simp [BvlSem.doApp, BvlSem.applyMemory, found, bound]
+              · simpa [bound] using (vRel_bool (maxApp := s.maxApp) (f := f) (refs := t.refs) (code := t.code) bound)
+        case refPtr.number flag ptr index =>
+          cases related with
+          | cons firstRel tail =>
+            cases tail with
+            | cons secondRel tail =>
+              cases tail
+              obtain ⟨targetPtr, rfl, mapped⟩ := vRel_refPtr_inv firstRel
+              have secondEq := vRel_number_inv secondRel
+              subst_vars
+              cases found : s.refs.lookup ptr with
+              | none => simp [found] at run
+              | some cell =>
+                cases cell with
+                | valueArray values => simp [found] at run
+                | thunk mode value => simp [found] at run
+                | byteArray bytes =>
+                  simp [found] at run
+                  rcases run with ⟨rfl, rfl⟩
+                  have targetFound := stateRel_bytes_lookup states ptr targetPtr bytes mapped found
+                  let bound := decide (0 ≤ index ∧ if loose then index ≤ Int.ofNat bytes.length else index < Int.ofNat bytes.length)
+                  refine ⟨BvlSem.boolValue bound, ?_, rfl, ?_⟩
+                  · simp [BvlSem.doApp, BvlSem.applyMemory, targetFound, bound]
+                  · simpa [bound] using (vRel_bool (maxApp := s.maxApp) (f := f) (refs := t.refs) (code := t.code) bound)
+
+/-- A failed byte bounds check reports a source type error. -/
+theorem memoryBoundsByte_error {C F : Type} (loose : Bool) (args : List ClosSem.Value)
+    (s : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
+    (run : ClosSem.doApp (.memOp (.boundsCheckByte loose)) args s = .err error) : error = .abort .typeError := by
+  simp only [ClosSem.doApp] at run
+  cases h : ClosSem.applyMemory (.boundsCheckByte loose) args s <;> simp [h] at run
+  exact run.symm
+
+/-- Immutable byte-vector operations compiled to byte-array operations. -/
+inductive ByteVectorRead where
+  | length
+  | deref
+
+def ByteVectorRead.sourceOp : ByteVectorRead → ClosLang.MemOp
+  | .length => .lengthByteVec
+  | .deref => .derefByteVec
+
+def ByteVectorRead.targetOp : ByteVectorRead → ClosLang.MemOp
+  | .length => .lengthByte
+  | .deref => .derefByte
+
+/-- Successful immutable byte-vector reads agree with the corresponding
+frozen byte-array operations produced by the compiler. -/
+theorem byteVectorRead_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    (op : ByteVectorRead) (args : List ClosSem.Value) (targets : List BvlSem.Value)
+    (s next : ClosSem.State C F) (t : BvlSem.State C F)
+    (related : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targets)
+    (value : ClosSem.Value) (run : ClosSem.doApp (.memOp op.sourceOp) args s = .val (value, next)) :
+    ∃ target, BvlSem.doApp (.memOp op.targetOp) targets t = .val (target, t) ∧
+      next = s ∧ vRel s.maxApp f t.refs t.code value target := by
+  cases op with
+  | length =>
+    cases args with
+    | nil => simp [ByteVectorRead.sourceOp, ClosSem.doApp, ClosSem.applyMemory] at run
+    | cons first rest =>
+      cases rest with
+      | cons second rest => simp [ByteVectorRead.sourceOp, ClosSem.doApp, ClosSem.applyMemory] at run
+      | nil =>
+        cases first <;> simp only [ByteVectorRead.sourceOp, ClosSem.doApp, ClosSem.applyMemory] at run
+        all_goals try contradiction
+        case byteVector bytes =>
+          simp at run
+          rcases run with ⟨rfl, rfl⟩
+          cases related with
+          | cons head tail =>
+            cases tail
+            obtain ⟨ptr, rfl, found⟩ := vRel_byteVector_inv head
+            exact ⟨.number bytes.length, by simp [ByteVectorRead.targetOp, BvlSem.doApp, BvlSem.applyMemory, found], rfl, .number _⟩
+  | deref =>
+    cases args with
+    | nil => simp [ByteVectorRead.sourceOp, ClosSem.doApp, ClosSem.applyMemory] at run
+    | cons first rest =>
+      cases rest with
+      | nil => simp [ByteVectorRead.sourceOp, ClosSem.doApp, ClosSem.applyMemory] at run
+      | cons second rest =>
+        cases rest with
+        | cons third rest => simp [ByteVectorRead.sourceOp, ClosSem.doApp, ClosSem.applyMemory] at run
+        | nil =>
+          cases first <;> cases second <;> simp only [ByteVectorRead.sourceOp, ClosSem.doApp, ClosSem.applyMemory] at run
+          all_goals try contradiction
+          case byteVector.number bytes index =>
+            cases related with
+            | cons head tail =>
+              cases tail with
+              | cons indexRel tail =>
+                cases tail
+                obtain ⟨ptr, rfl, found⟩ := vRel_byteVector_inv head
+                have indexEq := vRel_number_inv indexRel
+                subst_vars
+                by_cases negative : index < 0
+                · simp [negative] at run
+                · cases byteFound : bytes[index.toNat]? with
+                  | none => simp [negative, byteFound] at run
+                  | some byte =>
+                    simp [negative, byteFound] at run
+                    rcases run with ⟨rfl, rfl⟩
+                    exact ⟨.number byte.toNat,
+                      by simp [ByteVectorRead.targetOp, BvlSem.doApp, BvlSem.applyMemory, found, negative, byteFound],
+                      rfl, .number _⟩
+
+/-- Failed byte-vector reads report source type errors. -/
+theorem byteVectorRead_error {C F : Type} (op : ByteVectorRead) (args : List ClosSem.Value)
+    (s : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
+    (run : ClosSem.doApp (.memOp op.sourceOp) args s = .err error) : error = .abort .typeError := by
+  simp only [ClosSem.doApp] at run
+  cases h : ClosSem.applyMemory op.sourceOp args s <;> simp [h] at run
   exact run.symm
 
 end Flapjack.Compiler.Backend.ClosToBvl
