@@ -183,4 +183,29 @@ theorem compile_codeLocations (program : List (Nat × Nat × Exp)) :
     | inl h => exact Or.inl (annotateSing_codeLocations arity body h)
     | inr h => exact Or.inr (ih h)
 
+/-- Free-variable discovery preserves the number of top-level expressions. -/
+theorem altFreeList_length (expressions : List Exp) :
+    (altFreeList expressions).1.length = expressions.length := by
+  induction expressions with
+  | nil => simp [altFreeList]
+  | cons first rest ih => simp [altFreeList, ih]
+
+/-- Variable shifting preserves the number of top-level expressions. -/
+theorem shiftList_length (expressions : List Exp) (m l : Nat) (index : Spt Nat) :
+    (shiftList expressions m l index).length = expressions.length := by
+  induction expressions with
+  | nil => simp [shiftList]
+  | cons first rest ih => simp [shiftList, ih]
+
+/-- Annotation preserves the number of top-level expressions. -/
+theorem annotateList_length (arity : Nat) (expressions : List Exp) :
+    (annotateList arity expressions).length = expressions.length := by
+  simp [annotateList, shiftList_length, altFreeList_length]
+
+/-- The incremental integer name marker survives annotation unchanged. -/
+theorem annotateList_name_marker (start : Nat) (expressions : List Exp) :
+    annotateList 0 (.op .none (.intOp (.const (Int.ofNat start))) [] :: expressions) =
+      .op .none (.intOp (.const (Int.ofNat start))) [] :: annotateList 0 expressions := by
+  simp [annotateList, altFreeList, altFreeSing, shiftList, shiftSing]
+
 end Flapjack.Compiler.Backend.ClosAnnotate

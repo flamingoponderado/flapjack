@@ -167,4 +167,18 @@ theorem compileInc_location_bounds (start location : Nat) (expressions : List Ex
   rw [upper]
   omega
 
+/-- Incremental numbering reserves enough entry labels for the whole input
+list before allocating closure locations. -/
+theorem compileInc_reservation (start : Nat) (expressions : List Exp) :
+    start + max 1 expressions.length ≤ (compileInc start expressions).1 := by
+  let next := start + max expressions.length 1
+  let aligned := if next % 2 = 0 then next else next + 1
+  have numbered := renumberList_start_le expressions aligned
+  have lower : next ≤ aligned := by
+    dsimp [aligned]
+    split <;> omega
+  change start + max 1 expressions.length ≤ (renumberList aligned expressions).1
+  dsimp [next] at lower
+  omega
+
 end Flapjack.Compiler.Backend.ClosNumber

@@ -318,6 +318,142 @@ theorem numberedAnnotatedOracle_location_bounds {C : Type}
   apply ClosAnnotate.annotateList_codeLocations 0
   simpa [Function.comp_def, pureCo, ClosAnnotate.compileInc] using member
 
+/-- Extracting a preserved name marker returns its starting location and
+leaves precisely the closure locations of the remaining expressions. -/
+theorem extractName_numbered_marker (start : Nat) (expressions : List ClosLang.Exp) :
+    let marker := ClosLang.Exp.op .none (.intOp (.const (Int.ofNat start))) []
+    (extractName (marker :: expressions)).1 = start ∧
+    (extractName (marker :: expressions)).2.length = max 1 expressions.length ∧
+    ClosProps.codeLocations (extractName (marker :: expressions)).2 = ClosProps.codeLocations expressions := by
+  cases expressions with
+  | nil => simp [extractName, ClosProps.codeLocations, ClosProps.codeLocationsExp]
+  | cons first rest => simp [extractName]
+
+/-- The numbered and annotated incremental main program retains its original
+entry location, and the extracted chain reserves the expected number of slots. -/
+theorem numberedAnnotated_extractName (start : Nat) (expressions : List ClosLang.Exp) :
+    let output := ClosAnnotate.annotateList 0 (ClosNumber.compileInc start expressions).2
+    (extractName output).1 = start ∧
+      (extractName output).2.length = max 1 expressions.length ∧
+      ClosProps.codeLocations (extractName output).2 ⊆
+        ClosProps.codeLocations (ClosNumber.compileInc start expressions).2 := by
+  let next := start + max expressions.length 1
+  let aligned := if next % 2 = 0 then next else next + 1
+  cases numbered : ClosNumber.renumberList aligned expressions with
+  | mk nextLoc numberedExpressions =>
+    have numberedLength := ClosNumber.renumberList_length expressions aligned
+    simp only [numbered] at numberedLength
+    have marker : ClosAnnotate.annotateList 0 (ClosNumber.compileInc start expressions).2 =
+        .op .none (.intOp (.const (Int.ofNat start))) [] ::
+          ClosAnnotate.annotateList 0 numberedExpressions := by
+      simpa [ClosNumber.compileInc, next, aligned, numbered] using
+        ClosAnnotate.annotateList_name_marker start numberedExpressions
+    rw [marker]
+    have extract := extractName_numbered_marker start (ClosAnnotate.annotateList 0 numberedExpressions)
+    have length : (ClosAnnotate.annotateList 0 numberedExpressions).length = expressions.length := by
+      simpa [ClosAnnotate.annotateList_length] using numberedLength
+    refine ⟨extract.1, ?_, ?_⟩
+    · simpa [length] using extract.2.1
+    · rw [extract.2.2]
+      have subset := ClosAnnotate.annotateList_codeLocations 0 numberedExpressions
+      simpa [ClosNumber.compileInc, next, aligned, numbered, ClosProps.codeLocations,
+        ClosProps.codeLocationsExp] using subset
+
+/-- If the extracted main code and unchanged auxiliary code lie in one
+interval, incremental BVL conversion emits labels in that interval shifted
+by the application-stub prefix. -/
+theorem compileInc_labels_range (maxApp start limit : Nat)
+    (program : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp))
+    (real : List ClosLang.Exp) (extract : extractName program.1 = (start, real))
+    (entriesBound : start + max 1 real.length ≤ limit)
+    (mainBounds : ∀ location ∈ ClosProps.codeLocations real, start ≤ location ∧ location < limit)
+    (auxBounds : ∀ entry ∈ program.2, start ≤ entry.1 ∧ entry.1 < limit ∧
+      ∀ location ∈ ClosProps.codeLocationsExp entry.2.2, start ≤ location ∧ location < limit)
+    (label : Nat) (member : label ∈ (compileInc maxApp program).map Prod.fst) :
+    start + numStubs maxApp ≤ label ∧ label < limit + numStubs maxApp := by
+  let source := chainExps start real ++ program.2
+  have convert : compileProg? maxApp source = some (compileInc maxApp program) := by
+    simpa [source, compileInc, extract] using compileProg_checked_eq_original maxApp source
+  rw [compileProg_checked_codeLocations maxApp source _ convert] at member
+  simp only [List.mem_append, List.mem_map, List.mem_reverse] at member
+  cases member with
+  | inl entries =>
+    obtain ⟨entry, entryMem, equal⟩ := entries
+    have origin : entry ∈ chainExps start real ∨ entry ∈ program.2 := by
+      simpa [source] using entryMem
+    cases origin with
+    | inl chain =>
+      have entryLabel : entry.1 ∈ (chainExps start real).map Prod.fst :=
+        List.mem_map.mpr ⟨entry, chain, rfl⟩
+      have bounds := chainExps_label_bounds start real entry.1 entryLabel
+      omega
+    | inr auxiliary =>
+      have bounds := auxBounds entry auxiliary
+      omega
+  | inr locations =>
+    obtain ⟨location, sourceMem, equal⟩ := locations
+    simp only [source, List.map_append, ClosProps.codeLocations_append, List.mem_append,
+      chainExps_codeLocations] at sourceMem
+    cases sourceMem with
+    | inl main =>
+      have bounds := mainBounds location main
+      omega
+    | inr auxiliary =>
+      obtain ⟨body, inBodies, inBody⟩ := (ClosProps.mem_codeLocations location _).1 auxiliary
+      obtain ⟨entry, entryMem, equalBody⟩ := List.mem_map.mp inBodies
+      have bounds := (auxBounds entry entryMem).2.2 location (by simpa [equalBody] using inBody)
+      omega
+
+/-- Stateful numbering and annotation place the next incremental BVL program
+in its state interval, provided the untouched auxiliary code also lies there. -/
+theorem numberedAnnotatedOracle_labels_range {C : Type} (maxApp : Nat)
+    (oracle : Nat → (Nat × C) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (state : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (auxBounds : ∀ index entry, entry ∈ (oracle index).2.2 →
+      (oracle index).1.1 ≤ entry.1 ∧ entry.1 < (oracle (index + 1)).1.1 ∧
+      ∀ location ∈ ClosProps.codeLocationsExp entry.2.2,
+        (oracle index).1.1 ≤ location ∧ location < (oracle (index + 1)).1.1)
+    (index label : Nat)
+    (member : label ∈ (compileInc maxApp
+      ((pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2).map Prod.fst) :
+    (oracle index).1.1 + numStubs maxApp ≤ label ∧
+      label < (oracle (index + 1)).1.1 + numStubs maxApp := by
+  let start := (oracle index).1.1
+  let limit := (oracle (index + 1)).1.1
+  let expressions := (oracle index).2.1
+  let auxiliary := (oracle index).2.2
+  let numbered := ClosNumber.compileInc start expressions
+  let program := (ClosAnnotate.annotateList 0 numbered.2, ClosAnnotate.compile auxiliary)
+  have programEq :
+      ((pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2 = program := by
+    simp [program, numbered, start, expressions, auxiliary, pureCo, stateCo,
+      ClosNumber.ignoreTable, ClosAnnotate.compileInc]
+  rw [programEq] at member
+  let real := (extractName program.1).2
+  have shape := numberedAnnotated_extractName start expressions
+  have startEq : (extractName program.1).1 = start := by simpa [program, numbered] using shape.1
+  have lengthEq : real.length = max 1 expressions.length := by simpa [real, program, numbered] using shape.2.1
+  have locationsSub : ClosProps.codeLocations real ⊆ ClosProps.codeLocations numbered.2 := by
+    simpa [real, program, numbered] using shape.2.2
+  have nextEq : limit = numbered.1 := by simpa [limit, numbered, start, expressions, ClosNumber.ignoreTable] using state index
+  have extract : extractName program.1 = (start, real) := by
+    cases h : extractName program.1 with
+    | mk first second => simp [real, h] at startEq ⊢; exact startEq
+  apply compileInc_labels_range maxApp start limit program real extract ?_ ?_ ?_ label member
+  · simpa [lengthEq, nextEq, numbered, max_assoc] using ClosNumber.compileInc_reservation start expressions
+  · intro location inReal
+    have bounds := ClosNumber.compileInc_location_bounds start location expressions (locationsSub inReal)
+    simpa [nextEq, numbered] using bounds
+  · intro ⟨name, arity, body⟩ inAux
+    have sourceMem : (name, arity, body) ∈ ClosAnnotate.compile auxiliary := by simpa [program] using inAux
+    obtain ⟨⟨oldName, oldArity, oldBody⟩, oldMem, equal⟩ := List.mem_map.mp sourceMem
+    simp only [Prod.mk.injEq] at equal
+    obtain ⟨rfl, rfl, rfl⟩ := equal
+    have oldBounds := auxBounds index (oldName, oldArity, oldBody) oldMem
+    refine ⟨oldBounds.1, oldBounds.2.1, ?_⟩
+    intro location inBody
+    exact oldBounds.2.2 location (ClosAnnotate.annotateSing_codeLocations oldArity oldBody inBody)
+
 /-- The executable no-optimization closure compiler satisfies the prepared
 entry behavior theorem without separate program-annotation assumptions.
 Correctness of preprocessing and the oracle label bounds remain prerequisites
@@ -374,10 +510,10 @@ theorem compileNoOpts_numberedOracle_semantics {C F : Type} (ffi : HolFfiState F
     (initialState : current.nextLoc ≤ (oracle 0).1.1)
     (futureDistinct : ∀ index, ((compileInc current.maxApp
       ((pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2).map Prod.fst).Nodup)
-    (ranges : ∀ index location, location ∈ (compileInc current.maxApp
-      ((pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2).map Prod.fst →
-      (oracle index).1.1 + numStubs current.maxApp ≤ location ∧
-        location < (oracle (index + 1)).1.1 + numStubs current.maxApp)
+    (auxBounds : ∀ index entry, entry ∈ (oracle index).2.2 →
+      (oracle index).1.1 ≤ entry.1 ∧ entry.1 < (oracle (index + 1)).1.1 ∧
+      ∀ location ∈ ClosProps.codeLocationsExp entry.2.2,
+        (oracle index).1.1 ≤ location ∧ location < (oracle (index + 1)).1.1)
     (auxLocations : ∀ index entry, entry ∈ (oracle index).2.2 →
       ClosProps.everyFnLocationSome [entry.2.2]) :
     BvlSem.semantics ffi (sptFromAList compiled)
@@ -394,7 +530,7 @@ theorem compileNoOpts_numberedOracle_semantics {C F : Type} (ffi : HolFfiState F
     exact Nat.add_le_add_right (numberingOracle_state_monotone oracle oracleState order) _
   · exact Nat.add_le_add_right initialState _
   · exact futureDistinct
-  · exact ranges
+  · exact numberedAnnotatedOracle_labels_range current.maxApp oracle oracleState auxBounds
   · exact numberedAnnotatedOracle_annotations oracle auxLocations
 
 end Flapjack.Compiler.Backend.ClosToBvl
