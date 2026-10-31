@@ -377,4 +377,97 @@ theorem evaluate_aux_rcall_timeout {C F : Type} (loc workerLoc ticks : Nat) (ind
   exact ⟨by simpa [shiftBlock, workerAuxSource] using run, stateRel_with_clock 0 f source target states,
     onlyFresh_refl f target.refs, holesUnchanged_refl f target.refs {ptr}, holesStill_refl f target.refs⟩
 
+/-- Flapjack infrastructure: auxiliary simulation of an original recursive
+call, using only the smaller-clock worker-body induction hypothesis. The
+original theorem's measure and the other call-block conclusions are omitted. -/
+theorem evaluate_aux_rcall {C F : Type} (loc workerLoc ticks : Nat) (indices : List Nat)
+    (source : BviState (Nat × C) F) (target : BviState C F)
+    (env1 env2 extras : List Value) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
+    (slot ptr idx : Nat) (oldRefs : HolFiniteMapExact Nat (Ref Value)) (initial : Value)
+    (result : BviResult) (final : BviState (Nat × C) F)
+    (run : evaluate [callBlockToBvi loc (.rCall ticks indices)] env1 source = (result, final))
+    (notTypeError : result ≠ .err (.abort .typeError))
+    (environments : envRel opt f env1 env2) (wf : wfVars env1.length indices)
+    (states : stateRel f source target)
+    (hole : CallBlockEnvironment.allocHoleHasVal f target.refs extras slot idx initial)
+    (pointer : holEl slot extras = .refPtr false ptr) (domain : oldRefs.domain ⊆ target.refs.domain)
+    (code : optimisedCode loc workerLoc source.code target.code)
+    (bodyIH : ∀ body worker bodyResult,
+      findCode (some loc) (indices.map (fun n => holEl n env1)) source.code =
+        some (indices.map (fun n => holEl n env1), body) →
+      evaluate [body] (indices.map (fun n => holEl n env1)) (decClock (ticks + 1) source) =
+        (bodyResult, final) → bodyResult ≠ .err (.abort .typeError) → noMutcons body →
+      rewriteWorkerSource loc workerLoc indices.length (indices.length + 1) indices.length body = worker →
+      envRel true f (indices.map (fun n => holEl n env1))
+        (indices.map (fun n => holEl n env2) ++ [.refPtr false ptr, .number (Int.ofNat idx)]) →
+      holeHasVal f (indices.map (fun n => holEl n env1))
+        (indices.map (fun n => holEl n env2) ++ [.refPtr false ptr, .number (Int.ofNat idx)]) target.refs initial →
+      holeNotFinalised target.refs ptr →
+      IfWorker.WorkerCore worker (indices.map (fun n => holEl n env1))
+        (indices.map (fun n => holEl n env2) ++ [.refPtr false ptr, .number (Int.ofNat idx)])
+        f (decClock (ticks + 1) target) ptr bodyResult final) :
+    ∃ targetResult next g,
+      evaluate [workerAuxSource (shiftBlock extras.length (.rCall ticks indices)) workerLoc slot idx]
+        (extras ++ env2) target = (targetResult, next) ∧
+      ResultRelation.optResRel g result targetResult ∧ stateRel g final next ∧
+      finiteSubmap f g ∧ onlyFresh f g target.refs ∧
+      holesUnchangedExcept f target.refs next.refs {ptr} ∧ holesStillNotFinalised f target.refs next.refs ∧
+      ∀ sourceValue, result = .val [sourceValue] →
+        ∃ targetValue, mutableBlockRel g oldRefs (next.refs.eraseEq ptr) sourceValue targetValue ∧
+          CallBlockEnvironment.allocHoleHasVal f next.refs extras slot idx targetValue := by
+  have sourceArgs := evaluate_vars_source indices env1 source wf
+  obtain ⟨arity, body, wrapper, worker, sourceLookup, targetLookup, workerLookup, wrapRewrite, workerRewrite⟩ := code
+  have code' : optimisedCode loc workerLoc source.code target.code :=
+    ⟨arity, body, wrapper, worker, sourceLookup, targetLookup, workerLookup, wrapRewrite, workerRewrite⟩
+  simp only [callBlockToBvi] at run
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate, sourceArgs] at run
+  by_cases arityEq : (indices.map (fun n => holEl n env1)).length = arity
+  · have found : findCode (some loc) (indices.map (fun n => holEl n env1)) source.code =
+        some (indices.map (fun n => holEl n env1), body) := by simp [findCode, sourceLookup, arityEq]
+    have safe : noMutcons body := (findCode_rel f _ _ source target (some loc) _ body found
+      (CallBlockEnvironment.wfVars_list_rel indices opt f env1 env2 environments wf) states).1
+    by_cases timeout : source.clock < ticks + 1
+    · simp [found, timeout] at run
+      obtain ⟨rfl, rfl⟩ := run.symm
+      obtain ⟨targetRun, nextStates, fresh, unchanged, still⟩ :=
+        evaluate_aux_rcall_timeout loc workerLoc ticks indices source target env1 env2 extras opt f slot ptr idx
+          initial body environments wf states hole pointer found code' timeout
+      refine ⟨.err (.abort .timeoutError), { target with clock := 0 }, f, targetRun, ?_, nextStates,
+        ?_, fresh, unchanged, still, ?_⟩
+      · rfl
+      · intro key value h; exact h
+      · intro _ impossible; cases impossible
+    · have targetEnough : ¬target.clock < ticks + 1 := by simpa [states.2.1] using timeout
+      simp only [found, timeout, ↓reduceIte] at run
+      rw [BviSem.fixClock_evaluate] at run
+      cases bodyRun : evaluate [body] (indices.map (fun n => holEl n env1))
+          (decClock (ticks + 1) source) with
+      | mk bodyResult bodyFinal =>
+        simp only [bodyRun] at run
+        have bodyPair : (bodyResult, bodyFinal) = (result, final) := by
+          cases bodyResult with
+          | val values => simpa [bodyRun] using run
+          | err error =>
+            cases error with
+            | abort reason => simpa [bodyRun] using run
+            | raise payload =>
+              cases payload with
+              | exn value => simpa [bodyRun] using run
+              | ret values =>
+                simp at run
+                exact False.elim (notTypeError run.1.symm)
+        have noReturn : ∀ values, bodyResult ≠ .err (.raise (.ret values)) := by
+          intro values bad
+          rw [bad] at run
+          simp at run
+          exact notTypeError run.1.symm
+        cases bodyPair
+        apply evaluate_aux_rcall_from_body loc workerLoc ticks indices source target env1 env2 extras opt f
+          slot ptr idx oldRefs initial body result final environments wf hole pointer domain found code' targetEnough noReturn
+        intro worker rewrite envRel' hole' notFinal
+        exact bodyIH body worker result found bodyRun notTypeError safe rewrite envRel' hole' notFinal
+  · have arityNe : indices.length ≠ arity := by simpa using arityEq
+    simp [findCode, sourceLookup, arityNe] at run
+    exact False.elim (notTypeError run.1.symm)
+
 end Flapjack.Compiler.Backend.BviTmc.CallBlockWorkerLeaf
