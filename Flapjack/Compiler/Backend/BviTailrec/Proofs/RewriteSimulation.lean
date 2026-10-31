@@ -345,6 +345,118 @@ theorem rewriteTail_tick {C F : Type} (body : Bvi.Exp)
     · rw [evaluate_applyOp_tick op acc body env2 target env2[acc] lookup]
       simpa [BviSem.evaluate, targetNonzero] using applied
 
+/-- The local-binding case of the tail-rewrite simulation. -/
+theorem rewriteTail_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
+    (bindingsIH : rewriteTailProperty (C := C) (F := F) bindings)
+    (bodyIH : rewriteTailProperty (C := C) (F := F) [body]) :
+    rewriteTailProperty (C := C) (F := F) [.let bindings body] := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  obtain ⟨run, envRelated, stateRelated, types, _, notTypeError⟩ := hyp
+  have disabled := envRel_disable ty optimized acc env1 env2 envRelated
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate] at run
+  cases bindingRun : BviSem.evaluate bindings env1 source with
+  | mk bindingResult middle =>
+    cases bindingResult with
+    | err error =>
+      simp only [bindingRun] at run
+      have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
+        intro bad
+        apply notTypeError
+        exact (congrArg Prod.fst run).symm.trans bad
+      have bindingHyp : rewriteTailHyp bindings source env1 (.err error) middle false
+          target acc env2 loc ts ty := ⟨bindingRun, disabled, stateRelated, types, by simp, ok⟩
+      obtain ⟨targetMiddle, targetBindings, middleRelated, _⟩ :=
+        bindingsIH source env1 (.err error) middle false target acc env2 loc ts ty bindingHyp
+      have same : (.err error, middle) = (result, sourceNext) := by simpa [bindingRun] using run
+      cases same
+      refine ⟨targetMiddle, ?_, middleRelated, ?_⟩
+      · rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetBindings]
+      · intro enabled op workerLoc code arity required
+        simp only [List.headD_cons] at required ⊢
+        have accBound := (envRelated.2 enabled).2.1
+        have lookup : env2[acc]? = some env2[acc] := by simp [accBound]
+        refine ⟨.err error, targetMiddle, targetMiddle, ?_, ?_, middleRelated, middleRelated⟩
+        · rw [rewriteSource.eq_def]
+          dsimp only
+          cases eqn : rewriteSource loc workerLoc op (acc + bindings.length)
+            ((scanExpr ts loc bindings).map (fun (_, t, _, _) => t) ++
+              (match (scanExpr ts loc bindings).getLast? with | some (cs, _, _, _) => cs | none => ts)) body with
+          | mk flag rewritten =>
+            rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetBindings]
+        · rw [evaluate_applyOp_let op acc bindings body env2 target env2[acc] lookup]
+          rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetBindings]
+    | val values =>
+      have bindingHyp : rewriteTailHyp bindings source env1 (.val values) middle false
+          target acc env2 loc ts ty := ⟨bindingRun, disabled, stateRelated, types, by simp, by simp⟩
+      obtain ⟨targetMiddle, targetBindings, middleRelated, _⟩ :=
+        bindingsIH source env1 (.val values) middle false target acc env2 loc ts ty bindingHyp
+      have bodyRun : BviSem.evaluate [body] (values ++ env1) middle = (result, sourceNext) := by
+        simpa [bindingRun] using run
+      let scans := scanExpr ts loc bindings
+      let bodyTypes := scans.map (fun (_, t, _, _) => t) ++
+        (match scans.getLast? with | some (cs, _, _, _) => cs | none => ts)
+      have extendedTypes : tyRel (values ++ env1) bodyTypes :=
+        tyRel_letBindings ts loc bindings env1 values source middle types bindingRun
+      have extendedEnv := envRel_prepend ty optimized acc env1 env2 values envRelated
+      have lenEq := BviSem.evaluate_length bindings env1 source middle values bindingRun
+      have bodyHyp : rewriteTailHyp [body] middle (values ++ env1) result sourceNext optimized
+          targetMiddle (bindings.length + acc) (values ++ env2) loc bodyTypes ty := by
+        refine ⟨bodyRun, ?_, middleRelated, extendedTypes, by simp, notTypeError⟩
+        simpa [lenEq] using extendedEnv
+      obtain ⟨targetNext, targetBody, targetRelated, optRun⟩ :=
+        bodyIH middle (values ++ env1) result sourceNext optimized targetMiddle
+          (bindings.length + acc) (values ++ env2) loc bodyTypes ty bodyHyp
+      refine ⟨targetNext, ?_, targetRelated, ?_⟩
+      · rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetBindings]
+        exact targetBody
+      · intro enabled op workerLoc code arity required
+        simp only [List.headD_cons] at required ⊢
+        obtain ⟨sourceCode, optCode, sameType, op1, tt, resultTy, branch,
+          scan, notAny, notNoop, sameOp⟩ := required
+        have sourceCodeNext := evaluate_lookup_preserved bindings env1 source middle (.val values)
+          loc arity code bindingRun sourceCode
+        have targetGrowth := BviProps.evaluate_code_mono bindings env2 target targetMiddle (.val values) targetBindings
+        have targetCodeNext := optimizedCode_subspt loc arity code workerLoc target.code targetMiddle.code
+          op optCode targetGrowth
+        have bodyScan : ∃ out branch2,
+            scanExpr bodyTypes loc [body] = [(out, resultTy, branch2, some op1)] := by
+          rw [scanExpr_single, scanSing.eq_def] at scan
+          dsimp only at scan
+          rcases hscan : scanSing bodyTypes loc body with ⟨out, foundType, foundBranch, foundOp⟩
+          rw [← scanExpr_list] at scan
+          change [((scanSing bodyTypes loc body).1.drop scans.length,
+            (scanSing bodyTypes loc body).2.1, false,
+            (scanSing bodyTypes loc body).2.2.2)] = _ at scan
+          rw [hscan] at scan
+          simp only [List.cons.injEq, and_true, Prod.mk.injEq] at scan
+          obtain ⟨_, rfl, _, rfl⟩ := scan
+          refine ⟨out, foundBranch, ?_⟩
+          rw [scanExpr_single, hscan]
+        obtain ⟨bodyOut, bodyBranch, bodyScan⟩ := bodyScan
+        have requiredBody : sptLookup loc middle.code = some (arity, code) ∧
+            optimizedCode loc arity code workerLoc targetMiddle.code op ∧ opType op = ty ∧
+            (∃ op1 tt resultTy branch,
+              scanExpr bodyTypes loc [body] = [(tt, resultTy, branch, some op1)] ∧
+              resultTy ≠ .any ∧ op1 ≠ .noop ∧ opType op1 = opType op) :=
+          ⟨sourceCodeNext, targetCodeNext, sameType,
+            op1, bodyOut, resultTy, bodyBranch, bodyScan, notAny, notNoop, sameOp⟩
+        obtain ⟨r, t1, t2, rewritten, applied, rel1, rel2⟩ :=
+          optRun enabled op workerLoc code arity (by simpa only [List.headD_cons] using requiredBody)
+        have accBound := (envRelated.2 enabled).2.1
+        have lookup : env2[acc]? = some env2[acc] := by simp [accBound]
+        refine ⟨r, t1, t2, ?_, ?_, rel1, rel2⟩
+        · rw [rewriteSource.eq_def]
+          dsimp only
+          have eqIndices : acc + bindings.length = bindings.length + acc := Nat.add_comm _ _
+          rw [eqIndices]
+          change BviSem.evaluate [.let bindings (rewriteSource loc workerLoc op
+            (bindings.length + acc) bodyTypes body).2] env2 target = (r, t1)
+          rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetBindings]
+          simpa only [List.headD_cons] using rewritten
+        · rw [evaluate_applyOp_let op acc bindings body env2 target env2[acc] lookup]
+          rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetBindings]
+          simpa only [List.headD_cons] using applied
+
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a
 raise as an optimization candidate. -/
