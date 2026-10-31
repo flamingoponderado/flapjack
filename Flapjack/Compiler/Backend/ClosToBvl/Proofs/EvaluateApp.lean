@@ -152,4 +152,57 @@ theorem compile_appTarget (maxApp : Nat) (trace : BackendCommon.Tra) (location :
   rw [compileExps_eq_list]
   cases location <;> simp [compileExpListHOL, compileExpHOL, functionCompile, argsCompile, appTarget]
 
+/-- When a closure's remaining arity matches the generated argument list,
+`mkClCall` selects its direct call and enters the installed body. -/
+theorem evaluate_mkClCall_direct {C F : Type} (s : BvlSem.State C F)
+    (env : List BvlSem.Value) (cl : Bvl.Exp) (args : List Bvl.Exp)
+    (values : List BvlSem.Value) (tag ptr : Nat) (fields : List BvlSem.Value) (body : Bvl.Exp)
+    (clRun : BvlSem.evaluate [cl] env s =
+      (.val [.block tag (.codePtr ptr :: .number (Int.ofNat (args.length - 1)) :: fields)], s))
+    (argsRun : BvlSem.evaluate args env s = (.val values, s))
+    (nonempty : args ≠ [])
+    (lookup : sptLookup ptr s.code = some (values.length + 1, body)) :
+    BvlSem.evaluate [mkClCall cl args] env s =
+      if s.clock < args.length then (.err (.abort .timeoutError), { s with clock := 0 })
+      else BvlSem.evaluate [body]
+        (values ++ [.block tag (.codePtr ptr :: .number (Int.ofNat (args.length - 1)) :: fields)])
+        (BvlSem.decClock args.length s) := by
+  have elemZero : BvlSem.evaluate [.op (.blockOp (.elemAt 0)) [cl]] env s = (.val [.codePtr ptr], s) := by
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, clRun]
+    simp [BvlSem.doApp, BvlSem.applyBlock]
+  have elemOne : BvlSem.evaluate [.op (.blockOp (.elemAt 1)) [cl]] env s =
+      (.val [.number (Int.ofNat (args.length - 1))], s) := by
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, clRun]
+    simp [BvlSem.doApp, BvlSem.applyBlock]
+  have condRun : BvlSem.evaluate
+      [.op (.blockOp (.equalConst (.int (Int.ofNat (args.length - 1)))))
+        [.op (.blockOp (.elemAt 1)) [cl]]] env s = (.val [BvlSem.boolValue true], s) := by
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, elemOne]
+    simp [BvlSem.doApp, BvlSem.applyBlock]
+  have tailRun : BvlSem.evaluate [cl, .op (.blockOp (.elemAt 0)) [cl]] env s =
+      (.val [.block tag (.codePtr ptr :: .number (Int.ofNat (args.length - 1)) :: fields), .codePtr ptr], s) := by
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, clRun, elemZero]
+    rfl
+  have argumentsRun : BvlSem.evaluate (args ++ [cl, .op (.blockOp (.elemAt 0)) [cl]]) env s =
+      (.val (values ++ [.block tag (.codePtr ptr :: .number (Int.ofNat (args.length - 1)) :: fields), .codePtr ptr]), s) := by
+    change BvlSem.evaluateTuple (args ++ [cl, .op (.blockOp (.elemAt 0)) [cl]], env, s) = _
+    rw [BvlProps.evaluateAppend]
+    simp [BvlSem.evaluateTuple, argsRun, tailRun]
+  change BvlSem.evaluate [.ifThenElse
+    (.op (.blockOp (.equalConst (.int (Int.ofNat (args.length - 1)))))
+      [.op (.blockOp (.elemAt 1)) [cl]])
+    (.call (args.length - 1) none (args ++ [cl, .op (.blockOp (.elemAt 0)) [cl]]))
+    (.call 0 (some (genericAppFnLocation (args.length - 1))) (args ++ [cl]))] env s = _
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, condRun]
+  simp only [BvlSem.boolValue, BackendCommon.boolToTag, BvlSem.asBool]
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, argumentsRun]
+  have count : args.length - 1 + 1 = args.length := by
+    cases args <;> simp_all
+  have lastPair (inst : Nonempty BvlSem.Value) (xs : List BvlSem.Value) (x y : BvlSem.Value) :
+      @Flapjack.holLast BvlSem.Value inst (xs ++ [x, y]) = y := by
+    induction xs with
+    | nil => simp [Flapjack.holLast]
+    | cons z zs ih => simp [Flapjack.holLast_cons, ih]
+  simp [BvlSem.findCode, count, BackendCommon.trueTag, lastPair, lookup]
+
 end Flapjack.Compiler.Backend.ClosToBvl
