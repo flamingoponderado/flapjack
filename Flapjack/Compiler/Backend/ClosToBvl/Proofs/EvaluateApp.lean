@@ -1325,4 +1325,91 @@ theorem expressionSimulation_app_singletonRec_exact_case {C F : Type}
           (codeInstalled_subspt functionInstalled growth) envArgs statesArgs
       · exact bodyIH
 
+/-- Partially applying a related ordinary closure produces the target partial
+closure layout, with the correct installed entry and related saved arguments. -/
+theorem vRel_ordinary_partial {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity : Nat) (captured args : List ClosSem.Value) (target targetArgs : List BvlSem.Value)
+    (body : ClosLang.Exp) (states : stateRel f s t)
+    (functionRel : vRel s.maxApp f t.refs t.code
+      (.closure (some ptr) [] captured arity body) (.block 30 target))
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (nonempty : args ≠ []) (partialBound : args.length < arity) :
+    vRel s.maxApp f t.refs t.code (.closure (some ptr) args captured arity body)
+      (.block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1) (targetArgs.length - 1)) ::
+        .number (Int.ofNat (arity - 1 - args.length)) :: .block 30 target :: targetArgs)) := by
+  obtain ⟨fields, envRel, closure⟩ := vRel_ordinary_closure functionRel
+  have bounds : arity ≤ s.maxApp ∧ arity ≠ 0 := by
+    cases closure with
+    | closure bound positive _ _ _ _ _ => exact ⟨bound, positive⟩
+  obtain ⟨arityBound, positive⟩ := bounds
+  have argsLength : targetArgs.length = args.length := argsRel.length_eq.symm
+  have argsPositive : 0 < args.length := List.length_pos_iff.mpr nonempty
+  have totalBound : arity - 1 < s.maxApp := by omega
+  have previousBound : targetArgs.length - 1 < arity - 1 := by omega
+  have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (targetArgs.length - 1)
+    ⟨totalBound, previousBound⟩
+  have sizeEq : arity - 1 - (targetArgs.length - 1) + 1 = arity - args.length + 1 := by omega
+  have installed' : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (targetArgs.length - 1)) t.code =
+      some (arity - args.length + 1, generatePartialAppClosureFn (arity - 1) (targetArgs.length - 1)) := by
+    simpa [sizeEq] using installed
+  have added : addArgs (.closure (some ptr) [] captured arity body) args =
+      some (.closure (some ptr) args captured arity body) := by simp [addArgs]
+  exact .partialClosure envRel argsRel nonempty partialBound installed' added (by simp [getNumArgs]) closure
+
+/-- Partially applying a singleton recursive closure preserves its related
+closure and saved arguments. -/
+theorem vRel_singletonRec_partial {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity : Nat) (captured args : List ClosSem.Value) (target targetArgs : List BvlSem.Value)
+    (body : ClosLang.Exp) (states : stateRel f s t)
+    (functionRel : vRel s.maxApp f t.refs t.code
+      (.recclosure (some ptr) [] captured [(arity, body)] 0) (.block 30 target))
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (nonempty : args ≠ []) (partialBound : args.length < arity) :
+    vRel s.maxApp f t.refs t.code (.recclosure (some ptr) args captured [(arity, body)] 0)
+      (.block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1) (targetArgs.length - 1)) ::
+        .number (Int.ofNat (arity - 1 - args.length)) :: .block 30 target :: targetArgs)) := by
+  obtain ⟨fields, envRel, closure⟩ := vRel_singletonRec_closure functionRel
+  have boundsFor (v : BvlSem.Value)
+      (rel : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+        (captured, fields) (.recclosure (some ptr) [] captured [(arity, body)] 0) v) :
+      arity ≤ s.maxApp ∧ arity ≠ 0 := by
+    cases rel with
+    | singletonRec bound positive _ _ _ _ _ => exact ⟨bound, positive⟩
+    | mutualRec _ _ _ _ _ _ impossible _ _ _ _ => simp at impossible
+  have bounds := boundsFor _ closure
+  obtain ⟨arityBound, positive⟩ := bounds
+  have argsLength : targetArgs.length = args.length := argsRel.length_eq.symm
+  have argsPositive : 0 < args.length := List.length_pos_iff.mpr nonempty
+  have totalBound : arity - 1 < s.maxApp := by omega
+  have previousBound : targetArgs.length - 1 < arity - 1 := by omega
+  have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (targetArgs.length - 1)
+    ⟨totalBound, previousBound⟩
+  have sizeEq : arity - 1 - (targetArgs.length - 1) + 1 = arity - args.length + 1 := by omega
+  have installed' : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (targetArgs.length - 1)) t.code =
+      some (arity - args.length + 1, generatePartialAppClosureFn (arity - 1) (targetArgs.length - 1)) := by
+    simpa [sizeEq] using installed
+  have added : addArgs (.recclosure (some ptr) [] captured [(arity, body)] 0) args =
+      some (.recclosure (some ptr) args captured [(arity, body)] 0) := by simp [addArgs]
+  exact .partialClosure envRel argsRel nonempty partialBound installed' added (by simp [getNumArgs, Flapjack.holEl, Flapjack.holHd]) closure
+
+/-- The source ordinary-closure dispatcher saves an undersaturated argument
+prefix for a later application. -/
+theorem destClosure_ordinary_partial (maxApp ptr arity : Nat) (captured args : List ClosSem.Value)
+    (body : ClosLang.Exp) (bound : args.length ≤ maxApp) (partialBound : args.length < arity) :
+    ClosSem.destClosure maxApp none (.closure (some ptr) [] captured arity body) args =
+      some (.partialApp (.closure (some ptr) args captured arity body)) := by
+  have positive : 0 < arity := by omega
+  simp [ClosSem.destClosure, ClosSem.checkLoc, bound, partialBound, positive]
+
+/-- The source singleton recursive-closure dispatcher saves an undersaturated
+argument prefix for a later application. -/
+theorem destClosure_singletonRec_partial (maxApp ptr arity : Nat) (captured args : List ClosSem.Value)
+    (body : ClosLang.Exp) (bound : args.length ≤ maxApp) (partialBound : args.length < arity) :
+    ClosSem.destClosure maxApp none (.recclosure (some ptr) [] captured [(arity, body)] 0) args =
+      some (.partialApp (.recclosure (some ptr) args captured [(arity, body)] 0)) := by
+  have positive : 0 < arity := by omega
+  simp [ClosSem.destClosure, ClosSem.checkLoc, bound, partialBound, positive]
+
 end Flapjack.Compiler.Backend.ClosToBvl
