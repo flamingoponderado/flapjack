@@ -260,6 +260,20 @@ theorem term_prefix_simulation {C F : Type} (e : Bvi.Exp) (ctx : List ValueType)
   cases same
   exact ⟨value, typed, sourceRun source, targetRun target⟩
 
+/-- An enabled environment relation supplies a well-typed accumulator value. -/
+theorem envRel_accumulator (ty : ValueType) (acc : Nat) (env1 env2 : List Value)
+    (related : envRel ty true acc env1 env2) :
+    ∃ value, env2[acc]? = some value ∧ valueMatchesType value ty := by
+  obtain ⟨_, _, typed⟩ := related.2 rfl
+  cases ty with
+  | int =>
+    obtain ⟨integer, lookup⟩ := typed
+    exact ⟨.number integer, lookup, by simp [valueMatchesType]⟩
+  | list =>
+    obtain ⟨value, values, lookup, decode⟩ := typed
+    exact ⟨value, lookup, by simp [valueMatchesType, decode]⟩
+  | any => exact typed.elim
+
 /-- Empty-list case of the source rewrite simulation. The source singleton
 condition excludes optimization for an empty expression list. -/
 theorem rewriteTail_nil {C F : Type} (source : BviSem.BviState (Nat × C) F)
@@ -352,6 +366,32 @@ theorem evaluate_applyOp_var {C F : Type} (op : AssocOp) (acc : Nat)
       cases h : BviSem.doApp (toOp op) (values.reverse ++ [value]) next with
       | err error => rfl
       | val output => cases output; rfl
+
+/-- Evaluating a checked pure operand and the current accumulator yields the
+same updated, well-typed accumulator used by the worker call. -/
+theorem evaluate_accumulator_update {C F : Type} (op : AssocOp) (pure : Bvi.Exp)
+    (ctx : List ValueType) (loc acc : Nat) (env1 env2 : List Value)
+    (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (termIH : rewriteTailProperty (C := C) (F := F) [pure])
+    (notNoop : op ≠ .noop) (accepted : term ctx (opType op) pure = true)
+    (types : tyRel env1 ctx) (envRelated : envRel (opType op) true acc env1 env2)
+    (related : stateRel source target) :
+    ∃ pureValue oldValue newValue,
+      BviSem.evaluate [pure] env1 source = (.val [pureValue], source) ∧
+      BviSem.evaluate [pure] env2 target = (.val [pureValue], target) ∧
+      env2[acc]? = some oldValue ∧
+      accumulatorApply op [pureValue, oldValue] = some newValue ∧
+      valueMatchesType newValue (opType op) ∧
+      BviSem.evaluate [applyOp op (.var acc) pure] env2 target = (.val [newValue], target) := by
+  obtain ⟨pureValue, pureTyped, sourceRun, targetRun⟩ :=
+    term_prefix_simulation pure ctx (opType op) env1 env2 source target loc termIH accepted types envRelated.1 related
+  obtain ⟨oldValue, lookup, oldTyped⟩ := envRel_accumulator (opType op) acc env1 env2 envRelated
+  have pureTyped' : valueMatchesType pureValue (opType op) := by
+    cases op <;> simp_all [opType, valueMatchesType]
+  obtain ⟨newValue, applied, newTyped⟩ := accumulator_typed op pureValue oldValue notNoop pureTyped' oldTyped
+  refine ⟨pureValue, oldValue, newValue, sourceRun, targetRun, lookup, applied, newTyped, ?_⟩
+  rw [evaluate_applyOp_var op acc pure env2 target oldValue lookup, targetRun]
+  simp [doApp_toOp_pure, applied]
 
 /-- Adding the accumulator identity to a well-typed body result preserves its
 result and final state, including propagated errors. -/
@@ -2028,6 +2068,27 @@ theorem rewriteTail_op_word {C F : Type} (operation : ClosLang.WordOp) (args : L
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
   · exact stateRel_doApp_wordOp_success operation
   · exact doApp_wordOp_error operation
+  · exact hyp
+
+/-- Complete accumulator-operation case when the source candidate check
+finds no recursive call. -/
+theorem rewriteTail_op_accumulator_noCandidate {C F : Type} (assoc : AssocOp)
+    (args : List Bvi.Exp) (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (noCandidate : checkOp ts assoc loc (.op (toOp assoc) args) = none)
+    (hyp : rewriteTailHyp [.op (toOp assoc) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (toOp assoc) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (toOp assoc) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice, fromOp_toOp]
+    cases assoc <;> simp_all [BEq.beq, instBEqAssocOp.beq, AssocOp.ctorIdx]
+  · exact stateRel_doApp_toOp assoc
+  · exact doApp_toOp_error_type assoc
   · exact hyp
 
 /-- The raise case simulates the raised expression under the same state and

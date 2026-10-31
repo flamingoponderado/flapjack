@@ -246,6 +246,38 @@ def rewriteSource (loc next : Nat) (op : AssocOp) (acc : Nat)
   | e => sourceDispatch loc next op acc ctx e
 termination_by e => sizeOf e
 
+/-- A successful candidate is rewritten to a direct worker call with the
+pure operand combined into the accumulator. -/
+theorem checkOp_rewrite_worker (ctx : List ValueType) (assoc : AssocOp) (loc next acc : Nat)
+    (e checked : Exp) (check : checkOp ctx assoc loc e = some checked) :
+    ∃ pure ticks args,
+      term ctx (opType assoc) pure = true ∧ assoc ≠ .noop ∧
+      (e = applyOp assoc pure (.call ticks (some loc) args none) ∨
+        (assoc ≠ .append ∧ e = applyOp assoc (.call ticks (some loc) args none) pure)) ∧
+      rewriteSource loc next assoc acc ctx e =
+        (true, .call ticks (some next) (args ++ [applyOp assoc (.var acc) pure]) none) := by
+  obtain ⟨pure, ticks, args, termOk, checkedShape, notNoop, original⟩ :=
+    checkOp_candidate_call ctx assoc loc e checked check
+  have expressionShape : ∃ actual operands, e = .op actual operands := by
+    rcases original with direct | ⟨_, swapped⟩
+    · rw [direct]
+      exact ⟨toOp assoc, _, rfl⟩
+    · rw [swapped]
+      exact ⟨toOp assoc, _, rfl⟩
+  obtain ⟨actual, operands, rfl⟩ := expressionShape
+  have guard : (fromOp actual == assoc && assoc != .noop) = true := by
+    cases same : opEq assoc (.op actual operands) with
+    | false =>
+      have none := checkOp_of_not_opEq ctx assoc loc (.op actual operands) same
+      rw [none] at check
+      contradiction
+    | true => simpa [opEq_guard] using same
+  refine ⟨pure, ticks, args, termOk, notNoop, original, ?_⟩
+  rw [rewriteSource.eq_def]
+  dsimp only
+  rw [sourceDispatch_op]
+  simp [guard, check, checkedShape, applyOp]
+
 /-- The executed rewrite normal form agrees with the source-shaped rewrite. -/
 theorem rewriteSingle_eq_source (loc next : Nat) (op : AssocOp) (acc : Nat)
     (ctx : List ValueType) (e : Exp) :

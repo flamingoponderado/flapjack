@@ -54,6 +54,27 @@ theorem accumulator_identity_left (op : AssocOp) (value : Value)
     simp [accumulatorApply, opIdValue, valueToList, BackendCommon.nilTag, decode, encode]
   | noop => contradiction
 
+/-- Combining two well-typed accumulator values succeeds and retains the
+operator's required type. -/
+theorem accumulator_typed (op : AssocOp) (x y : Value) (notNoop : op ≠ .noop)
+    (tx : valueMatchesType x (opType op)) (ty : valueMatchesType y (opType op)) :
+    ∃ value, accumulatorApply op [x, y] = some value ∧ valueMatchesType value (opType op) := by
+  cases op with
+  | plus =>
+    obtain ⟨a, rfl⟩ := tx.1 rfl
+    obtain ⟨b, rfl⟩ := ty.1 rfl
+    exact ⟨.number (a + b), by simp [accumulatorApply, BvlSem.doIntApp], by simp [valueMatchesType, opType]⟩
+  | times =>
+    obtain ⟨a, rfl⟩ := tx.1 rfl
+    obtain ⟨b, rfl⟩ := ty.1 rfl
+    exact ⟨.number (a * b), by simp [accumulatorApply, BvlSem.doIntApp], by simp [valueMatchesType, opType]⟩
+  | append =>
+    obtain ⟨xs, hx⟩ := tx.2 rfl
+    obtain ⟨ys, hy⟩ := ty.2 rfl
+    exact ⟨listToValue (xs ++ ys), by simp [accumulatorApply, hx, hy],
+      by simp [valueMatchesType, opType, valueToList_listToValue]⟩
+  | noop => contradiction
+
 /-- The accumulator operations associate on values of their required type.
 This supplies the algebraic step for moving an accumulator across a recursive
 call. -/
@@ -446,6 +467,15 @@ theorem doApp_setGlobalsPtr_error {C F : Type} (args : List Value)
         | true => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
       | _ => simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] using run.symm
 
+/-- Accumulator primitives can fail only with the source type error. -/
+theorem doApp_toOp_error_type {C F : Type} (op : AssocOp) (args : List Value)
+    (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (toOp op) args state = .err error) : error = .abort .typeError := by
+  rw [doApp_toOp_pure] at run
+  cases found : accumulatorApply op args with
+  | none => simpa [found] using run.symm
+  | some value => simp [found] at run
+
 /-- Evaluating in-bounds variable expressions returns the corresponding
 environment entries without changing state. -/
 theorem evaluate_var_indices {C F : Type} (indices : List Nat) (env : List Value)
@@ -491,6 +521,23 @@ theorem evaluate_identity {C F : Type} (op : AssocOp) (env : List Value)
     simpa [identity, opIdValue] using evaluate_smallInt (C := C) (F := F) 1 (by decide) env state
   | append =>
     simpa [identity, opIdValue, BvlSem.listToValue] using evaluate_nil env state
+  | noop => contradiction
+
+/-- Appending a well-typed accumulator to call arguments establishes the
+worker's environment relation. -/
+theorem envRel_worker (op : AssocOp) (args : List Value) (value : Value)
+    (notNoop : op ≠ .noop) (typed : valueMatchesType value (opType op)) :
+    envRel (opType op) true args.length args (args ++ [value]) := by
+  cases op with
+  | plus =>
+    obtain ⟨integer, rfl⟩ := typed.1 rfl
+    simp [envRel, opType]
+  | times =>
+    obtain ⟨integer, rfl⟩ := typed.1 rfl
+    simp [envRel, opType]
+  | append =>
+    obtain ⟨values, decode⟩ := typed.2 rfl
+    simp [envRel, opType, decode]
   | noop => contradiction
 
 /-- The wrapper evaluates its worker under the original arguments, followed
