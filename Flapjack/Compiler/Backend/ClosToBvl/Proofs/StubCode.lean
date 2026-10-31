@@ -4,6 +4,7 @@ import Flapjack.Misc.Sptree.ToAList
 
 /-! Lookup properties of the generated initial closure-application stubs. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
+open Flapjack.Compiler.Backend.BackendProps
 
 private def insertSequential {α : Type} (entries : List α) (start : Nat) (tree : Spt α) : Nat × Spt α :=
   entries.foldl (fun (acc : Nat × Spt α) entry => (acc.1 + 1, sptInsert acc.1 entry acc.2)) (start, tree)
@@ -259,6 +260,15 @@ theorem distinct_entries_installed (entries : List (Nat × Nat × Bvl.Exp))
   have installed := install_codeInstalled (.ln) entries distinct (by simp [sptLookup])
   simpa [sptUnion] using installed
 
+/-- A location in a target tree built from emitted code occurs among the
+emitted labels. -/
+theorem emitted_tree_location_mem (entries : List (Nat × Nat × Bvl.Exp)) (location : Nat)
+    (member : sptMem location (sptFromAList entries)) : location ∈ entries.map Prod.fst := by
+  obtain ⟨value, found⟩ := (sptMem_iff_lookup _ _).1 member
+  rw [sptLookup_sptFromAList] at found
+  have inEntries := sptAListLookup_mem location entries value found
+  exact List.mem_map.mpr ⟨(location, value), inEntries, rfl⟩
+
 /-- Prepared compiler output with distinct labels preserves the proof-side
 behavior when installed using the compiler's target tree construction. -/
 theorem compilePrepared_tree_semantics {C F : Type} (ffi : HolFfiState F)
@@ -281,5 +291,40 @@ theorem compilePrepared_tree_semantics {C F : Type} (ffi : HolFfiState F)
   compilePrepared_entry_semantics ffi original current output expressions program compiled names sourceOracle sourceCompiler
     (sptFromAList compiled) targetOracle targetCompiler compile nonfail (distinct_entries_installed compiled distinct)
     locations varsAnnotated oracle
+
+/-- The prepared compiler's behavior theorem with the compiler and future
+oracle constructed by incremental closure-to-BVL compilation. Ordered label
+intervals supply the oracle freshness invariant. -/
+theorem compilePrepared_tree_semantics_of_boundaries {C F : Type} (ffi : HolFfiState F)
+    (original current output : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp)) (compiled : List (Nat × Nat × Bvl.Exp))
+    (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (sourceOracle : ClosSem.CompileOracle C) (targetCompiler : BvlSem.Compiler C) (boundary : Nat → Nat)
+    (compile : compilePrepared? original current expressions program = some (output, compiled, names))
+    (nonfail : ClosSem.semantics ffi current.maxApp (initialSourceCode program) sourceOracle
+      (pureCc (compileInc current.maxApp) targetCompiler) [.call .none 0 current.start []] ≠ .fail)
+    (distinct : (compiled.map Prod.fst).Nodup)
+    (locations : ∀ name arity body, (name, arity, body) ∈ program → ClosProps.everyFnLocationSome [body])
+    (varsAnnotated : ∀ name arity body, (name, arity, body) ∈ program → ClosProps.everyFnVarsSome [body])
+    (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
+    (initialBelow : ∀ location ∈ compiled.map Prod.fst, location < boundary 0)
+    (futureDistinct : ∀ index, ((compileInc current.maxApp (sourceOracle index).2).map Prod.fst).Nodup)
+    (ranges : ∀ index location, location ∈ (compileInc current.maxApp (sourceOracle index).2).map Prod.fst →
+      boundary index ≤ location ∧ location < boundary (index + 1))
+    (futureAnnotations : ∀ index, ClosProps.everyFnLocationSome (sourceOracle index).2.1 ∧
+      ClosProps.everyFnVarsSome (sourceOracle index).2.1 ∧
+      (∀ entry ∈ (sourceOracle index).2.2, ClosProps.everyFnLocationSome [entry.2.2]) ∧
+      (∀ entry ∈ (sourceOracle index).2.2, ClosProps.everyFnVarsSome [entry.2.2])) :
+    BvlSem.semantics ffi (sptFromAList compiled) (pureCo (compileInc current.maxApp) ∘ sourceOracle)
+        targetCompiler output.start =
+      ClosSem.semantics ffi current.maxApp (initialSourceCode program) sourceOracle
+        (pureCc (compileInc current.maxApp) targetCompiler) [.call .none 0 current.start []] := by
+  apply compilePrepared_tree_semantics ffi original current output expressions program compiled names sourceOracle
+    (pureCc (compileInc current.maxApp) targetCompiler) (pureCo (compileInc current.maxApp) ∘ sourceOracle)
+    targetCompiler compile nonfail distinct locations varsAnnotated
+  exact compileOracleInv_of_boundaries current.maxApp (initialSourceCode program) sourceOracle
+    (sptFromAList compiled) targetCompiler boundary monotone
+    (fun location member => initialBelow location (emitted_tree_location_mem compiled location member))
+    futureDistinct ranges futureAnnotations
 
 end Flapjack.Compiler.Backend.ClosToBvl
