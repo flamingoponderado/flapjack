@@ -147,6 +147,52 @@ def rewriteTailProperty {C F : Type} (xs : List Bvi.Exp) : Prop :=
     rewriteTailHyp xs source env1 result sourceNext optimized target acc env2 loc ts ty →
     rewriteTailPost xs source env1 result sourceNext optimized target acc env2 loc ts ty
 
+/-- The simulation property restricted to source states whose clocks do not
+exceed the induction bound. This permits structural induction at a fixed clock
+bound while recursive function calls use a smaller bound. -/
+def rewriteTailPropertyThrough {C F : Type} (limit : Nat) (xs : List Bvi.Exp) : Prop :=
+  ∀ (source : BviSem.BviState (Nat × C) F) env1 result sourceNext optimized
+    (target : BviSem.BviState C F) acc env2 loc ts ty,
+    source.clock ≤ limit →
+    rewriteTailHyp xs source env1 result sourceNext optimized target acc env2 loc ts ty →
+    rewriteTailPost xs source env1 result sourceNext optimized target acc env2 loc ts ty
+
+/-- An unrestricted simulation is available at every clock bound. -/
+theorem rewriteTailProperty_through {C F : Type} {xs : List Bvi.Exp}
+    (ih : rewriteTailProperty (C := C) (F := F) xs) (limit : Nat) :
+    rewriteTailPropertyThrough (C := C) (F := F) limit xs := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty _ hyp
+  exact ih source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+
+/-- Well-founded induction for the rewrite simulation: structural recursion
+stays within the current clock bound, and arbitrary expressions may be used
+at a strictly smaller bound. The step itself remains to be established for all
+expression cases; this helper is not the HOL correctness theorem. -/
+theorem rewriteTailProperty_of_bounded_step {C F : Type}
+    (step : ∀ limit xs,
+      (∀ ys, sizeOf ys < sizeOf xs → rewriteTailPropertyThrough (C := C) (F := F) limit ys) →
+      (∀ smaller, smaller < limit → ∀ ys, rewriteTailPropertyThrough (C := C) (F := F) smaller ys) →
+      rewriteTailPropertyThrough (C := C) (F := F) limit xs) :
+    ∀ xs, rewriteTailProperty (C := C) (F := F) xs := by
+  have bounded : ∀ limit xs, rewriteTailPropertyThrough (C := C) (F := F) limit xs := by
+    intro limit
+    induction limit using Nat.strong_induction_on with
+    | h limit clockIH =>
+      have bySize : ∀ n xs, sizeOf xs = n → rewriteTailPropertyThrough (C := C) (F := F) limit xs := by
+        intro n
+        induction n using Nat.strong_induction_on with
+        | h n sizeIH =>
+          intro xs sizeEq
+          apply step limit xs
+          · intro ys smaller
+            exact sizeIH (sizeOf ys) (by omega) ys rfl
+          · exact clockIH
+      intro xs
+      exact bySize (sizeOf xs) xs rfl
+  intro xs source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  exact bounded source.clock xs source env1 result sourceNext optimized target acc env2 loc ts ty
+    (Nat.le_refl _) hyp
+
 /-- Disabling optimization keeps the environment-prefix part of the source
 environment relation. -/
 theorem envRel_disable (ty : ValueType) (optimized : Bool) (acc : Nat)
@@ -875,10 +921,10 @@ theorem evaluate_applyOp_tick {C F : Type} (op : AssocOp) (acc : Nat)
 
 /-- Tick case of the source-shaped simulation. The recursive call receives
 both states after decrementing their related clocks. -/
-theorem rewriteTail_tick {C F : Type} (body : Bvi.Exp)
-    (ih : rewriteTailProperty (C := C) (F := F) [body]) :
-    rewriteTailProperty (C := C) (F := F) [.tick body] := by
-  intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+theorem rewriteTail_tick_through {C F : Type} (limit : Nat) (body : Bvi.Exp)
+    (ih : rewriteTailPropertyThrough (C := C) (F := F) limit [body]) :
+    rewriteTailPropertyThrough (C := C) (F := F) limit [.tick body] := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
   obtain ⟨run, envRelated, stateRelated, types, _, notTypeError⟩ := hyp
   have clocks := (stateRel_const source target stateRelated).2.1
   by_cases zero : source.clock = 0
@@ -909,7 +955,7 @@ theorem rewriteTail_tick {C F : Type} (body : Bvi.Exp)
       ⟨bodyRun, envRelated, nextRelated, types, by simp, notTypeError⟩
     obtain ⟨targetNext, targetRun, targetRelated, optRun⟩ :=
       ih (BviSem.decClock 1 source) env1 result sourceNext optimized
-        (BviSem.decClock 1 target) acc env2 loc ts ty bodyHyp
+        (BviSem.decClock 1 target) acc env2 loc ts ty (by simp [BviSem.decClock]; omega) bodyHyp
     refine ⟨targetNext, by simpa [BviSem.evaluate, targetNonzero] using targetRun, targetRelated, ?_⟩
     intro enabled op workerLoc code arity required
     simp only [List.headD_cons] at required ⊢
@@ -937,12 +983,21 @@ theorem rewriteTail_tick {C F : Type} (body : Bvi.Exp)
     · rw [evaluate_applyOp_tick op acc body env2 target env2[acc] lookup]
       simpa [BviSem.evaluate, targetNonzero] using applied
 
-/-- The local-binding case of the tail-rewrite simulation. -/
-theorem rewriteTail_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
-    (bindingsIH : rewriteTailProperty (C := C) (F := F) bindings)
-    (bodyIH : rewriteTailProperty (C := C) (F := F) [body]) :
-    rewriteTailProperty (C := C) (F := F) [.let bindings body] := by
+
+/-- The unrestricted form follows from the clock-bounded case. -/
+theorem rewriteTail_tick {C F : Type} (body : Bvi.Exp)
+    (ih : rewriteTailProperty (C := C) (F := F) [body]) :
+    rewriteTailProperty (C := C) (F := F) [.tick body] := by
   intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  exact rewriteTail_tick_through source.clock body (rewriteTailProperty_through ih _) source env1
+    result sourceNext optimized target acc env2 loc ts ty (Nat.le_refl _) hyp
+
+/-- The local-binding case of the tail-rewrite simulation. -/
+theorem rewriteTail_let_through {C F : Type} (limit : Nat) (bindings : List Bvi.Exp) (body : Bvi.Exp)
+    (bindingsIH : rewriteTailPropertyThrough (C := C) (F := F) limit bindings)
+    (bodyIH : rewriteTailPropertyThrough (C := C) (F := F) limit [body]) :
+    rewriteTailPropertyThrough (C := C) (F := F) limit [.let bindings body] := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
   obtain ⟨run, envRelated, stateRelated, types, _, notTypeError⟩ := hyp
   have disabled := envRel_disable ty optimized acc env1 env2 envRelated
   rw [BviSem.evaluate, BviSem.fixClock_evaluate] at run
@@ -958,7 +1013,7 @@ theorem rewriteTail_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
       have bindingHyp : rewriteTailHyp bindings source env1 (.err error) middle false
           target acc env2 loc ts ty := ⟨bindingRun, disabled, stateRelated, types, by simp, ok⟩
       obtain ⟨targetMiddle, targetBindings, middleRelated, _⟩ :=
-        bindingsIH source env1 (.err error) middle false target acc env2 loc ts ty bindingHyp
+        bindingsIH source env1 (.err error) middle false target acc env2 loc ts ty clockBound bindingHyp
       have same : (.err error, middle) = (result, sourceNext) := by simpa [bindingRun] using run
       cases same
       refine ⟨targetMiddle, ?_, middleRelated, ?_⟩
@@ -978,10 +1033,14 @@ theorem rewriteTail_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
         · rw [evaluate_applyOp_let op acc bindings body env2 target env2[acc] lookup]
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetBindings]
     | val values =>
+      have middleBound : middle.clock ≤ limit := by
+        have clockLe := BviSem.evaluate_clock_le bindings env1 source
+        rw [bindingRun] at clockLe
+        exact Nat.le_trans clockLe clockBound
       have bindingHyp : rewriteTailHyp bindings source env1 (.val values) middle false
           target acc env2 loc ts ty := ⟨bindingRun, disabled, stateRelated, types, by simp, by simp⟩
       obtain ⟨targetMiddle, targetBindings, middleRelated, _⟩ :=
-        bindingsIH source env1 (.val values) middle false target acc env2 loc ts ty bindingHyp
+        bindingsIH source env1 (.val values) middle false target acc env2 loc ts ty clockBound bindingHyp
       have bodyRun : BviSem.evaluate [body] (values ++ env1) middle = (result, sourceNext) := by
         simpa [bindingRun] using run
       let scans := scanExpr ts loc bindings
@@ -997,7 +1056,7 @@ theorem rewriteTail_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
         simpa [lenEq] using extendedEnv
       obtain ⟨targetNext, targetBody, targetRelated, optRun⟩ :=
         bodyIH middle (values ++ env1) result sourceNext optimized targetMiddle
-          (bindings.length + acc) (values ++ env2) loc bodyTypes ty bodyHyp
+          (bindings.length + acc) (values ++ env2) loc bodyTypes ty middleBound bodyHyp
       refine ⟨targetNext, ?_, targetRelated, ?_⟩
       · rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetBindings]
         exact targetBody
@@ -1048,6 +1107,17 @@ theorem rewriteTail_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
         · rw [evaluate_applyOp_let op acc bindings body env2 target env2[acc] lookup]
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetBindings]
           simpa only [List.headD_cons] using applied
+
+
+/-- The unrestricted local-binding case follows at the current clock bound. -/
+theorem rewriteTail_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
+    (bindingsIH : rewriteTailProperty (C := C) (F := F) bindings)
+    (bodyIH : rewriteTailProperty (C := C) (F := F) [body]) :
+    rewriteTailProperty (C := C) (F := F) [.let bindings body] := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  exact rewriteTail_let_through source.clock bindings body (rewriteTailProperty_through bindingsIH _)
+    (rewriteTailProperty_through bodyIH _) source env1 result sourceNext optimized target acc env2
+    loc ts ty (Nat.le_refl _) hyp
 
 /-- A successful direct or indirect call identifies an original code entry.
 Any replacement at that location and arity resolves to the same arguments. -/
@@ -3718,10 +3788,10 @@ theorem rewriteTail_op_of_size {C F : Type} (operation : ClosLang.Op) (args : Li
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a
 raise as an optimization candidate. -/
-theorem rewriteTail_raise {C F : Type} (body : Bvi.Exp)
-    (ih : rewriteTailProperty (C := C) (F := F) [body]) :
-    rewriteTailProperty (C := C) (F := F) [.raise body] := by
-  intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+theorem rewriteTail_raise_through {C F : Type} (limit : Nat) (body : Bvi.Exp)
+    (ih : rewriteTailPropertyThrough (C := C) (F := F) limit [body]) :
+    rewriteTailPropertyThrough (C := C) (F := F) limit [.raise body] := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
   obtain ⟨run, envRelated, stateRelated, types, _, notTypeError⟩ := hyp
   have disabled := envRel_disable ty optimized acc env1 env2 envRelated
   rw [BviSem.evaluate] at run
@@ -3737,7 +3807,7 @@ theorem rewriteTail_raise {C F : Type} (body : Bvi.Exp)
       have innerHyp : rewriteTailHyp [body] source env1 (.err error) middle false target acc env2 loc ts ty :=
         ⟨innerRun, disabled, stateRelated, types, by simp, ok⟩
       obtain ⟨targetNext, targetRun, targetRelated, _⟩ :=
-        ih source env1 (.err error) middle false target acc env2 loc ts ty innerHyp
+        ih source env1 (.err error) middle false target acc env2 loc ts ty clockBound innerHyp
       have same : (.err error, middle) = (result, sourceNext) := by simpa [innerRun] using run
       cases same
       refine ⟨targetNext, ?_, targetRelated, ?_⟩
@@ -3750,7 +3820,7 @@ theorem rewriteTail_raise {C F : Type} (body : Bvi.Exp)
       have innerHyp : rewriteTailHyp [body] source env1 (.val values) middle false target acc env2 loc ts ty :=
         ⟨innerRun, disabled, stateRelated, types, by simp, by simp⟩
       obtain ⟨targetNext, targetRun, targetRelated, _⟩ :=
-        ih source env1 (.val values) middle false target acc env2 loc ts ty innerHyp
+        ih source env1 (.val values) middle false target acc env2 loc ts ty clockBound innerHyp
       refine ⟨targetNext, ?_, ?_, ?_⟩
       · rw [BviSem.evaluate, targetRun]
         simpa [innerRun] using congrArg Prod.fst run
@@ -3761,13 +3831,22 @@ theorem rewriteTail_raise {C F : Type} (body : Bvi.Exp)
         rw [scanExpr_single, scanSing.eq_def] at scan
         simp at scan
 
+
+/-- The unrestricted form follows from the clock-bounded case. -/
+theorem rewriteTail_raise {C F : Type} (body : Bvi.Exp)
+    (ih : rewriteTailProperty (C := C) (F := F) [body]) :
+    rewriteTailProperty (C := C) (F := F) [.raise body] := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  exact rewriteTail_raise_through source.clock body (rewriteTailProperty_through ih _) source env1
+    result sourceNext optimized target acc env2 loc ts ty (Nat.le_refl _) hyp
+
 /-- The return case simulates its argument list under the same state and
 an environment with optimization disabled. The source scan cannot select a
 return as an optimization candidate. -/
-theorem rewriteTail_return {C F : Type} (args : List Bvi.Exp)
-    (ih : rewriteTailProperty (C := C) (F := F) args) :
-    rewriteTailProperty (C := C) (F := F) [.return args] := by
-  intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+theorem rewriteTail_return_through {C F : Type} (limit : Nat) (args : List Bvi.Exp)
+    (ih : rewriteTailPropertyThrough (C := C) (F := F) limit args) :
+    rewriteTailPropertyThrough (C := C) (F := F) limit [.return args] := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
   obtain ⟨run, envRelated, stateRelated, types, _, notTypeError⟩ := hyp
   have disabled := envRel_disable ty optimized acc env1 env2 envRelated
   rw [BviSem.evaluate] at run
@@ -3783,7 +3862,7 @@ theorem rewriteTail_return {C F : Type} (args : List Bvi.Exp)
       have innerHyp : rewriteTailHyp args source env1 (.err error) middle false target acc env2 loc ts ty :=
         ⟨innerRun, disabled, stateRelated, types, by simp, ok⟩
       obtain ⟨targetNext, targetRun, targetRelated, _⟩ :=
-        ih source env1 (.err error) middle false target acc env2 loc ts ty innerHyp
+        ih source env1 (.err error) middle false target acc env2 loc ts ty clockBound innerHyp
       have same : (.err error, middle) = (result, sourceNext) := by simpa [innerRun] using run
       cases same
       refine ⟨targetNext, ?_, targetRelated, ?_⟩
@@ -3796,7 +3875,7 @@ theorem rewriteTail_return {C F : Type} (args : List Bvi.Exp)
       have innerHyp : rewriteTailHyp args source env1 (.val values) middle false target acc env2 loc ts ty :=
         ⟨innerRun, disabled, stateRelated, types, by simp, by simp⟩
       obtain ⟨targetNext, targetRun, targetRelated, _⟩ :=
-        ih source env1 (.val values) middle false target acc env2 loc ts ty innerHyp
+        ih source env1 (.val values) middle false target acc env2 loc ts ty clockBound innerHyp
       refine ⟨targetNext, ?_, ?_, ?_⟩
       · rw [BviSem.evaluate, targetRun]
         simpa [innerRun] using congrArg Prod.fst run
@@ -3807,14 +3886,23 @@ theorem rewriteTail_return {C F : Type} (args : List Bvi.Exp)
         rw [scanExpr_single, scanSing.eq_def] at scan
         simp at scan
 
+
+/-- The unrestricted form follows from the clock-bounded case. -/
+theorem rewriteTail_return {C F : Type} (args : List Bvi.Exp)
+    (ih : rewriteTailProperty (C := C) (F := F) args) :
+    rewriteTailProperty (C := C) (F := F) [.return args] := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  exact rewriteTail_return_through source.clock args (rewriteTailProperty_through ih _) source env1
+    result sourceNext optimized target acc env2 loc ts ty (Nat.le_refl _) hyp
+
 /-- Sequential non-singleton case of the source rewrite simulation. The
 singleton optimization condition forces this case to use ordinary simulation
 of the head followed by the tail. -/
-theorem rewriteTail_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
-    (headIH : rewriteTailProperty (C := C) (F := F) [x])
-    (tailIH : rewriteTailProperty (C := C) (F := F) (y :: xs)) :
-    rewriteTailProperty (C := C) (F := F) (x :: y :: xs) := by
-  intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+theorem rewriteTail_cons_through {C F : Type} (limit : Nat) (x y : Bvi.Exp) (xs : List Bvi.Exp)
+    (headIH : rewriteTailPropertyThrough (C := C) (F := F) limit [x])
+    (tailIH : rewriteTailPropertyThrough (C := C) (F := F) limit (y :: xs)) :
+    rewriteTailPropertyThrough (C := C) (F := F) limit (x :: y :: xs) := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
   obtain ⟨run, envRelated, stateRelated, types, singleton, notTypeError⟩ := hyp
   have disabled : optimized = false := by
     cases optimized with
@@ -3832,17 +3920,21 @@ theorem rewriteTail_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
       have headHyp : rewriteTailHyp [x] source env1 (.err error) middle false target acc env2 loc ts ty :=
         ⟨headRun, envRelated, stateRelated, types, by simp, notTypeError⟩
       obtain ⟨targetNext, targetRun, targetRelated, _⟩ :=
-        headIH source env1 (.err error) middle false target acc env2 loc ts ty headHyp
+        headIH source env1 (.err error) middle false target acc env2 loc ts ty clockBound headHyp
       refine ⟨targetNext, ?_, targetRelated, by simp⟩
       change BviSem.evaluateTuple (x :: y :: xs, env2, target) = _
       rw [BviSem.evaluateConsCons]
       simp [BviSem.evaluateTuple, targetRun]
     | val headValues =>
+      have middleBound : middle.clock ≤ limit := by
+        have clockLe := BviSem.evaluate_clock_le [x] env1 source
+        rw [headRun] at clockLe
+        exact Nat.le_trans clockLe clockBound
       obtain ⟨headValue, rfl⟩ := BviSem.evaluate_singleton x env1 source middle headValues headRun
       have headHyp : rewriteTailHyp [x] source env1 (.val [headValue]) middle false target acc env2 loc ts ty :=
         ⟨headRun, envRelated, stateRelated, types, by simp, by simp⟩
       obtain ⟨targetMiddle, targetHead, middleRelated, _⟩ :=
-        headIH source env1 (.val [headValue]) middle false target acc env2 loc ts ty headHyp
+        headIH source env1 (.val [headValue]) middle false target acc env2 loc ts ty clockBound headHyp
       cases tailRun : BviSem.evaluate (y :: xs) env1 middle with
       | mk tailResult last =>
         cases tailResult with
@@ -3853,7 +3945,7 @@ theorem rewriteTail_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
               targetMiddle acc env2 loc ts ty :=
             ⟨tailRun, envRelated, middleRelated, types, by simp, notTypeError⟩
           obtain ⟨targetNext, targetTail, targetRelated, _⟩ :=
-            tailIH middle env1 (.err error) last false targetMiddle acc env2 loc ts ty tailHyp
+            tailIH middle env1 (.err error) last false targetMiddle acc env2 loc ts ty middleBound tailHyp
           refine ⟨targetNext, ?_, targetRelated, by simp⟩
           change BviSem.evaluateTuple (x :: y :: xs, env2, target) = _
           rw [BviSem.evaluateConsCons]
@@ -3866,11 +3958,41 @@ theorem rewriteTail_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
               targetMiddle acc env2 loc ts ty :=
             ⟨tailRun, envRelated, middleRelated, types, by simp, by simp⟩
           obtain ⟨targetNext, targetTail, targetRelated, _⟩ :=
-            tailIH middle env1 (.val tailValues) last false targetMiddle acc env2 loc ts ty tailHyp
+            tailIH middle env1 (.val tailValues) last false targetMiddle acc env2 loc ts ty middleBound tailHyp
           refine ⟨targetNext, ?_, targetRelated, by simp⟩
           change BviSem.evaluateTuple (x :: y :: xs, env2, target) = _
           rw [BviSem.evaluateConsCons]
           simp [BviSem.evaluateTuple, targetHead, targetTail, Flapjack.holHd]
+
+
+/-- The unrestricted sequential case follows at the current clock bound. -/
+theorem rewriteTail_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
+    (headIH : rewriteTailProperty (C := C) (F := F) [x])
+    (tailIH : rewriteTailProperty (C := C) (F := F) (y :: xs)) :
+    rewriteTailProperty (C := C) (F := F) (x :: y :: xs) := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  exact rewriteTail_cons_through source.clock x y xs (rewriteTailProperty_through headIH _)
+    (rewriteTailProperty_through tailIH _) source env1 result sourceNext optimized target acc env2
+    loc ts ty (Nat.le_refl _) hyp
+
+/-- The list cases reduce the bounded induction step to singleton expression
+cases. The singleton step is an explicit remaining premise, not a claimed
+port of the source theorem. -/
+theorem rewriteTail_list_through {C F : Type} (limit : Nat) (xs : List Bvi.Exp)
+    (structuralIH : ∀ ys, sizeOf ys < sizeOf xs → rewriteTailPropertyThrough (C := C) (F := F) limit ys)
+    (singletonStep : ∀ e, xs = [e] →
+      (∀ ys, sizeOf ys < sizeOf [e] → rewriteTailPropertyThrough (C := C) (F := F) limit ys) →
+      rewriteTailPropertyThrough (C := C) (F := F) limit [e]) :
+    rewriteTailPropertyThrough (C := C) (F := F) limit xs := by
+  cases xs with
+  | nil => exact rewriteTailProperty_through rewriteTailProperty_nil limit
+  | cons x tail =>
+    cases tail with
+    | nil => exact singletonStep x rfl structuralIH
+    | cons y rest =>
+      have positive : 0 < sizeOf y := by cases y <;> simp_wf <;> omega
+      exact rewriteTail_cons_through limit x y rest (structuralIH [x] (by simp_wf; omega))
+        (structuralIH (y :: rest) (by simp_wf; omega))
 
 /-- Assembles singleton expression cases using unrestricted smaller-expression
 and smaller-clock hypotheses. This Flapjack helper is not a HOL theorem port:
