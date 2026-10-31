@@ -268,4 +268,101 @@ theorem evaluate_appTarget_generic_exact {C F : Type} (s middle next : BvlSem.St
   rw [evaluate_appTarget_generic s middle next env maxApp args function values _ argsRun functionRun]
   simpa [← lengths] using evaluate_mkClCall_direct_env next values env tag ptr fields body nonempty lookup
 
+/-- The generated free-variable selectors read the payload after the two
+closure metadata fields, preserving both its order and the target state. -/
+theorem evaluate_freeLet {C F : Type} (n : Nat) (s : BvlSem.State C F)
+    (env : List BvlSem.Value) (closure : Bvl.Exp) (tag : Nat)
+    (code arity : BvlSem.Value) (fields : List BvlSem.Value)
+    (clRun : BvlSem.evaluate [closure] env s = (.val [.block tag (code :: arity :: fields)], s))
+    (bound : n ≤ fields.length) :
+    BvlSem.evaluate (freeLet closure n) env s = (.val (fields.take n), s) := by
+  induction n with
+  | zero => simp [freeLet, BvlSem.evaluate]
+  | succ n ih =>
+    have boundN : n ≤ fields.length := by omega
+    have indexBound : n < fields.length := by omega
+    have elemRun : BvlSem.evaluate [.op (.blockOp (.elemAt (n + 2))) [closure]] env s =
+        (.val [fields[n]], s) := by
+      rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, clRun]
+      simp [BvlSem.doApp, BvlSem.applyBlock, indexBound]
+    simp only [freeLet, List.range_succ, List.map_append, List.map_singleton]
+    change BvlSem.evaluateTuple (freeLet closure n ++ [.op (.blockOp (.elemAt (n + 2))) [closure]], env, s) = _
+    rw [BvlProps.evaluateAppend]
+    simp only [BvlSem.evaluateTuple, ih boundN, elemRun, List.take_append_getElem indexBound]
+
+/-- An ordinary closure's entry code exposes arguments followed by captured
+values to its compiled body. -/
+theorem evaluate_closure_entry {C F : Type} (s : BvlSem.State C F)
+    (args fields : List BvlSem.Value) (tag : Nat) (code arity : BvlSem.Value) (body : Bvl.Exp) :
+    BvlSem.evaluate [.let ((List.range args.length).map Bvl.Exp.var ++
+        freeLet (.var args.length) fields.length) body]
+      (args ++ [.block tag (code :: arity :: fields)]) s =
+    BvlSem.evaluate [body]
+      ((args ++ fields) ++ args ++ [.block tag (code :: arity :: fields)]) s := by
+  let env := args ++ [.block tag (code :: arity :: fields)]
+  have argsRun : BvlSem.evaluate ((List.range args.length).map Bvl.Exp.var) env s = (.val args, s) := by
+    have bound : args.length ≤ env.length := by simp [env]
+    simpa [env] using evaluate_rangeVars args.length env s bound
+  have clRun : BvlSem.evaluate [.var args.length] env s = (.val [.block tag (code :: arity :: fields)], s) := by
+    simp [BvlSem.evaluate, env]
+  have freeRun : BvlSem.evaluate (freeLet (.var args.length) fields.length) env s = (.val fields, s) := by
+    simpa using evaluate_freeLet fields.length s env (.var args.length) tag code arity fields clRun (by simp)
+  have bindingsRun : BvlSem.evaluate ((List.range args.length).map Bvl.Exp.var ++
+      freeLet (.var args.length) fields.length) env s = (.val (args ++ fields), s) := by
+    change BvlSem.evaluateTuple (((List.range args.length).map Bvl.Exp.var ++
+      freeLet (.var args.length) fields.length), env, s) = _
+    rw [BvlProps.evaluateAppend]
+    simp [BvlSem.evaluateTuple, argsRun, freeRun]
+  change BvlSem.evaluate [.let _ body] env s = _
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, bindingsRun]
+  simp [env, List.append_assoc]
+
+/-- An ordinary related closure at exact arity resolves to installed target
+code that presents its arguments and captured values to the compiled body. -/
+theorem clRel_ordinary_exact_call {C F : Type}
+    (s : BvlSem.State C F) (maxApp ptr arity : Nat) (fs : Nat → Prop)
+    (sourceEnv : List ClosSem.Value) (fields values rest : List BvlSem.Value)
+    (sourceBody : ClosLang.Exp) (target : BvlSem.Value)
+    (related : clRel maxApp fs s.refs s.code (sourceEnv, fields)
+      (.closure (some ptr) [] sourceEnv arity sourceBody) target)
+    (length : values.length = arity) (fieldsLength : fields.length = sourceEnv.length) :
+    ∃ aux targetBody finalAux,
+      compileExpsHOL maxApp [sourceBody] aux = ([targetBody], finalAux) ∧
+      codeInstalled finalAux s.code ∧
+      target = .block 30 (.codePtr (ptr + numStubs maxApp) :: .number (Int.ofNat (arity - 1)) :: fields) ∧
+      BvlSem.evaluate [mkClCall (.var values.length) ((List.range values.length).map Bvl.Exp.var)]
+          (values ++ [target] ++ rest) s =
+        if s.clock < arity then (.err (.abort .timeoutError), { s with clock := 0 })
+        else BvlSem.evaluate [targetBody]
+          ((values ++ fields) ++ values ++ [target]) (BvlSem.decClock arity s) := by
+  cases related with
+  | closure bound positive locations vars compiled installed lookup =>
+    have nonempty : values ≠ [] := by
+      intro empty
+      simp [empty] at length
+      exact positive length.symm
+    refine ⟨_, _, _, compiled, installed, rfl, ?_⟩
+    have run := evaluate_mkClCall_direct_env s values rest 30 (ptr + numStubs maxApp) fields _ nonempty
+      (by simpa [length, fieldsLength] using lookup)
+    simp only [length] at run ⊢
+    rw [run]
+    split
+    · rfl
+    · rw [← fieldsLength, ← length]
+      simpa [length] using evaluate_closure_entry (BvlSem.decClock arity s) values fields 30
+        (.codePtr (ptr + numStubs maxApp)) (.number (Int.ofNat (arity - 1))) _
+
+/-- An un-applied ordinary closure given exactly its arity selects its body,
+with no arguments left for a subsequent application. -/
+theorem destClosure_ordinary_exact (maxApp ptr arity : Nat) (sourceEnv args : List ClosSem.Value)
+    (body : ClosLang.Exp) (bound : arity ≤ maxApp) (positive : arity ≠ 0)
+    (length : args.length = arity) :
+    ClosSem.destClosure maxApp none (.closure (some ptr) [] sourceEnv arity body) args =
+      some (.fullApp body (args ++ sourceEnv) []) := by
+  have positiveArity : 0 < arity := Nat.pos_of_ne_zero positive
+  have take : args.reverse.take arity = args.reverse := by
+    apply List.take_of_length_le
+    simp [length]
+  simp [ClosSem.destClosure, ClosSem.checkLoc, length, bound, positiveArity, take]
+
 end Flapjack.Compiler.Backend.ClosToBvl
