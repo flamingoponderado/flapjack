@@ -618,6 +618,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileConcatByte
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CopyGlobalsStub
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileAllocGlobal
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstallArgs
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxNameRange
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
