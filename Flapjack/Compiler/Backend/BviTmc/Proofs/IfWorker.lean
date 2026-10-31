@@ -46,6 +46,7 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
     (conditionIH : ∀ r mid, evaluate [condition] env1 source = (r, mid) →
       r ≠ .err (.abort .typeError) → Core [condition] env2 f target r mid)
     (branchIH : ∀ branch mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
+      (∃ r, evaluate [condition] env1 source = (r, mid)) →
       (branch = yes ∨ branch = no) → evaluate [branch] env1 mid = (result, final) →
       envRel true g env1 env2 → stateRel g mid t →
       holeHasVal g env1 env2 t.refs c → holeNotFinalised t.refs holePtr →
@@ -115,7 +116,7 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
           have branchMember : selected = yes ∨ selected = no := by cases boolean <;> simp [selected]
           obtain ⟨workResult, h, workState, workRun, workRel, states, branchExtension,
             branchFresh, branchUnchanged, branchStill, filled⟩ :=
-            branchIH selected middle g middleTarget branchMember branchSource
+            branchIH selected middle g middleTarget ⟨.val [value], conditionRun⟩ branchMember branchSource
               (envRel_submap true f g env1 env2 environments extension) middleStates nextHole nextNotFinal
               (WrapperCases.evaluate_pres_opt_code loc locOpt source middle target middleTarget
                 [condition] env1 env2 (.val [value]) (.val [value']) code conditionRun targetRun)

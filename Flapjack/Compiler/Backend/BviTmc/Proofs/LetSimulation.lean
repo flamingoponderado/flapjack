@@ -77,14 +77,15 @@ theorem evaluate_let_core {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp
     (bindingsIH : ∀ r mid, evaluate bindings env1 source = (r, mid) →
       r ≠ .err (.abort .typeError) → Core bindings env2 f target r mid)
     (bodyIH : ∀ values values' mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
+      evaluate bindings env1 source = (.val values, mid) →
       evaluate [body] (values ++ env1) mid = (result, final) →
       envRel opt g (values ++ env1) (values' ++ env2) → stateRel g mid t →
       Core [body] (values' ++ env2) g t result final) :
     Core [.let bindings body] env2 f target result final := by
   apply evaluate_let_to_core bindings body body source env1 result final opt f target env2
     run notTypeError environments bindingsIH
-  intro values values' mid g t bodyRun valuesRelated env states _sourceRun _targetRun
-  exact bodyIH values values' mid g t bodyRun (envRel_append opt g env1 env2 values values' env valuesRelated) states
+  intro values values' mid g t bodyRun valuesRelated env states sourceRun _targetRun
+  exact bodyIH values values' mid g t sourceRun bodyRun (envRel_append opt g env1 env2 values values' env valuesRelated) states
 
 /-- Flapjack infrastructure: the let-wrapper simulation from the binding and
 body induction hypotheses, with optimized code preserved through bindings. -/
@@ -100,6 +101,7 @@ theorem evaluate_let_wrapper {C F : Type} (bindings : List Bvi.Exp) (body wrappe
     (bindingsIH : ∀ r mid, evaluate bindings env1 source = (r, mid) →
       r ≠ .err (.abort .typeError) → Core bindings env2 f target r mid)
     (bodyIH : ∀ values values' mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F) body',
+      evaluate bindings env1 source = (.val values, mid) →
       evaluate [body] (values ++ env1) mid = (result, final) →
       envRel opt g (values ++ env1) (values' ++ env2) → stateRel g mid t →
       optimisedCode loc locOpt mid.code t.code →
@@ -113,7 +115,7 @@ theorem evaluate_let_wrapper {C F : Type} (bindings : List Bvi.Exp) (body wrappe
   have nextCode := WrapperCases.evaluate_pres_opt_code loc locOpt source mid target t
     bindings env1 env2 (.val values) (.val values') code sourceBindings targetBindings
   have valueLength := evaluate_length bindings env1 source mid values sourceBindings
-  exact bodyIH values values' mid g t body' bodyRun
+  exact bodyIH values values' mid g t body' sourceBindings bodyRun
     (envRel_append opt g env1 env2 values values' env valuesRelated) states nextCode (by
       simpa [List.length_append, valueLength, Nat.add_comm] using rewrite)
 

@@ -17,6 +17,7 @@ theorem evaluate_if {C F : Type} (condition yes no : Bvi.Exp)
     (conditionIH : ∀ r mid, evaluate [condition] env1 source = (r, mid) →
       r ≠ .err (.abort .typeError) → Core [condition] env2 f target r mid)
     (branchIH : ∀ branch mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
+      (∃ r, evaluate [condition] env1 source = (r, mid)) →
       (branch = yes ∨ branch = no) → evaluate [branch] env1 mid = (result, final) →
       envRel opt g env1 env2 → stateRel g mid t →
       Core [branch] env2 g t result final ∧
@@ -38,15 +39,15 @@ theorem evaluate_if {C F : Type} (condition yes no : Bvi.Exp)
   constructor
   · apply evaluate_if_core condition yes no source env1 result final opt f target env2
       run notTypeError environments conditionIH
-    intro branch mid g t selected branchRun env states
-    exact (branchIH branch mid g t selected branchRun env states).1
+    intro branch mid g t conditionRun selected branchRun env states
+    exact (branchIH branch mid g t conditionRun selected branchRun env states).1
   · intro locOpt code
     constructor
     · intro wrapper wrapperRun
       apply evaluate_if_wrapper condition yes no wrapper source env1 result final opt f target env2
         loc locOpt run notTypeError environments code wrapperRun conditionIH
-      intro branch branchTarget mid g t selected rewritten branchRun env states nextCode
-      have branches := branchIH branch mid g t selected branchRun env states
+      intro branch branchTarget mid g t conditionRun selected rewritten branchRun env states nextCode
+      have branches := branchIH branch mid g t conditionRun selected branchRun env states
       rcases rewritten with rewrite | rfl
       · exact (branches.2 locOpt nextCode).1 branchTarget rewrite
       · exact branches.1
@@ -54,9 +55,9 @@ theorem evaluate_if {C F : Type} (condition yes no : Bvi.Exp)
       have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
       apply evaluate_if_worker condition yes no source env1 result final f target env2 loc locOpt holePtr
         run notTypeError optEnv c hole notFinal pointer code conditionIH
-      intro branch mid g t selected branchRun env states nextHole nextNotFinal nextCode
+      intro branch mid g t conditionRun selected branchRun env states nextHole nextNotFinal nextCode
       have branchEnv : envRel opt g env1 env2 := by simpa [optTrue] using env
-      exact (branchIH branch mid g t selected branchRun branchEnv states).2 locOpt nextCode |>.2
+      exact (branchIH branch mid g t conditionRun selected branchRun branchEnv states).2 locOpt nextCode |>.2
         optTrue holePtr c nextHole nextNotFinal pointer
 
 end Flapjack.Compiler.Backend.BviTmc.IfAssembly

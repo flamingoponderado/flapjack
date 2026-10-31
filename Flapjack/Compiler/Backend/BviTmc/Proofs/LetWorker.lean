@@ -22,6 +22,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
     (bindingsIH : ∀ r mid, evaluate bindings env1 source = (r, mid) →
       r ≠ .err (.abort .typeError) → Core bindings env2 f target r mid)
     (bodyIH : ∀ values values' mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
+      evaluate bindings env1 source = (.val values, mid) →
       evaluate [body] (values ++ env1) mid = (result, final) →
       envRel true g (values ++ env1) (values' ++ env2) → stateRel g mid t →
       holeHasVal g (values ++ env1) (values' ++ env2) t.refs c → holeNotFinalised t.refs holePtr →
@@ -85,7 +86,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
           bindings env1 env2 (.val values) (.val values') code bindingsRun targetRun
         obtain ⟨workResult, h, workState, workRun, workRel, states, bodyExtension,
           bodyFresh, bodyUnchanged, bodyStill, filled⟩ :=
-          bodyIH values values' middle g middleTarget run
+          bodyIH values values' middle g middleTarget bindingsRun run
             (envRel_append true g env1 env2 values values' (envRel_submap true f g env1 env2 environments extension) valuesRelated)
             middleStates extendedHole nextNotFinal extendedPointer nextCode
         have submap : finiteSubmap f h := by

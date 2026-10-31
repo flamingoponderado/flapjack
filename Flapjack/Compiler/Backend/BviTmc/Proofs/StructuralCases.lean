@@ -2,6 +2,8 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.StructuralHypothesis
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ReturnSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.RaiseSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.TickSimulation
+import Flapjack.Compiler.Backend.BviTmc.Proofs.IfAssembly
+import Flapjack.Compiler.Backend.BviTmc.Proofs.LetAssembly
 
 /-! Singleton expression cases for the TMC structural induction. -/
 namespace Flapjack.Compiler.Backend.BviTmc.StructuralCases
@@ -126,5 +128,75 @@ theorem evaluate_tick_from_clock {C F : Type} (loc : Nat) (body : Bvi.Exp)
   have post := ih body (BviSem.decClock 1 source) (BviSem.decClock 1 target) env1 env2 opt f loc result final
     smaller bodyRun safe environments decStates notTypeError
   exact singleton_to_raw body (BviSem.decClock 1 source) (BviSem.decClock 1 target) env1 env2 opt f loc result final post
+
+/-- Flapjack infrastructure: the conditional case follows from the common
+smaller-weight induction, including the selected branch's clock bound. -/
+theorem evaluate_if_from_weight {C F : Type} (loc : Nat) (condition yes no : Bvi.Exp)
+    (source : BviState (Nat × C) F) (target : BviState C F) (env1 env2 : List Value)
+    (opt : Bool) (f : HolFiniteMapExact Nat Nat) (result : BviResult) (final : BviState (Nat × C) F)
+    (run : evaluate [.ifThenElse condition yes no] env1 source = (result, final))
+    (notTypeError : result ≠ .err (.abort .typeError)) (safe : noMutcons (.ifThenElse condition yes no))
+    (environments : envRel opt f env1 env2) (states : stateRel f source target)
+    (ih : SmallerWeightIH (C := C) (F := F) source.clock (expsWeight [.ifThenElse condition yes no])) :
+    SingletonPost (.ifThenElse condition yes no) source target env1 env2 opt f loc result final := by
+  rw [noMutcons.eq_def] at safe
+  dsimp only at safe
+  have conditionWeight : expsWeight [condition] < expsWeight [.ifThenElse condition yes no] := by
+    simp only [BviSem.expsWeight, BviSem.expWeight]
+    omega
+  have yesWeight : expsWeight [yes] < expsWeight [.ifThenElse condition yes no] := by
+    simp only [BviSem.expsWeight, BviSem.expWeight]
+    omega
+  have noWeight : expsWeight [no] < expsWeight [.ifThenElse condition yes no] := by
+    simp only [BviSem.expsWeight, BviSem.expWeight]
+    omega
+  apply IfAssembly.evaluate_if condition yes no source env1 result final opt f target env2 loc
+    run notTypeError environments
+  · intro r mid conditionRun noError
+    exact (ih [condition] source target env1 env2 false f loc r mid (Nat.le_refl _) conditionWeight conditionRun
+      (by simpa using safe.1) (envRel_relax opt f env1 env2 environments) states (by simp) noError).1
+  · intro branch mid g t ⟨conditionResult, conditionRun⟩ selected branchRun env nextStates
+    have clock := evaluate_clock_le [condition] env1 source
+    rw [conditionRun] at clock
+    have weight : expsWeight [branch] < expsWeight [.ifThenElse condition yes no] := by
+      rcases selected with rfl | rfl
+      · exact yesWeight
+      · exact noWeight
+    have branchSafe : noMutcons branch := by
+      rcases selected with rfl | rfl
+      · exact safe.2.1
+      · exact safe.2.2
+    exact (ih [branch] mid t env1 env2 opt g loc result final clock weight branchRun
+      (by simpa using branchSafe) env nextStates (by simp) notTypeError).2 branch rfl
+
+/-- Flapjack infrastructure: the let case follows from the common
+smaller-weight induction for the bindings and body. -/
+theorem evaluate_let_from_weight {C F : Type} (loc : Nat) (bindings : List Bvi.Exp) (body : Bvi.Exp)
+    (source : BviState (Nat × C) F) (target : BviState C F) (env1 env2 : List Value)
+    (opt : Bool) (f : HolFiniteMapExact Nat Nat) (result : BviResult) (final : BviState (Nat × C) F)
+    (run : evaluate [.let bindings body] env1 source = (result, final))
+    (notTypeError : result ≠ .err (.abort .typeError)) (safe : noMutcons (.let bindings body))
+    (environments : envRel opt f env1 env2) (states : stateRel f source target)
+    (ih : SmallerWeightIH (C := C) (F := F) source.clock (expsWeight [.let bindings body])) :
+    SingletonPost (.let bindings body) source target env1 env2 opt f loc result final := by
+  rw [noMutcons.eq_def] at safe
+  dsimp only at safe
+  have bindingsWeight : expsWeight bindings < expsWeight [.let bindings body] := by
+    simp only [BviSem.expsWeight, BviSem.expWeight]
+    omega
+  have bodyWeight : expsWeight [body] < expsWeight [.let bindings body] := by
+    simp only [BviSem.expsWeight, BviSem.expWeight]
+    omega
+  have bindingsSafe : ∀ e ∈ bindings, noMutcons e := fun e member => safe.1 ⟨e, member⟩
+  apply LetAssembly.evaluate_let bindings body source env1 result final opt f target env2 loc
+    run notTypeError environments
+  · intro r mid bindingsRun noError
+    exact (ih bindings source target env1 env2 false f loc r mid (Nat.le_refl _) bindingsWeight bindingsRun
+      bindingsSafe (envRel_relax opt f env1 env2 environments) states (by simp) noError).1
+  · intro values values' mid g t bindingsRun bodyRun env nextStates
+    have clock := evaluate_clock_le bindings env1 source
+    rw [bindingsRun] at clock
+    exact (ih [body] mid t (values ++ env1) (values' ++ env2) opt g loc result final clock bodyWeight bodyRun
+      (by simpa using safe.2) env nextStates (by simp) notTypeError).2 body rfl
 
 end Flapjack.Compiler.Backend.BviTmc.StructuralCases

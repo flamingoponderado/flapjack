@@ -112,15 +112,17 @@ theorem evaluate_if_core {C F : Type} (condition yes no : Bvi.Exp)
     (conditionIH : ∀ r mid, evaluate [condition] env1 source = (r, mid) →
       r ≠ .err (.abort .typeError) → Core [condition] env2 f target r mid)
     (branchIH : ∀ branch mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
+      (∃ r, evaluate [condition] env1 source = (r, mid)) →
       (branch = yes ∨ branch = no) → evaluate [branch] env1 mid = (result, final) →
       envRel opt g env1 env2 → stateRel g mid t → Core [branch] env2 g t result final) :
     Core [.ifThenElse condition yes no] env2 f target result final := by
   apply evaluate_if_to_core condition yes no yes no source env1 result final opt f target env2
     run notTypeError environments conditionIH
-  intro branch branchTarget mid g t pair branchRun env states _conditionRuns
+  intro branch branchTarget mid g t pair branchRun env states conditionRuns
+  obtain ⟨r, _, sourceCondition, _⟩ := conditionRuns
   rcases pair with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-  · exact branchIH _ mid g t (Or.inl rfl) branchRun env states
-  · exact branchIH _ mid g t (Or.inr rfl) branchRun env states
+  · exact branchIH _ mid g t ⟨r, sourceCondition⟩ (Or.inl rfl) branchRun env states
+  · exact branchIH _ mid g t ⟨r, sourceCondition⟩ (Or.inr rfl) branchRun env states
 
 /-- Flapjack infrastructure: the wrapper branch of conditional simulation,
 assuming the condition and selected-branch induction hypotheses. The branch
@@ -137,6 +139,7 @@ theorem evaluate_if_wrapper {C F : Type} (condition yes no wrapper : Bvi.Exp)
     (conditionIH : ∀ r mid, evaluate [condition] env1 source = (r, mid) →
       r ≠ .err (.abort .typeError) → Core [condition] env2 f target r mid)
     (branchIH : ∀ branch branchTarget mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
+      (∃ r, evaluate [condition] env1 source = (r, mid)) →
       (branch = yes ∨ branch = no) →
       (rewriteWrapperSource loc locOpt env1.length branch = some branchTarget ∨ branchTarget = branch) →
       evaluate [branch] env1 mid = (result, final) →
@@ -155,9 +158,9 @@ theorem evaluate_if_wrapper {C F : Type} (condition yes no wrapper : Bvi.Exp)
     have nextCode := WrapperCases.evaluate_pres_opt_code loc locOpt source mid target t
       [condition] env1 env2 r r' code sourceCondition targetCondition
     rcases pair with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-    · apply branchIH _ _ mid g t (Or.inl rfl) ?_ branchRun env states nextCode
+    · apply branchIH _ _ mid g t r sourceCondition (Or.inl rfl) ?_ branchRun env states nextCode
       simp_all
-    · apply branchIH _ _ mid g t (Or.inr rfl) ?_ branchRun env states nextCode
+    · apply branchIH _ _ mid g t r sourceCondition (Or.inr rfl) ?_ branchRun env states nextCode
       simp_all
 
 end Flapjack.Compiler.Backend.BviTmc.IfSimulation

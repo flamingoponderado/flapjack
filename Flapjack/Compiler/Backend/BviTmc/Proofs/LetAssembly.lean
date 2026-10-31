@@ -17,6 +17,7 @@ theorem evaluate_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
     (bindingsIH : ∀ r mid, evaluate bindings env1 source = (r, mid) →
       r ≠ .err (.abort .typeError) → Core bindings env2 f target r mid)
     (bodyIH : ∀ values values' mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
+      evaluate bindings env1 source = (.val values, mid) →
       evaluate [body] (values ++ env1) mid = (result, final) →
       envRel opt g (values ++ env1) (values' ++ env2) → stateRel g mid t →
       Core [body] (values' ++ env2) g t result final ∧
@@ -38,22 +39,22 @@ theorem evaluate_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
   constructor
   · apply evaluate_let_core bindings body source env1 result final opt f target env2
       run notTypeError environments bindingsIH
-    intro values values' mid g t bodyRun env states
-    exact (bodyIH values values' mid g t bodyRun env states).1
+    intro values values' mid g t bindingsRun bodyRun env states
+    exact (bodyIH values values' mid g t bindingsRun bodyRun env states).1
   · intro locOpt code
     constructor
     · intro wrapper wrapperRun
       apply evaluate_let_wrapper bindings body wrapper source env1 result final opt f target env2
         loc locOpt run notTypeError environments code wrapperRun bindingsIH
-      intro values values' mid g t body' bodyRun env states nextCode rewrite
-      exact (bodyIH values values' mid g t bodyRun env states).2 locOpt nextCode |>.1 body' rewrite
+      intro values values' mid g t body' bindingsRun bodyRun env states nextCode rewrite
+      exact (bodyIH values values' mid g t bindingsRun bodyRun env states).2 locOpt nextCode |>.1 body' rewrite
     · intro optTrue holePtr c hole notFinal pointer
       have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
       apply evaluate_let_worker bindings body source env1 result final f target env2 loc locOpt holePtr
         run notTypeError optEnv c hole notFinal pointer code bindingsIH
-      intro values values' mid g t bodyRun env states nextHole nextNotFinal nextPointer nextCode
+      intro values values' mid g t bindingsRun bodyRun env states nextHole nextNotFinal nextPointer nextCode
       have bodyEnv : envRel opt g (values ++ env1) (values' ++ env2) := by simpa [optTrue] using env
-      exact (bodyIH values values' mid g t bodyRun bodyEnv states).2 locOpt nextCode |>.2
+      exact (bodyIH values values' mid g t bindingsRun bodyRun bodyEnv states).2 locOpt nextCode |>.2
         optTrue holePtr c nextHole nextNotFinal nextPointer
 
 end Flapjack.Compiler.Backend.BviTmc.LetAssembly
