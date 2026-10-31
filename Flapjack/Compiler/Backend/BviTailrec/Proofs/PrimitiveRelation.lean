@@ -682,6 +682,76 @@ theorem doApp_allocGlobal {C F : Type} (args : List Value) (state : BviSem.BviSt
     BviSem.doApp (.globOp .allocGlobal) args state = .err (.abort .typeError) := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux]
 
+/-- Constructing a plain block returns its fields without changing state. -/
+theorem doApp_blockCons {C F : Type} (tag : Nat) (args : List Value) (state : BviSem.BviState C F) :
+    BviSem.doApp (.blockOp (.cons tag)) args state = .val (.block tag args, state) := by
+  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+    BvlSem.applyBlock, BviSem.fromBvl_toBvl]
+
+/-- Plain block construction preserves related states. -/
+theorem stateRel_doApp_blockCons {C F : Type} (tag : Nat) (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.blockOp (.cons tag)) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.blockOp (.cons tag)) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  rw [doApp_blockCons] at run
+  cases run
+  exact ⟨target, doApp_blockCons tag args target, related⟩
+
+/-- Plain block construction cannot report an error. -/
+theorem doApp_blockCons_error {C F : Type} (tag : Nat) (args : List Value)
+    (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.blockOp (.cons tag)) args state = .err error) : error = .abort .typeError := by
+  rw [doApp_blockCons] at run
+  contradiction
+
+/-- A constant-block build returns the value and reference store produced by
+the shared builder; nonempty argument lists are rejected. -/
+theorem doApp_blockBuild_effect {C F : Type} (parts : List ClosLang.ConstPart)
+    (args : List Value) (state : BviSem.BviState C F) :
+    BviSem.doApp (.blockOp (.build parts)) args state =
+      match args with
+      | [] => let (value, refs) := doBuildConst parts state.refs
+        .val (value, { state with refs := refs })
+      | _ => .err (.abort .typeError) := by
+  cases args with
+  | nil =>
+    cases built : doBuildConst parts state.refs with
+    | mk value refs =>
+      simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+        BvlSem.applyBlock, BviSem.toBvl, BviSem.fromBvl, built]
+  | cons value rest =>
+    simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock]
+
+/-- Building a constant block preserves related states. -/
+theorem stateRel_doApp_blockBuild {C F : Type} (parts : List ClosLang.ConstPart) (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.blockOp (.build parts)) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.blockOp (.build parts)) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  have refs := (stateRel_const source target related).1
+  rw [doApp_blockBuild_effect] at run ⊢
+  rw [refs]
+  cases args with
+  | cons head tail => simp at run
+  | nil =>
+    cases built : doBuildConst parts source.refs with
+    | mk builtValue newRefs =>
+      simp [built] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact ⟨{ target with refs := newRefs }, by simp, stateRel_withRefs source target newRefs related⟩
+
+/-- Constant-block construction reports only type errors. -/
+theorem doApp_blockBuild_error {C F : Type} (parts : List ClosLang.ConstPart) (args : List Value)
+    (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.blockOp (.build parts)) args state = .err error) : error = .abort .typeError := by
+  rw [doApp_blockBuild_effect] at run
+  cases args with
+  | cons head tail => simpa using run.symm
+  | nil => cases built : doBuildConst parts state.refs; simp [built] at run
+
 /-- Value computed by BVI's two-argument block-from-list primitive. -/
 def blockFromListValue (tag : Nat) (args : List Value) : Option Value :=
   match args with

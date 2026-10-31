@@ -2961,6 +2961,44 @@ theorem rewriteTail_op_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlS
   rw [scanEq] at noChoice
   simp at noChoice
 
+/-- Plain block construction preserves the rewrite simulation. -/
+theorem rewriteTail_op_blockCons {C F : Type} (tag : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.blockOp (.cons tag)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.blockOp (.cons tag)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.blockOp (.cons tag)) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_blockCons tag
+  · exact doApp_blockCons_error tag
+  · exact hyp
+
+/-- Constant-block construction preserves the rewrite simulation. -/
+theorem rewriteTail_op_blockBuild {C F : Type} (parts : List ClosLang.ConstPart) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.blockOp (.build parts)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.blockOp (.build parts)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.blockOp (.build parts)) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_blockBuild parts
+  · exact doApp_blockBuild_error parts
+  · exact hyp
+
 /-- Block-from-list construction preserves the rewrite simulation. -/
 theorem rewriteTail_op_blockFromList {C F : Type} (tag : Nat) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
