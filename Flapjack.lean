@@ -644,6 +644,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
 import Flapjack.Compiler.Backend.ClosToBvl.Layout.Auxiliary
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Integer
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateInteger
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Word
 import Flapjack.Test.ClosToBvlRecursive
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
