@@ -1153,4 +1153,130 @@ theorem doApp_op_rel_updateByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
                         · intro key item present
                           exact present
 
+/-- Comparing byte arrays gives the same result after pointer renaming. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_stringCmp {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (fast : Bool) (op : Opb) (values relatedValues : List Value)
+    (source sourceNext : BviState (Nat × C) F) (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp (.stringCmp fast op)) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.memOp (.stringCmp fast op))) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp (.stringCmp fast op)) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+    | cons second rest =>
+      cases rest with
+      | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | nil =>
+        cases first <;> cases second <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux,
+          BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl] at run
+        rename_i flag1 ptr1 flag2 ptr2
+        cases valuesRelated with
+        | cons ptrRel tailRel =>
+          cases ptrRel with
+          | refPtr _ targetPtr1 _ mapped1 =>
+            cases tailRel with
+            | cons ptrRel tailRel =>
+              cases ptrRel with
+              | refPtr _ targetPtr2 _ mapped2 =>
+                cases tailRel
+                obtain ⟨_, _, sourceFound1, targetFound1, cells1⟩ :=
+                  stateRefRel_lookup f ptr1 targetPtr1 source.refs target.refs mapped1 statesRelated.1
+                obtain ⟨_, _, sourceFound2, targetFound2, cells2⟩ :=
+                  stateRefRel_lookup f ptr2 targetPtr2 source.refs target.refs mapped2 statesRelated.1
+                cases cells1 with
+                | valueArray xs ys rel => simp [sourceFound1] at run
+                | thunk mode x y rel => simp [sourceFound1] at run
+                | byteArray b1 bytes1 =>
+                  cases cells2 with
+                  | valueArray xs ys rel => simp [sourceFound1, sourceFound2] at run
+                  | thunk mode x y rel => simp [sourceFound1, sourceFound2] at run
+                  | byteArray b2 bytes2 =>
+                    simp [sourceFound1, sourceFound2, BviSem.fromBvl] at run
+                    obtain ⟨rfl, rfl⟩ := run
+                    refine ⟨f, boolValue (SemanticPrimitivesHOL.strCmp fast op
+                      (Basis.Pure.MlString.MlString.implode bytes1) (Basis.Pure.MlString.MlString.implode bytes2)),
+                      target, ?_, ?_, statesRelated, ?_, onlyFresh_refl f target.refs,
+                      holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+                    · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                        BviSem.toBvl, BviSem.fromBvl, targetFound1, targetFound2]
+                    · exact .block _ [] [] .nil
+                    · intro key item present
+                      exact present
+
+/-- Bytewise XOR updates corresponding destination arrays identically. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_xorByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp .xorByte) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.memOp .xorByte)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp .xorByte) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+    | cons second rest =>
+      cases rest with
+      | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | nil =>
+        cases first <;> cases second <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux,
+          BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl] at run
+        rename_i flag1 ptr1 flag2 ptr2
+        cases valuesRelated with
+        | cons ptrRel tailRel =>
+          cases ptrRel with
+          | refPtr _ targetPtr1 _ mapped1 =>
+            cases tailRel with
+            | cons ptrRel tailRel =>
+              cases ptrRel with
+              | refPtr _ targetPtr2 _ mapped2 =>
+                cases tailRel
+                obtain ⟨_, _, sourceFound1, targetFound1, cells1⟩ :=
+                  stateRefRel_lookup f ptr1 targetPtr1 source.refs target.refs mapped1 statesRelated.1
+                obtain ⟨_, _, sourceFound2, targetFound2, cells2⟩ :=
+                  stateRefRel_lookup f ptr2 targetPtr2 source.refs target.refs mapped2 statesRelated.1
+                cases cells2 with
+                | valueArray xs ys rel => simp [sourceFound2] at run
+                | thunk mode x y rel => simp [sourceFound2] at run
+                | byteArray b2 bytes2 =>
+                  cases cells1 with
+                  | valueArray xs ys rel => simp [sourceFound1, sourceFound2] at run
+                  | thunk mode x y rel => simp [sourceFound1, sourceFound2] at run
+                  | byteArray b1 bytes1 =>
+                    cases result : SemanticPrimitivesHOL.xorBytes bytes2 bytes1 with
+                    | none => simp [sourceFound1, sourceFound2, result] at run
+                    | some updated =>
+                      simp [sourceFound1, sourceFound2, result, BviSem.fromBvl] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      have nextRelated : stateRel f
+                          { source with refs := source.refs.updateEq (ptr1, .byteArray b1 updated) }
+                          { target with refs := target.refs.updateEq (targetPtr1, .byteArray b1 updated) } := by
+                        exact ⟨stateRefRel_update f source.refs target.refs ptr1 targetPtr1 _ _ statesRelated.1
+                          statesRelated.2.2.2.2.2.2.2.2.2.2 mapped1 (.byteArray _ _), statesRelated.2⟩
+                      refine ⟨f, unitValue, { target with refs := target.refs.updateEq (targetPtr1, .byteArray b1 updated) },
+                        ?_, ?_, nextRelated, ?_, onlyFresh_refl f target.refs,
+                        holesUnchanged_rangeUpdate f ptr1 targetPtr1 _ target.refs mapped1,
+                        holesStill_rangeUpdate f ptr1 targetPtr1 _ target.refs mapped1⟩
+                      · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                          BviSem.toBvl, BviSem.fromBvl, targetFound1, targetFound2, result]
+                      · exact .block _ [] [] .nil
+                      · intro key item present
+                        exact present
+
 end Flapjack.Compiler.Backend.BviTmc
