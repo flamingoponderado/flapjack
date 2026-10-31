@@ -237,6 +237,12 @@ theorem setWidth8_toInt (imm : BitVec 64)
     norm_num
     omega
 
+/-- A byte literal of a word's low eight bits is the word truncated to eight bits. -/
+theorem byte_eq_setWidth8 (disp : BitVec 64) :
+    byte disp.toNat = BitVec.setWidth 8 disp := by
+  apply BitVec.toNat_eq.mpr
+  simp [byte, BitVec.toNat_setWidth]
+
 /-- The `k`-th little-endian byte of a 64-bit word. -/
 theorem byte_extract (imm : BitVec 64) (k : Nat) :
     byte (imm.toNat / 2^(8*k)) = (imm >>> (8*k)).setWidth 8 := by
