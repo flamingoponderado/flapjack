@@ -164,4 +164,31 @@ theorem evaluate_bvi_to_cb_aux_inr_constructor {C F : Type}
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, innerRun] at run
           simpa [errorEq] using run
 
+/-- The singleton-list case of the original mutual extraction simulation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_bvi_to_cb_aux_inr_singleton {C F : Type}
+    (n loc tag : Nat) (e : Bvi.Exp)
+    (ih : ∀ (env : List Value) (state final : BviState C F) (result : BviResult)
+      (bs : List Bvi.Exp) (cb : CallBlock),
+      extractOneSource n loc tag e = some (bs, .inr cb) →
+      evaluate [.op (.blockOp (.cons tag)) [e]] env state = (result, final) →
+      n ≤ env.length →
+      ∃ argResult next, evaluate bs env state = (argResult, next) ∧
+        (∀ values, argResult = .val values →
+          evaluate [callBlockToBvi loc cb] values next = (result, final) ∧
+          ∀ extras, evaluate [callBlockToBvi loc cb] (values ++ extras) next = (result, final)) ∧
+        (∀ error, argResult = .err error → (argResult, next) = (result, final)))
+    (env : List Value) (state final : BviState C F) (result : BviResult)
+    (bs : List Bvi.Exp) (cb : CallBlock)
+    (extracted : extractListSource n loc tag [e] = some (bs, .inr cb))
+    (run : evaluate [.op (.blockOp (.cons tag)) [e]] env state = (result, final))
+    (bound : n ≤ env.length) :
+    ∃ argResult next, evaluate bs env state = (argResult, next) ∧
+      (∀ values, argResult = .val values →
+        evaluate [callBlockToBvi loc cb] values next = (result, final) ∧
+        ∀ extras, evaluate [callBlockToBvi loc cb] (values ++ extras) next = (result, final)) ∧
+      (∀ error, argResult = .err error → (argResult, next) = (result, final)) :=
+  ih env state final result bs cb (by simpa [extractListSource] using extracted) run bound
+
 end Flapjack.Compiler.Backend.BviTmc.CallExtraction

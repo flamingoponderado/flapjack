@@ -105,4 +105,78 @@ termination_by listBudget args
 decreasing_by all_goals simp_all only [listBudget]; omega
 end
 
+/-- Every successful top-level conversion produces a well-formed skeleton. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "bvi_to_cb_wf"]
+theorem toBlock_wf (n loc : Nat) (e : Bvi.Exp) (bs : List Bvi.Exp) (cb : CallBlock)
+    (run : toBlockSource n loc e = some (bs, cb)) : wfBlock bs.length cb := by
+  cases e with
+  | call ticks dest args handler =>
+    simp only [toBlockSource, callToBlockSource] at run
+    split at run
+    next =>
+      cases h : bind 0 args with
+      | mk indices last =>
+        simp only [h, Option.some.injEq, Prod.mk.injEq] at run
+        obtain ⟨rfl, rfl⟩ := run.symm
+        simpa [wfBlock] using wfVars_bind args indices 0 last h
+    next => simp at run
+  | op op args =>
+    cases op with
+    | blockOp block =>
+      cases block with
+      | cons tag =>
+        simp only [toBlockSource] at run
+        cases h : extractListSource n loc tag args with
+        | none => simp [h] at run
+        | some pair =>
+          obtain ⟨bindings, kind⟩ := pair
+          cases kind with
+          | inl vs => simp [h] at run
+          | inr child =>
+            have wf := (extractList_wf_inr n loc tag args bindings child h).1
+            simp [h] at run
+            obtain ⟨rfl, rfl⟩ := run.symm
+            exact wf
+      | _ => simp [toBlockSource] at run
+    | _ => simp [toBlockSource] at run
+  | _ => simp [toBlockSource] at run
+
+/-- Successful conversion arises from a constructor or a direct self-call. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "bvi_to_cb_cases"]
+theorem toBlock_cases (n loc : Nat) (e : Bvi.Exp) (bs : List Bvi.Exp) (cb : CallBlock)
+    (run : toBlockSource n loc e = some (bs, cb)) :
+    (∃ tag args left child right,
+      e = .op (.blockOp (.cons tag)) args ∧ cb = .callBlock tag left child right) ∨
+    (∃ ticks args vs, e = .call ticks (some loc) args none ∧ cb = .rCall ticks vs) := by
+  cases e with
+  | call ticks dest args handler =>
+    simp only [toBlockSource, callToBlockSource] at run
+    split at run
+    next same =>
+      obtain ⟨rfl, rfl⟩ := same
+      cases h : bind 0 args with
+      | mk indices last =>
+        simp only [h, Option.some.injEq, Prod.mk.injEq] at run
+        exact Or.inr ⟨ticks, args, indices, rfl, run.2.symm⟩
+    next => simp at run
+  | op op args =>
+    cases op with
+    | blockOp block =>
+      cases block with
+      | cons tag =>
+        simp only [toBlockSource] at run
+        cases h : extractListSource n loc tag args with
+        | none => simp [h] at run
+        | some pair =>
+          obtain ⟨bindings, kind⟩ := pair
+          cases kind with
+          | inl vs => simp [h] at run
+          | inr child =>
+            obtain ⟨_, left, inner, right, shape⟩ := extractList_wf_inr n loc tag args bindings child h
+            simp [h] at run
+            exact Or.inl ⟨tag, args, left, inner, right, rfl, run.2.symm.trans shape⟩
+      | _ => simp [toBlockSource] at run
+    | _ => simp [toBlockSource] at run
+  | _ => simp [toBlockSource] at run
+
 end Flapjack.Compiler.Backend.BviTmc
