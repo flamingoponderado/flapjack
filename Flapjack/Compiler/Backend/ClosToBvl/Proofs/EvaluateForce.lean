@@ -312,4 +312,82 @@ theorem evaluate_forceThunkCode_error {C F : Type} (t next : BvlSem.State C F)
     BvlSem.evaluate [forceThunkCode] [thunk, function] t = (.err error, next) := by
   rw [evaluate_forceThunkCode_factor, call]
 
+/-- A successful simulated source thunk application lifts to a simulation of
+its forcing stub, including the source and target reference updates. -/
+theorem evaluatePost_forceThunkCode_success {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (f : HolFiniteMapExact Nat Nat) (thunk function value : ClosSem.Value)
+    (targetThunk targetFunction : BvlSem.Value)
+    (sourceRun : ClosSem.evaluate [ClosSem.appUnit (.var .none 0)] [function] s = (.val [value], sFinal))
+    (thunkRel : vRel s.maxApp f t.refs t.code thunk targetThunk)
+    (post : evaluatePost s sFinal t [targetFunction] f (.val [value])
+      [.let [.op (.blockOp (.cons 0)) [], .var 0] (mkClCall (.var 1) [.var 0])])
+    (nextRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
+    (updated : ClosSem.updateThunk [thunk] sFinal.refs [value] = some nextRefs) :
+    evaluatePost s { sFinal with refs := nextRefs } t [targetThunk, targetFunction] f
+      (.val [value]) [forceThunkCode] := by
+  have maxApp : sFinal.maxApp = s.maxApp := by
+    have h := (ClosProps.evaluate_const (C := C) (F := F)).1
+      [ClosSem.appUnit (.var .none 0)] [function] s
+    rw [sourceRun] at h
+    exact h
+  obtain ⟨clock, targetResult, tFinal, fFinal, targetRun, related, states, map, frame, annotations, clocks⟩ := post
+  have codeGrowth : sptSubspt t.code tFinal.code :=
+    BvlProps.evaluateMono _ _ { t with clock := s.clock + clock } _ _ targetRun
+  have thunkFinal : vRel sFinal.maxApp fFinal tFinal.refs tFinal.code thunk targetThunk := by
+    simpa [maxApp] using vRel_grow thunkRel map frame codeGrowth
+  cases targetResult with
+  | err error => simp [resultRel] at related
+  | val targetValues =>
+    have valuesRel : List.Forall₂ (vRel sFinal.maxApp fFinal tFinal.refs tFinal.code)
+        [value] targetValues := by simpa [resultRel, maxApp] using related
+    cases valuesRel with
+    | cons valueRel tail =>
+      cases tail
+      rename_i targetValue
+      have appRun := targetRun
+      rw [evaluate_force_appUnit_binding] at appRun
+      obtain ⟨targetNext, forced, nextState, nextValue, nextFrame, nextClock⟩ :=
+        evaluate_forceThunkCode_success_related sFinal { t with clock := s.clock + clock } tFinal states
+          thunk value targetThunk targetFunction targetValue appRun thunkFinal valueRel nextRefs updated
+      refine ⟨clock, .val [targetValue], targetNext, fFinal, forced, ?_, nextState, map,
+        unmappedRefsSubmap_trans frame nextFrame, ?_, ?_⟩
+      · exact .cons (by simpa [maxApp] using nextValue) .nil
+      · simpa [codeAnnotations] using annotations
+      · simpa [nextClock] using clocks
+
+/-- An error in the simulated source application lifts unchanged through the
+forcing stub, preserving its simulation postcondition. -/
+theorem evaluatePost_forceThunkCode_error {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (f : HolFiniteMapExact Nat Nat) (targetThunk targetFunction : BvlSem.Value)
+    (error : ErrorResult ClosSem.Value)
+    (post : evaluatePost s sFinal t [targetFunction] f (.err error)
+      [.let [.op (.blockOp (.cons 0)) [], .var 0] (mkClCall (.var 1) [.var 0])]) :
+    evaluatePost s sFinal t [targetThunk, targetFunction] f (.err error) [forceThunkCode] := by
+  obtain ⟨clock, targetResult, tFinal, fFinal, targetRun, related, states, map, frame, annotations, clocks⟩ := post
+  cases targetResult with
+  | val values => simp [resultRel] at related
+  | err targetError =>
+    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, states, map, frame, annotations, clocks⟩
+    rw [evaluate_force_appUnit_binding] at targetRun
+    exact evaluate_forceThunkCode_error _ _ _ _ _ targetRun
+
+/-- A forcing-stub simulation yields a force-instruction simulation after
+supplying the extra tick consumed by the target stub call. -/
+theorem evaluatePost_forceThunkCode_enter {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (f : HolFiniteMapExact Nat Nat) (targetThunk targetFunction : BvlSem.Value) (rest : List BvlSem.Value)
+    (result : Result (List ClosSem.Value) ClosSem.Value) (location : Nat)
+    (found : BvlSem.destThunk targetThunk t.refs = .isThunk .notEvaluated targetFunction)
+    (installed : sptLookup location t.code = some (2, forceThunkCode))
+    (post : evaluatePost s sFinal t [targetThunk, targetFunction] f result [forceThunkCode]) :
+    evaluatePost s sFinal t (targetThunk :: rest) f result [.force location 0] := by
+  obtain ⟨clock, targetResult, tFinal, fFinal, targetRun, related, states, map, frame, annotations, clocks⟩ := post
+  refine ⟨clock + 1, targetResult, tFinal, fFinal, ?_, related, states, map, frame, annotations, clocks⟩
+  have entry := evaluate_force_unevaluated_enter { t with clock := s.clock + (clock + 1) }
+    rest targetThunk targetFunction location found installed (by simp)
+  rw [entry]
+  simpa [BvlSem.decClock, Nat.add_assoc] using targetRun
+
 end Flapjack.Compiler.Backend.ClosToBvl
