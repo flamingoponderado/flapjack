@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCons
 
 /-! Mutable reference lookup for the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -193,6 +194,174 @@ theorem memoryByte_error {C F : Type} (args : List ClosSem.Value)
     (run : ClosSem.doApp (.memOp .derefByte) args s = .err error) : error = .abort .typeError := by
   simp only [ClosSem.doApp] at run
   cases h : ClosSem.applyMemory .derefByte args s <;> simp [h] at run
+  exact run.symm
+
+/-- Looking up a related field preserves its value relation. -/
+theorem relatedFields_lookup {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {source : List ClosSem.Value} {target : List BvlSem.Value}
+    (related : List.Forall₂ (vRel maxApp f refs code) source target)
+    (index : Nat) (value : ClosSem.Value) (found : source[index]? = some value) :
+    ∃ targetValue, target[index]? = some targetValue ∧ vRel maxApp f refs code value targetValue := by
+  induction related generalizing index with
+  | nil => simp at found
+  | cons head tail ih =>
+    cases index with
+    | zero =>
+      simp only [List.getElem?_cons_zero, Option.some.injEq] at found
+      subst value
+      exact ⟨_, rfl, head⟩
+    | succ index =>
+      simp only [List.getElem?_cons_succ] at found ⊢
+      exact ih index found
+
+/-- Indexed access on related blocks has the same result relation. -/
+theorem memoryEl_block {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    (s : ClosSem.State C F) (t : BvlSem.State C F)
+    (tag : Nat) (fields : List ClosSem.Value) (target : BvlSem.Value)
+    (blockRel : vRel s.maxApp f t.refs t.code (.block tag fields) target)
+    (index : Int) (nonnegative : ¬ index < 0) (value : ClosSem.Value)
+    (found : fields[index.toNat]? = some value) :
+    ∃ result, BvlSem.doApp (.memOp .el) [target, .number index] t = .val (result, t) ∧
+      vRel s.maxApp f t.refs t.code value result := by
+  obtain ⟨targetFields, rfl, fieldsRel⟩ := vRel_block_inv blockRel
+  obtain ⟨result, targetFound, resultRel⟩ := relatedFields_lookup fieldsRel index.toNat value found
+  exact ⟨result, by simp [BvlSem.doApp, BvlSem.applyMemory, nonnegative, targetFound], resultRel⟩
+
+/-- Indexed access on related mutable arrays has the same result relation. -/
+theorem memoryEl_array {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+    (flag : Bool) (ptr targetPtr : Nat) (mapped : f.lookup ptr = some targetPtr)
+    (fields : List ClosSem.Value) (arrayFound : s.refs.lookup ptr = some (.valueArray fields))
+    (index : Int) (nonnegative : ¬ index < 0) (value : ClosSem.Value)
+    (found : fields[index.toNat]? = some value) :
+    ∃ result, BvlSem.doApp (.memOp .el) [.refPtr flag targetPtr, .number index] t = .val (result, t) ∧
+      vRel s.maxApp f t.refs t.code value result := by
+  obtain ⟨targetFields, targetArray, fieldsRel⟩ := stateRel_array_lookup states ptr targetPtr fields mapped arrayFound
+  obtain ⟨result, targetFound, resultRel⟩ := relatedFields_lookup fieldsRel index.toNat value found
+  exact ⟨result, by simp [BvlSem.doApp, BvlSem.applyMemory, targetArray, nonnegative, targetFound], resultRel⟩
+
+/-- Successful indexed block or mutable-array access preserves related values. -/
+theorem memoryEl_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    (args : List ClosSem.Value) (targets : List BvlSem.Value)
+    (s next : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+    (related : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targets)
+    (value : ClosSem.Value) (run : ClosSem.doApp (.memOp .el) args s = .val (value, next)) :
+    ∃ target, BvlSem.doApp (.memOp .el) targets t = .val (target, t) ∧
+      next = s ∧ vRel s.maxApp f t.refs t.code value target := by
+  cases args with
+  | nil => simp [ClosSem.doApp, ClosSem.applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [ClosSem.doApp, ClosSem.applyMemory] at run
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp [ClosSem.doApp, ClosSem.applyMemory] at run
+      | nil =>
+        cases first <;> cases second <;> simp only [ClosSem.doApp, ClosSem.applyMemory] at run
+        all_goals try contradiction
+        case block.number tag fields index =>
+          cases related with
+          | cons firstRel tail =>
+            cases tail with
+            | cons secondRel tail =>
+              cases tail
+              have secondEq := vRel_number_inv secondRel
+              subst_vars
+              by_cases negative : index < 0
+              · simp [negative] at run
+              · cases found : fields[index.toNat]? with
+                | none => simp [negative, found] at run
+                | some field =>
+                  simp [negative, found] at run
+                  rcases run with ⟨rfl, rfl⟩
+                  obtain ⟨target, targetRun, valueRel⟩ := memoryEl_block s t tag fields _ firstRel index negative field found
+                  exact ⟨target, targetRun, rfl, valueRel⟩
+        case refPtr.number flag ptr index =>
+          cases related with
+          | cons firstRel tail =>
+            cases tail with
+            | cons secondRel tail =>
+              cases tail
+              obtain ⟨targetPtr, rfl, mapped⟩ := vRel_refPtr_inv firstRel
+              have secondEq := vRel_number_inv secondRel
+              subst_vars
+              cases arrayFound : s.refs.lookup ptr with
+              | none => simp [arrayFound] at run
+              | some cell =>
+                cases cell with
+                | byteArray bytes => simp [arrayFound] at run
+                | thunk mode value => simp [arrayFound] at run
+                | valueArray fields =>
+                  by_cases negative : index < 0
+                  · simp [arrayFound, negative] at run
+                  · cases found : fields[index.toNat]? with
+                    | none => simp [arrayFound, negative, found] at run
+                    | some field =>
+                      simp [arrayFound, negative, found] at run
+                      rcases run with ⟨rfl, rfl⟩
+                      obtain ⟨target, targetRun, valueRel⟩ :=
+                        memoryEl_array s t states flag ptr targetPtr mapped fields arrayFound index negative field found
+                      exact ⟨target, targetRun, rfl, valueRel⟩
+
+/-- A failed indexed access reports a source type error. -/
+theorem memoryEl_error {C F : Type} (args : List ClosSem.Value)
+    (s : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
+    (run : ClosSem.doApp (.memOp .el) args s = .err error) : error = .abort .typeError := by
+  simp only [ClosSem.doApp] at run
+  cases h : ClosSem.applyMemory .el args s <;> simp [h] at run
+  exact run.symm
+
+/-- Array bounds checks agree for related mutable arrays. -/
+theorem memoryBoundsArray_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    (args : List ClosSem.Value) (targets : List BvlSem.Value)
+    (s next : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+    (related : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targets)
+    (value : ClosSem.Value) (run : ClosSem.doApp (.memOp .boundsCheckArray) args s = .val (value, next)) :
+    ∃ target, BvlSem.doApp (.memOp .boundsCheckArray) targets t = .val (target, t) ∧
+      next = s ∧ vRel s.maxApp f t.refs t.code value target := by
+  cases args with
+  | nil => simp [ClosSem.doApp, ClosSem.applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [ClosSem.doApp, ClosSem.applyMemory] at run
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp [ClosSem.doApp, ClosSem.applyMemory] at run
+      | nil =>
+        cases first <;> cases second <;> simp only [ClosSem.doApp, ClosSem.applyMemory] at run
+        all_goals try contradiction
+        case refPtr.number flag ptr index =>
+          cases related with
+          | cons firstRel tail =>
+            cases tail with
+            | cons secondRel tail =>
+              cases tail
+              obtain ⟨targetPtr, rfl, mapped⟩ := vRel_refPtr_inv firstRel
+              have secondEq := vRel_number_inv secondRel
+              subst_vars
+              cases found : s.refs.lookup ptr with
+              | none => simp [found] at run
+              | some cell =>
+                cases cell with
+                | byteArray bytes => simp [found] at run
+                | thunk mode value => simp [found] at run
+                | valueArray fields =>
+                  simp [found] at run
+                  rcases run with ⟨rfl, rfl⟩
+                  obtain ⟨targetFields, targetFound, fieldsRel⟩ :=
+                    stateRel_array_lookup states ptr targetPtr fields mapped found
+                  let bound := decide (0 ≤ index ∧ index < Int.ofNat fields.length)
+                  refine ⟨BvlSem.boolValue bound, ?_, rfl, ?_⟩
+                  · simp [BvlSem.doApp, BvlSem.applyMemory, targetFound, fieldsRel.length_eq, bound]
+                  · simpa [bound] using (vRel_bool (maxApp := s.maxApp) (f := f) (refs := t.refs) (code := t.code) bound)
+
+/-- Failed mutable-array bounds checks report a source type error. -/
+theorem memoryBoundsArray_error {C F : Type} (args : List ClosSem.Value)
+    (s : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
+    (run : ClosSem.doApp (.memOp .boundsCheckArray) args s = .err error) : error = .abort .typeError := by
+  simp only [ClosSem.doApp] at run
+  cases h : ClosSem.applyMemory .boundsCheckArray args s <;> simp [h] at run
   exact run.symm
 
 end Flapjack.Compiler.Backend.ClosToBvl
