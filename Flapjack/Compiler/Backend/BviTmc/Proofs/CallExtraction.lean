@@ -67,4 +67,64 @@ theorem evaluate_bvi_to_cb_aux_inr_call {C F : Type}
           simpa using run
   next => simp at extracted
 
+/-- The constructor-expression case, using the source induction hypothesis for
+the constructor's argument list. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_bvi_to_cb_aux_inr_constructor {C F : Type}
+    (n loc tag childTag : Nat) (args : List Bvi.Exp)
+    (ih : ∀ (env : List Value) (state final : BviState C F) (result : BviResult)
+      (bs : List Bvi.Exp) (cb : CallBlock),
+      extractListSource n loc childTag args = some (bs, .inr cb) →
+      evaluate [.op (.blockOp (.cons childTag)) args] env state = (result, final) →
+      n ≤ env.length →
+      ∃ argResult next, evaluate bs env state = (argResult, next) ∧
+        (∀ values, argResult = .val values →
+          evaluate [callBlockToBvi loc cb] values next = (result, final) ∧
+          ∀ extras, evaluate [callBlockToBvi loc cb] (values ++ extras) next = (result, final)) ∧
+        (∀ error, argResult = .err error → (argResult, next) = (result, final)))
+    (env : List Value) (state final : BviState C F) (result : BviResult)
+    (bs : List Bvi.Exp) (cb : CallBlock)
+    (extracted : extractOneSource n loc tag (.op (.blockOp (.cons childTag)) args) = some (bs, .inr cb))
+    (run : evaluate [.op (.blockOp (.cons tag)) [.op (.blockOp (.cons childTag)) args]] env state =
+      (result, final)) (bound : n ≤ env.length) :
+    ∃ argResult next, evaluate bs env state = (argResult, next) ∧
+      (∀ values, argResult = .val values →
+        evaluate [callBlockToBvi loc cb] values next = (result, final) ∧
+        ∀ extras, evaluate [callBlockToBvi loc cb] (values ++ extras) next = (result, final)) ∧
+      (∀ error, argResult = .err error → (argResult, next) = (result, final)) := by
+  simp only [extractOneSource] at extracted
+  cases innerExtract : extractListSource n loc childTag args with
+  | none => simp [innerExtract] at extracted
+  | some pair =>
+    obtain ⟨innerBs, kind⟩ := pair
+    cases kind with
+    | inl vs => simp only [innerExtract] at extracted; split at extracted <;> simp_all
+    | inr innerCb =>
+      simp only [innerExtract, Option.some.injEq, Prod.mk.injEq, Sum.inr.injEq] at extracted
+      obtain ⟨rfl, rfl⟩ := extracted.symm
+      cases innerRun : evaluate [.op (.blockOp (.cons childTag)) args] env state with
+      | mk innerResult innerState =>
+        obtain ⟨argResult, next, argsRun, success, failure⟩ :=
+          ih env state innerState innerResult innerBs innerCb innerExtract innerRun bound
+        refine ⟨argResult, next, argsRun, ?_, ?_⟩
+        · intro values valuesEq
+          obtain ⟨headRun, extended⟩ := success values valuesEq
+          have wrap (extraEnv : List Value)
+              (childRun : evaluate [callBlockToBvi loc innerCb] extraEnv next = (innerResult, innerState)) :
+              evaluate [callBlockToBvi loc (.callBlock tag [] innerCb [])] extraEnv next = (result, final) := by
+            simp only [callBlockToBvi, List.map_nil, List.nil_append, List.append_nil]
+            rw [BviSem.evaluate, BviSem.fixClock_evaluate, childRun]
+            rw [BviSem.evaluate, BviSem.fixClock_evaluate, innerRun] at run
+            exact run
+          constructor
+          · exact wrap values headRun
+          · intro extras
+            exact wrap (values ++ extras) (extended extras)
+        · intro error errorEq
+          have bad := failure error errorEq
+          rw [← bad] at innerRun
+          rw [BviSem.evaluate, BviSem.fixClock_evaluate, innerRun] at run
+          simpa [errorEq] using run
+
 end Flapjack.Compiler.Backend.BviTmc.CallExtraction
