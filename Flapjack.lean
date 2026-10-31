@@ -554,6 +554,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockWorkerSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractedSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ClockHypothesis
+import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionSafety
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
