@@ -301,4 +301,152 @@ theorem evaluate_letCall_addClock_ioEvents_step {C F : Type}
       simp only [run] at equal
       rw [equal]
 
+
+/-- A handled call is trace-monotone when argument, callee, and handler
+evaluations are trace-monotone at their respective clocks. -/
+theorem evaluate_handledCall_addClock_ioEvents_step {C F : Type}
+    (ticks dest : Nat) (args : List Bvi.Exp) (body : Bvi.Exp)
+    (env : List Value) (state : BviState C F) (extra : Nat)
+    (argsIH : (evaluate args env state).2.ffi.ioEvents <+:
+      (evaluate args env { state with clock := state.clock + extra }).2.ffi.ioEvents)
+    (calleeIH : ∀ (callee : Bvi.Exp) (calleeEnv : List Value) (start : BviState C F),
+      start.clock < state.clock → (evaluate [callee] calleeEnv start).2.ffi.ioEvents <+:
+        (evaluate [callee] calleeEnv { start with clock := start.clock + extra }).2.ffi.ioEvents)
+    (bodyIH : ∀ (bodyEnv : List Value) (start : BviState C F), start.clock < state.clock →
+      (evaluate [body] bodyEnv start).2.ffi.ioEvents <+:
+        (evaluate [body] bodyEnv { start with clock := start.clock + extra }).2.ffi.ioEvents) :
+    (evaluate [.call ticks (some dest) args (some body)] env state).2.ffi.ioEvents <+:
+      (evaluate [.call ticks (some dest) args (some body)] env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
+  cases run : evaluate [.call ticks (some dest) args (some body)] env state with
+  | mk result final =>
+    by_cases timeout : result = .err (.abort .timeoutError)
+    · subst result
+      have sourceRun := run
+      rw [evaluate, fixClock_evaluate] at sourceRun
+      cases argsRun : evaluate args env state with
+      | mk argResult last =>
+        have bound : last.clock ≤ state.clock := by
+          have clock := evaluate_clock_le args env state
+          simpa [argsRun] using clock
+        rw [argsRun] at sourceRun
+        cases argResult with
+        | err error =>
+          simp at sourceRun
+          rcases sourceRun with ⟨_, rfl⟩
+          have argsPrefix : last.ffi.ioEvents <+:
+              (evaluate args env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
+            simpa [argsRun] using argsIH
+          exact argsPrefix.trans (evaluate_call_args_ioEvents_prefix ticks (some dest) args (some body) env
+            { state with clock := state.clock + extra } (by simp))
+        | val arguments =>
+          have shiftedArgs := evaluate_addClock args env state last (.val arguments) extra argsRun (by simp)
+          dsimp only at sourceRun
+          cases found : findCode (some dest) arguments last.code with
+          | none => simp [found] at sourceRun
+          | some entry =>
+            rcases entry with ⟨calleeEnv, callee⟩
+            rw [found] at sourceRun
+            dsimp only at sourceRun
+            by_cases short : last.clock < ticks + 1
+            · rw [if_pos short] at sourceRun
+              simp at sourceRun
+              rcases sourceRun with ⟨_, rfl⟩
+              have argsPrefix : last.ffi.ioEvents <+:
+                  (evaluate args env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
+                simpa [argsRun] using argsIH
+              exact argsPrefix.trans (evaluate_call_args_ioEvents_prefix ticks (some dest) args (some body) env
+                { state with clock := state.clock + extra } (by simp))
+            · rw [if_neg short, fixClock_evaluate] at sourceRun
+              have smaller : (decClock (ticks + 1) last).clock < state.clock := by simp [decClock]; omega
+              have shifted : decClock (ticks + 1) { last with clock := last.clock + extra } =
+                  { decClock (ticks + 1) last with clock := (decClock (ticks + 1) last).clock + extra } := by
+                simp only [decClock]
+                congr 1
+                omega
+              cases calleeRun : evaluate [callee] calleeEnv (decClock (ticks + 1) last) with
+              | mk calleeResult called =>
+                have calledClock : called.clock < state.clock := by
+                  have clock := evaluate_clock_le [callee] calleeEnv (decClock (ticks + 1) last)
+                  simp only [calleeRun] at clock
+                  omega
+                cases calleeResult with
+                | val values => simp [calleeRun] at sourceRun
+                | err error =>
+                  cases error with
+                  | abort reason =>
+                    cases reason with
+                    | typeError => simp [calleeRun] at sourceRun
+                    | ffiError event => simp [calleeRun] at sourceRun
+                    | timeoutError =>
+                      simp [calleeRun] at sourceRun
+                      subst final
+                      have compare := calleeIH callee calleeEnv (decClock (ticks + 1) last) smaller
+                      simp only [calleeRun] at compare
+                      rw [evaluate, fixClock_evaluate, shiftedArgs]
+                      dsimp only
+                      rw [found]
+                      dsimp only
+                      have enough : ¬last.clock + extra < ticks + 1 := by omega
+                      simp only [if_neg enough, shifted]
+                      rw [fixClock_evaluate]
+                      cases targetRun : evaluate [callee] calleeEnv { decClock (ticks + 1) last with
+                          clock := (decClock (ticks + 1) last).clock + extra } with
+                      | mk targetResult targetNext =>
+                        simp only [targetRun] at compare
+                        cases targetResult with
+                        | val values => simpa [targetRun] using compare
+                        | err error =>
+                          cases error with
+                          | abort reason => simpa [targetRun] using compare
+                          | raise payload =>
+                            cases payload with
+                            | ret values => simpa [targetRun] using compare
+                            | exn value =>
+                              have handlerPrefix := evaluate_ioEvents_prefix [body] (value :: env) targetNext
+                              cases handlerRun : evaluate [body] (value :: env) targetNext with
+                              | mk handlerResult handlerNext =>
+                                simp only [handlerRun, eventGrowth] at handlerPrefix
+                                have both := compare.trans handlerPrefix
+                                cases handlerResult <;> simp_all
+                                all_goals repeat' (split <;> simp_all)
+                  | raise payload =>
+                    cases payload with
+                    | ret values => simp [calleeRun] at sourceRun
+                    | exn value =>
+                      simp only [calleeRun] at sourceRun
+                      cases handlerRun : evaluate [body] (value :: env) called with
+                      | mk handlerResult handlerNext =>
+                        cases handlerResult with
+                        | val values => simp [handlerRun] at sourceRun
+                        | err error =>
+                          cases error with
+                          | raise payload => cases payload <;> simp [handlerRun] at sourceRun
+                          | abort reason =>
+                            cases reason with
+                            | typeError => simp [handlerRun] at sourceRun
+                            | ffiError event => simp [handlerRun] at sourceRun
+                            | timeoutError =>
+                              simp [handlerRun] at sourceRun
+                              subst final
+                              have shiftedCallee := evaluate_addClock [callee] calleeEnv
+                                (decClock (ticks + 1) last) called (.err (.raise (.exn value))) extra calleeRun (by simp)
+                              have compare := bodyIH (value :: env) called calledClock
+                              simp only [handlerRun] at compare
+                              rw [evaluate, fixClock_evaluate, shiftedArgs]
+                              dsimp only
+                              rw [found]
+                              dsimp only
+                              have enough : ¬last.clock + extra < ticks + 1 := by omega
+                              simp only [if_neg enough, shifted]
+                              rw [fixClock_evaluate, shiftedCallee]
+                              cases targetRun : evaluate [body] (value :: env) { called with
+                                  clock := called.clock + extra } with
+                              | mk targetResult targetNext =>
+                                cases targetResult <;> simp_all
+                                all_goals repeat' (split <;> simp_all)
+    · have equal := evaluate_addClock_ioEvents_of_notTimeout [.call ticks (some dest) args (some body)]
+        env state final result extra run timeout
+      simp only [run] at equal
+      rw [equal]
+
 end Flapjack.Compiler.Backend.BviProps
