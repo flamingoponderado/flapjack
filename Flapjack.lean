@@ -550,6 +550,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockAllocation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockAuxFrame
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockAuxSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockWorkerFrame
+import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockWorkerSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
