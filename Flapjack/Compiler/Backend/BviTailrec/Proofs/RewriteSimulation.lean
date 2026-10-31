@@ -3484,6 +3484,60 @@ theorem rewriteTail_op_intOp_of_size {C F : Type} (operation : ClosLang.IntOp) (
       exact smaller.2
   exact ⟨structuralIH [pure] bounds.1, structuralIH callArgs bounds.2⟩
 
+/-- Non-accumulator block operations delegated to BVL preserve the rewrite
+simulation for all their argument and reference-store cases. -/
+theorem rewriteTail_op_block_delegated {C F : Type} (operation : ClosLang.BlockOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (notFromList : ∀ tag, operation ≠ .fromList tag) (notAppend : operation ≠ .listAppend)
+    (hyp : rewriteTailHyp [.op (.blockOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.blockOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.blockOp operation) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    cases operation <;> simp_all [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · intro values s next t value related run
+    exact stateRel_doApp_block_viaBvl operation values s next t value related notFromList run
+  · intro values s error run
+    exact doApp_block_viaBvl_error operation values s notFromList error run
+  · exact hyp
+
+/-- Every block operation satisfies the rewrite simulation under structural
+and smaller-clock induction hypotheses. -/
+theorem rewriteTail_op_blockOp_of_size {C F : Type} (operation : ClosLang.BlockOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (structuralIH : ∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op (.blockOp operation) args] →
+      rewriteTailProperty (C := C) (F := F) xs)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (hyp : rewriteTailHyp [.op (.blockOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.blockOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  have argsSmaller : sizeOf args < sizeOf [Bvi.Exp.op (.blockOp operation) args] := by
+    simp only [List.cons.sizeOf_spec, List.nil.sizeOf_spec, Bvi.Exp.op.sizeOf_spec]
+    omega
+  have argsIH := structuralIH args argsSmaller
+  cases operation with
+  | fromList tag => exact rewriteTail_op_blockFromList tag args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | listAppend => exact rewriteTail_op_accumulator_of_size .append args source env1 result sourceNext optimized target acc env2 loc ts ty structuralIH clockIH hyp
+  | _ =>
+    all_goals apply rewriteTail_op_block_delegated _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH
+    all_goals try (intro tag; simp)
+    all_goals try (simp)
+    all_goals exact hyp
+
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a
 raise as an optimization candidate. -/

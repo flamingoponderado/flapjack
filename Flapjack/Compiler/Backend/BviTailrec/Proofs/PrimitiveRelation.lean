@@ -682,6 +682,65 @@ theorem doApp_allocGlobal {C F : Type} (args : List Value) (state : BviSem.BviSt
     BviSem.doApp (.globOp .allocGlobal) args state = .err (.abort .typeError) := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux]
 
+/-- BVL block operations depend only on the reference store and update only that store. -/
+theorem applyBlock_sharedRefs {C D F G : Type} (op : ClosLang.BlockOp) (args : List Value)
+    (s : BvlSem.State C F) (t : BvlSem.State D G) (refs : t.refs = s.refs) :
+    BvlSem.applyBlock op args t = (BvlSem.applyBlock op args s).map
+      (fun (value, next) => (value, { t with refs := next.refs })) := by
+  unfold BvlSem.applyBlock
+  rw [refs]
+  repeat' split
+  all_goals simp_all [Option.map_bind]
+  all_goals cases t; simp_all
+/-- BVI delegates block operations other than fromList to BVL. -/
+theorem doApp_block_viaBvl {C F : Type} (op : ClosLang.BlockOp) (args : List Value) (s : BviSem.BviState C F)
+    (notFromList : ∀ tag, op ≠ .fromList tag) :
+    BviSem.doApp (.blockOp op) args s =
+      match BvlSem.applyBlock op args (BviSem.toBvl s) with
+      | none => .err (.abort .typeError)
+      | some (value, next) => .val (value, BviSem.fromBvl next s) := by
+  cases op <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at *
+  all_goals split <;> simp_all
+  all_goals split <;> simp_all
+/-- Delegated block operations preserve related BVI states. -/
+theorem stateRel_doApp_block_viaBvl {C F : Type} (op : ClosLang.BlockOp) (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (notFromList : ∀ tag, op ≠ .fromList tag)
+    (run : BviSem.doApp (.blockOp op) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.blockOp op) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  have refs := (stateRel_const source target related).1
+  have eqRefs : (BviSem.toBvl target).refs = (BviSem.toBvl source).refs := by simpa [BviSem.toBvl] using refs
+  have transfer := applyBlock_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl target) eqRefs
+  have self := applyBlock_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl source) rfl
+  rw [doApp_block_viaBvl op args source notFromList] at run
+  rw [doApp_block_viaBvl op args target notFromList]
+  cases found : BvlSem.applyBlock op args (BviSem.toBvl source) with
+  | none => simp [found] at run
+  | some pair =>
+    obtain ⟨v, next⟩ := pair
+    simp only [found, Option.map_some] at self transfer
+    have nextEq : next = { BviSem.toBvl source with refs := next.refs } := by
+      exact (Prod.mk.inj (Option.some.inj self)).2
+    rw [found] at run
+    dsimp only at run
+    rw [nextEq] at run
+    simp [BviSem.toBvl, BviSem.fromBvl] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨{ target with refs := next.refs }, ?_, stateRel_withRefs source target next.refs related⟩
+    rw [transfer]
+    simp [BviSem.toBvl, BviSem.fromBvl]
+/-- Delegated block operations report only type errors. -/
+theorem doApp_block_viaBvl_error {C F : Type} (op : ClosLang.BlockOp) (args : List Value)
+    (state : BviSem.BviState C F) (notFromList : ∀ tag, op ≠ .fromList tag)
+    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.blockOp op) args state = .err error) : error = .abort .typeError := by
+  rw [doApp_block_viaBvl op args state notFromList] at run
+  cases found : BvlSem.applyBlock op args (BviSem.toBvl state) with
+  | none => simpa [found] using run.symm
+  | some pair => cases pair; simp [found] at run
+
 /-- Constructing a plain block returns its fields without changing state. -/
 theorem doApp_blockCons {C F : Type} (tag : Nat) (args : List Value) (state : BviSem.BviState C F) :
     BviSem.doApp (.blockOp (.cons tag)) args state = .val (.block tag args, state) := by
