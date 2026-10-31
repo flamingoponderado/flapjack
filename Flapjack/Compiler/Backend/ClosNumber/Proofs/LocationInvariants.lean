@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosNumber
 import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 
 /-! Function-location invariants of closure numbering. -/
 namespace Flapjack.Compiler.Backend.ClosNumber
@@ -50,6 +51,28 @@ theorem renumberFuns_locations (functions : List (Nat × Exp)) (start : Nat) :
       simp [renumberFuns, fnLocationSomeFuns, renumber_locations body, renumberFuns_locations rest]
 termination_by sizeOf functions
 decreasing_by all_goals subst_vars; simp_wf <;> omega
+
+end
+
+mutual
+
+/-- Numbering preserves the length of an expression list. -/
+theorem renumberList_length (expressions : List Exp) (start : Nat) :
+    (renumberList start expressions).2.length = expressions.length := by
+  cases expressions with
+  | nil => simp [renumberList]
+  | cons first rest => simp [renumberList, renumberList_length rest]
+termination_by sizeOf expressions
+
+/-- Numbering preserves the number of recursive function bodies. -/
+theorem renumberFuns_length (functions : List (Nat × Exp)) (start : Nat) :
+    (renumberFuns start functions).2.length = functions.length := by
+  cases functions with
+  | nil => simp [renumberFuns]
+  | cons first rest =>
+    cases first with
+    | mk arity body => simp [renumberFuns, renumberFuns_length rest]
+termination_by sizeOf functions
 
 end
 

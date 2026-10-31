@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
+import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationBounds
 import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 
 /-! Location annotations supplied by closure numbering to prepared programs. -/
@@ -86,6 +86,24 @@ theorem numberingOracle_state_monotone {C : Type}
   induction order with
   | refl => exact Nat.le_refl _
   | @step j order ih => exact Nat.le_trans ih (step j)
+
+/-- Main expressions in a consistent numbered oracle use closure locations
+between the current and next numbering states. Auxiliary code is unchanged
+and therefore requires a separate range argument. -/
+theorem numberingOracle_location_bounds {C : Type}
+    (oracle : Nat → (Nat × C) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (state : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (index location : Nat)
+    (member : location ∈ ClosProps.codeLocations
+      ((stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle index).2.1)) :
+    (oracle index).1.1 ≤ location ∧ location < (oracle (index + 1)).1.1 := by
+  have numbered : location ∈ ClosProps.codeLocations
+      (ClosNumber.compileInc (oracle index).1.1 (oracle index).2.1).2 := by
+    simpa [stateCo, ClosNumber.ignoreTable] using member
+  have bounds := ClosNumber.compileInc_location_bounds (oracle index).1.1 location (oracle index).2.1 numbered
+  have next := state index
+  simp only [ClosNumber.ignoreTable] at next
+  omega
 
 /-- The executable no-optimization closure compiler satisfies the prepared
 entry behavior theorem without separate program-annotation assumptions.
