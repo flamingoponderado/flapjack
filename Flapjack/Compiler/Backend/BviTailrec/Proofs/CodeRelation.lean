@@ -419,6 +419,113 @@ theorem compileEachSource_distinct_and_free (next : Nat) (code : List (Nat × Na
         freeNames (compileEachSource next code).1 name :=
   ⟨compileEachSource_labels_nodup code next unique free, compileEachSource_output_free next code free⟩
 
+/-- Each original function remains unchanged or is replaced by its wrapper
+and worker in the compiled function list. -/
+theorem compileEachSource_entry (code : List (Nat × Nat × Bvi.Exp)) (next loc arity : Nat) (body : Bvi.Exp) (op : AssocOp)
+    (member : (loc, arity, body) ∈ code) :
+    (checkExpOriginal loc arity body = none → (loc, arity, body) ∈ (compileEachSource next code).2) ∧
+    (checkExpOriginal loc arity body = some op → ∃ workerLoc,
+      ∀ wrapper worker, compileExpSource loc workerLoc arity body = some (wrapper, worker) →
+        (loc, arity, wrapper) ∈ (compileEachSource next code).2 ∧
+        (workerLoc, arity + 1, worker) ∈ (compileEachSource next code).2) := by
+  induction code generalizing next with
+  | nil => simp at member
+  | cons entry rest ih =>
+    obtain ⟨headLoc, headArity, headBody⟩ := entry
+    simp only [List.mem_cons] at member
+    cases compiled : compileExpSource headLoc next headArity headBody with
+    | none =>
+      cases tail : compileEachSource next rest with
+      | mk last output =>
+        simp only [compileEachSource, compiled, tail]
+        rcases member with same | other
+        · cases same
+          constructor
+          · intro _; simp
+          · intro check
+            obtain ⟨wrapper, worker, existsRun⟩ := compileExpSource_of_check loc next arity body op check
+            rw [compiled] at existsRun
+            contradiction
+        · have both := ih next other
+          simp only [tail] at both
+          constructor
+          · intro check; exact List.mem_cons_of_mem _ (both.1 check)
+          · intro check
+            obtain ⟨workerLoc, found⟩ := both.2 check
+            exact ⟨workerLoc, fun wrapper worker run =>
+              ⟨List.mem_cons_of_mem _ (found wrapper worker run).1,
+                List.mem_cons_of_mem _ (found wrapper worker run).2⟩⟩
+    | some pair =>
+      obtain ⟨headWrapper, headWorker⟩ := pair
+      cases tail : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with
+      | mk last output =>
+        simp only [compileEachSource, compiled, tail]
+        rcases member with same | other
+        · cases same
+          constructor
+          · intro check
+            simp [compileExpSource, check] at compiled
+          · intro _
+            refine ⟨next, ?_⟩
+            intro wrapper worker run
+            rw [compiled] at run
+            cases run
+            exact ⟨by simp, by simp⟩
+        · have both := ih (next + Flapjack.bvlToBviNamespaces) other
+          simp only [tail] at both
+          constructor
+          · intro check; exact List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (both.1 check))
+          · intro check
+            obtain ⟨workerLoc, found⟩ := both.2 check
+            exact ⟨workerLoc, fun wrapper worker run =>
+              ⟨List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (found wrapper worker run).1),
+                List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (found wrapper worker run).2)⟩⟩
+
+/-- A distinct association list maps each present key to its listed value. -/
+theorem sptFromAList_lookup_of_mem {α : Type} (entries : List (Nat × α)) (key : Nat) (value : α)
+    (unique : (entries.map Prod.fst).Nodup) (member : (key, value) ∈ entries) :
+    sptLookup key (sptFromAList entries) = some value := by
+  induction entries with
+  | nil => simp at member
+  | cons entry rest ih =>
+    obtain ⟨head, val⟩ := entry
+    simp only [List.map_cons, List.nodup_cons] at unique
+    simp only [List.mem_cons, Prod.mk.injEq] at member
+    rw [sptFromAList]
+    rcases member with ⟨sameKey, sameValue⟩ | other
+    · subst head
+      subst val
+      exact sptLookup_sptInsert_same key value _
+    · have ne : key ≠ head := by
+        intro eq
+        subst head
+        apply unique.1
+        exact List.mem_map_of_mem other
+      rw [sptLookup_sptInsert_ne head key val _ ne]
+      exact ih unique.2 other
+
+/-- Compiling distinct functions with free worker labels establishes the
+code relation between the original and compiled trees. -/
+theorem compileEachSource_codeRel (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (unique : (code.map Prod.fst).Nodup)
+    (free : ∀ name ∈ code.map Prod.fst, freeNames next name) :
+    codeRel (sptFromAList code) (sptFromAList (compileEachSource next code).2) := by
+  have compiledUnique := compileEachSource_labels_nodup code next unique free
+  intro loc arity body op lookup
+  have member : (loc, arity, body) ∈ code :=
+    sptAListLookup_mem loc code (arity, body) (by simpa [sptLookup_sptFromAList] using lookup)
+  have facts := compileEachSource_entry code next loc arity body op member
+  constructor
+  · intro check
+    exact sptFromAList_lookup_of_mem _ loc (arity, body) compiledUnique (facts.1 check)
+  · intro check
+    obtain ⟨workerLoc, entries⟩ := facts.2 check
+    refine ⟨workerLoc, ?_⟩
+    intro wrapper worker run
+    obtain ⟨wrapperMem, workerMem⟩ := entries wrapper worker run
+    exact ⟨sptFromAList_lookup_of_mem _ loc (arity, wrapper) compiledUnique wrapperMem,
+      sptFromAList_lookup_of_mem _ workerLoc (arity + 1, worker) compiledUnique workerMem⟩
+
 /-- Worker labels use namespace residue two. -/
 def inWorkerNamespace (name : Nat) : Prop := name % Flapjack.bvlToBviNamespaces = 2
 
@@ -429,6 +536,45 @@ def namespaceRel {α : Type} (source target : Spt α) : Prop :=
     if n % Flapjack.bvlToBviNamespaces = 2 then ¬sptMem n source else sptMem n source) ∧
   (∀ n, sptMem n source ∧ Flapjack.bvlNumStubs ≤ n → ¬inWorkerNamespace n) ∧
   (∀ n, sptMem n target ∧ n < Flapjack.bvlNumStubs → sptMem n source)
+
+/-- A tree built from an association list contains exactly its listed keys. -/
+theorem sptFromAList_mem_iff {α : Type} (code : List (Nat × α)) (name : Nat) :
+    sptMem name (sptFromAList code) ↔ name ∈ code.map Prod.fst := by
+  induction code with
+  | nil => simp [sptFromAList, sptMem, sptDomain]
+  | cons entry rest ih =>
+    obtain ⟨key, value⟩ := entry
+    simp [sptFromAList, sptMem_sptInsert, ih]
+
+/-- Compiling code preserves the source-to-worker namespace relation. -/
+theorem compileEachSource_namespaceRel (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (bounds : Flapjack.bvlNumStubs ≤ next) (worker : inWorkerNamespace next)
+    (original : ∀ name ∈ code.map Prod.fst, Flapjack.bvlNumStubs ≤ name → ¬inWorkerNamespace name) :
+    namespaceRel (sptFromAList code) (sptFromAList (compileEachSource next code).2) := by
+  have generated (name : Nat) (k : Nat) (eq : name = next + k * Flapjack.bvlToBviNamespaces) :
+      inWorkerNamespace name := by
+    subst name
+    unfold inWorkerNamespace at worker ⊢
+    simpa [Nat.add_mod, Flapjack.bvlToBviNamespaces] using worker
+  refine ⟨?_, ?_, ?_⟩
+  · intro name ⟨member, above⟩
+    have targetMem := (sptFromAList_mem_iff _ name).mp member
+    by_cases inWorker : inWorkerNamespace name
+    · simp only [show name % Flapjack.bvlToBviNamespaces = 2 from inWorker, if_true]
+      intro sourceMem
+      exact original name ((sptFromAList_mem_iff _ name).mp sourceMem) above inWorker
+    · simp only [show ¬name % Flapjack.bvlToBviNamespaces = 2 from inWorker, if_false]
+      apply (sptFromAList_mem_iff _ name).mpr
+      rcases compileEachSource_mem code next name targetMem with old | ⟨_, _, k, eq⟩
+      · exact old
+      · exact (inWorker (generated name k eq)).elim
+  · intro name ⟨member, above⟩
+    exact original name ((sptFromAList_mem_iff _ name).mp member) above
+  · intro name ⟨member, below⟩
+    apply (sptFromAList_mem_iff _ name).mpr
+    rcases compileEachSource_mem code next name ((sptFromAList_mem_iff _ name).mp member) with old | ⟨lo, _, _⟩
+    · exact old
+    · omega
 
 /-- Union preserves the namespace relation. This applies in particular to
 the disjoint code installations used by the source simulation. -/
@@ -469,6 +615,30 @@ def inputCondition (next : Nat) (program : List (Nat × Nat × Bvi.Exp)) : Prop 
   (program.map fun p => p.1).Nodup ∧
   (∀ p ∈ program.filter (fun p => decide (Flapjack.bvlNumStubs ≤ p.1)), ¬inWorkerNamespace p.1) ∧
   Flapjack.bvlNumStubs ≤ next ∧ inWorkerNamespace next
+
+/-- The source installation side condition supplies the code relation,
+namespace relation, and distinct labels for a compiled function list. -/
+theorem compileEachSource_install_relations (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (condition : inputCondition next code) :
+    codeRel (sptFromAList code) (sptFromAList (compileEachSource next code).2) ∧
+    namespaceRel (sptFromAList code) (sptFromAList (compileEachSource next code).2) ∧
+    ((compileEachSource next code).2.map Prod.fst).Nodup := by
+  obtain ⟨free, unique, outside, bounds, worker⟩ := condition
+  have freeLabels : ∀ name ∈ code.map Prod.fst, freeNames next name := by
+    intro name member
+    obtain ⟨entry, present, equal⟩ := List.mem_map.mp member
+    subst name
+    exact free entry present
+  have outsideLabels : ∀ name ∈ code.map Prod.fst,
+      Flapjack.bvlNumStubs ≤ name → ¬inWorkerNamespace name := by
+    intro name member above
+    obtain ⟨entry, present, equal⟩ := List.mem_map.mp member
+    subst name
+    apply outside entry
+    exact List.mem_filter.mpr ⟨present, by simpa using above⟩
+  exact ⟨compileEachSource_codeRel next code unique freeLabels,
+    compileEachSource_namespaceRel next code bounds worker outsideLabels,
+    compileEachSource_labels_nodup code next unique freeLabels⟩
 
 /-- Apply the source-shaped pass to each future compiler-oracle program. -/
 def transformOracle {C : Type} (oracle : BviSem.CompileOracle (Nat × C)) : BviSem.CompileOracle C :=
