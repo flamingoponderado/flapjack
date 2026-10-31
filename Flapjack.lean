@@ -543,6 +543,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.LetAssembly
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.FinaliseHoles
 import Flapjack.Compiler.Backend.BviTmc.Proofs.FinaliseRelation
+import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockFrame
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
