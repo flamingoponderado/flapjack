@@ -9,6 +9,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLetrecMutual
 
 /-! Assembly of the closure-to-BVL expression simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
+open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
 mutual
 
@@ -97,5 +98,77 @@ list, discharging the body-simulation premise of the application induction. -/
 theorem applicationSimulation_all {C F : Type} (args : List ClosSem.Value) :
     applicationSimulation (C := C) (F := F) args :=
   applicationSimulation_of_body_simulation (fun body => expressionSimulation_all [body]) args
+
+/-- Source-shaped application simulation for both indirect and known-location
+calls. When no arguments are supplied, the source returns the closure and the
+target execution premise is vacuous. This remains untagged pending review of
+the candidate evaluators and carriers against the HOL statement. -/
+theorem applicationSimulation_any {C F : Type}
+    (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F) (target : BvlSem.Value)
+    (targetArgs rest : List BvlSem.Value) (f : HolFiniteMapExact Nat Nat)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (run : ClosSem.evaluateApp location function args s = (result, sFinal))
+    (noType : result ≠ .err (.abort .typeError))
+    (annotations : codeAnnotations s) (functionRel : vRel s.maxApp f t.refs t.code function target)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (states : stateRel f s t) :
+    ∃ extra targetResult tFinal fFinal,
+      (targetArgs ≠ [] →
+        (match location with
+        | none => BvlSem.evaluate [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)]
+            (targetArgs ++ [target] ++ rest) { t with clock := s.clock + extra }
+        | some address =>
+          match BvlSem.findCode (some (address + numStubs s.maxApp)) (targetArgs ++ [target]) t.code with
+          | none => (.err (.abort .typeError), tFinal)
+          | some (env, body) =>
+            if s.clock + extra < targetArgs.length then (.err (.abort .timeoutError), { t with clock := 0 })
+            else BvlSem.evaluate [body] env { t with clock := s.clock + extra - targetArgs.length }) =
+          (targetResult, tFinal)) ∧
+      resultRel (List.Forall₂ (vRel s.maxApp fFinal tFinal.refs tFinal.code))
+        (vRel s.maxApp fFinal tFinal.refs tFinal.code) result targetResult ∧
+      stateRel fFinal sFinal tFinal ∧ relocationSubmap f fFinal ∧
+      unmappedRefsSubmap t.refs tFinal.refs f fFinal ∧ codeAnnotations sFinal ∧ sFinal.clock = tFinal.clock := by
+  cases args with
+  | nil =>
+    cases argsRel
+    simp [ClosSem.evaluateApp] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨0, .val [target], { t with clock := s.clock }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
+    · simp
+    · exact List.Forall₂.cons (by simpa using functionRel) .nil
+    · exact (stateRel_clock f s t s.clock).1.mpr states
+    · intro key value lookup
+      exact lookup
+    · intro key value lookup fresh
+      exact ⟨lookup, fresh⟩
+  | cons first tail =>
+    have sourceNonempty : first :: tail ≠ [] := by simp
+    have targetNonempty : targetArgs ≠ [] := by
+      intro empty
+      have lengths := argsRel.length_eq
+      simp [empty] at lengths
+    cases location with
+    | none =>
+      obtain ⟨extra, targetResult, tFinal, fFinal, targetRun, related, finalStates, map, refs, finalAnnotations, clocks⟩ :=
+        applicationSimulation_all (first :: tail) sourceNonempty s sFinal t f function target targetArgs rest result
+          run noType states annotations functionRel argsRel
+      exact ⟨extra, targetResult, tFinal, fFinal, fun _ => targetRun, related, finalStates, map, refs, finalAnnotations, clocks⟩
+    | some address =>
+      obtain ⟨application, found⟩ := evaluateApp_direct_destClosure_some s sFinal address function (first :: tail)
+        result sourceNonempty run noType
+      obtain ⟨extra, targetResult, tFinal, fFinal, targetRun, related, finalStates, map, refs, finalAnnotations, clocks⟩ :=
+        evaluateApp_direct_simulation_below s sFinal t f address s.clock function target (first :: tail) targetArgs rest
+          application result (by omega) found run noType states annotations functionRel argsRel
+          (fun body => expressionSimulationBelow_all s.clock [body])
+      obtain ⟨body, targetFound⟩ := vRel_direct_findCode functionRel argsRel found
+      have directRun := evaluate_directCall_env { t with clock := s.clock + extra } targetArgs rest target
+        (address + numStubs s.maxApp) body targetNonempty (by simpa using targetFound)
+      refine ⟨extra, targetResult, tFinal, fFinal, ?_, related, finalStates, map, refs, finalAnnotations, clocks⟩
+      intro _
+      dsimp only
+      rw [targetFound]
+      rw [directRun] at targetRun
+      simpa [BvlSem.decClock] using targetRun
 
 end Flapjack.Compiler.Backend.ClosToBvl
