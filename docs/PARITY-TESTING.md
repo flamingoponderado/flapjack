@@ -414,6 +414,14 @@ The script verifies the reference compiler's embedded CakeML and HOL
 revisions, then compares complete output bytes, diagnostics and status. Its
 `--seed` and `--count` options select reproducible samples; a rejection or
 timeout fails the run. This is sampled evidence, not full-language parity.
+Add `--mutations` to apply reproducible single-character edits to small
+declarations with the prelude excluded. This mode compares successful output
+and rejection diagnostics alike, including complete stderr and exit status;
+timeouts still fail the run. For example:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --mutations --seed 2377 --count 180
+```
 
 To recheck the recorded historical outputs when that exact binary is available,
 run `python3 scripts/check-cake-cli-parity.py --check-reference /path/to/cake`.
