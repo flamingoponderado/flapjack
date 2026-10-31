@@ -3872,6 +3872,71 @@ theorem rewriteTail_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
           rw [BviSem.evaluateConsCons]
           simp [BviSem.evaluateTuple, targetHead, targetTail, Flapjack.holHd]
 
+/-- Assembles singleton expression cases using unrestricted smaller-expression
+and smaller-clock hypotheses. This Flapjack helper is not a HOL theorem port:
+the unrestricted structural hypothesis is stronger than the source induction. -/
+theorem rewriteTail_singleton_of_hypotheses {C F : Type} (e : Bvi.Exp) (source : BviSem.BviState (Nat × C) F) (env1 : List BvlSem.Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List BvlSem.Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (structuralIH : ∀ xs, sizeOf xs < sizeOf [e] → rewriteTailProperty (C := C) (F := F) xs)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List BvlSem.Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (hyp : rewriteTailHyp [e] source env1 result sourceNext optimized target acc env2 loc ts ty) :
+    rewriteTailPost [e] source env1 result sourceNext optimized target acc env2 loc ts ty := by
+  cases e with
+  | var n => exact rewriteTail_var n source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  | force place index => exact rewriteTail_force place index source env1 result sourceNext optimized target acc env2 loc ts ty clockIH hyp
+  | ifThenElse cond yes no =>
+    apply rewriteTail_if cond yes no source env1 result sourceNext optimized target acc env2 loc ts ty
+    · apply structuralIH; simp_wf; omega
+    · apply structuralIH; simp_wf; omega
+    · apply structuralIH; simp_wf; omega
+    · exact hyp
+  | «let» bindings body =>
+    apply rewriteTail_let bindings body (structuralIH bindings (by simp_wf; omega))
+      (structuralIH [body] (by simp_wf; omega)) source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  | raise body =>
+    exact rewriteTail_raise body (structuralIH [body] (by simp_wf)) source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  | tick body =>
+    exact rewriteTail_tick body (structuralIH [body] (by simp_wf)) source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  | call ticks dest args handler =>
+    exact rewriteTail_call ticks dest args handler source env1 result sourceNext optimized target acc env2 loc ts ty
+      (structuralIH args (by simp_wf; omega)) clockIH hyp
+  | op operation args =>
+    exact rewriteTail_op_of_size operation args source env1 result sourceNext optimized target acc env2 loc ts ty structuralIH clockIH hyp
+  | letCall rets ticks place args cont =>
+    exact rewriteTail_letCall rets ticks place cont args source env1 result sourceNext optimized target acc env2 loc ts ty
+      (structuralIH args (by simp_wf; omega)) clockIH hyp
+  | «return» args =>
+    exact rewriteTail_return args (structuralIH args (by simp_wf; omega)) source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+/-- Assembles all expression-list cases under the same stronger structural
+hypothesis; a clock-bounded induction is still required for the source theorem. -/
+theorem rewriteTail_list_of_hypotheses {C F : Type} (xs : List Bvi.Exp) (source : BviSem.BviState (Nat × C) F) (env1 : List BvlSem.Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List BvlSem.Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (structuralIH : ∀ ys, sizeOf ys < sizeOf xs → rewriteTailProperty (C := C) (F := F) ys)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List BvlSem.Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (hyp : rewriteTailHyp xs source env1 result sourceNext optimized target acc env2 loc ts ty) :
+    rewriteTailPost xs source env1 result sourceNext optimized target acc env2 loc ts ty := by
+  cases xs with
+  | nil => exact rewriteTail_nil source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  | cons x tail =>
+    cases tail with
+    | nil => exact rewriteTail_singleton_of_hypotheses x source env1 result sourceNext optimized target acc env2 loc ts ty structuralIH clockIH hyp
+    | cons y rest =>
+      have positive : 0 < sizeOf y := by cases y <;> simp_wf <;> omega
+      exact rewriteTail_cons x y rest (structuralIH [x] (by simp_wf; omega))
+        (structuralIH (y :: rest) (by simp_wf; omega)) source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+
 /-- Lists consisting of variables satisfy the complete source-shaped rewrite
 simulation, including the original non-type-error condition. -/
 theorem rewriteTail_variables {C F : Type} (names : List Nat) :
