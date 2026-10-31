@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpState
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 import Flapjack.Compiler.Backend.BvlInline.Proofs.VarListEvaluate
+import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateLength
 
 /-! Structural evaluator cases for the let-operation simulation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs
@@ -236,5 +237,114 @@ theorem letOpSimulation_let {C F : Type} (splitSeq : Bool) (limit : Nat)
       refine ⟨targetFinal, ?_, finalRel⟩
       rw [letOp_let_evaluate, evaluate, fixClock_evaluate, targetBindings]
       simpa [letOp, letOpList] using targetBody
+
+/-- A handler composes the body simulation and the handler simulation for a
+raised value, preserving aborts and successful returns. -/
+theorem letOpSimulation_handle {C F : Type} (splitSeq : Bool) (limit : Nat)
+    (body handler : Bvl.Exp) (env : List Value) (source : State C F)
+    (bodyIH : letOpSimulation splitSeq limit [body] env source)
+    (handlerIH : ∀ (handlerEnv : List Value) (state : State C F), state.clock ≤ source.clock →
+      letOpSimulation splitSeq limit [handler] handlerEnv state) :
+    letOpSimulation splitSeq limit [.handle body handler] env source := by
+  intro result final target related run notType
+  rw [evaluate, fixClock_evaluate] at run
+  cases bodyRun : evaluate [body] env source with
+  | mk bodyResult middle =>
+    rw [bodyRun] at run
+    have bound : middle.clock ≤ source.clock := by
+      have clock := evaluate_clock_le [body] env source
+      simpa [bodyRun] using clock
+    have bodyNotType : bodyResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst bodyResult
+      simp at run
+      exact notType run.1.symm
+    obtain ⟨targetMiddle, targetBody, middleRel⟩ :=
+      bodyIH bodyResult middle target related bodyRun bodyNotType
+    simp only [letOp, letOpList] at targetBody
+    cases bodyResult with
+    | val values =>
+      simp at run
+      rcases run with ⟨rfl, rfl⟩
+      refine ⟨targetMiddle, ?_, middleRel⟩
+      simp only [letOp, letOpList, letOpOne]
+      rw [evaluate, fixClock_evaluate, targetBody]
+    | err error =>
+      cases error with
+      | abort reason =>
+        simp at run
+        rcases run with ⟨rfl, rfl⟩
+        refine ⟨targetMiddle, ?_, middleRel⟩
+        simp only [letOp, letOpList, letOpOne]
+        rw [evaluate, fixClock_evaluate, targetBody]
+      | raise value =>
+        have handlerRun : evaluate [handler] (value :: env) middle = (result, final) := by simpa using run
+        obtain ⟨targetFinal, targetHandler, finalRel⟩ :=
+          handlerIH (value :: env) middle bound result final targetMiddle middleRel handlerRun notType
+        simp only [letOp, letOpList] at targetHandler
+        refine ⟨targetFinal, ?_, finalRel⟩
+        simp only [letOp, letOpList, letOpOne]
+        rw [evaluate, fixClock_evaluate, targetBody]
+        exact targetHandler
+
+/-- The conditional case composes the condition and selected-branch
+simulations. -/
+theorem letOpSimulation_if {C F : Type} (splitSeq : Bool) (limit : Nat)
+    (condition yes no : Bvl.Exp) (env : List Value) (source : State C F)
+    (conditionIH : letOpSimulation splitSeq limit [condition] env source)
+    (branchIH : ∀ (choice : Bool) (state : State C F), state.clock ≤ source.clock →
+      letOpSimulation splitSeq limit [if choice then yes else no] env state) :
+    letOpSimulation splitSeq limit [.ifThenElse condition yes no] env source := by
+  intro result final target related run notType
+  rw [evaluate, fixClock_evaluate] at run
+  cases conditionRun : evaluate [condition] env source with
+  | mk conditionResult middle =>
+    rw [conditionRun] at run
+    have bound : middle.clock ≤ source.clock := by
+      have clock := evaluate_clock_le [condition] env source
+      simpa [conditionRun] using clock
+    have conditionNotType : conditionResult ≠ .err (.abort .typeError) := by
+      cases conditionResult with
+      | val values => simp
+      | err error =>
+        simp at run
+        rcases run with ⟨rfl, _⟩
+        exact notType
+    obtain ⟨targetMiddle, targetCondition, middleRel⟩ :=
+      conditionIH conditionResult middle target related conditionRun conditionNotType
+    simp only [letOp, letOpList] at targetCondition
+    cases conditionResult with
+    | err error =>
+      simp at run
+      rcases run with ⟨rfl, rfl⟩
+      refine ⟨targetMiddle, ?_, middleRel⟩
+      simp only [letOp, letOpList, letOpOne]
+      rw [evaluate, fixClock_evaluate, targetCondition]
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton condition env source middle values conditionRun
+      cases boolRun : asBool value with
+      | none =>
+        simp [boolRun] at run
+        exact (notType run.1.symm).elim
+      | some choice =>
+        cases choice with
+        | false =>
+          simp [boolRun] at run
+          obtain ⟨targetFinal, targetBranch, finalRel⟩ :=
+            branchIH false middle bound result final targetMiddle middleRel run notType
+          simp only [Bool.false_eq_true, ↓reduceIte, letOp, letOpList] at targetBranch
+          refine ⟨targetFinal, ?_, finalRel⟩
+          simp only [letOp, letOpList, letOpOne]
+          rw [evaluate, fixClock_evaluate, targetCondition]
+          simpa [boolRun] using targetBranch
+        | true =>
+          simp [boolRun] at run
+          obtain ⟨targetFinal, targetBranch, finalRel⟩ :=
+            branchIH true middle bound result final targetMiddle middleRel run notType
+          simp only [↓reduceIte, letOp, letOpList] at targetBranch
+          refine ⟨targetFinal, ?_, finalRel⟩
+          simp only [letOp, letOpList, letOpOne]
+          rw [evaluate, fixClock_evaluate, targetCondition]
+          simpa [boolRun] using targetBranch
 
 end Flapjack.Compiler.Backend.BvlInline.Proofs
