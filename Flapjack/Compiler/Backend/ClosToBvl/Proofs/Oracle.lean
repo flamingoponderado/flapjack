@@ -46,4 +46,52 @@ def compileOracleInv {CC OC Result S : Type} (maxApp : Nat) (_sourceCode : S)
     (∀ entry ∈ (sourceOracle n).2.2, everyFnLocationSome [entry.2.2]) ∧
     (∀ entry ∈ (sourceOracle n).2.2, everyFnVarsSome [entry.2.2])
 
+/-- The next target oracle entry is the incremental compilation of the
+source entry, with fresh and distinct labels and the corresponding callback. -/
+theorem compileOracleInv_head {CC OC Result S : Type} (maxApp : Nat) (sourceCode : S)
+    (sourceCompiler : CC → ClosSem.Program → Result) (sourceOracle : ClosSem.CompileOracle OC)
+    (targetCode : Spt (Nat × Bvl.Exp)) (targetCompiler : CC → List (Nat × Nat × Bvl.Exp) → Result)
+    (targetOracle : BvlSem.CompileOracle OC)
+    (invariant : compileOracleInv maxApp sourceCode sourceCompiler sourceOracle targetCode targetCompiler targetOracle) :
+    targetOracle 0 = pureCo (compileInc maxApp) (sourceOracle 0) ∧
+      (∀ config program, sourceCompiler config program = targetCompiler config (compileInc maxApp program)) ∧
+      ((targetOracle 0).2.map Prod.fst).Nodup ∧
+      ∀ entry ∈ (targetOracle 0).2, sptLookup entry.1 targetCode = none := by
+  obtain ⟨compilerEq, oracleEq, nodup, fresh, _⟩ := invariant
+  refine ⟨congrFun oracleEq 0, ?_, nodup 0, ?_⟩
+  · intro config program
+    rw [compilerEq]
+    rfl
+  · intro entry member
+    cases lookup : sptLookup entry.1 targetCode with
+    | none => rfl
+    | some value =>
+      have mem : sptMem entry.1 targetCode := (sptMem_iff_lookup _ _).2 ⟨value, lookup⟩
+      have excluded := fresh 0 entry.1 ((sptMem_sptUnion _ _ _).2 (Or.inl mem))
+      exact False.elim (excluded (List.mem_map.mpr ⟨entry, member, rfl⟩))
+
+/-- Consuming the first future compilation entry preserves the oracle
+invariant when its code is added to the target code tree. The source-code
+parameter is observationally irrelevant to this invariant. -/
+theorem compileOracleInv_shift {CC OC Result S : Type} (maxApp : Nat) (sourceCode sourceCode' : S)
+    (sourceCompiler : CC → ClosSem.Program → Result) (sourceOracle : ClosSem.CompileOracle OC)
+    (targetCode : Spt (Nat × Bvl.Exp)) (targetCompiler : CC → List (Nat × Nat × Bvl.Exp) → Result)
+    (targetOracle : BvlSem.CompileOracle OC)
+    (invariant : compileOracleInv maxApp sourceCode sourceCompiler sourceOracle targetCode targetCompiler targetOracle) :
+    compileOracleInv maxApp sourceCode' sourceCompiler (fun n => sourceOracle (n + 1))
+      (sptUnion targetCode (sptFromAList (targetOracle 0).2)) targetCompiler (fun n => targetOracle (n + 1)) := by
+  obtain ⟨compilerEq, oracleEq, nodup, fresh, annotations⟩ := invariant
+  refine ⟨compilerEq, ?_, ?_, ?_, ?_⟩
+  · funext n
+    exact congrFun oracleEq (n + 1)
+  · intro n
+    exact nodup (n + 1)
+  · intro n p member
+    apply fresh (n + 1) p
+    simp only [nthCode, sptMem_sptUnion] at member ⊢
+    exact member.elim (fun first => first.elim Or.inl (fun h => Or.inr (Or.inl h)))
+      (fun h => Or.inr (Or.inr h))
+  · intro n
+    exact annotations (n + 1)
+
 end Flapjack.Compiler.Backend.ClosToBvl
