@@ -6,7 +6,9 @@ sufficient traversal bounds; HOL correspondence and correctness remain open. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
-private def identity : AssocOp → Exp
+/-- The neutral element for each accumulator operator. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "id_from_op_def"]
+def identity : AssocOp → Exp
   | .plus => .op (.intOp (.const 0)) []
   | .times => .op (.intOp (.const 1)) []
   | .append => .op (.blockOp (.cons 0)) []
