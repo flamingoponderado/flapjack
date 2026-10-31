@@ -25,17 +25,18 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteCopy
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteXor
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryConfig
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateFfi
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateThunk
 
 /-! Assembly of ordinary operator cases for the candidate simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
-/-- Every non-thunk, non-install operator satisfies the expression simulation
+/-- Every non-force, non-install operator satisfies the expression simulation
 when its argument list does. This remains a candidate until the semantic
 carriers and complete pass theorem are reviewed. -/
 theorem expressionSimulation_ordinary {C F : Type} (trace : BackendCommon.Tra)
     (op : ClosLang.Op) (args : List ClosLang.Exp)
     (argsIH : expressionSimulation (C := C) (F := F) args)
-    (notThunk : ∀ thunk, op ≠ .thunkOp thunk) (notInstall : op ≠ .install) :
+    (notForce : op ≠ .thunkOp .forceThunk) (notInstall : op ≠ .install) :
     expressionSimulation (C := C) (F := F) [.op trace op args] := by
   cases op with
   | label index => exact expressionSimulation_rejected trace (.label index) args argsIH
@@ -43,7 +44,11 @@ theorem expressionSimulation_ordinary {C F : Type} (trace : BackendCommon.Tra)
   | intOp operation => exact expressionSimulation_int trace operation args argsIH
   | wordOp operation => exact expressionSimulation_word trace operation args argsIH
   | install => exact False.elim (notInstall rfl)
-  | thunkOp operation => exact False.elim (notThunk operation rfl)
+  | thunkOp operation =>
+    cases operation with
+    | allocThunk mode => exact expressionSimulation_allocThunk trace mode args argsIH
+    | updateThunk mode => exact expressionSimulation_updateThunk trace mode args argsIH
+    | forceThunk => exact False.elim (notForce rfl)
   | globOp operation =>
     cases operation with
     | global index => exact expressionSimulation_global trace index args argsIH
