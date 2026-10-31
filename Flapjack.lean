@@ -655,6 +655,7 @@ import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracleEval
 import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyClockShift
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShiftCases
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
+import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateRefs
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BuildOk
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ApplyOk
