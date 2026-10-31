@@ -148,6 +148,29 @@ theorem destClosure_direct_recclosure (maxApp address : Nat) (location : Option 
 
 
 
+/-- A successful known-location selection is also the generic selection when
+the closure's arity satisfies the generic maximum-application bound. -/
+theorem destClosure_direct_generic (maxApp address : Nat) (function : Value)
+    (args : List Value) (application : AppKind) (bound : args.length ≤ maxApp)
+    (found : destClosure maxApp (some address) function args = some application) :
+    destClosure maxApp none function args = some application := by
+  cases function <;> simp only [destClosure] at found <;> try contradiction
+  case closure location supplied captured arity body =>
+    have shape := destClosure_direct_closure maxApp address location supplied captured args arity body application (by
+      simpa only [destClosure] using found)
+    obtain ⟨rfl, rfl, arityEq, nonempty, rfl⟩ := shape
+    have positive : 0 < args.length := List.length_pos_iff.mpr nonempty
+    have take : args.reverse.take args.length = args.reverse := by simpa using (List.take_length (l := args.reverse))
+    simp [destClosure, checkLoc, bound, arityEq, positive, take]
+  case recclosure location supplied captured functions index =>
+    have shape := destClosure_direct_recclosure maxApp address location supplied captured args functions index application (by
+      simpa only [destClosure] using found)
+    obtain ⟨arity, body, selected, locationEq, rfl, arityEq, nonempty, rfl⟩ := shape
+    have positive : 0 < args.length := List.length_pos_iff.mpr nonempty
+    have take : args.reverse.take args.length = args.reverse := by simpa using (List.take_length (l := args.reverse))
+    rw [arityEq] at selected
+    simp [destClosure, selected, checkLoc, bound, positive, take, List.append_assoc]
+
 /-- A saturated known-location call has no application continuation: after
 its clock cost it is exactly the clock-clamped evaluation of the body. -/
 theorem evaluateApp_direct_full {C F : Type} (address : Nat) (function : Value)
@@ -179,5 +202,43 @@ theorem evaluateApp_direct_full {C F : Type} (address : Nat) (function : Value)
             cases rest with
             | nil => simp [evaluateApp]
             | cons other remaining => rfl
+
+/-- Given a successful direct selection, generic and known-location source
+application have identical execution, including timeout and clock clamping. -/
+theorem evaluateApp_direct_eq_generic {C F : Type} (address : Nat) (function : Value)
+    (args : List Value) (state : State C F) (application : AppKind)
+    (bound : args.length ≤ state.maxApp)
+    (found : destClosure state.maxApp (some address) function args = some application) :
+    evaluateApp (some address) function args state = evaluateApp none function args state := by
+  have generic := destClosure_direct_generic state.maxApp address function args application bound found
+  cases application with
+  | partialApp partialValue => exact False.elim (destClosure_direct_not_partial _ _ _ _ _ found)
+  | fullApp body env rest =>
+    have empty := destClosure_direct_remaining_nil state.maxApp address function args env rest body found
+    subst rest
+    have nonempty : args ≠ [] := by
+      have h := destClosure_full_remaining_lt state.maxApp (some address) function args env [] body found
+      intro empty
+      simp [empty] at h
+    cases args with
+    | nil => contradiction
+    | cons first tail =>
+      conv_lhs => rw [evaluateApp, found]
+      conv_rhs => rw [evaluateApp, generic]
+      simp only [List.length_nil, Nat.sub_zero]
+      split
+      · rfl
+      · cases run : fixClock (decClock (first :: tail).length state)
+            (evaluate [body] env (decClock (first :: tail).length state)) with
+        | mk result next =>
+          cases result with
+          | err error => rfl
+          | val values =>
+            cases values with
+            | nil => rfl
+            | cons value rest =>
+              cases rest with
+              | nil => simp [evaluateApp]
+              | cons other remaining => rfl
 
 end Flapjack.Compiler.Backend.ClosSem
