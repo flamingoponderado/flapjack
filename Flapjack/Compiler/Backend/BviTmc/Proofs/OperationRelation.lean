@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.HoleRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
+import Flapjack.Compiler.Backend.BviTmc.Proofs.Allocation
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
 
 /-! Primitive-operation cases of the TMC evaluation simulation. -/
@@ -463,5 +464,78 @@ theorem doApp_op_rel_finaliseCons {C F : Type} (f : HolFiniteMapExact Nat Nat)
         · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, targetRun]
         · intro key item found
           exact found
+
+/-- Updating a mutable constructor cannot succeed in a related source heap. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_updateCons {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp .updateCons) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.memOp .updateCons)) (_valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp .updateCons) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  rw [BviTailrec.doApp_updateCons_effect] at run
+  cases effect : BviTailrec.updateConsEffect values source.refs with
+  | none => simp [effect] at run
+  | some refs =>
+    unfold BviTailrec.updateConsEffect at effect
+    repeat' split at effect
+    all_goals try contradiction
+    rename_i args flag ptr index child other tag finalised left old right found condition
+    exact (no_mutblock f source.refs target.refs ptr tag finalised left old right statesRelated.1 found).elim
+
+/-- Allocating an array of related values extends the pointer renaming with
+the fresh source and target addresses. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_ref {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp .ref) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.memOp .ref)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp .ref) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  let src := leastUnusedRef source.refs
+  let tgt := leastUnusedRef target.refs
+  have srcFresh : src ∉ source.refs.domain := by simp [HolFiniteMapExact.domain, src, leastUnusedRef_unused]
+  have tgtFresh : tgt ∉ target.refs.domain := by simp [HolFiniteMapExact.domain, tgt, leastUnusedRef_unused]
+  have rangeFresh : tgt ∉ mapRange f := by
+    rintro ⟨key, mapped⟩
+    obtain ⟨_, _, _, found, _⟩ := stateRefRel_lookup f key tgt source.refs target.refs mapped statesRelated.1
+    have absent : target.refs.lookup tgt = none := by simpa [HolFiniteMapExact.domain] using tgtFresh
+    rw [absent] at found
+    contradiction
+  have srcMissing : f.lookup src = none := by
+    have absent : src ∉ f.domain := by rw [statesRelated.1.1]; exact srcFresh
+    simpa [HolFiniteMapExact.domain] using absent
+  have extension : finiteSubmap f (f.updateEq (src, tgt)) := by
+    intro key item found
+    have different : key ≠ src := by
+      intro equal
+      subst key
+      rw [srcMissing] at found
+      contradiction
+    simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
+  have cells : refRel (f.updateEq (src, tgt)) (.valueArray values) (.valueArray relatedValues) :=
+    .valueArray _ _ (listRel_submap f _ values relatedValues valuesRelated extension)
+  have ⟨mapped, nextStates, submap, fresh, holes, unfinalised⟩ :=
+    stateRel_alloc f source target src tgt _ _ statesRelated srcFresh tgtFresh rangeFresh cells
+  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+    BviSem.toBvl, BviSem.fromBvl] at run
+  obtain ⟨rfl, rfl⟩ := run
+  refine ⟨f.updateEq (src, tgt), .refPtr true tgt,
+    { target with refs := target.refs.updateEq (tgt, .valueArray relatedValues) }, ?_,
+    .refPtr src tgt true mapped, nextStates, submap, fresh, holes, unfinalised⟩
+  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+    BviSem.toBvl, BviSem.fromBvl, tgt]
 
 end Flapjack.Compiler.Backend.BviTmc
