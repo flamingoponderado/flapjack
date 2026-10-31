@@ -663,6 +663,21 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
   --compile-cases 25 --rich-cases 25 --config-cases 10
 ```
 
+A fresh-seed run on 2026-10-31 matched the pinned compiler for 41 complete
+RISC-V program outputs, six backend-option combinations, four complete explorer
+reports, and the generated frontend and option-validation cases listed below.
+This is finite regression evidence, not a general output-equivalence proof.
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-seed 51739 --edge-seed 804193 --compile-seed 701923 \
+  --type-cases 80 --compile-cases 12 --explore-cases 4 --rich-cases 12 \
+  --extended-cases 8 --integration-cases 9 --declaration-cases 80 \
+  --handler-cases 80 --annotation-cases 80 --config-cases 6 \
+  --config-error-cases 10 --sexp-cases 40 --byte-cases 30 \
+  --structured-cases 80 --lex-cases 80 --token-cases 80 --raw-byte-cases 80
+```
+
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
 output for 28 benchmark programs and three bootstrap hello programs from the pinned
 CakeML submodule with captured original-compiler output. It checks the source revision and source hashes before
