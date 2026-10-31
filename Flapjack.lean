@@ -665,6 +665,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockEqual
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ScalarConstant
 import Flapjack.Compiler.Backend.ClosConstant.Proofs.Build
 import Flapjack.Compiler.Backend.ClosConstant.Proofs.Flatten
+import Flapjack.Compiler.Backend.ClosConstant.Proofs.Bounds
 import Flapjack.Compiler.Backend.ClosConstant.Proofs.Hash
 import Flapjack.Compiler.Backend.ClosConstant.Proofs.HashParts
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ConstantBuild
