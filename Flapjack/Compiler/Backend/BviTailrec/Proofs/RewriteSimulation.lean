@@ -3538,6 +3538,76 @@ theorem rewriteTail_op_blockOp_of_size {C F : Type} (operation : ClosLang.BlockO
     all_goals try (simp)
     all_goals exact hyp
 
+/-- Memory primitives delegated to BVL preserve the rewrite simulation. -/
+theorem rewriteTail_op_memory_delegated {C F : Type} (operation : ClosLang.MemOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args) (delegated : memoryDelegated operation = true)
+    (hyp : rewriteTailHyp [.op (.memOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.memOp operation) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · intro values s next t value related run
+    exact stateRel_doApp_memory_viaBvl operation values s next t value related delegated run
+  · intro values s error run
+    exact doApp_memory_viaBvl_error operation values s delegated error run
+  · exact hyp
+
+/-- BVI-rejected memory primitives propagate argument errors and otherwise
+produce the excluded type error. -/
+theorem rewriteTail_op_memory_rejected {C F : Type} (operation : ClosLang.MemOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args) (rejected : memoryRejected operation = true)
+    (hyp : rewriteTailHyp [.op (.memOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.memOp operation) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · intro values s next t value related run
+    rw [doApp_memory_rejected operation values s rejected] at run
+    contradiction
+  · intro values s error run
+    rw [doApp_memory_rejected operation values s rejected] at run
+    exact (SemanticPrimitivesHOL.Result.err.inj run).symm
+  · exact hyp
+
+/-- Every BVI memory primitive satisfies the rewrite simulation. -/
+theorem rewriteTail_op_memOp {C F : Type} (operation : ClosLang.MemOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.memOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  cases operation with
+  | refByte flag => exact rewriteTail_op_refByte flag args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | mutCons tag index => exact rewriteTail_op_mutCons tag index args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | updateCons => exact rewriteTail_op_updateCons args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | finaliseCons => exact rewriteTail_op_finaliseCons args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | copyByte flag =>
+    cases flag with
+    | false => exact rewriteTail_op_memory_delegated _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
+    | true => exact rewriteTail_op_memory_rejected _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
+  | _ =>
+    all_goals first
+      | exact rewriteTail_op_memory_delegated _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
+      | exact rewriteTail_op_memory_rejected _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
+
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a
 raise as an optimization candidate. -/

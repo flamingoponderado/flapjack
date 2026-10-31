@@ -741,6 +741,90 @@ theorem doApp_block_viaBvl_error {C F : Type} (op : ClosLang.BlockOp) (args : Li
   | none => simpa [found] using run.symm
   | some pair => cases pair; simp [found] at run
 
+/-- BVL memory operations depend only on the reference store and update only that store. -/
+theorem applyMemory_sharedRefs {C D F G : Type} (op : ClosLang.MemOp) (args : List Value)
+    (s : BvlSem.State C F) (t : BvlSem.State D G) (refs : t.refs = s.refs) :
+    BvlSem.applyMemory op args t = (BvlSem.applyMemory op args s).map
+      (fun (value, next) => (value, { t with refs := next.refs })) := by
+  unfold BvlSem.applyMemory
+  rw [refs]
+  repeat' split
+  all_goals simp_all [Option.map_bind]
+  all_goals try (cases t; simp_all)
+  all_goals try (repeat' (congr 1; funext value; cases value <;> simp [Option.map_bind]))
+/-- Memory operators rejected directly by the BVI dispatcher. -/
+def memoryRejected : ClosLang.MemOp → Bool
+  | .fromListByte | .toListByte | .concatByteVec | .copyByte true => true
+  | _ => false
+
+/-- These BVI memory operations always report a type error after their
+arguments have been evaluated. -/
+theorem doApp_memory_rejected {C F : Type} (op : ClosLang.MemOp) (args : List Value)
+    (state : BviSem.BviState C F) (rejected : memoryRejected op = true) :
+    BviSem.doApp (.memOp op) args state = .err (.abort .typeError) := by
+  cases op with
+  | copyByte flag => cases flag <;> simp [memoryRejected, BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at *
+  | _ => all_goals simp [memoryRejected, BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at *
+
+/-- Memory operators whose BVI dispatcher unconditionally delegates to BVL. -/
+def memoryDelegated : ClosLang.MemOp → Bool
+  | .refByte _ | .mutCons _ _ | .updateCons | .finaliseCons | .fromListByte | .toListByte | .concatByteVec | .copyByte true => false
+  | _ => true
+/-- BVI memory operators in the delegated class use the BVL dispatcher. -/
+theorem doApp_memory_viaBvl {C F : Type} (op : ClosLang.MemOp) (args : List Value) (s : BviSem.BviState C F)
+    (h : memoryDelegated op = true) :
+    BviSem.doApp (.memOp op) args s =
+      match BvlSem.applyMemory op args (BviSem.toBvl s) with
+      | none => .err (.abort .typeError)
+      | some (value, next) => .val (value, BviSem.fromBvl next s) := by
+  cases op with
+  | copyByte flag =>
+    cases flag <;> simp [memoryDelegated, BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at *
+    all_goals split <;> simp_all
+    all_goals split <;> simp_all
+  | _ =>
+    all_goals simp [memoryDelegated, BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at *
+    all_goals split <;> simp_all
+    all_goals split <;> simp_all
+/-- Delegated memory operations preserve related BVI states. -/
+theorem stateRel_doApp_memory_viaBvl {C F : Type} (op : ClosLang.MemOp) (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (delegated : memoryDelegated op = true)
+    (run : BviSem.doApp (.memOp op) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.memOp op) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  have refs := (stateRel_const source target related).1
+  have eqRefs : (BviSem.toBvl target).refs = (BviSem.toBvl source).refs := by simpa [BviSem.toBvl] using refs
+  have transfer := applyMemory_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl target) eqRefs
+  have self := applyMemory_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl source) rfl
+  rw [doApp_memory_viaBvl op args source delegated] at run
+  rw [doApp_memory_viaBvl op args target delegated]
+  cases found : BvlSem.applyMemory op args (BviSem.toBvl source) with
+  | none => simp [found] at run
+  | some pair =>
+    obtain ⟨v, next⟩ := pair
+    simp only [found, Option.map_some] at self transfer
+    have nextEq : next = { BviSem.toBvl source with refs := next.refs } := by
+      exact (Prod.mk.inj (Option.some.inj self)).2
+    rw [found] at run
+    dsimp only at run
+    rw [nextEq] at run
+    simp [BviSem.toBvl, BviSem.fromBvl] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨{ target with refs := next.refs }, ?_, stateRel_withRefs source target next.refs related⟩
+    rw [transfer]
+    simp [BviSem.toBvl, BviSem.fromBvl]
+/-- Delegated memory operations report only type errors. -/
+theorem doApp_memory_viaBvl_error {C F : Type} (op : ClosLang.MemOp) (args : List Value)
+    (state : BviSem.BviState C F) (delegated : memoryDelegated op = true)
+    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.memOp op) args state = .err error) : error = .abort .typeError := by
+  rw [doApp_memory_viaBvl op args state delegated] at run
+  cases found : BvlSem.applyMemory op args (BviSem.toBvl state) with
+  | none => simpa [found] using run.symm
+  | some pair => cases pair; simp [found] at run
+
 /-- Constructing a plain block returns its fields without changing state. -/
 theorem doApp_blockCons {C F : Type} (tag : Nat) (args : List Value) (state : BviSem.BviState C F) :
     BviSem.doApp (.blockOp (.cons tag)) args state = .val (.block tag args, state) := by
