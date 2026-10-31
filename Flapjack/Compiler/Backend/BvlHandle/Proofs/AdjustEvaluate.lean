@@ -235,4 +235,47 @@ theorem evaluate_handleAdjVars {C F : Type} (expression : Bvl.Exp)
       (before ++ (inserted ++ env)) state = evaluate [expression] (before ++ env) state := by
   simpa [handleAdjVarsList] using evaluate_handleAdjVarsList [expression] before inserted env state
 
+/-- Extending the inserted segment before an existing adjusted environment
+preserves evaluation when the original segment lies inside the environment. -/
+theorem evaluate_handleAdjVars_extend {C F : Type} (expression : Bvl.Exp) (depth : Nat)
+    (before inserted env : List Value) (state : State C F) (bound : depth ≤ env.length) :
+    evaluate [handleAdjVars before.length (depth + inserted.length) expression]
+      (before ++ (inserted ++ env)) state =
+    evaluate [handleAdjVars before.length depth expression] (before ++ env) state := by
+  let first := env.take depth
+  let rest := env.drop depth
+  have split : first ++ rest = env := List.take_append_drop depth env
+  have length : first.length = depth := by simp [first, Nat.min_eq_left bound]
+  have extended := evaluate_handleAdjVars expression before (inserted ++ first) rest state
+  have original := evaluate_handleAdjVars expression before first rest state
+  simp only [List.length_append, length, List.append_assoc, split] at extended original
+  simpa [Nat.add_comm] using extended.trans original.symm
+
+/-- Extensional singleton evaluation equality is preserved under handler
+variable adjustment when the requested segment is available. -/
+theorem handleAdjVars_evaluate_congr {C F : Type} (first second : Bvl.Exp)
+    (depth shift : Nat) (env : List Value) (state : State C F)
+    (equal : ∀ env, evaluate [first] env state = evaluate [second] env state)
+    (bound : depth + shift ≤ env.length) :
+    evaluate [handleAdjVars depth shift first] env state =
+      evaluate [handleAdjVars depth shift second] env state := by
+  let before := env.take depth
+  let afterBefore := env.drop depth
+  let inserted := afterBefore.take shift
+  let rest := afterBefore.drop shift
+  have beforeLength : before.length = depth := by
+    simp only [before, List.length_take]
+    omega
+  have insertedLength : inserted.length = shift := by
+    simp only [inserted, afterBefore, List.length_take, List.length_drop]
+    omega
+  have decomposition : before ++ (inserted ++ rest) = env := by
+    have parts : inserted ++ rest = afterBefore := List.take_append_drop shift afterBefore
+    rw [parts]
+    exact List.take_append_drop depth env
+  have firstEq := evaluate_handleAdjVars first before inserted rest state
+  have secondEq := evaluate_handleAdjVars second before inserted rest state
+  rw [beforeLength, insertedLength, decomposition] at firstEq secondEq
+  exact firstEq.trans ((equal (before ++ rest)).trans secondEq.symm)
+
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

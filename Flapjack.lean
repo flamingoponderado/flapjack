@@ -461,6 +461,7 @@ import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpState
 import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpCases
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.CanRaise
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.AdjustEvaluate
+import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyEvaluate
 import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpProduction
 import Flapjack.Compiler.Backend.BvlInline.Proofs.VarListEvaluate
 import Flapjack.Compiler.Backend.BvlInline.Proofs.MappedApply
