@@ -1461,4 +1461,112 @@ theorem evaluate_partialAppFnLocationCode_stub {C F : Type} {α : Type}
     simp [BvlSem.evaluate, BvlSem.doApp, BvlSem.applyBlock]
   · simp [mkConst, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyNumeric, BvlSem.doIntApp]
 
+/-- Entries in the partial-application global table, ordered first by total
+arity and then by previously supplied arguments. -/
+def partialAppEntries (maxApp count : Nat) : List BvlSem.Value :=
+  ((List.range count).map fun total =>
+    (List.range total).map fun previous =>
+      BvlSem.Value.codePtr (partialAppFnLocation maxApp total previous)).flatten
+
+/-- Extending the table by one arity appends exactly that arity's entries. -/
+theorem partialAppEntries_succ (maxApp count : Nat) :
+    partialAppEntries maxApp (count + 1) = partialAppEntries maxApp count ++
+      (List.range count).map (fun previous => BvlSem.Value.codePtr (partialAppFnLocation maxApp count previous)) := by
+  simp [partialAppEntries, List.range_succ]
+
+/-- Table lookup by the length of the preceding arity rows. -/
+theorem partialAppEntries_lookup (maxApp count total previous : Nat)
+    (inTable : total < count) (inRow : previous < total) :
+    (partialAppEntries maxApp count)[(partialAppEntries maxApp total).length + previous]? =
+      some (.codePtr (partialAppFnLocation maxApp total previous)) := by
+  induction count with
+  | zero => omega
+  | succ count ih =>
+    rw [partialAppEntries_succ]
+    by_cases equal : total = count
+    · subst total
+      simp [inRow]
+    · have smaller : total < count := by omega
+      have run := ih smaller
+      have bound : (partialAppEntries maxApp total).length + previous < (partialAppEntries maxApp count).length := by
+        exact (List.getElem?_eq_some_iff.mp run).1
+      simp [List.getElem?_append, bound, (List.getElem?_eq_some_iff.mp run).2]
+
+/-- The preceding table rows have the triangular length used by the generated
+index calculation. -/
+theorem partialAppEntries_length (maxApp count : Nat) :
+    (partialAppEntries maxApp count).length = count * (count - 1) / 2 := by
+  have twice : ∀ n, (partialAppEntries maxApp n).length * 2 = n * (n - 1) := by
+    intro n
+    induction n with
+    | zero => simp [partialAppEntries]
+    | succ n ih =>
+      rw [partialAppEntries_succ]
+      simp only [List.length_append, List.length_map, List.length_range]
+      cases n with
+      | zero => simp [partialAppEntries]
+      | succ n =>
+        simp only [Nat.add_sub_cancel] at *
+        simp only [Nat.add_mul, Nat.mul_add, Nat.one_mul, Nat.mul_one] at ih ⊢
+        omega
+  have h := congrArg (fun n : Nat => n / 2) (twice count)
+  simpa using h
+
+/-- The triangular slot in the global partial-application table contains the
+corresponding generated code pointer. -/
+theorem globalTable_partialApp_lookup (maxApp total previous : Nat)
+    (totalBound : total < maxApp) (previousBound : previous < total) :
+    ∃ entries, globalTable maxApp = .block 0 entries ∧
+      entries[previous + total * (total - 1) / 2]? =
+        some (.codePtr (partialAppFnLocation maxApp total previous)) := by
+  refine ⟨partialAppEntries maxApp maxApp, rfl, ?_⟩
+  simpa [partialAppEntries_length, Nat.add_comm] using
+    partialAppEntries_lookup maxApp maxApp total previous totalBound previousBound
+
+/-- A successfully computed slot and the installed global table evaluate to
+the corresponding partial-application code pointer. -/
+theorem evaluate_partialApp_global_pointer {C F : Type} (s : BvlSem.State C F)
+    (env : List BvlSem.Value) (index : Bvl.Exp) (maxApp total previous : Nat)
+    (totalBound : total < maxApp) (previousBound : previous < total)
+    (global : ClosSem.getGlobal 0 s.globals = some (some (globalTable maxApp)))
+    (indexRun : BvlSem.evaluate [index] env s =
+      (.val [.number (Int.ofNat (previous + total * (total - 1) / 2))], s)) :
+    BvlSem.evaluate [mkEl (.op (.globOp (.global 0)) []) index] env s =
+      (.val [.codePtr (partialAppFnLocation maxApp total previous)], s) := by
+  obtain ⟨entries, tableEq, slot⟩ := globalTable_partialApp_lookup maxApp total previous totalBound previousBound
+  have globalRun : BvlSem.evaluate [.op (.globOp (.global 0)) []] env s = (.val [.block 0 entries], s) := by
+    simp [ClosSem.getGlobal] at global
+    simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyGlobal, global, tableEq]
+  rw [mkEl, BvlSem.evaluate, BvlSem.fixClock_evaluate]
+  have argsRun : BvlSem.evaluate [index, .op (.globOp (.global 0)) []] env s =
+      (.val [.number (Int.ofNat (previous + total * (total - 1) / 2)), .block 0 entries], s) := by
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, indexRun, globalRun]
+    rfl
+  rw [argsRun]
+  have indexEq : (Int.ofNat previous + Int.ofNat total * Int.ofNat (total - 1) / 2) =
+      Int.ofNat (previous + total * (total - 1) / 2) := by
+    simp only [Int.ofNat_eq_natCast]
+    push_cast
+    rfl
+  simp only [Int.ofNat_eq_natCast] at indexEq
+  simp [BvlSem.doApp, BvlSem.applyMemory]
+  rw [indexEq]
+  have nonnegative : ¬ ((previous + total * (total - 1) / 2 : Nat) : Int) < 0 := by
+    exact Int.not_lt.mpr (Int.natCast_nonneg _)
+  simp only [if_neg nonnegative, Int.toNat_natCast, slot, Option.bind]
+
+/-- The generated stub's arity lookup and table access jointly select the
+installed partial-application entry pointer. -/
+theorem evaluate_partialApp_stub_pointer {C F : Type} (s : BvlSem.State C F)
+    (args : List BvlSem.Value) (extra ptr : BvlSem.Value) (tag : Nat) (fields : List BvlSem.Value)
+    (maxApp total previous : Nat) (totalBound : total < maxApp) (previousBound : previous < total)
+    (global : ClosSem.getGlobal 0 s.globals = some (some (globalTable maxApp))) :
+    BvlSem.evaluate [mkEl (.op (.globOp (.global 0)) [])
+      (partialAppFnLocationCode maxApp
+        (.op (.blockOp (.elemAt 1)) [.var (args.length + 1)]) (mkConst previous))]
+      (extra :: (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)])) s =
+      (.val [.codePtr (partialAppFnLocation maxApp total previous)], s) := by
+  apply evaluate_partialApp_global_pointer s _ _ maxApp total previous totalBound previousBound global
+  exact evaluate_partialAppFnLocationCode_stub maxApp s args extra ptr tag fields total previous previousBound
+
 end Flapjack.Compiler.Backend.ClosToBvl
