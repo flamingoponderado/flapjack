@@ -1,10 +1,24 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationBounds
 import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
 
 /-! Location annotations supplied by closure numbering to prepared programs. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.Compiler.Backend.BackendProps
+
+/-- Chaining top-level expressions adds no closure-code locations. -/
+theorem chainExps_codeLocations (start : Nat) (expressions : List ClosLang.Exp) :
+    ClosProps.codeLocations ((chainExps start expressions).map (fun (_, _, body) => body)) =
+      ClosProps.codeLocations expressions := by
+  induction expressions generalizing start with
+  | nil => simp [chainExps, ClosProps.codeLocations, ClosProps.codeLocationsExp]
+  | cons first rest ih =>
+    cases rest with
+    | nil => simp [chainExps, ClosProps.codeLocations]
+    | cons second tail =>
+      simpa [chainExps, ClosProps.codeLocations, ClosProps.codeLocationsExp] using
+        congrArg (fun locations => ClosProps.codeLocationsExp first ++ locations) (ih (start + 1))
 
 /-- Every entry in a chain of numbered expressions retains the locations
 assigned by the numbering pass. -/
@@ -48,6 +62,40 @@ theorem compileCommonNoOpts_annotations (config current : Config) (expressions :
           simp only [numbered] at source
           exact source member
         · exact ClosAnnotate.compile_varsSome _
+
+/-- The no-optimization preprocessing path places closure locations in the
+interval reserved by the numbering state, even after annotation and chaining. -/
+theorem compileCommonNoOpts_location_bounds (config current : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp))
+    (compiled : compileCommonNoOpts? config expressions = some (current, program))
+    (location : Nat) (member : location ∈ ClosProps.codeLocations (program.map (fun (_, _, body) => body))) :
+    config.nextLoc ≤ location ∧ location < current.nextLoc := by
+  by_cases enabled : config.doMti || config.doCall
+  · simp [compileCommonNoOpts?, enabled] at compiled
+  · cases known : config.knownConf with
+    | some k => simp [compileCommonNoOpts?, enabled, known] at compiled
+    | none =>
+      let next := config.nextLoc + max 1 expressions.length
+      let aligned := if next % 2 = 0 then next else next + 1
+      cases numbered : ClosNumber.renumberList aligned expressions with
+      | mk nextLoc numberedExpressions =>
+        have run : compileCommonNoOpts? config expressions =
+            some ({ config with start := config.nextLoc, nextLoc := nextLoc, knownConf := none, callState := (.ln, []) },
+              ClosAnnotate.compile (chainExps config.nextLoc numberedExpressions)) := by
+          simp [compileCommonNoOpts?, enabled, known, next, aligned, numbered]
+        have equal := Option.some.inj (compiled.symm.trans run)
+        cases equal
+        have raw := ClosAnnotate.compile_codeLocations (chainExps config.nextLoc numberedExpressions) member
+        rw [chainExps_codeLocations] at raw
+        have numberedMember : location ∈ ClosProps.codeLocations (ClosNumber.renumberList aligned expressions).2 := by
+          simpa [numbered] using raw
+        have bounds := ClosNumber.renumberList_location_bounds expressions aligned location numberedMember
+        have lower : config.nextLoc ≤ aligned := by
+          dsimp [aligned, next]
+          split <;> omega
+        simp only [numbered] at bounds
+        simp only
+        omega
 
 /-- Stateful numbering supplies locations for each incremental main program;
 annotation then supplies variables and preserves the supplied auxiliary-code
@@ -104,6 +152,19 @@ theorem numberingOracle_location_bounds {C : Type}
   have next := state index
   simp only [ClosNumber.ignoreTable] at next
   omega
+
+/-- Numbering followed by variable annotation keeps all main-expression
+closure locations inside the oracle entry's numbering interval. -/
+theorem numberedAnnotatedOracle_location_bounds {C : Type}
+    (oracle : Nat → (Nat × C) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (state : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (index location : Nat)
+    (member : location ∈ ClosProps.codeLocations
+      (((pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2.1)) :
+    (oracle index).1.1 ≤ location ∧ location < (oracle (index + 1)).1.1 := by
+  apply numberingOracle_location_bounds oracle state index location
+  apply ClosAnnotate.annotateList_codeLocations 0
+  simpa [Function.comp_def, pureCo, ClosAnnotate.compileInc] using member
 
 /-- The executable no-optimization closure compiler satisfies the prepared
 entry behavior theorem without separate program-annotation assumptions.
