@@ -112,4 +112,212 @@ theorem expressionSimulation_global {C F : Type} (trace : BackendCommon.Tra)
           rcases run with ⟨rfl, rfl⟩
           exact evaluatePost_global_success s sMiddle last t targetEnv f index targetArgs values value argsPost appRun maxApp
 
+/-- Argument errors propagate through global allocation. -/
+theorem evaluatePost_alloc_error {C F : Type} (s sFinal : ClosSem.State C F)
+    (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (args : List Bvl.Exp)
+    (error : ErrorResult ClosSem.Value)
+    (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
+    evaluatePost s sFinal t targetEnv f (.err error) [.op (.globOp .allocGlobal) args] := by
+  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
+  cases targetResult with
+  | val values => simp [resultRel] at related
+  | err targetError =>
+    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+
+/-- Allocation after successful argument evaluation preserves the simulation
+postcondition and the preexisting reference frame. -/
+theorem evaluatePost_alloc_success {C F : Type} (s sMiddle sLast : ClosSem.State C F)
+    (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (targetArgs : List Bvl.Exp)
+    (values : List ClosSem.Value) (value : ClosSem.Value)
+    (post : evaluatePost s sMiddle t targetEnv f (.val values) targetArgs)
+    (run : ClosSem.doApp (.globOp .allocGlobal) values.reverse sMiddle = .val (value, sLast))
+    (maxApp : sMiddle.maxApp = s.maxApp) :
+    evaluatePost s sLast t targetEnv f (.val [value]) [.op (.globOp .allocGlobal) targetArgs] := by
+  obtain ⟨count, argsEq, nonnegative, valueEq, stateEq⟩ := global_alloc_success values.reverse sMiddle sLast value run
+  obtain ⟨clock, targetResult, tMiddle, fMiddle, targetRun, related, state, map, refs, annotations, clocks⟩ := post
+  cases targetResult with
+  | err error => simp [resultRel] at related
+  | val targetValues =>
+    have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
+        [.number count] targetValues.reverse := by
+      simpa [resultRel, maxApp, argsEq] using reverse_related related
+    have targetEq := vRel_numbers_inv [count] targetValues.reverse argsRel
+    have allocation := global_alloc_related sMiddle tMiddle state count nonnegative
+    subst value
+    subst sLast
+    let tLast := { tMiddle with globals := tMiddle.globals ++ List.replicate count.toNat none }
+    refine ⟨clock, .val [BvlSem.unitValue], tLast, fMiddle, ?_, ?_, allocation.2.2.2,
+      map, refs, annotations, clocks⟩
+    · rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, targetRun]
+      simp [targetEq, allocation.2.1, tLast]
+    · exact List.Forall₂.cons (by simpa [maxApp, tLast] using allocation.2.2.1) .nil
+
+/-- The global-allocation expression case follows from the argument-list
+induction hypothesis. This candidate remains untagged pending review of the
+semantic carriers and the assembled pass theorem. -/
+theorem expressionSimulation_alloc {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp)
+    (argsIH : expressionSimulation (C := C) (F := F) args) :
+    expressionSimulation (C := C) (F := F) [.op trace (.globOp .allocGlobal) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    locations annotations varsAnnotated installed envRelated states
+  cases argsCompile : compileExpListHOL s.maxApp args aux with
+  | mk targetArgs aux1 =>
+    have argsCompiled : compileExpsHOL s.maxApp args aux = (targetArgs, aux1) := by
+      rw [compileExps_eq_list]
+      exact argsCompile
+    have wholeCompiled : compileExpsHOL s.maxApp [.op trace (.globOp .allocGlobal) args] aux =
+        ([.op (.globOp .allocGlobal) targetArgs], aux1) := by
+      rw [compileExps_eq_list]
+      simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
+    have equal := compile.symm.trans wholeCompiled
+    cases equal
+    have argsLoc : ClosProps.everyFnLocationSome args := by
+      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+    have argsVars : ClosProps.everyFnVarsSome args := by
+      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
+    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    cases argsRun : ClosSem.evaluate args sourceEnv s with
+    | mk argsResult sMiddle =>
+      rw [argsRun] at run
+      cases argsResult with
+      | err error =>
+        simp at run
+        rcases run with ⟨rfl, rfl⟩
+        exact evaluatePost_alloc_error s sMiddle t targetEnv f targetArgs error
+          (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
+            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+      | val values =>
+        have maxApp : sMiddle.maxApp = s.maxApp := by
+          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
+          rw [argsRun] at h
+          exact h
+        have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
+          argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
+        cases appRun : ClosSem.doApp (.globOp .allocGlobal) values.reverse sMiddle with
+        | err error =>
+          have errorEq := global_alloc_error values.reverse sMiddle error appRun
+          simp [appRun] at run
+          apply False.elim
+          apply noTypeError
+          simpa [errorEq] using run.1.symm
+        | val pair =>
+          obtain ⟨value, last⟩ := pair
+          simp [appRun] at run
+          rcases run with ⟨rfl, rfl⟩
+          exact evaluatePost_alloc_success s sMiddle last t targetEnv f targetArgs values value argsPost appRun maxApp
+
+/-- Argument errors propagate through a global write. -/
+theorem evaluatePost_setGlobal_error {C F : Type} (s sFinal : ClosSem.State C F)
+    (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (index : Nat) (args : List Bvl.Exp)
+    (error : ErrorResult ClosSem.Value)
+    (post : evaluatePost s sFinal t targetEnv f (.err error) args) :
+    evaluatePost s sFinal t targetEnv f (.err error)
+      [.op (.globOp (.setGlobal (index + numAddedGlobals))) args] := by
+  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, state, map, refs, annotations, clocks⟩ := post
+  cases targetResult with
+  | val values => simp [resultRel] at related
+  | err targetError =>
+    refine ⟨clock, .err targetError, tFinal, fFinal, ?_, related, state, map, refs, annotations, clocks⟩
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+
+/-- A successful global write preserves the expression simulation. -/
+theorem evaluatePost_setGlobal_success {C F : Type} (s sMiddle sLast : ClosSem.State C F)
+    (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (index : Nat) (targetArgs : List Bvl.Exp)
+    (values : List ClosSem.Value) (value : ClosSem.Value)
+    (post : evaluatePost s sMiddle t targetEnv f (.val values) targetArgs)
+    (run : ClosSem.doApp (.globOp (.setGlobal index)) values.reverse sMiddle = .val (value, sLast))
+    (maxApp : sMiddle.maxApp = s.maxApp) :
+    evaluatePost s sLast t targetEnv f (.val [value])
+      [.op (.globOp (.setGlobal (index + numAddedGlobals))) targetArgs] := by
+  obtain ⟨stored, argsEq, empty, valueEq, stateEq⟩ := global_set_success index values.reverse sMiddle sLast value run
+  obtain ⟨clock, targetResult, tMiddle, fMiddle, targetRun, related, state, map, refs, annotations, clocks⟩ := post
+  cases targetResult with
+  | err error => simp [resultRel] at related
+  | val targetValues =>
+    have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
+        [stored] targetValues.reverse := by
+      simpa [resultRel, maxApp, argsEq] using reverse_related related
+    cases reversed : targetValues.reverse with
+    | nil =>
+      rw [reversed] at argsRel
+      cases argsRel
+    | cons target rest =>
+      rw [reversed] at argsRel
+      cases argsRel with
+      | cons storedRel tail =>
+        cases tail
+        obtain ⟨targetApp, nextState⟩ := global_set_related sMiddle tMiddle state index stored target storedRel empty
+        subst value
+        subst sLast
+        let tLast := { tMiddle with globals := tMiddle.globals.set (index + numAddedGlobals) (some target) }
+        refine ⟨clock, .val [BvlSem.unitValue], tLast, fMiddle, ?_, ?_, nextState,
+          map, refs, annotations, clocks⟩
+        · rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, targetRun]
+          simp [reversed, targetApp, tLast]
+        · apply List.Forall₂.cons
+          · change vRel s.maxApp fMiddle tMiddle.refs tMiddle.code (.block 0 []) (.block 0 [])
+            exact .block .nil
+          · exact .nil
+
+/-- The global-write expression case follows from the argument-list
+induction hypothesis. This candidate remains untagged pending review of the
+semantic carriers and the assembled pass theorem. -/
+theorem expressionSimulation_setGlobal {C F : Type} (trace : BackendCommon.Tra)
+    (index : Nat) (args : List ClosLang.Exp)
+    (argsIH : expressionSimulation (C := C) (F := F) args) :
+    expressionSimulation (C := C) (F := F) [.op trace (.globOp (.setGlobal index)) args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
+    locations annotations varsAnnotated installed envRelated states
+  cases argsCompile : compileExpListHOL s.maxApp args aux with
+  | mk targetArgs aux1 =>
+    have argsCompiled : compileExpsHOL s.maxApp args aux = (targetArgs, aux1) := by
+      rw [compileExps_eq_list]
+      exact argsCompile
+    have wholeCompiled : compileExpsHOL s.maxApp [.op trace (.globOp (.setGlobal index)) args] aux =
+        ([.op (.globOp (.setGlobal (index + numAddedGlobals))) targetArgs], aux1) := by
+      rw [compileExps_eq_list]
+      simp [compileExpListHOL, compileExpHOL, argsCompile, compileOp]
+    have equal := compile.symm.trans wholeCompiled
+    cases equal
+    have argsLoc : ClosProps.everyFnLocationSome args := by
+      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+    have argsVars : ClosProps.everyFnVarsSome args := by
+      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
+    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    cases argsRun : ClosSem.evaluate args sourceEnv s with
+    | mk argsResult sMiddle =>
+      rw [argsRun] at run
+      cases argsResult with
+      | err error =>
+        simp at run
+        rcases run with ⟨rfl, rfl⟩
+        exact evaluatePost_setGlobal_error s sMiddle t targetEnv f index targetArgs error
+          (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
+            argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+      | val values =>
+        have maxApp : sMiddle.maxApp = s.maxApp := by
+          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
+          rw [argsRun] at h
+          exact h
+        have argsPost := argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.val values)
+          argsRun (by simp) argsCompiled argsLoc annotations argsVars installed envRelated states
+        cases appRun : ClosSem.doApp (.globOp (.setGlobal index)) values.reverse sMiddle with
+        | err error =>
+          have errorEq := global_set_error index values.reverse sMiddle error appRun
+          simp [appRun] at run
+          apply False.elim
+          apply noTypeError
+          simpa [errorEq] using run.1.symm
+        | val pair =>
+          obtain ⟨value, last⟩ := pair
+          simp [appRun] at run
+          rcases run with ⟨rfl, rfl⟩
+          exact evaluatePost_setGlobal_success s sMiddle last t targetEnv f index targetArgs values value argsPost appRun maxApp
+
 end Flapjack.Compiler.Backend.ClosToBvl

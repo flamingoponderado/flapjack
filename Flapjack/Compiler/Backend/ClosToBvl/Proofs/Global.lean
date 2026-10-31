@@ -183,4 +183,126 @@ theorem global_alloc_related {C F : Type} {f : HolFiniteMapExact Nat Nat}
   · simp [ClosSem.doApp, ClosSem.applyGlobal, nonnegative]
   · simp [BvlSem.doApp, BvlSem.applyGlobal, nonnegative]
 
+/-- A successful allocation has exactly one nonnegative numeric argument. -/
+theorem global_alloc_success {C F : Type} (args : List ClosSem.Value)
+    (s sLast : ClosSem.State C F) (value : ClosSem.Value)
+    (run : ClosSem.doApp (.globOp .allocGlobal) args s = .val (value, sLast)) :
+    ∃ count : Int, args = [.number count] ∧ ¬ count < 0 ∧
+      value = ClosSem.unitValue ∧
+      sLast = { s with globals := s.globals ++ List.replicate count.toNat none } := by
+  cases args with
+  | nil => simp [ClosSem.doApp, ClosSem.applyGlobal] at run
+  | cons first rest =>
+    cases rest with
+    | cons second rest => simp [ClosSem.doApp, ClosSem.applyGlobal] at run
+    | nil =>
+      cases first <;> simp only [ClosSem.doApp, ClosSem.applyGlobal] at run
+      all_goals try contradiction
+      case number count =>
+        by_cases negative : count < 0
+        · simp [negative] at run
+        · simp [negative] at run
+          exact ⟨count, rfl, negative, run.1.symm, run.2.symm⟩
+
+/-- A failed global allocation reports a source type error. -/
+theorem global_alloc_error {C F : Type} (args : List ClosSem.Value)
+    (s : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
+    (run : ClosSem.doApp (.globOp .allocGlobal) args s = .err error) :
+    error = .abort .typeError := by
+  simp only [ClosSem.doApp] at run
+  cases h : ClosSem.applyGlobal .allocGlobal args s <;> simp [h] at run
+  exact run.symm
+
+/-- Updating corresponding empty slots preserves the relation on global
+lists, and the reserved target table at index zero. -/
+theorem stateRel_set_global {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+    (index : Nat) (value : ClosSem.Value) (target : BvlSem.Value)
+    (valueRel : vRel s.maxApp f t.refs t.code value target)
+    (empty : ClosSem.getGlobal index s.globals = some none) :
+    t.globals[index + numAddedGlobals]? = some none ∧
+    stateRel f { s with globals := s.globals.set index (some value) }
+      { t with globals := t.globals.set (index + numAddedGlobals) (some target) } := by
+  have setRelated : ∀ (xs : List (Option ClosSem.Value)) (ys : List (Option BvlSem.Value)),
+      List.Forall₂ (optionValueRel (vRel s.maxApp f t.refs t.code)) xs ys →
+      ∀ (i : Nat), xs[i]? = some none →
+      ys[i]? = some none ∧
+      List.Forall₂ (optionValueRel (vRel s.maxApp f t.refs t.code))
+        (xs.set i (some value)) (ys.set i (some target)) := by
+    intro xs ys rel
+    induction rel with
+    | nil => intro i h; simp at h
+    | @cons x y xs ys head tail ih =>
+      intro i h
+      cases i with
+      | zero =>
+        simp only [List.getElem?_cons_zero, Option.some.injEq] at h
+        subst x
+        cases y with
+        | some v => simp [optionValueRel] at head
+        | none => exact ⟨rfl, .cons valueRel tail⟩
+      | succ i =>
+        simp only [List.getElem?_cons_succ] at h
+        obtain ⟨found, rest⟩ := ih i h
+        exact ⟨found, .cons head rest⟩
+  cases targetGlobals : t.globals with
+  | nil =>
+    have table := states.2.2.1
+    simp [ClosSem.getGlobal, targetGlobals] at table
+  | cons first rest =>
+    have related : List.Forall₂ (optionValueRel (vRel s.maxApp f t.refs t.code)) s.globals rest := by
+      simpa [targetGlobals, numAddedGlobals] using states.2.1
+    have sourceEmpty : s.globals[index]? = some none := empty
+    obtain ⟨targetEmpty, updated⟩ := setRelated _ _ related index sourceEmpty
+    constructor
+    · simpa [targetGlobals, numAddedGlobals, Nat.add_comm] using targetEmpty
+    · apply stateRel_replace_globals s t states
+      · simpa [targetGlobals, numAddedGlobals, Nat.add_comm] using updated
+      · have table := states.2.2.1
+        simpa [ClosSem.getGlobal, targetGlobals, numAddedGlobals, Nat.add_comm] using table
+
+/-- A successful source write has one argument and writes an empty slot. -/
+theorem global_set_success {C F : Type} (index : Nat) (args : List ClosSem.Value)
+    (s sLast : ClosSem.State C F) (value : ClosSem.Value)
+    (run : ClosSem.doApp (.globOp (.setGlobal index)) args s = .val (value, sLast)) :
+    ∃ stored, args = [stored] ∧ ClosSem.getGlobal index s.globals = some none ∧
+      value = ClosSem.unitValue ∧ sLast = { s with globals := s.globals.set index (some stored) } := by
+  cases args with
+  | nil => simp [ClosSem.doApp, ClosSem.applyGlobal] at run
+  | cons first rest =>
+    cases rest with
+    | cons second rest => simp [ClosSem.doApp, ClosSem.applyGlobal] at run
+    | nil =>
+      cases found : ClosSem.getGlobal index s.globals with
+      | none => simp [ClosSem.doApp, ClosSem.applyGlobal, found] at run
+      | some slot =>
+        cases slot with
+        | some old => simp [ClosSem.doApp, ClosSem.applyGlobal, found] at run
+        | none =>
+          simp [ClosSem.doApp, ClosSem.applyGlobal, found] at run
+          exact ⟨first, rfl, rfl, run.1.symm, run.2.symm⟩
+
+/-- A failed global write reports the source type error. -/
+theorem global_set_error {C F : Type} (index : Nat) (args : List ClosSem.Value)
+    (s : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
+    (run : ClosSem.doApp (.globOp (.setGlobal index)) args s = .err error) :
+    error = .abort .typeError := by
+  simp only [ClosSem.doApp] at run
+  cases h : ClosSem.applyGlobal (.setGlobal index) args s <;> simp [h] at run
+  exact run.symm
+
+/-- Corresponding writes return related unit values and preserve the state
+relation. -/
+theorem global_set_related {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+    (index : Nat) (value : ClosSem.Value) (target : BvlSem.Value)
+    (valueRel : vRel s.maxApp f t.refs t.code value target)
+    (empty : ClosSem.getGlobal index s.globals = some none) :
+    BvlSem.doApp (.globOp (.setGlobal (index + numAddedGlobals))) [target] t =
+      .val (BvlSem.unitValue, { t with globals := t.globals.set (index + numAddedGlobals) (some target) }) ∧
+    stateRel f { s with globals := s.globals.set index (some value) }
+      { t with globals := t.globals.set (index + numAddedGlobals) (some target) } := by
+  obtain ⟨targetEmpty, state⟩ := stateRel_set_global s t states index value target valueRel empty
+  exact ⟨by simp [BvlSem.doApp, BvlSem.applyGlobal, targetEmpty], state⟩
+
 end Flapjack.Compiler.Backend.ClosToBvl
