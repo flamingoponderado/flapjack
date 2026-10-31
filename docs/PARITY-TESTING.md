@@ -423,9 +423,15 @@ timeouts still fail the run. For example:
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --mutations --seed 2377 --count 180
 ```
 
+Use `--deep-mutations` in place of `--mutations` to apply up to three edits to
+nested declarations, pattern matches, exceptions, strings and comments. It
+also compares the full output for any mutated program that compiles.
+
 The same checker has a fixed language-feature corpus covering literals,
 patterns, datatypes, exceptions, local bindings, closures, structures and
-large integers, as well as unbound-name diagnostics with the prelude excluded:
+large integers, as well as unbound-name diagnostics with the prelude excluded.
+It also compiles several programs with the standard prelude enabled, including
+recursive programs, byte-word conversion, exceptions and UTF-8 source:
 
 ```sh
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus

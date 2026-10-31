@@ -45,6 +45,20 @@ SOURCE_CORPUS = [
     ('val a = Array.array (2, 1);', 1),
 ]
 
+# These programs also exercise the basis and full backend output. They must
+# compile successfully with the standard prelude enabled.
+BASIS_CORPUS = [
+    'val _ = print "hello\\n";',
+    'fun fib n = if n < 2 then n else fib (n-1) + fib (n-2); val _ = print_int (fib 8);',
+    'datatype tree = Leaf int | Node tree tree; fun sum t = case t of Leaf n => n | Node a b => sum a + sum b; val _ = print_int (sum (Node (Leaf 1) (Leaf 2)));',
+    'val _ = print_int (Word8.toInt (Word8.fromInt 300));',
+    'exception E int; val x = (raise E 7) handle E n => n; val _ = print_int x;',
+    'fun f x = let val y = x + 3 in fn z => y*z end; val _ = print_int (f 5 4);',
+    'val x = "héllo"; val _ = print x;',
+    'val _ = print (String.implode [#"a", #"b"]);',
+    'fun fact n acc = if n = 0 then acc else fact (n-1) (n*acc); val _ = print_int (fact 7 1);',
+]
+
 
 def expression(rng, depth):
     if depth == 0:
@@ -77,9 +91,30 @@ def mutated_source(rng):
     return source[:position] + rng.choice(alphabet) + source[position + 1:]
 
 
+def deep_mutated_source(rng):
+    """Mutate nested declarations and expressions, preserving reproducibility."""
+    source = rng.choice([
+        'datatype tree = Leaf int | Node tree tree;',
+        'fun append xs ys = case xs of [] => ys | x::tail => x::append tail ys;',
+        'val x = let val a = (1,2) in case a of (x,y) => x end;',
+        'structure S = struct datatype t = A | B int; val x = B 3 end;',
+        'fun f x = (fn y => fn z => x) 4 5;',
+        'exception Error int; fun f x = (raise Error x) handle Error y => y;',
+        'val x = "hello\\n\\tworld";',
+        '(* comment (* nested *) tail *) val x = [1,2,3];',
+    ])
+    alphabet = ' abcdefXYZ01234()[];:=+-*<>"\'\n!@#$%^&|,.\\'
+    for _ in range(rng.randrange(1, 4)):
+        position = rng.randrange(len(source) + 1)
+        operation = rng.randrange(3)
+        char = rng.choice(alphabet)
+        source = source[:position] + (char if operation != 1 else '') + source[position + (operation != 0):]
+    return source
+
+
 def run(binary, source, timeout, exclude_prelude=False):
     flags = ['--exclude_prelude=true'] if exclude_prelude else []
-    return subprocess.run([str(binary), '--target=riscv', *flags], input=source.encode('ascii'),
+    return subprocess.run([str(binary), '--target=riscv', *flags], input=source.encode('utf-8'),
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
 
 
@@ -93,8 +128,10 @@ def main():
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument('--mutations', action='store_true',
                         help='compare mutated source and diagnostics with the prelude excluded')
+    modes.add_argument('--deep-mutations', action='store_true',
+                       help='mutate nested declarations and expressions with the prelude excluded')
     modes.add_argument('--corpus', action='store_true',
-                       help='compare a fixed language-feature corpus with the prelude excluded')
+                       help='compare fixed language-feature and standard-prelude programs')
     args = parser.parse_args()
     if args.count < 0 or args.timeout <= 0:
         parser.error('count must be nonnegative and timeout must be positive')
@@ -102,19 +139,24 @@ def main():
     if f'CakeML: {CAKEML_REV}' not in version or f'HOL4:   {HOL_REV}' not in version:
         raise SystemExit('reference compiler does not report the pinned CakeML and HOL revisions')
     rng = random.Random(args.seed)
-    count = len(SOURCE_CORPUS) if args.corpus else args.count
+    corpus = [(source, status, True) for source, status in SOURCE_CORPUS]
+    corpus += [(source, 0, False) for source in BASIS_CORPUS]
+    count = len(corpus) if args.corpus else args.count
     for index in range(count):
-        source = (SOURCE_CORPUS[index][0] if args.corpus else mutated_source(rng) if args.mutations else
+        source = (corpus[index][0] if args.corpus else deep_mutated_source(rng) if args.deep_mutations else
+                  mutated_source(rng) if args.mutations else
                   'fun f x = ' + expression(rng, rng.randrange(1, 4)) + '; val _ = print_int (f 2);')
+        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations
         try:
-            original = run(args.reference, source, args.timeout, args.mutations or args.corpus)
-            candidate = run(args.cake, source, args.timeout, args.mutations or args.corpus)
+            original = run(args.reference, source, args.timeout, exclude_prelude)
+            candidate = run(args.cake, source, args.timeout, exclude_prelude)
         except subprocess.TimeoutExpired as error:
             raise SystemExit(f'case {index}, seed {args.seed}: compiler timed out: {error}\n{source}')
         expected = (original.returncode, original.stdout, original.stderr)
         actual = (candidate.returncode, candidate.stdout, candidate.stderr)
-        if ((args.corpus and original.returncode != SOURCE_CORPUS[index][1]) or
-                (not (args.mutations or args.corpus) and original.returncode != 0) or actual != expected):
+        if ((args.corpus and original.returncode != corpus[index][1]) or
+                (not (args.mutations or args.deep_mutations or args.corpus) and original.returncode != 0) or
+                actual != expected):
             def describe(result):
                 return (f'exit={result.returncode} stdout_sha256={hashlib.sha256(result.stdout).hexdigest()} '
                         f'stderr={result.stderr!r}')
