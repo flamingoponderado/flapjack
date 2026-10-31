@@ -627,6 +627,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRelation
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ValueGrowth
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluatePost
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRaise
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateTick
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
 import Flapjack.Compiler.Backend.ClosToBvl.Layout.Auxiliary
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Integer
