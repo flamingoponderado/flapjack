@@ -613,6 +613,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileWord
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileBlock
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileBlockObserve
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFromListByte
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileToListByte
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
