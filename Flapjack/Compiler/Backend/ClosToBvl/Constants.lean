@@ -15,7 +15,7 @@ def partHash : ConstPart → Nat
   | .con t ns => (18 + 5 * t + 7 * ns.sum) % 999983
 
 /-- HOL `ALOOKUP` on a constant-part bucket. -/
-private def lookupPart (p : ConstPart) : List (ConstPart × Nat) → Option Nat
+def lookupPart (p : ConstPart) : List (ConstPart × Nat) → Option Nat
   | [] => none
   | (q, n) :: xs => if p = q then some n else lookupPart p xs
 

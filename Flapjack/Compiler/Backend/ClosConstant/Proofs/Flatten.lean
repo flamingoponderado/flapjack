@@ -6,7 +6,7 @@ namespace Flapjack.Compiler.Backend.ClosConstant.Proofs
 open Flapjack.Compiler.Backend.ClosLang Flapjack.Compiler.Backend.ClosSem
 open Flapjack.Compiler.Backend.BackendCommon
 
-private def lookupPart (part : ConstPart) : List (ConstPart × Nat) → Option Nat
+def lookupPart (part : ConstPart) : List (ConstPart × Nat) → Option Nat
   | [] => none
   | (other, index) :: rest => if part = other then some index else lookupPart part rest
 
