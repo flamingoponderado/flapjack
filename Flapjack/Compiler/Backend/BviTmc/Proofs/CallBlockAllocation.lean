@@ -5,6 +5,25 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.FinaliseRelation
 namespace Flapjack.Compiler.Backend.BviTmc.CallBlockAllocation
 open BviTmc BviSem BvlSem
 
+/-- Flapjack infrastructure: a filled allocated hole remains outside an
+extended pointer-map range when the map only adds locations fresh for the
+heap in which the hole was allocated. -/
+theorem alloc_hole_advance (f g : HolFiniteMapExact Nat Nat)
+    (refs nextRefs : HolFiniteMapExact Nat (Ref Value)) (extras : List Value)
+    (slot idx : Nat) (initial child : Value)
+    (initialHole : CallBlockEnvironment.allocHoleHasVal f refs extras slot idx initial)
+    (filledHole : CallBlockEnvironment.allocHoleHasVal f nextRefs extras slot idx child)
+    (fresh : onlyFresh f g refs) :
+    CallBlockEnvironment.allocHoleHasVal g nextRefs extras slot idx child := by
+  obtain ⟨ptr, tag, left, right, bound, pointer, index, small, outside, found⟩ := filledHole
+  obtain ⟨ptr', tag', left', right', _, pointer', _, _, _, oldFound⟩ := initialHole
+  rw [pointer] at pointer'
+  have same : ptr' = ptr := by simpa using pointer'.symm
+  subst ptr'
+  have allocated : ptr ∈ refs.domain := by simp [HolFiniteMapExact.domain, oldFound]
+  have outsideNext := nonFresh_not_in_range f g refs ptr allocated outside fresh
+  exact ⟨ptr, tag, left, right, bound, pointer, index, small, outsideNext, found⟩
+
 /-- Flapjack infrastructure: a mutable constructor frame allocates one fresh
 unfinalised block with the selected variables in source order. -/
 theorem evaluate_mutCons {C F : Type} (tag : Nat) (left right : List Nat)
@@ -235,5 +254,114 @@ theorem evaluate_wrapper_success_related {C F : Type}
       leftRelated rightRelated heaps still
   exact ⟨value, refs, evaluate_wrapper_success tag left right child dest env state next
     leftWf rightWf value refs workerRun finalise, related, heaps', unchanged', still'⟩
+
+private theorem reverse_related (f : HolFiniteMapExact Nat Nat) {xs ys : List Value}
+    (related : List.Forall₂ (valueRel f) xs ys) : List.Forall₂ (valueRel f) xs.reverse ys.reverse := by
+  induction related with
+  | nil => exact .nil
+  | cons head tail ih =>
+    have appendRelated : ∀ {a b c d : List Value}, List.Forall₂ (valueRel f) a b →
+        List.Forall₂ (valueRel f) c d → List.Forall₂ (valueRel f) (a ++ c) (b ++ d) := by
+      intro a b c d first second
+      induction first with
+      | nil => exact second
+      | cons h t rest => exact .cons h rest
+    simpa using appendRelated ih (.cons head .nil)
+
+/-- Flapjack infrastructure: the wrapper simulation for a constructor frame,
+using the original auxiliary induction hypothesis for the child. The HOL
+measure and the separate ordinary and worker conclusions are omitted. -/
+theorem evaluate_wrapper_core {C F : Type} (loc dest tag : Nat) (left right : List Nat) (child : CallBlock)
+    (source : BviState (Nat × C) F) (target : BviState C F) (env1 env2 : List Value)
+    (opt : Bool) (f : HolFiniteMapExact Nat Nat) (result : BviResult) (final : BviState (Nat × C) F)
+    (run : evaluate [callBlockToBvi loc (.callBlock tag left child right)] env1 source = (result, final))
+    (notTypeError : result ≠ .err (.abort .typeError)) (environments : envRel opt f env1 env2)
+    (states : stateRel f source target) (leftWf : wfVars env1.length left) (rightWf : wfVars env1.length right)
+    (small : BackendCommon.smallEnoughInt (Int.ofNat right.length))
+    (childIH : ∀ childResult mid,
+      evaluate [callBlockToBvi loc child] env1 source = (childResult, mid) →
+      childResult ≠ .err (.abort .typeError) →
+      ∃ workerResult next g,
+        evaluate [workerAuxSource (shiftBlock 1 child) dest 0 right.length]
+          (.refPtr false (leastUnusedRef target.refs) :: env2)
+          { target with refs := target.refs.updateEq (leastUnusedRef target.refs,
+            .mutBlock tag false (right.map (fun n => holEl n env2)).reverse (.number 0)
+              (left.map (fun n => holEl n env2)).reverse) } = (workerResult, next) ∧
+        ResultRelation.optResRel g childResult workerResult ∧ stateRel g mid next ∧ finiteSubmap f g ∧
+        onlyFresh f g (target.refs.updateEq (leastUnusedRef target.refs,
+          .mutBlock tag false (right.map (fun n => holEl n env2)).reverse (.number 0)
+            (left.map (fun n => holEl n env2)).reverse)) ∧
+        holesUnchangedExcept f (target.refs.updateEq (leastUnusedRef target.refs,
+          .mutBlock tag false (right.map (fun n => holEl n env2)).reverse (.number 0)
+            (left.map (fun n => holEl n env2)).reverse)) next.refs {leastUnusedRef target.refs} ∧
+        holesStillNotFinalised f (target.refs.updateEq (leastUnusedRef target.refs,
+          .mutBlock tag false (right.map (fun n => holEl n env2)).reverse (.number 0)
+            (left.map (fun n => holEl n env2)).reverse)) next.refs ∧
+        ∀ sourceValue, childResult = .val [sourceValue] →
+          ∃ targetValue, mutableBlockRel g target.refs (next.refs.eraseEq (leastUnusedRef target.refs)) sourceValue targetValue ∧
+            CallBlockEnvironment.allocHoleHasVal f next.refs [.refPtr false (leastUnusedRef target.refs)] 0 right.length targetValue) :
+    ListSimulation.Core [wrapperBlockSource tag left child right dest] env2 f target result final := by
+  have targetLength := envRel_length opt f env1 env2 environments
+  have targetLeft := wfVars_expand env1.length env2.length left leftWf targetLength
+  have targetRight := wfVars_expand env1.length env2.length right rightWf targetLength
+  have alloc := alloc_frame_invariants tag left right env2 source target f states small
+  rw [CallBlockFrame.evaluate_frame loc tag left right child env1 source leftWf rightWf] at run
+  cases childRun : evaluate [callBlockToBvi loc child] env1 source with
+  | mk childResult mid =>
+    have childSafe : childResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst childResult
+      simp [childRun] at run
+      exact notTypeError run.1.symm
+    obtain ⟨workerResult, next, g, workerRun, related, nextStates, extension, fresh, unchanged, still, success⟩ :=
+      childIH childResult mid childRun childSafe
+    have invariants := wrapper_frame_invariants f g target.refs next.refs tag
+      (right.map (fun n => holEl n env2)).reverse (left.map (fun n => holEl n env2)).reverse
+      (.number 0) fresh unchanged still
+    cases childResult with
+    | err error =>
+      cases workerResult with
+      | val values => simp [ResultRelation.optResRel] at related
+      | err error' =>
+        simp [childRun] at run
+        obtain ⟨rfl, rfl⟩ := run.symm
+        exact ⟨next, g, .err error', evaluate_wrapper_error tag left right child dest env2 target next
+          targetLeft targetRight error' workerRun, related, nextStates, extension, invariants.1,
+          invariants.2.1, invariants.2.2⟩
+    | val values =>
+      obtain ⟨sourceValue, rfl⟩ := evaluate_singleton _ env1 source mid values childRun
+      have workerUnit : workerResult = .val [unitValue] := by
+        cases workerResult with
+        | err error => simp [ResultRelation.optResRel] at related
+        | val values =>
+          cases values with
+          | nil => simp [ResultRelation.optResRel] at related
+          | cons value rest =>
+            cases rest with
+            | nil =>
+              cases value with
+              | block blockTag fields => cases blockTag <;> cases fields <;> simp_all [ResultRelation.optResRel, unitValue]
+              | number _ | word64 _ | codePtr _ | refPtr _ _ => simp_all [ResultRelation.optResRel]
+            | cons value' rest => simp [ResultRelation.optResRel] at related
+      subst workerResult
+      obtain ⟨targetValue, blocks, filledHole⟩ := success sourceValue rfl
+      have nextHole := alloc_hole_advance f g _ next.refs _ 0 right.length (.number 0) targetValue
+        alloc.2.1 filledHole fresh
+      have leftRelated := CallBlockEnvironment.wfVars_list_rel left opt f env1 env2 environments leftWf
+      have rightRelated := CallBlockEnvironment.wfVars_list_rel right opt f env1 env2 environments rightWf
+      have leftNext := listRel_submap f g _ _ leftRelated extension
+      have rightNext := listRel_submap f g _ _ rightRelated extension
+      have outside := fresh_not_in_range f source.refs target.refs states.1
+      obtain ⟨value, refs, targetRun, valueRelated, heaps, finalUnchanged, finalStill⟩ :=
+        evaluate_wrapper_success_related tag left right child dest env2 target next f g mid.refs
+          (right.map (fun n => holEl n env1)).reverse (left.map (fun n => holEl n env1)).reverse
+          sourceValue targetValue targetLeft targetRight workerRun outside unchanged nextHole blocks
+          (reverse_related g rightNext) (reverse_related g leftNext) nextStates.1 invariants.2.2
+      simp [childRun, holHd] at run
+      obtain ⟨rfl, rfl⟩ := run.symm
+      refine ⟨{ next with refs := refs }, g, .val [value], targetRun, ?_, ⟨heaps, nextStates.2⟩,
+        extension, invariants.1, ?_, finalStill⟩
+      · exact .cons (by simpa using valueRelated) .nil
+      · exact holesUnchanged_trans f g target.refs next.refs refs ∅ invariants.2.1 finalUnchanged invariants.1 extension
 
 end Flapjack.Compiler.Backend.BviTmc.CallBlockAllocation
