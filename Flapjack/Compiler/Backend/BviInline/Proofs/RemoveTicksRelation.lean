@@ -289,4 +289,24 @@ theorem removeStateRel_doApp {C F : Type} (source target : BviState C F)
       exact ⟨targetNext, by simpa only [BviSem.doApp] using targetRun, nextRel⟩
   · exact removeStateRel_doApp_nonInstall source target states op args install
 
+/-- Flapjack infrastructure: primitive simulation also works from the
+cleaned state back to the original state, with the same value or error. -/
+theorem removeStateRel_doApp_reverse {C F : Type} (source target : BviState C F)
+    (states : RemoveStateRel source target) (op : ClosLang.Op) (args : List Value) :
+    match BviSem.doApp op args target with
+    | .err error => BviSem.doApp op args source = .err error
+    | .val (value, next) => ∃ sourceNext, BviSem.doApp op args source = .val (value, sourceNext) ∧
+        RemoveStateRel sourceNext next := by
+  have forward := removeStateRel_doApp source target states op args
+  cases sourceRun : BviSem.doApp op args source with
+  | err error =>
+    rw [sourceRun] at forward
+    rw [forward]
+  | val pair =>
+    obtain ⟨value, next⟩ := pair
+    rw [sourceRun] at forward
+    obtain ⟨targetNext, targetRun, nextRel⟩ := forward
+    rw [targetRun]
+    exact ⟨next, rfl, nextRel⟩
+
 end Flapjack.Compiler.Backend.BviInline
