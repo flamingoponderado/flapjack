@@ -889,6 +889,122 @@ theorem stateRel_doApp_thunk_error {C F : Type} (op : AstHOL.ThunkOp) (args : Li
     rw [transfer]
     cases e <;> simpa using run
   | val pair => cases pair; simp [found] at run
+/-- A successful installation exposes the exact decoded arguments, compiler
+result, disjointness checks, and shifted oracle. -/
+theorem doInstall_success_inv {C F : Type} (args : List Value) (s next : BviSem.BviState C F) (v : Value)
+    (run : BviSem.doInstall (R := BviSem.ExnOrRet) args s = .val (v, next)) :
+    ∃ v1 v2 len1 len2 bytes data cfg key arity body rest cfgNext,
+      args = [v1, v2, .number len1, .number len2] ∧
+      valueToBytes v1 = some bytes ∧ valueToWords v2 = some data ∧
+      len1 = Int.ofNat bytes.length ∧ len2 = Int.ofNat data.length ∧
+      s.compileOracle 0 = (cfg, (key, arity, body) :: rest) ∧
+      (∀ entry ∈ ((key, arity, body) :: rest), sptLookup entry.1 s.code = none) ∧
+      (((key, arity, body) :: rest).map Prod.fst).Nodup ∧
+      s.compile cfg ((key, arity, body) :: rest) = some (bytes, data, cfgNext) ∧
+      (s.compileOracle 1).1 = cfgNext ∧ v = .codePtr key ∧
+      next = { s with code := sptUnion s.code (sptFromAList ((key, arity, body) :: rest)), compileOracle := fun n => s.compileOracle (n + 1) } := by
+  unfold BviSem.doInstall at run
+  repeat' split at run
+  all_goals simp_all
+  all_goals split at run <;> simp_all
+  all_goals aesop
+
+/-- A successful source installation is reproduced by the related target,
+with the same code pointer and related updated states. -/
+theorem stateRel_doInstall_success {C F : Type} (args : List Value) (source sourceNext : BviSem.BviState (Nat × C) F)
+    (target : BviSem.BviState C F) (value : Value) (related : stateRel source target)
+    (run : BviSem.doInstall (R := BviSem.ExnOrRet) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doInstall (R := BviSem.ExnOrRet) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  obtain ⟨v1, v2, len1, len2, bytes, data, cfg, key, arity, body, rest, cfgNext,
+    argsEq, decode1, decode2, lenEq1, lenEq2, oracle0, absent, unique, callback, oracle1, valueEq, stateEq⟩ :=
+    doInstall_success_inv args source sourceNext value run
+  obtain ⟨next, config⟩ := cfg
+  let code := (key, arity, body) :: rest
+  let compiled := (compileEachSource next code).2
+  have oracleRelation := related.2.2.2.2.1
+  have compilerRelation := related.2.2.2.2.2.1
+  have condition : inputCondition next code := by
+    have cond := related.2.2.2.2.2.2.2.2.1 0
+    simpa [oracle0, code] using cond
+  have sourceAbsent : ∀ n ∈ code.map Prod.fst, ¬sptMem n source.code := by
+    intro n member present
+    obtain ⟨entry, entryMem, eq⟩ := List.mem_map.mp member
+    subst n
+    have no := absent entry entryMem
+    obtain ⟨foundValue, lookup⟩ := (sptMem_iff_lookup _ _).mp present
+    rw [no] at lookup
+    contradiction
+  have namespaces := related.2.2.2.2.2.2.2.1
+  have workerBound := related.2.2.2.2.2.2.2.2.2
+  have targetAbsent := compileEachSource_install_disjoint next code source.code target.code
+    condition namespaces (by simpa [oracle0] using workerBound) sourceAbsent
+  have ⟨_, _, targetUnique⟩ := compileEachSource_install_relations next code condition
+  have targetAbsent' : ∀ entry ∈ compiled, sptLookup entry.1 target.code = none := by
+    intro entry member
+    have mem : sptMem entry.1 (sptFromAList compiled) := (sptFromAList_mem_iff compiled entry.1).mpr (List.mem_map_of_mem member)
+    have absent' := targetAbsent entry.1 mem
+    cases found : sptLookup entry.1 target.code with
+    | none => rfl
+    | some v => exact (absent' ((sptMem_iff_lookup _ _).mpr ⟨v, found⟩)).elim
+  have targetOracle0 : target.compileOracle 0 = (config, compiled) := by
+    rw [oracleRelation]
+    simp [transformOracle, oracle0, code, compiled]
+  have targetCallback : ∃ config',
+      target.compile config compiled = some (bytes, data, config') ∧
+      cfgNext = ((compileEachSource next code).1, config') := by
+    rw [compilerRelation] at callback
+    change (target.compile config compiled).map (fun (b, d, c) => (b, d, ((compileEachSource next code).1, c))) =
+      some (bytes, data, cfgNext) at callback
+    cases res : target.compile config compiled with
+    | none => simp [res] at callback
+    | some output =>
+      obtain ⟨b, d, c⟩ := output
+      simp [res] at callback
+      obtain ⟨rfl, rfl, eq⟩ := callback
+      exact ⟨c, rfl, eq.symm⟩
+  obtain ⟨config', targetCallback, cfgNextEq⟩ := targetCallback
+  have nextEq : (source.compileOracle 1).1.1 = (compileEachSource next code).1 := by
+    rw [oracle1, cfgNextEq]
+  have targetOracle1 : (target.compileOracle 1).1 = config' := by
+    rw [oracleRelation]
+    simp [transformOracle, oracle1, cfgNextEq]
+  obtain ⟨compiledBody, compiledRest, head⟩ := compileEachSource_head next key arity body rest
+  have head' : compiled = (key, arity, compiledBody) :: compiledRest := by simpa [compiled, code] using head
+  have targetRun : BviSem.doInstall (R := BviSem.ExnOrRet) args target =
+      .val (.codePtr key, { target with code := sptUnion target.code (sptFromAList compiled), compileOracle := fun n => target.compileOracle (n + 1) }) := by
+    have targetUniqueHead : (((key, arity, compiledBody) :: compiledRest).map Prod.fst).Nodup := by
+      rw [← head']
+      exact targetUnique
+    cases target
+    simp_all [BviSem.doInstall]
+    exact targetAbsent'.2
+  have stateRelated := stateRel_install_code_and_oracle source target related
+    (by simpa [oracle0, code] using sourceAbsent) (by simpa [oracle0, code] using nextEq)
+  refine ⟨{ target with code := sptUnion target.code (sptFromAList compiled), compileOracle := fun n => target.compileOracle (n + 1) }, ?_, ?_⟩
+  · simpa [valueEq] using targetRun
+  · simpa [stateEq, oracle0, code, compiled] using stateRelated
+
+/-- Dynamic installation reports only type errors. -/
+theorem doApp_install_error {C F : Type} (args : List Value) (state : BviSem.BviState C F)
+    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp .install args state = .err error) : error = .abort .typeError := by
+  simp only [BviSem.doApp] at run
+  unfold BviSem.doInstall at run
+  repeat' split at run
+  all_goals simp_all
+  all_goals split at run <;> simp_all
+
+/-- Successful installation through the operation dispatcher preserves the
+state relation. -/
+theorem stateRel_doApp_install {C F : Type} (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (run : BviSem.doApp .install args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp .install args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  simpa only [BviSem.doApp] using stateRel_doInstall_success args source sourceNext target value related run
+
 /-- Constructing a plain block returns its fields without changing state. -/
 theorem doApp_blockCons {C F : Type} (tag : Nat) (args : List Value) (state : BviSem.BviState C F) :
     BviSem.doApp (.blockOp (.cons tag)) args state = .val (.block tag args, state) := by
