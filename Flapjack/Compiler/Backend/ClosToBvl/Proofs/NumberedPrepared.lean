@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationBounds
 import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainLocations
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.LabelOrigins
 
 /-! Location annotations supplied by closure numbering to prepared programs. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -141,6 +142,26 @@ theorem compileCommonNoOpts_entries_disjoint (config current : Config) (expressi
   have a := (compileCommonNoOpts_entry_labels config current expressions program compiled).2 label entry
   have b := compileCommonNoOpts_location_bounds config current expressions program compiled label nested
   omega
+
+/-- Each preprocessed entry survives checked BVL conversion at its shifted
+label, in the interval reserved for top-level entries. -/
+theorem compileCommonNoOpts_compiled_entry (config current : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp)) (target : List (Nat × Nat × Bvl.Exp))
+    (preprocess : compileCommonNoOpts? config expressions = some (current, program))
+    (convert : compileProg? current.maxApp program = some target)
+    (label : Nat) (entry : label ∈ program.map Prod.fst) :
+    label + numStubs current.maxApp ∈ target.map Prod.fst ∧
+      config.nextLoc + numStubs current.maxApp ≤ label + numStubs current.maxApp ∧
+      label + numStubs current.maxApp < config.nextLoc + max 1 expressions.length + numStubs current.maxApp := by
+  have labels := compileProg_checked_label_origins current.maxApp program target convert
+  have bounds := (compileCommonNoOpts_entry_labels config current expressions program preprocess).2 label entry
+  constructor
+  · rw [labels]
+    apply List.mem_append_left
+    obtain ⟨source, member, equal⟩ := List.mem_map.mp entry
+    apply List.mem_map.mpr
+    exact ⟨source, member, by simp only [equal]⟩
+  · omega
 
 /-- Stateful numbering supplies locations for each incremental main program;
 annotation then supplies variables and preserves the supplied auxiliary-code
