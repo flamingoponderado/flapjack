@@ -59,4 +59,126 @@ theorem scanFuel_op_eq (fuel : Nat) (ctx : List ValueType) (loc : Nat)
   rw [same] at run
   exact (Option.some.inj run).symm
 
+/-- Successful fuel-bounded scans return the source-shaped scan results. -/
+theorem scanFuel_correspondence (fuel : Nat) :
+    (∀ ctx loc e result, scanFuel fuel ctx loc e = some result → result = scanSing ctx loc e) ∧
+    (∀ ctx loc xs result, scanListFuel fuel ctx loc xs = some result → result = scanList ctx loc xs) := by
+  induction fuel with
+  | zero =>
+    constructor
+    · intro ctx loc e result run
+      simp [scanFuel] at run
+    · intro ctx loc xs result run
+      cases xs <;> simp_all [scanListFuel, scanList.eq_def]
+  | succ fuel ih =>
+    constructor
+    · intro ctx loc e result run
+      cases e with
+      | op op args => exact scanFuel_op_eq fuel ctx loc op args result run
+      | ifThenElse cond yes no =>
+        cases hc : scanFuel fuel ctx loc cond with
+        | none => simp [scanFuel, hc] at run
+        | some c =>
+          have ceq := ih.1 ctx loc cond c hc
+          subst c
+          cases hy : scanFuel fuel (scanSing ctx loc cond).1 loc yes with
+          | none => simp [scanFuel, hc, hy] at run
+          | some y =>
+            have yeq := ih.1 (scanSing ctx loc cond).1 loc yes y hy
+            subst y
+            cases hn : scanFuel fuel (scanSing ctx loc cond).1 loc no with
+            | none => simp [scanFuel, hc, hy, hn] at run
+            | some n =>
+              have neq := ih.1 (scanSing ctx loc cond).1 loc no n hn
+              subst n
+              rw [scanSing.eq_def]
+              simpa [scanFuel, hc, hy, hn] using run.symm
+      | «let» xs body =>
+        cases hs : scanListFuel fuel ctx loc xs with
+        | none => simp [scanFuel, hs] at run
+        | some scans =>
+          have seq := ih.2 ctx loc xs scans hs
+          subst scans
+          simp only [scanFuel, hs, bind, Option.bind, pure] at run
+          generalize hb : scanFuel fuel _ loc body = answer at run
+          cases answer with
+          | none => simp at run
+          | some b =>
+            have beq := ih.1 _ loc body b hb
+            subst b
+            rw [scanSing.eq_def]
+            simpa using run.symm
+      | tick body =>
+        rw [scanSing.eq_def]
+        exact ih.1 ctx loc body result run
+      | var n => simpa [scanFuel, scanSing.eq_def] using run.symm
+      | force b n => simpa [scanFuel, scanSing.eq_def] using run.symm
+      | raise e => simpa [scanFuel, scanSing.eq_def] using run.symm
+      | call a b c d => simpa [scanFuel, scanSing.eq_def] using run.symm
+      | «return» xs => simpa [scanFuel, scanSing.eq_def] using run.symm
+      | letCall a b c d e => simpa [scanFuel, scanSing.eq_def] using run.symm
+    · intro ctx loc xs result run
+      cases xs with
+      | nil => simpa [scanListFuel, scanList.eq_def] using run.symm
+      | cons x xs =>
+        cases hx : scanFuel fuel ctx loc x with
+        | none => simp [scanListFuel, hx] at run
+        | some head =>
+          have heq := ih.1 ctx loc x head hx
+          subst head
+          cases ht : scanListFuel fuel (scanSing ctx loc x).1 loc xs with
+          | none => simp [scanListFuel, hx, ht] at run
+          | some tail =>
+            have teq := ih.2 (scanSing ctx loc x).1 loc xs tail ht
+            subst tail
+            rw [scanList.eq_def]
+            simpa [scanListFuel, hx, ht] using run.symm
+
+/-- Retrying with structural fuel computes the source expression scan. -/
+theorem scanBounded_eq (fuel : Nat) (ctx : List ValueType) (loc : Nat) (e : Exp) :
+    scanBounded fuel ctx loc e = some (scanSing ctx loc e) := by
+  cases h : scanFuel fuel ctx loc e with
+  | some result =>
+    have eq := (scanFuel_correspondence fuel).1 ctx loc e result h
+    subst result
+    simp [scanBounded, h]
+  | none =>
+    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
+    obtain ⟨result, done⟩ := scanFuel_succeeds (max fuel (expBudget e + 1)) ctx loc e bound
+    have eq := (scanFuel_correspondence _).1 ctx loc e result done
+    subst result
+    simp [scanBounded, h, done]
+
+/-- Retrying with structural fuel computes the source list scan. -/
+theorem scanListBounded_eq (fuel : Nat) (ctx : List ValueType) (loc : Nat) (xs : List Exp) :
+    scanListBounded fuel ctx loc xs = some (scanList ctx loc xs) := by
+  cases h : scanListFuel fuel ctx loc xs with
+  | some result =>
+    have eq := (scanFuel_correspondence fuel).2 ctx loc xs result h
+    subst result
+    simp [scanListBounded, h]
+  | none =>
+    have bound : listBudget xs < max fuel (listBudget xs + 1) := by omega
+    obtain ⟨result, done⟩ := scanListFuel_succeeds (max fuel (listBudget xs + 1)) ctx loc xs bound
+    have eq := (scanFuel_correspondence _).2 ctx loc xs result done
+    subst result
+    simp [scanListBounded, h, done]
+
+/-- Flapjack's single-expression form of the source rewrite decision. The
+source definition uses a singleton list scan; this form uses `scanSing`. -/
+def checkExpSingle (loc arity : Nat) (e : Exp) : Option AssocOp :=
+  if !hasRec1 loc e then none else
+    let (_, ty, _, op) := scanSing (List.replicate arity .any) loc e
+    match op with
+    | some o => if ty == opType o then some o else none
+    | none => none
+
+/-- The executed decision computes the source-shaped single-expression
+decision for every fuel value. -/
+theorem checkExpFuel_eq (fuel loc arity : Nat) (e : Exp) :
+    checkExpFuel fuel loc arity e = some (checkExpSingle loc arity e) := by
+  simp [checkExpFuel, checkExpSingle, hasRecBounded_eq_hasRec1, scanBounded_eq]
+  split <;> simp_all
+  split <;> simp_all
+
 end Flapjack.Compiler.Backend.BviTailrec
