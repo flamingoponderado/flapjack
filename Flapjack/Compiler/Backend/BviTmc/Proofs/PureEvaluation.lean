@@ -6,7 +6,9 @@ open Bvi BviSem BvlSem
 namespace PureEvaluation
 
 mutual
-private theorem evaluatePureExp {C F : Type} (e : Bvi.Exp) (n : Nat)
+/-- A pure singleton has a state-independent value; this strengthens the
+source list theorem for use in extraction proofs. -/
+theorem evaluatePureExp {C F : Type} (e : Bvi.Exp) (n : Nat)
     (pure : pureExp n e = true) (env : List Value) (bound : n ≤ env.length) :
     ∃ value, ∀ state : BviState C F, evaluate [e] env state = (.val [value], state) := by
   cases e with
