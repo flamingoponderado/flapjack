@@ -459,6 +459,9 @@ import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineSemantics
 import Flapjack.Compiler.Backend.BvlInline.Proofs.ProductionSemantics
 import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpState
 import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpCases
+import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpCalls
+import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpSemantics
+import Flapjack.Compiler.Backend.BvlInline.Proofs.FullSemantics
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.CanRaise
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.AdjustEvaluate
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyEvaluate
@@ -646,6 +649,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitGlobalsStub
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Observations
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Divergence
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.OptimizedProgram
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
