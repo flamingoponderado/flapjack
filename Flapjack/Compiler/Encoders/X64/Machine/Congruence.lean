@@ -109,4 +109,45 @@ theorem decodeSSE_congr (r r' : Nat → BitVec 8) (off : Nat) (mandatory : Nat)
       simp
       rw [h (off + 1 + p.len) (by omega)]
 
+/-! ## The whole decoder -/
+
+/-- Two readers agreeing on the first sixteen bytes decode the same
+instruction.  Sixteen bytes cover the longest x86-64 instruction, so the
+decoder never reads past the bound. -/
+theorem decode_congr (r r' : Nat → BitVec 8) (h : ∀ i, i < 16 → r i = r' i) :
+    decode r = decode r' := by
+  have hlen : ∀ (rexB : Bool) (p : ParsedRM), parseRM r' 2 rexB = some p → p.len ≤ 6 :=
+    fun rexB p hp => parseRM_len_le r' 2 rexB p hp
+  simp only [decode, decodeNoRex, decodeRex, binopReg, movImm]
+  rw [h 0 (by omega), h 1 (by omega), h 2 (by omega)]
+  have hp1 : ∀ rexB, parseRM r 1 rexB = parseRM r' 1 rexB :=
+    fun rexB => parseRM_congr r r' 1 rexB (fun i hi => h i (by omega))
+  have hp2 : ∀ rexB, parseRM r 2 rexB = parseRM r' 2 rexB :=
+    fun rexB => parseRM_congr r r' 2 rexB (fun i hi => h i (by omega))
+  have hp3 : ∀ rexB, parseRM r 3 rexB = parseRM r' 3 rexB :=
+    fun rexB => parseRM_congr r r' 3 rexB (fun i hi => h i (by omega))
+  simp [hp1, hp2, hp3]
+  rw [le64_congr r r' 2 (fun i hi => h i (by omega)),
+      imm32_congr r r' 1 (fun i hi => h i (by omega)),
+      imm32_congr r r' 2 (fun i hi => h i (by omega)),
+      imm32_congr r r' 3 (fun i hi => h i (by omega)),
+      imm8_congr r r' 1 (fun i hi => h i (by omega))]
+  rw [decodeSSE_congr r r' 3 0x66 true _ _ _ (fun i hi => h i (by omega)),
+      decodeSSE_congr r r' 2 0x66 false false false false (fun i hi => h i (by omega)),
+      decodeSSE_congr r r' 3 0xF2 true _ _ _ (fun i hi => h i (by omega)),
+      decodeSSE_congr r r' 2 0xF2 false false false false (fun i hi => h i (by omega)),
+      decodeSSE_congr r r' 3 0xF3 true _ _ _ (fun i hi => h i (by omega)),
+      decodeSSE_congr r r' 2 0xF3 false false false false (fun i hi => h i (by omega))]
+  split <;> try rfl
+  all_goals (try (split <;> try rfl))
+  all_goals (try (split <;> try rfl))
+  all_goals (try (split <;> try rfl))
+  all_goals (try (split <;> try rfl))
+  all_goals (try (split <;> try rfl))
+  all_goals
+    first
+    | rfl
+    | (rw [imm8_congr r r' _ (fun i hi => h i (by have h := hlen _ _ (by assumption); omega))])
+    | (rw [imm32_congr r r' _ (fun i hi => h i (by have h := hlen _ _ (by assumption); omega))])
+
 end Flapjack.Compiler.Encoders.X64
