@@ -260,6 +260,39 @@ theorem term_prefix_simulation {C F : Type} (e : Bvi.Exp) (ctx : List ValueType)
   cases same
   exact ⟨value, typed, sourceRun source, targetRun target⟩
 
+/-- A scanned term has one common value in prefix-related environments and
+leaves every source and target state unchanged. -/
+theorem term_prefix_simulation_all {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
+    (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (loc : Nat) (termIH : rewriteTailProperty (C := C) (F := F) [e])
+    (accepted : term ctx termTy e = true) (types : tyRel env1 ctx)
+    (prefixRel : env1 <+: env2) (related : stateRel source target) :
+    ∃ value, valueMatchesType value termTy ∧
+      (∀ s : BviSem.BviState (Nat × C) F, BviSem.evaluate [e] env1 s = (.val [value], s)) ∧
+      (∀ s : BviSem.BviState C F, BviSem.evaluate [e] env2 s = (.val [value], s)) := by
+  obtain ⟨value, typed, sourceRun, targetRun⟩ :=
+    term_prefix_simulation e ctx termTy env1 env2 source target loc termIH accepted types prefixRel related
+  obtain ⟨sourceValue, _, sourceAll⟩ := term_total (C := Nat × C) (F := F) ctx termTy e env1 accepted types
+  obtain ⟨suffix, rfl⟩ := prefixRel
+  have extTypes := tyRel_prefix_extend env1 ctx suffix types
+  have extAccepted := term_extend e ctx (List.replicate suffix.length .any) termTy accepted
+  obtain ⟨targetValue, _, targetAll⟩ := term_total (C := C) (F := F)
+    (ctx ++ List.replicate suffix.length .any) termTy e (env1 ++ suffix) extAccepted extTypes
+  have sourceEq : sourceValue = value := by
+    have same := (sourceAll source).symm.trans sourceRun
+    injection same with valuesEq _
+    injection valuesEq with heads
+    exact (List.cons.inj heads).1
+  have targetEq : targetValue = value := by
+    have same := (targetAll target).symm.trans targetRun
+    injection same with valuesEq _
+    injection valuesEq with heads
+    exact (List.cons.inj heads).1
+  refine ⟨value, ?_, ?_, ?_⟩
+  · cases termTy <;> simp_all [valueMatchesType]
+  · simpa [sourceEq] using sourceAll
+  · simpa [targetEq] using targetAll
+
 /-- An enabled environment relation supplies a well-typed accumulator value. -/
 theorem envRel_accumulator (ty : ValueType) (acc : Nat) (env1 env2 : List Value)
     (related : envRel ty true acc env1 env2) :
@@ -1382,6 +1415,54 @@ theorem evaluate_worker_candidate_operation {C F : Type}
   exact evaluate_worker_candidate_success loc arity workerLoc ticks acc body pure op args env2 target targetMiddle
     sourceMiddle sourceBodyNext callArgs pureValue oldValue bodyResult bodyIH related lengthEq sourceCode optimized
     notNoop pureTyped oldTyped lookup pureTarget argsTarget enoughClock bodyRun notTypeError noReturn
+
+/-- When source call arguments fail, the candidate worker and the original
+accumulator expression propagate that failure to states related to the full
+source operation's final state. -/
+theorem evaluate_worker_candidate_argument_error {C F : Type}
+    (loc workerLoc ticks acc : Nat) (op : AssocOp) (pure : Bvi.Exp) (args : List Bvi.Exp)
+    (env1 env2 : List Value) (source sourceMiddle sourceNext : BviSem.BviState (Nat × C) F)
+    (target : BviSem.BviState C F) (ctx : List ValueType) (ty : ValueType)
+    (pureValue oldValue : Value) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (sourceResult : BviSem.BviResult)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (envRelated : envRel ty true acc env1 env2) (related : stateRel source target)
+    (types : tyRel env1 ctx) (notNoop : op ≠ .noop)
+    (pureTyped : valueMatchesType pureValue (opType op))
+    (oldTyped : valueMatchesType oldValue (opType op)) (lookup : env2[acc]? = some oldValue)
+    (pureSource : BviSem.evaluate [pure] env1 source = (.val [pureValue], source))
+    (pureTarget : ∀ s : BviSem.BviState C F, BviSem.evaluate [pure] env2 s = (.val [pureValue], s))
+    (argsSource : BviSem.evaluate args env1 source = (.err error, sourceMiddle))
+    (operationSource : BviSem.evaluate [applyOp op pure (.call ticks (some loc) args none)] env1 source =
+      (sourceResult, sourceNext))
+    (notTypeError : sourceResult ≠ .err (.abort .typeError)) :
+    ∃ targetNext,
+      BviSem.evaluate [.call ticks (some workerLoc) (args ++ [applyOp op (.var acc) pure]) none]
+        env2 target = (.err error, targetNext) ∧
+      BviSem.evaluate [applyOp op (.var acc) (applyOp op pure (.call ticks (some loc) args none))]
+        env2 target = (.err error, targetNext) ∧ stateRel sourceNext targetNext := by
+  have sourceCall : BviSem.evaluate [.call ticks (some loc) args none] env1 source =
+      (.err error, sourceMiddle) := by
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsSource]
+    rfl
+  have sourceOperation : BviSem.evaluate [applyOp op pure (.call ticks (some loc) args none)] env1 source =
+      (.err error, sourceMiddle) := by
+    rw [evaluate_applyOp_pureLeft op pure (.call ticks (some loc) args none) env1 source pureValue pureSource,
+      sourceCall]
+  have same := sourceOperation.symm.trans operationSource
+  have errorOk : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
+    intro bad
+    apply notTypeError
+    exact (congrArg Prod.fst same).symm.trans bad
+  have argsHyp : rewriteTailHyp args source env1 (.err error) sourceMiddle false target acc env2 loc ctx ty :=
+    ⟨argsSource, envRel_disable ty true acc env1 env2 envRelated, related, types, by simp, errorOk⟩
+  obtain ⟨targetNext, targetArgs, finalRelated, _⟩ :=
+    argsIH source env1 (.err error) sourceMiddle false target acc env2 loc ctx ty argsHyp
+  obtain ⟨workerRun, originalRun⟩ :=
+    evaluate_worker_call_argument_error loc workerLoc ticks acc op pure args env2 target targetNext
+      pureValue oldValue error notNoop pureTyped oldTyped lookup pureTarget targetArgs
+  have stateEq : sourceMiddle = sourceNext := congrArg Prod.snd same
+  exact ⟨targetNext, workerRun, originalRun, by simpa [stateEq] using finalRelated⟩
 
 /-- Force case of the rewrite simulation. The induction hypothesis applies
 to any called body at a strictly smaller clock, as in the source induction. -/
