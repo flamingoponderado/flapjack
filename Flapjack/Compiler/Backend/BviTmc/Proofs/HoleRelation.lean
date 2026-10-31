@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
+import Flapjack.Compiler.Backend.Semantics.BviSem.State
 
 /-! Mutable-hole invariants used by the TMC evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc
@@ -31,6 +32,93 @@ noncomputable def holeHasVal (f : HolFiniteMapExact Nat Nat) (env1 env2 : List V
     holEl (env1.length + 1) env2 = .number (Int.ofNat left.length) ∧
     BackendCommon.smallEnoughInt (Int.ofNat left.length) ∧ ptr ∉ mapRange f ∧
     refs.lookup ptr = some (.mutBlock tag finalised left c right)
+
+theorem holFmapAsFiniteSupportParamWitness_holeHasVal_submap_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_holeHasVal_submap_fNext (fNext : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup fNext) fNext.finiteSupport = fNext := by cases fNext; rfl
+theorem holFmapAsFiniteSupportParamWitness_holeHasVal_submap_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+
+/-- A hole outside a larger pointer-map range is outside a submap's range. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_submap"
+  (fmap_as_finite_support_parameters := [f, fNext, refs])]
+theorem holeHasVal_submap (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteMapExact Nat Nat)
+    (env1 env2 : List Value) (refs : HolFiniteMapExact Nat (Ref Value)) (c : Value)
+    (hole : holeHasVal fNext env1 env2 refs c) (submap : finiteSubmap f fNext) :
+    holeHasVal f env1 env2 refs c := by
+  obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
+  refine ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, ?_, found⟩
+  intro ⟨key, mapped⟩
+  exact outside ⟨key, submap key ptr mapped⟩
+
+private theorem holEl_prefixed {α : Type} [Nonempty α] (prefixValues values : List α) (index : Nat)
+    (bound : index < values.length) :
+    holEl (prefixValues.length + index) (prefixValues ++ values) = holEl index values := by
+  have fullBound : prefixValues.length + index < (prefixValues ++ values).length := by simp; omega
+  rw [holEl_eq_getElem _ _ fullBound, holEl_eq_getElem _ _ bound]
+  simp [List.getElem_append_right]
+
+theorem holFmapAsFiniteSupportParamWitness_holeHasVal_append_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_holeHasVal_append_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+
+/-- Related bindings can be added in front of both optimized environments. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_append"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem holeHasVal_append (f : HolFiniteMapExact Nat Nat) (env1 env2 : List Value)
+    (refs : HolFiniteMapExact Nat (Ref Value)) (c : Value) (vs vs' : List Value)
+    (hole : holeHasVal f env1 env2 refs c) (bindings : List.Forall₂ (valueRel f) vs vs') :
+    holeHasVal f (vs ++ env1) (vs' ++ env2) refs c := by
+  obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
+  have sameLength := bindings.length_eq
+  have ptrBound : env1.length < env2.length := by omega
+  have idxBound : env1.length + 1 < env2.length := by omega
+  refine ⟨by simp only [List.length_append]; omega, ptr, tag, finalised, left, right, ?_, ?_, small, outside, found⟩
+  · simpa [List.length_append, sameLength] using (holEl_prefixed vs' env2 env1.length ptrBound).trans ptrEq
+  · simpa [List.length_append, sameLength, Nat.add_assoc] using
+      (holEl_prefixed vs' env2 (env1.length + 1) idxBound).trans idxEq
+
+theorem holFmapAsFiniteSupportParamWitness_holeHasVal_unappend_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_holeHasVal_unappend_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+
+/-- Removing related leading bindings recovers the original hole relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_unappend"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem holeHasVal_unappend (f : HolFiniteMapExact Nat Nat) (vs vs' env1 env2 : List Value)
+    (refs : HolFiniteMapExact Nat (Ref Value)) (c : Value)
+    (hole : holeHasVal f (vs ++ env1) (vs' ++ env2) refs c)
+    (bindings : List.Forall₂ (valueRel f) vs vs') : holeHasVal f env1 env2 refs c := by
+  obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
+  have sameLength := bindings.length_eq
+  simp only [List.length_append] at length ptrEq idxEq
+  have lengths : env2.length = env1.length + 2 := by omega
+  have ptrBound : env1.length < env2.length := by omega
+  have idxBound : env1.length + 1 < env2.length := by omega
+  refine ⟨lengths, ptr, tag, finalised, left, right, ?_, ?_, small, outside, found⟩
+  · have equal := holEl_prefixed vs' env2 env1.length ptrBound
+    rw [← sameLength] at equal
+    exact equal.symm.trans ptrEq
+  · have equal := holEl_prefixed vs' env2 (env1.length + 1) idxBound
+    rw [← sameLength] at equal
+    simpa [Nat.add_assoc] using equal.symm.trans idxEq
+
+theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+
+/-- Decrementing the evaluator clock does not affect the hole's heap entry. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_dec"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
+theorem holeHasVal_dec {C F : Type} (f : HolFiniteMapExact Nat Nat) (env1 env2 : List Value)
+    (state : BviSem.BviState C F) (c : Value) (n : Nat)
+    (hole : holeHasVal f env1 env2 state.refs c) (_clock : state.clock = n + 1) :
+    holeHasVal f env1 env2 (BviSem.decClock 1 state).refs c := by
+  exact hole
 
 theorem holFmapAsFiniteSupportParamWitness_holesUnchangedExcept_f {α β : Type}
     (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
@@ -86,6 +174,46 @@ theorem holFmapAsFiniteSupportParamWitness_onlyFresh_refsOld (refsOld : HolFinit
 def onlyFresh (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
     (refsOld : HolFiniteMapExact Nat (Ref Value)) : Prop :=
   ∀ n, n ∈ mapRange g ∧ n ∉ mapRange f → n ∉ refsOld.domain
+
+theorem holFmapAsFiniteSupportParamWitness_unchanged_holeHasVal_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_unchanged_holeHasVal_fNext (fNext : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup fNext) fNext.finiteSupport = fNext := by cases fNext; rfl
+theorem holFmapAsFiniteSupportParamWitness_unchanged_holeHasVal_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+theorem holFmapAsFiniteSupportParamWitness_unchanged_holeHasVal_refsNext (refsNext : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup refsNext) refsNext.finiteSupport = refsNext := by cases refsNext; rfl
+
+/-- An unchanged hole remains valid when the pointer map grows only at fresh locations. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "unchanged_hole_has_val"
+  (fmap_as_finite_support_parameters := [f, fNext, refs, refsNext])]
+theorem unchanged_holeHasVal (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteMapExact Nat Nat)
+    (env1 envPrefix : List Value) (holePtr : Nat) (holeIdx : Int)
+    (refs : HolFiniteMapExact Nat (Ref Value)) (refsNext : HolFiniteMapExact Nat (Ref Value))
+    (c : Value) (changed : Set Nat)
+    (hole : holeHasVal f env1 (envPrefix ++ [.refPtr false holePtr, .number holeIdx]) refs c)
+    (fresh : onlyFresh f fNext refs) (unchanged : holesUnchangedExcept f refs refsNext changed)
+    (notChanged : holePtr ∉ changed) :
+    holeHasVal fNext env1 (envPrefix ++ [.refPtr false holePtr, .number holeIdx]) refsNext c := by
+  obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
+  have prefixLength : envPrefix.length = env1.length := by simp only [List.length_append, List.length_cons, List.length_nil] at length; omega
+  have knownPtr : holEl env1.length (envPrefix ++ [.refPtr false holePtr, .number holeIdx]) =
+      .refPtr false holePtr := by
+    have eq := holEl_prefixed envPrefix [.refPtr false holePtr, .number holeIdx] 0 (by simp)
+    simpa [prefixLength, holEl, holHd] using eq
+  rw [knownPtr] at ptrEq
+  have ptrSame : ptr = holePtr := by simpa using ptrEq.symm
+  subst ptr
+  obtain ⟨newFinal, newChild, newFound, sameChild⟩ :=
+    unchanged holePtr tag finalised left c right outside found
+  have childEq := sameChild notChanged
+  subst newChild
+  have outsideNext : holePtr ∉ mapRange fNext := by
+    intro member
+    have absent := fresh holePtr ⟨member, outside⟩
+    apply absent
+    simp [HolFiniteMapExact.domain, found]
+  exact ⟨length, holePtr, tag, newFinal, left, right, knownPtr, idxEq, small, outsideNext, newFound⟩
 
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_refl_f {α β : Type} (f : HolFiniteMapExact α β) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
