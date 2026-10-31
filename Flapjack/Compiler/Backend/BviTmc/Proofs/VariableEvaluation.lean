@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BviTmc
+import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
 
 /-! Variable-list evaluation for the TMC expression simulation. -/
@@ -154,5 +155,45 @@ theorem evaluate_var_list_binders {C F : Type} (indices : List Nat) (extras env 
     evaluate (indices.map fun n => Bvi.Exp.var (n + extras.length)) (extras ++ env) state = (result, next) := by
   simpa [shiftVars, List.map_map, Function.comp_def] using
     (evaluate_shift_vars indices env state extras).trans run
+
+private theorem evaluateBindings {C F : Type} (args : List Bvi.Exp) (values : List Value)
+    (count : values.length = args.length) (n : Nat) (ys : List Value)
+    (prefixLength : ys.length = n) (state : BviState C F) :
+    evaluate ((bind n args).1.map Bvi.Exp.var) (ys ++ values) state = (.val values, state) := by
+  induction args generalizing values n ys with
+  | nil =>
+    cases values <;> simp_all [bind, BviSem.evaluate]
+  | cons arg args ih =>
+    cases values with
+    | nil => simp at count
+    | cons value values =>
+      have count' : values.length = args.length := by simpa using count
+      cases binding : bind (n + 1) args with
+      | mk indices last =>
+        have tail := ih values count' (n + 1) (ys ++ [value]) (by simp [prefixLength])
+        simp only [binding] at tail
+        simp only [bind, binding, List.map_cons]
+        change evaluateTuple (.var n :: indices.map Bvi.Exp.var, ys ++ value :: values, state) = _
+        rw [evaluateCons]
+        have head : evaluateTuple ([.var n], ys ++ value :: values, state) = (.val [value], state) := by
+          simp [BviSem.evaluateTuple, BviSem.evaluate, ← prefixLength]
+        rw [head]
+        simp only [BviSem.evaluateTuple, Flapjack.holHd]
+        rw [show evaluate (indices.map Bvi.Exp.var) (ys ++ value :: values) state =
+          (.val values, state) by simpa [List.append_assoc] using tail]
+
+/-- The bindings generated for successful arguments retrieve their values. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_binders"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_binders {C F : Type} (args : List Bvi.Exp) (env : List Value)
+    (state nextState : BviState C F) (values : List Value) (next next' : Nat)
+    (indices : List Nat)
+    (run : evaluate args env state = (.val values, nextState))
+    (binding : bind next args = (indices, next')) (ys : List Value)
+    (prefixLength : ys.length = next) :
+    evaluate (indices.map Bvi.Exp.var) (ys ++ values) nextState = (.val values, nextState) := by
+  have count := BviSem.evaluate_length args env state nextState values run
+  have result := evaluateBindings args values count next ys prefixLength nextState
+  simpa [binding] using result
 
 end Flapjack.Compiler.Backend.BviTmc
