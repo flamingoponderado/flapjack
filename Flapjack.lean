@@ -671,6 +671,8 @@ import Flapjack.Compiler.Backend.ClosConstant.Proofs.Hash
 import Flapjack.Compiler.Backend.ClosConstant.Proofs.HashParts
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ConstantBuild
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateConstant
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Global
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateGlobal
 import Flapjack.Test.ClosToBvlRecursive
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
