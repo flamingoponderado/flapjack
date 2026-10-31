@@ -1763,6 +1763,156 @@ theorem rewriteTail_if {C F : Type} (cond yes no : Bvi.Exp)
               rw [evaluate_if_of_guard _ _ _ env2 target targetMiddle value flag targetGuard truth]
               cases flag <;> simpa [selected] using branchApplied
 
+/-- Shared operation simulation for a primitive whose scan selects no
+accumulator and whose only primitive error is the source type error. The
+primitive correspondence is a premise of this Flapjack helper. -/
+theorem rewriteTail_op_noChoice {C F : Type} (operation : ClosLang.Op) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (noChoice : (scanSing ts loc (.op operation args)).2.2.2 = none)
+    (appSuccess : ∀ (values : List Value) (s t : BviSem.BviState (Nat × C) F)
+      (u : BviSem.BviState C F) (v : Value), stateRel s u →
+      BviSem.doApp operation values s = .val (v, t) →
+      ∃ u', BviSem.doApp operation values u = .val (v, u') ∧ stateRel t u')
+    (appError : ∀ (values : List Value) (s : BviSem.BviState (Nat × C) F)
+      (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet),
+      BviSem.doApp operation values s = .err error → error = .abort .typeError)
+    (hyp : rewriteTailHyp [.op operation args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op operation args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  obtain ⟨run, envRelated, related, types, _, notTypeError⟩ := hyp
+  have simulation : ∃ targetNext, BviSem.evaluate [.op operation args] env2 target =
+      (result, targetNext) ∧ stateRel sourceNext targetNext := by
+    have disabled := envRel_disable ty optimized acc env1 env2 envRelated
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate] at run
+    cases argsRun : BviSem.evaluate args env1 source with
+    | mk argsResult middle =>
+      cases argsResult with
+      | err error =>
+        simp only [argsRun] at run
+        have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
+          intro bad
+          apply notTypeError
+          exact (congrArg Prod.fst run).symm.trans bad
+        have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
+            target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
+        obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
+          argsIH source env1 (.err error) middle false target acc env2 loc ts ty argsHyp
+        have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun] using run
+        cases same
+        refine ⟨targetMiddle, ?_, middleRelated⟩
+        rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
+      | val values =>
+        have argsHyp : rewriteTailHyp args source env1 (.val values) middle false
+            target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, by simp⟩
+        obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
+          argsIH source env1 (.val values) middle false target acc env2 loc ts ty argsHyp
+        cases applied : BviSem.doApp operation values.reverse middle with
+        | err error =>
+          have typeError := appError values.reverse middle error applied
+          subst error
+          simp [argsRun, applied] at run
+          exact (notTypeError run.1.symm).elim
+        | val pair =>
+          obtain ⟨value, last⟩ := pair
+          have same : (.val [value], last) = (result, sourceNext) := by simpa [argsRun, applied] using run
+          cases same
+          obtain ⟨targetNext, targetApplied, finalRelated⟩ :=
+            appSuccess values.reverse middle sourceNext targetMiddle value middleRelated applied
+          refine ⟨targetNext, ?_, finalRelated⟩
+          rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
+          dsimp only
+          rw [targetApplied]
+  obtain ⟨targetNext, targetRun, targetRelated⟩ := simulation
+  apply rewriteTailPost_of_no_scan (.op operation args) source env1 result sourceNext
+    optimized target targetNext acc env2 loc ts ty targetRun targetRelated
+  intro tt resultTy branch op1 scan
+  rw [scanExpr_single] at scan
+  have scanEq : scanSing ts loc (.op operation args) = (tt, resultTy, branch, some op1) := by
+    simpa using scan
+  rw [scanEq] at noChoice
+  simp at noChoice
+
+/-- Complete label-operation case of the source-shaped simulation. -/
+theorem rewriteTail_op_label {C F : Type} (label : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.label label) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.label label) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.label label) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_label label
+  · exact doApp_label_error label
+  · exact hyp
+
+/-- Complete integer constant operation case of the source-shaped simulation. -/
+theorem rewriteTail_op_intConst {C F : Type} (number : Int) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.intOp (.const number)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.intOp (.const number)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.intOp (.const number)) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_intConst number
+  · exact doApp_intConst_error number
+  · exact hyp
+
+/-- Complete global-pointer read operation case of the source-shaped simulation. -/
+theorem rewriteTail_op_globalsPtr {C F : Type}  (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.globOp .globalsPtr) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.globOp .globalsPtr) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.globOp .globalsPtr) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_globalsPtr
+  · exact doApp_globalsPtr_error
+  · exact hyp
+
+/-- Complete global-pointer write operation case of the source-shaped simulation. -/
+theorem rewriteTail_op_setGlobalsPtr {C F : Type}  (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.globOp .setGlobalsPtr) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.globOp .setGlobalsPtr) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.globOp .setGlobalsPtr) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_setGlobalsPtr
+  · exact doApp_setGlobalsPtr_error
+  · exact hyp
+
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a
 raise as an optimization candidate. -/
