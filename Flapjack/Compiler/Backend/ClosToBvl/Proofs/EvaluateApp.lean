@@ -1569,4 +1569,162 @@ theorem evaluate_partialApp_stub_pointer {C F : Type} (s : BvlSem.State C F)
   apply evaluate_partialApp_global_pointer s _ _ maxApp total previous totalBound previousBound global
   exact evaluate_partialAppFnLocationCode_stub maxApp s args extra ptr tag fields total previous previousBound
 
+/-- Extract the partial-application branch of the generated generic stub for
+local reasoning about its control flow. -/
+def genericAppPartialBranch (maxApp n : Nat) : Bvl.Exp :=
+  match generateGenericApp maxApp n with
+  | .let _ (.ifThenElse _ _ partialBranch) => partialBranch
+  | _ => .var 0
+
+/-- If the supplied argument count does not exceed the closure's remaining
+arity, the generic stub selects its partial-application branch. -/
+theorem evaluate_genericApp_partial_branch {C F : Type} (s : BvlSem.State C F)
+    (maxApp n total tag : Nat) (args fields : List BvlSem.Value) (ptr : BvlSem.Value)
+    (length : args.length = n + 1) (bound : n + 1 ≤ total) :
+    BvlSem.evaluate [generateGenericApp maxApp n]
+      (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)]) s =
+    BvlSem.evaluate [genericAppPartialBranch maxApp n]
+      (.number (Int.ofNat total - Int.ofNat (n + 1)) ::
+        (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)])) s := by
+  let env := args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)]
+  let diff : Int := Int.ofNat total - Int.ofNat (n + 1)
+  have varRun : BvlSem.evaluate [.var (n + 1)] env s =
+      (.val [.block tag (ptr :: .number (Int.ofNat total) :: fields)], s) := by
+    simp [BvlSem.evaluate, env, ← length]
+  have firstRun : BvlSem.evaluate [.op (.intOp .sub)
+      [mkConst (n + 1), .op (.blockOp (.elemAt 1)) [.var (n + 1)]]] env s = (.val [.number diff], s) := by
+    simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock,
+      BvlSem.applyNumeric, BvlSem.doIntApp, mkConst, varRun, diff]
+  have testRun : BvlSem.evaluate [.op (.intOp .less) [mkConst 0, .var 0]] (.number diff :: env) s =
+      (.val [BvlSem.boolValue false], s) := by
+    have nonnegative : ¬diff < 0 := by dsimp [diff]; omega
+    simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyNumeric,
+      BvlSem.doIntApp, mkConst, nonnegative]
+  change BvlSem.evaluate [.let [.op (.intOp .sub)
+      [mkConst (n + 1), .op (.blockOp (.elemAt 1)) [.var (n + 1)]]]
+      (.ifThenElse (.op (.intOp .less) [mkConst 0, .var 0]) _
+        (genericAppPartialBranch maxApp n))] env s = _
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, firstRun]
+  dsimp only
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate]
+  simp only [List.singleton_append]
+  rw [testRun]
+  simp [BvlSem.boolValue, BackendCommon.boolToTag, BackendCommon.falseTag, BvlSem.asBool, env, diff]
+
+/-- The repeated tick sequence consumes its requested clock or times out at
+zero before entering its body. -/
+theorem evaluate_genericAppTicks {C F : Type} (n : Nat) (body : Bvl.Exp)
+    (env : List BvlSem.Value) (s : BvlSem.State C F) :
+    BvlSem.evaluate [genericAppTicks n body] env s =
+      if s.clock < n then (.err (.abort .timeoutError), { s with clock := 0 })
+      else BvlSem.evaluate [body] env (BvlSem.decClock n s) := by
+  induction n generalizing s with
+  | zero =>
+    change BvlSem.evaluate [body] env s = BvlSem.evaluate [body] env (BvlSem.decClock 0 s)
+    cases s
+    rfl
+  | succ n ih =>
+    change BvlSem.evaluate [.tick (genericAppTicks n body)] env s = _
+    rw [BvlSem.evaluate]
+    by_cases empty : s.clock = 0
+    · cases s
+      simp_all
+    · simp only [empty, ↓reduceIte]
+      rw [ih]
+      by_cases insufficient : s.clock < n + 1
+      · have less : s.clock - 1 < n := by omega
+        simp [insufficient, less, BvlSem.decClock]
+      · have enough : ¬(BvlSem.decClock 1 s).clock < n := by simp [BvlSem.decClock]; omega
+        simp only [insufficient, enough, ↓reduceIte]
+        have clocks : s.clock - 1 - n = s.clock - (n + 1) := by omega
+        simp [BvlSem.decClock, clocks]
+
+/-- Strip a known number of generated tick constructors. -/
+def stripGenericAppTicks : Nat → Bvl.Exp → Bvl.Exp
+  | 0, body => body
+  | n + 1, .tick body => stripGenericAppTicks n body
+  | _ + 1, body => body
+
+/-- The body of the partial-application branch after its tick sequence. -/
+def genericAppPartialChoice (maxApp n : Nat) : Bvl.Exp :=
+  stripGenericAppTicks n (genericAppPartialBranch maxApp n)
+
+/-- Stripping a generated tick sequence recovers its body. -/
+theorem stripGenericAppTicks_generated (n : Nat) (body : Bvl.Exp) :
+    stripGenericAppTicks n (genericAppTicks n body) = body := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    change stripGenericAppTicks n (genericAppTicks n body) = body
+    exact ih
+
+/-- The partial branch consists of its arity-dependent ticks followed by the
+closure-tag choice. -/
+theorem genericAppPartialBranch_ticks (maxApp n : Nat) :
+    genericAppPartialBranch maxApp n = genericAppTicks n (genericAppPartialChoice maxApp n) := by
+  unfold genericAppPartialChoice genericAppPartialBranch generateGenericApp
+  change genericAppTicks n _ = genericAppTicks n (stripGenericAppTicks n (genericAppTicks n _))
+  rw [stripGenericAppTicks_generated]
+
+/-- Selecting the partial branch and consuming its ticks either times out or
+continues with the closure-tag choice. -/
+theorem evaluate_genericApp_partial_ticks {C F : Type} (s : BvlSem.State C F)
+    (maxApp n total tag : Nat) (args fields : List BvlSem.Value) (ptr : BvlSem.Value)
+    (length : args.length = n + 1) (bound : n + 1 ≤ total) :
+    BvlSem.evaluate [generateGenericApp maxApp n]
+      (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)]) s =
+    if s.clock < n then (.err (.abort .timeoutError), { s with clock := 0 })
+    else BvlSem.evaluate [genericAppPartialChoice maxApp n]
+      (.number (Int.ofNat total - Int.ofNat (n + 1)) ::
+        (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)])) (BvlSem.decClock n s) := by
+  rw [evaluate_genericApp_partial_branch s maxApp n total tag args fields ptr length bound,
+    genericAppPartialBranch_ticks, evaluate_genericAppTicks]
+
+/-- The generated branch that constructs a partial closure from a previously
+unapplied closure. -/
+def genericAppPartialNormal (maxApp n : Nat) : Bvl.Exp :=
+  match genericAppPartialChoice maxApp n with
+  | .ifThenElse _ normal _ => normal
+  | _ => .var 0
+
+/-- The remaining partial branch tests the closure tag and chooses between
+new and existing partial closures. -/
+theorem genericAppPartialChoice_shape (maxApp n : Nat) :
+    ∃ other, genericAppPartialChoice maxApp n =
+      .ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) (genericAppPartialNormal maxApp n) other := by
+  have shape : ∃ normal other, genericAppPartialChoice maxApp n =
+      .ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) normal other := by
+    unfold genericAppPartialChoice genericAppPartialBranch generateGenericApp
+    change ∃ normal other, stripGenericAppTicks n (genericAppTicks n
+        (.ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) _ _)) = _
+    rw [stripGenericAppTicks_generated]
+    exact ⟨_, _, rfl⟩
+  obtain ⟨normal, other, shape⟩ := shape
+  refine ⟨other, ?_⟩
+  simp [genericAppPartialNormal, shape]
+
+/-- An ordinary closure takes the new-partial-closure branch after the generic
+stub's arity test and tick sequence. -/
+theorem evaluate_genericApp_partial_normal {C F : Type} (s : BvlSem.State C F)
+    (maxApp n total : Nat) (args fields : List BvlSem.Value) (ptr : BvlSem.Value)
+    (length : args.length = n + 1) (bound : n + 1 ≤ total) :
+    BvlSem.evaluate [generateGenericApp maxApp n]
+      (args ++ [.block 30 (ptr :: .number (Int.ofNat total) :: fields)]) s =
+    if s.clock < n then (.err (.abort .timeoutError), { s with clock := 0 })
+    else BvlSem.evaluate [genericAppPartialNormal maxApp n]
+      (.number (Int.ofNat total - Int.ofNat (n + 1)) ::
+        (args ++ [.block 30 (ptr :: .number (Int.ofNat total) :: fields)])) (BvlSem.decClock n s) := by
+  rw [evaluate_genericApp_partial_ticks s maxApp n total 30 args fields ptr length bound]
+  split
+  · rfl
+  · obtain ⟨other, shape⟩ := genericAppPartialChoice_shape maxApp n
+    rw [shape, BvlSem.evaluate, BvlSem.fixClock_evaluate]
+    have test : BvlSem.evaluate [.op (.blockOp (.tagEq 30)) [.var (n + 2)]]
+        (.number (Int.ofNat total - Int.ofNat (n + 1)) ::
+          (args ++ [.block 30 (ptr :: .number (Int.ofNat total) :: fields)])) (BvlSem.decClock n s) =
+        (.val [BvlSem.boolValue true], BvlSem.decClock n s) := by
+      simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock, ← length]
+    rw [test]
+    simp [BvlSem.boolValue, BackendCommon.boolToTag, BackendCommon.trueTag, BvlSem.asBool]
+
 end Flapjack.Compiler.Backend.ClosToBvl

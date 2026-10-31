@@ -10,6 +10,9 @@ private def tickN : Nat → Bvl.Exp → Bvl.Exp
   | 0, e => e
   | n + 1, e => .tick (tickN n e)
 
+/-- Expose the repeated tick sequence for proofs of the application stubs. -/
+def genericAppTicks (n : Nat) (e : Bvl.Exp) : Bvl.Exp := tickN n e
+
 /-- Generate generic application code, including over- and partial application. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "generate_generic_app_def"]
 def generateGenericApp (maxApp n : Nat) : Bvl.Exp :=
