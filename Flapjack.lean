@@ -525,6 +525,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.PureExtraction
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CallExtraction
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WellFormed
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionWellFormed
+import Flapjack.Compiler.Backend.BviTmc.Proofs.ListExtraction
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
