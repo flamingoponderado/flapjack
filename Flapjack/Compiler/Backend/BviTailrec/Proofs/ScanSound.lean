@@ -205,6 +205,115 @@ theorem doApp_arith_success {C F : Type} (op : ClosLang.IntOp) (x y result : Val
     subst result
     exact ⟨_, rfl⟩
 
+/-- A successful binary integer primitive whose operands are classified as
+integers has integer operands. -/
+theorem doApp_integer_operands {C F : Type} (op : ClosLang.IntOp) (x y result : Value)
+    (state next : BviSem.BviState C F) (allowed : argType (.intOp op) = .int)
+    (run : BviSem.doApp (.intOp op) [x, y] state = .val (result, next)) :
+    (∃ a, x = .number a) ∧ (∃ b, y = .number b) := by
+  cases op <;> cases x <;> cases y <;>
+    simp_all [argType, BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+      BvlSem.applyNumeric, BvlSem.doIntApp, BviSem.fromBvl_toBvl]
+
+/-- Successful dispatch of a non-constant integer-argument primitive
+requires two operands. -/
+theorem doApp_integer_length {C F : Type} (op : ClosLang.IntOp) (args : List Value) (result : Value)
+    (state next : BviSem.BviState C F) (integerArgs : argType (.intOp op) = .int)
+    (notConst : ∀ k, op ≠ .const k)
+    (run : BviSem.doApp (.intOp op) args state = .val (result, next)) : args.length = 2 := by
+  cases op <;> try simp [argType] at integerArgs
+  case const k => exact (notConst k rfl).elim
+  all_goals
+    cases args with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+        BvlSem.applyNumeric, BvlSem.doIntApp] at run
+    | cons a rest =>
+      cases rest with
+      | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+          BvlSem.applyNumeric, BvlSem.doIntApp] at run
+      | cons b rest =>
+        cases rest with
+        | nil => rfl
+        | cons c rest =>
+          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+            BvlSem.applyNumeric, BvlSem.doIntApp] at run
+
+/-- Successful list append implies that both operands and the result decode
+as source lists. -/
+theorem doApp_append_success {C F : Type} (x y result : Value)
+    (state next : BviSem.BviState C F)
+    (run : BviSem.doApp (.blockOp .listAppend) [x, y] state = .val (result, next)) :
+    (∃ xs, valueToList x = some xs) ∧ (∃ ys, valueToList y = some ys) ∧
+      (∃ zs, valueToList result = some zs) := by
+  cases hx : valueToList x with
+  | none =>
+    simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+      BvlSem.applyBlock, hx] at run
+  | some xs =>
+    cases hy : valueToList y with
+    | none =>
+      simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+        BvlSem.applyBlock, hx, hy] at run
+    | some ys =>
+      simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+        BvlSem.applyBlock, hx, hy, BviSem.fromBvl_toBvl] at run
+      obtain ⟨rfl, _⟩ := run
+      exact ⟨⟨xs, rfl⟩, ⟨ys, rfl⟩, ⟨xs ++ ys, valueToList_listToValue _⟩⟩
+
+/-- Successful append dispatch requires exactly two arguments. -/
+theorem doApp_append_length {C F : Type} (args : List Value) (result : Value)
+    (state next : BviSem.BviState C F)
+    (run : BviSem.doApp (.blockOp .listAppend) args state = .val (result, next)) :
+    args.length = 2 := by
+  cases args with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+  | cons a rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+    | cons b rest =>
+      cases rest with
+      | nil => rfl
+      | cons c rest =>
+        simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+
+/-- Successful source list-append evaluation has exactly two operand
+expressions. -/
+theorem evaluate_append_length {C F : Type} (args : List Bvi.Exp) (env : List Value)
+    (state next : BviSem.BviState C F) (value : Value)
+    (run : BviSem.evaluate [.op (.blockOp .listAppend) args] env state = (.val [value], next)) :
+    args.length = 2 := by
+  obtain ⟨argValues, middle, argsRun, dispatch⟩ :=
+    evaluateOp_success (.blockOp .listAppend) args env state next value run
+  have length := doApp_append_length argValues.reverse value middle next dispatch
+  have valuesLength := BviSem.evaluate_length args env state middle argValues argsRun
+  simpa [valuesLength] using length
+
+/-- Successful integer-constant dispatch requires no arguments. -/
+theorem doApp_const_length {C F : Type} (k : Int) (args : List Value) (result : Value)
+    (state next : BviSem.BviState C F)
+    (run : BviSem.doApp (.intOp (.const k)) args state = .val (result, next)) : args = [] := by
+  cases args with
+  | nil => rfl
+  | cons x xs =>
+    simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+
+/-- Integer constants are sound for every operand list; nonempty lists
+cannot evaluate successfully. -/
+theorem scanSound_intConst_all {C F : Type} (ctx : List ValueType) (loc : Nat)
+    (k : Int) (args : List Bvi.Exp) :
+    scanSound (C := C) (F := F) ctx loc [.op (.intOp (.const k)) args] := by
+  cases args with
+  | nil => exact scanSound_intConst ctx loc k
+  | cons x xs =>
+    intro env state next values related run
+    obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton (.op (.intOp (.const k)) (x :: xs)) env state next values run
+    obtain ⟨argValues, middle, argsRun, dispatch⟩ :=
+      evaluateOp_success (.intOp (.const k)) (x :: xs) env state next value run
+    have empty := doApp_const_length k argValues.reverse value middle next dispatch
+    have count := BviSem.evaluate_length (x :: xs) env state middle argValues argsRun
+    have emptyLength : argValues.length = 0 := by simpa using congrArg List.length empty
+    simp [emptyLength] at count
+
 /-- A successful two-expression evaluation exposes the two sequential
 singleton evaluations. -/
 theorem evaluatePair_success {C F : Type} (x y : Bvi.Exp) (env : List Value)
@@ -277,6 +386,163 @@ theorem scanSound_arith {C F : Type} (ctx : List ValueType) (loc : Nat)
   · apply List.Forall₂.cons
     · rcases typeShape with same | same <;> rw [same] <;> simp
     · exact .nil
+
+/-- A binary integer-argument primitive outside the accumulator class has
+an unconstrained result and can only refine its operand variables as integers. -/
+theorem scanSing_otherInt_shape (ctx : List ValueType) (loc : Nat) (op : ClosLang.IntOp)
+    (x y : Bvi.Exp) (notAccumulator : fromOp (.intOp op) = .noop)
+    (integerArgs : argType (.intOp op) = .int) :
+    ((scanSing ctx loc (.op (.intOp op) [x, y])).1 = ctx ∨
+      (scanSing ctx loc (.op (.intOp op) [x, y])).1 = updateContext .int ctx x y) ∧
+    (scanSing ctx loc (.op (.intOp op) [x, y])).2.1 = .any := by
+  rw [scanSing.eq_def]
+  dsimp only
+  simp [notAccumulator, integerArgs, BEq.beq, instBEqAssocOp.beq,
+    instBEqValueType.beq, AssocOp.ctorIdx, ValueType.ctorIdx]
+  by_cases h : isConst (.intOp op) = true <;> simp [h]
+
+/-- Binary integer primitives outside the accumulator class preserve scan
+type soundness when their dispatch succeeds. -/
+theorem scanSound_otherInt {C F : Type} (ctx : List ValueType) (loc : Nat)
+    (op : ClosLang.IntOp) (x y : Bvi.Exp) (notAccumulator : fromOp (.intOp op) = .noop)
+    (integerArgs : argType (.intOp op) = .int) :
+    scanSound (C := C) (F := F) ctx loc [.op (.intOp op) [x, y]] := by
+  intro env state next values related run
+  obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton (.op (.intOp op) [x, y]) env state next values run
+  obtain ⟨argValues, middle, argsRun, dispatch⟩ := evaluateOp_success (.intOp op) [x, y] env state next value run
+  obtain ⟨vx, vy, between, rfl, xRun, yRun⟩ := evaluatePair_success x y env state middle argValues argsRun
+  have dispatch' : BviSem.doApp (.intOp op) [vy, vx] middle = .val (value, next) := by simpa using dispatch
+  obtain ⟨⟨b, rfl⟩, ⟨a, rfl⟩⟩ := doApp_integer_operands op vy vx value middle next integerArgs dispatch'
+  have refined : tyRel env (updateContext .int ctx x y) :=
+    tyRel_updateContext_of_evaluation related .int x y state between between middle
+      (.number a) (.number b) xRun yRun (by simp [valueMatchesType]) (by simp [valueMatchesType])
+  obtain ⟨contextShape, typeShape⟩ := scanSing_otherInt_shape ctx loc op x y notAccumulator integerArgs
+  rw [scanExpr_single]
+  simp only [List.mem_singleton, forall_eq, List.map_cons, List.map_nil]
+  constructor
+  · rcases contextShape with same | same <;> rw [same]
+    · exact related
+    · exact refined
+  · apply List.Forall₂.cons
+    · rw [typeShape]; simp
+    · exact .nil
+
+/-- A successful non-constant integer primitive with integer arguments has
+two source operands. -/
+theorem evaluate_integer_length {C F : Type} (op : ClosLang.IntOp) (args : List Bvi.Exp)
+    (env : List Value) (state next : BviSem.BviState C F) (value : Value)
+    (integerArgs : argType (.intOp op) = .int) (notConst : ∀ k, op ≠ .const k)
+    (run : BviSem.evaluate [.op (.intOp op) args] env state = (.val [value], next)) :
+    args.length = 2 := by
+  obtain ⟨argValues, middle, argsRun, dispatch⟩ := evaluateOp_success (.intOp op) args env state next value run
+  have length := doApp_integer_length op argValues.reverse value middle next integerArgs notConst dispatch
+  have valuesLength := BviSem.evaluate_length args env state middle argValues argsRun
+  simpa [valuesLength] using length
+
+/-- Non-constant integer operations preserve scan soundness for every arity. -/
+theorem scanSound_intNonconst {C F : Type} (ctx : List ValueType) (loc : Nat)
+    (op : ClosLang.IntOp) (args : List Bvi.Exp) (notConst : ∀ k, op ≠ .const k) :
+    scanSound (C := C) (F := F) ctx loc [.op (.intOp op) args] := by
+  by_cases integerArgs : argType (.intOp op) = .int
+  · intro env state next values related run
+    obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton (.op (.intOp op) args) env state next values run
+    have length := evaluate_integer_length op args env state next value integerArgs notConst run
+    cases args with
+    | nil => simp at length
+    | cons x xs =>
+      cases xs with
+      | nil => simp at length
+      | cons y ys =>
+        cases ys with
+        | cons z zs => simp at length
+        | nil =>
+          by_cases arith : isArith (.intOp op) = true
+          · exact scanSound_arith ctx loc op x y arith env state next [value] related run
+          · have notAccumulator : fromOp (.intOp op) = .noop := by
+              cases op <;> simp_all [isArith, fromOp]
+            exact scanSound_otherInt ctx loc op x y notAccumulator integerArgs env state next [value] related run
+  · have notAccumulator : fromOp (.intOp op) = .noop := by
+      cases op <;> simp_all [argType, fromOp]
+    exact scanSound_op_other ctx loc (.intOp op) args notAccumulator integerArgs
+
+/-- Every integer primitive preserves scan type soundness, including arity
+errors and out-of-range constants. -/
+theorem scanSound_intOp {C F : Type} (ctx : List ValueType) (loc : Nat)
+    (op : ClosLang.IntOp) (args : List Bvi.Exp) :
+    scanSound (C := C) (F := F) ctx loc [.op (.intOp op) args] := by
+  cases op with
+  | const k => exact scanSound_intConst_all ctx loc k args
+  | _ => apply scanSound_intNonconst; intro k; simp
+
+/-- A two-operand list-append scan can only preserve the context or refine
+both operands as lists, and its result type is list or unconstrained. -/
+theorem scanSing_append_shape (ctx : List ValueType) (loc : Nat) (x y : Bvi.Exp) :
+    ((scanSing ctx loc (.op (.blockOp .listAppend) [x, y])).1 = ctx ∨
+      (scanSing ctx loc (.op (.blockOp .listAppend) [x, y])).1 = updateContext .list ctx x y) ∧
+    ((scanSing ctx loc (.op (.blockOp .listAppend) [x, y])).2.1 = .list ∨
+      (scanSing ctx loc (.op (.blockOp .listAppend) [x, y])).2.1 = .any) := by
+  rw [scanSing.eq_def]
+  dsimp only
+  simp [fromOp, BEq.beq, instBEqAssocOp.beq, AssocOp.ctorIdx, opType]
+  by_cases h : (checkOp ctx .append loc (.op (.blockOp .listAppend) [x, y])).isSome = true <;>
+    by_cases ht : term ctx .list (.op (.blockOp .listAppend) [x, y]) = true <;> simp [h, ht]
+
+/-- A successful two-operand list append preserves the scan type-soundness
+invariant. -/
+theorem scanSound_append {C F : Type} (ctx : List ValueType) (loc : Nat) (x y : Bvi.Exp) :
+    scanSound (C := C) (F := F) ctx loc [.op (.blockOp .listAppend) [x, y]] := by
+  intro env state next values related run
+  obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton (.op (.blockOp .listAppend) [x, y]) env state next values run
+  obtain ⟨argValues, middle, argsRun, dispatch⟩ :=
+    evaluateOp_success (.blockOp .listAppend) [x, y] env state next value run
+  obtain ⟨vx, vy, between, rfl, xRun, yRun⟩ := evaluatePair_success x y env state middle argValues argsRun
+  have dispatch' : BviSem.doApp (.blockOp .listAppend) [vy, vx] middle = .val (value, next) := by
+    simpa using dispatch
+  obtain ⟨⟨ys, dy⟩, ⟨xs, dx⟩, ⟨zs, dz⟩⟩ := doApp_append_success vy vx value middle next dispatch'
+  have typedX : valueMatchesType vx .list := by simp [valueMatchesType, dx]
+  have typedY : valueMatchesType vy .list := by simp [valueMatchesType, dy]
+  have refined : tyRel env (updateContext .list ctx x y) :=
+    tyRel_updateContext_of_evaluation related .list x y state between between middle vx vy xRun yRun typedX typedY
+  obtain ⟨contextShape, typeShape⟩ := scanSing_append_shape ctx loc x y
+  rw [scanExpr_single]
+  simp only [List.mem_singleton, forall_eq, List.map_cons, List.map_nil]
+  constructor
+  · rcases contextShape with same | same <;> rw [same]
+    · exact related
+    · exact refined
+  · apply List.Forall₂.cons
+    · rcases typeShape with same | same <;> rw [same] <;> simp [dz]
+    · exact .nil
+
+/-- The source append scan is sound for every operand list, including
+wrong-arity lists which cannot evaluate successfully. -/
+theorem scanSound_append_all {C F : Type} (ctx : List ValueType) (loc : Nat) (args : List Bvi.Exp) :
+    scanSound (C := C) (F := F) ctx loc [.op (.blockOp .listAppend) args] := by
+  intro env state next values related run
+  obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton (.op (.blockOp .listAppend) args) env state next values run
+  have length := evaluate_append_length args env state next value run
+  cases args with
+  | nil => simp at length
+  | cons x xs =>
+    cases xs with
+    | nil => simp at length
+    | cons y ys =>
+      cases ys with
+      | nil => exact scanSound_append ctx loc x y env state next [value] related run
+      | cons z zs => simp at length
+
+/-- Every primitive-operation scan preserves the source type-soundness
+invariant for successful BVI evaluation. -/
+theorem scanSound_op {C F : Type} (ctx : List ValueType) (loc : Nat)
+    (op : ClosLang.Op) (args : List Bvi.Exp) :
+    scanSound (C := C) (F := F) ctx loc [.op op args] := by
+  cases op with
+  | intOp operation => exact scanSound_intOp ctx loc operation args
+  | blockOp operation =>
+    cases operation with
+    | listAppend => exact scanSound_append_all ctx loc args
+    | _ => apply scanSound_op_other <;> simp [fromOp, argType]
+  | _ => apply scanSound_op_other <;> simp [fromOp, argType]
 
 /-- Expressions whose scan has the source default result satisfy the scan
 invariant whenever they evaluate successfully. -/
@@ -466,5 +732,53 @@ theorem scanSound_cons {C F : Type} (ctx : List ValueType) (loc : Nat) (x : Bvi.
           · cases headSound.2 with
             | cons valueSound empty =>
               exact List.Forall₂.cons valueSound tailSound.2
+
+mutual
+/-- Every single-expression scan satisfies the source type-soundness
+invariant for the current BVI evaluator. -/
+theorem scanSound_single {C F : Type} (ctx : List ValueType) (loc : Nat) (e : Bvi.Exp) :
+    scanSound (C := C) (F := F) ctx loc [e] := by
+  cases e with
+  | var n => exact scanSound_var ctx loc n
+  | force place index => exact scanSound_force ctx loc place index
+  | op op args => exact scanSound_op ctx loc op args
+  | tick body => exact scanSound_tick ctx loc body (fun ctx => scanSound_single ctx loc body)
+  | ifThenElse condition yes no =>
+    exact scanSound_if ctx loc condition yes no
+      (fun ctx => scanSound_single ctx loc condition)
+      (fun ctx => scanSound_single ctx loc yes)
+      (fun ctx => scanSound_single ctx loc no)
+  | «let» bindings body =>
+    exact scanSound_let ctx loc bindings body
+      (fun ctx => scanSound_list ctx loc bindings)
+      (fun ctx => scanSound_single ctx loc body)
+  | raise e => exact (scanSound_default_cases ctx loc).1 e
+  | «return» xs => exact (scanSound_default_cases ctx loc).2.1 xs
+  | call ticks dest args handler => exact (scanSound_default_cases ctx loc).2.2.1 ticks dest args handler
+  | letCall rets ticks dest args body => exact (scanSound_default_cases ctx loc).2.2.2 rets ticks dest args body
+termination_by sizeOf e
+
+/-- Every source-shaped list scan satisfies the type-soundness invariant. -/
+theorem scanSound_list {C F : Type} (ctx : List ValueType) (loc : Nat) (xs : List Bvi.Exp) :
+    scanSound (C := C) (F := F) ctx loc xs := by
+  cases xs with
+  | nil => exact scanSound_nil ctx loc
+  | cons x xs =>
+    exact scanSound_cons ctx loc x xs
+      (fun ctx => scanSound_single ctx loc x)
+      (fun ctx => scanSound_list ctx loc xs)
+termination_by sizeOf xs
+end
+
+/-- The source-shaped scan type-soundness theorem. This remains untagged
+until the BVI evaluator and dispatcher are reviewed against the source. -/
+theorem scanExpr_tyRel {C F : Type} (ts : List ValueType) (loc : Nat) (xs : List Bvi.Exp)
+    (env : List Value) (ys : List (List ValueType × ValueType × Bool × Option AssocOp))
+    (state next : BviSem.BviState C F) (values : List Value)
+    (hyp : tyRel env ts ∧ scanExpr ts loc xs = ys ∧
+      BviSem.evaluate xs env state = (.val values, next)) :
+    (∀ entry ∈ ys, tyRel env entry.1) ∧ tyRel values (ys.map fun (_, ty, _, _) => ty) := by
+  obtain ⟨related, rfl, run⟩ := hyp
+  exact scanSound_list ts loc xs env state next values related run
 
 end Flapjack.Compiler.Backend.BviTailrec
