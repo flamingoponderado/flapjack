@@ -6397,4 +6397,172 @@ theorem evaluate_overApp_continue_generic {C F : Type} (s : BvlSem.State C F)
     (by simpa [exps, takeLength] using lookup)
   simpa [env, closure, exps] using callRun
 
+/-- The ordinary source dispatcher splits overapplication into the suffix
+that saturates the closure and the prefix applied to the result. -/
+theorem destClosure_ordinary_over (maxApp ptr arity : Nat)
+    (captured saved args : List ClosSem.Value) (body : ClosLang.Exp)
+    (savedBound : saved.length < arity) (bound : args.length ≤ maxApp)
+    (over : arity < args.length + saved.length) :
+    ClosSem.destClosure maxApp none (.closure (some ptr) saved captured arity body) args =
+      some (.fullApp body (args.drop (args.length - (arity - saved.length)) ++ saved ++ captured)
+        (args.take (args.length - (arity - saved.length)))) := by
+  have notPartial : ¬ args.length + saved.length < arity := by omega
+  simp [ClosSem.destClosure, ClosSem.checkLoc, bound, savedBound, notPartial,
+    List.reverse_take, List.reverse_drop, List.append_assoc]
+
+/-- A recursive source closure uses the same overapplication split and
+adds its recursive group to the selected body's environment. -/
+theorem destClosure_recclosure_over (maxApp ptr arity index : Nat)
+    (captured saved args : List ClosSem.Value) (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (found : functions[index]? = some (arity, body)) (savedBound : saved.length < arity)
+    (bound : args.length ≤ maxApp) (over : arity < args.length + saved.length) :
+    ClosSem.destClosure maxApp none (.recclosure (some ptr) saved captured functions index) args =
+      some (.fullApp body (args.drop (args.length - (arity - saved.length)) ++ saved ++
+        (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
+        (args.take (args.length - (arity - saved.length)))) := by
+  have notPartial : ¬ args.length + saved.length < arity := by omega
+  simp [ClosSem.destClosure, found, ClosSem.checkLoc, bound, savedBound, notPartial,
+    List.reverse_take, List.reverse_drop, List.append_assoc]
+
+/-- Overapplication of an ordinary closure evaluates its saturated body, then
+applies any remaining prefix to a singleton result. -/
+theorem evaluateApp_ordinary_over {C F : Type} (s : ClosSem.State C F)
+    (ptr arity : Nat) (captured saved args : List ClosSem.Value) (body : ClosLang.Exp)
+    (savedBound : saved.length < arity) (bound : args.length ≤ s.maxApp)
+    (over : arity < args.length + saved.length) :
+    ClosSem.evaluateApp none (.closure (some ptr) saved captured arity body) args s =
+      if s.clock < arity - saved.length then (.err (.abort .timeoutError), { s with clock := 0 })
+      else
+        let next := ClosSem.fixClock (ClosSem.decClock (arity - saved.length) s)
+          (ClosSem.evaluate [body] (args.drop (args.length - (arity - saved.length)) ++ saved ++ captured)
+            (ClosSem.decClock (arity - saved.length) s))
+        match next.1 with
+        | .val [value] => ClosSem.evaluateApp none value (args.take (args.length - (arity - saved.length))) next.2
+        | other => (other, next.2) := by
+  have nonempty : args ≠ [] := by intro empty; simp [empty] at over; omega
+  have neededBound : arity - saved.length ≤ args.length := by omega
+  have cost : args.length - (args.take (args.length - (arity - saved.length))).length = arity - saved.length := by
+    simp [List.length_take]
+    omega
+  have selected := destClosure_ordinary_over s.maxApp ptr arity captured saved args body savedBound bound over
+  cases args with
+  | nil => contradiction
+  | cons head tail =>
+    rw [ClosSem.evaluateApp, selected]
+    simp only [cost]
+    split <;> rfl
+
+/-- Overapplication of a recursive closure evaluates the selected body with
+its recursive group, then applies any remaining prefix to a singleton result. -/
+theorem evaluateApp_recclosure_over {C F : Type} (s : ClosSem.State C F)
+    (ptr arity index : Nat) (captured saved args : List ClosSem.Value)
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (found : functions[index]? = some (arity, body)) (savedBound : saved.length < arity)
+    (bound : args.length ≤ s.maxApp) (over : arity < args.length + saved.length) :
+    ClosSem.evaluateApp none (.recclosure (some ptr) saved captured functions index) args s =
+      if s.clock < arity - saved.length then (.err (.abort .timeoutError), { s with clock := 0 })
+      else
+        let next := ClosSem.fixClock (ClosSem.decClock (arity - saved.length) s)
+          (ClosSem.evaluate [body] (args.drop (args.length - (arity - saved.length)) ++ saved ++
+            (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
+            (ClosSem.decClock (arity - saved.length) s))
+        match next.1 with
+        | .val [value] => ClosSem.evaluateApp none value (args.take (args.length - (arity - saved.length))) next.2
+        | other => (other, next.2) := by
+  have nonempty : args ≠ [] := by intro empty; simp [empty] at over; omega
+  have neededBound : arity - saved.length ≤ args.length := by omega
+  have cost : args.length - (args.take (args.length - (arity - saved.length))).length = arity - saved.length := by
+    simp [List.length_take]
+    omega
+  have selected := destClosure_recclosure_over s.maxApp ptr arity index captured saved args functions body
+    found savedBound bound over
+  cases args with
+  | nil => contradiction
+  | cons head tail =>
+    rw [ClosSem.evaluateApp, selected]
+    simp only [cost]
+    split <;> rfl
+
+/-- Pointwise related lists remain related after taking and dropping the same
+number of elements. -/
+theorem forall₂_take_drop {α β : Type} (r : α → β → Prop) (xs : List α) (ys : List β)
+    (related : List.Forall₂ r xs ys) (n : Nat) :
+    List.Forall₂ r (xs.take n) (ys.take n) ∧ List.Forall₂ r (xs.drop n) (ys.drop n) := by
+  induction related generalizing n with
+  | nil => simp
+  | cons head tail ih =>
+    cases n with
+    | zero => simp [List.Forall₂.cons head tail]
+    | succ n =>
+      obtain ⟨takeRel, dropRel⟩ := ih n
+      exact ⟨by simpa using List.Forall₂.cons head takeRel, by simpa using dropRel⟩
+
+/-- The source overapplication split and generated target split agree on
+related argument lists and preserve the relation in each segment. -/
+theorem overApp_related_split {α β : Type} (r : α → β → Prop)
+    (source : List α) (target : List β) (arity saved n total : Nat)
+    (related : List.Forall₂ r source target) (targetLength : target.length = n + 1)
+    (savedBound : saved < arity) (storedArity : total = arity - saved - 1)
+    (over : arity < source.length + saved) :
+    source.length - (arity - saved) = n - total ∧
+    List.Forall₂ r (source.take (source.length - (arity - saved))) (target.take (n - total)) ∧
+    List.Forall₂ r (source.drop (source.length - (arity - saved))) (target.drop (n - total)) := by
+  have sameLength : source.length = target.length := related.length_eq
+  have splitEq : source.length - (arity - saved) = n - total := by omega
+  have ⟨takeRel, dropRel⟩ := forall₂_take_drop r source target related (n - total)
+  exact ⟨splitEq, by simpa [splitEq] using takeRel, by simpa [splitEq] using dropRel⟩
+
+/-- The generated closure call and generic overapplication stub execute the
+first saturated call, charging the outer call tick and the closure arity. -/
+theorem evaluate_mkClCall_over_step {C F : Type} (s : BvlSem.State C F)
+    (maxApp n total tag address : Nat) (args fields rest : List BvlSem.Value) (body : Bvl.Exp)
+    (length : args.length = n + 1) (over : total < n) (totalBound : total < maxApp)
+    (genericLookup : sptLookup (genericAppFnLocation n) s.code = some (n + 2, generateGenericApp maxApp n))
+    (lookup : sptLookup address s.code = some (total + 2, body)) :
+    let closure := BvlSem.Value.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)
+    BvlSem.evaluate [mkClCall (.var args.length) ((List.range args.length).map Bvl.Exp.var)]
+      (args ++ [closure] ++ rest) s =
+    if s.clock < total + 2 then (.err (.abort .timeoutError), { s with clock := 0 })
+    else
+      let next := BvlSem.evaluate [body] (args.drop (n - total) ++ [closure]) (BvlSem.decClock (total + 2) s)
+      match next.1 with
+      | .err error => (.err error, next.2)
+      | .val values => BvlSem.evaluate
+          [mkClCall (.var 0) ((List.range (n - total)).map fun i => .var (i + 3))]
+          (values ++ [.number (Int.ofNat total), .number (Int.ofNat total - Int.ofNat (n + 1))] ++
+            args ++ [closure]) next.2 := by
+  let closure := BvlSem.Value.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)
+  let env := args ++ [closure] ++ rest
+  have clRun : BvlSem.evaluate [.var args.length] env s = (.val [closure], s) := by simp [BvlSem.evaluate, env]
+  have argsRun : BvlSem.evaluate ((List.range args.length).map Bvl.Exp.var) env s = (.val args, s) := by
+    have bound : args.length ≤ env.length := by simp [env]
+    simpa [env] using evaluate_rangeVars args.length env s bound
+  have different : ((List.range args.length).map Bvl.Exp.var).length - 1 ≠ total := by
+    simp only [List.length_map, List.length_range, length]
+    omega
+  have lookup' : sptLookup (genericAppFnLocation (((List.range args.length).map Bvl.Exp.var).length - 1)) s.code =
+      some (args.length + 1, generateGenericApp maxApp n) := by simpa [length] using genericLookup
+  have callRun := evaluate_mkClCall_generic s env (.var args.length) ((List.range args.length).map Bvl.Exp.var)
+    args tag total (.codePtr address) fields (generateGenericApp maxApp n)
+    (by simpa [closure] using clRun) argsRun different lookup'
+  simp only [length] at callRun
+  change BvlSem.evaluate [_] env s = _
+  simp only [length]
+  rw [callRun]
+  by_cases zero : s.clock = 0
+  · simp [zero]
+  · simp only [zero, ↓reduceIte]
+    have lookupDec : sptLookup address (BvlSem.decClock 1 s).code = some (total + 2, body) := by
+      simpa [BvlSem.decClock] using lookup
+    rw [evaluate_genericApp_over_step (BvlSem.decClock 1 s) maxApp n total tag address args fields body
+      length (by omega) totalBound lookupDec]
+    have clockTest : (BvlSem.decClock 1 s).clock < total + 1 ↔ s.clock < total + 2 := by
+      simp only [BvlSem.decClock]
+      omega
+    simp only [clockTest]
+    split
+    · simp [BvlSem.decClock]
+    · have clocks : s.clock - 1 - (total + 1) = s.clock - (total + 2) := by omega
+      simp [BvlSem.decClock, clocks]
+
 end Flapjack.Compiler.Backend.ClosToBvl
