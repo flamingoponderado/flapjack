@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteScan
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermExtension
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
+import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
 
 /-! Cases of the source tail-recursion rewrite simulation. The evaluator,
 source scan and compilation carriers remain subject to HOL review. -/
@@ -4974,5 +4975,224 @@ theorem rewriteTail_variables {C F : Type} (names : List Nat) :
     | nil => exact rewriteTailProperty_var n
     | cons m ms =>
       exact rewriteTail_cons (.var n) (.var m) (ms.map Bvi.Exp.var) (rewriteTailProperty_var n) ih
+
+/-- Initial states satisfy the tail-recursion relation under the source
+program and oracle conditions. This helper is not a HOL declaration port. -/
+theorem initialState_compileEach_related {C F : Type}
+    (next : Nat) (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
+    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (clock : Nat)
+    (condition : inputCondition next program)
+    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
+    (workerBound : ∀ n, n ∈ (compileEachSource next program).2.map Prod.fst →
+      inWorkerNamespace n → n < (oracle 0).1.1) :
+    stateRel (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock)
+      (BviSem.initialState ffi (sptFromAList (compileEachSource next program).2)
+        (transformOracle oracle) compiler clock) := by
+  obtain ⟨codeRelated, namespaceRelated, _⟩ := compileEachSource_install_relations next program condition
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, codeRelated, namespaceRelated, oracleCondition, ?_⟩
+  intro n ⟨member, worker⟩
+  exact workerBound n ((sptFromAList_mem_iff _ n).mp member) worker
+
+/-- Evaluation of the initial call is preserved by compiling every function.
+This source-shaped theorem remains untagged pending review of the BVI
+evaluator and the pass's state and code representations against HOL. -/
+theorem evaluateCompileEach {C F : Type}
+    (next : Nat) (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
+    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (clock start : Nat)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (condition : inputCondition next program)
+    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
+    (workerBound : ∀ n, n ∈ (compileEachSource next program).2.map Prod.fst →
+      inWorkerNamespace n → n < (oracle 0).1.1)
+    (run : BviSem.evaluate [.call 0 (some start) [] none] []
+      (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock) =
+      (result, sourceNext))
+    (notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ targetNext,
+      BviSem.evaluate [.call 0 (some start) [] none] []
+        (BviSem.initialState ffi (sptFromAList (compileEachSource next program).2)
+          (transformOracle oracle) compiler clock) = (result, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  have related := initialState_compileEach_related next program ffi oracle compiler clock
+    condition oracleCondition workerBound
+  have simulation := rewriteTailProperty_all (C := C) (F := F) [.call 0 (some start) [] none]
+    (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock)
+    [] result sourceNext false
+    (BviSem.initialState ffi (sptFromAList (compileEachSource next program).2)
+      (transformOracle oracle) compiler clock) 0 [] 0 [] .any
+    ⟨run, by simp [envRel], related, by simp [tyRel], by simp, notTypeError⟩
+  obtain ⟨targetNext, targetRun, targetRelated, _⟩ := simulation
+  exact ⟨targetNext, targetRun, targetRelated⟩
+
+/-- A non-failing source semantics excludes a type error at every clock.
+This observation helper is specific to Flapjack's BVI semantics. -/
+theorem semantics_ne_fail_no_type_error {C F : Type} (ffi : HolFfiState F)
+    (code : Spt (Nat × Bvi.Exp)) (oracle : BviSem.CompileOracle C)
+    (compiler : BviSem.Compiler C) (start : Nat)
+    (notFail : BviSem.semantics ffi code oracle compiler start ≠ .fail) :
+    ∀ clock, (BviSem.evaluate [.call 0 (some start) [] none] []
+      (BviSem.initialState ffi code oracle compiler clock)).1 ≠ .err (.abort .typeError) := by
+  intro clock bad
+  apply notFail
+  unfold BviSem.semantics
+  have fatal : ∃ clock error, (BviSem.evaluateTuple ([.call 0 (some start) [] none], [],
+      BviSem.initialState ffi code oracle compiler clock)).1 = .err error ∧
+      error ≠ .abort .timeoutError ∧ ∀ event, error ≠ .abort (.ffiError event) := by
+    exact ⟨clock, .abort .typeError, bad, by simp, by simp⟩
+  simp [fatal]
+
+/-- At each clock, compiling the initial program preserves the result and
+FFI trace whenever the source whole-program semantics does not fail. -/
+theorem compileEach_initial_observations {C F : Type}
+    (next : Nat) (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
+    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (start : Nat)
+    (condition : inputCondition next program)
+    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
+    (workerBound : ∀ n, n ∈ (compileEachSource next program).2.map Prod.fst →
+      inWorkerNamespace n → n < (oracle 0).1.1)
+    (notFail : BviSem.semantics ffi (sptFromAList program) oracle (transformCompiler compiler) start ≠ .fail) :
+    ∀ clock,
+      let source := BviSem.evaluate [.call 0 (some start) [] none] []
+        (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock)
+      let target := BviSem.evaluate [.call 0 (some start) [] none] []
+        (BviSem.initialState ffi (sptFromAList (compileEachSource next program).2)
+          (transformOracle oracle) compiler clock)
+      source.1 = target.1 ∧ source.2.ffi.ioEvents = target.2.ffi.ioEvents := by
+  intro clock
+  have noType := semantics_ne_fail_no_type_error ffi (sptFromAList program) oracle
+    (transformCompiler compiler) start notFail clock
+  cases run : BviSem.evaluate [.call 0 (some start) [] none] []
+      (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock) with
+  | mk result sourceNext =>
+    have notType : result ≠ .err (.abort .typeError) := by simpa [run] using noType
+    obtain ⟨targetNext, targetRun, related⟩ := evaluateCompileEach next program ffi oracle compiler clock start
+      result sourceNext condition oracleCondition workerBound run notType
+    have ffiEqual := (stateRel_const sourceNext targetNext related).2.2.2
+    simp [targetRun, ffiEqual]
+
+/-- A terminating BVI observation depends only on each run's result and
+FFI trace. This reformulation is auxiliary Flapjack infrastructure. -/
+theorem terminatingObservation_iff_projections {C F : Type} (ffi : HolFfiState F)
+    (code : Spt (Nat × Bvi.Exp)) (oracle : BviSem.CompileOracle C)
+    (compiler : BviSem.Compiler C) (start : Nat) (behavior : Flapjack.HolBehaviour) :
+    BviSem.terminatingObservation ffi code oracle compiler start behavior ↔
+      ∃ clock outcome,
+        (match (BviSem.evaluate [.call 0 (some start) [] none] []
+          (BviSem.initialState ffi code oracle compiler clock)).1 with
+         | .err (.abort (.ffiError event)) => outcome = Flapjack.HolOutcome.ffiOutcome event
+         | .val _ => outcome = Flapjack.HolOutcome.success
+         | _ => False) ∧
+        behavior = Flapjack.HolBehaviour.terminate outcome
+          (BviSem.evaluate [.call 0 (some start) [] none] []
+            (BviSem.initialState ffi code oracle compiler clock)).2.ffi.ioEvents := by
+  constructor
+  · rintro ⟨clock, result, state, outcome, run, outcomeRun, behaviorEq⟩
+    change BviSem.evaluate [.call 0 (some start) [] none] []
+      (BviSem.initialState ffi code oracle compiler clock) = (result, state) at run
+    refine ⟨clock, outcome, ?_, ?_⟩
+    · rw [run]
+      cases result with
+      | val values => simpa using outcomeRun
+      | err error =>
+        cases error with
+        | raise value => simp at outcomeRun
+        | abort reason => cases reason <;> simp_all
+    · rw [run]; exact behaviorEq
+  · rintro ⟨clock, outcome, outcomeRun, behaviorEq⟩
+    let run := BviSem.evaluate [.call 0 (some start) [] none] []
+      (BviSem.initialState ffi code oracle compiler clock)
+    refine ⟨clock, run.1, run.2, outcome, by simp [BviSem.evaluateTuple, run], ?_, behaviorEq⟩
+    cases resultEq : run.1 with
+    | val values =>
+      dsimp only [run] at resultEq
+      simpa [resultEq] using outcomeRun
+    | err error =>
+      dsimp only [run] at resultEq
+      cases error with
+      | raise value => simp [resultEq] at outcomeRun
+      | abort reason => cases reason <;> simp_all
+
+/-- Equal initial results and traces at every clock determine equal BVI
+whole-program behavior. This is Flapjack observation infrastructure. -/
+theorem semantics_eq_of_initial_projections {C D F : Type} (ffi : HolFfiState F)
+    (code1 code2 : Spt (Nat × Bvi.Exp)) (oracle1 : BviSem.CompileOracle C)
+    (oracle2 : BviSem.CompileOracle D) (compiler1 : BviSem.Compiler C)
+    (compiler2 : BviSem.Compiler D) (start : Nat)
+    (same : ∀ clock,
+      let first := BviSem.evaluate [.call 0 (some start) [] none] []
+        (BviSem.initialState ffi code1 oracle1 compiler1 clock)
+      let second := BviSem.evaluate [.call 0 (some start) [] none] []
+        (BviSem.initialState ffi code2 oracle2 compiler2 clock)
+      first.1 = second.1 ∧ first.2.ffi.ioEvents = second.2.ffi.ioEvents) :
+    BviSem.semantics ffi code1 oracle1 compiler1 start =
+      BviSem.semantics ffi code2 oracle2 compiler2 start := by
+  classical
+  have sameResult : ∀ clock,
+      (BviSem.evaluateTuple ([.call 0 (some start) [] none], [],
+        BviSem.initialState ffi code1 oracle1 compiler1 clock)).1 =
+      (BviSem.evaluateTuple ([.call 0 (some start) [] none], [],
+        BviSem.initialState ffi code2 oracle2 compiler2 clock)).1 := by
+    intro clock
+    exact (same clock).1
+  have sameTrace : ∀ clock,
+      (BviSem.evaluateTuple ([.call 0 (some start) [] none], [],
+        BviSem.initialState ffi code1 oracle1 compiler1 clock)).2.ffi.ioEvents =
+      (BviSem.evaluateTuple ([.call 0 (some start) [] none], [],
+        BviSem.initialState ffi code2 oracle2 compiler2 clock)).2.ffi.ioEvents := by
+    intro clock
+    exact (same clock).2
+  have sameObservation : BviSem.terminatingObservation ffi code1 oracle1 compiler1 start =
+      BviSem.terminatingObservation ffi code2 oracle2 compiler2 start := by
+    funext behavior
+    apply propext
+    rw [terminatingObservation_iff_projections, terminatingObservation_iff_projections]
+    constructor
+    · rintro ⟨clock, outcome, result, trace⟩
+      exact ⟨clock, outcome, by rw [← (same clock).1]; exact result,
+        by rw [← (same clock).2]; exact trace⟩
+    · rintro ⟨clock, outcome, result, trace⟩
+      exact ⟨clock, outcome, by rw [(same clock).1]; exact result,
+        by rw [(same clock).2]; exact trace⟩
+  unfold BviSem.semantics
+  simp_rw [sameResult, sameTrace, sameObservation]
+
+/-- Compiling each function preserves whole-program BVI behavior when the
+source does not fail. This source-shaped result remains untagged until the
+evaluator, state relation, and compilation carriers are reviewed against HOL. -/
+theorem compileEach_semantics {C F : Type}
+    (next : Nat) (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
+    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (start : Nat)
+    (condition : inputCondition next program)
+    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
+    (workerBound : ∀ n, n ∈ (compileEachSource next program).2.map Prod.fst →
+      inWorkerNamespace n → n < (oracle 0).1.1)
+    (notFail : BviSem.semantics ffi (sptFromAList program) oracle (transformCompiler compiler) start ≠ .fail) :
+    BviSem.semantics ffi (sptFromAList program) oracle (transformCompiler compiler) start =
+      BviSem.semantics ffi (sptFromAList (compileEachSource next program).2)
+        (transformOracle oracle) compiler start := by
+  exact semantics_eq_of_initial_projections ffi _ _ oracle (transformOracle oracle)
+    (transformCompiler compiler) compiler start
+    (compileEach_initial_observations next program ffi oracle compiler start
+      condition oracleCondition workerBound notFail)
+
+/-- The executed fuel-based compiler has the same whole-program behavior as
+the source program under the pass's input conditions. The oracle transformation
+is the source-shaped pass; its representation still requires HOL review. -/
+theorem compileEachFuel_semantics {C F : Type}
+    (fuel next : Nat) (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
+    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (start : Nat)
+    (last : Nat) (compiled : List (Nat × Nat × Bvi.Exp))
+    (condition : inputCondition next program)
+    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
+    (workerBound : ∀ n, n ∈ compiled.map Prod.fst → inWorkerNamespace n → n < (oracle 0).1.1)
+    (compiledEq : compileEachFuel fuel next program = some (last, compiled))
+    (notFail : BviSem.semantics ffi (sptFromAList program) oracle (transformCompiler compiler) start ≠ .fail) :
+    BviSem.semantics ffi (sptFromAList program) oracle (transformCompiler compiler) start =
+      BviSem.semantics ffi (sptFromAList compiled) (transformOracle oracle) compiler start := by
+  have equal := (compileEachFuel_eq_source fuel next program).symm.trans compiledEq
+  have compiledSame : (compileEachSource next program).2 = compiled := by
+    exact congrArg Prod.snd (Option.some.inj equal)
+  rw [← compiledSame] at workerBound ⊢
+  exact compileEach_semantics next program ffi oracle compiler start condition oracleCondition workerBound notFail
 
 end Flapjack.Compiler.Backend.BviTailrec
