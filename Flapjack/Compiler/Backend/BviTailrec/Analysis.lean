@@ -1,8 +1,8 @@
 import Flapjack.Compiler.Backend.BviTailrec
 
-/-! Bounded transcription of the type and operator analysis used by BVI
-tail-recursion elimination. The total HOL functions and correspondence remain
-open; `none` denotes exhausted traversal fuel. -/
+/-! Type and operator analysis used by BVI tail-recursion elimination.
+The source-shaped term tests are total; their bounded executable versions
+return `none` when traversal fuel is exhausted. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
@@ -19,6 +19,7 @@ inductive AssocOp where
   deriving DecidableEq, BEq
 
 /-- Type required by the accumulator operation. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_type_def"]
 def opType : AssocOp → ValueType
   | .plus | .times => .int
   | .append => .list
@@ -44,10 +45,12 @@ private def small (i : Int) : Bool := -268435457 ≤ i && i ≤ 268435457
 private def isConst : ClosLang.Op → Bool
   | .intOp (.const i) => small i
   | _ => false
-private def isArith : ClosLang.Op → Bool
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_arith_def"]
+def isArith : ClosLang.Op → Bool
   | .intOp .add | .intOp .sub | .intOp .mult => true
   | _ => false
-private def isRel : ClosLang.Op → Bool
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "is_rel_def"]
+def isRel : ClosLang.Op → Bool
   | .intOp .less | .intOp .lessEq | .intOp .greater | .intOp .greaterEq => true
   | _ => false
 private def argType : ClosLang.Op → ValueType
@@ -66,6 +69,79 @@ private def update (ty : ValueType) (e : Exp) (ctx : List ValueType) : List Valu
   | _ => ctx
 private def updateContext (ty : ValueType) (ctx : List ValueType) (x y : Exp) : List ValueType :=
   update ty y (update ty x ctx)
+
+mutual
+  /-- Source integer-term test. Matching a two-element operand list is the
+  source `get_bin_args` check; optional lookup implements its bounds test. -/
+  @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "term_ok_int_def"]
+  def termInt (ctx : List ValueType) : Exp → Bool
+    | .var n => ctx[n]? == some .int
+    | .op op [x, y] => isArith op && termInt ctx x && termInt ctx y
+    | .op op [] => isConst op
+    | _ => false
+  termination_by e => sizeOf e
+
+  /-- Source arbitrary/list-term test, with the same operand ordering and
+  short-circuit cases as the original test. -/
+  @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "term_ok_any_def"]
+  def termAny (ctx : List ValueType) (list : Bool) : Exp → Bool
+    | .var n => if list then ctx[n]? == some .list else n < ctx.length
+    | .op op [x, y] =>
+      match op with
+      | .blockOp .listAppend => termAny ctx true x && termAny ctx true y
+      | .blockOp (.cons 0) => termAny ctx true x && termAny ctx false y
+      | _ => !list && (isArith op || isRel op) && termInt ctx x && termInt ctx y
+    | .op (.blockOp (.cons 0)) [] => list
+    | .op op [] => !list && isConst op
+    | _ => false
+  termination_by e => sizeOf e
+end
+
+/-- Dispatch to the source term test for the requested type. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "term_ok_def"]
+def term (ctx : List ValueType) (ty : ValueType) (e : Exp) : Bool :=
+  match ty with
+  | .int => termInt ctx e
+  | .list => termAny ctx true e
+  | .any => termAny ctx false e
+
+/-- Recognize the BVI operation represented by an accumulator operator. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "op_eq_def"]
+def opEq : AssocOp → Exp → Bool
+  | .plus, .op (.intOp .add) _ => true
+  | .times, .op (.intOp .mult) _ => true
+  | .append, .op (.blockOp .listAppend) _ => true
+  | _, _ => false
+
+/-- Extract precisely two operands from a BVI operation. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "get_bin_args_def"]
+def getBinArgs : Exp → Option (Exp × Exp)
+  | .op _ [x, y] => some (x, y)
+  | _ => none
+
+/-- Extract two operands only when the operation matches the accumulator. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "opbinargs_def"]
+def opBinArgs (assoc : AssocOp) (e : Exp) : Option (Exp × Exp) :=
+  if opEq assoc e then getBinArgs e else none
+
+/-- Construct the BVI expression for an accumulator operation. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "apply_op_def"]
+def applyOp (assoc : AssocOp) (x y : Exp) : Exp := .op (toOp assoc) [x, y]
+
+/-- Move a recursive left operand to the right for commutative operators. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "try_swap_def"]
+def trySwap (loc : Nat) (assoc : AssocOp) (e : Exp) : Exp :=
+  if assoc == .append then e else
+    match opBinArgs assoc e with
+    | none => e
+    | some (x, y) => if isRec loc x then applyOp assoc y x else e
+
+/-- Original candidate-operation check, before bounded traversal. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "check_op_def"]
+def checkOp (ctx : List ValueType) (assoc : AssocOp) (loc : Nat) (e : Exp) : Option Exp :=
+  match opBinArgs assoc (trySwap loc assoc e) with
+  | none => none
+  | some (x, y) => if isRec loc y && term ctx (opType assoc) x then some (applyOp assoc x y) else none
 
 mutual
   /-- Source termination test for integer terms. -/

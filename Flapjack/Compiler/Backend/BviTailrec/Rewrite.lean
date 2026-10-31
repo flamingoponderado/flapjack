@@ -6,7 +6,6 @@ sufficient traversal bounds; HOL correspondence and correctness remain open. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
-private def applyOp (op : AssocOp) (x y : Exp) : Exp := .op (toOp op) [x, y]
 private def identity : AssocOp → Exp
   | .plus => .op (.intOp (.const 0)) []
   | .times => .op (.intOp (.const 1)) []
