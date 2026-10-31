@@ -538,6 +538,36 @@ theorem evaluate_worker_arguments {C F : Type} (op : AssocOp) (acc : Nat)
     | err error => rfl
     | val values => simp [updateRun]
 
+/-- Applying an accumulator cannot introduce a return exception that was
+absent from the evaluated body. -/
+theorem evaluate_applyOp_noReturn {C F : Type} (op : AssocOp) (acc : Nat) (body : Bvi.Exp)
+    (env : List Value) (state bodyNext next : BviSem.BviState C F)
+    (value : Value) (bodyResult result : BviSem.BviResult)
+    (lookup : env[acc]? = some value)
+    (bodyRun : BviSem.evaluate [body] env state = (bodyResult, bodyNext))
+    (noReturn : ∀ values, bodyResult ≠ .err (.raise (.ret values)))
+    (run : BviSem.evaluate [applyOp op (.var acc) body] env state = (result, next)) :
+    ∀ values, result ≠ .err (.raise (.ret values)) := by
+  rw [evaluate_applyOp_var op acc body env state value lookup, bodyRun] at run
+  cases bodyResult with
+  | err error =>
+    simp only at run
+    have same : result = .err error := (congrArg Prod.fst run).symm
+    simpa [same] using noReturn
+  | val values =>
+    simp only [doApp_toOp_pure] at run
+    cases found : accumulatorApply op (values.reverse ++ [value]) with
+    | none =>
+      simp [found] at run
+      intro returned bad
+      rw [← run.1] at bad
+      cases bad
+    | some output =>
+      simp [found] at run
+      intro returned bad
+      rw [← run.1] at bad
+      cases bad
+
 /-- A let binding can be moved outside an accumulator operation by shifting
 the accumulator index past the values bound by the let. -/
 theorem evaluate_applyOp_let {C F : Type} (op : AssocOp) (acc : Nat)
@@ -674,6 +704,68 @@ theorem evaluate_applyOp_if {C F : Type} (op : AssocOp) (acc : Nat)
         cases flag with
         | false => exact (evaluate_applyOp_var op acc no env middle value lookup).symm
         | true => exact (evaluate_applyOp_var op acc yes env middle value lookup).symm
+
+/-- If recursive-call argument evaluation fails, both the worker call and
+the original accumulator expression propagate the same error and state. -/
+theorem evaluate_worker_call_argument_error {C F : Type}
+    (loc workerLoc ticks acc : Nat) (op : AssocOp) (pure : Bvi.Exp) (args : List Bvi.Exp)
+    (env : List Value) (state next : BviSem.BviState C F) (pureValue oldValue : Value)
+    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (notNoop : op ≠ .noop) (pureTyped : valueMatchesType pureValue (opType op))
+    (oldTyped : valueMatchesType oldValue (opType op)) (lookup : env[acc]? = some oldValue)
+    (pureRun : ∀ s : BviSem.BviState C F, BviSem.evaluate [pure] env s = (.val [pureValue], s))
+    (argsRun : BviSem.evaluate args env state = (.err error, next)) :
+    BviSem.evaluate [.call ticks (some workerLoc) (args ++ [applyOp op (.var acc) pure]) none]
+        env state = (.err error, next) ∧
+      BviSem.evaluate [applyOp op (.var acc) (applyOp op pure (.call ticks (some loc) args none))]
+        env state = (.err error, next) := by
+  obtain ⟨_, _, _, extendedRun⟩ :=
+    evaluate_worker_arguments op acc pure args env state pureValue oldValue notNoop pureTyped oldTyped lookup pureRun
+  have workerArgs : BviSem.evaluate (args ++ [applyOp op (.var acc) pure]) env state = (.err error, next) := by
+    rw [extendedRun, argsRun]
+  have callRun : BviSem.evaluate [.call ticks (some loc) args none] env state = (.err error, next) := by
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+    rfl
+  constructor
+  · rw [BviSem.evaluate, BviSem.fixClock_evaluate, workerArgs]
+    rfl
+  · rw [evaluate_applyOp_var op acc (applyOp op pure (.call ticks (some loc) args none)) env state oldValue lookup]
+    rw [evaluate_applyOp_pureLeft op pure (.call ticks (some loc) args none) env state pureValue (pureRun state)]
+    rw [callRun]
+
+/-- If the call clock is exhausted after evaluating arguments, the original
+call and the rewritten worker call both time out in the same state. -/
+theorem evaluate_worker_call_timeout {C F : Type}
+    (loc arity workerLoc ticks acc : Nat) (body originalBody pure : Bvi.Exp) (op : AssocOp)
+    (args : List Bvi.Exp) (env : List Value) (state middle : BviSem.BviState C F)
+    (callArgs : List Value) (pureValue oldValue : Value)
+    (notNoop : op ≠ .noop) (pureTyped : valueMatchesType pureValue (opType op))
+    (oldTyped : valueMatchesType oldValue (opType op)) (lookup : env[acc]? = some oldValue)
+    (pureRun : ∀ s : BviSem.BviState C F, BviSem.evaluate [pure] env s = (.val [pureValue], s))
+    (argsRun : BviSem.evaluate args env state = (.val callArgs, middle))
+    (lengthEq : callArgs.length = arity)
+    (originalCode : sptLookup loc middle.code = some (arity, originalBody))
+    (optimized : optimizedCode loc arity body workerLoc middle.code op)
+    (timeout : middle.clock < ticks + 1) :
+    BviSem.evaluate [.call ticks (some workerLoc) (args ++ [applyOp op (.var acc) pure]) none]
+        env state = (.err (.abort .timeoutError), { middle with clock := 0 }) ∧
+      BviSem.evaluate [applyOp op (.var acc) (applyOp op pure (.call ticks (some loc) args none))]
+        env state = (.err (.abort .timeoutError), { middle with clock := 0 }) := by
+  obtain ⟨newValue, _, _, extendedRun⟩ :=
+    evaluate_worker_arguments op acc pure args env state pureValue oldValue notNoop pureTyped oldTyped lookup pureRun
+  have workerArgs : BviSem.evaluate (args ++ [applyOp op (.var acc) pure]) env state =
+      (.val (callArgs ++ [newValue]), middle) := by rw [extendedRun, argsRun]
+  have workerCode := optimizedCode_find_worker loc arity body workerLoc middle.code op callArgs newValue optimized lengthEq
+  have callRun : BviSem.evaluate [.call ticks (some loc) args none] env state =
+      (.err (.abort .timeoutError), { middle with clock := 0 }) := by
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+    simp [findCode, originalCode, lengthEq, timeout]
+  constructor
+  · rw [BviSem.evaluate, BviSem.fixClock_evaluate, workerArgs]
+    simp [workerCode, timeout]
+  · rw [evaluate_applyOp_var op acc (applyOp op pure (.call ticks (some loc) args none)) env state oldValue lookup]
+    rw [evaluate_applyOp_pureLeft op pure (.call ticks (some loc) args none) env state pureValue (pureRun state)]
+    rw [callRun]
 
 /-- A known accumulator lookup commutes with a tick around its second operand.
 The timeout still occurs before any accumulator operation is dispatched. -/
@@ -964,6 +1056,129 @@ theorem evaluate_related_resolved_callee {C F : Type} (dest : Option Nat)
   have lookup : sptLookup loc target.code = some (actual.length, compiled) := by
     simpa [BviSem.decClock] using targetLookup
   exact ⟨compiled, targetNext, resolveReplacement target.code compiled lookup, targetRun, finalRelated⟩
+
+/-- A recursive worker body agrees with applying its incoming accumulator to
+the original body. The hypothesis is the smaller-clock body induction case. -/
+theorem evaluate_optimized_worker_body {C F : Type} (loc arity workerLoc : Nat)
+    (body : Bvi.Exp) (op : AssocOp) (args : List Value) (accumulator : Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (result : BviSem.BviResult)
+    (bodyIH : ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+      rewriteTailHyp [body] source args result sourceNext optimized target acc env2 loc ts ty →
+      rewriteTailPost [body] source args result sourceNext optimized target acc env2 loc ts ty)
+    (related : stateRel source target) (lengthEq : args.length = arity)
+    (sourceCode : sptLookup loc source.code = some (arity, body))
+    (optimized : optimizedCode loc arity body workerLoc target.code op)
+    (typed : valueMatchesType accumulator (opType op))
+    (run : BviSem.evaluate [body] args source = (result, sourceNext))
+    (notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ result' t1 t2,
+      BviSem.evaluate [(rewriteSource loc workerLoc op arity (List.replicate arity .any) body).2]
+        (args ++ [accumulator]) target = (result', t1) ∧
+      BviSem.evaluate [applyOp op (.var arity) body] (args ++ [accumulator]) target = (result', t2) ∧
+      stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
+  have check : checkExpOriginal loc arity body = some op := by
+    obtain ⟨_, _, _, check, _, _⟩ := optimized
+    exact check
+  obtain ⟨outCtx, scanTy, branch, scan, _, notAny, notNoop⟩ :=
+    checkExpOriginal_scan loc arity body op check
+  have envRelated : envRel (opType op) true arity args (args ++ [accumulator]) := by
+    simpa [lengthEq] using envRel_worker op args accumulator notNoop typed
+  have types : tyRel args (List.replicate arity .any) := by
+    simpa [lengthEq] using tyRel_replicate_any args
+  have hyp : rewriteTailHyp [body] source args result sourceNext true target arity (args ++ [accumulator])
+      loc (List.replicate arity .any) (opType op) :=
+    ⟨run, envRelated, related, types, by simp, notTypeError⟩
+  obtain ⟨_, _, _, optRun⟩ :=
+    bodyIH true target arity (args ++ [accumulator]) loc (List.replicate arity .any) (opType op) hyp
+  have req : sptLookup loc source.code = some (arity, body) ∧
+      optimizedCode loc arity body workerLoc target.code op ∧ opType op = opType op ∧
+      (∃ op1 outCtx resultTy branch,
+        scanExpr (List.replicate arity .any) loc [body] = [(outCtx, resultTy, branch, some op1)] ∧
+        resultTy ≠ .any ∧ op1 ≠ .noop ∧ opType op1 = opType op) :=
+    ⟨sourceCode, optimized, rfl, op, outCtx, scanTy, branch, scan, notAny, notNoop, rfl⟩
+  obtain ⟨result', t1, t2, workerRun, appliedRun, rel1, rel2⟩ :=
+    optRun rfl op workerLoc body arity (by simpa only [List.headD_cons] using req)
+  exact ⟨result', t1, t2, by simpa only [List.headD_cons] using workerRun,
+    by simpa only [List.headD_cons] using appliedRun, rel1, rel2⟩
+
+/-- A rewritten worker call evaluates its extended arguments and executes the
+worker body obtained from the smaller-clock induction hypothesis. -/
+theorem evaluate_optimized_worker_call {C F : Type}
+    (loc arity workerLoc ticks acc : Nat) (body pure : Bvi.Exp) (op : AssocOp)
+    (args : List Bvi.Exp) (env : List Value) (target targetMiddle : BviSem.BviState C F)
+    (sourceMiddle sourceNext : BviSem.BviState (Nat × C) F)
+    (callArgs : List Value) (pureValue oldValue : Value) (bodyResult : BviSem.BviResult)
+    (bodyIH : ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+      rewriteTailHyp [body] (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult
+        sourceNext optimized target acc env2 loc ts ty →
+      rewriteTailPost [body] (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult
+        sourceNext optimized target acc env2 loc ts ty)
+    (related : stateRel sourceMiddle targetMiddle) (lengthEq : callArgs.length = arity)
+    (sourceCode : sptLookup loc sourceMiddle.code = some (arity, body))
+    (optimized : optimizedCode loc arity body workerLoc targetMiddle.code op)
+    (notNoop : op ≠ .noop) (pureTyped : valueMatchesType pureValue (opType op))
+    (oldTyped : valueMatchesType oldValue (opType op)) (lookup : env[acc]? = some oldValue)
+    (pureRun : ∀ s : BviSem.BviState C F, BviSem.evaluate [pure] env s = (.val [pureValue], s))
+    (argsRun : BviSem.evaluate args env target = (.val callArgs, targetMiddle))
+    (enoughClock : ticks + 1 ≤ sourceMiddle.clock)
+    (bodyRun : BviSem.evaluate [body] callArgs (BviSem.decClock (ticks + 1) sourceMiddle) =
+      (bodyResult, sourceNext))
+    (notTypeError : bodyResult ≠ .err (.abort .typeError))
+    (noReturn : ∀ values, bodyResult ≠ .err (.raise (.ret values))) :
+    ∃ newValue result' t1 t2,
+      accumulatorApply op [pureValue, oldValue] = some newValue ∧
+      BviSem.evaluate [.call ticks (some workerLoc) (args ++ [applyOp op (.var acc) pure]) none]
+        env target = (result', t1) ∧
+      BviSem.evaluate [applyOp op (.var arity) body] (callArgs ++ [newValue])
+        (BviSem.decClock (ticks + 1) targetMiddle) = (result', t2) ∧
+      stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
+  obtain ⟨newValue, update, typed, extendedRun⟩ :=
+    evaluate_worker_arguments op acc pure args env target pureValue oldValue notNoop pureTyped oldTyped lookup pureRun
+  have workerArgs : BviSem.evaluate (args ++ [applyOp op (.var acc) pure]) env target =
+      (.val (callArgs ++ [newValue]), targetMiddle) := by rw [extendedRun, argsRun]
+  have found := optimizedCode_find_worker loc arity body workerLoc targetMiddle.code op callArgs newValue
+    optimized lengthEq
+  have clockMatch := (stateRel_const sourceMiddle targetMiddle related).2.1
+  have notTimeout : ¬targetMiddle.clock < ticks + 1 := by omega
+  have decremented := stateRel_decClock sourceMiddle targetMiddle (ticks + 1) related
+  have decSourceCode : sptLookup loc (BviSem.decClock (ticks + 1) sourceMiddle).code = some (arity, body) := by
+    simpa [BviSem.decClock] using sourceCode
+  have decOptimized : optimizedCode loc arity body workerLoc (BviSem.decClock (ticks + 1) targetMiddle).code op := by
+    simpa [BviSem.decClock] using optimized
+  obtain ⟨result', t1, t2, workerRun, appliedRun, rel1, rel2⟩ :=
+    evaluate_optimized_worker_body loc arity workerLoc body op callArgs newValue
+      (BviSem.decClock (ticks + 1) sourceMiddle) sourceNext (BviSem.decClock (ticks + 1) targetMiddle)
+      bodyResult bodyIH decremented lengthEq decSourceCode decOptimized typed bodyRun notTypeError
+  have envRelated : envRel (opType op) true arity callArgs (callArgs ++ [newValue]) := by
+    simpa [lengthEq] using envRel_worker op callArgs newValue notNoop typed
+  have types : tyRel callArgs (List.replicate arity .any) := by
+    simpa [lengthEq] using tyRel_replicate_any callArgs
+  have hyp : rewriteTailHyp [body] (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult sourceNext
+      true (BviSem.decClock (ticks + 1) targetMiddle) arity (callArgs ++ [newValue]) loc
+      (List.replicate arity .any) (opType op) :=
+    ⟨bodyRun, envRelated, decremented, types, by simp, notTypeError⟩
+  obtain ⟨ordinaryNext, ordinaryRun, _, _⟩ :=
+    bodyIH true (BviSem.decClock (ticks + 1) targetMiddle) arity (callArgs ++ [newValue]) loc
+      (List.replicate arity .any) (opType op) hyp
+  have workerLookup : (callArgs ++ [newValue])[arity]? = some newValue := by simp [← lengthEq]
+  have resultNoReturn := evaluate_applyOp_noReturn op arity body (callArgs ++ [newValue])
+    (BviSem.decClock (ticks + 1) targetMiddle) ordinaryNext t2 newValue bodyResult result'
+    workerLookup ordinaryRun noReturn appliedRun
+  refine ⟨newValue, result', t1, t2, update, ?_, appliedRun, rel1, rel2⟩
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate, workerArgs]
+  simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte,
+    found, notTimeout, BviSem.fixClock_evaluate]
+  rw [workerRun]
+  cases result' with
+  | val values => rfl
+  | err error =>
+    cases error with
+    | abort reason => rfl
+    | raise payload =>
+      cases payload with
+      | exn exception => rfl
+      | ret values => exact (resultNoReturn values rfl).elim
 
 /-- Force case of the rewrite simulation. The induction hypothesis applies
 to any called body at a strictly smaller clock, as in the source induction. -/
