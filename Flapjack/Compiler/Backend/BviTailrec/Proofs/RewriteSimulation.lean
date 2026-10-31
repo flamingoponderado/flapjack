@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteScan
+import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermExtension
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
 
 /-! Cases of the source tail-recursion rewrite simulation. The evaluator,
@@ -228,6 +229,36 @@ theorem lookup_of_envRel (ty : ValueType) (optimized : Bool) (acc n : Nat)
   obtain ⟨suffix, rfl⟩ := h.1
   rw [List.getElem?_append_left bound]
   exact lookup
+
+/-- An accepted pure term has the same value in prefix-related environments
+and leaves each related state unchanged. The recursive simulation hypothesis
+is the source induction hypothesis for the term expression. -/
+theorem term_prefix_simulation {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
+    (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (loc : Nat) (termIH : rewriteTailProperty (C := C) (F := F) [e])
+    (accepted : term ctx termTy e = true) (types : tyRel env1 ctx)
+    (prefixRel : env1 <+: env2) (related : stateRel source target) :
+    ∃ value, (match termTy with
+      | .int => ∃ integer, value = .number integer
+      | .list => ∃ ys, valueToList value = some ys
+      | .any => True) ∧
+      BviSem.evaluate [e] env1 source = (.val [value], source) ∧
+      BviSem.evaluate [e] env2 target = (.val [value], target) := by
+  obtain ⟨suffix, rfl⟩ := prefixRel
+  have extTypes := tyRel_prefix_extend env1 ctx suffix types
+  have extAccepted := term_extend e ctx (List.replicate suffix.length .any) termTy accepted
+  obtain ⟨value, typed, sourceRun⟩ := term_total (C := Nat × C) (F := F) ctx termTy e env1 accepted types
+  obtain ⟨targetValue, _, targetRun⟩ := term_total (C := C) (F := F)
+    (ctx ++ List.replicate suffix.length .any) termTy e (env1 ++ suffix) extAccepted extTypes
+  have envRelated : envRel .any false 0 env1 (env1 ++ suffix) := ⟨⟨suffix, rfl⟩, by simp⟩
+  have hyp : rewriteTailHyp [e] source env1 (.val [value]) source false target 0 (env1 ++ suffix)
+      loc ctx .any := ⟨sourceRun source, envRelated, related, types, by simp, by simp⟩
+  obtain ⟨targetNext, simulated, _, _⟩ :=
+    termIH source env1 (.val [value]) source false target 0 (env1 ++ suffix) loc ctx .any hyp
+  have same : ((.val [value] : BviSem.BviResult), targetNext) = (.val [targetValue], target) :=
+    simulated.symm.trans (targetRun target)
+  cases same
+  exact ⟨value, typed, sourceRun source, targetRun target⟩
 
 /-- Empty-list case of the source rewrite simulation. The source singleton
 condition excludes optimization for an empty expression list. -/
