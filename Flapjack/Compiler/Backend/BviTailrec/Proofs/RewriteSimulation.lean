@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteScan
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
 
 /-! Cases of the source tail-recursion rewrite simulation. The evaluator,
