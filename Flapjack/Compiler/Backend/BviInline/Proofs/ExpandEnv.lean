@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BviInline.Proofs.TickSemantics
+import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateLength
 
 /-! Environment-extension cases for BVI evaluation. -/
 namespace Flapjack.Compiler.Backend.BviInline.ExpandEnv
@@ -165,5 +166,294 @@ theorem letExp {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp) (env : Li
       simp only
       rw [← List.append_assoc, bodySame]
       rw [evaluate, BviSem.fixClock_evaluate, bindingsRun]
+
+/-- Flapjack infrastructure: a conditional extends its environment when
+the condition and the selected branch satisfy their induction cases. -/
+theorem ifThenElse {C F : Type} (condition yes no : Bvi.Exp) (env : List Value) (state : BviState C F)
+    (conditionIH : Property [condition] env state)
+    (branchIH : ∀ values next, evaluate [condition] env state = (.val values, next) →
+      Property [yes] env next ∧ Property [no] env next) : Property [.ifThenElse condition yes no] env state := by
+  intro extra notType
+  cases conditionRun : evaluate [condition] env state with
+  | mk conditionResult middle =>
+    have conditionNotType : (evaluate [condition] env state).1 ≠ .err (.abort .typeError) := by
+      cases conditionResult with
+      | val values => simp [conditionRun]
+      | err error =>
+        have h := notType
+        rw [evaluate, BviSem.fixClock_evaluate, conditionRun] at h
+        simpa [conditionRun] using h
+    have same := conditionIH extra conditionNotType
+    cases conditionResult with
+    | err error =>
+      rw [evaluate, BviSem.fixClock_evaluate, same, conditionRun]
+      simp
+      rw [evaluate, BviSem.fixClock_evaluate, conditionRun]
+    | val values =>
+      obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton condition env state middle values conditionRun
+      cases selected : asBool value with
+      | none =>
+        have h := notType
+        rw [evaluate, BviSem.fixClock_evaluate, conditionRun] at h
+        change (match asBool value with
+          | none => ((.err (.abort .typeError) : BviResult), middle)
+          | some true => evaluate [yes] env middle
+          | some false => evaluate [no] env middle).1 ≠ .err (.abort .typeError) at h
+        simp [selected] at h
+      | some choice =>
+        cases choice with
+        | false =>
+          have branchNotType : (evaluate [no] env middle).1 ≠ .err (.abort .typeError) := by
+            have h := notType
+            rw [evaluate, BviSem.fixClock_evaluate, conditionRun] at h
+            change (match asBool value with
+              | none => ((.err (.abort .typeError) : BviResult), middle)
+              | some true => evaluate [yes] env middle
+              | some false => evaluate [no] env middle).1 ≠ .err (.abort .typeError) at h
+            simpa [selected] using h
+          have branchSame := (branchIH [value] middle conditionRun).2 extra branchNotType
+          rw [evaluate, BviSem.fixClock_evaluate, same, conditionRun]
+          change (match asBool value with
+            | none => ((.err (.abort .typeError) : BviResult), middle)
+            | some true => evaluate [yes] (env ++ extra) middle
+            | some false => evaluate [no] (env ++ extra) middle) = _
+          simp only [selected]
+          rw [branchSame, evaluate, BviSem.fixClock_evaluate, conditionRun]
+          change _ = (match asBool value with
+            | none => ((.err (.abort .typeError) : BviResult), middle)
+            | some true => evaluate [yes] env middle
+            | some false => evaluate [no] env middle)
+          simp [selected]
+        | true =>
+          have branchNotType : (evaluate [yes] env middle).1 ≠ .err (.abort .typeError) := by
+            have h := notType
+            rw [evaluate, BviSem.fixClock_evaluate, conditionRun] at h
+            change (match asBool value with
+              | none => ((.err (.abort .typeError) : BviResult), middle)
+              | some true => evaluate [yes] env middle
+              | some false => evaluate [no] env middle).1 ≠ .err (.abort .typeError) at h
+            simpa [selected] using h
+          have branchSame := (branchIH [value] middle conditionRun).1 extra branchNotType
+          rw [evaluate, BviSem.fixClock_evaluate, same, conditionRun]
+          change (match asBool value with
+            | none => ((.err (.abort .typeError) : BviResult), middle)
+            | some true => evaluate [yes] (env ++ extra) middle
+            | some false => evaluate [no] (env ++ extra) middle) = _
+          simp only [selected]
+          rw [branchSame, evaluate, BviSem.fixClock_evaluate, conditionRun]
+          change _ = (match asBool value with
+            | none => ((.err (.abort .typeError) : BviResult), middle)
+            | some true => evaluate [yes] env middle
+            | some false => evaluate [no] env middle)
+          simp [selected]
+
+/-- Flapjack infrastructure: a call without a handler evaluates its callee in
+the same argument environment after extending the caller environment. -/
+theorem callNone {C F : Type} (ticks : Nat) (destination : Option Nat) (args : List Bvi.Exp)
+    (env : List Value) (state : BviState C F) (argsIH : Property args env state) :
+    Property [.call ticks destination args none] env state := by
+  intro extra notType
+  cases argsRun : evaluate args env state with
+  | mk result next =>
+    have argsNotType : (evaluate args env state).1 ≠ .err (.abort .typeError) := by
+      cases result with
+      | val values => simp [argsRun]
+      | err error =>
+        have h := notType
+        rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+        simpa [argsRun] using h
+    have same := argsIH extra argsNotType
+    simp only [evaluate, same]
+
+/-- Flapjack infrastructure: let-call continuation environments extend after
+the returned values, using the continuation induction at the resulting clock. -/
+theorem letCall {C F : Type} (rets ticks destination : Nat) (args : List Bvi.Exp) (body : Bvi.Exp)
+    (env : List Value) (state : BviState C F) (argsIH : Property args env state)
+    (bodyIH : ∀ returned (next : BviState C F), next.clock ≤ state.clock → Property [body] (returned ++ env) next) :
+    Property [.letCall rets ticks destination args body] env state := by
+  intro extra notType
+  cases argsRun : evaluate args env state with
+  | mk result middle =>
+    have argsNotType : (evaluate args env state).1 ≠ .err (.abort .typeError) := by
+      cases result with
+      | val values => simp [argsRun]
+      | err error =>
+        have h := notType
+        rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+        simpa [argsRun] using h
+    have same := argsIH extra argsNotType
+    cases result with
+    | err error =>
+      rw [evaluate, BviSem.fixClock_evaluate, same, argsRun]
+      simp
+      rw [evaluate, BviSem.fixClock_evaluate, argsRun]
+    | val values =>
+      cases found : findCode (some destination) values middle.code with
+      | none =>
+        have h := notType
+        rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+        simp [found] at h
+      | some pair =>
+        obtain ⟨callArgs, callee⟩ := pair
+        by_cases timeout : middle.clock < ticks + 1
+        · rw [evaluate, BviSem.fixClock_evaluate, same, argsRun]
+          simp [found, timeout]
+          rw [evaluate, BviSem.fixClock_evaluate, argsRun]
+          simp [found, timeout]
+        · cases calleeRun : evaluate [callee] callArgs (BviSem.decClock (ticks + 1) middle) with
+          | mk calleeResult calleeFinal =>
+            cases calleeResult with
+            | val values =>
+              have h := notType
+              rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+              simp only [found, timeout, ↓reduceIte] at h
+              rw [BviSem.fixClock_evaluate, calleeRun] at h
+              simp at h
+            | err error =>
+              cases error with
+              | abort reason =>
+                rw [evaluate, BviSem.fixClock_evaluate, same, argsRun]
+                simp only [found, timeout, ↓reduceIte]
+                rw [BviSem.fixClock_evaluate, calleeRun]
+                rw [evaluate, BviSem.fixClock_evaluate, argsRun]
+                simp only [found, timeout, ↓reduceIte]
+                rw [BviSem.fixClock_evaluate, calleeRun]
+              | raise payload =>
+                cases payload with
+                | exn value =>
+                  rw [evaluate, BviSem.fixClock_evaluate, same, argsRun]
+                  simp only [found, timeout, ↓reduceIte]
+                  rw [BviSem.fixClock_evaluate, calleeRun]
+                  rw [evaluate, BviSem.fixClock_evaluate, argsRun]
+                  simp only [found, timeout, ↓reduceIte]
+                  rw [BviSem.fixClock_evaluate, calleeRun]
+                | ret returned =>
+                  by_cases length : returned.length = rets
+                  · have bodyNotType : (evaluate [body] (returned ++ env) calleeFinal).1 ≠ .err (.abort .typeError) := by
+                      have h := notType
+                      rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+                      simp only [found, timeout, ↓reduceIte] at h
+                      rw [BviSem.fixClock_evaluate, calleeRun] at h
+                      simpa [length] using h
+                    have argsClock := evaluate_clock_le args env state
+                    rw [argsRun] at argsClock
+                    have calleeClock := evaluate_clock_le [callee] callArgs (BviSem.decClock (ticks + 1) middle)
+                    rw [calleeRun] at calleeClock
+                    have clock : calleeFinal.clock ≤ state.clock := by
+                      simp only at argsClock calleeClock
+                      simp only [BviSem.decClock] at calleeClock
+                      omega
+                    have bodySame := bodyIH returned calleeFinal clock extra bodyNotType
+                    rw [evaluate, BviSem.fixClock_evaluate, same, argsRun]
+                    simp only [found, timeout, ↓reduceIte]
+                    rw [BviSem.fixClock_evaluate, calleeRun]
+                    simp only [length, ↓reduceIte]
+                    rw [← List.append_assoc, bodySame, evaluate, BviSem.fixClock_evaluate, argsRun]
+                    simp only [found, timeout, ↓reduceIte]
+                    rw [BviSem.fixClock_evaluate, calleeRun]
+                    simp [length]
+                  · have h := notType
+                    rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+                    simp only [found, timeout, ↓reduceIte] at h
+                    rw [BviSem.fixClock_evaluate, calleeRun] at h
+                    simp [length] at h
+
+/-- Flapjack infrastructure: direct calls with handlers preserve evaluation
+under environment extension when arguments and handlers satisfy induction. -/
+theorem callSome {C F : Type} (ticks destination : Nat) (args : List Bvi.Exp) (handler : Bvi.Exp)
+    (env : List Value) (state : BviState C F) (argsIH : Property args env state)
+    (handlerIH : ∀ raised (next : BviState C F), next.clock ≤ state.clock → Property [handler] (raised :: env) next) :
+    Property [.call ticks (some destination) args (some handler)] env state := by
+  intro extra notType
+  cases argsRun : evaluate args env state with
+  | mk result middle =>
+    have argsNotType : (evaluate args env state).1 ≠ .err (.abort .typeError) := by
+      cases result with
+      | val values => simp [argsRun]
+      | err error =>
+        have h := notType
+        rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+        simpa [argsRun] using h
+    have same := argsIH extra argsNotType
+    cases result with
+    | err error =>
+      rw [evaluate, BviSem.fixClock_evaluate, same, argsRun]
+      simp
+      rw [evaluate, BviSem.fixClock_evaluate, argsRun]
+      simp
+    | val values =>
+      cases found : findCode (some destination) values middle.code with
+      | none =>
+        have h := notType
+        rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+        simp [found] at h
+      | some pair =>
+        obtain ⟨callArgs, callee⟩ := pair
+        by_cases timeout : middle.clock < ticks + 1
+        · rw [evaluate, BviSem.fixClock_evaluate, same, argsRun]
+          simp [found, timeout]
+          rw [evaluate, BviSem.fixClock_evaluate, argsRun]
+          simp [found, timeout]
+        · cases calleeRun : evaluate [callee] callArgs (BviSem.decClock (ticks + 1) middle) with
+          | mk calleeResult calleeFinal =>
+            cases calleeResult with
+            | val returned =>
+              rw [evaluate, BviSem.fixClock_evaluate, same, argsRun]
+              simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, found, timeout]
+              rw [BviSem.fixClock_evaluate, calleeRun]
+              rw [evaluate, BviSem.fixClock_evaluate, argsRun]
+              simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, found, timeout]
+              rw [BviSem.fixClock_evaluate, calleeRun]
+            | err error =>
+              cases error with
+              | abort reason =>
+                rw [evaluate, BviSem.fixClock_evaluate, same, argsRun]
+                simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, found, timeout]
+                rw [BviSem.fixClock_evaluate, calleeRun]
+                rw [evaluate, BviSem.fixClock_evaluate, argsRun]
+                simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, found, timeout]
+                rw [BviSem.fixClock_evaluate, calleeRun]
+              | raise payload =>
+                cases payload with
+                | ret values =>
+                  have h := notType
+                  rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+                  simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, found, timeout] at h
+                  rw [BviSem.fixClock_evaluate, calleeRun] at h
+                  simp at h
+                | exn raised =>
+                  have handlerNotType : (evaluate [handler] (raised :: env) calleeFinal).1 ≠ .err (.abort .typeError) := by
+                    intro bad
+                    cases handlerRun : evaluate [handler] (raised :: env) calleeFinal with
+                    | mk handlerResult handlerFinal =>
+                      rw [handlerRun] at bad
+                      simp at bad
+                      subst handlerResult
+                      have h := notType
+                      rw [evaluate, BviSem.fixClock_evaluate, argsRun] at h
+                      simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, found, timeout] at h
+                      rw [BviSem.fixClock_evaluate, calleeRun] at h
+                      simp only at h
+                      rw [handlerRun] at h
+                      simp at h
+                  have argsClock := evaluate_clock_le args env state
+                  rw [argsRun] at argsClock
+                  have calleeClock := evaluate_clock_le [callee] callArgs (BviSem.decClock (ticks + 1) middle)
+                  rw [calleeRun] at calleeClock
+                  have clock : calleeFinal.clock ≤ state.clock := by
+                    simp only at argsClock calleeClock
+                    simp only [BviSem.decClock] at calleeClock
+                    omega
+                  have handlerSame := handlerIH raised calleeFinal clock extra handlerNotType
+                  have handlerSame' : evaluate [handler] (raised :: (env ++ extra)) calleeFinal =
+                      evaluate [handler] (raised :: env) calleeFinal := by
+                    simpa only [List.cons_append] using handlerSame
+                  rw [evaluate, BviSem.fixClock_evaluate, same, argsRun]
+                  simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, found, timeout]
+                  rw [BviSem.fixClock_evaluate, calleeRun]
+                  simp only
+                  rw [handlerSame', evaluate, BviSem.fixClock_evaluate, argsRun]
+                  simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, found, timeout]
+                  rw [BviSem.fixClock_evaluate, calleeRun]
 
 end Flapjack.Compiler.Backend.BviInline.ExpandEnv
