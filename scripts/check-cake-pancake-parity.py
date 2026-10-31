@@ -58,6 +58,12 @@ def main():
         (b'fun 1 main() { var x = 1; var x = 2; return x; }', []),
         (b'fun 1 main() { return 0; missing(); }', []),
         (b'fun 1 main() { return 0; missing(); }', ['--no_warn']),
+        (b'fun 1 main() { return 1?; }\n', []),
+        (b'fun 1 main() { return 1; }\n /*', []),
+        (b'fun 1 main() { return 1; }\n $ %', []),
+        (b'fun 1 main() { /* x', ['--no_warn']),
+        (b'foo # 123', []),
+        (b'\n\nfun 1 main() { return 1?; }\nnext line\n', []),
         ((ROOT / 'Flapjack/Test/OriginalPancake/f01189_ffi_stub_order.pnk').read_bytes(), []),
     ]
     for source, options in diagnostic_cases:
@@ -69,6 +75,24 @@ def main():
         if results[0] != results[1]:
             raise SystemExit(f'Pancake diagnostic differs for {source[:80]!r} {options}')
         print(f'Pancake diagnostic matches pinned CakeML: {source[:60]!r} {options}', flush=True)
+    lexical_cases = 0
+    for byte in range(128):
+        source = b'fun 1 main() { return 1; }\n' + bytes([byte])
+        command = ['--target=riscv', '--pancake']
+        reference = subprocess.run([str(args.reference), *command], input=source,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+        if not reference.stderr.startswith((b'### ERROR: parse error\nUnrecognised',
+                                            b'### ERROR: parse error\nMalformed')):
+            continue
+        lexical_cases += 1
+        actual = subprocess.run([str(args.cake), *command], input=source,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+        if (reference.returncode, reference.stdout, reference.stderr) != (
+                actual.returncode, actual.stdout, actual.stderr):
+            raise SystemExit(f'Pancake lexical diagnostic differs for ASCII byte {byte}')
+    if lexical_cases != 38:
+        raise SystemExit(f'expected 38 ASCII lexical-error cases, got {lexical_cases}')
+    print(f'{lexical_cases} ASCII lexical diagnostics match pinned CakeML', flush=True)
     for options in (['--target=bad'], ['--target=bad', '--sexp=bad'],
                     ['--target=riscv', '--sexp=bad', '--exclude_prelude=bad'],
                     ['--target=riscv', '--reg_alg=bad', '--gc=bad']):

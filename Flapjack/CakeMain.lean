@@ -24,6 +24,24 @@ def pancakeStaticDiagnostic : Flapjack.StatErr → String
   | .general message => "### ERROR: static error\n" ++ message ++ "\n"
   | .shape message => "### ERROR: shape error\n" ++ message ++ "\n"
 
+/-- Translate the Pancake lexer's positions to the compiler's location carrier. -/
+def pancakeDiagnosticPos : Flapjack.Parser.Posn → Flapjack.Misc.Location.Locn
+  | .posn row col => .posn row col
+  | .eofPt => .eofPt
+  | .unknownPt => .unknownPt
+
+/-- Render lexical errors using the original byte-oriented location formatter. -/
+def pancakeLexicalDiagnostics (input : List HolChar)
+    (errors : List (String × Flapjack.Parser.Locs)) : List HolChar :=
+  let ascii := fun text : String => (ofString text).explode
+  ascii "### ERROR: parse error\n" ++
+    (errors.flatMap fun (message, location) =>
+      ascii message ++ ascii " at " ++
+      Flapjack.Compiler.Inference.Infer.Diagnostics.sourceLocation input
+        (some (.locs (pancakeDiagnosticPos location.start) (pancakeDiagnosticPos location.stop))) ++
+      ascii "\n") ++
+    ascii "\nProgram exited with nonzero exit code.\n"
+
 structure Options where
   excludePrelude : Bool := false
   skipTypeInference : Bool := false
@@ -513,7 +531,19 @@ def main (args : List String) : IO UInt32 := do
         IO.eprintln "cake: non-UTF-8 Pancake source is not yet supported"
         return 2
       let warnings ← match Flapjack.Parser.parseTopDecs (fun value => BitVec.ofInt 64 value) source true with
-        | .error _ => pure []
+        | .error _ =>
+          match Flapjack.Parser.safePancakeLex source with
+          | .error errors => do
+            -- The lexer models bytes as characters. Limit this rendering to
+            -- ASCII until non-ASCII error messages have been reviewed.
+            if source.toUTF8.data.all (fun b => b.toNat < 128) then
+              let chars := input.data.toList.map (fun c => BitVec.ofNat 8 c.toNat)
+              let bytes := pancakeLexicalDiagnostics chars errors
+              let stderr ← IO.getStderr
+              stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
+              return 1
+            pure []
+          | .ok _ => pure []
         | .ok declarations =>
           let (result, warnings) := Flapjack.staticCheck declarations
           match result with

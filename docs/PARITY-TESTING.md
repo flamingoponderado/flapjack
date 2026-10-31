@@ -457,10 +457,11 @@ The `cake --pancake --target=riscv` route uses the native Pancake compiler.
 `python3 scripts/check-cake-pancake-parity.py --reference /var/tmp/flapjack-pinned-cake`
 compares complete output for successful programs, selected allocator and
 backend options, returning entry points and exported functions. It also compares
-selected location-bearing static errors and warnings, including `--no_warn`,
-with the pinned compiler. Pancake parse-error diagnostics, exploration, and
-perf callgraph mode remain unsupported in this route; the driver reports those
-limits explicitly. Other static diagnostic cases still need parity coverage.
+selected location-bearing static errors and warnings, and ASCII lexical errors,
+including `--no_warn`, with the pinned compiler. Pancake grammar-error
+diagnostics, non-ASCII lexical-error rendering, exploration, and perf callgraph
+mode remain unsupported in this route; the driver reports those limits
+explicitly. Other static diagnostic cases still need parity coverage.
 
 `python3 scripts/check-cake-pinned-parity.py` checks additional successful,
 basis-enabled programs against complete-output captures from the pinned
