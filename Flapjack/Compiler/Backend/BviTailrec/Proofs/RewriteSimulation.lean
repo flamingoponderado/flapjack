@@ -1414,6 +1414,144 @@ theorem rewriteTail_call {C F : Type} (ticks : Nat) (dest : Option Nat)
       exact rewriteTail_call_handler ticks place handler args source env1 result sourceNext
         optimized target acc env2 loc ts ty argsIH clockIH hyp
 
+/-- A rewritten conditional branch has a selected, non-noop operator of the
+conditional's specific accumulator type. -/
+theorem scanIf_rewritten_branch (ctx : List ValueType) (loc next acc : Nat) (op : AssocOp)
+    (cond yes no branch output : Bvi.Exp)
+    (member : branch = yes ∨ branch = no)
+    (notNoop : op ≠ .noop)
+    (specific : (scanSing ctx loc (.ifThenElse cond yes no)).2.1 ≠ .any)
+    (sameType : (scanSing ctx loc (.ifThenElse cond yes no)).2.1 = opType op)
+    (rewritten : rewriteSource loc next op acc (scanSing ctx loc cond).1 branch = (true, output)) :
+    ∃ outCtx resultTy branchFlag op1,
+      scanExpr (scanSing ctx loc cond).1 loc [branch] = [(outCtx, resultTy, branchFlag, some op1)] ∧
+      resultTy ≠ .any ∧ op1 ≠ .noop ∧ opType op1 = opType op := by
+  have branchTypes := scanSing_if_branch_types ctx loc cond yes no specific
+  have branchType : (scanSing (scanSing ctx loc cond).1 loc branch).2.1 = opType op := by
+    rcases member with rfl | rfl
+    · exact branchTypes.1.trans sameType
+    · exact branchTypes.2.trans sameType
+  have branchSpecific : (scanSing (scanSing ctx loc cond).1 loc branch).2.1 ≠ .any := by
+    rw [branchType, ← sameType]
+    exact specific
+  have flags := rewriteSingle_scan branch (scanSing ctx loc cond).1 loc next acc op notNoop
+  rw [rewriteSingle_eq_source, rewritten] at flags
+  rcases hscan : scanSing (scanSing ctx loc cond).1 loc branch with ⟨outCtx, resultTy, branchFlag, choice⟩
+  cases choice with
+  | none =>
+    have impossible := flags.1 (by rw [hscan])
+    simp at impossible
+  | some op1 =>
+    have noNoop := scanSing_ne_noop (scanSing ctx loc cond).1 loc branch
+    rw [hscan] at noNoop
+    have noNoop' : op1 ≠ .noop := by simpa using noNoop
+    have typed := scanSing_choice_type branch (scanSing ctx loc cond).1 loc op1 (by rw [hscan]) branchSpecific
+    refine ⟨outCtx, resultTy, branchFlag, op1, ?_, ?_, noNoop', typed.trans branchType⟩
+    · rw [scanExpr_single, hscan]
+    · simpa [hscan] using branchSpecific
+
+/-- Applying an accumulator after a simulated branch preserves the related
+final state, whether the primitive succeeds or reports a type error. -/
+theorem stateRel_applyOp_after {C F : Type} (op : AssocOp) (acc : Nat) (branch : Bvi.Exp)
+    (env : List Value) (target targetNext : BviSem.BviState C F)
+    (sourceNext : BviSem.BviState (Nat × C) F) (result : BviSem.BviResult)
+    (value : Value) (lookup : env[acc]? = some value)
+    (run : BviSem.evaluate [branch] env target = (result, targetNext))
+    (related : stateRel sourceNext targetNext) :
+    ∃ result', BviSem.evaluate [applyOp op (.var acc) branch] env target = (result', targetNext) ∧
+      stateRel sourceNext targetNext := by
+  rw [evaluate_applyOp_var op acc branch env target value lookup, run]
+  cases result with
+  | err error => exact ⟨.err error, rfl, related⟩
+  | val values =>
+    cases applied : accumulatorApply op (values.reverse ++ [value]) with
+    | none =>
+      refine ⟨.err (.abort .typeError), ?_, related⟩
+      simp [doApp_toOp_pure, applied]
+    | some out =>
+      refine ⟨.val [out], ?_, related⟩
+      simp [doApp_toOp_pure, applied]
+
+/-- The selected conditional branch either uses its rewrite or falls back to
+an explicit accumulator operation, preserving the simulation postcondition. -/
+theorem rewriteTail_if_branch {C F : Type} (ctx : List ValueType) (loc next acc : Nat)
+    (op : AssocOp) (cond yes no branch : Bvi.Exp)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (target : BviSem.BviState C F) (env2 : List Value) (result : BviSem.BviResult)
+    (ty : ValueType) (body : Bvi.Exp) (arity : Nat)
+    (member : branch = yes ∨ branch = no)
+    (branchIH : rewriteTailProperty (C := C) (F := F) [branch])
+    (hyp : rewriteTailHyp [branch] source env1 result sourceNext true target acc env2 loc
+      (scanSing ctx loc cond).1 ty)
+    (sourceCode : sptLookup loc source.code = some (arity, body))
+    (optimized : optimizedCode loc arity body next target.code op)
+    (opTy : opType op = ty)
+    (specific : (scanSing ctx loc (.ifThenElse cond yes no)).2.1 ≠ .any)
+    (sameType : (scanSing ctx loc (.ifThenElse cond yes no)).2.1 = opType op) :
+    let pair := rewriteSource loc next op acc (scanSing ctx loc cond).1 branch
+    let chosen := if pair.1 then pair.2 else applyOp op (.var acc) branch
+    ∃ result' t1 t2, BviSem.evaluate [chosen] env2 target = (result', t1) ∧
+      BviSem.evaluate [applyOp op (.var acc) branch] env2 target = (result', t2) ∧
+      stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
+  obtain ⟨run, envRelated, related, types, singleton, notTypeError⟩ := hyp
+  have notNoop : op ≠ .noop := by
+    intro eq
+    subst op
+    simp [opType] at sameType
+    exact specific sameType
+  have lookupBound := (envRelated.2 rfl).2.1
+  have lookup : env2[acc]? = some env2[acc] := by simp [lookupBound]
+  obtain ⟨targetNext, targetRun, targetRelated, optRun⟩ :=
+    branchIH source env1 result sourceNext true target acc env2 loc (scanSing ctx loc cond).1 ty
+      ⟨run, envRelated, related, types, singleton, notTypeError⟩
+  cases rewrite : rewriteSource loc next op acc (scanSing ctx loc cond).1 branch with
+  | mk flag output =>
+    cases flag with
+    | false =>
+      obtain ⟨result', applied, related'⟩ :=
+        stateRel_applyOp_after op acc branch env2 target targetNext sourceNext result env2[acc]
+          lookup targetRun targetRelated
+      exact ⟨result', targetNext, targetNext, applied, applied, related', related'⟩
+    | true =>
+      obtain ⟨outCtx, resultTy, branchFlag, op1, scan, notAny, noNoop, opTypeEq⟩ :=
+        scanIf_rewritten_branch ctx loc next acc op cond yes no branch output member notNoop
+          specific sameType rewrite
+      have req : sptLookup loc source.code = some (arity, body) ∧
+          optimizedCode loc arity body next target.code op ∧ opType op = ty ∧
+          (∃ op1 outCtx resultTy branchFlag,
+            scanExpr (scanSing ctx loc cond).1 loc [branch] = [(outCtx, resultTy, branchFlag, some op1)] ∧
+            resultTy ≠ .any ∧ op1 ≠ .noop ∧ opType op1 = opType op) :=
+        ⟨sourceCode, optimized, opTy, op1, outCtx, resultTy, branchFlag, scan, notAny, noNoop, opTypeEq⟩
+      obtain ⟨result', t1, t2, rewrittenRun, appliedRun, rel1, rel2⟩ :=
+        optRun rfl op next body arity (by simpa only [List.headD_cons] using req)
+      simp only [List.headD_cons, rewrite] at rewrittenRun
+      exact ⟨result', t1, t2, rewrittenRun, by simpa using appliedRun, rel1, rel2⟩
+
+/-- Successful condition evaluation preserves the inferred type context used
+to scan both branches. -/
+theorem tyRel_if_condition {C F : Type} (ctx : List ValueType) (loc : Nat) (cond : Bvi.Exp)
+    (env : List Value) (source next : BviSem.BviState C F) (value : Value)
+    (types : tyRel env ctx) (run : BviSem.evaluate [cond] env source = (.val [value], next)) :
+    tyRel env (scanSing ctx loc cond).1 := by
+  have sound := scanSound_list ctx loc [cond] env source next [value] types run
+  have member : scanSing ctx loc cond ∈ scanExpr ctx loc [cond] := by simp [scanExpr_single]
+  exact sound.1 _ member
+
+/-- A successful boolean condition selects the corresponding branch without
+changing the environment. -/
+theorem evaluate_if_of_guard {C F : Type} (cond yes no : Bvi.Exp) (env : List Value)
+    (state middle : BviSem.BviState C F) (value : Value) (flag : Bool)
+    (guardRun : BviSem.evaluate [cond] env state = (.val [value], middle))
+    (truth : asBool value = some flag) :
+    BviSem.evaluate [.ifThenElse cond yes no] env state =
+      BviSem.evaluate [if flag then yes else no] env middle := by
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate, guardRun]
+  change (match asBool value with
+    | none => ((.err (.abort .typeError) : BviSem.BviResult), middle)
+    | some true => BviSem.evaluate [yes] env middle
+    | some false => BviSem.evaluate [no] env middle) = _
+  cases flag <;> simp [truth]
+
 /-- Conditional case when the condition propagates an error. Both the
 rewritten conditional and the accumulator expression stop at that condition. -/
 theorem rewriteTail_if_guard_error {C F : Type} (cond yes no : Bvi.Exp)
@@ -1519,6 +1657,111 @@ theorem rewriteTail_if_noOptimization {C F : Type} (cond yes no : Bvi.Exp)
             | some true => BviSem.evaluate [yes] env2 targetMiddle
             | some false => BviSem.evaluate [no] env2 targetMiddle) = _
           simpa [truth] using targetBranch
+
+/-- Complete conditional case of the source-shaped tail-rewrite simulation. -/
+theorem rewriteTail_if {C F : Type} (cond yes no : Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (guardIH : rewriteTailProperty (C := C) (F := F) [cond])
+    (yesIH : rewriteTailProperty (C := C) (F := F) [yes])
+    (noIH : rewriteTailProperty (C := C) (F := F) [no])
+    (hyp : rewriteTailHyp [.ifThenElse cond yes no] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.ifThenElse cond yes no] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  cases optimized with
+  | false =>
+    exact rewriteTail_if_noOptimization cond yes no source env1 result sourceNext target acc env2
+      loc ts ty guardIH yesIH noIH hyp
+  | true =>
+    obtain ⟨run, envRelated, related, types, _, notTypeError⟩ := hyp
+    cases guardRun : BviSem.evaluate [cond] env1 source with
+    | mk guardResult middle =>
+      cases guardResult with
+      | err error =>
+        exact rewriteTail_if_guard_error cond yes no source env1 result sourceNext true target acc env2
+          loc ts ty guardIH ⟨run, envRelated, related, types, by simp, notTypeError⟩ error middle guardRun
+      | val values =>
+        obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton cond env1 source middle values guardRun
+        have disabled := envRel_disable ty true acc env1 env2 envRelated
+        have guardHyp : rewriteTailHyp [cond] source env1 (.val [value]) middle false
+            target acc env2 loc ts ty := ⟨guardRun, disabled, related, types, by simp, by simp⟩
+        obtain ⟨targetMiddle, targetGuard, middleRelated, _⟩ :=
+          guardIH source env1 (.val [value]) middle false target acc env2 loc ts ty guardHyp
+        cases truth : asBool value with
+        | none =>
+          rw [BviSem.evaluate, BviSem.fixClock_evaluate, guardRun] at run
+          change (match asBool value with
+            | none => ((.err (.abort .typeError) : BviSem.BviResult), middle)
+            | some true => BviSem.evaluate [yes] env1 middle
+            | some false => BviSem.evaluate [no] env1 middle) = (result, sourceNext) at run
+          simp [truth] at run
+          exact (notTypeError run.1.symm).elim
+        | some flag =>
+          let selected := if flag then yes else no
+          have branchRun : BviSem.evaluate [selected] env1 middle = (result, sourceNext) := by
+            rw [evaluate_if_of_guard cond yes no env1 source middle value flag guardRun truth] at run
+            exact run
+          have branchTypes := tyRel_if_condition ts loc cond env1 source middle value types guardRun
+          have branchHyp : rewriteTailHyp [selected] middle env1 result sourceNext true targetMiddle
+              acc env2 loc (scanSing ts loc cond).1 ty :=
+            ⟨branchRun, envRelated, middleRelated, branchTypes, by simp, notTypeError⟩
+          have selectedIH : rewriteTailProperty (C := C) (F := F) [selected] := by
+            cases flag <;> simp [selected, yesIH, noIH]
+          obtain ⟨targetNext, targetBranch, finalRelated, _⟩ :=
+            selectedIH middle env1 result sourceNext true targetMiddle acc env2 loc
+              (scanSing ts loc cond).1 ty branchHyp
+          refine ⟨targetNext, ?_, finalRelated, ?_⟩
+          · rw [evaluate_if_of_guard cond yes no env2 target targetMiddle value flag targetGuard truth]
+            exact targetBranch
+          · intro _ op workerLoc code arity required
+            simp only [List.headD_cons] at required ⊢
+            obtain ⟨sourceCode, optCode, opTy, op1, outCtx, resultTy, scanBranch,
+              scan, notAny, _, opTypeEq⟩ := required
+            have globalScan : scanSing ts loc (.ifThenElse cond yes no) =
+                (outCtx, resultTy, scanBranch, some op1) := by
+              rw [scanExpr_single] at scan
+              simpa using scan
+            have specific : (scanSing ts loc (.ifThenElse cond yes no)).2.1 ≠ .any := by
+              simpa [globalScan] using notAny
+            have globalType := scanSing_choice_type (.ifThenElse cond yes no) ts loc op1
+              (by rw [globalScan]) specific
+            have sameType : (scanSing ts loc (.ifThenElse cond yes no)).2.1 = opType op := by
+              exact globalType.symm.trans opTypeEq
+            have sourceCodeNext := evaluate_lookup_preserved [cond] env1 source middle (.val [value])
+              loc arity code guardRun sourceCode
+            have targetGrowth := BviProps.evaluate_code_mono [cond] env2 target targetMiddle (.val [value]) targetGuard
+            have targetCodeNext := optimizedCode_subspt loc arity code workerLoc target.code targetMiddle.code
+              op optCode targetGrowth
+            have member : selected = yes ∨ selected = no := by
+              cases flag <;> simp [selected]
+            obtain ⟨r, t1, t2, branchRewritten, branchApplied, rel1, rel2⟩ :=
+              rewriteTail_if_branch ts loc workerLoc acc op cond yes no selected middle sourceNext env1
+                targetMiddle env2 result ty code arity member selectedIH branchHyp sourceCodeNext
+                targetCodeNext opTy specific sameType
+            have accBound := (envRelated.2 rfl).2.1
+            have lookup : env2[acc]? = some env2[acc] := by simp [accBound]
+            have rewriteIf : (rewriteSource loc workerLoc op acc ts (.ifThenElse cond yes no)).2 =
+                .ifThenElse cond
+                  (if (rewriteSource loc workerLoc op acc (scanSing ts loc cond).1 yes).1 then
+                    (rewriteSource loc workerLoc op acc (scanSing ts loc cond).1 yes).2
+                   else applyOp op (.var acc) yes)
+                  (if (rewriteSource loc workerLoc op acc (scanSing ts loc cond).1 no).1 then
+                    (rewriteSource loc workerLoc op acc (scanSing ts loc cond).1 no).2
+                   else applyOp op (.var acc) no) := by
+              rw [rewriteSource.eq_def]
+              dsimp only
+              rw [scanExpr_single]
+              simp only [List.headD_cons]
+              rfl
+            refine ⟨r, t1, t2, ?_, ?_, rel1, rel2⟩
+            · rw [rewriteIf, evaluate_if_of_guard _ _ _ env2 target targetMiddle value flag targetGuard truth]
+              cases flag <;> simpa [selected] using branchRewritten
+            · rw [evaluate_applyOp_if op acc cond yes no env2 target env2[acc] lookup]
+              rw [evaluate_if_of_guard _ _ _ env2 target targetMiddle value flag targetGuard truth]
+              cases flag <;> simpa [selected] using branchApplied
 
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a

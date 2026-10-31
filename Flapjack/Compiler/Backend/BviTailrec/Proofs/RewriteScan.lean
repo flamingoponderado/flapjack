@@ -174,6 +174,49 @@ theorem scanSing_choice_type (e : Exp) (ctx : List ValueType) (loc : Nat) :
   | letCall rets ticks dest args body => simp [scanSing.eq_def]
 termination_by sizeOf e
 
+/-- A specific conditional result type is shared by both branch scans. -/
+theorem scanSing_if_branch_types (ctx : List ValueType) (loc : Nat) (cond yes no : Exp)
+    (specific : (scanSing ctx loc (.ifThenElse cond yes no)).2.1 ≠ .any) :
+    (scanSing (scanSing ctx loc cond).1 loc yes).2.1 =
+        (scanSing ctx loc (.ifThenElse cond yes no)).2.1 ∧
+      (scanSing (scanSing ctx loc cond).1 loc no).2.1 =
+        (scanSing ctx loc (.ifThenElse cond yes no)).2.1 := by
+  have outer : (scanSing ctx loc (.ifThenElse cond yes no)).2.1 =
+      (match (scanSing (scanSing ctx loc cond).1 loc yes).2.2.2.orElse
+          (fun _ => (scanSing (scanSing ctx loc cond).1 loc no).2.2.2) with
+       | none => decideType (scanSing (scanSing ctx loc cond).1 loc yes).2.1
+           (scanSing (scanSing ctx loc cond).1 loc no).2.1
+       | some op => decideType (scanSing (scanSing ctx loc cond).1 loc yes).2.1
+           (decideType (scanSing (scanSing ctx loc cond).1 loc no).2.1 (opType op))) := by
+    rw [scanSing.eq_def]
+    dsimp only
+    cases hcond : scanSing ctx loc cond with
+    | mk ci rest =>
+      rcases rest with ⟨ct, cb, co⟩
+      cases hy : scanSing ci loc yes with
+      | mk cy resty =>
+        rcases resty with ⟨yt, yb, yo⟩
+        cases hn : scanSing ci loc no with
+        | mk cn restn =>
+          rcases restn with ⟨nt, nb, no⟩
+          rfl
+  rw [outer] at specific ⊢
+  cases hy : scanSing (scanSing ctx loc cond).1 loc yes with
+  | mk cy ry =>
+    rcases ry with ⟨ty, flagy, opy⟩
+    cases hn : scanSing (scanSing ctx loc cond).1 loc no with
+    | mk cn rn =>
+      rcases rn with ⟨tn, flagn, opn⟩
+      cases opy with
+      | none =>
+        cases opn with
+        | none => cases ty <;> cases tn <;> simp_all [decideType]
+        | some assoc =>
+          cases htype : opType assoc <;> cases ty <;> cases tn <;> simp_all [decideType]
+      | some assoc =>
+        cases opn <;> cases htype : opType assoc <;> cases ty <;> cases tn <;>
+          simp_all [decideType]
+
 /-- Every entry in a source-shaped list scan obeys the selected operator's
 type condition. -/
 theorem scanList_choice_type (xs : List Exp) (ctx : List ValueType) (loc : Nat) :
