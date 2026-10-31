@@ -13,7 +13,7 @@ HOL development or ready for production use.
 
 The intended target is Pancake source compiled to RISC-V. An experimental second
 backend compiles to MIPS32 (little-endian MIPS32r2) for the Ziren zkVM; item 9
-describes its separate trust base. Other backends are out of scope. The CakeML checkout in `cakeml` is the reference for
+describes its separate trust base. An experimental x86-64 backend targets the CakeML x64 assembly; item 11 describes its trust base. Other backends are out of scope. The CakeML checkout in `cakeml` is the reference for
 the ASTs, pass ordering, semantics, compiler, and correctness theorem. The
 current source-facing command is documented in the repository README and is
 implemented by `Flapjack.CompileMain`.
@@ -312,6 +312,33 @@ The following are open review or verification obligations:
       not yet provide; `asr` is only a word64 specialization of HOL's library
       `word_asr_n2w`. The Flapjack `encoderCorrect arm8Target` theorem is a
       closed-subset analogue, not the HOL L3 theorem.
+
+11. The x86-64 backend emits byte-identical machine code to the original
+    CakeML x64 target, but its correctness theorem is only half proved.
+    - **What is checked.** `flapjack-compile --target=x64` emits exactly the
+      same code bytes as `cake --pancake --target=x64` for the checked-in
+      corpus in `scripts/x64/parity/` (24 fixtures), for 1500 differentially
+      fuzzed programs, and for the 244 standalone Pancake programs embedded in
+      `cakeml/pancake/**/*.sml`. `scripts/x64/check-parity.py` exits 0 against
+      the original `cake` binary. `Flapjack/Compiler/Encoders/X64/Machine/`
+      defines a closed machine model for the emitted instruction forms, and
+      `Flapjack/Compiler/Encoders/X64/Machine/TargetProof.lean` proves
+      `encOk x64Config` and `targetOk x64Target`.
+    - **What is not checked.** `encoderCorrect x64Target` is **not** proved:
+      the transition simulation (`asserts`/`asserts2`) and its per-instruction
+      cases are missing, so neither is `panToTargetCompileSemanticsX64`. The
+      closed model is not CakeML's full L3 x86-64 semantics. Flags are modelled
+      per emitted instruction rather than by an L3 `Run` port, `div` failure
+      and `comisd` unordered handling are approximated, and SSE `min`/`max`
+      are approximated; floating-point results use `holFp64*` and therefore
+      agree with the source semantics by construction, not by a model
+      refinement. Unknown instruction words set `failed`. The decoder
+      inverses for the memory-operand forms, `binopRI`, conditional jumps and
+      the SSE forms are only partly proved. No `@[hol]` tag is claimed for any
+      declaration in the machine model, and no `reviewed_*` row for it is
+      present in `docs/HOL-THEOREM-MAP.json`. The trusted compiler claim
+      therefore rests on the parity evidence and `targetOk`, not on a
+      `encoderCorrect` theorem.
 
 ## Stack bounds and liveness
 
