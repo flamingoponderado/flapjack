@@ -3333,4 +3333,158 @@ theorem expressionSimulation_app_singletonRec_partial_all_case {C F : Type}
       trace args function values captured (head :: tail) ptr arity body aux finalAux compiled result argsRun functionRun
       (by simp) partialBound run noType compile locations annotations vars installed envRelated states argsIH functionIH
 
+/-- The completion stub reads the newly supplied arguments after binding the
+original closure at the front of its environment. -/
+theorem evaluate_completion_newArgs {C F : Type} (args rest : List BvlSem.Value)
+    (original : BvlSem.Value) (s : BvlSem.State C F) :
+    BvlSem.evaluate ((List.range args.length).map (fun i => Bvl.Exp.var (i + 1)))
+      (original :: (args ++ rest)) s = (.val args, s) := by
+  have shifted : ∀ n, n ≤ args.length →
+      BvlSem.evaluate ((List.range n).map (fun i => Bvl.Exp.var (i + 1)))
+        (original :: (args ++ rest)) s = (.val (args.take n), s) := by
+    intro n bound
+    induction n with
+    | zero => simp [BvlSem.evaluate]
+    | succ n ih =>
+      have boundN : n ≤ args.length := by omega
+      have indexBound : n < args.length := by omega
+      rw [List.range_succ, List.map_append]
+      change BvlSem.evaluateTuple (((List.range n).map (fun i => Bvl.Exp.var (i + 1)) ++
+        [.var (n + 1)]), original :: (args ++ rest), s) = _
+      rw [BvlProps.evaluateAppend]
+      simp only [BvlSem.evaluateTuple, ih boundN]
+      have varRun : BvlSem.evaluate [.var (n + 1)] (original :: (args ++ rest)) s = (.val [args[n]], s) := by
+        simp [BvlSem.evaluate, List.getElem?_append_left, indexBound]
+      rw [varRun]
+      simp only [List.take_append_getElem indexBound]
+  simpa using shifted args.length (by omega)
+
+/-- The completion stub reads its saved arguments in their stored order. -/
+theorem evaluate_completion_savedArgs {C F : Type} (args saved : List BvlSem.Value)
+    (original ptr arity : BvlSem.Value) (s : BvlSem.State C F) :
+    BvlSem.evaluate ((List.range saved.length).map (fun i =>
+      Bvl.Exp.op (.blockOp (.elemAt (i + 3))) [.var (args.length + 1)]))
+      (original :: (args ++ [.block 31 (ptr :: arity :: original :: saved)])) s = (.val saved, s) := by
+  have savedPrefix : ∀ n, n ≤ saved.length →
+      BvlSem.evaluate ((List.range n).map (fun i => Bvl.Exp.op (.blockOp (.elemAt (i + 3))) [.var (args.length + 1)]))
+        (original :: (args ++ [.block 31 (ptr :: arity :: original :: saved)])) s =
+        (.val (saved.take n), s) := by
+    intro n bound
+    induction n with
+    | zero => simp [BvlSem.evaluate]
+    | succ n ih =>
+      have boundN : n ≤ saved.length := by omega
+      have indexBound : n < saved.length := by omega
+      rw [List.range_succ, List.map_append]
+      change BvlSem.evaluateTuple (((List.range n).map (fun i => Bvl.Exp.op (.blockOp (.elemAt (i + 3))) [.var (args.length + 1)]) ++
+        [Bvl.Exp.op (.blockOp (.elemAt (n + 3))) [.var (args.length + 1)]]),
+        original :: (args ++ [.block 31 (ptr :: arity :: original :: saved)]), s) = _
+      rw [BvlProps.evaluateAppend]
+      simp only [BvlSem.evaluateTuple, ih boundN]
+      have elemRun : BvlSem.evaluate [Bvl.Exp.op (.blockOp (.elemAt (n + 3))) [.var (args.length + 1)]]
+          (original :: (args ++ [.block 31 (ptr :: arity :: original :: saved)])) s = (.val [saved[n]], s) := by
+        simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock, indexBound]
+      rw [elemRun]
+      simp only [List.take_append_getElem indexBound]
+  simpa using savedPrefix saved.length (by omega)
+
+/-- The generated completion stub restores new and saved arguments in order,
+then calls the original closure, charging the call tick. -/
+theorem evaluate_partialAppClosureFn {C F : Type} (s : BvlSem.State C F)
+    (total previous : Nat) (args saved : List BvlSem.Value) (stub originalPtr : Nat)
+    (remaining : BvlSem.Value) (originalFields : List BvlSem.Value) (body : Bvl.Exp)
+    (newCount : total - previous = args.length) (savedCount : previous + 1 = saved.length)
+    (lookup : sptLookup originalPtr s.code = some (args.length + saved.length + 1, body)) :
+    let original := BvlSem.Value.block 30 (.codePtr originalPtr :: originalFields)
+    let partialValue := BvlSem.Value.block 31 (.codePtr stub :: remaining :: original :: saved)
+    BvlSem.evaluate [generatePartialAppClosureFn total previous] (args ++ [partialValue]) s =
+      if s.clock = 0 then (.err (.abort .timeoutError), { s with clock := 0 })
+      else BvlSem.evaluate [body] (args ++ saved ++ [original]) (BvlSem.decClock 1 s) := by
+  let original := BvlSem.Value.block 30 (.codePtr originalPtr :: originalFields)
+  let partialValue := BvlSem.Value.block 31 (.codePtr stub :: remaining :: original :: saved)
+  let env := original :: (args ++ [partialValue])
+  have originalRun : BvlSem.evaluate [.op (.blockOp (.elemAt 2)) [.var (total - previous)]]
+      (args ++ [partialValue]) s = (.val [original], s) := by
+    simp [newCount, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock, partialValue]
+  have newRun : BvlSem.evaluate ((List.range (total - previous)).map (fun i => Bvl.Exp.var (i + 1))) env s =
+      (.val args, s) := by
+    simpa [newCount, env] using evaluate_completion_newArgs args [partialValue] original s
+  have savedRun : BvlSem.evaluate ((List.range (previous + 1)).map (fun i =>
+      Bvl.Exp.op (.blockOp (.elemAt (i + 3))) [.var (total - previous + 1)])) env s =
+      (.val saved, s) := by
+    simpa [newCount, savedCount, env, partialValue] using
+      evaluate_completion_savedArgs args saved original (.codePtr stub) remaining s
+  have tailRun : BvlSem.evaluate [.var 0, .op (.blockOp (.elemAt 0)) [.var 0]] env s =
+      (.val [original, .codePtr originalPtr], s) := by
+    simp [env, original, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock]
+  have savedAndTail : BvlSem.evaluate
+      (((List.range (previous + 1)).map (fun i => Bvl.Exp.op (.blockOp (.elemAt (i + 3)))
+        [.var (total - previous + 1)])) ++ [.var 0, .op (.blockOp (.elemAt 0)) [.var 0]]) env s =
+      (.val (saved ++ [original, .codePtr originalPtr]), s) := by
+    change BvlSem.evaluateTuple (_, env, s) = _
+    rw [BvlProps.evaluateAppend]
+    simp [BvlSem.evaluateTuple, savedRun, tailRun]
+  have allRun : BvlSem.evaluate
+      (((List.range (total - previous)).map (fun i => Bvl.Exp.var (i + 1))) ++
+       ((List.range (previous + 1)).map (fun i => Bvl.Exp.op (.blockOp (.elemAt (i + 3)))
+         [.var (total - previous + 1)]) ++ [.var 0, .op (.blockOp (.elemAt 0)) [.var 0]])) env s =
+      (.val (args ++ saved ++ [original, .codePtr originalPtr]), s) := by
+    change BvlSem.evaluateTuple (_, env, s) = _
+    rw [BvlProps.evaluateAppend]
+    simp [BvlSem.evaluateTuple, newRun, savedAndTail, List.append_assoc]
+  change BvlSem.evaluate [.let [.op (.blockOp (.elemAt 2)) [.var (total - previous)]]
+    (.call 0 none (((List.range (total - previous)).map (fun i => .var (i + 1))) ++
+      ((List.range (previous + 1)).map (fun i => .op (.blockOp (.elemAt (i + 3)))
+        [.var (total - previous + 1)])) ++ [.var 0, .op (.blockOp (.elemAt 0)) [.var 0]]))]
+    (args ++ [partialValue]) s = _
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, originalRun]
+  dsimp only
+  simp only [List.append_assoc, env] at allRun
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate]
+  simp only [List.append_assoc, List.singleton_append]
+  rw [allRun]
+  have lastPair (inst : Nonempty BvlSem.Value) (xs : List BvlSem.Value) (x y : BvlSem.Value) :
+      @Flapjack.holLast BvlSem.Value inst (xs ++ [x, y]) = y := by
+    induction xs with
+    | nil => simp [Flapjack.holLast]
+    | cons z zs ih => simp [Flapjack.holLast_cons, ih]
+  simp [BvlSem.findCode, lookup, lastPair, ← List.append_assoc, original]
+
+/-- A saturated call through an existing partial closure enters the original
+body with both argument groups and the original closure in its environment. -/
+theorem evaluate_mkClCall_partial_complete {C F : Type} (s : BvlSem.State C F)
+    (total previous : Nat) (args saved rest : List BvlSem.Value) (stub originalPtr : Nat)
+    (originalFields : List BvlSem.Value) (body : Bvl.Exp)
+    (nonempty : args ≠ []) (newCount : total - previous = args.length)
+    (savedCount : previous + 1 = saved.length)
+    (stubLookup : sptLookup stub s.code = some (args.length + 1, generatePartialAppClosureFn total previous))
+    (originalLookup : sptLookup originalPtr s.code = some (args.length + saved.length + 1, body)) :
+    let original := BvlSem.Value.block 30 (.codePtr originalPtr :: originalFields)
+    let partialValue := BvlSem.Value.block 31 (.codePtr stub :: .number (Int.ofNat (args.length - 1)) :: original :: saved)
+    BvlSem.evaluate [mkClCall (.var args.length) ((List.range args.length).map Bvl.Exp.var)]
+      (args ++ [partialValue] ++ rest) s =
+      if s.clock < args.length + 1 then (.err (.abort .timeoutError), { s with clock := 0 })
+      else BvlSem.evaluate [body] (args ++ saved ++ [original]) (BvlSem.decClock (args.length + 1) s) := by
+  let original := BvlSem.Value.block 30 (.codePtr originalPtr :: originalFields)
+  let partialValue := BvlSem.Value.block 31 (.codePtr stub :: .number (Int.ofNat (args.length - 1)) :: original :: saved)
+  change BvlSem.evaluate [_] (args ++ [partialValue] ++ rest) s = _
+  have callRun := evaluate_mkClCall_direct_env s args rest 31 stub (original :: saved)
+    (generatePartialAppClosureFn total previous) nonempty stubLookup
+  rw [callRun]
+  by_cases timeout : s.clock < args.length
+  · simp [timeout, show s.clock < args.length + 1 by omega]
+  · simp only [timeout, ↓reduceIte]
+    have lookupDec : sptLookup originalPtr (BvlSem.decClock args.length s).code =
+        some (args.length + saved.length + 1, body) := by simpa [BvlSem.decClock] using originalLookup
+    rw [evaluate_partialAppClosureFn (BvlSem.decClock args.length s) total previous args saved stub originalPtr
+      (.number (Int.ofNat (args.length - 1))) originalFields body newCount savedCount lookupDec]
+    have clockTest : (BvlSem.decClock args.length s).clock = 0 ↔ s.clock < args.length + 1 := by
+      simp only [BvlSem.decClock]
+      omega
+    simp only [clockTest]
+    split
+    · simp [BvlSem.decClock]
+    · have clocks : s.clock - args.length - 1 = s.clock - (args.length + 1) := by omega
+      simp [BvlSem.decClock, clocks]
+
 end Flapjack.Compiler.Backend.ClosToBvl
