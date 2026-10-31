@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
 
 /-! Mutable-hole invariants used by the TMC evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc
@@ -274,5 +275,23 @@ theorem holesStill_trans {α : Type} (f : HolFiniteMapExact Nat Nat) (g : HolFin
     simp [HolFiniteMapExact.domain, found]
   have outsideNew := nonFresh_not_in_range f g refs ptr allocated outside fresh
   exact second ptr outsideNew (first ptr outside hole)
+
+theorem holFmapAsFiniteSupportParamWitness_fresh_not_in_range_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_fresh_not_in_range_source (source : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup source) source.finiteSupport = source := by cases source; rfl
+theorem holFmapAsFiniteSupportParamWitness_fresh_not_in_range_target (target : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
+
+/-- A fresh target reference is outside the current pointer-map range. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fresh_not_in_range_f"
+  (fmap_as_finite_support_parameters := [f, source, target])]
+theorem fresh_not_in_range (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
+    (target : HolFiniteMapExact Nat (Ref Value)) (related : stateRefRel f source target) :
+    leastUnusedRef target ∉ mapRange f := by
+  rintro ⟨key, mapped⟩
+  obtain ⟨_, _, _, found, _⟩ := stateRefRel_lookup f key (leastUnusedRef target) source target mapped related
+  rw [leastUnusedRef_unused] at found
+  contradiction
 
 end Flapjack.Compiler.Backend.BviTmc

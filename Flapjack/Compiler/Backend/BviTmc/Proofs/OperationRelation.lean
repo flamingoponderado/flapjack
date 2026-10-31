@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.HoleRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Allocation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
+import Flapjack.Compiler.Backend.BviTmc.Proofs.BuildRelation
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
 
 /-! Primitive-operation cases of the TMC evaluation simulation. -/
@@ -2095,5 +2096,40 @@ theorem doApp_op_rel_boundsCheckBlock {C F : Type} (f : HolFiniteMapExact Nat Na
                 all_goals exact .block _ [] [] .nil
               · intro key item present
                 exact present
+
+/-- Constant construction preserves the state relation across fresh strings. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_build {C F : Type} (f : HolFiniteMapExact Nat Nat) (parts : List ClosLang.ConstPart)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.blockOp (.build parts)) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.blockOp (.build parts))) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.blockOp (.build parts)) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | cons first rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
+  | nil =>
+    cases valuesRelated
+    cases built : doBuildConst parts source.refs with
+    | mk builtValue builtRefs =>
+      obtain ⟨nextMap, targetValue, targetRefs, targetRun, valueRel, heaps, inj, submap, fresh, holes, still⟩ :=
+        doBuildConst_value_rel parts source.refs builtValue builtRefs f target.refs built statesRelated.1
+          statesRelated.2.2.2.2.2.2.2.2.2.2
+      simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
+        BviSem.toBvl, BviSem.fromBvl, built] at run
+      obtain ⟨rfl, rfl⟩ := run
+      have nextStates : stateRel nextMap { source with refs := builtRefs } { target with refs := targetRefs } := by
+        rcases statesRelated with ⟨_, clock, global, ffi, oracle, compiler, code, names, inputs, workers, _⟩
+        refine ⟨heaps, clock, ?_, ffi, oracle, compiler, code, names, inputs, workers, inj⟩
+        cases hs : source.global <;> cases ht : target.global <;> simp_all
+        exact submap _ _ global
+      refine ⟨nextMap, targetValue, { target with refs := targetRefs }, ?_, valueRel, nextStates, submap, fresh, holes, still⟩
+      simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
+        BviSem.toBvl, BviSem.fromBvl, targetRun]
 
 end Flapjack.Compiler.Backend.BviTmc
