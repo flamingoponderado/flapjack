@@ -5261,4 +5261,403 @@ theorem evaluateApp_recclosure_exact {C F : Type} (s : ClosSem.State C F)
     simp [ClosSem.evaluateApp]
     split <;> rfl
 
+/-- The selected mutual-recursive entry and its related closure group refer
+to the same shared array. -/
+theorem clRel_mutualRec_selected_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {captured : List ClosSem.Value} {fields : List BvlSem.Value} {ptr index arity : Nat}
+    {functions : List (Nat × ClosLang.Exp)} {body : ClosLang.Exp} {target : BvlSem.Value}
+    (related : clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code
+      (captured, fields) (.recclosure (some ptr) [] captured functions index) target)
+    (envRel' : List.Forall₂ (vRel maxApp f refs code) captured fields)
+    (many : 1 < functions.length) (found : functions[index]? = some (arity, body)) :
+    ∃ address shared targets aux targetBody finalAux,
+      target = .block 30 [.codePtr address, .number (Int.ofNat (arity - 1)), .refPtr true shared] ∧
+      refs.lookup shared = some (.valueArray (targets ++ fields)) ∧ targets.length = functions.length ∧
+      List.Forall₂ (vRel maxApp f refs code)
+        ((List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i)) targets ∧
+      arity ≤ maxApp ∧ arity ≠ 0 ∧
+      compileExpsHOL maxApp [body] aux = ([targetBody], finalAux) ∧
+      sptLookup address code = some (arity + 1, (codeForReccCase (captured.length + functions.length) arity targetBody).2) ∧
+      codeInstalled finalAux code := by
+  cases related with
+  | singletonRec _ _ _ _ _ _ _ => simp at many
+  | @mutualRec exps entries ps rs loc shared env ys k expsEq psEq positions values fresh stored groupSize indexBound locations vars installed =>
+    have targetsLength : rs.length = functions.length := by simp [values, expsEq]
+    have groupRelated : List.Forall₂ (vRel maxApp f refs code)
+        ((List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i)) rs := by
+      apply List.forall₂_of_length_eq_of_get
+      · simp [targetsLength]
+      · intro j sourceBound targetBound
+        have bound : j < functions.length := by simpa using sourceBound
+        have groupRel : clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code
+            (captured, fields) (.recclosure (some ptr) [] captured functions j) (holEl j rs) :=
+          .mutualRec expsEq psEq positions values fresh stored groupSize bound locations vars installed
+        cases entry : functions[j] with
+        | mk arity' body' =>
+          have found' : functions[j]? = some (arity', body') := by rw [List.getElem?_eq_getElem bound, entry]
+          obtain ⟨address', payload, shape⟩ := clRel_recclosure_target_shape groupRel found'
+          have valueRel : vRel maxApp f refs code (.recclosure (some ptr) [] captured functions j) (holEl j rs) := by
+            rw [shape] at groupRel ⊢
+            exact .closure envRel' groupRel
+          rw [Flapjack.holEl_eq_getElem j rs targetBound] at valueRel
+          simpa using valueRel
+    have entryBound : index < entries.length := by simpa [expsEq] using indexBound
+    have entryEq : (entries[index]'entryBound).1 = (arity, body) := by
+      have h : functions[index]? = some (arity, body) := found
+      rw [expsEq, List.getElem?_map, List.getElem?_eq_getElem entryBound] at h
+      simpa using h
+    have groupLength : entries.length = functions.length := by simp [expsEq]
+    have member : entries[index]'entryBound ∈ entries := List.getElem_mem _
+    cases entryShape : entries[index]'entryBound with
+    | mk pair address =>
+      have pairEq : pair = (arity, body) := by simpa [entryShape] using entryEq
+      subst pair
+      have member' : ((arity, body), address) ∈ entries := by simpa [entryShape] using member
+      obtain ⟨bound, positive, aux, targetBody, finalAux, compiled, lookup, installedAux⟩ := installed _ member'
+      have targetShape : holEl index rs = .block 30 [.codePtr address, .number (Int.ofNat (arity - 1)), .refPtr true shared] := by
+        rw [values, Flapjack.holEl_eq_getElem index _ (by simpa using entryBound)]
+        simp [entryShape]
+      exact ⟨address, shared, rs, aux, targetBody, finalAux, targetShape, stored, targetsLength, groupRelated,
+        bound, positive, compiled, by simpa [groupLength] using lookup, installedAux⟩
+
+/-- An exact call to a related mutually recursive closure simulates the
+selected body when the source clock suffices. -/
+theorem evaluatePost_mutualRec_exact_call {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr index arity : Nat) (captured args : List ClosSem.Value) (fields targetArgs rest : List BvlSem.Value)
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp) (target : BvlSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+      (captured, fields) (.recclosure (some ptr) [] captured functions index) target)
+    (envRel' : List.Forall₂ (vRel s.maxApp f t.refs t.code) captured fields)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (many : 1 < functions.length) (found : functions[index]? = some (arity, body))
+    (length : args.length = arity) (enough : arity ≤ s.clock)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (bodyRun : ClosSem.evaluate [body] (args ++
+      (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
+      (ClosSem.decClock arity s) = (result, sFinal)) (noType : result ≠ .err (.abort .typeError))
+    (locations : ClosProps.everyFnLocationSome [body]) (vars : ClosProps.everyFnVarsSome [body])
+    (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
+    evaluatePost s sFinal t (targetArgs ++ [target] ++ rest) f result
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  obtain ⟨address, shared, targets, aux, targetBody, finalAux, targetEq, stored, targetsLength,
+    groupRel, arityBound, positive, compiled, lookup, installed⟩ :=
+    clRel_mutualRec_selected_related related envRel' many found
+  have targetLength : targetArgs.length = arity := by rw [← length]; exact argsRel.length_eq.symm
+  have nonempty : targetArgs ≠ [] := by intro empty; simp [empty] at targetLength; exact positive targetLength.symm
+  have bodyStates : stateRel f (ClosSem.decClock arity s) t := by
+    exact (stateRel_clock f s t (s.clock - arity)).2.mpr states
+  have bodyEnv : envRel s.maxApp f t.refs t.code
+      (args ++ (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
+      ((targetArgs ++ (targets ++ fields)) ++ [.refPtr true shared] ++ targetArgs ++ [target]) := by
+    have tail : envRel s.maxApp f t.refs t.code captured (fields ++ [.refPtr true shared] ++ targetArgs ++ [target]) := by
+      simpa using envRel_prepend envRel' (env := [])
+        (targetEnv := BvlSem.Value.refPtr true shared :: (targetArgs ++ [target])) (by simp [envRel])
+    have group : envRel s.maxApp f t.refs t.code
+        ((List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
+        (targets ++ fields ++ [.refPtr true shared] ++ targetArgs ++ [target]) := by
+      simpa [List.append_assoc] using envRel_prepend groupRel tail
+    simpa [List.append_assoc] using envRel_prepend argsRel group
+  have bodyPost := bodyIH (ClosSem.decClock arity s) sFinal t _ _ f aux finalAux [targetBody] result
+    bodyRun noType (by simpa [ClosSem.decClock] using compiled) locations
+    (by simpa [ClosSem.decClock, codeAnnotations] using annotations) vars installed
+    (by simpa [ClosSem.decClock] using bodyEnv) bodyStates
+  obtain ⟨clock, targetResult, tFinal, fFinal, targetRun, resultRel, finalStates, map, frame,
+    finalAnnotations, finalClock⟩ := bodyPost
+  let start : BvlSem.State C F := { t with clock := s.clock + clock }
+  have lookupStart : sptLookup address start.code = some (targetArgs.length + 1,
+      (codeForReccCase (captured.length + functions.length) arity targetBody).2) := by
+    simpa [start, targetLength] using lookup
+  have callRun := evaluate_mkClCall_direct_env start targetArgs rest 30 address [.refPtr true shared]
+    ((codeForReccCase (captured.length + functions.length) arity targetBody).2) nonempty lookupStart
+  have enoughTarget : ¬ start.clock < targetArgs.length := by dsimp [start]; omega
+  simp only [if_neg enoughTarget] at callRun
+  have storedStart : (BvlSem.decClock targetArgs.length start).refs.lookup shared = some (.valueArray (targets ++ fields)) := by
+    simpa [start, BvlSem.decClock] using stored
+  have sharedLength : (targets ++ fields).length = captured.length + functions.length := by
+    simp [targetsLength, envRel'.length_eq, Nat.add_comm]
+  have entryRun := evaluate_recursive_entry (BvlSem.decClock targetArgs.length start) targetArgs (targets ++ fields)
+    shared 30 (.codePtr address) (.number (Int.ofNat (arity - 1))) targetBody storedStart
+  have clockEq : s.clock + clock - arity = s.clock - arity + clock := by omega
+  have finalRun : BvlSem.evaluate [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)]
+      (targetArgs ++ [target] ++ rest) start = (targetResult, tFinal) := by
+    rw [targetEq]
+    rw [show targetArgs.length - 1 = arity - 1 by omega] at callRun
+    rw [callRun]
+    rw [sharedLength, targetLength] at entryRun
+    rw [targetLength]
+    rw [entryRun]
+    simpa [targetEq, start, BvlSem.decClock, ClosSem.decClock, clockEq] using targetRun
+  exact ⟨clock, targetResult, tFinal, fFinal, finalRun, by simpa [ClosSem.decClock] using resultRel,
+    finalStates, map, frame, finalAnnotations, finalClock⟩
+
+/-- The selected recursive function inherits the group's body annotations. -/
+theorem clRel_recclosure_annotations {maxApp : Nat} {fs : Nat → Prop}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {captured : List ClosSem.Value} {fields : List BvlSem.Value} {ptr index arity : Nat}
+    {functions : List (Nat × ClosLang.Exp)} {body : ClosLang.Exp} {target : BvlSem.Value}
+    (related : clRel maxApp fs refs code (captured, fields) (.recclosure (some ptr) [] captured functions index) target)
+    (found : functions[index]? = some (arity, body)) :
+    ClosProps.everyFnLocationSome [body] ∧ ClosProps.everyFnVarsSome [body] := by
+  have locationMember : ∀ es : List ClosLang.Exp, ClosProps.everyFnLocationSome es →
+      ∀ e ∈ es, ClosProps.fnLocationSomeExp e := by
+    intro es h e member
+    induction es with
+    | nil => simp at member
+    | cons head tail ih =>
+      simp only [ClosProps.everyFnLocationSome] at h
+      simp only [List.mem_cons] at member
+      rcases member with rfl | member
+      · exact h.1
+      · exact ih h.2 member
+  have varsMember : ∀ es : List ClosLang.Exp, ClosProps.everyFnVarsSome es →
+      ∀ e ∈ es, ClosProps.fnVarsSomeExp e := by
+    intro es h e member
+    induction es with
+    | nil => simp at member
+    | cons head tail ih =>
+      simp only [ClosProps.everyFnVarsSome] at h
+      simp only [List.mem_cons] at member
+      rcases member with rfl | member
+      · exact h.1
+      · exact ih h.2 member
+  cases related with
+  | singletonRec bound positive locations vars compiled installed lookup =>
+    simp only [List.getElem?_cons_zero, Option.some.injEq, Prod.mk.injEq] at found
+    obtain ⟨rfl, rfl⟩ := found
+    exact ⟨locations, vars⟩
+  | mutualRec exps ps positions values fresh stored many indexBound locations vars installed =>
+    have member : body ∈ functions.map Prod.snd := List.mem_map.mpr ⟨(arity, body), List.mem_of_getElem? found, rfl⟩
+    exact ⟨by simpa [ClosProps.everyFnLocationSome] using locationMember _ locations body member,
+      by simpa [ClosProps.everyFnVarsSome] using varsMember _ vars body member⟩
+
+/-- A saturated recursive closure with no saved arguments returns its body
+result when the source has enough clock. -/
+theorem evaluateApp_recclosure_exact_body {C F : Type} (s sFinal : ClosSem.State C F)
+    (ptr arity index : Nat) (captured args : List ClosSem.Value) (functions : List (Nat × ClosLang.Exp))
+    (body : ClosLang.Exp) (found : functions[index]? = some (arity, body)) (nonempty : args ≠ [])
+    (bound : args.length ≤ s.maxApp) (length : args.length = arity) (enough : arity ≤ s.clock)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (bodyRun : ClosSem.evaluate [body] (args ++
+      (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
+      (ClosSem.decClock arity s) = (result, sFinal)) :
+    ClosSem.evaluateApp none (.recclosure (some ptr) [] captured functions index) args s = (result, sFinal) := by
+  have positive : 0 < arity := by have h := List.length_pos_iff.mpr nonempty; omega
+  rw [evaluateApp_recclosure_exact s ptr arity index captured [] args functions body found nonempty (by simp; omega)
+    bound (by simpa using length)]
+  simp only [List.append_nil, length]
+  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
+  cases result with
+  | err error => rfl
+  | val values => cases values with
+    | nil => rfl
+    | cons value tail => cases tail <;> rfl
+
+/-- Exact mutual-recursive application simulates the selected body when the
+source has enough clock. -/
+theorem evaluateApp_mutualRec_exact_simulation {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr index arity : Nat) (captured args : List ClosSem.Value) (fields targetArgs rest : List BvlSem.Value)
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp) (target : BvlSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+      (captured, fields) (.recclosure (some ptr) [] captured functions index) target)
+    (envRel' : List.Forall₂ (vRel s.maxApp f t.refs t.code) captured fields)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (many : 1 < functions.length) (found : functions[index]? = some (arity, body))
+    (length : args.length = arity) (enough : arity ≤ s.clock)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (appRun : ClosSem.evaluateApp none (.recclosure (some ptr) [] captured functions index) args s = (result, sFinal))
+    (noType : result ≠ .err (.abort .typeError)) (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
+    evaluatePost s sFinal t (targetArgs ++ [target] ++ rest) f result
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  have ⟨arityBound, positive⟩ := clRel_recclosure_arity related found
+  have ⟨locations, vars⟩ := clRel_recclosure_annotations related found
+  have nonempty : args ≠ [] := by intro empty; simp [empty] at length; exact positive length.symm
+  have bound : args.length ≤ s.maxApp := by omega
+  cases bodyRun : ClosSem.evaluate [body] (args ++
+      (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
+      (ClosSem.decClock arity s) with
+  | mk bodyResult bodyFinal =>
+    have sourceStep := evaluateApp_recclosure_exact_body s bodyFinal ptr arity index captured args functions body
+      found nonempty bound length enough bodyResult bodyRun
+    rw [appRun] at sourceStep
+    cases sourceStep
+    exact evaluatePost_mutualRec_exact_call s sFinal t f ptr index arity captured args fields targetArgs rest
+      functions body target states annotations related envRel' argsRel many found length enough result bodyRun noType locations vars bodyIH
+
+/-- Exact mutual-recursive application times out on both sides when the
+source has insufficient clock. -/
+theorem evaluateApp_mutualRec_exact_timeout {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr index arity : Nat) (captured args : List ClosSem.Value) (fields targetArgs rest : List BvlSem.Value)
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp) (target : BvlSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+      (captured, fields) (.recclosure (some ptr) [] captured functions index) target)
+    (envRel' : List.Forall₂ (vRel s.maxApp f t.refs t.code) captured fields)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (many : 1 < functions.length) (found : functions[index]? = some (arity, body))
+    (length : args.length = arity) (timeout : s.clock < arity) :
+    ClosSem.evaluateApp none (.recclosure (some ptr) [] captured functions index) args s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) ∧
+    evaluatePost s { s with clock := 0 } t (targetArgs ++ [target] ++ rest) f
+      (.err (.abort .timeoutError))
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  have ⟨arityBound, positive⟩ := clRel_recclosure_arity related found
+  have nonempty : args ≠ [] := by intro empty; simp [empty] at length; exact positive length.symm
+  have sourceTimeout : ClosSem.evaluateApp none (.recclosure (some ptr) [] captured functions index) args s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) := by
+    rw [evaluateApp_recclosure_exact s ptr arity index captured [] args functions body found nonempty (by simp; omega)
+      (by omega) (by simpa using length)]
+    simp [length, timeout]
+  have targetLength : targetArgs.length = arity := by rw [← length]; exact argsRel.length_eq.symm
+  let start : BvlSem.State C F := { t with clock := s.clock }
+  have shifted : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) start.refs start.code
+      (captured, fields) (.recclosure (some ptr) [] captured functions index) target := by simpa [start] using related
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, targetRun⟩ :=
+    clRel_mutualRec_exact_call start s.maxApp ptr index arity _ captured fields targetArgs rest functions body target
+      shifted many found envRel'.length_eq.symm targetLength
+  have targetTimeout : start.clock < arity := by simpa [start] using timeout
+  simp only [if_pos targetTimeout] at targetRun
+  refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
+  · simpa [start] using targetRun
+  · simp [resultRel, excRel]
+  · exact (stateRel_clock f s t 0).2.mpr ((stateRel_clock f s t 0).1.mpr states)
+  · intro key value mapped; exact mapped
+  · intro key value mapped fresh; exact ⟨mapped, fresh⟩
+
+/-- Exact application of a related mutual-recursive closure simulates both
+body execution and timeout. -/
+theorem evaluateApp_mutualRec_exact_related {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr index arity : Nat) (captured args : List ClosSem.Value) (targetArgs rest : List BvlSem.Value)
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp) (target : BvlSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : vRel s.maxApp f t.refs t.code (.recclosure (some ptr) [] captured functions index) target)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (many : 1 < functions.length) (found : functions[index]? = some (arity, body)) (length : args.length = arity)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (appRun : ClosSem.evaluateApp none (.recclosure (some ptr) [] captured functions index) args s = (result, sFinal))
+    (noType : result ≠ .err (.abort .typeError)) (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
+    evaluatePost s sFinal t (targetArgs ++ [target] ++ rest) f result
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  obtain ⟨fields, envRel', closure⟩ := vRel_recclosure_original related
+  by_cases enough : arity ≤ s.clock
+  · exact evaluateApp_mutualRec_exact_simulation s sFinal t f ptr index arity captured args fields targetArgs rest
+      functions body target states annotations closure envRel' argsRel many found length enough result appRun noType bodyIH
+  · obtain ⟨sourceTimeout, targetTimeout⟩ := evaluateApp_mutualRec_exact_timeout s t f ptr index arity captured args
+      fields targetArgs rest functions body target states annotations closure envRel' argsRel many found length (by omega)
+    rw [sourceTimeout] at appRun
+    cases appRun
+    exact targetTimeout
+
+/-- Compose an exact mutual-recursive closure call with argument and function
+expression simulations. -/
+theorem evaluatePost_app_mutualRec_exact {C F : Type}
+    (s sArgs sFunction sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value) (f : HolFiniteMapExact Nat Nat)
+    (sourceArgs : List ClosLang.Exp) (sourceFunction : ClosLang.Exp)
+    (targetArgs : List Bvl.Exp) (targetFunction : Bvl.Exp) (values captured : List ClosSem.Value)
+    (ptr index arity : Nat) (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (argsRun : ClosSem.evaluate sourceArgs sourceEnv s = (.val values, sArgs))
+    (functionRun : ClosSem.evaluate [sourceFunction] sourceEnv sArgs =
+      (.val [.recclosure (some ptr) [] captured functions index], sFunction))
+    (appRun : ClosSem.evaluateApp none (.recclosure (some ptr) [] captured functions index) values sFunction =
+      (result, sFinal)) (many : 1 < functions.length) (found : functions[index]? = some (arity, body))
+    (length : values.length = arity) (noType : result ≠ .err (.abort .typeError))
+    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv)
+    (argsPost : evaluatePost s sArgs t targetEnv f (.val values) targetArgs)
+    (functionIH : ∀ (tArgs : BvlSem.State C F) (fArgs : HolFiniteMapExact Nat Nat),
+      stateRel fArgs sArgs tArgs → envRel sArgs.maxApp fArgs tArgs.refs tArgs.code sourceEnv targetEnv →
+      codeAnnotations sArgs → sptSubspt t.code tArgs.code →
+      evaluatePost sArgs sFunction tArgs targetEnv fArgs
+        (.val [.recclosure (some ptr) [] captured functions index]) [targetFunction])
+    (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
+    evaluatePost s sFinal t targetEnv f result [appTarget s.maxApp none targetArgs targetFunction] := by
+  apply evaluatePost_app_generic_success s sArgs sFunction sFinal t sourceEnv targetEnv f sourceArgs sourceFunction
+    targetArgs targetFunction values (.recclosure (some ptr) [] captured functions index) result
+    argsRun functionRun envRelated argsPost functionIH
+  intro targetValues targetClosure tFunction fFunction states annotations argsRel functionRel
+  exact evaluateApp_mutualRec_exact_related sFunction sFinal tFunction fFunction ptr index arity captured values
+    targetValues targetEnv functions body targetClosure states annotations functionRel argsRel many found length result
+    appRun noType bodyIH
+
+/-- Exact mutual-recursive closure application expression simulation. -/
+theorem expressionSimulation_app_mutualRec_exact_case {C F : Type}
+    (s sArgs sFunction sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value) (f : HolFiniteMapExact Nat Nat)
+    (trace : BackendCommon.Tra) (args : List ClosLang.Exp) (function : ClosLang.Exp)
+    (values captured : List ClosSem.Value) (ptr index arity : Nat) (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (argsRun : ClosSem.evaluate args sourceEnv s = (.val values, sArgs))
+    (functionRun : ClosSem.evaluate [function] sourceEnv sArgs =
+      (.val [.recclosure (some ptr) [] captured functions index], sFunction))
+    (many : 1 < functions.length) (found : functions[index]? = some (arity, body)) (arityMatch : values.length = arity)
+    (run : ClosSem.evaluate [.app trace none function args] sourceEnv s = (result, sFinal))
+    (noType : result ≠ .err (.abort .typeError))
+    (compile : compileExpsHOL s.maxApp [.app trace none function args] aux = (compiled, finalAux))
+    (locations : ClosProps.everyFnLocationSome [.app trace none function args]) (annotations : codeAnnotations s)
+    (vars : ClosProps.everyFnVarsSome [.app trace none function args]) (installed : codeInstalled finalAux t.code)
+    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv) (states : stateRel f s t)
+    (argsIH : expressionSimulation (C := C) (F := F) args)
+    (functionIH : expressionSimulation (C := C) (F := F) [function])
+    (bodyIH : expressionSimulation (C := C) (F := F) [body]) :
+    evaluatePost s sFinal t targetEnv f result compiled := by
+  have nonempty : args ≠ [] := by
+    intro empty
+    subst args
+    simp [ClosSem.evaluate] at run
+    exact noType run.1.symm
+  have appRun : ClosSem.evaluateApp none (.recclosure (some ptr) [] captured functions index) values sFunction =
+      (result, sFinal) := by
+    have notEmpty : args.isEmpty = false := by cases args <;> simp_all
+    rw [ClosSem.evaluate] at run
+    simp only [notEmpty, Bool.false_eq_true, ↓reduceIte] at run
+    rw [ClosSem.fixClock_evaluate, argsRun] at run
+    dsimp only at run
+    rw [ClosSem.fixClock_evaluate, functionRun] at run
+    exact run
+  cases functionCompile : compileExpHOL s.maxApp function aux with
+  | mk targetFunction middleAux =>
+    cases argsCompile : compileExpListHOL s.maxApp args middleAux with
+    | mk targetArgs lastAux =>
+      have whole := compile_appTarget s.maxApp trace none function args aux middleAux lastAux
+        targetFunction targetArgs functionCompile argsCompile
+      have equal := compile.symm.trans whole
+      cases equal
+      have argsCompiled : compileExpsHOL s.maxApp args middleAux = (targetArgs, finalAux) := by
+        rw [compileExps_eq_list]
+        exact argsCompile
+      have functionCompiled : compileExpsHOL s.maxApp [function] aux = ([targetFunction], middleAux) := by
+        rw [compileExps_eq_list]
+        simp [compileExpListHOL, functionCompile]
+      have functionInstalled : codeInstalled middleAux t.code :=
+        compileExps_codeInstalled s.maxApp args middleAux finalAux targetArgs t.code argsCompiled installed
+      have locationsParts : ClosProps.fnLocationSomeExp function ∧ ClosProps.everyFnLocationSome args := by
+        simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+      have varsParts : ClosProps.fnVarsSomeExp function ∧ ClosProps.everyFnVarsSome args := by
+        simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using vars
+      have argsPost := argsIH s sArgs t sourceEnv targetEnv f middleAux finalAux targetArgs (.val values)
+        argsRun (by simp) argsCompiled locationsParts.2 annotations varsParts.2 installed envRelated states
+      apply evaluatePost_app_mutualRec_exact s sArgs sFunction sFinal t sourceEnv targetEnv f args function
+        targetArgs targetFunction values captured ptr index arity functions body result argsRun functionRun appRun many found arityMatch noType
+        envRelated argsPost
+      · intro tArgs fArgs statesArgs envArgs annotationsArgs growth
+        have maxApp : sArgs.maxApp = s.maxApp := by
+          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
+          rw [argsRun] at h
+          exact h
+        exact functionIH sArgs sFunction tArgs sourceEnv targetEnv fArgs aux middleAux [targetFunction]
+          (.val [.recclosure (some ptr) [] captured functions index]) functionRun (by simp)
+          (by simpa [maxApp] using functionCompiled)
+          (by simpa [ClosProps.everyFnLocationSome] using locationsParts.1) annotationsArgs
+          (by simpa [ClosProps.everyFnVarsSome] using varsParts.1)
+          (codeInstalled_subspt functionInstalled growth) envArgs statesArgs
+      · exact bodyIH
+
 end Flapjack.Compiler.Backend.ClosToBvl
