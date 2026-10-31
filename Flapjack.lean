@@ -537,6 +537,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.ListSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.IfSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WrapperCases
 import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockOld
+import Flapjack.Compiler.Backend.BviTmc.Proofs.IfWorker
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
