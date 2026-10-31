@@ -86,4 +86,42 @@ theorem expressionSimulation_rejected {C F : Type} (trace : BackendCommon.Tra)
         cases op <;> simp [RejectedOp.op, ClosSem.doApp, ClosSem.applyGlobal,
           ClosSem.applyBlock, ClosSem.applyMemory] at run <;> exact False.elim (noTypeError run.1.symm)
 
+/-- Bounded simulation for the operator and its argument expressions. -/
+theorem expressionSimulationBelow_rejected {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
+    (op : RejectedOp) (args : List ClosLang.Exp)
+    (argsIH : expressionSimulationBelow (C := C) (F := F) clockBound args) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.op trace op.op args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
+    locations annotations varsAnnotated installed envRelated states
+  cases argsCompile : compileExpListHOL s.maxApp args aux with
+  | mk targetArgs aux1 =>
+    have argsCompiled : compileExpsHOL s.maxApp args aux = (targetArgs, aux1) := by
+      rw [compileExps_eq_list]
+      exact argsCompile
+    have wholeCompiled : compileExpsHOL s.maxApp [.op trace op.op args] aux =
+        ([.op (compileOp op.op) targetArgs], aux1) := by
+      rw [compileExps_eq_list]
+      cases op <;> simp [compileExpListHOL, compileExpHOL, argsCompile, RejectedOp.op]
+    have equal := compile.symm.trans wholeCompiled
+    cases equal
+    have argsLoc : ClosProps.everyFnLocationSome args := by
+      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+    have argsVars : ClosProps.everyFnVarsSome args := by
+      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
+    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+    cases argsRun : ClosSem.evaluate args sourceEnv s with
+    | mk argsResult sMiddle =>
+      rw [argsRun] at run
+      cases argsResult with
+      | err error =>
+        simp at run
+        rcases run with ⟨rfl, rfl⟩
+        exact evaluatePost_rejected_error s sMiddle t targetEnv f op targetArgs error
+          (argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs (.err error)
+            clockBounded argsRun noTypeError argsCompiled argsLoc annotations argsVars installed envRelated states)
+      | val values =>
+        cases op <;> simp [RejectedOp.op, ClosSem.doApp, ClosSem.applyGlobal,
+          ClosSem.applyBlock, ClosSem.applyMemory] at run <;> exact False.elim (noTypeError run.1.symm)
+
+
 end Flapjack.Compiler.Backend.ClosToBvl

@@ -300,4 +300,55 @@ theorem expressionSimulation_call_case_below {C F : Type} (s sFinal : ClosSem.St
   exact bodyIH body start last targetStart sourceArgs targetValues fMiddle aux' finalAux' [targetBody] result
     smaller bodyRun noTypeError bodyCompiled bodyLocations bodyAnnotations bodyVars bodyInstalled bodyEnv bodyStates
 
+/-- Direct-call simulation below a successor bound from bounded argument
+and smaller-clock code-body simulations. -/
+theorem expressionSimulationBelow_call_succ {C F : Type} (s sFinal : ClosSem.State C F) (clockBound : Nat)
+    (t : BvlSem.State C F) (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (trace : BackendCommon.Tra) (ticks location : Nat)
+    (args : List ClosLang.Exp) (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (run : ClosSem.evaluate [.call trace ticks location args] sourceEnv s = (result, sFinal))
+    (noTypeError : result ≠ .err (.abort .typeError)) (clockBounded : s.clock < clockBound + 1)
+    (compile : compileExpsHOL s.maxApp [.call trace ticks location args] aux = (compiled, finalAux))
+    (locations : ClosProps.everyFnLocationSome [.call trace ticks location args])
+    (annotations : codeAnnotations s) (varsAnnotated : ClosProps.everyFnVarsSome [.call trace ticks location args])
+    (installed : codeInstalled finalAux t.code) (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv)
+    (states : stateRel f s t) (argsIH : expressionSimulationBelow (C := C) (F := F) (clockBound + 1) args)
+    (bodyIH : ∀ body : ClosLang.Exp, expressionSimulationBelow (C := C) (F := F) clockBound [body]) :
+    evaluatePost s sFinal t targetEnv f result compiled := by
+  cases argsCompile : compileExpListHOL s.maxApp args aux with
+  | mk targetArgs auxLast =>
+    have argsCompiled : compileExpsHOL s.maxApp args aux = (targetArgs, auxLast) := by
+      rw [compileExps_eq_list]
+      exact argsCompile
+    have wholeCompiled : compileExpsHOL s.maxApp [.call trace ticks location args] aux =
+        ([.call ticks (some (location + numStubs s.maxApp)) targetArgs], auxLast) := by
+      rw [compileExps_eq_list]
+      simp [compileExpListHOL, compileExpHOL, argsCompile]
+    have equal := compile.symm.trans wholeCompiled
+    cases equal
+    have argsLocations : ClosProps.everyFnLocationSome args := by
+      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+    have argsVars : ClosProps.everyFnVarsSome args := by
+      simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
+    apply evaluate_call_post s sFinal t sourceEnv targetEnv f trace ticks location args targetArgs result run noTypeError
+    · intro argResult sMiddle argRun argNotType
+      exact argsIH s sMiddle t sourceEnv targetEnv f aux finalAux targetArgs argResult clockBounded argRun argNotType
+        argsCompiled argsLocations annotations argsVars installed envRelated states
+    · intro body start last targetStart sourceArgs targetValues fMiddle aux' finalAux' targetBody smaller bodyRun
+        bodyCompiled bodyLocations bodyAnnotations bodyVars bodyInstalled bodyEnv bodyStates
+      exact bodyIH body start last targetStart sourceArgs targetValues fMiddle aux' finalAux' [targetBody] result
+        (by omega) bodyRun noTypeError bodyCompiled bodyLocations bodyAnnotations bodyVars bodyInstalled bodyEnv bodyStates
+
+/-- Direct-call singleton simulation below a successor clock bound. -/
+theorem expressionSimulationBelow_call {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
+    (ticks location : Nat) (args : List ClosLang.Exp)
+    (argsIH : expressionSimulationBelow (C := C) (F := F) (clockBound + 1) args)
+    (bodyIH : ∀ body : ClosLang.Exp, expressionSimulationBelow (C := C) (F := F) clockBound [body]) :
+    expressionSimulationBelow (C := C) (F := F) (clockBound + 1) [.call trace ticks location args] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noType compile
+    locations annotations vars installed envRelated states
+  exact expressionSimulationBelow_call_succ s sFinal clockBound t sourceEnv targetEnv f trace ticks location args
+    aux finalAux compiled result run noType clockBounded compile locations annotations vars installed envRelated states argsIH bodyIH
+
 end Flapjack.Compiler.Backend.ClosToBvl

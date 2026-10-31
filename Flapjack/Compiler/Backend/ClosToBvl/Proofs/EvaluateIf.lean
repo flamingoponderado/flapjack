@@ -189,4 +189,98 @@ theorem expressionSimulation_if {C F : Type} (trace : BackendCommon.Tra)
                   branchRun noTypeError branchCompiled yesLoc middleAnnotations yesVars (codeInstalled_subspt yesInstalled growth)
                   middleEnv middleStates
 
+/-- Conditional simulation under a source-clock bound. -/
+theorem expressionSimulationBelow_if {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
+    (condition yes no : ClosLang.Exp)
+    (conditionIH : expressionSimulationBelow (C := C) (F := F) clockBound [condition])
+    (yesIH : expressionSimulationBelow (C := C) (F := F) clockBound [yes])
+    (noIH : expressionSimulationBelow (C := C) (F := F) clockBound [no]) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.ifThenElse trace condition yes no] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
+    locations annotations varsAnnotated installed envRelated states
+  cases conditionCompile : compileExpHOL s.maxApp condition aux with
+  | mk targetCondition aux1 =>
+    cases yesCompile : compileExpHOL s.maxApp yes aux1 with
+    | mk targetYes aux2 =>
+      cases noCompile : compileExpHOL s.maxApp no aux2 with
+      | mk targetNo aux3 =>
+        have conditionCompiled : compileExpsHOL s.maxApp [condition] aux = ([targetCondition], aux1) := by
+          rw [compileExps_eq_list]
+          simp [compileExpListHOL, conditionCompile]
+        have yesCompiled : compileExpsHOL s.maxApp [yes] aux1 = ([targetYes], aux2) := by
+          rw [compileExps_eq_list]
+          simp [compileExpListHOL, yesCompile]
+        have noCompiled : compileExpsHOL s.maxApp [no] aux2 = ([targetNo], aux3) := by
+          rw [compileExps_eq_list]
+          simp [compileExpListHOL, noCompile]
+        have wholeCompiled : compileExpsHOL s.maxApp [.ifThenElse trace condition yes no] aux =
+            ([.ifThenElse targetCondition targetYes targetNo], aux3) := by
+          rw [compileExps_eq_list]
+          simp [compileExpListHOL, compileExpHOL, conditionCompile, yesCompile, noCompile]
+        have equal := compile.symm.trans wholeCompiled
+        cases equal
+        have yesInstalled : codeInstalled aux2 t.code :=
+          compileExps_codeInstalled s.maxApp [no] aux2 finalAux [targetNo] t.code noCompiled installed
+        have conditionInstalled : codeInstalled aux1 t.code :=
+          compileExps_codeInstalled s.maxApp [yes] aux1 aux2 [targetYes] t.code yesCompiled yesInstalled
+        have locs : ClosProps.fnLocationSomeExp condition ∧ ClosProps.fnLocationSomeExp yes ∧
+            ClosProps.fnLocationSomeExp no := by
+          simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+        have vars : ClosProps.fnVarsSomeExp condition ∧ ClosProps.fnVarsSomeExp yes ∧
+            ClosProps.fnVarsSomeExp no := by
+          simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
+        have conditionLoc : ClosProps.everyFnLocationSome [condition] := by simpa [ClosProps.everyFnLocationSome] using locs.1
+        have yesLoc : ClosProps.everyFnLocationSome [yes] := by simpa [ClosProps.everyFnLocationSome] using locs.2.1
+        have noLoc : ClosProps.everyFnLocationSome [no] := by simpa [ClosProps.everyFnLocationSome] using locs.2.2
+        have conditionVars : ClosProps.everyFnVarsSome [condition] := by simpa [ClosProps.everyFnVarsSome] using vars.1
+        have yesVars : ClosProps.everyFnVarsSome [yes] := by simpa [ClosProps.everyFnVarsSome] using vars.2.1
+        have noVars : ClosProps.everyFnVarsSome [no] := by simpa [ClosProps.everyFnVarsSome] using vars.2.2
+        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+        cases conditionRun : ClosSem.evaluate [condition] sourceEnv s with
+        | mk conditionResult sMiddle =>
+          rw [conditionRun] at run
+          cases conditionResult with
+          | err error =>
+            simp at run
+            rcases run with ⟨rfl, rfl⟩
+            exact evaluatePost_if_error s sMiddle t targetEnv f targetCondition targetYes targetNo error
+              (conditionIH s sMiddle t sourceEnv targetEnv f aux aux1 [targetCondition] (.err error)
+                clockBounded conditionRun noTypeError conditionCompiled conditionLoc annotations conditionVars
+                conditionInstalled envRelated states)
+          | val values =>
+            obtain ⟨value, rfl⟩ := ClosSem.evaluate_singleton_value condition sourceEnv s sMiddle values conditionRun
+            dsimp only at run
+            cases decoded : ClosSem.asBool value with
+            | none =>
+              simp [decoded] at run
+              exact False.elim (noTypeError run.1.symm)
+            | some choice =>
+              have conditionPost := conditionIH s sMiddle t sourceEnv targetEnv f aux aux1 [targetCondition] (.val [value])
+                clockBounded conditionRun (by simp) conditionCompiled conditionLoc annotations conditionVars conditionInstalled envRelated states
+              apply evaluatePost_if_success s sMiddle sFinal t sourceEnv targetEnv f condition targetCondition targetYes targetNo
+                value choice result conditionRun decoded envRelated conditionPost
+              intro tMiddle fMiddle middleStates middleEnv middleAnnotations growth
+              have maxApp : sMiddle.maxApp = s.maxApp := by
+                have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [condition] sourceEnv s
+                rw [conditionRun] at h
+                exact h
+              have middleClock : sMiddle.clock < clockBound := by
+                have h := ClosSem.evaluate_clock_le [condition] sourceEnv s
+                rw [conditionRun] at h
+                dsimp only at h
+                omega
+              cases choice with
+              | false =>
+                have branchRun : ClosSem.evaluate [no] sourceEnv sMiddle = (result, sFinal) := by simpa [decoded] using run
+                have branchCompiled : compileExpsHOL sMiddle.maxApp [no] aux2 = ([targetNo], finalAux) := by simpa [maxApp] using noCompiled
+                exact noIH sMiddle sFinal tMiddle sourceEnv targetEnv fMiddle aux2 finalAux [targetNo] result
+                  middleClock branchRun noTypeError branchCompiled noLoc middleAnnotations noVars (codeInstalled_subspt installed growth)
+                  middleEnv middleStates
+              | true =>
+                have branchRun : ClosSem.evaluate [yes] sourceEnv sMiddle = (result, sFinal) := by simpa [decoded] using run
+                have branchCompiled : compileExpsHOL sMiddle.maxApp [yes] aux1 = ([targetYes], aux2) := by simpa [maxApp] using yesCompiled
+                exact yesIH sMiddle sFinal tMiddle sourceEnv targetEnv fMiddle aux1 aux2 [targetYes] result
+                  middleClock branchRun noTypeError branchCompiled yesLoc middleAnnotations yesVars (codeInstalled_subspt yesInstalled growth)
+                  middleEnv middleStates
+
 end Flapjack.Compiler.Backend.ClosToBvl

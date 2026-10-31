@@ -303,4 +303,133 @@ theorem expressionSimulation_lists {C F : Type}
     | nil => exact singleton first
     | cons second tail => exact expressionSimulation_cons first second tail (singleton first) ih
 
+/-- Sequential composition exposing the source clock bound to the tail. -/
+theorem evaluate_cons_post_clock {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value)
+    (f : HolFiniteMapExact Nat Nat) (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
+    (targetHead : Bvl.Exp) (targetTail : List Bvl.Exp) (tailNonempty : targetTail ≠ [])
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (run : ClosSem.evaluate (first :: second :: rest) sourceEnv s = (result, sFinal))
+    (noTypeError : result ≠ .err (.abort .typeError))
+    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv)
+    (headIH : ∀ (headResult : Result (List ClosSem.Value) ClosSem.Value) (sMiddle : ClosSem.State C F),
+      ClosSem.evaluate [first] sourceEnv s = (headResult, sMiddle) →
+      headResult ≠ .err (.abort .typeError) →
+      evaluatePost s sMiddle t targetEnv f headResult [targetHead])
+    (tailIH : ∀ (sMiddle sLast : ClosSem.State C F) (tailResult : Result (List ClosSem.Value) ClosSem.Value)
+      (tMiddle : BvlSem.State C F) (fMiddle : HolFiniteMapExact Nat Nat),
+      ClosSem.evaluate (second :: rest) sourceEnv sMiddle = (tailResult, sLast) →
+      tailResult ≠ .err (.abort .typeError) → stateRel fMiddle sMiddle tMiddle →
+      envRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code sourceEnv targetEnv →
+      codeAnnotations sMiddle → sptSubspt t.code tMiddle.code → sMiddle.maxApp = s.maxApp →
+      sMiddle.clock ≤ s.clock →
+      evaluatePost sMiddle sLast tMiddle targetEnv fMiddle tailResult targetTail) :
+    evaluatePost s sFinal t targetEnv f result (targetHead :: targetTail) := by
+  rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+  cases headRun : ClosSem.evaluate [first] sourceEnv s with
+  | mk headResult sMiddle =>
+    rw [headRun] at run
+    cases headResult with
+    | err error =>
+      simp only at run
+      cases run
+      exact evaluatePost_cons_error s sFinal t targetEnv f targetHead targetTail tailNonempty error
+        (headIH (.err error) sFinal headRun noTypeError)
+    | val values =>
+      obtain ⟨value, rfl⟩ := ClosSem.evaluate_singleton_value first sourceEnv s sMiddle values headRun
+      cases tailRun : ClosSem.evaluate (second :: rest) sourceEnv sMiddle with
+      | mk tailResult sLast =>
+        simp only at run
+        rw [tailRun] at run
+        cases tailResult with
+        | val tailValues =>
+          simp at run
+          rcases run with ⟨rfl, rfl⟩
+          apply evaluatePost_cons_success s sMiddle sLast t sourceEnv targetEnv f first targetHead
+            value (.val tailValues) targetTail tailNonempty headRun envRelated (headIH _ _ headRun (by simp))
+          intro tMiddle fMiddle state env annotations growth
+          have maxApp : sMiddle.maxApp = s.maxApp := by
+            have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [first] sourceEnv s
+            rw [headRun] at h
+            exact h
+          have clock := ClosSem.evaluate_clock_le [first] sourceEnv s
+          rw [headRun] at clock
+          exact tailIH sMiddle sLast (.val tailValues) tMiddle fMiddle tailRun (by simp) state env annotations growth maxApp (by simpa using clock)
+        | err error =>
+          simp at run
+          rcases run with ⟨rfl, rfl⟩
+          apply evaluatePost_cons_success s sMiddle sLast t sourceEnv targetEnv f first targetHead
+            value (.err error) targetTail tailNonempty headRun envRelated (headIH _ _ headRun (by simp))
+          intro tMiddle fMiddle state env annotations growth
+          have maxApp : sMiddle.maxApp = s.maxApp := by
+            have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [first] sourceEnv s
+            rw [headRun] at h
+            exact h
+          have clock := ClosSem.evaluate_clock_le [first] sourceEnv s
+          rw [headRun] at clock
+          exact tailIH sMiddle sLast (.err error) tMiddle fMiddle tailRun noTypeError state env annotations growth maxApp (by simpa using clock)
+
+/-- Bounded simulation of a nonempty expression list from bounded head and
+tail simulations. -/
+theorem expressionSimulationBelow_cons {C F : Type} (clockBound : Nat) (first second : ClosLang.Exp)
+    (rest : List ClosLang.Exp)
+    (headIH : expressionSimulationBelow (C := C) (F := F) clockBound [first])
+    (tailIH : expressionSimulationBelow (C := C) (F := F) clockBound (second :: rest)) :
+    expressionSimulationBelow (C := C) (F := F) clockBound (first :: second :: rest) := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
+    locations annotations varsAnnotated installed envRelated states
+  cases headCompile : compileExpHOL s.maxApp first aux with
+  | mk targetHead auxMiddle =>
+    have headCompiled : compileExpsHOL s.maxApp [first] aux = ([targetHead], auxMiddle) := by
+      rw [compileExps_eq_list]
+      simp [compileExpListHOL, headCompile]
+    cases tailCompile : compileExpsHOL s.maxApp (second :: rest) auxMiddle with
+    | mk targetTail auxLast =>
+      have compiledEq : compileExpsHOL s.maxApp (first :: second :: rest) aux =
+          (targetHead :: targetTail, auxLast) := by
+        simp [compileExpsHOL, compileExpsSingleton_eq, headCompile, tailCompile]
+      have equal := compile.symm.trans compiledEq
+      cases equal
+      have tailNonempty : targetTail ≠ [] := by
+        have length := compileExps_length s.maxApp (second :: rest) auxMiddle targetTail finalAux tailCompile
+        intro empty
+        simp [empty] at length
+      have headInstalled : codeInstalled auxMiddle t.code :=
+        compileExps_codeInstalled s.maxApp (second :: rest) auxMiddle finalAux targetTail t.code tailCompile installed
+      simp only [ClosProps.everyFnLocationSome] at locations
+      simp only [ClosProps.everyFnVarsSome] at varsAnnotated
+      have headLocations : ClosProps.everyFnLocationSome [first] := by
+        simpa [ClosProps.everyFnLocationSome] using locations.1
+      have tailLocations : ClosProps.everyFnLocationSome (second :: rest) := by
+        simpa [ClosProps.everyFnLocationSome] using locations.2
+      have headVars : ClosProps.everyFnVarsSome [first] := by
+        simpa [ClosProps.everyFnVarsSome] using varsAnnotated.1
+      have tailVars : ClosProps.everyFnVarsSome (second :: rest) := by
+        simpa [ClosProps.everyFnVarsSome] using varsAnnotated.2
+      apply evaluate_cons_post_clock s sFinal t sourceEnv targetEnv f first second rest targetHead targetTail
+        tailNonempty result run noTypeError envRelated
+      · intro headResult sMiddle headRun headNotType
+        exact headIH s sMiddle t sourceEnv targetEnv f aux auxMiddle [targetHead] headResult clockBounded headRun
+          headNotType headCompiled headLocations annotations headVars headInstalled envRelated states
+      · intro sMiddle sLast tailResult tMiddle fMiddle tailRun tailNotType middleStates middleEnv middleAnnotations growth maxApp middleClock
+        have tailCompiled : compileExpsHOL sMiddle.maxApp (second :: rest) auxMiddle = (targetTail, finalAux) := by
+          simpa [maxApp] using tailCompile
+        exact tailIH sMiddle sLast tMiddle sourceEnv targetEnv fMiddle auxMiddle finalAux targetTail tailResult (by omega)
+          tailRun tailNotType tailCompiled tailLocations middleAnnotations tailVars
+          (codeInstalled_subspt installed growth) middleEnv middleStates
+
+/-- Bounded singleton simulations imply the bounded simulation for all
+expression lists, preserving the same clock limit across sequencing. -/
+theorem expressionSimulationBelow_lists {C F : Type} (clockBound : Nat)
+    (singleton : ∀ expression : ClosLang.Exp, expressionSimulationBelow (C := C) (F := F) clockBound [expression]) :
+    ∀ expressions, expressionSimulationBelow (C := C) (F := F) clockBound expressions := by
+  intro expressions
+  induction expressions with
+  | nil => exact expressionSimulation_below clockBound [] expressionSimulation_nil
+  | cons first rest ih =>
+    cases rest with
+    | nil => exact singleton first
+    | cons second tail => exact expressionSimulationBelow_cons clockBound first second tail (singleton first) ih
+
 end Flapjack.Compiler.Backend.ClosToBvl

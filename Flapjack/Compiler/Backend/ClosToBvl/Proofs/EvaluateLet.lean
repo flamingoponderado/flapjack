@@ -143,4 +143,75 @@ theorem expressionSimulation_let {C F : Type} (trace : BackendCommon.Tra)
             auxMiddle finalAux [targetBody] result bodyRun noTypeError bodyCompiled' bodyLocations
             middleAnnotations bodyVars (codeInstalled_subspt installed growth) middleEnv middleStates
 
+/-- Let-expression simulation under a source-clock bound. -/
+theorem expressionSimulationBelow_let {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
+    (bindings : List ClosLang.Exp) (body : ClosLang.Exp)
+    (bindingsIH : expressionSimulationBelow (C := C) (F := F) clockBound bindings)
+    (bodyIH : expressionSimulationBelow (C := C) (F := F) clockBound [body]) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.let trace bindings body] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
+    locations annotations varsAnnotated installed envRelated states
+  cases bindingsCompile : compileExpListHOL s.maxApp bindings aux with
+  | mk targetBindings auxMiddle =>
+    have bindingsCompiled : compileExpsHOL s.maxApp bindings aux = (targetBindings, auxMiddle) := by
+      rw [compileExps_eq_list]
+      exact bindingsCompile
+    cases bodyCompile : compileExpHOL s.maxApp body auxMiddle with
+    | mk targetBody auxLast =>
+      have bodyCompiled : compileExpsHOL s.maxApp [body] auxMiddle = ([targetBody], auxLast) := by
+        rw [compileExps_eq_list]
+        simp [compileExpListHOL, bodyCompile]
+      have wholeCompiled : compileExpsHOL s.maxApp [.let trace bindings body] aux =
+          ([.let targetBindings targetBody], auxLast) := by
+        rw [compileExps_eq_list]
+        simp [compileExpListHOL, compileExpHOL, bindingsCompile, bodyCompile]
+      have equal := compile.symm.trans wholeCompiled
+      cases equal
+      have bindingsInstalled : codeInstalled auxMiddle t.code :=
+        compileExps_codeInstalled s.maxApp [body] auxMiddle finalAux [targetBody] t.code bodyCompiled installed
+      have locationParts : ClosProps.fnLocationSomeExp body ∧ ClosProps.everyFnLocationSome bindings := by
+        simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+      have varParts : ClosProps.fnVarsSomeExp body ∧ ClosProps.everyFnVarsSome bindings := by
+        simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
+      have bindingsLocations : ClosProps.everyFnLocationSome bindings := locationParts.2
+      have bodyLocations : ClosProps.everyFnLocationSome [body] := by
+        simpa [ClosProps.everyFnLocationSome] using locationParts.1
+      have bindingsVars : ClosProps.everyFnVarsSome bindings := varParts.2
+      have bodyVars : ClosProps.everyFnVarsSome [body] := by
+        simpa [ClosProps.everyFnVarsSome] using varParts.1
+      rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+      cases bindingRun : ClosSem.evaluate bindings sourceEnv s with
+      | mk bindingResult sMiddle =>
+        rw [bindingRun] at run
+        cases bindingResult with
+        | err error =>
+          simp at run
+          rcases run with ⟨rfl, rfl⟩
+          exact evaluatePost_let_error s sMiddle t targetEnv f targetBindings targetBody error
+            (bindingsIH s sMiddle t sourceEnv targetEnv f aux auxMiddle targetBindings (.err error)
+              clockBounded bindingRun noTypeError bindingsCompiled bindingsLocations annotations bindingsVars
+              bindingsInstalled envRelated states)
+        | val values =>
+          have bodyRun : ClosSem.evaluate [body] (values ++ sourceEnv) sMiddle = (result, sFinal) := run
+          have bindingsPost := bindingsIH s sMiddle t sourceEnv targetEnv f aux auxMiddle targetBindings (.val values)
+            clockBounded bindingRun (by simp) bindingsCompiled bindingsLocations annotations bindingsVars
+            bindingsInstalled envRelated states
+          apply evaluatePost_let_success s sMiddle sFinal t sourceEnv targetEnv f bindings targetBindings targetBody
+            values result bindingRun envRelated bindingsPost
+          intro targetValues tMiddle fMiddle middleStates middleEnv middleAnnotations growth
+          have maxApp : sMiddle.maxApp = s.maxApp := by
+            have h := (ClosProps.evaluate_const (C := C) (F := F)).1 bindings sourceEnv s
+            rw [bindingRun] at h
+            exact h
+          have bodyCompiled' : compileExpsHOL sMiddle.maxApp [body] auxMiddle = ([targetBody], finalAux) := by
+            simpa [maxApp] using bodyCompiled
+          have middleClock : sMiddle.clock < clockBound := by
+            have h := ClosSem.evaluate_clock_le bindings sourceEnv s
+            rw [bindingRun] at h
+            dsimp only at h
+            omega
+          exact bodyIH sMiddle sFinal tMiddle (values ++ sourceEnv) (targetValues ++ targetEnv) fMiddle
+            auxMiddle finalAux [targetBody] result middleClock bodyRun noTypeError bodyCompiled' bodyLocations
+            middleAnnotations bodyVars (codeInstalled_subspt installed growth) middleEnv middleStates
+
 end Flapjack.Compiler.Backend.ClosToBvl

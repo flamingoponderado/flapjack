@@ -150,4 +150,80 @@ theorem expressionSimulation_handle {C F : Type} (trace : BackendCommon.Tra)
               auxMiddle finalAux [targetHandler] result handlerRun noTypeError handlerCompiled' handlerLoc
               middleAnnotations handlerVars (codeInstalled_subspt installed growth) middleEnv middleStates
 
+/-- Bounded simulation for exception handlers, including the handler clock bound. -/
+theorem expressionSimulationBelow_handle {C F : Type} (clockBound : Nat) (trace : BackendCommon.Tra)
+    (body handler : ClosLang.Exp)
+    (bodyIH : expressionSimulationBelow (C := C) (F := F) clockBound [body])
+    (handlerIH : expressionSimulationBelow (C := C) (F := F) clockBound [handler]) :
+    expressionSimulationBelow (C := C) (F := F) clockBound [.handle trace body handler] := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result clockBounded run noTypeError compile
+    locations annotations varsAnnotated installed envRelated states
+  cases bodyCompile : compileExpHOL s.maxApp body aux with
+  | mk targetBody auxMiddle =>
+    cases handlerCompile : compileExpHOL s.maxApp handler auxMiddle with
+    | mk targetHandler auxLast =>
+      have bodyCompiled : compileExpsHOL s.maxApp [body] aux = ([targetBody], auxMiddle) := by
+        rw [compileExps_eq_list]
+        simp [compileExpListHOL, bodyCompile]
+      have handlerCompiled : compileExpsHOL s.maxApp [handler] auxMiddle = ([targetHandler], auxLast) := by
+        rw [compileExps_eq_list]
+        simp [compileExpListHOL, handlerCompile]
+      have wholeCompiled : compileExpsHOL s.maxApp [.handle trace body handler] aux =
+          ([.handle targetBody targetHandler], auxLast) := by
+        rw [compileExps_eq_list]
+        simp [compileExpListHOL, compileExpHOL, bodyCompile, handlerCompile]
+      have equal := compile.symm.trans wholeCompiled
+      cases equal
+      have bodyInstalled : codeInstalled auxMiddle t.code :=
+        compileExps_codeInstalled s.maxApp [handler] auxMiddle finalAux [targetHandler] t.code handlerCompiled installed
+      have locs : ClosProps.fnLocationSomeExp body ∧ ClosProps.fnLocationSomeExp handler := by
+        simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+      have vars : ClosProps.fnVarsSomeExp body ∧ ClosProps.fnVarsSomeExp handler := by
+        simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using varsAnnotated
+      have bodyLoc : ClosProps.everyFnLocationSome [body] := by simpa [ClosProps.everyFnLocationSome] using locs.1
+      have handlerLoc : ClosProps.everyFnLocationSome [handler] := by simpa [ClosProps.everyFnLocationSome] using locs.2
+      have bodyVars : ClosProps.everyFnVarsSome [body] := by simpa [ClosProps.everyFnVarsSome] using vars.1
+      have handlerVars : ClosProps.everyFnVarsSome [handler] := by simpa [ClosProps.everyFnVarsSome] using vars.2
+      rw [ClosSem.evaluate, ClosSem.fixClock_evaluate] at run
+      cases bodyRun : ClosSem.evaluate [body] sourceEnv s with
+      | mk bodyResult sMiddle =>
+        rw [bodyRun] at run
+        cases bodyResult with
+        | val values =>
+          simp at run
+          rcases run with ⟨rfl, rfl⟩
+          exact evaluatePost_handle_value s sMiddle t targetEnv f targetBody targetHandler values
+            (bodyIH s sMiddle t sourceEnv targetEnv f aux auxMiddle [targetBody] (.val values)
+              clockBounded bodyRun (by simp) bodyCompiled bodyLoc annotations bodyVars bodyInstalled envRelated states)
+        | err error =>
+          cases error with
+          | abort reason =>
+            simp at run
+            rcases run with ⟨rfl, rfl⟩
+            exact evaluatePost_handle_abort s sMiddle t targetEnv f targetBody targetHandler reason
+              (bodyIH s sMiddle t sourceEnv targetEnv f aux auxMiddle [targetBody] (.err (.abort reason))
+                clockBounded bodyRun noTypeError bodyCompiled bodyLoc annotations bodyVars bodyInstalled envRelated states)
+          | raise value =>
+            have handlerRun : ClosSem.evaluate [handler] (value :: sourceEnv) sMiddle = (result, sFinal) := run
+            have bodyPost := bodyIH s sMiddle t sourceEnv targetEnv f aux auxMiddle [targetBody] (.err (.raise value))
+              clockBounded bodyRun (by simp) bodyCompiled bodyLoc annotations bodyVars bodyInstalled envRelated states
+            apply evaluatePost_handle_raise s sMiddle sFinal t sourceEnv targetEnv f body targetBody targetHandler
+              value result bodyRun envRelated bodyPost
+            intro targetValue tMiddle fMiddle middleStates middleEnv middleAnnotations growth
+            have maxApp : sMiddle.maxApp = s.maxApp := by
+              have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [body] sourceEnv s
+              rw [bodyRun] at h
+              exact h
+            have handlerCompiled' : compileExpsHOL sMiddle.maxApp [handler] auxMiddle = ([targetHandler], finalAux) := by
+              simpa [maxApp] using handlerCompiled
+            have middleClock : sMiddle.clock < clockBound := by
+              have h := ClosSem.evaluate_clock_le [body] sourceEnv s
+              rw [bodyRun] at h
+              dsimp only at h
+              omega
+            exact handlerIH sMiddle sFinal tMiddle (value :: sourceEnv) (targetValue :: targetEnv) fMiddle
+              auxMiddle finalAux [targetHandler] result middleClock handlerRun noTypeError handlerCompiled' handlerLoc
+              middleAnnotations handlerVars (codeInstalled_subspt installed growth) middleEnv middleStates
+
+
 end Flapjack.Compiler.Backend.ClosToBvl
