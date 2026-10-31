@@ -100,6 +100,59 @@ theorem wrapper_frame_invariants (f g : HolFiniteMapExact Nat Nat)
   · apply holesStill_delete f refs nextRefs (leastUnusedRef refs) tag left child right
     simpa only [sameUpdate] using unfinalised
 
+/-- Flapjack infrastructure: the auxiliary worker leaves the allocated
+wrapper frame's constructor tag and surrounding fields intact while filling
+its hole. Its reported hole is the original frame and stays outside the new
+pointer-map range. -/
+theorem wrapper_frame_contents (f g : HolFiniteMapExact Nat Nat)
+    (refs nextRefs : HolFiniteMapExact Nat (Ref Value)) (ptr tag : Nat)
+    (left right : List Value) (initial child : Value)
+    (outside : ptr ∉ mapRange f)
+    (unchanged : holesUnchangedExcept f (refs.updateEq (ptr,
+      .mutBlock tag false left initial right)) nextRefs {ptr})
+    (hole : CallBlockEnvironment.allocHoleHasVal g nextRefs [.refPtr false ptr] 0 left.length child) :
+    ptr ∉ mapRange g ∧ nextRefs.lookup ptr = some (.mutBlock tag false left child right) := by
+  obtain ⟨holePtr, holeTag, holeLeft, holeRight, _, ptrEq, _, _, holeOutside, holeFound⟩ := hole
+  have same : holePtr = ptr := by simpa [holEl, holHd] using ptrEq.symm
+  subst holePtr
+  have initialFound : (refs.updateEq (ptr, .mutBlock tag false left initial right)).lookup ptr =
+      some (.mutBlock tag false left initial right) := by
+    simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
+  obtain ⟨finalised, nextChild, preserved, _⟩ :=
+    unchanged ptr tag false left initial right outside initialFound
+  rw [holeFound] at preserved
+  cases preserved
+  exact ⟨holeOutside, holeFound⟩
+
+/-- Flapjack infrastructure: a successfully filled wrapper frame and its
+related child form a mutable constructor chain that can be finalised while
+preserving the heap relations. This is the successful wrapper's finalisation
+step, conditional on the auxiliary worker's simulation result. -/
+theorem wrapper_finalise_frame (f g : HolFiniteMapExact Nat Nat)
+    (oldRefs nextRefs sourceRefs : HolFiniteMapExact Nat (Ref Value)) (tag : Nat)
+    (left right sourceLeft sourceRight : List Value) (initial child sourceChild : Value)
+    (outside : leastUnusedRef oldRefs ∉ mapRange f)
+    (unchanged : holesUnchangedExcept f (oldRefs.updateEq (leastUnusedRef oldRefs,
+      .mutBlock tag false left initial right)) nextRefs {leastUnusedRef oldRefs})
+    (hole : CallBlockEnvironment.allocHoleHasVal g nextRefs [.refPtr false (leastUnusedRef oldRefs)]
+      0 left.length child)
+    (inner : mutableBlockRel g oldRefs (nextRefs.eraseEq (leastUnusedRef oldRefs)) sourceChild child)
+    (leftRelated : List.Forall₂ (valueRel g) sourceLeft left)
+    (rightRelated : List.Forall₂ (valueRel g) sourceRight right)
+    (heaps : stateRefRel g sourceRefs nextRefs)
+    (still : holesStillNotFinalised f oldRefs nextRefs) :
+    ∃ value refs, finaliseCons (.refPtr false (leastUnusedRef oldRefs)) nextRefs = some (value, refs) ∧
+      valueRel g (.block tag (sourceLeft ++ [sourceChild] ++ sourceRight)) value ∧
+      stateRefRel g sourceRefs refs ∧ holesUnchangedExcept g nextRefs refs ∅ ∧
+      holesStillNotFinalised f oldRefs refs := by
+  obtain ⟨outsideNext, found⟩ := wrapper_frame_contents f g oldRefs nextRefs
+    (leastUnusedRef oldRefs) tag left right initial child outside unchanged hole
+  have absent : leastUnusedRef oldRefs ∉ oldRefs.domain := by
+    simp [HolFiniteMapExact.domain, leastUnusedRef_unused]
+  have block := mutableBlockRel_cons g oldRefs nextRefs (leastUnusedRef oldRefs) tag
+    sourceLeft left sourceChild child sourceRight right inner leftRelated rightRelated found outsideNext absent
+  exact FinaliseRelation.evaluate_finalise_cons _ nextRefs f g sourceRefs _ oldRefs heaps block still
+
 /-- Flapjack infrastructure: a wrapper propagates errors from its auxiliary
 worker after allocating the constructor frame. -/
 theorem evaluate_wrapper_error {C F : Type} (tag : Nat) (left right : List Nat) (child : CallBlock)
@@ -140,5 +193,47 @@ theorem evaluate_wrapper_success {C F : Type} (tag : Nat) (left right : List Nat
   dsimp only
   rw [BviSem.evaluate, BviSem.fixClock_evaluate]
   simp [BviSem.evaluate, BviTailrec.doApp_finaliseCons_effect, BviTailrec.finaliseConsEffect, finalise]
+
+/-- Flapjack infrastructure: the successful auxiliary simulation yields an
+actual wrapper evaluation and a source-related final value. This assembles
+allocation, the worker's heap guarantees, and finalisation; the auxiliary
+simulation itself remains a separate proof obligation. -/
+theorem evaluate_wrapper_success_related {C F : Type}
+    (tag : Nat) (left right : List Nat) (child : CallBlock) (dest : Nat)
+    (env : List Value) (state next : BviState C F)
+    (f g : HolFiniteMapExact Nat Nat) (sourceRefs : HolFiniteMapExact Nat (Ref Value))
+    (sourceLeft sourceRight : List Value) (sourceChild childValue : Value)
+    (leftWf : wfVars env.length left) (rightWf : wfVars env.length right)
+    (workerRun : evaluate [workerAuxSource (shiftBlock 1 child) dest 0 right.length]
+      (.refPtr false (leastUnusedRef state.refs) :: env)
+      { state with refs := state.refs.updateEq (leastUnusedRef state.refs,
+        .mutBlock tag false (right.map (fun n => holEl n env)).reverse (.number 0)
+          (left.map (fun n => holEl n env)).reverse) } = (.val [unitValue], next))
+    (outside : leastUnusedRef state.refs ∉ mapRange f)
+    (unchanged : holesUnchangedExcept f (state.refs.updateEq (leastUnusedRef state.refs,
+      .mutBlock tag false (right.map (fun n => holEl n env)).reverse (.number 0)
+        (left.map (fun n => holEl n env)).reverse)) next.refs {leastUnusedRef state.refs})
+    (hole : CallBlockEnvironment.allocHoleHasVal g next.refs
+      [.refPtr false (leastUnusedRef state.refs)] 0 right.length childValue)
+    (inner : mutableBlockRel g state.refs (next.refs.eraseEq (leastUnusedRef state.refs)) sourceChild childValue)
+    (leftRelated : List.Forall₂ (valueRel g) sourceLeft (right.map (fun n => holEl n env)).reverse)
+    (rightRelated : List.Forall₂ (valueRel g) sourceRight (left.map (fun n => holEl n env)).reverse)
+    (heaps : stateRefRel g sourceRefs next.refs) (still : holesStillNotFinalised f state.refs next.refs) :
+    ∃ value refs, evaluate [wrapperBlockSource tag left child right dest] env state =
+        (.val [value], { next with refs := refs }) ∧
+      valueRel g (.block tag (sourceLeft ++ [sourceChild] ++ sourceRight)) value ∧
+      stateRefRel g sourceRefs refs ∧ holesUnchangedExcept g next.refs refs ∅ ∧
+      holesStillNotFinalised f state.refs refs := by
+  have hole' : CallBlockEnvironment.allocHoleHasVal g next.refs
+      [.refPtr false (leastUnusedRef state.refs)] 0
+      (right.map (fun n => holEl n env)).reverse.length childValue := by
+    simpa using hole
+  obtain ⟨value, refs, finalise, related, heaps', unchanged', still'⟩ :=
+    wrapper_finalise_frame f g state.refs next.refs sourceRefs tag
+      (right.map (fun n => holEl n env)).reverse (left.map (fun n => holEl n env)).reverse
+      sourceLeft sourceRight (.number 0) childValue sourceChild outside unchanged hole' inner
+      leftRelated rightRelated heaps still
+  exact ⟨value, refs, evaluate_wrapper_success tag left right child dest env state next
+    leftWf rightWf value refs workerRun finalise, related, heaps', unchanged', still'⟩
 
 end Flapjack.Compiler.Backend.BviTmc.CallBlockAllocation
