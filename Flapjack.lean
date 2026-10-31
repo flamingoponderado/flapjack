@@ -2834,6 +2834,7 @@ import Flapjack.Compiler.Encoders.X64.Machine.MemDecodeProof
 import Flapjack.Compiler.Encoders.X64.Machine.Congruence
 import Flapjack.Compiler.Encoders.X64.Machine.TargetProof
 import Flapjack.Compiler.Encoders.X64.Machine.StepAgree
+import Flapjack.Compiler.Encoders.X64.Machine.Simulate
 import Flapjack.X64.NativeSource
 import Flapjack.X64.NativeCLIAdapter
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32InstanceExecutable
