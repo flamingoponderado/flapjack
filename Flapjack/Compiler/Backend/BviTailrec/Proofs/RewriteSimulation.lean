@@ -2961,6 +2961,25 @@ theorem rewriteTail_op_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlS
   rw [scanEq] at noChoice
   simp at noChoice
 
+/-- Block-from-list construction preserves the rewrite simulation. -/
+theorem rewriteTail_op_blockFromList {C F : Type} (tag : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.blockOp (.fromList tag)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.blockOp (.fromList tag)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.blockOp (.fromList tag)) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_blockFromList tag
+  · exact doApp_blockFromList_error tag
+  · exact hyp
+
 /-- Complete label-operation case of the source-shaped simulation. -/
 theorem rewriteTail_op_label {C F : Type} (label : Nat) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
@@ -3056,6 +3075,30 @@ theorem rewriteTail_op_setGlobal {C F : Type} (index : Nat) (args : List Bvi.Exp
   · exact doApp_setGlobal_error index
   · exact hyp
 
+/-- Global allocation propagates argument errors; a primitive application
+itself would produce the excluded type error. -/
+theorem rewriteTail_op_allocGlobal {C F : Type} (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.globOp .allocGlobal) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.globOp .allocGlobal) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.globOp .allocGlobal) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · intro values s t u v _ run
+    rw [doApp_allocGlobal] at run
+    contradiction
+  · intro values s error run
+    rw [doApp_allocGlobal] at run
+    exact (SemanticPrimitivesHOL.Result.err.inj run).symm
+  · exact hyp
+
 /-- Complete global-pointer write operation case of the source-shaped simulation. -/
 theorem rewriteTail_op_setGlobalsPtr {C F : Type}  (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
@@ -3074,6 +3117,24 @@ theorem rewriteTail_op_setGlobalsPtr {C F : Type}  (args : List Bvi.Exp)
   · exact stateRel_doApp_setGlobalsPtr
   · exact doApp_setGlobalsPtr_error
   · exact hyp
+
+/-- Every BVI global primitive satisfies the rewrite simulation. -/
+theorem rewriteTail_op_globOp {C F : Type} (operation : ClosLang.GlobOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.globOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.globOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  cases operation with
+  | global index => exact rewriteTail_op_global index args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | setGlobal index => exact rewriteTail_op_setGlobal index args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | allocGlobal => exact rewriteTail_op_allocGlobal args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | globalsPtr => exact rewriteTail_op_globalsPtr args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  | setGlobalsPtr => exact rewriteTail_op_setGlobalsPtr args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
 
 /-- Complete operation case for integer primitives that the accumulator scan
 does not recognize, including subtraction, division, and comparisons. -/

@@ -467,6 +467,67 @@ theorem doApp_intConst_error {C F : Type} (number : Int) (args : List Value)
     · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, small] at run
     · simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, small] using run.symm
 
+/-- The BVI global allocation primitive always reports a type error. -/
+theorem doApp_allocGlobal {C F : Type} (args : List Value) (state : BviSem.BviState C F) :
+    BviSem.doApp (.globOp .allocGlobal) args state = .err (.abort .typeError) := by
+  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux]
+
+/-- Value computed by BVI's two-argument block-from-list primitive. -/
+def blockFromListValue (tag : Nat) (args : List Value) : Option Value :=
+  match args with
+  | [.number length, list] => do
+    let values ← valueToList list
+    if length = Int.ofNat values.length then some (.block tag values) else none
+  | _ => none
+
+/-- Constructing a block from a list is pure in BVI; the length check is part
+of the source dispatcher. -/
+theorem doApp_blockFromList_pure {C F : Type} (tag : Nat) (args : List Value)
+    (state : BviSem.BviState C F) :
+    BviSem.doApp (.blockOp (.fromList tag)) args state =
+      match blockFromListValue tag args with
+      | none => .err (.abort .typeError)
+      | some value => .val (value, state) := by
+  cases args with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, blockFromListValue]
+  | cons length rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, blockFromListValue]
+    | cons list rest =>
+      cases rest with
+      | cons extra xs => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, blockFromListValue]
+      | nil =>
+        cases length <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, blockFromListValue]
+        rename_i n
+        cases decoded : valueToList list with
+        | none => simp
+        | some values =>
+          split <;> simp_all
+
+/-- Successful block-from-list operations preserve related states. -/
+theorem stateRel_doApp_blockFromList {C F : Type} (tag : Nat) (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.blockOp (.fromList tag)) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.blockOp (.fromList tag)) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  rw [doApp_blockFromList_pure] at run ⊢
+  cases found : blockFromListValue tag args with
+  | none => simp [found] at run
+  | some result =>
+    simp [found] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨target, by simp, related⟩
+
+/-- Block-from-list failures are type errors. -/
+theorem doApp_blockFromList_error {C F : Type} (tag : Nat) (args : List Value)
+    (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.blockOp (.fromList tag)) args state = .err error) : error = .abort .typeError := by
+  rw [doApp_blockFromList_pure] at run
+  cases found : blockFromListValue tag args with
+  | none => simpa [found] using run.symm
+  | some value => simp [found] at run
+
 /-- The state-independent outcome of an external call, retaining exactly the
 reference-store and FFI updates that the BVI dispatcher copies back. -/
 noncomputable def ffiEffect {F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
