@@ -2521,4 +2521,166 @@ theorem evaluate_genericAppPartialExisting_pointer {C F : Type} (s : BvlSem.Stat
       (.val [.codePtr (partialAppFnLocation maxApp (remaining + saved.length) (saved.length + n))], s) :=
   evaluate_existingPartial_pointer s _ maxApp n remaining saved.length bound totalBound global
 
+/-- The two-slot offset version reads new arguments in reverse order. -/
+theorem evaluate_reverse_offsetVars2 {C F : Type} (n : Nat) (first second : BvlSem.Value)
+    (args rest : List BvlSem.Value) (s : BvlSem.State C F) (bound : n ≤ args.length) :
+    BvlSem.evaluate (((List.range n).map (fun i => Bvl.Exp.var (i + 2))).reverse)
+      (first :: second :: (args ++ rest)) s = (.val (args.take n).reverse, s) := by
+  induction n with
+  | zero => simp [BvlSem.evaluate]
+  | succ n ih =>
+    have smaller : n ≤ args.length := by omega
+    have indexBound : n < args.length := by omega
+    have varRun : BvlSem.evaluate [.var (n + 2)] (first :: second :: (args ++ rest)) s = (.val [args[n]], s) := by
+      simp [BvlSem.evaluate, List.getElem?_append, indexBound]
+    rw [List.range_succ, List.map_append, List.reverse_append]
+    change BvlSem.evaluateTuple (.var (n + 2) :: _, first :: second :: (args ++ rest), s) = _
+    rw [BvlProps.evaluateCons]
+    simp only [BvlSem.evaluateTuple, varRun]
+    dsimp only [List.append]
+    rw [ih smaller]
+    simp only [Flapjack.holHd, Prod.mk.injEq, Result.val.injEq, and_true]
+    simpa only [List.reverse_append, List.reverse_singleton, List.singleton_append] using
+      (congrArg List.reverse (List.take_append_getElem indexBound))
+
+/-- The extension body uses block extension to prepend the new saved fields. -/
+theorem genericAppPartialExistingBody_shape (maxApp n : Nat) :
+    genericAppPartialExistingBody maxApp n = .op (.blockOp (.consExtend 31))
+      ((.var (n + 3) :: mkConst 3 :: .var 0 :: .op (.intOp .add) [.var 0, mkConst (n + 4)] ::
+        mkEl (.op (.globOp (.global 0)) [])
+          (partialAppFnLocationCode maxApp
+            (.op (.intOp .add) [.var 0, .op (.intOp .add) [mkConst (n + 1), .var 1]])
+            (.op (.intOp .add) [.var 1, mkConst n])) ::
+        .var 1 :: .op (.blockOp (.elemAt 2)) [.var (n + 3)] ::
+        (List.range (n + 1)).map (fun i => .var (i + 2))).reverse) := by
+  unfold genericAppPartialExistingBody genericAppPartialExisting genericAppPartialChoice
+    genericAppPartialBranch generateGenericApp
+  change (match (match stripGenericAppTicks n (genericAppTicks n
+      (.ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) _ _)) with
+      | .ifThenElse _ _ existing => existing | _ => .var 0) with
+      | .let _ body => body | _ => .var 0) = _
+  rw [stripGenericAppTicks_generated]
+  rfl
+
+/-- Block extension preserves the old saved suffix after the newly supplied
+arguments, retaining the new stub pointer and original closure. -/
+theorem doApp_extendPartial {C F : Type} (s : BvlSem.State C F)
+    (n remaining savedCount : Nat) (args saved : List BvlSem.Value)
+    (oldPtr newPtr original : BvlSem.Value) (length : args.length = n + 1)
+    (savedLength : saved.length = savedCount) :
+    BvlSem.doApp (.blockOp (.consExtend 31))
+      (.block 31 (oldPtr :: .number (Int.ofNat remaining) :: original :: saved) ::
+        .number 3 :: .number (Int.ofNat savedCount) :: .number (Int.ofNat (savedCount + (n + 4))) ::
+        newPtr :: .number (Int.ofNat (remaining - (n + 1))) :: original :: args) s =
+    .val (.block 31 (newPtr :: .number (Int.ofNat (remaining - (n + 1))) :: original :: (args ++ saved)), s) := by
+  simp [BvlSem.doApp, BvlSem.applyBlock, length, savedLength]
+  have valid : ¬ ((savedCount : Int) < 0 ∨
+      (savedCount : Int) + 1 + 1 + 1 < 3 + (savedCount : Int) ∨
+      (savedCount : Int) + ((n : Int) + 4) = 0 ∨
+      ¬ (savedCount : Int) + ((n : Int) + 4) = (n : Int) + 1 + 1 + 1 + 1 + (savedCount : Int)) := by omega
+  simp only [if_neg valid]
+  simp [← savedLength]
+
+/-- The existing-partial body constructs the extended closure with the new
+arguments followed by the old saved arguments. -/
+theorem evaluate_genericAppPartialExistingBody {C F : Type} (s : BvlSem.State C F)
+    (maxApp n remaining : Nat) (args saved : List BvlSem.Value) (ptr original : BvlSem.Value)
+    (length : args.length = n + 1) (bound : n < remaining) (totalBound : remaining + saved.length < maxApp)
+    (global : ClosSem.getGlobal 0 s.globals = some (some (globalTable maxApp))) :
+    BvlSem.evaluate [genericAppPartialExistingBody maxApp n]
+      (.number (Int.ofNat saved.length) :: .number (Int.ofNat (remaining - (n + 1))) ::
+        (args ++ [.block 31 (ptr :: .number (Int.ofNat remaining) :: original :: saved)])) s =
+    (.val [.block 31 (.codePtr (partialAppFnLocation maxApp (remaining + saved.length) (saved.length + n)) ::
+      .number (Int.ofNat (remaining - (n + 1))) :: original :: (args ++ saved))], s) := by
+  let old := BvlSem.Value.block 31 (ptr :: .number (Int.ofNat remaining) :: original :: saved)
+  let newPtr := BvlSem.Value.codePtr (partialAppFnLocation maxApp (remaining + saved.length) (saved.length + n))
+  let env := .number (Int.ofNat saved.length) :: .number (Int.ofNat (remaining - (n + 1))) :: (args ++ [old])
+  let slot := mkEl (.op (.globOp (.global 0)) [])
+    (partialAppFnLocationCode maxApp
+      (.op (.intOp .add) [.var 0, .op (.intOp .add) [mkConst (n + 1), .var 1]])
+      (.op (.intOp .add) [.var 1, mkConst n]))
+  let totalExp := Bvl.Exp.op (.intOp .add) [.var 0, mkConst (n + 4)]
+  let originalExp := Bvl.Exp.op (.blockOp (.elemAt 2)) [.var (n + 3)]
+  have varsRun : BvlSem.evaluate (((List.range (n + 1)).map (fun i => Bvl.Exp.var (i + 2))).reverse) env s =
+      (.val args.reverse, s) := by
+    simpa [env, ← length] using evaluate_reverse_offsetVars2 (n + 1) (.number (Int.ofNat saved.length))
+      (.number (Int.ofNat (remaining - (n + 1)))) args [old] s (by omega)
+  have oldRun : BvlSem.evaluate [.var (n + 3)] env s = (.val [old], s) := by
+    simp [BvlSem.evaluate, env, ← length]
+  have originalRun : BvlSem.evaluate [originalExp] env s = (.val [original], s) := by
+    rw [show originalExp = .op (.blockOp (.elemAt 2)) [.var (n + 3)] from rfl,
+      BvlSem.evaluate, BvlSem.fixClock_evaluate, oldRun]
+    simp [BvlSem.doApp, BvlSem.applyBlock, old]
+  have remainingRun : BvlSem.evaluate [.var 1] env s =
+      (.val [.number (Int.ofNat (remaining - (n + 1)))], s) := by simp [BvlSem.evaluate, env]
+  have savedRun : BvlSem.evaluate [.var 0] env s = (.val [.number (Int.ofNat saved.length)], s) := by
+    simp [BvlSem.evaluate, env]
+  have slotRun : BvlSem.evaluate [slot] env s = (.val [newPtr], s) := by
+    exact evaluate_genericAppPartialExisting_pointer s maxApp n remaining args saved ptr original bound totalBound global
+  have totalRun : BvlSem.evaluate [totalExp] env s = (.val [.number (Int.ofNat (saved.length + (n + 4)))], s) := by
+    simp [totalExp, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyNumeric,
+      BvlSem.doIntApp, mkConst, env, Int.add_comm]
+  have constRun : BvlSem.evaluate [mkConst 3] env s = (.val [.number 3], s) := by
+    simp [mkConst, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyNumeric, BvlSem.doIntApp]
+  have tailRun : BvlSem.evaluate [originalExp, .var 1, slot, totalExp, .var 0, mkConst 3, .var (n + 3)] env s =
+      (.val [original, .number (Int.ofNat (remaining - (n + 1))), newPtr,
+        .number (Int.ofNat (saved.length + (n + 4))), .number (Int.ofNat saved.length), .number 3, old], s) := by
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, originalRun]
+    dsimp only
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, remainingRun]
+    dsimp only
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, slotRun]
+    dsimp only
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, totalRun]
+    dsimp only
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, savedRun]
+    dsimp only
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, constRun]
+    dsimp only
+    rw [oldRun]
+    rfl
+  have allRun : BvlSem.evaluate
+      (((List.range (n + 1)).map (fun i => Bvl.Exp.var (i + 2))).reverse ++
+        [originalExp, .var 1, slot, totalExp, .var 0, mkConst 3, .var (n + 3)]) env s =
+      (.val (args.reverse ++ [original, .number (Int.ofNat (remaining - (n + 1))), newPtr,
+        .number (Int.ofNat (saved.length + (n + 4))), .number (Int.ofNat saved.length), .number 3, old]), s) := by
+    change BvlSem.evaluateTuple (_, env, s) = _
+    rw [BvlProps.evaluateAppend]
+    simp [BvlSem.evaluateTuple, varsRun, tailRun]
+  rw [genericAppPartialExistingBody_shape, BvlSem.evaluate, BvlSem.fixClock_evaluate]
+  simp only [List.reverse_cons, List.append_assoc, List.cons_append, List.nil_append]
+  rw [allRun]
+  have extended := doApp_extendPartial s n remaining saved.length args saved ptr newPtr original length rfl
+  simp only [List.reverse_append, List.reverse_cons, List.reverse_nil, List.reverse_reverse,
+    List.nil_append, List.singleton_append, List.append_assoc] at *
+  simp only [List.cons_append, List.nil_append]
+  change (match BvlSem.doApp (.blockOp (.consExtend 31))
+    (.block 31 (ptr :: .number (Int.ofNat remaining) :: original :: saved) ::
+      .number 3 :: .number (Int.ofNat saved.length) :: .number (Int.ofNat (saved.length + (n + 4))) ::
+      newPtr :: .number (Int.ofNat (remaining - (n + 1))) :: original :: args) s with
+    | .err error => (Result.err error, s)
+    | .val (value, last) => (Result.val [value], last)) = _
+  rw [extended]
+
+/-- The generated generic stub extends an existing partial closure, retaining
+the original closure and the saved argument suffix. -/
+theorem evaluate_genericApp_partial_extend {C F : Type} (s : BvlSem.State C F)
+    (maxApp n remaining : Nat) (args saved : List BvlSem.Value) (ptr original : BvlSem.Value)
+    (length : args.length = n + 1) (bound : n < remaining)
+    (totalBound : remaining + saved.length < maxApp)
+    (global : ClosSem.getGlobal 0 s.globals = some (some (globalTable maxApp))) :
+    BvlSem.evaluate [generateGenericApp maxApp n]
+      (args ++ [.block 31 (ptr :: .number (Int.ofNat remaining) :: original :: saved)]) s =
+    if s.clock < n then (.err (.abort .timeoutError), { s with clock := 0 })
+    else (.val [.block 31 (.codePtr (partialAppFnLocation maxApp (remaining + saved.length) (saved.length + n)) ::
+      .number (Int.ofNat (remaining - (n + 1))) :: original :: (args ++ saved))], BvlSem.decClock n s) := by
+  rw [evaluate_genericApp_partial_existing s maxApp n remaining args (original :: saved) ptr length (by omega)]
+  split
+  · rfl
+  · have sub : Int.ofNat remaining - Int.ofNat (n + 1) = Int.ofNat (remaining - (n + 1)) := by
+      exact (Int.ofNat_sub (by omega)).symm
+    rw [sub, evaluate_genericAppPartialExisting_enter _ maxApp n remaining args saved ptr original length]
+    apply evaluate_genericAppPartialExistingBody _ maxApp n remaining args saved ptr original length bound totalBound
+    simpa [BvlSem.decClock] using global
+
 end Flapjack.Compiler.Backend.ClosToBvl
