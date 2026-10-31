@@ -299,4 +299,80 @@ theorem destThunk_isThunk_shape (values : List ClosSem.Value)
               rcases found with ⟨rfl, rfl⟩
               exact ⟨ptr, rfl, h⟩
 
+/-- A successful source force-update identifies the unevaluated thunk cell
+and a returned value that is not itself a thunk. -/
+theorem forceUpdate_shape (targets values : List ClosSem.Value)
+    (refs nextRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
+    (run : ClosSem.updateThunk targets refs values = some nextRefs) :
+    ∃ ptr value old, targets = [.refPtr false ptr] ∧ values = [value] ∧
+      ClosSem.destThunk [value] refs = .notThunk ∧ refs.lookup ptr = some (.thunk .notEvaluated old) ∧
+      nextRefs = refs.updateEq (ptr, .thunk .evaluated value) := by
+  cases targets with
+  | nil => simp [ClosSem.updateThunk] at run
+  | cons first rest =>
+    cases rest with
+    | cons second rest => simp [ClosSem.updateThunk] at run
+    | nil =>
+      cases values with
+      | nil => simp [ClosSem.updateThunk] at run
+      | cons value rest =>
+        cases rest with
+        | cons second rest => simp [ClosSem.updateThunk] at run
+        | nil =>
+          cases first <;> simp only [ClosSem.updateThunk] at run
+          all_goals try contradiction
+          case refPtr flag ptr =>
+            cases flag with
+            | true => simp at run
+            | false =>
+              cases inspected : ClosSem.destThunk [value] refs with
+              | badRef => simp [inspected] at run
+              | isThunk mode old => simp [inspected] at run
+              | notThunk =>
+                cases found : refs.lookup ptr with
+                | none => simp [inspected, ClosSem.storeThunk, found] at run
+                | some cell =>
+                  cases cell with
+                  | valueArray values => simp [inspected, ClosSem.storeThunk, found] at run
+                  | byteArray bytes => simp [inspected, ClosSem.storeThunk, found] at run
+                  | thunk mode old =>
+                    cases mode with
+                    | evaluated => simp [inspected, ClosSem.storeThunk, found] at run
+                    | notEvaluated =>
+                      simp [inspected, ClosSem.storeThunk, found] at run
+                      exact ⟨ptr, value, old, rfl, rfl, inspected, found, run.symm⟩
+
+/-- The state update after a successful source force is reproduced by BVL's
+thunk-update primitive, preserving the mapped-reference frame. -/
+theorem forceUpdate_related {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+    (thunk value : ClosSem.Value) (targetThunk targetValue : BvlSem.Value)
+    (thunkRel : vRel s.maxApp f t.refs t.code thunk targetThunk)
+    (valueRel : vRel s.maxApp f t.refs t.code value targetValue)
+    (nextRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
+    (run : ClosSem.updateThunk [thunk] s.refs [value] = some nextRefs) :
+    ∃ targetNext,
+      BvlSem.doApp (.thunkOp (.updateThunk .evaluated)) [targetThunk, targetValue] t =
+        .val (BvlSem.unitValue, targetNext) ∧
+      stateRel f { s with refs := nextRefs } targetNext ∧
+      vRel s.maxApp f targetNext.refs targetNext.code value targetValue ∧
+      unmappedRefsSubmap t.refs targetNext.refs f f ∧ targetNext.clock = t.clock := by
+  obtain ⟨ptr, result, old, thunkEq, valueEq, notThunk, found, refsEq⟩ :=
+    forceUpdate_shape [thunk] [value] s.refs nextRefs run
+  simp only [List.cons.injEq, and_true] at thunkEq valueEq
+  subst thunk
+  subst result
+  subst nextRefs
+  obtain ⟨targetPtr, rfl, mapped⟩ := vRel_refPtr_inv thunkRel
+  have good : ClosSem.badThunkUpdate .evaluated value s.refs = false := by
+    simp [ClosSem.badThunkUpdate, notThunk]
+  have updated := updateThunk_related s t f .evaluated ptr targetPtr mapped old found value targetValue states valueRel good
+  let targetNext := { t with refs := t.refs.updateEq (targetPtr, .thunk .evaluated targetValue) }
+  change _ ∧ BvlSem.doApp (.thunkOp (.updateThunk .evaluated)) [.refPtr false targetPtr, targetValue] t =
+    .val (BvlSem.unitValue, targetNext) ∧ stateRel f _ targetNext ∧ _ ∧
+    unmappedRefsSubmap t.refs targetNext.refs f f at updated
+  have submap : relocationSubmap f f := by intro key val lookup; exact lookup
+  exact ⟨targetNext, updated.2.1, updated.2.2.1, vRel_grow_refs valueRel submap updated.2.2.2.2,
+    updated.2.2.2.2, rfl⟩
+
 end Flapjack.Compiler.Backend.ClosToBvl
