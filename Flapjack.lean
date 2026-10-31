@@ -617,6 +617,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Total
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceCompile
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Integer
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Word
 import Flapjack.Test.ClosToBvlRecursive
@@ -811,6 +812,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvalInstall
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
