@@ -458,4 +458,120 @@ theorem evaluateApp_ordinary_exact {C F : Type} (s sFinal : ClosSem.State C F)
       | cons value tail =>
         cases tail <;> simp [ClosSem.evaluateApp]
 
+/-- A successful-clock exact application of a related ordinary closure
+simulates the source application itself. The remaining premise is the
+simulation induction hypothesis for the closure body. -/
+theorem evaluateApp_ordinary_exact_simulation {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity : Nat) (sourceEnv sourceArgs : List ClosSem.Value) (fields targetArgs rest : List BvlSem.Value)
+    (sourceBody : ClosLang.Exp) (targetClosure : BvlSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+      (sourceEnv, fields) (.closure (some ptr) [] sourceEnv arity sourceBody) targetClosure)
+    (envRelated : List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceEnv fields)
+    (argsRelated : List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceArgs targetArgs)
+    (arityMatch : sourceArgs.length = arity) (enough : arity ≤ s.clock)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (appRun : ClosSem.evaluateApp none (.closure (some ptr) [] sourceEnv arity sourceBody) sourceArgs s =
+      (result, sFinal)) (noType : result ≠ .err (.abort .typeError))
+    (bodyIH : expressionSimulation (C := C) (F := F) [sourceBody]) :
+    evaluatePost s sFinal t (targetArgs ++ [targetClosure] ++ rest) f result
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  have info : arity ≤ s.maxApp ∧ arity ≠ 0 ∧ ClosProps.everyFnLocationSome [sourceBody] ∧
+      ClosProps.everyFnVarsSome [sourceBody] := by
+    cases related with
+    | closure bound positive locations vars _ _ _ => exact ⟨bound, positive, locations, vars⟩
+  obtain ⟨bound, positive, locations, vars⟩ := info
+  cases bodyRun : ClosSem.evaluate [sourceBody] (sourceArgs ++ sourceEnv) (ClosSem.decClock arity s) with
+  | mk bodyResult bodyFinal =>
+    have sourceStep := evaluateApp_ordinary_exact s bodyFinal ptr arity sourceEnv sourceArgs sourceBody
+      bound positive arityMatch enough bodyResult bodyRun
+    rw [appRun] at sourceStep
+    cases sourceStep
+    exact evaluatePost_ordinary_exact_call s sFinal t f ptr arity sourceEnv sourceArgs fields targetArgs rest
+      sourceBody targetClosure states annotations related envRelated argsRelated arityMatch enough result bodyRun
+      noType locations vars bodyIH
+
+/-- An exact ordinary closure call with insufficient source clock times out on
+both sides, preserving the candidate state and reference relations. -/
+theorem evaluateApp_ordinary_exact_timeout {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity : Nat) (sourceEnv sourceArgs : List ClosSem.Value) (fields targetArgs rest : List BvlSem.Value)
+    (sourceBody : ClosLang.Exp) (targetClosure : BvlSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+      (sourceEnv, fields) (.closure (some ptr) [] sourceEnv arity sourceBody) targetClosure)
+    (envRelated : List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceEnv fields)
+    (argsRelated : List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceArgs targetArgs)
+    (arityMatch : sourceArgs.length = arity) (timeout : s.clock < arity) :
+    ClosSem.evaluateApp none (.closure (some ptr) [] sourceEnv arity sourceBody) sourceArgs s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) ∧
+    evaluatePost s { s with clock := 0 } t (targetArgs ++ [targetClosure] ++ rest) f
+      (.err (.abort .timeoutError))
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  have info : arity ≤ s.maxApp ∧ arity ≠ 0 := by
+    cases related with
+    | closure bound positive _ _ _ _ _ => exact ⟨bound, positive⟩
+  obtain ⟨bound, positive⟩ := info
+  have found := destClosure_ordinary_exact s.maxApp ptr arity sourceEnv sourceArgs sourceBody bound positive arityMatch
+  have nonempty : sourceArgs ≠ [] := by
+    intro empty
+    simp [empty] at arityMatch
+    exact positive arityMatch.symm
+  have sourceTimeout : ClosSem.evaluateApp none (.closure (some ptr) [] sourceEnv arity sourceBody) sourceArgs s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) := by
+    cases sourceArgs with
+    | nil => contradiction
+    | cons head tail =>
+      rw [ClosSem.evaluateApp, found]
+      simp [arityMatch, timeout]
+  have targetLength : targetArgs.length = arity := by
+    rw [← arityMatch]
+    exact argsRelated.length_eq.symm
+  let start : BvlSem.State C F := { t with clock := s.clock }
+  have shiftedRelated : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) start.refs start.code
+      (sourceEnv, fields) (.closure (some ptr) [] sourceEnv arity sourceBody) targetClosure := by
+    simpa [start] using related
+  obtain ⟨_, _, _, _, _, _, _, targetRun⟩ :=
+    clRel_ordinary_exact_call start s.maxApp ptr arity _ sourceEnv fields targetArgs rest sourceBody targetClosure
+      shiftedRelated targetLength envRelated.length_eq.symm
+  have targetTimeout : start.clock < arity := by simpa [start] using timeout
+  simp only [if_pos targetTimeout] at targetRun
+  refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, ?_, rfl⟩
+  · simpa [start] using targetRun
+  · simp [resultRel, excRel]
+  · exact (stateRel_clock f s t 0).2.mpr ((stateRel_clock f s t 0).1.mpr states)
+  · intro key value mapped
+    exact mapped
+  · intro key value mapped fresh
+    exact ⟨mapped, fresh⟩
+  · exact annotations
+
+/-- Exact ordinary closure application simulates both timeout and body
+execution, using the body simulation only when the source has enough clock. -/
+theorem evaluateApp_ordinary_exact_all {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity : Nat) (sourceEnv sourceArgs : List ClosSem.Value) (fields targetArgs rest : List BvlSem.Value)
+    (sourceBody : ClosLang.Exp) (targetClosure : BvlSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+      (sourceEnv, fields) (.closure (some ptr) [] sourceEnv arity sourceBody) targetClosure)
+    (envRelated : List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceEnv fields)
+    (argsRelated : List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceArgs targetArgs)
+    (arityMatch : sourceArgs.length = arity)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (appRun : ClosSem.evaluateApp none (.closure (some ptr) [] sourceEnv arity sourceBody) sourceArgs s =
+      (result, sFinal)) (noType : result ≠ .err (.abort .typeError))
+    (bodyIH : expressionSimulation (C := C) (F := F) [sourceBody]) :
+    evaluatePost s sFinal t (targetArgs ++ [targetClosure] ++ rest) f result
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  by_cases enough : arity ≤ s.clock
+  · exact evaluateApp_ordinary_exact_simulation s sFinal t f ptr arity sourceEnv sourceArgs fields targetArgs rest
+      sourceBody targetClosure states annotations related envRelated argsRelated arityMatch enough result appRun noType bodyIH
+  · obtain ⟨sourceTimeout, targetTimeout⟩ := evaluateApp_ordinary_exact_timeout s t f ptr arity sourceEnv sourceArgs
+      fields targetArgs rest sourceBody targetClosure states annotations related envRelated argsRelated arityMatch (by omega)
+    rw [sourceTimeout] at appRun
+    cases appRun
+    exact targetTimeout
+
 end Flapjack.Compiler.Backend.ClosToBvl
