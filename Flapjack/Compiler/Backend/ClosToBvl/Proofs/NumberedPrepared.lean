@@ -163,6 +163,57 @@ theorem compileCommonNoOpts_compiled_entry (config current : Config) (expression
     exact ⟨source, member, by simp only [equal]⟩
   · omega
 
+/-- The next location returned by preprocessing lies beyond the complete
+top-level entry interval. -/
+theorem compileCommonNoOpts_nextLoc_lower (config current : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp))
+    (preprocess : compileCommonNoOpts? config expressions = some (current, program)) :
+    config.nextLoc + max 1 expressions.length ≤ current.nextLoc := by
+  by_cases enabled : config.doMti || config.doCall
+  · simp [compileCommonNoOpts?, enabled] at preprocess
+  · cases known : config.knownConf with
+    | some k => simp [compileCommonNoOpts?, enabled, known] at preprocess
+    | none =>
+      let next := config.nextLoc + max 1 expressions.length
+      let aligned := if next % 2 = 0 then next else next + 1
+      cases numbered : ClosNumber.renumberList aligned expressions with
+      | mk nextLoc numberedExpressions =>
+        have run : compileCommonNoOpts? config expressions =
+            some ({ config with start := config.nextLoc, nextLoc := nextLoc, knownConf := none, callState := (.ln, []) },
+              ClosAnnotate.compile (chainExps config.nextLoc numberedExpressions)) := by
+          simp [compileCommonNoOpts?, enabled, known, next, aligned, numbered]
+        have equal := Option.some.inj (preprocess.symm.trans run)
+        cases equal
+        have monotone := ClosNumber.renumberList_start_le expressions aligned
+        simp only [numbered] at monotone
+        have lower : config.nextLoc + max 1 expressions.length ≤ aligned := by
+          dsimp [aligned, next]
+          split <;> omega
+        simp only
+        omega
+
+/-- All labels emitted by checked BVL conversion of the preprocessed program
+lie below its next fresh closure location, after adding the stub prefix. -/
+theorem compileCommonNoOpts_compiled_labels_below (config current : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp)) (target : List (Nat × Nat × Bvl.Exp))
+    (preprocess : compileCommonNoOpts? config expressions = some (current, program))
+    (convert : compileProg? current.maxApp program = some target)
+    (label : Nat) (member : label ∈ target.map Prod.fst) :
+    label < current.nextLoc + numStubs current.maxApp := by
+  rw [compileProg_checked_codeLocations current.maxApp program target convert] at member
+  simp only [List.mem_append, List.mem_map, List.mem_reverse] at member
+  cases member with
+  | inl entries =>
+    obtain ⟨source, sourceMem, equal⟩ := entries
+    have entry : source.1 ∈ program.map Prod.fst := List.mem_map.mpr ⟨source, sourceMem, rfl⟩
+    have bounds := (compileCommonNoOpts_entry_labels config current expressions program preprocess).2 source.1 entry
+    have lower := compileCommonNoOpts_nextLoc_lower config current expressions program preprocess
+    omega
+  | inr locations =>
+    obtain ⟨source, sourceMem, equal⟩ := locations
+    have bounds := compileCommonNoOpts_location_bounds config current expressions program preprocess source sourceMem
+    omega
+
 /-- Stateful numbering supplies locations for each incremental main program;
 annotation then supplies variables and preserves the supplied auxiliary-code
 locations. The auxiliary code is passed through numbering unchanged. -/
