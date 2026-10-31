@@ -1727,4 +1727,109 @@ theorem evaluate_genericApp_partial_normal {C F : Type} (s : BvlSem.State C F)
     rw [test]
     simp [BvlSem.boolValue, BackendCommon.boolToTag, BackendCommon.trueTag, BvlSem.asBool]
 
+/-- The reversed generated variable sequence reads a prefix of the argument
+list in reverse order without changing the state. -/
+theorem evaluate_reverse_offsetVars {C F : Type} (n : Nat) (first : BvlSem.Value)
+    (args rest : List BvlSem.Value) (s : BvlSem.State C F) (bound : n ≤ args.length) :
+    BvlSem.evaluate (((List.range n).map (fun i => Bvl.Exp.var (i + 1))).reverse)
+      (first :: (args ++ rest)) s = (.val (args.take n).reverse, s) := by
+  induction n with
+  | zero => simp [BvlSem.evaluate]
+  | succ n ih =>
+    have smaller : n ≤ args.length := by omega
+    have indexBound : n < args.length := by omega
+    have varRun : BvlSem.evaluate [.var (n + 1)] (first :: (args ++ rest)) s = (.val [args[n]], s) := by
+      simp [BvlSem.evaluate, List.getElem?_append, indexBound]
+    rw [List.range_succ, List.map_append, List.reverse_append]
+    change BvlSem.evaluateTuple (.var (n + 1) :: _, first :: (args ++ rest), s) = _
+    rw [BvlProps.evaluateCons]
+    simp only [BvlSem.evaluateTuple, varRun]
+    dsimp only [List.append]
+    rw [ih smaller]
+    simp only [Flapjack.holHd, Prod.mk.injEq, Result.val.injEq, and_true]
+    simpa only [List.reverse_append, List.reverse_singleton, List.singleton_append] using
+      (congrArg List.reverse (List.take_append_getElem indexBound))
+
+/-- The normal partial-application branch constructs a block from the table
+pointer, remaining arity, original closure and saved arguments. -/
+theorem genericAppPartialNormal_shape (maxApp n : Nat) :
+    genericAppPartialNormal maxApp n = .op (.blockOp (.cons 31))
+      ((mkEl (.op (.globOp (.global 0)) [])
+          (partialAppFnLocationCode maxApp (.op (.blockOp (.elemAt 1)) [.var (n + 2)]) (mkConst n)) ::
+        .var 0 :: .var (n + 2) :: (List.range (n + 1)).map (fun i => .var (i + 1))).reverse) := by
+  unfold genericAppPartialNormal genericAppPartialChoice genericAppPartialBranch generateGenericApp
+  change (match stripGenericAppTicks n (genericAppTicks n
+      (.ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) _ _)) with
+      | .ifThenElse _ normal _ => normal
+      | _ => .var 0) = _
+  rw [stripGenericAppTicks_generated]
+  rfl
+
+/-- The normal partial branch constructs the target closure with the selected
+stub pointer, remaining arity, original closure, and saved arguments. -/
+theorem evaluate_genericAppPartialNormal {C F : Type} (s : BvlSem.State C F)
+    (maxApp n total : Nat) (args fields : List BvlSem.Value) (ptr : BvlSem.Value) (remaining : Int)
+    (length : args.length = n + 1) (previousBound : n < total) (totalBound : total < maxApp)
+    (global : ClosSem.getGlobal 0 s.globals = some (some (globalTable maxApp))) :
+    BvlSem.evaluate [genericAppPartialNormal maxApp n]
+      (.number remaining :: (args ++ [.block 30 (ptr :: .number (Int.ofNat total) :: fields)])) s =
+    (.val [.block 31 (.codePtr (partialAppFnLocation maxApp total n) :: .number remaining ::
+      .block 30 (ptr :: .number (Int.ofNat total) :: fields) :: args)], s) := by
+  let closure := BvlSem.Value.block 30 (ptr :: .number (Int.ofNat total) :: fields)
+  let env := .number remaining :: (args ++ [closure])
+  let slot := mkEl (.op (.globOp (.global 0)) [])
+    (partialAppFnLocationCode maxApp (.op (.blockOp (.elemAt 1)) [.var (n + 2)]) (mkConst n))
+  have varsRun : BvlSem.evaluate (((List.range (n + 1)).map (fun i => Bvl.Exp.var (i + 1))).reverse) env s =
+      (.val args.reverse, s) := by
+    simpa [env, ← length] using evaluate_reverse_offsetVars (n + 1) (.number remaining) args [closure] s (by omega)
+  have closureRun : BvlSem.evaluate [.var (n + 2)] env s = (.val [closure], s) := by
+    simp [BvlSem.evaluate, env, ← length]
+  have remainingRun : BvlSem.evaluate [.var 0] env s = (.val [.number remaining], s) := by
+    simp [BvlSem.evaluate, env]
+  have slotRun : BvlSem.evaluate [slot] env s =
+      (.val [.codePtr (partialAppFnLocation maxApp total n)], s) := by
+    simpa [slot, env, closure, length, Nat.add_assoc] using
+      evaluate_partialApp_stub_pointer s args (.number remaining) ptr 30 fields maxApp total n totalBound previousBound global
+  have tailRun : BvlSem.evaluate [.var (n + 2), .var 0, slot] env s =
+      (.val [closure, .number remaining, .codePtr (partialAppFnLocation maxApp total n)], s) := by
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, closureRun]
+    dsimp only
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, remainingRun]
+    dsimp only
+    rw [slotRun]
+    rfl
+  have allRun : BvlSem.evaluate
+      (((List.range (n + 1)).map (fun i => Bvl.Exp.var (i + 1))).reverse ++ [.var (n + 2), .var 0, slot]) env s =
+      (.val (args.reverse ++ [closure, .number remaining, .codePtr (partialAppFnLocation maxApp total n)]), s) := by
+    change BvlSem.evaluateTuple (_, env, s) = _
+    rw [BvlProps.evaluateAppend]
+    simp [BvlSem.evaluateTuple, varsRun, tailRun]
+  rw [genericAppPartialNormal_shape, BvlSem.evaluate, BvlSem.fixClock_evaluate]
+  simp only [List.reverse_cons, List.append_assoc, List.cons_append, List.nil_append]
+  rw [allRun]
+  simp [BvlSem.doApp, BvlSem.applyBlock, closure]
+
+/-- The generic application stub either times out or constructs the expected
+partial closure for an ordinary closure with more arguments still needed. -/
+theorem evaluate_genericApp_partial_new {C F : Type} (s : BvlSem.State C F)
+    (maxApp n total : Nat) (args fields : List BvlSem.Value) (ptr : BvlSem.Value)
+    (length : args.length = n + 1) (previousBound : n < total) (totalBound : total < maxApp)
+    (global : ClosSem.getGlobal 0 s.globals = some (some (globalTable maxApp))) :
+    BvlSem.evaluate [generateGenericApp maxApp n]
+      (args ++ [.block 30 (ptr :: .number (Int.ofNat total) :: fields)]) s =
+    if s.clock < n then (.err (.abort .timeoutError), { s with clock := 0 })
+    else (.val [.block 31 (.codePtr (partialAppFnLocation maxApp total n) ::
+      .number (Int.ofNat (total - (n + 1))) ::
+      .block 30 (ptr :: .number (Int.ofNat total) :: fields) :: args)], BvlSem.decClock n s) := by
+  have bound : n + 1 ≤ total := by omega
+  rw [evaluate_genericApp_partial_normal s maxApp n total args fields ptr length bound]
+  split
+  · rfl
+  · have globalDec : ClosSem.getGlobal 0 (BvlSem.decClock n s).globals = some (some (globalTable maxApp)) := by
+      simpa [BvlSem.decClock] using global
+    rw [evaluate_genericAppPartialNormal (BvlSem.decClock n s) maxApp n total args fields ptr _
+      length previousBound totalBound globalDec]
+    simp only [Int.ofNat_eq_natCast]
+    rw [← Int.natCast_sub bound]
+
 end Flapjack.Compiler.Backend.ClosToBvl
