@@ -309,6 +309,8 @@ def main():
     parser.add_argument("--cake", type=Path, default=ROOT / ".lake/build/bin/cake")
     parser.add_argument("--type-cases", type=int, default=200)
     parser.add_argument("--compile-cases", type=int, default=20)
+    parser.add_argument("--compile-config-cases", type=int, default=8,
+                        help="generated basis programs compiled with varied optimization settings")
     parser.add_argument("--explore-cases", type=int, default=0,
                         help="diverse programs comparing complete explorer reports")
     parser.add_argument("--rich-cases", type=int, default=20,
@@ -344,7 +346,7 @@ def main():
     parser.add_argument("--edge-seed", type=int, default=83219)
     parser.add_argument("--timeout", type=int, default=90)
     args = parser.parse_args()
-    if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.extended_cases < 0 or args.explore_cases < 0 or args.sexp_cases < 0 or
+    if (args.type_cases < 0 or args.compile_cases < 0 or args.compile_config_cases < 0 or args.rich_cases < 0 or args.extended_cases < 0 or args.explore_cases < 0 or args.sexp_cases < 0 or
             not 0 <= args.integration_cases <= len(INTEGRATION_PROGRAMS) or
             args.declaration_cases < 0 or args.handler_cases < 0 or not 0 <= args.annotation_cases <= 320 or
             args.config_cases < 0 or args.config_error_cases < 0 or
@@ -432,6 +434,20 @@ def main():
         source = f"fun f x = {integer_expression(compile_rng, depth)}; val _ = print_int (f 7);"
         compare(args.reference, args.cake, [], source, args.timeout, True)
     print(f"{args.compile_cases} generated programs match complete pinned RISC-V output", flush=True)
+    compile_config_rng = random.Random(args.compile_seed ^ 51073)
+    optimization_groups = [BACKEND_OPTIONS[i] for i in (0, 1, 2, 3, 4, 5)]
+    for i in range(args.compile_config_cases):
+        if i % 2 == 0:
+            depth = compile_config_rng.randint(1, 3)
+            source = f"fun f x = {integer_expression(compile_config_rng, depth)}; val _ = print_int (f 7);"
+        else:
+            source = rich_program(compile_config_rng)
+        groups = compile_config_rng.sample(optimization_groups, k=compile_config_rng.randint(1, 4))
+        options = [compile_config_rng.choice(group) for group in groups]
+        compare(args.reference, args.cake, options, source, args.timeout, True)
+    if args.compile_config_cases:
+        print(f"{args.compile_config_cases} generated basis programs match complete RISC-V output "
+              "with varied optimization settings", flush=True)
     for _ in range(args.rich_cases):
         compare(args.reference, args.cake, [], rich_program(compile_rng), args.timeout, True)
     print(f"{args.rich_cases} diverse programs match complete pinned RISC-V output", flush=True)
