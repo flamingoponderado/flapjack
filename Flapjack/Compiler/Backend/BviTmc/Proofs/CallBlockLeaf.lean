@@ -16,6 +16,7 @@ theorem evaluate_rcall_core {C F : Type} (loc ticks : Nat) (indices : List Nat)
     (notTypeError : result ≠ .err (.abort .typeError)) (wf : wfVars env1.length indices)
     (environments : envRel opt f env1 env2) (states : stateRel f source target)
     (bodyIH : ∀ body body' args args' bodyResult,
+      ticks + 1 ≤ source.clock →
       findCode (some loc) (indices.map (fun n => holEl n env1)) source.code = some (args, body) →
       findCode (some loc) (indices.map (fun n => holEl n env2)) target.code = some (args', body') →
       envRel false f args args' → noMutcons body →
@@ -98,7 +99,7 @@ theorem evaluate_rcall_core {C F : Type} (loc ticks : Nat) (indices : List Nat)
           exact notTypeError run.1.symm
         cases bodyPair
         obtain ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩ :=
-          bodyIH body body' args args' result found targetFound argsRel safe bodyChanged bodyRun notTypeError
+          bodyIH body body' args args' result (by omega) found targetFound argsRel safe bodyChanged bodyRun notTypeError
         refine ⟨next, g, targetResult, ?_, related, nextStates, extension, fresh, unchanged, still⟩
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
         simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte,
@@ -132,6 +133,7 @@ theorem evaluate_cb_ordinary {C F : Type} (loc : Nat) (cb : CallBlock)
     (environments : envRel opt f env1 env2) (states : stateRel f source target)
     (bodyIH : ∀ ticks indices body body' args args' bodyResult bodyFinal,
       wfVars env1.length indices →
+      ticks + 1 ≤ source.clock →
       findCode (some loc) (indices.map (fun n => holEl n env1)) source.code = some (args, body) →
       findCode (some loc) (indices.map (fun n => holEl n env2)) target.code = some (args', body') →
       envRel false f args args' → noMutcons body →
@@ -148,8 +150,8 @@ theorem evaluate_cb_ordinary {C F : Type} (loc : Nat) (cb : CallBlock)
   intro ticks indices leafResult leafFinal leafWf leafRun leafSafe
   apply evaluate_rcall_core loc ticks indices source env1 leafResult leafFinal opt f target env2
     leafRun leafSafe leafWf environments states
-  intro body body' args args' bodyResult sourceFound targetFound argsRel safe changed bodyRun bodySafe
-  exact bodyIH ticks indices body body' args args' bodyResult leafFinal leafWf sourceFound targetFound
+  intro body body' args args' bodyResult clockBound sourceFound targetFound argsRel safe changed bodyRun bodySafe
+  exact bodyIH ticks indices body body' args args' bodyResult leafFinal leafWf clockBound sourceFound targetFound
     argsRel safe changed bodyRun bodySafe
 
 end Flapjack.Compiler.Backend.BviTmc.CallBlockLeaf

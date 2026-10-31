@@ -10,7 +10,8 @@ def WorkerBodyIH {C F : Type} (loc dest : Nat) (source : BviState (Nat × C) F)
     (env1 env2 : List Value) (f : HolFiniteMapExact Nat Nat) : Prop :=
   ∀ (ticks : Nat) (indices : List Nat) (target : BviState C F) (ptr idx : Nat) (initial : Value)
     (body worker : Bvi.Exp) (bodyResult : BviResult) (bodyFinal : BviState (Nat × C) F),
-    wfVars env1.length indices → stateRel f source target → optimisedCode loc dest source.code target.code →
+    wfVars env1.length indices → ticks + 1 ≤ source.clock → stateRel f source target →
+    optimisedCode loc dest source.code target.code →
     findCode (some loc) (indices.map (fun n => holEl n env1)) source.code =
       some (indices.map (fun n => holEl n env1), body) →
     evaluate [body] (indices.map (fun n => holEl n env1)) (decClock (ticks + 1) source) =
@@ -45,8 +46,8 @@ theorem evaluate_aux_cb {C F : Type} (loc dest : Nat) (cb : CallBlock)
   | rCall ticks indices =>
     apply CallBlockWorkerLeaf.evaluate_aux_rcall loc dest ticks indices source target env1 env2 extras opt f
       slot ptr idx oldRefs initial result final run notTypeError environments wf states hole pointer domain code
-    intro body worker bodyResult found bodyRun safe noMut rewrite envRelated filled notFinal
-    exact bodyIH ticks indices target ptr idx initial body worker bodyResult final wf states code found bodyRun safe
+    intro body worker bodyResult clockBound found bodyRun safe noMut rewrite envRelated filled notFinal
+    exact bodyIH ticks indices target ptr idx initial body worker bodyResult final wf clockBound states code found bodyRun safe
       noMut rewrite envRelated filled notFinal
   | callBlock tag left child right ih =>
     apply evaluate_aux_frame_core loc dest tag left right child source target env1 env2 extras opt f oldRefs

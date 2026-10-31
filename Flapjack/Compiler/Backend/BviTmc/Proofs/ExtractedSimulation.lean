@@ -123,6 +123,7 @@ theorem evaluate_extracted_worker {C F : Type} (loc dest ptr : Nat) (cb : CallBl
     (bindingsIH : ∀ r mid, evaluate bindings env1 source = (r, mid) →
       r ≠ .err (.abort .typeError) → Core bindings env2 f target r mid)
     (bodyIH : ∀ values values' mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
+      evaluate bindings env1 source = (.val values, mid) →
       evaluate [callBlockToBvi loc cb] (values ++ env1) mid = (result, final) →
       envRel true g (values ++ env1) (values' ++ env2) → stateRel g mid t →
       optimisedCode loc dest mid.code t.code →
@@ -133,12 +134,12 @@ theorem evaluate_extracted_worker {C F : Type} (loc dest ptr : Nat) (cb : CallBl
     run extracted (Nat.le_refl _)
   apply LetWorkerBlock.evaluate_let_worker_block bindings (callBlockToBvi loc cb) cb source env1 result final
     f target env2 loc dest ptr sourceRun notTypeError environments initial hole notFinal pointer code bindingsIH
-  intro values values' mid g t valueLength blockRun nextEnv nextStates nextHole nextNotFinal nextPointer nextCode
+  intro values values' mid g t valueLength sourceBindings blockRun nextEnv nextStates nextHole nextNotFinal nextPointer nextCode
   have blockWf : wfBlock (values ++ env1).length cb := by
     apply wfBlock_expand bindings.length (values ++ env1).length cb (toBlock_wf env1.length loc e bindings cb extracted)
     simp [List.length_append, valueLength]
   exact CallBlockWorkerSimulation.evaluate_worker_cb loc dest ptr cb mid t (values ++ env1) (values' ++ env2) g
     initial result final blockRun notTypeError nextEnv blockWf nextStates nextHole nextNotFinal nextPointer nextCode
-    (bodyIH values values' mid g t blockRun nextEnv nextStates nextCode)
+    (bodyIH values values' mid g t sourceBindings blockRun nextEnv nextStates nextCode)
 
 end Flapjack.Compiler.Backend.BviTmc.ExtractedSimulation

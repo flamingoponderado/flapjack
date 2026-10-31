@@ -393,6 +393,7 @@ theorem evaluate_aux_rcall {C F : Type} (loc workerLoc ticks : Nat) (indices : L
     (pointer : holEl slot extras = .refPtr false ptr) (domain : oldRefs.domain ⊆ target.refs.domain)
     (code : optimisedCode loc workerLoc source.code target.code)
     (bodyIH : ∀ body worker bodyResult,
+      ticks + 1 ≤ source.clock →
       findCode (some loc) (indices.map (fun n => holEl n env1)) source.code =
         some (indices.map (fun n => holEl n env1), body) →
       evaluate [body] (indices.map (fun n => holEl n env1)) (decClock (ticks + 1) source) =
@@ -465,7 +466,7 @@ theorem evaluate_aux_rcall {C F : Type} (loc workerLoc ticks : Nat) (indices : L
         apply evaluate_aux_rcall_from_body loc workerLoc ticks indices source target env1 env2 extras opt f
           slot ptr idx oldRefs initial body result final environments wf hole pointer domain found code' targetEnough noReturn
         intro worker rewrite envRel' hole' notFinal
-        exact bodyIH body worker result found bodyRun notTypeError safe rewrite envRel' hole' notFinal
+        exact bodyIH body worker result (by omega) found bodyRun notTypeError safe rewrite envRel' hole' notFinal
   · have arityNe : indices.length ≠ arity := by simpa using arityEq
     simp [findCode, sourceLookup, arityNe] at run
     exact False.elim (notTypeError run.1.symm)

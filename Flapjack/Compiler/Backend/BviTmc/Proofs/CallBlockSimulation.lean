@@ -9,7 +9,7 @@ simulation used by recursive call-block leaves. -/
 def OrdinaryBodyIH {C F : Type} (loc : Nat) (source : BviState (Nat × C) F)
     (target : BviState C F) (env1 env2 : List Value) (f : HolFiniteMapExact Nat Nat) : Prop :=
   ∀ ticks indices body body' args args' bodyResult bodyFinal,
-    wfVars env1.length indices →
+    wfVars env1.length indices → ticks + 1 ≤ source.clock →
     findCode (some loc) (indices.map (fun n => holEl n env1)) source.code = some (args, body) →
     findCode (some loc) (indices.map (fun n => holEl n env2)) target.code = some (args', body') →
     envRel false f args args' → noMutcons body →

@@ -35,7 +35,8 @@ theorem evaluate_worker_rcall_body {C F : Type} (loc dest ticks ptr : Nat) (indi
     environments wf small
   have workerHole := aux_hole_to_worker_general f (indices.map (fun n => holEl n env1))
     (indices.map (fun n => holEl n env2)) env2 env1.length ptr idx target.refs initial sourceLength allocHole pointer
-  have workerRun := bodyIH ticks indices target ptr idx initial body worker result final wf states code found bodyRun
+  have clockBound : ticks + 1 ≤ source.clock := by rw [← states.2.1]; omega
+  have workerRun := bodyIH ticks indices target ptr idx initial body worker result final wf clockBound states code found bodyRun
     notTypeError safe (by simpa using rewrite) envRelated workerHole.1 workerHole.2
   have argsRun := evaluate_vars_target indices env1.length env2 target wf (envRel_length true f env1 env2 environments)
   have ptrBound : env1.length < env2.length := by have h := hole.1; omega
