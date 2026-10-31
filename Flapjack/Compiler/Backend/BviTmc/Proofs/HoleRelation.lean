@@ -294,6 +294,36 @@ theorem holesStill_delete {α β γ : Type} (f : HolFiniteMapExact α β)
     exact ⟨oldTag, oldLeft, oldChild, oldRight,
       by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using lookup⟩
 
+/-- Flapjack infrastructure for removing a freshly allocated wrapper frame
+from the initial heap of an unchanged-hole relation. The HOL theorem
+`holes_unchanged_except_del_SING` still needs a full carrier review. -/
+theorem holesUnchanged_delete_fresh {α β γ : Type} (f : HolFiniteMapExact α β)
+    (refs refsNew : HolFiniteMapExact β (Ref γ)) (ptr : β) (value : Ref γ)
+    (related : holesUnchangedExcept f
+      (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refs (ptr, value)) refsNew {ptr})
+    (fresh : ptr ∉ refs.domain) : holesUnchangedExcept f refs refsNew ∅ := by
+  classical
+  intro key tag finalised left child right outside found
+  have different : key ≠ ptr := by
+    intro same
+    subst key
+    apply fresh
+    simp [HolFiniteMapExact.domain, found]
+  have updated : (refs.updateEq (ptr, value)).lookup key =
+      some (.mutBlock tag finalised left child right) := by
+    simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
+  obtain ⟨fin, childNew, result, unchanged⟩ := related key tag finalised left child right outside updated
+  exact ⟨fin, childNew, result, fun _ => unchanged (by simpa using different)⟩
+
+/-- Flapjack infrastructure: a freshness relation over an extended heap also
+holds over the original heap. The HOL theorem `only_fresh_del` still needs a
+full carrier review. -/
+theorem onlyFresh_delete_frame (f g : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (Ref Value)) (ptr : Nat) (value : Ref Value)
+    (fresh : onlyFresh f g (refs.updateEq (ptr, value))) : onlyFresh f g refs := by
+  intro key newKey present
+  exact fresh key newKey (BvlProps.refs_update_mono refs _ key _ present)
+
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_filled_f {α β : Type}
     (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_filled_refsOld {β γ : Type}

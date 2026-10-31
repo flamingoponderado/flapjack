@@ -70,6 +70,36 @@ theorem alloc_frame_invariants {C F : Type} (tag : Nat) (left right : List Nat)
     exact BvlProps.refs_update_mono target.refs _ key _ present
   · simp [HolFiniteMapExact.domain, leastUnusedRef_unused]
 
+/-- Flapjack infrastructure: after the worker has used the newly allocated
+frame as its only writable hole, its heap guarantees also hold for the heap
+that existed before the wrapper allocated that frame. -/
+theorem wrapper_frame_invariants (f g : HolFiniteMapExact Nat Nat)
+    (refs nextRefs : HolFiniteMapExact Nat (Ref Value)) (tag : Nat) (left right : List Value)
+    (child : Value)
+    (fresh : onlyFresh f g (refs.updateEq (leastUnusedRef refs,
+      .mutBlock tag false left child right)))
+    (unchanged : holesUnchangedExcept f (refs.updateEq (leastUnusedRef refs,
+      .mutBlock tag false left child right)) nextRefs {leastUnusedRef refs})
+    (unfinalised : holesStillNotFinalised f (refs.updateEq (leastUnusedRef refs,
+      .mutBlock tag false left child right)) nextRefs) :
+    onlyFresh f g refs ∧ holesUnchangedExcept f refs nextRefs ∅ ∧
+      holesStillNotFinalised f refs nextRefs := by
+  classical
+  have sameUpdate : @HolFiniteMapExact.updateEq Nat (Ref Value) (Classical.decEq Nat) refs
+      (leastUnusedRef refs, .mutBlock tag false left child right) =
+      @HolFiniteMapExact.updateEq Nat (Ref Value) instDecidableEqNat refs
+        (leastUnusedRef refs, .mutBlock tag false left child right) := by
+    congr 1
+    exact Subsingleton.elim _ _
+  refine ⟨onlyFresh_delete_frame f g refs _ _ fresh, ?_, ?_⟩
+  · have relation := holesUnchanged_delete_fresh f refs nextRefs (leastUnusedRef refs)
+      (.mutBlock tag false left child right)
+    apply relation ?_ (by
+      simp [HolFiniteMapExact.domain, leastUnusedRef_unused])
+    simpa only [sameUpdate] using unchanged
+  · apply holesStill_delete f refs nextRefs (leastUnusedRef refs) tag left child right
+    simpa only [sameUpdate] using unfinalised
+
 /-- Flapjack infrastructure: a wrapper propagates errors from its auxiliary
 worker after allocating the constructor frame. -/
 theorem evaluate_wrapper_error {C F : Type} (tag : Nat) (left right : List Nat) (child : CallBlock)
