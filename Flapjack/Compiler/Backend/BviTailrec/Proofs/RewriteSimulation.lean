@@ -371,7 +371,9 @@ The recursive simulation hypothesis is the one used for the called body. -/
 theorem evaluate_related_callee {C F : Type} (loc arity : Nat) (body : Bvi.Exp)
     (env : List Value) (source sourceNext : BviSem.BviState (Nat × C) F)
     (target : BviSem.BviState C F) (result : BviSem.BviResult)
-    (bodyIH : rewriteTailProperty (C := C) (F := F) [body])
+    (bodyIH : ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+      rewriteTailHyp [body] source env result sourceNext optimized target acc env2 loc ts ty →
+      rewriteTailPost [body] source env result sourceNext optimized target acc env2 loc ts ty)
     (related : stateRel source target) (lengthEq : env.length = arity)
     (sourceCode : sptLookup loc source.code = some (arity, body))
     (run : BviSem.evaluate [body] env source = (result, sourceNext))
@@ -390,7 +392,7 @@ theorem evaluate_related_callee {C F : Type} (loc arity : Nat) (body : Bvi.Exp)
         (List.replicate arity .any) .any :=
       ⟨run, envRelated, related, types, by simp, notTypeError⟩
     obtain ⟨targetNext, targetRun, finalRelated, _⟩ :=
-      bodyIH source env result sourceNext false target arity env loc (List.replicate arity .any) .any hyp
+      bodyIH false target arity env loc (List.replicate arity .any) .any hyp
     exact ⟨body, targetNext, found, targetRun, finalRelated⟩
   | some op =>
     obtain ⟨scanCtx, scanTy, scanBranch, scan, sameType, notAny, notNoop⟩ :=
@@ -410,7 +412,7 @@ theorem evaluate_related_callee {C F : Type} (loc arity : Nat) (body : Bvi.Exp)
         (List.replicate arity .any) (opType op) :=
       ⟨run, envRelated, related, types, by simp, notTypeError⟩
     obtain ⟨ordinaryNext, ordinaryRun, _, optimizedRun⟩ :=
-      bodyIH source env result sourceNext true target arity extended loc
+      bodyIH true target arity extended loc
         (List.replicate arity .any) (opType op) hyp
     have req : sptLookup loc source.code = some (arity, body) ∧
         optimizedCode loc arity body workerLoc target.code op ∧ opType op = opType op ∧
@@ -644,6 +646,131 @@ theorem rewriteTail_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
         · rw [evaluate_applyOp_let op acc bindings body env2 target env2[acc] lookup]
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetBindings]
           simpa only [List.headD_cons] using applied
+
+/-- Force case of the rewrite simulation. The induction hypothesis applies
+to any called body at a strictly smaller clock, as in the source induction. -/
+theorem rewriteTail_force {C F : Type} (place index : Nat)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (args : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called args r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called args r last optimized target acc env2 loc ts ty)
+    (hyp : rewriteTailHyp [.force place index] source env1 result sourceNext optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.force place index] source env1 result sourceNext optimized target acc env2 loc ts ty := by
+  obtain ⟨run, envRelated, stateRelated, types, _, notTypeError⟩ := hyp
+  have constants := stateRel_const source target stateRelated
+  have noOptimization : optimized = true → ∀ op workerLoc code arity,
+      sptLookup loc source.code = some (arity, code) ∧
+      optimizedCode loc arity code workerLoc target.code op ∧ opType op = ty ∧
+      (∃ op1 tt resultTy branch,
+        scanExpr ts loc [([.force place index] : List Bvi.Exp).headD (.var 0)] =
+          [(tt, resultTy, branch, some op1)] ∧ resultTy ≠ .any ∧
+          op1 ≠ .noop ∧ opType op1 = opType op) →
+      let rewritten := (rewriteSource loc workerLoc op acc ts
+        (([.force place index] : List Bvi.Exp).headD (.var 0))).2
+      ∃ rewrittenResult t1 t2,
+        BviSem.evaluate [rewritten] env2 target = (rewrittenResult, t1) ∧
+        BviSem.evaluate [applyOp op (.var acc) (([.force place index] : List Bvi.Exp).headD (.var 0))]
+          env2 target = (rewrittenResult, t2) ∧ stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
+    intro _ op workerLoc code arity required
+    obtain ⟨_, _, _, op1, tt, resultTy, branch, scan, _, _, _⟩ := required
+    rw [scanExpr_single, scanSing.eq_def] at scan
+    simp at scan
+  cases lookup : env1[index]? with
+  | none =>
+    simp [BviSem.evaluate, lookup] at run
+    exact (notTypeError run.1.symm).elim
+  | some thunk =>
+    have targetLookup := lookup_of_envRel ty optimized acc index env1 env2 envRelated thunk lookup
+    cases thunkRun : BviSem.destThunk thunk source.refs with
+    | badRef =>
+      simp [BviSem.evaluate, lookup, thunkRun] at run
+      exact (notTypeError run.1.symm).elim
+    | notThunk =>
+      simp [BviSem.evaluate, lookup, thunkRun] at run
+      exact (notTypeError run.1.symm).elim
+    | isThunk mode value =>
+      have targetThunk : BviSem.destThunk thunk target.refs = .isThunk mode value := by
+        simpa [constants.1] using thunkRun
+      cases mode with
+      | evaluated =>
+        have same : (result, sourceNext) = (.val [value], source) := by
+          simpa [BviSem.evaluate, lookup, thunkRun] using run.symm
+        cases same
+        exact ⟨target, by simp [BviSem.evaluate, targetLookup, targetThunk], stateRelated, noOptimization⟩
+      | notEvaluated =>
+        cases codeLookup : sptLookup place source.code with
+        | none =>
+          simp [BviSem.evaluate, lookup, thunkRun, findCode, codeLookup] at run
+          exact (notTypeError run.1.symm).elim
+        | some entry =>
+          obtain ⟨arity, body⟩ := entry
+          by_cases arityEq : arity = 2
+          · subst arity
+            have relatedCode := stateRel_codeRel source target stateRelated
+            obtain ⟨compiled, targetCode⟩ := codeRel_lookup_arity source.code target.code relatedCode
+              place 2 body codeLookup
+            by_cases zero : source.clock = 0
+            · have targetZero : target.clock = 0 := by omega
+              have same : (result, sourceNext) = (.err (.abort .timeoutError), { source with clock := 0 }) := by
+                simpa [BviSem.evaluate, lookup, thunkRun, findCode, codeLookup, zero] using run.symm
+              cases same
+              have relatedZero := stateRel_withClock source target 0 stateRelated
+              refine ⟨{ target with clock := 0 }, ?_, relatedZero, noOptimization⟩
+              simp [BviSem.evaluate, targetLookup, targetThunk, findCode, targetCode, targetZero]
+            · have targetNonzero : target.clock ≠ 0 := by omega
+              have nextRelated := stateRel_decClock source target 1 stateRelated
+              have small : (BviSem.decClock 1 source).clock < source.clock := by
+                simp only [BviSem.decClock]
+                omega
+              cases bodyRun : BviSem.evaluate [body] [thunk, value] (BviSem.decClock 1 source) with
+              | mk inner last =>
+                simp only [BviSem.evaluate, lookup, thunkRun, findCode, codeLookup,
+                  List.length_cons, List.length_nil, Nat.reduceAdd, ↓reduceIte, zero, bodyRun] at run
+                have same : (inner, last) = (result, sourceNext) := by
+                  cases inner with
+                  | val values => exact run
+                  | err error =>
+                    cases error with
+                    | abort reason => exact run
+                    | raise payload =>
+                      cases payload with
+                      | exn exception => exact run
+                      | ret values =>
+                        simp at run
+                        exact (notTypeError run.1.symm).elim
+                have notReturn : ∀ values, inner ≠ .err (.raise (.ret values)) := by
+                  intro values eq
+                  rw [eq] at run
+                  simp at run
+                  exact notTypeError run.1.symm
+                cases same
+                obtain ⟨targetBody, targetNext, targetBodyCode, targetBodyRun, finalRelated⟩ :=
+                  evaluate_related_callee place 2 body [thunk, value]
+                    (BviSem.decClock 1 source) sourceNext (BviSem.decClock 1 target) result
+                    (clockIH body (BviSem.decClock 1 source) [thunk, value] result sourceNext small)
+                    nextRelated (by simp) (by simpa [BviSem.decClock] using codeLookup) bodyRun notTypeError
+                have targetLookupCode : sptLookup place target.code = some (2, targetBody) := by
+                  simpa [BviSem.decClock] using targetBodyCode
+                refine ⟨targetNext, ?_, finalRelated, noOptimization⟩
+                simp only [BviSem.evaluate, targetLookup, targetThunk, findCode, targetLookupCode,
+                  List.length_cons, List.length_nil, Nat.reduceAdd, ↓reduceIte, targetNonzero, targetBodyRun]
+                cases result with
+                | val values => rfl
+                | err error =>
+                  cases error with
+                  | abort reason => rfl
+                  | raise payload =>
+                    cases payload with
+                    | exn exception => rfl
+                    | ret values => exact (notReturn values rfl).elim
+          · have arityNe : 2 ≠ arity := Ne.symm arityEq
+            simp [BviSem.evaluate, lookup, thunkRun, findCode, codeLookup, arityNe] at run
+            exact (notTypeError run.1.symm).elim
 
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a
