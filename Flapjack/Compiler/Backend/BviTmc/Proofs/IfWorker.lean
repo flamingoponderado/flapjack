@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.BviTmc.Proofs.IfSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockOld
+import Flapjack.Compiler.Backend.BviTmc.Proofs.WrapperCases
 
 /-! Optimized conditional worker simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.IfWorker
@@ -41,12 +42,14 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
     (c : Value) (hole : holeHasVal f env1 env2 target.refs c)
     (notFinal : holeNotFinalised target.refs holePtr)
     (pointer : holEl env1.length env2 = .refPtr false holePtr)
+    (code : optimisedCode loc locOpt source.code target.code)
     (conditionIH : ∀ r mid, evaluate [condition] env1 source = (r, mid) →
       r ≠ .err (.abort .typeError) → Core [condition] env2 f target r mid)
     (branchIH : ∀ branch mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
       (branch = yes ∨ branch = no) → evaluate [branch] env1 mid = (result, final) →
       envRel true g env1 env2 → stateRel g mid t →
       holeHasVal g env1 env2 t.refs c → holeNotFinalised t.refs holePtr →
+      optimisedCode loc locOpt mid.code t.code →
       WorkerCore (rewriteWorkerSource loc locOpt env1.length (env1.length + 1) env1.length branch)
         env1 env2 g t holePtr result final) :
     WorkerCore (rewriteWorkerSource loc locOpt env1.length (env1.length + 1) env1.length
@@ -114,6 +117,8 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
             branchFresh, branchUnchanged, branchStill, filled⟩ :=
             branchIH selected middle g middleTarget branchMember branchSource
               (envRel_submap true f g env1 env2 environments extension) middleStates nextHole nextNotFinal
+              (WrapperCases.evaluate_pres_opt_code loc locOpt source middle target middleTarget
+                [condition] env1 env2 (.val [value]) (.val [value']) code conditionRun targetRun)
           have submap : finiteSubmap f h := by
             intro k v found; exact branchExtension k v (extension k v found)
           have domain := BviProps.evaluate_refs_subset [condition] env2 target middleTarget (.val [value']) targetRun
