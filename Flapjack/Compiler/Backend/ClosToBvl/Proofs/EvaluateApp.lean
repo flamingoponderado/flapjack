@@ -800,4 +800,80 @@ theorem expressionSimulation_app_ordinary_exact_case {C F : Type}
           (codeInstalled_subspt functionInstalled growth) envArgs statesArgs
       · exact bodyIH
 
+/-- Argument and function-expression errors satisfy the application simulation
+for both direct and generic calls, before closure application begins. -/
+theorem expressionSimulation_app_preCall_error_case {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value) (f : HolFiniteMapExact Nat Nat)
+    (trace : BackendCommon.Tra) (location : Option Nat) (args : List ClosLang.Exp) (function : ClosLang.Exp)
+    (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (run : ClosSem.evaluate [.app trace location function args] sourceEnv s = (result, sFinal))
+    (noType : result ≠ .err (.abort .typeError))
+    (preCall : (∃ error, ClosSem.evaluate args sourceEnv s = (.err error, sFinal)) ∨
+      (∃ values sArgs error, ClosSem.evaluate args sourceEnv s = (.val values, sArgs) ∧
+        ClosSem.evaluate [function] sourceEnv sArgs = (.err error, sFinal)))
+    (compile : compileExpsHOL s.maxApp [.app trace location function args] aux = (compiled, finalAux))
+    (locations : ClosProps.everyFnLocationSome [.app trace location function args]) (annotations : codeAnnotations s)
+    (vars : ClosProps.everyFnVarsSome [.app trace location function args]) (installed : codeInstalled finalAux t.code)
+    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv) (states : stateRel f s t)
+    (argsIH : expressionSimulation (C := C) (F := F) args)
+    (functionIH : expressionSimulation (C := C) (F := F) [function]) :
+    evaluatePost s sFinal t targetEnv f result compiled := by
+  have nonempty : args ≠ [] := by
+    intro empty
+    subst args
+    simp [ClosSem.evaluate] at run
+    exact noType run.1.symm
+  have notEmpty : args.isEmpty = false := by cases args <;> simp_all
+  cases functionCompile : compileExpHOL s.maxApp function aux with
+  | mk targetFunction middleAux =>
+    cases argsCompile : compileExpListHOL s.maxApp args middleAux with
+    | mk targetArgs lastAux =>
+      have whole := compile_appTarget s.maxApp trace location function args aux middleAux lastAux
+        targetFunction targetArgs functionCompile argsCompile
+      have equal := compile.symm.trans whole
+      cases equal
+      have argsCompiled : compileExpsHOL s.maxApp args middleAux = (targetArgs, finalAux) := by
+        rw [compileExps_eq_list]
+        exact argsCompile
+      have functionCompiled : compileExpsHOL s.maxApp [function] aux = ([targetFunction], middleAux) := by
+        rw [compileExps_eq_list]
+        simp [compileExpListHOL, functionCompile]
+      have functionInstalled : codeInstalled middleAux t.code :=
+        compileExps_codeInstalled s.maxApp args middleAux finalAux targetArgs t.code argsCompiled installed
+      have locationsParts : ClosProps.fnLocationSomeExp function ∧ ClosProps.everyFnLocationSome args := by
+        simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+      have varsParts : ClosProps.fnVarsSomeExp function ∧ ClosProps.everyFnVarsSome args := by
+        simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using vars
+      rw [ClosSem.evaluate] at run
+      simp only [notEmpty, Bool.false_eq_true, ↓reduceIte] at run
+      rw [ClosSem.fixClock_evaluate] at run
+      rcases preCall with ⟨error, argsRun⟩ | ⟨values, sArgs, error, argsRun, functionRun⟩
+      · rw [argsRun] at run
+        simp at run
+        rcases run with ⟨rfl, rfl⟩
+        exact evaluatePost_app_args_error s sFinal t targetEnv f location targetArgs targetFunction error
+          (argsIH s sFinal t sourceEnv targetEnv f middleAux finalAux targetArgs (.err error)
+            argsRun noType argsCompiled locationsParts.2 annotations varsParts.2 installed envRelated states)
+      · rw [argsRun] at run
+        dsimp only at run
+        rw [ClosSem.fixClock_evaluate, functionRun] at run
+        simp at run
+        rcases run with ⟨rfl, rfl⟩
+        have argsPost := argsIH s sArgs t sourceEnv targetEnv f middleAux finalAux targetArgs (.val values)
+          argsRun (by simp) argsCompiled locationsParts.2 annotations varsParts.2 installed envRelated states
+        apply evaluatePost_app_function_error s sArgs sFinal t sourceEnv targetEnv f args targetArgs
+          targetFunction location values error argsRun envRelated argsPost
+        intro tArgs fArgs statesArgs envArgs annotationsArgs growth
+        have maxApp : sArgs.maxApp = s.maxApp := by
+          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
+          rw [argsRun] at h
+          exact h
+        exact functionIH sArgs sFinal tArgs sourceEnv targetEnv fArgs aux middleAux [targetFunction] (.err error)
+          functionRun noType (by simpa [maxApp] using functionCompiled)
+          (by simpa [ClosProps.everyFnLocationSome] using locationsParts.1) annotationsArgs
+          (by simpa [ClosProps.everyFnVarsSome] using varsParts.1)
+          (codeInstalled_subspt functionInstalled growth) envArgs statesArgs
+
 end Flapjack.Compiler.Backend.ClosToBvl
