@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
 
 /-! Value decoding needed by the dynamic-installation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
+open Flapjack.SemanticPrimitivesHOL
 
 /-- A source byte list and a related target value decode to identical bytes. -/
 theorem install_valueToBytes_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
@@ -127,5 +128,137 @@ theorem install_target_run {C F : Type} (s : ClosSem.State C F) (t : BvlSem.Stat
   refine ⟨start, body, tail, extracted, program, ?_⟩
   simp [BvlSem.doInstall, targetBytesDecoded, targetWordsDecoded, targetHead, program, targetCompile, targetNext]
   simpa [and_assoc] using And.intro fresh' nodup'
+
+/-- A source installation that avoids a type error has valid decoded inputs,
+a matching oracle compilation and the precise code/oracle/clock update.
+The result may still be a timeout, which happens after that update. -/
+theorem install_source_inv {C F : Type} (s next : ClosSem.State C F)
+    (values : List ClosSem.Value) (result : Result (List ClosLang.Exp) ClosSem.Value)
+    (run : ClosSem.doInstall values s = (result, next))
+    (noType : result ≠ .err (.abort .typeError)) :
+    ∃ sourceBytes sourceWords bytes words config expressions auxiliary nextConfig,
+      values = [sourceBytes, sourceWords] ∧
+      ClosSem.valueToBytes sourceBytes = some bytes ∧ ClosSem.valueToWords sourceWords = some words ∧
+      s.compileOracle 0 = (config, expressions, auxiliary) ∧
+      s.compile config (expressions, auxiliary) = some (bytes, words, nextConfig) ∧
+      (s.compileOracle 1).1 = nextConfig ∧ expressions ≠ [] ∧
+      (∀ index ∈ auxiliary.map Prod.fst, s.code.lookup index = none) ∧
+      (auxiliary.map Prod.fst).Nodup ∧
+      next = { s with
+        code := s.code.updateListEq auxiliary
+        compileOracle := Flapjack.holShiftSeq 1 s.compileOracle
+        clock := s.clock - 1 } ∧
+      result = if s.clock = 0 then .err (.abort .timeoutError) else .val expressions := by
+  classical
+  cases values with
+  | nil =>
+    simp [ClosSem.doInstall] at run
+    exact False.elim (noType run.1.symm)
+  | cons sourceBytes rest =>
+    cases rest with
+    | nil =>
+      simp [ClosSem.doInstall] at run
+      exact False.elim (noType run.1.symm)
+    | cons sourceWords rest =>
+      cases rest with
+      | cons extra rest =>
+        simp [ClosSem.doInstall] at run
+        exact False.elim (noType run.1.symm)
+      | nil =>
+        cases bytesRun : ClosSem.valueToBytes sourceBytes with
+        | none =>
+          simp [ClosSem.doInstall, bytesRun] at run
+          exact False.elim (noType run.1.symm)
+        | some bytes =>
+          cases wordsRun : ClosSem.valueToWords sourceWords with
+          | none =>
+            simp [ClosSem.doInstall, bytesRun, wordsRun] at run
+            exact False.elim (noType run.1.symm)
+          | some words =>
+            cases oracleRun : s.compileOracle 0 with
+            | mk config program =>
+              cases program with
+              | mk expressions auxiliary =>
+                by_cases valid : (∀ index ∈ auxiliary.map Prod.fst, s.code.lookup index = none) ∧
+                    (auxiliary.map Prod.fst).Nodup
+                · cases compileRun : s.compile config (expressions, auxiliary) with
+                  | none =>
+                    simp only [ClosSem.doInstall, bytesRun, wordsRun, oracleRun] at run
+                    rw [if_pos valid, compileRun] at run
+                    simp only [Prod.mk.injEq] at run
+                    exact False.elim (noType run.1.symm)
+                  | some output =>
+                    obtain ⟨compiledBytes, compiledWords, nextConfig⟩ := output
+                    by_cases agrees : bytes = compiledBytes ∧ words = compiledWords ∧
+                        (Flapjack.holShiftSeq 1 s.compileOracle 0).1 = nextConfig ∧ expressions ≠ []
+                    · have step := run
+                      simp only [ClosSem.doInstall, bytesRun, wordsRun, oracleRun] at step
+                      rw [if_pos valid, compileRun] at step
+                      dsimp only at step
+                      rw [if_pos agrees] at step
+                      have nextEq : next = { s with
+                          code := s.code.updateListEq auxiliary
+                          compileOracle := Flapjack.holShiftSeq 1 s.compileOracle
+                          clock := s.clock - 1 } := by
+                        by_cases clock : s.clock = 0
+                        · rw [if_pos clock] at step
+                          exact (congrArg Prod.snd step).symm
+                        · rw [if_neg clock] at step
+                          exact (congrArg Prod.snd step).symm
+                      have resultEq : result = if s.clock = 0 then .err (.abort .timeoutError) else .val expressions := by
+                        by_cases clock : s.clock = 0
+                        · rw [if_pos clock] at step ⊢
+                          exact (congrArg Prod.fst step).symm
+                        · rw [if_neg clock] at step ⊢
+                          exact (congrArg Prod.fst step).symm
+                      refine ⟨sourceBytes, sourceWords, bytes, words, config, expressions, auxiliary, nextConfig,
+                        rfl, bytesRun, wordsRun, rfl, ?_, ?_, agrees.2.2.2, valid.1, valid.2, nextEq, resultEq⟩
+                      · simpa [agrees.1, agrees.2.1] using compileRun
+                      · simpa [Flapjack.holShiftSeq] using agrees.2.2.1
+                    · simp only [ClosSem.doInstall, bytesRun, wordsRun, oracleRun] at run
+                      rw [if_pos valid, compileRun] at run
+                      dsimp only at run
+                      rw [if_neg agrees] at run
+                      simp only [Prod.mk.injEq] at run
+                      exact False.elim (noType run.1.symm)
+                · simp only [ClosSem.doInstall, bytesRun, wordsRun, oracleRun] at run
+                  rw [if_neg valid] at run
+                  simp only [Prod.mk.injEq] at run
+                  exact False.elim (noType run.1.symm)
+
+/-- Every non-type-error source installation has a matching successful target
+installation. Source timeout still installs code and shifts the oracle. -/
+theorem install_dispatch {C F : Type} (s next : ClosSem.State C F) (t : BvlSem.State C F)
+    (f : HolFiniteMapExact Nat Nat) (values : List ClosSem.Value) (targets : List BvlSem.Value)
+    (result : Result (List ClosLang.Exp) ClosSem.Value)
+    (run : ClosSem.doInstall values s = (result, next))
+    (noType : result ≠ .err (.abort .typeError))
+    (related : List.Forall₂ (vRel s.maxApp f t.refs t.code) values targets)
+    (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle) :
+    ∃ expressions auxiliary start body tail,
+      result = (if s.clock = 0 then .err (.abort .timeoutError) else .val expressions) ∧
+      next = { s with
+        code := s.code.updateListEq auxiliary
+        compileOracle := Flapjack.holShiftSeq 1 s.compileOracle
+        clock := s.clock - 1 } ∧
+      expressions ≠ [] ∧ (extractName expressions).1 = start ∧
+      compileInc s.maxApp (expressions, auxiliary) = (start + numStubs s.maxApp, 0, body) :: tail ∧
+      BvlSem.doInstall (R := BvlSem.Value) targets t =
+        .val (.codePtr (start + numStubs s.maxApp), { t with
+          code := sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))
+          compileOracle := fun n => t.compileOracle (n + 1) }) := by
+  obtain ⟨sourceBytes, sourceWords, bytes, words, config, expressions, auxiliary, nextConfig,
+    valuesEq, bytesRun, wordsRun, sourceHead, compiled, sourceNext, nonempty, _, _, nextEq, resultEq⟩ :=
+      install_source_inv s next values result run noType
+  subst values
+  cases related with
+  | cons bytesRel tail =>
+    cases tail with
+    | cons wordsRel tail =>
+      cases tail
+      obtain ⟨start, body, tail, extracted, program, targetRun⟩ :=
+        install_target_run s t f sourceBytes sourceWords _ _ bytes words config nextConfig expressions auxiliary
+          bytesRel wordsRel bytesRun wordsRun sourceHead sourceNext compiled oracle
+      exact ⟨expressions, auxiliary, start, body, tail, resultEq, nextEq, nonempty, extracted, program, targetRun⟩
 
 end Flapjack.Compiler.Backend.ClosToBvl
