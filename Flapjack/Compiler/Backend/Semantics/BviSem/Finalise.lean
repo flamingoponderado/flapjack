@@ -40,4 +40,51 @@ termination_by refs.card
 decreasing_by
   apply card_eraseEq_lt
   simp [_found]
+/-- Flapjack infrastructure: successful finalisation restores every removed
+key and preserves the reference domain. This supports the evaluator's domain
+growth proof; it is not a separate HOL declaration. -/
+theorem finaliseCons_domain (value result : Value) (refs rest : HolFiniteMapExact Nat (Ref Value))
+    (run : finaliseCons value refs = some (result, rest)) :
+    ∀ key, refs.lookup key ≠ none ↔ rest.lookup key ≠ none := by
+  have all : ∀ n : Nat, ∀ (value result : Value) (refs rest : HolFiniteMapExact Nat (Ref Value)),
+      refs.card = n → finaliseCons value refs = some (result, rest) →
+      ∀ key, refs.lookup key ≠ none ↔ rest.lookup key ≠ none := by
+    intro n
+    induction n using Nat.strongRecOn with
+    | ind n ih =>
+      intro value result refs rest size run key
+      cases value with
+      | refPtr flag ptr =>
+        rw [finaliseCons.eq_def] at run
+        dsimp only at run
+        cases found : refs.lookup ptr with
+        | none => rw [found] at run; contradiction
+        | some entry =>
+          rw [found] at run
+          cases entry with
+          | mutBlock tag finalised left child right =>
+            cases finalised with
+            | true => simp at run
+            | false =>
+              simp only [Bool.false_eq_true, ↓reduceIte] at run
+              cases recursive : finaliseCons child (refs.eraseEq ptr) with
+              | none => simp [recursive] at run
+              | some pair =>
+                obtain ⟨childResult, childRest⟩ := pair
+                simp only [recursive, Option.some.injEq, Prod.mk.injEq] at run
+                obtain ⟨_, rfl⟩ := run
+                have smaller : (refs.eraseEq ptr).card < n := by
+                  rw [← size]
+                  exact card_eraseEq_lt refs ptr (by simp [found])
+                have domain := ih (refs.eraseEq ptr).card smaller child childResult
+                  (refs.eraseEq ptr) childRest rfl recursive key
+                by_cases same : key = ptr
+                · subst key
+                  simp [found, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
+                · simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
+                    HolFiniteMapExact.eraseEq, FDOMSUB_HOL, same] using domain
+          | _ => simp at run; obtain ⟨_, rfl⟩ := run; rfl
+      | _ => simp [finaliseCons.eq_def] at run; obtain ⟨_, rfl⟩ := run; rfl
+  exact all refs.card value result refs rest rfl run
+
 end Flapjack.Compiler.Backend.BviSem
