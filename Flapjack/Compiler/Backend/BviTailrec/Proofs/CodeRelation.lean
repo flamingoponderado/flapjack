@@ -307,6 +307,23 @@ theorem compileEachSource_preserves_labels (code : List (Nat × Nat × Bvi.Exp))
         · exact Or.inl same
         · exact Or.inr (Or.inr (by simpa [tail] using ih (next + Flapjack.bvlToBviNamespaces) other))
 
+/-- Compilation keeps the first function label and arity, so installation
+returns the same entry-point pointer on both sides. -/
+theorem compileEachSource_head (next loc arity : Nat) (body : Bvi.Exp)
+    (rest : List (Nat × Nat × Bvi.Exp)) :
+    ∃ compiledBody outputRest,
+      (compileEachSource next ((loc, arity, body) :: rest)).2 =
+        (loc, arity, compiledBody) :: outputRest := by
+  cases compiled : compileExpSource loc next arity body with
+  | none =>
+    cases tail : compileEachSource next rest with
+    | mk last output => exact ⟨body, output, by simp [compileEachSource, compiled, tail]⟩
+  | some pair =>
+    obtain ⟨wrapper, worker⟩ := pair
+    cases tail : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with
+    | mk last output =>
+      exact ⟨wrapper, (next, arity + 1, worker) :: output, by simp [compileEachSource, compiled, tail]⟩
+
 /-- A name is free if it cannot be reached by advancing the worker namespace. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "free_names_def"]
 def freeNames (next name : Nat) : Prop :=
@@ -640,6 +657,64 @@ theorem compileEachSource_install_relations (next : Nat) (code : List (Nat × Na
     compileEachSource_namespaceRel next code bounds worker outsideLabels,
     compileEachSource_labels_nodup code next unique freeLabels⟩
 
+/-- Compiled installation entries are disjoint from existing target code
+when the original entries are disjoint and existing workers lie below next. -/
+theorem compileEachSource_install_disjoint (next : Nat) (code : List (Nat × Nat × Bvi.Exp)) (source target : Spt (Nat × Bvi.Exp))
+    (condition : inputCondition next code) (namespaces : namespaceRel source target)
+    (workerBound : ∀ n, sptMem n target ∧ inWorkerNamespace n → n < next)
+    (sourceAbsent : ∀ n ∈ code.map Prod.fst, ¬sptMem n source) :
+    ∀ n, sptMem n (sptFromAList (compileEachSource next code).2) → ¬sptMem n target := by
+  obtain ⟨free, unique, outside, bounds, currentWorker⟩ := condition
+  have outsideLabels : ∀ n ∈ code.map Prod.fst, Flapjack.bvlNumStubs ≤ n → ¬inWorkerNamespace n := by
+    intro n member above
+    obtain ⟨entry, present, equal⟩ := List.mem_map.mp member
+    subst n
+    apply outside entry
+    exact List.mem_filter.mpr ⟨present, by simpa using above⟩
+  have generated (name k : Nat) (eq : name = next + k * Flapjack.bvlToBviNamespaces) :
+      inWorkerNamespace name := by
+    subst name
+    unfold inWorkerNamespace at currentWorker ⊢
+    simpa [Nat.add_mod, Flapjack.bvlToBviNamespaces] using currentWorker
+  intro n installed existing
+  have names := (sptFromAList_mem_iff _ n).mp installed
+  rcases compileEachSource_mem code next n names with old | ⟨lo, _, k, eq⟩
+  · by_cases below : n < Flapjack.bvlNumStubs
+    · exact sourceAbsent n old (namespaces.2.2 n ⟨existing, below⟩)
+    · have above : Flapjack.bvlNumStubs ≤ n := by omega
+      by_cases inWorker : inWorkerNamespace n
+      · exact outsideLabels n old above inWorker
+      · have present := namespaces.1 n ⟨existing, above⟩
+        have sourcePresent : sptMem n source := by
+          have notResidue : ¬n % Flapjack.bvlToBviNamespaces = 2 := inWorker
+          simpa only [notResidue, if_false] using present
+        exact sourceAbsent n old sourcePresent
+  · have inWorker := generated n k eq
+    have oldBound := workerBound n ⟨existing, inWorker⟩
+    omega
+
+/-- Every worker-namespace label in the compiled installation lies below its
+resulting next worker label. -/
+theorem compileEachSource_install_worker_bound (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (condition : inputCondition next code) :
+    ∀ name, sptMem name (sptFromAList (compileEachSource next code).2) ∧ inWorkerNamespace name →
+      name < (compileEachSource next code).1 := by
+  obtain ⟨_, _, outside, bounds, _⟩ := condition
+  obtain ⟨steps, advance⟩ := compileEachSource_next_mono next code
+  have monotone : next ≤ (compileEachSource next code).1 := by rw [advance]; omega
+  intro name ⟨member, inWorker⟩
+  rcases compileEachSource_mem code next name ((sptFromAList_mem_iff _ name).mp member) with
+    old | ⟨_, upper, _⟩
+  · by_cases below : name < Flapjack.bvlNumStubs
+    · omega
+    · have above : Flapjack.bvlNumStubs ≤ name := by omega
+      obtain ⟨entry, present, equal⟩ := List.mem_map.mp old
+      subst name
+      have filtered : entry ∈ code.filter (fun p => decide (Flapjack.bvlNumStubs ≤ p.1)) :=
+        List.mem_filter.mpr ⟨present, by simpa using above⟩
+      exact (outside entry filtered inWorker).elim
+  · exact upper
+
 /-- Apply the source-shaped pass to each future compiler-oracle program. -/
 def transformOracle {C : Type} (oracle : BviSem.CompileOracle (Nat × C)) : BviSem.CompileOracle C :=
   fun index =>
@@ -685,5 +760,45 @@ theorem stateRel_withClock {C F : Type} (source : BviSem.BviState (Nat × C) F)
 theorem stateRel_codeRel {C F : Type} (source : BviSem.BviState (Nat × C) F)
     (target : BviSem.BviState C F) (h : stateRel source target) : codeRel source.code target.code :=
   h.2.2.2.2.2.2.1
+
+/-- Installing disjoint source and compiled code and advancing both oracles
+preserves the state relation when the next worker label agrees. -/
+theorem stateRel_install_code_and_oracle {C F : Type} (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (related : stateRel source target)
+    (sourceAbsent : ∀ n ∈ ((source.compileOracle 0).2.map Prod.fst), ¬sptMem n source.code)
+    (nextEq : (source.compileOracle 1).1.1 =
+      (compileEachSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).1) :
+    stateRel
+      { source with code := sptUnion source.code (sptFromAList (source.compileOracle 0).2), compileOracle := fun n => source.compileOracle (n + 1) }
+      { target with code := sptUnion target.code (sptFromAList
+          (compileEachSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).2), compileOracle := fun n => target.compileOracle (n + 1) } := by
+  rcases related with ⟨refs, clock, global, ffi, oracle, compiler, codeRelOld, namespaceOld, conditions, workerBound⟩
+  let next := (source.compileOracle 0).1.1
+  let code := (source.compileOracle 0).2
+  have condition : inputCondition next code := conditions 0
+  obtain ⟨codeRelNew, namespaceNew, _⟩ := compileEachSource_install_relations next code condition
+  have disjoint := compileEachSource_install_disjoint next code source.code target.code condition namespaceOld workerBound sourceAbsent
+  have bounds := compileEachSource_install_worker_bound next code condition
+  obtain ⟨steps, advance⟩ := compileEachSource_next_mono next code
+  have nextMono : next ≤ (compileEachSource next code).1 := by rw [advance]; omega
+  refine ⟨refs, clock, global, ffi, ?_, compiler, ?_, ?_, ?_, ?_⟩
+  · funext n
+    change target.compileOracle (n + 1) = transformOracle (fun n => source.compileOracle (n + 1)) n
+    rw [oracle]
+    rfl
+  · exact codeRel_union _ _ _ _ ⟨codeRelOld, codeRelNew, disjoint⟩
+  · exact namespaceRel_union _ _ _ _ namespaceOld namespaceNew
+  · intro n
+    exact conditions (n + 1)
+  · intro n ⟨mem, worker⟩
+    change n < (source.compileOracle 1).1.1
+    rw [nextEq]
+    change n < (compileEachSource next code).1
+    change sptMem n (sptUnion target.code (sptFromAList (compileEachSource next code).2)) at mem
+    rw [sptMem_sptUnion] at mem
+    rcases mem with old | new
+    · have oldBound := workerBound n ⟨old, worker⟩
+      omega
+    · exact bounds n ⟨new, worker⟩
 
 end Flapjack.Compiler.Backend.BviTailrec
