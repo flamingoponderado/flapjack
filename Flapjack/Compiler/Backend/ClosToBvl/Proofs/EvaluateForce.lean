@@ -2,7 +2,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLet
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Thunk
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.DirectApplicationTarget
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateOrdinary
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainEvaluation
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateInstall
 
 /-! Forced-thunk cases of the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -690,5 +690,18 @@ theorem expressionSimulationBelow_nonInstall_succ {C F : Type} (clockBound : Nat
   · subst op
     exact expressionSimulationBelow_force_succ clockBound trace args argsIH bodyIH
   · exact expressionSimulationBelow_ordinary (clockBound + 1) trace op args argsIH force notInstall
+
+/-- Every operation is simulated at a successor bound, using the predecessor
+bound for dynamically installed programs and forced closure bodies. -/
+theorem expressionSimulationBelow_op_succ {C F : Type} (clockBound : Nat)
+    (trace : BackendCommon.Tra) (op : ClosLang.Op) (args : List ClosLang.Exp)
+    (argsIH : expressionSimulationBelow (C := C) (F := F) (clockBound + 1) args)
+    (bodyIH : ∀ body : ClosLang.Exp, expressionSimulationBelow (C := C) (F := F) clockBound [body]) :
+    expressionSimulationBelow (C := C) (F := F) (clockBound + 1) [.op trace op args] := by
+  by_cases install : op = .install
+  · subst op
+    exact expressionSimulationBelow_install_succ clockBound trace args argsIH
+      (expressionSimulationBelow_lists clockBound bodyIH)
+  · exact expressionSimulationBelow_nonInstall_succ clockBound trace op args argsIH bodyIH install
 
 end Flapjack.Compiler.Backend.ClosToBvl
