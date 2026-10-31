@@ -6565,4 +6565,501 @@ theorem evaluate_mkClCall_over_step {C F : Type} (s : BvlSem.State C F)
     · have clocks : s.clock - 1 - (total + 1) = s.clock - (total + 2) := by omega
       simp [BvlSem.decClock, clocks]
 
+/-- If an overapplied ordinary closure runs out of clock before its first
+body call, both source and target time out. -/
+theorem evaluateApp_ordinary_over_timeout {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity : Nat) (captured args : List ClosSem.Value) (targetArgs rest : List BvlSem.Value)
+    (body : ClosLang.Exp) (target : BvlSem.Value) (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : vRel s.maxApp f t.refs t.code (.closure (some ptr) [] captured arity body) target)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (bound : args.length ≤ s.maxApp) (over : arity < args.length) (timeout : s.clock < arity) :
+    ClosSem.evaluateApp none (.closure (some ptr) [] captured arity body) args s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) ∧
+    evaluatePost s { s with clock := 0 } t (targetArgs ++ [target] ++ rest) f
+      (.err (.abort .timeoutError))
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  obtain ⟨fields, envRel', closure⟩ := vRel_ordinary_closure related
+  have shape : ∃ targetBody,
+      arity ≤ s.maxApp ∧ arity ≠ 0 ∧
+      target = .block 30 (.codePtr (ptr + numStubs s.maxApp) :: .number (Int.ofNat (arity - 1)) :: fields) ∧
+      sptLookup (ptr + numStubs s.maxApp) t.code = some (arity + 1,
+        .let ((List.range arity).map Bvl.Exp.var ++ freeLet (.var arity) captured.length) targetBody) := by
+    cases closure with
+    | closure arityBound positive _ _ _ _ lookup => exact ⟨_, arityBound, positive, rfl, lookup⟩
+  obtain ⟨targetBody, arityBound, positive, targetEq, bodyLookup⟩ := shape
+  have sourceTimeout : ClosSem.evaluateApp none (.closure (some ptr) [] captured arity body) args s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) := by
+    rw [evaluateApp_ordinary_over s ptr arity captured [] args body (by simp; omega) bound (by simpa using over)]
+    simp [timeout]
+  have targetLength : targetArgs.length = args.length := argsRel.length_eq.symm
+  let n := targetArgs.length - 1
+  have length : targetArgs.length = n + 1 := by dsimp [n]; omega
+  have over' : arity - 1 < n := by dsimp [n]; omega
+  have totalBound : arity - 1 < s.maxApp := by omega
+  have nBound : n < s.maxApp := by dsimp [n]; omega
+  let start : BvlSem.State C F := { t with clock := s.clock }
+  have genericLookup : sptLookup (genericAppFnLocation n) start.code = some (n + 2, generateGenericApp s.maxApp n) :=
+    states.2.2.2.2.2.2.2.2.1 n nBound
+  have lookup : sptLookup (ptr + numStubs s.maxApp) start.code = some (arity - 1 + 2,
+      .let ((List.range arity).map Bvl.Exp.var ++ freeLet (.var arity) captured.length) targetBody) := by
+    have arityEq : arity - 1 + 2 = arity + 1 := by omega
+    simpa [start, arityEq] using bodyLookup
+  have targetRun := evaluate_mkClCall_over_step start s.maxApp n (arity - 1) 30 (ptr + numStubs s.maxApp)
+    targetArgs fields rest _ length over' totalBound genericLookup lookup
+  have targetTimeout : start.clock < arity - 1 + 2 := by dsimp [start]; omega
+  simp only [if_pos targetTimeout] at targetRun
+  refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
+  · rw [targetEq]
+    simpa [start] using targetRun
+  · simp [resultRel, excRel]
+  · exact (stateRel_clock f s t 0).2.mpr ((stateRel_clock f s t 0).1.mpr states)
+  · intro key value mapped; exact mapped
+  · intro key value mapped fresh; exact ⟨mapped, fresh⟩
+
+/-- An overapplied ordinary partial closure times out on both sides when the
+source clock is insufficient for its first saturated call. -/
+theorem evaluateApp_ordinary_partial_over_timeout {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity : Nat) (captured saved args : List ClosSem.Value) (targetArgs rest : List BvlSem.Value)
+    (body : ClosLang.Exp) (target : BvlSem.Value) (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : vRel s.maxApp f t.refs t.code (.closure (some ptr) saved captured arity body) target)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (savedNonempty : saved ≠ []) (savedBound : saved.length < arity) (bound : args.length ≤ s.maxApp)
+    (over : arity < args.length + saved.length) (timeout : s.clock < arity - saved.length) :
+    ClosSem.evaluateApp none (.closure (some ptr) saved captured arity body) args s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) ∧
+    evaluatePost s { s with clock := 0 } t (targetArgs ++ [target] ++ rest) f
+      (.err (.abort .timeoutError))
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  obtain ⟨oldTargets, original, targetEq, originalRel, oldRel⟩ :=
+    vRel_ordinary_partial_existing s t f ptr arity captured saved body target savedNonempty related
+  obtain ⟨fields, envRel', closure⟩ := vRel_ordinary_closure originalRel
+  have ⟨arityBound, positive⟩ : arity ≤ s.maxApp ∧ arity ≠ 0 := by
+    cases closure with | closure arityBound positive _ _ _ _ _ => exact ⟨arityBound, positive⟩
+  have sourceTimeout : ClosSem.evaluateApp none (.closure (some ptr) saved captured arity body) args s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) := by
+    rw [evaluateApp_ordinary_over s ptr arity captured saved args body savedBound bound over]
+    simp [timeout]
+  have oldLength : oldTargets.length = saved.length := oldRel.length_eq.symm
+  have targetLength : targetArgs.length = args.length := argsRel.length_eq.symm
+  have savedPositive : 0 < saved.length := List.length_pos_iff.mpr savedNonempty
+  let n := targetArgs.length - 1
+  let total := arity - 1 - saved.length
+  have length : targetArgs.length = n + 1 := by dsimp [n]; omega
+  have over' : total < n := by dsimp [total, n]; omega
+  have totalBound : total < s.maxApp := by dsimp [total]; omega
+  have nBound : n < s.maxApp := by dsimp [n]; omega
+  have stubPrev : oldTargets.length - 1 < arity - 1 := by omega
+  have stubTotal : arity - 1 < s.maxApp := by omega
+  let start : BvlSem.State C F := { t with clock := s.clock }
+  have genericLookup : sptLookup (genericAppFnLocation n) start.code = some (n + 2, generateGenericApp s.maxApp n) :=
+    states.2.2.2.2.2.2.2.2.1 n nBound
+  have stubLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) start.code =
+      some (total + 2, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
+    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1) ⟨stubTotal, stubPrev⟩
+    have count : arity - 1 - (oldTargets.length - 1) + 1 = total + 2 := by dsimp [total]; omega
+    simpa [start, count] using installed
+  have targetRun := evaluate_mkClCall_over_step start s.maxApp n total 31
+    (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) targetArgs (original :: oldTargets) rest
+    (generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) length over' totalBound genericLookup stubLookup
+  have targetTimeout : start.clock < total + 2 := by dsimp [start, total]; omega
+  simp only [if_pos targetTimeout] at targetRun
+  refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
+  · rw [targetEq]
+    simpa [start, total] using targetRun
+  · simp [resultRel, excRel]
+  · exact (stateRel_clock f s t 0).2.mpr ((stateRel_clock f s t 0).1.mpr states)
+  · intro key value mapped; exact mapped
+  · intro key value mapped fresh; exact ⟨mapped, fresh⟩
+
+/-- A directly related recursive closure has installed code at the pointer
+stored in its target block, for both singleton and mutual groups. -/
+theorem clRel_recclosure_target_code {maxApp : Nat} {fs : Nat → Prop}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {captured : List ClosSem.Value} {fields : List BvlSem.Value} {ptr index arity : Nat}
+    {functions : List (Nat × ClosLang.Exp)} {body : ClosLang.Exp} {target : BvlSem.Value}
+    (related : clRel maxApp fs refs code (captured, fields) (.recclosure (some ptr) [] captured functions index) target)
+    (found : functions[index]? = some (arity, body)) :
+    ∃ address payload entry,
+      target = .block 30 (.codePtr address :: .number (Int.ofNat (arity - 1)) :: payload) ∧
+      sptLookup address code = some (arity + 1, entry) := by
+  by_cases many : 1 < functions.length
+  · obtain ⟨address, shared, targets, aux, targetBody, finalAux, targetEq, stored, targetsLength,
+      bound, positive, compiled, lookup, installed⟩ := clRel_mutualRec_selected related many found
+    exact ⟨address, [.refPtr true shared], _, targetEq, lookup⟩
+  · cases related with
+    | singletonRec bound positive locations vars compiled installed lookup =>
+      simp only [List.getElem?_cons_zero, Option.some.injEq, Prod.mk.injEq] at found
+      obtain ⟨rfl, rfl⟩ := found
+      exact ⟨_, _, _, rfl, lookup⟩
+    | mutualRec _ _ _ _ _ _ impossible _ _ _ _ => exact (many impossible).elim
+
+/-- An overapplied recursive closure times out on both sides before its first body call. -/
+theorem evaluateApp_recclosure_over_timeout {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity index : Nat) (captured args : List ClosSem.Value)
+    (functions : List (Nat × ClosLang.Exp)) (targetArgs rest : List BvlSem.Value)
+    (body : ClosLang.Exp) (target : BvlSem.Value) (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : vRel s.maxApp f t.refs t.code (.recclosure (some ptr) [] captured functions index) target)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (found : functions[index]? = some (arity, body)) (bound : args.length ≤ s.maxApp) (over : arity < args.length) (timeout : s.clock < arity) :
+    ClosSem.evaluateApp none (.recclosure (some ptr) [] captured functions index) args s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) ∧
+    evaluatePost s { s with clock := 0 } t (targetArgs ++ [target] ++ rest) f
+      (.err (.abort .timeoutError))
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  obtain ⟨fields, envRel', closure⟩ := vRel_recclosure_original related
+  have ⟨arityBound, positive⟩ := clRel_recclosure_arity closure found
+  obtain ⟨address, payload, targetBody, targetEq, bodyLookup⟩ := clRel_recclosure_target_code closure found
+  have sourceTimeout : ClosSem.evaluateApp none (.recclosure (some ptr) [] captured functions index) args s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) := by
+    rw [evaluateApp_recclosure_over s ptr arity index captured [] args functions body found (by simp; omega) bound (by simpa using over)]
+    simp [timeout]
+  have targetLength : targetArgs.length = args.length := argsRel.length_eq.symm
+  let n := targetArgs.length - 1
+  have length : targetArgs.length = n + 1 := by dsimp [n]; omega
+  have over' : arity - 1 < n := by dsimp [n]; omega
+  have totalBound : arity - 1 < s.maxApp := by omega
+  have nBound : n < s.maxApp := by dsimp [n]; omega
+  let start : BvlSem.State C F := { t with clock := s.clock }
+  have genericLookup : sptLookup (genericAppFnLocation n) start.code = some (n + 2, generateGenericApp s.maxApp n) :=
+    states.2.2.2.2.2.2.2.2.1 n nBound
+  have lookup : sptLookup address start.code = some (arity - 1 + 2,
+      targetBody) := by
+    have arityEq : arity - 1 + 2 = arity + 1 := by omega
+    simpa [start, arityEq] using bodyLookup
+  have targetRun := evaluate_mkClCall_over_step start s.maxApp n (arity - 1) 30 address
+    targetArgs payload rest _ length over' totalBound genericLookup lookup
+  have targetTimeout : start.clock < arity - 1 + 2 := by dsimp [start]; omega
+  simp only [if_pos targetTimeout] at targetRun
+  refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
+  · rw [targetEq]
+    simpa [start] using targetRun
+  · simp [resultRel, excRel]
+  · exact (stateRel_clock f s t 0).2.mpr ((stateRel_clock f s t 0).1.mpr states)
+  · intro key value mapped; exact mapped
+  · intro key value mapped fresh; exact ⟨mapped, fresh⟩
+
+/-- An overapplied recursive partial closure times out on both sides before its first body call. -/
+theorem evaluateApp_recclosure_partial_over_timeout {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity index : Nat) (captured saved args : List ClosSem.Value)
+    (functions : List (Nat × ClosLang.Exp)) (targetArgs rest : List BvlSem.Value)
+    (body : ClosLang.Exp) (target : BvlSem.Value) (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : vRel s.maxApp f t.refs t.code (.recclosure (some ptr) saved captured functions index) target)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (found : functions[index]? = some (arity, body)) (savedNonempty : saved ≠ []) (savedBound : saved.length < arity) (bound : args.length ≤ s.maxApp)
+    (over : arity < args.length + saved.length) (timeout : s.clock < arity - saved.length) :
+    ClosSem.evaluateApp none (.recclosure (some ptr) saved captured functions index) args s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) ∧
+    evaluatePost s { s with clock := 0 } t (targetArgs ++ [target] ++ rest) f
+      (.err (.abort .timeoutError))
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  obtain ⟨fields, oldTargets, original, targetEq, envRel', oldRel, closure⟩ :=
+    vRel_recclosure_partial_existing s t f ptr arity index captured saved functions body target found savedNonempty related
+  have ⟨arityBound, positive⟩ := clRel_recclosure_arity closure found
+  have sourceTimeout : ClosSem.evaluateApp none (.recclosure (some ptr) saved captured functions index) args s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) := by
+    rw [evaluateApp_recclosure_over s ptr arity index captured saved args functions body found savedBound bound over]
+    simp [timeout]
+  have oldLength : oldTargets.length = saved.length := oldRel.length_eq.symm
+  have targetLength : targetArgs.length = args.length := argsRel.length_eq.symm
+  have savedPositive : 0 < saved.length := List.length_pos_iff.mpr savedNonempty
+  let n := targetArgs.length - 1
+  let total := arity - 1 - saved.length
+  have length : targetArgs.length = n + 1 := by dsimp [n]; omega
+  have over' : total < n := by dsimp [total, n]; omega
+  have totalBound : total < s.maxApp := by dsimp [total]; omega
+  have nBound : n < s.maxApp := by dsimp [n]; omega
+  have stubPrev : oldTargets.length - 1 < arity - 1 := by omega
+  have stubTotal : arity - 1 < s.maxApp := by omega
+  let start : BvlSem.State C F := { t with clock := s.clock }
+  have genericLookup : sptLookup (genericAppFnLocation n) start.code = some (n + 2, generateGenericApp s.maxApp n) :=
+    states.2.2.2.2.2.2.2.2.1 n nBound
+  have stubLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) start.code =
+      some (total + 2, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
+    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1) ⟨stubTotal, stubPrev⟩
+    have count : arity - 1 - (oldTargets.length - 1) + 1 = total + 2 := by dsimp [total]; omega
+    simpa [start, count] using installed
+  have targetRun := evaluate_mkClCall_over_step start s.maxApp n total 31
+    (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) targetArgs (original :: oldTargets) rest
+    (generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) length over' totalBound genericLookup stubLookup
+  have targetTimeout : start.clock < total + 2 := by dsimp [start, total]; omega
+  simp only [if_pos targetTimeout] at targetRun
+  refine ⟨sourceTimeout, 0, .err (.abort .timeoutError), { t with clock := 0 }, f, ?_, ?_, ?_, ?_, ?_, annotations, rfl⟩
+  · rw [targetEq]
+    simpa [start, total] using targetRun
+  · simp [resultRel, excRel]
+  · exact (stateRel_clock f s t 0).2.mpr ((stateRel_clock f s t 0).1.mpr states)
+  · intro key value mapped; exact mapped
+  · intro key value mapped fresh; exact ⟨mapped, fresh⟩
+
+/-- The first-call timeout simulation for an overapplied ordinary closure
+covers both empty and nonempty saved-argument lists. -/
+theorem evaluateApp_ordinary_over_timeout_all {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity : Nat) (captured saved args : List ClosSem.Value) (targetArgs rest : List BvlSem.Value)
+    (body : ClosLang.Exp) (target : BvlSem.Value) (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : vRel s.maxApp f t.refs t.code (.closure (some ptr) saved captured arity body) target)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (savedBound : saved.length < arity) (bound : args.length ≤ s.maxApp)
+    (over : arity < args.length + saved.length) (timeout : s.clock < arity - saved.length) :
+    ClosSem.evaluateApp none (.closure (some ptr) saved captured arity body) args s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) ∧
+    evaluatePost s { s with clock := 0 } t (targetArgs ++ [target] ++ rest) f
+      (.err (.abort .timeoutError))
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  cases saved with
+  | nil =>
+    simp only [List.length_nil, Nat.add_zero, Nat.sub_zero] at over timeout
+    exact evaluateApp_ordinary_over_timeout s t f ptr arity captured args targetArgs rest body target
+      states annotations related argsRel bound over timeout
+  | cons head tail =>
+    exact evaluateApp_ordinary_partial_over_timeout s t f ptr arity captured (head :: tail) args targetArgs rest
+      body target states annotations related argsRel (by simp) savedBound bound over timeout
+
+/-- The first-call timeout simulation for an overapplied recursive closure
+covers singleton and mutual groups, with or without saved arguments. -/
+theorem evaluateApp_recclosure_over_timeout_all {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity index : Nat) (captured saved args : List ClosSem.Value) (functions : List (Nat × ClosLang.Exp))
+    (targetArgs rest : List BvlSem.Value) (body : ClosLang.Exp) (target : BvlSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : vRel s.maxApp f t.refs t.code (.recclosure (some ptr) saved captured functions index) target)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (found : functions[index]? = some (arity, body)) (savedBound : saved.length < arity)
+    (bound : args.length ≤ s.maxApp) (over : arity < args.length + saved.length)
+    (timeout : s.clock < arity - saved.length) :
+    ClosSem.evaluateApp none (.recclosure (some ptr) saved captured functions index) args s =
+      (.err (.abort .timeoutError), { s with clock := 0 }) ∧
+    evaluatePost s { s with clock := 0 } t (targetArgs ++ [target] ++ rest) f
+      (.err (.abort .timeoutError))
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  cases saved with
+  | nil =>
+    simp only [List.length_nil, Nat.add_zero, Nat.sub_zero] at over timeout
+    exact evaluateApp_recclosure_over_timeout s t f ptr arity index captured args functions targetArgs rest body target
+      states annotations related argsRel found bound over timeout
+  | cons head tail =>
+    exact evaluateApp_recclosure_partial_over_timeout s t f ptr arity index captured (head :: tail) args functions
+      targetArgs rest body target states annotations related argsRel found (by simp) savedBound bound over timeout
+
+/-- Compose an ordinary overapplication's first-call timeout with evaluation
+of its argument and function expressions. -/
+theorem evaluatePost_app_ordinary_over_timeout {C F : Type}
+    (s sArgs sFunction sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value) (f : HolFiniteMapExact Nat Nat)
+    (sourceArgs : List ClosLang.Exp) (sourceFunction : ClosLang.Exp)
+    (targetArgs : List Bvl.Exp) (targetFunction : Bvl.Exp) (values captured saved : List ClosSem.Value)
+    (ptr arity : Nat) (body : ClosLang.Exp) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (argsRun : ClosSem.evaluate sourceArgs sourceEnv s = (.val values, sArgs))
+    (functionRun : ClosSem.evaluate [sourceFunction] sourceEnv sArgs =
+      (.val [.closure (some ptr) saved captured arity body], sFunction))
+    (appRun : ClosSem.evaluateApp none (.closure (some ptr) saved captured arity body) values sFunction = (result, sFinal))
+    (savedBound : saved.length < arity) (bound : values.length ≤ sFunction.maxApp)
+    (over : arity < values.length + saved.length) (timeout : sFunction.clock < arity - saved.length)
+    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv)
+    (argsPost : evaluatePost s sArgs t targetEnv f (.val values) targetArgs)
+    (functionIH : ∀ (tArgs : BvlSem.State C F) (fArgs : HolFiniteMapExact Nat Nat),
+      stateRel fArgs sArgs tArgs → envRel sArgs.maxApp fArgs tArgs.refs tArgs.code sourceEnv targetEnv →
+      codeAnnotations sArgs → sptSubspt t.code tArgs.code →
+      evaluatePost sArgs sFunction tArgs targetEnv fArgs (.val [.closure (some ptr) saved captured arity body]) [targetFunction]) :
+    evaluatePost s sFinal t targetEnv f result [appTarget s.maxApp none targetArgs targetFunction] := by
+  apply evaluatePost_app_generic_success s sArgs sFunction sFinal t sourceEnv targetEnv f sourceArgs sourceFunction
+    targetArgs targetFunction values (.closure (some ptr) saved captured arity body) result
+    argsRun functionRun envRelated argsPost functionIH
+  intro targetValues targetClosure tFunction fFunction states annotations argsRel functionRel
+  obtain ⟨sourceTimeout, targetTimeout⟩ := evaluateApp_ordinary_over_timeout_all sFunction tFunction fFunction
+    ptr arity captured saved values targetValues targetEnv body targetClosure states annotations functionRel argsRel
+    savedBound bound over timeout
+  rw [sourceTimeout] at appRun
+  cases appRun
+  exact targetTimeout
+
+/-- Compose a recursive overapplication's first-call timeout with evaluation
+of its argument and function expressions. -/
+theorem evaluatePost_app_recclosure_over_timeout {C F : Type}
+    (s sArgs sFunction sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value) (f : HolFiniteMapExact Nat Nat)
+    (sourceArgs : List ClosLang.Exp) (sourceFunction : ClosLang.Exp)
+    (targetArgs : List Bvl.Exp) (targetFunction : Bvl.Exp) (values captured saved : List ClosSem.Value)
+    (ptr arity index : Nat) (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (argsRun : ClosSem.evaluate sourceArgs sourceEnv s = (.val values, sArgs))
+    (functionRun : ClosSem.evaluate [sourceFunction] sourceEnv sArgs =
+      (.val [.recclosure (some ptr) saved captured functions index], sFunction))
+    (appRun : ClosSem.evaluateApp none (.recclosure (some ptr) saved captured functions index) values sFunction = (result, sFinal))
+    (found : functions[index]? = some (arity, body)) (savedBound : saved.length < arity)
+    (bound : values.length ≤ sFunction.maxApp) (over : arity < values.length + saved.length)
+    (timeout : sFunction.clock < arity - saved.length)
+    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv)
+    (argsPost : evaluatePost s sArgs t targetEnv f (.val values) targetArgs)
+    (functionIH : ∀ (tArgs : BvlSem.State C F) (fArgs : HolFiniteMapExact Nat Nat),
+      stateRel fArgs sArgs tArgs → envRel sArgs.maxApp fArgs tArgs.refs tArgs.code sourceEnv targetEnv →
+      codeAnnotations sArgs → sptSubspt t.code tArgs.code →
+      evaluatePost sArgs sFunction tArgs targetEnv fArgs
+        (.val [.recclosure (some ptr) saved captured functions index]) [targetFunction]) :
+    evaluatePost s sFinal t targetEnv f result [appTarget s.maxApp none targetArgs targetFunction] := by
+  apply evaluatePost_app_generic_success s sArgs sFunction sFinal t sourceEnv targetEnv f sourceArgs sourceFunction
+    targetArgs targetFunction values (.recclosure (some ptr) saved captured functions index) result
+    argsRun functionRun envRelated argsPost functionIH
+  intro targetValues targetClosure tFunction fFunction states annotations argsRel functionRel
+  obtain ⟨sourceTimeout, targetTimeout⟩ := evaluateApp_recclosure_over_timeout_all sFunction tFunction fFunction
+    ptr arity index captured saved values functions targetValues targetEnv body targetClosure states annotations functionRel argsRel
+    found savedBound bound over timeout
+  rw [sourceTimeout] at appRun
+  cases appRun
+  exact targetTimeout
+
+/-- Expression simulation when an ordinary overapplication times out before its first call. -/
+theorem expressionSimulation_app_ordinary_over_timeout_case {C F : Type}
+    (s sArgs sFunction sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value) (f : HolFiniteMapExact Nat Nat)
+    (trace : BackendCommon.Tra) (args : List ClosLang.Exp) (function : ClosLang.Exp)
+    (values captured oldArgs : List ClosSem.Value) (ptr arity : Nat) (body : ClosLang.Exp)
+    (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (argsRun : ClosSem.evaluate args sourceEnv s = (.val values, sArgs))
+    (functionRun : ClosSem.evaluate [function] sourceEnv sArgs =
+      (.val [.closure (some ptr) oldArgs captured arity body], sFunction))
+    (savedBound : oldArgs.length < arity) (bound : values.length ≤ sFunction.maxApp)
+    (over : arity < values.length + oldArgs.length) (timeout : sFunction.clock < arity - oldArgs.length)
+    (run : ClosSem.evaluate [.app trace none function args] sourceEnv s = (result, sFinal))
+    (noType : result ≠ .err (.abort .typeError))
+    (compile : compileExpsHOL s.maxApp [.app trace none function args] aux = (compiled, finalAux))
+    (locations : ClosProps.everyFnLocationSome [.app trace none function args]) (annotations : codeAnnotations s)
+    (vars : ClosProps.everyFnVarsSome [.app trace none function args]) (installed : codeInstalled finalAux t.code)
+    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv) (states : stateRel f s t)
+    (argsIH : expressionSimulation (C := C) (F := F) args)
+    (functionIH : expressionSimulation (C := C) (F := F) [function])
+    :
+    evaluatePost s sFinal t targetEnv f result compiled := by
+  have nonempty : args ≠ [] := by
+    intro empty
+    subst args
+    simp [ClosSem.evaluate] at run
+    exact noType run.1.symm
+  have appRun : ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) values sFunction =
+      (result, sFinal) := by
+    have notEmpty : args.isEmpty = false := by cases args <;> simp_all
+    rw [ClosSem.evaluate] at run
+    simp only [notEmpty, Bool.false_eq_true, ↓reduceIte] at run
+    rw [ClosSem.fixClock_evaluate, argsRun] at run
+    dsimp only at run
+    rw [ClosSem.fixClock_evaluate, functionRun] at run
+    exact run
+  cases functionCompile : compileExpHOL s.maxApp function aux with
+  | mk targetFunction middleAux =>
+    cases argsCompile : compileExpListHOL s.maxApp args middleAux with
+    | mk targetArgs lastAux =>
+      have whole := compile_appTarget s.maxApp trace none function args aux middleAux lastAux
+        targetFunction targetArgs functionCompile argsCompile
+      have equal := compile.symm.trans whole
+      cases equal
+      have argsCompiled : compileExpsHOL s.maxApp args middleAux = (targetArgs, finalAux) := by
+        rw [compileExps_eq_list]
+        exact argsCompile
+      have functionCompiled : compileExpsHOL s.maxApp [function] aux = ([targetFunction], middleAux) := by
+        rw [compileExps_eq_list]
+        simp [compileExpListHOL, functionCompile]
+      have functionInstalled : codeInstalled middleAux t.code :=
+        compileExps_codeInstalled s.maxApp args middleAux finalAux targetArgs t.code argsCompiled installed
+      have locationsParts : ClosProps.fnLocationSomeExp function ∧ ClosProps.everyFnLocationSome args := by
+        simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+      have varsParts : ClosProps.fnVarsSomeExp function ∧ ClosProps.everyFnVarsSome args := by
+        simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using vars
+      have argsPost := argsIH s sArgs t sourceEnv targetEnv f middleAux finalAux targetArgs (.val values)
+        argsRun (by simp) argsCompiled locationsParts.2 annotations varsParts.2 installed envRelated states
+      apply evaluatePost_app_ordinary_over_timeout s sArgs sFunction sFinal t sourceEnv targetEnv f args function
+        targetArgs targetFunction values captured oldArgs ptr arity body result argsRun functionRun appRun savedBound bound over timeout
+        envRelated argsPost
+      · intro tArgs fArgs statesArgs envArgs annotationsArgs growth
+        have maxApp : sArgs.maxApp = s.maxApp := by
+          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
+          rw [argsRun] at h
+          exact h
+        exact functionIH sArgs sFunction tArgs sourceEnv targetEnv fArgs aux middleAux [targetFunction]
+          (.val [.closure (some ptr) oldArgs captured arity body]) functionRun (by simp)
+          (by simpa [maxApp] using functionCompiled)
+          (by simpa [ClosProps.everyFnLocationSome] using locationsParts.1) annotationsArgs
+          (by simpa [ClosProps.everyFnVarsSome] using varsParts.1)
+          (codeInstalled_subspt functionInstalled growth) envArgs statesArgs
+
+
+/-- Expression simulation when a recursive overapplication times out before its first call. -/
+theorem expressionSimulation_app_recclosure_over_timeout_case {C F : Type}
+    (s sArgs sFunction sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value) (f : HolFiniteMapExact Nat Nat)
+    (trace : BackendCommon.Tra) (args : List ClosLang.Exp) (function : ClosLang.Exp)
+    (values captured oldArgs : List ClosSem.Value) (ptr arity index : Nat) (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (argsRun : ClosSem.evaluate args sourceEnv s = (.val values, sArgs))
+    (functionRun : ClosSem.evaluate [function] sourceEnv sArgs =
+      (.val [.recclosure (some ptr) oldArgs captured functions index], sFunction))
+    (found : functions[index]? = some (arity, body)) (savedBound : oldArgs.length < arity)
+    (bound : values.length ≤ sFunction.maxApp) (over : arity < values.length + oldArgs.length)
+    (timeout : sFunction.clock < arity - oldArgs.length)
+    (run : ClosSem.evaluate [.app trace none function args] sourceEnv s = (result, sFinal))
+    (noType : result ≠ .err (.abort .typeError))
+    (compile : compileExpsHOL s.maxApp [.app trace none function args] aux = (compiled, finalAux))
+    (locations : ClosProps.everyFnLocationSome [.app trace none function args]) (annotations : codeAnnotations s)
+    (vars : ClosProps.everyFnVarsSome [.app trace none function args]) (installed : codeInstalled finalAux t.code)
+    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv) (states : stateRel f s t)
+    (argsIH : expressionSimulation (C := C) (F := F) args)
+    (functionIH : expressionSimulation (C := C) (F := F) [function])
+    :
+    evaluatePost s sFinal t targetEnv f result compiled := by
+  have nonempty : args ≠ [] := by
+    intro empty
+    subst args
+    simp [ClosSem.evaluate] at run
+    exact noType run.1.symm
+  have appRun : ClosSem.evaluateApp none (.recclosure (some ptr) oldArgs captured functions index) values sFunction =
+      (result, sFinal) := by
+    have notEmpty : args.isEmpty = false := by cases args <;> simp_all
+    rw [ClosSem.evaluate] at run
+    simp only [notEmpty, Bool.false_eq_true, ↓reduceIte] at run
+    rw [ClosSem.fixClock_evaluate, argsRun] at run
+    dsimp only at run
+    rw [ClosSem.fixClock_evaluate, functionRun] at run
+    exact run
+  cases functionCompile : compileExpHOL s.maxApp function aux with
+  | mk targetFunction middleAux =>
+    cases argsCompile : compileExpListHOL s.maxApp args middleAux with
+    | mk targetArgs lastAux =>
+      have whole := compile_appTarget s.maxApp trace none function args aux middleAux lastAux
+        targetFunction targetArgs functionCompile argsCompile
+      have equal := compile.symm.trans whole
+      cases equal
+      have argsCompiled : compileExpsHOL s.maxApp args middleAux = (targetArgs, finalAux) := by
+        rw [compileExps_eq_list]
+        exact argsCompile
+      have functionCompiled : compileExpsHOL s.maxApp [function] aux = ([targetFunction], middleAux) := by
+        rw [compileExps_eq_list]
+        simp [compileExpListHOL, functionCompile]
+      have functionInstalled : codeInstalled middleAux t.code :=
+        compileExps_codeInstalled s.maxApp args middleAux finalAux targetArgs t.code argsCompiled installed
+      have locationsParts : ClosProps.fnLocationSomeExp function ∧ ClosProps.everyFnLocationSome args := by
+        simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using locations
+      have varsParts : ClosProps.fnVarsSomeExp function ∧ ClosProps.everyFnVarsSome args := by
+        simpa [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp] using vars
+      have argsPost := argsIH s sArgs t sourceEnv targetEnv f middleAux finalAux targetArgs (.val values)
+        argsRun (by simp) argsCompiled locationsParts.2 annotations varsParts.2 installed envRelated states
+      apply evaluatePost_app_recclosure_over_timeout s sArgs sFunction sFinal t sourceEnv targetEnv f args function
+        targetArgs targetFunction values captured oldArgs ptr arity index functions body result argsRun functionRun appRun found savedBound bound over timeout
+        envRelated argsPost
+      · intro tArgs fArgs statesArgs envArgs annotationsArgs growth
+        have maxApp : sArgs.maxApp = s.maxApp := by
+          have h := (ClosProps.evaluate_const (C := C) (F := F)).1 args sourceEnv s
+          rw [argsRun] at h
+          exact h
+        exact functionIH sArgs sFunction tArgs sourceEnv targetEnv fArgs aux middleAux [targetFunction]
+          (.val [.recclosure (some ptr) oldArgs captured functions index]) functionRun (by simp)
+          (by simpa [maxApp] using functionCompiled)
+          (by simpa [ClosProps.everyFnLocationSome] using locationsParts.1) annotationsArgs
+          (by simpa [ClosProps.everyFnVarsSome] using varsParts.1)
+          (codeInstalled_subspt functionInstalled growth) envArgs statesArgs
+
 end Flapjack.Compiler.Backend.ClosToBvl
