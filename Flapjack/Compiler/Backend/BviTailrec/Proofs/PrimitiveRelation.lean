@@ -104,6 +104,17 @@ theorem accumulator_commutative (op : AssocOp) (x y : Value)
   | append => contradiction
   | noop => contradiction
 
+/-- The integer accumulator operations are commutative even on malformed
+operands, where both orders produce the same failure. -/
+theorem accumulator_commutative_all (op : AssocOp) (x y : Value)
+    (notNoop : op ≠ .noop) (notAppend : op ≠ .append) :
+    accumulatorApply op [x, y] = accumulatorApply op [y, x] := by
+  cases op with
+  | plus => cases x <;> cases y <;> simp [accumulatorApply, BvlSem.doIntApp, Int.add_comm]
+  | times => cases x <;> cases y <;> simp [accumulatorApply, BvlSem.doIntApp, Int.mul_comm]
+  | append => contradiction
+  | noop => contradiction
+
 /-- Accumulator dispatch only computes a value; it does not change the BVI
 state or inspect the state-dependent compiler fields. -/
 theorem doApp_toOp_pure {C F : Type} (op : AssocOp) (args : List Value)

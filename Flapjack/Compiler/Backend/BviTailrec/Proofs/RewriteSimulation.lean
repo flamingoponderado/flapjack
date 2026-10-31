@@ -370,6 +370,51 @@ theorem evaluate_applyOp_identity {C F : Type} (op : AssocOp) (acc : Nat)
     have identity := accumulator_identity_right op value notNoop (typed value rfl)
     simp [doApp_toOp_pure, identity]
 
+/-- Swapping a pure operand across another expression preserves evaluation
+for the commutative accumulator operators, including propagated errors. -/
+theorem evaluate_applyOp_swap_pure {C F : Type} (op : AssocOp) (pure other : Bvi.Exp)
+    (env : List Value) (state : BviSem.BviState C F) (value : Value)
+    (notNoop : op ≠ .noop) (notAppend : op ≠ .append)
+    (pureRun : ∀ s : BviSem.BviState C F, BviSem.evaluate [pure] env s = (.val [value], s)) :
+    BviSem.evaluate [applyOp op pure other] env state =
+      BviSem.evaluate [applyOp op other pure] env state := by
+  have leftList := BviSem.evaluateConsCons pure other [] env state
+  simp only [BviSem.evaluateTuple, pureRun state, Flapjack.holHd] at leftList
+  have rightList := BviSem.evaluateConsCons other pure [] env state
+  simp only [BviSem.evaluateTuple] at rightList
+  cases otherRun : BviSem.evaluate [other] env state with
+  | mk result middle =>
+    cases result with
+    | err error =>
+      simp only [otherRun] at leftList rightList
+      simp only [applyOp]
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, leftList]
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, rightList]
+    | val values =>
+      obtain ⟨otherValue, rfl⟩ := BviSem.evaluate_singleton other env state middle values otherRun
+      simp only [otherRun, pureRun middle, Flapjack.holHd] at leftList rightList
+      simp only [applyOp]
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, leftList]
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, rightList]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [doApp_toOp_pure, doApp_toOp_pure]
+      rw [accumulator_commutative_all op value otherValue notNoop notAppend]
+
+/-- The source candidate check preserves evaluation: its only possible
+change swaps a pure operand with a recursive call for a commutative operator. -/
+theorem checkOp_evaluate {C F : Type} (ctx : List ValueType) (op : AssocOp) (loc : Nat)
+    (e checked : Bvi.Exp) (env : List Value) (state : BviSem.BviState C F)
+    (types : tyRel env ctx) (check : checkOp ctx op loc e = some checked) :
+    BviSem.evaluate [e] env state = BviSem.evaluate [checked] env state := by
+  obtain ⟨recursive, pure, _, termOk, checkedShape, notNoop, original⟩ :=
+    checkOp_candidate ctx op loc e checked check
+  obtain ⟨value, _, pureRun⟩ := term_total (C := C) (F := F) ctx (opType op) pure env termOk types
+  rw [checkedShape]
+  rcases original with direct | ⟨notAppend, swapped⟩
+  · rw [direct]
+  · rw [swapped]
+    exact (evaluate_applyOp_swap_pure op pure recursive env state value notNoop notAppend pureRun).symm
+
 /-- A let binding can be moved outside an accumulator operation by shifting
 the accumulator index past the values bound by the let. -/
 theorem evaluate_applyOp_let {C F : Type} (op : AssocOp) (acc : Nat)

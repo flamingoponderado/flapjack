@@ -52,6 +52,113 @@ def sourceDispatch (loc next : Nat) (op : AssocOp) (acc : Nat)
     | none => (false, applyOp op (.var acc) checked)
     | some (value, call) => (true, pushCall next op acc value (argsFrom call))
 
+/-- Extracting binary operands from a recognized accumulator operation
+recovers its exact source operator and operands. -/
+theorem opBinArgs_success_shape (assoc : AssocOp) (e x y : Exp)
+    (run : opBinArgs assoc e = some (x, y)) :
+    assoc ≠ .noop ∧ e = applyOp assoc x y := by
+  unfold opBinArgs at run
+  split at run
+  next guard =>
+    cases e with
+    | op actual args =>
+      cases args with
+      | nil => simp [getBinArgs] at run
+      | cons a rest =>
+        cases rest with
+        | nil => simp [getBinArgs] at run
+        | cons b tail =>
+          cases tail with
+          | cons c cs => simp [getBinArgs] at run
+          | nil =>
+            simp [getBinArgs] at run
+            obtain ⟨rfl, rfl⟩ := run
+            have recognized : fromOp actual = assoc ∧ assoc ≠ .noop := by
+              rw [opEq_guard] at guard
+              cases assoc <;> cases actualFrom : fromOp actual <;>
+                simp_all [BEq.beq, instBEqAssocOp.beq, AssocOp.ctorIdx, bne]
+            have original := toOp_fromOp actual (by simpa [recognized.1] using recognized.2)
+            rw [recognized.1] at original
+            exact ⟨recognized.2, by simp [applyOp, original]⟩
+    | _ => simp [getBinArgs] at run
+  next => simp at run
+
+/-- A successful candidate after operand normalization came either from the
+original order or from swapping a commutative accumulator's operands. -/
+theorem trySwap_success_shape (loc : Nat) (assoc : AssocOp) (e x y : Exp)
+    (run : opBinArgs assoc (trySwap loc assoc e) = some (x, y)) :
+    assoc ≠ .noop ∧
+      (e = applyOp assoc x y ∨ (assoc ≠ .append ∧ e = applyOp assoc y x)) := by
+  unfold trySwap at run
+  split at run
+  next =>
+    obtain ⟨notNoop, shape⟩ := opBinArgs_success_shape assoc e x y run
+    exact ⟨notNoop, Or.inl shape⟩
+  next notAppend =>
+    cases original : opBinArgs assoc e with
+    | none => simp [original] at run
+    | some pair =>
+      obtain ⟨a, b⟩ := pair
+      simp only [original] at run
+      cases recursive : isRec loc a with
+      | false =>
+        simp only [recursive, Bool.false_eq_true, ↓reduceIte] at run
+        obtain ⟨notNoop, shape⟩ := opBinArgs_success_shape assoc e x y run
+        exact ⟨notNoop, Or.inl shape⟩
+      | true =>
+        simp only [recursive, ↓reduceIte] at run
+        obtain ⟨notNoop, shape⟩ := opBinArgs_success_shape assoc e a b original
+        obtain ⟨_, swapped⟩ := opBinArgs_success_shape assoc (applyOp assoc b a) x y run
+        have operands : (b, a) = (x, y) := by
+          have extracted := congrArg getBinArgs swapped
+          simpa [applyOp, getBinArgs] using extracted
+        cases operands
+        have notList : assoc ≠ .append := by
+          cases assoc <;> simp_all [BEq.beq, instBEqAssocOp.beq, AssocOp.ctorIdx]
+        exact ⟨notNoop, Or.inr ⟨notList, shape⟩⟩
+
+/-- A successful candidate check identifies the recursive call and its pure
+accumulator operand, and records whether the input operands were swapped.
+The carriers remain untagged until source review is complete. -/
+theorem checkOp_candidate (ctx : List ValueType) (assoc : AssocOp) (loc : Nat)
+    (e checked : Exp) (run : checkOp ctx assoc loc e = some checked) :
+    ∃ recursive pure,
+      isRec loc recursive = true ∧ term ctx (opType assoc) pure = true ∧
+      checked = applyOp assoc pure recursive ∧ assoc ≠ .noop ∧
+      (e = applyOp assoc pure recursive ∨
+        (assoc ≠ .append ∧ e = applyOp assoc recursive pure)) := by
+  unfold checkOp at run
+  cases selected : opBinArgs assoc (trySwap loc assoc e) with
+  | none => simp [selected] at run
+  | some pair =>
+    obtain ⟨pure, recursive⟩ := pair
+    simp only [selected] at run
+    split at run
+    next accepted =>
+      simp only [Option.some.injEq] at run
+      subst checked
+      have facts : isRec loc recursive = true ∧ term ctx (opType assoc) pure = true := by
+        simpa only [Bool.and_eq_true] using accepted
+      obtain ⟨notNoop, shape⟩ := trySwap_success_shape loc assoc e pure recursive selected
+      exact ⟨recursive, pure, facts.1, facts.2, rfl, notNoop, shape⟩
+    next => simp at run
+
+/-- A successful candidate uses a direct self-call without an exception
+handler. -/
+theorem checkOp_candidate_call (ctx : List ValueType) (assoc : AssocOp) (loc : Nat)
+    (e checked : Exp) (run : checkOp ctx assoc loc e = some checked) :
+    ∃ pure ticks args,
+      term ctx (opType assoc) pure = true ∧
+      checked = applyOp assoc pure (.call ticks (some loc) args none) ∧ assoc ≠ .noop ∧
+      (e = applyOp assoc pure (.call ticks (some loc) args none) ∨
+        (assoc ≠ .append ∧ e = applyOp assoc (.call ticks (some loc) args none) pure)) := by
+  obtain ⟨recursive, pure, rec, termOk, shape, notNoop, original⟩ :=
+    checkOp_candidate ctx assoc loc e checked run
+  cases recursive <;> simp [isRec] at rec
+  case call ticks dest args handler =>
+    cases dest <;> cases handler <;> simp_all
+    exact ⟨pure, termOk, ticks, args, rfl, original⟩
+
 /-- `Noop` cannot select a source operation candidate. -/
 theorem checkOp_noop (ctx : List ValueType) (loc : Nat) (e : Exp) :
     checkOp ctx .noop loc e = none := by
