@@ -1412,4 +1412,53 @@ theorem destClosure_singletonRec_partial (maxApp ptr arity : Nat) (captured args
   have positive : 0 < arity := by omega
   simp [ClosSem.destClosure, ClosSem.checkLoc, bound, partialBound, positive]
 
+/-- The computed partial-application slot evaluates the triangular index plus
+the number of previously supplied arguments. -/
+theorem evaluate_partialAppFnLocationCode {C F : Type} {α : Type}
+    (maxApp : α) (s : BvlSem.State C F) (env : List BvlSem.Value)
+    (total previous : Bvl.Exp) (totalValue previousValue : Int)
+    (totalRun : BvlSem.evaluate [total] env s = (.val [.number totalValue], s))
+    (previousRun : BvlSem.evaluate [previous] (.number totalValue :: env) s = (.val [.number previousValue], s)) :
+    BvlSem.evaluate [partialAppFnLocationCode maxApp total previous] env s =
+      (.val [.number (previousValue + (totalValue * (totalValue - 1)).fdiv 2)], s) := by
+  rw [partialAppFnLocationCode, BvlSem.evaluate, BvlSem.fixClock_evaluate, totalRun]
+  simp [mkConst, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp,
+    BvlSem.applyNumeric, BvlSem.doIntApp, previousRun]
+  rw [Int.mul_comm (totalValue - 1) totalValue, Int.add_comm]
+
+/-- For a positive total arity, the computed slot agrees with the natural
+triangular index used to construct the partial-application table. -/
+theorem evaluate_partialAppFnLocationCode_nat {C F : Type} {α : Type}
+    (maxApp : α) (s : BvlSem.State C F) (env : List BvlSem.Value)
+    (total previous : Bvl.Exp) (totalValue previousValue : Nat) (positive : 0 < totalValue)
+    (totalRun : BvlSem.evaluate [total] env s = (.val [.number (Int.ofNat totalValue)], s))
+    (previousRun : BvlSem.evaluate [previous] (.number (Int.ofNat totalValue) :: env) s =
+      (.val [.number (Int.ofNat previousValue)], s)) :
+    BvlSem.evaluate [partialAppFnLocationCode maxApp total previous] env s =
+      (.val [.number (Int.ofNat (previousValue + totalValue * (totalValue - 1) / 2))], s) := by
+  rw [evaluate_partialAppFnLocationCode maxApp s env total previous _ _ totalRun previousRun]
+  have sub : (Int.ofNat totalValue - 1) = Int.ofNat (totalValue - 1) := by
+    cases totalValue with
+    | zero => omega
+    | succ n => simp
+  rw [sub, Int.fdiv_eq_ediv_of_nonneg _ (by decide)]
+  simp only [Int.ofNat_eq_natCast]
+  push_cast
+  rfl
+
+/-- The generic stub computes the partial-application table slot from the
+closure arity field and the argument count. -/
+theorem evaluate_partialAppFnLocationCode_stub {C F : Type} {α : Type}
+    (maxApp : α) (s : BvlSem.State C F) (args : List BvlSem.Value)
+    (extra ptr : BvlSem.Value) (tag : Nat) (fields : List BvlSem.Value)
+    (total previous : Nat) (bound : previous < total) :
+    BvlSem.evaluate [partialAppFnLocationCode maxApp
+      (.op (.blockOp (.elemAt 1)) [.var (args.length + 1)]) (mkConst previous)]
+      (extra :: (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)])) s =
+      (.val [.number (Int.ofNat (previous + total * (total - 1) / 2))], s) := by
+  apply evaluate_partialAppFnLocationCode_nat maxApp s _ _ _ total previous (by omega)
+  · rw [BvlSem.evaluate, BvlSem.fixClock_evaluate]
+    simp [BvlSem.evaluate, BvlSem.doApp, BvlSem.applyBlock]
+  · simp [mkConst, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyNumeric, BvlSem.doIntApp]
+
 end Flapjack.Compiler.Backend.ClosToBvl
