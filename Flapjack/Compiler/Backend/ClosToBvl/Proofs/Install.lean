@@ -261,4 +261,142 @@ theorem install_dispatch {C F : Type} (s next : ClosSem.State C F) (t : BvlSem.S
           bytesRel wordsRel bytesRun wordsRun sourceHead sourceNext compiled oracle
       exact ⟨expressions, auxiliary, start, body, tail, resultEq, nextEq, nonempty, extracted, program, targetRun⟩
 
+/-- Each indexed output expression comes from compiling the corresponding
+source singleton, and its auxiliary output is installed whenever the final
+accumulator is installed. This supports the new-code part of installation. -/
+theorem compileExps_index_installed (maxApp : Nat) (expressions : List ClosLang.Exp)
+    (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
+    (code : Spt (Nat × Bvl.Exp)) (index : Nat) (source : ClosLang.Exp) (target : Bvl.Exp)
+    (run : compileExpsHOL maxApp expressions aux = (compiled, finalAux))
+    (sourceAt : expressions[index]? = some source) (targetAt : compiled[index]? = some target)
+    (installed : codeInstalled finalAux code) :
+    ∃ auxBefore auxAfter, compileExpsHOL maxApp [source] auxBefore = ([target], auxAfter) ∧
+      codeInstalled auxAfter code := by
+  induction expressions generalizing aux finalAux compiled index with
+  | nil => simp at sourceAt
+  | cons first rest ih =>
+    cases firstRun : compileExpHOL maxApp first aux with
+    | mk firstTarget middleAux =>
+      cases restRun : compileExpListHOL maxApp rest middleAux with
+      | mk restTargets lastAux =>
+        have whole : compileExpsHOL maxApp (first :: rest) aux = (firstTarget :: restTargets, lastAux) := by
+          simp [compileExps_eq_list, compileExpListHOL, firstRun, restRun]
+        have equal := run.symm.trans whole
+        cases equal
+        cases index with
+        | zero =>
+          simp only [List.getElem?_cons_zero, Option.some.injEq] at sourceAt targetAt
+          subst source
+          subst target
+          have tailRun : compileExpsHOL maxApp rest middleAux = (restTargets, finalAux) := by
+            simpa [compileExps_eq_list] using restRun
+          have firstInstalled := compileExps_codeInstalled maxApp rest middleAux finalAux restTargets code tailRun installed
+          exact ⟨aux, middleAux, by simp [compileExps_eq_list, compileExpListHOL, firstRun], firstInstalled⟩
+        | succ index =>
+          simp only [List.getElem?_cons_succ] at sourceAt targetAt
+          have tailRun : compileExpsHOL maxApp rest middleAux = (restTargets, finalAux) := by
+            simpa [compileExps_eq_list] using restRun
+          exact ih middleAux finalAux restTargets index tailRun sourceAt targetAt installed
+
+/-- If a compiled program is installed, each source entry resolves at its
+shifted target label and the auxiliary code for that entry is installed. -/
+theorem compileProgExps_entry_installed (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp))
+    (code : Spt (Nat × Bvl.Exp)) (name arity : Nat) (source : ClosLang.Exp)
+    (installed : codeInstalled (compileProgExpsHOL maxApp program) code)
+    (member : (name, arity, source) ∈ program) :
+    ∃ auxBefore target auxAfter,
+      compileExpsHOL maxApp [source] auxBefore = ([target], auxAfter) ∧
+      sptLookup (name + numStubs maxApp) code = some (arity, target) ∧ codeInstalled auxAfter code := by
+  cases compiledRun : compileExpsHOL maxApp (program.map (fun (_, _, exp) => exp)) [] with
+  | mk targets finalAux =>
+    let entries := (program.zip targets).map (fun ((loc, args, _), exp) => (loc + numStubs maxApp, args, exp))
+    have allInstalled : codeInstalled (entries ++ finalAux) code := by
+      simpa [compileProgExpsHOL, compiledRun, entries] using installed
+    have finalInstalled : codeInstalled finalAux code := by
+      intro entry inAux
+      exact allInstalled entry (List.mem_append_right entries inAux)
+    obtain ⟨index, indexBound, sourceEq⟩ := List.mem_iff_getElem.mp member
+    have targetLength : targets.length = program.length := by
+      simpa using compileExps_length maxApp (program.map (fun (_, _, exp) => exp)) [] targets finalAux compiledRun
+    have targetBound : index < targets.length := by omega
+    let target := targets[index]
+    have sourceAt : (program.map (fun (_, _, exp) => exp))[index]? = some source := by
+      simp [List.getElem?_map, List.getElem?_eq_getElem indexBound, sourceEq]
+    have targetAt : targets[index]? = some target := List.getElem?_eq_getElem targetBound
+    obtain ⟨auxBefore, auxAfter, singleton, auxInstalled⟩ :=
+      compileExps_index_installed maxApp (program.map (fun (_, _, exp) => exp)) [] finalAux targets
+        code index source target compiledRun sourceAt targetAt finalInstalled
+    have zipBound : index < (program.zip targets).length := by simp [List.length_zip]; omega
+    have zipped : ((name, arity, source), target) ∈ program.zip targets := by
+      apply List.mem_iff_getElem.mpr
+      refine ⟨index, zipBound, ?_⟩
+      simp [List.getElem_zip, sourceEq, target]
+    have outputMember : (name + numStubs maxApp, arity, target) ∈ entries ++ finalAux := by
+      apply List.mem_append_left
+      apply List.mem_map.mpr
+      exact ⟨((name, arity, source), target), zipped, rfl⟩
+    exact ⟨auxBefore, target, auxAfter, singleton, allInstalled _ outputMember, auxInstalled⟩
+
+private theorem install_assoc_lookup {α : Type} (entries : List (Nat × α)) (key : Nat) (value : α)
+    (distinct : (entries.map Prod.fst).Nodup) (member : (key, value) ∈ entries) :
+    sptAListLookup key entries = some value := by
+  induction entries with
+  | nil => simp at member
+  | cons entry rest ih =>
+    obtain ⟨other, payload⟩ := entry
+    simp only [List.map_cons, List.nodup_cons] at distinct
+    simp only [List.mem_cons] at member
+    cases member with
+    | inl same =>
+      cases same
+      simp [sptAListLookup]
+    | inr inRest =>
+      have different : key ≠ other := by
+        intro equal
+        subst other
+        apply distinct.1
+        exact List.mem_map.mpr ⟨(key, value), inRest, rfl⟩
+      simp [sptAListLookup, different, ih distinct.2 inRest]
+
+/-- Fresh, distinct target entries are all installed in the union of the old
+code and the tree built from those entries. -/
+theorem install_codeInstalled (code : Spt (Nat × Bvl.Exp)) (entries : List (Nat × Nat × Bvl.Exp))
+    (distinct : (entries.map Prod.fst).Nodup)
+    (fresh : ∀ entry ∈ entries, sptLookup entry.1 code = none) :
+    codeInstalled entries (sptUnion code (sptFromAList entries)) := by
+  intro entry member
+  obtain ⟨key, arity, body⟩ := entry
+  rw [sptLookup_sptUnion, fresh (key, arity, body) member, sptLookup_sptFromAList]
+  exact install_assoc_lookup entries key (arity, body) distinct member
+
+/-- Every auxiliary source entry in the next oracle program has a compiled
+entry and installed auxiliary code after the target installation. -/
+theorem install_auxiliary_entry {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
+    (config : C) (expressions : List ClosLang.Exp) (auxiliary : List (Nat × Nat × ClosLang.Exp))
+    (name arity : Nat) (source : ClosLang.Exp)
+    (sourceHead : s.compileOracle 0 = (config, expressions, auxiliary))
+    (member : (name, arity, source) ∈ auxiliary)
+    (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle) :
+    ∃ auxBefore target auxAfter,
+      compileExpsHOL s.maxApp [source] auxBefore = ([target], auxAfter) ∧
+      sptLookup (name + numStubs s.maxApp)
+        (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) = some (arity, target) ∧
+      codeInstalled auxAfter (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) := by
+  obtain ⟨headEq, _, nodup, fresh⟩ := compileOracleInv_head s.maxApp s.code s.compile s.compileOracle
+    t.code t.compile t.compileOracle oracle
+  have targetHead : t.compileOracle 0 = (config, compileInc s.maxApp (expressions, auxiliary)) := by
+    simpa [sourceHead, BackendProps.pureCo] using headEq
+  have distinct : ((compileInc s.maxApp (expressions, auxiliary)).map Prod.fst).Nodup := by
+    simpa [targetHead] using nodup
+  have targetFresh : ∀ entry ∈ compileInc s.maxApp (expressions, auxiliary), sptLookup entry.1 t.code = none := by
+    simpa [targetHead] using fresh
+  have installed := install_codeInstalled t.code (compileInc s.maxApp (expressions, auxiliary)) distinct targetFresh
+  cases extract : extractName expressions with
+  | mk start body =>
+    have installed' : codeInstalled (compileProgExpsHOL s.maxApp (chainExps start body ++ auxiliary))
+        (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) := by
+      simpa [compileInc, extract] using installed
+    exact compileProgExps_entry_installed s.maxApp (chainExps start body ++ auxiliary) _ name arity source installed'
+      (List.mem_append_right _ member)
+
 end Flapjack.Compiler.Backend.ClosToBvl
