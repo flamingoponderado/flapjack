@@ -511,6 +511,7 @@ import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecCorrespondence
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermCorrespondence
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanCorrespondence
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteCorrespondence
+import Flapjack.Compiler.Backend.BviTailrec.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Total
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Total
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Total

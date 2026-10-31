@@ -59,7 +59,9 @@ private def argType : ClosLang.Op → ValueType
   | .intOp .less | .intOp .lessEq | .intOp .greater | .intOp .greaterEq => .int
   | .blockOp .listAppend => .list
   | _ => .any
-private def decideType : ValueType → ValueType → ValueType
+/-- Keep a specific type only when both branches agree on it. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "decide_ty_def"]
+def decideType : ValueType → ValueType → ValueType
   | .int, .int => .int
   | .list, .list => .list
   | _, _ => .any
