@@ -531,6 +531,8 @@ import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateClockFull
 import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateList
 import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
+import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyEvents
+import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateEvents
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
