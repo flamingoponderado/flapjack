@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteScan
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermExtension
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
 import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
+import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 
 /-! Cases of the source tail-recursion rewrite simulation. The evaluator,
 source scan and compilation carriers remain subject to HOL review. -/
@@ -5194,5 +5195,62 @@ theorem compileEachFuel_semantics {C F : Type}
     exact congrArg Prod.snd (Option.some.inj equal)
   rw [← compiledSame] at workerBound ⊢
   exact compileEach_semantics next program ffi oracle compiler start condition oracleCondition workerBound notFail
+
+/-- The tail-recursion oracle adapter is the standard incremental-pass
+oracle adapter. -/
+theorem transformOracle_eq_stateCo {C : Type} (oracle : BviSem.CompileOracle (Nat × C)) :
+    transformOracle oracle = BackendProps.stateCo compileEachSource oracle := by
+  funext index
+  cases h : oracle index with
+  | mk config program => cases config; rfl
+
+/-- The tail-recursion callback is the standard incremental-pass callback. -/
+theorem transformCompiler_eq_stateCc {C : Type} (compiler : BviSem.Compiler C) :
+    transformCompiler compiler = BackendProps.stateCc compileEachSource compiler := by
+  funext config program
+  rcases config with ⟨next, config⟩
+  cases h : compileEachSource next program with
+  | mk next' compiled =>
+    cases hcompiler : compiler config compiled with
+    | none => simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
+    | some output =>
+      rcases output with ⟨bytes, data, config'⟩
+      simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
+
+/-- With tail-recursion elimination enabled, the production program entry
+point preserves BVI behavior using the standard incremental oracle and
+callback adapters. The HOL carrier comparison remains outstanding. -/
+theorem compileProgFuel_enabled_semantics {C F : Type}
+    (fuel next : Nat) (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
+    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (start : Nat)
+    (last : Nat) (compiled : List (Nat × Nat × Bvi.Exp))
+    (condition : inputCondition next program)
+    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
+    (workerBound : ∀ n, n ∈ compiled.map Prod.fst → inWorkerNamespace n → n < (oracle 0).1.1)
+    (compiledEq : compileProgFuel fuel true next program = some (last, compiled))
+    (notFail : BviSem.semantics ffi (sptFromAList program) oracle
+      (BackendProps.stateCc compileEachSource compiler) start ≠ .fail) :
+    BviSem.semantics ffi (sptFromAList program) oracle
+        (BackendProps.stateCc compileEachSource compiler) start =
+      BviSem.semantics ffi (sptFromAList compiled)
+        (BackendProps.stateCo compileEachSource oracle) compiler start := by
+  rw [← transformCompiler_eq_stateCc] at notFail ⊢
+  rw [← transformOracle_eq_stateCo]
+  exact compileEachFuel_semantics fuel next program ffi oracle compiler start last compiled
+    condition oracleCondition workerBound (by simpa [compileProgFuel] using compiledEq) notFail
+
+/-- With tail-recursion elimination disabled, the production entry point
+leaves the program unchanged and therefore preserves its BVI behavior. -/
+theorem compileProgFuel_disabled_semantics {C F : Type}
+    (fuel next : Nat) (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
+    (oracle : BviSem.CompileOracle C) (compiler : BviSem.Compiler C) (start last : Nat)
+    (compiled : List (Nat × Nat × Bvi.Exp))
+    (compiledEq : compileProgFuel fuel false next program = some (last, compiled)) :
+    BviSem.semantics ffi (sptFromAList program) oracle compiler start =
+      BviSem.semantics ffi (sptFromAList compiled) oracle compiler start := by
+  have same : program = compiled := by
+    have pairEq : (next, program) = (last, compiled) := by simpa [compileProgFuel] using compiledEq
+    exact congrArg Prod.snd pairEq
+  rw [same]
 
 end Flapjack.Compiler.Backend.BviTailrec
