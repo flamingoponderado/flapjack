@@ -1,4 +1,5 @@
-import Flapjack.Compiler.Backend.ClosConstant.Proofs.Build
+import Flapjack.Compiler.Backend.ClosConstant.Proofs.Reconstruct
+import Flapjack.Compiler.Backend.ClosConstant.Proofs.HashParts
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
 
 /-! Correspondence of source and BVL constant-part builders. -/
@@ -92,5 +93,23 @@ theorem constantBuildConst_related {C F : Type} (parts : List ClosLang.ConstPart
   have memoryRel : ∀ _ : Nat, vRel s.maxApp f t.refs t.code (.number 0) (.number 0) :=
     fun _ => .number 0
   exact constantBuild_related parts (fun _ => .number 0) (fun _ => .number 0) 0 s t f states memoryRel
+
+/-- For constants emitted as a build operation, the executed part builder
+produces a value related to the original constant. The state and value
+relations are the current candidates pending HOL carrier review. -/
+theorem compileConst_build_related {C F : Type} (constant : ClosLang.Const)
+    (prereqs : (∀ n, constant ≠ .constInt n) ∧ (∀ tag, constant ≠ .constCons tag []))
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (states : stateRel f s t) :
+    ∃ value refs,
+      ClosToBvl.compileConst constant = .blockOp (.build ((toParts constant).map updateTag)) ∧
+      BvlSem.doBuildConst ((toParts constant).map updateTag) t.refs = (value, refs) ∧
+      vRel s.maxApp f refs t.code (ClosSem.makeConst constant) value ∧
+      stateRel f s { t with refs := refs } ∧ unmappedRefsSubmap t.refs refs f f := by
+  obtain ⟨value, refs, run, relation, finalStates, frame⟩ :=
+    constantBuildConst_related (toParts constant) s t f states
+  have sourceValue : buildConst (toParts constant) = ClosSem.makeConst constant := by
+    rw [← makeConst_buildConstSyntax, buildConst_toParts]
+  exact ⟨value, refs, compileConst_thm constant prereqs, run, sourceValue ▸ relation, finalStates, frame⟩
 
 end Flapjack.Compiler.Backend.ClosToBvl
