@@ -831,4 +831,123 @@ theorem decode_movMR_z32 (src base : Nat) (hs : src < 16) (hb : base < 16)
     · by_cases h1 : disp = 0 ∧ base % 8 ≠ 5 <;>
         by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 <;> simp [h1, h2] <;> omega
 
+theorem eGenRmReg_regBase (sz : ZSize) (reg base : Nat) (hr : reg < 16) (hb : base < 16)
+    (disp : BitVec 64) (hlo : -(2^31 : Int) ≤ disp.toInt) (hhi : disp.toInt < 2^31)
+    (p : List (BitVec 8)) (opc : BitVec 8) (mo : Option (BitVec 8)) :
+    eGenRmReg sz (.zm none (.regBase base) disp) (BitVec.ofNat 4 reg) p opc mo =
+      (match sz with
+       | .z8 haveRex =>
+           (if 8 ≤ reg ∨ 8 ≤ base then
+             [byte (64 + (if 8 ≤ reg then 4 else 0) + (if 8 ≤ base then 1 else 0))]
+            else if haveRex then [byte 0x40] else [])
+       | .z16 =>
+           [byte 0x66] ++
+             (if 8 ≤ reg ∨ 8 ≤ base then
+               [byte (64 + (if 8 ≤ reg then 4 else 0) + (if 8 ≤ base then 1 else 0))]
+              else [])
+       | .z32 =>
+           (if 8 ≤ reg ∨ 8 ≤ base then
+             [byte (64 + (if 8 ≤ reg then 4 else 0) + (if 8 ≤ base then 1 else 0))]
+            else [])
+       | .z64 =>
+           [byte (72 + (if 8 ≤ reg then 4 else 0) + (if 8 ≤ base then 1 else 0))]) ++
+      p ++
+      [opc ||| (mo.getD (match sz with | .z8 _ => 0 | _ => 1))] ++
+      [byte ((if disp = 0 ∧ base % 8 ≠ 5 then 0
+              else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 64 else 128) +
+             8 * (reg % 8) + base % 8)] ++
+      (if base % 8 = 4 then [byte 0x24] else []) ++
+      (if disp = 0 ∧ base % 8 ≠ 5 then []
+       else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then [byte disp.toNat]
+       else [byte disp.toNat, byte (disp.toNat / 256), byte (disp.toNat / 65536), byte (disp.toNat / 16777216)]) := by
+  cases sz with
+  | z8 haveRex =>
+    cases haveRex
+    · interval_cases reg <;> interval_cases base
+      all_goals
+        simp only [eGenRmReg, eModRM, eOpsize, rexPrefix, mkRex, eImm8_32, eImm8, eImm32, byte, modField]
+        simp only [Nat.reduceMod, Nat.reduceMul, Nat.reduceDiv]
+        simp
+        by_cases h0 : disp = 0
+        · subst h0; simp
+        · have h0' : disp ≠ 0#64 := h0
+          by_cases h8 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
+          · simp [h0', h8]
+          · have h32 : -2147483648 ≤ disp.toInt ∧ disp.toInt ≤ 2147483647 := by omega
+            simp [h0', h8, h32]
+    · interval_cases reg <;> interval_cases base
+      all_goals
+        simp only [eGenRmReg, eModRM, eOpsize, rexPrefix, mkRex, eImm8_32, eImm8, eImm32, byte, modField]
+        simp only [Nat.reduceMod, Nat.reduceMul, Nat.reduceDiv]
+        simp
+        by_cases h0 : disp = 0
+        · subst h0; simp
+        · have h0' : disp ≠ 0#64 := h0
+          by_cases h8 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
+          · simp [h0', h8]
+          · have h32 : -2147483648 ≤ disp.toInt ∧ disp.toInt ≤ 2147483647 := by omega
+            simp [h0', h8, h32]
+  | z16 =>
+    interval_cases reg <;> interval_cases base
+    all_goals
+      simp only [eGenRmReg, eModRM, eOpsize, rexPrefix, mkRex, eImm8_32, eImm8, eImm32, byte, modField]
+      simp only [Nat.reduceMod, Nat.reduceMul, Nat.reduceDiv]
+      simp
+      by_cases h0 : disp = 0
+      · subst h0; simp
+      · have h0' : disp ≠ 0#64 := h0
+        by_cases h8 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
+        · simp [h0', h8]
+        · have h32 : -2147483648 ≤ disp.toInt ∧ disp.toInt ≤ 2147483647 := by omega
+          simp [h0', h8, h32]
+  | z32 =>
+    interval_cases reg <;> interval_cases base
+    all_goals
+      simp only [eGenRmReg, eModRM, eOpsize, rexPrefix, mkRex, eImm8_32, eImm8, eImm32, byte, modField]
+      simp only [Nat.reduceMod, Nat.reduceMul, Nat.reduceDiv]
+      simp
+      by_cases h0 : disp = 0
+      · subst h0; simp
+      · have h0' : disp ≠ 0#64 := h0
+        by_cases h8 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
+        · simp [h0', h8]
+        · have h32 : -2147483648 ≤ disp.toInt ∧ disp.toInt ≤ 2147483647 := by omega
+          simp [h0', h8, h32]
+  | z64 =>
+    interval_cases reg <;> interval_cases base
+    all_goals
+      simp only [eGenRmReg, eModRM, eOpsize, rexPrefix, mkRex, eImm8_32, eImm8, eImm32, byte, modField]
+      simp only [Nat.reduceMod, Nat.reduceMul, Nat.reduceDiv]
+      simp
+      by_cases h0 : disp = 0
+      · subst h0; simp
+      · have h0' : disp ≠ 0#64 := h0
+        by_cases h8 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
+        · simp [h0', h8]
+        · have h32 : -2147483648 ≤ disp.toInt ∧ disp.toInt ≤ 2147483647 := by omega
+          simp [h0', h8, h32]
+
+/-- The encoded byte list of `movMR .z16`. -/
+abbrev movMRZ16Bytes (src base : Nat) (disp : BitVec 64) : List (BitVec 8) :=
+  [byte 0x66] ++
+  (if 8 ≤ src ∨ 8 ≤ base then
+    [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) ++
+  [byte 0x89,
+   byte ((if disp = 0 ∧ base % 8 ≠ 5 then 0
+          else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 64 else 128) +
+         8 * (src % 8) + base % 8)] ++
+  (if base % 8 = 4 then [byte 0x24] else []) ++
+  (if disp = 0 ∧ base % 8 ≠ 5 then []
+   else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then [byte disp.toNat]
+   else [byte disp.toNat, byte (disp.toNat / 256), byte (disp.toNat / 65536),
+     byte (disp.toNat / 16777216)])
+
+/-- `encodeInsn (.movMR .z16 src base disp)` is `movMRZ16Bytes src base disp`. -/
+theorem encodeInsn_movMR_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
+    (disp : BitVec 64) (hlo : -(2^31 : Int) ≤ disp.toInt) (hhi : disp.toInt < 2^31) :
+    encodeInsn (.movMR .z16 src base disp) = movMRZ16Bytes src base disp := by
+  rw [encodeInsn, eGenRmReg_regBase .z16 src base hs hb disp hlo hhi [] (byte 0x88) none]
+  simp [movMRZ16Bytes]
+  decide
+
 end Flapjack.Compiler.Encoders.X64
