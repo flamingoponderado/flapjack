@@ -549,4 +549,78 @@ theorem install_dispatch_stateRel {C F : Type} (s next : ClosSem.State C F) (t :
       · simpa [nextEq] using statesNext
       · simpa [nextEq, codeAnnotations] using annotationsNext
 
+/-- The next installation's compiled main entry can be called indirectly
+with no arguments in the extended target code. -/
+theorem install_main_findCode {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
+    (config : C) (expressions : List ClosLang.Exp) (auxiliary : List (Nat × Nat × ClosLang.Exp))
+    (sourceHead : s.compileOracle 0 = (config, expressions, auxiliary))
+    (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle) :
+    ∃ start body tail,
+      (extractName expressions).1 = start ∧
+      compileInc s.maxApp (expressions, auxiliary) = (start + numStubs s.maxApp, 0, body) :: tail ∧
+      BvlSem.findCode none [.codePtr (start + numStubs s.maxApp)]
+        (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) = some ([], body) := by
+  obtain ⟨start, body, tail, extracted, program⟩ := compileInc_head s.maxApp (expressions, auxiliary)
+  obtain ⟨headEq, _, nodup, fresh⟩ := compileOracleInv_head s.maxApp s.code s.compile s.compileOracle
+    t.code t.compile t.compileOracle oracle
+  have targetHead : t.compileOracle 0 = (config, compileInc s.maxApp (expressions, auxiliary)) := by
+    simpa [sourceHead, BackendProps.pureCo] using headEq
+  have distinct : ((compileInc s.maxApp (expressions, auxiliary)).map Prod.fst).Nodup := by
+    simpa [targetHead] using nodup
+  have targetFresh : ∀ entry ∈ compileInc s.maxApp (expressions, auxiliary), sptLookup entry.1 t.code = none := by
+    simpa [targetHead] using fresh
+  have installed := install_codeInstalled t.code (compileInc s.maxApp (expressions, auxiliary)) distinct targetFresh
+  have member : (start + numStubs s.maxApp, 0, body) ∈ compileInc s.maxApp (expressions, auxiliary) := by
+    rw [program]
+    simp
+  have lookup := installed (start + numStubs s.maxApp, 0, body) member
+  refine ⟨start, body, tail, extracted, program, ?_⟩
+  simp [BvlSem.findCode, Flapjack.holLast, lookup]
+
+/-- Every source entry in the generated main chain has its corresponding
+compiled target entry and installed auxiliary code after installation. -/
+theorem install_chain_entry {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
+    (config : C) (expressions : List ClosLang.Exp) (auxiliary : List (Nat × Nat × ClosLang.Exp))
+    (start : Nat) (chain : List ClosLang.Exp) (name arity : Nat) (source : ClosLang.Exp)
+    (sourceHead : s.compileOracle 0 = (config, expressions, auxiliary))
+    (extract : extractName expressions = (start, chain))
+    (member : (name, arity, source) ∈ chainExps start chain)
+    (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle) :
+    ∃ auxBefore target auxAfter,
+      compileExpsHOL s.maxApp [source] auxBefore = ([target], auxAfter) ∧
+      sptLookup (name + numStubs s.maxApp)
+        (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) = some (arity, target) ∧
+      codeInstalled auxAfter (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) := by
+  obtain ⟨headEq, _, nodup, fresh⟩ := compileOracleInv_head s.maxApp s.code s.compile s.compileOracle
+    t.code t.compile t.compileOracle oracle
+  have targetHead : t.compileOracle 0 = (config, compileInc s.maxApp (expressions, auxiliary)) := by
+    simpa [sourceHead, BackendProps.pureCo] using headEq
+  have distinct : ((compileInc s.maxApp (expressions, auxiliary)).map Prod.fst).Nodup := by
+    simpa [targetHead] using nodup
+  have targetFresh : ∀ entry ∈ compileInc s.maxApp (expressions, auxiliary), sptLookup entry.1 t.code = none := by
+    simpa [targetHead] using fresh
+  have installed := install_codeInstalled t.code (compileInc s.maxApp (expressions, auxiliary)) distinct targetFresh
+  have installed' : codeInstalled (compileProgExpsHOL s.maxApp (chainExps start chain ++ auxiliary))
+      (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) := by
+    simpa [compileInc, extract] using installed
+  exact compileProgExps_entry_installed s.maxApp (chainExps start chain ++ auxiliary) _ name arity source installed'
+    (List.mem_append_left _ member)
+
+/-- After the installation primitive succeeds and returns a resolvable main
+entry, the generated target expression either times out or enters that entry. -/
+theorem evaluate_install_target_call {C F : Type}
+    (s middle next : BvlSem.State C F) (env : List BvlSem.Value)
+    (args : List Bvl.Exp) (values : List BvlSem.Value) (address : Nat) (body : Bvl.Exp)
+    (argsRun : BvlSem.evaluate args env s = (.val values, middle))
+    (installed : BvlSem.doInstall (R := BvlSem.Value) values.reverse middle = .val (.codePtr address, next))
+    (mainFound : BvlSem.findCode none [.codePtr address] next.code = some ([], body)) :
+    BvlSem.evaluate [.call 0 none [.op .install args]] env s =
+      if next.clock = 0 then (.err (.abort .timeoutError), { next with clock := 0 })
+      else BvlSem.evaluate [body] [] (BvlSem.decClock 1 next) := by
+  have opRun : BvlSem.evaluate [.op .install args] env s = (.val [.codePtr address], next) := by
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, argsRun]
+    simp [BvlSem.doApp, installed]
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, opRun]
+  simp [mainFound]
+
 end Flapjack.Compiler.Backend.ClosToBvl
