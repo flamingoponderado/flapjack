@@ -247,4 +247,85 @@ theorem refArray_error {C F : Type} (args : List ClosSem.Value)
   cases h : ClosSem.applyMemory .refArray args s <;> simp [h] at run
   exact run.symm
 
+/-- Allocating equal mutable byte arrays extends the relocation map and
+returns related source and target pointers. -/
+theorem alloc_byteArray_related {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
+    (f : HolFiniteMapExact Nat Nat) (bytes : List (BitVec 8)) (states : stateRel f s t) :
+    let sourcePtr := ClosSem.leastUnusedRef s.refs
+    let targetPtr := BvlSem.leastUnusedRef t.refs
+    let newMap := f.updateEq (sourcePtr, targetPtr)
+    let sourceNext := { s with refs := s.refs.updateEq (sourcePtr, .byteArray bytes) }
+    let targetNext := { t with refs := t.refs.updateEq (targetPtr, .byteArray false bytes) }
+    stateRel newMap sourceNext targetNext ∧
+    vRel s.maxApp newMap targetNext.refs targetNext.code (.refPtr true sourcePtr) (.refPtr true targetPtr) ∧
+    relocationSubmap f newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
+  let sourcePtr := ClosSem.leastUnusedRef s.refs
+  let targetPtr := BvlSem.leastUnusedRef t.refs
+  have sourceFree : s.refs.lookup sourcePtr = none := ClosSem.leastUnusedRef_unused s.refs
+  have targetFree : t.refs.lookup targetPtr = none := BvlSem.leastUnusedRef_unused t.refs
+  have ⟨submap, frame⟩ := freshMapped_growth s t f sourcePtr targetPtr (.byteArray false bytes)
+    states sourceFree targetFree
+  refine ⟨stateRel_alloc_mapped s t f sourcePtr targetPtr (.byteArray bytes) (.byteArray false bytes)
+      states sourceFree targetFree (by simp) ⟨rfl, rfl⟩, ?_, submap, frame⟩
+  exact .refPtr (by simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL])
+
+/-- Mutable byte allocation validates the same byte and allocates equal
+contents on both sides. -/
+theorem doApp_refByte_related {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
+    (f : HolFiniteMapExact Nat Nat) (count number : Int) (nonnegative : ¬ count < 0)
+    (byte : BitVec 8) (valid : ClosSem.intToByte number = some byte) (states : stateRel f s t) :
+    let sourcePtr := ClosSem.leastUnusedRef s.refs
+    let targetPtr := BvlSem.leastUnusedRef t.refs
+    let newMap := f.updateEq (sourcePtr, targetPtr)
+    let bytes := List.replicate count.toNat byte
+    let sourceNext := { s with refs := s.refs.updateEq (sourcePtr, .byteArray bytes) }
+    let targetNext := { t with refs := t.refs.updateEq (targetPtr, .byteArray false bytes) }
+    ClosSem.doApp (.memOp (.refByte false)) [.number count, .number number] s =
+      .val (.refPtr true sourcePtr, sourceNext) ∧
+    BvlSem.doApp (.memOp (.refByte false)) [.number count, .number number] t =
+      .val (.refPtr true targetPtr, targetNext) ∧
+    stateRel newMap sourceNext targetNext ∧
+    vRel s.maxApp newMap targetNext.refs targetNext.code (.refPtr true sourcePtr) (.refPtr true targetPtr) ∧
+    relocationSubmap f newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
+  refine ⟨?_, ?_, alloc_byteArray_related s t f _ states⟩
+  · simp [ClosSem.doApp, ClosSem.applyMemory, nonnegative, valid]
+  · simp [BvlSem.doApp, BvlSem.applyMemory, nonnegative, valid]
+
+/-- Successful mutable-byte allocation validates its length and byte. -/
+theorem refByte_success {C F : Type} (args : List ClosSem.Value)
+    (s next : ClosSem.State C F) (value : ClosSem.Value)
+    (run : ClosSem.doApp (.memOp (.refByte false)) args s = .val (value, next)) :
+    ∃ (count number : Int) (byte : BitVec 8), args = [.number count, .number number] ∧
+      ¬ count < 0 ∧ ClosSem.intToByte number = some byte ∧
+      value = .refPtr true (ClosSem.leastUnusedRef s.refs) ∧
+      next = { s with refs := s.refs.updateEq (ClosSem.leastUnusedRef s.refs,
+        .byteArray (List.replicate count.toNat byte)) } := by
+  cases args with
+  | nil => simp [ClosSem.doApp, ClosSem.applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [ClosSem.doApp, ClosSem.applyMemory] at run
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp [ClosSem.doApp, ClosSem.applyMemory] at run
+      | nil =>
+        cases first <;> cases second <;> simp only [ClosSem.doApp, ClosSem.applyMemory] at run
+        all_goals try contradiction
+        case number.number count number =>
+          by_cases negative : count < 0
+          · simp [negative] at run
+          · cases valid : ClosSem.intToByte number with
+            | none => simp [negative, valid] at run
+            | some byte =>
+              simp [negative, valid] at run
+              exact ⟨count, number, byte, rfl, negative, valid, run.1.symm, run.2.symm⟩
+
+/-- Failed mutable-byte allocation reports a source type error. -/
+theorem refByte_error {C F : Type} (args : List ClosSem.Value)
+    (s : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
+    (run : ClosSem.doApp (.memOp (.refByte false)) args s = .err error) : error = .abort .typeError := by
+  simp only [ClosSem.doApp] at run
+  cases h : ClosSem.applyMemory (.refByte false) args s <;> simp [h] at run
+  exact run.symm
+
 end Flapjack.Compiler.Backend.ClosToBvl
