@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
 
 /-! Cases of the source tail-recursion rewrite simulation. The evaluator,
 source scan and compilation carriers remain subject to HOL review. -/
@@ -49,6 +50,64 @@ theorem envRel_disable (ty : ValueType) (optimized : Bool) (acc : Nat)
     (env1 env2 : List Value) (h : envRel ty optimized acc env1 env2) :
     envRel ty false acc env1 env2 := by
   exact ⟨h.1, by simp⟩
+
+/-- Prepending the same evaluated bindings to both environments shifts the
+accumulator index by their length while preserving its value and type. -/
+theorem envRel_prepend (ty : ValueType) (optimized : Bool) (acc : Nat)
+    (env1 env2 bindings : List Value) (h : envRel ty optimized acc env1 env2) :
+    envRel ty optimized (bindings.length + acc) (bindings ++ env1) (bindings ++ env2) := by
+  obtain ⟨⟨suffix, pref⟩, optimizedRel⟩ := h
+  refine ⟨⟨suffix, by simp [pref, List.append_assoc]⟩, ?_⟩
+  intro enabled
+  obtain ⟨lengthEq, bound, typed⟩ := optimizedRel enabled
+  refine ⟨by simp [lengthEq], by simp [bound], ?_⟩
+  cases ty <;> simp_all
+
+/-- The context inferred for a let body is sound after its bindings
+successfully evaluate. -/
+theorem tyRel_letBindings {C F : Type} (ts : List ValueType) (loc : Nat)
+    (bindings : List Bvi.Exp) (env values : List Value)
+    (state next : BviSem.BviState C F) (related : tyRel env ts)
+    (run : BviSem.evaluate bindings env state = (.val values, next)) :
+    let scans := scanExpr ts loc bindings
+    let types := scans.map fun (_, ty, _, _) => ty
+    let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ts
+    tyRel (values ++ env) (types ++ last) := by
+  have sound := scanSound_list ts loc bindings env state next values related run
+  let scans := scanExpr ts loc bindings
+  let types := scans.map fun (_, ty, _, _) => ty
+  let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ts
+  have lastSound : tyRel env last := by
+    cases hlast : scans.getLast? with
+    | none => simpa [last, hlast] using related
+    | some entry =>
+      have entrySound := sound.1 entry (List.mem_of_getLast? hlast)
+      obtain ⟨a, b, c, d⟩ := entry
+      simpa [last, hlast] using entrySound
+  exact tyRel_append env last types values ⟨lastSound, sound.2⟩
+
+/-- Optimized wrapper and worker entries persist when evaluation extends the
+code tree without changing existing entries. -/
+theorem optimizedCode_subspt (loc arity : Nat) (body : Bvi.Exp) (workerLoc : Nat)
+    (code extended : Spt (Nat × Bvi.Exp)) (op : AssocOp)
+    (optimized : optimizedCode loc arity body workerLoc code op)
+    (growth : sptSubspt code extended) : optimizedCode loc arity body workerLoc extended op := by
+  obtain ⟨wrapper, worker, compiled, check, wrapperFound, workerFound⟩ := optimized
+  have wrapperMem := (sptMem_iff_lookup loc code).mpr ⟨_, wrapperFound⟩
+  have workerMem := (sptMem_iff_lookup workerLoc code).mpr ⟨_, workerFound⟩
+  exact ⟨wrapper, worker, compiled, check, (growth loc wrapperMem).2.trans wrapperFound,
+    (growth workerLoc workerMem).2.trans workerFound⟩
+
+/-- Evaluation preserves a previously installed function at its location. -/
+theorem evaluate_lookup_preserved {C F : Type} (xs : List Bvi.Exp) (env : List Value)
+    (state next : BviSem.BviState C F) (result : BviSem.BviResult)
+    (loc arity : Nat) (body : Bvi.Exp)
+    (run : BviSem.evaluate xs env state = (result, next))
+    (found : sptLookup loc state.code = some (arity, body)) :
+    sptLookup loc next.code = some (arity, body) := by
+  have growth := BviProps.evaluate_code_mono xs env state next result run
+  have member := (sptMem_iff_lookup loc state.code).mpr ⟨_, found⟩
+  exact (growth loc member).2.trans found
 
 /-- Decrementing both related clocks by the same amount preserves the state
 relation. -/
@@ -126,6 +185,68 @@ theorem rewriteTailProperty_var {C F : Type} (n : Nat) :
     rewriteTailProperty (C := C) (F := F) [.var n] := by
   intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
   exact rewriteTail_var n source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+
+/-- With a known accumulator, applying an operator first evaluates its other
+operand and dispatches on the resulting values. -/
+theorem evaluate_applyOp_var {C F : Type} (op : AssocOp) (acc : Nat)
+    (body : Bvi.Exp) (env : List Value) (state : BviSem.BviState C F)
+    (value : Value) (lookup : env[acc]? = some value) :
+    BviSem.evaluate [applyOp op (.var acc) body] env state =
+      match BviSem.evaluate [body] env state with
+      | (.err error, next) => (.err error, next)
+      | (.val values, next) =>
+        match BviSem.doApp (toOp op) (values.reverse ++ [value]) next with
+        | .err error => (.err error, next)
+        | .val (result, last) => (.val [result], last) := by
+  have varRun : BviSem.evaluate [.var acc] env state = (.val [value], state) := by
+    simp [BviSem.evaluate, lookup]
+  have listRun : BviSem.evaluate [.var acc, body] env state =
+      match BviSem.evaluate [body] env state with
+      | (.err error, next) => (.err error, next)
+      | (.val values, next) => (.val (value :: values), next) := by
+    have h := BviSem.evaluateConsCons (.var acc) body [] env state
+    simp only [BviSem.evaluateTuple, varRun, Flapjack.holHd] at h
+    cases run : BviSem.evaluate [body] env state with
+    | mk result last => cases result <;> simpa [run] using h
+  simp only [applyOp]
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate, listRun]
+  cases run : BviSem.evaluate [body] env state with
+  | mk result next =>
+    cases result with
+    | err error => rfl
+    | val values =>
+      simp only [List.reverse_cons]
+      cases h : BviSem.doApp (toOp op) (values.reverse ++ [value]) next with
+      | err error => rfl
+      | val output => cases output; rfl
+
+/-- A let binding can be moved outside an accumulator operation by shifting
+the accumulator index past the values bound by the let. -/
+theorem evaluate_applyOp_let {C F : Type} (op : AssocOp) (acc : Nat)
+    (bindings : List Bvi.Exp) (body : Bvi.Exp) (env : List Value)
+    (state : BviSem.BviState C F) (value : Value) (lookup : env[acc]? = some value) :
+    BviSem.evaluate [applyOp op (.var acc) (.let bindings body)] env state =
+      BviSem.evaluate [.let bindings (applyOp op (.var (bindings.length + acc)) body)] env state := by
+  have letEval (e : Bvi.Exp) : BviSem.evaluate [.let bindings e] env state =
+      match BviSem.evaluate bindings env state with
+      | (.err error, next) => (.err error, next)
+      | (.val values, next) => BviSem.evaluate [e] (values ++ env) next := by
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate]
+    cases BviSem.evaluate bindings env state with
+    | mk result next => cases result <;> rfl
+  rw [evaluate_applyOp_var op acc (.let bindings body) env state value lookup]
+  rw [letEval, letEval]
+  cases bindRun : BviSem.evaluate bindings env state with
+  | mk result next =>
+    cases result with
+    | err error => rfl
+    | val values =>
+      have lengthEq := BviSem.evaluate_length bindings env state next values bindRun
+      have shifted : (values ++ env)[bindings.length + acc]? = some value := by
+        rw [← lengthEq, List.getElem?_append_right (by omega)]
+        simpa using lookup
+      dsimp only
+      rw [evaluate_applyOp_var op (bindings.length + acc) body (values ++ env) next value shifted]
 
 /-- A known accumulator lookup commutes with a tick around its second operand.
 The timeout still occurs before any accumulator operation is dispatched. -/
