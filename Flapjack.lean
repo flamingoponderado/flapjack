@@ -514,6 +514,7 @@ import Flapjack.Compiler.Backend.BviInline.Proofs.InstallRelation
 import Flapjack.Compiler.Backend.BviInline.Proofs.PrimitiveRelation
 import Flapjack.Compiler.Backend.BviInline.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.BviInline.Proofs.EvaluateCalls
+import Flapjack.Compiler.Backend.BviInline.Proofs.EvaluateInduction
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureCorrespondence
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
