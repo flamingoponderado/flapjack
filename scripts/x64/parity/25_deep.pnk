@@ -1,0 +1,7 @@
+fun 1 f(1 n) {
+  if (n < 1) { return 1; }
+  var 1 a = f(n - 1);
+  var 1 b = f(n - 1);
+  return a + b;
+}
+fun 1 main() { return f(6); }

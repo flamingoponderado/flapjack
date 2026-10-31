@@ -1,0 +1,9 @@
+fun 1 f(1 a, 1 b) {
+  var 1 x = a + b;
+  var 1 y = a - b;
+  var 1 z = a & b;
+  var 1 u = a | b;
+  var 1 v = a ^ b;
+  return x + y + z + u + v;
+}
+fun 1 main() { return f(12345, 6789); }

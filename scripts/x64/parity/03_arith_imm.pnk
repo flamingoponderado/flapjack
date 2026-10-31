@@ -1,0 +1,11 @@
+fun 1 main() {
+  var 1 a = 0;
+  var 1 b = 1;
+  var 1 c = 255;
+  var 1 d = 65535;
+  var 1 e = 65536;
+  var 1 f = 305419896;
+  var 1 g = 0 - 1;
+  var 1 h = -1311768467463790320;
+  return a + b + c + d + e + f + g + h;
+}

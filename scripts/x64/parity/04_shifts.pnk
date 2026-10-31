@@ -1,0 +1,20 @@
+fun 1 main() {
+  var 1 a = 305419896;
+  var 1 b = a << 0;
+  var 1 c = a << 1;
+  var 1 d = a << 7;
+  var 1 e = a << 63;
+  var 1 f = a >>> 0;
+  var 1 g = a >>> 1;
+  var 1 h = a >>> 7;
+  var 1 i = a >>> 63;
+  var 1 j = a >> 0;
+  var 1 k = a >> 1;
+  var 1 l = a >> 7;
+  var 1 m = a >> 63;
+  var 1 n = a #>> 0;
+  var 1 o = a #>> 1;
+  var 1 p = a #>> 7;
+  var 1 q = a #>> 63;
+  return b + c + d + e + f + g + h + i + j + k + l + m + n + o + p + q;
+}

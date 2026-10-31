@@ -1,0 +1,7 @@
+fun 1 main() {
+  var 1 a = 71777214294589695;
+  var 1 b = a #>> 1;
+  var 1 c = a #>> 17;
+  var 1 d = a #>> 63;
+  return b + c + d;
+}

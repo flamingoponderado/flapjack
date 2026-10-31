@@ -1,0 +1,8 @@
+fun 1 main() {
+  var 1 a = 18446744073709551615;
+  var 1 b = 1;
+  var 1 c = 0;
+  var {1,1} r = __add_with_carry__(a, b, c);
+  r = __add_with_carry__(r.0, r.1, c);
+  return r.0 + r.1;
+}

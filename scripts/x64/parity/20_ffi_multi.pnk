@@ -1,0 +1,8 @@
+fun 1 main() {
+  var 1 x = 12345;
+  st8 @base, x;
+  @out(0, 0, @base, 1);
+  st8 @base, 7;
+  @err(0, 0, @base, 1);
+  return 0;
+}
