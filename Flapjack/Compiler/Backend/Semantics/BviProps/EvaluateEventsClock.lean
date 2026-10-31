@@ -1,10 +1,11 @@
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateEvents
+import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyError
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
 import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateLength
 
 /-! BVI event trace comparisons across clock allowances. -/
 namespace Flapjack.Compiler.Backend.BviProps
-open Flapjack.Compiler.Backend.BvlSem (Value findCode)
+open Flapjack.Compiler.Backend.BvlSem (Value findCode asBool unitValue)
 open Flapjack.Compiler.Backend.BviSem
 open Flapjack.SemanticPrimitivesHOL (Result ErrorResult Abort)
 
@@ -99,6 +100,24 @@ theorem evaluate_raise_addClock_ioEvents_step {C F : Type} (body : Bvi.Exp)
       (evaluate [.raise body] env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
   rw [evaluate_raise_ioEvents_eq, evaluate_raise_ioEvents_eq]
   exact bodyIH
+
+/-- Returning changes the result but retains its argument evaluation trace. -/
+theorem evaluate_return_ioEvents_eq {C F : Type} (args : List Bvi.Exp)
+    (env : List Value) (state : BviState C F) :
+    (evaluate [.return args] env state).2.ffi.ioEvents = (evaluate args env state).2.ffi.ioEvents := by
+  rw [evaluate]
+  cases argsRun : evaluate args env state with
+  | mk result last => cases result <;> rfl
+
+/-- Cross-clock trace comparison for a return reduces to its arguments. -/
+theorem evaluate_return_addClock_ioEvents_step {C F : Type} (args : List Bvi.Exp)
+    (env : List Value) (state : BviState C F) (extra : Nat)
+    (argsIH : (evaluate args env state).2.ffi.ioEvents <+:
+      (evaluate args env { state with clock := state.clock + extra }).2.ffi.ioEvents) :
+    (evaluate [.return args] env state).2.ffi.ioEvents <+:
+      (evaluate [.return args] env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
+  rw [evaluate_return_ioEvents_eq, evaluate_return_ioEvents_eq]
+  exact argsIH
 
 /-- A tick is trace-monotone in clock when its body is. -/
 theorem evaluate_tick_addClock_ioEvents_step {C F : Type} (body : Bvi.Exp)
@@ -243,6 +262,160 @@ theorem evaluate_force_addClock_ioEvents_step {C F : Type} (location index : Nat
                 cases bodyResult <;> cases targetResult <;>
                   simp_all [evaluate]
                 all_goals repeat' (split <;> simp_all)
+
+
+/-- The argument trace is a prefix of its primitive application trace. -/
+theorem evaluate_op_args_ioEvents_prefix {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
+    (env : List Value) (state : BviState C F) :
+    (evaluate args env state).2.ffi.ioEvents <+:
+      (evaluate [.op op args] env state).2.ffi.ioEvents := by
+  rw [evaluate, fixClock_evaluate]
+  cases argsRun : evaluate args env state with
+  | mk argResult last =>
+    cases argResult with
+    | err error => simp
+    | val arguments =>
+      cases appRun : doApp op arguments.reverse last with
+      | err error => simp [appRun]
+      | val pair =>
+        rcases pair with ⟨value, next⟩
+        simpa [appRun] using doApp_ioEvents_prefix op arguments.reverse last next value appRun
+
+/-- A primitive operation is trace-monotone when its arguments are. -/
+theorem evaluate_op_addClock_ioEvents_step {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
+    (env : List Value) (state : BviState C F) (extra : Nat)
+    (argsIH : (evaluate args env state).2.ffi.ioEvents <+:
+      (evaluate args env { state with clock := state.clock + extra }).2.ffi.ioEvents) :
+    (evaluate [.op op args] env state).2.ffi.ioEvents <+:
+      (evaluate [.op op args] env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
+  cases run : evaluate [.op op args] env state with
+  | mk result final =>
+    by_cases timeout : result = .err (.abort .timeoutError)
+    · subst result
+      have sourceRun := run
+      rw [evaluate, fixClock_evaluate] at sourceRun
+      cases argsRun : evaluate args env state with
+      | mk argResult last =>
+        rw [argsRun] at sourceRun
+        cases argResult with
+        | err error =>
+          simp at sourceRun
+          rcases sourceRun with ⟨_, rfl⟩
+          have argPrefix : last.ffi.ioEvents <+:
+              (evaluate args env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
+            simpa [argsRun] using argsIH
+          exact argPrefix.trans (evaluate_op_args_ioEvents_prefix op args env
+            { state with clock := state.clock + extra })
+        | val values =>
+          cases appRun : doApp op values.reverse last with
+          | err error =>
+            simp [appRun] at sourceRun
+            have impossible : error = .abort .timeoutError := sourceRun.1
+            subst error
+            exact (doApp_not_timeout op values.reverse last appRun).elim
+          | val pair => simp [appRun] at sourceRun
+    · have equal := evaluate_addClock_ioEvents_of_notTimeout [.op op args] env state final result extra run timeout
+      simp only [run] at equal
+      rw [equal]
+
+
+/-- The condition's trace is a prefix of the complete conditional trace. -/
+theorem evaluate_if_condition_ioEvents_prefix {C F : Type} (condition yes no : Bvi.Exp) (env : List Value) (state : BviState C F) :
+    (evaluate [condition] env state).2.ffi.ioEvents <+:
+      (evaluate [.ifThenElse condition yes no] env state).2.ffi.ioEvents := by
+  rw [evaluate, fixClock_evaluate]
+  cases conditionRun : evaluate [condition] env state with
+  | mk testResult last =>
+    cases testResult with
+    | err error => simp
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton condition env state last values conditionRun
+      dsimp only
+      change last.ffi.ioEvents <+: (match asBool value with
+        | none => ((Result.err (.abort .typeError) : BviResult), last)
+        | some true => evaluate [yes] env last
+        | some false => evaluate [no] env last).2.ffi.ioEvents
+      cases boolRun : asBool value with
+      | none => simp
+      | some choice =>
+        cases choice with
+        | false =>
+          cases branchRun : evaluate [no] env last with
+          | mk branchResult final =>
+            simpa [boolRun, branchRun] using evaluate_run_ioEvents_prefix [no] env last final branchResult branchRun
+        | true =>
+          cases branchRun : evaluate [yes] env last with
+          | mk branchResult final =>
+            simpa [boolRun, branchRun] using evaluate_run_ioEvents_prefix [yes] env last final branchResult branchRun
+
+/-- Conditional traces are monotone in clock when their conditions and
+selected branches are. -/
+theorem evaluate_if_addClock_ioEvents_step {C F : Type} (condition yes no : Bvi.Exp) (env : List Value) (state : BviState C F) (extra : Nat)
+    (conditionIH : (evaluate [condition] env state).2.ffi.ioEvents <+:
+      (evaluate [condition] env { state with clock := state.clock + extra }).2.ffi.ioEvents)
+    (branchIH : ∀ (choice : Bool) (start : BviState C F), start.clock ≤ state.clock →
+      (evaluate [if choice then yes else no] env start).2.ffi.ioEvents <+:
+        (evaluate [if choice then yes else no] env { start with clock := start.clock + extra }).2.ffi.ioEvents) :
+    (evaluate [.ifThenElse condition yes no] env state).2.ffi.ioEvents <+:
+      (evaluate [.ifThenElse condition yes no] env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
+  cases run : evaluate [.ifThenElse condition yes no] env state with
+  | mk result final =>
+    by_cases timeout : result = .err (.abort .timeoutError)
+    · subst result
+      have sourceRun := run
+      rw [evaluate, fixClock_evaluate] at sourceRun
+      cases conditionRun : evaluate [condition] env state with
+      | mk testResult last =>
+        have bound : last.clock ≤ state.clock := by
+          have clock := evaluate_clock_le [condition] env state
+          simpa [conditionRun] using clock
+        rw [conditionRun] at sourceRun
+        cases testResult with
+        | err error =>
+          simp at sourceRun
+          rcases sourceRun with ⟨_, rfl⟩
+          have testPrefix : last.ffi.ioEvents <+:
+              (evaluate [condition] env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
+            simpa [conditionRun] using conditionIH
+          exact testPrefix.trans (evaluate_if_condition_ioEvents_prefix condition yes no env
+            { state with clock := state.clock + extra })
+        | val values =>
+          obtain ⟨value, rfl⟩ := evaluate_singleton condition env state last values conditionRun
+          have shiftedTest := evaluate_addClock [condition] env state last (.val [value]) extra conditionRun (by simp)
+          dsimp only at sourceRun
+          change (match asBool value with
+            | none => ((Result.err (.abort .typeError) : BviResult), last)
+            | some true => evaluate [yes] env last
+            | some false => evaluate [no] env last) = _ at sourceRun
+          cases boolRun : asBool value with
+          | none => simp [boolRun] at sourceRun
+          | some choice =>
+            cases choice with
+            | false =>
+              simp [boolRun] at sourceRun
+              have compare := branchIH false last bound
+              simp only [Bool.false_eq_true, ↓reduceIte] at compare
+              rw [sourceRun] at compare
+              rw [evaluate, fixClock_evaluate, shiftedTest]
+              change final.ffi.ioEvents <+: (match asBool value with
+                | none => ((Result.err (.abort .typeError) : BviResult), { last with clock := last.clock + extra })
+                | some true => evaluate [yes] env { last with clock := last.clock + extra }
+                | some false => evaluate [no] env { last with clock := last.clock + extra }).2.ffi.ioEvents
+              simpa [boolRun] using compare
+            | true =>
+              simp [boolRun] at sourceRun
+              have compare := branchIH true last bound
+              simp only [↓reduceIte] at compare
+              rw [sourceRun] at compare
+              rw [evaluate, fixClock_evaluate, shiftedTest]
+              change final.ffi.ioEvents <+: (match asBool value with
+                | none => ((Result.err (.abort .typeError) : BviResult), { last with clock := last.clock + extra })
+                | some true => evaluate [yes] env { last with clock := last.clock + extra }
+                | some false => evaluate [no] env { last with clock := last.clock + extra }).2.ffi.ioEvents
+              simpa [boolRun] using compare
+    · have equal := evaluate_addClock_ioEvents_of_notTimeout [.ifThenElse condition yes no] env state final result extra run timeout
+      simp only [run] at equal
+      rw [equal]
 
 
 end Flapjack.Compiler.Backend.BviProps
