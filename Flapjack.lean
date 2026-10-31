@@ -682,6 +682,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteBounds
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteVectorRead
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshMappedRefs
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryAlloc
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MappedRefsUpdate
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryUpdate
 import Flapjack.Test.ClosToBvlRecursive
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
