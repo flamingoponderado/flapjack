@@ -1183,6 +1183,167 @@ theorem rewriteTail_call_handler {C F : Type} (ticks place : Nat) (handler : Bvi
   rw [scanExpr_single, scanSing.eq_def] at scan
   simp at scan
 
+/-- Result handling for a let-call, including arity checking before its
+continuation. -/
+noncomputable def letCallOutcome {C F : Type} (rets : Nat) (cont : Bvi.Exp) (env : List Value)
+    (result : BviSem.BviResult) (state : BviSem.BviState C F) : BviSem.EvalResult C F :=
+  match result with
+  | .val _ => (.err (.abort .typeError), state)
+  | .err (.raise (.ret values)) =>
+    if values.length = rets then BviSem.evaluate [cont] (values ++ env) state
+    else (.err (.abort .typeError), state)
+  | other => (other, state)
+
+/-- The let-call simulation, including returned values and its continuation. -/
+theorem rewriteTail_letCall {C F : Type} (rets ticks place : Nat) (cont : Bvi.Exp)
+    (args : List Bvi.Exp) (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (callArgs : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called callArgs r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called callArgs r last optimized target acc env2 loc ts ty)
+    (hyp : rewriteTailHyp [.letCall rets ticks place args cont] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.letCall rets ticks place args cont] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  obtain ⟨run, envRelated, related, types, _, notTypeError⟩ := hyp
+  have simulation : ∃ targetNext, BviSem.evaluate [.letCall rets ticks place args cont] env2 target =
+      (result, targetNext) ∧ stateRel sourceNext targetNext := by
+    have disabled := envRel_disable ty optimized acc env1 env2 envRelated
+    rw [BviSem.evaluate] at run
+    simp only [BviSem.fixClock_evaluate] at run
+    cases argsRun : BviSem.evaluate args env1 source with
+    | mk argsResult middle =>
+      cases argsResult with
+      | err error =>
+        simp only [argsRun] at run
+        have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
+          intro bad
+          apply notTypeError
+          exact (congrArg Prod.fst run).symm.trans bad
+        have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
+            target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
+        obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
+          argsIH source env1 (.err error) middle false target acc env2 loc ts ty argsHyp
+        have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun] using run
+        cases same
+        refine ⟨targetMiddle, ?_, middleRelated⟩
+        rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
+      | val values =>
+        have argsHyp : rewriteTailHyp args source env1 (.val values) middle false
+            target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, by simp⟩
+        obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
+          argsIH source env1 (.val values) middle false target acc env2 loc ts ty argsHyp
+        simp only [argsRun] at run
+        cases resolved : findCode (some place) values middle.code with
+        | none =>
+          simp [resolved] at run
+          exact (notTypeError run.1.symm).elim
+        | some entry =>
+          obtain ⟨actual, body⟩ := entry
+          have relatedCode := stateRel_codeRel middle targetMiddle middleRelated
+          obtain ⟨compiled, targetResolved⟩ :=
+            codeRel_findCode_replacement (some place) values actual middle.code targetMiddle.code body relatedCode resolved
+          by_cases timeout : middle.clock < ticks + 1
+          · have targetTimeout : targetMiddle.clock < ticks + 1 := by
+              have := (stateRel_const middle targetMiddle middleRelated).2.1
+              omega
+            have same : (.err (.abort .timeoutError), { middle with clock := 0 }) =
+                (result, sourceNext) := by
+              simpa [resolved, timeout] using run
+            cases same
+            refine ⟨{ targetMiddle with clock := 0 }, ?_,
+              stateRel_withClock middle targetMiddle 0 middleRelated⟩
+            rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
+            simp [targetResolved, targetTimeout]
+          · have argsClock := BviSem.evaluate_clock_le args env1 source
+            rw [argsRun] at argsClock
+            have small : (BviSem.decClock (ticks + 1) middle).clock < source.clock := by
+              simp only [BviSem.decClock]
+              simp only at argsClock
+              omega
+            have targetNotTimeout : ¬targetMiddle.clock < ticks + 1 := by
+              have := (stateRel_const middle targetMiddle middleRelated).2.1
+              omega
+            cases bodyRun : BviSem.evaluate [body] actual (BviSem.decClock (ticks + 1) middle) with
+            | mk inner last =>
+              rw [resolved] at run
+              simp only [timeout, ↓reduceIte, bodyRun] at run
+              have innerOk : inner ≠ .err (.abort .typeError) := by
+                intro bad
+                rw [bad] at run
+                simp at run
+                exact notTypeError run.1.symm
+              obtain ⟨targetBody, targetLast, targetBodyResolved, targetBodyRun, lastRelated⟩ :=
+                evaluate_related_resolved_callee (some place) values actual body (ticks + 1)
+                  middle last targetMiddle inner
+                  (clockIH body (BviSem.decClock (ticks + 1) middle) actual inner last small)
+                  middleRelated resolved bodyRun innerOk
+              have targetCall : BviSem.evaluate [.letCall rets ticks place args cont] env2 target =
+                  letCallOutcome rets cont env2 inner targetLast := by
+                rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
+                simp only [targetBodyResolved, targetNotTimeout, ↓reduceIte, BviSem.fixClock_evaluate]
+                rw [targetBodyRun]
+                cases inner with
+                | val values => rfl
+                | err error =>
+                  cases error with
+                  | abort reason => rfl
+                  | raise payload => cases payload <;> rfl
+              cases inner with
+              | val returned =>
+                simp at run
+                exact (notTypeError run.1.symm).elim
+              | err error =>
+                cases error with
+                | abort reason =>
+                  have same : (.err (.abort reason), last) = (result, sourceNext) := by simpa using run
+                  cases same
+                  exact ⟨targetLast, by simpa [letCallOutcome] using targetCall, lastRelated⟩
+                | raise payload =>
+                  cases payload with
+                  | exn exception =>
+                    have same : (.err (.raise (.exn exception)), last) = (result, sourceNext) := by simpa using run
+                    cases same
+                    exact ⟨targetLast, by simpa [letCallOutcome] using targetCall, lastRelated⟩
+                  | ret returned =>
+                    by_cases returnLength : returned.length = rets
+                    · have contRun : BviSem.evaluate [cont] (returned ++ env1) last = (result, sourceNext) := by
+                        simpa [returnLength] using run
+                      have bodyClock := BviSem.evaluate_clock_le [body] actual
+                        (BviSem.decClock (ticks + 1) middle)
+                      rw [bodyRun] at bodyClock
+                      have contSmall : last.clock < source.clock := by
+                        simp only [BviSem.decClock] at bodyClock
+                        simp only at bodyClock argsClock
+                        omega
+                      have contEnv := envRel_prepend ty false acc env1 env2 returned disabled
+                      have contTypes : tyRel (returned ++ env1) (List.replicate returned.length .any ++ ts) :=
+                        tyRel_append env1 ts (List.replicate returned.length .any) returned
+                          ⟨types, tyRel_replicate_any returned⟩
+                      have contHyp : rewriteTailHyp [cont] last (returned ++ env1) result sourceNext false
+                          targetLast (returned.length + acc) (returned ++ env2) loc
+                          (List.replicate returned.length .any ++ ts) ty :=
+                        ⟨contRun, contEnv, lastRelated, contTypes, by simp, notTypeError⟩
+                      obtain ⟨targetNext, targetCont, finalRelated, _⟩ :=
+                        clockIH cont last (returned ++ env1) result sourceNext contSmall false targetLast
+                          (returned.length + acc) (returned ++ env2) loc
+                          (List.replicate returned.length .any ++ ts) ty contHyp
+                      exact ⟨targetNext, by simpa [letCallOutcome, returnLength, targetCont] using targetCall,
+                        finalRelated⟩
+                    · simp [returnLength] at run
+                      exact (notTypeError run.1.symm).elim
+  obtain ⟨targetNext, targetRun, targetRelated⟩ := simulation
+  apply rewriteTailPost_of_no_scan (.letCall rets ticks place args cont) source env1 result sourceNext
+    optimized target targetNext acc env2 loc ts ty targetRun targetRelated
+  intro tt resultTy branch op1 scan
+  rw [scanExpr_single, scanSing.eq_def] at scan
+  simp at scan
+
 /-- The complete call case, including handler-free indirect calls and direct
 calls with handlers. An indirect call with a handler is a type error. -/
 theorem rewriteTail_call {C F : Type} (ticks : Nat) (dest : Option Nat)
