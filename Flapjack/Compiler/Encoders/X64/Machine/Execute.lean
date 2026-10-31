@@ -272,9 +272,10 @@ noncomputable def execInsn (i : X64Insn) (len : Nat) (s : X64State) : X64State :
   | .mul _ src =>
       let a := readReg s 0
       let b := readReg s src
-      let p := a.toNat * b.toNat
-      let s' := writeReg (writeReg s 0 (BitVec.ofNat 64 p)) 2 (BitVec.ofNat 64 (p / 2 ^ 64))
-      { s' with flags := { s.flags with cf := p / 2 ^ 64 ≠ 0, of := p / 2 ^ 64 ≠ 0 } }
+      let p : BitVec 128 := (a.setWidth 128) * (b.setWidth 128)
+      let hi : BitVec 64 := (p >>> 64).setWidth 64
+      let s' := writeReg (writeReg s 0 (p.setWidth 64)) 2 hi
+      { s' with flags := { s.flags with cf := hi ≠ 0, of := hi ≠ 0 } }
   | .div _ src =>
       let hi := readReg s 2
       let lo := readReg s 0
