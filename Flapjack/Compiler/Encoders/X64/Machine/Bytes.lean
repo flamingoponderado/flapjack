@@ -49,8 +49,7 @@ theorem modRM_mem_byte (modBits r20 rmBits : Nat)
 
 /-- The `SIB` byte written by `e_ModRM` for the base-register forms
 (`index = 4`, no index, base `b20`) is `0x24` when `b20 = 4`. -/
-theorem sibByte_fields (base : Nat) (h : base < 8) :
-    (0x24 : Nat) / 8 % 8 = 4 ∧ (0x24 : Nat) % 8 = 4 := by decide
+theorem sibByte_fields : (0x24 : Nat) / 8 % 8 = 4 ∧ (0x24 : Nat) % 8 = 4 := by decide
 
 /-! ## `parseRM` on register operands -/
 
@@ -106,7 +105,7 @@ theorem parseRM_base2 (r : Nat → BitVec 8) (off a b hi : Nat) (rexB : Bool)
 
 /-- `parseRM` recovers a `[base + disp8]` memory operand with a SIB byte when
 `mod = 1` and `rm = 4`. -/
-theorem parseRM_sib1 (r : Nat → BitVec 8) (off a b hi : Nat) (rexB : Bool)
+theorem parseRM_sib1 (r : Nat → BitVec 8) (off a hi : Nat) (rexB : Bool)
     (hm : (r off).toNat = 64 + 8 * a + 4) (ha : a < 8)
     (hsib : (r (off + 1)).toNat = 36) (hhi : hi = if rexB then 8 else 0) :
     parseRM r off rexB =
@@ -120,7 +119,7 @@ theorem parseRM_sib1 (r : Nat → BitVec 8) (off a b hi : Nat) (rexB : Bool)
 
 /-- `parseRM` recovers a `[base + disp32]` memory operand with a SIB byte when
 `mod = 2` and `rm = 4`. -/
-theorem parseRM_sib2 (r : Nat → BitVec 8) (off a b hi : Nat) (rexB : Bool)
+theorem parseRM_sib2 (r : Nat → BitVec 8) (off a hi : Nat) (rexB : Bool)
     (hm : (r off).toNat = 128 + 8 * a + 4) (ha : a < 8)
     (hsib : (r (off + 1)).toNat = 36) (hhi : hi = if rexB then 8 else 0) :
     parseRM r off rexB =

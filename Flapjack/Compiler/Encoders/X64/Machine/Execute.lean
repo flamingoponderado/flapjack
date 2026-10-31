@@ -214,7 +214,7 @@ noncomputable def execSSE (op : X64SSE) (s : X64State) : X64State :=
               if toXmm then writeXmm s xmm (readMemN s (if quad then 8 else 4) addr)
               else writeMemN s (if quad then 8 else 4) addr (readXmm s xmm)
           | none => { s with failed := true }
-  | .cvtpd2dq truncate dst src =>
+  | .cvtpd2dq _truncate dst src =>
       match holFp64ToInt .roundTiesToEven (readXmm s src) with
       | none => { s with failed := true }
       | some integer =>

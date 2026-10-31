@@ -11,7 +11,7 @@ Source 0 is RAX, 1 RCX, 2 RDX, 3 RBX, 4 RSP, 5 RBP, 6 RSI, 7 RDI, 8-15 R8-R15.
 The mapping passes arguments 1-6 in RDI, RSI, RDX, RCX, R8, R9, and makes
 registers 11-13 callee-saved in R14, R13, R12.  Registers 4 (RSP) and 5 (RBP)
 are avoided by `x64_config`'s `avoid_regs`. -/
-@[hol "cakeml/compiler/backend/x64/x64_configScript.sml" "x64_names_def"]
+@[hol "cakeml/compiler/backend/x64/x64_configScript.sml" "x64_names_def" 10]
 def x64Names : Flapjack.Spt Nat :=
   Flapjack.sptInsert 1 7 (Flapjack.sptInsert 2 6 (Flapjack.sptInsert 3 2
     (Flapjack.sptInsert 4 1 (Flapjack.sptInsert 5 8 (Flapjack.sptInsert 6 9

@@ -62,8 +62,7 @@ theorem decode_movRI_z32 (dst : Nat) (hd : dst < 16) (imm : BitVec 64)
     simp [hp, hq]
     unfold decode decodeNoRex decodeRex movImm
     dsimp only
-    simp only [byteListReader_cons_zero, byteListReader_cons_succ, byte_toNat, Nat.reduceMod,
-      decide_true, decide_false, Bool.true_and, Bool.and_true]
+    simp only [byteListReader_cons_zero, byteListReader_cons_succ, byte_toNat, Nat.reduceMod]
     simp
     rw [imm32_eImm32_at imm _ _ (by intro j hj; interval_cases j <;> simp) h1 h2]
 
@@ -73,14 +72,11 @@ theorem decode_movRI_z64 (dst : Nat) (hd : dst < 16) (imm : BitVec 64) :
       some (.movRI .z64 dst imm, 10) := by
   interval_cases dst
   all_goals
-    simp only [encodeInsn, eOpsizeImm, eOpsize, rexPrefix, mkRex, eImm32, eImm8, eImm64,
-      show ZSize.z64 = ZSize.z64 from rfl, if_true, Bool.true_and,
-      show ¬(ZSize.z64 = ZSize.z64 ∧ false = true) from by simp]
+    simp only [encodeInsn, eOpsizeImm, eOpsize, rexPrefix, mkRex, eImm32, eImm8, eImm64]
     simp
     unfold decode decodeNoRex decodeRex movImm
     dsimp only
-    simp only [byteListReader_cons_zero, byteListReader_cons_succ, byte_toNat, Nat.reduceMod,
-      decide_true, decide_false, Bool.true_and, Bool.and_true]
+    simp only [byteListReader_cons_zero, byteListReader_cons_succ, byte_toNat, Nat.reduceMod]
     simp
     rw [le64_at imm _ _ (by intro j hj; interval_cases j <;> simp)]
 
