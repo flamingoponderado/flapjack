@@ -129,6 +129,103 @@ theorem compileProgFuel_terminatingObservation {C F : Type}
       | abort reason => cases reason <;> simp_all [mapSimulationResult]
   · simpa [ffiEq] using behaviorEq
 
+/-- A terminating observation of the compiled program reflects back to the
+source. Clock extension aligns the target run with a source simulation. -/
+theorem compileProgFuel_reflect_terminatingObservation {C F : Type}
+    (fuel optFuel start counter : Nat) (ffi : HolFfiState F)
+    (programs : List (Nat × Nat × Bvl.Exp))
+    (oracle : BvlSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C)
+    (targetStart targetNextName : Nat) (targetProgram : List (Nat × Nat × Bvi.Exp))
+    (compiled : compileProgFuel fuel optFuel start counter programs = some (targetStart, targetProgram, targetNextName))
+    (distinct : (programs.map Prod.fst).Nodup)
+    (handlers : BvlHandle.Proofs.handleOk (programs.map (fun (_, _, body) => body)))
+    (oracleHandlers : ∀ index, BvlHandle.Proofs.handleOk ((oracle index).2.map (fun (_, _, body) => body)))
+    (counterBound : targetNextName ≤ (oracle 0).1.1)
+    (noTypeError : ∀ clock, (BvlSem.evaluate [.call 0 (some start) []] []
+      (BvlSem.initialState ffi (sptFromAList programs) oracle
+        (BackendProps.stateCc compileIncSource compiler) clock)).1 ≠ .err (.abort .typeError))
+    (behavior : HolBehaviour)
+    (observation : BviSem.terminatingObservation ffi (sptFromAList targetProgram)
+      (BackendProps.stateCo compileIncSource oracle) compiler targetStart behavior) :
+    BvlSem.terminatingObservation ffi (sptFromAList programs) oracle
+      (BackendProps.stateCc compileIncSource compiler) start behavior := by
+  obtain ⟨clock, targetResult, targetState, outcome, targetRun, targetOutcome, behaviorEq⟩ := observation
+  have targetNotTimeout : targetResult ≠ .err (.abort .timeoutError) := by
+    intro h; subst targetResult; simp at targetOutcome
+  let source := BvlSem.evaluate [.call 0 (some start) []] []
+    (BvlSem.initialState ffi (sptFromAList programs) oracle
+      (BackendProps.stateCc compileIncSource compiler) (clock + 1))
+  have sourceRun : BvlSem.evaluate [.call 0 (some start) []] []
+      (BvlSem.initialState ffi (sptFromAList programs) oracle
+        (BackendProps.stateCc compileIncSource compiler) (clock + 1)) = (source.1, source.2) := Prod.mk.eta.symm
+  have sourceNotType : source.1 ≠ .err (.abort .typeError) := noTypeError (clock + 1)
+  obtain ⟨extra, relocate, simulatedState, simulatedRun, related⟩ :=
+    compileProgFuelEvaluate fuel optFuel start counter (clock + 1) ffi programs oracle compiler
+      targetStart targetNextName targetProgram source.1 source.2 compiled sourceRun distinct handlers
+      oracleHandlers counterBound sourceNotType
+  have extended := BviProps.evaluate_addClock [.call 0 (some targetStart) [] none] []
+    (BviSem.initialState ffi (sptFromAList targetProgram) (BackendProps.stateCo compileIncSource oracle) compiler clock)
+    targetState targetResult (1 + extra) targetRun targetNotTimeout
+  have same : (mapSimulationResult relocate (match source.1 with
+      | .err (.raise value) => .val [value]
+      | other => other), simulatedState) =
+      (targetResult, { targetState with clock := targetState.clock + (1 + extra) }) :=
+    simulatedRun.symm.trans (by simpa [BviSem.initialState, Nat.add_assoc] using extended)
+  have sameResult := congrArg Prod.fst same
+  have sameEvents : source.2.ffi.ioEvents = targetState.ffi.ioEvents :=
+    (congrArg (·.ioEvents) related.2.1).trans (congrArg (fun p => p.2.ffi.ioEvents) same)
+  refine ⟨clock + 1, source.1, source.2, outcome, sourceRun, ?_, ?_⟩
+  · cases h : source.1 with
+    | val values =>
+      simp [h, mapSimulationResult] at sameResult
+      simpa [h, ← sameResult] using targetOutcome
+    | err error =>
+      cases error with
+      | raise value =>
+        simp [h, mapSimulationResult] at sameResult
+        simpa [h, ← sameResult] using targetOutcome
+      | abort reason =>
+        cases reason with
+        | typeError => exact False.elim (sourceNotType h)
+        | timeoutError =>
+          simp [h, mapSimulationResult] at sameResult
+          exact False.elim (targetNotTimeout sameResult.symm)
+        | ffiError event =>
+          simp [h, mapSimulationResult] at sameResult
+          simpa [h, ← sameResult] using targetOutcome
+  · simpa [sameEvents] using behaviorEq
+
+/-- If the source diverges, the compiled program also diverges. Equality of
+their potentially infinite traces requires the clock-indexed prefix theorem. -/
+theorem compileProgFuel_diverges {C F : Type}
+    (fuel optFuel start counter : Nat) (ffi : HolFfiState F)
+    (programs : List (Nat × Nat × Bvl.Exp))
+    (oracle : BvlSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C)
+    (targetStart targetNextName : Nat) (targetProgram : List (Nat × Nat × Bvi.Exp))
+    (compiled : compileProgFuel fuel optFuel start counter programs = some (targetStart, targetProgram, targetNextName))
+    (distinct : (programs.map Prod.fst).Nodup)
+    (handlers : BvlHandle.Proofs.handleOk (programs.map (fun (_, _, body) => body)))
+    (oracleHandlers : ∀ index, BvlHandle.Proofs.handleOk ((oracle index).2.map (fun (_, _, body) => body)))
+    (counterBound : targetNextName ≤ (oracle 0).1.1)
+    (trace : HolLList HolIoEvent)
+    (diverges : BvlSem.semantics ffi (sptFromAList programs) oracle
+      (BackendProps.stateCc compileIncSource compiler) start = .diverge trace) :
+    ∃ targetTrace, BviSem.semantics ffi (sptFromAList targetProgram)
+      (BackendProps.stateCo compileIncSource oracle) compiler targetStart = .diverge targetTrace := by
+  have nonfail : BvlSem.semantics ffi (sptFromAList programs) oracle
+      (BackendProps.stateCc compileIncSource compiler) start ≠ .fail := by
+    rw [diverges]; intro impossible; cases impossible
+  have noTypeError := BvlSem.noTypeError_of_semantics_ne_fail ffi (sptFromAList programs)
+    oracle (BackendProps.stateCc compileIncSource compiler) start nonfail
+  have noFatal := compileProgFuel_noFatalError fuel optFuel start counter ffi programs oracle compiler
+    targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError
+  apply BviSem.semantics_diverges_of_no_observation _ _ _ _ _ noFatal
+  intro behavior targetObserved
+  have sourceObserved := compileProgFuel_reflect_terminatingObservation fuel optFuel start counter ffi programs oracle compiler
+    targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError behavior targetObserved
+  exact BvlSem.no_terminatingObservation_of_semantics_eq_diverge ffi (sptFromAList programs) oracle
+    (BackendProps.stateCc compileIncSource compiler) start trace diverges behavior sourceObserved
+
 /-- Executed BVL-to-BVI compilation preserves a terminating whole-program
 behavior under the compiler's source well-formedness conditions. The
 divergence case requires additional clock-indexed trace-prefix results. -/

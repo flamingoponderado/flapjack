@@ -65,4 +65,23 @@ theorem terminatingObservation_of_semantics_eq_terminate {C F : Type} (ffi : Hol
       simp only [selected] at terminates
       simpa [terminates] using observed
 
+/-- A divergent whole-program behavior excludes terminating observations. -/
+theorem no_terminatingObservation_of_semantics_eq_diverge {C F : Type} (ffi : HolFfiState F)
+    (code : Spt (Nat × Bvl.Exp)) (oracle : CompileOracle C)
+    (compiler : Compiler C) (start : Nat) (trace : HolLList HolIoEvent)
+    (diverges : semantics ffi code oracle compiler start = .diverge trace) :
+    ∀ behavior, ¬ terminatingObservation ffi code oracle compiler start behavior := by
+  classical
+  unfold semantics at diverges
+  by_cases bad : ∃ clock, (evaluateTuple ([.call 0 (some start) []], [],
+      initialState ffi code oracle compiler clock)).1 = .err (.abort .typeError)
+  · simp [bad] at diverges
+  · simp only [bad, if_false] at diverges
+    cases selected : holOptionSome (terminatingObservation ffi code oracle compiler start) with
+    | none => exact holOptionSome_none selected
+    | some behavior =>
+      have observed := holOptionSome_some selected
+      obtain ⟨_, _, _, outcome, _, _, rfl⟩ := observed
+      simp [selected] at diverges
+
 end Flapjack.Compiler.Backend.BvlSem

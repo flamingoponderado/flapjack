@@ -91,6 +91,24 @@ theorem semantics_eq_of_terminatingObservation {C F : Type} (ffi : HolFfiState F
     (fun other otherObserved => terminatingObservation_unique ffi code oracle compiler start
       other behavior otherObserved observed)]
 
+/-- With no fatal result or terminating observation, the whole program
+diverges with the least upper bound of its finite-clock traces. -/
+theorem semantics_diverges_of_no_observation {C F : Type} (ffi : HolFfiState F)
+    (code : Spt (Nat × Bvi.Exp)) (oracle : CompileOracle C)
+    (compiler : Compiler C) (start : Nat)
+    (noFatal : ¬ ∃ clock error, (evaluateTuple ([.call 0 (some start) [] none], [],
+      initialState ffi code oracle compiler clock)).1 = .err error ∧
+      error ≠ .abort .timeoutError ∧ ∀ event, error ≠ .abort (.ffiError event))
+    (noObservation : ∀ behavior, ¬ terminatingObservation ffi code oracle compiler start behavior) :
+    ∃ trace, semantics ffi code oracle compiler start = .diverge trace := by
+  classical
+  unfold semantics
+  simp only [noFatal, if_false]
+  have selected : holOptionSome (terminatingObservation ffi code oracle compiler start) = none := by
+    unfold holOptionSome
+    simp [not_exists.mpr noObservation]
+  simp [selected]
+
 /-- In the absence of a fatal initial result, the observable behavior is
 either a terminating observation or a divergent trace. -/
 theorem semantics_ne_fail_of_noFatalError {C F : Type} (ffi : HolFfiState F)
