@@ -52,6 +52,58 @@ theorem vRel_isClosure {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
       addArgs_sourceIsClosure _ _ _ (clRel_sourceIsClosure closure) added
     exact ⟨fun _ => ⟨31, _, rfl, by simp [BvlSem.isClosure]⟩, fun _ => sourceClosure⟩
 
+/-- Equality distinguishes these broad value classes; references and byte
+vectors share a class because byte vectors become target references. -/
+def sourceEqClass : ClosSem.Value → Nat
+  | .number _ => 0
+  | .word64 _ => 1
+  | .block .. | .closure .. | .recclosure .. => 2
+  | .byteVector _ | .refPtr .. => 3
+
+/-- Corresponding BVL equality classes. -/
+def targetEqClass : BvlSem.Value → Nat
+  | .number _ => 0
+  | .word64 _ => 1
+  | .block .. => 2
+  | .refPtr .. => 3
+  | .codePtr _ => 4
+
+/-- Related values have the same broad equality class. -/
+theorem vRel_eqClass {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {source : ClosSem.Value} {target : BvlSem.Value}
+    (related : vRel maxApp f refs code source target) : sourceEqClass source = targetEqClass target := by
+  cases related with
+  | number | word64 | block | byteVector | refPtr => rfl
+  | closure env closure =>
+    have sourceClosure := clRel_sourceIsClosure closure
+    cases source <;> simp_all [sourceIsClosure, sourceEqClass, targetEqClass]
+  | partialClosure env args nonempty bound lookup added arity closure =>
+    have sourceClosure := addArgs_sourceIsClosure _ _ _ (clRel_sourceIsClosure closure) added
+    cases source <;> simp_all [sourceIsClosure, sourceEqClass, targetEqClass]
+
+/-- Values from different source equality classes always produce a type error. -/
+theorem sourceEq_class_mismatch (a b : ClosSem.Value)
+    (different : sourceEqClass a ≠ sourceEqClass b) : ClosSem.doEq a b = .typeError := by
+  cases a <;> cases b <;> simp_all [sourceEqClass, ClosSem.doEq]
+
+/-- Values from different target equality classes always produce a type error. -/
+theorem targetEq_class_mismatch {α : Type} (refs : HolFiniteMapExact Nat (BvlSem.Ref α))
+    (a b : BvlSem.Value) (different : targetEqClass a ≠ targetEqClass b) :
+    BvlSem.doEq refs a b = .typeError := by
+  cases a <;> cases b <;> simp_all [targetEqClass, BvlSem.doEq]
+
+/-- Equality agrees when the source values belong to different classes. -/
+theorem doEq_class_mismatch {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (a b : ClosSem.Value) (x y : BvlSem.Value)
+    (first : vRel maxApp f refs code a x) (second : vRel maxApp f refs code b y)
+    (different : sourceEqClass a ≠ sourceEqClass b) :
+    ClosSem.doEq a b = BvlSem.doEq refs x y := by
+  have targetDifferent : targetEqClass x ≠ targetEqClass y := by
+    simpa [← vRel_eqClass first, ← vRel_eqClass second] using different
+  rw [sourceEq_class_mismatch a b different, targetEq_class_mismatch refs x y targetDifferent]
+
 /-- A source reference pointer is mapped to the corresponding target pointer. -/
 theorem vRel_refPtr_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
