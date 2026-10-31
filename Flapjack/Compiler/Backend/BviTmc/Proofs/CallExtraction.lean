@@ -67,6 +67,43 @@ theorem evaluate_bvi_to_cb_aux_inr_call {C F : Type}
           simpa using run
   next => simp at extracted
 
+/-- The direct-call case of source reconstruction correctness. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_bvi_to_cb_call {C F : Type}
+    (cb : CallBlock) (n loc ticks : Nat) (dest : Option Nat) (args : List Bvi.Exp)
+    (handler : Option Bvi.Exp) (env : List Value) (state final : BviState C F)
+    (result : BviResult) (bs : List Bvi.Exp)
+    (run : evaluate [.call ticks dest args handler] env state = (result, final))
+    (extracted : toBlockSource n loc (.call ticks dest args handler) = some (bs, cb))
+    (_bound : n ≤ env.length) :
+    evaluate [.let bs (callBlockToBvi loc cb)] env state = (result, final) := by
+  simp only [toBlockSource, callToBlockSource] at extracted
+  split at extracted
+  next same =>
+    obtain ⟨destEq, handlerEq⟩ := same
+    subst dest
+    subst handler
+    cases binding : bind 0 args with
+    | mk indices last =>
+      simp only [binding, Option.some.injEq, Prod.mk.injEq] at extracted
+      obtain ⟨rfl, rfl⟩ := extracted.symm
+      cases argsRun : evaluate args env state with
+      | mk argResult next =>
+        cases argResult with
+        | err error =>
+          simp only [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at run ⊢
+          exact run
+        | val values =>
+          have vars := evaluate_binders args env state next values 0 last indices argsRun binding [] rfl
+          have varsExtended := evaluate_vars_expand_env indices values next values env (by simpa using vars)
+          rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+          simp only [callBlockToBvi]
+          rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at run
+          rw [BviSem.evaluate, BviSem.fixClock_evaluate, varsExtended]
+          exact run
+  next => simp at extracted
+
 /-- The constructor-expression case, using the source induction hypothesis for
 the constructor's argument list. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma"
