@@ -154,4 +154,31 @@ theorem compileProgFuel_enabled_semantics {C F : Type} (fuel next start : Nat)
   simpa only [outputEq] using
     compileEach_semantics_assembled next start program ffi oracle compiler condition oracleConditions bound notFail
 
+/-- Flapjack infrastructure: the executed TMC program pass preserves BVI
+behavior in both enabled and disabled modes, including its stateful adapters. -/
+theorem compileProgFuel_semantics {C F : Type} (fuel : Nat) (enabled : Bool) (next start : Nat)
+    (program compiled : List (Nat × Nat × Bvi.Exp)) (last : Nat) (ffi : HolFfiState F)
+    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C)
+    (condition : inputCondition next program)
+    (oracleConditions : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
+    (workerBound : ∀ n, n ∈ (compiled.map Prod.fst) → inWorkerNamespace n → n < (oracle 0).1.1)
+    (compiledEq : compileProgFuel fuel enabled next program = some (last, compiled))
+    (notFail : BviSem.semantics ffi (sptFromAList program) oracle (stateCc (compileProgSource enabled) compiler) start ≠ .fail) :
+    BviSem.semantics ffi (sptFromAList program) oracle (stateCc (compileProgSource enabled) compiler) start =
+      BviSem.semantics ffi (sptFromAList compiled) (stateCo (compileProgSource enabled) oracle) compiler start := by
+  cases enabled with
+  | false =>
+    have passEq : compileProgSource false = (fun c p => (c, p)) := by funext c p; rfl
+    rw [passEq] at notFail ⊢
+    have same : program = compiled := by
+      have pairEq : (next, program) = (last, compiled) := by simpa [compileProgFuel] using compiledEq
+      exact congrArg Prod.snd pairEq
+    subst compiled
+    exact BviTailrec.semantics_identity_adapter ffi (sptFromAList program) oracle compiler start notFail
+  | true =>
+    have passEq : compileProgSource true = compileEachSource := by funext c p; rfl
+    rw [passEq] at notFail ⊢
+    exact compileProgFuel_enabled_semantics fuel next start program compiled last ffi oracle compiler
+      condition oracleConditions workerBound compiledEq notFail
+
 end Flapjack.Compiler.Backend.BviTmc.Observation

@@ -36,34 +36,47 @@ theorem lowered_oracle_tmc_inputCondition {C : Type} (enabled : Bool)
     (oracle n).1.2.2.1 lower.2 tail.2 tailCondition outside safe (tmcBound n) (tmcWorker n) tailRun
   exact condition
 
-/-- Flapjack pipeline infrastructure: every worker label in an executed
-enabled TMC output is below its returned worker counter. -/
-theorem tmc_output_worker_below_counter (fuel next last : Nat)
+/-- Flapjack pipeline infrastructure: every worker label in an executed TMC
+output is below its returned worker counter in either pass mode. -/
+theorem tmc_output_worker_below_counter (fuel : Nat) (enabled : Bool) (next last : Nat)
     (program output : List (Nat × Nat × Bvi.Exp)) (condition : BviTmc.inputCondition next program)
-    (run : BviTmc.compileProgFuel fuel true next program = some (last, output)) :
+    (run : BviTmc.compileProgFuel fuel enabled next program = some (last, output)) :
     ∀ name ∈ output.map Prod.fst, BviTmc.inWorkerNamespace name → name < last := by
-  have pair := Option.some.inj ((BviTmc.compileProgFuel_eq_source fuel true next program).symm.trans run)
-  have codeEq : (BviTmc.compileEachSource next program).2 = output := congrArg Prod.snd pair
-  have nextEq : (BviTmc.compileEachSource next program).1 = last := congrArg Prod.fst pair
-  intro name member worker
-  have present : sptMem name (sptFromAList (BviTmc.compileEachSource next program).2) := by
-    apply (BviTailrec.sptFromAList_mem_iff _ name).mpr
-    simpa [codeEq] using member
-  have bound := BviTmc.compileEachSource_install_worker_bound next program condition name ⟨present, worker⟩
-  simpa [nextEq] using bound
+  cases enabled with
+  | false =>
+    simp [BviTmc.compileProgFuel] at run
+    obtain ⟨rfl, rfl⟩ := run
+    intro name member worker
+    obtain ⟨entry, present, same⟩ := List.mem_map.mp member
+    by_cases below : name < bvlNumStubs
+    · have nextBound := condition.2.2.2.2.1
+      omega
+    · have outside := condition.2.2.2.1 entry
+        (List.mem_filter.mpr ⟨present, by simpa [same] using (show bvlNumStubs ≤ name by omega)⟩)
+      exact (outside (by simpa [same] using worker)).elim
+  | true =>
+    have pair := Option.some.inj ((BviTmc.compileProgFuel_eq_source fuel true next program).symm.trans run)
+    have codeEq : (BviTmc.compileEachSource next program).2 = output := congrArg Prod.snd pair
+    have nextEq : (BviTmc.compileEachSource next program).1 = last := congrArg Prod.fst pair
+    intro name member worker
+    have present : sptMem name (sptFromAList (BviTmc.compileEachSource next program).2) := by
+      apply (BviTailrec.sptFromAList_mem_iff _ name).mpr
+      simpa [codeEq] using member
+    have bound := BviTmc.compileEachSource_install_worker_bound next program condition name ⟨present, worker⟩
+    simpa [nextEq] using bound
 
 /-- Flapjack pipeline infrastructure: the executed BVI tail-recursion and
 TMC passes preserve the behavior of the lowered program. Future-oracle
 conditions remain explicit, as do the original non-failure conditions. -/
 theorem lowering_tailrec_tmc_semantics {C F : Type}
-    (fuel optFuel start counter targetStart targetCounter : Nat) (enabled : Bool)
+    (fuel optFuel start counter targetStart targetCounter : Nat) (enabled tmcEnabled : Bool)
     (program : List (Nat × Nat × Bvl.Exp)) (lowered beforeTmc afterTmc : List (Nat × Nat × Bvi.Exp))
     (tailLast tmcLast : Nat) (ffi : HolFfiState F) (oracle : BviSem.CompileOracle (Nat × (Nat × C)))
     (compiler : BviSem.Compiler C) (entry : Nat)
     (distinct : (program.map Prod.fst).Nodup)
     (lowerRun : compileProgFuel fuel optFuel start counter program = some (targetStart, lowered, targetCounter))
     (tailRun : BviTailrec.compileProgFuel fuel enabled (bvlNumStubs + 2) lowered = some (tailLast, beforeTmc))
-    (tmcRun : BviTmc.compileProgFuel fuel true (bvlNumStubs + 3) beforeTmc = some (tmcLast, afterTmc))
+    (tmcRun : BviTmc.compileProgFuel fuel tmcEnabled (bvlNumStubs + 3) beforeTmc = some (tmcLast, afterTmc))
     (tailOracleCondition : ∀ n, BviTailrec.inputCondition (oracle n).1.1 (oracle n).2)
     (tailCounterBound : tailLast ≤ (oracle 0).1.1)
     (tmcOracleCondition : ∀ n, BviTmc.inputCondition
@@ -73,39 +86,39 @@ theorem lowering_tailrec_tmc_semantics {C F : Type}
       n < (BackendProps.stateCo (BviTailrec.compileProgSource enabled) oracle 0).1.1)
     (notFail : BviSem.semantics ffi (sptFromAList lowered) oracle
       (BackendProps.stateCc (BviTailrec.compileProgSource enabled)
-        (BackendProps.stateCc BviTmc.compileEachSource compiler)) entry ≠ .fail) :
+        (BackendProps.stateCc (BviTmc.compileProgSource tmcEnabled) compiler)) entry ≠ .fail) :
     BviSem.semantics ffi (sptFromAList lowered) oracle
         (BackendProps.stateCc (BviTailrec.compileProgSource enabled)
-          (BackendProps.stateCc BviTmc.compileEachSource compiler)) entry =
+          (BackendProps.stateCc (BviTmc.compileProgSource tmcEnabled) compiler)) entry =
       BviSem.semantics ffi (sptFromAList afterTmc)
-        (BackendProps.stateCo BviTmc.compileEachSource
+        (BackendProps.stateCo (BviTmc.compileProgSource tmcEnabled)
           (BackendProps.stateCo (BviTailrec.compileProgSource enabled) oracle)) compiler entry := by
   have tailSame := lowering_tailrec_semantics fuel optFuel start counter targetStart targetCounter enabled
-    program lowered beforeTmc tailLast ffi oracle (BackendProps.stateCc BviTmc.compileEachSource compiler) entry
+    program lowered beforeTmc tailLast ffi oracle (BackendProps.stateCc (BviTmc.compileProgSource tmcEnabled) compiler) entry
     distinct lowerRun tailRun tailOracleCondition tailCounterBound notFail
   have tmcNonFail : BviSem.semantics ffi (sptFromAList beforeTmc)
       (BackendProps.stateCo (BviTailrec.compileProgSource enabled) oracle)
-      (BackendProps.stateCc BviTmc.compileEachSource compiler) entry ≠ .fail := by
+      (BackendProps.stateCc (BviTmc.compileProgSource tmcEnabled) compiler) entry ≠ .fail := by
     rw [← tailSame]
     exact notFail
   have condition := lowered_tailrec_tmc_inputCondition_complete fuel optFuel start counter targetStart targetCounter
     enabled program lowered beforeTmc tailLast distinct lowerRun tailRun
-  have tmcSame := BviTmc.Observation.compileProgFuel_enabled_semantics fuel (bvlNumStubs + 3) entry
+  have tmcSame := BviTmc.Observation.compileProgFuel_semantics fuel tmcEnabled (bvlNumStubs + 3) entry
     beforeTmc afterTmc tmcLast ffi (BackendProps.stateCo (BviTailrec.compileProgSource enabled) oracle) compiler
     condition tmcOracleCondition tmcWorkerBound tmcRun tmcNonFail
   exact tailSame.trans tmcSame
 
 /-- Flapjack pipeline infrastructure: BVL lowering, BVI tail recursion,
-and enabled TMC preserve a non-failing source program's behavior. Oracle
+and TMC preserve a non-failing source program's behavior. Oracle
 conditions for the successive passes remain explicit. -/
 theorem lowerThenTailrecTmc_semantics {C F : Type}
-    (fuel optFuel start counter targetStart targetCounter : Nat) (enabled : Bool)
+    (fuel optFuel start counter targetStart targetCounter : Nat) (enabled tmcEnabled : Bool)
     (ffi : HolFfiState F) (program : List (Nat × Nat × Bvl.Exp))
     (oracle : BvlSem.CompileOracle (Nat × (Nat × (Nat × C)))) (compiler : BviSem.Compiler C)
     (lowered beforeTmc afterTmc : List (Nat × Nat × Bvi.Exp)) (tailLast tmcLast : Nat)
     (lowerRun : compileProgFuel fuel optFuel start counter program = some (targetStart, lowered, targetCounter))
     (tailRun : BviTailrec.compileProgFuel fuel enabled (bvlNumStubs + 2) lowered = some (tailLast, beforeTmc))
-    (tmcRun : BviTmc.compileProgFuel fuel true (bvlNumStubs + 3) beforeTmc = some (tmcLast, afterTmc))
+    (tmcRun : BviTmc.compileProgFuel fuel tmcEnabled (bvlNumStubs + 3) beforeTmc = some (tmcLast, afterTmc))
     (distinct : (program.map Prod.fst).Nodup)
     (handlers : BvlHandle.Proofs.handleOk (program.map (fun (_, _, body) => body)))
     (oracleHandlers : ∀ n, BvlHandle.Proofs.handleOk ((oracle n).2.map (fun (_, _, body) => body)))
@@ -119,20 +132,20 @@ theorem lowerThenTailrecTmc_semantics {C F : Type}
     (tmcCounterBound : tmcLast ≤ (oracle 0).1.2.2.1)
     (nonFail : BvlSem.semantics ffi (sptFromAList program) oracle
       (BackendProps.stateCc compileIncSource (BackendProps.stateCc (BviTailrec.compileProgSource enabled)
-        (BackendProps.stateCc BviTmc.compileEachSource compiler))) start ≠ .fail) :
+        (BackendProps.stateCc (BviTmc.compileProgSource tmcEnabled) compiler))) start ≠ .fail) :
     BviSem.semantics ffi (sptFromAList afterTmc)
-        (BackendProps.stateCo BviTmc.compileEachSource
+        (BackendProps.stateCo (BviTmc.compileProgSource tmcEnabled)
           (BackendProps.stateCo (BviTailrec.compileProgSource enabled) (BackendProps.stateCo compileIncSource oracle)))
         compiler targetStart =
       BvlSem.semantics ffi (sptFromAList program) oracle
         (BackendProps.stateCc compileIncSource (BackendProps.stateCc (BviTailrec.compileProgSource enabled)
-          (BackendProps.stateCc BviTmc.compileEachSource compiler))) start := by
+          (BackendProps.stateCc (BviTmc.compileProgSource tmcEnabled) compiler))) start := by
   have previous := lowerThenTailrec_semantics fuel optFuel start counter targetStart targetCounter enabled ffi program
-    oracle (BackendProps.stateCc BviTmc.compileEachSource compiler) lowered beforeTmc tailLast lowerRun tailRun
+    oracle (BackendProps.stateCc (BviTmc.compileProgSource tmcEnabled) compiler) lowered beforeTmc tailLast lowerRun tailRun
     distinct handlers oracleHandlers oracleDistinct oracleNextBound oracleWorker lowerCounterBound tailCounterBound nonFail
   have tmcNonFail : BviSem.semantics ffi (sptFromAList beforeTmc)
       (BackendProps.stateCo (BviTailrec.compileProgSource enabled) (BackendProps.stateCo compileIncSource oracle))
-      (BackendProps.stateCc BviTmc.compileEachSource compiler) targetStart ≠ .fail := by
+      (BackendProps.stateCc (BviTmc.compileProgSource tmcEnabled) compiler) targetStart ≠ .fail := by
     rw [previous]
     exact nonFail
   have condition := lowered_tailrec_tmc_inputCondition_complete fuel optFuel start counter targetStart targetCounter
@@ -142,20 +155,20 @@ theorem lowerThenTailrecTmc_semantics {C F : Type}
   have tmcWorkerBound : ∀ n, n ∈ afterTmc.map Prod.fst → BviTmc.inWorkerNamespace n →
       n < (BackendProps.stateCo (BviTailrec.compileProgSource enabled) (BackendProps.stateCo compileIncSource oracle) 0).1.1 := by
     intro name member worker
-    have below := tmc_output_worker_below_counter fuel (bvlNumStubs + 3) tmcLast beforeTmc afterTmc
+    have below := tmc_output_worker_below_counter fuel tmcEnabled (bvlNumStubs + 3) tmcLast beforeTmc afterTmc
       condition tmcRun name member worker
     exact Nat.lt_of_lt_of_le below tmcCounterBound
-  have tmcSame := BviTmc.Observation.compileProgFuel_enabled_semantics fuel (bvlNumStubs + 3) targetStart
+  have tmcSame := BviTmc.Observation.compileProgFuel_semantics fuel tmcEnabled (bvlNumStubs + 3) targetStart
     beforeTmc afterTmc tmcLast ffi
     (BackendProps.stateCo (BviTailrec.compileProgSource enabled) (BackendProps.stateCo compileIncSource oracle))
     compiler condition tmcOracleCondition tmcWorkerBound tmcRun tmcNonFail
   exact tmcSame.symm.trans previous
 
 /-- Flapjack pipeline infrastructure: the BVL optimizer, lowering,
-tail-recursion pass, and enabled TMC preserve a non-failing program's BVL
+tail-recursion pass, and TMC preserve a non-failing program's BVL
 behavior, using the executed output of each pass. -/
 theorem optimizedLowerTailrecTmc_semantics {C F : Type}
-    (bvlFuel inlineLimit cutSize bviFuel optFuel start counter : Nat) (splitSeq enabled : Bool)
+    (bvlFuel inlineLimit cutSize bviFuel optFuel start counter : Nat) (splitSeq enabled tmcEnabled : Bool)
     (ffi : HolFfiState F) (program : List (Nat × Nat × Bvl.Exp))
     (oracle : BvlSem.CompileOracle (Spt (Nat × Bvl.Exp) × (Nat × (Nat × (Nat × C)))))
     (compiler : BviSem.Compiler C) (cache : Spt (Nat × Bvl.Exp))
@@ -164,7 +177,7 @@ theorem optimizedLowerTailrecTmc_semantics {C F : Type}
     (optimizedRun : BvlInline.compileProgFuel bvlFuel inlineLimit cutSize splitSeq program = some (cache, optimized))
     (lowerRun : compileProgFuel bviFuel optFuel start counter optimized = some (targetStart, lowered, targetCounter))
     (tailRun : BviTailrec.compileProgFuel bviFuel enabled (bvlNumStubs + 2) lowered = some (tailLast, beforeTmc))
-    (tmcRun : BviTmc.compileProgFuel bviFuel true (bvlNumStubs + 3) beforeTmc = some (tmcLast, afterTmc))
+    (tmcRun : BviTmc.compileProgFuel bviFuel tmcEnabled (bvlNumStubs + 3) beforeTmc = some (tmcLast, afterTmc))
     (cacheEq : (oracle 0).1.1 = cache)
     (distinct : (program.map Prod.fst).Nodup)
     (oracleDistinct : ∀ n, ((oracle n).2.map Prod.fst).Nodup)
@@ -178,23 +191,23 @@ theorem optimizedLowerTailrecTmc_semantics {C F : Type}
     (nonFail : BvlSem.semantics ffi (sptFromAList program) oracle
       (inCc inlineLimit (removeTicksCc (letOpCompiler splitSeq cutSize
         (BackendProps.stateCc compileIncSource (BackendProps.stateCc (compileProgSource enabled)
-          (BackendProps.stateCc BviTmc.compileEachSource compiler)))))) start ≠ .fail) :
+          (BackendProps.stateCc (BviTmc.compileProgSource tmcEnabled) compiler)))))) start ≠ .fail) :
     BviSem.semantics ffi (sptFromAList afterTmc)
-        (BackendProps.stateCo BviTmc.compileEachSource
+        (BackendProps.stateCo (BviTmc.compileProgSource tmcEnabled)
           (BackendProps.stateCo (compileProgSource enabled) (BackendProps.stateCo compileIncSource
             (letOpOracle splitSeq cutSize (removeTicksCo ∘ inCo inlineLimit oracle))))) compiler targetStart =
       BvlSem.semantics ffi (sptFromAList program) oracle
         (inCc inlineLimit (removeTicksCc (letOpCompiler splitSeq cutSize
           (BackendProps.stateCc compileIncSource (BackendProps.stateCc (compileProgSource enabled)
-            (BackendProps.stateCc BviTmc.compileEachSource compiler)))))) start := by
+            (BackendProps.stateCc (BviTmc.compileProgSource tmcEnabled) compiler)))))) start := by
   let future := letOpOracle splitSeq cutSize (removeTicksCo ∘ inCo inlineLimit oracle)
   have previous := optimizedLowerTailrec_semantics bvlFuel inlineLimit cutSize bviFuel optFuel start counter
-    splitSeq enabled ffi program oracle (BackendProps.stateCc BviTmc.compileEachSource compiler) cache optimized
+    splitSeq enabled ffi program oracle (BackendProps.stateCc (BviTmc.compileProgSource tmcEnabled) compiler) cache optimized
     targetStart targetCounter lowered beforeTmc tailLast optimizedRun lowerRun tailRun cacheEq distinct oracleDistinct
     oracleTailBound oracleTailWorker lowerCounterBound tailCounterBound nonFail
   have tmcNonFail : BviSem.semantics ffi (sptFromAList beforeTmc)
       (BackendProps.stateCo (compileProgSource enabled) (BackendProps.stateCo compileIncSource future))
-      (BackendProps.stateCc BviTmc.compileEachSource compiler) targetStart ≠ .fail := by
+      (BackendProps.stateCc (BviTmc.compileProgSource tmcEnabled) compiler) targetStart ≠ .fail := by
     rw [previous]
     exact nonFail
   have optimizedDistinct : (optimized.map Prod.fst).Nodup := by
@@ -222,9 +235,9 @@ theorem optimizedLowerTailrecTmc_semantics {C F : Type}
   have workerBound : ∀ n, n ∈ afterTmc.map Prod.fst → BviTmc.inWorkerNamespace n →
       n < (BackendProps.stateCo (compileProgSource enabled) (BackendProps.stateCo compileIncSource future) 0).1.1 := by
     intro n member worker
-    exact Nat.lt_of_lt_of_le (tmc_output_worker_below_counter bviFuel (bvlNumStubs + 3) tmcLast
+    exact Nat.lt_of_lt_of_le (tmc_output_worker_below_counter bviFuel tmcEnabled (bvlNumStubs + 3) tmcLast
       beforeTmc afterTmc condition tmcRun n member worker) counterBound
-  have tmcSame := BviTmc.Observation.compileProgFuel_enabled_semantics bviFuel (bvlNumStubs + 3) targetStart
+  have tmcSame := BviTmc.Observation.compileProgFuel_semantics bviFuel tmcEnabled (bvlNumStubs + 3) targetStart
     beforeTmc afterTmc tmcLast ffi (BackendProps.stateCo (compileProgSource enabled) (BackendProps.stateCo compileIncSource future))
     compiler condition futureCondition workerBound tmcRun tmcNonFail
   exact tmcSame.symm.trans previous
