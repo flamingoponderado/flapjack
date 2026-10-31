@@ -61,6 +61,55 @@ inductive vRel (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
         (.block 31 (.codePtr (partialAppFnLocation maxApp (numArgs - 1) (ys.length - 1)) ::
           .number (Int.ofNat (numArgs - 1 - argEnv.length)) :: cl' :: ys))
 
+theorem holFmapAsFiniteSupportParamWitness_vRel_subspt_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
+    (ofBroad (toBroad f) f.finiteSupport).finiteSupport = f.finiteSupport ∧
+    ofBroad (toBroad f) f.finiteSupport = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_f f key
+
+theorem holFmapAsFiniteSupportParamWitness_vRel_subspt_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_refs refs key
+
+/-- Extending the code tree preserves related values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_subspt"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem vRel_subspt {maxApp : Nat} (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    {code1 code2 : Spt (Nat × Bvl.Exp)} {x y}
+    (related : vRel maxApp f refs code1 x y) (sub : sptSubspt code1 code2) :
+    vRel maxApp f refs code2 x y := by
+  refine vRel.rec
+    (motive_1 := fun x y _ => ∀ code2, sptSubspt code1 code2 → vRel maxApp f refs code2 x y)
+    (motive_2 := fun xs ys _ => ∀ code2, sptSubspt code1 code2 →
+      List.Forall₂ (vRel maxApp f refs code2) xs ys)
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ related code2 sub
+  · intro n code2 sub
+    exact .number n
+  · intro w code2 sub
+    exact .word64 w
+  · intro tag xs ys related ih code2 sub
+    exact .block (ih code2 sub)
+  · intro bs p lookup fresh code2 sub
+    exact .byteVector lookup fresh
+  · intro b r1 r2 lookup code2 sub
+    exact .refPtr lookup
+  · intro env fvs cl p n ys related closure ih code2 sub
+    exact .closure (ih code2 sub) (clRel_subspt refs closure sub)
+  · intro env fvs argEnv ys numArgs cl clApp cl' envRel argRel nonempty bound lookup added arity closure
+      envIh argIh code2 sub
+    have mem := (sptMem_iff_lookup _ _).2 ⟨_, lookup⟩
+    exact .partialClosure (envIh code2 sub) (argIh code2 sub) nonempty bound
+      ((sub _ mem).2.trans lookup) added arity (clRel_subspt refs closure sub)
+  · intro code2 sub
+    exact .nil
+  · intro a b xs ys head tail headIh tailIh code2 sub
+    exact .cons (headIh code2 sub) (tailIh code2 sub)
+
 theorem holFmapAsFiniteSupportParamWitness_envRel_f
     (f : HolFiniteMapExact Nat Nat) (key : Nat) :
     (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
@@ -98,5 +147,34 @@ theorem envRel_length {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
       | cons y ys =>
           have tail : envRel maxApp f refs code xs ys := related.2
           simpa using Nat.succ_le_succ (ih tail)
+
+theorem holFmapAsFiniteSupportParamWitness_envRel_subspt_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
+    (ofBroad (toBroad f) f.finiteSupport).finiteSupport = f.finiteSupport ∧
+    ofBroad (toBroad f) f.finiteSupport = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_f f key
+
+theorem holFmapAsFiniteSupportParamWitness_envRel_subspt_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_refs refs key
+
+/-- Extending the code tree preserves related environments. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "env_rel_subspt"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem envRel_subspt {maxApp : Nat} (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    {code1 code2 : Spt (Nat × Bvl.Exp)} {xs ys}
+    (related : envRel maxApp f refs code1 xs ys) (sub : sptSubspt code1 code2) :
+    envRel maxApp f refs code2 xs ys := by
+  induction xs generalizing ys with
+  | nil => trivial
+  | cons x xs ih =>
+      cases ys with
+      | nil => exact False.elim related
+      | cons y ys => exact ⟨vRel_subspt f refs related.1 sub, ih related.2⟩
 
 end Flapjack.Compiler.Backend.ClosToBvl

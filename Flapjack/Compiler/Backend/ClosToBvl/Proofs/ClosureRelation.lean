@@ -55,11 +55,18 @@ inductive clRel (maxApp : Nat) (fs : Nat → Prop)
       closureCodeInstalled maxApp code expsPs env →
       clRel maxApp fs refs code (env, ys) (.recclosure (some loc) [] env exps k) (holEl k rs)
 
-/-- Extending the code tree preserves each closure layout. This is a
-Flapjack proof of the source lemma; its inferred HOL type and finite-map
-parameter qualifier have not yet been reviewed for a theorem-map row. -/
+theorem holFmapAsFiniteSupportParamWitness_clRel_subspt_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_clRel_refs refs key
+
+/-- Extending the code tree preserves each closure layout. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_subspt"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem clRel_subspt {maxApp : Nat} {fs : Nat → Prop}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)}
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
     {code1 code2 : Spt (Nat × Bvl.Exp)} {env cl target}
     (related : clRel maxApp fs refs code1 env cl target) (sub : sptSubspt code1 code2) :
     clRel maxApp fs refs code2 env cl target := by
