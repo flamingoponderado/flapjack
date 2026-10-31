@@ -531,6 +531,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.EvaluateRewrite
 import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
 import Flapjack.Compiler.Backend.BviTmc.Proofs.VariableSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.TickSimulation
+import Flapjack.Compiler.Backend.BviTmc.Proofs.RaiseSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
