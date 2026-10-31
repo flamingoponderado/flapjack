@@ -407,6 +407,14 @@ compiler driver diff adds Pancake feature handling; its normal CakeML path is
 unchanged. These facts make the comparisons useful evidence, but the historical
 binary is not a pinned oracle and the hashes are not a cross-language proof.
 
+For an additional deterministic sample of generated integer, conditional,
+local-binding and closure programs, run
+`python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake`.
+The script verifies the reference compiler's embedded CakeML and HOL
+revisions, then compares complete output bytes, diagnostics and status. Its
+`--seed` and `--count` options select reproducible samples; a rejection or
+timeout fails the run. This is sampled evidence, not full-language parity.
+
 To recheck the recorded historical outputs when that exact binary is available,
 run `python3 scripts/check-cake-cli-parity.py --check-reference /path/to/cake`.
 `--record-reference /path/to/cake` checks the same provenance before replacing
