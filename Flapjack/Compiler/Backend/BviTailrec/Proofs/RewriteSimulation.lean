@@ -2921,12 +2921,12 @@ theorem rewriteTail_if {C F : Type} (cond yes no : Bvi.Exp)
 
 /-- Operation evaluation is simulated when both successful applications and
 primitive errors agree on related states. This includes non-type FFI errors. -/
-theorem evaluate_op_related_errors {C F : Type} (operation : ClosLang.Op) (args : List Bvi.Exp)
+theorem evaluate_op_related_errors_through {C F : Type} (limit : Nat) (operation : ClosLang.Op) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
     (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
     (loc : Nat) (ts : List ValueType) (ty : ValueType)
-    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
     (appSuccess : ∀ (values : List Value) (s t : BviSem.BviState (Nat × C) F)
       (u : BviSem.BviState C F) (v : Value), stateRel s u →
       BviSem.doApp operation values s = .val (v, t) →
@@ -2935,6 +2935,7 @@ theorem evaluate_op_related_errors {C F : Type} (operation : ClosLang.Op) (args 
       (u : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet),
       stateRel s u → BviSem.doApp operation values s = .err error →
       BviSem.doApp operation values u = .err error)
+    (clockBound : source.clock ≤ limit)
     (hyp : rewriteTailHyp [.op operation args] source env1 result sourceNext
       optimized target acc env2 loc ts ty) :
     ∃ targetNext, BviSem.evaluate [.op operation args] env2 target = (result, targetNext) ∧
@@ -2954,7 +2955,7 @@ theorem evaluate_op_related_errors {C F : Type} (operation : ClosLang.Op) (args 
       have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
           target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
       obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
-        argsIH source env1 (.err error) middle false target acc env2 loc ts ty argsHyp
+        argsIH source env1 (.err error) middle false target acc env2 loc ts ty clockBound argsHyp
       have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun] using run
       cases same
       refine ⟨targetMiddle, ?_, middleRelated⟩
@@ -2963,7 +2964,7 @@ theorem evaluate_op_related_errors {C F : Type} (operation : ClosLang.Op) (args 
       have argsHyp : rewriteTailHyp args source env1 (.val values) middle false
           target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, by simp⟩
       obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
-        argsIH source env1 (.val values) middle false target acc env2 loc ts ty argsHyp
+        argsIH source env1 (.val values) middle false target acc env2 loc ts ty clockBound argsHyp
       cases applied : BviSem.doApp operation values.reverse middle with
       | err error =>
         have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun, applied] using run
@@ -2984,10 +2985,9 @@ theorem evaluate_op_related_errors {C F : Type} (operation : ClosLang.Op) (args 
         dsimp only
         rw [targetApplied]
 
-/-- Ordinary operation evaluation is simulated when successful primitive
-applications preserve state relations and primitive errors are type errors.
-This Flapjack helper isolates those primitive obligations. -/
-theorem evaluate_op_related {C F : Type} (operation : ClosLang.Op) (args : List Bvi.Exp)
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
+theorem evaluate_op_related_errors {C F : Type} (operation : ClosLang.Op) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
     (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
@@ -2998,8 +2998,33 @@ theorem evaluate_op_related {C F : Type} (operation : ClosLang.Op) (args : List 
       BviSem.doApp operation values s = .val (v, t) →
       ∃ u', BviSem.doApp operation values u = .val (v, u') ∧ stateRel t u')
     (appError : ∀ (values : List Value) (s : BviSem.BviState (Nat × C) F)
+      (u : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet),
+      stateRel s u → BviSem.doApp operation values s = .err error →
+      BviSem.doApp operation values u = .err error)
+    (hyp : rewriteTailHyp [.op operation args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    ∃ targetNext, BviSem.evaluate [.op operation args] env2 target = (result, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  exact evaluate_op_related_errors_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) appSuccess appError (Nat.le_refl _) hyp
+
+/-- Ordinary operation evaluation is simulated when successful primitive
+applications preserve state relations and primitive errors are type errors.
+This Flapjack helper isolates those primitive obligations. -/
+theorem evaluate_op_related_through {C F : Type} (limit : Nat) (operation : ClosLang.Op) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (appSuccess : ∀ (values : List Value) (s t : BviSem.BviState (Nat × C) F)
+      (u : BviSem.BviState C F) (v : Value), stateRel s u →
+      BviSem.doApp operation values s = .val (v, t) →
+      ∃ u', BviSem.doApp operation values u = .val (v, u') ∧ stateRel t u')
+    (appError : ∀ (values : List Value) (s : BviSem.BviState (Nat × C) F)
       (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet),
       BviSem.doApp operation values s = .err error → error = .abort .typeError)
+    (clockBound : source.clock ≤ limit)
     (hyp : rewriteTailHyp [.op operation args] source env1 result sourceNext
       optimized target acc env2 loc ts ty) :
     ∃ targetNext, BviSem.evaluate [.op operation args] env2 target = (result, targetNext) ∧
@@ -3019,7 +3044,7 @@ theorem evaluate_op_related {C F : Type} (operation : ClosLang.Op) (args : List 
       have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
           target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
       obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
-        argsIH source env1 (.err error) middle false target acc env2 loc ts ty argsHyp
+        argsIH source env1 (.err error) middle false target acc env2 loc ts ty clockBound argsHyp
       have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun] using run
       cases same
       refine ⟨targetMiddle, ?_, middleRelated⟩
@@ -3028,7 +3053,7 @@ theorem evaluate_op_related {C F : Type} (operation : ClosLang.Op) (args : List 
       have argsHyp : rewriteTailHyp args source env1 (.val values) middle false
           target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, by simp⟩
       obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
-        argsIH source env1 (.val values) middle false target acc env2 loc ts ty argsHyp
+        argsIH source env1 (.val values) middle false target acc env2 loc ts ty clockBound argsHyp
       cases applied : BviSem.doApp operation values.reverse middle with
       | err error =>
         have typeError := appError values.reverse middle error applied
@@ -3046,9 +3071,64 @@ theorem evaluate_op_related {C F : Type} (operation : ClosLang.Op) (args : List 
         dsimp only
         rw [targetApplied]
 
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
+theorem evaluate_op_related {C F : Type} (operation : ClosLang.Op) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (appSuccess : ∀ (values : List Value) (s t : BviSem.BviState (Nat × C) F)
+      (u : BviSem.BviState C F) (v : Value), stateRel s u →
+      BviSem.doApp operation values s = .val (v, t) →
+      ∃ u', BviSem.doApp operation values u = .val (v, u') ∧ stateRel t u')
+    (appError : ∀ (values : List Value) (s : BviSem.BviState (Nat × C) F)
+      (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet),
+      BviSem.doApp operation values s = .err error → error = .abort .typeError)
+    (hyp : rewriteTailHyp [.op operation args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    ∃ targetNext, BviSem.evaluate [.op operation args] env2 target = (result, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  exact evaluate_op_related_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) appSuccess appError (Nat.le_refl _) hyp
+
 /-- Shared operation simulation for a primitive whose scan selects no
 accumulator and whose only primitive error is the source type error. The
 primitive correspondence is a premise of this Flapjack helper. -/
+theorem rewriteTail_op_noChoice_through {C F : Type} (limit : Nat) (operation : ClosLang.Op) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (noChoice : (scanSing ts loc (.op operation args)).2.2.2 = none)
+    (appSuccess : ∀ (values : List Value) (s t : BviSem.BviState (Nat × C) F)
+      (u : BviSem.BviState C F) (v : Value), stateRel s u →
+      BviSem.doApp operation values s = .val (v, t) →
+      ∃ u', BviSem.doApp operation values u = .val (v, u') ∧ stateRel t u')
+    (appError : ∀ (values : List Value) (s : BviSem.BviState (Nat × C) F)
+      (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet),
+      BviSem.doApp operation values s = .err error → error = .abort .typeError)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op operation args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op operation args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  obtain ⟨targetNext, targetRun, targetRelated⟩ :=
+    evaluate_op_related_through limit operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+      argsIH appSuccess appError clockBound hyp
+  apply rewriteTailPost_of_no_scan (.op operation args) source env1 result sourceNext
+    optimized target targetNext acc env2 loc ts ty targetRun targetRelated
+  intro tt resultTy branch op1 scan
+  rw [scanExpr_single] at scan
+  have scanEq : scanSing ts loc (.op operation args) = (tt, resultTy, branch, some op1) := by
+    simpa using scan
+  rw [scanEq] at noChoice
+  simp at noChoice
+
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_noChoice {C F : Type} (operation : ClosLang.Op) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3067,33 +3147,25 @@ theorem rewriteTail_op_noChoice {C F : Type} (operation : ClosLang.Op) (args : L
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op operation args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  obtain ⟨targetNext, targetRun, targetRelated⟩ :=
-    evaluate_op_related operation args source env1 result sourceNext optimized target acc env2 loc ts ty
-      argsIH appSuccess appError hyp
-  apply rewriteTailPost_of_no_scan (.op operation args) source env1 result sourceNext
-    optimized target targetNext acc env2 loc ts ty targetRun targetRelated
-  intro tt resultTy branch op1 scan
-  rw [scanExpr_single] at scan
-  have scanEq : scanSing ts loc (.op operation args) = (tt, resultTy, branch, some op1) := by
-    simpa using scan
-  rw [scanEq] at noChoice
-  simp at noChoice
+  exact rewriteTail_op_noChoice_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) noChoice appSuccess appError (Nat.le_refl _) hyp
 
 /-- External-call operations preserve the simulation, including final FFI
 errors and updates to the FFI and reference states. -/
-theorem rewriteTail_op_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+theorem rewriteTail_op_ffi_through {C F : Type} (limit : Nat) (name : Flapjack.Basis.Pure.MlString.MlString)
     (args : List Bvi.Exp) (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
     (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
     (loc : Nat) (ts : List ValueType) (ty : ValueType)
-    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
     (hyp : rewriteTailHyp [.op (.ffi name) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.ffi name) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
   obtain ⟨targetNext, targetRun, targetRelated⟩ :=
-    evaluate_op_related_errors (.ffi name) args source env1 result sourceNext optimized target acc env2 loc ts ty
-      argsIH (stateRel_doApp_ffi name) (stateRel_doApp_ffi_error name) hyp
+    evaluate_op_related_errors_through limit (.ffi name) args source env1 result sourceNext optimized target acc env2 loc ts ty
+      argsIH (stateRel_doApp_ffi name) (stateRel_doApp_ffi_error name) clockBound hyp
   apply rewriteTailPost_of_no_scan (.op (.ffi name) args) source env1 result sourceNext
     optimized target targetNext acc env2 loc ts ty targetRun targetRelated
   intro tt resultTy branch op1 scan
@@ -3106,7 +3178,44 @@ theorem rewriteTail_op_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlS
   rw [scanEq] at noChoice
   simp at noChoice
 
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
+theorem rewriteTail_op_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (args : List Bvi.Exp) (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.ffi name) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.ffi name) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  exact rewriteTail_op_ffi_through source.clock name args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) (Nat.le_refl _) hyp
+
 /-- Plain block construction preserves the rewrite simulation. -/
+theorem rewriteTail_op_blockCons_through {C F : Type} (limit : Nat) (tag : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.blockOp (.cons tag)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.blockOp (.cons tag)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.blockOp (.cons tag)) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_blockCons tag
+  · exact doApp_blockCons_error tag
+  · exact clockBound
+  · exact hyp
+
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_blockCons {C F : Type} (tag : Nat) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3117,15 +3226,32 @@ theorem rewriteTail_op_blockCons {C F : Type} (tag : Nat) (args : List Bvi.Exp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.blockOp (.cons tag)) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.blockOp (.cons tag)) args source env1 result sourceNext
+  exact rewriteTail_op_blockCons_through source.clock tag args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
+
+/-- Constant-block construction preserves the rewrite simulation. -/
+theorem rewriteTail_op_blockBuild_through {C F : Type} (limit : Nat) (parts : List ClosLang.ConstPart) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.blockOp (.build parts)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.blockOp (.build parts)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.blockOp (.build parts)) args source env1 result sourceNext
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_blockCons tag
-  · exact doApp_blockCons_error tag
+  · exact stateRel_doApp_blockBuild parts
+  · exact doApp_blockBuild_error parts
+  · exact clockBound
   · exact hyp
 
-/-- Constant-block construction preserves the rewrite simulation. -/
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_blockBuild {C F : Type} (parts : List ClosLang.ConstPart) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3136,15 +3262,32 @@ theorem rewriteTail_op_blockBuild {C F : Type} (parts : List ClosLang.ConstPart)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.blockOp (.build parts)) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.blockOp (.build parts)) args source env1 result sourceNext
+  exact rewriteTail_op_blockBuild_through source.clock parts args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
+
+/-- Block-from-list construction preserves the rewrite simulation. -/
+theorem rewriteTail_op_blockFromList_through {C F : Type} (limit : Nat) (tag : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.blockOp (.fromList tag)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.blockOp (.fromList tag)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.blockOp (.fromList tag)) args source env1 result sourceNext
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_blockBuild parts
-  · exact doApp_blockBuild_error parts
+  · exact stateRel_doApp_blockFromList tag
+  · exact doApp_blockFromList_error tag
+  · exact clockBound
   · exact hyp
 
-/-- Block-from-list construction preserves the rewrite simulation. -/
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_blockFromList {C F : Type} (tag : Nat) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3155,15 +3298,32 @@ theorem rewriteTail_op_blockFromList {C F : Type} (tag : Nat) (args : List Bvi.E
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.blockOp (.fromList tag)) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.blockOp (.fromList tag)) args source env1 result sourceNext
+  exact rewriteTail_op_blockFromList_through source.clock tag args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
+
+/-- Byte-array allocation preserves the rewrite simulation. -/
+theorem rewriteTail_op_refByte_through {C F : Type} (limit : Nat) (flag : Bool) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.memOp (.refByte flag)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp (.refByte flag)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.memOp (.refByte flag)) args source env1 result sourceNext
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_blockFromList tag
-  · exact doApp_blockFromList_error tag
+  · exact stateRel_doApp_refByte flag
+  · exact doApp_refByte_error flag
+  · exact clockBound
   · exact hyp
 
-/-- Byte-array allocation preserves the rewrite simulation. -/
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_refByte {C F : Type} (flag : Bool) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3174,15 +3334,32 @@ theorem rewriteTail_op_refByte {C F : Type} (flag : Bool) (args : List Bvi.Exp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.memOp (.refByte flag)) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.memOp (.refByte flag)) args source env1 result sourceNext
+  exact rewriteTail_op_refByte_through source.clock flag args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
+
+/-- Mutable-block finalisation preserves the rewrite simulation. -/
+theorem rewriteTail_op_finaliseCons_through {C F : Type} (limit : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.memOp .finaliseCons) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp .finaliseCons) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.memOp .finaliseCons) args source env1 result sourceNext
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_refByte flag
-  · exact doApp_refByte_error flag
+  · exact stateRel_doApp_finaliseCons
+  · exact doApp_finaliseCons_error
+  · exact clockBound
   · exact hyp
 
-/-- Mutable-block finalisation preserves the rewrite simulation. -/
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_finaliseCons {C F : Type} (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3193,15 +3370,32 @@ theorem rewriteTail_op_finaliseCons {C F : Type} (args : List Bvi.Exp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.memOp .finaliseCons) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.memOp .finaliseCons) args source env1 result sourceNext
+  exact rewriteTail_op_finaliseCons_through source.clock args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
+
+/-- Mutable-block updates preserve the rewrite simulation. -/
+theorem rewriteTail_op_updateCons_through {C F : Type} (limit : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.memOp .updateCons) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp .updateCons) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.memOp .updateCons) args source env1 result sourceNext
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_finaliseCons
-  · exact doApp_finaliseCons_error
+  · exact stateRel_doApp_updateCons
+  · exact doApp_updateCons_error
+  · exact clockBound
   · exact hyp
 
-/-- Mutable-block updates preserve the rewrite simulation. -/
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_updateCons {C F : Type} (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3212,15 +3406,32 @@ theorem rewriteTail_op_updateCons {C F : Type} (args : List Bvi.Exp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.memOp .updateCons) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.memOp .updateCons) args source env1 result sourceNext
+  exact rewriteTail_op_updateCons_through source.clock args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
+
+/-- Mutable-block allocation preserves the rewrite simulation. -/
+theorem rewriteTail_op_mutCons_through {C F : Type} (limit : Nat) (tag index : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.memOp (.mutCons tag index)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp (.mutCons tag index)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.memOp (.mutCons tag index)) args source env1 result sourceNext
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_updateCons
-  · exact doApp_updateCons_error
+  · exact stateRel_doApp_mutCons tag index
+  · exact doApp_mutCons_error tag index
+  · exact clockBound
   · exact hyp
 
-/-- Mutable-block allocation preserves the rewrite simulation. -/
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_mutCons {C F : Type} (tag index : Nat) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3231,29 +3442,25 @@ theorem rewriteTail_op_mutCons {C F : Type} (tag index : Nat) (args : List Bvi.E
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.memOp (.mutCons tag index)) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.memOp (.mutCons tag index)) args source env1 result sourceNext
-    optimized target acc env2 loc ts ty argsIH
-  · rw [scanSing_op_choice]
-    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_mutCons tag index
-  · exact doApp_mutCons_error tag index
-  · exact hyp
+  exact rewriteTail_op_mutCons_through source.clock tag index args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
 
 /-- Thunk allocation and updates preserve the rewrite simulation, including
 error outcomes and reference-store updates. -/
-theorem rewriteTail_op_thunkOp {C F : Type} (operation : AstHOL.ThunkOp) (args : List Bvi.Exp)
+theorem rewriteTail_op_thunkOp_through {C F : Type} (limit : Nat) (operation : AstHOL.ThunkOp) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
     (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
     (loc : Nat) (ts : List ValueType) (ty : ValueType)
-    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
     (hyp : rewriteTailHyp [.op (.thunkOp operation) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.thunkOp operation) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
   obtain ⟨targetNext, targetRun, targetRelated⟩ :=
-    evaluate_op_related_errors (.thunkOp operation) args source env1 result sourceNext optimized target acc env2 loc ts ty
-      argsIH (stateRel_doApp_thunk operation) (stateRel_doApp_thunk_error operation) hyp
+    evaluate_op_related_errors_through limit (.thunkOp operation) args source env1 result sourceNext optimized target acc env2 loc ts ty
+      argsIH (stateRel_doApp_thunk operation) (stateRel_doApp_thunk_error operation) clockBound hyp
   apply rewriteTailPost_of_no_scan (.op (.thunkOp operation) args) source env1 result sourceNext
     optimized target targetNext acc env2 loc ts ty targetRun targetRelated
   intro tt resultTy branch op1 scan
@@ -3266,7 +3473,43 @@ theorem rewriteTail_op_thunkOp {C F : Type} (operation : AstHOL.ThunkOp) (args :
   rw [scanEq] at noChoice
   simp at noChoice
 
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
+theorem rewriteTail_op_thunkOp {C F : Type} (operation : AstHOL.ThunkOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.thunkOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.thunkOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  exact rewriteTail_op_thunkOp_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) (Nat.le_refl _) hyp
+
 /-- Dynamic installation preserves the rewrite simulation. -/
+theorem rewriteTail_op_install_through {C F : Type} (limit : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op .install args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op .install args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit .install args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_install
+  · exact doApp_install_error
+  · exact clockBound
+  · exact hyp
+
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_install {C F : Type} (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3277,14 +3520,32 @@ theorem rewriteTail_op_install {C F : Type} (args : List Bvi.Exp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op .install args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice .install args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH
-  · rw [scanSing_op_choice]
-    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_install
-  · exact doApp_install_error
-  · exact hyp
+  exact rewriteTail_op_install_through source.clock args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) (Nat.le_refl _) hyp
 
 /-- Complete label-operation case of the source-shaped simulation. -/
+theorem rewriteTail_op_label_through {C F : Type} (limit : Nat) (label : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.label label) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.label label) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.label label) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_label label
+  · exact doApp_label_error label
+  · exact clockBound
+  · exact hyp
+
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_label {C F : Type} (label : Nat) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3295,15 +3556,32 @@ theorem rewriteTail_op_label {C F : Type} (label : Nat) (args : List Bvi.Exp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.label label) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.label label) args source env1 result sourceNext
+  exact rewriteTail_op_label_through source.clock label args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
+
+/-- Complete integer constant operation case of the source-shaped simulation. -/
+theorem rewriteTail_op_intConst_through {C F : Type} (limit : Nat) (number : Int) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.intOp (.const number)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.intOp (.const number)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.intOp (.const number)) args source env1 result sourceNext
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_label label
-  · exact doApp_label_error label
+  · exact stateRel_doApp_intConst number
+  · exact doApp_intConst_error number
+  · exact clockBound
   · exact hyp
 
-/-- Complete integer constant operation case of the source-shaped simulation. -/
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_intConst {C F : Type} (number : Int) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3314,15 +3592,32 @@ theorem rewriteTail_op_intConst {C F : Type} (number : Int) (args : List Bvi.Exp
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.intOp (.const number)) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.intOp (.const number)) args source env1 result sourceNext
+  exact rewriteTail_op_intConst_through source.clock number args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
+
+/-- Complete global-pointer read operation case of the source-shaped simulation. -/
+theorem rewriteTail_op_globalsPtr_through {C F : Type} (limit : Nat)  (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.globOp .globalsPtr) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.globOp .globalsPtr) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.globOp .globalsPtr) args source env1 result sourceNext
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_intConst number
-  · exact doApp_intConst_error number
+  · exact stateRel_doApp_globalsPtr
+  · exact doApp_globalsPtr_error
+  · exact clockBound
   · exact hyp
 
-/-- Complete global-pointer read operation case of the source-shaped simulation. -/
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_globalsPtr {C F : Type}  (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3333,15 +3628,32 @@ theorem rewriteTail_op_globalsPtr {C F : Type}  (args : List Bvi.Exp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.globOp .globalsPtr) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.globOp .globalsPtr) args source env1 result sourceNext
+  exact rewriteTail_op_globalsPtr_through source.clock args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
+
+/-- Global-slot reads preserve the rewrite simulation through related stores. -/
+theorem rewriteTail_op_global_through {C F : Type} (limit : Nat) (index : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.globOp (.global index)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.globOp (.global index)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.globOp (.global index)) args source env1 result sourceNext
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_globalsPtr
-  · exact doApp_globalsPtr_error
+  · exact stateRel_doApp_global index
+  · exact doApp_global_error index
+  · exact clockBound
   · exact hyp
 
-/-- Global-slot reads preserve the rewrite simulation through related stores. -/
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_global {C F : Type} (index : Nat) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3352,15 +3664,32 @@ theorem rewriteTail_op_global {C F : Type} (index : Nat) (args : List Bvi.Exp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.globOp (.global index)) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.globOp (.global index)) args source env1 result sourceNext
+  exact rewriteTail_op_global_through source.clock index args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
+
+/-- Global-slot writes preserve the rewrite simulation through related stores. -/
+theorem rewriteTail_op_setGlobal_through {C F : Type} (limit : Nat) (index : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.globOp (.setGlobal index)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.globOp (.setGlobal index)) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.globOp (.setGlobal index)) args source env1 result sourceNext
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_global index
-  · exact doApp_global_error index
+  · exact stateRel_doApp_setGlobal index
+  · exact doApp_setGlobal_error index
+  · exact clockBound
   · exact hyp
 
-/-- Global-slot writes preserve the rewrite simulation through related stores. -/
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_setGlobal {C F : Type} (index : Nat) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3371,16 +3700,37 @@ theorem rewriteTail_op_setGlobal {C F : Type} (index : Nat) (args : List Bvi.Exp
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.globOp (.setGlobal index)) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.globOp (.setGlobal index)) args source env1 result sourceNext
-    optimized target acc env2 loc ts ty argsIH
-  · rw [scanSing_op_choice]
-    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_setGlobal index
-  · exact doApp_setGlobal_error index
-  · exact hyp
+  exact rewriteTail_op_setGlobal_through source.clock index args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
 
 /-- Global allocation propagates argument errors; a primitive application
 itself would produce the excluded type error. -/
+theorem rewriteTail_op_allocGlobal_through {C F : Type} (limit : Nat) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.globOp .allocGlobal) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.globOp .allocGlobal) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.globOp .allocGlobal) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · intro values s t u v _ run
+    rw [doApp_allocGlobal] at run
+    contradiction
+  · intro values s error run
+    rw [doApp_allocGlobal] at run
+    exact (SemanticPrimitivesHOL.Result.err.inj run).symm
+  · exact clockBound
+  · exact hyp
+
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_allocGlobal {C F : Type} (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3391,19 +3741,32 @@ theorem rewriteTail_op_allocGlobal {C F : Type} (args : List Bvi.Exp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.globOp .allocGlobal) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.globOp .allocGlobal) args source env1 result sourceNext
+  exact rewriteTail_op_allocGlobal_through source.clock args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
+
+/-- Complete global-pointer write operation case of the source-shaped simulation. -/
+theorem rewriteTail_op_setGlobalsPtr_through {C F : Type} (limit : Nat)  (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.globOp .setGlobalsPtr) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.globOp .setGlobalsPtr) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.globOp .setGlobalsPtr) args source env1 result sourceNext
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · intro values s t u v _ run
-    rw [doApp_allocGlobal] at run
-    contradiction
-  · intro values s error run
-    rw [doApp_allocGlobal] at run
-    exact (SemanticPrimitivesHOL.Result.err.inj run).symm
+  · exact stateRel_doApp_setGlobalsPtr
+  · exact doApp_setGlobalsPtr_error
+  · exact clockBound
   · exact hyp
 
-/-- Complete global-pointer write operation case of the source-shaped simulation. -/
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_setGlobalsPtr {C F : Type}  (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3414,15 +3777,30 @@ theorem rewriteTail_op_setGlobalsPtr {C F : Type}  (args : List Bvi.Exp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.globOp .setGlobalsPtr) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.globOp .setGlobalsPtr) args source env1 result sourceNext
-    optimized target acc env2 loc ts ty argsIH
-  · rw [scanSing_op_choice]
-    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_setGlobalsPtr
-  · exact doApp_setGlobalsPtr_error
-  · exact hyp
+  exact rewriteTail_op_setGlobalsPtr_through source.clock args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
 
 /-- Every BVI global primitive satisfies the rewrite simulation. -/
+theorem rewriteTail_op_globOp_through {C F : Type} (limit : Nat) (operation : ClosLang.GlobOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.globOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.globOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  cases operation with
+  | global index => exact rewriteTail_op_global_through limit index args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | setGlobal index => exact rewriteTail_op_setGlobal_through limit index args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | allocGlobal => exact rewriteTail_op_allocGlobal_through limit args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | globalsPtr => exact rewriteTail_op_globalsPtr_through limit args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | setGlobalsPtr => exact rewriteTail_op_setGlobalsPtr_through limit args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_globOp {C F : Type} (operation : ClosLang.GlobOp) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3433,15 +3811,34 @@ theorem rewriteTail_op_globOp {C F : Type} (operation : ClosLang.GlobOp) (args :
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.globOp operation) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  cases operation with
-  | global index => exact rewriteTail_op_global index args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
-  | setGlobal index => exact rewriteTail_op_setGlobal index args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
-  | allocGlobal => exact rewriteTail_op_allocGlobal args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
-  | globalsPtr => exact rewriteTail_op_globalsPtr args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
-  | setGlobalsPtr => exact rewriteTail_op_setGlobalsPtr args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
+  exact rewriteTail_op_globOp_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) (Nat.le_refl _) hyp
 
 /-- Complete operation case for integer primitives that the accumulator scan
 does not recognize, including subtraction, division, and comparisons. -/
+theorem rewriteTail_op_nonAccumulatorInt_through {C F : Type} (limit : Nat) (operation : ClosLang.IntOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (notAccumulator : fromOp (.intOp operation) = .noop)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.intOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.intOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.intOp operation) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice, notAccumulator]
+    rfl
+  · exact stateRel_doApp_intOp_success operation
+  · exact doApp_intOp_error operation
+  · exact clockBound
+  · exact hyp
+
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_nonAccumulatorInt {C F : Type} (operation : ClosLang.IntOp) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3453,16 +3850,33 @@ theorem rewriteTail_op_nonAccumulatorInt {C F : Type} (operation : ClosLang.IntO
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.intOp operation) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.intOp operation) args source env1 result sourceNext
-    optimized target acc env2 loc ts ty argsIH
-  · rw [scanSing_op_choice, notAccumulator]
-    rfl
-  · exact stateRel_doApp_intOp_success operation
-  · exact doApp_intOp_error operation
-  · exact hyp
+  exact rewriteTail_op_nonAccumulatorInt_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) notAccumulator (Nat.le_refl _) hyp
 
 /-- Complete operation case for word primitives, which do not select an
 accumulator optimization. -/
+theorem rewriteTail_op_word_through {C F : Type} (limit : Nat) (operation : ClosLang.WordOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.wordOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.wordOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.wordOp operation) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_wordOp_success operation
+  · exact doApp_wordOp_error operation
+  · exact clockBound
+  · exact hyp
+
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_word {C F : Type} (operation : ClosLang.WordOp) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3473,13 +3887,8 @@ theorem rewriteTail_op_word {C F : Type} (operation : ClosLang.WordOp) (args : L
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.wordOp operation) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.wordOp operation) args source env1 result sourceNext
-    optimized target acc env2 loc ts ty argsIH
-  · rw [scanSing_op_choice]
-    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_wordOp_success operation
-  · exact doApp_wordOp_error operation
-  · exact hyp
+  exact rewriteTail_op_word_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _)  (Nat.le_refl _) hyp
 
 /-- Accumulator operations are simulated when optimization is disabled,
 regardless of whether their candidate check would succeed. -/
@@ -3543,6 +3952,29 @@ theorem rewriteTail_op_accumulator {C F : Type} (assoc : AssocOp)
 
 /-- Complete accumulator-operation case when the source candidate check
 finds no recursive call. -/
+theorem rewriteTail_op_accumulator_noCandidate_through {C F : Type} (limit : Nat) (assoc : AssocOp)
+    (args : List Bvi.Exp) (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (noCandidate : checkOp ts assoc loc (.op (toOp assoc) args) = none)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (toOp assoc) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (toOp assoc) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (toOp assoc) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice, fromOp_toOp]
+    cases assoc <;> simp_all [BEq.beq, instBEqAssocOp.beq, AssocOp.ctorIdx]
+  · exact stateRel_doApp_toOp assoc
+  · exact doApp_toOp_error_type assoc
+  · exact clockBound
+  · exact hyp
+
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_accumulator_noCandidate {C F : Type} (assoc : AssocOp)
     (args : List Bvi.Exp) (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3554,13 +3986,8 @@ theorem rewriteTail_op_accumulator_noCandidate {C F : Type} (assoc : AssocOp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (toOp assoc) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (toOp assoc) args source env1 result sourceNext
-    optimized target acc env2 loc ts ty argsIH
-  · rw [scanSing_op_choice, fromOp_toOp]
-    cases assoc <;> simp_all [BEq.beq, instBEqAssocOp.beq, AssocOp.ctorIdx]
-  · exact stateRel_doApp_toOp assoc
-  · exact doApp_toOp_error_type assoc
-  · exact hyp
+  exact rewriteTail_op_accumulator_noCandidate_through source.clock assoc args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) noCandidate (Nat.le_refl _) hyp
 
 /-- Every integer operation satisfies the rewrite simulation. Addition and
 multiplication use the worker-candidate proof; the other operations do not
@@ -3676,6 +4103,31 @@ theorem rewriteTail_op_intOp_of_size {C F : Type} (operation : ClosLang.IntOp) (
 
 /-- Non-accumulator block operations delegated to BVL preserve the rewrite
 simulation for all their argument and reference-store cases. -/
+theorem rewriteTail_op_block_delegated_through {C F : Type} (limit : Nat) (operation : ClosLang.BlockOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (notFromList : ∀ tag, operation ≠ .fromList tag) (notAppend : operation ≠ .listAppend)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.blockOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.blockOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.blockOp operation) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    cases operation <;> simp_all [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · intro values s next t value related run
+    exact stateRel_doApp_block_viaBvl operation values s next t value related notFromList run
+  · intro values s error run
+    exact doApp_block_viaBvl_error operation values s notFromList error run
+  · exact clockBound
+  · exact hyp
+
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_block_delegated {C F : Type} (operation : ClosLang.BlockOp) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3687,15 +4139,8 @@ theorem rewriteTail_op_block_delegated {C F : Type} (operation : ClosLang.BlockO
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.blockOp operation) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.blockOp operation) args source env1 result sourceNext
-    optimized target acc env2 loc ts ty argsIH
-  · rw [scanSing_op_choice]
-    cases operation <;> simp_all [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · intro values s next t value related run
-    exact stateRel_doApp_block_viaBvl operation values s next t value related notFromList run
-  · intro values s error run
-    exact doApp_block_viaBvl_error operation values s notFromList error run
-  · exact hyp
+  exact rewriteTail_op_block_delegated_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) notFromList notAppend (Nat.le_refl _) hyp
 
 /-- Every block operation satisfies the rewrite simulation under structural
 and smaller-clock induction hypotheses. -/
@@ -3729,6 +4174,30 @@ theorem rewriteTail_op_blockOp_of_size {C F : Type} (operation : ClosLang.BlockO
     all_goals exact hyp
 
 /-- Memory primitives delegated to BVL preserve the rewrite simulation. -/
+theorem rewriteTail_op_memory_delegated_through {C F : Type} (limit : Nat) (operation : ClosLang.MemOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args) (delegated : memoryDelegated operation = true)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.memOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.memOp operation) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · intro values s next t value related run
+    exact stateRel_doApp_memory_viaBvl operation values s next t value related delegated run
+  · intro values s error run
+    exact doApp_memory_viaBvl_error operation values s delegated error run
+  · exact clockBound
+  · exact hyp
+
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_memory_delegated {C F : Type} (operation : ClosLang.MemOp) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3739,18 +4208,37 @@ theorem rewriteTail_op_memory_delegated {C F : Type} (operation : ClosLang.MemOp
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.memOp operation) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.memOp operation) args source env1 result sourceNext
+  exact rewriteTail_op_memory_delegated_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) delegated (Nat.le_refl _) hyp
+
+/-- BVI-rejected memory primitives propagate argument errors and otherwise
+produce the excluded type error. -/
+theorem rewriteTail_op_memory_rejected_through {C F : Type} (limit : Nat) (operation : ClosLang.MemOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args) (rejected : memoryRejected operation = true)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.memOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice_through limit (.memOp operation) args source env1 result sourceNext
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
   · intro values s next t value related run
-    exact stateRel_doApp_memory_viaBvl operation values s next t value related delegated run
+    rw [doApp_memory_rejected operation values s rejected] at run
+    contradiction
   · intro values s error run
-    exact doApp_memory_viaBvl_error operation values s delegated error run
+    rw [doApp_memory_rejected operation values s rejected] at run
+    exact (SemanticPrimitivesHOL.Result.err.inj run).symm
+  · exact clockBound
   · exact hyp
 
-/-- BVI-rejected memory primitives propagate argument errors and otherwise
-produce the excluded type error. -/
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_memory_rejected {C F : Type} (operation : ClosLang.MemOp) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3761,19 +4249,37 @@ theorem rewriteTail_op_memory_rejected {C F : Type} (operation : ClosLang.MemOp)
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.memOp operation) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  apply rewriteTail_op_noChoice (.memOp operation) args source env1 result sourceNext
-    optimized target acc env2 loc ts ty argsIH
-  · rw [scanSing_op_choice]
-    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · intro values s next t value related run
-    rw [doApp_memory_rejected operation values s rejected] at run
-    contradiction
-  · intro values s error run
-    rw [doApp_memory_rejected operation values s rejected] at run
-    exact (SemanticPrimitivesHOL.Result.err.inj run).symm
-  · exact hyp
+  exact rewriteTail_op_memory_rejected_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) rejected (Nat.le_refl _) hyp
 
 /-- Every BVI memory primitive satisfies the rewrite simulation. -/
+theorem rewriteTail_op_memOp_through {C F : Type} (limit : Nat) (operation : ClosLang.MemOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailPropertyThrough (C := C) (F := F) limit args)
+    (clockBound : source.clock ≤ limit)
+    (hyp : rewriteTailHyp [.op (.memOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.memOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  cases operation with
+  | refByte flag => exact rewriteTail_op_refByte_through limit flag args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | mutCons tag index => exact rewriteTail_op_mutCons_through limit tag index args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | updateCons => exact rewriteTail_op_updateCons_through limit args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | finaliseCons => exact rewriteTail_op_finaliseCons_through limit args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | copyByte flag =>
+    cases flag with
+    | false => exact rewriteTail_op_memory_delegated_through limit _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl clockBound hyp
+    | true => exact rewriteTail_op_memory_rejected_through limit _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl clockBound hyp
+  | _ =>
+    all_goals first
+      | exact rewriteTail_op_memory_delegated_through limit _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl clockBound hyp
+      | exact rewriteTail_op_memory_rejected_through limit _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl clockBound hyp
+
+
+/-- The unrestricted argument hypothesis supplies the bounded case. -/
 theorem rewriteTail_op_memOp {C F : Type} (operation : ClosLang.MemOp) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -3784,19 +4290,35 @@ theorem rewriteTail_op_memOp {C F : Type} (operation : ClosLang.MemOp) (args : L
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op (.memOp operation) args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
+  exact rewriteTail_op_memOp_through source.clock operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (rewriteTailProperty_through argsIH _) (Nat.le_refl _) hyp
+
+/-- All bounded operation cases follow from the remaining integer and block
+cases, which include the accumulator rewrite. These two premises remain open. -/
+theorem rewriteTail_op_through_of_int_block {C F : Type} (limit : Nat)
+    (operation : ClosLang.Op) (args : List Bvi.Exp)
+    (structuralIH : ∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op operation args] →
+      rewriteTailPropertyThrough (C := C) (F := F) limit xs)
+    (intStep : ∀ op, operation = .intOp op →
+      rewriteTailPropertyThrough (C := C) (F := F) limit [.op (.intOp op) args])
+    (blockStep : ∀ op, operation = .blockOp op →
+      rewriteTailPropertyThrough (C := C) (F := F) limit [.op (.blockOp op) args]) :
+    rewriteTailPropertyThrough (C := C) (F := F) limit [.op operation args] := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
+  have argsSmaller : sizeOf args < sizeOf [Bvi.Exp.op operation args] := by
+    simp only [List.cons.sizeOf_spec, List.nil.sizeOf_spec, Bvi.Exp.op.sizeOf_spec]
+    omega
+  have argsIH := structuralIH args argsSmaller
   cases operation with
-  | refByte flag => exact rewriteTail_op_refByte flag args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
-  | mutCons tag index => exact rewriteTail_op_mutCons tag index args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
-  | updateCons => exact rewriteTail_op_updateCons args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
-  | finaliseCons => exact rewriteTail_op_finaliseCons args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH hyp
-  | copyByte flag =>
-    cases flag with
-    | false => exact rewriteTail_op_memory_delegated _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
-    | true => exact rewriteTail_op_memory_rejected _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
-  | _ =>
-    all_goals first
-      | exact rewriteTail_op_memory_delegated _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
-      | exact rewriteTail_op_memory_rejected _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
+  | label label => exact rewriteTail_op_label_through limit label args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | ffi name => exact rewriteTail_op_ffi_through limit name args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | intOp op => exact intStep op rfl source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
+  | wordOp op => exact rewriteTail_op_word_through limit op args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | blockOp op => exact blockStep op rfl source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
+  | globOp op => exact rewriteTail_op_globOp_through limit op args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | memOp op => exact rewriteTail_op_memOp_through limit op args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | install => exact rewriteTail_op_install_through limit args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
+  | thunkOp op => exact rewriteTail_op_thunkOp_through limit op args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH clockBound hyp
 
 /-- Every operation except dynamic installation satisfies the rewrite
 simulation using structural and smaller-clock induction hypotheses. -/
@@ -4131,6 +4653,30 @@ theorem rewriteTailProperty_of_op_through {C F : Type}
   intro operation args opEq
   subst e
   exact opStep limit operation args singletonIH clockIH
+
+/-- The rewrite simulation reduces to bounded integer and block operation
+steps. Both premises are outstanding; this is not a HOL theorem port. -/
+theorem rewriteTailProperty_of_int_block_through {C F : Type}
+    (intStep : ∀ limit op args,
+      (∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op (.intOp op) args] →
+        rewriteTailPropertyThrough (C := C) (F := F) limit xs) →
+      (∀ smaller, smaller < limit → ∀ xs, rewriteTailPropertyThrough (C := C) (F := F) smaller xs) →
+      rewriteTailPropertyThrough (C := C) (F := F) limit [.op (.intOp op) args])
+    (blockStep : ∀ limit op args,
+      (∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op (.blockOp op) args] →
+        rewriteTailPropertyThrough (C := C) (F := F) limit xs) →
+      (∀ smaller, smaller < limit → ∀ xs, rewriteTailPropertyThrough (C := C) (F := F) smaller xs) →
+      rewriteTailPropertyThrough (C := C) (F := F) limit [.op (.blockOp op) args]) :
+    ∀ xs, rewriteTailProperty (C := C) (F := F) xs := by
+  apply rewriteTailProperty_of_op_through
+  intro limit operation args structuralIH clockIH
+  apply rewriteTail_op_through_of_int_block limit operation args structuralIH
+  · intro op eq
+    subst operation
+    exact intStep limit op args structuralIH clockIH
+  · intro op eq
+    subst operation
+    exact blockStep limit op args structuralIH clockIH
 
 /-- Assembles singleton expression cases using unrestricted smaller-expression
 and smaller-clock hypotheses. This Flapjack helper is not a HOL theorem port:
