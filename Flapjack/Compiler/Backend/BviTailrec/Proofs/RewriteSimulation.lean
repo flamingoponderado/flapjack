@@ -3290,6 +3290,86 @@ theorem rewriteTail_op_intOp {C F : Type} (operation : ClosLang.IntOp) (args : L
   | _ =>
     all_goals exact rewriteTail_op_nonAccumulatorInt _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
 
+/-- Both subexpressions of a worker candidate are structurally smaller in
+either operand order. -/
+theorem candidate_subexpressions_smaller (op : AssocOp) (pure : Bvi.Exp)
+    (ticks loc : Nat) (args : List Bvi.Exp) :
+    (sizeOf [pure] < sizeOf [applyOp op pure (.call ticks (some loc) args none)] ∧
+      sizeOf args < sizeOf [applyOp op pure (.call ticks (some loc) args none)]) ∧
+    (sizeOf [pure] < sizeOf [applyOp op (.call ticks (some loc) args none) pure] ∧
+      sizeOf args < sizeOf [applyOp op (.call ticks (some loc) args none) pure]) := by
+  simp only [applyOp, List.cons.sizeOf_spec, List.nil.sizeOf_spec, Bvi.Exp.op.sizeOf_spec,
+    Bvi.Exp.call.sizeOf_spec]
+  omega
+
+/-- Accumulator-operation simulation from a size-based structural induction
+hypothesis, including the list-append accumulator. -/
+theorem rewriteTail_op_accumulator_of_size {C F : Type} (assoc : AssocOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (structuralIH : ∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op (toOp assoc) args] →
+      rewriteTailProperty (C := C) (F := F) xs)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (hyp : rewriteTailHyp [.op (toOp assoc) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (toOp assoc) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  have argsSmaller : sizeOf args < sizeOf [Bvi.Exp.op (toOp assoc) args] := by
+    simp only [List.cons.sizeOf_spec, List.nil.sizeOf_spec, Bvi.Exp.op.sizeOf_spec]
+    omega
+  apply rewriteTail_op_accumulator assoc args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (structuralIH args argsSmaller) ?_ clockIH hyp
+  intro op pure ticks callArgs shape
+  have smaller := candidate_subexpressions_smaller op pure ticks loc callArgs
+  have bounds : sizeOf [pure] < sizeOf [Bvi.Exp.op (toOp assoc) args] ∧
+      sizeOf callArgs < sizeOf [Bvi.Exp.op (toOp assoc) args] := by
+    rcases shape with direct | ⟨_, swapped⟩
+    · rw [direct]
+      exact smaller.1
+    · rw [swapped]
+      exact smaller.2
+  exact ⟨structuralIH [pure] bounds.1, structuralIH callArgs bounds.2⟩
+
+/-- Integer-operation simulation using the ordinary structural induction
+hypothesis for smaller expression lists. -/
+theorem rewriteTail_op_intOp_of_size {C F : Type} (operation : ClosLang.IntOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (structuralIH : ∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op (.intOp operation) args] →
+      rewriteTailProperty (C := C) (F := F) xs)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (hyp : rewriteTailHyp [.op (.intOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.intOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  have argsSmaller : sizeOf args < sizeOf [Bvi.Exp.op (.intOp operation) args] := by
+    simp only [List.cons.sizeOf_spec, List.nil.sizeOf_spec, Bvi.Exp.op.sizeOf_spec]
+    omega
+  apply rewriteTail_op_intOp operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+    (structuralIH args argsSmaller) ?_ clockIH hyp
+  intro op pure ticks callArgs shape
+  have smaller := candidate_subexpressions_smaller op pure ticks loc callArgs
+  have bounds : sizeOf [pure] < sizeOf [Bvi.Exp.op (.intOp operation) args] ∧
+      sizeOf callArgs < sizeOf [Bvi.Exp.op (.intOp operation) args] := by
+    rcases shape with direct | ⟨_, swapped⟩
+    · rw [direct]
+      exact smaller.1
+    · rw [swapped]
+      exact smaller.2
+  exact ⟨structuralIH [pure] bounds.1, structuralIH callArgs bounds.2⟩
+
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a
 raise as an optimization candidate. -/
