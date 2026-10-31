@@ -438,8 +438,10 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 ```
 
 It checks each case's expected acceptance or rejection and compares complete
-output and status. It is a finite regression sample, not evidence for all
-programs using those forms.
+output and status. The accepted cases include polymorphic datatypes, nested
+closures, type annotations, tuple patterns, qualified names and exception
+handlers; these exercise compilation as well as parsing and inference. It is a
+finite regression sample, not evidence for all programs using those forms.
 
 To recheck the recorded historical outputs when that exact binary is available,
 run `python3 scripts/check-cake-cli-parity.py --check-reference /path/to/cake`.

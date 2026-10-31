@@ -43,6 +43,18 @@ SOURCE_CORPUS = [
     ('fun f x = f x;', 0),
     ('val x = 1 div 0;', 1),
     ('val a = Array.array (2, 1);', 1),
+    ('val x : int = 3;', 0),
+    ('val id = fn x => x; val y = id 3;', 0),
+    ("datatype 'a option = NONE | SOME 'a; val x = SOME 3;", 0),
+    ('datatype tree = Leaf int | Node tree tree; val x = Node (Leaf 3) (Leaf 4);', 0),
+    ('fun f x y = x; val x = f 3 4;', 0),
+    ('structure S = struct val x = 1 end; val y = S.x;', 0),
+    ('exception E; val x = (raise E) handle E => 2;', 0),
+    ('fun f x = (case x of [] => [] | x::xs => xs);', 0),
+    ('val (a,b,c,d) = (1,2,3,4);', 0),
+    ('val x = (fn x => x) ((fn y => y) 10);', 0),
+    ('val f = fn x => fn y => fn z => (x,y,z); val x = f 1 2 3;', 0),
+    ('val x = ((fn x => x) : int -> int) 1;', 0),
 ]
 
 # These programs also exercise the basis and full backend output. They must
