@@ -3258,6 +3258,38 @@ theorem rewriteTail_op_accumulator_noCandidate {C F : Type} (assoc : AssocOp)
   · exact doApp_toOp_error_type assoc
   · exact hyp
 
+/-- Every integer operation satisfies the rewrite simulation. Addition and
+multiplication use the worker-candidate proof; the other operations do not
+select accumulator rewrites. -/
+theorem rewriteTail_op_intOp {C F : Type} (operation : ClosLang.IntOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (subIH : ∀ op pure ticks callArgs,
+      (.op (.intOp operation) args = applyOp op pure (.call ticks (some loc) callArgs none) ∨
+        (op ≠ .append ∧ .op (.intOp operation) args = applyOp op (.call ticks (some loc) callArgs none) pure)) →
+      rewriteTailProperty (C := C) (F := F) [pure] ∧ rewriteTailProperty (C := C) (F := F) callArgs)
+    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
+      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
+      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
+        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
+    (hyp : rewriteTailHyp [.op (.intOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.intOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  cases operation with
+  | add =>
+    exact rewriteTail_op_accumulator .plus args source env1 result sourceNext optimized target acc env2 loc ts ty
+      argsIH subIH clockIH hyp
+  | mult =>
+    exact rewriteTail_op_accumulator .times args source env1 result sourceNext optimized target acc env2 loc ts ty
+      argsIH subIH clockIH hyp
+  | _ =>
+    all_goals exact rewriteTail_op_nonAccumulatorInt _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl hyp
+
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a
 raise as an optimization candidate. -/
