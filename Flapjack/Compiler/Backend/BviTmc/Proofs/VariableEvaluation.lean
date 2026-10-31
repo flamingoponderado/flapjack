@@ -196,4 +196,61 @@ theorem evaluate_binders {C F : Type} (args : List Bvi.Exp) (env : List Value)
   have result := evaluateBindings args values count next ys prefixLength nextState
   simpa [binding] using result
 
+/-- Reconstruct a BVI expression from a constructor call skeleton. -/
+@[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "cb_to_bvi_def"]
+def callBlockToBvi (loc : Nat) : CallBlock → Bvi.Exp
+  | .rCall ticks args => .call ticks (some loc) (args.map Bvi.Exp.var) none
+  | .callBlock tag left child right =>
+      .op (.blockOp (.cons tag))
+        (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var)
+
+/-- Shifting a call skeleton preserves its evaluation under a prefixed environment. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_cb"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_shift_cb {C F : Type} (cb : CallBlock) (loc : Nat) (env : List Value)
+    (state : BviState C F) (bs : List Value) :
+    evaluate [callBlockToBvi loc (shiftBlock bs.length cb)] (bs ++ env) state =
+      evaluate [callBlockToBvi loc cb] env state := by
+  induction cb generalizing state with
+  | rCall ticks args =>
+    simp only [shiftBlock, callBlockToBvi, BviSem.evaluate]
+    rw [evaluate_shift_vars]
+  | callBlock tag left child right ih =>
+    have argsEqual : evaluateTuple (((shiftVars bs.length left).map Bvi.Exp.var) ++
+        [callBlockToBvi loc (shiftBlock bs.length child)] ++
+        (shiftVars bs.length right).map Bvi.Exp.var, bs ++ env, state) =
+        evaluateTuple (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++
+        right.map Bvi.Exp.var, env, state) := by
+      simp only [List.append_assoc]
+      conv_lhs => rw [evaluateAppend]
+      conv_rhs => rw [evaluateAppend]
+      simp only [BviSem.evaluateTuple, evaluate_shift_vars]
+      cases h : evaluate (left.map Bvi.Exp.var) env state with
+      | mk result next =>
+        cases result with
+        | err error => rfl
+        | val values =>
+          simp only
+          have tailEqual : evaluateTuple ([callBlockToBvi loc (shiftBlock bs.length child)] ++
+              (shiftVars bs.length right).map Bvi.Exp.var, bs ++ env, next) =
+              evaluateTuple ([callBlockToBvi loc child] ++ right.map Bvi.Exp.var, env, next) := by
+            conv_lhs => rw [evaluateAppend]
+            conv_rhs => rw [evaluateAppend]
+            simp only [BviSem.evaluateTuple, ih, evaluate_shift_vars]
+          change evaluate ([callBlockToBvi loc (shiftBlock bs.length child)] ++
+            (shiftVars bs.length right).map Bvi.Exp.var) (bs ++ env) next =
+            evaluate ([callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env next at tailEqual
+          rw [tailEqual]
+    simp only [shiftBlock, callBlockToBvi, BviSem.evaluate]
+    rw [show evaluate _ _ state = evaluate _ env state from argsEqual]
+
+/-- The single-value environment-prefix instance for a call skeleton. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_cb_sing"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_shift_cb_sing {C F : Type} (cb : CallBlock) (loc : Nat) (env : List Value)
+    (state : BviState C F) (b : Value) :
+    evaluate [callBlockToBvi loc (shiftBlock 1 cb)] (b :: env) state =
+      evaluate [callBlockToBvi loc cb] env state := by
+  simpa using evaluate_shift_cb cb loc env state [b]
+
 end Flapjack.Compiler.Backend.BviTmc
