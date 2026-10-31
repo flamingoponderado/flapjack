@@ -439,6 +439,43 @@ theorem evaluate_related_callee {C F : Type} (loc arity : Nat) (body : Bvi.Exp)
     rw [← lengthEq, evaluate_letWrap worker op env target notNoop]
     exact workerRun
 
+/-- A known accumulator can be applied after the selected conditional branch.
+Condition errors and non-boolean values are propagated unchanged. -/
+theorem evaluate_applyOp_if {C F : Type} (op : AssocOp) (acc : Nat)
+    (cond yes no : Bvi.Exp) (env : List Value) (state : BviSem.BviState C F)
+    (value : Value) (lookup : env[acc]? = some value) :
+    BviSem.evaluate [applyOp op (.var acc) (.ifThenElse cond yes no)] env state =
+      BviSem.evaluate [.ifThenElse cond (applyOp op (.var acc) yes)
+        (applyOp op (.var acc) no)] env state := by
+  rw [evaluate_applyOp_var op acc (.ifThenElse cond yes no) env state value lookup]
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate]
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate]
+  cases guardRun : BviSem.evaluate [cond] env state with
+  | mk guardResult middle =>
+    cases guardResult with
+    | err error => simp
+    | val values =>
+      obtain ⟨guardValue, rfl⟩ := BviSem.evaluate_singleton cond env state middle values guardRun
+      change (match (match asBool guardValue with
+          | none => ((.err (.abort .typeError) : BviSem.BviResult), middle)
+          | some true => BviSem.evaluate [yes] env middle
+          | some false => BviSem.evaluate [no] env middle) with
+        | (.err error, next) => (.err error, next)
+        | (.val values, next) =>
+          match BviSem.doApp (toOp op) (values.reverse ++ [value]) next with
+          | .err error => (.err error, next)
+          | .val (result, last) => (.val [result], last)) =
+        (match asBool guardValue with
+          | none => ((.err (.abort .typeError) : BviSem.BviResult), middle)
+          | some true => BviSem.evaluate [applyOp op (.var acc) yes] env middle
+          | some false => BviSem.evaluate [applyOp op (.var acc) no] env middle)
+      cases truth : asBool guardValue with
+      | none => rfl
+      | some flag =>
+        cases flag with
+        | false => exact (evaluate_applyOp_var op acc no env middle value lookup).symm
+        | true => exact (evaluate_applyOp_var op acc yes env middle value lookup).symm
+
 /-- A known accumulator lookup commutes with a tick around its second operand.
 The timeout still occurs before any accumulator operation is dispatched. -/
 theorem evaluate_applyOp_tick {C F : Type} (op : AssocOp) (acc : Nat)

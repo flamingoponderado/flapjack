@@ -120,6 +120,98 @@ theorem rewriteSingle_scan (e : Exp) (ctx : List ValueType) (loc next acc : Nat)
   | letCall rets ticks dest args body => simp [scanSing.eq_def, rewriteSingle.eq_def]
 termination_by sizeOf e
 
+/-- A specific type in a nested branch join agrees with its last input. -/
+theorem decideType_nested_right (left middle right : ValueType)
+    (specific : decideType left (decideType middle right) ≠ .any) :
+    right = decideType left (decideType middle right) := by
+  cases left <;> cases middle <;> cases right <;> simp_all [decideType]
+
+/-- Whenever the scan selects an accumulator and reports a specific result
+type, that type agrees with the selected operator. -/
+theorem scanSing_choice_type (e : Exp) (ctx : List ValueType) (loc : Nat) :
+    ∀ assoc, (scanSing ctx loc e).2.2.2 = some assoc →
+      (scanSing ctx loc e).2.1 ≠ .any → opType assoc = (scanSing ctx loc e).2.1 := by
+  cases e with
+  | var n => simp [scanSing.eq_def]
+  | force location index => simp [scanSing.eq_def]
+  | tick body =>
+    rw [scanSing.eq_def]
+    exact scanSing_choice_type body ctx loc
+  | «let» bindings body =>
+    let scans := scanList ctx loc bindings
+    let types := scans.map fun (_, ty, _, _) => ty
+    let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ctx
+    have ih := scanSing_choice_type body (types ++ last) loc
+    rw [scanSing.eq_def]
+    dsimp only
+    cases h : scanSing (types ++ last) loc body with
+    | mk first rest => simpa [h] using ih
+  | ifThenElse cond yes no =>
+    rw [scanSing.eq_def]
+    dsimp only
+    cases hy : scanSing (scanSing ctx loc cond).1 loc yes with
+    | mk cy ry =>
+      rcases ry with ⟨ty, flagy, opy⟩
+      cases hn : scanSing (scanSing ctx loc cond).1 loc no with
+      | mk cn rn =>
+        rcases rn with ⟨tn, flagn, opn⟩
+        cases opy <;> cases opn <;> simp_all
+        all_goals intro specific
+        all_goals exact decideType_nested_right _ _ _ specific
+  | op actual args =>
+    rw [scanSing.eq_def]
+    dsimp only
+    split <;> split
+    · split <;> split <;> simp_all
+    · split <;> simp_all
+    · simp_all
+    · split
+      · split <;> simp_all
+      · simp
+  | raise body => simp [scanSing.eq_def]
+  | «return» args => simp [scanSing.eq_def]
+  | call ticks dest args handler => simp [scanSing.eq_def]
+  | letCall rets ticks dest args body => simp [scanSing.eq_def]
+termination_by sizeOf e
+
+/-- Every entry in a source-shaped list scan obeys the selected operator's
+type condition. -/
+theorem scanList_choice_type (xs : List Exp) (ctx : List ValueType) (loc : Nat) :
+    ∀ entry ∈ scanList ctx loc xs,
+      match entry.2.2.2 with
+      | none => True
+      | some assoc => entry.2.1 ≠ .any → opType assoc = entry.2.1 := by
+  cases xs with
+  | nil => simp [scanList.eq_def]
+  | cons x rest =>
+    rw [scanList.eq_def]
+    dsimp only
+    intro entry member
+    simp only [List.mem_cons] at member
+    rcases member with rfl | member
+    · cases h : scanSing ctx loc x with
+      | mk out other =>
+        rcases other with ⟨ty, branch, choice⟩
+        cases choice with
+        | none => trivial
+        | some assoc =>
+          have typed := scanSing_choice_type x ctx loc assoc (by rw [h])
+          simpa [h] using typed
+    · exact scanList_choice_type rest (scanSing ctx loc x).1 loc entry member
+termination_by sizeOf xs
+
+/-- Source-shaped operator-type invariant for every entry in a list scan.
+This remains untagged until the scan carriers are source-reviewed. -/
+theorem scanExpr_op_type (ctx : List ValueType) (loc : Nat) (xs : List Exp)
+    (ys : List (List ValueType × ValueType × Bool × Option AssocOp))
+    (scan : scanExpr ctx loc xs = ys) :
+    ∀ entry ∈ ys, match entry.2.2.2 with
+      | none => True
+      | some assoc => entry.2.1 ≠ .any → opType assoc = entry.2.1 := by
+  subst ys
+  rw [scanExpr_list]
+  exact scanList_choice_type xs ctx loc
+
 /-- Source-shaped rewrite/scan invariant: no scan choice means no rewrite;
 a matching selected operator forces the rewrite flag. The scan and rewrite
 carriers remain subject to source review. -/
