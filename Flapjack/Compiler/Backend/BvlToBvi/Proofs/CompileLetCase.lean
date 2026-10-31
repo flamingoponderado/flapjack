@@ -11,7 +11,7 @@ theorem simulation_let_cons {C F : Type} (first : Bvl.Exp) (rest : List Bvl.Exp)
     (body : Bvl.Exp) (env : List Value) (source : BvlSem.State (Nat × C) F)
     (bindingsIH : simulation (first :: rest) env source)
     (bodyIH : ∀ (mid : BvlSem.State (Nat × C) F) (values : List Value),
-      simulation [body] (values ++ env) mid) :
+      mid.clock ≤ source.clock → simulation [body] (values ++ env) mid) :
     simulation [.let (first :: rest) body] env source := by
   intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
   rcases bindingsCompile : compileListSource n (first :: rest) with ⟨bindingsCode, bindingsAux, n1⟩
@@ -64,8 +64,11 @@ theorem simulation_let_cons {C F : Type} (first : Bvl.Exp) (rest : List Bvl.Exp)
         rcases List.mem_append.mp member with bound | old
         · exact (bvOkList_iff _ _).1 sourcePreserved.2.1 value bound
         · exact (bvOkList_iff _ _).1 sourcePreserved.2.2 value old
+      have midClock : mid.clock ≤ source.clock := by
+        have clockBound := BvlSem.evaluate_clock_le (first :: rest) env source
+        simpa [bindingsRun] using clockBound
       obtain ⟨targetFinal, finalRelocate, bodyClock, targetBody, relatedFinal, extendedEq, refsFinalEq⟩ :=
-        bodyIH mid values n1 res next targetMid finalName [bodyCode] bodyAux midRelocate bodyRun notTypeError
+        bodyIH mid values midClock n1 res next targetMid finalName [bodyCode] bodyAux midRelocate bodyRun notTypeError
           bodyCompiled relatedMid sourcePreserved.1 extendedOk bodyInstalled shape.2 targetGlobal
       have valuesEq := adjustMap_eq_of_ok midRelocate finalRelocate values mid.refs sourcePreserved.2.1 refsFinalEq
       have envFinalEq : env.map (adjustBv midRelocate) = env.map (adjustBv finalRelocate) := by
@@ -90,7 +93,7 @@ theorem simulation_let_vars {C F : Type} (first : Nat) (rest : List Nat) (body :
     simulation [.let ((first :: rest).map Bvl.Exp.var) (.var body)] env source := by
   apply simulation_let_cons (.var first) (rest.map Bvl.Exp.var) (.var body) env source
   · exact simulation_vars (first :: rest) env source
-  · intro mid values
+  · intro mid values _
     exact simulation_var body (values ++ env) mid
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

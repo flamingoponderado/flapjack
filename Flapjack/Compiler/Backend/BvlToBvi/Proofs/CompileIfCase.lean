@@ -10,8 +10,8 @@ hypotheses. Untagged pending BVI evaluator correspondence review. -/
 theorem simulation_if {C F : Type} (condition yes no : Bvl.Exp) (env : List Value)
     (source : BvlSem.State (Nat × C) F)
     (conditionIH : simulation [condition] env source)
-    (yesIH : ∀ mid : BvlSem.State (Nat × C) F, simulation [yes] env mid)
-    (noIH : ∀ mid : BvlSem.State (Nat × C) F, simulation [no] env mid) :
+    (yesIH : ∀ mid : BvlSem.State (Nat × C) F, mid.clock ≤ source.clock → simulation [yes] env mid)
+    (noIH : ∀ mid : BvlSem.State (Nat × C) F, mid.clock ≤ source.clock → simulation [no] env mid) :
     simulation [.ifThenElse condition yes no] env source := by
   intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
   rcases conditionCompile : compileSingSource n condition with ⟨conditionCode, conditionAux, n1⟩
@@ -118,13 +118,16 @@ theorem simulation_if {C F : Type} (condition yes no : Bvl.Exp) (env : List Valu
             | some false => BviSem.evaluate [noCode] (env.map (adjustBv finalRelocate))
                 (BviProps.incClock branchClock targetMid)) = _
           cases choice <;> simpa [asBool_adjustBv, bool, branchCodeEq] using targetBranch
+        have midClock : mid.clock ≤ source.clock := by
+          have clockBound := BvlSem.evaluate_clock_le [condition] env source
+          simpa [conditionRun] using clockBound
         cases choice with
         | false =>
           have branchRun : BvlSem.evaluate [no] env mid = (res, next) := by simpa [bool] using run
-          exact runBranch no noCode noAux nYes finalName (noIH mid) branchRun noCompiled noInstalled shape.2.2 (by rfl)
+          exact runBranch no noCode noAux nYes finalName (noIH mid midClock) branchRun noCompiled noInstalled shape.2.2 (by rfl)
         | true =>
           have branchRun : BvlSem.evaluate [yes] env mid = (res, next) := by simpa [bool] using run
-          exact runBranch yes yesCode yesAux n1 nYes (yesIH mid) branchRun yesCompiled yesInstalled shape.2.1 (by rfl)
+          exact runBranch yes yesCode yesAux n1 nYes (yesIH mid midClock) branchRun yesCompiled yesInstalled shape.2.1 (by rfl)
 
 /-- Flapjack consequence: a conditional whose condition and branches are
 variables satisfies the simulation for any environment and source state. -/
@@ -132,7 +135,7 @@ theorem simulation_if_vars {C F : Type} (condition yes no : Nat) (env : List Val
     (source : BvlSem.State (Nat × C) F) :
     simulation [.ifThenElse (.var condition) (.var yes) (.var no)] env source :=
   simulation_if (.var condition) (.var yes) (.var no) env source
-    (simulation_var condition env source) (fun mid => simulation_var yes env mid)
-    (fun mid => simulation_var no env mid)
+    (simulation_var condition env source) (fun mid _ => simulation_var yes env mid)
+    (fun mid _ => simulation_var no env mid)
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

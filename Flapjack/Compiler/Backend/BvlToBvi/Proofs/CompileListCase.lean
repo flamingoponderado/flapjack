@@ -14,7 +14,7 @@ induction hypotheses. Untagged pending BVI evaluator correspondence review. -/
 theorem simulation_cons {C F : Type} (first second : Bvl.Exp) (rest : List Bvl.Exp)
     (env : List Value) (source : BvlSem.State (Nat × C) F)
     (headIH : simulation [first] env source)
-    (tailIH : ∀ mid : BvlSem.State (Nat × C) F, simulation (second :: rest) env mid) :
+    (tailIH : ∀ mid : BvlSem.State (Nat × C) F, mid.clock ≤ source.clock → simulation (second :: rest) env mid) :
     simulation (first :: second :: rest) env source := by
   intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
   rcases headCompile : compileSingSource n first with ⟨headCode, headAux, n1⟩
@@ -72,8 +72,11 @@ theorem simulation_cons {C F : Type} (first second : Bvl.Exp) (rest : List Bvl.E
         have tailInstalled : auxCodeInstalled (appListAppend tailAux) targetMid.code := by
           apply auxCodeInstalled_subspt _ target.code targetMid.code pieces.2
           simpa [BviProps.incClock] using targetCodeGrowth
+        have midClock : mid.clock ≤ source.clock := by
+          have clockBound := BvlSem.evaluate_clock_le [first] env source
+          simpa [headRun] using clockBound
         obtain ⟨targetFinal, finalRelocate, tailClock, targetTail, relatedFinal, envFinalEq, refsFinalEq⟩ :=
-          tailIH mid n1 tailResult last targetMid finalName tailCode tailAux midRelocate tailRun tailNotType
+          tailIH mid midClock n1 tailResult last targetMid finalName tailCode tailAux midRelocate tailRun tailNotType
             tailCompile relatedMid sourcePreserved.1 sourcePreserved.2.2 tailInstalled shape.2 targetGlobal
         have headValueOk : bvOk mid.refs headValue := by
           simpa [bvOkList] using sourcePreserved.2.1
@@ -126,6 +129,6 @@ theorem simulation_vars {C F : Type} (indices : List Nat) (env : List Value)
     | nil => exact simulation_var index env source
     | cons second rest =>
       simpa using simulation_cons (.var index) (.var second) (rest.map Bvl.Exp.var) env source
-        (simulation_var index env source) (fun mid => ih mid)
+        (simulation_var index env source) (fun mid _ => ih mid)
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

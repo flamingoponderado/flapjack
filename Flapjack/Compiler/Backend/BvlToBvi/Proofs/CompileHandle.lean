@@ -19,7 +19,7 @@ theorem simulation_handle {C F : Type} (bindings : List Bvl.Exp) (body handler :
     (bindingsIH : simulation bindings env source)
     (bodyIH : ∀ values : List Value, simulation [body] values source)
     (handlerIH : ∀ (exception : Value) (mid : BvlSem.State (Nat × C) F),
-      simulation [handler] (exception :: env) mid) :
+      mid.clock ≤ source.clock → simulation [handler] (exception :: env) mid) :
     simulation [.handle (.let bindings body) handler] env source := by
   intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
   rcases bindingsCompile : compileListSource n bindings with ⟨bindingsCode, bindingsAux, n1⟩
@@ -158,8 +158,11 @@ theorem simulation_handle {C F : Type} (bindings : List Bvl.Exp) (body handler :
             have handlerInstalled : auxCodeInstalled (appListAppend handlerAux) targetBody.code := by
               apply auxCodeInstalled_subspt _ targetMid.code targetBody.code handlerInstalledMid
               simpa [BviProps.incClock] using targetBodyGrowth
+            have bodyClockBound : bodyMid.clock ≤ source.clock := by
+              have clockBound := BvlSem.evaluate_clock_le [body] values source
+              simpa [bodyRun] using clockBound
             obtain ⟨targetFinal, finalRelocate, handlerClock, targetHandler, relatedFinal, handlerEq, refsHandlerEq⟩ :=
-              handlerIH exception bodyMid nBody res next targetBody finalName [handlerCode] handlerAux bodyRelocate
+              handlerIH exception bodyMid bodyClockBound nBody res next targetBody finalName [handlerCode] handlerAux bodyRelocate
                 handlerRun notTypeError handlerCompiled relatedBody preserved.1 handlerEnvOk handlerInstalled
                 shape.2.2.2 targetBodyGlobal
             simp only [List.map_cons, List.cons.injEq] at handlerEq
@@ -198,6 +201,6 @@ theorem simulation_handle_vars {C F : Type} (indices : List Nat) (body handler :
     simulation [.handle (.let (indices.map Bvl.Exp.var) (.var body)) (.var handler)] env source :=
   simulation_handle (indices.map Bvl.Exp.var) (.var body) (.var handler) env source
     (simulation_vars indices env source) (fun values => simulation_var body values source)
-    (fun exception mid => simulation_var handler (exception :: env) mid)
+    (fun exception mid _ => simulation_var handler (exception :: env) mid)
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
