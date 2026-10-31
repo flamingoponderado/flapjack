@@ -127,6 +127,98 @@ theorem rewriteTailProperty_var {C F : Type} (n : Nat) :
   intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
   exact rewriteTail_var n source env1 result sourceNext optimized target acc env2 loc ts ty hyp
 
+/-- The raise case simulates the raised expression under the same state and
+an environment with optimization disabled. The source scan cannot select a
+raise as an optimization candidate. -/
+theorem rewriteTail_raise {C F : Type} (body : Bvi.Exp)
+    (ih : rewriteTailProperty (C := C) (F := F) [body]) :
+    rewriteTailProperty (C := C) (F := F) [.raise body] := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  obtain ⟨run, envRelated, stateRelated, types, _, notTypeError⟩ := hyp
+  have disabled := envRel_disable ty optimized acc env1 env2 envRelated
+  rw [BviSem.evaluate] at run
+  cases innerRun : BviSem.evaluate [body] env1 source with
+  | mk inner middle =>
+    cases inner with
+    | err error =>
+      simp only [innerRun] at run
+      have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
+        intro bad
+        apply notTypeError
+        exact (congrArg Prod.fst run).symm.trans bad
+      have innerHyp : rewriteTailHyp [body] source env1 (.err error) middle false target acc env2 loc ts ty :=
+        ⟨innerRun, disabled, stateRelated, types, by simp, ok⟩
+      obtain ⟨targetNext, targetRun, targetRelated, _⟩ :=
+        ih source env1 (.err error) middle false target acc env2 loc ts ty innerHyp
+      have same : (.err error, middle) = (result, sourceNext) := by simpa [innerRun] using run
+      cases same
+      refine ⟨targetNext, ?_, targetRelated, ?_⟩
+      · rw [BviSem.evaluate, targetRun]
+      · intro _ op workerLoc code arity required
+        obtain ⟨_, _, _, op1, tt, resultTy, branch, scan, _, _, _⟩ := required
+        rw [scanExpr_single, scanSing.eq_def] at scan
+        simp at scan
+    | val values =>
+      have innerHyp : rewriteTailHyp [body] source env1 (.val values) middle false target acc env2 loc ts ty :=
+        ⟨innerRun, disabled, stateRelated, types, by simp, by simp⟩
+      obtain ⟨targetNext, targetRun, targetRelated, _⟩ :=
+        ih source env1 (.val values) middle false target acc env2 loc ts ty innerHyp
+      refine ⟨targetNext, ?_, ?_, ?_⟩
+      · rw [BviSem.evaluate, targetRun]
+        simpa [innerRun] using congrArg Prod.fst run
+      · have same : middle = sourceNext := by simpa [innerRun] using congrArg Prod.snd run
+        simpa [same] using targetRelated
+      · intro _ op workerLoc code arity required
+        obtain ⟨_, _, _, op1, tt, resultTy, branch, scan, _, _, _⟩ := required
+        rw [scanExpr_single, scanSing.eq_def] at scan
+        simp at scan
+
+/-- The return case simulates its argument list under the same state and
+an environment with optimization disabled. The source scan cannot select a
+return as an optimization candidate. -/
+theorem rewriteTail_return {C F : Type} (args : List Bvi.Exp)
+    (ih : rewriteTailProperty (C := C) (F := F) args) :
+    rewriteTailProperty (C := C) (F := F) [.return args] := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  obtain ⟨run, envRelated, stateRelated, types, _, notTypeError⟩ := hyp
+  have disabled := envRel_disable ty optimized acc env1 env2 envRelated
+  rw [BviSem.evaluate] at run
+  cases innerRun : BviSem.evaluate args env1 source with
+  | mk inner middle =>
+    cases inner with
+    | err error =>
+      simp only [innerRun] at run
+      have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
+        intro bad
+        apply notTypeError
+        exact (congrArg Prod.fst run).symm.trans bad
+      have innerHyp : rewriteTailHyp args source env1 (.err error) middle false target acc env2 loc ts ty :=
+        ⟨innerRun, disabled, stateRelated, types, by simp, ok⟩
+      obtain ⟨targetNext, targetRun, targetRelated, _⟩ :=
+        ih source env1 (.err error) middle false target acc env2 loc ts ty innerHyp
+      have same : (.err error, middle) = (result, sourceNext) := by simpa [innerRun] using run
+      cases same
+      refine ⟨targetNext, ?_, targetRelated, ?_⟩
+      · rw [BviSem.evaluate, targetRun]
+      · intro _ op workerLoc code arity required
+        obtain ⟨_, _, _, op1, tt, resultTy, branch, scan, _, _, _⟩ := required
+        rw [scanExpr_single, scanSing.eq_def] at scan
+        simp at scan
+    | val values =>
+      have innerHyp : rewriteTailHyp args source env1 (.val values) middle false target acc env2 loc ts ty :=
+        ⟨innerRun, disabled, stateRelated, types, by simp, by simp⟩
+      obtain ⟨targetNext, targetRun, targetRelated, _⟩ :=
+        ih source env1 (.val values) middle false target acc env2 loc ts ty innerHyp
+      refine ⟨targetNext, ?_, ?_, ?_⟩
+      · rw [BviSem.evaluate, targetRun]
+        simpa [innerRun] using congrArg Prod.fst run
+      · have same : middle = sourceNext := by simpa [innerRun] using congrArg Prod.snd run
+        simpa [same] using targetRelated
+      · intro _ op workerLoc code arity required
+        obtain ⟨_, _, _, op1, tt, resultTy, branch, scan, _, _, _⟩ := required
+        rw [scanExpr_single, scanSing.eq_def] at scan
+        simp at scan
+
 /-- Sequential non-singleton case of the source rewrite simulation. The
 singleton optimization condition forces this case to use ordinary simulation
 of the head followed by the tail. -/
