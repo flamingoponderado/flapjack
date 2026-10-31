@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+import Flapjack.Compiler.Backend.BvlJump.Proofs
 
 /-! Application cases of the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -6106,5 +6107,138 @@ theorem expressionSimulation_app_mutualRec_not_overapplied_case {C F : Type}
     exact expressionSimulation_app_recclosure_partial_case s sArgs sFunction sFinal t sourceEnv targetEnv f
       trace args function values captured oldArgs ptr arity index functions body aux finalAux compiled result argsRun functionRun
       found partialBound run noType compile locations annotations vars installed envRelated states argsIH functionIH
+
+/-- Extract the overapplication branch of the generated generic stub. -/
+def genericAppOverBranch (maxApp n : Nat) : Bvl.Exp :=
+  match generateGenericApp maxApp n with
+  | .let _ (.ifThenElse _ over _) => over
+  | _ => .var 0
+
+/-- When the supplied argument group exceeds the closure's remaining arity,
+the generic stub enters its overapplication branch. -/
+theorem evaluate_genericApp_over_branch {C F : Type} (s : BvlSem.State C F)
+    (maxApp n total tag : Nat) (args fields : List BvlSem.Value) (ptr : BvlSem.Value)
+    (length : args.length = n + 1) (bound : total < n + 1) :
+    BvlSem.evaluate [generateGenericApp maxApp n]
+      (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)]) s =
+    BvlSem.evaluate [genericAppOverBranch maxApp n]
+      (.number (Int.ofNat total - Int.ofNat (n + 1)) ::
+        (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)])) s := by
+  let env := args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)]
+  let diff : Int := Int.ofNat total - Int.ofNat (n + 1)
+  have varRun : BvlSem.evaluate [.var (n + 1)] env s =
+      (.val [.block tag (ptr :: .number (Int.ofNat total) :: fields)], s) := by
+    simp [BvlSem.evaluate, env, ← length]
+  have firstRun : BvlSem.evaluate [.op (.intOp .sub)
+      [mkConst (n + 1), .op (.blockOp (.elemAt 1)) [.var (n + 1)]]] env s = (.val [.number diff], s) := by
+    simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock,
+      BvlSem.applyNumeric, BvlSem.doIntApp, mkConst, varRun, diff]
+  have testRun : BvlSem.evaluate [.op (.intOp .less) [mkConst 0, .var 0]] (.number diff :: env) s =
+      (.val [BvlSem.boolValue true], s) := by
+    have negative : diff < 0 := by dsimp [diff]; omega
+    simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyNumeric,
+      BvlSem.doIntApp, mkConst, negative]
+  change BvlSem.evaluate [.let [.op (.intOp .sub)
+      [mkConst (n + 1), .op (.blockOp (.elemAt 1)) [.var (n + 1)]]]
+      (.ifThenElse (.op (.intOp .less) [mkConst 0, .var 0])
+        (genericAppOverBranch maxApp n) _)] env s = _
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, firstRun]
+  dsimp only
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate]
+  simp only [List.singleton_append]
+  rw [testRun]
+  simp [BvlSem.boolValue, BackendCommon.boolToTag, BackendCommon.trueTag, BvlSem.asBool, env, diff]
+
+/-- The overapplication branch dispatches on the stored remaining arity. -/
+theorem genericAppOverBranch_shape (maxApp n : Nat) :
+    genericAppOverBranch maxApp n = BvlJump.jump
+      (.op (.blockOp (.elemAt 1)) [.var (n + 2)])
+      ((List.range maxApp).map fun numArgs =>
+        .let [.call numArgs none
+          ((List.range (numArgs + 1)).map (fun arg => .var (arg + 2 + n - numArgs)) ++
+            [.var (n + 3), .op (.blockOp (.elemAt 0)) [.var (n + 3)]])]
+          (mkClCall (.var 0) ((List.range (n - numArgs)).map fun i => .var (i + 3)))) := by
+  rfl
+
+/-- For an in-range stored arity, the overapplication branch selects the
+corresponding generated case of the balanced dispatch tree. -/
+theorem evaluate_genericAppOverBranch {C F : Type} (s : BvlSem.State C F)
+    (maxApp n total tag : Nat) (args fields : List BvlSem.Value) (ptr : BvlSem.Value)
+    (length : args.length = n + 1) (totalBound : total < maxApp) :
+    BvlSem.evaluate [genericAppOverBranch maxApp n]
+      (.number (Int.ofNat total - Int.ofNat (n + 1)) ::
+        (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)])) s =
+    BvlSem.evaluate [.let [.call total none
+        ((List.range (total + 1)).map (fun arg => .var (arg + 2 + n - total)) ++
+          [.var (n + 3), .op (.blockOp (.elemAt 0)) [.var (n + 3)]])]
+        (mkClCall (.var 0) ((List.range (n - total)).map fun i => .var (i + 3)))]
+      (.number (Int.ofNat total) :: .number (Int.ofNat total - Int.ofNat (n + 1)) ::
+        (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)])) s := by
+  let env := .number (Int.ofNat total - Int.ofNat (n + 1)) ::
+    (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)])
+  have selector : BvlSem.evaluate [.op (.blockOp (.elemAt 1)) [.var (n + 2)]] env s =
+      (.val [.number (Int.ofNat total)], s) := by
+    simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock, env, ← length]
+  rw [genericAppOverBranch_shape]
+  let branches := (List.range maxApp).map fun numArgs =>
+    Bvl.Exp.let [.call numArgs none
+      ((List.range (numArgs + 1)).map (fun arg => .var (arg + 2 + n - numArgs)) ++
+        [.var (n + 3), .op (.blockOp (.elemAt 0)) [.var (n + 3)]])]
+      (mkClCall (.var 0) ((List.range (n - numArgs)).map fun i => .var (i + 3)))
+  have run := BvlJump.evaluate_jump (.op (.blockOp (.elemAt 1)) [.var (n + 2)]) branches env s s total selector
+    (by simpa [branches] using totalBound)
+  simpa [env, branches, List.getElem_map] using run
+
+/-- An overapplied generic stub dispatches to the case for the closure's
+stored remaining arity, without changing the state. -/
+theorem evaluate_genericApp_over_dispatch {C F : Type} (s : BvlSem.State C F)
+    (maxApp n total tag : Nat) (args fields : List BvlSem.Value) (ptr : BvlSem.Value)
+    (length : args.length = n + 1) (over : total < n + 1) (totalBound : total < maxApp) :
+    BvlSem.evaluate [generateGenericApp maxApp n]
+      (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)]) s =
+    BvlSem.evaluate [.let [.call total none
+        ((List.range (total + 1)).map (fun arg => .var (arg + 2 + n - total)) ++
+          [.var (n + 3), .op (.blockOp (.elemAt 0)) [.var (n + 3)]])]
+        (mkClCall (.var 0) ((List.range (n - total)).map fun i => .var (i + 3)))]
+      (.number (Int.ofNat total) :: .number (Int.ofNat total - Int.ofNat (n + 1)) ::
+        (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)])) s := by
+  rw [evaluate_genericApp_over_branch s maxApp n total tag args fields ptr length over]
+  exact evaluate_genericAppOverBranch s maxApp n total tag args fields ptr length totalBound
+
+/-- The first overapplication call reads the suffix that saturates the
+closure; earlier arguments are retained for the continuation. -/
+theorem evaluate_overApp_saturatedArgs {C F : Type} (s : BvlSem.State C F)
+    (n total : Nat) (args rest : List BvlSem.Value) (first second : BvlSem.Value)
+    (length : args.length = n + 1) (over : total < n + 1) :
+    BvlSem.evaluate ((List.range (total + 1)).map (fun arg => Bvl.Exp.var (arg + 2 + n - total)))
+      (first :: second :: (args ++ rest)) s = (.val (args.drop (n - total)), s) := by
+  have totalLe : total ≤ n := by omega
+  have readPrefix : ∀ count, count ≤ total + 1 →
+      BvlSem.evaluate ((List.range count).map (fun arg => Bvl.Exp.var (arg + 2 + n - total)))
+        (first :: second :: (args ++ rest)) s = (.val ((args.drop (n - total)).take count), s) := by
+    intro count bound
+    induction count with
+    | zero => simp [BvlSem.evaluate]
+    | succ count ih =>
+      have smaller : count ≤ total + 1 := by omega
+      have indexBound : count < (args.drop (n - total)).length := by simp [List.length_drop, length]; omega
+      rw [List.range_succ, List.map_append]
+      change BvlSem.evaluateTuple (((List.range count).map (fun arg => Bvl.Exp.var (arg + 2 + n - total)) ++
+        [.var (count + 2 + n - total)]), first :: second :: (args ++ rest), s) = _
+      rw [BvlProps.evaluateAppend]
+      simp only [BvlSem.evaluateTuple, ih smaller]
+      have indexEq : count + 2 + n - total = (n - total + count) + 2 := by omega
+      have argBound : n - total + count < args.length := by omega
+      have varRun : BvlSem.evaluate [.var (count + 2 + n - total)] (first :: second :: (args ++ rest)) s =
+          (.val [(args.drop (n - total))[count]], s) := by
+        rw [indexEq]
+        simp [BvlSem.evaluate, List.getElem?_append_left, argBound, List.getElem_drop]
+      rw [varRun]
+      simp only [List.take_append_getElem indexBound]
+  have dropLength : (args.drop (n - total)).length = total + 1 := by simp [List.length_drop, length]; omega
+  have run := readPrefix (total + 1) (by omega)
+  rw [← dropLength] at run
+  rw [List.take_of_length_le (Nat.le_refl _)] at run
+  simpa only [dropLength] using run
 
 end Flapjack.Compiler.Backend.ClosToBvl
