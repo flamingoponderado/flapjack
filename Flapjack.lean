@@ -561,6 +561,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.ForceSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CallSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.LetCallSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Induction
+import Flapjack.Compiler.Backend.BviTmc.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation

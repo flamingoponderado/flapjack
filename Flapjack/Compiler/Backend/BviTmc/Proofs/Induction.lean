@@ -120,14 +120,16 @@ theorem evaluate_general {C F : Type} (loc : Nat) (xs : List Bvi.Exp)
   exact all source.clock (expsWeight xs) xs source target env1 env2 opt f loc result final (Nat.le_refl _)
     (Nat.le_refl _) run safe environments states optLength notTypeError
 
-/-- Flapjack infrastructure: the assembled TMC evaluation simulation in the
-source theorem's explicit wrapper and worker form. This declaration remains
-untagged until its complete HOL statement and carriers are source-reviewed. -/
-theorem evaluate_rewrite_tmc_assembled {C F : Type} (n : Nat × Nat) (xs : List Bvi.Exp)
+/-- Flapjack infrastructure: the assembled TMC evaluation simulation with
+explicit wrapper and worker conclusions. This stronger statement omits the
+original theorem's unused measure premise: `expsWeight` is an internal
+termination measure, not HOL's generated `list_size exp_size`. The declaration
+remains untagged until the full HOL statement and carriers are reviewed. -/
+theorem evaluate_rewrite_tmc_assembled {C F : Type} (xs : List Bvi.Exp)
     (source : BviState (Nat × C) F) (env1 : List Value) (result : BviResult)
     (final : BviState (Nat × C) F) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
     (target : BviState C F) (env2 : List Value) (loc : Nat)
-    (run : evaluate xs env1 source = (result, final)) (_measure : n = (source.clock, expsWeight xs))
+    (run : evaluate xs env1 source = (result, final))
     (environments : envRel opt f env1 env2) (safe : ∀ x ∈ xs, noMutcons x)
     (states : stateRel f source target) (optLength : opt = true → xs.length = 1)
     (notTypeError : result ≠ .err (.abort .typeError)) :
