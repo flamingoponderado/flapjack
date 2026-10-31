@@ -664,6 +664,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EqualityFull
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockEqual
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ScalarConstant
 import Flapjack.Compiler.Backend.ClosConstant.Proofs.Build
+import Flapjack.Compiler.Backend.ClosConstant.Proofs.Flatten
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ConstantBuild
 import Flapjack.Test.ClosToBvlRecursive
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
