@@ -334,7 +334,10 @@ theorem install_target_transfer_of_related {C F : Type} (relocate : Nat → Nat)
       BviSem.doApp .install [adjustBv relocate byteValue, adjustBv relocate wordValue,
         .number bytes.length, .number words.length] target = .val (adjustBv relocate result, targetNext) ∧
       targetNext.code = sptUnion target.code (sptFromAList (compileIncSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).2) ∧
-      targetNext.compileOracle = (fun n => target.compileOracle (n + 1)) := by
+      targetNext.compileOracle = (fun n => target.compileOracle (n + 1)) ∧
+      targetNext = { target with
+        code := sptUnion target.code (sptFromAList (compileIncSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).2)
+        compileOracle := fun n => target.compileOracle (n + 1) } := by
   obtain ⟨_, _, config, _, key, arity, body, rest, _, _, oracle, available, distinct, _, _, _, _⟩ :=
     install_success_shape byteValue wordValue source next result run
   have names : namesOk source.code target.code source.compileOracle := related.2.2.2.2.2.2.2.2.2.2.2.2.2.1

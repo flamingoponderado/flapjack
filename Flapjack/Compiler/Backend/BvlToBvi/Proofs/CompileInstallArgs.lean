@@ -222,7 +222,10 @@ theorem install_target_transfer {C F : Type} (relocate : Nat → Nat)
       BviSem.doApp .install [adjustBv relocate byteValue, adjustBv relocate wordValue,
         .number bytes.length, .number words.length] target = .val (adjustBv relocate result, targetNext) ∧
       targetNext.code = sptUnion target.code (sptFromAList (compileIncSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).2) ∧
-      targetNext.compileOracle = (fun n => target.compileOracle (n + 1)) := by
+      targetNext.compileOracle = (fun n => target.compileOracle (n + 1)) ∧
+      targetNext = { target with
+        code := sptUnion target.code (sptFromAList (compileIncSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).2)
+        compileOracle := fun n => target.compileOracle (n + 1) } := by
   obtain ⟨bytes, words, ⟨counter, config⟩, ⟨nextCounter, nextConfig⟩, key, arity, body, rest,
     bytesDecode, wordsDecode, oracle, _, _, callback, nextOracle, resultEq, _⟩ :=
       install_success_shape byteValue wordValue source next result run
@@ -256,8 +259,9 @@ theorem install_target_transfer {C F : Type} (relocate : Nat → Nat)
     targetOracle targetAvailable targetDistinct targetCallback targetNextOracle
   refine ⟨bytes, words, { target with
     code := sptUnion target.code (sptFromAList ((bvlNumStubs + bvlToBviNamespaces * key, arity, targetBody) :: targetRest))
-    compileOracle := fun n => target.compileOracle (n + 1) }, bytesDecode, wordsDecode, ?_, ?_, rfl⟩
+    compileOracle := fun n => target.compileOracle (n + 1) }, bytesDecode, wordsDecode, ?_, ?_, rfl, ?_⟩
   · simpa [resultEq, adjustBv] using targetRun
+  · simp [oracle, compiledEq]
   · simp [oracle, compiledEq]
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
