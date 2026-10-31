@@ -57,12 +57,14 @@ theorem leastUnusedRef_eq_zero (refs : HolFiniteMapExact Nat (Ref Value))
   have bound := Nat.find_min' (unusedRef_exists refs) free
   exact Nat.eq_zero_of_le_zero bound
 
-private def byteVectors : List Value → Option (List (List (BitVec 8)))
+/-- Decode byte-vector values in their original list order. -/
+def byteVectors : List Value → Option (List (List (BitVec 8)))
   | [] => some []
   | .byteVector bytes :: values => (byteVectors values).map (bytes :: ·)
   | _ => none
 
-private def byteNumbers : List Value → Option (List (BitVec 8))
+/-- Decode numeric values as bytes, rejecting values outside the byte range. -/
+def byteNumbers : List Value → Option (List (BitVec 8))
   | [] => some []
   | .number number :: values => do
     let byte ← intToByte number
