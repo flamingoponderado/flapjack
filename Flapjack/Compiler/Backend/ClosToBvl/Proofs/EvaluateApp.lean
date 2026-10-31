@@ -7365,4 +7365,169 @@ theorem evaluateApp_ordinary_over_success {C F : Type}
   intro targetValue tMiddle fMiddle statesMiddle valueRel map refs annotationsMiddle growth
   exact continuationIH targetValue tMiddle fMiddle sourceContinue statesMiddle valueRel map refs annotationsMiddle growth
 
+/-- A generated closure call depends on its argument expressions and closure
+expression only through their values and the number of arguments, provided
+those expressions evaluate without changing the state. -/
+theorem evaluate_mkClCall_congr {C F : Type} (s : BvlSem.State C F)
+    (env1 env2 : List BvlSem.Value) (cl1 cl2 : Bvl.Exp) (args1 args2 : List Bvl.Exp)
+    (closure : BvlSem.Value) (values : List BvlSem.Value)
+    (length : args1.length = args2.length)
+    (clRun1 : ∀ u : BvlSem.State C F, BvlSem.evaluate [cl1] env1 u = (.val [closure], u))
+    (clRun2 : ∀ u : BvlSem.State C F, BvlSem.evaluate [cl2] env2 u = (.val [closure], u))
+    (argsRun1 : ∀ u : BvlSem.State C F, BvlSem.evaluate args1 env1 u = (.val values, u))
+    (argsRun2 : ∀ u : BvlSem.State C F, BvlSem.evaluate args2 env2 u = (.val values, u)) :
+    BvlSem.evaluate [mkClCall cl1 args1] env1 s = BvlSem.evaluate [mkClCall cl2 args2] env2 s := by
+  have elemEq (u : BvlSem.State C F) (i : Nat) :
+      BvlSem.evaluate [.op (.blockOp (.elemAt i)) [cl1]] env1 u =
+      BvlSem.evaluate [.op (.blockOp (.elemAt i)) [cl2]] env2 u := by
+    rw [BvlSem.evaluate, BvlSem.evaluate, BvlSem.fixClock_evaluate, BvlSem.fixClock_evaluate, clRun1, clRun2]
+  have condEq : BvlSem.evaluate
+      [.op (.blockOp (.equalConst (.int (Int.ofNat (args1.length - 1)))))
+        [.op (.blockOp (.elemAt 1)) [cl1]]] env1 s =
+      BvlSem.evaluate
+      [.op (.blockOp (.equalConst (.int (Int.ofNat (args2.length - 1)))))
+        [.op (.blockOp (.elemAt 1)) [cl2]]] env2 s := by
+    rw [← length]
+    conv_lhs => rw [BvlSem.evaluate, BvlSem.fixClock_evaluate]
+    conv_rhs => rw [BvlSem.evaluate, BvlSem.fixClock_evaluate]
+    rw [elemEq]
+  have tailEq (u : BvlSem.State C F) : BvlSem.evaluate [cl1, .op (.blockOp (.elemAt 0)) [cl1]] env1 u =
+      BvlSem.evaluate [cl2, .op (.blockOp (.elemAt 0)) [cl2]] env2 u := by
+    rw [BvlSem.evaluate, BvlSem.evaluate, BvlSem.fixClock_evaluate, BvlSem.fixClock_evaluate, clRun1, clRun2]
+    rw [elemEq]
+  have argsDirectEq (u : BvlSem.State C F) :
+      BvlSem.evaluate (args1 ++ [cl1, .op (.blockOp (.elemAt 0)) [cl1]]) env1 u =
+      BvlSem.evaluate (args2 ++ [cl2, .op (.blockOp (.elemAt 0)) [cl2]]) env2 u := by
+    change BvlSem.evaluateTuple (_, env1, u) = BvlSem.evaluateTuple (_, env2, u)
+    rw [BvlProps.evaluateAppend, BvlProps.evaluateAppend]
+    simp only [BvlSem.evaluateTuple, argsRun1, argsRun2, tailEq]
+  have argsGenericEq (u : BvlSem.State C F) : BvlSem.evaluate (args1 ++ [cl1]) env1 u =
+      BvlSem.evaluate (args2 ++ [cl2]) env2 u := by
+    change BvlSem.evaluateTuple (_, env1, u) = BvlSem.evaluateTuple (_, env2, u)
+    rw [BvlProps.evaluateAppend, BvlProps.evaluateAppend]
+    simp only [BvlSem.evaluateTuple, argsRun1, argsRun2, clRun1, clRun2]
+  change BvlSem.evaluate [.ifThenElse
+    (.op (.blockOp (.equalConst (.int (Int.ofNat (args1.length - 1))))) [.op (.blockOp (.elemAt 1)) [cl1]])
+    (.call (args1.length - 1) none (args1 ++ [cl1, .op (.blockOp (.elemAt 0)) [cl1]]))
+    (.call 0 (some (genericAppFnLocation (args1.length - 1))) (args1 ++ [cl1]))] env1 s =
+    BvlSem.evaluate [.ifThenElse
+    (.op (.blockOp (.equalConst (.int (Int.ofNat (args2.length - 1))))) [.op (.blockOp (.elemAt 1)) [cl2]])
+    (.call (args2.length - 1) none (args2 ++ [cl2, .op (.blockOp (.elemAt 0)) [cl2]]))
+    (.call 0 (some (genericAppFnLocation (args2.length - 1))) (args2 ++ [cl2]))] env2 s
+  rw [← length] at condEq ⊢
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, BvlSem.evaluate, BvlSem.fixClock_evaluate, condEq]
+  split <;> simp_all only [BvlSem.evaluate, BvlSem.fixClock_evaluate]
+
+/-- The generated overapplication continuation and a canonical closure call
+evaluate the same remaining arguments and returned value in any target state. -/
+theorem evaluate_overApp_continue_canonical {C F : Type} (s : BvlSem.State C F)
+    (n total : Nat) (args rest extra : List BvlSem.Value) (value first second : BvlSem.Value)
+    (length : args.length = n + 1) (over : total < n) :
+    BvlSem.evaluate [mkClCall (.var 0) ((List.range (n - total)).map fun i => .var (i + 3))]
+      (value :: first :: second :: (args ++ rest)) s =
+    BvlSem.evaluate [mkClCall (.var (args.take (n - total)).length)
+      ((List.range (args.take (n - total)).length).map Bvl.Exp.var)]
+      (args.take (n - total) ++ [value] ++ extra) s := by
+  let remaining := args.take (n - total)
+  have remainingLength : remaining.length = n - total := by
+    dsimp [remaining]
+    simp [List.length_take]
+    omega
+  apply evaluate_mkClCall_congr s _ _ _ _ _ _ value remaining
+  · simp only [List.length_map, List.length_range, List.length_take]
+    omega
+  · intro u
+    simp [BvlSem.evaluate]
+  · intro u
+    simp [BvlSem.evaluate]
+  · intro u
+    exact evaluate_overApp_remainingArgs u n total args rest value first second length (by omega)
+  · intro u
+    have bound : remaining.length ≤ (remaining ++ [value] ++ extra).length := by simp
+    change BvlSem.evaluate ((List.range remaining.length).map Bvl.Exp.var)
+      (remaining ++ [value] ++ extra) u = (.val remaining, u)
+    simpa using evaluate_rangeVars remaining.length (remaining ++ [value] ++ extra) u bound
+
+/-- Lift the canonical remaining-call simulation to the environment used by
+the generated overapplication continuation. -/
+theorem evaluatePost_overApp_continue_canonical {C F : Type}
+    (s sFinal : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (n total : Nat) (args rest extra : List BvlSem.Value) (value first second : BvlSem.Value)
+    (result : Result (List ClosSem.Value) ClosSem.Value) (length : args.length = n + 1) (over : total < n)
+    (post : evaluatePost s sFinal t (args.take (n - total) ++ [value] ++ extra) f result
+      [mkClCall (.var (args.take (n - total)).length)
+        ((List.range (args.take (n - total)).length).map Bvl.Exp.var)]) :
+    evaluatePost s sFinal t (value :: first :: second :: (args ++ rest)) f result
+      [mkClCall (.var 0) ((List.range (n - total)).map fun i => .var (i + 3))] := by
+  obtain ⟨clock, targetResult, tFinal, fFinal, run, related, states, map, frame, annotations, clocks⟩ := post
+  refine ⟨clock, targetResult, tFinal, fFinal, ?_, related, states, map, frame, annotations, clocks⟩
+  rw [evaluate_overApp_continue_canonical _ n total args rest extra value first second length over]
+  exact run
+
+/-- Successful ordinary overapplication follows from the closure-body
+simulation and the ordinary application simulation for the remaining prefix. -/
+theorem evaluateApp_ordinary_over_success_canonical {C F : Type}
+    (s sMiddle sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (f : HolFiniteMapExact Nat Nat) (ptr arity n : Nat)
+    (captured args : List ClosSem.Value) (fields targetArgs rest : List BvlSem.Value)
+    (body : ClosLang.Exp) (value : ClosSem.Value) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (closure : clRel s.maxApp (fun p => ∃ r, f.lookup r = some p) t.refs t.code
+      (captured, fields) (.closure (some ptr) [] captured arity body)
+      (.block 30 (.codePtr (ptr + numStubs s.maxApp) :: .number (Int.ofNat (arity - 1)) :: fields)))
+    (capturedRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) captured fields)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (length : targetArgs.length = n + 1) (bound : args.length ≤ s.maxApp)
+    (over : arity < args.length) (enough : arity ≤ s.clock)
+    (bodyRun : ClosSem.evaluate [body] (args.drop (args.length - arity) ++ captured)
+      (ClosSem.decClock arity s) = (.val [value], sMiddle))
+    (appRun : ClosSem.evaluateApp none (.closure (some ptr) [] captured arity body) args s = (result, sFinal))
+    (bodyIH : expressionSimulation (C := C) (F := F) [body])
+    (continuationIH : ∀ (targetValue : BvlSem.Value) (tMiddle : BvlSem.State C F)
+      (fMiddle : HolFiniteMapExact Nat Nat),
+      ClosSem.evaluateApp none value (args.take (args.length - arity)) sMiddle = (result, sFinal) →
+      stateRel fMiddle sMiddle tMiddle →
+      vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code value targetValue →
+      List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
+        (args.take (args.length - arity)) (targetArgs.take (n - (arity - 1))) →
+      codeAnnotations sMiddle →
+      evaluatePost sMiddle sFinal tMiddle
+        (targetArgs.take (n - (arity - 1)) ++ [targetValue]) fMiddle result
+        [mkClCall (.var (targetArgs.take (n - (arity - 1))).length)
+          ((List.range (targetArgs.take (n - (arity - 1))).length).map Bvl.Exp.var)]) :
+    evaluatePost s sFinal t
+      (targetArgs ++ [.block 30 (.codePtr (ptr + numStubs s.maxApp) ::
+        .number (Int.ofNat (arity - 1)) :: fields)] ++ rest) f result
+      [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
+  have positive : arity ≠ 0 := by cases closure with | closure _ positive _ _ _ _ _ => exact positive
+  have targetLength : targetArgs.length = args.length := argsRel.length_eq.symm
+  have over' : arity - 1 < n := by omega
+  have ⟨_, prefixRel, _⟩ := overApp_related_split (vRel s.maxApp f t.refs t.code) args targetArgs
+    arity 0 n (arity - 1) argsRel length (by omega) (by simp) (by simpa using over)
+  have prefixRel' : List.Forall₂ (vRel s.maxApp f t.refs t.code)
+      (args.take (args.length - arity)) (targetArgs.take (n - (arity - 1))) := by
+    simpa using prefixRel
+  have maxAppEq : sMiddle.maxApp = s.maxApp := by
+    have h := (ClosProps.evaluate_const (C := C) (F := F)).1 [body]
+      (args.drop (args.length - arity) ++ captured) (ClosSem.decClock arity s)
+    rw [bodyRun] at h
+    simpa [ClosSem.decClock] using h
+  apply evaluateApp_ordinary_over_success s sMiddle sFinal t f ptr arity n captured args fields targetArgs rest
+    body value result states annotations closure capturedRel argsRel length bound over enough bodyRun appRun bodyIH
+  intro targetValue tMiddle fMiddle sourceRun statesMiddle valueRel map refs annotationsMiddle growth
+  have grown : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
+      (args.take (args.length - arity)) (targetArgs.take (n - (arity - 1))) := by
+    apply prefixRel'.imp
+    intro x y related
+    simpa [maxAppEq] using vRel_grow related map refs growth
+  have post := continuationIH targetValue tMiddle fMiddle sourceRun statesMiddle valueRel grown annotationsMiddle
+  have post' : evaluatePost sMiddle sFinal tMiddle
+      (targetArgs.take (n - (arity - 1)) ++ [targetValue] ++ []) fMiddle result
+      [mkClCall (.var (targetArgs.take (n - (arity - 1))).length)
+        ((List.range (targetArgs.take (n - (arity - 1))).length).map Bvl.Exp.var)] := by simpa using post
+  exact evaluatePost_overApp_continue_canonical sMiddle sFinal tMiddle fMiddle n (arity - 1) targetArgs
+    [.block 30 (.codePtr (ptr + numStubs s.maxApp) :: .number (Int.ofNat (arity - 1)) :: fields)] []
+    targetValue (.number (Int.ofNat (arity - 1))) (.number (Int.ofNat (arity - 1) - Int.ofNat (n + 1)))
+    result length over' post'
+
 end Flapjack.Compiler.Backend.ClosToBvl
