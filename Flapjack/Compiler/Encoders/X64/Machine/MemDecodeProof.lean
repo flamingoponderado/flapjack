@@ -32,6 +32,19 @@ abbrev movRMZ64Bytes (dst base : Nat) (disp : BitVec 64) : List (BitVec 8) :=
    else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then [byte disp.toNat]
    else [byte disp.toNat, byte (disp.toNat / 256), byte (disp.toNat / 65536), byte (disp.toNat / 16777216)])
 
+/-- The encoded byte list of `movRM .z32`. -/
+abbrev movRMZ32Bytes (dst base : Nat) (disp : BitVec 64) : List (BitVec 8) :=
+  (if 8 ≤ dst ∨ 8 ≤ base then
+    [byte (64 + (if 8 ≤ dst then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) ++
+  [byte 0x8B,
+   byte ((if disp = 0 ∧ base % 8 ≠ 5 then 0
+          else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 64 else 128) +
+         8 * (dst % 8) + base % 8)] ++
+  (if base % 8 = 4 then [byte 0x24] else []) ++
+  (if disp = 0 ∧ base % 8 ≠ 5 then []
+   else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then [byte disp.toNat]
+   else [byte disp.toNat, byte (disp.toNat / 256), byte (disp.toNat / 65536), byte (disp.toNat / 16777216)])
+
 /-- The encoded byte list of `movMR .z64`. -/
 abbrev movMRZ64Bytes (src base : Nat) (disp : BitVec 64) : List (BitVec 8) :=
   [byte (72 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0)),
@@ -104,6 +117,41 @@ theorem encodeInsn_movMR_z64 (src base : Nat) (hs : src < 16) (hb : base < 16)
     (disp : BitVec 64) (hlo : -(2^31 : Int) ≤ disp.toInt) (hhi : disp.toInt < 2^31) :
     encodeInsn (.movMR .z64 src base disp) = movMRZ64Bytes src base disp :=
   encodeInsn_movMR_z64_bytes src base hs hb disp hlo hhi
+
+/-- The encoded bytes of `movRM .z32`. -/
+theorem encodeInsn_movRM_z32_bytes (dst base : Nat) (hd : dst < 16) (hb : base < 16)
+    (disp : BitVec 64) (hlo : -(2^31 : Int) ≤ disp.toInt) (hhi : disp.toInt < 2^31) :
+    encodeInsn (.movRM .z32 dst base disp) =
+      (if 8 ≤ dst ∨ 8 ≤ base then
+        [byte (64 + (if 8 ≤ dst then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) ++
+      [byte 0x8B,
+       byte ((if disp = 0 ∧ base % 8 ≠ 5 then 0
+              else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 64 else 128) +
+             8 * (dst % 8) + base % 8)] ++
+      (if base % 8 = 4 then [byte 0x24] else []) ++
+      (if disp = 0 ∧ base % 8 ≠ 5 then []
+       else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then [byte disp.toNat]
+       else [byte disp.toNat, byte (disp.toNat / 256), byte (disp.toNat / 65536), byte (disp.toNat / 16777216)]) := by
+  interval_cases dst <;> interval_cases base
+  all_goals
+    simp only [encodeInsn, eGenRmReg, eModRM, eOpsize, rexPrefix, mkRex, eImm8_32, eImm8, eImm32, byte, modField]
+    simp only [Nat.reduceMod, Nat.reduceMul, Nat.reduceDiv]
+    simp
+    by_cases h0 : disp = 0
+    · subst h0
+      simp
+    · have h0' : disp ≠ 0#64 := h0
+      by_cases h8 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
+      · simp [h0', h8]
+      · have h32 : -2147483648 ≤ disp.toInt ∧ disp.toInt ≤ 2147483647 := by omega
+        simp [h0', h8, h32]
+
+/-- `encodeInsn (.movRM .z32 dst base disp)` is `movRMZ32Bytes dst base disp`. -/
+theorem encodeInsn_movRM_z32 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
+    (disp : BitVec 64) (hlo : -(2^31 : Int) ≤ disp.toInt) (hhi : disp.toInt < 2^31) :
+    encodeInsn (.movRM .z32 dst base disp) = movRMZ32Bytes dst base disp :=
+  encodeInsn_movRM_z32_bytes dst base hd hb disp hlo hhi
+
 
 /-- `parseRM` recovers a `[base + disp]` memory operand from any encoding whose
 bytes 2.. match the emitted `mov`-memory layout, for any two-byte prefix. -/
@@ -343,6 +391,31 @@ theorem decode_movRM_z64 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     · by_cases h1 : disp = 0 ∧ base % 8 ≠ 5 <;>
         by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 <;> simp [h1, h2] <;> omega
 
+
+/-- The `parseRM` inverse at offset 1, for the no-REX-prefix 32-bit forms. -/
+theorem parseRM_rmBase_noRex (b : BitVec 8) (reg base : Nat) (hr : reg < 8) (hb : base < 8)
+    (disp : BitVec 64) (hlo : -(2^31 : Int) ≤ disp.toInt) (hhi : disp.toInt < 2^31) :
+    parseRM (byteListReader
+      ([b,
+        byte ((if disp = 0 ∧ base % 8 ≠ 5 then 0
+               else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 64 else 128) +
+              8 * reg + base % 8)] ++
+        (if base % 8 = 4 then [byte 0x24] else []) ++
+        (if disp = 0 ∧ base % 8 ≠ 5 then []
+         else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then [byte disp.toNat]
+         else [byte disp.toNat, byte (disp.toNat / 256), byte (disp.toNat / 65536),
+           byte (disp.toNat / 16777216)]))) 1 false =
+      some { modBits := (if disp = 0 ∧ base % 8 ≠ 5 then 0
+                         else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 1 else 2),
+             regBits := reg,
+             rm := .zm none (.regBase base) disp,
+             len := (if base % 8 = 4 then 1 else 0) +
+                    (if disp = 0 ∧ base % 8 ≠ 5 then 1
+                     else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 2 else 5) } := by
+  have h := parseRM_rmBase_z64 (byte 0) b reg base hr (by omega) disp hlo hhi
+  have hd : decide (8 ≤ base) = false := by simp; omega
+  rw [hd] at h
+  exact h
 
 /-- `parseRM` recovers the `movMR .z64` memory operand from its encoding. -/
 theorem parseRM_movMR_z64 (src base : Nat) (hs : src < 16) (hb : base < 16)
