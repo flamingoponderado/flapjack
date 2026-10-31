@@ -272,4 +272,156 @@ theorem tick {C F : Type} (body : Bvi.Exp) (env : List Value)
         exact ⟨targetNext, by simpa [evaluate, zero, targetNonzero] using targetRun,
           by simpa [evaluate, zero] using nextRel⟩
 
+/-- Flapjack infrastructure: a related conditional evaluates the same
+condition and takes the corresponding branch after any code growth. -/
+theorem ifThenElse {C F : Type} (condition yes no : Bvi.Exp) (env : List Value)
+    (source : BviState (Spt (Nat × Bvi.Exp) × C) F)
+    (conditionIH : Property [condition] env source)
+    (branchIH : ∀ values next, evaluate [condition] env source = (.val values, next) →
+      Property [yes] env next ∧ Property [no] env next) :
+    Property [.ifThenElse condition yes no] env source := by
+  intro target ys states expressions notType
+  cases expressions with
+  | cons expression rest =>
+    cases rest
+    cases expression with
+    | ifThenElse conditionRel yesRel noRel =>
+      rename_i condition' yes' no'
+      cases conditionRun : evaluate [condition] env source with
+      | mk result next =>
+        have conditionNotType : (evaluate [condition] env source).1 ≠ .err (.abort .typeError) := by
+          cases result with
+          | val values => simp [conditionRun]
+          | err error =>
+            have h := notType
+            rw [evaluate, BviSem.fixClock_evaluate, conditionRun] at h
+            simpa [conditionRun] using h
+        obtain ⟨targetNext, targetRun, nextRel⟩ :=
+          conditionIH target [condition'] states (.cons conditionRel .nil) conditionNotType
+        rw [conditionRun] at targetRun nextRel
+        cases result with
+        | err error =>
+          refine ⟨targetNext, ?_, ?_⟩
+          · rw [evaluate, BviSem.fixClock_evaluate, targetRun]
+            simp only
+            rw [evaluate, BviSem.fixClock_evaluate, conditionRun]
+          · rw [evaluate, BviSem.fixClock_evaluate, conditionRun]
+            exact nextRel
+        | val values =>
+          obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton condition env source next values conditionRun
+          have sourceIf : evaluate [.ifThenElse condition yes no] env source =
+              (match BvlSem.asBool value with
+                | none => ((.err (.abort .typeError) : BviResult), next)
+                | some true => evaluate [yes] env next
+                | some false => evaluate [no] env next) := by
+            rw [evaluate, BviSem.fixClock_evaluate, conditionRun]
+            rfl
+          have targetIf : evaluate [.ifThenElse condition' yes' no'] env target =
+              (match BvlSem.asBool value with
+                | none => ((.err (.abort .typeError) : BviResult), targetNext)
+                | some true => evaluate [yes'] env targetNext
+                | some false => evaluate [no'] env targetNext) := by
+            rw [evaluate, BviSem.fixClock_evaluate, targetRun]
+            rfl
+          have moved := (evaluate_expRel_mono _ env target targetNext (.val [value])
+            (by simpa using targetRun)).1
+          have branchRelYes := moved _ _ yesRel
+          have branchRelNo := moved _ _ noRel
+          rw [sourceIf] at notType ⊢
+          rw [targetIf]
+          cases selected : BvlSem.asBool value with
+          | none => simp [selected] at notType
+          | some choice =>
+            cases choice with
+            | false =>
+              have branchNotType : (evaluate [no] env next).1 ≠ .err (.abort .typeError) := by
+                simpa [selected] using notType
+              obtain ⟨last, run, rel⟩ := (branchIH [value] next conditionRun).2 targetNext [no']
+                nextRel (.cons branchRelNo .nil) branchNotType
+              exact ⟨last, by simpa [selected] using run, by simpa [selected] using rel⟩
+            | true =>
+              have branchNotType : (evaluate [yes] env next).1 ≠ .err (.abort .typeError) := by
+                simpa [selected] using notType
+              obtain ⟨last, run, rel⟩ := (branchIH [value] next conditionRun).1 targetNext [yes']
+                nextRel (.cons branchRelYes .nil) branchNotType
+              exact ⟨last, by simpa [selected] using run, by simpa [selected] using rel⟩
+
+/-- Flapjack infrastructure: forcing a related thunk either returns its
+stored value or evaluates related code with a decremented clock. -/
+theorem force {C F : Type} (location index : Nat) (env : List Value)
+    (source : BviState (Spt (Nat × Bvi.Exp) × C) F)
+    (calleeIH : ∀ args body, source.clock ≠ 0 → Property [body] args (BviSem.decClock 1 source)) :
+    Property [.force location index] env source := by
+  intro target ys states expressions notType
+  cases expressions with
+  | cons expression rest =>
+    cases rest
+    cases expression with
+    | force =>
+      have refs := states.1
+      have clocks := states.2.1
+      cases found : env[index]? with
+      | none => simp [evaluate, found] at notType
+      | some thunk =>
+        cases thunkResult : destThunk thunk source.refs with
+        | badRef => simp [evaluate, found, thunkResult] at notType
+        | notThunk => simp [evaluate, found, thunkResult] at notType
+        | isThunk mode value =>
+          cases mode with
+          | evaluated =>
+            exact ⟨target, by simp [evaluate, found, refs, thunkResult],
+              by simpa [evaluate, found, thunkResult] using states⟩
+          | notEvaluated =>
+            cases codeFound : BvlSem.findCode (some location) [thunk, value] source.code with
+            | none => simp [evaluate, found, thunkResult, codeFound] at notType
+            | some pair =>
+              obtain ⟨args, body⟩ := pair
+              obtain ⟨body', targetCode, bodyRel⟩ :=
+                findCode_inStateRel source target (some location) [thunk, value] args body states codeFound
+              by_cases zero : source.clock = 0
+              · have targetZero : target.clock = 0 := by rw [clocks, zero]
+                refine ⟨{ target with clock := 0 }, ?_, ?_⟩
+                · simp [evaluate, found, refs, thunkResult, codeFound, targetCode, zero, targetZero]
+                · simpa [evaluate, found, thunkResult, codeFound, zero] using
+                    inStateRel_with_clock source target states 0
+              · have targetNonzero : target.clock ≠ 0 := by simpa [clocks] using zero
+                cases bodyRun : evaluate [body] args (BviSem.decClock 1 source) with
+                | mk result next =>
+                  have bodyNotType : (evaluate [body] args (BviSem.decClock 1 source)).1 ≠
+                      .err (.abort .typeError) := by
+                    cases result with
+                    | val values => simp [bodyRun]
+                    | err error =>
+                      cases error with
+                      | abort reason =>
+                        have h := notType
+                        rw [evaluate] at h
+                        simpa [found, thunkResult, codeFound, zero, bodyRun] using h
+                      | raise payload => cases payload <;> simp [bodyRun]
+                  obtain ⟨targetNext, targetRun, nextRel⟩ := calleeIH args body zero
+                    (BviSem.decClock 1 target) [body'] (inStateRel_decClock source target states 1)
+                    (.cons bodyRel .nil) bodyNotType
+                  rw [bodyRun] at targetRun nextRel
+                  cases result with
+                  | val values =>
+                    refine ⟨targetNext, ?_, ?_⟩
+                    · simp [evaluate, found, refs, thunkResult, codeFound, targetCode, zero,
+                        targetNonzero, bodyRun, targetRun]
+                    · simpa [evaluate, found, thunkResult, codeFound, zero, bodyRun] using nextRel
+                  | err error =>
+                    cases error with
+                    | abort reason =>
+                      refine ⟨targetNext, ?_, ?_⟩
+                      · simp [evaluate, found, refs, thunkResult, codeFound, targetCode, zero,
+                          targetNonzero, bodyRun, targetRun]
+                      · simpa [evaluate, found, thunkResult, codeFound, zero, bodyRun] using nextRel
+                    | raise payload =>
+                      cases payload with
+                      | exn value =>
+                        refine ⟨targetNext, ?_, ?_⟩
+                        · simp [evaluate, found, refs, thunkResult, codeFound, targetCode, zero,
+                            targetNonzero, bodyRun, targetRun]
+                        · simpa [evaluate, found, thunkResult, codeFound, zero, bodyRun] using nextRel
+                      | ret values => simp [evaluate, found, thunkResult, codeFound, zero, bodyRun] at notType
+
 end Flapjack.Compiler.Backend.BviInline.EvaluateCases
