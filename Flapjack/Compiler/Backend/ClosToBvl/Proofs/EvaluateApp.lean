@@ -7062,4 +7062,111 @@ theorem expressionSimulation_app_recclosure_over_timeout_case {C F : Type}
           (by simpa [ClosProps.everyFnVarsSome] using varsParts.1)
           (codeInstalled_subspt functionInstalled growth) envArgs statesArgs
 
+/-- When the first ordinary body returns one value, the source continues on
+the same argument prefix that the generated target call uses. -/
+theorem evaluateApp_ordinary_over_continue_split {C F : Type}
+    (s next : ClosSem.State C F) (ptr arity : Nat) (captured saved args : List ClosSem.Value)
+    (targetArgs : List BvlSem.Value) (body : ClosLang.Exp) (value : ClosSem.Value)
+    (r : ClosSem.Value → BvlSem.Value → Prop) (n total : Nat)
+    (related : List.Forall₂ r args targetArgs) (targetLength : targetArgs.length = n + 1)
+    (savedBound : saved.length < arity) (storedArity : total = arity - saved.length - 1)
+    (bound : args.length ≤ s.maxApp) (over : arity < args.length + saved.length)
+    (enough : arity - saved.length ≤ s.clock)
+    (bodyRun : ClosSem.evaluate [body]
+      (args.drop (args.length - (arity - saved.length)) ++ saved ++ captured)
+      (ClosSem.decClock (arity - saved.length) s) = (.val [value], next)) :
+    ClosSem.evaluateApp none (.closure (some ptr) saved captured arity body) args s =
+      ClosSem.evaluateApp none value (args.take (args.length - (arity - saved.length))) next ∧
+    List.Forall₂ r (args.take (args.length - (arity - saved.length))) (targetArgs.take (n - total)) ∧
+    List.Forall₂ r (args.drop (args.length - (arity - saved.length))) (targetArgs.drop (n - total)) := by
+  obtain ⟨_, prefixRel, suffixRel⟩ := overApp_related_split r args targetArgs arity saved.length n total
+    related targetLength savedBound storedArity over
+  refine ⟨?_, prefixRel, suffixRel⟩
+  rw [evaluateApp_ordinary_over s ptr arity captured saved args body savedBound bound over]
+  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
+
+/-- The same source/target prefix and suffix correspondence holds for a
+selected recursive closure body, including a mutually recursive group. -/
+theorem evaluateApp_recclosure_over_continue_split {C F : Type}
+    (s next : ClosSem.State C F) (ptr arity index : Nat) (captured saved args : List ClosSem.Value)
+    (functions : List (Nat × ClosLang.Exp)) (targetArgs : List BvlSem.Value)
+    (body : ClosLang.Exp) (value : ClosSem.Value) (r : ClosSem.Value → BvlSem.Value → Prop) (n total : Nat)
+    (related : List.Forall₂ r args targetArgs) (targetLength : targetArgs.length = n + 1)
+    (found : functions[index]? = some (arity, body)) (savedBound : saved.length < arity)
+    (storedArity : total = arity - saved.length - 1) (bound : args.length ≤ s.maxApp)
+    (over : arity < args.length + saved.length) (enough : arity - saved.length ≤ s.clock)
+    (bodyRun : ClosSem.evaluate [body]
+      (args.drop (args.length - (arity - saved.length)) ++ saved ++
+        (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
+      (ClosSem.decClock (arity - saved.length) s) = (.val [value], next)) :
+    ClosSem.evaluateApp none (.recclosure (some ptr) saved captured functions index) args s =
+      ClosSem.evaluateApp none value (args.take (args.length - (arity - saved.length))) next ∧
+    List.Forall₂ r (args.take (args.length - (arity - saved.length))) (targetArgs.take (n - total)) ∧
+    List.Forall₂ r (args.drop (args.length - (arity - saved.length))) (targetArgs.drop (n - total)) := by
+  obtain ⟨_, prefixRel, suffixRel⟩ := overApp_related_split r args targetArgs arity saved.length n total
+    related targetLength savedBound storedArity over
+  refine ⟨?_, prefixRel, suffixRel⟩
+  rw [evaluateApp_recclosure_over s ptr arity index captured saved args functions body found savedBound bound over]
+  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
+
+/-- A successful first overapplication call can return a closure whose arity
+matches the remaining arguments. The generated code then calls that closure
+directly, with precisely the unconsumed prefix. -/
+theorem evaluate_mkClCall_over_continue_direct {C F : Type} (s next : BvlSem.State C F)
+    (maxApp n total tag address returnedTag returnedAddress : Nat)
+    (args fields returnedFields rest : List BvlSem.Value) (body returnedBody : Bvl.Exp)
+    (length : args.length = n + 1) (over : total < n) (totalBound : total < maxApp)
+    (genericLookup : sptLookup (genericAppFnLocation n) s.code = some (n + 2, generateGenericApp maxApp n))
+    (lookup : sptLookup address s.code = some (total + 2, body))
+    (enough : total + 2 ≤ s.clock)
+    (firstRun : BvlSem.evaluate [body]
+      (args.drop (n - total) ++ [.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)])
+      (BvlSem.decClock (total + 2) s) =
+      (.val [.block returnedTag (.codePtr returnedAddress ::
+        .number (Int.ofNat (n - total - 1)) :: returnedFields)], next))
+    (returnedLookup : sptLookup returnedAddress next.code = some (n - total + 1, returnedBody)) :
+    BvlSem.evaluate [mkClCall (.var args.length) ((List.range args.length).map Bvl.Exp.var)]
+      (args ++ [.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)] ++ rest) s =
+    if next.clock < n - total then (.err (.abort .timeoutError), { next with clock := 0 })
+    else BvlSem.evaluate [returnedBody]
+      (args.take (n - total) ++ [.block returnedTag (.codePtr returnedAddress ::
+        .number (Int.ofNat (n - total - 1)) :: returnedFields)]) (BvlSem.decClock (n - total) next) := by
+  rw [evaluate_mkClCall_over_step s maxApp n total tag address args fields rest body length over totalBound
+    genericLookup lookup]
+  simp only [Nat.not_lt.mpr enough, ↓reduceIte, firstRun]
+  exact evaluate_overApp_continue_direct next n total returnedTag returnedAddress args returnedFields
+    [.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)]
+    (.number (Int.ofNat total)) (.number (Int.ofNat total - Int.ofNat (n + 1))) returnedBody
+    length over returnedLookup
+
+/-- If the returned closure has a different arity, successful overapplication
+continues through the generic stub for the unconsumed prefix. -/
+theorem evaluate_mkClCall_over_continue_generic {C F : Type} (s next : BvlSem.State C F)
+    (maxApp n total tag address returnedTag returnedTotal : Nat)
+    (args fields returnedFields rest : List BvlSem.Value) (returnedPtr : BvlSem.Value)
+    (body returnedBody : Bvl.Exp) (length : args.length = n + 1) (over : total < n)
+    (totalBound : total < maxApp)
+    (genericLookup : sptLookup (genericAppFnLocation n) s.code = some (n + 2, generateGenericApp maxApp n))
+    (lookup : sptLookup address s.code = some (total + 2, body)) (enough : total + 2 ≤ s.clock)
+    (firstRun : BvlSem.evaluate [body]
+      (args.drop (n - total) ++ [.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)])
+      (BvlSem.decClock (total + 2) s) =
+      (.val [.block returnedTag (returnedPtr :: .number (Int.ofNat returnedTotal) :: returnedFields)], next))
+    (different : n - total - 1 ≠ returnedTotal)
+    (returnedLookup : sptLookup (genericAppFnLocation (n - total - 1)) next.code =
+      some (n - total + 1, returnedBody)) :
+    BvlSem.evaluate [mkClCall (.var args.length) ((List.range args.length).map Bvl.Exp.var)]
+      (args ++ [.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)] ++ rest) s =
+    if next.clock = 0 then (.err (.abort .timeoutError), { next with clock := 0 })
+    else BvlSem.evaluate [returnedBody]
+      (args.take (n - total) ++ [.block returnedTag (returnedPtr :: .number (Int.ofNat returnedTotal) :: returnedFields)])
+      (BvlSem.decClock 1 next) := by
+  rw [evaluate_mkClCall_over_step s maxApp n total tag address args fields rest body length over totalBound
+    genericLookup lookup]
+  simp only [Nat.not_lt.mpr enough, ↓reduceIte, firstRun]
+  exact evaluate_overApp_continue_generic next n total returnedTag returnedTotal args returnedFields
+    [.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)] returnedPtr
+    (.number (Int.ofNat total)) (.number (Int.ofNat total - Int.ofNat (n + 1))) returnedBody
+    length over different returnedLookup
+
 end Flapjack.Compiler.Backend.ClosToBvl
