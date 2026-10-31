@@ -517,6 +517,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Allocation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
+import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Total
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeNames
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.Total
