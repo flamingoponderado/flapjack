@@ -6241,4 +6241,160 @@ theorem evaluate_overApp_saturatedArgs {C F : Type} (s : BvlSem.State C F)
   rw [List.take_of_length_le (Nat.le_refl _)] at run
   simpa only [dropLength] using run
 
+/-- The first overapplication call applies the argument suffix to the
+original closure and charges its full arity in target ticks. -/
+theorem evaluate_overApp_firstCall {C F : Type} (s : BvlSem.State C F)
+    (n total tag address : Nat) (args fields : List BvlSem.Value) (first second : BvlSem.Value)
+    (body : Bvl.Exp) (length : args.length = n + 1) (over : total < n + 1)
+    (lookup : sptLookup address s.code = some (total + 2, body)) :
+    let closure := BvlSem.Value.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)
+    BvlSem.evaluate [.call total none
+      ((List.range (total + 1)).map (fun arg => .var (arg + 2 + n - total)) ++
+        [.var (n + 3), .op (.blockOp (.elemAt 0)) [.var (n + 3)]])]
+      (first :: second :: (args ++ [closure])) s =
+    if s.clock < total + 1 then (.err (.abort .timeoutError), { s with clock := 0 })
+    else BvlSem.evaluate [body] (args.drop (n - total) ++ [closure]) (BvlSem.decClock (total + 1) s) := by
+  let closure := BvlSem.Value.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)
+  let env := first :: second :: (args ++ [closure])
+  have argsRun : BvlSem.evaluate ((List.range (total + 1)).map (fun arg => Bvl.Exp.var (arg + 2 + n - total))) env s =
+      (.val (args.drop (n - total)), s) := by
+    exact evaluate_overApp_saturatedArgs s n total args [closure] first second length over
+  have closureRun : BvlSem.evaluate [.var (n + 3)] env s = (.val [closure], s) := by
+    simp [BvlSem.evaluate, env, ← length]
+  have pointerRun : BvlSem.evaluate [.op (.blockOp (.elemAt 0)) [.var (n + 3)]] env s =
+      (.val [.codePtr address], s) := by
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, closureRun]
+    simp [BvlSem.doApp, BvlSem.applyBlock, closure]
+  have tailRun : BvlSem.evaluate [.var (n + 3), .op (.blockOp (.elemAt 0)) [.var (n + 3)]] env s =
+      (.val [closure, .codePtr address], s) := by
+    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, closureRun, pointerRun]
+    rfl
+  have allRun : BvlSem.evaluate
+      (((List.range (total + 1)).map (fun arg => Bvl.Exp.var (arg + 2 + n - total))) ++
+        [.var (n + 3), .op (.blockOp (.elemAt 0)) [.var (n + 3)]]) env s =
+      (.val (args.drop (n - total) ++ [closure, .codePtr address]), s) := by
+    change BvlSem.evaluateTuple (_, env, s) = _
+    rw [BvlProps.evaluateAppend]
+    simp [BvlSem.evaluateTuple, argsRun, tailRun]
+  have suffixLength : (args.drop (n - total)).length = total + 1 := by
+    simp [List.length_drop, length]
+    omega
+  have lastPair (inst : Nonempty BvlSem.Value) (xs : List BvlSem.Value) (x y : BvlSem.Value) :
+      @Flapjack.holLast BvlSem.Value inst (xs ++ [x, y]) = y := by
+    induction xs with
+    | nil => simp [Flapjack.holLast]
+    | cons z zs ih => simp [Flapjack.holLast_cons, ih]
+  change BvlSem.evaluate [.call total none _] env s = _
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, allRun]
+  simp [BvlSem.findCode, lookup, lastPair, suffixLength, closure]
+
+/-- After the first call returns, the overapplication continuation reads the
+unconsumed prefix of the original arguments. -/
+theorem evaluate_overApp_remainingArgs {C F : Type} (s : BvlSem.State C F)
+    (n total : Nat) (args rest : List BvlSem.Value) (result first second : BvlSem.Value)
+    (length : args.length = n + 1) (over : total < n + 1) :
+    BvlSem.evaluate ((List.range (n - total)).map (fun i => Bvl.Exp.var (i + 3)))
+      (result :: first :: second :: (args ++ rest)) s = (.val (args.take (n - total)), s) := by
+  have bound : n - total ≤ args.length := by omega
+  have readPrefix : ∀ count, count ≤ args.length →
+      BvlSem.evaluate ((List.range count).map (fun i => Bvl.Exp.var (i + 3)))
+        (result :: first :: second :: (args ++ rest)) s = (.val (args.take count), s) := by
+    intro count countBound
+    induction count with
+    | zero => simp [BvlSem.evaluate]
+    | succ count ih =>
+      have smaller : count ≤ args.length := by omega
+      have indexBound : count < args.length := by omega
+      rw [List.range_succ, List.map_append]
+      change BvlSem.evaluateTuple (((List.range count).map (fun i => Bvl.Exp.var (i + 3)) ++ [.var (count + 3)]),
+        result :: first :: second :: (args ++ rest), s) = _
+      rw [BvlProps.evaluateAppend]
+      simp only [BvlSem.evaluateTuple, ih smaller]
+      have indexEq : count + 3 = Nat.succ (Nat.succ (Nat.succ count)) := by omega
+      have varRun : BvlSem.evaluate [.var (count + 3)] (result :: first :: second :: (args ++ rest)) s =
+          (.val [args[count]], s) := by
+        rw [indexEq]
+        simp [BvlSem.evaluate, List.getElem?_append_left, indexBound]
+      rw [varRun]
+      simp only [List.take_append_getElem indexBound]
+  exact readPrefix (n - total) bound
+
+/-- An overapplied generic stub first runs the saturated call. Errors and
+timeouts propagate; successful values are bound for the remaining call. -/
+theorem evaluate_genericApp_over_step {C F : Type} (s : BvlSem.State C F)
+    (maxApp n total tag address : Nat) (args fields : List BvlSem.Value) (body : Bvl.Exp)
+    (length : args.length = n + 1) (over : total < n + 1) (totalBound : total < maxApp)
+    (lookup : sptLookup address s.code = some (total + 2, body)) :
+    let closure := BvlSem.Value.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)
+    BvlSem.evaluate [generateGenericApp maxApp n] (args ++ [closure]) s =
+      if s.clock < total + 1 then (.err (.abort .timeoutError), { s with clock := 0 })
+      else
+        let next := BvlSem.evaluate [body] (args.drop (n - total) ++ [closure]) (BvlSem.decClock (total + 1) s)
+        match next.1 with
+        | .err error => (.err error, next.2)
+        | .val values => BvlSem.evaluate
+            [mkClCall (.var 0) ((List.range (n - total)).map fun i => .var (i + 3))]
+            (values ++ [.number (Int.ofNat total), .number (Int.ofNat total - Int.ofNat (n + 1))] ++
+              args ++ [closure]) next.2 := by
+  let closure := BvlSem.Value.block tag (.codePtr address :: .number (Int.ofNat total) :: fields)
+  change BvlSem.evaluate [generateGenericApp maxApp n] (args ++ [closure]) s = _
+  rw [evaluate_genericApp_over_dispatch s maxApp n total tag args fields (.codePtr address) length over totalBound]
+  change BvlSem.evaluate [.let [.call total none _] _]
+    (.number (Int.ofNat total) :: .number (Int.ofNat total - Int.ofNat (n + 1)) :: (args ++ [closure])) s = _
+  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate,
+    evaluate_overApp_firstCall s n total tag address args fields (.number (Int.ofNat total))
+      (.number (Int.ofNat total - Int.ofNat (n + 1))) body length over lookup]
+  by_cases timeout : s.clock < total + 1
+  · simp [timeout]
+  · simp only [timeout, ↓reduceIte]
+    cases BvlSem.evaluate [body] (args.drop (n - total) ++ [closure]) (BvlSem.decClock (total + 1) s) with
+    | mk result next => cases result <;> simp [closure, List.append_assoc]
+
+/-- If the first call returns a closure with the remaining arity, the
+overapplication continuation invokes it directly with the unconsumed prefix. -/
+theorem evaluate_overApp_continue_direct {C F : Type} (s : BvlSem.State C F)
+    (n total tag address : Nat) (args fields rest : List BvlSem.Value) (first second : BvlSem.Value)
+    (body : Bvl.Exp) (length : args.length = n + 1) (over : total < n)
+    (lookup : sptLookup address s.code = some (n - total + 1, body)) :
+    let closure := BvlSem.Value.block tag (.codePtr address :: .number (Int.ofNat (n - total - 1)) :: fields)
+    BvlSem.evaluate [mkClCall (.var 0) ((List.range (n - total)).map (fun i => .var (i + 3)))]
+      (closure :: first :: second :: (args ++ rest)) s =
+    if s.clock < n - total then (.err (.abort .timeoutError), { s with clock := 0 })
+    else BvlSem.evaluate [body] (args.take (n - total) ++ [closure]) (BvlSem.decClock (n - total) s) := by
+  let closure := BvlSem.Value.block tag (.codePtr address :: .number (Int.ofNat (n - total - 1)) :: fields)
+  let env := closure :: first :: second :: (args ++ rest)
+  let exps := (List.range (n - total)).map (fun i => Bvl.Exp.var (i + 3))
+  have clRun : BvlSem.evaluate [.var 0] env s = (.val [closure], s) := by simp [BvlSem.evaluate, env]
+  have argsRun : BvlSem.evaluate exps env s = (.val (args.take (n - total)), s) := by
+    exact evaluate_overApp_remainingArgs s n total args rest closure first second length (by omega)
+  have nonempty : exps ≠ [] := by simp [exps]; omega
+  have takeLength : (args.take (n - total)).length = n - total := by simp [List.length_take]; omega
+  have callRun := evaluate_mkClCall_direct s env (.var 0) exps (args.take (n - total)) tag address fields body
+    (by simpa [closure, exps] using clRun) argsRun nonempty (by simpa [takeLength] using lookup)
+  simpa [env, closure, exps] using callRun
+
+/-- If the returned closure needs a different arity, the continuation calls
+the corresponding generic stub with the unconsumed prefix. -/
+theorem evaluate_overApp_continue_generic {C F : Type} (s : BvlSem.State C F)
+    (n total tag returnedTotal : Nat) (args fields rest : List BvlSem.Value)
+    (ptr first second : BvlSem.Value) (body : Bvl.Exp) (length : args.length = n + 1) (over : total < n)
+    (different : n - total - 1 ≠ returnedTotal)
+    (lookup : sptLookup (genericAppFnLocation (n - total - 1)) s.code = some (n - total + 1, body)) :
+    let closure := BvlSem.Value.block tag (ptr :: .number (Int.ofNat returnedTotal) :: fields)
+    BvlSem.evaluate [mkClCall (.var 0) ((List.range (n - total)).map (fun i => .var (i + 3)))]
+      (closure :: first :: second :: (args ++ rest)) s =
+    if s.clock = 0 then (.err (.abort .timeoutError), { s with clock := 0 })
+    else BvlSem.evaluate [body] (args.take (n - total) ++ [closure]) (BvlSem.decClock 1 s) := by
+  let closure := BvlSem.Value.block tag (ptr :: .number (Int.ofNat returnedTotal) :: fields)
+  let env := closure :: first :: second :: (args ++ rest)
+  let exps := (List.range (n - total)).map (fun i => Bvl.Exp.var (i + 3))
+  have clRun : BvlSem.evaluate [.var 0] env s = (.val [closure], s) := by simp [BvlSem.evaluate, env]
+  have argsRun : BvlSem.evaluate exps env s = (.val (args.take (n - total)), s) := by
+    exact evaluate_overApp_remainingArgs s n total args rest closure first second length (by omega)
+  have takeLength : (args.take (n - total)).length = n - total := by simp [List.length_take]; omega
+  have callRun := evaluate_mkClCall_generic s env (.var 0) exps (args.take (n - total)) tag returnedTotal ptr fields body
+    (by simpa [closure] using clRun) argsRun (by simpa [exps] using different)
+    (by simpa [exps, takeLength] using lookup)
+  simpa [env, closure, exps] using callRun
+
 end Flapjack.Compiler.Backend.ClosToBvl
