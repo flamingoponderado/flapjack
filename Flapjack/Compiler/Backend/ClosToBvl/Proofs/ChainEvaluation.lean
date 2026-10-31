@@ -236,4 +236,142 @@ theorem evaluate_compileInc_chain {C F : Type} (maxApp start : Nat)
   subst mainBody
   exact ⟨chainBody, tail, extra, program, chainRun⟩
 
+/-- Name extraction either keeps the compiled expression list or removes
+one leading, side-effect-free integer marker. -/
+theorem extractName_compiled_shape (maxApp start : Nat) (expressions real : List ClosLang.Exp)
+    (aux : List (Nat × Nat × Bvl.Exp)) (extract : extractName expressions = (start, real)) :
+    (compileExpsHOL maxApp expressions aux).1 = (compileExpsHOL maxApp real aux).1 ∨
+      (compileExpsHOL maxApp expressions aux).1 =
+        .op (.intOp (.const (Int.ofNat start))) [] :: (compileExpsHOL maxApp real aux).1 := by
+  unfold extractName at extract
+  split at extract
+  · rename_i trace n rest
+    split at extract
+    · cases extract
+      exact Or.inl rfl
+    · cases extract
+      right
+      cases h : compileExpListHOL maxApp real aux with
+      | mk result finalAux =>
+        simp [compileExps_eq_list, compileExpListHOL, compileExpHOL, compileOp, h]
+  · cases extract
+    exact Or.inl rfl
+
+/-- The optional compiled name marker leaves state unchanged and does not
+affect the final value or error of a nonempty extracted program. -/
+theorem evaluate_extractName_compiled {C F : Type} (maxApp start : Nat)
+    (expressions real : List ClosLang.Exp) (compiled originalAux : List Bvl.Exp)
+    (auxiliary : List (Nat × Nat × Bvl.Exp)) (s final : BvlSem.State C F)
+    (result : Result (List BvlSem.Value) BvlSem.Value)
+    (extract : extractName expressions = (start, real)) (nonempty : expressions ≠ [])
+    (originalCompile : compileExpsHOL maxApp expressions [] = (compiled, auxiliary))
+    (realCompile : (compileExpsHOL maxApp real []).1 = originalAux)
+    (run : BvlSem.evaluate compiled [] s = (result, final)) :
+    ∃ realResult, BvlSem.evaluate originalAux [] s = (realResult, final) ∧
+      chainResult result = chainResult realResult := by
+  have realNonempty := extractName_nonempty expressions start real extract nonempty
+  have compiledNonempty : originalAux ≠ [] := by
+    cases realRun : compileExpsHOL maxApp real [] with
+    | mk target aux =>
+      have length := compileExps_length maxApp real [] target aux realRun
+      have equal : target = originalAux := by simpa [realRun] using realCompile
+      intro empty
+      rw [equal, empty] at length
+      exact realNonempty (List.length_eq_zero_iff.mp length.symm)
+  have shape := extractName_compiled_shape maxApp start expressions real [] extract
+  simp only [originalCompile, realCompile] at shape
+  cases shape with
+  | inl same =>
+    subst compiled
+    exact ⟨result, run, rfl⟩
+  | inr marked =>
+    subst compiled
+    cases originalAux with
+    | nil => contradiction
+    | cons first rest =>
+      have markerRun : BvlSem.evaluate [.op (.intOp (.const (Int.ofNat start))) []] [] s =
+          (.val [.number (Int.ofNat start)], s) := by
+        simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyNumeric, BvlSem.doIntApp]
+      rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, markerRun] at run
+      cases realRun : BvlSem.evaluate (first :: rest) [] s with
+      | mk realResult realFinal =>
+        rw [realRun] at run
+        cases realResult with
+        | err error =>
+          simp at run
+          rcases run with ⟨rfl, rfl⟩
+          exact ⟨.err error, rfl, rfl⟩
+        | val values =>
+          have len := BvlSem.evaluate_length (first :: rest) [] s realFinal values realRun
+          cases values with
+          | nil => simp at len
+          | cons value tail =>
+            simp at run
+            rcases run with ⟨rfl, rfl⟩
+            exact ⟨.val (value :: tail), rfl, by simp [chainResult]⟩
+
+/-- Evaluation of the original compiled nonempty program is reproduced by
+the actual installed incremental main entry, up to its final result projection. -/
+theorem evaluate_original_compileInc_chain {C F : Type} (maxApp : Nat)
+    (expressions : List ClosLang.Exp) (auxiliary : List (Nat × Nat × ClosLang.Exp))
+    (compiled : List Bvl.Exp) (aux : List (Nat × Nat × Bvl.Exp))
+    (s final : BvlSem.State C F) (result : Result (List BvlSem.Value) BvlSem.Value)
+    (nonempty : expressions ≠ []) (compile : compileExpsHOL maxApp expressions [] = (compiled, aux))
+    (installed : codeInstalled (compileInc maxApp (expressions, auxiliary)) s.code)
+    (run : BvlSem.evaluate compiled [] s = (result, final)) :
+    ∃ start body tail extra,
+      (extractName expressions).1 = start ∧
+      compileInc maxApp (expressions, auxiliary) = (start + numStubs maxApp, 0, body) :: tail ∧
+      BvlSem.evaluate [body] [] { s with clock := s.clock + extra } = (chainResult result, final) := by
+  cases extract : extractName expressions with
+  | mk start real =>
+    cases realCompile : compileExpsHOL maxApp real [] with
+    | mk realTargets realAux =>
+      obtain ⟨realResult, realRun, resultEq⟩ := evaluate_extractName_compiled maxApp start expressions real
+        compiled realTargets aux s final result extract nonempty compile (by simp [realCompile]) run
+      have realNonempty := extractName_nonempty expressions start real extract nonempty
+      obtain ⟨body, tail, extra, program, chainRun⟩ := evaluate_compileInc_chain maxApp start expressions real
+        auxiliary realTargets realAux s final realResult extract realNonempty realCompile installed realRun
+      refine ⟨start, body, tail, extra, ?_, program, ?_⟩
+      · rfl
+      · simpa [resultEq] using chainRun
+
+/-- After installation, the target main entry resolves and reproduces the
+last value or error of the original compiled source expression list. -/
+theorem install_evaluate_compiled_main {C F : Type} (s : ClosSem.State C F) (t final : BvlSem.State C F)
+    (config : C) (expressions : List ClosLang.Exp) (auxiliary : List (Nat × Nat × ClosLang.Exp))
+    (compiled : List Bvl.Exp) (aux : List (Nat × Nat × Bvl.Exp))
+    (result : Result (List BvlSem.Value) BvlSem.Value)
+    (sourceHead : s.compileOracle 0 = (config, expressions, auxiliary)) (nonempty : expressions ≠ [])
+    (compile : compileExpsHOL s.maxApp expressions [] = (compiled, aux))
+    (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle)
+    (run : BvlSem.evaluate compiled [] { t with
+      code := sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))
+      compileOracle := fun n => t.compileOracle (n + 1) } = (result, final)) :
+    ∃ start body tail extra,
+      (extractName expressions).1 = start ∧
+      compileInc s.maxApp (expressions, auxiliary) = (start + numStubs s.maxApp, 0, body) :: tail ∧
+      let targetNext := { t with
+        code := sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))
+        compileOracle := fun n => t.compileOracle (n + 1) }
+      BvlSem.findCode none [.codePtr (start + numStubs s.maxApp)] targetNext.code = some ([], body) ∧
+      BvlSem.evaluate [body] [] { targetNext with clock := targetNext.clock + extra } = (chainResult result, final) := by
+  obtain ⟨headEq, _, nodup, fresh⟩ := compileOracleInv_head s.maxApp s.code s.compile s.compileOracle
+    t.code t.compile t.compileOracle oracle
+  have targetHead : t.compileOracle 0 = (config, compileInc s.maxApp (expressions, auxiliary)) := by
+    simpa [sourceHead, BackendProps.pureCo] using headEq
+  have distinct : ((compileInc s.maxApp (expressions, auxiliary)).map Prod.fst).Nodup := by
+    simpa [targetHead] using nodup
+  have targetFresh : ∀ entry ∈ compileInc s.maxApp (expressions, auxiliary), sptLookup entry.1 t.code = none := by
+    simpa [targetHead] using fresh
+  have installed := install_codeInstalled t.code (compileInc s.maxApp (expressions, auxiliary)) distinct targetFresh
+  obtain ⟨start, body, tail, extra, extracted, program, chainRun⟩ :=
+    evaluate_original_compileInc_chain s.maxApp expressions auxiliary compiled aux _ final result nonempty compile installed run
+  have member : (start + numStubs s.maxApp, 0, body) ∈ compileInc s.maxApp (expressions, auxiliary) := by
+    rw [program]
+    simp
+  have lookup := installed _ member
+  refine ⟨start, body, tail, extra, extracted, program, ?_, chainRun⟩
+  simp [BvlSem.findCode, Flapjack.holLast, lookup]
+
 end Flapjack.Compiler.Backend.ClosToBvl
