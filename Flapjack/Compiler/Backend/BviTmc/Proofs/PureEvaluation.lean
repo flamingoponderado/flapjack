@@ -71,6 +71,23 @@ termination_by listBudget xs
 decreasing_by all_goals simp_all [listBudget]; omega
 end
 
+/-- The mutual pure-expression and pure-list evaluation lemma. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_pure_exp_lemma"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_pure_exp_lemma {C F : Type} :
+    (∀ (e : Bvi.Exp) n, pureExp n e = true → ∀ env, n ≤ env.length →
+      ∃ values, ∀ state : BviState C F, evaluate [e] env state = (.val values, state)) ∧
+    (∀ (_ : Option Bvi.Exp), True) ∧
+    (∀ (xs : List Bvi.Exp) n, pureExps n xs = true → ∀ env, n ≤ env.length →
+      ∃ values, ∀ state : BviState C F, evaluate xs env state = (.val values, state)) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro e n pure env bound
+    obtain ⟨value, run⟩ := evaluatePureExp (C := C) (F := F) e n pure env bound
+    exact ⟨[value], run⟩
+  · intro _; trivial
+  · intro xs n pure env bound
+    exact evaluatePureExps xs n pure env bound
+
 /-- Pure expression lists evaluate successfully to state-independent values. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_pure_exps"
   (fmap_as_finite_support := [refs])]

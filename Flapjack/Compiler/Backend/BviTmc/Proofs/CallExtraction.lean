@@ -104,6 +104,35 @@ theorem evaluate_bvi_to_cb_call {C F : Type}
           exact run
   next => simp at extracted
 
+/-- The singleton direct-call constructor case of reconstruction correctness. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_bvi_to_cb_constructor_call {C F : Type}
+    (cb : CallBlock) (n loc tag ticks : Nat) (dest : Option Nat) (args : List Bvi.Exp)
+    (handler : Option Bvi.Exp) (env : List Value) (state final : BviState C F)
+    (result : BviResult) (bs : List Bvi.Exp)
+    (run : evaluate [.op (.blockOp (.cons tag)) [.call ticks dest args handler]] env state = (result, final))
+    (extracted : toBlockSource n loc (.op (.blockOp (.cons tag)) [.call ticks dest args handler]) =
+      some (bs, cb)) (bound : n ≤ env.length) :
+    evaluate [.let bs (callBlockToBvi loc cb)] env state = (result, final) := by
+  simp only [toBlockSource, extractListSource] at extracted
+  cases source : extractOneSource n loc tag (.call ticks dest args handler) with
+  | none => simp [source] at extracted
+  | some pair =>
+    obtain ⟨bindings, kind⟩ := pair
+    cases kind with
+    | inl vs => simp [source] at extracted
+    | inr child =>
+      simp [source] at extracted
+      obtain ⟨rfl, rfl⟩ := extracted.symm
+      obtain ⟨argResult, next, argsRun, success, failure⟩ :=
+        evaluate_bvi_to_cb_aux_inr_call n loc tag ticks dest args handler env state final result
+          bindings child source run bound
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+      cases argResult with
+      | err error => exact failure error rfl
+      | val values => exact (success values rfl).2 env
+
 /-- The constructor-expression case, using the source induction hypothesis for
 the constructor's argument list. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma"
