@@ -520,6 +520,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.ThunkRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.InstallRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CallRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.VariableEvaluation
+import Flapjack.Compiler.Backend.BviTmc.Proofs.PureEvaluation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
