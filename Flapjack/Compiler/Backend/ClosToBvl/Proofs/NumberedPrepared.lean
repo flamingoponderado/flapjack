@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationBounds
 import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainLocations
 
 /-! Location annotations supplied by closure numbering to prepared programs. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -69,7 +70,7 @@ theorem compileCommonNoOpts_location_bounds (config current : Config) (expressio
     (program : List (Nat × Nat × ClosLang.Exp))
     (compiled : compileCommonNoOpts? config expressions = some (current, program))
     (location : Nat) (member : location ∈ ClosProps.codeLocations (program.map (fun (_, _, body) => body))) :
-    config.nextLoc ≤ location ∧ location < current.nextLoc := by
+    config.nextLoc + max 1 expressions.length ≤ location ∧ location < current.nextLoc := by
   by_cases enabled : config.doMti || config.doCall
   · simp [compileCommonNoOpts?, enabled] at compiled
   · cases known : config.knownConf with
@@ -90,12 +91,56 @@ theorem compileCommonNoOpts_location_bounds (config current : Config) (expressio
         have numberedMember : location ∈ ClosProps.codeLocations (ClosNumber.renumberList aligned expressions).2 := by
           simpa [numbered] using raw
         have bounds := ClosNumber.renumberList_location_bounds expressions aligned location numberedMember
-        have lower : config.nextLoc ≤ aligned := by
+        have lower : config.nextLoc + max 1 expressions.length ≤ aligned := by
           dsimp [aligned, next]
           split <;> omega
         simp only [numbered] at bounds
         simp only
         omega
+
+/-- Prepared top-level entries have distinct labels in the interval reserved
+before closure numbering. -/
+theorem compileCommonNoOpts_entry_labels (config current : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp))
+    (compiled : compileCommonNoOpts? config expressions = some (current, program)) :
+    (program.map Prod.fst).Nodup ∧
+      ∀ label ∈ program.map Prod.fst,
+        config.nextLoc ≤ label ∧ label < config.nextLoc + max 1 expressions.length := by
+  by_cases enabled : config.doMti || config.doCall
+  · simp [compileCommonNoOpts?, enabled] at compiled
+  · cases known : config.knownConf with
+    | some k => simp [compileCommonNoOpts?, enabled, known] at compiled
+    | none =>
+      let next := config.nextLoc + max 1 expressions.length
+      let aligned := if next % 2 = 0 then next else next + 1
+      cases numbered : ClosNumber.renumberList aligned expressions with
+      | mk nextLoc numberedExpressions =>
+        have run : compileCommonNoOpts? config expressions =
+            some ({ config with start := config.nextLoc, nextLoc := nextLoc, knownConf := none, callState := (.ln, []) },
+              ClosAnnotate.compile (chainExps config.nextLoc numberedExpressions)) := by
+          simp [compileCommonNoOpts?, enabled, known, next, aligned, numbered]
+        have equal := Option.some.inj (compiled.symm.trans run)
+        cases equal
+        have length := ClosNumber.renumberList_length expressions aligned
+        simp only [numbered] at length
+        rw [annotated_labels]
+        constructor
+        · exact chainExps_labels_nodup _ _
+        · intro label member
+          have bounds := chainExps_label_bounds config.nextLoc numberedExpressions label member
+          simpa only [length] using bounds
+
+/-- Entry labels and nested closure labels from no-optimization preprocessing
+are disjoint because numbering starts after the reserved entry interval. -/
+theorem compileCommonNoOpts_entries_disjoint (config current : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp))
+    (compiled : compileCommonNoOpts? config expressions = some (current, program))
+    (label : Nat) (entry : label ∈ program.map Prod.fst) :
+    label ∉ ClosProps.codeLocations (program.map (fun (_, _, body) => body)) := by
+  intro nested
+  have a := (compileCommonNoOpts_entry_labels config current expressions program compiled).2 label entry
+  have b := compileCommonNoOpts_location_bounds config current expressions program compiled label nested
+  omega
 
 /-- Stateful numbering supplies locations for each incremental main program;
 annotation then supplies variables and preserves the supplied auxiliary-code
