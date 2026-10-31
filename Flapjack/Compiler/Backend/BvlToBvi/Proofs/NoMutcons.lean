@@ -18,6 +18,30 @@ theorem compileInt_noMutcons (value : Int) : noMutcons (compileInt value) := by
   simp [compileInt, noMutcons, noMutconsOp, Subtype.forall]
   split <;> simp
 
+/-- Lowering an operation cannot introduce mutable-block allocation when
+its already lowered operands do not contain it. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_op_no_mutcons"]
+theorem compileOp_noMutcons (op : ClosLang.Op) (args : List Bvi.Exp)
+    (safe : ∀ e ∈ args, noMutcons e) : noMutcons (compileOp op args) := by
+  have zeroSafe : noMutcons (.op (.intOp (.const 0)) []) := by simp [noMutcons, noMutconsOp, Subtype.forall]
+  have lengthSafe (v : Nat) : noMutcons (.call 0 (some listLengthLocation)
+      [.var v, .op (.intOp (.const 0)) []] none) := by simp [noMutcons, noMutconsOp, Subtype.forall]
+  have argsSafe : ∀ e ∈ (if args.isEmpty then [.op (.intOp (.const 0)) []] else args), noMutcons e := by
+    split <;> simp_all
+  cases op <;> simp only [compileOp]
+  all_goals repeat' first | split | simp [noMutcons, noMutconsOp, Subtype.forall, compileInt_noMutcons]
+  all_goals repeat' first
+    | exact safe
+    | exact zeroSafe
+    | exact lengthSafe _
+    | exact argsSafe
+    | constructor
+    | simp_all
+  intro e member
+  rcases member with member | rfl
+  · exact safe e member
+  · exact zeroSafe
+
 /-- Every accumulator operator used by tail-recursion rewriting is safe. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "to_op_no_mutcons"]
 theorem tailrec_toOp_noMutcons (op : BviTailrec.AssocOp) : noMutconsOp (BviTailrec.toOp op) := by
