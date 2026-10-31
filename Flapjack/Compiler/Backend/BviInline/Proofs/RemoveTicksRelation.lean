@@ -49,6 +49,13 @@ theorem removeStateRel_with_clock {C F : Type} (source target : BviState C F)
     RemoveStateRel { source with clock := clock } { target with clock := clock } := by
   exact ⟨states.1, rfl, states.2.2⟩
 
+/-- Flapjack infrastructure: equal clock decrements preserve tick-cleanup
+state relatedness. -/
+theorem removeStateRel_decClock {C F : Type} (source target : BviState C F)
+    (states : RemoveStateRel source target) (ticks : Nat) :
+    RemoveStateRel (BviSem.decClock ticks source) (BviSem.decClock ticks target) := by
+  simpa [BviSem.decClock, states.2.1] using removeStateRel_with_clock source target states (source.clock - ticks)
+
 /-- Flapjack infrastructure: matching code lookup preserves arguments and
 removes ticks from the selected callee. -/
 theorem findCode_removeStateRel {C F : Type} (source target : BviState C F)
