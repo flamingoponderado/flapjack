@@ -489,4 +489,96 @@ theorem compileEachSource_namespaceRel (next last : Nat) (program output : List 
     · exact (mem_fromAList_iff program key).mpr original
     · omega
 
+/-- Flapjack installation helper: a compiled nonempty list retains its first
+source label and arity. -/
+theorem compileEachSource_head (next loc arity : Nat) (body : Bvi.Exp)
+    (rest : List (Nat × Nat × Bvi.Exp)) :
+    ∃ compiledBody compiledRest,
+      (compileEachSource next ((loc, arity, body) :: rest)).2 = (loc, arity, compiledBody) :: compiledRest := by
+  cases decision : compileExpSource loc next arity body with
+  | none =>
+    cases tail : compileEachSource next rest with
+    | mk last output => exact ⟨body, output, by simp [compileEachSource, decision, tail]⟩
+  | some result =>
+    obtain ⟨wrapper, worker⟩ := result
+    cases tail : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with
+    | mk last output => exact ⟨wrapper, (next, arity + 2, worker) :: output, by simp [compileEachSource, decision, tail]⟩
+
+/-- Flapjack installation helper: input conditions establish the code and
+namespace relations and distinct output labels. -/
+theorem compileEachSource_install_relations (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (condition : inputCondition next code) :
+    codeRel (sptFromAList code) (sptFromAList (compileEachSource next code).2) ∧
+    namespaceRel (sptFromAList code) (sptFromAList (compileEachSource next code).2) ∧
+    ((compileEachSource next code).2.map Prod.fst).Nodup := by
+  obtain ⟨free, safe, unique, outside, bounds, worker⟩ := condition
+  let result := compileEachSource next code
+  have run : compileEachSource next code = (result.1, result.2) := by exact (Prod.eta result).symm
+  exact ⟨compileEachSource_codeRel next result.1 code result.2 run unique free safe,
+    compileEachSource_namespaceRel next result.1 code result.2 run worker bounds outside,
+    (compileEachSource_distinct_and_free next result.1 code result.2 run unique free).1⟩
+
+/-- Flapjack installation helper: compiled entries avoid existing target code
+when the source entries are absent and existing workers precede the counter. -/
+theorem compileEachSource_install_disjoint (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (source target : Spt (Nat × Bvi.Exp)) (condition : inputCondition next code)
+    (namespaces : namespaceRel source target)
+    (workerBound : ∀ n, sptMem n target ∧ inWorkerNamespace n → n < next)
+    (sourceAbsent : ∀ n ∈ code.map Prod.fst, ¬sptMem n source) :
+    ∀ n, sptMem n (sptFromAList (compileEachSource next code).2) → ¬sptMem n target := by
+  obtain ⟨free, safe, unique, outside, bounds, currentWorker⟩ := condition
+  have outsideLabels : ∀ n ∈ code.map Prod.fst, Flapjack.bvlNumStubs ≤ n → ¬inWorkerNamespace n := by
+    intro n member above
+    obtain ⟨entry, present, equal⟩ := List.mem_map.mp member
+    subst n
+    exact outside entry (List.mem_filter.mpr ⟨present, by simpa using above⟩)
+  have generated (name k : Nat) (eq : name = next + k * Flapjack.bvlToBviNamespaces) :
+      inWorkerNamespace name := by
+    subst name
+    unfold inWorkerNamespace at currentWorker ⊢
+    simpa [Nat.add_mod, Flapjack.bvlToBviNamespaces] using currentWorker
+  let result := compileEachSource next code
+  have run : compileEachSource next code = (result.1, result.2) := by exact (Prod.eta result).symm
+  intro n installed existing
+  have names := (BviTailrec.sptFromAList_mem_iff _ n).mp installed
+  rcases compileEachSource_mem next result.1 n code result.2 run names with old | ⟨lo, _, k, eq⟩
+  · by_cases below : n < Flapjack.bvlNumStubs
+    · exact sourceAbsent n old (namespaces.2.2 n ⟨existing, below⟩)
+    · have above : Flapjack.bvlNumStubs ≤ n := by omega
+      by_cases inWorker : inWorkerNamespace n
+      · exact outsideLabels n old above inWorker
+      · have present := namespaces.1 n ⟨existing, above⟩
+        have sourcePresent : sptMem n source := by
+          have notResidue : ¬n % Flapjack.bvlToBviNamespaces = 3 := inWorker
+          simpa [notResidue] using present
+        exact sourceAbsent n old sourcePresent
+  · have inWorker := generated n k eq
+    have oldBound := workerBound n ⟨existing, inWorker⟩
+    omega
+
+/-- Flapjack installation helper: newly installed worker labels lie below
+the resulting counter. -/
+theorem compileEachSource_install_worker_bound (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (condition : inputCondition next code) :
+    ∀ name, sptMem name (sptFromAList (compileEachSource next code).2) ∧ inWorkerNamespace name →
+      name < (compileEachSource next code).1 := by
+  obtain ⟨_, _, _, outside, bounds, _⟩ := condition
+  let result := compileEachSource next code
+  have run : compileEachSource next code = (result.1, result.2) := by exact (Prod.eta result).symm
+  obtain ⟨steps, advance⟩ := compileEachSource_next_mono next result.1 code result.2 run
+  have monotone : next ≤ result.1 := by rw [advance]; omega
+  intro name ⟨member, inWorker⟩
+  change name < result.1
+  rcases compileEachSource_mem next result.1 name code result.2 run ((BviTailrec.sptFromAList_mem_iff _ name).mp member) with
+    old | ⟨_, upper, _⟩
+  · by_cases below : name < Flapjack.bvlNumStubs
+    · omega
+    · have above : Flapjack.bvlNumStubs ≤ name := by omega
+      obtain ⟨entry, present, equal⟩ := List.mem_map.mp old
+      subst name
+      have filtered : entry ∈ code.filter (fun p => decide (Flapjack.bvlNumStubs ≤ p.1)) :=
+        List.mem_filter.mpr ⟨present, by simpa using above⟩
+      exact (outside entry filtered inWorker).elim
+  · exact upper
+
 end Flapjack.Compiler.Backend.BviTmc

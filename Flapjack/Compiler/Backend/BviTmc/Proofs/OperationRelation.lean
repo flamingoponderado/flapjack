@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.Allocation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.BuildRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ThunkRelation
+import Flapjack.Compiler.Backend.BviTmc.Proofs.InstallRelation
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
 
 /-! Primitive-operation cases of the TMC evaluation simulation. -/
@@ -2524,5 +2525,55 @@ theorem doApp_op_rel_ffi {C F : Type} (f : HolFiniteMapExact Nat Nat)
                             simp [BviTailrec.ffiEffect, targetConfig, targetData, statesRelated.2.2.2.1, outcome]
                           · intro key item present
                             exact present
+
+/-- Dynamic installation preserves the primitive simulation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_install {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp .install values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp .install) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp .install relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  change BviSem.doInstall values source = .val (value, sourceNext) at run
+  obtain ⟨targetNext, targetRun, nextStates, ⟨key, valueEq⟩, refsEq⟩ :=
+    doInstall_success_rel f values relatedValues source sourceNext target value statesRelated valuesRelated run
+  subst value
+  refine ⟨f, .codePtr key, targetNext, targetRun, .codePtr key, nextStates, ?_, onlyFresh_refl f target.refs, ?_, ?_⟩
+  · intro ptr item found
+    exact found
+  · simpa [refsEq] using holesUnchanged_refl f target.refs ∅
+  · simpa [refsEq] using holesStill_refl f target.refs
+
+/-- Successful primitive operations are simulated by the TMC target,
+preserving related results, state, freshness and mutable-hole invariants. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang.Op)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp op values source = .val (value, sourceNext))
+    (noMutcons : noMutconsOp op) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp op relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases op with
+  | label label => exact doApp_op_rel_label f label values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | ffi name => exact doApp_op_rel_ffi f name values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | intOp op => exact doApp_op_rel_int f op values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | wordOp op => exact doApp_op_rel_word f op values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | blockOp op => exact doApp_op_rel_block f op values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | globOp op => exact doApp_op_rel_glob f op values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | memOp op => exact doApp_op_rel_mem f op values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | install => exact doApp_op_rel_install f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | thunkOp op => exact doApp_op_rel_thunk f op values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
 
 end Flapjack.Compiler.Backend.BviTmc
