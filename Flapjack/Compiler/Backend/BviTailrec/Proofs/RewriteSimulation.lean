@@ -1376,6 +1376,112 @@ theorem rewriteTail_call {C F : Type} (ticks : Nat) (dest : Option Nat)
       exact rewriteTail_call_handler ticks place handler args source env1 result sourceNext
         optimized target acc env2 loc ts ty argsIH clockIH hyp
 
+/-- Conditional case when the condition propagates an error. Both the
+rewritten conditional and the accumulator expression stop at that condition. -/
+theorem rewriteTail_if_guard_error {C F : Type} (cond yes no : Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (guardIH : rewriteTailProperty (C := C) (F := F) [cond])
+    (hyp : rewriteTailHyp [.ifThenElse cond yes no] source env1 result sourceNext
+      optimized target acc env2 loc ts ty)
+    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (middle : BviSem.BviState (Nat × C) F)
+    (guardRun : BviSem.evaluate [cond] env1 source = (.err error, middle)) :
+    rewriteTailPost [.ifThenElse cond yes no] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  obtain ⟨run, envRelated, related, types, _, notTypeError⟩ := hyp
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate, guardRun] at run
+  have same : (.err error, middle) = (result, sourceNext) := run
+  cases same
+  have disabled := envRel_disable ty optimized acc env1 env2 envRelated
+  have guardHyp : rewriteTailHyp [cond] source env1 (.err error) sourceNext false
+      target acc env2 loc ts ty := ⟨guardRun, disabled, related, types, by simp, notTypeError⟩
+  obtain ⟨targetNext, targetGuard, targetRelated, _⟩ :=
+    guardIH source env1 (.err error) sourceNext false target acc env2 loc ts ty guardHyp
+  have targetIf : BviSem.evaluate [.ifThenElse cond yes no] env2 target = (.err error, targetNext) := by
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetGuard]
+  refine ⟨targetNext, targetIf, targetRelated, ?_⟩
+  intro enabled op workerLoc code arity required
+  simp only [List.headD_cons] at required ⊢
+  have accBound := (envRelated.2 enabled).2.1
+  have lookup : env2[acc]? = some env2[acc] := by simp [accBound]
+  refine ⟨.err error, targetNext, targetNext, ?_, ?_, targetRelated, targetRelated⟩
+  · rw [rewriteSource.eq_def]
+    dsimp only
+    split <;> split <;> rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetGuard]
+  · rw [evaluate_applyOp_var op acc (.ifThenElse cond yes no) env2 target env2[acc] lookup, targetIf]
+
+/-- Conditional simulation with optimization disabled. Both branches use
+the same induction hypotheses as the source conditional case. -/
+theorem rewriteTail_if_noOptimization {C F : Type} (cond yes no : Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (guardIH : rewriteTailProperty (C := C) (F := F) [cond])
+    (yesIH : rewriteTailProperty (C := C) (F := F) [yes])
+    (noIH : rewriteTailProperty (C := C) (F := F) [no])
+    (hyp : rewriteTailHyp [.ifThenElse cond yes no] source env1 result sourceNext
+      false target acc env2 loc ts ty) :
+    rewriteTailPost [.ifThenElse cond yes no] source env1 result sourceNext
+      false target acc env2 loc ts ty := by
+  obtain ⟨run, envRelated, related, types, _, notTypeError⟩ := hyp
+  cases guardRun : BviSem.evaluate [cond] env1 source with
+  | mk guardResult middle =>
+    cases guardResult with
+    | err error =>
+      exact rewriteTail_if_guard_error cond yes no source env1 result sourceNext false target acc env2
+        loc ts ty guardIH ⟨run, envRelated, related, types, by simp, notTypeError⟩ error middle guardRun
+    | val values =>
+      obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton cond env1 source middle values guardRun
+      have guardHyp : rewriteTailHyp [cond] source env1 (.val [value]) middle false
+          target acc env2 loc ts ty := ⟨guardRun, envRelated, related, types, by simp, by simp⟩
+      obtain ⟨targetMiddle, targetGuard, middleRelated, _⟩ :=
+        guardIH source env1 (.val [value]) middle false target acc env2 loc ts ty guardHyp
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, guardRun] at run
+      change (match asBool value with
+        | none => (.err (.abort .typeError), middle)
+        | some true => BviSem.evaluate [yes] env1 middle
+        | some false => BviSem.evaluate [no] env1 middle) = (result, sourceNext) at run
+      cases truth : asBool value with
+      | none =>
+        simp [truth] at run
+        exact (notTypeError run.1.symm).elim
+      | some truthValue =>
+        cases truthValue with
+        | false =>
+          have branchRun : BviSem.evaluate [no] env1 middle = (result, sourceNext) := by
+            simpa [truth] using run
+          have branchHyp : rewriteTailHyp [no] middle env1 result sourceNext false
+              targetMiddle acc env2 loc ts ty :=
+            ⟨branchRun, envRelated, middleRelated, types, by simp, notTypeError⟩
+          obtain ⟨targetNext, targetBranch, finalRelated, _⟩ :=
+            noIH middle env1 result sourceNext false targetMiddle acc env2 loc ts ty branchHyp
+          refine ⟨targetNext, ?_, finalRelated, by simp⟩
+          rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetGuard]
+          change (match asBool value with
+            | none => ((.err (.abort .typeError) : BviSem.BviResult), targetMiddle)
+            | some true => BviSem.evaluate [yes] env2 targetMiddle
+            | some false => BviSem.evaluate [no] env2 targetMiddle) = _
+          simpa [truth] using targetBranch
+        | true =>
+          have branchRun : BviSem.evaluate [yes] env1 middle = (result, sourceNext) := by
+            simpa [truth] using run
+          have branchHyp : rewriteTailHyp [yes] middle env1 result sourceNext false
+              targetMiddle acc env2 loc ts ty :=
+            ⟨branchRun, envRelated, middleRelated, types, by simp, notTypeError⟩
+          obtain ⟨targetNext, targetBranch, finalRelated, _⟩ :=
+            yesIH middle env1 result sourceNext false targetMiddle acc env2 loc ts ty branchHyp
+          refine ⟨targetNext, ?_, finalRelated, by simp⟩
+          rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetGuard]
+          change (match asBool value with
+            | none => ((.err (.abort .typeError) : BviSem.BviResult), targetMiddle)
+            | some true => BviSem.evaluate [yes] env2 targetMiddle
+            | some false => BviSem.evaluate [no] env2 targetMiddle) = _
+          simpa [truth] using targetBranch
+
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a
 raise as an optimization candidate. -/
