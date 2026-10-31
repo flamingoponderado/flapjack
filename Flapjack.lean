@@ -522,6 +522,7 @@ import Flapjack.Compiler.Backend.BviInline.Proofs.WholeProgramSimulation
 import Flapjack.Compiler.Backend.BviInline.Proofs.Observation
 import Flapjack.Compiler.Backend.BviInline.Proofs.Pipeline
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BviStages
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InlineHandoff
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureCorrespondence
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
