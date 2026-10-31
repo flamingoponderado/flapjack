@@ -2,7 +2,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLet
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Thunk
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.DirectApplicationTarget
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateOrdinary
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Install
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainEvaluation
 
 /-! Forced-thunk cases of the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
