@@ -246,6 +246,21 @@ def rewriteSource (loc next : Nat) (op : AssocOp) (acc : Nat)
   | e => sourceDispatch loc next op acc ctx e
 termination_by e => sizeOf e
 
+/-- An operation with a false accumulator guard or a failed candidate check
+is rewritten to the explicit accumulator fallback. -/
+theorem rewriteSource_op_fallback (ctx : List ValueType) (loc next acc : Nat)
+    (assoc : AssocOp) (actual : ClosLang.Op) (args : List Exp)
+    (fallback : (fromOp actual == assoc && assoc != .noop) = false ∨
+      checkOp ctx assoc loc (.op actual args) = none) :
+    rewriteSource loc next assoc acc ctx (.op actual args) =
+      (false, applyOp assoc (.var acc) (.op actual args)) := by
+  rw [rewriteSource.eq_def]
+  dsimp only
+  rw [sourceDispatch_op]
+  rcases fallback with guard | failed
+  · simp [guard]
+  · cases guard : (fromOp actual == assoc && assoc != .noop) <;> simp [failed]
+
 /-- A successful candidate is rewritten to a direct worker call with the
 pure operand combined into the accumulator. -/
 theorem checkOp_rewrite_worker (ctx : List ValueType) (assoc : AssocOp) (loc next acc : Nat)

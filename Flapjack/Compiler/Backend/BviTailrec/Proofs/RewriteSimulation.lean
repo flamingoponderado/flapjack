@@ -568,6 +568,46 @@ theorem evaluate_applyOp_noReturn {C F : Type} (op : AssocOp) (acc : Nat) (body 
       rw [← run.1] at bad
       cases bad
 
+/-- Applying the same accumulator to equal expression results yields the
+same result in either state and leaves each expression's final state intact. -/
+theorem evaluate_applyOp_matching {C F D G : Type} (op : AssocOp)
+    (pure1 body1 pure2 body2 : Bvi.Exp) (env1 env2 : List Value)
+    (state1 next1 : BviSem.BviState C F) (state2 next2 : BviSem.BviState D G)
+    (value : Value) (bodyResult : BviSem.BviResult)
+    (pureRun1 : BviSem.evaluate [pure1] env1 state1 = (.val [value], state1))
+    (pureRun2 : BviSem.evaluate [pure2] env2 state2 = (.val [value], state2))
+    (bodyRun1 : BviSem.evaluate [body1] env1 state1 = (bodyResult, next1))
+    (bodyRun2 : BviSem.evaluate [body2] env2 state2 = (bodyResult, next2)) :
+    ∃ result, BviSem.evaluate [applyOp op pure1 body1] env1 state1 = (result, next1) ∧
+      BviSem.evaluate [applyOp op pure2 body2] env2 state2 = (result, next2) := by
+  rw [evaluate_applyOp_pureLeft op pure1 body1 env1 state1 value pureRun1, bodyRun1]
+  rw [evaluate_applyOp_pureLeft op pure2 body2 env2 state2 value pureRun2, bodyRun2]
+  cases bodyResult with
+  | err error => exact ⟨.err error, rfl, rfl⟩
+  | val values =>
+    cases found : accumulatorApply op (values.reverse ++ [value]) with
+    | none => exact ⟨.err (.abort .typeError), by simp [doApp_toOp_pure, found],
+        by simp [doApp_toOp_pure, found]⟩
+    | some output => exact ⟨.val [output], by simp [doApp_toOp_pure, found],
+        by simp [doApp_toOp_pure, found]⟩
+
+/-- An accumulator operation with a pure first operand leaves the final state
+at the state produced by its second operand, even on primitive failure. -/
+theorem evaluate_applyOp_pure_state {C F : Type} (op : AssocOp) (pure body : Bvi.Exp)
+    (env : List Value) (state bodyNext final : BviSem.BviState C F)
+    (value : Value) (bodyResult result : BviSem.BviResult)
+    (pureRun : BviSem.evaluate [pure] env state = (.val [value], state))
+    (bodyRun : BviSem.evaluate [body] env state = (bodyResult, bodyNext))
+    (run : BviSem.evaluate [applyOp op pure body] env state = (result, final)) : final = bodyNext := by
+  rw [evaluate_applyOp_pureLeft op pure body env state value pureRun, bodyRun] at run
+  cases bodyResult with
+  | err error => exact (congrArg Prod.snd run).symm
+  | val values =>
+    simp only [doApp_toOp_pure] at run
+    cases found : accumulatorApply op (values.reverse ++ [value]) with
+    | none => simpa [found] using (congrArg Prod.snd run).symm
+    | some output => simpa [found] using (congrArg Prod.snd run).symm
+
 /-- A let binding can be moved outside an accumulator operation by shifting
 the accumulator index past the values bound by the let. -/
 theorem evaluate_applyOp_let {C F : Type} (op : AssocOp) (acc : Nat)
@@ -1057,6 +1097,53 @@ theorem evaluate_related_resolved_callee {C F : Type} (dest : Option Nat)
     simpa [BviSem.decClock] using targetLookup
   exact ⟨compiled, targetNext, resolveReplacement target.code compiled lookup, targetRun, finalRelated⟩
 
+/-- A direct recursive call through related code yields the same non-return
+callee result and a related final state. -/
+theorem evaluate_related_direct_call {C F : Type} (loc arity ticks : Nat)
+    (body : Bvi.Exp) (args : List Bvi.Exp) (env : List Value)
+    (sourceMiddle sourceNext : BviSem.BviState (Nat × C) F)
+    (target targetMiddle : BviSem.BviState C F) (values : List Value) (result : BviSem.BviResult)
+    (bodyIH : ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+      rewriteTailHyp [body] (BviSem.decClock (ticks + 1) sourceMiddle) values result
+        sourceNext optimized target acc env2 loc ts ty →
+      rewriteTailPost [body] (BviSem.decClock (ticks + 1) sourceMiddle) values result
+        sourceNext optimized target acc env2 loc ts ty)
+    (related : stateRel sourceMiddle targetMiddle) (lengthEq : values.length = arity)
+    (sourceCode : sptLookup loc sourceMiddle.code = some (arity, body))
+    (argsRun : BviSem.evaluate args env target = (.val values, targetMiddle))
+    (enoughClock : ticks + 1 ≤ sourceMiddle.clock)
+    (bodyRun : BviSem.evaluate [body] values (BviSem.decClock (ticks + 1) sourceMiddle) =
+      (result, sourceNext))
+    (notTypeError : result ≠ .err (.abort .typeError))
+    (noReturn : ∀ values, result ≠ .err (.raise (.ret values))) :
+    ∃ targetNext, BviSem.evaluate [.call ticks (some loc) args none] env target = (result, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  have decRelated := stateRel_decClock sourceMiddle targetMiddle (ticks + 1) related
+  have decCode : sptLookup loc (BviSem.decClock (ticks + 1) sourceMiddle).code = some (arity, body) := by
+    simpa [BviSem.decClock] using sourceCode
+  obtain ⟨compiled, targetNext, targetCode, targetBody, finalRelated⟩ :=
+    evaluate_related_callee loc arity body values (BviSem.decClock (ticks + 1) sourceMiddle)
+      sourceNext (BviSem.decClock (ticks + 1) targetMiddle) result bodyIH decRelated lengthEq decCode bodyRun notTypeError
+  have lookup : sptLookup loc targetMiddle.code = some (arity, compiled) := by
+    simpa [BviSem.decClock] using targetCode
+  have targetEnough : ¬targetMiddle.clock < ticks + 1 := by
+    have clocks := (stateRel_const sourceMiddle targetMiddle related).2.1
+    omega
+  refine ⟨targetNext, ?_, finalRelated⟩
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+  simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, findCode,
+    lookup, lengthEq, targetEnough, BviSem.fixClock_evaluate]
+  rw [targetBody]
+  cases result with
+  | val values => rfl
+  | err error =>
+    cases error with
+    | abort reason => rfl
+    | raise payload =>
+      cases payload with
+      | exn exception => rfl
+      | ret values => exact (noReturn values rfl).elim
+
 /-- A recursive worker body agrees with applying its incoming accumulator to
 the original body. The hypothesis is the smaller-clock body induction case. -/
 theorem evaluate_optimized_worker_body {C F : Type} (loc arity workerLoc : Nat)
@@ -1179,6 +1266,122 @@ theorem evaluate_optimized_worker_call {C F : Type}
       cases payload with
       | exn exception => rfl
       | ret values => exact (resultNoReturn values rfl).elim
+
+/-- Successful recursive-candidate calls agree with the original expression
+with its accumulator applied, and both final states remain related. -/
+theorem evaluate_worker_candidate_success {C F : Type}
+    (loc arity workerLoc ticks acc : Nat) (body pure : Bvi.Exp) (op : AssocOp)
+    (args : List Bvi.Exp) (env : List Value) (target targetMiddle : BviSem.BviState C F)
+    (sourceMiddle sourceNext : BviSem.BviState (Nat × C) F)
+    (callArgs : List Value) (pureValue oldValue : Value) (bodyResult : BviSem.BviResult)
+    (bodyIH : ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+      rewriteTailHyp [body] (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult
+        sourceNext optimized target acc env2 loc ts ty →
+      rewriteTailPost [body] (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult
+        sourceNext optimized target acc env2 loc ts ty)
+    (related : stateRel sourceMiddle targetMiddle) (lengthEq : callArgs.length = arity)
+    (sourceCode : sptLookup loc sourceMiddle.code = some (arity, body))
+    (optimized : optimizedCode loc arity body workerLoc targetMiddle.code op)
+    (notNoop : op ≠ .noop) (pureTyped : valueMatchesType pureValue (opType op))
+    (oldTyped : valueMatchesType oldValue (opType op)) (lookup : env[acc]? = some oldValue)
+    (pureRun : ∀ s : BviSem.BviState C F, BviSem.evaluate [pure] env s = (.val [pureValue], s))
+    (argsRun : BviSem.evaluate args env target = (.val callArgs, targetMiddle))
+    (enoughClock : ticks + 1 ≤ sourceMiddle.clock)
+    (bodyRun : BviSem.evaluate [body] callArgs (BviSem.decClock (ticks + 1) sourceMiddle) =
+      (bodyResult, sourceNext))
+    (notTypeError : bodyResult ≠ .err (.abort .typeError))
+    (noReturn : ∀ values, bodyResult ≠ .err (.raise (.ret values))) :
+    ∃ result' t1 t2,
+      BviSem.evaluate [.call ticks (some workerLoc) (args ++ [applyOp op (.var acc) pure]) none]
+        env target = (result', t1) ∧
+      BviSem.evaluate [applyOp op (.var acc) (applyOp op pure (.call ticks (some loc) args none))]
+        env target = (result', t2) ∧ stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
+  obtain ⟨newValue, result', t1, t2, update, workerRun, appliedRun, rel1, _⟩ :=
+    evaluate_optimized_worker_call loc arity workerLoc ticks acc body pure op args env target targetMiddle
+      sourceMiddle sourceNext callArgs pureValue oldValue bodyResult bodyIH related lengthEq sourceCode
+      optimized notNoop pureTyped oldTyped lookup pureRun argsRun enoughClock bodyRun notTypeError noReturn
+  obtain ⟨originalNext, originalRun, originalRelated⟩ :=
+    evaluate_related_direct_call loc arity ticks body args env sourceMiddle sourceNext target targetMiddle
+      callArgs bodyResult bodyIH related lengthEq sourceCode argsRun enoughClock bodyRun notTypeError noReturn
+  have typed : valueMatchesType newValue (opType op) := by
+    obtain ⟨value, valueRun, valueTyped⟩ := accumulator_typed op pureValue oldValue notNoop pureTyped oldTyped
+    rw [update] at valueRun
+    cases valueRun
+    exact valueTyped
+  have decRelated := stateRel_decClock sourceMiddle targetMiddle (ticks + 1) related
+  have envRelated : envRel (opType op) true arity callArgs (callArgs ++ [newValue]) := by
+    simpa [lengthEq] using envRel_worker op callArgs newValue notNoop typed
+  have types : tyRel callArgs (List.replicate arity .any) := by
+    simpa [lengthEq] using tyRel_replicate_any callArgs
+  have hyp : rewriteTailHyp [body] (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult sourceNext
+      true (BviSem.decClock (ticks + 1) targetMiddle) arity (callArgs ++ [newValue]) loc
+      (List.replicate arity .any) (opType op) :=
+    ⟨bodyRun, envRelated, decRelated, types, by simp, notTypeError⟩
+  obtain ⟨bodyTargetNext, bodyTargetRun, _, _⟩ :=
+    bodyIH true (BviSem.decClock (ticks + 1) targetMiddle) arity (callArgs ++ [newValue]) loc
+      (List.replicate arity .any) (opType op) hyp
+  have workerVar : BviSem.evaluate [.var arity] (callArgs ++ [newValue])
+      (BviSem.decClock (ticks + 1) targetMiddle) = (.val [newValue], BviSem.decClock (ticks + 1) targetMiddle) := by
+    simp [BviSem.evaluate, ← lengthEq]
+  have updatedRun : BviSem.evaluate [applyOp op (.var acc) pure] env target = (.val [newValue], target) := by
+    rw [evaluate_applyOp_var op acc pure env target oldValue lookup, pureRun target]
+    simp [doApp_toOp_pure, update]
+  obtain ⟨matchingResult, workerApplied, originalApplied⟩ :=
+    evaluate_applyOp_matching op (.var arity) body (applyOp op (.var acc) pure)
+      (.call ticks (some loc) args none) (callArgs ++ [newValue]) env
+      (BviSem.decClock (ticks + 1) targetMiddle) bodyTargetNext target originalNext newValue bodyResult
+      workerVar updatedRun bodyTargetRun originalRun
+  have sameResult : result' = matchingResult := by
+    rw [appliedRun] at workerApplied
+    exact congrArg Prod.fst workerApplied
+  subst matchingResult
+  refine ⟨result', t1, originalNext, workerRun, ?_, rel1, originalRelated⟩
+  rw [evaluate_applyOp_reassociate op acc pure (.call ticks (some loc) args none) env target
+    pureValue oldValue notNoop pureTyped oldTyped lookup pureRun]
+  exact originalApplied
+
+/-- The successful recursive-candidate worker simulation relates its final
+states to the complete source accumulator operation, not just the callee. -/
+theorem evaluate_worker_candidate_operation {C F : Type}
+    (loc arity workerLoc ticks acc : Nat) (body pure : Bvi.Exp) (op : AssocOp)
+    (args : List Bvi.Exp) (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F)
+    (sourceMiddle sourceBodyNext sourceNext : BviSem.BviState (Nat × C) F)
+    (target targetMiddle : BviSem.BviState C F) (callArgs : List Value)
+    (pureValue oldValue : Value) (bodyResult sourceResult : BviSem.BviResult)
+    (bodyIH : ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
+      rewriteTailHyp [body] (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult
+        sourceBodyNext optimized target acc env2 loc ts ty →
+      rewriteTailPost [body] (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult
+        sourceBodyNext optimized target acc env2 loc ts ty)
+    (related : stateRel sourceMiddle targetMiddle) (lengthEq : callArgs.length = arity)
+    (sourceCode : sptLookup loc sourceMiddle.code = some (arity, body))
+    (optimized : optimizedCode loc arity body workerLoc targetMiddle.code op)
+    (notNoop : op ≠ .noop) (pureTyped : valueMatchesType pureValue (opType op))
+    (oldTyped : valueMatchesType oldValue (opType op)) (lookup : env2[acc]? = some oldValue)
+    (pureSource : BviSem.evaluate [pure] env1 source = (.val [pureValue], source))
+    (pureTarget : ∀ s : BviSem.BviState C F, BviSem.evaluate [pure] env2 s = (.val [pureValue], s))
+    (argsTarget : BviSem.evaluate args env2 target = (.val callArgs, targetMiddle))
+    (enoughClock : ticks + 1 ≤ sourceMiddle.clock)
+    (bodyRun : BviSem.evaluate [body] callArgs (BviSem.decClock (ticks + 1) sourceMiddle) =
+      (bodyResult, sourceBodyNext))
+    (callSource : BviSem.evaluate [.call ticks (some loc) args none] env1 source =
+      (bodyResult, sourceBodyNext))
+    (operationSource : BviSem.evaluate [applyOp op pure (.call ticks (some loc) args none)] env1 source =
+      (sourceResult, sourceNext))
+    (notTypeError : bodyResult ≠ .err (.abort .typeError))
+    (noReturn : ∀ values, bodyResult ≠ .err (.raise (.ret values))) :
+    ∃ result' t1 t2,
+      BviSem.evaluate [.call ticks (some workerLoc) (args ++ [applyOp op (.var acc) pure]) none]
+        env2 target = (result', t1) ∧
+      BviSem.evaluate [applyOp op (.var acc) (applyOp op pure (.call ticks (some loc) args none))]
+        env2 target = (result', t2) ∧ stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
+  have finalState : sourceNext = sourceBodyNext :=
+    evaluate_applyOp_pure_state op pure (.call ticks (some loc) args none) env1 source sourceBodyNext
+      sourceNext pureValue bodyResult sourceResult pureSource callSource operationSource
+  subst sourceNext
+  exact evaluate_worker_candidate_success loc arity workerLoc ticks acc body pure op args env2 target targetMiddle
+    sourceMiddle sourceBodyNext callArgs pureValue oldValue bodyResult bodyIH related lengthEq sourceCode optimized
+    notNoop pureTyped oldTyped lookup pureTarget argsTarget enoughClock bodyRun notTypeError noReturn
 
 /-- Force case of the rewrite simulation. The induction hypothesis applies
 to any called body at a strictly smaller clock, as in the source induction. -/
@@ -1886,6 +2089,23 @@ theorem stateRel_applyOp_after {C F : Type} (op : AssocOp) (acc : Nat) (branch :
       refine ⟨.val [out], ?_, related⟩
       simp [doApp_toOp_pure, applied]
 
+/-- The explicit accumulator fallback satisfies the optimization postcondition
+whenever ordinary evaluation has already been simulated. -/
+theorem evaluate_rewrite_fallback {C F : Type} (op : AssocOp) (loc next acc : Nat)
+    (ctx : List ValueType) (e : Bvi.Exp) (env : List Value)
+    (sourceNext : BviSem.BviState (Nat × C) F) (target targetNext : BviSem.BviState C F)
+    (result : BviSem.BviResult) (value : Value) (lookup : env[acc]? = some value)
+    (ordinary : BviSem.evaluate [e] env target = (result, targetNext))
+    (related : stateRel sourceNext targetNext)
+    (fallback : rewriteSource loc next op acc ctx e = (false, applyOp op (.var acc) e)) :
+    ∃ result' t1 t2,
+      BviSem.evaluate [(rewriteSource loc next op acc ctx e).2] env target = (result', t1) ∧
+      BviSem.evaluate [applyOp op (.var acc) e] env target = (result', t2) ∧
+      stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
+  obtain ⟨result', run, finalRelated⟩ :=
+    stateRel_applyOp_after op acc e env target targetNext sourceNext result value lookup ordinary related
+  exact ⟨result', targetNext, targetNext, by simpa [fallback] using run, run, finalRelated, finalRelated⟩
+
 /-- The selected conditional branch either uses its rewrite or falls back to
 an explicit accumulator operation, preserving the simulation postcondition. -/
 theorem rewriteTail_if_branch {C F : Type} (ctx : List ValueType) (loc next acc : Nat)
@@ -2177,6 +2397,68 @@ theorem rewriteTail_if {C F : Type} (cond yes no : Bvi.Exp)
               rw [evaluate_if_of_guard _ _ _ env2 target targetMiddle value flag targetGuard truth]
               cases flag <;> simpa [selected] using branchApplied
 
+/-- Ordinary operation evaluation is simulated when successful primitive
+applications preserve state relations and primitive errors are type errors.
+This Flapjack helper isolates those primitive obligations. -/
+theorem evaluate_op_related {C F : Type} (operation : ClosLang.Op) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (appSuccess : ∀ (values : List Value) (s t : BviSem.BviState (Nat × C) F)
+      (u : BviSem.BviState C F) (v : Value), stateRel s u →
+      BviSem.doApp operation values s = .val (v, t) →
+      ∃ u', BviSem.doApp operation values u = .val (v, u') ∧ stateRel t u')
+    (appError : ∀ (values : List Value) (s : BviSem.BviState (Nat × C) F)
+      (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet),
+      BviSem.doApp operation values s = .err error → error = .abort .typeError)
+    (hyp : rewriteTailHyp [.op operation args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    ∃ targetNext, BviSem.evaluate [.op operation args] env2 target = (result, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  obtain ⟨run, envRelated, related, types, _, notTypeError⟩ := hyp
+  have disabled := envRel_disable ty optimized acc env1 env2 envRelated
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate] at run
+  cases argsRun : BviSem.evaluate args env1 source with
+  | mk argsResult middle =>
+    cases argsResult with
+    | err error =>
+      simp only [argsRun] at run
+      have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
+        intro bad
+        apply notTypeError
+        exact (congrArg Prod.fst run).symm.trans bad
+      have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
+          target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
+      obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
+        argsIH source env1 (.err error) middle false target acc env2 loc ts ty argsHyp
+      have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun] using run
+      cases same
+      refine ⟨targetMiddle, ?_, middleRelated⟩
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
+    | val values =>
+      have argsHyp : rewriteTailHyp args source env1 (.val values) middle false
+          target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, by simp⟩
+      obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
+        argsIH source env1 (.val values) middle false target acc env2 loc ts ty argsHyp
+      cases applied : BviSem.doApp operation values.reverse middle with
+      | err error =>
+        have typeError := appError values.reverse middle error applied
+        subst error
+        simp [argsRun, applied] at run
+        exact (notTypeError run.1.symm).elim
+      | val pair =>
+        obtain ⟨value, last⟩ := pair
+        have same : (.val [value], last) = (result, sourceNext) := by simpa [argsRun, applied] using run
+        cases same
+        obtain ⟨targetNext, targetApplied, finalRelated⟩ :=
+          appSuccess values.reverse middle sourceNext targetMiddle value middleRelated applied
+        refine ⟨targetNext, ?_, finalRelated⟩
+        rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
+        dsimp only
+        rw [targetApplied]
+
 /-- Shared operation simulation for a primitive whose scan selects no
 accumulator and whose only primitive error is the source type error. The
 primitive correspondence is a premise of this Flapjack helper. -/
@@ -2198,50 +2480,9 @@ theorem rewriteTail_op_noChoice {C F : Type} (operation : ClosLang.Op) (args : L
       optimized target acc env2 loc ts ty) :
     rewriteTailPost [.op operation args] source env1 result sourceNext
       optimized target acc env2 loc ts ty := by
-  obtain ⟨run, envRelated, related, types, _, notTypeError⟩ := hyp
-  have simulation : ∃ targetNext, BviSem.evaluate [.op operation args] env2 target =
-      (result, targetNext) ∧ stateRel sourceNext targetNext := by
-    have disabled := envRel_disable ty optimized acc env1 env2 envRelated
-    rw [BviSem.evaluate, BviSem.fixClock_evaluate] at run
-    cases argsRun : BviSem.evaluate args env1 source with
-    | mk argsResult middle =>
-      cases argsResult with
-      | err error =>
-        simp only [argsRun] at run
-        have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
-          intro bad
-          apply notTypeError
-          exact (congrArg Prod.fst run).symm.trans bad
-        have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
-            target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
-        obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
-          argsIH source env1 (.err error) middle false target acc env2 loc ts ty argsHyp
-        have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun] using run
-        cases same
-        refine ⟨targetMiddle, ?_, middleRelated⟩
-        rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-      | val values =>
-        have argsHyp : rewriteTailHyp args source env1 (.val values) middle false
-            target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, by simp⟩
-        obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
-          argsIH source env1 (.val values) middle false target acc env2 loc ts ty argsHyp
-        cases applied : BviSem.doApp operation values.reverse middle with
-        | err error =>
-          have typeError := appError values.reverse middle error applied
-          subst error
-          simp [argsRun, applied] at run
-          exact (notTypeError run.1.symm).elim
-        | val pair =>
-          obtain ⟨value, last⟩ := pair
-          have same : (.val [value], last) = (result, sourceNext) := by simpa [argsRun, applied] using run
-          cases same
-          obtain ⟨targetNext, targetApplied, finalRelated⟩ :=
-            appSuccess values.reverse middle sourceNext targetMiddle value middleRelated applied
-          refine ⟨targetNext, ?_, finalRelated⟩
-          rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-          dsimp only
-          rw [targetApplied]
-  obtain ⟨targetNext, targetRun, targetRelated⟩ := simulation
+  obtain ⟨targetNext, targetRun, targetRelated⟩ :=
+    evaluate_op_related operation args source env1 result sourceNext optimized target acc env2 loc ts ty
+      argsIH appSuccess appError hyp
   apply rewriteTailPost_of_no_scan (.op operation args) source env1 result sourceNext
     optimized target targetNext acc env2 loc ts ty targetRun targetRelated
   intro tt resultTy branch op1 scan
@@ -2367,6 +2608,23 @@ theorem rewriteTail_op_word {C F : Type} (operation : ClosLang.WordOp) (args : L
   · exact stateRel_doApp_wordOp_success operation
   · exact doApp_wordOp_error operation
   · exact hyp
+
+/-- Accumulator operations are simulated when optimization is disabled,
+regardless of whether their candidate check would succeed. -/
+theorem rewriteTail_op_accumulator_noOptimization {C F : Type} (assoc : AssocOp)
+    (args : List Bvi.Exp) (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (toOp assoc) args] source env1 result sourceNext
+      false target acc env2 loc ts ty) :
+    rewriteTailPost [.op (toOp assoc) args] source env1 result sourceNext
+      false target acc env2 loc ts ty := by
+  obtain ⟨targetNext, run, related⟩ :=
+    evaluate_op_related (toOp assoc) args source env1 result sourceNext false target acc env2 loc ts ty
+      argsIH (stateRel_doApp_toOp assoc) (doApp_toOp_error_type assoc) hyp
+  exact ⟨targetNext, run, related, by simp⟩
 
 /-- Complete accumulator-operation case when the source candidate check
 finds no recursive call. -/
