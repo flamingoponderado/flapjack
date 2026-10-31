@@ -14,6 +14,19 @@ def identity : AssocOp → Exp
   | .append => .op (.blockOp (.cons 0)) []
   | .noop => .var 1234567890
 
+/-- Extract the arguments and metadata of a direct call. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "args_from_def"]
+def argsFrom : Exp → Option (Nat × Nat × List Exp × Option Exp)
+  | .call ticks (some dest) args handler => some (ticks, dest, args, handler)
+  | _ => none
+
+/-- Construct the accumulator worker call from extracted call data. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "push_call_def"]
+def pushCall (next : Nat) (op : AssocOp) (acc : Nat) (value : Exp) :
+    Option (Nat × Nat × List Exp × Option Exp) → Exp
+  | some (ticks, _, args, handler) => .call ticks (some next) (args ++ [applyOp op (.var acc) value]) handler
+  | none => .var 1234567890
+
 /-- Rewrite accumulator candidates, preserving the source's evaluation
 contexts and the original expressions in non-rewritten conditional branches. -/
 def rewriteFuel : Nat → Nat → Nat → AssocOp → Nat → List ValueType → Exp → Option (Bool × Exp)
