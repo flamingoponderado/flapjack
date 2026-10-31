@@ -6,6 +6,60 @@ import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecCorrespondence
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
+mutual
+/-- A singleton list scan returns exactly the source single-expression scan. -/
+theorem scanExpr_single (ctx : List ValueType) (loc : Nat) (e : Exp) :
+    scanExpr ctx loc [e] = [scanSing ctx loc e] := by
+  cases e with
+  | ifThenElse cond yes no =>
+    rw [scanExpr.eq_def, scanSing.eq_def]
+    try dsimp only
+    rw [scanExpr_single ctx loc cond]
+    try dsimp only
+    rw [scanExpr_single _ loc yes, scanExpr_single _ loc no]
+    rfl
+  | «let» xs body =>
+    rw [scanExpr.eq_def, scanSing.eq_def]
+    try dsimp only
+    rw [scanExpr_list ctx loc xs]
+    rw [scanExpr_single _ loc body]
+    cases last : (scanList ctx loc xs).getLast? with
+    | none => rfl
+    | some s => obtain ⟨a, b, c, d⟩ := s; rfl
+  | tick body =>
+    rw [scanExpr.eq_def, scanSing.eq_def]
+    try dsimp only
+    exact scanExpr_single ctx loc body
+  | var n => rw [scanExpr.eq_def]
+  | force a n => rw [scanExpr.eq_def]
+  | op op xs => rw [scanExpr.eq_def]
+  | raise e => rw [scanExpr.eq_def]
+  | call a b c d => rw [scanExpr.eq_def]
+  | «return» xs => rw [scanExpr.eq_def]
+  | letCall a b c d e => rw [scanExpr.eq_def]
+termination_by sizeOf e
+
+/-- The source list traversal agrees with the context-threaded list scan. -/
+theorem scanExpr_list (ctx : List ValueType) (loc : Nat) (xs : List Exp) :
+    scanExpr ctx loc xs = scanList ctx loc xs := by
+  cases xs with
+  | nil => rw [scanExpr.eq_def, scanList.eq_def]
+  | cons x xs =>
+    cases xs with
+    | nil =>
+      rw [scanExpr_single, scanList.eq_def]
+      dsimp only
+      rw [scanList.eq_def]
+    | cons y ys =>
+      rw [scanExpr.eq_def, scanList.eq_def]
+      try dsimp only
+      rw [scanExpr_single ctx loc x]
+      try dsimp only
+      rw [scanExpr_list _ loc (y :: ys)]
+      rfl
+termination_by sizeOf xs
+end
+
 /-- Every recognized accumulator operator round-trips to its source BVI
 operation. -/
 theorem toOp_fromOp (op : ClosLang.Op) (recognized : fromOp op ≠ .noop) : toOp (fromOp op) = op := by
@@ -172,6 +226,21 @@ def checkExpSingle (loc arity : Nat) (e : Exp) : Option AssocOp :=
     match op with
     | some o => if ty == opType o then some o else none
     | none => none
+
+/-- Source-shaped candidate decision using the original list-based scan. -/
+def checkExpOriginal (loc arity : Nat) (e : Exp) : Option AssocOp :=
+  if !hasRec1 loc e then none else
+    match scanExpr (List.replicate arity .any) loc [e] with
+    | [] => none
+    | (_, ty, _, op) :: _ =>
+      match op with
+      | some o => if ty == opType o then some o else none
+      | none => none
+
+/-- The source's list-based decision and its singleton form agree. -/
+theorem checkExpOriginal_eq (loc arity : Nat) (e : Exp) :
+    checkExpOriginal loc arity e = checkExpSingle loc arity e := by
+  simp [checkExpOriginal, checkExpSingle, scanExpr_single]
 
 /-- The executed decision computes the source-shaped single-expression
 decision for every fuel value. -/

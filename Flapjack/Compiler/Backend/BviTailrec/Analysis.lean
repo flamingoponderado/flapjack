@@ -256,6 +256,34 @@ mutual
   termination_by xs => sizeOf xs
 end
 
+/-- List-based source scan with the non-recursive singleton cases delegated to
+`scanSing`. The default for an empty singleton result is unreachable; the
+source uses `HD` in those positions. -/
+def scanExpr (ctx : List ValueType) (loc : Nat) : List Exp → List Scan
+  | [] => []
+  | x :: y :: xs =>
+    let head := (scanExpr ctx loc [x]).headD (ctx, .any, false, none)
+    head :: scanExpr head.1 loc (y :: xs)
+  | [.ifThenElse cond yes no] =>
+    let (ci, _, _, _) := (scanExpr ctx loc [cond]).headD (ctx, .any, false, none)
+    let (ct, tt, _, ot) := (scanExpr ci loc [yes]).headD (ci, .any, false, none)
+    let (ce, te, _, oe) := (scanExpr ci loc [no]).headD (ci, .any, false, none)
+    let op := ot.orElse fun _ => oe
+    let ty := match op with | none => decideType tt te | some o => decideType tt (decideType te (opType o))
+    [((ct.zip ce).map fun (x, y) => decideType x y, ty, oe.isSome, op)]
+  | [.let xs body] =>
+    let scans := scanExpr ctx loc xs
+    let types := scans.map fun (_, ty, _, _) => ty
+    let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ctx
+    let (out, ty, _, op) := (scanExpr (types ++ last) loc [body]).headD (types ++ last, .any, false, none)
+    [(out.drop scans.length, ty, false, op)]
+  | [.tick body] => scanExpr ctx loc [body]
+  | [e] => [scanSing ctx loc e]
+termination_by es => sizeOf es
+decreasing_by
+  all_goals simp_wf
+  all_goals first | omega | (cases y <;> simp_wf <;> omega)
+
 mutual
   /-- Analyze one expression in the source evaluation order. -/
   def scanFuel : Nat → List ValueType → Nat → Exp → Option Scan

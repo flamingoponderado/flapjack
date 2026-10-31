@@ -115,21 +115,20 @@ def rewriteSingle (loc next : Nat) (op : AssocOp) (acc : Nat)
   | e => (false, applyOp op (.var acc) e)
 termination_by e => sizeOf e
 
-/-- Source rewrite after replacing singleton and list scans with their
-source-defined single-expression and list counterparts. -/
+/-- Source-shaped rewrite using the original list-based scan. -/
 def rewriteSource (loc next : Nat) (op : AssocOp) (acc : Nat)
     (ctx : List ValueType) : Exp → Bool × Exp
   | .var n => (false, .var n)
   | .force l n => (false, .force l n)
   | .ifThenElse cond yes no =>
-    let ctx' := (scanSing ctx loc cond).1
+    let ctx' := ((scanExpr ctx loc [cond]).headD (ctx, .any, false, none)).1
     let (ry, y) := rewriteSource loc next op acc ctx' yes
     let (rn, n) := rewriteSource loc next op acc ctx' no
     let y := if ry then y else applyOp op (.var acc) yes
     let n := if rn then n else applyOp op (.var acc) no
     (ry || rn, .ifThenElse cond y n)
   | .let xs body =>
-    let scans := scanList ctx loc xs
+    let scans := scanExpr ctx loc xs
     let types := scans.map fun (_, ty, _, _) => ty
     let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ctx
     let (r, body) := rewriteSource loc next op (acc + xs.length) (types ++ last) body
@@ -152,10 +151,13 @@ theorem rewriteSingle_eq_source (loc next : Nat) (op : AssocOp) (acc : Nat)
   | ifThenElse cond yes no =>
     rw [rewriteSingle.eq_def, rewriteSource.eq_def]
     dsimp only
+    rw [scanExpr_single ctx loc cond]
     rw [rewriteSingle_eq_source loc next op acc _ yes, rewriteSingle_eq_source loc next op acc _ no]
+    rfl
   | «let» xs body =>
     rw [rewriteSingle.eq_def, rewriteSource.eq_def]
     dsimp only
+    rw [scanExpr_list ctx loc xs]
     cases last : (scanList ctx loc xs).getLast? with
     | none =>
       rw [rewriteSingle_eq_source loc next op (acc + xs.length) _ body]
@@ -290,13 +292,14 @@ theorem compileExpBounded_eq (fuel loc next arity : Nat) (e : Exp) :
 when the single-expression candidate check selects an operator. -/
 theorem compileExpBounded_eq_source (fuel loc next arity : Nat) (e : Exp) :
     compileExpBounded fuel loc next arity e = some
-      (match checkExpSingle loc arity e with
+      (match checkExpOriginal loc arity e with
        | none => none
        | some op =>
          let worker := (rewriteSource loc next op arity (List.replicate arity .any) e).2
          some (.let ((List.range arity).map .var ++ [identity op]) worker, worker)) := by
   rw [compileExpBounded_eq]
   unfold compileExpSingle
+  rw [checkExpOriginal_eq]
   cases checkExpSingle loc arity e with
   | none => rfl
   | some op =>
