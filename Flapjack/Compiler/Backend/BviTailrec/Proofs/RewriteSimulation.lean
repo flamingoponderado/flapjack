@@ -127,6 +127,103 @@ theorem rewriteTailProperty_var {C F : Type} (n : Nat) :
   intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
   exact rewriteTail_var n source env1 result sourceNext optimized target acc env2 loc ts ty hyp
 
+/-- A known accumulator lookup commutes with a tick around its second operand.
+The timeout still occurs before any accumulator operation is dispatched. -/
+theorem evaluate_applyOp_tick {C F : Type} (op : AssocOp) (acc : Nat)
+    (body : Bvi.Exp) (env : List Value) (state : BviSem.BviState C F)
+    (value : Value) (lookup : env[acc]? = some value) :
+    BviSem.evaluate [applyOp op (.var acc) (.tick body)] env state =
+      BviSem.evaluate [.tick (applyOp op (.var acc) body)] env state := by
+  have varRun (s : BviSem.BviState C F) :
+      BviSem.evaluate [.var acc] env s = (.val [value], s) := by
+    simp [BviSem.evaluate, lookup]
+  have listRun (e : Bvi.Exp) (s : BviSem.BviState C F) :
+      BviSem.evaluate [.var acc, e] env s =
+        match BviSem.evaluate [e] env s with
+        | (.err err, last) => (.err err, last)
+        | (.val values, last) => (.val (value :: values), last) := by
+    have h := BviSem.evaluateConsCons (.var acc) e [] env s
+    simp only [BviSem.evaluateTuple, varRun, Flapjack.holHd] at h
+    cases run : BviSem.evaluate [e] env s with
+    | mk result last => cases result <;> simpa [run] using h
+  by_cases zero : state.clock = 0
+  · simp [applyOp, BviSem.evaluate, listRun, zero, BviSem.fixClock]
+    cases state; simp_all
+  · have bound := BviSem.evaluate_clock_le [body] env (BviSem.decClock 1 state)
+    cases run : BviSem.evaluate [body] env (BviSem.decClock 1 state) with
+    | mk result last =>
+      rw [run] at bound
+      have clocks : last.clock ≤ state.clock - 1 := by simpa [BviSem.decClock] using bound
+      simp only [BviSem.decClock] at run
+      cases result <;>
+        simp [applyOp, BviSem.evaluate, listRun, zero, run, BviSem.fixClock,
+          BviSem.decClock, Nat.min_eq_right (by omega : last.clock ≤ state.clock),
+          Nat.min_eq_right clocks]
+
+/-- Tick case of the source-shaped simulation. The recursive call receives
+both states after decrementing their related clocks. -/
+theorem rewriteTail_tick {C F : Type} (body : Bvi.Exp)
+    (ih : rewriteTailProperty (C := C) (F := F) [body]) :
+    rewriteTailProperty (C := C) (F := F) [.tick body] := by
+  intro source env1 result sourceNext optimized target acc env2 loc ts ty hyp
+  obtain ⟨run, envRelated, stateRelated, types, _, notTypeError⟩ := hyp
+  have clocks := (stateRel_const source target stateRelated).2.1
+  by_cases zero : source.clock = 0
+  · have targetZero : target.clock = 0 := by omega
+    have same : (result, sourceNext) = (.err (.abort .timeoutError), source) := by
+      simpa [BviSem.evaluate, zero] using run.symm
+    cases same
+    refine ⟨target, by simp [BviSem.evaluate, targetZero], stateRelated, ?_⟩
+    intro enabled op workerLoc code arity required
+    simp only [List.headD_cons] at required ⊢
+    have accBound := (envRelated.2 enabled).2.1
+    have lookup : env2[acc]? = some env2[acc] := by simp [accBound]
+    refine ⟨.err (.abort .timeoutError), target, target, ?_, ?_, stateRelated, stateRelated⟩
+    · cases eqn : rewriteSource loc workerLoc op acc ts body with
+      | mk flag rewritten =>
+        rw [rewriteSource.eq_def]
+        dsimp only
+        rw [eqn]
+        simp [BviSem.evaluate, targetZero]
+    · rw [evaluate_applyOp_tick op acc body env2 target env2[acc] lookup]
+      simp [BviSem.evaluate, targetZero]
+  · have targetNonzero : target.clock ≠ 0 := by omega
+    have bodyRun : BviSem.evaluate [body] env1 (BviSem.decClock 1 source) = (result, sourceNext) := by
+      simpa [BviSem.evaluate, zero] using run
+    have nextRelated := stateRel_decClock source target 1 stateRelated
+    have bodyHyp : rewriteTailHyp [body] (BviSem.decClock 1 source) env1 result sourceNext
+        optimized (BviSem.decClock 1 target) acc env2 loc ts ty :=
+      ⟨bodyRun, envRelated, nextRelated, types, by simp, notTypeError⟩
+    obtain ⟨targetNext, targetRun, targetRelated, optRun⟩ :=
+      ih (BviSem.decClock 1 source) env1 result sourceNext optimized
+        (BviSem.decClock 1 target) acc env2 loc ts ty bodyHyp
+    refine ⟨targetNext, by simpa [BviSem.evaluate, targetNonzero] using targetRun, targetRelated, ?_⟩
+    intro enabled op workerLoc code arity required
+    simp only [List.headD_cons] at required ⊢
+    have accBound := (envRelated.2 enabled).2.1
+    have lookup : env2[acc]? = some env2[acc] := by simp [accBound]
+    have requiredBody :
+        sptLookup loc (BviSem.decClock 1 source).code = some (arity, code) ∧
+        optimizedCode loc arity code workerLoc (BviSem.decClock 1 target).code op ∧
+        opType op = ty ∧
+        (∃ op1 tt resultTy branch,
+          scanExpr ts loc [body] = [(tt, resultTy, branch, some op1)] ∧
+          resultTy ≠ .any ∧ op1 ≠ .noop ∧ opType op1 = opType op) := by
+      have scanEq : scanExpr ts loc [.tick body] = scanExpr ts loc [body] := by
+        rw [scanExpr_single, scanExpr_single, scanSing.eq_def]
+      simpa only [BviSem.decClock, scanEq] using required
+    obtain ⟨r, t1, t2, rewritten, applied, rel1, rel2⟩ := optRun enabled op workerLoc code arity requiredBody
+    refine ⟨r, t1, t2, ?_, ?_, rel1, rel2⟩
+    · cases eqn : rewriteSource loc workerLoc op acc ts body with
+      | mk flag rewrittenBody =>
+        simp only [List.headD_cons, eqn] at rewritten
+        rw [rewriteSource.eq_def]
+        dsimp only
+        rw [eqn]
+        simpa [BviSem.evaluate, targetNonzero] using rewritten
+    · rw [evaluate_applyOp_tick op acc body env2 target env2[acc] lookup]
+      simpa [BviSem.evaluate, targetNonzero] using applied
+
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a
 raise as an optimization candidate. -/
