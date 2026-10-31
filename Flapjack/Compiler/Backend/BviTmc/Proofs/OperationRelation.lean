@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Allocation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
 import Flapjack.Compiler.Backend.BviTmc.Proofs.BuildRelation
+import Flapjack.Compiler.Backend.BviTmc.Proofs.ThunkRelation
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
 
 /-! Primitive-operation cases of the TMC evaluation simulation. -/
@@ -2307,5 +2308,147 @@ theorem doApp_op_rel_block {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Cl
   | equal => exact doApp_op_rel_equal f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | equalConst part => exact doApp_op_rel_equalConst f part values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | build parts => exact doApp_op_rel_build f parts values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+
+/-- Allocating a thunk preserves its related payload and extends the pointer map. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_allocThunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (mode : AstHOL.ThunkMode)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.thunkOp (.allocThunk mode)) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.thunkOp (.allocThunk mode))) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.thunkOp (.allocThunk mode)) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
+  | cons first rest =>
+    cases rest with
+    | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
+    | nil =>
+      cases valuesRelated with
+      | @cons a targetFirst xs ys firstRel tailRel =>
+        cases tailRel
+        by_cases bad : BvlSem.badThunkUpdate mode first source.refs
+        · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BviSem.toBvl, bad] at run
+        · have targetGood := goodThunkUpdate_rel mode first targetFirst source.refs target.refs f bad firstRel statesRelated.1
+          have ⟨mapped, nextStates, submap, fresh, holes, unfinalised⟩ :=
+            allocate_related f source target (.thunk mode first) (.thunk mode targetFirst) statesRelated
+              (.thunk mode first targetFirst firstRel)
+          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+            BviSem.toBvl, BviSem.fromBvl, bad] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨f.updateEq (leastUnusedRef source.refs, leastUnusedRef target.refs),
+            .refPtr false (leastUnusedRef target.refs),
+            { target with refs := target.refs.updateEq (leastUnusedRef target.refs, .thunk mode targetFirst) },
+            ?_, .refPtr _ _ false mapped, nextStates, submap, fresh, holes, unfinalised⟩
+          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+            BviSem.toBvl, BviSem.fromBvl, targetGood]
+
+/-- Updating a thunk preserves related payloads and untouched mutable holes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_updateThunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (mode : AstHOL.ThunkMode)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.thunkOp (.updateThunk mode)) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.thunkOp (.updateThunk mode))) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.thunkOp (.updateThunk mode)) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
+    | cons payload rest =>
+      cases rest with
+      | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
+      | nil =>
+        cases first with
+        | number i => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
+        | word64 w => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
+        | block tag xs => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
+        | codePtr n => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
+        | refPtr flag ptr =>
+          cases flag with
+          | true => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
+          | false =>
+            cases valuesRelated with
+            | cons ptrRel tailRel =>
+              cases ptrRel with
+              | refPtr _ targetPtr _ mapped =>
+                cases tailRel with
+                | @cons a targetPayload xs ys payloadRel tailRel =>
+                  cases tailRel
+                  by_cases bad : BvlSem.badThunkUpdate mode payload source.refs
+                  · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BviSem.toBvl, bad] at run
+                  · have targetGood := goodThunkUpdate_rel mode payload targetPayload source.refs target.refs f bad payloadRel statesRelated.1
+                    obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
+                      stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+                    cases cells with
+                    | byteArray b bytes => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BviSem.toBvl, bad, sourceFound] at run
+                    | valueArray xs ys rel => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BviSem.toBvl, bad, sourceFound] at run
+                    | thunk oldMode oldValue targetOld rel =>
+                      cases oldMode with
+                      | evaluated => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BviSem.toBvl, bad, sourceFound] at run
+                      | notEvaluated =>
+                        simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+                          BviSem.toBvl, BviSem.fromBvl, bad, sourceFound] at run
+                        obtain ⟨rfl, rfl⟩ := run
+                        have nextStates : stateRel f
+                            { source with refs := source.refs.updateEq (ptr, .thunk mode payload) }
+                            { target with refs := target.refs.updateEq (targetPtr, .thunk mode targetPayload) } := by
+                          exact ⟨stateRefRel_update f source.refs target.refs ptr targetPtr _ _ statesRelated.1
+                            statesRelated.2.2.2.2.2.2.2.2.2.2 mapped (.thunk _ _ _ payloadRel), statesRelated.2⟩
+                        refine ⟨f, unitValue, { target with refs := target.refs.updateEq (targetPtr, .thunk mode targetPayload) },
+                          ?_, .block _ [] [] .nil, nextStates, ?_, onlyFresh_refl f target.refs,
+                          holesUnchanged_rangeUpdate f ptr targetPtr _ target.refs mapped,
+                          holesStill_rangeUpdate f ptr targetPtr _ target.refs mapped⟩
+                        · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
+                            BviSem.toBvl, BviSem.fromBvl, targetGood, targetFound]
+                        · intro key item present
+                          exact present
+
+/-- The force-thunk primitive is rejected by the BVL dispatcher. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_forceThunk {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.thunkOp .forceThunk) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.thunkOp .forceThunk)) (_valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (_statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.thunkOp .forceThunk) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
+
+/-- Every thunk operation satisfies the source primitive simulation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_thunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : AstHOL.ThunkOp)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.thunkOp op) values source = .val (value, sourceNext))
+    (noMutcons : noMutconsOp (.thunkOp op)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.thunkOp op) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases op with
+  | allocThunk mode => exact doApp_op_rel_allocThunk f mode values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | updateThunk mode => exact doApp_op_rel_updateThunk f mode values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | forceThunk => exact doApp_op_rel_forceThunk f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
 
 end Flapjack.Compiler.Backend.BviTmc
