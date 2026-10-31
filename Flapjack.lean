@@ -701,6 +701,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Thunk
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateThunk
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateForce
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateAll
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRejected
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateOrdinary
 import Flapjack.Test.ClosToBvlRecursive
