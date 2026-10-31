@@ -240,4 +240,21 @@ theorem fmapInj_lookup_eq (f : HolFiniteMapExact Nat Nat) (n m n' m' : Nat)
     rw [left] at right
     exact Option.some.inj right
 
+theorem holFmapAsFiniteSupportParamWitness_no_mutblock_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_no_mutblock_source (source : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup source) source.finiteSupport = source := by cases source; rfl
+theorem holFmapAsFiniteSupportParamWitness_no_mutblock_target (target : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
+
+/-- A related source heap cannot already contain a TMC mutable block. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "no_mutblock"
+  (fmap_as_finite_support_parameters := [f, source, target])]
+theorem no_mutblock (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
+    (target : HolFiniteMapExact Nat (Ref Value)) (ptr tag : Nat) (finalised : Bool)
+    (left : List Value) (child : Value) (right : List Value) (related : stateRefRel f source target)
+    (found : source.lookup ptr = some (.mutBlock tag finalised left child right)) : False := by
+  obtain ⟨_, _, _, cells, _⟩ := related.2 ptr _ found
+  cases cells
+
 end Flapjack.Compiler.Backend.BviTmc
