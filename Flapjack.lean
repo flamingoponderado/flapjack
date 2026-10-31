@@ -476,6 +476,7 @@ import Flapjack.Compiler.Backend.BvlHandle.Proofs.LetLet
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.LetLetEvaluate
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileCases
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.ExpressionCorrect
+import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceCorrect
 import Flapjack.Compiler.Backend.BvlHandle.Compile
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileProduction
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceProduction
