@@ -279,6 +279,26 @@ def rich_extended_program(rng):
     ])
 
 
+def cross_context_program(rng):
+    """Cross patterns, annotations and exception contexts in generated inputs."""
+    types = ["int", "bool", "unit", "int list", "int * bool", "(int -> bool)",
+             "(int * int) list", "missing", "'a list"]
+    patterns = ["x", "_", "(x,y)", "[]", "x::xs", "A", "A x", "(A x,y)",
+                "(x : int)", "(x : bool)"]
+    expressions = ["x", "y", "1", "True", "False", "[]", "[1,2]", "(1,True)",
+                   "fn y => y", "A", "A 1", "raise E 1", "case x of A y => y | _ => 0",
+                   "let val x = 1 in x end"]
+    pattern, expr, typ = rng.choice(patterns), rng.choice(expressions), rng.choice(types)
+    prefix = "datatype t = A int | B; exception E int; "
+    return prefix + rng.choice([
+        f"val {pattern} : {typ} = {expr};",
+        f"fun f ({pattern} : {typ}) = {expr};",
+        f"val x = ({expr} : {typ});",
+        f"fun f x = (case x of {pattern} => {expr} | _ => 0);",
+        f"val x = ({expr} handle {pattern} => 0);",
+    ])
+
+
 def run(executable, options, source, timeout):
     data = source.encode("ascii") if isinstance(source, str) else source
     return subprocess.run([str(executable), "--target=riscv", *options], input=data,
@@ -325,6 +345,8 @@ def main():
                         help="generated pattern, exception handler and constructor scope cases")
     parser.add_argument("--annotation-cases", type=int, default=100,
                         help="type annotations in five contexts (maximum 320)")
+    parser.add_argument("--cross-context-cases", type=int, default=0,
+                        help="generated pattern, annotation and exception context combinations")
     parser.add_argument("--config-cases", type=int, default=10,
                         help="successful compilations with generated backend options")
     parser.add_argument("--config-error-cases", type=int, default=100,
@@ -349,6 +371,7 @@ def main():
     if (args.type_cases < 0 or args.compile_cases < 0 or args.compile_config_cases < 0 or args.rich_cases < 0 or args.extended_cases < 0 or args.explore_cases < 0 or args.sexp_cases < 0 or
             not 0 <= args.integration_cases <= len(INTEGRATION_PROGRAMS) or
             args.declaration_cases < 0 or args.handler_cases < 0 or not 0 <= args.annotation_cases <= 320 or
+            args.cross_context_cases < 0 or
             args.config_cases < 0 or args.config_error_cases < 0 or
             args.structured_cases < 0 or args.lex_cases < 0 or args.token_cases < 0 or args.raw_byte_cases < 0 or
             not 0 <= args.byte_cases <= 256 or args.timeout <= 0):
@@ -418,6 +441,12 @@ def main():
     for source in annotation_cases[:args.annotation_cases]:
         compare(args.reference, args.cake, ["--types"], source, args.timeout, False)
     print(f"{args.annotation_cases} type annotation cases match pinned CakeML", flush=True)
+    cross_rng = random.Random(args.edge_seed)
+    for _ in range(args.cross_context_cases):
+        compare(args.reference, args.cake, ["--types", "--exclude_prelude=true"],
+                cross_context_program(cross_rng), args.timeout, False)
+    if args.cross_context_cases:
+        print(f"{args.cross_context_cases} cross-context cases match pinned CakeML", flush=True)
     if args.config_error_cases:
         option_rng = random.Random(args.edge_seed ^ 344)
         option_cases = [[flag + value] for flag in CONFIG_FLAGS for value in CONFIG_VALUES]

@@ -709,6 +709,21 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
   --raw-byte-cases 0 --compile-seed 550103 --timeout 45
 ```
 
+Another run matched 60 complete outputs for stateful, recursive, exception,
+and module programs with `--extended-cases 60 --compile-seed 83443` (all other
+case counts zero). The `--cross-context-cases` generator combines patterns,
+type annotations, constructors and exception handlers; 2,000 cases matched
+the pinned compiler's complete type-mode output and exit status using:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 0 --compile-cases 0 --compile-config-cases 0 --rich-cases 0 \
+  --extended-cases 0 --integration-cases 0 --declaration-cases 0 --handler-cases 0 \
+  --annotation-cases 0 --cross-context-cases 2000 --config-cases 0 \
+  --config-error-cases 0 --sexp-cases 0 --byte-cases 0 --structured-cases 0 \
+  --lex-cases 0 --token-cases 0 --raw-byte-cases 0 --edge-seed 992414 --timeout 20
+```
+
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
 output for 28 benchmark programs and three bootstrap hello programs from the pinned
 CakeML submodule with captured original-compiler output. It checks the source revision and source hashes before
