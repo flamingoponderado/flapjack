@@ -2774,6 +2774,71 @@ theorem rewriteTail_if {C F : Type} (cond yes no : Bvi.Exp)
               rw [evaluate_if_of_guard _ _ _ env2 target targetMiddle value flag targetGuard truth]
               cases flag <;> simpa [selected] using branchApplied
 
+/-- Operation evaluation is simulated when both successful applications and
+primitive errors agree on related states. This includes non-type FFI errors. -/
+theorem evaluate_op_related_errors {C F : Type} (operation : ClosLang.Op) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (appSuccess : ∀ (values : List Value) (s t : BviSem.BviState (Nat × C) F)
+      (u : BviSem.BviState C F) (v : Value), stateRel s u →
+      BviSem.doApp operation values s = .val (v, t) →
+      ∃ u', BviSem.doApp operation values u = .val (v, u') ∧ stateRel t u')
+    (appError : ∀ (values : List Value) (s : BviSem.BviState (Nat × C) F)
+      (u : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet),
+      stateRel s u → BviSem.doApp operation values s = .err error →
+      BviSem.doApp operation values u = .err error)
+    (hyp : rewriteTailHyp [.op operation args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    ∃ targetNext, BviSem.evaluate [.op operation args] env2 target = (result, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  obtain ⟨run, envRelated, related, types, _, notTypeError⟩ := hyp
+  have disabled := envRel_disable ty optimized acc env1 env2 envRelated
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate] at run
+  cases argsRun : BviSem.evaluate args env1 source with
+  | mk argsResult middle =>
+    cases argsResult with
+    | err error =>
+      simp only [argsRun] at run
+      have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
+        intro bad
+        apply notTypeError
+        exact (congrArg Prod.fst run).symm.trans bad
+      have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
+          target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
+      obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
+        argsIH source env1 (.err error) middle false target acc env2 loc ts ty argsHyp
+      have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun] using run
+      cases same
+      refine ⟨targetMiddle, ?_, middleRelated⟩
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
+    | val values =>
+      have argsHyp : rewriteTailHyp args source env1 (.val values) middle false
+          target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, by simp⟩
+      obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
+        argsIH source env1 (.val values) middle false target acc env2 loc ts ty argsHyp
+      cases applied : BviSem.doApp operation values.reverse middle with
+      | err error =>
+        have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun, applied] using run
+        cases same
+        have targetApplied := appError values.reverse sourceNext targetMiddle error middleRelated applied
+        refine ⟨targetMiddle, ?_, middleRelated⟩
+        rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
+        dsimp only
+        rw [targetApplied]
+      | val pair =>
+        obtain ⟨value, last⟩ := pair
+        have same : (.val [value], last) = (result, sourceNext) := by simpa [argsRun, applied] using run
+        cases same
+        obtain ⟨targetNext, targetApplied, finalRelated⟩ :=
+          appSuccess values.reverse middle sourceNext targetMiddle value middleRelated applied
+        refine ⟨targetNext, ?_, finalRelated⟩
+        rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
+        dsimp only
+        rw [targetApplied]
+
 /-- Ordinary operation evaluation is simulated when successful primitive
 applications preserve state relations and primitive errors are type errors.
 This Flapjack helper isolates those primitive obligations. -/
@@ -2865,6 +2930,33 @@ theorem rewriteTail_op_noChoice {C F : Type} (operation : ClosLang.Op) (args : L
   intro tt resultTy branch op1 scan
   rw [scanExpr_single] at scan
   have scanEq : scanSing ts loc (.op operation args) = (tt, resultTy, branch, some op1) := by
+    simpa using scan
+  rw [scanEq] at noChoice
+  simp at noChoice
+
+/-- External-call operations preserve the simulation, including final FFI
+errors and updates to the FFI and reference states. -/
+theorem rewriteTail_op_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (args : List Bvi.Exp) (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.ffi name) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.ffi name) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  obtain ⟨targetNext, targetRun, targetRelated⟩ :=
+    evaluate_op_related_errors (.ffi name) args source env1 result sourceNext optimized target acc env2 loc ts ty
+      argsIH (stateRel_doApp_ffi name) (stateRel_doApp_ffi_error name) hyp
+  apply rewriteTailPost_of_no_scan (.op (.ffi name) args) source env1 result sourceNext
+    optimized target targetNext acc env2 loc ts ty targetRun targetRelated
+  intro tt resultTy branch op1 scan
+  have noChoice : (scanSing ts loc (.op (.ffi name) args)).2.2.2 = none := by
+    rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  rw [scanExpr_single] at scan
+  have scanEq : scanSing ts loc (.op (.ffi name) args) = (tt, resultTy, branch, some op1) := by
     simpa using scan
   rw [scanEq] at noChoice
   simp at noChoice

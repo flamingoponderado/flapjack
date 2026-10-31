@@ -467,6 +467,89 @@ theorem doApp_intConst_error {C F : Type} (number : Int) (args : List Value)
     · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, small] at run
     · simpa [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, small] using run.symm
 
+/-- The state-independent outcome of an external call, retaining exactly the
+reference-store and FFI updates that the BVI dispatcher copies back. -/
+noncomputable def ffiEffect {F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (args : List Value) (refs : HolFiniteMapExact Nat (Ref Value)) (ffi : HolFfiState F) :
+    SemanticPrimitivesHOL.Result (HolFiniteMapExact Nat (Ref Value) × HolFfiState F) BviSem.ExnOrRet :=
+  match args with
+  | [.refPtr _ configPtr, .refPtr _ ptr] =>
+    match refs.lookup configPtr, refs.lookup ptr with
+    | some (.byteArray true config), some (.byteArray false bytes) =>
+      match callFFIHOL ffi (.extCall name) config bytes with
+      | .ret ffi' updated => .val (refs.updateEq (ptr, .byteArray false updated), ffi')
+      | .final outcome => .err (.abort (.ffiError outcome))
+    | _, _ => .err (.abort .typeError)
+  | _ => .err (.abort .typeError)
+
+/-- External calls update only the shared reference and FFI fields. -/
+theorem doApp_ffi_effect {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (args : List Value) (state : BviSem.BviState C F) :
+    BviSem.doApp (.ffi name) args state =
+      match ffiEffect name args state.refs state.ffi with
+      | .err error => .err error
+      | .val (refs, ffi) => .val (unitValue, { state with refs := refs, ffi := ffi }) := by
+  cases args with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, ffiEffect]
+  | cons a rest =>
+    cases rest with
+    | nil => cases a <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, ffiEffect]
+    | cons b rest =>
+      cases rest with
+      | cons c cs => cases a <;> cases b <;>
+          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, ffiEffect]
+      | nil =>
+        cases a <;> cases b <;>
+          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, ffiEffect,
+            BviSem.toBvl, BviSem.fromBvl]
+        rename_i flag1 ptr1 flag2 ptr2
+        cases first : state.refs.lookup ptr1 with
+        | none => simp
+        | some ref1 =>
+          cases second : state.refs.lookup ptr2 with
+          | none => simp
+          | some ref2 =>
+            cases ref1 <;> cases ref2 <;> try simp
+            all_goals rename_i xflag config yflag bytes
+            all_goals cases xflag <;> cases yflag <;> try simp
+            all_goals cases outcome : callFFIHOL state.ffi (.extCall name) config bytes <;>
+              simp
+
+/-- Successful external calls preserve related states, including the updated
+reference bytes and FFI state. -/
+theorem stateRel_doApp_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (args : List Value) (source sourceNext : BviSem.BviState (Nat × C) F)
+    (target : BviSem.BviState C F) (value : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.ffi name) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.ffi name) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  have refs := (stateRel_const source target related).1
+  have ffi := (stateRel_const source target related).2.2.2
+  rw [doApp_ffi_effect] at run ⊢
+  rw [refs, ffi]
+  cases effect : ffiEffect name args source.refs source.ffi with
+  | err error => simp [effect] at run
+  | val pair =>
+    obtain ⟨newRefs, newFfi⟩ := pair
+    simp [effect] at run
+    obtain ⟨rfl, rfl⟩ := run
+    refine ⟨{ target with refs := newRefs, ffi := newFfi }, by simp, ?_⟩
+    exact stateRel_withFfi _ _ newFfi (stateRel_withRefs source target newRefs related)
+
+/-- External-call errors, including final FFI outcomes, agree in related states. -/
+theorem stateRel_doApp_ffi_error {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (args : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet) (related : stateRel source target)
+    (run : BviSem.doApp (.ffi name) args source = .err error) :
+    BviSem.doApp (.ffi name) args target = .err error := by
+  have refs := (stateRel_const source target related).1
+  have ffi := (stateRel_const source target related).2.2.2
+  rw [doApp_ffi_effect] at run ⊢
+  rw [refs, ffi]
+  cases effect : ffiEffect name args source.refs source.ffi with
+  | err e => simpa [effect] using run
+  | val pair => cases pair; simp [effect] at run
+
 /-- Reading a global slot depends only on the shared global pointer and
 reference store. -/
 theorem stateRel_doApp_global {C F : Type} (index : Nat) (args : List Value)
