@@ -639,6 +639,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveInstalled
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveAllocation
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveSteps
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLetrecMutual
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
 import Flapjack.Compiler.Backend.ClosToBvl.Layout.Auxiliary
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Integer

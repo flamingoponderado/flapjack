@@ -124,4 +124,22 @@ theorem recursiveEntries_projections (functions : List (Nat × ClosLang.Exp)) (b
     rw [List.range_eq_range', ← List.zipIdx_map_snd 0 functions, List.map_map]
     rfl
 
+/-- Compiling recursive function bodies preserves the group size. -/
+theorem compileExpFuns_length (maxApp : Nat) (functions : List (Nat × ClosLang.Exp))
+    (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List (Nat × Bvl.Exp))
+    (run : compileExpFunsHOL maxApp functions aux = (compiled, finalAux)) :
+    compiled.length = functions.length := by
+  induction functions generalizing aux finalAux compiled with
+  | nil => simp [compileExpFunsHOL] at run; simp [← run.1]
+  | cons entry rest ih =>
+    obtain ⟨arity, body⟩ := entry
+    cases headRun : compileExpHOL maxApp body aux with
+    | mk targetBody auxMiddle =>
+      cases tailRun : compileExpFunsHOL maxApp rest auxMiddle with
+      | mk targetRest auxLast =>
+        have shape : (arity, targetBody) :: targetRest = compiled ∧ auxLast = finalAux := by
+          simpa [compileExpFunsHOL, headRun, tailRun] using run
+        obtain ⟨rfl, rfl⟩ := shape
+        simpa using congrArg Nat.succ (ih auxMiddle auxLast targetRest tailRun)
+
 end Flapjack.Compiler.Backend.ClosToBvl
