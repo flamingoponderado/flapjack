@@ -293,6 +293,18 @@ theorem imm32_eImm32_at (imm : BitVec 64) (off : Nat) (r : Nat → BitVec 8)
   simp only [le32, e0, e1, e2, e3]
   exact imm32_eImm32 imm h1 h2
 
+/-- `imm8` reads back an `e_imm8` byte at any offset. -/
+theorem imm8_at (imm : BitVec 64) (off : Nat) (r : Nat → BitVec 8)
+    (hr : r off = byte imm.toNat)
+    (h1 : -(2^7 : Int) ≤ imm.toInt) (h2 : imm.toInt < 2^7) :
+    imm8 r off = imm := by
+  rw [imm8, hr]
+  have hb : byte imm.toNat = BitVec.setWidth 8 imm := by
+    simpa using byte_extract imm 0
+  rw [hb]
+  have := setWidth8_toInt imm h1 h2
+  rw [this, BitVec.ofInt_toInt]
+
 /-- `imm8` reads back an `e_imm8` immediate in the signed 8-bit range. -/
 theorem imm8_eImm8 (imm : BitVec 64)
     (h1 : -(2^7 : Int) ≤ imm.toInt) (h2 : imm.toInt < 2^7) :
