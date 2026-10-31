@@ -507,6 +507,7 @@ import Flapjack.Compiler.Backend.BviInline.Proofs.Total
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
 import Flapjack.Compiler.Backend.BviTmc.Proofs.PureCorrespondence
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
+import Flapjack.Compiler.Backend.BviTmc.Proofs.RewriteCorrespondence
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Total
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeNames
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.Total
