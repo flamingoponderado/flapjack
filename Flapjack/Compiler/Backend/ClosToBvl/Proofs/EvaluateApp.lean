@@ -2835,4 +2835,82 @@ theorem evaluateApp_ordinary_partial_again_simulation {C F : Type}
       · intro key value mapped fresh; exact ⟨mapped, fresh⟩
       · simp [ClosSem.decClock, next, BvlSem.decClock, start]
 
+/-- A related already-partial ordinary closure exposes its original closure
+and the corresponding saved argument values. -/
+theorem vRel_ordinary_partial_existing {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity : Nat) (captured oldArgs : List ClosSem.Value) (body : ClosLang.Exp)
+    (target : BvlSem.Value) (nonempty : oldArgs ≠ [])
+    (related : vRel s.maxApp f t.refs t.code (.closure (some ptr) oldArgs captured arity body) target) :
+    ∃ oldTargets targetOriginal,
+      target = .block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) ::
+        .number (Int.ofNat (arity - 1 - oldArgs.length)) :: targetOriginal :: oldTargets) ∧
+      vRel s.maxApp f t.refs t.code (.closure (some ptr) [] captured arity body) targetOriginal ∧
+      List.Forall₂ (vRel s.maxApp f t.refs t.code) oldArgs oldTargets := by
+  cases related with
+  | closure envRel closure => cases closure; simp_all
+  | @partialClosure env fvs argEnv ys numArgs cl clApp cl' envRel argRel argsNonempty argsBound installed added arityEq closure =>
+    cases cl <;> simp [addArgs] at added
+    case closure loc supplied captured' arity' body' =>
+      obtain ⟨rfl, argsEq, rfl, rfl, rfl⟩ := added
+      cases closure with
+      | closure bound positive locs vars compiled codeInstalled lookup =>
+        simp only [List.append_nil] at argsEq
+        subst oldArgs
+        simp [getNumArgs] at arityEq
+        subst numArgs
+        exact ⟨ys, _, rfl, .closure envRel (.closure bound positive locs vars compiled codeInstalled lookup), argRel⟩
+
+/-- The repeated-partial simulation follows from the ordinary value relation;
+callers need not supply the target closure layout or saved values separately. -/
+theorem evaluateApp_ordinary_partial_again_related {C F : Type}
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
+    (ptr arity : Nat) (captured oldArgs newArgs : List ClosSem.Value)
+    (newTargets rest : List BvlSem.Value) (body : ClosLang.Exp) (target : BvlSem.Value)
+    (states : stateRel f s t) (annotations : codeAnnotations s)
+    (related : vRel s.maxApp f t.refs t.code (.closure (some ptr) oldArgs captured arity body) target)
+    (newRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) newArgs newTargets)
+    (oldNonempty : oldArgs ≠ []) (nonempty : newArgs ≠ [])
+    (partialBound : (newArgs ++ oldArgs).length < arity) :
+    ∃ result sFinal,
+      ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) newArgs s = (result, sFinal) ∧
+      evaluatePost s sFinal t (newTargets ++ [target] ++ rest) f result
+        [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)] := by
+  obtain ⟨oldTargets, original, rfl, originalRel, oldRel⟩ :=
+    vRel_ordinary_partial_existing s t f ptr arity captured oldArgs body target oldNonempty related
+  exact evaluateApp_ordinary_partial_again_simulation s t f ptr arity captured oldArgs newArgs
+    oldTargets newTargets rest body original states annotations originalRel oldRel newRel oldNonempty nonempty partialBound
+
+/-- Compose repeated ordinary partial application with the function and
+argument expression simulations. -/
+theorem evaluatePost_app_ordinary_partial_again {C F : Type}
+    (s sArgs sFunction sFinal : ClosSem.State C F) (t : BvlSem.State C F)
+    (sourceEnv : List ClosSem.Value) (targetEnv : List BvlSem.Value) (f : HolFiniteMapExact Nat Nat)
+    (sourceArgs : List ClosLang.Exp) (sourceFunction : ClosLang.Exp)
+    (targetArgs : List Bvl.Exp) (targetFunction : Bvl.Exp) (values captured oldArgs : List ClosSem.Value)
+    (ptr arity : Nat) (body : ClosLang.Exp) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (argsRun : ClosSem.evaluate sourceArgs sourceEnv s = (.val values, sArgs))
+    (functionRun : ClosSem.evaluate [sourceFunction] sourceEnv sArgs =
+      (.val [.closure (some ptr) oldArgs captured arity body], sFunction))
+    (appRun : ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) values sFunction =
+      (result, sFinal)) (oldNonempty : oldArgs ≠ []) (nonempty : values ≠ [])
+    (partialBound : (values ++ oldArgs).length < arity)
+    (envRelated : envRel s.maxApp f t.refs t.code sourceEnv targetEnv)
+    (argsPost : evaluatePost s sArgs t targetEnv f (.val values) targetArgs)
+    (functionIH : ∀ (tArgs : BvlSem.State C F) (fArgs : HolFiniteMapExact Nat Nat),
+      stateRel fArgs sArgs tArgs → envRel sArgs.maxApp fArgs tArgs.refs tArgs.code sourceEnv targetEnv →
+      codeAnnotations sArgs → sptSubspt t.code tArgs.code →
+      evaluatePost sArgs sFunction tArgs targetEnv fArgs (.val [.closure (some ptr) oldArgs captured arity body]) [targetFunction]) :
+    evaluatePost s sFinal t targetEnv f result [appTarget s.maxApp none targetArgs targetFunction] := by
+  apply evaluatePost_app_generic_success s sArgs sFunction sFinal t sourceEnv targetEnv f sourceArgs sourceFunction
+    targetArgs targetFunction values (.closure (some ptr) oldArgs captured arity body) result
+    argsRun functionRun envRelated argsPost functionIH
+  intro targetValues targetClosure tFunction fFunction states annotations argsRel functionRel
+  obtain ⟨sourceResult, sourceFinal, sourceRun, targetPost⟩ :=
+    evaluateApp_ordinary_partial_again_related sFunction tFunction fFunction ptr arity captured oldArgs values
+      targetValues targetEnv body targetClosure states annotations functionRel argsRel oldNonempty nonempty partialBound
+  rw [appRun] at sourceRun
+  cases sourceRun
+  exact targetPost
+
 end Flapjack.Compiler.Backend.ClosToBvl
