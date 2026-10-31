@@ -1913,6 +1913,47 @@ theorem rewriteTail_op_setGlobalsPtr {C F : Type}  (args : List Bvi.Exp)
   · exact doApp_setGlobalsPtr_error
   · exact hyp
 
+/-- Complete operation case for integer primitives that the accumulator scan
+does not recognize, including subtraction, division, and comparisons. -/
+theorem rewriteTail_op_nonAccumulatorInt {C F : Type} (operation : ClosLang.IntOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (notAccumulator : fromOp (.intOp operation) = .noop)
+    (hyp : rewriteTailHyp [.op (.intOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.intOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.intOp operation) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice, notAccumulator]
+    rfl
+  · exact stateRel_doApp_intOp_success operation
+  · exact doApp_intOp_error operation
+  · exact hyp
+
+/-- Complete operation case for word primitives, which do not select an
+accumulator optimization. -/
+theorem rewriteTail_op_word {C F : Type} (operation : ClosLang.WordOp) (args : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (argsIH : rewriteTailProperty (C := C) (F := F) args)
+    (hyp : rewriteTailHyp [.op (.wordOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty) :
+    rewriteTailPost [.op (.wordOp operation) args] source env1 result sourceNext
+      optimized target acc env2 loc ts ty := by
+  apply rewriteTail_op_noChoice (.wordOp operation) args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH
+  · rw [scanSing_op_choice]
+    simp [fromOp, BEq.beq, instBEqAssocOp.beq]
+  · exact stateRel_doApp_wordOp_success operation
+  · exact doApp_wordOp_error operation
+  · exact hyp
+
 /-- The raise case simulates the raised expression under the same state and
 an environment with optimization disabled. The source scan cannot select a
 raise as an optimization candidate. -/

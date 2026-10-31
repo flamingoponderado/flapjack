@@ -145,6 +145,114 @@ theorem stateRel_withFfi {C F : Type} (source : BviSem.BviState (Nat × C) F)
   rcases related with ⟨refs, clock, global, _, oracle, compiler, code, ns, input, bound⟩
   exact ⟨refs, clock, global, rfl, oracle, compiler, code, ns, input, bound⟩
 
+/-- Pure integer-primitive result, including BVI's bounded constant rule. -/
+def intPrimitiveResult (op : ClosLang.IntOp) (args : List Value) : Option Value :=
+  match op, args with
+  | .const number, [] => if BackendCommon.smallEnoughInt number then some (.number number) else none
+  | .const _, _ => none
+  | _, _ => BvlSem.doIntApp op args
+
+/-- Integer primitive dispatch is independent of BVI state and leaves it
+unchanged whenever it succeeds. -/
+theorem doApp_intOp_pure {C F : Type} (op : ClosLang.IntOp) (args : List Value)
+    (state : BviSem.BviState C F) :
+    BviSem.doApp (.intOp op) args state =
+      match intPrimitiveResult op args with
+      | none => .err (.abort .typeError)
+      | some value => .val (value, state) := by
+  have convert (found : Option Value) :
+      (match (match found.map (fun value => (value, BviSem.toBvl state)) with
+        | none => .err (.abort .typeError)
+        | some pair => .val pair : SemanticPrimitivesHOL.Result (Value × BvlSem.State C F) Value) with
+       | .val (value, next) => .val (value, BviSem.fromBvl next state)
+       | .err (.abort error) => .err (.abort error)
+       | .err (.raise value) => .err (.raise (.exn value)) :
+         SemanticPrimitivesHOL.Result (Value × BviSem.BviState C F) BviSem.ExnOrRet) =
+      (match found with
+       | none => .err (.abort .typeError)
+       | some value => .val (value, state)) := by
+    cases found <;> simp [BviSem.fromBvl_toBvl]
+  cases op with
+  | const number =>
+    cases args <;> by_cases small : BackendCommon.smallEnoughInt number <;>
+      simp [intPrimitiveResult, BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, small]
+  | _ =>
+    all_goals simp only [intPrimitiveResult, BviSem.doApp, BviSem.doAppFallback,
+      BviSem.doAppAux, BvlSem.doApp, BvlSem.applyNumeric]
+    all_goals exact convert _
+
+/-- Integer primitive application preserves state relations, including the
+source type-error outcome. -/
+theorem stateRel_doApp_intOp {C F : Type} (op : ClosLang.IntOp) (args : List Value)
+    (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (related : stateRel source target) :
+    (BviSem.doApp (.intOp op) args source = .err (.abort .typeError) ∧
+      BviSem.doApp (.intOp op) args target = .err (.abort .typeError)) ∨
+    ∃ value, BviSem.doApp (.intOp op) args source = .val (value, source) ∧
+      BviSem.doApp (.intOp op) args target = .val (value, target) ∧ stateRel source target := by
+  rw [doApp_intOp_pure, doApp_intOp_pure]
+  cases h : intPrimitiveResult op args with
+  | none => exact Or.inl ⟨rfl, rfl⟩
+  | some value => exact Or.inr ⟨value, rfl, rfl, related⟩
+
+/-- Successful integer primitives preserve related states. -/
+theorem stateRel_doApp_intOp_success {C F : Type} (op : ClosLang.IntOp) (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.intOp op) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.intOp op) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  rcases stateRel_doApp_intOp op args source target related with failed | ⟨v, sourceRun, targetRun, rel⟩
+  · rw [failed.1] at run
+    contradiction
+  · rw [sourceRun] at run
+    cases run
+    exact ⟨target, targetRun, rel⟩
+
+/-- Every integer primitive error is the source type error. -/
+theorem doApp_intOp_error {C F : Type} (op : ClosLang.IntOp) (args : List Value)
+    (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.intOp op) args state = .err error) : error = .abort .typeError := by
+  rw [doApp_intOp_pure] at run
+  cases found : intPrimitiveResult op args with
+  | none => simpa [found] using run.symm
+  | some value => simp [found] at run
+
+/-- Word primitive dispatch is pure and leaves the BVI state unchanged. -/
+theorem doApp_wordOp_pure {C F : Type} (op : ClosLang.WordOp) (args : List Value)
+    (state : BviSem.BviState C F) :
+    BviSem.doApp (.wordOp op) args state =
+      match BvlSem.doWordApp op args with
+      | none => .err (.abort .typeError)
+      | some value => .val (value, state) := by
+  simp only [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux,
+    BvlSem.doApp, BvlSem.applyNumeric]
+  cases found : BvlSem.doWordApp op args <;> simp [BviSem.fromBvl_toBvl]
+
+/-- Successful word operations preserve related states. -/
+theorem stateRel_doApp_wordOp_success {C F : Type} (op : ClosLang.WordOp) (args : List Value)
+    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
+    (value : Value) (related : stateRel source target)
+    (run : BviSem.doApp (.wordOp op) args source = .val (value, sourceNext)) :
+    ∃ targetNext, BviSem.doApp (.wordOp op) args target = .val (value, targetNext) ∧
+      stateRel sourceNext targetNext := by
+  rw [doApp_wordOp_pure] at run ⊢
+  cases found : BvlSem.doWordApp op args with
+  | none => simp [found] at run
+  | some result =>
+    simp [found] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨target, by simp, related⟩
+
+/-- Every word primitive error is the source type error. -/
+theorem doApp_wordOp_error {C F : Type} (op : ClosLang.WordOp) (args : List Value)
+    (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.wordOp op) args state = .err error) : error = .abort .typeError := by
+  rw [doApp_wordOp_pure] at run
+  cases found : BvlSem.doWordApp op args with
+  | none => simpa [found] using run.symm
+  | some value => simp [found] at run
+
 /-- Successful label primitives preserve related states and produce the same
 code pointer. The source code relation guarantees the label exists on the
 target even when its body has been rewritten. -/
