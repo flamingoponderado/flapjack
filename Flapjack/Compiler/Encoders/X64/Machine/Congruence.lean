@@ -80,4 +80,33 @@ theorem movImm_congr (low : Nat) (r r' : Nat → BitVec 8) (rexB rexW : Bool)
   simp only [movImm, le64_congr r r' 2 (fun i hi => h i (by omega)),
     imm32_congr r r' 2 (fun i hi => h i (by omega))]
 
+/-! ## The SSE decoder -/
+
+/-- Two readers agreeing on the eight bytes from `off` decode the same SSE
+instruction.  The only reader-dependent byte beyond the operand parser is the
+shift immediate at `off + 1 + p.len`, which lies within the bound because a
+parsed operand consumes at most six bytes. -/
+theorem decodeSSE_congr (r r' : Nat → BitVec 8) (off : Nat) (mandatory : Nat)
+    (hasRex rexW rexR rexB : Bool) (h : ∀ i, i < off + 8 → r i = r' i) :
+    decodeSSE r off mandatory hasRex rexW rexR rexB =
+      decodeSSE r' off mandatory hasRex rexW rexR rexB := by
+  have hp1 : parseRM r (off + 1) rexB = parseRM r' (off + 1) rexB :=
+    parseRM_congr r r' (off + 1) rexB (fun i hi => h i (by omega))
+  have hp2 : parseRM r (off + 2) rexB = parseRM r' (off + 2) rexB :=
+    parseRM_congr r r' (off + 2) rexB (fun i hi => h i (by omega))
+  simp only [decodeSSE]
+  rw [h off (by omega), h (off + 1) (by omega), hp1, hp2]
+  cases hp : parseRM r' (off + 1) rexB with
+  | none => simp
+  | some p =>
+    cases hp2' : parseRM r' (off + 2) rexB with
+    | none =>
+      have hl : p.len ≤ 6 := parseRM_len_le r' (off + 1) rexB p hp
+      simp
+      rw [h (off + 1 + p.len) (by omega)]
+    | some q =>
+      have hl : p.len ≤ 6 := parseRM_len_le r' (off + 1) rexB p hp
+      simp
+      rw [h (off + 1 + p.len) (by omega)]
+
 end Flapjack.Compiler.Encoders.X64
