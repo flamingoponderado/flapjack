@@ -162,4 +162,89 @@ theorem evaluate_call_no_handler_non_extracted {C F : Type} (loc ticks : Nat)
     simp only [rewriteWorkerSource, notExtracted]
     exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
 
+/-- Flapjack infrastructure: when a called body raises an exception, the
+handler induction hypothesis applies at the body’s final clock.  The raised
+values and environments are related at the map produced by the body. -/
+theorem evaluate_call_handler_from_weight {C F : Type} (loc ticks destination : Nat)
+    (args : List Bvi.Exp) (handler body targetBody : Bvi.Exp)
+    (initial bodyStart bodyFinal : BviState (Nat × C) F) (bodyTarget : BviState C F)
+    (callEnv targetCallEnv env1 env2 : List Value) (opt : Bool) (f g : HolFiniteMapExact Nat Nat)
+    (raised : Value) (result : BviResult) (final : BviState (Nat × C) F)
+    (bodyRun : evaluate [body] callEnv bodyStart = (.err (.raise (.exn raised)), bodyFinal))
+    (bodyClock : bodyStart.clock ≤ initial.clock)
+    (bodyCore : Core [targetBody] targetCallEnv g bodyTarget (.err (.raise (.exn raised))) bodyFinal)
+    (handlerRun : evaluate [handler] (raised :: env1) bodyFinal = (result, final))
+    (notTypeError : result ≠ .err (.abort .typeError)) (handlerSafe : noMutcons handler)
+    (environments : envRel opt f env1 env2) (initialExtension : finiteSubmap f g)
+    (weightIH : SmallerWeightIH (C := C) (F := F) initial.clock
+      (expsWeight [.call ticks (some destination) args (some handler)])) :
+    ∃ (next : BviState C F) (h : HolFiniteMapExact Nat Nat) (raisedTarget : Value),
+      evaluate [targetBody] targetCallEnv bodyTarget = (.err (.raise (.exn raisedTarget)), next) ∧
+      finiteSubmap g h ∧ onlyFresh g h bodyTarget.refs ∧
+      holesUnchangedExcept g bodyTarget.refs next.refs ∅ ∧
+      holesStillNotFinalised g bodyTarget.refs next.refs ∧
+      SingletonPost handler bodyFinal next (raised :: env1) (raisedTarget :: env2) opt h loc result final := by
+  obtain ⟨next, h, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩ := bodyCore
+  cases targetResult with
+  | val values => simp [resultRel] at related
+  | err error =>
+    cases error with
+    | abort reason => simp [resultRel, excRel] at related
+    | raise payload =>
+      cases payload with
+      | ret values => simp [resultRel, excRel, eorRel] at related
+      | exn raisedTarget =>
+        have valuesRelated : valueRel h raised raisedTarget := by
+          simpa [resultRel, excRel, eorRel] using related
+        have envRelated : envRel opt h (raised :: env1) (raisedTarget :: env2) :=
+          envRel_cons opt h env1 env2 raised raisedTarget
+            (envRel_submap opt f h env1 env2 environments
+              (fun key value found => extension key value (initialExtension key value found))) valuesRelated
+        have finalClock : bodyFinal.clock ≤ initial.clock := by
+          have bound := evaluate_clock_le [body] callEnv bodyStart
+          rw [bodyRun] at bound
+          exact Nat.le_trans bound bodyClock
+        have weight : expsWeight [handler] < expsWeight [.call ticks (some destination) args (some handler)] := by
+          simp [BviSem.expsWeight, BviSem.expWeight]
+          omega
+        have post := weightIH [handler] bodyFinal next (raised :: env1) (raisedTarget :: env2) opt h loc
+          result final finalClock weight handlerRun (by simpa using handlerSafe) envRelated nextStates (by simp) notTypeError
+        exact ⟨next, h, raisedTarget, targetRun, extension, fresh, unchanged, still, post.2 handler rfl⟩
+
+/-- Flapjack infrastructure: a successful call that reaches its exception
+handler returns that handler's result, which cannot be a return signal. -/
+theorem call_handler_source_result {C F : Type} (ticks destination : Nat) (args : List Bvi.Exp)
+    (handler body : Bvi.Exp) (env callEnv : List Value)
+    (source middle bodyFinal handlerFinal final : BviState (Nat × C) F)
+    (values : List Value) (raised : Value) (handlerResult result : BviResult)
+    (run : evaluate [.call ticks (some destination) args (some handler)] env source = (result, final))
+    (notTypeError : result ≠ .err (.abort .typeError))
+    (argsRun : evaluate args env source = (.val values, middle))
+    (found : findCode (some destination) values middle.code = some (callEnv, body))
+    (enough : ¬middle.clock < ticks + 1)
+    (bodyRun : evaluate [body] callEnv (decClock (ticks + 1) middle) = (.err (.raise (.exn raised)), bodyFinal))
+    (handlerRun : evaluate [handler] (raised :: env) bodyFinal = (handlerResult, handlerFinal)) :
+    (handlerResult, handlerFinal) = (result, final) ∧
+      ∀ values, handlerResult ≠ .err (.raise (.ret values)) := by
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at run
+  simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, found, enough] at run
+  rw [BviSem.fixClock_evaluate, bodyRun] at run
+  simp only at run
+  rw [handlerRun] at run
+  have noReturn : ∀ values, handlerResult ≠ .err (.raise (.ret values)) := by
+    intro values bad
+    rw [bad] at run
+    simp at run
+    exact notTypeError run.1.symm
+  refine ⟨?_, noReturn⟩
+  cases handlerResult with
+  | val values => simpa using run
+  | err error =>
+    cases error with
+    | abort reason => simpa using run
+    | raise payload =>
+      cases payload with
+      | exn value => simpa using run
+      | ret values => exact False.elim (noReturn values rfl)
+
 end Flapjack.Compiler.Backend.BviTmc.CallSimulation
