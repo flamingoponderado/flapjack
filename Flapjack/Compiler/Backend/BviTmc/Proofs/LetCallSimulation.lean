@@ -180,4 +180,230 @@ theorem evaluate_letcall_return_post {C F : Type} (loc rets ticks destination : 
     simp only [rewriteWorkerSource]
     exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
 
+/-- Flapjack infrastructure: when a direct call without a handler ends in a
+non-type-error error, the corresponding let-call propagates the same error. -/
+theorem letcall_of_call_error {C F : Type} (rets ticks destination : Nat) (args : List Bvi.Exp)
+    (continuation : Bvi.Exp) (env : List Value) (state final : BviState C F)
+    (error : SemanticPrimitivesHOL.ErrorResult ExnOrRet)
+    (run : evaluate [.call ticks (some destination) args none] env state = (.err error, final))
+    (notTypeError : (.err error : BviResult) ≠ .err (.abort .typeError)) :
+    evaluate [.letCall rets ticks destination args continuation] env state = (.err error, final) := by
+  cases argsRun : evaluate args env state with
+  | mk argsResult middle =>
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at run
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+    cases argsResult with
+    | err error => simpa using run
+    | val values =>
+      cases found : findCode (some destination) values middle.code with
+      | none =>
+        simp [found] at run
+        exact False.elim (notTypeError (congrArg SemanticPrimitivesHOL.Result.err run.1.symm))
+      | some pair =>
+        obtain ⟨callArgs, body⟩ := pair
+        by_cases timeout : middle.clock < ticks + 1
+        · simpa [found, timeout] using run
+        · simp only [Option.isNone_some, Option.isSome_none, Bool.false_and, Bool.false_eq_true,
+            ↓reduceIte, found, timeout] at run ⊢
+          rw [BviSem.fixClock_evaluate] at run ⊢
+          cases bodyRun : evaluate [body] callArgs (decClock (ticks + 1) middle) with
+          | mk bodyResult bodyFinal =>
+            cases bodyResult with
+            | val values => simp [bodyRun] at run
+            | err bodyError =>
+              cases bodyError with
+              | abort reason => simpa [bodyRun] using run
+              | raise payload =>
+                cases payload with
+                | exn value => simpa [bodyRun] using run
+                | ret values =>
+                  simp [bodyRun] at run
+                  exact False.elim (notTypeError (congrArg SemanticPrimitivesHOL.Result.err run.1.symm))
+
+/-- Flapjack infrastructure: simulation of let-calls that agree with a
+handler-free call returning a non-type-error error. -/
+theorem evaluate_letcall_error_post {C F : Type} (loc rets ticks destination : Nat)
+    (args : List Bvi.Exp) (continuation : Bvi.Exp) (source final : BviState (Nat × C) F)
+    (target : BviState C F) (env1 env2 : List Value) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
+    (error : SemanticPrimitivesHOL.ErrorResult ExnOrRet)
+    (run : evaluate [.call ticks (some destination) args none] env1 source = (.err error, final))
+    (notTypeError : (.err error : BviResult) ≠ .err (.abort .typeError))
+    (safe : noMutcons (.letCall rets ticks destination args continuation))
+    (environments : envRel opt f env1 env2) (states : stateRel f source target)
+    (weightIH : SmallerWeightIH (C := C) (F := F) source.clock
+      (expsWeight [.letCall rets ticks destination args continuation]))
+    (clockIH : SmallerClockIH (C := C) (F := F) source.clock) :
+    SingletonPost (.letCall rets ticks destination args continuation) source target env1 env2 opt f loc (.err error) final := by
+  have safeCall : noMutcons (.call ticks (some destination) args none) := by
+    rw [noMutcons.eq_def] at safe ⊢
+    simpa using safe.1
+  have weightCall : SmallerWeightIH (C := C) (F := F) source.clock
+      (expsWeight [.call ticks (some destination) args none]) := by
+    intro xs s t a b o g l r last clock weight eval safeXs env st length notError
+    apply weightIH xs s t a b o g l r last clock ?_ eval safeXs env st length notError
+    simp only [BviSem.expsWeight, BviSem.expWeight] at weight ⊢
+    omega
+  obtain ⟨next, g, targetResult, targetCallRun, related, nextStates, extension, fresh, unchanged, still⟩ :=
+    CallSimulation.evaluate_call_no_handler_core loc ticks (some destination) args source target env1 env2 opt f
+      (.err error) final run notTypeError safeCall environments states weightCall clockIH
+  cases targetResult with
+  | val values => simp [resultRel] at related
+  | err targetError =>
+    have targetNotTypeError : (.err targetError : BviResult) ≠ .err (.abort .typeError) := by
+      intro bad
+      have eq : targetError = .abort .typeError := SemanticPrimitivesHOL.Result.err.inj bad
+      subst targetError
+      cases error with
+      | abort reason =>
+        simp [resultRel, excRel] at related
+        exact notTypeError (by simp [related])
+      | raise payload => simp [resultRel, excRel] at related
+    have targetRun := letcall_of_call_error rets ticks destination args continuation env2 target next
+      targetError targetCallRun targetNotTypeError
+    have sourceRun := letcall_of_call_error rets ticks destination args continuation env1 source final
+      error run notTypeError
+    have core : Core [.letCall rets ticks destination args continuation] env2 f target (.err error) final :=
+      ⟨next, g, .err targetError, targetRun, related, nextStates, extension, fresh, unchanged, still⟩
+    refine ⟨core, ?_⟩
+    intro locOpt _code
+    constructor
+    · intro wrapper rewrite
+      simp [rewriteWrapperSource] at rewrite
+    · intro optTrue holePtr c hole notFinal pointer
+      have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
+      obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
+        FillHole.evaluate_fill_hole (.letCall rets ticks destination args continuation) f g env1 env2 source
+          final target next (.err error) (.err targetError) c holePtr sourceRun targetRun optEnv states extension
+          related hole notFinal unchanged still fresh nextStates pointer
+      simp only [rewriteWorkerSource]
+      exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
+
+/-- Flapjack infrastructure: a callee error other than a return signal is
+propagated identically by a let-call and an ordinary call. -/
+theorem call_error_of_letcall_body {C F : Type} (rets ticks destination : Nat)
+    (args : List Bvi.Exp) (continuation body : Bvi.Exp) (env callArgs : List Value)
+    (source middle bodyFinal final : BviState C F) (values : List Value)
+    (error : SemanticPrimitivesHOL.ErrorResult ExnOrRet) (result : BviResult)
+    (run : evaluate [.letCall rets ticks destination args continuation] env source = (result, final))
+    (argsRun : evaluate args env source = (.val values, middle))
+    (found : findCode (some destination) values middle.code = some (callArgs, body))
+    (enough : ¬middle.clock < ticks + 1)
+    (bodyRun : evaluate [body] callArgs (decClock (ticks + 1) middle) = (.err error, bodyFinal))
+    (noReturn : ∀ values, error ≠ .raise (.ret values)) :
+    (.err error, bodyFinal) = (result, final) ∧
+      evaluate [.call ticks (some destination) args none] env source = (.err error, bodyFinal) := by
+  rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at run
+  simp only [found, enough, ↓reduceIte] at run
+  rw [BviSem.fixClock_evaluate, bodyRun] at run
+  have callRun : evaluate [.call ticks (some destination) args none] env source = (.err error, bodyFinal) := by
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+    simp only [Option.isNone_some, Option.isSome_none, Bool.false_and, Bool.false_eq_true,
+      ↓reduceIte, found, enough]
+    rw [BviSem.fixClock_evaluate, bodyRun]
+    cases error with
+    | abort reason => rfl
+    | raise payload =>
+      cases payload with
+      | exn value => rfl
+      | ret values => exact False.elim (noReturn values rfl)
+  refine ⟨?_, callRun⟩
+  cases error with
+  | abort reason => simpa using run
+  | raise payload =>
+    cases payload with
+    | exn value => simpa using run
+    | ret values => exact False.elim (noReturn values rfl)
+
+/-- Flapjack infrastructure: the let-call singleton simulation follows from
+the shared structural and clock induction hypotheses. -/
+theorem evaluate_letcall_from_induction {C F : Type} (loc rets ticks destination : Nat)
+    (args : List Bvi.Exp) (continuation : Bvi.Exp) (source final : BviState (Nat × C) F)
+    (target : BviState C F) (env1 env2 : List Value) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
+    (result : BviResult)
+    (run : evaluate [.letCall rets ticks destination args continuation] env1 source = (result, final))
+    (notTypeError : result ≠ .err (.abort .typeError))
+    (safe : noMutcons (.letCall rets ticks destination args continuation))
+    (environments : envRel opt f env1 env2) (states : stateRel f source target)
+    (weightIH : SmallerWeightIH (C := C) (F := F) source.clock
+      (expsWeight [.letCall rets ticks destination args continuation]))
+    (clockIH : SmallerClockIH (C := C) (F := F) source.clock) :
+    SingletonPost (.letCall rets ticks destination args continuation) source target env1 env2 opt f loc result final := by
+  cases argsRun : evaluate args env1 source with
+  | mk argsResult middle =>
+    cases argsResult with
+    | err error =>
+      have pair : (.err error, middle) = (result, final) := by
+        have h := run
+        rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at h
+        simpa using h
+      cases pair
+      have callRun : evaluate [.call ticks (some destination) args none] env1 source = (.err error, final) := by
+        rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+        simp
+      exact evaluate_letcall_error_post loc rets ticks destination args continuation source final target env1 env2
+        opt f error callRun notTypeError safe environments states weightIH clockIH
+    | val values =>
+      cases found : findCode (some destination) values middle.code with
+      | none =>
+        have bad : result = .err (.abort .typeError) := by
+          have h := run
+          rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at h
+          simp [found] at h
+          exact h.1.symm
+        exact False.elim (notTypeError bad)
+      | some pair =>
+        obtain ⟨callArgs, body⟩ := pair
+        by_cases timeout : middle.clock < ticks + 1
+        · have pair : (.err (.abort .timeoutError), { middle with clock := 0 }) = (result, final) := by
+            have h := run
+            rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at h
+            simpa [found, timeout] using h
+          cases pair
+          have callRun : evaluate [.call ticks (some destination) args none] env1 source =
+              (.err (.abort .timeoutError), { middle with clock := 0 }) := by
+            rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+            simp [found, timeout]
+          exact evaluate_letcall_error_post loc rets ticks destination args continuation source { middle with clock := 0 } target env1 env2
+            opt f (.abort .timeoutError) callRun notTypeError safe environments states weightIH clockIH
+        · cases bodyRun : evaluate [body] callArgs (decClock (ticks + 1) middle) with
+          | mk bodyResult bodyFinal =>
+            cases bodyResult with
+            | val values =>
+              have bad : result = .err (.abort .typeError) := by
+                have h := run
+                rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at h
+                simp only [found, timeout, ↓reduceIte] at h
+                rw [BviSem.fixClock_evaluate, bodyRun] at h
+                simp at h
+                exact h.1.symm
+              exact False.elim (notTypeError bad)
+            | err error =>
+              by_cases returns : ∃ returned, error = .raise (.ret returned)
+              · obtain ⟨returned, rfl⟩ := returns
+                by_cases length : returned.length = rets
+                · have continuationRun : evaluate [continuation] (returned ++ env1) bodyFinal = (result, final) := by
+                    have h := run
+                    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at h
+                    simp only [found, timeout, ↓reduceIte] at h
+                    rw [BviSem.fixClock_evaluate, bodyRun] at h
+                    simpa [length] using h
+                  exact evaluate_letcall_return_post loc rets ticks destination args continuation body source middle
+                    bodyFinal final target env1 env2 callArgs opt f values returned result notTypeError safe environments
+                    states argsRun found timeout bodyRun length continuationRun weightIH clockIH
+                · have bad : result = .err (.abort .typeError) := by
+                    have h := run
+                    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at h
+                    simp only [found, timeout, ↓reduceIte] at h
+                    rw [BviSem.fixClock_evaluate, bodyRun] at h
+                    simp [length] at h
+                    exact h.1.symm
+                  exact False.elim (notTypeError bad)
+              · have noReturn : ∀ returned, error ≠ .raise (.ret returned) := by
+                  intro returned eq; exact returns ⟨returned, eq⟩
+                obtain ⟨pair, callRun⟩ := call_error_of_letcall_body rets ticks destination args continuation body
+                  env1 callArgs source middle bodyFinal final values error result run argsRun found timeout bodyRun noReturn
+                cases pair
+                exact evaluate_letcall_error_post loc rets ticks destination args continuation source final target env1 env2
+                  opt f error callRun notTypeError safe environments states weightIH clockIH
+
 end Flapjack.Compiler.Backend.BviTmc.LetCallSimulation
