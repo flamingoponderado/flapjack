@@ -680,4 +680,181 @@ theorem doApp_op_rel_refByte {C F : Type} (f : HolFiniteMapExact Nat Nat) (flag 
                   ?_, .refPtr _ _ true mapped, nextStates, submap, fresh, holes, unfinalised⟩
                 simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, negative, byteValue]
 
+/-- The length of a value array is unchanged by pointer renaming. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_length {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp .length) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.memOp .length)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp .length) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+    | nil =>
+      cases first with
+      | number i => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | word64 w => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | block tag xs => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | codePtr n => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | refPtr flag ptr =>
+        cases valuesRelated with
+        | cons headRel tailRel =>
+          cases tailRel
+          cases headRel with
+          | refPtr _ targetPtr _ mapped =>
+            obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
+              stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+            cases cells with
+            | byteArray b bytes =>
+              simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl, sourceFound] at run
+            | thunk mode x y rel =>
+              simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl, sourceFound] at run
+            | valueArray xs ys rel =>
+              have lengths := List.Forall₂.length_eq rel
+              simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                BviSem.toBvl, BviSem.fromBvl, sourceFound] at run
+              obtain ⟨rfl, rfl⟩ := run
+              refine ⟨f, .number xs.length, target, ?_, .number _, statesRelated, ?_, onlyFresh_refl f target.refs,
+                holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+              · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                  BviSem.toBvl, BviSem.fromBvl, targetFound, lengths]
+              · intro key item found
+                exact found
+
+/-- The length of a byte array is unchanged by pointer renaming. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_lengthByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp .lengthByte) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.memOp .lengthByte)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp .lengthByte) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+    | nil =>
+      cases first with
+      | number i => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | word64 w => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | block tag xs => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | codePtr n => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | refPtr flag ptr =>
+        cases valuesRelated with
+        | cons headRel tailRel =>
+          cases tailRel
+          cases headRel with
+          | refPtr _ targetPtr _ mapped =>
+            obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
+              stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+            cases cells with
+            | valueArray xs ys rel =>
+              simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl, sourceFound] at run
+            | thunk mode x y rel =>
+              simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl, sourceFound] at run
+            | byteArray b bytes =>
+              simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                BviSem.toBvl, BviSem.fromBvl, sourceFound] at run
+              obtain ⟨rfl, rfl⟩ := run
+              refine ⟨f, .number bytes.length, target, ?_, .number _, statesRelated, ?_, onlyFresh_refl f target.refs,
+                holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+              · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                  BviSem.toBvl, BviSem.fromBvl, targetFound]
+              · intro key item found
+                exact found
+
+/-- Element reads return related values from either blocks or reference arrays. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])]
+theorem doApp_op_rel_el {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp .el) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.memOp .el)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp .el) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  cases values with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+    | cons second rest =>
+      cases rest with
+      | cons extra rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | nil =>
+        cases second with
+        | number index =>
+          cases valuesRelated with
+          | @cons a b xs ys firstRel tailRel =>
+            cases tailRel with
+            | cons indexRel tailRel =>
+              cases indexRel
+              cases tailRel
+              cases firstRel with
+              | number i => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+              | word64 w => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+              | codePtr n => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+              | block tag xs ys rel =>
+                by_cases negative : index < 0
+                · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, negative] at run
+                · cases found : xs[index.toNat]? with
+                  | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, negative, found] at run
+                  | some v =>
+                    obtain ⟨w, found', related⟩ := related_getElem f rel index.toNat v found
+                    simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                      BviSem.fromBvl_toBvl, negative, found] at run
+                    obtain ⟨rfl, rfl⟩ := run
+                    refine ⟨f, w, target, ?_, related, statesRelated, ?_, onlyFresh_refl f target.refs,
+                      holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+                    · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                        BviSem.fromBvl_toBvl, negative, found']
+                    · intro key item found
+                      exact found
+              | refPtr ptr targetPtr flag mapped =>
+                obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
+                  stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+                cases cells with
+                | byteArray b bytes => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl, sourceFound] at run
+                | thunk mode x y rel => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl, sourceFound] at run
+                | valueArray xs ys rel =>
+                  by_cases negative : index < 0
+                  · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl, sourceFound, negative] at run
+                  · cases found : xs[index.toNat]? with
+                    | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl, sourceFound, negative, found] at run
+                    | some v =>
+                      obtain ⟨w, found', related⟩ := related_getElem f rel index.toNat v found
+                      simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                        BviSem.toBvl, BviSem.fromBvl, sourceFound, negative, found] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      refine ⟨f, w, target, ?_, related, statesRelated, ?_, onlyFresh_refl f target.refs,
+                        holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+                      · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+                          BviSem.toBvl, BviSem.fromBvl, targetFound, negative, found']
+                      · intro key item found
+                        exact found
+        | word64 w => cases first <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+        | block tag xs => cases first <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+        | codePtr n => cases first <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+        | refPtr flag ptr => cases first <;> simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+
 end Flapjack.Compiler.Backend.BviTmc
