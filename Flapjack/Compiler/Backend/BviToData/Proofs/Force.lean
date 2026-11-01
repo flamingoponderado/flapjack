@@ -227,6 +227,22 @@ theorem simulationFor_force_evaluated {C F : Type} (label index : Nat)
               · simp [DataSem.getVar, sptLookup_sptMap, destRead, projected]
               · constructor
 
+/-- An already evaluated thunk satisfies the complete compiler simulation
+invariant at any clock. The evaluator and carrier correspondence still need
+review against HOL, so this assembling lemma is untagged. -/
+theorem simulationFor_force_of_evaluated {C F : Type} (label index : Nat)
+    (env : List BvlSem.Value) (source : BviSem.BviState C F)
+    (thunk value : BvlSem.Value) (sourceVar : env[index]? = some thunk)
+    (sourceThunk : BviSem.destThunk thunk source.refs = .isThunk .evaluated value) :
+    simulationFor [.force label index] env source := by
+  intro res s2 target n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
+  obtain ⟨sourceRun, targetNext, prog, pres, names, next, ls, compiled, targetRun, finalRel, outcome⟩ :=
+    simulationFor_force_evaluated label index env source thunk value sourceVar sourceThunk
+      target n corr tail live vars fresh related livePresent
+  rw [sourceRun] at run
+  cases run
+  exact ⟨targetNext, prog, pres, names, next, ls, compiled, targetRun, finalRel, outcome⟩
+
 /-- At zero clock, all non-type-error forcing executions are covered: an
 already evaluated thunk returns its value, while a valid unevaluated thunk
 times out. This assembles the cases into the compiler simulation invariant;
