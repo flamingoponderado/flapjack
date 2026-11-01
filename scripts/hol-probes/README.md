@@ -1,3 +1,9 @@
+`data_sem_evaluate_probe.out` captures the typed original clocked evaluator and
+observations for skip, timeout, missing locals, return, force, tail calls and
+exception handlers. Lean checks the corresponding cases. These observations
+are regression evidence, not a proof of the complete compiler simulation.
+Regenerate with `HOL_PROBE_ONLY=data_sem_evaluate_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `data_sem_conversion_proof_probe.out` captures the original byte- and word-list
 preservation theorem statements for BVI-to-data timestamp erasure. Lean checks
 the corresponding proofs; the capture itself is not a cross-language proof.

@@ -86,4 +86,9 @@ noncomputable def doStack {C F : Type} (op : ClosLang.Op) (values : List Value)
   let safe := (newStack.map (fun n => decide (state.limits.stackLimit > n))).getD false
   { state with safeForSpace := state.safeForSpace && safe, stackMax := Option.map₂ max state.stackMax newStack }
 
+/-- Stack accounting preserves the evaluation clock. -/
+@[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "do_stack_clock"]
+theorem doStack_clock {C F : Type} (op : ClosLang.Op) (values : List Value) (state : State C F) :
+    (doStack op values state).clock = state.clock := rfl
+
 end Flapjack.Compiler.Backend.DataSem
