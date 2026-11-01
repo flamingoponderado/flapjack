@@ -3,6 +3,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainLocations
 import Flapjack.Compiler.Backend.Semantics.ClosSem.InstallGrowth
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateCodeGrowth
+import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 
 /-! Source closure-code chains used by the top-level compiler. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -126,5 +128,139 @@ theorem chainInstalled_after_evaluate {C F : Type} (start : Nat) (chain evaluate
     chainInstalled start chain next.code :=
   chainInstalled_submap start chain source.code next.code installed
     (evaluate_code_growth.1 evaluated env source next result run)
+
+/-- A generated chain discards all but the last successful value and
+preserves errors. -/
+def sourceChainResult : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value →
+    Flapjack.SemanticPrimitivesHOL.Result (List Value) Value
+  | .err error => .err error
+  | .val values => .val values.getLast?.toList
+
+/-- A failed first expression exits the generated chain without a call. -/
+theorem evaluate_sourceChain_first_error {C F : Type} (source next : State C F)
+    (first : ClosLang.Exp) (address : Nat) (error : Flapjack.SemanticPrimitivesHOL.ErrorResult Value)
+    (run : evaluate [first] [] source = (.err error, next)) :
+    evaluate [.let .none [first] (.call .none 0 address [])] [] source = (.err error, next) := by
+  rw [evaluate, fixClock_evaluate, run]
+
+/-- A successful chain step spends one extra clock unit for the generated
+call and then executes the installed body. -/
+theorem evaluate_sourceChain_first_success {C F : Type} (source middle final : State C F)
+    (first body : ClosLang.Exp) (address extra : Nat) (value : Value)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (headRun : evaluate [first] [] source = (.val [value], middle))
+    (lookup : findCode address ([] : List Value) middle.code = some ([], body))
+    (tailRun : evaluate [body] [] { middle with clock := middle.clock + extra } = (result, final)) :
+    evaluate [.let .none [first] (.call .none 0 address [])] []
+        { source with clock := source.clock + (extra + 1) } = (result, final) := by
+  have shifted := evaluate_addClock.1 [first] [] source middle (.val [value]) (extra + 1) headRun (by simp)
+  rw [evaluate, fixClock_evaluate, shifted]
+  cases entry : middle.code.lookup address with
+  | none => simp [findCode, entry] at lookup
+  | some pair =>
+    obtain ⟨arity, codeBody⟩ := pair
+    have entryEq : arity = 0 ∧ codeBody = body := by simpa [findCode, entry, eq_comm] using lookup
+    obtain ⟨rfl, rfl⟩ := entryEq
+    simpa [evaluate, fixClock, findCode, entry, decClock] using tailRun
+
+/-- An installed nonempty source chain executes an expression list, returning
+its last value or the same error after sufficient additional clock. -/
+theorem evaluate_sourceChain {C F : Type} (expressions : List ClosLang.Exp) (start : Nat)
+    (source final : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (nonempty : expressions ≠ []) (installed : chainInstalled start expressions source.code)
+    (run : evaluate expressions [] source = (result, final)) :
+    ∃ body extra, findCode start ([] : List Value) source.code = some ([], body) ∧
+      evaluate [body] [] { source with clock := source.clock + extra } = (sourceChainResult result, final) := by
+  induction expressions generalizing start source final result with
+  | nil => contradiction
+  | cons first rest ih =>
+    cases rest with
+    | nil =>
+      have head := ((chainInstalled_cons start first [] source.code).mp installed).1
+      refine ⟨first, 0, by simpa using head, ?_⟩
+      cases result with
+      | err error => simpa [sourceChainResult] using run
+      | val values =>
+        have length := (evaluate_length (C := C) (F := F)).1 [first] [] source final values run
+        cases values with
+        | nil => simp at length
+        | cons value tail =>
+          cases tail with
+          | cons other tail => simp at length
+          | nil => simpa [sourceChainResult] using run
+    | cons second tail =>
+      have chainParts := (chainInstalled_cons start first (second :: tail) source.code).mp installed
+      cases headRun : evaluate [first] [] source with
+      | mk headResult middle =>
+        have decomposed := run
+        rw [evaluate, fixClock_evaluate, headRun] at decomposed
+        cases headResult with
+        | err error =>
+          simp at decomposed
+          rcases decomposed with ⟨rfl, rfl⟩
+          refine ⟨.let .none [first] (.call .none 0 (start + 1) []), 0, ?_, ?_⟩
+          · simpa using chainParts.1
+          · simpa [sourceChainResult] using evaluate_sourceChain_first_error source middle first (start + 1) error headRun
+        | val values =>
+          have length := (evaluate_length (C := C) (F := F)).1 [first] [] source middle values headRun
+          cases values with
+          | nil => simp at length
+          | cons value remaining =>
+            cases remaining with
+            | cons other remaining => simp at length
+            | nil =>
+              cases tailRun : evaluate (second :: tail) [] middle with
+              | mk tailResult last =>
+                simp only at decomposed
+                rw [tailRun] at decomposed
+                have tailInstalled := chainInstalled_after_evaluate (start + 1) (second :: tail) [first]
+                  [] source middle (.val [value]) chainParts.2 headRun
+                obtain ⟨body, extra, lookup, chainRun⟩ := ih (start + 1) middle last tailResult
+                  (by simp) tailInstalled tailRun
+                have chained := evaluate_sourceChain_first_success source middle last first body (start + 1) extra value
+                  (sourceChainResult tailResult) headRun lookup chainRun
+                have resultEq : sourceChainResult result = sourceChainResult tailResult ∧ final = last := by
+                  cases tailResult with
+                  | err error =>
+                    simp at decomposed
+                    rcases decomposed with ⟨rfl, rfl⟩
+                    simp [sourceChainResult]
+                  | val tailValues =>
+                    have tailLength := (evaluate_length (C := C) (F := F)).1 (second :: tail) [] middle last tailValues tailRun
+                    cases tailValues with
+                    | nil => simp at tailLength
+                    | cons next more =>
+                      simp at decomposed
+                      rcases decomposed with ⟨rfl, rfl⟩
+                      simp [sourceChainResult]
+                obtain ⟨resultEq, rfl⟩ := resultEq
+                refine ⟨.let .none [first] (.call .none 0 (start + 1) []), extra + 1, ?_, ?_⟩
+                · simpa using chainParts.1
+                · simpa [resultEq] using chained
+
+/-- The direct entry call spends one clock unit and enters its installed
+zero-argument body. -/
+theorem evaluate_sourceChain_entry {C F : Type} (source : State C F) (start extra : Nat)
+    (body : ClosLang.Exp) (lookup : findCode start ([] : List Value) source.code = some ([], body)) :
+    evaluate [.call .none 0 start []] [] { source with clock := source.clock + (extra + 1) } =
+      evaluate [body] [] { source with clock := source.clock + extra } := by
+  cases entry : source.code.lookup start with
+  | none => simp [findCode, entry] at lookup
+  | some pair =>
+    obtain ⟨arity, codeBody⟩ := pair
+    have entryEq : arity = 0 ∧ codeBody = body := by simpa [findCode, entry, eq_comm] using lookup
+    obtain ⟨rfl, rfl⟩ := entryEq
+    simp [evaluate, fixClock, findCode, entry, decClock]
+
+/-- Calling the installed chain entry reproduces the projected source list
+result and final state with enough additional clock. -/
+theorem evaluate_sourceChain_call {C F : Type} (expressions : List ClosLang.Exp) (start : Nat)
+    (source final : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (nonempty : expressions ≠ []) (installed : chainInstalled start expressions source.code)
+    (run : evaluate expressions [] source = (result, final)) :
+    ∃ extra, evaluate [.call .none 0 start []] [] { source with clock := source.clock + extra } =
+      (sourceChainResult result, final) := by
+  obtain ⟨body, extra, lookup, bodyRun⟩ := evaluate_sourceChain expressions start source final result nonempty installed run
+  exact ⟨extra + 1, (evaluate_sourceChain_entry source start extra body lookup).trans bodyRun⟩
 
 end Flapjack.Compiler.Backend.ClosToBvl
