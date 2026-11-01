@@ -266,7 +266,7 @@ theorem evaluateSeq_stop {C F : Type} (first rest : DataLang.Prog)
 
 /-- Successful non-tail list composition: the two recursive simulations
 combine with the real BVI clock bound into one source and target execution.
-The other result cases and the full inductive theorem remain open. -/
+The assembled simulation is proved separately in `Proofs.Simulation`; HOL correspondence review remains open. -/
 theorem compileCorrect_cons_success {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
     (env : List BvlSem.Value) (head : BvlSem.Value) (values : List BvlSem.Value)
     (s1 smid s2 : BviSem.BviState C F) (t1 tmid t2 : DataSem.State C F)
@@ -375,7 +375,7 @@ def simulationFor {C F : Type} (xs : List Bvi.Exp) (env : List BvlSem.Value)
 /-- The list case assembled from recursive compiler simulations. The second
 induction premise applies to intermediate states reached by a successful
 first expression. This remains untagged until the BVI evaluator is reviewed
-and the case is connected to its evaluator induction. -/
+and the assembled induction is in `Proofs.Simulation`. -/
 theorem compileCorrect_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
     (ihFirst : simulationFor [x] env s1)
@@ -603,7 +603,7 @@ private theorem outcome_decClock_initial {C F : Type} (res : BviSem.BviResult)
 
 /-- The tick case of the compiler simulation, assuming the recursive
 simulation at the decremented source clock. This remains untagged pending
-the source evaluator review and assembly of the complete induction. -/
+the source evaluator correspondence review. -/
 theorem simulationFor_tick {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Value)
     (s1 : BviSem.BviState C F)
     (ih : s1.clock ≠ 0 → simulationFor [body] env (BviSem.decClock 1 s1)) :
@@ -776,7 +776,7 @@ theorem simulationFor_raise {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Val
 
 /-- The `let` case composes binding and body simulations, extending the
 environment by the binding results. This remains untagged pending evaluator
-correspondence review and assembly of the complete induction. -/
+correspondence review. -/
 theorem simulationFor_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
     (ihBindings : simulationFor bindings env s1)
@@ -1011,7 +1011,7 @@ private theorem compileSource_single (n : Nat) (env : List Nat) (tail : Bool) (l
 
 /-- Conditional simulation, combining condition evaluation, branch choice,
 and the fresh-result merge for non-tail compilation. This remains untagged
-pending evaluator correspondence review and complete induction assembly. -/
+pending evaluator correspondence review. -/
 theorem simulationFor_if {C F : Type} (condition yes no : Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
     (ihCondition : simulationFor [condition] env s1)
