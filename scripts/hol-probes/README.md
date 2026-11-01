@@ -1,5 +1,6 @@
-`data_to_word_memory_repr_probe.out` captures typed heap representation and
-pointer projection definitions, plus original HOL low-bit observations.
+`data_to_word_memory_repr_probe.out` captures typed heap representation,
+pointer projection, byte-header and word-payload definitions (including their
+independent word widths), plus original HOL low-bit observations.
 Regenerate with
 `HOL_PROBE_ONLY=data_to_word_memory_repr_probeScript.sml scripts/hol-probes/regenerate.sh`. The capture supports source review; it is
 not a cross-language proof.

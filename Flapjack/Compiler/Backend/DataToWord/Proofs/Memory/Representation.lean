@@ -50,4 +50,42 @@ def wordAddr {width : Nat} [NeZero width] (conf : Config) : HeapAddress (WordLoc
   | .data (.word value) => .word (value &&& ~~~(1 : BitVec width))
   | .pointer index value => .word (getAddr conf index value)
 
+/-- Encode a thunk's evaluation mode in the header tag bits. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "thunk_tag_to_bits_def"
+  (words_as_type_indexed_bitvec)]
+def thunkTagToBits {width : Nat} [NeZero width] : AstHOL.ThunkMode → BitVec width
+  | .evaluated => 1
+  | .notEvaluated => 0
+
+/-- Construct a concrete header and payload for an abstract heap element. The
+header and payload word widths are independent in the original definition. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_payload_def"
+  (words_as_type_indexed_bitvec)]
+def wordPayload {headerWidth : Nat} {payloadWidth : Nat} [NeZero headerWidth] [NeZero payloadWidth]
+    (addresses : List (HeapAddress (WordLocW payloadWidth))) (len : Nat) (tag : HeapTag)
+    (payload : List (WordLocW payloadWidth)) (conf : Config) :
+    BitVec headerWidth × List (WordLocW payloadWidth) × Bool :=
+  match tag with
+  | .blockTag n =>
+      let header := makeHeader conf (BitVec.ofNat headerWidth n <<< 2) addresses.length
+      (header, addresses.map (wordAddr conf),
+        payload.isEmpty && decide (addresses.length = len ∧ encodeHeader conf (n * 4) addresses.length = some header))
+  | .refTag =>
+      (makeHeader conf 2 addresses.length, addresses.map (wordAddr conf),
+        payload.isEmpty && decide (addresses.length = len))
+  | .thunkTag mode =>
+      (makeHeader conf ((thunkTagToBits mode <<< 3) ||| 6) addresses.length, addresses.map (wordAddr conf),
+        payload.isEmpty && decide (addresses.length = 1 ∧ len = 1))
+  | .word64Tag =>
+      (makeHeader conf 3 len, payload,
+        addresses.isEmpty && decide (payload.length = len) && (encodeHeader (width := headerWidth) conf 3 len).isSome)
+  | .numTag negative =>
+      let tagBits : BitVec headerWidth := ((if negative then 1 else 0) <<< 2) ||| 3
+      (makeHeader conf tagBits payload.length, payload,
+        addresses.isEmpty && decide (payload.length = len) && (encodeHeader (width := headerWidth) conf tagBits.toNat payload.length).isSome)
+  | .bytesTag compareByContents n =>
+      let k := if headerWidth = 32 then 2 else 3
+      (makeByteHeader conf compareByContents n, payload,
+        addresses.isEmpty && decide (payload.length = len ∧ n + 2 ^ k < 2 ^ (conf.lenSize + k)))
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

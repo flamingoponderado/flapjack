@@ -99868,6 +99868,33 @@
     "reviewer": "Source comparison: original word_addr clauses and typed data_to_word_memory_repr capture. Data Loc retains its label and zeroes its offset, Data Word clears bit zero, and Pointer projects via getAddr; the abstract address and word-location carriers preserve the original constructors."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Header.lean",
+    "lean_name": "makeByteHeader",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "make_byte_header_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: typed data_to_word_memory_repr capture and original definition. Both width branches use the same length increment, shift and comparison tag, with positive type-indexed word width. This definition currently serves the proof-side payload model."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Representation.lean",
+    "lean_name": "thunkTagToBits",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "thunk_tag_to_bits_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: typed data_to_word_memory_repr capture; evaluated and unevaluated map to one and zero at arbitrary positive word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Representation.lean",
+    "lean_name": "wordPayload",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_payload_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: all six clauses in the original definition and typed data_to_word_memory_repr capture. Header and payload use independently quantified positive word widths; address mapping, payload selection, header encoding and each validity condition preserve the source. Empty-list tests and decidable conjunctions compute the corresponding Boolean conditions."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Limits.lean",
     "lean_name": "limitsInv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",

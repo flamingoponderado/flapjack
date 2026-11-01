@@ -27,4 +27,14 @@ def getLowerBits {width : Nat} [NeZero width] (conf : Config) : WordLocW width â
   | .word value => (value.extractLsb' 0 (smallShiftLength conf)).setWidth width ||| 1
   | .loc _ _ => 1
 
+/-- Construct a byte-array header using the source's 32-bit or other-width
+layout. This proof-side definition has not yet been connected to all executed
+header generation paths. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "make_byte_header_def"
+  (words_as_type_indexed_bitvec)]
+def makeByteHeader {width : Nat} [NeZero width] (conf : Config) (compareByContents : Bool) (len : Nat) : BitVec width :=
+  let tag : BitVec width := if compareByContents then 7 else 23
+  if width = 32 then (BitVec.ofNat width (len + 4) <<< (width - 2 - conf.lenSize)) ||| tag
+  else (BitVec.ofNat width (len + 8) <<< (width - 3 - conf.lenSize)) ||| tag
+
 end Flapjack.Compiler.Backend.DataToWord

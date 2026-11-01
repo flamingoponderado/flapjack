@@ -25,3 +25,6 @@ val _ = show "lower_bits_wide_result" (prove(
   ``data_to_word$get_lowerbits ((c:data_to_word$config) with <|len_bits := 20; tag_bits := 1|>)
       (wordLang$Word (254w:word8)) = (255w:word8)``,
   simp [data_to_wordTheory.get_lowerbits_def, data_to_wordTheory.small_shift_length_def] >> blastLib.BBLAST_TAC));
+val _ = show "make_byte_header_typed" data_to_wordTheory.make_byte_header_def;
+val _ = show "thunk_tag_to_bits_typed" data_to_word_memoryProofTheory.thunk_tag_to_bits_def;
+val _ = show "word_payload_typed" data_to_word_memoryProofTheory.word_payload_def;
