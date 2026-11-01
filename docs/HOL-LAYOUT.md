@@ -120,7 +120,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/data_liveScript.sml` | `Flapjack/Compiler/Backend/DataLive.lean` (statement review remains open) |
 | `compiler/backend/data_simpScript.sml` | `Flapjack/Compiler/Backend/DataSimp.lean` (statement review remains open) |
 | `compiler/backend/data_spaceScript.sml` | `Flapjack/Compiler/Backend/DataSpace/Requirements.lean` and `DataSpace/Compile.lean` (statement review remains open) |
-| `compiler/backend/semantics/dataSemScript.sml` | `Flapjack/Compiler/Backend/Semantics/DataSem/Value.lean`, `DataSem/State.lean`, `DataSem/Control.lean`, `DataSem/Build.lean`, `DataSem/Int.lean`, `DataSem/Finalise.lean`, `DataSem/Equality.lean`, `DataSem/Word.lean` and `DataSem/Heap.lean` (value and state carriers, control, constant construction, integer and word operations, mutable-constructor finalization, value equality and heap accounting; evaluation and semantic correspondence remain open) |
+| `compiler/backend/semantics/dataSemScript.sml` | `Flapjack/Compiler/Backend/Semantics/DataSem/Value.lean`, `DataSem/State.lean`, `DataSem/Control.lean`, `DataSem/Build.lean`, `DataSem/Int.lean`, `DataSem/Finalise.lean`, `DataSem/Equality.lean`, `DataSem/Word.lean`, `DataSem/Heap.lean` and `DataSem/Space.lean` (value and state carriers, control, constant construction, integer and word operations, mutable-constructor finalization, value equality and space accounting; evaluation and semantic correspondence remain open) |
 | `compiler/backend/proofs/bvi_to_dataProofScript.sml` | `Flapjack/Compiler/Backend/BviToData/Proofs/Value.lean`, `Proofs/Thunk.lean`, `Proofs/Build.lean`, `Proofs/Int.lean`, `Proofs/Word.lean` and `Proofs/Finalise.lean` (value, reference, thunk, construction, integer-operation, word-operation and finalization projections; evaluator simulation and correctness remain open) |
 | `compiler/backend/dataLangScript.sml` | `Flapjack/Compiler/Backend/DataLang/Syntax.lean` (syntax and allocation classifications; statement review remains open) |
 | `compiler/backend/bvi_letScript.sml` | `Flapjack/Compiler/Backend/BviLet/Helpers.lean`, `BviLet/Compile.lean`, `BviLet/SourceSing.lean`, `BviLet/Proofs/Total.lean` and `BviLet/Proofs/SourceAgreement.lean` (source-shaped total optimizer and its agreement with the executed traversal for every initial fuel) |
@@ -288,6 +288,8 @@ checks are distinct from source review and the finite original HOL probes.
 
 The pinned external `HOL/src/pred_set/src/pred_setScript.sml` counterpart is
 `Flapjack/Misc/PredSet.lean` (the left inverse `LINV_OPT`/`LINV`, sets as predicates).
+
+The pinned external `HOL/src/integer/integerScript.sml` division and remainder specifications are in `Flapjack/Misc/Integer.lean`.
 
 The pinned external `HOL/src/num/extra_theories/logrootScript.sml` counterpart is
 `Flapjack/Misc/Logroot.lean` (the specified `LOG`, rendered by Hilbert choice like HOL's
