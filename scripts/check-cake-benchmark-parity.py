@@ -24,6 +24,7 @@ BENCHMARKS = {
 
 # Standalone sources shipped with CakeML outside the main benchmark corpus.
 EXTRA_SOURCES = {
+    "bootstrap/x64/extract-code": "unverified/sexpr-bootstrap/x64/64/extract_code.cml",
     "bootstrap/x64/test-hello": "compiler/bootstrap/compilation/x64/64/test-hello.cml",
     "bootstrap/x64/hello": "compiler/bootstrap/compilation/x64/hello.cml",
     "bootstrap/arm8/hello": "compiler/bootstrap/compilation/arm8/hello.cml",

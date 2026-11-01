@@ -624,7 +624,9 @@ option matrix). `--type-seed`, `--edge-seed`, and
 `--compile-seed` select reproducible random inputs. These samples do not prove
 general parity. A focused `--compile-config-cases 12 --compile-seed 477991`
 run also matched the pinned compiler. With compile seed `851673`, 20 rich,
-20 extended, and 20 composed programs also matched complete output. Set
+20 extended, and 20 composed programs also matched complete output. A fresh
+run with compile seed `9110371` matched another 20 programs in each of those
+three groups. Set
 `--raw-byte-cases=1536` to compare each byte in all
 three contexts under both output modes; larger counts add random byte strings.
 Set `--annotation-cases=320` to exhaust the annotation matrix; its order is
@@ -836,8 +838,9 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
 ```
 
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
-output for 28 benchmark programs and three bootstrap hello programs from the pinned
-CakeML submodule with captured original-compiler output. It checks the source revision and source hashes before
+output for 28 benchmark programs, three bootstrap hello programs, and the
+S-expression bootstrap code extractor from the pinned CakeML submodule with
+captured original-compiler output. It checks the source revision and source hashes before
 using the captures. Pass `--check-reference /var/tmp/flapjack-pinned-cake` to
 also rerun the pinned compiler, or `--record-reference` with that executable
 to regenerate the captures. The benchmark comparisons are finite regression
