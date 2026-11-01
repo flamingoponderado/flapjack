@@ -279,6 +279,28 @@ def rich_extended_program(rng):
     ])
 
 
+def composed_program(rng):
+    """Exercise combinations of state, higher-order functions and datatypes."""
+    a, b, c = (rng.randrange(1, 20) for _ in range(3))
+    return rng.choice([
+        f'datatype tree = Leaf int | Branch (tree * tree); '
+        f'fun fold f z t = case t of Leaf n => f z n | Branch (l,r) => fold f (fold f z l) r; '
+        f'val _ = print_int (fold (fn x => fn y => x+y) {a} (Branch (Leaf {b}, Leaf {c})));',
+        f'fun compose f g = fn x => f (g x); '
+        f'fun add n x = x+n; val h = compose (add {a}) (add {b}); '
+        f'val _ = print_int (h {c});',
+        f'val r = Ref [1,2]; fun push x = r := x :: !r; '
+        f'val _ = push {a}; val _ = push {b}; '
+        f'val _ = print_int (List.foldl (fn x => fn y => x+y) {c} (!r));',
+        f'exception Stop int; fun find xs = case xs of [] => 0 | x::rest => '
+        f'if x = {a} then raise Stop x else find rest; '
+        f'val _ = print_int ((find [{b},{a},{c}]) handle Stop n => n+{b});',
+        f'structure A = struct datatype t = K int; fun get (K x) = x; end; '
+        f'structure B = struct val k = A.K {a}; fun f n = A.get k+n; end; '
+        f'val _ = print_int (B.f {b} + B.f {c});',
+    ])
+
+
 def cross_context_program(rng):
     """Cross patterns, annotations and exception contexts in generated inputs."""
     types = ["int", "bool", "unit", "int list", "int * bool", "(int -> bool)",
@@ -337,6 +359,8 @@ def main():
                         help="well-typed programs exercising diverse compiler passes")
     parser.add_argument("--extended-cases", type=int, default=0,
                         help="additional stateful, recursive and module-dependent programs")
+    parser.add_argument("--composed-cases", type=int, default=0,
+                        help="combinations of higher-order functions, mutation and datatypes")
     parser.add_argument("--integration-cases", type=int, default=len(INTEGRATION_PROGRAMS),
                         help="handwritten end-to-end compiler cases (maximum %(default)s)")
     parser.add_argument("--declaration-cases", type=int, default=100,
@@ -368,7 +392,7 @@ def main():
     parser.add_argument("--edge-seed", type=int, default=83219)
     parser.add_argument("--timeout", type=int, default=90)
     args = parser.parse_args()
-    if (args.type_cases < 0 or args.compile_cases < 0 or args.compile_config_cases < 0 or args.rich_cases < 0 or args.extended_cases < 0 or args.explore_cases < 0 or args.sexp_cases < 0 or
+    if (args.type_cases < 0 or args.compile_cases < 0 or args.compile_config_cases < 0 or args.rich_cases < 0 or args.extended_cases < 0 or args.composed_cases < 0 or args.explore_cases < 0 or args.sexp_cases < 0 or
             not 0 <= args.integration_cases <= len(INTEGRATION_PROGRAMS) or
             args.declaration_cases < 0 or args.handler_cases < 0 or not 0 <= args.annotation_cases <= 320 or
             args.cross_context_cases < 0 or
@@ -485,6 +509,11 @@ def main():
         compare(args.reference, args.cake, [], rich_extended_program(extended_rng), args.timeout, True)
     if args.extended_cases:
         print(f"{args.extended_cases} extended programs match complete pinned RISC-V output", flush=True)
+    composed_rng = random.Random(args.compile_seed ^ 72037)
+    for _ in range(args.composed_cases):
+        compare(args.reference, args.cake, [], composed_program(composed_rng), args.timeout, True)
+    if args.composed_cases:
+        print(f"{args.composed_cases} composed programs match complete pinned RISC-V output", flush=True)
     for source in INTEGRATION_PROGRAMS[:args.integration_cases]:
         compare(args.reference, args.cake, [], source, args.timeout, True)
     print(f"{args.integration_cases} integration programs match complete pinned RISC-V output", flush=True)

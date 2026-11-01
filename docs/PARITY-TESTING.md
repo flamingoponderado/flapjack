@@ -593,6 +593,22 @@ Set `--annotation-cases=320` to exhaust the annotation matrix; its order is
 shuffled deterministically from `--edge-seed`, and its entries include both
 successful programs and diagnostic errors.
 
+The optional `--composed-cases` generator uses its own random stream to exercise
+higher-order tree folds, function composition, captured mutable lists,
+exception-driven recursion and module-qualified constructors. It defaults to
+zero and does not change earlier generators' seeded outputs. The following run
+compared 15 programs, including every template, against the pinned compiler's
+complete RISC-V output, stderr and status:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --compile-seed 587412 --composed-cases 15 --type-cases 0 --sexp-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --declaration-cases 0 --handler-cases 0 --annotation-cases 0 --cross-context-cases 0 \
+  --byte-cases 0 --config-error-cases 0 --compile-cases 0 --compile-config-cases 0 \
+  --rich-cases 0 --config-cases 0 --integration-cases 0
+```
+
 The optional `--extended-cases` generator exercises captured mutable references,
 accumulating and nested list recursion, datatype branches, exception handlers,
 and dependent modules. It uses a separate random stream, so existing seeds keep
