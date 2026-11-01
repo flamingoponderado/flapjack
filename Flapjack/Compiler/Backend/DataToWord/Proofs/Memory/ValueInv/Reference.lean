@@ -6,6 +6,18 @@ finite maps nested in its context tuple. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend.DataSem
 
+/-- The unbounded relation holds exactly when the clocked relation holds at
+every clock, with the source's explicit tuple components. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "v_inv_eq"
+  (fmap_as_finite_support_relation := [f, tf]) (words_as_type_indexed_bitvec)]
+theorem valueInv_eq_explicit {width : Nat} [NeZero width] (conf : Config)
+    (value : Flapjack.Compiler.Backend.DataSem.Value)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (x : HeapAddress (WordLocW width)) (f : HolFiniteMapExact Nat Nat)
+    (tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
+    valueInv conf value refs (x,f,tf,heap) ↔
+      ∀ ck, ClockValueInv ck conf value refs (x,f,tf,heap) := Iff.rfl
+
 /-- Lowering the clock preserves a related data value. The two finite maps
 are explicit here, matching the source theorem's quantified parameters. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "v_inv_ck_mono"

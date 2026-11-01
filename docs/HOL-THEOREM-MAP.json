@@ -99817,6 +99817,16 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv/Reference.lean",
+    "lean_name": "valueInv_eq_explicit",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_inv_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["f", "tf"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: v_inv_eq and the typed data_to_word_memory_repr capture retain configuration, data value, literal spt reference tree and all four tuple components in source order. The right side quantifies every natural clock over the same clocked relation, with no extra assumptions. The two HOL finite maps are the canonical finite-support carriers f and tf; the shared heap/address word dimension is positive, and the data value's Word64 remains fixed at 64 bits. The underlying inductive's nine rules were compared with the typed source as recorded for v_inv_def; the mutual list helper is kernel-proved equivalent to LIST_REL. The inductive declaration itself remains untagged pending checker support for its nested tuple-map carriers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv/Reference.lean",
     "lean_name": "clockValueInv_mono_explicit",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
     "hol_name": "v_inv_ck_mono",

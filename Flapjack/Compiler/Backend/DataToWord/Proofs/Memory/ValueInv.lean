@@ -13,6 +13,47 @@ abbrev ValueHeap (width : Nat) [NeZero width] :=
 abbrev ValueContext (width : Nat) [NeZero width] :=
   HeapAddress (WordLocW width) × HolFiniteMapExact Nat Nat × HolFiniteMapExact Nat Nat × ValueHeap width
 
+/-- Lookup-function view of a value context, used only for the finite-map
+representation roundtrip. This is Flapjack infrastructure. -/
+abbrev ValueContextLookups (width : Nat) [NeZero width] :=
+  HeapAddress (WordLocW width) × (Nat → Option Nat) × (Nat → Option Nat) × ValueHeap width
+
+/-- Forget the finite-support proofs while retaining both maps and all other
+context components. This is Flapjack representation infrastructure. -/
+def valueContextToLookups {width : Nat} [NeZero width] (context : ValueContext width) :
+    ValueContextLookups width :=
+  (context.1, context.2.1.lookup, context.2.2.1.lookup, context.2.2.2)
+
+/-- Recover a finite-map context from lookup functions with finite domains.
+This is Flapjack representation infrastructure. -/
+def valueContextOfLookups {width : Nat} [NeZero width] (context : ValueContextLookups width)
+    (firstFinite : ∃ keys : List Nat, ∀ key, context.2.1 key ≠ none → key ∈ keys)
+    (secondFinite : ∃ keys : List Nat, ∀ key, context.2.2.1 key ≠ none → key ∈ keys) :
+    ValueContext width :=
+  (context.1, ⟨context.2.1, firstFinite⟩, ⟨context.2.2.1, secondFinite⟩, context.2.2.2)
+
+/-- Both finite maps and the other context components survive a roundtrip
+through the lookup-function view. This is a representation witness, not a
+claim of cross-language correspondence. -/
+theorem holFmapAsFiniteSupportTupleWitness {width : Nat} [NeZero width]
+    (context : ValueContext width) :
+    valueContextOfLookups (valueContextToLookups context)
+      context.2.1.finiteSupport context.2.2.1.finiteSupport = context := by
+  rcases context with ⟨address, first, second, heap⟩
+  cases first
+  cases second
+  rfl
+
+/-- The lookup view also survives reconstruction for every pair of finitely
+supported functions. This is Flapjack representation infrastructure. -/
+theorem valueContextToLookups_ofLookups {width : Nat} [NeZero width]
+    (context : ValueContextLookups width)
+    (firstFinite : ∃ keys : List Nat, ∀ key, context.2.1 key ≠ none → key ∈ keys)
+    (secondFinite : ∃ keys : List Nat, ∀ key, context.2.2.1 key ≠ none → key ∈ keys) :
+    valueContextToLookups (valueContextOfLookups context firstFinite secondFinite) = context := by
+  rcases context with ⟨address, first, second, heap⟩
+  rfl
+
 mutual
 /-- Clock-indexed value invariant, factored through a mutual list relation to
 meet Lean's positivity rules. The HOL source has a single `v_inv_ck` relation
