@@ -100226,7 +100226,7 @@
     "hol_name": "n2mw_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The zero and nonzero clauses preserve the little-endian remainder and quotient at an arbitrary positive word width; Lean checks termination."
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The zero and nonzero clauses preserve the little-endian remainder and quotient at an arbitrary positive word width; Lean checks termination. The executed constant compiler uses this through i2mw, and oldDigits_eq_n2mw proves agreement with the former bounded traversal under its satisfied fuel bound."
   },
   {
     "lean_path": "Flapjack/Misc/Multiword.lean",
@@ -100235,7 +100235,7 @@
     "hol_name": "i2mw_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The sign Boolean is exactly i < 0 and the magnitude is Num (ABS i), represented by Int.natAbs, passed to n2mw."
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The sign Boolean is exactly i < 0 and the magnitude is Num (ABS i), represented by Int.natAbs, passed to n2mw. The executed constant compiler now calls this definition."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Numbers.lean",
@@ -100271,7 +100271,7 @@
     "hol_name": "small_int_def",
     "statement_status": "reviewed_word_dimension_as_width",
     "word_dimension_as_width": "width",
-    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The word dimension occurs only numerically, translated to an explicit positive width; the signed lower inclusive and upper exclusive dimword DIV 8 bounds match."
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The word dimension occurs only numerically, translated to an explicit positive width; the signed lower inclusive and upper exclusive dimword DIV 8 bounds match. The executed constant compiler uses this condition."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Numbers.lean",
@@ -100280,7 +100280,7 @@
     "hol_name": "Smallnum_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Both original signed branches preserve integer multiplication, HOL Num as Int.toNat, and modular word subtraction."
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Both original signed branches preserve integer multiplication, HOL Num as Int.toNat, and modular word subtraction. The executed constant compiler uses this definition; smallnum_eq_inlined proves equality to its previous formula at every positive width."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",

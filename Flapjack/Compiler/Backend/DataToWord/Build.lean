@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataToWord.Header
+import Flapjack.Compiler.Backend.DataToWord.Numbers
+import Flapjack.Misc.Multiword
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Misc.Sptree
 
@@ -16,12 +18,6 @@ private def ptrBits {width : Nat} (conf : Config) (tag len : Nat) : BitVec width
     let maximum := 2 ^ bits - 1
     BitVec.ofNat width ((if n < maximum then n else maximum) * 2 ^ shift)
   field tag conf.tagBits (1 + conf.lenBits) ||| field len conf.lenBits 1
-
-private def digits {width : Nat} (fuel : Nat) (n : Nat) : List (BitVec width) :=
-  match fuel with
-  | 0 => []
-  | fuel + 1 => if n == 0 then [] else
-      BitVec.ofNat width (n % (2 ^ width)) :: digits fuel (n / (2 ^ width))
 
 private def pointer {width : Nat} [NeZero width] (conf : Config) (offset : BitVec width) : BitVec width :=
   (offset <<< (shiftLength conf - wordShiftAmount width)) ||| 1
@@ -44,13 +40,11 @@ def partWords {width : Nat} [NeZero width] (conf : Config) (memory : Spt (Value 
   if width != 32 && width != 64 then none else
   match part with
   | .int i =>
-    let bound : Int := Int.ofNat (2 ^ width / 8)
-    if -bound ≤ i ∧ i < bound then
-      let w := BitVec.ofNat width (4 * i.natAbs)
-      some ((false, if i < 0 then -w else w), [])
+    if smallInt width i then
+      some ((false, smallnum i), [])
     else
-      let ws := digits (width := width) (i.natAbs + 1) i.natAbs
-      let header ← encodeHeader (width := width) conf (if i < 0 then 7 else 3) ws.length
+      let (sign, ws) := Misc.Multiword.i2mw (width := width) i
+      let header ← encodeHeader (width := width) conf (if sign then 7 else 3) ws.length
       some ((true, pointer conf offset), (header :: ws).map (false, ·))
   | .con tag refs =>
     if refs.isEmpty then

@@ -25,14 +25,18 @@ def ptrBits {width : Nat} [NeZero width] (conf : Config) (tag len : Nat) : BitVe
   maxoutBits tag conf.tagBits (1 + conf.lenBits) ||| maxoutBits len conf.lenBits 1
 
 /-- The signed interval represented by an immediate integer. The production
-constant compiler currently expands this bound inline. -/
+constant compiler uses this condition directly. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "small_int_def"
   (word_dimension_as_width := width)]
 def smallInt (width : Nat) [NeZero width] (i : Int) : Prop :=
   -(Int.ofNat (2 ^ width / 8)) ≤ i ∧ i < Int.ofNat (2 ^ width / 8)
 
-/-- Encode a signed immediate integer in the source word representation. The
-production constant compiler currently expands this formula inline. -/
+instance (width : Nat) [NeZero width] (i : Int) : Decidable (smallInt width i) := by
+  unfold smallInt
+  infer_instance
+
+/-- Encode a signed immediate integer in the source word representation.
+The production constant compiler uses this definition directly. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "Smallnum_def"
   (words_as_type_indexed_bitvec)]
 def smallnum {width : Nat} [NeZero width] (i : Int) : BitVec width :=
