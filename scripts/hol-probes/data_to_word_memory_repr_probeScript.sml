@@ -91,3 +91,5 @@ val _ = show "bc_stack_ref_inv_typed" data_to_word_memoryProofTheory.bc_stack_re
 val _ = show "abs_ml_inv_typed" data_to_word_memoryProofTheory.abs_ml_inv_def;
 val _ = show "word_ml_inv_typed" data_to_word_memoryProofTheory.word_ml_inv_def;
 val _ = show "memory_rel_typed" data_to_word_memoryProofTheory.memory_rel_def;
+val _ = show "v_inv_ck_mono_typed" data_to_word_memoryProofTheory.v_inv_ck_mono;
+val _ = show "v_inv_def_typed" data_to_word_memoryProofTheory.v_inv_def;

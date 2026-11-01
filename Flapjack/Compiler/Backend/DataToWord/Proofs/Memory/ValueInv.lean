@@ -112,11 +112,147 @@ theorem clockValueListInv_iff {width : Nat} [NeZero width] (ck : Nat) (conf : Co
             | cons head tail =>
                 exact .cons ck conf refs f tf heap value x values xs head ((ih xs).mpr tail)
 
+/-- Clock monotonicity for the preliminary clocked value relation. This has
+no HOL tag while the relation and its nested finite-map carriers remain
+unreviewed; the original `v_inv_ck_mono` statement is captured by the probe. -/
+theorem clockValueInv_mono {width : Nat} [NeZero width] :
+    ∀ ck conf value refs context, ClockValueInv (width := width) ck conf value refs context →
+      ∀ ck', ck' ≤ ck → ClockValueInv ck' conf value refs context := by
+  intro ck
+  induction ck with
+  | zero =>
+      intro conf value refs context related ck' bound
+      have : ck' = 0 := by omega
+      subst ck'
+      exact related
+  | succ ck ih =>
+      intro conf value refs context related ck' bound
+      cases related with
+      | numberSmall _ _ i refs f tf heap small =>
+          exact .numberSmall ck' conf i refs f tf heap small
+      | numberBig _ _ i ptr refs f tf heap large found =>
+          exact .numberBig ck' conf i ptr refs f tf heap large found
+      | word64 _ _ w ptr refs f tf heap found =>
+          exact .word64 ck' conf w ptr refs f tf heap found
+      | codePtr _ _ n refs f tf heap =>
+          exact .codePtr ck' conf n refs f tf heap
+      | refPtr bit _ _ n refs f tf heap domain notThunk notMut =>
+          exact .refPtr bit ck' conf n refs f tf heap domain notThunk notMut
+      | refPtrThunk _ _ mode n value x refs f tf heap found evaluated domain cell recursive =>
+          refine ClockValueInv.refPtrThunk ck' conf mode n value x refs f tf heap found evaluated domain cell ?_
+          intro positive
+          have r := recursive (by omega)
+          have r' : ClockValueInv ck conf value refs (x, f, tf, heap) := by simpa using r
+          exact ih conf value refs (x, f, tf, heap) r' (ck' - 1) (by omega)
+      | refPtrThunkInlined _ _ n value x refs f tf heap found notThunk recursive =>
+          refine ClockValueInv.refPtrThunkInlined ck' conf n value x refs f tf heap found notThunk ?_
+          intro positive
+          have r := recursive (by omega)
+          have r' : ClockValueInv ck conf value refs (x, f, tf, heap) := by simpa using r
+          exact ih conf value refs (x, f, tf, heap) r' (ck' - 1) (by omega)
+      | blockNil _ _ stamp tag values refs f tf heap empty tagBound zeroStamp =>
+          exact .blockNil ck' conf stamp tag values refs f tf heap empty tagBound zeroStamp
+      | blockCons _ _ stamp tag ptr values xs refs f tf heap nonempty recursive timestamp cell =>
+          refine ClockValueInv.blockCons ck' conf stamp tag ptr values xs refs f tf heap nonempty ?_ timestamp cell
+          intro positive
+          have r := recursive (by omega)
+          have r' : ClockValueListInv ck conf refs f tf heap values xs := by simpa using r
+          apply (clockValueListInv_iff _ _ _ _ _ _ _ _).mpr
+          apply List.Forall₂.imp _ ((clockValueListInv_iff _ _ _ _ _ _ _ _).mp r')
+          intro value x head
+          exact ih conf value refs (x, f, tf, heap) head (ck' - 1) (by omega)
+
+
 /-- The unbounded value relation is the intersection of the clocked ones.
 This remains untagged until the clocked relation and tuple-map representation
 have been reviewed against the original. -/
 def valueInv {width : Nat} [NeZero width] (conf : Config) (value : Value)
     (refs : Spt (BvlSem.Ref Value)) (context : ValueContext width) : Prop :=
   ∀ ck, ClockValueInv ck conf value refs context
+
+/-- Unbounded relatedness can be established at arbitrarily large clocks;
+monotonicity then supplies every smaller clock. This is Flapjack proof
+infrastructure and does not claim a separate HOL declaration. -/
+theorem valueInv_iff_unboundedClocks {width : Nat} [NeZero width] (conf : Config) (value : Value)
+    (refs : Spt (BvlSem.Ref Value)) (context : ValueContext width) :
+    valueInv conf value refs context ↔
+      ∀ ck, ∃ larger, ck ≤ larger ∧ ClockValueInv larger conf value refs context := by
+  constructor
+  · intro all ck
+    exact ⟨ck, Nat.le_refl _, all ck⟩
+  · intro unbounded ck
+    obtain ⟨larger, bound, related⟩ := unbounded ck
+    exact clockValueInv_mono larger conf value refs context related ck bound
+
+/-- Number case, over the preliminary value invariant. This remains untagged until the
+underlying relation and finite-map representation are source-reviewed. -/
+theorem valueInv_number {width : Nat} [NeZero width] (conf : Config) (i : Int) (refs : Spt (BvlSem.Ref Value))
+    (x : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
+    valueInv conf (.number i) refs (x,f,tf,heap) ↔
+      if smallInt width i then x = .data (.word (smallnum i)) else
+        ∃ ptr, x = .pointer ptr (.word 0) ∧ heapLookup ptr heap = some (bignumRep i) := by
+  by_cases hs : smallInt width i
+  · simp only [hs, ↓reduceIte]
+    constructor
+    · intro h
+      have related := h 0
+      cases related with
+      | numberSmall _ _ _ _ _ _ _ small => rfl
+      | numberBig _ _ _ _ _ _ _ _ large _ => exact False.elim (large hs)
+    · intro h ck
+      subst x
+      exact .numberSmall ck conf i refs f tf heap hs
+  · simp only [hs, ↓reduceIte]
+    constructor
+    · intro h
+      have related := h 0
+      cases related with
+      | numberSmall _ _ _ _ _ _ _ small => exact False.elim (hs small)
+      | numberBig _ _ _ ptr _ _ _ _ _ found => exact ⟨ptr, rfl, found⟩
+    · rintro ⟨ptr, rfl, found⟩ ck
+      exact .numberBig ck conf i ptr refs f tf heap hs found
+
+/-- Word64 case, over the preliminary value invariant. This remains untagged until the
+underlying relation and finite-map representation are source-reviewed. -/
+theorem valueInv_word64 {width : Nat} [NeZero width] (conf : Config) (word : BitVec 64) (refs : Spt (BvlSem.Ref Value))
+    (x : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
+    valueInv conf (.word64 word) refs (x,f,tf,heap) ↔
+      ∃ ptr, x = .pointer ptr (.word 0) ∧ heapLookup ptr heap = some (word64Rep word) := by
+  constructor
+  · intro h
+    have related := h 0
+    cases related with
+    | word64 _ _ _ ptr _ _ _ _ found => exact ⟨ptr, rfl, found⟩
+  · rintro ⟨ptr, rfl, found⟩ ck
+    exact .word64 ck conf word ptr refs f tf heap found
+
+/-- Code-pointer case, over the preliminary value invariant. This remains untagged until the
+underlying relation and finite-map representation are source-reviewed. -/
+theorem valueInv_codePtr {width : Nat} [NeZero width] (conf : Config) (n : Nat) (refs : Spt (BvlSem.Ref Value))
+    (x : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
+    valueInv conf (.codePtr n) refs (x,f,tf,heap) ↔ x = .data (.loc n 0) := by
+  constructor
+  · intro h
+    have related := h 0
+    cases related with
+    | codePtr => rfl
+  · intro h ck
+    subst x
+    exact .codePtr ck conf n refs f tf heap
+
+/-- Empty-block case, over the preliminary value invariant. This remains untagged until the
+underlying relation and finite-map representation are source-reviewed. -/
+theorem valueInv_emptyBlock {width : Nat} [NeZero width] (conf : Config) (stamp tag : Nat) (refs : Spt (BvlSem.Ref Value))
+    (x : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
+    valueInv conf (.block stamp tag []) refs (x,f,tf,heap) ↔
+      x = .data (.word (blockNil tag)) ∧ tag < 2 ^ width / 16 ∧ stamp = 0 := by
+  constructor
+  · intro h
+    have related := h 0
+    cases related with
+    | blockNil _ _ _ _ _ _ _ _ _ _ bound zero => exact ⟨rfl, bound, zero⟩
+    | blockCons _ _ _ _ _ _ _ _ _ _ _ nonempty _ _ _ => exact False.elim (nonempty rfl)
+  · rintro ⟨rfl, bound, zero⟩ ck
+    exact .blockNil ck conf stamp tag [] refs f tf heap rfl bound zero
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

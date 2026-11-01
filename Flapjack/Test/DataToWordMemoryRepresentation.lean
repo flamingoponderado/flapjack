@@ -114,6 +114,15 @@ example : ClockValueInv (width := 32) 0 config (.block 0 2 []) .ln
     (.data (.word (blockNil 2)), HolFiniteMapExact.empty, HolFiniteMapExact.empty, []) := by
   exact .blockNil 0 config 0 2 [] .ln _ _ [] rfl (by decide) rfl
 
+example : valueInv (width := 32) config (.number (-2)) .ln
+    (.data (.word (smallnum (-2))), HolFiniteMapExact.empty, HolFiniteMapExact.empty, []) := by
+  apply (valueInv_number config (-2) .ln _ _ _ _).2
+  simp [smallInt]
+
+example : valueInv (width := 32) config (.block 0 2 []) .ln
+    (.data (.word (blockNil 2)), HolFiniteMapExact.empty, HolFiniteMapExact.empty, []) := by
+  exact (valueInv_emptyBlock config 0 2 .ln _ _ _ _).2 ⟨rfl, by decide, rfl⟩
+
 example : ¬ bcRefInv (width := 32) config 0 .ln
     (HolFiniteMapExact.empty, HolFiniteMapExact.empty, [], false) := by
   simp [bcRefInv, HolFiniteMapExact.empty]
