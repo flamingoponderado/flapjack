@@ -227,4 +227,51 @@ theorem simulationFor_force_evaluated {C F : Type} (label index : Nat)
               · simp [DataSem.getVar, sptLookup_sptMap, destRead, projected]
               · constructor
 
+/-- At zero clock, all non-type-error forcing executions are covered: an
+already evaluated thunk returns its value, while a valid unevaluated thunk
+times out. This assembles the cases into the compiler simulation invariant;
+it remains untagged pending evaluator and carrier review. -/
+theorem simulationFor_force_clock_zero {C F : Type} (label index : Nat)
+    (env : List BvlSem.Value) (source : BviSem.BviState C F)
+    (clock : source.clock = 0) : simulationFor [.force label index] env source := by
+  intro res s2 target n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
+  cases sourceVar : env[index]? with
+  | none =>
+    simp [BviSem.evaluate, sourceVar] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact False.elim (notTypeError rfl)
+  | some thunk =>
+    cases sourceThunk : BviSem.destThunk thunk source.refs with
+    | badRef =>
+      simp [BviSem.evaluate, sourceVar, sourceThunk] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact False.elim (notTypeError rfl)
+    | notThunk =>
+      simp [BviSem.evaluate, sourceVar, sourceThunk] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact False.elim (notTypeError rfl)
+    | isThunk mode value =>
+      cases mode with
+      | evaluated =>
+        obtain ⟨sourceRun, targetNext, prog, pres, names, next, ls, compiled, targetRun, finalRel, outcome⟩ :=
+          simulationFor_force_evaluated label index env source thunk value sourceVar sourceThunk
+            target n corr tail live vars fresh related livePresent
+        rw [sourceRun] at run
+        cases run
+        exact ⟨targetNext, prog, pres, names, next, ls, compiled, targetRun, finalRel, outcome⟩
+      | notEvaluated =>
+        cases sourceCode : BvlSem.findCode (some label) [thunk, value] source.code with
+        | none =>
+          simp [BviSem.evaluate, sourceVar, sourceThunk, sourceCode] at run
+          obtain ⟨rfl, rfl⟩ := run
+          exact False.elim (notTypeError rfl)
+        | some pair =>
+          obtain ⟨callArgs, body⟩ := pair
+          obtain ⟨sourceRun, targetNext, prog, pres, names, next, ls, compiled, targetRun, finalRel, outcome⟩ :=
+            simulationFor_force_timeout label index env source thunk value callArgs body
+              sourceVar sourceThunk sourceCode clock target n corr tail live vars related livePresent
+          rw [sourceRun] at run
+          cases run
+          exact ⟨targetNext, prog, pres, names, next, ls, compiled, targetRun, finalRel, outcome⟩
+
 end Flapjack.Compiler.Backend.BviToData
