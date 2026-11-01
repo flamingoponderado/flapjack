@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 
 /-! Initial cases of closure-annotation evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate
@@ -34,6 +36,13 @@ def EvalSimulation {C F : Type} (expressions : List ClosLang.Exp) : Prop :=
     ∃ targetResult targetNext,
       evaluate (shiftList (altFree expressions).1 m l index) nextEnv target = (targetResult, targetNext) ∧
       ResultRel result targetResult ∧ StateRel sourceNext targetNext
+
+/-- Preservation obligation for code and oracle safety across evaluation.
+The general proof for arbitrary expressions and applications remains open. -/
+def PreservesCodeOracle {C F : Type} (expressions : List ClosLang.Exp) : Prop :=
+  ∀ (env : List Value) (source : State C F) (result : Result (List Value) Value) (next : State C F),
+    evaluate expressions env source = (result, next) → CodeSafe source → OracleSafe source →
+    CodeSafe next ∧ OracleSafe next
 
 /-- Empty expression lists preserve evaluation and state. -/
 theorem evaluate_nil {C F : Type} : EvalSimulation (C := C) (F := F) [] := by
@@ -70,5 +79,97 @@ theorem evaluate_var {C F : Type} (trace : BackendCommon.Tra) (variableIndex : N
     obtain ⟨rfl, rfl⟩ := run
     refine ⟨.val [targetValue], target, ?_, .cons valueRel .nil, states⟩
     simp [altFree_var, shiftList, shiftSing, evaluate, targetLookup]
+
+/-- Sequence two or more expressions when their simulations and the first
+expression's code/oracle safety preservation are available. -/
+theorem evaluate_cons {C F : Type} (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
+    (firstIH : EvalSimulation (C := C) (F := F) [first])
+    (restIH : EvalSimulation (C := C) (F := F) (second :: rest))
+    (firstSafety : PreservesCodeOracle (C := C) (F := F) [first]) :
+    EvalSimulation (C := C) (F := F) (first :: second :: rest) := by
+  intro env source nextEnv target result sourceNext m l index run noType length vars safe code oracle states
+  have firstVars : ∀ n, altFv n [first] = true → EnvOk m l index env nextEnv n := by
+    intro n present
+    apply vars n
+    rw [altFv_cons]
+    simp [present]
+  have restVars : ∀ n, altFv n (second :: rest) = true → EnvOk m l index env nextEnv n := by
+    intro n present
+    apply vars n
+    rw [altFv_cons]
+    simp [present]
+  have safety : everyFnVarsNone [first] ∧ everyFnVarsNone (second :: rest) := by
+    simpa [everyFnVarsNone] using safe
+  cases firstRun : evaluate [first] env source with
+  | mk firstResult middle =>
+    cases firstResult with
+    | err error =>
+      have fullRun := ClosProps.evaluate_cons_error first (second :: rest) env source middle error firstRun
+      rw [fullRun] at run
+      cases run
+      obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+        firstIH env source nextEnv target (.err error) sourceNext m l index
+          firstRun noType length firstVars safety.1 code oracle states
+      cases targetResult with
+      | val values => cases error <;> simp [ResultRel] at resultRel
+      | err targetError =>
+        refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
+        simp only [altFree_singleton, shiftList] at targetRun
+        simp only [altFree, altFreeList, shiftList]
+        exact ClosProps.evaluate_cons_error _ _ _ _ _ _ targetRun
+    | val values =>
+      have valueLength := (evaluate_length (C := C) (F := F)).1 [first] env source middle values firstRun
+      cases values with
+      | nil => simp at valueLength
+      | cons value tail =>
+        cases tail with
+        | cons other tail => simp at valueLength
+        | nil =>
+          have firstNoType : (Result.val [value] : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
+          obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+            firstIH env source nextEnv target (.val [value]) middle m l index
+              firstRun firstNoType length firstVars safety.1 code oracle states
+          cases targetResult with
+          | err error => cases error <;> simp [ResultRel] at resultRel
+          | val targetValues =>
+            cases resultRel with
+            | cons valueRel tailRel =>
+              cases tailRel
+              rename_i targetValue
+              have middleSafety := firstSafety env source (.val [value]) middle firstRun code oracle
+              cases restRun : evaluate (second :: rest) env middle with
+              | mk restResult last =>
+                have fullRun := ClosProps.evaluate_cons_value first (second :: rest) env source middle value firstRun
+                rw [restRun] at fullRun
+                cases restResult with
+                | err error =>
+                  simp only at fullRun
+                  rw [fullRun] at run
+                  cases run
+                  obtain ⟨targetRestResult, targetLast, targetRestRun, restRel, lastRel⟩ :=
+                    restIH env middle nextEnv targetMiddle (.err error) sourceNext m l index
+                      restRun noType length restVars safety.2 middleSafety.1 middleSafety.2 middleRel
+                  cases targetRestResult with
+                  | val values => cases error <;> simp [ResultRel] at restRel
+                  | err targetError =>
+                    refine ⟨.err targetError, targetLast, ?_, restRel, lastRel⟩
+                    simp only [altFree_singleton, shiftList] at targetRun
+                    simp only [altFree, altFreeList, shiftList] at targetRestRun ⊢
+                    rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ targetRun, targetRestRun]
+                | val values =>
+                  simp only at fullRun
+                  rw [fullRun] at run
+                  cases run
+                  have restNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
+                  obtain ⟨targetRestResult, targetLast, targetRestRun, restRel, lastRel⟩ :=
+                    restIH env middle nextEnv targetMiddle (.val values) sourceNext m l index
+                      restRun restNoType length restVars safety.2 middleSafety.1 middleSafety.2 middleRel
+                  cases targetRestResult with
+                  | err error => cases error <;> simp [ResultRel] at restRel
+                  | val targetValues =>
+                    refine ⟨.val (targetValue :: targetValues), targetLast, ?_, .cons valueRel restRel, lastRel⟩
+                    simp only [altFree_singleton, shiftList] at targetRun
+                    simp only [altFree, altFreeList, shiftList] at targetRestRun ⊢
+                    rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ targetRun, targetRestRun]
 
 end Flapjack.Compiler.Backend.ClosAnnotate

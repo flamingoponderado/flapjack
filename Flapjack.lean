@@ -772,6 +772,7 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EnvironmentExtension
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EvaluateCases
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstallSafety
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
 import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 import Flapjack.Compiler.Backend.BvlToBvi.Stubs
