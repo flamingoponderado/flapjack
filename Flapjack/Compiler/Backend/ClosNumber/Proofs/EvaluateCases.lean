@@ -443,4 +443,112 @@ theorem evaluate_handle {C F : Type} (trace : BackendCommon.Tra)
               exact targetHandlerRun
             · simpa [maxEq] using handlerRel
 
+/-- Numbering preserves the evaluator's Boolean observation. -/
+theorem valueRel_asBool {maxApp : Nat} {left right : Value}
+    (related : ValueRel maxApp left right) : asBool left = asBool right := by
+  cases related with
+  | block tag left right entries =>
+    cases entries with
+    | nil => rfl
+    | cons head tail => cases tag <;> simp [asBool]
+  | number _ | word64 _ | byteVector _ | refPtr _ _ => rfl
+  | closure => rfl
+  | recclosure => rfl
+
+/-- Conditionals follow the same branch after numbering, assuming the
+    condition and both branches satisfy their simulations. -/
+theorem evaluate_if {C F : Type} (trace : BackendCommon.Tra) (condition yes no : ClosLang.Exp)
+    (conditionIH : EvalSimulation (C := C) (F := F) [condition])
+    (yesIH : EvalSimulation (C := C) (F := F) [yes])
+    (noIH : EvalSimulation (C := C) (F := F) [no]) :
+    EvalSimulation (C := C) (F := F) [.ifThenElse trace condition yes no] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  have safeParts : ¬ ClosProps.containsAppSomeExp source.maxApp condition ∧
+      ¬ ClosProps.containsAppSomeExp source.maxApp yes ∧
+      ¬ ClosProps.containsAppSomeExp source.maxApp no := by
+    simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
+  have conditionSafe : ¬ ClosProps.containsAppSome source.maxApp [condition] := by
+    simpa [ClosProps.containsAppSome] using safeParts.1
+  have yesSafe : ¬ ClosProps.containsAppSome source.maxApp [yes] := by
+    simpa [ClosProps.containsAppSome] using safeParts.2.1
+  have noSafe : ¬ ClosProps.containsAppSome source.maxApp [no] := by
+    simpa [ClosProps.containsAppSome] using safeParts.2.2
+  cases conditionRun : evaluate [condition] env source with
+  | mk conditionResult middle =>
+    cases conditionResult with
+    | err error =>
+      rw [evaluate, fixClock_evaluate, conditionRun] at run
+      cases run
+      obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+        conditionIH env nextEnv source target (.err error) middle start conditionRun
+          noType conditionSafe envRel stateRel
+      cases targetResult with
+      | val values => cases error <;> simp [ResultRel] at resultRel
+      | err targetError =>
+        refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
+        simp only [renumberList] at targetRun
+        simp only [renumberList, renumber]
+        rw [evaluate, fixClock_evaluate, targetRun]
+    | val values =>
+      have length := (evaluate_length (C := Nat × C) (F := F)).1 [condition] env source middle values conditionRun
+      cases values with
+      | nil => simp at length
+      | cons value tail =>
+        cases tail with
+        | cons value' tail => simp at length
+        | nil =>
+          have conditionNoType : (Result.val [value] : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
+          obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+            conditionIH env nextEnv source target (.val [value]) middle start conditionRun
+              conditionNoType conditionSafe envRel stateRel
+          cases targetResult with
+          | err error => cases error <;> simp [ResultRel] at resultRel
+          | val targetValues =>
+            cases resultRel with
+            | cons valueRel tailRel =>
+              cases tailRel
+              rename_i targetValue
+              have boolEq : asBool value = asBool targetValue := valueRel_asBool valueRel
+              have maxEq : middle.maxApp = source.maxApp := by
+                have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 [condition] env source
+                simpa [conditionRun] using h
+              have middleEnv : List.Forall₂ (ValueRel middle.maxApp) env nextEnv := by
+                simpa [maxEq] using envRel
+              cases decision : asBool value with
+              | none =>
+                rw [evaluate, fixClock_evaluate, conditionRun] at run
+                simp [decision] at run
+                exact False.elim (noType run.1.symm)
+              | some flag =>
+                have targetDecision : asBool targetValue = some flag := by rw [← boolEq]; exact decision
+                cases flag with
+                | false =>
+                  have branchRun : evaluate [no] env middle = (result, sourceNext) := by
+                    rw [evaluate, fixClock_evaluate, conditionRun] at run
+                    simpa [decision] using run
+                  obtain ⟨targetBranchResult, targetLast, targetBranchRun, branchRel, lastRel⟩ :=
+                    noIH env nextEnv middle targetMiddle result sourceNext
+                      (renumber (renumber start condition).1 yes).1 branchRun noType
+                      (by simpa [maxEq] using noSafe) middleEnv middleRel
+                  refine ⟨targetBranchResult, targetLast, ?_, ?_, lastRel⟩
+                  · simp only [renumberList] at targetRun targetBranchRun
+                    simp only [renumberList, renumber]
+                    rw [evaluate, fixClock_evaluate, targetRun]
+                    simpa [targetDecision] using targetBranchRun
+                  · simpa [maxEq] using branchRel
+                | true =>
+                  have branchRun : evaluate [yes] env middle = (result, sourceNext) := by
+                    rw [evaluate, fixClock_evaluate, conditionRun] at run
+                    simpa [decision] using run
+                  obtain ⟨targetBranchResult, targetLast, targetBranchRun, branchRel, lastRel⟩ :=
+                    yesIH env nextEnv middle targetMiddle result sourceNext
+                      (renumber start condition).1 branchRun noType
+                      (by simpa [maxEq] using yesSafe) middleEnv middleRel
+                  refine ⟨targetBranchResult, targetLast, ?_, ?_, lastRel⟩
+                  · simp only [renumberList] at targetRun targetBranchRun
+                    simp only [renumberList, renumber]
+                    rw [evaluate, fixClock_evaluate, targetRun]
+                    simpa [targetDecision] using targetBranchRun
+                  · simpa [maxEq] using branchRel
+
 end Flapjack.Compiler.Backend.ClosNumber
