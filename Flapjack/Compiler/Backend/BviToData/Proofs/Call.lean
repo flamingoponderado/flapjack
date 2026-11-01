@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
 import Flapjack.Compiler.Backend.BviToData.Proofs.Compare
 import Flapjack.Compiler.Backend.Semantics.DataProps.Ticks
 import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush
+import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateForce
 import Flapjack.Misc.Sptree.UnionAlgebra
 import Mathlib.Data.List.Induction
 
@@ -1344,6 +1345,199 @@ theorem simulationFor_call_handler_abort {C F : Type} (ticks dest : Nat) (args :
     · simp [compileSource, compiled, handlerCompiled, rest, call, after, roots]
     · simp [correctOutcome, dataToBviResult, isReturn, isResult, isException]
 
+/-- A handled call transfers a callee exception into the recursively
+simulated handler and continues with its result. -/
+theorem simulationFor_call_handler_exception {C F : Type} (ticks dest : Nat) (args : List Bvi.Exp)
+    (handler : Bvi.Exp) (env values callArgs : List BvlSem.Value) (body : Bvi.Exp)
+    (s1 smid caughtSource s2 : BviSem.BviState C F) (value : BvlSem.Value) (res : BviSem.BviResult)
+    (ihArgs : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
+    (sourceCode : BvlSem.findCode (some dest) values smid.code = some (callArgs, body))
+    (clock : ticks + 1 ≤ smid.clock)
+    (bodyRun : BviSem.evaluate [body] callArgs (BviSem.decClock (ticks + 1) smid) = (.err (.raise (.exn value)), caughtSource))
+    (ihBody : simulationFor [body] callArgs (BviSem.decClock (ticks + 1) smid))
+    (handlerRun : BviSem.evaluate [handler] (value :: env) caughtSource = (res, s2))
+    (ihHandler : simulationFor [handler] (value :: env) caughtSource)
+    (notReturn : ¬ isReturn res) (notType : res ≠ .err (.abort .typeError))
+    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
+    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
+    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none)
+    (exceptionJump : isException res → DataSem.jumpExc t1 ≠ none) :
+    BviSem.evaluate [.call ticks (some dest) args (some handler)] env s1 = (res, s2) ∧
+    ∃ t2 prog pres names next ls,
+      compileSource n corr tail live [.call ticks (some dest) args (some handler)] = (prog, names, next) ∧
+      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
+      correctOutcome res t1 t2 n next corr live names env tail pres ls := by
+  have bodyClamped : BviSem.fixClock (BviSem.decClock (ticks + 1) smid)
+      (BviSem.evaluate [body] callArgs (BviSem.decClock (ticks + 1) smid)) = (.err (.raise (.exn value)), caughtSource) := by
+    rw [BviSem.fixClock_evaluate, bodyRun]
+  have wholeRun : BviSem.evaluate [.call ticks (some dest) args (some handler)] env s1 = (res, s2) := by
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+    simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, sourceCode,
+      show ¬ smid.clock < ticks + 1 by omega, bodyClamped, handlerRun]
+    cases res with
+    | val values => rfl
+    | err error => cases error with
+      | abort error => rfl
+      | raise value => cases value with
+        | exn value => rfl
+        | ret values => exact False.elim (notReturn ⟨values, rfl⟩)
+  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, firstOutcome⟩ :=
+    ihArgs (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent (by simp [isException])
+  cases pres with
+  | some result => simp [correctOutcome, isResult] at firstOutcome
+  | none =>
+    have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls firstOutcome livePresent
+    have liveMid : ∀ key ∈ live, sptLookup key tmid.locals ≠ none := by
+      intro key member
+      exact liveMidAll key (List.mem_append_right argNames member)
+    have freshMid : ∀ key, n1 ≤ key → sptLookup key tmid.locals = none := firstOutcome.2.2.2.1
+    have varsMid : DataProps.varCorr env corr (sptMap dataToBviValue tmid.locals) := firstOutcome.2.2.2.2.1
+    have jumpMid : DataSem.jumpExc t1 ≠ none → DataSem.jumpExc tmid ≠ none := firstOutcome.2.2.2.2.2.2.2.2.2.1
+    have resultVars : DataProps.varCorr values argNames (sptMap dataToBviValue tmid.locals) := firstOutcome.2.2.2.2.2.2.2.2.2.2
+    obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
+    have projectedCode : BvlSem.findCode (some dest) (dataValues.map dataToBviValue) smid.code = some (callArgs, body) := by
+      simpa [← projected] using sourceCode
+    obtain ⟨dataArgs, size, argsProjection, targetCode⟩ :=
+      findCode_direct smid tmid dest dataValues callArgs body middleRel projectedCode
+    subst callArgs
+    have targetClock : ticks + 1 ≤ tmid.clock := by simpa [← middleRel.1] using clock
+    let afterTicks := { tmid with clock := tmid.clock - ticks }
+    have positive : afterTicks.clock ≠ 0 := by simp only [afterTicks]; omega
+    have afterRead : DataSem.getVars argNames afterTicks.locals = some dataValues := by simpa [afterTicks] using read
+    have afterCode : DataSem.findCode (some dest) dataValues afterTicks.code afterTicks.stackFrameSizes =
+        some (dataArgs, compileExp dataArgs.length body, size) := by simpa [afterTicks] using targetCode
+    let roots := live ++ corr
+    let cut := sptMkWf (sptInter tmid.locals (namesOfList roots))
+    have rootsPresent : ∀ key ∈ roots, sptLookup key tmid.locals ≠ none := by
+      simpa [roots, DataSem.getVars] using
+        (roots_present tmid [] live corr env [] varsMid liveMid (by simp [DataSem.getVars]))
+    have cutEnv : DataSem.cutEnv (namesOfList roots) afterTicks.locals = some cut :=
+      cutEnv_namesOfList roots tmid.locals rootsPresent
+    let pushed := DataSem.pushEnv cut true (DataSem.decClock afterTicks)
+    have entryRel : stateRel (BviSem.decClock (ticks + 1) smid) (DataSem.decClock afterTicks) := by
+      have entry := stateRel_callEntry smid tmid dataArgs size ticks middleRel
+      simpa [stateRel, DataSem.callEnv, afterTicks] using entry
+    have pushedRel := stateRel_pushEnv (BviSem.decClock (ticks + 1) smid) (DataSem.decClock afterTicks) cut true entryRel
+    have callJump : DataSem.jumpExc (DataSem.callEnv dataArgs size pushed) ≠ none := by
+      change DataSem.jumpExc (DataSem.callEnv dataArgs size (DataSem.pushEnv cut true (DataSem.decClock afterTicks))) ≠ none
+      rw [DataSem.jumpExc_callEnv_push_handler]
+      simp
+    obtain ⟨result, final, bodyNames, next, lsBody, localsSize, stackMax, safe, peak, bodyTarget,
+        finalRel, optimizedRel, bodyOutcome⟩ :=
+      compileExp_callEnv body dataArgs (BviSem.decClock (ticks + 1) smid) caughtSource (.err (.raise (.exn value))) pushed size
+        ihBody bodyRun (by simp) pushedRel (by intro _; exact callJump)
+    have projection := bodyOutcome.1 (by simp [isReturn])
+    rw [dataToBviResult_eq] at projection
+    obtain ⟨dataValue, resultEq, projectedValue⟩ := projection
+    simp only [BviSem.ExnOrRet.exn.injEq] at projectedValue
+    subst result
+    let optimized := { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }
+    have optOutcome := correctOutcome_some_resources (.err (.raise (.exn value))) (DataSem.callEnv dataArgs size pushed)
+      final dataArgs.length next (List.range dataArgs.length) [] bodyNames (dataArgs.map dataToBviValue) true
+      (.err (.raise dataValue)) lsBody localsSize stackMax safe peak bodyOutcome
+    have innerJump := optOutcome.2.2.2.2 (by simp [isException])
+    have savedJump : DataSem.jumpExc { optimized with stack := .exc tmid.localsSize cut tmid.handler :: tmid.stack, handler := tmid.stack.length } =
+        some { optimized with localsSize := lsBody } := by
+      simpa [DataSem.callEnv, pushed, DataSem.pushEnv, DataSem.decClock, afterTicks, optimized] using innerJump
+    obtain ⟨caughtStack, caughtHandler, caughtLocals, caughtSize⟩ := jumpExc_handler_frame tmid optimized cut lsBody savedJump
+    have handlerJump : isException res → DataSem.jumpExc tmid ≠ none := fun h => jumpMid (exceptionJump h)
+    obtain ⟨handlerProg, handlerName, n2, hfinal, hpres, lsHandler, handlerCompiled, handlerTarget, handlerRel, handlerOutcome⟩ :=
+      simulationFor_caught_handler handler env caughtSource s2 value dataValue res tmid optimized n1 corr live
+        ihHandler handlerRun notType projectedValue varsMid freshMid liveMid (by simpa [cut, roots] using caughtLocals)
+        caughtStack caughtHandler optimizedRel handlerJump
+    have clamped : DataSem.fixClock (DataSem.callEnv dataArgs size pushed)
+        (DataSem.evaluate (compileExp dataArgs.length body) (DataSem.callEnv dataArgs size pushed)) =
+        (some (.err (.raise dataValue)), optimized) := by
+      rw [DataSem.fixClock_evaluate, bodyTarget]
+    let call := DataLang.Prog.call (some ([n2], namesOfList roots)) (some dest) argNames
+      (some (n1, .seq handlerProg (.move n2 handlerName)))
+    have callRun : DataSem.evaluate call afterTicks = (hpres, hfinal) := by
+      simp only [call, DataSem.evaluate, afterRead, afterCode, List.nodup_singleton, decide_true, Bool.not_true,
+        Bool.false_eq_true, ↓reduceIte, cutEnv, positive, Option.isSome_some]
+      rw [clamped]
+      simpa only [DataSem.evaluate, Prod.fst, Prod.snd] using handlerTarget
+    have callBound := DataSem.evaluate_clock_le call afterTicks
+    rw [callRun] at callBound
+    have sourceBound := BviSem.evaluate_clock_le args env s1
+    rw [argsRun] at sourceBound
+    have targetBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+    cases hpres with
+    | some result =>
+      have noValue : ¬ isResult res := by
+        intro isValue
+        have impossible := handlerOutcome.2.2.2.1 isValue
+        contradiction
+      let after := if tail then DataLang.Prog.return [n2] else .skip
+      have seqRun : DataSem.evaluate (.seq call after) afterTicks = (some result, hfinal) :=
+        evaluateSeq_stop call after afterTicks hfinal result callRun callBound
+      let rest := DataLang.mkTicks ticks (.seq call after)
+      have ticksRun : DataSem.evaluate rest tmid = (some result, hfinal) := by
+        dsimp only [rest]
+        rw [DataSem.evaluate_mkTicks, if_neg (by omega : ¬ tmid.clock < ticks)]
+        exact seqRun
+      have targetRun := evaluateSeq_continue argsProg rest t1 tmid _ target targetBound ticksRun
+      have secondOutcome : correctOutcome res tmid hfinal n1 (n2 + 1) corr live [n2] env tail (some result) lsHandler := by
+        cases tail <;> simpa [correctOutcome, noValue] using handlerOutcome
+      refine ⟨wholeRun, hfinal, .seq argsProg rest, some result, [n2], n2 + 1, lsHandler,
+        ?_, targetRun, handlerRel, ?_⟩
+      · simp [compileSource, compiled, handlerCompiled, rest, call, after, roots, Flapjack.holHd]
+      · exact correctOutcome_seq values res t1 tmid hfinal n n1 (n2 + 1) corr live argNames [n2]
+          env tail (some result) ls lsHandler firstOutcome secondOutcome
+    | none =>
+      cases res with
+      | err error => simp [correctOutcome] at handlerOutcome
+      | val results =>
+        obtain ⟨handlerValue, rfl⟩ := BviSem.evaluate_singleton handler (value :: env) caughtSource s2 results handlerRun
+        have resultVars' : DataProps.varCorr [handlerValue] [n2] (sptMap dataToBviValue hfinal.locals) :=
+          handlerOutcome.2.2.2.2.2.2.2.2.2.2
+        obtain ⟨dataResults, readResult, projectResult⟩ := getVars_lift [n2] [handlerValue] hfinal.locals resultVars'
+        cases dataResults with
+        | nil => simp at projectResult
+        | cons dataResult rest =>
+          cases rest with
+          | cons other rest => simp at projectResult
+          | nil =>
+            have resultProjection : dataToBviValue dataResult = handlerValue := by simpa using projectResult.symm
+            cases tail with
+            | false =>
+              have seqRun : DataSem.evaluate (.seq call .skip) afterTicks = (none, hfinal) :=
+                evaluateSeq_continue call .skip afterTicks hfinal _ callRun callBound (by simp [DataSem.evaluate])
+              let rest := DataLang.mkTicks ticks (.seq call .skip)
+              have ticksRun : DataSem.evaluate rest tmid = (none, hfinal) := by
+                dsimp only [rest]
+                rw [DataSem.evaluate_mkTicks, if_neg (by omega : ¬ tmid.clock < ticks)]
+                exact seqRun
+              have targetRun := evaluateSeq_continue argsProg rest t1 tmid _ target targetBound ticksRun
+              refine ⟨wholeRun, hfinal, .seq argsProg rest, none, [n2], n2 + 1, lsHandler, ?_, targetRun, handlerRel, ?_⟩
+              · simp [compileSource, compiled, handlerCompiled, rest, call, roots, Flapjack.holHd]
+              · exact correctOutcome_seq values (.val [handlerValue]) t1 tmid hfinal n n1 (n2 + 1)
+                  corr live argNames [n2] env false none ls lsHandler firstOutcome handlerOutcome
+            | true =>
+              let finished := DataSem.flushState false hfinal
+              have returnRun : DataSem.evaluate (.return [n2]) hfinal = (some (.val [dataResult]), finished) := by
+                simp [DataSem.evaluate, readResult, finished]
+              have seqRun : DataSem.evaluate (.seq call (.return [n2])) afterTicks = (some (.val [dataResult]), finished) :=
+                evaluateSeq_continue call (.return [n2]) afterTicks hfinal _ callRun callBound returnRun
+              let rest := DataLang.mkTicks ticks (.seq call (.return [n2]))
+              have ticksRun : DataSem.evaluate rest tmid = (some (.val [dataResult]), finished) := by
+                dsimp only [rest]
+                rw [DataSem.evaluate_mkTicks, if_neg (by omega : ¬ tmid.clock < ticks)]
+                exact seqRun
+              have targetRun := evaluateSeq_continue argsProg rest t1 tmid _ target targetBound ticksRun
+              have finalRel : stateRel s2 finished := by simpa [stateRel, finished, DataSem.flushState] using handlerRel
+              have secondOutcome : correctOutcome (.val [handlerValue]) tmid finished n1 (n2 + 1) corr live [n2] env true
+                  (some (.val [dataResult])) none := by
+                have stack := handlerOutcome.2.2.2.2.2.2.2.1
+                have handlerEq := handlerOutcome.2.2.2.2.2.2.2.2.1
+                simp [correctOutcome, isReturn, isResult, isException, dataToBviResult, resultProjection,
+                  finished, DataSem.flushState, stack, handlerEq]
+              refine ⟨wholeRun, finished, .seq argsProg rest, some (.val [dataResult]), [n2], n2 + 1,
+                none, ?_, targetRun, finalRel, ?_⟩
+              · simp [compileSource, compiled, handlerCompiled, rest, call, roots, Flapjack.holHd]
+              · exact correctOutcome_seq values (.val [handlerValue]) t1 tmid finished n n1 (n2 + 1)
+                  corr live argNames [n2] env true (some (.val [dataResult])) ls none firstOutcome secondOutcome
+
 /-- An error while evaluating unhandled-call arguments propagates before
 the call executes. This is untagged pending evaluator correspondence review. -/
 theorem simulationFor_call_argsError {C F : Type} (ticks : Nat) (dest : Option Nat) (args : List Bvi.Exp)
@@ -1552,5 +1746,136 @@ theorem simulationFor_call_noHandler {C F : Type} (ticks : Nat) (dest : Option N
                     ihArgs argsRun sourceCode clock bodyRun bodyIH target n corr live vars fresh related livePresent
                     (exceptionJump (by simp [isException]))).2
                 | ret values => exact False.elim (returns ⟨values, rfl⟩)
+
+/-- The direct handled-call simulation, assuming recursive simulations of
+arguments, the callee, and any handler reached by a callee exception. -/
+theorem simulationFor_call_handler {C F : Type} (ticks dest : Nat) (args : List Bvi.Exp)
+    (handler : Bvi.Exp) (env : List BvlSem.Value) (source : BviSem.BviState C F)
+    (ihArgs : simulationFor args env source)
+    (ihBody : ∀ values smid callArgs body,
+      BviSem.evaluate args env source = (.val values, smid) →
+      BvlSem.findCode (some dest) values smid.code = some (callArgs, body) →
+      ticks + 1 ≤ smid.clock → simulationFor [body] callArgs (BviSem.decClock (ticks + 1) smid))
+    (ihHandler : ∀ values smid callArgs body value caughtSource,
+      BviSem.evaluate args env source = (.val values, smid) →
+      BvlSem.findCode (some dest) values smid.code = some (callArgs, body) →
+      ticks + 1 ≤ smid.clock →
+      BviSem.evaluate [body] callArgs (BviSem.decClock (ticks + 1) smid) = (.err (.raise (.exn value)), caughtSource) →
+      simulationFor [handler] (value :: env) caughtSource) :
+    simulationFor [.call ticks (some dest) args (some handler)] env source := by
+  intro res s2 target n corr tail live run notType vars tailShape fresh related livePresent exceptionJump
+  generalize argsRun : BviSem.evaluate args env source = argsPair
+  obtain ⟨argsResult, smid⟩ := argsPair
+  cases argsResult with
+  | err error =>
+    have whole : BviSem.evaluate [.call ticks (some dest) args (some handler)] env source = (.err error, smid) := by
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+      simp
+    rw [whole] at run
+    cases run
+    exact (simulationFor_call_handler_argsError ticks dest args handler env source s2 error ihArgs argsRun notType
+      target n corr tail live vars fresh related livePresent exceptionJump).2
+  | val values =>
+    cases sourceCode : BvlSem.findCode (some dest) values smid.code with
+    | none =>
+      have whole : BviSem.evaluate [.call ticks (some dest) args (some handler)] env source = (.err (.abort .typeError), smid) := by
+        rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+        simp [sourceCode]
+      rw [whole] at run
+      cases run
+      exact False.elim (notType rfl)
+    | some pair =>
+      obtain ⟨callArgs, body⟩ := pair
+      by_cases timeout : smid.clock < ticks + 1
+      · have simulated := simulationFor_call_handler_timeout ticks dest args handler env values callArgs body source smid ihArgs
+          argsRun sourceCode timeout target n corr tail live vars fresh related livePresent
+        rw [simulated.1] at run
+        cases run
+        exact simulated.2
+      · have clock : ticks + 1 ≤ smid.clock := by omega
+        generalize bodyRun : BviSem.evaluate [body] callArgs (BviSem.decClock (ticks + 1) smid) = bodyPair
+        obtain ⟨bodyResult, bodyState⟩ := bodyPair
+        have bodyClamped : BviSem.fixClock (BviSem.decClock (ticks + 1) smid)
+            (BviSem.evaluate [body] callArgs (BviSem.decClock (ticks + 1) smid)) = (bodyResult, bodyState) := by
+          rw [BviSem.fixClock_evaluate, bodyRun]
+        have bodyIH := ihBody values smid callArgs body argsRun sourceCode clock
+        cases bodyResult with
+        | val results =>
+          obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton body callArgs (BviSem.decClock (ticks + 1) smid) bodyState results bodyRun
+          have simulated := simulationFor_call_handler_value ticks dest args handler env values callArgs body source smid bodyState value
+            ihArgs argsRun sourceCode clock bodyRun bodyIH target n corr tail live vars fresh related livePresent
+          rw [simulated.1] at run
+          cases run
+          exact simulated.2
+        | err error => cases error with
+          | abort error =>
+            have whole : BviSem.evaluate [.call ticks (some dest) args (some handler)] env source = (.err (.abort error), bodyState) := by
+              rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+              simp [sourceCode, timeout, bodyClamped]
+            rw [whole] at run
+            cases run
+            exact (simulationFor_call_handler_abort ticks dest args handler env values callArgs body source smid s2 error
+              ihArgs argsRun sourceCode clock bodyRun (by simpa using notType) bodyIH
+              target n corr tail live vars fresh related livePresent).2
+          | raise value => cases value with
+            | ret returned =>
+              have whole : BviSem.evaluate [.call ticks (some dest) args (some handler)] env source = (.err (.abort .typeError), bodyState) := by
+                rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+                simp [sourceCode, timeout, bodyClamped]
+              rw [whole] at run
+              cases run
+              exact False.elim (notType rfl)
+            | exn value =>
+              generalize handlerRun : BviSem.evaluate [handler] (value :: env) bodyState = handlerPair
+              obtain ⟨handlerResult, handlerState⟩ := handlerPair
+              by_cases returns : isReturn handlerResult
+              · obtain ⟨returned, rfl⟩ := returns
+                have whole : BviSem.evaluate [.call ticks (some dest) args (some handler)] env source = (.err (.abort .typeError), handlerState) := by
+                  rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+                  simp [sourceCode, timeout, bodyClamped, handlerRun]
+                rw [whole] at run
+                cases run
+                exact False.elim (notType rfl)
+              · have whole : BviSem.evaluate [.call ticks (some dest) args (some handler)] env source = (handlerResult, handlerState) := by
+                  rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+                  simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, sourceCode, timeout, bodyClamped, handlerRun]
+                  cases handlerResult with
+                  | val results => rfl
+                  | err error => cases error with
+                    | abort error => rfl
+                    | raise value => cases value with
+                      | exn value => rfl
+                      | ret values => exact False.elim (returns ⟨values, rfl⟩)
+                rw [whole] at run
+                cases run
+                exact (simulationFor_call_handler_exception ticks dest args handler env values callArgs body source smid bodyState s2 value res
+                  ihArgs argsRun sourceCode clock bodyRun bodyIH handlerRun
+                  (ihHandler values smid callArgs body value bodyState argsRun sourceCode clock bodyRun)
+                  returns notType target n corr tail live vars fresh related livePresent exceptionJump).2
+
+/-- The complete call-expression simulation, with recursive induction
+hypotheses for arguments, the called body, and an installed handler. -/
+theorem simulationFor_call {C F : Type} (ticks : Nat) (dest : Option Nat) (args : List Bvi.Exp)
+    (handler : Option Bvi.Exp) (env : List BvlSem.Value) (source : BviSem.BviState C F)
+    (ihArgs : simulationFor args env source)
+    (ihBody : ∀ values smid callArgs body,
+      BviSem.evaluate args env source = (.val values, smid) →
+      BvlSem.findCode dest values smid.code = some (callArgs, body) →
+      ticks + 1 ≤ smid.clock → simulationFor [body] callArgs (BviSem.decClock (ticks + 1) smid))
+    (ihHandler : ∀ h values smid callArgs body value caughtSource,
+      handler = some h → BviSem.evaluate args env source = (.val values, smid) →
+      BvlSem.findCode dest values smid.code = some (callArgs, body) → ticks + 1 ≤ smid.clock →
+      BviSem.evaluate [body] callArgs (BviSem.decClock (ticks + 1) smid) = (.err (.raise (.exn value)), caughtSource) →
+      simulationFor [h] (value :: env) caughtSource) :
+    simulationFor [.call ticks dest args handler] env source := by
+  cases handler with
+  | none => exact simulationFor_call_noHandler ticks dest args env source ihArgs ihBody
+  | some h =>
+    cases dest with
+    | none => exact simulationFor_call_invalid_handler ticks args h env source
+    | some label =>
+      apply simulationFor_call_handler ticks label args h env source ihArgs ihBody
+      intro values smid callArgs body value caughtSource argsRun code clock bodyRun
+      exact ihHandler h values smid callArgs body value caughtSource rfl argsRun code clock bodyRun
 
 end Flapjack.Compiler.Backend.BviToData
