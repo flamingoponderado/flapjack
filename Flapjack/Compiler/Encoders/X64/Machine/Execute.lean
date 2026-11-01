@@ -153,6 +153,18 @@ def effectiveAddress (s : X64State) (len : Nat) (rm : ZRM) : Option (BitVec 64) 
       | none, .noBase => some disp
       | _, _ => none
 
+/-- Logical right shift of each 64-bit lane of a 128-bit XMM value.
+`psrlq` operates on the two packed 64-bit quadwords independently, so the
+low lane must not receive bits from the high lane. -/
+def psrlqLanes (v : BitVec 128) (n : Nat) : BitVec 128 :=
+  ((((v >>> 64).setWidth 64) >>> n).setWidth 128) <<< 64 |||
+    (((v.setWidth 64) >>> n).setWidth 128)
+
+/-- Logical left shift of each 64-bit lane of a 128-bit XMM value. -/
+def psllqLanes (v : BitVec 128) (n : Nat) : BitVec 128 :=
+  ((((v >>> 64).setWidth 64) <<< n).setWidth 128) <<< 64 |||
+    (((v.setWidth 64) <<< n).setWidth 128)
+
 /-- Execute one SSE instruction.  The floating-point operations use the same
 `holFp64*` functions as `fp_upd`, so their results agree with the source
 semantics.  `sseMin`/`sseMax` are not emitted by the backend and are modelled
@@ -178,10 +190,10 @@ noncomputable def execSSE (op : X64SSE) (s : X64State) : X64State :=
       { s with xmm := fun r => if r = dst % 8 then mask else s.xmm r }
   | .psrlqImm dst imm =>
       { s with xmm := fun r =>
-          if r = dst % 8 then (s.xmm (dst % 8)) >>> imm.toNat else s.xmm r }
+          if r = dst % 8 then psrlqLanes (s.xmm (dst % 8)) imm.toNat else s.xmm r }
   | .psllqImm dst imm =>
       { s with xmm := fun r =>
-          if r = dst % 8 then (s.xmm (dst % 8)) <<< imm.toNat else s.xmm r }
+          if r = dst % 8 then psllqLanes (s.xmm (dst % 8)) imm.toNat else s.xmm r }
   | .logicPD op dst src =>
       let a := readXmm s dst
       let b := readXmm s src
