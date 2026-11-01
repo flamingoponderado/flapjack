@@ -100262,6 +100262,42 @@
     "reviewer": "Source comparison: memory_rel_Block_IMP and its typed data_to_word_memory_repr capture preserve the original memory relation and good_dimindex hypotheses and both branches of the existential Word conclusion. The empty case retains the encoded tag, clear low bit, tag bound and zero timestamp. The nonempty case retains the pointer and header bits, decoded real address, memory contents and domain membership, decoded length, length bound, encoded header and timestamp bound. getLsbD = true/false represents the corresponding HOL word bits; domain a = true represents membership in dm. store uses the canonical finite-support map, and all target words share the positive source word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockTests.lean",
+    "lean_name": "memoryRel_tagLimit",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_tag_limit",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_tag_limit and its typed data_to_word_memory_repr capture. The source memory relation and good_dimindex imply the same constructor-tag bound dimword / 16. store is the canonical finite-support map and all target words use the shared positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockTests.lean",
+    "lean_name": "memoryRel_testNilEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_test_nil_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_test_nil_eq and its typed data_to_word_memory_repr capture. The source memory relation, tested-tag bound and good_dimindex yield a target Word whose equality to n2w (16*n+2) is equivalent to both equal tags and an empty value list. store is the canonical finite-support map and all target words use the shared positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockTests.lean",
+    "lean_name": "memoryRel_testNoneEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_test_none_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_test_none_eq and its typed data_to_word_memory_repr capture. The original NONE encoded-header premise, memory relation, nonzero length and good_dimindex imply the negation of matching tag and length. store is the canonical finite-support map and all target words use the shared positive HOL word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
