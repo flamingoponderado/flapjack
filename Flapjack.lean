@@ -999,6 +999,7 @@ import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveThunk
 import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveBlockRead
 import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveBlockAlloc
 import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveMemoryRead
+import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveMemoryUpdate
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateControl
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackResult
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultPrimitive
