@@ -70,10 +70,23 @@ No `sorry`/`admit` anywhere under `Machine/`, `Backend/X64Config/`, or
   `calleeSavedRegs=[12,13,14]`), `x64MachineConfigOk`, `x64InitOk`.
 * `Flapjack/Pancake/Proofs/PanToTarget/X64Instance.lean` —
   `x64PancakeHeapLimit_lt`, `panToTargetCompileSemanticsX64`.
+* The driver chain, mirroring the MIPS32 one:
+  * `X64InstanceExecutable.lean` — `panToTargetCompileSemanticsX64Executable`
+    (compiler premise on the callable `compileProgMaxExecutable`).
+  * `X64Source.lean` — `panToTargetCompileSemanticsX64AsmExecutable` (assembler
+    config only) and `panToTargetCompileSemanticsX64Source` (compiler premise on
+    `mainFirstHOL decls`, semantics of the original `decls`).
+  * `X64NativeSourceCorrect.lean` — `x64NativeSourceLogicalBound`,
+    `x64NativeSourceCompileDeclarations_eq`, `x64NativeSourceCompile_ok`,
+    `x64NativeSourceCompile_full_result`, `x64NativeSourceCompile_correct`.
+  * `X64NativeCLICorrect.lean` — `NativeX64Correctness`,
+    `x64CLIOutput_correct`: a successful `X64.NativeCLI.output` prints the
+    rendering of a compiled tuple satisfying `NativeX64Correctness` for the
+    parsed program, which is the same level as `mips32CLIOutput_correct`.
 * `Flapjack.lean` imports `Machine/MemCase`, `Machine/FpCase`,
   `Machine/JumpCmpCase`, `Machine/Complete`, `X64Config/BackendProof`,
-  `X64Config/Proofs`, `PanToTarget/X64Instance`, and
-  `Misc/MachineIeee/SignBits`.
+  `X64Config/Proofs`, `PanToTarget/X64Instance`, `Misc/MachineIeee/SignBits`,
+  and the four driver modules above.
 * `Flapjack/CompileMain.lean` routes `--target=x64` to `X64.NativeCLI.output`.
 
 ## Model fixes
@@ -150,10 +163,12 @@ Other traps found while closing the remaining cases:
 
 ## Remaining work
 
-None of the seven items this note previously listed are open; the port described
-by this document is complete and gate-green. Possible follow-ups, not required
-for this port:
+None of the seven items this note previously listed are open, and the x86-64 driver
+now reaches the same level as the MIPS32 one (`x64CLIOutput_correct`). Possible
+follow-ups, not required for this port:
 
+* `--target=arm8` still stops at `Arm8.NativeCLI.output_ok`; an `arm8CLIOutput_correct`
+  would need the ARMv8 analogue of `X64Source.lean` and `X64NativeSourceCorrect.lean`.
 * Rebuild `cakeml/developers/bin/cake` from the pinned submodule revision so
   parity runs without the `/var/tmp` binary. This needs HOL4 built from the
   `HOL` submodule, not the unrelated `~/HOL` install.

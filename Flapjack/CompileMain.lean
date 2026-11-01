@@ -21,8 +21,9 @@ successful output `mips32CLIOutput_correct` connects to source correctness in th
 A leading `--target=arm8` selects the ARMv8 (AArch64) backend,
 `Arm8.NativeSource.compile`, whose successful output is identified by
 `Arm8.NativeCLI.output_ok`.  A leading `--target=x64` selects the x86-64
-backend, `X64.NativeSource.compile`, whose successful output is identified by
-`X64.NativeCLI.output_ok`.  The ARMv8 target proves `encoderCorrect arm8Target`
+backend, `X64.NativeSource.compile`, whose successful output `x64CLIOutput_correct`
+connects to source correctness in the same way as the MIPS32 route (via
+`X64.NativeCLI.output_ok`).  The ARMv8 target proves `encoderCorrect arm8Target`
 for the closed ARMv8 model in `Flapjack/Compiler/Encoders/Arm8/Machine/` and
 instantiates the Pancake-to-machine-code theorem there; that model covers the
 emitted instruction subset, not the full L3 ARMv8 semantics.

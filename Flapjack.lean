@@ -2863,6 +2863,10 @@ import Flapjack.Pancake.Proofs.PanToTarget.Mips32InstanceExecutable
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32Source
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32NativeSourceCorrect
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32NativeCLICorrect
+import Flapjack.Pancake.Proofs.PanToTarget.X64InstanceExecutable
+import Flapjack.Pancake.Proofs.PanToTarget.X64Source
+import Flapjack.Pancake.Proofs.PanToTarget.X64NativeSourceCorrect
+import Flapjack.Pancake.Proofs.PanToTarget.X64NativeCLICorrect
 /-!
 # Flapjack in Lean
 
