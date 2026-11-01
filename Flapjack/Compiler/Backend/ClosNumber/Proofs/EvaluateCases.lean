@@ -1586,4 +1586,65 @@ theorem primitiveSimulation_block_bounds {C F : Type} :
           cases second <;> simp [doApp, applyBlock, ResultRel]
       | cons head tail => simp [doApp, applyBlock, ResultRel]
 
+/-- Converting a closure list to a block preserves its fields and malformed
+    lists fail in both executions. -/
+theorem primitiveSimulation_block_fromList {C F : Type} (tag : Nat) :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp (.fromList tag)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      rename_i value nextValue
+      have decoded := valueToList_related source.maxApp value nextValue head
+      cases left : valueToList value <;> cases right : valueToList nextValue <;>
+        simp_all [doApp, applyBlock, ResultRel]
+      exact .block _ _ _ decoded
+    | cons head tail => simp [doApp, applyBlock, ResultRel]
+
+/-- List append preserves element order across numbering and reports malformed
+    input lists on both sides. -/
+theorem primitiveSimulation_block_listAppend {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp .listAppend) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyBlock, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        rename_i left nextLeft right nextRight
+        have firstRel := valueToList_related source.maxApp left nextLeft first
+        have secondRel := valueToList_related source.maxApp right nextRight second
+        cases leftRun : valueToList left <;> cases nextLeftRun : valueToList nextLeft <;>
+          cases rightRun : valueToList right <;> cases nextRightRun : valueToList nextRight <;>
+          simp_all [doApp, applyBlock, ResultRel]
+        exact listToValue_related _ (List.rel_append firstRel secondRel)
+      | cons head tail => simp [doApp, applyBlock, ResultRel]
+
+/-- Structural equality has the same result or type error for related
+    closure values, including nested blocks and closures. -/
+theorem primitiveSimulation_block_equal {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp .equal) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyBlock, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        rename_i left nextLeft right nextRight
+        have same := doEq_related source.maxApp left right nextLeft nextRight first second
+        cases result : doEq left right with
+        | typeError => simp [doApp, applyBlock, ← same, result, ResultRel]
+        | val boolean =>
+          have boolRel := boolValue_related source.maxApp boolean
+          simp [doApp, applyBlock, ← same, result, boolRel, stateRel]
+      | cons head tail => simp [doApp, applyBlock, ResultRel]
+
 end Flapjack.Compiler.Backend.ClosNumber
