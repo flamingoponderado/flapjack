@@ -241,6 +241,16 @@ theorem fpAddOffset (a : BitVec 64) (m n : Nat) :
     (a + BitVec.ofNat 64 m) + BitVec.ofNat 64 n = a + BitVec.ofNat 64 (m + n) := by
   rw [BitVec.ofNat_add, BitVec.add_assoc]
 
+/-- Splitting three instructions' bytes off a `bytesInMemoryHOL` fact (local
+copy, so this module does not need the carry-case module). -/
+theorem fpBytesInMemory_three (pc : BitVec 64) (l1 l2 l3 : List (BitVec 8))
+    (m : BitVec 64 → BitVec 8) (dm : BitVec 64 → Prop) :
+    bytesInMemoryHOL pc (l1 ++ l2 ++ l3) m dm ↔
+      bytesInMemoryHOL pc l1 m dm ∧
+      bytesInMemoryHOL (pc + BitVec.ofNat 64 l1.length) l2 m dm ∧
+      bytesInMemoryHOL ((pc + BitVec.ofNat 64 l1.length) + BitVec.ofNat 64 l2.length) l3 m dm := by
+  rw [bytesInMemory_append, bytesInMemory_append, and_assoc, List.length_append, fpAddOffset]
+
 /-- `pc` arithmetic for the comparison sequence: the four instruction lengths
 add up. -/
 theorem fpCmp_pc (pc : BitVec 64) (m : Nat) :
@@ -832,6 +842,25 @@ theorem case_fpEqual (n d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
     (by decide) henc hs2pc hs2mem hs2dom hs2fp hs2regs
     (fun a b => evalCond_zE_comisd a b)
     (fun a b hu => holFp64Equal_nan a b (xmmUnordered_nan a b hu))
+
+/-- The byte-shift amount `12` of the `fpToInt` lowering, as a natural. -/
+theorem toNat_twelve : (12 : BitVec 8).toNat = 12 := by decide
+
+/-- A 32-bit value written into the low word of an XMM register, shifted left
+and then right by 96 bits, reads back as its 64-bit zero extension. -/
+theorem writeXmm_low32 (s : X64State) (r : Nat) (hr : r < 8) (v : BitVec 32) :
+    ((((writeXmm s (r % 8) (BitVec.setWidth 64 v)).xmm (r % 8)) <<< 96) >>> 96).setWidth 64 =
+      BitVec.setWidth 64 v := by
+  simp only [writeXmm, Nat.mod_eq_of_lt hr]
+  rw [if_true]
+  bv_decide
+
+/-- The HOL 32-bit low extraction of a 64-bit word is a truncation. -/
+theorem holWordExtract_31_0 (v : BitVec 64) :
+    holWordExtract 31 0 v 32 = BitVec.setWidth 32 v := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [holWordExtract, BitVec.toNat_setWidth, BitVec.toNat_ofNat, Nat.shiftRight_zero]
+  norm_num
 
 /-- `readXmm` depends only on the register number modulo eight. -/
 theorem readXmm_congr_mod (s : X64State) {x y : Nat} (h : x % 8 = y % 8) :
@@ -1548,5 +1577,368 @@ theorem case_fpMovToReg (r1 r2 d : Nat) (s1 s2 : AsmState 64) (ms : X64State)
     (by intro k hk; interval_cases k; exact hsafe0)
     (by intro k hk1 hk2; omega)
     hq
+
+
+/-- The `fpFromInt` constructor of `encoder_correct x64Target`: one `cvtdq2pd`
+converts the low 32 bits of the source XMM register. -/
+theorem case_fpFromInt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.fp (.fpFromInt d1 d2))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.fp (.fpFromInt d1 d2))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.fp (.fpFromInt d1 d2))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  simp only [asmOkExact, asmInstOkExact, asmFpOkExact, x64Config, Bool.and_eq_true] at hok
+  obtain ⟨hd1ok, hd2ok⟩ := hok
+  have hd1 : d1 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd1ok
+  have hd2 : d2 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd2ok
+  have hd2' : d2 % 8 = d2 := Nat.mod_eq_of_lt hd2
+  have hlt : ¬ (8 ≤ d1 % 8 ∨ 8 ≤ d2 % 8) := by omega
+  have hlen : (encodeInsn (.sse (.cvtdq2pd (d1 % 8) (d2 % 8)))).length = 4 := by
+    rw [encodeInsn_cvtdq2pd (d1 % 8) (d2 % 8) (by omega) (by omega)]
+    simp [cvtdq2pdBytes, sseRex, hlt]
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64
+      (x64Target.config.encode (.inst (.fp (.fpFromInt d1 d2)))).length := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+    rw [← st.upd]; intro a
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, if_true]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, if_true]
+  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, if_true]
+  have hs2fp : ∀ x, s2.fpRegs x = if x = d1 then
+      holIntToFp64 .roundTiesToEven (holWordExtract 31 0 (s1.fpRegs d2) 32).toInt
+      else s1.fpRegs x := by
+    intro x
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, if_true,
+      Flapjack.Compiler.Encoders.AsmSem.readFpReg]
+  have henc : x64Target.config.encode (.inst (.fp (.fpFromInt d1 d2))) =
+      encodeInsn (.sse (.cvtdq2pd (d1 % 8) (d2 % 8))) := by
+    rw [x64Target_config, x64Config_encode]
+    refine x64Enc_of_flatMap _ _ ?_ ?_
+    · simp only [x64Ast, x64Inst, List.flatMap_cons, List.flatMap_nil, List.append_nil]
+    · intro h'
+      have := congrArg List.length h'
+      simp [hlen] at this
+  have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.cvtdq2pd (d1 % 8) (d2 % 8))))
+      ms.mem s1.memDomain := by
+    have h' := st.bytesTarget
+    rw [henc] at h'
+    rw [← st.pc] at h'
+    exact h'
+  have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+      some (.sse (.cvtdq2pd (d1 % 8) (d2 % 8)), 4) := by
+    have hd := decode_cvtdq2pd (d1 % 8) (d2 % 8) (by omega) (by omega)
+    have h := decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbm hd
+      (by rw [hlen]; simp [hlt])
+    simpa [hlt] using h
+  have hW : holIntToFp64 .roundTiesToEven
+        (BitVec.setWidth 32 (readXmm ms (d2 % 8))).toInt =
+      holIntToFp64 .roundTiesToEven
+        (holWordExtract 31 0 (s1.fpRegs d2) 32).toInt := by
+    have hread : readXmm ms (d2 % 8) = s1.fpRegs d2 := by
+      rw [hd2']
+      exact st.fp d2 hd2
+    rw [hread, holWordExtract_31_0]
+  exact fpWriteCase (.fpFromInt d1 d2) (.cvtdq2pd (d1 % 8) (d2 % 8)) d1 (d1 % 8) 4
+    (holIntToFp64 .roundTiesToEven
+      (BitVec.setWidth 32 (readXmm ms (d2 % 8))).toInt)
+    (holIntToFp64 .roundTiesToEven
+      (holWordExtract 31 0 (s1.fpRegs d2) 32).toInt) s1 s2 ms h hd1 rfl henc hlen hdec
+    rfl (by intro a ha; simp [x64Touched] at ha) hW hs2pc hs2mem hs2dom hs2regs hs2fp
+
+
+set_option maxHeartbeats 4000000 in
+/-- The `fpToInt` constructor of `encoder_correct x64Target`: `cvtpd2dq` writes
+the 32-bit conversion into the low word, and the two byte-shifts move it to the
+bottom of the register. -/
+theorem case_fpToInt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.fp (.fpToInt d1 d2))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.fp (.fpToInt d1 d2))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.fp (.fpToInt d1 d2))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  simp only [asmOkExact, asmInstOkExact, asmFpOkExact, x64Config, Bool.and_eq_true] at hok
+  obtain ⟨hd1ok, hd2ok⟩ := hok
+  have hd1 : d1 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd1ok
+  have hd2 : d2 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd2ok
+  have hd1' : d1 % 8 = d1 := Nat.mod_eq_of_lt hd1
+  have hd2' : d2 % 8 = d2 := Nat.mod_eq_of_lt hd2
+  have hlt : ¬ (8 ≤ d1 % 8 ∨ 8 ≤ d2 % 8) := by omega
+  have hlt1 : ¬ 8 ≤ d1 % 8 := by omega
+  have hlen0 : (encodeInsn (.sse (.cvtpd2dq false (d1 % 8) (d2 % 8)))).length = 4 := by
+    rw [encodeInsn_cvtpd2dq (d1 % 8) (d2 % 8) (by omega) (by omega)]
+    simp [cvtpd2dqBytes, sseRex, hlt]
+  have hd1mod8 : d1 % 8 < 8 := Nat.mod_lt d1 (by decide : 0 < 8)
+  have hd1mod16 : d1 % 8 < 16 := by omega
+  have hlen1 : (encodeInsn (.sse (.pslldq (d1 % 8) 12))).length = 5 := by
+    rw [encodeInsn_pslldq (d1 % 8) hd1mod16 12]
+    simp [pslldqBytes, sseRex, hd1mod8]
+  have hlen2 : (encodeInsn (.sse (.psrldq (d1 % 8) 12))).length = 5 := by
+    rw [encodeInsn_psrldq (d1 % 8) hd1mod16 12]
+    simp [psrldqBytes, sseRex, hd1mod8]
+  have henc : x64Target.config.encode (.inst (.fp (.fpToInt d1 d2))) =
+      encodeInsn (.sse (.cvtpd2dq false (d1 % 8) (d2 % 8))) ++
+      encodeInsn (.sse (.pslldq (d1 % 8) 12)) ++
+      encodeInsn (.sse (.psrldq (d1 % 8) 12)) := by
+    rw [x64Target_config, x64Config_encode]
+    refine x64Enc_of_flatMap _ _ ?_ ?_
+    · simp only [x64Ast, x64Inst, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+        List.append_assoc]
+    · intro h'
+      have ha : encodeInsn (.sse (.cvtpd2dq false (d1 % 8) (d2 % 8))) ≠ [] := by
+        intro h0
+        have := congrArg List.length h0
+        rw [hlen0] at this
+        simp at this
+      have h2 := (List.append_eq_nil_iff.mp h').1
+      exact ha (List.append_eq_nil_iff.mp h2).1
+  have hread : readXmm ms (d2 % 8) = Flapjack.Compiler.Encoders.AsmSem.readFpReg d2 s1 := by
+    rw [hd2']
+    exact st.fp d2 hd2
+  cases hint : holFp64ToInt .roundTiesToEven
+      (Flapjack.Compiler.Encoders.AsmSem.readFpReg d2 s1) with
+  | none =>
+      exfalso
+      have hf : s2.failed = true := by
+        rw [← st.upd]
+        simp only [asmUpd, instUpd, updPc, fpUpd, hint, assertState, Bool.not_false,
+          Bool.true_or]
+      have hnotfailed := st.ok
+      rw [hf] at hnotfailed
+      simp at hnotfailed
+  | some integer =>
+      have hintT : holFp64ToInt .roundTiesToEven (readXmm ms (d2 % 8)) = some integer := by
+        rw [hread, hint]
+      by_cases hchk : (BitVec.ofInt 32 integer).toInt = integer
+      · -- the conversion succeeds and fits in 32 bits
+        have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64
+            (x64Target.config.encode (.inst (.fp (.fpToInt d1 d2)))).length := by
+          rw [← st.upd]
+          simp only [asmUpd, instUpd, updPc]
+        have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+          rw [← st.upd]; intro a
+          simp only [asmUpd, instUpd, updPc, fpUpd, hint, if_true, updFpReg, assertState]
+        have hs2dom : s2.memDomain = s1.memDomain := by
+          rw [← st.upd]
+          simp only [asmUpd, instUpd, updPc, fpUpd, hint, if_true, updFpReg, assertState]
+        have hs2regs : ∀ x, s2.regs x = s1.regs x := by
+          rw [← st.upd]; intro x
+          simp only [asmUpd, instUpd, updPc, fpUpd, hint, if_true, updFpReg, assertState]
+        have hs2fp : ∀ x, s2.fpRegs x = if x = d1 then
+            BitVec.setWidth 64 (BitVec.ofInt 32 integer) else s1.fpRegs x := by
+          intro x
+          rw [← st.upd]
+          simp only [asmUpd, instUpd, updPc, fpUpd, hint, if_true, updFpReg, assertState]
+        -- the target run
+        have hbmAll : bytesInMemoryHOL ms.pc
+            (encodeInsn (.sse (.cvtpd2dq false (d1 % 8) (d2 % 8))) ++
+             encodeInsn (.sse (.pslldq (d1 % 8) 12)) ++
+             encodeInsn (.sse (.psrldq (d1 % 8) 12))) ms.mem s1.memDomain := by
+          have h' := st.bytesTarget
+          rw [henc] at h'
+          rw [← st.pc] at h'
+          exact h'
+        obtain ⟨hb0, hb1, hb2⟩ :=
+          (fpBytesInMemory_three ms.pc _ _ _ ms.mem s1.memDomain).1 hbmAll
+        rw [hlen0] at hb1
+        rw [hlen0] at hb2
+        rw [hlen1] at hb2
+        have hdec0 : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+            some (.sse (.cvtpd2dq false (d1 % 8) (d2 % 8)), 4) := by
+          have hd := decode_cvtpd2dq (d1 % 8) (d2 % 8) (by omega) (by omega)
+          have h := decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hb0 hd
+            (by rw [hlen0]; simp [hlt])
+          simpa [hlt] using h
+        have hdec1 : decode (fun k => ms.mem ((ms.pc + BitVec.ofNat 64 4) +
+            BitVec.ofNat 64 k)) = some (.sse (.pslldq (d1 % 8) 12), 5) := by
+          have hd := decode_pslldq (d1 % 8) hd1mod16 12
+          have h := decode_bytesInMemory _ _ ms.mem s1.memDomain _ _ hb1 hd
+            (by rw [hlen1]; simp [hlt1])
+          simpa [hlt1] using h
+        have hdec2 : decode (fun k => ms.mem (((ms.pc + BitVec.ofNat 64 4) +
+            BitVec.ofNat 64 5) + BitVec.ofNat 64 k)) =
+            some (.sse (.psrldq (d1 % 8) 12), 5) := by
+          have hd := decode_psrldq (d1 % 8) hd1mod16 12
+          have h := decode_bytesInMemory _ _ ms.mem s1.memDomain _ _ hb2 hd
+            (by rw [hlen2]; simp [hlt1])
+          simpa [hlt1, hlen0] using h
+        set ms1 : X64State :=
+          { writeXmm ms (d1 % 8) (BitVec.setWidth 64 (BitVec.ofInt 32 integer)) with
+            pc := ms.pc + BitVec.ofNat 64 4 } with hms1
+        set ms2 : X64State :=
+          { ms1 with
+            xmm := fun r => if r = d1 % 8 then (ms1.xmm (d1 % 8)) <<< (8 * 12)
+              else ms1.xmm r,
+            pc := ms1.pc + BitVec.ofNat 64 5 } with hms2
+        set ms3 : X64State :=
+          { ms2 with
+            xmm := fun r => if r = d1 % 8 then (ms2.xmm (d1 % 8)) >>> (8 * 12)
+              else ms2.xmm r,
+            pc := ms2.pc + BitVec.ofNat 64 5 } with hms3
+        have hstep0 : x64Next ms = ms1 := by
+          simp only [hms1, x64Next, st.failed, Bool.false_eq_true, if_false, hdec0, execInsn,
+            execSSE, hintT, hchk, ne_self_iff_false]
+        have hstep1 : x64Next ms1 = ms2 := by
+          simp only [hms1, hms2, x64Next, writeXmm_failed, st.failed, Bool.false_eq_true,
+            if_false, writeXmm_mem, hdec1, execInsn, execSSE, Nat.mod_mod, toNat_twelve]
+          rfl
+        have hstep2 : x64Next ms2 = ms3 := by
+          simp only [hms1, hms2, hms3, x64Next, writeXmm_failed, st.failed, Bool.false_eq_true,
+            if_false, writeXmm_mem, hdec2, execInsn, execSSE, Nat.mod_mod, toNat_twelve]
+          rfl
+        have hms1pc : ms1.pc = ms.pc + BitVec.ofNat 64 4 := by simp only [hms1]
+        have hms2pc : ms2.pc = ms1.pc + BitVec.ofNat 64 5 := by simp only [hms2]
+        have hms3pc : ms3.pc = ms2.pc + BitVec.ofNat 64 5 := by simp only [hms3]
+        have hms1mem : ms1.mem = ms.mem := by simp only [hms1, writeXmm_mem]
+        have hms2mem : ms2.mem = ms1.mem := by simp only [hms2]
+        have hms3mem : ms3.mem = ms2.mem := by simp only [hms3]
+        have hms1regs : ms1.regs = ms.regs := by simp only [hms1, writeXmm_regs]
+        have hms2regs : ms2.regs = ms1.regs := by simp only [hms2]
+        have hms3regs : ms3.regs = ms2.regs := by simp only [hms3]
+        have hms1failed : ms1.failed = ms.failed := by simp only [hms1, writeXmm_failed]
+        have hms2failed : ms2.failed = ms1.failed := by simp only [hms2]
+        have hms3failed : ms3.failed = ms2.failed := by simp only [hms3]
+        have hq : targetStateRel x64Target s2 (x64Next^[2 + 1] ms) := by
+          have hi : x64Next^[3] ms = ms3 := by
+            rw [show (3 : Nat) = 2 + 1 from rfl, Function.iterate_succ_apply,
+              show (2 : Nat) = 1 + 1 from rfl, Function.iterate_succ_apply,
+              Function.iterate_one, hstep0, hstep1, hstep2]
+          show targetStateRel x64Target s2 (x64Next^[3] ms)
+          rw [hi]
+          refine ⟨?_, ?_, ?_, ?_, ?_⟩
+          · show x64StateOk ms3 = true
+            simp only [x64StateOk, hms3failed, hms2failed, hms1failed, st.failed, Bool.not_false]
+          · show ms3.pc = s2.pc
+            rw [hms3pc, hms2pc, hms1pc, hs2pc, st.pc, henc, List.length_append,
+              List.length_append, hlen0, hlen1, hlen2]
+            rw [fpAddOffset s1.pc 4 5, fpAddOffset s1.pc (4 + 5) 5]
+          · intro x hx
+            show ms3.mem x = s2.mem x
+            rw [hms3mem, hms2mem, hms1mem, hs2mem x]
+            exact st.mem x (hs2dom ▸ hx)
+          · intro x hx
+            show readReg ms3 x = s2.regs x
+            rw [show readReg ms3 x = readReg ms x from by
+              simp only [readReg, hms3regs, hms2regs, hms1regs]]
+            rw [hs2regs x]
+            exact st.reg x hx
+          · intro x hx
+            have hx8 : x < 8 := by simpa [x64Target_config, x64Config] using hx
+            show readXmm ms3 x = s2.fpRegs x
+            by_cases hx1 : x = d1
+            · rw [hx1, hs2fp d1]
+              rw [show readXmm ms3 d1 = BitVec.setWidth 64 (BitVec.ofInt 32 integer) from by
+                rw [readXmm]
+                rw [show ms3.xmm (d1 % 8) = ms2.xmm (d1 % 8) >>> (8 * 12) from by
+                  simp [hms3]]
+                rw [show ms2.xmm (d1 % 8) = ms1.xmm (d1 % 8) <<< (8 * 12) from by
+                  simp [hms2]]
+                rw [show ms1.xmm (d1 % 8) =
+                    (writeXmm ms (d1 % 8) (BitVec.setWidth 64 (BitVec.ofInt 32 integer))).xmm
+                      (d1 % 8) from rfl]
+                exact writeXmm_low32 ms d1 hd1 (BitVec.ofInt 32 integer)]
+              simp
+            · have hne : x % 8 ≠ d1 % 8 := by
+                rw [Nat.mod_eq_of_lt hx8, Nat.mod_eq_of_lt hd1]
+                exact hx1
+              rw [hs2fp x]
+              rw [show readXmm ms3 x = readXmm ms x from by
+                rw [readXmm]
+                rw [show ms3.xmm (x % 8) = ms2.xmm (x % 8) from by
+                  simp [hms3, hne]]
+                rw [show ms2.xmm (x % 8) = ms1.xmm (x % 8) from by
+                  simp [hms2, hne]]
+                rw [show ms1.xmm (x % 8) = ms.xmm (x % 8) from by
+                  simp [hms1, writeXmm, hne]]
+                rw [readXmm]]
+              simp only [if_neg hx1]
+              exact st.fp x hx8
+        have hcode : allPcs (x64Target.config.encode (.inst (.fp (.fpToInt d1 d2)))).length
+            s1.pc 0 ⊆ s1.memDomain :=
+          bytesInMemory_allPcs _ s1.pc s1.mem s1.memDomain 0 st.bytes
+        have hsafe0 : StepSafe s1.memDomain ms := by
+          refine ⟨.sse (.cvtpd2dq false (d1 % 8) (d2 % 8)), 4, hdec0, ?_, ?_⟩
+          · intro j hj
+            have hj' : j < (encodeInsn (.sse (.cvtpd2dq false (d1 % 8) (d2 % 8)))).length := by
+              rw [hlen0]; exact hj
+            exact bytesInMemoryHOL_domain _ ms.pc ms.mem s1.memDomain hb0 j hj'
+          · intro a ha
+            simp [x64Touched] at ha
+        have hsafe1 : StepSafe s1.memDomain ms1 := by
+          refine ⟨.sse (.pslldq (d1 % 8) 12), 5, ?_, ?_, ?_⟩
+          · rw [hms1]
+            exact hdec1
+          · intro j hj
+            have hj' : j < (encodeInsn (.sse (.pslldq (d1 % 8) 12))).length := by
+              rw [hlen1]; exact hj
+            exact bytesInMemoryHOL_domain _ (ms.pc + BitVec.ofNat 64 4) ms.mem s1.memDomain
+              hb1 j hj'
+          · intro a ha
+            simp [x64Touched] at ha
+        have hsafe2 : StepSafe s1.memDomain ms2 := by
+          refine ⟨.sse (.psrldq (d1 % 8) 12), 5, ?_, ?_, ?_⟩
+          · rw [hms2]
+            exact hdec2
+          · intro j hj
+            have hj' : j < (encodeInsn (.sse (.psrldq (d1 % 8) 12))).length := by
+              rw [hlen2]; exact hj
+            exact bytesInMemoryHOL_domain _ ((ms.pc + BitVec.ofNat 64 4) + BitVec.ofNat 64 5)
+              ms.mem s1.memDomain hb2 j hj'
+          · intro a ha
+            simp [x64Touched] at ha
+        have hokS : ∀ s : X64State, s.failed = false → x64StateOk s = true := by
+          intro s hs; simp [x64StateOk, hs]
+        have hf1 : ms1.failed = false := by
+          simp only [hms1, writeXmm_failed, st.failed]
+        have hf2 : ms2.failed = false := by
+          simp only [hms2, hf1]
+        refine encoderCaseStep (.inst (.fp (.fpToInt d1 d2))) s1 s2 ms 2 hs2dom hcode ?_ ?_ hq
+        · intro k hk
+          have hk' : k = 0 ∨ k = 1 ∨ k = 2 := by omega
+          rcases hk' with rfl | rfl | rfl
+          · simpa using hsafe0
+          · rw [Function.iterate_one, hstep0]; exact hsafe1
+          · rw [show (2 : Nat) = 1 + 1 from rfl, Function.iterate_succ_apply,
+              Function.iterate_one, hstep0, hstep1]
+            exact hsafe2
+        · intro k hk1 hk2
+          have hk : k = 1 ∨ k = 2 := by omega
+          rcases hk with rfl | rfl
+          · rw [Function.iterate_one, hstep0]
+            refine ⟨hokS ms1 hf1, ?_, ?_⟩
+            · intro pc _
+              rw [hms1mem]
+            · rw [hms1pc, st.pc, henc, List.length_append, List.length_append,
+                hlen0, hlen1, hlen2]
+              exact mem_allPcs_zero s1.pc (by omega)
+          · rw [show (2 : Nat) = 1 + 1 from rfl, Function.iterate_succ_apply,
+              Function.iterate_one, hstep0, hstep1]
+            refine ⟨hokS ms2 hf2, ?_, ?_⟩
+            · intro pc _
+              rw [hms2mem, hms1mem]
+            · rw [hms2pc, hms1pc, st.pc, fpAddOffset s1.pc 4 5, henc, List.length_append,
+                List.length_append, hlen0, hlen1, hlen2]
+              exact mem_allPcs_zero s1.pc (by omega)
+      · -- the conversion does not fit in 32 bits: the source fails
+        exfalso
+        have hchk' : ¬ (integer.bmod 4294967296 = integer) := by
+          intro h
+          exact hchk (by simpa using h)
+        have hdec : decide ((BitVec.ofInt 32 integer).toInt = integer) = false := by
+          simp [hchk']
+        have hf : s2.failed = true := by
+          rw [← st.upd]
+          simp only [asmUpd, instUpd, updPc, fpUpd, hint, if_true, assertState, updFpReg, hdec]
+          simp
+        have hnotfailed := st.ok
+        rw [hf] at hnotfailed
+        simp at hnotfailed
 
 end Flapjack.Compiler.Encoders.X64
