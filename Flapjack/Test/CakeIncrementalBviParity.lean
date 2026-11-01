@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.SourceToFlat.ToBviIncremental
 import Flapjack.Compiler.Backend.SourceToFlat.ToDataIncremental
 import Flapjack.Compiler.Backend.SourceToFlat.ToWordIncremental
+import Flapjack.Compiler.Backend.SourceToFlat.ToRiscVIncremental
+import Flapjack.Compiler.Backend.RiscVConfig.Executable
 
 /-! Replay incremental source-to-BVI observations from pinned CakeML/HOL. -/
 namespace Flapjack.Test.CakeIncrementalBviParity
@@ -14,6 +16,34 @@ private def bvlConfig : BvlToBvi.Config :=
 
 private def wordConfig : DataToWord.Config :=
   ⟨1, 2, 3, 16, false, false, false, false, false, false, .simple⟩
+
+private def riscvConfig : Backend.Config :=
+  { RiscVConfig.riscvBackendConfigExecutable with
+    sourceConf := SourceToFlat.emptyConfig
+    closConf := closureConfig
+    bvlConf := bvlConfig }
+
+#guard match SourceToFlat.compileCakeIncToRiscVFuel 100 riscvConfig (0, 0)
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.lit (.intLit 1))] with
+  | some (config, none) => config.wordConf.bitmapsLength == 6 && config.labConf.pos == 0
+  | _ => false
+
+private def seededLab : LabToTarget.Config :=
+  { riscvConfig.labConf with pos := 4096, labels := sptFromAList ((List.range 132).map fun n => (n, sptInsert 0 0 .ln)) }
+
+private def wordOracleConfig : WordToWord.Config :=
+  { riscvConfig.wordToWordConf with colOracle := [some (sptInsert 7 11 .ln)] }
+
+#guard match SourceToFlat.compileCakeIncToRiscVFuel 100
+    { riscvConfig with labConf := seededLab, wordToWordConf := wordOracleConfig } (0, 0)
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.lit (.intLit 1))] with
+  | some (config, some (bytes, bitmaps)) => config.wordConf.bitmapsLength == 6 &&
+    config.labConf.pos == 4316 && bytes.length == 220 &&
+    bitmaps == [2, 2, 8, 8589934595, 0, 0] &&
+    match config.wordToWordConf.colOracle with
+    | [some oracle] => sptLookup 7 oracle == some 11
+    | _ => false
+  | _ => false
 
 private def unit : Bvi.Exp := .op (.blockOp (.cons 0)) []
 private def storeEnv : Bvi.Exp :=

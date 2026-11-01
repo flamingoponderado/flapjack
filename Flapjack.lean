@@ -786,6 +786,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.ToBviIncremental
 import Flapjack.Compiler.Backend.SourceToFlat.ToBviIncremental
 import Flapjack.Compiler.Backend.SourceToFlat.ToDataIncremental
 import Flapjack.Compiler.Backend.SourceToFlat.ToWordIncremental
+import Flapjack.Compiler.Backend.SourceToFlat.ToRiscVIncremental
 import Flapjack.Test.CakeIncrementalBviParity
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Total
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values
