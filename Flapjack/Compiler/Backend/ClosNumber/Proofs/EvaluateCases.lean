@@ -305,4 +305,142 @@ theorem evaluate_cons {C F : Type} (first second : ClosLang.Exp) (rest : List Cl
                       rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ targetRun, targetRestRun]
                     · exact List.Forall₂.cons valueRel (by simpa [ResultRel, maxEq] using restRel)
 
+/-- A let expression preserves evaluation when its bindings and body satisfy
+    their simulations. The environment is extended in the evaluator's order. -/
+theorem evaluate_let {C F : Type} (trace : BackendCommon.Tra)
+    (bindings : List ClosLang.Exp) (body : ClosLang.Exp)
+    (bindingsIH : EvalSimulation (C := C) (F := F) bindings)
+    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
+    EvalSimulation (C := C) (F := F) [.let trace bindings body] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  have safeParts : ¬ ClosProps.containsAppSomeExp source.maxApp body ∧
+      ¬ ClosProps.containsAppSome source.maxApp bindings := by
+    simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
+  have bodySafe : ¬ ClosProps.containsAppSome source.maxApp [body] := by
+    simpa [ClosProps.containsAppSome] using safeParts.1
+  cases bindingsRun : evaluate bindings env source with
+  | mk bindingsResult middle =>
+    cases bindingsResult with
+    | err error =>
+      rw [evaluate, fixClock_evaluate, bindingsRun] at run
+      cases run
+      obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+        bindingsIH env nextEnv source target (.err error) middle start bindingsRun
+          noType safeParts.2 envRel stateRel
+      cases targetResult with
+      | val values => cases error <;> simp [ResultRel] at resultRel
+      | err targetError =>
+        refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
+        simp only [renumberList, renumber]
+        rw [evaluate, fixClock_evaluate, targetRun]
+    | val values =>
+      have bindingsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
+      obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+        bindingsIH env nextEnv source target (.val values) middle start bindingsRun
+          bindingsNoType safeParts.2 envRel stateRel
+      cases targetResult with
+      | err error => cases error <;> simp [ResultRel] at resultRel
+      | val targetValues =>
+        have maxEq : middle.maxApp = source.maxApp := by
+          have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 bindings env source
+          simpa [bindingsRun] using h
+        have bodySafe' : ¬ ClosProps.containsAppSome middle.maxApp [body] := by
+          simpa [maxEq] using bodySafe
+        have extended : List.Forall₂ (ValueRel middle.maxApp) (values ++ env) (targetValues ++ nextEnv) := by
+          apply List.rel_append
+          · simpa [ResultRel, maxEq] using resultRel
+          · simpa [maxEq] using envRel
+        have bodyRun : evaluate [body] (values ++ env) middle = (result, sourceNext) := by
+          rw [evaluate, fixClock_evaluate, bindingsRun] at run
+          exact run
+        obtain ⟨targetBodyResult, targetLast, targetBodyRun, bodyRel, lastRel⟩ :=
+          bodyIH (values ++ env) (targetValues ++ nextEnv) middle targetMiddle result sourceNext
+            (renumberList start bindings).1 bodyRun noType bodySafe' extended middleRel
+        refine ⟨targetBodyResult, targetLast, ?_, ?_, lastRel⟩
+        · simp only [renumberList] at targetBodyRun
+          simp only [renumberList, renumber]
+          rw [evaluate, fixClock_evaluate, targetRun]
+          exact targetBodyRun
+        · simpa [maxEq] using bodyRel
+
+/-- A handler preserves normal and abort results and evaluates related handlers
+    with related raised values prepended to their environments. -/
+theorem evaluate_handle {C F : Type} (trace : BackendCommon.Tra)
+    (body handler : ClosLang.Exp)
+    (bodyIH : EvalSimulation (C := C) (F := F) [body])
+    (handlerIH : EvalSimulation (C := C) (F := F) [handler]) :
+    EvalSimulation (C := C) (F := F) [.handle trace body handler] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  have safeParts : ¬ ClosProps.containsAppSomeExp source.maxApp body ∧
+      ¬ ClosProps.containsAppSomeExp source.maxApp handler := by
+    simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
+  have bodySafe : ¬ ClosProps.containsAppSome source.maxApp [body] := by
+    simpa [ClosProps.containsAppSome] using safeParts.1
+  have handlerSafe : ¬ ClosProps.containsAppSome source.maxApp [handler] := by
+    simpa [ClosProps.containsAppSome] using safeParts.2
+  cases bodyRun : evaluate [body] env source with
+  | mk bodyResult middle =>
+    have bodyNoType : bodyResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst bodyResult
+      rw [evaluate, fixClock_evaluate, bodyRun] at run
+      cases run
+      exact noType rfl
+    obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+      bodyIH env nextEnv source target bodyResult middle start bodyRun bodyNoType bodySafe envRel stateRel
+    cases bodyResult with
+    | val values =>
+      cases targetResult with
+      | err error => cases error <;> simp [ResultRel] at resultRel
+      | val targetValues =>
+        rw [evaluate, fixClock_evaluate, bodyRun] at run
+        cases run
+        refine ⟨.val targetValues, targetMiddle, ?_, resultRel, middleRel⟩
+        simp only [renumberList] at targetRun
+        simp only [renumberList, renumber]
+        rw [evaluate, fixClock_evaluate, targetRun]
+    | err error =>
+      cases error with
+      | abort reason =>
+        cases targetResult with
+        | val values => simp [ResultRel] at resultRel
+        | err targetError =>
+          cases targetError with
+          | raise value => simp [ResultRel] at resultRel
+          | abort targetReason =>
+            rw [evaluate, fixClock_evaluate, bodyRun] at run
+            cases run
+            refine ⟨.err (.abort targetReason), targetMiddle, ?_, resultRel, middleRel⟩
+            simp only [renumberList] at targetRun
+            simp only [renumberList, renumber]
+            rw [evaluate, fixClock_evaluate, targetRun]
+      | raise value =>
+        cases targetResult with
+        | val values => simp [ResultRel] at resultRel
+        | err targetError =>
+          cases targetError with
+          | abort reason => simp [ResultRel] at resultRel
+          | raise targetValue =>
+            have maxEq : middle.maxApp = source.maxApp := by
+              have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 [body] env source
+              simpa [bodyRun] using h
+            have handlerSafe' : ¬ ClosProps.containsAppSome middle.maxApp [handler] := by
+              simpa [maxEq] using handlerSafe
+            have extended : List.Forall₂ (ValueRel middle.maxApp) (value :: env) (targetValue :: nextEnv) := by
+              apply List.Forall₂.cons
+              · simpa [ResultRel, maxEq] using resultRel
+              · simpa [maxEq] using envRel
+            have handlerRun : evaluate [handler] (value :: env) middle = (result, sourceNext) := by
+              rw [evaluate, fixClock_evaluate, bodyRun] at run
+              exact run
+            obtain ⟨targetHandlerResult, targetLast, targetHandlerRun, handlerRel, lastRel⟩ :=
+              handlerIH (value :: env) (targetValue :: nextEnv) middle targetMiddle result sourceNext
+                (renumber start body).1 handlerRun noType handlerSafe' extended middleRel
+            refine ⟨targetHandlerResult, targetLast, ?_, ?_, lastRel⟩
+            · simp only [renumberList] at targetRun targetHandlerRun
+              simp only [renumberList, renumber]
+              rw [evaluate, fixClock_evaluate, targetRun]
+              exact targetHandlerRun
+            · simpa [maxEq] using handlerRel
+
 end Flapjack.Compiler.Backend.ClosNumber
