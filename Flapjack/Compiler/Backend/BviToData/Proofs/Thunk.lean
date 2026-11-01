@@ -35,4 +35,18 @@ theorem destThunk_projection (value : DataSem.Value)
       | mutBlock tag finished left current right => simp [dataToBviRef, projectThunkResult]
       | thunk mode body => cases bit <;> simp [dataToBviRef, projectThunkResult]
 
+/-- The evaluated-thunk update restriction is invariant under value and
+reference projection. This is Flapjack primitive-simulation infrastructure. -/
+theorem badThunkUpdate_projection (mode : AstHOL.ThunkMode) (value : DataSem.Value)
+    (dataRefs : Spt (BvlSem.Ref DataSem.Value)) (bviRefs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    (related : ∀ key, bviRefs.lookup key = (sptLookup key dataRefs).map dataToBviRef) :
+    BvlSem.badThunkUpdate mode (dataToBviValue value) bviRefs ↔
+      DataSem.badThunkUpdate mode value dataRefs := by
+  have inspected := destThunk_projection value dataRefs bviRefs related
+  rw [BviSem.destThunk_fromBvl] at inspected
+  unfold BvlSem.badThunkUpdate DataSem.badThunkUpdate
+  cases hd : DataSem.destThunk value dataRefs <;>
+    cases hb : BvlSem.destThunk (dataToBviValue value) bviRefs <;>
+    simp_all [projectThunkResult, BviSem.fromBvlThunkResult]
+
 end Flapjack.Compiler.Backend.BviToData
