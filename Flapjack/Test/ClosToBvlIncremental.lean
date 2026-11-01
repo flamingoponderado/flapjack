@@ -4,14 +4,36 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Incremental
 namespace Flapjack.Test.ClosToBvlIncremental
 open Flapjack.Compiler.Backend
 open ClosToBvl
+open Flapjack.Basis.Pure.MlString
 
 private def config : Config :=
   { defaultConfig with nextLoc := 10, maxApp := 2, doMti := false, doCall := false, knownConf := none }
+
+private def configWithCalls : Config :=
+  { config with callState := (sptInsert 9 () .ln, [(3, 0, .var .none 0)]) }
 
 /-- Incremental compilation keeps incoming auxiliary code, allocates the
 entry label, and advances the numbering state. -/
 example : (match compileIncNoOpts? config ([.var .none 0], [(42, 0, .var .none 0)]) with
     | some (out, [(15, 0, .var 0), (47, 0, .var 0)]) => out.nextLoc == 12
+    | _ => false) = true := by native_decide
+
+/-- Replays `incremental_aux` from the pinned HOL probe, including the
+retained call set and discarded old call-state auxiliary list. -/
+example : (match compileIncNoOpts? configWithCalls ([.var .none 0], [(42, 0, .var .none 0)]) with
+    | some (out, [(15, 0, .var 0), (47, 0, .var 0)]) =>
+        out.nextLoc == 12 && decide (sptToAList out.callState.1 = [(9, ())]) && out.callState.2.isEmpty
+    | _ => false) = true := by native_decide
+
+/-- Replays the empty-input and single-closure outputs from the same probe. -/
+example : (match compileIncNoOpts? config ([], []) with
+    | some (out, [(15, 0, .op (.intOp (.const 10)) [])]) => out.nextLoc == 12
+    | _ => false) = true := by native_decide
+
+example : (match compileIncNoOpts? config ([.fn (ofString "f") none none 1 (.var .none 0)], []) with
+    | some (out, [(15, 0, .op (.blockOp (.cons 30))
+          [.op (.intOp (.const 0)) [], .op (.label 17) []]), (17, 2, .let [.var 0] (.var 0))]) =>
+        out.nextLoc == 14
     | _ => false) = true := by native_decide
 
 /-- Enabled optimizations are rejected until their incremental passes are

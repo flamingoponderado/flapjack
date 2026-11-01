@@ -257,6 +257,10 @@ run_probe() {
   done
 }
 
+run_probe clos_to_bvl_incremental_probeScript.sml clos_to_bvl_incremental_probe.out \
+  incremental_aux incremental_empty incremental_closure \
+  "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
+
 run_probe clos_to_bvl_recursive_types_probeScript.sml clos_to_bvl_recursive_types_probe.out \
   recc_lets_type build_recc_lets_type recc_lets_example build_recc_lets_example compile_exp_sing_def compile_exp_sing_type compile_exp_list_type compile_prog_def compile_prog_type compile_exps_def compile_exps_type compile_exp_sing_eq \
   "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"

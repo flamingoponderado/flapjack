@@ -9199,3 +9199,12 @@ carrier and dependency review.
 `bvi_let_compile_probe.out` captures the typed original single-expression and list optimizer equations, the entry-point correspondence, and tail-position, variable-propagation, and empty-let examples. `Flapjack/Test/BviLetSourceParity.lean` replays these observations. Regenerate with `HOL_PROBE_ONLY=bvi_let_compile_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `bvl_to_bvi_compile_probe.out` captures the typed SmartAppend and source conversion equations, a polymorphic auxiliary-code example, a three-branch example that observes left-associated auxiliary tree shape, and the incremental compiler equations and output example. `Flapjack/Test/BvlToBviSourceParity.lean` replays the examples. Regenerate with `HOL_PROBE_ONLY=bvl_to_bvi_compile_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`clos_to_bvl_incremental_probe.out` captures the pinned original
+`clos_to_bvl_compile_inc` with closure optimizations disabled for empty input,
+a single closure, and a program with incoming auxiliary code and a nonempty
+call-state set. The probe adds the original `extract_name_pmatch` theorem to
+HOL evaluation so the source's choice-based marker extraction computes.
+`Flapjack.Test.ClosToBvlIncremental` replays the resulting code and observable
+configuration fields against the checked Lean wrapper. Regenerate with
+`CAKEML=/var/tmp/flapjack-cakeml-oracle HOL4=/home/zksecurity/HOL HOL_PROBE_ONLY=clos_to_bvl_incremental_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+These finite observations do not establish the unrestricted pass correspondence.
