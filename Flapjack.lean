@@ -988,6 +988,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.OpFrame
 import Flapjack.Compiler.Backend.BviToData.Proofs.Call
 import Flapjack.Compiler.Backend.BviToData.Proofs.Force
 import Flapjack.Compiler.Backend.BviToData.Proofs.Simulation
+import Flapjack.Compiler.Backend.BviToData.Proofs.Program
 import Flapjack.Compiler.Backend.DataSimp.Proofs.Correct
 import Flapjack.Compiler.Backend.DataLive.Proofs.State
 import Flapjack.Compiler.Backend.DataLive.Proofs.Simulation
