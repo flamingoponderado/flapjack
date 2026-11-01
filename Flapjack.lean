@@ -802,6 +802,8 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Memory
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ThunkOperations
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Force
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ClosureApplication
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ApplicationExpression
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.DirectCall
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
