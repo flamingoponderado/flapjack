@@ -2086,4 +2086,93 @@ theorem decode_lea (dst : Nat) (hd : dst < 16) (disp : BitVec 64)
       omega
     exact hsrc
 
+theorem eImm32_eq (imm : BitVec 64)
+    (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    eImm32 imm = some [byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)] := by
+  simp only [eImm32]
+  rw [if_pos ⟨hlo, by omega⟩]
+
+theorem decode_jcc_always (imm : BitVec 64)
+    (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    decode (byteListReader (encodeInsn (.jcc .zAlways imm))) =
+      some (.jcc .zAlways imm, 5) := by
+  simp only [encodeInsn]
+  rw [eImm32_eq imm hlo hhi]
+  simp only [if_true]
+  have hr : ∀ j, j < 4 → byteListReader [byte 0xE9, byte imm.toNat, byte (imm.toNat / 256),
+      byte (imm.toNat / 65536), byte (imm.toNat / 16777216)] (1 + j) =
+      byte (imm.toNat / 2^(8*j)) := by
+    intro j hj
+    interval_cases j <;> simp [byteListReader, byte]
+  have himm := imm32_eImm32_at imm 1
+    (byteListReader [byte 0xE9, byte imm.toNat, byte (imm.toNat / 256),
+      byte (imm.toNat / 65536), byte (imm.toNat / 16777216)]) hr hlo hhi
+  simp only [decode, decodeNoRex]
+  rw [show (byteListReader [byte 0xE9, byte imm.toNat, byte (imm.toNat / 256),
+      byte (imm.toNat / 65536), byte (imm.toNat / 16777216)] 0).toNat = 0xE9 from by
+    simp [byteListReader, byte]]
+  simp
+  rw [himm]
+
+theorem eImm8_32_eq_four (imm : BitVec 64)
+    (hnos : ¬ (-128 ≤ imm.toInt ∧ imm.toInt ≤ 127))
+    (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    eImm8_32 imm = some (4, [byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)]) := by
+  unfold eImm8_32
+  rw [show eImm8 imm = none from by unfold eImm8; rw [if_neg hnos]]
+  rw [eImm32_eq imm hlo hhi]
+
+theorem condOfCode_code (cond : ZCond) (h : cond ≠ .zAlways) : condOfCode cond.code = some cond := by
+  cases cond <;> first | rfl | (exact absurd rfl h)
+
+/-- The bytes of the long conditional-jump form. -/
+theorem decode_jcc_long_other (cond : ZCond) (hne : cond ≠ .zAlways) (hneP : cond ≠ .zP)
+    (imm : BitVec 64) (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    decode (byteListReader (encodeInsn (.jcc cond imm))) =
+      some (.jcc cond imm, 6) := by
+  simp only [encodeInsn]
+  rw [if_neg hne, if_neg hneP, eImm32_eq imm hlo hhi]
+  simp only [List.cons_append, List.nil_append]
+  have hcode : cond.code < 16 := by
+    cases cond <;> first | decide | (exact absurd rfl hne)
+  have hb0 : (byteListReader [byte 0x0F, byte (0x80 + cond.code),
+      byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)] 0).toNat = 0x0F := by
+    simp [byteListReader, byte]
+  have hb1 : (byteListReader [byte 0x0F, byte (0x80 + cond.code),
+      byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)] 1).toNat = 0x80 + cond.code := by
+    simp [byteListReader, byte]
+    omega
+  have hb1' : 0x80 ≤ (byteListReader [byte 0x0F, byte (0x80 + cond.code),
+      byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)] 1).toNat ∧
+      (byteListReader [byte 0x0F, byte (0x80 + cond.code),
+      byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)] 1).toNat ≤ 0x8F := by
+    rw [hb1]
+    constructor <;> omega
+  have hr : ∀ j, j < 4 → byteListReader [byte 0x0F, byte (0x80 + cond.code),
+      byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)] (2 + j) = byte (imm.toNat / 2^(8*j)) := by
+    intro j hj
+    interval_cases j <;> simp [byteListReader, byte]
+  have himm := imm32_eImm32_at imm 2
+    (byteListReader [byte 0x0F, byte (0x80 + cond.code),
+      byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)]) hr hlo hhi
+  simp only [decode, decodeNoRex]
+  rw [hb0]
+  rw [hb1]
+  have h1 : 128 ≤ 128 + cond.code := by omega
+  have h2 : 128 + cond.code ≤ 143 := by omega
+  rw [show decide (128 ≤ 128 + cond.code) = true from by simp [h1],
+      show decide (128 + cond.code ≤ 143) = true from by simp [h2]]
+  simp only [Bool.true_and, if_true]
+  rw [show 128 + cond.code - 128 = cond.code from by omega]
+  simp only [condOfCode_code cond hne]
+  rw [himm]
+
 end Flapjack.Compiler.Encoders.X64
