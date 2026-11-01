@@ -1,5 +1,8 @@
 import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.BviToData.Proofs.Optimise
+import Flapjack.Compiler.Backend.BviToData.Proofs.FindCode
+import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
+import Flapjack.Compiler.Backend.BviToData.Proofs.Compare
 import Flapjack.Compiler.Backend.Semantics.DataProps.Ticks
 import Mathlib.Data.List.Induction
 
@@ -113,6 +116,160 @@ theorem simulationFor_call_invalid_handler {C F : Type} (ticks : Nat) (args : Li
   simp [BviSem.evaluate] at run
   obtain ⟨rfl, rfl⟩ := run
   exact False.elim (notTypeError rfl)
+
+/-- Successful call arguments followed by exhaustion within the generated
+ticks produce the same timeout and related state on both sides. This is one
+case of the unhandled-call simulation. -/
+theorem simulationFor_call_ticksTimeout {C F : Type} (ticks : Nat) (dest : Option Nat) (args : List Bvi.Exp)
+    (env values callArgs : List BvlSem.Value) (body : Bvi.Exp)
+    (s1 smid : BviSem.BviState C F) (ih : simulationFor args env s1)
+    (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
+    (sourceCode : BvlSem.findCode dest values smid.code = some (callArgs, body))
+    (timeout : smid.clock < ticks)
+    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
+    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
+    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
+    BviSem.evaluate [.call ticks dest args none] env s1 = (.err (.abort .timeoutError), { smid with clock := 0 }) ∧
+    ∃ t2 prog pres names next ls,
+      compileSource n corr tail live [.call ticks dest args none] = (prog, names, next) ∧
+      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel { smid with clock := 0 } t2 ∧
+      correctOutcome (.err (.abort .timeoutError)) t1 t2 n next corr live names env tail pres ls := by
+  have wholeRun : BviSem.evaluate [.call ticks dest args none] env s1 =
+      (.err (.abort .timeoutError), { smid with clock := 0 }) := by
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+    simp [sourceCode, show smid.clock < ticks + 1 by omega]
+  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
+    ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent (by simp [isException])
+  cases pres with
+  | some result => simp [correctOutcome, isResult] at outcome
+  | none =>
+    let rest := DataLang.mkTicks ticks (.call (if tail then none else some ([n1], namesOfList (live ++ corr))) dest argNames none)
+    let last := { tmid with clock := 0, locals := .ln, stack := [], localsSize := some 0 }
+    have targetTimeout : tmid.clock < ticks := by simpa [← middleRel.1] using timeout
+    have restRun : DataSem.evaluate rest tmid = (some (.err (.abort .timeoutError)), last) := by
+      simp [rest, DataSem.evaluate_mkTicks, targetTimeout, last]
+    have sourceBound := BviSem.evaluate_clock_le args env s1
+    rw [argsRun] at sourceBound
+    have targetBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+    have targetRun : DataSem.evaluate (.seq argsProg rest) t1 = (some (.err (.abort .timeoutError)), last) :=
+      evaluateSeq_continue argsProg rest t1 tmid _ target targetBound restRun
+    have finalRel : stateRel { smid with clock := 0 } last := by
+      simpa [stateRel, last] using middleRel.2
+    refine ⟨wholeRun, last, .seq argsProg rest, some (.err (.abort .timeoutError)), [n1], n1 + 1,
+      ls, ?_, targetRun, finalRel, ?_⟩
+    · simp [compileSource, compiled, rest]
+    · simp [correctOutcome, dataToBviResult, isReturn, isResult, isException]
+
+/-- If generated ticks consume exactly the remaining clock, the call itself
+times out. Both tail and returning calls preserve the BVI/data relation. -/
+theorem simulationFor_call_entryTimeout {C F : Type} (ticks : Nat) (dest : Option Nat) (args : List Bvi.Exp)
+    (env values callArgs : List BvlSem.Value) (body : Bvi.Exp)
+    (s1 smid : BviSem.BviState C F) (ih : simulationFor args env s1)
+    (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
+    (sourceCode : BvlSem.findCode dest values smid.code = some (callArgs, body))
+    (timeout : smid.clock = ticks)
+    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
+    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
+    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
+    BviSem.evaluate [.call ticks dest args none] env s1 = (.err (.abort .timeoutError), { smid with clock := 0 }) ∧
+    ∃ t2 prog pres names next ls,
+      compileSource n corr tail live [.call ticks dest args none] = (prog, names, next) ∧
+      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel { smid with clock := 0 } t2 ∧
+      correctOutcome (.err (.abort .timeoutError)) t1 t2 n next corr live names env tail pres ls := by
+  have wholeRun : BviSem.evaluate [.call ticks dest args none] env s1 =
+      (.err (.abort .timeoutError), { smid with clock := 0 }) := by
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+    simp [sourceCode, timeout]
+  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
+    ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent (by simp [isException])
+  cases pres with
+  | some result => simp [correctOutcome, isResult] at outcome
+  | none =>
+    have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
+    have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
+      intro v member
+      exact liveMidAll v (List.mem_append_right argNames member)
+    rcases outcome with ⟨_, _, _, _, varsMid, _, _, _, _, _, resultVars⟩
+    obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
+    have projectedCode : BvlSem.findCode dest (dataValues.map dataToBviValue) smid.code = some (callArgs, body) := by
+      simpa [← projected] using sourceCode
+    obtain ⟨dataArgs, size, argsProjection, targetCode⟩ :=
+      findCode_projection dest dataValues smid tmid callArgs body middleRel projectedCode
+    have targetClock : tmid.clock = ticks := by simpa [← middleRel.1] using timeout
+    let afterTicks := { tmid with clock := tmid.clock - ticks }
+    have afterClock : afterTicks.clock = 0 := by simp [afterTicks, targetClock]
+    have afterRead : DataSem.getVars argNames afterTicks.locals = some dataValues := by simpa [afterTicks] using read
+    have afterCode : DataSem.findCode dest dataValues afterTicks.code afterTicks.stackFrameSizes =
+        some (dataArgs, compileExp dataArgs.length body, size) := by simpa [afterTicks] using targetCode
+    have sourceBound := BviSem.evaluate_clock_le args env s1
+    rw [argsRun] at sourceBound
+    have targetBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+    cases tail with
+    | true =>
+      let call := DataLang.Prog.call none dest argNames none
+      let last := DataSem.flushState true afterTicks
+      have callRun : DataSem.evaluate call afterTicks = (some (.err (.abort .timeoutError)), last) := by
+        simp [call, DataSem.evaluate, afterRead, afterCode, afterClock, last]
+      have ticksRun : DataSem.evaluate (DataLang.mkTicks ticks call) tmid = (some (.err (.abort .timeoutError)), last) := by
+        rw [DataSem.evaluate_mkTicks]
+        rw [if_neg (by omega : ¬ tmid.clock < ticks)]
+        exact callRun
+      have targetRun := evaluateSeq_continue argsProg (DataLang.mkTicks ticks call) t1 tmid _ target targetBound ticksRun
+      have finalRel : stateRel { smid with clock := 0 } last := by
+        simpa [stateRel, last, DataSem.flushState, afterTicks, targetClock] using middleRel.2
+      refine ⟨wholeRun, last, .seq argsProg (DataLang.mkTicks ticks call), some (.err (.abort .timeoutError)),
+        [n1], n1 + 1, ls, ?_, targetRun, finalRel, ?_⟩
+      · simp [compileSource, compiled, call]
+      · simp [correctOutcome, dataToBviResult, isReturn, isResult, isException]
+    | false =>
+      let roots := live ++ corr
+      let cut := sptMkWf (sptInter tmid.locals (namesOfList roots))
+      have rootsPresent : ∀ key ∈ roots, sptLookup key tmid.locals ≠ none := by
+        simpa [roots, DataSem.getVars] using
+          (roots_present tmid [] live corr env [] varsMid liveMid (by simp [DataSem.getVars]))
+      have cutEnv : DataSem.cutEnv (namesOfList roots) afterTicks.locals = some cut :=
+        cutEnv_namesOfList roots tmid.locals rootsPresent
+      let call := DataLang.Prog.call (some ([n1], namesOfList roots)) dest argNames none
+      let callState := DataSem.callEnv dataArgs size (DataSem.pushEnv cut false (DataSem.decClock afterTicks))
+      let last := { callState with stack := [], locals := .ln }
+      have callRun : DataSem.evaluate call afterTicks = (some (.err (.abort .timeoutError)), last) := by
+        simp [call, DataSem.evaluate, afterRead, afterCode, afterClock, cutEnv, callState, last]
+      have ticksRun : DataSem.evaluate (DataLang.mkTicks ticks call) tmid = (some (.err (.abort .timeoutError)), last) := by
+        rw [DataSem.evaluate_mkTicks]
+        rw [if_neg (by omega : ¬ tmid.clock < ticks)]
+        exact callRun
+      have targetRun := evaluateSeq_continue argsProg (DataLang.mkTicks ticks call) t1 tmid _ target targetBound ticksRun
+      have finalRel : stateRel { smid with clock := 0 } last := by
+        simpa [stateRel, last, callState, DataSem.callEnv, DataSem.pushEnv, DataSem.decClock, afterTicks, targetClock] using middleRel.2
+      refine ⟨wholeRun, last, .seq argsProg (DataLang.mkTicks ticks call), some (.err (.abort .timeoutError)),
+        [n1], n1 + 1, ls, ?_, targetRun, finalRel, ?_⟩
+      · simp [compileSource, compiled, call, roots]
+      · simp [correctOutcome, dataToBviResult, isReturn, isResult, isException]
+
+/-- All call timeouts after successful arguments and code lookup, including
+the boundary at which the generated ticks consume the entire clock. -/
+theorem simulationFor_call_timeout {C F : Type} (ticks : Nat) (dest : Option Nat) (args : List Bvi.Exp)
+    (env values callArgs : List BvlSem.Value) (body : Bvi.Exp)
+    (s1 smid : BviSem.BviState C F) (ih : simulationFor args env s1)
+    (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
+    (sourceCode : BvlSem.findCode dest values smid.code = some (callArgs, body))
+    (timeout : smid.clock < ticks + 1)
+    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
+    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
+    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
+    BviSem.evaluate [.call ticks dest args none] env s1 = (.err (.abort .timeoutError), { smid with clock := 0 }) ∧
+    ∃ t2 prog pres names next ls,
+      compileSource n corr tail live [.call ticks dest args none] = (prog, names, next) ∧
+      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel { smid with clock := 0 } t2 ∧
+      correctOutcome (.err (.abort .timeoutError)) t1 t2 n next corr live names env tail pres ls := by
+  by_cases before : smid.clock < ticks
+  · exact simulationFor_call_ticksTimeout ticks dest args env values callArgs body s1 smid ih
+      argsRun sourceCode before t1 n corr tail live vars fresh related livePresent
+  · exact simulationFor_call_entryTimeout ticks dest args env values callArgs body s1 smid ih
+      argsRun sourceCode (by omega) t1 n corr tail live vars fresh related livePresent
 
 /-- An error while evaluating unhandled-call arguments propagates before
 the call executes. This is untagged pending evaluator correspondence review. -/
