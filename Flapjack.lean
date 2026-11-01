@@ -757,6 +757,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlProps.FindCode
 import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyCode
 import Flapjack.Compiler.Backend.Semantics.BvlSem.MemoryChoice
 import Flapjack.Test.BvlSemValuesParity
+import Flapjack.Test.DataSemEquality
 import Flapjack.Test.BvlToBviValueParity
 import Flapjack.Test.BviFinaliseParity
 import Flapjack.Test.BviApplyAuxParity
@@ -924,6 +925,7 @@ import Flapjack.Compiler.Backend.Semantics.DataSem.Control
 import Flapjack.Compiler.Backend.Semantics.DataSem.Build
 import Flapjack.Compiler.Backend.Semantics.DataSem.Int
 import Flapjack.Compiler.Backend.Semantics.DataSem.Finalise
+import Flapjack.Compiler.Backend.Semantics.DataSem.Equality
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
 import Flapjack.Compiler.Backend.BviToData.Compile
