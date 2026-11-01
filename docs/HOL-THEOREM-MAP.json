@@ -99782,6 +99782,15 @@
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 4628-4634, binders !p s t; evaluate (p,s) = (NONE,t) ⇒ stack_size t.stack = stack_size s.stack; from evaluate_stack_swap and s_key_eq_stack_size as in HOL. State carrier WordSemStateFiniteExact width C F (alpha word width, independent beta/gamma as C/F) with the reviewed fmap_as_finite_support [fpRegs, store] and words qualifiers. Inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8) through evaluate/inst. Typed capture word_props_code_grows probe (show_types, no hypotheses)."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Limits.lean",
+    "lean_name": "limitsInv",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "limits_inv_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original lines 4490–4498 and typed data_to_word_gc_stack capture. The six explicit input binders, stack and length limits, width=64 architecture flag, heap length, natural non-overflow condition, and both FP flags match. HOL bytes_in_word is n2w (dimindex DIV 8), w2n is BitVec.toNat, dimword is 2^width, and WordLocW is the reviewed positive-width word carrier."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean",
     "lean_name": "stackRel",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",

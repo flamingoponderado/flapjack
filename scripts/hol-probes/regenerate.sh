@@ -8216,7 +8216,7 @@ run_probe backend_read_limits_probeScript.sml backend_read_limits_probe.out \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_gc_stack_probeScript.sml data_to_word_gc_stack_probe.out \
-  stack_rel_typed the_global_typed contains_loc_typed \
+  stack_rel_typed the_global_typed contains_loc_typed limits_inv_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_space_control_probeScript.sml data_to_word_space_control_probe.out \
