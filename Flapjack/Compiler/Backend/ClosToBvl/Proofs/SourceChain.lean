@@ -278,4 +278,87 @@ theorem evaluate_sourceChain_call_codeExtension {C F : Type} (expressions : List
     nonempty installed targetRun
   exact ⟨extra, targetFinal, chainRun, finalRel⟩
 
+/-- Add the generated chain to existing source code using the same
+right-fold precedence as the source association list. -/
+def sourceCodeWithChain (start : Nat) (expressions : List ClosLang.Exp)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) : HolFiniteMapExact Nat (Nat × ClosLang.Exp) :=
+  code.updateListEq (chainExps start expressions).reverse
+
+/-- Existing code is retained when generated chain labels are fresh. -/
+theorem sourceCodeWithChain_original_submap (start : Nat) (expressions : List ClosLang.Exp)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (fresh : ∀ key, key ∈ (chainExps start expressions).map Prod.fst → code.lookup key = none) :
+    CodeSubmap code (sourceCodeWithChain start expressions code) := by
+  intro key value found
+  have absent : key ∉ ((chainExps start expressions).reverse.map Prod.fst) := by
+    intro member
+    have chainMember : key ∈ (chainExps start expressions).map Prod.fst := by simpa using member
+    rw [fresh key chainMember] at found
+    contradiction
+  change FUPDATE_LIST_HOL code.lookup (chainExps start expressions).reverse key = some value
+  have same := FLOOKUP_FUPDATE_LIST_HOL_not_mem code.lookup (chainExps start expressions).reverse key absent
+  change FUPDATE_LIST_HOL code.lookup (chainExps start expressions).reverse key = code.lookup key at same
+  rw [same]
+  exact found
+
+/-- All entries of the generated chain are present in the combined map. -/
+theorem sourceCodeWithChain_chain_submap (start : Nat) (expressions : List ClosLang.Exp)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
+    CodeSubmap (initialSourceCode (chainExps start expressions)) (sourceCodeWithChain start expressions code) := by
+  apply codeSubmap_updateList
+  intro key value found
+  simp [HolFiniteMapExact.empty] at found
+
+/-- Nonempty chain labels occupy exactly the interval reserved by the
+source correctness theorem, so its ordering premise covers the combined map. -/
+theorem sourceCodeWithChain_extension {C F : Type} (start : Nat) (expressions : List ClosLang.Exp)
+    (source : State C F) (nonempty : expressions ≠ [])
+    (fresh : ∀ key, start ≤ key → key < start + expressions.length → source.code.lookup key = none)
+    (ordered : Flapjack.Compiler.Backend.BackendProps.oracleMonotonic oracleCodeNames (· < ·)
+      ({ key | start ≤ key ∧ key < start + expressions.length } ∪ codeDomain source.code) source.compileOracle) :
+    CodeExtension source { source with code := sourceCodeWithChain start expressions source.code } := by
+  have lengthPositive : 0 < expressions.length := List.length_pos_iff.mpr nonempty
+  have chainBound : ∀ key, key ∈ (chainExps start expressions).map Prod.fst →
+      start ≤ key ∧ key < start + expressions.length := by
+    intro key member
+    have h := chainExps_label_bounds start expressions key member
+    simpa [Nat.max_eq_right (by omega : 1 ≤ expressions.length)] using h
+  refine ⟨rfl, sourceCodeWithChain_original_submap start expressions source.code (by
+    intro key member
+    exact fresh key (chainBound key member).1 (chainBound key member).2), ?_⟩
+  constructor
+  · exact ordered.1
+  · intro i x y member oracleMember
+    apply ordered.2 i x y _ oracleMember
+    have domain := codeDomain_updateList_subset source.code (chainExps start expressions).reverse x member
+    cases domain with
+    | inl old => exact Or.inr old
+    | inr added =>
+      have chainMember : x ∈ (chainExps start expressions).map Prod.fst := by simpa using added
+      exact Or.inl (chainBound x chainMember)
+
+/-- The generated entry call reproduces a non-type-error source evaluation
+when its reserved labels are fresh and precede future oracle labels. -/
+theorem evaluate_sourceCodeWithChain_call {C F : Type} (expressions : List ClosLang.Exp) (start : Nat)
+    (source final : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (nonempty : expressions ≠ [])
+    (fresh : ∀ key, start ≤ key → key < start + expressions.length → source.code.lookup key = none)
+    (ordered : Flapjack.Compiler.Backend.BackendProps.oracleMonotonic oracleCodeNames (· < ·)
+      ({ key | start ≤ key ∧ key < start + expressions.length } ∪ codeDomain source.code) source.compileOracle)
+    (run : evaluate expressions [] source = (result, final))
+    (noType : result ≠ .err (.abort .typeError)) :
+    ∃ extra targetFinal,
+      evaluate [.call .none 0 start []] []
+        { source with code := sourceCodeWithChain start expressions source.code, clock := source.clock + extra } =
+        (sourceChainResult result, targetFinal) ∧
+      CodeExtension final targetFinal := by
+  let target := { source with code := sourceCodeWithChain start expressions source.code }
+  have installed : chainInstalled start expressions target.code :=
+    chainInstalled_submap start expressions _ _ (chainInstalled_chainExps start expressions)
+      (sourceCodeWithChain_chain_submap start expressions source.code)
+  obtain ⟨extra, targetFinal, chainRun, finalRel⟩ :=
+    evaluate_sourceChain_call_codeExtension expressions start source target final result nonempty installed
+      (sourceCodeWithChain_extension start expressions source nonempty fresh ordered) run noType
+  exact ⟨extra, targetFinal, chainRun, finalRel⟩
+
 end Flapjack.Compiler.Backend.ClosToBvl
