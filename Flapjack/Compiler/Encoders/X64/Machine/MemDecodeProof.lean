@@ -2547,4 +2547,267 @@ theorem decode_binopRI_test (dst : Nat) (hd : dst < 16) (hne : dst ≠ 0) (imm :
        simp [ZRM.regOf])
 
 
+
+/-! ## SSE forms -/
+
+/-- The encoded byte list of `comisd`. -/
+
+
+
+theorem eGenRmReg_xmm (reg src : Nat) (hr : reg < 16) (hs : src < 16)
+    (p : List (BitVec 8)) (opc : BitVec 8) (mo : Option (BitVec 8)) :
+    eGenRmReg .z32 (.zr src) (BitVec.ofNat 4 reg) p opc mo =
+      (if 8 ≤ reg ∨ 8 ≤ src then
+        [byte (64 + (if 8 ≤ reg then 4 else 0) + (if 8 ≤ src then 1 else 0))] else []) ++
+      p ++ [opc ||| mo.getD 1] ++ [byte (192 + 8 * (reg % 8) + src % 8)] := by
+  interval_cases reg <;> interval_cases src <;> cases mo with
+  | none => simp [eGenRmReg, eModRM, eOpsize, rexPrefix, mkRex, byte]
+  | some m => simp [eGenRmReg, eModRM, eOpsize, rexPrefix, mkRex, byte]
+
+abbrev sseRex (reg src : Nat) : List (BitVec 8) :=
+  if 8 ≤ reg ∨ 8 ≤ src then
+    [byte (64 + (if 8 ≤ reg then 4 else 0) + (if 8 ≤ src then 1 else 0))] else []
+
+abbrev modrmB (reg src : Nat) : BitVec 8 := byte (192 + 8 * (reg % 8) + src % 8)
+
+abbrev comisdBytes (dst src : Nat) : List (BitVec 8) :=
+  [byte 0x66] ++ sseRex dst src ++ [byte 0x0F, byte 0x2F, modrmB dst src]
+
+abbrev movsdBytes (dst src : Nat) : List (BitVec 8) :=
+  [byte 0xF2] ++ sseRex dst src ++ [byte 0x0F, byte 0x10, modrmB dst src]
+
+abbrev pcmpeqqBytes (dst src : Nat) : List (BitVec 8) :=
+  [byte 0x66] ++ sseRex dst src ++ [byte 0x0F, byte 0x38, byte 0x29, modrmB dst src]
+
+abbrev sqrtsdBytes (dst src : Nat) : List (BitVec 8) :=
+  [byte 0xF2] ++ sseRex dst src ++ [byte 0x0F, byte 0x51, modrmB dst src]
+
+abbrev cvtdq2pdBytes (dst src : Nat) : List (BitVec 8) :=
+  [byte 0xF3] ++ sseRex dst src ++ [byte 0x0F, byte 0xE6, modrmB dst src]
+
+abbrev cvtpd2dqBytes (dst src : Nat) : List (BitVec 8) :=
+  [byte 0xF2] ++ sseRex dst src ++ [byte 0x0F, byte 0xE6, modrmB dst src]
+
+abbrev logicPDBytes (code dst src : Nat) : List (BitVec 8) :=
+  [byte 0x66] ++ sseRex dst src ++ [byte 0x0F, byte (0x54 + code), modrmB dst src]
+
+abbrev binSDBytes (code dst src : Nat) : List (BitVec 8) :=
+  [byte 0xF2] ++ sseRex dst src ++ [byte 0x0F, byte (0x58 + code), modrmB dst src]
+
+abbrev psrlqBytes (dst : Nat) (imm : BitVec 8) : List (BitVec 8) :=
+  [byte 0x66] ++ sseRex 2 dst ++ [byte 0x0F, byte 0x73, modrmB 2 dst] ++ [imm]
+
+abbrev psllqBytes (dst : Nat) (imm : BitVec 8) : List (BitVec 8) :=
+  [byte 0x66] ++ sseRex 6 dst ++ [byte 0x0F, byte 0x73, modrmB 6 dst] ++ [imm]
+
+abbrev pslldqBytes (dst : Nat) (imm : BitVec 8) : List (BitVec 8) :=
+  [byte 0x66] ++ sseRex 7 dst ++ [byte 0x0F, byte 0x73, modrmB 7 dst] ++ [imm]
+
+abbrev psrldqBytes (dst : Nat) (imm : BitVec 8) : List (BitVec 8) :=
+  [byte 0x66] ++ sseRex 3 dst ++ [byte 0x0F, byte 0x73, modrmB 3 dst] ++ [imm]
+
+abbrev movDQBytes (toXmm quad : Bool) (xmm gpr : Nat) : List (BitVec 8) :=
+  [byte 0x66] ++
+    (if quad then [byte (72 + (if 8 ≤ xmm then 4 else 0) + (if 8 ≤ gpr then 1 else 0))]
+     else sseRex xmm gpr) ++
+    [byte 0x0F, byte (if toXmm then 0x6E else 0x7E), modrmB xmm gpr]
+
+theorem encodeInsn_comisd (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    encodeInsn (.sse (.comisd dst src)) = comisdBytes dst src := by
+  simp only [encodeInsn, encodeSSE, xmmToRM, comisdBytes, sseRex, modrmB]
+  rw [eGenRmReg_xmm dst src hd hs [byte 0x0F] (byte 0x2F) none]
+  simp [byte]
+
+theorem decode_comisd (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    decode (byteListReader (encodeInsn (.sse (.comisd dst src)))) =
+      some (.sse (.comisd dst src), 4 + (if 8 ≤ dst ∨ 8 ≤ src then 1 else 0)) := by
+  rw [encodeInsn_comisd dst src hd hs]
+  interval_cases dst <;> interval_cases src <;> decide
+
+theorem encodeInsn_movsd (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    encodeInsn (.sse (.movsd dst src)) = movsdBytes dst src := by
+  simp only [encodeInsn, encodeSSE, xmmToRM, movsdBytes, sseRex, modrmB]
+  rw [eGenRmReg_xmm dst src hd hs [byte 0x0F] (byte 0x10) (some 0)]
+  simp [byte]
+
+theorem decode_movsd (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    decode (byteListReader (encodeInsn (.sse (.movsd dst src)))) =
+      some (.sse (.movsd dst src), 4 + (if 8 ≤ dst ∨ 8 ≤ src then 1 else 0)) := by
+  rw [encodeInsn_movsd dst src hd hs]
+  interval_cases dst <;> interval_cases src <;> decide
+
+theorem encodeInsn_pcmpeqq (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    encodeInsn (.sse (.pcmpeqq dst src)) = pcmpeqqBytes dst src := by
+  simp only [encodeInsn, encodeSSE, xmmToRM, pcmpeqqBytes, sseRex, modrmB]
+  rw [eGenRmReg_xmm dst src hd hs [byte 0x0F, byte 0x38] (byte 0x29) (some 0)]
+  simp [byte]
+
+theorem decode_pcmpeqq (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    decode (byteListReader (encodeInsn (.sse (.pcmpeqq dst src)))) =
+      some (.sse (.pcmpeqq dst src), 5 + (if 8 ≤ dst ∨ 8 ≤ src then 1 else 0)) := by
+  rw [encodeInsn_pcmpeqq dst src hd hs]
+  interval_cases dst <;> interval_cases src <;> decide
+
+theorem encodeInsn_sqrtsd (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    encodeInsn (.sse (.sqrtsd dst src)) = sqrtsdBytes dst src := by
+  simp only [encodeInsn, encodeSSE, xmmToRM, sqrtsdBytes, sseRex, modrmB]
+  rw [eGenRmReg_xmm dst src hd hs [byte 0x0F] (byte 0x51) (some 0)]
+  simp [byte]
+
+theorem decode_sqrtsd (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    decode (byteListReader (encodeInsn (.sse (.sqrtsd dst src)))) =
+      some (.sse (.sqrtsd dst src), 4 + (if 8 ≤ dst ∨ 8 ≤ src then 1 else 0)) := by
+  rw [encodeInsn_sqrtsd dst src hd hs]
+  interval_cases dst <;> interval_cases src <;> decide
+
+theorem encodeInsn_cvtdq2pd (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    encodeInsn (.sse (.cvtdq2pd dst src)) = cvtdq2pdBytes dst src := by
+  simp only [encodeInsn, encodeSSE, xmmToRM, cvtdq2pdBytes, sseRex, modrmB]
+  rw [eGenRmReg_xmm dst src hd hs [byte 0x0F] (byte 0xE6) (some 0)]
+  simp [byte]
+
+theorem decode_cvtdq2pd (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    decode (byteListReader (encodeInsn (.sse (.cvtdq2pd dst src)))) =
+      some (.sse (.cvtdq2pd dst src), 4 + (if 8 ≤ dst ∨ 8 ≤ src then 1 else 0)) := by
+  rw [encodeInsn_cvtdq2pd dst src hd hs]
+  interval_cases dst <;> interval_cases src <;> decide
+
+theorem encodeInsn_cvtpd2dq (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    encodeInsn (.sse (.cvtpd2dq false dst src)) = cvtpd2dqBytes dst src := by
+  simp only [encodeInsn, encodeSSE, xmmToRM, cvtpd2dqBytes, sseRex, modrmB]
+  rw [eGenRmReg_xmm dst src hd hs [byte 0x0F] (byte 0xE6) (some 0)]
+  simp [byte]
+
+theorem decode_cvtpd2dq (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    decode (byteListReader (encodeInsn (.sse (.cvtpd2dq false dst src)))) =
+      some (.sse (.cvtpd2dq false dst src), 4 + (if 8 ≤ dst ∨ 8 ≤ src then 1 else 0)) := by
+  rw [encodeInsn_cvtpd2dq dst src hd hs]
+  interval_cases dst <;> interval_cases src <;> decide
+
+theorem encodeInsn_logicPD (logic : SSELogic) (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    encodeInsn (.sse (.logicPD logic dst src)) =
+      logicPDBytes (sseLogicCode logic).toNat dst src := by
+  simp only [encodeInsn, encodeSSE, xmmToRM, logicPDBytes, sseRex, modrmB]
+  rw [eGenRmReg_xmm dst src hd hs [byte 0x0F] (byte 0x54) (some (BitVec.ofNat 8 (sseLogicCode logic).toNat))]
+  cases logic <;> interval_cases dst <;> interval_cases src <;> decide
+
+theorem decode_logicPD (logic : SSELogic) (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    decode (byteListReader (encodeInsn (.sse (.logicPD logic dst src)))) =
+      some (.sse (.logicPD logic dst src), 4 + (if 8 ≤ dst ∨ 8 ≤ src then 1 else 0)) := by
+  rw [encodeInsn_logicPD logic dst src hd hs]
+  cases logic <;> interval_cases dst <;> interval_cases src <;> decide
+
+theorem encodeInsn_binSD (bop : SSEBinop) (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    encodeInsn (.sse (.binSD bop dst src)) =
+      binSDBytes (sseBinopCode bop).toNat dst src := by
+  simp only [encodeInsn, encodeSSE, xmmToRM, binSDBytes, sseRex, modrmB]
+  rw [eGenRmReg_xmm dst src hd hs [byte 0x0F] (byte 0x58) (some (BitVec.ofNat 8 (sseBinopCode bop).toNat))]
+  cases bop <;> interval_cases dst <;> interval_cases src <;> decide
+
+theorem decode_binSD (bop : SSEBinop) (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
+    decode (byteListReader (encodeInsn (.sse (.binSD bop dst src)))) =
+      some (.sse (.binSD bop dst src), 4 + (if 8 ≤ dst ∨ 8 ≤ src then 1 else 0)) := by
+  rw [encodeInsn_binSD bop dst src hd hs]
+  cases bop <;> interval_cases dst <;> interval_cases src <;> decide
+
+
+
+
+
+theorem eGenRmReg_xmm64 (reg src : Nat) (hr : reg < 16) (hs : src < 16)
+    (p : List (BitVec 8)) (opc : BitVec 8) (mo : Option (BitVec 8)) :
+    eGenRmReg .z64 (.zr src) (BitVec.ofNat 4 reg) p opc mo =
+      [byte (72 + (if 8 ≤ reg then 4 else 0) + (if 8 ≤ src then 1 else 0))] ++
+      p ++ [opc ||| mo.getD 1] ++ [byte (192 + 8 * (reg % 8) + src % 8)] := by
+  interval_cases reg <;> interval_cases src <;> cases mo with
+  | none => simp [eGenRmReg, eModRM, eOpsize, rexPrefix, mkRex, byte]
+  | some m => simp [eGenRmReg, eModRM, eOpsize, rexPrefix, mkRex, byte]
+
+theorem encodeInsn_psrlqImm (dst : Nat) (hd : dst < 16) (imm : BitVec 8) :
+    encodeInsn (.sse (.psrlqImm dst imm)) = psrlqBytes dst imm := by
+  simp only [encodeInsn, encodeSSE, psrlqBytes, sseRex, modrmB]
+  rw [eGenRmReg_xmm 2 dst (by decide) hd [byte 0x0F] (byte 0x73) (some 0)]
+  interval_cases dst <;> rfl
+
+theorem decode_psrlqImm (dst : Nat) (hd : dst < 16) (imm : BitVec 8) :
+    decode (byteListReader (encodeInsn (.sse (.psrlqImm dst imm)))) =
+      some (.sse (.psrlqImm dst imm), 5 + (if 8 ≤ dst then 1 else 0)) := by
+  rw [encodeInsn_psrlqImm dst hd imm]
+  interval_cases dst <;>
+    simp [decode, decodeNoRex, decodeSSE, parseRM, psrlqBytes, sseRex, modrmB, ZRM.regOf]
+
+theorem encodeInsn_psllqImm (dst : Nat) (hd : dst < 16) (imm : BitVec 8) :
+    encodeInsn (.sse (.psllqImm dst imm)) = psllqBytes dst imm := by
+  simp only [encodeInsn, encodeSSE, psllqBytes, sseRex, modrmB]
+  rw [eGenRmReg_xmm 6 dst (by decide) hd [byte 0x0F] (byte 0x73) (some 0)]
+  interval_cases dst <;> rfl
+
+theorem decode_psllqImm (dst : Nat) (hd : dst < 16) (imm : BitVec 8) :
+    decode (byteListReader (encodeInsn (.sse (.psllqImm dst imm)))) =
+      some (.sse (.psllqImm dst imm), 5 + (if 8 ≤ dst then 1 else 0)) := by
+  rw [encodeInsn_psllqImm dst hd imm]
+  interval_cases dst <;>
+    simp [decode, decodeNoRex, decodeSSE, parseRM, psllqBytes, sseRex, modrmB, ZRM.regOf]
+
+theorem encodeInsn_pslldq (dst : Nat) (hd : dst < 16) (imm : BitVec 8) :
+    encodeInsn (.sse (.pslldq dst imm)) = pslldqBytes dst imm := by
+  simp only [encodeInsn, encodeSSE, pslldqBytes, sseRex, modrmB]
+  rw [eGenRmReg_xmm 7 dst (by decide) hd [byte 0x0F] (byte 0x73) (some 0)]
+  interval_cases dst <;> rfl
+
+theorem decode_pslldq (dst : Nat) (hd : dst < 16) (imm : BitVec 8) :
+    decode (byteListReader (encodeInsn (.sse (.pslldq dst imm)))) =
+      some (.sse (.pslldq dst imm), 5 + (if 8 ≤ dst then 1 else 0)) := by
+  rw [encodeInsn_pslldq dst hd imm]
+  interval_cases dst <;>
+    simp [decode, decodeNoRex, decodeSSE, parseRM, pslldqBytes, sseRex, modrmB, ZRM.regOf]
+
+theorem encodeInsn_psrldq (dst : Nat) (hd : dst < 16) (imm : BitVec 8) :
+    encodeInsn (.sse (.psrldq dst imm)) = psrldqBytes dst imm := by
+  simp only [encodeInsn, encodeSSE, psrldqBytes, sseRex, modrmB]
+  rw [eGenRmReg_xmm 3 dst (by decide) hd [byte 0x0F] (byte 0x73) (some 0)]
+  interval_cases dst <;> rfl
+
+theorem decode_psrldq (dst : Nat) (hd : dst < 16) (imm : BitVec 8) :
+    decode (byteListReader (encodeInsn (.sse (.psrldq dst imm)))) =
+      some (.sse (.psrldq dst imm), 5 + (if 8 ≤ dst then 1 else 0)) := by
+  rw [encodeInsn_psrldq dst hd imm]
+  interval_cases dst <;>
+    simp [decode, decodeNoRex, decodeSSE, parseRM, psrldqBytes, sseRex, modrmB, ZRM.regOf]
+
+theorem encodeInsn_movDQ (toXmm quad : Bool) (xmm gpr : Nat) (hx : xmm < 16) (hg : gpr < 16) :
+    encodeInsn (.sse (.movDQ toXmm quad xmm (.zr gpr))) = movDQBytes toXmm quad xmm gpr := by
+  cases quad
+  case false =>
+    cases toXmm
+    case false =>
+      simp only [encodeInsn, encodeSSE, movDQBytes, sseRex, modrmB,
+        Bool.false_eq_true, if_false]
+      rw [eGenRmReg_xmm xmm gpr hx hg [byte 0x0F] (byte 0x7E) (some 0)]
+      interval_cases xmm <;> interval_cases gpr <;> rfl
+    case true =>
+      simp only [encodeInsn, encodeSSE, movDQBytes, sseRex, modrmB, reduceIte,
+        Bool.false_eq_true, if_false]
+      rw [eGenRmReg_xmm xmm gpr hx hg [byte 0x0F] (byte 0x6E) (some 0)]
+      interval_cases xmm <;> interval_cases gpr <;> rfl
+  case true =>
+    cases toXmm
+    case false =>
+      simp only [encodeInsn, encodeSSE, movDQBytes, sseRex, modrmB, reduceIte,
+        Bool.false_eq_true, if_false]
+      rw [eGenRmReg_xmm64 xmm gpr hx hg [byte 0x0F] (byte 0x7E) (some 0)]
+      interval_cases xmm <;> interval_cases gpr <;> rfl
+    case true =>
+      simp only [encodeInsn, encodeSSE, movDQBytes, sseRex, modrmB, reduceIte]
+      rw [eGenRmReg_xmm64 xmm gpr hx hg [byte 0x0F] (byte 0x6E) (some 0)]
+      interval_cases xmm <;> interval_cases gpr <;> rfl
+
+theorem decode_movDQ (toXmm quad : Bool) (xmm gpr : Nat) (hx : xmm < 16) (hg : gpr < 16) :
+    decode (byteListReader (encodeInsn (.sse (.movDQ toXmm quad xmm (.zr gpr))))) =
+      some (.sse (.movDQ toXmm quad xmm (.zr gpr)),
+        (encodeInsn (.sse (.movDQ toXmm quad xmm (.zr gpr)))).length) := by
+  rw [encodeInsn_movDQ toXmm quad xmm gpr hx hg]
+  cases quad <;> cases toXmm <;> interval_cases xmm <;> interval_cases gpr <;> decide
+
+
 end Flapjack.Compiler.Encoders.X64
