@@ -100403,6 +100403,30 @@
     "reviewer": "Source comparison: memory_rel_Block_MEM and its typed capture retain the original memory relation, child-index bound and good_dimindex, existential word/address/offset, Smallnum real-offset equation, pointer and domain facts, and the full extended memory relation for the indexed child. The index bound is carried explicitly for Lean list indexing; store is the canonical finite-support map and target words share the positive HOL word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerEquality.lean",
+    "lean_name": "memoryRel_pointerEq_blockBlock",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_pointer_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_pointer_eq and its typed capture. This is the block/block case of the original structural induction: it keeps the original memory relation with a shared word location, good_dimindex, do_eq result, and conclusion, together with the induction hypothesis for each child of the first block. The proof obtains matching tags and lengths, reads both indexed children at the same concrete address, and applies the induction hypothesis. store is the canonical finite-support map; target words share the positive HOL word width. The other cases and the assembling theorem remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerEquality.lean",
+    "lean_name": "memoryRel_pointerEq_refRef",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_pointer_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_pointer_eq and its typed capture. This is the reference-pointer/reference-pointer constructor case, preserving the original shared target location, memory relation, good_dimindex, do_eq result and conclusion. Invalid comparison flags produce type errors; for valid flags, the source reference equality theorem identifies the indices and the resulting self-comparison is true. store is the canonical finite-support map and target words use the shared positive HOL word width. Other cases and the assembling theorem remain open."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
