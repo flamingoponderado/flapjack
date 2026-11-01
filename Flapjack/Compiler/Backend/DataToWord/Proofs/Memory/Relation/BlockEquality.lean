@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeaderInjective
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
+import Flapjack.Compiler.Backend.Semantics.DataSem.Equality
 
 /-! Shared-pointer constructor facts for the source equality proof. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -106,5 +107,32 @@ theorem memoryRel_blocksDistinctImmediate {width : Nat} [NeZero width] (conf : C
   simp only [empty2, ↓reduceIte] at case2
   apply different
   rw [case1.1, case2.1, tagEq]
+
+/-- If equality of equally long value lists returns false, one pair of
+corresponding elements compares false. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "do_eq_list_F_IMP_MEM"]
+theorem doEqList_falseElement {α : Type} (refs : Spt (BvlSem.Ref α))
+    (xs ys : List Flapjack.Compiler.Backend.DataSem.Value)
+    (h : doEqList refs xs ys = .val false ∧ ys.length = xs.length) :
+    ∃ (i : Nat) (hx : i < xs.length) (hy : i < ys.length),
+      doEq refs xs[i] ys[i] = .val false := by
+  obtain ⟨result, sameLength⟩ := h
+  induction xs generalizing ys with
+  | nil => cases ys <;> simp_all [doEqList]
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp at sameLength
+    | cons y ys =>
+      simp only [List.length_cons, Nat.succ.injEq] at sameLength
+      simp only [doEqList] at result
+      cases h : doEq refs x y with
+      | val b =>
+        cases b with
+        | false => exact ⟨0, by simp, by simp, h⟩
+        | true =>
+          simp only [h] at result
+          obtain ⟨i, hx, hy, hit⟩ := ih ys result sameLength
+          exact ⟨i + 1, by simpa using hx, by simpa using hy, by simpa using hit⟩
+      | typeError => simp [h] at result
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

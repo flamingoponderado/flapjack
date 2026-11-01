@@ -100319,6 +100319,14 @@
     "reviewer": "Source comparison: the local memory_rel_Block_Block_small_eq theorem and its typed replay retain the source memory relation for both blocks, good_dimindex, distinct target words, and the clear low bit of the first word; the conclusion is unequal lengths or unequal tags. The store uses the canonical finite-support map and target words share the positive HOL word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockEquality.lean",
+    "lean_name": "doEqList_falseElement",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "do_eq_list_F_IMP_MEM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: the local do_eq_list_F_IMP_MEM theorem and its typed replay retain the polymorphic reference-cell payload, two data-value lists, false equality result, equal lengths, and an index where the element equality returns false. Lean indexing carries the bounds proofs for both lists; the second bound follows from the source equal-length premise."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

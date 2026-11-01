@@ -118,6 +118,14 @@ val block_block_small_eq_replay = prove(
   >> imp_res_tac memory_rel_tail
   >> old_drule memory_rel_Block_IMP >> fs []);
 val _ = show "memory_rel_Block_Block_small_eq_replay_typed" block_block_small_eq_replay;
+val do_eq_list_false_replay = prove(
+  ``!l l'. dataSem$do_eq_list refs l l' = Eq_val F /\ LENGTH l' = LENGTH l ==>
+      ?i. i < LENGTH l /\ dataSem$do_eq refs (EL i l) (EL i l') = Eq_val F``,
+  Induct >> Cases_on `l'` >> fs [] >> rpt strip_tac
+  >> every_case_tac >> fs [] >> res_tac
+  >- (qexists_tac `SUC i` >> fs [])
+  >> qexists_tac `0` >> fs []);
+val _ = show "do_eq_list_F_IMP_MEM_replay_typed" do_eq_list_false_replay;
 val _ = show "memory_rel_tag_limit_typed" data_to_word_memoryProofTheory.memory_rel_tag_limit;
 val _ = show "memory_rel_test_nil_eq_typed" data_to_word_memoryProofTheory.memory_rel_test_nil_eq;
 val _ = show "memory_rel_test_none_eq_typed" data_to_word_memoryProofTheory.memory_rel_test_none_eq;
