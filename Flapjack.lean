@@ -962,6 +962,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyFinalise
 import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyRef
 import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyMutCons
 import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyThunk
+import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyArrayUpdate
 import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk
 import Flapjack.Compiler.Backend.BviToData.Proofs.Build
 import Flapjack.Compiler.Backend.BviToData.Proofs.Int
