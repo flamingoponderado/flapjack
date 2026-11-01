@@ -918,6 +918,587 @@ theorem case_subOverflow (d rc sl sr : Nat) (s1 s2 : AsmState 64) (ms : X64State
       · exact hstep2
       · exact hstep3)
     hstate hoff hsafe hs2dom hq
+/-! ## The `addCarry` lowering -/
 
+/-- `asm_ok` of an `addCarry` fixes the destination/result pair and checks the
+four registers. -/
+theorem addCarry_ok (d rs sl sr : Nat)
+    (h : asmOkExact (.inst (.arith (.addCarry d rs sl sr))) x64Config = true) :
+    d = rs ∧ asmRegOkExact d x64Config = true ∧ asmRegOkExact rs x64Config = true ∧
+      asmRegOkExact sl x64Config = true ∧ asmRegOkExact sr x64Config = true := by
+  simp only [asmOkExact, asmInstOkExact, asmArithOkExact, x64Config, Bool.and_eq_true,
+    Bool.or_eq_true] at h
+  simp at h
+  exact ⟨h.1.1.1.1, h.1.1.1.2, h.1.1.2, h.1.2, h.2⟩
+
+/-! ### Model steps and flag facts -/
+
+/-- The closed model executes a 64-bit `cmp` by setting the subtraction flags
+only. -/
+theorem execInsn_binopRI_zcmp (dst : Nat) (imm : BitVec 64) (len : Nat) (s : X64State) :
+    execInsn (.binopRI .zcmp .z64 dst imm) len s =
+      { s with flags := subFlags (readReg s dst) imm } := rfl
+
+/-- One `x64Next` step over a 64-bit `cmp`. -/
+theorem x64Next_binopRI_zcmp (ms : X64State) (_dm : BitVec 64 → Prop) (dst : Nat)
+    (imm : BitVec 64) (len : Nat)
+    (hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+      some (.binopRI .zcmp .z64 dst imm, len))
+    (hlen : (encodeInsn (.binopRI .zcmp .z64 dst imm)).length = len)
+    (hfailed : ms.failed = false) :
+    x64Next ms = { ms with
+      flags := subFlags (readReg ms dst) imm,
+      pc := ms.pc + BitVec.ofNat 64 (encodeInsn (.binopRI .zcmp .z64 dst imm)).length } := by
+  rw [hlen]
+  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec,
+    execInsn_binopRI_zcmp]
+
+/-- The closed model executes `cmc` by flipping the carry flag. -/
+theorem execInsn_cmc (len : Nat) (s : X64State) :
+    execInsn .cmc len s = { s with flags := { s.flags with cf := !s.flags.cf } } := rfl
+
+/-- One `x64Next` step over `cmc`. -/
+theorem x64Next_cmc (ms : X64State) (dm : BitVec 64 → Prop)
+    (hbm : bytesInMemoryHOL ms.pc (encodeInsn .cmc) ms.mem dm)
+    (hfailed : ms.failed = false) :
+    x64Next ms = { ms with
+      flags := { ms.flags with cf := !ms.flags.cf },
+      pc := ms.pc + BitVec.ofNat 64 (encodeInsn .cmc).length } := by
+  have hlen : (encodeInsn .cmc).length = 1 := by simp [encodeInsn]
+  have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) = some (.cmc, 1) :=
+    decode_bytesInMemory _ ms.pc ms.mem dm _ _ hbm decode_cmc (by rw [hlen])
+  rw [hlen]
+  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn_cmc]
+
+/-- The closed model executes `adc`, adding the incoming carry flag. -/
+theorem execInsn_binopRR_zadc (dst src : Nat) (len : Nat) (s : X64State) :
+    execInsn (.binopRR .zadc .z64 dst src) len s =
+      { (writeReg s dst (readReg s dst + readReg s src +
+          BitVec.ofNat 64 (if s.flags.cf then 1 else 0))) with
+        flags := adcFlags (readReg s dst) (readReg s src) s.flags.cf } := rfl
+
+/-- One `x64Next` step over `adc`. -/
+theorem x64Next_binopRR_zadc (ms : X64State) (dm : BitVec 64 → Prop) (dst src : Nat)
+    (hdst : dst < 16) (hsrc : src < 16)
+    (hbm : bytesInMemoryHOL ms.pc (encodeInsn (.binopRR .zadc .z64 dst src)) ms.mem dm)
+    (hfailed : ms.failed = false) :
+    x64Next ms = { (writeReg ms dst (readReg ms dst + readReg ms src +
+        BitVec.ofNat 64 (if ms.flags.cf then 1 else 0))) with
+      flags := adcFlags (readReg ms dst) (readReg ms src) ms.flags.cf,
+      pc := ms.pc + BitVec.ofNat 64 (encodeInsn (.binopRR .zadc .z64 dst src)).length } := by
+  have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+      some (.binopRR .zadc .z64 dst src, (encodeInsn (.binopRR .zadc .z64 dst src)).length) :=
+    decode_bytesInMemory _ ms.pc ms.mem dm _ _ hbm
+      (decode_binopRR_z64 .zadc dst src hdst hsrc (by decide)) (by omega)
+  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn_binopRR_zadc]
+
+/-! ### The source semantics of `addCarry` -/
+
+/-- The register update of an `addCarry`: the carry register wins over the
+destination, as `updReg` nests the sum write inside the carry write. -/
+theorem arithUpd_addCarry_regs (s : AsmState 64) (r1 r2 r3 r4 : Nat) :
+    ∀ j, (arithUpd (.addCarry r1 r2 r3 r4) s).regs j =
+      (if j = r4 then
+        (if 2 ^ 64 ≤ (s.regs r2).toNat + (s.regs r3).toNat +
+          (if s.regs r4 = 0 then 0 else 1) then (1 : BitVec 64) else 0)
+       else if j = r1 then
+        BitVec.ofNat 64 ((s.regs r2).toNat + (s.regs r3).toNat +
+          (if s.regs r4 = 0 then 0 else 1))
+       else s.regs j) := by
+  intro j
+  simp only [arithUpd, updReg, Flapjack.Compiler.Encoders.AsmSem.readReg]
+  by_cases h4 : j = r4
+  · simp only [if_pos h4]
+    rfl
+  · simp only [if_neg h4]
+    rfl
+
+/-! ### BitVec and flag bridging facts -/
+
+/-- Adding a natural carry is the natural-number sum modulo `2^64`. -/
+theorem ofNat_add_carry (a b : BitVec 64) (c : Nat) :
+    a + b + BitVec.ofNat 64 c = BitVec.ofNat 64 (a.toNat + b.toNat + c) := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.toNat_add, BitVec.toNat_ofNat]
+  omega
+
+/-- `cmp r, 1` leaves `CF` set exactly when `r = 0`. -/
+theorem subFlags_cf_one (a : BitVec 64) : (subFlags a 1).cf = decide (a = 0) := by
+  have h1 : ((1 : BitVec 64)).toNat = 1 := by decide
+  by_cases h : a = 0
+  · subst h; simp [subFlags]
+  · have hpos : a.toNat ≠ 0 := by
+      intro hz
+      exact h (BitVec.eq_of_toNat_eq (by rw [hz]; rfl))
+    have hlt : ¬ a.toNat < 1 := by omega
+    simp only [subFlags, h1]
+    rw [show decide (a.toNat < 1) = false by simp [hlt]]
+    exact (decide_eq_false_iff_not.mpr h).symm
+
+/-- After `cmp r, 1; cmc`, the carry-in bit is `1` exactly when `r ≠ 0`. -/
+theorem carryIn_eq (a : BitVec 64) :
+    (if !(subFlags a 1).cf then (1 : Nat) else 0) = (if a = 0 then 0 else 1) := by
+  rw [subFlags_cf_one]
+  by_cases h : a = 0 <;> simp [h]
+
+/-! ### The `addCarry` lowering -/
+
+/-- The `addCarry` encoding is the `cmp`/`cmc`/`adc`/`mov`/`setc` sequence. -/
+theorem x64Enc_addCarry (r1 r2 r3 r4 : Nat)
+    (h : asmOkExact (.inst (.arith (.addCarry r1 r2 r3 r4))) x64Config = true) :
+    x64Target.config.encode (.inst (.arith (.addCarry r1 r2 r3 r4))) =
+      encodeInsn (.binopRI .zcmp .z64 r4 1) ++ encodeInsn .cmc ++
+        encodeInsn (.binopRR .zadc .z64 r1 r3) ++ encodeInsn (.movRI .z32 r4 0) ++
+        encodeInsn (.setcc .zB true r4) := by
+  obtain ⟨hr12, hr1ok, hrok, hr3ok, hr4ok⟩ := addCarry_ok r1 r2 r3 r4 h
+  have hr1 : r1 < 16 := jumpReg_reg_lt r1 hr1ok
+  have hr3 : r3 < 16 := jumpReg_reg_lt r3 hr3ok
+  have hr4 : r4 < 16 := jumpReg_reg_lt r4 hr4ok
+  have hz1 : totalNum2Zreg r1 = r1 := totalNum2Zreg_eq r1 hr1
+  have hz3 : totalNum2Zreg r3 = r3 := totalNum2Zreg_eq r3 hr3
+  have hz4 : totalNum2Zreg r4 = r4 := totalNum2Zreg_eq r4 hr4
+  have hflat : (x64Ast (.inst (.arith (.addCarry r1 r2 r3 r4)))).flatMap encodeInsn =
+      [.binopRI .zcmp .z64 r4 1, .cmc, .binopRR .zadc .z64 r1 r3,
+        .movRI .z32 r4 0, .setcc .zB true r4].flatMap encodeInsn := by
+    simp only [x64Ast, x64Inst, hz1, hz3, hz4]
+  have hlen1 : (encodeInsn (.binopRI .zcmp .z64 r4 1)).length = 4 := by
+    have hs : -128 ≤ (1 : BitVec 64).toInt ∧ (1 : BitVec 64).toInt ≤ 127 := by decide
+    rw [encodeInsn_binopRI_83 .zcmp r4 hr4 1 (by decide) (by decide) hs]
+    simp [binopRI83Bytes]
+  have hlen2 : (encodeInsn .cmc).length = 1 := by simp [encodeInsn]
+  have hlen3 : (encodeInsn (.binopRR .zadc .z64 r1 r3)).length = 3 :=
+    binopRR_z64_length .zadc r1 r3 (by decide)
+  have hlen4 : (encodeInsn (.movRI .z32 r4 0)).length = mov32Len r4 :=
+    movRI_z32_length r4 hr4 0 (by decide) (by decide)
+  have hlen5 : (encodeInsn (.setcc .zB true r4)).length = 4 := setcc_length .zB r4 hr4 (by decide)
+  have hne : ([.binopRI .zcmp .z64 r4 1, .cmc, .binopRR .zadc .z64 r1 r3,
+      .movRI .z32 r4 0, .setcc .zB true r4].flatMap encodeInsn) ≠ [] := by
+    intro hnil
+    have hpos : 0 < ([.binopRI .zcmp .z64 r4 1, .cmc, .binopRR .zadc .z64 r1 r3,
+        .movRI .z32 r4 0, .setcc .zB true r4].flatMap encodeInsn).length := by
+      simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.length_append,
+        hlen1, hlen2, hlen3, hlen4, hlen5]
+      have := mov32Len_ge r4
+      omega
+    rw [hnil] at hpos
+    simp at hpos
+  show x64Enc (.inst (.arith (.addCarry r1 r2 r3 r4))) =
+    encodeInsn (.binopRI .zcmp .z64 r4 1) ++ encodeInsn .cmc ++
+      encodeInsn (.binopRR .zadc .z64 r1 r3) ++ encodeInsn (.movRI .z32 r4 0) ++
+      encodeInsn (.setcc .zB true r4)
+  rw [x64Enc_of_flatMap _ _ hflat hne]
+  simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil, List.append_assoc]
+
+/-- The state after the `cmp r4, 1` of the `addCarry` lowering. -/
+def carryT1 (ms : X64State) (r4 : Nat) : X64State :=
+  { ms with
+    flags := subFlags (readReg ms r4) 1,
+    pc := ms.pc + BitVec.ofNat 64 (encodeInsn (.binopRI .zcmp .z64 r4 1)).length }
+
+/-- The state after the `cmc` of the `addCarry` lowering. -/
+def carryT2 (ms : X64State) (r4 : Nat) : X64State :=
+  { (carryT1 ms r4) with
+    flags := { (carryT1 ms r4).flags with cf := !(carryT1 ms r4).flags.cf },
+    pc := (carryT1 ms r4).pc + BitVec.ofNat 64 (encodeInsn .cmc).length }
+
+/-- The state after the `adc r1, r3` of the `addCarry` lowering. -/
+def carryT3 (ms : X64State) (r1 r3 r4 : Nat) : X64State :=
+  { (writeReg (carryT2 ms r4) r1
+      (readReg (carryT2 ms r4) r1 + readReg (carryT2 ms r4) r3 +
+        BitVec.ofNat 64 (if (carryT2 ms r4).flags.cf then 1 else 0))) with
+    flags := adcFlags (readReg (carryT2 ms r4) r1) (readReg (carryT2 ms r4) r3)
+      (carryT2 ms r4).flags.cf,
+    pc := (carryT2 ms r4).pc + BitVec.ofNat 64
+      (encodeInsn (.binopRR .zadc .z64 r1 r3)).length }
+
+/-- The state after zeroing the carry register. -/
+def carryT4 (ms : X64State) (r1 r3 r4 : Nat) : X64State :=
+  { (writeReg (carryT3 ms r1 r3 r4) r4 0) with
+    pc := (carryT3 ms r1 r3 r4).pc + BitVec.ofNat 64 (encodeInsn (.movRI .z32 r4 0)).length }
+
+/-- The state after the conditional set of the carry register. -/
+def carryT5 (ms : X64State) (r1 r3 r4 : Nat) : X64State :=
+  { writeRegSized (.z8 true) r4
+      (if evalCond .zB (carryT4 ms r1 r3 r4).flags then 1 else 0)
+      (carryT4 ms r1 r3 r4) with
+    pc := (carryT4 ms r1 r3 r4).pc + BitVec.ofNat 64 (encodeInsn (.setcc .zB true r4)).length }
+
+/-- The `addCarry` constructor of `encoder_correct x64Target`: the
+`cmp`/`cmc`/`adc`/`mov`/`setc` sequence writes the sum and its carry-out. -/
+theorem case_addCarry (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.arith (.addCarry r1 r2 r3 r4))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.arith (.addCarry r1 r2 r3 r4))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.arith (.addCarry r1 r2 r3 r4))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  obtain ⟨hr12, hr1ok, hrok, hr3ok, hr4ok⟩ := addCarry_ok r1 r2 r3 r4 hok
+  have hr1 : r1 < 16 := jumpReg_reg_lt r1 hr1ok
+  have hr3 : r3 < 16 := jumpReg_reg_lt r3 hr3ok
+  have hr4 : r4 < 16 := jumpReg_reg_lt r4 hr4ok
+  have hreg1 := regOk_of_asmRegOk r1 hr1ok
+  have hreg3 := regOk_of_asmRegOk r3 hr3ok
+  have hreg4 := regOk_of_asmRegOk r4 hr4ok
+  have henc : x64Target.config.encode (.inst (.arith (.addCarry r1 r2 r3 r4))) =
+      encodeInsn (.binopRI .zcmp .z64 r4 1) ++ encodeInsn .cmc ++
+        encodeInsn (.binopRR .zadc .z64 r1 r3) ++ encodeInsn (.movRI .z32 r4 0) ++
+        encodeInsn (.setcc .zB true r4) := x64Enc_addCarry r1 r2 r3 r4 hok
+  have hlen1 : (encodeInsn (.binopRI .zcmp .z64 r4 1)).length = 4 := by
+    have hs : -128 ≤ (1 : BitVec 64).toInt ∧ (1 : BitVec 64).toInt ≤ 127 := by decide
+    rw [encodeInsn_binopRI_83 .zcmp r4 hr4 1 (by decide) (by decide) hs]
+    simp [binopRI83Bytes]
+  have hlen2 : (encodeInsn .cmc).length = 1 := by simp [encodeInsn]
+  have hlen3 : (encodeInsn (.binopRR .zadc .z64 r1 r3)).length = 3 :=
+    binopRR_z64_length .zadc r1 r3 (by decide)
+  have hlen4 : (encodeInsn (.movRI .z32 r4 0)).length = mov32Len r4 :=
+    movRI_z32_length r4 hr4 0 (by decide) (by decide)
+  have hlen5 : (encodeInsn (.setcc .zB true r4)).length = 4 := setcc_length .zB r4 hr4 (by decide)
+  -- the source post-state
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 (4 + 1 + 3 + mov32Len r4 + 4) := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+    rw [henc, List.length_append, List.length_append, List.length_append, List.length_append,
+      hlen1, hlen2, hlen3, hlen4, hlen5]
+  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+    rw [← st.upd]; intro a
+    simp only [asmUpd, instUpd, updPc, arithUpd, updReg]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, arithUpd, updReg]
+  have hs2fp : ∀ x, s2.fpRegs x = s1.fpRegs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, arithUpd, updReg]
+  have hs2regs : ∀ x, s2.regs x =
+      (if x = r4 then
+        (if 2 ^ 64 ≤ (s1.regs r2).toNat + (s1.regs r3).toNat +
+          (if s1.regs r4 = 0 then 0 else 1) then (1 : BitVec 64) else 0)
+       else if x = r1 then
+        BitVec.ofNat 64 ((s1.regs r2).toNat + (s1.regs r3).toNat +
+          (if s1.regs r4 = 0 then 0 else 1))
+       else s1.regs x) := by
+    intro x
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+    exact arithUpd_addCarry_regs s1 r1 r2 r3 r4 x
+  -- the encoded bytes, split per instruction
+  have hb : bytesInMemoryHOL ms.pc
+      (encodeInsn (.binopRI .zcmp .z64 r4 1) ++ encodeInsn .cmc ++
+        encodeInsn (.binopRR .zadc .z64 r1 r3) ++ encodeInsn (.movRI .z32 r4 0) ++
+        encodeInsn (.setcc .zB true r4)) ms.mem s1.memDomain := by
+    have h' := st.bytesTarget
+    rw [henc] at h'
+    rw [← st.pc] at h'
+    exact h'
+  obtain ⟨hb1, hb2, hb3, hb4, hb5⟩ :=
+    (bytesInMemory_five ms.pc _ _ _ _ _ ms.mem s1.memDomain).1 hb
+  -- the interference-free run
+  let t : Nat → X64State := fun k =>
+    match k with
+    | 0 => ms
+    | 1 => carryT1 ms r4
+    | 2 => carryT2 ms r4
+    | 3 => carryT3 ms r1 r3 r4
+    | 4 => carryT4 ms r1 r3 r4
+    | _ => carryT5 ms r1 r3 r4
+  let offs : Nat → Nat := fun k =>
+    match k with
+    | 0 => 0
+    | 1 => 4
+    | 2 => 5
+    | 3 => 8
+    | 4 => 8 + mov32Len r4
+    | _ => 8 + mov32Len r4 + 4
+  have hpc1 : (carryT1 ms r4).pc = ms.pc + BitVec.ofNat 64 4 := by
+    show ms.pc + BitVec.ofNat 64 (encodeInsn (.binopRI .zcmp .z64 r4 1)).length =
+      ms.pc + BitVec.ofNat 64 4
+    rw [hlen1]
+  have hpc2 : (carryT2 ms r4).pc = ms.pc + BitVec.ofNat 64 5 := by
+    show (carryT1 ms r4).pc + BitVec.ofNat 64 (encodeInsn .cmc).length =
+      ms.pc + BitVec.ofNat 64 5
+    rw [hpc1, hlen2]
+    exact x64AddOffset ms.pc 4 1
+  have hpc3 : (carryT3 ms r1 r3 r4).pc = ms.pc + BitVec.ofNat 64 8 := by
+    show (carryT2 ms r4).pc + BitVec.ofNat 64
+        (encodeInsn (.binopRR .zadc .z64 r1 r3)).length = ms.pc + BitVec.ofNat 64 8
+    rw [hpc2, hlen3]
+    exact x64AddOffset ms.pc 5 3
+  have hpc4 : (carryT4 ms r1 r3 r4).pc = ms.pc + BitVec.ofNat 64 (8 + mov32Len r4) := by
+    show (carryT3 ms r1 r3 r4).pc + BitVec.ofNat 64
+        (encodeInsn (.movRI .z32 r4 0)).length = ms.pc + BitVec.ofNat 64 (8 + mov32Len r4)
+    rw [hpc3, hlen4]
+    exact x64AddOffset ms.pc 8 (mov32Len r4)
+  have hpc5 : (carryT5 ms r1 r3 r4).pc = ms.pc + BitVec.ofNat 64 (8 + mov32Len r4 + 4) := by
+    show (carryT4 ms r1 r3 r4).pc + BitVec.ofNat 64
+        (encodeInsn (.setcc .zB true r4)).length = ms.pc + BitVec.ofNat 64 (8 + mov32Len r4 + 4)
+    rw [hpc4, hlen5]
+    exact x64AddOffset ms.pc (8 + mov32Len r4) 4
+  have hs1 : -128 ≤ (1 : BitVec 64).toInt ∧ (1 : BitVec 64).toInt ≤ 127 := by decide
+  have hdec1 : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+      some (.binopRI .zcmp .z64 r4 1, 4) :=
+    decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hb1
+      (decode_binopRI_83 .zcmp r4 hr4 1 (by decide) (by decide) hs1) (by rw [hlen1])
+  have hdec2 : decode (fun k => (t 1).mem ((t 1).pc + BitVec.ofNat 64 k)) =
+      some (.cmc, 1) := by
+    show decode (fun k => ms.mem ((ms.pc + BitVec.ofNat 64
+        (encodeInsn (.binopRI .zcmp .z64 r4 1)).length) + BitVec.ofNat 64 k)) = some (.cmc, 1)
+    exact decode_bytesInMemory _ _ _ s1.memDomain _ _ hb2 decode_cmc (by rw [hlen2])
+  have hdec3 : decode (fun k => (t 2).mem ((t 2).pc + BitVec.ofNat 64 k)) =
+      some (.binopRR .zadc .z64 r1 r3, (encodeInsn (.binopRR .zadc .z64 r1 r3)).length) := by
+    show decode (fun k => ms.mem (((ms.pc + BitVec.ofNat 64
+        (encodeInsn (.binopRI .zcmp .z64 r4 1)).length) + BitVec.ofNat 64
+        (encodeInsn .cmc).length) + BitVec.ofNat 64 k)) =
+      some (.binopRR .zadc .z64 r1 r3, (encodeInsn (.binopRR .zadc .z64 r1 r3)).length)
+    exact decode_bytesInMemory _ _ _ s1.memDomain _ _ hb3
+      (decode_binopRR_z64 .zadc r1 r3 hr1 hr3 (by decide)) (by omega)
+  have hdec4 : decode (fun k => (t 3).mem ((t 3).pc + BitVec.ofNat 64 k)) =
+      some (.movRI .z32 r4 0, mov32Len r4) := by
+    show decode (fun k => ms.mem ((((ms.pc + BitVec.ofNat 64
+        (encodeInsn (.binopRI .zcmp .z64 r4 1)).length) + BitVec.ofNat 64
+        (encodeInsn .cmc).length) + BitVec.ofNat 64
+        (encodeInsn (.binopRR .zadc .z64 r1 r3)).length) + BitVec.ofNat 64 k)) =
+      some (.movRI .z32 r4 0, mov32Len r4)
+    exact decode_bytesInMemory _ _ _ s1.memDomain _ _ hb4
+      (decode_movRI_z32 r4 hr4 0 (by decide) (by decide)) (by rw [hlen4])
+  have hdec5 : decode (fun k => (t 4).mem ((t 4).pc + BitVec.ofNat 64 k)) =
+      some (.setcc .zB true r4, 4) := by
+    show decode (fun k => ms.mem (((((ms.pc + BitVec.ofNat 64
+        (encodeInsn (.binopRI .zcmp .z64 r4 1)).length) + BitVec.ofNat 64
+        (encodeInsn .cmc).length) + BitVec.ofNat 64
+        (encodeInsn (.binopRR .zadc .z64 r1 r3)).length) + BitVec.ofNat 64
+        (encodeInsn (.movRI .z32 r4 0)).length) + BitVec.ofNat 64 k)) =
+      some (.setcc .zB true r4, 4)
+    have hd := decode_setcc .zB r4 hr4 (by decide)
+    rw [hlen5] at hd
+    exact decode_bytesInMemory _ _ _ s1.memDomain _ _ hb5 hd (by rw [hlen5])
+  have hstep1 : x64Next (t 0) = t 1 := by
+    rw [show t 0 = ms from rfl]
+    exact x64Next_binopRI_zcmp ms s1.memDomain r4 1 4 hdec1 (by rw [hlen1]) st.failed
+  have hstep2 : x64Next (t 1) = t 2 := by
+    rw [show t 1 = carryT1 ms r4 from rfl]
+    exact x64Next_cmc (carryT1 ms r4) s1.memDomain hb2 (by
+      show (carryT1 ms r4).failed = false
+      simp only [carryT1, st.failed])
+  have hstep3 : x64Next (t 2) = t 3 := by
+    rw [show t 2 = carryT2 ms r4 from rfl]
+    exact x64Next_binopRR_zadc (carryT2 ms r4) s1.memDomain r1 r3 hr1 hr3 hb3 (by
+      show (carryT2 ms r4).failed = false
+      simp only [carryT2, carryT1, st.failed])
+  have hstep4 : x64Next (t 3) = t 4 := by
+    rw [show t 3 = carryT3 ms r1 r3 r4 from rfl]
+    exact x64Next_mov32_zero (carryT3 ms r1 r3 r4) s1.memDomain r4 hr4 hb4 (by
+      show (carryT3 ms r1 r3 r4).failed = false
+      simp only [carryT3, carryT2, carryT1, writeReg, st.failed])
+  have hstep5 : x64Next (t 4) = t 5 := by
+    rw [show t 4 = carryT4 ms r1 r3 r4 from rfl]
+    exact x64Next_setcc (carryT4 ms r1 r3 r4) s1.memDomain .zB r4 hr4 (by decide) hb5 (by
+      show (carryT4 ms r1 r3 r4).failed = false
+      simp only [carryT4, carryT3, carryT2, carryT1, writeReg, st.failed])
+  have hstate : ∀ k, 1 ≤ k → k ≤ 4 → x64StateOk (t k) = true ∧
+      (∀ x, (t k).mem x = ms.mem x) ∧ (t k).pc = ms.pc + BitVec.ofNat 64 (offs k) := by
+    intro k h1 h2
+    interval_cases k
+    · rw [show t 1 = carryT1 ms r4 from rfl]
+      refine ⟨?_, ?_, ?_⟩
+      · simp only [x64StateOk, carryT1, st.failed, Bool.not_false]
+      · intro x
+        show (carryT1 ms r4).mem x = ms.mem x
+        simp only [carryT1]
+      · show (carryT1 ms r4).pc = ms.pc + BitVec.ofNat 64 (offs 1)
+        rw [hpc1]
+        rfl
+    · rw [show t 2 = carryT2 ms r4 from rfl]
+      refine ⟨?_, ?_, ?_⟩
+      · simp only [x64StateOk, carryT2, carryT1, st.failed, Bool.not_false]
+      · intro x
+        show (carryT2 ms r4).mem x = ms.mem x
+        simp only [carryT2, carryT1]
+      · show (carryT2 ms r4).pc = ms.pc + BitVec.ofNat 64 (offs 2)
+        rw [hpc2]
+        rfl
+    · rw [show t 3 = carryT3 ms r1 r3 r4 from rfl]
+      refine ⟨?_, ?_, ?_⟩
+      · simp only [x64StateOk, carryT3, carryT2, carryT1, writeReg, st.failed, Bool.not_false]
+      · intro x
+        show (carryT3 ms r1 r3 r4).mem x = ms.mem x
+        simp only [carryT3, carryT2, carryT1, writeReg]
+      · show (carryT3 ms r1 r3 r4).pc = ms.pc + BitVec.ofNat 64 (offs 3)
+        rw [hpc3]
+        rfl
+    · rw [show t 4 = carryT4 ms r1 r3 r4 from rfl]
+      refine ⟨?_, ?_, ?_⟩
+      · simp only [x64StateOk, carryT4, carryT3, carryT2, carryT1, writeReg, st.failed,
+          Bool.not_false]
+      · intro x
+        show (carryT4 ms r1 r3 r4).mem x = ms.mem x
+        simp only [carryT4, carryT3, carryT2, carryT1, writeReg]
+      · show (carryT4 ms r1 r3 r4).pc = ms.pc + BitVec.ofNat 64 (offs 4)
+        rw [hpc4]
+        rfl
+  have hoff : ∀ k, k ≤ 4 → offs k < offs 5 := by
+    intro k hk
+    interval_cases k
+    · show 0 < 8 + mov32Len r4 + 4
+      have := mov32Len_ge r4; omega
+    · show 4 < 8 + mov32Len r4 + 4
+      have := mov32Len_ge r4; omega
+    · show 5 < 8 + mov32Len r4 + 4
+      have := mov32Len_ge r4; omega
+    · show 8 < 8 + mov32Len r4 + 4
+      have := mov32Len_ge r4; omega
+    · show 8 + mov32Len r4 < 8 + mov32Len r4 + 4
+      omega
+  have hsafe : ∀ k, k ≤ 4 → StepSafe s1.memDomain (t k) := by
+    intro k hk
+    interval_cases k
+    · rw [show t 0 = ms from rfl]
+      refine ⟨.binopRI .zcmp .z64 r4 1, 4, hdec1, ?_, ?_⟩
+      · intro j hj
+        rw [← hlen1] at hj
+        exact bytesInMemoryHOL_domain _ _ _ _ hb1 j hj
+      · intro a ha
+        simp [x64Touched] at ha
+    · rw [show t 1 = carryT1 ms r4 from rfl]
+      refine ⟨.cmc, 1, hdec2, ?_, ?_⟩
+      · intro j hj
+        rw [← hlen2] at hj
+        exact bytesInMemoryHOL_domain _ _ _ _ hb2 j hj
+      · intro a ha
+        simp [x64Touched] at ha
+    · rw [show t 2 = carryT2 ms r4 from rfl]
+      refine ⟨.binopRR .zadc .z64 r1 r3, _, hdec3, ?_, ?_⟩
+      · intro j hj
+        exact bytesInMemoryHOL_domain _ _ _ _ hb3 j hj
+      · intro a ha
+        simp [x64Touched] at ha
+    · rw [show t 3 = carryT3 ms r1 r3 r4 from rfl]
+      refine ⟨.movRI .z32 r4 0, mov32Len r4, hdec4, ?_, ?_⟩
+      · intro j hj
+        rw [← hlen4] at hj
+        exact bytesInMemoryHOL_domain _ _ _ _ hb4 j hj
+      · intro a ha
+        simp [x64Touched] at ha
+    · rw [show t 4 = carryT4 ms r1 r3 r4 from rfl]
+      refine ⟨.setcc .zB true r4, 4, hdec5, ?_, ?_⟩
+      · intro j hj
+        rw [← hlen5] at hj
+        exact bytesInMemoryHOL_domain _ _ _ _ hb5 j hj
+      · intro a ha
+        simp [x64Touched] at ha
+  have hq : targetStateRel x64Target s2 (t 5) := by
+    rw [show t 5 = carryT5 ms r1 r3 r4 from rfl]
+    have hdread1 : readReg ms r1 = s1.regs r1 := st.reg r1 hreg1
+    have hdread2 : readReg ms r1 = s1.regs r2 := by rw [hdread1, hr12]
+    have hr3read : readReg ms r3 = s1.regs r3 := st.reg r3 hreg3
+    have hr4read : readReg ms r4 = s1.regs r4 := st.reg r4 hreg4
+    have hreadT2 : ∀ r, readReg (carryT2 ms r4) r = readReg ms r := fun r => rfl
+    have hadcval : readReg (carryT3 ms r1 r3 r4) r1 =
+        BitVec.ofNat 64 ((s1.regs r2).toNat + (s1.regs r3).toNat +
+          (if s1.regs r4 = 0 then 0 else 1)) := by
+      have hc := carryIn_eq (readReg ms r4)
+      rw [show readReg (carryT3 ms r1 r3 r4) r1 =
+          readReg (writeReg (carryT2 ms r4) r1
+            (readReg (carryT2 ms r4) r1 + readReg (carryT2 ms r4) r3 +
+              BitVec.ofNat 64 (if (carryT2 ms r4).flags.cf then 1 else 0))) r1 from rfl]
+      rw [readReg_writeReg (carryT2 ms r4) r1 _ r1 hr1 hr1, if_pos rfl]
+      rw [hreadT2 r1, hreadT2 r3]
+      rw [show (carryT2 ms r4).flags.cf = !(subFlags (readReg ms r4) 1).cf from rfl]
+      rw [hdread2, hr3read, hc, hr4read]
+      exact ofNat_add_carry (s1.regs r2) (s1.regs r3) _
+    have hval : (if evalCond .zB (carryT4 ms r1 r3 r4).flags then (1 : BitVec 64) else 0) =
+        (if 2 ^ 64 ≤ (s1.regs r2).toNat + (s1.regs r3).toNat +
+          (if s1.regs r4 = 0 then 0 else 1) then (1 : BitVec 64) else 0) := by
+      have hc := carryIn_eq (readReg ms r4)
+      have hcf : (carryT4 ms r1 r3 r4).flags.cf =
+          decide (2 ^ 64 ≤ (readReg ms r1).toNat + (readReg ms r3).toNat +
+            (if !(subFlags (readReg ms r4) 1).cf then 1 else 0)) := by
+        show (adcFlags (readReg (carryT2 ms r4) r1) (readReg (carryT2 ms r4) r3)
+            (carryT2 ms r4).flags.cf).cf = _
+        rw [hreadT2 r1, hreadT2 r3,
+          show (carryT2 ms r4).flags.cf = !(subFlags (readReg ms r4) 1).cf from rfl]
+        rfl
+      show (if (carryT4 ms r1 r3 r4).flags.cf then (1 : BitVec 64) else 0) =
+        (if 2 ^ 64 ≤ (s1.regs r2).toNat + (s1.regs r3).toNat +
+          (if s1.regs r4 = 0 then 0 else 1) then (1 : BitVec 64) else 0)
+      rw [hcf, hdread2, hr3read, hc, hr4read]
+      simp
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · simp only [x64Target_stateOk, x64StateOk, carryT5, carryT4, carryT3, carryT2, carryT1,
+        writeRegSized, writeReg, st.failed, Bool.not_false]
+    · show (carryT5 ms r1 r3 r4).pc = s2.pc
+      rw [hpc5, hs2pc, st.pc]
+    · intro a ha
+      show (carryT5 ms r1 r3 r4).mem a = s2.mem a
+      rw [hs2mem a]
+      exact st.mem a (hs2dom ▸ ha)
+    · intro x hx
+      have hx16 : x < 16 := by
+        simpa [x64Target_config, x64Config] using hx.1
+      show readReg (carryT5 ms r1 r3 r4) x = s2.regs x
+      have hold : readReg (carryT4 ms r1 r3 r4) r4 = 0 := by
+        show readReg (writeReg (carryT3 ms r1 r3 r4) r4 0) r4 = 0
+        rw [readReg_writeReg _ r4 _ r4 hr4 hr4]
+        simp
+      have hv : (if evalCond .zB (carryT4 ms r1 r3 r4).flags then (1 : BitVec 64) else
+          (0 : BitVec 64)) = 0 ∨
+          (if evalCond .zB (carryT4 ms r1 r3 r4).flags then (1 : BitVec 64) else
+            (0 : BitVec 64)) = 1 := by
+        by_cases hc : evalCond .zB (carryT4 ms r1 r3 r4).flags
+        · right; simp [hc]
+        · left; simp [hc]
+      have hself := readReg_writeRegSized_z8_self (carryT4 ms r1 r3 r4) r4
+        (if evalCond .zB (carryT4 ms r1 r3 r4).flags then 1 else 0) hr4 hold hv
+      have ht5 : readReg (carryT5 ms r1 r3 r4) x =
+          readReg (writeRegSized (.z8 true) r4
+            (if evalCond .zB (carryT4 ms r1 r3 r4).flags then 1 else 0)
+            (carryT4 ms r1 r3 r4)) x := rfl
+      rw [ht5]
+      by_cases hx4 : x = r4
+      · rw [hx4, hself, hs2regs r4, hval]
+        simp
+      · have hother : readReg (writeRegSized (.z8 true) r4
+            (if evalCond .zB (carryT4 ms r1 r3 r4).flags then 1 else 0)
+            (carryT4 ms r1 r3 r4)) x =
+            readReg (carryT4 ms r1 r3 r4) x :=
+          readReg_writeRegSized_z8_other (carryT4 ms r1 r3 r4) r4 x
+            (if evalCond .zB (carryT4 ms r1 r3 r4).flags then 1 else 0) hr4 hx16 hx4
+        rw [hother]
+        show readReg (writeReg (carryT3 ms r1 r3 r4) r4 0) x = s2.regs x
+        rw [readReg_writeReg (carryT3 ms r1 r3 r4) r4 0 x hr4 hx16, if_neg hx4]
+        by_cases hx1 : x = r1
+        · have hr14 : ¬ r1 = r4 := by rw [← hx1]; exact hx4
+          rw [hx1, hadcval, hs2regs r1]
+          simp only [if_neg hr14]
+          rfl
+        · have h3 : readReg (carryT3 ms r1 r3 r4) x = readReg ms x := by
+            rw [show readReg (carryT3 ms r1 r3 r4) x =
+                readReg (writeReg (carryT2 ms r4) r1
+                  (readReg (carryT2 ms r4) r1 + readReg (carryT2 ms r4) r3 +
+                    BitVec.ofNat 64 (if (carryT2 ms r4).flags.cf then 1 else 0))) x from rfl]
+            rw [readReg_writeReg (carryT2 ms r4) r1 _ x hr1 hx16, if_neg hx1]
+            exact hreadT2 x
+          rw [h3, hs2regs x]
+          simp only [if_neg hx4, if_neg hx1]
+          exact st.reg x hx
+    · intro x hx
+      show readXmm (carryT5 ms r1 r3 r4) x = s2.fpRegs x
+      rw [hs2fp x]
+      exact st.fp x (by simpa [x64Target_config, x64Config] using hx)
+  exact x64RunCase _ s1 s2 ms 4 t offs h
+    (by
+      show (x64Target.config.encode (.inst (.arith (.addCarry r1 r2 r3 r4)))).length =
+        offs 5
+      rw [henc, List.length_append, List.length_append, List.length_append, List.length_append,
+        hlen1, hlen2, hlen3, hlen4, hlen5]
+      rfl)
+    (by rfl)
+    (by
+      intro k hk
+      interval_cases k
+      · exact hstep1
+      · exact hstep2
+      · exact hstep3
+      · exact hstep4
+      · exact hstep5)
+    hstate hoff hsafe hs2dom hq
 
 end Flapjack.Compiler.Encoders.X64
