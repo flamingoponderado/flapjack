@@ -507,13 +507,12 @@ theorem simulationFor_op_block_success {C F : Type} (op : ClosLang.BlockOp) (arg
         simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
           DataSem.flushState, ← resultProjection, stack, handler]
 
-/-- A successful non-copy memory expression satisfies the simulation
-invariant, assuming its primitive frame. The byte-copy path remains open;
-this is untagged pending evaluator correspondence review. -/
+/-- A successful memory expression satisfies the simulation invariant,
+assuming its primitive frame. This is untagged pending evaluator
+correspondence review. -/
 theorem simulationFor_op_mem_success_of_frame {C F : Type} (op : ClosLang.MemOp) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 smid s2 : BviSem.BviState C F)
     (values : List BvlSem.Value) (result : BvlSem.Value)
-    (notCopy : ∀ flag, op ≠ .copyByte flag)
     (primitiveFrame : ∀ (args : List DataSem.Value) (before after : DataSem.State C F) (value : DataSem.Value),
       DataSem.doApp (.memOp op) args before = .val (value, after) → DataSem.SameLocalControl before after)
     (ih : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
@@ -547,7 +546,7 @@ theorem simulationFor_op_mem_success_of_frame {C F : Type} (op : ClosLang.MemOp)
       simpa [List.map_reverse, ← projected] using opRun
     obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
       evaluate_iAssign_mem_outcome_of_frame op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
-        notCopy primitiveFrame middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
+        primitiveFrame middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
     let assignment := iAssign n1 (.memOp op) argNames.reverse live corr
     let inner := DataLang.Prog.seq argsProg assignment
     have sourceBound := BviSem.evaluate_clock_le args env s1
@@ -725,12 +724,10 @@ theorem simulationFor_op_block {C F : Type} (op : ClosLang.BlockOp) (args : List
       exact (simulationFor_op_block_success op args env s1 smid s2 values result ih argsRun opRun
         t1 n corr tail live vars fresh related livePresent).2
 
-/-- Memory expression simulation conditional on the primitive frame and
-excluding byte-copy operations, whose primitive correspondence still needs a proof.
+/-- Memory expression simulation conditional on the primitive frame.
 This remains untagged pending evaluator correspondence review. -/
 theorem simulationFor_op_mem_of_frame {C F : Type} (op : ClosLang.MemOp) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
-    (notCopy : ∀ flag, op ≠ .copyByte flag)
     (primitiveFrame : ∀ (args : List DataSem.Value) (before after : DataSem.State C F) (value : DataSem.Value),
       DataSem.doApp (.memOp op) args before = .val (value, after) → DataSem.SameLocalControl before after)
     (ih : simulationFor args env s1) :
@@ -764,126 +761,126 @@ theorem simulationFor_op_mem_of_frame {C F : Type} (op : ClosLang.MemOp) (args :
         simp [opRun]
       rw [whole] at run
       cases run
-      exact (simulationFor_op_mem_success_of_frame op args env s1 smid s2 values result notCopy primitiveFrame ih argsRun opRun
+      exact (simulationFor_op_mem_success_of_frame op args env s1 smid s2 values result primitiveFrame ih argsRun opRun
         t1 n corr tail live vars fresh related livePresent).2
 
 /-- Reference allocation satisfies the BVI-to-data expression simulation. -/
 theorem simulationFor_op_ref {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .ref) args] env s1 :=
-  simulationFor_op_mem_of_frame .ref args env s1 (by simp)
+  simulationFor_op_mem_of_frame .ref args env s1
     (DataSem.doApp_mem_frame_of_aux .ref DataSem.doAppAux_ref_frame) ih
 
 /-- Array allocation satisfies the BVI-to-data expression simulation. -/
 theorem simulationFor_op_refArray {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .refArray) args] env s1 :=
-  simulationFor_op_mem_of_frame .refArray args env s1 (by simp)
+  simulationFor_op_mem_of_frame .refArray args env s1
     (DataSem.doApp_mem_frame_of_aux .refArray DataSem.doAppAux_refArray_frame) ih
 
 /-- GC configuration satisfies the BVI-to-data expression simulation. -/
 theorem simulationFor_op_configGC {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .configGC) args] env s1 :=
-  simulationFor_op_mem_of_frame .configGC args env s1 (by simp)
+  simulationFor_op_mem_of_frame .configGC args env s1
     (DataSem.doApp_mem_frame_of_aux .configGC DataSem.doAppAux_configGC_frame) ih
 
 /-- Array bounds checking satisfies the BVI-to-data expression simulation. -/
 theorem simulationFor_op_boundsCheckArray {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .boundsCheckArray) args] env s1 :=
-  simulationFor_op_mem_of_frame .boundsCheckArray args env s1 (by simp)
+  simulationFor_op_mem_of_frame .boundsCheckArray args env s1
     (DataSem.doApp_mem_frame_of_aux .boundsCheckArray DataSem.doAppAux_boundsCheckArray_frame) ih
 
 /-- Both byte-array bounds-check modes satisfy the expression simulation. -/
 theorem simulationFor_op_boundsCheckByte {C F : Type} (loose : Bool) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp (.boundsCheckByte loose)) args] env s1 :=
-  simulationFor_op_mem_of_frame (.boundsCheckByte loose) args env s1 (by simp)
+  simulationFor_op_mem_of_frame (.boundsCheckByte loose) args env s1
     (DataSem.doApp_mem_frame_of_aux (.boundsCheckByte loose) (DataSem.doAppAux_boundsCheckByte_frame loose)) ih
 
 /-- Array length satisfies the BVI-to-data expression simulation. -/
 theorem simulationFor_op_length {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .length) args] env s1 :=
-  simulationFor_op_mem_of_frame .length args env s1 (by simp)
+  simulationFor_op_mem_of_frame .length args env s1
     (DataSem.doApp_mem_frame_of_aux .length DataSem.doAppAux_length_frame) ih
 
 /-- Byte-array length satisfies the BVI-to-data expression simulation. -/
 theorem simulationFor_op_lengthByte {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .lengthByte) args] env s1 :=
-  simulationFor_op_mem_of_frame .lengthByte args env s1 (by simp)
+  simulationFor_op_mem_of_frame .lengthByte args env s1
     (DataSem.doApp_mem_frame_of_aux .lengthByte DataSem.doAppAux_lengthByte_frame) ih
 
 /-- Indexed reads satisfy the BVI-to-data expression simulation. -/
 theorem simulationFor_op_el {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .el) args] env s1 :=
-  simulationFor_op_mem_of_frame .el args env s1 (by simp)
+  simulationFor_op_mem_of_frame .el args env s1
     (DataSem.doApp_mem_frame_of_aux .el DataSem.doAppAux_el_frame) ih
 
 /-- Byte-array reads satisfy the BVI-to-data expression simulation. -/
 theorem simulationFor_op_derefByte {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .derefByte) args] env s1 :=
-  simulationFor_op_mem_of_frame .derefByte args env s1 (by simp)
+  simulationFor_op_mem_of_frame .derefByte args env s1
     (DataSem.doApp_mem_frame_of_aux .derefByte DataSem.doAppAux_derefByte_frame) ih
 
 /-- Array updates satisfy the BVI-to-data expression simulation. -/
 theorem simulationFor_op_update {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .update) args] env s1 :=
-  simulationFor_op_mem_of_frame .update args env s1 (by simp)
+  simulationFor_op_mem_of_frame .update args env s1
     (DataSem.doApp_mem_frame_of_aux .update DataSem.doAppAux_update_frame) ih
 
 /-- Byte-array updates satisfy the BVI-to-data expression simulation. -/
 theorem simulationFor_op_updateByte {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .updateByte) args] env s1 :=
-  simulationFor_op_mem_of_frame .updateByte args env s1 (by simp)
+  simulationFor_op_mem_of_frame .updateByte args env s1
     (DataSem.doApp_mem_frame_of_aux .updateByte DataSem.doAppAux_updateByte_frame) ih
 
 /-- Byte-array allocation satisfies the BVI-to-data expression simulation. -/
 theorem simulationFor_op_refByte {C F : Type} (flag : Bool) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp (.refByte flag)) args] env s1 :=
-  simulationFor_op_mem_of_frame (.refByte flag) args env s1 (by simp)
+  simulationFor_op_mem_of_frame (.refByte flag) args env s1
     (DataSem.doApp_mem_frame_of_aux (.refByte flag) (DataSem.doAppAux_refByte_frame flag)) ih
 
 /-- Mutable-constructor allocation satisfies the expression simulation. -/
 theorem simulationFor_op_mutCons {C F : Type} (tag index : Nat) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp (.mutCons tag index)) args] env s1 :=
-  simulationFor_op_mem_of_frame (.mutCons tag index) args env s1 (by simp)
+  simulationFor_op_mem_of_frame (.mutCons tag index) args env s1
     (DataSem.doApp_mem_frame_of_aux (.mutCons tag index) (DataSem.doAppAux_mutCons_frame tag index)) ih
 
 /-- Constructor finalisation satisfies the expression simulation. -/
 theorem simulationFor_op_finaliseCons {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .finaliseCons) args] env s1 :=
-  simulationFor_op_mem_of_frame .finaliseCons args env s1 (by simp)
+  simulationFor_op_mem_of_frame .finaliseCons args env s1
     (DataSem.doApp_mem_frame_of_aux .finaliseCons DataSem.doAppAux_finaliseCons_frame) ih
 
 /-- Mutable-constructor updates satisfy the expression simulation. -/
 theorem simulationFor_op_updateCons {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .updateCons) args] env s1 :=
-  simulationFor_op_mem_of_frame .updateCons args env s1 (by simp)
+  simulationFor_op_mem_of_frame .updateCons args env s1
     (DataSem.doApp_mem_frame_of_aux .updateCons DataSem.doAppAux_updateCons_frame) ih
 
 /-- String comparison satisfies the BVI-to-data expression simulation. -/
 theorem simulationFor_op_stringCmp {C F : Type} (fast : Bool) (cmp : Opb) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp (.stringCmp fast cmp)) args] env s1 :=
-  simulationFor_op_mem_of_frame (.stringCmp fast cmp) args env s1 (by simp)
+  simulationFor_op_mem_of_frame (.stringCmp fast cmp) args env s1
     (DataSem.doApp_mem_frame_of_aux (.stringCmp fast cmp) (DataSem.doAppAux_stringCmp_frame fast cmp)) ih
 
 /-- Byte-array XOR satisfies the BVI-to-data expression simulation. -/
 theorem simulationFor_op_xorByte {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .xorByte) args] env s1 :=
-  simulationFor_op_mem_of_frame .xorByte args env s1 (by simp)
+  simulationFor_op_mem_of_frame .xorByte args env s1
     (DataSem.doApp_mem_frame_of_aux .xorByte DataSem.doAppAux_xorByte_frame) ih
 
 /-- The current source evaluator rejects `concatByteVec`; its expression simulation
@@ -891,7 +888,7 @@ therefore only propagates argument errors. -/
 theorem simulationFor_op_concatByteVec {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .concatByteVec) args] env s1 :=
-  simulationFor_op_mem_of_frame .concatByteVec args env s1 (by simp)
+  simulationFor_op_mem_of_frame .concatByteVec args env s1
     (DataSem.doApp_mem_frame_of_aux .concatByteVec DataSem.doAppAux_concatByteVec_frame) ih
 
 /-- The current source evaluator rejects `fromListByte`; its expression simulation
@@ -899,7 +896,7 @@ therefore only propagates argument errors. -/
 theorem simulationFor_op_fromListByte {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .fromListByte) args] env s1 :=
-  simulationFor_op_mem_of_frame .fromListByte args env s1 (by simp)
+  simulationFor_op_mem_of_frame .fromListByte args env s1
     (DataSem.doApp_mem_frame_of_aux .fromListByte DataSem.doAppAux_fromListByte_frame) ih
 
 /-- The current source evaluator rejects `toListByte`; its expression simulation
@@ -907,7 +904,7 @@ therefore only propagates argument errors. -/
 theorem simulationFor_op_toListByte {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .toListByte) args] env s1 :=
-  simulationFor_op_mem_of_frame .toListByte args env s1 (by simp)
+  simulationFor_op_mem_of_frame .toListByte args env s1
     (DataSem.doApp_mem_frame_of_aux .toListByte DataSem.doAppAux_toListByte_frame) ih
 
 /-- The current source evaluator rejects `lengthByteVec`; its expression simulation
@@ -915,7 +912,7 @@ therefore only propagates argument errors. -/
 theorem simulationFor_op_lengthByteVec {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .lengthByteVec) args] env s1 :=
-  simulationFor_op_mem_of_frame .lengthByteVec args env s1 (by simp)
+  simulationFor_op_mem_of_frame .lengthByteVec args env s1
     (DataSem.doApp_mem_frame_of_aux .lengthByteVec DataSem.doAppAux_lengthByteVec_frame) ih
 
 /-- The current source evaluator rejects `derefByteVec`; its expression simulation
@@ -923,7 +920,7 @@ therefore only propagates argument errors. -/
 theorem simulationFor_op_derefByteVec {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.memOp .derefByteVec) args] env s1 :=
-  simulationFor_op_mem_of_frame .derefByteVec args env s1 (by simp)
+  simulationFor_op_mem_of_frame .derefByteVec args env s1
     (DataSem.doApp_mem_frame_of_aux .derefByteVec DataSem.doAppAux_derefByteVec_frame) ih
 
 /-- The source evaluator rejects the `true` byte-copy mode after evaluating
@@ -951,12 +948,18 @@ theorem simulationFor_op_copyByte_true {C F : Type} (args : List Bvi.Exp)
     cases run
     exact False.elim (notTypeError rfl)
 
-/-- Memory operations other than the `false` byte-copy mode satisfy the
-expression simulation. That byte-copy lowering path remains open. This is
+/-- False-mode byte copy satisfies the BVI-to-data expression simulation. -/
+theorem simulationFor_op_copyByte_false {C F : Type} (args : List Bvi.Exp)
+    (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
+    simulationFor [.op (.memOp (.copyByte false)) args] env s1 :=
+  simulationFor_op_mem_of_frame (.copyByte false) args env s1
+    (DataSem.doApp_mem_frame_of_aux (.copyByte false) DataSem.doAppAux_copyByte_false_frame) ih
+
+/-- All memory operations satisfy the expression simulation. The result is
 untagged pending evaluator correspondence review. -/
-theorem simulationFor_op_mem_except_copyByte_false {C F : Type} (op : ClosLang.MemOp) (args : List Bvi.Exp)
-    (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1)
-    (notCopy : op ≠ .copyByte false) : simulationFor [.op (.memOp op) args] env s1 := by
+theorem simulationFor_op_mem {C F : Type} (op : ClosLang.MemOp) (args : List Bvi.Exp)
+    (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
+    simulationFor [.op (.memOp op) args] env s1 := by
   cases op with
   | ref => exact simulationFor_op_ref args env s1 ih
   | update => exact simulationFor_op_update args env s1 ih
@@ -970,7 +973,7 @@ theorem simulationFor_op_mem_except_copyByte_false {C F : Type} (op : ClosLang.M
   | concatByteVec => exact simulationFor_op_concatByteVec args env s1 ih
   | copyByte flag =>
     cases flag with
-    | false => exact False.elim (notCopy rfl)
+    | false => exact simulationFor_op_copyByte_false args env s1 ih
     | true => exact simulationFor_op_copyByte_true args env s1 ih
   | fromListByte => exact simulationFor_op_fromListByte args env s1 ih
   | toListByte => exact simulationFor_op_toListByte args env s1 ih
@@ -1352,5 +1355,22 @@ theorem simulationFor_op_label {C F : Type} (label : Nat) (args : List Bvi.Exp)
       cases run
       exact (simulationFor_op_label_success label args env s1 smid s2 values result ih argsRun opRun
         t1 n corr tail live vars fresh related livePresent).2
+
+/-- Every operation except installation satisfies the expression simulation.
+Installation remains a separate open case; the assembled theorem is untagged
+pending correspondence review of the BVI and data evaluators. -/
+theorem simulationFor_op_nonInstall {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
+    (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1)
+    (notInstall : op ≠ .install) : simulationFor [.op op args] env s1 := by
+  cases op with
+  | label label => exact simulationFor_op_label label args env s1 ih
+  | ffi name => exact simulationFor_op_ffi name args env s1 ih
+  | intOp op => exact simulationFor_op_int op args env s1 ih
+  | wordOp op => exact simulationFor_op_word op args env s1 ih
+  | blockOp op => exact simulationFor_op_block op args env s1 ih
+  | globOp op => exact simulationFor_op_global op args env s1 ih
+  | memOp op => exact simulationFor_op_mem op args env s1 ih
+  | thunkOp op => exact simulationFor_op_thunk op args env s1 ih
+  | install => exact False.elim (notInstall rfl)
 
 end Flapjack.Compiler.Backend.BviToData

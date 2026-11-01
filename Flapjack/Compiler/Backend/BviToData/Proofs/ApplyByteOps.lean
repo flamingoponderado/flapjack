@@ -107,5 +107,73 @@ theorem doApp_xorByte {C F : Type} (args : List DataSem.Value)
                     · simp [DataSem.doAppAux, DataSem.applyNonFfi, srcFound, dstFound, xorRun]
                     · simpa [dataToBviRef] using stateRel_insertRef source target related dst (.byteArray dstFlag updated)
 
+/-- Copying bytes between two arrays preserves the reference-store relation,
+including when the source and destination refer to the same array. This is an
+untagged case of the primitive simulation pending evaluator review. -/
+theorem doApp_copyByte_false {C F : Type} (args : List DataSem.Value)
+    (source : BviSem.BviState C F) (target : DataSem.State C F)
+    (related : stateRel source target) (result : BvlSem.Value) (next : BviSem.BviState C F)
+    (run : BviSem.doApp (.memOp (.copyByte false)) (args.map dataToBviValue) source = .val (result, next)) :
+    ∃ targetNext value, DataSem.doAppAux (.memOp (.copyByte false)) args target = .val (value, targetNext) ∧
+      result = dataToBviValue value ∧ stateRel next targetNext := by
+  cases args with
+  | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+  | cons a rest =>
+    cases rest with
+    | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+    | cons b rest =>
+      cases rest with
+      | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+      | cons c rest =>
+        cases rest with
+        | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+        | cons d rest =>
+          cases rest with
+          | nil => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+          | cons e rest =>
+            cases rest with
+            | cons f rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+            | nil =>
+              cases a <;> try (simp [dataToBviValue, BviSem.doApp, BviSem.doAppFallback,
+                BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl] at run)
+              case refPtr srcBit src =>
+                cases b <;> try (simp [dataToBviValue] at run)
+                case number offset =>
+                  cases c <;> try (simp [dataToBviValue] at run)
+                  case number length =>
+                    cases d <;> try (simp [dataToBviValue] at run)
+                    case refPtr dstBit dst =>
+                      cases e <;> try (simp [dataToBviValue] at run)
+                      case number dstOffset =>
+                        have refs : ∀ key, source.refs.lookup key = (sptLookup key target.refs).map dataToBviRef := by
+                          intro key
+                          rw [← sptLookup_sptMap]
+                          exact related.2.2.2.2.1 key
+                        cases srcFound : sptLookup src target.refs with
+                        | none => simp [refs, srcFound] at run
+                        | some srcEntry =>
+                          cases srcEntry with
+                          | valueArray values => simp [refs, srcFound, dataToBviRef] at run
+                          | thunk mode body => simp [refs, srcFound, dataToBviRef] at run
+                          | mutBlock tag done left child right => simp [refs, srcFound, dataToBviRef] at run
+                          | byteArray srcFlag srcBytes =>
+                            cases dstFound : sptLookup dst target.refs with
+                            | none => simp [refs, srcFound, dstFound, dataToBviRef] at run
+                            | some dstEntry =>
+                              cases dstEntry with
+                              | valueArray values => simp [refs, srcFound, dstFound, dataToBviRef] at run
+                              | thunk mode body => simp [refs, srcFound, dstFound, dataToBviRef] at run
+                              | mutBlock tag done left child right => simp [refs, srcFound, dstFound, dataToBviRef] at run
+                              | byteArray dstFlag dstBytes =>
+                                cases copyRun : copyArray (srcBytes, offset) length (some (dstBytes, dstOffset)) with
+                                | none => simp [refs, srcFound, dstFound, dataToBviRef, copyRun] at run
+                                | some updated =>
+                                  simp [refs, srcFound, dstFound, dataToBviRef, BviSem.fromBvl, copyRun] at run
+                                  rcases run with ⟨rfl, rfl⟩
+                                  refine ⟨{ target with refs := sptInsert dst (.byteArray dstFlag updated) target.refs },
+                                    DataSem.unitValue, ?_, dataToBviValue_unit.symm, ?_⟩
+                                  · simp [DataSem.doAppAux, DataSem.applyNonFfi, srcFound, dstFound, copyRun]
+                                  · simpa [dataToBviRef] using stateRel_insertRef source target related dst (.byteArray dstFlag updated)
+
 end
 end Flapjack.Compiler.Backend.BviToData

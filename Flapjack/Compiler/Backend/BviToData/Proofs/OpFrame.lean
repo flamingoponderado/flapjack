@@ -282,7 +282,7 @@ theorem evaluate_iAssign_int_outcome {C F : Type} (op : ClosLang.IntOp)
       correctOutcome (.val [result]) target targetNext dest (dest + 1) corr live [dest] env false none none := by
   obtain ⟨targetNext, value, execution, projected, finalRel, destRead⟩ :=
     evaluate_iAssign_success (.intOp op) target source operands live corr env args dest result next
-      (by simp) (by intro flag; simp) (by simp) related vars livePresent read run
+      (by simp) (by simp) related vars livePresent read run
   have control : DataSem.SameControl target targetNext :=
     evaluate_iAssign_int_control op dest operands live corr target targetNext execution
   have keeps := evaluate_iAssign_int_keepRoots op dest operands live corr target targetNext execution
@@ -484,7 +484,7 @@ theorem evaluate_iAssign_word_outcome {C F : Type} (op : ClosLang.WordOp)
       correctOutcome (.val [result]) target targetNext dest (dest + 1) corr live [dest] env false none none := by
   obtain ⟨targetNext, value, execution, projected, finalRel, destRead⟩ :=
     evaluate_iAssign_success (.wordOp op) target source operands live corr env args dest result next
-      (by simp) (by intro flag; simp) (by simp) related vars livePresent read run
+      (by simp) (by simp) related vars livePresent read run
   obtain ⟨_, cutEnabled, _, lookupOther, control⟩ :=
     evaluate_iAssign_word_lookup op dest operands live corr target targetNext execution
   have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
@@ -560,7 +560,7 @@ theorem evaluate_iAssign_block_outcome {C F : Type} (op : ClosLang.BlockOp)
       correctOutcome (.val [result]) target targetNext dest (dest + 1) corr live [dest] env false none none := by
   obtain ⟨targetNext, value, execution, projected, finalRel, destRead⟩ :=
     evaluate_iAssign_success (.blockOp op) target source operands live corr env args dest result next
-      (by simp) (by intro flag; simp) (by simp) related vars livePresent read run
+      (by simp) (by simp) related vars livePresent read run
   obtain ⟨_, cutEnabled, _, lookupOther, control⟩ :=
     evaluate_iAssign_block_lookup op dest operands live corr target targetNext execution
   have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
@@ -637,7 +637,7 @@ theorem evaluate_iAssign_thunk_outcome {C F : Type} (op : AstHOL.ThunkOp)
       correctOutcome (.val [result]) target targetNext dest (dest + 1) corr live [dest] env false none none := by
   obtain ⟨targetNext, value, execution, projected, finalRel, destRead⟩ :=
     evaluate_iAssign_success (.thunkOp op) target source operands live corr env args dest result next
-      (by simp) (by intro flag; simp) (by simpa using notForce) related vars livePresent read run
+      (by simp) (by simpa using notForce) related vars livePresent read run
   obtain ⟨_, cutEnabled, _, lookupOther, control⟩ :=
     evaluate_iAssign_thunk_lookup op dest operands live corr target targetNext execution
   have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
@@ -694,13 +694,12 @@ theorem evaluate_iAssign_thunk_outcome {C F : Type} (op : AstHOL.ThunkOp)
     · simp [DataSem.getVar, sptLookup_sptMap, destRead, projected]
     · constructor
 
-/-- A successful non-copy memory `iAssign` establishes the continuing
-invariant, assuming its primitive frame. The byte-copy path remains open. -/
+/-- A successful memory `iAssign` establishes the continuing invariant,
+assuming its primitive frame. -/
 theorem evaluate_iAssign_mem_outcome_of_frame {C F : Type} (op : ClosLang.MemOp)
     (target : DataSem.State C F) (source next : BviSem.BviState C F)
     (operands live corr : List Nat) (env : List BvlSem.Value)
     (args : List DataSem.Value) (dest : Nat) (result : BvlSem.Value)
-    (notCopy : ∀ flag, op ≠ .copyByte flag)
     (primitiveFrame : ∀ (args : List DataSem.Value) (before after : DataSem.State C F) (value : DataSem.Value),
       DataSem.doApp (.memOp op) args before = .val (value, after) → DataSem.SameLocalControl before after)
     (related : stateRel source target)
@@ -716,7 +715,7 @@ theorem evaluate_iAssign_mem_outcome_of_frame {C F : Type} (op : ClosLang.MemOp)
       correctOutcome (.val [result]) target targetNext dest (dest + 1) corr live [dest] env false none none := by
   obtain ⟨targetNext, value, execution, projected, finalRel, destRead⟩ :=
     evaluate_iAssign_success (.memOp op) target source operands live corr env args dest result next
-      (by simp) (by intro flag; simpa using notCopy flag) (by simp) related vars livePresent read run
+      (by simp) (by simp) related vars livePresent read run
   obtain ⟨_, cutEnabled, _, lookupOther, control⟩ :=
     evaluate_iAssign_mem_lookup_of_frame op dest operands live corr target targetNext primitiveFrame execution
   have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
@@ -792,7 +791,7 @@ theorem evaluate_iAssign_ffi_outcome {C F : Type} (name : Basis.Pure.MlString.Ml
       correctOutcome (.val [result]) target targetNext dest (dest + 1) corr live [dest] env false none none := by
   obtain ⟨targetNext, value, execution, projected, finalRel, destRead⟩ :=
     evaluate_iAssign_success (.ffi name) target source operands live corr env args dest result next
-      (by simp) (by intro flag; simp) (by simp) related vars livePresent read run
+      (by simp) (by simp) related vars livePresent read run
   obtain ⟨_, _, lookupOther, control⟩ :=
     evaluate_iAssign_ffi_lookup name dest operands live corr target targetNext execution
   have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
@@ -863,7 +862,7 @@ theorem evaluate_iAssign_global_outcome {C F : Type} (op : ClosLang.GlobOp)
       correctOutcome (.val [result]) target targetNext dest (dest + 1) corr live [dest] env false none none := by
   obtain ⟨targetNext, value, execution, projected, finalRel, destRead⟩ :=
     evaluate_iAssign_success (.globOp op) target source operands live corr env args dest result next
-      (by simp) (by intro flag; simp) (by simp) related vars livePresent read run
+      (by simp) (by simp) related vars livePresent read run
   obtain ⟨_, _, lookupOther, control⟩ :=
     evaluate_iAssign_global_lookup op dest operands live corr target targetNext execution
   have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
@@ -952,7 +951,7 @@ theorem evaluate_iAssign_label_outcome {C F : Type} (label : Nat)
       correctOutcome (.val [result]) target targetNext dest (dest + 1) corr live [dest] env false none none := by
   obtain ⟨targetNext, value, execution, projected, finalRel, destRead⟩ :=
     evaluate_iAssign_success (.label label) target source operands live corr env args dest result next
-      (by simp) (by intro flag; simp) (by simp) related vars livePresent read run
+      (by simp) (by simp) related vars livePresent read run
   obtain ⟨_, _, lookupOther, control⟩ :=
     evaluate_iAssign_label_lookup label dest operands live corr target targetNext execution
   have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →

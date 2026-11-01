@@ -96,7 +96,7 @@ theorem doApp_full_projection {C F : Type} (op : ClosLang.Op)
     (notGreaterEq : op ≠ .intOp .greaterEq)
     (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
     (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
-    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (notForce : op ≠ .thunkOp .forceThunk)
     (related : stateRel source target)
     (enough : DataLang.opSpaceReset op = true ∨ DataSpace.opSpaceReq op args.length ≤ target.space)
     (run : BviSem.doApp op (args.map dataToBviValue) source = .val (result, next)) :
@@ -108,7 +108,7 @@ theorem doApp_full_projection {C F : Type} (op : ClosLang.Op)
   have stackRel := stateRel_doStack source (DataSem.doLimSafe accounted op args) op args safeRel
   obtain ⟨targetNext, value, aux, projected, finalRel⟩ :=
     doApp_projection op _ source args result next notInstall notGreater notGreaterEq notWordGt notWordGeq
-      notCopy notForce stackRel run
+      notForce stackRel run
   exact ⟨targetNext, value, doApp_of_aux op args target accounted targetNext value notInstall notGreater
     notGreaterEq space aux, projected, finalRel⟩
 
@@ -131,7 +131,7 @@ theorem doApp_full_after_makeSpace {C F : Type} (op : ClosLang.Op)
     (notGreaterEq : op ≠ .intOp .greaterEq)
     (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
     (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
-    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (notForce : op ≠ .thunkOp .forceThunk)
     (related : stateRel source target)
     (present : ∀ key ∈ names, sptLookup key target.locals ≠ none)
     (run : BviSem.doApp op (args.map dataToBviValue) source = .val (result, next)) :
@@ -146,7 +146,7 @@ theorem doApp_full_after_makeSpace {C F : Type} (op : ClosLang.Op)
     simpa [stateRel] using related
   have reservedRel := stateRel_addSpace source _ (DataSpace.opSpaceReq op args.length) cutRel
   apply doApp_full_projection op _ source args result next notInstall notGreater notGreaterEq notWordGt notWordGeq
-    notCopy notForce reservedRel
+    notForce reservedRel
   · right
     simp [DataSem.addSpace]
   · exact run
@@ -162,7 +162,7 @@ theorem evaluate_makeSpace_assign {C F : Type} (op : ClosLang.Op)
     (notGreaterEq : op ≠ .intOp .greaterEq)
     (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
     (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
-    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (notForce : op ≠ .thunkOp .forceThunk)
     (noLiveNames : DataLang.opRequiresNames op = false)
     (related : stateRel source target)
     (present : ∀ key ∈ roots, sptLookup key target.locals ≠ none)
@@ -182,7 +182,7 @@ theorem evaluate_makeSpace_assign {C F : Type} (op : ClosLang.Op)
     simpa [reserved, cut, DataSem.addSpace] using getVars_cut_exact roots target.locals operands args read included
   obtain ⟨_, targetNext, value, app, projected, finalRel⟩ :=
     doApp_full_after_makeSpace op target source roots args result next notInstall notGreater notGreaterEq
-      notWordGt notWordGeq notCopy notForce related present run
+      notWordGt notWordGeq notForce related present run
   have assignment : DataSem.evaluate (.assign dest op operands none) reserved =
       (none, DataSem.setVar dest value (DataSem.installSfs op targetNext)) := by
     simp [DataSem.evaluate, noLiveNames, readCut, DataSem.cutStateOpt, app, reserved, cut]
@@ -202,7 +202,7 @@ theorem evaluate_iAssign_makeSpace {C F : Type} (op : ClosLang.Op)
     (notGreaterEq : op ≠ .intOp .greaterEq)
     (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
     (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
-    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (notForce : op ≠ .thunkOp .forceThunk)
     (noLiveNames : DataLang.opRequiresNames op = false)
     (needsSpace : DataSpace.opSpaceReq op operands.length ≠ 0)
     (related : stateRel source target)
@@ -237,7 +237,7 @@ theorem evaluate_iAssign_makeSpace {C F : Type} (op : ClosLang.Op)
     simp [iAssign, noLiveNames, needsSpace, length]
   rw [shape]
   exact evaluate_makeSpace_assign op target source (operands ++ live ++ corr) operands args dest result next
-    notInstall notGreater notGreaterEq notWordGt notWordGeq notCopy notForce noLiveNames related rootsPresent
+    notInstall notGreater notGreaterEq notWordGt notWordGeq notForce noLiveNames related rootsPresent
     (by intro key member; simp [member]) read run
 
 private theorem iAssign_noSpace_shape (op : ClosLang.Op) (dest : Nat) (operands live corr : List Nat)
@@ -258,7 +258,7 @@ theorem evaluate_iAssign_noSpace {C F : Type} (op : ClosLang.Op)
     (notGreaterEq : op ≠ .intOp .greaterEq)
     (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
     (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
-    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (notForce : op ≠ .thunkOp .forceThunk)
     (noLiveNames : DataLang.opRequiresNames op = false)
     (noSpace : DataSpace.opSpaceReq op operands.length = 0)
     (related : stateRel source target)
@@ -274,7 +274,7 @@ theorem evaluate_iAssign_noSpace {C F : Type} (op : ClosLang.Op)
     simp [length, noSpace]
   obtain ⟨targetNext, value, app, projected, finalRel⟩ :=
     doApp_full_projection op target source args result next notInstall notGreater notGreaterEq notWordGt notWordGeq
-      notCopy notForce related enough run
+      notForce related enough run
   refine ⟨targetNext, value, ?_, projected, ?_⟩
   · rw [iAssign_noSpace_shape op dest operands live corr noLiveNames noSpace notWordGt notWordGeq]
     simp [DataSem.evaluate, noLiveNames, read, DataSem.cutStateOpt, app]
@@ -290,7 +290,7 @@ theorem evaluate_iAssign_noLiveNames {C F : Type} (op : ClosLang.Op)
     (notGreaterEq : op ≠ .intOp .greaterEq)
     (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
     (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
-    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (notForce : op ≠ .thunkOp .forceThunk)
     (noLiveNames : DataLang.opRequiresNames op = false)
     (related : stateRel source target)
     (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
@@ -303,9 +303,9 @@ theorem evaluate_iAssign_noLiveNames {C F : Type} (op : ClosLang.Op)
       result = dataToBviValue value ∧ stateRel next (DataSem.setVar dest value (DataSem.installSfs op targetNext)) := by
   by_cases noSpace : DataSpace.opSpaceReq op operands.length = 0
   · exact evaluate_iAssign_noSpace op target source operands live corr args dest result next notInstall
-      notGreater notGreaterEq notWordGt notWordGeq notCopy notForce noLiveNames noSpace related read run
+      notGreater notGreaterEq notWordGt notWordGeq notForce noLiveNames noSpace related read run
   · exact evaluate_iAssign_makeSpace op target source operands live corr env args dest result next notInstall
-      notGreater notGreaterEq notWordGt notWordGeq notCopy notForce noLiveNames noSpace related vars livePresent read run
+      notGreater notGreaterEq notWordGt notWordGeq notForce noLiveNames noSpace related vars livePresent read run
 
 private theorem requiresNames_space (op : ClosLang.Op) (count : Nat)
     (requires : DataLang.opRequiresNames op = true) :
@@ -329,7 +329,7 @@ theorem evaluate_iAssign_liveNames {C F : Type} (op : ClosLang.Op)
     (notGreaterEq : op ≠ .intOp .greaterEq)
     (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
     (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
-    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (notForce : op ≠ .thunkOp .forceThunk)
     (requires : DataLang.opRequiresNames op = true)
     (related : stateRel source target)
     (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
@@ -366,7 +366,7 @@ theorem evaluate_iAssign_liveNames {C F : Type} (op : ClosLang.Op)
     · exact Or.inr (by simp [zero])
   obtain ⟨targetNext, value, app, projected, finalRel⟩ :=
     doApp_full_projection op prepared source args result next notInstall notGreater notGreaterEq notWordGt notWordGeq
-      notCopy notForce cutRel enough run
+      notForce cutRel enough run
   have cutEnv : DataSem.cutEnv (namesOfList roots) target.locals = some cut := by
     exact cutEnv_namesOfList roots target.locals rootsPresent
   refine ⟨targetNext, value, ?_, projected, ?_⟩
@@ -387,7 +387,7 @@ theorem evaluate_assign_reset {C F : Type} (op : ClosLang.Op)
     (notGreaterEq : op ≠ .intOp .greaterEq)
     (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
     (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
-    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (notForce : op ≠ .thunkOp .forceThunk)
     (resets : DataLang.opSpaceReset op = true) (related : stateRel source target)
     (present : ∀ key ∈ roots, sptLookup key target.locals ≠ none)
     (read : DataSem.getVars operands target.locals = some args)
@@ -401,7 +401,7 @@ theorem evaluate_assign_reset {C F : Type} (op : ClosLang.Op)
   have cutRel : stateRel source prepared := by simpa [prepared, stateRel] using related
   obtain ⟨targetNext, value, app, projected, finalRel⟩ :=
     doApp_full_projection op prepared source args result next notInstall notGreater notGreaterEq notWordGt notWordGeq
-      notCopy notForce cutRel (Or.inl resets) run
+      notForce cutRel (Or.inl resets) run
   have cutEnv : DataSem.cutEnv (namesOfList roots) target.locals = some cut :=
     cutEnv_namesOfList roots target.locals present
   have requires : DataLang.opRequiresNames op = true := by simp [DataLang.opRequiresNames, resets]
@@ -420,7 +420,7 @@ theorem evaluate_iAssign_supported {C F : Type} (op : ClosLang.Op)
     (notGreaterEq : op ≠ .intOp .greaterEq)
     (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
     (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
-    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (notForce : op ≠ .thunkOp .forceThunk)
     (related : stateRel source target)
     (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
     (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
@@ -433,9 +433,9 @@ theorem evaluate_iAssign_supported {C F : Type} (op : ClosLang.Op)
   cases requires : DataLang.opRequiresNames op with
   | false =>
     exact evaluate_iAssign_noLiveNames op target source operands live corr env args dest result next notInstall
-      notGreater notGreaterEq notWordGt notWordGeq notCopy notForce requires related vars livePresent read run
+      notGreater notGreaterEq notWordGt notWordGeq notForce requires related vars livePresent read run
   | true =>
     exact evaluate_iAssign_liveNames op target source operands live corr env args dest result next notInstall
-      notGreater notGreaterEq notWordGt notWordGeq notCopy notForce requires related vars livePresent read run
+      notGreater notGreaterEq notWordGt notWordGeq notForce requires related vars livePresent read run
 
 end Flapjack.Compiler.Backend.BviToData

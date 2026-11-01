@@ -39,7 +39,6 @@ theorem doApp_projection {C F : Type} (op : ClosLang.Op)
     (notGreaterEq : op ≠ .intOp .greaterEq)
     (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
     (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
-    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag))
     (notForce : op ≠ .thunkOp .forceThunk)
     (related : stateRel source target)
     (run : BviSem.doApp op (args.map dataToBviValue) source = .val (result, next)) :
@@ -92,7 +91,10 @@ theorem doApp_projection {C F : Type} (op : ClosLang.Op)
     | refArray => exact doApp_refArray args source target related result next run
     | derefByte => exact doApp_derefByte args source target related result next run
     | updateByte => exact doApp_updateByte args source target related result next run
-    | copyByte flag => exact False.elim (notCopy flag rfl)
+    | copyByte flag =>
+      cases flag with
+      | false => exact doApp_copyByte_false args source target related result next run
+      | true => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
     | stringCmp fast cmp => exact doApp_stringCmp fast cmp args source target related result next run
     | xorByte => exact doApp_xorByte args source target related result next run
     | boundsCheckArray => exact doApp_boundsCheckArray args source target related result next run

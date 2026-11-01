@@ -446,6 +446,56 @@ theorem doAppAux_derefByteVec_frame {C F : Type} (args : List Value)
     (run : doAppAux (.memOp .derefByteVec) args state = .val (value, next)) : SameLocalControl state next := by
   cases args <;> simp [doAppAux, applyNonFfi] at run
 
+/-- Copying into a byte array changes the reference store but preserves
+locals and control fields. -/
+theorem doAppAux_copyByte_false_frame {C F : Type} (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doAppAux (.memOp (.copyByte false)) args state = .val (value, next)) : SameLocalControl state next := by
+  cases args with
+  | nil => simp [doAppAux, applyNonFfi] at run
+  | cons a rest =>
+    cases rest with
+    | nil => simp [doAppAux, applyNonFfi] at run
+    | cons b rest =>
+      cases rest with
+      | nil => simp [doAppAux, applyNonFfi] at run
+      | cons c rest =>
+        cases rest with
+        | nil => simp [doAppAux, applyNonFfi] at run
+        | cons d rest =>
+          cases rest with
+          | nil => simp [doAppAux, applyNonFfi] at run
+          | cons e rest =>
+            cases rest with
+            | cons f rest => simp [doAppAux, applyNonFfi] at run
+            | nil =>
+              cases a <;> try (simp [doAppAux, applyNonFfi] at run)
+              case refPtr srcBit src =>
+                cases b <;> try (simp at run)
+                case number offset =>
+                  cases c <;> try (simp at run)
+                  case number length =>
+                    cases d <;> try (simp at run)
+                    case refPtr dstBit dst =>
+                      cases e <;> try (simp at run)
+                      case number dstOffset =>
+                        cases srcFound : sptLookup src state.refs with
+                        | none => simp [srcFound] at run
+                        | some srcEntry =>
+                          cases srcEntry <;> simp [srcFound] at run
+                          case byteArray srcFlag srcBytes =>
+                            cases dstFound : sptLookup dst state.refs with
+                            | none => simp [dstFound] at run
+                            | some dstEntry =>
+                              cases dstEntry <;> simp [dstFound] at run
+                              case byteArray dstFlag dstBytes =>
+                                cases copied : copyArray (srcBytes, offset) length (some (dstBytes, dstOffset)) with
+                                | none => simp [copied] at run
+                                | some updated =>
+                                  simp [copied] at run
+                                  obtain ⟨rfl, rfl⟩ := run
+                                  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
 /-- Lift a memory auxiliary frame through resource bookkeeping. -/
 theorem doApp_mem_frame_of_aux {C F : Type} (op : ClosLang.MemOp)
     (auxFrame : ∀ (args : List Value) (before after : State C F) (value : Value),

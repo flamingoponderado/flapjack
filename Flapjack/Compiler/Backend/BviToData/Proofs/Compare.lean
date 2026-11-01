@@ -147,7 +147,7 @@ theorem evaluate_iAssign_intGreater {C F : Type} (target : DataSem.State C F)
     simpa [List.map_reverse] using doApp_intGreater_reverse (args.map dataToBviValue) source next result run
   obtain ⟨targetNext, value, targetRun, projected, finalRel⟩ :=
     evaluate_assign_reset (.intOp .less) target source (operands ++ live ++ corr) operands.reverse args.reverse dest result next
-      (by simp) (by simp) (by simp) (by simp) (by simp) (by intro flag; simp) (by simp)
+      (by simp) (by simp) (by simp) (by simp) (by simp) (by simp)
       (by simp [DataLang.opSpaceReset]) related (roots_present target operands live corr env args vars livePresent read)
       (DataProps.getVars_reverse operands target.locals args read) reversedRun
   refine ⟨targetNext, value, ?_, projected, finalRel⟩
@@ -171,7 +171,7 @@ theorem evaluate_iAssign_intGreaterEq {C F : Type} (target : DataSem.State C F)
     simpa [List.map_reverse] using doApp_intGreaterEq_reverse (args.map dataToBviValue) source next result run
   obtain ⟨targetNext, value, targetRun, projected, finalRel⟩ :=
     evaluate_assign_reset (.intOp .lessEq) target source (operands ++ live ++ corr) operands.reverse args.reverse dest result next
-      (by simp) (by simp) (by simp) (by simp) (by simp) (by intro flag; simp) (by simp)
+      (by simp) (by simp) (by simp) (by simp) (by simp) (by simp)
       (by simp [DataLang.opSpaceReset]) related (roots_present target operands live corr env args vars livePresent read)
       (DataProps.getVars_reverse operands target.locals args read) reversedRun
   refine ⟨targetNext, value, ?_, projected, finalRel⟩
@@ -194,7 +194,7 @@ theorem evaluate_iAssign_byteGreater {C F : Type} (target : DataSem.State C F)
     simpa [List.map_reverse] using doApp_byteGreater_reverse (args.map dataToBviValue) source next result run
   obtain ⟨targetNext, value, targetRun, projected, finalRel⟩ :=
     evaluate_iAssign_noSpace (.wordOp (.wordTest .w8 (.compare .lt))) target source operands.reverse live corr args.reverse dest result next
-      (by simp) (by simp) (by simp) (by simp) (by simp) (by intro flag; simp) (by simp)
+      (by simp) (by simp) (by simp) (by simp) (by simp) (by simp)
       (by simp [DataLang.opRequiresNames, DataLang.opSpaceReset]) (by simp [DataSpace.opSpaceReq]) related
       (DataProps.getVars_reverse operands target.locals args read) reversedRun
   refine ⟨targetNext, value, ?_, projected, finalRel⟩
@@ -217,7 +217,7 @@ theorem evaluate_iAssign_byteGreaterEq {C F : Type} (target : DataSem.State C F)
     simpa [List.map_reverse] using doApp_byteGreaterEq_reverse (args.map dataToBviValue) source next result run
   obtain ⟨targetNext, value, targetRun, projected, finalRel⟩ :=
     evaluate_iAssign_noSpace (.wordOp (.wordTest .w8 (.compare .leq))) target source operands.reverse live corr args.reverse dest result next
-      (by simp) (by simp) (by simp) (by simp) (by simp) (by intro flag; simp) (by simp)
+      (by simp) (by simp) (by simp) (by simp) (by simp) (by simp)
       (by simp [DataLang.opRequiresNames, DataLang.opSpaceReset]) (by simp [DataSpace.opSpaceReq]) related
       (DataProps.getVars_reverse operands target.locals args read) reversedRun
   refine ⟨targetNext, value, ?_, projected, finalRel⟩
@@ -230,7 +230,7 @@ theorem evaluate_iAssign_success {C F : Type} (op : ClosLang.Op)
     (target : DataSem.State C F) (source : BviSem.BviState C F)
     (operands live corr : List Nat) (env : List BvlSem.Value)
     (args : List DataSem.Value) (dest : Nat) (result : BvlSem.Value) (next : BviSem.BviState C F)
-    (notInstall : op ≠ .install) (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag))
+    (notInstall : op ≠ .install)
     (notForce : op ≠ .thunkOp .forceThunk) (related : stateRel source target)
     (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
     (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
@@ -260,7 +260,7 @@ theorem evaluate_iAssign_success {C F : Type} (op : ClosLang.Op)
     exact ⟨_, value, execution, projected, finalRel, by simp [DataSem.setVar, sptLookup_sptInsert_same]⟩
   · obtain ⟨s, value, execution, projected, finalRel⟩ :=
       evaluate_iAssign_supported op target source operands live corr env args dest result next notInstall greater
-        greaterEq byteGreater byteGreaterEq notCopy notForce related vars livePresent read run
+        greaterEq byteGreater byteGreaterEq notForce related vars livePresent read run
     exact ⟨_, value, execution, projected, finalRel, by simp [DataSem.setVar, sptLookup_sptInsert_same]⟩
 
 end Flapjack.Compiler.Backend.BviToData
