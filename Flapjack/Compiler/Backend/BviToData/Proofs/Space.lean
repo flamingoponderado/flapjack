@@ -191,4 +191,218 @@ theorem evaluate_makeSpace_assign {C F : Type} (op : ClosLang.Op)
     simpa [DataSem.fixClock, reserved, cut, DataSem.addSpace] using assignment
   · simpa [stateRel, DataSem.setVar, DataSem.installSfs] using finalRel
 
+/-- The actual `iAssign` make-space branch simulates a successful supported
+primitive. Operand reads, live locals, and the current environment establish
+that all compiler-selected roots are present. -/
+theorem evaluate_iAssign_makeSpace {C F : Type} (op : ClosLang.Op)
+    (target : DataSem.State C F) (source : BviSem.BviState C F)
+    (operands live corr : List Nat) (env : List BvlSem.Value)
+    (args : List DataSem.Value) (dest : Nat) (result : BvlSem.Value) (next : BviSem.BviState C F)
+    (notInstall : op ≠ .install) (notGreater : op ≠ .intOp .greater)
+    (notGreaterEq : op ≠ .intOp .greaterEq)
+    (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
+    (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
+    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (noLiveNames : DataLang.opRequiresNames op = false)
+    (needsSpace : DataSpace.opSpaceReq op operands.length ≠ 0)
+    (related : stateRel source target)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
+    (read : DataSem.getVars operands target.locals = some args)
+    (run : BviSem.doApp op (args.map dataToBviValue) source = .val (result, next)) :
+    ∃ targetNext value,
+      DataSem.evaluate (iAssign dest op operands live corr) target =
+        (none, DataSem.setVar dest value (DataSem.installSfs op targetNext)) ∧
+      result = dataToBviValue value ∧ stateRel next (DataSem.setVar dest value (DataSem.installSfs op targetNext)) := by
+  have operandPresent := getVars_present operands target.locals args read
+  have corrRead := DataProps.getVars_thm corr env (sptMap dataToBviValue target.locals) vars
+  have corrPresentMapped := getVars_present corr (sptMap dataToBviValue target.locals) env corrRead
+  have corrPresent : ∀ key ∈ corr, sptLookup key target.locals ≠ none := by
+    intro key member absent
+    have mapped := corrPresentMapped key member
+    apply mapped
+    simp [sptLookup_sptMap, absent]
+  have rootsPresent : ∀ key ∈ operands ++ live ++ corr, sptLookup key target.locals ≠ none := by
+    intro key member
+    simp only [List.mem_append] at member
+    rcases member with operandOrLive | corrMember
+    · rcases operandOrLive with operand | liveMember
+      · exact operandPresent key operand
+      · exact livePresent key liveMember
+    · exact corrPresent key corrMember
+  have length := getVars_length operands target.locals args read
+  have shape : iAssign dest op operands live corr =
+      .seq (.makeSpace (DataSpace.opSpaceReq op args.length) (namesOfList (operands ++ live ++ corr)))
+        (.assign dest op operands none) := by
+    simp [iAssign, noLiveNames, needsSpace, length]
+  rw [shape]
+  exact evaluate_makeSpace_assign op target source (operands ++ live ++ corr) operands args dest result next
+    notInstall notGreater notGreaterEq notWordGt notWordGeq notCopy notForce noLiveNames related rootsPresent
+    (by intro key member; simp [member]) read run
+
+private theorem iAssign_noSpace_shape (op : ClosLang.Op) (dest : Nat) (operands live corr : List Nat)
+    (noLiveNames : DataLang.opRequiresNames op = false)
+    (noSpace : DataSpace.opSpaceReq op operands.length = 0)
+    (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
+    (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq))) :
+    iAssign dest op operands live corr = .assign dest op operands none := by
+  simp only [iAssign, noLiveNames, Bool.false_eq_true, if_false, noSpace, if_true]
+
+/-- The direct `iAssign` branch simulates a successful supported primitive
+when it needs neither a live-name cut nor a space reservation. -/
+theorem evaluate_iAssign_noSpace {C F : Type} (op : ClosLang.Op)
+    (target : DataSem.State C F) (source : BviSem.BviState C F)
+    (operands live corr : List Nat) (args : List DataSem.Value) (dest : Nat)
+    (result : BvlSem.Value) (next : BviSem.BviState C F)
+    (notInstall : op ≠ .install) (notGreater : op ≠ .intOp .greater)
+    (notGreaterEq : op ≠ .intOp .greaterEq)
+    (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
+    (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
+    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (noLiveNames : DataLang.opRequiresNames op = false)
+    (noSpace : DataSpace.opSpaceReq op operands.length = 0)
+    (related : stateRel source target)
+    (read : DataSem.getVars operands target.locals = some args)
+    (run : BviSem.doApp op (args.map dataToBviValue) source = .val (result, next)) :
+    ∃ targetNext value,
+      DataSem.evaluate (iAssign dest op operands live corr) target =
+        (none, DataSem.setVar dest value (DataSem.installSfs op targetNext)) ∧
+      result = dataToBviValue value ∧ stateRel next (DataSem.setVar dest value (DataSem.installSfs op targetNext)) := by
+  have length := getVars_length operands target.locals args read
+  have enough : DataLang.opSpaceReset op = true ∨ DataSpace.opSpaceReq op args.length ≤ target.space := by
+    right
+    simp [length, noSpace]
+  obtain ⟨targetNext, value, app, projected, finalRel⟩ :=
+    doApp_full_projection op target source args result next notInstall notGreater notGreaterEq notWordGt notWordGeq
+      notCopy notForce related enough run
+  refine ⟨targetNext, value, ?_, projected, ?_⟩
+  · rw [iAssign_noSpace_shape op dest operands live corr noLiveNames noSpace notWordGt notWordGeq]
+    simp [DataSem.evaluate, noLiveNames, read, DataSem.cutStateOpt, app]
+  · simpa [stateRel, DataSem.setVar, DataSem.installSfs] using finalRel
+
+/-- Successful supported operations that do not require live names are
+simulated by the compiler's actual `iAssign`, whether or not space is needed. -/
+theorem evaluate_iAssign_noLiveNames {C F : Type} (op : ClosLang.Op)
+    (target : DataSem.State C F) (source : BviSem.BviState C F)
+    (operands live corr : List Nat) (env : List BvlSem.Value)
+    (args : List DataSem.Value) (dest : Nat) (result : BvlSem.Value) (next : BviSem.BviState C F)
+    (notInstall : op ≠ .install) (notGreater : op ≠ .intOp .greater)
+    (notGreaterEq : op ≠ .intOp .greaterEq)
+    (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
+    (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
+    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (noLiveNames : DataLang.opRequiresNames op = false)
+    (related : stateRel source target)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
+    (read : DataSem.getVars operands target.locals = some args)
+    (run : BviSem.doApp op (args.map dataToBviValue) source = .val (result, next)) :
+    ∃ targetNext value,
+      DataSem.evaluate (iAssign dest op operands live corr) target =
+        (none, DataSem.setVar dest value (DataSem.installSfs op targetNext)) ∧
+      result = dataToBviValue value ∧ stateRel next (DataSem.setVar dest value (DataSem.installSfs op targetNext)) := by
+  by_cases noSpace : DataSpace.opSpaceReq op operands.length = 0
+  · exact evaluate_iAssign_noSpace op target source operands live corr args dest result next notInstall
+      notGreater notGreaterEq notWordGt notWordGeq notCopy notForce noLiveNames noSpace related read run
+  · exact evaluate_iAssign_makeSpace op target source operands live corr env args dest result next notInstall
+      notGreater notGreaterEq notWordGt notWordGeq notCopy notForce noLiveNames noSpace related vars livePresent read run
+
+private theorem requiresNames_space (op : ClosLang.Op) (count : Nat)
+    (requires : DataLang.opRequiresNames op = true) :
+    DataLang.opSpaceReset op = true ∨ DataSpace.opSpaceReq op count = 0 := by
+  cases op <;> simp_all [DataLang.opRequiresNames, DataLang.opSpaceReset, DataSpace.opSpaceReq]
+  case memOp op => cases op <;> simp_all
+
+private theorem iAssign_live_shape (op : ClosLang.Op) (dest : Nat) (operands live corr : List Nat)
+    (requires : DataLang.opRequiresNames op = true)
+    (notGreater : op ≠ .intOp .greater) (notGreaterEq : op ≠ .intOp .greaterEq) :
+    iAssign dest op operands live corr = .assign dest op operands (some (namesOfList (operands ++ live ++ corr))) := by
+  simp only [iAssign, requires, if_true]
+
+/-- The live-name `iAssign` branch simulates a successful supported
+primitive after cutting the target environment to the compiler's roots. -/
+theorem evaluate_iAssign_liveNames {C F : Type} (op : ClosLang.Op)
+    (target : DataSem.State C F) (source : BviSem.BviState C F)
+    (operands live corr : List Nat) (env : List BvlSem.Value)
+    (args : List DataSem.Value) (dest : Nat) (result : BvlSem.Value) (next : BviSem.BviState C F)
+    (notInstall : op ≠ .install) (notGreater : op ≠ .intOp .greater)
+    (notGreaterEq : op ≠ .intOp .greaterEq)
+    (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
+    (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
+    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (requires : DataLang.opRequiresNames op = true)
+    (related : stateRel source target)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
+    (read : DataSem.getVars operands target.locals = some args)
+    (run : BviSem.doApp op (args.map dataToBviValue) source = .val (result, next)) :
+    ∃ targetNext value,
+      DataSem.evaluate (iAssign dest op operands live corr) target =
+        (none, DataSem.setVar dest value (DataSem.installSfs op targetNext)) ∧
+      result = dataToBviValue value ∧ stateRel next (DataSem.setVar dest value (DataSem.installSfs op targetNext)) := by
+  let roots := operands ++ live ++ corr
+  let cut := sptMkWf (sptInter target.locals (namesOfList roots))
+  let prepared := { target with locals := cut }
+  have operandPresent := getVars_present operands target.locals args read
+  have corrRead := DataProps.getVars_thm corr env (sptMap dataToBviValue target.locals) vars
+  have corrPresentMapped := getVars_present corr (sptMap dataToBviValue target.locals) env corrRead
+  have corrPresent : ∀ key ∈ corr, sptLookup key target.locals ≠ none := by
+    intro key member absent
+    have mapped := corrPresentMapped key member
+    apply mapped
+    simp [sptLookup_sptMap, absent]
+  have rootsPresent : ∀ key ∈ roots, sptLookup key target.locals ≠ none := by
+    intro key member
+    simp only [roots, List.mem_append] at member
+    rcases member with operandOrLive | corrMember
+    · rcases operandOrLive with operand | liveMember
+      · exact operandPresent key operand
+      · exact livePresent key liveMember
+    · exact corrPresent key corrMember
+  have cutRel : stateRel source prepared := by simpa [prepared, stateRel] using related
+  have enough : DataLang.opSpaceReset op = true ∨ DataSpace.opSpaceReq op args.length ≤ prepared.space := by
+    rcases requiresNames_space op args.length requires with resets | zero
+    · exact Or.inl resets
+    · exact Or.inr (by simp [zero])
+  obtain ⟨targetNext, value, app, projected, finalRel⟩ :=
+    doApp_full_projection op prepared source args result next notInstall notGreater notGreaterEq notWordGt notWordGeq
+      notCopy notForce cutRel enough run
+  have cutEnv : DataSem.cutEnv (namesOfList roots) target.locals = some cut := by
+    exact cutEnv_namesOfList roots target.locals rootsPresent
+  refine ⟨targetNext, value, ?_, projected, ?_⟩
+  · rw [iAssign_live_shape op dest operands live corr requires notGreater notGreaterEq]
+    simpa [roots, prepared] using (show DataSem.evaluate (.assign dest op operands (some (namesOfList roots))) target =
+        (none, DataSem.setVar dest value (DataSem.installSfs op targetNext)) by
+      simp [DataSem.evaluate, requires, read, DataSem.cutStateOpt, DataSem.cutState, cutEnv, app, prepared])
+  · simpa [stateRel, DataSem.setVar, DataSem.installSfs] using finalRel
+
+/-- The compiler's complete `iAssign` structure simulates a successful
+primitive, under the restrictions of the auxiliary primitive theorem. The
+special operation rewrites and terminal FFI result remain separate cases. -/
+theorem evaluate_iAssign_supported {C F : Type} (op : ClosLang.Op)
+    (target : DataSem.State C F) (source : BviSem.BviState C F)
+    (operands live corr : List Nat) (env : List BvlSem.Value)
+    (args : List DataSem.Value) (dest : Nat) (result : BvlSem.Value) (next : BviSem.BviState C F)
+    (notInstall : op ≠ .install) (notGreater : op ≠ .intOp .greater)
+    (notGreaterEq : op ≠ .intOp .greaterEq)
+    (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
+    (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
+    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (related : stateRel source target)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
+    (read : DataSem.getVars operands target.locals = some args)
+    (run : BviSem.doApp op (args.map dataToBviValue) source = .val (result, next)) :
+    ∃ targetNext value,
+      DataSem.evaluate (iAssign dest op operands live corr) target =
+        (none, DataSem.setVar dest value (DataSem.installSfs op targetNext)) ∧
+      result = dataToBviValue value ∧ stateRel next (DataSem.setVar dest value (DataSem.installSfs op targetNext)) := by
+  cases requires : DataLang.opRequiresNames op with
+  | false =>
+    exact evaluate_iAssign_noLiveNames op target source operands live corr env args dest result next notInstall
+      notGreater notGreaterEq notWordGt notWordGeq notCopy notForce requires related vars livePresent read run
+  | true =>
+    exact evaluate_iAssign_liveNames op target source operands live corr env args dest result next notInstall
+      notGreater notGreaterEq notWordGt notWordGeq notCopy notForce requires related vars livePresent read run
+
 end Flapjack.Compiler.Backend.BviToData
