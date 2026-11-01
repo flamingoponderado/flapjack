@@ -106,6 +106,39 @@ theorem stateRel_allocGlobals {C F : Type} {source : State (Nat × C) F} {target
     | succ n ih => exact .cons trivial ih
   exact stateRel_withGlobals _ _ related (List.rel_append related.2.2.2.2.2.2.1 blanks)
 
+/-- Writing related references at the same address preserves the reference
+    store and the rest of the numbering state relation. -/
+theorem stateRel_updateRefs {C F : Type} {source : State (Nat × C) F} {target : State C F}
+    (index : Nat) (left right : Ref Value) (related : StateRel source target)
+    (refRel : RefRel source.maxApp left right) :
+    StateRel { source with refs := source.refs.updateEq (index, left) }
+      { target with refs := target.refs.updateEq (index, right) } := by
+  rcases related with ⟨clock, ffi, maxApp, compiler, oracle, refs, globals, safe, sourceCode, targetCode⟩
+  refine ⟨clock, ffi, maxApp, compiler, oracle, ?_, globals, safe, sourceCode, targetCode⟩
+  intro key
+  by_cases equal : key = index
+  · simp [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, equal, OptionRel, refRel]
+  · simpa [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, equal] using refs key
+
+/-- Replacing both FFI states by the same state preserves the relation. -/
+theorem stateRel_withFfi {C F : Type} {source : State (Nat × C) F} {target : State C F}
+    (ffi : Flapjack.HolFfiState F) (related : StateRel source target) :
+    StateRel { source with ffi := ffi } { target with ffi := ffi } := by
+  rcases related with ⟨clock, oldFfi, maxApp, compiler, oracle, refs, globals, safe, sourceCode, targetCode⟩
+  exact ⟨clock, rfl, maxApp, compiler, oracle, refs, globals, safe, sourceCode, targetCode⟩
+
+/-- Related reference stores agree on the presence and contents of a byte
+    array at any address. -/
+theorem stateRel_byteArray_lookup {C F : Type} {source : State (Nat × C) F} {target : State C F}
+    (related : StateRel source target) (index : Nat) (bytes : List (BitVec 8)) :
+    source.refs.lookup index = some (.byteArray bytes) ↔
+      target.refs.lookup index = some (.byteArray bytes) := by
+  have h := related.2.2.2.2.2.1 index
+  cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
+    simp_all [OptionRel, RefRel]
+  rename_i leftRef rightRef
+  cases leftRef <;> cases rightRef <;> simp_all
+
 /-- Initial states satisfy the relation whenever future incremental source
 programs contain no pre-numbered applications or auxiliary code. This shows
 that the state relation is inhabited under its intended oracle conditions. -/

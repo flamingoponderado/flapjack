@@ -1749,4 +1749,48 @@ theorem evaluate_blockOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang
     EvalSimulation (C := C) (F := F) [.op trace (.blockOp op) args] :=
   evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_block op)
 
+/-- FFI calls preserve matching byte-array contents, events and final errors. -/
+theorem primitiveSimulation_ffi {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString) :
+    PrimitiveSimulation (C := C) (F := F) (.ffi name) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases first with
+        | byteVector configuration =>
+          cases second with
+          | refPtr flag index =>
+            have refsRel := stateRel.2.2.2.2.2.1 index
+            cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
+              simp_all [OptionRel, RefRel, doApp, ResultRel]
+            rename_i leftRef rightRef
+            cases leftRef <;> cases rightRef <;> simp_all
+            rename_i leftBytes bytes
+            have ffiEq := stateRel.2.1
+            rw [← ffiEq]
+            cases ffiRun : callFFIHOL source.ffi (.extCall name) configuration bytes with
+            | final event => simp
+            | ret ffi updated =>
+              have refs := stateRel_updateRefs index (.byteArray updated) (.byteArray updated) stateRel rfl
+              have next := stateRel_withFfi ffi refs
+              have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil
+              simp [unitRel, next]
+          | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+            simp [doApp, ResultRel]
+        | number _ | word64 _ | block _ _ _ _ | refPtr _ _ | closure | recclosure =>
+          cases second <;> simp [doApp, ResultRel]
+      | cons head tail => simp [doApp, ResultRel]
+
+/-- FFI expressions preserve evaluation and event state through numbering. -/
+theorem evaluate_ffi {C F : Type} (trace : BackendCommon.Tra)
+    (name : Flapjack.Basis.Pure.MlString.MlString) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.ffi name) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_ffi name)
+
 end Flapjack.Compiler.Backend.ClosNumber
