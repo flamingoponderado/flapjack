@@ -1,9 +1,21 @@
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EvaluateCases
+import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
 
 /-! Code and oracle safety across closure-language installation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open Flapjack Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
+
+/-- Ordinary primitive execution preserves the code and oracle invariants. -/
+theorem doApp_preserves_safe {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (source next : State C F) (value : Value) (run : doApp op args source = .val (value, next))
+    (code : CodeSafe source) (oracle : OracleSafe source) : CodeSafe next ∧ OracleSafe next := by
+  obtain ⟨codeEq, oracleEq⟩ := doApp_codeOracle op args source next value run
+  constructor
+  · intro key arity body found
+    rw [codeEq] at found
+    exact code key arity body found
+  · simpa [OracleSafe, oracleEq] using oracle
 
 private theorem everyFnVarsNone_mem (expressions : List ClosLang.Exp)
     (safe : everyFnVarsNone expressions) (body : ClosLang.Exp) (member : body ∈ expressions) :
@@ -82,5 +94,206 @@ theorem doInstall_preserves_safe_all {C F : Type} (values : List Value) (source 
     have same := doInstall_typeError_state values source next run
     simpa [same] using And.intro code oracle
   · exact doInstall_preserves_safe values source next result run typeError code oracle
+
+/-- An ordinary operation preserves safety when its arguments do. -/
+theorem evaluate_ordinaryOp_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (args : List ClosLang.Exp) (notInstall : op ≠ .install)
+    (notForce : op ≠ .thunkOp .forceThunk) (argsIH : PreservesCodeOracle (C := C) (F := F) args) :
+    PreservesCodeOracle (C := C) (F := F) [.op trace op args] := by
+  intro env source result next run code oracle
+  rw [evaluate_ordinaryOp_eq trace op args env source notInstall notForce] at run
+  cases argsRun : evaluate args env source with
+  | mk argsResult middle =>
+    have middleSafe := argsIH env source argsResult middle argsRun code oracle
+    rw [argsRun] at run
+    cases argsResult with
+    | err error =>
+      cases run
+      exact middleSafe
+    | val values =>
+      dsimp only at run
+      cases appRun : doApp op values.reverse middle with
+      | err error =>
+        rw [appRun] at run
+        cases run
+        exact middleSafe
+      | val pair =>
+        obtain ⟨value, final⟩ := pair
+        rw [appRun] at run
+        cases run
+        exact doApp_preserves_safe op values.reverse middle next value appRun middleSafe.1 middleSafe.2
+
+/-- Installation preserves safety when argument evaluation and the
+dynamically installed program do. -/
+theorem evaluate_install_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : PreservesCodeOracle (C := C) (F := F) args)
+    (programIH : ∀ program, PreservesCodeOracle (C := C) (F := F) program) :
+    PreservesCodeOracle (C := C) (F := F) [.op trace .install args] := by
+  intro env source result next run code oracle
+  rw [evaluate, fixClock_evaluate] at run
+  cases argsRun : evaluate args env source with
+  | mk argsResult middle =>
+    have middleSafe := argsIH env source argsResult middle argsRun code oracle
+    rw [argsRun] at run
+    cases argsResult with
+    | err error =>
+      cases run
+      exact middleSafe
+    | val values =>
+      dsimp only at run
+      cases installRun : doInstall values.reverse middle with
+      | mk installResult installed =>
+        have installedSafe := doInstall_preserves_safe_all values.reverse middle installed installResult
+          installRun middleSafe.1 middleSafe.2
+        rw [installRun] at run
+        cases installResult with
+        | err error =>
+          cases run
+          exact installedSafe
+        | val program =>
+          dsimp only at run
+          cases programRun : evaluate program [] installed with
+          | mk programResult final =>
+            have finalSafe := programIH program [] installed programResult final programRun installedSafe.1 installedSafe.2
+            rw [programRun] at run
+            cases programResult <;> cases run <;> exact finalSafe
+
+/-- Evaluating an empty list or a variable leaves the code and oracle intact. -/
+theorem evaluate_nil_preserves_safe {C F : Type} : PreservesCodeOracle (C := C) (F := F) [] := by
+  intro env source result next run code oracle
+  simp [evaluate] at run
+  obtain ⟨_, rfl⟩ := run
+  exact ⟨code, oracle⟩
+
+theorem evaluate_var_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (index : Nat) :
+    PreservesCodeOracle (C := C) (F := F) [.var trace index] := by
+  intro env source result next run code oracle
+  simp only [evaluate] at run
+  split at run <;> simp_all
+
+/-- Sequencing preserves safety when both component evaluations do. -/
+theorem evaluate_cons_preserves_safe {C F : Type} (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
+    (firstIH : PreservesCodeOracle (C := C) (F := F) [first])
+    (restIH : PreservesCodeOracle (C := C) (F := F) (second :: rest)) :
+    PreservesCodeOracle (C := C) (F := F) (first :: second :: rest) := by
+  intro env source result next run code oracle
+  rw [evaluate, fixClock_evaluate] at run
+  cases firstRun : evaluate [first] env source with
+  | mk firstResult middle =>
+    have middleSafe := firstIH env source firstResult middle firstRun code oracle
+    rw [firstRun] at run
+    cases firstResult with
+    | err error => cases run; exact middleSafe
+    | val values =>
+      dsimp only at run
+      cases restRun : evaluate (second :: rest) env middle with
+      | mk restResult last =>
+        have lastSafe := restIH env middle restResult last restRun middleSafe.1 middleSafe.2
+        rw [restRun] at run
+        cases restResult <;> cases run <;> exact lastSafe
+
+/-- Raise expressions inherit safety preservation from their body. -/
+theorem evaluate_raise_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (bodyIH : PreservesCodeOracle (C := C) (F := F) [body]) :
+    PreservesCodeOracle (C := C) (F := F) [.raise trace body] := by
+  intro env source result next run code oracle
+  rw [evaluate] at run
+  cases bodyRun : evaluate [body] env source with
+  | mk bodyResult middle =>
+    have middleSafe := bodyIH env source bodyResult middle bodyRun code oracle
+    rw [bodyRun] at run
+    cases bodyResult <;> cases run <;> exact middleSafe
+
+/-- Tick expressions only change the clock before evaluating their body. -/
+theorem evaluate_tick_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (bodyIH : PreservesCodeOracle (C := C) (F := F) [body]) :
+    PreservesCodeOracle (C := C) (F := F) [.tick trace body] := by
+  intro env source result next run code oracle
+  by_cases zero : source.clock = 0
+  · simp [evaluate, zero] at run
+    obtain ⟨_, rfl⟩ := run
+    exact ⟨code, oracle⟩
+  · have bodyRun : evaluate [body] env (decClock 1 source) = (result, next) := by
+      simpa [evaluate, zero] using run
+    apply bodyIH env (decClock 1 source) result next bodyRun
+    · simpa [CodeSafe, decClock] using code
+    · simpa [OracleSafe, decClock] using oracle
+
+/-- Let expressions preserve safety through their bindings and body. -/
+theorem evaluate_let_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
+    (bindings : List ClosLang.Exp) (body : ClosLang.Exp)
+    (bindingsIH : PreservesCodeOracle (C := C) (F := F) bindings)
+    (bodyIH : PreservesCodeOracle (C := C) (F := F) [body]) :
+    PreservesCodeOracle (C := C) (F := F) [.let trace bindings body] := by
+  intro env source result next run code oracle
+  rw [evaluate, fixClock_evaluate] at run
+  cases bindingsRun : evaluate bindings env source with
+  | mk bindingsResult middle =>
+    have middleSafe := bindingsIH env source bindingsResult middle bindingsRun code oracle
+    rw [bindingsRun] at run
+    cases bindingsResult with
+    | err error => cases run; exact middleSafe
+    | val values => exact bodyIH (values ++ env) middle result next run middleSafe.1 middleSafe.2
+
+/-- Exception handlers preserve safety through both the body and handler. -/
+theorem evaluate_handle_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
+    (body handler : ClosLang.Exp) (bodyIH : PreservesCodeOracle (C := C) (F := F) [body])
+    (handlerIH : PreservesCodeOracle (C := C) (F := F) [handler]) :
+    PreservesCodeOracle (C := C) (F := F) [.handle trace body handler] := by
+  intro env source result next run code oracle
+  rw [evaluate, fixClock_evaluate] at run
+  cases bodyRun : evaluate [body] env source with
+  | mk bodyResult middle =>
+    have middleSafe := bodyIH env source bodyResult middle bodyRun code oracle
+    rw [bodyRun] at run
+    cases bodyResult with
+    | val values => cases run; exact middleSafe
+    | err error =>
+      cases error with
+      | abort reason => cases run; exact middleSafe
+      | raise value => exact handlerIH (value :: env) middle result next run middleSafe.1 middleSafe.2
+
+/-- Conditionals preserve safety along the evaluated condition and branch. -/
+theorem evaluate_if_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
+    (condition yes no : ClosLang.Exp) (conditionIH : PreservesCodeOracle (C := C) (F := F) [condition])
+    (yesIH : PreservesCodeOracle (C := C) (F := F) [yes])
+    (noIH : PreservesCodeOracle (C := C) (F := F) [no]) :
+    PreservesCodeOracle (C := C) (F := F) [.ifThenElse trace condition yes no] := by
+  intro env source result next run code oracle
+  rw [evaluate, fixClock_evaluate] at run
+  cases testRun : evaluate [condition] env source with
+  | mk testResult middle =>
+    have middleSafe := conditionIH env source testResult middle testRun code oracle
+    rw [testRun] at run
+    cases testResult with
+    | err error => cases run; exact middleSafe
+    | val values =>
+      dsimp only at run
+      split at run
+      · cases run; exact middleSafe
+      · exact yesIH env middle result next run middleSafe.1 middleSafe.2
+      · exact noIH env middle result next run middleSafe.1 middleSafe.2
+
+/-- Constructing a closure leaves code and oracle untouched. -/
+theorem evaluate_fn_preserves_safe {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (location : Option Nat) (selected : Option (List Nat)) (arity : Nat) (body : ClosLang.Exp) :
+    PreservesCodeOracle (C := C) (F := F) [.fn name location selected arity body] := by
+  intro env source result next run code oracle
+  rw [evaluate.eq_def] at run
+  dsimp only at run
+  repeat' split at run <;> simp_all
+
+/-- Recursive closure construction either fails without changing state or
+evaluates the body with an extended environment. -/
+theorem evaluate_letrec_preserves_safe {C F : Type} (names : List Flapjack.AstHOL.VarN)
+    (location : Option Nat) (selected : Option (List Nat)) (functions : List (Nat × ClosLang.Exp))
+    (body : ClosLang.Exp) (bodyIH : PreservesCodeOracle (C := C) (F := F) [body]) :
+    PreservesCodeOracle (C := C) (F := F) [.letrec names location selected functions body] := by
+  intro env source result next run code oracle
+  rw [evaluate.eq_def] at run
+  dsimp only at run
+  repeat' split at run
+  all_goals try (simp_all; done)
+  all_goals exact bodyIH _ source result next run code oracle
 
 end Flapjack.Compiler.Backend.ClosAnnotate
