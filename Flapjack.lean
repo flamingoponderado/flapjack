@@ -970,6 +970,8 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyElemAt
 import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyByteRead
 import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBool
 import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBlockObserve
+import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyEqualConst
+import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyConfigGC
 import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk
 import Flapjack.Compiler.Backend.BviToData.Proofs.Build
 import Flapjack.Compiler.Backend.BviToData.Proofs.Int
