@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.DataSpace.Proofs.ResourceVariation
+import Flapjack.Compiler.Backend.DataSpace.Proofs.TimeoutAll
 
 /-! Composition of reservation simulations through sequences. -/
 namespace Flapjack.Compiler.Backend.DataSpace
@@ -94,8 +94,7 @@ theorem simulationFor_seq_plain_raise {C F : Type} (first second : DataLang.Prog
       simpa using varied
 
 /-- Sequencing combines two simulations when the compiled second component
-admits the exact resource-field swap for all non-type-error outcomes. The
-swap premise is still open for timeouts. -/
+admits the exact resource-field swap for all non-type-error outcomes. -/
 theorem simulationFor_seq_plain_of_resourceSwap {C F : Type} (first second : DataLang.Prog)
     (firstIH : simulationFor (C := C) (F := F) first)
     (secondIH : simulationFor (C := C) (F := F) second)
@@ -134,6 +133,7 @@ theorem simulationFor_seq_plain_of_resourceSwap {C F : Type} (first second : Dat
         refine ⟨out, safe', peak', stackMax', ?_, finalIncluded⟩
         rw [shape, DataSem.evaluate, fixClock_evaluate, targetFirst]
         simpa using varied
+
       | some stopped =>
         obtain ⟨safe', peak', stackMax', varied⟩ := resourceSwap { mid with locals := midLocals }
           { sourceNext with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
@@ -142,8 +142,17 @@ theorem simulationFor_seq_plain_of_resourceSwap {C F : Type} (first second : Dat
         rw [shape, DataSem.evaluate, fixClock_evaluate, targetFirst]
         simpa using varied
 
-/-- Retained sequence composition holds for every non-type-error result
-except timeout, whose exact resource swap remains open. -/
+/-- Retained sequences compose for all non-type-error outcomes. -/
+theorem simulationFor_seq_plain {C F : Type} (first second : DataLang.Prog)
+    (firstIH : simulationFor (C := C) (F := F) first)
+    (secondIH : simulationFor (C := C) (F := F) second)
+    (shape : compile (.seq first second) = .seq (compile first) (compile second)) :
+    simulationFor (C := C) (F := F) (.seq first second) := by
+  apply simulationFor_seq_plain_of_resourceSwap first second firstIH secondIH shape
+  intro state next result safe peak stackMax notType run
+  exact evaluate_resource_variation_exact (compile second) state next result safe peak stackMax notType run
+
+/-- Retained sequence composition specialized to non-timeout results. -/
 theorem simulationFor_seq_plain_nonTimeout {C F : Type} (first second : DataLang.Prog)
     (firstIH : simulationFor (C := C) (F := F) first)
     (secondIH : simulationFor (C := C) (F := F) second)
