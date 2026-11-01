@@ -2833,6 +2833,7 @@ import Flapjack.Compiler.Encoders.X64.Machine.EncodingProof
 import Flapjack.Compiler.Encoders.X64.Machine.MemDecodeProof
 import Flapjack.Compiler.Encoders.X64.Machine.Congruence
 import Flapjack.Compiler.Encoders.X64.Machine.DecodeReads
+import Flapjack.Compiler.Encoders.X64.Machine.DecodeCongr
 import Flapjack.Compiler.Encoders.X64.Machine.TargetProof
 import Flapjack.Compiler.Encoders.X64.Machine.StepAgree
 import Flapjack.Compiler.Encoders.X64.Machine.Simulate
