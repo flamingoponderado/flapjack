@@ -100250,6 +100250,18 @@
     "reviewer": "Source comparison: get_real_addr_get_addr and its typed data_to_word_memory_repr capture preserve the heap-length bound, successful lookup, CurrHeap store lookup and good_dimindex hypotheses, together with both simple and optimized decoder conclusions. The heap address and payload element carriers are independently polymorphic and independent of the positive target word width. store is the canonical finite-support map with its local lookup-and-support roundtrip witness. All three optimized branches are proved from the source conditions."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockHeader.lean",
+    "lean_name": "memoryRel_blockImp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Block_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Block_IMP and its typed data_to_word_memory_repr capture preserve the original memory relation and good_dimindex hypotheses and both branches of the existential Word conclusion. The empty case retains the encoded tag, clear low bit, tag bound and zero timestamp. The nonempty case retains the pointer and header bits, decoded real address, memory contents and domain membership, decoded length, length bound, encoded header and timestamp bound. getLsbD = true/false represents the corresponding HOL word bits; domain a = true represents membership in dm. store uses the canonical finite-support map, and all target words share the positive source word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

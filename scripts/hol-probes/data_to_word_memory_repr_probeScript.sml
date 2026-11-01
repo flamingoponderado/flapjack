@@ -103,6 +103,7 @@ val _ = show "get_real_addr_get_addr_typed" data_to_word_memoryProofTheory.get_r
 val _ = show "word_addr_eq_Loc_typed" data_to_word_memoryProofTheory.word_addr_eq_Loc;
 val _ = show "blocks_unique_CodePtr_typed" data_to_word_memoryProofTheory.blocks_unique_CodePtr;
 val _ = show "memory_rel_CodePtr_typed" data_to_word_memoryProofTheory.memory_rel_CodePtr;
+val _ = show "memory_rel_Block_IMP_typed" data_to_word_memoryProofTheory.memory_rel_Block_IMP;
 val _ = show "memory_rel_Add_typed" data_to_word_memoryProofTheory.memory_rel_Add;
 val _ = show "memory_rel_Sub_typed" data_to_word_memoryProofTheory.memory_rel_Sub;
 val _ = show "memory_rel_And_typed" data_to_word_memoryProofTheory.memory_rel_And;
