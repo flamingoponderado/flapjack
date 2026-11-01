@@ -1024,6 +1024,7 @@ import Flapjack.Compiler.Backend.DataSpace.Proofs.Accounting
 import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveSpace
 import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveMemorySpace
 import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveBlockSpace
+import Flapjack.Compiler.Backend.DataSpace.Proofs.ReservationAssign
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Simulation
 import Flapjack.Compiler.Backend.BviToData.Proofs.FindCode
 import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk
