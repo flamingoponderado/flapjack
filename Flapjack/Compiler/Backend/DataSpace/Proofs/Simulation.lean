@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.DataSpace.Proofs.State
 import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
 import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
+import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveAll
 
 /-! Basic cases of data-space reservation simulation. -/
 namespace Flapjack.Compiler.Backend.DataSpace
@@ -40,6 +41,95 @@ theorem simulationFor_move {C F : Type} (dest src : Nat) : simulationFor (C := C
     refine ⟨sptInsert dest value locals, source.safeForSpace, source.peakHeapLength, source.stackMax, ?_, ?_⟩
     · simp [compile, space, pMakeSpace, DataSem.evaluate, targetRead, setVar]
     · exact insert_subspt source.locals locals dest value included
+
+/-- An annotated assignment cuts the two environments to the same tree, so
+the rest of the primitive evaluation starts from exactly the same state. -/
+theorem simulationFor_annotatedAssign {C F : Type} (dest : Nat) (op : ClosLang.Op)
+    (arguments : List Nat) (names : NumSet) :
+    simulationFor (C := C) (F := F) (.assign dest op arguments (some names)) := by
+  intro source sourceNext result locals notType run included
+  by_cases invalid : DataLang.opRequiresNames op = false
+  · simp [DataSem.evaluate, invalid] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact False.elim (notType rfl)
+  · cases read : DataSem.getVars arguments source.locals with
+    | none =>
+      simp [DataSem.evaluate, invalid, read] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact False.elim (notType rfl)
+    | some values =>
+      have targetRead := getVars_of_subspt arguments source.locals locals values included read
+      cases cut : cutEnv names source.locals with
+      | none =>
+        simp [DataSem.evaluate, invalid, read, cutStateOpt, cutState, cut] at run
+        obtain ⟨rfl, rfl⟩ := run
+        exact False.elim (notType rfl)
+      | some env =>
+        have targetCut := cutEnv_of_subspt names source.locals locals env included cut
+        have same : DataSem.evaluate (.assign dest op arguments (some names)) { source with locals := locals } =
+            DataSem.evaluate (.assign dest op arguments (some names)) source := by
+          simp [DataSem.evaluate, invalid, read, targetRead, cutStateOpt, cutState, cut, targetCut]
+        refine ⟨sourceNext.locals, sourceNext.safeForSpace, sourceNext.peakHeapLength, sourceNext.stackMax, ?_, ?_⟩
+        · simpa [compile, space, pMakeSpace] using same.trans run
+        · intro key member
+          exact ⟨member, rfl⟩
+
+/-- An unannotated assignment preserves the simulation when the target has
+additional locals; primitive accounting may change the three resource fields. -/
+theorem simulationFor_unannotatedAssign {C F : Type} (dest : Nat) (op : ClosLang.Op)
+    (arguments : List Nat) : simulationFor (C := C) (F := F) (.assign dest op arguments none) := by
+  intro source sourceNext result locals notType run included
+  by_cases invalid : DataLang.opRequiresNames op = true
+  · simp [DataSem.evaluate, invalid] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact False.elim (notType rfl)
+  · cases read : DataSem.getVars arguments source.locals with
+    | none =>
+      simp [DataSem.evaluate, invalid, read] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact False.elim (notType rfl)
+    | some values =>
+      have targetRead := getVars_of_subspt arguments source.locals locals values included read
+      let target := { source with locals := locals }
+      have related : DataLive.stateRel source target .ln := by
+        rcases DataLive.stateRel_refl source .ln with ⟨code, clock, spaceEq, ffi, refs, global, handler, stack, compiler, oracle, stamps, limits, frames, _⟩
+        exact ⟨code, clock, spaceEq, ffi, refs, global, handler, stack, compiler, oracle, stamps, limits, frames, by simp [sptMem, sptDomain, sptLookup]⟩
+      cases app : doApp op values source with
+      | err error =>
+        have targetApp := DataLive.stateRel_doApp_error source target .ln op values error related app
+        simp [DataSem.evaluate, invalid, read, cutStateOpt, app] at run
+        obtain ⟨rfl, rfl⟩ := run
+        refine ⟨.ln, (installSfs op source).safeForSpace, source.peakHeapLength, source.stackMax, ?_, ?_⟩
+        · simp [compile, space, pMakeSpace, DataSem.evaluate, invalid, targetRead, cutStateOpt, targetApp, target, flushState, installSfs]
+        · simp [flushState, sptSubspt, sptMem, sptDomain, sptLookup]
+      | val pair =>
+        obtain ⟨value, sourceApplied⟩ := pair
+        obtain ⟨targetApplied, targetApp, appRel⟩ :=
+          DataLive.stateRel_doApp_success source target sourceApplied .ln op values value related app
+        have sourceControl := doApp_control op values source sourceApplied value app
+        have targetControl := doApp_control op values target targetApplied value targetApp
+        have stateEq : targetApplied = { sourceApplied with locals := locals, safeForSpace := targetApplied.safeForSpace, peakHeapLength := targetApplied.peakHeapLength, stackMax := targetApplied.stackMax } := by
+          rcases appRel with ⟨code, clock, spaceEq, ffi, refs, global, handler, _, compiler, oracle, stamps, limits, frames, _⟩
+          cases sourceApplied
+          cases targetApplied
+          simp_all [target]
+        simp [DataSem.evaluate, invalid, read, cutStateOpt, app] at run
+        obtain ⟨rfl, rfl⟩ := run
+        refine ⟨sptInsert dest value locals, (installSfs op targetApplied).safeForSpace,
+          targetApplied.peakHeapLength, targetApplied.stackMax, ?_, ?_⟩
+        · simp only [compile, space, pMakeSpace]
+          simp [DataSem.evaluate, invalid, targetRead, cutStateOpt, targetApp, target]
+          rw [stateEq]
+          simp [setVar, installSfs]
+        · simpa [setVar, installSfs, sourceControl.1] using insert_subspt source.locals locals dest value included
+
+/-- Both assignment forms satisfy the data-space simulation. -/
+theorem simulationFor_assign {C F : Type} (dest : Nat) (op : ClosLang.Op)
+    (arguments : List Nat) (names : Option NumSet) :
+    simulationFor (C := C) (F := F) (.assign dest op arguments names) := by
+  cases names with
+  | none => exact simulationFor_unannotatedAssign dest op arguments
+  | some names => exact simulationFor_annotatedAssign dest op arguments names
 
 /-- Clock ticks preserve local extension, including timeout. -/
 theorem simulationFor_tick {C F : Type} : simulationFor (C := C) (F := F) .tick := by
