@@ -988,6 +988,8 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.OpFrame
 import Flapjack.Compiler.Backend.BviToData.Proofs.Call
 import Flapjack.Compiler.Backend.BviToData.Proofs.Force
 import Flapjack.Compiler.Backend.DataSimp.Proofs.Correct
+import Flapjack.Compiler.Backend.DataLive.Proofs.State
+import Flapjack.Compiler.Backend.DataSpace.Proofs.State
 import Flapjack.Compiler.Backend.BviToData.Proofs.FindCode
 import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk
 import Flapjack.Compiler.Backend.BviToData.Proofs.Build
