@@ -100128,6 +100128,44 @@
     "reviewer": "Source comparison: memory_rel_RefPtr_EQ and its typed data_to_word_memory_repr capture retain the full memory relation for two RefPtr T values and good_dimindex, and conclude the existence of both Word witnesses together with equivalence of their equality and the original reference indices. Heap lookup bounds and the source-shaped pointer encoding establish injectivity; store uses the canonical finite-support map, and all target words share the positive source word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/CodePointer.lean",
+    "lean_name": "getAddr_lowBit",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "get_addr_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: get_addr_0 and its typed data_to_word_memory_repr capture. The original unrestricted pointer encoding has bit zero set; getLsbD 0 = true represents the HOL Boolean bit."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/CodePointer.lean",
+    "lean_name": "wordAddr_eqLoc",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_addr_eq_Loc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_addr_eq_Loc and its typed data_to_word_memory_repr capture. The original equality to Loc l1 l2 is equivalent to l2 = 0 and existence of a Data (Loc l1 offset) source address."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/CodePointer.lean",
+    "lean_name": "blocksUnique_codePtr",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "blocks_unique_CodePtr",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: blocks_unique_CodePtr and its typed data_to_word_memory_repr capture. The source pair-list second carrier remains independent and polymorphic; uniqueness for MAP FST implies uniqueness after prepending CodePtr."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/CodePointer.lean",
+    "lean_name": "memoryRel_codePtr",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_CodePtr",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_CodePtr and its typed data_to_word_memory_repr capture. The original memory relation implies the same relation after prepending CodePtr lab and Loc lab 0; store uses the canonical finite-support map and target words share the positive source width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

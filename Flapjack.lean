@@ -225,6 +225,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SmallNumber
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Unit
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Bool
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefEquality
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.CodePointer
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Numbers
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Space
