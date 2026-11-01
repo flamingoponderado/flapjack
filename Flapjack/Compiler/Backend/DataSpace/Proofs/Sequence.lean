@@ -95,10 +95,11 @@ theorem simulationFor_seq_plain_raise {C F : Type} (first second : DataLang.Prog
 
 /-- Sequencing combines two simulations when the compiled second component
 admits the exact resource-field swap for all non-type-error outcomes. -/
-theorem simulationFor_seq_plain_of_resourceSwap {C F : Type} (first second : DataLang.Prog)
+theorem simulationFor_seq_of_evaluate_shape_resourceSwap {C F : Type} (first second : DataLang.Prog)
     (firstIH : simulationFor (C := C) (F := F) first)
     (secondIH : simulationFor (C := C) (F := F) second)
-    (shape : compile (.seq first second) = .seq (compile first) (compile second))
+    (shape : ∀ state : State C F, DataSem.evaluate (compile (.seq first second)) state =
+      DataSem.evaluate (.seq (compile first) (compile second)) state)
     (resourceSwap : ∀ (state next : State C F) (result : Option (Result (List DataSem.Value) DataSem.Value))
       (safe : Bool) (peak : Nat) (stackMax : Option Nat),
       result ≠ some (.err (.abort .typeError)) →
@@ -142,15 +143,54 @@ theorem simulationFor_seq_plain_of_resourceSwap {C F : Type} (first second : Dat
         rw [shape, DataSem.evaluate, fixClock_evaluate, targetFirst]
         simpa using varied
 
+/-- Sequences compose when the compiled sequence evaluates like the two
+compiled components in order. -/
+theorem simulationFor_seq_of_evaluate_shape {C F : Type} (first second : DataLang.Prog)
+    (firstIH : simulationFor (C := C) (F := F) first)
+    (secondIH : simulationFor (C := C) (F := F) second)
+    (shape : ∀ state : State C F, DataSem.evaluate (compile (.seq first second)) state =
+      DataSem.evaluate (.seq (compile first) (compile second)) state) :
+    simulationFor (C := C) (F := F) (.seq first second) := by
+  apply simulationFor_seq_of_evaluate_shape_resourceSwap first second firstIH secondIH shape
+  intro state next result safe peak stackMax notType run
+  exact evaluate_resource_variation_exact (compile second) state next result safe peak stackMax notType run
+
 /-- Retained sequences compose for all non-type-error outcomes. -/
 theorem simulationFor_seq_plain {C F : Type} (first second : DataLang.Prog)
     (firstIH : simulationFor (C := C) (F := F) first)
     (secondIH : simulationFor (C := C) (F := F) second)
     (shape : compile (.seq first second) = .seq (compile first) (compile second)) :
     simulationFor (C := C) (F := F) (.seq first second) := by
-  apply simulationFor_seq_plain_of_resourceSwap first second firstIH secondIH shape
-  intro state next result safe peak stackMax notType run
-  exact evaluate_resource_variation_exact (compile second) state next result safe peak stackMax notType run
+  apply simulationFor_seq_of_evaluate_shape first second firstIH secondIH
+  intro state
+  rw [shape]
+
+/-- Sequences whose first instruction cannot absorb a deferred reservation
+preserve the simulation for either form of the second component. -/
+theorem simulationFor_seq_nonHoistable {C F : Type} (first second : DataLang.Prog)
+    (firstIH : simulationFor (C := C) (F := F) first)
+    (secondIH : simulationFor (C := C) (F := F) second)
+    (notSkip : first ≠ .skip) (notSpace : ∀ amount names, first ≠ .makeSpace amount names)
+    (notMove : ∀ dest src, first ≠ .move dest src)
+    (notAssign : ∀ dest op args, first ≠ .assign dest op args none) :
+    simulationFor (C := C) (F := F) (.seq first second) := by
+  apply simulationFor_seq_plain first second firstIH secondIH
+  cases found : space second with
+  | inl body => exact compile_seq_plain_of_noReservation first second body found notSkip notSpace
+  | inr payload =>
+    obtain ⟨amount, names, body⟩ := payload
+    exact compile_seq_plain_of_nonHoistable first second amount names body found notSkip notSpace notMove notAssign
+
+/-- A non-special first component composes whenever the second component
+has no deferred reservation. -/
+theorem simulationFor_seq_withoutDeferred {C F : Type} (first second body : DataLang.Prog)
+    (firstIH : simulationFor (C := C) (F := F) first)
+    (secondIH : simulationFor (C := C) (F := F) second)
+    (found : space second = .inl body) (notSkip : first ≠ .skip)
+    (notSpace : ∀ amount names, first ≠ .makeSpace amount names) :
+    simulationFor (C := C) (F := F) (.seq first second) := by
+  exact simulationFor_seq_plain first second firstIH secondIH
+    (compile_seq_plain_of_noReservation first second body found notSkip notSpace)
 
 /-- Retained sequence composition specialized to non-timeout results. -/
 theorem simulationFor_seq_plain_nonTimeout {C F : Type} (first second : DataLang.Prog)
