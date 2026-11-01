@@ -955,6 +955,9 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Equality
 import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyEquality
 import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBuild
 import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyWord
+import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyInt
+import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyGlobals
+import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyLabel
 import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk
 import Flapjack.Compiler.Backend.BviToData.Proofs.Build
 import Flapjack.Compiler.Backend.BviToData.Proofs.Int

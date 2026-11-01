@@ -29,4 +29,27 @@ theorem doIntApp_projection (op : ClosLang.IntOp) (args : List DataSem.Value) (r
           first | (rcases run with ⟨_, rfl⟩; simp [dataToBviValue]) | (subst result; simp [dataToBviValue])
       | cons c rest => simp_all [DataSem.doIntApp]
 
+/-- All non-constant integer operations commute with timestamp erasure,
+including their failure cases. Constants are handled separately by the BVI
+dispatcher, which enforces the data language's small-integer bound. This is
+Flapjack pass-simulation infrastructure. -/
+theorem doIntApp_projection_nonconst (op : ClosLang.IntOp) (args : List DataSem.Value)
+    (notConst : ∀ n, op ≠ .const n) :
+    (DataSem.doIntApp op args).map dataToBviValue =
+      BvlSem.doIntApp op (args.map dataToBviValue) := by
+  cases op <;> cases args with
+  | nil => simp_all [DataSem.doIntApp, BvlSem.doIntApp]
+  | cons a rest =>
+    cases rest with
+    | nil =>
+      cases a <;> simp_all [DataSem.doIntApp, BvlSem.doIntApp, dataToBviValue,
+        DataSem.boolValue, BvlSem.boolValue]
+    | cons b rest =>
+      cases rest with
+      | nil =>
+        cases a <;> cases b <;> simp_all [DataSem.doIntApp, BvlSem.doIntApp, dataToBviValue,
+          DataSem.boolValue, BvlSem.boolValue]
+        all_goals split <;> simp_all [dataToBviValue]
+      | cons c rest => simp_all [DataSem.doIntApp, BvlSem.doIntApp]
+
 end Flapjack.Compiler.Backend.BviToData
