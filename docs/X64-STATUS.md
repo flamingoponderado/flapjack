@@ -221,9 +221,9 @@ follow-ups, not required for this port:
   port of CakeML's L3 `x64Script.sml`. Porting the L3 state and transition
   semantics (`NextStateX64`, the `x64_ok` MXCSR/exception condition, the full
   instruction semantics) and proving `x64_encoder_correct` against it — or a
-  checked refinement from the closed model — remains open. `docs/SOUNDNESS.md`
-  item 11 records that the parity evidence covers emitted bytes only and cannot
-  establish that connection.
+  checked refinement from the closed model — remains open and is tracked in
+  #1238. `docs/SOUNDNESS.md` item 11 records that the parity evidence covers
+  emitted bytes only and cannot establish that connection.
 * `--target=arm8` still stops at `Arm8.NativeCLI.output_ok`; an `arm8CLIOutput_correct`
   would need the ARMv8 analogue of `X64Source.lean` and `X64NativeSourceCorrect.lean`.
 * Rebuild `cakeml/developers/bin/cake` from the pinned submodule revision so
