@@ -2840,6 +2840,7 @@ import Flapjack.Compiler.Encoders.X64.Machine.SkipCase
 import Flapjack.Compiler.Encoders.X64.Machine.ControlCase
 import Flapjack.Compiler.Encoders.X64.Machine.VacuousCase
 import Flapjack.Compiler.Encoders.X64.Machine.LocCase
+import Flapjack.Compiler.Encoders.X64.Machine.JumpRegCase
 import Flapjack.Compiler.Encoders.X64.Machine.StepAgree
 import Flapjack.Compiler.Encoders.X64.Machine.Simulate
 import Flapjack.X64.NativeSource
