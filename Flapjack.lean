@@ -994,6 +994,7 @@ import Flapjack.Compiler.Backend.DataLive.Proofs.PureError
 import Flapjack.Compiler.Backend.DataLive.Proofs.PureBlock
 import Flapjack.Compiler.Backend.DataLive.Proofs.PureMemory
 import Flapjack.Compiler.Backend.DataLive.Proofs.Accounting
+import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveFfi
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateControl
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackResult
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultPrimitive
