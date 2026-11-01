@@ -81,6 +81,15 @@ SOURCE_CORPUS = [
     ('fun f x = case x of (a,b) => a a;', 1),
     ('structure S = struct val x = 1 end; val x = S.x 4;', 1),
     ('val f = fn x => x; val x = (f 1, f "a");', 0),
+    ('datatype t = A | B int; fun f x = case x of A => 0 | B y => y; val z = f (B 3);', 0),
+    ('structure S = struct datatype t = A | B int; fun f x = case x of A => 0 | B n => n end; val z = S.f (S.B 5);', 0),
+    ('datatype t = A | B int; exception E t; fun f x = (raise E x) handle E A => 0 | E (B n) => n; val z = f (B 2);', 0),
+    ('fun f x y = let val (a,b) = (y,x) in fn z => (a,b,z) end; val z = f 1 2 3;', 0),
+    ('val x = (fn f => f (fn x => x)) (fn g => g 5);', 0),
+    ('val x = "λ😀"; val y = (x, x);', 0),
+    ('fun f x = let val x = x in let val x = x in x end end; val y = f 1;', 0),
+    ('val x = ((fn x => fn y => x) 1) "a"; val y = ((fn x => fn y => x) "b") 2;', 0),
+    ('val x = (1, 2, 3); val (a,b,c) = x; val y = (c,b,a);', 0),
 ]
 
 # These programs also exercise the basis and full backend output. They must
