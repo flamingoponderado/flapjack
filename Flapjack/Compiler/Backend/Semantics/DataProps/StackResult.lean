@@ -21,16 +21,16 @@ def stackResult {C F : Type} (source : State C F) (result : Option (Result (List
 The induction hypotheses are precisely the invariants for the two components. -/
 theorem evaluate_seq_stackResult {C F : Type} (first second : DataLang.Prog) (state next : State C F)
     (result : Option (Result (List Value) Value))
-    (firstIH : ∀ before after : State C F, ∀ outcome,
-      evaluate first before = (outcome, after) → stackResult before outcome after)
+    (firstIH : ∀ after : State C F, ∀ outcome,
+      evaluate first state = (outcome, after) → stackResult state outcome after)
     (secondIH : ∀ before after : State C F, ∀ outcome,
-      evaluate second before = (outcome, after) → stackResult before outcome after)
+      before.clock ≤ state.clock → evaluate second before = (outcome, after) → stackResult before outcome after)
     (run : evaluate (.seq first second) state = (result, next)) : stackResult state result next := by
   rw [evaluate, fixClock_evaluate] at run
   cases firstRun : evaluate first state with
   | mk outcome mid =>
     rw [firstRun] at run
-    have firstControl := firstIH state mid outcome firstRun
+    have firstControl := firstIH mid outcome firstRun
     cases outcome with
     | some stopped =>
       simp only [Prod.mk.injEq] at run
@@ -38,7 +38,10 @@ theorem evaluate_seq_stackResult {C F : Type} (first second : DataLang.Prog) (st
       exact firstControl
     | none =>
       have midControl : mid.stack = state.stack ∧ mid.handler = state.handler := firstControl
-      have secondControl := secondIH mid next result run
+      have midClock : mid.clock ≤ state.clock := by
+        have bound := evaluate_clock_le first state
+        simpa [firstRun] using bound
+      have secondControl := secondIH mid next result midClock run
       cases result with
       | none =>
         exact ⟨secondControl.1.trans midControl.1, secondControl.2.trans midControl.2⟩
@@ -59,10 +62,10 @@ theorem evaluate_seq_stackResult {C F : Type} (first second : DataLang.Prog) (st
 /-- The result-sensitive invariant composes through either conditional branch. -/
 theorem evaluate_if_stackResult {C F : Type} (name : Nat) (yes no : DataLang.Prog) (state next : State C F)
     (result : Option (Result (List Value) Value))
-    (yesIH : ∀ before after : State C F, ∀ outcome,
-      evaluate yes before = (outcome, after) → stackResult before outcome after)
-    (noIH : ∀ before after : State C F, ∀ outcome,
-      evaluate no before = (outcome, after) → stackResult before outcome after)
+    (yesIH : ∀ after : State C F, ∀ outcome,
+      evaluate yes state = (outcome, after) → stackResult state outcome after)
+    (noIH : ∀ after : State C F, ∀ outcome,
+      evaluate no state = (outcome, after) → stackResult state outcome after)
     (run : evaluate (.ifThenElse name yes no) state = (result, next)) : stackResult state result next := by
   cases read : getVar name state.locals with
   | none =>
@@ -71,10 +74,10 @@ theorem evaluate_if_stackResult {C F : Type} (name : Nat) (yes no : DataLang.Pro
     trivial
   | some value =>
     by_cases yes : isBool true value
-    · apply yesIH state next result
+    · apply yesIH next result
       simpa [evaluate, read, yes] using run
     · by_cases no : isBool false value
-      · apply noIH state next result
+      · apply noIH next result
         simpa [evaluate, read, yes, no] using run
       · simp [evaluate, read, yes, no] at run
         obtain ⟨rfl, rfl⟩ := run

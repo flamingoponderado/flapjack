@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.DataLive.Proofs.State
 import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
 import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
+import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultAll
 
 /-! Compositional simulation cases for data liveness. -/
 namespace Flapjack.Compiler.Backend.DataLive
@@ -232,5 +233,17 @@ theorem simulationFor_seq_of_control {C F : Type} (first second : DataLang.Prog)
       refine ⟨targetNext, ?_, finalRel⟩
       simp only [compile]
       rw [DataSem.evaluate, fixClock_evaluate, targetFirst]
+
+/-- Sequential liveness simulation follows from the two component
+simulations. It remains untagged pending evaluator and carrier review. -/
+theorem simulationFor_seq {C F : Type} (first second : DataLang.Prog) (live : NumSet)
+    (firstIH : simulationFor (C := C) (F := F) first (compile second live).2)
+    (secondIH : simulationFor (C := C) (F := F) second live) :
+    simulationFor (C := C) (F := F) (.seq first second) live := by
+  apply simulationFor_seq_of_control first second live firstIH secondIH
+  · intro state next run
+    exact evaluate_stackResult first state next none run
+  · intro state next run
+    exact evaluate_stackResult (compile first (compile second live).2).1 state next none run
 
 end Flapjack.Compiler.Backend.DataLive
