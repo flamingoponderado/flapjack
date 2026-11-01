@@ -301,4 +301,17 @@ theorem compileExpBounded_agrees_all (fuel argc : Nat) (exp : Bvi.Exp) :
     have agreement := compileFuel_agrees (max fuel (Bvi.expBudget exp + 1)) argc (List.range argc) true [] exp bound
     simp [compileExpBounded, compileExpFuel, compileExp, first, agreement]
 
+/-- Mapping the executed compiler over a BVI program always produces the
+same function list as the total source-shaped program compiler. -/
+theorem compileProgBounded_agrees (fuel : Nat) (program : List (Nat × Nat × Bvi.Exp)) :
+    (program.mapM fun (name, argc, body) => do
+      pure (name, argc, ← compileExpBounded fuel argc body)) = some (compileProg program) := by
+  induction program with
+  | nil => rfl
+  | cons part rest ih =>
+    obtain ⟨name, argc, body⟩ := part
+    simp only [List.mapM_cons]
+    rw [ih]
+    simp [compileExpBounded_agrees_all, compileProg, compilePart]
+
 end Flapjack.Compiler.Backend.BviToData

@@ -71,6 +71,18 @@ theorem codeRel_compileProg (program : List (Nat × Nat × Bvi.Exp)) :
   rw [← same]
   exact mapped
 
+/-- The program produced by the executed bounded traversal forms a related
+code tree, including for duplicate labels. -/
+theorem codeRel_compileProgBounded (fuel : Nat) (program : List (Nat × Nat × Bvi.Exp))
+    (compiled : List (Nat × Nat × DataLang.Prog))
+    (run : (program.mapM fun (name, argc, body) => do
+      pure (name, argc, ← compileExpBounded fuel argc body)) = some compiled) :
+    codeRel (sptFromAList program) (sptFromAList compiled) := by
+  have agreement := compileProgBounded_agrees fuel program
+  rw [run] at agreement
+  cases agreement
+  exact codeRel_compileProg program
+
 /-- Installing corresponding program lists and advancing both compiler
 oracles preserves the BVI-to-data state relation. -/
 theorem stateRel_install {C F : Type} (source : BviSem.BviState C F) (target : DataSem.State C F)

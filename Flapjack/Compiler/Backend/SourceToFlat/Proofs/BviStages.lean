@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
 import Flapjack.Compiler.Backend.BviInline.Proofs.Pipeline
+import Flapjack.Compiler.Backend.SourceToFlat.ToDataIncremental
+import Flapjack.Compiler.Backend.BviToData.Proofs.Install
 
 /-! Executed BVI stage witnesses for the configured source pipeline. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -76,5 +78,27 @@ theorem configured_bvi_inline_names (fuel : Nat) (source : Config) (closure : Cl
   subst cache
   exact ⟨beforeTail, afterTail, afterTmc, tailLast, tmcLast, tailRun, tmcRun, inlineRun,
     BviInline.compileProgFuel_names fuel afterTmc output resultConfig.bviInlines inlineRun⟩
+
+/-- A successful incremental source-to-BVI stage is followed by the exact
+executed BVI-to-data program traversal, whose resulting code tree satisfies
+the simulation's code relation. This is Flapjack pipeline infrastructure;
+it does not establish correctness of the preceding frontend passes. -/
+theorem incremental_bvi_to_data_codeRel (fuel : Nat)
+    (config : Config × ClosToBvl.Config × BvlToBvi.Config) (envId : Nat × Nat)
+    (decls : List AstHOL.Dec)
+    (nextConfig : Config × ClosToBvl.Config × BvlToBvi.Config)
+    (program : List (Nat × Nat × Bvi.Exp))
+    (run : compileCakeIncToBviFuel fuel config envId decls = some (nextConfig, program)) :
+    ∃ compiled,
+      compileCakeIncToDataFuel fuel config envId decls = some (nextConfig, compiled) ∧
+      BviToData.codeRel (sptFromAList program) (sptFromAList compiled) := by
+  refine ⟨BviToData.compileProg program, ?_, BviToData.codeRel_compileProg program⟩
+  unfold compileCakeIncToDataFuel
+  rw [run]
+  simp only [bind, Option.bind]
+  have agreement := BviToData.compileProgBounded_agrees fuel program
+  simp only [bind, Option.bind] at agreement
+  rw [agreement]
+  rfl
 
 end Flapjack.Compiler.Backend.SourceToFlat
