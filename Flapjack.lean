@@ -708,9 +708,11 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ProgramCode
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.StubCode
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberedPrepared
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Incremental
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRejected
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateOrdinary
 import Flapjack.Test.ClosToBvlRecursive
+import Flapjack.Test.ClosToBvlIncremental
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
