@@ -123,6 +123,22 @@ example : valueInv (width := 32) config (.block 0 2 []) .ln
     (.data (.word (blockNil 2)), HolFiniteMapExact.empty, HolFiniteMapExact.empty, []) := by
   exact (valueInv_emptyBlock config 0 2 .ln _ _ _ _).2 ⟨rfl, by decide, rfl⟩
 
+private def timestampMap : HolFiniteMapExact Nat Nat := HolFiniteMapExact.empty.updateEq (3, 0)
+private def blockAddress : HeapAddress (WordLocW 32) := .data (.word (smallnum 2))
+private def blockHeap : ValueHeap 32 := [blockRep 1 [blockAddress]]
+
+example : valueInv (width := 32) config (.block 3 1 [.number 2]) .ln
+    (.pointer 0 (.word (ptrBits config 1 1)), HolFiniteMapExact.empty, timestampMap, blockHeap) := by
+  apply (valueInv_block config 3 1 [.number 2] .ln _ _ _ _).2
+  simp only [List.cons_ne_nil, ↓reduceIte]
+  refine ⟨0, [blockAddress], ?_, ?_, rfl, ?_⟩
+  · apply List.Forall₂.cons
+    · apply (valueInv_number config 2 .ln _ _ _ _).2
+      simp [smallInt, blockAddress]
+    · exact .nil
+  · rfl
+  · rfl
+
 example : ¬ bcRefInv (width := 32) config 0 .ln
     (HolFiniteMapExact.empty, HolFiniteMapExact.empty, [], false) := by
   simp [bcRefInv, HolFiniteMapExact.empty]

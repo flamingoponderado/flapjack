@@ -255,4 +255,96 @@ theorem valueInv_emptyBlock {width : Nat} [NeZero width] (conf : Config) (stamp 
   · rintro ⟨rfl, bound, zero⟩ ck
     exact .blockNil ck conf stamp tag [] refs f tf heap rfl bound zero
 
+/-- Flapjack list infrastructure: pairwise relatedness commutes with universal clock quantification. -/
+theorem forallPairwise {α β : Type} (R : Nat → α → β → Prop) (xs : List α) (ys : List β) :
+    (∀ ck, List.Forall₂ (R ck) xs ys) ↔ List.Forall₂ (fun x y => ∀ ck, R ck x y) xs ys := by
+  induction xs generalizing ys with
+  | nil =>
+      cases ys with
+      | nil => simp
+      | cons y ys => constructor <;> intro h <;> first | (have bad := h 0; cases bad) | cases h
+  | cons x xs ih =>
+      cases ys with
+      | nil => constructor <;> intro h <;> first | (have bad := h 0; cases bad) | cases h
+      | cons y ys =>
+          constructor
+          · intro h
+            apply List.Forall₂.cons
+            · intro ck
+              have pair := h ck
+              cases pair with | cons head tail => exact head
+            · apply (ih ys).mp
+              intro ck
+              have pair := h ck
+              cases pair with | cons head tail => exact tail
+          · intro h ck
+            cases h with
+            | cons head tail => exact .cons (head ck) ((ih ys).mpr tail ck)
+
+
+/-- Inversion of the preliminary clocked relation for a nonempty block. This
+remains untagged until the underlying relation and map carriers are reviewed. -/
+theorem clockBlockInv {width : Nat} [NeZero width] (ck : Nat) (conf : Config) (stamp tag : Nat)
+    (values : List Value) (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
+    (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) (nonempty : values ≠ [])
+    (related : ClockValueInv ck conf (.block stamp tag values) refs (x, f, tf, heap)) :
+      ∃ ptr xs, x = .pointer ptr (.word (ptrBits conf tag xs.length)) ∧
+        (ck ≠ 0 → ClockValueListInv (ck - 1) conf refs f tf heap values xs) ∧
+        tf.lookup stamp = some ptr ∧ heapLookup ptr heap = some (blockRep tag xs) := by
+  cases related with
+  | blockNil _ _ _ _ _ _ _ _ _ empty _ _ => exact False.elim (nonempty empty)
+  | blockCons _ _ _ _ ptr _ xs _ _ _ _ _ recursive timestamp cell =>
+      exact ⟨ptr, xs, rfl, recursive, timestamp, cell⟩
+
+/-- Nonempty-block case of the preliminary unbounded relation. The heap lookup
+fixes the same field addresses at every clock. This remains untagged until the
+underlying relation and map carriers are reviewed. -/
+theorem valueInv_nonemptyBlock {width : Nat} [NeZero width] (conf : Config) (stamp tag : Nat)
+    (values : List Value) (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
+    (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) (nonempty : values ≠ []) :
+    valueInv conf (.block stamp tag values) refs (x, f, tf, heap) ↔
+      ∃ ptr xs, List.Forall₂ (fun value addr => valueInv conf value refs (addr, f, tf, heap)) values xs ∧
+        tf.lookup stamp = some ptr ∧ x = .pointer ptr (.word (ptrBits conf tag xs.length)) ∧
+        heapLookup ptr heap = some (blockRep tag xs) := by
+  constructor
+  · intro all
+    obtain ⟨ptr, xs, xpos, _, timestamp, cell⟩ := clockBlockInv 0 conf stamp tag values refs x f tf heap nonempty (all 0)
+    refine ⟨ptr, xs, ?_, timestamp, xpos, cell⟩
+    apply (forallPairwise _ values xs).mp
+    intro ck
+    obtain ⟨ptr2, xs2, _, recursive, timestamp2, cell2⟩ :=
+      clockBlockInv (ck + 1) conf stamp tag values refs x f tf heap nonempty (all (ck + 1))
+    have hp : ptr2 = ptr := Option.some.inj (timestamp2.symm.trans timestamp)
+    subst ptr2
+    have hx : xs2 = xs := by
+      have he := Option.some.inj (cell2.symm.trans cell)
+      cases he
+      rfl
+    subst xs2
+    have pair := recursive (by omega)
+    have pair' : ClockValueListInv ck conf refs f tf heap values xs := by simpa using pair
+    exact (clockValueListInv_iff _ _ _ _ _ _ _ _).mp pair'
+  · rintro ⟨ptr, xs, pair, timestamp, rfl, cell⟩ ck
+    refine .blockCons ck conf stamp tag ptr values xs refs f tf heap nonempty ?_ timestamp cell
+    intro _
+    apply (clockValueListInv_iff _ _ _ _ _ _ _ _).mpr
+    exact pair.imp (fun value addr related => related (ck - 1))
+
+/-- Complete block case of the preliminary unbounded relation. This remains
+untagged until the underlying relation and map carriers are reviewed. -/
+theorem valueInv_block {width : Nat} [NeZero width] (conf : Config) (stamp tag : Nat)
+    (values : List Value) (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
+    (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
+    valueInv conf (.block stamp tag values) refs (x, f, tf, heap) ↔
+      if values = [] then
+        x = .data (.word (blockNil tag)) ∧ tag < 2 ^ width / 16 ∧ stamp = 0
+      else
+        ∃ ptr xs, List.Forall₂ (fun value addr => valueInv conf value refs (addr, f, tf, heap)) values xs ∧
+          tf.lookup stamp = some ptr ∧ x = .pointer ptr (.word (ptrBits conf tag xs.length)) ∧
+          heapLookup ptr heap = some (blockRep tag xs) := by
+  by_cases empty : values = []
+  · subst values
+    simpa using valueInv_emptyBlock conf stamp tag refs x f tf heap
+  · simpa [empty] using valueInv_nonemptyBlock conf stamp tag values refs x f tf heap empty
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
