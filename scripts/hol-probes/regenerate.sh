@@ -8170,7 +8170,7 @@ run_probe source_to_flat_helpers_probeScript.sml source_to_flat_helpers_probe.ou
   "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend"
 
 run_probe source_to_bvi_incremental_probeScript.sml source_to_bvi_incremental_probe.out \
-  source_incremental_empty source_incremental_let source_incremental_dependent \
+  source_incremental_empty source_incremental_let source_incremental_dependent source_incremental_data source_incremental_word \
   "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
 
 run_probe source_to_flat_compile_probeScript.sml source_to_flat_compile_probe.out \

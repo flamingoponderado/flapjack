@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.SourceToFlat.ToBviIncremental
+import Flapjack.Compiler.Backend.SourceToFlat.ToDataIncremental
+import Flapjack.Compiler.Backend.SourceToFlat.ToWordIncremental
 
 /-! Replay incremental source-to-BVI observations from pinned CakeML/HOL. -/
 namespace Flapjack.Test.CakeIncrementalBviParity
@@ -9,6 +11,9 @@ private def closureConfig : ClosToBvl.Config :=
 
 private def bvlConfig : BvlToBvi.Config :=
   { BvlToBvi.defaultConfig with inlineSizeLimit := 0, doTailrec := false, doTmc := false }
+
+private def wordConfig : DataToWord.Config :=
+  ⟨1, 2, 3, 16, false, false, false, false, false, false, .simple⟩
 
 private def unit : Bvi.Exp := .op (.blockOp (.cons 0)) []
 private def storeEnv : Bvi.Exp :=
@@ -55,5 +60,50 @@ private def check (decls : List AstHOL.Dec) (count : Int) : Bool :=
           (156, 0, unit)]
     | none => false
   | none => false
+
+-- Complete data-language output from the original incremental pipeline.
+#guard match SourceToFlat.compileCakeIncToDataFuel 100 (SourceToFlat.emptyConfig, closureConfig, bvlConfig)
+    (0, 0) [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.lit (.intLit 1))] with
+  | some ((source, closure, bvl),
+    [(132, 0, .seq (.assign 0 (.intOp (.const 1)) [] none)
+      (.seq (.call (some ([1], .ln)) (some 62) [0] none)
+        (.seq (.assign 2 (.blockOp (.cons 0)) [] none) (.call none (some 136) [] none)))),
+     (136, 0, .seq (.assign 0 (.intOp (.const 1)) [] none)
+      (.seq (.assign 1 (.globOp (.setGlobal 3)) [0] none) (.call none (some 140) [] none))),
+     (140, 0, .seq (.makeSpace 3 .ln)
+      (.seq (.assign 0 (.globOp (.global 3)) [] none)
+       (.seq (.assign 1 (.blockOp (.build [.int 0, .con 0 [0, 0]])) [] none)
+        (.seq (.assign 2 (.intOp (.const 0)) [] none)
+         (.seq (.assign 3 (.memOp .update) [0, 2, 1] none) (.call none (some 144) [] none)))))),
+     (144, 0, .seq (.assign 0 (.blockOp (.cons 0)) [] none) (.return [0]))]) =>
+      source.envs.next == 1 && source.next.vidx == 1 && closure.nextLoc == 14 && bvl.nextName1 == 73
+  | _ => false
+
+#guard match SourceToFlat.compileCakeIncToWord64Fuel 100 (SourceToFlat.emptyConfig, closureConfig, bvlConfig)
+    wordConfig (0, 0) [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.lit (.intLit 1))] with
+  | some ((source, closure, bvl),
+    [(132, 1, .seq (.assign 2 (.const 4))
+      (.seq (.call (some ([4], (live1, .ln), .skip, 132, 2)) (some 62) [2] none)
+        (.seq (.assign 6 (.const 2)) (.call none (some 136) [0] none)))),
+     (136, 1, .seq (.assign 2 (.const 4))
+      (.seq (.seq (.store (.op .add [.lookup .globReal, .const 32]) 2) (.assign 4 (.const 2)))
+        (.call none (some 140) [0] none))),
+     (140, 1, .seq
+      (.seq (.assign 1 (.op .sub [.lookup .triggerGC, .lookup .nextFree]))
+        (.ite .lower 1 (.imm 24) (.seq .skip (.seq (.assign 1 (.const 24))
+          (.seq (.alloc 1 (live2, .ln)) .skip))) .skip))
+      (.seq (.assign 2 (.load (.op .add [.lookup .globReal, .const 32])))
+       (.seq (.seq (.assign 1 (.lookup .nextFree))
+         (.seq (.assign 3 (.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5)))
+          (.seq (.storeConsts 1 3 1 3 [(false, 562949953421315), (false, 0), (false, 0)])
+           (.seq (.set .nextFree (.var 1)) (.assign 4 (.op .add [.const 5, .var 3]))))))
+        (.seq (.assign 6 (.const 0))
+         (.seq (.seq (.store (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 2) (.const 5)],
+                    .op .add [.const 8, .shift .lsl (.var 6) (.const 1)]]) 4)
+              (.assign 8 (.const 2))) (.call none (some 144) [0] none)))))),
+     (144, 1, .seq (.assign 2 (.const 2)) (.return 0 [2]))]) =>
+    source.envs.next == 1 && source.next.vidx == 1 && closure.nextLoc == 14 && bvl.nextName1 == 73 &&
+      decide (live1 = sptListInsert [0] .ln) && decide (live2 = sptListInsert [0] .ln)
+  | _ => false
 
 end Flapjack.Test.CakeIncrementalBviParity

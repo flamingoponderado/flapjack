@@ -9202,7 +9202,8 @@ carrier and dependency review.
 
 `source_to_bvi_incremental_probe.out` captures complete BVI code and selected
 configuration fields for an empty batch, a literal binding, and two batches
-where the second refers to the first batch's environment. The checked Lean
+where the second refers to the first batch's environment. It also captures
+the full data and 64-bit word programs for the literal binding. The checked Lean
 composition replays these observations in `Flapjack/Test/CakeIncrementalBviParity.lean`.
 Regenerate with `HOL_PROBE_ONLY=source_to_bvi_incremental_probeScript.sml scripts/hol-probes/regenerate.sh`.
 These observations do not prove correspondence for arbitrary programs.
