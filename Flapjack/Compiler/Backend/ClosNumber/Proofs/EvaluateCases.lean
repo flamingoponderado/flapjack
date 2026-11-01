@@ -45,6 +45,223 @@ def AppSimulation {C F : Type} : Prop :=
       evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
       ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
 
+/-- Applying no arguments returns the related closure without changing state. -/
+theorem evaluateApp_empty {C F : Type} (function nextFunction : Value)
+    (source : State (Nat × C) F) (target : State C F)
+    (related : ValueRel source.maxApp function nextFunction) (stateRel : StateRel source target) :
+    ∃ targetResult targetNext,
+      evaluateApp none nextFunction [] target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp (evaluateApp none function [] source).1 targetResult ∧
+      StateRel (evaluateApp none function [] source).2 targetNext := by
+  refine ⟨.val [nextFunction], target, ?_, ?_, ?_⟩
+  · rw [evaluateApp]
+  · simpa [evaluateApp, ResultRel] using List.Forall₂.cons related .nil
+  · simpa [evaluateApp] using stateRel
+
+/-- A partial indirect application returns a related partial closure, or the
+    same timeout with both clocks set to zero. -/
+theorem evaluateApp_partial {C F : Type} (function nextFunction first : Value)
+    (rest nextArgs : List Value) (source : State (Nat × C) F) (target : State C F)
+    (partialValue : Value) (result : Result (List Value) Value) (sourceNext : State (Nat × C) F)
+    (run : evaluateApp none function (first :: rest) source = (result, sourceNext))
+    (found : destClosure source.maxApp none function (first :: rest) = some (.partialApp partialValue))
+    (related : ValueRel source.maxApp function nextFunction)
+    (argsRel : List.Forall₂ (ValueRel source.maxApp) (first :: rest) nextArgs)
+    (stateRel : StateRel source target) :
+    ∃ targetResult targetNext, evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
+  obtain ⟨nextPartial, nextFound, partialRel⟩ :=
+    destClosure_related_partial source.maxApp function nextFunction (first :: rest) nextArgs partialValue
+      related argsRel found
+  have maxEq : source.maxApp = target.maxApp := (stateRel_clock_maxApp stateRel).2
+  have clockEq : source.clock = target.clock := stateRel.1
+  have lengthEq : (first :: rest).length = nextArgs.length := argsRel.length_eq
+  cases argsRel with
+  | cons head tail =>
+    rename_i nextFirst nextRest
+    have targetFound : destClosure target.maxApp none nextFunction (nextFirst :: nextRest) =
+        some (.partialApp nextPartial) := by simpa [← maxEq] using nextFound
+    by_cases insufficient : source.clock < (first :: rest).length
+    · have targetInsufficient : target.clock < (nextFirst :: nextRest).length := by
+        simpa [← clockEq, ← lengthEq] using insufficient
+      rw [evaluateApp, found] at run
+      dsimp only at run
+      rw [if_pos insufficient] at run
+      cases run
+      refine ⟨.err (.abort .timeoutError), { target with clock := 0 }, ?_, rfl, ?_⟩
+      · rw [evaluateApp, targetFound]
+        dsimp only
+        rw [if_pos targetInsufficient]
+        rfl
+      · exact stateRel_withClock 0 stateRel
+    · have targetEnough : ¬ target.clock < (nextFirst :: nextRest).length := by
+        simpa [← clockEq, ← lengthEq] using insufficient
+      rw [evaluateApp, found] at run
+      dsimp only at run
+      rw [if_neg insufficient] at run
+      cases run
+      refine ⟨.val [nextPartial], decClock (nextFirst :: nextRest).length target, ?_, ?_, ?_⟩
+      · rw [evaluateApp, targetFound]
+        dsimp only
+        rw [if_neg targetEnough]
+      · exact .cons partialRel .nil
+      · simpa [decClock, ← clockEq, ← lengthEq] using
+          stateRel_withClock (source.clock - (first :: rest).length) stateRel
+
+/-- A rejected indirect application is excluded by the original theorem's
+    non-type-error premise. -/
+theorem evaluateApp_rejected {C F : Type} (function first : Value) (rest : List Value)
+    (source : State (Nat × C) F) (result : Result (List Value) Value)
+    (sourceNext : State (Nat × C) F)
+    (run : evaluateApp none function (first :: rest) source = (result, sourceNext))
+    (rejected : destClosure source.maxApp none function (first :: rest) = none)
+    (noType : result ≠ .err (.abort .typeError)) : False := by
+  rw [evaluateApp, rejected] at run
+  dsimp only at run
+  cases run
+  exact noType rfl
+
+/-- Full applications that exhaust the clock time out in both related
+    executions, even when their remaining argument lists differ in values. -/
+theorem evaluateApp_full_timeout {C F : Type} (function nextFunction first : Value)
+    (rest nextArgs : List Value) (source : State (Nat × C) F) (target : State C F)
+    (body : ClosLang.Exp) (bodyEnv remaining : List Value)
+    (result : Result (List Value) Value) (sourceNext : State (Nat × C) F)
+    (run : evaluateApp none function (first :: rest) source = (result, sourceNext))
+    (found : destClosure source.maxApp none function (first :: rest) = some (.fullApp body bodyEnv remaining))
+    (insufficient : source.clock < (first :: rest).length - remaining.length)
+    (related : ValueRel source.maxApp function nextFunction)
+    (argsRel : List.Forall₂ (ValueRel source.maxApp) (first :: rest) nextArgs)
+    (stateRel : StateRel source target) :
+    ∃ targetResult targetNext, evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
+  obtain ⟨start, nextEnv, nextRemaining, nextFound, envRel, remainingRel, bodySafe⟩ :=
+    destClosure_related_full source.maxApp function nextFunction (first :: rest) nextArgs
+      body bodyEnv remaining related argsRel found
+  have maxEq : source.maxApp = target.maxApp := (stateRel_clock_maxApp stateRel).2
+  have clockEq : source.clock = target.clock := stateRel.1
+  have lengthEq : (first :: rest).length = nextArgs.length := argsRel.length_eq
+  have remainingEq : remaining.length = nextRemaining.length := remainingRel.length_eq
+  cases argsRel with
+  | cons head tail =>
+    rename_i nextFirst nextRest
+    have targetFound : destClosure target.maxApp none nextFunction (nextFirst :: nextRest) =
+        some (.fullApp (renumber start body).2 nextEnv nextRemaining) := by simpa [← maxEq] using nextFound
+    have targetInsufficient : target.clock < (nextFirst :: nextRest).length - nextRemaining.length := by
+      simpa [← clockEq, ← lengthEq, ← remainingEq] using insufficient
+    rw [evaluateApp, found] at run
+    dsimp only at run
+    rw [if_pos insufficient] at run
+    cases run
+    refine ⟨.err (.abort .timeoutError), { target with clock := 0 }, ?_, rfl, stateRel_withClock 0 stateRel⟩
+    rw [evaluateApp, targetFound]
+    dsimp only
+    rw [if_pos targetInsufficient]
+    rfl
+
+/-- A full application with enough clock composes the numbered body simulation
+    with the remaining-argument application hypothesis. The two hypotheses
+    are factored prerequisites for the eventual mutual induction. -/
+theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
+    (rest nextArgs : List Value) (source : State (Nat × C) F) (target : State C F)
+    (body : ClosLang.Exp) (bodyEnv remaining : List Value)
+    (result : Result (List Value) Value) (sourceNext : State (Nat × C) F)
+    (run : evaluateApp none function (first :: rest) source = (result, sourceNext))
+    (found : destClosure source.maxApp none function (first :: rest) = some (.fullApp body bodyEnv remaining))
+    (enough : ¬ source.clock < (first :: rest).length - remaining.length)
+    (noType : result ≠ .err (.abort .typeError))
+    (related : ValueRel source.maxApp function nextFunction)
+    (argsRel : List.Forall₂ (ValueRel source.maxApp) (first :: rest) nextArgs)
+    (stateRel : StateRel source target)
+    (bodyIH : EvalSimulation (C := C) (F := F) [body])
+    (applicationIH : AppSimulation (C := C) (F := F)) :
+    ∃ targetResult targetNext, evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
+  obtain ⟨start, nextEnv, nextRemaining, nextFound, envRel, remainingRel, bodySafe⟩ :=
+    destClosure_related_full source.maxApp function nextFunction (first :: rest) nextArgs
+      body bodyEnv remaining related argsRel found
+  have maxEq : source.maxApp = target.maxApp := (stateRel_clock_maxApp stateRel).2
+  have clockEq : source.clock = target.clock := stateRel.1
+  have lengthEq : (first :: rest).length = nextArgs.length := argsRel.length_eq
+  have remainingEq : remaining.length = nextRemaining.length := remainingRel.length_eq
+  cases argsRel with
+  | cons head tail =>
+    rename_i nextFirst nextRest
+    let cost := (first :: rest).length - remaining.length
+    have targetCost : (nextFirst :: nextRest).length - nextRemaining.length = cost := by
+      simp [cost, ← lengthEq, ← remainingEq]
+    have targetFound : destClosure target.maxApp none nextFunction (nextFirst :: nextRest) =
+        some (.fullApp (renumber start body).2 nextEnv nextRemaining) := by simpa [← maxEq] using nextFound
+    have targetEnough : ¬ target.clock < (nextFirst :: nextRest).length - nextRemaining.length := by
+      rw [targetCost, ← clockEq]
+      exact enough
+    have startRel : StateRel (decClock cost source) (decClock cost target) := by
+      simpa [decClock, ← clockEq] using stateRel_withClock (source.clock - cost) stateRel
+    have bodyEnvRel : List.Forall₂ (ValueRel (decClock cost source).maxApp) bodyEnv nextEnv := envRel
+    have bodySafe' : ¬ ClosProps.containsAppSome (decClock cost source).maxApp [body] := bodySafe
+    rw [evaluateApp, found] at run
+    dsimp only at run
+    rw [if_neg enough, fixClock_evaluate] at run
+    cases bodyRun : evaluate [body] bodyEnv (decClock cost source) with
+    | mk bodyResult last =>
+      have bodyNoType : bodyResult ≠ .err (.abort .typeError) := by
+        intro bad
+        subst bodyResult
+        rw [bodyRun] at run
+        cases run
+        exact noType rfl
+      obtain ⟨targetBodyResult, targetLast, targetBodyRun, bodyRel, lastRel⟩ :=
+        bodyIH bodyEnv nextEnv (decClock cost source) (decClock cost target)
+          bodyResult last start bodyRun bodyNoType bodySafe' bodyEnvRel startRel
+      cases bodyResult with
+      | err error =>
+        rw [bodyRun] at run
+        cases run
+        cases targetBodyResult with
+        | val values => cases error <;> simp [ResultRel] at bodyRel
+        | err targetError =>
+          refine ⟨.err targetError, targetLast, ?_, bodyRel, lastRel⟩
+          rw [evaluateApp, targetFound]
+          dsimp only
+          rw [if_neg targetEnough, targetCost, fixClock_evaluate]
+          simp only [renumberList] at targetBodyRun
+          rw [targetBodyRun]
+      | val values =>
+        have length := (evaluate_length (C := Nat × C) (F := F)).1 [body] bodyEnv
+          (decClock cost source) last values bodyRun
+        cases values with
+        | nil => simp at length
+        | cons value tail =>
+          cases tail with
+          | cons value' tail => simp at length
+          | nil =>
+            cases targetBodyResult with
+            | err error => cases error <;> simp [ResultRel] at bodyRel
+            | val targetValues =>
+              cases bodyRel with
+              | cons valueRel tailRel =>
+                cases tailRel
+                rename_i targetValue
+                have lastMax : last.maxApp = source.maxApp := by
+                  have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 [body] bodyEnv (decClock cost source)
+                  rw [bodyRun] at h
+                  exact h
+                have appRun : evaluateApp none value remaining last = (result, sourceNext) := by
+                  rw [bodyRun] at run
+                  exact run
+                obtain ⟨targetResult, targetNext, targetAppRun, resultRel, nextRel⟩ :=
+                  applicationIH value targetValue remaining nextRemaining last targetLast result sourceNext
+                    appRun noType (by simpa [lastMax, decClock] using valueRel)
+                    (by simpa [lastMax] using remainingRel) lastRel
+                refine ⟨targetResult, targetNext, ?_, ?_, nextRel⟩
+                · rw [evaluateApp, targetFound]
+                  dsimp only
+                  rw [if_neg targetEnough, targetCost, fixClock_evaluate]
+                  simp only [renumberList] at targetBodyRun
+                  rw [targetBodyRun]
+                  exact targetAppRun
+                · simpa [lastMax] using resultRel
+
 /-- An environment lookup preserves a pointwise relation. -/
 theorem related_lookup {α β : Type} {relation : α → β → Prop} {left : List α} {right : List β}
     (related : List.Forall₂ relation left right) (index : Nat) (value : α)
