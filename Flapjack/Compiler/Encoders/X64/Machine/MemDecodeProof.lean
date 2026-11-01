@@ -2175,4 +2175,77 @@ theorem decode_jcc_long_other (cond : ZCond) (hne : cond ≠ .zAlways) (hneP : c
   simp only [condOfCode_code cond hne]
   rw [himm]
 
+/-- The short conditional-jump form for the parity condition. -/
+theorem decode_jcc_zP_short (imm : BitVec 64)
+    (hs : -128 ≤ imm.toInt ∧ imm.toInt ≤ 127) :
+    decode (byteListReader (encodeInsn (.jcc .zP imm))) =
+      some (.jcc .zP imm, 2) := by
+  have h8 : eImm8_32 imm = some (1, [byte imm.toNat]) := by
+    unfold eImm8_32
+    rw [show eImm8 imm = some [byte imm.toNat] from by unfold eImm8; rw [if_pos hs]]
+  have henc : encodeInsn (.jcc .zP imm) = [byte 0x7A, byte imm.toNat] := by
+    simp only [encodeInsn, h8]
+    rfl
+  rw [henc]
+  have hb0 : (byteListReader [byte 0x7A, byte imm.toNat] 0).toNat = 0x7A := by
+    simp [byteListReader, byte]
+  have hb1 : byteListReader [byte 0x7A, byte imm.toNat] 1 = byte imm.toNat := by
+    simp [byteListReader, byte]
+  have himm := imm8_at imm 1 (byteListReader [byte 0x7A, byte imm.toNat]) hb1
+    (by omega) (by omega)
+  simp only [decode, decodeNoRex]
+  rw [hb0]
+  simp
+  rw [himm]
+
+/-- The long conditional-jump form for the parity condition. -/
+theorem decode_jcc_zP_long (imm : BitVec 64)
+    (hnos : ¬ (-128 ≤ imm.toInt ∧ imm.toInt ≤ 127))
+    (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    decode (byteListReader (encodeInsn (.jcc .zP imm))) =
+      some (.jcc .zP imm, 6) := by
+  have h4 := eImm8_32_eq_four imm hnos hlo hhi
+  have henc : encodeInsn (.jcc .zP imm) =
+      [byte 0x0F, byte 0x8A, byte imm.toNat, byte (imm.toNat / 256),
+        byte (imm.toNat / 65536), byte (imm.toNat / 16777216)] := by
+    simp only [encodeInsn, h4]
+    rfl
+  rw [henc]
+  have hb0 : (byteListReader [byte 0x0F, byte 0x8A, byte imm.toNat,
+      byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)] 0).toNat = 0x0F := by
+    simp [byteListReader, byte]
+  have hb1 : (byteListReader [byte 0x0F, byte 0x8A, byte imm.toNat,
+      byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)] 1).toNat = 0x80 + ZCond.zP.code := by
+    simp [byteListReader, byte, ZCond.code]
+  have hb1' : 0x80 ≤ (byteListReader [byte 0x0F, byte 0x8A, byte imm.toNat,
+      byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)] 1).toNat ∧
+      (byteListReader [byte 0x0F, byte 0x8A, byte imm.toNat,
+      byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)] 1).toNat ≤ 0x8F := by
+    rw [hb1]
+    decide
+  have hr : ∀ j, j < 4 → byteListReader [byte 0x0F, byte 0x8A, byte imm.toNat,
+      byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)] (2 + j) = byte (imm.toNat / 2^(8*j)) := by
+    intro j hj
+    interval_cases j <;> simp [byteListReader, byte]
+  have himm := imm32_eImm32_at imm 2
+    (byteListReader [byte 0x0F, byte 0x8A, byte imm.toNat,
+      byte (imm.toNat / 256), byte (imm.toNat / 65536),
+      byte (imm.toNat / 16777216)]) hr hlo hhi
+  simp only [decode, decodeNoRex]
+  rw [hb0]
+  rw [hb1]
+  have h1 : 128 ≤ 128 + ZCond.zP.code := by omega
+  have h2 : 128 + ZCond.zP.code ≤ 143 := by omega
+  rw [show decide (128 ≤ 128 + ZCond.zP.code) = true from by simp [h1],
+      show decide (128 + ZCond.zP.code ≤ 143) = true from by simp [h2]]
+  simp only [Bool.true_and, if_true]
+  rw [show 128 + ZCond.zP.code - 128 = ZCond.zP.code from by omega]
+  simp only [condOfCode_code ZCond.zP (by decide)]
+  rw [himm]
+
 end Flapjack.Compiler.Encoders.X64
