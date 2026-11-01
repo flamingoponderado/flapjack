@@ -99827,6 +99827,16 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation.lean",
+    "lean_name": "bcStackRefInv",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "bc_stack_ref_inv_def",
+    "statement_status": "reviewed_fmap_as_finite_support_existentials_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_existentials": ["f", "tf"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: bc_stack_ref_inv_def and its typed data_to_word_memory_repr capture preserve configuration, timestamp, source stack, literal spt reference tree, roots/heap/endianness tuple, and both existential finite maps f and tf. In source order the conjuncts retain injectivity into data cells, reference-domain containment, timestamp-map injectivity, timestamp membership and bound, endianness, block uniqueness, pairwise value invariant, and reachable-reference cell invariant. mapInjInto expands HOL INJ to the same target-membership and injectivity conditions; mapDomain and the lookup-existence condition represent FDOM and sptree domain respectively. The reviewed bcRefInv equation preserves all four reference-cell cases. The two same-module roundtrip witnesses preserve lookup and finite-support evidence for f and tf. The heap/address word dimension remains positive and shared, while data values retain fixed word64."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation.lean",
     "lean_name": "bcRefInv_explicit",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
     "hol_name": "bc_ref_inv_def",

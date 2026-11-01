@@ -71,14 +71,53 @@ theorem bcRefInv_explicit {width : Nat} [NeZero width] (conf : Config) (n : Nat)
               addresses (left ++ [value] ++ right)
       | _, _ => False := Iff.rfl
 
-/-- Stack and reference invariant, retaining existential finite maps and the
-source's reachability and timestamp conditions. Its full source correspondence
-and existential finite-map carriers still require review. -/
+/-- A lookup function and finite-support certificate, used to witness the
+representation of existential source finite maps. This is Flapjack
+representation infrastructure. -/
+structure ReferenceMapBroad where
+  lookup : Nat → Option Nat
+  finiteSupport : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys
+
+namespace ReferenceMapBroad
+
+/-- Forget the canonical finite-map wrapper. -/
+def toBroad (map : HolFiniteMapExact Nat Nat) : ReferenceMapBroad :=
+  ⟨map.lookup, map.finiteSupport⟩
+
+/-- Reconstruct the canonical finite-map wrapper. -/
+def ofBroad (map : ReferenceMapBroad) : HolFiniteMapExact Nat Nat :=
+  ⟨map.lookup, map.finiteSupport⟩
+
+end ReferenceMapBroad
+
+/-- Both lookup and finite support survive the canonical `f` roundtrip. -/
+theorem holFmapAsFiniteSupportExistentialWitness_bcStackRefInv_f
+    (f : HolFiniteMapExact Nat Nat) :
+    (ReferenceMapBroad.ofBroad (ReferenceMapBroad.toBroad f)).lookup = f.lookup ∧
+    (ReferenceMapBroad.ofBroad (ReferenceMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    ReferenceMapBroad.ofBroad (ReferenceMapBroad.toBroad f) = f := by
+  cases f
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Both lookup and finite support survive the canonical `tf` roundtrip. -/
+theorem holFmapAsFiniteSupportExistentialWitness_bcStackRefInv_tf
+    (tf : HolFiniteMapExact Nat Nat) :
+    (ReferenceMapBroad.ofBroad (ReferenceMapBroad.toBroad tf)).lookup = tf.lookup ∧
+    (ReferenceMapBroad.ofBroad (ReferenceMapBroad.toBroad tf)).finiteSupport = tf.finiteSupport ∧
+    ReferenceMapBroad.ofBroad (ReferenceMapBroad.toBroad tf) = tf := by
+  cases tf
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Stack and reference invariant, retaining the source's existential finite
+maps, reachability and timestamp conditions. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "bc_stack_ref_inv_def"
+  (fmap_as_finite_support_existentials := [f, tf]) (words_as_type_indexed_bitvec)]
 noncomputable def bcStackRefInv {width : Nat} [NeZero width] (conf : Config) (next : Nat)
-    (stack : List Value) (refs : Spt (BvlSem.Ref Value))
+    (stack : List Flapjack.Compiler.Backend.DataSem.Value)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
     (context : List (HeapAddress (WordLocW width)) × ValueHeap width × Bool) : Prop :=
   let (roots, heap, bigEndian) := context
-  ∃ f tf : HolFiniteMapExact Nat Nat,
+  ∃ (f : HolFiniteMapExact Nat Nat), ∃ (tf : HolFiniteMapExact Nat Nat),
     mapInjInto f (fun ptr => isSomeDataElement (heapLookup ptr heap)) ∧
     (∀ n, mapDomain f n → ∃ cell, sptLookup n refs = some cell) ∧
     mapInjInto tf (fun ptr => isSomeDataElement (heapLookup ptr heap)) ∧
