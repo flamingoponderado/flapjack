@@ -96,15 +96,16 @@ theorem doInstall_preserves_safe_all {C F : Type} (values : List Value) (source 
   · exact doInstall_preserves_safe values source next result run typeError code oracle
 
 /-- An ordinary operation preserves safety when its arguments do. -/
-theorem evaluate_ordinaryOp_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
+theorem evaluate_ordinaryOp_preserves_safe_step {C F : Type} (trace : BackendCommon.Tra)
     (op : ClosLang.Op) (args : List ClosLang.Exp) (notInstall : op ≠ .install)
-    (notForce : op ≠ .thunkOp .forceThunk) (argsIH : PreservesCodeOracle (C := C) (F := F) args) :
-    PreservesCodeOracle (C := C) (F := F) [.op trace op args] := by
-  intro env source result next run code oracle
+    (notForce : op ≠ .thunkOp .forceThunk) (source : State C F)
+    (argsIH : PreservesCodeOracleAt source args) :
+    PreservesCodeOracleAt source [.op trace op args] := by
+  intro env result next run code oracle
   rw [evaluate_ordinaryOp_eq trace op args env source notInstall notForce] at run
   cases argsRun : evaluate args env source with
   | mk argsResult middle =>
-    have middleSafe := argsIH env source argsResult middle argsRun code oracle
+    have middleSafe := argsIH env argsResult middle argsRun code oracle
     rw [argsRun] at run
     cases argsResult with
     | err error =>
@@ -123,17 +124,29 @@ theorem evaluate_ordinaryOp_preserves_safe {C F : Type} (trace : BackendCommon.T
         cases run
         exact doApp_preserves_safe op values.reverse middle next value appRun middleSafe.1 middleSafe.2
 
+/-- Unrestricted form of the ordinary-operation safety step. -/
+theorem evaluate_ordinaryOp_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (args : List ClosLang.Exp) (notInstall : op ≠ .install)
+    (notForce : op ≠ .thunkOp .forceThunk) (argsIH : PreservesCodeOracle (C := C) (F := F) args) :
+    PreservesCodeOracle (C := C) (F := F) [.op trace op args] := by
+  intro env source result next run code oracle
+  exact evaluate_ordinaryOp_preserves_safe_step trace op args notInstall notForce source
+    (preservesCodeOracle_at argsIH source) env result next run code oracle
+
 /-- Installation preserves safety when argument evaluation and the
 dynamically installed program do. -/
-theorem evaluate_install_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : PreservesCodeOracle (C := C) (F := F) args)
-    (programIH : ∀ program, PreservesCodeOracle (C := C) (F := F) program) :
-    PreservesCodeOracle (C := C) (F := F) [.op trace .install args] := by
-  intro env source result next run code oracle
+theorem evaluate_install_preserves_safe_step {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (source : State C F) (argsIH : PreservesCodeOracleAt source args)
+    (programIH : ∀ program (state : State C F), state.clock < source.clock → PreservesCodeOracleAt state program) :
+    PreservesCodeOracleAt source [.op trace .install args] := by
+  intro env result next run code oracle
   rw [evaluate, fixClock_evaluate] at run
   cases argsRun : evaluate args env source with
   | mk argsResult middle =>
-    have middleSafe := argsIH env source argsResult middle argsRun code oracle
+    have middleSafe := argsIH env argsResult middle argsRun code oracle
+    have middleClock : middle.clock ≤ source.clock := by
+      have h := evaluate_clock_le args env source
+      simpa [argsRun] using h
     rw [argsRun] at run
     cases argsResult with
     | err error =>
@@ -154,9 +167,22 @@ theorem evaluate_install_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
           dsimp only at run
           cases programRun : evaluate program [] installed with
           | mk programResult final =>
-            have finalSafe := programIH program [] installed programResult final programRun installedSafe.1 installedSafe.2
+            have installedClock := doInstall_success_clock values.reverse middle installed program installRun
+            have smaller : installed.clock < source.clock := by omega
+            have finalSafe := programIH program installed smaller [] programResult final programRun installedSafe.1 installedSafe.2
             rw [programRun] at run
             cases programResult <;> cases run <;> exact finalSafe
+
+/-- Unrestricted form of the installation safety step. -/
+theorem evaluate_install_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : PreservesCodeOracle (C := C) (F := F) args)
+    (programIH : ∀ program, PreservesCodeOracle (C := C) (F := F) program) :
+    PreservesCodeOracle (C := C) (F := F) [.op trace .install args] := by
+  intro env source result next run code oracle
+  apply evaluate_install_preserves_safe_step trace args source (preservesCodeOracle_at argsIH source) ?_
+    env result next run code oracle
+  intro program state _
+  exact preservesCodeOracle_at (programIH program) state
 
 /-- Evaluating an empty list or a variable leaves the code and oracle intact. -/
 theorem evaluate_nil_preserves_safe {C F : Type} : PreservesCodeOracle (C := C) (F := F) [] := by
@@ -172,15 +198,18 @@ theorem evaluate_var_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (in
   split at run <;> simp_all
 
 /-- Sequencing preserves safety when both component evaluations do. -/
-theorem evaluate_cons_preserves_safe {C F : Type} (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
-    (firstIH : PreservesCodeOracle (C := C) (F := F) [first])
-    (restIH : PreservesCodeOracle (C := C) (F := F) (second :: rest)) :
-    PreservesCodeOracle (C := C) (F := F) (first :: second :: rest) := by
-  intro env source result next run code oracle
+theorem evaluate_cons_preserves_safe_step {C F : Type} (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
+    (source : State C F) (firstIH : PreservesCodeOracleAt source [first])
+    (restIH : ∀ state : State C F, state.clock ≤ source.clock → PreservesCodeOracleAt state (second :: rest)) :
+    PreservesCodeOracleAt source (first :: second :: rest) := by
+  intro env result next run code oracle
   rw [evaluate, fixClock_evaluate] at run
   cases firstRun : evaluate [first] env source with
   | mk firstResult middle =>
-    have middleSafe := firstIH env source firstResult middle firstRun code oracle
+    have middleSafe := firstIH env firstResult middle firstRun code oracle
+    have middleClock : middle.clock ≤ source.clock := by
+      have h := evaluate_clock_le [first] env source
+      simpa [firstRun] using h
     rw [firstRun] at run
     cases firstResult with
     | err error => cases run; exact middleSafe
@@ -188,82 +217,130 @@ theorem evaluate_cons_preserves_safe {C F : Type} (first second : ClosLang.Exp) 
       dsimp only at run
       cases restRun : evaluate (second :: rest) env middle with
       | mk restResult last =>
-        have lastSafe := restIH env middle restResult last restRun middleSafe.1 middleSafe.2
+        have lastSafe := restIH middle middleClock env restResult last restRun middleSafe.1 middleSafe.2
         rw [restRun] at run
         cases restResult <;> cases run <;> exact lastSafe
 
+theorem evaluate_cons_preserves_safe {C F : Type} (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
+    (firstIH : PreservesCodeOracle (C := C) (F := F) [first])
+    (restIH : PreservesCodeOracle (C := C) (F := F) (second :: rest)) :
+    PreservesCodeOracle (C := C) (F := F) (first :: second :: rest) := by
+  intro env source result next run code oracle
+  exact evaluate_cons_preserves_safe_step first second rest source (preservesCodeOracle_at firstIH source)
+    (fun state _ => preservesCodeOracle_at restIH state) env result next run code oracle
+
 /-- Raise expressions inherit safety preservation from their body. -/
+theorem evaluate_raise_preserves_safe_step {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (source : State C F) (bodyIH : PreservesCodeOracleAt source [body]) :
+    PreservesCodeOracleAt source [.raise trace body] := by
+  intro env result next run code oracle
+  rw [evaluate] at run
+  cases bodyRun : evaluate [body] env source with
+  | mk bodyResult middle =>
+    have middleSafe := bodyIH env bodyResult middle bodyRun code oracle
+    rw [bodyRun] at run
+    cases bodyResult <;> cases run <;> exact middleSafe
+
 theorem evaluate_raise_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
     (bodyIH : PreservesCodeOracle (C := C) (F := F) [body]) :
     PreservesCodeOracle (C := C) (F := F) [.raise trace body] := by
   intro env source result next run code oracle
-  rw [evaluate] at run
-  cases bodyRun : evaluate [body] env source with
-  | mk bodyResult middle =>
-    have middleSafe := bodyIH env source bodyResult middle bodyRun code oracle
-    rw [bodyRun] at run
-    cases bodyResult <;> cases run <;> exact middleSafe
+  exact evaluate_raise_preserves_safe_step trace body source (preservesCodeOracle_at bodyIH source)
+    env result next run code oracle
 
 /-- Tick expressions only change the clock before evaluating their body. -/
-theorem evaluate_tick_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
-    (bodyIH : PreservesCodeOracle (C := C) (F := F) [body]) :
-    PreservesCodeOracle (C := C) (F := F) [.tick trace body] := by
-  intro env source result next run code oracle
+theorem evaluate_tick_preserves_safe_step {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (source : State C F) (bodyIH : PreservesCodeOracleAt (decClock 1 source) [body]) :
+    PreservesCodeOracleAt source [.tick trace body] := by
+  intro env result next run code oracle
   by_cases zero : source.clock = 0
   · simp [evaluate, zero] at run
     obtain ⟨_, rfl⟩ := run
     exact ⟨code, oracle⟩
   · have bodyRun : evaluate [body] env (decClock 1 source) = (result, next) := by
       simpa [evaluate, zero] using run
-    apply bodyIH env (decClock 1 source) result next bodyRun
+    apply bodyIH env result next bodyRun
     · simpa [CodeSafe, decClock] using code
     · simpa [OracleSafe, decClock] using oracle
 
+theorem evaluate_tick_preserves_safe {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (bodyIH : PreservesCodeOracle (C := C) (F := F) [body]) :
+    PreservesCodeOracle (C := C) (F := F) [.tick trace body] := by
+  intro env source result next run code oracle
+  exact evaluate_tick_preserves_safe_step trace body source (preservesCodeOracle_at bodyIH (decClock 1 source))
+    env result next run code oracle
+
 /-- Let expressions preserve safety through their bindings and body. -/
+theorem evaluate_let_preserves_safe_step {C F : Type} (trace : BackendCommon.Tra)
+    (bindings : List ClosLang.Exp) (body : ClosLang.Exp) (source : State C F)
+    (bindingsIH : PreservesCodeOracleAt source bindings)
+    (bodyIH : ∀ state : State C F, state.clock ≤ source.clock → PreservesCodeOracleAt state [body]) :
+    PreservesCodeOracleAt source [.let trace bindings body] := by
+  intro env result next run code oracle
+  rw [evaluate, fixClock_evaluate] at run
+  cases bindingsRun : evaluate bindings env source with
+  | mk bindingsResult middle =>
+    have middleSafe := bindingsIH env bindingsResult middle bindingsRun code oracle
+    have middleClock : middle.clock ≤ source.clock := by
+      have h := evaluate_clock_le bindings env source
+      simpa [bindingsRun] using h
+    rw [bindingsRun] at run
+    cases bindingsResult with
+    | err error => cases run; exact middleSafe
+    | val values => exact bodyIH middle middleClock (values ++ env) result next run middleSafe.1 middleSafe.2
+
 theorem evaluate_let_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
     (bindings : List ClosLang.Exp) (body : ClosLang.Exp)
     (bindingsIH : PreservesCodeOracle (C := C) (F := F) bindings)
     (bodyIH : PreservesCodeOracle (C := C) (F := F) [body]) :
     PreservesCodeOracle (C := C) (F := F) [.let trace bindings body] := by
   intro env source result next run code oracle
-  rw [evaluate, fixClock_evaluate] at run
-  cases bindingsRun : evaluate bindings env source with
-  | mk bindingsResult middle =>
-    have middleSafe := bindingsIH env source bindingsResult middle bindingsRun code oracle
-    rw [bindingsRun] at run
-    cases bindingsResult with
-    | err error => cases run; exact middleSafe
-    | val values => exact bodyIH (values ++ env) middle result next run middleSafe.1 middleSafe.2
+  exact evaluate_let_preserves_safe_step trace bindings body source (preservesCodeOracle_at bindingsIH source)
+    (fun state _ => preservesCodeOracle_at bodyIH state) env result next run code oracle
 
 /-- Exception handlers preserve safety through both the body and handler. -/
-theorem evaluate_handle_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
-    (body handler : ClosLang.Exp) (bodyIH : PreservesCodeOracle (C := C) (F := F) [body])
-    (handlerIH : PreservesCodeOracle (C := C) (F := F) [handler]) :
-    PreservesCodeOracle (C := C) (F := F) [.handle trace body handler] := by
-  intro env source result next run code oracle
+theorem evaluate_handle_preserves_safe_step {C F : Type} (trace : BackendCommon.Tra)
+    (body handler : ClosLang.Exp) (source : State C F) (bodyIH : PreservesCodeOracleAt source [body])
+    (handlerIH : ∀ state : State C F, state.clock ≤ source.clock → PreservesCodeOracleAt state [handler]) :
+    PreservesCodeOracleAt source [.handle trace body handler] := by
+  intro env result next run code oracle
   rw [evaluate, fixClock_evaluate] at run
   cases bodyRun : evaluate [body] env source with
   | mk bodyResult middle =>
-    have middleSafe := bodyIH env source bodyResult middle bodyRun code oracle
+    have middleSafe := bodyIH env bodyResult middle bodyRun code oracle
+    have middleClock : middle.clock ≤ source.clock := by
+      have h := evaluate_clock_le [body] env source
+      simpa [bodyRun] using h
     rw [bodyRun] at run
     cases bodyResult with
     | val values => cases run; exact middleSafe
     | err error =>
       cases error with
       | abort reason => cases run; exact middleSafe
-      | raise value => exact handlerIH (value :: env) middle result next run middleSafe.1 middleSafe.2
+      | raise value => exact handlerIH middle middleClock (value :: env) result next run middleSafe.1 middleSafe.2
+
+theorem evaluate_handle_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
+    (body handler : ClosLang.Exp) (bodyIH : PreservesCodeOracle (C := C) (F := F) [body])
+    (handlerIH : PreservesCodeOracle (C := C) (F := F) [handler]) :
+    PreservesCodeOracle (C := C) (F := F) [.handle trace body handler] := by
+  intro env source result next run code oracle
+  exact evaluate_handle_preserves_safe_step trace body handler source (preservesCodeOracle_at bodyIH source)
+    (fun state _ => preservesCodeOracle_at handlerIH state) env result next run code oracle
 
 /-- Conditionals preserve safety along the evaluated condition and branch. -/
-theorem evaluate_if_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
-    (condition yes no : ClosLang.Exp) (conditionIH : PreservesCodeOracle (C := C) (F := F) [condition])
-    (yesIH : PreservesCodeOracle (C := C) (F := F) [yes])
-    (noIH : PreservesCodeOracle (C := C) (F := F) [no]) :
-    PreservesCodeOracle (C := C) (F := F) [.ifThenElse trace condition yes no] := by
-  intro env source result next run code oracle
+theorem evaluate_if_preserves_safe_step {C F : Type} (trace : BackendCommon.Tra)
+    (condition yes no : ClosLang.Exp) (source : State C F) (conditionIH : PreservesCodeOracleAt source [condition])
+    (yesIH : ∀ state : State C F, state.clock ≤ source.clock → PreservesCodeOracleAt state [yes])
+    (noIH : ∀ state : State C F, state.clock ≤ source.clock → PreservesCodeOracleAt state [no]) :
+    PreservesCodeOracleAt source [.ifThenElse trace condition yes no] := by
+  intro env result next run code oracle
   rw [evaluate, fixClock_evaluate] at run
   cases testRun : evaluate [condition] env source with
   | mk testResult middle =>
-    have middleSafe := conditionIH env source testResult middle testRun code oracle
+    have middleSafe := conditionIH env testResult middle testRun code oracle
+    have middleClock : middle.clock ≤ source.clock := by
+      have h := evaluate_clock_le [condition] env source
+      simpa [testRun] using h
     rw [testRun] at run
     cases testResult with
     | err error => cases run; exact middleSafe
@@ -271,8 +348,18 @@ theorem evaluate_if_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
       dsimp only at run
       split at run
       · cases run; exact middleSafe
-      · exact yesIH env middle result next run middleSafe.1 middleSafe.2
-      · exact noIH env middle result next run middleSafe.1 middleSafe.2
+      · exact yesIH middle middleClock env result next run middleSafe.1 middleSafe.2
+      · exact noIH middle middleClock env result next run middleSafe.1 middleSafe.2
+
+theorem evaluate_if_preserves_safe {C F : Type} (trace : BackendCommon.Tra)
+    (condition yes no : ClosLang.Exp) (conditionIH : PreservesCodeOracle (C := C) (F := F) [condition])
+    (yesIH : PreservesCodeOracle (C := C) (F := F) [yes])
+    (noIH : PreservesCodeOracle (C := C) (F := F) [no]) :
+    PreservesCodeOracle (C := C) (F := F) [.ifThenElse trace condition yes no] := by
+  intro env source result next run code oracle
+  exact evaluate_if_preserves_safe_step trace condition yes no source (preservesCodeOracle_at conditionIH source)
+    (fun state _ => preservesCodeOracle_at yesIH state) (fun state _ => preservesCodeOracle_at noIH state)
+    env result next run code oracle
 
 /-- Constructing a closure leaves code and oracle untouched. -/
 theorem evaluate_fn_preserves_safe {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
@@ -285,15 +372,23 @@ theorem evaluate_fn_preserves_safe {C F : Type} (name : Flapjack.Basis.Pure.MlSt
 
 /-- Recursive closure construction either fails without changing state or
 evaluates the body with an extended environment. -/
+theorem evaluate_letrec_preserves_safe_step {C F : Type} (names : List Flapjack.AstHOL.VarN)
+    (location : Option Nat) (selected : Option (List Nat)) (functions : List (Nat × ClosLang.Exp))
+    (body : ClosLang.Exp) (source : State C F) (bodyIH : PreservesCodeOracleAt source [body]) :
+    PreservesCodeOracleAt source [.letrec names location selected functions body] := by
+  intro env result next run code oracle
+  rw [evaluate.eq_def] at run
+  dsimp only at run
+  repeat' split at run
+  all_goals try (simp_all; done)
+  all_goals exact bodyIH _ result next run code oracle
 theorem evaluate_letrec_preserves_safe {C F : Type} (names : List Flapjack.AstHOL.VarN)
     (location : Option Nat) (selected : Option (List Nat)) (functions : List (Nat × ClosLang.Exp))
     (body : ClosLang.Exp) (bodyIH : PreservesCodeOracle (C := C) (F := F) [body]) :
     PreservesCodeOracle (C := C) (F := F) [.letrec names location selected functions body] := by
   intro env source result next run code oracle
-  rw [evaluate.eq_def] at run
-  dsimp only at run
-  repeat' split at run
-  all_goals try (simp_all; done)
-  all_goals exact bodyIH _ source result next run code oracle
+  exact evaluate_letrec_preserves_safe_step names location selected functions body source
+    (preservesCodeOracle_at bodyIH source) env result next run code oracle
+
 
 end Flapjack.Compiler.Backend.ClosAnnotate

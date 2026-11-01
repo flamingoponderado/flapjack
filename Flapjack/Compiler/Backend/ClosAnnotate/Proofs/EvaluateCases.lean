@@ -44,6 +44,19 @@ def PreservesCodeOracle {C F : Type} (expressions : List ClosLang.Exp) : Prop :=
     evaluate expressions env source = (result, next) → CodeSafe source → OracleSafe source →
     CodeSafe next ∧ OracleSafe next
 
+/-- Code and oracle safety preservation from one source state. -/
+def PreservesCodeOracleAt {C F : Type} (source : State C F) (expressions : List ClosLang.Exp) : Prop :=
+  ∀ (env : List Value) (result : Result (List Value) Value) (next : State C F),
+    evaluate expressions env source = (result, next) → CodeSafe source → OracleSafe source →
+    CodeSafe next ∧ OracleSafe next
+
+/-- Restrict an unrestricted safety proof to one state. -/
+theorem preservesCodeOracle_at {C F : Type} {expressions : List ClosLang.Exp}
+    (safe : PreservesCodeOracle (C := C) (F := F) expressions) (source : State C F) :
+    PreservesCodeOracleAt source expressions := by
+  intro env result next run code oracle
+  exact safe env source result next run code oracle
+
 /-- Empty expression lists preserve evaluation and state. -/
 theorem evaluate_nil {C F : Type} : EvalSimulation (C := C) (F := F) [] := by
   intro env source nextEnv target result sourceNext m l index run noType length vars safe code oracle states
