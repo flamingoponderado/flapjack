@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosNumber
 import Flapjack.Compiler.Backend.Semantics.ClosSem
+import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 import Mathlib.Data.List.Forall2
 
@@ -135,6 +136,36 @@ termination_by sizeOf left
 decreasing_by
   simp_wf
   have bound := List.sizeOf_lt_of_mem member
+  omega
+
+/-- Every closure constant evaluates to a value related to itself, including
+    recursively nested constructor constants. -/
+theorem makeConst_related (maxApp : Nat) (constant : ClosLang.Const) :
+    ValueRel maxApp (makeConst constant) (makeConst constant) := by
+  cases constant with
+  | constInt value => simpa [makeConst] using ValueRel.number (maxApp := maxApp) value
+  | constWord64 value => simpa [makeConst] using ValueRel.word64 (maxApp := maxApp) value
+  | constStr value => simpa [makeConst] using ValueRel.byteVector (maxApp := maxApp) value.explode
+  | constCons tag constants =>
+    simp only [makeConst]
+    apply ValueRel.block
+    have worker : ∀ xs : List ClosLang.Const, (∀ x ∈ xs, x ∈ constants) →
+        List.Forall₂ (ValueRel maxApp) (xs.map makeConst) (xs.map makeConst) := by
+      intro xs member
+      induction xs with
+      | nil => exact .nil
+      | cons first rest ih =>
+        apply List.Forall₂.cons
+        · have contained : first ∈ constants := member first (by simp)
+          exact makeConst_related maxApp first
+        · apply ih
+          intro x hx
+          exact member x (by simp [hx])
+    exact worker constants (by intro x hx; exact hx)
+termination_by sizeOf constant
+decreasing_by
+  simp_wf
+  have bound := List.sizeOf_lt_of_mem contained
   omega
 
 /-- Invert the closure case without requiring the two location annotations to

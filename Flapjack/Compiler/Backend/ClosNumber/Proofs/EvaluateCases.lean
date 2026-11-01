@@ -1647,4 +1647,106 @@ theorem primitiveSimulation_block_equal {C F : Type} :
           simp [doApp, applyBlock, ← same, result, boolRel, stateRel]
       | cons head tail => simp [doApp, applyBlock, ResultRel]
 
+/-- Constants preserve nested constructor values without observing locations. -/
+theorem primitiveSimulation_block_constant {C F : Type} (constant : ClosLang.Const) :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp (.constant constant)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil =>
+    have valueRel := makeConst_related source.maxApp constant
+    simp [doApp, applyBlock, valueRel, stateRel]
+  | cons head tail => simp [doApp, applyBlock, ResultRel]
+
+/-- Constant comparisons preserve their scalar observations and errors. -/
+theorem primitiveSimulation_block_equalConst {C F : Type} (constant : ClosLang.ConstPart) :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp (.equalConst constant)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil => cases constant <;> cases head <;> simp [doApp, applyBlock, ResultRel, boolValue_related, stateRel]
+    | cons head tail => simp [doApp, applyBlock, ResultRel]
+
+/-- The proof-side dispatcher rejects the build operation on both sides. -/
+theorem primitiveSimulation_block_build {C F : Type} (constants : List ClosLang.ConstPart) :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp (.build constants)) := by
+  intro args nextArgs source target argsRel stateRel
+  simp [doApp, applyBlock, ResultRel]
+
+/-- Block extension keeps the source slices and initial fields related, and
+    tests identical bounds and lengths. -/
+theorem primitiveSimulation_block_consExtend {C F : Type} (tag : Nat) :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp (.consExtend tag)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons first rest =>
+    cases first with
+    | block original fields nextFields fieldsRel =>
+      cases rest with
+      | nil => simp [doApp, applyBlock, ResultRel]
+      | cons lowerRel rest =>
+        cases lowerRel with
+        | number lower =>
+          cases rest with
+          | nil => simp [doApp, applyBlock, ResultRel]
+          | cons lenRel rest =>
+            cases lenRel with
+            | number len =>
+              cases rest with
+              | nil => simp [doApp, applyBlock, ResultRel]
+              | cons totalRel initialRel =>
+                cases totalRel with
+                | number total =>
+                  rename_i initial nextInitial
+                  have fieldsLength := fieldsRel.length_eq
+                  have initialLength := initialRel.length_eq
+                  have sliceRel := List.forall₂_take len.toNat (List.forall₂_drop lower.toNat fieldsRel)
+                  have resultRel := ValueRel.block tag _ _ (List.rel_append initialRel sliceRel)
+                  by_cases invalid : lower < 0 ∨ len < 0 ∨ Int.ofNat fields.length < lower + len ∨
+                      total = 0 ∨ total ≠ Int.ofNat initial.length + len
+                  · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength]
+                    rw [if_pos invalid, if_pos invalid]
+                    exact ⟨_, rfl, rfl⟩
+                  · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength]
+                    rw [if_neg invalid, if_neg invalid]
+                    exact ⟨_, _, rfl, resultRel, stateRel⟩
+                | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+                  simp [doApp, applyBlock, ResultRel]
+            | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+              cases rest <;> simp [doApp, applyBlock, ResultRel]
+        | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+          cases rest <;> simp [doApp, applyBlock, ResultRel]
+    | number _ | word64 _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+      cases rest <;> simp [doApp, applyBlock, ResultRel]
+
+/-- All cases in the proof-side block dispatcher preserve the numbering
+    relation. Its source correspondence remains a separate review obligation. -/
+theorem primitiveSimulation_block {C F : Type} (op : ClosLang.BlockOp) :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp op) := by
+  cases op with
+  | cons tag => exact primitiveSimulation_block_cons tag
+  | elemAt index => exact primitiveSimulation_block_elemAt index
+  | tagLenEq tag length => exact primitiveSimulation_block_tagLenEq tag length
+  | lenEq length => exact primitiveSimulation_block_lenEq length
+  | tagEq tag => exact primitiveSimulation_block_tagEq tag
+  | lengthBlock => exact primitiveSimulation_block_length
+  | boolTest test => exact primitiveSimulation_block_boolTest test
+  | boolNot => exact primitiveSimulation_block_boolNot
+  | boundsCheckBlock => exact primitiveSimulation_block_bounds
+  | consExtend tag => exact primitiveSimulation_block_consExtend tag
+  | fromList tag => exact primitiveSimulation_block_fromList tag
+  | listAppend => exact primitiveSimulation_block_listAppend
+  | constant constant => exact primitiveSimulation_block_constant constant
+  | equal => exact primitiveSimulation_block_equal
+  | equalConst constant => exact primitiveSimulation_block_equalConst constant
+  | build constants => exact primitiveSimulation_block_build constants
+
+/-- Block expressions preserve evaluation under location numbering. -/
+theorem evaluate_blockOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.BlockOp)
+    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.blockOp op) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_block op)
+
 end Flapjack.Compiler.Backend.ClosNumber
