@@ -220,6 +220,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackPermute
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackOperations
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SmallNumber
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Unit
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Bool
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Numbers
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Space

@@ -99901,6 +99901,42 @@
     "reviewer": "Source comparison: memory_rel_Unit and its typed data_to_word_memory_repr capture. The full memory relation and good_dimindex imply the same relation with Unit and Word 2 prepended; store is the canonical finite-support map. All source word occurrences share the positive HOL word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Bool.lean",
+    "lean_name": "memoryRel_boolTrue",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Boolv_T",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Boolv_T and its typed data_to_word_memory_repr capture. The original relation and good_dimindex premises imply the relation with Boolv T and Word 18 prepended. store uses the canonical finite-support map; memory, domain and word locations share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Bool.lean",
+    "lean_name": "memoryRel_boolFalse",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Boolv_F",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Boolv_F and its typed data_to_word_memory_repr capture. The original relation and good_dimindex premises imply the relation with Boolv F and Word 2 prepended. store uses the canonical finite-support map; memory, domain and word locations share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Bool.lean",
+    "lean_name": "memoryRel_bool",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Boolv",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Boolv and its typed data_to_word_memory_repr capture. The original relation and good_dimindex are preserved, as are the two conditional requirements selecting Word 18 for true and Word 2 for false. Lean states the HOL Boolean conditions as equality to true or false. store uses the canonical finite-support map; memory, domain and word locations share the positive HOL word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
