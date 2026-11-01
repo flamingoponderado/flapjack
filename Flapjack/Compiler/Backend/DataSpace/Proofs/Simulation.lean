@@ -469,6 +469,42 @@ theorem simulationFor_seq_makeSpace {C F : Type} (firstAmount secondAmount : Nat
       · intro key member
         exact ⟨member, rfl⟩
 
+/-- A reservation can move before a variable move using the adjusted live
+set, while preserving the simulation's local-extension relation. -/
+theorem simulationFor_seq_move_makeSpace {C F : Type} (dest src amount : Nat) (names : NumSet) :
+    simulationFor (C := C) (F := F) (.seq (.move dest src) (.makeSpace amount names)) := by
+  intro source sourceNext result locals notType run included
+  cases read : DataSem.getVar src source.locals with
+  | none =>
+    simp [DataSem.evaluate, read] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact False.elim (notType rfl)
+  | some value =>
+    let moved := setVar dest value source
+    have moveRun : DataSem.evaluate (.move dest src) source = (none, moved) := by
+      simp [DataSem.evaluate, read, moved]
+    rw [DataSem.evaluate, fixClock_evaluate, moveRun] at run
+    cases cut : cutEnv names moved.locals with
+    | none =>
+      simp [DataSem.evaluate, cut] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact False.elim (notType rfl)
+    | some resultEnv =>
+      have sourceCut : cutEnv names (sptInsert dest value source.locals) = some resultEnv := by simpa [moved, setVar] using cut
+      obtain ⟨before, beforeCut, beforeRead, afterIncluded⟩ :=
+        cutEnv_before_move source.locals locals names dest src value resultEnv included read sourceCut
+      simp [DataSem.evaluate, cut] at run
+      obtain ⟨rfl, rfl⟩ := run
+      let targetMid := addSpace { source with locals := before } amount
+      let targetNext := setVar dest value targetMid
+      refine ⟨sptInsert dest value before, targetNext.safeForSpace, targetNext.peakHeapLength, targetNext.stackMax, ?_, ?_⟩
+      · change DataSem.evaluate (.seq (.makeSpace amount (sptInsert src () (sptDelete dest names))) (.seq (.move dest src) .skip)) { source with locals := locals } = _
+        have reserveRun : DataSem.evaluate (.makeSpace amount (sptInsert src () (sptDelete dest names))) { source with locals := locals } = (none, targetMid) := by
+          simp [DataSem.evaluate, beforeCut, targetMid]
+        rw [DataSem.evaluate, fixClock_evaluate, reserveRun, DataSem.evaluate_seq_skip]
+        simp [DataSem.evaluate, DataSem.getVar, targetMid, targetNext, addSpace, setVar, beforeRead, moved]
+      · simpa [addSpace] using afterIncluded
+
 /-- Changing only resource-accounting fields preserves the evaluator result
 and observable data state for non-type-error executions. The stronger HOL
 swap theorem additionally describes the exact final locals and control fields. -/
