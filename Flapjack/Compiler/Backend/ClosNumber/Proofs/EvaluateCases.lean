@@ -935,16 +935,23 @@ theorem evaluate_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
   · simp [arityOk] at run
     exact False.elim (noType run.1.symm)
 
-/-- Indirect application composes argument and function evaluation with the
-    application induction hypothesis. This factored hypothesis is universally
-    quantified and must be discharged by the eventual mutual simulation. -/
-theorem evaluate_app {C F : Type} (trace : BackendCommon.Tra)
+/-- Indirect application at one source state. Argument and function
+simulations are limited to reachable clocks, and application is available at
+any clock no larger than the starting clock. -/
+theorem evaluate_app_step {C F : Type} (trace : BackendCommon.Tra)
     (function : ClosLang.Exp) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args)
-    (functionIH : EvalSimulation (C := C) (F := F) [function])
-    (applicationIH : AppSimulation (C := C) (F := F)) :
-    EvalSimulation (C := C) (F := F) [.app trace none function args] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+    (env nextEnv : List Value) (source : State (Nat × C) F) (target : State C F)
+    (result : Result (List Value) Value) (sourceNext : State (Nat × C) F) (start : Nat)
+    (run : evaluate [.app trace none function args] env source = (result, sourceNext))
+    (noType : result ≠ .err (.abort .typeError))
+    (safe : ¬ ClosProps.containsAppSome source.maxApp [.app trace none function args])
+    (envRel : List.Forall₂ (ValueRel source.maxApp) env nextEnv) (stateRel : StateRel source target)
+    (argsIH : EvalSimulationAt source args)
+    (functionIH : ∀ state : State (Nat × C) F, state.clock ≤ source.clock → EvalSimulationAt state [function])
+    (applicationIH : AppSimulationClockBelow (C := C) (F := F) (source.clock + 1)) :
+    ∃ targetResult targetNext,
+      evaluate (renumberList start [.app trace none function args]).2 nextEnv target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
   have safeParts : args.length ≤ source.maxApp ∧
       ¬ ClosProps.containsAppSomeExp source.maxApp function ∧
       ¬ ClosProps.containsAppSome source.maxApp args := by
@@ -958,12 +965,15 @@ theorem evaluate_app {C F : Type} (trace : BackendCommon.Tra)
   | cons first rest =>
     cases argsRun : evaluate (first :: rest) env source with
     | mk argsResult middle =>
+      have middleClock : middle.clock ≤ source.clock := by
+        have h := evaluate_clock_le (first :: rest) env source
+        simpa [argsRun] using h
       cases argsResult with
       | err error =>
         rw [evaluate, fixClock_evaluate, argsRun] at run
         cases run
         obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-          argsIH env nextEnv source target (.err error) middle (renumber start function).1 argsRun noType safeParts.2.2 envRel stateRel
+          argsIH env nextEnv target (.err error) middle (renumber start function).1 argsRun noType safeParts.2.2 envRel stateRel
         cases targetResult with
         | val values => cases error <;> simp [ResultRel] at resultRel
         | err targetError =>
@@ -975,7 +985,7 @@ theorem evaluate_app {C F : Type} (trace : BackendCommon.Tra)
       | val values =>
         have argsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
         obtain ⟨targetArgsResult, targetMiddle, targetArgsRun, argsRel, middleRel⟩ :=
-          argsIH env nextEnv source target (.val values) middle (renumber start function).1
+          argsIH env nextEnv target (.val values) middle (renumber start function).1
             argsRun argsNoType safeParts.2.2 envRel stateRel
         cases targetArgsResult with
         | err error => cases error <;> simp [ResultRel] at argsRel
@@ -996,7 +1006,7 @@ theorem evaluate_app {C F : Type} (trace : BackendCommon.Tra)
               rw [fixClock_evaluate, functionRun] at run
               cases run
               obtain ⟨targetResult, targetLast, targetRun, resultRel, lastRel⟩ :=
-                functionIH env nextEnv middle targetMiddle (.err error) last start functionRun
+                functionIH middle middleClock env nextEnv targetMiddle (.err error) last start functionRun
                   noType middleSafe middleEnv middleRel
               cases targetResult with
               | val values => cases error <;> simp [ResultRel] at resultRel
@@ -1018,7 +1028,7 @@ theorem evaluate_app {C F : Type} (trace : BackendCommon.Tra)
                 | nil =>
                   have functionNoType : (Result.val [value] : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
                   obtain ⟨targetFunctionResult, targetLast, targetFunctionRun, functionRel, lastRel⟩ :=
-                    functionIH env nextEnv middle targetMiddle (.val [value]) last start functionRun
+                    functionIH middle middleClock env nextEnv targetMiddle (.val [value]) last start functionRun
                       functionNoType middleSafe middleEnv middleRel
                   cases targetFunctionResult with
                   | err error => cases error <;> simp [ResultRel] at functionRel
@@ -1035,9 +1045,14 @@ theorem evaluate_app {C F : Type} (trace : BackendCommon.Tra)
                         simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte] at run
                         rw [fixClock_evaluate, functionRun] at run
                         simpa using run
+                      have lastClock : last.clock ≤ source.clock := by
+                        have h := evaluate_clock_le [function] env middle
+                        rw [functionRun] at h
+                        simp only at h
+                        omega
                       obtain ⟨targetResult, targetNext, targetAppRun, resultRel, nextRel⟩ :=
                         applicationIH value targetValue values targetValues last targetLast result sourceNext
-                          appRun noType (by simpa [lastMax, middleMax] using valueRel)
+                          (by omega) appRun noType (by simpa [lastMax, middleMax] using valueRel)
                           (by simpa [ResultRel, lastMax, middleMax] using argsRel) lastRel
                       refine ⟨targetResult, targetNext, ?_, ?_, nextRel⟩
                       · simp only [renumberList] at targetArgsRun targetFunctionRun
@@ -1048,6 +1063,23 @@ theorem evaluate_app {C F : Type} (trace : BackendCommon.Tra)
                         simpa using targetAppRun
                       · simpa [lastMax, middleMax] using resultRel
 
+/-- Unrestricted application case, derived from the clock-bounded step. -/
+theorem evaluate_app {C F : Type} (trace : BackendCommon.Tra)
+    (function : ClosLang.Exp) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args)
+    (functionIH : EvalSimulation (C := C) (F := F) [function])
+    (applicationIH : AppSimulation (C := C) (F := F)) :
+    EvalSimulation (C := C) (F := F) [.app trace none function args] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  apply evaluate_app_step trace function args env nextEnv source target result sourceNext start
+    run noType safe envRel stateRel
+  · intro env nextEnv target result next start run noType safe envRel stateRel
+    exact argsIH env nextEnv source target result next start run noType safe envRel stateRel
+  · intro state _ env nextEnv target result next start run noType safe envRel stateRel
+    exact functionIH env nextEnv state target result next start run noType safe envRel stateRel
+  · intro function nextFunction args nextArgs state target result next _ run noType related argsRel stateRel
+    exact applicationIH function nextFunction args nextArgs state target result next run noType related argsRel stateRel
+
 /-- Directly annotated applications cannot satisfy the simulation's source
     side condition; numbering correctness only considers indirect calls here. -/
 theorem evaluate_app_some {C F : Type} (trace : BackendCommon.Tra) (location : Nat)
@@ -1056,12 +1088,20 @@ theorem evaluate_app_some {C F : Type} (trace : BackendCommon.Tra) (location : N
   intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
   simp [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] at safe
 
-/-- A direct call can only propagate an argument error under the numbering
-    state relation: its source code map is empty after successful arguments. -/
-theorem evaluate_call {C F : Type} (trace : BackendCommon.Tra) (ticks location : Nat)
-    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
-    EvalSimulation (C := C) (F := F) [.call trace ticks location args] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+/-- Direct calls at one source state can only propagate an argument error:
+the numbering relation makes their code map empty. -/
+theorem evaluate_call_step {C F : Type} (trace : BackendCommon.Tra) (ticks location : Nat)
+    (args : List ClosLang.Exp) (env nextEnv : List Value)
+    (source : State (Nat × C) F) (target : State C F) (result : Result (List Value) Value)
+    (sourceNext : State (Nat × C) F) (start : Nat)
+    (run : evaluate [.call trace ticks location args] env source = (result, sourceNext))
+    (noType : result ≠ .err (.abort .typeError))
+    (safe : ¬ ClosProps.containsAppSome source.maxApp [.call trace ticks location args])
+    (envRel : List.Forall₂ (ValueRel source.maxApp) env nextEnv) (stateRel : StateRel source target)
+    (argsIH : EvalSimulationAt source args) :
+    ∃ targetResult targetNext,
+      evaluate (renumberList start [.call trace ticks location args]).2 nextEnv target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
   have argsSafe : ¬ ClosProps.containsAppSome source.maxApp args := by
     simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
   cases argsRun : evaluate args env source with
@@ -1071,7 +1111,7 @@ theorem evaluate_call {C F : Type} (trace : BackendCommon.Tra) (ticks location :
       rw [evaluate, fixClock_evaluate, argsRun] at run
       cases run
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-        argsIH env nextEnv source target (.err error) middle start argsRun noType argsSafe envRel stateRel
+        argsIH env nextEnv target (.err error) middle start argsRun noType argsSafe envRel stateRel
       cases targetResult with
       | val values => cases error <;> simp [ResultRel] at resultRel
       | err targetError =>
@@ -1081,11 +1121,21 @@ theorem evaluate_call {C F : Type} (trace : BackendCommon.Tra) (ticks location :
     | val values =>
       have argsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-        argsIH env nextEnv source target (.val values) middle start argsRun argsNoType argsSafe envRel stateRel
+        argsIH env nextEnv target (.val values) middle start argsRun argsNoType argsSafe envRel stateRel
       have emptyCode : middle.code = HolFiniteMapExact.empty := middleRel.2.2.2.2.2.2.2.2.1
       rw [evaluate, fixClock_evaluate, argsRun] at run
       simp [findCode, emptyCode, HolFiniteMapExact.empty] at run
       exact False.elim (noType run.1.symm)
+
+/-- Unrestricted direct-call case derived from its local-state step. -/
+theorem evaluate_call {C F : Type} (trace : BackendCommon.Tra) (ticks location : Nat)
+    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.call trace ticks location args] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  apply evaluate_call_step trace ticks location args env nextEnv source target result sourceNext start
+    run noType safe envRel stateRel
+  intro env nextEnv target result next start run noType safe envRel stateRel
+  exact argsIH env nextEnv source target result next start run noType safe envRel stateRel
 
 /-- Integer operations inspect only numeric values, which numbering preserves. -/
 theorem doIntApp_related (maxApp : Nat) (op : ClosLang.IntOp) {args nextArgs : List Value}
