@@ -784,6 +784,7 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Operations
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.IntegerOperations
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.WordOperations
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.GlobalOperations
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockInspection
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
