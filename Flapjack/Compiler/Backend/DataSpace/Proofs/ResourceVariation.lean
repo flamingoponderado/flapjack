@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Simulation
 import Flapjack.Compiler.Backend.Semantics.DataProps.AbortControl
+import Flapjack.Compiler.Backend.Semantics.DataProps.FrameResult
 
 /-! Control-state consequences of resource-accounting variation. -/
 namespace Flapjack.Compiler.Backend.DataSpace
@@ -57,5 +58,50 @@ theorem evaluate_resource_variation_control {C F : Type} (program : DataLang.Pro
     simp_all
   exact ⟨targetNext.localsSize, targetNext.safeForSpace, targetNext.peakHeapLength,
     targetNext.stackMax, by simpa [target, ← stateEq] using targetRun⟩
+
+/-- The full resource-field swap holds for continuing executions. -/
+theorem evaluate_resource_variation_normal {C F : Type} (program : DataLang.Prog)
+    (source sourceNext : State C F) (safe : Bool) (peak : Nat) (stackMax : Option Nat)
+    (run : DataSem.evaluate program source = (none, sourceNext)) :
+    ∃ safe' peak' stackMax',
+      DataSem.evaluate program { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } =
+        (none, { sourceNext with safeForSpace := safe', peakHeapLength := peak', stackMax := stackMax' }) := by
+  obtain ⟨localsSize, safe', peak', stackMax', targetRun⟩ :=
+    evaluate_resource_variation_control program source sourceNext none safe peak stackMax run (by simp)
+  have originalSize := evaluate_frameSizeResult program source sourceNext none run
+  have targetSize := evaluate_frameSizeResult program
+    { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+    { sourceNext with localsSize := localsSize, safeForSpace := safe', peakHeapLength := peak', stackMax := stackMax' }
+    none targetRun
+  have sizeEq : localsSize = sourceNext.localsSize := by
+    change localsSize = source.localsSize at targetSize
+    exact targetSize.trans originalSize.symm
+  subst localsSize
+  exact ⟨safe', peak', stackMax', by simpa using targetRun⟩
+
+/-- The full resource-field swap also holds when evaluation raises. -/
+theorem evaluate_resource_variation_raise {C F : Type} (program : DataLang.Prog)
+    (source sourceNext : State C F) (value : DataSem.Value) (safe : Bool) (peak : Nat) (stackMax : Option Nat)
+    (run : DataSem.evaluate program source = (some (.err (.raise value)), sourceNext)) :
+    ∃ safe' peak' stackMax',
+      DataSem.evaluate program { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } =
+        (some (.err (.raise value)), { sourceNext with safeForSpace := safe', peakHeapLength := peak', stackMax := stackMax' }) := by
+  obtain ⟨localsSize, safe', peak', stackMax', targetRun⟩ :=
+    evaluate_resource_variation_control program source sourceNext (some (.err (.raise value))) safe peak stackMax run (by simp)
+  obtain ⟨jumped, jumpRun, originalSize⟩ :=
+    evaluate_frameSizeResult program source sourceNext (some (.err (.raise value))) run
+  obtain ⟨targetJump, targetJumpRun, targetSize⟩ := evaluate_frameSizeResult program
+    { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+    { sourceNext with localsSize := localsSize, safeForSpace := safe', peakHeapLength := peak', stackMax := stackMax' }
+    (some (.err (.raise value))) targetRun
+  have moved := jumpExc_transport source
+    { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } jumped rfl rfl jumpRun
+  have jumpEq := Option.some.inj (targetJumpRun.symm.trans moved)
+  subst targetJump
+  have sizeEq : localsSize = sourceNext.localsSize := by
+    change localsSize = jumped.localsSize at targetSize
+    exact targetSize.trans originalSize.symm
+  subst localsSize
+  exact ⟨safe', peak', stackMax', by simpa using targetRun⟩
 
 end Flapjack.Compiler.Backend.DataSpace
