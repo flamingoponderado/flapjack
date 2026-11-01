@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.GcShared
 import Flapjack.Compiler.Backend.DataToWord.Header
 import Flapjack.AstHOL.BackendOperators
+import Flapjack.Misc.GoodDimindex
 
 /-! Abstract heap representation used by data-to-word memory correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -87,5 +88,26 @@ def wordPayload {headerWidth : Nat} {payloadWidth : Nat} [NeZero headerWidth] [N
       let k := if headerWidth = 32 then 2 else 3
       (makeByteHeader conf compareByContents n, payload,
         addresses.isEmpty && decide (payload.length = len ∧ n + 2 ^ k < 2 ^ (conf.lenSize + k)))
+
+/-- A valid payload has the declared length; its header identifies whether
+it contains raw words or projected heap addresses. The header and payload
+widths remain independent, as in the original theorem. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_payload_T_IMP"
+  (words_as_type_indexed_bitvec)]
+theorem wordPayloadTrueImp {headerWidth : Nat} {payloadWidth : Nat}
+    [NeZero headerWidth] [NeZero payloadWidth]
+    (addresses : List (HeapAddress (WordLocW payloadWidth))) (len : Nat) (tag : HeapTag)
+    (payload : List (WordLocW payloadWidth)) (conf : Config) (h : BitVec headerWidth)
+    (ts : List (WordLocW payloadWidth)) :
+    wordPayload addresses len tag payload conf = (h, ts, true) ∧
+      goodDimindex headerWidth ∧ conf.lenSize + 2 < headerWidth →
+    len = ts.length ∧ if h.getLsbD 2 then addresses = [] else ts = addresses.map (wordAddr conf) := by
+  rintro ⟨eqn, good, bound⟩
+  have hb : 2 < headerWidth - conf.lenSize := by omega
+  rcases good with hw | hw <;> subst headerWidth
+  all_goals cases tag <;> simp [wordPayload] at eqn
+  all_goals rcases eqn with ⟨rfl, rfl, eqn⟩
+  all_goals simp_all [makeHeader, makeByteHeader]
+  all_goals split at * <;> simp_all
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

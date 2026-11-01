@@ -99895,6 +99895,15 @@
     "reviewer": "Source comparison: all six clauses in the original definition and typed data_to_word_memory_repr capture. Header and payload use independently quantified positive word widths; address mapping, payload selection, header encoding and each validity condition preserve the source. Empty-list tests and decidable conjunctions compute the corresponding Boolean conditions."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Representation.lean",
+    "lean_name": "wordPayloadTrueImp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_payload_T_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original theorem and typed data_to_word_memory_repr capture preserve independent header and payload dimensions, the payload triple equality, good_dimindex and length-size bound as the conjunctive premise, and the length and word_bit 2 conditional conclusions. getLsbD 2 matches word_bit at the 32- and 64-bit widths allowed by goodDimindex. Lean checks all six tag cases."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Limits.lean",
     "lean_name": "limitsInv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
