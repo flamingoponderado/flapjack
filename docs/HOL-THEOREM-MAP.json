@@ -99961,6 +99961,60 @@
     "reviewer": "Source comparison: memory_rel_any_Number_IMP and its typed data_to_word_memory_repr capture. The original good_dimindex and memory_rel hypotheses yield a word location whose bit zero is set exactly when the integer is not small. Lean represents the HOL Boolean bit as getLsbD 0 = true. store uses the canonical finite-support map; memory, domain and word locations share the positive HOL word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/NumberCompare.lean",
+    "lean_name": "smallnum_i2w",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "Smallnum_i2w",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: Smallnum_i2w and its typed data_to_word_memory_repr capture. The exact encoding equality converts 4 * i to the shared positive-width word; BitVec.ofInt corresponds to HOL i2w. All word occurrences share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/NumberCompare.lean",
+    "lean_name": "numLessThm",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "num_less_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: num_less_thm and its typed data_to_word_memory_repr capture. The original good_dimindex and both small_int hypotheses imply the equivalence between integer order and signed word order, represented by BitVec.slt. All word occurrences share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/NumberCompare.lean",
+    "lean_name": "memoryRel_numberLess",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Number_LESS",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Number_LESS and its typed data_to_word_memory_repr capture. The original relation, both small_int conditions, and good_dimindex imply the two word witnesses and equivalence between signed word less-than and integer less-than. store uses the canonical finite-support map; All word occurrences share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/NumberCompare.lean",
+    "lean_name": "memoryRel_numberEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Number_EQ",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Number_EQ and its typed data_to_word_memory_repr capture. The original relation, disjunction requiring at least one small integer, and good_dimindex imply the two word witnesses and equality equivalence, including mixed small/bignum cases. store uses the canonical finite-support map; All word occurrences share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/NumberCompare.lean",
+    "lean_name": "memoryRel_numberLessEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Number_LESS_EQ",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Number_LESS_EQ and its typed data_to_word_memory_repr capture. The original relation, both small_int conditions, and good_dimindex imply the two word witnesses and equivalence between signed word less-or-equal and integer less-or-equal. store uses the canonical finite-support map; All word occurrences share the positive HOL word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
