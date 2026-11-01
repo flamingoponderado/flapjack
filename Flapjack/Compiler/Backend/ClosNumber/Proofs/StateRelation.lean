@@ -21,8 +21,8 @@ def OptionRel {α β : Type} (relation : α → β → Prop) : Option α → Opt
   | _, _ => False
 
 /-- Source-shaped numbering state relation. The code and reference stores use
-the proof-side finite-support carrier; exact source correspondence and the
-numbering evaluator simulation remain open. -/
+the proof-side finite-support carrier; exact source correspondence remains
+to be reviewed. -/
 def StateRel {C F : Type} (source : State (Nat × C) F) (target : State C F) : Prop :=
   source.clock = target.clock ∧ source.ffi = target.ffi ∧ target.maxApp = source.maxApp ∧
   source.compile = stateCc (ignoreTable compileInc) target.compile ∧
