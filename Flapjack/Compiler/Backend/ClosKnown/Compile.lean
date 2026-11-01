@@ -171,4 +171,22 @@ def compileFuel (fuel : Nat) (config : Option Config) (es : List Exp) : Option (
         ClosLetop.compileBounded fuel e
       pure (some { c with valApproxSpt := globals }, es)
 
+/-- Incremental known-function optimization retains the incoming global
+approximations, resets the inline factor, and discards incoming auxiliary
+code when enabled. Failure remains explicit when bounded inlining runs out of
+fuel. This checked implementation still needs HOL correspondence review. -/
+def compileIncFuel (fuel : Nat) (config : Option Config)
+    (program : List Exp × List (Nat × Nat × Exp)) :
+    Option (Option Config × (List Exp × List (Nat × Nat × Exp))) := do
+  match config with
+  | none => pure (none, program)
+  | some c =>
+      let es ← program.1.mapM (ClosFvs.removeBounded fuel 0)
+      let static := { resetInlineFactor c with valApproxSpt := .ln }
+      let (es, globals) ← knownListBounded fuel static es [] c.valApproxSpt
+      let es ← es.mapM fun (e, _) => do
+        let e ← ClosTicks.removeBounded fuel e
+        ClosLetop.compileBounded fuel e
+      pure (some { c with valApproxSpt := globals }, (es, []))
+
 end Flapjack.Compiler.Backend.ClosKnown

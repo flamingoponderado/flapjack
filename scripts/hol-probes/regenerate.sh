@@ -258,7 +258,7 @@ run_probe() {
 }
 
 run_probe clos_to_bvl_incremental_probeScript.sml clos_to_bvl_incremental_probe.out \
-  incremental_aux incremental_empty incremental_closure incremental_mti_aux incremental_mti_empty incremental_call_closure incremental_call_mti \
+  incremental_aux incremental_empty incremental_closure incremental_mti_aux incremental_mti_empty incremental_call_closure incremental_call_mti incremental_known_globals incremental_known_default \
   "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_to_bvl_recursive_types_probeScript.sml clos_to_bvl_recursive_types_probe.out \

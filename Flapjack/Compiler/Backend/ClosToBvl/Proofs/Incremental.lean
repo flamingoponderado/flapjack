@@ -8,6 +8,16 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.Compiler.Backend.BackendProps
 
+/-- With known-function optimization disabled, the full checked entry point
+agrees with the earlier incremental wrapper. -/
+theorem compileIncFuel_noKnown (fuel : Nat) (config : Config) (program : ClosSem.Program)
+    (noKnown : config.knownConf = none) :
+    compileIncFuel? fuel config program = compileIncCallsFuel? fuel config program := by
+  cases call : config.doCall <;> cases mti : config.doMti <;>
+    simp [compileIncFuel?, compileIncCallsFuel?, compileIncMtiFuel?, prepareIncMtiFuel?,
+      prepareIncNoOpts, ClosKnown.compileIncFuel, noKnown, call, mti]
+  cases ClosMti.compileFuel fuel true config.maxApp program.1 <;> simp
+
 /-- Disabling direct-call conversion recovers the multi-argument wrapper. -/
 theorem compileIncCallsFuel_disabled (fuel : Nat) (config : Config) (program : ClosSem.Program)
     (disabled : config.doCall = false) :

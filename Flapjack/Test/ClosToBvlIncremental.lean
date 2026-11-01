@@ -12,6 +12,9 @@ private def config : Config :=
 private def configWithCalls : Config :=
   { config with callState := (sptInsert 9 () .ln, [(3, 0, .var .none 0)]) }
 
+private def knownGlobalsConfig : ClosKnown.Config :=
+  { ClosKnown.defaultConfig 2 with inlineFactor := 0, valApproxSpt := sptInsert 4 (.int 7) .ln }
+
 /-- Incremental compilation keeps incoming auxiliary code, allocates the
 entry label, and advances the numbering state. -/
 example : (match compileIncNoOpts? config ([.var .none 0], [(42, 0, .var .none 0)]) with
@@ -63,6 +66,34 @@ example : (match compileIncCallsFuel? 0 { config with doCall := true, doMti := t
           [.op (.intOp (.const 1)) [], .op (.label 20) []]),
         (21, 2, .var 0), (20, 3, .let [.var 0, .var 1] (.call 0 (some 21) [.var 0, .var 1]))]) =>
         out.nextLoc == 14 && decide (sptToAList out.callState.1 = [(12, ())])
+    | _ => false) = true := by native_decide
+
+/-- The known pass reads retained global approximations, updates them, resets
+the working inline factor, and drops incoming auxiliary code. -/
+example : (match compileIncFuel? 100 { config with knownConf := some knownGlobalsConfig }
+    ([.op .none (.globOp (.global 4)) [],
+      .op .none (.globOp (.setGlobal 5)) [.op .none (.intOp (.const 9)) []]],
+      [(42, 0, .var .none 0)]) with
+    | some (out, [(15, 0, .let [.op (.intOp (.const 7)) []] (.call 0 (some 16) [])),
+        (16, 0, .op (.globOp (.setGlobal 6)) [.op (.intOp (.const 9)) []])]) =>
+      out.nextLoc == 12 && match out.knownConf with
+        | some known => known.inlineFactor == 0 &&
+          match sptLookup 4 known.valApproxSpt, sptLookup 5 known.valApproxSpt with
+          | some (.int 7), some (.int 9) => true
+          | _, _ => false
+        | none => false
+    | _ => false) = true := by native_decide
+
+/-- Replay the original default combination of all three optimizations. -/
+example : (match compileIncFuel? 100 { defaultConfig with nextLoc := 10, maxApp := 3 }
+    ([.fn (ofString "f") none none 1 (.fn (ofString "g") none none 1 (.var .none 0))], []) with
+    | some (out, [(18, 0, .op (.blockOp (.cons 30))
+          [.op (.intOp (.const 1)) [], .op (.label 20) []]),
+        (21, 2, .var 0), (20, 3, .let [.var 0, .var 1] (.call 0 (some 21) [.var 0, .var 1]))]) =>
+        out.nextLoc == 14 && decide (sptToAList out.callState.1 = [(12, ())]) &&
+          match out.knownConf with
+          | some known => (sptToAList known.valApproxSpt).isEmpty
+          | none => false
     | _ => false) = true := by native_decide
 
 example : (match compileIncMtiFuel? 0 { config with doMti := true, maxApp := 3 }

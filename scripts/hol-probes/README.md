@@ -9206,7 +9206,9 @@ a single closure, and a program with incoming auxiliary code and a nonempty
 call-state set. It also captures enabled multi-argument introduction for
 empty input and a nested closure, both with incoming auxiliary code. It also
 captures direct-call conversion with a retained location set and a combined
-multi-argument/direct-call case. The probe adds the original `extract_name_pmatch` theorem to
+multi-argument/direct-call case. It also captures retained and updated known
+global approximations and the default combination of all three optimizations.
+The probe adds the original `extract_name_pmatch` theorem to
 HOL evaluation so the source's choice-based marker extraction computes.
 `Flapjack.Test.ClosToBvlIncremental` replays the resulting code and observable
 configuration fields against the checked Lean wrapper. Regenerate with
