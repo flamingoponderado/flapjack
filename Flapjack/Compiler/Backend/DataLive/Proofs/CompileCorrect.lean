@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.DataLive.Proofs.CompileAll
+import Flapjack.Compiler.Backend.Semantics.DataProps.ValueLocals
 
 /-! Observable consequences of the data liveness simulation. -/
 namespace Flapjack.Compiler.Backend.DataLive
@@ -41,6 +42,33 @@ theorem compile_correct_raise {C F : Type} (program : DataLang.Prog) (source sou
   have stackEq : sourceNext.stack = targetNext.stack := sourceStack.trans targetStack.symm
   have handlerEq : sourceNext.handler = targetNext.handler := sourceHandler.trans targetHandler.symm
   have localsEq : sourceNext.locals = targetNext.locals := sourceLocals.trans targetLocals.symm
+  have stateEq : targetNext = { sourceNext with localsSize := targetNext.localsSize, stackMax := targetNext.stackMax, safeForSpace := targetNext.safeForSpace, peakHeapLength := targetNext.peakHeapLength } := by
+    rcases related with ⟨code, clock, space, ffi, refs, global, _, _, compiler, oracle, stamps, limits, frames, _⟩
+    cases sourceNext
+    cases targetNext
+    simp_all
+  refine ⟨targetNext.localsSize, targetNext.stackMax, targetNext.safeForSpace, targetNext.peakHeapLength, ?_⟩
+  rw [← stateEq]
+  exact targetRun
+
+/-- A value result of liveness-compiled code has the original state except
+for the four fields permitted by the source correctness theorem. This is the
+value case only; source-carrier review remains open. -/
+theorem compile_correct_value {C F : Type} (program : DataLang.Prog) (source sourceNext : State C F)
+    (values : List DataSem.Value)
+    (run : DataSem.evaluate program source = (some (.val values), sourceNext)) :
+    ∃ localsSize stackMax safe peak,
+      DataSem.evaluate (compile program .ln).1 source =
+        (some (.val values), { sourceNext with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }) := by
+  obtain ⟨targetNext, targetRun, related⟩ :=
+    compile_sameResult program .ln source sourceNext (some (.val values)) run (by simp)
+  have sourceControl := evaluate_stackResult program source sourceNext (some (.val values)) run
+  have targetControl := evaluate_stackResult (compile program .ln).1 source targetNext (some (.val values)) targetRun
+  have stackEq : sourceNext.stack = targetNext.stack := sourceControl.1.trans targetControl.1.symm
+  have handlerEq : sourceNext.handler = targetNext.handler := sourceControl.2.trans targetControl.2.symm
+  have localsEq : sourceNext.locals = targetNext.locals :=
+    (evaluate_value_locals program source sourceNext values run).trans
+      (evaluate_value_locals (compile program .ln).1 source targetNext values targetRun).symm
   have stateEq : targetNext = { sourceNext with localsSize := targetNext.localsSize, stackMax := targetNext.stackMax, safeForSpace := targetNext.safeForSpace, peakHeapLength := targetNext.peakHeapLength } := by
     rcases related with ⟨code, clock, space, ffi, refs, global, _, _, compiler, oracle, stamps, limits, frames, _⟩
     cases sourceNext
