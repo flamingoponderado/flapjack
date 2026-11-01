@@ -137,6 +137,40 @@ def expression(rng, depth):
     ])
 
 
+def rich_expression(rng, depth, variables):
+    """Generate an integer expression with scoped closures and patterns."""
+    if depth == 0:
+        return rng.choice(variables + ['0', '1', '2', '~1'])
+    left = rich_expression(rng, depth - 1, variables)
+    right = rich_expression(rng, depth - 1, variables)
+    form = rng.randrange(8)
+    if form == 0:
+        return f'({left} + {right})'
+    if form == 1:
+        return f'({left} * {right})'
+    if form == 2:
+        return f'(if {left} < {right} then {left} else {right})'
+    if form == 3:
+        body = rich_expression(rng, depth - 1, variables + ['z'])
+        return f'(let val z = {left} in {body} end)'
+    if form == 4:
+        body = rich_expression(rng, depth - 1, variables + ['z'])
+        return f'((fn z => {body}) {left})'
+    if form == 5:
+        body = rich_expression(rng, depth - 1, variables + ['u', 'v'])
+        return f'(case ({left},{right}) of (u,v) => {body})'
+    if form == 6:
+        body = rich_expression(rng, depth - 1, variables + ['z'])
+        return f'((fn f => f {left}) (fn z => {body}))'
+    body = rich_expression(rng, depth - 1, variables + ['z'])
+    return f'(let fun g z = {body} in g {left} end)'
+
+
+def rich_source(rng):
+    body = rich_expression(rng, rng.randrange(1, 4), ['x', 'y'])
+    return f'fun f x y = {body}; val z = f 1 2;'
+
+
 def structured_source(rng):
     """Generate accepted programs that exercise closures, patterns and modules."""
     a, b, c = (rng.randrange(1000) for _ in range(3))
@@ -156,6 +190,20 @@ def structured_source(rng):
         f'fun f (a,b,c) = fn (x,y) => (c,b,a,y,x); val y = f ({a},{b},{c}) ({b},{a});',
         f'val x = let val x = {a} in let val y = fn z => (x,z) in y {b} end end;',
     ])
+
+
+def backend_options(rng):
+    """Combine options that influence closure, BVL and backend lowering."""
+    groups = [
+        ['--multi=true', '--multi=false'], ['--known=true', '--known=false'],
+        ['--call=true', '--call=false'], ['--split=true', '--split=false'],
+        ['--tmc=true', '--tmc=false'], ['--tailrec=true', '--tailrec=false'],
+        ['--reg_alg=0', '--reg_alg=1', '--reg_alg=2', '--reg_alg=3', '--reg_alg=4'],
+        ['--gc=none', '--gc=simple', '--gc=gen2,3'], ['--jump=true', '--jump=false'],
+        ['--inline_size=0', '--inline_size=1', '--inline_size=5'],
+        ['--exp_cut=0', '--exp_cut=1', '--exp_cut=5'],
+    ]
+    return [rng.choice(group) for group in rng.sample(groups, rng.randrange(1, 5))]
 
 
 def mutated_source(rng):
@@ -234,10 +282,10 @@ def byte_mutated_source(rng):
     return source
 
 
-def run(binary, source, timeout, exclude_prelude=False):
+def run(binary, source, timeout, exclude_prelude=False, extra_flags=()):
     flags = ['--exclude_prelude=true'] if exclude_prelude else []
     payload = source if isinstance(source, bytes) else source.encode('utf-8')
-    return subprocess.run([str(binary), '--target=riscv', *flags], input=payload,
+    return subprocess.run([str(binary), '--target=riscv', *flags, *extra_flags], input=payload,
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
 
 
@@ -261,6 +309,10 @@ def main():
                        help='compare fixed language-feature and standard-prelude programs')
     modes.add_argument('--structured', action='store_true',
                        help='compare accepted closure, datatype, pattern and module programs')
+    modes.add_argument('--rich', action='store_true',
+                       help='compare generated nested closures, bindings and patterns')
+    modes.add_argument('--backend-options', action='store_true',
+                       help='compare accepted programs with varied backend options')
     args = parser.parse_args()
     if args.count < 0 or args.timeout <= 0:
         parser.error('count must be nonnegative and timeout must be positive')
@@ -272,17 +324,20 @@ def main():
     corpus += [(source, 0, False) for source in BASIS_CORPUS]
     count = len(corpus) if args.corpus else args.count
     for index in range(count):
-        source = (corpus[index][0] if args.corpus else byte_mutated_source(rng) if args.byte_mutations else
+        extra_flags = backend_options(rng) if args.backend_options else []
+        source = ('fun f x y = let fun g z = (x,y,z) in g y end; val z = f 1 2;' if args.backend_options else
+                  corpus[index][0] if args.corpus else byte_mutated_source(rng) if args.byte_mutations else
                   unicode_mutated_source(rng) if args.unicode_mutations else
                   deep_mutated_source(rng) if args.deep_mutations else
                   mutated_source(rng) if args.mutations else structured_source(rng) if args.structured else
+                  rich_source(rng) if args.rich else
                   'fun f x = ' + expression(rng, rng.randrange(1, 4)) + '; val _ = print_int (f 2);')
-        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations or args.unicode_mutations or args.byte_mutations or args.structured
+        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations or args.unicode_mutations or args.byte_mutations or args.structured or args.backend_options
         try:
-            original = run(args.reference, source, args.timeout, exclude_prelude)
-            candidate = run(args.cake, source, args.timeout, exclude_prelude)
+            original = run(args.reference, source, args.timeout, exclude_prelude, extra_flags)
+            candidate = run(args.cake, source, args.timeout, exclude_prelude, extra_flags)
         except subprocess.TimeoutExpired as error:
-            raise SystemExit(f'case {index}, seed {args.seed}: compiler timed out: {error}\n{source}')
+            raise SystemExit(f'case {index}, seed {args.seed}, options {extra_flags}: compiler timed out: {error}\n{source}')
         expected = (original.returncode, original.stdout, original.stderr)
         actual = (candidate.returncode, candidate.stdout, candidate.stderr)
         if ((args.corpus and original.returncode != corpus[index][1]) or
@@ -291,7 +346,7 @@ def main():
             def describe(result):
                 return (f'exit={result.returncode} stdout_sha256={hashlib.sha256(result.stdout).hexdigest()} '
                         f'stderr={result.stderr!r}')
-            raise SystemExit(f'case {index}, seed {args.seed}: output mismatch or rejection\n{source!r}\n'
+            raise SystemExit(f'case {index}, seed {args.seed}, options {extra_flags}: output mismatch or rejection\n{source!r}\n'
                              f'original: {describe(original)}\ncandidate: {describe(candidate)}')
         print(f'case {index}: exact output matches', flush=True)
     print(f'{count} cases matched' + ('' if args.corpus else f' (seed {args.seed})'))

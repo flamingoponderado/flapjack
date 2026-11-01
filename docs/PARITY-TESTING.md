@@ -424,6 +424,23 @@ prelude. Seed `857196` matched the pinned compiler on 100 complete outputs:
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured --seed 857196 --count 100
 ```
 
+Use `--rich` for recursively generated integer programs that combine tuple
+patterns, nested local functions, higher-order closures, and shadowed bindings.
+These programs use the standard prelude, so the run checks complete assembly
+for accepted programs rather than only diagnostics for unbound arithmetic names:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 31428 --count 40
+```
+
+Use `--backend-options` to compile a closure-capturing program without the
+prelude while varying combinations of closure, BVL, allocation, GC, and stack
+options. It reports the exact options with any failure:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --backend-options --seed 33194 --count 80
+```
+
 Add `--mutations` to apply reproducible single-character edits to small
 declarations with the prelude excluded. This mode compares successful output
 and rejection diagnostics alike, including complete stderr and exit status;
