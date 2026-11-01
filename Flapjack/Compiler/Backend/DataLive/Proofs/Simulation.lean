@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.DataLive.Proofs.State
+import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
+import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 
 /-! Compositional simulation cases for data liveness. -/
 namespace Flapjack.Compiler.Backend.DataLive
@@ -14,6 +16,43 @@ def exceptionRel {C F : Type} (source target : State C F) : Prop :=
   ∀ sourceJump, jumpExc source = some sourceJump →
     ∃ targetJump, jumpExc target = some targetJump ∧ stateRel sourceJump targetJump .ln ∧
       targetJump.handler = sourceJump.handler ∧ targetJump.stack.length = sourceJump.stack.length
+
+/-- Moving saved control fields between otherwise related states preserves
+the empty-live-set relation. This is auxiliary proof infrastructure. -/
+theorem stateRel_savedControl {C F : Type} (source target sourceSaved targetSaved : State C F)
+    (live : NumSet) (related : stateRel source target live)
+    (saved : stateRel sourceSaved targetSaved .ln) :
+    stateRel { source with stack := sourceSaved.stack, handler := sourceSaved.handler, locals := sourceSaved.locals, localsSize := sourceSaved.localsSize }
+      { target with stack := targetSaved.stack, handler := targetSaved.handler, locals := targetSaved.locals, localsSize := targetSaved.localsSize } .ln := by
+  rcases related with ⟨code, clock, space, ffi, refs, global, _, _, compiler, oracle, stamps, limits, frames, _⟩
+  rcases saved with ⟨_, _, _, _, _, _, handler, stack, _, _, _, _, _, _⟩
+  refine ⟨code, clock, space, ffi, refs, global, handler, stack, compiler, oracle, stamps, limits, frames, ?_⟩
+  intro key member
+  simp [sptMem, sptDomain, sptLookup] at member
+
+/-- Exception correspondence survives a pair of continuing executions once
+their stack and handler preservation is known. The general evaluator lemma
+supplying those preservation facts remains to be proved. -/
+theorem exceptionRel_after {C F : Type} (source target sourceNext targetNext : State C F)
+    (live : NumSet) (related : stateRel sourceNext targetNext live)
+    (exception : exceptionRel source target)
+    (sourceStack : sourceNext.stack = source.stack) (sourceHandler : sourceNext.handler = source.handler)
+    (targetStack : targetNext.stack = target.stack) (targetHandler : targetNext.handler = target.handler) :
+    exceptionRel sourceNext targetNext := by
+  intro sourceJump sourceRun
+  let oldJump := { source with stack := sourceJump.stack, handler := sourceJump.handler, locals := sourceJump.locals, localsSize := sourceJump.localsSize }
+  have oldRun : jumpExc source = some oldJump :=
+    jumpExc_transport sourceNext source sourceJump sourceStack.symm sourceHandler.symm sourceRun
+  obtain ⟨targetJump, targetRun, saved, handler, stack⟩ := exception oldJump oldRun
+  let newJump := { targetNext with stack := targetJump.stack, handler := targetJump.handler, locals := targetJump.locals, localsSize := targetJump.localsSize }
+  refine ⟨newJump, jumpExc_transport target targetNext targetJump targetStack targetHandler targetRun, ?_, ?_, ?_⟩
+  · have sourceForm := Option.some.inj (sourceRun.symm.trans
+      (jumpExc_transport sourceNext sourceNext sourceJump rfl rfl sourceRun))
+    rw [sourceForm]
+    have rel := stateRel_savedControl sourceNext targetNext oldJump targetJump live related saved
+    simpa [oldJump, newJump] using rel
+  · simpa [oldJump, newJump] using handler
+  · simpa [oldJump, newJump] using stack
 
 /-- The source-shaped liveness simulation for one program and output live
 set. It is untagged pending data-evaluator and state-carrier review. -/
@@ -148,5 +187,50 @@ theorem simulationFor_if {C F : Type} (name : Nat) (yes no : DataLang.Prog) (liv
       · simp [DataSem.evaluate, read, isTrue, isFalse] at run
         obtain ⟨rfl, rfl⟩ := run
         exact False.elim (notType rfl)
+
+/-- Sequential composition, conditional on the missing general fact that
+normally continuing evaluations preserve their stack and handler. This extra
+premise is an open proof gap, so this is not the HOL sequence case. -/
+theorem simulationFor_seq_of_control {C F : Type} (first second : DataLang.Prog) (live : NumSet)
+    (firstIH : simulationFor (C := C) (F := F) first (compile second live).2)
+    (secondIH : simulationFor (C := C) (F := F) second live)
+    (firstControl : ∀ (state next : State C F), DataSem.evaluate first state = (none, next) →
+      next.stack = state.stack ∧ next.handler = state.handler)
+    (compiledControl : ∀ (state next : State C F),
+      DataSem.evaluate (compile first (compile second live).2).1 state = (none, next) →
+      next.stack = state.stack ∧ next.handler = state.handler) :
+    simulationFor (C := C) (F := F) (.seq first second) live := by
+  intro source target result sourceNext run related notType exception
+  have firstRel : stateRel source target (compile first (compile second live).2).2 := by
+    simpa [compile] using related
+  cases firstRun : DataSem.evaluate first source with
+  | mk firstResult sourceMid =>
+    cases firstResult with
+    | none =>
+      have secondRun : DataSem.evaluate second sourceMid = (result, sourceNext) := by
+        rw [DataSem.evaluate, fixClock_evaluate, firstRun] at run
+        exact run
+      obtain ⟨targetMid, targetFirst, midRel⟩ :=
+        firstIH source target none sourceMid firstRun firstRel (by simp) exception
+      have sourceControl := firstControl source sourceMid firstRun
+      have targetControl := compiledControl target targetMid targetFirst
+      have midException := exceptionRel_after source target sourceMid targetMid _ midRel exception
+        sourceControl.1 sourceControl.2 targetControl.1 targetControl.2
+      obtain ⟨targetNext, targetSecond, finalRel⟩ :=
+        secondIH sourceMid targetMid result sourceNext secondRun midRel notType midException
+      refine ⟨targetNext, ?_, finalRel⟩
+      simp only [compile]
+      rw [DataSem.evaluate, fixClock_evaluate, targetFirst]
+      exact targetSecond
+    | some outcome =>
+      have firstResultEq : result = some outcome ∧ sourceNext = sourceMid := by
+        rw [DataSem.evaluate, fixClock_evaluate, firstRun] at run
+        exact Prod.mk.inj run.symm
+      obtain ⟨rfl, rfl⟩ := firstResultEq
+      obtain ⟨targetNext, targetFirst, finalRel⟩ :=
+        firstIH source target (some outcome) sourceNext firstRun firstRel notType exception
+      refine ⟨targetNext, ?_, finalRel⟩
+      simp only [compile]
+      rw [DataSem.evaluate, fixClock_evaluate, targetFirst]
 
 end Flapjack.Compiler.Backend.DataLive
