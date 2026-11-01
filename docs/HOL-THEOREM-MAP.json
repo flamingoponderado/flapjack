@@ -1,5 +1,41 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml", "hol_name": "compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileSource.lean", "lean_name": "compileSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed source equations captured in bvi_to_data_state_probe.out and the original script: empty and multi-expression lists, all singleton BVI constructors, tail flags, live-name order, counter updates, reverse argument order, handlers, and the exact LetCall shortcut are retained. HOL HD uses the source-shaped holHd carrier, and the value/type constructors match the imported fixed-width source carriers. The separate compileSource_agrees theorem connects this source traversal to the executed rewrite."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml", "hol_name": "compile_sing_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/CompileSource.lean", "lean_name": "compileSing_source_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source conjunction in bvi_to_data_state_probe.out: the first conjunct preserves the singleton result and its compiler-output premise, and the second equates the non-tail list rewrite to the original list-shaped compiler."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml", "hol_name": "compile_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/CompileSource.lean", "lean_name": "compileSource_LENGTH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source implication in bvi_to_data_state_probe.out: a compiler result tuple yields equal lengths for the output-name and input-expression lists."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml", "hol_name": "compile_LESS_EQ",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/CompileSource.lean", "lean_name": "compileSource_LESS_EQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source implication in bvi_to_data_state_probe.out: the source compiler result tuple implies the initial fresh-name counter is at most the final counter."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml", "hol_name": "data_to_bvi_result_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Result.lean", "lean_name": "dataToBviResult",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all three typed source equations in bvi_to_data_state_probe.out: successful data-value lists are projected, data exceptions become BVI Exn values, and aborts retain the same abort payload. The data and BVL value carriers retain fixed word64 fields."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml", "hol_name": "data_to_bvi_result_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Result.lean", "lean_name": "dataToBviResult_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source equivalence in bvi_to_data_state_probe.out: an arbitrary data result projects to the given BVI raise exactly when a data raised value exists with the original result and Exn equalities."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "var_corr_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/Variables.lean", "lean_name": "varCorr",
     "statement_status": "reviewed_exact",

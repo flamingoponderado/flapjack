@@ -76,8 +76,8 @@ termination_by xs => sizeOf xs
 end
 
 /-- Compile a complete expression, then apply the original optimization sequence.
-This uses the source's `compile_exp_eq` rewrite through `compile_sing`; the
-Lean proof connecting it to the original list traversal remains open. -/
+This uses the source's `compile_exp_eq` rewrite through `compile_sing`; its
+agreement with the original list traversal is proved in `Proofs.CompileSource`. -/
 @[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_exp_def"]
 noncomputable def compileExp (argc : Nat) (exp : Bvi.Exp) : DataLang.Prog :=
   optimise (compileSing argc (List.range argc) true [] exp).1

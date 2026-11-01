@@ -5,6 +5,10 @@ val _ = Globals.show_types := true;
 fun show label th = if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show "compile_sing=" bvi_to_dataTheory.compile_sing_def;
+val _ = show "compile=" bvi_to_dataTheory.compile_def;
+val _ = show "compile_sing_eq=" bvi_to_dataTheory.compile_sing_eq;
+val _ = show "compile_LENGTH=" bvi_to_dataTheory.compile_LENGTH;
+val _ = show "compile_LESS_EQ=" bvi_to_dataTheory.compile_LESS_EQ;
 val _ = show "compile_exp_eq=" bvi_to_dataTheory.compile_exp_eq;
 val _ = show "compile_part=" bvi_to_dataTheory.compile_part_def;
 val _ = show "compile_prog=" bvi_to_dataTheory.compile_prog_def;
@@ -17,6 +21,8 @@ val _ = show "var_corr=" dataPropsTheory.var_corr_def;
 val _ = show "get_vars_thm=" dataPropsTheory.get_vars_thm;
 val _ = show "var_corr_map=" bvi_to_dataProofTheory.var_corr_map;
 val _ = show "get_vars_lift_thm=" bvi_to_dataProofTheory.get_vars_lift_thm;
+val _ = show "data_to_bvi_result=" bvi_to_dataProofTheory.data_to_bvi_result_def;
+val _ = show "data_to_bvi_result_eq=" bvi_to_dataProofTheory.data_to_bvi_result_eq;
 val _ = show "missing_var=" (EVAL ``bvi_to_data$compile_sing 4 [] F [] (bvi$Var 5)``);
 val _ = show "tail_var=" (EVAL ``bvi_to_data$compile_sing 4 [7] T [] (bvi$Var 0)``);
 val _ = show "tail_letcall=" (EVAL ``bvi_to_data$compile_sing 2 [] F []
