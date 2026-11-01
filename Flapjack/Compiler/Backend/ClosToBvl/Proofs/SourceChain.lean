@@ -2,7 +2,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ProgramCode
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainLocations
 import Flapjack.Compiler.Backend.Semantics.ClosSem.InstallGrowth
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateCodeGrowth
+import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtensionEvaluate
 import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 
@@ -262,5 +262,20 @@ theorem evaluate_sourceChain_call {C F : Type} (expressions : List ClosLang.Exp)
       (sourceChainResult result, final) := by
   obtain ⟨body, extra, lookup, bodyRun⟩ := evaluate_sourceChain expressions start source final result nonempty installed run
   exact ⟨extra + 1, (evaluate_sourceChain_entry source start extra body lookup).trans bodyRun⟩
+
+/-- An installed chain in a safe code extension reproduces the original
+source result, while its final state remains related to the original final state. -/
+theorem evaluate_sourceChain_call_codeExtension {C F : Type} (expressions : List ClosLang.Exp) (start : Nat)
+    (source target final : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (nonempty : expressions ≠ []) (installed : chainInstalled start expressions target.code)
+    (states : CodeExtension source target) (run : evaluate expressions [] source = (result, final))
+    (noType : result ≠ .err (.abort .typeError)) :
+    ∃ extra targetFinal, evaluate [.call .none 0 start []] [] { target with clock := target.clock + extra } =
+      (sourceChainResult result, targetFinal) ∧ CodeExtension final targetFinal := by
+  obtain ⟨targetFinal, targetRun, finalRel⟩ :=
+    evaluate_codeExtension.1 expressions source [] target result final run noType states
+  obtain ⟨extra, chainRun⟩ := evaluate_sourceChain_call expressions start target targetFinal result
+    nonempty installed targetRun
+  exact ⟨extra, targetFinal, chainRun, finalRel⟩
 
 end Flapjack.Compiler.Backend.ClosToBvl

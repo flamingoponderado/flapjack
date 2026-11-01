@@ -815,6 +815,8 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.InstallGrowth
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateCodeGrowth
 import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtension
 import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtensionPrimitive
+import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtensionSteps
+import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtensionEvaluate
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceChain
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
