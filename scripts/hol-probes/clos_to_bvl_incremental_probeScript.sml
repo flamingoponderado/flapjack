@@ -29,3 +29,18 @@ val _ = emit "incremental_closure" ``
   let (c', code) = clos_to_bvl$clos_to_bvl_compile_inc c
     ([closLang$Fn «f» NONE NONE 1 (closLang$Var None 0)],[]) in
     (c'.next_loc, code)``;
+
+val _ = emit "incremental_mti_aux" ``
+  let c = clos_to_bvl$default_config with
+    <| next_loc := 10; max_app := 3; do_mti := T; do_call := F; known_conf := NONE |> in
+  let (c', code) = clos_to_bvl$clos_to_bvl_compile_inc c
+    ([closLang$Fn «f» NONE NONE 1 (closLang$Fn «g» NONE NONE 1 (closLang$Var None 0))],
+      [(42,0,closLang$Var None 0)]) in
+    (c'.next_loc, code)``;
+
+val _ = emit "incremental_mti_empty" ``
+  let c = clos_to_bvl$default_config with
+    <| next_loc := 10; max_app := 3; do_mti := T; do_call := F; known_conf := NONE |> in
+  let (c', code) = clos_to_bvl$clos_to_bvl_compile_inc c
+    ([], [(42,0,closLang$Var None 0)]) in
+    (c'.next_loc, code)``;

@@ -36,6 +36,21 @@ example : (match compileIncNoOpts? config ([.fn (ofString "f") none none 1 (.var
         out.nextLoc == 14
     | _ => false) = true := by native_decide
 
+/-- Replays the source's enabled multi-argument case, including removal of
+the incoming auxiliary program. -/
+example : (match compileIncMtiFuel? 0 { config with doMti := true, maxApp := 3 }
+    ([.fn (ofString "f") none none 1 (.fn (ofString "g") none none 1 (.var .none 0))],
+      [(42, 0, .var .none 0)]) with
+    | some (out, [(18, 0, .op (.blockOp (.cons 30))
+          [.op (.intOp (.const 1)) [], .op (.label 20) []]),
+        (20, 3, .let [.var 0, .var 1] (.var 0))]) => out.nextLoc == 14
+    | _ => false) = true := by native_decide
+
+example : (match compileIncMtiFuel? 0 { config with doMti := true, maxApp := 3 }
+    ([], [(42, 0, .var .none 0)]) with
+    | some (out, [(18, 0, .op (.intOp (.const 10)) [])]) => out.nextLoc == 12
+    | _ => false) = true := by native_decide
+
 /-- Enabled optimizations are rejected until their incremental passes are
 connected to this wrapper. -/
 example : compileIncNoOpts? { config with doMti := true } ([], []) = none := by rfl
@@ -44,6 +59,13 @@ example : compileIncNoOpts? { config with knownConf := some (ClosKnown.defaultCo
 
 private def downstream : BvlSem.Compiler Nat := fun state entries =>
   if entries.length == 2 then some ([BitVec.ofNat 8 state], [], state + 1) else none
+
+/-- The multi-argument callback passes its transformed output downstream. -/
+example : (match compileIncMtiFuelCallback 0 downstream ({ config with doMti := true, maxApp := 3 }, 7)
+    ([.fn (ofString "f") none none 1 (.fn (ofString "g") none none 1 (.var .none 0))],
+      [(42, 0, .var .none 0)]) with
+    | some ([byte], [], (next, 8)) => byte == BitVec.ofNat 8 7 && next.nextLoc == 14 && next.doMti
+    | _ => false) = true := by native_decide
 
 /-- The composed callback sends the generated entries to the downstream
 compiler and returns both updated configurations. -/

@@ -31,11 +31,37 @@ def compileIncNoOpts? (config : Config)
       let compiled ← compileProg? config.maxApp (chainExps start expressions ++ annotated.2)
       pure (nextConfig, compiled)
 
+/-- Incremental closure compilation with optional multi-argument introduction.
+As in the source, enabling this pass discards the incoming auxiliary program;
+when disabled, it preserves it. Known-function and direct-call optimization
+are still rejected. The checked traversal may retry with a structural budget. -/
+def compileIncMtiFuel? (fuel : Nat) (config : Config) (program : ClosSem.Program) :
+    Option (Config × List (Nat × Nat × Bvl.Exp)) := do
+  if config.doCall then none else
+  match config.knownConf with
+  | some _ => none
+  | none =>
+      let program ← if config.doMti then do
+        let transformed ← ClosMti.compileFuel fuel true config.maxApp program.1
+        pure (transformed, [])
+      else pure program
+      let (nextConfig, annotated) := prepareIncNoOpts config program
+      let (start, expressions) := extractName annotated.1
+      let compiled ← compileProg? config.maxApp (chainExps start expressions ++ annotated.2)
+      pure (nextConfig, compiled)
+
 /-- Adapt a downstream BVL compiler into a closure compiler, passing the
 updated closure configuration onward only when both stages succeed. -/
 def compileIncNoOptsCallback {C : Type} (downstream : BvlSem.Compiler C) :
     ClosSem.Compiler (Config × C) := fun (config, downstreamConfig) program => do
   let (nextConfig, compiled) ← compileIncNoOpts? config program
+  let (bytes, data, nextDownstream) ← downstream downstreamConfig compiled
+  pure (bytes, data, (nextConfig, nextDownstream))
+
+/-- Downstream callback adapter for the multi-argument incremental path. -/
+def compileIncMtiFuelCallback {C : Type} (fuel : Nat) (downstream : BvlSem.Compiler C) :
+    ClosSem.Compiler (Config × C) := fun (config, downstreamConfig) program => do
+  let (nextConfig, compiled) ← compileIncMtiFuel? fuel config program
   let (bytes, data, nextDownstream) ← downstream downstreamConfig compiled
   pure (bytes, data, (nextConfig, nextDownstream))
 
@@ -46,6 +72,13 @@ def compileIncNoOptsOracle {C : Type} (oracle : Nat → (Config × C) × ClosSem
     (index : Nat) : Option (C × List (Nat × Nat × Bvl.Exp)) := do
   let entry := oracle index
   let (_, compiled) ← compileIncNoOpts? entry.1.1 entry.2
+  pure (entry.1.2, compiled)
+
+/-- Oracle adapter for the multi-argument incremental path. -/
+def compileIncMtiFuelOracle {C : Type} (fuel : Nat) (oracle : Nat → (Config × C) × ClosSem.Program)
+    (index : Nat) : Option (C × List (Nat × Nat × Bvl.Exp)) := do
+  let entry := oracle index
+  let (_, compiled) ← compileIncMtiFuel? fuel entry.1.1 entry.2
   pure (entry.1.2, compiled)
 
 end Flapjack.Compiler.Backend.ClosToBvl

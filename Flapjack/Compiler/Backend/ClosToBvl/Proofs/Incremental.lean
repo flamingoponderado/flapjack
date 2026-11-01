@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Incremental
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Oracle
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+import Flapjack.Compiler.Backend.ClosMti.Proofs.Total
 
 /-! Correctness infrastructure for the checked incremental wrapper. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -24,6 +25,61 @@ theorem compileIncNoOpts_checked (config : Config) (program : ClosSem.Program)
     simpa using compileInc_checked_eq config.maxApp annotated
   dsimp only [annotated] at checked
   simp [compileIncNoOpts?, prepareIncNoOpts, noMti, noCall, noKnown, ClosNumber.ignoreTable, checked]
+
+/-- Disabling multi-argument introduction recovers the earlier checked
+incremental wrapper, including its handling of auxiliary code. -/
+theorem compileIncMtiFuel_disabled (fuel : Nat) (config : Config) (program : ClosSem.Program)
+    (disabled : config.doMti = false) :
+    compileIncMtiFuel? fuel config program = compileIncNoOpts? config program := by
+  simp [compileIncMtiFuel?, compileIncNoOpts?, disabled]
+
+/-- When multi-argument introduction succeeds, the checked incremental
+wrapper compiles its transformed main program and the source-prescribed empty
+auxiliary program. HOL correspondence of the traversal remains open. -/
+theorem compileIncMtiFuel_checked (fuel : Nat) (config : Config) (program : ClosSem.Program)
+    (enabled : config.doMti = true) (noCall : config.doCall = false)
+    (noKnown : config.knownConf = none) (transformed : List ClosLang.Exp)
+    (mti : ClosMti.compileFuel fuel true config.maxApp program.1 = some transformed) :
+    compileIncMtiFuel? fuel config program =
+      some ((prepareIncNoOpts config (transformed, [])).1,
+        compileInc config.maxApp (prepareIncNoOpts config (transformed, [])).2) := by
+  let annotated := (prepareIncNoOpts config (transformed, [])).2
+  have checked : compileProg? config.maxApp
+      (chainExps (extractName annotated.1).1 (extractName annotated.1).2 ++ annotated.2) =
+        some (compileInc config.maxApp annotated) := by
+    simpa using compileInc_checked_eq config.maxApp annotated
+  dsimp only [annotated] at checked
+  simp [compileIncMtiFuel?, enabled, noCall, noKnown, mti, checked]
+
+/-- The supported incremental wrapper succeeds for every input when known and
+direct-call optimizations are disabled; the bounded multi-argument traversal
+uses its proved structural retry bound. -/
+theorem compileIncMtiFuel_succeeds (fuel : Nat) (config : Config) (program : ClosSem.Program)
+    (noCall : config.doCall = false) (noKnown : config.knownConf = none) :
+    ∃ result, compileIncMtiFuel? fuel config program = some result := by
+  cases enabled : config.doMti with
+  | false =>
+    rw [compileIncMtiFuel_disabled fuel config program enabled]
+    exact ⟨_, compileIncNoOpts_checked config program enabled noCall noKnown⟩
+  | true =>
+    obtain ⟨transformed, mti⟩ := ClosMti.compileFuel_succeeds fuel true config.maxApp program.1
+    exact ⟨_, compileIncMtiFuel_checked fuel config program enabled noCall noKnown transformed mti⟩
+
+/-- With multi-argument introduction disabled, the callback adapters agree. -/
+theorem compileIncMtiFuelCallback_disabled {C : Type} (fuel : Nat) (downstream : BvlSem.Compiler C)
+    (config : Config) (downstreamConfig : C) (program : ClosSem.Program)
+    (disabled : config.doMti = false) :
+    compileIncMtiFuelCallback fuel downstream (config, downstreamConfig) program =
+      compileIncNoOptsCallback downstream (config, downstreamConfig) program := by
+  simp [compileIncMtiFuelCallback, compileIncNoOptsCallback, compileIncMtiFuel_disabled fuel config program disabled]
+
+/-- With multi-argument introduction disabled, the oracle adapters agree. -/
+theorem compileIncMtiFuelOracle_disabled {C : Type} (fuel : Nat)
+    (oracle : Nat → (Config × C) × ClosSem.Program) (index : Nat)
+    (disabled : (oracle index).1.1.doMti = false) :
+    compileIncMtiFuelOracle fuel oracle index = compileIncNoOptsOracle oracle index := by
+  simp [compileIncMtiFuelOracle, compileIncNoOptsOracle,
+    compileIncMtiFuel_disabled fuel (oracle index).1.1 (oracle index).2 disabled]
 
 /-- The executable callback is the stateful numbering/annotation adapter
 followed by the source-shaped closure-to-BVL converter and downstream
