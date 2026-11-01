@@ -99847,7 +99847,7 @@
     "hol_name": "get_lowerbits_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: original lines 1381–1385 and typed data_to_word_memory_repr capture. For Word the low (smallShiftLength) bits are extracted and resized to the same positive width before OR with one; smallShiftLength is always positive, matching HOL slice (small_shift_length−1 -- 0). Loc returns one. Original HOL replays include ordinary and larger-than-width slices; the executed compiler inlines a mask and agreement with this proof-side helper remains open."
+    "reviewer": "Source comparison: original lines 1381–1385 and typed data_to_word_memory_repr capture. For Word the low (smallShiftLength) bits are extracted and resized to the same positive width before OR with one; smallShiftLength is always positive, matching HOL slice (small_shift_length−1 -- 0). Loc returns one. Original HOL replays include ordinary and larger-than-width slices; the executed compiler calls this definition, and getLowerBits_word_eq_mask proves agreement with the previous inlined mask."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Representation.lean",

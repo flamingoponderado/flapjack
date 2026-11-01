@@ -161,8 +161,7 @@ private def compileCons {width : Nat} [NeZero width] (conf : Config) (l dest tag
     | none => (giveUp, l)
     | some header =>
         let bytes := BitVec.ofNat width (width / 8) * BitVec.ofNat width (args.length + 1)
-        let mask := BitVec.ofNat width (2 ^ smallShiftLength conf - 1)
-        let pointer := (pointerBits conf tag args.length &&& mask) ||| 1
+        let pointer := getLowerBits conf (.word (pointerBits conf tag args.length))
         (listSeq [
           .assign 1 (.lookup .nextFree), .assign 3 (.const header),
           storeEach 1 (3 :: args.map adjustVar) 0,

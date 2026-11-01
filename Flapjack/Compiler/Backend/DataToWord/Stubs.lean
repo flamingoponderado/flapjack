@@ -229,8 +229,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
     match encodeHeader (width := width) conf 0 2 with
     | none => some (3, .skip)
     | some header =>
-        let mask := BitVec.ofNat width (2 ^ smallShiftLength conf - 1)
-        let ptr := (pointerBits conf 0 2 &&& mask) ||| 1
+        let ptr := getLowerBits conf (.word (pointerBits conf 0 2))
         some (3, .ite .test 4 (.imm 1) (.return 0 [2]) (listSeq [
           .set (.temp 0) (.var 2), .set (.temp 1) (.var 4),
           .assign 1 (.lookup .nextFree), .assign 3 (.const header),

@@ -19,8 +19,8 @@ def encodeHeader {width : Nat} [NeZero width] (conf : Config) (tag len : Nat) : 
   else none
 
 /-- Preserve the low pointer-tag bits of a word location, setting its low bit;
-a code location has only that bit set. The executed compiler currently inlines
-a mask; agreement with this proof-side definition remains to be established. -/
+a code location has only that bit set. The executed compiler uses this
+definition; its agreement with the previous mask is proved in `Proofs.Mask`. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "get_lowerbits_def"
   (words_as_type_indexed_bitvec)]
 def getLowerBits {width : Nat} [NeZero width] (conf : Config) : WordLocW width → BitVec width

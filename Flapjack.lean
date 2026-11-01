@@ -199,6 +199,7 @@ import Flapjack.Compiler.Backend.BackendProof.CompileLab
 import Flapjack.Compiler.Backend.BackendProof.ConfigOk
 import Flapjack.Compiler.Backend.BackendProof.ReadLimits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Mask
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
