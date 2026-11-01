@@ -6,63 +6,103 @@ infrastructure, not a HOL mapping document.
 
 ## Verified
 
+All five required gates are green at `7292f4c99` (the commit before this note):
+
+* `lake build Flapjack` — 6487 jobs.
+* `lake test` — exit 0.
+* `scripts/check-warnings.sh` — 0 non-test warnings.
+* `scripts/check-hol-refs.py` — 7645 `@[hol]` references checked.
+* `scripts/check_hol_ref_export.py` — 7644 reviewed theorem-map rows match their
+  elaborated attributes (run through `python3`; the file is not executable).
+
+Plus the two x86-64-specific checks:
+
 * Machine-code parity: `scripts/x64/check-parity.py --cake <cake>` passes on all
-  25 fixtures in `scripts/x64/parity/`; the emitted bytes are identical to the
-  original CakeML `--pancake --target=x64` frontend. Differential fuzz and a
-  corpus run over `cakeml/pancake/**/*.sml` also pass (1500 programs, 244
-  programs / 87 accepted, 0 failures).
-* Gate-green commit: `88a697686` (`lake build Flapjack`, `lake test`,
-  `scripts/check-warnings.sh`, `scripts/check-hol-refs.py`,
-  `scripts/check_hol_ref_export.py` all pass).
-* `encoderCorrect x64Target` constructors proved (16): `case_skip`, `case_jump`,
-  `case_call` (vacuous), `case_div` (vacuous), `case_fpFma` (vacuous), `case_loc`,
-  `case_jumpReg`, `case_const`, `case_binopRR`, `case_binopRI`, `case_shiftImm`,
-  `case_shiftReg`, `case_longMul`, `case_longDiv`, `case_addOverflow`,
-  `case_subOverflow`. Files: `Machine/SkipCase.lean`,
-  `VacuousCase.lean`, `ControlCase.lean`, `JumpRegCase.lean`, `ConstCase.lean`,
-  `ArithBinopCase.lean`, `ShiftCase.lean`, `MulCase.lean`, `DivCase.lean`.
+  25 fixtures in `scripts/x64/parity/`. The prebuilt pinned-revision compiler at
+  `/var/tmp/flapjack-pinned-build-check/cake` reproduces every checked-in
+  `.cake.S`; `cakeml/developers/bin/cake` is not built in this checkout.
+* Executed-path parity: `lake exe flapjack-compile --target=x64 --pancake` on each
+  `scripts/x64/parity/*.pnk` produces byte-identical assembly to that same cake.
+  Differential fuzz and a corpus run over `cakeml/pancake/**/*.sml` passed in an
+  earlier session (1500 programs; 244 programs / 87 accepted, 0 failures).
 
-## Model fix (commit `3c57f074f`)
+Axiom footprint of the three top theorems (`#print axioms`): `propext`,
+`Classical.choice`, `Quot.sound`, plus the `bv_decide` native-certificate axioms
+`holFp64Abs_eq_and._native.bv_decide.ax_1_9`,
+`holFp64Negate_eq_xor._native.bv_decide.ax_1_9`, `le32_bytes._native…`,
+`le64_bytes._native…`, `writeXmm_low32._native…`. `bv_decide` is already used
+elsewhere in the tree (`Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean`), so
+this is the established practice; the kernel does not check the SAT certificate,
+so those five facts are native-computation trust, not kernel proof.
 
-`Machine/Execute.lean`'s `execInsn` wrote `a + b` for `.binopRR .zadc` and
-`.binopRI .zadc` without the incoming carry flag, while the source `addCarry`
-semantics (and real x86) include it. The clauses now special-case `.zadc` and
-`.zsbb` to add/subtract `BitVec.ofNat 64 (if s.flags.cf then 1 else 0)`. The
-`.zsbb` *flags* still omit the borrow, but the backend never emits `sbb`; this is
-noted in a comment. All existing proofs still hold (`rfl`/`cases` unaffected).
+### Encoder correctness
 
-## Remaining work
+`x64EncoderCorrect : encoderCorrect x64Target` in `Machine/Complete.lean` covers
+`target_ok` plus all 42 instruction cases, each in its own module under
+`Machine/`:
 
-1. `case_addCarry` in `Machine/CarryCase.lean` (the file already proves
-   `case_addOverflow` and `case_subOverflow`). Lowerings and semantics are
-   documented in the case template below. 3, 3, and 5 instructions (n = 2, 2, 4).
-2. The eight `mem` cases (`load`, `load32`, `load16`, `load8`, `store`, `store32`,
-   `store16`, `store8`) — see `Machine/StepAgree.lean`
-   (`x64Touched_movRM/movMR/movzxRM`, `sizeBytes`) and `MemDecodeProof.lean`
-   (`movRMZ64Bytes`, `movMRZ64Bytes`, `movzxBytes`); the memory domain changes, so
-   `hdom` must be derived from `x64Touched` and the source `memOp`.
-3. The fifteen `fp` cases (`fpLess`, `fpLessEq`, `fpEqual`, `fpMov`, `fpAbs`,
-   `fpNeg`, `fpSqrt`, `fpAdd`, `fpSub`, `fpMul`, `fpDiv`, `fpMovToReg`,
-   `fpMovFromReg`, `fpToInt`, `fpFromInt`) — `execSSE` uses the same `holFp64*`
-   functions as `fpUpd`, so values agree by construction.
-4. `jumpCmp` reg and imm — see `ControlCase.lean` (jump/jumpReg) and
-   `StepAgree.lean`'s `decode_jcc_*` lemmas.
-5. Assemble `x64EncoderCorrect : encoderCorrect x64Target` in
-   `Machine/Complete.lean` (model: `Flapjack/Compiler/Encoders/Arm8/Machine/Complete.lean`
-   and `Flapjack/Mips32/TargetProof/Complete.lean`).
-6. `Flapjack/Compiler/Backend/X64Config/BackendProof.lean`: the 27
-   `backendConfigOk` conjuncts plus `x64NameInv`/`x64NameInv_map`/
-   `x64NameMap_inv`/`findNameSpt_x64Names`, modelled on
-   `Flapjack/Compiler/Backend/Arm8Config/BackendProof.lean`. `x64Config`'s
-   `validImm` is the signed 32-bit range `[x64Min32.toInt, x64Max32.toInt]`.
-7. Two prepared but uncompiled files exist untracked in the main checkout:
-   `Flapjack/Compiler/Backend/X64Config/Proofs.lean` (`isX64MachineConfig` with
-   `lenReg=6`, `ptrReg=7`, `len2Reg=1`, `ptr2Reg=2`, `calleeSavedRegs=[12,13,14]`,
-   `x64MachineConfigOk`, `x64InitOk`) and
-   `Flapjack/Pancake/Proofs/PanToTarget/X64Instance.lean`
-   (`panToTargetCompileSemanticsX64`). They compile only after items 5 and 6.
-   Add both plus `Machine/Complete.lean` and the case files to `Flapjack.lean`,
-   then run the five gates and re-run parity.
+* `SkipCase` — `case_skip`; `ControlCase` — `case_jump`;
+  `VacuousCase` — `case_call`, `case_div`, `case_fpFma` (never emitted);
+  `JumpRegCase` — `case_jumpReg`; `LocCase` — `case_loc`.
+* `ConstCase` — `case_const`; `ArithBinopCase` — `case_binopRR`, `case_binopRI`;
+  `ShiftCase` — `case_shiftImm`, `case_shiftReg`; `MulCase` — `case_longMul`;
+  `DivCase` — `case_longDiv`; `CarryCase` — `case_addCarry`, `case_addOverflow`,
+  `case_subOverflow`.
+* `MemCase` — the eight `load`/`load8`/`load16`/`load32` and
+  `store`/`store8`/`store16`/`store32` cases (via the `case_memLoadSpine` /
+  `case_memStoreSpine` spines).
+* `FpCase` — all fifteen `fp` cases: `fpLess`, `fpLessEqual`, `fpEqual`, `fpMov`,
+  `fpAbs`, `fpNeg`, `fpSqrt`, `fpAdd`, `fpSub`, `fpMul`, `fpDiv`, `fpMovToReg`,
+  `fpMovFromReg`, `fpToInt`, `fpFromInt`.
+* `JumpCmpCase` — `case_jumpCmp_reg`, `case_jumpCmp_imm`.
+
+No `sorry`/`admit` anywhere under `Machine/`, `Backend/X64Config/`, or
+`PanToTarget/X64Instance.lean`.
+
+### Backend configuration and the top theorem
+
+* `Flapjack/Compiler/Backend/X64Config/BackendProof.lean` —
+  `x64NameInv`, `x64NameInv_map`, `x64NameMap_inv`, `findNameSpt_x64Names`,
+  `toInt_ofNat_small`, `x64BackendConfigOkRaw`,
+  `backendConfigOk_pancakeX64BackendConfig`, `x64BackendConfigOk`.
+* `Flapjack/Compiler/Backend/X64Config/Proofs.lean` — `isX64MachineConfig`
+  (`lenReg=6`, `ptrReg=7`, `len2Reg=1`, `ptr2Reg=2`,
+  `calleeSavedRegs=[12,13,14]`), `x64MachineConfigOk`, `x64InitOk`.
+* `Flapjack/Pancake/Proofs/PanToTarget/X64Instance.lean` —
+  `x64PancakeHeapLimit_lt`, `panToTargetCompileSemanticsX64`.
+* `Flapjack.lean` imports `Machine/MemCase`, `Machine/FpCase`,
+  `Machine/JumpCmpCase`, `Machine/Complete`, `X64Config/BackendProof`,
+  `X64Config/Proofs`, `PanToTarget/X64Instance`, and
+  `Misc/MachineIeee/SignBits`.
+* `Flapjack/CompileMain.lean` routes `--target=x64` to `X64.NativeCLI.output`.
+
+## Model fixes
+
+**`zadc`/`zsbb` carry (commit `3c57f074f`).** `Machine/Execute.lean`'s
+`execInsn` wrote `a + b` for `.binopRR .zadc` and `.binopRI .zadc` without the
+incoming carry flag, while the source `addCarry` semantics (and real x86) include
+it. The clauses now special-case `.zadc`/`.zsbb` to add/subtract
+`BitVec.ofNat 64 (if s.flags.cf then 1 else 0)`. The `.zsbb` *flags* still omit
+the borrow, but the backend never emits `sbb`; this is noted in a comment.
+
+**Per-lane `psrlq`/`psllq` (commit `5e390bfb4`).** The SSE model shifted the
+whole 128-bit register, so `psrlq`/`psllq` leaked the high lane into the low one.
+`psrlqLanes`/`psllqLanes` now shift each 64-bit lane separately. `pslldq`/
+`psrldq` (used by `fpToInt`) really are whole-register byte shifts, so those
+clauses keep the raw `<<<`/`>>>`.
+
+## `fp64_abs`/`fp64_negate` computation lemmas
+
+`holFp64Abs_eq_and` and `holFp64Negate_eq_xor` (mask by `2^63 - 1` and xor with
+`2^63`) live in `Flapjack/Misc/MachineIeee/SignBits.lean`, not beside the
+definitions. `scripts/check-hol-refs.py` recognizes the eleven reviewed real-free
+`binary_ieee`/`machine_ieee` forms by comparing each one's *body slice* against a
+canonical text; the slice of a declaration runs to the next declaration it
+recognizes. Adding theorems after `holFp64Negate` extended its slice, the
+fail-closed group check then rejected every bit-only form in the tree, and all 15
+renderings demanded `(reals_as_rational_cuts)`. Keep new declarations about those
+forms out of `Flapjack/Misc/MachineIeee.lean` (a submodule is fine) or the same
+cascade returns.
 
 ## Case template (works)
 
@@ -82,3 +122,41 @@ machine `X64.readReg (s) (r)`; source reads are `AsmSem.readReg r s`.
 `targetStateRel` tracks only stateOk/pc/mem-on-domain/regs/fpRegs — not flags or
 failed. `asmStep` supplies `¬ s2.failed`, which is how a source `assert`
 success is recovered.
+
+Other traps found while closing the remaining cases:
+
+* Structure updates: `{ s with f := v, g := w }` on one line fails to parse; put
+  the fields on following lines.
+* `asmCmpOkExact` must be unfolded with `x64Config` in scope, otherwise
+  `asmRegImmOkExact`'s `.imm` clause stays folded and the `validImm` extraction
+  fails.
+* `isTest operator = true` forces `zop = .ztest`, and `decode_binopRR_z64`
+  rejects `.ztest`; use `decode_binopRR_test` for the test form (encapsulated in
+  `decode_binopCmp`). The `zcmp` path requires `isTest operator = false`.
+* `binopRI` immediates: `.ztest` uses `encodeInsn_binopRI_test_rax` (6 bytes,
+  `rax`) or `encodeInsn_binopRI_test` (7 bytes); `.zcmp` with a one-byte
+  immediate uses `encodeInsn_binopRI_83` (4 bytes), otherwise
+  `encodeInsn_binopRI_rax` (6) or `encodeInsn_binopRI_81` (7).
+* In `x64Enc_of_flatMap`, pass the fully `rw`-reduced byte list explicitly as the
+  second argument; leaving it implicit makes the `simp` in the second subgoal
+  unfold the goal before `omega` can use the length hypotheses. Discharge the
+  nil check with `simp at this` once lengths are substituted.
+* `Int.bmod_def` + `split_ifs` + `decide_ne_decide` is the working recipe for
+  signed-comparison flag lemmas; `bv_decide` fails on `subFlags`'s `of` field
+  because it abstracts `decide (... ≠ ...)` as opaque.
+* `FpCase`'s `setcc_length_fp`/`x64Next_setcc_fp` are renamed copies of
+  `CarryCase`'s `setcc_length`/`x64Next_setcc`; keep the suffixes when adding a
+  third consumer.
+
+## Remaining work
+
+None of the seven items this note previously listed are open; the port described
+by this document is complete and gate-green. Possible follow-ups, not required
+for this port:
+
+* Rebuild `cakeml/developers/bin/cake` from the pinned submodule revision so
+  parity runs without the `/var/tmp` binary. This needs HOL4 built from the
+  `HOL` submodule, not the unrelated `~/HOL` install.
+* Replace the five `bv_decide` native certificates with kernel-checked proofs if
+  the assurance level in `docs/SOUNDNESS.md` is ever raised to forbid native
+  computation.
