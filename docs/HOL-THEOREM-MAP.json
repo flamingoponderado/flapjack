@@ -100039,6 +100039,42 @@
     "reviewer": "Source comparison: memory_rel_Sub and its typed data_to_word_memory_repr capture retain the two Number/Word operands, both clear-bit premises, good_dimindex, and the w2i no-overflow equation for subtraction. The conclusion prepends the source integer result and corresponding word result to the original suffix. BitVec.toInt represents signed w2i and getLsbD 0 = false represents the negated word_bit premise. store uses the canonical finite-support map and all word occurrences share the positive HOL width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteBitwise.lean",
+    "lean_name": "memoryRel_byteAnd",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_And",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_And and its typed data_to_word_memory_repr capture retain the fixed word8 source operands, their unsigned natural values embedded in Number, the two target words, full memory relation and good_dimindex premise. The conclusion applies bitwise AND at the original respective widths and keeps the original suffix. BitVec 8 represents source word8 and the independently indexed positive target width represents the shared HOL word type; store uses the canonical finite-support map."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteBitwise.lean",
+    "lean_name": "memoryRel_byteOr",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Or",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Or and its typed data_to_word_memory_repr capture retain the fixed word8 source operands, their unsigned natural values embedded in Number, the two target words, full memory relation and good_dimindex premise. The conclusion applies bitwise OR at the original respective widths and keeps the original suffix. BitVec 8 represents source word8 and the independently indexed positive target width represents the shared HOL word type; store uses the canonical finite-support map."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteBitwise.lean",
+    "lean_name": "memoryRel_byteXor",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Xor",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Xor and its typed data_to_word_memory_repr capture retain the fixed word8 source operands, their unsigned natural values embedded in Number, the two target words, full memory relation and good_dimindex premise. The conclusion applies bitwise XOR at the original respective widths and keeps the original suffix. BitVec 8 represents source word8 and the independently indexed positive target width represents the shared HOL word type; store uses the canonical finite-support map."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
