@@ -764,6 +764,7 @@ import Flapjack.Test.DataSemSpace
 import Flapjack.Test.DataSemStack
 import Flapjack.Test.DataSemLimits
 import Flapjack.Test.DataSemApplyAux
+import Flapjack.Test.DataSemInstall
 import Flapjack.Test.BvlToBviValueParity
 import Flapjack.Test.BviFinaliseParity
 import Flapjack.Test.BviApplyAuxParity
@@ -938,6 +939,8 @@ import Flapjack.Compiler.Backend.Semantics.DataSem.Space
 import Flapjack.Compiler.Backend.Semantics.DataSem.Stack
 import Flapjack.Compiler.Backend.Semantics.DataSem.Limits
 import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
+import Flapjack.Compiler.Backend.Semantics.DataSem.Conversions
+import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
 import Flapjack.Compiler.Backend.BviToData.Compile
@@ -947,6 +950,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk
 import Flapjack.Compiler.Backend.BviToData.Proofs.Build
 import Flapjack.Compiler.Backend.BviToData.Proofs.Int
 import Flapjack.Compiler.Backend.BviToData.Proofs.Word
+import Flapjack.Compiler.Backend.BviToData.Proofs.Conversions
 import Flapjack.Compiler.Backend.BviToData.Proofs.Finalise
 import Flapjack.Compiler.Backend.DataSimp
 import Flapjack.Compiler.Backend.DataLive

@@ -1,3 +1,14 @@
+`data_sem_conversion_proof_probe.out` captures the original byte- and word-list
+preservation theorem statements for BVI-to-data timestamp erasure. Lean checks
+the corresponding proofs; the capture itself is not a cross-language proof.
+Regenerate with `HOL_PROBE_ONLY=data_sem_conversion_proof_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`data_sem_install_probe.out` captures the typed choice-based byte and word
+decoders, the polymorphic installation result, and outer-dispatch rejection
+cases. Lean proves both decoder choice correspondences and checks installation
+success with an existing label. The capture is not a full installation proof.
+Regenerate with `HOL_PROBE_ONLY=data_sem_install_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `data_sem_apply_probe.out` captures the typed data primitive dispatcher and
 original observations for block construction, timestamp updates, invalid list
 lengths, integer arithmetic, and unsupported byte copying. Lean examples cover
