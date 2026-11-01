@@ -55,6 +55,21 @@ SOURCE_CORPUS = [
     ('val x = (fn x => x) ((fn y => y) 10);', 0),
     ('val f = fn x => fn y => fn z => (x,y,z); val x = f 1 2 3;', 0),
     ('val x = ((fn x => x) : int -> int) 1;', 0),
+    ('val x = #"\\n";', 0),
+    ('val x = "\\^A\\^_";', 1),
+    ('val x = 0xff; val y = 0wxFF;', 0),
+    ('fun f x = case x of SOME (x,y) => x | NONE => 0;', 1),
+    ('fun id x = x; val x = (id 1,id "a");', 0),
+    ('datatype t = A | B int; val B x = B 2;', 0),
+    ('fun f x = let val z = x in let val x = 1 in z end end;', 0),
+    ('fun f (x as SOME y) = y | f NONE = 0;', 1),
+    ('fun f x = case x of (a,b) => (b,a);', 0),
+    ('val x = fn (a,b) => fn (c,d) => (a,b,c,d);', 0),
+    ('local datatype t = A | B in val x = A end;', 0),
+    ('structure A = struct structure B = struct val z = 2 end end; val x = A.B.z;', 0),
+    ('val x = 1; val x = 2; val y = x;', 0),
+    ('fun even n = if n = 0 then true else odd (n-1) and odd n = if n = 0 then false else even (n-1);', 1),
+    ('fun f x = let fun g y = y x in g (fn z => z) end;', 0),
 ]
 
 # These programs also exercise the basis and full backend output. They must

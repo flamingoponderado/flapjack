@@ -413,8 +413,9 @@ local-binding and closure programs, run
 The script verifies the reference compiler's embedded CakeML and HOL
 revisions, then compares complete output bytes, diagnostics and status. Its
 `--seed` and `--count` options select reproducible samples; a rejection or
-timeout fails the run. A generated-program run with seed `49127` matched 25 cases
-against the pinned compiler. This is sampled evidence, not full-language parity.
+timeout fails the run. Generated-program runs with seed `49127` (25 cases) and
+seed `96317` (100 cases) matched the pinned compiler. This is sampled evidence,
+not full-language parity.
 Add `--mutations` to apply reproducible single-character edits to small
 declarations with the prelude excluded. This mode compares successful output
 and rejection diagnostics alike, including complete stderr and exit status;
@@ -427,7 +428,8 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 Use `--deep-mutations` in place of `--mutations` to apply up to three edits to
 nested declarations, pattern matches, exceptions, strings and comments. It
 also compares the full output for any mutated program that compiles. A run with
-seed `35791` matched 200 cases against the pinned compiler.
+seed `35791` and a second run with seed `46821` each matched 200 cases against
+the pinned compiler.
 
 The same checker has a fixed language-feature corpus covering literals,
 patterns, datatypes, exceptions, local bindings, closures, structures and
@@ -442,7 +444,9 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 It checks each case's expected acceptance or rejection and compares complete
 output and status. The accepted cases include polymorphic datatypes, nested
 closures, type annotations, tuple patterns, qualified names and exception
-handlers; these exercise compilation as well as parsing and inference. It is a
+handlers. Additional cases cover shadowing, nested structures, polymorphic
+functions, hexadecimal literals, character escapes and rejected syntax; these
+exercise compilation as well as parsing and inference. It is a
 finite regression sample, not evidence for all programs using those forms.
 
 To recheck the recorded historical outputs when that exact binary is available,
