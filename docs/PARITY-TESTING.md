@@ -416,6 +416,14 @@ revisions, then compares complete output bytes, diagnostics and status. Its
 timeout fails the run. Generated-program runs with seed `49127` (25 cases),
 seed `96317` (100 cases), seed `84513` (60 cases), and seed `139047` (40 cases)
 matched the pinned compiler. This is sampled evidence, not full-language parity.
+Use `--structured` to generate accepted programs combining datatypes, pattern
+matches, nested closures, exceptions, polymorphism, and modules without the
+prelude. Seed `857196` matched the pinned compiler on 100 complete outputs:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured --seed 857196 --count 100
+```
+
 Add `--mutations` to apply reproducible single-character edits to small
 declarations with the prelude excluded. This mode compares successful output
 and rejection diagnostics alike, including complete stderr and exit status;

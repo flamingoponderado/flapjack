@@ -3,7 +3,7 @@
 
 This is a bounded source-to-assembly differential check, not a correctness
 proof. Both complete outputs, standard errors, and exit statuses must match.
-Generated integer programs must also be accepted. Mutation and corpus modes
+Generated programs must also be accepted. Mutation and corpus modes
 compare accepted and rejected inputs alike, including their diagnostics. The
 checker needs a locally built pinned original compiler; see
 docs/PARITY-TESTING.md.
@@ -131,6 +131,27 @@ def expression(rng, depth):
     ])
 
 
+def structured_source(rng):
+    """Generate accepted programs that exercise closures, patterns and modules."""
+    a, b, c = (rng.randrange(1000) for _ in range(3))
+    return rng.choice([
+        f'datatype t = A | B int | C int int; '
+        f'fun f x = case x of A => {a} | B n => n | C n m => m; val y = f (C {b} {c});',
+        f'fun f x = let fun g y = fn z => (x,y,z) in g {a} end; val y = f {b} {c};',
+        f'exception E int; fun f x = (raise E x) handle E n => (n,{a}); val y = f {b};',
+        f'structure S = struct datatype t = A | B int; '
+        f'fun f x = case x of A => {a} | B n => n end; val y = S.f (S.B {b});',
+        f'val id = fn x => x; val a = id {a}; val b = id "str"; val c = id (a,b,{b});',
+        f'fun f x = case x of [] => [] | h::t => h::t; val y = f [{a},{b},{c}];',
+        f'datatype tree = Leaf int | Node tree tree; '
+        f'fun f x = case x of Leaf n => n | Node (Leaf n) y => n | Node x y => {a}; '
+        f'val y = f (Node (Leaf {b}) (Leaf {c}));',
+        f'local datatype t = A int | B in fun f x = case x of A y => y | B => {a}; val y = f (A {b}) end;',
+        f'fun f (a,b,c) = fn (x,y) => (c,b,a,y,x); val y = f ({a},{b},{c}) ({b},{a});',
+        f'val x = let val x = {a} in let val y = fn z => (x,z) in y {b} end end;',
+    ])
+
+
 def mutated_source(rng):
     """Make one reproducible insertion, deletion, or replacement in source."""
     source = rng.choice([
@@ -232,6 +253,8 @@ def main():
                        help='mutate arbitrary source bytes with the prelude excluded')
     modes.add_argument('--corpus', action='store_true',
                        help='compare fixed language-feature and standard-prelude programs')
+    modes.add_argument('--structured', action='store_true',
+                       help='compare accepted closure, datatype, pattern and module programs')
     args = parser.parse_args()
     if args.count < 0 or args.timeout <= 0:
         parser.error('count must be nonnegative and timeout must be positive')
@@ -246,9 +269,9 @@ def main():
         source = (corpus[index][0] if args.corpus else byte_mutated_source(rng) if args.byte_mutations else
                   unicode_mutated_source(rng) if args.unicode_mutations else
                   deep_mutated_source(rng) if args.deep_mutations else
-                  mutated_source(rng) if args.mutations else
+                  mutated_source(rng) if args.mutations else structured_source(rng) if args.structured else
                   'fun f x = ' + expression(rng, rng.randrange(1, 4)) + '; val _ = print_int (f 2);')
-        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations or args.unicode_mutations or args.byte_mutations
+        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations or args.unicode_mutations or args.byte_mutations or args.structured
         try:
             original = run(args.reference, source, args.timeout, exclude_prelude)
             candidate = run(args.cake, source, args.timeout, exclude_prelude)
