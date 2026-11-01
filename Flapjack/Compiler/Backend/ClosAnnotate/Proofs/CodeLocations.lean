@@ -159,6 +159,97 @@ decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 end
 
+mutual
+
+/-- Free-variable discovery preserves the order of surviving locations. -/
+theorem altFreeSing_codeLocations_sublist (expression : Exp) :
+    List.Sublist (codeLocationsExp (altFreeSing expression).1) (codeLocationsExp expression) := by
+  cases expression with
+  | var trace n => simp [altFreeSing, codeLocationsExp]
+  | ifThenElse trace condition yes no =>
+    simpa only [altFreeSing, codeLocationsExp] using
+      ((altFreeSing_codeLocations_sublist condition).append
+        (altFreeSing_codeLocations_sublist yes)).append (altFreeSing_codeLocations_sublist no)
+  | «let» trace bindings body =>
+    simp only [altFreeSing]
+    split
+    · simp only [codeLocationsExp, codeLocations_replicate_const0, List.nil_append]
+      exact (List.nil_sublist _).append (altFreeSing_codeLocations_sublist body)
+    · simpa only [codeLocationsExp] using
+        (altFreeList_codeLocations_sublist bindings).append (altFreeSing_codeLocations_sublist body)
+  | raise trace body | tick trace body =>
+    simpa [altFreeSing, codeLocationsExp] using altFreeSing_codeLocations_sublist body
+  | handle trace body handler =>
+    simpa only [altFreeSing, codeLocationsExp] using
+      (altFreeSing_codeLocations_sublist body).append (altFreeSing_codeLocations_sublist handler)
+  | call trace ticks dest args | op trace _ args =>
+    simpa [altFreeSing, codeLocationsExp] using altFreeList_codeLocations_sublist args
+  | app trace dest function args =>
+    simpa only [altFreeSing, codeLocationsExp] using
+      (altFreeSing_codeLocations_sublist function).append (altFreeList_codeLocations_sublist args)
+  | fn name dest vars arity body =>
+    simpa only [altFreeSing, codeLocationsExp] using
+      (altFreeSing_codeLocations_sublist body).append (List.Sublist.refl [dest.getD 0])
+  | letrec names dest vars functions body =>
+    simpa only [altFreeSing, codeLocationsExp, List.length_map, altFreeFuns_length] using
+      ((altFreeFuns_codeLocations_sublist functions functions.length).append
+        (List.Sublist.refl ((List.range functions.length).map (fun i => dest.getD 0 + 2 * i)))).append
+          (altFreeSing_codeLocations_sublist body)
+termination_by sizeOf expression
+
+/-- Free-variable discovery preserves the order of locations in a list. -/
+theorem altFreeList_codeLocations_sublist (expressions : List Exp) :
+    List.Sublist (codeLocations (altFreeList expressions).1) (codeLocations expressions) := by
+  cases expressions with
+  | nil => simp [altFreeList, codeLocations]
+  | cons first rest =>
+    simpa only [altFreeList, codeLocations] using
+      (altFreeSing_codeLocations_sublist first).append (altFreeList_codeLocations_sublist rest)
+termination_by sizeOf expressions
+
+/-- Free-variable discovery preserves location order in recursive bodies. -/
+theorem altFreeFuns_codeLocations_sublist (functions : List (Nat × Exp)) (count : Nat) :
+    List.Sublist (codeLocationsFuns ((altFreeFuns count functions).map Prod.fst)) (codeLocationsFuns functions) := by
+  cases functions with
+  | nil => simp [altFreeFuns, codeLocationsFuns]
+  | cons first rest =>
+    cases first with
+    | mk arity body =>
+      simpa only [altFreeFuns, List.map_cons, codeLocationsFuns] using
+        (altFreeSing_codeLocations_sublist body).append (altFreeFuns_codeLocations_sublist rest count)
+termination_by sizeOf functions
+decreasing_by all_goals subst_vars; simp_wf <;> omega
+
+end
+
+/-- Annotation preserves the ordered subsequence of closure locations and
+therefore cannot introduce duplicate locations. -/
+theorem annotateList_codeLocations_sublist (arity : Nat) (expressions : List Exp) :
+    List.Sublist (codeLocations (annotateList arity expressions)) (codeLocations expressions) := by
+  simpa [annotateList, shiftList_codeLocations] using altFreeList_codeLocations_sublist expressions
+
+/-- If the input locations are distinct, list annotation keeps them distinct. -/
+theorem annotateList_codeLocations_nodup (arity : Nat) (expressions : List Exp)
+    (distinct : (codeLocations expressions).Nodup) :
+    (codeLocations (annotateList arity expressions)).Nodup :=
+  (annotateList_codeLocations_sublist arity expressions).nodup distinct
+
+/-- Single-expression annotation preserves the order of surviving locations. -/
+theorem annotateSing_codeLocations_sublist (arity : Nat) (expression : Exp) :
+    List.Sublist (codeLocationsExp (annotateSing arity expression)) (codeLocationsExp expression) := by
+  simpa [annotateSing, shiftSing_codeLocations] using altFreeSing_codeLocations_sublist expression
+
+/-- Program annotation preserves the order of surviving body locations. -/
+theorem compile_codeLocations_sublist (program : List (Nat × Nat × Exp)) :
+    List.Sublist (codeLocations ((compile program).map (fun (_, _, body) => body)))
+      (codeLocations (program.map (fun (_, _, body) => body))) := by
+  induction program with
+  | nil => simp [compile, codeLocations]
+  | cons first rest ih =>
+    obtain ⟨name, arity, body⟩ := first
+    simpa only [compile, List.map_cons, codeLocations] using
+      (annotateSing_codeLocations_sublist arity body).append ih
+
 /-- Annotation can erase unused code but introduces no closure location. -/
 theorem annotateList_codeLocations (arity : Nat) (expressions : List Exp) :
     codeLocations (annotateList arity expressions) ⊆ codeLocations expressions := by

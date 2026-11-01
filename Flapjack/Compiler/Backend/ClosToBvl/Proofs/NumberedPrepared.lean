@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationBounds
+import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationDistinct
 import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainLocations
@@ -142,6 +143,60 @@ theorem compileCommonNoOpts_entries_disjoint (config current : Config) (expressi
   have a := (compileCommonNoOpts_entry_labels config current expressions program compiled).2 label entry
   have b := compileCommonNoOpts_location_bounds config current expressions program compiled label nested
   omega
+
+/-- Numbering, chaining, and annotation produce pairwise distinct nested
+closure locations on the no-optimization path. -/
+theorem compileCommonNoOpts_nested_nodup (config current : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp))
+    (compiled : compileCommonNoOpts? config expressions = some (current, program)) :
+    (ClosProps.codeLocations (program.map (fun (_, _, body) => body))).Nodup := by
+  by_cases enabled : config.doMti || config.doCall
+  · simp [compileCommonNoOpts?, enabled] at compiled
+  · cases known : config.knownConf with
+    | some k => simp [compileCommonNoOpts?, enabled, known] at compiled
+    | none =>
+      let next := config.nextLoc + max 1 expressions.length
+      let aligned := if next % 2 = 0 then next else next + 1
+      cases numbered : ClosNumber.renumberList aligned expressions with
+      | mk nextLoc numberedExpressions =>
+        have run : compileCommonNoOpts? config expressions =
+            some ({ config with start := config.nextLoc, nextLoc := nextLoc, knownConf := none, callState := (.ln, []) },
+              ClosAnnotate.compile (chainExps config.nextLoc numberedExpressions)) := by
+          simp [compileCommonNoOpts?, enabled, known, next, aligned, numbered]
+        have equal := Option.some.inj (compiled.symm.trans run)
+        cases equal
+        have distinct := ClosNumber.renumberList_codeLocations_nodup expressions aligned
+        simp only [numbered] at distinct
+        have chainDistinct : (ClosProps.codeLocations
+            ((chainExps config.nextLoc numberedExpressions).map (fun (_, _, body) => body))).Nodup := by
+          simpa [chainExps_codeLocations] using distinct
+        exact (ClosAnnotate.compile_codeLocations_sublist _).nodup chainDistinct
+
+/-- Checked conversion of the no-optimization preprocessed program emits
+pairwise distinct BVL labels. -/
+theorem compileCommonNoOpts_converted_nodup (config current : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp)) (target : List (Nat × Nat × Bvl.Exp))
+    (preprocess : compileCommonNoOpts? config expressions = some (current, program))
+    (convert : compileProg? current.maxApp program = some target) :
+    (target.map Prod.fst).Nodup := by
+  rw [compileProg_checked_codeLocations current.maxApp program target convert]
+  apply List.Nodup.append
+  · have entries := (compileCommonNoOpts_entry_labels config current expressions program preprocess).1
+    have shifted : ((program.map Prod.fst).map (fun label => label + numStubs current.maxApp)).Nodup :=
+      entries.map (fun _ _ equal => Nat.add_right_cancel equal)
+    simpa [List.map_map, Function.comp_def] using shifted
+  · have nested := compileCommonNoOpts_nested_nodup config current expressions program preprocess
+    apply List.Nodup.map (fun _ _ equal => Nat.add_right_cancel equal)
+    exact List.nodup_reverse.mpr nested
+  · intro label entryMember nestedMember
+    obtain ⟨entry, entryMem, entryEq⟩ := List.mem_map.mp entryMember
+    obtain ⟨location, locationMem, locationEq⟩ := List.mem_map.mp nestedMember
+    have sourceEntry : entry.1 ∈ program.map Prod.fst := List.mem_map.mpr ⟨entry, entryMem, rfl⟩
+    have sourceNested : location ∈ ClosProps.codeLocations (program.map (fun (_, _, body) => body)) := by
+      simpa using locationMem
+    have different := compileCommonNoOpts_entries_disjoint config current expressions program preprocess entry.1 sourceEntry
+    have equal : entry.1 = location := by omega
+    exact different (equal ▸ sourceNested)
 
 /-- Each preprocessed entry survives checked BVL conversion at its shifted
 label, in the interval reserved for top-level entries. -/
@@ -358,6 +413,28 @@ theorem numberedAnnotated_extractName (start : Nat) (expressions : List ClosLang
       have subset := ClosAnnotate.annotateList_codeLocations 0 numberedExpressions
       simpa [ClosNumber.compileInc, next, aligned, numbered, ClosProps.codeLocations,
         ClosProps.codeLocationsExp] using subset
+
+/-- Numbered and annotated incremental main expressions have distinct
+closure locations after the entry marker is extracted. -/
+theorem numberedAnnotated_extractName_nodup (start : Nat) (expressions : List ClosLang.Exp) :
+    let output := ClosAnnotate.annotateList 0 (ClosNumber.compileInc start expressions).2
+    (ClosProps.codeLocations (extractName output).2).Nodup := by
+  let next := start + max expressions.length 1
+  let aligned := if next % 2 = 0 then next else next + 1
+  cases numbered : ClosNumber.renumberList aligned expressions with
+  | mk nextLoc numberedExpressions =>
+    have marker : ClosAnnotate.annotateList 0 (ClosNumber.compileInc start expressions).2 =
+        .op .none (.intOp (.const (Int.ofNat start))) [] ::
+          ClosAnnotate.annotateList 0 numberedExpressions := by
+      simpa [ClosNumber.compileInc, next, aligned, numbered] using
+        ClosAnnotate.annotateList_name_marker start numberedExpressions
+    rw [marker]
+    have extract := extractName_numbered_marker start (ClosAnnotate.annotateList 0 numberedExpressions)
+    dsimp only
+    rw [extract.2.2]
+    apply ClosAnnotate.annotateList_codeLocations_nodup
+    have distinct := ClosNumber.renumberList_codeLocations_nodup expressions aligned
+    simpa [numbered] using distinct
 
 /-- If the extracted main code and unchanged auxiliary code lie in one
 interval, incremental BVL conversion emits labels in that interval shifted
