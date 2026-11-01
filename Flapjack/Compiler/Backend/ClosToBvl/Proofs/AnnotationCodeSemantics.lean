@@ -395,4 +395,46 @@ theorem compileNoOpts_source_semantics {C F : Type} (ffi : HolFfiState F)
         rw [emptySource_semantics]
         exact compiledEq
 
+/-- With all optional closure optimizations disabled, the production driver
+is exactly the no-optimization compiler for every traversal fuel. -/
+theorem compileCallMtiFuel_noOpts (fuel : Nat) (config : Config) (expressions : List ClosLang.Exp)
+    (mti : config.doMti = false) (calls : config.doCall = false) (known : config.knownConf = none) :
+    compileCallMtiFuel? fuel config expressions = compileNoOpts? config expressions := by
+  simp only [compileCallMtiFuel?, compileNoOpts?, compileCommonNoOpts?, ClosMti.compileFuel,
+    ClosKnown.compileFuel, ClosCall.compileFuel, mti, calls, known, Bool.false_or, Bool.false_eq_true,
+    ↓reduceIte, Option.bind_eq_bind, Option.bind]
+  cases h : ClosNumber.renumberList
+      (if (config.nextLoc + max 1 expressions.length) % 2 = 0 then config.nextLoc + max 1 expressions.length
+       else config.nextLoc + max 1 expressions.length + 1) expressions with
+  | mk next transformed =>
+    simp
+
+/-- The production closure driver inherits the no-optimization source
+behavior theorem when all optional closure optimizations are disabled. -/
+theorem compileCallMtiFuel_noOpts_semantics {C F : Type} (ffi : HolFfiState F)
+    (fuel : Nat) (config current output : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp)) (compiled : List (Nat × Nat × Bvl.Exp))
+    (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (oracle : ClosSem.CompileOracle (Nat × C)) (targetCompiler : BvlSem.Compiler C)
+    (mti : config.doMti = false) (calls : config.doCall = false) (known : config.knownConf = none)
+    (preprocess : compileCommonNoOpts? config expressions = some (current, program))
+    (compile : compileCallMtiFuel? fuel config expressions = some (output, compiled, names))
+    (nonfail : semantics ffi config.maxApp HolFiniteMapExact.empty oracle
+      (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+        (pureCc ClosAnnotate.compileInc (pureCc (compileInc config.maxApp) targetCompiler))) expressions ≠ .fail)
+    (numberSafe : ¬ containsAppSome config.maxApp expressions) (varsSafe : everyFnVarsNone expressions)
+    (oracleSafe : ∀ index, (oracle index).2.2 = [] ∧
+      ¬ containsAppSome config.maxApp (oracle index).2.1 ∧ everyFnVarsNone (oracle index).2.1)
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (initialBound : current.nextLoc ≤ (oracle 0).1.1) :
+    BvlSem.semantics ffi (sptFromAList compiled)
+      (pureCo (compileInc config.maxApp) ∘ pureCo ClosAnnotate.compileInc ∘
+        stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) targetCompiler output.start =
+      semantics ffi config.maxApp HolFiniteMapExact.empty oracle
+        (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+          (pureCc ClosAnnotate.compileInc (pureCc (compileInc config.maxApp) targetCompiler))) expressions := by
+  apply compileNoOpts_source_semantics ffi config current output expressions program compiled names oracle targetCompiler
+    preprocess _ nonfail numberSafe varsSafe oracleSafe oracleState initialBound
+  simpa [← compileCallMtiFuel_noOpts fuel config expressions mti calls known] using compile
+
 end Flapjack.Compiler.Backend.ClosToBvl
