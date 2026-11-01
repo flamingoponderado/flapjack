@@ -38,6 +38,7 @@ val _ = show "heap_lookup_MEM_typed" gc_sharedTheory.heap_lookup_MEM;
 val _ = show "heap_lookup_SPLIT_typed" gc_sharedTheory.heap_lookup_SPLIT;
 val _ = show "heap_lookup_LESS_typed" gc_sharedTheory.heap_lookup_LESS;
 val _ = show "word_heap_APPEND_typed" data_to_word_memoryProofTheory.word_heap_APPEND;
+val _ = show "word_list_APPEND_typed" data_to_word_memoryProofTheory.word_list_APPEND;
 val _ = show "heap_expand_typed" gc_sharedTheory.heap_expand_def;
 val _ = show "gen_starts_in_store_typed" data_to_word_memoryProofTheory.gen_starts_in_store_def;
 val _ = show "gen_starts_in_store_IMP_typed" data_to_word_memoryProofTheory.gen_starts_in_store_IMP;

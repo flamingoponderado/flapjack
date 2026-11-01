@@ -100354,6 +100354,15 @@
     "reviewer": "Source comparison: the simplified word_cmp_loop_refl theorem and its typed capture quantify the same loop counter, shared address, domain, memory and result word; any successful self-comparison returns 1. The proof applies for every positive HOL word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockElement.lean",
+    "lean_name": "wordListAppend",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_list_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_list_APPEND and its typed capture retain independent arbitrary list element type and positive address-word width, both arbitrary lists, and equality of the complete separation assertions. The suffix address is a + n2w (LENGTH xs) * bytes_in_word, with modular word arithmetic."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
