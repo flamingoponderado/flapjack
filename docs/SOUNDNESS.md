@@ -345,7 +345,16 @@ The following are open review or verification obligations:
       `comisd` unordered handling are approximated, and SSE `min`/`max` are
       approximated; floating-point results use `holFp64*` and therefore agree
       with the source semantics by construction, not by a model refinement.
-      Unknown instruction words set `failed`. No `@[hol]` tag is claimed for
+      Unknown instruction words set `failed`. The parity evidence compares
+      emitted assembly and bytes only: it does not run the closed model against
+      CakeML's L3 `NextStateX64` or against hardware, so it cannot establish a
+      semantic connection between them. No refinement relation from the closed
+      model to the L3 model is proved or claimed, and `x64EncoderCorrect` is a
+      theorem about the closed model alone. CakeML's L3 x86-64 model
+      (`HOL/examples/l3-machine-code/x64/model/x64Script.sml`) — its
+      `NextStateX64` transition, the `x64_ok` MXCSR and exception validity
+      condition, and the full instruction semantics — is not ported, so this is
+      not the HOL `x64_encoder_correct` theorem. No `@[hol]` tag is claimed for
       any declaration in the machine model, and no `reviewed_*` row for it is
       present in `docs/HOL-THEOREM-MAP.json`.
 
