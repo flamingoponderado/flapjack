@@ -107,6 +107,7 @@ val _ = show "memory_rel_Block_IMP_typed" data_to_word_memoryProofTheory.memory_
 val _ = show "memory_rel_tag_limit_typed" data_to_word_memoryProofTheory.memory_rel_tag_limit;
 val _ = show "memory_rel_test_nil_eq_typed" data_to_word_memoryProofTheory.memory_rel_test_nil_eq;
 val _ = show "memory_rel_test_none_eq_typed" data_to_word_memoryProofTheory.memory_rel_test_none_eq;
+val _ = show "encode_header_EQ_typed" data_to_word_memoryProofTheory.encode_header_EQ;
 val _ = show "memory_rel_Add_typed" data_to_word_memoryProofTheory.memory_rel_Add;
 val _ = show "memory_rel_Sub_typed" data_to_word_memoryProofTheory.memory_rel_Sub;
 val _ = show "memory_rel_And_typed" data_to_word_memoryProofTheory.memory_rel_And;
