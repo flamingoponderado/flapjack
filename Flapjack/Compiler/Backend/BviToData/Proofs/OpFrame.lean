@@ -546,4 +546,93 @@ theorem evaluate_iAssign_global_outcome {C F : Type} (op : ClosLang.GlobOp)
     · simp [DataSem.getVar, sptLookup_sptMap, destRead, projected]
     · constructor
 
+/-- Label assignments have no live cut or make-space prelude. -/
+theorem evaluate_iAssign_label_lookup {C F : Type} (label : Nat) (dest : Nat)
+    (operands live corr : List Nat) (state next : DataSem.State C F)
+    (run : DataSem.evaluate (iAssign dest (.label label) operands live corr) state = (none, next)) :
+    ∃ value, sptLookup dest next.locals = some value ∧
+      (∀ key, key ≠ dest → sptLookup key next.locals = sptLookup key state.locals) ∧
+      DataSem.SameControl state next := by
+  have shape : iAssign dest (.label label) operands live corr = .assign dest (.label label) operands none := by
+    simp [iAssign, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSpace.opSpaceReq]
+  rw [shape] at run
+  obtain ⟨prepared, value, cut, locals, control⟩ :=
+    DataSem.evaluate_assign_locals (.label label) dest operands none state next (DataSem.doApp_label_frame label) run
+  simp [DataSem.cutStateOpt] at cut
+  subst prepared
+  refine ⟨value, ?_, ?_, control⟩
+  · simp [locals, sptLookup_sptInsert_same]
+  · intro key different
+    simpa [locals] using sptLookup_sptInsert_ne dest key value state.locals different
+
+/-- A successful label `iAssign` establishes the complete continuing
+compiler invariant when its destination is fresh. Label assignments retain the other locals. -/
+theorem evaluate_iAssign_label_outcome {C F : Type} (label : Nat)
+    (target : DataSem.State C F) (source next : BviSem.BviState C F)
+    (operands live corr : List Nat) (env : List BvlSem.Value)
+    (args : List DataSem.Value) (dest : Nat) (result : BvlSem.Value)
+    (related : stateRel source target)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
+    (fresh : ∀ key, dest ≤ key → sptLookup key target.locals = none)
+    (read : DataSem.getVars operands target.locals = some args)
+    (run : BviSem.doApp (.label label) (args.map dataToBviValue) source = .val (result, next)) :
+    ∃ targetNext value,
+      DataSem.evaluate (iAssign dest (.label label) operands live corr) target = (none, targetNext) ∧
+      result = dataToBviValue value ∧ stateRel next targetNext ∧
+      sptLookup dest targetNext.locals = some value ∧
+      correctOutcome (.val [result]) target targetNext dest (dest + 1) corr live [dest] env false none none := by
+  obtain ⟨targetNext, value, execution, projected, finalRel, destRead⟩ :=
+    evaluate_iAssign_success (.label label) target source operands live corr env args dest result next
+      (by simp) (by intro flag; simp) (by simp) related vars livePresent read run
+  obtain ⟨_, _, lookupOther, control⟩ :=
+    evaluate_iAssign_label_lookup label dest operands live corr target targetNext execution
+  have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
+      sptLookup key targetNext.locals = sptLookup key target.locals := by
+    intro key member different
+    exact lookupOther key different
+  have rootsPresent := roots_present target operands live corr env args vars livePresent read
+  have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue targetNext.locals) := by
+    apply varCorr_of_lookup_eq dataToBviValue target.locals targetNext.locals corr env vars
+    intro key member
+    have root : key ∈ operands ++ live ++ corr := by simp [member]
+    have different : key ≠ dest := by
+      intro equal
+      subst key
+      exact rootsPresent dest root (fresh dest (Nat.le_refl dest))
+    exact keeps key root different
+  refine ⟨targetNext, value, execution, projected, finalRel, destRead, ?_⟩
+  simp only [correctOutcome, true_and, List.mem_singleton, forall_eq]
+  refine ⟨by omega, by omega, ?_, varsNew, ?_, ?_, control.1.symm, control.2.1.symm, ?_, ?_⟩
+  · intro key bound
+    have different : key ≠ dest := by omega
+    rw [lookupOther key different]
+    exact fresh key (by omega)
+  · intro key dataValue lookup
+    by_cases equal : key = dest
+    · omega
+    · have oldLookup : sptLookup key target.locals = some dataValue := by
+        simpa [lookupOther key equal] using lookup
+      by_contra bound
+      have absent := fresh key (by omega)
+      rw [oldLookup] at absent
+      contradiction
+  · intro key dataValue lookup needed
+    have different : key ≠ dest := by
+      intro equal
+      subst key
+      have absent := fresh dest (Nat.le_refl dest)
+      rw [lookup] at absent
+      contradiction
+    have root : key ∈ operands ++ live ++ corr := by
+      by_cases member : key ∈ live
+      · simp [member]
+      · simp [needed member]
+    rw [keeps key root different]
+    exact lookup
+  · exact DataSem.SameControl.jumpExc_ne_none control
+  · constructor
+    · simp [DataSem.getVar, sptLookup_sptMap, destRead, projected]
+    · constructor
+
 end Flapjack.Compiler.Backend.BviToData

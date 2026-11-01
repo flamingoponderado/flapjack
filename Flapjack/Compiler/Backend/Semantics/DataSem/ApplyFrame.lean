@@ -228,6 +228,19 @@ theorem doAppAux_global_frame {C F : Type} (op : ClosLang.GlobOp) (args : List V
                 exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
               · simp [doAppAux, applyNonFfi, global, found, bound] at run
 
+/-- Successful code-label lookup preserves local and control fields. -/
+theorem doAppAux_label_frame {C F : Type} (label : Nat) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doAppAux (.label label) args state = .val (value, next)) : SameLocalControl state next := by
+  cases args with
+  | cons a rest => simp [doAppAux, applyNonFfi] at run
+  | nil =>
+    cases found : sptLookup label state.code with
+    | none => simp [doAppAux, applyNonFfi, found] at run
+    | some entry =>
+      simp [doAppAux, applyNonFfi, found] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 /-- A successful FFI auxiliary application preserves local and control
 fields while updating the reference store and FFI state. -/
 theorem doAppAux_ffi_frame {C F : Type} (name : Basis.Pure.MlString.MlString) (args : List Value)
@@ -341,6 +354,21 @@ theorem doApp_global_frame {C F : Type} (op : ClosLang.GlobOp) (args : List Valu
     simp only [space] at run
     have first := doSpace_frame (.globOp op) args state accounted space
     have second := doAppAux_global_frame op args _ next value run
+    have second' : SameLocalControl accounted next := by
+      simpa [SameLocalControl, doStack, doLimSafe] using second
+    exact first.trans second'
+
+/-- The complete label dispatcher preserves local and control fields. -/
+theorem doApp_label_frame {C F : Type} (label : Nat) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doApp (.label label) args state = .val (value, next)) : SameLocalControl state next := by
+  simp only [doApp] at run
+  cases space : doSpace (.label label) args state with
+  | none => simp [space] at run
+  | some accounted =>
+    simp only [space] at run
+    have first := doSpace_frame (.label label) args state accounted space
+    have second := doAppAux_label_frame label args _ next value run
     have second' : SameLocalControl accounted next := by
       simpa [SameLocalControl, doStack, doLimSafe] using second
     exact first.trans second'
