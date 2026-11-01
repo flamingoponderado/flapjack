@@ -31,6 +31,20 @@ def EvalSimulation {C F : Type} (expressions : List ClosLang.Exp) : Prop :=
       evaluate (renumberList start expressions).2 nextEnv target = (targetResult, targetNext) ∧
       ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
 
+/-- Induction hypothesis for indirect closure application. This is proof-side
+    infrastructure, pending the complete evaluator correspondence review. -/
+def AppSimulation {C F : Type} : Prop :=
+  ∀ (function nextFunction : Value) (args nextArgs : List Value)
+    (source : State (Nat × C) F) (target : State C F)
+    (result : Result (List Value) Value) (sourceNext : State (Nat × C) F),
+    evaluateApp none function args source = (result, sourceNext) →
+    result ≠ .err (.abort .typeError) →
+    ValueRel source.maxApp function nextFunction →
+    List.Forall₂ (ValueRel source.maxApp) args nextArgs → StateRel source target →
+    ∃ targetResult targetNext,
+      evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
+
 /-- An environment lookup preserves a pointwise relation. -/
 theorem related_lookup {α β : Type} {relation : α → β → Prop} {left : List α} {right : List β}
     (related : List.Forall₂ relation left right) (index : Nat) (value : α)
@@ -596,5 +610,126 @@ theorem evaluate_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
       cases selected <;> simp_all
   · simp [arityOk] at run
     exact False.elim (noType run.1.symm)
+
+/-- Indirect application composes argument and function evaluation with the
+    application induction hypothesis. This factored hypothesis is universally
+    quantified and must be discharged by the eventual mutual simulation. -/
+theorem evaluate_app {C F : Type} (trace : BackendCommon.Tra)
+    (function : ClosLang.Exp) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args)
+    (functionIH : EvalSimulation (C := C) (F := F) [function])
+    (applicationIH : AppSimulation (C := C) (F := F)) :
+    EvalSimulation (C := C) (F := F) [.app trace none function args] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  have safeParts : args.length ≤ source.maxApp ∧
+      ¬ ClosProps.containsAppSomeExp source.maxApp function ∧
+      ¬ ClosProps.containsAppSome source.maxApp args := by
+    simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp, not_or, Nat.not_lt] using safe
+  have functionSafe : ¬ ClosProps.containsAppSome source.maxApp [function] := by
+    simpa [ClosProps.containsAppSome] using safeParts.2.1
+  cases args with
+  | nil =>
+    simp [evaluate] at run
+    exact False.elim (noType run.1.symm)
+  | cons first rest =>
+    cases argsRun : evaluate (first :: rest) env source with
+    | mk argsResult middle =>
+      cases argsResult with
+      | err error =>
+        rw [evaluate, fixClock_evaluate, argsRun] at run
+        cases run
+        obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+          argsIH env nextEnv source target (.err error) middle (renumber start function).1 argsRun noType safeParts.2.2 envRel stateRel
+        cases targetResult with
+        | val values => cases error <;> simp [ResultRel] at resultRel
+        | err targetError =>
+          refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
+          simp only [renumberList] at targetRun
+          simp only [renumberList, renumber]
+          rw [evaluate, fixClock_evaluate, targetRun]
+          rfl
+      | val values =>
+        have argsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
+        obtain ⟨targetArgsResult, targetMiddle, targetArgsRun, argsRel, middleRel⟩ :=
+          argsIH env nextEnv source target (.val values) middle (renumber start function).1
+            argsRun argsNoType safeParts.2.2 envRel stateRel
+        cases targetArgsResult with
+        | err error => cases error <;> simp [ResultRel] at argsRel
+        | val targetValues =>
+          have middleMax : middle.maxApp = source.maxApp := by
+            have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 (first :: rest) env source
+            simpa [argsRun] using h
+          have middleEnv : List.Forall₂ (ValueRel middle.maxApp) env nextEnv := by
+            simpa [middleMax] using envRel
+          have middleSafe : ¬ ClosProps.containsAppSome middle.maxApp [function] := by
+            simpa [middleMax] using functionSafe
+          cases functionRun : evaluate [function] env middle with
+          | mk functionResult last =>
+            cases functionResult with
+            | err error =>
+              rw [evaluate, fixClock_evaluate, argsRun] at run
+              simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte] at run
+              rw [fixClock_evaluate, functionRun] at run
+              cases run
+              obtain ⟨targetResult, targetLast, targetRun, resultRel, lastRel⟩ :=
+                functionIH env nextEnv middle targetMiddle (.err error) last start functionRun
+                  noType middleSafe middleEnv middleRel
+              cases targetResult with
+              | val values => cases error <;> simp [ResultRel] at resultRel
+              | err targetError =>
+                refine ⟨.err targetError, targetLast, ?_, ?_, lastRel⟩
+                · simp only [renumberList] at targetRun targetArgsRun
+                  simp only [renumberList, renumber]
+                  rw [evaluate, fixClock_evaluate, targetArgsRun]
+                  simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte]
+                  rw [fixClock_evaluate, targetRun]
+                · simpa [middleMax] using resultRel
+            | val functions =>
+              have length := (evaluate_length (C := Nat × C) (F := F)).1 [function] env middle last functions functionRun
+              cases functions with
+              | nil => simp at length
+              | cons value tail =>
+                cases tail with
+                | cons value' tail => simp at length
+                | nil =>
+                  have functionNoType : (Result.val [value] : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
+                  obtain ⟨targetFunctionResult, targetLast, targetFunctionRun, functionRel, lastRel⟩ :=
+                    functionIH env nextEnv middle targetMiddle (.val [value]) last start functionRun
+                      functionNoType middleSafe middleEnv middleRel
+                  cases targetFunctionResult with
+                  | err error => cases error <;> simp [ResultRel] at functionRel
+                  | val targetFunctions =>
+                    cases functionRel with
+                    | cons valueRel tailRel =>
+                      cases tailRel
+                      rename_i targetValue
+                      have lastMax : last.maxApp = middle.maxApp := by
+                        have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 [function] env middle
+                        simpa [functionRun] using h
+                      have appRun : evaluateApp none value values last = (result, sourceNext) := by
+                        rw [evaluate, fixClock_evaluate, argsRun] at run
+                        simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte] at run
+                        rw [fixClock_evaluate, functionRun] at run
+                        simpa using run
+                      obtain ⟨targetResult, targetNext, targetAppRun, resultRel, nextRel⟩ :=
+                        applicationIH value targetValue values targetValues last targetLast result sourceNext
+                          appRun noType (by simpa [lastMax, middleMax] using valueRel)
+                          (by simpa [ResultRel, lastMax, middleMax] using argsRel) lastRel
+                      refine ⟨targetResult, targetNext, ?_, ?_, nextRel⟩
+                      · simp only [renumberList] at targetArgsRun targetFunctionRun
+                        simp only [renumberList, renumber]
+                        rw [evaluate, fixClock_evaluate, targetArgsRun]
+                        simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte]
+                        rw [fixClock_evaluate, targetFunctionRun]
+                        simpa using targetAppRun
+                      · simpa [lastMax, middleMax] using resultRel
+
+/-- Directly annotated applications cannot satisfy the simulation's source
+    side condition; numbering correctness only considers indirect calls here. -/
+theorem evaluate_app_some {C F : Type} (trace : BackendCommon.Tra) (location : Nat)
+    (function : ClosLang.Exp) (args : List ClosLang.Exp) :
+    EvalSimulation (C := C) (F := F) [.app trace (some location) function args] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  simp [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] at safe
 
 end Flapjack.Compiler.Backend.ClosNumber
