@@ -77,3 +77,17 @@ val _ = show "ref_ptr_annot_typed" data_to_word_memoryProofTheory.ref_ptr_annot_
 val _ = show "v_inv_ck_rules_typed" data_to_word_memoryProofTheory.v_inv_ck_rules;
 val _ = show "v_inv_eq_typed" data_to_word_memoryProofTheory.v_inv_eq;
 val _ = show "n2mw_typed" multiwordTheory.n2mw_def;
+val _ = show "bytes_to_word_typed" byteTheory.bytes_to_word_def;
+val _ = show "write_bytes_typed" data_to_wordTheory.write_bytes_def;
+val _ = show "bytes_rep_typed" data_to_word_memoryProofTheory.Bytes_def;
+val _ = show "write_bytes_le" (EVAL ``data_to_word$write_bytes
+  [17w:word8;34w;51w] [0xAABBCCDDw:word32;0x11223344w] F``);
+val _ = show "write_bytes_be" (EVAL ``data_to_word$write_bytes
+  [17w:word8;34w;51w] [0xAABBCCDDw:word32;0x11223344w] T``);
+val _ = show "write_bytes_64" (EVAL ``data_to_word$write_bytes
+  [1w:word8;2w;3w;4w;5w;6w;7w;8w;9w] [0w:word64;0w] F``);
+val _ = show "bc_ref_inv_typed" data_to_word_memoryProofTheory.bc_ref_inv_def;
+val _ = show "bc_stack_ref_inv_typed" data_to_word_memoryProofTheory.bc_stack_ref_inv_def;
+val _ = show "abs_ml_inv_typed" data_to_word_memoryProofTheory.abs_ml_inv_def;
+val _ = show "word_ml_inv_typed" data_to_word_memoryProofTheory.word_ml_inv_def;
+val _ = show "memory_rel_typed" data_to_word_memoryProofTheory.memory_rel_def;

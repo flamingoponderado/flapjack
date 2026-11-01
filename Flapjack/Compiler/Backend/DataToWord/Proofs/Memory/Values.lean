@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.Semantics.DataSem.Value
 import Flapjack.Misc.Sptree
 import Flapjack.Misc.Multiword
 import Flapjack.Compiler.Backend.DataToWord.Numbers
+import Flapjack.Compiler.Backend.DataToWord.Bytes
 import Mathlib.Logic.Relation
 
 /-! Value and reference traversals used by the abstract memory invariant. -/
@@ -14,6 +15,16 @@ open Flapjack.Compiler.Backend.DataSem
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "RefBlock_def"]
 def refBlock {α β : Type} (values : List (HeapAddress α)) : HeapElement α (HeapTag × List β) :=
   .dataElement values values.length (.refTag, [])
+
+/-- Byte-array heap representation, retaining existing word contents where no
+input bytes apply. Its heap-address carrier is tied to the payload word width. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "Bytes_def"
+  (words_as_type_indexed_bitvec)]
+def bytesRep {width : Nat} [NeZero width] (bigEndian compareByContents : Bool)
+    (bytes : List (BitVec 8)) (words : List (BitVec width)) :
+    HeapElement (WordLocW width) (HeapTag × List (WordLocW width)) :=
+  let packed := writeBytes bytes words bigEndian
+  .dataElement [] packed.length (.bytesTag compareByContents bytes.length, packed.map .word)
 
 /-- Abstract bignum cell; its unused address carrier is independent of the
 payload word width. -/

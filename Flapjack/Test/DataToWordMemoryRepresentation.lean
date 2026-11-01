@@ -1,6 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
 
 /-! Original HOL observations for pointer-tag and heap representation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -97,6 +97,15 @@ example : allOnes (width := 8) 8 4 = 0xF0 := by decide
 example : refPtrAnnot (width := 8) config
     (some (.mutBlock 1 false [42] 9 []) : Option (BvlSem.Ref Nat)) = .word 12 := by decide
 
+example : writeBytes (width := 32) [0x11, 0x22, 0x33] [0xAABBCCDD, 0x11223344] false =
+    [0xAA332211, 0x11223344] := by native_decide
+
+example : writeBytes (width := 32) [0x11, 0x22, 0x33] [0xAABBCCDD, 0x11223344] true =
+    [0x112233DD, 0x11223344] := by native_decide
+
+example : writeBytes (width := 64) [1, 2, 3, 4, 5, 6, 7, 8, 9] [0, 0] false =
+    [0x0807060504030201, 9] := by native_decide
+
 example : ClockValueInv (width := 32) 0 config (.number (-2)) .ln
     (.data (.word (smallnum (-2))), HolFiniteMapExact.empty, HolFiniteMapExact.empty, []) := by
   exact .numberSmall 0 config (-2) .ln _ _ [] (by simp [smallInt])
@@ -104,5 +113,19 @@ example : ClockValueInv (width := 32) 0 config (.number (-2)) .ln
 example : ClockValueInv (width := 32) 0 config (.block 0 2 []) .ln
     (.data (.word (blockNil 2)), HolFiniteMapExact.empty, HolFiniteMapExact.empty, []) := by
   exact .blockNil 0 config 0 2 [] .ln _ _ [] rfl (by decide) rfl
+
+example : ¬ bcRefInv (width := 32) config 0 .ln
+    (HolFiniteMapExact.empty, HolFiniteMapExact.empty, [], false) := by
+  simp [bcRefInv, HolFiniteMapExact.empty]
+
+example : absMlInv (width := 32) config [] .ln ([], [], false, 0, 0, 0, .genState 0 []) 0 0 := by
+  simp only [absMlInv]
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · simp [rootsOk]
+  · simp [heapOk, heapLength]
+  · simp [gcKindInv, config]
+  · simp [unusedSpaceInv, heapLength, dataUpTo, heapSplit]
+  · refine ⟨HolFiniteMapExact.empty, HolFiniteMapExact.empty, ?_⟩
+    simp [mapInjInto, mapDomain, HolFiniteMapExact.empty, beOk, config, blocksUnique, allValues, valueListValues]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

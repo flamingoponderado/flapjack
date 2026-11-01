@@ -100301,6 +100301,33 @@
     "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The option of reference cells has a fully polymorphic payload; MutBlock uses its tag and lengths while all other cases give Word zero."
   },
   {
+    "lean_path": "Flapjack/Byte/BytesToWord.lean",
+    "lean_name": "bytesToWord",
+    "hol_path": "HOL/src/n-bit/byteScript.sml",
+    "hol_name": "bytes_to_word_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The original count and byte-list cases, recursive byte-update order, address increment, fixed word8 byte and existing destination word are retained for every positive width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Bytes.lean",
+    "lean_name": "writeBytes",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "write_bytes_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The word-list recursion, width DIV 8 chunk size, zero starting byte address, byte-list DROP and existing word contents match. The executed string compiler still uses a separate packing routine pending an equivalence proof."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "bytesRep",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "Bytes_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The typed source ties the empty heap-address carrier to the same word dimension as the payload. Both flags, original byte length, packed-word length and Word mapping are retained."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Limits.lean",
     "lean_name": "limitsInv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
