@@ -2424,4 +2424,208 @@ theorem evaluate_memory_configGC {C F : Type} (trace : BackendCommon.Tra) (args 
     EvalSimulation (C := C) (F := F) [.op trace (.memOp .configGC) args] :=
   evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_configGC
 
+/-- XOR updates matching byte arrays and rejects the same invalid inputs. -/
+theorem primitiveSimulation_memory_xorByte {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .xorByte) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases first with
+        | refPtr flag ptr =>
+          cases second with
+          | byteVector input =>
+            have refsRel := stateRel.2.2.2.2.2.1 ptr
+            cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
+              simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+            rename_i leftRef rightRef
+            cases leftRef <;> cases rightRef <;> simp_all
+            rename_i leftBytes bytes
+            cases xorRun : Flapjack.SemanticPrimitivesHOL.xorBytes input bytes with
+            | none => simp
+            | some updatedBytes =>
+              have updated := stateRel_updateRefs ptr (.byteArray updatedBytes) (.byteArray updatedBytes) stateRel rfl
+              have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil
+              simp [unitRel, updated]
+          | number _ | word64 _ | block _ _ _ _ | refPtr _ _ | closure | recclosure =>
+            simp [doApp, applyMemory, ResultRel]
+        | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+          simp [doApp, applyMemory, ResultRel]
+      | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- XOR byte-array expressions preserve evaluation. -/
+theorem evaluate_memory_xorByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .xorByte) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_xorByte
+
+/-- Copying a byte slice into a new vector preserves both vector and
+    byte-array inputs and reports the same invalid bounds. -/
+theorem primitiveSimulation_memory_copyByte_new {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp (.copyByte true)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil => simp [doApp, applyMemory, ResultRel]
+      | cons third tail =>
+        cases tail with
+        | nil =>
+          cases first with
+          | byteVector bytes =>
+            cases second with
+            | number offset =>
+              cases third with
+              | number length =>
+                cases copyRun : Flapjack.SemanticPrimitivesHOL.copyArray (bytes, offset) length none with
+                | none => simp [doApp, applyMemory, copyRun, ResultRel]
+                | some copied =>
+                  have valueRel : ValueRel source.maxApp (.byteVector copied) (.byteVector copied) := .byteVector _
+                  simp [doApp, applyMemory, copyRun, valueRel, stateRel]
+              | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+                simp [doApp, applyMemory, ResultRel]
+            | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+              simp [doApp, applyMemory, ResultRel]
+          | refPtr flag ptr =>
+            cases second with
+            | number offset =>
+              cases third with
+              | number length =>
+                have refsRel := stateRel.2.2.2.2.2.1 ptr
+                cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
+                  simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+                rename_i leftRef rightRef
+                cases leftRef <;> cases rightRef <;> simp_all
+                rename_i leftBytes bytes
+                cases copyRun : Flapjack.SemanticPrimitivesHOL.copyArray (bytes, offset) length none with
+                | none => simp
+                | some copied =>
+                  have valueRel : ValueRel source.maxApp (.byteVector copied) (.byteVector copied) := .byteVector _
+                  simp [valueRel, stateRel]
+              | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+                simp [doApp, applyMemory, ResultRel]
+            | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+              simp [doApp, applyMemory, ResultRel]
+          | number _ | word64 _ | block _ _ _ _ | closure | recclosure =>
+            simp [doApp, applyMemory, ResultRel]
+        | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Copy-to-vector expressions preserve evaluation under numbering. -/
+theorem evaluate_memory_copyByte_new {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.copyByte true)) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_copyByte_new
+
+/-- Copying a byte vector into a related byte-array destination preserves the
+    copied bytes, bounds errors and the updated store. -/
+theorem copyByte_write_vector {C F : Type} (source : State (Nat × C) F) (target : State C F)
+    (input : List (BitVec 8)) (offset length dstOffset : Int) (flag : Bool) (dst : Nat)
+    (stateRel : StateRel source target) :
+    match doApp (.memOp (.copyByte false))
+        [.byteVector input, .number offset, .number length, .refPtr flag dst, .number dstOffset] source with
+    | .err error => ∃ targetError,
+        doApp (.memOp (.copyByte false))
+          [.byteVector input, .number offset, .number length, .refPtr flag dst, .number dstOffset] target = .err targetError ∧
+        ResultRel source.maxApp (.err error) (.err targetError)
+    | .val (value, next) => ∃ targetValue targetNext,
+        doApp (.memOp (.copyByte false))
+          [.byteVector input, .number offset, .number length, .refPtr flag dst, .number dstOffset] target = .val (targetValue, targetNext) ∧
+        ValueRel source.maxApp value targetValue ∧ StateRel next targetNext := by
+  have refsRel := stateRel.2.2.2.2.2.1 dst
+  cases left : source.refs.lookup dst <;> cases right : target.refs.lookup dst <;>
+    simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+  rename_i leftRef rightRef
+  cases leftRef <;> cases rightRef <;> simp_all
+  rename_i leftBytes bytes
+  cases copyRun : Flapjack.SemanticPrimitivesHOL.copyArray (input, offset) length (some (bytes, dstOffset)) with
+  | none => simp
+  | some copied =>
+    have updated := stateRel_updateRefs dst (.byteArray copied) (.byteArray copied) stateRel rfl
+    have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil
+    simp [unitRel, updated]
+
+/-- Copying from an array uses the same byte contents as copying from its
+    corresponding immutable vector, including when source and destination alias. -/
+theorem copyByte_write_ref {C F : Type} (source : State (Nat × C) F) (target : State C F)
+    (srcFlag : Bool) (src : Nat) (offset length dstOffset : Int) (dstFlag : Bool) (dst : Nat)
+    (stateRel : StateRel source target) :
+    match doApp (.memOp (.copyByte false))
+        [.refPtr srcFlag src, .number offset, .number length, .refPtr dstFlag dst, .number dstOffset] source with
+    | .err error => ∃ targetError,
+        doApp (.memOp (.copyByte false))
+          [.refPtr srcFlag src, .number offset, .number length, .refPtr dstFlag dst, .number dstOffset] target = .err targetError ∧
+        ResultRel source.maxApp (.err error) (.err targetError)
+    | .val (value, next) => ∃ targetValue targetNext,
+        doApp (.memOp (.copyByte false))
+          [.refPtr srcFlag src, .number offset, .number length, .refPtr dstFlag dst, .number dstOffset] target = .val (targetValue, targetNext) ∧
+        ValueRel source.maxApp value targetValue ∧ StateRel next targetNext := by
+  have refsRel := stateRel.2.2.2.2.2.1 src
+  cases left : source.refs.lookup src <;> cases right : target.refs.lookup src <;>
+    simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+  rename_i leftRef rightRef
+  cases leftRef <;> cases rightRef <;> simp_all
+  rename_i leftBytes bytes
+  have vectorSim := copyByte_write_vector source target bytes offset length dstOffset dstFlag dst stateRel
+  simpa [doApp, applyMemory, stateRel.2.1, ResultRel] using vectorSim
+
+/-- In-place byte copying preserves related stores for vector and array
+    sources, including overlapping source and destination addresses. -/
+theorem primitiveSimulation_memory_copyByte_write {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp (.copyByte false)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil => simp [doApp, applyMemory, ResultRel]
+      | cons third tail =>
+        cases tail with
+        | nil => simp [doApp, applyMemory, ResultRel]
+        | cons fourth tail =>
+          cases tail with
+          | nil => simp [doApp, applyMemory, ResultRel]
+          | cons fifth tail =>
+            cases tail with
+            | nil =>
+              cases second with
+              | number offset =>
+                cases third with
+                | number length =>
+                  cases fourth with
+                  | refPtr flag dst =>
+                    cases fifth with
+                    | number dstOffset =>
+                      cases first with
+                      | byteVector input => exact copyByte_write_vector source target input offset length dstOffset flag dst stateRel
+                      | refPtr srcFlag src => exact copyByte_write_ref source target srcFlag src offset length dstOffset flag dst stateRel
+                      | number _ | word64 _ | block _ _ _ _ | closure | recclosure =>
+                        simp [doApp, applyMemory, ResultRel]
+                    | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+                      cases first <;> simp [doApp, applyMemory, ResultRel]
+                  | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+                    cases first <;> simp [doApp, applyMemory, ResultRel]
+                | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+                  cases first <;> simp [doApp, applyMemory, ResultRel]
+              | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+                cases first <;> simp [doApp, applyMemory, ResultRel]
+            | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- In-place byte-copy expressions preserve evaluation. -/
+theorem evaluate_memory_copyByte_write {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.copyByte false)) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_copyByte_write
+
 end Flapjack.Compiler.Backend.ClosNumber
