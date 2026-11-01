@@ -109,30 +109,25 @@ theorem x64Touched_congr {d : BitVec 64 → Prop} {s t : X64State} (h : X64Agree
 /-- `StepSafe` is preserved when the state is replaced by an agreeing one. -/
 theorem StepSafe.of_agree {d : BitVec 64 → Prop} {s t : X64State} (h : X64Agree d s t)
     (hs : StepSafe d t) : StepSafe d s := by
-  obtain ⟨hfetch, htouch⟩ := hs
-  have hfetch' : FetchSafe d s := by
-    intro i hi
-    have hd : d (s.pc + BitVec.ofNat 64 i) := by
-      have h' := hfetch i hi
-      rw [← h.pc] at h'
-      exact h'
-    show d (s.pc + BitVec.ofNat 64 i)
-    exact hd
-  have hdecode : decode (fun k => s.mem (s.pc + BitVec.ofNat 64 k)) =
-      decode (fun k => t.mem (t.pc + BitVec.ofNat 64 k)) := by
-    apply decode_congr
-    intro i hi
-    have hd : d (s.pc + BitVec.ofNat 64 i) := hfetch' i hi
-    show s.mem (s.pc + BitVec.ofNat 64 i) = t.mem (t.pc + BitVec.ofNat 64 i)
-    rw [← h.pc]
-    exact h.mem _ hd
-  refine ⟨hfetch', ?_⟩
-  intro i len hdec a ha
-  have hdec' : decode (fun k => t.mem (t.pc + BitVec.ofNat 64 k)) = some (i, len) := by
-    rw [← hdecode]
-    exact hdec
-  rw [x64Touched_congr h i] at ha
-  exact htouch i len hdec' a ha
+  obtain ⟨insn, len, hdec_t, hfetch_t, htouch_t⟩ := hs
+  have hmem : ∀ j, j < len →
+      s.mem (s.pc + BitVec.ofNat 64 j) = t.mem (t.pc + BitVec.ofNat 64 j) := by
+    intro j hj
+    show s.mem (s.pc + BitVec.ofNat 64 j) = t.mem (t.pc + BitVec.ofNat 64 j)
+    rw [h.pc]
+    exact h.mem _ (hfetch_t j hj)
+  have hdec_s : decode (fun k => s.mem (s.pc + BitVec.ofNat 64 k)) = some (insn, len) :=
+    decode_congr_upto (fun k => t.mem (t.pc + BitVec.ofNat 64 k))
+      (fun k => s.mem (s.pc + BitVec.ofNat 64 k)) insn len hdec_t
+      (fun j hj => (hmem j hj).symm)
+  refine ⟨insn, len, hdec_s, ?_, ?_⟩
+  · intro j hj
+    have hd_t : d (t.pc + BitVec.ofNat 64 j) := hfetch_t j hj
+    rw [h.pc]
+    exact hd_t
+  · intro a ha
+    rw [x64Touched_congr h insn] at ha
+    exact htouch_t a ha
 
 /-- A run stays inside `d`: the current state and its successor both stay
 inside `d`. -/

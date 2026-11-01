@@ -1,6 +1,7 @@
 import Mathlib.Tactic
 import Flapjack.Compiler.Encoders.X64.Machine.Agree
 import Flapjack.Compiler.Encoders.X64.Machine.Congruence
+import Flapjack.Compiler.Encoders.X64.Machine.DecodeCongr
 
 /-!
 # Step agreement and framing for the closed x86-64 model
@@ -12,9 +13,14 @@ step stays inside `d`, and that a step leaves every byte outside `d` alone.
 These are the step-agreement and framing facts an `encoder_correct` proof for
 the x86-64 target needs.
 
-The decoder reads at most sixteen bytes (the longest x86-64 instruction), so
-`FetchSafe d s` asks for the bytes `pc, pc+1, …, pc+15`; `decode_congr` turns
-agreement on those bytes into agreement on the decoded instruction.
+`FetchSafe d s` asks for the bytes the decoder reads: when decoding succeeds
+with length `len`, the bytes `pc, pc+1, …, pc+len-1`; when it fails, the whole
+sixteen-byte window `pc, …, pc+15` the decoder may examine.  An x86-64 encoding
+is 1–10 bytes and `asm_step` only guarantees the bytes of the instruction being
+executed, so the length-based form is what the per-instruction cases can
+discharge.  `decode_congr_upto` turns agreement below the reported length into
+agreement on the decoded instruction, and `decode_congr` does the same for the
+sixteen-byte window when decoding fails.
 -/
 
 namespace Flapjack.Compiler.Encoders.X64
@@ -690,42 +696,55 @@ theorem execInsn_frame (s : X64State) (i : X64Insn) (len : Nat) (a : BitVec 64)
 
 /-! ## Step agreement and framing for `x64Next` -/
 
-/-- The bytes the next instruction is fetched from lie in `d`. -/
+/-- The bytes the next instruction is fetched from lie in `d`: the instruction
+at `PC` decodes with length `len` and the `len` bytes from `PC` are in `d`.
+Requiring the decode to succeed is what the per-instruction cases discharge
+(from the decoder inverses); it lets the simulation carry the decoded
+instruction across agreeing states without a sixteen-byte window. -/
 def FetchSafe (d : BitVec 64 → Prop) (s : X64State) : Prop :=
-  ∀ i, i < 16 → d (s.pc + BitVec.ofNat 64 i)
+  ∃ (i : X64Insn) (len : Nat),
+    decode (fun k => s.mem (s.pc + BitVec.ofNat 64 k)) = some (i, len) ∧
+      ∀ j, j < len → d (s.pc + BitVec.ofNat 64 j)
 
-/-- A step stays inside `d`: the fetched bytes and every byte the decoded
-instruction touches lie in `d`. -/
+/-- A step stays inside `d`: the decoded instruction's bytes and every byte it
+touches lie in `d`. -/
 def StepSafe (d : BitVec 64 → Prop) (s : X64State) : Prop :=
-  FetchSafe d s ∧ ∀ (i : X64Insn) (len : Nat),
-    decode (fun k => s.mem (s.pc + BitVec.ofNat 64 k)) = some (i, len) →
-    ∀ a ∈ x64Touched s i, d a
+  ∃ (i : X64Insn) (len : Nat),
+    decode (fun k => s.mem (s.pc + BitVec.ofNat 64 k)) = some (i, len) ∧
+      (∀ j, j < len → d (s.pc + BitVec.ofNat 64 j)) ∧
+      ∀ a ∈ x64Touched s i, d a
 
 /-- One closed-model step preserves agreement on `d` when it stays inside
 `d`. -/
 theorem x64Next_agree {d : BitVec 64 → Prop} {s t : X64State} (h : X64Agree d s t)
     (hsafe : StepSafe d s) : X64Agree d (x64Next s) (x64Next t) := by
-  obtain ⟨hfetch, htouch⟩ := hsafe
-  have hdecode : decode (fun i => s.mem (s.pc + BitVec.ofNat 64 i)) =
-      decode (fun i => t.mem (t.pc + BitVec.ofNat 64 i)) := by
-    apply decode_congr
-    intro i hi
-    have hd : d (t.pc + BitVec.ofNat 64 i) := by
-      have h' := hfetch i hi
-      rw [h.pc] at h'
-      exact h'
-    rw [h.pc]
+  obtain ⟨insn, len, hdec_s, hfetch, htouch⟩ := hsafe
+  have hmem : ∀ j, j < len →
+      s.mem (s.pc + BitVec.ofNat 64 j) = t.mem (t.pc + BitVec.ofNat 64 j) := by
+    intro j hj
+    have hd : d (s.pc + BitVec.ofNat 64 j) := hfetch j hj
+    show s.mem (s.pc + BitVec.ofNat 64 j) = t.mem (t.pc + BitVec.ofNat 64 j)
+    rw [← h.pc]
     exact h.mem _ hd
+  have hdec_t : decode (fun k => t.mem (t.pc + BitVec.ofNat 64 k)) = some (insn, len) :=
+    decode_congr_upto _ _ insn len hdec_s hmem
+  have hdecode : decode (fun k => s.mem (s.pc + BitVec.ofNat 64 k)) =
+      decode (fun k => t.mem (t.pc + BitVec.ofNat 64 k)) := by
+    rw [hdec_s, hdec_t]
   unfold x64Next
   rw [h.failed, hdecode]
   split
   · exact h
   · split
-    · rename_i insn len hdec
-      have hdec' : decode (fun k => s.mem (s.pc + BitVec.ofNat 64 k)) = some (insn, len) := by
-        rw [hdecode]; exact hdec
-      have hacc : ∀ a ∈ x64Touched s insn, d a := htouch insn len hdec'
-      have hagree := execInsn_agree h insn len hacc
+    · rename_i insn' len' hdec
+      have hpair : insn = insn' ∧ len = len' :=
+        Prod.mk.inj (Option.some.inj (hdec_s.symm.trans (hdecode.trans hdec)))
+      obtain ⟨hinsn, hlen⟩ := hpair
+      have htouch' : ∀ a ∈ x64Touched s insn', d a := by
+        intro a ha
+        rw [← hinsn] at ha
+        exact htouch a ha
+      have hagree := execInsn_agree h insn' len' htouch'
       split
       · exact hagree
       · exact hagree
@@ -736,14 +755,20 @@ theorem x64Next_agree {d : BitVec 64 → Prop} {s t : X64State} (h : X64Agree d 
 /-- One closed-model step leaves every byte outside `d` alone. -/
 theorem x64Next_frame {d : BitVec 64 → Prop} {s : X64State} (hsafe : StepSafe d s)
     (a : BitVec 64) (ha : ¬ d a) : (x64Next s).mem a = s.mem a := by
-  obtain ⟨hfetch, htouch⟩ := hsafe
+  obtain ⟨insn, len, hdec_s, hfetch, htouch⟩ := hsafe
   unfold x64Next
   split
   · rfl
   · split
-    · rename_i insn len hdec
-      have hacc : ∀ b ∈ x64Touched s insn, d b := htouch insn len hdec
-      have hframe := execInsn_frame s insn len a (fun hmem => ha (hacc a hmem))
+    · rename_i insn' len' hdec
+      have hpair : insn' = insn ∧ len' = len :=
+        Prod.mk.inj (Option.some.inj (hdec.symm.trans hdec_s))
+      obtain ⟨hinsn, hlen⟩ := hpair
+      have htouch' : ∀ b ∈ x64Touched s insn', d b := by
+        intro b hb
+        rw [hinsn] at hb
+        exact htouch b hb
+      have hframe := execInsn_frame s insn' len' a (fun hmem => ha (htouch' a hmem))
       split
       · exact hframe
       · exact hframe
