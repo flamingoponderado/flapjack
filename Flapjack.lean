@@ -794,6 +794,7 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MemoryAllocation
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MemoryReads
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MemoryUpdates
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ByteReads
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ByteLists
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
