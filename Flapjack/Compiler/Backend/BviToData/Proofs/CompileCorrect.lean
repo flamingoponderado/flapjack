@@ -56,6 +56,31 @@ private theorem varCorr_member {α : Type} {values : List α} {names : List Nat}
     · exact ⟨value, lookup⟩
     · exact ih key member
 
+private theorem varCorr_append {α : Type} {values1 values2 : List α} {names1 names2 : List Nat}
+    {env : Spt α} (first : DataProps.varCorr values1 names1 env)
+    (second : DataProps.varCorr values2 names2 env) :
+    DataProps.varCorr (values1 ++ values2) (names1 ++ names2) env := by
+  induction first with
+  | nil => exact second
+  | cons lookup _ ih => exact .cons lookup ih
+
+private theorem varCorr_append_right {α : Type} (values1 values2 : List α) (names1 names2 : List Nat)
+    (env : Spt α) (lengths : values1.length = names1.length)
+    (related : DataProps.varCorr (values1 ++ values2) (names1 ++ names2) env) :
+    DataProps.varCorr values2 names2 env := by
+  induction values1 generalizing names1 with
+  | nil =>
+    cases names1 with
+    | nil => exact related
+    | cons _ _ => simp at lengths
+  | cons value values ih =>
+    cases names1 with
+    | nil => simp at lengths
+    | cons name names =>
+      simp only [List.length_cons, Nat.add_right_cancel_iff] at lengths
+      cases related with
+      | cons _ rest => exact ih names lengths rest
+
 /-- A continuing compilation preserves each live local and supplies every
 result local for the next compilation. This is simulation infrastructure for
 the source list case. -/
@@ -137,6 +162,38 @@ theorem correctOutcome_stop_after_continue {C F : Type} (head : BvlSem.Value)
     exact ⟨stack.trans stackRest, handler.trans handlerRest⟩
   · intro raised
     simpa only [stack, handler] using exception raised
+
+/-- Compose the local-state obligations for a successful binding list and
+its body, dropping the temporary bindings from the outer correspondence. -/
+theorem correctOutcome_let {C F : Type} (values : List BvlSem.Value) (res : BviSem.BviResult)
+    (t1 tmid t2 : DataSem.State C F) (n nmid next : Nat) (corr live boundNames names : List Nat)
+    (env : List BvlSem.Value) (tail : Bool)
+    (pres : Option (Result (List DataSem.Value) DataSem.Value)) (ls1 ls2 : Option Nat)
+    (first : correctOutcome (.val values) t1 tmid n nmid corr live boundNames env false none ls1)
+    (body : correctOutcome res tmid t2 nmid next (boundNames ++ corr) live names (values ++ env) tail pres ls2) :
+    correctOutcome res t1 t2 n next corr live names env tail pres ls2 := by
+  rcases first with ⟨_, nBound, _, _, _, _, preserve1, stack1, handler1, jump1, firstVars⟩
+  cases pres with
+  | some result =>
+    rcases body with ⟨projection, returned, preserved, tailResult, exception⟩
+    refine ⟨projection, returned, ?_, tailResult, ?_⟩
+    · intro resultOrReturn
+      obtain ⟨stack2, handler2⟩ := preserved resultOrReturn
+      exact ⟨stack1.trans stack2, handler1.trans handler2⟩
+    · intro raised
+      simpa only [stack1, handler1] using exception raised
+  | none =>
+    rcases body with ⟨notTail, nextBound, namesBound, fresh, envBound, localBound, preserve2,
+      stack2, handler2, jump2, resultVars⟩
+    have lengths : values.length = boundNames.length := firstVars.length_eq.symm
+    have envOriginal := varCorr_append_right values env boundNames corr (sptMap dataToBviValue t2.locals) lengths envBound
+    refine ⟨notTail, Nat.le_trans nBound nextBound, namesBound, fresh, envOriginal, localBound, ?_,
+      stack1.trans stack2, handler1.trans handler2, fun h => jump2 (jump1 h), resultVars⟩
+    intro key value lookup needed
+    have firstKeep := preserve1 key value lookup needed
+    apply preserve2 key value firstKeep
+    intro missing
+    exact List.mem_append_right boundNames (needed missing)
 
 /-- Sequential data evaluation needs no clock adjustment when the first
 result's clock is bounded by the initial clock. -/
@@ -665,5 +722,67 @@ theorem simulationFor_raise {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Val
               · exact evaluateSeq_continue prog (.raise name) t1 tmid _ target targetBound raiseRun
               · simp [correctOutcome, isReturn, isResult, isException, dataToBviResult, projection, stack, handler]
                 exact ⟨rfl, by simpa using jumpAgain⟩
+
+/-- The `let` case composes binding and body simulations, extending the
+environment by the binding results. This remains untagged pending evaluator
+correspondence review and assembly of the complete induction. -/
+theorem simulationFor_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
+    (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
+    (ihBindings : simulationFor bindings env s1)
+    (ihBody : ∀ (values : List BvlSem.Value) (smid : BviSem.BviState C F),
+      BviSem.evaluate bindings env s1 = (.val values, smid) → simulationFor [body] (values ++ env) smid) :
+    simulationFor [.let bindings body] env s1 := by
+  intro res s2 t1 n corr tail live run notTypeError vars _ fresh related livePresent exceptionJump
+  generalize bindingsRun : BviSem.evaluate bindings env s1 = pair
+  obtain ⟨bindingsResult, smid⟩ := pair
+  cases bindingsResult with
+  | err error =>
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, bindingsRun] at run
+    simp only [Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    obtain ⟨t2, first, pres, boundNames, nmid, ls, compiled, target, finalRel, outcome⟩ :=
+      ihBindings (.err error) smid t1 n corr false live bindingsRun notTypeError vars (by simp) fresh related livePresent exceptionJump
+    cases pres with
+    | none => simp [correctOutcome] at outcome
+    | some result =>
+      generalize compiledBody : compileSource nmid (boundNames ++ corr) tail live [body] = triple
+      obtain ⟨second, names, next⟩ := triple
+      have sourceBound := BviSem.evaluate_clock_le bindings env s1
+      rw [bindingsRun] at sourceBound
+      have targetBound : t2.clock ≤ t1.clock := by
+        simpa [← related.1, ← finalRel.1] using sourceBound
+      refine ⟨t2, .seq first second, some result, names, next, ls, ?_, ?_, finalRel, ?_⟩
+      · simp [compileSource, compiled, compiledBody]
+      · exact evaluateSeq_stop first second t1 t2 result target targetBound
+      · simpa [correctOutcome, isResult] using outcome
+  | val values =>
+    have bodyRun : BviSem.evaluate [body] (values ++ env) smid = (res, s2) := by
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, bindingsRun] at run
+      exact run
+    obtain ⟨tmid, first, pres, boundNames, nmid, ls1, compiled, target, middleRel, outcome⟩ :=
+      ihBindings (.val values) smid t1 n corr false live bindingsRun (by simp) vars (by simp) fresh related livePresent
+        (by simp [isException])
+    cases pres with
+    | some result => simp [correctOutcome, isResult] at outcome
+    | none =>
+      have firstOutcome := outcome
+      have liveMidAll := correctOutcome_live values t1 tmid n nmid corr live boundNames env ls1 outcome livePresent
+      have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
+        intro v member
+        exact liveMidAll v (List.mem_append_right boundNames member)
+      rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, jumpMid, resultVars⟩
+      have extendedVars : DataProps.varCorr (values ++ env) (boundNames ++ corr)
+          (sptMap dataToBviValue tmid.locals) := varCorr_append resultVars varsMid
+      obtain ⟨t2, second, pres, names, next, ls2, compiledBody, targetBody, finalRel, bodyOutcome⟩ :=
+        ihBody values smid bindingsRun res s2 tmid nmid (boundNames ++ corr) tail live bodyRun notTypeError
+          extendedVars (by simp) freshMid middleRel liveMid (fun h => jumpMid (exceptionJump h))
+      have sourceBound := BviSem.evaluate_clock_le bindings env s1
+      rw [bindingsRun] at sourceBound
+      have targetBound : tmid.clock ≤ t1.clock := by
+        simpa [← related.1, ← middleRel.1] using sourceBound
+      refine ⟨t2, .seq first second, pres, names, next, ls2, ?_, ?_, finalRel, ?_⟩
+      · simp [compileSource, compiled, compiledBody]
+      · exact evaluateSeq_continue first second t1 tmid _ target targetBound targetBody
+      · exact correctOutcome_let values res t1 tmid t2 n nmid next corr live boundNames names env tail pres ls1 ls2 firstOutcome bodyOutcome
 
 end Flapjack.Compiler.Backend.BviToData
