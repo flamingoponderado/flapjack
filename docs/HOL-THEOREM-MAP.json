@@ -1,5 +1,29 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "var_corr_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/Variables.lean", "lean_name": "varCorr",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source definition in bvi_to_data_state_probe.out: generic values, natural names and sparse-tree environment remain independently quantified, and the pairwise relation applies the name lookup to each value in the original argument order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "get_vars_thm",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/Variables.lean", "lean_name": "getVars_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source implication in bvi_to_data_state_probe.out: a generic value list related to the names and sparse-tree environment is exactly the successful result of reading those names."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml", "hol_name": "var_corr_map",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Variables.lean", "lean_name": "varCorr_map",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source theorem in bvi_to_data_state_probe.out: the source and result element types remain independent, and the function maps both the corresponding value list and the sparse-tree environment."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml", "hol_name": "get_vars_lift_thm",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Variables.lean", "lean_name": "getVars_lift",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source theorem in bvi_to_data_state_probe.out: BVL values related to names in the mapped data sparse tree have a data-value list read by get_vars whose projection is the original BVL list. Data and BVL value constructors retain the source's fixed-width word64 fields."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml", "hol_name": "data_to_bvi_v_list_to_v_APPEND",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Build.lean", "lean_name": "dataToBviValue_listToValue_append",
     "statement_status": "reviewed_exact",

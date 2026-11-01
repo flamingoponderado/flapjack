@@ -1,4 +1,4 @@
-`bvi_to_data_state_probe.out` captures the typed original primitive and equality simulations, list-append projection, expression compiler,
+`bvi_to_data_state_probe.out` captures the typed original primitive and equality simulations, list-append projection, variable correspondence and lookup lemmas, expression compiler,
 code relation, and state relation, plus variable and tail-call observations.
 Lean checks those observations and the bounded traversal's agreement above its
 structural budget; the full BVI-to-data compiler correctness proof remains open.
