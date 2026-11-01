@@ -100108,6 +100108,26 @@
     "reviewer": "Source comparison: memory_rel_RefPtr_EQ_IMP and its typed data_to_word_memory_repr capture. The original memory relation, good_dimindex and ByteArray lookup hypotheses imply equality of both target words, retaining independent comparison flags, the common reference index, and the fixed word8 byte list. store uses the canonical finite-support map; target word occurrences share the positive HOL word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "heapLookup_less",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_lookup_LESS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: heap_lookup_LESS and its typed data_to_word_memory_repr capture retain independently polymorphic heap address and payload carriers. A successful lookup of an element implies the strict offset bound in heap_length."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/RefEquality.lean",
+    "lean_name": "memoryRel_refPtrEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_RefPtr_EQ",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_RefPtr_EQ and its typed data_to_word_memory_repr capture retain the full memory relation for two RefPtr T values and good_dimindex, and conclude the existence of both Word witnesses together with equivalence of their equality and the original reference indices. Heap lookup bounds and the source-shaped pointer encoding establish injectivity; store uses the canonical finite-support map, and all target words share the positive source word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

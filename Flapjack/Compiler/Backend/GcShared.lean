@@ -155,6 +155,15 @@ theorem heapLookup_split {α β : Type} (heap : List (HeapElement α β)) (n : N
           · simp [heapLength] at hlen ⊢
             omega
 
+/-- A successful lookup lies strictly within the heap's total word length. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_lookup_LESS"]
+theorem heapLookup_less {α β : Type} (heap : List (HeapElement α β)) (n : Nat)
+    (x : HeapElement α β) (h : heapLookup n heap = some x) : n < heapLength heap := by
+  obtain ⟨before, after, rfl, rfl⟩ := heapLookup_split heap n x h
+  rw [heapLength_append]
+  simp only [heapLength, List.map_cons, List.sum_cons]
+  cases x <;> simp [elLength] <;> omega
+
 end Backend
 end Compiler
 end Flapjack
