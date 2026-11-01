@@ -2328,4 +2328,100 @@ theorem evaluate_memory_stringCmp {C F : Type} (trace : BackendCommon.Tra) (fast
     EvalSimulation (C := C) (F := F) [.op trace (.memOp (.stringCmp fast op)) args] :=
   evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_memory_stringCmp fast op)
 
+/-- Value-array bounds checks observe the same length and index in related
+    stores, including invalid-reference and invalid-arity cases. -/
+theorem primitiveSimulation_memory_boundsCheckArray {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .boundsCheckArray) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases first with
+        | refPtr flag ptr =>
+          cases second with
+          | number index =>
+            have refsRel := stateRel.2.2.2.2.2.1 ptr
+            cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
+              simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+            rename_i leftRef rightRef
+            cases leftRef <;> cases rightRef <;> simp_all
+            have lengths := refsRel.length_eq
+            simp [← lengths, boolValue_related]
+          | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+            simp [doApp, applyMemory, ResultRel]
+        | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+          simp [doApp, applyMemory, ResultRel]
+      | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- GC configuration observes only numeric arguments and returns unit. -/
+theorem primitiveSimulation_memory_configGC {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .configGC) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases first <;> cases second <;> simp [doApp, applyMemory, ResultRel, stateRel, unitValue, ValueRel.block]
+      | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Byte bounds checks agree for both immutable vectors and mutable arrays. -/
+theorem primitiveSimulation_memory_boundsCheckByte {C F : Type} (loose : Bool) :
+    PrimitiveSimulation (C := C) (F := F) (.memOp (.boundsCheckByte loose)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases first with
+        | byteVector bytes =>
+          cases second with
+          | number index => simp [doApp, applyMemory, boolValue_related, stateRel]
+          | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+            simp [doApp, applyMemory, ResultRel]
+        | refPtr flag ptr =>
+          cases second with
+          | number index =>
+            have refsRel := stateRel.2.2.2.2.2.1 ptr
+            cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
+              simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+            rename_i leftRef rightRef
+            cases leftRef <;> cases rightRef <;> simp_all
+            exact boolValue_related _ _
+          | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+            simp [doApp, applyMemory, ResultRel]
+        | number _ | word64 _ | block _ _ _ _ | closure | recclosure =>
+          simp [doApp, applyMemory, ResultRel]
+      | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Value-array bounds-check expressions preserve evaluation. -/
+theorem evaluate_memory_boundsCheckArray {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .boundsCheckArray) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_boundsCheckArray
+
+/-- Byte bounds-check expressions preserve evaluation. -/
+theorem evaluate_memory_boundsCheckByte {C F : Type} (trace : BackendCommon.Tra) (loose : Bool)
+    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.boundsCheckByte loose)) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_memory_boundsCheckByte loose)
+
+/-- GC configuration expressions preserve evaluation. -/
+theorem evaluate_memory_configGC {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .configGC) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_configGC
+
 end Flapjack.Compiler.Backend.ClosNumber
