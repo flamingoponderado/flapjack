@@ -1011,6 +1011,7 @@ import Flapjack.Compiler.Backend.DataLive.Proofs.EvaluatorForce
 import Flapjack.Compiler.Backend.DataLive.Proofs.EvaluatorCall
 import Flapjack.Compiler.Backend.DataLive.Proofs.EvaluatorAll
 import Flapjack.Compiler.Backend.DataLive.Proofs.CompileAll
+import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateControl
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackResult
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultPrimitive
