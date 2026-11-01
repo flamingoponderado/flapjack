@@ -144,4 +144,33 @@ theorem simulationFor_all {C F : Type} (expressions : List Bvi.Exp)
                 omega
   exact allRanks state.clock (BviSem.expsWeight expressions) expressions env state rfl rfl
 
+/-- The optimized executable traversal at a sufficient structural fuel bound
+satisfies the assembled simulation for an arbitrary function body. The
+unoptimized final state carries the result invariant; optimization may change
+the four resource fields displayed in the executed state. This is a Lean-side
+composition, pending HOL evaluator and carrier correspondence review. -/
+theorem compileExpBounded_correct {C F : Type} (fuel : Nat) (body : Bvi.Exp)
+    (env : List BvlSem.Value) (source nextSource : BviSem.BviState C F)
+    (res : BviSem.BviResult) (target : DataSem.State C F)
+    (bound : Bvi.expBudget body < fuel)
+    (run : BviSem.evaluate [body] env source = (res, nextSource))
+    (notType : res ≠ .err (.abort .typeError))
+    (vars : DataProps.varCorr env (List.range env.length) (sptMap dataToBviValue target.locals))
+    (fresh : ∀ k, env.length ≤ k → sptLookup k target.locals = none)
+    (related : stateRel source target)
+    (exceptionJump : isException res → DataSem.jumpExc target ≠ none) :
+    ∃ prog result final names next ls localsSize stackMax safe peak,
+      compileExpBounded fuel env.length body = some prog ∧
+      DataSem.evaluate prog target =
+        (some result, { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }) ∧
+      stateRel nextSource final ∧
+      stateRel nextSource { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak } ∧
+      correctOutcome res target final env.length next (List.range env.length) [] names env true (some result) ls := by
+  obtain ⟨result, final, names, next, ls, localsSize, stackMax, safe, peak, runTarget,
+      finalRel, optimisedRel, outcome⟩ :=
+    compileExp_of_simulation body env source nextSource res target
+      (simulationFor_all [body] env source) run notType vars fresh related exceptionJump
+  exact ⟨compileExp env.length body, result, final, names, next, ls, localsSize, stackMax, safe, peak,
+    compileExpBounded_agrees fuel env.length body bound, runTarget, finalRel, optimisedRel, outcome⟩
+
 end Flapjack.Compiler.Backend.BviToData
