@@ -2628,4 +2628,152 @@ theorem evaluate_memory_copyByte_write {C F : Type} (trace : BackendCommon.Tra) 
     EvalSimulation (C := C) (F := F) [.op trace (.memOp (.copyByte false)) args] :=
   evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_copyByte_write
 
+/-- Every memory operation in the proof-side dispatcher preserves the
+    numbering relation. Its source correspondence remains to be reviewed. -/
+theorem primitiveSimulation_memory {C F : Type} (op : ClosLang.MemOp) :
+    PrimitiveSimulation (C := C) (F := F) (.memOp op) := by
+  cases op with
+  | ref => exact primitiveSimulation_memory_ref
+  | update => exact primitiveSimulation_memory_update
+  | el => exact primitiveSimulation_memory_el
+  | length => exact primitiveSimulation_memory_length
+  | lengthByte => exact primitiveSimulation_memory_lengthByte
+  | refByte flag =>
+    cases flag with
+    | false => exact primitiveSimulation_memory_refByte
+    | true =>
+      intro args nextArgs source target argsRel stateRel
+      simp [doApp, applyMemory, ResultRel]
+  | refArray => exact primitiveSimulation_memory_refArray
+  | derefByte => exact primitiveSimulation_memory_derefByte
+  | updateByte => exact primitiveSimulation_memory_updateByte
+  | concatByteVec => exact primitiveSimulation_memory_concatByteVec
+  | copyByte fresh => cases fresh <;> first | exact primitiveSimulation_memory_copyByte_write | exact primitiveSimulation_memory_copyByte_new
+  | fromListByte => exact primitiveSimulation_memory_fromListByte
+  | toListByte => exact primitiveSimulation_memory_toListByte
+  | lengthByteVec => exact primitiveSimulation_memory_lengthByteVec
+  | derefByteVec => exact primitiveSimulation_memory_derefByteVec
+  | stringCmp fast comparison => exact primitiveSimulation_memory_stringCmp fast comparison
+  | xorByte => exact primitiveSimulation_memory_xorByte
+  | boundsCheckArray => exact primitiveSimulation_memory_boundsCheckArray
+  | boundsCheckByte loose => exact primitiveSimulation_memory_boundsCheckByte loose
+  | mutCons _ _ | updateCons | finaliseCons =>
+    intro args nextArgs source target argsRel stateRel
+    simp [doApp, applyMemory, ResultRel]
+  | configGC => exact primitiveSimulation_memory_configGC
+
+/-- Memory expressions preserve evaluation under location numbering. -/
+theorem evaluate_memoryOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.MemOp)
+    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp op) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_memory op)
+
+/-- Thunk inspection preserves its cases and relates the stored value. -/
+def DestThunkRel (maxApp : Nat) : DestThunkResult → DestThunkResult → Prop
+  | .badRef, .badRef | .notThunk, .notThunk => True
+  | .isThunk mode left, .isThunk nextMode right => mode = nextMode ∧ ValueRel maxApp left right
+  | _, _ => False
+
+/-- Inspecting related values in related stores gives related thunk results. -/
+theorem destThunk_related {C F : Type} (source : State (Nat × C) F) (target : State C F)
+    (value nextValue : Value) (valueRel : ValueRel source.maxApp value nextValue)
+    (stateRel : StateRel source target) :
+    DestThunkRel source.maxApp (destThunk [value] source.refs) (destThunk [nextValue] target.refs) := by
+  cases valueRel with
+  | refPtr flag index =>
+    have refsRel := stateRel.2.2.2.2.2.1 index
+    cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
+      simp_all [OptionRel, RefRel, destThunk, DestThunkRel]
+    rename_i leftRef rightRef
+    cases leftRef <;> cases rightRef <;> simp_all
+    cases flag <;> simp_all
+  | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+    simp [destThunk, DestThunkRel]
+
+/-- The evaluated-thunk validity check gives the same result on related
+    values and reference stores. -/
+theorem badThunkUpdate_related {C F : Type} (source : State (Nat × C) F) (target : State C F)
+    (mode : Flapjack.AstHOL.ThunkMode) (value nextValue : Value)
+    (valueRel : ValueRel source.maxApp value nextValue) (stateRel : StateRel source target) :
+    badThunkUpdate mode value source.refs = badThunkUpdate mode nextValue target.refs := by
+  have related := destThunk_related source target value nextValue valueRel stateRel
+  unfold badThunkUpdate
+  split
+  · cases left : destThunk [value] source.refs <;> cases right : destThunk [nextValue] target.refs <;>
+      simp_all [DestThunkRel]
+  · rfl
+
+/-- Thunk allocation preserves its validity check, fresh address and stored
+    related value. -/
+theorem primitiveSimulation_thunk_alloc {C F : Type} (mode : Flapjack.AstHOL.ThunkMode) :
+    PrimitiveSimulation (C := C) (F := F) (.thunkOp (.allocThunk mode)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      rename_i value nextValue
+      have same := badThunkUpdate_related source target mode value nextValue head stateRel
+      cases bad : badThunkUpdate mode value source.refs with
+      | true => simp [doApp, ← same, bad, ResultRel]
+      | false =>
+        have addressEq := stateRel_leastUnusedRef stateRel
+        have refs := stateRel_updateRefs (leastUnusedRef source.refs)
+          (.thunk mode value) (.thunk mode nextValue) stateRel ⟨rfl, head⟩
+        have pointerRel : ValueRel source.maxApp (.refPtr false (leastUnusedRef source.refs))
+            (.refPtr false (leastUnusedRef source.refs)) := .refPtr _ _
+        simp [doApp, ← same, bad, ← addressEq, pointerRel, refs]
+    | cons head tail => simp [doApp, ResultRel]
+
+/-- Updating an unevaluated thunk preserves related contents and rejects
+    invalid pointers, modes and values in both stores. -/
+theorem primitiveSimulation_thunk_update {C F : Type} (mode : Flapjack.AstHOL.ThunkMode) :
+    PrimitiveSimulation (C := C) (F := F) (.thunkOp (.updateThunk mode)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases first with
+        | refPtr flag index =>
+          cases flag with
+          | true => simp [doApp, ResultRel]
+          | false =>
+            rename_i value nextValue
+            have same := badThunkUpdate_related source target mode value nextValue second stateRel
+            cases bad : badThunkUpdate mode value source.refs with
+            | true => simp [doApp, ← same, bad, ResultRel]
+            | false =>
+              have refsRel := stateRel.2.2.2.2.2.1 index
+              cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
+                simp_all [OptionRel, RefRel, doApp, ResultRel]
+              rename_i leftRef rightRef
+              cases leftRef <;> cases rightRef <;> simp_all
+              rename_i leftMode leftValue rightMode rightValue
+              cases leftMode <;> cases rightMode <;> simp_all
+              have refs := stateRel_updateRefs index (.thunk mode value) (.thunk mode nextValue)
+                stateRel ⟨rfl, second⟩
+              have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil
+              simp [unitRel, refs]
+        | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+          simp [doApp, ResultRel]
+      | cons head tail => simp [doApp, ResultRel]
+
+/-- Thunk allocation expressions preserve evaluation. -/
+theorem evaluate_thunk_alloc {C F : Type} (trace : BackendCommon.Tra) (mode : Flapjack.AstHOL.ThunkMode)
+    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.thunkOp (.allocThunk mode)) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_thunk_alloc mode)
+
+/-- Thunk update expressions preserve evaluation. -/
+theorem evaluate_thunk_update {C F : Type} (trace : BackendCommon.Tra) (mode : Flapjack.AstHOL.ThunkMode)
+    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.thunkOp (.updateThunk mode)) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_thunk_update mode)
+
 end Flapjack.Compiler.Backend.ClosNumber
