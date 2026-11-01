@@ -473,4 +473,63 @@ theorem simulationFor_vars {C F : Type} (indices : List Nat) (env : List BvlSem.
       · intro _ smid _
         simpa using ih smid
 
+private theorem jumpExc_decClock {C F : Type} (state : DataSem.State C F) :
+    DataSem.jumpExc (DataSem.decClock state) = (DataSem.jumpExc state).map DataSem.decClock := by
+  simp only [DataSem.jumpExc, DataSem.decClock]
+  by_cases h : state.handler < state.stack.length
+  · simp only [h, if_true]
+    split <;> simp [DataSem.decClock]
+  · simp [h]
+
+private theorem outcome_decClock_initial {C F : Type} (res : BviSem.BviResult)
+    (t1 t2 : DataSem.State C F) (n next : Nat) (corr live vs : List Nat)
+    (env : List BvlSem.Value) (tail : Bool)
+    (pres : Option (Result (List DataSem.Value) DataSem.Value)) (ls : Option Nat) :
+    correctOutcome res (DataSem.decClock t1) t2 n next corr live vs env tail pres ls ↔
+    correctOutcome res t1 t2 n next corr live vs env tail pres ls := by
+  have sameJump : (DataSem.jumpExc (DataSem.decClock t1) ≠ none) ↔ DataSem.jumpExc t1 ≠ none := by
+    rw [jumpExc_decClock]
+    simp
+  dsimp [DataSem.decClock] at sameJump
+  cases pres <;> simp only [correctOutcome, DataSem.decClock, sameJump]
+
+/-- The tick case of the compiler simulation, assuming the recursive
+simulation at the decremented source clock. This remains untagged pending
+the source evaluator review and assembly of the complete induction. -/
+theorem simulationFor_tick {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Value)
+    (s1 : BviSem.BviState C F)
+    (ih : s1.clock ≠ 0 → simulationFor [body] env (BviSem.decClock 1 s1)) :
+    simulationFor [.tick body] env s1 := by
+  intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
+  by_cases clockZero : s1.clock = 0
+  · have targetZero : t1.clock = 0 := related.1.symm.trans clockZero
+    simp [BviSem.evaluate, clockZero] at run
+    obtain ⟨rfl, rfl⟩ := run
+    generalize compiled : compileSource n corr tail live [body] = triple
+    obtain ⟨prog, names, next⟩ := triple
+    refine ⟨DataSem.flushState true t1, .seq .tick prog, some (.err (.abort .timeoutError)), names, next, none, ?_, ?_, ?_, ?_⟩
+    · simp [compileSource, compiled]
+    · simp [DataSem.evaluate, targetZero, DataSem.fixClock, DataSem.flushState]
+    · simpa [stateRel, DataSem.flushState] using related
+    · simp [correctOutcome, dataToBviResult, isReturn, isResult, isException]
+  · have targetNonzero : t1.clock ≠ 0 := by simpa [← related.1] using clockZero
+    have bodyRun : BviSem.evaluate [body] env (BviSem.decClock 1 s1) = (res, s2) := by
+      simpa [BviSem.evaluate, clockZero] using run
+    have jump : isException res → DataSem.jumpExc (DataSem.decClock t1) ≠ none := by
+      intro raised
+      rw [jumpExc_decClock]
+      simpa using exceptionJump raised
+    obtain ⟨t2, prog, pres, names, next, ls, compiled, target, finalRel, outcome⟩ :=
+      ih clockZero res s2 (DataSem.decClock t1) n corr tail live bodyRun notTypeError
+        (by simpa [DataSem.decClock] using vars) (by simp)
+        (by simpa [DataSem.decClock] using fresh) (stateRel_decClock s1 t1 related)
+        (by simpa [DataSem.decClock] using livePresent) jump
+    refine ⟨t2, .seq .tick prog, pres, names, next, ls, ?_, ?_, finalRel, ?_⟩
+    · simp [compileSource, compiled]
+    · apply evaluateSeq_continue .tick prog t1 (DataSem.decClock t1) (pres, t2)
+      · simp [DataSem.evaluate, targetNonzero]
+      · simp [DataSem.decClock]
+      · exact target
+    · exact (outcome_decClock_initial res t1 t2 n next corr live names env tail pres ls).mp outcome
+
 end Flapjack.Compiler.Backend.BviToData
