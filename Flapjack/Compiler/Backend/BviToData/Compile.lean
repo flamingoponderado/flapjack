@@ -5,12 +5,14 @@ import Flapjack.Compiler.Backend.BviToData.Optimise
 /-! Checked expression traversal for BVI-to-data lowering. -/
 namespace Flapjack.Compiler.Backend.BviToData
 
-private def isVariablesFrom : List Bvi.Exp → Nat → Bool
+/-- Test the consecutive variable sequence used by the tail-call shortcut. -/
+def isVariablesFrom : List Bvi.Exp → Nat → Bool
   | [], _ => true
   | .var v :: xs, n => v == n && isVariablesFrom xs (n + 1)
   | _ :: _, _ => false
 
-private def isTailReturn (rets : Nat) : Bvi.Exp → Bool
+/-- Recognize the return sequence for the tail-call shortcut. -/
+def isTailReturn (rets : Nat) : Bvi.Exp → Bool
   | .return xs => xs.length == rets && isVariablesFrom xs 0
   | _ => false
 

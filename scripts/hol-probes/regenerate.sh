@@ -591,6 +591,9 @@ run_probe data_sem_semantics_probeScript.sml data_sem_semantics_probe.out \
 run_probe data_sem_evaluate_probeScript.sml data_sem_evaluate_probe.out \
   evaluate eval_skip eval_tick_timeout eval_move_missing eval_return_empty eval_seq_timeout eval_call_missing eval_force_evaluated eval_tail_call_result eval_call_handler_result "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
 
+run_probe bvi_to_data_state_probeScript.sml bvi_to_data_state_probe.out \
+  compile_sing compile_exp_eq compile_part compile_prog code_rel state_rel missing_var tail_var tail_letcall "$cake_dir/compiler/backend/proofs/bvi_to_dataProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe data_sem_conversion_proof_probeScript.sml data_sem_conversion_proof_probe.out \
   v_to_bytes_eq v_to_words_eq "$cake_dir/compiler/backend/proofs/bvi_to_dataProofScript.sml" "$cake_dir/compiler/backend/proofs"
 

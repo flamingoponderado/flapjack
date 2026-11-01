@@ -1,3 +1,9 @@
+`bvi_to_data_state_probe.out` captures the typed original expression compiler,
+code relation, and state relation, plus variable and tail-call observations.
+Lean checks those observations and the bounded traversal's agreement above its
+structural budget; the full BVI-to-data compiler correctness proof remains open.
+Regenerate with `HOL_PROBE_ONLY=bvi_to_data_state_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `data_sem_semantics_probe.out` captures the typed data-language observable
 semantics and original observations for limit construction, skip, and a missing
 entry point. Lean checks the same cases. The observations do not establish the
