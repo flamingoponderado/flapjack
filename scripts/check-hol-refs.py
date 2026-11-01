@@ -2046,6 +2046,107 @@ def _is_top_level_hol_finite_map_type(type_text: str) -> bool:
     )) == 1
 
 
+def fmap_value_context_tuple_errors(
+    lines: list[str], declaration: str, positions: tuple[str, ...],
+    hol_reference: tuple[str, str],
+) -> list[str]:
+    """Check the proposed narrow tuple-map representation for v_inv_ck.
+
+    This validation helper is not yet connected to attribute parsing. It
+    accepts only the reviewed four-component ValueContext and its canonical
+    conversions, with both finite maps represented at positions 2 and 3.
+    The checked roundtrips establish Lean representation facts; a source
+    comparison is still required for any future tagged declaration.
+    """
+    errors: list[str] = []
+    if hol_reference != (
+        "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "v_inv_ck"
+    ):
+        errors.append("tuple-map qualifier is restricted to the original v_inv_ck relation")
+    if positions != ("component_2", "component_3"):
+        errors.append("tuple-map qualifier requires exactly component_2 and component_3")
+
+    source = strip_lean_comments("\n".join(lines))
+    if re.search(r"(?m)^[ \t]*(?:variable|variables|include|omit)\b", source):
+        errors.append("tuple-map qualifier requires self-contained binders without ambient variables")
+    declarations = list(re.finditer(r"(?m)^\s*abbrev\s+ValueContext\b", source))
+    if len(declarations) != 1:
+        errors.append("tuple-map qualifier requires one local ValueContext alias")
+    else:
+        tail = source[declarations[0].start():]
+        alias = re.match(
+            r"\s*abbrev\s+ValueContext\s*\(width\s*:\s*Nat\)\s*"
+            r"\[NeZero\s+width\]\s*:=\s*([^\n]+)", tail,
+        )
+        expected = ["HeapAddress (WordLocW width)", "HolFiniteMapExact Nat Nat",
+                    "HolFiniteMapExact Nat Nat", "ValueHeap width"]
+        parts = _tuple_type_components(alias.group(1)) if alias else None
+        if parts is None or [" ".join(part.split()) for part in parts] != expected:
+            errors.append("tuple-map ValueContext must have exactly the reviewed four components")
+
+    raw_aliases = list(re.finditer(r"(?m)^[ \t]*abbrev\s+ValueContextLookups\b", source))
+    if len(raw_aliases) != 1:
+        errors.append("tuple-map qualifier requires one local ValueContextLookups alias")
+    else:
+        raw = re.match(
+            r"\s*abbrev\s+ValueContextLookups\s*\(width\s*:\s*Nat\)\s*"
+            r"\[NeZero\s+width\]\s*:=\s*([^\n]+)", source[raw_aliases[0].start():],
+        )
+        expected_raw = ["HeapAddress (WordLocW width)", "(Nat → Option Nat)",
+                        "(Nat → Option Nat)", "ValueHeap width"]
+        raw_parts = _tuple_type_components(raw.group(1)) if raw else None
+        if raw_parts is None or [" ".join(part.split()) for part in raw_parts] != expected_raw:
+            errors.append("tuple-map lookup context must preserve both raw lookup slots")
+
+    sig = " ".join(strip_lean_comments(declaration).split())
+    if not re.search(
+        r"\binductive ClockValueInv\s*\{width\s*:\s*Nat\}\s*"
+        r"\[NeZero width\]\s*:\s*Nat\s*→\s*Config\s*→\s*Value\s*→\s*"
+        r"Spt \(BvlSem\.Ref Value\)\s*→\s*ValueContext width\s*→\s*Prop\s*where\b", sig,
+    ):
+        errors.append("tuple-map qualifier requires the reviewed ClockValueInv signature")
+
+    # Require these exact local signatures and conversion bodies, rather than
+    # accepting mentions elsewhere in the module or a vacuous self-equality.
+    def statement(kind: str, name: str) -> str:
+        matches = list(re.finditer(rf"(?m)^[ \t]*{kind}\s+{name}\b", source))
+        if len(matches) != 1:
+            return ""
+        tail = source[matches[0].start():]
+        next_decl = re.search(r"(?m)^[ \t]*(?:abbrev|def|theorem|inductive|mutual|end)\b", tail[1:])
+        if next_decl:
+            tail = tail[:next_decl.start() + 1]
+        return " ".join(tail.split())
+
+    support = "∃ keys : List Nat, ∀ key, context.2.1 key ≠ none → key ∈ keys"
+    support2 = "∃ keys : List Nat, ∀ key, context.2.2.1 key ≠ none → key ∈ keys"
+    expected = {
+        ("def", "valueContextToLookups"):
+            "def valueContextToLookups {width : Nat} [NeZero width] (context : ValueContext width) : "
+            "ValueContextLookups width := (context.1, context.2.1.lookup, context.2.2.1.lookup, context.2.2.2)",
+        ("def", "valueContextOfLookups"):
+            "def valueContextOfLookups {width : Nat} [NeZero width] (context : ValueContextLookups width) "
+            f"(firstFinite : {support}) (secondFinite : {support2}) : ValueContext width := "
+            "(context.1, ⟨context.2.1, firstFinite⟩, ⟨context.2.2.1, secondFinite⟩, context.2.2.2)",
+    }
+    witness_headers = {
+        "holFmapAsFiniteSupportTupleWitness":
+            "theorem holFmapAsFiniteSupportTupleWitness {width : Nat} [NeZero width] "
+            "(context : ValueContext width) : valueContextOfLookups (valueContextToLookups context) "
+            "context.2.1.finiteSupport context.2.2.1.finiteSupport = context",
+        "valueContextToLookups_ofLookups":
+            "theorem valueContextToLookups_ofLookups {width : Nat} [NeZero width] "
+            "(context : ValueContextLookups width) "
+            f"(firstFinite : {support}) (secondFinite : {support2}) : "
+            "valueContextToLookups (valueContextOfLookups context firstFinite secondFinite) = context",
+    }
+    if (any(statement(kind, name) != text for (kind, name), text in expected.items()) or
+            any(statement("theorem", name).partition(":=")[0].strip() != text
+                for name, text in witness_headers.items())):
+        errors.append("tuple-map qualifier requires both canonical conversion bodies and roundtrip witnesses")
+    return errors
+
+
 def _target_is_postfix_option_mapped(text: str, decl_name: str) -> bool:
     """Check the projection witness's canonical `(target ...).map` shape."""
     target = re.search(rf"\b{re.escape(decl_name)}\b", text)
