@@ -9200,6 +9200,13 @@ carrier and dependency review.
 
 `bvl_to_bvi_compile_probe.out` captures the typed SmartAppend and source conversion equations, a polymorphic auxiliary-code example, a three-branch example that observes left-associated auxiliary tree shape, and incremental compiler examples. The latter include two consecutive calls that exercise the retained inline cache and a default-configuration observation. `Flapjack/Test/BvlToBviSourceParity.lean` replays the examples. Regenerate with `HOL_PROBE_ONLY=bvl_to_bvi_compile_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`source_to_bvi_incremental_probe.out` captures complete BVI code and selected
+configuration fields for an empty batch, a literal binding, and two batches
+where the second refers to the first batch's environment. The checked Lean
+composition replays these observations in `Flapjack/Test/CakeIncrementalBviParity.lean`.
+Regenerate with `HOL_PROBE_ONLY=source_to_bvi_incremental_probeScript.sml scripts/hol-probes/regenerate.sh`.
+These observations do not prove correspondence for arbitrary programs.
+
 `clos_to_bvl_incremental_probe.out` captures the pinned original
 `clos_to_bvl_compile_inc` with closure optimizations disabled for empty input,
 a single closure, and a program with incoming auxiliary code and a nonempty
