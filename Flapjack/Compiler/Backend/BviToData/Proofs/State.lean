@@ -42,4 +42,20 @@ theorem stateRel_decClock {C F : Type} (source : BviSem.BviState C F) (target : 
   simp only [stateRel, BviSem.decClock, DataSem.decClock]
   exact ⟨by rw [clocks], rest⟩
 
+/-- Inserting corresponding references on both sides preserves the state
+relation. This is Flapjack infrastructure for primitive simulations. -/
+theorem stateRel_insertRef {C F : Type} (source : BviSem.BviState C F) (target : DataSem.State C F)
+    (related : stateRel source target) (key : Nat) (value : BvlSem.Ref DataSem.Value) :
+    stateRel { source with refs := source.refs.updateEq (key, dataToBviRef value) }
+      { target with refs := sptInsert key value target.refs } := by
+  rcases related with ⟨clock, code, oracle, compiler, refs, ffi, global⟩
+  refine ⟨clock, code, oracle, compiler, ?_, ffi, global⟩
+  intro n
+  rw [HolFiniteMapExact.lookup_updateEq, sptLookup_sptMap]
+  by_cases same : n = key
+  · subst n
+    simp [FUPDATE_HOL, sptLookup_sptInsert_same]
+  · rw [sptLookup_sptInsert_ne key n value target.refs same]
+    simp [FUPDATE_HOL, same, ← sptLookup_sptMap, refs]
+
 end Flapjack.Compiler.Backend.BviToData
