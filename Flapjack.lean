@@ -794,6 +794,7 @@ import Flapjack.Compiler.Backend.ClosNumber.Proofs.StateRelation
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.Install
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.ClosureApplication
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.EvaluateCases
+import Flapjack.Compiler.Backend.ClosNumber.Proofs.EvaluateInstall
 import Flapjack.Test.CakeIncrementalBviParity
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Total
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values
