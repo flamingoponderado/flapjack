@@ -54,8 +54,10 @@ def readXmm (s : X64State) (register : Nat) : BitVec 64 :=
 /-- Write the low 64 bits of an XMM register, preserving the high bits. -/
 def writeXmm (s : X64State) (register : Nat) (value : BitVec 64) : X64State :=
   { s with xmm := fun r =>
-      if r = register % 8 then (s.xmm (register % 8)).setWidth 128 |||
-        (value.setWidth 128) else s.xmm r }
+      if r = register % 8 then
+        ((s.xmm (register % 8)).setWidth 128 &&& BitVec.ofNat 128 (2 ^ 128 - 2 ^ 64)) |||
+          (value.setWidth 128)
+      else s.xmm r }
 
 /-- Read one byte of memory. -/
 def readByte (s : X64State) (address : BitVec 64) : BitVec 8 := s.mem address

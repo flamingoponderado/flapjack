@@ -235,7 +235,21 @@ theorem writeReg_regs (s : X64State) (r : Nat) (v : BitVec 64) :
     (writeReg s r v).regs = fun x => if x = num2Zreg r then v else s.regs x := rfl
 theorem writeXmm_xmm (s : X64State) (r : Nat) (v : BitVec 64) :
     (writeXmm s r v).xmm = fun x => if x = r % 8 then
-      (s.xmm (r % 8)).setWidth 128 ||| v.setWidth 128 else s.xmm x := rfl
+      ((s.xmm (r % 8)).setWidth 128 &&& BitVec.ofNat 128 (2 ^ 128 - 2 ^ 64)) |||
+        v.setWidth 128 else s.xmm x := rfl
+
+/-- Writing the low word of an XMM register leaves that word readable. -/
+theorem readXmm_writeXmm_self (s : X64State) (r : Nat) (v : BitVec 64) :
+    readXmm (writeXmm s r v) r = v := by
+  simp only [readXmm, writeXmm, if_pos rfl]
+  bv_decide
+
+/-- Writing one XMM register leaves a different register's low word alone. -/
+theorem readXmm_writeXmm_other (s : X64State) (r x : Nat) (v : BitVec 64)
+    (h : x % 8 ≠ r % 8) :
+    readXmm (writeXmm s r v) x = readXmm s x := by
+  simp only [readXmm, writeXmm]
+  rw [if_neg (by omega : ¬ x % 8 = r % 8)]
 
 @[simp] theorem writeReg_mem (s : X64State) (r : Nat) (v : BitVec 64) :
     (writeReg s r v).mem = s.mem := rfl
