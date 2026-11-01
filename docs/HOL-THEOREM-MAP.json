@@ -99826,6 +99826,74 @@
     "reviewer": "Source comparison: all nine rules of v_inv_ck and their typed data_to_word_memory_repr capture retain the source constructors, fixed Word64 input, independent positive heap word width, reference tree, clock decrement and zero guards, pointer annotations, lookup and domain premises, timestamp and heap checks. component_2 and component_3 are exactly the two HOL finite maps f and tf represented as canonical HolFiniteMapExact values. The context lookup conversions preserve the address and heap and have kernel-checked roundtrips in both directions for finite-support functions. Lean's mutual list relation exists to satisfy positivity; clockValueListInv_iff proves it is precisely the source LIST_REL recursive premise. The HOL/Lean inductive correspondence is source-reviewed, not established by those representation witnesses."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
+    "lean_name": "absMlInv_stackPermute",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "abs_ml_inv_stack_permute",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: abs_ml_inv_stack_permute and its typed data_to_word_memory_repr capture retain both lists of data-value/heap-address pairs, source stack and roots suffixes, all heap tuple fields, limit and timestamp. The original invariant and set-of-list subset conjunction imply the invariant for the selected pairs, with the same suffixes and no added assumption. List membership inclusion represents source set inclusion; all word locations share the positive source word width. The proof restricts the timestamp map to allTimestamps of the new stack, preserving the reference cells, root relations, domain bounds and block uniqueness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
+    "lean_name": "wordMlInv_rearrange",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_ml_inv_rearrange",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_ml_inv_rearrange and its typed data_to_word_memory_repr capture retain the pointwise pair-list membership inclusion premise, source word invariant and target word invariant, with unchanged heap tuple, limit, timestamp, configuration and spt references. Data-value/word-location pairs use the same positive source word dimension; the proof selects corresponding abstract roots and applies absMlInv_stackPermute."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Rearrange.lean",
+    "lean_name": "memoryRel_rearrange",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_rearrange",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_rearrange and its typed data_to_word_memory_repr capture preserve pair-list membership inclusion, source memory relation and target relation, retaining all other arguments. store represents the source finite map with the canonical carrier; memory, locations and store values share the positive word dimension. The proof preserves the original heap witnesses and applies wordMlInv_rearrange."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Rearrange.lean",
+    "lean_name": "memoryRel_tl",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_tl",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_tl and its typed data_to_word_memory_repr capture preserve the memory-relation premise on x::xs and conclusion on xs, with unchanged parameters. store is the canonical finite-support map and all word carriers share the source positive width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Rearrange.lean",
+    "lean_name": "memoryRel_tail",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_tail",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_tail and its typed data_to_word_memory_repr capture preserve the memory-relation premise on a pair cons and conclusion on its tail, with unchanged parameters. store is the canonical finite-support map and all word carriers share the source positive width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Rearrange.lean",
+    "lean_name": "memoryRel_drop",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_drop",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_drop and its typed data_to_word_memory_repr capture preserve the premise on the appended pair lists and conclusion on the second list. store is the canonical finite-support map and all word carriers share the source positive width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Rearrange.lean",
+    "lean_name": "memoryRel_swap",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_swap",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_swap and its typed data_to_word_memory_repr capture retain both leading data-value/word-location pairs, the unchanged suffix, and the exact source and swapped target relations. store is the canonical finite-support map and all word carriers share the source positive width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Timestamps.lean",
     "lean_name": "valueListValues_timestamp",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
