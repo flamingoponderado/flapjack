@@ -99782,6 +99782,32 @@
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 4628-4634, binders !p s t; evaluate (p,s) = (NONE,t) ⇒ stack_size t.stack = stack_size s.stack; from evaluate_stack_swap and s_key_eq_stack_size as in HOL. State carrier WordSemStateFiniteExact width C F (alpha word width, independent beta/gamma as C/F) with the reviewed fmap_as_finite_support [fpRegs, store] and words qualifiers. Inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8) through evaluate/inst. Typed capture word_props_code_grows probe (show_types, no hypotheses)."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean",
+    "lean_name": "joinEnv",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "join_env_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: lines 285–289 and typed data_to_word_gc_stack capture. The independent HOL environment and list-payload types remain independent Lean parameters; HOL inhabited types correspond to Nonempty α. Filter uses nonzero even names, index is (name−2)/2, list order is preserved, and holThe preserves the unspecified THE NONE branch."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean",
+    "lean_name": "flatStack",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "flat_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: lines 291–297 and typed data_to_word_gc_stack capture. Both data frame constructors pair with any word frame and append the joinEnv of its GC cutset, ignoring the handler; either exhausted list gives nil. WordSemStackFrame and WordLocW use the reviewed positive-width representation; THE NONE remains unspecified."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean",
+    "lean_name": "flatStack_append",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "flat_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: lines 299–305 and typed data_to_word_gc_stack capture. Binders retain source order xs, ys, xs1, ys1; the sole equal-length premise and append equality match. The data and word stack carriers and positive word width match flat_def; Lean checks induction on both original stack shapes."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Limits.lean",
     "lean_name": "limitsInv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",

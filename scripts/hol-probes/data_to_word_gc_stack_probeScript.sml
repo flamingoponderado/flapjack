@@ -9,3 +9,6 @@ val _ = show "stack_rel_typed" data_to_word_gcProofTheory.stack_rel_def;
 val _ = show "the_global_typed" data_to_word_gcProofTheory.the_global_def;
 val _ = show "contains_loc_typed" data_to_word_gcProofTheory.contains_loc_def;
 val _ = show "limits_inv_typed" data_to_word_gcProofTheory.limits_inv_def;
+val _ = show "join_env_typed" data_to_word_gcProofTheory.join_env_def;
+val _ = show "flat_typed" data_to_word_gcProofTheory.flat_def;
+val _ = show "flat_append_typed" data_to_word_gcProofTheory.flat_APPEND;
