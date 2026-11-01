@@ -210,6 +210,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Stack
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Restriction
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Space
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Number

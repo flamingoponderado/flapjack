@@ -99826,6 +99826,26 @@
     "reviewer": "Source comparison: all nine rules of v_inv_ck and their typed data_to_word_memory_repr capture retain the source constructors, fixed Word64 input, independent positive heap word width, reference tree, clock decrement and zero guards, pointer annotations, lookup and domain premises, timestamp and heap checks. component_2 and component_3 are exactly the two HOL finite maps f and tf represented as canonical HolFiniteMapExact values. The context lookup conversions preserve the address and heap and have kernel-checked roundtrips in both directions for finite-support functions. Lean's mutual list relation exists to satisfy positivity; clockValueListInv_iff proves it is precisely the source LIST_REL recursive premise. The HOL/Lean inductive correspondence is source-reviewed, not established by those representation witnesses."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv/Restriction.lean",
+    "lean_name": "clockValueInv_tfRestrict",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_inv_tf_restrict_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["f", "tf"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: v_inv_tf_restrict_lemma and its typed data_to_word_memory_repr capture preserve the clock, configuration, data value, spt reference tree, stack, address, two maps, heap and predicate. The unbounded value-invariant premise and both timestamp-containment conditions imply the clocked relation with only tf restricted. f and tf use canonical finite-support maps; restrictTimestampMap_lookup_some establishes the source DRESTRICT lookup behavior, including absent and excluded keys. The heap and address retain the shared positive word dimension, and dataSem.Value retains fixed word64."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv/Restriction.lean",
+    "lean_name": "valueInv_tfRestrict",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_inv_tf_restrict",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["f", "tf"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: v_inv_tf_restrict and its typed data_to_word_memory_repr capture preserve all quantified inputs and the conjunction of value invariant, timestamps of the value, and timestamps in all_ts refs stack as the premise. The conclusion retains the same relation and heap with tf restricted to the source predicate. f and tf are canonical finite-support maps; restrictTimestampMap_lookup_some matches DRESTRICT at every key. Address and heap use the same positive word dimension, and the data value's Word64 payload is fixed at 64 bits."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Stack.lean",
     "lean_name": "mem_valueListValues",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
