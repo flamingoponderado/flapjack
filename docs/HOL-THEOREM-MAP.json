@@ -99920,6 +99920,30 @@
     "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture; sum of mapped element lengths with independent polymorphic address and payload carriers."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "heapLength_append",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_length_APPEND",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: typed data_to_word_memory_repr capture preserves independent address and payload carriers and the append-length equality."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "heapLookup_mem",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_lookup_MEM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: typed data_to_word_memory_repr capture preserves independent address and payload carriers, the successful lookup premise, and list membership conclusion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "heapLookup_split",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_lookup_SPLIT",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: typed data_to_word_memory_repr capture preserves independent address and payload carriers, successful lookup, both existential heap lists, their concatenation and the preceding heap length."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Heap.lean",
     "lean_name": "wordEl",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

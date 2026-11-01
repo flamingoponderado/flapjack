@@ -112,6 +112,49 @@ def heapOk {α β : Type} (heap : List (HeapElement α β)) (limit : Nat) : Prop
     ∀ xs len data ptr value, .dataElement xs len data ∈ heap ∧ .pointer ptr value ∈ xs →
       isSomeDataElement (heapLookup ptr heap)
 
+/-- Heap length distributes over concatenation. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_length_APPEND"]
+theorem heapLength_append {α β : Type} (xs ys : List (HeapElement α β)) :
+    heapLength (xs ++ ys) = heapLength xs + heapLength ys := by
+  simp [heapLength, List.map_append, List.sum_append]
+
+/-- Every successful lookup returns an element of the heap. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_lookup_MEM"]
+theorem heapLookup_mem {α β : Type} (heap : List (HeapElement α β)) (n : Nat)
+    (x : HeapElement α β) (h : heapLookup n heap = some x) : x ∈ heap := by
+  induction heap generalizing n with
+  | nil => simp [heapLookup] at h
+  | cons head tail ih =>
+      by_cases hn : n = 0
+      · subst n
+        simp [heapLookup] at h
+        simp [h]
+      · by_cases hlt : n < elLength head
+        · simp [heapLookup, hn, hlt] at h
+        · exact List.mem_cons_of_mem head (ih _ (by simpa [heapLookup, hn, hlt] using h))
+
+/-- A successful lookup identifies an element boundary and its preceding heap. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_lookup_SPLIT"]
+theorem heapLookup_split {α β : Type} (heap : List (HeapElement α β)) (n : Nat)
+    (x : HeapElement α β) (h : heapLookup n heap = some x) :
+    ∃ before after, heap = before ++ x :: after ∧ n = heapLength before := by
+  induction heap generalizing n with
+  | nil => simp [heapLookup] at h
+  | cons head tail ih =>
+      by_cases hn : n = 0
+      · subst n
+        simp [heapLookup] at h
+        subst head
+        exact ⟨[], tail, by simp [heapLength]⟩
+      · by_cases hlt : n < elLength head
+        · simp [heapLookup, hn, hlt] at h
+        · obtain ⟨before, after, heq, hlen⟩ :=
+            ih _ (by simpa [heapLookup, hn, hlt] using h)
+          refine ⟨head :: before, after, ?_, ?_⟩
+          · simp [heq]
+          · simp [heapLength] at hlen ⊢
+            omega
+
 end Backend
 end Compiler
 end Flapjack
