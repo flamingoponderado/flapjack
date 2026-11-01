@@ -936,6 +936,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Value
 import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk
 import Flapjack.Compiler.Backend.BviToData.Proofs.Build
 import Flapjack.Compiler.Backend.BviToData.Proofs.Int
+import Flapjack.Compiler.Backend.BviToData.Proofs.Word
 import Flapjack.Compiler.Backend.BviToData.Proofs.Finalise
 import Flapjack.Compiler.Backend.DataSimp
 import Flapjack.Compiler.Backend.DataLive
