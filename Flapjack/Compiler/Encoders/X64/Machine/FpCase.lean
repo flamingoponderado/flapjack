@@ -832,4 +832,552 @@ theorem case_fpEqual (n d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
     (by decide) henc hs2pc hs2mem hs2dom hs2fp hs2regs
     (fun a b => evalCond_zE_comisd a b)
     (fun a b hu => holFp64Equal_nan a b (xmmUnordered_nan a b hu))
+
+/-- `readXmm` depends only on the register number modulo eight. -/
+theorem readXmm_congr_mod (s : X64State) {x y : Nat} (h : x % 8 = y % 8) :
+    readXmm s x = readXmm s y := by
+  simp only [readXmm, h]
+
+/-- The `fpMov` constructor of `encoder_correct x64Target`: one `movsd` copies
+the low word of the source XMM register into the destination. -/
+theorem case_fpMov (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.fp (.fpMov d1 d2))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.fp (.fpMov d1 d2))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.fp (.fpMov d1 d2))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  simp only [asmOkExact, asmInstOkExact, asmFpOkExact, x64Config, Bool.and_eq_true] at hok
+  obtain ⟨hd1ok, hd2ok⟩ := hok
+  have hd1 : d1 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd1ok
+  have hd2 : d2 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd2ok
+  have hd1' : d1 % 8 = d1 := Nat.mod_eq_of_lt hd1
+  have hd2' : d2 % 8 = d2 := Nat.mod_eq_of_lt hd2
+  have hlt : ¬ (8 ≤ d1 % 8 ∨ 8 ≤ d2 % 8) := by omega
+  have hlen : (encodeInsn (.sse (.movsd (d1 % 8) (d2 % 8)))).length = 4 := by
+    rw [encodeInsn_movsd (d1 % 8) (d2 % 8) (by omega) (by omega)]
+    simp [movsdBytes, sseRex, hlt]
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64
+      (x64Target.config.encode (.inst (.fp (.fpMov d1 d2)))).length := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+    rw [← st.upd]; intro a
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2fp : ∀ x, s2.fpRegs x = if x = d1 then s1.fpRegs d2 else s1.fpRegs x := by
+    intro x
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, readFpReg]
+  have henc : x64Target.config.encode (.inst (.fp (.fpMov d1 d2))) =
+      encodeInsn (.sse (.movsd (d1 % 8) (d2 % 8))) := by
+    rw [x64Target_config, x64Config_encode]
+    refine x64Enc_of_flatMap _ _ ?_ ?_
+    · simp only [x64Ast, x64Inst, List.flatMap_cons, List.flatMap_nil, List.append_nil]
+    · intro h'
+      have := congrArg List.length h'
+      simp [hlen] at this
+  have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.movsd (d1 % 8) (d2 % 8))))
+      ms.mem s1.memDomain := by
+    have h' := st.bytesTarget
+    rw [henc] at h'
+    rw [← st.pc] at h'
+    exact h'
+  have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+      some (.sse (.movsd (d1 % 8) (d2 % 8)), 4) := by
+    have hd := decode_movsd (d1 % 8) (d2 % 8) (by omega) (by omega)
+    have h := decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbm hd (by rw [hlen]; simp [hlt])
+    simpa [hlt] using h
+  have hnext : x64Next ms = { writeXmm ms (d1 % 8) (readXmm ms (d2 % 8)) with
+      pc := ms.pc + BitVec.ofNat 64 4 } := by
+    simp only [x64Next, st.failed, Bool.false_eq_true, if_false, hdec, execInsn, execSSE]
+  have hq : targetStateRel x64Target s2 (x64Next^[0 + 1] ms) := by
+    show targetStateRel x64Target s2 (x64Next ms)
+    rw [hnext]
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · simp only [x64Target_stateOk, x64StateOk, writeXmm_failed, st.failed, Bool.not_false]
+    · show ms.pc + BitVec.ofNat 64 4 = s2.pc
+      rw [st.pc, hs2pc, henc, hlen]
+    · intro a ha
+      show (writeXmm ms (d1 % 8) (readXmm ms (d2 % 8))).mem a = s2.mem a
+      rw [writeXmm_mem, hs2mem a]
+      exact st.mem a (hs2dom ▸ ha)
+    · intro x hx
+      show readReg (writeXmm ms (d1 % 8) (readXmm ms (d2 % 8))) x = s2.regs x
+      rw [show readReg (writeXmm ms (d1 % 8) (readXmm ms (d2 % 8))) x = readReg ms x from by
+        simp only [readReg, writeXmm_regs]]
+      rw [hs2regs x]
+      exact st.reg x hx
+    · intro x hx
+      have hx8lt : x < 8 := by simpa [x64Target_config, x64Config] using hx
+      show readXmm (writeXmm ms (d1 % 8) (readXmm ms (d2 % 8))) x = s2.fpRegs x
+      by_cases hx1 : x = d1
+      · rw [hx1, hd1', readXmm_writeXmm_self, hs2fp d1]
+        simp only [if_true]
+        rw [hd2']
+        exact st.fp d2 hd2
+      · have hne : x % 8 ≠ d1 % 8 := by
+          rw [Nat.mod_eq_of_lt hx8lt, hd1']
+          exact hx1
+        rw [hd1']
+        rw [readXmm_writeXmm_other ms d1 x _ hne, hs2fp x]
+        simp only [if_neg hx1]
+        exact st.fp x hx8lt
+  have hcode : allPcs (x64Target.config.encode (.inst (.fp (.fpMov d1 d2)))).length
+      s1.pc 0 ⊆ s1.memDomain :=
+    bytesInMemory_allPcs _ s1.pc s1.mem s1.memDomain 0 st.bytes
+  have hsafe0 : StepSafe s1.memDomain ms := by
+    refine ⟨.sse (.movsd (d1 % 8) (d2 % 8)), 4, hdec, ?_, ?_⟩
+    · intro j hj
+      have hj' : j < (encodeInsn (.sse (.movsd (d1 % 8) (d2 % 8)))).length := by
+        rw [hlen]; exact hj
+      exact bytesInMemoryHOL_domain _ ms.pc ms.mem s1.memDomain hbm j hj'
+    · intro a ha
+      simp [x64Touched] at ha
+  exact encoderCaseStep (.inst (.fp (.fpMov d1 d2))) s1 s2 ms 0 hs2dom hcode
+    (by intro k hk; interval_cases k; exact hsafe0)
+    (by intro k hk1 hk2; omega)
+    hq
+
+
+/-- A one-instruction fp case: the source writes the low word of one XMM
+register, the model writes the same word in one step, and the written value is
+the source's. -/
+theorem fpWriteCase (op : HolFp) (insn : X64SSE) (d1 dst : Nat) (W V : BitVec 64)
+    (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.fp op)) s2 ∧ targetStateRel x64Target s1 ms)
+    (hd1 : d1 < 8) (hdst : dst = d1 % 8)
+    (henc : x64Target.config.encode (.inst (.fp op)) = encodeInsn (.sse insn))
+    (hlen : (encodeInsn (.sse insn)).length = 4)
+    (hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) = some (.sse insn, 4))
+    (hexec : execSSE insn ms = writeXmm ms dst W)
+    (htouch : ∀ a, a ∈ x64Touched ms (.sse insn) → s1.memDomain a)
+    (hW : W = V)
+    (hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 (x64Target.config.encode (.inst (.fp op))).length)
+    (hs2mem : ∀ a, s2.mem a = s1.mem a)
+    (hs2dom : s2.memDomain = s1.memDomain)
+    (hs2regs : ∀ x, s2.regs x = s1.regs x)
+    (hs2fp : ∀ x, s2.fpRegs x = if x = d1 then V else s1.fpRegs x) :
+    CaseGoal (.inst (.fp op)) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse insn)) ms.mem s1.memDomain := by
+    have h' := st.bytesTarget
+    rw [henc] at h'
+    rw [← st.pc] at h'
+    exact h'
+  have hnext : x64Next ms = { writeXmm ms dst W with pc := ms.pc + BitVec.ofNat 64 4 } := by
+    simp only [x64Next, st.failed, Bool.false_eq_true, if_false, hdec, execInsn, hexec]
+  have hq : targetStateRel x64Target s2 (x64Next^[0 + 1] ms) := by
+    show targetStateRel x64Target s2 (x64Next ms)
+    rw [hnext]
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · simp only [x64Target_stateOk, x64StateOk, writeXmm_failed, st.failed, Bool.not_false]
+    · show ms.pc + BitVec.ofNat 64 4 = s2.pc
+      rw [st.pc, hs2pc, henc, hlen]
+    · intro a ha
+      show (writeXmm ms dst W).mem a = s2.mem a
+      rw [writeXmm_mem, hs2mem a]
+      exact st.mem a (hs2dom ▸ ha)
+    · intro x hx
+      show readReg (writeXmm ms dst W) x = s2.regs x
+      rw [show readReg (writeXmm ms dst W) x = readReg ms x from by
+        simp only [readReg, writeXmm_regs]]
+      rw [hs2regs x]
+      exact st.reg x hx
+    · intro x hx
+      have hx8 : x < 8 := by simpa [x64Target_config, x64Config] using hx
+      show readXmm (writeXmm ms dst W) x = s2.fpRegs x
+      by_cases hx1 : x = d1
+      · rw [hx1]
+        rw [show readXmm (writeXmm ms dst W) d1 = W from by
+          rw [readXmm_congr_mod _ (by omega : d1 % 8 = dst % 8), readXmm_writeXmm_self]]
+        rw [hW, hs2fp d1]
+        simp
+      · have hdst1 : dst = d1 := by rw [hdst, Nat.mod_eq_of_lt hd1]
+        have hne : x % 8 ≠ dst % 8 := by
+          rw [Nat.mod_eq_of_lt hx8, hdst1, Nat.mod_eq_of_lt hd1]
+          exact hx1
+        rw [readXmm_writeXmm_other ms dst x W hne, hs2fp x]
+        simp only [if_neg hx1]
+        exact st.fp x hx8
+  have hcode : allPcs (x64Target.config.encode (.inst (.fp op))).length s1.pc 0 ⊆
+      s1.memDomain :=
+    bytesInMemory_allPcs _ s1.pc s1.mem s1.memDomain 0 st.bytes
+  have hsafe0 : StepSafe s1.memDomain ms := by
+    refine ⟨.sse insn, 4, hdec, ?_, ?_⟩
+    · intro j hj
+      have hj' : j < (encodeInsn (.sse insn)).length := by rw [hlen]; exact hj
+      exact bytesInMemoryHOL_domain _ ms.pc ms.mem s1.memDomain hbm j hj'
+    · intro a ha
+      exact htouch a ha
+  exact encoderCaseStep (.inst (.fp op)) s1 s2 ms 0 hs2dom hcode
+    (by intro k hk; interval_cases k; exact hsafe0)
+    (by intro k hk1 hk2; omega)
+    hq
+
+/-- The `fpSqrt` constructor of `encoder_correct x64Target`: one `sqrtsd`. -/
+theorem case_fpSqrt (d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.fp (.fpSqrt d1 d2))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.fp (.fpSqrt d1 d2))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.fp (.fpSqrt d1 d2))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  simp only [asmOkExact, asmInstOkExact, asmFpOkExact, x64Config, Bool.and_eq_true] at hok
+  obtain ⟨hd1ok, hd2ok⟩ := hok
+  have hd1 : d1 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd1ok
+  have hd2 : d2 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd2ok
+  have hd1' : d1 % 8 = d1 := Nat.mod_eq_of_lt hd1
+  have hd2' : d2 % 8 = d2 := Nat.mod_eq_of_lt hd2
+  have hlt : ¬ (8 ≤ d1 % 8 ∨ 8 ≤ d2 % 8) := by omega
+  have hlen : (encodeInsn (.sse (.sqrtsd (d1 % 8) (d2 % 8)))).length = 4 := by
+    rw [encodeInsn_sqrtsd (d1 % 8) (d2 % 8) (by omega) (by omega)]
+    simp [sqrtsdBytes, sseRex, hlt]
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64
+      (x64Target.config.encode (.inst (.fp (.fpSqrt d1 d2)))).length := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+    rw [← st.upd]; intro a
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2fp : ∀ x, s2.fpRegs x = if x = d1 then
+      holFp64Sqrt .roundTiesToEven (s1.fpRegs d2) else s1.fpRegs x := by
+    intro x
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, readFpReg]
+  have henc : x64Target.config.encode (.inst (.fp (.fpSqrt d1 d2))) =
+      encodeInsn (.sse (.sqrtsd (d1 % 8) (d2 % 8))) := by
+    rw [x64Target_config, x64Config_encode]
+    refine x64Enc_of_flatMap _ _ ?_ ?_
+    · simp only [x64Ast, x64Inst, List.flatMap_cons, List.flatMap_nil, List.append_nil]
+    · intro h'
+      have := congrArg List.length h'
+      simp [hlen] at this
+  have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.sqrtsd (d1 % 8) (d2 % 8))))
+      ms.mem s1.memDomain := by
+    have h' := st.bytesTarget
+    rw [henc] at h'
+    rw [← st.pc] at h'
+    exact h'
+  have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+      some (.sse (.sqrtsd (d1 % 8) (d2 % 8)), 4) := by
+    have hd := decode_sqrtsd (d1 % 8) (d2 % 8) (by omega) (by omega)
+    have h := decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbm hd (by rw [hlen]; simp [hlt])
+    simpa [hlt] using h
+  have hW : holFp64Sqrt .roundTiesToEven (readXmm ms (d2 % 8)) =
+      holFp64Sqrt .roundTiesToEven (s1.fpRegs d2) := by
+    rw [hd2']
+    rw [st.fp d2 hd2]
+  exact fpWriteCase (.fpSqrt d1 d2) (.sqrtsd (d1 % 8) (d2 % 8)) d1 (d1 % 8)
+    (holFp64Sqrt .roundTiesToEven (readXmm ms (d2 % 8)))
+    (holFp64Sqrt .roundTiesToEven (s1.fpRegs d2)) s1 s2 ms h hd1 rfl henc hlen hdec
+    rfl (by intro a ha; simp [x64Touched] at ha) hW hs2pc hs2mem hs2dom hs2regs hs2fp
+
+
+/-- The `fpAdd` constructor of `encoder_correct x64Target`: one `sseAdd`-style SSE
+operation writing the destination XMM register's low word. -/
+theorem case_fpAdd (d l r : Nat) (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.fp (.fpAdd d l r))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.fp (.fpAdd d l r))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.fp (.fpAdd d l r))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  simp only [asmOkExact, asmInstOkExact, asmFpOkExact, x64Config, Bool.and_eq_true] at hok
+  obtain ⟨⟨⟨hdeq, hdok⟩, hlok⟩, hrok⟩ := hok
+  have hdl : d = l := by simpa using hdeq
+  have hd : d < 8 := by simpa [asmFpRegOkExact, x64Config] using hdok
+  have hl : l < 8 := by simpa [asmFpRegOkExact, x64Config] using hlok
+  have hr : r < 8 := by simpa [asmFpRegOkExact, x64Config] using hrok
+  have hd' : d % 8 = d := Nat.mod_eq_of_lt hd
+  have hr' : r % 8 = r := Nat.mod_eq_of_lt hr
+  have hlt : ¬ (8 ≤ d % 8 ∨ 8 ≤ r % 8) := by omega
+  have hlen : (encodeInsn (.sse (.binSD .sseAdd (d % 8) (r % 8)))).length = 4 := by
+    rw [encodeInsn_binSD .sseAdd (d % 8) (r % 8) (by omega) (by omega)]
+    simp [binSDBytes, sseRex, hlt]
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64
+      (x64Target.config.encode (.inst (.fp (.fpAdd d l r)))).length := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+    rw [← st.upd]; intro a
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2fp : ∀ x, s2.fpRegs x = if x = d then
+      holFp64Add .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r) else s1.fpRegs x := by
+    intro x
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, readFpReg]
+  have henc : x64Target.config.encode (.inst (.fp (.fpAdd d l r))) =
+      encodeInsn (.sse (.binSD .sseAdd (d % 8) (r % 8))) := by
+    rw [x64Target_config, x64Config_encode]
+    refine x64Enc_of_flatMap _ _ ?_ ?_
+    · simp only [x64Ast, x64Inst, List.flatMap_cons, List.flatMap_nil, List.append_nil]
+    · intro h'
+      have := congrArg List.length h'
+      simp [hlen] at this
+  have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.binSD .sseAdd (d % 8) (r % 8))))
+      ms.mem s1.memDomain := by
+    have h' := st.bytesTarget
+    rw [henc] at h'
+    rw [← st.pc] at h'
+    exact h'
+  have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+      some (.sse (.binSD .sseAdd (d % 8) (r % 8)), 4) := by
+    have hd := decode_binSD .sseAdd (d % 8) (r % 8) (by omega) (by omega)
+    have h := decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbm hd
+      (by rw [hlen]; simp [hlt])
+    simpa [hlt] using h
+  have hW : holFp64Add .roundTiesToEven (readXmm ms (d % 8)) (readXmm ms (r % 8)) =
+      holFp64Add .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r) := by
+    have h1 : readXmm ms (d % 8) = s1.fpRegs l := by
+      rw [hd', hdl]
+      exact st.fp l hl
+    have h2 : readXmm ms (r % 8) = s1.fpRegs r := by
+      rw [hr']
+      exact st.fp r hr
+    rw [h1, h2]
+  exact fpWriteCase (.fpAdd d l r) (.binSD .sseAdd (d % 8) (r % 8)) d (d % 8)
+    (holFp64Add .roundTiesToEven (readXmm ms (d % 8)) (readXmm ms (r % 8)))
+    (holFp64Add .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r)) s1 s2 ms h hd rfl henc hlen
+    hdec rfl (by intro a ha; simp [x64Touched] at ha) hW hs2pc hs2mem hs2dom hs2regs hs2fp
+
+
+/-- The `fpSub` constructor of `encoder_correct x64Target`: one `sseSub`-style SSE
+operation writing the destination XMM register's low word. -/
+theorem case_fpSub (d l r : Nat) (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.fp (.fpSub d l r))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.fp (.fpSub d l r))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.fp (.fpSub d l r))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  simp only [asmOkExact, asmInstOkExact, asmFpOkExact, x64Config, Bool.and_eq_true] at hok
+  obtain ⟨⟨⟨hdeq, hdok⟩, hlok⟩, hrok⟩ := hok
+  have hdl : d = l := by simpa using hdeq
+  have hd : d < 8 := by simpa [asmFpRegOkExact, x64Config] using hdok
+  have hl : l < 8 := by simpa [asmFpRegOkExact, x64Config] using hlok
+  have hr : r < 8 := by simpa [asmFpRegOkExact, x64Config] using hrok
+  have hd' : d % 8 = d := Nat.mod_eq_of_lt hd
+  have hr' : r % 8 = r := Nat.mod_eq_of_lt hr
+  have hlt : ¬ (8 ≤ d % 8 ∨ 8 ≤ r % 8) := by omega
+  have hlen : (encodeInsn (.sse (.binSD .sseSub (d % 8) (r % 8)))).length = 4 := by
+    rw [encodeInsn_binSD .sseSub (d % 8) (r % 8) (by omega) (by omega)]
+    simp [binSDBytes, sseRex, hlt]
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64
+      (x64Target.config.encode (.inst (.fp (.fpSub d l r)))).length := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+    rw [← st.upd]; intro a
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2fp : ∀ x, s2.fpRegs x = if x = d then
+      holFp64Sub .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r) else s1.fpRegs x := by
+    intro x
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, readFpReg]
+  have henc : x64Target.config.encode (.inst (.fp (.fpSub d l r))) =
+      encodeInsn (.sse (.binSD .sseSub (d % 8) (r % 8))) := by
+    rw [x64Target_config, x64Config_encode]
+    refine x64Enc_of_flatMap _ _ ?_ ?_
+    · simp only [x64Ast, x64Inst, List.flatMap_cons, List.flatMap_nil, List.append_nil]
+    · intro h'
+      have := congrArg List.length h'
+      simp [hlen] at this
+  have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.binSD .sseSub (d % 8) (r % 8))))
+      ms.mem s1.memDomain := by
+    have h' := st.bytesTarget
+    rw [henc] at h'
+    rw [← st.pc] at h'
+    exact h'
+  have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+      some (.sse (.binSD .sseSub (d % 8) (r % 8)), 4) := by
+    have hd := decode_binSD .sseSub (d % 8) (r % 8) (by omega) (by omega)
+    have h := decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbm hd
+      (by rw [hlen]; simp [hlt])
+    simpa [hlt] using h
+  have hW : holFp64Sub .roundTiesToEven (readXmm ms (d % 8)) (readXmm ms (r % 8)) =
+      holFp64Sub .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r) := by
+    have h1 : readXmm ms (d % 8) = s1.fpRegs l := by
+      rw [hd', hdl]
+      exact st.fp l hl
+    have h2 : readXmm ms (r % 8) = s1.fpRegs r := by
+      rw [hr']
+      exact st.fp r hr
+    rw [h1, h2]
+  exact fpWriteCase (.fpSub d l r) (.binSD .sseSub (d % 8) (r % 8)) d (d % 8)
+    (holFp64Sub .roundTiesToEven (readXmm ms (d % 8)) (readXmm ms (r % 8)))
+    (holFp64Sub .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r)) s1 s2 ms h hd rfl henc hlen
+    hdec rfl (by intro a ha; simp [x64Touched] at ha) hW hs2pc hs2mem hs2dom hs2regs hs2fp
+
+
+/-- The `fpMul` constructor of `encoder_correct x64Target`: one `sseMul`-style SSE
+operation writing the destination XMM register's low word. -/
+theorem case_fpMul (d l r : Nat) (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.fp (.fpMul d l r))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.fp (.fpMul d l r))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.fp (.fpMul d l r))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  simp only [asmOkExact, asmInstOkExact, asmFpOkExact, x64Config, Bool.and_eq_true] at hok
+  obtain ⟨⟨⟨hdeq, hdok⟩, hlok⟩, hrok⟩ := hok
+  have hdl : d = l := by simpa using hdeq
+  have hd : d < 8 := by simpa [asmFpRegOkExact, x64Config] using hdok
+  have hl : l < 8 := by simpa [asmFpRegOkExact, x64Config] using hlok
+  have hr : r < 8 := by simpa [asmFpRegOkExact, x64Config] using hrok
+  have hd' : d % 8 = d := Nat.mod_eq_of_lt hd
+  have hr' : r % 8 = r := Nat.mod_eq_of_lt hr
+  have hlt : ¬ (8 ≤ d % 8 ∨ 8 ≤ r % 8) := by omega
+  have hlen : (encodeInsn (.sse (.binSD .sseMul (d % 8) (r % 8)))).length = 4 := by
+    rw [encodeInsn_binSD .sseMul (d % 8) (r % 8) (by omega) (by omega)]
+    simp [binSDBytes, sseRex, hlt]
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64
+      (x64Target.config.encode (.inst (.fp (.fpMul d l r)))).length := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+    rw [← st.upd]; intro a
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2fp : ∀ x, s2.fpRegs x = if x = d then
+      holFp64Mul .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r) else s1.fpRegs x := by
+    intro x
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, readFpReg]
+  have henc : x64Target.config.encode (.inst (.fp (.fpMul d l r))) =
+      encodeInsn (.sse (.binSD .sseMul (d % 8) (r % 8))) := by
+    rw [x64Target_config, x64Config_encode]
+    refine x64Enc_of_flatMap _ _ ?_ ?_
+    · simp only [x64Ast, x64Inst, List.flatMap_cons, List.flatMap_nil, List.append_nil]
+    · intro h'
+      have := congrArg List.length h'
+      simp [hlen] at this
+  have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.binSD .sseMul (d % 8) (r % 8))))
+      ms.mem s1.memDomain := by
+    have h' := st.bytesTarget
+    rw [henc] at h'
+    rw [← st.pc] at h'
+    exact h'
+  have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+      some (.sse (.binSD .sseMul (d % 8) (r % 8)), 4) := by
+    have hd := decode_binSD .sseMul (d % 8) (r % 8) (by omega) (by omega)
+    have h := decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbm hd
+      (by rw [hlen]; simp [hlt])
+    simpa [hlt] using h
+  have hW : holFp64Mul .roundTiesToEven (readXmm ms (d % 8)) (readXmm ms (r % 8)) =
+      holFp64Mul .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r) := by
+    have h1 : readXmm ms (d % 8) = s1.fpRegs l := by
+      rw [hd', hdl]
+      exact st.fp l hl
+    have h2 : readXmm ms (r % 8) = s1.fpRegs r := by
+      rw [hr']
+      exact st.fp r hr
+    rw [h1, h2]
+  exact fpWriteCase (.fpMul d l r) (.binSD .sseMul (d % 8) (r % 8)) d (d % 8)
+    (holFp64Mul .roundTiesToEven (readXmm ms (d % 8)) (readXmm ms (r % 8)))
+    (holFp64Mul .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r)) s1 s2 ms h hd rfl henc hlen
+    hdec rfl (by intro a ha; simp [x64Touched] at ha) hW hs2pc hs2mem hs2dom hs2regs hs2fp
+
+
+/-- The `fpDiv` constructor of `encoder_correct x64Target`: one `sseDiv`-style SSE
+operation writing the destination XMM register's low word. -/
+theorem case_fpDiv (d l r : Nat) (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.fp (.fpDiv d l r))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.fp (.fpDiv d l r))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.fp (.fpDiv d l r))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  simp only [asmOkExact, asmInstOkExact, asmFpOkExact, x64Config, Bool.and_eq_true] at hok
+  obtain ⟨⟨⟨hdeq, hdok⟩, hlok⟩, hrok⟩ := hok
+  have hdl : d = l := by simpa using hdeq
+  have hd : d < 8 := by simpa [asmFpRegOkExact, x64Config] using hdok
+  have hl : l < 8 := by simpa [asmFpRegOkExact, x64Config] using hlok
+  have hr : r < 8 := by simpa [asmFpRegOkExact, x64Config] using hrok
+  have hd' : d % 8 = d := Nat.mod_eq_of_lt hd
+  have hr' : r % 8 = r := Nat.mod_eq_of_lt hr
+  have hlt : ¬ (8 ≤ d % 8 ∨ 8 ≤ r % 8) := by omega
+  have hlen : (encodeInsn (.sse (.binSD .sseDiv (d % 8) (r % 8)))).length = 4 := by
+    rw [encodeInsn_binSD .sseDiv (d % 8) (r % 8) (by omega) (by omega)]
+    simp [binSDBytes, sseRex, hlt]
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64
+      (x64Target.config.encode (.inst (.fp (.fpDiv d l r)))).length := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+    rw [← st.upd]; intro a
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2regs : ∀ x, s2.regs x = s1.regs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg]
+  have hs2fp : ∀ x, s2.fpRegs x = if x = d then
+      holFp64Div .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r) else s1.fpRegs x := by
+    intro x
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updFpReg, readFpReg]
+  have henc : x64Target.config.encode (.inst (.fp (.fpDiv d l r))) =
+      encodeInsn (.sse (.binSD .sseDiv (d % 8) (r % 8))) := by
+    rw [x64Target_config, x64Config_encode]
+    refine x64Enc_of_flatMap _ _ ?_ ?_
+    · simp only [x64Ast, x64Inst, List.flatMap_cons, List.flatMap_nil, List.append_nil]
+    · intro h'
+      have := congrArg List.length h'
+      simp [hlen] at this
+  have hbm : bytesInMemoryHOL ms.pc (encodeInsn (.sse (.binSD .sseDiv (d % 8) (r % 8))))
+      ms.mem s1.memDomain := by
+    have h' := st.bytesTarget
+    rw [henc] at h'
+    rw [← st.pc] at h'
+    exact h'
+  have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+      some (.sse (.binSD .sseDiv (d % 8) (r % 8)), 4) := by
+    have hd := decode_binSD .sseDiv (d % 8) (r % 8) (by omega) (by omega)
+    have h := decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbm hd
+      (by rw [hlen]; simp [hlt])
+    simpa [hlt] using h
+  have hW : holFp64Div .roundTiesToEven (readXmm ms (d % 8)) (readXmm ms (r % 8)) =
+      holFp64Div .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r) := by
+    have h1 : readXmm ms (d % 8) = s1.fpRegs l := by
+      rw [hd', hdl]
+      exact st.fp l hl
+    have h2 : readXmm ms (r % 8) = s1.fpRegs r := by
+      rw [hr']
+      exact st.fp r hr
+    rw [h1, h2]
+  exact fpWriteCase (.fpDiv d l r) (.binSD .sseDiv (d % 8) (r % 8)) d (d % 8)
+    (holFp64Div .roundTiesToEven (readXmm ms (d % 8)) (readXmm ms (r % 8)))
+    (holFp64Div .roundTiesToEven (s1.fpRegs l) (s1.fpRegs r)) s1 s2 ms h hd rfl henc hlen
+    hdec rfl (by intro a ha; simp [x64Touched] at ha) hW hs2pc hs2mem hs2dom hs2regs hs2fp
+
 end Flapjack.Compiler.Encoders.X64
