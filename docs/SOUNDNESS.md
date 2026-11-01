@@ -320,7 +320,8 @@ The following are open review or verification obligations:
       same code bytes as `cake --pancake --target=x64` for the checked-in
       corpus in `scripts/x64/parity/` (24 fixtures), for 1500 differentially
       fuzzed programs, and for the 244 standalone Pancake programs embedded in
-      `cakeml/pancake/**/*.sml`. `scripts/x64/check-parity.py` exits 0 against
+      `cakeml/pancake/**/*.sml`, of which 87 are accepted by the original
+      compiler and therefore actually compared. `scripts/x64/check-parity.py` exits 0 against
       the original `cake` binary, and the executed `flapjack-compile
       --target=x64` reproduces every checked-in fixture. `Flapjack/Compiler/
       Encoders/X64/Machine/` defines a closed machine model for the emitted
@@ -339,8 +340,9 @@ The following are open review or verification obligations:
     - **What is not checked.** The closed model is not CakeML's full L3
       x86-64 semantics: `x64EncoderCorrect` is Flapjack's closed-subset
       analogue of HOL's per-target theorem, not a port of it, so the model's
-      faithfulness to real x86-64 execution remains an external assumption
-      supported only by the parity evidence above. Flags are modelled per
+      faithfulness to real x86-64 execution remains an external assumption; the
+      parity evidence above does not establish it, because it compares emitted
+      bytes rather than model execution. Flags are modelled per
       emitted instruction rather than by an L3 `Run` port, `div` failure and
       `comisd` unordered handling are approximated, and SSE `min`/`max` are
       approximated; floating-point results use `holFp64*` and therefore agree

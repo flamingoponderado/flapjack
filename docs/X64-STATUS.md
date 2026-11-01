@@ -43,8 +43,10 @@ Plus the two x86-64-specific checks:
   `### ERROR: ...` and exits nonzero) from an oracle failure (any other nonzero
   exit, or a signal), and fails when fewer than `--min-compared` programs were
   actually compared, so a run cannot pass with no comparisons.
-  Differential fuzz and a corpus run over `cakeml/pancake/**/*.sml` passed in an
-  earlier session (1500 programs; 244 programs / 87 accepted, 0 failures).
+* Differential fuzz and a corpus run over `cakeml/pancake/**/*.sml` passed in an
+  earlier session: 1500 generated programs, and of the 244 standalone programs
+  in that corpus 87 were accepted by the original compiler and compared, with 0
+  failures.
 
 Axiom footprint of the top theorems (`#print axioms` on `x64EncoderCorrect`,
 `x64NativeSourceCompile_correct` and `x64CLIOutput_correct`): exactly `propext`,
