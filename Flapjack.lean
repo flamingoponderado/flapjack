@@ -2822,6 +2822,8 @@ import Flapjack.Compiler.Encoders.X64.Encode
 import Flapjack.Compiler.Encoders.X64.Target
 import Flapjack.Compiler.Backend.X64Config.Names
 import Flapjack.Compiler.Backend.X64Config.BackendConfig
+import Flapjack.Compiler.Backend.X64Config.BackendProof
+import Flapjack.Compiler.Backend.X64Config.Proofs
 import Flapjack.Compiler.Encoders.X64.Machine.State
 import Flapjack.Compiler.Encoders.X64.Machine.Decode
 import Flapjack.Compiler.Encoders.X64.Machine.Execute
@@ -2847,10 +2849,15 @@ import Flapjack.Compiler.Encoders.X64.Machine.ShiftCase
 import Flapjack.Compiler.Encoders.X64.Machine.MulCase
 import Flapjack.Compiler.Encoders.X64.Machine.DivCase
 import Flapjack.Compiler.Encoders.X64.Machine.CarryCase
+import Flapjack.Compiler.Encoders.X64.Machine.MemCase
+import Flapjack.Compiler.Encoders.X64.Machine.FpCase
+import Flapjack.Compiler.Encoders.X64.Machine.JumpCmpCase
+import Flapjack.Compiler.Encoders.X64.Machine.Complete
 import Flapjack.Compiler.Encoders.X64.Machine.StepAgree
 import Flapjack.Compiler.Encoders.X64.Machine.Simulate
 import Flapjack.X64.NativeSource
 import Flapjack.X64.NativeCLIAdapter
+import Flapjack.Pancake.Proofs.PanToTarget.X64Instance
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32InstanceExecutable
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32Source
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32NativeSourceCorrect
