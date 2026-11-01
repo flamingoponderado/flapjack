@@ -6,8 +6,8 @@ infrastructure, not a HOL mapping document.
 
 ## Verified
 
-Every gate in `.github/workflows/lean_action_ci.yml` passes at `6cde1ddc2`
-(the commit before this note):
+Every gate in `.github/workflows/lean_action_ci.yml` passes on this branch at
+its current head (this note only adds documentation on top of the code):
 
 * `lake build Flapjack` — 6491 jobs.
 * `lake test` — exit 0.
@@ -39,6 +39,10 @@ Plus the two x86-64-specific checks:
   `.cake.S`; `cakeml/developers/bin/cake` is not built in this checkout.
 * Executed-path parity: `lake exe flapjack-compile --target=x64 --pancake` on each
   `scripts/x64/parity/*.pnk` produces byte-identical assembly to that same cake.
+* `scripts/x64/fuzz.py` distinguishes an expected input rejection (cake prints
+  `### ERROR: ...` and exits nonzero) from an oracle failure (any other nonzero
+  exit, or a signal), and fails when fewer than `--min-compared` programs were
+  actually compared, so a run cannot pass with no comparisons.
   Differential fuzz and a corpus run over `cakeml/pancake/**/*.sml` passed in an
   earlier session (1500 programs; 244 programs / 87 accepted, 0 failures).
 
@@ -113,6 +117,14 @@ incoming carry flag, while the source `addCarry` semantics (and real x86) includ
 it. The clauses now special-case `.zadc`/`.zsbb` to add/subtract
 `BitVec.ofNat 64 (if s.flags.cf then 1 else 0)`. The `.zsbb` *flags* still omit
 the borrow, but the backend never emits `sbb`; this is noted in a comment.
+
+**`PF` parity.** `parityByte` XOR-folded its eight low-byte bits from `false`,
+so it reported *odd* parity, while x86 `PF` is set for *even* parity: a zero
+result cleared the flag on hardware but set it in the model. The fold now starts
+from `true`, with `parityByte_zero`/`parityByte_one` as regression facts. No case
+proof changed: `targetStateRel` relates only state, pc, memory, general registers
+and FP registers, never flags, and the only emitted parity branch follows
+`comisd`, whose `pf` comes from `xmmUnordered`.
 
 **Per-lane `psrlq`/`psllq` (commit `5e390bfb4`).** The SSE model shifted the
 whole 128-bit register, so `psrlq`/`psllq` leaked the high lane into the low one.

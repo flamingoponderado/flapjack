@@ -16,9 +16,16 @@ namespace Flapjack.Compiler.Encoders.X64
 
 open Flapjack Compiler.Encoders.Asm Compiler.Encoders.AsmSem
 
-/-- Parity of the low byte: true when the number of set bits is even. -/
+/-- Parity of the low byte, in x86 `PF` form: true when the number of set bits
+is even.  The XOR fold therefore starts from `true`, not `false`. -/
 def parityByte (value : BitVec 64) : Bool :=
-  (List.range 8).foldl (fun acc i => xor acc (value.toNat / 2 ^ i % 2 = 1)) false
+  (List.range 8).foldl (fun acc i => xor acc (value.toNat / 2 ^ i % 2 = 1)) true
+
+/-- `PF` regression: a zero low byte has even parity, so `PF` is set. -/
+theorem parityByte_zero : parityByte 0 = true := by decide
+
+/-- `PF` regression: a low byte of `1` has odd parity, so `PF` is clear. -/
+theorem parityByte_one : parityByte 1 = false := by decide
 
 /-- The flags produced by an addition. -/
 def addFlags (a b : BitVec 64) : X64Flags :=

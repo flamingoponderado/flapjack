@@ -3,8 +3,14 @@
 
 Generates random Pancake programs, compiles them with the original CakeML
 compiler (`cake --pancake --target=x64`) and with `flapjack-compile
---target=x64`, and compares the complete assembly output.  Exits nonzero on
-the first mismatch and writes both outputs for inspection.
+--target=x64`, and compares the complete assembly output.  Exits nonzero on a
+mismatch, on an oracle failure, or when too few programs were compared.
+
+A program the original compiler rejects prints `### ERROR: ...` and exits
+nonzero; that is an expected input rejection, not a failure.  Any other
+nonzero oracle exit (a crash, a missing binary, a truncated run) is an oracle
+failure: counting it as a rejection would let the run pass with no comparisons
+at all.  `--min-compared` (default half of `--count`) guards against that.
 """
 import argparse
 import random
@@ -100,36 +106,66 @@ def run(cmd: list[str], source: str) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, input=source, capture_output=True, text=True)
 
 
+REJECTION_MARKER = "### ERROR"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--count", type=int, default=100)
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--keep-going", action="store_true")
+    parser.add_argument(
+        "--min-compared", type=int, default=None,
+        help="require at least this many successful comparisons (default: half of --count)")
     args = parser.parse_args()
+    min_compared = (args.min_compared if args.min_compared is not None
+                    else max(1, args.count // 2))
+    if not ORACLE.is_file():
+        print(f"FAIL: oracle compiler not found at {ORACLE}", file=sys.stderr)
+        return 1
+    if not FLAPJACK.is_file():
+        print(f"FAIL: flapjack-compile not found at {FLAPJACK}; "
+              f"run lake build flapjack-compile", file=sys.stderr)
+        return 1
     rng = random.Random(args.seed)
     failures = 0
-    skipped = 0
+    rejected = 0
+    compared = 0
     for i in range(args.count):
         source = gen_program(rng)
         oracle = run([str(ORACLE), "--pancake", "--target=x64"], source)
-        if oracle.returncode != 0:
-            skipped += 1
-            continue
-        flapjack = run([str(FLAPJACK), "--target=x64"], source)
-        if flapjack.returncode != 0:
-            print(f"FAIL {i}: flapjack exited {flapjack.returncode}: {flapjack.stderr.strip()}",
-                  file=sys.stderr)
+        if oracle.returncode < 0:
+            print(f"FAIL {i}: oracle killed by signal {-oracle.returncode}", file=sys.stderr)
             print(source, file=sys.stderr)
             failures += 1
-        elif flapjack.stdout != oracle.stdout:
-            print(f"FAIL {i}: output differs", file=sys.stderr)
+        elif oracle.returncode != 0:
+            if REJECTION_MARKER in oracle.stderr:
+                rejected += 1
+                continue
+            print(f"FAIL {i}: oracle exited {oracle.returncode} without an input "
+                  f"rejection: {oracle.stderr.strip()}", file=sys.stderr)
             print(source, file=sys.stderr)
             failures += 1
         else:
-            continue
+            compared += 1
+            flapjack = run([str(FLAPJACK), "--target=x64"], source)
+            if flapjack.returncode != 0:
+                print(f"FAIL {i}: flapjack exited {flapjack.returncode}: "
+                      f"{flapjack.stderr.strip()}", file=sys.stderr)
+                print(source, file=sys.stderr)
+                failures += 1
+            elif flapjack.stdout != oracle.stdout:
+                print(f"FAIL {i}: output differs", file=sys.stderr)
+                print(source, file=sys.stderr)
+                failures += 1
         if failures >= 5 and not args.keep_going:
             break
-    print(f"{args.count} programs, {skipped} rejected by cake, {failures} failures")
+    print(f"{args.count} programs, {compared} compared, {rejected} rejected by cake, "
+          f"{failures} failures")
+    if compared < min_compared:
+        print(f"FAIL: only {compared} successful comparisons, need at least {min_compared}",
+              file=sys.stderr)
+        return 1
     return 1 if failures else 0
 
 

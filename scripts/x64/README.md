@@ -18,7 +18,10 @@ scripts/x64/check-parity.py --cake /path/to/cake --regenerate
 ```
 
 `scripts/x64/fuzz.py` generates random Pancake programs and compares the full
-assembly output of the two compilers.
+assembly output of the two compilers.  Programs the original compiler rejects
+(`### ERROR: ...`) are counted as rejections; any other nonzero oracle exit is a
+failure, and the run fails unless at least `--min-compared` (default half of
+`--count`) programs were actually compared.
 
 See `docs/X64.md` for the backend status and `docs/PARITY-TESTING.md` for the
 evidence rule.
