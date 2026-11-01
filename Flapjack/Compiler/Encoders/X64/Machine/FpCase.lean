@@ -670,4 +670,166 @@ theorem fpCmpCase (op : HolFp) (cond : ZCond) (n d1 d2 : Nat)
             fpAddOffset s1.pc (4 + (5 + (if 8 ≤ n then 1 else 0))) 2]
           exact mem_allPcs_zero s1.pc (by split_ifs <;> omega)
 
+
+/-- The `fpLess` constructor of `encoder_correct x64Target`. -/
+theorem case_fpLess (n d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.fp (.fpLess n d1 d2))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.fp (.fpLess n d1 d2))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.fp (.fpLess n d1 d2))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  simp only [asmOkExact, asmInstOkExact, asmFpOkExact, x64Config, Bool.and_eq_true] at hok
+  obtain ⟨⟨hnok, hd1ok⟩, hd2ok⟩ := hok
+  have hreg := regOk_of_asmRegOk n hnok
+  have hn : n < 16 := jumpReg_reg_lt n hnok
+  have hnav : x64Target.config.avoidRegs.contains n = false := hreg.2
+  have hd1 : d1 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd1ok
+  have hd2 : d2 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd2ok
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64
+      (x64Target.config.encode (.inst (.fp (.fpLess n d1 d2)))).length := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+    rw [← st.upd]; intro a
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg]
+  have hs2fp : ∀ x, s2.fpRegs x = s1.fpRegs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg]
+  have hs2regs : ∀ x, s2.regs x = if x = n then
+      (if holFp64LessThan (s1.fpRegs d1) (s1.fpRegs d2) then 1 else 0) else s1.regs x := by
+    intro x
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg, readFpReg]
+    rfl
+  have henc : x64Target.config.encode (.inst (.fp (.fpLess n d1 d2))) =
+      encodeInsn (.sse (.comisd (d1 % 8) (d2 % 8))) ++ encodeInsn (.movRI .z32 n 0) ++
+      encodeInsn (.jcc .zP 4) ++ encodeInsn (.setcc .zB true n) := by
+    rw [x64Target_config, x64Config_encode]
+    refine x64Enc_of_flatMap _ _ ?_ ?_
+    · simp only [x64Ast, x64Inst, totalNum2Zreg_eq n hn, List.flatMap_cons, List.flatMap_nil,
+        List.append_nil, List.append_assoc]
+    · intro h'
+      have ha : encodeInsn (.sse (.comisd (d1 % 8) (d2 % 8))) ≠ [] := by
+        intro h0
+        have := congrArg List.length h0
+        simp [comisd_length_lt8 (d1 % 8) (d2 % 8) (by omega) (by omega)] at this
+      have h3 := (List.append_eq_nil_iff.mp h').1
+      have h2 := (List.append_eq_nil_iff.mp h3).1
+      exact ha (List.append_eq_nil_iff.mp h2).1
+  exact fpCmpCase (.fpLess n d1 d2) .zB n d1 d2 holFp64LessThan s1 s2 ms h hn hnav hd1 hd2
+    (by decide) henc hs2pc hs2mem hs2dom hs2fp hs2regs
+    (fun a b => evalCond_zB_comisd a b)
+    (fun a b hu => holFp64LessThan_nan a b (xmmUnordered_nan a b hu))
+
+/-- The `fpLessEqual` constructor of `encoder_correct x64Target`. -/
+theorem case_fpLessEqual (n d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.fp (.fpLessEqual n d1 d2))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.fp (.fpLessEqual n d1 d2))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.fp (.fpLessEqual n d1 d2))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  simp only [asmOkExact, asmInstOkExact, asmFpOkExact, x64Config, Bool.and_eq_true] at hok
+  obtain ⟨⟨hnok, hd1ok⟩, hd2ok⟩ := hok
+  have hreg := regOk_of_asmRegOk n hnok
+  have hn : n < 16 := jumpReg_reg_lt n hnok
+  have hnav : x64Target.config.avoidRegs.contains n = false := hreg.2
+  have hd1 : d1 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd1ok
+  have hd2 : d2 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd2ok
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64
+      (x64Target.config.encode (.inst (.fp (.fpLessEqual n d1 d2)))).length := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+    rw [← st.upd]; intro a
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg]
+  have hs2fp : ∀ x, s2.fpRegs x = s1.fpRegs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg]
+  have hs2regs : ∀ x, s2.regs x = if x = n then
+      (if holFp64LessEqual (s1.fpRegs d1) (s1.fpRegs d2) then 1 else 0) else s1.regs x := by
+    intro x
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg, readFpReg]
+    rfl
+  have henc : x64Target.config.encode (.inst (.fp (.fpLessEqual n d1 d2))) =
+      encodeInsn (.sse (.comisd (d1 % 8) (d2 % 8))) ++ encodeInsn (.movRI .z32 n 0) ++
+      encodeInsn (.jcc .zP 4) ++ encodeInsn (.setcc .zNA true n) := by
+    rw [x64Target_config, x64Config_encode]
+    refine x64Enc_of_flatMap _ _ ?_ ?_
+    · simp only [x64Ast, x64Inst, totalNum2Zreg_eq n hn, List.flatMap_cons, List.flatMap_nil,
+        List.append_nil, List.append_assoc]
+    · intro h'
+      have ha : encodeInsn (.sse (.comisd (d1 % 8) (d2 % 8))) ≠ [] := by
+        intro h0
+        have := congrArg List.length h0
+        simp [comisd_length_lt8 (d1 % 8) (d2 % 8) (by omega) (by omega)] at this
+      have h3 := (List.append_eq_nil_iff.mp h').1
+      have h2 := (List.append_eq_nil_iff.mp h3).1
+      exact ha (List.append_eq_nil_iff.mp h2).1
+  exact fpCmpCase (.fpLessEqual n d1 d2) .zNA n d1 d2 holFp64LessEqual s1 s2 ms h hn hnav hd1 hd2
+    (by decide) henc hs2pc hs2mem hs2dom hs2fp hs2regs
+    (fun a b => evalCond_zNA_comisd a b)
+    (fun a b hu => holFp64LessEqual_nan a b (xmmUnordered_nan a b hu))
+
+/-- The `fpEqual` constructor of `encoder_correct x64Target`. -/
+theorem case_fpEqual (n d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.fp (.fpEqual n d1 d2))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.fp (.fpEqual n d1 d2))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.fp (.fpEqual n d1 d2))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  simp only [asmOkExact, asmInstOkExact, asmFpOkExact, x64Config, Bool.and_eq_true] at hok
+  obtain ⟨⟨hnok, hd1ok⟩, hd2ok⟩ := hok
+  have hreg := regOk_of_asmRegOk n hnok
+  have hn : n < 16 := jumpReg_reg_lt n hnok
+  have hnav : x64Target.config.avoidRegs.contains n = false := hreg.2
+  have hd1 : d1 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd1ok
+  have hd2 : d2 < 8 := by simpa [asmFpRegOkExact, x64Config] using hd2ok
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64
+      (x64Target.config.encode (.inst (.fp (.fpEqual n d1 d2)))).length := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+    rw [← st.upd]; intro a
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg]
+  have hs2fp : ∀ x, s2.fpRegs x = s1.fpRegs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg]
+  have hs2regs : ∀ x, s2.regs x = if x = n then
+      (if holFp64Equal (s1.fpRegs d1) (s1.fpRegs d2) then 1 else 0) else s1.regs x := by
+    intro x
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, fpUpd, updReg, readFpReg]
+    rfl
+  have henc : x64Target.config.encode (.inst (.fp (.fpEqual n d1 d2))) =
+      encodeInsn (.sse (.comisd (d1 % 8) (d2 % 8))) ++ encodeInsn (.movRI .z32 n 0) ++
+      encodeInsn (.jcc .zP 4) ++ encodeInsn (.setcc .zE true n) := by
+    rw [x64Target_config, x64Config_encode]
+    refine x64Enc_of_flatMap _ _ ?_ ?_
+    · simp only [x64Ast, x64Inst, totalNum2Zreg_eq n hn, List.flatMap_cons, List.flatMap_nil,
+        List.append_nil, List.append_assoc]
+    · intro h'
+      have ha : encodeInsn (.sse (.comisd (d1 % 8) (d2 % 8))) ≠ [] := by
+        intro h0
+        have := congrArg List.length h0
+        simp [comisd_length_lt8 (d1 % 8) (d2 % 8) (by omega) (by omega)] at this
+      have h3 := (List.append_eq_nil_iff.mp h').1
+      have h2 := (List.append_eq_nil_iff.mp h3).1
+      exact ha (List.append_eq_nil_iff.mp h2).1
+  exact fpCmpCase (.fpEqual n d1 d2) .zE n d1 d2 holFp64Equal s1 s2 ms h hn hnav hd1 hd2
+    (by decide) henc hs2pc hs2mem hs2dom hs2fp hs2regs
+    (fun a b => evalCond_zE_comisd a b)
+    (fun a b hu => holFp64Equal_nan a b (xmmUnordered_nan a b hu))
 end Flapjack.Compiler.Encoders.X64
