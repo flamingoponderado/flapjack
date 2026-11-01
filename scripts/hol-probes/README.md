@@ -1,3 +1,9 @@
+`data_sem_semantics_probe.out` captures the typed data-language observable
+semantics and original observations for limit construction, skip, and a missing
+entry point. Lean checks the same cases. The observations do not establish the
+compiler simulation or cross-language equivalence. Regenerate with
+`HOL_PROBE_ONLY=data_sem_semantics_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `data_sem_evaluate_probe.out` captures the typed original clocked evaluator and
 observations for skip, timeout, missing locals, return, force, tail calls and
 exception handlers. Lean checks the corresponding cases. These observations
