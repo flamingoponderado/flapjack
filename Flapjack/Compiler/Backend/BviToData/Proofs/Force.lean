@@ -294,6 +294,74 @@ theorem simulationFor_force_tail_recursive {C F : Type} (label index : Nat)
   · simp [compileSource, nameAt]
   · simpa [correctOutcome, DataSem.callEnv, DataSem.decClock, optimized] using optimizedOutcome
 
+/-- A positive-clock non-tail force propagates a recursive thunk abort through
+the saved caller frame. This is an evaluator case with the recursive body
+simulation as its induction hypothesis. -/
+theorem simulationFor_force_nontail_abort {C F : Type} (label index : Nat)
+    (env : List BvlSem.Value) (source nextSource : BviSem.BviState C F)
+    (thunk function : BvlSem.Value) (callArgs : List BvlSem.Value) (body : Bvi.Exp)
+    (error : Abort) (sourceVar : env[index]? = some thunk)
+    (sourceThunk : BviSem.destThunk thunk source.refs = .isThunk .notEvaluated function)
+    (sourceCode : BvlSem.findCode (some label) [thunk, function] source.code = some (callArgs, body))
+    (clock : source.clock ≠ 0)
+    (bodyRun : BviSem.evaluate [body] callArgs (BviSem.decClock 1 source) = (.err (.abort error), nextSource))
+    (notType : error ≠ .typeError)
+    (ih : simulationFor [body] callArgs (BviSem.decClock 1 source))
+    (target : DataSem.State C F) (n : Nat) (corr live : List Nat)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (related : stateRel source target) (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none) :
+    BviSem.evaluate [.force label index] env source = (.err (.abort error), nextSource) ∧
+    ∃ targetNext prog pres names next ls,
+      compileSource n corr false live [.force label index] = (prog, names, next) ∧
+      DataSem.evaluate prog target = (pres, targetNext) ∧ stateRel nextSource targetNext ∧
+      correctOutcome (.err (.abort error)) target targetNext n next corr live names env false pres ls := by
+  have sourceRun : BviSem.evaluate [.force label index] env source = (.err (.abort error), nextSource) := by
+    simp [BviSem.evaluate, sourceVar, sourceThunk, sourceCode, clock, bodyRun]
+  obtain ⟨name, dataThunk, dataFunction, nameAt, read, thunkProjection, inspect, functionProjection⟩ :=
+    force_inspection_projection index env source target corr thunk function .notEvaluated sourceVar sourceThunk vars related
+  have projectedCode : BvlSem.findCode (some label) ([dataThunk, dataFunction].map dataToBviValue) source.code =
+      some (callArgs, body) := by simpa [thunkProjection, functionProjection] using sourceCode
+  obtain ⟨dataArgs, size, argsProjection, targetCode⟩ :=
+    findCode_direct source target label [dataThunk, dataFunction] callArgs body related projectedCode
+  subst callArgs
+  have targetClock : target.clock ≠ 0 := by simpa [← related.1] using clock
+  let roots := live ++ corr
+  let cut := sptMkWf (sptInter target.locals (namesOfList roots))
+  have rootsPresent : ∀ key ∈ roots, sptLookup key target.locals ≠ none := by
+    simpa [roots, DataSem.getVars] using
+      (roots_present target [] live corr env [] vars livePresent (by simp [DataSem.getVars]))
+  have cutEnv : DataSem.cutEnv (namesOfList roots) target.locals = some cut :=
+    cutEnv_namesOfList roots target.locals rootsPresent
+  let pushed := DataSem.pushEnv cut false (DataSem.decClock target)
+  have callRelated := stateRel_pushEnv (BviSem.decClock 1 source) (DataSem.decClock target) cut false
+    (stateRel_decClock source target related)
+  obtain ⟨result, final, names, next, ls, localsSize, stackMax, safe, peak, bodyTarget,
+      finalRel, optimizedRel, outcome⟩ :=
+    compileExp_callEnv body dataArgs (BviSem.decClock 1 source) nextSource (.err (.abort error)) pushed size
+      ih bodyRun (by simpa using notType) callRelated (by simp [isException])
+  have resultEq : result = .err (.abort error) := by
+    have projected := outcome.1 (by simp [isReturn])
+    cases result with
+    | val values => simp [dataToBviResult] at projected
+    | err failure =>
+      cases failure with
+      | abort reason => simpa [dataToBviResult] using projected
+      | raise value => simp [dataToBviResult] at projected
+  subst result
+  let optimized := { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }
+  have clamped : DataSem.fixClock (DataSem.callEnv dataArgs size pushed)
+      (DataSem.evaluate (compileExp dataArgs.length body) (DataSem.callEnv dataArgs size pushed)) =
+      (some (.err (.abort error)), optimized) := by
+    rw [DataSem.fixClock_evaluate, bodyTarget]
+  have targetRun : DataSem.evaluate (.force (some (n, namesOfList roots)) label name) target =
+      (some (.err (.abort error)), optimized) := by
+    simp only [DataSem.evaluate, read, inspect, targetCode, targetClock, cutEnv, ↓reduceIte]
+    rw [clamped]
+  refine ⟨sourceRun, optimized, .force (some (n, namesOfList roots)) label name,
+    some (.err (.abort error)), [n], max (n + 1) (name + 1), ls, ?_, targetRun, optimizedRel, ?_⟩
+  · simp [compileSource, nameAt, roots]
+  · simp [correctOutcome, dataToBviResult, isReturn, isResult, isException]
+
 /-- An already evaluated thunk satisfies the complete compiler simulation
 invariant at any clock. The evaluator and carrier correspondence still need
 review against HOL, so this assembling lemma is untagged. -/
