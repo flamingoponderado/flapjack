@@ -31,6 +31,23 @@ def EvalSimulation {C F : Type} (expressions : List ClosLang.Exp) : Prop :=
       evaluate (renumberList start expressions).2 nextEnv target = (targetResult, targetNext) ∧
       ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
 
+/-- Evaluator simulation at one source state, for arbitrary related targets
+and environments. -/
+def EvalSimulationAt {C F : Type} (source : State (Nat × C) F) (expressions : List ClosLang.Exp) : Prop :=
+  ∀ (env nextEnv : List Value) (target : State C F) (result : Result (List Value) Value)
+    (sourceNext : State (Nat × C) F) (start : Nat),
+    evaluate expressions env source = (result, sourceNext) →
+    result ≠ .err (.abort .typeError) →
+    ¬ ClosProps.containsAppSome source.maxApp expressions →
+    List.Forall₂ (ValueRel source.maxApp) env nextEnv → StateRel source target →
+    ∃ targetResult targetNext,
+      evaluate (renumberList start expressions).2 nextEnv target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
+
+/-- Evaluator simulations available at clocks strictly below the bound. -/
+def EvalSimulationBelow {C F : Type} (clock : Nat) (expressions : List ClosLang.Exp) : Prop :=
+  ∀ source : State (Nat × C) F, source.clock < clock → EvalSimulationAt source expressions
+
 /-- Induction hypothesis for indirect closure application. This is proof-side
     infrastructure, pending the complete evaluator correspondence review. -/
 def AppSimulation {C F : Type} : Prop :=
@@ -55,6 +72,19 @@ def AppSimulationBelow {C F : Type} (bound : Nat) : Prop :=
     evaluateApp none function args source = (result, sourceNext) →
     result ≠ .err (.abort .typeError) →
     ValueRel source.maxApp function nextFunction →
+    List.Forall₂ (ValueRel source.maxApp) args nextArgs → StateRel source target →
+    ∃ targetResult targetNext,
+      evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
+
+/-- Indirect applications starting at clocks strictly below the bound. -/
+def AppSimulationClockBelow {C F : Type} (clock : Nat) : Prop :=
+  ∀ (function nextFunction : Value) (args nextArgs : List Value)
+    (source : State (Nat × C) F) (target : State C F)
+    (result : Result (List Value) Value) (sourceNext : State (Nat × C) F),
+    source.clock < clock →
+    evaluateApp none function args source = (result, sourceNext) →
+    result ≠ .err (.abort .typeError) → ValueRel source.maxApp function nextFunction →
     List.Forall₂ (ValueRel source.maxApp) args nextArgs → StateRel source target →
     ∃ targetResult targetNext,
       evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
@@ -188,8 +218,8 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
     (related : ValueRel source.maxApp function nextFunction)
     (argsRel : List.Forall₂ (ValueRel source.maxApp) (first :: rest) nextArgs)
     (stateRel : StateRel source target)
-    (bodyIH : EvalSimulation (C := C) (F := F) [body])
-    (applicationIH : AppSimulationBelow (C := C) (F := F) (first :: rest).length) :
+    (bodyIH : EvalSimulationBelow (C := C) (F := F) source.clock [body])
+    (applicationIH : AppSimulationClockBelow (C := C) (F := F) source.clock) :
     ∃ targetResult targetNext, evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
       ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
   obtain ⟨start, nextEnv, nextRemaining, nextFound, envRel, remainingRel, bodySafe⟩ :=
@@ -203,6 +233,11 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
   | cons head tail =>
     rename_i nextFirst nextRest
     let cost := (first :: rest).length - remaining.length
+    have costPositive : 0 < cost :=
+      Nat.sub_pos_of_lt (destClosure_full_remaining_lt _ _ _ _ _ _ _ found)
+    have bodyClockLess : (decClock cost source).clock < source.clock := by
+      simp [decClock]
+      omega
     have targetCost : (nextFirst :: nextRest).length - nextRemaining.length = cost := by
       simp [cost, ← lengthEq, ← remainingEq]
     have targetFound : destClosure target.maxApp none nextFunction (nextFirst :: nextRest) =
@@ -226,7 +261,7 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
         cases run
         exact noType rfl
       obtain ⟨targetBodyResult, targetLast, targetBodyRun, bodyRel, lastRel⟩ :=
-        bodyIH bodyEnv nextEnv (decClock cost source) (decClock cost target)
+        bodyIH (decClock cost source) bodyClockLess bodyEnv nextEnv (decClock cost target)
           bodyResult last start bodyRun bodyNoType bodySafe' bodyEnvRel startRel
       cases bodyResult with
       | err error =>
@@ -264,9 +299,13 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
                 have appRun : evaluateApp none value remaining last = (result, sourceNext) := by
                   rw [bodyRun] at run
                   exact run
+                have lastClockLess : last.clock < source.clock := by
+                  have bound := evaluate_clock_le [body] bodyEnv (decClock cost source)
+                  rw [bodyRun] at bound
+                  exact Nat.lt_of_le_of_lt bound bodyClockLess
                 obtain ⟨targetResult, targetNext, targetAppRun, resultRel, nextRel⟩ :=
                   applicationIH value targetValue remaining nextRemaining last targetLast result sourceNext
-                    (destClosure_full_remaining_lt _ _ _ _ _ _ _ found) appRun noType (by simpa [lastMax, decClock] using valueRel)
+                    lastClockLess appRun noType (by simpa [lastMax, decClock] using valueRel)
                     (by simpa [lastMax] using remainingRel) lastRel
                 refine ⟨targetResult, targetNext, ?_, ?_, nextRel⟩
                 · rw [evaluateApp, targetFound]
@@ -277,40 +316,57 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
                   exact targetAppRun
                 · simpa [lastMax] using resultRel
 
-/-- Indirect application simulation follows by induction on the argument
-    count, assuming simulations of all closure bodies. The body assumption is
-    a remaining mutual-evaluator obligation, not an established HOL theorem. -/
+/-- One indirect application step, assuming both recursive simulations only
+at smaller clocks. -/
+theorem appSimulation_clock_step {C F : Type} (function nextFunction : Value)
+    (args nextArgs : List Value) (source : State (Nat × C) F) (target : State C F)
+    (result : Result (List Value) Value) (sourceNext : State (Nat × C) F)
+    (run : evaluateApp none function args source = (result, sourceNext))
+    (noType : result ≠ .err (.abort .typeError))
+    (related : ValueRel source.maxApp function nextFunction)
+    (argsRel : List.Forall₂ (ValueRel source.maxApp) args nextArgs) (stateRel : StateRel source target)
+    (bodyIH : ∀ body, EvalSimulationBelow (C := C) (F := F) source.clock [body])
+    (applicationIH : AppSimulationClockBelow (C := C) (F := F) source.clock) :
+    ∃ targetResult targetNext, evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
+  cases args with
+  | nil =>
+    cases argsRel
+    rw [evaluateApp] at run
+    cases run
+    simpa [evaluateApp] using evaluateApp_empty function nextFunction source target related stateRel
+  | cons first rest =>
+    cases found : destClosure source.maxApp none function (first :: rest) with
+    | none => exact False.elim (evaluateApp_rejected function first rest source result sourceNext run found noType)
+    | some kind =>
+      cases kind with
+      | partialApp partialValue =>
+        exact evaluateApp_partial function nextFunction first rest nextArgs source target partialValue
+          result sourceNext run found related argsRel stateRel
+      | fullApp body bodyEnv remaining =>
+        by_cases insufficient : source.clock < (first :: rest).length - remaining.length
+        · exact evaluateApp_full_timeout function nextFunction first rest nextArgs source target body bodyEnv remaining
+            result sourceNext run found insufficient related argsRel stateRel
+        · exact evaluateApp_full function nextFunction first rest nextArgs source target body bodyEnv remaining
+            result sourceNext run found insufficient noType related argsRel stateRel (bodyIH body) applicationIH
+
+/-- Indirect application simulation follows by clock induction, assuming
+simulations of all closure bodies. The body assumption remains a mutual
+ evaluator obligation. -/
 theorem appSimulation_of_bodySimulations {C F : Type}
     (bodyIH : ∀ body, EvalSimulation (C := C) (F := F) [body]) :
     AppSimulation (C := C) (F := F) := by
-  have bounded : ∀ bound, AppSimulationBelow (C := C) (F := F) bound := by
-    intro bound
-    induction bound using Nat.strong_induction_on with
-    | h bound ih =>
+  have bounded : ∀ clock, AppSimulationClockBelow (C := C) (F := F) clock := by
+    intro clock
+    induction clock using Nat.strong_induction_on with
+    | h clock ih =>
       intro function nextFunction args nextArgs source target result sourceNext smaller run noType related argsRel stateRel
-      cases args with
-      | nil =>
-        cases argsRel
-        rw [evaluateApp] at run
-        cases run
-        simpa [evaluateApp] using evaluateApp_empty function nextFunction source target related stateRel
-      | cons first rest =>
-        cases found : destClosure source.maxApp none function (first :: rest) with
-        | none => exact False.elim (evaluateApp_rejected function first rest source result sourceNext run found noType)
-        | some kind =>
-          cases kind with
-          | partialApp partialValue =>
-            exact evaluateApp_partial function nextFunction first rest nextArgs source target partialValue
-              result sourceNext run found related argsRel stateRel
-          | fullApp body bodyEnv remaining =>
-            by_cases insufficient : source.clock < (first :: rest).length - remaining.length
-            · exact evaluateApp_full_timeout function nextFunction first rest nextArgs source target body bodyEnv remaining
-                result sourceNext run found insufficient related argsRel stateRel
-            · exact evaluateApp_full function nextFunction first rest nextArgs source target body bodyEnv remaining
-                result sourceNext run found insufficient noType related argsRel stateRel (bodyIH body)
-                  (ih (first :: rest).length smaller)
+      apply appSimulation_clock_step function nextFunction args nextArgs source target result sourceNext
+        run noType related argsRel stateRel ?_ (ih source.clock smaller)
+      intro body state _ env nextEnv target result next start run noType safe envRel stateRel
+      exact bodyIH body env nextEnv state target result next start run noType safe envRel stateRel
   intro function nextFunction args nextArgs source target result sourceNext run noType related argsRel stateRel
-  exact bounded (args.length + 1) function nextFunction args nextArgs source target result sourceNext
+  exact bounded (source.clock + 1) function nextFunction args nextArgs source target result sourceNext
     (Nat.lt_succ_self _) run noType related argsRel stateRel
 
 /-- An environment lookup preserves a pointwise relation. -/

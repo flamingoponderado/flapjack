@@ -6,23 +6,6 @@ namespace Flapjack.Compiler.Backend.ClosNumber
 open Flapjack Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- Evaluator simulation at one source state, for arbitrary related targets
-and environments. This form allows clock induction to restrict its premise. -/
-def EvalSimulationAt {C F : Type} (source : State (Nat × C) F) (expressions : List ClosLang.Exp) : Prop :=
-  ∀ (env nextEnv : List Value) (target : State C F) (result : Result (List Value) Value)
-    (sourceNext : State (Nat × C) F) (start : Nat),
-    evaluate expressions env source = (result, sourceNext) →
-    result ≠ .err (.abort .typeError) →
-    ¬ ClosProps.containsAppSome source.maxApp expressions →
-    List.Forall₂ (ValueRel source.maxApp) env nextEnv → StateRel source target →
-    ∃ targetResult targetNext,
-      evaluate (renumberList start expressions).2 nextEnv target = (targetResult, targetNext) ∧
-      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
-
-/-- Simulations available at clocks strictly below a given bound. -/
-def EvalSimulationBelow {C F : Type} (clock : Nat) (expressions : List ClosLang.Exp) : Prop :=
-  ∀ source : State (Nat × C) F, source.clock < clock → EvalSimulationAt source expressions
-
 /-- Continuation after the closure evaluator has evaluated install arguments. -/
 noncomputable def runInstalled {C F : Type} (values : List Value) (state : State C F) : EvalResult C F :=
   match doInstall values state with
