@@ -1127,4 +1127,91 @@ theorem evaluate_intOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.I
           rw [evaluate, fixClock_evaluate, targetRun]
           simp [doApp, applyNumeric, ← same, numeric]
 
+/-- Related arguments give identical word-primitive observations, including
+    the existing floating-point operations and their FpSemHOL assumptions. -/
+theorem doWordApp_related (maxApp : Nat) (op : ClosLang.WordOp) {args nextArgs : List Value}
+    (related : List.Forall₂ (ValueRel maxApp) args nextArgs) :
+    doWordApp op args = doWordApp op nextArgs := by
+  cases op <;> cases related with
+  | nil => rfl
+  | cons head tail =>
+    cases head <;> cases tail <;> simp_all [doWordApp, doWordAppIntegral]
+    all_goals
+      rename_i head2 tail2
+      cases head2 <;> cases tail2 <;> try simp_all
+      all_goals
+        rename_i head3 tail3
+        cases head3 <;> cases tail3 <;> simp_all
+
+/-- Successful word operations return scalar words, numbers, or Boolean
+    values, each related to itself. -/
+theorem doWordApp_result_related (maxApp : Nat) (op : ClosLang.WordOp) (args : List Value) (value : Value)
+    (run : doWordApp op args = some value) : ValueRel maxApp value value := by
+  cases op <;> cases args <;> simp_all [doWordApp, doWordAppIntegral]
+  all_goals
+    rename_i head tail
+    cases head <;> cases tail <;> try simp_all
+    all_goals try (subst value; exact .word64 _)
+    all_goals try (subst value; exact .number _)
+    all_goals
+      repeat
+        first
+        | split at run
+        | simp_all
+        | subst value
+        | exact .number _
+        | exact .word64 _
+        | exact boolValue_related _ _
+    all_goals try simp_all
+    all_goals simp [intToByte] at run
+    all_goals split at run <;> simp_all
+    all_goals try (split at run <;> simp_all)
+    all_goals try (subst value; exact .number _)
+    all_goals try (subst value; exact .word64 _)
+
+/-- Word primitive expressions preserve evaluation after numbering, given
+    the induction hypothesis for their argument expressions. -/
+theorem evaluate_wordOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.WordOp)
+    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.wordOp op) args] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  have argsSafe : ¬ ClosProps.containsAppSome source.maxApp args := by
+    simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
+  cases argsRun : evaluate args env source with
+  | mk argsResult middle =>
+    cases argsResult with
+    | err error =>
+      rw [evaluate, fixClock_evaluate, argsRun] at run
+      cases run
+      obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+        argsIH env nextEnv source target (.err error) middle start argsRun noType argsSafe envRel stateRel
+      cases targetResult with
+      | val values => cases error <;> simp [ResultRel] at resultRel
+      | err targetError =>
+        refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
+        simp only [renumberList, renumber]
+        rw [evaluate, fixClock_evaluate, targetRun]
+    | val values =>
+      have argsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
+      obtain ⟨targetResult, targetMiddle, targetRun, argsRel, middleRel⟩ :=
+        argsIH env nextEnv source target (.val values) middle start argsRun argsNoType argsSafe envRel stateRel
+      cases targetResult with
+      | err error => cases error <;> simp [ResultRel] at argsRel
+      | val nextValues =>
+        have same := doWordApp_related source.maxApp op (List.rel_reverse argsRel)
+        cases numeric : doWordApp op values.reverse with
+        | none =>
+          rw [evaluate, fixClock_evaluate, argsRun] at run
+          simp [doApp, applyNumeric, numeric] at run
+          exact False.elim (noType run.1.symm)
+        | some value =>
+          have valueRel := doWordApp_result_related source.maxApp op values.reverse value numeric
+          rw [evaluate, fixClock_evaluate, argsRun] at run
+          simp [doApp, applyNumeric, numeric] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨.val [value], targetMiddle, ?_, .cons valueRel .nil, middleRel⟩
+          simp only [renumberList, renumber]
+          rw [evaluate, fixClock_evaluate, targetRun]
+          simp [doApp, applyNumeric, ← same, numeric]
+
 end Flapjack.Compiler.Backend.ClosNumber
