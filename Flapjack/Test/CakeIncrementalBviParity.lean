@@ -45,6 +45,18 @@ private def wordOracleConfig : WordToWord.Config :=
     | _ => false
   | _ => false
 
+-- The evaluation callback returns the same emitted bytes and bitmaps and
+-- preserves the updated configuration; assembly failure stays a failure.
+#guard match SourceToFlat.compileCakeIncForEvalFuel 100
+    ((0, 0), { riscvConfig with labConf := seededLab },
+      [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.lit (.intLit 1))]) with
+  | some (config, bytes, bitmaps) => config.labConf.pos == 4316 && config.wordConf.bitmapsLength == 6 &&
+      bytes.length == 220 && bitmaps == [2, 2, 8, 8589934595, 0, 0]
+  | none => false
+
+#guard (SourceToFlat.compileCakeIncForEvalFuel 100
+  ((0, 0), riscvConfig, [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.lit (.intLit 1))])).isNone
+
 private def unit : Bvi.Exp := .op (.blockOp (.cons 0)) []
 private def storeEnv : Bvi.Exp :=
   .let [.op (.globOp (.global 3)) []]

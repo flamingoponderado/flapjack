@@ -36,4 +36,15 @@ def compileCakeIncToRiscVFuel (fuel : Nat) (config : Backend.Config)
   | some (bytes, labConfig) =>
     pure ({ updated with labConf := labConfig }, some (bytes, appListAppend bitmaps.1))
 
+/-- Runtime-evaluation interface for the checked RISC-V incremental compiler.
+For this 64-bit target the source `upper_w2w` bitmap conversion is the identity.
+Both checked frontend failure and target assembly failure produce `none`, as
+required by the evaluation interface. This is not yet a reviewed HOL port. -/
+def compileCakeIncForEvalFuel (fuel : Nat)
+    (input : (Nat × Nat) × Backend.Config × List AstHOL.Dec) :
+    Option (Backend.Config × List (BitVec 8) × List (BitVec 64)) := do
+  let (config, target) ← compileCakeIncToRiscVFuel fuel input.2.1 input.1 input.2.2
+  let (bytes, bitmaps) ← target
+  pure (config, bytes, bitmaps)
+
 end Flapjack.Compiler.Backend.SourceToFlat
