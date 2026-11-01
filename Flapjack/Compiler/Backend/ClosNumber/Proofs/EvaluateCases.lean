@@ -1332,15 +1332,21 @@ def PrimitiveSimulation {C F : Type} (op : ClosLang.Op) : Prop :=
         doApp op nextArgs target = .val (targetValue, targetNext) ∧
         ValueRel source.maxApp value targetValue ∧ StateRel next targetNext
 
-/-- An ordinary primitive expression composes argument evaluation with its
-    primitive-dispatch simulation. Installation and forcing are separate. -/
-theorem evaluate_ordinaryOp {C F : Type} (trace : BackendCommon.Tra)
+/-- An ordinary primitive step at one source state. Its argument simulation
+is needed only at that state. Installation and forcing are separate. -/
+theorem evaluate_ordinaryOp_step {C F : Type} (trace : BackendCommon.Tra)
     (op : ClosLang.Op) (args : List ClosLang.Exp)
     (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
-    (argsIH : EvalSimulation (C := C) (F := F) args)
-    (primitiveIH : PrimitiveSimulation (C := C) (F := F) op) :
-    EvalSimulation (C := C) (F := F) [.op trace op args] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+    (env nextEnv : List Value) (source : State (Nat × C) F) (target : State C F)
+    (result : Result (List Value) Value) (sourceNext : State (Nat × C) F) (start : Nat)
+    (run : evaluate [.op trace op args] env source = (result, sourceNext))
+    (noType : result ≠ .err (.abort .typeError))
+    (safe : ¬ ClosProps.containsAppSome source.maxApp [.op trace op args])
+    (envRel : List.Forall₂ (ValueRel source.maxApp) env nextEnv) (stateRel : StateRel source target)
+    (argsIH : EvalSimulationAt source args) (primitiveIH : PrimitiveSimulation (C := C) (F := F) op) :
+    ∃ targetResult targetNext,
+      evaluate (renumberList start [.op trace op args]).2 nextEnv target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
   have argsSafe : ¬ ClosProps.containsAppSome source.maxApp args := by
     cases op <;> simp_all [ClosProps.containsAppSome, ClosProps.containsAppSomeExp]
   rw [evaluate_ordinaryOp_eq trace op args env source notInstall notForce] at run
@@ -1351,7 +1357,7 @@ theorem evaluate_ordinaryOp {C F : Type} (trace : BackendCommon.Tra)
       rw [argsRun] at run
       cases run
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-        argsIH env nextEnv source target (.err error) sourceNext start argsRun noType argsSafe envRel stateRel
+        argsIH env nextEnv target (.err error) sourceNext start argsRun noType argsSafe envRel stateRel
       cases targetResult with
       | val values => cases error <;> simp [ResultRel] at resultRel
       | err targetError =>
@@ -1361,7 +1367,7 @@ theorem evaluate_ordinaryOp {C F : Type} (trace : BackendCommon.Tra)
     | val values =>
       have argsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
       obtain ⟨targetResult, targetMiddle, targetRun, argsRel, middleRel⟩ :=
-        argsIH env nextEnv source target (.val values) middle start argsRun argsNoType argsSafe envRel stateRel
+        argsIH env nextEnv target (.val values) middle start argsRun argsNoType argsSafe envRel stateRel
       cases targetResult with
       | err error => cases error <;> simp [ResultRel] at argsRel
       | val nextValues =>
@@ -1399,6 +1405,19 @@ theorem evaluate_ordinaryOp {C F : Type} (trace : BackendCommon.Tra)
             dsimp only
             rw [targetPrimRun]
           · exact .cons (by simpa [maxEq] using valueRel) .nil
+
+/-- Unrestricted ordinary-operation case derived from its local-state step. -/
+theorem evaluate_ordinaryOp {C F : Type} (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (args : List ClosLang.Exp)
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
+    (argsIH : EvalSimulation (C := C) (F := F) args)
+    (primitiveIH : PrimitiveSimulation (C := C) (F := F) op) :
+    EvalSimulation (C := C) (F := F) [.op trace op args] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  apply evaluate_ordinaryOp_step trace op args notInstall notForce env nextEnv source target result sourceNext start
+    run noType safe envRel stateRel ?_ primitiveIH
+  intro env nextEnv target result next start run noType safe envRel stateRel
+  exact argsIH env nextEnv source target result next start run noType safe envRel stateRel
 
 /-- Integer primitives satisfy the shared ordinary-operation obligation. -/
 theorem primitiveSimulation_int {C F : Type} (op : ClosLang.IntOp) :
@@ -2870,6 +2889,28 @@ theorem primitiveSimulation_thunk_update {C F : Type} (mode : Flapjack.AstHOL.Th
           simp [doApp, ResultRel]
       | cons head tail => simp [doApp, ResultRel]
 
+/-- All ordinary dispatcher operations preserve the numbering relation.
+Installation and forcing use their separate evaluator cases. -/
+theorem primitiveSimulation_ordinary {C F : Type} (op : ClosLang.Op)
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk) :
+    PrimitiveSimulation (C := C) (F := F) op := by
+  cases op with
+  | install => exact (notInstall rfl).elim
+  | label _ =>
+    intro args nextArgs source target argsRel stateRel
+    simp [doApp, ResultRel]
+  | ffi name => exact primitiveSimulation_ffi name
+  | intOp operation => exact primitiveSimulation_int operation
+  | wordOp operation => exact primitiveSimulation_word operation
+  | blockOp operation => exact primitiveSimulation_block operation
+  | globOp operation => exact primitiveSimulation_global operation
+  | memOp operation => exact primitiveSimulation_memory operation
+  | thunkOp operation =>
+    cases operation with
+    | forceThunk => exact (notForce rfl).elim
+    | allocThunk mode => exact primitiveSimulation_thunk_alloc mode
+    | updateThunk mode => exact primitiveSimulation_thunk_update mode
+
 /-- Thunk allocation expressions preserve evaluation. -/
 theorem evaluate_thunk_alloc {C F : Type} (trace : BackendCommon.Tra) (mode : Flapjack.AstHOL.ThunkMode)
     (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
@@ -2943,11 +2984,19 @@ theorem updateThunk_related {C F : Type} (source : State (Nat × C) F) (target :
 /-- Forcing a thunk composes argument evaluation, thunk inspection, evaluation
     of the forced function and the related store update. The generated-call
     simulation is a remaining mutual-evaluator induction hypothesis. -/
-theorem evaluate_forceThunk {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args)
-    (forceIH : EvalSimulation (C := C) (F := F) [appUnit (.var .none 0)]) :
-    EvalSimulation (C := C) (F := F) [.op trace (.thunkOp .forceThunk) args] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+theorem evaluate_forceThunk_step {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (env nextEnv : List Value) (source : State (Nat × C) F) (target : State C F)
+    (result : Result (List Value) Value) (sourceNext : State (Nat × C) F) (start : Nat)
+    (run : evaluate [.op trace (.thunkOp .forceThunk) args] env source = (result, sourceNext))
+    (noType : result ≠ .err (.abort .typeError))
+    (safe : ¬ ClosProps.containsAppSome source.maxApp [.op trace (.thunkOp .forceThunk) args])
+    (envRel : List.Forall₂ (ValueRel source.maxApp) env nextEnv) (stateRel : StateRel source target)
+    (argsIH : EvalSimulationAt source args)
+    (forceIH : ∀ state : State (Nat × C) F, state.clock ≤ source.clock →
+      EvalSimulationAt state [appUnit (.var .none 0)]) :
+    ∃ targetResult targetNext,
+      evaluate (renumberList start [.op trace (.thunkOp .forceThunk) args]).2 nextEnv target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
   have safeParts : 1 ≤ source.maxApp ∧ ¬ ClosProps.containsAppSome source.maxApp args := by
     have h : source.maxApp ≠ 0 ∧ ¬ ClosProps.containsAppSome source.maxApp args := by
       simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp, not_or] using safe
@@ -2959,7 +3008,7 @@ theorem evaluate_forceThunk {C F : Type} (trace : BackendCommon.Tra) (args : Lis
       rw [evaluate, fixClock_evaluate, argsRun] at run
       cases run
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-        argsIH env nextEnv source target (.err error) middle start argsRun noType safeParts.2 envRel stateRel
+        argsIH env nextEnv target (.err error) middle start argsRun noType safeParts.2 envRel stateRel
       cases targetResult with
       | val values => cases error <;> simp [ResultRel] at resultRel
       | err targetError =>
@@ -2969,10 +3018,13 @@ theorem evaluate_forceThunk {C F : Type} (trace : BackendCommon.Tra) (args : Lis
     | val values =>
       have argsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
       obtain ⟨targetResult, targetMiddle, targetRun, valuesRel, middleRel⟩ :=
-        argsIH env nextEnv source target (.val values) middle start argsRun argsNoType safeParts.2 envRel stateRel
+        argsIH env nextEnv target (.val values) middle start argsRun argsNoType safeParts.2 envRel stateRel
       cases targetResult with
       | err error => cases error <;> simp [ResultRel] at valuesRel
       | val nextValues =>
+        have middleClock : middle.clock ≤ source.clock := by
+          have h := evaluate_clock_le args env source
+          simpa [argsRun] using h
         have middleMax : middle.maxApp = source.maxApp := by
           have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 args env source
           simpa [argsRun] using h
@@ -3021,7 +3073,7 @@ theorem evaluate_forceThunk {C F : Type} (trace : BackendCommon.Tra) (args : Lis
                   rw [forceRun] at run
                   cases run
                   obtain ⟨targetForceResult, targetLast, targetForceRun, resultRel, lastRel⟩ :=
-                    forceIH [value] [targetValue] middle targetMiddle (.err error) last 0 forceRun noType
+                    forceIH middle middleClock [value] [targetValue] targetMiddle (.err error) last 0 forceRun noType
                       forceSafe (.cons valueRel .nil) middleRel
                   cases targetForceResult with
                   | val values => cases error <;> simp [ResultRel] at resultRel
@@ -3039,7 +3091,7 @@ theorem evaluate_forceThunk {C F : Type} (trace : BackendCommon.Tra) (args : Lis
                 | val forced =>
                   have forceNoType : (Result.val forced : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
                   obtain ⟨targetForceResult, targetLast, targetForceRun, resultRel, lastRel⟩ :=
-                    forceIH [value] [targetValue] middle targetMiddle (.val forced) last 0 forceRun forceNoType
+                    forceIH middle middleClock [value] [targetValue] targetMiddle (.val forced) last 0 forceRun forceNoType
                       forceSafe (.cons valueRel .nil) middleRel
                   cases targetForceResult with
                   | err error => cases error <;> simp [ResultRel] at resultRel
@@ -3084,5 +3136,18 @@ theorem evaluate_forceThunk {C F : Type} (trace : BackendCommon.Tra) (args : Lis
                         dsimp only
                         rw [targetUpdate]
                       · simpa [ResultRel, lastMax, middleMax] using forcedRel
+
+/-- Unrestricted thunk-force case derived from its local-state step. -/
+theorem evaluate_forceThunk {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args)
+    (forceIH : EvalSimulation (C := C) (F := F) [appUnit (.var .none 0)]) :
+    EvalSimulation (C := C) (F := F) [.op trace (.thunkOp .forceThunk) args] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  apply evaluate_forceThunk_step trace args env nextEnv source target result sourceNext start
+    run noType safe envRel stateRel
+  · intro env nextEnv target result next start run noType safe envRel stateRel
+    exact argsIH env nextEnv source target result next start run noType safe envRel stateRel
+  · intro state _ env nextEnv target result next start run noType safe envRel stateRel
+    exact forceIH env nextEnv state target result next start run noType safe envRel stateRel
 
 end Flapjack.Compiler.Backend.ClosNumber
