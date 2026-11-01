@@ -22,4 +22,51 @@ constant compiler uses this definition directly. -/
 def i2mw {width : Nat} [NeZero width] (i : Int) : Bool × List (BitVec width) :=
   (decide (i < 0), n2mw i.natAbs)
 
+/-- Interpret little-endian word digits as a natural number. -/
+@[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "mw2n_def"
+  (words_as_type_indexed_bitvec)]
+def mw2n {width : Nat} [NeZero width] : List (BitVec width) → Nat
+  | [] => 0
+  | x :: xs => x.toNat + 2 ^ width * mw2n xs
+
+/-- Decode a sign-and-magnitude representation as a signed integer. -/
+@[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "mw2i_def"
+  (words_as_type_indexed_bitvec)]
+def mw2i {width : Nat} [NeZero width] : Bool × List (BitVec width) → Int
+  | (false, xs) => Int.ofNat (mw2n xs)
+  | (true, xs) => -Int.ofNat (mw2n xs)
+
+/-- Converting a natural to words and back preserves its value. -/
+@[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "mw2n_n2mw"
+  (words_as_type_indexed_bitvec)]
+theorem mw2n_n2mw {width : Nat} [NeZero width] (n : Nat) : mw2n (n2mw n : List (BitVec width)) = n := by
+  rw [n2mw]
+  split
+  · simp_all [mw2n]
+  · simp only [mw2n, BitVec.toNat_ofNat, Nat.mod_mod]
+    rw [mw2n_n2mw (n / 2 ^ width)]
+    exact Nat.mod_add_div n (2 ^ width)
+termination_by n
+decreasing_by
+  apply Nat.div_lt_self (by omega)
+  exact Nat.one_lt_two_pow (NeZero.ne width)
+
+/-- Converting an integer to signed words and back preserves its value. -/
+@[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "mw2i_i2mw"
+  (words_as_type_indexed_bitvec)]
+theorem mw2i_i2mw {width : Nat} [NeZero width] (i : Int) : mw2i (i2mw i : Bool × List (BitVec width)) = i := by
+  cases i with
+  | ofNat n =>
+    have nonnegative : ¬ (Int.ofNat n < 0) := by
+      rw [Int.ofNat_eq_natCast]
+      exact Int.not_lt_of_ge (Int.natCast_nonneg n)
+    change mw2i (decide (Int.ofNat n < 0), n2mw (Int.ofNat n).natAbs) = Int.ofNat n
+    rw [show decide (Int.ofNat n < 0) = false from decide_eq_false nonnegative]
+    simp [mw2i, mw2n_n2mw]
+  | negSucc n =>
+    change mw2i (decide (Int.negSucc n < 0), n2mw (Int.negSucc n).natAbs) = Int.negSucc n
+    simp only [Int.negSucc_lt_zero, decide_true, Int.natAbs_negSucc, mw2i, mw2n_n2mw]
+    rw [Int.negSucc_eq]
+    simp
+
 end Flapjack.Misc.Multiword

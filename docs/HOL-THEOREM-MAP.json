@@ -100412,7 +100412,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: memory_rel_pointer_eq and its typed capture. This is the block/block case of the original structural induction: it keeps the original memory relation with a shared word location, good_dimindex, do_eq result, and conclusion, together with the induction hypothesis for each child of the first block. The proof obtains matching tags and lengths, reads both indexed children at the same concrete address, and applies the induction hypothesis. store is the canonical finite-support map; target words share the positive HOL word width. The other cases and the assembling theorem remain open."
+    "reviewer": "Source comparison: memory_rel_pointer_eq and its typed capture. This is the block/block case of the original structural induction: it keeps the original memory relation with a shared word location, good_dimindex, do_eq result, and conclusion, together with the induction hypothesis for each child of the first block. The proof obtains matching tags and lengths, reads both indexed children at the same concrete address, and applies the induction hypothesis. store is the canonical finite-support map; target words share the positive HOL word width. The complete theorem is assembled in memoryRel_pointerEq."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerEquality.lean",
@@ -100424,7 +100424,43 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: memory_rel_pointer_eq and its typed capture. This is the reference-pointer/reference-pointer constructor case, preserving the original shared target location, memory relation, good_dimindex, do_eq result and conclusion. Invalid comparison flags produce type errors; for valid flags, the source reference equality theorem identifies the indices and the resulting self-comparison is true. store is the canonical finite-support map and target words use the shared positive HOL word width. Other cases and the assembling theorem remain open."
+    "reviewer": "Source comparison: memory_rel_pointer_eq and its typed capture. This is the reference-pointer/reference-pointer constructor case, preserving the original shared target location, memory relation, good_dimindex, do_eq result and conclusion. Invalid comparison flags produce type errors; for valid flags, the source reference equality theorem identifies the indices and the resulting self-comparison is true. store is the canonical finite-support map and target words use the shared positive HOL word width. The complete theorem is assembled in memoryRel_pointerEq."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerEquality.lean",
+    "lean_name": "memoryRel_pointerEq_word64Word64",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_pointer_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_pointer_eq and its typed data_to_word_memory_repr capture. The word64/word64 case preserves the shared target location, full memory relation, good_dimindex, do_eq result and conclusion. It identifies the bounded heap pointers and recovers the original 64-bit values from the 32- or 64-bit heap payload. store is the canonical finite-support map and target words share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerEquality.lean",
+    "lean_name": "memoryRel_pointerEq_numberNumber",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_pointer_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_pointer_eq and its typed data_to_word_memory_repr capture. The number/number case preserves the shared target location, full memory relation, good_dimindex, do_eq result and conclusion. Small values use the original small-number equality result; large values use equal bounded heap pointers and the multiword round trip. store is the canonical finite-support map and target words share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/PointerEquality.lean",
+    "lean_name": "memoryRel_pointerEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_pointer_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_pointer_eq and its typed data_to_word_memory_repr capture. The complete theorem preserves arbitrary source values, a shared target word location, the original full memory relation, good_dimindex, successful do_eq result and the conclusion that its Boolean is true. Structural recursion handles every constructor, using the reviewed block, reference, number and word64 cases. store is the canonical finite-support map and target words share the positive HOL word width."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
@@ -101246,6 +101282,42 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The sign Boolean is exactly i < 0 and the magnitude is Num (ABS i), represented by Int.natAbs, passed to n2mw. The executed constant compiler now calls this definition."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "mw2n",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "mw2n_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: mw2n_def and its typed data_to_word_memory_repr capture. The empty case is zero and each word contributes its unsigned natural value plus dimword times the decoded tail."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "mw2i",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "mw2i_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: mw2i_def and its typed data_to_word_memory_repr capture. The false sign returns the natural magnitude as an integer, and the true sign negates it."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "mw2n_n2mw",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "mw2n_n2mw",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: mw2n_n2mw and its typed data_to_word_memory_repr capture. For every natural and every positive word width, decoding the original little-endian encoding yields the natural."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "mw2i_i2mw",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "mw2i_i2mw",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: mw2i_i2mw and its typed data_to_word_memory_repr capture. For every integer and every positive word width, decoding its original sign-and-magnitude encoding yields the integer."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Numbers.lean",
