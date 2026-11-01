@@ -93,4 +93,103 @@ theorem simulationFor_seq_plain_raise {C F : Type} (first second : DataLang.Prog
       rw [shape, DataSem.evaluate, fixClock_evaluate, targetFirst]
       simpa using varied
 
+/-- Sequencing combines two simulations when the compiled second component
+admits the exact resource-field swap for all non-type-error outcomes. The
+swap premise is still open for timeouts. -/
+theorem simulationFor_seq_plain_of_resourceSwap {C F : Type} (first second : DataLang.Prog)
+    (firstIH : simulationFor (C := C) (F := F) first)
+    (secondIH : simulationFor (C := C) (F := F) second)
+    (shape : compile (.seq first second) = .seq (compile first) (compile second))
+    (resourceSwap : ∀ (state next : State C F) (result : Option (Result (List DataSem.Value) DataSem.Value))
+      (safe : Bool) (peak : Nat) (stackMax : Option Nat),
+      result ≠ some (.err (.abort .typeError)) →
+      DataSem.evaluate (compile second) state = (result, next) →
+      ∃ safe' peak' stackMax',
+        DataSem.evaluate (compile second) { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } =
+          (result, { next with safeForSpace := safe', peakHeapLength := peak', stackMax := stackMax' })) :
+    simulationFor (C := C) (F := F) (.seq first second) := by
+  intro source sourceNext result locals notType run included
+  rw [DataSem.evaluate, fixClock_evaluate] at run
+  cases firstRun : DataSem.evaluate first source with
+  | mk outcome mid =>
+    rw [firstRun] at run
+    cases outcome with
+    | some stopped =>
+      simp only [Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      obtain ⟨out, safe, peak, stackMax, targetFirst, finalIncluded⟩ :=
+        firstIH source mid (some stopped) locals notType firstRun included
+      refine ⟨out, safe, peak, stackMax, ?_, finalIncluded⟩
+      rw [shape, DataSem.evaluate, fixClock_evaluate, targetFirst]
+    | none =>
+      obtain ⟨midLocals, midSafe, midPeak, midMax, targetFirst, midIncluded⟩ :=
+        firstIH source mid none locals (by simp) firstRun included
+      obtain ⟨out, safe, peak, stackMax, targetSecond, finalIncluded⟩ :=
+        secondIH mid sourceNext result midLocals notType run midIncluded
+      cases result with
+      | none =>
+        obtain ⟨safe', peak', stackMax', varied⟩ := resourceSwap { mid with locals := midLocals }
+          { sourceNext with locals := out, safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+          none midSafe midPeak midMax (by simp) targetSecond
+        refine ⟨out, safe', peak', stackMax', ?_, finalIncluded⟩
+        rw [shape, DataSem.evaluate, fixClock_evaluate, targetFirst]
+        simpa using varied
+      | some stopped =>
+        obtain ⟨safe', peak', stackMax', varied⟩ := resourceSwap { mid with locals := midLocals }
+          { sourceNext with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+          (some stopped) midSafe midPeak midMax notType targetSecond
+        refine ⟨out, safe', peak', stackMax', ?_, finalIncluded⟩
+        rw [shape, DataSem.evaluate, fixClock_evaluate, targetFirst]
+        simpa using varied
+
+/-- Retained sequence composition holds for every non-type-error result
+except timeout, whose exact resource swap remains open. -/
+theorem simulationFor_seq_plain_nonTimeout {C F : Type} (first second : DataLang.Prog)
+    (firstIH : simulationFor (C := C) (F := F) first)
+    (secondIH : simulationFor (C := C) (F := F) second)
+    (shape : compile (.seq first second) = .seq (compile first) (compile second))
+    (source sourceNext : State C F) (result : Option (Result (List DataSem.Value) DataSem.Value))
+    (locals : Spt DataSem.Value) (notType : result ≠ some (.err (.abort .typeError)))
+    (notTimeout : result ≠ some (.err (.abort .timeoutError)))
+    (run : DataSem.evaluate (.seq first second) source = (result, sourceNext))
+    (included : sptSubspt source.locals locals) :
+    ∃ out safe peak stackMax,
+      DataSem.evaluate (compile (.seq first second)) { source with locals := locals } =
+        (result, if result = none then { sourceNext with locals := out, safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+          else { sourceNext with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }) ∧
+      sptSubspt sourceNext.locals out := by
+  rw [DataSem.evaluate, fixClock_evaluate] at run
+  cases firstRun : DataSem.evaluate first source with
+  | mk outcome mid =>
+    rw [firstRun] at run
+    cases outcome with
+    | some stopped =>
+      simp only [Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      obtain ⟨out, safe, peak, stackMax, targetFirst, finalIncluded⟩ :=
+        firstIH source mid (some stopped) locals notType firstRun included
+      refine ⟨out, safe, peak, stackMax, ?_, finalIncluded⟩
+      rw [shape, DataSem.evaluate, fixClock_evaluate, targetFirst]
+    | none =>
+      obtain ⟨midLocals, midSafe, midPeak, midMax, targetFirst, midIncluded⟩ :=
+        firstIH source mid none locals (by simp) firstRun included
+      obtain ⟨out, safe, peak, stackMax, targetSecond, finalIncluded⟩ :=
+        secondIH mid sourceNext result midLocals notType run midIncluded
+      cases result with
+      | none =>
+        obtain ⟨safe', peak', stackMax', varied⟩ := evaluate_resource_variation_nonTimeout (compile second)
+          { mid with locals := midLocals }
+          { sourceNext with locals := out, safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+          none midSafe midPeak midMax targetSecond (by simp) (by simp)
+        refine ⟨out, safe', peak', stackMax', ?_, finalIncluded⟩
+        rw [shape, DataSem.evaluate, fixClock_evaluate, targetFirst]
+        simpa using varied
+      | some stopped =>
+        obtain ⟨safe', peak', stackMax', varied⟩ := evaluate_resource_variation_nonTimeout (compile second)
+          { mid with locals := midLocals }
+          { sourceNext with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+          (some stopped) midSafe midPeak midMax targetSecond notType notTimeout
+        refine ⟨out, safe', peak', stackMax', ?_, finalIncluded⟩
+        rw [shape, DataSem.evaluate, fixClock_evaluate, targetFirst]
+        simpa using varied
 end Flapjack.Compiler.Backend.DataSpace

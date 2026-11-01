@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Simulation
 import Flapjack.Compiler.Backend.Semantics.DataProps.AbortControl
 import Flapjack.Compiler.Backend.Semantics.DataProps.FrameResult
+import Flapjack.Compiler.Backend.Semantics.DataProps.ValueFrameSize
+import Flapjack.Compiler.Backend.Semantics.DataProps.AbortFrameSize
 
 /-! Control-state consequences of resource-accounting variation. -/
 namespace Flapjack.Compiler.Backend.DataSpace
@@ -103,5 +105,67 @@ theorem evaluate_resource_variation_raise {C F : Type} (program : DataLang.Prog)
     exact targetSize.trans originalSize.symm
   subst localsSize
   exact ⟨safe', peak', stackMax', by simpa using targetRun⟩
+
+/-- The exact resource-field swap for returned values. -/
+theorem evaluate_resource_variation_value {C F : Type} (program : DataLang.Prog)
+    (source sourceNext : State C F) (values : List DataSem.Value) (safe : Bool) (peak : Nat) (stackMax : Option Nat)
+    (run : DataSem.evaluate program source = (some (.val values), sourceNext)) :
+    ∃ safe' peak' stackMax',
+      DataSem.evaluate program { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } =
+        (some (.val values), { sourceNext with safeForSpace := safe', peakHeapLength := peak', stackMax := stackMax' }) := by
+  obtain ⟨localsSize, safe', peak', stackMax', targetRun⟩ :=
+    evaluate_resource_variation_control program source sourceNext (some (.val values)) safe peak stackMax run (by simp)
+  have originalSize := evaluate_value_localsSize program source sourceNext values run
+  have targetSize := evaluate_value_localsSize program
+    { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+    { sourceNext with localsSize := localsSize, safeForSpace := safe', peakHeapLength := peak', stackMax := stackMax' }
+    values targetRun
+  have sizeEq : localsSize = sourceNext.localsSize := targetSize.trans originalSize.symm
+  subst localsSize
+  exact ⟨safe', peak', stackMax', by simpa using targetRun⟩
+
+/-- The exact resource-field swap for FFI aborts. Timeout needs separate
+reasoning because some timeout paths retain their current frame size. -/
+theorem evaluate_resource_variation_ffiAbort {C F : Type} (program : DataLang.Prog)
+    (source sourceNext : State C F) (event : HolFinalEvent) (safe : Bool) (peak : Nat) (stackMax : Option Nat)
+    (run : DataSem.evaluate program source = (some (.err (.abort (.ffiError event))), sourceNext)) :
+    ∃ safe' peak' stackMax',
+      DataSem.evaluate program { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } =
+        (some (.err (.abort (.ffiError event))), { sourceNext with safeForSpace := safe', peakHeapLength := peak', stackMax := stackMax' }) := by
+  obtain ⟨localsSize, safe', peak', stackMax', targetRun⟩ :=
+    evaluate_resource_variation_control program source sourceNext (some (.err (.abort (.ffiError event)))) safe peak stackMax run (by simp)
+  have originalSize := (evaluate_abort_frameSize program source sourceNext (.ffiError event) (by simp) (by simp) run).1
+  have targetSize := (evaluate_abort_frameSize program
+    { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+    { sourceNext with localsSize := localsSize, safeForSpace := safe', peakHeapLength := peak', stackMax := stackMax' }
+    (.ffiError event) (by simp) (by simp) targetRun).1
+  have sizeEq : localsSize = sourceNext.localsSize := targetSize.trans originalSize.symm
+  subst localsSize
+  exact ⟨safe', peak', stackMax', by simpa using targetRun⟩
+
+/-- Exact resource variation for every outcome except a type error or
+timeout. -/
+theorem evaluate_resource_variation_nonTimeout {C F : Type} (program : DataLang.Prog)
+    (source sourceNext : State C F) (result : Option (Result (List DataSem.Value) DataSem.Value))
+    (safe : Bool) (peak : Nat) (stackMax : Option Nat)
+    (run : DataSem.evaluate program source = (result, sourceNext))
+    (notType : result ≠ some (.err (.abort .typeError)))
+    (notTimeout : result ≠ some (.err (.abort .timeoutError))) :
+    ∃ safe' peak' stackMax',
+      DataSem.evaluate program { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } =
+        (result, { sourceNext with safeForSpace := safe', peakHeapLength := peak', stackMax := stackMax' }) := by
+  cases result with
+  | none => exact evaluate_resource_variation_normal program source sourceNext safe peak stackMax run
+  | some result =>
+    cases result with
+    | val values => exact evaluate_resource_variation_value program source sourceNext values safe peak stackMax run
+    | err error =>
+      cases error with
+      | raise value => exact evaluate_resource_variation_raise program source sourceNext value safe peak stackMax run
+      | abort reason =>
+        cases reason with
+        | typeError => exact False.elim (notType rfl)
+        | timeoutError => exact False.elim (notTimeout rfl)
+        | ffiError event => exact evaluate_resource_variation_ffiAbort program source sourceNext event safe peak stackMax run
 
 end Flapjack.Compiler.Backend.DataSpace
