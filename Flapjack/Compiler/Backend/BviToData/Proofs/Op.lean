@@ -28,6 +28,27 @@ private theorem wordOp_error_is_typeError {C F : Type} (op : ClosLang.WordOp) (a
   | some value =>
     simp [BviSem.doApp, BviSem.doAppFallback, fallback, BvlSem.doApp, BvlSem.applyNumeric, wordResult] at run
 
+private theorem globalAux_noFallback {C F : Type} (op : ClosLang.GlobOp) (args : List BvlSem.Value)
+    (source : BviSem.BviState C F) : BviSem.doAppAux (.globOp op) args source ≠ some none := by
+  cases op <;> cases args <;> simp [BviSem.doAppAux]
+  all_goals try (split <;> simp_all)
+  all_goals simp only [Option.bind_eq_some_iff, not_exists, not_and]
+  all_goals intros
+  all_goals try split
+  all_goals try (split <;> simp)
+  all_goals simp
+
+private theorem globalOp_error_is_typeError {C F : Type} (op : ClosLang.GlobOp) (args : List BvlSem.Value)
+    (source : BviSem.BviState C F) (error : ErrorResult BviSem.ExnOrRet)
+    (run : BviSem.doApp (.globOp op) args source = .err error) : error = .abort .typeError := by
+  cases auxiliary : BviSem.doAppAux (.globOp op) args source with
+  | none =>
+    simpa [BviSem.doApp, BviSem.doAppFallback, auxiliary] using run.symm
+  | some result =>
+    cases result with
+    | none => exact False.elim (globalAux_noFallback op args source auxiliary)
+    | some pair => simp [BviSem.doApp, BviSem.doAppFallback, auxiliary] at run
+
 private theorem ffiOp_error_is_final {C F : Type} (name : Basis.Pure.MlString.MlString) (args : List BvlSem.Value)
     (source : BviSem.BviState C F) (error : ErrorResult BviSem.ExnOrRet)
     (run : BviSem.doApp (.ffi name) args source = .err error) (notType : error ≠ .abort .typeError) :
@@ -505,6 +526,113 @@ theorem simulationFor_op_ffi {C F : Type} (name : Basis.Pure.MlString.MlString) 
       rw [whole] at run
       cases run
       exact (simulationFor_op_ffi_success name args env s1 smid s2 values result ih argsRun opRun
+        t1 n corr tail live vars fresh related livePresent).2
+
+/-- A successful global primitive expression satisfies the compiler
+simulation invariant in tail and non-tail position. This source case remains
+untagged pending evaluator review and assembly of the complete operation proof. -/
+theorem simulationFor_op_global_success {C F : Type} (op : ClosLang.GlobOp) (args : List Bvi.Exp)
+    (env : List BvlSem.Value) (s1 smid s2 : BviSem.BviState C F)
+    (values : List BvlSem.Value) (result : BvlSem.Value)
+    (ih : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
+    (opRun : BviSem.doApp (.globOp op) values.reverse smid = .val (result, s2))
+    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
+    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
+    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
+    BviSem.evaluate [.op (.globOp op) args] env s1 = (.val [result], s2) ∧
+    ∃ t2 prog pres names next ls,
+      compileSource n corr tail live [.op (.globOp op) args] = (prog, names, next) ∧
+      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
+      correctOutcome (.val [result]) t1 t2 n next corr live names env tail pres ls := by
+  have wholeRun : BviSem.evaluate [.op (.globOp op) args] env s1 = (.val [result], s2) := by
+    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+    simp [opRun]
+  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
+    ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
+      (by simp [isException])
+  cases pres with
+  | some result => simp [correctOutcome, isResult] at outcome
+  | none =>
+    have firstOutcome := outcome
+    have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
+    have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
+      intro v member
+      exact liveMidAll v (List.mem_append_right argNames member)
+    rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
+    obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
+    have projectedRun : BviSem.doApp (.globOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
+      simpa [List.map_reverse, ← projected] using opRun
+    obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
+      evaluate_iAssign_global_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
+        middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
+    let assignment := iAssign n1 (.globOp op) argNames.reverse live corr
+    let inner := DataLang.Prog.seq argsProg assignment
+    have sourceBound := BviSem.evaluate_clock_le args env s1
+    rw [argsRun] at sourceBound
+    have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+    have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
+      evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
+    have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
+      argNames [n1] env false none ls none firstOutcome assignmentOutcome
+    cases tail with
+    | false =>
+      refine ⟨wholeRun, tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
+      simp [compileSource, compiled, assignment, inner]
+    | true =>
+      have fullBound := BviSem.evaluate_clock_le [.op (.globOp op) args] env s1
+      rw [wholeRun] at fullBound
+      have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
+      have returnRun : DataSem.evaluate (.return [n1]) tassign =
+          (some (.val [dataValue]), DataSem.flushState false tassign) := by
+        simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
+      refine ⟨wholeRun, DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
+        [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
+      · simp [compileSource, compiled, assignment, inner]
+      · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
+      · simpa [stateRel, DataSem.flushState] using finalRel
+      · have stack := innerOutcome.2.2.2.2.2.2.2.1
+        have handler := innerOutcome.2.2.2.2.2.2.2.2.1
+        simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
+          DataSem.flushState, ← resultProjection, stack, handler]
+
+/-- Complete global-operation expression case of the BVI-to-data simulation.
+The recursive hypothesis covers its argument list; non-type errors propagate
+from arguments, and successful global application handles both tail modes.
+This remains untagged pending evaluator correspondence review. -/
+theorem simulationFor_op_global {C F : Type} (op : ClosLang.GlobOp) (args : List Bvi.Exp)
+    (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
+    simulationFor [.op (.globOp op) args] env s1 := by
+  intro res s2 t1 n corr tail live run notTypeError vars _ fresh related livePresent exceptionJump
+  generalize argsRun : BviSem.evaluate args env s1 = pair
+  obtain ⟨argResult, smid⟩ := pair
+  cases argResult with
+  | err error =>
+    have whole : BviSem.evaluate [.op (.globOp op) args] env s1 = (.err error, smid) := by
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+    rw [whole] at run
+    cases run
+    exact (simulationFor_op_argsError (.globOp op) args env s1 s2 error ih argsRun notTypeError
+      t1 n corr tail live vars fresh related livePresent exceptionJump).2
+  | val values =>
+    generalize opRun : BviSem.doApp (.globOp op) values.reverse smid = opResult
+    cases opResult with
+    | err error =>
+      have whole : BviSem.evaluate [.op (.globOp op) args] env s1 = (.err error, smid) := by
+        rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+        simp [opRun]
+      rw [whole] at run
+      cases run
+      have onlyTypeError := globalOp_error_is_typeError op values.reverse s2 error opRun
+      exact False.elim (notTypeError (by rw [onlyTypeError]))
+    | val pair =>
+      obtain ⟨result, slast⟩ := pair
+      have whole : BviSem.evaluate [.op (.globOp op) args] env s1 = (.val [result], slast) := by
+        rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
+        simp [opRun]
+      rw [whole] at run
+      cases run
+      exact (simulationFor_op_global_success op args env s1 smid s2 values result ih argsRun opRun
         t1 n corr tail live vars fresh related livePresent).2
 
 end Flapjack.Compiler.Backend.BviToData

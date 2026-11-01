@@ -152,6 +152,82 @@ theorem doAppAux_word_frame {C F : Type} (op : ClosLang.WordOp) (args : List Val
     obtain ⟨rfl, rfl⟩ := run
     exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
+/-- Successful global operations preserve local and control fields. -/
+theorem doAppAux_global_frame {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doAppAux (.globOp op) args state = .val (value, next)) : SameLocalControl state next := by
+  cases op with
+  | allocGlobal => simp [doAppAux, applyNonFfi] at run
+  | globalsPtr =>
+    cases args with
+    | cons a rest => simp [doAppAux, applyNonFfi] at run
+    | nil =>
+      cases global : state.global with
+      | none => simp [doAppAux, applyNonFfi, global] at run
+      | some ptr =>
+        simp [doAppAux, applyNonFfi, global] at run
+        obtain ⟨rfl, rfl⟩ := run
+        exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+  | setGlobalsPtr =>
+    cases args with
+    | nil => simp [doAppAux, applyNonFfi] at run
+    | cons a rest =>
+      cases rest with
+      | cons b rest => simp [doAppAux, applyNonFfi] at run
+      | nil =>
+        cases a <;> simp [doAppAux, applyNonFfi] at run
+        case refPtr bit ptr =>
+          cases bit with
+          | false => simp at run
+          | true =>
+            simp at run
+            obtain ⟨rfl, rfl⟩ := run
+            exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+  | global index =>
+    cases args with
+    | cons a rest => simp [doAppAux, applyNonFfi] at run
+    | nil =>
+      cases global : state.global with
+      | none => simp [doAppAux, applyNonFfi, global] at run
+      | some ptr =>
+        cases found : sptLookup ptr state.refs with
+        | none => simp [doAppAux, applyNonFfi, global, found] at run
+        | some entry =>
+          cases entry with
+          | byteArray flag bytes => simp [doAppAux, applyNonFfi, global, found] at run
+          | thunk mode v => simp [doAppAux, applyNonFfi, global, found] at run
+          | mutBlock tag done left child right => simp [doAppAux, applyNonFfi, global, found] at run
+          | valueArray values =>
+            cases slot : values[index]? with
+            | none => simp [doAppAux, applyNonFfi, global, found, slot] at run
+            | some v =>
+              simp [doAppAux, applyNonFfi, global, found, slot] at run
+              obtain ⟨rfl, rfl⟩ := run
+              exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+  | setGlobal index =>
+    cases args with
+    | nil => simp [doAppAux, applyNonFfi] at run
+    | cons a rest =>
+      cases rest with
+      | cons b rest => simp [doAppAux, applyNonFfi] at run
+      | nil =>
+        cases global : state.global with
+        | none => simp [doAppAux, applyNonFfi, global] at run
+        | some ptr =>
+          cases found : sptLookup ptr state.refs with
+          | none => simp [doAppAux, applyNonFfi, global, found] at run
+          | some entry =>
+            cases entry with
+            | byteArray flag bytes => simp [doAppAux, applyNonFfi, global, found] at run
+            | thunk mode v => simp [doAppAux, applyNonFfi, global, found] at run
+            | mutBlock tag done left child right => simp [doAppAux, applyNonFfi, global, found] at run
+            | valueArray values =>
+              by_cases bound : index < values.length
+              · simp [doAppAux, applyNonFfi, global, found, bound] at run
+                obtain ⟨rfl, rfl⟩ := run
+                exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+              · simp [doAppAux, applyNonFfi, global, found, bound] at run
+
 /-- A successful FFI auxiliary application preserves local and control
 fields while updating the reference store and FFI state. -/
 theorem doAppAux_ffi_frame {C F : Type} (name : Basis.Pure.MlString.MlString) (args : List Value)
@@ -253,6 +329,21 @@ theorem doApp_word_frame {C F : Type} (op : ClosLang.WordOp) (args : List Value)
   | some accounted =>
     simp only [space] at run
     exact wordAccounting_frame op args state accounted next value space run
+
+/-- The complete global dispatcher preserves local and control fields. -/
+theorem doApp_global_frame {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doApp (.globOp op) args state = .val (value, next)) : SameLocalControl state next := by
+  simp only [doApp] at run
+  cases space : doSpace (.globOp op) args state with
+  | none => simp [space] at run
+  | some accounted =>
+    simp only [space] at run
+    have first := doSpace_frame (.globOp op) args state accounted space
+    have second := doAppAux_global_frame op args _ next value run
+    have second' : SameLocalControl accounted next := by
+      simpa [SameLocalControl, doStack, doLimSafe] using second
+    exact first.trans second'
 
 /-- The complete returning FFI dispatcher preserves local and control
 fields through its space and stack accounting. -/
