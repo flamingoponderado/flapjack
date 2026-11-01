@@ -807,6 +807,8 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.DirectCall
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Install
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.LocalSteps
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Evaluate
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotateCorrect
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.SemanticsCorrect
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
