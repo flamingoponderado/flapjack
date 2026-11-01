@@ -175,4 +175,55 @@ theorem memoryRel_refPtrEq {width : Nat} [NeZero width] (conf : Config) (bigEndi
                 subst i2
                 rfl
 
+/-- A related reference pointer names an existing source reference cell. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_RefPtr_IMP_lemma"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_refPtrExists {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (space : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (bit : Bool) (index : Nat) (location : WordLocW width)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) :
+    memoryRel conf bigEndian next refs space store memory domain ((.refPtr bit index, location) :: vars) →
+    ∃ cell, sptLookup index refs = some cell := by
+  rintro ⟨heap, limit, a, sp, sp1, gens, _, wordInv, _, _⟩
+  obtain ⟨roots, inv, _⟩ := wordInv
+  obtain ⟨_, _, _, _, stackInv⟩ := inv
+  obtain ⟨f, tf, _, fDomain, _, _, _, _, _, values, _⟩ := stackInv
+  cases roots with
+  | nil => cases values
+  | cons root rest =>
+    cases values with
+    | cons related _ =>
+      rcases (valueInv_refPtr conf bit index refs root f tf heap).mp related with ordinary | thunk | inlined
+      · exact fDomain index ordinary.1
+      · obtain ⟨mode, value, _, found, _⟩ := thunk
+        exact ⟨.thunk mode value, found⟩
+      · obtain ⟨value, found, _⟩ := inlined
+        exact ⟨.thunk .evaluated value, found⟩
+
+/-- A pointer-comparison reference cannot denote a mutable block. This is a
+Flapjack helper for the source reference-header proof. -/
+theorem memoryRel_refPtrTrueNotMutBlock {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (space : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (index : Nat) (location : WordLocW width)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))
+    (tag : Nat) (finalised : Bool) (left : List Flapjack.Compiler.Backend.DataSem.Value)
+    (child : Flapjack.Compiler.Backend.DataSem.Value) (right : List Flapjack.Compiler.Backend.DataSem.Value)
+    (inv : memoryRel conf bigEndian next refs space store memory domain ((.refPtr true index, location) :: vars))
+    (found : sptLookup index refs = some (.mutBlock tag finalised left child right)) : False := by
+  obtain ⟨heap, limit, a, sp, sp1, gens, _, wordInv, _, _⟩ := inv
+  obtain ⟨roots, inv, _⟩ := wordInv
+  obtain ⟨_, _, _, _, stackInv⟩ := inv
+  obtain ⟨f, tf, _, _, _, _, _, _, _, values, _⟩ := stackInv
+  cases roots with
+  | nil => cases values
+  | cons root rest =>
+    cases values with
+    | cons related _ =>
+      have h := (valueInv_refPtr_true conf index refs root f tf heap).mp related
+      exact h.2.2.1 tag finalised left child right found
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

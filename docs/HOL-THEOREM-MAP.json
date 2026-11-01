@@ -100166,6 +100166,27 @@
     "reviewer": "Source comparison: memory_rel_CodePtr and its typed data_to_word_memory_repr capture. The original memory relation implies the same relation after prepending CodePtr lab and Loc lab 0; store uses the canonical finite-support map and target words share the positive source width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/RefEquality.lean",
+    "lean_name": "memoryRel_refPtrExists",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_RefPtr_IMP_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_RefPtr_IMP_lemma and its typed data_to_word_memory_repr capture preserve the full memory relation with arbitrary reference flag and target location, and conclude existence of a reference cell at the same index. store uses the canonical finite-support map; target words share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Space.lean",
+    "lean_name": "wordMlInv_spLimit",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_ml_inv_SP_LIMIT",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_ml_inv_SP_LIMIT and its typed data_to_word_memory_repr capture retain the full heap tuple, limit, timestamp, configuration, references and paired stack, concluding the original sp \u2264 limit bound. Target words share the positive HOL width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
