@@ -100015,6 +100015,30 @@
     "reviewer": "Source comparison: memory_rel_Number_LESS_EQ and its typed data_to_word_memory_repr capture. The original relation, both small_int conditions, and good_dimindex imply the two word witnesses and equivalence between signed word less-or-equal and integer less-or-equal. store uses the canonical finite-support map; All word occurrences share the positive HOL word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/NumberArithmetic.lean",
+    "lean_name": "memoryRel_add",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Add",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Add and its typed data_to_word_memory_repr capture retain the two Number/Word operands, both clear-bit premises, good_dimindex, and the w2i no-overflow equation for addition. The conclusion prepends the source integer result and corresponding word result to the original suffix. BitVec.toInt represents signed w2i and getLsbD 0 = false represents the negated word_bit premise. store uses the canonical finite-support map and all word occurrences share the positive HOL width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/NumberArithmetic.lean",
+    "lean_name": "memoryRel_sub",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Sub",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Sub and its typed data_to_word_memory_repr capture retain the two Number/Word operands, both clear-bit premises, good_dimindex, and the w2i no-overflow equation for subtraction. The conclusion prepends the source integer result and corresponding word result to the original suffix. BitVec.toInt represents signed w2i and getLsbD 0 = false represents the negated word_bit premise. store uses the canonical finite-support map and all word occurrences share the positive HOL width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
