@@ -100327,6 +100327,33 @@
     "reviewer": "Source comparison: the local do_eq_list_F_IMP_MEM theorem and its typed replay retain the polymorphic reference-cell payload, two data-value lists, false equality result, equal lengths, and an index where the element equality returns false. Lean indexing carries the bounds proofs for both lists; the second bound follows from the source equal-length premise."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/CompareLoop.lean",
+    "lean_name": "wordCmpRes",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_cmp_res_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_cmp_res_def and its typed capture retain two integer inputs and return 1, 0 or 2 at the shared positive HOL word width according to equality and signed integer ordering."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/CompareLoop.lean",
+    "lean_name": "wordCmpLoop",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_cmp_loop_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_cmp_loop_def and its typed capture retain the word counter, both word addresses, Boolean memory-domain function, word-or-location memory, and option-valued result. The zero, domain failure, non-word memory, equal-word recursion, unsigned less-than and greater-than branches match HOL, including modular subtraction and bytes_in_word = n2w (dimindex DIV 8)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/CompareLoop.lean",
+    "lean_name": "wordCmpLoop_refl",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_cmp_loop_refl",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the simplified word_cmp_loop_refl theorem and its typed capture quantify the same loop counter, shared address, domain, memory and result word; any successful self-comparison returns 1. The proof applies for every positive HOL word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

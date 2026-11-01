@@ -231,6 +231,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockTests
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeaderInjective
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockEquality
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.CompareLoop
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Numbers
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Space
