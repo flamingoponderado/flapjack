@@ -95,22 +95,6 @@ HOL `fp64_negate = float_to_fp64 o float_negate o fp64_to_float`. -/
 def holFp64Negate (a : BitVec 64) : BitVec 64 :=
   holFloatToFp64 (holFloatNegate (holFp64ToFloat a))
 
-/-- `fp64_abs` clears the sign bit: the codecs round-trip the payload and
-`float_abs` only zeroes the sign, so the result is `a` masked to 63 bits.
-Flapjack-specific computation lemma (no HOL declaration of its own). -/
-theorem holFp64Abs_eq_and (a : BitVec 64) :
-    holFp64Abs a = a &&& BitVec.ofNat 64 (2 ^ 63 - 1) := by
-  simp only [holFp64Abs, holFloatAbs, holFp64ToFloat, holFloatToFp64]
-  bv_decide
-
-/-- `fp64_negate` complements the sign bit: the codecs round-trip the payload
-and `float_negate` only flips the sign, so the result is `a` with bit 63
-toggled. Flapjack-specific computation lemma (no HOL declaration of its own). -/
-theorem holFp64Negate_eq_xor (a : BitVec 64) :
-    holFp64Negate a = a ^^^ BitVec.ofNat 64 (2 ^ 63) := by
-  simp only [holFp64Negate, holFloatNegate, holFp64ToFloat, holFloatToFp64]
-  bv_decide
-
 /-- HOL `fp64_isNan = float_is_nan o fp64_to_float`. -/
 @[hol "HOL/src/floating-point/machine_ieeeScript.sml" "fp64_isNan_def" 16
   (reals_as_rational_cuts)]

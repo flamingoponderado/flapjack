@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Encoders.X64.Machine.DivCase
+import Flapjack.Misc.MachineIeee.SignBits
 
 /-!
 # The floating-point cases of `encoder_correct x64Target`

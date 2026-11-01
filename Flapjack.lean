@@ -1844,6 +1844,7 @@ import Flapjack.Misc.MachineIeee.Convert
 import Flapjack.Misc.MachineIeee.ConvertInt
 import Flapjack.Misc.MachineIeee.ConvertReal
 import Flapjack.Misc.MachineIeee.SqrtReal
+import Flapjack.Misc.MachineIeee.SignBits
 import Flapjack.Misc.BinaryIeeeRound
 import Flapjack.Misc.BinaryIeeeArith
 import Flapjack.Misc.BinaryIeeeRoundFp64
