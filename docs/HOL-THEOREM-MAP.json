@@ -100114,6 +100114,112 @@
     "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Preserves all GC-kind cases, generic heap address and auxiliary payload types, generation condition, split witnesses and both EVERY conditions as membership quantification."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "refBlock",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "RefBlock_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The heap-address and auxiliary-list element types are independent; data length is the address-list length."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "word64Rep",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "Word64Rep_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The heap address carrier is independent of the positive-width result words. The 32-bit halves and complete low 64 bits are truncated or zero-extended to the result width, as HOL word slices are."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "word64RepDataElement",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "Word64Rep_DataElement",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Preserves the original width and word64 argument, and existential data-element payload whose length is the stored length."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "getRefs",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "get_refs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The four leaf cases and ordered flat map of nested block references match."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "refEdge",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "ref_edge_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The sparse reference tree and ValueArray, Thunk and MutBlock cases match. HOL uses ARB for the temporary block tag; getRefs_block_tag_irrelevant proves that any tag produces the same list, so zero is observationally identical."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "reachableRefs",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "reachable_refs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The root and initial-reference witnesses and reflexive-transitive closure retain their original order and direction."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "valueTimestamps",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_all_ts_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The block timestamp precedes the ordered flat map of child timestamps; every other value gives the empty list."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "findRef",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "find_ref_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The cell payload type is independent and the four reference-cell cases preserve original equality and membership direction."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "allTimestamps",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "all_ts_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Both root alternatives, sparse-tree lookup witness, findRef predicate and nested timestamp membership are preserved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "beOk",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "be_ok_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. HOL infers a fully polymorphic equality, retained here rather than restricting this predicate to Booleans."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "valueListValues",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_all_vs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Preserves the original preorder block traversal and ordinary list cases, including list order."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "allValues",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "all_vs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Retains each of the four union branches, sparse reference lookups and nested value memberships."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "blocksUnique",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "blocks_unique_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Preserves every quantified timestamp, tag and list, both nonempty premises, and all three conclusions."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Limits.lean",
     "lean_name": "limitsInv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",

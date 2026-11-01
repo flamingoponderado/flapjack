@@ -1,8 +1,8 @@
 `data_to_word_memory_repr_probe.out` captures typed heap representation,
 pointer projection, byte-header and word-payload definitions and the valid
 payload classification theorem, heap assertions, append theorem, heap/store
-invariant, and abstract heap/GC conditions (including their independent
-carriers), plus original HOL low-bit observations.
+invariant, abstract heap/GC conditions, and value/reference traversals
+(including their independent carriers), plus original HOL low-bit observations.
 Regenerate with
 `HOL_PROBE_ONLY=data_to_word_memory_repr_probeScript.sml scripts/hol-probes/regenerate.sh`. The capture supports source review; it is
 not a cross-language proof.

@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
 
 /-! Original HOL observations for pointer-tag and heap representation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -69,5 +70,21 @@ example : isRef (.dataElement [] 1 (.refTag, 7) : HeapElement Nat (HeapTag × Na
 
 example : gcKindInv config 0 0 0 (.genState 0 []) abstractHeap := by
   simp [gcKindInv, config]
+
+example : word64Rep (width := 32) (α := Bool) 0x1122334455667788 =
+    .dataElement [] 2 (.word64Tag, [.word 0x11223344, .word 0x55667788]) := by rfl
+
+example : word64Rep (width := 64) (α := Bool) 0x1122334455667788 =
+    .dataElement [] 1 (.word64Tag, [.word 0x1122334455667788]) := by rfl
+
+example : getRefs (.block 3 0 [.refPtr true 4, .block 5 1 [.refPtr false 8]]) = [4, 8] := by
+  simp [getRefs]
+
+example : valueTimestamps (.block 3 0 [.refPtr true 4, .block 5 1 []]) = [3, 5] := by
+  simp [valueTimestamps]
+
+example : reachableRefs [.refPtr true 7] .ln 7 := by
+  refine ⟨.refPtr true 7, 7, by simp, ?_, Relation.ReflTransGen.refl⟩
+  simp [getRefs]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
