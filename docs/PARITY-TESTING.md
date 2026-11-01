@@ -430,8 +430,9 @@ nested declarations, pattern matches, exceptions, strings and comments. It
 also compares the full output for any mutated program that compiles. A run with
 seed `35791` and a second run with seed `46821` each matched 200 cases against
 the pinned compiler. Seeds `76241` and `97631` each matched another 120 cases;
-seed `651291` matched 600 cases. Seed `803471` matched another 200 cases;
-single-edit mutation seed `945701` matched 400 cases.
+seed `651291` matched 600 cases. Seeds `803471`, `723987`, and `419023`
+matched another 200, 300, and 1,000 cases respectively. Single-edit mutation
+seed `945701` matched 400 cases.
 
 The same checker has a fixed language-feature corpus covering literals,
 patterns, datatypes, exceptions, local bindings, closures, structures and
@@ -450,6 +451,9 @@ handlers. Additional cases cover shadowing, nested structures, polymorphic
 functions, hexadecimal literals, character escapes and rejected syntax; these
 exercise compilation as well as parsing and inference. It is a
 finite regression sample, not evidence for all programs using those forms.
+The corpus also compares full type-error diagnostics for duplicate pattern
+variables, recursive unification, constructor arguments, tuple patterns,
+qualified function application, and an error following UTF-8 source text.
 
 To recheck the recorded historical outputs when that exact binary is available,
 run `python3 scripts/check-cake-cli-parity.py --check-reference /path/to/cake`.

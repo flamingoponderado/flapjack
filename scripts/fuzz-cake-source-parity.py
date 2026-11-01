@@ -70,6 +70,17 @@ SOURCE_CORPUS = [
     ('val x = 1; val x = 2; val y = x;', 0),
     ('fun even n = if n = 0 then true else odd (n-1) and odd n = if n = 0 then false else even (n-1);', 1),
     ('fun f x = let fun g y = y x in g (fn z => z) end;', 0),
+    ('val x : bool = 5;', 1),
+    ('val (x,x) = (1,2);', 1),
+    ('fun f (x,x) = x;', 1),
+    ('val (x,y) = 1;', 1),
+    ('fun f x = x x;', 1),
+    ('val x = "héllo"; val y = foo;', 1),
+    ('datatype t = C int; val x = C "x";', 1),
+    ('datatype t = C int; val x = C 2;', 0),
+    ('fun f x = case x of (a,b) => a a;', 1),
+    ('structure S = struct val x = 1 end; val x = S.x 4;', 1),
+    ('val f = fn x => x; val x = (f 1, f "a");', 0),
 ]
 
 # These programs also exercise the basis and full backend output. They must
