@@ -99835,6 +99835,69 @@
     "reviewer": "Source comparison: abs_ml_inv_stack_permute and its typed data_to_word_memory_repr capture retain both lists of data-value/heap-address pairs, source stack and roots suffixes, all heap tuple fields, limit and timestamp. The original invariant and set-of-list subset conjunction imply the invariant for the selected pairs, with the same suffixes and no added assumption. List membership inclusion represents source set inclusion; all word locations share the positive source word width. The proof restricts the timestamp map to allTimestamps of the new stack, preserving the reference cells, root relations, domain bounds and block uniqueness."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackOperations.lean",
+    "lean_name": "popThm",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "pop_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: pop_thm and its typed data_to_word_memory_repr capture retain the complete abstract invariant tuple, references, limit, timestamp, and source positive heap word width. The premise retains the original paired prefixes and equal-length condition, and the conclusion drops both prefixes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackOperations.lean",
+    "lean_name": "duplicateThm",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "duplicate_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: duplicate_thm and its typed data_to_word_memory_repr capture retain the complete abstract invariant tuple, references, limit, timestamp, and source positive heap word width. The equal-length premise and both duplicated value and root prefixes match the original."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackOperations.lean",
+    "lean_name": "duplicate1Thm",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "duplicate1_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: duplicate1_thm and its typed data_to_word_memory_repr capture retain the complete abstract invariant tuple, references, limit, timestamp, and source positive heap word width. The singleton specialization retains the original single-value and single-root premise and duplicated conclusion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackOperations.lean",
+    "lean_name": "moveThm",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "move_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: move_thm and its typed data_to_word_memory_repr capture retain the complete abstract invariant tuple, references, limit, timestamp, and source positive heap word width. The three value and root segments, their independent length equalities, and the exchanged second and third segments match the original."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackOperations.lean",
+    "lean_name": "split1Thm",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "split1_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: split1_thm and its typed data_to_word_memory_repr capture retain the complete abstract invariant tuple, references, limit, timestamp, and source positive heap word width. The original existential root decomposition and prefix length are preserved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackOperations.lean",
+    "lean_name": "split2Thm",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "split2_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: split2_thm and its typed data_to_word_memory_repr capture retain the complete abstract invariant tuple, references, limit, timestamp, and source positive heap word width. The original two existential root prefixes and both length equalities are preserved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackOperations.lean",
+    "lean_name": "split3Thm",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "split3_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: split3_thm and its typed data_to_word_memory_repr capture retain the complete abstract invariant tuple, references, limit, timestamp, and source positive heap word width. The original three existential root prefixes and all three length equalities are preserved."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "wordMlInv_rearrange",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
