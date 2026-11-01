@@ -249,7 +249,14 @@ noncomputable def execInsn (i : X64Insn) (len : Nat) (s : X64State) : X64State :
       writeReg s dst (readMemN s (sizeBytes sz1) addr)
   | .binopRI op sz dst imm =>
       let a := readReg s dst
-      let r := binopValue op a imm
+      -- `adc`/`sbb` include the incoming carry flag in the written value; the
+      -- `adc` flags below already do so.  `sbb`'s flags still omit the borrow,
+      -- but the backend never emits it.
+      let r :=
+        match op with
+        | .zadc => a + imm + BitVec.ofNat 64 (if s.flags.cf then 1 else 0)
+        | .zsbb => a - imm - BitVec.ofNat 64 (if s.flags.cf then 1 else 0)
+        | _ => binopValue op a imm
       let flags := binopFlags op a imm s.flags
       match op with
       | .zcmp | .ztest => { s with flags := flags }
@@ -257,7 +264,14 @@ noncomputable def execInsn (i : X64Insn) (len : Nat) (s : X64State) : X64State :
   | .binopRR op sz dst src =>
       let a := readReg s dst
       let b := readReg s src
-      let r := binopValue op a b
+      -- `adc`/`sbb` include the incoming carry flag in the written value; the
+      -- `adc` flags below already do so.  `sbb`'s flags still omit the borrow,
+      -- but the backend never emits it.
+      let r :=
+        match op with
+        | .zadc => a + b + BitVec.ofNat 64 (if s.flags.cf then 1 else 0)
+        | .zsbb => a - b - BitVec.ofNat 64 (if s.flags.cf then 1 else 0)
+        | _ => binopValue op a b
       let flags := binopFlags op a b s.flags
       match op with
       | .zcmp | .ztest => { s with flags := flags }
