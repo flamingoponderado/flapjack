@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Incremental
+import Flapjack.Compiler.Backend.ClosToBvl.ToBviIncremental
 
 /-! Concrete checks of the disabled-optimization incremental wrapper. -/
 namespace Flapjack.Test.ClosToBvlIncremental
@@ -95,6 +96,18 @@ example : (match compileIncFuel? 100 { defaultConfig with nextLoc := 10, maxApp 
           | some known => (sptToAList known.valApproxSpt).isEmpty
           | none => false
     | _ => false) = true := by native_decide
+
+/-- The composed path carries the closure and BVL configurations into a
+subsequent incremental compilation. -/
+example : (match compileIncToBviFuel 100 (config, BvlToBvi.defaultConfig)
+    ([.var .none 0], []) with
+  | some (next, first) =>
+    match compileIncToBviFuel 100 next ([.var .none 0], []) with
+    | some (last, second) =>
+      next.1.nextLoc == 12 && last.1.nextLoc == 14 &&
+        !first.isEmpty && !second.isEmpty
+    | none => false
+  | none => false) = true := by native_decide
 
 example : (match compileIncMtiFuel? 0 { config with doMti := true, maxApp := 3 }
     ([], [(42, 0, .var .none 0)]) with

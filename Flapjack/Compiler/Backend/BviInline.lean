@@ -105,4 +105,12 @@ def compileProgFuel (fuel : Nat) (prog : List (Nat × Nat × Exp)) :
     pure (name, arity, ← removeTicksBounded fuel body)
   pure (cache, prog)
 
+/-- Incremental wrapper inlining starts from the retained inline cache. -/
+def compileIncFuel (fuel : Nat) (cache : Spt (Nat × Exp)) (prog : List (Nat × Nat × Exp)) :
+    Option (Spt (Nat × Exp) × List (Nat × Nat × Exp)) := do
+  let (cache, prog) ← inlineAllFuel fuel cache prog
+  let prog ← prog.mapM fun (name, arity, body) => do
+    pure (name, arity, ← removeTicksBounded fuel body)
+  pure (cache, prog)
+
 end Flapjack.Compiler.Backend.BviInline

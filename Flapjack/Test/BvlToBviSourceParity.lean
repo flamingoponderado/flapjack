@@ -1,7 +1,34 @@
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ProgramAgreement
+import Flapjack.Compiler.Backend.BvlToBvi.Incremental
 
 /-! Replays the typed HOL auxiliary-tree observations. -/
 open Flapjack Flapjack.Compiler.Backend.BvlToBvi
+
+-- Replays the original two-call incremental pipeline, observing both
+-- retained caches, the fresh-name counters, and each resulting program.
+private def incrementalConfig : Config :=
+  { defaultConfig with nextName1 := 2, nextName2 := 3, nextName3 := 4, doTailrec := false, doTmc := false }
+
+#guard match compileIncAllFuel 100 incrementalConfig [(1, 1, .var 0)] with
+  | some (config, [(76, 1, .var 0)]) =>
+    match compileIncAllFuel 100 config [(2, 1, .call 0 (some 1) [.var 0])] with
+    | some (next, [(80, 1, .let [.op (.intOp (.const 0)) []] (.var 1))]) =>
+      next.nextName1 == 2 && next.nextName2 == 3 && next.nextName3 == 4 &&
+        (sptToAList next.bviInlines).isEmpty &&
+        match sptToAList next.inlines with
+        | [(1, 1, .var 0), (2, 1, .let [.var 0] (.tick (.var 0)))] => true
+        | _ => false
+    | _ => false
+  | _ => false
+
+#guard match compileIncAllFuel 100 defaultConfig [(1, 1, .var 0)] with
+  | some (config, [(76, 1, .var 0)]) =>
+    config.nextName1 == 73 && config.nextName2 == 74 && config.nextName3 == 75 &&
+      (sptToAList config.bviInlines).isEmpty &&
+      match sptToAList config.inlines with
+      | [(1, 1, .var 0)] => true
+      | _ => false
+  | _ => false
 
 #guard match compileAuxSource (2, true, .var 1) with
   | .list [(81, true, .var 1)] => true

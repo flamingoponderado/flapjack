@@ -210,4 +210,15 @@ def compileProgFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
     pure (name, arity, ← BvlHandle.compileAnyFuel fuel splitSeq cutSize arity body)
   pure (cache, prog)
 
+/-- Incremental BVL optimization starts from the retained inline cache. -/
+def compileIncFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
+    (cache : Spt (Nat × Exp)) (prog : List (Nat × Nat × Exp)) :
+    Option (Spt (Nat × Exp) × List (Nat × Nat × Exp)) := do
+  let (cache, prog) ← tickInlineAllFuel fuel inlineLimit cache prog
+  let prog ← prog.mapM fun (name, arity, body) => do
+    let body ← removeTicksBounded fuel body
+    let body ← letOpBounded fuel body
+    pure (name, arity, ← BvlHandle.compileAnyFuel fuel splitSeq cutSize arity body)
+  pure (cache, prog)
+
 end Flapjack.Compiler.Backend.BvlInline

@@ -20,3 +20,15 @@ val _ = show "compile_list_def=" compile_list_def;
 val _ = show "compile_inc_def=" compile_inc_def;
 val _ = show "compile_inc_example=" (EVAL ``compile_inc 0
   [(1, 2, bvl$Let [] (bvl$Let [] (bvl$Var 0))); (2, 1, bvl$Var 0)]``);
+val _ = Globals.show_types := false;
+val _ = show "compile_inc_all_cache=" (EVAL ``
+  let c = bvl_to_bvi$default_config with
+    <| next_name1 := 2; next_name2 := 3; next_name3 := 4; do_tailrec := F; do_tmc := F |> in
+  let (c, first) = bvl_to_bvi$bvl_to_bvi_compile_inc_all c [(1,1,bvl$Var 0)] in
+  let (c, second) = bvl_to_bvi$bvl_to_bvi_compile_inc_all c
+    [(2,1,bvl$Call 0 (SOME 1) [bvl$Var 0])] in
+  (c.next_name1,c.next_name2,c.next_name3,toAList c.inlines,toAList c.bvi_inlines,first,second)``);
+val _ = show "compile_inc_all_default=" (EVAL ``
+  let (c, code) = bvl_to_bvi$bvl_to_bvi_compile_inc_all bvl_to_bvi$default_config
+    [(1, 1, bvl$Var 0)] in
+  (c.next_name1,c.next_name2,c.next_name3,toAList c.inlines,toAList c.bvi_inlines,code)``);

@@ -781,6 +781,8 @@ import Flapjack.Compiler.Backend.BviLet.Proofs.Calls
 import Flapjack.Compiler.Backend.BviLet.Proofs.Simulation
 import Flapjack.Test.BviLetSourceParity
 import Flapjack.Compiler.Backend.BvlToBvi.Compile
+import Flapjack.Compiler.Backend.BvlToBvi.Incremental
+import Flapjack.Compiler.Backend.ClosToBvl.ToBviIncremental
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Total
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCode
