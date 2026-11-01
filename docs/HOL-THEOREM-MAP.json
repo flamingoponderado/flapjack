@@ -100363,6 +100363,46 @@
     "reviewer": "Source comparison: word_list_APPEND and its typed capture retain independent arbitrary list element type and positive address-word width, both arbitrary lists, and equality of the complete separation assertions. The suffix address is a + n2w (LENGTH xs) * bytes_in_word, with modular word arithmetic."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockStack.lean",
+    "lean_name": "allTimestamps_headEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "all_ts_head_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: all_ts_head_eq and its typed capture preserve the source value, reference tree, stack and independent unused polymorphic ts binder. A value already in all_vs leaves the entire all_ts set unchanged when prepended."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockStack.lean",
+    "lean_name": "blocksUnique_el",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "blocks_unique_el",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: blocks_unique_el and its typed capture preserve the in-bounds index, parent block and stack, reference tree, and full block uniqueness predicate after prepending the indexed child. Lean carries the original index bound as the proof required for list indexing."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockStack.lean",
+    "lean_name": "memoryRel_elAny",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_El_any",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_El_any and its typed capture retain the original memory relation, good_dimindex and in-bounds child, all three existential words including the unused y, the real-address and domain facts, and the full extended memory relation at the same modular payload address. The index bound is carried explicitly for Lean list indexing; store is the canonical finite-support map and target words share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockStack.lean",
+    "lean_name": "memoryRel_blockMem",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Block_MEM",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Block_MEM and its typed capture retain the original memory relation, child-index bound and good_dimindex, existential word/address/offset, Smallnum real-offset equation, pointer and domain facts, and the full extended memory relation for the indexed child. The index bound is carried explicitly for Lean list indexing; store is the canonical finite-support map and target words share the positive HOL word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
