@@ -362,6 +362,154 @@ theorem simulationFor_force_nontail_abort {C F : Type} (label index : Nat)
   · simp [compileSource, nameAt, roots]
   · simp [correctOutcome, dataToBviResult, isReturn, isResult, isException]
 
+/-- A positive-clock non-tail force restores the saved caller environment
+when the recursive thunk body produces a value. -/
+theorem simulationFor_force_nontail_value {C F : Type} (label index : Nat)
+    (env : List BvlSem.Value) (source nextSource : BviSem.BviState C F)
+    (thunk function : BvlSem.Value) (callArgs : List BvlSem.Value) (body : Bvi.Exp)
+    (value : BvlSem.Value) (sourceVar : env[index]? = some thunk)
+    (sourceThunk : BviSem.destThunk thunk source.refs = .isThunk .notEvaluated function)
+    (sourceCode : BvlSem.findCode (some label) [thunk, function] source.code = some (callArgs, body))
+    (clock : source.clock ≠ 0)
+    (bodyRun : BviSem.evaluate [body] callArgs (BviSem.decClock 1 source) = (.val [value], nextSource))
+    (ih : simulationFor [body] callArgs (BviSem.decClock 1 source))
+    (target : DataSem.State C F) (n : Nat) (corr live : List Nat)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (fresh : ∀ key, n ≤ key → sptLookup key target.locals = none)
+    (related : stateRel source target) (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none) :
+    BviSem.evaluate [.force label index] env source = (.val [value], nextSource) ∧
+    ∃ targetNext prog pres names next ls,
+      compileSource n corr false live [.force label index] = (prog, names, next) ∧
+      DataSem.evaluate prog target = (pres, targetNext) ∧ stateRel nextSource targetNext ∧
+      correctOutcome (.val [value]) target targetNext n next corr live names env false pres ls := by
+  have sourceRun : BviSem.evaluate [.force label index] env source = (.val [value], nextSource) := by
+    simp [BviSem.evaluate, sourceVar, sourceThunk, sourceCode, clock, bodyRun]
+  obtain ⟨name, dataThunk, dataFunction, nameAt, read, thunkProjection, inspect, functionProjection⟩ :=
+    force_inspection_projection index env source target corr thunk function .notEvaluated sourceVar sourceThunk vars related
+  have nameLt : name < n := by
+    by_contra bound
+    have absent := fresh name (by omega)
+    simp only [DataSem.getVar] at read
+    rw [absent] at read
+    contradiction
+  have nextBound : max (n + 1) (name + 1) = n + 1 := Nat.max_eq_left (by omega)
+  have projectedCode : BvlSem.findCode (some label) ([dataThunk, dataFunction].map dataToBviValue) source.code =
+      some (callArgs, body) := by simpa [thunkProjection, functionProjection] using sourceCode
+  obtain ⟨dataArgs, size, argsProjection, targetCode⟩ :=
+    findCode_direct source target label [dataThunk, dataFunction] callArgs body related projectedCode
+  subst callArgs
+  have targetClock : target.clock ≠ 0 := by simpa [← related.1] using clock
+  let roots := live ++ corr
+  let cut := sptMkWf (sptInter target.locals (namesOfList roots))
+  have rootsPresent : ∀ key ∈ roots, sptLookup key target.locals ≠ none := by
+    simpa [roots, DataSem.getVars] using
+      (roots_present target [] live corr env [] vars livePresent (by simp [DataSem.getVars]))
+  have cutEnv : DataSem.cutEnv (namesOfList roots) target.locals = some cut :=
+    cutEnv_namesOfList roots target.locals rootsPresent
+  let pushed := DataSem.pushEnv cut false (DataSem.decClock target)
+  have callRelated := stateRel_pushEnv (BviSem.decClock 1 source) (DataSem.decClock target) cut false
+    (stateRel_decClock source target related)
+  obtain ⟨result, final, names, next, ls, localsSize, stackMax, safe, peak, bodyTarget,
+      finalRel, optimizedRel, outcome⟩ :=
+    compileExp_callEnv body dataArgs (BviSem.decClock 1 source) nextSource (.val [value]) pushed size
+      ih bodyRun (by simp) callRelated (by simp [isException])
+  obtain ⟨dataValue, resultEq, projected⟩ : ∃ dataValue, result = .val [dataValue] ∧ dataToBviValue dataValue = value := by
+    have projection := outcome.1 (by simp [isReturn])
+    cases result with
+    | err error => cases error <;> simp [dataToBviResult] at projection
+    | val values =>
+      cases values with
+      | nil => simp [dataToBviResult] at projection
+      | cons head tail =>
+        cases tail with
+        | nil => exact ⟨head, rfl, by simpa [dataToBviResult] using projection⟩
+        | cons second rest => simp [dataToBviResult] at projection
+  subst result
+  have control := outcome.2.2.1 (by simp [isResult])
+  have stack : final.stack = .env target.localsSize cut :: target.stack := by
+    simpa [DataSem.callEnv, pushed, DataSem.pushEnv, DataSem.decClock] using control.1.symm
+  have handler : final.handler = target.handler := by
+    simpa [DataSem.callEnv, pushed, DataSem.pushEnv, DataSem.decClock] using control.2.symm
+  let optimized := { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }
+  let restored := { optimized with stack := target.stack, locals := cut, localsSize := target.localsSize }
+  let targetNext := DataSem.setVar n dataValue restored
+  have pop : DataSem.popEnv optimized = some restored := by
+    simp [DataSem.popEnv, optimized, stack, restored]
+  have clamped : DataSem.fixClock (DataSem.callEnv dataArgs size pushed)
+      (DataSem.evaluate (compileExp dataArgs.length body) (DataSem.callEnv dataArgs size pushed)) =
+      (some (.val [dataValue]), optimized) := by
+    rw [DataSem.fixClock_evaluate, bodyTarget]
+  have targetRun : DataSem.evaluate (.force (some (n, namesOfList roots)) label name) target = (none, targetNext) := by
+    simp only [DataSem.evaluate, read, inspect, targetCode, targetClock, cutEnv, ↓reduceIte]
+    rw [clamped, pop]
+  have targetRel : stateRel nextSource targetNext := by
+    simpa [targetNext, restored, DataSem.setVar, stateRel, optimized] using optimizedRel
+  have locals : targetNext.locals = sptInsert n dataValue cut := by simp [targetNext, restored, DataSem.setVar]
+  have destRead : sptLookup n targetNext.locals = some dataValue := by simp [locals, sptLookup_sptInsert_same]
+  have lookupOther : ∀ key, key ≠ n → sptLookup key targetNext.locals =
+      if key ∈ roots then sptLookup key target.locals else none := by
+    intro key different
+    rw [locals, sptLookup_sptInsert_ne n key dataValue cut different]
+    exact lookup_cut_namesOfList roots target.locals key
+  have keeps : ∀ key ∈ roots, key ≠ n → sptLookup key targetNext.locals = sptLookup key target.locals := by
+    intro key member different
+    rw [lookupOther key different, if_pos member]
+  have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue targetNext.locals) := by
+    apply varCorr_of_lookup_eq dataToBviValue target.locals targetNext.locals corr env vars
+    intro key member
+    have root : key ∈ roots := by simp [roots, member]
+    have different : key ≠ n := by
+      intro equal
+      subst key
+      exact rootsPresent n root (fresh n (Nat.le_refl n))
+    exact keeps key root different
+  refine ⟨sourceRun, targetNext, .force (some (n, namesOfList roots)) label name, none,
+    [n], n + 1, none, ?_, targetRun, targetRel, ?_⟩
+  · simp [compileSource, nameAt, nextBound, roots]
+  · simp only [correctOutcome, true_and, List.mem_singleton, forall_eq]
+    refine ⟨by omega, by omega, ?_, varsNew, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · intro key bound
+      have different : key ≠ n := by omega
+      rw [lookupOther key different]
+      simp [fresh key (by omega)]
+    · intro key v lookup
+      by_cases equal : key = n
+      · omega
+      · have oldLookup : sptLookup key target.locals = some v := by
+          rw [lookupOther key equal] at lookup
+          split at lookup <;> simp_all
+        by_contra bound
+        have absent := fresh key (by omega)
+        rw [oldLookup] at absent
+        contradiction
+    · intro key v lookup needed
+      have different : key ≠ n := by
+        intro equal
+        subst key
+        have absent := fresh n (Nat.le_refl n)
+        rw [lookup] at absent
+        contradiction
+      have root : key ∈ roots := by
+        by_cases member : key ∈ live
+        · simp [roots, member]
+        · simp [roots, needed member]
+      rw [keeps key root different]
+      exact lookup
+    · simp [targetNext, restored, DataSem.setVar]
+    · simp [targetNext, restored, DataSem.setVar, optimized, handler]
+    · intro available
+      cases old : DataSem.jumpExc target with
+      | none => exact False.elim (available old)
+      | some jumped =>
+        have moved := DataSem.jumpExc_transport target targetNext jumped
+          (by simp [targetNext, restored, DataSem.setVar])
+          (by simp [targetNext, restored, DataSem.setVar, optimized, handler]) old
+        rw [moved]
+        simp
+    · constructor
+      · simp [DataSem.getVar, sptLookup_sptMap, destRead, projected]
+      · constructor
+
 /-- An already evaluated thunk satisfies the complete compiler simulation
 invariant at any clock. The evaluator and carrier correspondence still need
 review against HOL, so this assembling lemma is untagged. -/
