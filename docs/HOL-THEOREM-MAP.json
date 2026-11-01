@@ -99871,6 +99871,36 @@
     "reviewer": "Source comparison: IMP_memory_rel_Number and its typed data_to_word_memory_repr capture. The good_dimindex, small_int and full memory_rel premises imply the original relation with the Number and encoded Word prepended. store is the canonical finite-support representation of the HOL finite map; memory, domain, stored words and result use the shared positive HOL width. The word address mask is proved for both widths admitted by good_dimindex."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Unit.lean",
+    "lean_name": "consThm_empty",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "cons_thm_EMPTY",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: cons_thm_EMPTY and its typed data_to_word_memory_repr capture. The original abstract invariant and tag < dimword / 16 premises imply the same invariant with Block 0 tag [] and its BlockNil word root prepended; the heap tuple, references, limit and timestamp are unchanged. All source word occurrences share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Unit.lean",
+    "lean_name": "wordMlInv_unit",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_ml_inv_Unit",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_ml_inv_Unit and its typed data_to_word_memory_repr capture. The word-level invariant and good_dimindex premises imply the same invariant with Unit and Word 2 prepended; Unit is the separately ported Block 0 0 []. All source word occurrences share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Unit.lean",
+    "lean_name": "memoryRel_unit",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Unit",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Unit and its typed data_to_word_memory_repr capture. The full memory relation and good_dimindex imply the same relation with Unit and Word 2 prepended; store is the canonical finite-support map. All source word occurrences share the positive HOL word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
