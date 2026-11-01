@@ -2845,6 +2845,7 @@ import Flapjack.Compiler.Encoders.X64.Machine.ConstCase
 import Flapjack.Compiler.Encoders.X64.Machine.ArithBinopCase
 import Flapjack.Compiler.Encoders.X64.Machine.ShiftCase
 import Flapjack.Compiler.Encoders.X64.Machine.MulCase
+import Flapjack.Compiler.Encoders.X64.Machine.DivCase
 import Flapjack.Compiler.Encoders.X64.Machine.StepAgree
 import Flapjack.Compiler.Encoders.X64.Machine.Simulate
 import Flapjack.X64.NativeSource
