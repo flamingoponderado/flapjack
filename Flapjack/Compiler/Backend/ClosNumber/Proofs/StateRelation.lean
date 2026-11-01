@@ -163,6 +163,19 @@ theorem stateRel_leastUnusedRef {C F : Type} {source : State (Nat × C) F} {targ
     have free := (stateRel_ref_unused related _).mp (leastUnusedRef_unused source.refs)
     exact occupied free
 
+/-- Related stores agree on whether an address contains a value array and
+    relate its fields pointwise whenever it does. -/
+theorem stateRel_valueArray_lookup {C F : Type} {source : State (Nat × C) F} {target : State C F}
+    (related : StateRel source target) (index : Nat) :
+    OptionRel (List.Forall₂ (ValueRel source.maxApp))
+      (match source.refs.lookup index with | some (.valueArray values) => some values | _ => none)
+      (match target.refs.lookup index with | some (.valueArray values) => some values | _ => none) := by
+  have h := related.2.2.2.2.2.1 index
+  cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
+    simp_all [OptionRel, RefRel]
+  rename_i leftRef rightRef
+  cases leftRef <;> cases rightRef <;> simp_all
+
 /-- Initial states satisfy the relation whenever future incremental source
 programs contain no pre-numbered applications or auxiliary code. This shows
 that the state relation is inhabited under its intended oracle conditions. -/

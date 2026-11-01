@@ -1893,4 +1893,131 @@ theorem evaluate_memory_refByte {C F : Type} (trace : BackendCommon.Tra) (args :
     EvalSimulation (C := C) (F := F) [.op trace (.memOp (.refByte false)) args] :=
   evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_refByte
 
+/-- Reading a value-array length observes equal lengths and the same invalid
+    reference cases in related stores. -/
+theorem primitiveSimulation_memory_length {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .length) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      cases head with
+      | refPtr flag index =>
+        have refsRel := stateRel.2.2.2.2.2.1 index
+        cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
+          simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+        rename_i leftRef rightRef
+        cases leftRef <;> cases rightRef <;> simp_all
+        rename_i fields nextFields
+        have lengths := refsRel.length_eq
+        have resultRel : ValueRel source.maxApp (.number fields.length) (.number fields.length) := .number _
+        simp [← lengths, resultRel]
+      | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+        simp [doApp, applyMemory, ResultRel]
+    | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Reading an indexed block or value array preserves the selected related
+    field and agrees on invalid indices and references. -/
+theorem primitiveSimulation_memory_el {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .el) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases second with
+        | number index =>
+          cases first with
+          | block tag fields nextFields fieldsRel =>
+            by_cases negative : index < 0
+            · simp [doApp, applyMemory, negative, ResultRel]
+            · have lookupRel : OptionRel (ValueRel source.maxApp) fields[index.toNat]? nextFields[index.toNat]? := by
+                simpa [getGlobal] using forall₂_getGlobal fieldsRel index.toNat
+              cases left : fields[index.toNat]? <;> cases right : nextFields[index.toNat]? <;>
+                simp_all [OptionRel, doApp, applyMemory, ResultRel]
+              simp [show ¬ index < 0 by omega, lookupRel, stateRel]
+          | refPtr flag ptr =>
+            have refsRel := stateRel.2.2.2.2.2.1 ptr
+            cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
+              simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+            rename_i leftRef rightRef
+            cases leftRef <;> cases rightRef <;> simp_all
+            rename_i fields nextFields
+            by_cases negative : index < 0
+            · simp [negative]
+            · have lookupRel : OptionRel (ValueRel source.maxApp) fields[index.toNat]? nextFields[index.toNat]? := by
+                simpa [getGlobal] using forall₂_getGlobal refsRel index.toNat
+              cases left : fields[index.toNat]? <;> cases right : nextFields[index.toNat]? <;>
+                simp_all [OptionRel]
+              simp [show ¬ index < 0 by omega, lookupRel, stateRel]
+          | number _ | word64 _ | byteVector _ | closure | recclosure =>
+            simp [doApp, applyMemory, ResultRel]
+        | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+          cases first <;> simp [doApp, applyMemory, ResultRel]
+      | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Updating a value-array element preserves corresponding contents and
+    produces the same type errors for invalid indices or references. -/
+theorem primitiveSimulation_memory_update {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .update) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil => simp [doApp, applyMemory, ResultRel]
+      | cons third tail =>
+        cases tail with
+        | nil =>
+          cases first with
+          | refPtr flag ptr =>
+            cases second with
+            | number index =>
+              have refsRel := stateRel.2.2.2.2.2.1 ptr
+              cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
+                simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+              rename_i leftRef rightRef
+              cases leftRef <;> cases rightRef <;> simp_all
+              rename_i value nextValue fields nextFields
+              have lengths := refsRel.length_eq
+              by_cases invalid : index < 0 ∨ index.toNat ≥ fields.length
+              · simp [← lengths, invalid]
+              · have fieldsUpdated := forall₂_set refsRel index.toNat value nextValue third
+                have updated := stateRel_updateRefs ptr (.valueArray (fields.set index.toNat value))
+                  (.valueArray (nextFields.set index.toNat nextValue)) stateRel fieldsUpdated
+                have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil
+                simp [← lengths, invalid, unitRel, updated]
+            | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+              simp [doApp, applyMemory, ResultRel]
+          | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+            cases second <;> simp [doApp, applyMemory, ResultRel]
+        | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Value-array length expressions preserve evaluation through numbering. -/
+theorem evaluate_memory_length {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .length) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_length
+
+/-- Indexed block and value-array reads preserve evaluation through numbering. -/
+theorem evaluate_memory_el {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .el) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_el
+
+/-- Value-array updates preserve evaluation through numbering. -/
+theorem evaluate_memory_update {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .update) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_update
+
 end Flapjack.Compiler.Backend.ClosNumber
