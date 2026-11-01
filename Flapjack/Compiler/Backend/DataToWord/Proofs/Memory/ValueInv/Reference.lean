@@ -249,4 +249,45 @@ theorem valueInv_refPtr {width : Nat} [NeZero width] (conf : Config) (bit : Bool
     · exact .refPtrThunk ck conf mode n value addr refs f tf heap found safe domain cell (fun _ => recInv (ck - 1))
     · exact .refPtrThunkInlined ck conf n value x refs f tf heap found safe (fun _ => recInv (ck - 1))
 
+/-- All five unbounded value-invariant equations together, in the order of the
+original case theorem. This is not tagged as a HOL port: `valueInv` uses the
+preliminary clocked relation, whose tuple of finite maps still needs a reviewed
+representation qualifier and source correspondence. -/
+theorem valueInv_cases {width : Nat} [NeZero width] (conf : Config) (i : Int)
+    (word : BitVec 64) (n : Nat) (bit : Bool) (stamp : Nat) (values : List Value)
+    (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
+    (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
+    (valueInv conf (.number i) refs (x,f,tf,heap) ↔
+      if smallInt width i then x = .data (.word (smallnum i)) else
+        ∃ ptr, x = .pointer ptr (.word 0) ∧ heapLookup ptr heap = some (bignumRep i)) ∧
+    (valueInv conf (.word64 word) refs (x,f,tf,heap) ↔
+      ∃ ptr, x = .pointer ptr (.word 0) ∧ heapLookup ptr heap = some (word64Rep word)) ∧
+    (valueInv conf (.codePtr n) refs (x,f,tf,heap) ↔ x = .data (.loc n 0)) ∧
+    (valueInv conf (.refPtr bit n) refs (x,f,tf,heap) ↔
+      ((∃ ptr, f.lookup n = some ptr) ∧
+       (∀ mode value, sptLookup n refs ≠ some (.thunk mode value)) ∧
+       (∀ tag finalised left child right,
+         sptLookup n refs = some (.mutBlock tag finalised left child right) → bit = false) ∧
+       x = .pointer (holFapply f n) (refPtrAnnot conf (sptLookup n refs))) ∨
+      (∃ mode value addr, sptLookup n refs = some (.thunk mode value) ∧
+       (mode = .evaluated → destThunk value refs = .notThunk) ∧
+       (∃ ptr, f.lookup n = some ptr) ∧
+       heapLookup (holFapply f n) heap = some (thunkBlock mode addr) ∧
+       valueInv conf value refs (addr,f,tf,heap) ∧ bit = false ∧
+       x = .pointer (holFapply f n) (.word 0)) ∨
+      (∃ value, sptLookup n refs = some (.thunk .evaluated value) ∧
+       destThunk value refs = .notThunk ∧ bit = false ∧ valueInv conf value refs (x,f,tf,heap))) ∧
+    (valueInv conf (.block stamp n values) refs (x,f,tf,heap) ↔
+      if values = [] then
+        x = .data (.word (blockNil n)) ∧ n < 2 ^ width / 16 ∧ stamp = 0
+      else
+        ∃ ptr xs, List.Forall₂ (fun value addr => valueInv conf value refs (addr,f,tf,heap)) values xs ∧
+          tf.lookup stamp = some ptr ∧ x = .pointer ptr (.word (ptrBits conf n xs.length)) ∧
+          heapLookup ptr heap = some (blockRep n xs)) := by
+  exact ⟨valueInv_number conf i refs x f tf heap,
+    valueInv_word64 conf word refs x f tf heap,
+    valueInv_codePtr conf n refs x f tf heap,
+    valueInv_refPtr conf bit n refs x f tf heap,
+    valueInv_block conf stamp n values refs x f tf heap⟩
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
