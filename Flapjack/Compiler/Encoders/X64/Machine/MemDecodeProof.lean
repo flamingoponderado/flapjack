@@ -2248,4 +2248,303 @@ theorem decode_jcc_zP_long (imm : BitVec 64)
   simp only [condOfCode_code ZCond.zP (by decide)]
   rw [himm]
 
+/-! ## Register-immediate binary operations -/
+
+/-- The encoded byte list of the one-byte-immediate `0x83` form on a register. -/
+abbrev binopRI83Bytes (opc dst : Nat) (imm : BitVec 64) : List (BitVec 8) :=
+  [byte (0x48 + (if 8 ≤ dst then 1 else 0)), byte 0x83,
+   byte (0xC0 + 8 * (opc % 8) + dst % 8), byte imm.toNat]
+
+theorem encodeInsn_binopRI_83 (op : ZBinopName) (dst : Nat) (hd : dst < 16) (imm : BitVec 64)
+    (hns : op ≠ .ztest) (hnsh : op.code / 8 ≠ 1)
+    (hs : -128 ≤ imm.toInt ∧ imm.toInt ≤ 127) :
+    encodeInsn (.binopRI op .z64 dst imm) = binopRI83Bytes op.code dst imm := by
+  have hop : op = .zadd ∨ op = .zor ∨ op = .zadc ∨ op = .zsbb ∨ op = .zand ∨
+      op = .zsub ∨ op = .zxor ∨ op = .zcmp := by
+    cases op <;> simp_all [ZBinopName.code]
+  have h8 : eImm8 imm = some [byte imm.toNat] := by unfold eImm8; rw [if_pos hs]
+  rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;> interval_cases dst <;>
+    simp only [encodeInsn, h8, Option.isSome_some, Bool.true_and, if_true,
+      ZBinopName.code, notByte, isRax, eRmImm8, eModRM, eOpsize, rexPrefix, mkRex, byte,
+      binopRI83Bytes] <;>
+    rfl
+
+theorem binopOfExt_code (op : ZBinopName)
+    (hop : op = .zadd ∨ op = .zor ∨ op = .zadc ∨ op = .zsbb ∨ op = .zand ∨
+      op = .zsub ∨ op = .zxor ∨ op = .zcmp) :
+    binopOfExt (op.code % 8) = some op := by
+  rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;> rfl
+
+theorem decode_binopRI_83 (op : ZBinopName) (dst : Nat) (hd : dst < 16) (imm : BitVec 64)
+    (hns : op ≠ .ztest) (hnsh : op.code / 8 ≠ 1)
+    (hs : -128 ≤ imm.toInt ∧ imm.toInt ≤ 127) :
+    decode (byteListReader (encodeInsn (.binopRI op .z64 dst imm))) =
+      some (.binopRI op .z64 dst imm, 4) := by
+  have hop : op = .zadd ∨ op = .zor ∨ op = .zadc ∨ op = .zsbb ∨ op = .zand ∨
+      op = .zsub ∨ op = .zxor ∨ op = .zcmp := by
+    cases op <;> simp_all [ZBinopName.code]
+  rw [encodeInsn_binopRI_83 op dst hd imm hns hnsh hs]
+  have hb3 : byteListReader (binopRI83Bytes op.code dst imm) 3 = byte imm.toNat := by
+    simp [binopRI83Bytes]
+  rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;> interval_cases dst
+  all_goals
+    have himm := imm8_at imm 3 (byteListReader (binopRI83Bytes _ _ imm)) hb3
+      (by omega) (by omega)
+    simp [binopRI83Bytes, ZBinopName.code] at himm
+    simp [decode, decodeNoRex, decodeRex, parseRM, binopRI83Bytes, binopOfExt,
+      ZBinopName.code, byte_toNat]
+    rw [himm]
+    simp [ZRM.regOf]
+
+
+
+
+/-! ## Byte layouts -/
+
+abbrev binopRIC1Bytes (opc dst : Nat) (imm : BitVec 64) : List (BitVec 8) :=
+  [byte (0x48 + (if 8 ≤ dst then 1 else 0)), byte 0xC1,
+   byte (0xC0 + 8 * (opc % 8) + dst % 8), byte imm.toNat]
+
+abbrev binopRID1Bytes (opc dst : Nat) : List (BitVec 8) :=
+  [byte (0x48 + (if 8 ≤ dst then 1 else 0)), byte 0xD1,
+   byte (0xC0 + 8 * (opc % 8) + dst % 8)]
+
+abbrev binopRI81Bytes (opc dst : Nat) (imm : BitVec 64) : List (BitVec 8) :=
+  [byte (0x48 + (if 8 ≤ dst then 1 else 0)), byte 0x81,
+   byte (0xC0 + 8 * (opc % 8) + dst % 8),
+   byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
+   byte (imm.toNat / 16777216)]
+
+abbrev binopRIRaxBytes (opc : Nat) (imm : BitVec 64) : List (BitVec 8) :=
+  [byte 0x48, byte (opc * 8 + 5),
+   byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
+   byte (imm.toNat / 16777216)]
+
+abbrev binopRITestRaxBytes (imm : BitVec 64) : List (BitVec 8) :=
+  [byte 0x48, byte 0xA9,
+   byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
+   byte (imm.toNat / 16777216)]
+
+abbrev binopRITestBytes (dst : Nat) (imm : BitVec 64) : List (BitVec 8) :=
+  [byte (0x48 + (if 8 ≤ dst then 1 else 0)), byte 0xF7, byte (0xC0 + dst % 8),
+   byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
+   byte (imm.toNat / 16777216)]
+
+theorem shiftOp (op : ZBinopName)
+    (hop : op = .zror ∨ op = .zshl ∨ op = .zshr ∨ op = .zsar) :
+    op.code / 8 = 1 ∧ op ≠ .ztest := by
+  rcases hop with rfl|rfl|rfl|rfl <;> exact ⟨by decide, by decide⟩
+
+theorem binopOp (op : ZBinopName)
+    (hop : op = .zadd ∨ op = .zor ∨ op = .zadc ∨ op = .zsbb ∨ op = .zand ∨
+      op = .zsub ∨ op = .zxor ∨ op = .zcmp) :
+    op.code / 8 ≠ 1 ∧ op ≠ .ztest := by
+  rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;> exact ⟨by decide, by decide⟩
+
+theorem shiftOfExt_code (op : ZBinopName)
+    (hop : op = .zror ∨ op = .zshl ∨ op = .zshr ∨ op = .zsar) :
+    shiftOfExt (op.code % 8) = some op := by
+  rcases hop with rfl|rfl|rfl|rfl <;> rfl
+
+/-! ## The shift `0xC1` form -/
+
+theorem encodeInsn_binopRI_C1 (op : ZBinopName) (dst : Nat) (hd : dst < 16) (imm : BitVec 64)
+    (hop : op = .zror ∨ op = .zshl ∨ op = .zshr ∨ op = .zsar) (hne : imm ≠ 1)
+    (hs : -128 ≤ imm.toInt ∧ imm.toInt ≤ 127) :
+    encodeInsn (.binopRI op .z64 dst imm) = binopRIC1Bytes op.code dst imm := by
+  have h8 : eImm8 imm = some [byte imm.toNat] := by unfold eImm8; rw [if_pos hs]
+  rcases hop with rfl|rfl|rfl|rfl <;> interval_cases dst <;>
+    simp only [encodeInsn, h8, if_neg hne, ZBinopName.code, notByte,
+      eRmImm8, eModRM, eOpsize, rexPrefix, mkRex, byte, binopRIC1Bytes] <;>
+    rfl
+
+theorem decode_binopRI_C1 (op : ZBinopName) (dst : Nat) (hd : dst < 16) (imm : BitVec 64)
+    (hop : op = .zror ∨ op = .zshl ∨ op = .zshr ∨ op = .zsar) (hne : imm ≠ 1)
+    (hs : -128 ≤ imm.toInt ∧ imm.toInt ≤ 127) :
+    decode (byteListReader (encodeInsn (.binopRI op .z64 dst imm))) =
+      some (.binopRI op .z64 dst imm, 4) := by
+  rw [encodeInsn_binopRI_C1 op dst hd imm hop hne hs]
+  have hb3 : byteListReader (binopRIC1Bytes op.code dst imm) 3 = byte imm.toNat := by
+    simp [binopRIC1Bytes]
+  rcases hop with rfl|rfl|rfl|rfl <;> interval_cases dst
+  all_goals
+    have himm := imm8_at imm 3 (byteListReader (binopRIC1Bytes _ _ imm)) hb3
+      (by omega) (by omega)
+    simp [binopRIC1Bytes, ZBinopName.code] at himm
+    simp [decode, decodeNoRex, decodeRex, parseRM, binopRIC1Bytes, shiftOfExt,
+      ZBinopName.code, byte_toNat]
+    rw [himm]
+    simp [ZRM.regOf]
+
+/-! ## The shift-by-one `0xD1` form -/
+
+theorem encodeInsn_binopRI_D1 (op : ZBinopName) (dst : Nat) (hd : dst < 16)
+    (hop : op = .zror ∨ op = .zshl ∨ op = .zshr ∨ op = .zsar) :
+    encodeInsn (.binopRI op .z64 dst 1) = binopRID1Bytes op.code dst := by
+  rcases hop with rfl|rfl|rfl|rfl <;> interval_cases dst <;>
+    simp only [encodeInsn, ZBinopName.code, eGenRmReg, eModRM, eOpsize, rexPrefix,
+      mkRex, byte, binopRID1Bytes] <;>
+    rfl
+
+theorem decode_binopRI_D1 (op : ZBinopName) (dst : Nat) (hd : dst < 16)
+    (hop : op = .zror ∨ op = .zshl ∨ op = .zshr ∨ op = .zsar) :
+    decode (byteListReader (encodeInsn (.binopRI op .z64 dst 1))) =
+      some (.binopRI op .z64 dst 1, 3) := by
+  rw [encodeInsn_binopRI_D1 op dst hd hop]
+  rcases hop with rfl|rfl|rfl|rfl <;> interval_cases dst <;>
+    simp [decode, decodeNoRex, decodeRex, parseRM, binopRID1Bytes, shiftOfExt,
+      ZBinopName.code, byte_toNat, ZRM.regOf]
+
+
+
+
+theorem binopOp_ne_test (op : ZBinopName)
+    (hop : op = .zadd ∨ op = .zor ∨ op = .zadc ∨ op = .zsbb ∨ op = .zand ∨
+      op = .zsub ∨ op = .zxor ∨ op = .zcmp) : op ≠ .ztest := by
+  rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;> decide
+
+theorem binopOp_ne_shift (op : ZBinopName)
+    (hop : op = .zadd ∨ op = .zor ∨ op = .zadc ∨ op = .zsbb ∨ op = .zand ∨
+      op = .zsub ∨ op = .zxor ∨ op = .zcmp) : op.code / 8 ≠ 1 := by
+  rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;> decide
+
+theorem encodeInsn_binopRI_81 (op : ZBinopName) (dst : Nat) (hd : dst < 16) (imm : BitVec 64)
+    (hop : op = .zadd ∨ op = .zor ∨ op = .zadc ∨ op = .zsbb ∨ op = .zand ∨
+      op = .zsub ∨ op = .zxor ∨ op = .zcmp)
+    (hns : ¬ (-128 ≤ imm.toInt ∧ imm.toInt ≤ 127)) (hne : dst ≠ 0)
+    (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    encodeInsn (.binopRI op .z64 dst imm) = binopRI81Bytes op.code dst imm := by
+  have h8 : eImm8 imm = none := by unfold eImm8; rw [if_neg hns]
+  have h32 := eImm32_eq imm hlo hhi
+  have his : (eImm8 imm).isSome = false := by rw [h8]; rfl
+  have hnt := binopOp_ne_test op hop
+  have hnsh := binopOp_ne_shift op hop
+  simp only [encodeInsn]
+  rw [if_neg hnt, if_neg hnsh]
+  rw [his]
+  simp only [Bool.and_false, Bool.false_eq_true, if_false]
+  rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;> interval_cases dst
+  all_goals
+    first
+    | exact absurd rfl hne
+    | simp [h32, eRmImm, eModRM, eOpsizeImm, eOpsize, rexPrefix, mkRex, byte,
+        binopRI81Bytes, isRax, ZBinopName.code]
+
+theorem encodeInsn_binopRI_rax (op : ZBinopName) (imm : BitVec 64)
+    (hop : op = .zadd ∨ op = .zor ∨ op = .zadc ∨ op = .zsbb ∨ op = .zand ∨
+      op = .zsub ∨ op = .zxor ∨ op = .zcmp)
+    (hns : ¬ (-128 ≤ imm.toInt ∧ imm.toInt ≤ 127))
+    (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    encodeInsn (.binopRI op .z64 0 imm) = binopRIRaxBytes op.code imm := by
+  have h8 : eImm8 imm = none := by unfold eImm8; rw [if_neg hns]
+  have h32 := eImm32_eq imm hlo hhi
+  have his : (eImm8 imm).isSome = false := by rw [h8]; rfl
+  have hnt := binopOp_ne_test op hop
+  have hnsh := binopOp_ne_shift op hop
+  simp only [encodeInsn]
+  rw [if_neg hnt, if_neg hnsh]
+  rw [his]
+  simp only [Bool.and_false, Bool.false_eq_true, if_false]
+  rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
+    simp [h32, eRaxImm, eOpsizeImm, eOpsize, rexPrefix, byte,
+      binopRIRaxBytes, isRax, ZBinopName.code]
+
+theorem encodeInsn_binopRI_test_rax (imm : BitVec 64)
+    (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    encodeInsn (.binopRI .ztest .z64 0 imm) = binopRITestRaxBytes imm := by
+  have h32 := eImm32_eq imm hlo hhi
+  simp [encodeInsn, h32, eRaxImm, eOpsizeImm, eOpsize, rexPrefix, byte,
+    binopRITestRaxBytes, isRax]
+
+theorem encodeInsn_binopRI_test (dst : Nat) (hd : dst < 16) (hne : dst ≠ 0) (imm : BitVec 64)
+    (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    encodeInsn (.binopRI .ztest .z64 dst imm) = binopRITestBytes dst imm := by
+  have h32 := eImm32_eq imm hlo hhi
+  interval_cases dst
+  all_goals
+    first
+    | exact absurd rfl hne
+    | simp [encodeInsn, h32, eRmImm, eModRM, eOpsizeImm, eOpsize, rexPrefix, mkRex,
+        byte, binopRITestBytes, isRax]
+
+
+
+
+theorem decode_binopRI_81 (op : ZBinopName) (dst : Nat) (hd : dst < 16) (imm : BitVec 64)
+    (hop : op = .zadd ∨ op = .zor ∨ op = .zadc ∨ op = .zsbb ∨ op = .zand ∨
+      op = .zsub ∨ op = .zxor ∨ op = .zcmp)
+    (hns : ¬ (-128 ≤ imm.toInt ∧ imm.toInt ≤ 127)) (hne : dst ≠ 0)
+    (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    decode (byteListReader (encodeInsn (.binopRI op .z64 dst imm))) =
+      some (.binopRI op .z64 dst imm, 7) := by
+  rw [encodeInsn_binopRI_81 op dst hd imm hop hns hne hlo hhi]
+  have hbo := binopOfExt_code op hop
+  have hr : ∀ j, j < 4 → byteListReader (binopRI81Bytes op.code dst imm) (3 + j) =
+      byte (imm.toNat / 2^(8*j)) := by
+    intro j hj
+    interval_cases j <;> simp [binopRI81Bytes]
+  have himm := imm32_eImm32_at imm 3 (byteListReader (binopRI81Bytes op.code dst imm)) hr hlo hhi
+  rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;> interval_cases dst
+  all_goals
+    first
+    | exact absurd rfl hne
+    | (simp [binopRI81Bytes, ZBinopName.code] at himm
+       simp [decode, decodeNoRex, decodeRex, parseRM, binopRI81Bytes, binopOfExt,
+         ZBinopName.code, byte_toNat]
+       rw [himm]
+       simp [ZRM.regOf])
+
+theorem decode_binopRI_rax (op : ZBinopName) (imm : BitVec 64)
+    (hop : op = .zadd ∨ op = .zor ∨ op = .zadc ∨ op = .zsbb ∨ op = .zand ∨
+      op = .zsub ∨ op = .zxor ∨ op = .zcmp)
+    (hns : ¬ (-128 ≤ imm.toInt ∧ imm.toInt ≤ 127))
+    (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    decode (byteListReader (encodeInsn (.binopRI op .z64 0 imm))) =
+      some (.binopRI op .z64 0 imm, 6) := by
+  rw [encodeInsn_binopRI_rax op imm hop hns hlo hhi]
+  have hr : ∀ j, j < 4 → byteListReader (binopRIRaxBytes op.code imm) (2 + j) =
+      byte (imm.toNat / 2^(8*j)) := by
+    intro j hj
+    interval_cases j <;> simp [binopRIRaxBytes]
+  have himm := imm32_eImm32_at imm 2 (byteListReader (binopRIRaxBytes op.code imm)) hr hlo hhi
+  rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl
+  all_goals
+    simp [binopRIRaxBytes, ZBinopName.code] at himm
+    simp [decode, decodeNoRex, decodeRex, binopRIRaxBytes, ZBinopName.code,
+      byte_toNat]
+    rw [himm]
+
+theorem decode_binopRI_test_rax (imm : BitVec 64)
+    (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    decode (byteListReader (encodeInsn (.binopRI .ztest .z64 0 imm))) =
+      some (.binopRI .ztest .z64 0 imm, 6) := by
+  rw [encodeInsn_binopRI_test_rax imm hlo hhi]
+  have hr : ∀ j, j < 4 → byteListReader (binopRITestRaxBytes imm) (2 + j) =
+      byte (imm.toNat / 2^(8*j)) := by
+    intro j hj
+    interval_cases j <;> simp [binopRITestRaxBytes]
+  have himm := imm32_eImm32_at imm 2 (byteListReader (binopRITestRaxBytes imm)) hr hlo hhi
+  simp [decode, decodeNoRex, decodeRex, binopRITestRaxBytes, byte_toNat]
+  rw [himm]
+
+theorem decode_binopRI_test (dst : Nat) (hd : dst < 16) (hne : dst ≠ 0) (imm : BitVec 64)
+    (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
+    decode (byteListReader (encodeInsn (.binopRI .ztest .z64 dst imm))) =
+      some (.binopRI .ztest .z64 dst imm, 7) := by
+  rw [encodeInsn_binopRI_test dst hd hne imm hlo hhi]
+  have hr : ∀ j, j < 4 → byteListReader (binopRITestBytes dst imm) (3 + j) =
+      byte (imm.toNat / 2^(8*j)) := by
+    intro j hj
+    interval_cases j <;> simp [binopRITestBytes]
+  have himm := imm32_eImm32_at imm 3 (byteListReader (binopRITestBytes dst imm)) hr hlo hhi
+  interval_cases dst
+  all_goals
+    first
+    | exact absurd rfl hne
+    | (simp [binopRITestBytes] at himm
+       simp [decode, decodeNoRex, decodeRex, parseRM, binopRITestBytes, byte_toNat]
+       rw [himm]
+       simp [ZRM.regOf])
+
+
 end Flapjack.Compiler.Encoders.X64
