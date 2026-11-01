@@ -1001,6 +1001,7 @@ import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveBlockAlloc
 import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveMemoryRead
 import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveMemoryUpdate
 import Flapjack.Compiler.Backend.DataLive.Proofs.Force
+import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluatorSimulation
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateControl
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackResult
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultPrimitive
