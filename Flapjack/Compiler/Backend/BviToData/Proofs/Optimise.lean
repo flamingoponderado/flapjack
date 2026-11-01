@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BviToData.Optimise
+import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.DataSimp.Proofs.Correct
 import Flapjack.Compiler.Backend.DataSpace.Proofs.CompileCorrect
@@ -40,5 +41,49 @@ theorem optimise_correct {C F : Type} (program : DataLang.Prog) (state : State C
   obtain ⟨safe', peak', stackMax', spaceCorrect⟩ := DataSpace.compile_correct simplified state stageNotType stageStopped
   refine ⟨localsSize, stackMax', safe', peak', ?_⟩
   simpa [optimise, simplified, liveSimp] using spaceCorrect
+
+/-- A singleton expression simulation also covers the optimized function
+body used in the data code tree. The unoptimized final state is retained to
+state the simulation outcome; the actual optimized state differs only in the
+four resource fields allowed by optimization. This composition has no
+separate HOL declaration and awaits evaluator and carrier review. -/
+theorem compileExp_of_simulation {C F : Type} (body : Bvi.Exp)
+    (env : List BvlSem.Value) (source nextSource : BviSem.BviState C F)
+    (res : BviSem.BviResult) (target : State C F)
+    (ih : simulationFor [body] env source)
+    (run : BviSem.evaluate [body] env source = (res, nextSource))
+    (notType : res ≠ .err (.abort .typeError))
+    (vars : DataProps.varCorr env (List.range env.length) (sptMap dataToBviValue target.locals))
+    (fresh : ∀ k, env.length ≤ k → sptLookup k target.locals = none)
+    (related : stateRel source target)
+    (exceptionJump : isException res → DataSem.jumpExc target ≠ none) :
+    ∃ result final names next ls localsSize stackMax safe peak,
+      DataSem.evaluate (compileExp env.length body) target =
+        (some result, { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }) ∧
+      stateRel nextSource final ∧
+      stateRel nextSource { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak } ∧
+      correctOutcome res target final env.length next (List.range env.length) [] names env true (some result) ls := by
+  obtain ⟨final, prog, pres, names, next, ls, compiled, targetRun, finalRel, outcome⟩ :=
+    ih res nextSource target env.length (List.range env.length) true [] run notType vars (by simp)
+      fresh related (by simp) exceptionJump
+  cases pres with
+  | none => simp [correctOutcome] at outcome
+  | some result =>
+    have resultNotType : result ≠ .err (.abort .typeError) := by
+      intro eq
+      subst result
+      have notReturn : ¬ isReturn res := by
+        intro returns
+        obtain ⟨values, impossible, _⟩ := outcome.2.1 returns
+        cases impossible
+      exact notType (by simpa [dataToBviResult] using (outcome.1 notReturn).symm)
+    have compiledBody : (compileSing env.length (List.range env.length) true [] body).1 = prog := by
+      have first := congrArg Prod.fst compiled
+      simpa [compileSource_agrees] using first
+    obtain ⟨localsSize, stackMax, safe, peak, optimised⟩ :=
+      optimise_correct prog target (by simpa [targetRun] using resultNotType) (by simp [targetRun])
+    refine ⟨result, final, names, next, ls, localsSize, stackMax, safe, peak, ?_, finalRel, ?_, outcome⟩
+    · simpa [compileExp, compiledBody, targetRun] using optimised
+    · simpa [stateRel] using finalRel
 
 end Flapjack.Compiler.Backend.BviToData
