@@ -680,6 +680,10 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
   --rich-cases 0 --config-cases 0
 ```
 
+A subsequent run with type seed `832617` and edge seed `912673` matched
+2,900 additional generated parser, type, S-expression, lexical, random-token,
+declaration, and pattern-handler cases, comparing full output and status.
+
 On 2026-10-30, all 320 annotation cases matched the pinned compiler. The
 following command reproduces that matrix independently of the other generators:
 
