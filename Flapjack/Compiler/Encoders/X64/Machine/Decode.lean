@@ -427,8 +427,12 @@ def decodeRex (r : Nat → BitVec 8) (rexW rexR rexB : Bool) : Option (X64Insn �
   | 0x0F =>
       let b2 := (r 2).toNat
       if 0x80 ≤ b2 && b2 ≤ 0x8F then
+        -- A REX prefix precedes the two-byte opcode, so the instruction is
+        -- seven bytes: the prefix, `0F`, the opcode and the four-byte
+        -- immediate.  The emitted subset never puts a REX prefix before a
+        -- conditional jump, so this arm is unreachable for compiled code.
         match condOfCode (b2 - 0x80) with
-        | some cond => some (.jcc cond (imm32 r 3), 6)
+        | some cond => some (.jcc cond (imm32 r 3), 7)
         | none => none
       else if 0x90 ≤ b2 && b2 ≤ 0x9F then
         match parseRM r 3 rexB with
