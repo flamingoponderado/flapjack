@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
 
 /-! Original HOL observations for pointer-tag and heap representation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -138,6 +139,25 @@ example : valueInv (width := 32) config (.block 3 1 [.number 2]) .ln
     · exact .nil
   · rfl
   · rfl
+
+private def referenceMap : HolFiniteMapExact Nat Nat := HolFiniteMapExact.empty.updateEq (4, 7)
+
+example : valueInv (width := 32) config (.refPtr true 4) .ln
+    (.pointer (holFapply referenceMap 4) (.word 0), referenceMap, HolFiniteMapExact.empty, []) := by
+  apply (valueInv_refPtr_true config 4 .ln _ _ _ _).2
+  refine ⟨⟨7, rfl⟩, ?_, ?_, rfl⟩ <;> simp
+
+private def evaluatedRefs : Spt (BvlSem.Ref DataSem.Value) :=
+  sptInsert 4 (.thunk .evaluated (.number 2)) .ln
+
+example : valueInv (width := 32) config (.refPtr false 4) evaluatedRefs
+    (.data (.word (smallnum 2)), HolFiniteMapExact.empty, HolFiniteMapExact.empty, []) := by
+  apply (valueInv_refPtr config false 4 evaluatedRefs _ _ _ _).2
+  right; right
+  refine ⟨.number 2, ?_, rfl, rfl, ?_⟩
+  · exact sptLookup_sptInsert_same 4 _ _
+  · apply (valueInv_number config 2 evaluatedRefs _ _ _ _).2
+    simp [smallInt]
 
 example : ¬ bcRefInv (width := 32) config 0 .ln
     (HolFiniteMapExact.empty, HolFiniteMapExact.empty, [], false) := by
