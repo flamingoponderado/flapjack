@@ -953,6 +953,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Total
 import Flapjack.Compiler.Backend.BviToData.Proofs.Value
 import Flapjack.Compiler.Backend.BviToData.Proofs.Result
 import Flapjack.Compiler.Backend.BviToData.Proofs.CompileSource
+import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.BviToData.Proofs.Equality
 import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyEquality
 import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBuild
