@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ProgramCode
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainLocations
 import Flapjack.Compiler.Backend.Semantics.ClosSem.InstallGrowth
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateCodeGrowth
 
 /-! Source closure-code chains used by the top-level compiler. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -115,5 +116,15 @@ theorem chainInstalled_after_primitive {C F : Type} (start : Nat) (expressions :
     chainInstalled start expressions next.code := by
   have same := (doApp_codeOracle op values source next value run).1
   simpa [same] using installed
+
+/-- Any closure evaluation retains an installed chain, regardless of its
+result. The evaluator's correspondence with HOL is still to be reviewed. -/
+theorem chainInstalled_after_evaluate {C F : Type} (start : Nat) (chain evaluated : List ClosLang.Exp)
+    (env : List Value) (source next : State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (installed : chainInstalled start chain source.code) (run : evaluate evaluated env source = (result, next)) :
+    chainInstalled start chain next.code :=
+  chainInstalled_submap start chain source.code next.code installed
+    (evaluate_code_growth.1 evaluated env source next result run)
 
 end Flapjack.Compiler.Backend.ClosToBvl
