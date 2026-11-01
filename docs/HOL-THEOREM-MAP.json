@@ -99816,6 +99816,16 @@
     "reviewer": "Source comparison: original lines 126–133; the six tag constructors preserve order and fields, including the source thunk mode, Boolean flags, and natural tags."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv/Reference.lean",
+    "lean_name": "valueInv_cases",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_inv_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["f", "tf"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: v_inv_def and the typed data_to_word_memory_repr capture preserve all five conjuncts with the same shared n, configuration, references, address, maps and heap. Number and Word64 distinguish the literal fixed 64-bit input from the independently positive heap word width; CodePtr keeps offset zero. RefPtr retains the ordinary, stored-thunk and inlined-thunk alternatives and their domain, thunk-mode, lookup, annotation, recursive and boolean conditions. FDOM is existence of a canonical map lookup; holFapply agrees with the lookup under that domain premise. Block keeps the empty timestamp/bound case and the pairwise recursive relation, timestamp lookup and heap cell for the nonempty case. List.Forall₂ is HOL LIST_REL; bit = false is HOL boolean negation. The underlying clocked relation was compared against all nine typed v_inv_ck rules and v_inv_eq: the mutual list helper is kernel-proved equivalent to the LIST_REL premise and the source clock decrement and zero guards are preserved. The clocked inductive itself remains untagged because its maps are nested in the context tuple, which the current qualifier does not cover; no end-to-end compiler theorem is claimed."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Representation.lean",
     "lean_name": "blockRep",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

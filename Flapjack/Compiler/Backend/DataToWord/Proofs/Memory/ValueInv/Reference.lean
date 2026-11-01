@@ -249,14 +249,18 @@ theorem valueInv_refPtr {width : Nat} [NeZero width] (conf : Config) (bit : Bool
     · exact .refPtrThunk ck conf mode n value addr refs f tf heap found safe domain cell (fun _ => recInv (ck - 1))
     · exact .refPtrThunkInlined ck conf n value x refs f tf heap found safe (fun _ => recInv (ck - 1))
 
-/-- All five unbounded value-invariant equations together, in the order of the
-original case theorem. This is not tagged as a HOL port: `valueInv` uses the
-preliminary clocked relation, whose tuple of finite maps still needs a reviewed
-representation qualifier and source correspondence. -/
+/-- All five unbounded value-invariant equations together, in source order.
+The clocked relation underlying `valueInv` has been compared with the original
+rules, but remains separately untagged until the reference checker supports
+its finite maps nested in the context tuple. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "v_inv_def"
+  (fmap_as_finite_support_relation := [f, tf]) (words_as_type_indexed_bitvec)]
 theorem valueInv_cases {width : Nat} [NeZero width] (conf : Config) (i : Int)
-    (word : BitVec 64) (n : Nat) (bit : Bool) (stamp : Nat) (values : List Value)
-    (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
-    (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
+    (word : BitVec 64) (n : Nat) (bit : Bool) (stamp : Nat)
+    (values : List Flapjack.Compiler.Backend.DataSem.Value)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (x : HeapAddress (WordLocW width))
+    (f : HolFiniteMapExact Nat Nat) (tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
     (valueInv conf (.number i) refs (x,f,tf,heap) ↔
       if smallInt width i then x = .data (.word (smallnum i)) else
         ∃ ptr, x = .pointer ptr (.word 0) ∧ heapLookup ptr heap = some (bignumRep i)) ∧

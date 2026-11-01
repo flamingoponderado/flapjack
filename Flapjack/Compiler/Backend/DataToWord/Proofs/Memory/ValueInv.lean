@@ -17,9 +17,9 @@ mutual
 /-- Clock-indexed value invariant, factored through a mutual list relation to
 meet Lean's positivity rules. The HOL source has a single `v_inv_ck` relation
 with an EVERY2 premise. The list helper below is proved equivalent to that
-premise, but the combined finite-map qualifier for maps nested in the source
-tuple and the full source correspondence still require review, so no HOL tag
-is claimed on this declaration yet. -/
+premise. The rules have been compared with the typed source, but the finite-map
+qualifier for maps nested in the source tuple is not yet supported, so no HOL
+tag is claimed on this declaration. -/
 inductive ClockValueInv {width : Nat} [NeZero width] :
     Nat → Config → Value → Spt (BvlSem.Ref Value) → ValueContext width → Prop where
   | numberSmall (ck : Nat) (conf : Config) (i : Int) (refs : Spt (BvlSem.Ref Value))
