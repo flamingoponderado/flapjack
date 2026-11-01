@@ -247,4 +247,98 @@ theorem encoderCase (i : HolAsm 64) (s1 s2 : AsmState 64) (ms : X64State) (n : N
   · exact asserts2_of_run (d := s1.memDomain) _ (fun k x => hagree _ _) (n + 1) ms ms
       (X64Agree.refl _ _) (fun k hk => hsafe k (by omega))
 
+
+/-- One `x64Next` step preserves agreement on `d` from a state that steps
+inside `d`. -/
+theorem next_agree_step {d : BitVec 64 → Prop} {s t : X64State} (h : X64Agree d s t)
+    (hs : StepSafe d t) : X64Agree d (x64Next s) (x64Next t) :=
+  (x64Next_agree h.symm hs).symm
+
+/-! ## The `StepSafe` chain used by the control-flow and multi-step cases -/
+
+/-- The assertion chain of `encoder_correct`, along any step function that
+agrees with `x64Next`, from a state agreeing with the start of an
+interference-free run that is `StepSafe` at every simulated step. -/
+theorem asserts_of_run_step {d : BitVec 64 → Prop} {P Q : X64State → Prop}
+    (hP : ∀ s t, X64Agree d s t → P t → P s) (hQ : ∀ s t, X64Agree d s t → Q t → Q s)
+    (f : Nat → X64State → X64State) (hf : ∀ k x, X64Agree d (f k x) (x64Next x)) :
+    ∀ (m : Nat) (u t : X64State), X64Agree d u t →
+      (∀ k ≤ m, StepSafe d (x64Next^[k] t)) →
+      (∀ k, 1 ≤ k → k ≤ m → P (x64Next^[k] t)) → Q (x64Next^[m + 1] t) →
+      asserts m f u P Q := by
+  intro m
+  induction m with
+  | zero =>
+    intro u t hut hsafe _ hq
+    exact hQ _ _ ((hf 0 u).trans (next_agree_step hut (hsafe 0 (Nat.le_refl 0)))) hq
+  | succ m ih =>
+    intro u t hut hsafe hp hq
+    have h1 : X64Agree d (f (m + 1) u) (x64Next t) :=
+      (hf (m + 1) u).trans (next_agree_step hut (hsafe 0 (Nat.zero_le _)))
+    refine ⟨hP _ _ h1 (hp 1 (Nat.le_refl 1) (by omega)), ?_⟩
+    apply ih _ _ h1
+    · intro k hk
+      have := hsafe (k + 1) (by omega)
+      rwa [Function.iterate_succ_apply] at this
+    · intro k hk1 hk2
+      have := hp (k + 1) (by omega) (by omega)
+      rwa [Function.iterate_succ_apply] at this
+    · rwa [← Function.iterate_succ_apply]
+
+/-- `asserts2_of_run` with `StepSafe` along the run instead of `NextSafe`. -/
+theorem asserts2_of_run_step {d : BitVec 64 → Prop}
+    (fi : Nat → X64State → X64State) (hfi : ∀ k x, X64Agree d (fi k x) x) :
+    ∀ (m : Nat) (u t : X64State), X64Agree d u t →
+      (∀ k < m, StepSafe d (x64Next^[k] t)) →
+      asserts2 m fi x64Next u
+        (fun ms1 ms2 => ∀ x, ¬ d x → ms1.mem x = ms2.mem x) := by
+  intro m
+  induction m with
+  | zero => intros; trivial
+  | succ m ih =>
+    intro u t hut hsafe
+    have hs0 := hsafe 0 (Nat.zero_lt_succ _)
+    refine ⟨fun x hx => (x64Next_frame (StepSafe.of_agree hut hs0) x hx).symm, ?_⟩
+    exact ih _ (x64Next t) ((hfi (m + 1) _).trans (next_agree_step hut hs0))
+      (fun k hk => by
+        have := hsafe (k + 1) (by omega)
+        rwa [Function.iterate_succ_apply] at this)
+
+/-- One constructor of `encoder_correct x64Target` from its interference-free
+run of `n + 1` steps, with `StepSafe` (not `NextSafe`) along the run.  This is
+what control flow and multi-instruction lowerings use: their successor's bytes
+need not be in the source domain. -/
+theorem encoderCaseStep (i : HolAsm 64) (s1 s2 : AsmState 64) (ms : X64State) (n : Nat)
+    (hdom : s2.memDomain = s1.memDomain)
+    (hcode : allPcs (x64Target.config.encode i).length s1.pc 0 ⊆ s1.memDomain)
+    (hsafe : ∀ k ≤ n, StepSafe s1.memDomain (x64Next^[k] ms))
+    (hp : ∀ k, 1 ≤ k → k ≤ n →
+      x64StateOk (x64Next^[k] ms) = true ∧
+      (∀ pc, pc ∈ allPcs (x64Target.config.encode i).length s1.pc 0 →
+        (x64Next^[k] ms).mem pc = ms.mem pc) ∧
+      (x64Next^[k] ms).pc ∈
+        allPcs (x64Target.config.encode i).length s1.pc x64Target.config.codeAlignment)
+    (hq : targetStateRel x64Target s2 (x64Next^[n + 1] ms)) :
+    CaseGoal i s1 s2 ms := by
+  refine ⟨n, fun env henv => ?_⟩
+  have hagree : ∀ k x, X64Agree s1.memDomain (env k x) x :=
+    fun k x => (proj_eq_iff _ _ _).1 (henv k x)
+  constructor
+  · apply asserts_of_run_step (d := s1.memDomain) _ _ _ _ n ms ms (X64Agree.refl _ _) hsafe hp
+    · exact hq
+    · rintro s t hst ⟨h1, h2, h3⟩
+      refine ⟨?_, fun pc hpc => ?_, ?_⟩
+      · change x64StateOk s = true
+        rw [x64StateOk_congr hst]; exact h1
+      · change s.mem pc = ms.mem pc
+        rw [hst.mem pc (hcode hpc)]; exact h2 pc hpc
+      · change s.pc ∈ _
+        rw [hst.pc]; exact h3
+    · intro s t hst ht
+      exact targetStateRel_congr (hdom ▸ hst) ht
+    · intro k x
+      exact hagree _ _
+  · exact asserts2_of_run_step (d := s1.memDomain) _ (fun k x => hagree _ _) (n + 1) ms ms
+      (X64Agree.refl _ _) (fun k hk => hsafe k (by omega))
+
 end Flapjack.Compiler.Encoders.X64
