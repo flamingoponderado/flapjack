@@ -99904,6 +99904,49 @@
     "reviewer": "Source comparison: original theorem and typed data_to_word_memory_repr capture preserve independent header and payload dimensions, the payload triple equality, good_dimindex and length-size bound as the conjunctive premise, and the length and word_bit 2 conditional conclusions. getLsbD 2 matches word_bit at the 32- and 64-bit widths allowed by goodDimindex. Lean checks all six tag cases."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "elLength",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "el_length_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original clauses and typed data_to_word_memory_repr capture; all three element constructors return their stored length plus one, with independent polymorphic address and payload carriers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "heapLength",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_length_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture; sum of mapped element lengths with independent polymorphic address and payload carriers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Heap.lean",
+    "lean_name": "wordEl",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_el_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: all three original clauses and typed data_to_word_memory_repr capture. The heap address and stored word dimensions are independent, the payload header has the stored word dimension, and the payload length bound uses the address dimension. Singleton, word-list, existential-list, separation and pure-condition assertions retain their original operands and order."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Heap.lean",
+    "lean_name": "wordHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_heap_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original empty and cons clauses and typed data_to_word_memory_repr capture; independently quantified address and stored-word dimensions, modular byte offset, element length and separation order match."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Heap.lean",
+    "lean_name": "wordHeapAppend",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_heap_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original quantified append equality and typed data_to_word_memory_repr capture. Independent address and stored-word dimensions, unchanged configuration, separation order and suffix offset by bytes_in_word times heap_length agree; Lean checks induction with separation associativity."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Limits.lean",
     "lean_name": "limitsInv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",

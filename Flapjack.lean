@@ -203,6 +203,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Mask
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Space
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Control
 import Flapjack.RiscV.CorrectnessEncoding.ConstWide

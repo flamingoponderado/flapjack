@@ -15,9 +15,8 @@ Datatype: heap_element =
 ```
 
 `num` is rendered as `Nat` and `('a heap_address) list` as `List (HeapAddress α)`.
-Only the two carriers used by `word_gcFunctions$refs_to_addresses` are ported
-here; the `gc_state` record is not needed by that definition and is left to a
-future GC-simulation port.
+The carriers and their element/heap length definitions are ported here; the
+`gc_state` record remains to be ported for GC simulation.
 -/
 
 namespace Flapjack
@@ -45,6 +44,20 @@ inductive HeapElement (α β : Type) : Type where
   /-- `DataElement (('a heap_address) list) num 'b`. -/
   | dataElement (ptrs : List (HeapAddress α)) (n : Nat) (data : β)
   deriving Repr
+
+/-- Number of words occupied by an abstract heap element, including its
+header. Both address and payload carriers are independently polymorphic. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "el_length_def"]
+def elLength {α β : Type} : HeapElement α β → Nat
+  | .unused len => len + 1
+  | .forwardPointer _ _ len => len + 1
+  | .dataElement _ len _ => len + 1
+
+/-- Total word length of a heap, preserving the source's polymorphic
+element carriers. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_length_def"]
+def heapLength {α β : Type} (heap : List (HeapElement α β)) : Nat :=
+  (heap.map elLength).sum
 
 end Backend
 end Compiler
