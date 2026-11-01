@@ -2,8 +2,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 
-/-! The full shape of the data-to-word memory relation. Its value invariant is
-still preliminary; consequently these definitions are not yet HOL-tagged. -/
+/-! The data-to-word memory relation and its reference-cell invariant. The
+remaining higher-level invariants have not yet been reviewed as HOL ports. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.Compiler.Backend.GcCombined
 
@@ -16,8 +16,8 @@ noncomputable def mapInjInto (map : HolFiniteMapExact Nat Nat) (target : Nat →
   (∀ key, mapDomain map key → target (holFapply map key)) ∧
     ∀ x y, mapDomain map x ∧ mapDomain map y → holFapply map x = holFapply map y → x = y
 
-/-- Reference-cell invariant with all original cell cases. This is untagged
-until `valueInv` and the nested finite-map carriers are source-reviewed. -/
+/-- Reference-cell invariant with all original cell cases. Its source-shaped
+equation with explicit tuple components is tagged separately below. -/
 noncomputable def bcRefInv {width : Nat} [NeZero width] (conf : Config) (n : Nat)
     (refs : Spt (BvlSem.Ref Value))
     (context : HolFiniteMapExact Nat Nat × HolFiniteMapExact Nat Nat × ValueHeap width × Bool) : Prop :=
@@ -41,9 +41,39 @@ noncomputable def bcRefInv {width : Nat} [NeZero width] (conf : Config) (n : Nat
           addresses (left ++ [value] ++ right)
   | _, _ => False
 
+/-- The reference-cell invariant with its tuple components exposed, in the
+source case order. The two map parameters use the canonical finite-support
+carrier; the unwrapped form also exposes the shared heap word width. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "bc_ref_inv_def"
+  (fmap_as_finite_support_relation := [f, tf]) (words_as_type_indexed_bitvec)]
+theorem bcRefInv_explicit {width : Nat} [NeZero width] (conf : Config) (n : Nat)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (f : HolFiniteMapExact Nat Nat) (tf : HolFiniteMapExact Nat Nat)
+    (heap : List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))))
+    (bigEndian : Bool) :
+    bcRefInv conf n refs (f, tf, heap, bigEndian) ↔
+      match f.lookup n, sptLookup n refs with
+      | some ptr, some (.valueArray values) =>
+          ∃ addresses, heapLookup ptr heap = some (refBlock addresses) ∧
+            List.Forall₂ (fun address value => valueInv conf value refs (address, f, tf, heap)) addresses values
+      | some ptr, some (.byteArray compareByContents bytes) =>
+          let count := bytes.length / (width / 8) + 1
+          heapLookup ptr heap = some (bytesRep bigEndian compareByContents bytes (List.replicate count 0))
+      | some ptr, some (.thunk mode value) =>
+          ∃ address, heapLookup ptr heap = some (thunkBlock mode address) ∧
+            (mode = .evaluated → destThunk value refs = .notThunk) ∧
+            valueInv conf value refs (address, f, tf, heap)
+      | some ptr, some (.mutBlock tag finalised left value right) =>
+          (∀ sizes, conf.gcKind ≠ .generational sizes) ∧
+          (finalised = false → ¬ ∃ stamp, mapDomain tf stamp ∧ holFapply tf stamp = ptr) ∧
+          ∃ addresses, heapLookup ptr heap = some (blockRep tag addresses) ∧
+            List.Forall₂ (fun address item => valueInv conf item refs (address, f, tf, heap))
+              addresses (left ++ [value] ++ right)
+      | _, _ => False := Iff.rfl
+
 /-- Stack and reference invariant, retaining existential finite maps and the
-source's reachability and timestamp conditions. It is untagged while its
-preliminary value invariant and nested finite-map carriers remain unreviewed. -/
+source's reachability and timestamp conditions. Its full source correspondence
+and existential finite-map carriers still require review. -/
 noncomputable def bcStackRefInv {width : Nat} [NeZero width] (conf : Config) (next : Nat)
     (stack : List Value) (refs : Spt (BvlSem.Ref Value))
     (context : List (HeapAddress (WordLocW width)) × ValueHeap width × Bool) : Prop :=
@@ -58,8 +88,7 @@ noncomputable def bcStackRefInv {width : Nat} [NeZero width] (conf : Config) (ne
     List.Forall₂ (fun value address => valueInv conf value refs (address, f, tf, heap)) stack roots ∧
     ∀ n, reachableRefs stack refs n ∧ mapDomain f n → bcRefInv conf n refs (f, tf, heap, bigEndian)
 
-/-- Abstract ML heap invariant, assembled over the preliminary value and
-reference relation; this is not yet a reviewed HOL port. -/
+/-- Abstract ML heap invariant; this is not yet a reviewed HOL port. -/
 noncomputable def absMlInv {width : Nat} [NeZero width] (conf : Config)
     (stack : List Value) (refs : Spt (BvlSem.Ref Value))
     (context : List (HeapAddress (WordLocW width)) × ValueHeap width × Bool × Nat × Nat × Nat × GenState)
@@ -77,8 +106,8 @@ noncomputable def wordMlInv {width : Nat} [NeZero width]
   ∃ roots, absMlInv conf (stack.map Prod.fst) refs (roots, heap, bigEndian, a, sp, sp1, gens) limit next ∧
     List.Forall₂ (fun address word => wordAddr conf address = word) roots (stack.map Prod.snd)
 
-/-- Full memory-relation shape over the preliminary value invariant. This is
-not yet a reviewed HOL port or a pass-correctness theorem. -/
+/-- Full memory-relation shape; this is not yet a reviewed HOL port or a
+pass-correctness theorem. -/
 noncomputable def memoryRel {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool) (next : Nat)
     (refs : Spt (BvlSem.Ref Value)) (space : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
     (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)

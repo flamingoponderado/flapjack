@@ -99826,6 +99826,26 @@
     "reviewer": "Source comparison: all nine rules of v_inv_ck and their typed data_to_word_memory_repr capture retain the source constructors, fixed Word64 input, independent positive heap word width, reference tree, clock decrement and zero guards, pointer annotations, lookup and domain premises, timestamp and heap checks. component_2 and component_3 are exactly the two HOL finite maps f and tf represented as canonical HolFiniteMapExact values. The context lookup conversions preserve the address and heap and have kernel-checked roundtrips in both directions for finite-support functions. Lean's mutual list relation exists to satisfy positivity; clockValueListInv_iff proves it is precisely the source LIST_REL recursive premise. The HOL/Lean inductive correspondence is source-reviewed, not established by those representation witnesses."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation.lean",
+    "lean_name": "bcRefInv_explicit",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "bc_ref_inv_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["f", "tf"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: bc_ref_inv_def and its typed data_to_word_memory_repr capture retain the exact configuration, reference index, spt reference tree and four tuple components. Both failed lookups yield false; successful ValueArray, ByteArray, Thunk and MutBlock cases retain the source heap cells, related-value list order, byte count LENGTH bs DIV (dimindex DIV 8) + 1 and zero replication, evaluated-thunk condition, non-generational condition, unfinalised timestamp exclusion and mutable-block contents. List.Forall₂ represents LIST_REL; finalised = false represents HOL boolean negation. The two canonical finite maps f and tf represent the source finite maps; their lookup functions represent FLOOKUP, mapDomain is FDOM membership, and the existential image expression is the source IMAGE (FAPPLY tf) (FDOM tf). The heap and address share the source positive word width; dataSem.Value retains fixed word64. This equation does not establish a pass-correctness theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv/Reference.lean",
+    "lean_name": "valueInv_refPtr_true",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_inv_RefPtr_T",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["f", "tf"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: v_inv_RefPtr_T and its typed data_to_word_memory_repr capture preserve the same configuration, true reference flag, natural reference index, literal spt reference tree, tuple components and independently positive word width. The four right-hand conjuncts retain membership in the domain of f, exclusion of every thunk and mutable block, and the pointer at f applied to n with zero word annotation. Existence of a canonical lookup represents FDOM membership, and holFapply agrees with that lookup under the domain premise. The source reference's payload is the reviewed dataSem.Value, with its fixed Word64 constructor. No additional premise or weakened conclusion is introduced."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv/Reference.lean",
     "lean_name": "valueInv_eq_explicit",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

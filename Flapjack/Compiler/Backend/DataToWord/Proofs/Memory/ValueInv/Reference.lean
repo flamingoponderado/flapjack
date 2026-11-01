@@ -43,9 +43,13 @@ private theorem refPtrAnnot_zero_of_noMut {width : Nat} [NeZero width] {α : Typ
       | thunk _ _ => rfl
       | mutBlock tag finalised left child right => exact False.elim (noMut tag finalised left child right rfl)
 
-/-- Pointer-comparison references exclude thunks and mutable blocks. This is a Flapjack case helper. -/
-theorem valueInv_refPtr_true {width : Nat} [NeZero width] (conf : Config) (n : Nat) (refs : Spt (BvlSem.Ref Value))
-    (x : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
+/-- Pointer-comparison references exclude thunks and mutable blocks. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "v_inv_RefPtr_T"
+  (fmap_as_finite_support_relation := [f, tf]) (words_as_type_indexed_bitvec)]
+theorem valueInv_refPtr_true {width : Nat} [NeZero width] (conf : Config) (n : Nat)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (x : HeapAddress (WordLocW width)) (f : HolFiniteMapExact Nat Nat)
+    (tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
     valueInv conf (.refPtr true n) refs (x,f,tf,heap) ↔
       (∃ ptr, f.lookup n = some ptr) ∧
       (∀ mode value, sptLookup n refs ≠ some (.thunk mode value)) ∧

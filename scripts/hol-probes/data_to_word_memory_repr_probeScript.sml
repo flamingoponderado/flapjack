@@ -79,6 +79,7 @@ val _ = show "bignum_rep_typed" data_to_word_memoryProofTheory.Bignum_def;
 val _ = show "ref_ptr_annot_typed" data_to_word_memoryProofTheory.ref_ptr_annot_def;
 val _ = show "v_inv_ck_rules_typed" data_to_word_memoryProofTheory.v_inv_ck_rules;
 val _ = show "v_inv_eq_typed" data_to_word_memoryProofTheory.v_inv_eq;
+val _ = show "v_inv_RefPtr_T_typed" data_to_word_memoryProofTheory.v_inv_RefPtr_T;
 val _ = show "n2mw_typed" multiwordTheory.n2mw_def;
 val _ = show "bytes_to_word_typed" byteTheory.bytes_to_word_def;
 val _ = show "write_bytes_typed" data_to_wordTheory.write_bytes_def;
