@@ -73,17 +73,17 @@ theorem evaluate_iAssign_block_lookup_of_frame {C F : Type} (op : ClosLang.Block
         rw [locals, sptLookup_sptInsert_ne dest key value mid.locals different, midLocals]
         exact lookup_cut_namesOfList (operands ++ live ++ corr) state.locals key
 
-/-- A compiled tag comparison writes its destination and preserves the
+/-- A compiled block op writes its destination and preserves the
 compiler's live roots and control fields. -/
-theorem evaluate_iAssign_tagEq_lookup {C F : Type} (tag dest : Nat)
+theorem evaluate_iAssign_block_lookup {C F : Type} (op : ClosLang.BlockOp) (dest : Nat)
     (operands live corr : List Nat) (state next : DataSem.State C F)
-    (run : DataSem.evaluate (iAssign dest (.blockOp (.tagEq tag)) operands live corr) state = (none, next)) :
+    (run : DataSem.evaluate (iAssign dest (.blockOp op) operands live corr) state = (none, next)) :
     ∃ (value : DataSem.Value) (cutEnabled : Bool), sptLookup dest next.locals = some value ∧
       (∀ key, key ≠ dest → sptLookup key next.locals =
         if cutEnabled then (if key ∈ operands ++ live ++ corr then sptLookup key state.locals else none)
         else sptLookup key state.locals) ∧ DataSem.SameControl state next :=
-  evaluate_iAssign_block_lookup_of_frame (.tagEq tag) dest operands live corr state next
-    (DataSem.doApp_tagEq_frame tag) run
+  evaluate_iAssign_block_lookup_of_frame op dest operands live corr state next
+    (DataSem.doApp_block_frame op) run
 
 /-- Integer lowering emits a single assignment, including its two operand
 reversal cases. -/
@@ -481,9 +481,9 @@ theorem evaluate_iAssign_word_outcome {C F : Type} (op : ClosLang.WordOp)
     · simp [DataSem.getVar, sptLookup_sptMap, destRead, projected]
     · constructor
 
-/-- A successful tag-comparison `iAssign` establishes the complete continuing
+/-- A successful block op `iAssign` establishes the complete continuing
 compiler invariant when its destination is fresh. This includes the compiler live-name and space handling. -/
-theorem evaluate_iAssign_tagEq_outcome {C F : Type} (tag : Nat)
+theorem evaluate_iAssign_block_outcome {C F : Type} (op : ClosLang.BlockOp)
     (target : DataSem.State C F) (source next : BviSem.BviState C F)
     (operands live corr : List Nat) (env : List BvlSem.Value)
     (args : List DataSem.Value) (dest : Nat) (result : BvlSem.Value)
@@ -492,17 +492,17 @@ theorem evaluate_iAssign_tagEq_outcome {C F : Type} (tag : Nat)
     (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
     (fresh : ∀ key, dest ≤ key → sptLookup key target.locals = none)
     (read : DataSem.getVars operands target.locals = some args)
-    (run : BviSem.doApp (.blockOp (.tagEq tag)) (args.map dataToBviValue) source = .val (result, next)) :
+    (run : BviSem.doApp (.blockOp op) (args.map dataToBviValue) source = .val (result, next)) :
     ∃ targetNext value,
-      DataSem.evaluate (iAssign dest (.blockOp (.tagEq tag)) operands live corr) target = (none, targetNext) ∧
+      DataSem.evaluate (iAssign dest (.blockOp op) operands live corr) target = (none, targetNext) ∧
       result = dataToBviValue value ∧ stateRel next targetNext ∧
       sptLookup dest targetNext.locals = some value ∧
       correctOutcome (.val [result]) target targetNext dest (dest + 1) corr live [dest] env false none none := by
   obtain ⟨targetNext, value, execution, projected, finalRel, destRead⟩ :=
-    evaluate_iAssign_success (.blockOp (.tagEq tag)) target source operands live corr env args dest result next
+    evaluate_iAssign_success (.blockOp op) target source operands live corr env args dest result next
       (by simp) (by intro flag; simp) (by simp) related vars livePresent read run
   obtain ⟨_, cutEnabled, _, lookupOther, control⟩ :=
-    evaluate_iAssign_tagEq_lookup tag dest operands live corr target targetNext execution
+    evaluate_iAssign_block_lookup op dest operands live corr target targetNext execution
   have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
       sptLookup key targetNext.locals = sptLookup key target.locals := by
     intro key member different
