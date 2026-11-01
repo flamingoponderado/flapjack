@@ -99826,6 +99826,62 @@
     "reviewer": "Source comparison: all nine rules of v_inv_ck and their typed data_to_word_memory_repr capture retain the source constructors, fixed Word64 input, independent positive heap word width, reference tree, clock decrement and zero guards, pointer annotations, lookup and domain premises, timestamp and heap checks. component_2 and component_3 are exactly the two HOL finite maps f and tf represented as canonical HolFiniteMapExact values. The context lookup conversions preserve the address and heap and have kernel-checked roundtrips in both directions for finite-support functions. Lean's mutual list relation exists to satisfy positivity; clockValueListInv_iff proves it is precisely the source LIST_REL recursive premise. The HOL/Lean inductive correspondence is source-reviewed, not established by those representation witnesses."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Stack.lean",
+    "lean_name": "mem_valueListValues",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "MEM_v_all_vs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: MEM_v_all_vs and its typed data_to_word_memory_repr capture preserve the data-value list, value membership premise and recursive traversal membership conclusion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Stack.lean",
+    "lean_name": "mem_stack_allValues",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "MEM_stack_all_vs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: MEM_stack_all_vs and its typed data_to_word_memory_repr capture preserve the source value, stack, spt reference tree, membership premise and all_vs conclusion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Stack.lean",
+    "lean_name": "valueListValues_append",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_all_vs_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: v_all_vs_append and its typed data_to_word_memory_repr capture preserve the two data-value lists and the traversal/append equality in source order."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Stack.lean",
+    "lean_name": "mem_valueListValues_fst",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "MEM_v_all_vs_FST",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: MEM_v_all_vs_FST and its typed data_to_word_memory_repr capture retain the data-value first component, independently polymorphic second component, pair membership and singleton traversal premises, and traversal of MAP FST conclusion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Stack.lean",
+    "lean_name": "mem_valueListValues_subset",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "MEM_v_all_vs_SUBSET",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: MEM_v_all_vs_SUBSET and its typed data_to_word_memory_repr capture preserve the order of the two pair lists, independently polymorphic second component, source subset and traversal membership premises, and target traversal membership conclusion. Pointwise list membership is the source set-of-list subset condition."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Stack.lean",
+    "lean_name": "blocksUnique_stackPermute",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "blocks_unique_stack_permute",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: blocks_unique_stack_permute and its typed data_to_word_memory_repr capture retain the arbitrary second pair-component type, stack and spt refs, source subset condition, source block-uniqueness premise and restricted stack conclusion. Pointwise list membership expresses the HOL set-of-list subset."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Stack.lean",
+    "lean_name": "reachableRefs_stackSubset",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "reachable_refs_stack_subset",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: reachable_refs_stack_subset and its typed data_to_word_memory_repr capture preserve source and restricted data-value lists, the same spt reference tree and target index, and the conjunction of reachability and list-set inclusion implying reachability from the larger list."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Space.lean",
     "lean_name": "memoryRel_lessSpace",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
