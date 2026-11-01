@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
 import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveInstalled
+import Mathlib.Data.List.Nodup
 
 /-! Origins of labels in closure-to-BVL program conversion. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -193,5 +194,30 @@ theorem compileProg_checked_label_lower (maxApp : Nat) (program : List (Nat × N
   rw [compileProg_checked_codeLocations maxApp program compiled run] at member
   simp only [List.mem_append, List.mem_map] at member
   rcases member with ⟨entry, _, equal⟩ | ⟨location, _, equal⟩ <;> omega
+
+/-- Source entry labels and nested locations that are jointly distinct remain
+distinct in the checked BVL program. -/
+theorem compileProg_checked_nodup_of_source (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp))
+    (compiled : Aux) (run : compileProg? maxApp program = some compiled)
+    (sourceDistinct : ((program.map Prod.fst) ++
+      ClosProps.codeLocations (program.map (fun (_, _, body) => body))).Nodup) :
+    (compiled.map Prod.fst).Nodup := by
+  rw [compileProg_checked_codeLocations maxApp program compiled run]
+  apply List.Nodup.append
+  · have entries := sourceDistinct.of_append_left
+    have shifted : ((program.map Prod.fst).map (fun label => label + numStubs maxApp)).Nodup :=
+      entries.map (fun _ _ equal => Nat.add_right_cancel equal)
+    simpa [List.map_map, Function.comp_def] using shifted
+  · have nested := sourceDistinct.of_append_right
+    apply List.Nodup.map (fun _ _ equal => Nat.add_right_cancel equal)
+    exact List.nodup_reverse.mpr nested
+  · intro label entryMember nestedMember
+    obtain ⟨entry, entryMem, entryEq⟩ := List.mem_map.mp entryMember
+    obtain ⟨location, locationMem, locationEq⟩ := List.mem_map.mp nestedMember
+    have sourceEntry : entry.1 ∈ program.map Prod.fst := List.mem_map.mpr ⟨entry, entryMem, rfl⟩
+    have sourceNested : location ∈ ClosProps.codeLocations (program.map (fun (_, _, body) => body)) := by
+      simpa using locationMem
+    have equal : entry.1 = location := by omega
+    exact sourceDistinct.disjoint sourceEntry (equal ▸ sourceNested)
 
 end Flapjack.Compiler.Backend.ClosToBvl

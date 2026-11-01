@@ -167,6 +167,20 @@ theorem compileInc_location_bounds (start location : Nat) (expressions : List Ex
   rw [upper]
   omega
 
+/-- Closure locations are assigned only after the entry-label reservation. -/
+theorem compileInc_location_after_entries (start location : Nat) (expressions : List Exp)
+    (member : location ∈ codeLocations (compileInc start expressions).2) :
+    start + max 1 expressions.length ≤ location := by
+  let next := start + max expressions.length 1
+  let aligned := if next % 2 = 0 then next else next + 1
+  have lower : start + max 1 expressions.length ≤ aligned := by
+    dsimp [aligned, next]
+    split <;> omega
+  have numbered : location ∈ codeLocations (renumberList aligned expressions).2 := by
+    simpa [compileInc, codeLocations, codeLocationsExp, next, aligned] using member
+  have bounds := renumberList_location_bounds expressions aligned location numbered
+  omega
+
 /-- Incremental numbering reserves enough entry labels for the whole input
 list before allocating closure locations. -/
 theorem compileInc_reservation (start : Nat) (expressions : List Exp) :

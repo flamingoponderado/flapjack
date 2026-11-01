@@ -537,6 +537,55 @@ theorem compileInc_labels_range (maxApp start limit : Nat)
       have bounds := (auxBounds entry entryMem).2.2 location (by simpa [equalBody] using inBody)
       omega
 
+/-- Incremental conversion is label-distinct when the extracted main code and
+auxiliary code have distinct, disjoint locations above the chained entries. -/
+theorem compileInc_labels_nodup (maxApp start : Nat)
+    (program : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp))
+    (real : List ClosLang.Exp) (extract : extractName program.1 = (start, real))
+    (mainDistinct : (ClosProps.codeLocations real).Nodup)
+    (auxDistinct : ((program.2.map Prod.fst) ++
+      ClosProps.codeLocations (program.2.map (fun (_, _, body) => body))).Nodup)
+    (mainAbove : ∀ label ∈ ClosProps.codeLocations real, start + max 1 real.length ≤ label)
+    (auxAbove : ∀ label ∈ (program.2.map Prod.fst) ++
+      ClosProps.codeLocations (program.2.map (fun (_, _, body) => body)), start + max 1 real.length ≤ label)
+    (mainAuxDisjoint : ∀ label ∈ ClosProps.codeLocations real,
+      label ∉ (program.2.map Prod.fst) ++ ClosProps.codeLocations (program.2.map (fun (_, _, body) => body))) :
+    ((compileInc maxApp program).map Prod.fst).Nodup := by
+  let chain := chainExps start real
+  let auxLabels := program.2.map Prod.fst
+  let auxLocations := ClosProps.codeLocations (program.2.map (fun (_, _, body) => body))
+  let mainLocations := ClosProps.codeLocations real
+  have chainDistinct : (chain.map Prod.fst).Nodup := chainExps_labels_nodup start real
+  have auxEntryDistinct : auxLabels.Nodup := auxDistinct.of_append_left
+  have auxLocationDistinct : auxLocations.Nodup := auxDistinct.of_append_right
+  have source : ((chain ++ program.2).map Prod.fst ++
+      ClosProps.codeLocations ((chain ++ program.2).map (fun (_, _, body) => body))).Nodup := by
+    simp only [List.map_append, ClosProps.codeLocations_append, chain, chainExps_codeLocations]
+    apply List.Nodup.append
+    · apply List.Nodup.append chainDistinct auxEntryDistinct
+      intro label inChain inAux
+      have below := chainExps_label_bounds start real label inChain
+      have above := auxAbove label (List.mem_append_left auxLocations inAux)
+      omega
+    · apply List.Nodup.append mainDistinct auxLocationDistinct
+      intro label inMain inAux
+      exact mainAuxDisjoint label inMain (List.mem_append_right auxLabels inAux)
+    · intro label inEntries inLocations
+      simp only [List.mem_append] at inEntries inLocations
+      cases inEntries with
+      | inl inChain =>
+        have below := chainExps_label_bounds start real label inChain
+        cases inLocations with
+        | inl inMain => have above := mainAbove label inMain; omega
+        | inr inAux => have above := auxAbove label (List.mem_append_right auxLabels inAux); omega
+      | inr inAux =>
+        cases inLocations with
+        | inl inMain => exact mainAuxDisjoint label inMain (List.mem_append_left auxLocations inAux)
+        | inr inNested => exact auxDistinct.disjoint inAux inNested
+  have convert : compileProg? maxApp (chain ++ program.2) = some (compileInc maxApp program) := by
+    simpa [chain, compileInc, extract] using compileProg_checked_eq_original maxApp (chain ++ program.2)
+  exact compileProg_checked_nodup_of_source maxApp (chain ++ program.2) _ convert source
+
 /-- Stateful numbering and annotation place the next incremental BVL program
 in its state interval, provided the untouched auxiliary code also lies there. -/
 theorem numberedAnnotatedOracle_labels_range {C : Type} (maxApp : Nat)
@@ -586,6 +635,74 @@ theorem numberedAnnotatedOracle_labels_range {C : Type} (maxApp : Nat)
     refine ⟨oldBounds.1, oldBounds.2.1, ?_⟩
     intro location inBody
     exact oldBounds.2.2 location (ClosAnnotate.annotateSing_codeLocations oldArity oldBody inBody)
+
+/-- Numbered oracle output is label-distinct when unchanged auxiliary labels
+are themselves distinct, lie after reserved entries, and avoid the newly
+numbered main locations. These are source-side auxiliary-code conditions. -/
+theorem numberedAnnotatedOracle_labels_nodup {C : Type} (maxApp : Nat)
+    (oracle : Nat → (Nat × C) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (auxDistinct : ∀ index, (((oracle index).2.2.map Prod.fst) ++
+      ClosProps.codeLocations ((oracle index).2.2.map (fun (_, _, body) => body))).Nodup)
+    (auxAbove : ∀ index label, label ∈ ((oracle index).2.2.map Prod.fst) ++
+      ClosProps.codeLocations ((oracle index).2.2.map (fun (_, _, body) => body)) →
+      (oracle index).1.1 + max 1 (oracle index).2.1.length ≤ label)
+    (auxSeparate : ∀ index label, label ∈ ClosProps.codeLocations
+      (ClosNumber.compileInc (oracle index).1.1 (oracle index).2.1).2 →
+      label ∉ ((oracle index).2.2.map Prod.fst) ++
+        ClosProps.codeLocations ((oracle index).2.2.map (fun (_, _, body) => body))) :
+    ∀ index, ((compileInc maxApp
+      ((pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2).map Prod.fst).Nodup := by
+  intro index
+  let start := (oracle index).1.1
+  let expressions := (oracle index).2.1
+  let auxiliary := (oracle index).2.2
+  let numbered := ClosNumber.compileInc start expressions
+  let program := (ClosAnnotate.annotateList 0 numbered.2, ClosAnnotate.compile auxiliary)
+  have programEq :
+      ((pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2 = program := by
+    simp [program, numbered, start, expressions, auxiliary, pureCo, stateCo,
+      ClosNumber.ignoreTable, ClosAnnotate.compileInc]
+  rw [programEq]
+  let real := (extractName program.1).2
+  have shape := numberedAnnotated_extractName start expressions
+  have startEq : (extractName program.1).1 = start := by simpa [program, numbered] using shape.1
+  have lengthEq : real.length = max 1 expressions.length := by simpa [real, program, numbered] using shape.2.1
+  have locationsSub : ClosProps.codeLocations real ⊆ ClosProps.codeLocations numbered.2 := by
+    simpa [real, program, numbered] using shape.2.2
+  have extract : extractName program.1 = (start, real) := by
+    cases h : extractName program.1 with
+    | mk first second => simp [real, h] at startEq ⊢; exact startEq
+  have mainDistinct : (ClosProps.codeLocations real).Nodup := by
+    simpa [real, program, numbered] using numberedAnnotated_extractName_nodup start expressions
+  have auxSub : List.Sublist ((program.2.map Prod.fst) ++
+      ClosProps.codeLocations (program.2.map (fun (_, _, body) => body)))
+      ((auxiliary.map Prod.fst) ++ ClosProps.codeLocations (auxiliary.map (fun (_, _, body) => body))) := by
+    simp only [program, annotated_labels]
+    exact (List.Sublist.refl _).append (ClosAnnotate.compile_codeLocations_sublist auxiliary)
+  apply compileInc_labels_nodup maxApp start program real extract mainDistinct (auxSub.nodup (auxDistinct index))
+  · intro location inMain
+    have after := ClosNumber.compileInc_location_after_entries start location expressions (locationsSub inMain)
+    simpa [lengthEq, max_assoc] using after
+  · intro location inAux
+    have after := auxAbove index location (auxSub.subset inAux)
+    simpa [lengthEq, max_assoc, start, expressions, auxiliary] using after
+  · intro location inMain inAux
+    exact auxSeparate index location (locationsSub inMain) (auxSub.subset inAux)
+
+/-- An oracle with no auxiliary code satisfies the incremental output-label
+distinctness condition without any auxiliary invariants. -/
+theorem numberedAnnotatedOracle_labels_nodup_emptyAux {C : Type} (maxApp : Nat)
+    (oracle : Nat → (Nat × C) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (empty : ∀ index, (oracle index).2.2 = []) :
+    ∀ index, ((compileInc maxApp
+      ((pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2).map Prod.fst).Nodup := by
+  apply numberedAnnotatedOracle_labels_nodup maxApp oracle
+  · intro index
+    simp [empty index, ClosProps.codeLocations]
+  · intro index label member
+    simp [empty index, ClosProps.codeLocations] at member
+  · intro index label inMain inAux
+    simp [empty index, ClosProps.codeLocations] at inAux
 
 /-- The executable no-optimization closure compiler satisfies the prepared
 entry behavior theorem without separate program-annotation assumptions.
@@ -641,8 +758,15 @@ theorem compileNoOpts_numberedOracle_semantics {C F : Type} (ffi : HolFfiState F
       (pureCc (compileInc current.maxApp) targetCompiler) [.call .none 0 current.start []] ≠ .fail)
     (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
     (initialState : current.nextLoc ≤ (oracle 0).1.1)
-    (futureDistinct : ∀ index, ((compileInc current.maxApp
-      ((pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2).map Prod.fst).Nodup)
+    (auxDistinct : ∀ index, (((oracle index).2.2.map Prod.fst) ++
+      ClosProps.codeLocations ((oracle index).2.2.map (fun (_, _, body) => body))).Nodup)
+    (auxAbove : ∀ index label, label ∈ ((oracle index).2.2.map Prod.fst) ++
+      ClosProps.codeLocations ((oracle index).2.2.map (fun (_, _, body) => body)) →
+      (oracle index).1.1 + max 1 (oracle index).2.1.length ≤ label)
+    (auxSeparate : ∀ index label, label ∈ ClosProps.codeLocations
+      (ClosNumber.compileInc (oracle index).1.1 (oracle index).2.1).2 →
+      label ∉ ((oracle index).2.2.map Prod.fst) ++
+        ClosProps.codeLocations ((oracle index).2.2.map (fun (_, _, body) => body)))
     (auxBounds : ∀ index entry, entry ∈ (oracle index).2.2 →
       (oracle index).1.1 ≤ entry.1 ∧ entry.1 < (oracle (index + 1)).1.1 ∧
       ∀ location ∈ ClosProps.codeLocationsExp entry.2.2,
@@ -662,7 +786,7 @@ theorem compileNoOpts_numberedOracle_semantics {C F : Type} (ffi : HolFfiState F
   · intro i j order
     exact Nat.add_le_add_right (numberingOracle_state_monotone oracle oracleState order) _
   · exact Nat.add_le_add_right initialState _
-  · exact futureDistinct
+  · exact numberedAnnotatedOracle_labels_nodup current.maxApp oracle auxDistinct auxAbove auxSeparate
   · exact numberedAnnotatedOracle_labels_range current.maxApp oracle oracleState auxBounds
   · exact numberedAnnotatedOracle_annotations oracle auxLocations
 
