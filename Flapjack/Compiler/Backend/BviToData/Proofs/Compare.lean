@@ -108,7 +108,9 @@ theorem doApp_byteGreaterEq_reverse {C F : Type} (args : List BvlSem.Value)
           BvlSem.doApp, BvlSem.applyNumeric, BvlSem.doWordApp, BvlSem.doWordAppIntegral,
           (intCmp_reverse _ _).2, and_comm, and_left_comm, and_assoc]
 
-private theorem roots_present {C F : Type} (target : DataSem.State C F)
+/-- Operand reads, live locals and the projected environment establish all
+roots selected by the assignment compiler. -/
+theorem roots_present {C F : Type} (target : DataSem.State C F)
     (operands live corr : List Nat) (env : List BvlSem.Value) (args : List DataSem.Value)
     (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
     (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
