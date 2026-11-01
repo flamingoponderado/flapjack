@@ -2020,4 +2020,124 @@ theorem evaluate_memory_update {C F : Type} (trace : BackendCommon.Tra) (args : 
     EvalSimulation (C := C) (F := F) [.op trace (.memOp .update) args] :=
   evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_update
 
+/-- Byte-array length reads agree for valid and invalid references. -/
+theorem primitiveSimulation_memory_lengthByte {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .lengthByte) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      cases head with
+      | refPtr flag index =>
+        have refsRel := stateRel.2.2.2.2.2.1 index
+        cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
+          simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+        rename_i leftRef rightRef
+        cases leftRef <;> cases rightRef <;> simp_all
+        exact .number _
+      | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+        simp [doApp, applyMemory, ResultRel]
+    | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Reading a byte yields the same number and rejects the same invalid
+    references and indices on both sides. -/
+theorem primitiveSimulation_memory_derefByte {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .derefByte) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases first with
+        | refPtr flag ptr =>
+          cases second with
+          | number index =>
+            have refsRel := stateRel.2.2.2.2.2.1 ptr
+            cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
+              simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+            rename_i leftRef rightRef
+            cases leftRef <;> cases rightRef <;> simp_all
+            rename_i leftBytes bytes
+            by_cases negative : index < 0
+            · simp [negative]
+            · cases found : bytes[index.toNat]? with
+              | none => simp [negative]
+              | some byte =>
+                have valueRel : ValueRel source.maxApp (.number byte.toNat) (.number byte.toNat) := .number _
+                simp [negative, valueRel, stateRel]
+          | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+            simp [doApp, applyMemory, ResultRel]
+        | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+          cases second <;> simp [doApp, applyMemory, ResultRel]
+      | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Byte writes preserve the updated byte array and reject the same invalid
+    pointers, bounds and byte values. -/
+theorem primitiveSimulation_memory_updateByte {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .updateByte) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil => simp [doApp, applyMemory, ResultRel]
+      | cons third tail =>
+        cases tail with
+        | nil =>
+          cases first with
+          | refPtr flag ptr =>
+            cases second with
+            | number index =>
+              cases third with
+              | number byte =>
+                have refsRel := stateRel.2.2.2.2.2.1 ptr
+                cases left : source.refs.lookup ptr <;> cases right : target.refs.lookup ptr <;>
+                  simp_all [OptionRel, RefRel, doApp, applyMemory, ResultRel]
+                rename_i leftRef rightRef
+                cases leftRef <;> cases rightRef <;> simp_all
+                rename_i leftBytes bytes
+                by_cases invalid : index < 0 ∨ index.toNat ≥ bytes.length
+                · simp [invalid]
+                · cases converted : intToByte byte with
+                  | none => simp [invalid]
+                  | some value =>
+                    have updated := stateRel_updateRefs ptr (.byteArray (bytes.set index.toNat value))
+                      (.byteArray (bytes.set index.toNat value)) stateRel rfl
+                    have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil
+                    simp [invalid, unitRel, updated]
+              | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+                simp [doApp, applyMemory, ResultRel]
+            | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+              simp [doApp, applyMemory, ResultRel]
+          | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+            simp [doApp, applyMemory, ResultRel]
+        | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Byte-array length expressions preserve evaluation through numbering. -/
+theorem evaluate_memory_lengthByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .lengthByte) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_lengthByte
+
+/-- Byte-array read expressions preserve evaluation through numbering. -/
+theorem evaluate_memory_derefByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .derefByte) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_derefByte
+
+/-- Byte-array write expressions preserve evaluation through numbering. -/
+theorem evaluate_memory_updateByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .updateByte) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_updateByte
+
 end Flapjack.Compiler.Backend.ClosNumber
