@@ -444,6 +444,14 @@ status for both accepted and rejected programs:
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --unicode-mutations --seed 325579 --count 400
 ```
 
+For source byte handling, `--byte-mutations` includes malformed UTF-8, NUL
+and other control bytes in and around literals, comments and declarations.
+Seed `7611927` matched the pinned compiler on 1,000 cases:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --byte-mutations --seed 7611927 --count 1000
+```
+
 The same checker has a fixed language-feature corpus covering literals,
 patterns, datatypes, exceptions, local bindings, closures, structures and
 large integers, as well as unbound-name diagnostics with the prelude excluded.

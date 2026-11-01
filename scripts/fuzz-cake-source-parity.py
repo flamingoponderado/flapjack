@@ -175,9 +175,31 @@ def unicode_mutated_source(rng):
     return source
 
 
+def byte_mutated_source(rng):
+    """Mutate input bytes, including malformed UTF-8 and control characters."""
+    source = rng.choice([
+        b'val x = "abc\\n\\000\\255";', b'val x = #"a";',
+        b'(* one (* two *) *) val x = 1;',
+        b'datatype t = A int | B; fun f x = case x of A a => a | B => 0;',
+        b'val x : int = 5; val y = x;',
+        b'structure A = struct val x = 1 end; val y = A.x;',
+        b'val x = 0wx12ab;',
+        b'exception E int; val x = (raise E 1) handle E x => x;',
+    ])
+    alphabet = b'abcdefghijklXYZ0123456789 !@#$%^&*()-_=+[]{};:\'"\\,./\n\t\r\x00\x7f\x80\xa9\xc0\xc3\xe2\xff'
+    for _ in range(rng.randrange(1, 5)):
+        position = rng.randrange(len(source) + 1)
+        operation = rng.randrange(3)
+        char = bytes([rng.choice(alphabet)])
+        skip = operation != 0 and position < len(source)
+        source = source[:position] + (char if operation != 1 else b'') + source[position + skip:]
+    return source
+
+
 def run(binary, source, timeout, exclude_prelude=False):
     flags = ['--exclude_prelude=true'] if exclude_prelude else []
-    return subprocess.run([str(binary), '--target=riscv', *flags], input=source.encode('utf-8'),
+    payload = source if isinstance(source, bytes) else source.encode('utf-8')
+    return subprocess.run([str(binary), '--target=riscv', *flags], input=payload,
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
 
 
@@ -195,6 +217,8 @@ def main():
                        help='mutate nested declarations and expressions with the prelude excluded')
     modes.add_argument('--unicode-mutations', action='store_true',
                        help='mutate UTF-8 source with the prelude excluded')
+    modes.add_argument('--byte-mutations', action='store_true',
+                       help='mutate arbitrary source bytes with the prelude excluded')
     modes.add_argument('--corpus', action='store_true',
                        help='compare fixed language-feature and standard-prelude programs')
     args = parser.parse_args()
@@ -208,11 +232,12 @@ def main():
     corpus += [(source, 0, False) for source in BASIS_CORPUS]
     count = len(corpus) if args.corpus else args.count
     for index in range(count):
-        source = (corpus[index][0] if args.corpus else unicode_mutated_source(rng) if args.unicode_mutations else
+        source = (corpus[index][0] if args.corpus else byte_mutated_source(rng) if args.byte_mutations else
+                  unicode_mutated_source(rng) if args.unicode_mutations else
                   deep_mutated_source(rng) if args.deep_mutations else
                   mutated_source(rng) if args.mutations else
                   'fun f x = ' + expression(rng, rng.randrange(1, 4)) + '; val _ = print_int (f 2);')
-        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations or args.unicode_mutations
+        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations or args.unicode_mutations or args.byte_mutations
         try:
             original = run(args.reference, source, args.timeout, exclude_prelude)
             candidate = run(args.cake, source, args.timeout, exclude_prelude)
@@ -221,7 +246,7 @@ def main():
         expected = (original.returncode, original.stdout, original.stderr)
         actual = (candidate.returncode, candidate.stdout, candidate.stderr)
         if ((args.corpus and original.returncode != corpus[index][1]) or
-                (not (args.mutations or args.deep_mutations or args.unicode_mutations or args.corpus) and original.returncode != 0) or
+                (not (args.mutations or args.deep_mutations or args.unicode_mutations or args.byte_mutations or args.corpus) and original.returncode != 0) or
                 actual != expected):
             def describe(result):
                 return (f'exit={result.returncode} stdout_sha256={hashlib.sha256(result.stdout).hexdigest()} '
