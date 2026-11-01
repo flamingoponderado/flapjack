@@ -33,6 +33,13 @@ CASES = {
     'no_prelude_qualified_value': 'structure S = struct val x = 1 end; val y = S.x;',
     'no_prelude_nested_closures': 'val f = fn x => fn y => fn z => (x,y,z); val x = f 1 2 3;',
     'no_prelude_function_type_annotation': 'val x = ((fn x => x) : int -> int) 1;',
+    'no_prelude_boolean_constructor_match': 'datatype t = A int | B bool; fun f x = case x of A n => n | B True => 1 | B False => 0; val z = f (B True);',
+    'no_prelude_qualified_datatype_function': 'structure S = struct datatype t = A | B int; fun f x = case x of A => 1 | B y => y; end; val y = S.f (S.B 2);',
+    'no_prelude_tuple_list_pattern': 'fun f (x,y) = case x of [] => y | a::rest => a; val z = f ([3],4);',
+    'no_prelude_nested_list_case': 'val a = [1,2,3]; val b = case a of x::y::rest => (x,y,rest) | _ => (0,0,[]);',
+    'no_prelude_string_pattern': 'val x = "abc"; val y = case x of "" => 0 | "abc" => 1 | _ => 2;',
+    'no_prelude_signed_bigints': 'val v = 999999999999999999999999999999; val w = ~999999999999999999999999999999;',
+    'no_prelude_recursive_group': 'fun f x = x and g y = f y; val z = g 2;',
     'recursive_array_fill': 'val a = Array.array 8 0; fun fill i = if i = 8 then () else (Array.update a i (i*i); fill (i+1)); val _ = fill 0; val _ = print_int (Array.sub a 7);',
     'two_captured_closures': 'fun f x = let fun g y = x+y in g end; val a = f 3; val b = f 4; val _ = print_int (a 8 + b 9);',
     'sequential_reference_calls': 'val r = Ref 1; fun next x = (r := !r + x; !r); val _ = print_int (next 3 + next 4);',
@@ -178,6 +185,13 @@ CASE_ARGS = {
     'no_prelude_qualified_value': ['--exclude_prelude=true'],
     'no_prelude_nested_closures': ['--exclude_prelude=true'],
     'no_prelude_function_type_annotation': ['--exclude_prelude=true'],
+    'no_prelude_boolean_constructor_match': ['--exclude_prelude=true'],
+    'no_prelude_qualified_datatype_function': ['--exclude_prelude=true'],
+    'no_prelude_tuple_list_pattern': ['--exclude_prelude=true'],
+    'no_prelude_nested_list_case': ['--exclude_prelude=true'],
+    'no_prelude_string_pattern': ['--exclude_prelude=true'],
+    'no_prelude_signed_bigints': ['--exclude_prelude=true'],
+    'no_prelude_recursive_group': ['--exclude_prelude=true'],
     'explore_frontend': ['--explore', '--exclude_prelude=true'],
     'explore_basis': ['--explore'],
     'explore_no_optimisations': ['--explore', '--exclude_prelude=true', '--multi=false', '--known=false', '--call=false'],
@@ -237,6 +251,12 @@ def main():
                     (row['stdout_bytes'] != 0 if is_types else row['stdout_bytes'] == 0) or
                     (row['stderr_bytes'] == 0 if is_types else row['stderr_bytes'] != 0)):
                 raise SystemExit(f'{name}: original compiler did not successfully emit assembly: {row}')
+        # Keep existing case order so a fresh oracle run highlights changed
+        # observations and newly added cases instead of reordering the fixture.
+        if FIXTURE.exists():
+            existing = json.loads(FIXTURE.read_text()).get('cases', {})
+            rows = {**{name: rows[name] for name in existing if name in rows},
+                    **{name: row for name, row in rows.items() if name not in existing}}
         FIXTURE.write_text(json.dumps({'cakeml_revision': parity.PINNED_REV,
                                        'hol_revision': parity.HOL_REV, 'cases': rows}, indent=2) + '\n')
     expected = json.loads(FIXTURE.read_text())

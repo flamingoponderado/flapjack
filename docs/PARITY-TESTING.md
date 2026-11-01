@@ -430,7 +430,8 @@ nested declarations, pattern matches, exceptions, strings and comments. It
 also compares the full output for any mutated program that compiles. A run with
 seed `35791` and a second run with seed `46821` each matched 200 cases against
 the pinned compiler. Seeds `76241` and `97631` each matched another 120 cases;
-seed `651291` matched 600 cases.
+seed `651291` matched 600 cases. Seed `803471` matched another 200 cases;
+single-edit mutation seed `945701` matched 400 cases.
 
 The same checker has a fixed language-feature corpus covering literals,
 patterns, datatypes, exceptions, local bindings, closures, structures and
@@ -589,7 +590,9 @@ configuration-error precedence. Case counts can be changed with
 option matrix). `--type-seed`, `--edge-seed`, and
 `--compile-seed` select reproducible random inputs. These samples do not prove
 general parity. A focused `--compile-config-cases 12 --compile-seed 477991`
-run also matched the pinned compiler. Set `--raw-byte-cases=1536` to compare each byte in all
+run also matched the pinned compiler. With compile seed `851673`, 20 rich,
+20 extended, and 20 composed programs also matched complete output. Set
+`--raw-byte-cases=1536` to compare each byte in all
 three contexts under both output modes; larger counts add random byte strings.
 Set `--annotation-cases=320` to exhaust the annotation matrix; its order is
 shuffled deterministically from `--edge-seed`, and its entries include both
