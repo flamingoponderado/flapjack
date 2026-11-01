@@ -96,12 +96,11 @@ theorem compileExp_source (argc : Nat) (exp : Bvi.Exp) :
   rw [compileSource_agrees]
   rfl
 
-/-- With enough structural fuel, the executable bounded compiler returns the
+/-- At any initial fuel, the executable bounded compiler returns the
 original optimized list-shaped compilation. -/
-theorem compileExpBounded_source (fuel argc : Nat) (exp : Bvi.Exp)
-    (bound : Bvi.expBudget exp < fuel) :
+theorem compileExpBounded_source (fuel argc : Nat) (exp : Bvi.Exp) :
     compileExpBounded fuel argc exp =
       some (optimise (compileSource argc (List.range argc) true [] [exp]).1) := by
-  rw [compileExpBounded_agrees fuel argc exp bound, compileExp_source]
+  rw [compileExpBounded_agrees_all fuel argc exp, compileExp_source]
 
 end Flapjack.Compiler.Backend.BviToData
