@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.DataSimp.Proofs.Correct
 import Flapjack.Compiler.Backend.DataSpace.Proofs.CompileCorrect
+import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
 
 /-! Composition of the established data optimization steps. -/
 namespace Flapjack.Compiler.Backend.BviToData
@@ -41,6 +42,27 @@ theorem optimise_correct {C F : Type} (program : DataLang.Prog) (state : State C
   obtain ⟨safe', peak', stackMax', spaceCorrect⟩ := DataSpace.compile_correct simplified state stageNotType stageStopped
   refine ⟨localsSize, stackMax', safe', peak', ?_⟩
   simpa [optimise, simplified, liveSimp] using spaceCorrect
+
+/-- Resource-field changes preserve the terminal simulation obligations,
+including the saved exception jump. This is composition infrastructure. -/
+theorem correctOutcome_some_resources {C F : Type} (res : BviSem.BviResult)
+    (initial final : State C F) (n next : Nat) (corr live names : List Nat)
+    (env : List BvlSem.Value) (tail : Bool) (result : Result (List DataSem.Value) DataSem.Value)
+    (ls localsSize stackMax : Option Nat) (safe : Bool) (peak : Nat)
+    (outcome : correctOutcome res initial final n next corr live names env tail (some result) ls) :
+    correctOutcome res initial
+      { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }
+      n next corr live names env tail (some result) ls := by
+  rcases outcome with ⟨projected, returned, control, tailResult, jump⟩
+  refine ⟨projected, returned, ?_, tailResult, ?_⟩
+  · simpa using control
+  · intro exception
+    have old := jump exception
+    have transported := DataSem.jumpExc_transport
+      { final with stack := initial.stack, handler := initial.handler }
+      { final with stack := initial.stack, handler := initial.handler, localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }
+      { final with localsSize := ls } rfl rfl old
+    simpa using transported
 
 /-- A singleton expression simulation also covers the optimized function
 body used in the data code tree. The unoptimized final state is retained to
