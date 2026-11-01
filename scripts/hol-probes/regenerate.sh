@@ -585,6 +585,9 @@ run_probe bvl_to_bvi_value_rel_probeScript.sml bvl_to_bvi_value_rel_probe.out \
 run_probe bvi_sem_state_probeScript.sml bvi_sem_state_probe.out \
   evaluate_code_mono evaluate_global_mono inc_clock_ADD dec_clock_inv_clock do_app_change_clock do_app_change_clock_err evaluate_inv_clock exn_type ret_type result_type state_refs_type state_clock_type state_global_type state_compile_type state_oracle_type state_code_type state_ffi_type dec_clock fix_clock initial_state bvl_to_bvi bad_ref_type not_thunk_type is_thunk_type dest_thunk finalise_cons finalise_nonref finalise_missing finalise_cycle finalise_one small_enough_int do_app_aux aux_const_boundary aux_const_large aux_bad_update_fallback do_install do_install_type install_bad_arity bvi_to_bvl do_app do_app_type do_app_const evaluate_clock fix_clock_evaluate evaluate_type eval_var eval_return eval_tick_timeout eval_call_bad_handler eval_force_evaluated eval_let_call_return "$cake_dir/compiler/backend/semantics/bviSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe data_sem_apply_probeScript.sml data_sem_apply_probe.out \
+  do_app_aux nullary_cons nonempty_cons invalid_list_length integer_add unsupported_copy "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+
 run_probe data_sem_limits_probeScript.sml data_sem_limits_probe.out \
   lim_safe_part lim_safe ref_array_inside ref_array_boundary ref_array_negative ref_array_malformed nullary_tag_boundary "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
 

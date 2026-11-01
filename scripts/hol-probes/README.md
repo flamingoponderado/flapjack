@@ -1,3 +1,9 @@
+`data_sem_apply_probe.out` captures the typed data primitive dispatcher and
+original observations for block construction, timestamp updates, invalid list
+lengths, integer arithmetic, and unsupported byte copying. Lean examples cover
+the same cases; these checks do not establish full dispatcher correspondence.
+Regenerate with `HOL_PROBE_ONLY=data_sem_apply_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `data_sem_limits_probe.out` captures the typed operation-limit definitions and
 original array-length and nullary-tag boundary observations. Corresponding
 Lean cases cover valid, invalid, and malformed inputs. The observations do not
