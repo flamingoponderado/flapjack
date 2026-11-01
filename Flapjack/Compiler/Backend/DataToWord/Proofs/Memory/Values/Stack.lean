@@ -106,6 +106,45 @@ theorem blocksUnique_stackPermute {α : Type} (ys xs : List (Value × α)) (next
   exact h.2 stamp tag1 xs1 tag2 xs2
     ⟨subset _ premises.1, premises.2.1, subset _ premises.2.2.1, premises.2.2.2⟩
 
+/-- Block uniqueness is monotone under value-stack membership inclusion.
+This is Flapjack list infrastructure. -/
+theorem blocksUnique_stackSubset (ys xs : List Value) (next : Nat)
+    (refs : Spt (BvlSem.Ref Value)) (stack : List Value)
+    (subset : ∀ value, value ∈ ys → value ∈ xs)
+    (unique : blocksUnique next (allValues refs (xs ++ stack))) :
+    blocksUnique next (allValues refs (ys ++ stack)) := by
+  have result := blocksUnique_stackPermute (ys.map (fun value => (value, ())))
+    (xs.map (fun value => (value, ()))) next refs stack (by
+      constructor
+      · intro pair member
+        obtain ⟨value, member, eq⟩ := List.mem_map.mp member
+        exact List.mem_map.mpr ⟨value, subset value member, eq⟩
+      · simpa [Function.comp_def] using unique)
+  simpa [Function.comp_def] using result
+
+/-- Duplicating a stack prefix preserves block uniqueness. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "blocks_unique_duplicate"]
+theorem blocksUnique_duplicate (xs stack : List Value) (refs : Spt (BvlSem.Ref Value)) (next : Nat) :
+    blocksUnique next (allValues refs (xs ++ stack)) →
+    blocksUnique next (allValues refs (xs ++ xs ++ stack)) := by
+  intro unique
+  exact blocksUnique_stackSubset (xs ++ xs) xs next refs stack (by simp) unique
+
+/-- Swapping two stack segments preserves block uniqueness. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "blocks_unique_move"]
+theorem blocksUnique_move (xs1 xs2 xs3 stack : List Value) (refs : Spt (BvlSem.Ref Value)) (next : Nat) :
+    blocksUnique next (allValues refs (xs1 ++ xs2 ++ xs3 ++ stack)) →
+    blocksUnique next (allValues refs (xs1 ++ xs3 ++ xs2 ++ stack)) := by
+  intro unique
+  apply blocksUnique_stackSubset (xs1 ++ xs3 ++ xs2) (xs1 ++ xs2 ++ xs3) next refs stack
+  · intro value member
+    simp only [List.mem_append] at member ⊢
+    rcases member with (first | third) | second
+    · exact Or.inl (Or.inl first)
+    · exact Or.inr third
+    · exact Or.inl (Or.inr second)
+  · simpa only [List.append_assoc] using unique
+
 /-- Extending a stack cannot remove a reference reachable from it. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "reachable_refs_stack_subset"]
 theorem reachableRefs_stackSubset (xs ys : List Value) (refs : Spt (BvlSem.Ref Value)) (n : Nat)

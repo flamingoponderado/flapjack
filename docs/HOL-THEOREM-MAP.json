@@ -99826,6 +99826,22 @@
     "reviewer": "Source comparison: all nine rules of v_inv_ck and their typed data_to_word_memory_repr capture retain the source constructors, fixed Word64 input, independent positive heap word width, reference tree, clock decrement and zero guards, pointer annotations, lookup and domain premises, timestamp and heap checks. component_2 and component_3 are exactly the two HOL finite maps f and tf represented as canonical HolFiniteMapExact values. The context lookup conversions preserve the address and heap and have kernel-checked roundtrips in both directions for finite-support functions. Lean's mutual list relation exists to satisfy positivity; clockValueListInv_iff proves it is precisely the source LIST_REL recursive premise. The HOL/Lean inductive correspondence is source-reviewed, not established by those representation witnesses."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Stack.lean",
+    "lean_name": "blocksUnique_duplicate",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "blocks_unique_duplicate",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: blocks_unique_duplicate and its typed data_to_word_memory_repr capture retain the same block-uniqueness implication over recursive allValues of the stack and references. The same original stack prefix is repeated, with the common suffix, references, and next timestamp unchanged."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Stack.lean",
+    "lean_name": "blocksUnique_move",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "blocks_unique_move",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: blocks_unique_move and its typed data_to_word_memory_repr capture retain the same block-uniqueness implication over recursive allValues of the stack and references. The source and target retain all three stack segments, exchange the second and third, and preserve the common suffix, references, and next timestamp."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

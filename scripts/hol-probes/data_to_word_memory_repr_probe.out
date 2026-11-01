@@ -58,6 +58,8 @@ v_all_vs_append_typed=∀(x :v list) (y :v list). v_all_vs (x ++ y) = v_all_vs x
 MEM_v_all_vs_FST_typed=∀(xs :(v # α) list) (h0 :v) (h1 :α) (x :v). MEM (h0,h1) xs ∧ MEM x (v_all_vs [h0]) ⇒ MEM x (v_all_vs (MAP (FST :v # α -> v) xs))
 MEM_v_all_vs_SUBSET_typed=∀(ys :(v # α) list) (xs :(v # α) list) (x :v). set ys ⊆ set xs ∧ MEM x (v_all_vs (MAP (FST :v # α -> v) ys)) ⇒ MEM x (v_all_vs (MAP (FST :v # α -> v) xs))
 blocks_unique_stack_permute_typed=set (ys :(v # α) list) ⊆ set (xs :(v # α) list) ∧ blocks_unique (ts :num) (all_vs (refs :v ref sptree$num_map) (MAP (FST :v # α -> v) xs ++ (stack :v list))) ⇒ blocks_unique ts (all_vs refs (MAP (FST :v # α -> v) ys ++ stack))
+blocks_unique_duplicate_typed=blocks_unique (ts :num) (all_vs (refs :v ref sptree$num_map) ((xs :v list) ++ (stack :v list))) ⇒ blocks_unique ts (all_vs refs (xs ++ xs ++ stack))
+blocks_unique_move_typed=blocks_unique (ts :num) (all_vs (refs :v ref sptree$num_map) ((xs1 :v list) ++ (xs2 :v list) ++ (xs3 :v list) ++ (stack :v list))) ⇒ blocks_unique ts (all_vs refs (xs1 ++ xs3 ++ xs2 ++ stack))
 reachable_refs_stack_subset_typed=∀(x :v list) (y :v list) (refs :v ref sptree$num_map) (n :num). reachable_refs y refs n ∧ set y ⊆ set x ⇒ reachable_refs x refs n
 v_all_vs_ts_MEM_typed=∀(x :v) (y :v) (ts :num). MEM ts (v_all_ts x) ∧ MEM x (v_all_vs [y]) ⇒ MEM ts (v_all_ts y)
 v_all_vs_ts_typed=∀(x :v) (ts :num) (tag :num) (xs :v list). MEM (Block ts tag xs :v) (v_all_vs [x]) ⇒ MEM ts (v_all_ts x)
