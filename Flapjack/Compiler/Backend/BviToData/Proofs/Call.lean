@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.BviToData.Proofs.Optimise
+import Flapjack.Compiler.Backend.Semantics.DataProps.Ticks
 import Mathlib.Data.List.Induction
 
 /-! Call argument cases for the BVI-to-data simulation. -/
@@ -65,6 +66,20 @@ theorem stateRel_pushEnv {C F : Type} (source : BviSem.BviState C F)
     (target : DataSem.State C F) (env : Spt DataSem.Value) (handler : Bool)
     (related : stateRel source target) : stateRel source (DataSem.pushEnv env handler target) := by
   simpa [stateRel, DataSem.pushEnv] using related
+
+/-- The generated ticks followed by call entry consume the same clock as a
+BVI call and preserve the remaining state relation. -/
+theorem stateRel_callEntry {C F : Type} (source : BviSem.BviState C F)
+    (target : DataSem.State C F) (args : List DataSem.Value) (size : Option Nat) (ticks : Nat)
+    (related : stateRel source target) :
+    stateRel (BviSem.decClock (ticks + 1) source)
+      (DataSem.callEnv args size (DataSem.decClock { target with clock := target.clock - ticks })) := by
+  apply stateRel_callEnv
+  rcases related with ⟨clocks, rest⟩
+  refine ⟨?_, rest⟩
+  simp only [BviSem.decClock, DataSem.decClock]
+  rw [clocks]
+  omega
 
 /-- Run an optimized compiled function body from a freshly populated call
 environment, given the recursive source simulation. The remaining exception
