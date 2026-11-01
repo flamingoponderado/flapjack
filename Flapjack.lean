@@ -207,6 +207,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Space
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Control
 import Flapjack.RiscV.CorrectnessEncoding.ConstWide

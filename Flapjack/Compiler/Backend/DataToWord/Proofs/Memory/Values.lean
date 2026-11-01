@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
 import Flapjack.Compiler.Backend.Semantics.DataSem.Value
 import Flapjack.Misc.Sptree
+import Flapjack.Misc.Multiword
+import Flapjack.Compiler.Backend.DataToWord.Numbers
 import Mathlib.Logic.Relation
 
 /-! Value and reference traversals used by the abstract memory invariant. -/
@@ -12,6 +14,24 @@ open Flapjack.Compiler.Backend.DataSem
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "RefBlock_def"]
 def refBlock {α β : Type} (values : List (HeapAddress α)) : HeapElement α (HeapTag × List β) :=
   .dataElement values values.length (.refTag, [])
+
+/-- Abstract bignum cell; its unused address carrier is independent of the
+payload word width. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "Bignum_def"
+  (words_as_type_indexed_bitvec)]
+def bignumRep {width : Nat} [NeZero width] {α : Type} (i : Int) :
+    HeapElement α (HeapTag × List (WordLocW width)) :=
+  let (sign, payload) := Misc.Multiword.i2mw (width := width) i
+  .dataElement [] payload.length (.numTag sign, payload.map .word)
+
+/-- Pointer annotation for a reference, retaining the fully polymorphic
+reference payload type inferred by the original definition. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "ref_ptr_annot_def"
+  (words_as_type_indexed_bitvec)]
+def refPtrAnnot {width : Nat} [NeZero width] {α : Type} (conf : Config) :
+    Option (BvlSem.Ref α) → WordLocW width
+  | some (.mutBlock tag _ left _ right) => .word (ptrBits conf tag (left.length + 1 + right.length))
+  | _ => .word 0
 
 /-- Abstract representation of a 64-bit value at an arbitrary positive word
 width. Its unused heap-address carrier is independent of that width. -/

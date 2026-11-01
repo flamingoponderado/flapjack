@@ -1,6 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
 
 /-! Original HOL observations for pointer-tag and heap representation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -86,5 +86,23 @@ example : valueTimestamps (.block 3 0 [.refPtr true 4, .block 5 1 []]) = [3, 5] 
 example : reachableRefs [.refPtr true 7] .ln 7 := by
   refine ⟨.refPtr true 7, 7, by simp, ?_, Relation.ReflTransGen.refl⟩
   simp [getRefs]
+
+example : Misc.Multiword.n2mw (width := 8) 0x12345 = [0x45, 0x23, 0x01] := by
+  simp [Misc.Multiword.n2mw]
+
+example : smallnum (width := 32) (-2) = 0xFFFFFFF8 := by decide
+
+example : allOnes (width := 8) 8 4 = 0xF0 := by decide
+
+example : refPtrAnnot (width := 8) config
+    (some (.mutBlock 1 false [42] 9 []) : Option (BvlSem.Ref Nat)) = .word 12 := by decide
+
+example : ClockValueInv (width := 32) 0 config (.number (-2)) .ln
+    (.data (.word (smallnum (-2))), HolFiniteMapExact.empty, HolFiniteMapExact.empty, []) := by
+  exact .numberSmall 0 config (-2) .ln _ _ [] (by simp [smallInt])
+
+example : ClockValueInv (width := 32) 0 config (.block 0 2 []) .ln
+    (.data (.word (blockNil 2)), HolFiniteMapExact.empty, HolFiniteMapExact.empty, []) := by
+  exact .blockNil 0 config 0 2 [] .ln _ _ [] rfl (by decide) rfl
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

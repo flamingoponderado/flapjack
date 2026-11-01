@@ -100220,6 +100220,87 @@
     "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Preserves every quantified timestamp, tag and list, both nonempty premises, and all three conclusions."
   },
   {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "n2mw",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "n2mw_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The zero and nonzero clauses preserve the little-endian remainder and quotient at an arbitrary positive word width; Lean checks termination."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "i2mw",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "i2mw_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The sign Boolean is exactly i < 0 and the magnitude is Num (ABS i), represented by Int.natAbs, passed to n2mw."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Numbers.lean",
+    "lean_name": "allOnes",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "all_ones_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The branch on high ≤ low and source word slice of all ones preserve out-of-range bit behavior."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Numbers.lean",
+    "lean_name": "maxoutBits",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "maxout_bits_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The source bound, converted and shifted number, and saturated slice have the same input order and positive word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Numbers.lean",
+    "lean_name": "ptrBits",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "ptr_bits_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Both field encodings, shifts and bitwise OR match; the executed compiler still uses its inlined formula, pending production-path equivalence and integration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Numbers.lean",
+    "lean_name": "smallInt",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "small_int_def",
+    "statement_status": "reviewed_word_dimension_as_width",
+    "word_dimension_as_width": "width",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The word dimension occurs only numerically, translated to an explicit positive width; the signed lower inclusive and upper exclusive dimword DIV 8 bounds match."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Numbers.lean",
+    "lean_name": "smallnum",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Smallnum_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Both original signed branches preserve integer multiplication, HOL Num as Int.toNat, and modular word subtraction."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "bignumRep",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "Bignum_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The address payload carrier is independent of the word dimension; sign, magnitude digits, element length, numeric tag and Word mapping match."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values.lean",
+    "lean_name": "refPtrAnnot",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "ref_ptr_annot_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. The option of reference cells has a fully polymorphic payload; MutBlock uses its tag and lengths while all other cases give Word zero."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Limits.lean",
     "lean_name": "limitsInv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
