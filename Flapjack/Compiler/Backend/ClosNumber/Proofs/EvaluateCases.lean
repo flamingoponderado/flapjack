@@ -2776,4 +2776,207 @@ theorem evaluate_thunk_update {C F : Type} (trace : BackendCommon.Tra) (mode : F
     EvalSimulation (C := C) (F := F) [.op trace (.thunkOp (.updateThunk mode)) args] :=
   evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_thunk_update mode)
 
+/-- Thunk inspection also preserves invalid-arity cases for related lists. -/
+theorem destThunk_list_related {C F : Type} (source : State (Nat × C) F) (target : State C F)
+    (values nextValues : List Value) (valuesRel : List.Forall₂ (ValueRel source.maxApp) values nextValues)
+    (stateRel : StateRel source target) :
+    DestThunkRel source.maxApp (destThunk values source.refs) (destThunk nextValues target.refs) := by
+  cases valuesRel with
+  | nil => simp [destThunk, DestThunkRel]
+  | cons head tail =>
+    cases tail with
+    | nil => exact destThunk_related source target _ _ head stateRel
+    | cons next tail => simp [destThunk, DestThunkRel]
+
+/-- The force-result update succeeds or fails together and preserves related
+    stores when it writes an evaluated thunk. -/
+theorem updateThunk_related {C F : Type} (source : State (Nat × C) F) (target : State C F)
+    (values nextValues results nextResults : List Value)
+    (valuesRel : List.Forall₂ (ValueRel source.maxApp) values nextValues)
+    (resultsRel : List.Forall₂ (ValueRel source.maxApp) results nextResults)
+    (stateRel : StateRel source target) :
+    match updateThunk values source.refs results with
+    | none => updateThunk nextValues target.refs nextResults = none
+    | some refs => ∃ nextRefs, updateThunk nextValues target.refs nextResults = some nextRefs ∧
+        StateRel { source with refs := refs } { target with refs := nextRefs } := by
+  cases valuesRel with
+  | nil => simp [updateThunk]
+  | cons pointer tail =>
+    cases tail with
+    | cons head tail => simp [updateThunk]
+    | nil =>
+      cases resultsRel with
+      | nil => simp [updateThunk]
+      | cons value tail =>
+        cases tail with
+        | cons head tail => simp [updateThunk]
+        | nil =>
+          cases pointer with
+          | refPtr flag index =>
+            cases flag with
+            | true => simp [updateThunk]
+            | false =>
+              rename_i result nextResult
+              have inspected := destThunk_related source target result nextResult value stateRel
+              cases left : destThunk [result] source.refs <;>
+                cases right : destThunk [nextResult] target.refs <;>
+                simp_all [DestThunkRel, updateThunk]
+              have refsRel := stateRel.2.2.2.2.2.1 index
+              cases leftRef : source.refs.lookup index <;> cases rightRef : target.refs.lookup index <;>
+                simp_all [OptionRel, RefRel, storeThunk]
+              rename_i sourceRef targetRef
+              cases sourceRef <;> cases targetRef <;> simp_all
+              rename_i leftMode leftValue rightMode rightValue
+              cases leftMode <;> cases rightMode <;> simp_all
+              have updated := stateRel_updateRefs index (.thunk .evaluated result)
+                (.thunk .evaluated nextResult) stateRel ⟨rfl, value⟩
+              exact updated
+          | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+            simp [updateThunk]
+
+/-- Forcing a thunk composes argument evaluation, thunk inspection, evaluation
+    of the forced function and the related store update. The generated-call
+    simulation is a remaining mutual-evaluator induction hypothesis. -/
+theorem evaluate_forceThunk {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args)
+    (forceIH : EvalSimulation (C := C) (F := F) [appUnit (.var .none 0)]) :
+    EvalSimulation (C := C) (F := F) [.op trace (.thunkOp .forceThunk) args] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  have safeParts : 1 ≤ source.maxApp ∧ ¬ ClosProps.containsAppSome source.maxApp args := by
+    have h : source.maxApp ≠ 0 ∧ ¬ ClosProps.containsAppSome source.maxApp args := by
+      simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp, not_or] using safe
+    exact ⟨by omega, h.2⟩
+  cases argsRun : evaluate args env source with
+  | mk argsResult middle =>
+    cases argsResult with
+    | err error =>
+      rw [evaluate, fixClock_evaluate, argsRun] at run
+      cases run
+      obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+        argsIH env nextEnv source target (.err error) middle start argsRun noType safeParts.2 envRel stateRel
+      cases targetResult with
+      | val values => cases error <;> simp [ResultRel] at resultRel
+      | err targetError =>
+        refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
+        simp only [renumberList, renumber]
+        rw [evaluate, fixClock_evaluate, targetRun]
+    | val values =>
+      have argsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
+      obtain ⟨targetResult, targetMiddle, targetRun, valuesRel, middleRel⟩ :=
+        argsIH env nextEnv source target (.val values) middle start argsRun argsNoType safeParts.2 envRel stateRel
+      cases targetResult with
+      | err error => cases error <;> simp [ResultRel] at valuesRel
+      | val nextValues =>
+        have middleMax : middle.maxApp = source.maxApp := by
+          have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 args env source
+          simpa [argsRun] using h
+        have relatedValues : List.Forall₂ (ValueRel middle.maxApp) values nextValues := by
+          simpa [ResultRel, middleMax] using valuesRel
+        have inspected := destThunk_list_related middle targetMiddle values nextValues relatedValues middleRel
+        rw [evaluate, fixClock_evaluate, argsRun] at run
+        dsimp only at run
+        cases sourceThunk : destThunk values middle.refs with
+        | badRef =>
+          rw [sourceThunk] at run
+          simp at run
+          exact False.elim (noType run.1.symm)
+        | notThunk =>
+          rw [sourceThunk] at run
+          simp at run
+          exact False.elim (noType run.1.symm)
+        | isThunk mode value =>
+          cases targetThunk : destThunk nextValues targetMiddle.refs with
+          | badRef => simp [DestThunkRel, sourceThunk, targetThunk] at inspected
+          | notThunk => simp [DestThunkRel, sourceThunk, targetThunk] at inspected
+          | isThunk targetMode targetValue =>
+            have rel : mode = targetMode ∧ ValueRel middle.maxApp value targetValue := by
+              simpa [DestThunkRel, sourceThunk, targetThunk] using inspected
+            obtain ⟨rfl, valueRel⟩ := rel
+            cases mode with
+            | evaluated =>
+              rw [sourceThunk] at run
+              cases run
+              refine ⟨.val [targetValue], targetMiddle, ?_, ?_, middleRel⟩
+              · simp only [renumberList, renumber]
+                rw [evaluate, fixClock_evaluate, targetRun]
+                dsimp only
+                rw [targetThunk]
+              · exact .cons (by simpa [middleMax] using valueRel) .nil
+            | notEvaluated =>
+              have forceSafe : ¬ ClosProps.containsAppSome middle.maxApp [appUnit (.var .none 0)] := by
+                simp [ClosProps.containsAppSome, ClosProps.containsAppSomeExp, appUnit, middleMax]
+                omega
+              cases forceRun : evaluate [appUnit (.var .none 0)] [value] middle with
+              | mk forceResult last =>
+                cases forceResult with
+                | err error =>
+                  rw [sourceThunk] at run
+                  dsimp only at run
+                  rw [forceRun] at run
+                  cases run
+                  obtain ⟨targetForceResult, targetLast, targetForceRun, resultRel, lastRel⟩ :=
+                    forceIH [value] [targetValue] middle targetMiddle (.err error) last 0 forceRun noType
+                      forceSafe (.cons valueRel .nil) middleRel
+                  cases targetForceResult with
+                  | val values => cases error <;> simp [ResultRel] at resultRel
+                  | err targetError =>
+                    refine ⟨.err targetError, targetLast, ?_, ?_, lastRel⟩
+                    · simp [renumberList, renumber, appUnit] at targetForceRun
+                      simp only [renumberList, renumber]
+                      rw [evaluate, fixClock_evaluate, targetRun]
+                      dsimp only
+                      rw [targetThunk]
+                      dsimp only
+                      simp only [appUnit]
+                      rw [targetForceRun]
+                    · simpa [middleMax] using resultRel
+                | val forced =>
+                  have forceNoType : (Result.val forced : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
+                  obtain ⟨targetForceResult, targetLast, targetForceRun, resultRel, lastRel⟩ :=
+                    forceIH [value] [targetValue] middle targetMiddle (.val forced) last 0 forceRun forceNoType
+                      forceSafe (.cons valueRel .nil) middleRel
+                  cases targetForceResult with
+                  | err error => cases error <;> simp [ResultRel] at resultRel
+                  | val nextForced =>
+                    have lastMax : last.maxApp = middle.maxApp := by
+                      have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1
+                        [appUnit (.var .none 0)] [value] middle
+                      simpa [forceRun] using h
+                    have forcedRel : List.Forall₂ (ValueRel last.maxApp) forced nextForced := by
+                      simpa [ResultRel, lastMax] using resultRel
+                    have pointerRel : List.Forall₂ (ValueRel last.maxApp) values nextValues := by
+                      simpa [lastMax] using relatedValues
+                    have update := updateThunk_related last targetLast values nextValues forced nextForced
+                      pointerRel forcedRel lastRel
+                    cases updateRun : updateThunk values last.refs forced with
+                    | none =>
+                      rw [sourceThunk] at run
+                      dsimp only at run
+                      rw [forceRun] at run
+                      dsimp only at run
+                      rw [updateRun] at run
+                      simp at run
+                      exact False.elim (noType run.1.symm)
+                    | some refs =>
+                      rw [updateRun] at update
+                      obtain ⟨targetRefs, targetUpdate, updatedRel⟩ := update
+                      rw [sourceThunk] at run
+                      dsimp only at run
+                      rw [forceRun] at run
+                      dsimp only at run
+                      rw [updateRun] at run
+                      cases run
+                      refine ⟨.val nextForced, { targetLast with refs := targetRefs }, ?_, ?_, updatedRel⟩
+                      · simp [renumberList, renumber, appUnit] at targetForceRun
+                        simp only [renumberList, renumber]
+                        rw [evaluate, fixClock_evaluate, targetRun]
+                        dsimp only
+                        rw [targetThunk]
+                        dsimp only
+                        simp only [appUnit]
+                        rw [targetForceRun]
+                        dsimp only
+                        rw [targetUpdate]
+                      · simpa [ResultRel, lastMax, middleMax] using forcedRel
+
 end Flapjack.Compiler.Backend.ClosNumber
