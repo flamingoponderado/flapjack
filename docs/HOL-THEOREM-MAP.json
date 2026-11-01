@@ -99842,6 +99842,35 @@
     "reviewer": "Source comparison: blocks_unique_move and its typed data_to_word_memory_repr capture retain the same block-uniqueness implication over recursive allValues of the stack and references. The source and target retain all three stack segments, exchange the second and third, and preserve the common suffix, references, and next timestamp."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/SmallNumber.lean",
+    "lean_name": "blocksUnique_number",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "blocks_unique_Number",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: blocks_unique_Number and its typed data_to_word_memory_repr capture. The premise ranges over an arbitrary discarded stack prefix; the conclusion adds the same number to the retained suffix, preserving refs and timestamp."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/SmallNumber.lean",
+    "lean_name": "absMlInv_num",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "abs_ml_inv_Num",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: abs_ml_inv_Num and its typed data_to_word_memory_repr capture. The premise is the original abstract invariant and small_int condition. The conclusion prepends the source Number and Data (Word (Smallnum i)) root, with the same heap tuple, references, limit and timestamp; all word locations use the shared positive HOL width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/SmallNumber.lean",
+    "lean_name": "impMemoryRel_number",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "IMP_memory_rel_Number",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: IMP_memory_rel_Number and its typed data_to_word_memory_repr capture. The good_dimindex, small_int and full memory_rel premises imply the original relation with the Number and encoded Word prepended. store is the canonical finite-support representation of the HOL finite map; memory, domain, stored words and result use the shared positive HOL width. The word address mask is proved for both widths admitted by good_dimindex."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
