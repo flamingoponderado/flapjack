@@ -44,6 +44,161 @@ theorem jumpExc_remove_saved_frame {C F : Type} (target final : DataSem.State C 
     cases final
     simp_all
 
+/-- A jump to the handler frame installed for a call restores the caller's
+control and saved locals. -/
+theorem jumpExc_handler_frame {C F : Type} (target final : DataSem.State C F)
+    (cut : Spt DataSem.Value) (ls : Option Nat)
+    (jump : DataSem.jumpExc { final with stack := .exc target.localsSize cut target.handler :: target.stack, handler := target.stack.length } =
+      some { final with localsSize := ls }) :
+    final.stack = target.stack ∧ final.handler = target.handler ∧ final.locals = cut ∧ ls = target.localsSize := by
+  have equal : { final with stack := target.stack, handler := target.handler, locals := cut, localsSize := target.localsSize } =
+      { final with localsSize := ls } := by
+    simpa [DataSem.jumpExc] using jump
+  have stack := congrArg DataSem.State.stack equal
+  have handler := congrArg DataSem.State.handler equal
+  have locals := congrArg DataSem.State.locals equal
+  have size := congrArg DataSem.State.localsSize equal
+  exact ⟨stack.symm, handler.symm, locals.symm, size.symm⟩
+
+/-- Binding a caught exception in the fresh handler local preserves the
+caller's live locals, variable correspondence, and control stack. -/
+theorem correctOutcome_catch_entry {C F : Type} (target caught : DataSem.State C F)
+    (n : Nat) (corr live : List Nat) (env : List BvlSem.Value)
+    (value : BvlSem.Value) (dataValue : DataSem.Value)
+    (projected : dataToBviValue dataValue = value)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (fresh : ∀ key, n ≤ key → sptLookup key target.locals = none)
+    (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
+    (locals : caught.locals = sptMkWf (sptInter target.locals (namesOfList (live ++ corr))))
+    (stack : caught.stack = target.stack) (handler : caught.handler = target.handler) :
+    correctOutcome (.val [value]) target (DataSem.setVar n dataValue caught) n (n + 1)
+      corr live [n] env false none none := by
+  let roots := live ++ corr
+  let cut := sptMkWf (sptInter target.locals (namesOfList roots))
+  let next := DataSem.setVar n dataValue caught
+  have rootsPresent : ∀ key ∈ roots, sptLookup key target.locals ≠ none := by
+    simpa [roots, DataSem.getVars] using
+      (roots_present target [] live corr env [] vars livePresent (by simp [DataSem.getVars]))
+  have nextLocals : next.locals = sptInsert n dataValue cut := by
+    simp [next, DataSem.setVar, locals, cut, roots]
+  have destRead : sptLookup n next.locals = some dataValue := by simp [nextLocals, sptLookup_sptInsert_same]
+  have lookupOther : ∀ key, key ≠ n → sptLookup key next.locals =
+      if key ∈ roots then sptLookup key target.locals else none := by
+    intro key different
+    rw [nextLocals, sptLookup_sptInsert_ne n key dataValue cut different]
+    exact lookup_cut_namesOfList roots target.locals key
+  have keeps : ∀ key ∈ roots, key ≠ n → sptLookup key next.locals = sptLookup key target.locals := by
+    intro key member different
+    rw [lookupOther key different, if_pos member]
+  have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue next.locals) := by
+    apply varCorr_of_lookup_eq dataToBviValue target.locals next.locals corr env vars
+    intro key member
+    have root : key ∈ roots := by simp [roots, member]
+    have different : key ≠ n := by
+      intro equal
+      subst key
+      exact rootsPresent n root (fresh n (Nat.le_refl n))
+    exact keeps key root different
+  change correctOutcome (.val [value]) target next n (n + 1) corr live [n] env false none none
+  simp only [correctOutcome, true_and, List.mem_singleton, forall_eq]
+  refine ⟨by omega, by omega, ?_, varsNew, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro key bound
+    have different : key ≠ n := by omega
+    rw [lookupOther key different]
+    simp [fresh key (by omega)]
+  · intro key v lookup
+    by_cases equal : key = n
+    · omega
+    · have oldLookup : sptLookup key target.locals = some v := by
+        rw [lookupOther key equal] at lookup
+        split at lookup <;> simp_all
+      by_contra bound
+      have absent := fresh key (by omega)
+      rw [oldLookup] at absent
+      contradiction
+  · intro key v lookup needed
+    have different : key ≠ n := by
+      intro equal
+      subst key
+      have absent := fresh n (Nat.le_refl n)
+      rw [lookup] at absent
+      contradiction
+    have root : key ∈ roots := by
+      by_cases member : key ∈ live
+      · simp [roots, member]
+      · simp [roots, needed member]
+    rw [keeps key root different]
+    exact lookup
+  · simp [next, DataSem.setVar, stack]
+  · simp [next, DataSem.setVar, handler]
+  · intro available
+    cases old : DataSem.jumpExc target with
+    | none => exact False.elim (available old)
+    | some jumped =>
+      have moved := DataSem.jumpExc_transport target next jumped
+        (by simp [next, DataSem.setVar, stack]) (by simp [next, DataSem.setVar, handler]) old
+      rw [moved]
+      simp
+  · constructor
+    · simp [DataSem.getVar, sptLookup_sptMap, destRead, projected]
+    · constructor
+
+/-- Once an exception has restored the caller frame, the recursively simulated
+handler can run with the caught value in its fresh local and move its result
+to the handler's merge local. -/
+theorem simulationFor_caught_handler {C F : Type} (handler : Bvi.Exp)
+    (env : List BvlSem.Value) (source nextSource : BviSem.BviState C F)
+    (value : BvlSem.Value) (dataValue : DataSem.Value) (res : BviSem.BviResult)
+    (target caught : DataSem.State C F) (n : Nat) (corr live : List Nat)
+    (ih : simulationFor [handler] (value :: env) source)
+    (run : BviSem.evaluate [handler] (value :: env) source = (res, nextSource))
+    (notType : res ≠ .err (.abort .typeError))
+    (projected : dataToBviValue dataValue = value)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (fresh : ∀ key, n ≤ key → sptLookup key target.locals = none)
+    (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
+    (locals : caught.locals = sptMkWf (sptInter target.locals (namesOfList (live ++ corr))))
+    (stack : caught.stack = target.stack) (handlerEq : caught.handler = target.handler)
+    (related : stateRel source caught)
+    (exceptionJump : isException res → DataSem.jumpExc target ≠ none) :
+    ∃ hprog hname next targetNext pres ls,
+      compileSource (n + 1) (n :: corr) false live [handler] = (hprog, [hname], next) ∧
+      DataSem.evaluate (.seq hprog (.move next hname)) (DataSem.setVar n dataValue caught) = (pres, targetNext) ∧
+      stateRel nextSource targetNext ∧
+      correctOutcome res target targetNext n (next + 1) corr live [next] env false pres ls := by
+  let start := DataSem.setVar n dataValue caught
+  have base : correctOutcome (.val [value]) target start n (n + 1) corr live [n] env false none none :=
+    correctOutcome_catch_entry target caught n corr live env value dataValue projected vars fresh livePresent locals stack handlerEq
+  have startRel : stateRel source start := by simpa [start, DataSem.setVar, stateRel] using related
+  have liveAll := correctOutcome_live [value] target start n (n + 1) corr live [n] env none base livePresent
+  have liveStart : ∀ key ∈ live, sptLookup key start.locals ≠ none := by
+    intro key member
+    exact liveAll key (List.mem_append_right [n] member)
+  have freshStart : ∀ key, n + 1 ≤ key → sptLookup key start.locals = none := base.2.2.2.1
+  have oldVars : DataProps.varCorr env corr (sptMap dataToBviValue start.locals) := base.2.2.2.2.1
+  have valueVars : DataProps.varCorr [value] [n] (sptMap dataToBviValue start.locals) := base.2.2.2.2.2.2.2.2.2.2
+  have handlerVars : DataProps.varCorr (value :: env) (n :: corr) (sptMap dataToBviValue start.locals) := by
+    cases valueVars with
+    | cons read _ => exact .cons read oldVars
+  have jumpStart : isException res → DataSem.jumpExc start ≠ none := by
+    intro exception
+    exact base.2.2.2.2.2.2.2.2.2.1 (exceptionJump exception)
+  obtain ⟨final, hprog, pres, names, next, ls, compiled, targetRun, finalRel, outcome⟩ :=
+    ih res nextSource start (n + 1) (n :: corr) false live run notType handlerVars (by simp) freshStart startRel liveStart jumpStart
+  have length := compileSource_LENGTH (n + 1) (n :: corr) false live [handler] hprog names next compiled
+  cases names with
+  | nil => simp at length
+  | cons name rest =>
+    cases rest with
+    | cons second more => simp at length
+    | nil =>
+      obtain ⟨targetNext, presFinal, movedRun, movedRel, movedOutcome⟩ :=
+        simulation_branch_move handler (value :: env) source nextSource start final res (n + 1) next next name
+          (n :: corr) live hprog pres ls run targetRun startRel finalRel outcome (Nat.le_refl next)
+      refine ⟨hprog, name, next, targetNext, presFinal, ls, compiled, movedRun, movedRel, ?_⟩
+      exact correctOutcome_let [value] res target start targetNext n (n + 1) (next + 1) corr live [n] [next]
+        env false presFinal none ls base (by simpa using movedOutcome)
+
 private theorem fromListFoldIndex {α : Type} (values : List α) (start : Nat) (tree : Spt α) :
     (values.foldl (fun (acc : Nat × Spt α) value => (acc.1 + 1, sptInsert acc.1 value acc.2))
       (start, tree)).1 = start + values.length := by
