@@ -34,17 +34,19 @@ theorem binopRR_ok (op : BinOp) (r1 r2 r3 : Nat)
   simp at h
   exact ⟨h.1.1.1, h.1.1.2, h.1.2, h.2⟩
 
-/-- `asm_ok` of an immediate `binop` splits into its register check and the
-immediate-range check. -/
-theorem binopRI_ok (op : BinOp) (r : Nat) (i : BitVec 64)
-    (h : asmOkExact (.inst (.arith (.binop op r r (.imm i)))) x64Config = true) :
-    asmRegOkExact r x64Config = true ∧
-      ((((Sum.inl op : Sum BinOp Cmp) == (Sum.inl BinOp.xor : Sum BinOp Cmp)) = true ∧ i = -1) ∨
+/-- `asm_ok` of an immediate `binop` splits into the two-register equality, the
+register checks and the immediate-range check. -/
+theorem binopRI_ok (op : BinOp) (r1 r2 : Nat) (i : BitVec 64)
+    (h : asmOkExact (.inst (.arith (.binop op r1 r2 (.imm i)))) x64Config = true) :
+    r1 = r2 ∧ asmRegOkExact r1 x64Config = true ∧
+      asmRegOkExact r2 x64Config = true ∧
+      (((Sum.inl op : Sum BinOp Cmp) == (Sum.inl BinOp.xor : Sum BinOp Cmp)) = true ∧
+          i = -1 ∨
         (x64Min32.toInt ≤ i.toInt ∧ i.toInt ≤ x64Max32.toInt)) := by
   simp only [asmOkExact, asmInstOkExact, asmArithOkExact, asmRegImmOkExact, x64Config,
     Bool.and_eq_true, Bool.or_eq_true, Bool.not_true, Bool.false_or] at h
   simp at h
-  exact h
+  exact ⟨h.1.1.1, h.1.1.2, h.1.2, h.2⟩
 
 /-- The value of a source `binop`. -/
 def binopVal (op : BinOp) (a b : BitVec 64) : BitVec 64 :=
@@ -61,6 +63,90 @@ theorem binopValue_x64Bop (op : BinOp) (a b : BitVec 64) :
 theorem binopUpd_value (r : Nat) (op : BinOp) (a b : BitVec 64) (s : AsmState 64) :
     binopUpd r op a b s = updReg r (binopVal op a b) s := by
   cases op <;> rfl
+
+/-- The source binops map into the eight arithmetic opcodes. -/
+theorem x64Bop_hop (bop : BinOp) :
+    x64Bop bop = .zadd ∨ x64Bop bop = .zor ∨ x64Bop bop = .zadc ∨
+      x64Bop bop = .zsbb ∨ x64Bop bop = .zand ∨ x64Bop bop = .zsub ∨
+      x64Bop bop = .zxor ∨ x64Bop bop = .zcmp := by
+  cases bop <;> simp [x64Bop]
+
+/-- The source binops never map to `test`. -/
+theorem x64Bop_ne_test (bop : BinOp) : x64Bop bop ≠ .ztest := by
+  cases bop <;> simp [x64Bop]
+
+/-- The source binops never map to a shift opcode. -/
+theorem x64Bop_code_div (bop : BinOp) : (x64Bop bop).code / 8 ≠ 1 := by
+  cases bop <;> simp [x64Bop, ZBinopName.code]
+
+/-- The immediate arithmetic encoding is nonempty under the range check. -/
+theorem binopRI_z64_ne (bop : BinOp) (dst : Nat) (imm : BitVec 64) (hd : dst < 16)
+    (hlo : -(2 ^ 31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2 ^ 31) :
+    encodeInsn (.binopRI (x64Bop bop) .z64 dst imm) ≠ [] := by
+  by_cases hs : -128 ≤ imm.toInt ∧ imm.toInt ≤ 127
+  · rw [encodeInsn_binopRI_83 (x64Bop bop) dst hd imm (x64Bop_ne_test bop)
+      (x64Bop_code_div bop) hs]
+    simp [binopRI83Bytes]
+  · by_cases hne : dst = 0
+    · subst hne
+      rw [encodeInsn_binopRI_rax (x64Bop bop) imm (x64Bop_hop bop) hs hlo hhi]
+      simp [binopRIRaxBytes]
+    · rw [encodeInsn_binopRI_81 (x64Bop bop) dst hd imm (x64Bop_hop bop) hs hne hlo hhi]
+      simp [binopRI81Bytes]
+
+/-- The zeroing `not` is nonempty. -/
+theorem monop_not_ne (r : Nat) (hr : r < 16) :
+    encodeInsn (.monop .znot .z64 r) ≠ [] := by
+  intro h
+  interval_cases r <;> simp [encodeInsn, eGenRmReg, eModRM] at h
+
+/-- Comparing with `xor` through the `Sum` carrier. -/
+theorem bop_xor_beq (bop : BinOp) :
+    ((Sum.inl bop : Sum BinOp Cmp) == (Sum.inl BinOp.xor : Sum BinOp Cmp)) = true ↔
+      bop = .xor := by
+  cases bop <;> decide
+
+/-- The `asm_ok` `xor -1` condition is the lowering's condition. -/
+theorem bop_xor_cond (bop : BinOp) (i : BitVec 64) :
+    (((Sum.inl bop : Sum BinOp Cmp) == (Sum.inl BinOp.xor : Sum BinOp Cmp)) = true ∧
+        i = -1) ↔
+      (decide (bop = .xor) && decide (i = -1)) = true := by
+  rw [bop_xor_beq, Bool.and_eq_true]
+  simp only [decide_eq_true_eq]
+
+/-- The bounds of `x64Min32` and `x64Max32` as integers. -/
+theorem x64Min32_toInt : x64Min32.toInt = -(2 ^ 31 : Int) := by decide
+
+theorem x64Max32_toInt : x64Max32.toInt = 2 ^ 31 - 1 := by decide
+
+/-- The immediate `binop` encoding is the lowering's instruction. -/
+theorem x64Enc_binopRI (bop : BinOp) (r1 r2 : Nat) (i : BitVec 64)
+    (h : asmOkExact (.inst (.arith (.binop bop r1 r2 (.imm i)))) x64Config = true) :
+    x64Target.config.encode (.inst (.arith (.binop bop r1 r2 (.imm i)))) =
+      encodeInsn (x64BinopRIImmInsn bop r1 i) := by
+  obtain ⟨hr12, hr1ok, -, himm⟩ := binopRI_ok bop r1 r2 i h
+  have hr1 : r1 < 16 := jumpReg_reg_lt r1 hr1ok
+  have hdst : totalNum2Zreg r1 = r1 := totalNum2Zreg_eq r1 hr1
+  have hflat : (x64Ast (.inst (.arith (.binop bop r1 r2 (.imm i))))).flatMap encodeInsn =
+      encodeInsn (x64BinopRIImmInsn bop r1 i) := by
+    simp only [x64Ast, x64Inst, x64BinopRIImmInsn, hdst]
+    by_cases hc : bop = .xor && i = -1
+    · simp only [if_pos hc]; simp
+    · simp only [if_neg hc]; simp
+  have hne : encodeInsn (x64BinopRIImmInsn bop r1 i) ≠ [] := by
+    by_cases hc : bop = .xor && i = -1
+    · rw [x64BinopRIImmInsn, if_pos hc]
+      exact monop_not_ne r1 hr1
+    · have hb : ¬(((Sum.inl bop : Sum BinOp Cmp) ==
+          (Sum.inl BinOp.xor : Sum BinOp Cmp)) = true ∧ i = -1) := by
+        intro hh
+        exact hc ((bop_xor_cond bop i).mp hh)
+      obtain ⟨hlo, hhi⟩ := himm.resolve_left hb
+      rw [x64Min32_toInt] at hlo
+      rw [x64Max32_toInt] at hhi
+      rw [x64BinopRIImmInsn, if_neg hc]
+      exact binopRI_z64_ne bop r1 i hr1 hlo (by omega)
+  exact x64Enc_of_flatMap _ _ hflat hne
 
 /-- A register-to-register 64-bit move is three bytes. -/
 theorem encodeInsn_movRR_z64_length (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
