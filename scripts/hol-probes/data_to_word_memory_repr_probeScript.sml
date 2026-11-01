@@ -1,0 +1,27 @@
+load "data_to_word_memoryProofTheory"; load "blastLib";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+fun show label th =
+  if null (hyp th) then
+    (print label; print "="; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
+  else raise Fail (label ^ " has hypotheses");
+val _ = show "block_rep_typed" data_to_word_memoryProofTheory.BlockRep_def;
+val _ = show "block_nil_typed" data_to_word_memoryProofTheory.BlockNil_def;
+val _ = show "thunk_block_typed" data_to_word_memoryProofTheory.ThunkBlock_def;
+val _ = show "lower_bits_typed" data_to_wordTheory.get_lowerbits_def;
+val _ = show "get_addr_typed" data_to_word_memoryProofTheory.get_addr_def;
+val _ = show "word_addr_typed" data_to_word_memoryProofTheory.word_addr_def;
+val _ = show "lower_bits_word8" (EVAL ``data_to_word$get_lowerbits
+  ((c:data_to_word$config) with <|len_bits := 2; tag_bits := 1|>) (wordLang$Word (255w:word8))``);
+val _ = show "lower_bits_wide" (EVAL ``data_to_word$get_lowerbits
+  ((c:data_to_word$config) with <|len_bits := 20; tag_bits := 1|>) (wordLang$Word (254w:word8))``);
+val _ = show "word_addr_loc" (EVAL ``data_to_word_memoryProof$word_addr
+  (c:data_to_word$config) (gc_shared$Data (wordLang$Loc 7 9):word8 wordLang$word_loc gc_shared$heap_address)``);
+val _ = show "lower_bits_word8_result" (prove(
+  ``data_to_word$get_lowerbits ((c:data_to_word$config) with <|len_bits := 2; tag_bits := 1|>)
+      (wordLang$Word (255w:word8)) = (15w:word8)``,
+  simp [data_to_wordTheory.get_lowerbits_def, data_to_wordTheory.small_shift_length_def] >> blastLib.BBLAST_TAC));
+val _ = show "lower_bits_wide_result" (prove(
+  ``data_to_word$get_lowerbits ((c:data_to_word$config) with <|len_bits := 20; tag_bits := 1|>)
+      (wordLang$Word (254w:word8)) = (255w:word8)``,
+  simp [data_to_wordTheory.get_lowerbits_def, data_to_wordTheory.small_shift_length_def] >> blastLib.BBLAST_TAC));

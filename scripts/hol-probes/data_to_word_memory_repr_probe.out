@@ -1,0 +1,11 @@
+block_rep_typed=∀(tag :num) (xs :α heap_address list). (BlockRep tag xs :(α, tag # β list) heap_element) = DataElement xs (LENGTH xs) (BlockTag tag,([] :β list))
+block_nil_typed=∀(n :num). (BlockNil n :α word) = (n2w n :α word) ≪ (4 :num) + (2w :α word)
+thunk_block_typed=∀(ev :thunk_mode) (x :α heap_address). (ThunkBlock ev x :(α, tag # β list) heap_element) = DataElement [x] (1 :num) (ThunkTag ev,([] :β list))
+lower_bits_typed=get_lowerbits (conf :data_to_word$config) (Word (w :α word)) = (small_shift_length conf − (1 :num) -- (0 :num)) w ‖ (1w :α word) ∧ get_lowerbits conf (Loc (v3 :num) (v4 :num) :α word_loc) = (1w :α word)
+get_addr_typed=∀(conf :data_to_word$config) (n :num) (w :α word_loc). get_addr conf n w = (n2w n :α word) ≪ shift_length conf ‖ get_lowerbits conf w
+word_addr_typed=word_addr (conf :data_to_word$config) (Data (Loc (l1 :num) (l2 :num) :α word_loc)) = (Loc l1 (0 :num) :α word_loc) ∧ word_addr conf (Data (Word (v :α word))) = Word (v && ¬(1w :α word)) ∧ word_addr conf (Pointer (n :num) (w :α word_loc)) = Word (get_addr conf n w)
+lower_bits_word8=get_lowerbits ((c :data_to_word$config) with <|len_bits := (2 :num); tag_bits := (1 :num)|>) (Word (255w :word8)) = (15w :word8)
+lower_bits_wide=get_lowerbits ((c :data_to_word$config) with <|len_bits := (20 :num); tag_bits := (1 :num)|>) (Word (254w :word8)) = (255w :word8)
+word_addr_loc=word_addr (c :data_to_word$config) (Data (Loc (7 :num) (9 :num) :word8 word_loc)) = (Loc (7 :num) (0 :num) :word8 word_loc)
+lower_bits_word8_result=get_lowerbits ((c :data_to_word$config) with <|len_bits := (2 :num); tag_bits := (1 :num)|>) (Word (255w :word8)) = (15w :word8)
+lower_bits_wide_result=get_lowerbits ((c :data_to_word$config) with <|len_bits := (20 :num); tag_bits := (1 :num)|>) (Word (254w :word8)) = (255w :word8)

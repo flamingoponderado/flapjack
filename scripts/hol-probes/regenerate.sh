@@ -8215,6 +8215,10 @@ run_probe backend_read_limits_probeScript.sml backend_read_limits_probe.out \
   read_limits_def_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe data_to_word_memory_repr_probeScript.sml data_to_word_memory_repr_probe.out \
+  block_rep_typed block_nil_typed thunk_block_typed lower_bits_typed get_addr_typed word_addr_typed lower_bits_word8 lower_bits_wide word_addr_loc lower_bits_word8_result lower_bits_wide_result \
+  "$cake_dir/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe data_to_word_gc_stack_probeScript.sml data_to_word_gc_stack_probe.out \
   stack_rel_typed the_global_typed contains_loc_typed limits_inv_typed join_env_typed flat_typed flat_append_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"

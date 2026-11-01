@@ -18,4 +18,13 @@ def encodeHeader {width : Nat} [NeZero width] (conf : Config) (tag len : Nat) : 
     some (makeHeader conf (BitVec.ofNat width tag) len)
   else none
 
+/-- Preserve the low pointer-tag bits of a word location, setting its low bit;
+a code location has only that bit set. The executed compiler currently inlines
+a mask; agreement with this proof-side definition remains to be established. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "get_lowerbits_def"
+  (words_as_type_indexed_bitvec)]
+def getLowerBits {width : Nat} [NeZero width] (conf : Config) : WordLocW width → BitVec width
+  | .word value => (value.extractLsb' 0 (smallShiftLength conf)).setWidth width ||| 1
+  | .loc _ _ => 1
+
 end Flapjack.Compiler.Backend.DataToWord
