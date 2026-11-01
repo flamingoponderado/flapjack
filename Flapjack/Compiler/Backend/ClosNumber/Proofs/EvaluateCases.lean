@@ -1214,4 +1214,123 @@ theorem evaluate_wordOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.
           rw [evaluate, fixClock_evaluate, targetRun]
           simp [doApp, applyNumeric, ← same, numeric]
 
+/-- Proof-side simulation obligation for a closure primitive dispatcher. -/
+def PrimitiveSimulation {C F : Type} (op : ClosLang.Op) : Prop :=
+  ∀ (args nextArgs : List Value) (source : State (Nat × C) F) (target : State C F),
+    List.Forall₂ (ValueRel source.maxApp) args nextArgs → StateRel source target →
+    match doApp op args source with
+    | .err error => ∃ targetError,
+        doApp op nextArgs target = .err targetError ∧
+        ResultRel source.maxApp (.err error) (.err targetError)
+    | .val (value, next) => ∃ targetValue targetNext,
+        doApp op nextArgs target = .val (targetValue, targetNext) ∧
+        ValueRel source.maxApp value targetValue ∧ StateRel next targetNext
+
+/-- An ordinary primitive expression composes argument evaluation with its
+    primitive-dispatch simulation. Installation and forcing are separate. -/
+theorem evaluate_ordinaryOp {C F : Type} (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (args : List ClosLang.Exp)
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
+    (argsIH : EvalSimulation (C := C) (F := F) args)
+    (primitiveIH : PrimitiveSimulation (C := C) (F := F) op) :
+    EvalSimulation (C := C) (F := F) [.op trace op args] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  have argsSafe : ¬ ClosProps.containsAppSome source.maxApp args := by
+    cases op <;> simp_all [ClosProps.containsAppSome, ClosProps.containsAppSomeExp]
+  rw [evaluate_ordinaryOp_eq trace op args env source notInstall notForce] at run
+  cases argsRun : evaluate args env source with
+  | mk argsResult middle =>
+    cases argsResult with
+    | err error =>
+      rw [argsRun] at run
+      cases run
+      obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+        argsIH env nextEnv source target (.err error) sourceNext start argsRun noType argsSafe envRel stateRel
+      cases targetResult with
+      | val values => cases error <;> simp [ResultRel] at resultRel
+      | err targetError =>
+        refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
+        simp only [renumberList, renumber]
+        rw [evaluate_ordinaryOp_eq trace op _ nextEnv target notInstall notForce, targetRun]
+    | val values =>
+      have argsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
+      obtain ⟨targetResult, targetMiddle, targetRun, argsRel, middleRel⟩ :=
+        argsIH env nextEnv source target (.val values) middle start argsRun argsNoType argsSafe envRel stateRel
+      cases targetResult with
+      | err error => cases error <;> simp [ResultRel] at argsRel
+      | val nextValues =>
+        have maxEq : middle.maxApp = source.maxApp := by
+          have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 args env source
+          simpa [argsRun] using h
+        have relatedArgs : List.Forall₂ (ValueRel middle.maxApp) values.reverse nextValues.reverse := by
+          simpa [ResultRel, maxEq] using List.rel_reverse argsRel
+        have prim := primitiveIH values.reverse nextValues.reverse middle targetMiddle relatedArgs middleRel
+        cases primRun : doApp op values.reverse middle with
+        | err error =>
+          rw [primRun] at prim
+          obtain ⟨targetError, targetPrimRun, errorRel⟩ := prim
+          rw [argsRun] at run
+          dsimp only at run
+          rw [primRun] at run
+          cases run
+          refine ⟨.err targetError, targetMiddle, ?_, ?_, middleRel⟩
+          · simp only [renumberList, renumber]
+            rw [evaluate_ordinaryOp_eq trace op _ nextEnv target notInstall notForce, targetRun]
+            dsimp only
+            rw [targetPrimRun]
+          · simpa [maxEq] using errorRel
+        | val pair =>
+          obtain ⟨value, last⟩ := pair
+          rw [primRun] at prim
+          obtain ⟨targetValue, targetLast, targetPrimRun, valueRel, lastRel⟩ := prim
+          rw [argsRun] at run
+          dsimp only at run
+          rw [primRun] at run
+          cases run
+          refine ⟨.val [targetValue], targetLast, ?_, ?_, lastRel⟩
+          · simp only [renumberList, renumber]
+            rw [evaluate_ordinaryOp_eq trace op _ nextEnv target notInstall notForce, targetRun]
+            dsimp only
+            rw [targetPrimRun]
+          · exact .cons (by simpa [maxEq] using valueRel) .nil
+
+/-- Integer primitives satisfy the shared ordinary-operation obligation. -/
+theorem primitiveSimulation_int {C F : Type} (op : ClosLang.IntOp) :
+    PrimitiveSimulation (C := C) (F := F) (.intOp op) := by
+  intro args nextArgs source target argsRel stateRel
+  have same := doIntApp_related source.maxApp op argsRel
+  cases run : doIntApp op args with
+  | none =>
+    simp [doApp, applyNumeric, run, ← same, ResultRel]
+  | some value =>
+    have valueRel := doIntApp_result_related source.maxApp op args value run
+    simp [doApp, applyNumeric, run, ← same, valueRel, stateRel]
+
+/-- Word primitives satisfy the same obligation, using the proof-side
+    floating-point model and its documented assumptions. -/
+theorem primitiveSimulation_word {C F : Type} (op : ClosLang.WordOp) :
+    PrimitiveSimulation (C := C) (F := F) (.wordOp op) := by
+  intro args nextArgs source target argsRel stateRel
+  have same := doWordApp_related source.maxApp op argsRel
+  cases run : doWordApp op args with
+  | none =>
+    simp [doApp, applyNumeric, run, ← same, ResultRel]
+  | some value =>
+    have valueRel := doWordApp_result_related source.maxApp op args value run
+    simp [doApp, applyNumeric, run, ← same, valueRel, stateRel]
+
+/-- Constructing blocks preserves the tag and relates all fields, including
+    captured closures and other non-scalar values. -/
+theorem primitiveSimulation_block_cons {C F : Type} (tag : Nat) :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp (.cons tag)) := by
+  intro args nextArgs source target argsRel stateRel
+  simp only [doApp, applyBlock]
+  exact ⟨.block tag nextArgs, target, rfl, .block tag args nextArgs argsRel, stateRel⟩
+
+/-- Block construction composes the shared primitive and argument simulations. -/
+theorem evaluate_block_cons {C F : Type} (trace : BackendCommon.Tra) (tag : Nat)
+    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.blockOp (.cons tag)) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_block_cons tag)
+
 end Flapjack.Compiler.Backend.ClosNumber
