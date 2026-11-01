@@ -99937,6 +99937,30 @@
     "reviewer": "Source comparison: memory_rel_Boolv and its typed data_to_word_memory_repr capture. The original relation and good_dimindex are preserved, as are the two conditional requirements selecting Word 18 for true and Word 2 for false. Lean states the HOL Boolean conditions as equality to true or false. store uses the canonical finite-support map; memory, domain and word locations share the positive HOL word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Number.lean",
+    "lean_name": "memoryRel_numberImp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Number_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Number_IMP and its typed data_to_word_memory_repr capture. The original good_dimindex, small_int, and memory_rel hypotheses imply that the related location is exactly Word (Smallnum i). store uses the canonical finite-support map; memory, domain and word locations share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Number.lean",
+    "lean_name": "memoryRel_anyNumberImp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_any_Number_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_any_Number_IMP and its typed data_to_word_memory_repr capture. The original good_dimindex and memory_rel hypotheses yield a word location whose bit zero is set exactly when the integer is not small. Lean represents the HOL Boolean bit as getLsbD 0 = true. store uses the canonical finite-support map; memory, domain and word locations share the positive HOL word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
