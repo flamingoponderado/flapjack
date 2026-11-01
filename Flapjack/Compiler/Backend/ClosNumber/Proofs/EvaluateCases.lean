@@ -45,6 +45,21 @@ def AppSimulation {C F : Type} : Prop :=
       evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
       ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
 
+/-- Application simulations restricted to strictly smaller argument lists.
+    This supplies the well-founded recursive hypothesis for over-application. -/
+def AppSimulationBelow {C F : Type} (bound : Nat) : Prop :=
+  ∀ (function nextFunction : Value) (args nextArgs : List Value)
+    (source : State (Nat × C) F) (target : State C F)
+    (result : Result (List Value) Value) (sourceNext : State (Nat × C) F),
+    args.length < bound →
+    evaluateApp none function args source = (result, sourceNext) →
+    result ≠ .err (.abort .typeError) →
+    ValueRel source.maxApp function nextFunction →
+    List.Forall₂ (ValueRel source.maxApp) args nextArgs → StateRel source target →
+    ∃ targetResult targetNext,
+      evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
+
 /-- Applying no arguments returns the related closure without changing state. -/
 theorem evaluateApp_empty {C F : Type} (function nextFunction : Value)
     (source : State (Nat × C) F) (target : State C F)
@@ -174,7 +189,7 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
     (argsRel : List.Forall₂ (ValueRel source.maxApp) (first :: rest) nextArgs)
     (stateRel : StateRel source target)
     (bodyIH : EvalSimulation (C := C) (F := F) [body])
-    (applicationIH : AppSimulation (C := C) (F := F)) :
+    (applicationIH : AppSimulationBelow (C := C) (F := F) (first :: rest).length) :
     ∃ targetResult targetNext, evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
       ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
   obtain ⟨start, nextEnv, nextRemaining, nextFound, envRel, remainingRel, bodySafe⟩ :=
@@ -251,7 +266,7 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
                   exact run
                 obtain ⟨targetResult, targetNext, targetAppRun, resultRel, nextRel⟩ :=
                   applicationIH value targetValue remaining nextRemaining last targetLast result sourceNext
-                    appRun noType (by simpa [lastMax, decClock] using valueRel)
+                    (destClosure_full_remaining_lt _ _ _ _ _ _ _ found) appRun noType (by simpa [lastMax, decClock] using valueRel)
                     (by simpa [lastMax] using remainingRel) lastRel
                 refine ⟨targetResult, targetNext, ?_, ?_, nextRel⟩
                 · rw [evaluateApp, targetFound]
@@ -261,6 +276,42 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
                   rw [targetBodyRun]
                   exact targetAppRun
                 · simpa [lastMax] using resultRel
+
+/-- Indirect application simulation follows by induction on the argument
+    count, assuming simulations of all closure bodies. The body assumption is
+    a remaining mutual-evaluator obligation, not an established HOL theorem. -/
+theorem appSimulation_of_bodySimulations {C F : Type}
+    (bodyIH : ∀ body, EvalSimulation (C := C) (F := F) [body]) :
+    AppSimulation (C := C) (F := F) := by
+  have bounded : ∀ bound, AppSimulationBelow (C := C) (F := F) bound := by
+    intro bound
+    induction bound using Nat.strong_induction_on with
+    | h bound ih =>
+      intro function nextFunction args nextArgs source target result sourceNext smaller run noType related argsRel stateRel
+      cases args with
+      | nil =>
+        cases argsRel
+        rw [evaluateApp] at run
+        cases run
+        simpa [evaluateApp] using evaluateApp_empty function nextFunction source target related stateRel
+      | cons first rest =>
+        cases found : destClosure source.maxApp none function (first :: rest) with
+        | none => exact False.elim (evaluateApp_rejected function first rest source result sourceNext run found noType)
+        | some kind =>
+          cases kind with
+          | partialApp partialValue =>
+            exact evaluateApp_partial function nextFunction first rest nextArgs source target partialValue
+              result sourceNext run found related argsRel stateRel
+          | fullApp body bodyEnv remaining =>
+            by_cases insufficient : source.clock < (first :: rest).length - remaining.length
+            · exact evaluateApp_full_timeout function nextFunction first rest nextArgs source target body bodyEnv remaining
+                result sourceNext run found insufficient related argsRel stateRel
+            · exact evaluateApp_full function nextFunction first rest nextArgs source target body bodyEnv remaining
+                result sourceNext run found insufficient noType related argsRel stateRel (bodyIH body)
+                  (ih (first :: rest).length smaller)
+  intro function nextFunction args nextArgs source target result sourceNext run noType related argsRel stateRel
+  exact bounded (args.length + 1) function nextFunction args nextArgs source target result sourceNext
+    (Nat.lt_succ_self _) run noType related argsRel stateRel
 
 /-- An environment lookup preserves a pointwise relation. -/
 theorem related_lookup {α β : Type} {relation : α → β → Prop} {left : List α} {right : List β}
@@ -948,5 +999,36 @@ theorem evaluate_app_some {C F : Type} (trace : BackendCommon.Tra) (location : N
     EvalSimulation (C := C) (F := F) [.app trace (some location) function args] := by
   intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
   simp [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] at safe
+
+/-- A direct call can only propagate an argument error under the numbering
+    state relation: its source code map is empty after successful arguments. -/
+theorem evaluate_call {C F : Type} (trace : BackendCommon.Tra) (ticks location : Nat)
+    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.call trace ticks location args] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  have argsSafe : ¬ ClosProps.containsAppSome source.maxApp args := by
+    simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
+  cases argsRun : evaluate args env source with
+  | mk argsResult middle =>
+    cases argsResult with
+    | err error =>
+      rw [evaluate, fixClock_evaluate, argsRun] at run
+      cases run
+      obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+        argsIH env nextEnv source target (.err error) middle start argsRun noType argsSafe envRel stateRel
+      cases targetResult with
+      | val values => cases error <;> simp [ResultRel] at resultRel
+      | err targetError =>
+        refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
+        simp only [renumberList, renumber]
+        rw [evaluate, fixClock_evaluate, targetRun]
+    | val values =>
+      have argsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
+      obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
+        argsIH env nextEnv source target (.val values) middle start argsRun argsNoType argsSafe envRel stateRel
+      have emptyCode : middle.code = HolFiniteMapExact.empty := middleRel.2.2.2.2.2.2.2.2.1
+      rw [evaluate, fixClock_evaluate, argsRun] at run
+      simp [findCode, emptyCode, HolFiniteMapExact.empty] at run
+      exact False.elim (noType run.1.symm)
 
 end Flapjack.Compiler.Backend.ClosNumber
