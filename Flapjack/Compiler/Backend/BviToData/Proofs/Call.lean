@@ -309,6 +309,174 @@ private theorem lookupFromList {α : Type} (values : List α) (key : Nat) :
       · have beyond : values.length < key := by omega
         simp [List.getElem?_append, bound, List.getElem?_eq_none, show 1 ≤ key - values.length by omega]
 
+/-- The contiguous return-name association list looks up exactly the value
+at the corresponding offset. -/
+theorem lookup_return_bindings {α : Type} (values : List α) (start key : Nat) :
+    sptLookup key (sptFromAList (((List.range values.length).map (start + ·)).zip values)) =
+      if start ≤ key then values[key - start]? else none := by
+  rw [← List.range'_eq_map_range, sptLookup_sptFromAList]
+  induction values generalizing start key with
+  | nil => simp [sptAListLookup]
+  | cons value values ih =>
+    simp only [List.length_cons, List.range', List.zip_cons_cons, sptAListLookup]
+    by_cases equal : key = start
+    · subst key
+      simp
+    · rw [if_neg equal]
+      rw [ih]
+      by_cases before : key < start
+      · simp [show ¬ start ≤ key by omega, show ¬ start + 1 ≤ key by omega]
+      · have later : start + 1 ≤ key := by omega
+        have diff : key - start = (key - (start + 1)) + 1 := by omega
+        simp [show start ≤ key by omega, later, diff]
+
+/-- Installing consecutive returned values reads the new binding at an
+in-range offset and otherwise retains the previous local. -/
+theorem lookup_setVars_returns {C F : Type} (values : List DataSem.Value)
+    (start key : Nat) (state : DataSem.State C F) :
+    sptLookup key (DataSem.setVars ((List.range values.length).map (start + ·)) values state).locals =
+      (if start ≤ key then values[key - start]? else none).orElse (fun _ => sptLookup key state.locals) := by
+  simp only [DataSem.setVars, sptLookup_sptUnion, lookup_return_bindings]
+  generalize h : (if start ≤ key then values[key - start]? else none) = found
+  cases found <;> rfl
+
+/-- Installing a complete returned-value list into fresh consecutive locals
+establishes the binding invariant needed by the let-call continuation. -/
+theorem correctOutcome_returns_entry {C F : Type} (target restored : DataSem.State C F)
+    (n : Nat) (corr live : List Nat) (env values : List BvlSem.Value) (dataValues : List DataSem.Value)
+    (projected : values = dataValues.map dataToBviValue)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (fresh : ∀ key, n ≤ key → sptLookup key target.locals = none)
+    (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
+    (locals : restored.locals = sptMkWf (sptInter target.locals (namesOfList (live ++ corr))))
+    (stack : restored.stack = target.stack) (handler : restored.handler = target.handler) :
+    correctOutcome (.val values) target
+      (DataSem.setVars ((List.range dataValues.length).map (n + ·)) dataValues restored)
+      n (n + dataValues.length) corr live ((List.range dataValues.length).map (n + ·)) env false none none := by
+  let roots := live ++ corr
+  let next := DataSem.setVars ((List.range dataValues.length).map (n + ·)) dataValues restored
+  have rootsPresent : ∀ key ∈ roots, sptLookup key target.locals ≠ none := by
+    simpa [roots, DataSem.getVars] using
+      (roots_present target [] live corr env [] vars livePresent (by simp [DataSem.getVars]))
+  have oldRead : ∀ key, key < n → sptLookup key next.locals =
+      if key ∈ roots then sptLookup key target.locals else none := by
+    intro key bound
+    rw [show sptLookup key next.locals = _ from lookup_setVars_returns dataValues n key restored]
+    simp only [show ¬ n ≤ key by omega, ↓reduceIte]
+    rw [locals]
+    exact lookup_cut_namesOfList roots target.locals key
+  have newRead : ∀ index (bound : index < dataValues.length),
+      sptLookup (n + index) next.locals = some dataValues[index] := by
+    intro index bound
+    rw [show sptLookup (n + index) next.locals = _ from lookup_setVars_returns dataValues n (n + index) restored]
+    simp [List.getElem?_eq_getElem bound]
+  have highRead : ∀ key, n + dataValues.length ≤ key → sptLookup key next.locals = none := by
+    intro key bound
+    rw [show sptLookup key next.locals = _ from lookup_setVars_returns dataValues n key restored]
+    have outside : dataValues[key - n]? = none := List.getElem?_eq_none (by omega)
+    simp only [show n ≤ key by omega, ↓reduceIte, outside]
+    rw [locals, lookup_cut_namesOfList roots target.locals key]
+    simp [fresh key (by omega)]
+  have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue next.locals) := by
+    apply varCorr_of_lookup_eq dataToBviValue target.locals next.locals corr env vars
+    intro key member
+    have root : key ∈ roots := by simp [roots, member]
+    have below : key < n := by
+      by_contra bound
+      exact rootsPresent key root (fresh key (by omega))
+    rw [oldRead key below, if_pos root]
+  have valueVars : DataProps.varCorr values ((List.range dataValues.length).map (n + ·))
+      (sptMap dataToBviValue next.locals) := by
+    subst values
+    apply List.forall₂_iff_get.mpr
+    constructor
+    · simp
+    · intro index leftBound rightBound
+      have bound : index < dataValues.length := by simpa using rightBound
+      simp [DataSem.getVar, sptLookup_sptMap, newRead index bound]
+  change correctOutcome (.val values) target next n (n + dataValues.length) corr live
+    ((List.range dataValues.length).map (n + ·)) env false none none
+  simp only [correctOutcome, true_and]
+  refine ⟨by omega, ?_, highRead, varsNew, ?_, ?_, ?_, ?_, ?_, valueVars⟩
+  · intro key member
+    simp only [List.mem_map, List.mem_range] at member
+    obtain ⟨index, bound, rfl⟩ := member
+    omega
+  · intro key value lookup
+    by_contra bound
+    have absent := highRead key (by omega)
+    rw [lookup] at absent
+    contradiction
+  · intro key value lookup needed
+    have below : key < n := by
+      by_contra bound
+      have absent := fresh key (by omega)
+      rw [lookup] at absent
+      contradiction
+    have root : key ∈ roots := by
+      by_cases member : key ∈ live
+      · simp [roots, member]
+      · simp [roots, needed member]
+    rw [oldRead key below, if_pos root]
+    exact lookup
+  · simp [next, DataSem.setVars, stack]
+  · simp [next, DataSem.setVars, handler]
+  · intro available
+    cases old : DataSem.jumpExc target with
+    | none => exact False.elim (available old)
+    | some jumped =>
+      have moved := DataSem.jumpExc_transport target next jumped
+        (by simp [next, DataSem.setVars, stack]) (by simp [next, DataSem.setVars, handler]) old
+      rw [moved]
+      simp
+
+/-- After restoring a caller frame and binding all returned values, run the
+recursively simulated let-call continuation and discharge its local-binding
+obligations back to the caller's environment. -/
+theorem simulationFor_returned_continuation {C F : Type} (body : Bvi.Exp)
+    (env values : List BvlSem.Value) (dataValues : List DataSem.Value)
+    (source nextSource : BviSem.BviState C F) (res : BviSem.BviResult)
+    (target restored : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
+    (ih : simulationFor [body] (values ++ env) source)
+    (run : BviSem.evaluate [body] (values ++ env) source = (res, nextSource))
+    (notType : res ≠ .err (.abort .typeError))
+    (projected : values = dataValues.map dataToBviValue)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (fresh : ∀ key, n ≤ key → sptLookup key target.locals = none)
+    (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
+    (locals : restored.locals = sptMkWf (sptInter target.locals (namesOfList (live ++ corr))))
+    (stack : restored.stack = target.stack) (handler : restored.handler = target.handler)
+    (related : stateRel source restored)
+    (exceptionJump : isException res → DataSem.jumpExc target ≠ none) :
+    ∃ prog names next targetNext pres ls,
+      compileSource (n + dataValues.length) (((List.range dataValues.length).map (n + ·)) ++ corr) tail live [body] = (prog, names, next) ∧
+      DataSem.evaluate prog (DataSem.setVars ((List.range dataValues.length).map (n + ·)) dataValues restored) = (pres, targetNext) ∧
+      stateRel nextSource targetNext ∧
+      correctOutcome res target targetNext n next corr live names env tail pres ls := by
+  let returns := (List.range dataValues.length).map (n + ·)
+  let start := DataSem.setVars returns dataValues restored
+  have base : correctOutcome (.val values) target start n (n + dataValues.length) corr live returns env false none none :=
+    correctOutcome_returns_entry target restored n corr live env values dataValues projected vars fresh livePresent locals stack handler
+  have startRel : stateRel source start := by simpa [start, DataSem.setVars, stateRel] using related
+  have liveAll := correctOutcome_live values target start n (n + dataValues.length) corr live returns env none base livePresent
+  have liveStart : ∀ key ∈ live, sptLookup key start.locals ≠ none := by
+    intro key member
+    exact liveAll key (List.mem_append_right returns member)
+  have freshStart : ∀ key, n + dataValues.length ≤ key → sptLookup key start.locals = none := base.2.2.2.1
+  have oldVars : DataProps.varCorr env corr (sptMap dataToBviValue start.locals) := base.2.2.2.2.1
+  have valueVars : DataProps.varCorr values returns (sptMap dataToBviValue start.locals) := base.2.2.2.2.2.2.2.2.2.2
+  have bodyVars : DataProps.varCorr (values ++ env) (returns ++ corr) (sptMap dataToBviValue start.locals) :=
+    List.rel_append valueVars oldVars
+  have jumpStart : isException res → DataSem.jumpExc start ≠ none := by
+    intro exception
+    exact base.2.2.2.2.2.2.2.2.2.1 (exceptionJump exception)
+  obtain ⟨final, prog, pres, names, next, ls, compiled, targetRun, finalRel, outcome⟩ :=
+    ih res nextSource start (n + dataValues.length) (returns ++ corr) tail live run notType bodyVars
+      (by simp) freshStart startRel liveStart jumpStart
+  refine ⟨prog, names, next, final, pres, ls, compiled, targetRun, finalRel, ?_⟩
+  exact correctOutcome_let values res target start final n (n + dataValues.length) next corr live returns names
+    env tail pres none ls base outcome
+
 /-- Entering a data call gives each projected argument its corresponding
 zero-based local name and leaves every later local absent. -/
 theorem callEnv_argument_locals {C F : Type} (args : List DataSem.Value)
