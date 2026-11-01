@@ -980,6 +980,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyByteOps
 import Flapjack.Compiler.Backend.BviToData.Proofs.Apply
 import Flapjack.Compiler.Backend.BviToData.Proofs.Variables
 import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
+import Flapjack.Compiler.Backend.BviToData.Proofs.Space
 import Flapjack.Compiler.Backend.BviToData.Proofs.FindCode
 import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk
 import Flapjack.Compiler.Backend.BviToData.Proofs.Build

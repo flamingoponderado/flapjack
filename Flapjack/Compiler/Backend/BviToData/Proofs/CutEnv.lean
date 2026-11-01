@@ -70,4 +70,28 @@ theorem getVars_cut_namesOfList {α β : Type} (f : α → β) (kept : List Nat)
     DataSem.getVars names (sptMap f (sptMkWf (sptInter env (namesOfList kept)))) = some values :=
   DataProps.getVars_thm names values _ (varCorr_cut_namesOfList f kept env names values related included)
 
+/-- A successful unprojected read is unchanged when the cut retains every
+requested name. -/
+theorem getVars_cut_exact {α : Type} (kept : List Nat) (env : Spt α)
+    (names : List Nat) (values : List α)
+    (read : DataSem.getVars names env = some values)
+    (included : ∀ key ∈ names, key ∈ kept) :
+    DataSem.getVars names (sptMkWf (sptInter env (namesOfList kept))) = some values := by
+  induction names generalizing values with
+  | nil => simpa [DataSem.getVars] using read
+  | cons name names ih =>
+    have member : name ∈ kept := included name (by simp)
+    simp only [DataSem.getVars, DataSem.getVar, lookup_cut_namesOfList, if_pos member] at read ⊢
+    cases found : sptLookup name env with
+    | none => simp [found] at read
+    | some value =>
+      simp only [found] at read ⊢
+      cases rest : DataSem.getVars names env with
+      | none => simp [rest] at read
+      | some tail =>
+        simp [rest] at read
+        subst values
+        have restRead := ih tail rest (fun key member => included key (by simp [member]))
+        simp [restRead]
+
 end Flapjack.Compiler.Backend.BviToData
