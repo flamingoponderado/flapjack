@@ -31,6 +31,33 @@ theorem compileSource_LESS_EQ (n : Nat) (env : List Nat) (tail : Bool) (live : L
     (compiled : compileSource n env tail live xs = (code, names, next)) : n ≤ next := by
   simpa [compiled] using compileSource_counter n env tail live xs
 
+/-- Every result name produced by the source compiler is below its returned
+fresh-name counter. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "compile_RANGE_lemma"]
+theorem compileSource_range (n : Nat) (env : List Nat) (tail : Bool) (live : List Nat) (xs : List Bvi.Exp) :
+    ∀ v ∈ (compileSource n env tail live xs).2.1, v < (compileSource n env tail live xs).2.2 := by
+  fun_induction compileSource n env tail live xs <;> (simp_all [Flapjack.holHd]; try omega)
+  case case2 n env tail live x y xs c1 vs1 n1 h1 c2 vs2 n2 h2 ih1 ih2 =>
+    have len := compileSource_length n env false live [x]
+    rw [h1] at len
+    have counter := compileSource_counter n1 env false (Flapjack.holHd vs1 :: live) (y :: xs)
+    simp only [Flapjack.holHd] at counter
+    rw [h2] at counter
+    cases vs1 with
+    | nil => simp at len
+    | cons v rest =>
+      simp at counter ⊢
+      have bound := ih1 v (by simp)
+      omega
+
+/-- Result names of a compilation are below its returned fresh counter. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "compile_RANGE"]
+theorem compileSource_RANGE (n : Nat) (env : List Nat) (tail : Bool) (live : List Nat)
+    (xs : List Bvi.Exp) (code : DataLang.Prog) (names : List Nat) (next : Nat)
+    (compiled : compileSource n env tail live xs = (code, names, next)) :
+    ∀ v ∈ names, v < next := by
+  simpa [compiled] using compileSource_range n env tail live xs
+
 /-- The source traversal agrees with the single-expression and non-tail list
 rewrites used by the executable compiler. -/
 theorem compileSource_agrees (n : Nat) (env : List Nat) (tail : Bool) (live : List Nat) (xs : List Bvi.Exp) :

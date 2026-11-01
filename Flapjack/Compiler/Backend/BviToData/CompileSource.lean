@@ -11,7 +11,7 @@ private theorem listBudget_pos (xs : List Bvi.Exp) : 0 < Bvi.listBudget xs := by
 
 /-- The original compiler traverses expression lists directly, returning one
 local name per expression. The executable uses the separate `compileSing` and
-`compileList` rewrite; connecting both traversals remains a proof obligation. -/
+`compileList` rewrite, related by `compileSource_agrees`. -/
 @[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_def"]
 noncomputable def compileSource (n : Nat) (env : List Nat) (tail : Bool) (live : List Nat) :
     List Bvi.Exp → DataLang.Prog × List Nat × Nat

@@ -24,6 +24,18 @@
     "reviewer": "Compared the typed source implication in bvi_to_data_state_probe.out: the source compiler result tuple implies the initial fresh-name counter is at most the final counter."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml", "hol_name": "compile_RANGE_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/CompileSource.lean", "lean_name": "compileSource_range",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source statement captured in bvi_to_data_state_probe.out. The local HOL theorem states that every result name is less than the final counter for arbitrary inputs; membership quantification expresses HOL EVERY. The local source statement was parsed with inferred types, not replayed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml", "hol_name": "compile_RANGE",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/CompileSource.lean", "lean_name": "compileSource_RANGE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source statement captured in bvi_to_data_state_probe.out: the compiler-result tuple is the sole premise, and every result name is less than its final counter. The local source statement was parsed with inferred types, not replayed."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml", "hol_name": "data_to_bvi_result_def",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Result.lean", "lean_name": "dataToBviResult",
     "statement_status": "reviewed_exact",

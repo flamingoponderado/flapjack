@@ -9,6 +9,15 @@ val _ = show "compile=" bvi_to_dataTheory.compile_def;
 val _ = show "compile_sing_eq=" bvi_to_dataTheory.compile_sing_eq;
 val _ = show "compile_LENGTH=" bvi_to_dataTheory.compile_LENGTH;
 val _ = show "compile_LESS_EQ=" bvi_to_dataTheory.compile_LESS_EQ;
+(* The original theorems are local; capture their literal typed statements. *)
+val _ = (print "compile_RANGE_lemma_statement="; print_term
+  ``!n env tail live xs.
+      EVERY (\v. v < (SND (SND (bvi_to_data$compile n env tail live xs))))
+        (FST (SND (bvi_to_data$compile n env tail live xs)))``; print "\n");
+val _ = (print "compile_RANGE_statement="; print_term
+  ``!n env tail live xs ys vs k.
+    (bvi_to_data$compile n env tail live xs = (ys,vs,k)) ==>
+      EVERY (\v. v < k) vs``; print "\n");
 val _ = show "compile_exp_eq=" bvi_to_dataTheory.compile_exp_eq;
 val _ = show "compile_part=" bvi_to_dataTheory.compile_part_def;
 val _ = show "compile_prog=" bvi_to_dataTheory.compile_prog_def;
