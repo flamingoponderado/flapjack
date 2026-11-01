@@ -413,7 +413,8 @@ local-binding and closure programs, run
 The script verifies the reference compiler's embedded CakeML and HOL
 revisions, then compares complete output bytes, diagnostics and status. Its
 `--seed` and `--count` options select reproducible samples; a rejection or
-timeout fails the run. This is sampled evidence, not full-language parity.
+timeout fails the run. A generated-program run with seed `49127` matched 25 cases
+against the pinned compiler. This is sampled evidence, not full-language parity.
 Add `--mutations` to apply reproducible single-character edits to small
 declarations with the prelude excluded. This mode compares successful output
 and rejection diagnostics alike, including complete stderr and exit status;

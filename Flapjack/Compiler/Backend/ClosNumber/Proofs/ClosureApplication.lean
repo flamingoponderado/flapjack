@@ -36,6 +36,27 @@ theorem renumberedBundle_getElem (functions : List (Nat × ClosLang.Exp)) (start
   refine ⟨location, ?_⟩
   exact List.getElem?_zip_eq_some.mpr ⟨sourceArity, result⟩
 
+/-- The recursive-bundle traversal has the same bodies and arities as the
+    representation used by the numbered closure relation. -/
+theorem renumberFuns_eq_bundle (functions : List (Nat × ClosLang.Exp)) (start : Nat) :
+    (renumberFuns start functions).2 =
+      (functions.map Prod.fst).zip (renumberList start (functions.map Prod.snd)).2 := by
+  induction functions generalizing start with
+  | nil => rfl
+  | cons f rest ih =>
+    obtain ⟨arity, body⟩ := f
+    simp [renumberFuns, renumberList, ih]
+
+/-- Recursive-bundle numbering preserves the arity validation test. -/
+theorem renumberFuns_all_arities (functions : List (Nat × ClosLang.Exp)) (start maxApp : Nat) :
+    ((renumberFuns start functions).2.all (fun (arity, _) => arity ≤ maxApp && arity != 0)) =
+      functions.all (fun (arity, _) => arity ≤ maxApp && arity != 0) := by
+  induction functions generalizing start with
+  | nil => rfl
+  | cons f rest ih =>
+    obtain ⟨arity, body⟩ := f
+    simp [renumberFuns, ih]
+
 /-- A body selected from an application-safe function bundle is itself
 application-safe. -/
 theorem selectedBody_noAppSome (maxApp index arity : Nat) (functions : List (Nat × ClosLang.Exp))

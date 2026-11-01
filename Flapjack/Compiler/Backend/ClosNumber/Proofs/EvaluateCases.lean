@@ -551,4 +551,50 @@ theorem evaluate_if {C F : Type} (trace : BackendCommon.Tra) (condition yes no :
                     simpa [targetDecision] using targetBranchRun
                   · simpa [maxEq] using branchRel
 
+/-- Recursive closure creation preserves the related environment and evaluates
+    the numbered body under corresponding recursive function bundles. -/
+theorem evaluate_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
+    (location : Option Nat) (selected : Option (List Nat))
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
+    EvalSimulation (C := C) (F := F) [.letrec names location selected functions body] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  have safeParts : ¬ ClosProps.containsAppSomeFuns source.maxApp functions ∧
+      ¬ ClosProps.containsAppSomeExp source.maxApp body := by
+    simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
+  have funSafe : ¬ ClosProps.containsAppSome source.maxApp (functions.map Prod.snd) := by
+    simpa [ClosProps.containsAppSomeFuns_eq_map] using safeParts.1
+  have bodySafe : ¬ ClosProps.containsAppSome source.maxApp [body] := by
+    simpa [ClosProps.containsAppSome] using safeParts.2
+  have maxEq : source.maxApp = target.maxApp := (stateRel_clock_maxApp stateRel).2
+  rw [evaluate.eq_def] at run
+  by_cases arityOk : functions.all (fun (arity, _) => arity ≤ source.maxApp && arity != 0)
+  · simp only [arityOk, ↓reduceIte] at run
+    cases captured : (match selected with | none => some env | some indices => lookupVars indices env) with
+    | none =>
+      cases selected <;> simp_all
+    | some values =>
+      obtain ⟨nextValues, nextCaptured, capturedRel⟩ :=
+        related_capture source.maxApp selected env nextEnv values envRel captured
+      have recRel := numberedRecclosures_related source.maxApp start location
+        (some (renumberFuns start functions).1) values nextValues functions capturedRel funSafe
+      rw [← renumberFuns_eq_bundle] at recRel
+      have extended := List.rel_append recRel envRel
+      have bodyRun : evaluate [body]
+          (((List.range functions.length).map (fun i => Value.recclosure location [] values functions i)) ++ env)
+          source = (result, sourceNext) := by
+        cases selected <;> simp_all
+      obtain ⟨targetResult, targetNext, targetRun, resultRel, nextRel⟩ :=
+        bodyIH _ _ source target result sourceNext
+          ((renumberFuns start functions).1 + 2 * (renumberFuns start functions).2.length)
+          bodyRun noType bodySafe extended stateRel
+      refine ⟨targetResult, targetNext, ?_, resultRel, nextRel⟩
+      simp only [renumberList] at targetRun
+      simp only [renumberList, renumber]
+      rw [evaluate.eq_def]
+      simp only [← maxEq, renumberFuns_all_arities, arityOk, ↓reduceIte]
+      cases selected <;> simp_all
+  · simp [arityOk] at run
+    exact False.elim (noType run.1.symm)
+
 end Flapjack.Compiler.Backend.ClosNumber
