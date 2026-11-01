@@ -11,6 +11,18 @@ def SameLocalControl {C F : Type} (before after : State C F) : Prop :=
   after.handler = before.handler ∧ after.localsSize = before.localsSize ∧
   after.stackFrameSizes = before.stackFrameSizes ∧ after.clock = before.clock
 
+/-- Control fields preserved even when a live-name cut changes locals. -/
+def SameControl {C F : Type} (before after : State C F) : Prop :=
+  after.stack = before.stack ∧ after.handler = before.handler ∧ after.localsSize = before.localsSize ∧
+  after.stackFrameSizes = before.stackFrameSizes ∧ after.clock = before.clock
+
+/-- Control preservation composes through sequential execution. -/
+theorem SameControl.trans {C F : Type} {a b c : State C F}
+    (first : SameControl a b) (second : SameControl b c) : SameControl a c := by
+  rcases first with ⟨a1, a2, a3, a4, a5⟩
+  rcases second with ⟨b1, b2, b3, b4, b5⟩
+  exact ⟨b1.trans a1, b2.trans a2, b3.trans a3, b4.trans a4, b5.trans a5⟩
+
 /-- Local/control preservation composes across bookkeeping steps. -/
 theorem SameLocalControl.trans {C F : Type} {a b c : State C F}
     (first : SameLocalControl a b) (second : SameLocalControl b c) : SameLocalControl a c := by
@@ -52,6 +64,38 @@ theorem cutStateOpt_control {C F : Type} (live : Option NumSet) (state next : St
       simp [cutStateOpt, cutState, cut] at run
       subst next
       exact ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Successful `makeSpace` changes locals and resource accounting, while
+preserving control metadata. -/
+theorem evaluate_makeSpace_control {C F : Type} (amount : Nat) (names : NumSet) (state next : State C F)
+    (run : evaluate (.makeSpace amount names) state = (none, next)) : SameControl state next := by
+  cases cut : cutEnv names state.locals with
+  | none => simp [evaluate, cut] at run
+  | some env =>
+    simp [evaluate, cut] at run
+    subst next
+    exact ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- A normally continuing sequence preserves control when each component
+does. The first component's clock preservation discharges the clock clamp. -/
+theorem evaluate_seq_control {C F : Type} (first second : DataLang.Prog) (state next : State C F)
+    (firstFrame : ∀ before after : State C F, evaluate first before = (none, after) → SameControl before after)
+    (secondFrame : ∀ before after : State C F, evaluate second before = (none, after) → SameControl before after)
+    (run : evaluate (.seq first second) state = (none, next)) : SameControl state next := by
+  generalize firstRun : evaluate first state = pair
+  obtain ⟨pres, mid⟩ := pair
+  cases pres with
+  | some result => simp [evaluate, firstRun, fixClock] at run
+  | none =>
+    have firstControl := firstFrame state mid firstRun
+    have clock := firstControl.2.2.2.2
+    have bound : mid.clock ≤ state.clock := by rw [clock]
+    have clamp : fixClock state ((none : Option (Result (List Value) Value)), mid) = (none, mid) := by
+      simp [fixClock, Nat.min_eq_right bound]
+    have secondRun : evaluate second mid = (none, next) := by
+      rw [evaluate, firstRun, clamp] at run
+      exact run
+    exact firstControl.trans (secondFrame mid next secondRun)
 
 /-- A successful integer auxiliary operation leaves local and control fields
 unchanged. This is Flapjack infrastructure for compiler-pass simulation. -/
@@ -153,6 +197,27 @@ theorem evaluate_assign_frame {C F : Type} (op : ClosLang.Op) (dest : Nat)
           subst next
           exact ⟨args, prepared, applied, value, rfl, rfl, app, rfl, primitiveFrame args prepared applied value app⟩
 
+/-- A successful assignment updates only its destination in the cut local
+environment and preserves the original control fields. -/
+theorem evaluate_assign_locals {C F : Type} (op : ClosLang.Op) (dest : Nat)
+    (names : List Nat) (live : Option NumSet) (state next : State C F)
+    (primitiveFrame : ∀ (args : List Value) (before after : State C F) (value : Value),
+      doApp op args before = .val (value, after) → SameLocalControl before after)
+    (run : evaluate (.assign dest op names live) state = (none, next)) :
+    ∃ prepared value, cutStateOpt live state = some prepared ∧
+      next.locals = sptInsert dest value prepared.locals ∧ SameControl state next := by
+  obtain ⟨args, prepared, applied, value, read, cut, app, output, frame⟩ :=
+    evaluate_assign_frame op dest names live state next primitiveFrame run
+  have cutControl := cutStateOpt_control live state prepared cut
+  rcases cutControl with ⟨stack1, handler1, size1, sizes1, clock1⟩
+  rcases frame with ⟨locals, stack2, handler2, size2, sizes2, clock2⟩
+  refine ⟨prepared, value, cut, ?_, ?_⟩
+  · rw [output]
+    simp [setVar, installSfs, locals]
+  · rw [output]
+    simp [SameControl, setVar, installSfs, stack2, handler2, size2, sizes2, clock2,
+      stack1, handler1, size1, sizes1, clock1]
+
 /-- Integer assignment execution exposes its cut and preserves all other
 local/control fields through the primitive dispatcher. -/
 theorem evaluate_assign_int_frame {C F : Type} (op : ClosLang.IntOp) (dest : Nat)
@@ -173,5 +238,18 @@ theorem evaluate_assign_word_frame {C F : Type} (op : ClosLang.WordOp) (dest : N
       doApp (.wordOp op) args prepared = .val (value, applied) ∧
       next = setVar dest value (installSfs (.wordOp op) applied) ∧ SameLocalControl prepared applied :=
   evaluate_assign_frame (.wordOp op) dest names live state next (doApp_word_frame op) run
+
+/-- A successful word assignment preserves the control stack and metadata. -/
+theorem evaluate_assign_word_control {C F : Type} (op : ClosLang.WordOp) (dest : Nat)
+    (names : List Nat) (live : Option NumSet) (state next : State C F)
+    (run : evaluate (.assign dest (.wordOp op) names live) state = (none, next)) : SameControl state next := by
+  obtain ⟨args, prepared, applied, value, read, cut, app, output, frame⟩ :=
+    evaluate_assign_word_frame op dest names live state next run
+  have cutControl := cutStateOpt_control live state prepared cut
+  rcases cutControl with ⟨stack1, handler1, size1, sizes1, clock1⟩
+  rcases frame with ⟨_, stack2, handler2, size2, sizes2, clock2⟩
+  rw [output]
+  simp [SameControl, setVar, installSfs, stack2, handler2, size2, sizes2, clock2,
+    stack1, handler1, size1, sizes1, clock1]
 
 end Flapjack.Compiler.Backend.DataSem
