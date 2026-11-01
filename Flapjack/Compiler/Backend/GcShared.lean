@@ -59,6 +59,11 @@ element carriers. -/
 def heapLength {α β : Type} (heap : List (HeapElement α β)) : Nat :=
   (heap.map elLength).sum
 
+/-- An unused heap region of the given word length. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_expand_def"]
+def heapExpand {α β : Type} (length : Nat) : List (HeapElement α β) :=
+  if length = 0 then [] else [.unused (length - 1)]
+
 end Backend
 end Compiler
 end Flapjack

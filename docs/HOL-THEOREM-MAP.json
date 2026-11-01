@@ -99947,6 +99947,61 @@
     "reviewer": "Source comparison: original quantified append equality and typed data_to_word_memory_repr capture. Independent address and stored-word dimensions, unchanged configuration, separation order and suffix offset by bytes_in_word times heap_length agree; Lean checks induction with separation associativity."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "heapExpand",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_expand_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture; zero yields an empty heap and a nonzero length yields one Unused element of length n minus one, with independent polymorphic carriers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcCombined.lean",
+    "lean_name": "GenState",
+    "hol_path": "cakeml/compiler/backend/gc/gc_combinedScript.sml",
+    "hol_name": "gen_state",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: the sole GenState constructor retains its natural-number and natural-number-list fields in source order."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Store.lean",
+    "lean_name": "genStartsInStore",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "gen_starts_in_store_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the original clauses and typed data_to_word_memory_repr capture preserve the generation-state and Word patterns, universally quantified generation sizes and list-head condition, modular byte offset, and false cases."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Store.lean",
+    "lean_name": "genStartsInStoreImp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "gen_starts_in_store_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the original implication and typed data_to_word_memory_repr capture preserve the configuration, generation-state and optional word-location inputs and the existential word conclusion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Store.lean",
+    "lean_name": "globRealInv",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "glob_real_inv_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture retain both optional locations, existential word, word shifts and modular addition at the same width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Store.lean",
+    "lean_name": "heapInMemoryStore",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "heap_in_memory_store_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: all original bounds, store lookups, alignments, generation and globals conditions, and separated heap assertions match the typed data_to_word_memory_repr capture. The address/store width and independent heap-value width are retained; FDOM membership is existence of a successful canonical store lookup, and the Boolean memory domain is interpreted by equality to true in fun2Set."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Limits.lean",
     "lean_name": "limitsInv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",

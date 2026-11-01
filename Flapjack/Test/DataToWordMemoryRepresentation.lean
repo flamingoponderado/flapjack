@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 
 /-! Original HOL observations for pointer-tag and heap representation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -38,5 +38,15 @@ example : (wordPayload (headerWidth := 32) (payloadWidth := 64)
 
 example : (wordPayload (headerWidth := 32) (payloadWidth := 64)
     [] 0 (.bytesTag true 60) [] config).2.2 = false := by decide
+
+example : genStartsInStore (width := 32) { config with gcKind := .generational [10, 20] }
+    (.genState 0 [2, 4]) (some (.word 8)) := by
+  simp [genStartsInStore, StackRemove.bytesInWord]
+
+example : ¬ genStartsInStore (width := 32) config (.genState 0 []) (some (.loc 1 0)) := by
+  simp [genStartsInStore]
+
+example : genStartsInStore (width := 32) config (.genState 0 [7]) (some (.word 0)) := by
+  simp [genStartsInStore, config]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

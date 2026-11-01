@@ -706,6 +706,7 @@ import Flapjack.Test.WordConvsPostAllocExactParity
 import Flapjack.Test.WordConvsPreAllocExactParity
 import Flapjack.Test.WordRemoveMustTerminateParity
 import Flapjack.Test.DataToWordConfigParity
+import Flapjack.Test.DataToWordMemoryRepresentation
 import Flapjack.Test.WordGcFunctionsParity
 import Flapjack.Test.StackAllocGcCodeParity
 import Flapjack.Test.StackAllocGetBitsParity
