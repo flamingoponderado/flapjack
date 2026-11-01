@@ -11,13 +11,14 @@ infrastructure, not a HOL mapping document.
   original CakeML `--pancake --target=x64` frontend. Differential fuzz and a
   corpus run over `cakeml/pancake/**/*.sml` also pass (1500 programs, 244
   programs / 87 accepted, 0 failures).
-* Gate-green commit: `3c57f074f` (`lake build Flapjack`, `lake test`,
+* Gate-green commit: `88a697686` (`lake build Flapjack`, `lake test`,
   `scripts/check-warnings.sh`, `scripts/check-hol-refs.py`,
   `scripts/check_hol_ref_export.py` all pass).
-* `encoderCorrect x64Target` constructors proved (14): `case_skip`, `case_jump`,
+* `encoderCorrect x64Target` constructors proved (16): `case_skip`, `case_jump`,
   `case_call` (vacuous), `case_div` (vacuous), `case_fpFma` (vacuous), `case_loc`,
   `case_jumpReg`, `case_const`, `case_binopRR`, `case_binopRI`, `case_shiftImm`,
-  `case_shiftReg`, `case_longMul`, `case_longDiv`. Files: `Machine/SkipCase.lean`,
+  `case_shiftReg`, `case_longMul`, `case_longDiv`, `case_addOverflow`,
+  `case_subOverflow`. Files: `Machine/SkipCase.lean`,
   `VacuousCase.lean`, `ControlCase.lean`, `JumpRegCase.lean`, `ConstCase.lean`,
   `ArithBinopCase.lean`, `ShiftCase.lean`, `MulCase.lean`, `DivCase.lean`.
 
@@ -32,8 +33,8 @@ noted in a comment. All existing proofs still hold (`rfl`/`cases` unaffected).
 
 ## Remaining work
 
-1. `case_addOverflow`, `case_subOverflow`, `case_addCarry` in a new
-   `Machine/CarryCase.lean` (import `DivCase`). Lowerings and semantics are
+1. `case_addCarry` in `Machine/CarryCase.lean` (the file already proves
+   `case_addOverflow` and `case_subOverflow`). Lowerings and semantics are
    documented in the case template below. 3, 3, and 5 instructions (n = 2, 2, 4).
 2. The eight `mem` cases (`load`, `load32`, `load16`, `load8`, `store`, `store32`,
    `store16`, `store8`) — see `Machine/StepAgree.lean`
