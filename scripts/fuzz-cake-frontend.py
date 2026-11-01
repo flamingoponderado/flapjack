@@ -76,6 +76,16 @@ INTEGRATION_PROGRAMS = [
     'val x = Double.sqrt (Double.fromInt 4); val _ = print_int (Double.toInt x);',
     'fun even n = if n = 0 then True else odd (n-1) and odd n = if n = 0 then False else even (n-1); val _ = if even 8 then print "true" else print "false";',
     'val a = Vector.fromList [1,2,3]; val _ = print_int (Vector.sub a 2);',
+    'val a = Array.array 2 (Array.array 3 0); val _ = Array.update (Array.sub a 1) 2 4; val _ = print_int (Array.sub (Array.sub a 0) 2);',
+    'fun f x = let val r = Ref x in (fn y => (r := !r+y; !r), fn () => !r) end; val (add,get) = f 3; val _ = add 9; val _ = print_int (get ());',
+    'datatype tree = Leaf int | Node (tree * tree); fun map f t = case t of Leaf n => Leaf (f n) | Node (x,y) => Node (map f x,map f y); fun sum t = case t of Leaf n => n | Node (x,y) => sum x + sum y; val _ = print_int (sum (map (fn x => x+1) (Node (Leaf 2,Leaf 3))));',
+    'exception E int; exception F int; fun f x = ((if x < 0 then raise E x else x) handle E n => raise F (~n)) handle F n => n; val _ = print_int (f ~3);',
+    'fun f x = if x=0 then (fn y => y+1) else (fn y => y+2); val g = f 3; val _ = print_int (g 8);',
+    'val _ = print (String.concat (List.map Int.toString [1,2,3,4,5,6]));',
+    'val a = Word8Array.array 8 (Word8.fromInt 0); fun f n = if n=8 then () else (Word8Array.update a n (Word8.fromInt (n*17)); f (n+1)); val _ = f 0; val _ = print_int (Word8.toInt (Word8Array.sub a 7));',
+    'fun loop n a b = if n=0 then a else loop (n-1) b (a+b); val _ = print_int (loop 20 0 1);',
+    'fun f x = let val a = fn y => x+y; val b = fn y => x-y in if x<0 then a else b end; val _ = print_int (f 9 4);',
+    'val v = Vector.fromList ["a","ab","abc"]; val _ = print_int (String.size (Vector.sub v 2));',
 ]
 
 

@@ -751,6 +751,12 @@ RISC-V program outputs, six backend-option combinations, four complete explorer
 reports, and the generated frontend and option-validation cases listed below.
 This is finite regression evidence, not a general output-equivalence proof.
 
+On 2026-11-01, compile seed `394793` matched the pinned compiler for 30
+stateful or module-dependent programs and 40 composed higher-order programs.
+Edge seed `933455` matched 675 option-validation cases. The integration corpus
+also covers nested mutable arrays, shared reference closures, recursive tree
+mapping, exception rethrows, byte-array updates, and vectors of strings.
+
 ```sh
 python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
   --type-seed 51739 --edge-seed 804193 --compile-seed 701923 \
