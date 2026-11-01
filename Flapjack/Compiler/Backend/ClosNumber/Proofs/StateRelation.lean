@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyMemory
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 
 /-! State relation for the closure-numbering simulation. -/
@@ -138,6 +139,29 @@ theorem stateRel_byteArray_lookup {C F : Type} {source : State (Nat × C) F} {ta
     simp_all [OptionRel, RefRel]
   rename_i leftRef rightRef
   cases leftRef <;> cases rightRef <;> simp_all
+
+/-- Related reference stores have the same allocated addresses. -/
+theorem stateRel_ref_unused {C F : Type} {source : State (Nat × C) F} {target : State C F}
+    (related : StateRel source target) (index : Nat) :
+    source.refs.lookup index = none ↔ target.refs.lookup index = none := by
+  have h := related.2.2.2.2.2.1 index
+  cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
+    simp_all [OptionRel]
+
+/-- Allocation chooses the same least free reference in related stores. -/
+theorem stateRel_leastUnusedRef {C F : Type} {source : State (Nat × C) F} {target : State C F}
+    (related : StateRel source target) : leastUnusedRef source.refs = leastUnusedRef target.refs := by
+  apply Nat.le_antisymm
+  · by_contra notLe
+    have smaller : leastUnusedRef target.refs < leastUnusedRef source.refs := by omega
+    have occupied := leastUnusedRef_minimal source.refs _ smaller
+    have free := (stateRel_ref_unused related _).mpr (leastUnusedRef_unused target.refs)
+    exact occupied free
+  · by_contra notLe
+    have smaller : leastUnusedRef source.refs < leastUnusedRef target.refs := by omega
+    have occupied := leastUnusedRef_minimal target.refs _ smaller
+    have free := (stateRel_ref_unused related _).mp (leastUnusedRef_unused source.refs)
+    exact occupied free
 
 /-- Initial states satisfy the relation whenever future incremental source
 programs contain no pre-numbered applications or auxiliary code. This shows

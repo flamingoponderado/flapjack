@@ -1793,4 +1793,104 @@ theorem evaluate_ffi {C F : Type} (trace : BackendCommon.Tra)
     EvalSimulation (C := C) (F := F) [.op trace (.ffi name) args] :=
   evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_ffi name)
 
+/-- Allocating a value array chooses the same fresh address and writes related
+    fields into both reference stores. -/
+theorem primitiveSimulation_memory_ref {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .ref) := by
+  intro args nextArgs source target argsRel stateRel
+  have addressEq := stateRel_leastUnusedRef stateRel
+  have updated := stateRel_updateRefs (leastUnusedRef source.refs)
+    (.valueArray args) (.valueArray nextArgs) stateRel argsRel
+  have pointerRel : ValueRel source.maxApp (.refPtr true (leastUnusedRef source.refs))
+      (.refPtr true (leastUnusedRef source.refs)) := .refPtr _ _
+  simp [doApp, applyMemory, ← addressEq, pointerRel, updated]
+
+/-- Replicated-array allocation uses related initial values and the same
+    fresh address, and rejects negative sizes on both sides. -/
+theorem primitiveSimulation_memory_refArray {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .refArray) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases first with
+        | number count =>
+          rename_i value nextValue
+          by_cases negative : count < 0
+          · simp [doApp, applyMemory, negative, ResultRel]
+          · have repeated : List.Forall₂ (ValueRel source.maxApp)
+                (List.replicate count.toNat value) (List.replicate count.toNat nextValue) := by
+              generalize count.toNat = n
+              induction n with
+              | zero => exact .nil
+              | succ n ih => exact .cons second ih
+            have addressEq := stateRel_leastUnusedRef stateRel
+            have updated := stateRel_updateRefs (leastUnusedRef source.refs)
+              (.valueArray (List.replicate count.toNat value))
+              (.valueArray (List.replicate count.toNat nextValue)) stateRel repeated
+            have pointerRel : ValueRel source.maxApp (.refPtr true (leastUnusedRef source.refs))
+                (.refPtr true (leastUnusedRef source.refs)) := .refPtr _ _
+            simp [doApp, applyMemory, negative, ← addressEq, pointerRel, updated]
+        | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+          simp [doApp, applyMemory, ResultRel]
+      | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Byte-array allocation preserves bounds checks, byte conversion, the fresh
+    address and the updated reference store. -/
+theorem primitiveSimulation_memory_refByte {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp (.refByte false)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases first with
+        | number count =>
+          cases second with
+          | number byte =>
+            by_cases negative : count < 0
+            · simp [doApp, applyMemory, negative, ResultRel]
+            · cases converted : intToByte byte with
+              | none => simp [doApp, applyMemory, negative, converted, ResultRel]
+              | some value =>
+                have addressEq := stateRel_leastUnusedRef stateRel
+                have updated := stateRel_updateRefs (leastUnusedRef source.refs)
+                  (.byteArray (List.replicate count.toNat value))
+                  (.byteArray (List.replicate count.toNat value)) stateRel rfl
+                have pointerRel : ValueRel source.maxApp (.refPtr true (leastUnusedRef source.refs))
+                    (.refPtr true (leastUnusedRef source.refs)) := .refPtr _ _
+                simp [doApp, applyMemory, negative, converted, ← addressEq, pointerRel, updated]
+          | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+            simp [doApp, applyMemory, ResultRel]
+        | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+          cases second <;> simp [doApp, applyMemory, ResultRel]
+      | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Allocation expressions use the shared primitive and argument simulations. -/
+theorem evaluate_memory_ref {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .ref) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_ref
+
+/-- Replicated value-array expressions preserve evaluation through numbering. -/
+theorem evaluate_memory_refArray {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .refArray) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_refArray
+
+/-- Byte-array allocation expressions preserve evaluation through numbering. -/
+theorem evaluate_memory_refByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.refByte false)) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_refByte
+
 end Flapjack.Compiler.Backend.ClosNumber
