@@ -772,7 +772,10 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
 
 Another run matched 60 complete outputs for stateful, recursive, exception,
 and module programs with `--extended-cases 60 --compile-seed 83443` (all other
-case counts zero). The `--cross-context-cases` generator combines patterns,
+case counts zero). After adding polymorphic datatype, nested-module,
+higher-order, handler, and mutable-state combinations, seed `74129` matched
+another 60 complete outputs (`--extended-cases 60`, other case counts zero).
+All seven new program shapes appeared in that run. The `--cross-context-cases` generator combines patterns,
 type annotations, constructors and exception handlers; 2,000 cases matched
 the pinned compiler's complete type-mode output and exit status using:
 

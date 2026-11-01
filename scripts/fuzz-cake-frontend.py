@@ -276,6 +276,29 @@ def rich_extended_program(rng):
         f'fun f xs = case xs of [] => {a} | x::rest => '
         f'(case rest of [] => x | y::ys => x+y+f ys); '
         f'val _ = print_int (f [{a},{b},{c}]);',
+        "datatype 'a box = Box 'a; fun get (Box x) = x; "
+        f'val p = (get (Box {a}), get (Box True)); '
+        f'val _ = print_int (case p of (n, True) => n + {b} | _ => {c});',
+        f'fun apply f x = f x; fun make n = fn x => x+n; '
+        f'val fs = [make {a}, make {b}]; '
+        f'val _ = print_int (List.foldl (fn f => fn n => apply f n) {c} fs);',
+        f'exception E int; fun step n = if n = {a} then raise E n else n+1; '
+        f'fun run xs = case xs of [] => {b} | x::rest => '
+        f'((step x) handle E n => n+{c}) + run rest; '
+        f'val _ = print_int (run [{a},{b},{c}]);',
+        f'structure Outer = struct structure Inner = struct datatype t = K int; '
+        f'fun get (K n) = n; end; val x = Inner.K {a}; end; '
+        f'val _ = print_int (Outer.Inner.get Outer.x + {b});',
+        f'val r = Ref {a}; fun bump n = (r := !r+n; !r); '
+        f'val xs = List.map bump [{b},{c}]; '
+        f'val _ = print_int (!r + List.foldl (fn x => fn y => x+y) 0 xs);',
+        f'fun swap p = case p of (x,y) => (y,x); '
+        f'val (u,v) = swap ({a}, {b}); '
+        f'val _ = print_int (u*{c}+v);',
+        f'datatype item = Present int | Absent; '
+        f'fun count xs = case xs of [] => 0 | _::ys => 1+count ys; '
+        f'val xs = [Present {a}, Absent, Present {b}]; '
+        f'val _ = print_int (count xs + {c});',
     ])
 
 
