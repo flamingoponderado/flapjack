@@ -231,4 +231,238 @@ theorem evaluate_resource_variation_timeout_zero {C F : Type} (program : DataLan
   subst localsSize
   exact ⟨safe', peak', stackMax', by simpa using targetRun⟩
 
+/-- Entering a call after varying resource accounting changes only those
+accounting fields in the callee state. -/
+theorem callEnv_resource_shape {C F : Type} (args : List DataSem.Value) (size : Option Nat)
+    (state : State C F) (safe : Bool) (peak : Nat) (stackMax : Option Nat) :
+    DataSem.callEnv args size { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } =
+      { DataSem.callEnv args size state with
+        safeForSpace := (DataSem.callEnv args size { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }).safeForSpace,
+        peakHeapLength := peak,
+        stackMax := (DataSem.callEnv args size { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }).stackMax } := by
+  rfl
+
+/-- Saving a caller environment after varying resource accounting changes
+only the accounting fields of the saved state. -/
+theorem pushEnv_resource_shape {C F : Type} (env : Spt DataSem.Value) (handler : Bool)
+    (state : State C F) (safe : Bool) (peak : Nat) (stackMax : Option Nat) :
+    pushEnv env handler { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } =
+      { pushEnv env handler state with
+        safeForSpace := (pushEnv env handler { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }).safeForSpace,
+        peakHeapLength := peak,
+        stackMax := (pushEnv env handler { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }).stackMax } := by
+  cases handler <;> rfl
+
+/-- A timeout propagated from a forced thunk has the same final frame size
+if the property holds for the thunk body at the smaller clock. -/
+theorem evaluate_force_timeout_size_step {C F : Type} (ret : Option (Nat × NumSet)) (label src : Nat)
+    (state next targetNext : State C F) (safe : Bool) (peak : Nat) (stackMax : Option Nat)
+    (bodyIH : ∀ (body : DataLang.Prog) (entered finished targetFinished : State C F)
+      (bodySafe : Bool) (bodyPeak : Nat) (bodyMax : Option Nat), entered.clock < state.clock →
+      DataSem.evaluate body entered = (some (.err (.abort .timeoutError)), finished) →
+      DataSem.evaluate body { entered with safeForSpace := bodySafe, peakHeapLength := bodyPeak, stackMax := bodyMax } =
+        (some (.err (.abort .timeoutError)), targetFinished) → finished.localsSize = targetFinished.localsSize)
+    (run : DataSem.evaluate (.force ret label src) state = (some (.err (.abort .timeoutError)), next))
+    (targetRun : DataSem.evaluate (.force ret label src)
+      { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } =
+        (some (.err (.abort .timeoutError)), targetNext)) : next.localsSize = targetNext.localsSize := by
+  by_cases zero : state.clock = 0
+  · exact evaluate_force_timeout_zero_size ret label src state next targetNext safe peak stackMax zero run targetRun
+  · cases read : getVar src state.locals with
+    | none => simp [DataSem.evaluate, read] at run
+    | some thunk =>
+      cases inspect : destThunk thunk state.refs with
+      | badRef => simp [DataSem.evaluate, read, inspect] at run
+      | notThunk => simp [DataSem.evaluate, read, inspect] at run
+      | isThunk mode value =>
+        cases mode with
+        | evaluated =>
+          cases ret with
+          | none => simp [DataSem.evaluate, read, inspect] at run
+          | some pair =>
+            obtain ⟨dest, names⟩ := pair
+            cases cut : cutEnv names state.locals <;> simp [DataSem.evaluate, read, inspect, cut] at run
+        | notEvaluated =>
+          cases found : findCode (some label) [thunk, value] state.code state.stackFrameSizes with
+          | none => simp [DataSem.evaluate, read, inspect, found] at run
+          | some triple =>
+            obtain ⟨args, body, size⟩ := triple
+            cases ret with
+            | none =>
+              let entered := DataSem.callEnv args size (decClock state)
+              let target := { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+              let targetEntered := DataSem.callEnv args size (decClock target)
+              have smaller : entered.clock < state.clock := by simp [entered, DataSem.callEnv, decClock]; omega
+              have bodyRun : DataSem.evaluate body entered = (some (.err (.abort .timeoutError)), next) := by
+                cases called : DataSem.evaluate body entered with
+                | mk outcome last =>
+                  cases outcome <;> simp [DataSem.evaluate, read, inspect, found, zero, entered, called] at run
+                  all_goals simpa [entered, called] using run
+              have enteredEq : targetEntered = { entered with safeForSpace := targetEntered.safeForSpace, peakHeapLength := targetEntered.peakHeapLength, stackMax := targetEntered.stackMax } := by rfl
+              obtain ⟨targetLast, bodyTarget, _, _⟩ := evaluate_resource_variation body entered next
+                (some (.err (.abort .timeoutError))) targetEntered.safeForSpace targetEntered.peakHeapLength targetEntered.stackMax bodyRun (by simp)
+              rw [← enteredEq] at bodyTarget
+              have outerTarget : DataSem.evaluate (.force none label src) target = (some (.err (.abort .timeoutError)), targetLast) := by
+                simp only [targetEntered, target] at bodyTarget
+                simp [DataSem.evaluate, target, read, inspect, found, zero, bodyTarget]
+              have same : targetLast = targetNext := Prod.mk.inj (outerTarget.symm.trans targetRun) |>.2
+              subst targetNext
+              apply bodyIH body entered next targetLast targetEntered.safeForSpace targetEntered.peakHeapLength targetEntered.stackMax smaller bodyRun
+              simpa [← enteredEq] using bodyTarget
+            | some pair =>
+              obtain ⟨dest, names⟩ := pair
+              cases cut : cutEnv names state.locals with
+              | none => simp [DataSem.evaluate, read, inspect, found, cut] at run
+              | some env =>
+                let entered := DataSem.callEnv args size (pushEnv env false (decClock state))
+                let target := { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+                let targetEntered := DataSem.callEnv args size (pushEnv env false (decClock target))
+                have smaller : entered.clock < state.clock := by simp [entered, DataSem.callEnv, pushEnv, decClock]; omega
+                have bodyRun : DataSem.evaluate body entered = (some (.err (.abort .timeoutError)), next) := by
+                  cases called : DataSem.evaluate body entered with
+                  | mk outcome last =>
+                    have clamped : fixClock (DataSem.callEnv args size (pushEnv env false (decClock state)))
+                        (DataSem.evaluate body (DataSem.callEnv args size (pushEnv env false (decClock state)))) = (outcome, last) := by
+                      simpa [entered, fixClock_evaluate] using called
+                    cases outcome with
+                    | none => simp [DataSem.evaluate, read, inspect, found, cut, zero, clamped] at run
+                    | some outcome =>
+                      cases outcome with
+                      | val values =>
+                        cases values with
+                        | nil => simp [DataSem.evaluate, read, inspect, found, cut, zero, clamped] at run
+                        | cons first rest =>
+                          cases rest with
+                          | cons second rest => simp [DataSem.evaluate, read, inspect, found, cut, zero, clamped] at run
+                          | nil => cases popped : popEnv last <;> simp [DataSem.evaluate, read, inspect, found, cut, zero, clamped, popped] at run
+                      | err error =>
+                        cases error with
+                        | raise value => simp [DataSem.evaluate, read, inspect, found, cut, zero, clamped] at run
+                        | abort reason =>
+                          simp [DataSem.evaluate, read, inspect, found, cut, zero, clamped] at run
+                          obtain ⟨rfl, rfl⟩ := run
+                          rfl
+                have enteredEq : targetEntered = { entered with safeForSpace := targetEntered.safeForSpace, peakHeapLength := targetEntered.peakHeapLength, stackMax := targetEntered.stackMax } := by rfl
+                obtain ⟨targetLast, bodyTarget, _, _⟩ := evaluate_resource_variation body entered next
+                  (some (.err (.abort .timeoutError))) targetEntered.safeForSpace targetEntered.peakHeapLength targetEntered.stackMax bodyRun (by simp)
+                rw [← enteredEq] at bodyTarget
+                have outerTarget : DataSem.evaluate (.force (some (dest, names)) label src) target = (some (.err (.abort .timeoutError)), targetLast) := by
+                  have clamped : fixClock targetEntered (DataSem.evaluate body targetEntered) = (some (.err (.abort .timeoutError)), targetLast) := by
+                    simpa [fixClock_evaluate] using bodyTarget
+                  simp only [targetEntered, target] at clamped
+                  simp [DataSem.evaluate, target, read, inspect, found, cut, zero, clamped]
+                have same : targetLast = targetNext := Prod.mk.inj (outerTarget.symm.trans targetRun) |>.2
+                subst targetNext
+                apply bodyIH body entered next targetLast targetEntered.safeForSpace targetEntered.peakHeapLength targetEntered.stackMax smaller bodyRun
+                simpa [← enteredEq] using bodyTarget
+
+/-- A tail call propagates timeout frame-size equality from its body. -/
+theorem evaluate_tailCall_timeout_size_step {C F : Type} (dest : Option Nat) (names : List Nat)
+    (state next targetNext : State C F) (safe : Bool) (peak : Nat) (stackMax : Option Nat)
+    (bodyIH : ∀ (body : DataLang.Prog) (entered finished targetFinished : State C F)
+      (bodySafe : Bool) (bodyPeak : Nat) (bodyMax : Option Nat), entered.clock < state.clock →
+      DataSem.evaluate body entered = (some (.err (.abort .timeoutError)), finished) →
+      DataSem.evaluate body { entered with safeForSpace := bodySafe, peakHeapLength := bodyPeak, stackMax := bodyMax } =
+        (some (.err (.abort .timeoutError)), targetFinished) → finished.localsSize = targetFinished.localsSize)
+    (run : DataSem.evaluate (.call none dest names none) state = (some (.err (.abort .timeoutError)), next))
+    (targetRun : DataSem.evaluate (.call none dest names none)
+      { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } =
+        (some (.err (.abort .timeoutError)), targetNext)) : next.localsSize = targetNext.localsSize := by
+  by_cases zero : state.clock = 0
+  · exact evaluate_call_timeout_zero_size none dest names none state next targetNext safe peak stackMax zero run targetRun
+  · cases read : DataSem.getVars names state.locals with
+    | none => simp [DataSem.evaluate, read] at run
+    | some values =>
+      cases found : findCode dest values state.code state.stackFrameSizes with
+      | none => simp [DataSem.evaluate, read, found] at run
+      | some triple =>
+        obtain ⟨args, body, size⟩ := triple
+        let entered := DataSem.callEnv args size (decClock state)
+        let target := { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+        let targetEntered := DataSem.callEnv args size (decClock target)
+        have smaller : entered.clock < state.clock := by simp [entered, DataSem.callEnv, decClock]; omega
+        have bodyRun : DataSem.evaluate body entered = (some (.err (.abort .timeoutError)), next) := by
+          cases called : DataSem.evaluate body entered with
+          | mk outcome last =>
+            cases outcome <;> simp [DataSem.evaluate, read, found, zero, entered, called] at run
+            all_goals simpa [entered, called] using run
+        have enteredEq : targetEntered = { entered with safeForSpace := targetEntered.safeForSpace, peakHeapLength := targetEntered.peakHeapLength, stackMax := targetEntered.stackMax } := by rfl
+        obtain ⟨targetLast, bodyTarget, _, _⟩ := evaluate_resource_variation body entered next
+          (some (.err (.abort .timeoutError))) targetEntered.safeForSpace targetEntered.peakHeapLength targetEntered.stackMax bodyRun (by simp)
+        rw [← enteredEq] at bodyTarget
+        have outerTarget : DataSem.evaluate (.call none dest names none) target = (some (.err (.abort .timeoutError)), targetLast) := by
+          simp only [targetEntered, target] at bodyTarget
+          simp [DataSem.evaluate, target, read, found, zero, bodyTarget]
+        have same : targetLast = targetNext := Prod.mk.inj (outerTarget.symm.trans targetRun) |>.2
+        subst targetNext
+        apply bodyIH body entered next targetLast targetEntered.safeForSpace targetEntered.peakHeapLength targetEntered.stackMax smaller bodyRun
+        simpa [← enteredEq] using bodyTarget
+
+/-- A non-tail call without a handler propagates timeout frame-size equality
+from its body. -/
+theorem evaluate_nonTailCall_noHandler_timeout_size_step {C F : Type}
+    (returns : List Nat) (live : NumSet) (dest : Option Nat) (names : List Nat)
+    (state next targetNext : State C F) (safe : Bool) (peak : Nat) (stackMax : Option Nat)
+    (bodyIH : ∀ (body : DataLang.Prog) (entered finished targetFinished : State C F)
+      (bodySafe : Bool) (bodyPeak : Nat) (bodyMax : Option Nat), entered.clock < state.clock →
+      DataSem.evaluate body entered = (some (.err (.abort .timeoutError)), finished) →
+      DataSem.evaluate body { entered with safeForSpace := bodySafe, peakHeapLength := bodyPeak, stackMax := bodyMax } =
+        (some (.err (.abort .timeoutError)), targetFinished) → finished.localsSize = targetFinished.localsSize)
+    (run : DataSem.evaluate (.call (some (returns, live)) dest names none) state = (some (.err (.abort .timeoutError)), next))
+    (targetRun : DataSem.evaluate (.call (some (returns, live)) dest names none)
+      { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } =
+        (some (.err (.abort .timeoutError)), targetNext)) : next.localsSize = targetNext.localsSize := by
+  by_cases zero : state.clock = 0
+  · exact evaluate_call_timeout_zero_size (some (returns, live)) dest names none state next targetNext safe peak stackMax zero run targetRun
+  · cases read : DataSem.getVars names state.locals with
+    | none => simp [DataSem.evaluate, read] at run
+    | some values =>
+      cases found : findCode dest values state.code state.stackFrameSizes with
+      | none => simp [DataSem.evaluate, read, found] at run
+      | some triple =>
+        obtain ⟨args, body, size⟩ := triple
+        by_cases nodup : returns.Nodup
+        · cases cut : cutEnv live state.locals with
+          | none => simp [DataSem.evaluate, read, found, nodup, cut] at run
+          | some env =>
+            let entered := DataSem.callEnv args size (pushEnv env false (decClock state))
+            let target := { state with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+            let targetEntered := DataSem.callEnv args size (pushEnv env false (decClock target))
+            have smaller : entered.clock < state.clock := by simp [entered, DataSem.callEnv, pushEnv, decClock]; omega
+            have bodyRun : DataSem.evaluate body entered = (some (.err (.abort .timeoutError)), next) := by
+              cases called : DataSem.evaluate body entered with
+              | mk outcome last =>
+                have clamped : fixClock (DataSem.callEnv args size (pushEnv env false (decClock state)))
+                    (DataSem.evaluate body (DataSem.callEnv args size (pushEnv env false (decClock state)))) = (outcome, last) := by
+                  simpa [entered, fixClock_evaluate] using called
+                cases outcome with
+                | none => simp [DataSem.evaluate, read, found, nodup, cut, zero, clamped] at run
+                | some outcome =>
+                  cases outcome with
+                  | val values =>
+                    by_cases length : values.length = returns.length
+                    · cases popped : popEnv last <;> simp [DataSem.evaluate, read, found, nodup, cut, zero, clamped, length, popped] at run
+                    · simp [DataSem.evaluate, read, found, nodup, cut, zero, clamped, length] at run
+                  | err error =>
+                    cases error with
+                    | raise value => simp [DataSem.evaluate, read, found, nodup, cut, zero, clamped] at run
+                    | abort reason =>
+                      simp [DataSem.evaluate, read, found, nodup, cut, zero, clamped] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      rfl
+            have enteredEq : targetEntered = { entered with safeForSpace := targetEntered.safeForSpace, peakHeapLength := targetEntered.peakHeapLength, stackMax := targetEntered.stackMax } := by rfl
+            obtain ⟨targetLast, bodyTarget, _, _⟩ := evaluate_resource_variation body entered next
+              (some (.err (.abort .timeoutError))) targetEntered.safeForSpace targetEntered.peakHeapLength targetEntered.stackMax bodyRun (by simp)
+            rw [← enteredEq] at bodyTarget
+            have outerTarget : DataSem.evaluate (.call (some (returns, live)) dest names none) target = (some (.err (.abort .timeoutError)), targetLast) := by
+              have clamped : fixClock targetEntered (DataSem.evaluate body targetEntered) = (some (.err (.abort .timeoutError)), targetLast) := by
+                simpa [fixClock_evaluate] using bodyTarget
+              simp only [targetEntered, target] at clamped
+              simp [DataSem.evaluate, target, read, found, nodup, cut, zero, clamped]
+            have same : targetLast = targetNext := Prod.mk.inj (outerTarget.symm.trans targetRun) |>.2
+            subst targetNext
+            apply bodyIH body entered next targetLast targetEntered.safeForSpace targetEntered.peakHeapLength targetEntered.stackMax smaller bodyRun
+            simpa [← enteredEq] using bodyTarget
+        · simp [DataSem.evaluate, read, found, nodup] at run
+
 end Flapjack.Compiler.Backend.DataSpace
