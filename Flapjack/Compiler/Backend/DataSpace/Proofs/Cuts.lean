@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataSpace.Proofs.State
 import Flapjack.Compiler.Backend.DataLive.Proofs.State
+import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
 
 /-! Sparse-tree cuts used when reservations are combined. -/
 namespace Flapjack.Compiler.Backend.DataSpace
@@ -107,6 +108,89 @@ theorem cutEnv_before_move {α : Type} (source target : Spt α) (names : NumSet)
     by_cases member : sptMem key names
     · have preMember : sptMem key preNames := by
         apply (sptMem_sptInsert key src () _).2
+        right
+        simpa [sptMem, sptDomain, sptLookup_sptDelete, same] using member
+      have sourceRead : sptLookup key source = some found := by
+        simpa [member, sptLookup_sptInsert_ne dest key value source same] using resultRead
+      have targetFound := (sptSubsptLookup _ _).1 included key found sourceRead
+      rw [DataLive.cutEnv_lookup preNames target before beforeCut key]
+      simp [preMember, targetFound]
+    · simp [member] at resultRead
+
+/-- A successful argument read is preserved by a cut retaining every
+argument name. -/
+theorem getVars_after_cut {α : Type} (arguments : List Nat) (env cut : Spt α) (names : NumSet)
+    (values : List α) (read : DataSem.getVars arguments env = some values)
+    (cutRun : cutEnv names env = some cut) (kept : ∀ key ∈ arguments, sptMem key names) :
+    DataSem.getVars arguments cut = some values := by
+  induction arguments generalizing values with
+  | nil => simpa [DataSem.getVars] using read
+  | cons name arguments ih =>
+    cases first : DataSem.getVar name env with
+    | none => simp [DataSem.getVars, first] at read
+    | some value =>
+      cases rest : DataSem.getVars arguments env with
+      | none => simp [DataSem.getVars, first, rest] at read
+      | some tail =>
+        have present : sptMem name names := kept name (by simp)
+        have cutFirst : DataSem.getVar name cut = some value := by
+          change sptLookup name env = some value at first
+          simpa [DataSem.getVar, present, first] using DataLive.cutEnv_lookup names env cut cutRun name
+        have cutRest := ih tail rest (by intro key member; exact kept key (by simp [member]))
+        simp [DataSem.getVars, first, rest] at read
+        subst values
+        simp [DataSem.getVars, cutFirst, cutRest]
+
+/-- Cutting before an assignment keeps all operand values and produces a
+post-write environment extending the original post-assignment cut. -/
+theorem cutEnv_before_assign {α : Type} (source target : Spt α) (names : NumSet)
+    (dest : Nat) (arguments : List Nat) (values : List α) (value : α) (result : Spt α)
+    (included : sptSubspt source target) (read : DataSem.getVars arguments source = some values)
+    (cut : cutEnv names (sptInsert dest value source) = some result) :
+    ∃ before, cutEnv (sptListInsert arguments (sptDelete dest names)) target = some before ∧
+      DataSem.getVars arguments before = some values ∧ sptSubspt result (sptInsert dest value before) := by
+  classical
+  have postPresent : ∀ key, sptMem key names → sptMem key (sptInsert dest value source) := by
+    unfold cutEnv at cut
+    split at cut
+    · assumption
+    · simp at cut
+  have targetRead := getVars_of_subspt arguments source target values included read
+  have argsPresent := BviToData.getVars_present arguments target values targetRead
+  let preNames := sptListInsert arguments (sptDelete dest names)
+  have prePresent : ∀ key, sptMem key preNames → sptMem key target := by
+    intro key member
+    rcases (DataLive.mem_listInsert arguments _ key).1 member with argument | rest
+    · have present := argsPresent key argument
+      cases found : sptLookup key target <;> simp_all [sptMem, sptDomain]
+    · have other : key ≠ dest := by
+        intro same
+        subst key
+        simp [sptMem, sptDomain, sptLookup_sptDelete] at rest
+      have post := postPresent key (by simpa [sptMem, sptDomain, sptLookup_sptDelete, other] using rest)
+      have sourceMember : sptMem key source := by simpa [sptMem_sptInsert, other] using post
+      exact (included key sourceMember).1
+  let before := sptMkWf (sptInter target preNames)
+  have beforeCut : cutEnv preNames target = some before := by
+    simp only [cutEnv, if_pos prePresent]
+    rfl
+  have beforeRead : DataSem.getVars arguments before = some values :=
+    getVars_after_cut arguments target before preNames values targetRead beforeCut
+      (fun key member => (DataLive.mem_listInsert arguments _ key).2 (Or.inl member))
+  refine ⟨before, beforeCut, beforeRead, ?_⟩
+  rw [sptSubsptLookup]
+  intro key found resultRead
+  by_cases same : key = dest
+  · subst key
+    rw [sptLookup_sptInsert_same]
+    rw [DataLive.cutEnv_lookup names (sptInsert dest value source) result cut dest] at resultRead
+    by_cases member : sptMem dest names <;> simp [member, sptLookup_sptInsert_same] at resultRead
+    exact congrArg some resultRead
+  · rw [sptLookup_sptInsert_ne dest key value before same]
+    rw [DataLive.cutEnv_lookup names (sptInsert dest value source) result cut key] at resultRead
+    by_cases member : sptMem key names
+    · have preMember : sptMem key preNames := by
+        apply (DataLive.mem_listInsert arguments _ key).2
         right
         simpa [sptMem, sptDomain, sptLookup_sptDelete, same] using member
       have sourceRead : sptLookup key source = some found := by

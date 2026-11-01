@@ -1020,6 +1020,7 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultPrimitive
 import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush
 import Flapjack.Compiler.Backend.DataSpace.Proofs.State
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Cuts
+import Flapjack.Compiler.Backend.DataSpace.Proofs.Accounting
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Simulation
 import Flapjack.Compiler.Backend.BviToData.Proofs.FindCode
 import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk
