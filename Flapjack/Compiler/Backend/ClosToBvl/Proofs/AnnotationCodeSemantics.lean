@@ -172,7 +172,7 @@ theorem source_to_annotatedChain_semantics {C F : Type} (ffi : HolFfiState F) (m
 /-- The no-optimization compiler preserves a nonempty source batch through
 numbering, chain construction, annotation and BVL conversion, assuming a
 consistent future oracle and a bound on its first numbering state. -/
-theorem compileNoOpts_source_semantics {C F : Type} (ffi : HolFfiState F)
+theorem compileNoOpts_source_semantics_nonempty {C F : Type} (ffi : HolFfiState F)
     (config current output : Config) (expressions : List ClosLang.Exp)
     (program : List (Nat × Nat × ClosLang.Exp)) (compiled : List (Nat × Nat × Bvl.Exp))
     (names : Spt Flapjack.Basis.Pure.MlString.MlString)
@@ -251,5 +251,148 @@ theorem compileNoOpts_source_semantics {C F : Type} (ffi : HolFfiState F)
           (by intro i entry member; simp [(oracleSafe i).1] at member)
           (by intro i entry member; simp [(oracleSafe i).1] at member)
         exact compiledEq.trans (chainEq.trans numberedEq)
+
+/-- The generated entry for an empty batch returns a constant once its
+entry-call clock has been paid. -/
+theorem emptyAnnotatedChain_run {C F : Type} (ffi : HolFfiState F) (maxApp start clock : Nat)
+    (oracle : CompileOracle C) (compiler : Compiler C) :
+    evaluate [.call .none 0 start []] []
+      (initialState ffi maxApp (initialSourceCode (ClosAnnotate.compile (chainExps start []))) oracle compiler (clock + 1)) =
+      (.val [.number 0], initialState ffi maxApp (initialSourceCode (ClosAnnotate.compile (chainExps start []))) oracle compiler clock) := by
+  simp [ClosAnnotate.compile, chainExps, ClosAnnotate.annotateSing, ClosAnnotate.altFreeSing,
+    ClosAnnotate.altFreeList, ClosAnnotate.shiftSing, ClosAnnotate.shiftList, evaluate, fixClock,
+    initialState, findCode, initialSourceCode_cons_lookup, decClock, doApp, applyNumeric, doIntApp]
+
+/-- A zero-clock call to the dummy entry times out without changing FFI state. -/
+theorem emptyAnnotatedChain_zero {C F : Type} (ffi : HolFfiState F) (maxApp start : Nat)
+    (oracle : CompileOracle C) (compiler : Compiler C) :
+    evaluate [.call .none 0 start []] []
+      (initialState ffi maxApp (initialSourceCode (ClosAnnotate.compile (chainExps start []))) oracle compiler 0) =
+      (.err (.abort .timeoutError), initialState ffi maxApp
+        (initialSourceCode (ClosAnnotate.compile (chainExps start []))) oracle compiler 0) := by
+  simp [ClosAnnotate.compile, chainExps, ClosAnnotate.annotateSing, ClosAnnotate.altFreeSing,
+    ClosAnnotate.altFreeList, ClosAnnotate.shiftSing, ClosAnnotate.shiftList, evaluate, fixClock,
+    initialState, findCode, initialSourceCode_cons_lookup]
+
+/-- The empty expression list has the immediate successful observation. -/
+theorem emptySource_semantics {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (oracle : CompileOracle C) (compiler : Compiler C) :
+    semantics ffi maxApp code oracle compiler [] = .terminate .success ffi.ioEvents := by
+  classical
+  have noError : ¬ ∃ clock, (evaluate [] [] (initialState ffi maxApp code oracle compiler clock)).1 =
+      .err (.abort .typeError) := by simp [evaluate]
+  have observed : terminatingObservation ffi maxApp code oracle compiler [] (.terminate .success ffi.ioEvents) := by
+    refine ⟨0, .val [], initialState ffi maxApp code oracle compiler 0, .success, ?_, ?_, ?_⟩
+    · simp [evaluate]
+    · rfl
+    · rfl
+  have unique : ∀ behavior, terminatingObservation ffi maxApp code oracle compiler [] behavior →
+      behavior = .terminate .success ffi.ioEvents := by
+    intro behavior ⟨clock, result, state, outcome, run, resultOutcome, behaviorEq⟩
+    simp [evaluate] at run
+    rcases run with ⟨rfl, rfl⟩
+    subst outcome
+    simpa [initialState] using behaviorEq
+  unfold semantics
+  rw [if_neg noError, HolLList.holOptionSome_eq_some observed unique]
+
+/-- The generated dummy entry has the same successful observation as an
+empty source batch. -/
+theorem emptyAnnotatedChain_semantics {C F : Type} (ffi : HolFfiState F) (maxApp start : Nat)
+    (oracle : CompileOracle C) (compiler : Compiler C) :
+    semantics ffi maxApp (initialSourceCode (ClosAnnotate.compile (chainExps start []))) oracle compiler
+      [.call .none 0 start []] = .terminate .success ffi.ioEvents := by
+  classical
+  let code := initialSourceCode (ClosAnnotate.compile (chainExps start []))
+  have noError : ¬ ∃ clock, (evaluate [.call .none 0 start []] []
+      (initialState ffi maxApp code oracle compiler clock)).1 = .err (.abort .typeError) := by
+    rintro ⟨clock, bad⟩
+    cases clock with
+    | zero => simp [code, emptyAnnotatedChain_zero] at bad
+    | succ clock => simp [code, emptyAnnotatedChain_run] at bad
+  have observed : terminatingObservation ffi maxApp code oracle compiler [.call .none 0 start []]
+      (.terminate .success ffi.ioEvents) := by
+    refine ⟨1, .val [.number 0], initialState ffi maxApp code oracle compiler 0, .success, ?_, ?_, ?_⟩
+    · simpa [code] using emptyAnnotatedChain_run ffi maxApp start 0 oracle compiler
+    · rfl
+    · rfl
+  have unique : ∀ behavior, terminatingObservation ffi maxApp code oracle compiler [.call .none 0 start []] behavior →
+      behavior = .terminate .success ffi.ioEvents := by
+    intro behavior ⟨clock, result, state, outcome, run, resultOutcome, behaviorEq⟩
+    cases clock with
+    | zero =>
+      rw [show evaluate [.call .none 0 start []] [] (initialState ffi maxApp code oracle compiler 0) =
+        (.err (.abort .timeoutError), initialState ffi maxApp code oracle compiler 0) from
+          emptyAnnotatedChain_zero ffi maxApp start oracle compiler] at run
+      cases run
+      exact False.elim resultOutcome
+    | succ clock =>
+      rw [show evaluate [.call .none 0 start []] [] (initialState ffi maxApp code oracle compiler (clock + 1)) =
+        (.val [.number 0], initialState ffi maxApp code oracle compiler clock) from
+          emptyAnnotatedChain_run ffi maxApp start clock oracle compiler] at run
+      cases run
+      subst outcome
+      simpa [initialState] using behaviorEq
+  change semantics ffi maxApp code oracle compiler [.call .none 0 start []] = _
+  unfold semantics
+  rw [if_neg noError, HolLList.holOptionSome_eq_some observed unique]
+
+/-- The no-optimization closure compiler preserves source behavior for both
+empty and nonempty batches under the stated safety and oracle assumptions. -/
+theorem compileNoOpts_source_semantics {C F : Type} (ffi : HolFfiState F)
+    (config current output : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp)) (compiled : List (Nat × Nat × Bvl.Exp))
+    (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (oracle : ClosSem.CompileOracle (Nat × C)) (targetCompiler : BvlSem.Compiler C)
+    (preprocess : compileCommonNoOpts? config expressions = some (current, program))
+    (compile : compileNoOpts? config expressions = some (output, compiled, names))
+    (nonfail : semantics ffi config.maxApp HolFiniteMapExact.empty oracle
+      (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+        (pureCc ClosAnnotate.compileInc (pureCc (compileInc config.maxApp) targetCompiler))) expressions ≠ .fail)
+    (numberSafe : ¬ containsAppSome config.maxApp expressions) (varsSafe : everyFnVarsNone expressions)
+    (oracleSafe : ∀ index, (oracle index).2.2 = [] ∧
+      ¬ containsAppSome config.maxApp (oracle index).2.1 ∧ everyFnVarsNone (oracle index).2.1)
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (initialBound : current.nextLoc ≤ (oracle 0).1.1) :
+    BvlSem.semantics ffi (sptFromAList compiled)
+      (pureCo (compileInc config.maxApp) ∘ pureCo ClosAnnotate.compileInc ∘
+        stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) targetCompiler output.start =
+      semantics ffi config.maxApp HolFiniteMapExact.empty oracle
+        (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+          (pureCc ClosAnnotate.compileInc (pureCc (compileInc config.maxApp) targetCompiler))) expressions := by
+  by_cases nonempty : expressions ≠ []
+  · exact compileNoOpts_source_semantics_nonempty ffi config current output expressions program compiled names
+      oracle targetCompiler preprocess compile nonempty nonfail numberSafe varsSafe oracleSafe oracleState initialBound
+  · have empty : expressions = [] := by simpa using nonempty
+    subst expressions
+    by_cases enabled : config.doMti || config.doCall
+    · simp [compileCommonNoOpts?, enabled] at preprocess
+    · cases known : config.knownConf with
+      | some k => simp [compileCommonNoOpts?, enabled, known] at preprocess
+      | none =>
+        let next := config.nextLoc + max 1 ([] : List ClosLang.Exp).length
+        let aligned := if next % 2 = 0 then next else next + 1
+        have run : compileCommonNoOpts? config [] =
+            some ({ config with start := config.nextLoc, nextLoc := aligned, knownConf := none, callState := (.ln, []) },
+              ClosAnnotate.compile (chainExps config.nextLoc [])) := by
+          simp [compileCommonNoOpts?, enabled, known, next, aligned, ClosNumber.renumberList]
+        have equal := Option.some.inj (preprocess.symm.trans run)
+        cases equal
+        have chainNonfail : semantics ffi config.maxApp
+            (initialSourceCode (ClosAnnotate.compile (chainExps config.nextLoc [])))
+            (pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+            (pureCc (compileInc config.maxApp) targetCompiler) [.call .none 0 config.nextLoc []] ≠ .fail := by
+          rw [emptyAnnotatedChain_semantics]
+          simp
+        have compiledEq := compileNoOpts_numberedOracle_semantics ffi config _ output [] _ compiled names
+          oracle targetCompiler run compile chainNonfail oracleState initialBound
+          (by intro i; simp [(oracleSafe i).1, ClosProps.codeLocations])
+          (by intro i label member; simp [(oracleSafe i).1, ClosProps.codeLocations] at member)
+          (by intro i label inMain inAux; simp [(oracleSafe i).1, ClosProps.codeLocations] at inAux)
+          (by intro i entry member; simp [(oracleSafe i).1] at member)
+          (by intro i entry member; simp [(oracleSafe i).1] at member)
+        rw [emptyAnnotatedChain_semantics] at compiledEq
+        rw [emptySource_semantics]
+        exact compiledEq
 
 end Flapjack.Compiler.Backend.ClosToBvl
