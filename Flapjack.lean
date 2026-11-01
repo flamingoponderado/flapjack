@@ -927,6 +927,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcHandoff
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcSemantics
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Observations
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Divergence
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.DataSemantics
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.OptimizedProgram
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.Semantics.DataSem.Value
