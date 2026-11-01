@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.DataSpace.Proofs.State
 import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
 import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveAll
+import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
 
 /-! Basic cases of data-space reservation simulation. -/
 namespace Flapjack.Compiler.Backend.DataSpace
@@ -404,5 +405,51 @@ theorem simulationFor_if {C F : Type} (name : Nat) (yes no : DataLang.Prog)
       · simp [DataSem.evaluate, read, isTrue, isFalse] at run
         obtain ⟨rfl, rfl⟩ := run
         exact False.elim (notType rfl)
+
+/-- Removing a leading skip commutes with the reservation transformation. -/
+theorem simulationFor_seq_skip_left {C F : Type} (second : DataLang.Prog)
+    (secondIH : simulationFor (C := C) (F := F) second) :
+    simulationFor (C := C) (F := F) (.seq .skip second) := by
+  intro source sourceNext result locals notType run included
+  have sourceRun : DataSem.evaluate second source = (result, sourceNext) := by
+    simpa [DataSem.evaluate, fixClock] using run
+  obtain ⟨out, safe, peak, stackMax, targetRun, final⟩ :=
+    secondIH source sourceNext result locals notType sourceRun included
+  refine ⟨out, safe, peak, stackMax, ?_, final⟩
+  cases found : space second with
+  | inl program => simpa [compile, space, found] using targetRun
+  | inr reservation =>
+    obtain ⟨amount, names, program⟩ := reservation
+    simpa [compile, space, found] using targetRun
+
+/-- Removing a trailing skip commutes with the reservation transformation. -/
+theorem simulationFor_seq_skip_right {C F : Type} (first : DataLang.Prog)
+    (firstIH : simulationFor (C := C) (F := F) first) :
+    simulationFor (C := C) (F := F) (.seq first .skip) := by
+  intro source sourceNext result locals notType run included
+  have sourceRun : DataSem.evaluate first source = (result, sourceNext) := by
+    simpa [DataSem.evaluate_seq_skip] using run
+  obtain ⟨out, safe, peak, stackMax, targetRun, final⟩ :=
+    firstIH source sourceNext result locals notType sourceRun included
+  refine ⟨out, safe, peak, stackMax, ?_, final⟩
+  cases first <;> simpa [compile, space, pMakeSpace, DataSem.evaluate_seq_skip] using targetRun
+
+/-- Changing only resource-accounting fields preserves the evaluator result
+and observable data state for non-type-error executions. The stronger HOL
+swap theorem additionally describes the exact final locals and control fields. -/
+theorem evaluate_resource_variation {C F : Type} (program : DataLang.Prog)
+    (source sourceNext : State C F) (result : Option (Result (List DataSem.Value) DataSem.Value))
+    (safe : Bool) (peak : Nat) (stackMax : Option Nat)
+    (run : DataSem.evaluate program source = (result, sourceNext))
+    (notType : result ≠ some (.err (.abort .typeError))) :
+    ∃ targetNext,
+      DataSem.evaluate program { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } = (result, targetNext) ∧
+      DataLive.stateRel sourceNext targetNext .ln ∧ (result = none → sourceNext.locals = targetNext.locals) := by
+  let target := { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
+  have related : DataLive.stateRel source target .ln := by
+    simp [DataLive.stateRel, target, sptMem, sptDomain, sptLookup]
+  have exceptions : DataLive.exceptionRel source target := by
+    apply DataLive.exceptionRel_after source source source target .ln related (DataLive.exceptionRel_refl source) <;> rfl
+  exact DataLive.evaluatorSimulation_all program source target sourceNext result related rfl exceptions notType run
 
 end Flapjack.Compiler.Backend.DataSpace
