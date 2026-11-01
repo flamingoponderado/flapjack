@@ -244,6 +244,116 @@ theorem compileCorrect_cons_restStop {C F : Type} (x y : Bvi.Exp) (xs : List Bvi
   · simp [compileSource, compileFirst, compileRest, Flapjack.holHd]
   · exact correctOutcome_stop_after_continue head (.err error) t1 tmid t2 n nmid next name corr live names env result ls1 ls2 firstOutcome restOutcome
 
+/-- The compiler invariant for a fixed source expression list and initial
+state, with arbitrary target state and compiler parameters. This is proof
+infrastructure for assembling the source evaluator induction. -/
+def simulationFor {C F : Type} (xs : List Bvi.Exp) (env : List BvlSem.Value)
+    (s1 : BviSem.BviState C F) : Prop :=
+  ∀ (res : BviSem.BviResult) (s2 : BviSem.BviState C F) (t1 : DataSem.State C F)
+    (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat),
+    BviSem.evaluate xs env s1 = (res, s2) →
+    res ≠ .err (.abort .typeError) →
+    DataProps.varCorr env corr (sptMap dataToBviValue t1.locals) →
+    (xs.length ≠ 1 → tail = false) →
+    (∀ k, n ≤ k → sptLookup k t1.locals = none) →
+    stateRel s1 t1 →
+    (∀ v ∈ live, sptLookup v t1.locals ≠ none) →
+    (isException res → DataSem.jumpExc t1 ≠ none) →
+    ∃ t2 prog pres vs next ls,
+      compileSource n corr tail live xs = (prog, vs, next) ∧
+      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
+      correctOutcome res t1 t2 n next corr live vs env tail pres ls
+
+/-- The list case assembled from recursive compiler simulations. The second
+induction premise applies to intermediate states reached by a successful
+first expression. This remains untagged until the BVI evaluator is reviewed
+and the case is connected to its evaluator induction. -/
+theorem compileCorrect_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
+    (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
+    (ihFirst : simulationFor [x] env s1)
+    (ihRest : ∀ (head : BvlSem.Value) (smid : BviSem.BviState C F),
+      BviSem.evaluate [x] env s1 = (.val [head], smid) → simulationFor (y :: xs) env smid) :
+    simulationFor (x :: y :: xs) env s1 := by
+  intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
+  have notTail : tail = false := tailShape (by simp)
+  subst tail
+  generalize firstRun : BviSem.evaluate [x] env s1 = firstPair
+  obtain ⟨firstResult, smid⟩ := firstPair
+  cases firstResult with
+  | err error =>
+    have whole : BviSem.evaluate (x :: y :: xs) env s1 = (.err error, smid) := by
+      rw [BviSem.evaluate, BviSem.fixClock_evaluate, firstRun]
+    rw [whole] at run
+    cases run
+    obtain ⟨t2, first, pres, firstNames, nmid, ls, compiled, target, state, outcome⟩ :=
+      ihFirst (.err error) s2 t1 n corr false live firstRun notTypeError vars (by simp) fresh related livePresent exceptionJump
+    have len := compileSource_LENGTH n corr false live [x] first firstNames nmid compiled
+    cases firstNames with
+    | nil => simp at len
+    | cons name restNames =>
+      cases restNames with
+      | cons name2 more => simp at len
+      | nil =>
+        cases pres with
+        | none => simp [correctOutcome] at outcome
+        | some result =>
+          generalize restCompiled : compileSource nmid corr false (name :: live) (y :: xs) = restTriple
+          obtain ⟨rest, names, next⟩ := restTriple
+          obtain ⟨_, compiledAll, targetAll, stateAll, outcomeAll⟩ :=
+            compileCorrect_cons_firstStop x y xs env error s1 s2 t1 t2 n nmid next name corr live names first rest result ls firstRun compiled restCompiled target related state outcome
+          exact ⟨t2, .seq first rest, some result, name :: names, next, ls, compiledAll, targetAll, stateAll, outcomeAll⟩
+  | val values =>
+    obtain ⟨head, rfl⟩ := BviSem.evaluate_singleton x env s1 smid values firstRun
+    obtain ⟨tmid, first, pres, firstNames, nmid, ls1, compiled, target, middleRel, outcome⟩ :=
+      ihFirst (.val [head]) smid t1 n corr false live firstRun (by simp) vars (by simp) fresh related livePresent
+        (by simp [isException])
+    have len := compileSource_LENGTH n corr false live [x] first firstNames nmid compiled
+    cases firstNames with
+    | nil => simp at len
+    | cons name restNames =>
+      cases restNames with
+      | cons name2 more => simp at len
+      | nil =>
+        cases pres with
+        | some result => simp [correctOutcome, isResult] at outcome
+        | none =>
+          have firstOutcome := outcome
+          have liveMid : ∀ v ∈ name :: live, sptLookup v tmid.locals ≠ none := by
+            simpa using correctOutcome_live [head] t1 tmid n nmid corr live [name] env ls1 outcome livePresent
+          rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, jumpMid, _⟩
+          generalize restRun : BviSem.evaluate (y :: xs) env smid = restPair
+          obtain ⟨restResult, slast⟩ := restPair
+          cases restResult with
+          | val tailValues =>
+            have whole : BviSem.evaluate (x :: y :: xs) env s1 = (.val (head :: tailValues), slast) := by
+              rw [BviSem.evaluate, BviSem.fixClock_evaluate, firstRun, restRun]
+              rfl
+            rw [whole] at run
+            cases run
+            obtain ⟨t2, rest, pres, names, next, ls2, restCompiled, targetRest, finalRel, restOutcome⟩ :=
+              ihRest head smid firstRun (.val tailValues) s2 tmid nmid corr false (name :: live) restRun (by simp) varsMid
+                (by simp) freshMid middleRel liveMid (by simp [isException])
+            cases pres with
+            | some result => simp [correctOutcome, isResult] at restOutcome
+            | none =>
+              obtain ⟨_, compiledAll, targetAll, stateAll, outcomeAll⟩ :=
+                compileCorrect_cons_success x y xs env head tailValues s1 smid s2 t1 tmid t2 n nmid next name corr live names first rest ls1 ls2 firstRun restRun compiled restCompiled target targetRest related middleRel finalRel firstOutcome restOutcome
+              exact ⟨t2, .seq first rest, none, name :: names, next, ls2, compiledAll, targetAll, stateAll, outcomeAll⟩
+          | err error =>
+            have whole : BviSem.evaluate (x :: y :: xs) env s1 = (.err error, slast) := by
+              rw [BviSem.evaluate, BviSem.fixClock_evaluate, firstRun, restRun]
+            rw [whole] at run
+            cases run
+            obtain ⟨t2, rest, pres, names, next, ls2, restCompiled, targetRest, finalRel, restOutcome⟩ :=
+              ihRest head smid firstRun (.err error) s2 tmid nmid corr false (name :: live) restRun notTypeError varsMid
+                (by simp) freshMid middleRel liveMid (fun h => jumpMid (exceptionJump h))
+            cases pres with
+            | none => simp [correctOutcome] at restOutcome
+            | some result =>
+              obtain ⟨_, compiledAll, targetAll, stateAll, outcomeAll⟩ :=
+                compileCorrect_cons_restStop x y xs env head error s1 smid s2 t1 tmid t2 n nmid next name corr live names first rest result ls1 ls2 firstRun restRun compiled restCompiled target targetRest related middleRel finalRel firstOutcome restOutcome
+              exact ⟨t2, .seq first rest, some result, name :: names, next, ls2, compiledAll, targetAll, stateAll, outcomeAll⟩
+
 /-- Empty-expression case of the full source simulation invariant. This case
 is not tagged as a HOL port while the source-shaped BVI evaluator awaits its
 own correspondence review. -/
@@ -334,5 +444,33 @@ theorem compileCorrect_var {C F : Type} (index : Nat) (env : List BvlSem.Value)
       · simp [DataSem.evaluate, DataSem.getVars, read]
       · simpa [stateRel, DataSem.flushState] using related
       · simp [correctOutcome, isReturn, isResult, isException, dataToBviResult, projected, DataSem.flushState]
+
+/-- The empty list satisfies the reusable evaluator induction invariant. -/
+theorem simulationFor_nil {C F : Type} (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
+    simulationFor [] env s1 := by
+  intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
+  exact compileCorrect_nil env s1 s2 res t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
+
+/-- A variable expression satisfies the reusable evaluator induction invariant. -/
+theorem simulationFor_var {C F : Type} (index : Nat) (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
+    simulationFor [.var index] env s1 := by
+  intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
+  exact compileCorrect_var index env s1 s2 res t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
+
+/-- Every list of variable expressions satisfies the full simulation
+invariant, for any source environment and source state. -/
+theorem simulationFor_vars {C F : Type} (indices : List Nat) (env : List BvlSem.Value)
+    (s1 : BviSem.BviState C F) : simulationFor (indices.map Bvi.Exp.var) env s1 := by
+  induction indices generalizing s1 with
+  | nil => simpa using simulationFor_nil env s1
+  | cons index rest ih =>
+    cases rest with
+    | nil => simpa using simulationFor_var index env s1
+    | cons next more =>
+      simp only [List.map_cons]
+      apply compileCorrect_cons (.var index) (.var next) (more.map Bvi.Exp.var) env s1
+      · exact simulationFor_var index env s1
+      · intro _ smid _
+        simpa using ih smid
 
 end Flapjack.Compiler.Backend.BviToData
