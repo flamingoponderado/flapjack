@@ -6,14 +6,30 @@ infrastructure, not a HOL mapping document.
 
 ## Verified
 
-All five required gates are green at `7292f4c99` (the commit before this note):
+Every gate in `.github/workflows/lean_action_ci.yml` passes at `6cde1ddc2`
+(the commit before this note):
 
-* `lake build Flapjack` — 6487 jobs.
+* `lake build Flapjack` — 6491 jobs.
 * `lake test` — exit 0.
 * `scripts/check-warnings.sh` — 0 non-test warnings.
+* `scripts/check-native-decide.sh` — 9 `native_decide` uses, all allowlisted;
+  `check-native-trust.py` finds no `bv_decide`, `ofReduceBool` or
+  `trustCompiler` use.
 * `scripts/check-hol-refs.py` — 7645 `@[hol]` references checked.
-* `scripts/check_hol_ref_export.py` — 7644 reviewed theorem-map rows match their
-  elaborated attributes (run through `python3`; the file is not executable).
+* `scripts/check_hol_theorem_map.py` — 10248 declarations, all 3532 Proofs
+  theorems mapped.
+* `scripts/check_hol_ref_export.py` — 7645 reviewed theorem-map rows match
+  their elaborated attributes (run through `python3`; the file is not
+  executable).
+* HOL reference unit tests (`test*hol*.py`, 580 tests), RISC-V regression unit
+  tests (`test_riscv_*.py`, 357 tests), and `scripts/l3/check-native-model.py`
+  (96 tests).
+* `scripts/check-parity-goldens.py`, `scripts/check-cli-no-depth.py`,
+  `scripts/pan-to-crep-coverage-report.py --check`,
+  `scripts/parity-small-corpus.py --flapjack-only` (166 programs, 0 failures),
+  `scripts/check-frame-occupancy-parity.py` (17 fixtures),
+  `scripts/check-allocator-parity.py` (77 fixtures), and both pinned guest
+  builds (`check-guest-parity.py`, accelerated and software).
 
 Plus the two x86-64-specific checks:
 
