@@ -429,7 +429,7 @@ Use `--deep-mutations` in place of `--mutations` to apply up to three edits to
 nested declarations, pattern matches, exceptions, strings and comments. It
 also compares the full output for any mutated program that compiles. A run with
 seed `35791` and a second run with seed `46821` each matched 200 cases against
-the pinned compiler.
+the pinned compiler. Seed `76241` matched another 120 cases.
 
 The same checker has a fixed language-feature corpus covering literals,
 patterns, datatypes, exceptions, local bindings, closures, structures and
