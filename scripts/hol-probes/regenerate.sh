@@ -40,6 +40,8 @@ probe_needs_refresh() {
   local probe="$2"
   local source="$3"
   [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == data_sem_stack_probeScript.sml &&
+       "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == source_to_flat_opassign_probeScript.sml &&
        "$cake_dir/semantics/semanticPrimitivesScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == source_to_flat_opderef_probeScript.sml &&
@@ -582,6 +584,9 @@ run_probe bvl_to_bvi_value_rel_probeScript.sml bvl_to_bvi_value_rel_probe.out \
 
 run_probe bvi_sem_state_probeScript.sml bvi_sem_state_probe.out \
   evaluate_code_mono evaluate_global_mono inc_clock_ADD dec_clock_inv_clock do_app_change_clock do_app_change_clock_err evaluate_inv_clock exn_type ret_type result_type state_refs_type state_clock_type state_global_type state_compile_type state_oracle_type state_code_type state_ffi_type dec_clock fix_clock initial_state bvl_to_bvi bad_ref_type not_thunk_type is_thunk_type dest_thunk finalise_cons finalise_nonref finalise_missing finalise_cycle finalise_one small_enough_int do_app_aux aux_const_boundary aux_const_large aux_bad_update_fallback do_install do_install_type install_bad_arity bvi_to_bvl do_app do_app_type do_app_const evaluate_clock fix_clock_evaluate evaluate_type eval_var eval_return eval_tick_timeout eval_call_bad_handler eval_force_evaluated eval_let_call_return "$cake_dir/compiler/backend/semantics/bviSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe data_sem_stack_probeScript.sml data_sem_stack_probe.out \
+  any_arith_call_tree stack_consumed do_stack "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvi_tailrec_frontend_probeScript.sml bvi_tailrec_frontend_probe.out \
   decisions cases tmc analysis rewrites program "$cake_dir/compiler/backend/bvi_tailrecScript.sml" "$cake_dir/compiler/backend"
