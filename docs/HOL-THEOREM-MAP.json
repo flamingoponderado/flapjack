@@ -99827,6 +99827,34 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation.lean",
+    "lean_name": "absMlInv",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "abs_ml_inv_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: abs_ml_inv_def and the typed data_to_word_memory_repr capture preserve configuration, data stack, spt reference tree, the complete roots/heap/endianness/allocation/space/generation tuple and the limit and timestamp parameters. The five conjuncts are roots_ok, heap_ok, gc_kind_inv, unused_space_inv at a and sp + sp1, and the reviewed bc_stack_ref_inv in source order. Heap locations and stored words share the source positive word dimension, and data values retain fixed word64."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation.lean",
+    "lean_name": "wordMlInv",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_ml_inv_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_ml_inv_def and the typed data_to_word_memory_repr capture preserve the heap/endianness/allocation/space/generation tuple, limit, timestamp, configuration, spt references and list of data-value/word-location pairs. The existential roots feed absMlInv with MAP FST and the same tuple components, followed by LIST_REL wordAddr roots (MAP SND stack). List.Forall₂ is the source LIST_REL; the positive heap/location word dimension is shared and dataSem.Value retains fixed word64."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation.lean",
+    "lean_name": "memoryRel",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_def and the typed data_to_word_memory_repr capture preserve configuration, endianness, timestamp, spt references, space, store, memory, domain and value/location pairs in source order. The six existential heap/limit/allocation/space/generation variables and both invariant conjuncts are unchanged; (limit + 3) * (width DIV 8) + 1 < 2^width and space ≤ sp reproduce the final bounds. store is the canonical finite-support representation of the HOL store finite map; the tagged heapInMemoryStore consumes that same map. The memory address, memory value, abstract heap and word-location widths are all the same source dimension, and the Bool-valued domain represents the source word set."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation.lean",
     "lean_name": "bcStackRefInv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
     "hol_name": "bc_stack_ref_inv_def",

@@ -2,8 +2,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
 
-/-! The data-to-word memory relation and its reference-cell invariant. The
-remaining higher-level invariants have not yet been reviewed as HOL ports. -/
+/-! The data-to-word memory relation and its abstract heap invariants. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.Compiler.Backend.GcCombined
 
@@ -127,30 +126,39 @@ noncomputable def bcStackRefInv {width : Nat} [NeZero width] (conf : Config) (ne
     List.Forall₂ (fun value address => valueInv conf value refs (address, f, tf, heap)) stack roots ∧
     ∀ n, reachableRefs stack refs n ∧ mapDomain f n → bcRefInv conf n refs (f, tf, heap, bigEndian)
 
-/-- Abstract ML heap invariant; this is not yet a reviewed HOL port. -/
+/-- Abstract ML heap invariant, including roots, heap, generation and stack
+reference conditions. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "abs_ml_inv_def"
+  (words_as_type_indexed_bitvec)]
 noncomputable def absMlInv {width : Nat} [NeZero width] (conf : Config)
-    (stack : List Value) (refs : Spt (BvlSem.Ref Value))
+    (stack : List Flapjack.Compiler.Backend.DataSem.Value)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
     (context : List (HeapAddress (WordLocW width)) × ValueHeap width × Bool × Nat × Nat × Nat × GenState)
     (limit next : Nat) : Prop :=
   let (roots, heap, bigEndian, a, sp, sp1, gens) := context
   rootsOk roots heap ∧ heapOk heap limit ∧ gcKindInv conf a sp sp1 gens heap ∧
     unusedSpaceInv a (sp + sp1) heap ∧ bcStackRefInv conf next stack refs (roots, heap, bigEndian)
 
-/-- Word-level ML invariant over the preliminary abstract invariant. It is not
-yet a reviewed port of the original declaration. -/
+/-- Word-level ML invariant, relating abstract roots to word locations. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_ml_inv_def"
+  (words_as_type_indexed_bitvec)]
 noncomputable def wordMlInv {width : Nat} [NeZero width]
     (context : ValueHeap width × Bool × Nat × Nat × Nat × GenState) (limit next : Nat)
-    (conf : Config) (refs : Spt (BvlSem.Ref Value)) (stack : List (Value × WordLocW width)) : Prop :=
+    (conf : Config) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (stack : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) : Prop :=
   let (heap, bigEndian, a, sp, sp1, gens) := context
   ∃ roots, absMlInv conf (stack.map Prod.fst) refs (roots, heap, bigEndian, a, sp, sp1, gens) limit next ∧
     List.Forall₂ (fun address word => wordAddr conf address = word) roots (stack.map Prod.snd)
 
-/-- Full memory-relation shape; this is not yet a reviewed HOL port or a
-pass-correctness theorem. -/
+/-- Full data-to-word memory relation, including the original space bound.
+This relation is not itself a pass-correctness theorem. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_def"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
 noncomputable def memoryRel {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool) (next : Nat)
-    (refs : Spt (BvlSem.Ref Value)) (space : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (space : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
     (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
-    (vars : List (Value × WordLocW width)) : Prop :=
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) : Prop :=
   ∃ heap limit a sp sp1 gens,
     heapInMemoryStore heap a sp sp1 gens conf store memory domain limit ∧
     wordMlInv (heap, bigEndian, a, sp, sp1, gens) limit next conf refs vars ∧
