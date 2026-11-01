@@ -18,6 +18,10 @@ var_corr=∀(env :α list) (corr :num list) (t :α sptree$num_map). var_corr env
 get_vars_thm=∀(vs :num list) (a :α list) (t2 :α sptree$num_map). var_corr a vs t2 ⇒ (get_vars vs t2 :α list option) = SOME a
 var_corr_map=∀(p :α sptree$num_map) (f :α -> β) (vs :num list) (z :α list). var_corr z vs p ⇒ var_corr (MAP f z) vs (map f p :β sptree$num_map)
 get_vars_lift_thm=∀(vs :num list) (a :bvlSem$v list) (t2 :v sptree$num_map). var_corr a vs (map data_to_bvi_v t2 :bvlSem$v sptree$num_map) ⇒ ∃(z :v list). (get_vars vs t2 :v list option) = SOME z ∧ a = MAP data_to_bvi_v z
+var_corr_inter=∀(t :α sptree$num_map) (p :β sptree$num_map) (vs :num list) (z :β list). var_corr z vs (inter p t) ⇒ var_corr z vs p
+get_vars_mk_wf=∀(vs :num list) (t :α sptree$num_map) (z :α list). (get_vars vs (mk_wf t) :α list option) = SOME z ⇔ (get_vars vs t :α list option) = SOME z
+get_vars_inter=∀(vs :num list) (p :α sptree$num_map) (t :β sptree$num_map) (z :α list). (get_vars vs (inter p t) :α list option) = SOME z ⇒ (get_vars vs p :α list option) = SOME z
+lookup_mk_wf=∀(x :num) (t :α sptree$num_map). (lookup x (mk_wf t) :α option) = (lookup x t :α option)
 data_to_bvi_result=data_to_bvi_result (Rval (vs :v list) :(v list, v) result) = (Rval (MAP data_to_bvi_v vs) :(bvlSem$v list, exn_or_ret) result) ∧ data_to_bvi_result (Rerr (Rraise (v :v)) :(v list, v) result) = (Rerr (Rraise (Exn (data_to_bvi_v v))) :(bvlSem$v list, exn_or_ret) result) ∧ data_to_bvi_result (Rerr (Rabort (err :abort) :v error_result) :(v list, v) result) = (Rerr (Rabort err :exn_or_ret error_result) :(bvlSem$v list, exn_or_ret) result)
 data_to_bvi_result_eq=∀(x :(v list, v) result) (v :exn_or_ret). data_to_bvi_result x = (Rerr (Rraise v) :(bvlSem$v list, exn_or_ret) result) ⇔ ∃(z :v). x = (Rerr (Rraise z) :(v list, v) result) ∧ Exn (data_to_bvi_v z) = v
 missing_var=(compile_sing (4 :num) ([] :num list) F ([] :num list) (Var (5 :num) :bvi$exp) :dataLang$prog # num # num) = (Skip,(0 :num),(4 :num))

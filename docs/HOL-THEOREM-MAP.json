@@ -1,5 +1,29 @@
 [
   {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml", "hol_name": "lookup_mk_wf",
+    "lean_path": "Flapjack/Misc/Sptree/MkWf.lean", "lean_name": "sptLookup_mkWf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: lookup at an arbitrary natural key is preserved by mk_wf for an arbitrary polymorphic sparse tree, without a well-formedness premise. The proof covers both smart-constructor collapse cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml", "hol_name": "var_corr_inter",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Variables.lean", "lean_name": "varCorr_inter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: the two sparse-tree payload types are independent and a correspondence in inter p t implies the same correspondence in p."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml", "hol_name": "get_vars_mk_wf",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Variables.lean", "lean_name": "getVars_mkWf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: a generic successful read from mk_wf is equivalent to the same successful read from the original tree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml", "hol_name": "get_vars_inter",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Variables.lean", "lean_name": "getVars_inter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: successful reads from inter p t imply the same reads from p, with independent payload types for p and t."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml", "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileSource.lean", "lean_name": "compileSource",
     "statement_status": "reviewed_exact",
