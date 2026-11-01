@@ -2,10 +2,17 @@ import Flapjack.Compiler.Backend.ClosToBvl.Incremental
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Oracle
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Total
+import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
 
 /-! Correctness infrastructure for the checked incremental wrapper. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.Compiler.Backend.BackendProps
+
+/-- Disabling direct-call conversion recovers the multi-argument wrapper. -/
+theorem compileIncCallsFuel_disabled (fuel : Nat) (config : Config) (program : ClosSem.Program)
+    (disabled : config.doCall = false) :
+    compileIncCallsFuel? fuel config program = compileIncMtiFuel? fuel config program := by
+  simp [compileIncCallsFuel?, disabled]
 
 /-- With optional closure optimizations disabled, the checked wrapper
 returns the numbered and annotated source-shaped incremental result and the
@@ -64,6 +71,43 @@ theorem compileIncMtiFuel_succeeds (fuel : Nat) (config : Config) (program : Clo
   | true =>
     obtain ⟨transformed, mti⟩ := ClosMti.compileFuel_succeeds fuel true config.maxApp program.1
     exact ⟨_, compileIncMtiFuel_checked fuel config program enabled noCall noKnown transformed mti⟩
+
+/-- Direct-call conversion and checked BVL lowering have sufficient retry
+bounds for any numbered incremental program. -/
+theorem compileIncCallsFuel_succeeds (fuel : Nat) (config : Config) (program : ClosSem.Program)
+    (noKnown : config.knownConf = none) :
+    ∃ result, compileIncCallsFuel? fuel config program = some result := by
+  cases call : config.doCall with
+  | false =>
+    rw [compileIncCallsFuel_disabled fuel config program call]
+    exact compileIncMtiFuel_succeeds fuel config program call noKnown
+  | true =>
+    have mti : ∃ p, prepareIncMtiFuel? fuel config program = some p := by
+      cases enabled : config.doMti with
+      | false => exact ⟨program, by simp [prepareIncMtiFuel?, enabled]⟩
+      | true =>
+        obtain ⟨p, hp⟩ := ClosMti.compileFuel_succeeds fuel true config.maxApp program.1
+        exact ⟨(p, []), by simp [prepareIncMtiFuel?, enabled, hp]⟩
+    obtain ⟨p, hp⟩ := mti
+    let numbered := ClosNumber.ignoreTable ClosNumber.compileInc config.nextLoc p
+    obtain ⟨⟨expressions, callState⟩, hc⟩ :=
+      ClosCall.callsListBounded_succeeds fuel numbered.2.1 (config.callState.1, [])
+    let annotated := ClosAnnotate.compileInc (expressions, callState.2)
+    have checked : compileProg? config.maxApp
+        (chainExps (extractName annotated.1).1 (extractName annotated.1).2 ++ annotated.2) =
+        some (compileInc config.maxApp annotated) := by
+      simpa using compileInc_checked_eq config.maxApp annotated
+    dsimp only [numbered] at hc
+    dsimp only [annotated] at checked
+    refine ⟨({ config with nextLoc := numbered.1, callState := (callState.1, []) },
+      compileInc config.maxApp annotated), ?_⟩
+    simp only [compileIncCallsFuel?, call, Bool.not_true, Bool.false_eq_true, if_false, noKnown]
+    rw [hp]
+    dsimp only [bind, Bind.bind, Option.bind]
+    rw [hc]
+    dsimp only
+    rw [checked]
+    rfl
 
 /-- With multi-argument introduction disabled, the callback adapters agree. -/
 theorem compileIncMtiFuelCallback_disabled {C : Type} (fuel : Nat) (downstream : BvlSem.Compiler C)

@@ -50,6 +50,40 @@ def compileIncMtiFuel? (fuel : Nat) (config : Config) (program : ClosSem.Program
       let compiled ← compileProg? config.maxApp (chainExps start expressions ++ annotated.2)
       pure (nextConfig, compiled)
 
+/-- Apply the optional incremental multi-argument transformation. -/
+def prepareIncMtiFuel? (fuel : Nat) (config : Config) (program : ClosSem.Program) :
+    Option ClosSem.Program := do
+  if config.doMti then do
+    let transformed ← ClosMti.compileFuel fuel true config.maxApp program.1
+    pure (transformed, [])
+  else pure program
+
+/-- Incremental closure compilation with multi-argument and direct-call
+conversion. The direct-call pass starts with the retained set of locations,
+discards incoming auxiliary code, and installs its newly generated code. Known
+function optimization and correspondence of these traversals remain open. -/
+def compileIncCallsFuel? (fuel : Nat) (config : Config) (program : ClosSem.Program) :
+    Option (Config × List (Nat × Nat × Bvl.Exp)) := do
+  if !config.doCall then compileIncMtiFuel? fuel config program else
+  match config.knownConf with
+  | some _ => none
+  | none =>
+      let program ← prepareIncMtiFuel? fuel config program
+      let (next, numbered) := ClosNumber.ignoreTable ClosNumber.compileInc config.nextLoc program
+      let (expressions, callState) ← ClosCall.callsListBounded fuel numbered.1 (config.callState.1, [])
+      let nextConfig := { config with nextLoc := next, callState := (callState.1, []) }
+      let annotated := ClosAnnotate.compileInc (expressions, callState.2)
+      let (start, expressions) := extractName annotated.1
+      let compiled ← compileProg? config.maxApp (chainExps start expressions ++ annotated.2)
+      pure (nextConfig, compiled)
+
+/-- Adapt incremental direct-call conversion to a downstream compiler. -/
+def compileIncCallsFuelCallback {C : Type} (fuel : Nat) (downstream : BvlSem.Compiler C) :
+    ClosSem.Compiler (Config × C) := fun (config, downstreamConfig) program => do
+  let (nextConfig, compiled) ← compileIncCallsFuel? fuel config program
+  let (bytes, data, nextDownstream) ← downstream downstreamConfig compiled
+  pure (bytes, data, (nextConfig, nextDownstream))
+
 /-- Adapt a downstream BVL compiler into a closure compiler, passing the
 updated closure configuration onward only when both stages succeed. -/
 def compileIncNoOptsCallback {C : Type} (downstream : BvlSem.Compiler C) :
@@ -79,6 +113,13 @@ def compileIncMtiFuelOracle {C : Type} (fuel : Nat) (oracle : Nat → (Config ×
     (index : Nat) : Option (C × List (Nat × Nat × Bvl.Exp)) := do
   let entry := oracle index
   let (_, compiled) ← compileIncMtiFuel? fuel entry.1.1 entry.2
+  pure (entry.1.2, compiled)
+
+/-- Oracle adapter for incremental direct-call conversion. -/
+def compileIncCallsFuelOracle {C : Type} (fuel : Nat) (oracle : Nat → (Config × C) × ClosSem.Program)
+    (index : Nat) : Option (C × List (Nat × Nat × Bvl.Exp)) := do
+  let entry := oracle index
+  let (_, compiled) ← compileIncCallsFuel? fuel entry.1.1 entry.2
   pure (entry.1.2, compiled)
 
 end Flapjack.Compiler.Backend.ClosToBvl

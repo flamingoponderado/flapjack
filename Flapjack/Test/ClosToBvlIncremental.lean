@@ -46,6 +46,25 @@ example : (match compileIncMtiFuel? 0 { config with doMti := true, maxApp := 3 }
         (20, 3, .let [.var 0, .var 1] (.var 0))]) => out.nextLoc == 14
     | _ => false) = true := by native_decide
 
+/-- Replay source direct-call conversion with retained locations and incoming
+auxiliary code, which the enabled pass replaces with generated code. -/
+example : (match compileIncCallsFuel? 0 { configWithCalls with doCall := true }
+    ([.fn (ofString "f") none none 1 (.var .none 0)], [(42, 0, .var .none 0)]) with
+    | some (out, [(15, 0, .op (.blockOp (.cons 30))
+          [.op (.intOp (.const 0)) [], .op (.label 17) []]),
+        (18, 1, .var 0), (17, 2, .let [.var 0] (.call 0 (some 18) [.var 0]))]) =>
+        out.nextLoc == 14 && decide (sptToAList out.callState.1 = [(9, ()), (12, ())]) &&
+          out.callState.2.isEmpty
+    | _ => false) = true := by native_decide
+
+example : (match compileIncCallsFuel? 0 { config with doCall := true, doMti := true, maxApp := 3 }
+    ([.fn (ofString "f") none none 1 (.fn (ofString "g") none none 1 (.var .none 0))], []) with
+    | some (out, [(18, 0, .op (.blockOp (.cons 30))
+          [.op (.intOp (.const 1)) [], .op (.label 20) []]),
+        (21, 2, .var 0), (20, 3, .let [.var 0, .var 1] (.call 0 (some 21) [.var 0, .var 1]))]) =>
+        out.nextLoc == 14 && decide (sptToAList out.callState.1 = [(12, ())])
+    | _ => false) = true := by native_decide
+
 example : (match compileIncMtiFuel? 0 { config with doMti := true, maxApp := 3 }
     ([], [(42, 0, .var .none 0)]) with
     | some (out, [(18, 0, .op (.intOp (.const 10)) [])]) => out.nextLoc == 12

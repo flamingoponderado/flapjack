@@ -9204,8 +9204,9 @@ carrier and dependency review.
 `clos_to_bvl_compile_inc` with closure optimizations disabled for empty input,
 a single closure, and a program with incoming auxiliary code and a nonempty
 call-state set. It also captures enabled multi-argument introduction for
-empty input and a nested closure, both with incoming auxiliary code. The probe
-adds the original `extract_name_pmatch` theorem to
+empty input and a nested closure, both with incoming auxiliary code. It also
+captures direct-call conversion with a retained location set and a combined
+multi-argument/direct-call case. The probe adds the original `extract_name_pmatch` theorem to
 HOL evaluation so the source's choice-based marker extraction computes.
 `Flapjack.Test.ClosToBvlIncremental` replays the resulting code and observable
 configuration fields against the checked Lean wrapper. Regenerate with
