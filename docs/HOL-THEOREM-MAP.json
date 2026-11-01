@@ -99874,7 +99874,7 @@
     "hol_name": "make_byte_header_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: typed data_to_word_memory_repr capture and original definition. Both width branches use the same length increment, shift and comparison tag, with positive type-indexed word width. This definition currently serves the proof-side payload model."
+    "reviewer": "Source comparison: typed data_to_word_memory_repr capture and original definition. Both width branches use the same length increment, shift and comparison tag, with positive type-indexed word width. The executable string-constant compiler calls this definition as in HOL; makeByteHeader_contents_eq_inlined proves agreement with its previous inlined formula."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Representation.lean",

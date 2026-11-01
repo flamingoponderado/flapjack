@@ -28,13 +28,21 @@ def getLowerBits {width : Nat} [NeZero width] (conf : Config) : WordLocW width â
   | .loc _ _ => 1
 
 /-- Construct a byte-array header using the source's 32-bit or other-width
-layout. This proof-side definition has not yet been connected to all executed
-header generation paths. -/
+layout. The closure-constant compiler uses this for string headers. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "make_byte_header_def"
   (words_as_type_indexed_bitvec)]
 def makeByteHeader {width : Nat} [NeZero width] (conf : Config) (compareByContents : Bool) (len : Nat) : BitVec width :=
   let tag : BitVec width := if compareByContents then 7 else 23
   if width = 32 then (BitVec.ofNat width (len + 4) <<< (width - 2 - conf.lenSize)) ||| tag
   else (BitVec.ofNat width (len + 8) <<< (width - 3 - conf.lenSize)) ||| tag
+
+/-- Flapjack-specific equivalence with the previously inlined string-header
+formula, at every positive width and without restrictions on the length. -/
+theorem makeByteHeader_contents_eq_inlined {width : Nat} [NeZero width]
+    (conf : Config) (len : Nat) :
+    makeByteHeader (width := width) conf true len =
+      (BitVec.ofNat width (len + (if width == 32 then 4 else 8)) <<<
+        (width - (if width == 32 then 2 else 3) - conf.lenSize)) ||| 7 := by
+  by_cases h : width = 32 <;> simp [makeByteHeader, h]
 
 end Flapjack.Compiler.Backend.DataToWord

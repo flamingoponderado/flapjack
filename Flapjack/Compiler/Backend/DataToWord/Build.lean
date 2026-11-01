@@ -71,9 +71,7 @@ def partWords {width : Nat} [NeZero width] (conf : Config) (memory : Spt (Value 
     let n := bs.length
     let k := if width == 32 then n / 4 + 1 else n / 8 + 1
     if !(k < 2 ^ (width - 4) ∧ k < 2 ^ conf.lenSize) then none else
-    let header : BitVec width :=
-      (BitVec.ofNat width (n + (if width == 32 then 4 else 8)) <<<
-        (width - (if width == 32 then 2 else 3) - conf.lenSize)) ||| 7
+    let header := makeByteHeader (width := width) conf true n
     let ws := header :: bytesWords conf.be bs k
     some ((true, pointer conf offset), ws.map (false, ·))
 
