@@ -6,6 +6,23 @@ namespace Flapjack.Compiler.Backend.ClosNumber
 open Flapjack Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL (Result)
 
+/-- Evaluator simulation at one source state, for arbitrary related targets
+and environments. This form allows clock induction to restrict its premise. -/
+def EvalSimulationAt {C F : Type} (source : State (Nat × C) F) (expressions : List ClosLang.Exp) : Prop :=
+  ∀ (env nextEnv : List Value) (target : State C F) (result : Result (List Value) Value)
+    (sourceNext : State (Nat × C) F) (start : Nat),
+    evaluate expressions env source = (result, sourceNext) →
+    result ≠ .err (.abort .typeError) →
+    ¬ ClosProps.containsAppSome source.maxApp expressions →
+    List.Forall₂ (ValueRel source.maxApp) env nextEnv → StateRel source target →
+    ∃ targetResult targetNext,
+      evaluate (renumberList start expressions).2 nextEnv target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
+
+/-- Simulations available at clocks strictly below a given bound. -/
+def EvalSimulationBelow {C F : Type} (clock : Nat) (expressions : List ClosLang.Exp) : Prop :=
+  ∀ source : State (Nat × C) F, source.clock < clock → EvalSimulationAt source expressions
+
 /-- Continuation after the closure evaluator has evaluated install arguments. -/
 noncomputable def runInstalled {C F : Type} (values : List Value) (state : State C F) : EvalResult C F :=
   match doInstall values state with
@@ -69,7 +86,7 @@ theorem evaluate_installed_program {C F : Type} (number : Nat) (expressions : Li
     (run : evaluate expressions [] source = (result, final))
     (notType : result ≠ .err (.abort .typeError))
     (nonempty : expressions ≠ []) (safe : ¬ ClosProps.containsAppSome source.maxApp expressions)
-    (states : StateRel source target) (programIH : EvalSimulation (C := C) (F := F) expressions) :
+    (states : StateRel source target) (programIH : EvalSimulationAt source expressions) :
     ∃ targetResult targetFinal,
       evaluate (compileInc number expressions).2 [] target = (targetResult, targetFinal) ∧
       StateRel final targetFinal ∧
@@ -81,7 +98,7 @@ theorem evaluate_installed_program {C F : Type} (number : Nat) (expressions : Li
   let start := let next := number + max expressions.length 1
     if next % 2 = 0 then next else next + 1
   obtain ⟨targetResult, targetFinal, targetRun, resultRel, finalRel⟩ :=
-    programIH [] [] source target result final start run notType safe .nil states
+    programIH [] [] target result final start run notType safe .nil states
   have numbered : (compileInc number expressions).2 =
       .op .none (.intOp (.const (Int.ofNat number))) [] :: (renumberList start expressions).2 := by
     simp [compileInc, start]
@@ -123,7 +140,7 @@ theorem runInstalled_related {C F : Type} (source : State (Nat × C) F) (target 
     (run : runInstalled values source = (result, final))
     (notType : result ≠ .err (.abort .typeError))
     (states : StateRel source target) (valuesRel : List.Forall₂ (ValueRel source.maxApp) values nextValues)
-    (programIH : ∀ expressions, EvalSimulation (C := C) (F := F) expressions) :
+    (programIH : ∀ expressions, EvalSimulationBelow (C := C) (F := F) source.clock expressions) :
     ∃ targetResult targetFinal, runInstalled nextValues target = (targetResult, targetFinal) ∧
       ResultRel source.maxApp result targetResult ∧ StateRel final targetFinal := by
   cases installRun : doInstall values source with
@@ -143,6 +160,9 @@ theorem runInstalled_related {C F : Type} (source : State (Nat × C) F) (target 
       exact ⟨.err (.abort .timeoutError), targetInstalled, by simp [runInstalled, targetInstall], rfl, installedRel⟩
     · simp only [zero, ↓reduceIte] at sourceResult targetInstall
       rw [sourceResult] at installRun
+      have clockLess : installed.clock < source.clock := by
+        have clock := doInstall_success_clock values source installed expressions installRun
+        omega
       have nonempty : expressions ≠ [] := by
         obtain ⟨_, _, _, _, _, program, _, _, _, _, _, _, _, _, _, _, programNonempty, _, resultEq⟩ :=
           doInstall_nonType_parts values source installed (.val expressions) installRun (by simp)
@@ -158,7 +178,7 @@ theorem runInstalled_related {C F : Type} (source : State (Nat × C) F) (target 
         obtain ⟨targetBodyResult, targetFinal, targetBodyRun, finalRel, resultRel⟩ :=
           evaluate_installed_program (source.compileOracle 0).1.1 expressions installed targetInstalled
             bodyResult bodyFinal bodyRun bodyNotType nonempty (by simpa [maxEq] using safe)
-            installedRel (programIH expressions)
+            installedRel (programIH expressions installed clockLess)
         cases bodyResult with
         | err error =>
           cases targetBodyResult with
@@ -182,11 +202,18 @@ theorem runInstalled_related {C F : Type} (source : State (Nat × C) F) (target 
 /-- Installation expressions preserve the numbering simulation, assuming
 the simulations for their arguments and dynamically installed program. The
 general evaluator induction and HOL carrier review are still required. -/
-theorem evaluate_install {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (argsIH : EvalSimulation (C := C) (F := F) args)
-    (programIH : ∀ expressions, EvalSimulation (C := C) (F := F) expressions) :
-    EvalSimulation (C := C) (F := F) [.op trace .install args] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+theorem evaluate_install_step {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (env nextEnv : List Value) (source : State (Nat × C) F) (target : State C F)
+    (argsIH : EvalSimulationAt source args)
+    (result : Result (List Value) Value) (sourceNext : State (Nat × C) F) (start : Nat)
+    (run : evaluate [.op trace .install args] env source = (result, sourceNext))
+    (noType : result ≠ .err (.abort .typeError))
+    (safe : ¬ ClosProps.containsAppSome source.maxApp [.op trace .install args])
+    (envRel : List.Forall₂ (ValueRel source.maxApp) env nextEnv) (stateRel : StateRel source target)
+    (programIH : ∀ expressions, EvalSimulationBelow (C := C) (F := F) source.clock expressions) :
+    ∃ targetResult targetNext,
+      evaluate (renumberList start [.op trace .install args]).2 nextEnv target = (targetResult, targetNext) ∧
+      ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
   have argsSafe : ¬ ClosProps.containsAppSome source.maxApp args := by
     simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
   cases argsRun : evaluate args env source with
@@ -196,7 +223,7 @@ theorem evaluate_install {C F : Type} (trace : BackendCommon.Tra) (args : List C
       rw [evaluate_install_eq, argsRun] at run
       cases run
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-        argsIH env nextEnv source target (.err error) sourceNext start argsRun noType argsSafe envRel stateRel
+        argsIH env nextEnv target (.err error) sourceNext start argsRun noType argsSafe envRel stateRel
       cases targetResult with
       | val values => cases error <;> simp [ResultRel] at resultRel
       | err targetError =>
@@ -206,7 +233,7 @@ theorem evaluate_install {C F : Type} (trace : BackendCommon.Tra) (args : List C
     | val values =>
       have argsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
       obtain ⟨targetResult, targetMiddle, targetRun, valuesRel, middleRel⟩ :=
-        argsIH env nextEnv source target (.val values) middle start argsRun argsNoType argsSafe envRel stateRel
+        argsIH env nextEnv target (.val values) middle start argsRun argsNoType argsSafe envRel stateRel
       cases targetResult with
       | err error => cases error <;> simp [ResultRel] at valuesRel
       | val nextValues =>
@@ -215,14 +242,35 @@ theorem evaluate_install {C F : Type} (trace : BackendCommon.Tra) (args : List C
           simpa [argsRun] using h
         have related : List.Forall₂ (ValueRel middle.maxApp) values.reverse nextValues.reverse := by
           simpa [ResultRel, middleMax] using List.rel_reverse valuesRel
+        have clockLe : middle.clock ≤ source.clock := by
+          have h := evaluate_clock_le args env source
+          simpa [argsRun] using h
+        have smallerIH : ∀ expressions, EvalSimulationBelow (C := C) (F := F) middle.clock expressions := by
+          intro expressions state smaller
+          exact programIH expressions state (Nat.lt_of_lt_of_le smaller clockLe)
         rw [evaluate_install_eq, argsRun] at run
         obtain ⟨targetResult, targetFinal, targetInstall, resultRel, finalRel⟩ :=
           runInstalled_related middle targetMiddle values.reverse nextValues.reverse result sourceNext
-            run noType middleRel related programIH
+            run noType middleRel related smallerIH
         refine ⟨targetResult, targetFinal, ?_, ?_, finalRel⟩
         · simp only [renumberList, renumber]
           rw [evaluate_install_eq, targetRun]
           exact targetInstall
         · simpa [middleMax] using resultRel
+
+/-- Unrestricted form of the installation case, derived from its clock-bounded
+step for callers that already have simulations at every state. -/
+theorem evaluate_install {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args)
+    (programIH : ∀ expressions, EvalSimulation (C := C) (F := F) expressions) :
+    EvalSimulation (C := C) (F := F) [.op trace .install args] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  have argsAt : EvalSimulationAt source args := by
+    intro env nextEnv target result next start run noType safe envRel stateRel
+    exact argsIH env nextEnv source target result next start run noType safe envRel stateRel
+  apply evaluate_install_step trace args env nextEnv source target argsAt result sourceNext start
+    run noType safe envRel stateRel
+  intro expressions state _ env nextEnv target result next start run noType safe envRel stateRel
+  exact programIH expressions env nextEnv state target result next start run noType safe envRel stateRel
 
 end Flapjack.Compiler.Backend.ClosNumber
