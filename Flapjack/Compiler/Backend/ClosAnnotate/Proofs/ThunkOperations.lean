@@ -47,6 +47,52 @@ theorem destThunk_list_related {C F : Type} (source target : State C F)
     | nil => exact destThunk_related source target _ _ first states
     | cons second rest => simp [destThunk, DestThunkRel]
 
+/-- A force-result update succeeds or fails in both stores, and a successful
+update preserves the candidate state relation. -/
+theorem updateThunk_related {C F : Type} (source target : State C F)
+    (values nextValues results nextResults : List Value)
+    (valuesRel : List.Forall₂ ValueRel values nextValues)
+    (resultsRel : List.Forall₂ ValueRel results nextResults)
+    (states : StateRel source target) :
+    match updateThunk values source.refs results with
+    | none => updateThunk nextValues target.refs nextResults = none
+    | some refs => ∃ nextRefs, updateThunk nextValues target.refs nextResults = some nextRefs ∧
+        StateRel { source with refs := refs } { target with refs := nextRefs } := by
+  cases valuesRel with
+  | nil => simp [updateThunk]
+  | cons pointer tail =>
+    cases tail with
+    | cons head tail => simp [updateThunk]
+    | nil =>
+      cases resultsRel with
+      | nil => simp [updateThunk]
+      | cons value tail =>
+        cases tail with
+        | cons head tail => simp [updateThunk]
+        | nil =>
+          cases pointer with
+          | refPtr flag index =>
+            cases flag with
+            | true => simp [updateThunk]
+            | false =>
+              rename_i result nextResult
+              have inspected := destThunk_related source target result nextResult value states
+              cases left : destThunk [result] source.refs <;>
+                cases right : destThunk [nextResult] target.refs <;>
+                simp_all [DestThunkRel, updateThunk]
+              have refsRel := states.2.2.2.2.2.2.1 index
+              cases leftRef : source.refs.lookup index <;> cases rightRef : target.refs.lookup index <;>
+                simp_all [OptionRel, RefRel, storeThunk]
+              rename_i sourceRef targetRef
+              cases sourceRef <;> cases targetRef <;> simp_all
+              rename_i leftMode leftValue rightMode rightValue
+              cases leftMode <;> cases rightMode <;> simp_all
+              have updated := stateRel_updateRefFfi source target states index (.thunk .evaluated result)
+                (.thunk .evaluated nextResult) ⟨rfl, value⟩ source.ffi
+              simpa [states.2.1] using updated
+          | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
+            simp [updateThunk]
+
 /-- Allocating a thunk keeps its stored values and fresh address related. -/
 theorem primitiveSimulation_thunkAlloc {C F : Type} (mode : AstHOL.ThunkMode) :
     PrimitiveSimulation (C := C) (F := F) (.thunkOp (.allocThunk mode)) := by
