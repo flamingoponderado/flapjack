@@ -8,33 +8,6 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush
 namespace Flapjack.Compiler.Backend.BviToData
 open Flapjack Flapjack.SemanticPrimitivesHOL
 
-private theorem jumpExc_remove_saved_frame {C F : Type} (target final : DataSem.State C F)
-    (cut : Spt DataSem.Value) (ls : Option Nat)
-    (jump : DataSem.jumpExc { final with stack := .env target.localsSize cut :: target.stack, handler := target.handler } =
-      some { final with localsSize := ls }) :
-    DataSem.jumpExc { final with stack := target.stack, handler := target.handler } =
-      some { final with localsSize := ls } := by
-  let base := { final with stack := target.stack, handler := target.handler, localsSize := target.localsSize }
-  have transported := DataSem.jumpExc_transport
-    { final with stack := .env target.localsSize cut :: target.stack, handler := target.handler }
-    (DataSem.pushEnv cut false base) { final with localsSize := ls }
-    (by simp [DataSem.pushEnv, base]) (by simp [DataSem.pushEnv, base]) jump
-  rw [DataSem.jumpExc_pushEnv_noHandler] at transported
-  cases baseJump : DataSem.jumpExc base with
-  | none => simp [baseJump] at transported
-  | some jumped =>
-    simp only [baseJump, Option.map_some, Option.some.injEq] at transported
-    have finalJump := DataSem.jumpExc_transport base
-      { final with stack := target.stack, handler := target.handler } jumped rfl rfl baseJump
-    rw [finalJump]
-    congr 1
-    have stackEq := congrArg DataSem.State.stack transported
-    have handlerEq := congrArg DataSem.State.handler transported
-    have localsEq := congrArg DataSem.State.locals transported
-    have sizeEq := congrArg DataSem.State.localsSize transported
-    cases final
-    simp_all
-
 /-- A source thunk selected from the environment has a corresponding data
 local and an inspection result with the same mode and projected value. -/
 theorem force_inspection_projection {C F : Type} (index : Nat) (env : List BvlSem.Value)
