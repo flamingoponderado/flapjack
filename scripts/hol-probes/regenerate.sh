@@ -8215,6 +8215,10 @@ run_probe backend_read_limits_probeScript.sml backend_read_limits_probe.out \
   read_limits_def_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe data_to_word_gc_stack_probeScript.sml data_to_word_gc_stack_probe.out \
+  stack_rel_typed the_global_typed contains_loc_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe data_to_word_space_control_probeScript.sml data_to_word_space_control_probe.out \
   do_space_code_const_typed cut_state_opt_ffi_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/semantics"

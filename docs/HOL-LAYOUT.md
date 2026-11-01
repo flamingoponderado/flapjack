@@ -234,7 +234,7 @@ the cited name occurs in one of the two syntactic forms.
 | `misc/miscScript.sml` (`MOD_SUB_LEMMA`, `IMP_MULT_DIV_LESS`, `DIV_LESS_DIV`) | `Flapjack/Misc/DivModLemmas.lean` |
 | `misc/miscScript.sml` (`DISJOINT_INTER`) | `Flapjack/Misc/DisjointInter.lean` |
 | `misc/miscScript.sml` (`WORD_LS_IMP`) | `Flapjack/Misc/WordLsImp.lean` |
-| `compiler/backend/proofs/data_to_word_gcProofScript.sml` | `Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/` (`WordLemmas.lean` opening word lemmas: `lsr_lsl`; `InitStoreOk.lean`, `GcFunOk.lean`, `GcFunConstOk.lean`) |
+| `compiler/backend/proofs/data_to_word_gcProofScript.sml` | `Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/` (`WordLemmas.lean` opening word lemmas: `lsr_lsl`; `InitStoreOk.lean`, `GcFunOk.lean`, `GcFunConstOk.lean`, `StackRel.lean` for stack-frame, global-value and handler-location relations) |
 | `semantics/panPropsScript.sml` | `Flapjack/Pancake/Semantics/PanProps.lean`, `PanProps/EvalInvariant.lean`, `PanProps/MemByteArray.lean` (exact `write_bytearray_update_byte` / `read_write_bytearray_lemma`), `PanProps/LocalisedExpSimps.lean`, `PanProps/NamelessExpSimps.lean`, `PanProps/EvaluateAddClockIoEventsMono.lean` |
 | `semantics/crepSemScript.sml` | `Flapjack/Pancake/Semantics/CrepSem.lean`, `CrepSem/Eval.lean`, `CrepSem/TotalEval.lean`, `CrepSem/Primop.lean`, `CrepSem/LookupCode.lean` |
 | `semantics/crepPropsScript.sml` | `Flapjack/Pancake/Semantics/CrepProps.lean` |

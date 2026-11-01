@@ -99782,6 +99782,32 @@
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 4628-4634, binders !p s t; evaluate (p,s) = (NONE,t) ⇒ stack_size t.stack = stack_size s.stack; from evaluate_stack_swap and s_key_eq_stack_size as in HOL. State carrier WordSemStateFiniteExact width C F (alpha word width, independent beta/gamma as C/F) with the reviewed fmap_as_finite_support [fpRegs, store] and words qualifiers. Inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8) through evaluate/inst. Typed capture word_props_code_grows probe (show_types, no hypotheses)."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean",
+    "lean_name": "stackRel",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "stack_rel_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original lines 4440–4450 and typed data_to_word_gc_stack capture. All Env/Exc and handler-presence cases match. stackEnvRel factors the source Env conjuncts: nonzero even GC keys, equal optional sizes, zero non-GC keys, distinct GC keys, and equivalent lookup presence at adjustVar. DataSem.Stack and WordSemStackFrame retain the original fields and types; WordLocW uses the reviewed positive-width bit-vector representation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean",
+    "lean_name": "theGlobal",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "the_global_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original lines 4452–4453 and typed data_to_word_gc_stack capture; absent global defaults to Number 0 and present global produces RefPtr true at the same natural-number pointer."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean",
+    "lean_name": "containsLoc",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "contains_loc_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: original lines 4455–4456 and typed data_to_word_gc_stack capture; the first non-GC association at key zero must equal Loc l1 l2. sptAListLookup preserves HOL ALOOKUP first-match behavior even with duplicates; WordLocW uses the reviewed positive-width word representation."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Space.lean",
     "lean_name": "doSpace_code_const",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
