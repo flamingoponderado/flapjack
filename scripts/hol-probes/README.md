@@ -1,3 +1,9 @@
+`data_sem_limits_probe.out` captures the typed operation-limit definitions and
+original array-length and nullary-tag boundary observations. Corresponding
+Lean cases cover valid, invalid, and malformed inputs. The observations do not
+establish the complete evaluator correspondence. Regenerate with
+`HOL_PROBE_ONLY=data_sem_limits_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `data_sem_stack_probe.out` captures the typed computed arithmetic call tree,
 the data-language stack-consumption clauses, and the stack update. The tree
 was regenerated against the pinned CakeML and HOL revisions; run

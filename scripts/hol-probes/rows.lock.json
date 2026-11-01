@@ -353,6 +353,7 @@
     {"bytes": 78, "out": "crep_vmap_ctxtfc_probe.out", "rows": 7, "sha256": "bb121330b6b5fd571f27e176bb0a19bdbef1c7da6660391d7ae2da984f6bbb79"},
     {"bytes": 477, "out": "ctxt_fc_probe.out", "rows": 6, "sha256": "8a507b00bc204713a4452260d8a316c681b33b0d6c1889cb91a86fcc5488440d"},
     {"bytes": 1930, "out": "data_max_heap_limit_probe.out", "rows": 66, "sha256": "349156b177ad7f8ea708bb73cad1707d89898f96bb1e973acaf7f7f3211eb06c"},
+    {"bytes": 15012, "out": "data_sem_limits_probe.out", "rows": 7, "sha256": "830d01666743877170d3a3d0226d53a60f6a261b82cc28726b3283567ef4907c"},
     {"bytes": 26166, "out": "data_sem_stack_probe.out", "rows": 3, "sha256": "90d20a69aeabe6af2e96ef91fc00ec783eaaf4bb95e1a570bbd6fea3579e7778"},
     {"bytes": 155, "out": "data_to_word_config_probe.out", "rows": 6, "sha256": "82d64ad100c26e3af2edab3eab7d2766baa06d1a40c000b8a5d418e58d8a86bd"},
     {"bytes": 383, "out": "data_to_word_gc_fun_const_ok_probe.out", "rows": 3, "sha256": "b409edb231ded937ce5e7226be881f54ee06cb276556d30d3ea99f5ebb7fbe9c"},
