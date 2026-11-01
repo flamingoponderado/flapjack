@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.StubCode
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberAndAnnotate
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainEvaluation
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberedPrepared
 
 /-! Observable behavior of source programs and their installed entry chains. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -336,5 +337,133 @@ theorem compilePrepared_numbered_source_semantics {C F : Type} (ffi : HolFfiStat
     (by simpa using varsAnnotated) (by simpa [annotated, sourceOracle, sourceCompiler] using oracleInv)
   rw [emptyCode] at result
   exact result.trans annotatedEq
+
+/-- The numbered and annotated future oracle has annotated source bodies;
+numbering supplies the locations and annotation supplies the variable sets. -/
+theorem numberedOracle_locations {C : Type} (oracle : ClosSem.CompileOracle (Nat × C))
+    (emptyAux : ∀ index, (oracle index).2.2 = []) :
+    ∀ index,
+      let entry := (BackendProps.stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle index).2
+      ClosProps.everyFnLocationSome entry.1 ∧
+        ∀ item ∈ entry.2, ClosProps.everyFnLocationSome [item.2.2] := by
+  intro index
+  constructor
+  · simpa [BackendProps.stateCo, ClosNumber.ignoreTable] using
+      ClosNumber.compileInc_locations (oracle index).1.1 (oracle index).2.1
+  · simp [BackendProps.stateCo, ClosNumber.ignoreTable, emptyAux index]
+
+/-- Ordered intervals and distinct future labels establish the compiler-oracle
+invariant for the composed numbering, annotation and BVL passes. -/
+theorem numbered_compileOracleInv_of_boundaries {C : Type} (maxApp : Nat)
+    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (oracle : ClosSem.CompileOracle (Nat × C)) (targetCode : Spt (Nat × Bvl.Exp))
+    (targetCompiler : BvlSem.Compiler C) (boundary : Nat → Nat)
+    (emptyAux : ∀ index, (oracle index).2.2 = [])
+    (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
+    (initialBelow : ∀ location, sptMem location targetCode → location < boundary 0)
+    (distinct : ∀ index, ((compileInc maxApp (ClosAnnotate.compileInc
+      ((BackendProps.stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle index).2))).map Prod.fst).Nodup)
+    (ranges : ∀ index location, location ∈ (compileInc maxApp (ClosAnnotate.compileInc
+      ((BackendProps.stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle index).2))).map Prod.fst →
+      boundary index ≤ location ∧ location < boundary (index + 1)) :
+    compileOracleInv maxApp sourceCode (BackendProps.pureCc (compileInc maxApp) targetCompiler)
+      (BackendProps.pureCo ClosAnnotate.compileInc ∘ BackendProps.stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+      targetCode targetCompiler
+      (BackendProps.pureCo (compileInc maxApp) ∘ BackendProps.pureCo ClosAnnotate.compileInc ∘
+        BackendProps.stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) := by
+  exact compileOracleInv_of_annotated_boundaries maxApp sourceCode
+    (BackendProps.stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) targetCode targetCompiler boundary
+    monotone initialBelow distinct ranges (numberedOracle_locations oracle emptyAux)
+
+/-- Behavior preservation with the compiler-oracle invariant derived from
+future label intervals. The source-chain ordering and target intervals remain
+explicit until they are derived from the compilation configuration. -/
+theorem compilePrepared_numbered_source_semantics_of_boundaries {C F : Type} (ffi : HolFfiState F)
+    (original current output : Config) (number : Nat) (program : List ClosLang.Exp)
+    (compiled : List (Nat × Nat × Bvl.Exp)) (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (oracle : ClosSem.CompileOracle (Nat × C)) (targetCompiler : BvlSem.Compiler C) (boundary : Nat → Nat)
+    (nonempty : program ≠ [])
+    (notFail : ClosSem.semantics ffi current.maxApp HolFiniteMapExact.empty oracle
+      (BackendProps.stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+        (BackendProps.pureCc ClosAnnotate.compileInc (BackendProps.pureCc (compileInc current.maxApp) targetCompiler))) program ≠ .fail)
+    (numberSafe : ¬ ClosProps.containsAppSome current.maxApp program)
+    (varsSafe : ClosProps.everyFnVarsNone program)
+    (oracleSafe : ∀ index, (oracle index).2.2 = [] ∧
+      ¬ ClosProps.containsAppSome current.maxApp (oracle index).2.1 ∧ ClosProps.everyFnVarsNone (oracle index).2.1)
+    (compile : let annotated := (extractName (ClosAnnotate.compileInc ((ClosNumber.compileInc number program).2, [])).1).2
+      compilePrepared? original current program (chainExps current.start annotated) = some (output, compiled, names))
+    (ordered : let annotated := (extractName (ClosAnnotate.compileInc ((ClosNumber.compileInc number program).2, [])).1).2
+      BackendProps.oracleMonotonic oracleCodeNames (· < ·)
+        ({ key | current.start ≤ key ∧ key < current.start + annotated.length } ∪ codeDomain HolFiniteMapExact.empty)
+        (BackendProps.pureCo ClosAnnotate.compileInc ∘ BackendProps.stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle))
+    (distinct : (compiled.map Prod.fst).Nodup)
+    (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
+    (initialBelow : ∀ location ∈ compiled.map Prod.fst, location < boundary 0)
+    (ranges : ∀ index location, location ∈ (compileInc current.maxApp (ClosAnnotate.compileInc
+      ((BackendProps.stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle index).2))).map Prod.fst →
+      boundary index ≤ location ∧ location < boundary (index + 1)) :
+    BvlSem.semantics ffi (sptFromAList compiled)
+      (BackendProps.pureCo (compileInc current.maxApp) ∘ BackendProps.pureCo ClosAnnotate.compileInc ∘
+        BackendProps.stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) targetCompiler output.start =
+      ClosSem.semantics ffi current.maxApp HolFiniteMapExact.empty oracle
+        (BackendProps.stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+          (BackendProps.pureCc ClosAnnotate.compileInc (BackendProps.pureCc (compileInc current.maxApp) targetCompiler))) program := by
+  apply compilePrepared_numbered_source_semantics ffi original current output number program compiled names oracle
+    targetCompiler _ nonempty notFail numberSafe varsSafe oracleSafe compile ordered distinct
+  dsimp only
+  apply numbered_compileOracleInv_of_boundaries current.maxApp _ oracle _ targetCompiler boundary
+    (fun index => (oracleSafe index).1) monotone
+  · intro location member
+    exact initialBelow location (emitted_tree_location_mem compiled location member)
+  · intro index
+    have distinctFuture := numberedAnnotatedOracle_labels_nodup_emptyAux current.maxApp oracle
+      (fun i => (oracleSafe i).1) index
+    simpa [BackendProps.pureCo, Function.comp_def] using distinctFuture
+  · exact ranges
+
+/-- Consistent numbering-oracle states supply the future intervals and
+source-chain ordering when the original oracle carries no auxiliary code. -/
+theorem compilePrepared_numbered_source_semantics_of_stateOracle {C F : Type} (ffi : HolFfiState F)
+    (original current output : Config) (number : Nat) (program : List ClosLang.Exp)
+    (compiled : List (Nat × Nat × Bvl.Exp)) (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (oracle : ClosSem.CompileOracle (Nat × C)) (targetCompiler : BvlSem.Compiler C)
+    (nonempty : program ≠ [])
+    (notFail : ClosSem.semantics ffi current.maxApp HolFiniteMapExact.empty oracle
+      (BackendProps.stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+        (BackendProps.pureCc ClosAnnotate.compileInc (BackendProps.pureCc (compileInc current.maxApp) targetCompiler))) program ≠ .fail)
+    (numberSafe : ¬ ClosProps.containsAppSome current.maxApp program)
+    (varsSafe : ClosProps.everyFnVarsNone program)
+    (oracleSafe : ∀ index, (oracle index).2.2 = [] ∧
+      ¬ ClosProps.containsAppSome current.maxApp (oracle index).2.1 ∧ ClosProps.everyFnVarsNone (oracle index).2.1)
+    (compile : let annotated := (extractName (ClosAnnotate.compileInc ((ClosNumber.compileInc number program).2, [])).1).2
+      compilePrepared? original current program (chainExps current.start annotated) = some (output, compiled, names))
+    (distinct : (compiled.map Prod.fst).Nodup)
+    (oracleState : BackendProps.isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (initialBelow : ∀ location ∈ compiled.map Prod.fst, location < (oracle 0).1.1 + numStubs current.maxApp) :
+    BvlSem.semantics ffi (sptFromAList compiled)
+      (BackendProps.pureCo (compileInc current.maxApp) ∘ BackendProps.pureCo ClosAnnotate.compileInc ∘
+        BackendProps.stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) targetCompiler output.start =
+      ClosSem.semantics ffi current.maxApp HolFiniteMapExact.empty oracle
+        (BackendProps.stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+          (BackendProps.pureCc ClosAnnotate.compileInc (BackendProps.pureCc (compileInc current.maxApp) targetCompiler))) program := by
+  apply compilePrepared_numbered_source_semantics_of_boundaries ffi original current output number program compiled names
+    oracle targetCompiler (fun i => (oracle i).1.1 + numStubs current.maxApp)
+    nonempty notFail numberSafe varsSafe oracleSafe compile ?_ distinct ?_ initialBelow
+  · intro index location member
+    have bound := numberedAnnotatedOracle_labels_range current.maxApp oracle oracleState
+      (by intro i entry member; simp [(oracleSafe i).1] at member) index location
+      (by simpa [BackendProps.pureCo, Function.comp_def] using member)
+    exact bound
+  · dsimp only
+    constructor <;> intro i
+    · intro j x y _ member _
+      simp [oracleCodeNames, BackendProps.pureCo, BackendProps.stateCo,
+        ClosNumber.ignoreTable, ClosAnnotate.compileInc, ClosAnnotate.compile, (oracleSafe i).1] at member
+    · intro x y _ member
+      simp [oracleCodeNames, BackendProps.pureCo, BackendProps.stateCo,
+        ClosNumber.ignoreTable, ClosAnnotate.compileInc, ClosAnnotate.compile, (oracleSafe i).1] at member
+  · intro i j order
+    have h := numberingOracle_state_monotone oracle oracleState order
+    omega
 
 end Flapjack.Compiler.Backend.ClosToBvl
