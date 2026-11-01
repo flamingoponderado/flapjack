@@ -1997,4 +1997,93 @@ theorem decode_movzxRM_z8 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
       omega
     rw [hsrc]
 
+/-- The RIP-relative ModRM byte for register `k`: `5 | (k <<< 3) = 5 + 8k`. -/
+theorem modrm_rip_byte (k : Nat) (hk : k < 8) :
+    5#8 ||| BitVec.ofNat 8 (k <<< 3) = BitVec.ofNat 8 (5 + 8 * k) := by
+  interval_cases k <;> decide
+
+/-- The encoded byte list of `lea .z64 dst disp` (RIP-relative). -/
+abbrev leaBytes (dst : Nat) (disp : BitVec 64) : List (BitVec 8) :=
+  [byte (72 + (if 8 ≤ dst then 4 else 0)), byte 0x8D,
+   byte (5 + 8 * (dst % 8)),
+   byte disp.toNat, byte (disp.toNat / 256), byte (disp.toNat / 65536),
+   byte (disp.toNat / 16777216)]
+
+theorem encodeInsn_lea (dst : Nat) (hd : dst < 16) (disp : BitVec 64)
+    (hlo : -(2^31 : Int) ≤ disp.toInt) (hhi : disp.toInt < 2^31) :
+    encodeInsn (.lea .z64 dst disp) = leaBytes dst disp := by
+  simp only [encodeInsn, eGenRmReg, eModRM, eImm32, eOpsize, rexPrefix, mkRex]
+  rw [if_pos ⟨hlo, by omega⟩]
+  by_cases hd8 : 8 ≤ dst
+  · have hd8' : dst / 8 = 1 := by omega
+    simp [leaBytes, hd8, hd8', byte, Nat.mod_eq_of_lt (by omega)]
+    exact modrm_rip_byte (dst % 8) (Nat.mod_lt dst (by norm_num))
+  · have hd8' : dst / 8 = 0 := by omega
+    simp [leaBytes, hd8, hd8', byte, Nat.mod_eq_of_lt (by omega)]
+    exact modrm_rip_byte (dst % 8) (Nat.mod_lt dst (by norm_num))
+
+set_option maxHeartbeats 1000000 in
+theorem decode_lea (dst : Nat) (hd : dst < 16) (disp : BitVec 64)
+    (hlo : -(2^31 : Int) ≤ disp.toInt) (hhi : disp.toInt < 2^31) :
+    decode (byteListReader (encodeInsn (.lea .z64 dst disp))) =
+      some (.lea .z64 dst disp, 7) := by
+  rw [encodeInsn_lea dst hd disp hlo hhi]
+  have hr : ∀ j, j < 4 → byteListReader (leaBytes dst disp) (3 + j) =
+      byte (disp.toNat / 2^(8*j)) := by
+    intro j hj
+    interval_cases j <;> simp [leaBytes, byteListReader, byte]
+  by_cases hd8 : 8 ≤ dst
+  · have hb0 : (byteListReader (leaBytes dst disp) 0).toNat = 76 := by
+      simp [leaBytes, byteListReader, byte, hd8]
+    have hb1 : (byteListReader (leaBytes dst disp) 1).toNat = 0x8D := by
+      simp [leaBytes, byteListReader, byte, hd8]
+    have hm : (byteListReader (leaBytes dst disp) 2).toNat = 8 * (dst % 8) + 5 := by
+      simp [leaBytes, byteListReader, byte, hd8]
+      rw [Nat.mod_eq_of_lt (by omega)]
+      omega
+    have hpm := parseRM_rip (byteListReader (leaBytes dst disp)) 2 (dst % 8) hm
+      (Nat.mod_lt dst (by norm_num))
+    have himm := imm32_eImm32_at disp 3 (byteListReader (leaBytes dst disp)) hr hlo hhi
+    rw [himm] at hpm
+    simp only [decode, decodeNoRex]
+    rw [hb0]
+    simp only [Nat.reduceMod, Nat.reduceLeDiff]
+    simp only [decide_true, Bool.true_and, if_true]
+    rw [show decide (4 ≥ 4) = true from by decide,
+        show decide (0 = 1) = false from by decide]
+    simp only [decodeRex, hb1]
+    simp only [leaBytes, if_true]
+    rw [hpm]
+    simp only [Option.some.injEq, Prod.mk.injEq, X64Insn.lea.injEq, true_and, and_true]
+    have hsrc : 8 + dst % 8 = dst := by
+      rw [Nat.mod_eq_sub_mod hd8, Nat.mod_eq_of_lt (by omega)]
+      omega
+    exact hsrc
+  · have hb0 : (byteListReader (leaBytes dst disp) 0).toNat = 72 := by
+      simp [leaBytes, byteListReader, byte, hd8]
+    have hb1 : (byteListReader (leaBytes dst disp) 1).toNat = 0x8D := by
+      simp [leaBytes, byteListReader, byte, hd8]
+    have hm : (byteListReader (leaBytes dst disp) 2).toNat = 8 * (dst % 8) + 5 := by
+      simp [leaBytes, byteListReader, byte, hd8]
+      rw [Nat.mod_eq_of_lt (by omega)]
+      omega
+    have hpm := parseRM_rip (byteListReader (leaBytes dst disp)) 2 (dst % 8) hm
+      (Nat.mod_lt dst (by norm_num))
+    have himm := imm32_eImm32_at disp 3 (byteListReader (leaBytes dst disp)) hr hlo hhi
+    rw [himm] at hpm
+    simp only [decode, decodeNoRex]
+    rw [hb0]
+    simp only [Nat.reduceMod, Nat.reduceLeDiff]
+    simp only [decide_true, Bool.true_and, if_true]
+    rw [show decide (0 ≥ 4) = false from by decide,
+        show decide (0 = 1) = false from by decide]
+    simp only [decodeRex, hb1]
+    simp only [leaBytes]
+    rw [hpm]
+    simp only [Option.some.injEq, Prod.mk.injEq, X64Insn.lea.injEq, true_and, and_true]
+    have hsrc : 0 + dst % 8 = dst := by
+      rw [Nat.mod_eq_of_lt (by omega)]
+      omega
+    exact hsrc
+
 end Flapjack.Compiler.Encoders.X64
