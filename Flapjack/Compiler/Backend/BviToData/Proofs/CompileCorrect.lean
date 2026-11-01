@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.BviToData.Proofs.CompileSource
 import Flapjack.Compiler.Backend.BviToData.Proofs.Variables
 import Flapjack.Compiler.Backend.BviToData.Proofs.Result
+import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBool
 import Flapjack.Compiler.Backend.Semantics.DataSem.Control
 import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateLength
 
@@ -80,6 +81,29 @@ private theorem varCorr_append_right {α : Type} (values1 values2 : List α) (na
       simp only [List.length_cons, Nat.add_right_cancel_iff] at lengths
       cases related with
       | cons _ rest => exact ih names lengths rest
+
+private theorem varCorr_insert_absent {α : Type} {values : List α} {names : List Nat}
+    {env : Spt α} (related : DataProps.varCorr values names env)
+    (dest : Nat) (value : α) (absent : sptLookup dest env = none) :
+    DataProps.varCorr values names (sptInsert dest value env) := by
+  induction related with
+  | nil => constructor
+  | @cons name first names values lookup rest ih =>
+    have different : name ≠ dest := by
+      intro same
+      subst name
+      simp [DataSem.getVar, absent] at lookup
+    constructor
+    · simpa [DataSem.getVar, sptLookup_sptInsert_ne dest name value env different] using lookup
+    · exact ih
+
+private theorem jumpExc_setVar_ne_none {C F : Type} (state : DataSem.State C F)
+    (name : Nat) (value : DataSem.Value) :
+    DataSem.jumpExc (DataSem.setVar name value state) ≠ none ↔ DataSem.jumpExc state ≠ none := by
+  simp only [DataSem.jumpExc, DataSem.setVar]
+  by_cases h : state.handler < state.stack.length
+  · simp only [h, if_true]
+  · simp [h]
 
 /-- A continuing compilation preserves each live local and supplies every
 result local for the next compilation. This is simulation infrastructure for
@@ -194,6 +218,33 @@ theorem correctOutcome_let {C F : Type} (values : List BvlSem.Value) (res : BviS
     apply preserve2 key value firstKeep
     intro missing
     exact List.mem_append_right boundNames (needed missing)
+
+/-- Compose a continuing preliminary evaluation with a second simulation
+that retains the same environment and live-variable set. -/
+theorem correctOutcome_seq {C F : Type} (values : List BvlSem.Value) (res : BviSem.BviResult)
+    (t1 tmid t2 : DataSem.State C F) (n nmid next : Nat) (corr live firstNames names : List Nat)
+    (env : List BvlSem.Value) (tail : Bool)
+    (pres : Option (Result (List DataSem.Value) DataSem.Value)) (ls1 ls2 : Option Nat)
+    (first : correctOutcome (.val values) t1 tmid n nmid corr live firstNames env false none ls1)
+    (second : correctOutcome res tmid t2 nmid next corr live names env tail pres ls2) :
+    correctOutcome res t1 t2 n next corr live names env tail pres ls2 := by
+  rcases first with ⟨_, nBound, _, _, _, _, preserve1, stack1, handler1, jump1, _⟩
+  cases pres with
+  | some result =>
+    rcases second with ⟨projection, returned, preserved, tailResult, exception⟩
+    refine ⟨projection, returned, ?_, tailResult, ?_⟩
+    · intro resultOrReturn
+      obtain ⟨stack2, handler2⟩ := preserved resultOrReturn
+      exact ⟨stack1.trans stack2, handler1.trans handler2⟩
+    · intro raised
+      simpa only [stack1, handler1] using exception raised
+  | none =>
+    rcases second with ⟨notTail, nextBound, namesBound, fresh, envVars, localBound, preserve2,
+      stack2, handler2, jump2, resultVars⟩
+    refine ⟨notTail, Nat.le_trans nBound nextBound, namesBound, fresh, envVars, localBound, ?_,
+      stack1.trans stack2, handler1.trans handler2, fun h => jump2 (jump1 h), resultVars⟩
+    intro key value lookup needed
+    exact preserve2 key value (preserve1 key value lookup needed) needed
 
 /-- Sequential data evaluation needs no clock adjustment when the first
 result's clock is bounded by the initial clock. -/
@@ -784,5 +835,130 @@ theorem simulationFor_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp
       · simp [compileSource, compiled, compiledBody]
       · exact evaluateSeq_continue first second t1 tmid _ target targetBound targetBody
       · exact correctOutcome_let values res t1 tmid t2 n nmid next corr live boundNames names env tail pres ls1 ls2 firstOutcome bodyOutcome
+
+/-- Copy a successful non-tail branch result to a fresh destination. The
+full continuing invariant is retained at the incremented destination bound. -/
+theorem correctOutcome_move {C F : Type} (value : BvlSem.Value)
+    (source : BviSem.BviState C F) (t1 t2 : DataSem.State C F)
+    (n next dest name : Nat) (corr live : List Nat) (env : List BvlSem.Value) (ls : Option Nat)
+    (related : stateRel source t2)
+    (outcome : correctOutcome (.val [value]) t1 t2 n next corr live [name] env false none ls)
+    (destBound : next ≤ dest) :
+    ∃ dataValue,
+      DataSem.evaluate (.move dest name) t2 = (none, DataSem.setVar dest dataValue t2) ∧
+      stateRel source (DataSem.setVar dest dataValue t2) ∧
+      correctOutcome (.val [value]) t1 (DataSem.setVar dest dataValue t2)
+        n (dest + 1) corr live [dest] env false none ls := by
+  rcases outcome with ⟨_, nBound, _, fresh, envVars, localBound, preserve, stack, handler, jump, resultVars⟩
+  have projectedLookup : sptLookup name (sptMap dataToBviValue t2.locals) = some value := by
+    cases resultVars with
+    | cons lookup _ => exact lookup
+  rw [sptLookup_sptMap] at projectedLookup
+  cases read : sptLookup name t2.locals with
+  | none => simp [read] at projectedLookup
+  | some dataValue =>
+    have projection : dataToBviValue dataValue = value := by simpa [read] using projectedLookup
+    have absent : sptLookup dest t2.locals = none := fresh dest destBound
+    have mappedAbsent : sptLookup dest (sptMap dataToBviValue t2.locals) = none := by
+      simp [sptLookup_sptMap, absent]
+    have envNew := varCorr_insert_absent envVars dest (dataToBviValue dataValue) mappedAbsent
+    refine ⟨dataValue, ?_, ?_, ?_⟩
+    · simp [DataSem.evaluate, DataSem.getVar, read]
+    · simpa [stateRel, DataSem.setVar] using related
+    · simp only [correctOutcome, DataSem.setVar, true_and, List.mem_singleton, forall_eq]
+      refine ⟨by omega, by omega, ?_, ?_, ?_, ?_, stack, handler, ?_, ?_⟩
+      · intro k bound
+        have different : k ≠ dest := by omega
+        rw [sptLookup_sptInsert_ne dest k dataValue t2.locals different]
+        exact fresh k (by omega)
+      · simpa [sptMap_sptInsert, projection] using envNew
+      · intro k x lookup
+        by_cases same : k = dest
+        · omega
+        · rw [sptLookup_sptInsert_ne dest k dataValue t2.locals same] at lookup
+          have oldBound := localBound k x lookup
+          omega
+      · intro k x lookup needed
+        have old := preserve k x lookup needed
+        have different : k ≠ dest := by
+          intro same
+          subst k
+          rw [absent] at old
+          contradiction
+        rw [sptLookup_sptInsert_ne dest k dataValue t2.locals different]
+        exact old
+      · intro hasJump
+        have := jump hasJump
+        simpa only [DataSem.setVar] using (jumpExc_setVar_ne_none t2 dest dataValue).2 this
+      · constructor
+        · simp [DataSem.getVar, sptLookup_sptMap, sptLookup_sptInsert_same, projection]
+        · constructor
+
+/-- A selected non-tail conditional branch either stops unchanged or copies
+its single result into the fresh merge local. Its result and state satisfy the
+same simulation invariant at the merge point. -/
+theorem simulation_branch_move {C F : Type} (branch : Bvi.Exp) (env : List BvlSem.Value)
+    (source nextSource : BviSem.BviState C F) (t1 t2 : DataSem.State C F)
+    (res : BviSem.BviResult) (n next dest name : Nat) (corr live : List Nat)
+    (prog : DataLang.Prog) (pres : Option (Result (List DataSem.Value) DataSem.Value)) (ls : Option Nat)
+    (sourceRun : BviSem.evaluate [branch] env source = (res, nextSource))
+    (targetRun : DataSem.evaluate prog t1 = (pres, t2))
+    (initialRel : stateRel source t1) (finalRel : stateRel nextSource t2)
+    (outcome : correctOutcome res t1 t2 n next corr live [name] env false pres ls)
+    (destBound : next ≤ dest) :
+    ∃ t3 presFinal,
+      DataSem.evaluate (.seq prog (.move dest name)) t1 = (presFinal, t3) ∧
+      stateRel nextSource t3 ∧
+      correctOutcome res t1 t3 n (dest + 1) corr live [dest] env false presFinal ls := by
+  have sourceBound := BviSem.evaluate_clock_le [branch] env source
+  rw [sourceRun] at sourceBound
+  have targetBound : t2.clock ≤ t1.clock := by
+    simpa [← initialRel.1, ← finalRel.1] using sourceBound
+  cases pres with
+  | some result =>
+    refine ⟨t2, some result, evaluateSeq_stop prog (.move dest name) t1 t2 result targetRun targetBound, finalRel, ?_⟩
+    exact outcome
+  | none =>
+    cases res with
+    | err error => simp [correctOutcome] at outcome
+    | val values =>
+      obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton branch env source nextSource values sourceRun
+      obtain ⟨dataValue, moveRun, movedRel, movedOutcome⟩ :=
+        correctOutcome_move value nextSource t1 t2 n next dest name corr live env ls finalRel outcome destBound
+      refine ⟨DataSem.setVar dest dataValue t2, none, ?_, movedRel, movedOutcome⟩
+      exact evaluateSeq_continue prog (.move dest name) t1 t2 _ targetRun targetBound moveRun
+
+private theorem destBool_tests (value : DataSem.Value) (result : Bool)
+    (decoded : DataSem.destBool value = some result) :
+    DataSem.isBool true value = result ∧ DataSem.isBool false value = !result := by
+  cases value with
+  | number n => simp [DataSem.destBool] at decoded
+  | word64 w => simp [DataSem.destBool] at decoded
+  | codePtr p => simp [DataSem.destBool] at decoded
+  | refPtr bit ptr => simp [DataSem.destBool] at decoded
+  | block ts tag fields =>
+    cases fields with
+    | cons field rest => simp [DataSem.destBool] at decoded
+    | nil =>
+      cases tag with
+      | zero => simp [DataSem.destBool] at decoded; subst result; simp [DataSem.isBool, BackendCommon.boolToTag, BackendCommon.falseTag, BackendCommon.trueTag]
+      | succ tag =>
+        cases tag with
+        | zero => simp [DataSem.destBool] at decoded; subst result; simp [DataSem.isBool, BackendCommon.boolToTag, BackendCommon.falseTag, BackendCommon.trueTag]
+        | succ tag => simp [DataSem.destBool] at decoded
+
+/-- A target conditional selects the branch indicated by decoding the
+corresponding BVI value. Timestamps do not affect the choice. -/
+theorem evaluateIf_projection {C F : Type} (state : DataSem.State C F) (name : Nat)
+    (value : DataSem.Value) (condition : Bool) (yes no : DataLang.Prog)
+    (read : DataSem.getVar name state.locals = some value)
+    (decoded : BvlSem.asBool (dataToBviValue value) = some condition) :
+    DataSem.evaluate (.ifThenElse name yes no) state =
+      DataSem.evaluate (if condition then yes else no) state := by
+  have dataDecoded : DataSem.destBool value = some condition := by
+    rw [← destBool_projection]
+    exact decoded
+  obtain ⟨yesTest, noTest⟩ := destBool_tests value condition dataDecoded
+  cases condition <;> simp [DataSem.evaluate, read, yesTest, noTest]
 
 end Flapjack.Compiler.Backend.BviToData
