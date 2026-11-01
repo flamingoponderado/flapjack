@@ -923,6 +923,7 @@ import Flapjack.Compiler.Backend.Semantics.DataSem.State
 import Flapjack.Compiler.Backend.Semantics.DataSem.Control
 import Flapjack.Compiler.Backend.Semantics.DataSem.Build
 import Flapjack.Compiler.Backend.Semantics.DataSem.Int
+import Flapjack.Compiler.Backend.Semantics.DataSem.Finalise
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
 import Flapjack.Compiler.Backend.BviToData.Compile
@@ -931,6 +932,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Value
 import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk
 import Flapjack.Compiler.Backend.BviToData.Proofs.Build
 import Flapjack.Compiler.Backend.BviToData.Proofs.Int
+import Flapjack.Compiler.Backend.BviToData.Proofs.Finalise
 import Flapjack.Compiler.Backend.DataSimp
 import Flapjack.Compiler.Backend.DataLive
 import Flapjack.Compiler.Backend.BviToData.Optimise
