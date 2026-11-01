@@ -587,7 +587,8 @@ configuration-error precedence. Case counts can be changed with
 `--compile-config-cases` (generated basis programs with varied optimization flags), `--rich-cases`, `--extended-cases`, `--integration-cases`, `--explore-cases`, `--token-cases`, `--config-cases`, and `--config-error-cases` (zero skips the
 option matrix). `--type-seed`, `--edge-seed`, and
 `--compile-seed` select reproducible random inputs. These samples do not prove
-general parity. Set `--raw-byte-cases=1536` to compare each byte in all
+general parity. A focused `--compile-config-cases 12 --compile-seed 477991`
+run also matched the pinned compiler. Set `--raw-byte-cases=1536` to compare each byte in all
 three contexts under both output modes; larger counts add random byte strings.
 Set `--annotation-cases=320` to exhaust the annotation matrix; its order is
 shuffled deterministically from `--edge-seed`, and its entries include both
