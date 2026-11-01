@@ -811,6 +811,8 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotateCorrect
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.SemanticsCorrect
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.VarsNone
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberAndAnnotate
+import Flapjack.Compiler.Backend.Semantics.ClosSem.InstallGrowth
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceChain
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
