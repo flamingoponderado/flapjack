@@ -93,6 +93,13 @@ private theorem hasVar_altFreeFuns (index count : Nat) (functions : List (Nat ×
     simp [altFreeFuns, listMkUnion, hasVar_mkUnion, hasVar, altFv, altFree, altFreeList,
       mkUnion_empty_right, ih, Nat.add_assoc]
 
+/-- The live set computed for a recursive function group contains exactly
+the variables used by one of its bodies beyond its binders. -/
+theorem hasVar_recursiveLive (index count : Nat) (functions : List (Nat × Exp)) :
+    hasVar index (listMkUnion ((altFreeFuns count functions).map Prod.snd)) =
+      functions.any (fun (arity, body) => altFv (index + arity + count) [body]) :=
+  hasVar_altFreeFuns index count functions
+
 /-- Recursive function bodies shift past both their arguments and the whole
 function bundle; the enclosing body shifts past that bundle. -/
 theorem altFv_letrec (index : Nat) (names : List Flapjack.Basis.Pure.MlString.MlString)

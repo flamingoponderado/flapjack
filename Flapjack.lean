@@ -779,6 +779,7 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Control
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.PureBindings
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Let
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Function
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.RecursiveFunctions
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis

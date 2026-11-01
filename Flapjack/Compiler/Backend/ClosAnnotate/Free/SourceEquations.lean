@@ -108,7 +108,7 @@ theorem altFree_handle (trace : BackendCommon.Tra) (body handler : Exp) :
         mkUnion (altFree [body]).2 (.shift 1 (altFree [handler]).2)) := by
   simp [altFree_singleton, altFreeSing, Flapjack.holHd]
 
-private theorem altFreeFuns_as_map (count : Nat) (functions : List (Nat × Exp)) :
+theorem altFreeFuns_as_map (count : Nat) (functions : List (Nat × Exp)) :
     altFreeFuns count functions = functions.map (fun (arity, body) =>
       ((arity, @Flapjack.holHd Exp ⟨.var .none 0⟩ (altFree [body]).1),
         DbVarSet.shift (arity + count) (altFree [body]).2)) := by
