@@ -267,8 +267,221 @@ theorem execInsn_binopRR (bop : BinOp) (dst src : Nat) (len : Nat) (s : X64State
         flags := binopFlags (x64Bop bop) (readReg s dst) (readReg s src) s.flags } := by
   cases bop <;> rfl
 
-/-- One `x64Next` step over a register-register arithmetic instruction writes
-the operation's value and sets the flags. -/
+/-- `targetStateRel`'s register hypothesis from `asm_ok`'s register check. -/
+theorem regOk_of_asmRegOk (r : Nat) (h : asmRegOkExact r x64Config = true) :
+    r < x64Target.config.regCount ∧ x64Target.config.avoidRegs.contains r = false := by
+  refine ⟨?_, ?_⟩
+  · simpa [x64Target_config, x64Config] using jumpReg_reg_lt r h
+  · simpa [x64Target_config, x64Config] using jumpReg_reg_avoid r h
+
+/-- Negation of a 64-bit word is its `xor` with all ones. -/
+theorem neg_one_eq_allOnes : (-1 : BitVec 64) = BitVec.allOnes 64 := by decide
+
+/-- `xor` with all ones complements the register. -/
+theorem xor_allOnes_eq (a : BitVec 64) :
+    a ^^^ (18446744073709551615#64) = ~~~a := by
+  rw [show (18446744073709551615#64 : BitVec 64) = BitVec.allOnes 64 from by decide,
+    BitVec.xor_allOnes]
+
+/-- The immediate `binop` constructor of `encoder_correct x64Target`: one
+`x64Next` step writes the operation's value to the destination register. -/
+theorem case_binopRI (bop : BinOp) (r1 r2 : Nat) (i : BitVec 64) (s1 s2 : AsmState 64)
+    (ms : X64State)
+    (h : asmStep x64Config s1 (.inst (.arith (.binop bop r1 r2 (.imm i)))) s2 ∧
+      targetStateRel x64Target s1 ms) :
+    CaseGoal (.inst (.arith (.binop bop r1 r2 (.imm i)))) s1 s2 ms := by
+  have st := x64Start _ s1 s2 ms h
+  have hok : asmOkExact (.inst (.arith (.binop bop r1 r2 (.imm i)))) x64Config = true := by
+    simpa [x64Target_config] using st.asmOk
+  obtain ⟨hr12, hr1ok, -, himm⟩ := binopRI_ok bop r1 r2 i hok
+  have hr1 : r1 < 16 := jumpReg_reg_lt r1 hr1ok
+  have hreg1 := regOk_of_asmRegOk r1 hr1ok
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64
+      (encodeInsn (x64BinopRIImmInsn bop r1 i)).length := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc]
+    rw [x64Enc_binopRI bop r1 r2 i hok]
+  have hs2regs : ∀ x, s2.regs x =
+      if x = r1 then binopVal bop (s1.regs r1) i else s1.regs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, arithUpd, binopUpd_value, regImm, AsmSem.readReg,
+      updReg, hr12]
+  have hs2mem : ∀ a, s2.mem a = s1.mem a := by
+    rw [← st.upd]; intro a
+    simp only [asmUpd, instUpd, updPc, arithUpd, binopUpd_value, updReg]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← st.upd]
+    simp only [asmUpd, instUpd, updPc, arithUpd, binopUpd_value, updReg]
+  have hs2fp : ∀ x, s2.fpRegs x = s1.fpRegs x := by
+    rw [← st.upd]; intro x
+    simp only [asmUpd, instUpd, updPc, arithUpd, binopUpd_value, updReg]
+  have hdom : s2.memDomain = s1.memDomain := hs2dom
+  have hbm : bytesInMemoryHOL ms.pc (encodeInsn (x64BinopRIImmInsn bop r1 i)) ms.mem
+      s1.memDomain := by
+    rw [st.pc]
+    have h' := st.bytesTarget
+    rw [x64Enc_binopRI bop r1 r2 i hok] at h'
+    exact h'
+  have hcode : allPcs (x64Target.config.encode
+      (.inst (.arith (.binop bop r1 r2 (.imm i))))).length s1.pc 0 ⊆ s1.memDomain :=
+    bytesInMemory_allPcs _ s1.pc s1.mem s1.memDomain 0 st.bytes
+  have finish (hq : targetStateRel x64Target s2 (x64Next^[0 + 1] ms))
+      (hsafe : StepSafe s1.memDomain ms) :
+      CaseGoal (.inst (.arith (.binop bop r1 r2 (.imm i)))) s1 s2 ms := by
+    exact encoderCaseStep _ s1 s2 ms 0 hdom hcode
+      (by
+        intro k hk
+        have hk0 : k = 0 := by omega
+        subst hk0
+        simpa using hsafe)
+      (by intro k hk1 hk2; omega) hq
+  by_cases hc : bop = .xor && i = -1
+  · -- `not r1`
+    have hc_raw : (decide (bop = .xor) && decide (i = -1)) = true := hc
+    simp only [Bool.and_eq_true, decide_eq_true_eq] at hc
+    have hbx : bop = .xor := hc.1
+    have hi1 : i = -1 := hc.2
+    have hinsn : x64BinopRIImmInsn bop r1 i = .monop .znot .z64 r1 := by
+      rw [x64BinopRIImmInsn, if_pos hc_raw]
+    have hs2pc' : s2.pc = s1.pc + BitVec.ofNat 64
+        (encodeInsn (.monop .znot .z64 r1)).length := by
+      rw [hs2pc, hinsn]
+    have hbmM : bytesInMemoryHOL ms.pc (encodeInsn (.monop .znot .z64 r1))
+        ms.mem s1.memDomain := by
+      rw [← hinsn]; exact hbm
+    have hval : binopVal bop (s1.regs r1) i = ~~~(s1.regs r1) := by
+      rw [hbx, hi1]
+      simp [binopVal, xor_allOnes_eq]
+    have hnext := x64Next_monop_not ms s1.memDomain r1 hr1 hbmM st.failed
+    have hq : targetStateRel x64Target s2 (x64Next^[0 + 1] ms) := by
+      show targetStateRel x64Target s2 (x64Next ms)
+      rw [hnext]
+      refine ⟨?_, ?_, ?_, ?_, ?_⟩
+      · simp only [x64Target_stateOk, x64StateOk, writeReg, st.failed, Bool.not_false]
+      · show ms.pc + BitVec.ofNat 64 (encodeInsn (.monop .znot .z64 r1)).length = s2.pc
+        rw [st.pc, hs2pc']
+      · intro a ha
+        show ms.mem a = s2.mem a
+        rw [hs2mem a]
+        rw [hs2dom] at ha
+        exact st.mem a ha
+      · intro x hx
+        show readReg (writeReg ms r1 (~~~(readReg ms r1))) x = s2.regs x
+        rw [readReg_writeReg ms r1 _ x hr1 hx.1, hs2regs x]
+        by_cases hxr : x = r1
+        · rw [if_pos hxr, if_pos hxr, hval, st.reg r1 hreg1]
+        · rw [if_neg hxr, if_neg hxr]
+          exact st.reg x hx
+      · intro x hx
+        show readXmm ms x = s2.fpRegs x
+        rw [hs2fp x]
+        exact st.fp x hx
+    have hstepSafe : StepSafe s1.memDomain ms := by
+      have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+          some (.monop .znot .z64 r1, (encodeInsn (.monop .znot .z64 r1)).length) :=
+        decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbmM
+          (decode_monop_z64 .znot r1 hr1) (by omega)
+      have hdomN := bytesInMemoryHOL_domain _ _ _ _ hbmM
+      refine ⟨.monop .znot .z64 r1, _, hdec, ?_, ?_⟩
+      · intro j hj; exact hdomN j hj
+      · intro a ha; simp [x64Touched] at ha
+    exact finish hq hstepSafe
+  · have hbx : ¬(bop = .xor ∧ i = -1) := by
+      intro hh
+      exact hc (by simp [hh])
+    have hb : ¬(((Sum.inl bop : Sum BinOp Cmp) ==
+        (Sum.inl BinOp.xor : Sum BinOp Cmp)) = true ∧ i = -1) := by
+      intro hh
+      exact hbx ⟨(bop_xor_beq bop).mp hh.1, hh.2⟩
+    obtain ⟨hlo0, hhi0⟩ := himm.resolve_left hb
+    have hlo : -(2 ^ 31 : Int) ≤ i.toInt := by rw [x64Min32_toInt] at hlo0; exact hlo0
+    have hhi : i.toInt < 2 ^ 31 := by rw [x64Max32_toInt] at hhi0; omega
+    have hinsn : x64BinopRIImmInsn bop r1 i = .binopRI (x64Bop bop) .z64 r1 i := by
+      rw [x64BinopRIImmInsn, if_neg hc]
+    have hval : binopVal bop (s1.regs r1) i =
+        binopValue (x64Bop bop) (readReg ms r1) i := by
+      rw [binopValue_x64Bop, st.reg r1 hreg1]
+    have hs2pc' : s2.pc = s1.pc + BitVec.ofNat 64
+        (encodeInsn (.binopRI (x64Bop bop) .z64 r1 i)).length := by
+      rw [hs2pc, hinsn]
+    have hbmM : bytesInMemoryHOL ms.pc (encodeInsn (.binopRI (x64Bop bop) .z64 r1 i))
+        ms.mem s1.memDomain := by
+      rw [← hinsn]; exact hbm
+    have hdomN := bytesInMemoryHOL_domain _ _ _ _ hbmM
+    have hq_of : ∀ (len : Nat), len = (encodeInsn (.binopRI (x64Bop bop) .z64 r1 i)).length →
+        (decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+          some (.binopRI (x64Bop bop) .z64 r1 i, len)) →
+        targetStateRel x64Target s2 (x64Next^[0 + 1] ms) := by
+      intro len hlen hdec
+      have hnext := x64Next_binopRI ms bop r1 i len hdec hlen.symm st.failed
+      show targetStateRel x64Target s2 (x64Next ms)
+      rw [hnext]
+      refine ⟨?_, ?_, ?_, ?_, ?_⟩
+      · simp only [x64Target_stateOk, x64StateOk, writeReg, st.failed, Bool.not_false]
+      · show ms.pc + BitVec.ofNat 64
+            (encodeInsn (.binopRI (x64Bop bop) .z64 r1 i)).length = s2.pc
+        rw [st.pc, hs2pc']
+      · intro a ha
+        show ms.mem a = s2.mem a
+        rw [hs2mem a]
+        rw [hs2dom] at ha
+        exact st.mem a ha
+      · intro x hx
+        show readReg (writeReg ms r1
+            (binopValue (x64Bop bop) (readReg ms r1) i)) x = s2.regs x
+        rw [readReg_writeReg ms r1 _ x hr1 hx.1, hs2regs x]
+        by_cases hxr : x = r1
+        · rw [if_pos hxr, if_pos hxr, ← hval]
+        · rw [if_neg hxr, if_neg hxr]
+          exact st.reg x hx
+      · intro x hx
+        show readXmm ms x = s2.fpRegs x
+        rw [hs2fp x]
+        exact st.fp x hx
+    have hsafe_of : ∀ (len : Nat),
+        (decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+          some (.binopRI (x64Bop bop) .z64 r1 i, len)) →
+        len = (encodeInsn (.binopRI (x64Bop bop) .z64 r1 i)).length →
+        StepSafe s1.memDomain ms := by
+      intro len hdec hlen
+      refine ⟨.binopRI (x64Bop bop) .z64 r1 i, len, hdec, ?_, ?_⟩
+      · intro j hj
+        exact hdomN j (by omega)
+      · intro a ha; simp [x64Touched] at ha
+    by_cases hs : -128 ≤ i.toInt ∧ i.toInt ≤ 127
+    · -- `83` form
+      have hlen : (encodeInsn (.binopRI (x64Bop bop) .z64 r1 i)).length = 4 := by
+        rw [encodeInsn_binopRI_83 (x64Bop bop) r1 hr1 i (x64Bop_ne_test bop)
+          (x64Bop_code_div bop) hs]
+        simp [binopRI83Bytes]
+      have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+          some (.binopRI (x64Bop bop) .z64 r1 i, 4) :=
+        decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbmM
+          (decode_binopRI_83 (x64Bop bop) r1 hr1 i (x64Bop_ne_test bop)
+            (x64Bop_code_div bop) hs) (by rw [hlen])
+      exact finish (hq_of 4 hlen.symm hdec) (hsafe_of 4 hdec hlen.symm)
+    · by_cases hz : r1 = 0
+      · -- accumulator form
+        subst hz
+        have hlen : (encodeInsn (.binopRI (x64Bop bop) .z64 0 i)).length = 6 := by
+          rw [encodeInsn_binopRI_rax (x64Bop bop) i (x64Bop_hop bop) hs hlo hhi]
+          simp [binopRIRaxBytes]
+        have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+            some (.binopRI (x64Bop bop) .z64 0 i, 6) :=
+          decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbmM
+            (decode_binopRI_rax (x64Bop bop) i (x64Bop_hop bop) hs hlo hhi) (by rw [hlen])
+        exact finish (hq_of 6 hlen.symm hdec) (hsafe_of 6 hdec hlen.symm)
+      · -- `81` form
+        have hlen : (encodeInsn (.binopRI (x64Bop bop) .z64 r1 i)).length = 7 := by
+          rw [encodeInsn_binopRI_81 (x64Bop bop) r1 hr1 i (x64Bop_hop bop) hs hz hlo hhi]
+          simp [binopRI81Bytes]
+        have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+            some (.binopRI (x64Bop bop) .z64 r1 i, 7) :=
+          decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbmM
+            (decode_binopRI_81 (x64Bop bop) r1 hr1 i (x64Bop_hop bop) hs hz hlo hhi)
+            (by rw [hlen])
+        exact finish (hq_of 7 hlen.symm hdec) (hsafe_of 7 hdec hlen.symm)
+
 theorem x64Next_binopRR (ms : X64State) (d : BitVec 64 → Prop) (bop : BinOp)
     (r1 r3 : Nat) (hr1 : r1 < 16) (hr3 : r3 < 16)
     (hbm : bytesInMemoryHOL ms.pc (encodeInsn (.binopRR (x64Bop bop) .z64 r1 r3)) ms.mem d)
@@ -286,13 +499,6 @@ theorem x64Next_binopRR (ms : X64State) (d : BitVec 64 → Prop) (bop : BinOp)
   simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec]
   rw [execInsn_binopRR]
   simp only [writeRegSized, writeReg]
-
-/-- `targetStateRel`'s register hypothesis from `asm_ok`'s register check. -/
-theorem regOk_of_asmRegOk (r : Nat) (h : asmRegOkExact r x64Config = true) :
-    r < x64Target.config.regCount ∧ x64Target.config.avoidRegs.contains r = false := by
-  refine ⟨?_, ?_⟩
-  · simpa [x64Target_config, x64Config] using jumpReg_reg_lt r h
-  · simpa [x64Target_config, x64Config] using jumpReg_reg_avoid r h
 
 /-- The register-register `binop` constructor of `encoder_correct x64Target`:
 one `x64Next` step writes the operation's value to the destination register. -/
@@ -456,5 +662,6 @@ theorem case_binopRR (bop : BinOp) (r1 r2 r3 : Nat) (s1 s2 : AsmState 64) (ms : 
         rw [hs2fp x]
         exact st.fp x hx
     exact finish hq hstepSafe
+
 
 end Flapjack.Compiler.Encoders.X64
