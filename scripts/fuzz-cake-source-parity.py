@@ -50,6 +50,9 @@ SOURCE_CORPUS = [
     ('val id = fn x => x; val y = id 3;', 0),
     ("datatype 'a option = NONE | SOME 'a; val x = SOME 3;", 0),
     ('datatype tree = Leaf int | Node tree tree; val x = Node (Leaf 3) (Leaf 4);', 0),
+    ('datatype tags = A0 int | A1 int | A2 int | A3 int | A4 int | A5 int | A6 int | A7 int | '
+     'A8 int | A9 int | A10 int | A11 int | A12 int | A13 int | A14 int | A15 int | A16 int | A17 int; '
+     'val x = A17 7; val y = (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17);', 0),
     ('fun f x y = x; val x = f 3 4;', 0),
     ('structure S = struct val x = 1 end; val y = S.x;', 0),
     ('exception E; val x = (raise E) handle E => 2;', 0),

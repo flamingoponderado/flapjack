@@ -100262,7 +100262,7 @@
     "hol_name": "ptr_bits_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Both field encodings, shifts and bitwise OR match; the executed compiler still uses its inlined formula, pending production-path equivalence and integration."
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Both field encodings, shifts and bitwise OR match; the executed constant compiler uses this definition, and ptrBits_eq_inlined proves agreement with its previous formula for all configurations and positive widths."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Numbers.lean",

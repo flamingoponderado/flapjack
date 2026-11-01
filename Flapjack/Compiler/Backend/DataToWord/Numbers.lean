@@ -17,8 +17,8 @@ def allOnes {width : Nat} [NeZero width] (high low : Nat) : BitVec width :=
 def maxoutBits {width : Nat} [NeZero width] (n bits shift : Nat) : BitVec width :=
   if n < 2 ^ bits - 1 then BitVec.ofNat width n <<< shift else allOnes (shift + bits) shift
 
-/-- The pointer annotation's tag and length fields. This source-shaped
-definition is not yet connected to the production compiler's inlined formula. -/
+/-- The pointer annotation's tag and length fields. The production constant
+compiler uses this definition directly. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "ptr_bits_def"
   (words_as_type_indexed_bitvec)]
 def ptrBits {width : Nat} [NeZero width] (conf : Config) (tag len : Nat) : BitVec width :=

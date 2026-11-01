@@ -13,12 +13,6 @@ open Flapjack.Basis.Pure.MlString
 
 abbrev Value (width : Nat) := Bool × BitVec width
 
-private def ptrBits {width : Nat} (conf : Config) (tag len : Nat) : BitVec width :=
-  let field (n bits shift : Nat) : BitVec width :=
-    let maximum := 2 ^ bits - 1
-    BitVec.ofNat width ((if n < maximum then n else maximum) * 2 ^ shift)
-  field tag conf.tagBits (1 + conf.lenBits) ||| field len conf.lenBits 1
-
 private def pointer {width : Nat} [NeZero width] (conf : Config) (offset : BitVec width) : BitVec width :=
   (offset <<< (shiftLength conf - wordShiftAmount width)) ||| 1
 
