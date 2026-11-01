@@ -496,6 +496,46 @@ theorem doAppAux_copyByte_false_frame {C F : Type} (args : List Value)
                                   obtain ⟨rfl, rfl⟩ := run
                                   exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
+/-- The data auxiliary dispatcher has no successful true-mode byte-copy
+clause. -/
+theorem doAppAux_copyByte_true_frame {C F : Type} (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doAppAux (.memOp (.copyByte true)) args state = .val (value, next)) : SameLocalControl state next := by
+  cases args <;> simp [doAppAux, applyNonFfi] at run
+
+/-- Every successful memory auxiliary operation preserves local and control
+fields. This is Flapjack infrastructure for evaluator and pass proofs. -/
+theorem doAppAux_mem_frame {C F : Type} (op : ClosLang.MemOp) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doAppAux (.memOp op) args state = .val (value, next)) : SameLocalControl state next := by
+  cases op with
+  | ref => exact doAppAux_ref_frame args state next value run
+  | update => exact doAppAux_update_frame args state next value run
+  | el => exact doAppAux_el_frame args state next value run
+  | length => exact doAppAux_length_frame args state next value run
+  | lengthByte => exact doAppAux_lengthByte_frame args state next value run
+  | refByte flag => exact doAppAux_refByte_frame flag args state next value run
+  | refArray => exact doAppAux_refArray_frame args state next value run
+  | derefByte => exact doAppAux_derefByte_frame args state next value run
+  | updateByte => exact doAppAux_updateByte_frame args state next value run
+  | concatByteVec => exact doAppAux_concatByteVec_frame args state next value run
+  | copyByte flag =>
+    cases flag with
+    | false => exact doAppAux_copyByte_false_frame args state next value run
+    | true => exact doAppAux_copyByte_true_frame args state next value run
+  | fromListByte => exact doAppAux_fromListByte_frame args state next value run
+  | toListByte => exact doAppAux_toListByte_frame args state next value run
+  | lengthByteVec => exact doAppAux_lengthByteVec_frame args state next value run
+  | derefByteVec => exact doAppAux_derefByteVec_frame args state next value run
+  | stringCmp fast cmp => exact doAppAux_stringCmp_frame fast cmp args state next value run
+  | xorByte => exact doAppAux_xorByte_frame args state next value run
+  | boundsCheckArray => exact doAppAux_boundsCheckArray_frame args state next value run
+  | boundsCheckByte loose => exact doAppAux_boundsCheckByte_frame loose args state next value run
+  | mutCons tag index => exact doAppAux_mutCons_frame tag index args state next value run
+  | updateCons => exact doAppAux_updateCons_frame args state next value run
+  | finaliseCons => exact doAppAux_finaliseCons_frame args state next value run
+  | configGC => exact doAppAux_configGC_frame args state next value run
+
 /-- Lift a memory auxiliary frame through resource bookkeeping. -/
 theorem doApp_mem_frame_of_aux {C F : Type} (op : ClosLang.MemOp)
     (auxFrame : ∀ (args : List Value) (before after : State C F) (value : Value),
@@ -512,5 +552,12 @@ theorem doApp_mem_frame_of_aux {C F : Type} (op : ClosLang.MemOp)
     have second' : SameLocalControl accounted next := by
       simpa [SameLocalControl, doStack, doLimSafe] using second
     exact first.trans second'
+
+/-- Successful memory operations preserve local and control fields through
+the full dispatcher. -/
+theorem doApp_mem_frame {C F : Type} (op : ClosLang.MemOp) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doApp (.memOp op) args state = .val (value, next)) : SameLocalControl state next :=
+  doApp_mem_frame_of_aux op (doAppAux_mem_frame op) args state next value run
 
 end Flapjack.Compiler.Backend.DataSem
