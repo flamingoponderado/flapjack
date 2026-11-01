@@ -115,6 +115,12 @@ theorem decode_binopRR_z64 (op : ZBinopName) (dst src : Nat) (hd : dst < 16) (hs
       some (.binopRR op .z64 dst src, (encodeInsn (.binopRR op .z64 dst src)).length) := by
   cases op <;> simp [ZBinopName.code] at hop <;> interval_cases dst <;> interval_cases src <;> decide
 
+theorem decode_binopRR_z32 (op : ZBinopName) (dst src : Nat) (hd : dst < 16) (hs : src < 16)
+    (hop : op.code < 8) :
+    decode (byteListReader (encodeInsn (.binopRR op .z32 dst src))) =
+      some (.binopRR op .z32 dst src, (encodeInsn (.binopRR op .z32 dst src)).length) := by
+  cases op <;> simp [ZBinopName.code] at hop <;> interval_cases dst <;> interval_cases src <;> decide
+
 theorem decode_binopRR_test (dst src : Nat) (hd : dst < 16) (hs : src < 16) :
     decode (byteListReader (encodeInsn (.binopRR .ztest .z64 dst src))) =
       some (.binopRR .ztest .z64 dst src, (encodeInsn (.binopRR .ztest .z64 dst src)).length) := by
