@@ -237,30 +237,30 @@ theorem evaluate_iAssign_success {C F : Type} (op : ClosLang.Op)
     (read : DataSem.getVars operands target.locals = some args)
     (run : BviSem.doApp op (args.map dataToBviValue) source = .val (result, next)) :
     ∃ targetNext value, DataSem.evaluate (iAssign dest op operands live corr) target = (none, targetNext) ∧
-      result = dataToBviValue value ∧ stateRel next targetNext := by
+      result = dataToBviValue value ∧ stateRel next targetNext ∧ sptLookup dest targetNext.locals = some value := by
   by_cases greater : op = .intOp .greater
   · subst op
     obtain ⟨s, value, execution, projected, finalRel⟩ :=
       evaluate_iAssign_intGreater target source next operands live corr env args dest result related vars livePresent read run
-    exact ⟨_, value, execution, projected, finalRel⟩
+    exact ⟨_, value, execution, projected, finalRel, by simp [DataSem.setVar, sptLookup_sptInsert_same]⟩
   by_cases greaterEq : op = .intOp .greaterEq
   · subst op
     obtain ⟨s, value, execution, projected, finalRel⟩ :=
       evaluate_iAssign_intGreaterEq target source next operands live corr env args dest result related vars livePresent read run
-    exact ⟨_, value, execution, projected, finalRel⟩
+    exact ⟨_, value, execution, projected, finalRel, by simp [DataSem.setVar, sptLookup_sptInsert_same]⟩
   by_cases byteGreater : op = .wordOp (.wordTest .w8 (.compare .gt))
   · subst op
     obtain ⟨s, value, execution, projected, finalRel⟩ :=
       evaluate_iAssign_byteGreater target source next operands live corr args dest result related read run
-    exact ⟨_, value, execution, projected, finalRel⟩
+    exact ⟨_, value, execution, projected, finalRel, by simp [DataSem.setVar, sptLookup_sptInsert_same]⟩
   by_cases byteGreaterEq : op = .wordOp (.wordTest .w8 (.compare .geq))
   · subst op
     obtain ⟨s, value, execution, projected, finalRel⟩ :=
       evaluate_iAssign_byteGreaterEq target source next operands live corr args dest result related read run
-    exact ⟨_, value, execution, projected, finalRel⟩
+    exact ⟨_, value, execution, projected, finalRel, by simp [DataSem.setVar, sptLookup_sptInsert_same]⟩
   · obtain ⟨s, value, execution, projected, finalRel⟩ :=
       evaluate_iAssign_supported op target source operands live corr env args dest result next notInstall greater
         greaterEq byteGreater byteGreaterEq notCopy notForce related vars livePresent read run
-    exact ⟨_, value, execution, projected, finalRel⟩
+    exact ⟨_, value, execution, projected, finalRel, by simp [DataSem.setVar, sptLookup_sptInsert_same]⟩
 
 end Flapjack.Compiler.Backend.BviToData

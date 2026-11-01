@@ -45,6 +45,55 @@ theorem lookup_cut_namesOfList {α : Type} (names : List Nat) (env : Spt α) (ke
         exact False.elim (member contradiction)
     simp [member, absent]
 
+/-- A successful optional compiler root cut preserves every listed local. -/
+theorem cutStateOpt_names_keep {C F : Type} (enabled : Bool) (roots : List Nat)
+    (state prepared : DataSem.State C F) (key : Nat) (member : key ∈ roots)
+    (run : DataSem.cutStateOpt (if enabled then some (namesOfList roots) else none) state = some prepared) :
+    sptLookup key prepared.locals = sptLookup key state.locals := by
+  cases enabled with
+  | false =>
+    simp [DataSem.cutStateOpt] at run
+    subst prepared
+    rfl
+  | true =>
+    cases cut : DataSem.cutEnv (namesOfList roots) state.locals with
+    | none => simp [DataSem.cutStateOpt, DataSem.cutState, cut] at run
+    | some env =>
+      simp [DataSem.cutStateOpt, DataSem.cutState, cut] at run
+      subst prepared
+      unfold DataSem.cutEnv at cut
+      split at cut
+      · simp only [Option.some.injEq] at cut
+        subst env
+        simp [lookup_cut_namesOfList, member]
+      · simp at cut
+
+/-- The optional root cut either preserves each local or removes it when the
+cut is enabled and the name is absent from the root list. -/
+theorem cutStateOpt_names_lookup {C F : Type} (enabled : Bool) (roots : List Nat)
+    (state prepared : DataSem.State C F) (key : Nat)
+    (run : DataSem.cutStateOpt (if enabled then some (namesOfList roots) else none) state = some prepared) :
+    sptLookup key prepared.locals =
+      if enabled then (if key ∈ roots then sptLookup key state.locals else none) else sptLookup key state.locals := by
+  classical
+  cases enabled with
+  | false =>
+    simp [DataSem.cutStateOpt] at run
+    subst prepared
+    rfl
+  | true =>
+    cases cut : DataSem.cutEnv (namesOfList roots) state.locals with
+    | none => simp [DataSem.cutStateOpt, DataSem.cutState, cut] at run
+    | some env =>
+      simp [DataSem.cutStateOpt, DataSem.cutState, cut] at run
+      subst prepared
+      unfold DataSem.cutEnv at cut
+      split at cut
+      · simp only [Option.some.injEq] at cut
+        subst env
+        exact lookup_cut_namesOfList roots state.locals key
+      · simp at cut
+
 /-- A projected variable correspondence survives a cut that keeps all of
 its names. The projection can have an independent result type. -/
 theorem varCorr_cut_namesOfList {α β : Type} (f : α → β) (kept : List Nat) (env : Spt α)
@@ -60,6 +109,21 @@ theorem varCorr_cut_namesOfList {α β : Type} (f : α → β) (kept : List Nat)
       rw [if_pos (included name (by simp))]
       simpa [DataSem.getVar, sptLookup_sptMap] using lookup
     · exact ih (fun key member => included key (by simp [member]))
+
+/-- A projected correspondence is preserved when each of its named lookups
+is unchanged. -/
+theorem varCorr_of_lookup_eq {α β : Type} (f : α → β) (before after : Spt α)
+    (names : List Nat) (values : List β) (related : DataProps.varCorr values names (sptMap f before))
+    (same : ∀ key ∈ names, sptLookup key after = sptLookup key before) :
+    DataProps.varCorr values names (sptMap f after) := by
+  induction related with
+  | nil => constructor
+  | @cons name value names values lookup rest ih =>
+    constructor
+    · simp only [DataSem.getVar, sptLookup_sptMap] at lookup ⊢
+      rw [same name (by simp)]
+      exact lookup
+    · exact ih (fun key member => same key (by simp [member]))
 
 /-- If the variable correspondence's names are live, a cut preserves the
 entire corresponding read, in the original order. -/

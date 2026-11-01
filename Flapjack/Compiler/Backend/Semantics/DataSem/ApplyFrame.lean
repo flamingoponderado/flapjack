@@ -23,6 +23,18 @@ theorem SameControl.trans {C F : Type} {a b c : State C F}
   rcases second with ⟨b1, b2, b3, b4, b5⟩
   exact ⟨b1.trans a1, b2.trans a2, b3.trans a3, b4.trans a4, b5.trans a5⟩
 
+/-- Exception-handler availability depends only on stack and handler, both
+of which are preserved by `SameControl`. -/
+theorem SameControl.jumpExc_ne_none {C F : Type} {before after : State C F}
+    (control : SameControl before after) (available : jumpExc before ≠ none) : jumpExc after ≠ none := by
+  rcases control with ⟨stack, handler, _, _, _⟩
+  by_cases h : before.handler < before.stack.length
+  · simp only [jumpExc, stack, handler, if_pos h] at available ⊢
+    cases frame : before.stack.drop (before.stack.length - (before.handler + 1)) with
+    | nil => simp [frame] at available
+    | cons head rest => cases head <;> simp_all
+  · simp [jumpExc, h] at available
+
 /-- Local/control preservation composes across bookkeeping steps. -/
 theorem SameLocalControl.trans {C F : Type} {a b c : State C F}
     (first : SameLocalControl a b) (second : SameLocalControl b c) : SameLocalControl a c := by
