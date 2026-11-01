@@ -99826,6 +99826,46 @@
     "reviewer": "Source comparison: all nine rules of v_inv_ck and their typed data_to_word_memory_repr capture retain the source constructors, fixed Word64 input, independent positive heap word width, reference tree, clock decrement and zero guards, pointer annotations, lookup and domain premises, timestamp and heap checks. component_2 and component_3 are exactly the two HOL finite maps f and tf represented as canonical HolFiniteMapExact values. The context lookup conversions preserve the address and heap and have kernel-checked roundtrips in both directions for finite-support functions. Lean's mutual list relation exists to satisfy positivity; clockValueListInv_iff proves it is precisely the source LIST_REL recursive premise. The HOL/Lean inductive correspondence is source-reviewed, not established by those representation witnesses."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Timestamps.lean",
+    "lean_name": "valueListValues_timestamp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_all_vs_ts_MEM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: v_all_vs_ts_MEM and its typed data_to_word_memory_repr capture preserve both data values, timestamp, nested-value membership and timestamp-membership premise, and enclosing-value timestamp conclusion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Timestamps.lean",
+    "lean_name": "blockTimestamp_of_nested",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_all_vs_ts",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: v_all_vs_ts and its typed data_to_word_memory_repr capture preserve the enclosing value, timestamp, tag, child list, nested Block membership premise, and timestamp membership conclusion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Timestamps.lean",
+    "lean_name": "block_valueListValues_origin",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_all_vs_MEM2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: v_all_vs_MEM2 and its typed data_to_word_memory_repr capture preserve the source list and Block fields, its traversal membership premise, and the existential source-list member whose singleton traversal contains that Block."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Timestamps.lean",
+    "lean_name": "valueListValues_timestamp_list",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_all_vs_ts_list",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: v_all_vs_ts_list and its typed data_to_word_memory_repr capture preserve the value, list and timestamp, both membership premises, and membership in FLAT (MAP v_all_ts list), rendered by List.flatMap."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Timestamps.lean",
+    "lean_name": "mem_allTimestamps",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "MEM_in_all_ts",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: MEM_in_all_ts and its typed data_to_word_memory_repr capture preserve the data value, timestamp, stack and literal spt reference tree, the all_vs and v_all_ts conjunction, and the all_ts conclusion. The proof considers all reference-cell sources and stack membership without added premises."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv/Restriction.lean",
     "lean_name": "clockValueInv_tfRestrict",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
