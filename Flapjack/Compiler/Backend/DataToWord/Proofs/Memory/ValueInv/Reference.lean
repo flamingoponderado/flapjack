@@ -1,10 +1,23 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
 
-/-! Reference cases for the preliminary data-to-word value relation. The HOL
-source uses nested finite maps in its tuple; these statements remain untagged
-until that representation and the underlying relation have been reviewed. -/
+/-! Reference cases for the data-to-word value relation. The clocked relation
+itself remains untagged because the reference checker does not yet support
+finite maps nested in its context tuple. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend.DataSem
+
+/-- Lowering the clock preserves a related data value. The two finite maps
+are explicit here, matching the source theorem's quantified parameters. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "v_inv_ck_mono"
+  (fmap_as_finite_support_relation := [f, tf]) (words_as_type_indexed_bitvec)]
+theorem clockValueInv_mono_explicit {width : Nat} [NeZero width] (ck : Nat) (conf : Config)
+    (value : Flapjack.Compiler.Backend.DataSem.Value)
+    (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (x : HeapAddress (WordLocW width)) (f : HolFiniteMapExact Nat Nat)
+    (tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
+    ClockValueInv ck conf value refs (x,f,tf,heap) →
+      ∀ ck', ck' ≤ ck → ClockValueInv ck' conf value refs (x,f,tf,heap) :=
+  clockValueInv_mono ck conf value refs (x,f,tf,heap)
 
 /-- A non-mutable-block cell has the zero reference annotation. -/
 private theorem refPtrAnnot_zero_of_noMut {width : Nat} [NeZero width] {α : Type} (conf : Config)

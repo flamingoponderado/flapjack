@@ -99817,6 +99817,16 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv/Reference.lean",
+    "lean_name": "clockValueInv_mono_explicit",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_inv_ck_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["f", "tf"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: v_inv_ck_mono and the typed data_to_word_memory_repr capture preserve the quantifier order, both canonical finite-map parameters, the clocked value-relation premise, the universally quantified smaller clock, and the non-strict bound and relation conclusion without additional assumptions. The heap and word-location carriers share the original positive word dimension, while data values retain the literal 64-bit Word64 constructor. The clocked relation's nine rules were compared with the typed source as recorded for v_inv_def; its auxiliary list relation is kernel-proved equivalent to the original LIST_REL premise. Its own tuple-parameter declaration remains untagged pending checker support for finite maps nested in tuples."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv/Reference.lean",
     "lean_name": "valueInv_cases",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
     "hol_name": "v_inv_def",
