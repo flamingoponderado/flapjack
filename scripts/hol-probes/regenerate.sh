@@ -8215,6 +8215,10 @@ run_probe backend_read_limits_probeScript.sml backend_read_limits_probe.out \
   read_limits_def_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe data_to_word_space_control_probeScript.sml data_to_word_space_control_probe.out \
+  do_space_code_const_typed cut_state_opt_ffi_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe data_to_word_option_le_probeScript.sml data_to_word_option_le_probe.out \
   option_le_SOME_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"

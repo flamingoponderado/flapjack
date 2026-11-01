@@ -99782,6 +99782,22 @@
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 4628-4634, binders !p s t; evaluate (p,s) = (NONE,t) ⇒ stack_size t.stack = stack_size s.stack; from evaluate_stack_swap and s_key_eq_stack_size as in HOL. State carrier WordSemStateFiniteExact width C F (alpha word width, independent beta/gamma as C/F) with the reviewed fmap_as_finite_support [fpRegs, store] and words qualifiers. Inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8) through evaluate/inst. Typed capture word_props_code_grows probe (show_types, no hypotheses)."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Space.lean",
+    "lean_name": "doSpace_code_const",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+    "hol_name": "do_space_code_const",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original lines 45–49; the typed literal HOL replay data_to_word_space_control_probe confirms the same independent state parameters, operation and value-list inputs, successful do_space premise, and code and compile_oracle equalities. DataSem.State matches the original state carriers; doSpace and consumeSpace update only space-accounting fields in every successful branch."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Control.lean",
+    "lean_name": "cutStateOpt_ffi",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+    "hol_name": "cut_state_opt_ffi",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original local theorem lines 171–174; the typed literal HOL replay data_to_word_space_control_probe confirms independent state parameters, optional num_set input, successful cut_state_opt premise, and identical FFI equality. NumSet is the unit sparse-tree carrier and the data state and cut operations match the source carriers and branches."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/OptionLe.lean",
     "lean_name": "optionLe_SOME",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",

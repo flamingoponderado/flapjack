@@ -1,3 +1,9 @@
+`data_to_word_space_control_probe.out` captures typed literal HOL replays of
+the space-accounting code/oracle preservation and optional environment-cut FFI
+preservation lemmas. Regenerate with
+`HOL_PROBE_ONLY=data_to_word_space_control_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source review; it is not a cross-language proof.
+
 `bvi_to_data_state_probe.out` captures the typed original primitive and equality simulations, list-append and result projections, variable correspondence and lookup lemmas, original and rewritten expression compilers and their structural theorems,
 code relation, and state relation, plus variable and tail-call observations.
 It also captures the complete typed compiler simulation statement and typed

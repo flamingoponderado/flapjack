@@ -1,0 +1,2 @@
+do_space_code_const_typed=do_space (op :closLang$op) (vs :v list) (s :(α, β) state) = SOME (s1 :(α, β) state) ⇒ s1.code = s.code ∧ s1.compile_oracle = s.compile_oracle
+cut_state_opt_ffi_typed=cut_state_opt (names_opt :sptree$num_set option) (r :(α, β) state) = SOME (v1 :(α, β) state) ⇒ v1.ffi = r.ffi

@@ -5,8 +5,8 @@ namespace Flapjack.Compiler.Backend.DataToWord.Proofs
 open Flapjack
 
 /-- Successful data-language space accounting preserves both the code tree and
-the compiler oracle. Source comparison has not yet captured the original
-inferred types, so reviewed-port classification remains pending. -/
+the compiler oracle. A typed replay of the original confirms the independent
+state parameters and the same premise and equalities. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml" "do_space_code_const"]
 theorem doSpace_code_const {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
     (state next : DataSem.State C F) (run : DataSem.doSpace op values state = some next) :

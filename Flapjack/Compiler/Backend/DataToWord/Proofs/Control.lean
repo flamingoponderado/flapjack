@@ -4,8 +4,8 @@ import Flapjack.Compiler.Backend.Semantics.DataSem.Control
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs
 open Flapjack
 
-/-- Cutting optional live locals preserves the FFI state. The local HOL
-theorem's inferred types still need a typed source replay before review. -/
+/-- Cutting optional live locals preserves the FFI state. A typed replay of
+the local HOL theorem confirms its independent state parameters. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml" "cut_state_opt_ffi"]
 theorem cutStateOpt_ffi {C F : Type} (names : Option NumSet)
     (state next : DataSem.State C F) (run : DataSem.cutStateOpt names state = some next) :
