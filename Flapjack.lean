@@ -788,6 +788,7 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockInspection
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockLists
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ValueEquality
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockBoolean
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockExtend
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
