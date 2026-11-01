@@ -414,8 +414,8 @@ The script verifies the reference compiler's embedded CakeML and HOL
 revisions, then compares complete output bytes, diagnostics and status. Its
 `--seed` and `--count` options select reproducible samples; a rejection or
 timeout fails the run. Generated-program runs with seed `49127` (25 cases),
-seed `96317` (100 cases), and seed `84513` (60 cases) matched the pinned
-compiler. This is sampled evidence, not full-language parity.
+seed `96317` (100 cases), seed `84513` (60 cases), and seed `139047` (40 cases)
+matched the pinned compiler. This is sampled evidence, not full-language parity.
 Add `--mutations` to apply reproducible single-character edits to small
 declarations with the prelude excluded. This mode compares successful output
 and rejection diagnostics alike, including complete stderr and exit status;
