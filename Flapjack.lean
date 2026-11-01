@@ -991,6 +991,7 @@ import Flapjack.Compiler.Backend.DataSimp.Proofs.Correct
 import Flapjack.Compiler.Backend.DataLive.Proofs.State
 import Flapjack.Compiler.Backend.DataLive.Proofs.Simulation
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateControl
+import Flapjack.Compiler.Backend.Semantics.DataProps.StackResult
 import Flapjack.Compiler.Backend.DataSpace.Proofs.State
 import Flapjack.Compiler.Backend.BviToData.Proofs.FindCode
 import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk
