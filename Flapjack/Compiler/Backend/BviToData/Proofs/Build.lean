@@ -27,6 +27,59 @@ theorem dataToBviValue_listToValue_timestamp (values : List DataSem.Value) (tail
     simp only [DataSem.listToValue, dataToBviValue, List.map_cons, List.map_nil]
     rw [ih (left + 1) (right + 1)]
 
+private theorem bvlList_reconstruct (value : BvlSem.Value) (values : List BvlSem.Value)
+    (decode : BvlSem.valueToList value = some values) : BvlSem.listToValue values = value := by
+  cases value with
+  | block tag fields =>
+    cases fields with
+    | nil =>
+      simp only [BvlSem.valueToList] at decode
+      split at decode
+      · rename_i equal
+        simp only [Option.some.injEq] at decode
+        subst values
+        subst tag
+        rfl
+      · contradiction
+    | cons head tail =>
+      cases tail with
+      | nil => simp [BvlSem.valueToList] at decode
+      | cons next rest =>
+        cases rest with
+        | cons other rest => simp [BvlSem.valueToList] at decode
+        | nil =>
+          simp only [BvlSem.valueToList] at decode
+          split at decode
+          · rename_i equal
+            cases nextDecode : BvlSem.valueToList next with
+            | none => simp [nextDecode] at decode
+            | some vs =>
+              simp [nextDecode] at decode
+              subst values
+              have ih := bvlList_reconstruct next vs nextDecode
+              subst tag
+              simp [BvlSem.listToValue, ih]
+          · contradiction
+  | _ => simp [BvlSem.valueToList] at decode
+termination_by sizeOf value
+
+/-- Constructing a list onto a valid list tail agrees, after timestamp erasure,
+with constructing the concatenation onto nil. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "data_to_bvi_v_list_to_v_APPEND"]
+theorem dataToBviValue_listToValue_append (front suffix : List DataSem.Value)
+    (tail : DataSem.Value) (timestamp : Nat) (decoded : DataSem.valueToList tail = some suffix) :
+    dataToBviValue (DataSem.listToValue timestamp tail front) =
+      dataToBviValue (DataSem.listToValue timestamp (.block 0 nilTag []) (front ++ suffix)) := by
+  have projectedDecode : BvlSem.valueToList (dataToBviValue tail) = some (suffix.map dataToBviValue) := by
+    rw [← dataToBviValue_valueToList, decoded]
+    rfl
+  have tailEq := (bvlList_reconstruct (dataToBviValue tail) (suffix.map dataToBviValue) projectedDecode).symm
+  induction front generalizing timestamp with
+  | nil => simpa only [List.nil_append, DataSem.listToValue, dataToBviValue_listToValue_nil] using tailEq
+  | cons first rest ih =>
+    simp only [List.cons_append, DataSem.listToValue, dataToBviValue, List.map_cons, List.map_nil]
+    rw [ih (timestamp + 1)]
+
 /-- Lookup-related reference stores choose the same least free index. -/
 theorem leastUnusedRef_projection (dataRefs : Spt (BvlSem.Ref DataSem.Value))
     (bviRefs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))

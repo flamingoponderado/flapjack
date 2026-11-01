@@ -1,5 +1,11 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml", "hol_name": "data_to_bvi_v_list_to_v_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Build.lean", "lean_name": "dataToBviValue_listToValue_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source theorem in bvi_to_data_state_probe.out: both quantify a prefix and suffix of data values, a data tail and a natural timestamp, assume exactly that the tail decodes to the suffix, and equate the projected construction with construction onto Block 0 nil_tag [] of the concatenated list. The data value constructors, including fixed word64, and the timestamp-incrementing list construction and decoder match the source."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "find_code_EVERY_IMP",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/FindCode.lean", "lean_name": "findCodeEveryImp",
     "statement_status": "reviewed_fmap_as_finite_support",
