@@ -776,6 +776,9 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstallSafety
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AppSafety
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Safety
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Control
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.PureBindings
+import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
+import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
 import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 import Flapjack.Compiler.Backend.BvlToBvi.Stubs
