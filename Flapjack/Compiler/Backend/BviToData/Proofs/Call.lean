@@ -1,8 +1,93 @@
 import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
+import Flapjack.Compiler.Backend.BviToData.Proofs.Optimise
+import Mathlib.Data.List.Induction
 
 /-! Call argument cases for the BVI-to-data simulation. -/
 namespace Flapjack.Compiler.Backend.BviToData
 open Flapjack Flapjack.SemanticPrimitivesHOL
+
+private theorem fromListFoldIndex {α : Type} (values : List α) (start : Nat) (tree : Spt α) :
+    (values.foldl (fun (acc : Nat × Spt α) value => (acc.1 + 1, sptInsert acc.1 value acc.2))
+      (start, tree)).1 = start + values.length := by
+  induction values generalizing start tree with
+  | nil => simp
+  | cons value values ih =>
+    simp only [List.foldl_cons, ih, List.length_cons]
+    omega
+
+private theorem lookupFromList {α : Type} (values : List α) (key : Nat) :
+    sptLookup key (sptFromList values) = values[key]? := by
+  induction values using List.reverseRecOn with
+  | nil => simp [sptFromList]
+  | append_singleton values value ih =>
+    have inserted : sptFromList (values ++ [value]) =
+        sptInsert values.length value (sptFromList values) := by
+      simp only [sptFromList, List.foldl_append, List.foldl_cons, List.foldl_nil,
+        fromListFoldIndex, Nat.zero_add]
+    rw [inserted]
+    by_cases equal : key = values.length
+    · subst key
+      simp [sptLookup_sptInsert_same]
+    · rw [sptLookup_sptInsert_ne values.length key value (sptFromList values) equal, ih]
+      by_cases bound : key < values.length
+      · simp [List.getElem?_append, bound]
+      · have beyond : values.length < key := by omega
+        simp [List.getElem?_append, bound, List.getElem?_eq_none, show 1 ≤ key - values.length by omega]
+
+/-- Entering a data call gives each projected argument its corresponding
+zero-based local name and leaves every later local absent. -/
+theorem callEnv_argument_locals {C F : Type} (args : List DataSem.Value)
+    (size : Option Nat) (target : DataSem.State C F) :
+    DataProps.varCorr (args.map dataToBviValue) (List.range args.length)
+      (sptMap dataToBviValue (DataSem.callEnv args size target).locals) ∧
+    (∀ key, args.length ≤ key → sptLookup key (DataSem.callEnv args size target).locals = none) := by
+  constructor
+  · apply List.forall₂_iff_get.mpr
+    constructor
+    · simp
+    · intro index leftBound rightBound
+      have bound : index < args.length := by simpa using leftBound
+      simp [DataSem.getVar, DataSem.callEnv, sptLookup_sptMap,
+        lookupFromList, List.getElem?_eq_getElem bound]
+  · intro key bound
+    simp [DataSem.callEnv, lookupFromList, List.getElem?_eq_none bound]
+
+/-- Entering a call does not change any field observed by the BVI/data state
+relation. -/
+theorem stateRel_callEnv {C F : Type} (source : BviSem.BviState C F)
+    (target : DataSem.State C F) (args : List DataSem.Value) (size : Option Nat)
+    (related : stateRel source target) : stateRel source (DataSem.callEnv args size target) := by
+  simpa [stateRel, DataSem.callEnv] using related
+
+/-- Saving a caller frame does not change any field observed by the BVI/data
+state relation. -/
+theorem stateRel_pushEnv {C F : Type} (source : BviSem.BviState C F)
+    (target : DataSem.State C F) (env : Spt DataSem.Value) (handler : Bool)
+    (related : stateRel source target) : stateRel source (DataSem.pushEnv env handler target) := by
+  simpa [stateRel, DataSem.pushEnv] using related
+
+/-- Run an optimized compiled function body from a freshly populated call
+environment, given the recursive source simulation. The remaining exception
+premise is the caller's actual handler obligation. -/
+theorem compileExp_callEnv {C F : Type} (body : Bvi.Exp) (args : List DataSem.Value)
+    (source nextSource : BviSem.BviState C F) (res : BviSem.BviResult)
+    (target : DataSem.State C F) (size : Option Nat)
+    (ih : simulationFor [body] (args.map dataToBviValue) source)
+    (run : BviSem.evaluate [body] (args.map dataToBviValue) source = (res, nextSource))
+    (notType : res ≠ .err (.abort .typeError)) (related : stateRel source target)
+    (exceptionJump : isException res → DataSem.jumpExc (DataSem.callEnv args size target) ≠ none) :
+    ∃ result final names next ls localsSize stackMax safe peak,
+      DataSem.evaluate (compileExp args.length body) (DataSem.callEnv args size target) =
+        (some result, { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }) ∧
+      stateRel nextSource final ∧
+      stateRel nextSource { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak } ∧
+      correctOutcome res (DataSem.callEnv args size target) final args.length next
+        (List.range args.length) [] names (args.map dataToBviValue) true (some result) ls := by
+  obtain ⟨vars, fresh⟩ := callEnv_argument_locals args size target
+  have callRelated := stateRel_callEnv source target args size related
+  simpa using compileExp_of_simulation body (args.map dataToBviValue) source nextSource res
+    (DataSem.callEnv args size target) ih run notType (by simpa using vars)
+    (by simpa using fresh) callRelated exceptionJump
 
 /-- An indirect call with a handler is rejected before evaluating its
 arguments, so it has no non-type-error execution. -/
