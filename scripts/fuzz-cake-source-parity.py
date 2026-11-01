@@ -104,6 +104,11 @@ BASIS_CORPUS = [
     'val x = "héllo"; val _ = print x;',
     'val _ = print (String.implode [#"a", #"b"]);',
     'fun fact n acc = if n = 0 then acc else fact (n-1) (n*acc); val _ = print_int (fact 7 1);',
+    'val a = Array.array 2 (Array.array 3 0); val _ = Array.update (Array.sub a 1) 2 4; val _ = print_int (Array.sub (Array.sub a 0) 2);',
+    'val a = Word8Array.array 3 (Word8.fromInt 1); val _ = Word8Array.update a 1 (Word8.fromInt 2); val _ = Word8Array.copy a 0 2 a 1; val _ = print_int (Word8.toInt (Word8Array.sub a 2));',
+    'fun even n = if n = 0 then 1 else odd (n-1) and odd n = if n = 0 then 0 else even (n-1); val _ = print_int (even 8);',
+    'val _ = print (String.substring "abcdef" 2 3);',
+    'fun f xs = List.foldl (fn x => fn a => a + x*x) 0 xs; val _ = print_int (f [1,2,3,4]);',
 ]
 
 

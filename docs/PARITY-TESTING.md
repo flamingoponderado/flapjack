@@ -432,7 +432,7 @@ seed `35791` and a second run with seed `46821` each matched 200 cases against
 the pinned compiler. Seeds `76241` and `97631` each matched another 120 cases;
 seed `651291` matched 600 cases. Seeds `803471`, `723987`, and `419023`
 matched another 200, 300, and 1,000 cases respectively. Seed `729081` matched
-200 cases. Single-edit mutation
+200 cases; seed `1973104` matched 200 more. Single-edit mutation
 seed `945701` matched 400 cases.
 
 Use `--unicode-mutations` to mutate source containing multibyte characters,
@@ -467,7 +467,8 @@ output and status. The accepted cases include polymorphic datatypes, nested
 closures, type annotations, tuple patterns, qualified names and exception
 handlers. Additional cases cover shadowing, nested structures, polymorphic
 functions, datatype constructors inside structures and exception patterns,
-higher-order closures, Unicode strings, hexadecimal literals, character escapes
+higher-order closures, aliased nested arrays, overlapping byte-array copies,
+mutual recursion, Unicode strings, hexadecimal literals, character escapes
 and rejected syntax; these
 exercise compilation as well as parsing and inference. It is a
 finite regression sample, not evidence for all programs using those forms.
