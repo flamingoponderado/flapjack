@@ -99826,6 +99826,46 @@
     "reviewer": "Source comparison: all nine rules of v_inv_ck and their typed data_to_word_memory_repr capture retain the source constructors, fixed Word64 input, independent positive heap word width, reference tree, clock decrement and zero guards, pointer annotations, lookup and domain premises, timestamp and heap checks. component_2 and component_3 are exactly the two HOL finite maps f and tf represented as canonical HolFiniteMapExact values. The context lookup conversions preserve the address and heap and have kernel-checked roundtrips in both directions for finite-support functions. Lean's mutual list relation exists to satisfy positivity; clockValueListInv_iff proves it is precisely the source LIST_REL recursive premise. The HOL/Lean inductive correspondence is source-reviewed, not established by those representation witnesses."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Space.lean",
+    "lean_name": "memoryRel_lessSpace",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_less_space",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_less_space and its typed data_to_word_memory_repr capture preserve the original memory relation, smaller-space inequality, and the same relation with the smaller space as conclusion. All other inputs are unchanged. The HOL store finite map is the canonical finite-support parameter store, the shared word dimension is positive, and the memory domain is the source Bool-valued word set."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Space.lean",
+    "lean_name": "memoryRel_zeroSpace",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_zero_space",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_zero_space and its typed data_to_word_memory_repr capture preserve the input memory relation and the conclusion with zero requested space, retaining all other inputs. The HOL store finite map is the canonical finite-support parameter store; the same positive word dimension is used for addresses, locations and memory."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Number.lean",
+    "lean_name": "memoryRel_numberImpWord",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Number_IMP_Word",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Number_IMP_Word and its typed data_to_word_memory_repr capture preserve the memory relation on the leading Number/location pair and the existential word whose Word location equals that location. The store is the canonical finite-support map, and the single positive source dimension is shared by the existential word, location, memory and store values; the unrelated dataSem Word64 constructor remains fixed-width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Number.lean",
+    "lean_name": "memoryRel_numberImpWord2",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Number_IMP_Word_2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Number_IMP_Word_2 and its typed data_to_word_memory_repr capture preserve both leading Number/location pairs, the memory-relation premise, and two existential words with their matching location equalities in source order. The store is the canonical finite-support map; both existential words, both locations, memory and store values share the original positive word dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation.lean",
     "lean_name": "absMlInv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
