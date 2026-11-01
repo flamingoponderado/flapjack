@@ -185,4 +185,13 @@ theorem compileProg_checked_codeLocations (maxApp : Nat) (program : List (Nat ×
   rw [compileProg_checked_label_origins maxApp program compiled run]
   simp [compileExpList_aux_labels]
 
+/-- Every checked program label is at or above the application-stub prefix. -/
+theorem compileProg_checked_label_lower (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp))
+    (compiled : Aux) (run : compileProg? maxApp program = some compiled)
+    (label : Nat) (member : label ∈ compiled.map Prod.fst) :
+    numStubs maxApp ≤ label := by
+  rw [compileProg_checked_codeLocations maxApp program compiled run] at member
+  simp only [List.mem_append, List.mem_map] at member
+  rcases member with ⟨entry, _, equal⟩ | ⟨location, _, equal⟩ <;> omega
+
 end Flapjack.Compiler.Backend.ClosToBvl

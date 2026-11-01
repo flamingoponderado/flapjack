@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainLocations
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.LabelOrigins
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SortPermutation
 
 /-! Location annotations supplied by closure numbering to prepared programs. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -304,6 +305,61 @@ theorem compileNoOpts_prepared_labels_below (config current output : Config) (ex
       List.mem_map.mpr ⟨(name, arity, body), compiledEntry, rfl⟩
     exact compileCommonNoOpts_compiled_labels_below config current expressions program _ preprocess converted name targetMember
 
+/-- The complete prepared output has distinct labels, including both runtime
+stubs and the application-stub table, after sorting. -/
+theorem compileNoOpts_prepared_labels_nodup (config current output : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp)) (compiled : List (Nat × Nat × Bvl.Exp))
+    (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (preprocess : compileCommonNoOpts? config expressions = some (current, program))
+    (compile : compileNoOpts? config expressions = some (output, compiled, names)) :
+    (compiled.map Prod.fst).Nodup := by
+  classical
+  have prepared : compilePrepared? config current expressions program = some (output, compiled, names) := by
+    simpa [compileNoOpts?, preprocess] using compile
+  obtain ⟨resultNames, generated⟩ := compilePrepared_entries config current expressions program
+  have equal := Option.some.inj (prepared.symm.trans generated)
+  cases equal
+  let stubs := sptToAList (initCode current.maxApp)
+  let converted := compileProgExpsHOL current.maxApp program
+  let stubLabels := stubs.map Prod.fst ++ [numStubs current.maxApp - 2, numStubs current.maxApp - 1]
+  have stubCount : 2 ≤ numStubs current.maxApp := by simp [numStubs]
+  have stubDistinct : (stubs.map Prod.fst).Nodup := sptAllDistinctMapFstToAList _
+  have stubBelow : ∀ label ∈ stubs.map Prod.fst, label < numStubs current.maxApp - 2 := by
+    intro label member
+    obtain ⟨⟨name, arity, body⟩, entry, equal⟩ := List.mem_map.mp member
+    simp only at equal
+    subst label
+    exact initCode_label_lt current.maxApp name (arity, body) entry
+  have prefixDistinct : stubLabels.Nodup := by
+    dsimp [stubLabels]
+    apply List.Nodup.append stubDistinct
+    · simp
+      omega
+    · intro label inStub inSpecial
+      have bound := stubBelow label inStub
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at inSpecial
+      omega
+  have prefixBelow : ∀ label ∈ stubLabels, label < numStubs current.maxApp := by
+    intro label member
+    simp only [stubLabels, List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at member
+    cases member with
+    | inl stub => have bound := stubBelow label stub; omega
+    | inr special => omega
+  have convertedRun : compileProg? current.maxApp program = some converted :=
+    compileProg_checked_eq_original current.maxApp program
+  have convertedDistinct := compileCommonNoOpts_converted_nodup config current expressions program converted preprocess convertedRun
+  have convertedAbove : ∀ label ∈ converted.map Prod.fst, numStubs current.maxApp ≤ label :=
+    compileProg_checked_label_lower current.maxApp program converted convertedRun
+  have allDistinct : (stubLabels ++ converted.map Prod.fst).Nodup := by
+    apply List.Nodup.append prefixDistinct convertedDistinct
+    intro label inPrefix inConverted
+    have low := prefixBelow label inPrefix
+    have high := convertedAbove label inConverted
+    omega
+  have permutation := (codeSort_perm (initialCompiledEntries current.maxApp current.start program)).map Prod.fst
+  apply permutation.nodup_iff.mpr
+  simpa [initialCompiledEntries, stubs, converted, stubLabels, List.map_append] using allDistinct
+
 /-- Stateful numbering supplies locations for each incremental main program;
 annotation then supplies variables and preserves the supplied auxiliary-code
 locations. The auxiliary code is passed through numbering unchanged. -/
@@ -544,7 +600,6 @@ theorem compileNoOpts_tree_semantics {C F : Type} (ffi : HolFfiState F)
     (compile : compileNoOpts? config expressions = some (output, compiled, names))
     (nonfail : ClosSem.semantics ffi current.maxApp (initialSourceCode program) sourceOracle
       (pureCc (compileInc current.maxApp) targetCompiler) [.call .none 0 current.start []] ≠ .fail)
-    (distinct : (compiled.map Prod.fst).Nodup)
     (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
     (initialBoundary : current.nextLoc + numStubs current.maxApp ≤ boundary 0)
     (futureDistinct : ∀ index, ((compileInc current.maxApp (sourceOracle index).2).map Prod.fst).Nodup)
@@ -562,7 +617,9 @@ theorem compileNoOpts_tree_semantics {C F : Type} (ffi : HolFfiState F)
     simpa [compileNoOpts?, preprocess] using compile
   obtain ⟨locations, varsAnnotated⟩ := compileCommonNoOpts_annotations config current expressions program preprocess
   exact compilePrepared_tree_semantics_of_boundaries ffi config current output expressions program compiled names
-    sourceOracle targetCompiler boundary prepared nonfail distinct locations varsAnnotated monotone
+    sourceOracle targetCompiler boundary prepared nonfail
+    (compileNoOpts_prepared_labels_nodup config current output expressions program compiled names preprocess compile)
+    locations varsAnnotated monotone
     (fun location member => Nat.lt_of_lt_of_le
       (compileNoOpts_prepared_labels_below config current output expressions program compiled names
         preprocess compile location member) initialBoundary)
@@ -582,7 +639,6 @@ theorem compileNoOpts_numberedOracle_semantics {C F : Type} (ffi : HolFfiState F
     (nonfail : ClosSem.semantics ffi current.maxApp (initialSourceCode program)
       (pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
       (pureCc (compileInc current.maxApp) targetCompiler) [.call .none 0 current.start []] ≠ .fail)
-    (distinct : (compiled.map Prod.fst).Nodup)
     (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
     (initialState : current.nextLoc ≤ (oracle 0).1.1)
     (futureDistinct : ∀ index, ((compileInc current.maxApp
@@ -602,7 +658,7 @@ theorem compileNoOpts_numberedOracle_semantics {C F : Type} (ffi : HolFfiState F
   apply compileNoOpts_tree_semantics ffi config current output expressions program compiled names
     (pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
     targetCompiler (fun index => (oracle index).1.1 + numStubs current.maxApp)
-    preprocess compile nonfail distinct
+    preprocess compile nonfail
   · intro i j order
     exact Nat.add_le_add_right (numberingOracle_state_monotone oracle oracleState order) _
   · exact Nat.add_le_add_right initialState _
