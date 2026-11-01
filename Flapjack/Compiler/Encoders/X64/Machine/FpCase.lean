@@ -170,7 +170,7 @@ theorem comisd_length_lt8 (dst src : Nat) (hd : dst < 8) (hs : src < 8) :
 theorem jcc_zP4_length : (encodeInsn (.jcc .zP 4)).length = 2 := by decide
 
 /-- A `setcc` with a forced REX prefix is four bytes. -/
-theorem setcc_length (cond : ZCond) (dst : Nat) (hd : dst < 16) (hc : cond ≠ .zAlways) :
+theorem setcc_length_fp (cond : ZCond) (dst : Nat) (hd : dst < 16) (hc : cond ≠ .zAlways) :
     (encodeInsn (.setcc cond true dst)).length = 4 := by
   cases cond <;> first | exact absurd rfl hc | (interval_cases dst <;> decide)
 
@@ -210,13 +210,13 @@ theorem x64Next_jcc_zP4 (ms : X64State) (d : BitVec 64 → Prop)
   simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn]
 
 /-- One `x64Next` step over a `setcc` writes the condition's `0`/`1` byte. -/
-theorem x64Next_setcc (ms : X64State) (d : BitVec 64 → Prop) (cond : ZCond) (n : Nat)
+theorem x64Next_setcc_fp (ms : X64State) (d : BitVec 64 → Prop) (cond : ZCond) (n : Nat)
     (hn : n < 16) (hc : cond ≠ .zAlways)
     (hbm : bytesInMemoryHOL ms.pc (encodeInsn (.setcc cond true n)) ms.mem d)
     (hfailed : ms.failed = false) :
     x64Next ms = { writeRegSized (.z8 true) n (if evalCond cond ms.flags then 1 else 0) ms with
       pc := ms.pc + BitVec.ofNat 64 4 } := by
-  have hlen := setcc_length cond n hn hc
+  have hlen := setcc_length_fp cond n hn hc
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.setcc cond true n, 4) := by
     have hd := decode_setcc cond n hn hc
@@ -297,7 +297,7 @@ theorem fpCmpCase (op : HolFp) (cond : ZCond) (n d1 d2 : Nat)
   have hlenM : (encodeInsn (.movRI .z32 n 0)).length = 5 + (if 8 ≤ n then 1 else 0) :=
     movRI_z32_length n hn 0 (by decide) (by decide)
   have hlenJ : (encodeInsn (.jcc .zP 4)).length = 2 := jcc_zP4_length
-  have hlenS : (encodeInsn (.setcc cond true n)).length = 4 := setcc_length cond n hn hcne
+  have hlenS : (encodeInsn (.setcc cond true n)).length = 4 := setcc_length_fp cond n hn hcne
   have htotal : (x64Target.config.encode (.inst (.fp op))).length =
       4 + (5 + (if 8 ≤ n then 1 else 0)) + 2 + 4 := by
     rw [henc, List.length_append, List.length_append, List.length_append,
@@ -562,7 +562,7 @@ theorem fpCmpCase (op : HolFp) (cond : ZCond) (n d1 d2 : Nat)
           s1.memDomain := by
         rw [hms3pc, hms2pc, hms1pc, hlenM, hms3mem]
         exact hb3
-      rw [x64Next_setcc ms3 s1.memDomain cond n hn hcne hbm hf3]
+      rw [x64Next_setcc_fp ms3 s1.memDomain cond n hn hcne hbm hf3]
       exact hms4.symm
     have hms4pc : ms4.pc = ms3.pc + BitVec.ofNat 64 4 := by simp [hms4]
     have hms4mem : ms4.mem = ms.mem := by simp [hms4, hms3mem]
