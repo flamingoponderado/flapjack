@@ -48,6 +48,13 @@ def EvalSimulationAt {C F : Type} (source : State (Nat × C) F) (expressions : L
 def EvalSimulationBelow {C F : Type} (clock : Nat) (expressions : List ClosLang.Exp) : Prop :=
   ∀ source : State (Nat × C) F, source.clock < clock → EvalSimulationAt source expressions
 
+/-- Restrict a universal simulation to a given source state. -/
+theorem evalSimulation_at {C F : Type} {expressions : List ClosLang.Exp}
+    (simulation : EvalSimulation (C := C) (F := F) expressions) (source : State (Nat × C) F) :
+    EvalSimulationAt source expressions := by
+  intro env nextEnv target result next start run noType safe envRel stateRel
+  exact simulation env nextEnv source target result next start run noType safe envRel stateRel
+
 /-- Induction hypothesis for indirect closure application. This is proof-side
     infrastructure, pending the complete evaluator correspondence review. -/
 def AppSimulation {C F : Type} : Prop :=
@@ -486,10 +493,10 @@ theorem evaluate_fn {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
 
 /-- The tick case of numbering correctness, assuming the induction hypothesis
 for its body. Both evaluators decrement the same related clock. -/
-theorem evaluate_tick {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
-    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
-    EvalSimulation (C := C) (F := F) [.tick trace body] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+theorem evaluate_tick_step {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (source : State (Nat × C) F) (bodyIH : EvalSimulationAt (decClock 1 source) [body]) :
+    EvalSimulationAt source [.tick trace body] := by
+  intro env nextEnv target result sourceNext start run noType safe envRel stateRel
   have bodySafe : ¬ ClosProps.containsAppSome source.maxApp [body] := by
     simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
   by_cases zero : source.clock = 0
@@ -504,17 +511,25 @@ theorem evaluate_tick {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.
     have bodyRun : evaluate [body] env (decClock 1 source) = (result, sourceNext) := by
       simpa [evaluate, zero] using run
     obtain ⟨targetResult, targetNext, targetRun, resultRel, nextRel⟩ :=
-      bodyIH env nextEnv (decClock 1 source) (decClock 1 target) result sourceNext start
+      bodyIH env nextEnv (decClock 1 target) result sourceNext start
         bodyRun noType bodySafe envRel clocks
     refine ⟨targetResult, targetNext, ?_, resultRel, nextRel⟩
     simpa [renumberList, renumber, evaluate, targetNonzero] using targetRun
 
+/-- Unrestricted tick case, derived from the local-state step. -/
+theorem evaluate_tick {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
+    EvalSimulation (C := C) (F := F) [.tick trace body] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  exact evaluate_tick_step trace body source (evalSimulation_at bodyIH (decClock 1 source))
+    env nextEnv target result sourceNext start run noType safe envRel stateRel
+
 /-- Raising a value preserves the numbering relation, assuming the body
 simulation. The evaluator's singleton-result theorem supplies the raised value. -/
-theorem evaluate_raise {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
-    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
-    EvalSimulation (C := C) (F := F) [.raise trace body] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+theorem evaluate_raise_step {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (source : State (Nat × C) F) (bodyIH : EvalSimulationAt source [body]) :
+    EvalSimulationAt source [.raise trace body] := by
+  intro env nextEnv target result sourceNext start run noType safe envRel stateRel
   have bodySafe : ¬ ClosProps.containsAppSome source.maxApp [body] := by
     simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
   cases bodyRun : evaluate [body] env source with
@@ -525,7 +540,7 @@ theorem evaluate_raise {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang
       obtain ⟨rfl, rfl⟩ := run
       have bodyNoType : Result.err error ≠ Result.err (.abort .typeError) := noType
       obtain ⟨targetResult, targetNext, targetRun, resultRel, nextRel⟩ :=
-        bodyIH env nextEnv source target (.err error) bodyNext start bodyRun bodyNoType bodySafe envRel stateRel
+        bodyIH env nextEnv target (.err error) bodyNext start bodyRun bodyNoType bodySafe envRel stateRel
       cases targetResult with
       | val values => cases error <;> simp [ResultRel] at resultRel
       | err targetError =>
@@ -536,7 +551,7 @@ theorem evaluate_raise {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang
       have length := (evaluate_length (C := Nat × C) (F := F)).1 [body] env source bodyNext values bodyRun
       have bodyNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
       obtain ⟨targetResult, targetNext, targetRun, resultRel, nextRel⟩ :=
-        bodyIH env nextEnv source target (.val values) bodyNext start bodyRun bodyNoType bodySafe envRel stateRel
+        bodyIH env nextEnv target (.val values) bodyNext start bodyRun bodyNoType bodySafe envRel stateRel
       cases values with
       | nil => simp at length
       | cons value tail =>
@@ -555,13 +570,21 @@ theorem evaluate_raise {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang
               simp only [renumberList] at targetRun
               simp [renumberList, renumber, evaluate, targetRun]
 
+/-- Unrestricted raise case, derived from the local-state step. -/
+theorem evaluate_raise {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
+    EvalSimulation (C := C) (F := F) [.raise trace body] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  exact evaluate_raise_step trace body source (evalSimulation_at bodyIH source)
+    env nextEnv target result sourceNext start run noType safe envRel stateRel
+
 /-- Sequencing preserves the simulation when the first expression and the
 remaining nonempty list satisfy their respective induction hypotheses. -/
-theorem evaluate_cons {C F : Type} (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
-    (firstIH : EvalSimulation (C := C) (F := F) [first])
-    (restIH : EvalSimulation (C := C) (F := F) (second :: rest)) :
-    EvalSimulation (C := C) (F := F) (first :: second :: rest) := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+theorem evaluate_cons_step {C F : Type} (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
+    (source : State (Nat × C) F) (firstIH : EvalSimulationAt source [first])
+    (restIH : ∀ state : State (Nat × C) F, state.clock ≤ source.clock → EvalSimulationAt state (second :: rest)) :
+    EvalSimulationAt source (first :: second :: rest) := by
+  intro env nextEnv target result sourceNext start run noType safe envRel stateRel
   have safeParts : ¬ ClosProps.containsAppSomeExp source.maxApp first ∧
       ¬ ClosProps.containsAppSome source.maxApp (second :: rest) := by
     simpa only [ClosProps.containsAppSome, not_or] using safe
@@ -576,7 +599,7 @@ theorem evaluate_cons {C F : Type} (first second : ClosLang.Exp) (rest : List Cl
       rw [allRun] at run
       cases run
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-        firstIH env nextEnv source target (.err error) sourceNext start firstRun noType firstSafe envRel stateRel
+        firstIH env nextEnv target (.err error) sourceNext start firstRun noType firstSafe envRel stateRel
       cases targetResult with
       | val values => cases error <;> simp [ResultRel] at resultRel
       | err targetError =>
@@ -593,7 +616,7 @@ theorem evaluate_cons {C F : Type} (first second : ClosLang.Exp) (rest : List Cl
         | nil =>
           have firstNoType : (Result.val [value] : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
           obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-            firstIH env nextEnv source target (.val [value]) middle start firstRun firstNoType firstSafe envRel stateRel
+            firstIH env nextEnv target (.val [value]) middle start firstRun firstNoType firstSafe envRel stateRel
           cases targetResult with
           | err error => cases error <;> simp [ResultRel] at resultRel
           | val targetValues =>
@@ -601,6 +624,9 @@ theorem evaluate_cons {C F : Type} (first second : ClosLang.Exp) (rest : List Cl
             | cons valueRel tailRel =>
               cases tailRel
               rename_i targetValue
+              have middleClock : middle.clock ≤ source.clock := by
+                have h := evaluate_clock_le [first] env source
+                simpa [firstRun] using h
               have maxEq : middle.maxApp = source.maxApp := by
                 have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 [first] env source
                 simpa [firstRun] using h
@@ -618,7 +644,7 @@ theorem evaluate_cons {C F : Type} (first second : ClosLang.Exp) (rest : List Cl
                   rw [allRun] at run
                   cases run
                   obtain ⟨targetRestResult, targetLast, targetRestRun, restRel, lastRel⟩ :=
-                    restIH env nextEnv middle targetMiddle (.err error) sourceNext (renumber start first).1
+                    restIH middle middleClock env nextEnv targetMiddle (.err error) sourceNext (renumber start first).1
                       restRun noType middleSafe middleEnv middleRel
                   cases targetRestResult with
                   | val values => cases error <;> simp [ResultRel] at restRel
@@ -633,7 +659,7 @@ theorem evaluate_cons {C F : Type} (first second : ClosLang.Exp) (rest : List Cl
                   cases run
                   have restNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
                   obtain ⟨targetRestResult, targetLast, targetRestRun, restRel, lastRel⟩ :=
-                    restIH env nextEnv middle targetMiddle (.val values) sourceNext (renumber start first).1
+                    restIH middle middleClock env nextEnv targetMiddle (.val values) sourceNext (renumber start first).1
                       restRun restNoType middleSafe middleEnv middleRel
                   cases targetRestResult with
                   | err error => cases error <;> simp [ResultRel] at restRel
@@ -643,14 +669,24 @@ theorem evaluate_cons {C F : Type} (first second : ClosLang.Exp) (rest : List Cl
                       rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ targetRun, targetRestRun]
                     · exact List.Forall₂.cons valueRel (by simpa [ResultRel, maxEq] using restRel)
 
+/-- Unrestricted list case, derived from the local-state step. -/
+theorem evaluate_cons {C F : Type} (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
+    (firstIH : EvalSimulation (C := C) (F := F) [first])
+    (restIH : EvalSimulation (C := C) (F := F) (second :: rest)) :
+    EvalSimulation (C := C) (F := F) (first :: second :: rest) := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  exact evaluate_cons_step first second rest source (evalSimulation_at firstIH source)
+    (fun state _ => evalSimulation_at restIH state) env nextEnv target result sourceNext start
+    run noType safe envRel stateRel
+
 /-- A let expression preserves evaluation when its bindings and body satisfy
     their simulations. The environment is extended in the evaluator's order. -/
-theorem evaluate_let {C F : Type} (trace : BackendCommon.Tra)
-    (bindings : List ClosLang.Exp) (body : ClosLang.Exp)
-    (bindingsIH : EvalSimulation (C := C) (F := F) bindings)
-    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
-    EvalSimulation (C := C) (F := F) [.let trace bindings body] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+theorem evaluate_let_step {C F : Type} (trace : BackendCommon.Tra)
+    (bindings : List ClosLang.Exp) (body : ClosLang.Exp) (source : State (Nat × C) F)
+    (bindingsIH : EvalSimulationAt source bindings)
+    (bodyIH : ∀ state : State (Nat × C) F, state.clock ≤ source.clock → EvalSimulationAt state [body]) :
+    EvalSimulationAt source [.let trace bindings body] := by
+  intro env nextEnv target result sourceNext start run noType safe envRel stateRel
   have safeParts : ¬ ClosProps.containsAppSomeExp source.maxApp body ∧
       ¬ ClosProps.containsAppSome source.maxApp bindings := by
     simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
@@ -663,7 +699,7 @@ theorem evaluate_let {C F : Type} (trace : BackendCommon.Tra)
       rw [evaluate, fixClock_evaluate, bindingsRun] at run
       cases run
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-        bindingsIH env nextEnv source target (.err error) middle start bindingsRun
+        bindingsIH env nextEnv target (.err error) middle start bindingsRun
           noType safeParts.2 envRel stateRel
       cases targetResult with
       | val values => cases error <;> simp [ResultRel] at resultRel
@@ -674,11 +710,14 @@ theorem evaluate_let {C F : Type} (trace : BackendCommon.Tra)
     | val values =>
       have bindingsNoType : (Result.val values : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-        bindingsIH env nextEnv source target (.val values) middle start bindingsRun
+        bindingsIH env nextEnv target (.val values) middle start bindingsRun
           bindingsNoType safeParts.2 envRel stateRel
       cases targetResult with
       | err error => cases error <;> simp [ResultRel] at resultRel
       | val targetValues =>
+        have middleClock : middle.clock ≤ source.clock := by
+          have h := evaluate_clock_le bindings env source
+          simpa [bindingsRun] using h
         have maxEq : middle.maxApp = source.maxApp := by
           have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 bindings env source
           simpa [bindingsRun] using h
@@ -692,7 +731,7 @@ theorem evaluate_let {C F : Type} (trace : BackendCommon.Tra)
           rw [evaluate, fixClock_evaluate, bindingsRun] at run
           exact run
         obtain ⟨targetBodyResult, targetLast, targetBodyRun, bodyRel, lastRel⟩ :=
-          bodyIH (values ++ env) (targetValues ++ nextEnv) middle targetMiddle result sourceNext
+          bodyIH middle middleClock (values ++ env) (targetValues ++ nextEnv) targetMiddle result sourceNext
             (renumberList start bindings).1 bodyRun noType bodySafe' extended middleRel
         refine ⟨targetBodyResult, targetLast, ?_, ?_, lastRel⟩
         · simp only [renumberList] at targetBodyRun
@@ -701,14 +740,25 @@ theorem evaluate_let {C F : Type} (trace : BackendCommon.Tra)
           exact targetBodyRun
         · simpa [maxEq] using bodyRel
 
+/-- Unrestricted let case, derived from the local-state step. -/
+theorem evaluate_let {C F : Type} (trace : BackendCommon.Tra)
+    (bindings : List ClosLang.Exp) (body : ClosLang.Exp)
+    (bindingsIH : EvalSimulation (C := C) (F := F) bindings)
+    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
+    EvalSimulation (C := C) (F := F) [.let trace bindings body] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  exact evaluate_let_step trace bindings body source (evalSimulation_at bindingsIH source)
+    (fun state _ => evalSimulation_at bodyIH state) env nextEnv target result sourceNext start
+    run noType safe envRel stateRel
+
 /-- A handler preserves normal and abort results and evaluates related handlers
     with related raised values prepended to their environments. -/
-theorem evaluate_handle {C F : Type} (trace : BackendCommon.Tra)
-    (body handler : ClosLang.Exp)
-    (bodyIH : EvalSimulation (C := C) (F := F) [body])
-    (handlerIH : EvalSimulation (C := C) (F := F) [handler]) :
-    EvalSimulation (C := C) (F := F) [.handle trace body handler] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+theorem evaluate_handle_step {C F : Type} (trace : BackendCommon.Tra)
+    (body handler : ClosLang.Exp) (source : State (Nat × C) F)
+    (bodyIH : EvalSimulationAt source [body])
+    (handlerIH : ∀ state : State (Nat × C) F, state.clock ≤ source.clock → EvalSimulationAt state [handler]) :
+    EvalSimulationAt source [.handle trace body handler] := by
+  intro env nextEnv target result sourceNext start run noType safe envRel stateRel
   have safeParts : ¬ ClosProps.containsAppSomeExp source.maxApp body ∧
       ¬ ClosProps.containsAppSomeExp source.maxApp handler := by
     simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
@@ -725,7 +775,7 @@ theorem evaluate_handle {C F : Type} (trace : BackendCommon.Tra)
       cases run
       exact noType rfl
     obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-      bodyIH env nextEnv source target bodyResult middle start bodyRun bodyNoType bodySafe envRel stateRel
+      bodyIH env nextEnv target bodyResult middle start bodyRun bodyNoType bodySafe envRel stateRel
     cases bodyResult with
     | val values =>
       cases targetResult with
@@ -759,6 +809,9 @@ theorem evaluate_handle {C F : Type} (trace : BackendCommon.Tra)
           cases targetError with
           | abort reason => simp [ResultRel] at resultRel
           | raise targetValue =>
+            have middleClock : middle.clock ≤ source.clock := by
+              have h := evaluate_clock_le [body] env source
+              simpa [bodyRun] using h
             have maxEq : middle.maxApp = source.maxApp := by
               have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 [body] env source
               simpa [bodyRun] using h
@@ -772,7 +825,7 @@ theorem evaluate_handle {C F : Type} (trace : BackendCommon.Tra)
               rw [evaluate, fixClock_evaluate, bodyRun] at run
               exact run
             obtain ⟨targetHandlerResult, targetLast, targetHandlerRun, handlerRel, lastRel⟩ :=
-              handlerIH (value :: env) (targetValue :: nextEnv) middle targetMiddle result sourceNext
+              handlerIH middle middleClock (value :: env) (targetValue :: nextEnv) targetMiddle result sourceNext
                 (renumber start body).1 handlerRun noType handlerSafe' extended middleRel
             refine ⟨targetHandlerResult, targetLast, ?_, ?_, lastRel⟩
             · simp only [renumberList] at targetRun targetHandlerRun
@@ -780,6 +833,16 @@ theorem evaluate_handle {C F : Type} (trace : BackendCommon.Tra)
               rw [evaluate, fixClock_evaluate, targetRun]
               exact targetHandlerRun
             · simpa [maxEq] using handlerRel
+
+/-- Unrestricted handler case, derived from the local-state step. -/
+theorem evaluate_handle {C F : Type} (trace : BackendCommon.Tra) (body handler : ClosLang.Exp)
+    (bodyIH : EvalSimulation (C := C) (F := F) [body])
+    (handlerIH : EvalSimulation (C := C) (F := F) [handler]) :
+    EvalSimulation (C := C) (F := F) [.handle trace body handler] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  exact evaluate_handle_step trace body handler source (evalSimulation_at bodyIH source)
+    (fun state _ => evalSimulation_at handlerIH state) env nextEnv target result sourceNext start
+    run noType safe envRel stateRel
 
 /-- Numbering preserves the evaluator's Boolean observation. -/
 theorem valueRel_asBool {maxApp : Nat} {left right : Value}
@@ -795,12 +858,12 @@ theorem valueRel_asBool {maxApp : Nat} {left right : Value}
 
 /-- Conditionals follow the same branch after numbering, assuming the
     condition and both branches satisfy their simulations. -/
-theorem evaluate_if {C F : Type} (trace : BackendCommon.Tra) (condition yes no : ClosLang.Exp)
-    (conditionIH : EvalSimulation (C := C) (F := F) [condition])
-    (yesIH : EvalSimulation (C := C) (F := F) [yes])
-    (noIH : EvalSimulation (C := C) (F := F) [no]) :
-    EvalSimulation (C := C) (F := F) [.ifThenElse trace condition yes no] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+theorem evaluate_if_step {C F : Type} (trace : BackendCommon.Tra) (condition yes no : ClosLang.Exp)
+    (source : State (Nat × C) F) (conditionIH : EvalSimulationAt source [condition])
+    (yesIH : ∀ state : State (Nat × C) F, state.clock ≤ source.clock → EvalSimulationAt state [yes])
+    (noIH : ∀ state : State (Nat × C) F, state.clock ≤ source.clock → EvalSimulationAt state [no]) :
+    EvalSimulationAt source [.ifThenElse trace condition yes no] := by
+  intro env nextEnv target result sourceNext start run noType safe envRel stateRel
   have safeParts : ¬ ClosProps.containsAppSomeExp source.maxApp condition ∧
       ¬ ClosProps.containsAppSomeExp source.maxApp yes ∧
       ¬ ClosProps.containsAppSomeExp source.maxApp no := by
@@ -818,7 +881,7 @@ theorem evaluate_if {C F : Type} (trace : BackendCommon.Tra) (condition yes no :
       rw [evaluate, fixClock_evaluate, conditionRun] at run
       cases run
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-        conditionIH env nextEnv source target (.err error) middle start conditionRun
+        conditionIH env nextEnv target (.err error) middle start conditionRun
           noType conditionSafe envRel stateRel
       cases targetResult with
       | val values => cases error <;> simp [ResultRel] at resultRel
@@ -837,7 +900,7 @@ theorem evaluate_if {C F : Type} (trace : BackendCommon.Tra) (condition yes no :
         | nil =>
           have conditionNoType : (Result.val [value] : Result (List Value) Value) ≠ .err (.abort .typeError) := by simp
           obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
-            conditionIH env nextEnv source target (.val [value]) middle start conditionRun
+            conditionIH env nextEnv target (.val [value]) middle start conditionRun
               conditionNoType conditionSafe envRel stateRel
           cases targetResult with
           | err error => cases error <;> simp [ResultRel] at resultRel
@@ -847,6 +910,9 @@ theorem evaluate_if {C F : Type} (trace : BackendCommon.Tra) (condition yes no :
               cases tailRel
               rename_i targetValue
               have boolEq : asBool value = asBool targetValue := valueRel_asBool valueRel
+              have middleClock : middle.clock ≤ source.clock := by
+                have h := evaluate_clock_le [condition] env source
+                simpa [conditionRun] using h
               have maxEq : middle.maxApp = source.maxApp := by
                 have h := (ClosProps.evaluate_const (C := Nat × C) (F := F)).1 [condition] env source
                 simpa [conditionRun] using h
@@ -865,7 +931,7 @@ theorem evaluate_if {C F : Type} (trace : BackendCommon.Tra) (condition yes no :
                     rw [evaluate, fixClock_evaluate, conditionRun] at run
                     simpa [decision] using run
                   obtain ⟨targetBranchResult, targetLast, targetBranchRun, branchRel, lastRel⟩ :=
-                    noIH env nextEnv middle targetMiddle result sourceNext
+                    noIH middle middleClock env nextEnv targetMiddle result sourceNext
                       (renumber (renumber start condition).1 yes).1 branchRun noType
                       (by simpa [maxEq] using noSafe) middleEnv middleRel
                   refine ⟨targetBranchResult, targetLast, ?_, ?_, lastRel⟩
@@ -879,7 +945,7 @@ theorem evaluate_if {C F : Type} (trace : BackendCommon.Tra) (condition yes no :
                     rw [evaluate, fixClock_evaluate, conditionRun] at run
                     simpa [decision] using run
                   obtain ⟨targetBranchResult, targetLast, targetBranchRun, branchRel, lastRel⟩ :=
-                    yesIH env nextEnv middle targetMiddle result sourceNext
+                    yesIH middle middleClock env nextEnv targetMiddle result sourceNext
                       (renumber start condition).1 branchRun noType
                       (by simpa [maxEq] using yesSafe) middleEnv middleRel
                   refine ⟨targetBranchResult, targetLast, ?_, ?_, lastRel⟩
@@ -889,14 +955,25 @@ theorem evaluate_if {C F : Type} (trace : BackendCommon.Tra) (condition yes no :
                     simpa [targetDecision] using targetBranchRun
                   · simpa [maxEq] using branchRel
 
+/-- Unrestricted conditional case, derived from the local-state step. -/
+theorem evaluate_if {C F : Type} (trace : BackendCommon.Tra) (condition yes no : ClosLang.Exp)
+    (conditionIH : EvalSimulation (C := C) (F := F) [condition])
+    (yesIH : EvalSimulation (C := C) (F := F) [yes])
+    (noIH : EvalSimulation (C := C) (F := F) [no]) :
+    EvalSimulation (C := C) (F := F) [.ifThenElse trace condition yes no] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  exact evaluate_if_step trace condition yes no source (evalSimulation_at conditionIH source)
+    (fun state _ => evalSimulation_at yesIH state) (fun state _ => evalSimulation_at noIH state)
+    env nextEnv target result sourceNext start run noType safe envRel stateRel
+
 /-- Recursive closure creation preserves the related environment and evaluates
     the numbered body under corresponding recursive function bundles. -/
-theorem evaluate_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
+theorem evaluate_letrec_step {C F : Type} (names : List Flapjack.AstHOL.VarN)
     (location : Option Nat) (selected : Option (List Nat))
-    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
-    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
-    EvalSimulation (C := C) (F := F) [.letrec names location selected functions body] := by
-  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp) (source : State (Nat × C) F)
+    (bodyIH : EvalSimulationAt source [body]) :
+    EvalSimulationAt source [.letrec names location selected functions body] := by
+  intro env nextEnv target result sourceNext start run noType safe envRel stateRel
   have safeParts : ¬ ClosProps.containsAppSomeFuns source.maxApp functions ∧
       ¬ ClosProps.containsAppSomeExp source.maxApp body := by
     simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
@@ -923,7 +1000,7 @@ theorem evaluate_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
           source = (result, sourceNext) := by
         cases selected <;> simp_all
       obtain ⟨targetResult, targetNext, targetRun, resultRel, nextRel⟩ :=
-        bodyIH _ _ source target result sourceNext
+        bodyIH _ _ target result sourceNext
           ((renumberFuns start functions).1 + 2 * (renumberFuns start functions).2.length)
           bodyRun noType bodySafe extended stateRel
       refine ⟨targetResult, targetNext, ?_, resultRel, nextRel⟩
@@ -934,6 +1011,16 @@ theorem evaluate_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
       cases selected <;> simp_all
   · simp [arityOk] at run
     exact False.elim (noType run.1.symm)
+
+/-- Unrestricted recursive-let case, derived from the local-state step. -/
+theorem evaluate_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
+    (location : Option Nat) (selected : Option (List Nat))
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (bodyIH : EvalSimulation (C := C) (F := F) [body]) :
+    EvalSimulation (C := C) (F := F) [.letrec names location selected functions body] := by
+  intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
+  exact evaluate_letrec_step names location selected functions body source (evalSimulation_at bodyIH source)
+    env nextEnv target result sourceNext start run noType safe envRel stateRel
 
 /-- Indirect application at one source state. Argument and function
 simulations are limited to reachable clocks, and application is available at
