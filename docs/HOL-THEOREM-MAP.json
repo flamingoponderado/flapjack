@@ -100238,6 +100238,18 @@
     "reviewer": "Source comparison: get_lowerbits_LSL_shift_length and its typed data_to_word_memory_repr capture. For every location the original right shift by shift_length yields the zero word without extra hypotheses. all word occurrences share the positive source word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Address.lean",
+    "lean_name": "getRealAddr_getAddr",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "get_real_addr_get_addr",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: get_real_addr_get_addr and its typed data_to_word_memory_repr capture preserve the heap-length bound, successful lookup, CurrHeap store lookup and good_dimindex hypotheses, together with both simple and optimized decoder conclusions. The heap address and payload element carriers are independently polymorphic and independent of the positive target word width. store is the canonical finite-support map with its local lookup-and-support roundtrip witness. All three optimized branches are proved from the source conditions."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

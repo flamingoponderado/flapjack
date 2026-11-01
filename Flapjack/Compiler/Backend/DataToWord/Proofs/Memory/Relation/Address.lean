@@ -119,8 +119,7 @@ theorem shiftWordBytes {width : Nat} [NeZero width] (good : goodDimindex width) 
   rcases good with h | h <;> subst width <;> simp [wordShiftAmount, StackRemove.bytesInWord] <;> bv_decide
 
 /-- A heap-bounded encoded pointer recovers the expected simple machine address.
-This is the simple-address component of the original combined theorem; the
-optimized address branches still require their own proof. -/
+This Flapjack helper is the simple-address component of the combined theorem. -/
 theorem getRealSimpleAddr_getAddr {width : Nat} [NeZero width] {α β : Type}
     (conf : Config) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
     (heap : List (HeapElement α β)) (index : Nat) (element : HeapElement α β)
@@ -141,5 +140,114 @@ theorem getRealSimpleAddr_getAddr {width : Nat} [NeZero width] {α β : Type}
     getLowerBits_shiftLength, bounded_shift_roundtrip index (shiftLength conf) bounded,
     shiftWordBytes good]
   simp
+
+/-- Shifting beyond both the tag field and marker bit clears the lower bits.
+This is Flapjack infrastructure for optimized address recovery. -/
+theorem getLowerBits_shiftBeyond {width : Nat} [NeZero width] (conf : Config) (v : WordLocW width) (k : Nat)
+    (bound : smallShiftLength conf ≤ k) (pos : 0 < k) : getLowerBits conf v >>> k = 0 := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  cases v with
+  | word w =>
+    simp only [getLowerBits, BitVec.getLsbD_ushiftRight, BitVec.getLsbD_or,
+      BitVec.getLsbD_setWidth, BitVec.getLsbD_extractLsb']
+    simp only [Nat.zero_add]
+    have h : ¬ k + i < smallShiftLength conf := by omega
+    simp [h, Nat.ne_of_gt pos]
+  | loc a b => simp [getLowerBits, Nat.ne_of_gt pos]
+
+/-- With no length or tag fields, the lower pointer bits consist only of the
+marker. This is Flapjack infrastructure for optimized address recovery. -/
+theorem getLowerBits_marker {width : Nat} [NeZero width] (conf : Config) (v : WordLocW width)
+    (len : conf.lenBits = 0) (tag : conf.tagBits = 0) : getLowerBits conf v = 1 := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  cases v with
+  | word w =>
+    simp only [getLowerBits, smallShiftLength, len, tag, Nat.zero_add,
+      BitVec.getLsbD_or, BitVec.getLsbD_setWidth, BitVec.getLsbD_extractLsb']
+    by_cases zero : i = 0
+    · subst i
+      simp [hi]
+    · have notlt : ¬ i < 1 := by omega
+      simp [notlt]
+  | loc a b => rfl
+
+/-- A bounded left shift followed by a shorter right shift retains the
+remaining shift. This is Flapjack bit-vector infrastructure. -/
+theorem bounded_shift_partial {width : Nat} [NeZero width] (n s k : Nat) (ks : k ≤ s)
+    (hn : n * 2 ^ s < 2 ^ width) :
+    (BitVec.ofNat width n <<< s) >>> (s - k) = (BitVec.ofNat width n <<< k) := by
+  have nle : n ≤ n * 2 ^ s := Nat.le_mul_of_pos_right n (Nat.two_pow_pos s)
+  have nlt : n < 2 ^ width := Nat.lt_of_le_of_lt nle hn
+  have smallPow : 2 ^ k ≤ 2 ^ s := Nat.pow_le_pow_right (by decide) ks
+  have hsmall : n * 2 ^ k < 2 ^ width := Nat.lt_of_le_of_lt (Nat.mul_le_mul_left n smallPow) hn
+  have hp : 2 ^ s = 2 ^ k * 2 ^ (s - k) := by
+    rw [← Nat.pow_add]
+    congr 1
+    omega
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.toNat_ushiftRight, BitVec.toNat_shiftLeft, BitVec.toNat_ofNat,
+    Nat.mod_eq_of_lt nlt, Nat.shiftLeft_eq, Nat.mod_eq_of_lt hn, Nat.mod_eq_of_lt hsmall,
+    Nat.shiftRight_eq_div_pow]
+  rw [hp, ← Nat.mul_assoc, Nat.mul_div_cancel _ (Nat.two_pow_pos _)]
+
+/-- The marker bit cancels in the direct-address optimization at both source
+word widths. This is Flapjack bit-vector infrastructure. -/
+theorem pointerMarker_cancel {width : Nat} [NeZero width] (good : goodDimindex width) (n curr : BitVec width) :
+    curr + ((n <<< wordShiftAmount width) ||| 1) - 1 = curr + (n <<< wordShiftAmount width) := by
+  rcases good with h | h <;> subst width <;> simp [wordShiftAmount] <;> bv_decide
+
+/-- The combined address theorem's store argument has the canonical
+lookup-and-support roundtrip. -/
+theorem holFmapAsFiniteSupportParamWitness_getRealAddr_getAddr_store {width : Nat} [NeZero width]
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).lookup key = store.lookup key ∧
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).finiteSupport = store.finiteSupport ∧
+    MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store) = store := by
+  cases store
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Both source address decoders recover the same bounded heap location. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "get_real_addr_get_addr"
+  (fmap_as_finite_support_parameters := [store]) (words_as_type_indexed_bitvec)]
+theorem getRealAddr_getAddr {width : Nat} [NeZero width] {α β : Type}
+    (conf : Config) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (heap : List (HeapElement α β)) (index : Nat) (element : HeapElement α β)
+    (curr : BitVec width) (v : WordLocW width) :
+    heapLength heap ≤ 2 ^ width / 2 ^ shiftLength conf ∧
+      heapLookup index heap = some element ∧ store.lookup .currHeap = some (.word curr) ∧ goodDimindex width →
+    getRealSimpleAddr conf store (getAddr conf index v) =
+      some (curr + BitVec.ofNat width index * StackRemove.bytesInWord width) ∧
+    getRealAddr conf store (getAddr conf index v) =
+      some (curr + BitVec.ofNat width index * StackRemove.bytesInWord width) := by
+  rintro ⟨heapBound, found, stored, good⟩
+  refine ⟨getRealSimpleAddr_getAddr conf store heap index element curr v heapBound found stored good, ?_⟩
+  have indexBound : index < heapLength heap := heapLookup_less heap index element found
+  have below : index < 2 ^ width / 2 ^ shiftLength conf := Nat.lt_of_lt_of_le indexBound heapBound
+  have bounded : index * 2 ^ shiftLength conf < 2 ^ width := by
+    calc
+      index * 2 ^ shiftLength conf < (2 ^ width / 2 ^ shiftLength conf) * 2 ^ shiftLength conf :=
+        Nat.mul_lt_mul_of_pos_right below (Nat.two_pow_pos _)
+      _ ≤ 2 ^ width := Nat.div_mul_le_self _ _
+  by_cases fast : wordShiftAmount width = shiftLength conf ∧ conf.lenBits = 0 ∧ conf.tagBits = 0
+  · simp only [getRealAddr, stored, if_pos fast, getAddr,
+      getLowerBits_marker conf v fast.2.1 fast.2.2]
+    rw [← fast.1, pointerMarker_cancel good, shiftWordBytes good]
+  · by_cases short : wordShiftAmount width ≤ conf.padBits + 1
+    · have ks : wordShiftAmount width ≤ shiftLength conf := by simp [shiftLength] at *; omega
+      have tagBound : smallShiftLength conf ≤ shiftLength conf - wordShiftAmount width := by
+        simp [smallShiftLength, shiftLength] at *
+        omega
+      have positive : 0 < shiftLength conf - wordShiftAmount width := by
+        simp [shiftLength] at *
+        omega
+      simp only [getRealAddr, stored, fast, ↓reduceIte, short, getAddr, BitVec.ushiftRight_or_distrib,
+        getLowerBits_shiftBeyond conf v _ tagBound positive,
+        bounded_shift_partial index (shiftLength conf) (wordShiftAmount width) ks bounded,
+        shiftWordBytes good]
+      simp
+    · simpa [getRealAddr, getRealSimpleAddr, stored, fast, short] using
+        getRealSimpleAddr_getAddr conf store heap index element curr v heapBound found stored good
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
