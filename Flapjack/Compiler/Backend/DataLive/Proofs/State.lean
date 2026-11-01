@@ -48,7 +48,7 @@ theorem mem_inter (left right : NumSet) (key : Nat) :
 
 /-- A successful cut has exactly the requested names and retains their
 original values. -/
-theorem cutEnv_lookup (names : NumSet) (env cut : Spt Value)
+theorem cutEnv_lookup {α : Type} (names : NumSet) (env cut : Spt α)
     (run : DataSem.cutEnv names env = some cut) (key : Nat) :
     sptLookup key cut = if sptMem key names then sptLookup key env else none := by
   classical

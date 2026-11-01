@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
 import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveAll
 import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
+import Flapjack.Compiler.Backend.DataSpace.Proofs.Cuts
 
 /-! Basic cases of data-space reservation simulation. -/
 namespace Flapjack.Compiler.Backend.DataSpace
@@ -433,6 +434,40 @@ theorem simulationFor_seq_skip_right {C F : Type} (first : DataLang.Prog)
     firstIH source sourceNext result locals notType sourceRun included
   refine ⟨out, safe, peak, stackMax, ?_, final⟩
   cases first <;> simpa [compile, space, pMakeSpace, DataSem.evaluate_seq_skip] using targetRun
+
+/-- Two adjacent reservations can be combined by cutting to the
+intersection and keeping the later reservation amount. -/
+theorem simulationFor_seq_makeSpace {C F : Type} (firstAmount secondAmount : Nat)
+    (firstNames secondNames : NumSet) :
+    simulationFor (C := C) (F := F) (.seq (.makeSpace firstAmount firstNames) (.makeSpace secondAmount secondNames)) := by
+  intro source sourceNext result locals notType run included
+  cases firstCut : cutEnv firstNames source.locals with
+  | none =>
+    simp [DataSem.evaluate, firstCut] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact False.elim (notType rfl)
+  | some middle =>
+    let middleState := addSpace { source with locals := middle } firstAmount
+    have firstRun : DataSem.evaluate (.makeSpace firstAmount firstNames) source = (none, middleState) := by
+      simp [DataSem.evaluate, firstCut, middleState]
+    rw [DataSem.evaluate, fixClock_evaluate, firstRun] at run
+    cases secondCut : cutEnv secondNames middle with
+    | none =>
+      simp [DataSem.evaluate, middleState, addSpace, secondCut] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact False.elim (notType rfl)
+    | some out =>
+      have combined := cutEnv_twice firstNames secondNames source.locals middle out firstCut secondCut
+      have targetCut := cutEnv_of_subspt (sptInter firstNames secondNames) source.locals locals out included combined
+      simp [DataSem.evaluate, middleState, addSpace, secondCut] at run
+      obtain ⟨rfl, rfl⟩ := run
+      let targetNext := addSpace { source with locals := out } secondAmount
+      refine ⟨out, targetNext.safeForSpace, targetNext.peakHeapLength, targetNext.stackMax, ?_, ?_⟩
+      · change DataSem.evaluate (.seq (.makeSpace secondAmount (sptInter firstNames secondNames)) .skip) { source with locals := locals } = _
+        rw [DataSem.evaluate_seq_skip]
+        simp [DataSem.evaluate, targetCut, targetNext, addSpace]
+      · intro key member
+        exact ⟨member, rfl⟩
 
 /-- Changing only resource-accounting fields preserves the evaluator result
 and observable data state for non-type-error executions. The stronger HOL
