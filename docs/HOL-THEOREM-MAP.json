@@ -100187,6 +100187,57 @@
     "reviewer": "Source comparison: word_ml_inv_SP_LIMIT and its typed data_to_word_memory_repr capture retain the full heap tuple, limit, timestamp, configuration, references and paired stack, concluding the original sp \u2264 limit bound. Target words share the positive HOL width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Address.lean",
+    "lean_name": "getRealAddr",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "get_real_addr_def",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: get_real_addr_def and its typed data_to_word_memory_repr capture. All three source branches and the NONE and Loc failures are retained, with the same shift, length, tag and pad-bit conditions. store is the canonical finite-support map with its local lookup-and-support roundtrip witness; all word occurrences share the positive source word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Address.lean",
+    "lean_name": "getRealOffset",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "get_real_offset_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: get_real_offset_def and its typed data_to_word_memory_repr capture. The source chooses word + bytes_in_word at width 32, otherwise (word << 1) + bytes_in_word. all word occurrences share the positive source word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Address.lean",
+    "lean_name": "getRealSimpleAddr",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "get_real_simple_addr_def",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: get_real_simple_addr_def and its typed data_to_word_memory_repr capture. The source CurrHeap Word case and its two shift amounts are retained, with NONE and Loc returning NONE. store is the canonical finite-support map with its local lookup-and-support roundtrip witness; all word occurrences share the positive source word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Address.lean",
+    "lean_name": "getRealOffset_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "get_real_offset_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: get_real_offset_thm and its typed data_to_word_memory_repr capture. The good_dimindex premise and offset of n2w (4 * index) retain the original conclusion. all word occurrences share the positive source word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Address.lean",
+    "lean_name": "getLowerBits_shiftLength",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "get_lowerbits_LSL_shift_length",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: get_lowerbits_LSL_shift_length and its typed data_to_word_memory_repr capture. For every location the original right shift by shift_length yields the zero word without extra hypotheses. all word occurrences share the positive source word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
