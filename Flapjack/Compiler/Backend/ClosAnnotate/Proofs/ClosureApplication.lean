@@ -42,6 +42,109 @@ theorem functionsRel_length (env nextEnv : List Value) (count : Nat)
     functions.length = nextFunctions.length := by
   exact ((functionsRel_iff env nextEnv count functions nextFunctions).mp related).length_eq
 
+/-- Related argument and recursive-closure prefixes provide the local slots
+needed to evaluate an annotated closure body. -/
+theorem envOk_application_body (body : ClosLang.Exp) (m localCount : Nat) (index : Spt Nat)
+    (env nextEnv front nextFront : List Value) (frontRel : List.Forall₂ ValueRel front nextFront)
+    (frontLength : front.length = localCount)
+    (live : ∀ n, altFv n [body] = true → localCount ≤ n →
+      EnvOk m 0 index env nextEnv (n - localCount)) :
+    ∀ n, altFv n [body] = true → EnvOk m localCount index (front ++ env) (nextFront ++ nextEnv) n := by
+  intro n present
+  have extended := envOk_extend m 0 index front nextFront env nextEnv n frontRel (by
+    intro bound
+    simpa [frontLength] using live n present (by simpa [frontLength] using bound))
+  simpa [frontLength] using extended
+
+/-- Full applications expose an annotated body together with matching
+arguments, captured-variable assumptions, and over-application tails. -/
+theorem destClosure_related_full (maxApp : Nat) (requested : Option Nat)
+    (function nextFunction : Value) (args nextArgs : List Value)
+    (body : ClosLang.Exp) (bodyEnv remaining : List Value)
+    (related : ValueRel function nextFunction) (argsRel : List.Forall₂ ValueRel args nextArgs)
+    (run : destClosure maxApp requested function args = some (.fullApp body bodyEnv remaining)) :
+    ∃ nextBody nextBodyEnv nextRemaining m localCount index,
+      destClosure maxApp requested nextFunction nextArgs = some (.fullApp nextBody nextBodyEnv nextRemaining) ∧
+      shiftList (altFree [body]).1 m localCount index = [nextBody] ∧
+      bodyEnv.length = m + localCount ∧
+      (∀ n, altFv n [body] = true → EnvOk m localCount index bodyEnv nextBodyEnv n) ∧
+      everyFnVarsNone [body] ∧ List.Forall₂ ValueRel remaining nextRemaining := by
+  cases related with
+  | number _ | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ => simp [destClosure] at run
+  | closure location supplied nextSupplied env nextEnv arity m original nextBody index shifted live safe length suppliedRel =>
+    have argsLen := argsRel.length_eq
+    have suppliedLen := suppliedRel.length_eq
+    by_cases valid : checkLoc maxApp requested location arity args.length supplied.length && supplied.length < arity
+    · by_cases part : args.length + supplied.length < arity
+      · simp [destClosure, valid, part] at run
+      · simp [destClosure, valid, part] at run
+        obtain ⟨rfl, rfl, rfl⟩ := run
+        let needed := arity - supplied.length
+        let front := (args.reverse.take needed).reverse ++ supplied
+        let nextFront := (nextArgs.reverse.take needed).reverse ++ nextSupplied
+        have suppliedBound : supplied.length < arity := by
+          simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
+          exact valid.2
+        have frontLength : front.length = arity := by
+          simp only [front, List.length_append, List.length_reverse, List.length_take]
+          dsimp [needed]
+          omega
+        have frontRel : List.Forall₂ ValueRel front nextFront :=
+          List.rel_append (List.rel_reverse (List.forall₂_take needed (List.rel_reverse argsRel))) suppliedRel
+        refine ⟨nextBody, nextFront ++ nextEnv, (nextArgs.reverse.drop needed).reverse,
+          m, arity, index, ?_, shifted, ?_, ?_, safe, ?_⟩
+        · simp [destClosure, ← argsLen, ← suppliedLen, valid, part, needed, nextFront, List.append_assoc]
+        · have h : (front ++ env).length = m + arity := by simp [frontLength, length, Nat.add_comm]
+          simpa [front, List.append_assoc] using h
+        · simpa [front, nextFront, List.append_assoc] using
+            envOk_application_body original m arity index env nextEnv front nextFront frontRel frontLength live
+        · exact List.rel_reverse (List.forall₂_drop needed (List.rel_reverse argsRel))
+    · simp [destClosure, valid] at run
+  | recclosure location supplied nextSupplied env nextEnv functions nextFunctions funIndex functionsRel suppliedRel bound =>
+    cases found : functions[funIndex]? with
+    | none => simp [destClosure, found] at run
+    | some entry =>
+      obtain ⟨arity, original⟩ := entry
+      obtain ⟨nextBody, m, index, nextFound, shifted, live, safe, length⟩ :=
+        functionsRel_getElem env nextEnv functions.length functions nextFunctions funIndex arity original functionsRel found
+      have argsLen := argsRel.length_eq
+      have suppliedLen := suppliedRel.length_eq
+      have funLength := functionsRel_length env nextEnv functions.length functions nextFunctions functionsRel
+      by_cases valid : checkLoc maxApp requested (location.map (fun loc => 2 * funIndex + loc))
+          arity args.length supplied.length && supplied.length < arity
+      · by_cases part : args.length + supplied.length < arity
+        · simp [destClosure, found, valid, part] at run
+        · simp [destClosure, found, valid, part] at run
+          obtain ⟨rfl, rfl, rfl⟩ := run
+          let needed := arity - supplied.length
+          let recs := (List.range functions.length).map (fun i => Value.recclosure location [] env functions i)
+          let nextRecs := (List.range functions.length).map (fun i => Value.recclosure location [] nextEnv nextFunctions i)
+          let front := (args.reverse.take needed).reverse ++ supplied ++ recs
+          let nextFront := (nextArgs.reverse.take needed).reverse ++ nextSupplied ++ nextRecs
+          have suppliedBound : supplied.length < arity := by
+            simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
+            exact valid.2
+          have frontLength : front.length = arity + functions.length := by
+            simp only [front, recs, List.length_append, List.length_reverse, List.length_take,
+              List.length_map, List.length_range]
+            dsimp [needed]
+            omega
+          have frontRel : List.Forall₂ ValueRel front nextFront :=
+            List.rel_append (List.rel_append (List.rel_reverse (List.forall₂_take needed (List.rel_reverse argsRel))) suppliedRel)
+              (recursiveValues_related location env nextEnv functions nextFunctions functionsRel)
+          refine ⟨nextBody, nextFront ++ nextEnv, (nextArgs.reverse.drop needed).reverse,
+            m, arity + functions.length, index, ?_, ?_, ?_, ?_, safe, ?_⟩
+          · simp [destClosure, nextFound, ← argsLen, ← suppliedLen, ← funLength, valid, part,
+              needed, nextFront, nextRecs, List.append_assoc]
+          · simpa [Nat.add_comm] using shifted
+          · have h : (front ++ env).length = m + (arity + functions.length) := by
+              simp [frontLength, length, Nat.add_comm]
+            simpa [front, recs, List.append_assoc] using h
+          · simpa [front, nextFront, recs, nextRecs, List.append_assoc] using
+              envOk_application_body original m (arity + functions.length) index env nextEnv front nextFront frontRel frontLength live
+          · exact List.rel_reverse (List.forall₂_drop needed (List.rel_reverse argsRel))
+      · simp [destClosure, found, valid] at run
+
 /-- A partial application accumulates related arguments in related closures.
 This covers both direct and indirect applications and recursive closures. -/
 theorem destClosure_related_partial (maxApp : Nat) (requested : Option Nat)
@@ -161,5 +264,165 @@ theorem evaluateApp_rejected {C F : Type} (requested : Option Nat) (function fir
   dsimp only at run
   cases run
   exact noType rfl
+
+/-- Simulation of application at clocks below a bound, used for the
+recursive application of a full call's result to remaining arguments. -/
+def AppSimulationClockBelow {C F : Type} (clock : Nat) : Prop :=
+  ∀ (requested : Option Nat) (function nextFunction : Value) (args nextArgs : List Value)
+    (source target : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (sourceNext : State C F),
+    source.clock < clock → evaluateApp requested function args source = (result, sourceNext) →
+    result ≠ .err (.abort .typeError) → ValueRel function nextFunction →
+    List.Forall₂ ValueRel args nextArgs → CodeSafe source → OracleSafe source → StateRel source target →
+    ∃ targetResult targetNext, evaluateApp requested nextFunction nextArgs target = (targetResult, targetNext) ∧
+      ResultRel result targetResult ∧ StateRel sourceNext targetNext
+
+/-- A full application composes its smaller-clock body simulation with the
+smaller-clock application of any remaining arguments. -/
+theorem evaluateApp_full {C F : Type} (requested : Option Nat) (function nextFunction first : Value)
+    (rest nextArgs : List Value) (source target : State C F) (body : ClosLang.Exp)
+    (bodyEnv remaining : List Value)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value) (sourceNext : State C F)
+    (run : evaluateApp requested function (first :: rest) source = (result, sourceNext))
+    (found : destClosure source.maxApp requested function (first :: rest) = some (.fullApp body bodyEnv remaining))
+    (noType : result ≠ .err (.abort .typeError)) (related : ValueRel function nextFunction)
+    (argsRel : List.Forall₂ ValueRel (first :: rest) nextArgs)
+    (code : CodeSafe source) (oracle : OracleSafe source) (states : StateRel source target)
+    (bodyIH : ∀ state : State C F, state.clock < source.clock → EvalSimulationAt state [body])
+    (applicationIH : AppSimulationClockBelow (C := C) (F := F) source.clock) :
+    ∃ targetResult targetNext, evaluateApp requested nextFunction nextArgs target = (targetResult, targetNext) ∧
+      ResultRel result targetResult ∧ StateRel sourceNext targetNext := by
+  obtain ⟨nextBody, nextEnv, nextRemaining, m, localCount, index, nextFound, shifted,
+    envLength, envRel, bodySafe, remainingRel⟩ :=
+      destClosure_related_full source.maxApp requested function nextFunction (first :: rest) nextArgs
+        body bodyEnv remaining related argsRel found
+  have maxEq : source.maxApp = target.maxApp := states.2.2.1
+  have clockEq : source.clock = target.clock := states.1
+  have lengthEq : (first :: rest).length = nextArgs.length := argsRel.length_eq
+  have remainingEq : remaining.length = nextRemaining.length := remainingRel.length_eq
+  cases argsRel with
+  | cons head tail =>
+    rename_i nextFirst nextRest
+    let cost := (first :: rest).length - remaining.length
+    have costPositive : 0 < cost :=
+      Nat.sub_pos_of_lt (destClosure_full_remaining_lt _ _ _ _ _ _ _ found)
+    have targetCost : (nextFirst :: nextRest).length - nextRemaining.length = cost := by
+      simp [cost, ← lengthEq, ← remainingEq]
+    have targetFound : destClosure target.maxApp requested nextFunction (nextFirst :: nextRest) =
+        some (.fullApp nextBody nextEnv nextRemaining) := by simpa [← maxEq] using nextFound
+    by_cases insufficient : source.clock < cost
+    · have targetInsufficient : target.clock < (nextFirst :: nextRest).length - nextRemaining.length := by
+        rw [targetCost, ← clockEq]
+        exact insufficient
+      rw [evaluateApp, found] at run
+      dsimp only at run
+      rw [if_pos insufficient] at run
+      cases run
+      refine ⟨.err (.abort .timeoutError), { target with clock := 0 }, ?_, rfl, stateRel_withClock states 0⟩
+      rw [evaluateApp, targetFound]
+      dsimp only
+      rw [if_pos targetInsufficient]
+      rfl
+    · have bodyClockLess : (decClock cost source).clock < source.clock := by
+        simp [decClock]
+        omega
+      have targetEnough : ¬ target.clock < (nextFirst :: nextRest).length - nextRemaining.length := by
+        rw [targetCost, ← clockEq]
+        exact insufficient
+      have startRel : StateRel (decClock cost source) (decClock cost target) := by
+        simpa [decClock, ← clockEq] using stateRel_withClock states (source.clock - cost)
+      have startCode : CodeSafe (decClock cost source) := by simpa [CodeSafe, decClock] using code
+      have startOracle : OracleSafe (decClock cost source) := by simpa [OracleSafe, decClock] using oracle
+      rw [evaluateApp, found] at run
+      dsimp only at run
+      rw [if_neg insufficient, fixClock_evaluate] at run
+      cases bodyRun : evaluate [body] bodyEnv (decClock cost source) with
+      | mk bodyResult last =>
+        have bodyNoType : bodyResult ≠ .err (.abort .typeError) := by
+          intro bad
+          subst bodyResult
+          rw [bodyRun] at run
+          cases run
+          exact noType rfl
+        obtain ⟨targetBodyResult, targetLast, targetBodyRun, bodyRel, lastRel⟩ :=
+          bodyIH (decClock cost source) bodyClockLess bodyEnv nextEnv (decClock cost target)
+            bodyResult last m localCount index bodyRun bodyNoType envLength envRel bodySafe startCode startOracle startRel
+        rw [shifted] at targetBodyRun
+        cases bodyResult with
+        | err error =>
+          rw [bodyRun] at run
+          cases run
+          cases targetBodyResult with
+          | val values => cases error <;> simp [ResultRel] at bodyRel
+          | err targetError =>
+            refine ⟨.err targetError, targetLast, ?_, bodyRel, lastRel⟩
+            rw [evaluateApp, targetFound]
+            dsimp only
+            rw [if_neg targetEnough, targetCost, fixClock_evaluate, targetBodyRun]
+        | val values =>
+          have size := (evaluate_length (C := C) (F := F)).1 [body] bodyEnv
+            (decClock cost source) last values bodyRun
+          cases values with
+          | nil => simp at size
+          | cons value tail =>
+            cases tail with
+            | cons value' tail => simp at size
+            | nil =>
+              cases targetBodyResult with
+              | err error => cases error <;> simp [ResultRel] at bodyRel
+              | val targetValues =>
+                cases bodyRel with
+                | cons valueRel tailRel =>
+                  cases tailRel
+                  rename_i targetValue
+                  have appRun : evaluateApp requested value remaining last = (result, sourceNext) := by
+                    rw [bodyRun] at run
+                    exact run
+                  have lastClockLess : last.clock < source.clock := by
+                    have bound := evaluate_clock_le [body] bodyEnv (decClock cost source)
+                    rw [bodyRun] at bound
+                    exact Nat.lt_of_le_of_lt bound bodyClockLess
+                  have lastSafe := (evaluate_preserves_safe.1 [body]) bodyEnv (decClock cost source)
+                    (.val [value]) last bodyRun startCode startOracle
+                  obtain ⟨targetResult, targetNext, targetAppRun, resultRel, nextRel⟩ :=
+                    applicationIH requested value targetValue remaining nextRemaining last targetLast result sourceNext
+                      lastClockLess appRun noType valueRel remainingRel lastSafe.1 lastSafe.2 lastRel
+                  refine ⟨targetResult, targetNext, ?_, resultRel, nextRel⟩
+                  rw [evaluateApp, targetFound]
+                  dsimp only
+                  rw [if_neg targetEnough, targetCost, fixClock_evaluate, targetBodyRun]
+                  exact targetAppRun
+
+/-- One application induction step, using body and recursive application
+simulations only at strictly smaller clocks. -/
+theorem evaluateApp_clock_step {C F : Type} (requested : Option Nat) (function nextFunction : Value)
+    (args nextArgs : List Value) (source target : State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value) (sourceNext : State C F)
+    (run : evaluateApp requested function args source = (result, sourceNext))
+    (noType : result ≠ .err (.abort .typeError)) (related : ValueRel function nextFunction)
+    (argsRel : List.Forall₂ ValueRel args nextArgs)
+    (code : CodeSafe source) (oracle : OracleSafe source) (states : StateRel source target)
+    (bodyIH : ∀ (body : ClosLang.Exp) (state : State C F), state.clock < source.clock →
+      EvalSimulationAt state [body])
+    (applicationIH : AppSimulationClockBelow (C := C) (F := F) source.clock) :
+    ∃ targetResult targetNext, evaluateApp requested nextFunction nextArgs target = (targetResult, targetNext) ∧
+      ResultRel result targetResult ∧ StateRel sourceNext targetNext := by
+  cases args with
+  | nil =>
+    cases argsRel
+    have empty := evaluateApp_empty requested function nextFunction source target related states
+    rw [run] at empty
+    exact empty
+  | cons first rest =>
+    cases found : destClosure source.maxApp requested function (first :: rest) with
+    | none => exact False.elim (evaluateApp_rejected requested function first rest source result sourceNext run found noType)
+    | some application =>
+      cases application with
+      | partialApp partialValue =>
+        exact evaluateApp_partial requested function nextFunction first rest nextArgs source target partialValue
+          result sourceNext run found related argsRel states
+      | fullApp body bodyEnv remaining =>
+        exact evaluateApp_full requested function nextFunction first rest nextArgs source target body bodyEnv remaining
+          result sourceNext run found noType related argsRel code oracle states (bodyIH body) applicationIH
 
 end Flapjack.Compiler.Backend.ClosAnnotate
