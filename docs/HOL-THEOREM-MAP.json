@@ -100075,6 +100075,39 @@
     "reviewer": "Source comparison: memory_rel_Xor and its typed data_to_word_memory_repr capture retain the fixed word8 source operands, their unsigned natural values embedded in Number, the two target words, full memory relation and good_dimindex premise. The conclusion applies bitwise XOR at the original respective widths and keeps the original suffix. BitVec 8 represents source word8 and the independently indexed positive target width represents the shared HOL word type; store uses the canonical finite-support map."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/NumberCompare.lean",
+    "lean_name": "memoryRel_numberWordMsb",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Number_word_msb",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Number_word_msb and its typed data_to_word_memory_repr capture. The original memory relation, good_dimindex and small_int hypotheses imply that the target word most significant bit is set exactly when the source integer is negative. Lean represents the HOL Boolean word_msb proposition as w.msb = true. store uses the canonical finite-support map; target word occurrences share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/RefEquality.lean",
+    "lean_name": "refEqThm",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "ref_eq_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: ref_eq_thm and its typed data_to_word_memory_repr capture. The original abstract invariant for two RefPtr T values implies both the equivalence of reference indices and roots and the existence of the two zero-annotated pointer roots. target word occurrences share the positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/RefEquality.lean",
+    "lean_name": "memoryRel_refPtrEqImp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_RefPtr_EQ_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_RefPtr_EQ_IMP and its typed data_to_word_memory_repr capture. The original memory relation, good_dimindex and ByteArray lookup hypotheses imply equality of both target words, retaining independent comparison flags, the common reference index, and the fixed word8 byte list. store uses the canonical finite-support map; target word occurrences share the positive HOL word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

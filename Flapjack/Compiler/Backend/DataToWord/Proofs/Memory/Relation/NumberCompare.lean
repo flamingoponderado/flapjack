@@ -167,4 +167,23 @@ theorem memoryRel_numberLessEq {width : Nat} [NeZero width] (conf : Config) (big
     BitVec.toInt_ofInt_eq_self pos bounds2.1 bounds2.2]
   omega
 
+/-- A related small integer is negative exactly when the word sign bit is set. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_Number_word_msb"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_numberWordMsb {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (space : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (i : Int) (w : BitVec width) (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) :
+    memoryRel conf bigEndian next refs space store memory domain ((.number i, .word w) :: vars) ∧
+      goodDimindex width ∧ smallInt width i → (w.msb = true ↔ i < 0) := by
+  rintro ⟨inv, good, small⟩
+  have word := WordLocW.word.inj (memoryRel_numberImp conf bigEndian next refs space store memory domain
+    i (.word w) vars ⟨good, small, inv⟩)
+  have bounds := smallnum_signedBounds good i small
+  have pos : 0 < width := Nat.pos_of_ne_zero (NeZero.ne width)
+  rw [word, BitVec.msb_eq_toInt, decide_eq_true_eq, smallnum_i2w,
+    BitVec.toInt_ofInt_eq_self pos bounds.1 bounds.2]
+  omega
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
