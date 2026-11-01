@@ -435,6 +435,15 @@ matched another 200, 300, and 1,000 cases respectively. Seed `729081` matched
 200 cases. Single-edit mutation
 seed `945701` matched 400 cases.
 
+Use `--unicode-mutations` to mutate source containing multibyte characters,
+comments, strings and diagnostic locations. Seed `325579` matched 400 cases
+against the pinned compiler, comparing complete output, diagnostics and exit
+status for both accepted and rejected programs:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --unicode-mutations --seed 325579 --count 400
+```
+
 The same checker has a fixed language-feature corpus covering literals,
 patterns, datatypes, exceptions, local bindings, closures, structures and
 large integers, as well as unbound-name diagnostics with the prelude excluded.

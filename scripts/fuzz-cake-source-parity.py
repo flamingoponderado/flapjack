@@ -159,6 +159,22 @@ def deep_mutated_source(rng):
     return source
 
 
+def unicode_mutated_source(rng):
+    """Mutate UTF-8 source at character boundaries, including error locations."""
+    source = rng.choice([
+        'val x = "héllo";', 'val λ = 1;', 'val x = "😀";',
+        '(* áβ *) val x = 1;', 'val x = 3;\nval y = missing;',
+        'fun f (x,y) = x;',
+    ])
+    alphabet = 'λéß😀中\r\t\\"(*):;#0129'
+    for _ in range(rng.randrange(1, 4)):
+        position = rng.randrange(len(source) + 1)
+        char = rng.choice(alphabet)
+        skip = rng.randrange(2) if position < len(source) else 0
+        source = source[:position] + char + source[position + skip:]
+    return source
+
+
 def run(binary, source, timeout, exclude_prelude=False):
     flags = ['--exclude_prelude=true'] if exclude_prelude else []
     return subprocess.run([str(binary), '--target=riscv', *flags], input=source.encode('utf-8'),
@@ -177,6 +193,8 @@ def main():
                         help='compare mutated source and diagnostics with the prelude excluded')
     modes.add_argument('--deep-mutations', action='store_true',
                        help='mutate nested declarations and expressions with the prelude excluded')
+    modes.add_argument('--unicode-mutations', action='store_true',
+                       help='mutate UTF-8 source with the prelude excluded')
     modes.add_argument('--corpus', action='store_true',
                        help='compare fixed language-feature and standard-prelude programs')
     args = parser.parse_args()
@@ -190,10 +208,11 @@ def main():
     corpus += [(source, 0, False) for source in BASIS_CORPUS]
     count = len(corpus) if args.corpus else args.count
     for index in range(count):
-        source = (corpus[index][0] if args.corpus else deep_mutated_source(rng) if args.deep_mutations else
+        source = (corpus[index][0] if args.corpus else unicode_mutated_source(rng) if args.unicode_mutations else
+                  deep_mutated_source(rng) if args.deep_mutations else
                   mutated_source(rng) if args.mutations else
                   'fun f x = ' + expression(rng, rng.randrange(1, 4)) + '; val _ = print_int (f 2);')
-        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations
+        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations or args.unicode_mutations
         try:
             original = run(args.reference, source, args.timeout, exclude_prelude)
             candidate = run(args.cake, source, args.timeout, exclude_prelude)
@@ -202,7 +221,7 @@ def main():
         expected = (original.returncode, original.stdout, original.stderr)
         actual = (candidate.returncode, candidate.stdout, candidate.stderr)
         if ((args.corpus and original.returncode != corpus[index][1]) or
-                (not (args.mutations or args.deep_mutations or args.corpus) and original.returncode != 0) or
+                (not (args.mutations or args.deep_mutations or args.unicode_mutations or args.corpus) and original.returncode != 0) or
                 actual != expected):
             def describe(result):
                 return (f'exit={result.returncode} stdout_sha256={hashlib.sha256(result.stdout).hexdigest()} '
