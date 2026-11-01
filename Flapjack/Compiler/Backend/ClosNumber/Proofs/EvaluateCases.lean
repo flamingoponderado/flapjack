@@ -1333,4 +1333,94 @@ theorem evaluate_block_cons {C F : Type} (trace : BackendCommon.Tra) (tag : Nat)
     EvalSimulation (C := C) (F := F) [.op trace (.blockOp (.cons tag)) args] :=
   evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_block_cons tag)
 
+/-- Global reads preserve missing slots and relate successful values, for
+    both fixed and dynamically selected indices. -/
+theorem primitiveSimulation_global_read {C F : Type} (index : Nat) :
+    PrimitiveSimulation (C := C) (F := F) (.globOp (.global index)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil =>
+    have readRel := stateRel_getGlobal stateRel index
+    cases left : (getGlobal index source.globals).join <;>
+      cases right : (getGlobal index target.globals).join <;>
+      simp_all [OptionRel, doApp, applyGlobal, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      cases head with
+      | number number =>
+        by_cases negative : number < 0
+        · simp [doApp, applyGlobal, negative, ResultRel]
+        · have readRel := stateRel_getGlobal stateRel number.toNat
+          cases left : (getGlobal number.toNat source.globals).join <;>
+            cases right : (getGlobal number.toNat target.globals).join <;>
+            simp_all [OptionRel, doApp, applyGlobal, ResultRel]
+          simp [show ¬ number < 0 by omega, readRel, stateRel]
+      | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+        simp [doApp, applyGlobal, ResultRel]
+    | cons head tail =>
+      cases head <;> simp [doApp, applyGlobal, ResultRel]
+
+/-- Global allocation appends related empty slots and returns unit. -/
+theorem primitiveSimulation_global_alloc {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.globOp .allocGlobal) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyGlobal, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      cases head with
+      | number number =>
+        by_cases negative : number < 0
+        · simp [doApp, applyGlobal, negative, ResultRel]
+        · have appended := stateRel_allocGlobals number.toNat stateRel
+          have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil
+          simp [doApp, applyGlobal, negative, unitRel, appended]
+      | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+        simp [doApp, applyGlobal, ResultRel]
+    | cons head tail => cases head <;> simp [doApp, applyGlobal, ResultRel]
+
+/-- Initializing a global slot writes related values in corresponding stores;
+    initialized or out-of-range slots fail in both executions. -/
+theorem primitiveSimulation_global_set {C F : Type} (index : Nat) :
+    PrimitiveSimulation (C := C) (F := F) (.globOp (.setGlobal index)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyGlobal, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      rename_i value nextValue
+      have slots := forall₂_getGlobal stateRel.2.2.2.2.2.2.1 index
+      have updated : StateRel { source with globals := source.globals.set index (some value) }
+          { target with globals := target.globals.set index (some nextValue) } :=
+        stateRel_withGlobals _ _ stateRel (forall₂_set stateRel.2.2.2.2.2.2.1 index _ _ head)
+      have unitRel : ValueRel source.maxApp unitValue unitValue := .block _ [] [] .nil
+      cases left : getGlobal index source.globals with
+      | none => cases right : getGlobal index target.globals <;> simp_all [OptionRel, doApp, applyGlobal, ResultRel]
+      | some leftValue =>
+        cases right : getGlobal index target.globals with
+        | none => simp_all [OptionRel]
+        | some rightValue =>
+          cases leftValue <;> cases rightValue <;> simp_all [OptionRel, doApp, applyGlobal, ResultRel]
+    | cons head tail => simp [doApp, applyGlobal, ResultRel]
+
+/-- All global dispatcher cases satisfy the shared primitive obligation. -/
+theorem primitiveSimulation_global {C F : Type} (op : ClosLang.GlobOp) :
+    PrimitiveSimulation (C := C) (F := F) (.globOp op) := by
+  cases op with
+  | global index => exact primitiveSimulation_global_read index
+  | setGlobal index => exact primitiveSimulation_global_set index
+  | allocGlobal => exact primitiveSimulation_global_alloc
+  | globalsPtr | setGlobalsPtr =>
+    intro args nextArgs source target argsRel stateRel
+    simp [doApp, applyGlobal, ResultRel]
+
+/-- Global expressions preserve evaluation through numbering. -/
+theorem evaluate_globalOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.GlobOp)
+    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.globOp op) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_global op)
+
 end Flapjack.Compiler.Backend.ClosNumber
