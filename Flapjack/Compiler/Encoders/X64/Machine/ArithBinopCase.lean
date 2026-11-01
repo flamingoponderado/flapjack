@@ -199,6 +199,50 @@ theorem x64Enc_binopRR (op : BinOp) (r1 r2 r3 : Nat)
       exact binopRR_z64_ne (x64Bop op) r1 r3 hop
   exact x64Enc_of_flatMap _ _ hflat hne
 
+/-- The closed model executes an immediate arithmetic instruction by writing
+the operation's value and setting the flags. -/
+theorem execInsn_binopRI (bop : BinOp) (dst : Nat) (imm : BitVec 64) (len : Nat)
+    (s : X64State) :
+    execInsn (.binopRI (x64Bop bop) .z64 dst imm) len s =
+      { (writeRegSized .z64 dst (binopValue (x64Bop bop) (readReg s dst) imm) s) with
+        flags := binopFlags (x64Bop bop) (readReg s dst) imm s.flags } := by
+  cases bop <;> rfl
+
+/-- The closed model executes `not` by writing the complement. -/
+theorem execInsn_monop_not (dst : Nat) (len : Nat) (s : X64State) :
+    execInsn (.monop .znot .z64 dst) len s =
+      writeRegSized .z64 dst (~~~(readReg s dst)) s := rfl
+
+/-- One `x64Next` step over an immediate arithmetic instruction writes the
+operation's value and sets the flags. -/
+theorem x64Next_binopRI (ms : X64State) (bop : BinOp)
+    (r : Nat) (i : BitVec 64) (len : Nat)
+    (hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+      some (.binopRI (x64Bop bop) .z64 r i, len))
+    (hlen : (encodeInsn (.binopRI (x64Bop bop) .z64 r i)).length = len)
+    (hfailed : ms.failed = false) :
+    x64Next ms = { (writeReg ms r (binopValue (x64Bop bop) (readReg ms r) i)) with
+      flags := binopFlags (x64Bop bop) (readReg ms r) i ms.flags,
+      pc := ms.pc + BitVec.ofNat 64
+        (encodeInsn (.binopRI (x64Bop bop) .z64 r i)).length } := by
+  rw [hlen]
+  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec]
+  rw [execInsn_binopRI]
+  simp only [writeRegSized, writeReg]
+
+/-- One `x64Next` step over `not` writes the complement of the register. -/
+theorem x64Next_monop_not (ms : X64State) (d : BitVec 64 → Prop) (r : Nat) (hr : r < 16)
+    (hbm : bytesInMemoryHOL ms.pc (encodeInsn (.monop .znot .z64 r)) ms.mem d)
+    (hfailed : ms.failed = false) :
+    x64Next ms = { (writeReg ms r (~~~(readReg ms r))) with
+      pc := ms.pc + BitVec.ofNat 64 (encodeInsn (.monop .znot .z64 r)).length } := by
+  have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
+      some (.monop .znot .z64 r, (encodeInsn (.monop .znot .z64 r)).length) :=
+    decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm (decode_monop_z64 .znot r hr) (by omega)
+  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec]
+  rw [execInsn_monop_not]
+  simp only [writeRegSized, writeReg]
+
 /-- One `x64Next` step over a register move copies the source register. -/
 theorem x64Next_binopRR_mov (ms : X64State) (d : BitVec 64 → Prop) (r1 r3 : Nat)
     (hr1 : r1 < 16) (hr3 : r3 < 16)
