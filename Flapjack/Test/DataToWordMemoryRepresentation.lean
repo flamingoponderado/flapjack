@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
 
 /-! Original HOL observations for pointer-tag and heap representation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -48,5 +49,25 @@ example : ¬ genStartsInStore (width := 32) config (.genState 0 []) (some (.loc 
 
 example : genStartsInStore (width := 32) config (.genState 0 [7]) (some (.word 0)) := by
   simp [genStartsInStore, config]
+
+private def abstractHeap : List (HeapElement Nat (HeapTag × Nat)) :=
+  [.dataElement [] 1 (.refTag, 7), .unused 1]
+
+example : heapLookup 1 abstractHeap = none := by rfl
+
+example : heapLookup 2 abstractHeap = some (.unused 1) := by rfl
+
+example : heapSplit 1 abstractHeap = none := by rfl
+
+example : heapSplit 2 abstractHeap = some ([.dataElement [] 1 (.refTag, 7)], [.unused 1]) := by rfl
+
+example : rootsOk ([] : List (HeapAddress Bool)) abstractHeap := by
+  simp [rootsOk]
+
+example : isRef (.dataElement [] 1 (.refTag, 7) : HeapElement Nat (HeapTag × Nat)) := by
+  simp [isRef, isMutTag]
+
+example : gcKindInv config 0 0 0 (.genState 0 []) abstractHeap := by
+  simp [gcKindInv, config]
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

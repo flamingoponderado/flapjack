@@ -64,6 +64,54 @@ def heapLength {α β : Type} (heap : List (HeapElement α β)) : Nat :=
 def heapExpand {α β : Type} (length : Nat) : List (HeapElement α β) :=
   if length = 0 then [] else [.unused (length - 1)]
 
+/-- Look up an element at a heap offset; an offset inside an element fails. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_lookup_def"]
+def heapLookup {α β : Type} (offset : Nat) : List (HeapElement α β) → Option (HeapElement α β)
+  | [] => none
+  | x :: xs =>
+      if offset = 0 then some x
+      else if offset < elLength x then none
+      else heapLookup (offset - elLength x) xs
+
+/-- Split a heap exactly at an element boundary. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_split_def"]
+def heapSplit {α β : Type} (offset : Nat) :
+    List (HeapElement α β) → Option (List (HeapElement α β) × List (HeapElement α β))
+  | [] => if offset = 0 then some ([], []) else none
+  | x :: xs =>
+      if offset = 0 then some ([], x :: xs)
+      else if offset < elLength x then none
+      else (heapSplit (offset - elLength x) xs).map fun (first, second) => (x :: first, second)
+
+/-- Recognize an abstract data element. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "isDataElement_def"]
+def isDataElement {α β : Type} (element : HeapElement α β) : Prop :=
+  ∃ xs len data, element = .dataElement xs len data
+
+/-- Recognize a successful lookup of an abstract data element. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "isSomeDataElement_def"]
+def isSomeDataElement {α β : Type} (element : Option (HeapElement α β)) : Prop :=
+  ∃ xs len data, element = some (.dataElement xs len data)
+
+/-- Recognize a forwarding pointer. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "isForwardPointer_def"]
+def isForwardPointer {α β : Type} : HeapElement α β → Bool
+  | .forwardPointer .. => true
+  | _ => false
+
+/-- Every pointer in the roots names a data element in the heap. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "roots_ok_def"]
+def rootsOk {α β γ : Type} (roots : List (HeapAddress α)) (heap : List (HeapElement β γ)) : Prop :=
+  ∀ ptr value, .pointer ptr value ∈ roots → isSomeDataElement (heapLookup ptr heap)
+
+/-- Heap length, absence of forwarding pointers, and validity of data-element
+pointers, with both element carriers independently polymorphic. -/
+@[hol "cakeml/compiler/backend/gc/gc_sharedScript.sml" "heap_ok_def"]
+def heapOk {α β : Type} (heap : List (HeapElement α β)) (limit : Nat) : Prop :=
+  heapLength heap = limit ∧ heap.filter isForwardPointer = [] ∧
+    ∀ xs len data ptr value, .dataElement xs len data ∈ heap ∧ .pointer ptr value ∈ xs →
+      isSomeDataElement (heapLookup ptr heap)
+
 end Backend
 end Compiler
 end Flapjack

@@ -100002,6 +100002,118 @@
     "reviewer": "Source comparison: all original bounds, store lookups, alignments, generation and globals conditions, and separated heap assertions match the typed data_to_word_memory_repr capture. The address/store width and independent heap-value width are retained; FDOM membership is existence of a successful canonical store lookup, and the Boolean memory domain is interpreted by equality to true in fun2Set."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "heapLookup",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_lookup_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Preserves independent element carriers and rejects offsets strictly inside an element."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "heapSplit",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_split_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Preserves independent element carriers, exact boundary checks, failure and prefix reconstruction."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "isDataElement",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "isDataElement_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Preserves the existential data-element constructor and independent carriers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "isSomeDataElement",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "isSomeDataElement_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Preserves the existential successful data-element constructor and independent carriers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "isForwardPointer",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "isForwardPointer_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Matches all three heap-element cases with independent carriers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "rootsOk",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "roots_ok_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Root address payload, heap address payload and heap data payload are three independent types, as inferred by HOL; all pointer roots must reference data elements."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "heapOk",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_ok_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Retains the length equality, forward-pointer filter, and quantified data-element pointer validity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Abstract.lean",
+    "lean_name": "dataUpTo",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "data_up_to_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Preserves both split witnesses, split equality and EVERY data-element condition, translated as membership quantification."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Abstract.lean",
+    "lean_name": "unusedSpaceInv",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "unused_space_inv_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Retains the nonzero implication, exact unused length, heap-length bound and data-prefix condition."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Abstract.lean",
+    "lean_name": "isMutTag",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "isMutTag_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Retains the reference disjunct and existential thunk mode."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Abstract.lean",
+    "lean_name": "isRef",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "isRef_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Retains the mutable-tag test and false cases, with independent address and auxiliary payload types."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Abstract.lean",
+    "lean_name": "genStartOk",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "gen_start_ok_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Retains split witnesses and the complete quantified data-element pointer condition with independent carriers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Abstract.lean",
+    "lean_name": "genStateOk",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "gen_state_ok_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Preserves the generation-state match and both EVERY conditions as membership quantification."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Abstract.lean",
+    "lean_name": "gcKindInv",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "gc_kind_inv_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: original definition and typed data_to_word_memory_repr capture. Preserves all GC-kind cases, generic heap address and auxiliary payload types, generation condition, split witnesses and both EVERY conditions as membership quantification."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Limits.lean",
     "lean_name": "limitsInv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
