@@ -119,8 +119,12 @@ theorem compile_correct_stopped {C F : Type} (program : DataLang.Prog) (source s
     | abort reason => exact compile_correct_abort program source sourceNext reason (by simpa using notType) run
 
 /-- The data liveness correctness statement in the source theorem's
-evaluation-pair form. It remains untagged pending comparison of the imported
-evaluator and state carriers with HOL. -/
+evaluation-pair form. Its stopped/non-type-error premises, result, and four
+updated state fields match the source statement. The data state has the same
+fields as the source record, and the evaluator's force singleton pattern
+corresponds to the source's length-one test. This remains untagged: the
+transitive primitive semantics and the data-program and FFI carriers have not
+completed the required typed correspondence review. -/
 theorem compile_correct {C F : Type} (program : DataLang.Prog) (source : State C F)
     (notType : (DataSem.evaluate program source).1 ≠ some (.err (.abort .typeError)))
     (stopped : (DataSem.evaluate program source).1 ≠ none) :

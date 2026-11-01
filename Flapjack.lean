@@ -1028,6 +1028,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Conversions
 import Flapjack.Compiler.Backend.BviToData.CompileTotal
 import Flapjack.Compiler.Backend.BviToData.Proofs.State
 import Flapjack.Compiler.Backend.BviToData.Proofs.CompileAgreement
+import Flapjack.Compiler.Backend.BviToData.Proofs.Optimise
 import Flapjack.Compiler.Backend.BviToData.Proofs.Finalise
 import Flapjack.Compiler.Backend.DataSimp
 import Flapjack.Compiler.Backend.DataLive
