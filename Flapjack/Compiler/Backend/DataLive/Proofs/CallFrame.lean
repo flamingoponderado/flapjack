@@ -110,6 +110,15 @@ theorem stateRel_popNonTail {C F : Type} (source target sourceLast targetLast : 
     { source with locals := sourceEnv } { target with locals := targetEnv } .ln live lastRel savedRel
   simpa [sourceNext, targetNext] using restored
 
+/-- Popping a known saved call frame restores exactly its saved locals. -/
+theorem popNonTail_locals {C F : Type} (source last next : State C F)
+    (args : List DataSem.Value) (size : Option Nat) (env : Spt DataSem.Value) (hasHandler : Bool)
+    (stack : last.stack = (DataSem.callEnv args size (pushEnv env hasHandler (decClock source))).stack)
+    (handler : last.handler = (DataSem.callEnv args size (pushEnv env hasHandler (decClock source))).handler)
+    (run : popEnv last = some next) : next.locals = env := by
+  cases hasHandler <;> simp [popEnv, stack, handler, DataSem.callEnv, pushEnv, decClock] at run <;>
+    subst next <;> rfl
+
 /-- After a callee raises to its fresh handler, the evaluator's exception
 invariant restores each saved environment. Agreement on the saved live set
 therefore holds at handler entry, even though the callee's other state fields
