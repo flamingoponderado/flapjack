@@ -532,4 +532,138 @@ theorem simulationFor_tick {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Valu
       · exact target
     · exact (outcome_decClock_initial res t1 t2 n next corr live names env tail pres ls).mp outcome
 
+/-- Return expressions evaluate their argument list and then return its
+projected values. This remains untagged pending the source evaluator review. -/
+theorem simulationFor_return {C F : Type} (args : List Bvi.Exp) (env : List BvlSem.Value)
+    (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
+    simulationFor [.return args] env s1 := by
+  intro res s2 t1 n corr tail live run notTypeError vars _ fresh related livePresent exceptionJump
+  generalize argsRun : BviSem.evaluate args env s1 = pair
+  obtain ⟨argsResult, smid⟩ := pair
+  cases argsResult with
+  | err error =>
+    simp [BviSem.evaluate, argsRun] at run
+    obtain ⟨rfl, rfl⟩ := run
+    obtain ⟨t2, prog, pres, names, next, ls, compiled, target, finalRel, outcome⟩ :=
+      ih (.err error) smid t1 n corr false live argsRun notTypeError vars (by simp) fresh related livePresent exceptionJump
+    cases pres with
+    | none => simp [correctOutcome] at outcome
+    | some result =>
+      have sourceBound := BviSem.evaluate_clock_le args env s1
+      rw [argsRun] at sourceBound
+      have targetBound : t2.clock ≤ t1.clock := by
+        simpa [← related.1, ← finalRel.1] using sourceBound
+      refine ⟨t2, .seq prog (.return names), some result, [next], next + 1, ls, ?_, ?_, finalRel, ?_⟩
+      · simp [compileSource, compiled]
+      · exact evaluateSeq_stop prog (.return names) t1 t2 result target targetBound
+      · simpa [correctOutcome, isResult] using outcome
+  | val values =>
+    simp [BviSem.evaluate, argsRun] at run
+    obtain ⟨rfl, rfl⟩ := run
+    obtain ⟨tmid, prog, pres, names, next, ls, compiled, target, middleRel, outcome⟩ :=
+      ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
+        (by simp [isException])
+    cases pres with
+    | some result => simp [correctOutcome, isResult] at outcome
+    | none =>
+      rcases outcome with ⟨_, _, _, _, _, _, _, stack, handler, _, resultVars⟩
+      obtain ⟨dataValues, read, projected⟩ := getVars_lift names values tmid.locals resultVars
+      have sourceBound := BviSem.evaluate_clock_le args env s1
+      rw [argsRun] at sourceBound
+      have targetBound : tmid.clock ≤ t1.clock := by
+        simpa [← related.1, ← middleRel.1] using sourceBound
+      have returnRun : DataSem.evaluate (.return names) tmid =
+          (some (.val dataValues), DataSem.flushState false tmid) := by
+        simp [DataSem.evaluate, read]
+      refine ⟨DataSem.flushState false tmid, .seq prog (.return names), some (.val dataValues), [next], next + 1, none, ?_, ?_, ?_, ?_⟩
+      · simp [compileSource, compiled]
+      · exact evaluateSeq_continue prog (.return names) t1 tmid _ target targetBound returnRun
+      · simpa [stateRel, DataSem.flushState] using middleRel
+      · simp [correctOutcome, isResult, isReturn, isException, DataSem.flushState, projected, stack, handler]
+
+private theorem jumpExc_preserves {C F : Type} (s : BviSem.BviState C F)
+    (before after : DataSem.State C F) (related : stateRel s before)
+    (jump : DataSem.jumpExc before = some after) :
+    stateRel s after ∧
+    DataSem.jumpExc { after with stack := before.stack, handler := before.handler } = some after := by
+  unfold DataSem.jumpExc at jump ⊢
+  split at jump
+  · split at jump
+    · simp only [Option.some.injEq] at jump
+      subst after
+      constructor
+      · simpa [stateRel] using related
+      · simp_all
+    · simp at jump
+  · simp at jump
+
+/-- Raise evaluates its operand, projects the raised value, and transfers
+control through the corresponding exception frame. This remains untagged
+pending the source evaluator review. -/
+theorem simulationFor_raise {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Value)
+    (s1 : BviSem.BviState C F) (ih : simulationFor [body] env s1) :
+    simulationFor [.raise body] env s1 := by
+  intro res s2 t1 n corr tail live run notTypeError vars _ fresh related livePresent exceptionJump
+  generalize bodyRun : BviSem.evaluate [body] env s1 = pair
+  obtain ⟨bodyResult, smid⟩ := pair
+  cases bodyResult with
+  | err error =>
+    simp [BviSem.evaluate, bodyRun] at run
+    obtain ⟨rfl, rfl⟩ := run
+    obtain ⟨t2, prog, pres, names, next, ls, compiled, target, finalRel, outcome⟩ :=
+      ih (.err error) smid t1 n corr false live bodyRun notTypeError vars (by simp) fresh related livePresent exceptionJump
+    cases pres with
+    | none => simp [correctOutcome] at outcome
+    | some result =>
+      have sourceBound := BviSem.evaluate_clock_le [body] env s1
+      rw [bodyRun] at sourceBound
+      have targetBound : t2.clock ≤ t1.clock := by
+        simpa [← related.1, ← finalRel.1] using sourceBound
+      refine ⟨t2, .seq prog (.raise (Flapjack.holHd names)), some result, names, next, ls, ?_, ?_, finalRel, ?_⟩
+      · simp [compileSource, compiled]
+      · exact evaluateSeq_stop prog (.raise (Flapjack.holHd names)) t1 t2 result target targetBound
+      · simpa [correctOutcome, isResult] using outcome
+  | val values =>
+    obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton body env s1 smid values bodyRun
+    simp [BviSem.evaluate, bodyRun] at run
+    obtain ⟨rfl, rfl⟩ := run
+    obtain ⟨tmid, prog, pres, names, next, ls, compiled, target, middleRel, outcome⟩ :=
+      ih (.val [value]) smid t1 n corr false live bodyRun (by simp) vars (by simp) fresh related livePresent
+        (by simp [isException])
+    have len := compileSource_LENGTH n corr false live [body] prog names next compiled
+    cases names with
+    | nil => simp at len
+    | cons name rest =>
+      cases rest with
+      | cons name2 more => simp at len
+      | nil =>
+        cases pres with
+        | some result => simp [correctOutcome, isResult] at outcome
+        | none =>
+          rcases outcome with ⟨_, _, _, _, _, _, _, stack, handler, jumpKeep, resultVars⟩
+          have projectedLookup : sptLookup name (sptMap dataToBviValue tmid.locals) = some value := by
+            cases resultVars with
+            | cons lookup _ => exact lookup
+          rw [sptLookup_sptMap] at projectedLookup
+          cases localFound : sptLookup name tmid.locals with
+          | none => simp [localFound] at projectedLookup
+          | some dataValue =>
+            have projection : dataToBviValue dataValue = value := by simpa [localFound] using projectedLookup
+            have jumpExists : DataSem.jumpExc tmid ≠ none := jumpKeep (exceptionJump ⟨value, rfl⟩)
+            cases jumped : DataSem.jumpExc tmid with
+            | none => exact False.elim (jumpExists jumped)
+            | some t2 =>
+              obtain ⟨finalRel, jumpAgain⟩ := jumpExc_preserves smid tmid t2 middleRel jumped
+              have sourceBound := BviSem.evaluate_clock_le [body] env s1
+              rw [bodyRun] at sourceBound
+              have targetBound : tmid.clock ≤ t1.clock := by
+                simpa [← related.1, ← middleRel.1] using sourceBound
+              have raiseRun : DataSem.evaluate (.raise name) tmid = (some (.err (.raise dataValue)), t2) := by
+                simp [DataSem.evaluate, DataSem.getVar, localFound, jumped]
+              refine ⟨t2, .seq prog (.raise name), some (.err (.raise dataValue)), [name], next, t2.localsSize, ?_, ?_, finalRel, ?_⟩
+              · simp [compileSource, compiled, Flapjack.holHd]
+              · exact evaluateSeq_continue prog (.raise name) t1 tmid _ target targetBound raiseRun
+              · simp [correctOutcome, isReturn, isResult, isException, dataToBviResult, projection, stack, handler]
+                exact ⟨rfl, by simpa using jumpAgain⟩
+
 end Flapjack.Compiler.Backend.BviToData
