@@ -2,10 +2,38 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Install
 import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk
 import Flapjack.Compiler.Backend.BviToData.Proofs.FindCode
 import Flapjack.Compiler.Backend.BviToData.Proofs.Call
+import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush
 
 /-! Thunk forcing cases for the BVI-to-data simulation. -/
 namespace Flapjack.Compiler.Backend.BviToData
 open Flapjack Flapjack.SemanticPrimitivesHOL
+
+private theorem jumpExc_remove_saved_frame {C F : Type} (target final : DataSem.State C F)
+    (cut : Spt DataSem.Value) (ls : Option Nat)
+    (jump : DataSem.jumpExc { final with stack := .env target.localsSize cut :: target.stack, handler := target.handler } =
+      some { final with localsSize := ls }) :
+    DataSem.jumpExc { final with stack := target.stack, handler := target.handler } =
+      some { final with localsSize := ls } := by
+  let base := { final with stack := target.stack, handler := target.handler, localsSize := target.localsSize }
+  have transported := DataSem.jumpExc_transport
+    { final with stack := .env target.localsSize cut :: target.stack, handler := target.handler }
+    (DataSem.pushEnv cut false base) { final with localsSize := ls }
+    (by simp [DataSem.pushEnv, base]) (by simp [DataSem.pushEnv, base]) jump
+  rw [DataSem.jumpExc_pushEnv_noHandler] at transported
+  cases baseJump : DataSem.jumpExc base with
+  | none => simp [baseJump] at transported
+  | some jumped =>
+    simp only [baseJump, Option.map_some, Option.some.injEq] at transported
+    have finalJump := DataSem.jumpExc_transport base
+      { final with stack := target.stack, handler := target.handler } jumped rfl rfl baseJump
+    rw [finalJump]
+    congr 1
+    have stackEq := congrArg DataSem.State.stack transported
+    have handlerEq := congrArg DataSem.State.handler transported
+    have localsEq := congrArg DataSem.State.locals transported
+    have sizeEq := congrArg DataSem.State.localsSize transported
+    cases final
+    simp_all
 
 /-- A source thunk selected from the environment has a corresponding data
 local and an inspection result with the same mode and projected value. -/
@@ -362,6 +390,84 @@ theorem simulationFor_force_nontail_abort {C F : Type} (label index : Nat)
   · simp [compileSource, nameAt, roots]
   · simp [correctOutcome, dataToBviResult, isReturn, isResult, isException]
 
+/-- A positive-clock non-tail force propagates an exception from the
+recursive thunk body through the caller's saved frame. -/
+theorem simulationFor_force_nontail_exception {C F : Type} (label index : Nat)
+    (env : List BvlSem.Value) (source nextSource : BviSem.BviState C F)
+    (thunk function : BvlSem.Value) (callArgs : List BvlSem.Value) (body : Bvi.Exp)
+    (value : BvlSem.Value) (sourceVar : env[index]? = some thunk)
+    (sourceThunk : BviSem.destThunk thunk source.refs = .isThunk .notEvaluated function)
+    (sourceCode : BvlSem.findCode (some label) [thunk, function] source.code = some (callArgs, body))
+    (clock : source.clock ≠ 0)
+    (bodyRun : BviSem.evaluate [body] callArgs (BviSem.decClock 1 source) = (.err (.raise (.exn value)), nextSource))
+    (ih : simulationFor [body] callArgs (BviSem.decClock 1 source))
+    (target : DataSem.State C F) (n : Nat) (corr live : List Nat)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (related : stateRel source target) (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
+    (exceptionJump : DataSem.jumpExc target ≠ none) :
+    BviSem.evaluate [.force label index] env source = (.err (.raise (.exn value)), nextSource) ∧
+    ∃ targetNext prog pres names next ls,
+      compileSource n corr false live [.force label index] = (prog, names, next) ∧
+      DataSem.evaluate prog target = (pres, targetNext) ∧ stateRel nextSource targetNext ∧
+      correctOutcome (.err (.raise (.exn value))) target targetNext n next corr live names env false pres ls := by
+  have sourceRun : BviSem.evaluate [.force label index] env source = (.err (.raise (.exn value)), nextSource) := by
+    simp [BviSem.evaluate, sourceVar, sourceThunk, sourceCode, clock, bodyRun]
+  obtain ⟨name, dataThunk, dataFunction, nameAt, read, thunkProjection, inspect, functionProjection⟩ :=
+    force_inspection_projection index env source target corr thunk function .notEvaluated sourceVar sourceThunk vars related
+  have projectedCode : BvlSem.findCode (some label) ([dataThunk, dataFunction].map dataToBviValue) source.code =
+      some (callArgs, body) := by simpa [thunkProjection, functionProjection] using sourceCode
+  obtain ⟨dataArgs, size, argsProjection, targetCode⟩ :=
+    findCode_direct source target label [dataThunk, dataFunction] callArgs body related projectedCode
+  subst callArgs
+  have targetClock : target.clock ≠ 0 := by simpa [← related.1] using clock
+  let roots := live ++ corr
+  let cut := sptMkWf (sptInter target.locals (namesOfList roots))
+  have rootsPresent : ∀ key ∈ roots, sptLookup key target.locals ≠ none := by
+    simpa [roots, DataSem.getVars] using
+      (roots_present target [] live corr env [] vars livePresent (by simp [DataSem.getVars]))
+  have cutEnv : DataSem.cutEnv (namesOfList roots) target.locals = some cut :=
+    cutEnv_namesOfList roots target.locals rootsPresent
+  let pushed := DataSem.pushEnv cut false (DataSem.decClock target)
+  have callRelated := stateRel_pushEnv (BviSem.decClock 1 source) (DataSem.decClock target) cut false
+    (stateRel_decClock source target related)
+  have callJump : DataSem.jumpExc (DataSem.callEnv dataArgs size pushed) ≠ none := by
+    change DataSem.jumpExc (DataSem.callEnv dataArgs size (DataSem.pushEnv cut false (DataSem.decClock target))) ≠ none
+    rw [DataSem.jumpExc_callEnv_push_noHandler]
+    cases h : DataSem.jumpExc target with
+    | none => exact False.elim (exceptionJump h)
+    | some jumped => simp
+  obtain ⟨result, final, names, next, ls, localsSize, stackMax, safe, peak, bodyTarget,
+      finalRel, optimizedRel, outcome⟩ :=
+    compileExp_callEnv body dataArgs (BviSem.decClock 1 source) nextSource (.err (.raise (.exn value))) pushed size
+      ih bodyRun (by simp) callRelated (by intro _; exact callJump)
+  have projected := outcome.1 (by simp [isReturn])
+  rw [dataToBviResult_eq] at projected
+  obtain ⟨dataValue, resultEq, projection⟩ := projected
+  simp only [BviSem.ExnOrRet.exn.injEq] at projection
+  subst result
+  let optimized := { final with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }
+  have optimizedOutcome := correctOutcome_some_resources (.err (.raise (.exn value)))
+    (DataSem.callEnv dataArgs size pushed) final dataArgs.length next
+    (List.range dataArgs.length) [] names (dataArgs.map dataToBviValue) true (.err (.raise dataValue))
+    ls localsSize stackMax safe peak outcome
+  have innerJump := optimizedOutcome.2.2.2.2 (by simp [isException])
+  have savedJump : DataSem.jumpExc { optimized with stack := .env target.localsSize cut :: target.stack, handler := target.handler } =
+      some { optimized with localsSize := ls } := by
+    simpa [DataSem.callEnv, pushed, DataSem.pushEnv, DataSem.decClock, optimized] using innerJump
+  have finalJump := jumpExc_remove_saved_frame target optimized cut ls savedJump
+  have clamped : DataSem.fixClock (DataSem.callEnv dataArgs size pushed)
+      (DataSem.evaluate (compileExp dataArgs.length body) (DataSem.callEnv dataArgs size pushed)) =
+      (some (.err (.raise dataValue)), optimized) := by
+    rw [DataSem.fixClock_evaluate, bodyTarget]
+  have targetRun : DataSem.evaluate (.force (some (n, namesOfList roots)) label name) target =
+      (some (.err (.raise dataValue)), optimized) := by
+    simp only [DataSem.evaluate, read, inspect, targetCode, targetClock, cutEnv, ↓reduceIte]
+    rw [clamped]
+  refine ⟨sourceRun, optimized, .force (some (n, namesOfList roots)) label name,
+    some (.err (.raise dataValue)), [n], max (n + 1) (name + 1), ls, ?_, targetRun, optimizedRel, ?_⟩
+  · simp [compileSource, nameAt, roots]
+  · simp [correctOutcome, dataToBviResult, isReturn, isResult, isException, projection, finalJump]
+
 /-- A positive-clock non-tail force restores the saved caller environment
 when the recursive thunk body produces a value. -/
 theorem simulationFor_force_nontail_value {C F : Type} (label index : Nat)
@@ -572,5 +678,94 @@ theorem simulationFor_force_clock_zero {C F : Type} (label index : Nat)
           rw [sourceRun] at run
           cases run
           exact ⟨targetNext, prog, pres, names, next, ls, compiled, targetRun, finalRel, outcome⟩
+
+/-- The complete force-expression simulation, assuming the evaluator's
+recursive induction hypothesis for any called thunk body. The assembled case
+remains untagged pending HOL evaluator and state-carrier review. -/
+theorem simulationFor_force {C F : Type} (label index : Nat)
+    (env : List BvlSem.Value) (source : BviSem.BviState C F)
+    (ih : ∀ thunk function callArgs body,
+      env[index]? = some thunk →
+      BviSem.destThunk thunk source.refs = .isThunk .notEvaluated function →
+      BvlSem.findCode (some label) [thunk, function] source.code = some (callArgs, body) →
+      source.clock ≠ 0 → simulationFor [body] callArgs (BviSem.decClock 1 source)) :
+    simulationFor [.force label index] env source := by
+  by_cases clock : source.clock = 0
+  · exact simulationFor_force_clock_zero label index env source clock
+  intro res s2 target n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
+  cases sourceVar : env[index]? with
+  | none =>
+    simp [BviSem.evaluate, sourceVar] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact False.elim (notTypeError rfl)
+  | some thunk =>
+    cases sourceThunk : BviSem.destThunk thunk source.refs with
+    | badRef =>
+      simp [BviSem.evaluate, sourceVar, sourceThunk] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact False.elim (notTypeError rfl)
+    | notThunk =>
+      simp [BviSem.evaluate, sourceVar, sourceThunk] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact False.elim (notTypeError rfl)
+    | isThunk mode function =>
+      cases mode with
+      | evaluated =>
+        exact simulationFor_force_of_evaluated label index env source thunk function sourceVar sourceThunk
+          res s2 target n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
+      | notEvaluated =>
+        cases sourceCode : BvlSem.findCode (some label) [thunk, function] source.code with
+        | none =>
+          simp [BviSem.evaluate, sourceVar, sourceThunk, sourceCode] at run
+          obtain ⟨rfl, rfl⟩ := run
+          exact False.elim (notTypeError rfl)
+        | some pair =>
+          obtain ⟨callArgs, body⟩ := pair
+          generalize bodyRun : BviSem.evaluate [body] callArgs (BviSem.decClock 1 source) = bodyPair
+          obtain ⟨bodyResult, nextSource⟩ := bodyPair
+          by_cases returns : isReturn bodyResult
+          · obtain ⟨values, rfl⟩ := returns
+            simp [BviSem.evaluate, sourceVar, sourceThunk, sourceCode, clock, bodyRun] at run
+            obtain ⟨rfl, rfl⟩ := run
+            exact False.elim (notTypeError rfl)
+          · have whole : BviSem.evaluate [.force label index] env source = (bodyResult, nextSource) := by
+              simp only [BviSem.evaluate, sourceVar, sourceThunk, sourceCode, clock, ↓reduceIte, bodyRun]
+              cases bodyResult with
+              | val values => rfl
+              | err error =>
+                cases error with
+                | abort error => rfl
+                | raise value =>
+                  cases value with
+                  | exn value => rfl
+                  | ret values => exact False.elim (returns ⟨values, rfl⟩)
+            rw [whole] at run
+            cases run
+            have bodyIH := ih thunk function callArgs body sourceVar sourceThunk sourceCode clock
+            cases tail with
+            | true =>
+              exact (simulationFor_force_tail_recursive label index env source s2 thunk function
+                callArgs body res sourceVar sourceThunk sourceCode clock bodyRun returns notTypeError bodyIH
+                target n corr live vars related exceptionJump).2
+            | false =>
+              cases res with
+              | val values =>
+                obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton body callArgs (BviSem.decClock 1 source) s2 values bodyRun
+                exact (simulationFor_force_nontail_value label index env source s2 thunk function
+                  callArgs body value sourceVar sourceThunk sourceCode clock bodyRun bodyIH
+                  target n corr live vars fresh related livePresent).2
+              | err error =>
+                cases error with
+                | abort error =>
+                  exact (simulationFor_force_nontail_abort label index env source s2 thunk function
+                    callArgs body error sourceVar sourceThunk sourceCode clock bodyRun
+                    (by simpa using notTypeError) bodyIH target n corr live vars related livePresent).2
+                | raise value =>
+                  cases value with
+                  | exn value =>
+                    exact (simulationFor_force_nontail_exception label index env source s2 thunk function
+                      callArgs body value sourceVar sourceThunk sourceCode clock bodyRun bodyIH
+                      target n corr live vars related livePresent (exceptionJump (by simp [isException]))).2
+                  | ret values => exact False.elim (returns ⟨values, rfl⟩)
 
 end Flapjack.Compiler.Backend.BviToData
