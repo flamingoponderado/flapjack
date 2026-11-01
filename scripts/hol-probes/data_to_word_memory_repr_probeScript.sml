@@ -104,6 +104,20 @@ val _ = show "word_addr_eq_Loc_typed" data_to_word_memoryProofTheory.word_addr_e
 val _ = show "blocks_unique_CodePtr_typed" data_to_word_memoryProofTheory.blocks_unique_CodePtr;
 val _ = show "memory_rel_CodePtr_typed" data_to_word_memoryProofTheory.memory_rel_CodePtr;
 val _ = show "memory_rel_Block_IMP_typed" data_to_word_memoryProofTheory.memory_rel_Block_IMP;
+val _ = load "preamble";
+open preamble wordsTheory data_to_word_memoryProofTheory dataSemTheory wordLangTheory;
+val block_block_small_eq_replay = prove(
+  ``data_to_word_memoryProof$memory_rel c be ts refs sp st m dm
+      ((dataSem$Block ts1 t1 v1,wordLang$Word (w1:'a word))::(dataSem$Block ts2 t2 v2,wordLang$Word w2)::vars) /\
+    misc$good_dimindex (:'a) /\ w1 <> w2 /\ ~words$word_bit 0 w1 ==>
+    LENGTH v1 <> LENGTH v2 \/ t1 <> t2``,
+  rw [] >> old_drule memory_rel_Block_IMP >> fs []
+  >> fs [word_bit] >> strip_tac >> rveq
+  >> once_rewrite_tac [EQ_SYM_EQ]
+  >> CCONTR_TAC >> fs [LENGTH_NIL] >> rveq
+  >> imp_res_tac memory_rel_tail
+  >> old_drule memory_rel_Block_IMP >> fs []);
+val _ = show "memory_rel_Block_Block_small_eq_replay_typed" block_block_small_eq_replay;
 val _ = show "memory_rel_tag_limit_typed" data_to_word_memoryProofTheory.memory_rel_tag_limit;
 val _ = show "memory_rel_test_nil_eq_typed" data_to_word_memoryProofTheory.memory_rel_test_nil_eq;
 val _ = show "memory_rel_test_none_eq_typed" data_to_word_memoryProofTheory.memory_rel_test_none_eq;

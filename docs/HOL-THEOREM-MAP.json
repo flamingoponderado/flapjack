@@ -100307,6 +100307,18 @@
     "reviewer": "Source comparison: encode_header_EQ and its typed data_to_word_memory_repr capture preserve both successful header encodings, the len_size + 2 < dimindex condition, and equivalence of word equality with equality of both tags and lengths. The proof handles every positive HOL word width, using the source bounds to recover each tag and length bit independently."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockEquality.lean",
+    "lean_name": "memoryRel_blocksDistinctImmediate",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Block_Block_small_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the local memory_rel_Block_Block_small_eq theorem and its typed replay retain the source memory relation for both blocks, good_dimindex, distinct target words, and the clear low bit of the first word; the conclusion is unequal lengths or unequal tags. The store uses the canonical finite-support map and target words share the positive HOL word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
