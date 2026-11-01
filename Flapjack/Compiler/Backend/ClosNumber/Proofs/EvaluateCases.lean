@@ -1423,4 +1423,167 @@ theorem evaluate_globalOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLan
     EvalSimulation (C := C) (F := F) [.op trace (.globOp op) args] :=
   evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_global op)
 
+/-- Testing a block's tag and length yields the same Boolean after numbering. -/
+theorem primitiveSimulation_block_tagLenEq {C F : Type} (tag length : Nat) :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp (.tagLenEq tag length)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      cases head with
+      | block actual fields nextFields fieldsRel =>
+        have lengths := fieldsRel.length_eq
+        have boolRel := boolValue_related source.maxApp (actual == tag && fields.length == length)
+        simp [doApp, applyBlock, ← lengths, boolRel, stateRel]
+      | number _ | word64 _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+        simp [doApp, applyBlock, ResultRel]
+    | cons head tail => simp [doApp, applyBlock, ResultRel]
+
+/-- A block tag test observes the same constructor tag on related values. -/
+theorem primitiveSimulation_block_tagEq {C F : Type} (tag : Nat) :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp (.tagEq tag)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      cases head with
+      | block actual fields nextFields fieldsRel =>
+        have boolRel := boolValue_related source.maxApp (actual == tag)
+        simp [doApp, applyBlock, boolRel, stateRel]
+      | number _ | word64 _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+        simp [doApp, applyBlock, ResultRel]
+    | cons head tail => simp [doApp, applyBlock, ResultRel]
+
+/-- Related blocks have equal lengths and therefore agree on length tests. -/
+theorem primitiveSimulation_block_lenEq {C F : Type} (length : Nat) :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp (.lenEq length)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      cases head with
+      | block actual fields nextFields fieldsRel =>
+        have lengths := fieldsRel.length_eq
+        have boolRel := boolValue_related source.maxApp (fields.length == length)
+        simp [doApp, applyBlock, ← lengths, boolRel, stateRel]
+      | number _ | word64 _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+        simp [doApp, applyBlock, ResultRel]
+    | cons head tail => simp [doApp, applyBlock, ResultRel]
+
+/-- Block length returns the same number for corresponding blocks. -/
+theorem primitiveSimulation_block_length {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp .lengthBlock) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      cases head with
+      | block actual fields nextFields fieldsRel =>
+        have lengths := fieldsRel.length_eq
+        have valueRel : ValueRel source.maxApp (.number fields.length) (.number fields.length) := .number _
+        simp [doApp, applyBlock, ← lengths, valueRel, stateRel]
+      | number _ | word64 _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+        simp [doApp, applyBlock, ResultRel]
+    | cons head tail => simp [doApp, applyBlock, ResultRel]
+
+/-- Block field lookup returns related values and fails on both sides for an
+    out-of-range index. -/
+theorem primitiveSimulation_block_elemAt {C F : Type} (index : Nat) :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp (.elemAt index)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      cases head with
+      | block actual fields nextFields fieldsRel =>
+        have lookupRel : OptionRel (ValueRel source.maxApp) fields[index]? nextFields[index]? := by
+          simpa [getGlobal] using forall₂_getGlobal fieldsRel index
+        cases left : fields[index]? <;> cases right : nextFields[index]? <;>
+          simp_all [OptionRel, doApp, applyBlock, ResultRel]
+      | number _ | word64 _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+        simp [doApp, applyBlock, ResultRel]
+    | cons head tail => simp [doApp, applyBlock, ResultRel]
+
+/-- Boolean negation observes the same truth value or type error on related
+    arguments. -/
+theorem primitiveSimulation_block_boolNot {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp .boolNot) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      rename_i value nextValue
+      have same := valueRel_asBool head
+      cases observation : asBool value with
+      | none =>
+        have targetObservation : asBool nextValue = none := by rw [← same, observation]
+        simp [doApp, applyBlock, observation, targetObservation, ResultRel]
+      | some boolean =>
+        have targetObservation : asBool nextValue = some boolean := by rw [← same, observation]
+        have relatedBool := boolValue_related source.maxApp (!boolean)
+        simp [doApp, applyBlock, observation, targetObservation, relatedBool, stateRel]
+    | cons head tail => simp [doApp, applyBlock, ResultRel]
+
+/-- Boolean block comparisons agree on both arguments, including invalid
+    Boolean values and invalid arities. -/
+theorem primitiveSimulation_block_boolTest {C F : Type} (test : Flapjack.AstHOL.Test) :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp (.boolTest test)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyBlock, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        rename_i left nextLeft right nextRight
+        have sameLeft := valueRel_asBool first
+        have sameRight := valueRel_asBool second
+        cases obsLeft : asBool left with
+        | none => simp [doApp, applyBlock, ← sameLeft, obsLeft, ResultRel]
+        | some x =>
+          cases obsRight : asBool right with
+          | none => simp [doApp, applyBlock, ← sameLeft, ← sameRight, obsLeft, obsRight, ResultRel]
+          | some y =>
+            have boolRel := boolValue_related source.maxApp (x == y)
+            simp [doApp, applyBlock, ← sameLeft, ← sameRight, obsLeft, obsRight, boolRel, stateRel]
+      | cons head tail => simp [doApp, applyBlock, ResultRel]
+
+/-- Block bounds checks agree on related blocks and numeric indices. -/
+theorem primitiveSimulation_block_bounds {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.blockOp .boundsCheckBlock) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyBlock, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyBlock, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases first with
+        | block tag fields nextFields fieldsRel =>
+          cases second with
+          | number index =>
+            have lengths := fieldsRel.length_eq
+            simp [doApp, applyBlock, ← lengths, boolValue_related, stateRel]
+          | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+            simp [doApp, applyBlock, ResultRel]
+        | number _ | word64 _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+          cases second <;> simp [doApp, applyBlock, ResultRel]
+      | cons head tail => simp [doApp, applyBlock, ResultRel]
+
 end Flapjack.Compiler.Backend.ClosNumber
