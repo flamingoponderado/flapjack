@@ -76,4 +76,18 @@ theorem jumpExc_callEnv_push_noHandler_inv {C F : Type} (state jumped : State C 
     subst jumped
     exact ⟨original, rfl, rfl, rfl⟩
 
+/-- The caller jump also supplies the restored local environment. -/
+theorem jumpExc_callEnv_push_noHandler_inv_locals {C F : Type} (state jumped : State C F) (env : Spt Value)
+    (args : List Value) (size : Option Nat)
+    (run : jumpExc (callEnv args size (pushEnv env false (decClock state))) = some jumped) :
+    ∃ original, jumpExc state = some original ∧ jumped.stack = original.stack ∧
+      jumped.handler = original.handler ∧ jumped.locals = original.locals := by
+  rw [jumpExc_callEnv_push_noHandler] at run
+  cases initial : jumpExc state with
+  | none => simp [initial] at run
+  | some original =>
+    simp [initial] at run
+    subst jumped
+    exact ⟨original, rfl, rfl, rfl, rfl⟩
+
 end Flapjack.Compiler.Backend.DataSem

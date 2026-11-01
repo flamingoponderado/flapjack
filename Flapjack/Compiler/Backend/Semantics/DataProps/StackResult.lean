@@ -7,14 +7,15 @@ open Flapjack Flapjack.SemanticPrimitivesHOL
 
 /-- The stack and handler invariant needed for recursive calls: continuing
 and value-returning executions retain the entry control state, and a raised
-exception uses the entry exception jump. Abort cases impose no condition.
+exception restores the locals and control fields of the entry exception jump.
+Abort cases impose no condition.
 This predicate is auxiliary and has no direct HOL declaration. -/
 def stackResult {C F : Type} (source : State C F) (result : Option (Result (List Value) Value))
     (next : State C F) : Prop :=
   match result with
   | none | some (.val _) => next.stack = source.stack ∧ next.handler = source.handler
   | some (.err (.raise _)) =>
-      ∃ jumped, jumpExc source = some jumped ∧ next.stack = jumped.stack ∧ next.handler = jumped.handler
+      ∃ jumped, jumpExc source = some jumped ∧ next.stack = jumped.stack ∧ next.handler = jumped.handler ∧ next.locals = jumped.locals
   | some (.err (.abort _)) => True
 
 /-- The result-sensitive invariant composes through sequential execution.
@@ -53,11 +54,12 @@ theorem evaluate_seq_stackResult {C F : Type} (first second : DataLang.Prog) (st
           cases error with
           | abort reason => trivial
           | raise value =>
-            obtain ⟨jumped, jumpedRun, stack, handler⟩ := secondControl
+            obtain ⟨jumped, jumpedRun, stack, handler, locals⟩ := secondControl
             let originalJump := { state with stack := jumped.stack, handler := jumped.handler, locals := jumped.locals, localsSize := jumped.localsSize }
-            refine ⟨originalJump, jumpExc_transport mid state jumped midControl.1.symm midControl.2.symm jumpedRun, ?_, ?_⟩
+            refine ⟨originalJump, jumpExc_transport mid state jumped midControl.1.symm midControl.2.symm jumpedRun, ?_, ?_, ?_⟩
             · simpa [originalJump] using stack
             · simpa [originalJump] using handler
+            · simpa [originalJump] using locals
 
 /-- The result-sensitive invariant composes through either conditional branch. -/
 theorem evaluate_if_stackResult {C F : Type} (name : Nat) (yes no : DataLang.Prog) (state next : State C F)
@@ -101,7 +103,7 @@ theorem evaluate_raise_stackResult {C F : Type} (name : Nat) (state next : State
     | some jumped =>
       simp [evaluate, read, jump] at run
       obtain ⟨rfl, rfl⟩ := run
-      exact ⟨jumped, jump, rfl, rfl⟩
+      exact ⟨jumped, jump, rfl, rfl, rfl⟩
 
 /-- Returning values clears locals but keeps the control stack and handler. -/
 theorem evaluate_return_stackResult {C F : Type} (names : List Nat) (state next : State C F)

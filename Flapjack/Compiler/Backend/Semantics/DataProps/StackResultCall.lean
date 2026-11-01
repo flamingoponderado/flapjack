@@ -19,7 +19,9 @@ theorem evaluate_call_stackResult {C F : Type} (ret : Option (List Nat × NumSet
     · intro body entered finished values smaller called
       exact bodyIH body entered finished (some (.val values)) smaller called
     · intro body entered finished value smaller called
-      exact bodyIH body entered finished (some (.err (.raise value))) smaller called
+      have raised := bodyIH body entered finished (some (.err (.raise value))) smaller called
+      obtain ⟨jumped, jumpRun, stack, handler, _⟩ := raised
+      exact ⟨jumped, jumpRun, stack, handler⟩
     · intro body entered finished smaller called
       exact bodyIH body entered finished none smaller called
     · exact run
@@ -118,14 +120,14 @@ theorem evaluate_call_stackResult {C F : Type} (ret : Option (List Nat × NumSet
                           simp only [Option.isSome] at called
                           simp [evaluate, read, found, nodup, cut, zero, called] at run
                           obtain ⟨rfl, rfl⟩ := run
-                          obtain ⟨jumped, jumpRun, afterStack, afterHandler⟩ := bodyControl
-                          obtain ⟨original, originalRun, jumpedStack, jumpedHandler⟩ :=
-                            jumpExc_callEnv_push_noHandler_inv state jumped env args size jumpRun
-                          exact ⟨original, originalRun, afterStack.trans jumpedStack, afterHandler.trans jumpedHandler⟩
+                          obtain ⟨jumped, jumpRun, afterStack, afterHandler, afterLocals⟩ := bodyControl
+                          obtain ⟨original, originalRun, jumpedStack, jumpedHandler, jumpedLocals⟩ :=
+                            jumpExc_callEnv_push_noHandler_inv_locals state jumped env args size jumpRun
+                          exact ⟨original, originalRun, afterStack.trans jumpedStack, afterHandler.trans jumpedHandler, afterLocals.trans jumpedLocals⟩
                         | some pair =>
                           obtain ⟨name, handlerBody⟩ := pair
                           simp only [Option.isSome] at called
-                          obtain ⟨jumped, jumpRun, afterStack, afterHandler⟩ := bodyControl
+                          obtain ⟨jumped, jumpRun, afterStack, afterHandler, _⟩ := bodyControl
                           have expected := jumpExc_callEnv_push_handler state args size env
                           have jumpEq : jumped = { entered with stack := state.stack, handler := state.handler, locals := env, localsSize := state.localsSize } := by
                             apply Option.some.inj

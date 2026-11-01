@@ -20,11 +20,12 @@ theorem stackResult_transport {C F : Type} (source entered next : State C F)
       cases error with
       | abort reason => trivial
       | raise value =>
-        obtain ⟨jumped, run, afterStack, afterHandler⟩ := control
+        obtain ⟨jumped, run, afterStack, afterHandler, afterLocals⟩ := control
         let oldJump := { source with stack := jumped.stack, handler := jumped.handler, locals := jumped.locals, localsSize := jumped.localsSize }
-        refine ⟨oldJump, jumpExc_transport entered source jumped stack.symm handler.symm run, ?_, ?_⟩
+        refine ⟨oldJump, jumpExc_transport entered source jumped stack.symm handler.symm run, ?_, ?_, ?_⟩
         · simpa [oldJump] using afterStack
         · simpa [oldJump] using afterHandler
+        · simpa [oldJump] using afterLocals
 
 /-- The full result invariant for a force follows from the invariant for
 thunk bodies at smaller clocks. This is auxiliary induction infrastructure,
@@ -155,9 +156,9 @@ theorem evaluate_force_stackResult {C F : Type} (ret : Option (Nat × NumSet)) (
                         | raise raised =>
                           simp [evaluate, read, inspect, found, cut, zero, called] at run
                           obtain ⟨rfl, rfl⟩ := run
-                          obtain ⟨jumped, jumpRun, afterStack, afterHandler⟩ := bodyControl
-                          obtain ⟨original, originalRun, jumpedStack, jumpedHandler⟩ :=
-                            jumpExc_callEnv_push_noHandler_inv state jumped env args size jumpRun
-                          exact ⟨original, originalRun, afterStack.trans jumpedStack, afterHandler.trans jumpedHandler⟩
+                          obtain ⟨jumped, jumpRun, afterStack, afterHandler, afterLocals⟩ := bodyControl
+                          obtain ⟨original, originalRun, jumpedStack, jumpedHandler, jumpedLocals⟩ :=
+                            jumpExc_callEnv_push_noHandler_inv_locals state jumped env args size jumpRun
+                          exact ⟨original, originalRun, afterStack.trans jumpedStack, afterHandler.trans jumpedHandler, afterLocals.trans jumpedLocals⟩
 
 end Flapjack.Compiler.Backend.DataSem
