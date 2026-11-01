@@ -109,6 +109,25 @@ theorem evaluate_seq_control {C F : Type} (first second : DataLang.Prog) (state 
       exact run
     exact firstControl.trans (secondFrame mid next secondRun)
 
+/-- Invert a normally continuing sequence when the first program preserves
+its clock; the second program then starts from the actual intermediate state. -/
+theorem evaluate_seq_inv_control {C F : Type} (first second : DataLang.Prog) (state next : State C F)
+    (firstFrame : ∀ before after : State C F, evaluate first before = (none, after) → SameControl before after)
+    (run : evaluate (.seq first second) state = (none, next)) :
+    ∃ mid, evaluate first state = (none, mid) ∧ evaluate second mid = (none, next) := by
+  generalize firstRun : evaluate first state = pair
+  obtain ⟨pres, mid⟩ := pair
+  cases pres with
+  | some result => simp [evaluate, firstRun, fixClock] at run
+  | none =>
+    have clock := (firstFrame state mid firstRun).2.2.2.2
+    have bound : mid.clock ≤ state.clock := by rw [clock]
+    have clamp : fixClock state ((none : Option (Result (List Value) Value)), mid) = (none, mid) := by
+      simp [fixClock, Nat.min_eq_right bound]
+    refine ⟨mid, rfl, ?_⟩
+    rw [evaluate, firstRun, clamp] at run
+    exact run
+
 /-- A successful integer auxiliary operation leaves local and control fields
 unchanged. This is Flapjack infrastructure for compiler-pass simulation. -/
 theorem doAppAux_int_frame {C F : Type} (op : ClosLang.IntOp) (args : List Value)
@@ -132,6 +151,61 @@ theorem doAppAux_word_frame {C F : Type} (op : ClosLang.WordOp) (args : List Val
     simp [doAppAux, applyNonFfi, wordResult] at run
     obtain ⟨rfl, rfl⟩ := run
     exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- A successful FFI auxiliary application preserves local and control
+fields while updating the reference store and FFI state. -/
+theorem doAppAux_ffi_frame {C F : Type} (name : Basis.Pure.MlString.MlString) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doAppAux (.ffi name) args state = .val (value, next)) : SameLocalControl state next := by
+  cases args with
+  | nil => simp [doAppAux] at run
+  | cons a rest =>
+    cases rest with
+    | nil => simp [doAppAux] at run
+    | cons b rest =>
+      cases rest with
+      | cons c tail => simp [doAppAux] at run
+      | nil =>
+        cases a with
+        | number n => simp [doAppAux] at run
+        | word64 w => simp [doAppAux] at run
+        | codePtr p => simp [doAppAux] at run
+        | block ts tag vs => simp [doAppAux] at run
+        | refPtr flag configPtr =>
+          cases b with
+          | number n => simp [doAppAux] at run
+          | word64 w => simp [doAppAux] at run
+          | codePtr p => simp [doAppAux] at run
+          | block ts tag vs => simp [doAppAux] at run
+          | refPtr bit ptr =>
+            cases configFound : sptLookup configPtr state.refs with
+            | none => simp [doAppAux, configFound] at run
+            | some configEntry =>
+              cases configEntry with
+              | valueArray values => simp [doAppAux, configFound] at run
+              | thunk mode value => simp [doAppAux, configFound] at run
+              | mutBlock tag done left child right => simp [doAppAux, configFound] at run
+              | byteArray immutable config =>
+                cases immutable with
+                | false => simp [doAppAux, configFound] at run
+                | true =>
+                  cases bytesFound : sptLookup ptr state.refs with
+                  | none => simp [doAppAux, configFound, bytesFound] at run
+                  | some bytesEntry =>
+                    cases bytesEntry with
+                    | valueArray values => simp [doAppAux, configFound, bytesFound] at run
+                    | thunk mode value => simp [doAppAux, configFound, bytesFound] at run
+                    | mutBlock tag done left child right => simp [doAppAux, configFound, bytesFound] at run
+                    | byteArray mutable bytes =>
+                      cases mutable with
+                      | true => simp [doAppAux, configFound, bytesFound] at run
+                      | false =>
+                        cases call : callFFIHOL state.ffi (.extCall name) config bytes with
+                        | final outcome => simp [doAppAux, configFound, bytesFound, call] at run
+                        | ret ffi updated =>
+                          simp [doAppAux, configFound, bytesFound, call] at run
+                          obtain ⟨rfl, rfl⟩ := run
+                          exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 private theorem intAccounting_frame {C F : Type} (op : ClosLang.IntOp) (args : List Value)
     (state accounted next : State C F) (value : Value)
@@ -179,6 +253,22 @@ theorem doApp_word_frame {C F : Type} (op : ClosLang.WordOp) (args : List Value)
   | some accounted =>
     simp only [space] at run
     exact wordAccounting_frame op args state accounted next value space run
+
+/-- The complete returning FFI dispatcher preserves local and control
+fields through its space and stack accounting. -/
+theorem doApp_ffi_frame {C F : Type} (name : Basis.Pure.MlString.MlString) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doApp (.ffi name) args state = .val (value, next)) : SameLocalControl state next := by
+  simp only [doApp] at run
+  cases space : doSpace (.ffi name) args state with
+  | none => simp [space] at run
+  | some accounted =>
+    simp only [space] at run
+    have first := doSpace_frame (.ffi name) args state accounted space
+    have second := doAppAux_ffi_frame name args _ next value run
+    have second' : SameLocalControl accounted next := by
+      simpa [SameLocalControl, doStack, doLimSafe] using second
+    exact first.trans second'
 
 /-- Invert a successful assignment using a frame theorem for its primitive.
 The returned intermediate states expose the actual read, cut, application and

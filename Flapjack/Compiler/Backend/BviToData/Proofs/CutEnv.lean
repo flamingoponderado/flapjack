@@ -94,6 +94,24 @@ theorem cutStateOpt_names_lookup {C F : Type} (enabled : Bool) (roots : List Nat
         exact lookup_cut_namesOfList roots state.locals key
       · simp at cut
 
+/-- A successful make-space instruction cuts its locals to precisely the
+compiler's named roots. -/
+theorem evaluate_makeSpace_names_locals {C F : Type} (amount : Nat) (roots : List Nat)
+    (state next : DataSem.State C F)
+    (run : DataSem.evaluate (.makeSpace amount (namesOfList roots)) state = (none, next)) :
+    next.locals = sptMkWf (sptInter state.locals (namesOfList roots)) := by
+  cases cut : DataSem.cutEnv (namesOfList roots) state.locals with
+  | none => simp [DataSem.evaluate, cut] at run
+  | some env =>
+    simp [DataSem.evaluate, cut] at run
+    subst next
+    unfold DataSem.cutEnv at cut
+    split at cut
+    · simp only [Option.some.injEq] at cut
+      subst env
+      rfl
+    · simp at cut
+
 /-- A projected variable correspondence survives a cut that keeps all of
 its names. The projection can have an independent result type. -/
 theorem varCorr_cut_namesOfList {α β : Type} (f : α → β) (kept : List Nat) (env : Spt α)

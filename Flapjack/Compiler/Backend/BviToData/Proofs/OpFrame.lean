@@ -213,6 +213,22 @@ theorem iAssign_word_shape (op : ClosLang.WordOp) (dest : Nat) (operands live co
   all_goals try (cases_type Bool)
   all_goals simp
 
+/-- The optional make-space prelude for a word assignment uses exactly the
+compiler's original root names, and its assignment has no further cut. -/
+theorem iAssign_word_shape_roots (op : ClosLang.WordOp) (dest : Nat) (operands live corr : List Nat) :
+    (∃ actualOp actualOperands,
+      iAssign dest (.wordOp op) operands live corr = .assign dest (.wordOp actualOp) actualOperands none) ∨
+    (∃ actualOp actualOperands amount,
+      iAssign dest (.wordOp op) operands live corr =
+        .seq (.makeSpace amount (namesOfList (operands ++ live ++ corr)))
+          (.assign dest (.wordOp actualOp) actualOperands none)) := by
+  cases op <;> simp [iAssign, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSpace.opSpaceReq]
+  all_goals try (cases_type AstHOL.WordSize)
+  all_goals try (cases_type AstHOL.Test)
+  all_goals try (cases_type Flapjack.Opb)
+  all_goals try (cases_type Bool)
+  all_goals simp
+
 /-- Successful generated word assignments preserve the target control
 stack, handler, metadata and clock, including through the make-space prelude. -/
 theorem evaluate_iAssign_word_control {C F : Type} (op : ClosLang.WordOp) (dest : Nat)
@@ -228,5 +244,217 @@ theorem evaluate_iAssign_word_control {C F : Type} (op : ClosLang.WordOp) (dest 
     exact DataSem.evaluate_seq_control (.makeSpace amount roots) (.assign dest (.wordOp actualOp) actualOperands actualLive)
       state next (DataSem.evaluate_makeSpace_control amount roots)
       (DataSem.evaluate_assign_word_control actualOp dest actualOperands actualLive) run
+
+/-- A successful word assignment writes its destination and otherwise either
+retains all locals or retains exactly the compiler roots after make-space. -/
+theorem evaluate_iAssign_word_lookup {C F : Type} (op : ClosLang.WordOp) (dest : Nat)
+    (operands live corr : List Nat) (state next : DataSem.State C F)
+    (run : DataSem.evaluate (iAssign dest (.wordOp op) operands live corr) state = (none, next)) :
+    ∃ (value : DataSem.Value) (cutEnabled : Bool), sptLookup dest next.locals = some value ∧
+      (∀ key, key ≠ dest → sptLookup key next.locals =
+        if cutEnabled then (if key ∈ operands ++ live ++ corr then sptLookup key state.locals else none)
+        else sptLookup key state.locals) ∧ DataSem.SameControl state next := by
+  classical
+  have control := evaluate_iAssign_word_control op dest operands live corr state next run
+  rcases iAssign_word_shape_roots op dest operands live corr with direct | spaced
+  · obtain ⟨actualOp, actualOperands, shape⟩ := direct
+    rw [shape] at run
+    obtain ⟨prepared, value, cut, locals, _⟩ :=
+      DataSem.evaluate_assign_locals (.wordOp actualOp) dest actualOperands none state next
+        (DataSem.doApp_word_frame actualOp) run
+    simp [DataSem.cutStateOpt] at cut
+    subst prepared
+    refine ⟨value, false, ?_, ?_, control⟩
+    · simp [locals, sptLookup_sptInsert_same]
+    · intro key different
+      simpa [locals] using sptLookup_sptInsert_ne dest key value state.locals different
+  · obtain ⟨actualOp, actualOperands, amount, shape⟩ := spaced
+    rw [shape] at run
+    obtain ⟨mid, firstRun, secondRun⟩ :=
+      DataSem.evaluate_seq_inv_control (.makeSpace amount (namesOfList (operands ++ live ++ corr)))
+        (.assign dest (.wordOp actualOp) actualOperands none) state next
+        (DataSem.evaluate_makeSpace_control amount (namesOfList (operands ++ live ++ corr))) run
+    have midLocals := evaluate_makeSpace_names_locals amount (operands ++ live ++ corr) state mid firstRun
+    obtain ⟨prepared, value, cut, locals, _⟩ :=
+      DataSem.evaluate_assign_locals (.wordOp actualOp) dest actualOperands none mid next
+        (DataSem.doApp_word_frame actualOp) secondRun
+    simp [DataSem.cutStateOpt] at cut
+    subst prepared
+    refine ⟨value, true, ?_, ?_, control⟩
+    · simp [locals, sptLookup_sptInsert_same]
+    · intro key different
+      rw [locals, sptLookup_sptInsert_ne dest key value mid.locals different, midLocals]
+      exact lookup_cut_namesOfList (operands ++ live ++ corr) state.locals key
+
+/-- A successful generated FFI assignment writes its destination and
+retains precisely the original compiler root names everywhere else. -/
+theorem evaluate_iAssign_ffi_lookup {C F : Type} (name : Basis.Pure.MlString.MlString) (dest : Nat)
+    (operands live corr : List Nat) (state next : DataSem.State C F)
+    (run : DataSem.evaluate (iAssign dest (.ffi name) operands live corr) state = (none, next)) :
+    ∃ value, sptLookup dest next.locals = some value ∧
+      (∀ key, key ≠ dest → sptLookup key next.locals =
+        if key ∈ operands ++ live ++ corr then sptLookup key state.locals else none) ∧
+      DataSem.SameControl state next := by
+  classical
+  have shape : iAssign dest (.ffi name) operands live corr =
+      .assign dest (.ffi name) operands (some (namesOfList (operands ++ live ++ corr))) := by
+    simp [iAssign, DataLang.opRequiresNames, DataLang.opSpaceReset]
+  rw [shape] at run
+  obtain ⟨prepared, value, cut, locals, control⟩ :=
+    DataSem.evaluate_assign_locals (.ffi name) dest operands (some (namesOfList (operands ++ live ++ corr)))
+      state next (DataSem.doApp_ffi_frame name) run
+  refine ⟨value, ?_, ?_, control⟩
+  · simp [locals, sptLookup_sptInsert_same]
+  · intro key different
+    rw [locals, sptLookup_sptInsert_ne dest key value prepared.locals different]
+    simpa using cutStateOpt_names_lookup true (operands ++ live ++ corr) state prepared key cut
+
+/-- A successful word `iAssign` establishes the complete continuing
+compiler invariant when its destination is fresh. This includes comparison
+rewrites and the optional make-space cut. -/
+theorem evaluate_iAssign_word_outcome {C F : Type} (op : ClosLang.WordOp)
+    (target : DataSem.State C F) (source next : BviSem.BviState C F)
+    (operands live corr : List Nat) (env : List BvlSem.Value)
+    (args : List DataSem.Value) (dest : Nat) (result : BvlSem.Value)
+    (related : stateRel source target)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
+    (fresh : ∀ key, dest ≤ key → sptLookup key target.locals = none)
+    (read : DataSem.getVars operands target.locals = some args)
+    (run : BviSem.doApp (.wordOp op) (args.map dataToBviValue) source = .val (result, next)) :
+    ∃ targetNext value,
+      DataSem.evaluate (iAssign dest (.wordOp op) operands live corr) target = (none, targetNext) ∧
+      result = dataToBviValue value ∧ stateRel next targetNext ∧
+      sptLookup dest targetNext.locals = some value ∧
+      correctOutcome (.val [result]) target targetNext dest (dest + 1) corr live [dest] env false none none := by
+  obtain ⟨targetNext, value, execution, projected, finalRel, destRead⟩ :=
+    evaluate_iAssign_success (.wordOp op) target source operands live corr env args dest result next
+      (by simp) (by intro flag; simp) (by simp) related vars livePresent read run
+  obtain ⟨_, cutEnabled, _, lookupOther, control⟩ :=
+    evaluate_iAssign_word_lookup op dest operands live corr target targetNext execution
+  have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
+      sptLookup key targetNext.locals = sptLookup key target.locals := by
+    intro key member different
+    rw [lookupOther key different]
+    cases cutEnabled with
+    | false => rfl
+    | true => simp only [if_true, if_pos member]
+  have rootsPresent := roots_present target operands live corr env args vars livePresent read
+  have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue targetNext.locals) := by
+    apply varCorr_of_lookup_eq dataToBviValue target.locals targetNext.locals corr env vars
+    intro key member
+    have root : key ∈ operands ++ live ++ corr := by simp [member]
+    have different : key ≠ dest := by
+      intro equal
+      subst key
+      exact rootsPresent dest root (fresh dest (Nat.le_refl dest))
+    exact keeps key root different
+  refine ⟨targetNext, value, execution, projected, finalRel, destRead, ?_⟩
+  simp only [correctOutcome, true_and, List.mem_singleton, forall_eq]
+  refine ⟨by omega, by omega, ?_, varsNew, ?_, ?_, control.1.symm, control.2.1.symm, ?_, ?_⟩
+  · intro key bound
+    have different : key ≠ dest := by omega
+    rw [lookupOther key different]
+    simp [fresh key (by omega)]
+  · intro key dataValue lookup
+    by_cases equal : key = dest
+    · omega
+    · have oldLookup : sptLookup key target.locals = some dataValue := by
+        rw [lookupOther key equal] at lookup
+        split at lookup
+        · split at lookup <;> simp_all
+        · exact lookup
+      by_contra bound
+      have absent := fresh key (by omega)
+      rw [oldLookup] at absent
+      contradiction
+  · intro key dataValue lookup needed
+    have different : key ≠ dest := by
+      intro equal
+      subst key
+      have absent := fresh dest (Nat.le_refl dest)
+      rw [lookup] at absent
+      contradiction
+    have root : key ∈ operands ++ live ++ corr := by
+      by_cases member : key ∈ live
+      · simp [member]
+      · simp [needed member]
+    rw [keeps key root different]
+    exact lookup
+  · exact DataSem.SameControl.jumpExc_ne_none control
+  · constructor
+    · simp [DataSem.getVar, sptLookup_sptMap, destRead, projected]
+    · constructor
+
+/-- A successful FFI `iAssign` establishes the complete continuing
+compiler invariant when its destination is fresh. This retains the compiler live-name cut. -/
+theorem evaluate_iAssign_ffi_outcome {C F : Type} (name : Basis.Pure.MlString.MlString)
+    (target : DataSem.State C F) (source next : BviSem.BviState C F)
+    (operands live corr : List Nat) (env : List BvlSem.Value)
+    (args : List DataSem.Value) (dest : Nat) (result : BvlSem.Value)
+    (related : stateRel source target)
+    (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
+    (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
+    (fresh : ∀ key, dest ≤ key → sptLookup key target.locals = none)
+    (read : DataSem.getVars operands target.locals = some args)
+    (run : BviSem.doApp (.ffi name) (args.map dataToBviValue) source = .val (result, next)) :
+    ∃ targetNext value,
+      DataSem.evaluate (iAssign dest (.ffi name) operands live corr) target = (none, targetNext) ∧
+      result = dataToBviValue value ∧ stateRel next targetNext ∧
+      sptLookup dest targetNext.locals = some value ∧
+      correctOutcome (.val [result]) target targetNext dest (dest + 1) corr live [dest] env false none none := by
+  obtain ⟨targetNext, value, execution, projected, finalRel, destRead⟩ :=
+    evaluate_iAssign_success (.ffi name) target source operands live corr env args dest result next
+      (by simp) (by intro flag; simp) (by simp) related vars livePresent read run
+  obtain ⟨_, _, lookupOther, control⟩ :=
+    evaluate_iAssign_ffi_lookup name dest operands live corr target targetNext execution
+  have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
+      sptLookup key targetNext.locals = sptLookup key target.locals := by
+    intro key member different
+    rw [lookupOther key different, if_pos member]
+  have rootsPresent := roots_present target operands live corr env args vars livePresent read
+  have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue targetNext.locals) := by
+    apply varCorr_of_lookup_eq dataToBviValue target.locals targetNext.locals corr env vars
+    intro key member
+    have root : key ∈ operands ++ live ++ corr := by simp [member]
+    have different : key ≠ dest := by
+      intro equal
+      subst key
+      exact rootsPresent dest root (fresh dest (Nat.le_refl dest))
+    exact keeps key root different
+  refine ⟨targetNext, value, execution, projected, finalRel, destRead, ?_⟩
+  simp only [correctOutcome, true_and, List.mem_singleton, forall_eq]
+  refine ⟨by omega, by omega, ?_, varsNew, ?_, ?_, control.1.symm, control.2.1.symm, ?_, ?_⟩
+  · intro key bound
+    have different : key ≠ dest := by omega
+    rw [lookupOther key different]
+    simp [fresh key (by omega)]
+  · intro key dataValue lookup
+    by_cases equal : key = dest
+    · omega
+    · have oldLookup : sptLookup key target.locals = some dataValue := by
+        rw [lookupOther key equal] at lookup
+        split at lookup <;> simp_all
+      by_contra bound
+      have absent := fresh key (by omega)
+      rw [oldLookup] at absent
+      contradiction
+  · intro key dataValue lookup needed
+    have different : key ≠ dest := by
+      intro equal
+      subst key
+      have absent := fresh dest (Nat.le_refl dest)
+      rw [lookup] at absent
+      contradiction
+    have root : key ∈ operands ++ live ++ corr := by
+      by_cases member : key ∈ live
+      · simp [member]
+      · simp [needed member]
+    rw [keeps key root different]
+    exact lookup
+  · exact DataSem.SameControl.jumpExc_ne_none control
+  · constructor
+    · simp [DataSem.getVar, sptLookup_sptMap, destRead, projected]
+    · constructor
 
 end Flapjack.Compiler.Backend.BviToData
