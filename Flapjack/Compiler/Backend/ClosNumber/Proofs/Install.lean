@@ -147,4 +147,142 @@ theorem stateRel_shiftOracle {C F : Type} {source : State (Nat × C) F} {target 
   · intro index
     exact safe (index + amount)
 
+/-- Invert every installation result other than a type error, retaining the
+decoded payload, oracle entry, callback result, and updated state. -/
+theorem doInstall_nonType_parts {C F : Type} (values : List Value) (state final : State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List ClosLang.Exp) Value)
+    (run : doInstall values state = (result, final))
+    (notType : result ≠ .err (.abort .typeError)) :
+    ∃ byteValue wordValue bytes words config expressions auxiliary nextConfig,
+      values = [byteValue, wordValue] ∧
+      valueToBytes byteValue = some bytes ∧ valueToWords wordValue = some words ∧
+      state.compileOracle 0 = (config, expressions, auxiliary) ∧
+      state.compile config (expressions, auxiliary) = some (bytes, words, nextConfig) ∧
+      (∀ index ∈ auxiliary.map Prod.fst, state.code.lookup index = none) ∧
+      (auxiliary.map Prod.fst).Nodup ∧
+      (holShiftSeq 1 state.compileOracle 0).1 = nextConfig ∧ expressions ≠ [] ∧
+      final = { state with code := state.code.updateListEq auxiliary, compileOracle := holShiftSeq 1 state.compileOracle, clock := state.clock - 1 } ∧
+      result = if state.clock = 0 then .err (.abort .timeoutError) else .val expressions := by
+  classical
+  cases values with
+  | nil => simp [doInstall] at run; exact (notType run.1.symm).elim
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doInstall] at run; exact (notType run.1.symm).elim
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp [doInstall] at run; exact (notType run.1.symm).elim
+      | nil =>
+        cases bytesRun : valueToBytes first with
+        | none => simp [doInstall, bytesRun] at run; exact (notType run.1.symm).elim
+        | some bytes =>
+          cases wordsRun : valueToWords second with
+          | none => simp [doInstall, bytesRun, wordsRun] at run; exact (notType run.1.symm).elim
+          | some words =>
+            cases oracleRun : state.compileOracle 0 with
+            | mk config program =>
+              cases program with
+              | mk expressions auxiliary =>
+                by_cases valid : (∀ index ∈ auxiliary.map Prod.fst, state.code.lookup index = none) ∧
+                    (auxiliary.map Prod.fst).Nodup
+                · cases compileRun : state.compile config (expressions, auxiliary) with
+                  | none =>
+                    simp [doInstall, bytesRun, wordsRun, oracleRun, valid, compileRun] at run
+                    exact (notType run.1.symm).elim
+                  | some output =>
+                    obtain ⟨compiledBytes, compiledWords, nextConfig⟩ := output
+                    by_cases checks : bytes = compiledBytes ∧ words = compiledWords ∧
+                        (holShiftSeq 1 state.compileOracle 0).1 = nextConfig ∧ expressions ≠ []
+                    · obtain ⟨rfl, rfl, nextEq, nonempty⟩ := checks
+                      refine ⟨first, second, bytes, words, config, expressions, auxiliary, nextConfig,
+                        rfl, bytesRun, wordsRun, rfl, compileRun, valid.1, valid.2,
+                        nextEq, nonempty, ?_, ?_⟩
+                      · by_cases zero : state.clock = 0 <;>
+                          simp_all [doInstall]
+                      · by_cases zero : state.clock = 0 <;>
+                          simp_all [doInstall]
+                    · simp [doInstall, bytesRun, wordsRun, oracleRun, valid, compileRun, checks] at run
+                      exact (notType run.1.symm).elim
+                · simp only [doInstall, bytesRun, wordsRun, oracleRun, valid, ↓reduceIte] at run
+                  simp only [Prod.mk.injEq] at run
+                  exact (notType run.1.symm).elim
+
+/-- Every incremental numbering result begins with its original location. -/
+theorem compileInc_nonempty (number : Nat) (expressions : List ClosLang.Exp) :
+    (compileInc number expressions).2 ≠ [] := by
+  simp only [compileInc]
+  split <;> simp
+
+/-- Successful or timed-out installation is simulated by the numbered
+oracle entry. This uses the proof-side state and value relations; their HOL
+carrier correspondence and the enclosing evaluator theorem remain open. -/
+theorem doInstall_related {C F : Type} (source : State (Nat × C) F) (target : State C F)
+    (sourceValues targetValues : List Value) (result : Flapjack.SemanticPrimitivesHOL.Result (List ClosLang.Exp) Value)
+    (final : State (Nat × C) F) (states : StateRel source target)
+    (values : List.Forall₂ (ValueRel source.maxApp) sourceValues targetValues)
+    (run : doInstall sourceValues source = (result, final))
+    (notType : result ≠ .err (.abort .typeError)) :
+    ∃ expressions targetFinal,
+      doInstall targetValues target =
+        (if source.clock = 0 then .err (.abort .timeoutError)
+          else .val (compileInc (source.compileOracle 0).1.1 expressions).2, targetFinal) ∧
+      result = (if source.clock = 0 then .err (.abort .timeoutError) else .val expressions) ∧
+      ¬ ClosProps.containsAppSome source.maxApp expressions ∧
+      final.maxApp = source.maxApp ∧ StateRel final targetFinal := by
+  classical
+  obtain ⟨byteValue, wordValue, bytes, words, config, expressions, auxiliary, nextConfig,
+    valueEq, bytesRun, wordsRun, oracleRun, compileRun, _, _, nextEq, _, finalEq, resultEq⟩ :=
+    doInstall_nonType_parts sourceValues source final result run notType
+  subst sourceValues
+  cases values with
+  | cons bytesRel rest =>
+    cases rest with
+    | cons wordsRel rest =>
+      cases rest
+      rename_i targetByte targetWord
+      have targetBytes : valueToBytes targetByte = some bytes := by
+        rw [← valueToBytes_related source.maxApp byteValue targetByte bytesRel, bytesRun]
+      have targetWords : valueToWords targetWord = some words := by
+        rw [← valueToWords_related source.maxApp wordValue targetWord wordsRel, wordsRun]
+      have safe := states.2.2.2.2.2.2.2.1 0
+      rw [oracleRun] at safe
+      obtain ⟨rfl, safeExpressions⟩ := safe
+      cases config with
+      | mk number config =>
+        cases numbered : compileInc number expressions with
+        | mk nextNumber numberedExpressions =>
+          have targetOracle : target.compileOracle 0 = (config, numberedExpressions, []) := by
+            rw [states.2.2.2.2.1]
+            simp [stateCo, ignoreTable, oracleRun, numbered]
+          rw [states.2.2.2.1] at compileRun
+          cases targetCompile : target.compile config (numberedExpressions, []) with
+          | none => simp [stateCc, ignoreTable, numbered, targetCompile] at compileRun
+          | some output =>
+            obtain ⟨targetBytesOut, targetWordsOut, targetNext⟩ := output
+            simp [stateCc, ignoreTable, numbered, targetCompile] at compileRun
+            obtain ⟨rfl, rfl, rfl⟩ := compileRun
+            have targetNextEq : (holShiftSeq 1 target.compileOracle 0).1 = targetNext := by
+              have oracleEq := states.2.2.2.2.1
+              rw [oracleEq]
+              simpa [holShiftSeq, stateCo] using congrArg Prod.snd nextEq
+            have nonempty : numberedExpressions ≠ [] := by
+              have h := compileInc_nonempty number expressions
+              simpa [numbered] using h
+            have sourceEmpty : source.code.updateListEq [] = source.code := by
+              cases source.code
+              rfl
+            have targetEmpty : target.code.updateListEq [] = target.code := by
+              cases target.code
+              rfl
+            let targetFinal : State C F := { target with compileOracle := holShiftSeq 1 target.compileOracle, clock := target.clock - 1 }
+            refine ⟨expressions, targetFinal, ?_, resultEq, safeExpressions, ?_, ?_⟩
+            · have clockEq := states.1
+              by_cases zero : target.clock = 0 <;>
+                simp [doInstall, targetBytes, targetWords, targetOracle, targetCompile,
+                  targetNextEq, nonempty, targetFinal, clockEq, oracleRun, numbered, targetEmpty, zero]
+            · simp [finalEq]
+            · rw [finalEq]
+              have h := stateRel_withClock (source.clock - 1) (stateRel_shiftOracle states 1)
+              simpa [targetFinal, states.1, sourceEmpty] using h
+
 end Flapjack.Compiler.Backend.ClosNumber
