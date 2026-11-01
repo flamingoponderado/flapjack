@@ -2140,4 +2140,192 @@ theorem evaluate_memory_updateByte {C F : Type} (trace : BackendCommon.Tra) (arg
     EvalSimulation (C := C) (F := F) [.op trace (.memOp .updateByte) args] :=
   evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_updateByte
 
+/-- Numbering preserves the byte-vector decoder, including malformed lists. -/
+theorem byteVectors_related (maxApp : Nat) {left right : List Value}
+    (related : List.Forall₂ (ValueRel maxApp) left right) : byteVectors left = byteVectors right := by
+  induction related with
+  | nil => rfl
+  | cons head tail ih => cases head <;> simp [byteVectors, ih]
+
+/-- Numbering preserves byte-number decoding, including range errors. -/
+theorem byteNumbers_related (maxApp : Nat) {left right : List Value}
+    (related : List.Forall₂ (ValueRel maxApp) left right) : byteNumbers left = byteNumbers right := by
+  induction related with
+  | nil => rfl
+  | cons head tail ih => cases head <;> simp [byteNumbers, ih]
+
+/-- Decoding a closure list into bytes preserves successful byte vectors and
+    malformed or out-of-range input errors. -/
+theorem primitiveSimulation_memory_fromListByte {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .fromListByte) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      rename_i value nextValue
+      have decoded := valueToList_related source.maxApp value nextValue head
+      cases left : valueToList value <;> cases right : valueToList nextValue <;>
+        simp_all [doApp, applyMemory, ResultRel]
+      have same := byteNumbers_related source.maxApp decoded
+      rw [← same]
+      cases numbers : byteNumbers _ with
+      | none => simp
+      | some bytes =>
+        have valueRel : ValueRel source.maxApp (.byteVector bytes) (.byteVector bytes) := .byteVector _
+        simp [valueRel, stateRel]
+    | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Concatenating a list of byte vectors preserves byte order and malformed
+    input errors through numbering. -/
+theorem primitiveSimulation_memory_concatByteVec {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .concatByteVec) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      rename_i value nextValue
+      have decoded := valueToList_related source.maxApp value nextValue head
+      cases left : valueToList value <;> cases right : valueToList nextValue <;>
+        simp_all [doApp, applyMemory, ResultRel]
+      have same := byteVectors_related source.maxApp decoded
+      rw [← same]
+      cases vectors : byteVectors _ with
+      | none => simp
+      | some chunks =>
+        have valueRel : ValueRel source.maxApp (.byteVector chunks.flatten) (.byteVector chunks.flatten) := .byteVector _
+        simp [valueRel, stateRel]
+    | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Encoding a byte vector as a closure list preserves every byte. -/
+theorem primitiveSimulation_memory_toListByte {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .toListByte) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      cases head with
+      | byteVector bytes =>
+        have elements : List.Forall₂ (ValueRel source.maxApp)
+            (bytes.map (fun b => .number b.toNat)) (bytes.map (fun b => .number b.toNat)) := by
+          induction bytes with
+          | nil => exact .nil
+          | cons byte rest ih => exact .cons (.number _) ih
+        have valueRel := listToValue_related source.maxApp elements
+        simp [doApp, applyMemory, valueRel, stateRel]
+      | number _ | word64 _ | block _ _ _ _ | refPtr _ _ | closure | recclosure =>
+        simp [doApp, applyMemory, ResultRel]
+    | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Related byte vectors have exactly the same length. -/
+theorem primitiveSimulation_memory_lengthByteVec {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .lengthByteVec) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons head tail =>
+    cases tail with
+    | nil =>
+      cases head with
+      | byteVector bytes =>
+        have valueRel : ValueRel source.maxApp (.number bytes.length) (.number bytes.length) := .number _
+        simp [doApp, applyMemory, valueRel, stateRel]
+      | number _ | word64 _ | block _ _ _ _ | refPtr _ _ | closure | recclosure =>
+        simp [doApp, applyMemory, ResultRel]
+    | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Byte-vector indexing gives the same byte and the same bounds errors. -/
+theorem primitiveSimulation_memory_derefByteVec {C F : Type} :
+    PrimitiveSimulation (C := C) (F := F) (.memOp .derefByteVec) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases first with
+        | byteVector bytes =>
+          cases second with
+          | number index =>
+            by_cases negative : index < 0
+            · simp [doApp, applyMemory, negative, ResultRel]
+            · cases found : bytes[index.toNat]? with
+              | none => simp [doApp, applyMemory, negative, found, ResultRel]
+              | some byte =>
+                have valueRel : ValueRel source.maxApp (.number byte.toNat) (.number byte.toNat) := .number _
+                simp [doApp, applyMemory, negative, found, valueRel, stateRel]
+          | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure =>
+            simp [doApp, applyMemory, ResultRel]
+        | number _ | word64 _ | block _ _ _ _ | refPtr _ _ | closure | recclosure =>
+          simp [doApp, applyMemory, ResultRel]
+      | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- String comparison uses equal byte vectors and therefore yields the same
+    Boolean result for related arguments. -/
+theorem primitiveSimulation_memory_stringCmp {C F : Type} (fast : Bool) (op : Flapjack.Opb) :
+    PrimitiveSimulation (C := C) (F := F) (.memOp (.stringCmp fast op)) := by
+  intro args nextArgs source target argsRel stateRel
+  cases argsRel with
+  | nil => simp [doApp, applyMemory, ResultRel]
+  | cons first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, ResultRel]
+    | cons second tail =>
+      cases tail with
+      | nil =>
+        cases first with
+        | byteVector left =>
+          cases second with
+          | byteVector right =>
+            simp [doApp, applyMemory, boolValue_related, stateRel]
+          | number _ | word64 _ | block _ _ _ _ | refPtr _ _ | closure | recclosure =>
+            simp [doApp, applyMemory, ResultRel]
+        | number _ | word64 _ | block _ _ _ _ | refPtr _ _ | closure | recclosure =>
+          simp [doApp, applyMemory, ResultRel]
+      | cons head tail => simp [doApp, applyMemory, ResultRel]
+
+/-- Byte-list decoding expressions preserve evaluation through numbering. -/
+theorem evaluate_memory_fromListByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .fromListByte) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_fromListByte
+
+/-- Byte-vector concatenation expressions preserve evaluation. -/
+theorem evaluate_memory_concatByteVec {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .concatByteVec) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_concatByteVec
+
+/-- Byte-list encoding expressions preserve evaluation. -/
+theorem evaluate_memory_toListByte {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .toListByte) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_toListByte
+
+/-- Byte-vector length expressions preserve evaluation. -/
+theorem evaluate_memory_lengthByteVec {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .lengthByteVec) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_lengthByteVec
+
+/-- Byte-vector index expressions preserve evaluation. -/
+theorem evaluate_memory_derefByteVec {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp .derefByteVec) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH primitiveSimulation_memory_derefByteVec
+
+/-- String comparison expressions preserve evaluation. -/
+theorem evaluate_memory_stringCmp {C F : Type} (trace : BackendCommon.Tra) (fast : Bool) (op : Flapjack.Opb)
+    (args : List ClosLang.Exp) (argsIH : EvalSimulation (C := C) (F := F) args) :
+    EvalSimulation (C := C) (F := F) [.op trace (.memOp (.stringCmp fast op)) args] :=
+  evaluate_ordinaryOp trace _ args (by simp) (by simp) argsIH (primitiveSimulation_memory_stringCmp fast op)
+
 end Flapjack.Compiler.Backend.ClosNumber
