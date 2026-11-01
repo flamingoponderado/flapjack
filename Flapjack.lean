@@ -918,10 +918,13 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Observations
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Divergence
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.OptimizedProgram
 import Flapjack.Compiler.Backend.DataLang.Syntax
+import Flapjack.Compiler.Backend.Semantics.DataSem.Value
+import Flapjack.Compiler.Backend.Semantics.DataSem.State
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
 import Flapjack.Compiler.Backend.BviToData.Compile
 import Flapjack.Compiler.Backend.BviToData.Proofs.Total
+import Flapjack.Compiler.Backend.BviToData.Proofs.Value
 import Flapjack.Compiler.Backend.DataSimp
 import Flapjack.Compiler.Backend.DataLive
 import Flapjack.Compiler.Backend.BviToData.Optimise
