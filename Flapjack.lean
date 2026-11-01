@@ -1029,6 +1029,7 @@ import Flapjack.Compiler.Backend.DataSpace.Proofs.ResourceVariation
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Sequence
 import Flapjack.Compiler.Backend.DataSpace.Proofs.SequenceReservation
 import Flapjack.Compiler.Backend.DataSpace.Proofs.SequenceMove
+import Flapjack.Compiler.Backend.DataSpace.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.DataSpace.Proofs.TimeoutSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.FrameSize
 import Flapjack.Compiler.Backend.DataSpace.Proofs.CodeLabels
