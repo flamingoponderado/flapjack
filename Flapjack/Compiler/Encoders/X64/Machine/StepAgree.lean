@@ -242,7 +242,7 @@ theorem writeXmm_xmm (s : X64State) (r : Nat) (v : BitVec 64) :
 theorem readXmm_writeXmm_self (s : X64State) (r : Nat) (v : BitVec 64) :
     readXmm (writeXmm s r v) r = v := by
   simp only [readXmm, writeXmm]
-  bv_decide
+  bv_normalize
 
 /-- Writing one XMM register leaves a different register's low word alone. -/
 theorem readXmm_writeXmm_other (s : X64State) (r x : Nat) (v : BitVec 64)

@@ -248,19 +248,113 @@ theorem byte_extract (imm : BitVec 64) (k : Nat) :
   apply BitVec.toNat_eq.mpr
   simp [byte, BitVec.toNat_setWidth, BitVec.toNat_ushiftRight, Nat.shiftRight_eq_div_pow]
 
-/-- `le32` of the four little-endian bytes of `imm` is `imm` truncated to 32 bits. -/
+/-- `le32` of the four little-endian bytes of `imm` is `imm` truncated to 32 bits.
+Proved bit by bit: each bit index lies in exactly one of the four bytes. -/
 theorem le32_bytes (imm : BitVec 64) :
     le32 (fun k => byte (imm.toNat / 2^(8*k))) 0 = BitVec.setWidth 32 imm := by
   have hb : ∀ k, byte (imm.toNat / 2^(8*k)) = (imm >>> (8*k)).setWidth 8 := byte_extract imm
   simp only [hb, le32]
-  bv_decide
+  ext i
+  simp
+  by_cases h8 : i < 8
+  · have h16 : i < 16 := by omega
+    have h24 : i < 24 := by omega
+    simp [h8, h16, h24]
+  · by_cases h16 : i < 16
+    · have h24 : i < 24 := by omega
+      have e8 : i - 8 < 8 := by omega
+      have e : 8 + (i - 8) = i := by omega
+      simp [h8, h16, h24, e8, e]
+    · by_cases h24 : i < 24
+      · have e16 : i - 16 < 8 := by omega
+        have ne8 : ¬ (i - 8 < 8) := by omega
+        have e : 16 + (i - 16) = i := by omega
+        simp [h8, h16, h24, e16, ne8, e]
+      · have e24 : i - 24 < 8 := by omega
+        have ne8 : ¬ (i - 8 < 8) := by omega
+        have ne16 : ¬ (i - 16 < 8) := by omega
+        have e : 24 + (i - 24) = i := by omega
+        simp [h8, h16, h24, e24, ne8, ne16, e]
 
-/-- `le64` of the eight little-endian bytes of `imm` is `imm`. -/
+/-- `le64` of the eight little-endian bytes of `imm` is `imm`.  Proved bit by
+bit: each bit index lies in exactly one of the eight bytes. -/
 theorem le64_bytes (imm : BitVec 64) :
     le64 (fun k => byte (imm.toNat / 2^(8*k))) 0 = imm := by
   have hb : ∀ k, byte (imm.toNat / 2^(8*k)) = (imm >>> (8*k)).setWidth 8 := byte_extract imm
   simp only [hb, le64]
-  bv_decide
+  ext i
+  simp
+  by_cases h8 : i < 8
+  · have h16 : i < 16 := by omega
+    have h24 : i < 24 := by omega
+    have h32 : i < 32 := by omega
+    have h40 : i < 40 := by omega
+    have h48 : i < 48 := by omega
+    have h56 : i < 56 := by omega
+    simp [h8, h16, h24, h32, h40, h48, h56]; rfl
+  · by_cases h16 : i < 16
+    · have h24 : i < 24 := by omega
+      have h32 : i < 32 := by omega
+      have h40 : i < 40 := by omega
+      have h48 : i < 48 := by omega
+      have h56 : i < 56 := by omega
+      have e1 : i - 8 < 8 := by omega
+      have a1 : 8 + (i - 8) = i := by omega
+      simp [h8, h16, h24, h32, h40, h48, h56, e1, a1]; rfl
+    · by_cases h24 : i < 24
+      · have h32 : i < 32 := by omega
+        have h40 : i < 40 := by omega
+        have h48 : i < 48 := by omega
+        have h56 : i < 56 := by omega
+        have e2 : i - 16 < 8 := by omega
+        have a2 : 16 + (i - 16) = i := by omega
+        have d8 : ¬ (i - 8 < 8) := by omega
+        simp [h8, h16, h24, h32, h40, h48, h56, e2, a2, d8]; rfl
+      · by_cases h32 : i < 32
+        · have h40 : i < 40 := by omega
+          have h48 : i < 48 := by omega
+          have h56 : i < 56 := by omega
+          have e3 : i - 24 < 8 := by omega
+          have a3 : 24 + (i - 24) = i := by omega
+          have d8 : ¬ (i - 8 < 8) := by omega
+          have d16 : ¬ (i - 16 < 8) := by omega
+          simp [h8, h16, h24, h32, h40, h48, h56, e3, a3, d8, d16]; rfl
+        · by_cases h40 : i < 40
+          · have h48 : i < 48 := by omega
+            have h56 : i < 56 := by omega
+            have e4 : i - 32 < 8 := by omega
+            have a4 : 32 + (i - 32) = i := by omega
+            have d8 : ¬ (i - 8 < 8) := by omega
+            have d16 : ¬ (i - 16 < 8) := by omega
+            have d24 : ¬ (i - 24 < 8) := by omega
+            simp [h8, h16, h24, h32, h40, h48, h56, e4, a4, d8, d16, d24]; rfl
+          · by_cases h48 : i < 48
+            · have h56 : i < 56 := by omega
+              have e5 : i - 40 < 8 := by omega
+              have a5 : 40 + (i - 40) = i := by omega
+              have d8 : ¬ (i - 8 < 8) := by omega
+              have d16 : ¬ (i - 16 < 8) := by omega
+              have d24 : ¬ (i - 24 < 8) := by omega
+              have d32 : ¬ (i - 32 < 8) := by omega
+              simp [h8, h16, h24, h32, h40, h48, h56, e5, a5, d8, d16, d24, d32]; rfl
+            · by_cases h56 : i < 56
+              · have e6 : i - 48 < 8 := by omega
+                have a6 : 48 + (i - 48) = i := by omega
+                have d8 : ¬ (i - 8 < 8) := by omega
+                have d16 : ¬ (i - 16 < 8) := by omega
+                have d24 : ¬ (i - 24 < 8) := by omega
+                have d32 : ¬ (i - 32 < 8) := by omega
+                have d40 : ¬ (i - 40 < 8) := by omega
+                simp [h8, h16, h24, h32, h40, h48, h56, e6, a6, d8, d16, d24, d32, d40]; rfl
+              · have e7 : i - 56 < 8 := by omega
+                have a7 : 56 + (i - 56) = i := by omega
+                have d8 : ¬ (i - 8 < 8) := by omega
+                have d16 : ¬ (i - 16 < 8) := by omega
+                have d24 : ¬ (i - 24 < 8) := by omega
+                have d32 : ¬ (i - 32 < 8) := by omega
+                have d40 : ¬ (i - 40 < 8) := by omega
+                have d48 : ¬ (i - 48 < 8) := by omega
+                simp [h8, h16, h24, h32, h40, h48, h56, e7, a7, d8, d16, d24, d32, d40, d48]; rfl
 
 /-- `le64` reads back eight `e_imm64` bytes at any offset. -/
 theorem le64_at (imm : BitVec 64) (off : Nat) (r : Nat → BitVec 8)

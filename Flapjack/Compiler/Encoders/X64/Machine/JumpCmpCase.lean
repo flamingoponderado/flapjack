@@ -62,9 +62,11 @@ theorem holAsmSignedLess_eq (a b : BitVec 64) : holAsmSignedLess a b = a.slt b :
   split <;> split <;> simp <;> omega
 
 theorem subFlags_zf (a b : BitVec 64) : (subFlags a b).zf = (a == b) := by
-  simp only [subFlags]
-  rw [beq_eq_decide, decide_eq_decide]
-  bv_decide
+  simp only [subFlags, _root_.beq_eq_decide]
+  have h : (a - b = 0) ↔ (a = b) := by
+    rw [BitVec.sub_eq_iff_eq_add]
+    simp
+  exact decide_eq_decide.mpr h
 
 theorem subFlags_cf (a b : BitVec 64) : (subFlags a b).cf = decide (a < b) := by
   simp only [subFlags, BitVec.lt_def]

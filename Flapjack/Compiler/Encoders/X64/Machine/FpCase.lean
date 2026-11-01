@@ -856,13 +856,34 @@ theorem case_fpEqual (n d1 d2 : Nat) (s1 s2 : AsmState 64) (ms : X64State)
 theorem toNat_twelve : (12 : BitVec 8).toNat = 12 := by decide
 
 /-- A 32-bit value written into the low word of an XMM register, shifted left
-and then right by 96 bits, reads back as its 64-bit zero extension. -/
+and then right by 96 bits, reads back as its 64-bit zero extension.  The
+amounts are annotated `Nat`: with an unannotated literal Lean would pick the
+homogeneous `ShiftLeft (Word width)` view from `Flapjack/RiscV/Model.lean`
+instead of the `Nat` shift that the `BitVec` bit-index lemmas cover. -/
 theorem writeXmm_low32 (s : X64State) (r : Nat) (hr : r < 8) (v : BitVec 32) :
-    ((((writeXmm s (r % 8) (BitVec.setWidth 64 v)).xmm (r % 8)) <<< 96) >>> 96).setWidth 64 =
+    ((((writeXmm s (r % 8) (BitVec.setWidth 64 v)).xmm (r % 8)) <<< (96 : Nat)) >>>
+        (96 : Nat)).setWidth 64 =
       BitVec.setWidth 64 v := by
   simp only [writeXmm, Nat.mod_eq_of_lt hr]
   rw [if_true]
-  bv_decide
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  have hm : (BitVec.ofNat 128 (2 ^ 128 - 2 ^ 64)) =
+      ((BitVec.allOnes 64).setWidth 128) <<< (64 : Nat) := by decide
+  rw [hm]
+  simp only [BitVec.getLsbD_setWidth, BitVec.getLsbD_ushiftRight, BitVec.getLsbD_shiftLeft,
+    BitVec.getLsbD_or, BitVec.getLsbD_and, BitVec.getLsbD_allOnes]
+  by_cases h32 : i < 32
+  · have e1 : 96 + i < 128 := by omega
+    have e2 : ¬ (96 + i < 96) := by omega
+    have e3 : 96 + i - 96 = i := by omega
+    have h64 : i < 64 := by omega
+    have h128 : i < 128 := by omega
+    simp [h32, e1, e2, e3, h64, h128]
+  · have e1 : ¬ (96 + i < 128) := by omega
+    have h128 : i < 128 := by omega
+    have hge : 32 ≤ i := by omega
+    simp [e1, h128, hge]
 
 /-- The HOL 32-bit low extraction of a 64-bit word is a truncation. -/
 theorem holWordExtract_31_0 (v : BitVec 64) :

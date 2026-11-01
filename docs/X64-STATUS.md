@@ -18,7 +18,7 @@ All five required gates are green at `7292f4c99` (the commit before this note):
 Plus the two x86-64-specific checks:
 
 * Machine-code parity: `scripts/x64/check-parity.py --cake <cake>` passes on all
-  25 fixtures in `scripts/x64/parity/`. The prebuilt pinned-revision compiler at
+  24 fixtures in `scripts/x64/parity/`. The prebuilt pinned-revision compiler at
   `/var/tmp/flapjack-pinned-build-check/cake` reproduces every checked-in
   `.cake.S`; `cakeml/developers/bin/cake` is not built in this checkout.
 * Executed-path parity: `lake exe flapjack-compile --target=x64 --pancake` on each
@@ -26,14 +26,14 @@ Plus the two x86-64-specific checks:
   Differential fuzz and a corpus run over `cakeml/pancake/**/*.sml` passed in an
   earlier session (1500 programs; 244 programs / 87 accepted, 0 failures).
 
-Axiom footprint of the three top theorems (`#print axioms`): `propext`,
-`Classical.choice`, `Quot.sound`, plus the `bv_decide` native-certificate axioms
-`holFp64Abs_eq_and._native.bv_decide.ax_1_9`,
-`holFp64Negate_eq_xor._native.bv_decide.ax_1_9`, `le32_bytes._native…`,
-`le64_bytes._native…`, `writeXmm_low32._native…`. `bv_decide` is already used
-elsewhere in the tree (`Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean`), so
-this is the established practice; the kernel does not check the SAT certificate,
-so those five facts are native-computation trust, not kernel proof.
+Axiom footprint of the top theorems (`#print axioms` on `x64EncoderCorrect`,
+`x64NativeSourceCompile_correct` and `x64CLIOutput_correct`): exactly `propext`,
+`Classical.choice`, `Quot.sound`.  Nothing in the x86-64 chain rests on native
+computation.  An earlier version used `bv_decide` in `le32_bytes`, `le64_bytes`,
+`readXmm_writeXmm_self`, `subFlags_zf`, `writeXmm_low32` and the two
+`MachineIeee/SignBits` lemmas; `scripts/check-native-trust.py` (run from
+`scripts/check-native-decide.sh`) rejects `bv_decide` outright, so each was
+reproved by bit-index case analysis.  See the "Bit-index proofs" section below.
 
 ### Encoder correctness
 
@@ -117,6 +117,29 @@ renderings demanded `(reals_as_rational_cuts)`. Keep new declarations about thos
 forms out of `Flapjack/Misc/MachineIeee.lean` (a submodule is fine) or the same
 cascade returns.
 
+## Bit-index proofs (no native computation)
+
+`scripts/check-native-trust.py` forbids `bv_decide`, so the bit-level facts are
+proved by `BitVec.eq_of_getLsbD_eq` plus a case split on the bit index.  Two
+traps:
+
+* `getLsbD_append` and `getElem_append` are not `@[simp]`; rewrite the cast away
+  first (`simp only [BitVec.getLsbD_cast]`) and then `rw [BitVec.getLsbD_append]`
+  once per concatenation level.  `BitVec.getLsbD_and/or/xor/not/setWidth/allOnes/
+  extractLsb'` are `@[simp]`, and `Nat.testBit_two_pow_sub_one` /
+  `Nat.testBit_two_pow` turn the mask literals into `decide` facts.
+* `Flapjack/RiscV/Model.lean` installs homogeneous `ShiftLeft`/`ShiftRight`
+  instances for `BitVec width`, so an unannotated shift amount (`x <<< 96` with
+  `x : BitVec 128`) elaborates as a *`BitVec`* literal through those instances
+  and the core `BitVec.getLsbD_shiftLeft`/`getLsbD_ushiftRight` lemmas do not
+  match.  Annotate the amount `(96 : Nat)` to get the `Nat` shift the core
+  lemmas cover; `writeXmm_low32` is stated that way.
+* `sub_eq_zero` needs the `AddGroup` `Sub` instance, which `BitVec` does not
+  use; use `BitVec.sub_eq_iff_eq_add` instead.
+* `readXmm_writeXmm_self` closes with `simp only [readXmm, writeXmm];
+  bv_normalize` (`bv_normalize` is a kernel-checked rewrite tactic, not
+  `bv_decide`).
+
 ## Case template (works)
 
 `have st := x64Start _ s1 s2 ms h`; `hok := by simpa [x64Target_config] using
@@ -155,8 +178,7 @@ Other traps found while closing the remaining cases:
   unfold the goal before `omega` can use the length hypotheses. Discharge the
   nil check with `simp at this` once lengths are substituted.
 * `Int.bmod_def` + `split_ifs` + `decide_ne_decide` is the working recipe for
-  signed-comparison flag lemmas; `bv_decide` fails on `subFlags`'s `of` field
-  because it abstracts `decide (... ≠ ...)` as opaque.
+  signed-comparison flag lemmas.
 * `FpCase`'s `setcc_length_fp`/`x64Next_setcc_fp` are renamed copies of
   `CarryCase`'s `setcc_length`/`x64Next_setcc`; keep the suffixes when adding a
   third consumer.
@@ -172,6 +194,3 @@ follow-ups, not required for this port:
 * Rebuild `cakeml/developers/bin/cake` from the pinned submodule revision so
   parity runs without the `/var/tmp` binary. This needs HOL4 built from the
   `HOL` submodule, not the unrelated `~/HOL` install.
-* Replace the five `bv_decide` native certificates with kernel-checked proofs if
-  the assurance level in `docs/SOUNDNESS.md` is ever raised to forbid native
-  computation.

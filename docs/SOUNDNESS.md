@@ -314,31 +314,40 @@ The following are open review or verification obligations:
       closed-subset analogue, not the HOL L3 theorem.
 
 11. The x86-64 backend emits byte-identical machine code to the original
-    CakeML x64 target, but its correctness theorem is only half proved.
+    CakeML x64 target, and its correctness theorem is proved against a closed
+    model of the emitted instruction subset, not CakeML's L3 x86-64 semantics.
     - **What is checked.** `flapjack-compile --target=x64` emits exactly the
       same code bytes as `cake --pancake --target=x64` for the checked-in
       corpus in `scripts/x64/parity/` (24 fixtures), for 1500 differentially
       fuzzed programs, and for the 244 standalone Pancake programs embedded in
       `cakeml/pancake/**/*.sml`. `scripts/x64/check-parity.py` exits 0 against
-      the original `cake` binary. `Flapjack/Compiler/Encoders/X64/Machine/`
-      defines a closed machine model for the emitted instruction forms, and
-      `Flapjack/Compiler/Encoders/X64/Machine/TargetProof.lean` proves
-      `encOk x64Config` and `targetOk x64Target`.
-    - **What is not checked.** `encoderCorrect x64Target` is **not** proved:
-      the transition simulation (`asserts`/`asserts2`) and its per-instruction
-      cases are missing, so neither is `panToTargetCompileSemanticsX64`. The
-      closed model is not CakeML's full L3 x86-64 semantics. Flags are modelled
-      per emitted instruction rather than by an L3 `Run` port, `div` failure
-      and `comisd` unordered handling are approximated, and SSE `min`/`max`
-      are approximated; floating-point results use `holFp64*` and therefore
-      agree with the source semantics by construction, not by a model
-      refinement. Unknown instruction words set `failed`. The decoder
-      inverses for the memory-operand forms, `binopRI`, conditional jumps and
-      the SSE forms are only partly proved. No `@[hol]` tag is claimed for any
-      declaration in the machine model, and no `reviewed_*` row for it is
-      present in `docs/HOL-THEOREM-MAP.json`. The trusted compiler claim
-      therefore rests on the parity evidence and `targetOk`, not on a
-      `encoderCorrect` theorem.
+      the original `cake` binary, and the executed `flapjack-compile
+      --target=x64` reproduces every checked-in fixture. `Flapjack/Compiler/
+      Encoders/X64/Machine/` defines a closed machine model for the emitted
+      instruction forms; `TargetProof.lean` proves `encOk x64Config` and
+      `targetOk x64Target`, the decoder inverses are complete for the emitted
+      subset, and `Machine/Complete.lean` proves `x64EncoderCorrect :
+      encoderCorrect x64Target` from `targetOk` and all 42 instruction cases.
+      `Pancake/Proofs/PanToTarget/X64Instance.lean` instantiates
+      `panToTargetCompileSemantics` at the closed model with `backendConfigOk`
+      and the machine-config facts discharged, and
+      `X64NativeCLICorrect.lean`'s `x64CLIOutput_correct` connects every
+      successful `flapjack-compile --target=x64` run to the Pancake semantics
+      of the parsed declarations under the original non-configuration
+      premises. These theorems use no native computation: their axiom
+      footprint is exactly `propext`, `Classical.choice`, `Quot.sound`.
+    - **What is not checked.** The closed model is not CakeML's full L3
+      x86-64 semantics: `x64EncoderCorrect` is Flapjack's closed-subset
+      analogue of HOL's per-target theorem, not a port of it, so the model's
+      faithfulness to real x86-64 execution remains an external assumption
+      supported only by the parity evidence above. Flags are modelled per
+      emitted instruction rather than by an L3 `Run` port, `div` failure and
+      `comisd` unordered handling are approximated, and SSE `min`/`max` are
+      approximated; floating-point results use `holFp64*` and therefore agree
+      with the source semantics by construction, not by a model refinement.
+      Unknown instruction words set `failed`. No `@[hol]` tag is claimed for
+      any declaration in the machine model, and no `reviewed_*` row for it is
+      present in `docs/HOL-THEOREM-MAP.json`.
 
 ## Stack bounds and liveness
 
