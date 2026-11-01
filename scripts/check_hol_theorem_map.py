@@ -1921,6 +1921,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support",
     "reviewed_fmap_as_finite_support_function",
     "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_heterogeneous_function",
     "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_result",
@@ -2099,7 +2100,7 @@ def tagged_declarations(
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions,
              fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality, result_observations, dimension_widths) in HOL_ATTRIBUTE_SITES(
+             fmap_equality, result_observations, dimension_widths, fmap_tuple) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -2108,6 +2109,7 @@ def tagged_declarations(
                  include_fmap_as_finite_support_equality=True,
                  include_result_observations=True,
                  include_word_dimensions_widths=True,
+                 include_fmap_tuple=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -2118,7 +2120,7 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths)
+                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -2134,7 +2136,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-        fmap_equality, result_observations, dimension_widths,
+        fmap_equality, result_observations, dimension_widths, fmap_tuple,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -2156,6 +2158,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_result"] = True
         if fmap_function_positions:
             entry["fmap_as_finite_support_function"] = list(fmap_function_positions)
+        if fmap_tuple:
+            entry["fmap_as_finite_support_tuple"] = list(fmap_tuple)
         if fmap_heterogeneous_function_positions:
             entry["fmap_as_finite_support_heterogeneous_function"] = list(
                 fmap_heterogeneous_function_positions
@@ -2490,6 +2494,16 @@ def validate_inventory(
         fmap_equality = bool(tag[16]) if tag is not None and len(tag) > 16 else False
         result_observations = tag[17] if tag is not None and len(tag) > 17 else ()
         dimension_widths = tag[18] if tag is not None and len(tag) > 18 else ()
+        fmap_tuple = tag[19] if tag is not None and len(tag) > 19 else ()
+        tuple_status = "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec"
+        if tuple(record.get("fmap_as_finite_support_tuple", ())) != fmap_tuple:
+            errors.append(f"{key[0]}:{key[1]}: tuple-map positions do not match @[hol] tag")
+        if bool(fmap_tuple) != (status == tuple_status) or (fmap_tuple and not words_bitvec):
+            errors.append(f"{key[0]}:{key[1]}: tuple maps require their combined reviewed status and word qualifier")
+        if fmap_tuple and (not isinstance(reviewer, str) or
+                           any(pos not in reviewer for pos in fmap_tuple) or
+                           "source" not in reviewer.lower()):
+            errors.append(f"{key[0]}:{key[1]}: tuple-map review must name the source and both positions")
         manifest_observations = tuple(record.get("fmap_as_finite_support_result_observations", ()))
         observation_status = "reviewed_fmap_as_finite_support_result_observations"
         if manifest_observations != result_observations:
@@ -2844,6 +2858,7 @@ def validate_inventory(
             )
         if words_bitvec and status not in {
             "reviewed_words_as_type_indexed_bitvec",
+            "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec",
             combined_words_status,
             "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",

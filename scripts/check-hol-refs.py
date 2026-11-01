@@ -322,6 +322,9 @@ FMAP_AS_FINITE_SUPPORT_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_FUNCTION_RE = re.compile(
     r'\(\s*fmap_as_finite_support_function\s*:=\s*\[([^]]*)\]\s*\)'
 )
+FMAP_AS_FINITE_SUPPORT_TUPLE_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_tuple\s*:=\s*\[([^]]*)\]\s*\)'
+)
 FMAP_AS_FINITE_SUPPORT_HETEROGENEOUS_FUNCTION_RE = re.compile(
     r'\(\s*fmap_as_finite_support_heterogeneous_function\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -558,7 +561,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_reals_as_rational_cuts: bool = False,
                         include_fmap_as_finite_support_equality: bool = False,
                         include_result_observations: bool = False,
-                        include_word_dimensions_widths: bool = False):
+                        include_word_dimensions_widths: bool = False,
+                        include_fmap_tuple: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -650,6 +654,13 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     if len(matches) > 1:
                         dimensions += ("",)  # Repeated qualifiers fail closed.
                     site += (dimensions,)
+                if include_fmap_tuple:
+                    matches = list(FMAP_AS_FINITE_SUPPORT_TUPLE_RE.finditer(attribute))
+                    positions = tuple(field.strip() for match in matches
+                                      for field in match.group(1).split(","))
+                    if len(matches) > 1:
+                        positions += ("",)
+                    site += (positions,)
                 yield site
         start = None
         chunks = []
@@ -2069,6 +2080,18 @@ def fmap_value_context_tuple_errors(
     source = strip_lean_comments("\n".join(lines))
     if re.search(r"(?m)^[ \t]*(?:variable|variables|include|omit)\b", source):
         errors.append("tuple-map qualifier requires self-contained binders without ambient variables")
+    if re.search(
+        r"(?m)^[ \t]*(?:private\s+|protected\s+)?"
+        r"(?:abbrev|def|structure|inductive|class)\s+"
+        r"(?:HeapAddress|WordLocW|HolFiniteMapExact|HeapTag|Spt|Config)\b", source,
+    ):
+        errors.append("tuple-map qualifier rejects local declarations shadowing imported carriers")
+    heaps = list(re.finditer(r"(?m)^[ \t]*abbrev\s+ValueHeap\b", source))
+    heap_pattern = (r"\s*abbrev\s+ValueHeap\s*\(width\s*:\s*Nat\)\s*\[NeZero\s+width\]\s*:=\s*"
+                    r"List\s*\(HeapElement\s*\(WordLocW\s+width\)\s*"
+                    r"\(HeapTag\s*×\s*List\s*\(WordLocW\s+width\)\)\)\s*(?=abbrev\s+ValueContext\b)")
+    if len(heaps) != 1 or not re.match(heap_pattern, source[heaps[0].start():]):
+        errors.append("tuple-map qualifier requires the reviewed width-indexed ValueHeap alias")
     declarations = list(re.finditer(r"(?m)^\s*abbrev\s+ValueContext\b", source))
     if len(declarations) != 1:
         errors.append("tuple-map qualifier requires one local ValueContext alias")
@@ -2081,7 +2104,8 @@ def fmap_value_context_tuple_errors(
         expected = ["HeapAddress (WordLocW width)", "HolFiniteMapExact Nat Nat",
                     "HolFiniteMapExact Nat Nat", "ValueHeap width"]
         parts = _tuple_type_components(alias.group(1)) if alias else None
-        if parts is None or [" ".join(part.split()) for part in parts] != expected:
+        if (parts is None or [" ".join(part.split()) for part in parts] != expected or
+                not re.match(r"\s*abbrev\s+ValueContextLookups\b", tail[alias.end():])):
             errors.append("tuple-map ValueContext must have exactly the reviewed four components")
 
     raw_aliases = list(re.finditer(r"(?m)^[ \t]*abbrev\s+ValueContextLookups\b", source))
@@ -2095,14 +2119,18 @@ def fmap_value_context_tuple_errors(
         expected_raw = ["HeapAddress (WordLocW width)", "(Nat → Option Nat)",
                         "(Nat → Option Nat)", "ValueHeap width"]
         raw_parts = _tuple_type_components(raw.group(1)) if raw else None
-        if raw_parts is None or [" ".join(part.split()) for part in raw_parts] != expected_raw:
+        raw_tail = source[raw_aliases[0].start():]
+        if (raw_parts is None or [" ".join(part.split()) for part in raw_parts] != expected_raw or
+                not re.match(r"\s*def\s+valueContextToLookups\b", raw_tail[raw.end():])):
             errors.append("tuple-map lookup context must preserve both raw lookup slots")
 
     sig = " ".join(strip_lean_comments(declaration).split())
     if not re.search(
         r"\binductive ClockValueInv\s*\{width\s*:\s*Nat\}\s*"
-        r"\[NeZero width\]\s*:\s*Nat\s*→\s*Config\s*→\s*Value\s*→\s*"
-        r"Spt \(BvlSem\.Ref Value\)\s*→\s*ValueContext width\s*→\s*Prop\s*where\b", sig,
+        r"\[NeZero width\]\s*:\s*Nat\s*→\s*Config\s*→\s*"
+        r"Flapjack\.Compiler\.Backend\.DataSem\.Value\s*→\s*"
+        r"Spt \(BvlSem\.Ref Flapjack\.Compiler\.Backend\.DataSem\.Value\)\s*→\s*"
+        r"ValueContext width\s*→\s*Prop\s*where\b", sig,
     ):
         errors.append("tuple-map qualifier requires the reviewed ClockValueInv signature")
 
@@ -4776,7 +4804,7 @@ def main(argv: list[str]) -> int:
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality, result_observations, dimension_widths) in hol_attribute_sites(
+             fmap_equality, result_observations, dimension_widths, fmap_tuple) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -4785,8 +4813,22 @@ def main(argv: list[str]) -> int:
                 include_fmap_as_finite_support_equality=True,
                 include_result_observations=True,
                 include_word_dimensions_widths=True,
+                include_fmap_tuple=True,
              ):
             where = f"{rel}:{number}"
+            if fmap_tuple:
+                if rel != "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv.lean":
+                    errors.append(f"{where}: tuple maps require the reviewed value-invariant module")
+                if find_lean_decl(lines, number - 1) != "ClockValueInv":
+                    errors.append(f"{where}: tuple maps require the ClockValueInv declaration")
+                if (not words_bitvec or list_fields or names_fields or boundary_fields or
+                        fmap_fields or fmap_result or fmap_relation or fmap_equalities or
+                        fmap_parameters or fmap_existentials or dimension_width or dimension_widths or
+                        fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or
+                        fmap_equality or result_observations):
+                    errors.append(f"{where}: tuple maps may only combine with words_as_type_indexed_bitvec")
+                errors.extend(f"{where}: {error}" for error in fmap_value_context_tuple_errors(
+                    lines, tagged_declaration_source(lines, number), fmap_tuple, (hol_path, hol_name)))
             if result_observations:
                 if (list_fields or names_fields or fmap_fields or fmap_result or fmap_relation or
                     fmap_equalities or words_bitvec or fmap_parameters or fmap_existentials or
@@ -4916,10 +4958,23 @@ def main(argv: list[str]) -> int:
                     )
                 )
             if words_bitvec:
+                # The narrow tuple gate above checks the entire original
+                # ClockValueInv signature and the ValueContext/ValueHeap alias
+                # bodies. Resolve its actual width-indexed WordLocW component
+                # through the usual imported-owner check; the alias itself is
+                # not a structure or inductive owner.
+                word_declaration = tagged_declaration_source(lines, number)
+                if fmap_tuple:
+                    word_declaration = (
+                        "inductive ClockValueInv {width : Nat} [NeZero width] : "
+                        "Nat → Config → Flapjack.Compiler.Backend.DataSem.Value → "
+                        "Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value) → "
+                        "WordLocW width → Prop where"
+                    )
                 errors.extend(
                     f"{where}: {error}"
                     for error in words_as_type_indexed_bitvec_errors(
-                        tagged_declaration_source(lines, number),
+                        word_declaration,
                         lean_decl,
                         module=module,
                         root=str(ROOT),

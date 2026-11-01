@@ -1,3 +1,4 @@
+import Flapjack.HolRef
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
 import Flapjack.Compiler.Backend.Semantics.DataSem.Control
 import Flapjack.Misc.FiniteMapApply
@@ -58,11 +59,13 @@ mutual
 /-- Clock-indexed value invariant, factored through a mutual list relation to
 meet Lean's positivity rules. The HOL source has a single `v_inv_ck` relation
 with an EVERY2 premise. The list helper below is proved equivalent to that
-premise. The rules have been compared with the typed source, but the finite-map
-qualifier for maps nested in the source tuple is not yet supported, so no HOL
-tag is claimed on this declaration. -/
+premise. The tuple qualifier records the two canonical finite maps in the
+context; the word qualifier records the positive HOL word dimension. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "v_inv_ck"
+  (fmap_as_finite_support_tuple := [component_2, component_3]) (words_as_type_indexed_bitvec)]
 inductive ClockValueInv {width : Nat} [NeZero width] :
-    Nat → Config → Value → Spt (BvlSem.Ref Value) → ValueContext width → Prop where
+    Nat → Config → Flapjack.Compiler.Backend.DataSem.Value →
+      Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value) → ValueContext width → Prop where
   | numberSmall (ck : Nat) (conf : Config) (i : Int) (refs : Spt (BvlSem.Ref Value))
       (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width)
       (small : smallInt width i) :
@@ -153,9 +156,8 @@ theorem clockValueListInv_iff {width : Nat} [NeZero width] (ck : Nat) (conf : Co
             | cons head tail =>
                 exact .cons ck conf refs f tf heap value x values xs head ((ih xs).mpr tail)
 
-/-- Clock monotonicity for the preliminary clocked value relation. This has
-no HOL tag while the relation and its nested finite-map carriers remain
-unreviewed; the original `v_inv_ck_mono` statement is captured by the probe. -/
+/-- Clock monotonicity over a whole context. This helper is untagged; the
+source-shaped theorem with explicit tuple components is tagged separately. -/
 theorem clockValueInv_mono {width : Nat} [NeZero width] :
     ∀ ck conf value refs context, ClockValueInv (width := width) ck conf value refs context →
       ∀ ck', ck' ≤ ck → ClockValueInv ck' conf value refs context := by
@@ -205,8 +207,8 @@ theorem clockValueInv_mono {width : Nat} [NeZero width] :
 
 
 /-- The unbounded value relation is the intersection of the clocked ones.
-This remains untagged until the clocked relation and tuple-map representation
-have been reviewed against the original. -/
+This helper uses a context parameter; its source-shaped equation with explicit
+tuple components is tagged separately. -/
 def valueInv {width : Nat} [NeZero width] (conf : Config) (value : Value)
     (refs : Spt (BvlSem.Ref Value)) (context : ValueContext width) : Prop :=
   ∀ ck, ClockValueInv ck conf value refs context
@@ -225,8 +227,7 @@ theorem valueInv_iff_unboundedClocks {width : Nat} [NeZero width] (conf : Config
     obtain ⟨larger, bound, related⟩ := unbounded ck
     exact clockValueInv_mono larger conf value refs context related ck bound
 
-/-- Number case, over the preliminary value invariant. This remains untagged until the
-underlying relation and finite-map representation are source-reviewed. -/
+/-- Number case, a helper for the assembled source case theorem. -/
 theorem valueInv_number {width : Nat} [NeZero width] (conf : Config) (i : Int) (refs : Spt (BvlSem.Ref Value))
     (x : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
     valueInv conf (.number i) refs (x,f,tf,heap) ↔
@@ -253,8 +254,7 @@ theorem valueInv_number {width : Nat} [NeZero width] (conf : Config) (i : Int) (
     · rintro ⟨ptr, rfl, found⟩ ck
       exact .numberBig ck conf i ptr refs f tf heap hs found
 
-/-- Word64 case, over the preliminary value invariant. This remains untagged until the
-underlying relation and finite-map representation are source-reviewed. -/
+/-- Word64 case, a helper for the assembled source case theorem. -/
 theorem valueInv_word64 {width : Nat} [NeZero width] (conf : Config) (word : BitVec 64) (refs : Spt (BvlSem.Ref Value))
     (x : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
     valueInv conf (.word64 word) refs (x,f,tf,heap) ↔
@@ -267,8 +267,7 @@ theorem valueInv_word64 {width : Nat} [NeZero width] (conf : Config) (word : Bit
   · rintro ⟨ptr, rfl, found⟩ ck
     exact .word64 ck conf word ptr refs f tf heap found
 
-/-- Code-pointer case, over the preliminary value invariant. This remains untagged until the
-underlying relation and finite-map representation are source-reviewed. -/
+/-- Code-pointer case, a helper for the assembled source case theorem. -/
 theorem valueInv_codePtr {width : Nat} [NeZero width] (conf : Config) (n : Nat) (refs : Spt (BvlSem.Ref Value))
     (x : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
     valueInv conf (.codePtr n) refs (x,f,tf,heap) ↔ x = .data (.loc n 0) := by
@@ -281,8 +280,7 @@ theorem valueInv_codePtr {width : Nat} [NeZero width] (conf : Config) (n : Nat) 
     subst x
     exact .codePtr ck conf n refs f tf heap
 
-/-- Empty-block case, over the preliminary value invariant. This remains untagged until the
-underlying relation and finite-map representation are source-reviewed. -/
+/-- Empty-block case, a helper for the assembled source case theorem. -/
 theorem valueInv_emptyBlock {width : Nat} [NeZero width] (conf : Config) (stamp tag : Nat) (refs : Spt (BvlSem.Ref Value))
     (x : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
     valueInv conf (.block stamp tag []) refs (x,f,tf,heap) ↔
@@ -323,8 +321,7 @@ theorem forallPairwise {α β : Type} (R : Nat → α → β → Prop) (xs : Lis
             | cons head tail => exact .cons (head ck) ((ih ys).mpr tail ck)
 
 
-/-- Inversion of the preliminary clocked relation for a nonempty block. This
-remains untagged until the underlying relation and map carriers are reviewed. -/
+/-- Flapjack inversion helper for the clocked relation on a nonempty block. -/
 theorem clockBlockInv {width : Nat} [NeZero width] (ck : Nat) (conf : Config) (stamp tag : Nat)
     (values : List Value) (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
     (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) (nonempty : values ≠ [])
@@ -337,9 +334,8 @@ theorem clockBlockInv {width : Nat} [NeZero width] (ck : Nat) (conf : Config) (s
   | blockCons _ _ _ _ ptr _ xs _ _ _ _ _ recursive timestamp cell =>
       exact ⟨ptr, xs, rfl, recursive, timestamp, cell⟩
 
-/-- Nonempty-block case of the preliminary unbounded relation. The heap lookup
-fixes the same field addresses at every clock. This remains untagged until the
-underlying relation and map carriers are reviewed. -/
+/-- Nonempty-block helper for the assembled source case theorem. The heap
+lookup fixes the same field addresses at every clock. -/
 theorem valueInv_nonemptyBlock {width : Nat} [NeZero width] (conf : Config) (stamp tag : Nat)
     (values : List Value) (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
     (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) (nonempty : values ≠ []) :
@@ -371,8 +367,7 @@ theorem valueInv_nonemptyBlock {width : Nat} [NeZero width] (conf : Config) (sta
     apply (clockValueListInv_iff _ _ _ _ _ _ _ _).mpr
     exact pair.imp (fun value addr related => related (ck - 1))
 
-/-- Complete block case of the preliminary unbounded relation. This remains
-untagged until the underlying relation and map carriers are reviewed. -/
+/-- Complete block helper for the assembled source case theorem. -/
 theorem valueInv_block {width : Nat} [NeZero width] (conf : Config) (stamp tag : Nat)
     (values : List Value) (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
     (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :

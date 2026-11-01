@@ -6,7 +6,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-CHECK = runpy.run_path(str(ROOT / "scripts/check-hol-refs.py"))["fmap_value_context_tuple_errors"]
+CHECKER = runpy.run_path(str(ROOT / "scripts/check-hol-refs.py"))
+CHECK = CHECKER["fmap_value_context_tuple_errors"]
 SOURCE = (ROOT / "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv.lean").read_text()
 HOL = ("cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml", "v_inv_ck")
 POSITIONS = ("component_2", "component_3")
@@ -20,6 +21,30 @@ class ValueContextTupleQualifierTest(unittest.TestCase):
     def test_actual_canonical_carrier_and_witnesses(self):
         self.assertEqual(self.check(), [])
 
+    def test_scanner_records_tuple_positions_and_fails_closed_on_repetition(self):
+        tag = ('@[hol "' + HOL[0] + '" "' + HOL[1] + '" '
+               '(fmap_as_finite_support_tuple := [component_2, component_3]) '
+               '(words_as_type_indexed_bitvec)]')
+        site = list(CHECKER["hol_attribute_sites"]([tag], include_fmap_tuple=True))[0]
+        self.assertEqual(site[-1], POSITIONS)
+        duplicate = tag.replace('(words_as_type_indexed_bitvec)',
+                                '(fmap_as_finite_support_tuple := [component_2, component_3])')
+        positions = list(CHECKER["hol_attribute_sites"]([duplicate], include_fmap_tuple=True))[0][-1]
+        self.assertTrue(self.check(positions=positions))
+
+    def test_gate_receives_the_real_inductive_declaration(self):
+        tag = ('@[hol "' + HOL[0] + '" "' + HOL[1] + '"\n'
+               '  (fmap_as_finite_support_tuple := [component_2, component_3]) '
+               '(words_as_type_indexed_bitvec)]\n')
+        tagged = SOURCE.replace('inductive ClockValueInv ', tag + 'inductive ClockValueInv ', 1)
+        lines = tagged.splitlines()
+        site = list(CHECKER["hol_attribute_sites"](lines, include_fmap_tuple=True))[0]
+        declaration = CHECKER["tagged_declaration_source"](lines, site[0])
+        self.assertEqual(CHECK(lines, declaration, site[-1], HOL), [])
+        empty = tag.replace('component_2, component_3', '')
+        positions = list(CHECKER["hol_attribute_sites"]([empty], include_fmap_tuple=True))[0][-1]
+        self.assertTrue(self.check(positions=positions))
+
     def test_source_and_both_positions_are_required(self):
         self.assertTrue(self.check(positions=("component_2",)))
         self.assertTrue(self.check(positions=("component_2", "component_2")))
@@ -32,19 +57,33 @@ class ValueContextTupleQualifierTest(unittest.TestCase):
             "HolFiniteMapExact Nat Nat", "(Nat → Option Nat)", 1))))
         self.assertTrue(self.check(SOURCE.replace(alias, alias.replace(
             " × HolFiniteMapExact Nat Nat", "", 1))))
+        self.assertTrue(self.check(SOURCE.replace(alias, alias + "\n    × Nat", 1)))
 
     def test_raw_lookup_alias_must_keep_both_slots(self):
         raw = "HeapAddress (WordLocW width) × (Nat → Option Nat) × (Nat → Option Nat) × ValueHeap width"
         self.assertIn(raw, SOURCE)
         self.assertTrue(self.check(SOURCE.replace(raw, raw.replace("(Nat → Option Nat)", "Nat", 1))))
+        self.assertTrue(self.check(SOURCE.replace(raw, raw + "\n    × Nat", 1)))
 
     def test_rejects_extra_context_alias(self):
         self.assertTrue(self.check(SOURCE + "\nabbrev ValueContext := Nat\n"))
+        self.assertTrue(self.check(SOURCE + "\nabbrev HolFiniteMapExact := Nat\n"))
+        self.assertTrue(self.check(SOURCE + "\nstructure HeapAddress where\n  value : Nat\n"))
 
     def test_rejects_wrong_signature(self):
         self.assertTrue(self.check(SOURCE.replace(
-            "Nat → Config → Value → Spt (BvlSem.Ref Value) → ValueContext width → Prop where",
-            "Nat → Config → Value → Spt (BvlSem.Ref Value) → ValueHeap width → Prop where", 1)))
+            "ValueContext width → Prop where", "ValueHeap width → Prop where", 1)))
+
+    def test_rejects_different_heap_width(self):
+        self.assertTrue(self.check(SOURCE.replace(
+            "List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width)))",
+            "List (HeapElement (WordLocW width) (HeapTag × List (WordLocW 64)))", 1)))
+        self.assertTrue(self.check(SOURCE.replace(
+            "List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width)))",
+            "List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width))) × Nat", 1)))
+        self.assertTrue(self.check(SOURCE.replace(
+            "List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width)))",
+            "List (HeapElement (WordLocW width) (HeapTag × List (WordLocW width)))\n    × Nat", 1)))
 
     def test_rejects_discarded_map_and_decoy_witness(self):
         body = "(context.1, context.2.1.lookup, context.2.2.1.lookup, context.2.2.2)"

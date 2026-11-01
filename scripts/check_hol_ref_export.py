@@ -33,6 +33,7 @@ ALLOWED_QUALIFIERS = {
     "list_as_array", "names_as_string", "names_as_string_boundary",
     "fmap_as_finite_support", "fmap_as_finite_support_result",
     "fmap_as_finite_support_function",
+    "fmap_as_finite_support_tuple",
     "fmap_as_finite_support_heterogeneous_function",
     "fmap_as_finite_support_result_observations",
     "fmap_as_finite_support_parameters",
@@ -122,6 +123,7 @@ def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:
     for key in (
         "fmap_as_finite_support_relation",
         "fmap_as_finite_support_function",
+        "fmap_as_finite_support_tuple",
         "fmap_as_finite_support_heterogeneous_function",
         "fmap_as_finite_support_result_observations",
         "fmap_as_finite_support_parameters",
@@ -176,6 +178,12 @@ def check_records(
             raise ValueError(
                 f"{record['lean_path']}:{record['lean_name']}: manifest qualifiers "
                 "differ from elaborated @[hol] exporter"
+            )
+        if (exported_qualifiers.get("fmap_as_finite_support_tuple", []) !=
+                qualifiers.get("fmap_as_finite_support_tuple", [])):
+            raise ValueError(
+                f"{record['lean_path']}:{record['lean_name']}: tuple-map qualifier "
+                "differs from elaborated @[hol] exporter"
             )
         if (exported_qualifiers.get("reals_as_rational_cuts", False)
                 and not qualifiers.get("reals_as_rational_cuts", False)):

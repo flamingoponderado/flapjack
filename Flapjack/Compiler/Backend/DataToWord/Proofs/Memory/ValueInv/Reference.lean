@@ -1,8 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
 
-/-! Reference cases for the data-to-word value relation. The clocked relation
-itself remains untagged because the reference checker does not yet support
-finite maps nested in its context tuple. -/
+/-! Reference cases for the data-to-word value relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend.DataSem
 
@@ -45,7 +43,7 @@ private theorem refPtrAnnot_zero_of_noMut {width : Nat} [NeZero width] {α : Typ
       | thunk _ _ => rfl
       | mutBlock tag finalised left child right => exact False.elim (noMut tag finalised left child right rfl)
 
-/-- Pointer-comparison references exclude thunks and mutable blocks. This is untagged pending review of the underlying relation and map carriers. -/
+/-- Pointer-comparison references exclude thunks and mutable blocks. This is a Flapjack case helper. -/
 theorem valueInv_refPtr_true {width : Nat} [NeZero width] (conf : Config) (n : Nat) (refs : Spt (BvlSem.Ref Value))
     (x : HeapAddress (WordLocW width)) (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
     valueInv conf (.refPtr true n) refs (x,f,tf,heap) ↔
@@ -72,7 +70,7 @@ theorem valueInv_refPtr_true {width : Nat} [NeZero width] (conf : Config) (n : N
       (by intro tag finalised left child right found; exact False.elim (noMut tag finalised left child right found))
 
 
-/-- Non-thunk references use the direct reference-pointer case. This is untagged pending review of the underlying relation and map carriers. -/
+/-- Non-thunk references use the direct reference-pointer case. This is a Flapjack case helper. -/
 theorem valueInv_refPtr_notThunk {width : Nat} [NeZero width] (conf : Config) (bit : Bool) (n : Nat)
     (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
     (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width)
@@ -95,7 +93,7 @@ theorem valueInv_refPtr_notThunk {width : Nat} [NeZero width] (conf : Config) (b
     exact .refPtr bit ck conf n refs f tf heap domain noThunk noMut
 
 
-/-- Invert a clocked reference to an unevaluated thunk. This is untagged pending review of the underlying relation and map carriers. -/
+/-- Invert a clocked reference to an unevaluated thunk. This is a Flapjack case helper. -/
 theorem clockValueInv_notEvaluated {width : Nat} [NeZero width] (ck : Nat) (conf : Config) (n : Nat)
     (value : Value) (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
     (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width)
@@ -117,7 +115,7 @@ theorem clockValueInv_notEvaluated {width : Nat} [NeZero width] (ck : Nat) (conf
         Option.some.inj (found2.symm.trans found)
       cases eq
 
-/-- Unevaluated-thunk references have one fixed related heap payload. This is untagged pending review of the underlying relation and map carriers. -/
+/-- Unevaluated-thunk references have one fixed related heap payload. This is a Flapjack case helper. -/
 theorem valueInv_refPtr_notEvaluated {width : Nat} [NeZero width] (conf : Config) (n : Nat)
     (value : Value) (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
     (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width)
@@ -161,7 +159,7 @@ theorem allClocks_or_of_monotone (A B : Nat → Prop)
     · exact False.elim (hbad (monoA _ _ (Nat.le_max_left _ _) ha))
     · exact monoB _ _ (Nat.le_max_right _ _) hb
 
-/-- Invert a clocked evaluated thunk into stored or inlined alternatives. This is untagged pending review of the relation and map carriers. -/
+/-- Invert a clocked evaluated thunk into stored or inlined alternatives. This is a Flapjack case helper. -/
 theorem clockValueInv_evaluated {width : Nat} [NeZero width] (ck : Nat) (conf : Config) (n : Nat)
     (value : Value) (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
     (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width)
@@ -182,7 +180,7 @@ theorem clockValueInv_evaluated {width : Nat} [NeZero width] (ck : Nat) (conf : 
       cases eq
       exact Or.inr recursive
 
-/-- An evaluated thunk has a uniformly stored or uniformly inlined value representation at all clocks. This is untagged pending relation review. -/
+/-- An evaluated thunk has a uniformly stored or uniformly inlined value representation at all clocks. This is a Flapjack case helper. -/
 theorem valueInv_refPtr_evaluated {width : Nat} [NeZero width] (conf : Config) (n : Nat)
     (value : Value) (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
     (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width)
@@ -234,7 +232,7 @@ theorem valueInv_refPtr_evaluated {width : Nat} [NeZero width] (conf : Config) (
         (fun _ => recursive (ck - 1))
 
 
-/-- Complete reference-pointer case for the preliminary unbounded relation. This is untagged pending review of the underlying relation and map carriers. -/
+/-- Reference-pointer helper for the assembled source case theorem. -/
 theorem valueInv_refPtr {width : Nat} [NeZero width] (conf : Config) (bit : Bool) (n : Nat)
     (refs : Spt (BvlSem.Ref Value)) (x : HeapAddress (WordLocW width))
     (f tf : HolFiniteMapExact Nat Nat) (heap : ValueHeap width) :
@@ -274,10 +272,7 @@ theorem valueInv_refPtr {width : Nat} [NeZero width] (conf : Config) (bit : Bool
     · exact .refPtrThunk ck conf mode n value addr refs f tf heap found safe domain cell (fun _ => recInv (ck - 1))
     · exact .refPtrThunkInlined ck conf n value x refs f tf heap found safe (fun _ => recInv (ck - 1))
 
-/-- All five unbounded value-invariant equations together, in source order.
-The clocked relation underlying `valueInv` has been compared with the original
-rules, but remains separately untagged until the reference checker supports
-its finite maps nested in the context tuple. -/
+/-- All five unbounded value-invariant equations together, in source order. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "v_inv_def"
   (fmap_as_finite_support_relation := [f, tf]) (words_as_type_indexed_bitvec)]
 theorem valueInv_cases {width : Nat} [NeZero width] (conf : Config) (i : Int)

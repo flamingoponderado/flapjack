@@ -1738,6 +1738,33 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertNotIn(mismatch, MAP["tagged_declarations"]())
 
 
+class TupleFmapStatusTest(unittest.TestCase):
+    def setUp(self):
+        self.key = ("Flapjack/Example.lean", "ClockValueInv")
+        self.record = {
+            "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+            "hol_name": "v_inv_ck", "lean_path": self.key[0], "lean_name": self.key[1],
+            "statement_status": "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec",
+            "fmap_as_finite_support_tuple": ["component_2", "component_3"],
+            "words_as_type_indexed_bitvec": True,
+            "reviewer": "source comparison: component_2 and component_3 are finite maps",
+        }
+        self.tag = (self.record["hol_path"], self.record["hol_name"], (), (), (), (),
+                    False, (), False, True, (), (), None, (), (), False, False, (), (),
+                    ("component_2", "component_3"))
+
+    def test_requires_matching_tuple_positions_status_and_note(self):
+        validate = MAP["validate_inventory"]
+        self.assertEqual(validate([self.record], set(), {self.key: self.tag}, set()), [])
+        for changed in (
+            {"fmap_as_finite_support_tuple": ["component_2"]},
+            {"statement_status": "reviewed_words_as_type_indexed_bitvec"},
+            {"reviewer": "source comparison"},
+        ):
+            self.assertTrue(validate([{**self.record, **changed}], set(), {self.key: self.tag}, set()))
+        self.assertTrue(validate([self.record], set(), {self.key: self.tag[:-1] + ((),)}, set()))
+
+
 class ExistentialFmapStatusTest(unittest.TestCase):
     def _record(self, **overrides):
         record = {

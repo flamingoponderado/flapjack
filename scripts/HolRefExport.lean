@@ -294,6 +294,9 @@ elab "#emit_hol_ref_export" : command => do
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_heterogeneous_function",
               toJson ref.fmapAsFiniteSupportHeterogeneousFunction)]
+        if !ref.fmapAsFiniteSupportTuple.isEmpty then
+          qualifiers := qualifiers ++ [
+            ("fmap_as_finite_support_tuple", toJson ref.fmapAsFiniteSupportTuple)]
         if let some width := ref.wordDimensionAsWidth then
           qualifiers := qualifiers ++ [("word_dimension_as_width", toJson width)]
         if !ref.wordDimensionsAsWidths.isEmpty then

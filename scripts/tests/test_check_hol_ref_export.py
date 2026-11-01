@@ -46,6 +46,16 @@ class HolRefExportTest(unittest.TestCase):
             {"fmap_as_finite_support_result_observations": ["different"]},
         )
 
+    def test_tuple_map_qualifier_must_match_in_both_directions(self):
+        status = "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec"
+        fields = {"fmap_as_finite_support_tuple": ["component_2", "component_3"],
+                  "words_as_type_indexed_bitvec": True}
+        self.check_qualifier(status, fields, fields,
+                             {"fmap_as_finite_support_tuple": ["component_2"],
+                              "words_as_type_indexed_bitvec": True})
+        with self.assertRaisesRegex(ValueError, "tuple-map qualifier"):
+            MODULE.check_records(self.manifest, [{**self.export[0], "qualifiers": fields}])
+
     def test_reviewed_row_matches_its_declaration(self):
         self.assertEqual(MODULE.check_records(self.manifest, self.export), 1)
 
