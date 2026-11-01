@@ -376,6 +376,39 @@ theorem evaluate_iAssign_liveNames {C F : Type} (op : ClosLang.Op)
       simp [DataSem.evaluate, requires, read, DataSem.cutStateOpt, DataSem.cutState, cutEnv, app, prepared])
   · simpa [stateRel, DataSem.setVar, DataSem.installSfs] using finalRel
 
+/-- A resetting primitive assignment succeeds with any present root list.
+This form permits compiler rewrites that reorder operands while keeping the
+original live-name tree. -/
+theorem evaluate_assign_reset {C F : Type} (op : ClosLang.Op)
+    (target : DataSem.State C F) (source : BviSem.BviState C F)
+    (roots operands : List Nat) (args : List DataSem.Value) (dest : Nat)
+    (result : BvlSem.Value) (next : BviSem.BviState C F)
+    (notInstall : op ≠ .install) (notGreater : op ≠ .intOp .greater)
+    (notGreaterEq : op ≠ .intOp .greaterEq)
+    (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
+    (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq)))
+    (notCopy : ∀ flag, op ≠ .memOp (.copyByte flag)) (notForce : op ≠ .thunkOp .forceThunk)
+    (resets : DataLang.opSpaceReset op = true) (related : stateRel source target)
+    (present : ∀ key ∈ roots, sptLookup key target.locals ≠ none)
+    (read : DataSem.getVars operands target.locals = some args)
+    (run : BviSem.doApp op (args.map dataToBviValue) source = .val (result, next)) :
+    ∃ targetNext value,
+      DataSem.evaluate (.assign dest op operands (some (namesOfList roots))) target =
+        (none, DataSem.setVar dest value (DataSem.installSfs op targetNext)) ∧
+      result = dataToBviValue value ∧ stateRel next (DataSem.setVar dest value (DataSem.installSfs op targetNext)) := by
+  let cut := sptMkWf (sptInter target.locals (namesOfList roots))
+  let prepared := { target with locals := cut }
+  have cutRel : stateRel source prepared := by simpa [prepared, stateRel] using related
+  obtain ⟨targetNext, value, app, projected, finalRel⟩ :=
+    doApp_full_projection op prepared source args result next notInstall notGreater notGreaterEq notWordGt notWordGeq
+      notCopy notForce cutRel (Or.inl resets) run
+  have cutEnv : DataSem.cutEnv (namesOfList roots) target.locals = some cut :=
+    cutEnv_namesOfList roots target.locals present
+  have requires : DataLang.opRequiresNames op = true := by simp [DataLang.opRequiresNames, resets]
+  refine ⟨targetNext, value, ?_, projected, ?_⟩
+  · simp [DataSem.evaluate, requires, read, DataSem.cutStateOpt, DataSem.cutState, cutEnv, app, prepared]
+  · simpa [stateRel, DataSem.setVar, DataSem.installSfs] using finalRel
+
 /-- The compiler's complete `iAssign` structure simulates a successful
 primitive, under the restrictions of the auxiliary primitive theorem. The
 special operation rewrites and terminal FFI result remain separate cases. -/

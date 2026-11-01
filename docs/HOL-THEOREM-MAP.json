@@ -1,5 +1,11 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "get_vars_reverse",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/Variables.lean", "lean_name": "getVars_reverse",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
+  },
+  {
     "hol_path": "hol4/src/finite_maps/sptreeScript.sml", "hol_name": "lookup_mk_wf",
     "lean_path": "Flapjack/Misc/Sptree/MkWf.lean", "lean_name": "sptLookup_mkWf",
     "statement_status": "reviewed_exact",

@@ -5,6 +5,8 @@ parses of the two local result-name range statements;
 those statements are not re-proved by the probe.
 The variable-read captures include the original intersection and sparse-tree
 normalization lemmas and the polymorphic lookup-after-normalization theorem.
+It also captures the original polymorphic variable-read reversal theorem used
+by the integer and byte comparison rewrites.
 Lean checks those observations and the bounded traversal's agreement above its
 structural budget; the full BVI-to-data compiler correctness proof remains open.
 Regenerate with `HOL_PROBE_ONLY=bvi_to_data_state_probeScript.sml scripts/hol-probes/regenerate.sh`.

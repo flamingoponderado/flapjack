@@ -36,4 +36,45 @@ theorem varCorr_lookup {α : Type} (values : List α) (names : List Nat) (env : 
       simp only [List.getElem?_cons_succ] at atIndex ⊢
       exact ih index atIndex
 
+/-- Reading concatenated name lists concatenates their successful reads. -/
+private theorem getVars_append_of_reads {α : Type} (first second : List Nat) (env : Spt α)
+    (left right : List α) (firstRead : DataSem.getVars first env = some left)
+    (secondRead : DataSem.getVars second env = some right) :
+    DataSem.getVars (first ++ second) env = some (left ++ right) := by
+  induction first generalizing left with
+  | nil => simp [DataSem.getVars] at firstRead; subst left; exact secondRead
+  | cons name names ih =>
+    simp only [DataSem.getVars] at firstRead
+    cases found : DataSem.getVar name env with
+    | none => simp [found] at firstRead
+    | some value =>
+      simp only [found] at firstRead
+      cases rest : DataSem.getVars names env with
+      | none => simp [rest] at firstRead
+      | some tail =>
+        simp [rest] at firstRead
+        subst left
+        simp [DataSem.getVars, found, ih tail rest]
+
+/-- Reversing a successful list of variable names reverses its values. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "get_vars_reverse"]
+theorem getVars_reverse {α : Type} (names : List Nat) (env : Spt α) (values : List α)
+    (read : DataSem.getVars names env = some values) :
+    DataSem.getVars names.reverse env = some values.reverse := by
+  induction names generalizing values with
+  | nil => simpa [DataSem.getVars] using read
+  | cons name names ih =>
+    simp only [DataSem.getVars] at read
+    cases found : DataSem.getVar name env with
+    | none => simp [found] at read
+    | some value =>
+      simp only [found] at read
+      cases rest : DataSem.getVars names env with
+      | none => simp [rest] at read
+      | some tail =>
+        simp [rest] at read
+        subst values
+        simpa only [List.reverse_cons] using
+          getVars_append_of_reads names.reverse [name] env tail.reverse [value] (ih tail rest) (by simp [DataSem.getVars, found])
+
 end Flapjack.Compiler.Backend.DataProps
