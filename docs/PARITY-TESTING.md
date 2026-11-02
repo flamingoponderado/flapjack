@@ -884,6 +884,11 @@ inference disabled, using the bootstrap's heap and stack settings. The direct
 S-expression parser is total; its equivalence with the HOL PEG and whole
 AST-decoder correspondence have not been proved.
 
+`python3 scripts/fuzz-cake-sexp-input.py --reference /path/to/pinned/cake`
+compares exit status, stdout and stderr for mutated S-expression AST inputs,
+including malformed delimiters and arbitrary byte values. The seed and count
+can be changed to explore additional cases.
+
 An additional unverified bootstrap provides an original compiler built from
 the pinned translated CakeML compiler AST. Given the pinned CakeML and HOL
 checkouts, an already-built `compiler64ProgTheory`, and the historical bootstrap
