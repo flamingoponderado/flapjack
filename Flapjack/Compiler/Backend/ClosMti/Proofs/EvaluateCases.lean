@@ -30,6 +30,16 @@ theorem introExp_eq_var (maxApp : Nat) (expression : ClosLang.Exp) (trace : Back
       introExp_handle, introExp_tick, introExp_op, introExp_app_none,
       introExp_fn_none, introExp_letrec_none]
 
+/-- Unary source code cannot transform into a direct call. -/
+theorem introExp_ne_call (maxApp : Nat) (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
+    (ticks location : Nat) (args : List ClosLang.Exp) (unary : ClosProps.noMti expression) :
+    introExp maxApp expression ≠ .call trace ticks location args := by
+  intro transformed
+  cases expression <;>
+    simp_all [ClosProps.noMti, introExp_var, introExp_if, introExp_let, introExp_raise,
+      introExp_handle, introExp_tick, introExp_op, introExp_app_none,
+      introExp_fn_none, introExp_letrec_none]
+
 /-- Introduction preserves the outer tick constructor on unary source code. -/
 theorem introExp_eq_tick (maxApp : Nat) (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
     (targetBody : ClosLang.Exp) (unary : ClosProps.noMti expression)
@@ -186,6 +196,23 @@ theorem evaluateRel_var {C F : Type} (sourceCode : List ClosLang.Exp)
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.val [value], source, by simp [evaluate, sourceLookup],
             by simpa [resultRel] using List.Forall₂.cons lookups List.Forall₂.nil, states⟩
+
+/-- The direct-call case is unreachable under the unary source invariant. -/
+theorem evaluateRel_call {C F : Type} (sourceCode : List ClosLang.Exp)
+    (trace : BackendCommon.Tra) (ticks location : Nat) (args : List ClosLang.Exp) :
+    @EvaluateRelAt C F sourceCode [.call trace ticks location args] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+  have length := codeRel_length code
+  cases sourceCode with
+  | nil => simp at length
+  | cons expression rest =>
+    cases rest with
+    | cons next tail => simp at length
+    | nil =>
+      have unary : ClosProps.noMti expression := code.1 expression (by simp)
+      have transformed : introExp source.maxApp expression = .call trace ticks location args := by
+        simpa [introList] using code.2.symm
+      exact (introExp_ne_call source.maxApp expression trace ticks location args unary transformed).elim
 
 /-- The multi-expression case composes the simulations for the first
 expression and the remaining list. -/
