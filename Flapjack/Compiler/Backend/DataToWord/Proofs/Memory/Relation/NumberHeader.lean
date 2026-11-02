@@ -8,6 +8,17 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataSem
 open Classical
 noncomputable section
 
+/-- Header bits identify a bignum and encode its sign. This is Flapjack
+    bit-vector infrastructure for the bignum comparison proof. -/
+theorem bignumHeaderBits {width : Nat} [NeZero width] (conf : Config) (value : Int) (len : Nat)
+    (good : goodDimindex width) (configBound : conf.lenSize + 7 < width) :
+    let tag : BitVec width := ((if value < 0 then 1 else 0) <<< 2) ||| 3
+    let header := makeHeader conf tag len
+    header.getLsbD 2 = true ∧ header.getLsbD 3 = true ∧ (header.getLsbD 4 = true ↔ value < 0) := by
+  have h4 : ¬ (4 : Nat) ≥ width - conf.lenSize := by omega
+  rcases good with hw | hw <;> subst width <;>
+    by_cases sign : value < 0 <;> simp [makeHeader, h4, sign]
+
 /-- Rearrange a separated cell and preserve all other heap assertions. -/
 private theorem bignumExtractStar {α : Type} (p q r s t f : (α → Prop) → Prop) :
     SetSep.star (SetSep.star p (SetSep.star (SetSep.star (SetSep.star q r) s) t)) f =
@@ -142,6 +153,9 @@ theorem memoryRel_bignumWords {width : Nat} [NeZero width] (conf : Config) (be :
       SetSep.star (Misc.wordList (address + StackRemove.bytesInWord width) (digits.map WordLocW.word)) frame
         (SetSep.fun2Set (memory, fun a => domain a = true)) ∧
       digits.length < 2 ^ (width - 4) ∧
+      w.getLsbD 0 = true ∧ (makeHeader conf tag digits.length).getLsbD 2 = true ∧
+      (makeHeader conf tag digits.length).getLsbD 3 = true ∧
+      ((makeHeader conf tag digits.length).getLsbD 4 = true ↔ value < 0) ∧
       WordGcFunctions.decodeLength conf (makeHeader conf tag digits.length) = BitVec.ofNat width digits.length := by
   rintro ⟨⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, _, _⟩, large, good⟩
   obtain ⟨roots, inv, addresses⟩ := wordInv
@@ -169,11 +183,13 @@ theorem memoryRel_bignumWords {width : Nat} [NeZero width] (conf : Config) (be :
               (Misc.Multiword.n2mw (width := width) value.natAbs).length)) := by rw [singleton]
         have graph := (iff_of_eq (congrFun partition.1 _)).mp (Or.inl member)
         have facts := (SetSep.fun2SetThm memory _ _ _).mp graph
+        have bits := bignumHeaderBits conf value (Misc.Multiword.n2mw (width := width) value.natAbs).length
+          good heapMem.2.2.2.2.1
         refine ⟨getAddr conf ptr (.word 0), curr + StackRemove.bytesInWord width * BitVec.ofNat width ptr,
           SetSep.star frame (SetSep.one (curr + StackRemove.bytesInWord width * BitVec.ofNat width ptr,
             .word (makeHeader conf (((if value < 0 then 1 else 0) <<< 2) ||| 3)
               (Misc.Multiword.n2mw (width := width) value.natAbs).length))),
-          ?_, ?_, facts.1, facts.2, ?_, bound, decoded⟩
+          ?_, ?_, facts.1, facts.2, ?_, bound, getAddr_zero_lowBit conf ptr, bits.1, bits.2.1, bits.2.2, decoded⟩
         · simpa [wordAddr] using projected.symm
         · simpa [BitVec.mul_comm] using addr
         · rw [SetSep.starComm (SetSep.one _) _] at preserved
