@@ -168,4 +168,28 @@ theorem evaluateApp_related {C F : Type} (source target : State C F)
   (evaluate_mutual_within (C := C) (F := F) source.clock).1 source target sourceFunction targetFunction
     sourceArgs targetArgs (by omega) states functions args bound
 
+/-- Forward correctness of multi-argument introduction for the current Lean
+closure evaluator. The source and target carriers and evaluator still need
+HOL correspondence review, so this source-shaped result is not tagged as a
+port of the HOL theorem. -/
+theorem introMulti_correct_candidate {C F : Type} (sourceCode : List ClosLang.Exp)
+    (sourceEnv targetEnv : List Value) (source target sourceFinal : State C F)
+    (sourceResult : SemanticPrimitivesHOL.Result (List Value) Value)
+    (sourceRun : evaluate sourceCode sourceEnv source = (sourceResult, sourceFinal))
+    (unary : ∀ expression ∈ sourceCode, ClosProps.noMti expression)
+    (envRel : List.Forall₂ (ValueRel source.maxApp) sourceEnv targetEnv)
+    (states : StateRel source target) :
+    ∃ targetResult targetFinal,
+      evaluate (introList source.maxApp sourceCode) targetEnv target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
+        sourceResult targetResult ∧ StateRel sourceFinal targetFinal := by
+  cases targetRun : evaluate (introList source.maxApp sourceCode) targetEnv target with
+  | mk targetResult targetFinal =>
+    obtain ⟨relatedResult, relatedFinal, relatedRun, resultRel, finalStates⟩ :=
+      evaluate_related sourceCode (introList source.maxApp sourceCode) targetEnv target sourceEnv
+        targetFinal source targetResult targetRun envRel states ⟨unary, rfl⟩
+    rw [sourceRun] at relatedRun
+    cases relatedRun
+    exact ⟨targetResult, targetFinal, rfl, resultRel, finalStates⟩
+
 end Flapjack.Compiler.Backend.ClosMti

@@ -534,6 +534,7 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateApplication
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateRecursiveApplication
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateAppExpression
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateMutual
+import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.Proofs.FullTotal
