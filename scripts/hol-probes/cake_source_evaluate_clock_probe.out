@@ -1,3 +1,4 @@
+dec_definition=⊢ ∀(s :α state). dec_clock s = s with clock := s.clock − (1 :num)
 fix_type=:α state -> β state # γ -> β state # γ
 list_type=:(α, β) result -> (α list, β) result
 clock_lemma=⊢ ∀(s :α state) (x :β state # γ) (s1 :β state) (res :γ). fix_clock s x = (s1,res) ⇒ s1.clock ≤ s.clock

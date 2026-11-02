@@ -26,6 +26,27 @@ val _ = show_thm "build_tdefs_definition=" semanticPrimitivesTheory.build_tdefs_
 val _ = show_thm "check_dup_ctors_definition=" semanticPrimitivesTheory.check_dup_ctors_def;
 val _ = show_thm "combine_dec_result_definition=" semanticPrimitivesTheory.combine_dec_result_def;
 val _ = show_thm "extend_dec_env_definition=" semanticPrimitivesTheory.extend_dec_env_def;
+val expression_cons = prove (
+  ``∀(st:'ffi semanticPrimitives$state) env e1 e2 es.
+      evaluate$evaluate st env (e1::e2::es) =
+        case evaluate$evaluate st env [e1] of
+        | (st1,Rerr err) => (st1,Rerr err)
+        | (st1,Rval vs) =>
+          case evaluate$evaluate st1 env (e2::es) of
+          | (st2,Rerr err) => (st2,Rerr err)
+          | (st2,Rval vs_tail) => (st2,Rval (HD vs::vs_tail))``,
+  simp [evaluateTheory.full_evaluate_def]);
+val _ = show_thm "expression_cons_equation=" expression_cons;
+val declaration_cons = prove (
+  ``∀(st:'ffi semanticPrimitives$state) env d1 d2 ds.
+      evaluate$evaluate_decs st env (d1::d2::ds) =
+        case evaluate$evaluate_decs st env [d1] of
+        | (st1,Rerr err) => (st1,Rerr err)
+        | (st1,Rval env1) =>
+          case evaluate$evaluate_decs st1 (extend_dec_env env1 env) (d2::ds) of
+          | (st2,result) => (st2,combine_dec_result env1 result)``,
+  simp [evaluateTheory.full_evaluate_def]);
+val _ = show_thm "declaration_cons_equation=" declaration_cons;
 val _ = (print "build_constrs_nat="; print_term (rhs (concl (EVAL
   ``semanticPrimitives$build_constrs 3 [(«A», [4n; 5n])]``))); print "\n");
 val _ = (print "build_constrs_bool="; print_term (rhs (concl (EVAL

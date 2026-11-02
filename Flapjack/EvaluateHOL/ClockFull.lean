@@ -200,9 +200,8 @@ decreasing_by
   all_goals try omega
 end
 
-/-- The original three-part evaluator clock bound. Source and imported-carrier
-review remains pending; floating-point cases inherit the primitive
-dispatcher's rational-cut assumption. -/
+/-- The original three-part evaluator clock bound. Floating-point cases
+inherit the primitive dispatcher's rational-cut assumption. -/
 @[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
 theorem evaluateClock {σ : Type} :
     (∀ (st : State σ) env es result st', evaluate st env es = (st', result) → st'.clock ≤ st.clock) ∧
@@ -229,5 +228,46 @@ theorem fixClockEvaluate {σ : Type} (st : State σ) (env : SemEnv Value)
     exact evaluateClockFull st (evaluate st env es).1 env es (evaluate st env es).2 (Prod.eta _).symm
   · apply fixClock_eq_of_bound
     exact evaluateDecsClockFull st (evaluateDecs st env decs).1 env decs (evaluateDecs st env decs).2 (Prod.eta _).symm
+
+/-- The original post-termination expression-list equation: the first
+evaluation's clock clamp is redundant. -/
+@[hol "cakeml/semantics/evaluateScript.sml" "full_evaluate_def"]
+theorem evaluateConsSource {σ : Type} (st : State σ) (env : SemEnv Value)
+    (first second : AstHOL.Exp) (rest : List AstHOL.Exp) :
+    evaluate st env (first :: second :: rest) =
+      match evaluate st env [first] with
+      | (next, .err err) => (next, .err err)
+      | (next, .val values) =>
+        match evaluate next env (second :: rest) with
+        | (last, .err err) => (last, .err err)
+        | (last, .val tail) => (last, .val (headValue values :: tail)) := by
+  rw [evaluate, (fixClockEvaluate st env [first] []).1]
+  cases h : evaluate st env [first] with
+  | mk next result =>
+    cases result with
+    | err err => simp
+    | val values =>
+      cases h2 : evaluate next env (second :: rest) with
+      | mk last result => cases result <;> simp [h2]
+
+/-- The original post-termination declaration-list equation, with the
+first evaluation's redundant clock clamp removed. -/
+@[hol "cakeml/semantics/evaluateScript.sml" "full_evaluate_def"]
+theorem evaluateDecsConsSource {σ : Type} (st : State σ) (env : SemEnv Value)
+    (first second : Dec) (rest : List Dec) :
+    evaluateDecs st env (first :: second :: rest) =
+      match evaluateDecs st env [first] with
+      | (next, .err err) => (next, .err err)
+      | (next, .val newEnv) =>
+        match evaluateDecs next (extendDecEnv newEnv env) (second :: rest) with
+        | (last, result) => (last, combineDecResult newEnv result) := by
+  rw [evaluateDecs, (fixClockEvaluate st env [] [first]).2]
+  cases h : evaluateDecs st env [first] with
+  | mk next result =>
+    cases result with
+    | err err => simp
+    | val newEnv =>
+      cases h2 : evaluateDecs next (extendDecEnv newEnv env) (second :: rest) with
+      | mk last result => simp [h2]
 
 end Flapjack.EvaluateHOL

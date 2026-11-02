@@ -97,9 +97,10 @@ theorem sourcePrecondition_iff {C F : Type} [Nonempty C]
   · rintro ⟨transform, middle, initial, related⟩
     exact ⟨middle, transform, initial, related⟩
 
-/-- Full source-to-flat behavior in the original existential-precondition
-shape. The component simulation relations remain under HOL correspondence
-review, so this is not yet tagged as the source correctness theorem. -/
+/-- Source-to-flat behavior under the original precondition and absence of
+source failure. The primitive floating-point model inherits the documented
+rational-cut assumption. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_semantics"]
 theorem sourceCompile_semantics {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C)))
     (source : State F) (sourceEnv : SemEnv Value) (config : Config)

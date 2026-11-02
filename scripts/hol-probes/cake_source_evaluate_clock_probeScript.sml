@@ -2,6 +2,7 @@ load "evaluateTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+val _ = (print "dec_definition="; print_thm evaluateTheory.dec_clock_def; print "\n");
 val _ = (print "fix_type="; print_type (type_of ``evaluate$fix_clock``); print "\n");
 val _ = (print "list_type="; print_type (type_of ``evaluate$list_result``); print "\n");
 val replay = prove (``∀s x s1 res.

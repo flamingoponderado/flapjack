@@ -992,6 +992,15 @@
     "reviewer": "Compared the complete typed precondition capture: compiler, FFI and initial environment value types remain independent; the intermediate installation configuration and source transformation are existentially quantified in source order; precondition1 and the reviewed pattern installation relation use the same config and arguments. Nonempty C supplies HOL type inhabitation for THE in precondition1."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileSemantics.lean",
+    "lean_name": "sourceCompile_semantics",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "compile_semantics",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed source_compile_semantics capture: independent compiler and FFI carriers, the original existential precondition, absence of source Fail, and the source behavior of the flat semantics of SND (compile cfg prog) are retained without extra simulation or target-execution assumptions. Nonempty C supplies HOL type inhabitation used by the reviewed precondition. The checked proof composes the source-to-flat program, flat elimination and pattern semantics. Its Lean axioms are propext, Classical.choice and Quot.sound; floating-point evaluation inherits the rational-cut assumption in SOUNDNESS item 8. The source comparison and HOL probe are not a cross-language equivalence proof."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
     "lean_name": "ctorsOf_siblings_source",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
@@ -110349,8 +110358,9 @@
     "hol_line": 54,
     "lean_path": "Flapjack/EvaluateHOL/Definition.lean",
     "lean_name": "evaluate",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: clocked mutually recursive source evaluator; complete clause and imported-carrier review remains pending. Floating-point branches inherit the rational-cut assumption documented for the primitive dispatcher; HOL HD on an empty list uses the existing holHd/holArb representation."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared all raw evaluate_def expression and list clauses at source line 54 with the Lean clocked evaluator and the typed full_evaluate_def capture. List sequencing, HD, constructors and reversed arguments, pattern checks, call, thunk force, dynamic Eval, primitive application, logical and conditional branches, matches, bindings and annotations retain the original state, result, and clock behavior. fixClockEvaluate proves the clamps removed in HOL full_evaluate_def are inert. HOL HD on an empty list uses the shared holHd/holArb model; successful singleton results are nonempty by evaluateSingFull. Floating operations inherit the rational-cut assumption from doApp."
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
@@ -110358,8 +110368,9 @@
     "hol_line": 54,
     "lean_path": "Flapjack/EvaluateHOL/Definition.lean",
     "lean_name": "evaluateMatch",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: clocked mutually recursive source evaluator; complete clause and imported-carrier review remains pending. Floating-point branches inherit the rational-cut assumption documented for the primitive dispatcher; HOL HD on an empty list uses the existing holHd/holArb representation."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the raw evaluate_def match clauses and typed full_evaluate_def capture: empty rows raise the supplied error value; each row checks distinct bindings before pmatch, recursively handles No_match, rejects Match_type_error, and extends the value namespace before evaluating a successful body. The recursive evaluator inherits the doApp rational-cut assumption."
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
@@ -110367,8 +110378,9 @@
     "hol_line": 54,
     "lean_path": "Flapjack/EvaluateHOL/Definition.lean",
     "lean_name": "evaluateDecs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: clocked mutually recursive source evaluator; complete clause and imported-carrier review remains pending. Floating-point branches inherit the rational-cut assumption documented for the primitive dispatcher; HOL HD on an empty list uses the existing holHd/holArb representation."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared every raw evaluate_def declaration clause and the typed full_evaluate_def capture: empty and multi-declaration sequencing, value and recursive bindings, datatype stamps, type abbreviations, Eval environments, exceptions, modules and local declarations preserve the original guards, state updates, namespace ordering and errors. fixClockEvaluate proves the clamps removed in HOL full_evaluate_def are inert. The recursive evaluator inherits the doApp rational-cut assumption."
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
@@ -110599,24 +110611,44 @@
     "hol_name": "evaluate_clock",
     "lean_path": "Flapjack/EvaluateHOL/ClockFull.lean",
     "lean_name": "evaluateClock",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: kernel-checked full source clock result using explicit well-founded mutual induction over the actual evaluator and the source-shaped constructor cases. The pinned cake_source_evaluate_clock_probe captures the original typed theorem and full_evaluate_ind. Full source evaluator and imported-carrier review remains pending; floating-point behavior inherits the documented rational-cut assumption."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed evaluate_clock capture: all three expression, match and declaration conjuncts retain the original evaluation equality hypothesis and clock bound over the same independently polymorphic FFI carrier. The checked mutual induction uses the reviewed evaluator and inherits the doApp rational-cut assumption."
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
     "hol_name": "fix_clock_evaluate",
     "lean_path": "Flapjack/EvaluateHOL/ClockFull.lean",
     "lean_name": "fixClockEvaluate",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: kernel-checked full source clock result using explicit well-founded mutual induction over the actual evaluator and the source-shaped constructor cases. The pinned cake_source_evaluate_clock_probe captures the original typed theorem and full_evaluate_ind. Full source evaluator and imported-carrier review remains pending; floating-point behavior inherits the documented rational-cut assumption."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed fix_clock_evaluate capture: expression and declaration evaluations share the original state and environment, and each clock clamp is equal to the underlying evaluation. The proof uses the full clock theorem and inherits the doApp rational-cut assumption."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "full_evaluate_def",
+    "lean_path": "Flapjack/EvaluateHOL/ClockFull.lean",
+    "lean_name": "evaluateConsSource",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed expression_cons_equation HOL replay: the complete two-or-more-expression list clause retains both evaluation results, errors, state transitions and HD of the first result; its clock clamp is discharged by fixClockEvaluate. The equation invokes the reviewed evaluator and inherits the doApp rational-cut assumption."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "full_evaluate_def",
+    "lean_path": "Flapjack/EvaluateHOL/ClockFull.lean",
+    "lean_name": "evaluateDecsConsSource",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed declaration_cons_equation HOL replay: the complete two-or-more-declaration list clause retains first-result errors, environment extension, tail evaluation and combineDecResult, with the clock clamp discharged by fixClockEvaluate. The equation invokes the reviewed evaluator and inherits the doApp rational-cut assumption."
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
     "hol_name": "dec_clock_def",
     "lean_path": "Flapjack/EvaluateHOL.lean",
     "lean_name": "decClock",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed dec_definition capture: preserve every state field except clock, which is natural subtraction by one and therefore saturates at zero."
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
@@ -110631,8 +110663,8 @@
     "hol_name": "fix_clock_do_eval_res",
     "lean_path": "Flapjack/EvaluateHOL.lean",
     "lean_name": "fixClockDoEvalRes",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: kernel-checked source-evaluator clock identity; complete carrier and do_eval_res correspondence review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed eval_clock_lemma capture: FFI state and error payload types are independent and the same doEvalRes invocation appears on both sides. Its checked proof uses the reviewed dynamic Eval result and the unchanged clock field."
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
@@ -110924,16 +110956,18 @@
     "hol_name": "evaluate_prog_with_clock_def",
     "lean_path": "Flapjack/SemanticsHOL.lean",
     "lean_name": "evaluateProgWithClock",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (pending complete source evaluator and carrier review): pinned HOL types and empty-program behavior captured in cake_program_semantics_probe; divergence uses lprefixLub over the clock-indexed event traces. Inherits the floating-point rational-cut assumption."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed evaluate_definition and evaluate_type captures: replace only the source clock, evaluate declarations in the supplied value environment, and return the resulting FFI state and declaration result. FFI type remains independent; the reviewed evaluator inherits the doApp rational-cut assumption."
   },
   {
     "hol_path": "cakeml/semantics/semanticsScript.sml",
     "hol_name": "semantics_prog_def",
     "lean_path": "Flapjack/SemanticsHOL.lean",
     "lean_name": "semanticsProg",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (pending complete source evaluator and carrier review): pinned HOL types and empty-program behavior captured in cake_program_semantics_probe; divergence uses lprefixLub over the clock-indexed event traces. Inherits the floating-point rational-cut assumption."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared all three typed semantics_definition observation clauses: termination preserves the FFI-outcome and timeout distinction, event equality and type-error exclusion; divergence requires timeout at every clock and the lprefix least upper bound of exactly the clock-indexed traces; failure is existence of a type-error clock. The finite-program empty_iff is proved independently in HOL and Lean. The reviewed evaluator inherits the doApp rational-cut assumption."
   },
   {
     "hol_path": "cakeml/semantics/primTypesScript.sml",

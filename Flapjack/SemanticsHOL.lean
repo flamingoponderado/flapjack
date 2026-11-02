@@ -1,9 +1,8 @@
 import Flapjack.EvaluateHOL.ClockFull
 import Flapjack.Misc.LprefixLub
 
-/-! CakeML program observations over the clocked source evaluator. Parsing,
-typing, initial environments, and the top-level compiler theorem remain to be
-ported. The definitions here are pending full source and carrier review. -/
+/-! CakeML program observations over the clocked source evaluator. Their
+connection to the complete compiler remains a separate correctness obligation. -/
 namespace Flapjack.SemanticsHOL
 open Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL Flapjack.AstHOL
 
@@ -35,5 +34,12 @@ noncomputable def semanticsProg {σ : Type} (st : State σ) (env : SemEnv Value)
           HolLList.fromList (evaluateProgWithClock st env clock prog).1.ioEvents = events) trace
   | .fail =>
       ∃ clock, (evaluateProgWithClock st env clock prog).2 = .err (.abort .typeError)
+
+/-- An empty source program has exactly one observation: successful
+termination with the input FFI events. This is Flapjack infrastructure. -/
+theorem semanticsProg_nil_iff {σ : Type} (st : State σ) (env : SemEnv Value)
+    (behavior : HolBehaviour) :
+    semanticsProg st env [] behavior ↔ behavior = .terminate .success st.ffi.ioEvents := by
+  cases behavior <;> simp [semanticsProg, evaluateProgWithClock, evaluateDecs, and_assoc]
 
 end Flapjack.SemanticsHOL

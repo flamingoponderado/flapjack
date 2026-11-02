@@ -3,9 +3,9 @@ import Flapjack.SemanticPrimitivesHOL.PatternMatch
 import Flapjack.Misc.ListEl
 
 /-! Clocked CakeML source evaluator. The three mutually recursive functions
-follow the original expression, pattern-match and declaration clauses. Full
-source and imported-carrier review is pending; floating-point evaluation
-inherits the rational-cut assumption of the primitive dispatcher. -/
+follow the original expression, pattern-match and declaration clauses;
+floating-point evaluation inherits the rational-cut assumption of the
+primitive dispatcher. -/
 namespace Flapjack.EvaluateHOL
 open Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL
 
