@@ -219,6 +219,45 @@ theorem evaluate_rewritten_call_eq_known_app {C F : Type}
         obtain ⟨value, rfl⟩ := evaluate_singleton_value _ _ _ _ resultValues run
         simp [evaluateApp]
 
+/-- The known-stub comparison also covers insufficient clock, including the
+boundary where application reaches the stub with no tick left. -/
+theorem evaluate_rewritten_call_eq_known_app_all {C F : Type}
+    (trace stubTrace : BackendCommon.Tra) (label address : Nat)
+    (args : List ClosLang.Exp) (env values stubEnv : List ClosSem.Value)
+    (function : ClosSem.Value) (state afterArgs : ClosSem.State C F) (body : ClosLang.Exp)
+    (argsRun : evaluate args env state = (.val values, afterArgs))
+    (code : afterArgs.code.lookup label = some (values.length, body))
+    (closure : destClosure afterArgs.maxApp (some address) function values =
+      some (.fullApp (.call stubTrace 0 label (ClosCall.variables stubTrace values.length)) stubEnv [])) :
+    evaluate [.call trace values.length label args] env { state with clock := state.clock + 1 } =
+      evaluateApp (some address) function values { afterArgs with clock := afterArgs.clock + 1 } := by
+  by_cases enough : values.length ≤ afterArgs.clock
+  · exact evaluate_rewritten_call_eq_known_app trace stubTrace label address args env values stubEnv
+      function state afterArgs body argsRun code enough closure
+  · have short : afterArgs.clock < values.length := by omega
+    obtain ⟨captured, stubEq, _⟩ := destClosure_known_prefix afterArgs.maxApp address function values stubEnv [] _ closure
+    have bound : values.length ≤ stubEnv.length := by rw [stubEq]; simp
+    have zeroStub : evaluate [.call stubTrace 0 label (ClosCall.variables stubTrace values.length)] stubEnv
+        { afterArgs with clock := 0 } = (.err (.abort .timeoutError), { afterArgs with clock := 0 }) := by
+      rw [evaluate, fixClock_evaluate, evaluate_variables stubTrace values.length stubEnv _ bound]
+      simp [findCode, code, List.length_take, Nat.min_eq_left bound]
+    rw [evaluate_rewritten_call trace label args env values state afterArgs body argsRun code]
+    simp only [short, ↓reduceIte]
+    cases values with
+    | nil => simp at short
+    | cons first rest =>
+      rw [evaluateApp, closure]
+      simp only [List.length_cons, List.length_nil, Nat.sub_zero]
+      by_cases timeout : afterArgs.clock + 1 < rest.length + 1
+      · simp [timeout]
+      · have zero : afterArgs.clock + 1 - (rest.length + 1) = 0 := by
+          simp only [List.length_cons] at short
+          omega
+        simp only [timeout, ↓reduceIte, fixClock_evaluate]
+        simp only [decClock, zero]
+        simp only [List.length_cons] at zeroStub
+        rw [zeroStub]
+
 /-- A related known-location closure supplies the installed stub and code
 entry needed by the direct-call/application comparison. This is still a
 local target-side equality, not a source-to-target pass simulation. -/
@@ -228,7 +267,6 @@ theorem related_known_app_eq_rewritten_call {C F : Type}
     (sourceBody : ClosLang.Exp) (sourceBodyEnv sourceRest : List ClosSem.Value)
     (args : List ClosLang.Exp) (env : List ClosSem.Value) (state afterArgs : ClosSem.State C F)
     (argsRun : evaluate args env state = (.val targetValues, afterArgs))
-    (enough : targetValues.length ≤ afterArgs.clock)
     (sourceClosure : destClosure afterArgs.maxApp (some address) source sourceValues =
       some (.fullApp sourceBody sourceBodyEnv sourceRest))
     (functions : ValueRelFuel fuel g allowed afterArgs.code source target)
@@ -256,7 +294,7 @@ theorem related_known_app_eq_rewritten_call {C F : Type}
   have targetClosure' : destClosure afterArgs.maxApp (some address) target targetValues =
       some (.fullApp (.call stubTrace 0 (address + 1) (ClosCall.variables stubTrace targetValues.length)) stubEnv []) := by
     simpa [values.length_eq] using targetClosure
-  exact evaluate_rewritten_call_eq_known_app trace stubTrace (address + 1) address args env targetValues
-    stubEnv target state afterArgs convertedBody argsRun code enough targetClosure'
+  exact evaluate_rewritten_call_eq_known_app_all trace stubTrace (address + 1) address args env targetValues
+    stubEnv target state afterArgs convertedBody argsRun code targetClosure'
 
 end Flapjack.Compiler.Backend.ClosCall
