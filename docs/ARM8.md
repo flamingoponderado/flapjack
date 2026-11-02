@@ -279,12 +279,23 @@ its word, `Encode`/`Decode` inverse and `Run` reduction, where the return
 address `PC + 4` also goes to the link register (`X30`), plus
 `arm8_encoder_correct_call` with `n = 0`.
 
+`JumpReg.lean` does the same for `BranchRegister (r, JMP)`: the word, its
+`Encode`/`Decode` inverse and the `Run` reduction, where `PC` becomes the
+register's value.  The target's alignment is forced by `asm_step`'s
+`~s2.failed` premise, since `JumpReg` lowers to `assert (aligned 2 a)`.
+`arm8_encoder_correct_jumpReg` assembles that case with `n = 0`.
+
+`Fp.lean` records that the `FP` constructor is vacuous: `arm8_ast` lowers it to
+the fail list, and `arm8_config` has no FP registers, so `fp_ok` rejects every
+FP operation and `asm_step` cannot hold.  `arm8_encoder_correct_fp` proves the
+case from that contradiction, matching the HOL proof's `FP` branch.
+
 Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
 `DecodeBitMasks`/`BitfieldMove`), and the `longDiv`, `addCarry`,
 `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
 `ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in `Carry.lean` and its
 `ConditionalCompareImmediate@64` facts in `Compare.lean`), `Mem`,
-`Fp`, `JumpCmp`, `JumpReg` and the out-of-range `Loc` constructors.
+`JumpCmp` and the out-of-range `Loc` constructors.
 `longDiv` lowers to `arm8EncodeFail`, so its case cannot be a faithful lowering
 without the intended instruction sequence.  The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
