@@ -23,7 +23,7 @@ private theorem maxDepth_mem (xs : List Value) (nonempty : xs ≠ []) :
       · exact ⟨z, by simp [mem], by rw [vDepthMax, Nat.max_eq_right (Nat.le_of_not_ge h), maxEq]⟩
 
 /-- A child of a block has smaller source structural size. -/
-private theorem child_size_lt (x : Value) (stamp tag : Nat) (xs : List Value) (mem : x ∈ xs) :
+theorem child_size_lt (x : Value) (stamp tag : Nat) (xs : List Value) (mem : x ∈ xs) :
     valueBlockSize x < valueBlockSize (.block stamp tag xs) := by
   obtain ⟨before, after, rfl⟩ := List.append_of_mem mem
   simp only [valueBlockSize, List.map_append, List.map_cons, List.sum_append,

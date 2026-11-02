@@ -100664,6 +100664,16 @@
     "reviewer": "Compared the complete source theorem and captured inferred type: the related head, ancestor chain, and good_dimindex imply an existential prefix whose extended relation holds, whose length equals v_depth, and whose first projection preserves elements_list. store uses the canonical finite-support map and all target locations and memory words share the positive HOL word dimension."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth/Size.lean",
+    "lean_name": "memoryRel_depthSizeLimit",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_depth_size_limit",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared the complete source theorem and captured inferred type: memory_rel for a head pair and good_dimindex imply vb_size v ≤ dimword raised to v_depth v + 1, with the same arbitrary tail and shared word dimension. Lean 2 ^ width represents dimword; store uses the canonical finite-support map."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth/Elements.lean",
     "lean_name": "memoryRel_elementsListWords",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

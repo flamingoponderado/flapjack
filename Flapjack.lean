@@ -248,6 +248,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCardinali
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.Elements
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.Limit
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.Size
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.BlockPointer
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.List
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
