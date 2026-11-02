@@ -589,6 +589,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateAppExpression
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallClock
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StateWellformed
+import Flapjack.Compiler.Backend.ClosCall.Proofs.NumericWellformed
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.Proofs.FullTotal
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
