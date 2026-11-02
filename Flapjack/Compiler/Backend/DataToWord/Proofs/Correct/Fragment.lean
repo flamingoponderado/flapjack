@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BoolTest
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.LessConst
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockEmpty
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagEmpty
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Construct
 
 /-! Inductive simulation for the currently established data-language fragment. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
@@ -115,6 +116,7 @@ inductive VerifiedFragment : DataLang.Prog → Prop where
   | skip : VerifiedFragment .skip
   | tick : VerifiedFragment .tick
   | move (dest src : Nat) : VerifiedFragment (.move dest src)
+  | emptyCons (dest tag : Nat) : tag < 2 ^ 64 / 16 → VerifiedFragment (.assign dest (.blockOp (.cons tag)) [] none)
   | blockTagEmpty (dest src tag : Nat) : VerifiedFragment (.assign dest (.blockOp (.tagLenEq tag 0)) [src] none)
   | blockEmpty (dest src : Nat) : VerifiedFragment (.assign dest (.blockOp (.lenEq 0)) [src] none)
   | lessConst (dest src n : Nat) : VerifiedFragment (.assign dest (.intOp (.lessConstSmall n)) [src] none)
@@ -150,6 +152,9 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
   | move dest src =>
     intro label source target locs related safe
     exact Or.inl (move64_of_safe conf secn label l1 l2 source target locs related dest src safe)
+  | emptyCons dest tag bound =>
+    intro label source target locs related _
+    exact Or.inl (assignEmptyCons64 conf secn label l1 l2 source target locs related dest tag bound)
   | blockTagEmpty dest src tag =>
     intro label source target locs related safe
     exact Or.inl (assignBlockTagEmpty64_of_safe conf secn label l1 l2 source target locs related dest src tag safe)
