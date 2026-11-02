@@ -288,6 +288,14 @@ its word, `Encode`/`Decode` inverse and `Run` reduction, where the return
 address `PC + 4` also goes to the link register (`X30`), plus
 `arm8_encoder_correct_call` with `n = 0`.
 
+`BranchConditional.lean` records the conditional-branch word
+(`01010100 imm19 0 cd`) that `arm8_ast` emits for `JumpCmp`: its
+`Encode`/`Decode` inverse (with the `imm19` and `cd` field reassembly), the
+byte split, the `Run` semantics (`BranchTo` when the condition holds and an
+unchanged state otherwise) and one `NextStateARM8` step, which advances `PC`
+by four exactly when the branch is not taken.  It is the prerequisite for the
+`JumpCmp` case theorem.
+
 `JumpReg.lean` does the same for `BranchRegister (r, JMP)`: the word, its
 `Encode`/`Decode` inverse and the `Run` reduction, where `PC` becomes the
 register's value.  The target's alignment is forced by `asm_step`'s

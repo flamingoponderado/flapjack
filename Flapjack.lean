@@ -2795,6 +2795,7 @@ import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Loc
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LocBig
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LongDiv
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Branch
+import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.BranchConditional
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Call
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpReg
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Fp
