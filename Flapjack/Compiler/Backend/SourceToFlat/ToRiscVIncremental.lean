@@ -18,7 +18,7 @@ def compileCakeIncToRiscVFuel (fuel : Nat) (config : Backend.Config)
     (envId : Nat × Nat) (declarations : List AstHOL.Dec) :
     Option (Backend.Config × Option (List (BitVec 8) × List (BitVec 64))) := do
   let asm := Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig
-  let data := { config.dataConf with hasFpOps := decide (1 < asm.fpRegCount), hasFpTern := false }
+  let data := Backend.ensureFpConfOk asm config.dataConf
   let ((source, closure, bvl), program) ←
     compileCakeIncToWord64Fuel fuel (config.sourceConf, config.closConf, config.bvlConf)
       data envId declarations

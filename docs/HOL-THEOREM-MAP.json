@@ -5669,6 +5669,15 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "ensureFpConfOk",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "ensure_fp_conf_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared backend_fp_config_probe's fully typed HOL equation: arbitrary assembler and data configurations are retained, setting has_fp_ops exactly when fp_reg_count exceeds one and has_fp_tern exactly for ARMv7 with more than two floating-point registers. The reviewed AsmConfigExact and DataToWord.Config carriers retain all fields; the positive HOL word dimension is represented by BitVec width with NeZero. The kernel-checked RISC-V specialization proves the production whole-program and incremental paths retain their previous updates for every data configuration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
     "lean_name": "attachBitmaps",
     "hol_path": "cakeml/compiler/backend/backendScript.sml",
     "hol_name": "attach_bitmaps_def",

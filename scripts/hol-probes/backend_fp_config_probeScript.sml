@@ -1,0 +1,13 @@
+load "riscv_configTheory"; load "riscv_targetTheory"; load "backendTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "ensure_fp_config_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl backendTheory.ensure_fp_conf_ok_def); print "\n");
+val fp = EVAL ``let c = backend$ensure_fp_conf_ok riscv_target$riscv_config riscv_config$riscv_backend_config.data_conf in (c.has_fp_ops, c.has_fp_tern)``;
+val _ = (print "riscv_fp_config="; print_term (rhs (concl fp)); print "\n");
+val arm = EVAL ``let asm = riscv_target$riscv_config with <| ISA := ARMv7; fp_reg_count := 3 |> in let c = backend$ensure_fp_conf_ok asm riscv_config$riscv_backend_config.data_conf in (c.has_fp_ops, c.has_fp_tern)``;
+val _ = (print "armv7_three_fp_config="; print_term (rhs (concl arm)); print "\n");
+val arm2 = EVAL ``let asm = riscv_target$riscv_config with <| ISA := ARMv7; fp_reg_count := 2 |> in let c = backend$ensure_fp_conf_ok asm riscv_config$riscv_backend_config.data_conf in (c.has_fp_ops, c.has_fp_tern)``;
+val _ = (print "armv7_two_fp_config="; print_term (rhs (concl arm2)); print "\n");
+val riscv3 = EVAL ``let asm = riscv_target$riscv_config with fp_reg_count := 3 in let c = backend$ensure_fp_conf_ok asm riscv_config$riscv_backend_config.data_conf in (c.has_fp_ops, c.has_fp_tern)``;
+val _ = (print "riscv_three_fp_config="; print_term (rhs (concl riscv3)); print "\n");

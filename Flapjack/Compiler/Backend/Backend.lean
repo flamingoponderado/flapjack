@@ -34,6 +34,17 @@ structure Config where
   tapConf : PresLang.TapConfig
   exported : List MlString
 
+/-- Set the data compiler's floating-point capabilities from the target
+assembler configuration. -/
+@[hol "cakeml/compiler/backend/backendScript.sml" "ensure_fp_conf_ok_def"
+  (words_as_type_indexed_bitvec)]
+def ensureFpConfOk {width : Nat} [NeZero width]
+    (asm : Flapjack.Compiler.Encoders.Asm.AsmConfigExact width)
+    (config : Flapjack.Compiler.Backend.DataToWord.Config) : Flapjack.Compiler.Backend.DataToWord.Config :=
+  { config with
+    hasFpOps := decide (1 < asm.fpRegCount)
+    hasFpTern := decide (asm.isa = .armv7 ∧ 2 < asm.fpRegCount) }
+
 /-- The complete source attachment operation. HOL independently quantifies the
 byte and bitmap payload types: neither payload is inspected. Only labConf and
 symbols are updated, preserving every other configuration field. Missing names

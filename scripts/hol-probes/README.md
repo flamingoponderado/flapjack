@@ -1,3 +1,8 @@
+`backend_fp_config_probe.out` captures the typed backend floating-point
+configuration equation and capability results for RISC-V and ARMv7 register
+boundaries. It supports source review and target-specific regression checks,
+not full backend correctness.
+
 `source_to_flat_envrel_probe.out` captures the fully typed original
 `env_rel_LIST_REL` and `env_rel_bind_one` statements, along with typed source
 parses of local domain, lookup, append and singleton statements, including

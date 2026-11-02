@@ -11,6 +11,16 @@ import Flapjack.Compiler.Backend.StackRemove.StubNames
 /-! Restricted CakeML AST to RISC-V backend composition. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
+/-- For RISC-V the general backend rule agrees with the prior specialized
+floating-point configuration update for every data configuration. This is a
+Flapjack compatibility lemma for replacing that update, with no HOL original. -/
+theorem riscvEnsureFpConfOk (config : DataToWord.Config) :
+    Backend.ensureFpConfOk Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig config =
+      { config with
+        hasFpOps := decide (1 < (Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig).fpRegCount)
+        hasFpTern := false } := by
+  rfl
+
 /-- Execute the existing RISC-V word optimizer and backend after the checked
 source-to-word route. The caller supplies the symbol-name map: source and
 stub name propagation and the default frontend optimizations are not supplied
@@ -20,7 +30,7 @@ def compileCakeToRiscVNoOptsFuel (fuel : Nat) (config : Backend.Config)
     (names : Spt Basis.Pure.MlString.MlString) (decls : List AstHOL.Dec) :
     Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
   let asmConf := Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig
-  let dataConf := { config.dataConf with hasFpOps := decide (1 < asmConf.fpRegCount), hasFpTern := false }
+  let dataConf := Backend.ensureFpConfOk asmConf config.dataConf
   let (source, closure, start, program, _) ←
     compileCakeToWordWithStubs64NoOptsFuel fuel config.sourceConf config.closConf dataConf decls
   let closure := { closure with start := start }
@@ -41,7 +51,7 @@ whole-compiler correctness theorem is claimed. -/
 def compileCakeToRiscVNamedNoOptsFuel (fuel : Nat) (config : Backend.Config)
     (decls : List AstHOL.Dec) : Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
   let asmConf := Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig
-  let dataConf := { config.dataConf with hasFpOps := decide (1 < asmConf.fpRegCount), hasFpTern := false }
+  let dataConf := Backend.ensureFpConfOk asmConf config.dataConf
   let (source, closure, start, program, _, names) ←
     compileCakeToWordWithStubsAndNames64NoOptsFuel fuel config.sourceConf config.closConf dataConf decls
   let closure := { closure with start := start }
@@ -56,7 +66,7 @@ full original compiler or its correctness proof. -/
 def compileCakeToRiscVInlineFuel (fuel : Nat) (config : Backend.Config)
     (decls : List AstHOL.Dec) : Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
   let asmConf := Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig
-  let dataConf := { config.dataConf with hasFpOps := decide (1 < asmConf.fpRegCount), hasFpTern := false }
+  let dataConf := Backend.ensureFpConfOk asmConf config.dataConf
   let (source, closure, start, program, _, names) ←
     compileCakeToWordWithStubsAndNames64InlineFuel fuel config.sourceConf config.closConf dataConf decls
   let closure := { closure with start := start }
@@ -71,7 +81,7 @@ def compileCakeToRiscVOptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq :
     (config : Backend.Config) (decls : List AstHOL.Dec) :
     Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
   let asmConf := Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig
-  let dataConf := { config.dataConf with hasFpOps := decide (1 < asmConf.fpRegCount), hasFpTern := false }
+  let dataConf := Backend.ensureFpConfOk asmConf config.dataConf
   let (source, closure, start, program, _, names) ←
     compileCakeToWord64OptimizedFuel fuel inlineLimit cutSize splitSeq config.sourceConf config.closConf dataConf decls
   let closure := { closure with start := start }
@@ -86,7 +96,7 @@ No whole-compiler correctness theorem or final-byte correspondence is claimed. -
 def compileCakeToRiscVConfiguredFuel (fuel : Nat) (config : Backend.Config)
     (decls : List AstHOL.Dec) : Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
   let asmConf := Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig
-  let dataConf := { config.dataConf with hasFpOps := decide (1 < asmConf.fpRegCount), hasFpTern := false }
+  let dataConf := Backend.ensureFpConfOk asmConf config.dataConf
   let (source, closure, bvlConfig, program, names) ←
     compileCakeToWord64ConfiguredFuel fuel config.sourceConf config.closConf config.bvlConf dataConf decls
   let (col, program) := WordToWord.compileWith RegAlloc.regAllocExecutable config.wordToWordConf asmConf program

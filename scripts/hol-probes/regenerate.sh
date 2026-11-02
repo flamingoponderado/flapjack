@@ -271,6 +271,10 @@ run_probe() {
   done
 }
 
+run_probe backend_fp_config_probeScript.sml backend_fp_config_probe.out \
+  ensure_fp_config_typed riscv_fp_config armv7_three_fp_config armv7_two_fp_config riscv_three_fp_config \
+  "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend/riscv"
+
 run_probe source_to_flat_envrel_probeScript.sml source_to_flat_envrel_probe.out \
   env_rel_list_typed env_rel_dom_typed env_rel_lookup_typed env_rel_append_typed env_rel_one_typed env_rel_bind_one_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"

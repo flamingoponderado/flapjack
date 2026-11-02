@@ -23,6 +23,17 @@ private def riscvConfig : Backend.Config :=
     closConf := closureConfig
     bvlConf := bvlConfig }
 
+-- `backend_fp_config_probe.out`: original target-specific capability flags.
+private def fpCaps (isa : Flapjack.Compiler.Encoders.Asm.AsmArchitecture) (registers : Nat) : Bool × Bool :=
+  let asm := { Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig with isa := isa, fpRegCount := registers }
+  let data := Backend.ensureFpConfOk asm riscvConfig.dataConf
+  (data.hasFpOps, data.hasFpTern)
+
+#guard fpCaps .riscv 0 == (false, false)
+#guard fpCaps .armv7 3 == (true, true)
+#guard fpCaps .armv7 2 == (true, false)
+#guard fpCaps .riscv 3 == (true, false)
+
 #guard match SourceToFlat.compileCakeIncToRiscVFuel 100 riscvConfig (0, 0)
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.lit (.intLit 1))] with
   | some (config, none) => config.wordConf.bitmapsLength == 6 && config.labConf.pos == 0
