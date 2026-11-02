@@ -216,6 +216,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Skip
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Tick
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Return
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.SeqCases
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordTotal
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordLabels
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
