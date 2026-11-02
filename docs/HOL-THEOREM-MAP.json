@@ -115419,5 +115419,41 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Compared data_to_wordScript.sml:573-582 and typed capture shift_var_def_typed: independent shift, variable and amount inputs; rotate modulo positive word width and zero case; zero, oversized arithmetic/right/left shifts and ordinary shift branches; ShiftN is the source overload building a word constant. Original 64-bit zero, oversized, and rotate examples are replayed by DataToWordConfigParity. The tagged helper is used by the executed lowering and stubs; neither attribute nor probes prove cross-language correspondence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "list_Seq_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "wordListSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against data_to_wordScript.sml:88-92: nil gives Skip, a singleton gives its element, and a longer list is right-associated with no trailing Skip. Typed original definitions and representative 64-bit observations are captured in data_to_word_config_probe.out and executable rows are kernel replayed in DataToWordConfigParity. Positive-width BitVec represents HOL word width. The definition is used by the executed data-to-word control path; the probes and qualifier do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "StoreEach_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "storeEach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against data_to_wordScript.sml:94-99: unchanged base, ordered registers, initial word offset, per-store Add address, and word-sized modular offset increment. Typed original definitions and representative 64-bit observations are captured in data_to_word_config_probe.out and executable rows are kernel replayed in DataToWordConfigParity. Positive-width BitVec represents HOL word width. The definition is used by the executed data-to-word control path; the probes and qualifier do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "MemEqList_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "memEqList",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against data_to_wordScript.sml:1102-1107: empty list assigns TRUE_CONST 18 to register 1; each nonempty step loads offset from register 3 into 5, compares against the next word, and advances by bytes_in_word only on equality. Typed original definitions and representative 64-bit observations are captured in data_to_word_config_probe.out and executable rows are kernel replayed in DataToWordConfigParity. Positive-width BitVec represents HOL word width. The definition is used by the executed data-to-word control path; the probes and qualifier do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "SilentFFI_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "silentFfi",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against data_to_wordScript.sml:340-348: call_empty_ffi gates the ordered zero, NextFree-CurrHeap, HeapLength, and empty-name FFI operations, preserving the two input cutsets and register numbers. Typed original definitions and representative 64-bit observations are captured in data_to_word_config_probe.out and executable rows are kernel replayed in DataToWordConfigParity. Positive-width BitVec represents HOL word width. The definition is used by the executed data-to-word control path; the probes and qualifier do not prove cross-language equivalence."
   }
 ]

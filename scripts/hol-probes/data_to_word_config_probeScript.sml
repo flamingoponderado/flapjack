@@ -38,3 +38,15 @@ val _ = print_eval "shift_large_lsl_64" ``(ShiftVar Lsl 4 64 : 64 wordLang$exp)`
 val _ = print_eval "shift_rotate_multiple_64" ``(ShiftVar Ror 4 128 : 64 wordLang$exp)``;
 val _ = print_eval "shift_rotate_wrap_64" ``(ShiftVar Ror 4 67 : 64 wordLang$exp)``;
 val _ = print_eval "give_up_64" ``(GiveUp : 64 wordLang$prog)``;
+val _ = (print "list_seq_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.list_Seq_def); print "\n");
+val _ = (print "store_each_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.StoreEach_def); print "\n");
+val _ = (print "mem_eq_list_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.MemEqList_def); print "\n");
+val _ = (print "silent_ffi_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.SilentFFI_def); print "\n");
+val _ = print_eval "store_each_64" ``(StoreEach 2 [4;6] 8w : 64 wordLang$prog)``;
+val _ = print_eval "mem_eq_list_64" ``(MemEqList 8w [3w;7w] : 64 wordLang$prog)``;
+val _ = print_eval "silent_ffi_off_64" ``(SilentFFI ^conf 3 (LN,LN) : 64 wordLang$prog)``;
+val _ = print_eval "silent_ffi_on_64" ``(SilentFFI (^conf with call_empty_ffi := T) 3 (LN,LN) : 64 wordLang$prog)``;

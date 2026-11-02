@@ -21,3 +21,11 @@ shift_large_lsl_64=Const 0w
 shift_rotate_multiple_64=Var 4
 shift_rotate_wrap_64=ShiftN Ror (Var 4) 3
 give_up_64=Seq (Assign 1 (Const 0xFFFFFFFFFFFFFFFFw)) (Alloc 1 (⦕ 0 ⦖,LN))
+list_seq_def_typed=list_Seq ([] :α prog list) = (Skip :α prog) ∧ (∀(x :α prog). list_Seq [x] = x) ∧ ∀(y :α prog) (xs :α prog list) (x :α prog). list_Seq (x::y::xs) = Seq x (list_Seq (y::xs))
+store_each_def_typed=(∀(v :num) (offset :α word). StoreEach v ([] :num list) offset = (Skip :α prog)) ∧ ∀(v :num) (x :num) (xs :num list) (offset :α word). StoreEach v (x::xs) offset = Seq (Store (Op Add [(Var v :α exp); (Const offset :α exp)] :α exp) x :α prog) (StoreEach v xs (offset + (bytes_in_word :α word)))
+mem_eq_list_def_typed=(∀(a :α word). MemEqList a ([] :α word list) = (Assign (1 :num) TRUE_CONST :α prog)) ∧ ∀(a :α word) (w :α word) (ws :α word list). MemEqList a (w::ws) = Seq (Assign (5 :num) (Load (Op Add [(Var (3 :num) :α exp); (Const a :α exp)] :α exp) :α exp) :α prog) (If Equal (5 :num) (Imm w) (MemEqList (a + (bytes_in_word :α word)) ws) (Skip :α prog) :α prog)
+silent_ffi_def_typed=∀(c :config) (n :num) (names :sptree$num_set # sptree$num_set). (SilentFFI c n names :α prog) = if c.call_empty_ffi then list_Seq [(Assign n (Const (0w :α word) :α exp) :α prog); (Assign (7 :num) (Op Sub [(Lookup NextFree :α exp); (Lookup CurrHeap :α exp)] :α exp) :α prog); (Assign (9 :num) (Lookup HeapLength :α exp) :α prog); (FFI «» (7 :num) n (9 :num) n names :α prog)] else (Skip :α prog)
+store_each_64=Seq (Store (Op Add [Var 2; Const 8w]) 4) (Seq (Store (Op Add [Var 2; Const 16w]) 6) Skip)
+mem_eq_list_64=Seq (Assign 5 (Load (Op Add [Var 3; Const 8w]))) (If Equal 5 (Imm 3w) (Seq (Assign 5 (Load (Op Add [Var 3; Const 16w]))) (If Equal 5 (Imm 7w) (Assign 1 TRUE_CONST) Skip)) Skip)
+silent_ffi_off_64=Skip
+silent_ffi_on_64=Seq (Assign 3 (Const 0w)) (Seq (Assign 7 (Op Sub [Lookup NextFree; Lookup CurrHeap])) (Seq (Assign 9 (Lookup HeapLength)) (FFI «» 7 3 9 3 (LN,LN))))

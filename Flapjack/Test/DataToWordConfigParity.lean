@@ -57,6 +57,26 @@ private def conf : Config :=
   | .seq (.assign 1 (.const n)) (.alloc 1 (.ls (), .ln)) => n.toNat == 2 ^ 64 - 1
   | _ => false
 
+-- Consecutive-store, comparison and optional FFI oracle rows.
+#guard match storeEach (width := 64) 2 [4, 6] 8 with
+  | .seq (.store (.op .add [.var 2, .const a]) 4)
+      (.seq (.store (.op .add [.var 2, .const b]) 6) .skip) => a.toNat == 8 && b.toNat == 16
+  | _ => false
+#guard match memEqList (width := 64) 8 [3, 7] with
+  | .seq (.assign 5 (.load (.op .add [.var 3, .const a])))
+      (.ite .equal 5 (.imm x)
+        (.seq (.assign 5 (.load (.op .add [.var 3, .const b])))
+          (.ite .equal 5 (.imm y) (.assign 1 (.const t)) .skip)) .skip) =>
+    a.toNat == 8 && b.toNat == 16 && x.toNat == 3 && y.toNat == 7 && t.toNat == 18
+  | _ => false
+#guard match silentFfi (width := 64) conf 3 (.ln, .ln) with | .skip => true | _ => false
+#guard match silentFfi (width := 64) { conf with callEmptyFfi := true } 3 (.ln, .ln) with
+  | .seq (.assign 3 (.const z))
+      (.seq (.assign 7 (.op .sub [.lookup .nextFree, .lookup .currHeap]))
+        (.seq (.assign 9 (.lookup .heapLength)) (.ffi name 7 3 9 3 (.ln, .ln)))) =>
+    z.toNat == 0 && name == Flapjack.Basis.Pure.MlString.ofString ""
+  | _ => false
+
 -- The original compiler's catch-all assignment emits Skip at the same label.
 #guard ([ (.intOp .greater, [1, 2]), (.intOp .greaterEq, [1, 2]), (.globOp .allocGlobal, []),
     (.memOp .concatByteVec, [1]), (.memOp .fromListByte, [1]) ] :
