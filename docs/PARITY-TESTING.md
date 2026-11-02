@@ -436,7 +436,8 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 
 An additional rich run with seed `522901` matched 40 complete outputs, and a
 deep-mutation run with seed `832661` matched output, diagnostics, and exit
-status for 1,000 accepted and rejected inputs. These remain sampled evidence.
+status for 1,000 accepted and rejected inputs. A second deep-mutation run with
+seed `931275` matched 500 inputs. These remain sampled evidence.
 
 Use `--backend-options` to compile a closure-capturing program without the
 prelude while varying combinations of closure, BVL, allocation, GC, and stack
@@ -446,13 +447,14 @@ options. It reports the exact options with any failure:
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --backend-options --seed 33194 --count 80
 ```
 
-Seed `287601` also matched 80 backend-option cases against the pinned compiler.
+Seed `287601` also matched 80 backend-option cases against the pinned compiler;
+seed `93171` matched 100.
 
 Use `--display-mutations` to compare `--types`, `--print_sexp`, their
 combination, and S-expression output with type inference disabled. The input
 generator mutates nested declarations, Unicode and arbitrary bytes, and compares
 successful output and rejection diagnostics, including exit status. Seed `811091` matched 500
-cases against the pinned compiler:
+cases against the pinned compiler; seed `6439001` matched 1,000:
 
 ```sh
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --display-mutations --seed 811091 --count 500

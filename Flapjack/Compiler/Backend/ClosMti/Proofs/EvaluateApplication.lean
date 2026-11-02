@@ -92,4 +92,47 @@ theorem evaluateApp_closure_partial {C F : Type} (source target : State C F)
     · have clocks := stateRel_withClock states (source.clock - sourceArgs.length)
       simpa [decClock, agreement.1, argsLength] using clocks
 
+/-- A full or over-application times out before entering the closure body
+on both sides when the clock cannot cover the collected unary calls. This
+uses the Lean evaluator; its correspondence with HOL remains open. -/
+theorem evaluateApp_closure_full_timeout {C F : Type} (source target : State C F)
+    (sourceArgs targetArgs sourceSupplied targetSupplied sourceEnv targetEnv : List Value)
+    (arity : Nat) (sourceBody targetBody : ClosLang.Exp)
+    (names : List Basis.Pure.MlString.MlString)
+    (states : StateRel source target)
+    (argsRel : List.Forall₂ (ValueRel source.maxApp) sourceArgs targetArgs)
+    (suppliedRel : List.Forall₂ (ValueRel source.maxApp) sourceSupplied targetSupplied)
+    (arityEq : 1 + names.length + sourceSupplied.length = arity)
+    (bound : sourceArgs.length ≤ source.maxApp)
+    (full : names.length < sourceArgs.length) (timeout : source.clock ≤ names.length) :
+    evaluateApps (.closure none [] (sourceSupplied ++ sourceEnv) 1 (mkFns names sourceBody))
+        sourceArgs source = (.err (.abort .timeoutError), { source with clock := 0 }) ∧
+    evaluateApp none (.closure none targetSupplied targetEnv arity targetBody) targetArgs target =
+        (.err (.abort .timeoutError), { target with clock := 0 }) ∧
+    StateRel { source with clock := 0 } { target with clock := 0 } := by
+  have argsLength := argsRel.length_eq
+  have suppliedLength := suppliedRel.length_eq
+  have agreement := stateRel_clock_maxApp states
+  have targetBound : targetArgs.length ≤ target.maxApp := by omega
+  have suppliedBound : targetSupplied.length < arity := by omega
+  have fullBound : arity ≤ targetArgs.length + targetSupplied.length := by omega
+  have costTimeout : target.clock < arity - targetSupplied.length := by omega
+  refine ⟨evaluateApps_nestedFns_timeout_long sourceArgs names sourceBody
+    (sourceSupplied ++ sourceEnv) source timeout full (by omega), ?_, stateRel_withClock states 0⟩
+  cases targetArgs with
+  | nil => simp only [List.length_nil] at argsLength; omega
+  | cons first rest =>
+    simp only [List.length_cons] at targetBound fullBound
+    have dest : destClosure target.maxApp none
+        (.closure none targetSupplied targetEnv arity targetBody) (first :: rest) =
+        some (.fullApp targetBody
+          (((first :: rest).reverse.take (arity - targetSupplied.length)).reverse ++
+            (targetSupplied ++ targetEnv))
+          (((first :: rest).reverse.drop (arity - targetSupplied.length)).reverse)) := by
+      simp [destClosure, checkLoc, targetBound, suppliedBound, Nat.not_lt.mpr fullBound]
+    rw [evaluateApp]
+    have cost : rest.length + 1 - (rest.length + 1 - (arity - targetSupplied.length)) =
+        arity - targetSupplied.length := by omega
+    split <;> simp_all [List.length_drop]
+
 end Flapjack.Compiler.Backend.ClosMti
