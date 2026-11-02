@@ -1,6 +1,54 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "patsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "patsexp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all seven captured pattern equations, optional identifier and nested pattern carriers; the recursive list helper is proved equal to the source MAP. The executable uses this definition."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodePattern_patsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexppat_patsexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured pat carrier and decode-encode result equality, including nested patterns and annotations."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "patsexp_injective",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "patsexp_11",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified pat equality equivalence."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "litsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "litsexp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all captured literal equations, integer sign cases, byte character, mlstring, and fixed 8- and 64-bit word carriers. The executable uses this definition."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeLiteral_litsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexplit_litsexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured literal carrier and decode-encode result equality, including bounded words and negative integers."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "litsexp_injective",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "litsexp_11",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified literal equality equivalence."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
     "lean_name": "typesexp",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "typesexp_def",

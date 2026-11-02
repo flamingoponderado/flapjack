@@ -133,4 +133,99 @@ theorem typesexp_injective (left right : AstT) :
     subst right
     rfl
 
+/-- Decoding an encoded literal returns the original literal. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplit_litsexp"]
+theorem decodeLiteral_litsexp (l : Lit) : decodeLiteral (litsexp l) = some l := by
+  cases l with
+  | intLit i =>
+    cases i with
+    | ofNat n => simp [litsexp, decodeLiteral]
+    | negSucc n =>
+      simp (config := { decide := true }) [litsexp, listsexp, decodeLiteral,
+        stripConstructor, decodeList]
+      omega
+  | char c => simp (config := { decide := true }) [litsexp, listsexp, decodeLiteral,
+      stripConstructor, decodeList, destString_sexstr]
+  | strLit s =>
+    cases s with
+    | implode bytes => simp [litsexp, decodeLiteral, sexstr, destString, decode_encode_control]
+  | word8 w => simp (config := { decide := true }) [litsexp, listsexp, decodeLiteral,
+      stripConstructor, decodeList, w.isLt]
+  | word64 w => simp (config := { decide := true }) [litsexp, listsexp, decodeLiteral,
+      stripConstructor, decodeList, w.isLt]
+  | float64 w => simp (config := { decide := true }) [litsexp, listsexp, decodeLiteral,
+      stripConstructor, decodeList, w.isLt]
+
+/-- Encoding CakeML literals is injective. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "litsexp_11"]
+theorem litsexp_injective (left right : Lit) : litsexp left = litsexp right ↔ left = right := by
+  constructor
+  · intro h
+    have decoded := congrArg decodeLiteral h
+    simpa [decodeLiteral_litsexp] using decoded
+  · intro h
+    subst right
+    rfl
+
+/-- The recursive pattern encoder helper implements the source's map. -/
+theorem patsexpList_eq_map (ps : List Pat) : patsexpList ps = ps.map patsexp := by
+  induction ps with
+  | nil => simp [patsexpList]
+  | cons p ps ih => simp [patsexpList, ih]
+
+mutual
+/-- Decoding encoded CakeML pattern syntax returns the original pattern. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexppat_patsexp"]
+theorem decodePattern_patsexp (p : Pat) : decodePattern (patsexp p) = some p := by
+  cases p with
+  | pany => simp (config := { decide := true }) [patsexp, listsexp, decodePattern]
+  | pvar name =>
+    cases name with
+    | implode bytes => simp [patsexp, decodePattern, sexstr, destString, decode_encode_control]
+  | plit lit =>
+    simp (config := { decide := true }) [patsexp, listsexp, decodePattern, decodeLiteral_litsexp]
+  | pcon con pats =>
+    have hc : decodeOption (decodeId destString) (optsexp (con.map idsexp)) = some con := by
+      apply decodeOption_optsexp
+      intro y hy
+      subst con
+      simp [decodeId_idsexp]
+    have ih := decodePatternList_patsexpList pats
+    simp only [listsexp] at ih
+    simp (config := { decide := true }) [patsexp, listsexp, decodePattern, hc, ih]
+  | pref pat =>
+    simp (config := { decide := true }) [patsexp, listsexp, decodePattern, decodePattern_patsexp pat]
+  | pas pat name =>
+    cases name with
+    | implode bytes =>
+      simp (config := { decide := true }) [patsexp, listsexp, decodePattern,
+        decodePattern_patsexp pat, destString_sexstr]
+  | ptannot pat type =>
+    simp (config := { decide := true }) [patsexp, listsexp, decodePattern,
+      decodePattern_patsexp pat, decodeType_typesexp]
+termination_by sizeOf p
+
+/-- The recursive pattern-list helper round trips each member. -/
+theorem decodePatternList_patsexpList (ps : List Pat) :
+    decodePatternList (listsexp (patsexpList ps)) = some ps := by
+  cases ps with
+  | nil => simp (config := { decide := true }) [patsexpList, listsexp, decodePatternList]
+  | cons p ps =>
+    have ih := decodePatternList_patsexpList ps
+    simp only [listsexp] at ih
+    simp [patsexpList, listsexp, decodePatternList, decodePattern_patsexp p, ih]
+termination_by sizeOf ps
+end
+
+/-- Encoding CakeML patterns is injective. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "patsexp_11"]
+theorem patsexp_injective (left right : Pat) : patsexp left = patsexp right ↔ left = right := by
+  constructor
+  · intro h
+    have decoded := congrArg decodePattern h
+    simpa [decodePattern_patsexp] using decoded
+  · intro h
+    subst right
+    rfl
+
 end Flapjack.CakeParser.FromSexp

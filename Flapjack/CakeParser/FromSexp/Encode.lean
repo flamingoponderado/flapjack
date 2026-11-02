@@ -58,4 +58,35 @@ def typesexpList : List AstT → List Sexp
 termination_by ts => sizeOf ts
 end
 
+/-- Encode CakeML literal syntax. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "litsexp_def"]
+def litsexp : Lit → Sexp
+  | .intLit (.ofNat n) => .num n
+  | .intLit (.negSucc n) => listsexp [.sym (ascii "-"), .num (n + 1)]
+  | .char c => listsexp [.sym (ascii "char"), sexstr [c]]
+  | .strLit s => sexstr s.explode
+  | .word8 w => listsexp [.sym (ascii "word8"), .num w.toNat]
+  | .word64 w => listsexp [.sym (ascii "word64"), .num w.toNat]
+  | .float64 w => listsexp [.sym (ascii "float64"), .num w.toNat]
+
+mutual
+/-- Encode CakeML pattern syntax. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "patsexp_def"]
+def patsexp : Pat → Sexp
+  | .pany => listsexp [.sym (ascii "Pany")]
+  | .pvar name => sexstr name.explode
+  | .plit lit => listsexp [.sym (ascii "Plit"), litsexp lit]
+  | .pcon con pats => listsexp [.sym (ascii "Pcon"), optsexp (con.map idsexp), listsexp (patsexpList pats)]
+  | .pref pat => listsexp [.sym (ascii "Pref"), patsexp pat]
+  | .pas pat name => listsexp [.sym (ascii "Pas"), patsexp pat, sexstr name.explode]
+  | .ptannot pat type => listsexp [.sym (ascii "Ptannot"), patsexp pat, typesexp type]
+termination_by p => sizeOf p
+
+/-- Recursive map used by `patsexp` for nested pattern lists. -/
+def patsexpList : List Pat → List Sexp
+  | [] => []
+  | p :: ps => patsexp p :: patsexpList ps
+termination_by ps => sizeOf ps
+end
+
 end Flapjack.CakeParser.FromSexp

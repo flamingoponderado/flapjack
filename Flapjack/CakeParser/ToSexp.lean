@@ -24,31 +24,9 @@ abbrev ident := FromSexp.idsexp
 
 abbrev type := FromSexp.typesexp
 
-def literal : Lit → Sexp
-  | .intLit (.ofNat n) => .num n
-  | .intLit (.negSucc n) => node "-" [.num (n + 1)]
-  | .char c => node "char" [.str (encodeControl [c])]
-  | .strLit s => str s
-  | .word8 w => node "word8" [.num w.toNat]
-  | .word64 w => node "word64" [.num w.toNat]
-  | .float64 w => node "float64" [.num w.toNat]
+abbrev literal := FromSexp.litsexp
 
-mutual
-def pattern : Pat → Sexp
-  | .pany => node "Pany" []
-  | .pvar n => str n
-  | .plit l => node "Plit" [literal l]
-  | .pcon cn ps => node "Pcon" [option (cn.map ident), list (patternList ps)]
-  | .pref p => node "Pref" [pattern p]
-  | .pas p n => node "Pas" [pattern p, str n]
-  | .ptannot p t => node "Ptannot" [pattern p, type t]
-termination_by p => sizeOf p
-
-private def patternList : List Pat → List Sexp
-  | [] => []
-  | p :: ps => pattern p :: patternList ps
-termination_by ps => sizeOf ps
-end
+abbrev pattern := FromSexp.patsexp
 
 private def arith : Arith → Sexp := fun x => sym <| match x with
   | .add => "Add" | .sub => "Sub" | .mul => "Mul" | .div => "Div"
