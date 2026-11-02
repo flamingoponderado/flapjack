@@ -100550,6 +100550,32 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueEquality.lean",
+    "lean_name": "vbEqSize_imp_vbSize",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "vb_eq_size_IMP_vb_size",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: vb_eq_size_IMP_vb_size and its typed capture retain both universally quantified implications, including the value size and the sum plus length for lists. The reference payload type is independent of the compared data values."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordMemoryEquality.lean",
+    "lean_name": "wordMemEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_mem_eq_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_mem_eq_def and its typed capture preserve the empty result, domain check, non-word failure, unequal-word short circuit, and recursive address step. Address and payload words retain the two independent positive widths inferred in HOL."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordMemoryEquality.lean",
+    "lean_name": "wordMemEqThm",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_mem_eq_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed replay of local word_mem_eq_thm retains the arbitrary separation frame and complete functional memory graph, equal list lengths, and exact equality-result conclusion. Address and payload word widths remain independent and positive."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueEquality.lean",
     "lean_name": "doEq_iff_vbEqSize",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
     "hol_name": "do_eq_IFF_vb_eq_size",

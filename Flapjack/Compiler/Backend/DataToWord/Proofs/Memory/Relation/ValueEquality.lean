@@ -148,5 +148,74 @@ theorem memoryRel_ptr_vbEq {width : Nat} [NeZero width] (conf : Config) (bigEndi
   exact memoryRel_ptrEq conf bigEndian next refs space store memory domain v1 v2 location b vars
     ⟨rel, vbEqSize_imp_doEq refs v1 v2 n b sized, good⟩
 
+mutual
+/-- A sized value comparison is bounded by its first value (Flapjack helper). -/
+theorem valueBound {α : Type} (refs : Spt (BvlSem.Ref α)) (x y : Value) (n : Nat) (b : Bool)
+    (h : vbEqSize refs x y = some (n,b)) : n ≤ valueBlockSize x := by
+  cases x <;> cases y <;> simp only [vbEqSize] at h
+  all_goals try { simp_all [valueBlockSize] }
+  case block.block s1 t1 xs s2 t2 ys =>
+    by_cases hc : isClosure t1 xs ∨ isClosure t2 ys
+    · simp only [hc, ite_true] at h
+      split at h
+      · simp_all [valueBlockSize]; omega
+      · simp_all
+    · simp only [hc, ite_false] at h
+      by_cases hm : t1 = t2 ∧ xs.length = ys.length
+      · simp only [hm, true_and, ite_true] at h
+        cases he : vbEqSizeList refs xs ys with
+        | none => simp [he] at h
+        | some p =>
+          obtain ⟨m, bb⟩ := p
+          have bound := listBound refs xs ys m bb he
+          simp [he] at h
+          simp only [valueBlockSize]
+          omega
+      · simp [hm] at h
+        simp_all [valueBlockSize]; omega
+  case refPtr.refPtr b1 n1 b2 n2 =>
+    split at h <;> simp_all
+    split at h <;> simp_all [valueBlockSize]
+termination_by sizeOf x
+
+/-- A sized list comparison is bounded by its first list (Flapjack helper). -/
+theorem listBound {α : Type} (refs : Spt (BvlSem.Ref α)) (xs ys : List Value) (n : Nat) (b : Bool)
+    (h : vbEqSizeList refs xs ys = some (n,b)) : n ≤ (xs.map valueBlockSize).sum + xs.length := by
+  cases xs with
+  | nil => cases ys <;> simp_all [vbEqSizeList]
+  | cons x xs =>
+    cases ys with
+    | nil => simp_all [vbEqSizeList]; omega
+    | cons y ys =>
+      simp only [vbEqSizeList] at h
+      cases he : vbEqSize refs x y with
+      | none => simp [he] at h
+      | some p =>
+        obtain ⟨m, bb⟩ := p
+        have bound := valueBound refs x y m bb he
+        cases bb
+        · simp [he] at h
+          simp only [List.map_cons, List.sum_cons, List.length_cons]
+          omega
+        · cases ht : vbEqSizeList refs xs ys with
+          | none => simp [he, ht] at h
+          | some q =>
+            obtain ⟨k, bc⟩ := q
+            have tailBound := listBound refs xs ys k bc ht
+            simp [he, ht] at h
+            simp only [List.map_cons, List.sum_cons, List.length_cons]
+            omega
+termination_by sizeOf xs
+end
+
+/-- Successful sized comparisons fit the source structural-size bounds. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "vb_eq_size_IMP_vb_size"]
+theorem vbEqSize_imp_vbSize {α : Type} :
+    (∀ (refs : Spt (BvlSem.Ref α)) v1 v2 n b,
+      vbEqSize refs v1 v2 = some (n,b) → n ≤ valueBlockSize v1) ∧
+    (∀ (refs : Spt (BvlSem.Ref α)) v1 v2 n b,
+      vbEqSizeList refs v1 v2 = some (n,b) → n ≤ (v1.map valueBlockSize).sum + v1.length) := by
+  exact ⟨valueBound, listBound⟩
+
 end
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

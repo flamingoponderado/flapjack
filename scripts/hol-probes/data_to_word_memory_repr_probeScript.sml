@@ -55,6 +55,16 @@ val fix_clock_imp_replay = prove(
 val _ = show "fix_clock_IMP_replay_typed" fix_clock_imp_replay;
 val _ = show "word_is_clos_def_typed" data_to_word_memoryProofTheory.word_is_clos_def;
 val _ = show "vb_eq_size_def_typed" data_to_word_memoryProofTheory.vb_eq_size_def;
+val _ = show "vb_eq_size_IMP_vb_size_typed" data_to_word_memoryProofTheory.vb_eq_size_IMP_vb_size;
+val _ = show "word_mem_eq_def_typed" data_to_word_memoryProofTheory.word_mem_eq_def;
+val _ = show "word_mem_eq_mixed_words" (EVAL ``data_to_word_memoryProof$word_mem_eq
+  (0w:word32) [5w:word64; 5w] (\a. T) (\a. wordLang$Word (5w:word64))``);
+val _ = show "word_mem_eq_mixed_unequal" (EVAL ``data_to_word_memoryProof$word_mem_eq
+  (0w:word32) [5w:word64; 6w] (\a. T) (\a. wordLang$Word (5w:word64))``);
+val _ = show "word_mem_eq_mixed_outside" (EVAL ``data_to_word_memoryProof$word_mem_eq
+  (0w:word32) [5w:word64] (\a. F) (\a. wordLang$Word (5w:word64))``);
+val _ = show "word_mem_eq_mixed_loc" (EVAL ``data_to_word_memoryProof$word_mem_eq
+  (0w:word32) [5w:word64] (\a. T) (\a. wordLang$Loc 0 0)``);
 val _ = show "do_eq_IFF_vb_eq_size_typed" data_to_word_memoryProofTheory.do_eq_IFF_vb_eq_size;
 val _ = show "do_eq_IMP_vb_eq_size_typed" data_to_word_memoryProofTheory.do_eq_IMP_vb_eq_size;
 val _ = show "vb_eq_size_IMP_do_eq_typed" data_to_word_memoryProofTheory.vb_eq_size_IMP_do_eq;
@@ -192,7 +202,21 @@ val _ = show "blocks_unique_CodePtr_typed" data_to_word_memoryProofTheory.blocks
 val _ = show "memory_rel_CodePtr_typed" data_to_word_memoryProofTheory.memory_rel_CodePtr;
 val _ = show "memory_rel_Block_IMP_typed" data_to_word_memoryProofTheory.memory_rel_Block_IMP;
 val _ = load "preamble";
+val _ = load "helperLib";
 open preamble wordsTheory data_to_word_memoryProofTheory dataSemTheory wordLangTheory;
+open helperLib set_sepTheory wordSemTheory;
+val word_mem_eq_thm_replay = prove(
+  ``!xs ys a ff.
+      (word_list a (MAP Word xs) * ff) (fun2set (m,dm)) /\ LENGTH xs = LENGTH ys ==>
+      word_mem_eq a ys dm m = SOME (xs = ys)``,
+  Induct >> Cases_on `ys` >> fs [word_mem_eq_def]
+  >> fs [miscTheory.word_list_def] >> rpt strip_tac
+  >> SEP_R_TAC >> fs [isWord_def]
+  >> IF_CASES_TAC >> fs [] >> rveq
+  >> first_x_assum match_mp_tac
+  >> qexists_tac `one (a,Word h) * ff`
+  >> fs [AC STAR_COMM STAR_ASSOC]);
+val _ = show "word_mem_eq_thm_replay_typed" word_mem_eq_thm_replay;
 val memory_rel_isClos_replay = prove(
   ``memory_rel c be ts refs sp st m dm ((Block ts1 t1 v1,Word (w1:'a word))::vars) /\
     word_bit 0 w1 /\ get_real_addr c st w1 = SOME a' /\ m a' = Word x' /\
