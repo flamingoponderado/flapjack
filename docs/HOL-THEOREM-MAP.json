@@ -5,6 +5,15 @@
     "hol_name": "do_app_def",
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_fromTo_source",
+    "reviewer": "Compared the complete typed flat do_app FromTo case and fallback with source check_type and do_conversion. All source and target primitive types and argument lists are retained. The ten successful conversions preserve fixed word widths and float bit patterns; out-of-range integer-to-character conversion raises the flat character exception, while wrong types and arities fail. On the nonnegative branch Int.toNat agrees with Num (ABS i), and BitVec.ofInt implements i2w. Compiler and FFI payload types remain independent."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyArithmeticSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
     "lean_name": "doApp_arithWord8_source",
     "reviewer": "Compared the typed flat do_app arithmetic case for WordT W8 with source check_type and do_arith, for all argument lists and operators. Exactly two projected Word8 literals are accepted; wordArith implements the original fixed-width Add, Sub, And, Or and Xor clauses and rejects other operators. The state payload types remain independent."
   },

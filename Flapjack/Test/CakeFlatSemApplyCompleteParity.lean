@@ -56,6 +56,28 @@ example {C F : Type} (s : State C F) :
 example {C F : Type} (s : State C F) :
     doApp s (.src (.arith .add (.wordT .w8))) [.litv (.word8 3), .litv (.word64 5)] = none := by rfl
 example {C F : Type} (s : State C F) :
+    doApp s (.src (.fromTo .intT .charT)) [.litv (.intLit 255)] =
+      some (s, .val (.litv (.char 255))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.fromTo .intT .charT)) [.litv (.intLit 256)] =
+      some (s, .err (.raise chrExnV)) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.fromTo .intT .charT)) [.litv (.intLit (-1))] =
+      some (s, .err (.raise chrExnV)) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.fromTo .intT (.wordT .w8))) [.litv (.intLit (-1))] =
+      some (s, .val (.litv (.word8 255))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.fromTo (.wordT .w64) .intT)) [.litv (.word64 0xffffffffffffffff)] =
+      some (s, .val (.litv (.intLit 18446744073709551615))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.fromTo .float64T (.wordT .w64))) [.litv (.float64 0x7ff0000000000000)] =
+      some (s, .val (.litv (.word64 0x7ff0000000000000))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.fromTo .intT .charT)) [.litv (.word8 3)] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.fromTo .intT .boolT)) [.litv (.intLit 3)] = none := by rfl
+example {C F : Type} (s : State C F) :
     doApp s (.src (.shift .w64 .ror 65)) [.litv (.word64 3)] =
       some (s, .val (.litv (.word64 0x8000000000000001))) := by rfl
 example {C F : Type} (s : State C F) :

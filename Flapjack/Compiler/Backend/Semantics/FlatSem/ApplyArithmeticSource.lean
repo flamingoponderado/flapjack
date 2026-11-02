@@ -53,4 +53,36 @@ theorem doApp_arithWord64_source {C F : Type} (s : State C F)
     SemanticPrimitivesHOL.doApp, doAppNumericCore, wordArith]
   all_goals repeat' first | split at * | simp_all [valueToFlat]
 
+/-- Primitive conversions check the projected input type, preserve the word
+bit patterns and raise the character exception for out-of-range integers. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]
+theorem doApp_fromTo_source {C F : Type} (s : State C F)
+    (source target : PrimType) (vs : List Value) :
+    doApp s (.src (.fromTo source target)) vs =
+      match source, target, vs.map flatToValue with
+      | .wordT .w8, .intT, [.litv (.word8 w)] => some (s, .val (.litv (.intLit w.toNat)))
+      | .wordT .w64, .intT, [.litv (.word64 w)] => some (s, .val (.litv (.intLit w.toNat)))
+      | .intT, .wordT .w8, [.litv (.intLit i)] => some (s, .val (.litv (.word8 (BitVec.ofInt 8 i))))
+      | .intT, .wordT .w64, [.litv (.intLit i)] => some (s, .val (.litv (.word64 (BitVec.ofInt 64 i))))
+      | .charT, .intT, [.litv (.char c)] => some (s, .val (.litv (.intLit c.toNat)))
+      | .intT, .charT, [.litv (.intLit i)] =>
+        if i < 0 ∨ i > 255 then some (s, .err (.raise chrExnV))
+        else some (s, .val (.litv (.char (BitVec.ofNat 8 i.toNat))))
+      | .charT, .wordT .w8, [.litv (.char c)] => some (s, .val (.litv (.word8 c)))
+      | .wordT .w8, .charT, [.litv (.word8 w)] => some (s, .val (.litv (.char w)))
+      | .float64T, .wordT .w64, [.litv (.float64 w)] => some (s, .val (.litv (.word64 w)))
+      | .wordT .w64, .float64T, [.litv (.word64 w)] => some (s, .val (.litv (.float64 w)))
+      | _, _, _ => none := by
+  generalize valuesEq : vs.map flatToValue = values
+  simp only [doApp, doAppNumeric, applyNumericProjection,
+    SemanticPrimitivesHOL.doApp, doAppNumericCore, valuesEq]
+  clear valuesEq
+  all_goals cases source <;> cases target
+  all_goals try (cases ‹WordSize›)
+  all_goals try (cases ‹WordSize›)
+  all_goals try (simp [valueToFlat])
+  all_goals cases values <;> try (rename_i value rest; cases rest <;> cases value <;> try (cases ‹Lit›))
+  all_goals try simp
+  all_goals split <;> simp_all
+
 end Flapjack.Compiler.Backend.FlatSem

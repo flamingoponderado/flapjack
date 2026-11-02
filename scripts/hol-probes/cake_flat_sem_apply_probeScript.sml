@@ -94,6 +94,22 @@ val _ = show_int_eval "numeric_word8_bad_op=" ``OPTION_MAP SND
   (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Mul (WordT W8))) [Litv (Word8 3w); Litv (Word8 5w)])``;
 val _ = show_int_eval "numeric_word8_bad_width=" ``OPTION_MAP SND
   (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Add (WordT W8))) [Litv (Word8 3w); Litv (Word64 5w)])``;
+val _ = show_int_eval "convert_int_char_255=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (FromTo IntT CharT)) [Litv (IntLit 255)])``;
+val _ = show_int_eval "convert_int_char_256=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (FromTo IntT CharT)) [Litv (IntLit 256)])``;
+val _ = show_int_eval "convert_int_char_negative=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (FromTo IntT CharT)) [Litv (IntLit (~1))])``;
+val _ = show_int_eval "convert_int_word8_negative=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (FromTo IntT (WordT W8))) [Litv (IntLit (~1))])``;
+val _ = show_int_eval "convert_word64_int=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (FromTo (WordT W64) IntT)) [Litv (Word64 0xffffffffffffffffw)])``;
+val _ = show_int_eval "convert_float_word=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (FromTo Float64T (WordT W64))) [Litv (Float64 0x7ff0000000000000w)])``;
+val _ = show_int_eval "convert_wrong_operand=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (FromTo IntT CharT)) [Litv (Word8 3w)])``;
+val _ = show_int_eval "convert_bad_target=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (FromTo IntT BoolT)) [Litv (IntLit 3)])``;
 val _ = show_word_eval "numeric_shift64_rotate=" ``OPTION_MAP SND
   (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Shift W64 Ror 65)) [Litv (Word64 3w)])``;
 val _ = show_eval "numeric_shift_wrong_width=" ``OPTION_MAP SND
