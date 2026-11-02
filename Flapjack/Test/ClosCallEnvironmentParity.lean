@@ -6,7 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateLet
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateFunction
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -201,6 +201,28 @@ example : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
     (.closure (some 10) [] [] 1 (.var .none 0))
     (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) := by
   exact .closure closedGroupRelation .nil (.equalLength rfl .nil)
+
+-- Creating a closed function produces the extracted direct-call closure.
+example {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (source : ClosSem.State (Flapjack.NumSet × C) F) (target : ClosSem.State C F)
+    (states : StateRelFuel 5 closedGroupResult ∅ source target)
+    (targetCode : target.code = closedGroupCode) (arityOk : 1 ≤ source.maxApp) :
+    ∃ result final,
+      ClosSem.evaluate [.fn name (some 10) none 1 (.call .none 0 11 [.var .none 0])] [] target = (result, final) ∧
+      Flapjack.SemanticPrimitivesProps.resultRel
+        (List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ final.code))
+        (ValueRelFuel 5 closedGroupResult ∅ final.code)
+        (.val [.closure (some 10) [] [] 1 (.var .none 0)]) result ∧
+      StateRelFuel 5 closedGroupResult ∅ source final ∧
+      (∀ key value, target.code.lookup key = some value → final.code.lookup key = some value) := by
+  apply evaluate_fn_fuel 5 closedGroupResult ∅ name 10 1 (.var .none 0)
+    (.call .none 0 11 [.var .none 0]) [] [] source target
+    (.val [.closure (some 10) [] [] 1 (.var .none 0)]) source
+  · simp [ClosSem.evaluate, arityOk]
+  · simp
+  · exact .equalLength rfl .nil
+  · exact states
+  · simpa [targetCode, closedGroup] using closedGroupRelation
 
 -- Extending code preserves a captured direct-call closure in an environment.
 example : EnvRelFuel 5 closedGroupResult ∅
