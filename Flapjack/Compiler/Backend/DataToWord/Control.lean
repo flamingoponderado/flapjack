@@ -244,8 +244,8 @@ private def compileCons {width : Nat} [NeZero width] (conf : Config) (l dest tag
             .const pointer]),
           .set .nextFree (.op .add [.var 1, .const bytes])], l)
 
-/-- Flapjack's partial traversal. Unsupported assignment operations return
-`none`; this is not HOL's total `comp`. -/
+/-- Flapjack's checked traversal. Some non-64-bit operations return `none`;
+this definition has not yet been reviewed as HOL's total `comp`. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
     Nat → DataLang.Prog → Option (WordLangProgHOL (BitVec width) × Nat)
   | l, .skip => some (.skip, l)

@@ -83,7 +83,7 @@ def compileCakeToWordWithStubsAndNames64InlineFuel
   pure (source, closure, start, fixed ++ bignum ++ code, next, names)
 
 /-- Continue the checked BVL-optimized route through 64-bit word lowering.
-Unsupported operations return `none`. -/
+Earlier compilation and stub generation may return `none`. -/
 def compileCakeToWord64OptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
     (source : Config) (closure : ClosToBvl.Config) (word : DataToWord.Config)
     (decls : List AstHOL.Dec) :
