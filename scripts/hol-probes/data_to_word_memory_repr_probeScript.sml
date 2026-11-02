@@ -65,6 +65,7 @@ val _ = show "memory_rel_elements_list_distinct_typed" data_to_word_memoryProofT
 val _ = show "memory_rel_depth_limit_typed" data_to_word_memoryProofTheory.memory_rel_depth_limit;
 val _ = show "memory_rel_depth_size_limit_typed" data_to_word_memoryProofTheory.memory_rel_depth_size_limit;
 val _ = show "memory_rel_limit_typed" data_to_word_memoryProofTheory.memory_rel_limit;
+val _ = show "word_eq_thm_typed" data_to_word_memoryProofTheory.word_eq_thm;
 val _ = show "vb_eq_size_def_typed" data_to_word_memoryProofTheory.vb_eq_size_def;
 val _ = show "vb_eq_size_IMP_vb_size_typed" data_to_word_memoryProofTheory.vb_eq_size_IMP_vb_size;
 val _ = show "word_mem_eq_def_typed" data_to_word_memoryProofTheory.word_mem_eq_def;
