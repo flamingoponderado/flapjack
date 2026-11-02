@@ -106907,8 +106907,8 @@
     "lean_name": "numSetTreeUnion",
     "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
     "hol_name": "num_set_tree_union_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every clause of tree_union_definition in flat_elim_closure_probe.out: both operands are Spt NumSet, disjoint nodes retain their existing payloads, shared nodes use the left-biased HOL sparse-tree union, and both child recursions preserve their positions. Spt matches the HOL constructors and NumSet is Spt Unit."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
@@ -106923,8 +106923,8 @@
     "lean_name": "codeAnalysisUnion",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "code_analysis_union_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed analysis_union_definition capture: root trees have an independent arbitrary payload type shared between both inputs and the result, while dependency trees contain NumSet payloads. The two fields use the original sparse-tree union and num_set_tree_union in the original order. Nat and Bool root observations are captured from HOL."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
@@ -106947,8 +106947,8 @@
     "lean_name": "removeUnreachable",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "remove_unreachable_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed remove_unreachable_definition capture: reachable is an arbitrary-payload sparse tree and the expression list is filtered with keep reachable, in source order. Nat and Bool payload observations are captured from HOL."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",

@@ -424,7 +424,7 @@ run_probe flat_pattern_global_flag_probeScript.sml flat_pattern_global_flag_prob
   "$cake_dir/compiler/backend/proofs/flat_patternProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe flat_elim_closure_probeScript.sml flat_elim_closure_probe.out \
-  closure_definition fold_domain adjacent reachable closure_reachable tree_union_lookup tree_union_symmetric adjacent_union reachable_union noncanonical_subset noncanonical_closure \
+  closure_definition tree_union_definition analyse_exp_definition analysis_union_definition analyse_code_definition remove_unreachable_definition has_eval_dec_definition remove_flat_prog_definition analysis_union_nat analysis_union_bool remove_unreachable_nat remove_unreachable_bool remove_unreachable_nat_live remove_unreachable_bool_live fold_domain adjacent reachable closure_reachable tree_union_lookup tree_union_symmetric adjacent_union reachable_union noncanonical_subset noncanonical_closure \
   "$hol_dir/examples/algorithms/spt_closureScript.sml" "$cake_dir/compiler/backend"
 
 run_probe flat_elim_value_globals_probeScript.sml flat_elim_value_globals_probe.out \

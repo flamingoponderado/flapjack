@@ -40,7 +40,7 @@ def analyseExp (e : Exp) : NumSet × Spt NumSet :=
 
 /-- Combine two code-analysis results. -/
 @[hol "cakeml/compiler/backend/flat_elimScript.sml" "code_analysis_union_def"]
-def codeAnalysisUnion (a b : NumSet × Spt NumSet) : NumSet × Spt NumSet :=
+def codeAnalysisUnion {α : Type} (a b : Spt α × Spt NumSet) : Spt α × Spt NumSet :=
   (sptUnion a.1 b.1, numSetTreeUnion a.2 b.2)
 
 /-- Analyse a program in the original right-fold order. -/
@@ -56,7 +56,7 @@ def keep {α : Type} (reachable : Spt α) (e : Exp) : Bool :=
 
 /-- Filter a program by the result of the reachability analysis. -/
 @[hol "cakeml/compiler/backend/flat_elimScript.sml" "remove_unreachable_def"]
-def removeUnreachable (reachable : NumSet) (code : List Exp) : List Exp :=
+def removeUnreachable {α : Type} (reachable : Spt α) (code : List Exp) : List Exp :=
   code.filter (keep reachable)
 
 /-- Dynamic evaluation in a top-level expression disables elimination. -/

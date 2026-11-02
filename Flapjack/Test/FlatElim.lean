@@ -59,6 +59,14 @@ private def set2 : Exp := .app .none (.globalVarInit 2) [get1]
 private def eval : Exp := .app .none (.src .eval) []
 open Flapjack.Test.CakeMLFlatOracle
 
+-- Original HOL captures use independent Nat and Bool root payloads.
+#guard codeAnalysisUnion ((.ls 7 : Spt Nat), .ln) (.ls 9, .ln) == (.ls 7, .ln)
+#guard codeAnalysisUnion ((.ls true : Spt Bool), .ln) (.ls false, .ln) == (.ls true, .ln)
+#guard (removeUnreachable (.ls 7 : Spt Nat) [lit]).isEmpty
+#guard (removeUnreachable (.ls true : Spt Bool) [lit]).isEmpty
+#guard (removeUnreachable (.ls 7 : Spt Nat) [.app .none (.globalVarInit 0) [lit]]).length == 1
+#guard (removeUnreachable (.ls true : Spt Bool) [.app .none (.globalVarInit 0) [lit]]).length == 1
+
 -- An assignment containing a lookup is effectful and immediately reachable.
 #guard isPure set2 == impure_lookup_init
 #guard isHidden set2 == hidden_lookup_init
