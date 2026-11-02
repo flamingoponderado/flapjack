@@ -1,5 +1,41 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/State.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "hol_name": "state",
+    "lean_name": "State",
+    "reviewer": "Compared all eight field types with the typed original capture clos_sem_evaluate_probe.out and the source datatype, including separate compiler and FFI type parameters, source closure values and expressions, and the word8/word64 callback results. The canonical lookup/support roundtrip witnesses both refs and code; globals remain a list. This comparison and witness do not establish evaluator correspondence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/State.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "hol_name": "dec_clock_def",
+    "lean_name": "decClock",
+    "reviewer": "Compared the typed original capture clos_sem_evaluate_probe.out: the update changes only the natural-number clock using truncated subtraction. Both state finite maps use the canonical finite-support carrier and the local roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/State.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "hol_name": "fix_clock_def",
+    "lean_name": "fixClock",
+    "reviewer": "Compared the typed original capture clos_sem_evaluate_probe.out: the result payload and both input and output state type parameters are independent, and only the output clock changes to the minimum. Both state finite maps use the canonical finite-support carrier and the local roundtrip witness."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Semantics.lean",
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
     "hol_name": "semantics_def",

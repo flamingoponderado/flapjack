@@ -9,10 +9,6 @@ open Flapjack.SemanticPrimitivesHOL
 /-- Evaluation result in the same order as the HOL closure semantics. -/
 abbrev EvalResult (C F : Type) := Result (List Value) Value × State C F
 
-/-- Clamp the result clock to its input clock. -/
-def fixClock {C F : Type} (state : State C F) (result : EvalResult C F) : EvalResult C F :=
-  (result.1, { result.2 with clock := min state.clock result.2.clock })
-
 private noncomputable def headValue (values : List Value) : Value :=
   @Flapjack.holHd Value ⟨unitValue⟩ values
 

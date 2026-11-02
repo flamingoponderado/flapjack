@@ -360,6 +360,8 @@ run_probe clos_sem_memory_probeScript.sml clos_sem_memory_probe.out \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_evaluate_probeScript.sml clos_sem_evaluate_probe.out \
+  state_globals_type state_refs_type state_ffi_type state_clock_type state_compile_type \
+  state_oracle_type state_code_type state_max_app_type dec_clock_typed fix_clock_typed initial_state_typed \
   evaluate_typed variable missing conditional raise_handle zero_tick call_closure \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 

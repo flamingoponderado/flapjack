@@ -14,9 +14,9 @@ abbrev Compiler (C : Type) := C → Program → Option (List (BitVec 8) × List 
 /-- Sequence of future compiler configurations and closure programs. -/
 abbrev CompileOracle (C : Type) := Nat → C × Program
 
-/-- Proof-side closure state. The two HOL finite maps use the canonical
-finite-support carrier; this declaration remains untagged until the required
-representation witness and full source correspondence review are complete. -/
+/-- Closure state with canonical finite-support reference and code maps. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "state"
+  (fmap_as_finite_support := [refs, code])]
 structure State (C F : Type) where
   globals : List (Option Value)
   refs : HolFiniteMapExact Nat (Ref Value)
@@ -63,10 +63,18 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       cases code
       rfl
 
-/-- Subtract from the closure clock using natural-number subtraction. This
-proof-side operation awaits the finite-map representation review. -/
+/-- Subtract from the closure clock using natural-number subtraction. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "dec_clock_def"
+  (fmap_as_finite_support := [refs, code])]
 def decClock {C F : Type} (n : Nat) (state : State C F) : State C F :=
   { state with clock := state.clock - n }
+
+/-- Clamp the output clock, allowing independent input and output states and
+an arbitrary result payload, as in the original definition. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "fix_clock_def"
+  (fmap_as_finite_support := [refs, code])]
+def fixClock {C F D G R : Type} (state : State C F) (result : R × State D G) : R × State D G :=
+  (result.1, { result.2 with clock := min state.clock result.2.clock })
 
 /-- The original closure evaluator starts with empty globals and reference
 store, while code and compilation callbacks are supplied by the caller.
