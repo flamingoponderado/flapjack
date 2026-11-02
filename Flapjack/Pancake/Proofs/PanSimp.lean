@@ -2054,7 +2054,7 @@ theorem evalPanValueDeclarationsWithStructs_exnDecl_decl_commute
       by_cases hmatch : panShapeMatches (panValueShape structs value) declShape = true <;>
         by_cases hexists : (lookupInfo exception state.exceptions).isSome = true <;>
         by_cases hshape : isWfShape structs shape = true <;>
-        simp [hmatch, hexists, hshape]
+        simp [hexists, hshape]
 
 /-- Bubbling a declaration that commutes with every element of `rest` to the
     end of that list. -/
