@@ -352,7 +352,7 @@ run_probe clos_sem_thunk_probeScript.sml clos_sem_thunk_probe.out \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_basic_probeScript.sml clos_sem_basic_probe.out \
-  apply_typed taglen length bool_test extend extend_invalid constant \
+  apply_typed taglen length bool_test extend extend_invalid constant build_fallback_typed \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_memory_probeScript.sml clos_sem_memory_probe.out \

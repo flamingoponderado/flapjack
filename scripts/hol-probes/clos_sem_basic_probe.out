@@ -5,3 +5,4 @@ bool_test=SOME (Block 0 [])
 extend=SOME (Block 2 [Number 8; Number 2; Number 3])
 extend_invalid=NONE
 constant=SOME (Block 4 [Number 3; Number 7])
+build_fallback_typed=∀(parts :const_part list) (values :v list) (s :(γ, 'ffi) state). (do_app (BlockOp (Build parts)) values s :(v # (γ, 'ffi) state, v) result) = (Rerr (Rabort Rtype_error :v error_result) :(v # (γ, 'ffi) state, v) result)

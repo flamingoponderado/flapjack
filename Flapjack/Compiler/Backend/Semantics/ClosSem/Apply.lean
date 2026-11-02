@@ -48,4 +48,12 @@ noncomputable def doApp {C F : Type} (op : ClosLang.Op) (args : List Value) (sta
     | _, _ => fail
   | _ => fail
 
+/-- `Build` reaches the closure dispatcher's type-error fallback for every
+argument list. This helper has no separate HOL declaration; the corresponding
+universal source equation is replayed in `clos_sem_basic_probe.out`. -/
+theorem doApp_build_fallback {C F : Type} (parts : List ClosLang.ConstPart)
+    (args : List Value) (state : State C F) :
+    doApp (.blockOp (.build parts)) args state = .err (.abort .typeError) := by
+  simp [doApp, applyBlock]
+
 end Flapjack.Compiler.Backend.ClosSem

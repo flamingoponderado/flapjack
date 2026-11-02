@@ -12,3 +12,7 @@ val _ = show_eval "bool_test=" ``case closSem$do_app (BlockOp (BoolTest Equal)) 
 val _ = show_eval "extend=" ``case closSem$do_app (BlockOp (ConsExtend 2)) [Block 0 [Number 1;Number 2;Number 3]; Number 1;Number 2;Number 3;Number 8] (ARB : (unit,unit) closSem$state) of Rval (v,_) => SOME v | _ => NONE``;
 val _ = show_eval "extend_invalid=" ``case closSem$do_app (BlockOp (ConsExtend 2)) [Block 0 [Number 1]; Number 1;Number 2;Number 2] (ARB : (unit,unit) closSem$state) of Rval (v,_) => SOME v | _ => NONE``;
 val _ = show_eval "constant=" ``case closSem$do_app (BlockOp (Constant (ConstCons 4 [ConstInt 3; ConstInt 7]))) [] (ARB : (unit,unit) closSem$state) of Rval (v,_) => SOME v | _ => NONE``;
+val _ = show_thm "build_fallback_typed=" (prove (
+  ``∀parts values (s : ('c,'ffi) closSem$state).
+      closSem$do_app (BlockOp (Build parts)) values s = Rerr (Rabort Rtype_error)``,
+  simp [closSemTheory.do_app_def]));

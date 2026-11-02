@@ -283,11 +283,12 @@ theorem primitiveSimulation_block_equalConst {C F : Type} (constant : ClosLang.C
     | nil => cases constant <;> cases head <;> simp [doApp, applyBlock, excRel, boolValue_related, states]
     | cons head tail => simp [doApp, applyBlock, excRel]
 
-/-- The proof-side dispatcher rejects the build operation on both sides. -/
+/-- The closure dispatcher rejects build on both sides, as in the universal
+source fallback replayed by the closure semantics probe. -/
 theorem primitiveSimulation_block_build {C F : Type} (constants : List ClosLang.ConstPart) :
     @PrimitiveSimulation C F (.blockOp (.build constants)) := by
   intro source target left right states values
-  simp [doApp, applyBlock, excRel]
+  simp [doApp_build_fallback, excRel]
 
 /-- Block extension preserves the initial fields and selected related slice,
 and rejects the same invalid sizes and bounds. -/
