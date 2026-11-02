@@ -28,3 +28,13 @@ val _ = (print "real_addr_def_typed="; Lib.with_flag (Globals.show_types,true)
 val _ = print_eval "real_addr_sub_64" ``(real_addr (^conf with <|tag_bits := 0; len_bits := 0; pad_bits := 1|>) 4 : 64 wordLang$exp)``;
 val _ = print_eval "real_addr_right_64" ``(real_addr ^conf 4 : 64 wordLang$exp)``;
 val _ = print_eval "real_addr_both_64" ``(real_addr (^conf with pad_bits := 0) 4 : 64 wordLang$exp)``;
+val _ = (print "shift_var_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.ShiftVar_def); print "\n");
+val _ = (print "give_up_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.GiveUp_def); print "\n");
+val _ = print_eval "shift_zero_64" ``(ShiftVar Lsl 4 0 : 64 wordLang$exp)``;
+val _ = print_eval "shift_large_asr_64" ``(ShiftVar Asr 4 65 : 64 wordLang$exp)``;
+val _ = print_eval "shift_large_lsl_64" ``(ShiftVar Lsl 4 64 : 64 wordLang$exp)``;
+val _ = print_eval "shift_rotate_multiple_64" ``(ShiftVar Ror 4 128 : 64 wordLang$exp)``;
+val _ = print_eval "shift_rotate_wrap_64" ``(ShiftVar Ror 4 67 : 64 wordLang$exp)``;
+val _ = print_eval "give_up_64" ``(GiveUp : 64 wordLang$prog)``;

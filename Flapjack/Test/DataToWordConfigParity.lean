@@ -45,6 +45,18 @@ private def conf : Config :=
     l.toNat == 5 && k.toNat == 3
   | _ => false
 
+-- Original ShiftVar and GiveUp observations at the RISC-V width.
+#guard match shiftVar (width := 64) .lsl 4 0 with | .var 4 => true | _ => false
+#guard match shiftVar (width := 64) .asr 4 65 with
+  | .shift .asr (.var 4) (.const n) => n.toNat == 63 | _ => false
+#guard match shiftVar (width := 64) .lsl 4 64 with | .const n => n.toNat == 0 | _ => false
+#guard match shiftVar (width := 64) .ror 4 128 with | .var 4 => true | _ => false
+#guard match shiftVar (width := 64) .ror 4 67 with
+  | .shift .ror (.var 4) (.const n) => n.toNat == 3 | _ => false
+#guard match giveUp (width := 64) with
+  | .seq (.assign 1 (.const n)) (.alloc 1 (.ls (), .ln)) => n.toNat == 2 ^ 64 - 1
+  | _ => false
+
 -- The original compiler's catch-all assignment emits Skip at the same label.
 #guard ([ (.intOp .greater, [1, 2]), (.intOp .greaterEq, [1, 2]), (.globOp .allocGlobal, []),
     (.memOp .concatByteVec, [1]), (.memOp .fromListByte, [1]) ] :

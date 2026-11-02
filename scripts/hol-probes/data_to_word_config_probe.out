@@ -13,3 +13,11 @@ real_addr_def_typed=∀(conf :config) (r :num). (real_addr conf r :α exp) = (le
 real_addr_sub_64=Op Add [Lookup CurrHeap; Op Sub [Var 4; Const 1w]]
 real_addr_right_64=Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 5]
 real_addr_both_64=Op Add [Lookup CurrHeap; ShiftN Lsl (ShiftN Lsr (Var 4) 5) 3]
+shift_var_def_typed=∀(sh :ast$shift) (v :num) (n :num). (ShiftVar sh v n :α exp) = if sh = Ror then (let (m :num) = if n < dimindex (:α) then n else n MOD dimindex (:α) in if m = (0 :num) then (Var v :α exp) else ShiftN sh (Var v :α exp) m) else if n = (0 :num) then (Var v :α exp) else if dimindex (:α) ≤ n then if sh = Asr then ShiftN sh (Var v :α exp) (dimindex (:α) − (1 :num)) else (Const (0w :α word) :α exp) else ShiftN sh (Var v :α exp) n
+give_up_def_typed=(GiveUp :α prog) = Seq (Assign (1 :num) (Const (-(1w :α word)) :α exp) :α prog) (Alloc (1 :num) (adjust_sets (LN :sptree$num_set)) :α prog)
+shift_zero_64=Var 4
+shift_large_asr_64=ShiftN Asr (Var 4) 63
+shift_large_lsl_64=Const 0w
+shift_rotate_multiple_64=Var 4
+shift_rotate_wrap_64=ShiftN Ror (Var 4) 3
+give_up_64=Seq (Assign 1 (Const 0xFFFFFFFFFFFFFFFFw)) (Alloc 1 (⦕ 0 ⦖,LN))

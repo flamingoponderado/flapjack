@@ -42,8 +42,10 @@ private def silentFfi {width : Nat} (conf : Config) (n : Nat) (names : WordLangC
       .assign 9 (.lookup .heapLength), .ffi (.implode []) 7 n 9 n names]
   else .skip
 
-/-- Internal allocation-failure sequence used by supported cases. -/
-def giveUp {width : Nat} : WordLangProgHOL (BitVec width) :=
+/-- Original allocation-failure sequence used by the data-to-word pass. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "GiveUp_def"
+  (words_as_type_indexed_bitvec)]
+def giveUp {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) :=
   .seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet)))
 
 /-- Construct a word-language heap address from a tagged pointer, following
@@ -67,12 +69,14 @@ private def boolResult {width : Nat} (dest : Nat) (cmp : Cmp) (r : Nat)
     (other : WordRegImm (BitVec width)) : WordLangProgHOL (BitVec width) :=
   .ite cmp r other (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))
 
-/-- Internal shift constructor and source-shaped saturation for variable
-shifts. The standalone HOL `ShiftVar` declaration remains to be reviewed. -/
+/-- Internal constructor for HOL's `ShiftN` overload. -/
 def shiftN {width : Nat} (op : Shift) (e : WordLangExpHOL (BitVec width)) (n : Nat) :
     WordLangExpHOL (BitVec width) := .shift op e (.const (BitVec.ofNat width n))
 
-def shiftVar {width : Nat} (op : Shift) (v n : Nat) : WordLangExpHOL (BitVec width) :=
+/-- Construct a variable shift with the original rotate and saturation rules. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "ShiftVar_def"
+  (words_as_type_indexed_bitvec)]
+def shiftVar {width : Nat} [NeZero width] (op : Shift) (v n : Nat) : WordLangExpHOL (BitVec width) :=
   match op with
   | .ror =>
       let m := if n < width then n else n % width

@@ -115401,5 +115401,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Compared data_to_wordScript.sml:137-147 and typed HOL definition capture in data_to_word_config_probe.out. The source shift overload is backend_common.word_shift and the ShiftN overload inserts a width-indexed word constant. All three conditions, natural subtraction, CurrHeap lookup, variable and word-expression constructor order agree; positive width represents the HOL word dimension. The three original 64-bit branch evaluations are replayed by the Lean parity module. The tagged definition is the production compiler helper; these checks are not a cross-language proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "GiveUp_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "giveUp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared data_to_wordScript.sml:57-60 and typed capture give_up_def_typed: Seq of Assign 1 to negative one and Alloc 1 with adjust_sets LN, including both cutsets and positive-width word carrier. The 64-bit original observation is replayed by DataToWordConfigParity. This is the helper executed by compileControl and the runtime stubs; the capture and kernel replay do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "ShiftVar_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "shiftVar",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared data_to_wordScript.sml:573-582 and typed capture shift_var_def_typed: independent shift, variable and amount inputs; rotate modulo positive word width and zero case; zero, oversized arithmetic/right/left shifts and ordinary shift branches; ShiftN is the source overload building a word constant. Original 64-bit zero, oversized, and rotate examples are replayed by DataToWordConfigParity. The tagged helper is used by the executed lowering and stubs; neither attribute nor probes prove cross-language correspondence."
   }
 ]

@@ -4082,7 +4082,7 @@ run_probe word_remove_must_terminate_probeScript.sml word_remove_must_terminate_
 # `data_to_word` pointer-layout helpers: `shift_length`, `small_shift_length`
 # and `get_gen_size` (empty, in range, overflowing) at 64 and 32 bits.
 run_probe data_to_word_config_probeScript.sml data_to_word_config_probe.out \
-  shift_length gen_size_three_32 assign_greater_fallback assign_greater_eq_fallback assign_alloc_global_fallback assign_concat_byte_vec_fallback assign_from_list_byte_fallback real_addr_def_typed real_addr_sub_64 real_addr_right_64 real_addr_both_64 \
+  shift_length gen_size_three_32 assign_greater_fallback assign_greater_eq_fallback assign_alloc_global_fallback assign_concat_byte_vec_fallback assign_from_list_byte_fallback real_addr_def_typed real_addr_sub_64 real_addr_right_64 real_addr_both_64 shift_var_def_typed give_up_def_typed shift_zero_64 shift_large_asr_64 shift_large_lsl_64 shift_rotate_multiple_64 shift_rotate_wrap_64 give_up_64 \
   "$cake_dir/compiler/backend/data_to_wordScript.sml" \
   "$cake_dir/compiler/backend"
 
