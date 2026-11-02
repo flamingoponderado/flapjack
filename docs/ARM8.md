@@ -202,14 +202,20 @@ machinery and `scripts/check-hol-refs.py` cannot resolve them.
 
 `Flapjack/Compiler/Encoders/Arm8/L3/Target.lean` adds `arm8_next = THE ∘
 NextStateARM8` over the L3 carrier.  `Flapjack/Compiler/Encoders/Arm8/L3/Ast.lean`
-ports `arm8_encode_fail` and `arm8_encode`, the byte-level encoder that
-`arm8_config` uses.  `Flapjack/Compiler/Encoders/Arm8/L3/Target/State.lean`
-assembles `arm8TargetL3 : HolAsmTarget 64 arm8_state Arm8L3Projection` and
-proves `arm8TargetL3_targetOk`, the `targetOk` half of `encoderCorrect`.  That
-record is deliberately untagged: its `config` field uses the closed-model
-`arm8Config`, whose `encode` is `arm8Enc` over `HolAsm 64`, whereas HOL's
-`arm8_config` uses `arm8_enc` over the full L3 `instruction` type.  The missing
-construct is `arm8_ast` (the `asm`-to-`instruction` lowering); once it and the
-exact `arm8_config` carrier are ported (#1229), `arm8TargetL3` becomes an exact
-`arm8_target_def` port.  The per-instruction `encoder_correct` simulation
-proofs remain #1239; `encoderCorrect` is proved only for the closed model.
+ports the rest of the CakeML target script: `arm8_encode_fail`, `arm8_encode`,
+`arm8_enc_mov_imm`, `cmp_cond`, the three `arm8_load_store_ast` variants,
+`arm8_ast` (the `asm`-to-L3-`instruction` lowering) and
+`arm8_enc = C LIST_BIND arm8_encode o arm8_ast`.
+`Flapjack/Compiler/Encoders/Arm8/L3/Configuration.lean` ports `valid_immediate`
+and the exact sixteen-field `arm8_config` (`arm8ConfigL3`) over the L3 encoder,
+and proves `arm8ConfigL3_encOk`.
+
+`Flapjack/Compiler/Encoders/Arm8/L3/Target/State.lean` assembles
+`arm8TargetL3 : HolAsmTarget 64 arm8_state Arm8L3Projection` from the exact L3
+configuration and `arm8_next`/`arm8_ok`/`arm8_proj`, and proves
+`arm8TargetL3_targetOk`, the `targetOk` half of `encoderCorrect`.  The record is
+tagged `arm8_target_def` and recorded as `pending_statement_review`: the
+`arm8_ast`/`arm8_enc`/`EncodeBitMask` definitions it depends on are still
+mechanically rendered and not source-reviewed.  The per-instruction
+`encoder_correct` simulation proofs remain #1239; `encoderCorrect` is proved
+only for the closed model.
