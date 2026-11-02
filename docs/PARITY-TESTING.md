@@ -392,6 +392,19 @@ are true and all 120 negative guards are false. This is regression evidence,
 not a replay of the complete original proof or cross-language equivalence.
 Recursive/Call register-bound assembly remains separate unfinished work.
 
+On 2026-11-02, additional fresh-seed comparisons against
+`/var/tmp/flapjack-pinned-cake` matched 200 structured source programs and 40
+nested-expression source programs at complete output, as well as 200 Unicode
+source mutations and 500 mutated S-expression inputs (including diagnostics and
+exit status). These are finite tests, not a general parity guarantee:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured --seed 1075209 --count 200
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 903327 --count 40
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --unicode-mutations --seed 998143 --count 200
+python3 scripts/fuzz-cake-sexp-input.py --reference /var/tmp/flapjack-pinned-cake --seed 904188 --count 500
+```
+
 The CakeML command has an exploratory complete-output regression suite:
 `lake build cake` followed by `python3 scripts/check-cake-cli-parity.py`.
 It checks the entire stdout and stderr (byte count and SHA-256), and exit
