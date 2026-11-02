@@ -430,9 +430,8 @@ mutual
                               | none =>
                                   pure (.control (.error calleeLocals calleeGlobals
                                     calleeMemory calleeFfi), calleeClock)
-                        else pure (.control (.error
-                          (if preserveReturnLocals then calleeLocals else fun _ => none)
-                          calleeGlobals calleeMemory calleeFfi), calleeClock)
+                        else pure (.control (.error calleeLocals calleeGlobals
+                          calleeMemory calleeFfi), calleeClock)
                     | .raised calleeLocals calleeGlobals calleeMemory calleeFfi exception value =>
                         match info with
                         | some (_, some (caught, handlerVariable, handlerProgram)) =>
@@ -769,9 +768,7 @@ theorem evalPanValueFfiClockCodeCall_callee_returnedShapeMismatch_error
       memory ffi clock info function arguments (memoryAccess := memoryAccess)
       (contracts := contracts) (memoryHandler := memoryHandler)
       (preserveReturnLocals := preserveReturnLocals) =
-        some (.control (.error
-          (if preserveReturnLocals then bodyLocals else fun _ => none)
-          finalGlobals finalMemory finalFfi),
+        some (.control (.error bodyLocals finalGlobals finalMemory finalFfi),
           min (decPanClock clock) calleeClock) := by
   simp [evalPanValueFfiClockCodeCall, panValueCallArgumentsValue, Option.elim_some,
     harguments, hlookup, hclock, hbody, hmismatch, decPanClock]
