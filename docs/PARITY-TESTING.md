@@ -431,13 +431,21 @@ for accepted programs rather than only diagnostics for unbound arithmetic names.
 Seed `7438291` matched 40 complete outputs from the pinned compiler:
 
 ```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 31428 --count 40
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 7438291 --count 40
 ```
 
 An additional rich run with seed `522901` matched 40 complete outputs, and a
 deep-mutation run with seed `832661` matched output, diagnostics, and exit
 status for 1,000 accepted and rejected inputs. A second deep-mutation run with
-seed `931275` matched 500 inputs. These remain sampled evidence.
+seed `931275` matched 500 inputs. Rich seed `7346295` matched 100 further
+complete outputs. These remain sampled evidence.
+
+`scripts/fuzz-cake-frontend.py --composed-config-cases 50 --compile-seed 7723019`
+also generates standard-basis programs that combine closures, mutable state,
+datatypes, and exception handlers with varied backend options. It compares the
+complete output, diagnostics, and exit status with a pinned compiler supplied
+via `--reference`. The 50 cases for that seed matched; the option adds cases to
+the script's other selected checks.
 
 Use `--backend-options` to compile a closure-capturing program without the
 prelude while varying combinations of closure, BVL, allocation, GC, and stack
@@ -448,7 +456,7 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 ```
 
 Seed `287601` also matched 80 backend-option cases against the pinned compiler;
-seed `93171` matched 100.
+seeds `93171` and `8740163` each matched 100.
 
 Use `--display-mutations` to compare `--types`, `--print_sexp`, their
 combination, and S-expression output with type inference disabled. The input
@@ -472,8 +480,8 @@ inputs in all three modes:
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --sexp-mutations --seed 67129643 --count 300
 ```
 
-Seed `875663` matched 500 additional cases, with accepted and rejected inputs
-in each of the three modes.
+Seeds `875663` and `12057389` each matched 500 additional cases, with accepted
+and rejected inputs in each of the three modes.
 
 Add `--mutations` to apply reproducible single-character edits to small
 declarations with the prelude excluded. This mode compares successful output

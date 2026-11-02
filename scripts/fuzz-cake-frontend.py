@@ -394,6 +394,8 @@ def main():
                         help="additional stateful, recursive and module-dependent programs")
     parser.add_argument("--composed-cases", type=int, default=0,
                         help="combinations of higher-order functions, mutation and datatypes")
+    parser.add_argument("--composed-config-cases", type=int, default=0,
+                        help="composed basis programs with varied backend options")
     parser.add_argument("--integration-cases", type=int, default=len(INTEGRATION_PROGRAMS),
                         help="handwritten end-to-end compiler cases (maximum %(default)s)")
     parser.add_argument("--declaration-cases", type=int, default=100,
@@ -425,7 +427,7 @@ def main():
     parser.add_argument("--edge-seed", type=int, default=83219)
     parser.add_argument("--timeout", type=int, default=90)
     args = parser.parse_args()
-    if (args.type_cases < 0 or args.compile_cases < 0 or args.compile_config_cases < 0 or args.rich_cases < 0 or args.extended_cases < 0 or args.composed_cases < 0 or args.explore_cases < 0 or args.sexp_cases < 0 or
+    if (args.type_cases < 0 or args.compile_cases < 0 or args.compile_config_cases < 0 or args.rich_cases < 0 or args.extended_cases < 0 or args.composed_cases < 0 or args.composed_config_cases < 0 or args.explore_cases < 0 or args.sexp_cases < 0 or
             not 0 <= args.integration_cases <= len(INTEGRATION_PROGRAMS) or
             args.declaration_cases < 0 or args.handler_cases < 0 or not 0 <= args.annotation_cases <= 320 or
             args.cross_context_cases < 0 or
@@ -547,6 +549,16 @@ def main():
         compare(args.reference, args.cake, [], composed_program(composed_rng), args.timeout, True)
     if args.composed_cases:
         print(f"{args.composed_cases} composed programs match complete pinned RISC-V output", flush=True)
+    composed_config_rng = random.Random(args.compile_seed ^ 64195)
+    composed_option_groups = [BACKEND_OPTIONS[i] for i in (0, 1, 2, 3, 4, 5, 6, 7, 8, 11)]
+    for _ in range(args.composed_config_cases):
+        source = composed_program(composed_config_rng)
+        groups = composed_config_rng.sample(composed_option_groups, k=composed_config_rng.randint(1, 4))
+        options = [composed_config_rng.choice(group) for group in groups]
+        compare(args.reference, args.cake, options, source, args.timeout, True)
+    if args.composed_config_cases:
+        print(f"{args.composed_config_cases} composed basis programs match complete RISC-V output "
+              "with varied backend options", flush=True)
     for source in INTEGRATION_PROGRAMS[:args.integration_cases]:
         compare(args.reference, args.cake, [], source, args.timeout, True)
     print(f"{args.integration_cases} integration programs match complete pinned RISC-V output", flush=True)
