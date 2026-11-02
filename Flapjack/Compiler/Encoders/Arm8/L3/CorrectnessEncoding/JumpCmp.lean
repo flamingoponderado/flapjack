@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Overflow
+import Flapjack.Compiler.Encoders.Arm8.Machine.JumpCmpCase
 
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 10000
@@ -207,5 +208,113 @@ theorem arm8Next_addSubShiftedRegister_setflags_xzr (ms : arm8_state) (rm rn : B
   dsimp only [i]
   rw [hrun]
   rfl
+
+/-! ## The flag semantics of the two compare shapes
+
+`ConditionHolds` reads the four flags through the rendered `ConditionTest`
+table.  The arithmetic facts about `AddWithCarry`'s flags at 64 bits are the
+machine model's `jumpCmp_flags_*` lemmas, reached through
+`arm8AddWithCarry_machine`; this keeps the L3 case theorem on the same
+subtraction semantics the machine model already proved against `BitVec.slt`. -/
+
+/-- Boolean equality over a lawful `BEq` is decided equality. -/
+theorem arm8Beq_eq_decide {α : Type} [DecidableEq α] [BEq α] [LawfulBEq α] (a b : α) :
+    (a == b) = decide (a = b) := by
+  rw [Bool.eq_iff_iff, beq_iff_eq, decide_eq_true_eq]
+
+/-- Negated decided truth is decided falsity. -/
+theorem arm8NotDecide_eq_decide_ne {p : Prop} [Decidable p] [Decidable ¬p] :
+    (!decide p) = decide (¬p) := (decide_not (p := p)).symm
+
+/-- The most significant bit of a sixty-four-bit word is bit 63. -/
+theorem arm8GetMsbD_zero_64 (r : BitVec 64) : r.getMsbD 0 = r.getLsbD 63 := by
+  rw [BitVec.getMsbD_eq_getLsbD]
+  simp
+
+/-- The rendered `AddWithCarry` at 64 bits is the machine model's
+`addWithCarry`. -/
+theorem arm8AddWithCarry_machine (x y : BitVec 64) (c : Bool) :
+    AddWithCarry (TN := 64) (x, (y, c)) = addWithCarry x y c := by
+  simp only [AddWithCarry, addWithCarry, BitVec.msb, arm8GetMsbD_zero_64,
+    arm8Beq_eq_decide, arm8NotDecide_eq_decide_ne]
+  rfl
+
+/-- The `C` flag of the `SUBS` compare is "not below" (unsigned). -/
+theorem arm8SubFlags_c (x y : BitVec 64) :
+    (AddWithCarry (TN := 64) (x, (~~~y, true))).2.2.2.1 = !(x.ult y) := by
+  rw [arm8AddWithCarry_machine]
+  exact jumpCmp_flags_c x y
+
+/-- The `Z` flag of the `SUBS` compare is equality. -/
+theorem arm8SubFlags_z (x y : BitVec 64) :
+    (AddWithCarry (TN := 64) (x, (~~~y, true))).2.2.1 = decide (x = y) := by
+  rw [arm8AddWithCarry_machine]
+  exact jumpCmp_flags_z x y
+
+/-- The `N`/`V` pair of the `SUBS` compare is signed less-than. -/
+theorem arm8SubFlags_slt (x y : BitVec 64) :
+    ((AddWithCarry (TN := 64) (x, (~~~y, true))).2.1 !=
+      (AddWithCarry (TN := 64) (x, (~~~y, true))).2.2.2.2) = x.slt y := by
+  rw [arm8AddWithCarry_machine]
+  exact jumpCmp_flags_slt x y
+
+/-- The rendered `ConditionTest` table on the condition codes `cmp_cond`
+emits, over an arbitrary flag tuple. -/
+theorem arm8ConditionTest_cmpCond (cmp : Cmp) (f : Bool × (Bool × (Bool × Bool))) :
+    ConditionTest (arm8CmpCond cmp, f) =
+      (match cmp with
+        | .equal => f.2.1
+        | .less => f.1 != f.2.2.2
+        | .lower => !f.2.2.1
+        | .test => f.2.1
+        | .notEqual => !f.2.1
+        | .notLess => f.1 == f.2.2.2
+        | .notLower => f.2.2.1
+        | .notTest => !f.2.1) := by
+  obtain ⟨n, z, c, v⟩ := f
+  cases cmp <;>
+    simp only [arm8CmpCond, ConditionTest, Flapjack.RiscV.L3.holWordExtract] <;> rfl
+
+/-- The condition code of a non-`test` comparison against the flags of
+`AddWithCarry x (~~~y) true`, i.e. of the subtraction `x - y`. -/
+theorem arm8SubCmp_semantics (cmp : Cmp) (x y : BitVec 64) (hNT : isTest cmp = false) :
+    ConditionTest (arm8CmpCond cmp, (AddWithCarry (TN := 64) (x, (~~~y, true))).2) =
+      wordCmpHOL cmp x y := by
+  rw [arm8ConditionTest_cmpCond]
+  cases cmp
+  case equal =>
+    simp only [wordCmpHOL, arm8SubFlags_z, arm8Beq_eq_decide]
+  case less =>
+    simp only [wordCmpHOL, arm8SubFlags_slt, jumpCmp_holAsmSignedLess_eq]
+  case lower =>
+    simp only [wordCmpHOL, arm8SubFlags_c, Bool.not_not, BitVec.ult_eq_decide_lt]
+  case test => simp [isTest] at hNT
+  case notEqual =>
+    simp only [wordCmpHOL, arm8SubFlags_z, arm8Beq_eq_decide]
+  case notLower =>
+    simp only [wordCmpHOL, arm8SubFlags_c, BitVec.ult_eq_decide_lt]
+  case notLess =>
+    have h := arm8SubFlags_slt x y
+    simp only [wordCmpHOL, jumpCmp_holAsmSignedLess_eq]
+    rw [← h]
+    simp only [bne, Bool.not_not]
+  case notTest => simp [isTest] at hNT
+
+/-- The condition code of a `test`/`notTest` comparison against the flags of
+the `ANDS` compare, i.e. of `x &&& y`. -/
+theorem arm8AndCmp_semantics (cmp : Cmp) (x y : BitVec 64) (hT : isTest cmp = true) :
+    ConditionTest (arm8CmpCond cmp,
+      (BitVec.msb (x &&& y), ((x &&& y) == (0 : BitVec 64), (false, false)))) =
+      wordCmpHOL cmp x y := by
+  rw [arm8ConditionTest_cmpCond]
+  cases cmp
+  case equal => simp [isTest] at hT
+  case less => simp [isTest] at hT
+  case lower => simp [isTest] at hT
+  case test => simp only [wordCmpHOL, AndOp.and]; rfl
+  case notEqual => simp [isTest] at hT
+  case notLess => simp [isTest] at hT
+  case notLower => simp [isTest] at hT
+  case notTest => simp only [wordCmpHOL, AndOp.and, bne]; rfl
 
 end Flapjack.Compiler.Encoders.Arm8.L3
