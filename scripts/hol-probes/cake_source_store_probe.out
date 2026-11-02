@@ -1,3 +1,12 @@
+type_stamp_type=:mlstring -> num -> stamp
+exn_stamp_type=:num -> stamp
+sem_env_v_type=:α sem_env -> (mlstring, mlstring, α) namespace
+sem_env_c_type=:α sem_env -> (mlstring, mlstring, num # stamp) namespace
+litv_type=:lit -> v
+conv_type=:stamp option -> v list -> v
+loc_type=:bool -> num -> v
+vector_type=:v list -> v
+env_type=:v sem_env -> num # num -> v
 closure_type=:v sem_env -> mlstring -> exp -> v
 recclosure_type=:v sem_env -> (mlstring # mlstring # exp) list -> mlstring -> v
 store_assign_type=:num -> α store_v -> α store_v list -> α store_v list option

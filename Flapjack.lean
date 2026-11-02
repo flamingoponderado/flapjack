@@ -323,6 +323,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelInduction
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelSourceCases
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Equality
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ListConversion
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType

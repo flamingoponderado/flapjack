@@ -1,9 +1,9 @@
 import Flapjack.AstHOL.Syntax
 import Flapjack.FfiHOL
 
-/-! CakeML source-semantics value and store carriers. Statement review is
-pending; the source evaluator and compiler correctness theorem are not yet
-ported by this module. -/
+/-! CakeML source-semantics value and store carriers. Individual declarations
+are classified in the theorem map; this module does not establish evaluator or
+compiler correctness. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Basis.Pure.MlString
 

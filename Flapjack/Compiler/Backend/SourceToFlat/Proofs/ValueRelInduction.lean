@@ -1,8 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
 
 /-! Source-shaped induction for the mutually recursive source-to-flat
-relations. This is Flapjack infrastructure: the relation and its complete
-correspondence with HOL are still under review. -/
+relations. This is Flapjack infrastructure derived from their mutual recursor. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Basis.Pure.MlString
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendCommon

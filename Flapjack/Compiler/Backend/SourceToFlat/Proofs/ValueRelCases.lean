@@ -1,14 +1,14 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
 
-/-! Inversion facts for Flapjack's factored source-to-flat value relation.
-These are infrastructure, not reviewed ports of the HOL relation equations. -/
+/-! Inversion facts for the factored source-to-flat value relation. These are
+Flapjack infrastructure, rather than separately tagged HOL equations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open Flapjack.Compiler.Backend.BackendCommon
 
 /-- A related source closure must be a compiled flat closure with related
 captured locals and a compatible global environment. This is an inversion
-lemma for the preliminary factored relation, not yet a reviewed HOL port. -/
+lemma for the factored relation, not a separate HOL theorem port. -/
 theorem valueRel_closure_iff (genv : GlobalEnv) (sourceEnv : SemEnv Value)
     (name : VarN) (body : AstHOL.Exp) (flat : FlatSem.Value) :
     ValueRel genv (.closure sourceEnv name body) flat ↔
@@ -28,8 +28,7 @@ theorem valueRel_closure_iff (genv : GlobalEnv) (sourceEnv : SemEnv Value)
     exact .closure genv compMap globalEnv sourceLocal name body flatLocal trace traces locals globals length
 
 /-- Recursive closures relate either to a compiled local recursive closure or
-to the top-level global-closure representation. The factored relation remains
-under HOL correspondence review. -/
+to the top-level global-closure representation. -/
 theorem valueRel_recclosure_iff (genv : GlobalEnv) (sourceEnv : SemEnv Value)
     (funs : List (VarN × VarN × AstHOL.Exp)) (name : VarN) (flat : FlatSem.Value) :
     ValueRel genv (.recclosure sourceEnv funs name) flat ↔
@@ -136,7 +135,7 @@ theorem valueRel_conv_iff (genv : GlobalEnv) (stamp : Option Stamp)
       exact valueRel_constructor genv sourceCtor flatCtor sources flats related lookup
 
 /-- Constructor inversion in the two-disjunct shape used by the original
-proof. This is an infrastructure theorem over the still-unreviewed relation. -/
+proof. This is a Flapjack infrastructure theorem. -/
 theorem valueRel_conv_cases (genv : GlobalEnv) (stamp : Option Stamp)
     (sources : List SemanticPrimitivesHOL.Value) (flat : FlatSem.Value) :
     ValueRel genv (.conv stamp sources) flat ↔

@@ -3,20 +3,27 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindLocals
 import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
 import Mathlib.Data.List.Forall2
 
-/-! Source-to-flat value and environment relation infrastructure. Nested HOL
-list and lookup premises are factored through mutual inductive helpers for
-Lean's positivity checker. Exact HOL correspondence and compiler simulation
-are not yet established. -/
+/-! Source-to-flat value and environment relations. Nested HOL list and lookup
+premises are factored through mutual inductive helpers for Lean's positivity
+checker. The compiler simulation remains a separate obligation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Basis.Pure.MlString
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendCommon
 
+namespace ValueRelPort
+
+/-- Roundtrip for the two canonical finite-map fields of the global carrier. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env :=
+  GlobalEnv.holFmapAsFiniteSupportWitness env
+
+end ValueRelPort
+
 mutual
-/-- Flapjack representation of the source-to-flat value relation. HOL includes
-both `recclosure` and `topRecclosure` forms; the latter is not an extra Lean
-case. Nested HOL list and lookup premises use the helpers below. Full
-correspondence, including the mutual induction and carriers, remains under
-review. -/
+/-- Source-to-flat value relation. Nested list and lookup premises use the
+mutual helpers below. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel"
+  (fmap_as_finite_support := [c, tys])]
 inductive ValueRel : GlobalEnv → SemanticPrimitivesHOL.Value → FlatSem.Value → Prop where
   | literal (genv : GlobalEnv) (lit : Lit) :
       ValueRel genv (.litv lit) (.litv lit)
@@ -76,6 +83,8 @@ inductive ValueListRel : GlobalEnv → List SemanticPrimitivesHOL.Value → List
       ValueListRel genv (source :: sources) (flat :: flats)
 
 /-- Flapjack representation of the source-to-flat local environment relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel"
+  (fmap_as_finite_support := [c, tys])]
 inductive EnvRel : GlobalEnv → Namespace ModN VarN SemanticPrimitivesHOL.Value → List (VarN × FlatSem.Value) → Prop where
   | empty (genv : GlobalEnv) : EnvRel genv nsEmpty []
   | bind (genv : GlobalEnv) (name : VarN) (source : SemanticPrimitivesHOL.Value)
@@ -84,6 +93,8 @@ inductive EnvRel : GlobalEnv → Namespace ModN VarN SemanticPrimitivesHOL.Value
       EnvRel genv (nsBind name source env) ((name, flat) :: flatEnv)
 
 /-- Flapjack representation of the source-to-flat global environment invariant. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel"
+  (fmap_as_finite_support := [c, tys])]
 inductive GlobalEnvInv : GlobalEnv → Environment → (VarN → Prop) → SemEnv SemanticPrimitivesHOL.Value → Prop where
   | intro (genv : GlobalEnv) (compMap : Environment) (shadowers : VarN → Prop)
       (env : SemEnv SemanticPrimitivesHOL.Value)

@@ -671,7 +671,7 @@ run_probe cake_source_apply_probeScript.sml cake_source_apply_probe.out \
   do_app_type ref_alloc ref_assign ref_invalid ref_wrong_type list_append shift8 eq_mismatch byte_alloc byte_negative byte_read byte_safe_oob byte_unsafe_oob byte_update array_fixed array_update array_negative vector_unsafe substring substring_oob byte_copy_overlap string_copy_byte byte_xor byte_xor_short string_sub_negative env_id ffi_empty thunk_alloc ffi_return ffi_final int_div_pos int_div_neg int_mod_neg int_div_zero int_to_w8 int_to_char_bad word_add bool_not arith_bad_type "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_store_probeScript.sml cake_source_store_probe.out \
-  closure_type recclosure_type store_assign_type compiler_type oracle_type state_ffi_type state_eval_type ref_same thunk_update thunk_final allocation lookup update invalid wrong_type "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+  type_stamp_type exn_stamp_type sem_env_v_type sem_env_c_type litv_type conv_type loc_type vector_type env_type closure_type recclosure_type store_assign_type compiler_type oracle_type state_ffi_type state_eval_type ref_same thunk_update thunk_final allocation lookup update invalid wrong_type "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_constructor_probeScript.sml cake_source_constructor_probe.out \
   find_type build_env_type same_type same_ctor exn_type check wrong_arity build "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"

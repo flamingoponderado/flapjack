@@ -1,5 +1,41 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "v_rel",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRel.lean",
+    "lean_name": "ValueRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "reviewer": "Compared all typed HOL value-relation rules, induction and case equations. The eight cases preserve literal, constructor lookup and pointwise fields, tuple, local and top-level recursive closures, offset locations and vectors; the additional Lean list and lookup relations are positivity helpers. valueRel_source_cases and valueRel_source_induction_all establish the source-shaped cases and least-relation induction. GlobalEnv.c and GlobalEnv.tys use the reviewed canonical finite-map representation. Every global-list access is guarded by the original bound, under which globalSlot_eq_get proves agreement with list indexing."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "v_rel",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRel.lean",
+    "lean_name": "EnvRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "reviewer": "Compared the typed HOL mutual environment rules and case equation: empty environments relate and a binding extends both sides with the same name and related values. The source-shaped cases and induction cover this relation jointly with values and global invariants. GlobalEnv.c and GlobalEnv.tys use the reviewed canonical finite-map representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "v_rel",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRel.lean",
+    "lean_name": "GlobalEnvInv",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "reviewer": "Compared the typed HOL mutual global invariant rule: non-shadowed value lookups have the same existential global slot and value relation; constructor lookups retain arity, mapped type group and type-map consistency. Bounded optional lookup agrees with HOL list indexing by globalSlot_eq_get. The source-shaped cases and induction account for the positivity-friendly global-lookup helper. GlobalEnv.c and GlobalEnv.tys use the reviewed canonical finite-map representation."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
     "hol_name": "evaluate_def",
@@ -108916,16 +108952,16 @@
     "hol_name": "sem_env",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "SemEnv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete HOL sem_env fields and typed projections: the value namespace is polymorphic in its payload, and the constructor namespace maps module and constructor names to an arity and stamp. Both use the reviewed exact namespace and MlString carriers."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "stamp",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "Stamp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both HOL stamp constructors and their typed original signatures: datatype constructor names use mlstring and a natural type identifier; exception stamps use a natural identifier. ConN is the reviewed exact MlString alias."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -108948,8 +108984,8 @@
     "hol_name": "v",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "Value",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all seven HOL value constructors and their typed signatures: literals, optional constructor stamps and value lists, lexical and recursive closures with source environments, flagged natural locations, vectors, and Eval environments with a pair of natural identifiers. The literal, source syntax, MlString, namespace, stamp and sem_env carriers retain their original shapes."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
