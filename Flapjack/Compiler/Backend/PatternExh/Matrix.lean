@@ -66,9 +66,9 @@ def expandList : List Pat → List (List Pat)
   | p :: ps => mkProds (expand p) (expandList ps)
 end
 
-/-- Turn each pattern into a one-column matrix row. -/
+/-- Turn each element into a one-column matrix row. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "mk_rows_def"]
-def mkRows : List Pat → List (List Pat)
+def mkRows {α : Type} : List α → List (List α)
   | [] => []
   | p :: ps => [p] :: mkRows ps
 
@@ -84,8 +84,8 @@ def tagCtors : List (Nat × Nat) → List Ctor
   | [] => []
   | (t, a) :: xs => .tagC t a :: tagCtors xs
 
-/-- Remove duplicates while preserving each constructor's last occurrence. -/
-@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "ctor_nub_def"]
+/-- Remove duplicates while preserving each constructor's last occurrence.
+The executable specializes the source's polymorphic operation to `Ctor`. -/
 def ctorNub : List Ctor → List Ctor
   | [] => []
   | x :: xs => if x ∈ xs then ctorNub xs else x :: ctorNub xs
@@ -99,18 +99,58 @@ def ctorsOf : Pat → Option (List Ctor)
   | .cons (some (_, none)) _ => none
   | .cons (some (t, some siblings)) qs => some (ctorNub (.tagC t qs.length :: tagCtors siblings))
 
-/-- Keep members of the first constructor list that occur in the second. -/
-@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "ctor_keep_def"]
+/-- Keep members of the first constructor list that occur in the second.
+The executable specializes the source's polymorphic operation to `Ctor`. -/
 def ctorKeep : List Ctor → List Ctor → List Ctor
   | [], _ => []
   | x :: xs, ys => if x ∈ ys then x :: ctorKeep xs ys else ctorKeep xs ys
 
-/-- Intersect known constructor classes, treating unknown as no restriction. -/
-@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "ctor_inter_def"]
+/-- Intersect known constructor classes, treating unknown as no restriction.
+The executable specializes the source's polymorphic operation to `Ctor`. -/
 def ctorInter : Option (List Ctor) → Option (List Ctor) → Option (List Ctor)
   | none, ys => ys
   | xs, none => xs
   | some xs, some ys => some (ctorKeep xs ys)
+
+section SourcePolymorphic
+open Classical
+
+/-- HOL's unrestricted polymorphic duplicate elimination. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "ctor_nub_def"]
+noncomputable def ctorNubHOL {α : Type} : List α → List α
+  | [] => []
+  | x :: xs => if x ∈ xs then ctorNubHOL xs else x :: ctorNubHOL xs
+
+/-- HOL's unrestricted polymorphic membership filter. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "ctor_keep_def"]
+noncomputable def ctorKeepHOL {α : Type} : List α → List α → List α
+  | [], _ => []
+  | x :: xs, ys => if x ∈ ys then x :: ctorKeepHOL xs ys else ctorKeepHOL xs ys
+
+/-- HOL's unrestricted optional-list intersection. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "ctor_inter_def"]
+noncomputable def ctorInterHOL {α : Type} : Option (List α) → Option (List α) → Option (List α)
+  | none, ys => ys
+  | xs, none => xs
+  | some xs, some ys => some (ctorKeepHOL xs ys)
+
+/-- The executed constructor-specific duplicate elimination agrees with the
+source operation at the constructor carrier. -/
+theorem ctorNub_eq_HOL (xs : List Ctor) : ctorNub xs = ctorNubHOL xs := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih => simp [ctorNub, ctorNubHOL, ih]
+
+/-- The executed constructor filter agrees with the source specialization. -/
+theorem ctorKeep_eq_HOL (xs ys : List Ctor) : ctorKeep xs ys = ctorKeepHOL xs ys := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih => simp [ctorKeep, ctorKeepHOL, ih]
+
+/-- The executed constructor intersection agrees with the source specialization. -/
+theorem ctorInter_eq_HOL (xs ys : Option (List Ctor)) : ctorInter xs ys = ctorInterHOL xs ys := by
+  cases xs <;> cases ys <;> simp [ctorInter, ctorInterHOL, ctorKeep_eq_HOL]
+end SourcePolymorphic
 
 /-- Combine the constructor information in a matrix's first column. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "col_ctors_def"]

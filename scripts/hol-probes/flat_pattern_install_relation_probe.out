@@ -3,6 +3,29 @@ pattern_lit_type=:lit -> pat
 pattern_pos_type=:num -> position -> position
 pattern_test_type=:position -> dTest -> dGuard
 pattern_if_type=:dGuard -> dTree -> dTree -> dTree
+exh_tag_ctor_type=:num -> num -> ctor
+exh_ctor_arity=(∀(t :num) (a :num). ctor_arity (TagC t a) = a) ∧ (∀(a :num). ctor_arity (TupC a) = a) ∧ ctor_arity RefC = (1 :num)
+exh_anys=anys (0 :num) = ([] :pat list) ∧ ∀(n :num). anys (SUC n) = Any::anys n
+exh_add_head=(∀(x :α). add_head x ([] :α list list) = ([] :α list list)) ∧ ∀(x :α) (ys :α list) (yss :α list list). add_head x (ys::yss) = (x::ys)::add_head x yss
+exh_mk_prods=(∀(ys :α list list). mk_prods ([] :α list) ys = ([] :α list list)) ∧ ∀(x :α) (xs :α list) (ys :α list list). mk_prods (x::xs) ys = add_head x ys ++ mk_prods xs ys
+exh_mk_refs=mk_refs ([] :pat list) = ([] :pat list) ∧ ∀(p :pat) (ps :pat list). mk_refs (p::ps) = Ref p::mk_refs ps
+exh_mk_conses=(∀(t :(num # (num # num) list option) option). mk_conses t ([] :pat list list) = ([] :pat list)) ∧ ∀(t :(num # (num # num) list option) option) (ps :pat list) (pss :pat list list). mk_conses t (ps::pss) = (Cons t ps :pat)::mk_conses t pss
+exh_expand=expand Any = [Any] ∧ (∀(l :lit). expand (Lit l :pat) = [(Lit l :pat)]) ∧ (∀(p :pat) (q :pat). expand (Or p q :pat) = expand p ++ expand q) ∧ (∀(p :pat). expand (Ref p) = mk_refs (expand p)) ∧ (∀(t :(num # (num # num) list option) option) (ps :pat list). expand (Cons t ps :pat) = mk_conses t (expand_list ps)) ∧ expand_list ([] :pat list) = [([] :pat list)] ∧ ∀(p :pat) (ps :pat list). expand_list (p::ps) = mk_prods (expand p) (expand_list ps)
+exh_mk_rows=mk_rows ([] :α list) = ([] :α list list) ∧ ∀(p :α) (ps :α list). mk_rows (p::ps) = [p]::mk_rows ps
+exh_or_rows=or_rows ([] :(pat # α) list) = ([] :pat list list) ∧ ∀(rows :(pat # α) list) (p :pat) (e :α). or_rows ((p,e)::rows) = mk_rows (expand p) ++ or_rows rows
+exh_tag_ctors=tag_ctors ([] :(num # num) list) = ([] :ctor list) ∧ ∀(t :num) (sibs :(num # num) list) (a :num). tag_ctors ((t,a)::sibs) = TagC t a::tag_ctors sibs
+exh_ctor_nub=ctor_nub ([] :α list) = ([] :α list) ∧ ∀(x :α) (xs :α list). ctor_nub (x::xs) = if MEM x xs then ctor_nub xs else x::ctor_nub xs
+exh_ctors_of=ctors_of Any = (NONE :ctor list option) ∧ ctors_of (Lit (v0 :lit) :pat) = (NONE :ctor list option) ∧ ctors_of (Or (v1 :pat) (v2 :pat) :pat) = (NONE :ctor list option) ∧ ctors_of (Ref (v3 :pat)) = SOME [RefC] ∧ ctors_of (Cons (NONE :(num # (num # num) list option) option) (qs :pat list) :pat) = SOME [TupC (LENGTH qs)] ∧ ctors_of (Cons (SOME ((t :num),(NONE :(num # num) list option))) qs :pat) = (NONE :ctor list option) ∧ ctors_of (Cons (SOME (t,SOME (sibs :(num # num) list))) qs :pat) = SOME (ctor_nub (TagC t (LENGTH qs)::tag_ctors sibs))
+exh_ctor_keep=(∀(ys :α list). ctor_keep ([] :α list) ys = ([] :α list)) ∧ ∀(x :α) (xs :α list) (ys :α list). ctor_keep (x::xs) ys = if MEM x ys then x::ctor_keep xs ys else ctor_keep xs ys
+exh_ctor_inter=ctor_inter (NONE :α list option) (ys' :α list option) = ys' ∧ ctor_inter (SOME (v2 :α list)) (NONE :α list option) = SOME v2 ∧ ctor_inter (SOME (xs :α list)) (SOME (ys :α list)) = SOME (ctor_keep xs ys)
+exh_col_ctors=col_ctors ([] :pat list list) = (NONE :ctor list option) ∧ (∀(rows :pat list list). col_ctors (([] :pat list)::rows) = col_ctors rows) ∧ ∀(v0 :pat list) (rows :pat list list) (p :pat). col_ctors ((p::v0)::rows) = ctor_inter (ctors_of p) (col_ctors rows)
+exh_spec_row=spec_row (c :ctor) ([] :pat list) = ([] :pat list list) ∧ spec_row c (Any::(rest :pat list)) = [anys (ctor_arity c) ++ rest] ∧ spec_row c ((Cons (NONE :(num # (num # num) list option) option) (qs :pat list) :pat)::rest) = (if c = TupC (LENGTH qs) then [qs ++ rest] else ([] :pat list list)) ∧ spec_row c ((Cons (SOME (ts :num # (num # num) list option)) qs :pat)::rest) = (if c = TagC (FST ts) (LENGTH qs) then [qs ++ rest] else ([] :pat list list)) ∧ spec_row c (Ref (q :pat)::rest) = (if c = RefC then [q::rest] else ([] :pat list list)) ∧ spec_row c ((Lit (l :lit) :pat)::rest) = ([] :pat list list) ∧ spec_row c ((Or (p :pat) q :pat)::rest) = ([] :pat list list)
+exh_spec_mat=(∀(c :ctor). spec_mat c ([] :pat list list) = ([] :pat list list)) ∧ ∀(c :ctor) (r :pat list) (rows :pat list list). spec_mat c (r::rows) = spec_row c r ++ spec_mat c rows
+exh_spec_mats=(∀(rows :pat list list). spec_mats ([] :ctor list) rows = ([] :pat list list list)) ∧ ∀(c :ctor) (cs :ctor list) (rows :pat list list). spec_mats (c::cs) rows = spec_mat c rows::spec_mats cs rows
+exh_default_row=default_row (Any::(rest :pat list)) = [rest] ∧ default_row ([] :pat list) = ([] :pat list list) ∧ default_row ((Cons (v4 :(num # (num # num) list option) option) (v5 :pat list) :pat)::(v1 :pat list)) = ([] :pat list list) ∧ default_row ((Or (v6 :pat) (v7 :pat) :pat)::v1) = ([] :pat list list) ∧ default_row ((Lit (v8 :lit) :pat)::v1) = ([] :pat list list) ∧ default_row (Ref (v9 :pat)::v1) = ([] :pat list list)
+exh_default_mat=default_mat ([] :pat list list) = ([] :pat list list) ∧ ∀(r :pat list) (rows :pat list list). default_mat (r::rows) = default_row r ++ default_mat rows
+exh_matrix=(exh_matrix ([] :pat list list) ⇔ F) ∧ (∀(rows :pat list list) (r :pat list). exh_matrix (r::rows) ⇔ if NULL r then T else case col_ctors (r::rows) of (NONE :ctor list option) => exh_matrix (default_mat (r::rows)) | SOME cs => exh_mats (spec_mats cs (r::rows))) ∧ (exh_mats ([] :pat list list list) ⇔ T) ∧ ∀(ms :pat list list list) (m :pat list list). exh_mats (m::ms) ⇔ exh_matrix m ∧ exh_mats ms
+exh_rows=∀(rows :(pat # α) list). exh_rows rows ⇔ exh_matrix (or_rows rows)
 pure_cc=∀(f :β -> δ) (cc :α -> δ -> γ). pure_cc f cc = (λ(cfg :α) (prog :β). (let (prog1 :δ) = f prog in cc cfg prog1))
 pure_co=∀(f :β -> γ). (pure_co f :α # β -> α # γ) = (I :α -> α) ## f
 snd_pure_co=SND (pure_co (co :γ -> α) (x :β # γ)) = co (SND x)
