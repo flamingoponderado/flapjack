@@ -40,4 +40,37 @@ theorem arm8Run_address (imm : BitVec 64) (rd : BitVec 5) (st : arm8_state) :
     Run (.Address (false, (imm, rd))) st = «write'X» ((st.PC + imm), rd) st := by
   simp only [Run, «dfn'Address», Bool.false_eq_true, if_false]
 
+/-- The four encoded bytes of the address word. -/
+theorem arm8EncodeBytes_address (imm : BitVec 64) (rd : BitVec 5)
+    (h : BitVec.signExtend 64 (BitVec.setWidth 21
+      (holWordExtract 19 20 2 imm ++ holWordExtract 2 1 0 imm)) = imm) :
+    arm8Encode (.Address (false, (imm, rd))) =
+      [BitVec.ofNat 8 ((arm8AddressWord imm rd >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8AddressWord imm rd >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8AddressWord imm rd >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8AddressWord imm rd >>> 24).toNat)] := by
+  rw [arm8Encode, arm8Encode_address imm rd h]
+
+/-- `arm8_ast` lowers an in-range `Loc` to the single `Address` instruction. -/
+theorem arm8Ast_loc_small (register : Nat) (offset : BitVec 64)
+    (h : arm8LocInRange offset = true) :
+    arm8Ast (.loc register offset) = [.Address (false, offset, register)] := by
+  simp only [arm8Ast, arm8LocInRange] at h ⊢
+  rw [h]
+  simp
+
+/-- The encoded bytes of the in-range `Loc` lowering. -/
+theorem arm8Enc_loc_small (register : Nat) (offset : BitVec 64)
+    (h : arm8LocInRange offset = true) :
+    arm8Enc (.loc register offset) = arm8Encode (.Address (false, offset, register)) := by
+  rw [arm8Enc, arm8Ast_loc_small register offset h]
+  simp
+
+/-- The in-range `Loc` lowering encodes to four bytes. -/
+theorem arm8Enc_loc_small_length (register : Nat) (offset : BitVec 64)
+    (h : arm8LocInRange offset = true) :
+    (arm8Enc (.loc register offset)).length = 4 := by
+  rw [arm8Enc_loc_small register offset h]
+  exact arm8Encode_length _
+
 end Flapjack.Compiler.Encoders.Arm8.L3
