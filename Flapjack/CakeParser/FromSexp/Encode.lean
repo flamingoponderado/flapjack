@@ -205,4 +205,31 @@ def expsexpFuns : List (VarN × VarN × Exp) → List Sexp
 termination_by fs => sizeOf fs
 end
 
+/-- Encode the constructor and parameter lists of a datatype definition. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "type_defsexp_def"]
+def typeDefsexp (td : TypeDef) : Sexp := listsexp <| td.map fun (vs, name, cs) =>
+  .cons (listsexp (vs.map expsexpString)) (.cons (expsexpString name) (listsexp (cs.map fun (c, ts) =>
+    .cons (expsexpString c) (listsexp (ts.map typesexp)))))
+
+mutual
+/-- Encode CakeML declarations. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "decsexp_def"]
+def decsexp : Dec → Sexp
+  | .dlet l p e => expsexpNode "Dlet" [locssexp l, patsexp p, expsexp e]
+  | .dletrec l fs => expsexpNode "Dletrec" [locssexp l, listsexp (expsexpFuns fs)]
+  | .dtype l td => expsexpNode "Dtype" [locssexp l, typeDefsexp td]
+  | .dtabbrev l ns n t => expsexpNode "Dtabbrev" [locssexp l, listsexp (ns.map expsexpString), expsexpString n, typesexp t]
+  | .dexn l n ts => expsexpNode "Dexn" [locssexp l, expsexpString n, listsexp (ts.map typesexp)]
+  | .dmod n ds => expsexpNode "Dmod" [expsexpString n, listsexp (decsexpList ds)]
+  | .dlocal a b => expsexpNode "Dlocal" [listsexp (decsexpList a), listsexp (decsexpList b)]
+  | .denv n => expsexpNode "Denv" [expsexpString n]
+termination_by d => sizeOf d
+
+/-- Recursive map used by `decsexp` for nested declaration lists. -/
+def decsexpList : List Dec → List Sexp
+  | [] => []
+  | d :: ds => decsexp d :: decsexpList ds
+termination_by ds => sizeOf ds
+end
+
 end Flapjack.CakeParser.FromSexp

@@ -483,4 +483,121 @@ theorem expsexp_injective (left right : Exp) (h : expsexp left = expsexp right) 
   have decoded := congrArg decodeExp h
   simpa [decodeExp_expsexp] using decoded
 
+/-- Lists of encoded mlstrings round trip through the generic list decoder. -/
+theorem decodeStringList (xs : List MlString) :
+    decodeList destString (listsexp (xs.map expsexpString)) = some xs := by
+  apply decodeList_listsexp
+  intro x _
+  exact destString_expsexpString x
+
+/-- Lists of encoded types round trip through the type-list decoder. -/
+theorem decodeTypeList_map (xs : List AstT) :
+    decodeTypeList (listsexp (xs.map typesexp)) = some xs := by
+  rw [← typesexpList_eq_map]
+  exact decodeTypeList_typesexpList xs
+
+/-- Datatype definition constructor lists round trip. -/
+theorem decodeTypeDefConstructors (xs : List (MlString × List AstT)) :
+    decodeList (decodePair destString decodeTypeList)
+      (listsexp (xs.map (fun (name, ts) => .cons (expsexpString name) (listsexp (ts.map typesexp))))) = some xs := by
+  apply decodeList_listsexp
+  intro x _
+  rcases x with ⟨name, ts⟩
+  simp [decodePair, destString_expsexpString, decodeTypeList_map]
+
+/-- Encoded datatype definitions round trip. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexptype_def_type_defsexp"]
+theorem decodeTypeDef_typeDefsexp (td : TypeDef) : decodeTypeDef (typeDefsexp td) = some td := by
+  unfold decodeTypeDef typeDefsexp
+  apply decodeList_listsexp
+  intro x _
+  rcases x with ⟨vs, name, cs⟩
+  simp [decodePair, decodeStringList, destString_expsexpString, decodeTypeDefConstructors]
+
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "type_defsexp_11"]
+theorem typeDefsexp_injective (a b : TypeDef) : typeDefsexp a = typeDefsexp b ↔ a = b := by
+  constructor
+  · intro h
+    have decoded := congrArg decodeTypeDef h
+    simpa [decodeTypeDef_typeDefsexp] using decoded
+  · rintro rfl
+    rfl
+
+/-- The declaration encoder helper is the source's map. -/
+theorem decsexpList_eq_map (ds : List Dec) : decsexpList ds = ds.map decsexp := by
+  induction ds with
+  | nil => simp [decsexpList]
+  | cons d ds ih => simp [decsexpList, ih]
+
+mutual
+/-- Decoding encoded declarations returns the original declaration. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpdec_decsexp"]
+theorem decodeDec_decsexp (d : Dec) : decodeDec (decsexp d) = some d := by
+  cases d with
+  | dlet l p e =>
+    simp (config := { decide := true }) [decsexp, expsexpNode, listsexp, decodeDec,
+      decodeLoc_locssexp, decodePattern_patsexp, decodeExp_expsexp]
+  | dletrec l fs =>
+    have ih := decodeFunctions_expsexpFuns fs
+    simp only [listsexp] at ih
+    simp (config := { decide := true }) [decsexp, expsexpNode, listsexp, decodeDec,
+      decodeLoc_locssexp, ih]
+  | dtype l td =>
+    simp (config := { decide := true }) [decsexp, expsexpNode, listsexp, decodeDec,
+      decodeLoc_locssexp, decodeTypeDef_typeDefsexp]
+  | dtabbrev l ns name type =>
+    have ih := decodeStringList ns
+    simp only [listsexp] at ih
+    simp (config := { decide := true }) [decsexp, expsexpNode, listsexp, decodeDec,
+      decodeLoc_locssexp, destString_expsexpString, decodeType_typesexp, ih]
+  | dexn l name ts =>
+    have ih := decodeTypeList_map ts
+    simp only [listsexp] at ih
+    simp (config := { decide := true }) [decsexp, expsexpNode, listsexp, decodeDec,
+      decodeLoc_locssexp, destString_expsexpString, ih]
+  | dmod name ds =>
+    have ih := decodeDecList_decsexpList ds
+    simp only [listsexp] at ih
+    simp (config := { decide := true }) [decsexp, expsexpNode, listsexp, decodeDec,
+      destString_expsexpString, ih]
+  | dlocal a b =>
+    have ia := decodeDecList_decsexpList a
+    have ib := decodeDecList_decsexpList b
+    simp only [listsexp] at ia ib
+    simp (config := { decide := true }) [decsexp, expsexpNode, listsexp, decodeDec, ia, ib]
+  | denv name =>
+    simp (config := { decide := true }) [decsexp, expsexpNode, listsexp, decodeDec,
+      destString_expsexpString]
+termination_by sizeOf d
+
+/-- Encoded declaration lists round trip. -/
+theorem decodeDecList_decsexpList (ds : List Dec) :
+    decodeDecList (listsexp (decsexpList ds)) = some ds := by
+  cases ds with
+  | nil => simp (config := { decide := true }) [decsexpList, listsexp, decodeDecList]
+  | cons d ds =>
+    have ih := decodeDecList_decsexpList ds
+    simp only [listsexp] at ih
+    simp [decsexpList, listsexp, decodeDecList, decodeDec_decsexp d, ih]
+termination_by sizeOf ds
+end
+
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "decsexp_11"]
+theorem decsexp_injective (a b : Dec) : decsexp a = decsexp b ↔ a = b := by
+  constructor
+  · intro h
+    have decoded := congrArg decodeDec h
+    simpa [decodeDec_decsexp] using decoded
+  · rintro rfl
+    rfl
+
+/-- The executable's whole-program encoder round trips through its
+declaration-list decoder. This assembles the HOL component lemmas for the
+Flapjack driver; it has no separate HOL declaration. -/
+theorem decodeProgram_toSexp (ds : List Dec) :
+    decodeDecList (Flapjack.CakeParser.ToSexp.program ds) = some ds := by
+  unfold Flapjack.CakeParser.ToSexp.program
+  rw [← decsexpList_eq_map]
+  exact decodeDecList_decsexpList ds
+
 end Flapjack.CakeParser.FromSexp
