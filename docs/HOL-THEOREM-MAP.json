@@ -6,6 +6,54 @@
       "c",
       "tys"
     ],
+    "hol_name": "src_orac_env_invs_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "srcOracEnvInvs",
+    "reviewer": "Compared the typed original three cases: no Eval state is true; declaration mode is false; oracle mode requires the same next configuration, valid environment store, equal generation count, and bounded nested environment lookup with matching tree lookups and reviewed global invariant. Dependent list indexing is guarded by precisely the original bounds. The compiler payload is independent of the source state and the canonical finite-map qualifier covers the global environment fields."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "hol_name": "src_orac_invs_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "srcOracInvs",
+    "reviewer": "Compared the typed original conjunction of step, environment and generation invariants, including the independently polymorphic compiler payload and the HOL inhabitance needed by THE. Each component is separately reviewed; the canonical finite-map qualifier covers the global environment fields."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "hol_name": "src_orac_invs_weak",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "srcOracInvs_growth",
+    "reviewer": "Compared the typed original implication: the old oracle invariant, constructor and type finite-map submap conditions, and subglobals premise imply the invariant for the new global environment. finiteSubmap is the lookup characterization of the original submap; both canonical global finite-map fields are named by the qualifier. No target invariant or extra success premise is assumed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "hol_name": "invariant_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "factoredInvariant",
+    "reviewer": "Compared all ten conjuncts with the fully typed original invariant: constructor and type-map validity, source/flat states, index range, source-oracle conditions, compiler-oracle relation, globals equality, reserved reference, generation validity and final-index match. Source FFI and flat compiler payload types remain independent, and the standard HOL inhabitance required for THE is explicit. The reviewed canonical global environment c and tys fields are covered by the qualifier; compiler environment tree maps retain their reviewed sptree representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
     "hol_name": "result_rel",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateControl.lean",
     "lean_name": "ResultRel",

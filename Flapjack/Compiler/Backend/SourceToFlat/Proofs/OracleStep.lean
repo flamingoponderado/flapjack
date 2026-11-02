@@ -13,6 +13,15 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 private instance : Nonempty Config :=
   ⟨{ next := ⟨0, 0, 0⟩, modEnv := emptyEnv, patternCfg := ⟨0⟩, envs := ⟨0, .ln⟩ }⟩
 
+namespace OracleStepPort
+
+/-- Roundtrip for the global carrier's canonical finite maps. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env :=
+  GlobalEnv.holFmapAsFiniteSupportWitness env
+
+end OracleStepPort
+
 /-- Declaring an environment in oracle mode preserves the call relation:
 the current generation grows by one entry, and earlier generations are
 unchanged. -/
@@ -291,9 +300,9 @@ noncomputable def srcOracGenInv (evalState : Option EvalState) : Prop :=
   | some (.evalOracle state) => state.generation < state.envs.length
   | some (.evalDecs _) => Flapjack.holArb Bool = true
 
-/-- Every stored source oracle environment has a related compiler map. This
-uses Flapjack's factored global environment relation, whose HOL correspondence
-is still under review, and therefore is not tagged as the original invariant. -/
+/-- Every stored source oracle environment has a related compiler map. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "src_orac_env_invs_def"
+  (fmap_as_finite_support := [c, tys])]
 def srcOracEnvInvs {C : Type} (interp : Option (Value → Option (Config × C)))
     (genv : GlobalEnv) (evalState : Option EvalState) : Prop :=
   match evalState with
@@ -394,16 +403,18 @@ noncomputable def srcOracStepInvs {C : Type} [Nonempty C]
       configAt (k + 1) = (incCompileProg envId (configAt k) (transform decs)).1
   | _, _ => False
 
-/-- Combined source-oracle conditions using the factored environment
-relation. This is not yet the original HOL invariant. -/
+/-- Combined source-oracle step, environment, and generation conditions. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "src_orac_invs_def"
+  (fmap_as_finite_support := [c, tys])]
 noncomputable def srcOracInvs {C : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (genv : GlobalEnv) (evalState : Option EvalState) : Prop :=
   srcOracStepInvs interp transform evalState ∧ srcOracEnvInvs interp genv evalState ∧
     srcOracGenInv evalState
 
-/-- The factored source-oracle invariant is stable under the original
-subglobal and submap growth hypotheses. -/
+/-- The source-oracle invariant is stable under subglobal and submap growth. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "src_orac_invs_weak"
+  (fmap_as_finite_support := [c, tys])]
 theorem srcOracInvs_growth {C : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (old new : GlobalEnv) (evalState : Option EvalState)

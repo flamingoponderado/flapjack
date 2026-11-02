@@ -7,9 +7,18 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreEnvId
 namespace Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-/-- Factored source-to-flat invariant for the proof-side evaluator. Its value,
-state, and global-environment relations still require HOL correspondence
-review, so this is not tagged as the original `invariant` definition. -/
+namespace InvariantPort
+
+/-- Roundtrip for the global carrier's canonical finite maps. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env :=
+  GlobalEnv.holFmapAsFiniteSupportWitness env
+
+end InvariantPort
+
+/-- Source-to-flat invariant for evaluator simulations. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_def"
+  (fmap_as_finite_support := [c, tys])]
 noncomputable def factoredInvariant {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
@@ -22,9 +31,8 @@ noncomputable def factoredInvariant {C F : Type} [Nonempty C]
   evalRefInv (flat.globals.take 1) (flat.refs.take 1) ∧ envGenInv gen ∧
   finIdxMatch flat.globals.length idxs.2.1 (srcOracNextCfg interp source.evalState)
 
-/-- Shrinking the reserved block preserves the factored invariant. This is
-Flapjack-specific because the factored invariant still needs correspondence
-review against the original invariant. -/
+/-- Shrinking the reserved block preserves the invariant. This supporting
+lemma has no separate HOL declaration. -/
 theorem factoredInvariant_shrink {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
@@ -37,9 +45,8 @@ theorem factoredInvariant_shrink {C F : Type} [Nonempty C]
   exact ⟨cOk, tysOk, states, idxRangeRel_shrink interp genv _ _ _ start next finish other
     ⟨range, previous, bounded⟩, invs, orac, globals, reserved, genInv, fin⟩
 
-/-- Replacing the reserved first reference preserves the factored simulation
-invariant. The relations underlying it still require HOL correspondence
-review, so this is not tagged as the original invariant theorem. -/
+/-- Replacing the reserved first reference preserves the simulation invariant.
+This supporting lemma has no separate HOL declaration. -/
 theorem factoredInvariant_changeEvalRef {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (gen : EnvironmentGenerationStore) (genv : GlobalEnv)

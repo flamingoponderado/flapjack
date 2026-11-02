@@ -63,6 +63,7 @@ val _ = (print "env_gen_future="; print_thm source_to_flatProofTheory.env_gen_fu
 val _ = (print "orac_env_inv="; print_thm source_to_flatProofTheory.src_orac_env_invs_def; print "\n");
 val _ = (print "orac_gen_inv="; print_thm source_to_flatProofTheory.src_orac_gen_inv_def; print "\n");
 val _ = (print "orac_invs="; print_thm source_to_flatProofTheory.src_orac_invs_def; print "\n");
+val _ = (print "full_invariant="; print_thm source_to_flatProofTheory.invariant_def; print "\n");
 val _ = (print "orac_weak="; print_thm source_to_flatProofTheory.src_orac_invs_weak; print "\n");
 val _ = (print "orac_lookup="; print_thm source_to_flatProofTheory.src_orac_env_invs_lookup_env; print "\n");
 val _ = (print "do_eval_oracle="; print_thm source_evalProofTheory.do_eval_oracle_def; print "\n");
