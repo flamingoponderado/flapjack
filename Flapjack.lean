@@ -223,6 +223,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Fragment
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.FragmentCompiler
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordTotal
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordLabels
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordFragment
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
