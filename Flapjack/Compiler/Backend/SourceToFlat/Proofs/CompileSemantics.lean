@@ -72,4 +72,44 @@ theorem factoredCompile_semantics {C F : Type} [Nonempty C]
   rw [passes] at initialSem
   simpa [compileTotal, compiled] using initialSem
 
+/-- Whole-pass precondition in the source's existential shape. The initial
+environment's value type is independent of both compiler and FFI types. This
+is not yet tagged as the HOL definition: the pattern installation relation
+and its compiler dependencies still require source correspondence review. -/
+def SourcePrecondition {C F A : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C)))
+    (source : State F) (sourceEnv : SemEnv A) (config : Config)
+    (targetConfig : FlatSem.InstallConfig C) (decs : List Dec) : Prop :=
+  ∃ middleConfig transform,
+    FactoredPrecondition1 interp transform source sourceEnv config middleConfig decs ∧
+      FlatPattern.installConfRel config.patternCfg middleConfig targetConfig
+
+/-- The explicit transformation used in the factored proof is a witness for
+the source's existential precondition. -/
+theorem sourcePrecondition_iff {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C)))
+    (source : State F) (sourceEnv : SemEnv Value) (config : Config)
+    (targetConfig : FlatSem.InstallConfig C) (decs : List Dec) :
+    SourcePrecondition interp source sourceEnv config targetConfig decs ↔
+      ∃ transform, FactoredPrecondition interp transform source sourceEnv config targetConfig decs := by
+  constructor
+  · rintro ⟨middle, transform, initial, related⟩
+    exact ⟨transform, middle, initial, related⟩
+  · rintro ⟨transform, middle, initial, related⟩
+    exact ⟨middle, transform, initial, related⟩
+
+/-- Full source-to-flat behavior in the original existential-precondition
+shape. The component simulation relations remain under HOL correspondence
+review, so this is not yet tagged as the source correctness theorem. -/
+theorem sourceCompile_semantics {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C)))
+    (source : State F) (sourceEnv : SemEnv Value) (config : Config)
+    (targetConfig : FlatSem.InstallConfig C) (decs : List Dec)
+    (precondition : SourcePrecondition interp source sourceEnv config targetConfig decs)
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs .fail) :
+    Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs
+      (FlatSem.semantics targetConfig source.ffi (compileTotal config decs).2) := by
+  obtain ⟨transform, factored⟩ := (sourcePrecondition_iff interp source sourceEnv config targetConfig decs).mp precondition
+  exact factoredCompile_semantics interp transform source sourceEnv config targetConfig decs factored safe
+
 end Flapjack.Compiler.Backend.SourceToFlat

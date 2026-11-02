@@ -231,4 +231,25 @@ theorem sourceCompileProg_semantics_proofSide {C F : Type} [Nonempty C]
   rw [← complete] at sourceSem
   exact sourceSem
 
+/-- Source-to-closure behavior under the original existential form of the
+source precondition. The underlying factored simulations remain under HOL
+correspondence review. -/
+theorem sourceCompileProg_semantics_exists {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (SourceToFlat.Config × C)))
+    (source : State F) (sourceEnv : SemEnv Value) (sourceConfig : SourceToFlat.Config)
+    (flatConfig : FlatSem.InstallConfig C) (compiler : ClosSem.Compiler C)
+    (declarations : List AstHOL.Dec) (maxApp : Nat)
+    (precondition : SourceToFlat.SourcePrecondition interp source sourceEnv sourceConfig flatConfig declarations)
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (positive : 0 < maxApp)
+    (production : flatConfig.compile = pureCc incCompileDecs compiler) :
+    Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+      (ClosSem.semantics source.ffi maxApp HolFiniteMapExact.empty
+        (pureCo incCompileDecs ∘ flatConfig.compileOracle) compiler
+        (compileProg (SourceToFlat.compileTotal sourceConfig declarations).2)) := by
+  obtain ⟨transform, factored⟩ :=
+    (SourceToFlat.sourcePrecondition_iff interp source sourceEnv sourceConfig flatConfig declarations).mp precondition
+  exact sourceCompileProg_semantics_proofSide interp transform source sourceEnv sourceConfig flatConfig
+    compiler declarations maxApp factored safe positive production
+
 end Flapjack.Compiler.Backend.FlatToClos
