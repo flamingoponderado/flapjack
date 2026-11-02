@@ -5,13 +5,24 @@ namespace Flapjack.Compiler.Backend.ClosSem
 open Flapjack.AstHOL
 
 /-- Result of examining a possible thunk pointer. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "dest_thunk_ret"]
 inductive DestThunkResult where
   | badRef
   | notThunk
   | isThunk : ThunkMode → Value → DestThunkResult
 
-/-- Inspect a singleton pointer, including the invalid-reference flag. The
-finite-map representation remains pending HOL correspondence review. -/
+private def maptoBroadlookup {K V : Type} (map : HolFiniteMapExact K V) : K → Option V := map.lookup
+private def mapofBroad {K V : Type} (lookup : K → Option V)
+    (support : ∃ keys : List K, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact K V :=
+  ⟨lookup, support⟩
+
+/-- The reference-map lookup and finite-support representation roundtrips. -/
+theorem holFmapAsFiniteSupportParamWitness_destThunk_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+
+/-- Inspect a singleton pointer, including the invalid-reference flag. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "dest_thunk_def"
+  (fmap_as_finite_support_parameters := [refs])]
 def destThunk (values : List Value) (refs : HolFiniteMapExact Nat (Ref Value)) : DestThunkResult :=
   match values with
   | [.refPtr isRef index] => match refs.lookup index with
@@ -20,14 +31,17 @@ def destThunk (values : List Value) (refs : HolFiniteMapExact Nat (Ref Value)) :
     | some _ => .notThunk
   | _ => .notThunk
 
-/-- Update a thunk only if its previous mode is unevaluated. -/
+/-- Update a thunk only if its previous mode is unevaluated. This specializes
+HOL's polymorphic key and value types to closure-state addresses and values;
+it therefore is not tagged as the general HOL definition. -/
 def storeThunk (index : Nat) (value : Ref Value) (refs : HolFiniteMapExact Nat (Ref Value)) :
     Option (HolFiniteMapExact Nat (Ref Value)) :=
   match refs.lookup index with
   | some (.thunk .notEvaluated _) => some (refs.updateEq (index, value))
   | _ => none
 
-/-- An evaluated thunk cannot be updated to a thunk or invalid reference. -/
+/-- An evaluated thunk cannot be updated to a thunk or invalid reference.
+This remains untagged while its optional finite-map result is reviewed. -/
 def updateThunk (targets : List Value) (refs : HolFiniteMapExact Nat (Ref Value))
     (values : List Value) : Option (HolFiniteMapExact Nat (Ref Value)) :=
   match targets, values with

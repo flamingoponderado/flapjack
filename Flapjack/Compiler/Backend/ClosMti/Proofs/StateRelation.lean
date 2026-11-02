@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Relations
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
 import Flapjack.Compiler.Backend.BackendProps.Pure
 
 /-! State relation for multi-argument introduction. -/
@@ -53,5 +53,204 @@ theorem stateRel_clock_maxApp {C F : Type} {source target : State C F}
     source.clock = target.clock ∧ source.maxApp = target.maxApp ∧ 1 ≤ target.maxApp := by
   obtain ⟨_, _, _, maxEq, maxPos, clockEq, _⟩ := related
   exact ⟨clockEq.symm, maxEq.symm, maxEq ▸ maxPos⟩
+
+/-- Lift a relation through optional lookup results. This helper is shared
+Lean-side infrastructure rather than a separate HOL declaration. -/
+def OptionRel {A B : Type} (r : A → B → Prop) : Option A → Option B → Prop
+  | none, none => True
+  | some a, some b => r a b
+  | _, _ => False
+
+/-- A related pair of finite maps has related lookup results at every key. -/
+theorem fmapRel_lookup {K A B : Type} {r : A → B → Prop}
+    {first : HolFiniteMapExact K A} {second : HolFiniteMapExact K B}
+    (related : fmapRel r first second) (key : K) :
+    OptionRel r (first.lookup key) (second.lookup key) := by
+  obtain ⟨domain, values⟩ := related
+  cases left : first.lookup key with
+  | none =>
+    cases right : second.lookup key with
+    | none => trivial
+    | some value =>
+      have same := domain key
+      simp [left, right] at same
+  | some value =>
+    obtain ⟨next, found, rel⟩ := values key value left
+    rw [found]
+    exact rel
+
+/-- Updating corresponding keys with related values preserves the finite-map
+relation, including the domains and all untouched lookups. -/
+theorem fmapRel_update {K A B : Type} [DecidableEq K] {r : A → B → Prop}
+    {first : HolFiniteMapExact K A} {second : HolFiniteMapExact K B}
+    (related : fmapRel r first second) (key : K) (left : A) (right : B) (values : r left right) :
+    fmapRel r (first.updateEq (key, left)) (second.updateEq (key, right)) := by
+  obtain ⟨domain, entries⟩ := related
+  constructor
+  · intro k
+    by_cases equal : k = key
+    · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, equal]
+    · simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, equal] using domain k
+  · intro k value found
+    by_cases equal : k = key
+    · subst k
+      simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL] at found
+      subst value
+      exact ⟨right, by simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL], values⟩
+    · have original : first.lookup k = some value := by
+        simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, equal] using found
+      obtain ⟨next, lookup, rel⟩ := entries k value original
+      exact ⟨next, by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, equal] using lookup, rel⟩
+
+/-- Related states expose related references at every address. -/
+theorem stateRel_lookupRefs {C F : Type} {source target : State C F}
+    (related : StateRel source target) (key : Nat) :
+    OptionRel (RefRel source.maxApp) (source.refs.lookup key) (target.refs.lookup key) := by
+  exact fmapRel_lookup related.2.2.2.2.2.2.2.2.1 key
+
+/-- Updating both reference stores with related entries preserves the state
+relation. This is a Lean-side step toward the source thunk-update theorem. -/
+theorem stateRel_updateRefs {C F : Type} {source target : State C F}
+    (related : StateRel source target) (key : Nat) (left right : Ref Value)
+    (values : RefRel source.maxApp left right) :
+    StateRel { source with refs := source.refs.updateEq (key, left) }
+      { target with refs := target.refs.updateEq (key, right) } := by
+  obtain ⟨oracle, sourceCode, targetCode, maxApp, positive, clock, ffi, globals, refs, compiler, nextOracle⟩ := related
+  exact ⟨oracle, sourceCode, targetCode, maxApp, positive, clock, ffi, globals,
+    fmapRel_update refs key left right values, compiler, nextOracle⟩
+
+/-- Thunk inspection preserves its error classification and relates values
+when it finds a thunk. This relation is Lean-side simulation infrastructure. -/
+inductive DestThunkRel (maxApp : Nat) : DestThunkResult → DestThunkResult → Prop where
+  | badRef : DestThunkRel maxApp .badRef .badRef
+  | notThunk : DestThunkRel maxApp .notThunk .notThunk
+  | isThunk (mode : AstHOL.ThunkMode) (left right : Value) :
+      ValueRel maxApp left right → DestThunkRel maxApp (.isThunk mode left) (.isThunk mode right)
+
+/-- A pointer into related stores has corresponding thunk-inspection results. -/
+theorem destThunk_pointer_related {C F : Type} {source target : State C F}
+    (related : StateRel source target) (flag : Bool) (key : Nat) :
+    DestThunkRel source.maxApp (destThunk [.refPtr flag key] source.refs)
+      (destThunk [.refPtr flag key] target.refs) := by
+  have lookup := stateRel_lookupRefs related key
+  cases left : source.refs.lookup key with
+  | none =>
+    cases right : target.refs.lookup key with
+    | none => simpa [destThunk, left, right] using DestThunkRel.badRef (maxApp := source.maxApp)
+    | some value => simp [OptionRel, left, right] at lookup
+  | some value =>
+    cases right : target.refs.lookup key with
+    | none => simp [OptionRel, left, right] at lookup
+    | some next =>
+      have refs : RefRel source.maxApp value next := by simpa [OptionRel, left, right] using lookup
+      cases refs with
+      | byteArray bytes =>
+        simpa [destThunk, left, right] using DestThunkRel.notThunk (maxApp := source.maxApp)
+      | valueArray values nextValues rel =>
+        simpa [destThunk, left, right] using DestThunkRel.notThunk (maxApp := source.maxApp)
+      | thunk mode value next rel =>
+        cases flag with
+        | false => simpa [destThunk, left, right] using DestThunkRel.isThunk mode value next rel
+        | true => simpa [destThunk, left, right] using DestThunkRel.badRef (maxApp := source.maxApp)
+
+/-- Related argument lists have corresponding thunk-inspection results in
+related states, including malformed argument lists and non-reference values. -/
+theorem destThunk_related {C F : Type} {source target : State C F} {left right : List Value}
+    (states : StateRel source target) (values : List.Forall₂ (ValueRel source.maxApp) left right) :
+    DestThunkRel source.maxApp (destThunk left source.refs) (destThunk right target.refs) := by
+  cases values with
+  | nil => exact .notThunk
+  | @cons first next rest restNext firstRel tailRel =>
+    cases tailRel with
+    | nil =>
+      cases firstRel <;> try exact .notThunk
+      case refPtr flag address => exact destThunk_pointer_related states flag address
+    | cons head tail => cases first <;> cases next <;> exact .notThunk
+
+/-- Storing related thunk payloads succeeds or fails together and preserves
+the state relation on success. This is Lean-side simulation infrastructure. -/
+theorem storeThunk_related {C F : Type} {source target : State C F}
+    (states : StateRel source target) (key : Nat) (left right : Ref Value)
+    (values : RefRel source.maxApp left right) :
+    (storeThunk key right target.refs = none → storeThunk key left source.refs = none) ∧
+    (∀ refs₂, storeThunk key right target.refs = some refs₂ →
+      ∃ refs₁, storeThunk key left source.refs = some refs₁ ∧
+        StateRel { source with refs := refs₁ } { target with refs := refs₂ }) := by
+  have lookup := stateRel_lookupRefs states key
+  cases sourceLookup : source.refs.lookup key with
+  | none =>
+    cases targetLookup : target.refs.lookup key with
+    | none => simp [storeThunk, sourceLookup, targetLookup]
+    | some next => simp [OptionRel, sourceLookup, targetLookup] at lookup
+  | some old =>
+    cases targetLookup : target.refs.lookup key with
+    | none => simp [OptionRel, sourceLookup, targetLookup] at lookup
+    | some next =>
+      have refs : RefRel source.maxApp old next := by simpa [OptionRel, sourceLookup, targetLookup] using lookup
+      cases refs with
+      | byteArray bytes => simp [storeThunk, sourceLookup, targetLookup]
+      | valueArray xs ys rel => simp [storeThunk, sourceLookup, targetLookup]
+      | thunk mode old next rel =>
+        cases mode with
+        | notEvaluated =>
+          constructor
+          · simp [storeThunk, targetLookup]
+          · intro refs₂ run
+            simp [storeThunk, targetLookup] at run
+            subst refs₂
+            exact ⟨source.refs.updateEq (key, left), by simp [storeThunk, sourceLookup],
+              stateRel_updateRefs states key left right values⟩
+        | evaluated => simp [storeThunk, sourceLookup, targetLookup]
+
+/-- Thunk updates with related values fail together or produce related
+states. This follows the source thunk-update simulation but remains untagged
+until the Lean thunk operations have completed source correspondence review. -/
+theorem updateThunk_related {C F : Type} {source target : State C F}
+    {left right : List Value} (states : StateRel source target)
+    (values : List.Forall₂ (ValueRel source.maxApp) left right) (flag : Bool) (key : Nat) :
+    (updateThunk [.refPtr flag key] target.refs right = none →
+      updateThunk [.refPtr flag key] source.refs left = none) ∧
+    (∀ refs₂, updateThunk [.refPtr flag key] target.refs right = some refs₂ →
+      ∃ refs₁, updateThunk [.refPtr flag key] source.refs left = some refs₁ ∧
+        StateRel { source with refs := refs₁ } { target with refs := refs₂ }) := by
+  cases flag with
+  | true => simp [updateThunk]
+  | false =>
+    cases values with
+    | nil => simp [updateThunk]
+    | @cons first next rest restNext firstRel tailRel =>
+      cases tailRel with
+      | nil =>
+        have destRel := destThunk_related states (List.Forall₂.cons firstRel .nil)
+        cases targetDest : destThunk [next] target.refs with
+        | badRef =>
+          cases sourceDest : destThunk [first] source.refs with
+          | badRef => simp [updateThunk, sourceDest, targetDest]
+          | notThunk =>
+            simp only [sourceDest, targetDest] at destRel
+            cases destRel
+          | isThunk mode value =>
+            simp only [sourceDest, targetDest] at destRel
+            cases destRel
+        | notThunk =>
+          cases sourceDest : destThunk [first] source.refs with
+          | badRef =>
+            simp only [sourceDest, targetDest] at destRel
+            cases destRel
+          | isThunk mode value =>
+            simp only [sourceDest, targetDest] at destRel
+            cases destRel
+          | notThunk =>
+            have stored := storeThunk_related states key (.thunk .evaluated first)
+              (.thunk .evaluated next) (.thunk .evaluated first next firstRel)
+            simpa [updateThunk, sourceDest, targetDest] using stored
+        | isThunk mode value =>
+          cases sourceDest : destThunk [first] source.refs with
+          | badRef => simp [updateThunk, sourceDest, targetDest]
+          | notThunk =>
+            simp only [sourceDest, targetDest] at destRel
+            cases destRel
+          | isThunk mode' value' => simp [updateThunk, sourceDest, targetDest]
+      | cons head tail => simp [updateThunk]
 
 end Flapjack.Compiler.Backend.ClosMti

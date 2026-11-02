@@ -1,5 +1,24 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "dest_thunk_ret",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Thunk.lean",
+    "lean_name": "DestThunkResult",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the datatype and constructor types dest_bad_ref_type, dest_not_thunk_type and dest_is_thunk_type in clos_sem_evaluate_probe.out: BadRef and NotThunk have no fields; IsThunk retains the reviewed thunk_mode and closure value carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "dest_thunk_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Thunk.lean",
+    "lean_name": "destThunk",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "refs"
+    ],
+    "reviewer": "Compared every typed dest_thunk_typed case with the source and Lean definition: only singleton RefPtr examines the finite map; a missing entry is BadRef, value and byte arrays are NotThunk, and both thunk modes return BadRef for a true flag or IsThunk with the same mode and value otherwise. All other argument shapes return NotThunk. The standalone refs input uses the canonical finite-support carrier and same-module lookup/support roundtrip witness."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/clos_mtiScript.sml",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
     "statement_status": "reviewed_exact",

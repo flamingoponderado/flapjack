@@ -363,7 +363,7 @@ run_probe clos_sem_evaluate_probeScript.sml clos_sem_evaluate_probe.out \
   ref_value_array_type ref_byte_array_type ref_thunk_type value_number_type value_word64_type value_block_type value_byte_vector_type value_ref_ptr_type value_closure_type value_recclosure_type \
   state_globals_type state_refs_type state_ffi_type state_clock_type state_compile_type \
   state_oracle_type state_code_type state_max_app_type dec_clock_typed fix_clock_typed initial_state_typed \
-  evaluate_typed variable missing conditional raise_handle zero_tick call_closure \
+  evaluate_typed variable missing conditional raise_handle zero_tick call_closure dest_bad_ref_type dest_not_thunk_type dest_is_thunk_type dest_thunk_typed store_thunk_typed update_thunk_typed \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe cake_flat_sem_thunk_probeScript.sml cake_flat_sem_thunk_probe.out \

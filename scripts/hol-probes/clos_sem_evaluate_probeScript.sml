@@ -34,3 +34,9 @@ val _ = show_eval "conditional=" ``FST (closSem$evaluate ([If None (Op None (Blo
 val _ = show_eval "raise_handle=" ``FST (closSem$evaluate ([Handle None (Raise None (Op None (IntOp (Const 7)) [])) (Var None 0)],[],ARB : (unit,unit) closSem$state))``;
 val _ = show_eval "zero_tick=" ``FST (closSem$evaluate ([Tick None (Var None 0)],[Number 7],(ARB : (unit,unit) closSem$state) with clock := 0))``;
 val _ = show_eval "call_closure=" ``FST (closSem$evaluate ([App None NONE (Fn «f» NONE NONE 1 (Var None 0)) [Op None (IntOp (Const 9)) []]],[],(ARB : (unit,unit) closSem$state) with <|clock := 2; max_app := 2|>))``;
+val _ = typ "dest_bad_ref_type=" ``closSem$BadRef``;
+val _ = typ "dest_not_thunk_type=" ``closSem$NotThunk``;
+val _ = typ "dest_is_thunk_type=" ``closSem$IsThunk``;
+val _ = show_thm "dest_thunk_typed=" closSemTheory.dest_thunk_def;
+val _ = show_thm "store_thunk_typed=" closSemTheory.store_thunk_def;
+val _ = show_thm "update_thunk_typed=" closSemTheory.update_thunk_def;
