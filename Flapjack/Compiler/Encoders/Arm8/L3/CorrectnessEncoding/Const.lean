@@ -1634,4 +1634,31 @@ theorem arm8_encoder_correct_const_movK (r : Nat) (v : BitVec 64)
   · simp only [asserts2, Nat.reduceAdd, Nat.reduceSub]
     exact ⟨hP'1, hP'2, hP'3, hP'4, trivial⟩
 
+/-- The `const` constructor of `encoder_correct arm8TargetL3`, by the four
+shapes of `arm8_ast`: zeroing, negating and bitmask `MoveWide`, then the
+four-instruction `MoveWide .k` lowering. -/
+theorem arm8_encoder_correct_const (r : Nat) (v : BitVec 64)
+    (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (.inst (.const r v)) s2 ∧
+      targetStateRel arm8TargetL3 s1 ms) :
+    CaseGoal (.inst (.const r v)) s1 s2 ms := by
+  cases hz : arm8EncMovImm v with
+  | some p =>
+    obtain ⟨imm16, hw⟩ := p
+    exact arm8_encoder_correct_const_movZ r v imm16 hw s1 s2 ms h hz
+  | none =>
+    cases hn : arm8EncMovImm (~~~v) with
+    | some p =>
+      obtain ⟨imm16, hw⟩ := p
+      exact arm8_encoder_correct_const_movN r v imm16 hw s1 s2 ms h hz hn
+    | none =>
+      cases hb : EncodeBitMask v with
+      | some p =>
+        obtain ⟨N, imms, immr⟩ := p
+        exact arm8_encoder_correct_const_orr r v N imms immr s1 s2 ms h hz hn
+          (by rw [hb]; rfl) hb
+      | none =>
+        exact arm8_encoder_correct_const_movK r v s1 s2 ms h hz hn (by rw [hb]; rfl)
+
 end Flapjack.Compiler.Encoders.Arm8.L3
+
