@@ -385,7 +385,7 @@ run_probe cake_flat_sem_apply_probeScript.sml cake_flat_sem_apply_probe.out \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_int_probeScript.sml clos_sem_int_probe.out \
-  int_app_typed div_negative_left div_negative_right mod_negative_left mod_negative_right divide_zero small_upper small_invalid \
+  int_app_typed div_negative_left div_negative_right mod_negative_left mod_negative_right div_both_negative mod_both_negative div_exact_negative mod_exact_negative divide_zero mod_zero small_upper small_invalid small_negative small_above \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_call_probeScript.sml clos_sem_call_probe.out \
@@ -393,7 +393,7 @@ run_probe clos_sem_call_probeScript.sml clos_sem_call_probe.out \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_word_probeScript.sml clos_sem_word_probe.out \
-  word_app_typed byte_add_wrap byte_negative byte_too_large byte_asr word_from_negative word_to_byte byte_compare byte_alt_compare word_add word_shift \
+  word_app_typed byte_add_wrap byte_negative byte_too_large byte_asr word_from_negative word_to_byte byte_compare byte_alt_compare word_add word_shift word_xor word_wrong_arity \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_install_probeScript.sml clos_sem_install_probe.out \

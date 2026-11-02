@@ -10,6 +10,13 @@ val _ = show_eval "div_negative_left=" ``closSem$do_int_app Div [Number (-7); Nu
 val _ = show_eval "div_negative_right=" ``closSem$do_int_app Div [Number 7; Number (-3)]``;
 val _ = show_eval "mod_negative_left=" ``closSem$do_int_app Mod [Number (-7); Number 3]``;
 val _ = show_eval "mod_negative_right=" ``closSem$do_int_app Mod [Number 7; Number (-3)]``;
+val _ = show_eval "div_both_negative=" ``closSem$do_int_app Div [Number (-7); Number (-3)]``;
+val _ = show_eval "mod_both_negative=" ``closSem$do_int_app Mod [Number (-7); Number (-3)]``;
+val _ = show_eval "div_exact_negative=" ``closSem$do_int_app Div [Number (-6); Number 3]``;
+val _ = show_eval "mod_exact_negative=" ``closSem$do_int_app Mod [Number (-6); Number 3]``;
 val _ = show_eval "divide_zero=" ``closSem$do_int_app Div [Number 7; Number 0]``;
+val _ = show_eval "mod_zero=" ``closSem$do_int_app Mod [Number 7; Number 0]``;
 val _ = show_eval "small_upper=" ``closSem$do_int_app (LessConstSmall 999999) [Number 1000000]``;
 val _ = show_eval "small_invalid=" ``closSem$do_int_app (LessConstSmall 1000000) [Number 0]``;
+val _ = show_eval "small_negative=" ``closSem$do_int_app (LessConstSmall 0) [Number (-1)]``;
+val _ = show_eval "small_above=" ``closSem$do_int_app (LessConstSmall 999999) [Number 1000001]``;

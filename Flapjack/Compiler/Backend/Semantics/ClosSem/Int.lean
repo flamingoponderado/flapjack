@@ -4,8 +4,8 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem
 namespace Flapjack.Compiler.Backend.ClosSem
 
 /-- Closure integer operations. Division and remainder use floor semantics,
-and reject zero divisors. This proof-side implementation is untagged until
-the HOL integer operations and the value carrier have completed review. -/
+and reject zero divisors. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "do_int_app_def"]
 def doIntApp : ClosLang.IntOp → List Value → Option Value
   | .const n, [] => some (.number n)
   | .add, [.number a, .number b] => some (.number (a + b))

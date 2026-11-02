@@ -3,9 +3,11 @@ byte_add_wrap=case some(w1,w2). 255 = &w2n w1 ∧ 2 = &w2n w2 of NONE => NONE | 
 byte_negative=case some(w1,w2). -1 = &w2n w1 ∧ 2 = &w2n w2 of NONE => NONE | SOME (w1,w2) => SOME (Number (&w2n (w1 + w2)))
 byte_too_large=case some w. 256 = &w2n w of NONE => NONE | SOME w => SOME (Word64 (w2w w))
 byte_asr=case some w. 128 = &w2n w of NONE => NONE | SOME w => SOME (Number (&w2n (w ≫ 7)))
-word_from_negative=SOME (Word64 (-1w))
-word_to_byte=SOME (Number (&w2n (w2w 511w)))
+word_from_negative=SOME (Word64 0xFFFFFFFFFFFFFFFFw)
+word_to_byte=SOME (Number 255)
 byte_compare=SOME (Block 1 [])
 byte_alt_compare=NONE
-word_add=SOME (Word64 (5w + 9w))
-word_shift=SOME (Word64 (7w ≪ 3))
+word_add=SOME (Word64 14w)
+word_shift=SOME (Word64 56w)
+word_xor=SOME (Word64 255w)
+word_wrong_arity=NONE

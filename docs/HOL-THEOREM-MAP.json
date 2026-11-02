@@ -113570,6 +113570,23 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "do_int_app_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Int.lean",
+    "lean_name": "doIntApp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed int_app_typed clause and the source definition: operands, result constructors, all comparison directions, the three LessConstSmall bounds, zero-divisor rejection, and arity or constructor fallbacks agree. HOL integerScript.sml int_div specifies floor division for each sign and int_mod is the corresponding remainder; Lean Int.fdiv/fmod use that convention, and zero is rejected before either operation. Pinned HOL and Lean parity cases cover both operand signs, exact and inexact division, zero and the small-comparison boundaries. The imported IntOp, Value and boolValue carriers are reviewed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "do_word_app_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Word.lean",
+    "lean_name": "doWordApp",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared word_app_typed and all source clauses: fixed word8 and word64 operations, tests, shifts, conversions, floating-point operations and malformed-operand fallbacks agree. intToByte_iff proves that the decoder returns exactly the unique byte satisfying HOL's choice predicate, including failure; applyWordOp and the reviewed fixed-width shift definitions implement the source operators. The reviewed WordOp, Value and floating-point operations are used. The floating-point calls inherit reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "Unit_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
     "lean_name": "unitValue",

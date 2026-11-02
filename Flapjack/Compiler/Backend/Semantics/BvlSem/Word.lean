@@ -7,19 +7,8 @@ open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL
 
 /-- The byte decoder implements the original unique word8 condition. -/
 theorem intToByte_iff (n : Int) (byte : BitVec 8) :
-    ClosSem.intToByte n = some byte ↔ n = (byte.toNat : Int) := by
-  constructor
-  · intro h
-    simp only [ClosSem.intToByte] at h
-    split at h
-    · rename_i bounds
-      simp only [Option.some.injEq] at h
-      subst byte
-      simp [BitVec.toNat_ofInt, Int.emod_eq_of_lt bounds.1 bounds.2, Int.max_eq_left bounds.1]
-    · simp at h
-  · intro h
-    subst n
-    exact ClosSem.intToByte_toNat byte
+    ClosSem.intToByte n = some byte ↔ n = (byte.toNat : Int) :=
+  ClosSem.intToByte_iff n byte
 
 /-- Flapjack helper for the integer and fixed-word cases of the original
 dispatcher. The byte decoder captures the unique word8 required by HOL. -/

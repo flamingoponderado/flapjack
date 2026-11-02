@@ -1,10 +1,14 @@
 load "closSemTheory";
+load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun show_thm label th =
   if null (hyp th) then (print label; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+fun show_word_eval label tm =
+  (print label; print_term (rhs (concl ((EVAL THENC DEPTH_CONV
+    (CHANGED_CONV wordsLib.WORD_EVAL_CONV)) tm))); print "\n");
 val _ = show_thm "word_app_typed=" closSemTheory.do_word_app_def;
 val _ = show_eval "byte_add_wrap=" ``closSem$do_word_app (WordOpw W8 Add) [Number 255; Number 2]``;
 val _ = show_eval "byte_negative=" ``closSem$do_word_app (WordOpw W8 Add) [Number (-1); Number 2]``;
@@ -16,3 +20,5 @@ val _ = show_eval "byte_compare=" ``closSem$do_word_app (WordTest W8 (Compare Lt
 val _ = show_eval "byte_alt_compare=" ``closSem$do_word_app (WordTest W8 (AltCompare Lt)) [Number 1; Number 2]``;
 val _ = show_eval "word_add=" ``closSem$do_word_app (WordOpw W64 Add) [Word64 5w; Word64 9w]``;
 val _ = show_eval "word_shift=" ``closSem$do_word_app (WordShift W64 Lsl 3) [Word64 7w]``;
+val _ = show_word_eval "word_xor=" ``closSem$do_word_app (WordOpw W64 Xor) [Word64 240w; Word64 15w]``;
+val _ = show_eval "word_wrong_arity=" ``closSem$do_word_app (WordOpw W64 Add) [Word64 5w]``;

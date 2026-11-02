@@ -25,6 +25,24 @@ theorem intToByte_toNat (byte : BitVec 8) : intToByte (byte.toNat : Int) = some 
   simp [intToByte]
   exact Int.ofNat_lt.mpr bound
 
+/-- The decoder succeeds precisely for the unique word8 whose unsigned value
+is the given integer. This connects the executable test with HOL's choice
+predicate. -/
+theorem intToByte_iff (n : Int) (byte : BitVec 8) :
+    intToByte n = some byte ↔ n = (byte.toNat : Int) := by
+  constructor
+  · intro h
+    simp only [intToByte] at h
+    split at h
+    · rename_i bounds
+      simp only [Option.some.injEq] at h
+      subst byte
+      simp [BitVec.toNat_ofInt, Int.emod_eq_of_lt bounds.1 bounds.2, Int.max_eq_left bounds.1]
+    · simp at h
+  · intro h
+    subst n
+    exact intToByte_toNat byte
+
 /-- Integer and fixed-word cases of the closure word dispatcher. -/
 def doWordAppIntegral : ClosLang.WordOp → List Value → Option Value
   | .wordOpw .w8 op, [.number a, .number b] => do
@@ -53,8 +71,8 @@ def doWordAppIntegral : ClosLang.WordOp → List Value → Option Value
   | _, _ => none
 
 /-- Full closure word dispatcher, including the existing floating-point
-model. This remains untagged pending source and carrier review; floating-point
-cases inherit the rational-cut assumptions of `FpSemHOL`. -/
+model. Floating-point cases inherit the rational-cut assumptions of `FpSemHOL`. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "do_word_app_def"]
 noncomputable def doWordApp (op : ClosLang.WordOp) (values : List Value) : Option Value :=
   match op, values with
   | .fpTop op, [.word64 a, .word64 b, .word64 c] => some (.word64 (fpSemFpTopComp op a b c))

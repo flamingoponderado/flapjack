@@ -1,9 +1,8 @@
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
 
-/-! Concrete closure-word edge cases. The Boolean comparison observations
-are captured in `scripts/hol-probes/clos_sem_word_probe.out`; byte arithmetic
-and conversion examples also exercise the Lean implementation where HOL's
-choice expressions remain unreduced in that capture. -/
+/-! Concrete closure-word edge cases. The original probe reduces Boolean,
+word64 conversion and arithmetic observations; byte arithmetic examples also
+exercise the Lean implementation where HOL's choice remains unreduced. -/
 namespace Flapjack.Test.ClosSemWordParity
 open Flapjack.Compiler.Backend.ClosSem
 
@@ -18,5 +17,7 @@ example : doWordAppIntegral (.wordTest .w8 (.compare .lt)) [.number 127, .number
 example : doWordAppIntegral (.wordTest .w8 (.altCompare .lt)) [.number 1, .number 2] = none := rfl
 example : doWordAppIntegral (.wordOpw .w64 .add) [.word64 5, .word64 9] = some (.word64 14) := rfl
 example : doWordAppIntegral (.wordShift .w64 .lsl 3) [.word64 7] = some (.word64 56) := rfl
+example : doWordApp (.wordOpw .w64 .xor) [.word64 240, .word64 15] = some (.word64 255) := rfl
+example : doWordApp (.wordOpw .w64 .add) [.word64 5] = none := rfl
 
 end Flapjack.Test.ClosSemWordParity
