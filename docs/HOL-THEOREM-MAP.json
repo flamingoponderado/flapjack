@@ -99356,5 +99356,77 @@
     "lean_name": "panToTargetCompileSemanticsArm8",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): instantiates the generic `panToTargetCompileSemantics` theorem at the closed `arm8Target`, supplying `arm8MachineConfigOk` and `arm8EncoderCorrect`. It has no single HOL original: the CakeML analogue depends on the unported L3 `arm8_encoder_correct` and the full `arm8_config` carrier, tracked in #1229."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "ProcState",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "ProcState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:8-10, Record with fields C, EL, N, SPS, V, Z in that order, EL at BitVec 2. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "TCR_EL1",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "TCR_EL1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:12-13, Record with fields TBI0, TBI1, tcr_el1'rst (BitVec 62) in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "TCR_EL2_EL3",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "TCR_EL2_EL3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:15, Record with fields TBI, tcr_el2_el3'rst (BitVec 31) in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "SCTLRType",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "SCTLRType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:17-20, Record with fields A, E0E, EE, SA, SA0, sctlrtype'rst (BitVec 27) in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "BranchType",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "BranchType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:22-27, Datatype with seven nullary constructors BranchType_CALL, BranchType_ERET, BranchType_DBGEXIT, BranchType_RET, BranchType_JMP, BranchType_EXCEPTION, BranchType_UNKNOWN, in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "exception",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "exception",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:362-365, Datatype ALIGNMENT_FAULT | ASSERT (string) | NoException | UNDEFINED_FAULT (string) in that order, with the string payloads rendered as List HolChar. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "arm8_state",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "arm8_state",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:367-375, Record with the 16 fields MEM (word64 -> word8), PC (word64), PSTATE (ProcState), REG (word5 -> word64), SCTLR_EL1/EL2/EL3 (SCTLRType), SP_EL0/EL1/EL2/EL3 (word64), TCR_EL1 (TCR_EL1), TCR_EL2/EL3 (TCR_EL2_EL3), branch_hint (BranchType option), exception (exception), in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/arm8/arm8_targetScript.sml",
+    "hol_name": "arm8_proj_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Target.lean",
+    "lean_name": "arm8Proj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): cakeml/compiler/encoders/arm8/arm8_targetScript.sml:343-348 defines arm8_proj d s = (s.PSTATE, s.SCTLR_EL1, s.TCR_EL1, s.exception, s.REG, fun2set (s.MEM,d), s.PC). Lean arm8Proj returns the same seven components in the same order over the L3 arm8_state carrier, keeps the domain parameter d, and uses Flapjack.SetSep.fun2Set, the reviewed exact port of set_sep fun2set_def. No extra hypothesis, side condition or reordered component."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/arm8/arm8_targetScript.sml",
+    "hol_name": "arm8_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Target.lean",
+    "lean_name": "arm8Ok",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): cakeml/compiler/encoders/arm8/arm8_targetScript.sml:20-27 defines arm8_ok ms <=> ms.PSTATE.EL = 0w /\\ ~ms.SCTLR_EL1.E0E /\\ ~ms.SCTLR_EL1.SA0 /\\ ~ms.TCR_EL1.TBI1 /\\ ~ms.TCR_EL1.TBI0 /\\ ms.exception = NoException /\\ aligned 2 ms.PC. Lean arm8Ok is the same seven-way Bool conjunction: decide for the two equalities (HOL word and datatype equality) and holAligned, the reviewed exact port of HOL aligned, for the alignment conjunct. No conjunct is added, dropped or weakened."
   }
 ]

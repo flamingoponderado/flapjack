@@ -286,6 +286,10 @@ The following are open review or verification obligations:
       the instruction forms `arm8_ast` emits, and
       `Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean` instantiates the
       Pancake-to-machine-code theorem at that model with no encoder premise.
+      The L3 `arm8_state` carrier, CakeML's `arm8_proj` and `arm8_ok` are
+      ported in `Flapjack/Compiler/Encoders/Arm8/L3/`, and `arm8Ok_of_closed`
+      proves that the closed model's validity implies the L3 validity gate
+      under the L3-only privilege, control-register and exception hypotheses.
     - **What is not checked.** The closed model is not CakeML's full L3 ARMv8
       semantics.  The decoder is a permissive recognizer and can also accept
       non-emitted AArch64 words with closed-model (not L3) semantics; only
@@ -299,9 +303,12 @@ The following are open review or verification obligations:
       ANDS-immediate `Rd`); the ANDS-immediate case relies on `setflags = true`,
       since the non-flag-setting logical-immediate slot means SP.  That per-slot
       AArch64 fact is an external assumption, not checked by the model.  Unknown
-      instruction words set `failed`; there is no L3
-      `arm8_encoder_correct` port, no proof about arbitrary ARMv8 code, and no
-      theorem that the model agrees with real AArch64 hardware or with L3.
+      instruction words set `failed`.  The L3 state carrier, projection and
+      validity gate are ported, but there is no transition refinement: the
+      closed `arm8Next` is not shown to agree with L3 `NextStateARM8`.  There is
+      no L3 `arm8_encoder_correct` port, no proof about arbitrary ARMv8 code,
+      and no theorem that the model agrees with real AArch64 hardware or with
+      L3.
       The trusted compiler claim therefore rests on the closed model plus the
       parity evidence, not on an L3 refinement.
     - **Proof port status.** The structural length lemmas at the start of

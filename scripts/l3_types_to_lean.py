@@ -1,18 +1,20 @@
 """Render the L3 Import Construct/Record declarations of an L3 model script as Lean.
 
-Usage: scripts/l3_types_to_lean.py MODEL_SCRIPT HOL_PATH
+Usage: scripts/l3_types_to_lean.py MODEL_SCRIPT HOL_PATH [DECL ...]
 
 Prints, in source order, one tagged Lean `inductive` per `Construct` type and one tagged
 `structure` per `Record`, with the type renderings documented in
-`Flapjack/RiscV/L3/Types.lean`. `scripts/tests/test_hol_l3_types_to_lean.py` checks that the
-committed RISC-V carriers are exactly this output. This is a mechanical transcription aid;
-it does not establish HOL-to-Lean equivalence.
+`Flapjack/RiscV/L3/Types.lean`. With trailing DECL arguments, only the named declarations
+are emitted (used for the ARM8 state carriers, which are a subset of the model's types).
+`scripts/tests/test_hol_l3_types_to_lean.py` checks that the committed RISC-V carriers are
+exactly the full output and that the ARM8 carriers are exactly the filtered output. This is
+a mechanical transcription aid; it does not establish HOL-to-Lean equivalence.
 """
 import re, sys, runpy
 from pathlib import Path
 
 
-def render(text: str, HOLPATH: str) -> str:
+def render(text: str, HOLPATH: str, only: list[str] | None = None) -> str:
     decls = runpy.run_path(str(Path(__file__).with_name('hol_sml_declarations.py')))['l3_type_declarations'](text)
     lines = text.splitlines(keepends=True)
     KW = {'done','at','by','fun','have','show','from','let','in','if','then','else','do','match','with','end',
@@ -79,17 +81,20 @@ def render(text: str, HOLPATH: str) -> str:
                 out.append(('Construct',n,cons,start))
                 if p.peek(','): p.eat(',')
     def hasfun(t): return '→' in t
+    script = Path(HOLPATH).name
     res=[]
     for kind,n,items,start in out:
+        if only is not None and n not in only:
+            continue
         tag='@[hol "%s" "%s" %d]'%(HOLPATH,n,start) if False else '@[hol "%s" "%s"]'%(HOLPATH,n)
         if kind=='Record':
             fun=any(hasfun(t) for _,t in items)
-            res.append('/-- HOL L3 record `%s` (`riscvScript.sml:%d`). -/\n%s\nstructure %s where\n'%(n,start,tag,ident(n)))
+            res.append('/-- HOL L3 record `%s` (`%s:%d`). -/\n%s\nstructure %s where\n'%(n,script,start,tag,ident(n)))
             for f,t in items: res.append('  %s : %s\n'%(ident(f),t))
             res.append('  deriving Inhabited\n\n' if fun else '  deriving DecidableEq, Repr, Inhabited\n\n')
         else:
             fun=any(hasfun(t) for _,a in items for t in a)
-            res.append('/-- HOL L3 datatype `%s` (`riscvScript.sml:%d`). -/\n%s\ninductive %s where\n'%(n,start,tag,ident(n)))
+            res.append('/-- HOL L3 datatype `%s` (`%s:%d`). -/\n%s\ninductive %s where\n'%(n,script,start,tag,ident(n)))
             for c,args in items:
                 res.append('  | %s%s\n'%(ident(c),''.join(' (a%d : %s)'%(k,t) for k,t in enumerate(args))))
             res.append('  deriving Inhabited\n\n' if fun else '  deriving DecidableEq, Repr, Inhabited\n\n')
@@ -97,4 +102,4 @@ def render(text: str, HOLPATH: str) -> str:
 
 
 if __name__ == "__main__":
-    print(render(Path(sys.argv[1]).read_text(), sys.argv[2]))
+    print(render(Path(sys.argv[1]).read_text(), sys.argv[2], sys.argv[3:] or None))

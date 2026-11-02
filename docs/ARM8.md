@@ -159,3 +159,25 @@ emitted shapes.  The load-shape limits above and the unproved per-slot
 `mcConfOk`, `mcInitOk` and encoder correctness are all discharged, so the
 Pancake-to-ARM-machine-code theorem no longer takes an encoder premise. The
 parity fixtures remain the executable evidence.
+
+## L3 carrier and validity gate
+
+`Flapjack/Compiler/Encoders/Arm8/L3/Types.lean` ports the L3-generated
+`arm8_state` carrier and the records it contains (`ProcState`, `TCR_EL1`,
+`TCR_EL2_EL3`, `SCTLRType`, `BranchType`, `exception`) exactly as declared in
+`HOL/examples/l3-machine-code/arm8/model/arm8Script.sml`.  The file is the
+mechanical output of `scripts/l3_types_to_lean.py` for those declarations, and
+`scripts/tests/test_hol_l3_types_to_lean.py` checks it against the model.
+
+`Flapjack/Compiler/Encoders/Arm8/L3/Target.lean` ports CakeML's `arm8_proj`
+and `arm8_ok` over that carrier.  `arm8Ok_of_closed` proves that the closed
+model's `arm8StateOk`, under the relation `arm8StateRel`, implies the L3
+validity gate; the L3-only privilege, control-register and exception fields are
+explicit hypotheses because the closed carrier does not model them.  This is a
+validity-condition refinement only.
+
+The L3 transition semantics (`Next`/`Fetch`/`Decode`/`Run`) and the full
+`arm8$instruction` carrier are not ported, so `arm8_next`/`arm8_target` are not
+yet L3 instances and `encoderCorrect` remains proved only for the closed model.
+The remaining work is tracked in issues #1229 (carrier and transition gaps) and
+#1239 (L3 target correctness chain).
