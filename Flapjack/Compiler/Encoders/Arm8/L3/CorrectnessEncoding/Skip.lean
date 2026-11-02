@@ -1,7 +1,5 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.Configuration
-import Flapjack.Compiler.Encoders.Arm8.L3.Target.State
-import Flapjack.Misc.BytesInMemory
-import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Infrastructure
 
 set_option maxHeartbeats 4000000
 
@@ -122,72 +120,6 @@ theorem arm8Next_nop (ms : arm8_state)
   simp only [Next, NextStateARM8]
   rw [hfetch]
   simp [arm8Decode_nop, arm8Run_nop, hexc]
-
-/-- Wrapped address reassociation for the byte walk (Flapjack infrastructure). -/
-theorem addOneOffset {width : Nat} (a : BitVec width) (j : Nat) :
-    (a + 1) + BitVec.ofNat width j = a + BitVec.ofNat width (j + 1) := by
-  rw [BitVec.ofNat_add, BitVec.add_assoc]
-  congr 1
-  exact BitVec.add_comm _ _
-
-/-- The `j`-th byte of a byte list in memory, for every `j` below the length. -/
-theorem bytesInMemoryHOL_get {width : Nat} [NeZero width]
-    {a : BitVec width} {bs : List (BitVec 8)} {m : BitVec width → BitVec 8}
-    {d : BitVec width → Prop} (h : bytesInMemoryHOL a bs m d) :
-    ∀ j, j < bs.length → m (a + BitVec.ofNat width j) = bs.getD j 0 := by
-  revert h
-  induction bs generalizing a with
-  | nil => intro _ j hj; simp at hj
-  | cons x xs ih =>
-      intro h j hj
-      obtain ⟨hx, hd, ht⟩ := h
-      cases j with
-      | zero => simpa using hx
-      | succ j =>
-          have hj' : j < xs.length := by simpa using hj
-          have hrec := ih ht j hj'
-          rw [← addOneOffset]
-          simpa using hrec
-
-/-- The `j`-th byte of a byte list in memory lies in the domain. -/
-theorem bytesInMemoryHOL_domain {width : Nat} [NeZero width]
-    {a : BitVec width} {bs : List (BitVec 8)} {m : BitVec width → BitVec 8}
-    {d : BitVec width → Prop} (h : bytesInMemoryHOL a bs m d) :
-    ∀ j, j < bs.length → d (a + BitVec.ofNat width j) := by
-  revert h
-  induction bs generalizing a with
-  | nil => intro _ j hj; simp at hj
-  | cons x xs ih =>
-      intro h j hj
-      obtain ⟨hx, hd, ht⟩ := h
-      cases j with
-      | zero => simpa using hd
-      | succ j =>
-          have hj' : j < xs.length := by simpa using hj
-          have hrec := ih ht j hj'
-          rw [← addOneOffset]
-          simpa using hrec
-
-/-- `Aligned` at size four is the signed 20-bit alignment predicate used by
-`arm8_ok` (Flapjack infrastructure; HOL `arm8_ok` uses `aligned 2`). -/
-theorem Aligned_four_iff (pc : BitVec 64) :
-    Aligned (TN := 64) (pc, 4) = true ↔ pc.toNat % 4 = 0 := by
-  simp only [Aligned, Align, beq_iff_eq]
-  constructor
-  · intro h
-    have ht := congrArg BitVec.toNat h
-    have hle : 4 * (pc.toNat / 4) ≤ pc.toNat := by
-      rw [Nat.mul_comm]; exact Nat.div_mul_le_self _ _
-    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt hle pc.isLt)] at ht
-    rw [ht]
-    exact Nat.mul_mod_right 4 (pc.toNat / 4)
-  · intro h
-    apply BitVec.eq_of_toNat_eq
-    have hle : 4 * (pc.toNat / 4) ≤ pc.toNat := by
-      rw [Nat.mul_comm]
-      exact Nat.div_mul_le_self _ _
-    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt hle pc.isLt),
-      Nat.mul_comm 4 (pc.toNat / 4), Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero h)]
 
 /-- The `Skip` constructor of `encoder_correct arm8TargetL3`: one
 `NextStateARM8` step from a state holding the emitted `NOP` bytes only advances
