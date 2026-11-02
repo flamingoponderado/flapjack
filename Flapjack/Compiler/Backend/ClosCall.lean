@@ -1,3 +1,4 @@
+import Flapjack.HolRef
 import Flapjack.Compiler.Backend.ClosLang.Pure
 import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.BackendCommon.Trace
@@ -83,6 +84,16 @@ def insertEach (loc count : Nat) (state : State) : State :=
 def codeList (loc : Nat) (fns : List (Nat × Exp)) (state : State) : State :=
   (state.1, (fns.zip (List.range fns.length)).foldl
     (fun code ((arity, body), i) => (loc + 2 * i + 1, arity, body) :: code) state.2)
+/-- Source-shaped `code_list`, retaining HOL's independent payload and state
+carrier types. The production `codeList` uses a fold-based implementation;
+its agreement with this definition is proved in the pass proofs. -/
+@[hol "cakeml/compiler/backend/clos_callScript.sml" "code_list_def"]
+def codeListSource {A B C : Type} (loc : Nat) : List (A × B) →
+    C × List (Nat × A × B) → C × List (Nat × A × B)
+  | [], state => state
+  | (arity, body) :: rest, (known, code) =>
+      codeListSource (loc + 2) rest (known, (loc + 1, arity, body) :: code)
+
 private def variables (t : BackendCommon.Tra) (arity : Nat) : List Exp :=
   (List.range arity).map (.var t)
 private def callsList (loc : Nat) (fns : List (Nat × Exp)) : List (Nat × Exp) :=

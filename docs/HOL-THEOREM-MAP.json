@@ -115939,5 +115939,37 @@
     "lean_name": "collectAppsRebuild",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared source lines 259-280: original quantifier order includes the unused accumulator, preserved in Lean; empty accumulator, no_mti, existential tra list, list ZIP order, equal lengths and upper bound match. HOL ZIP and Lean zip both truncate on unequal lists. Original theorem or definition replayed with inferred types in clos_mti_collect_args_probe.out; Lean proof kernel checked against the reviewed production collector and no_mti predicate. This does not establish cross-language equivalence."
-  }
+  },
+{
+  "hol_path": "cakeml/compiler/backend/clos_callScript.sml",
+  "hol_name": "code_list_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall.lean",
+  "lean_name": "codeListSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the two recursive equations at source lines 207-211 and the independently polymorphic inferred type in clos_call_code_list_probe.out; the executed fold is proved equal in codeList_eq_source. Lean checks the proof; this comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "FST_code_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeList.lean",
+  "lean_name": "codeListSource_fst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source line 405 and the inferred statement in clos_call_code_list_probe.out, including independent payload and state types. Lean checks the proof; this comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "SND_code_list_change",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeList.lean",
+  "lean_name": "codeListSource_snd_change",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source line 446 and the inferred statement in clos_call_code_list_probe.out, including independently typed first components of the two states. Lean checks the proof; this comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "MAP_FST_code_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeList.lean",
+  "lean_name": "codeListSource_labels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source line 456 and the inferred statement in clos_call_code_list_probe.out: GENLIST is the native range/map, with the same reversed labels and existing suffix. Lean checks the proof; this comparison does not establish cross-language equivalence."
+}
 ]

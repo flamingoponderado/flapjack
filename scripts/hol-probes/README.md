@@ -343,6 +343,8 @@ the complete carrier correspondence remains under review.
 
 `clos_call_frontend_probe.out` captures closure free-variable annotations, direct-call conversion, effectful calls, and mutually recursive code extraction. `full_clos_call_cake_word_probe.out` captures the complete word program for a nested-function CakeML declaration with direct-call conversion and the ported BVL/BVI optimizations enabled; known-function optimization is disabled.
 
+`clos_call_code_list_probe.out` captures the polymorphic source type and typed label-accounting theorems for the direct-call code-list helper, together with a concrete example replayed by the executable-pass parity tests.
+
 `clos_known_helpers_probe.out` captures closure free-variable cleanup, tick removal, let-operation cleanup and inlining decisions, including trace preservation and size limits. These support the bounded known-function pass.
 
 `clos_op_frontend_probe.out` captures smart arithmetic, constructor inspection, equality expansion, trace retention and effectful binding order. The bounded Lean operation simplifier is checked against these selected original outputs.

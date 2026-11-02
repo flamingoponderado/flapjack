@@ -5,6 +5,14 @@ namespace Flapjack.Test.ClosCallParity
 open Flapjack.Compiler.Backend ClosCall
 open Flapjack.Basis.Pure.MlString
 
+-- `clos_call_code_list_probe.out`: preserve existing code and prepend new
+-- bodies in reverse order, with the original odd-offset labels.
+#guard match codeList 10 [(2, .var .none 4), (0, .var .none 9), (1, .var .none 2)]
+    (.ln, [(90, 3, .var .none 0)]) with
+  | (.ln, [(15, 1, .var .none 2), (13, 0, .var .none 9),
+      (11, 2, .var .none 4), (90, 3, .var .none 0)]) => true
+  | _ => false
+
 #guard match freeFuel 100 (.fn (ofString "f") (some 4) none 1
     (.let .none [.var .none 3] (.var .none 0))) with
   | some (.fn name (some 4) (some [2]) 1 (.let .none [.var .none 3] (.var .none 0)),
