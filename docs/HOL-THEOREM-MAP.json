@@ -100626,6 +100626,15 @@
     "reviewer": "Source comparison: memory_rel_ByteArray_words_IMP and its typed capture retain the complete memory relation, reference lookup, good_dimindex and real-address hypotheses. The existential header and separation frame, exact write_bytes payload over the functional memory graph, and both decoded-length conclusions match HOL. store uses the canonical finite-support map and all memory words share the source positive word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordCardinality.lean",
+    "lean_name": "wordListLimit",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_list_limit",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared with the source and captured inferred type: a list of word locations satisfying EVERY isWord and ALL_DISTINCT has length at most dimword. Lean List.all and Nodup retain those conditions, and the word-location payload uses the positive HOL word dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality/Complete.lean",
     "lean_name": "wordEqThm0",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

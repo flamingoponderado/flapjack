@@ -55,6 +55,7 @@ val fix_clock_imp_replay = prove(
 val _ = show "fix_clock_IMP_replay_typed" fix_clock_imp_replay;
 val _ = show "word_is_clos_def_typed" data_to_word_memoryProofTheory.word_is_clos_def;
 val _ = show "word_eq_thm0_typed" data_to_word_memoryProofTheory.word_eq_thm0;
+val _ = show "word_list_limit_typed" data_to_word_memoryProofTheory.word_list_limit;
 val _ = show "vb_eq_size_def_typed" data_to_word_memoryProofTheory.vb_eq_size_def;
 val _ = show "vb_eq_size_IMP_vb_size_typed" data_to_word_memoryProofTheory.vb_eq_size_IMP_vb_size;
 val _ = show "word_mem_eq_def_typed" data_to_word_memoryProofTheory.word_mem_eq_def;
