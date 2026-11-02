@@ -557,6 +557,7 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeList
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Suffix
+import Flapjack.Compiler.Backend.ClosCall.Proofs.Length
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.Proofs.FullTotal
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
