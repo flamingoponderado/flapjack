@@ -109238,8 +109238,8 @@
     "lean_name": "collectArgs",
     "hol_path": "cakeml/compiler/backend/clos_mtiScript.sml",
     "hol_name": "collect_args_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed carrier and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared clos_mtiScript.sml:14-20 and all inferred constructor cases in clos_mti_collect_args_probe.out. Native MlString, optional num and num-list fields, Nat arities and exact ClosLang.Exp carrier agree. Only Fn with both annotations NONE is recursively collected, with the original addition, comparison and unchanged overflow branch; all other cases return the original expression. This is the collector used by the executable traversal. The source comparison and typed capture do not prove cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosMti.lean",
@@ -115455,5 +115455,29 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison against data_to_wordScript.sml:340-348: call_empty_ffi gates the ordered zero, NextFree-CurrHeap, HeapLength, and empty-name FFI operations, preserving the two input cutsets and register numbers. Typed original definitions and representative 64-bit observations are captured in data_to_word_config_probe.out and executable rows are kernel replayed in DataToWordConfigParity. Positive-width BitVec represents HOL word width. The definition is used by the executed data-to-word control path; the probes and qualifier do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "mk_Fns_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/CollectArgs.lean",
+    "lean_name": "mkFns",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared HOL source lines 63-66 and typed replay: the trace carrier is native mlstring and each function uses NONE for both annotations and arity one. The original definition or theorem was replayed with inferred types in clos_mti_collect_args_probe.out; Lean proof is kernel checked. Source and Lean use the reviewed production collector and no_mti predicate. These checks do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "collect_args_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/CollectArgs.lean",
+    "lean_name": "collectArgsBounds",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared HOL source lines 177-186 and typed replay: the same five quantified inputs, collection equality, upper bound, and two arithmetic conclusions. The original definition or theorem was replayed with inferred types in clos_mti_collect_args_probe.out; Lean proof is kernel checked. Source and Lean use the reviewed production collector and no_mti predicate. These checks do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "collect_args_ok_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/CollectArgs.lean",
+    "lean_name": "collectArgsUnary",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared HOL source lines 188-201 and typed replay: the same collection equality and no_mti premise, existential native mlstring list, reconstructed nested unary functions, exact count and residual no_mti conclusion. The original definition or theorem was replayed with inferred types in clos_mti_collect_args_probe.out; Lean proof is kernel checked. Source and Lean use the reviewed production collector and no_mti predicate. These checks do not prove cross-language equivalence."
   }
 ]

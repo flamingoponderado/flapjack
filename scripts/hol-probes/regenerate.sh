@@ -8235,6 +8235,10 @@ run_probe data_to_word_option_le_probeScript.sml data_to_word_option_le_probe.ou
   option_le_SOME_typed get_limits_def_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe clos_mti_collect_args_probeScript.sml clos_mti_collect_args_probe.out \
+  mk_fns_def_typed collect_args_def_typed collect_args_imp_typed collect_args_ok_imp_typed \
+  "$cake_dir/compiler/backend/proofs/clos_mtiProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe pan_to_word_crep_inst_ok_probeScript.sml pan_to_word_crep_inst_ok_probe.out \
   crep_every_exp_def_typed every_inst_ok_less_crep_to_loop_compile_exp_typed every_prog_loop_inst_ok_nested_seq_typed every_inst_ok_less_crep_to_loop_compile_typed every_inst_ok_less_comp_func_typed \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
