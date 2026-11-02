@@ -117,6 +117,120 @@ theorem panSemExecStateOfHOLWithKeys_ranged {σ : Type}
     exact panValueOfHOL_byteRanged v
   · exact panStructContextOfHOL_byteRanged exact.structs
 
+/-- Give the executable state a HOL FFI carrier without changing any source
+    expression inputs. This is infrastructure for the forward state codec. -/
+def panSemExecStateWithHolFfi {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (ffi : HolFfiState σ) :
+    PanSemState (RiscV.Word 64) (HolFfiState σ) where
+  locals := state.locals
+  globals := state.globals
+  structs := state.structs
+  code := state.code
+  exceptionShapes := state.exceptionShapes
+  memory := state.memory
+  memaddrs := state.memaddrs
+  sharedMemaddrs := state.sharedMemaddrs
+  clock := state.clock
+  be := state.be
+  ffi := ffi
+  baseAddress := state.baseAddress
+  topAddress := state.topAddress
+
+/-- The finite HOL view of a production state. The caller supplies the actual
+    finite-support property for the projected maps; no arbitrary infinite map
+    is represented as a HOL finite map. -/
+def panSemFiniteViewOfExec {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (ffi : HolFfiState σ)
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hfinite : (panSemStateToExact (panSemExecStateWithHolFfi state ffi)
+      (panSemMemoryExactOf state.memory) hmem).FiniteSupport) : PanSemStateFiniteExact 64 σ :=
+  PanSemStateFiniteExact.ofExact
+    (panSemStateToExact (panSemExecStateWithHolFfi state ffi)
+      (panSemMemoryExactOf state.memory) hmem) hfinite
+
+instance panSemFiniteViewOfExec_decidableMemaddrs {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (ffi : HolFfiState σ)
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hfinite : (panSemStateToExact (panSemExecStateWithHolFfi state ffi)
+      (panSemMemoryExactOf state.memory) hmem).FiniteSupport) :
+    DecidablePred (panSemFiniteViewOfExec state ffi hmem hfinite).memaddrs :=
+  fun address => inferInstanceAs (Decidable (state.memaddrs address = true))
+
+/-- The forward finite view is related to its production state. FFI agreement,
+    finite map support, and defined word memory on the domain are explicit. -/
+theorem panSemFiniteViewOfExec_rel {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (ffi : HolFfiState σ)
+    (hffi : FfiStateRel state.ffi ffi)
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hfinite : (panSemStateToExact (panSemExecStateWithHolFfi state ffi)
+      (panSemMemoryExactOf state.memory) hmem).FiniteSupport) :
+    PanSemStateRelExec state (panSemFiniteViewOfExec state ffi hmem hfinite).toExact := by
+  have h := panSemStateRel_toExact (panSemExecStateWithHolFfi state ffi)
+    (panSemMemoryExactOf state.memory) hmem
+  rcases h with ⟨hloc, hglob, hstruct, hcode, hshapes, hmemory, hdom, hshared,
+    hclock, hbe, _, hbase, htop⟩
+  simpa [PanSemStateRelExec, panSemFiniteViewOfExec, PanSemStateFiniteExact.ofExact,
+    panSemStateToExact, panSemExecStateWithHolFfi] using
+    And.intro hloc (And.intro hglob (And.intro hstruct (And.intro hcode
+      (And.intro hshapes (And.intro hmemory (And.intro hdom (And.intro hshared
+        (And.intro hclock (And.intro hbe (And.intro hffi (And.intro hbase htop)))))))))))
+
+/-- Code and exception shapes do not occur in expression evaluation. Clearing
+    them lets the finite expression view require support only for locals and
+    globals, while retaining every field actually read by the evaluator. -/
+def panSemExpressionShadow {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    PanSemState (RiscV.Word 64) (FfiState σ) :=
+  { state with code := [], exceptionShapes := fun _ => none }
+
+/-- Expression evaluation never invokes FFI, so the isolated view can use a
+    fixed failing oracle without constraining the production state's oracle. -/
+def panSemExpressionIsolated {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    PanSemState (RiscV.Word 64) (FfiState σ) :=
+  { state with ffi := trivialFfiState σ state.ffi.state }
+
+def panSemExpressionHolFfi {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) : HolFfiState σ :=
+  { oracle := fun _ _ _ _ => .final .failed, ffiState := state.ffi.state, ioEvents := [] }
+
+theorem panSemExpressionIsolated_ffiRel {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    FfiStateRel (panSemExpressionIsolated state).ffi (panSemExpressionHolFfi state) := by
+  unfold FfiStateRel
+  refine ⟨rfl, ?_, ?_⟩
+  · simp [panSemExpressionIsolated, panSemExpressionHolFfi, trivialFfiState, FfiEventListRel]
+  · intro name holName hname ffiState configuration holConfiguration bytes holBytes hconf hbytes
+    simp [panSemExpressionIsolated, panSemExpressionHolFfi, trivialFfiState, OracleResultRel,
+      OutcomeRel]
+
+/-- Local and global support suffice for the shadow's four HOL finite maps. -/
+theorem panSemExpressionShadow_finite {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (ffi : HolFfiState σ)
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : ∃ keys : List MlS, ∀ key,
+      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hglob : ∃ keys : List MlS, ∀ key,
+      state.globals (toStringOfBytes key) ≠ none → key ∈ keys) :
+    (panSemStateToExact (panSemExecStateWithHolFfi (panSemExpressionShadow state) ffi)
+      (panSemMemoryExactOf state.memory) hmem).FiniteSupport := by
+  obtain ⟨localKeys, hlocalKeys⟩ := hloc
+  obtain ⟨globalKeys, hglobalKeys⟩ := hglob
+  refine ⟨⟨localKeys, ?_⟩, ⟨globalKeys, ?_⟩, ⟨[], ?_⟩, ⟨[], ?_⟩⟩
+  · intro key h
+    apply hlocalKeys key
+    intro hnone
+    apply h
+    simp [panSemStateToExact, panSemExecStateWithHolFfi, panSemExpressionShadow, hnone]
+  · intro key h
+    apply hglobalKeys key
+    intro hnone
+    apply h
+    simp [panSemStateToExact, panSemExecStateWithHolFfi, panSemExpressionShadow, hnone]
+  · simp [panSemStateToExact, panSemExecStateWithHolFfi, panSemExpressionShadow,
+      panSemCodeLookup, lookupInfo]
+  · simp [panSemStateToExact, panSemExecStateWithHolFfi, panSemExpressionShadow]
+
 /-- Decode the finite HOL state to the executable state carrier, using an
     explicitly supplied executable FFI state. The finite code support and
     decidable domains come from the HOL state and its caller. -/
@@ -182,6 +296,120 @@ theorem evalPanValueExpCounted_agree {σ : Type}
       exact.evalHOLFinite (expToHOL e) := by
   simpa [evalPanValueExpCounted, Option.map_map, Function.comp_def] using
     evalPanValueExp_agree state exact hrel hranged e he
+
+/-- Agreement for an existing production state and its constructed finite HOL
+    view. The assumptions describe the representation boundary itself: finite
+    support of the four maps, word-valued memory on the source domain, related
+    FFI states, and byte-ranged names in the state and expression. -/
+theorem evalPanSemStateExp_finiteView_agree {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (ffi : HolFfiState σ)
+    (hffi : FfiStateRel state.ffi ffi)
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hfinite : (panSemStateToExact (panSemExecStateWithHolFfi state ffi)
+      (panSemMemoryExactOf state.memory) hmem).FiniteSupport)
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    Option.map panValueToHOL (evalPanSemStateExp state e) =
+      (panSemFiniteViewOfExec state ffi hmem hfinite).evalHOLFinite (expToHOL e) := by
+  exact evalPanSemStateExp_agree state (panSemFiniteViewOfExec state ffi hmem hfinite)
+    (panSemFiniteViewOfExec_rel state ffi hffi hmem hfinite) hranged e he
+
+/-- An existing production state's expression evaluation has a finite HOL
+    view when its local and global maps have finite support. No support
+    condition on code or exception shapes is needed for expressions. -/
+theorem evalPanSemStateExp_expressionView_agree {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (ffi : HolFfiState σ)
+    (hffi : FfiStateRel state.ffi ffi)
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : ∃ keys : List MlS, ∀ key,
+      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hglob : ∃ keys : List MlS, ∀ key,
+      state.globals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    Option.map panValueToHOL (evalPanSemStateExp state e) =
+      @PanSemStateFiniteExact.evalHOLFinite 64 σ _
+        (panSemFiniteViewOfExec (panSemExpressionShadow state) ffi hmem
+          (panSemExpressionShadow_finite state ffi hmem hloc hglob))
+        (fun address => inferInstanceAs (Decidable (state.memaddrs address = true))) (expToHOL e) := by
+  exact evalPanSemStateExp_finiteView_agree (panSemExpressionShadow state) ffi hffi hmem
+    (panSemExpressionShadow_finite state ffi hmem hloc hglob) hranged e he
+
+/-- Construct the finite expression-only view without relying on the source
+    code map, exception shapes, or FFI oracle. -/
+def panSemExpressionView {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : ∃ keys : List MlS, ∀ key,
+      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hglob : ∃ keys : List MlS, ∀ key,
+      state.globals (toStringOfBytes key) ≠ none → key ∈ keys) : PanSemStateFiniteExact 64 σ :=
+  panSemFiniteViewOfExec (panSemExpressionShadow (panSemExpressionIsolated state))
+    (panSemExpressionHolFfi state) hmem
+    (panSemExpressionShadow_finite (panSemExpressionIsolated state)
+      (panSemExpressionHolFfi state) hmem hloc hglob)
+
+/-- Production expression evaluation agrees with its finite HOL expression
+    view without any premise on code, exception shapes, or FFI. Local/global
+    support, word-valued domain memory, and byte-ranged names remain explicit. -/
+theorem evalPanSemStateExp_isolatedView_agree {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : ∃ keys : List MlS, ∀ key,
+      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hglob : ∃ keys : List MlS, ∀ key,
+      state.globals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    Option.map panValueToHOL (evalPanSemStateExp state e) =
+      @PanSemStateFiniteExact.evalHOLFinite 64 σ _ (panSemExpressionView state hmem hloc hglob)
+        (fun address => inferInstanceAs (Decidable (state.memaddrs address = true))) (expToHOL e) := by
+  exact evalPanSemStateExp_expressionView_agree (panSemExpressionIsolated state)
+    (panSemExpressionHolFfi state) (panSemExpressionIsolated_ffiRel state)
+    hmem hloc hglob hranged e he
+
+/-- The clocked evaluator's counted expression result agrees with the same
+    expression-only HOL view after removing the instrumentation count. -/
+theorem evalPanValueExpCounted_isolatedView_agree {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : ∃ keys : List MlS, ∀ key,
+      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hglob : ∃ keys : List MlS, ∀ key,
+      state.globals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    Option.map (fun result => panValueToHOL result.1)
+        (evalPanValueExpCounted state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+          (memoryAccess := some (panSemBitVec64MemoryAccess state))) =
+      @PanSemStateFiniteExact.evalHOLFinite 64 σ _ (panSemExpressionView state hmem hloc hglob)
+        (fun address => inferInstanceAs (Decidable (state.memaddrs address = true))) (expToHOL e) := by
+  simp only [evalPanValueExpCounted, Option.map_map, Function.comp_def]
+  change Option.map panValueToHOL
+    (evalPanValueExp state.structs state.locals state.globals state.memory
+      state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+      (memoryAccess := some (panSemBitVec64MemoryAccess state))) = _
+  rw [← evalPanSemStateExp_64_eq_previous]
+  exact evalPanSemStateExp_isolatedView_agree state hmem hloc hglob hranged e he
+
+/-- The same constructed finite view covers the counted expression result
+    consumed by the clocked production evaluator. -/
+theorem evalPanValueExpCounted_finiteView_agree {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (ffi : HolFfiState σ)
+    (hffi : FfiStateRel state.ffi ffi)
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hfinite : (panSemStateToExact (panSemExecStateWithHolFfi state ffi)
+      (panSemMemoryExactOf state.memory) hmem).FiniteSupport)
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    Option.map (fun result => panValueToHOL result.1)
+        (evalPanValueExpCounted state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+          (memoryAccess := some (panSemBitVec64MemoryAccess state))) =
+      (panSemFiniteViewOfExec state ffi hmem hfinite).evalHOLFinite (expToHOL e) := by
+  exact evalPanValueExpCounted_agree state (panSemFiniteViewOfExec state ffi hmem hfinite)
+    (panSemFiniteViewOfExec_rel state ffi hffi hmem hfinite) hranged e he
 
 /-- An expression decoded from the HOL carrier is automatically byte-ranged;
     no separate syntax-rangedness assumption is needed at this boundary. -/
