@@ -304,9 +304,18 @@ bits `0b11`) into `XZR`, and for the ordering comparisons a `SUBS`
 the `Encode`/`Decode` inverse for the `ANDS` word, the `Run` state equations
 for both compare shapes (the `AND` result's most significant bit and zero-ness
 for `ANDS`, `AddWithCarry`'s flags for `SUBS`, with the `XZR` destination
-discarded) and one `arm8Next` step for each.  The `JumpCmp` case theorem still
-needs the flag-to-`wordCmpHOL` correspondence for the eight `Cmp`
-constructors.
+discarded) and one `arm8Next` step for each.
+
+The same module carries the condition-code semantics those two shapes need.
+`arm8AddWithCarry_machine` identifies the rendered `AddWithCarry` at 64 bits
+with the machine model's `addWithCarry`, so the machine model's
+`jumpCmp_flags_c`/`_z`/`_slt` lemmas carry over: `C` is "not below" unsigned,
+`Z` is equality, and `N != V` is `BitVec.slt`.  `arm8ConditionTest_cmpCond`
+tabulates the rendered `ConditionTest` on the eight `cmp_cond` codes, and
+`arm8SubCmp_semantics`/`arm8AndCmp_semantics` conclude
+`ConditionHolds (cmp_cond cmp)` after the compare equals
+`wordCmpHOL cmp x y`.  What remains for the `JumpCmp` case theorem is the
+two-instruction simulation itself.
 
 `JumpReg.lean` does the same for `BranchRegister (r, JMP)`: the word, its
 `Encode`/`Decode` inverse and the `Run` reduction, where `PC` becomes the
@@ -330,7 +339,7 @@ Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
 `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
 `ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in `Carry.lean` and its
 `ConditionalCompareImmediate@64` facts in `Compare.lean`), `Mem`, and the
-`JumpCmp` case theorem itself (its compare instructions and conditional branch
-are recorded, but the `cmp_cond` flag semantics are not yet proved).
+`JumpCmp` case theorem itself (its compare instructions, conditional branch and
+`cmp_cond` flag semantics are proved; the two-instruction simulation is not).
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
