@@ -100644,5 +100644,13 @@
   "lean_name": "arm8_encoder_correct_fp",
   "statement_status": "pending_statement_review",
   "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): the Fp constructor case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:654) with the full encoder_correct_def premise (asmStep + targetStateRel), existential n = 0, every environment, interference preservation, the code-byte/PC assertion and the outside-domain byte conclusion. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/BranchTo definitions it uses are mechanically rendered and not yet source-reviewed."
- }
+ },
+{
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/LocBig.lean",
+  "lean_name": "arm8_encoder_correct_loc_big",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): the out-of-range Loc constructor case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:283, arm8_ast_def) with the full encoder_correct_def premise (asmStep + targetStateRel), existential n = 5 for the six-instruction lowering, every environment, interference preservation, the code-byte/PC assertion and the outside-domain byte conclusion. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/Address/MoveWide/AddSubShiftedRegister definitions it uses are mechanically rendered and not yet source-reviewed."
+}
 ]

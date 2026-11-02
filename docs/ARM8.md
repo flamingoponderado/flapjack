@@ -262,7 +262,16 @@ followed by the `VC` select.
 inverse, `Run` semantics and `arm8Next` reduction, plus the bit-level
 reassembly of the 21-bit immediate and the sign-extend roundtrip from the
 signed-20-bit range; `arm8_encoder_correct_loc_small` assembles the in-range
-`Loc` case. The six-instruction out-of-range lowering is still open.
+`Loc` case.
+
+`LocBig.lean` records the six-instruction out-of-range lowering from
+`arm8_ast`: an `Address` with immediate zero writing `PC` to the destination,
+four `MoveWide .k` insertions of the offset into the temporary register 26,
+and a final `AddSubShiftedRegister@64` adding the temporary to the
+destination.  It proves the lowering shape, the 24-byte encoding, the six
+`NextStateARM8` steps, that the four insertions put the offset into register 26
+and that the final add writes `PC + offset`; `arm8_encoder_correct_loc_big`
+assembles the case with `n = 5`.
 
 `Branch.lean` records the `JMP`-typed `BranchImmediate` instruction: its word
 (`btype = CALL` bit, the `00101` opcode and the 26-bit immediate), the
@@ -291,11 +300,11 @@ FP operation and `asm_step` cannot hold.  `arm8_encoder_correct_fp` proves the
 case from that contradiction, matching the HOL proof's `FP` branch.
 
 Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
-`DecodeBitMasks`/`BitfieldMove`), and the `longDiv`, `addCarry`,
+`DecodeBitMasks`/`BitfieldMove`), the `longDiv` case, `addCarry`,
 `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
 `ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in `Carry.lean` and its
-`ConditionalCompareImmediate@64` facts in `Compare.lean`), `Mem`,
-`JumpCmp` and the out-of-range `Loc` constructors.
+`ConditionalCompareImmediate@64` facts in `Compare.lean`), `Mem` and
+`JumpCmp`.
 `longDiv` lowers to `arm8EncodeFail`, so its case cannot be a faithful lowering
 without the intended instruction sequence.  The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
