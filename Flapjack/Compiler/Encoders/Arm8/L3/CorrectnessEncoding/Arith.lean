@@ -35,8 +35,6 @@ theorem arm8Encode_addSubShiftedRegister (op : Bool) (s : Bool) (shift : ShiftTy
   simp only [Encode, e_data, arm8AddSubShiftedRegisterWord]
   rfl
 
-theorem holV2w_one_false : holV2w 1 [false] = (0 : BitVec 1) := by decide
-
 /-- The rendered `Decode` inverts `arm8AddSubShiftedRegisterWord` for the
 `lsl` shift used by `arm8_ast` (the other shifts encode other instructions,
 and `ror` decodes as `Reserved`). -/

@@ -235,13 +235,16 @@ The further case modules under `CorrectnessEncoding/` cover, so far, the
 `LogicalImmediateBinop.lean`), the `binop` add/sub shifted-register and
 immediate forms (`Arith.lean`, `AddSubImmediate.lean`), and `shift` with a
 register operand plus its `.ror` immediate form (`Shift.lean`,
-`ShiftImmediate.lean`), and `div` (`Division.lean`).  Each records the emitted word, the `Decode` inverse,
+`ShiftImmediate.lean`), `div` (`Division.lean`), and the `longMul` instruction
+pair `MultiplyHigh` + `MultiplyAddSub@64` (`Multiply.lean`, which also proves
+that the high half of the unsigned 128-bit product is `r / 2 ^ 64`).  Each records the emitted word, the `Decode` inverse,
 the `Run` reduction and the `asmCaseOne` interference simulation for its
 constructor; all are Flapjack case splits of the single HOL theorem
 `arm8_encoder_correct` and carry no `@[hol]` tags of their own.
 
 Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
-`DecodeBitMasks`/`BitfieldMove`), and the `longMul`, `longDiv`, `addCarry`,
+`DecodeBitMasks`/`BitfieldMove`), the two-instruction `longMul` case theorem
+(its instruction facts are in `Multiply.lean`), and the `longDiv`, `addCarry`,
 `addOverflow`, `subOverflow`, `Mem`, `Fp`, `Jump`, `JumpCmp`, `Call`,
 `JumpReg` and `Loc` constructors.  `longDiv` lowers to
 `arm8EncodeFail`, so its case cannot be a faithful lowering without the

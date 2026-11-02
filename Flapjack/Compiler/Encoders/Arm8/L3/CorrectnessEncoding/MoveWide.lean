@@ -64,6 +64,8 @@ theorem holV2w_sixteen (w : BitVec 16) :
   exact holV2w_holW2v w
 
 theorem holV2w_one_true : holV2w 1 [true] = (1 : BitVec 1) := by decide
+/-- One-bit roundtrip for the `0` bit list. -/
+theorem holV2w_one_false : holV2w 1 [false] = (0 : BitVec 1) := by decide
 theorem holV2w_two_zero : holV2w 2 [false, false] = (0 : BitVec 2) := by decide
 theorem holV2w_two_two : holV2w 2 [true, false] = (2 : BitVec 2) := by decide
 theorem holV2w_two_three : holV2w 2 [true, true] = (3 : BitVec 2) := by decide
