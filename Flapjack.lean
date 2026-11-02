@@ -581,6 +581,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateList
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateLet
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateFunction
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FunctionInvariant
+import Flapjack.Compiler.Backend.ClosCall.Proofs.RecursiveInvariant
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.Proofs.FullTotal
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
