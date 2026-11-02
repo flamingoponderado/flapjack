@@ -74,10 +74,20 @@ theorem valueToWords_eq_some (value : Value) (words : List (BitVec 64)) :
     rfl
   · exact Option.some.inj (hx.symm.trans hy)
 
+namespace InstallPort
+/-- The installation state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end InstallPort
+
 /-- Validate compiler output and install the new code and shifted oracle.
 Invalid input leaves the state unchanged; a valid installation updates state
-even when its clock is zero and the result is timeout. This proof-side model
-is untagged pending finite-map, decoder, and evaluator correspondence review. -/
+even when its clock is zero and the result is timeout. The finite-map lookup
+guard expresses disjointness from the auxiliary code's keys. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "do_install_def"
+  (fmap_as_finite_support := [refs, code])]
 noncomputable def doInstall {C F : Type} (values : List Value) (state : State C F) :
     Result (List ClosLang.Exp) Value × State C F := by
   classical

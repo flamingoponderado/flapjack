@@ -115,7 +115,7 @@ and executed checked builders. Regenerate with
 `HOL_PROBE_ONLY=clos_to_bvl_recursive_types_probeScript.sml scripts/hol-probes/regenerate.sh`;
 the complete carrier correspondence remains under review.
 
-`clos_sem_evaluate_probe.out` captures the typed closure evaluator and variable, conditional, exception, timeout and closure-call observations. `Flapjack/Test/ClosSemEvaluateParity.lean` replays those cases with both the extra-bound evaluator and the clocked unbounded evaluator. Full evaluator and carrier correspondence remain open.
+`clos_sem_evaluate_probe.out` captures the typed closure evaluator and variable, conditional, exception, timeout and closure-call observations. It also captures the typed installation definition and function carrier used in the finite-map representation review. `Flapjack/Test/ClosSemEvaluateParity.lean` replays the evaluator cases with both the extra-bound evaluator and the clocked unbounded evaluator. Full evaluator correspondence remains open.
 
 `clos_sem_memory_probe.out` captures closure array, byte-update, overlap-copy and byte-bounds observations. `Flapjack/Test/ClosSemMemoryParity.lean` replays them, except that the HOL byte-update capture retains an unreduced word-existence condition. The assembled dispatcher and finite-map correspondence remain pending review.
 
@@ -123,7 +123,7 @@ the complete carrier correspondence remains under review.
 
 `clos_sem_thunk_probe.out` captures typed closure thunk operations and missing, flagged, array, valid-update, repeated-update and nested-thunk observations. `Flapjack/Test/ClosSemThunkParity.lean` replays the concrete cases; the proof-side store relation connects flat and closure thunk inspection and successful updates, pending cross-language review.
 
-`clos_sem_install_probe.out` captures typed closure installation, payload decoders and clock theorems, along with invalid-arity observations. Lean checks decoder uniqueness, related flat-to-closure payloads and installation clock facts; finite-map and semantic correspondence remain pending.
+`clos_sem_install_probe.out` captures typed closure installation, payload decoders and clock theorems, along with invalid-arity observations. Lean checks decoder uniqueness, related flat-to-closure payloads and installation clock facts. These captures support source review but do not prove cross-language equivalence.
 
 `clos_sem_word_probe.out` captures the typed closure word dispatcher and representative edge cases. Some HOL `some`-choice and word expressions remain unreduced in the capture; `Flapjack/Test/ClosSemWordParity.lean` checks the Lean cases and explicitly identifies which observations reduce in HOL. The floating-point model and complete correspondence remain subject to their stated review and assumptions.
 

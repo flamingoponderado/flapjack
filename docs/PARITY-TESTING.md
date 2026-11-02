@@ -434,6 +434,10 @@ Seed `7438291` matched 40 complete outputs from the pinned compiler:
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 31428 --count 40
 ```
 
+An additional rich run with seed `522901` matched 40 complete outputs, and a
+deep-mutation run with seed `832661` matched output, diagnostics, and exit
+status for 1,000 accepted and rejected inputs. These remain sampled evidence.
+
 Use `--backend-options` to compile a closure-capturing program without the
 prelude while varying combinations of closure, BVL, allocation, GC, and stack
 options. It reports the exact options with any failure:

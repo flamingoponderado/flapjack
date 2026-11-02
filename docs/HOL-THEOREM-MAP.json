@@ -1,6 +1,15 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "do_install_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Install.lean",
+    "lean_name": "doInstall",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the complete typed definition and inferred v list -> (alpha,beta) state -> (closLang exp list,v) result # (alpha,beta) state in clos_sem_evaluate_probe.out. Both decoded payloads, the oracle entry, compiler callback, output equality and next-configuration guards, nonempty program, shifted oracle, clock subtraction and timeout update follow the source. Lookup absence for every auxiliary label expresses disjointness from FDOM; Nodup matches ALL_DISTINCT and updateListEq is FUPDATE_LIST with HOL equality. All error branches leave the original state. The local state roundtrip witnesses the canonical finite-support refs and code carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "v_to_bytes_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Install.lean",
     "lean_name": "valueToBytes",

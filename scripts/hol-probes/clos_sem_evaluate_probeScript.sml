@@ -46,3 +46,5 @@ val _ = show_thm "bool_value_typed=" closSemTheory.Boolv_def;
 val _ = show_thm "closure_equality_typed=" closSemTheory.do_eq_def;
 val _ = show_thm "value_to_bytes_typed=" closSemTheory.v_to_bytes_def;
 val _ = show_thm "value_to_words_typed=" closSemTheory.v_to_words_def;
+val _ = show_thm "do_install_typed=" closSemTheory.do_install_def;
+val _ = typ "do_install_type=" ``closSem$do_install``;
