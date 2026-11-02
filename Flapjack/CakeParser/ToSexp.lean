@@ -11,20 +11,16 @@ open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Misc.Location
 
 private def ascii (s : String) : List HolChar := (ofString s).explode
 def sym (s : String) : Sexp := .sym (ascii s)
-def list (xs : List Sexp) : Sexp := xs.foldr .cons (sym "nil")
+abbrev list := FromSexp.listsexp
 def node (s : String) (xs : List Sexp) : Sexp := list (sym s :: xs)
-def option (s : Option Sexp) : Sexp := match s with
-  | none => sym "NONE"
-  | some x => node "SOME" [x]
+abbrev option := FromSexp.optsexp
 
 abbrev hexDigit := FromSexp.hexDigit
 abbrev encodeControl := FromSexp.encodeControl
 
 def str (s : MlString) : Sexp := FromSexp.sexstr s.explode
 
-def ident : Ident MlString MlString → Sexp
-  | .short n => node "Short" [str n]
-  | .long m n => node "Long" [str m, ident n]
+abbrev ident := FromSexp.idsexp
 
 mutual
 def type : AstT → Sexp

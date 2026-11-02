@@ -1,6 +1,86 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "listsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "listsexp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured HOL fold over sexp lists and nil constructor. The executable uses this definition."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "optsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "optsexp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both captured option equations, constructor names and sexp payload type. The executable uses this definition."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "idsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "idsexp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both captured identifier equations and the inferred mlstring identifier carriers. The executable uses this definition."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "listsexp_injective",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "listsexp_11",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified sexp-list equality equivalence."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "optsexp_injective",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "optsexp_11",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured sexp-option equality equivalence."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "destString_sexstr",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "odestSEXSTR_SEXSTR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured byte-list input and mlstring result equality."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeId_idsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexpid_odestSEXSTR_idsexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured identifier carriers and decoding result equality."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeList_listsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexplist_listsexp_rwt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured polymorphic element type, pointwise premise, and list-decoding result."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeOption_optsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexpopt_optsexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured polymorphic element type, pointwise premise, and option-decoding result."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "idsexp_injective",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "idsexp_11",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified mlstring identifier equality equivalence."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
     "lean_name": "encodeControl",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "encode_control_def",

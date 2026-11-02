@@ -1,8 +1,12 @@
 import Flapjack.CakeParser.Sexp
+import Flapjack.AstHOL.Syntax
 
 /-! CakeML's byte-oriented S-expression string encoding. -/
 namespace Flapjack.CakeParser.FromSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString
+open Flapjack.NamespaceHOL
+
+private def ascii (s : String) : List HolChar := (ofString s).explode
 
 /-- Hexadecimal digit helper for control-byte encoding. -/
 def hexDigit (n : Nat) : HolChar :=
@@ -19,5 +23,21 @@ def encodeControl (bytes : List HolChar) : List HolChar := bytes.flatMap fun c =
 /-- Construct an encoded string S-expression from a HOL byte string. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "SEXSTR_def"]
 def sexstr (bytes : List HolChar) : Sexp := .str (encodeControl bytes)
+
+/-- Encode a proper S-expression list. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "listsexp_def"]
+def listsexp (xs : List Sexp) : Sexp := xs.foldr .cons (.sym (ascii "nil"))
+
+/-- Encode an optional S-expression. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "optsexp_def"]
+def optsexp : Option Sexp → Sexp
+  | none => .sym (ascii "NONE")
+  | some x => listsexp [.sym (ascii "SOME"), x]
+
+/-- Encode a short or module-qualified CakeML identifier. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "idsexp_def"]
+def idsexp : Ident MlString MlString → Sexp
+  | .short name => listsexp [.sym (ascii "Short"), sexstr name.explode]
+  | .long moduleName rest => listsexp [.sym (ascii "Long"), sexstr moduleName.explode, idsexp rest]
 
 end Flapjack.CakeParser.FromSexp
