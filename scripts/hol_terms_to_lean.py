@@ -25,6 +25,23 @@ sys.setrecursionlimit(1000000)
 # HOL theory holding the L3 model datatypes/constants (riscv or arm8).
 MODEL_THY = 'riscv'
 
+# Datatypes already ported outside the model Types module.  The ARM8
+# `ShiftType`/`MoveWideOp` live in Flapjack/Compiler/Encoders/Arm8/Encode.lean
+# with Lean constructor names.
+EXTRA_TYPES = {
+    'arm8': '''
+inductive ShiftType where
+  | lsl
+  | lsr
+  | asr
+  | ror
+inductive MoveWideOp where
+  | n
+  | z
+  | k
+''',
+}
+
 # ---------------------------------------------------------------------------
 # S-expression reader
 
@@ -154,6 +171,19 @@ def tyvar_name(n: str) -> str:
     return 'T' + re.sub(r"[^A-Za-z0-9]", "", n)
 
 
+def fcp_tyvars(t, acc):
+    """Type variables used as an fcp `bool ** 'N` width (HOL dimension)."""
+    if isinstance(t, Ty) and t.thy == 'fcp' and t.op == 'cart' and t.args[0] == Ty('min', 'bool', ()):
+        inner = t.args[1]
+        if isinstance(inner, TyVar) and inner.name not in acc:
+            acc.append(inner.name)
+        return acc
+    if isinstance(t, Ty):
+        for a in t.args:
+            fcp_tyvars(a, acc)
+    return acc
+
+
 def tyvars(t, acc):
     if isinstance(t, TyVar):
         if t.name not in acc:
@@ -170,6 +200,10 @@ def ty_lean(t) -> str:
     w = word_width(t)
     if w is not None:
         return f'(BitVec {w})'
+    if isinstance(t, Ty) and t.thy == 'fcp' and t.op == 'cart' and t.args[0] == Ty('min', 'bool', ()):
+        inner = t.args[1]
+        if isinstance(inner, TyVar):
+            return f'(BitVec {tyvar_name(inner.name)})'
     key = (t.thy, t.op)
     if key == ('min', 'bool'):
         return 'Bool'
@@ -379,7 +413,19 @@ class Renderer:
             if generic is not None and generic[1]:
                 inst = {}
                 match_ty(generic[0], c.ty, inst)
-                name = '(' + name + ''.join(f' ({tyvar_name(v)} := {ty_lean(inst[v])})' for v in generic[1] if v in inst) + ')'
+                widths = set(fcp_tyvars(generic[0], []))
+                explicit = []
+                for v in generic[1]:
+                    if v not in inst:
+                        continue
+                    if v in widths:
+                        we = width_expr(inst[v])
+                        if we is None:
+                            raise Unrenderable(f'{c.name} width instantiation')
+                        explicit.append(f' ({tyvar_name(v)} := {we})')
+                    else:
+                        explicit.append(f' ({tyvar_name(v)} := {ty_lean(inst[v])})')
+                name = '(' + name + ''.join(explicit) + ')'
             return name if not args else '(' + name + ''.join(' ' + self.atom(a, env) for a in args) + ')'
         if c.thy == MODEL_THY:
             return self.riscv_const(c, args, env)
@@ -396,6 +442,12 @@ class Renderer:
     # -- generated riscv constants -----------------------------------------
     def riscv_const(self, c: Const, args, env) -> str:
         n = c.name
+        if (c.thy, n) in RENAMED_CTORS:
+            tname, cname = RENAMED_CTORS[(c.thy, n)]
+            arity = len(fun_parts(c.ty)[0])
+            return self.eta(c, args, env, arity,
+                            lambda xs, raw: (f'{tname}.{cname}' if not xs else
+                                             f'({tname}.{cname}' + ''.join(' ' + x for x in xs) + ')'))
         m = re.fullmatch(r'recordtype\.([A-Za-z0-9_]+)\.seldef\.([A-Za-z0-9_\']+)_fupd', n)
         if m:
             field = ident(m.group(2))
@@ -473,7 +525,8 @@ class Renderer:
         if isinstance(t, Ty) and t.thy == MODEL_THY and 'fields' in self.types.get(t.op, {}):
             return '⟨' + ', '.join(names) + '⟩'
         if isinstance(t, Ty) and t.thy == MODEL_THY:
-            return f'.{ident(ctor)}' + ''.join(' ' + n for n in names)
+            _, cname = RENAMED_CTORS.get((t.thy, ctor), (t.op, ctor))
+            return f'.{ident(cname)}' + ''.join(' ' + n for n in names)
         key = (t.thy, t.op)
         if key == ('option', 'option'):
             return 'none' if ctor == 'NONE' else f'some {names[0]}'
@@ -508,15 +561,31 @@ def unused_pattern(pattern: str, body: str) -> str:
     return re.sub(r"[A-Za-z_][A-Za-z0-9_']*", lambda m: unused(m.group(), body), pattern)
 
 
-def width_of_result(c: Const) -> int:
-    w = word_width(fun_parts(c.ty)[1])
+def width_expr(t) -> int | str | None:
+    """A Lean width: an int numeral, or the Nat type variable of an fcp cart."""
+    if isinstance(t, TyVar):
+        return tyvar_name(t.name)
+    if isinstance(t, Ty) and t.thy == 'fcp' and t.op in ('bit0', 'bit1', 'one'):
+        return fcp_size(t)
+    w = word_width(t)
+    if w is not None:
+        return w
+    if isinstance(t, Ty) and t.thy == 'fcp' and t.op == 'cart' and t.args[0] == Ty('min', 'bool', ()):
+        inner = t.args[1]
+        if isinstance(inner, TyVar):
+            return tyvar_name(inner.name)
+    return None
+
+
+def width_of_result(c: Const) -> str:
+    w = width_expr(fun_parts(c.ty)[1])
     if w is None:
         raise Unrenderable(f'{c.name} result width')
     return w
 
 
-def width_of_arg(c: Const, i: int) -> int:
-    w = word_width(fun_parts(c.ty)[0][i])
+def width_of_arg(c: Const, i: int) -> str:
+    w = width_expr(fun_parts(c.ty)[0][i])
     if w is None:
         raise Unrenderable(f'{c.name} argument width')
     return w
@@ -707,7 +776,13 @@ def special_bit_field_insert(r, c, args, env):
         raise Unrenderable('bit_field_insert requires checked literal bounds')
     high, low = nat_literal(args[0]), nat_literal(args[1])
     width = word_width(type_of(args[2]))
-    if high is None or low is None or width is None or (low <= high and high - low >= width):
+    if high is None or low is None:
+        # Non-literal bounds (ARM8 MoveWide uses `pos + 15` with
+        # pos in {0,16,32,48} and a 16-bit input): emit the generic helper.
+        # Its getLsbD-based indexing is exact for every in-range call.
+        return r.eta(c, args, env, 4,
+                     lambda xs, raw: f'(holBitFieldInsert {xs[0]} {xs[1]} {xs[2]} {xs[3]})')
+    if width is None or (low <= high and high - low >= width):
         raise Unrenderable('bit_field_insert input index may exceed word width')
     return r.eta(c, args, env, 4,
                  lambda xs, raw: f'(holBitFieldInsert {xs[0]} {xs[1]} {xs[2]} {xs[3]})')
@@ -735,6 +810,18 @@ def special_chr(r, c, args, env):
 
 def special_int_of_num(r, c, args, env):
     return r.eta(c, args, env, 1, lambda xs, raw: f'(Int.ofNat {xs[0]})')
+
+
+# HOL constructors whose Lean port uses different constructor names.
+RENAMED_CTORS = {
+    ('arm8', 'ShiftType_LSL'): ('ShiftType', 'lsl'),
+    ('arm8', 'ShiftType_LSR'): ('ShiftType', 'lsr'),
+    ('arm8', 'ShiftType_ASR'): ('ShiftType', 'asr'),
+    ('arm8', 'ShiftType_ROR'): ('ShiftType', 'ror'),
+    ('arm8', 'MoveWideOp_N'): ('MoveWideOp', 'n'),
+    ('arm8', 'MoveWideOp_Z'): ('MoveWideOp', 'z'),
+    ('arm8', 'MoveWideOp_K'): ('MoveWideOp', 'k'),
+}
 
 
 SPECIAL = {
@@ -865,6 +952,33 @@ CONSTANTS = {
     ('words', 'word_to_hex_string'): (1, lambda r, c, xs, raw: f'(holWordToHexString {xs[0]})'),
     ('ASCIInumbers', 'num_to_dec_string'): (1, lambda r, c, xs, raw: f'(holNumToDecString {xs[0]})'),
     ('state_transformer', 'FOR'): (1, lambda r, c, xs, raw: f'(holFor {xs[0]})'),
+    ('bitstring', 'w2v'): (1, lambda r, c, xs, raw: f'(holW2v {xs[0]})'),
+    ('bitstring', 'testbit'): (2, lambda r, c, xs, raw: f'(holTestbit {xs[0]} {xs[1]})'),
+    ('bitstring', 'shiftr'): (2, lambda r, c, xs, raw: f'(holShiftr {xs[0]} {xs[1]})'),
+    ('bitstring', 'shiftl'): (2, lambda r, c, xs, raw: f'(holShiftl {xs[0]} {xs[1]})'),
+    ('bitstring', 'rotate'): (2, lambda r, c, xs, raw: f'(holRotate {xs[0]} {xs[1]})'),
+    ('bitstring', 'replicate'): (2, lambda r, c, xs, raw: f'(holReplicate {xs[0]} {xs[1]})'),
+    ('bitstring', 'bxor'): (2, lambda r, c, xs, raw: f'(holBxor {xs[0]} {xs[1]})'),
+    ('bitstring', 'field'): (3, lambda r, c, xs, raw: f'(holField {xs[0]} {xs[1]} {xs[2]})'),
+    ('bitstring', 'v2n'): (1, lambda r, c, xs, raw: f'(holV2n {xs[0]})'),
+    ('list', 'PAD_LEFT'): (3, lambda r, c, xs, raw: f'(holPadLeft {xs[0]} {xs[1]} {xs[2]})'),
+    ('list', 'PAD_RIGHT'): (3, lambda r, c, xs, raw: f'(holPadRight {xs[0]} {xs[1]} {xs[2]})'),
+    ('list', 'FLAT'): (1, lambda r, c, xs, raw: f'(List.flatten {xs[0]})'),
+    ('list', 'HD'): (1, lambda r, c, xs, raw: f'(holHd {xs[0]})'),
+    ('list', 'LENGTH'): (1, lambda r, c, xs, raw: f'({xs[0]}.length)'),
+    ('list', 'REVERSE'): (1, lambda r, c, xs, raw: f'({xs[0]}.reverse)'),
+    ('bool', 'IN'): (2, lambda r, c, xs, raw: f'({xs[1]} {xs[0]})'),
+    ('pred_set', 'EMPTY'): (0, lambda r, c, xs, raw: '(fun _ => false)'),
+    ('pred_set', 'INSERT'): (2, lambda r, c, xs, raw: f'(fun x => x = {xs[0]} || {xs[1]} x)'),
+    ('words', 'word_ror'): (2, lambda r, c, xs, raw: f'(BitVec.rotateRight {xs[0]} {xs[1]})'),
+    ('words', 'word_msb'): (1, lambda r, c, xs, raw: f'(BitVec.msb {xs[0]})'),
+    ('words', 'word_hi'): (2, lambda r, c, xs, raw: f'(holWordHi {xs[0]} {xs[1]})'),
+    ('words', 'word_reverse'): (1, lambda r, c, xs, raw: f'(BitVec.reverse {xs[0]})'),
+    ('words', 'word_log2'): (1, lambda r, c, xs, raw: f'(holWordLog2 {xs[0]})'),
+    ('integer', 'int_add'): bin_op('+'),
+    ('integer', 'Num'): (1, lambda r, c, xs, raw: f'({xs[0]}.natAbs)'),
+    ('arithmetic', 'MIN'): (2, lambda r, c, xs, raw: f'(min {xs[0]} {xs[1]})'),
+    ('arithmetic', 'MOD'): bin_op('%'),
 }
 
 
@@ -900,6 +1014,41 @@ for _name in ('LT', 'EQ', 'GT', 'UN'):
         0, lambda r, c, xs, raw, name=_name: f'HolFloatCompare.{name.lower()}')
 
 
+def render_multi(r: Renderer, lean_name: str, out) -> tuple[str, bool]:
+    """A `match` for a multi-clause definition with one parameter.
+
+    L3 generates `...2num`/`num2...` as one equation per constructor (and one
+    numeral per constructor index).  HOL leaves `num2...` unspecified above the
+    highest index; the Lean rendering adds a total default arm from the first
+    clause, which is unreachable at every model call site.
+    """
+    f0, params0, _ = out[0]
+    if len(params0) != 1:
+        raise Unrenderable(f'{len(out)} clauses')
+    param_ty = type_of(params0[0])
+    arg, env = r.bind(Var('arg0', param_ty), {})
+    arms = []
+    numerals = True
+    for f, params, rhs in out:
+        p = params[0]
+        v = nat_literal(p)
+        if v is not None:
+            pat = str(v)
+        elif isinstance(p, Const) and p.thy == MODEL_THY:
+            numerals = False
+            pat = r.pattern(param_ty, p.name, [])
+        else:
+            raise Unrenderable(f'{len(out)} clauses')
+        body = r.tm(rhs, env)
+        arms.append(f'| {pat} => {body}')
+    if numerals:
+        arms.append(f'| _ => {r.tm(out[0][2], env)}')
+    result_ty = ty_lean(fun_parts(f0.ty)[1])
+    text = (f'def {lean_name} ({arg} : {ty_lean(param_ty)}) : {result_ty} :=\n'
+            f'  match {arg} with\n  ' + '\n  '.join(arms))
+    return text, False
+
+
 def render_def(r: Renderer, lean_name: str, term) -> tuple[str, bool]:
     """The Lean equations of one HOL definition theorem (a conjunction of clauses)."""
     clauses = []
@@ -925,6 +1074,8 @@ def render_def(r: Renderer, lean_name: str, term) -> tuple[str, bool]:
         lhs, rhs = args
         f, params = strip_comb(lhs)
         out.append((f, params, rhs))
+    if len(out) > 1:
+        return render_multi(r, lean_name, out)
     if len(out) != 1:
         raise Unrenderable(f'{len(out)} clauses')
     f, params, rhs = out[0]
@@ -951,7 +1102,13 @@ def render_def(r: Renderer, lean_name: str, term) -> tuple[str, bool]:
     for p in params:
         tyvars(type_of(p), tvs)
     # HOL type variables range over nonempty carriers. No chosen Lean default is required.
-    tv_binders = ''.join(f'{{{tyvar_name(v)} : Type}} [Nonempty {tyvar_name(v)}] ' for v in tvs)
+    width_tvs = fcp_tyvars(type_of(lhs), [])
+    for p in params:
+        fcp_tyvars(type_of(p), width_tvs)
+    tv_binders = ''.join(
+        f'{{{tyvar_name(v)} : Nat}} [NeZero {tyvar_name(v)}] ' if v in width_tvs
+        else f'{{{tyvar_name(v)} : Type}} [Nonempty {tyvar_name(v)}] '
+        for v in tvs)
     head = f'def {lean_name} ' + tv_binders + ' '.join(binders) + f' : {result_ty} :=\n  {body}'
     return head, recursive
 
@@ -989,7 +1146,7 @@ def main(argv):
             MODEL_THY = arg.removeprefix('--thy=')
     sexp_path, types_lean = argv[1], argv[2]
     data = read_sexps(Path(sexp_path).read_text())
-    types = parse_types(Path(types_lean).read_text())
+    types = parse_types(Path(types_lean).read_text() + EXTRA_TYPES.get(MODEL_THY, ''))
     defined = {}
     order = []
     for rec in data:

@@ -305,16 +305,17 @@ The following are open review or verification obligations:
       ANDS-immediate `Rd`); the ANDS-immediate case relies on `setflags = true`,
       since the non-flag-setting logical-immediate slot means SP.  That per-slot
       AArch64 fact is an external assumption, not checked by the model.  Unknown
-      instruction words set `failed`.  The L3 carriers, projection and
-      validity gate are ported, but there is no transition refinement: the
-      closed `arm8Next` is not shown to agree with L3 `NextStateARM8`.  The
-      transition definitions are stated over HOL's `bitstring`/FCP bit-vectors,
-      whose Lean library (`w2v`, `shiftr`, `testbit`, `PAD_LEFT`, `FLAT`, `IN`)
-      is not yet ported, so the L3 `Fetch`/`Decode`/`Run`/`Next` closure cannot
-      be rendered.  There is
-      no L3 `arm8_encoder_correct` port, no proof about arbitrary ARMv8 code,
-      and no theorem that the model agrees with real AArch64 hardware or with
-      L3.
+      instruction words set `failed`.  The L3 carriers, projection, validity gate and the
+      transition-definition closure are ported: `L3/Support.lean` supplies the
+      bitstring/FCP/list/set/word/integer helpers, and `L3/Defs.lean` renders
+      the 129 definitions reachable from `NextStateARM8` (118 tagged
+      `pending_statement_review`), with `L3/Target.lean`'s `arm8_next`.  There
+      is still no transition refinement: the closed `arm8Next` is not shown to
+      agree with L3 `NextStateARM8`, the rendered equations have not been
+      source-reviewed, `arm8_target` awaits the full L3 `arm8_config` carrier
+      (#1229), and there is no L3 `arm8_encoder_correct` port, no proof about
+      arbitrary ARMv8 code, and no theorem that the model agrees with real
+      AArch64 hardware or with L3.
       The trusted compiler claim therefore rests on the closed model plus the
       parity evidence, not on an L3 refinement.
     - **Proof port status.** The structural length lemmas at the start of

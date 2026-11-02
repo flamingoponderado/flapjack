@@ -1,7 +1,9 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.Types
+import Flapjack.Compiler.Encoders.Arm8.L3.Defs
 import Flapjack.Compiler.Encoders.Arm8.Machine.State
 import Flapjack.Misc.Alignment
 import Flapjack.Misc.SetSep
+import Flapjack.Misc.Option
 
 /-!
 # L3 ARMv8 target: projection, validity gate, and the closed-model link
@@ -46,6 +48,14 @@ def arm8Ok (s : arm8_state) : Bool :=
   decide (s.PSTATE.EL = 0) && !s.SCTLR_EL1.E0E && !s.SCTLR_EL1.SA0 &&
   !s.TCR_EL1.TBI1 && !s.TCR_EL1.TBI0 &&
   decide (s.exception = exception.NoException) && holAligned 2 s.PC
+
+/-- CakeML's `arm8_next` (`arm8_targetScript.sml:15`): the L3 `NextStateARM8`
+step, projected with `THE`.  This is the transition over the L3 carrier; the
+`arm8_target` record and the encoder-correctness chain still need the full L3
+`arm8_config` carrier (#1229) and the simulation proofs (#1239). -/
+@[hol "cakeml/compiler/encoders/arm8/arm8_targetScript.sml" "arm8_next_def"]
+noncomputable def arm8Next (s : arm8_state) : arm8_state :=
+  holThe (NextStateARM8 s)
 
 /-- Flapjack source-review regression of all seven original validity conjuncts;
 no extra native-state or successful-step premise. -/

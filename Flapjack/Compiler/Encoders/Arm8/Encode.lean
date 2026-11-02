@@ -44,7 +44,7 @@ inductive MoveWideOp where
   | n
   | z
   | k
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Inhabited
 
 /-- The `LogicalOp` constructors produced by `arm8_ast`. -/
 inductive LogicalOp where
@@ -60,7 +60,7 @@ inductive ShiftType where
   | lsr
   | asr
   | ror
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Inhabited
 
 /-- The slice of `MemOp` produced by the ARMv8 backend. -/
 inductive MemOp where
