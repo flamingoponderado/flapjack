@@ -146,6 +146,87 @@ theorem cakeToAnnotatedMti_semantics_proofSide {C F : Type} [Nonempty C]
   rw [behavior]
   exact sourceBehavior
 
+/-- Source-to-BVI behavior composition with multi-argument introduction
+enabled. Source-pass, callback, incremental-oracle, cache and counter
+conditions remain explicit; this is not a reviewed end-to-end HOL theorem. -/
+theorem cakeToOptimizedBviMti_semantics_proofSide {C F : Type} [Nonempty C]
+    (fuel inlineLimit cutSize : Nat) (splitSeq tailEnabled tmcEnabled : Bool)
+    (interp : Option (Value → Option (SourceToFlat.Config × (Nat × OptimizationConfig C))))
+    (source : State F) (sourceEnv : SemEnv Value) (sourceConfig nextSource : SourceToFlat.Config)
+    (flatConfig : FlatSem.InstallConfig (Nat × OptimizationConfig C)) (compiler : BviSem.Compiler C)
+    (declarations : List AstHOL.Dec) (expressions : List ClosLang.Exp)
+    (config current output : ClosToBvl.Config) (program : List (Nat × Nat × ClosLang.Exp))
+    (compiled : List (Nat × Nat × Bvl.Exp)) (names : Spt Basis.Pure.MlString.MlString)
+    (cache : Spt (Nat × Bvl.Exp)) (optimized : List (Nat × Nat × Bvl.Exp))
+    (targetStart targetNext : Nat) (lowered beforeTmc afterTmc final : List (Nat × Nat × Bvi.Exp))
+    (tailLast tmcLast : Nat) (bviCache : Spt (Nat × Bvi.Exp))
+    (precondition : SourceToFlat.SourcePrecondition interp source sourceEnv sourceConfig
+      flatConfig (SourceToSource.compile declarations))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (positive : 0 < config.maxApp)
+    (production : flatConfig.compile = pureCc (incCompileDecs (α := Nat × Nat × ClosLang.Exp))
+      (pureCc (ClosMti.compileInc (Input := List (Nat × Nat × ClosLang.Exp)) config.maxApp)
+        (sourceClosureCompiler config.maxApp inlineLimit cutSize splitSeq tailEnabled tmcEnabled compiler)))
+    (sourceRun : SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (nextSource, expressions))
+    (enabled : config.doMti = true) (calls : config.doCall = false) (known : config.knownConf = none)
+    (preprocess : compileCommonNoOpts? { config with doMti := false }
+      (ClosMti.introList config.maxApp expressions) = some (current, program))
+    (closureRun : compileCallMtiFuel? fuel config expressions = some (output, compiled, names))
+    (optimizedRun : BvlInline.compileProgFuel fuel inlineLimit cutSize splitSeq compiled = some (cache, optimized))
+    (lowerRun : BvlToBvi.compileProgFuel fuel fuel output.start 0 optimized = some (targetStart, lowered, targetNext))
+    (tailRun : BviTailrec.compileProgFuel fuel tailEnabled (bvlNumStubs + 2) lowered = some (tailLast, beforeTmc))
+    (tmcRun : BviTmc.compileProgFuel fuel tmcEnabled (bvlNumStubs + 3) beforeTmc = some (tmcLast, afterTmc))
+    (inlineRun : BviInline.compileProgFuel fuel afterTmc = some (bviCache, final))
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc)
+      (pureCo (ClosMti.compileInc (Output := Nat × Nat × ClosLang.Exp) config.maxApp) ∘ sourceClosureOracle flatConfig))
+    (initialBound : current.nextLoc ≤ ((sourceClosureOracle flatConfig) 0).1.1)
+    (cacheEq : (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.1 = cache)
+    (oracleTailBound : ∀ i, bvlNumStubs ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.1)
+    (oracleTailWorker : ∀ i, BviTailrec.inWorkerNamespace (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.1)
+    (oracleTmcBound : ∀ i, bvlNumStubs ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.2.1)
+    (oracleTmcWorker : ∀ i, BviTmc.inWorkerNamespace (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.2.1)
+    (lowerCounterBound : targetNext ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.1)
+    (tailCounterBound : tailLast ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.2.1)
+    (tmcCounterBound : tmcLast ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.2.2.1)
+    (bviCacheEq : (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.2.2.2.1 = bviCache) :
+    Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+      (BviSem.semantics source.ffi (sptFromAList final)
+        (stateCo BviInline.compileIncSource (stateCo (BviTmc.compileProgSource tmcEnabled)
+          (stateCo (BviTailrec.compileProgSource tailEnabled) (stateCo BvlToBvi.compileIncSource
+            (BvlInline.Proofs.letOpOracle splitSeq cutSize
+              (BvlInline.Proofs.removeTicksCo ∘ BvlInline.Proofs.inCo inlineLimit
+                (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig)))))))) compiler targetStart) := by
+  let intermediate : ClosSem.Compiler (Nat × OptimizationConfig C) := pureCc (ClosMti.compileInc config.maxApp)
+    (sourceClosureCompiler config.maxApp inlineLimit cutSize splitSeq tailEnabled tmcEnabled compiler)
+  have sourceBehavior := cakeCompileToClosFuel_semantics_exists fuel interp source sourceEnv sourceConfig nextSource
+    flatConfig intermediate declarations expressions config.maxApp precondition safe positive production sourceRun
+  have nonfail : ClosSem.semantics source.ffi config.maxApp HolFiniteMapExact.empty (sourceClosureOracle flatConfig)
+      intermediate expressions ≠ .fail := by
+    intro failure
+    rw [failure] at sourceBehavior
+    exact safe sourceBehavior
+  have unary : ∀ e ∈ expressions, ClosProps.noMti e := by
+    have output := congrArg (Option.map Prod.snd) sourceRun
+    have same : compileProg (SourceToFlat.compileTotal sourceConfig (SourceToSource.compile declarations)).2 = expressions := by
+      apply Option.some.inj
+      simpa [SourceToFlat.compileCakeToClosFuel, SourceToFlat.compileToClosFuel, SourceToFlat.compile] using output
+    rw [← same]
+    exact compileProg_noMti _
+  have oracleUnary : ∀ index, ((sourceClosureOracle flatConfig) index).2.2 = [] ∧
+      ∀ e ∈ ((sourceClosureOracle flatConfig) index).2.1, ClosProps.noMti e := by
+    intro index
+    change (incCompileDecs (flatConfig.compileOracle index).2).2 = [] ∧
+      ∀ e ∈ (incCompileDecs (flatConfig.compileOracle index).2).1, ClosProps.noMti e
+    exact ⟨rfl, incCompileDecs_noMti _⟩
+  have backend := mti_closure_optimized_bvi_semantics source.ffi fuel fuel inlineLimit cutSize fuel fuel
+    splitSeq tailEnabled tmcEnabled config current output expressions program compiled names (sourceClosureOracle flatConfig)
+    compiler cache optimized targetStart targetNext lowered beforeTmc afterTmc final tailLast tmcLast bviCache
+    enabled calls known positive unary oracleUnary preprocess closureRun optimizedRun lowerRun tailRun tmcRun inlineRun
+    nonfail oracleState initialBound cacheEq oracleTailBound oracleTailWorker oracleTmcBound oracleTmcWorker
+    lowerCounterBound tailCounterBound tmcCounterBound bviCacheEq
+  rw [backend]
+  exact sourceBehavior
+
 /-- The source-to-closure compiler, the production closure driver with its
 optional optimizations disabled, and the implemented BVL/BVI pipeline produce
 an observable behavior of the original CakeML declarations. The source pass,
