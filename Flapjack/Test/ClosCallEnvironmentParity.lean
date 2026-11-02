@@ -158,11 +158,12 @@ example (names : List Flapjack.Basis.Pure.MlString.MlString) :
 -- A real closed group is related to its generated direct-call stub and code.
 private theorem closedGroupRelation : recClosureRelFuel 5 closedGroupResult ∅ closedGroupCode 10 closedGroup
     [(1, .call .none 0 11 [.var .none 0])] := by
-  have result := callsFuel_fn_closed_source 4 (Flapjack.Basis.Pure.MlString.ofString "") 10 1
-    (.var .none 0) (.var .none 0) closedGroupInitial closedGroupAfter closedGroupResult ∅ closedGroupCode
-  apply result ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ |>.2
+  have result := callsFuel_letrec_closed_final 5 [] 10 closedGroup (.var .none 0) (.var .none 0)
+    closedGroupInitial closedGroupAfter closedGroupResult closedGroupResult [.var .none 0] ∅ closedGroupCode
+  apply result ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ |>.2
   · rfl
-  · simp [freeVarExp]
+  · simp [groupClosed, closedGroup, freeVarExp]
+  · rfl
   · constructor
     · ext label
       simp only [closedGroupInitial, Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
@@ -170,20 +171,21 @@ private theorem closedGroupRelation : recClosureRelFuel 5 closedGroupResult ∅ 
       change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
       simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
     · simp [closedGroupInitial]
-  · simp [everyFnLocationSome, fnLocationSomeExp]
-  · simp [everyFnVarsNone, fnVarsNoneExp]
-  · simp [codeLocations, codeLocationsExp, codeLocationsFuns]
+  · simp [closedGroup, everyFnLocationSome, fnLocationSomeExp, fnLocationSomeFuns]
+  · simp [closedGroup, everyFnVarsNone, fnVarsNoneExp, fnVarsNoneFuns]
+  · simp [closedGroup, codeLocations, codeLocationsExp, codeLocationsFuns]
   · simp [LabelsFresh, closedGroupInitial]
   · apply stateExtends_refl
     simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
-  · simp [codeLocations, codeLocationsExp, closedGroupAfter, closedGroupInitial, insertEach,
+  · simp [closedGroup, codeLocations, codeLocationsExp, codeLocationsFuns, closedGroupResult, codeList,
+      closedGroupAfter, closedGroupInitial, insertEach,
       Flapjack.sptDomain, Flapjack.sptLookup, Flapjack.sptInsert]
   · intro key value lookup
     by_cases equal : key = 11
     · subst key
-      simpa [closedGroupAfter, codeList, logicalAssocLookup, List.find?,
+      simpa [closedGroupResult, closedGroup, closedGroupAfter, codeList, logicalAssocLookup, List.find?,
         closedGroupCode, Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE] using lookup
-    · simp [closedGroupAfter, closedGroupInitial, codeList, insertEach,
+    · simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach,
         logicalAssocLookup, List.find?, equal] at lookup
 
 -- A group with a captured variable follows the open-closure alternative.
@@ -232,15 +234,42 @@ example {C F : Type} (names : List Flapjack.Basis.Pure.MlString.MlString)
         (.val [.recclosure (some 10) [] [] closedGroup 0]) result ∧
       StateRelFuel 5 closedGroupResult ∅ source final ∧
       (∀ key value, target.code.lookup key = some value → final.code.lookup key = some value) := by
-  apply evaluate_letrec_fuel 5 closedGroupResult ∅ names 10 closedGroup
-    [(1, .call .none 0 11 [.var .none 0])] (.var .none 0) (.var .none 0)
-    (exprSimFuel_var 5 closedGroupResult ∅ .none 0) [] [] source target
+  apply callsFuel_letrec_evaluate 5 names 10 closedGroup (.var .none 0)
+    (.letrec names (some 10) none [(1, .call .none 0 11 [.var .none 0])] (.var .none 0))
+    closedGroupInitial closedGroupResult closedGroupResult ∅ [] [] source target
     (.val [.recclosure (some 10) [] [] closedGroup 0]) source
   · simp [ClosSem.evaluate, closedGroup, arityOk]
   · simp
+  · rfl
+  · intro targetBody middle run
+    simp [callsFuel] at run
+    obtain ⟨rfl, _⟩ := run
+    exact exprSimFuel_var 5 closedGroupResult ∅ .none 0
+  · constructor
+    · ext label
+      simp only [closedGroupInitial, Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
+      simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
+    · simp [closedGroupInitial]
+  · simp [closedGroup, everyFnLocationSome, fnLocationSomeExp, fnLocationSomeFuns]
+  · simp [closedGroup, everyFnVarsNone, fnVarsNoneExp, fnVarsNoneFuns]
+  · simp [closedGroup, codeLocations, codeLocationsExp, codeLocationsFuns]
+  · simp [LabelsFresh, closedGroupInitial]
+  · apply stateExtends_refl
+    simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
+  · simp [closedGroup, codeLocations, codeLocationsExp, codeLocationsFuns, closedGroupResult, codeList,
+      closedGroupAfter, closedGroupInitial, insertEach, Flapjack.sptDomain, Flapjack.sptLookup, Flapjack.sptInsert]
+  · rw [targetCode]
+    intro key value lookup
+    by_cases equal : key = 11
+    · subst key
+      simpa [closedGroupResult, closedGroup, closedGroupAfter, codeList, logicalAssocLookup, List.find?,
+        closedGroupCode, Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE] using lookup
+    · simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach,
+        logicalAssocLookup, List.find?, equal] at lookup
   · exact .equalLength rfl .nil
   · exact states
-  · simpa [targetCode] using closedGroupRelation
 
 -- Creating a closed function produces the extracted direct-call closure.
 example {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
