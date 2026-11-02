@@ -93,6 +93,23 @@ theorem groupClosedFuel_iff (fuel : Nat) (fns : List (Nat × Exp)) (bodies : Lis
           · rintro ⟨_, h⟩
             exact (ih bodies restLength).mpr h
 
+/-- Under the same length condition, the fold returns false exactly when
+some transformed function is not closed at its arity. -/
+theorem groupClosedFuel_false_iff (fuel : Nat) (fns : List (Nat × Exp)) (bodies : List Exp)
+    (lengths : fns.length = bodies.length) :
+    groupClosedFuel fuel fns bodies = some false ↔
+      ¬List.Forall₂ (fun fn body => ∀ n, freeVarExp n body → n < fn.1) fns bodies := by
+  constructor
+  · intro check closed
+    have success := (groupClosedFuel_iff fuel fns bodies lengths).mpr closed
+    rw [check] at success
+    contradiction
+  · intro notClosed
+    obtain ⟨value, check⟩ := groupClosedFuel_succeeds fuel fns bodies
+    cases value with
+    | false => exact check
+    | true => exact False.elim (notClosed ((groupClosedFuel_iff fuel fns bodies lengths).mp check))
+
 /-- If converted recursive bodies are closed at their arities, the executed
 pass selects the code-extraction branch and emits the direct-call stubs. -/
 theorem callsFuel_letrec_closedBranch (fuel : Nat)

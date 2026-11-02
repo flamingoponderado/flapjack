@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
 import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
+import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -109,5 +110,87 @@ example : codeIncludes [(1, 2), (1, 3)] singletonCode := by
     simpa [logicalAssocLookup, List.find?, singletonCode, Flapjack.HolFiniteMapExact.update,
       Flapjack.FUPDATE] using lookup
   · simp [logicalAssocLookup, List.find?, eq] at lookup
+
+-- The fuel-aware recursive-closure relation is inhabited for the empty group.
+example (fuel loc : Nat) :
+    recClosureRelFuel fuel (.ln, []) ∅ Flapjack.HolFiniteMapExact.empty loc [] [] := by
+  refine ⟨(.ln, []), ?_, ?_, ?_, ?_, [], (.ln, []), ?_, Or.inl ?_⟩
+  · simp [recClosureWellFormed, everyFnLocationSome, everyFnVarsNone, codeLocations]
+  · constructor
+    · ext label
+      simp only [Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
+      simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
+    · simp
+  · simp [codeLocations]
+  · simp
+  · cases fuel <;> rfl
+  · refine ⟨?_, ⟨.none, 0, rfl⟩, ?_, ?_, ?_⟩
+    · exact List.Forall₂.nil
+    · apply stateExtends_refl
+      simp [codeList]
+    · simp [groupLocationsCovered, codeLocations]
+    · simp [codeIncludes, codeList, logicalAssocLookup_nil]
+
+private def closedGroup : List (Nat × ClosLang.Exp) := [(1, .var .none 0)]
+private def closedGroupInitial : State := (.ln, [])
+private def closedGroupAfter : State := insertEach 10 1 closedGroupInitial
+private def closedGroupResult : State := codeList 10 closedGroup closedGroupAfter
+private def closedGroupCode : Flapjack.HolFiniteMapExact Nat (Nat × ClosLang.Exp) :=
+  Flapjack.HolFiniteMapExact.empty.update (11, (1, .var .none 0))
+
+-- A real closed group is related to its generated direct-call stub and code.
+example : recClosureRelFuel 5 closedGroupResult ∅ closedGroupCode 10 closedGroup
+    [(1, .call .none 0 11 [.var .none 0])] := by
+  refine ⟨closedGroupInitial, ?_, ?_, ?_, ?_, [.var .none 0], closedGroupAfter, ?_, Or.inl ?_⟩
+  · simp [closedGroup, recClosureWellFormed, everyFnLocationSome, fnLocationSomeExp,
+      everyFnVarsNone, fnVarsNoneExp, codeLocations, codeLocationsExp]
+  · constructor
+    · ext label
+      simp only [closedGroupInitial, Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
+      simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
+    · simp [closedGroupInitial]
+  · simp [closedGroupInitial]
+  · simp [closedGroupInitial]
+  · rfl
+  · refine ⟨?_, ⟨.none, 0, rfl⟩, ?_, ?_, ?_⟩
+    · simp [groupClosed, closedGroup, freeVarExp]
+    · apply stateExtends_refl
+      simp [closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
+    · simp [groupLocationsCovered, closedGroup, codeLocations, codeLocationsExp]
+    · intro key value lookup
+      by_cases equal : key = 11
+      · subst key
+        simpa [closedGroup, closedGroupAfter, codeList, logicalAssocLookup, List.find?,
+          closedGroupCode, Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE] using lookup
+      · simp [closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach,
+          logicalAssocLookup, List.find?, equal] at lookup
+
+-- A group with a captured variable follows the open-closure alternative.
+example : recClosureRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 10
+    [(1, .var .none 1)] [(1, .var .none 1)] := by
+  refine ⟨(.ln, []), ?_, ?_, ?_, ?_, [.var .none 1], insertEach 10 1 (.ln, []), ?_, Or.inr ?_⟩
+  · simp [recClosureWellFormed, everyFnLocationSome, fnLocationSomeExp,
+      everyFnVarsNone, fnVarsNoneExp, codeLocations, codeLocationsExp]
+  · constructor
+    · ext label
+      simp only [Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
+      simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
+    · simp
+  · simp
+  · simp
+  · rfl
+  · refine ⟨?_, [.var .none 1], (.ln, []), rfl, rfl, ?_, ?_, ?_, ?_⟩
+    · simp [groupClosed, freeVarExp]
+    · apply stateExtends_refl
+      simp
+    · simp [groupLocationsCovered, codeLocations, codeLocationsExp]
+    · simp
+    · simp [codeIncludes, logicalAssocLookup_nil]
 
 end Flapjack.Test.ClosCallEnvironmentParity
