@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueWellformed
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
 
 /-! Fuel-aware well-formed closure states. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -183,5 +183,86 @@ theorem applyGlobal_alloc_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {
   · simp [ClosSem.applyGlobal, negative] at run
     obtain ⟨rfl, rfl⟩ := run
     exact ⟨.block _ .nil, stateWellFormedFuel_allocGlobals stateWf count.toNat⟩
+
+/-- Every successful global primitive returns a well-formed value and
+preserves a well-formed state, for any accepted argument form. -/
+theorem applyGlobal_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (op : ClosLang.GlobOp)
+    (args : List ClosSem.Value) (state next : ClosSem.State C F) (result : ClosSem.Value)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args)
+    (run : ClosSem.applyGlobal op args state = some (result, next)) :
+    ValueWellFormedFuel fuel g allowed code result ∧ StateWellFormedFuel fuel g allowed code next := by
+  cases op with
+  | global index =>
+    cases args with
+    | nil => exact applyGlobal_read_wellFormedFuel state next index result stateWf run
+    | cons first rest =>
+      cases rest with
+      | nil =>
+        cases first with
+        | number n => exact applyGlobal_readDynamic_wellFormedFuel state next index n result stateWf run
+        | word64 | block | byteVector | refPtr | closure | recclosure => simp [ClosSem.applyGlobal] at run
+      | cons second rest => simp [ClosSem.applyGlobal] at run
+  | setGlobal index =>
+    cases args with
+    | nil => simp [ClosSem.applyGlobal] at run
+    | cons first rest =>
+      cases rest with
+      | nil =>
+        exact applyGlobal_set_wellFormedFuel state next index first result stateWf
+          (valuesWellFormedFuel_mem argsWf (by simp)) run
+      | cons second rest => simp [ClosSem.applyGlobal] at run
+  | allocGlobal =>
+    cases args with
+    | nil => simp [ClosSem.applyGlobal] at run
+    | cons first rest =>
+      cases rest with
+      | nil =>
+        cases first with
+        | number n => exact applyGlobal_alloc_wellFormedFuel state next n result stateWf run
+        | word64 | block | byteVector | refPtr | closure | recclosure => simp [ClosSem.applyGlobal] at run
+      | cons second rest => simp [ClosSem.applyGlobal] at run
+  | globalsPtr | setGlobalsPtr => cases args <;> simp [ClosSem.applyGlobal] at run
+
+/-- The evaluator's global primitive dispatcher preserves value and state
+well-formedness on successful execution. -/
+theorem doApp_global_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (op : ClosLang.GlobOp)
+    (args : List ClosSem.Value) (state next : ClosSem.State C F) (result : ClosSem.Value)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args)
+    (run : ClosSem.doApp (.globOp op) args state = .val (result, next)) :
+    ValueWellFormedFuel fuel g allowed code result ∧ StateWellFormedFuel fuel g allowed code next := by
+  cases applied : ClosSem.applyGlobal op args state with
+  | none => simp [ClosSem.doApp, applied] at run
+  | some pair =>
+    have same : pair = (result, next) := by simpa [ClosSem.doApp, applied] using run
+    subst pair
+    exact applyGlobal_wellFormedFuel op args state next result stateWf argsWf applied
+
+/-- A primitive result preserves state and payload well-formedness on
+success; raised values must be well formed, while aborts have no payload. -/
+def PrimitiveResultWellFormedFuel {C F : Type} (fuel : Nat) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
+    Flapjack.SemanticPrimitivesHOL.Result (ClosSem.Value × ClosSem.State C F) ClosSem.Value → Prop
+  | .val (value, state) => ValueWellFormedFuel fuel g allowed code value ∧ StateWellFormedFuel fuel g allowed code state
+  | .err (.raise value) => ValueWellFormedFuel fuel g allowed code value
+  | .err (.abort _) => True
+
+/-- Global primitive dispatch preserves the invariant for every outcome,
+including rejected argument lists. -/
+theorem doApp_global_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (op : ClosLang.GlobOp)
+    (args : List ClosSem.Value) (state : ClosSem.State C F)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args) :
+    PrimitiveResultWellFormedFuel fuel g allowed code (ClosSem.doApp (.globOp op) args state) := by
+  cases applied : ClosSem.applyGlobal op args state with
+  | none => simp [ClosSem.doApp, applied, PrimitiveResultWellFormedFuel]
+  | some pair =>
+    obtain ⟨value, next⟩ := pair
+    simpa [ClosSem.doApp, applied, PrimitiveResultWellFormedFuel] using
+      applyGlobal_wellFormedFuel op args state next value stateWf argsWf applied
 
 end Flapjack.Compiler.Backend.ClosCall
