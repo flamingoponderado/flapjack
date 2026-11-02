@@ -1128,6 +1128,24 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "abort_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileCorrectShape.lean",
+    "lean_name": "resultAbort",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the fully typed source_to_flat_compile_correct_probe: success and raised results are false, and every abort is true. The success and exception payload types remain independently polymorphic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileCorrectShape.lean",
+    "lean_name": "compileCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared all three conjuncts with the fully typed source_to_flat_compile_correct_probe and the original source: expression and match premises, the compiled-output equalities, the match safety and fallback-value premises, existential target evaluations, result/state relations, non-abort invariant and growth conclusions, and the declaration success/error conclusions are preserved. Flat compiler and shared FFI carriers are independent, as are the two unused success types of the declaration error relation. The HOL inhabitance used by THE is explicit. The qualifier covers the reviewed canonical global-environment c and tys finite maps, including their submap observations. The source and flat evaluators inherit the reviewed rational-cut real model."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["c", "tys"],
     "hol_name": "invariant_change_clock",

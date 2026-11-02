@@ -25,6 +25,11 @@ global-vector and constructor-map consequences, index-range shrinking with
 and without a generation change, and reserved Eval-reference update. These
 statements support review of their Lean ports, not pass correctness.
 
+`source_to_flat_compile_correct_probe.out` captures the polymorphic abort
+predicate and the complete typed three-conjunct source-to-flat compiler
+correctness statement. The capture supports source review of the Lean
+statement; it is not a cross-language equivalence proof.
+
 `flat_props_evaluate_match_probe.out` captures the fully typed flat-properties
 match evaluator used by source-to-flat correctness. Its Lean counterpart
 retains all three match outcomes and the distinct-binding check. The capture
