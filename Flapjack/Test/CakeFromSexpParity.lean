@@ -1,8 +1,7 @@
 import Flapjack.CakeParser.FromSexp.Ast
 import Flapjack.CakeParser.ToSexp
 
-/-! Finite observations from `cake_from_sexp_probe.out`. The remaining bounded
-AST decoders have not yet completed source correspondence review. -/
+/-! Finite observations from `cake_from_sexp_probe.out`. -/
 namespace Flapjack.Test.CakeFromSexpParity
 open Flapjack.CakeParser.Sexp Flapjack.CakeParser.FromSexp
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
@@ -167,6 +166,26 @@ private def nestedExpression (depth : Nat) : Sexp :=
 
 example : (decodeExp (nestedExpression 64)).map CakeParser.ToSexp.exp = some (nestedExpression 64) ∧
     (decodeExpFuel 64 (nestedExpression 64)).isNone = true := by native_decide
+
+private def declarationInputs : List Sexp :=
+  let loc := list [sym "unk", sym "unk"]
+  [node "Denv" [str "x"], node "Dlet" [loc, str "x", node "Lit" [.num 1]],
+   node "Dmod" [str "M", list [node "Denv" [str "x"]]],
+   node "Dlocal" [list [node "Denv" [str "a"]], list [node "Denv" [str "b"]]],
+   node "Dtype" [loc, list []],
+   node "Dexn" [loc, str "E", list [node "Atvar" [str "a"]]],
+   node "Dtabbrev" [loc, list [str "a"], str "t", node "Atvar" [str "a"]],
+   node "Dmod" [str "M", .cons (node "Denv" [str "x"]) (sym "bad")],
+   node "Dlet" [sym "unk"]]
+
+example : declarationInputs.map (fun d => (decodeDec d).map CakeParser.ToSexp.dec) =
+    (declarationInputs.take 7).map some ++ [none, none] := by native_decide
+
+private def nestedDeclaration (depth : Nat) : Sexp :=
+  (List.replicate depth ()).foldr (fun _ rest => node "Dmod" [str "M", list [rest]]) (node "Denv" [str "x"])
+
+example : (decodeDec (nestedDeclaration 64)).map CakeParser.ToSexp.dec = some (nestedDeclaration 64) ∧
+    (decodeDecFuel 64 (nestedDeclaration 64)).isNone = true := by native_decide
 
 example : [decodeOp (sym "Equality"), decodeOp (sym "Opapp"), decodeOp (sym "Aw8subunsafe"),
     decodeOp (sym "ForceThunk"), decodeOp (sym "Envid"), decodeOp (.cons (sym "FFI") (str "x\\00y")),

@@ -1,7 +1,7 @@
 import Flapjack.CakeParser.FromSexp.Operators
 
-/-! CakeML AST decoding from S-expressions. Expression decoding is total and
-source-reviewed; declaration decoding still uses a bounded worker. -/
+/-! CakeML AST decoding from S-expressions. Expression and declaration
+decoding use source-reviewed structural recursion. -/
 namespace Flapjack.CakeParser.FromSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString Flapjack.AstHOL
 
@@ -96,11 +96,14 @@ def decodeFunctions : Sexp → Option (List (MlString × MlString × Exp))
 termination_by sexp => sizeOf sexp
 end
 
-/-- Decode a type definition's constructor and parameter lists. The retained
-fuel argument is no longer used by the total type decoder. -/
-def decodeTypeDefFuel (_fuel : Nat) : Sexp → Option TypeDef :=
+/-- Decode a type definition's constructor and parameter lists. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexptype_def_def"]
+def decodeTypeDef : Sexp → Option TypeDef :=
   decodeList (decodePair (decodeList destString)
     (decodePair destString (decodeList (decodePair destString decodeTypeList))))
+
+/-- Compatibility entry point; type-definition decoding no longer uses fuel. -/
+def decodeTypeDefFuel (_fuel : Nat) : Sexp → Option TypeDef := decodeTypeDef
 
 /-- Decode declarations, including nested modules and local declarations. -/
 def decodeDecFuel : Nat → Sexp → Option Dec
@@ -128,6 +131,42 @@ def decodeDecFuel : Nat → Sexp → Option Dec
         some (.dtabbrev (← decodeLoc a) (← decodeList destString b) (← destString c) (← decodeType d))
       else none
     | _ => none
+
+mutual
+/-- Decode declarations by recursion on the input S-expression. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpdec_def"]
+def decodeDec : Sexp → Option Dec
+  | .cons (.sym name) (.cons a (.sym terminator)) =>
+    if name == ascii "Denv" && terminator == ascii "nil" then (destString a).map Dec.denv else none
+  | .cons (.sym name) (.cons a (.cons b (.sym terminator))) =>
+    if terminator != ascii "nil" then none
+    else if name == ascii "Dletrec" then do some (.dletrec (← decodeLoc a) (← decodeFunctions b))
+    else if name == ascii "Dtype" then do some (.dtype (← decodeLoc a) (← decodeTypeDef b))
+    else if name == ascii "Dmod" then do some (.dmod (← destString a) (← decodeDecList b))
+    else if name == ascii "Dlocal" then do some (.dlocal (← decodeDecList a) (← decodeDecList b))
+    else none
+  | .cons (.sym name) (.cons a (.cons b (.cons c (.sym terminator)))) =>
+    if terminator != ascii "nil" then none
+    else if name == ascii "Dlet" then do
+      some (.dlet (← decodeLoc a) (← decodePattern b) (← decodeExp c))
+    else if name == ascii "Dexn" then do
+      some (.dexn (← decodeLoc a) (← destString b) (← decodeTypeList c))
+    else none
+  | .cons (.sym name) (.cons a (.cons b (.cons c (.cons d (.sym terminator))))) =>
+    if terminator != ascii "nil" then none
+    else if name == ascii "Dtabbrev" then do
+      some (.dtabbrev (← decodeLoc a) (← decodeList destString b) (← destString c) (← decodeType d))
+    else none
+  | _ => none
+termination_by sexp => sizeOf sexp
+
+/-- Flapjack recursion helper for a proper list of declarations. -/
+def decodeDecList : Sexp → Option (List Dec)
+  | .cons head tail => do some ((← decodeDec head) :: (← decodeDecList tail))
+  | .sym name => if name == ascii "nil" then some [] else none
+  | _ => none
+termination_by sexp => sizeOf sexp
+end
 
 /-- Decode the proper top-level list of declarations. -/
 def decodeProgramFuel (fuel : Nat) : Sexp → Option (List Dec) := decodeList (decodeDecFuel fuel)

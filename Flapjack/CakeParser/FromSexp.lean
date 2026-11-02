@@ -3,9 +3,8 @@ import Flapjack.AstHOL.Syntax
 
 /-! Shared conversions for CakeML's S-expression AST format, following
 `compiler/parsing/fromSexpScript.sml`. The S-expression carrier and total
-identifier, type and pattern decoders are source-reviewed; the other bounded AST
-decoders still need correspondence review. The executable's S-expression path
-uses them. -/
+identifier, type and pattern decoders are source-reviewed. The executable's
+S-expression path uses them. -/
 namespace Flapjack.CakeParser.FromSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString
 open Flapjack.AstHOL Flapjack.NamespaceHOL

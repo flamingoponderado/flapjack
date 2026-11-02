@@ -1,6 +1,22 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/Ast.lean",
+    "lean_name": "decodeTypeDef",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexptype_def_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete HOL list-of-pairs decoder and captured inferred type: each type definition contains a proper mlstring parameter list, a type name, and a proper list of constructor names and type lists. The Lean decoder uses the same proper-list and dotted-pair structure and the total sexptype decoder."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Ast.lean",
+    "lean_name": "decodeDec",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexpdec_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every source case and captured inferred type: Dlet, Dletrec, Dtype, Dtabbrev, Denv, Dexn, Dmod and Dlocal require the same proper argument lists and invoke the corresponding location, pattern, expression, type and declaration-list decoders. Malformed forms fail. The structurally recursive Lean list helper implements sexplist sexpdec without execution fuel."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Ast.lean",
     "lean_name": "decodeExp",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "sexpexp_def",

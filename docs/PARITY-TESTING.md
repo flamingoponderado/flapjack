@@ -881,8 +881,8 @@ primitives. To compare a
 complete exported compiler AST, add `--bootstrap-sexp /path/to/compiler.sexpr`
 alongside `--check-reference`; this compares type-reporting output with type
 inference disabled, using the bootstrap's heap and stack settings. The parser
-and AST decoder remain bounded and their equivalence with HOL has not been
-proved.
+remains bounded, and whole-parser and AST-decoder equivalence with HOL has not
+been proved.
 
 An additional unverified bootstrap provides an original compiler built from
 the pinned translated CakeML compiler AST. Given the pinned CakeML and HOL

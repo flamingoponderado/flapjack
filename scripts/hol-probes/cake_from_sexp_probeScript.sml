@@ -26,6 +26,15 @@ val _ = (print "sexppat_typed=";
 val _ = (print "sexpexp_typed=";
   Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.sexpexp_def);
   print "\n");
+val _ = (print "sexptype_def_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.sexptype_def_def);
+  print "\n");
+val _ = (print "sexptype_def_type=";
+  print_type (type_of ``fromSexp$sexptype_def``);
+  print "\n");
+val _ = (print "sexpdec_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.sexpdec_def);
+  print "\n");
 val _ = (print "sexp_constructors_typed=";
   print_type (type_of ``(SX_CONS, SX_SYM, SX_NUM, SX_STR)``);
   print "\n");
@@ -81,6 +90,16 @@ val _ = showSimp "expressions" ``MAP fromSexp$sexpexp
    ⟪SX_SYM "App"; SX_SYM "Opref"; SX_CONS (⟪SX_SYM "Lit"; 1⟫) (SX_SYM "bad")⟫;
    ⟪SX_SYM "Mat"; ⟪SX_SYM "Lit"; 1⟫; ⟪SX_STR "x"⟫⟫;
    ⟪SX_SYM "Lit"; 1; 2⟫]``;
+val _ = showSimp "declarations" ``MAP fromSexp$sexpdec
+  [⟪SX_SYM "Denv"; SX_STR "x"⟫;
+   ⟪SX_SYM "Dlet"; ⟪SX_SYM "unk"; SX_SYM "unk"⟫; SX_STR "x"; ⟪SX_SYM "Lit"; 1⟫⟫;
+   ⟪SX_SYM "Dmod"; SX_STR "M"; ⟪⟪SX_SYM "Denv"; SX_STR "x"⟫⟫⟫;
+   ⟪SX_SYM "Dlocal"; ⟪⟪SX_SYM "Denv"; SX_STR "a"⟫⟫; ⟪⟪SX_SYM "Denv"; SX_STR "b"⟫⟫⟫;
+   ⟪SX_SYM "Dtype"; ⟪SX_SYM "unk"; SX_SYM "unk"⟫; ⟪⟫⟫;
+   ⟪SX_SYM "Dexn"; ⟪SX_SYM "unk"; SX_SYM "unk"⟫; SX_STR "E"; ⟪⟪SX_SYM "Atvar"; SX_STR "a"⟫⟫⟫;
+   ⟪SX_SYM "Dtabbrev"; ⟪SX_SYM "unk"; SX_SYM "unk"⟫; ⟪SX_STR "a"⟫; SX_STR "t"; ⟪SX_SYM "Atvar"; SX_STR "a"⟫⟫;
+   ⟪SX_SYM "Dmod"; SX_STR "M"; SX_CONS (⟪SX_SYM "Denv"; SX_STR "x"⟫) (SX_SYM "bad")⟫;
+   ⟪SX_SYM "Dlet"; SX_SYM "unk"⟫]``;
 val _ = show "operators" ``MAP fromSexp$sexpop
   [SX_SYM "Equality"; SX_SYM "Opapp"; SX_SYM "Aw8subunsafe"; SX_SYM "ForceThunk";
    SX_SYM "Envid"; ⟪SX_SYM "FFI" • SX_STR "x\\00y"⟫;

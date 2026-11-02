@@ -345,15 +345,14 @@ bounded port; no general sufficiency theorem is claimed for this bound. -/
 private def sourceFuel (source : List HolChar) : Nat :=
   10000 + 16 * source.length
 
-/-- Parse ordinary CakeML text or the bootstrap S-expression encoding. Both
-paths are bounded and the S-expression decoder's correspondence is not yet
-proved. -/
+/-- Parse ordinary CakeML text or the bootstrap S-expression encoding. Parsing
+remains bounded; whole-decoder correspondence has not yet been proved. -/
 private def parseInput (options : Options) (fuel : Nat) (source : List HolChar) :
     Flapjack.CakeParser.Frontend.ParseResult :=
   if options.inputSexp then
     match Flapjack.CakeParser.Sexp.parseFuel fuel source with
     | none => .rejected
-    | some sexp => match Flapjack.CakeParser.FromSexp.decodeProgramFuel fuel sexp with
+    | some sexp => match Flapjack.CakeParser.FromSexp.decodeDecList sexp with
       | none => .rejected
       | some decls => .success decls
   else Flapjack.CakeParser.Frontend.parseSourceFuel fuel fuel source
