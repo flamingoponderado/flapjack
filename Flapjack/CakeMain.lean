@@ -93,6 +93,15 @@ private def usage : String :=
   "[--hash_size=N] [--pancake] [--no_warn] < input_file\n" ++
   "Experimental CakeML to RISC-V port; complete CakeML output parity is not yet established."
 
+/-- Version information for this Lean executable and its pinned reference
+sources. CakeML's own output includes its build time and Poly/ML version;
+those values do not describe this executable. -/
+private def versionInfo : String :=
+  "The Flapjack CakeML compiler\n\nReference revisions:\n" ++
+  "CakeML: 857f0d98da8f8a3580f34423338e697809308ede\n" ++
+  "HOL4:   a390cbabd3a4521bab4ee20281e3e42933a8a3ae\n" ++
+  "Lean:   " ++ Lean.versionString ++ "\n"
+
 private def parseBool (text : String) : Option Bool :=
   if text == "true" then some true else if text == "false" then some false else none
 
@@ -485,8 +494,8 @@ def main (args : List String) : IO UInt32 := do
     IO.print Flapjack.CakeHelp.text
     return 0
   if args.contains "--version" then
-    IO.eprintln s!"cake: unsupported option: --version\n{usage}"
-    return 2
+    IO.print versionInfo
+    return 0
   if let some feature := findFlag args "--pancake_feature=" then
     IO.print (if Flapjack.CakeFeatures.enabled feature then "true" else "false")
     return 0

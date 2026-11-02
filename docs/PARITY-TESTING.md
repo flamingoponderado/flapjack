@@ -564,10 +564,10 @@ and multi-argument functions; each is compared over the full assembly output.
 `scripts/check-cake-help.py` separately compares the complete `--help` output
 and its flag precedence with the pinned driver source. Interactive modes remain
 unsupported; their precedence over help is preserved by reporting that limit.
-The pinned compiler also accepts `--version` and prints build-specific CakeML,
-HOL, and Poly/ML provenance on stdout; Flapjack currently reports this option
-as unsupported. Matching its output requires handling the reference compiler's
-build metadata without attributing the reference binary's build to Flapjack.
+Both compilers accept `--version` with the same flag precedence. The pinned
+compiler prints its own build date and Poly/ML provenance; Flapjack instead
+reports its Lean version and pinned CakeML and HOL reference revisions. Version
+text is therefore build-specific and is not compared byte for byte.
 The feature-query checks cover every feature in the pinned NEWS file, including
 disabled entries, duplicate flags, and precedence over configuration errors.
 
