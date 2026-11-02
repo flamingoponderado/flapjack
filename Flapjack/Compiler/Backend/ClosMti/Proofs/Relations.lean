@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.FuelStable
+import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
 import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
 import Flapjack.Compiler.Backend.Semantics.ClosSem
 import Mathlib.Data.List.Forall2
@@ -12,6 +12,13 @@ uses the total `intro_multi`; this is untagged until its correspondence with
 `compileFuel` has been established. -/
 def CodeRel (fuel maxApp : Nat) (source target : List ClosLang.Exp) : Prop :=
   (∀ e ∈ source, ClosProps.noMti e) ∧ compileFuel fuel true maxApp source = some target
+
+/-- The relation to the executed pass can be expressed using its total
+proof-side view. HOL correspondence for that view remains to be reviewed. -/
+theorem codeRel_iff_introList (fuel maxApp : Nat) (source target : List ClosLang.Exp) :
+    CodeRel fuel maxApp source target ↔
+      (∀ e ∈ source, ClosProps.noMti e) ∧ target = introList maxApp source := by
+  simp [CodeRel, compileFuel_introList, eq_comm]
 
 /-- Relate a unary source function to a multi-argument target function. This
 uses the Lean-specific `CodeRel`, so it is not yet the HOL relation. -/
