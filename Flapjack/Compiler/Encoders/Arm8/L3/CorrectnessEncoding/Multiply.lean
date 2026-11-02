@@ -349,4 +349,14 @@ theorem arm8Enc_longMul_length (destinationLeft destinationRight sourceLeft sour
   rw [arm8Enc_longMul]
   simp [arm8Encode_length]
 
+
+/-- The bytes emitted for `MultiplyHigh`. -/
+theorem arm8EncodeBytes_multiplyHigh (rm rn rd : BitVec 5) :
+    arm8Encode (.Data (.MultiplyHigh (false, rm, rn, rd))) =
+      [BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn rd >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn rd >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn rd >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn rd >>> 24).toNat)] := by
+  simp [arm8Encode, arm8Encode_multiplyHigh]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
