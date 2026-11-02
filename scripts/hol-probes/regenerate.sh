@@ -50,6 +50,8 @@ probe_needs_refresh() {
     [[ "$(basename "$probe")" == clos_call_wfg_probeScript.sml &&
        ( "$cake_dir/compiler/backend/semantics/closPropsScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == clos_call_stub_probeScript.sml &&
+       "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == data_sem_stack_probeScript.sml &&
        "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == source_to_flat_opassign_probeScript.sml &&
@@ -583,6 +585,9 @@ run_probe clos_call_env_rel_probeScript.sml clos_call_env_rel_probe.out \
 
 run_probe clos_call_free_correct_probeScript.sml clos_call_free_correct_probe.out \
   free_thm closed_fn_fv closed_cases "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_call_stub_probeScript.sml clos_call_stub_probe.out \
+  variables_type variables_def calls_list_type calls_list_def calls_list_mapi cases "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe tmc_program_word_probeScript.sml tmc_program_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"

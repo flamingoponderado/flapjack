@@ -94,9 +94,11 @@ def codeListSource {A B C : Type} (loc : Nat) : List (A × B) →
   | (arity, body) :: rest, (known, code) =>
       codeListSource (loc + 2) rest (known, (loc + 1, arity, body) :: code)
 
-private def variables (t : BackendCommon.Tra) (arity : Nat) : List Exp :=
+/-- The argument variables supplied by generated direct calls. -/
+def variables (t : BackendCommon.Tra) (arity : Nat) : List Exp :=
   (List.range arity).map (.var t)
-private def callsList (loc : Nat) (fns : List (Nat × Exp)) : List (Nat × Exp) :=
+/-- Generate direct-call bodies for a mutually recursive group. -/
+def callsList (loc : Nat) (fns : List (Nat × Exp)) : List (Nat × Exp) :=
   (fns.zip (List.range fns.length)).map fun ((arity, _), i) =>
     (arity, .call .none 0 (loc + 2 * i + 1) (variables .none arity))
 

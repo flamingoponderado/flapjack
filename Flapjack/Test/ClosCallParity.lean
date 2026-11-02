@@ -1,9 +1,21 @@
-import Flapjack.Compiler.Backend.ClosCall
+import Flapjack.Compiler.Backend.ClosCall.Stubs
 
 /-! Replay original `clos_call_frontend_probe.out` cases. -/
 namespace Flapjack.Test.ClosCallParity
 open Flapjack.Compiler.Backend ClosCall
 open Flapjack.Basis.Pure.MlString
+
+-- `clos_call_stub_probe.out`: source stubs keep function order and use odd
+-- locations, with arguments in ascending de Bruijn order.
+#guard match callsListSource .none 4 10 [(2, true), (0, false), (1, true)] with
+  | [(2, .call .none 0 11 [.var .none 0, .var .none 1]),
+     (0, .call .none 0 13 []), (1, .call .none 0 15 [.var .none 0])] => true
+  | _ => false
+
+#guard match callsList 10 [(2, .var .none 7), (0, .var .none 8), (1, .var .none 9)] with
+  | [(2, .call .none 0 11 [.var .none 0, .var .none 1]),
+     (0, .call .none 0 13 []), (1, .call .none 0 15 [.var .none 0])] => true
+  | _ => false
 
 -- `clos_call_free_correct_probe.out`: bound arguments and let-bound values
 -- do not count as captured variables, while references beyond them do.

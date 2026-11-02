@@ -351,6 +351,8 @@ the complete carrier correspondence remains under review.
 
 `clos_call_free_correct_probe.out` captures the original free-analysis and closed-function statements and replays closedness decisions in the executable Lean pass.
 
+`clos_call_stub_probe.out` records the polymorphic source stub-generator types and clauses and checks their generated argument order and labels against the Lean source-shaped and executable forms.
+
 `clos_known_helpers_probe.out` captures closure free-variable cleanup, tick removal, let-operation cleanup and inlining decisions, including trace preservation and size limits. These support the bounded known-function pass.
 
 `clos_op_frontend_probe.out` captures smart arithmetic, constructor inspection, equality expansion, trace retention and effectful binding order. The bounded Lean operation simplifier is checked against these selected original outputs.
