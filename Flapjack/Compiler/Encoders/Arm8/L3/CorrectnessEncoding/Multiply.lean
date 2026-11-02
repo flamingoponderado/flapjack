@@ -377,4 +377,10 @@ theorem arm8MultiplyHigh_extract (ms : arm8_state) (sl sr : Nat)
       BitVec.ofNat 64 ((ms.REG (BitVec.ofNat 5 sl)).toNat * (ms.REG (BitVec.ofNat 5 sr)).toNat / 2 ^ 64) := by
   rw [arm8X_of_valid _ hsl31 hsl, arm8X_of_valid _ hsr31 hsr, arm8MultiplyHigh_high]
 
+
+/-- Reading a register other than the one just written is unchanged. -/
+theorem arm8X_update_other (st : arm8_state) (a b : BitVec 5) (v : BitVec 64) (h : a ≠ b) :
+    X (TN := 64) a { st with REG := holUpdate b v st.REG } = X (TN := 64) a st := by
+  simp [X, Flapjack.RiscV.L3.holUpdate, Ne.symm h]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
