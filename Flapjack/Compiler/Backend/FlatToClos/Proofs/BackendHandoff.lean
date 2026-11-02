@@ -420,6 +420,71 @@ theorem cakeConfiguredToBvi_semantics_from_run {C F : Type} [Nonempty C]
       preprocess closureRun optimizedRun lowerRun tailRun tmcRun inlineRun oracleState bound
       cacheEq oracleTailBound oracleTailWorker oracleTmcBound oracleTmcWorker lowerCounterBound tailCounterBound tmcCounterBound bviCacheEq
 
+/-- Conditional source-to-BVI behavior for the configured execution with
+multi-argument introduction enabled.
+Intermediate successful runs and caches are recovered from `run`; the
+remaining bounds and oracle relations are explicit proof obligations. -/
+theorem cakeConfiguredToBviMti_semantics_from_run {C F : Type} [Nonempty C]
+    (fuel : Nat) (bvlConfig : BvlToBvi.Config)
+    (interp : Option (Value → Option (SourceToFlat.Config × (Nat × OptimizationConfig C))))
+    (source : State F) (sourceEnv : SemEnv Value) (sourceConfig : SourceToFlat.Config)
+    (flatConfig : FlatSem.InstallConfig (Nat × OptimizationConfig C)) (compiler : BviSem.Compiler C)
+    (declarations : List AstHOL.Dec) (config : ClosToBvl.Config)
+    (resultSource : SourceToFlat.Config) (resultClosure : ClosToBvl.Config) (resultConfig : BvlToBvi.Config)
+    (resultCode : List (Nat × Nat × Bvi.Exp)) (resultNames : Spt Basis.Pure.MlString.MlString)
+    (run : SourceToFlat.compileCakeToBviConfiguredFuel fuel sourceConfig config bvlConfig declarations =
+      some (resultSource, resultClosure, resultConfig, resultCode, resultNames))
+    (precondition : SourceToFlat.SourcePrecondition interp source sourceEnv sourceConfig
+      flatConfig (SourceToSource.compile declarations))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (positive : 0 < config.maxApp)
+    (production : flatConfig.compile = pureCc (incCompileDecs (α := Nat × Nat × ClosLang.Exp))
+      (pureCc (ClosMti.compileInc (Input := List (Nat × Nat × ClosLang.Exp)) config.maxApp)
+        (sourceClosureCompiler config.maxApp bvlConfig.inlineSizeLimit bvlConfig.expCut
+          bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc compiler)))
+    (enabled : config.doMti = true) (calls : config.doCall = false) (known : config.knownConf = none)
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc)
+      (pureCo (ClosMti.compileInc (Output := Nat × Nat × ClosLang.Exp) config.maxApp) ∘ sourceClosureOracle flatConfig))
+    (initialBound : ∀ expressions current program,
+      SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (resultSource, expressions) →
+      compileCommonNoOpts? { config with doMti := false } (ClosMti.introList config.maxApp expressions) = some (current, program) →
+      current.nextLoc ≤ ((sourceClosureOracle flatConfig) 0).1.1)
+    (cacheEq : (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.1 = resultConfig.inlines)
+    (oracleTailBound : ∀ i, bvlNumStubs ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.1)
+    (oracleTailWorker : ∀ i, BviTailrec.inWorkerNamespace (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.1)
+    (oracleTmcBound : ∀ i, bvlNumStubs ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.2.1)
+    (oracleTmcWorker : ∀ i, BviTmc.inWorkerNamespace (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.2.1)
+    (lowerCounterBound : resultConfig.nextName1 ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.1)
+    (tailCounterBound : resultConfig.nextName2 ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.2.1)
+    (tmcCounterBound : resultConfig.nextName3 ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.2.2.1)
+    (bviCacheEq : (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.2.2.2.1 = resultConfig.bviInlines) :
+    Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+      (BviSem.semantics source.ffi (sptFromAList resultCode)
+        (stateCo BviInline.compileIncSource (stateCo (BviTmc.compileProgSource bvlConfig.doTmc)
+          (stateCo (BviTailrec.compileProgSource bvlConfig.doTailrec) (stateCo BvlToBvi.compileIncSource
+            (BvlInline.Proofs.letOpOracle bvlConfig.splitMainAtSeq bvlConfig.expCut
+              (BvlInline.Proofs.removeTicksCo ∘ BvlInline.Proofs.inCo bvlConfig.inlineSizeLimit
+                (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig)))))))) compiler resultClosure.start) := by
+  obtain ⟨source', expressions, output, compiled, names, cache, optimized, targetStart, lowered,
+    targetNext, tailLast, beforeTmc, tmcLast, afterTmc, bviCache, sourceRun, closureRun,
+    optimizedRun, lowerRun, tailRun, tmcRun, inlineRun, sourceEq, closureEq, configEq, _⟩ :=
+    SourceToFlat.configured_bvi_all_stage_witnesses fuel sourceConfig config bvlConfig declarations
+      resultSource resultClosure resultConfig resultCode resultNames run
+  subst resultSource
+  subst resultClosure
+  subst resultConfig
+  cases preprocess : compileCommonNoOpts? { config with doMti := false } (ClosMti.introList config.maxApp expressions) with
+  | none => simp [compileCommonNoOpts?, calls, known] at preprocess
+  | some pair =>
+    obtain ⟨current, program⟩ := pair
+    have bound := initialBound expressions current program sourceRun preprocess
+    exact cakeToOptimizedBviMti_semantics_proofSide fuel bvlConfig.inlineSizeLimit bvlConfig.expCut
+      bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc interp source sourceEnv sourceConfig source'
+      flatConfig compiler declarations expressions config current output program compiled names cache optimized targetStart targetNext
+      lowered beforeTmc afterTmc resultCode tailLast tmcLast bviCache precondition safe positive production sourceRun enabled calls known
+      preprocess closureRun optimizedRun lowerRun tailRun tmcRun inlineRun oracleState bound
+      cacheEq oracleTailBound oracleTailWorker oracleTmcBound oracleTmcWorker lowerCounterBound tailCounterBound tmcCounterBound bviCacheEq
+
 /-- The BVI oracle used by the configured source-to-BVI correctness chain. -/
 noncomputable abbrev configuredBviOracle {C : Type} (maxApp : Nat) (config : BvlToBvi.Config)
     (oracle : ClosSem.CompileOracle (Nat × OptimizationConfig C)) : BviSem.CompileOracle C :=
@@ -428,6 +493,15 @@ noncomputable abbrev configuredBviOracle {C : Type} (maxApp : Nat) (config : Bvl
       (BvlInline.Proofs.letOpOracle config.splitMainAtSeq config.expCut
         (BvlInline.Proofs.removeTicksCo ∘ BvlInline.Proofs.inCo config.inlineSizeLimit
           (closureFuture maxApp oracle))))))
+
+/-- The BVI oracle after enabled incremental multi-argument introduction. -/
+noncomputable abbrev configuredMtiBviOracle {C : Type} (maxApp : Nat) (config : BvlToBvi.Config)
+    (oracle : ClosSem.CompileOracle (Nat × OptimizationConfig C)) : BviSem.CompileOracle C :=
+  stateCo BviInline.compileIncSource (stateCo (BviTmc.compileProgSource config.doTmc)
+    (stateCo (BviTailrec.compileProgSource config.doTailrec) (stateCo BvlToBvi.compileIncSource
+      (BvlInline.Proofs.letOpOracle config.splitMainAtSeq config.expCut
+        (BvlInline.Proofs.removeTicksCo ∘ BvlInline.Proofs.inCo config.inlineSizeLimit
+          (mtiClosureFuture maxApp oracle))))))
 
 /-- Compose the configured source-to-BVI behavior with BVI-to-data simulation,
 and identify the executed bounded data compilation with the simulated code.
@@ -485,6 +559,72 @@ theorem cakeConfiguredToData_semantics_from_run {C F : Type} [Nonempty C]
     intro failure
     apply safe
     simpa [oracle, configuredBviOracle, bviCompiler, failure] using behavior
+  have agreement := BviToData.compileProg_semantics source.ffi resultCode oracle compiler limits sizes resultClosure.start noFail
+  dsimp only
+  constructor
+  · rw [agreement]
+    exact behavior
+  · exact BviToData.compileProgBounded_agrees fuel resultCode
+
+/-- Compose the enabled multi-argument source-to-BVI path with BVI-to-data simulation,
+and identify the executed bounded data compilation with the simulated code.
+The source, oracle and cache assumptions remain explicit; known-function and
+direct-call conversion are disabled. HOL correspondence of the BVI and data
+semantics remains under review. -/
+theorem cakeConfiguredToDataMti_semantics_from_run {C F : Type} [Nonempty C]
+    (fuel : Nat) (bvlConfig : BvlToBvi.Config)
+    (interp : Option (Value → Option (SourceToFlat.Config × (Nat × OptimizationConfig C))))
+    (source : State F) (sourceEnv : SemEnv Value) (sourceConfig : SourceToFlat.Config)
+    (flatConfig : FlatSem.InstallConfig (Nat × OptimizationConfig C)) (compiler : DataSem.Compiler C) (limits : DataSem.Limits) (sizes : Spt Nat)
+    (declarations : List AstHOL.Dec) (config : ClosToBvl.Config)
+    (resultSource : SourceToFlat.Config) (resultClosure : ClosToBvl.Config) (resultConfig : BvlToBvi.Config)
+    (resultCode : List (Nat × Nat × Bvi.Exp)) (resultNames : Spt Basis.Pure.MlString.MlString)
+    (run : SourceToFlat.compileCakeToBviConfiguredFuel fuel sourceConfig config bvlConfig declarations =
+      some (resultSource, resultClosure, resultConfig, resultCode, resultNames))
+    (precondition : SourceToFlat.SourcePrecondition interp source sourceEnv sourceConfig
+      flatConfig (SourceToSource.compile declarations))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (positive : 0 < config.maxApp)
+    (production : flatConfig.compile = pureCc (incCompileDecs (α := Nat × Nat × ClosLang.Exp))
+      (pureCc (ClosMti.compileInc (Input := List (Nat × Nat × ClosLang.Exp)) config.maxApp)
+        (sourceClosureCompiler config.maxApp bvlConfig.inlineSizeLimit bvlConfig.expCut
+          bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc
+          (fun cfg code => compiler cfg (BviToData.compileProg code)))))
+    (enabled : config.doMti = true) (calls : config.doCall = false) (known : config.knownConf = none)
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc)
+      (pureCo (ClosMti.compileInc (Output := Nat × Nat × ClosLang.Exp) config.maxApp) ∘ sourceClosureOracle flatConfig))
+    (initialBound : ∀ expressions current program,
+      SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (resultSource, expressions) →
+      compileCommonNoOpts? { config with doMti := false } (ClosMti.introList config.maxApp expressions) = some (current, program) →
+      current.nextLoc ≤ ((sourceClosureOracle flatConfig) 0).1.1)
+    (cacheEq : (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.1 = resultConfig.inlines)
+    (oracleTailBound : ∀ i, bvlNumStubs ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.1)
+    (oracleTailWorker : ∀ i, BviTailrec.inWorkerNamespace (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.1)
+    (oracleTmcBound : ∀ i, bvlNumStubs ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.2.1)
+    (oracleTmcWorker : ∀ i, BviTmc.inWorkerNamespace (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.2.1)
+    (lowerCounterBound : resultConfig.nextName1 ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.1)
+    (tailCounterBound : resultConfig.nextName2 ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.2.1)
+    (tmcCounterBound : resultConfig.nextName3 ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.2.2.1)
+    (bviCacheEq : (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.2.2.2.1 = resultConfig.bviInlines) :
+    let oracle := configuredMtiBviOracle config.maxApp bvlConfig (sourceClosureOracle flatConfig)
+    Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+      (DataSem.semantics source.ffi (sptFromAList (BviToData.compileProg resultCode))
+        (fun n => let (cfg, code) := oracle n; (cfg, BviToData.compileProg code))
+        compiler limits sizes resultClosure.start) ∧
+      (resultCode.mapM fun (name, argc, body) => do
+        pure (name, argc, ← BviToData.compileExpBounded fuel argc body)) =
+        some (BviToData.compileProg resultCode) := by
+  let bviCompiler : BviSem.Compiler C := fun cfg code => compiler cfg (BviToData.compileProg code)
+  let oracle := configuredMtiBviOracle config.maxApp bvlConfig (sourceClosureOracle flatConfig)
+  have behavior := cakeConfiguredToBviMti_semantics_from_run fuel bvlConfig interp source sourceEnv sourceConfig
+    flatConfig bviCompiler declarations config resultSource resultClosure resultConfig resultCode resultNames
+    run precondition safe positive production enabled calls known oracleState initialBound cacheEq
+    oracleTailBound oracleTailWorker oracleTmcBound oracleTmcWorker lowerCounterBound tailCounterBound
+    tmcCounterBound bviCacheEq
+  have noFail : BviSem.semantics source.ffi (sptFromAList resultCode) oracle bviCompiler resultClosure.start ≠ .fail := by
+    intro failure
+    apply safe
+    simpa [oracle, configuredMtiBviOracle, bviCompiler, failure] using behavior
   have agreement := BviToData.compileProg_semantics source.ffi resultCode oracle compiler limits sizes resultClosure.start noFail
   dsimp only
   constructor
