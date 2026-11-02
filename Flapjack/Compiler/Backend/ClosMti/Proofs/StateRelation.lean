@@ -134,6 +134,22 @@ theorem stateRel_withGlobals {C F : Type} {source target : State C F}
   obtain ⟨oracle, sourceCode, targetCode, maxApp, positive, clock, ffi, _, refs, compiler, nextOracle⟩ := related
   exact ⟨oracle, sourceCode, targetCode, maxApp, positive, clock, ffi, globals, refs, compiler, nextOracle⟩
 
+/-- Advancing both compiler oracles and replacing both clocks preserves the
+multi-argument state relation. This is Lean-side simulation infrastructure. -/
+theorem stateRel_shiftClock {C F : Type} {source target : State C F}
+    (related : StateRel source target) (clock amount : Nat) :
+    StateRel { source with clock := clock, compileOracle := Flapjack.holShiftSeq amount source.compileOracle }
+      { target with clock := clock, compileOracle := Flapjack.holShiftSeq amount target.compileOracle } := by
+  obtain ⟨oracle, sourceCode, targetCode, maxApp, positive, _, ffi, globals, refs, compiler, nextOracle⟩ := related
+  refine ⟨?_, sourceCode, targetCode, maxApp, positive, rfl, ffi, globals, refs, compiler, ?_⟩
+  · intro n
+    exact oracle (n + amount)
+  · funext n
+    change target.compileOracle (n + amount) =
+      pureCo (compileInc source.maxApp) (source.compileOracle (n + amount))
+    rw [nextOracle]
+    rfl
+
 /-- The multi-argument state relation meets the generic simple-state
 conditions used by primitive-operation simulations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "simple_state_rel"
