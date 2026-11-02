@@ -100674,6 +100674,16 @@
     "reviewer": "Compared the complete source theorem and captured inferred type: memory_rel for a head pair and good_dimindex imply vb_size v ≤ dimword raised to v_depth v + 1, with the same arbitrary tail and shared word dimension. Lean 2 ^ width represents dimword; store uses the canonical finite-support map."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth/ResourceLimit.lean",
+    "lean_name": "memoryRel_limit",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_limit",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared the full source and captured inferred type, including the two otherwise unused universally quantified values of independent types β and γ. The same memory relation, successful sized equality result, and good_dimindex imply the strict inequality against MustTerminate_limit minus dimword. Lean 2 ^ width is dimword; store uses the canonical finite-support map and the word carriers share the positive HOL dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth/Elements.lean",
     "lean_name": "memoryRel_elementsListWords",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
