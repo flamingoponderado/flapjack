@@ -69,5 +69,68 @@ theorem bignumWordLoop {width : Nat} [NeZero width] (i1 i2 : Int)
     | none => simpa [outcome] using loop.trans (congrArg some correct)
     | some flag => cases flag <;> simpa [outcome] using loop.trans (congrArg some correct)
 
+/-- Related large integers with identical headers compare correctly through
+    the concrete word loop. This is a Flapjack helper for the original number
+    comparison theorem, whose unequal-header cases remain separate. -/
+theorem memoryRel_bignumEqualHeader {width : Nat} [NeZero width] (conf : DataToWord.Config) (be : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (i1 i2 : Int) (v1 v2 : WordLocW width) (vars : List (DataSem.Value × WordLocW width)) :
+    memoryRel conf be next refs space store memory domain ((.number i1, v1) :: (.number i2, v2) :: vars) ∧
+      goodDimindex width ∧ ¬ smallInt width i1 ∧ ¬ smallInt width i2 →
+    ∃ w1 w2 a1 a2 h1 h2 : BitVec width,
+      v1 = .word w1 ∧ v2 = .word w2 ∧ getRealAddr conf store w1 = some a1 ∧
+      getRealAddr conf store w2 = some a2 ∧ memory a1 = .word h1 ∧ memory a2 = .word h2 ∧
+      (h1 = h2 →
+        let a := if (16 : BitVec width) &&& h1 = 0 then a1 else a2
+        let b := if (16 : BitVec width) &&& h1 = 0 then a2 else a1
+        wordCmpLoop (WordGcFunctions.decodeLength conf h1)
+          (a + StackRemove.bytesInWord width * WordGcFunctions.decodeLength conf h1)
+          (b + StackRemove.bytesInWord width * WordGcFunctions.decodeLength conf h2)
+          domain memory = some (wordCmpRes i1 i2)) := by
+  rintro ⟨rel, good, large1, large2⟩
+  have tail := memoryRel_tail conf be next refs space store memory domain (.number i1, v1) ((.number i2, v2) :: vars) rel
+  obtain ⟨w1, a1, f1, loc1, addr1, mem1, _, words1, bound1, _, _, _, sign1, decoded1⟩ :=
+    memoryRel_bignumWords conf be next refs space store memory domain i1 v1 ((.number i2, v2) :: vars) ⟨rel, large1, good⟩
+  obtain ⟨w2, a2, f2, loc2, addr2, mem2, _, words2, bound2, _, _, _, sign2, decoded2⟩ :=
+    memoryRel_bignumWords conf be next refs space store memory domain i2 v2 vars ⟨tail, large2, good⟩
+  refine ⟨w1, w2, a1, a2, _, _, loc1, loc2, addr1, addr2, mem1, mem2, ?_⟩
+  intro sameHeader
+  have sameSign : (i1 < 0 ↔ i2 < 0) := by
+    rw [← sign1, ← sign2, sameHeader]
+  have sameDecoded := decoded1.symm.trans (sameHeader ▸ decoded2)
+  have power : 2 ^ (width - 4) ≤ 2 ^ width := Nat.pow_le_pow_right (by decide) (by omega)
+  have small1 : (n2mw i1.natAbs : List (BitVec width)).length < 2 ^ width := lt_of_lt_of_le bound1 power
+  have small2 : (n2mw i2.natAbs : List (BitVec width)).length < 2 ^ width := lt_of_lt_of_le bound2 power
+  have sameLength : (n2mw i1.natAbs : List (BitVec width)).length =
+      (n2mw i2.natAbs : List (BitVec width)).length := by
+    have h := congrArg BitVec.toNat sameDecoded
+    simpa [BitVec.toNat_ofNat, Nat.mod_eq_of_lt small1, Nat.mod_eq_of_lt small2] using h
+  have loop := bignumWordLoop i1 i2 f1 f2 a1 a2 domain memory sameSign sameLength small1 words1 words2
+  have maskBit (x : BitVec width) : ((16 : BitVec width) &&& x = 0) ↔ x.getLsbD 4 = false := by
+    rcases good with hw | hw <;> subst width <;> bv_decide
+  rw [← sameHeader]
+  by_cases neg : i1 < 0
+  · have bit := sign1.mpr neg
+    have maskNe : (16 : BitVec width) &&& (makeHeader (width := width) conf
+        (((if i1 < 0 then 1 else 0) <<< 2) ||| 3) (n2mw i1.natAbs : List (BitVec width)).length) ≠ 0 := by
+      intro h
+      have := (maskBit _).mp h
+      simp_all
+    simp only [neg, ↓reduceIte] at loop
+    simp only [maskNe, ↓reduceIte, decoded1]
+    exact loop
+  · have bit : (makeHeader (width := width) conf (((if i1 < 0 then 1 else 0) <<< 2) ||| 3)
+        (n2mw i1.natAbs : List (BitVec width)).length).getLsbD 4 = false := by
+      cases h : (makeHeader (width := width) conf (((if i1 < 0 then 1 else 0) <<< 2) ||| 3)
+        (n2mw i1.natAbs : List (BitVec width)).length).getLsbD 4 with
+      | false => rfl
+      | true => exact (neg (sign1.mp h)).elim
+    have maskEq := (maskBit _).mpr bit
+    simp only [neg, ↓reduceIte] at loop
+    simp only [maskEq, ↓reduceIte, decoded1]
+    exact loop
+
 end
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
