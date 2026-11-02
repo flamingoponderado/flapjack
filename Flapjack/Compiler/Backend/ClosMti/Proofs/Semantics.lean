@@ -199,4 +199,20 @@ theorem semantics_compile_candidate {C F : Type} (ffi : HolFfiState F) (maxApp :
     simpa [compile] using semantics_introMulti_candidate ffi maxApp oracle compiler program
       (positive rfl) (safe rfl) (unary rfl)
 
+/-- The executed retrying traversal always returns a program whose current
+Lean observational semantics satisfies the optional-pass theorem. This
+connects the result to `compileFuel`; HOL correspondence remains open. -/
+theorem semantics_compileFuel_candidate {C F : Type} (fuel : Nat) (ffi : HolFfiState F) (maxApp : Nat)
+    (enabled : Bool) (oracle : CompileOracle C) (compiler : Compiler C) (program : List ClosLang.Exp)
+    (positive : enabled = true → 1 ≤ maxApp)
+    (safe : enabled = true → ∀ n, (oracle n).2.2 = [] ∧ ∀ e ∈ (oracle n).2.1, ClosProps.noMti e)
+    (unary : enabled = true → ∀ e ∈ program, ClosProps.noMti e) :
+    ∃ transformed, compileFuel fuel enabled maxApp program = some transformed ∧
+      semantics ffi maxApp HolFiniteMapExact.empty oracle
+        (if enabled then pureCc (compileInc maxApp) compiler else compiler) program =
+      semantics ffi maxApp HolFiniteMapExact.empty
+        (if enabled then pureCo (compileInc maxApp) ∘ oracle else oracle) compiler transformed := by
+  exact ⟨compile enabled maxApp program, compileFuel_eq_compile fuel enabled maxApp program,
+    semantics_compile_candidate ffi maxApp enabled oracle compiler program positive safe unary⟩
+
 end Flapjack.Compiler.Backend.ClosMti

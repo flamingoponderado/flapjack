@@ -2,11 +2,45 @@ import Flapjack.Compiler.Backend.ClosToBvl.Incremental
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Oracle
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Total
+import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
 
 /-! Correctness infrastructure for the checked incremental wrapper. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.Compiler.Backend.BackendProps
+
+/-- The executed incremental preparation is exactly the optional
+multi-argument transformation, including the auxiliary-code behavior. -/
+theorem prepareIncMtiFuel_eq (fuel : Nat) (config : Config) (program : ClosSem.Program) :
+    prepareIncMtiFuel? fuel config program =
+      some (ClosMti.condCompileInc config.doMti config.maxApp program) := by
+  cases enabled : config.doMti <;>
+    simp [prepareIncMtiFuel?, ClosMti.condCompileInc, ClosMti.compileInc,
+      ClosMti.compileFuel_introList, enabled]
+
+/-- The incremental multi-argument preparation used by the checked compiler
+preserves the current Lean closure observations under the pass invariants.
+This does not establish correspondence of the evaluator or later passes to HOL. -/
+theorem prepareIncMtiFuel_semantics {C F : Type} (fuel : Nat) (config : Config)
+    (program : ClosSem.Program) (ffi : HolFfiState F) (oracle : ClosSem.CompileOracle C)
+    (compiler : ClosSem.Compiler C)
+    (positive : config.doMti = true → 1 ≤ config.maxApp)
+    (safe : config.doMti = true → ∀ n, (oracle n).2.2 = [] ∧
+      ∀ e ∈ (oracle n).2.1, ClosProps.noMti e)
+    (unary : config.doMti = true → ∀ e ∈ program.1, ClosProps.noMti e) :
+    ∃ prepared, prepareIncMtiFuel? fuel config program = some prepared ∧
+      ClosSem.semantics ffi config.maxApp HolFiniteMapExact.empty oracle
+        (if config.doMti then pureCc (ClosMti.compileInc config.maxApp) compiler else compiler) program.1 =
+      ClosSem.semantics ffi config.maxApp HolFiniteMapExact.empty
+        (if config.doMti then pureCo (ClosMti.compileInc config.maxApp) ∘ oracle else oracle)
+        compiler prepared.1 := by
+  refine ⟨ClosMti.condCompileInc config.doMti config.maxApp program,
+    prepareIncMtiFuel_eq fuel config program, ?_⟩
+  have result := ClosMti.semantics_compile_candidate ffi config.maxApp config.doMti oracle compiler
+    program.1 positive safe unary
+  cases enabled : config.doMti with
+  | false => simp [ClosMti.condCompileInc]
+  | true => simpa [enabled, ClosMti.condCompileInc, ClosMti.compileInc, ClosMti.compile] using result
 
 /-- With known-function optimization disabled, the full checked entry point
 agrees with the earlier incremental wrapper. -/
