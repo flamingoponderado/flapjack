@@ -207,6 +207,14 @@ theorem arm8X_congr {d : BitVec 64 → Prop} {s t : arm8_state} (h : Arm8L3Agree
     {n : BitVec 5} (hn : n ≠ 31#5) : X (TN := 64) n s = X (TN := 64) n t := by
   simp [X, h.reg, hn]
 
+/-- The zero register reads as zero in every state, so `X` agrees there without
+a register-agreement hypothesis. -/
+theorem arm8X_congr_or_zero {d : BitVec 64 → Prop} {s t : arm8_state}
+    (h : Arm8L3Agree d s t) (n : BitVec 5) : X (TN := 64) n s = X (TN := 64) n t := by
+  by_cases hn : n = 31#5
+  · rw [hn, arm8X_zero, arm8X_zero]
+  · exact arm8X_congr h hn
+
 /-- Applying `arm8Next` to two states that agree on `d` and carry the
 `MultiplyHigh` word gives states that still agree. -/
 theorem arm8Next_multiplyHigh_agree (d : BitVec 64 → Prop) (s t : arm8_state)
@@ -258,7 +266,7 @@ theorem arm8Next_multiplyHigh_agree (d : BitVec 64 → Prop) (s t : arm8_state)
 theorem arm8Next_multiplyAddSub_agree (d : BitVec 64 → Prop) (s t : arm8_state)
     (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
     (rm ra rn : BitVec 5) (n : Nat) (hn : n < 32) (h31 : n ≠ 31)
-    (hrn : rn ≠ 31#5) (hrm : rm ≠ 31#5) (hra : ra ≠ 31#5)
+    (hrn : rn ≠ 31#5) (hrm : rm ≠ 31#5)
     (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
     (hb0 : t.MEM t.PC = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 0).toNat))
     (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 8).toNat))
@@ -291,7 +299,7 @@ theorem arm8Next_multiplyAddSub_agree (d : BitVec 64 → Prop) (s t : arm8_state
   rw [hss, htt]
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simp [h.pc]
-  · simp only [h.reg, arm8X_congr h hra, arm8X_congr h hrn, arm8X_congr h hrm]
+  · simp only [h.reg, arm8X_congr_or_zero h ra, arm8X_congr h hrn, arm8X_congr h hrm]
   · simp [h.pstate]
   · simp [h.sctlr]
   · simp [h.tcr]
@@ -399,9 +407,31 @@ theorem arm8X_longMulT1 (ms : arm8_state) (hi : BitVec 64) (d : BitVec 5)
   simp [X, Flapjack.RiscV.L3.holUpdate, Ne.symm h]
 
 
-/-- The zero register, written as `BitVec.ofNat 5 31`, reads as zero. -/
+/-- The zero register, written as the plain `31` numeral at width 5, reads as
+zero. `rw` needs this form: the literal that `arm8_ast` puts into the state is
+`OfNat.ofNat 31`, which is definitionally but not syntactically
+`BitVec.ofNat 5 31`. -/
 theorem arm8X_zero_ofNat (st : arm8_state) :
-    X (TN := 64) (BitVec.ofNat 5 31) st = (0 : BitVec 64) := by
+    X (TN := 64) (31 : BitVec 5) st = (0 : BitVec 64) := by
+  show X (TN := 64) (BitVec.ofNat 5 31) st = (0 : BitVec 64)
   simp [X]
+
+/-- `BitVec.ofNat 5` is injective on register numbers below 32. -/
+theorem arm8Reg_eq {a b : Nat} (ha : a < 32) (hb : b < 32) :
+    (BitVec.ofNat 5 a = BitVec.ofNat 5 b) ↔ a = b := by
+  constructor
+  · intro h
+    have h' := congrArg BitVec.toNat h
+    rw [BitVec.toNat_ofNat, BitVec.toNat_ofNat] at h'
+    have ha' : a % 2 ^ 5 = a := Nat.mod_eq_of_lt (by omega)
+    have hb' : b % 2 ^ 5 = b := Nat.mod_eq_of_lt (by omega)
+    omega
+  · intro h; rw [h]
+
+/-- The plain `0` numeral at width 64 is the additive identity, in the form `rw`
+matches. -/
+theorem arm8Zero_add (x : BitVec 64) : (0 : BitVec 64) + x = x := by
+  show BitVec.ofNat 64 0 + x = x
+  exact BitVec.zero_add x
 
 end Flapjack.Compiler.Encoders.Arm8.L3

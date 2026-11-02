@@ -2787,6 +2787,7 @@ import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Shift
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftImmediate
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Division
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Multiply
+import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LongMul
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ConditionalSelect
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Carry
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Compare

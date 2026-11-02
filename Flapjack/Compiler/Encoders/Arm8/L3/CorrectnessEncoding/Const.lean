@@ -1227,11 +1227,6 @@ theorem arm8ConstT4_reg_ne (ms : arm8_state) (v : BitVec 64) (r j : Nat)
     exact if_neg hne
   rw [h4, h3, h2, h1]
 
-/-- Splitting a wrapped address sum at a literal offset. -/
-theorem bv_add_split (a : BitVec 64) (m k : Nat) :
-    a + BitVec.ofNat 64 m + BitVec.ofNat 64 k = a + BitVec.ofNat 64 (m + k) := by
-  rw [BitVec.ofNat_add, BitVec.add_assoc]
-
 /-- A `MoveWide .k` step leaves memory untouched (state-equation form). -/
 theorem arm8Next_movK_mem (s : arm8_state) (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5)
     (hrd : rd ≠ 31) (hexc0 : s.exception = exception.NoException)

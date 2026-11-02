@@ -168,5 +168,18 @@ theorem asmCaseOne (inst : HolInst 64) (r : Nat) (v : BitVec 64)
     rw [hnext]
     exact (htmem x).symm
 
+/-- The two PCs covered by an 8-byte, 4-byte-aligned code window. -/
+theorem mem_allPcs_eight_l3 (p : BitVec 64) (i : Nat) (hi : i < 2) :
+    p + BitVec.ofNat 64 (i * 4) ∈ allPcs 8 p 2 := by
+  rw [allPcs_eq]
+  refine ⟨i, ?_, rfl⟩
+  have h4 : (2 : Nat) ^ 2 = 4 := by norm_num
+  omega
+
+/-- Splitting a wrapped address sum at a literal offset. -/
+theorem bv_add_split (a : BitVec 64) (m k : Nat) :
+    a + BitVec.ofNat 64 m + BitVec.ofNat 64 k = a + BitVec.ofNat 64 (m + k) := by
+  rw [BitVec.ofNat_add, BitVec.add_assoc]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
 

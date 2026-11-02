@@ -250,9 +250,11 @@ the `Run` reduction and the `asmCaseOne` interference simulation for its
 constructor; all are Flapjack case splits of the single HOL theorem
 `arm8_encoder_correct` and carry no `@[hol]` tags of their own.
 
+`LongMul.lean` assembles those facts into the two-instruction `longMul` case
+theorem with `n = 1` (`asserts 1`, `asserts2 2`).
+
 Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
-`DecodeBitMasks`/`BitfieldMove`), the two-instruction `longMul` case theorem
-(its instruction facts are in `Multiply.lean`), and the `longDiv`, `addCarry`,
+`DecodeBitMasks`/`BitfieldMove`), and the `longDiv`, `addCarry`,
 `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
 `ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in `Carry.lean` and its
 `ConditionalCompareImmediate@64` facts in `Compare.lean`), `Mem`,
