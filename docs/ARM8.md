@@ -296,6 +296,18 @@ unchanged state otherwise) and one `NextStateARM8` step, which advances `PC`
 by four exactly when the branch is not taken.  It is the prerequisite for the
 `JumpCmp` case theorem.
 
+`JumpCmp.lean` records the two flag-setting compare instructions that
+`arm8_ast` emits ahead of that branch: for the `is_test` comparisons an
+`ANDS` (`LogicalShiftedRegister@64` with `LogicalOp_AND`, `S := T`, opcode
+bits `0b11`) into `XZR`, and for the ordering comparisons a `SUBS`
+(`AddSubShiftedRegister@64` with `op := T`, `S := T`) into `XZR`.  It proves
+the `Encode`/`Decode` inverse for the `ANDS` word, the `Run` state equations
+for both compare shapes (the `AND` result's most significant bit and zero-ness
+for `ANDS`, `AddWithCarry`'s flags for `SUBS`, with the `XZR` destination
+discarded) and one `arm8Next` step for each.  The `JumpCmp` case theorem still
+needs the flag-to-`wordCmpHOL` correspondence for the eight `Cmp`
+constructors.
+
 `JumpReg.lean` does the same for `BranchRegister (r, JMP)`: the word, its
 `Encode`/`Decode` inverse and the `Run` reduction, where `PC` becomes the
 register's value.  The target's alignment is forced by `asm_step`'s
@@ -317,7 +329,8 @@ Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
 `DecodeBitMasks`/`BitfieldMove`), `addCarry`,
 `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
 `ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in `Carry.lean` and its
-`ConditionalCompareImmediate@64` facts in `Compare.lean`), `Mem` and
-`JumpCmp`.
+`ConditionalCompareImmediate@64` facts in `Compare.lean`), `Mem`, and the
+`JumpCmp` case theorem itself (its compare instructions and conditional branch
+are recorded, but the `cmp_cond` flag semantics are not yet proved).
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
