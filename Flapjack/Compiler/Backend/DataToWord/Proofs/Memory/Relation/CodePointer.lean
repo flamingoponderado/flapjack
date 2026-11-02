@@ -97,4 +97,28 @@ theorem memoryRel_codePtr {width : Nat} [NeZero width] (conf : Config) (bigEndia
     absMlInv_codePtr conf lab vars refs roots heap bigEndian a sp sp1 gens limit next inv,
     .cons rfl addresses⟩
 
+/-- A related code location originates from the corresponding source code pointer. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_Loc"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_loc {width : Nat} [NeZero width] (conf : Config) (be : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (v : Value) (label offset : Nat) (vars : List (Value × WordLocW width)) :
+    memoryRel conf be next refs space store memory domain ((v, .loc label offset) :: vars) ∧
+      (∀ ptr, v ≠ .refPtr false ptr) → v = .codePtr label := by
+  rintro ⟨⟨heap, limit, a, sp, sp1, gens, _, wordInv, _, _⟩, notRef⟩
+  obtain ⟨roots, inv, addresses⟩ := wordInv
+  obtain ⟨_, _, _, _, stackInv⟩ := inv
+  obtain ⟨f, tf, _, _, _, _, _, _, _, values, _⟩ := stackInv
+  cases roots with
+  | nil => cases values
+  | cons root rest =>
+    cases values with
+    | cons related _ =>
+      cases addresses with
+      | cons projected _ =>
+        have value := related 0
+        cases value <;> simp_all [wordAddr]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

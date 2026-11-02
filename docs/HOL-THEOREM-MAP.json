@@ -100147,6 +100147,18 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/CodePointer.lean",
+    "lean_name": "memoryRel_loc",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Loc",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Loc and its typed capture retain the memory relation with an arbitrary Loc label and offset, the universal exclusion of RefPtr F values, and the conclusion that the source value is CodePtr of that label. store uses the canonical finite-support map and all target words share the positive HOL width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/CodePointer.lean",
     "lean_name": "blocksUnique_codePtr",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
     "hol_name": "blocks_unique_CodePtr",
@@ -101658,6 +101670,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison: mw_cmp_def and its typed capture retain the empty-first-list result, comparison of LAST elements, recursive FRONT of both lists, and unsigned comparison on unequal final words. Lean dropLast implements HOL FRONT, including the empty-list case; holLast preserves the source's unspecified LAST [] independently."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword/Compare.lean",
+    "lean_name": "mwCmpThm",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "mw_cmp_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: mw_cmp_thm and its typed data_to_word_memory_repr capture retain the universally quantified word lists, ordered equal-length hypothesis, and complete NONE-or-SOME magnitude comparison conclusion. Both word lists share the same positive HOL word width."
   },
   {
     "lean_path": "Flapjack/Misc/Multiword.lean",

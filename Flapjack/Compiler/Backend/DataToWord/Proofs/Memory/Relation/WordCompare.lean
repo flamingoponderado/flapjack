@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
+import Flapjack.Misc.Multiword.Compare
 
 /-! Correctness of the word-list comparison loop. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

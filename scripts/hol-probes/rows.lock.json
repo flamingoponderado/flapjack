@@ -366,7 +366,7 @@
     {"bytes": 3564, "out": "data_to_word_gc_init_store_ok_probe.out", "rows": 6, "sha256": "96ec6227ed540489438c0c4f0337ef518d9e553f04ebcd9c1627454a2e677791"},
     {"bytes": 3529, "out": "data_to_word_gc_stack_probe.out", "rows": 7, "sha256": "b1800a3c3769b41910cfa6c0fb5d713d19837211700f60a8b82d43376d32c802"},
     {"bytes": 713, "out": "data_to_word_header_types_probe.out", "rows": 4, "sha256": "03f118c02ff75572b365f0d8538d409e9de4b1a9c6383080c7abc540b0ee525f"},
-    {"bytes": 94229, "out": "data_to_word_memory_repr_probe.out", "rows": 226, "sha256": "0c0a79d02f66bf9e30e59a951ab4b56917d5508e132e2cb8a2ee267b96ccb4be"},
+    {"bytes": 94756, "out": "data_to_word_memory_repr_probe.out", "rows": 228, "sha256": "69ebdb945e87812682333e9b1a41004b81b2854eb1c705733301fa389325b428"},
     {"bytes": 103, "out": "data_to_word_option_le_probe.out", "rows": 1, "sha256": "61ed8aa7ea64f514135e6357e9e16687f2337ed4ecb089e7d947fee2bae756d0"},
     {"bytes": 316, "out": "data_to_word_space_control_probe.out", "rows": 2, "sha256": "bc3ccbdf7ac7ca7d1f02e53197498f70304d3238e40cb8e79bcb9bc5b20d9848"},
     {"bytes": 107, "out": "default_frontend_config_probe.out", "rows": 1, "sha256": "c0d860973f9f454f3db5978bc39ead06507cf34f0095adc3c8c8e42f508e38b1"},
