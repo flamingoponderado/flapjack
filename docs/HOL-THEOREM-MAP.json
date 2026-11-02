@@ -1,5 +1,32 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyArithmeticSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_arithWord8_source",
+    "reviewer": "Compared the typed flat do_app arithmetic case for WordT W8 with source check_type and do_arith, for all argument lists and operators. Exactly two projected Word8 literals are accepted; wordArith implements the original fixed-width Add, Sub, And, Or and Xor clauses and rejects other operators. The state payload types remain independent."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyArithmeticSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_arithWord64_source",
+    "reviewer": "Compared the typed flat do_app arithmetic case for WordT W64 with source check_type and do_arith, for all argument lists and operators. Exactly two projected Word64 literals are accepted; wordArith implements the original fixed-width Add, Sub, And, Or and Xor clauses and rejects other operators. The state payload types remain independent."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyArithmeticSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_arithInt_source",
+    "reviewer": "Compared the original typed flat do_app arithmetic clause for IntT with check_type and do_arith in semanticPrimitivesScript.sml. All argument lists and arithmetic operators are retained: only two projected integer literals pass the source type check, Add/Sub/Mul and floor Div/Mod return their integer result, zero divisors raise the flat div exception, and other operators or operands fail. Compiler and FFI payload types remain independent."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyCompareSource.lean",
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
     "hol_name": "do_app_def",

@@ -6,6 +6,10 @@ fun show_thm label th =
   if null (hyp th) then (print label; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val exists_eq = CONV_RULE (DEPTH_CONV ETA_CONV) (prove (``∀a:'a. ∃x. a = x``, metis_tac []));
+fun show_int_eval label tm =
+  (print label; print_term (rhs (concl (CONV_RULE
+    (RAND_CONV (SIMP_CONV (srw_ss()) [boolTheory.EXISTS_REFL, exists_eq] THENC EVAL)) (EVAL tm)))); print "\n");
 fun show_word_eval label tm = (print label; print_term (rhs (concl
   ((EVAL THENC DEPTH_CONV (CHANGED_CONV wordsLib.WORD_EVAL_CONV) THENC EVAL) tm))); print "\n");
 val _ = show_thm "do_app_typed=" flatSemTheory.do_app_def;
@@ -70,6 +74,26 @@ val _ = show_eval "data_thunk_alloc=" ``OPTION_MAP (λ(s,r). (s.refs,r))
     (Src (ThunkOp (AllocThunk NotEvaluated))) [Litv (IntLit 5)])``;
 val _ = show_eval "numeric_shift=" ``OPTION_MAP SND
   (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Shift W8 Lsl 2)) [Litv (Word8 7w)])``;
+val _ = show_int_eval "numeric_int_div_negative=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Div IntT)) [Litv (IntLit (~7)); Litv (IntLit 3)])``;
+val _ = show_int_eval "numeric_int_div_zero=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Div IntT)) [Litv (IntLit 7); Litv (IntLit 0)])``;
+val _ = show_int_eval "numeric_int_mod_negative=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Mod IntT)) [Litv (IntLit (~7)); Litv (IntLit 3)])``;
+val _ = show_int_eval "numeric_int_div_negative_divisor=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Div IntT)) [Litv (IntLit 7); Litv (IntLit (~3))])``;
+val _ = show_int_eval "numeric_int_mod_negative_divisor=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Mod IntT)) [Litv (IntLit 7); Litv (IntLit (~3))])``;
+val _ = show_eval "numeric_int_arity=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Add IntT)) [Litv (IntLit 7)])``;
+val _ = show_int_eval "numeric_word8_wrap=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Add (WordT W8))) [Litv (Word8 255w); Litv (Word8 1w)])``;
+val _ = show_int_eval "numeric_word64_xor=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Xor (WordT W64))) [Litv (Word64 3w); Litv (Word64 5w)])``;
+val _ = show_int_eval "numeric_word8_bad_op=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Mul (WordT W8))) [Litv (Word8 3w); Litv (Word8 5w)])``;
+val _ = show_int_eval "numeric_word8_bad_width=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Add (WordT W8))) [Litv (Word8 3w); Litv (Word64 5w)])``;
 val _ = show_word_eval "numeric_shift64_rotate=" ``OPTION_MAP SND
   (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Shift W64 Ror 65)) [Litv (Word64 3w)])``;
 val _ = show_eval "numeric_shift_wrong_width=" ``OPTION_MAP SND

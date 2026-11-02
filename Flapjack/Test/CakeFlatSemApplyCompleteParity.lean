@@ -29,6 +29,33 @@ example {C F : Type} (s : State C F) :
 example {C F : Type} (s : State C F) :
     doApp s (.src (.shift .w8 .lsl 2)) [.litv (.word8 7)] = some (s, .val (.litv (.word8 28))) := by rfl
 example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .div .intT)) [.litv (.intLit (-7)), .litv (.intLit 3)] =
+      some (s, .val (.litv (.intLit (-3)))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .div .intT)) [.litv (.intLit 7), .litv (.intLit 0)] =
+      some (s, .err (.raise divExnV)) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .mod .intT)) [.litv (.intLit (-7)), .litv (.intLit 3)] =
+      some (s, .val (.litv (.intLit 2))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .div .intT)) [.litv (.intLit 7), .litv (.intLit (-3))] =
+      some (s, .val (.litv (.intLit (-3)))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .mod .intT)) [.litv (.intLit 7), .litv (.intLit (-3))] =
+      some (s, .val (.litv (.intLit (-2)))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .add .intT)) [.litv (.intLit 7)] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .add (.wordT .w8))) [.litv (.word8 255), .litv (.word8 1)] =
+      some (s, .val (.litv (.word8 0))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .xor (.wordT .w64))) [.litv (.word64 3), .litv (.word64 5)] =
+      some (s, .val (.litv (.word64 6))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .mul (.wordT .w8))) [.litv (.word8 3), .litv (.word8 5)] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .add (.wordT .w8))) [.litv (.word8 3), .litv (.word64 5)] = none := by rfl
+example {C F : Type} (s : State C F) :
     doApp s (.src (.shift .w64 .ror 65)) [.litv (.word64 3)] =
       some (s, .val (.litv (.word64 0x8000000000000001))) := by rfl
 example {C F : Type} (s : State C F) :
