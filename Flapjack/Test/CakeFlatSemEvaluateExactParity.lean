@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
+import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
 
 /-! Unbounded flat evaluation compared with the original HOL observations in
 `cake_flat_sem_evaluate_probe.out`. -/
@@ -10,6 +11,12 @@ private def env : Environment Value := ⟨[]⟩
 private def x := ofString "x"
 private def call : Flapjack.Compiler.Backend.FlatLang.Exp := .app .none (.src .opapp)
   [.fn (ofString "unused") x (.varLocal .none x), .lit .none (.intLit 7)]
+
+-- Original `semantics_empty` is proved by the pinned HOL probe.
+example {C F : Type} (config : InstallConfig C) (ffi : Flapjack.HolFfiState F) :
+    semantics config ffi [] = .terminate .success ffi.ioEvents := semantics_nil config ffi
+example {C F : Type} (config : InstallConfig C) (ffi : Flapjack.HolFfiState F) :
+    semantics config ffi [.lit .none (.intLit 1)] = .fail := semantics_nonunit_literal config ffi .none 1
 
 example {C F : Type} (s : State C F) :
     evaluate env { s with clock := 4 } [.lit .none (.intLit 3)] =

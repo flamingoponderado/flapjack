@@ -21,9 +21,10 @@ def terminatingObservation {C F : Type} (evalConfig : InstallConfig C)
      | _ => outcome = HolOutcome.success) ∧
     behavior = HolBehaviour.terminate outcome state.ffi.ioEvents
 
-/-- Observational behavior built from the current flat evaluator. Its
-correspondence depends on the remaining source review of that evaluator, so
-this definition is not yet tagged as the original HOL semantics. -/
+/-- Observational behavior of the clocked flat evaluator. The choice and lazy
+list models are the shared HOL representations; floating operations inherit
+the evaluator's rational-cut assumption. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "semantics_def"]
 noncomputable def semantics {C F : Type} (evalConfig : InstallConfig C)
     (ffi : HolFfiState F) (program : List FlatLang.Exp) : HolBehaviour :=
   open Classical in
@@ -34,6 +35,61 @@ noncomputable def semantics {C F : Type} (evalConfig : InstallConfig C)
     | some behavior => behavior
     | none => .diverge (HolLList.buildLprefixLub (fun trace => ∃ clock,
         trace = HolLList.fromList (evaluateDecs (initialState ffi clock evalConfig) program).1.ffi.ioEvents))
+
+open Classical in
+/-- The original semantics equation, with the terminating choice predicate
+expanded and the divergence traces expressed as an image of all clocks. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "semantics_def"]
+theorem semantics_source {C F : Type} (evalConfig : InstallConfig C)
+    (ffi : HolFfiState F) (program : List FlatLang.Exp) :
+    semantics evalConfig ffi program =
+      if ∃ clock, (evaluateDecs (initialState ffi clock evalConfig) program).2 = some (.abort .typeError) then
+        .fail
+      else match holOptionSome (fun behavior => ∃ clock state result outcome,
+        evaluateDecs (initialState ffi clock evalConfig) program = (state, result) ∧
+        (match result with
+         | some (.abort (.ffiError event)) => outcome = HolOutcome.ffiOutcome event
+         | some (.abort _) => False
+         | _ => outcome = HolOutcome.success) ∧
+        behavior = HolBehaviour.terminate outcome state.ffi.ioEvents) with
+      | some behavior => behavior
+      | none => .diverge (HolLList.buildLprefixLub (fun trace => ∃ clock,
+          trace = HolLList.fromList (evaluateDecs (initialState ffi clock evalConfig) program).1.ffi.ioEvents)) := by
+  rfl
+
+/-- The empty flat program terminates successfully without emitting events.
+This is a Flapjack consequence of the semantics, not a separate HOL theorem. -/
+theorem semantics_nil {C F : Type} (evalConfig : InstallConfig C) (ffi : HolFfiState F) :
+    semantics evalConfig ffi [] = .terminate .success ffi.ioEvents := by
+  classical
+  have witness : terminatingObservation evalConfig ffi [] (.terminate .success ffi.ioEvents) := by
+    refine ⟨0, initialState ffi 0 evalConfig, none, .success, ?_, rfl, rfl⟩
+    rw [evaluateDecs]
+  have unique : ∀ behavior, terminatingObservation evalConfig ffi [] behavior →
+      behavior = .terminate .success ffi.ioEvents := by
+    intro behavior observed
+    obtain ⟨clock, state, result, outcome, run, outcomeEq, behaviorEq⟩ := observed
+    rw [evaluateDecs] at run
+    cases run
+    simpa [initialState] using behaviorEq.trans (congrArg (fun o => HolBehaviour.terminate o ffi.ioEvents) outcomeEq)
+  have chosen := HolLList.holOptionSome_eq_some witness unique
+  unfold semantics
+  have safe : ¬ ∃ clock, (evaluateDecs (initialState ffi clock evalConfig) []).2 = some (.abort .typeError) := by
+    simp [evaluateDecs]
+  simp only [safe, if_false, chosen]
+
+/-- A non-unit literal declaration is a type error and makes the observation
+fail. This is Flapjack proof infrastructure, not a separate HOL declaration. -/
+theorem semantics_nonunit_literal {C F : Type} (evalConfig : InstallConfig C) (ffi : HolFfiState F)
+    (trace : BackendCommon.Tra) (i : Int) :
+    semantics evalConfig ffi [.lit trace (.intLit i)] = .fail := by
+  classical
+  unfold semantics
+  have failure : ∃ clock, (evaluateDecs (initialState ffi clock evalConfig)
+      [.lit trace (.intLit i)]).2 = some (.abort .typeError) := by
+    refine ⟨0, ?_⟩
+    simp [evaluateDecs, evaluate, fixClock]
+  simp only [failure, if_true]
 
 /-- If no clock produces a type error, flat observational semantics does not
 return failure. This is a consequence of the factored semantics definition. -/

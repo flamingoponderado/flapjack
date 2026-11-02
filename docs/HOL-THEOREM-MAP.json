@@ -1,5 +1,23 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Semantics.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "semantics_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "semantics",
+    "reviewer": "Compared semantics_typed and the complete source definition with the reviewed flat evaluator, initial state, FFI and behavior carriers. Both give Fail priority to any clock yielding a type error, choose a terminating result exactly for FFI-final or non-abort outcomes, and otherwise diverge with the prefix LUB of the image of all clock-indexed event traces. The factored terminatingObservation retains all four original existential binders and conjuncts. HOL's option-choice binder is rendered by holOptionSome using Classical.choose, and IMAGE over UNIV by an existential predicate; the reviewed HolLList operations render the lazy-list carrier. Compiler and FFI payload types remain independent. Floating operations inherit the rational-cut assumption. This source comparison and the probes do not prove cross-language equivalence or the compiler correctness theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Semantics.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "semantics_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "semantics_source",
+    "reviewer": "Compared the typed original semantics equation with the expanded Lean terminating-choice predicate: the type-error guard, clock/state/result/outcome witnesses, FFI-final and abort cases, event trace, and divergence LUB all have the source shape. HOL option choice uses holOptionSome/Classical.choose and IMAGE UNIV is rendered as an existential predicate. Compiler and FFI payload types remain independent; floating operations inherit the rational-cut assumption."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
     "hol_name": "evaluate_clock",

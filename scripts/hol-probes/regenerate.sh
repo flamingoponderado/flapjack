@@ -324,7 +324,7 @@ run_probe cake_source_evaluate_length_probeScript.sml cake_source_evaluate_lengt
   "$cake_dir/semantics/proofs/evaluatePropsScript.sml" "$cake_dir/semantics/proofs"
 
 run_probe cake_flat_sem_evaluate_probeScript.sml cake_flat_sem_evaluate_probe.out \
-  evaluate_type evaluate_dec_type evaluate_decs_type evaluate_rebound_typed eval_lit eval_missing eval_lookup_shadow eval_let_shadow eval_if_bad eval_list_raise eval_handle_no_match eval_letrec_duplicate eval_app_bad eval_match_duplicate eval_call eval_timeout eval_raise_handle eval_reference_order eval_match_failure eval_force eval_decs_unit eval_decs_nonunit \
+  evaluate_type evaluate_dec_type evaluate_decs_type evaluate_rebound_typed semantics_type semantics_typed semantics_empty semantics_nonunit eval_lit eval_missing eval_lookup_shadow eval_let_shadow eval_if_bad eval_list_raise eval_handle_no_match eval_letrec_duplicate eval_app_bad eval_match_duplicate eval_call eval_timeout eval_raise_handle eval_reference_order eval_match_failure eval_force eval_decs_unit eval_decs_nonunit \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe cake_flat_sem_apply_probeScript.sml cake_flat_sem_apply_probe.out \

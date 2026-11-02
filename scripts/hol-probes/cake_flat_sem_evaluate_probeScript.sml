@@ -10,6 +10,19 @@ val _ = show_type "evaluate_type=" ``flatSem$evaluate``;
 val _ = show_type "evaluate_dec_type=" ``flatSem$evaluate_dec``;
 val _ = show_type "evaluate_decs_type=" ``flatSem$evaluate_decs``;
 val _ = show_thm "evaluate_rebound_typed=" flatSemTheory.evaluate_def;
+val _ = show_type "semantics_type=" ``flatSem$semantics``;
+val _ = show_thm "semantics_typed=" flatSemTheory.semantics_def;
+val semantics_empty = prove (
+  ``flatSem$semantics (ec : unit flatSem$install_config) (ffi : unit ffi$ffi_state) [] =
+      Terminate Success ffi.io_events``,
+  simp [flatSemTheory.semantics_def, flatSemTheory.initial_state_def, flatSemTheory.evaluate_def]);
+val _ = show_thm "semantics_empty=" semantics_empty;
+val semantics_nonunit = prove (
+  ``flatSem$semantics (ec : unit flatSem$install_config) (ffi : unit ffi$ffi_state)
+      [Lit backend_common$None (IntLit 1)] = Fail``,
+  simp [flatSemTheory.semantics_def, flatSemTheory.initial_state_def, flatSemTheory.evaluate_def,
+        flatSemTheory.Unitv_def]);
+val _ = show_thm "semantics_nonunit=" semantics_nonunit;
 val _ = show_eval "eval_lit=" ``SND (flatSem$evaluate <| v := [] |>
   ((ARB : (unit,unit) flatSem$state) with clock := 4) [Lit backend_common$None (IntLit 3)])``;
 val _ = show_eval "eval_missing=" ``SND (flatSem$evaluate <| v := [] |>
