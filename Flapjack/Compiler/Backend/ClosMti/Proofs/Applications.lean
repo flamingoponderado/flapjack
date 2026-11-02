@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectApps
-import Flapjack.Compiler.Backend.ClosMti.Proofs.Relations
+import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Mathlib.Data.List.Induction

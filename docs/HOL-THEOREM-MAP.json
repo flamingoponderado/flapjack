@@ -1,5 +1,61 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/clos_mtiScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "compile_def",
+    "lean_name": "compile",
+    "reviewer": "Compared compile_typed: false returns the input expression list and true uses reviewed introList. compileFuel_eq_compile connects both cases to the executed compiler for every fuel."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_mtiScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "compile_inc_def",
+    "lean_name": "compileInc",
+    "reviewer": "Compared compile_inc_typed: the input second component has arbitrary type beta independently of the output alpha list. The main list is transformed by reviewed introList and the output list is empty."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_mtiScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "cond_mti_compile_inc_def",
+    "lean_name": "condCompileInc",
+    "reviewer": "Compared conditional_compile_inc_typed: the boolean chooses between compileInc and identity on the same expression-list and arbitrary alpha-list product; no additional premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "SND_compile_inc",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
+    "lean_name": "compileInc_snd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared snd_compile_inc_typed: the input payload beta and output-list element alpha remain independent, and the second projection is empty for every max_app and program."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "FMAP_REL_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/StateRelation.lean",
+    "lean_name": "fmapRel",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "first",
+      "second"
+    ],
+    "reviewer": "Compared fmap_rel_typed: the key type and both value types remain independently polymorphic. Equality of HOL domains is pointwise equivalence of nonempty canonical lookups, followed by the same universal lookup and existential related target value. Both map parameters have same-module lookup/support roundtrip witnesses; no extra equality instance is assumed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/StateRelation.lean",
+    "lean_name": "StateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "reviewer": "Compared state_rel_typed and the complete original definition: both states share the same independent compiler and FFI carriers; oracle code is empty and expression lists satisfy noMti; both code maps are empty; max_app, positivity, clock, FFI, global and reference relations match; compiler and oracle use pureCc and pureCo of the reviewed polymorphic compileInc. Both finite-map fields use the imported reviewed State carrier and its local re-exported lookup/support roundtrip. This is source review, not a compiler correctness proof."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
     "statement_status": "reviewed_exact",

@@ -292,4 +292,35 @@ theorem introExp_letrec_vars (maxApp : Nat) (names : List Flapjack.Basis.Pure.Ml
   apply introExp_eq_of_fuel (fuel + 1)
   rw [introMultiFuel, hb] <;> simp_all
 
+/-- Apply multi-argument introduction when enabled. -/
+@[hol "cakeml/compiler/backend/clos_mtiScript.sml" "compile_def"]
+noncomputable def compile (enabled : Bool) (maxApp : Nat) (es : List Exp) : List Exp :=
+  if enabled then introList maxApp es else es
+
+/-- The total compiler agrees with the executed fuel-based compiler. -/
+theorem compileFuel_eq_compile (fuel : Nat) (enabled : Bool) (maxApp : Nat) (es : List Exp) :
+    compileFuel fuel enabled maxApp es = some (compile enabled maxApp es) := by
+  cases enabled with
+  | false => rfl
+  | true => exact compileFuel_introList fuel maxApp es
+
+/-- Incremental multi-argument compilation transforms the main expression
+list and returns an empty auxiliary list. The input and output payloads are
+independent, as in the inferred HOL type. -/
+@[hol "cakeml/compiler/backend/clos_mtiScript.sml" "compile_inc_def"]
+noncomputable def compileInc {Input Output : Type} (maxApp : Nat)
+    (program : List Exp × Input) : List Exp × List Output :=
+  (introList maxApp program.1, [])
+
+/-- Optionally run the incremental transformation. -/
+@[hol "cakeml/compiler/backend/clos_mtiScript.sml" "cond_mti_compile_inc_def"]
+noncomputable def condCompileInc {Output : Type} (enabled : Bool) (maxApp : Nat) :
+    List Exp × List Output → List Exp × List Output :=
+  if enabled then compileInc maxApp else id
+
+/-- Incremental compilation always returns an empty auxiliary list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "SND_compile_inc"]
+theorem compileInc_snd {Input Output : Type} (maxApp : Nat) (program : List Exp × Input) :
+    (compileInc (Output := Output) maxApp program).2 = [] := rfl
+
 end Flapjack.Compiler.Backend.ClosMti
