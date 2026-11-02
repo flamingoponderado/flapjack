@@ -585,19 +585,31 @@ theorem panSemExpressionSlice_globals_finite {σ : Type}
     · simp [panSemExpressionSlice, h] at hkey
   exact List.mem_map.mpr ⟨toStringOfBytes key, hm, ofString_toStringOfBytes key⟩
 
+def PanSemExpressionInputsRanged (s : PanSemState (RiscV.Word 64) (FfiState σ))
+    (e : Exp (RiscV.Word 64)) : Prop :=
+  (∀ n ∈ expLocalVars e, ∀ v, s.locals n = some v → PanValueByteRanged v) ∧
+  (∀ n ∈ expGlobalVars e, ∀ v, s.globals n = some v → PanValueByteRanged v) ∧
+  StructContextByteRanged s.structs.toHOL
+
+theorem panSemSliceRanged_of_inputs (s : PanSemState (RiscV.Word 64) (FfiState σ))
+    (e : Exp (RiscV.Word 64)) (h : PanSemExpressionInputsRanged s e) :
+    PanSemStateRelExecRanged (panSemExpressionSlice s e) := by
+  refine ⟨?_, ?_, h.2.2⟩
+  · intro name value hv
+    by_cases hn : name ∈ expLocalVars e
+    · exact h.1 name hn value (by simpa [panSemExpressionSlice, hn] using hv)
+    · simp [panSemExpressionSlice, hn] at hv
+  · intro name value hv
+    by_cases hn : name ∈ expGlobalVars e
+    · exact h.2.1 name hn value (by simpa [panSemExpressionSlice, hn] using hv)
+    · simp [panSemExpressionSlice, hn] at hv
+
 theorem panSemExpressionSlice_ranged {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ)) (e : Exp (RiscV.Word 64))
     (hranged : PanSemStateRelExecRanged state) :
-    PanSemStateRelExecRanged (panSemExpressionSlice state e) := by
-  refine ⟨?_, ?_, hranged.2.2⟩
-  · intro name value h
-    by_cases hm : name ∈ expLocalVars e
-    · exact hranged.1 name value (by simpa [panSemExpressionSlice, hm] using h)
-    · simp [panSemExpressionSlice, hm] at h
-  · intro name value h
-    by_cases hm : name ∈ expGlobalVars e
-    · exact hranged.2.1 name value (by simpa [panSemExpressionSlice, hm] using h)
-    · simp [panSemExpressionSlice, hm] at h
+    PanSemStateRelExecRanged (panSemExpressionSlice state e) :=
+  panSemSliceRanged_of_inputs state e
+    ⟨fun _ _ v h => hranged.1 _ v h, fun _ _ v h => hranged.2.1 _ v h, hranged.2.2⟩
 
 /-- HOL-backed evaluation using only the finite set of lookups referenced by
     the expression. It does not require finite support of the original maps. -/
@@ -622,17 +634,25 @@ theorem evalPanSemStateExp_expressionSlice {σ : Type}
 
 /-- The finite slice adapter returns the production result under the byte-name
     and memory representation invariants, without map-support assumptions. -/
+theorem evalPanSemStateExpViaHOLSlice_eq_of_sliceRanged {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (e : Exp (RiscV.Word 64))
+    (hranged : PanSemStateRelExecRanged (panSemExpressionSlice state e)) (he : ExpByteRanged e) :
+    evalPanSemStateExpViaHOLSlice state hmem e = evalPanSemStateExp state e := by
+  exact (evalPanSemStateExpViaHOL_eq (panSemExpressionSlice state e) hmem
+    (panSemExpressionSlice_locals_finite state e)
+    (panSemExpressionSlice_globals_finite state e) hranged e he).trans
+      (evalPanSemStateExp_expressionSlice state e)
+
 theorem evalPanSemStateExpViaHOLSlice_eq {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ))
     (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
     (hranged : PanSemStateRelExecRanged state)
     (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
-    evalPanSemStateExpViaHOLSlice state hmem e = evalPanSemStateExp state e := by
-  exact (evalPanSemStateExpViaHOL_eq (panSemExpressionSlice state e) hmem
-    (panSemExpressionSlice_locals_finite state e)
-    (panSemExpressionSlice_globals_finite state e)
-    (panSemExpressionSlice_ranged state e hranged) e he).trans
-      (evalPanSemStateExp_expressionSlice state e)
+    evalPanSemStateExpViaHOLSlice state hmem e = evalPanSemStateExp state e :=
+  evalPanSemStateExpViaHOLSlice_eq_of_sliceRanged state hmem e
+    (panSemExpressionSlice_ranged state e hranged) he
 
 /-- Convert a byte-keyed lookup with finite support to the canonical HOL map.
     The support witness is erased; the executable lookup remains unchanged. -/

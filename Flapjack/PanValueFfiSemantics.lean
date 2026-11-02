@@ -434,10 +434,9 @@ def panValueDecAccepted
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
-    (value : Exp α) (memoryAccess : Option (PanValueMemoryAccess α)) (shape : Shape)
-    (evaluator : Option (PanExprEvaluator α) := none) :
+    (value : Exp α) (memoryAccess : Option (PanValueMemoryAccess α)) (shape : Shape) :
     Option (PanValue α × Nat) :=
-  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+  match evalPanValueExpCountedWith none structs locals globals memory baseAddress topAddress bytesInWord
       value memoryAccess with
   | none => none
   | some (evaluated, valueSteps) =>
@@ -675,10 +674,9 @@ def panValueIteCondition
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
-    (condition : Exp α) (memoryAccess : Option (PanValueMemoryAccess α))
-    (evaluator : Option (PanExprEvaluator α) := none) :
+    (condition : Exp α) (memoryAccess : Option (PanValueMemoryAccess α)) :
     Option (α × Nat) :=
-  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+  match evalPanValueExpCountedWith none structs locals globals memory baseAddress topAddress bytesInWord
       condition memoryAccess with
   | some (.word value, steps) => some (value, steps)
   | _ => none
@@ -711,10 +709,9 @@ def panValueCallArguments
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
-    (arguments : List (Exp α)) (memoryAccess : Option (PanValueMemoryAccess α))
-    (evaluator : Option (PanExprEvaluator α) := none) :
+    (arguments : List (Exp α)) (memoryAccess : Option (PanValueMemoryAccess α)) :
     Option (List (PanValue α) × Nat) :=
-  evalPanValueExpsCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+  evalPanValueExpsCountedWith none structs locals globals memory baseAddress topAddress bytesInWord
     arguments memoryAccess
 
 /-- Uncounted evaluation of a call's argument list; the clocked counterpart of

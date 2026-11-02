@@ -58,6 +58,22 @@ private def dispatchCallState :=
   (testSelectedRoute (sourceCodeState false true)
     (.ite (.const 0) (.return (.const 9)) (.return (.const 19)))) 10
 
+/- Check the dispatch for the same state and expression subsequently executed
+   by the production entry. The second case exercises its String fallback. -/
+#guard panSemExpressionUsesHOLCached
+  (panSemExpressionContextCache (sourceCodeState false true).structs)
+  (sourceCodeState false true) (.loadByte (.const 0))
+
+private def fallbackRouteState :=
+  { sourceCodeState false true with
+    locals := fun name => if name == "Ā" then some (.word 17) else none }
+
+#guard !(panSemExpressionUsesHOLCached (panSemExpressionContextCache fallbackRouteState.structs)
+  fallbackRouteState (.var .local "Ā"))
+#guard observesWord
+  (panSemEvaluateRiscV64CodeStateWithProductionPrimop sourceFfiContext sourceFfiHandler
+    fallbackRouteState (.return (.var .local "Ā"))) 17
+
 /- The actual HOL route sees source byte order and rejects out-of-domain reads. -/
 #guard observesWord
   (panSemEvaluateRiscV64CodeStateViaHOL sourceFfiContext sourcePrimitive sourceFfiHandler
