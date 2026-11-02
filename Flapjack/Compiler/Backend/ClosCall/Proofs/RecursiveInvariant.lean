@@ -101,6 +101,97 @@ theorem letrec_open_location_unknown (fuel : Nat) (names : List Basis.Pure.MlStr
     · have : origin = 2 * i + loc := Nat.add_right_cancel eq.symm
       exact noSelf (this ▸ member)
 
+/-- A successful traversal cannot introduce an unknown location absent from
+the traversed expression, when the initial pass state is well formed. -/
+theorem callsFuel_unknown_preserved (fuel : Nat) (body out : ClosLang.Exp)
+    (initial final : State) (run : callsFuel fuel body initial = some (out, final))
+    (well : weaklyWellFormed initial) (key : Nat) (outside : key ∉ codeLocationsExp body)
+    (unknown : ¬ sptDomain initial.1 key) : ¬ sptDomain final.1 key := by
+  have noOldLabel : key + 1 ∉ initial.2.map Prod.fst := by
+    intro member
+    have imageMember : key + 1 ∈ Set.image Nat.succ (sptDomain initial.1) := well member
+    obtain ⟨other, known, equal⟩ := imageMember
+    have : other = key := Nat.succ.inj equal
+    exact unknown (this ▸ known)
+  intro known
+  rcases callsFuel_knownBound fuel body initial final out run key known with old | generated
+  · exact unknown old
+  · rcases callsFuel_labelsBound fuel body initial final out run (key + 1) generated with
+        old | ⟨origin, member, equal⟩
+    · exact noOldLabel old
+    · have : origin = key := Nat.add_right_cancel equal.symm
+      exact outside (this ▸ member)
+
+/-- A successful single-expression traversal extends its pass state when
+its closure locations are distinct and fresh. -/
+theorem callsFuel_stateExtends (fuel : Nat) (body out : ClosLang.Exp)
+    (initial final : State) (run : callsFuel fuel body initial = some (out, final))
+    (distinct : (codeLocationsExp body).Nodup) (fresh : LabelsFresh (codeLocationsExp body) initial)
+    (oldDistinct : (initial.2.map Prod.fst).Nodup) : stateExtends initial final := by
+  have listRun : callsListBounded (fuel + 1) [body] initial = some ([out], final) := by
+    simp [callsListBounded, callsListFuel, run]
+  exact callsListBounded_stateExtends (fuel + 1) [body] initial final [out] listRun
+    (by simpa [codeLocations] using distinct) (by simpa [codeLocations] using fresh) oldDistinct
+
+/-- Labels belonging to the continuation remain fresh after retrying the
+recursive function bodies, since the two location lists are disjoint. -/
+theorem letrec_continuation_fresh_after_retry (fuel : Nat)
+    (names : List Basis.Pure.MlString.MlString) (loc : Nat)
+    (fns : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (initial afterRetry : State) (retryBodies : List ClosLang.Exp)
+    (retry : callsListFuel fuel (fns.map Prod.snd) initial = some (retryBodies, afterRetry))
+    (distinct : (codeLocations [.letrec names (some loc) none fns body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.letrec names (some loc) none fns body]) initial) :
+    (codeLocationsExp body).Nodup ∧ LabelsFresh (codeLocationsExp body) afterRetry := by
+  let nested := codeLocations (fns.map Prod.snd)
+  let own := (List.range fns.length).map (fun i => loc + 2 * i)
+  have nodup : (nested ++ own ++ codeLocationsExp body).Nodup := by
+    simpa [codeLocations, codeLocationsExp, codeLocationsFuns_map, nested, own] using distinct
+  have fresh' : LabelsFresh (nested ++ own ++ codeLocationsExp body) initial := by
+    simpa [codeLocations, codeLocationsExp, codeLocationsFuns_map, nested, own] using fresh
+  refine ⟨(List.nodup_append.mp nodup).2.1, ?_⟩
+  intro key member generated
+  have noOld := fresh' key (List.mem_append_right _ member)
+  rcases callsListFuel_labelsBound fuel (fns.map Prod.snd) initial afterRetry retryBodies retry
+      (key + 1) generated with old | ⟨origin, originMember, equal⟩
+  · exact noOld old
+  · have originEq : origin = key := Nat.add_right_cancel equal.symm
+    subst origin
+    exact (List.nodup_append.mp nodup).2.2 key (List.mem_append_left _ originMember) key member rfl
+
+/-- A continuation cannot turn an unknown recursive-group location into a
+known location. Thus coverage stated at the final pass state also covers
+unknown group locations at the intermediate state. -/
+theorem letrec_group_coverage_before_continuation (fuel : Nat)
+    (names : List Basis.Pure.MlString.MlString) (loc : Nat)
+    (fns : List (Nat × ClosLang.Exp)) (body body' : ClosLang.Exp)
+    (middle final : State) (allowed : Set Nat)
+    (run : callsFuel fuel body middle = some (body', final)) (middleWf : weaklyWellFormed middle)
+    (distinct : (codeLocations [.letrec names (some loc) none fns body]).Nodup)
+    (coverage : ∀ k ∈ codeLocations [.letrec names (some loc) none fns body],
+      ¬ sptDomain final.1 k → k ∈ allowed) :
+    groupLocationsCovered fns middle allowed ∧
+      (∀ i, i < fns.length → ¬ sptDomain middle.1 (2 * i + loc) → 2 * i + loc ∈ allowed) := by
+  let group := codeLocations (fns.map Prod.snd) ++ (List.range fns.length).map (fun i => loc + 2 * i)
+  have nodup : (group ++ codeLocationsExp body).Nodup := by
+    simpa [codeLocations, codeLocationsExp, codeLocationsFuns_map, group] using distinct
+  have groupCoverage : ∀ k ∈ group, ¬ sptDomain middle.1 k → k ∈ allowed := by
+    intro k member unknown
+    have outside : k ∉ codeLocationsExp body := by
+      intro inBody
+      exact (List.nodup_append.mp nodup).2.2 k member k inBody rfl
+    have sourceMember : k ∈ codeLocations [.letrec names (some loc) none fns body] := by
+      simpa [codeLocations, codeLocationsExp, codeLocationsFuns_map, group] using
+        List.mem_append_left (codeLocationsExp body) member
+    exact coverage k sourceMember (callsFuel_unknown_preserved fuel body body' middle final run middleWf k outside unknown)
+  constructor
+  · intro k member unknown
+    exact groupCoverage k (List.mem_append_left _ member) unknown
+  · intro i bound unknown
+    apply groupCoverage (2 * i + loc) _ unknown
+    apply List.mem_append_right
+    exact List.mem_map.mpr ⟨i, List.mem_range.mpr bound, by simp [Nat.add_comm]⟩
+
 private theorem callsListSource_arities (trace : BackendCommon.Tra) (index loc : Nat)
     (fns : List (Nat × ClosLang.Exp)) :
     (callsListSource trace index loc fns).map Prod.fst = fns.map Prod.fst := by
@@ -371,5 +462,86 @@ theorem callsFuel_letrec_open_source (fuel : Nat)
     probeBodies retryBodies allowed code probe notClosed retry continuation wf initialWf nestedFresh ownFresh growth
     (letrec_source_coverage names loc fns body afterRetry allowed coverage) ownAllowed
     (codeIncludes_of_stateExtends afterRetry g code growth included)
+
+/-- The closed-group invariant follows from coverage at the final pass state. -/
+theorem callsFuel_letrec_closed_final (fuel : Nat)
+    (names : List Basis.Pure.MlString.MlString) (loc : Nat) (fns : List (Nat × ClosLang.Exp))
+    (body body' : ClosLang.Exp) (initial afterBodies final g : State)
+    (bodies : List ClosLang.Exp) (allowed : Set Nat) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (bodyRun : callsListFuel fuel (fns.map Prod.snd) (insertEach loc fns.length initial) = some (bodies, afterBodies))
+    (closed : groupClosed fns bodies)
+    (continuation : callsFuel fuel body (codeList loc ((fns.map Prod.fst).zip bodies) afterBodies) = some (body', final))
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.letrec names (some loc) none fns body])
+    (annotations : everyFnVarsNone [.letrec names (some loc) none fns body])
+    (distinct : (codeLocations [.letrec names (some loc) none fns body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.letrec names (some loc) none fns body]) initial)
+    (growth : stateExtends (codeList loc ((fns.map Prod.fst).zip bodies) afterBodies) g)
+    (coverage : ∀ k ∈ codeLocations [.letrec names (some loc) none fns body],
+      ¬ sptDomain final.1 k → k ∈ allowed)
+    (included : codeIncludes g.2 code) :
+    callsFuel (fuel + 1) (.letrec names (some loc) none fns body) initial =
+      some (.letrec names (some loc) none (callsList loc fns) body', final) ∧
+    recClosureRelFuel fuel g allowed code loc fns (callsList loc fns) := by
+  obtain ⟨wf, nestedFresh, ownFresh⟩ := letrec_source_invariants names loc fns body initial
+    locations annotations distinct fresh
+  have middleWf : weaklyWellFormed (codeList loc ((fns.map Prod.fst).zip bodies) afterBodies) := by
+    apply weaklyWellFormed_codeList
+    · exact callsListFuel_weaklyWellFormed fuel (fns.map Prod.snd) _ afterBodies bodies bodyRun
+        (weaklyWellFormed_insertEach loc fns.length initial (wellFormed_weak initial initialWf))
+    · intro key member
+      simp only [Set.mem_ofPred_eq, List.mem_map, List.mem_range] at member
+      obtain ⟨i, bound, rfl⟩ := member
+      have size := convertedFunctions_length fuel fns (insertEach loc fns.length initial) afterBodies bodies bodyRun
+      rw [size] at bound
+      apply callsListFuel_knownExt fuel _ _ afterBodies bodies bodyRun
+      exact (insertEach_domain loc fns.length initial _).mpr (Or.inr ⟨i, bound, rfl⟩)
+  have covered := (letrec_group_coverage_before_continuation fuel names loc fns body body'
+    (codeList loc ((fns.map Prod.fst).zip bodies) afterBodies) final allowed continuation middleWf distinct coverage).1
+  have covered' : groupLocationsCovered fns afterBodies allowed := by simpa [codeList, groupLocationsCovered] using covered
+  exact callsFuel_letrec_closed_invariant fuel names loc fns body body' initial afterBodies final g bodies allowed code
+    bodyRun closed continuation wf initialWf nestedFresh ownFresh growth covered'
+    (codeIncludes_of_stateExtends _ g code growth included)
+
+/-- The open-group invariant follows from coverage at the final pass state. -/
+theorem callsFuel_letrec_open_final (fuel : Nat)
+    (names : List Basis.Pure.MlString.MlString) (loc : Nat) (fns : List (Nat × ClosLang.Exp))
+    (body body' : ClosLang.Exp) (initial afterProbe afterRetry final g : State)
+    (probeBodies retryBodies : List ClosLang.Exp) (allowed : Set Nat) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (probe : callsListFuel fuel (fns.map Prod.snd) (insertEach loc fns.length initial) = some (probeBodies, afterProbe))
+    (notClosed : ¬groupClosed fns probeBodies)
+    (retry : callsListFuel fuel (fns.map Prod.snd) initial = some (retryBodies, afterRetry))
+    (continuation : callsFuel fuel body afterRetry = some (body', final))
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.letrec names (some loc) none fns body])
+    (annotations : everyFnVarsNone [.letrec names (some loc) none fns body])
+    (distinct : (codeLocations [.letrec names (some loc) none fns body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.letrec names (some loc) none fns body]) initial)
+    (growth : stateExtends final g)
+    (coverage : ∀ k ∈ codeLocations [.letrec names (some loc) none fns body],
+      ¬ sptDomain final.1 k → k ∈ allowed)
+    (included : codeIncludes g.2 code) :
+    callsFuel (fuel + 1) (.letrec names (some loc) none fns body) initial =
+      some (.letrec names (some loc) none ((fns.map Prod.fst).zip retryBodies) body', final) ∧
+    recClosureRelFuel fuel g allowed code loc fns ((fns.map Prod.fst).zip retryBodies) := by
+  obtain ⟨wf, nestedFresh, ownFresh⟩ := letrec_source_invariants names loc fns body initial
+    locations annotations distinct fresh
+  have middleWf : wellFormed afterRetry :=
+    callsListFuel_wellFormed fuel (fns.map Prod.snd) initial afterRetry retryBodies retry
+      wf.2.2.2 nestedFresh initialWf
+  obtain ⟨bodyDistinct, bodyFresh⟩ := letrec_continuation_fresh_after_retry fuel names loc fns body
+    initial afterRetry retryBodies retry distinct fresh
+  have middleGrowth : stateExtends afterRetry final :=
+    callsFuel_stateExtends fuel body body' afterRetry final continuation bodyDistinct bodyFresh middleWf.2
+  have groupGrowth := stateExtends_trans afterRetry final g middleGrowth growth
+  obtain ⟨covered, ownCovered⟩ := letrec_group_coverage_before_continuation fuel names loc fns body body'
+    afterRetry final allowed continuation (wellFormed_weak afterRetry middleWf) distinct coverage
+  have ownAllowed : ∀ i, i < fns.length → 2 * i + loc ∈ allowed := by
+    intro i bound
+    exact ownCovered i bound (letrec_open_location_unknown fuel names loc fns body initial afterRetry
+      retryBodies retry initialWf distinct fresh i bound)
+  exact callsFuel_letrec_open_invariant fuel names loc fns body body' initial afterProbe afterRetry final g
+    probeBodies retryBodies allowed code probe notClosed retry continuation wf initialWf nestedFresh ownFresh groupGrowth
+    covered ownAllowed (codeIncludes_of_stateExtends afterRetry g code groupGrowth included)
 
 end Flapjack.Compiler.Backend.ClosCall

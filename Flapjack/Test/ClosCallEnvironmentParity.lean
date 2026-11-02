@@ -172,7 +172,7 @@ private theorem closedGroupRelation : recClosureRelFuel 5 closedGroupResult ∅ 
     · simp [closedGroupInitial]
   · simp [everyFnLocationSome, fnLocationSomeExp]
   · simp [everyFnVarsNone, fnVarsNoneExp]
-  · simp [codeLocations, codeLocationsExp]
+  · simp [codeLocations, codeLocationsExp, codeLocationsFuns]
   · simp [LabelsFresh, closedGroupInitial]
   · apply stateExtends_refl
     simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
@@ -189,12 +189,13 @@ private theorem closedGroupRelation : recClosureRelFuel 5 closedGroupResult ∅ 
 -- A group with a captured variable follows the open-closure alternative.
 private theorem openGroupRelation : recClosureRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 10
     [(1, .var .none 1)] [(1, .var .none 1)] := by
-  have result := callsFuel_fn_open_source 4 (Flapjack.Basis.Pure.MlString.ofString "") 10 1
-    (.var .none 1) (.var .none 1) (.var .none 1)
-    (.ln, []) (insertEach 10 1 (.ln, [])) (.ln, []) (.ln, []) {10} Flapjack.HolFiniteMapExact.empty
-  apply result ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ |>.2
+  have result := callsFuel_letrec_open_final 4 [] 10 [(1, .var .none 1)] (.var .none 0) (.var .none 0)
+    (.ln, []) (insertEach 10 1 (.ln, [])) (.ln, []) (.ln, []) (.ln, [])
+    [.var .none 1] [.var .none 1] {10} Flapjack.HolFiniteMapExact.empty
+  apply result ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ |>.2
   · rfl
-  · simp [freeVarExp]
+  · simp [groupClosed, freeVarExp]
+  · rfl
   · rfl
   · constructor
     · ext label
@@ -203,13 +204,13 @@ private theorem openGroupRelation : recClosureRelFuel 5 (.ln, []) {10} Flapjack.
       change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
       simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
     · simp
-  · simp [everyFnLocationSome, fnLocationSomeExp]
-  · simp [everyFnVarsNone, fnVarsNoneExp]
-  · simp [codeLocations, codeLocationsExp]
+  · simp [everyFnLocationSome, fnLocationSomeExp, fnLocationSomeFuns]
+  · simp [everyFnVarsNone, fnVarsNoneExp, fnVarsNoneFuns]
+  · simp [codeLocations, codeLocationsExp, codeLocationsFuns]
   · simp [LabelsFresh]
   · apply stateExtends_refl
     simp
-  · simp [codeLocations, codeLocationsExp]
+  · simp [codeLocations, codeLocationsExp, codeLocationsFuns]
   · simp [codeIncludes, logicalAssocLookup_nil]
 
 example : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
