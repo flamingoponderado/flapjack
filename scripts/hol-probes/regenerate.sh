@@ -625,7 +625,7 @@ run_probe pan_mem_load_probeScript.sml pan_mem_load_probe.out \
   one_hit recursive_mem_loads_two_words recursive_comb_two_words \
   recursive_named_two_fields "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_state_eval_probeScript.sml pan_sem_state_eval_probe.out \
-  word_load_hit eval_nested_load_shape pan_sem_state_eval_done \
+  word_load_hit eval_nested_load_shape nstruct_load_byte_little nstruct_load_byte_big nstruct_load_byte_outside_domain pan_sem_state_eval_done \
   "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_mem_domain_probeScript.sml pan_sem_mem_domain_probe.out \
   domain_load_hit domain_load_miss_present domain_store_then_load_hit \

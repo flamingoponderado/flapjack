@@ -246,10 +246,11 @@ def evalPanValueFieldsCounted [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul �
     (locals globals : VarName → Option (PanValue α))
     (memory : α → Option (PanValue α))
     (baseAddress topAddress bytesInWord : α)
-    (fields : List (FieldName × Exp α)) :
+    (fields : List (FieldName × Exp α))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     Option (List (FieldName × PanValue α) × Nat) :=
   (evalPanValueExp.evalPanValueFields structs locals globals memory
-      baseAddress topAddress bytesInWord fields).map
+      baseAddress topAddress bytesInWord fields (memoryAccess := memoryAccess)).map
     (fun values => (values, panValueFieldsStepCost fields))
 
 theorem evalPanValueExpCounted_fst
@@ -315,11 +316,12 @@ theorem evalPanValueFieldsCounted_fst
     (locals globals : VarName → Option (PanValue α))
     (memory : α → Option (PanValue α))
     (baseAddress topAddress bytesInWord : α)
-    (fields : List (FieldName × Exp α)) :
+    (fields : List (FieldName × Exp α))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     (evalPanValueFieldsCounted structs locals globals memory baseAddress topAddress
-      bytesInWord fields).map (fun result => result.1) =
+      bytesInWord fields (memoryAccess := memoryAccess)).map (fun result => result.1) =
       evalPanValueExp.evalPanValueFields structs locals globals memory
-        baseAddress topAddress bytesInWord fields := by
+        baseAddress topAddress bytesInWord fields (memoryAccess := memoryAccess) := by
   simp [evalPanValueFieldsCounted, Function.comp_def]
 
 theorem evalPanValueFieldsCounted_snd
@@ -330,11 +332,12 @@ theorem evalPanValueFieldsCounted_snd
     (locals globals : VarName → Option (PanValue α))
     (memory : α → Option (PanValue α))
     (baseAddress topAddress bytesInWord : α)
-    (fields : List (FieldName × Exp α)) :
+    (fields : List (FieldName × Exp α))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     (evalPanValueFieldsCounted structs locals globals memory baseAddress topAddress
-      bytesInWord fields).map Prod.snd =
+      bytesInWord fields (memoryAccess := memoryAccess)).map Prod.snd =
       (evalPanValueExp.evalPanValueFields structs locals globals memory
-        baseAddress topAddress bytesInWord fields).map
+        baseAddress topAddress bytesInWord fields (memoryAccess := memoryAccess)).map
         (fun _ => panValueFieldsStepCost fields) := by
   simp [evalPanValueFieldsCounted, Function.comp_def]
 
