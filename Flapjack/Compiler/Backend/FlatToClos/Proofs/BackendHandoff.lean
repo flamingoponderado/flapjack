@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.SourcePreprocessing
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.LoweringHandoff
 import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Syntactic
 
 /-! Conditional source-to-BVI behavior composition. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -20,6 +21,37 @@ noncomputable abbrev sourceClosureCompiler {C : Type} (maxApp inlineLimit cutSiz
     ClosSem.Compiler (Nat × OptimizationConfig C) :=
   stateCc (ClosNumber.ignoreTable ClosNumber.compileInc) (pureCc ClosAnnotate.compileInc
     (pureCc (compileInc maxApp) (optimizationCallback inlineLimit cutSize splitSeq tailEnabled tmcEnabled compiler)))
+
+/-- Successful source-to-closure compilation supplies the syntactic invariants
+required by closure numbering and annotation. -/
+theorem sourceClosure_syntactic (fuel maxApp : Nat) (positive : 0 < maxApp)
+    (sourceConfig nextSource : SourceToFlat.Config) (declarations : List AstHOL.Dec)
+    (expressions : List ClosLang.Exp)
+    (run : SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (nextSource, expressions)) :
+    ¬ ClosProps.containsAppSome maxApp expressions ∧ ClosProps.everyFnVarsNone expressions := by
+  have output := congrArg (Option.map Prod.snd) run
+  have same : compileProg (SourceToFlat.compileTotal sourceConfig (SourceToSource.compile declarations)).2 = expressions := by
+    apply Option.some.inj
+    simpa [SourceToFlat.compileCakeToClosFuel, SourceToFlat.compileToClosFuel, SourceToFlat.compile] using output
+  rw [← same]
+  have properties := compileProg_syntacticProps maxApp
+    (SourceToFlat.compileTotal sourceConfig (SourceToSource.compile declarations)).2
+  exact ⟨properties.2.2 positive, properties.2.1⟩
+
+/-- Each incremental closure compilation supplies the same invariants and
+does not introduce an auxiliary code list. -/
+theorem sourceClosureOracle_syntactic {C : Type} (config : FlatSem.InstallConfig C)
+    (maxApp : Nat) (positive : 0 < maxApp) (i : Nat) :
+    ((sourceClosureOracle config) i).2.2 = [] ∧
+      ¬ ClosProps.containsAppSome maxApp ((sourceClosureOracle config) i).2.1 ∧
+        ClosProps.everyFnVarsNone ((sourceClosureOracle config) i).2.1 := by
+  cases h : config.compileOracle i with
+  | mk state declarations =>
+    have props := incCompileDecs_syntacticProps (α := C) (β := C) (γ := C) maxApp declarations
+    refine ⟨?_, ?_, ?_⟩
+    · simp [sourceClosureOracle, pureCo, h, incCompileDecs]
+    · simpa [sourceClosureOracle, Function.comp_def, pureCo, h, incCompileDecs] using props.2.2 positive
+    · simpa [sourceClosureOracle, Function.comp_def, pureCo, h, incCompileDecs] using props.2.1
 
 /-- The source-to-closure compiler, the production closure driver with its
 optional optimizations disabled, and the implemented BVL/BVI pipeline produce
@@ -52,10 +84,6 @@ theorem cakeToOptimizedBvi_semantics_proofSide {C F : Type} [Nonempty C]
     (tailRun : BviTailrec.compileProgFuel fuel tailEnabled (bvlNumStubs + 2) lowered = some (tailLast, beforeTmc))
     (tmcRun : BviTmc.compileProgFuel fuel tmcEnabled (bvlNumStubs + 3) beforeTmc = some (tmcLast, afterTmc))
     (inlineRun : BviInline.compileProgFuel fuel afterTmc = some (bviCache, final))
-    (numberSafe : ¬ ClosProps.containsAppSome config.maxApp expressions) (varsSafe : ClosProps.everyFnVarsNone expressions)
-    (oracleSafe : ∀ i, ((sourceClosureOracle flatConfig) i).2.2 = [] ∧
-      ¬ ClosProps.containsAppSome config.maxApp ((sourceClosureOracle flatConfig) i).2.1 ∧
-        ClosProps.everyFnVarsNone ((sourceClosureOracle flatConfig) i).2.1)
     (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) (sourceClosureOracle flatConfig))
     (initialBound : current.nextLoc ≤ ((sourceClosureOracle flatConfig) 0).1.1)
     (cacheEq : (closureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.1 = cache)
@@ -82,6 +110,9 @@ theorem cakeToOptimizedBvi_semantics_proofSide {C F : Type} [Nonempty C]
     intro failure
     rw [failure] at sourceBehavior
     exact safe sourceBehavior
+  have ⟨numberSafe, varsSafe⟩ := sourceClosure_syntactic fuel config.maxApp positive
+    sourceConfig nextSource declarations expressions sourceRun
+  have oracleSafe := sourceClosureOracle_syntactic flatConfig config.maxApp positive
   have backend := noOpts_closure_optimized_bvi_semantics source.ffi fuel fuel inlineLimit cutSize fuel fuel
     splitSeq tailEnabled tmcEnabled config current output expressions program compiled names (sourceClosureOracle flatConfig)
     compiler cache optimized targetStart targetNext lowered beforeTmc afterTmc final tailLast tmcLast bviCache
@@ -123,10 +154,6 @@ theorem cakeConfiguredToBvi_semantics_proofSide {C F : Type} [Nonempty C]
     (tailRun : BviTailrec.compileProgFuel fuel bvlConfig.doTailrec (bvlNumStubs + 2) lowered = some (tailLast, beforeTmc))
     (tmcRun : BviTmc.compileProgFuel fuel bvlConfig.doTmc (bvlNumStubs + 3) beforeTmc = some (tmcLast, afterTmc))
     (inlineRun : BviInline.compileProgFuel fuel afterTmc = some (bviCache, final))
-    (numberSafe : ¬ ClosProps.containsAppSome config.maxApp expressions) (varsSafe : ClosProps.everyFnVarsNone expressions)
-    (oracleSafe : ∀ i, ((sourceClosureOracle flatConfig) i).2.2 = [] ∧
-      ¬ ClosProps.containsAppSome config.maxApp ((sourceClosureOracle flatConfig) i).2.1 ∧
-        ClosProps.everyFnVarsNone ((sourceClosureOracle flatConfig) i).2.1)
     (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) (sourceClosureOracle flatConfig))
     (initialBound : current.nextLoc ≤ ((sourceClosureOracle flatConfig) 0).1.1)
     (cacheEq : (closureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.1 = cache)
@@ -149,7 +176,7 @@ theorem cakeConfiguredToBvi_semantics_proofSide {C F : Type} [Nonempty C]
     bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc interp source sourceEnv sourceConfig nextSource
     flatConfig compiler declarations expressions config current output program compiled names cache optimized targetStart targetNext
     lowered beforeTmc afterTmc final tailLast tmcLast bviCache precondition safe positive production sourceRun mti calls known
-    preprocess closureRun optimizedRun lowerRun tailRun tmcRun inlineRun numberSafe varsSafe oracleSafe oracleState initialBound
+    preprocess closureRun optimizedRun lowerRun tailRun tmcRun inlineRun oracleState initialBound
     cacheEq oracleTailBound oracleTailWorker oracleTmcBound oracleTmcWorker lowerCounterBound tailCounterBound tmcCounterBound bviCacheEq
   simp [SourceToFlat.compileCakeToBviConfiguredFuel, sourceRun, closureRun, optimizedRun, lowerRun, tailRun, tmcRun, inlineRun] at run
   obtain ⟨_, closureEq, _, codeEq, _⟩ := run
