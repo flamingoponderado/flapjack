@@ -121,6 +121,20 @@ SOURCE_CORPUS = [
     ('datatype a = A a | B; fun f x = case x of A (A y) => y | _ => B;', 0),
     ('fun f (x as x) = x;', 1),
     ('fun f (x as (y,x)) = y;', 1),
+    ('datatype tree = L | N tree tree; fun swap x = case x of L => L | N a b => N (swap b) (swap a); val z = swap (N L L);', 0),
+    ('datatype t = A | B int; datatype u = C t | D; fun f (C (B x)) = x | f _ = 0;', 1),
+    ('exception X int; fun f x = (raise X x) handle X n => n;', 0),
+    ('fun map f xs = case xs of [] => [] | x::xs => (f x)::map f xs; val x = map (fn x => x) [1,2,3];', 0),
+    ('local val x = 42 in fun f y = (x,y) end; val z = f 1;', 0),
+    ('structure M = struct datatype t = A | B int; fun f x = case x of A => 0 | B y => y end; val z = M.f (M.B 4);', 0),
+    ('val f = let val z = 4 in fn x => fn y => (x,z,y) end; val z = f 2 3;', 1),
+    ('fun f x y z = let fun h a b = (x,y,z,a,b) in h end; val g = f 1 2 3;', 1),
+    ('exception E; fun f x = (raise E) handle E => x | _ => 0;', 0),
+    ('val a = 0w0; val b = 0wxFFFFFFFFFFFFFFFF; val c = 0w123456789;', 0),
+    ('fun f x = case x of 0 => 10 | 1 => 11 | 2 => 12 | 3 => 13 | 4 => 14 | _ => 100;', 0),
+    ('datatype t = A | B | C | D | E | F | G | H | I | J; fun f x = case x of A => 1 | J => 2 | _ => 3;', 0),
+    ('val f = fn (a,b,c,d,e,f,g,h) => (h,g,f,e,d,c,b,a); val y = f (1,2,3,4,5,6,7,8);', 0),
+    ('val x = (fn f => f (fn x => x)) (fn g => (g 1, g "a"));', 1),
 ]
 
 # These programs also exercise the basis and full backend output. They must
