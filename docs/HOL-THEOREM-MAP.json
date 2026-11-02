@@ -5,6 +5,42 @@
     "hol_name": "do_app_def",
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_arithChar_source",
+    "reviewer": "Compared the typed flat do_app arithmetic case at CharT with source check_type and do_arith: the latter returns NONE for every operator and argument list. Compiler and FFI payload types remain independent."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyArithmeticSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_arithString_source",
+    "reviewer": "Compared the typed flat do_app arithmetic case at StrT with source check_type and do_arith: the latter returns NONE for every operator and argument list. Compiler and FFI payload types remain independent."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyArithmeticSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_arithFloat64_source",
+    "reviewer": "Compared the typed flat do_app arithmetic case for Float64T against source check_type and do_arith for all operators and operand lists. It requires the original arity and Float64 operands for Abs, Neg, Sqrt, Add, Sub, Mul, Div and FMA; other shapes fail. The existing binary64 wrappers use roundTiesToEven and FMA preserves the original addend-first argument order. Compiler and FFI payload types remain independent; floating operations inherit the rational-cut model."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyArithmeticSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_arithBool_source",
+    "reviewer": "Compared the typed flat do_app arithmetic case for BoolT against source check_type and do_arith for all operators and operand lists. Not accepts one source True or False constructor and returns the opposite flat Boolean; all other constructors, arities and operators fail. Compiler and FFI payload types remain independent."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyArithmeticSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
     "lean_name": "doApp_fromTo_source",
     "reviewer": "Compared the complete typed flat do_app FromTo case and fallback with source check_type and do_conversion. All source and target primitive types and argument lists are retained. The ten successful conversions preserve fixed word widths and float bit patterns; out-of-range integer-to-character conversion raises the flat character exception, while wrong types and arities fail. On the nonnegative branch Int.toNat agrees with Num (ABS i), and BitVec.ofInt implements i2w. Compiler and FFI payload types remain independent."
   },

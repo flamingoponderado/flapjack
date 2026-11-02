@@ -1,7 +1,12 @@
 load "flatSemTheory";
 load "wordsLib";
+load "machine_ieeeTheory";
+load "binary_ieeeLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
+val _ = computeLib.add_funs [machine_ieeeTheory.fp64_to_float_def,
+  machine_ieeeTheory.float_to_fp64_def, machine_ieeeTheory.fp64_abs_def,
+  machine_ieeeTheory.fp64_negate_def, machine_ieeeTheory.fp64_mul_add_def];
 fun show_thm label th =
   if null (hyp th) then (print label; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
@@ -94,6 +99,29 @@ val _ = show_int_eval "numeric_word8_bad_op=" ``OPTION_MAP SND
   (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Mul (WordT W8))) [Litv (Word8 3w); Litv (Word8 5w)])``;
 val _ = show_int_eval "numeric_word8_bad_width=" ``OPTION_MAP SND
   (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Add (WordT W8))) [Litv (Word8 3w); Litv (Word64 5w)])``;
+val _ = show_int_eval "numeric_bool_not_true=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Not BoolT)) [Boolv T])``;
+val _ = show_int_eval "numeric_bool_not_false=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Not BoolT)) [Boolv F])``;
+val _ = show_int_eval "numeric_bool_bad_tag=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Not BoolT)) [Conv (SOME (8,SOME 0)) []])``;
+val _ = show_int_eval "numeric_bool_bad_op=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Add BoolT)) [Boolv T])``;
+val _ = show_int_eval "numeric_float_neg=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Neg Float64T)) [Litv (Float64 0x3ff0000000000000w)])``;
+val _ = show_int_eval "numeric_float_abs=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Abs Float64T)) [Litv (Float64 0xbff0000000000000w)])``;
+val _ = show_int_eval "numeric_float_fma_order=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith FMA Float64T))
+    [Litv (Float64 0x3ff0000000000000w); Litv (Float64 0xfff0000000000000w); Litv (Float64 0x7ff0000000000000w)])``;
+val _ = show_int_eval "numeric_float_bad_type=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Neg Float64T)) [Litv (Word64 0w)])``;
+val _ = show_int_eval "numeric_float_bad_arity=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith FMA Float64T)) [Litv (Float64 0w)])``;
+val _ = show_int_eval "numeric_char_unsupported=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Add CharT)) [Litv (Char #"a"); Litv (Char #"b")])``;
+val _ = show_int_eval "numeric_string_unsupported=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Arith Add StrT)) [Litv (StrLit «a»); Litv (StrLit «b»)])``;
 val _ = show_int_eval "convert_int_char_255=" ``OPTION_MAP SND
   (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (FromTo IntT CharT)) [Litv (IntLit 255)])``;
 val _ = show_int_eval "convert_int_char_256=" ``OPTION_MAP SND

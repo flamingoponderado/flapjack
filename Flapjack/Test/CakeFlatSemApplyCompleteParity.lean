@@ -56,6 +56,41 @@ example {C F : Type} (s : State C F) :
 example {C F : Type} (s : State C F) :
     doApp s (.src (.arith .add (.wordT .w8))) [.litv (.word8 3), .litv (.word64 5)] = none := by rfl
 example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .not .boolT)) [boolValue true] =
+      some (s, .val (boolValue false)) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .not .boolT)) [boolValue false] =
+      some (s, .val (boolValue true)) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .not .boolT)) [.conv (some (8, some 0)) []] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .add .boolT)) [boolValue true] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .neg .float64T)) [.litv (.float64 0x3ff0000000000000)] =
+      some (s, .val (.litv (.float64 0xbff0000000000000))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .abs .float64T)) [.litv (.float64 0xbff0000000000000)] =
+      some (s, .val (.litv (.float64 0x3ff0000000000000))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .fma .float64T))
+      [.litv (.float64 0x3ff0000000000000), .litv (.float64 0xfff0000000000000),
+        .litv (.float64 0x7ff0000000000000)] =
+      some (s, .val (.litv (.float64 0xfff0000000000000))) := by
+  have fma : Flapjack.fpSemFpfma 0x3ff0000000000000 0xfff0000000000000
+      0x7ff0000000000000 = 0xfff0000000000000 := by decide +kernel
+  change (some (s, .val (.litv (.float64 (Flapjack.fpSemFpfma 0x3ff0000000000000
+    0xfff0000000000000 0x7ff0000000000000)))) :
+      Option (State C F × Flapjack.SemanticPrimitivesHOL.Result Value Value)) = _
+  rw [fma]
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .neg .float64T)) [.litv (.word64 0)] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .fma .float64T)) [.litv (.float64 0)] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .add .charT)) [.litv (.char 97), .litv (.char 98)] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.arith .add .strT)) [.litv (.strLit (ofString "a")), .litv (.strLit (ofString "b"))] = none := by rfl
+example {C F : Type} (s : State C F) :
     doApp s (.src (.fromTo .intT .charT)) [.litv (.intLit 255)] =
       some (s, .val (.litv (.char 255))) := by rfl
 example {C F : Type} (s : State C F) :
