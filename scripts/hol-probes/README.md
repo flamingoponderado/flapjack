@@ -20,6 +20,11 @@ of the original source-to-flat invariant clock replacement and decrement
 theorems, including their independent compiler and FFI carriers. These support
 source review of the Lean ports, not the complete pass correctness theorem.
 
+`source_to_flat_invariant_helpers_probe.out` captures the inferred original
+global-vector and constructor-map consequences, index-range shrinking with
+and without a generation change, and reserved Eval-reference update. These
+statements support review of their Lean ports, not pass correctness.
+
 `source_to_flat_mapi_probe.out` captures the inferred types and statements of
 `mapi_map` and `FILTER_MAPi_ID` from the pinned source-to-flat proof. Their
 Lean counterparts establish the corresponding indexed-map and filtering

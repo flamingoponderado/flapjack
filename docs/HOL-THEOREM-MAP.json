@@ -1146,6 +1146,51 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "invariant_globals",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "invariantGlobals",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the inferred source_to_flat_invariant_helpers_probe statement: the invariant implies flat globals equal the global environment vector in the same order. The compiler payload and FFI carriers remain independent; the explicit inhabitance supplies HOL's THE. The qualifier covers the invariant's canonical c and tys finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "invariant_genv_c_ok",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "invariantGenvCOk",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the inferred source_to_flat_invariant_helpers_probe statement: the invariant implies the constructor map condition on genv.c. The compiler payload and FFI carriers remain independent; the explicit inhabitance supplies HOL's THE. The qualifier covers the invariant's canonical c and tys finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "invariant_idx_range_shrink",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "invariantIdxRangeShrink",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the inferred source_to_flat_invariant_helpers_probe statement: the same three conjuncts bound the new left index and the conclusion keeps the generation, right index, other set and both states. The compiler payload and FFI carriers remain independent; explicit inhabitance supplies HOL's THE. The qualifier covers the invariant's canonical c and tys finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "invariant_idx_range_shrink_gen",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "invariantIdxRangeShrinkGen",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the inferred source_to_flat_invariant_helpers_probe statement: the original invariant, two index bounds and generation-validity implication yield the invariant with the new generation and left index. The compiler payload and FFI carriers remain independent; explicit inhabitance supplies HOL's THE. The qualifier covers the invariant's canonical c and tys finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "invariant_change_eval_ref",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "factoredInvariant_changeEvalRef",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the inferred source_to_flat_invariant_helpers_probe statement: the same source invariant is preserved by replacing flat refs with Refv y followed by the original tail. The state relation guarantees a nonempty reference list. The compiler payload and FFI carriers remain independent; explicit inhabitance supplies HOL's THE. The qualifier covers the invariant's canonical c and tys finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": [
       "c",

@@ -372,10 +372,9 @@ theorem factoredDecCase_append_error {C F : Type} [Nonempty C]
     | abort kind => exact False.elim notAbort
     | raise value =>
       obtain ⟨invariant, forward, growth⟩ := post trivial
-      have shrunk := factoredInvariant_shrink interp transform firstGen finalGenv firstNext lastNext finish
-        other last finalFlat invariant previous bounded
-      exact ⟨factoredInvariant_changeGen interp transform firstGen lastGen finalGenv
-        (lastNext, finish, other) last finalFlat shrunk lastGenValid, forward, growth⟩
+      exact ⟨invariantIdxRangeShrinkGen interp transform firstGen lastGen finalGenv
+        firstNext lastNext finish other last finalFlat
+        ⟨invariant, previous, bounded, fun _ => lastGenValid⟩, forward, growth⟩
   · intro resultEnv impossible
     cases impossible
   · intro error' same
