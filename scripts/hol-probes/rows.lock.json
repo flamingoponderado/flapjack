@@ -394,7 +394,7 @@
     {"bytes": 11498, "out": "flat_lang_probe.out", "rows": 13, "sha256": "177f1d35c7eb8d487a25533bd3fb0d389736a23e12a698457e52ee7e515327d3"},
     {"bytes": 324, "out": "flat_pattern_config_probe.out", "rows": 7, "sha256": "35fe497e7d2febc3a1371ca4a9bf51fcdee1685065191b2a062c9f49d0d7f476"},
     {"bytes": 11335, "out": "flat_pattern_global_flag_probe.out", "rows": 44, "sha256": "98a534e3f6270ceb97da7b1ba186c8a2972808c4c3d278bec56ee7114d2b1435"},
-    {"bytes": 45495, "out": "flat_pattern_install_relation_probe.out", "rows": 116, "sha256": "f64f7b5d0bc8e4d5f3bf3b9c059a3d9e0f9b8a652b7c4f8142fc8bc53918e09c"},
+    {"bytes": 49826, "out": "flat_pattern_install_relation_probe.out", "rows": 118, "sha256": "270b3200998859105c1615ba7cee27b6b40d54629ebd0496aa1978a4fd87ffae"},
     {"bytes": 14980, "out": "flat_to_clos_globals_probe.out", "rows": 27, "sha256": "d0272038079ede693bf9d3a5a2bfc564a368c9aa405599751b6a466354489a00"},
     {"bytes": 81, "out": "fm_empty_zip_alist_probe.out", "rows": 4, "sha256": "37c2430b9e311fcd750f7e841f55ff858ad624eff05232358404effeb9e42b06"},
     {"bytes": 124, "out": "fp_sem_fp_cmp_probe.out", "rows": 6, "sha256": "5542b7030041c2441ab4a7fef05d2ce6dcc257cfd2988d96348e5f419fc1b650"},

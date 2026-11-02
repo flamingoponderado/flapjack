@@ -73,9 +73,8 @@ theorem factoredCompile_semantics {C F : Type} [Nonempty C]
   simpa [compileTotal, compiled] using initialSem
 
 /-- Whole-pass precondition in the source's existential shape. The initial
-environment's value type is independent of both compiler and FFI types. This
-is not yet tagged as the HOL definition: the pattern installation relation
-and its compiler dependencies still require source correspondence review. -/
+environment's value type is independent of both compiler and FFI types. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "precondition_def"]
 def SourcePrecondition {C F A : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C)))
     (source : State F) (sourceEnv : SemEnv A) (config : Config)

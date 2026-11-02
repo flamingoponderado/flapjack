@@ -1,5 +1,13 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileSemantics.lean",
+    "lean_name": "SourcePrecondition",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "precondition_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed precondition capture: compiler, FFI and initial environment value types remain independent; the intermediate installation configuration and source transformation are existentially quantified in source order; precondition1 and the reviewed pattern installation relation use the same config and arguments. Nonempty C supplies HOL type inhabitation for THE in precondition1."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
     "lean_name": "ctorsOf_siblings_source",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
@@ -1874,16 +1882,16 @@
     "hol_name": "pure_cc_def",
     "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
     "lean_name": "pureCc",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source definition: independent config, input, transformed-output and result types are retained, and the program transformation runs before the unchanged compiler callback."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
     "hol_name": "pure_co_def",
     "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
     "lean_name": "pureCo",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source definition: independent config, input and output types are retained; the first component is unchanged and the second is transformed."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
@@ -1930,8 +1938,8 @@
     "hol_name": "install_conf_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/InstallRelation.lean",
     "lean_name": "installConfRel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; pass, installation config, and source carrier correspondence remain pending. The typed compile_decs_semantics probe has independent cfg and cfg1 variables; compileDec_config_irrel proves the Lean pass ignores them, but source pass and semantics review remain open."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed source definition: one arbitrary compiler-state carrier for both installation configurations, target oracle as pureCo of mapped compileDec composed after source oracle, and source compiler as pureCc of that same map applied to target compiler. Flat-pattern config and installation carriers were separately reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -107155,40 +107163,40 @@
     "lean_name": "compileExp",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "compile_exp_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every captured typed source clause and flat syntax carrier: variable, raise, handler, constructor, function, application, match, let, recursive group, if and literal. The checked source equations establish reverse/traverse/reverse equivalence for constructor and application and the mapped maximum/exists equivalence for recursive functions; source bind_tag is zero. The invoked branch compiler has a separately checked source-shaped equation."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileTotal.lean",
     "lean_name": "compileExps",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "compile_exp_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured typed source list clauses: empty yields zero, false and empty; each cons compiles head and tail in order and combines max, disjunction and output cons."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileTotal.lean",
     "lean_name": "compileMatch",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "compile_exp_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured typed source branch-list clauses: empty yields zero, false and empty; each branch combines the compiled body, maximum bound pattern name, and recursively compiled tail with the same max nesting, flag and ordered output."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileTotal.lean",
     "lean_name": "compileDec",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "compile_dec_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured typed source definition: for arbitrary config and flat expression, select the expression component of compileExp without additional conditions."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Patterns.lean",
     "lean_name": "compilePats",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "compile_pats_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source branch composition transcribed; typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed source definition and kernel-checked compilePats_source: identical naive branch and indexed decision-tree branch, with the source sparse-tree fromList. Constituent decision-tree correctness remains separate."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Names.lean",

@@ -47,6 +47,8 @@ val _ = show_thm "compile_exp_app_clause=" (List.nth (CONJUNCTS flat_patternTheo
 val _ = show_thm "compile_exp_letrec_clause=" (List.nth (CONJUNCTS flat_patternTheory.compile_exp_def, 8));
 val _ = show_thm "encode_pat_pcon_clause=" (List.nth (CONJUNCTS flat_patternTheory.encode_pat_def, 3));
 val _ = show_thm "compile_pats=" flat_patternTheory.compile_pats_def;
+val _ = show_thm "compile_exp_all=" flat_patternTheory.compile_exp_def;
+val _ = show_thm "compile_dec=" flat_patternTheory.compile_dec_def;
 val _ = show_thm "comp_is_const_row=" pattern_compTheory.is_const_row_def;
 val _ = show_thm "comp_is_any=" pattern_compTheory.is_Any_def;
 val _ = show_thm "comp_is_or_row=" pattern_compTheory.is_Or_row_def;
