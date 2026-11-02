@@ -595,6 +595,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.MemoryWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ThunkWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallWellformed
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateOrdinaryWellformed
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.Proofs.FullTotal
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
