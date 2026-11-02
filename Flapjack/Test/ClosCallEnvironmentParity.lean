@@ -6,7 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.ClosCall.Proofs.FullApplication
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateApplication
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -267,6 +267,52 @@ example : ∃ body env rest,
       _ _ _ _ _ _ _ sourceRun functions args
   exact ⟨body, env, rest, targetRun, bodyEnv, restRel⟩
 
+-- A full application reaches its related body, under the selected-body
+-- induction hypothesis, and preserves the evaluator's clocked state.
+example {C F : Type} (source : ClosSem.State (Flapjack.NumSet × C) F) (target : ClosSem.State C F)
+    (states : StateRelFuel 5 closedGroupResult ∅ source target)
+    (targetCode : target.code = closedGroupCode) (maxApp : source.maxApp = 2) (clock : 1 ≤ source.clock)
+    (bodyIH : ∀ (targetBody : ClosLang.Exp) (loc : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp))
+        (index arity : Nat),
+      recClosureRelFuel 5 closedGroupResult ∅ target.code loc sourceFns targetFns →
+      sourceFns[index]? = some (arity, .var .none 0) → targetFns[index]? = some (arity, targetBody) →
+      ExprSimFuel (C := C) (F := F) 5 closedGroupResult ∅ (.var .none 0) targetBody) :
+    ∃ result final,
+      ClosSem.evaluateApp none (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0]))
+        [.number 7] target = (result, final) ∧
+      Flapjack.SemanticPrimitivesProps.resultRel
+        (List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ final.code))
+        (ValueRelFuel 5 closedGroupResult ∅ final.code) (.val [.number 7]) result ∧
+      StateRelFuel 5 closedGroupResult ∅ (ClosSem.decClock 1 source) final ∧
+      (∀ key value, target.code.lookup key = some value → final.code.lookup key = some value) := by
+  apply evaluateApp_full_fuel 5 closedGroupResult ∅ none
+    (.closure (some 10) [] [] 1 (.var .none 0))
+    (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0]))
+    [.number 7] [.number 7] (.var .none 0) [.number 7] [] source target
+    (.val [.number 7]) (ClosSem.decClock 1 source)
+  · simp
+  · simp [ClosSem.destClosure, ClosSem.checkLoc, maxApp]
+  · have closure : ClosSem.destClosure source.maxApp none (.closure (some 10) [] [] 1 (.var .none 0))
+        [.number 7] = some (.fullApp (.var .none 0) [.number 7] []) := by
+      simp [ClosSem.destClosure, ClosSem.checkLoc, maxApp]
+    rw [ClosSem.evaluateApp, closure]
+    simp only [List.length_cons, List.length_nil, Nat.add_zero, Nat.sub_zero]
+    rw [if_neg (Nat.not_lt.mpr clock), ClosSem.fixClock_evaluate]
+    simp [ClosSem.evaluate, ClosSem.evaluateApp]
+  · simp
+  · rw [targetCode]
+    exact .closure closedGroupRelation .nil (.equalLength rfl .nil)
+  · exact .cons (.number 7) .nil
+  · exact states
+  · simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
+  · exact bodyIH
+  · intro sourceValue targetValue targetRest _
+    cases targetRest with
+    | nil => exact appSimFuel_nil 5 closedGroupResult ∅ none sourceValue targetValue
+    | cons head tail =>
+      intro _ _ _ _ _ _ _ related _
+      cases related
+
 -- A one-argument partial application preserves a captured recursive closure.
 example : ∃ targetPartial,
     ClosSem.destClosure 2 none (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
@@ -319,6 +365,12 @@ example : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
     (.closure (some 10) [] [] 1 (.var .none 0))
     (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) := by
   exact .closure closedGroupRelation .nil (.equalLength rfl .nil)
+
+-- Empty application returns a related extracted closure unchanged.
+example : AppSimFuel (C := Unit) (F := Unit) 5 closedGroupResult ∅ none
+    (.closure (some 10) [] [] 1 (.var .none 0))
+    (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) [] [] :=
+  appSimFuel_nil 5 closedGroupResult ∅ none _ _
 
 -- An over-applied extracted closure keeps its remaining argument related.
 example : ∃ body env rest,

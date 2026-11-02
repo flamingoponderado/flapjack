@@ -584,6 +584,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.FunctionInvariant
 import Flapjack.Compiler.Backend.ClosCall.Proofs.RecursiveInvariant
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PartialApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FullApplication
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateApplication
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.Proofs.FullTotal
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
