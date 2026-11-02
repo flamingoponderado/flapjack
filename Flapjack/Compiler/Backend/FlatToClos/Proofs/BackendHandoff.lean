@@ -693,4 +693,68 @@ theorem cakeConfiguredWordRun_data_behavior {C F : Type} [Nonempty C]
     tmcCounterBound bviCacheEq
   exact ⟨bviCode, lowered, fixed, bignum, bviRun, lowerRun, fixedRun, bignumRun, outputEq, behavior.1⟩
 
+/-- With multi-argument introduction enabled, the data program simulated by the
+source-to-data proof is the one fed to
+checked word lowering in a successful configured source-to-word execution.
+This leaves data-to-word semantic preservation as a separate obligation. -/
+theorem cakeConfiguredWordMtiRun_data_behavior {C F : Type} [Nonempty C]
+    (fuel : Nat) (bvlConfig : BvlToBvi.Config)
+    (interp : Option (Value → Option (SourceToFlat.Config × (Nat × OptimizationConfig C))))
+    (source : State F) (sourceEnv : SemEnv Value) (sourceConfig : SourceToFlat.Config)
+    (flatConfig : FlatSem.InstallConfig (Nat × OptimizationConfig C)) (compiler : DataSem.Compiler C) (limits : DataSem.Limits) (sizes : Spt Nat)
+    (declarations : List AstHOL.Dec) (config : ClosToBvl.Config)
+    (resultSource : SourceToFlat.Config) (resultClosure : ClosToBvl.Config) (resultConfig : BvlToBvi.Config)
+    (wordConfig : DataToWord.Config) (resultWord : List (Nat × Nat × WordLangProgHOL (BitVec 64)))
+    (resultNames : Spt Basis.Pure.MlString.MlString)
+    (run : SourceToFlat.compileCakeToWord64ConfiguredFuel fuel sourceConfig config bvlConfig wordConfig declarations =
+      some (resultSource, resultClosure, resultConfig, resultWord, resultNames))
+    (precondition : SourceToFlat.SourcePrecondition interp source sourceEnv sourceConfig
+      flatConfig (SourceToSource.compile declarations))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (positive : 0 < config.maxApp)
+    (production : flatConfig.compile = pureCc (incCompileDecs (α := Nat × Nat × ClosLang.Exp))
+      (pureCc (ClosMti.compileInc (Input := List (Nat × Nat × ClosLang.Exp)) config.maxApp)
+        (sourceClosureCompiler config.maxApp bvlConfig.inlineSizeLimit bvlConfig.expCut
+          bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc
+          (fun cfg code => compiler cfg (BviToData.compileProg code)))))
+    (enabled : config.doMti = true) (calls : config.doCall = false) (known : config.knownConf = none)
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc)
+      (pureCo (ClosMti.compileInc (Output := Nat × Nat × ClosLang.Exp) config.maxApp) ∘ sourceClosureOracle flatConfig))
+    (initialBound : ∀ expressions current program,
+      SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (resultSource, expressions) →
+      compileCommonNoOpts? { config with doMti := false } (ClosMti.introList config.maxApp expressions) = some (current, program) →
+      current.nextLoc ≤ ((sourceClosureOracle flatConfig) 0).1.1)
+    (cacheEq : (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.1 = resultConfig.inlines)
+    (oracleTailBound : ∀ i, bvlNumStubs ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.1)
+    (oracleTailWorker : ∀ i, BviTailrec.inWorkerNamespace (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.1)
+    (oracleTmcBound : ∀ i, bvlNumStubs ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.2.1)
+    (oracleTmcWorker : ∀ i, BviTmc.inWorkerNamespace (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) i).1.2.2.2.1)
+    (lowerCounterBound : resultConfig.nextName1 ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.1)
+    (tailCounterBound : resultConfig.nextName2 ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.2.1)
+    (tmcCounterBound : resultConfig.nextName3 ≤ (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.2.2.1)
+    (bviCacheEq : (mtiClosureFuture config.maxApp (sourceClosureOracle flatConfig) 0).1.2.2.2.2.1 = resultConfig.bviInlines) :
+    let oracle := configuredMtiBviOracle config.maxApp bvlConfig (sourceClosureOracle flatConfig)
+    ∃ bviCode lowered fixed bignum,
+      SourceToFlat.compileCakeToBviConfiguredFuel fuel sourceConfig config bvlConfig declarations =
+        some (resultSource, resultClosure, resultConfig, bviCode, resultNames) ∧
+      ((BviToData.compileProg bviCode).mapM fun (name, args, body) => do
+        let (body, _) ← DataToWord.compileControl? (width := 64) wordConfig name 2 body
+        pure (name, args + 1, body)) = some lowered ∧
+      DataToWord.fixedStubs? wordConfig = some fixed ∧
+      WordBignum.generateStubs 64 DataToWord.bignumLocation = some bignum ∧
+      resultWord = fixed ++ bignum ++ lowered ∧
+      Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+        (DataSem.semantics source.ffi (sptFromAList (BviToData.compileProg bviCode))
+          (fun n => let (cfg, code) := oracle n; (cfg, BviToData.compileProg code))
+          compiler limits sizes resultClosure.start) := by
+  obtain ⟨bviCode, lowered, fixed, bignum, bviRun, lowerRun, fixedRun, bignumRun, outputEq⟩ :=
+    SourceToFlat.configured_word_stage_witnesses fuel sourceConfig config bvlConfig wordConfig declarations
+      resultSource resultClosure resultConfig resultWord resultNames run
+  have behavior := cakeConfiguredToDataMti_semantics_from_run fuel bvlConfig interp source sourceEnv sourceConfig
+    flatConfig compiler limits sizes declarations config resultSource resultClosure resultConfig bviCode resultNames
+    bviRun precondition safe positive production enabled calls known oracleState initialBound cacheEq
+    oracleTailBound oracleTailWorker oracleTmcBound oracleTmcWorker lowerCounterBound tailCounterBound
+    tmcCounterBound bviCacheEq
+  exact ⟨bviCode, lowered, fixed, bignum, bviRun, lowerRun, fixedRun, bignumRun, outputEq, behavior.1⟩
+
 end Flapjack.Compiler.Backend.FlatToClos
