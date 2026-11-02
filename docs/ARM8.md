@@ -235,15 +235,15 @@ The further case modules under `CorrectnessEncoding/` cover, so far, the
 `LogicalImmediateBinop.lean`), the `binop` add/sub shifted-register and
 immediate forms (`Arith.lean`, `AddSubImmediate.lean`), and `shift` with a
 register operand plus its `.ror` immediate form (`Shift.lean`,
-`ShiftImmediate.lean`).  Each records the emitted word, the `Decode` inverse,
+`ShiftImmediate.lean`), and `div` (`Division.lean`).  Each records the emitted word, the `Decode` inverse,
 the `Run` reduction and the `asmCaseOne` interference simulation for its
 constructor; all are Flapjack case splits of the single HOL theorem
 `arm8_encoder_correct` and carry no `@[hol]` tags of their own.
 
 Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
-`DecodeBitMasks`/`BitfieldMove`), and the `div`, `longMul`, `longDiv`,
-`addCarry`, `addOverflow`, `subOverflow`, `Mem`, `Fp`, `Jump`, `JumpCmp`,
-`Call`, `JumpReg` and `Loc` constructors.  `longDiv` lowers to
+`DecodeBitMasks`/`BitfieldMove`), and the `longMul`, `longDiv`, `addCarry`,
+`addOverflow`, `subOverflow`, `Mem`, `Fp`, `Jump`, `JumpCmp`, `Call`,
+`JumpReg` and `Loc` constructors.  `longDiv` lowers to
 `arm8EncodeFail`, so its case cannot be a faithful lowering without the
 intended instruction sequence.  The assembling `encoderCorrect arm8TargetL3`
 theorem waits on the remaining cases.
