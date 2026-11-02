@@ -1,11 +1,48 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Number
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordMemoryEquality
 
 /-! Header extraction for heap-allocated integers. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataSem
 open Classical
 noncomputable section
+
+/-- Rearrange a separated cell and preserve all other heap assertions. -/
+private theorem bignumExtractStar {α : Type} (p q r s t f : (α → Prop) → Prop) :
+    SetSep.star (SetSep.star p (SetSep.star (SetSep.star (SetSep.star q r) s) t)) f =
+      SetSep.star q (SetSep.star r (SetSep.star p (SetSep.star s (SetSep.star t f)))) := by
+  have : Std.Associative (SetSep.star (α := α)) := ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
+  have : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+  ac_rfl
+
+/-- Extract a bignum header, digits, and complete frame from the word heap. -/
+private theorem bignumHeap {width : Nat} [NeZero width] (conf : Config)
+    (heap : ValueHeap width) (index : Nat) (value : Int) (curr : BitVec width)
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (whole : (BitVec width × WordLocW width) → Prop)
+    (found : heapLookup index heap = some (bignumRep value))
+    (assertion : SetSep.star (wordHeap curr heap conf) frame whole) :
+    let digits : List (BitVec width) := Misc.Multiword.n2mw value.natAbs
+    let tag : BitVec width := ((if value < 0 then 1 else 0) <<< 2) ||| 3
+    ∃ rest, SetSep.star
+      (SetSep.one (curr + StackRemove.bytesInWord width * BitVec.ofNat width index,
+        WordLocW.word (makeHeader conf tag digits.length)))
+      (SetSep.star (Misc.wordList (curr + StackRemove.bytesInWord width * BitVec.ofNat width index +
+        StackRemove.bytesInWord width) (digits.map WordLocW.word)) rest) whole ∧
+      digits.length < 2 ^ (width - 4) ∧
+      WordGcFunctions.decodeLength conf (makeHeader conf tag digits.length) = BitVec.ofNat width digits.length := by
+  obtain ⟨before, after, heapEq, indexEq⟩ := heapLookup_split heap index (bignumRep value) found
+  subst heap
+  subst index
+  rw [wordHeapAppend] at assertion
+  simp only [wordHeap, wordEl, bignumRep, Misc.Multiword.i2mw, wordPayload, List.isEmpty_nil,
+    Bool.true_and, List.length_map, decide_true, Bool.and_true, decide_eq_true_eq, Misc.wordList] at assertion
+  have facts := assertion
+  obtain ⟨_, _, _, ⟨_, _, _, _, ⟨_, _, _, ⟨_, _, _, _, pure⟩, _⟩⟩, _⟩ := facts
+  have bounds := pure.2
+  rw [bignumExtractStar] at assertion
+  exact ⟨_, assertion, bounds.1, bounds.2.1⟩
 
 /-- A bignum cell contributes its header and validity check to a word heap.
     This is Flapjack separation infrastructure. -/
@@ -86,6 +123,62 @@ theorem memoryRel_bignumHeaderCore {width : Nat} [NeZero width] (conf : Config) 
           ?_, ?_, encoded, facts.1⟩
         · simpa [wordAddr] using projected.symm
         · simpa [BitVec.mul_comm] using addr
+
+/-- A related bignum exposes its complete separated multiword payload. This
+    Flapjack helper is a consequence used toward the original bignum memory
+    theorem; it does not claim that theorem's unused polymorphic existential. -/
+theorem memoryRel_bignumWords {width : Nat} [NeZero width] (conf : Config) (be : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (value : Int) (location : WordLocW width) (vars : List (Value × WordLocW width)) :
+    memoryRel conf be next refs space store memory domain ((.number value, location) :: vars) ∧
+      ¬ smallInt width value ∧ goodDimindex width →
+    ∃ (w address : BitVec width) (frame : ((BitVec width × WordLocW width) → Prop) → Prop),
+      location = .word w ∧ getRealAddr conf store w = some address ∧
+      let digits : List (BitVec width) := Misc.Multiword.n2mw value.natAbs
+      let tag : BitVec width := ((if value < 0 then 1 else 0) <<< 2) ||| 3
+      memory address = .word (makeHeader conf tag digits.length) ∧ domain address = true ∧
+      SetSep.star (Misc.wordList (address + StackRemove.bytesInWord width) (digits.map WordLocW.word)) frame
+        (SetSep.fun2Set (memory, fun a => domain a = true)) ∧
+      digits.length < 2 ^ (width - 4) ∧
+      WordGcFunctions.decodeLength conf (makeHeader conf tag digits.length) = BitVec.ofNat width digits.length := by
+  rintro ⟨⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, _, _⟩, large, good⟩
+  obtain ⟨roots, inv, addresses⟩ := wordInv
+  obtain ⟨_, _, _, _, stackInv⟩ := inv
+  obtain ⟨f, tf, _, _, _, _, _, _, _, values, _⟩ := stackInv
+  cases roots with
+  | nil => cases values
+  | cons root rest =>
+    cases values with
+    | cons related _ =>
+      cases addresses with
+      | cons projected _ =>
+        have num := (valueInv_number conf value refs root f tf heap).mp related
+        simp only [large, ↓reduceIte] at num
+        obtain ⟨ptr, rootEq, cell⟩ := num
+        rw [rootEq] at projected
+        obtain ⟨curr, other, _, _, stored, _, _, _, _, _, _, _, heapAssertion⟩ := heapMem.2.2.2.2.2.2.2
+        have addr := (getRealAddr_getAddr conf store heap ptr _ curr (.word 0)
+          ⟨heapMem.1, cell, stored, good⟩).2
+        obtain ⟨frame, split, bound, decoded⟩ := bignumHeap conf heap ptr value curr _ _ cell heapAssertion
+        have preserved := split
+        obtain ⟨left, right, partition, singleton, _⟩ := split
+        have member : left (curr + StackRemove.bytesInWord width * BitVec.ofNat width ptr,
+            .word (makeHeader conf (((if value < 0 then 1 else 0) <<< 2) ||| 3)
+              (Misc.Multiword.n2mw (width := width) value.natAbs).length)) := by rw [singleton]
+        have graph := (iff_of_eq (congrFun partition.1 _)).mp (Or.inl member)
+        have facts := (SetSep.fun2SetThm memory _ _ _).mp graph
+        refine ⟨getAddr conf ptr (.word 0), curr + StackRemove.bytesInWord width * BitVec.ofNat width ptr,
+          SetSep.star frame (SetSep.one (curr + StackRemove.bytesInWord width * BitVec.ofNat width ptr,
+            .word (makeHeader conf (((if value < 0 then 1 else 0) <<< 2) ||| 3)
+              (Misc.Multiword.n2mw (width := width) value.natAbs).length))),
+          ?_, ?_, facts.1, facts.2, ?_, bound, decoded⟩
+        · simpa [wordAddr] using projected.symm
+        · simpa [BitVec.mul_comm] using addr
+        · rw [SetSep.starComm (SetSep.one _) _] at preserved
+          rw [← SetSep.starAssoc] at preserved
+          exact preserved
 
 end
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
