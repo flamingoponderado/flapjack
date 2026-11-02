@@ -100645,6 +100645,16 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth/Elements.lean",
+    "lean_name": "memoryRel_elementsListDistinct",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_elements_list_distinct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared the complete source theorem and captured inferred type: memory_rel, elements_list, equality with the first projection and good_dimindex imply ALL_DISTINCT of the second projection of the tail. List.Nodup represents ALL_DISTINCT; store is the canonical finite-support map and locations use the positive HOL word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth/Elements.lean",
     "lean_name": "memoryRel_elementsListWords",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
     "hol_name": "memory_rel_elements_list_words",
