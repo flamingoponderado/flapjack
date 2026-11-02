@@ -263,7 +263,7 @@ theorem constCaseOne (r : Nat) (v : BitVec 64) (i : instruction) (t : arm8_state
     rw [← hupd]; simp [asmUpd, instUpd, updPc, updReg]
   have hs2regs : ∀ j, s2.regs j = if j = r then v else s1.regs j := by
     intro j; rw [← hupd]; simp [asmUpd, instUpd, updPc, updReg]
-  exact asmCaseOne (.const r v) r v i t s1 s2 ms ⟨hs, hr⟩ hast hnext htpc htmem htreg htval htok
+  exact asmCaseOne (.const r v) r v t s1 s2 ms ⟨hs, hr⟩ hnext htpc htmem htreg htval htok
     hs2pc hs2mem hs2dom hs2regs
 
 /-- The word emitted for a zeroing `MoveWide` constant. -/

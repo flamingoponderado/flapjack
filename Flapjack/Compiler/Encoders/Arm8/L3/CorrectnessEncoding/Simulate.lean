@@ -111,10 +111,9 @@ lowering: the single `arm8Next` step executes `i`, which writes `v` into the
 destination register `r` and changes nothing else (Flapjack infrastructure;
 the `const` and `arith` one-instruction shapes both use it).  The source-state
 update facts are hypotheses because `asmUpd` inspects the instruction. -/
-theorem asmCaseOne (inst : HolInst 64) (r : Nat) (v : BitVec 64) (i : instruction)
+theorem asmCaseOne (inst : HolInst 64) (r : Nat) (v : BitVec 64)
     (t : arm8_state) (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst inst) s2 ∧ targetStateRel arm8TargetL3 s1 ms)
-    (hast : arm8Ast (.inst inst) = [i])
     (hnext : arm8Next ms = t)
     (htpc : t.PC = ms.PC + 4)
     (htmem : ∀ x, t.MEM x = ms.MEM x)
