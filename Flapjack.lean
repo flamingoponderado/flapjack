@@ -211,6 +211,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Total
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StubLabels
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeOracle
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordTotal
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordLabels
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
