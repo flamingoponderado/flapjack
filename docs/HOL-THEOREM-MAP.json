@@ -100611,6 +100611,69 @@
     "reviewer": "Source comparison: memory_rel_Block_explode and its typed capture retain the full memory relation, pointer low bit, real-address and good_dimindex premises, and both the exploded memory relation and domain predicate conclusions. The proof exposes each indexed child through memory_rel_El_any and rearranges the resulting stack. store is the canonical finite-support map and target words share the positive HOL word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "fixClock_wordEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "fix_clock_word_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: local fix_clock_word_eq and its typed HOL replay preserve the source fixed configuration, canonical store, memory, clocks and words, and equality of the clamped result with the original result. The same-module store witness establishes the canonical finite-map codec."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "wordEqList_unclamped",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_def",
+    "hol_line": 14055,
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the second conjunct of the rebound word_eq_def at line 14055 and its typed capture retain every source case and recursive argument. The checked clamp identity removes fix_clock exactly as in HOL. The source word_eq conjunct remains represented by wordEq at its original definition; the store has the canonical finite-map codec."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "wordEq_addClock",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_add_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store1",
+      "store2"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_eq_add_clock and its typed capture retain both independently quantified source conjuncts, successful-result premises, added clock and corresponding increased remaining clock. store1 and store2 are the independently quantified canonical finite-support stores."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "wordEq_maxClock",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_max_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store1",
+      "store2"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_eq_max_clock and its typed capture retain both independently quantified source conjuncts, the maximum of the old and new clock, and the exact remaining-clock adjustment by natural subtraction. store1 and store2 are the independently quantified canonical finite-support stores."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "wordEq_minMaxClock",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_min_max_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_eq_min_max_clock and its typed capture retain the original shared configuration, canonical store, memory, values and result variables across both conjuncts, the independently quantified x and y in each conjunct, and the existential resulting clock. The same-module store witness establishes the canonical finite-map codec."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

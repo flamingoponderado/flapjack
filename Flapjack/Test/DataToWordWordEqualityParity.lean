@@ -16,6 +16,7 @@ private def fourMemory (_ : BitVec 64) : WordLocW 64 := .word 4
 #guard wordEq config store allDomain fourMemory 7 5 8 12 = some (0, 7, 5)
 #guard wordEqList config store allDomain fourMemory 3 2 0 16 24 = some (1, 3, 2)
 #guard wordEqList config store allDomain fourMemory 3 2 1 16 24 = some (1, 1, 2)
+#guard wordEqList config store allDomain fourMemory 3 7 1 16 24 = some (1, 1, 7)
 #guard wordEqList config store allDomain fourMemory 3 0 1 16 24 = none
 
 end Flapjack.Test.DataToWordWordEqualityParity

@@ -56,6 +56,9 @@ val _ = show "fix_clock_IMP_replay_typed" fix_clock_imp_replay;
 val _ = show "word_is_clos_def_typed" data_to_word_memoryProofTheory.word_is_clos_def;
 val _ = show "word_eq_def_rebound_typed" data_to_word_memoryProofTheory.word_eq_def;
 val _ = show "word_eq_LESS_EQ_typed" data_to_word_memoryProofTheory.word_eq_LESS_EQ;
+val _ = show "word_eq_add_clock_typed" data_to_word_memoryProofTheory.word_eq_add_clock;
+val _ = show "word_eq_max_clock_typed" data_to_word_memoryProofTheory.word_eq_max_clock;
+val _ = show "word_eq_min_max_clock_typed" data_to_word_memoryProofTheory.word_eq_min_max_clock;
 val _ = show "eq_assum_def_typed" data_to_word_memoryProofTheory.eq_assum_def;
 val _ = show "eq_explode_def_typed" data_to_word_memoryProofTheory.eq_explode_def;
 val _ = show "memory_rel_Block_explode_typed" data_to_word_memoryProofTheory.memory_rel_Block_explode;
@@ -66,6 +69,7 @@ val fix_clock_word_eq_replay = prove(
   Cases_on `data_to_word_memoryProof$word_eq c st dm m l ck w1 w2` >> fs [data_to_word_memoryProofTheory.fix_clock_def]
   >> PairCases_on `x` >> fs [data_to_word_memoryProofTheory.fix_clock_def] >> rw []
   >> imp_res_tac data_to_word_memoryProofTheory.word_eq_LESS_EQ >> fs []);
+val _ = show "fix_clock_word_eq_replay_typed" fix_clock_word_eq_replay;
 val word_eq_list_original_replay = prove(
   ``data_to_word_memoryProof$word_eq_list c st dm m l ck w a1 (a2:'a word) =
       if w = 0w then SOME (1w,l,ck) else
@@ -95,6 +99,9 @@ val _ = show "word_eq_list_one64" (EVAL ``data_to_word_memoryProof$word_eq_list
 val _ = show "word_eq_list_clock_zero64" (EVAL ``data_to_word_memoryProof$word_eq_list
   (c:data_to_word$config) st (\(a:word64). T) (\a. wordLang$Word (4w:word64))
   3 0 (1w:word64) 16w 24w``);
+val _ = show "word_eq_list_more_clock64" (EVAL ``data_to_word_memoryProof$word_eq_list
+  (c:data_to_word$config) st (\(a:word64). T) (\a. wordLang$Word (4w:word64))
+  3 7 (1w:word64) 16w 24w``);
 val _ = show "heap_expand_typed" gc_sharedTheory.heap_expand_def;
 val _ = show "gen_starts_in_store_typed" data_to_word_memoryProofTheory.gen_starts_in_store_def;
 val _ = show "gen_starts_in_store_IMP_typed" data_to_word_memoryProofTheory.gen_starts_in_store_IMP;

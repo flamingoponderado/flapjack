@@ -195,4 +195,211 @@ theorem wordEq_lessEq {width : Nat} [NeZero width] :
   · intro conf store domain memory limit clock count a1 a2 result remaining remainingClock outcome
     exact (wordEq_boundsAux conf store domain memory limit).2 clock count a1 a2 result remaining remainingClock outcome
 
+/-- The clamp theorem's finite store argument has the canonical lookup codec. -/
+theorem holFmapAsFiniteSupportParamWitness_fixClock_wordEq_store {width : Nat} [NeZero width]
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).lookup key = store.lookup key ∧
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).finiteSupport = store.finiteSupport ∧
+    MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store) = store := by
+  cases store
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- The source clock clamp does not change a word-equality result. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "fix_clock_word_eq"
+  (fmap_as_finite_support_parameters := [store]) (words_as_type_indexed_bitvec)]
+theorem fixClock_wordEq {width : Nat} [NeZero width] (conf : Config)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+    (limit clock : Nat) (w1 w2 : BitVec width) :
+    fixClock clock limit (wordEq conf store domain memory limit clock w1 w2) =
+      wordEq conf store domain memory limit clock w1 w2 := by
+  cases outcome : wordEq conf store domain memory limit clock w1 w2 with
+  | none => simp [fixClock]
+  | some triple =>
+    rcases triple with ⟨result, remaining, remainingClock⟩
+    have bounds := (wordEq_boundsAux conf store domain memory limit).1 clock w1 w2 result remaining remainingClock outcome
+    have limitNotLt : ¬ limit < remaining := by omega
+    have clockNotLt : ¬ clock < remainingClock := by omega
+    simp [fixClock, limitNotLt, clockNotLt]
+
+/-- The rebound list equation's finite store has the canonical lookup codec. -/
+theorem holFmapAsFiniteSupportParamWitness_wordEqList_unclamped_store {width : Nat} [NeZero width]
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).lookup key = store.lookup key ∧
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).finiteSupport = store.finiteSupport ∧
+    MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store) = store := by
+  cases store
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Unclamped equation for the list worker, justified by the clock bounds. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_eq_def" 14055
+  (fmap_as_finite_support_parameters := [store]) (words_as_type_indexed_bitvec)]
+theorem wordEqList_unclamped {width : Nat} [NeZero width] (conf : Config)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+    (limit clock : Nat) (count a1 a2 : BitVec width) :
+    wordEqList conf store domain memory limit clock count a1 a2 =
+      if count = 0 then some (1, limit, clock)
+      else if domain a1 = false ∨ domain a2 = false ∨ limit = 0 ∨ clock = 0 then none
+      else match memory a1, memory a2 with
+        | .word w1, .word w2 =>
+          match wordEq conf store domain memory (limit - 1) (clock - 1) w1 w2 with
+          | none => none
+          | some (x, remaining, _) =>
+            if x ≠ 1 then some (x, remaining, clock)
+            else if remaining = 0 then none
+            else wordEqList conf store domain memory (remaining - 1) clock (count - 1)
+              (a1 + StackRemove.bytesInWord width) (a2 + StackRemove.bytesInWord width)
+        | _, _ => none := by
+  rw [wordEqList]
+  by_cases zero : count = 0
+  · simp [zero]
+  · simp only [zero, ↓reduceIte]
+    by_cases invalid : domain a1 = false ∨ domain a2 = false ∨ limit = 0 ∨ clock = 0
+    · simp [invalid]
+    · simp only [invalid, ↓reduceIte]
+      cases mem1 : memory a1 with
+      | loc p q => rfl
+      | word w1 =>
+        cases mem2 : memory a2 with
+        | loc p q => rfl
+        | word w2 =>
+          have clamp := fixClock_wordEq conf store domain memory (limit - 1) (clock - 1) w1 w2
+          repeat' first | split | contradiction
+          all_goals simp_all
+
+
+/-- Clock extension for both equality workers at a fixed limit. This is
+Flapjack induction infrastructure for the original clock theorem. -/
+theorem wordEq_addClockAux {width : Nat} [NeZero width] (conf : Config)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width) (limit : Nat) :
+    (∀ clock w1 w2 result remaining remainingClock extra,
+      wordEq conf store domain memory limit clock w1 w2 = some (result, remaining, remainingClock) →
+      wordEq conf store domain memory limit (clock + extra) w1 w2 = some (result, remaining, remainingClock + extra)) ∧
+    (∀ clock count a1 a2 result remaining remainingClock extra,
+      wordEqList conf store domain memory limit clock count a1 a2 = some (result, remaining, remainingClock) →
+      wordEqList conf store domain memory limit (clock + extra) count a1 a2 = some (result, remaining, remainingClock + extra)) := by
+  induction limit using Nat.strong_induction_on with
+  | h limit ih =>
+    constructor
+    · intro clock w1 w2 result remaining remainingClock extra outcome
+      rw [wordEq] at outcome ⊢
+      repeat' first | split at outcome | contradiction
+      all_goals try simp_all
+      all_goals try (exact (ih (limit - 1) (by omega)).2 _ _ _ _ _ _ _ _ outcome)
+      all_goals try grind
+    · intro clock count a1 a2 result remaining remainingClock extra outcome
+      by_cases zero : count = 0
+      · simp [wordEqList_unclamped, zero] at outcome ⊢
+        omega
+      · have positive : 0 < limit ∧ 0 < clock := by
+          by_contra missing
+          have invalid : domain a1 = false ∨ domain a2 = false ∨ limit = 0 ∨ clock = 0 := by omega
+          rw [wordEqList_unclamped] at outcome
+          simp [invalid] at outcome
+          exact zero outcome.1
+        have shifted : clock + extra - 1 = (clock - 1) + extra := by omega
+        rw [wordEqList_unclamped] at outcome ⊢
+        repeat' first | split at outcome | contradiction
+        all_goals try simp_all
+        all_goals have step := (ih (limit - 1) (by omega)).1 _ _ _ _ _ _ extra (by assumption)
+        all_goals simp only [step]
+        all_goals try simp_all
+        have bound := (wordEq_boundsAux conf store domain memory (limit - 1)).1 _ _ _ _ _ _ (by assumption)
+        exact (ih _ (by omega)).2 _ _ _ _ _ _ _ extra outcome
+
+/-- Supplying additional stack clock preserves successful results and adds
+that amount to the remaining stack clock. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_eq_add_clock"
+  (fmap_as_finite_support_relation := [store1, store2]) (words_as_type_indexed_bitvec)]
+theorem wordEq_addClock {width : Nat} [NeZero width] :
+    (∀ (conf : Config) (store1 : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+      (limit clock : Nat) (w1 w2 result : BitVec width) (remaining remainingClock extra : Nat),
+      wordEq conf store1 domain memory limit clock w1 w2 = some (result, remaining, remainingClock) →
+      wordEq conf store1 domain memory limit (clock + extra) w1 w2 = some (result, remaining, remainingClock + extra)) ∧
+    (∀ (conf : Config) (store2 : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+      (limit clock : Nat) (count a1 a2 result : BitVec width) (remaining remainingClock extra : Nat),
+      wordEqList conf store2 domain memory limit clock count a1 a2 = some (result, remaining, remainingClock) →
+      wordEqList conf store2 domain memory limit (clock + extra) count a1 a2 = some (result, remaining, remainingClock + extra)) := by
+  constructor
+  · intro conf store domain memory limit clock w1 w2 result remaining remainingClock extra outcome
+    exact (wordEq_addClockAux conf store domain memory limit).1 clock w1 w2 result remaining remainingClock extra outcome
+  · intro conf store domain memory limit clock count a1 a2 result remaining remainingClock extra outcome
+    exact (wordEq_addClockAux conf store domain memory limit).2 clock count a1 a2 result remaining remainingClock extra outcome
+
+/-- Raising the stack clock to a maximum preserves the result and adjusts the
+remaining clock by the same increase. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_eq_max_clock"
+  (fmap_as_finite_support_relation := [store1, store2]) (words_as_type_indexed_bitvec)]
+theorem wordEq_maxClock {width : Nat} [NeZero width] :
+    (∀ (conf : Config) (store1 : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+      (limit clock : Nat) (w1 w2 result : BitVec width) (remaining remainingClock extra : Nat),
+      wordEq conf store1 domain memory limit clock w1 w2 = some (result, remaining, remainingClock) →
+      wordEq conf store1 domain memory limit (max clock extra) w1 w2 =
+        some (result, remaining, remainingClock + (extra - clock))) ∧
+    (∀ (conf : Config) (store2 : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+      (limit clock : Nat) (count a1 a2 result : BitVec width) (remaining remainingClock extra : Nat),
+      wordEqList conf store2 domain memory limit clock count a1 a2 = some (result, remaining, remainingClock) →
+      wordEqList conf store2 domain memory limit (max clock extra) count a1 a2 =
+        some (result, remaining, remainingClock + (extra - clock))) := by
+  constructor
+  · intro conf store domain memory limit clock w1 w2 result remaining remainingClock extra outcome
+    have extended := (wordEq_addClockAux conf store domain memory limit).1
+      clock w1 w2 result remaining remainingClock (extra - clock) outcome
+    have clockEq : clock + (extra - clock) = max clock extra := by omega
+    simpa only [clockEq] using extended
+  · intro conf store domain memory limit clock count a1 a2 result remaining remainingClock extra outcome
+    have extended := (wordEq_addClockAux conf store domain memory limit).2
+      clock count a1 a2 result remaining remainingClock (extra - clock) outcome
+    have clockEq : clock + (extra - clock) = max clock extra := by omega
+    simpa only [clockEq] using extended
+
+/-- The min/max clock theorem's finite store has the canonical lookup codec. -/
+theorem holFmapAsFiniteSupportParamWitness_wordEq_minMaxClock_store {width : Nat} [NeZero width]
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).lookup key = store.lookup key ∧
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).finiteSupport = store.finiteSupport ∧
+    MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store) = store := by
+  cases store
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Increasing either input to the minimum clock preserves a successful word
+or word-list comparison. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_eq_min_max_clock"
+  (fmap_as_finite_support_parameters := [store]) (words_as_type_indexed_bitvec)]
+theorem wordEq_minMaxClock {width : Nat} [NeZero width] (conf : Config)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+    (limit a b : Nat) (a1 a2 result : BitVec width) (remaining remainingClock : Nat) (count : BitVec width) :
+    (∀ x y : Nat, wordEq conf store domain memory limit (min a b) a1 a2 = some (result, remaining, remainingClock) →
+      ∃ finalClock, wordEq conf store domain memory limit (min (max a x) (max b y)) a1 a2 =
+        some (result, remaining, finalClock)) ∧
+    (∀ x y : Nat, wordEqList conf store domain memory limit (min a b) count a1 a2 = some (result, remaining, remainingClock) →
+      ∃ finalClock, wordEqList conf store domain memory limit (min (max a x) (max b y)) count a1 a2 =
+        some (result, remaining, finalClock)) := by
+  constructor
+  · intro x y outcome
+    let base := min a b
+    let target := min (max a x) (max b y)
+    have le : base ≤ target := by dsimp [base, target]; omega
+    have clockEq : base + (target - base) = target := by omega
+    refine ⟨remainingClock + (target - base), ?_⟩
+    have extended := (wordEq_addClockAux conf store domain memory limit).1
+      base a1 a2 result remaining remainingClock (target - base) outcome
+    simpa only [clockEq] using extended
+  · intro x y outcome
+    let base := min a b
+    let target := min (max a x) (max b y)
+    have le : base ≤ target := by dsimp [base, target]; omega
+    have clockEq : base + (target - base) = target := by omega
+    refine ⟨remainingClock + (target - base), ?_⟩
+    have extended := (wordEq_addClockAux conf store domain memory limit).2
+      base count a1 a2 result remaining remainingClock (target - base) outcome
+    simpa only [clockEq] using extended
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
