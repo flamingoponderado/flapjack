@@ -1,5 +1,37 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
+    "lean_name": "valueRel_basic_source",
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "v_rel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed basic-value source rule: the same shape relation and pointwise contained-value relation are the only premises. This is one original rule; complete inductive correspondence remains a separate obligation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
+    "lean_name": "valueRel_closure_source",
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "v_rel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed closure source rule: the same environment relation and compiled-name bound imply related closures, with the same name and compiled expression projection. This is one original rule; complete inductive correspondence remains a separate obligation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
+    "lean_name": "valueRel_recclosure_source",
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "v_rel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed recursive-closure rule: every original function body has the same compiled-name bound; the output maps the compiled expression projection over the original function triples. This is one original rule; complete inductive correspondence remains a separate obligation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
+    "lean_name": "envRel_source",
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "v_rel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed environment rule: bounded ALOOKUP_rel on the value fields is the sole premise. The proof uses the checked equivalence between source-shaped lookup relation and the positivity-friendly environment constructor. This is one original rule; complete inductive correspondence remains a separate obligation."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileSemantics.lean",
     "lean_name": "SourcePrecondition",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -1858,16 +1890,16 @@
     "hol_name": "simple_basic_val_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
     "lean_name": "simpleBasicValRel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; evaluator, value and store carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed source value cases: literal and location require the same payload, constructor retains the optional tag, vector retains only its shape, and closure and recursive closure are false. The flat value and literal carriers are reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "v_container_xs_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
     "lean_name": "valueContainerXs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; evaluator, value and store carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed source value cases: constructor and vector return their value lists, and literal, location and both closure forms return empty."
   },
   {
     "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
@@ -2458,8 +2490,8 @@
     "hol_name": "ALOOKUP_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed source definition: independent key, left payload and right payload types; for each selected key, the source option relation is applied to both left-biased association-list lookups. The local propositional holALookup preserves source equality without a BEq side condition."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",

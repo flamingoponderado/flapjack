@@ -28,6 +28,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.ConfigIrrelevance
 import Flapjack.Compiler.Backend.FlatProps.ValueBasics
 import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationRules
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationCases
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.RecursiveClosures
