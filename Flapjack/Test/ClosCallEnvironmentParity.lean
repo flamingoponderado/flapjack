@@ -6,7 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.ClosCall.Proofs.RecursiveInvariant
+import Flapjack.Compiler.Backend.ClosCall.Proofs.PartialApplication
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -214,6 +214,80 @@ private theorem openGroupRelation : recClosureRelFuel 5 (.ln, []) {10} Flapjack.
     simp
   · simp [codeLocations, codeLocationsExp, codeLocationsFuns]
   · simp [codeIncludes, logicalAssocLookup_nil]
+
+private theorem openTwoArgRelation : recClosureRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 10
+    [(2, .var .none 2)] [(2, .var .none 2)] := by
+  have result := callsFuel_letrec_open_final 4 [] 10 [(2, .var .none 2)] (.var .none 0) (.var .none 0)
+    (.ln, []) (insertEach 10 1 (.ln, [])) (.ln, []) (.ln, []) (.ln, [])
+    [.var .none 2] [.var .none 2] {10} Flapjack.HolFiniteMapExact.empty
+  apply result ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ |>.2
+  · rfl
+  · simp [groupClosed, freeVarExp]
+  · rfl
+  · rfl
+  · constructor
+    · ext label
+      simp only [Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
+      simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
+    · simp
+  · simp [everyFnLocationSome, fnLocationSomeExp, fnLocationSomeFuns]
+  · simp [everyFnVarsNone, fnVarsNoneExp, fnVarsNoneFuns]
+  · simp [codeLocations, codeLocationsExp, codeLocationsFuns]
+  · simp [LabelsFresh]
+  · apply stateExtends_refl
+    simp
+  · simp [codeLocations, codeLocationsExp, codeLocationsFuns]
+  · simp [codeIncludes, logicalAssocLookup_nil]
+
+-- A one-argument partial application preserves a captured recursive closure.
+example : ∃ targetPartial,
+    ClosSem.destClosure 2 none (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+      [.number 7] = some (.partialApp targetPartial) ∧
+    ValueRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty
+      (.recclosure (some 10) [.number 7] [.number 42] [(2, .var .none 2)] 0) targetPartial := by
+  apply destClosure_partial_fuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 2 none
+    (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+    (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+    (.recclosure (some 10) [.number 7] [.number 42] [(2, .var .none 2)] 0)
+    [.number 7] [.number 7]
+  · rfl
+  · exact .recclosure openTwoArgRelation .nil (.equalLength rfl (.cons (.number 42) .nil))
+  · exact .cons (.number 7) .nil
+
+-- The evaluator consumes one clock tick for that partial application.
+example {C F : Type} (source : ClosSem.State (Flapjack.NumSet × C) F) (target : ClosSem.State C F)
+    (states : StateRelFuel 5 (.ln, []) {10} source target)
+    (targetCode : target.code = Flapjack.HolFiniteMapExact.empty)
+    (maxApp : source.maxApp = 2) (clock : 1 ≤ source.clock) :
+    ∃ result final,
+      ClosSem.evaluateApp none (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+        [.number 7] target = (result, final) ∧
+      Flapjack.SemanticPrimitivesProps.resultRel
+        (List.Forall₂ (ValueRelFuel 5 (.ln, []) {10} final.code))
+        (ValueRelFuel 5 (.ln, []) {10} final.code)
+        (.val [.recclosure (some 10) [.number 7] [.number 42] [(2, .var .none 2)] 0]) result ∧
+      StateRelFuel 5 (.ln, []) {10} (ClosSem.decClock 1 source) final ∧
+      (∀ key value, target.code.lookup key = some value → final.code.lookup key = some value) := by
+  apply evaluateApp_partial_fuel 5 (.ln, []) {10} none
+    (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+    (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+    (.recclosure (some 10) [.number 7] [.number 42] [(2, .var .none 2)] 0)
+    [.number 7] [.number 7] source target
+    (.val [.recclosure (some 10) [.number 7] [.number 42] [(2, .var .none 2)] 0]) (ClosSem.decClock 1 source)
+  · simp
+  · simp [ClosSem.destClosure, ClosSem.checkLoc, maxApp]
+  · have closure : ClosSem.destClosure source.maxApp none
+        (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0) [.number 7] =
+        some (.partialApp (.recclosure (some 10) [.number 7] [.number 42] [(2, .var .none 2)] 0)) := by
+      simp [ClosSem.destClosure, ClosSem.checkLoc, maxApp]
+    rw [ClosSem.evaluateApp, closure]
+    simp [Nat.not_lt.mpr clock]
+  · rw [targetCode]
+    exact .recclosure openTwoArgRelation .nil (.equalLength rfl (.cons (.number 42) .nil))
+  · exact .cons (.number 7) .nil
+  · exact states
 
 example : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
     (.closure (some 10) [] [] 1 (.var .none 0))
