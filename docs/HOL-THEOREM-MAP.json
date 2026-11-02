@@ -100629,6 +100629,18 @@
     "reviewer": "Source comparison: memory_rel_ValueArray_IMP and its typed capture retain the memory relation, array lookup and good_dimindex hypotheses, existential pointer and header, all original tag-bit facts, both address decodings, memory and domain facts, decoded length, and length bound. store uses the canonical finite-support map and all target words share the positive HOL dimension."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Word64.lean",
+    "lean_name": "memoryRel_word64Imp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Word64_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Word64_IMP and its typed capture retain the full memory relation and good_dimindex hypotheses, existential natural heap index, real address and header, pointer representation, memory and domain facts, tag bits, and both width-dependent payload and header branches. At the permitted 32-bit width the shifted and resized words implement extracts 63..32 and 31..0; at 64 bits resizing implements extract 63..0. store uses the canonical finite-support map and target words share the positive HOL dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueArray.lean",
     "lean_name": "memoryRel_refPtrTrueImp",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
