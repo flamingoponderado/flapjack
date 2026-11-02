@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
 
 /-! Fuel-aware well-formed values and related-value witnesses. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -32,6 +33,219 @@ inductive ValuesWellFormedFuel (fuel : Nat) (g : State) (allowed : Set Nat)
   | cons {value values} : ValueWellFormedFuel fuel g allowed code value →
       ValuesWellFormedFuel fuel g allowed code values → ValuesWellFormedFuel fuel g allowed code (value :: values)
 end
+
+/-- Extending compiler state, allowed locations, and installed code
+preserves fuel-aware well-formedness of a value. -/
+theorem valueWellFormedFuel_mono {fuel : Nat} {g g' : State} {allowed allowed' : Set Nat}
+    {code code' : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} {value : ClosSem.Value}
+    (wf : ValueWellFormedFuel fuel g allowed code value)
+    (stateGrowth : stateExtends g g') (allowedGrowth : allowed ⊆ allowed')
+    (codeGrowth : ∀ key entry, code.lookup key = some entry → code'.lookup key = some entry) :
+    ValueWellFormedFuel fuel g' allowed' code' value := by
+  refine ValueWellFormedFuel.rec
+    (motive_1 := fun value _ => ValueWellFormedFuel fuel g' allowed' code' value)
+    (motive_2 := fun values _ => ValuesWellFormedFuel fuel g' allowed' code' values)
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ wf
+  · intro n; exact .number n
+  · intro w; exact .word64 w
+  · intro tag values _ ih; exact .block tag ih
+  · intro bytes; exact .byteVector bytes
+  · intro flag address; exact .refPtr flag address
+  · intro loc supplied env arity body targets _ _ closure suppliedIH envIH
+    exact .closure suppliedIH envIH
+      (recClosureRelFuel_mono fuel g g' allowed allowed' code code' loc _ _ closure
+        stateGrowth allowedGrowth codeGrowth)
+  · intro loc supplied env fns index targets _ _ closure suppliedIH envIH
+    exact .recclosure suppliedIH envIH
+      (recClosureRelFuel_mono fuel g g' allowed allowed' code code' loc _ _ closure
+        stateGrowth allowedGrowth codeGrowth)
+  · exact .nil
+  · intro value values _ _ headIH tailIH; exact .cons headIH tailIH
+
+/-- The same extension preserves well-formedness of an environment. -/
+theorem valuesWellFormedFuel_mono {fuel : Nat} {g g' : State} {allowed allowed' : Set Nat}
+    {code code' : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} {values : List ClosSem.Value}
+    (wf : ValuesWellFormedFuel fuel g allowed code values)
+    (stateGrowth : stateExtends g g') (allowedGrowth : allowed ⊆ allowed')
+    (codeGrowth : ∀ key entry, code.lookup key = some entry → code'.lookup key = some entry) :
+    ValuesWellFormedFuel fuel g' allowed' code' values := by
+  induction values with
+  | nil => exact .nil
+  | cons value rest ih =>
+    cases wf with
+    | cons head tail =>
+      exact .cons (valueWellFormedFuel_mono head stateGrowth allowedGrowth codeGrowth) (ih tail)
+
+/-- Concatenation preserves pointwise value well-formedness. -/
+theorem valuesWellFormedFuel_append {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} {left right : List ClosSem.Value}
+    (leftWf : ValuesWellFormedFuel fuel g allowed code left)
+    (rightWf : ValuesWellFormedFuel fuel g allowed code right) :
+    ValuesWellFormedFuel fuel g allowed code (left ++ right) := by
+  induction left with
+  | nil => exact rightWf
+  | cons value rest ih =>
+    cases leftWf with
+    | cons head tail => exact .cons head (ih tail)
+
+/-- A value present in a well-formed environment is well formed. -/
+theorem valuesWellFormedFuel_mem {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} {values : List ClosSem.Value}
+    (wf : ValuesWellFormedFuel fuel g allowed code values) {value : ClosSem.Value}
+    (member : value ∈ values) : ValueWellFormedFuel fuel g allowed code value := by
+  induction values with
+  | nil => simp at member
+  | cons first rest ih =>
+    cases wf with
+    | cons head tail =>
+      simp only [List.mem_cons] at member
+      rcases member with rfl | member
+      · exact head
+      · exact ih tail member
+
+/-- Pointwise well-formedness constructs a well-formed list. -/
+theorem valuesWellFormedFuel_of_forall {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} {values : List ClosSem.Value}
+    (all : ∀ value ∈ values, ValueWellFormedFuel fuel g allowed code value) :
+    ValuesWellFormedFuel fuel g allowed code values := by
+  induction values with
+  | nil => exact .nil
+  | cons first rest ih =>
+    refine .cons (all first (by simp)) (ih ?_)
+    intro value member
+    exact all value (by simp [member])
+
+/-- The bundle of recursive closures sharing a well-formed environment is
+well formed at every generated index. -/
+theorem recClosureBundle_wellFormedFuel {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (loc : Nat)
+    (env : List ClosSem.Value) (fns targets : List (Nat × ClosLang.Exp))
+    (envWf : ValuesWellFormedFuel fuel g allowed code env)
+    (closure : recClosureRelFuel fuel g allowed code loc fns targets) :
+    ValuesWellFormedFuel fuel g allowed code
+      ((List.range fns.length).map (fun i => ClosSem.Value.recclosure (some loc) [] env fns i)) := by
+  apply valuesWellFormedFuel_of_forall
+  intro value member
+  obtain ⟨index, _, rfl⟩ := List.mem_map.mp member
+  exact .recclosure .nil envWf closure
+
+/-- A list made from members of a well-formed list is well formed. -/
+theorem valuesWellFormedFuel_of_subset {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} {source result : List ClosSem.Value}
+    (wf : ValuesWellFormedFuel fuel g allowed code source)
+    (subset : ∀ value ∈ result, value ∈ source) : ValuesWellFormedFuel fuel g allowed code result := by
+  induction result with
+  | nil => exact .nil
+  | cons value rest ih =>
+    apply ValuesWellFormedFuel.cons
+    · exact valuesWellFormedFuel_mem wf (subset value (by simp))
+    · apply ih
+      intro item member
+      exact subset item (by simp [member])
+
+/-- Taking, dropping, and reversing preserve well-formedness. -/
+theorem valuesWellFormedFuel_take {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} {values : List ClosSem.Value}
+    (wf : ValuesWellFormedFuel fuel g allowed code values) (count : Nat) :
+    ValuesWellFormedFuel fuel g allowed code (values.take count) := by
+  apply valuesWellFormedFuel_of_subset wf
+  intro value member
+  exact List.mem_of_mem_take member
+
+theorem valuesWellFormedFuel_drop {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} {values : List ClosSem.Value}
+    (wf : ValuesWellFormedFuel fuel g allowed code values) (count : Nat) :
+    ValuesWellFormedFuel fuel g allowed code (values.drop count) := by
+  apply valuesWellFormedFuel_of_subset wf
+  intro value member
+  exact List.mem_of_mem_drop member
+
+theorem valuesWellFormedFuel_reverse {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} {values : List ClosSem.Value}
+    (wf : ValuesWellFormedFuel fuel g allowed code values) :
+    ValuesWellFormedFuel fuel g allowed code values.reverse := by
+  apply valuesWellFormedFuel_of_subset wf
+  intro value member
+  simpa using member
+
+/-- A partial closure application preserves well-formedness when its
+function and argument values are well formed. -/
+theorem destClosure_partial_wellFormedFuel {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)}
+    (maxApp : Nat) (requested : Option Nat) (function : ClosSem.Value)
+    (args : List ClosSem.Value) (result : ClosSem.Value)
+    (functionWf : ValueWellFormedFuel fuel g allowed code function)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args)
+    (run : ClosSem.destClosure maxApp requested function args = some (.partialApp result)) :
+    ValueWellFormedFuel fuel g allowed code result := by
+  cases functionWf with
+  | number | word64 | block | byteVector | refPtr => simp [ClosSem.destClosure] at run
+  | @closure loc supplied env arity body targets suppliedWf envWf closure =>
+    simp only [ClosSem.destClosure] at run
+    split at run
+    · split at run
+      · simp only [Option.some.injEq, ClosSem.AppKind.partialApp.injEq] at run
+        subst result
+        exact .closure (valuesWellFormedFuel_append argsWf suppliedWf) envWf closure
+      · simp at run
+    · simp at run
+  | @recclosure loc supplied env fns index targets suppliedWf envWf closure =>
+    cases lookup : fns[index]? with
+    | none => simp [ClosSem.destClosure, lookup] at run
+    | some entry =>
+      rcases entry with ⟨arity, body⟩
+      simp only [ClosSem.destClosure, lookup] at run
+      split at run
+      · split at run
+        · simp only [Option.some.injEq, ClosSem.AppKind.partialApp.injEq] at run
+          subst result
+          exact .recclosure (valuesWellFormedFuel_append argsWf suppliedWf) envWf closure
+        · simp at run
+      · simp at run
+
+/-- A full application produces a well-formed body environment and
+well-formed remaining arguments, including recursive closure bindings. -/
+theorem destClosure_full_wellFormedFuel {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)}
+    (maxApp : Nat) (requested : Option Nat) (function : ClosSem.Value)
+    (args env rest : List ClosSem.Value) (body : ClosLang.Exp)
+    (functionWf : ValueWellFormedFuel fuel g allowed code function)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args)
+    (run : ClosSem.destClosure maxApp requested function args = some (.fullApp body env rest)) :
+    ValuesWellFormedFuel fuel g allowed code env ∧ ValuesWellFormedFuel fuel g allowed code rest := by
+  cases functionWf with
+  | number | word64 | block | byteVector | refPtr => simp [ClosSem.destClosure] at run
+  | @closure loc supplied captured arity expression targets suppliedWf envWf closure =>
+    simp only [ClosSem.destClosure] at run
+    split at run
+    · split at run
+      · simp at run
+      · simp only [Option.some.injEq, ClosSem.AppKind.fullApp.injEq] at run
+        obtain ⟨rfl, rfl, rfl⟩ := run
+        constructor
+        · exact valuesWellFormedFuel_append
+            (valuesWellFormedFuel_reverse (valuesWellFormedFuel_take (valuesWellFormedFuel_reverse argsWf) _))
+            (valuesWellFormedFuel_append suppliedWf envWf)
+        · exact valuesWellFormedFuel_reverse (valuesWellFormedFuel_drop (valuesWellFormedFuel_reverse argsWf) _)
+    · simp at run
+  | @recclosure loc supplied captured fns index targets suppliedWf envWf closure =>
+    cases lookup : fns[index]? with
+    | none => simp [ClosSem.destClosure, lookup] at run
+    | some entry =>
+      rcases entry with ⟨arity, expression⟩
+      simp only [ClosSem.destClosure, lookup] at run
+      split at run
+      · split at run
+        · simp at run
+        · simp only [Option.some.injEq, ClosSem.AppKind.fullApp.injEq] at run
+          obtain ⟨rfl, rfl, rfl⟩ := run
+          constructor
+          · exact valuesWellFormedFuel_append
+              (valuesWellFormedFuel_reverse (valuesWellFormedFuel_take (valuesWellFormedFuel_reverse argsWf) _))
+              (valuesWellFormedFuel_append
+                (valuesWellFormedFuel_append suppliedWf (recClosureBundle_wellFormedFuel loc captured fns targets envWf closure)) envWf)
+          · exact valuesWellFormedFuel_reverse (valuesWellFormedFuel_drop (valuesWellFormedFuel_reverse argsWf) _)
+      · simp at run
 
 /-- Every fuel-well-formed value has a target witness. This bounded theorem
 does not claim the unbounded HOL value relation. -/
