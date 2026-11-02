@@ -314,8 +314,18 @@ with the machine model's `addWithCarry`, so the machine model's
 tabulates the rendered `ConditionTest` on the eight `cmp_cond` codes, and
 `arm8SubCmp_semantics`/`arm8AndCmp_semantics` conclude
 `ConditionHolds (cmp_cond cmp)` after the compare equals
-`wordCmpHOL cmp x y`.  What remains for the `JumpCmp` case theorem is the
-two-instruction simulation itself.
+`wordCmpHOL cmp x y`.
+
+`BranchConditional.lean` also carries the nineteen-bit immediate reassembly
+(`arm8BranchCondBits`), the signed twenty-one-bit sign extension and
+`arm8BranchCondRoundtrip`, mirroring the `Branch` module's 26-bit trio.
+`JumpCmp.lean` then records the two-instruction lowering (`arm8Ast_jumpCmp_reg`
+and `_imm`), its eight encoded bytes for both the `test` and the ordering
+register forms, the `cjump` window facts `asmOkExact` supplies
+(`arm8CjumpOk_of_asm`), the encoded offset `a - 4` in the signed 21-bit range
+(`arm8CjumpOffsetOk`), and the compare's register-validity conjuncts.  What
+remains for the `JumpCmp` case theorem is the two-instruction simulation
+itself.
 
 `JumpReg.lean` does the same for `BranchRegister (r, JMP)`: the word, its
 `Encode`/`Decode` inverse and the `Run` reduction, where `PC` becomes the
