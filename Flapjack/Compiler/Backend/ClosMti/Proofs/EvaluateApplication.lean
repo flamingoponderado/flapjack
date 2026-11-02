@@ -4,6 +4,20 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateForce
 namespace Flapjack.Compiler.Backend.ClosMti
 open Flapjack ClosSem SemanticPrimitivesProps
 
+/-- The expression simulation restricted to states below an outer clock.
+This is an induction interface for the Lean evaluator, not a separate HOL port. -/
+def EvaluateRelBelow {C F : Type} (limit : Nat) (sourceCode targetCode : List ClosLang.Exp) : Prop :=
+  ∀ (targetEnv : List Value) (target : State C F) (sourceEnv : List Value)
+    (targetFinal : State C F) (source : State C F)
+    (targetResult : SemanticPrimitivesHOL.Result (List Value) Value),
+    source.clock < limit → evaluate targetCode targetEnv target = (targetResult, targetFinal) →
+    List.Forall₂ (ValueRel source.maxApp) sourceEnv targetEnv →
+    StateRel source target → CodeRel source.maxApp sourceCode targetCode →
+    ∃ sourceResult sourceFinal,
+      evaluate sourceCode sourceEnv source = (sourceResult, sourceFinal) ∧
+      resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
+        sourceResult targetResult ∧ StateRel sourceFinal targetFinal
+
 /-- Relate replacement of both closure clocks by the same value. -/
 theorem stateRel_withClock {C F : Type} {source target : State C F}
     (states : StateRel source target) (clock : Nat) :
@@ -206,8 +220,8 @@ theorem evaluateApps_nestedFns_exact {C F : Type} (state : State C F)
         | cons other tail => rfl
 
 /-- Exactly saturated related closures evaluate related bodies under related
-environments. The body simulation is the corresponding induction hypothesis;
-the evaluator and the complete HOL theorem remain under review. -/
+environments. This helper assumes unrestricted body simulation; the general
+application case below uses a smaller-clock hypothesis. HOL review remains open. -/
 theorem evaluateApp_closure_exact_related_of_clock {C F : Type} (source target : State C F)
     (sourceArgs targetArgs sourceSupplied targetSupplied sourceEnv targetEnv : List Value)
     (arity : Nat) (sourceBody targetBody : ClosLang.Exp)
@@ -258,8 +272,7 @@ theorem evaluateApp_closure_exact_related_of_clock {C F : Type} (source target :
     exact ⟨related, finalStates⟩
 
 /-- Exactly saturated ordinary closure applications preserve related results
-and states, including timeout. The body induction hypothesis uses the same
-backward simulation interface as the other expression cases. -/
+and states, including timeout, assuming unrestricted body simulation. -/
 theorem evaluateApp_closure_exact_related {C F : Type} (source target : State C F)
     (sourceArgs targetArgs sourceSupplied targetSupplied sourceEnv targetEnv : List Value)
     (arity : Nat) (sourceBody targetBody : ClosLang.Exp)
@@ -358,7 +371,7 @@ theorem evaluateApp_closure_full_related {C F : Type} (source target : State C F
     (bodyRel : CodeRel source.maxApp [sourceBody] [targetBody])
     (arityEq : 1 + names.length + sourceSupplied.length = arity)
     (full : names.length < sourceArgs.length) (bound : sourceArgs.length ≤ source.maxApp)
-    (bodyIH : EvaluateRelAt (C := C) (F := F) [sourceBody] [targetBody])
+    (bodyIH : EvaluateRelBelow (C := C) (F := F) source.clock [sourceBody] [targetBody])
     (appIH : ∀ (s t : State C F) (sv tv : Value) (sa ta : List Value),
       s.clock < source.clock → StateRel s t → ValueRel s.maxApp sv tv →
       List.Forall₂ (ValueRel s.maxApp) sa ta → sa.length ≤ s.maxApp →
@@ -409,7 +422,7 @@ theorem evaluateApp_closure_full_related {C F : Type} (source target : State C F
         (decClock (1 + names.length) target) with
     | mk targetResult targetFinal =>
       obtain ⟨sourceResult, sourceFinal, sourceRun, related, finalStates⟩ :=
-        bodyIH _ _ _ _ _ _ targetRun (by simpa [decClock] using environments) starts
+        bodyIH _ _ _ _ _ _ (by simp [decClock]; omega) targetRun (by simpa [decClock] using environments) starts
           (by simpa [decClock] using bodyRel)
       rw [sourceRun]
       have maxConst := ClosProps.evaluate_const.1 [sourceBody]
@@ -460,7 +473,7 @@ theorem evaluateApp_closure_related {C F : Type} (source target : State C F)
     (bodyRel : CodeRel source.maxApp [sourceBody] [targetBody])
     (arityEq : 1 + names.length + sourceSupplied.length = arity)
     (bound : sourceArgs.length ≤ source.maxApp)
-    (bodyIH : EvaluateRelAt (C := C) (F := F) [sourceBody] [targetBody])
+    (bodyIH : EvaluateRelBelow (C := C) (F := F) source.clock [sourceBody] [targetBody])
     (appIH : ∀ (s t : State C F) (sv tv : Value) (sa ta : List Value),
       s.clock < source.clock → StateRel s t → ValueRel s.maxApp sv tv →
       List.Forall₂ (ValueRel s.maxApp) sa ta → sa.length ≤ s.maxApp →

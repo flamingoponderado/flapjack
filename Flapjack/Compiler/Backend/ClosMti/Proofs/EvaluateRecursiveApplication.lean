@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateApplication
+import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateLetrec
 
 /-! Recursive closure application for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti
@@ -82,6 +83,23 @@ theorem evaluateApp_recclosure_full_eq {C F : Type} (state : State C F)
     rw [evaluateApp_of_dest_full state _ _ _ _ _ (by simp) recFound,
       evaluateApp_of_dest_full state _ _ _ _ _ (by simp) found]
 
+/-- The first unary call into a recursive closure is the same as calling its
+selected unary body with the recursive bundle inserted into its environment. -/
+theorem evaluateApps_recclosure_eq_closure {C F : Type} (state : State C F)
+    (args env : List Value) (functions : List (Nat × ClosLang.Exp))
+    (index : Nat) (body : ClosLang.Exp) (nonempty : args ≠ [])
+    (maxApp : 1 ≤ state.maxApp) (selected : functions[index]? = some (1, body)) :
+    evaluateApps (.recclosure none [] env functions index) args state =
+      evaluateApps (.closure none []
+        (((List.range functions.length).map (fun i => .recclosure none [] env functions i)) ++ env)
+        1 body) args state := by
+  induction args using List.reverseRecOn with
+  | nil => exact (nonempty rfl).elim
+  | append_singleton args value ih =>
+    rw [evaluateApps_snoc, evaluateApps_snoc]
+    rw [evaluateApp_recclosure_full_eq state [value] [] env functions index 1 body
+      (by simp) (by simpa using maxApp) selected (by simp) (by simp)]
+
 /-- Full and over-applied recursive closures follow the ordinary closure
 simulation after inserting the related recursive bindings into the body
 environment. The body and subsequent application remain induction hypotheses. -/
@@ -99,7 +117,7 @@ theorem evaluateApp_recclosure_full_related {C F : Type} (source target : State 
     (selected : functions[index]? = some (arity, targetBody))
     (arityEq : 1 + names.length + sourceSupplied.length = arity)
     (full : names.length < sourceArgs.length) (bound : sourceArgs.length ≤ source.maxApp)
-    (bodyIH : EvaluateRelAt (C := C) (F := F) [sourceBody] [targetBody])
+    (bodyIH : EvaluateRelBelow (C := C) (F := F) source.clock [sourceBody] [targetBody])
     (appIH : ∀ (s t : State C F) (sv tv : Value) (sa ta : List Value),
       s.clock < source.clock → StateRel s t → ValueRel s.maxApp sv tv →
       List.Forall₂ (ValueRel s.maxApp) sa ta → sa.length ≤ s.maxApp →
@@ -234,7 +252,7 @@ theorem evaluateApp_partialRecclosure_related {C F : Type} (source target : Stat
     (selected : targetFunctions[index] = (arity, targetBody))
     (arityEq : 1 + names.length + sourceSupplied.length = arity)
     (suppliedNonempty : targetSupplied ≠ []) (bound : sourceArgs.length ≤ source.maxApp)
-    (bodyIH : EvaluateRelAt (C := C) (F := F) [sourceBody] [targetBody])
+    (bodyIH : EvaluateRelBelow (C := C) (F := F) source.clock [sourceBody] [targetBody])
     (appIH : ∀ (s t : State C F) (sv tv : Value) (sa ta : List Value),
       s.clock < source.clock → StateRel s t → ValueRel s.maxApp sv tv →
       List.Forall₂ (ValueRel s.maxApp) sa ta → sa.length ≤ s.maxApp →
@@ -276,5 +294,180 @@ theorem evaluateApp_partialRecclosure_related {C F : Type} (source target : Stat
       exact evaluateApp_recclosure_full_related source target sourceArgs targetArgs sourceSupplied
         targetSupplied sourceEnv targetEnv recursive targetFunctions index arity sourceBody targetBody
         names states argsRel suppliedRel envRel recursiveRel bodyRel found arityEq (by omega) bound bodyIH appIH
+
+/-- Initial applications of related recursive closures preserve related
+results and states, assuming the two smaller-clock induction hypotheses. -/
+theorem evaluateApp_recclosure_related {C F : Type} (source target : State C F)
+    (sourceArgs targetArgs sourceEnv targetEnv : List Value)
+    (sourceFunctions targetFunctions : List (Nat × ClosLang.Exp)) (index : Nat)
+    (indexBound : index < targetFunctions.length)
+    (states : StateRel source target)
+    (argsRel : List.Forall₂ (ValueRel source.maxApp) sourceArgs targetArgs)
+    (envRel : List.Forall₂ (ValueRel source.maxApp) sourceEnv targetEnv)
+    (functionsRel : List.Forall₂ (FunctionRel source.maxApp) sourceFunctions targetFunctions)
+    (bound : sourceArgs.length ≤ source.maxApp)
+    (bodyIH : ∀ sourceBody targetBody,
+      EvaluateRelBelow (C := C) (F := F) source.clock [sourceBody] [targetBody])
+    (appIH : ∀ (s t : State C F) (sv tv : Value) (sa ta : List Value),
+      s.clock < source.clock → StateRel s t → ValueRel s.maxApp sv tv →
+      List.Forall₂ (ValueRel s.maxApp) sa ta → sa.length ≤ s.maxApp →
+      resultRel (List.Forall₂ (ValueRel s.maxApp)) (ValueRel s.maxApp)
+        (evaluateApps sv sa s).1 (evaluateApp none tv ta t).1 ∧
+      StateRel (evaluateApps sv sa s).2 (evaluateApp none tv ta t).2) :
+    resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
+      (evaluateApps (.recclosure none [] sourceEnv sourceFunctions index) sourceArgs source).1
+      (evaluateApp none (.recclosure none [] targetEnv targetFunctions index) targetArgs target).1 ∧
+    StateRel
+      (evaluateApps (.recclosure none [] sourceEnv sourceFunctions index) sourceArgs source).2
+      (evaluateApp none (.recclosure none [] targetEnv targetFunctions index) targetArgs target).2 := by
+  by_cases empty : targetArgs = []
+  · have sourceEmpty : sourceArgs = [] := by
+      have lengths := argsRel.length_eq
+      simp only [empty, List.length_nil] at lengths
+      cases sourceArgs <;> simp_all
+    subst sourceArgs
+    subst targetArgs
+    have related : ValueRel source.maxApp (.recclosure none [] sourceEnv sourceFunctions index)
+        (.recclosure none [] targetEnv targetFunctions index) :=
+      .recclosure sourceEnv targetEnv sourceFunctions targetFunctions index functionsRel envRel indexBound
+    have nilCase := evaluateApp_nil_related source target _ _ states related
+    simpa [nilCase.1, nilCase.2.1] using ⟨nilCase.2.2.1, nilCase.2.2.2⟩
+  · have sourceBound : index < sourceFunctions.length := by
+      have lengths := functionsRel.length_eq
+      omega
+    have entries : FunctionRel source.maxApp sourceFunctions[index] targetFunctions[index] :=
+      functionsRel.get sourceBound indexBound
+    cases sourceEntry : sourceFunctions[index] with
+    | mk sourceArity sourceFunction =>
+      cases targetEntry : targetFunctions[index] with
+      | mk targetArity targetFunction =>
+        rw [sourceEntry, targetEntry] at entries
+        obtain ⟨body, names, codeRel, _, _, sourceArityEq, sourceFunctionEq, targetArityEq⟩ := entries
+        dsimp only at codeRel sourceArityEq sourceFunctionEq targetArityEq
+        have sourceSelected : sourceFunctions[index]? = some (1, mkFns names body) := by
+          rw [List.getElem?_eq_getElem sourceBound, sourceEntry]
+          simp [sourceArityEq, sourceFunctionEq]
+        have targetSelected : targetFunctions[index] = (targetArity, targetFunction) := targetEntry
+        have sourceNonempty : sourceArgs ≠ [] := by
+          intro sourceEmpty
+          have lengths := argsRel.length_eq
+          simp only [sourceEmpty, List.length_nil] at lengths
+          have : targetArgs = [] := by
+            cases targetArgs with
+            | nil => rfl
+            | cons head tail => simp only [List.length_cons] at lengths; omega
+          exact empty this
+        have sourceMax : 1 ≤ source.maxApp := by
+          have agreement := stateRel_clock_maxApp states
+          omega
+        have sourceEq := evaluateApps_recclosure_eq_closure source sourceArgs sourceEnv sourceFunctions
+          index (mkFns names body) sourceNonempty sourceMax sourceSelected
+        rw [sourceEq]
+        have recursiveRel := recursiveClosures_related source.maxApp sourceFunctions targetFunctions
+          sourceEnv targetEnv functionsRel envRel
+        by_cases partialCount : sourceArgs.length ≤ names.length
+        · have caseRel := evaluateApp_recclosure_partial_related source target sourceArgs targetArgs [] []
+            sourceEnv targetEnv _ sourceFunctions targetFunctions index targetArity body targetFunction names
+            indexBound states argsRel .nil envRel functionsRel recursiveRel codeRel targetSelected
+            (by simp [targetArityEq, Nat.add_comm]) empty bound partialCount
+          simpa using caseRel
+        · have targetFound : targetFunctions[index]? = some (targetArity, targetFunction) := by
+            rw [List.getElem?_eq_getElem indexBound, targetEntry]
+          have caseRel := evaluateApp_recclosure_full_related source target sourceArgs targetArgs [] []
+            sourceEnv targetEnv _ targetFunctions index targetArity body targetFunction names states argsRel
+            .nil envRel recursiveRel codeRel targetFound (by simp [targetArityEq, Nat.add_comm])
+            (by omega) bound (bodyIH body targetFunction) appIH
+          simpa using caseRel
+
+/-- Non-closure values fail application on both sides, without changing state. -/
+theorem evaluateApp_badClosure_related {C F : Type} (source target : State C F)
+    (sourceFunction targetFunction : Value) (sourceArgs targetArgs : List Value)
+    (states : StateRel source target) (argsRel : List.Forall₂ (ValueRel source.maxApp) sourceArgs targetArgs)
+    (nonempty : targetArgs ≠ [])
+    (sourceBad : ∀ value, destClosure source.maxApp none sourceFunction [value] = none)
+    (targetBad : destClosure target.maxApp none targetFunction targetArgs = none) :
+    resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
+      (evaluateApps sourceFunction sourceArgs source).1 (evaluateApp none targetFunction targetArgs target).1 ∧
+    StateRel (evaluateApps sourceFunction sourceArgs source).2
+      (evaluateApp none targetFunction targetArgs target).2 := by
+  have sourceNonempty : sourceArgs ≠ [] := by
+    intro empty
+    have lengths := argsRel.length_eq
+    simp only [empty, List.length_nil] at lengths
+    have : targetArgs = [] := by
+      cases targetArgs with
+      | nil => rfl
+      | cons head tail => simp only [List.length_cons] at lengths; omega
+    exact nonempty this
+  have sourceRun : evaluateApps sourceFunction sourceArgs source = (.err (.abort .typeError), source) := by
+    induction sourceArgs using List.reverseRecOn with
+    | nil => exact (sourceNonempty rfl).elim
+    | append_singleton args value ih =>
+      exact evaluateApps_snoc_badClosure args value sourceFunction source (sourceBad value)
+  have targetRun : evaluateApp none targetFunction targetArgs target = (.err (.abort .typeError), target) := by
+    cases targetArgs with
+    | nil => exact (nonempty rfl).elim
+    | cons first rest =>
+      rw [evaluateApp]
+      split <;> simp_all
+  rw [sourceRun, targetRun]
+  exact ⟨by simp [resultRel, excRel], states⟩
+
+/-- Application of related values preserves related results and states,
+assuming the smaller-clock body and application hypotheses. HOL evaluator
+correspondence and the enclosing mutual induction remain pending. -/
+theorem evaluateApp_value_related {C F : Type} (source target : State C F)
+    (sourceFunction targetFunction : Value) (sourceArgs targetArgs : List Value)
+    (states : StateRel source target) (functions : ValueRel source.maxApp sourceFunction targetFunction)
+    (argsRel : List.Forall₂ (ValueRel source.maxApp) sourceArgs targetArgs)
+    (bound : sourceArgs.length ≤ source.maxApp)
+    (bodyIH : ∀ sourceBody targetBody,
+      EvaluateRelBelow (C := C) (F := F) source.clock [sourceBody] [targetBody])
+    (appIH : ∀ (s t : State C F) (sv tv : Value) (sa ta : List Value),
+      s.clock < source.clock → StateRel s t → ValueRel s.maxApp sv tv →
+      List.Forall₂ (ValueRel s.maxApp) sa ta → sa.length ≤ s.maxApp →
+      resultRel (List.Forall₂ (ValueRel s.maxApp)) (ValueRel s.maxApp)
+        (evaluateApps sv sa s).1 (evaluateApp none tv ta t).1 ∧
+      StateRel (evaluateApps sv sa s).2 (evaluateApp none tv ta t).2) :
+    resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
+      (evaluateApps sourceFunction sourceArgs source).1 (evaluateApp none targetFunction targetArgs target).1 ∧
+    StateRel (evaluateApps sourceFunction sourceArgs source).2
+      (evaluateApp none targetFunction targetArgs target).2 := by
+  by_cases empty : targetArgs = []
+  · have sourceEmpty : sourceArgs = [] := by
+      have lengths := argsRel.length_eq
+      simp only [empty, List.length_nil] at lengths
+      cases sourceArgs <;> simp_all
+    subst sourceArgs
+    subst targetArgs
+    have nilCase := evaluateApp_nil_related source target _ _ states functions
+    simpa [nilCase.1, nilCase.2.1] using ⟨nilCase.2.2.1, nilCase.2.2.2⟩
+  · cases functions with
+    | number value =>
+      exact evaluateApp_badClosure_related source target _ _ sourceArgs targetArgs states argsRel empty
+        (by intro value; rfl) (by cases targetArgs <;> rfl)
+    | word64 value =>
+      exact evaluateApp_badClosure_related source target _ _ sourceArgs targetArgs states argsRel empty
+        (by intro value; rfl) (by cases targetArgs <;> rfl)
+    | byteVector bytes =>
+      exact evaluateApp_badClosure_related source target _ _ sourceArgs targetArgs states argsRel empty
+        (by intro value; rfl) (by cases targetArgs <;> rfl)
+    | refPtr flag address =>
+      exact evaluateApp_badClosure_related source target _ _ sourceArgs targetArgs states argsRel empty
+        (by intro value; rfl) (by cases targetArgs <;> rfl)
+    | block tag left right related =>
+      exact evaluateApp_badClosure_related source target _ _ sourceArgs targetArgs states argsRel empty
+        (by intro value; rfl) (by cases targetArgs <;> rfl)
+    | closure supplied₁ supplied₂ env₁ env₂ arity body₁ body₂ names arityEq code envRel suppliedRel =>
+      exact evaluateApp_closure_related source target sourceArgs targetArgs supplied₁ supplied₂ env₁ env₂
+        arity body₁ body₂ names states argsRel suppliedRel envRel code arityEq bound (bodyIH body₁ body₂) appIH
+    | recclosure env₁ env₂ funs₁ funs₂ index funsRel envRel indexBound =>
+      exact evaluateApp_recclosure_related source target sourceArgs targetArgs env₁ env₂ funs₁ funs₂ index
+        indexBound states argsRel envRel funsRel bound bodyIH appIH
+    | partialRecclosure supplied₁ env₁ funs₁ supplied₂ env₂ funs₂ index recursive names body₁ body₂
+        arity indexBound funsRel envRel suppliedRel suppliedNonempty selected arityEq code recursiveRel =>
+      exact evaluateApp_partialRecclosure_related source target sourceArgs targetArgs supplied₁ supplied₂
+        env₁ env₂ recursive funs₁ funs₂ index arity body₁ body₂ names indexBound states argsRel suppliedRel
+        envRel funsRel recursiveRel code selected arityEq suppliedNonempty bound (bodyIH body₁ body₂) appIH
 
 end Flapjack.Compiler.Backend.ClosMti
