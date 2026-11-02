@@ -359,4 +359,14 @@ theorem arm8EncodeBytes_multiplyHigh (rm rn rd : BitVec 5) :
        BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn rd >>> 24).toNat)] := by
   simp [arm8Encode, arm8Encode_multiplyHigh]
 
+
+theorem arm8EncodeBytes_multiplyAddSub (rm ra rn rd : BitVec 5) :
+    arm8Encode (.Data (.«MultiplyAddSub@64» ((1 : BitVec 64), (false, (rm, (ra, (rn, rd))))))) =
+      [BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn rd >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn rd >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn rd >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn rd >>> 24).toNat)] := by
+  unfold arm8Encode
+  rw [arm8Encode_multiplyAddSub]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
