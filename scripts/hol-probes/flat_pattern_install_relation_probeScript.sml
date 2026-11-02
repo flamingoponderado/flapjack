@@ -5,6 +5,12 @@ val _ = Globals.show_types := true;
 fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
+fun show_type label tm = (print label; print_type (type_of tm); print "\n");
+val _ = show_type "pattern_cons_type=" ``pattern_semantics$Cons``;
+val _ = show_type "pattern_lit_type=" ``pattern_semantics$Lit``;
+val _ = show_type "pattern_pos_type=" ``pattern_common$Pos``;
+val _ = show_type "pattern_test_type=" ``pattern_semantics$PosTest``;
+val _ = show_type "pattern_if_type=" ``pattern_semantics$If``;
 val _ = show_thm "pure_cc=" backendPropsTheory.pure_cc_def;
 val _ = show_thm "pure_co=" backendPropsTheory.pure_co_def;
 val _ = show_thm "snd_pure_co=" backendPropsTheory.SND_pure_co;
@@ -18,6 +24,20 @@ val _ = show_thm "compile_exp_app_clause=" (List.nth (CONJUNCTS flat_patternTheo
 val _ = show_thm "compile_exp_letrec_clause=" (List.nth (CONJUNCTS flat_patternTheory.compile_exp_def, 8));
 val _ = show_thm "encode_pat_pcon_clause=" (List.nth (CONJUNCTS flat_patternTheory.encode_pat_def, 3));
 val _ = show_thm "compile_pats=" flat_patternTheory.compile_pats_def;
+val _ = show_thm "comp_is_const_row=" pattern_compTheory.is_const_row_def;
+val _ = show_thm "comp_is_any=" pattern_compTheory.is_Any_def;
+val _ = show_thm "comp_is_or_row=" pattern_compTheory.is_Or_row_def;
+val _ = show_thm "comp_take_until_any=" pattern_compTheory.take_until_Any_def;
+val _ = show_thm "comp_move_const_up=" pattern_compTheory.move_const_up_def;
+val _ = show_thm "comp_insert_any=" pattern_compTheory.insert_Any_def;
+val _ = show_thm "comp_is_true=" pattern_compTheory.is_True_def;
+val _ = show_thm "comp_mk_disj=" pattern_compTheory.mk_Disj_def;
+val _ = show_thm "comp_mk_conj=" pattern_compTheory.mk_Conj_def;
+val _ = show_thm "comp_mk_if=" pattern_compTheory.mk_If_def;
+val _ = show_thm "comp_get_pos=" pattern_compTheory.get_pos_def;
+val _ = show_thm "comp_pat_to_guard=" pattern_compTheory.pat_to_guard_def;
+val _ = show_thm "comp_pats_to_code=" pattern_compTheory.pats_to_code_def;
+val _ = show_thm "comp_definition=" pattern_compTheory.comp_def;
 val _ = show_thm "decs_semantics=" flat_patternProofTheory.compile_decs_semantics;
 val _ = show_thm "basic_values=" flatPropsTheory.simple_basic_val_rel_def;
 val _ = show_thm "value_contents=" flatPropsTheory.v_container_xs_def;

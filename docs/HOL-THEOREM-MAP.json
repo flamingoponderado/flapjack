@@ -105971,8 +105971,8 @@
     "lean_name": "Position",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_commonScript.sml",
     "hol_name": "position",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source position datatype and captured Pos type: EmptyPos and Pos natural-number position have the same constructors and recursive carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternCommon.lean",
@@ -105995,32 +105995,32 @@
     "lean_name": "Pat",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
     "hol_name": "pat",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source pat datatype and captured Cons and Lit types: Any, optional natural tag and optional list of natural pairs with child patterns, Or, source literal and Ref retain constructor order and carriers."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternSemantics.lean",
     "lean_name": "DTest",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
     "hol_name": "dTest",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source dTest datatype: TagLenEq has two natural arguments and LitEq has the source literal carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternSemantics.lean",
     "lean_name": "DGuard",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
     "hol_name": "dGuard",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source dGuard datatype and captured PosTest type: positional tests, Not, Conj, Disj and True have the same argument types and recursive structure."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternSemantics.lean",
     "lean_name": "DTree",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
     "hol_name": "dTree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source dTree datatype and captured If type: Leaf natural, Fail, TypeFail and If guard with two recursive trees retain their carriers."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Decode.lean",
@@ -106387,112 +106387,112 @@
     "lean_name": "isConstRow",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "is_const_row_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source equations: arbitrary row payload, only a Cons pattern with an empty child list returns true."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "isAny",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "is_Any_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source clauses: Any is true, Or recursively disjoins both branches, all other patterns are false."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "isOrRow",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "is_Or_row_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source equations: the row payload is arbitrary and only an Or pattern returns true."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "takeUntilAny",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "take_until_Any_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed polymorphic source equations: retain rows in order, stopping after the first isAny pattern."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "moveConstUp",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "move_const_up_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed polymorphic source definition: truncate at Any, preserve rows of length at least five or containing Or, otherwise append constant rows and nonconstant rows in their original relative orders."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "insertAny",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "insert_Any_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed polymorphic source clauses for empty, singleton and at-least-two rows: only the final pattern is replaced by Any and every payload is retained."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "isTrue",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "is_True_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed source guard constructors: only True is accepted."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "mkDisj",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "mk_Disj_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source definition: return True if either operand is True and otherwise retain the ordered Disj."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "mkConj",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "mk_Conj_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source definition: return the other operand when either guard is True, otherwise retain the ordered Conj."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "mkIf",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "mk_If_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source definition: True selects the first tree, otherwise retain the If node and both trees."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "getPos",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "get_pos_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed source equations: EmptyPos for the empty natural-number path and Pos head applied recursively to the tail."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "patToGuard",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "pat_to_guard_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed pat_to_guard source clauses, including reversed paths, constructor tag and arity tests, disjunction and reference descent. The mutually recursive patsToGuard retains the source singleton and longer-list clauses."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "patsToGuard",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "pat_to_guard_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed pats_to_guard source clauses: empty is True, a singleton uses the indexed child directly, and longer lists conjoin the head guard with the recursively incremented index."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",
     "lean_name": "patsToCode",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "pats_to_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed source clauses over pattern and natural-number rows: empty gives Fail and each row yields mkIf of the empty-path pattern guard, its Leaf index and the recursively compiled tail."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
@@ -107075,8 +107075,8 @@
     "lean_name": "comp",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml",
     "hol_name": "comp_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source composition transcribed; complete typed source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source wrapper: moveConstUp, conditionally insertAny when exhRows holds, then apply patsToCode to the chosen rows. The constituent exhaustiveness pass retains separate correspondence obligations."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/BindingsTotal.lean",
