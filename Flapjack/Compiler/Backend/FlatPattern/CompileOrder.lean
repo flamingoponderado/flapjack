@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
+import Flapjack.PanToCrepMaxList
 
 /-! Infrastructure for the source's reverse/traverse/reverse clauses. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
@@ -79,5 +80,39 @@ theorem compileExp_app_source (cfg : Config) (t : BackendCommon.Tra)
   | mk i rest =>
     cases rest with
     | mk sg ys => simp [compileExp, h]
+
+/-- The recursive-function helper implements HOL's map, maximum, and exists
+operations on the compiled bodies. -/
+theorem compileFuns_source (cfg : Config)
+    (fs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp)) :
+    compileFuns cfg fs =
+      let ys := fs.map (fun (a, b, body) => (a, b, compileExp cfg body))
+      (Flapjack.maxList (ys.map (fun (_, _, result) => result.1)),
+        ys.any (fun (_, _, result) => result.2.1),
+        ys.map (fun (a, b, result) => (a, b, result.2.2))) := by
+  induction fs with
+  | nil => rfl
+  | cons f fs ih =>
+    rcases f with ⟨name, arg, body⟩
+    cases h : compileExp cfg body with
+    | mk i rest =>
+      cases rest with
+      | mk sg result =>
+        simp [compileFuns, Flapjack.maxList, h, ih]
+
+/-- Recursive-function compilation satisfies the source's map-and-aggregate
+equation. -/
+@[hol "cakeml/compiler/backend/flat_patternScript.sml" "compile_exp_def"]
+theorem compileExp_letrec_source (cfg : Config) (t : Flapjack.AstHOL.VarN)
+    (fs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
+    (body : FlatLang.Exp) :
+    compileExp cfg (.letrec t fs body) =
+      let ys := fs.map (fun (a, b, exp) => (a, b, compileExp cfg exp))
+      let (i, sgx, y) := compileExp cfg body
+      let j := Flapjack.maxList (ys.map (fun (_, _, result) => result.1))
+      let sgfs := ys.any (fun (_, _, result) => result.2.1)
+      let fs2 := ys.map (fun (a, b, result) => (a, b, result.2.2))
+      (max i j, sgfs || sgx, .letrec t fs2 y) := by
+  simp only [compileExp, compileFuns_source]
 
 end Flapjack.Compiler.Backend.FlatPattern

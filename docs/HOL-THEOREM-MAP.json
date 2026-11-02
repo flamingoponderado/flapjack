@@ -1,6 +1,14 @@
 [
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileOrder.lean",
+    "lean_name": "compileExp_letrec_source",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured typed Letrec conjunct: arbitrary config, mlstring trace, recursive function triples and body; map compilation over bodies, take MAX_LIST of generated-name maxima and EXISTS of flags, rebuild the same function triples, and combine metadata with the separately compiled body. The helper equivalence proves the executed recursive fold has this source shape."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileOrder.lean",
     "lean_name": "compileExp_con_source",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "compile_exp_def",
