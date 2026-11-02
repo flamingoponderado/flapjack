@@ -241,8 +241,10 @@ that the high half of the unsigned 128-bit product is `r / 2 ^ 64`, plus the
 one-step `arm8Next_multiplyHigh` / `arm8Next_multiplyAddSub` reductions and
 their `Arm8L3Agree` congruence lemmas).
 `ConditionalSelect.lean` records the same facts for `ConditionalSelect@64`, the
-select used by the `addOverflow` and `subOverflow` lowerings, and `Carry.lean`
-does the same for `AddSubCarry@64`, which the `addCarry` lowering uses twice.  Each records the emitted word, the `Decode` inverse,
+select used by the `addOverflow` and `subOverflow` lowerings, `Carry.lean`
+does the same for `AddSubCarry@64`, which the `addCarry` lowering uses twice,
+and `Compare.lean` records `ConditionalCompareImmediate@64`'s word, `e_sf` and
+`Run` (its conditional `e_data` and decoder inverse are still open).  Each records the emitted word, the `Decode` inverse,
 the `Run` reduction and the `asmCaseOne` interference simulation for its
 constructor; all are Flapjack case splits of the single HOL theorem
 `arm8_encoder_correct` and carry no `@[hol]` tags of their own.
@@ -251,8 +253,9 @@ Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
 `DecodeBitMasks`/`BitfieldMove`), the two-instruction `longMul` case theorem
 (its instruction facts are in `Multiply.lean`), and the `longDiv`, `addCarry`,
 `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
-`ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in
-`Carry.lean`; `ConditionalCompareImmediate@64` still needs facts), `Mem`,
+`ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in `Carry.lean` and its
+`ConditionalCompareImmediate@64` word/`Run` in `Compare.lean`; that
+instruction's encode/decode are still open), `Mem`,
 `Fp`, `Jump`, `JumpCmp`, `Call`, `JumpReg` and `Loc` constructors.  `longDiv` lowers to
 `arm8EncodeFail`, so its case cannot be a faithful lowering without the
 intended instruction sequence.  The assembling `encoderCorrect arm8TargetL3`
