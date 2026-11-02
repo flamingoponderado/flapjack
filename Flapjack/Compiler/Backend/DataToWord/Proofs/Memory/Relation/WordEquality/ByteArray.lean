@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCompare
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArray
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueArray
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueEquality
 
 /-! Comparison of packed byte-array payloads. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -183,6 +185,96 @@ theorem memoryRel_byteArraysEqualHeaderLoop {width : Nat} [NeZero width] (conf :
     a1 a2 domain memory good equalLengths cap countEnough countBound words1 words2
   refine ⟨result, ?_, correct⟩
   simpa [zeroWords, count] using loop
+
+/-- Byte-array header bits identify whether equality compares the contents. -/
+theorem byteHeaderContentBits {width : Nat} [NeZero width] (conf : DataToWord.Config)
+    (len : Nat) (flag : Bool) (good : goodDimindex width) (bound : conf.lenSize + 7 < width) :
+    (DataToWord.makeByteHeader (width := width) conf flag len).getLsbD 2 = true ∧
+    ((DataToWord.makeByteHeader (width := width) conf flag len).getLsbD 4 = false ↔ flag = true) := by
+  rcases good with hw | hw <;> subst width
+  · have h4 : ¬ (4 : Nat) ≥ 32 - 2 - conf.lenSize := by omega
+    cases flag <;> simp [DataToWord.makeByteHeader, h4]
+  · have h4 : ¬ (4 : Nat) ≥ 64 - 3 - conf.lenSize := by omega
+    cases flag <;> simp [DataToWord.makeByteHeader, h4]
+
+/-- A related comparison reference has the byte-content header exactly when
+    its source cell is a content-comparing byte array. -/
+theorem memoryRel_refPtrTrueContent {width : Nat} [NeZero width] (conf : DataToWord.Config) (be : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (index : Nat) (w address header : BitVec width) (vars : List (DataSem.Value × WordLocW width))
+    (rel : memoryRel conf be next refs space store memory domain ((.refPtr true index, .word w) :: vars))
+    (real : getRealAddr conf store w = some address) (contents : memory address = .word header)
+    (good : goodDimindex width) :
+    (∃ bytes, sptLookup index refs = some (.byteArray true bytes)) ↔
+      (header.getLsbD 2 = true ∧ header.getLsbD 4 = false) := by
+  have noThunk : ∀ mode value, sptLookup index refs ≠ some (.thunk mode value) := by
+    obtain ⟨heap, limit, a, sp, sp1, gens, _, wordInv, _, _⟩ := rel
+    obtain ⟨roots, inv, _⟩ := wordInv
+    obtain ⟨_, _, _, _, stackInv⟩ := inv
+    obtain ⟨f, tf, _, _, _, _, _, _, _, values, _⟩ := stackInv
+    cases roots with
+    | nil => cases values
+    | cons root rest =>
+      cases values with
+      | cons related _ =>
+        exact ((valueInv_refPtr_true conf index refs root f tf heap).mp related).2.1
+  obtain ⟨cell, found⟩ := memoryRel_refPtrExists conf be next refs space store memory domain true index (.word w) vars rel
+  cases cell with
+  | valueArray values =>
+    obtain ⟨w', a', h', loc, _, _, bit2, _, _, addr, mem, _, _, _⟩ :=
+      memoryRel_valueArrayImp conf be next refs space store memory domain true index values (.word w) vars ⟨rel, found, good⟩
+    have weq := WordLocW.word.inj loc
+    subst w'
+    have aeq := Option.some.inj (addr.symm.trans real)
+    subst a'
+    have heq := WordLocW.word.inj (mem.symm.trans contents)
+    subst h'
+    simp [found, bit2]
+  | byteArray flag bytes =>
+    obtain ⟨w', a', loc, _, addr, _, mem, _, bound, _⟩ :=
+      memoryRel_byteArrayHeader conf be next refs space store memory domain true flag index bytes (.word w) vars rel found good
+    have weq := WordLocW.word.inj loc
+    subst w'
+    have aeq := Option.some.inj (addr.symm.trans real)
+    subst a'
+    have heq := WordLocW.word.inj (mem.symm.trans contents)
+    subst header
+    have bits := byteHeaderContentBits conf bytes.length flag good bound
+    cases flag <;> simp_all
+  | thunk mode value => exact False.elim (noThunk mode value found)
+  | mutBlock tag finalised left child right =>
+    exact False.elim (memoryRel_refPtrTrueNotMutBlock conf be next refs space store memory domain index (.word w) vars
+      tag finalised left child right ⟨rel, found⟩)
+
+/-- Successful true-valued reference equality either compares the same index
+    or compares two identical byte arrays by content. -/
+theorem vbEqSize_refTrue (refs : Spt (BvlSem.Ref DataSem.Value)) (i1 i2 n : Nat)
+    (sized : vbEqSize refs (.refPtr true i1) (.refPtr true i2) = some (n, true)) :
+    i1 = i2 ∨ ∃ bytes, sptLookup i1 refs = some (.byteArray true bytes) ∧
+      sptLookup i2 refs = some (.byteArray true bytes) := by
+  simp only [vbEqSize, Bool.true_and] at sized
+  split at sized <;> simp_all
+  all_goals split at sized <;> simp_all
+
+/-- Every successful comparison of two comparison references uses one unit
+    of source work. -/
+theorem vbEqSize_refCount (refs : Spt (BvlSem.Ref DataSem.Value)) (i1 i2 n : Nat) (b : Bool)
+    (sized : vbEqSize refs (.refPtr true i1) (.refPtr true i2) = some (n, b)) : n = 1 := by
+  simp only [vbEqSize, Bool.true_and] at sized
+  split at sized <;> simp_all
+  all_goals split at sized <;> simp_all
+
+/-- Without two content-comparing byte arrays, successful reference equality
+    compares their source indices. -/
+theorem vbEqSize_refNotBothContent (refs : Spt (BvlSem.Ref DataSem.Value)) (i1 i2 n : Nat) (b : Bool)
+    (notBoth : ¬ ((∃ bytes, sptLookup i1 refs = some (.byteArray true bytes)) ∧
+      (∃ bytes, sptLookup i2 refs = some (.byteArray true bytes))))
+    (sized : vbEqSize refs (.refPtr true i1) (.refPtr true i2) = some (n, b)) : b = decide (i1 = i2) := by
+  simp only [vbEqSize, Bool.true_and] at sized
+  split at sized <;> simp_all
+  all_goals split at sized <;> simp_all
 
 end
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

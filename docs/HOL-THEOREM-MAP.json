@@ -100626,6 +100626,36 @@
     "reviewer": "Source comparison: memory_rel_ByteArray_words_IMP and its typed capture retain the complete memory relation, reference lookup, good_dimindex and real-address hypotheses. The existential header and separation frame, exact write_bytes payload over the functional memory graph, and both decoded-length conclusions match HOL. store uses the canonical finite-support map and all memory words share the source positive word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality/Reference.lean",
+    "lean_name": "wordEqThm0_refPtrTrue",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_thm0",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: this is the true/true RefPtr case of the first conjunct of word_eq_thm0, compared with the source boolean case split and typed capture. It retains all original hypotheses and the full existential target result, equality equivalence and resource bound, with no added assumptions. The proof handles pointer comparison and content-comparing byte arrays. This case does not assemble the full theorem. store uses the canonical finite-support map and target words share the positive HOL dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality/Reference.lean",
+    "lean_name": "wordEqThm0_refPtrFalseLeft",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_thm0",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: this is the false/any RefPtr case of the first conjunct of word_eq_thm0, compared with the source boolean case split and typed capture. All original hypotheses and the existential conclusion are retained; the sized comparison hypothesis is impossible. This case does not assemble the full theorem. store uses the canonical finite-support map and target words share the positive HOL dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality/Reference.lean",
+    "lean_name": "wordEqThm0_refPtrFalseRight",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_thm0",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: this is the true/false RefPtr case of the first conjunct of word_eq_thm0, compared with the source boolean case split and typed capture. All original hypotheses and the existential conclusion are retained; the sized comparison hypothesis is impossible. This case does not assemble the full theorem. store uses the canonical finite-support map and target words share the positive HOL dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality/Block.lean",
     "lean_name": "wordEqThm0_block",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
