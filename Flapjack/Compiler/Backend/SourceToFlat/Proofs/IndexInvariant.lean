@@ -41,6 +41,24 @@ def idxFinalBlock (start : NextIndices) : Set (Nat × IndexKind) :=
     | .type => start.tidx ≤ i
     | .exception => start.eidx ≤ i
 
+/-- A reserved block and the subsequent unbounded indices partition the
+unbounded indices from its beginning. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "idx_block_union_final"]
+theorem idxBlock_union_final (start finish : NextIndices) (ordered : idxPrev start finish) :
+    idxBlock start finish ∪ idxFinalBlock finish = idxFinalBlock start := by
+  ext ⟨i, kind⟩
+  rcases ordered with ⟨hv, ht, he⟩
+  cases kind with
+  | «variable» =>
+    change (start.vidx ≤ i ∧ i < finish.vidx) ∨ finish.vidx ≤ i ↔ start.vidx ≤ i
+    omega
+  | «type» =>
+    change (start.tidx ≤ i ∧ i < finish.tidx) ∨ finish.tidx ≤ i ↔ start.tidx ≤ i
+    omega
+  | «exception» =>
+    change (start.eidx ≤ i ∧ i < finish.eidx) ∨ finish.eidx ≤ i ↔ start.eidx ≤ i
+    omega
+
 /-- Pairwise disjointness of a list of sets, with the original bounded indices. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ALL_DISJOINT_DEF"]
 def allDisjoint {α : Type} (sets : List (Set α)) : Prop :=

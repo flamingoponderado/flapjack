@@ -45,6 +45,7 @@ val _ = (print "idx_prev_refl="; print_thm source_to_flatProofTheory.idx_prev_re
 val _ = (print "idx_prev_trans="; print_thm source_to_flatProofTheory.idx_prev_trans; print "\n");
 val _ = (print "idx_block="; print_thm source_to_flatProofTheory.idx_block_def; print "\n");
 val _ = (print "idx_final_block="; print_thm source_to_flatProofTheory.idx_final_block_def; print "\n");
+val _ = (print "idx_block_union_final="; print_thm source_to_flatProofTheory.idx_block_union_final; print "\n");
 val _ = (print "idx_allocated="; print_thm source_to_flatProofTheory.genv_allocated_idxs_def; print "\n");
 val _ = (print "idx_disjoint="; print_thm source_to_flatProofTheory.ALL_DISJOINT_DEF; print "\n");
 val _ = (print "idx_finish="; print_thm source_to_flatProofTheory.fin_idx_match_def; print "\n");

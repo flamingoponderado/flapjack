@@ -1,5 +1,13 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "idxBlock_union_final",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "idx_block_union_final",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured typed source statement, including both next_indices arguments, the componentwise ordering premise and equality of sets of natural-index and index-kind pairs."
+  },
+  {
     "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
     "lean_name": "decodeDec_some",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
