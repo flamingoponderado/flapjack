@@ -8232,8 +8232,8 @@ run_probe data_to_word_gc_stack_probeScript.sml data_to_word_gc_stack_probe.out 
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_space_control_probeScript.sml data_to_word_space_control_probe.out \
-  do_space_code_const_typed cut_state_opt_ffi_typed \
-  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/semantics"
+  do_space_code_const_typed cut_state_opt_ffi_typed MEM_join_env_cut_env_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_option_le_probeScript.sml data_to_word_option_le_probe.out \
   option_le_SOME_typed get_limits_def_typed \

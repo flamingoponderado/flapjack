@@ -26,8 +26,8 @@ global default, handler-location, architecture/heap-limit, polymorphic environme
 The capture supports source review; it is not a cross-language proof.
 
 `data_to_word_space_control_probe.out` captures typed literal HOL replays of
-the space-accounting code/oracle preservation and optional environment-cut FFI
-preservation lemmas. Regenerate with
+the space-accounting code/oracle preservation, environment-join membership,
+and optional environment-cut FFI preservation lemmas. Regenerate with
 `HOL_PROBE_ONLY=data_to_word_space_control_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source review; it is not a cross-language proof.
 

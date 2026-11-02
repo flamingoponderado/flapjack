@@ -102060,6 +102060,15 @@
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 4628-4634, binders !p s t; evaluate (p,s) = (NONE,t) ⇒ stack_size t.stack = stack_size s.stack; from evaluate_stack_swap and s_key_eq_stack_size as in HOL. State carrier WordSemStateFiniteExact width C F (alpha word width, independent beta/gamma as C/F) with the reviewed fmap_as_finite_support [fpRegs, store] and words qualifiers. Inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8) through evaluate/inst. Typed capture word_props_code_grows probe (show_types, no hypotheses)."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/JoinEnv.lean",
+    "lean_name": "mem_joinEnv_cutEnv",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+    "hol_name": "MEM_join_env_cut_env",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: lines 102–115 and literal typed replay in data_to_word_space_control_probe. The source value type remains independent of the positive-width WordLocW carrier; the free cut environment and quantified pair, word tree, live set and source tree are retained. The conjunction premise and membership conclusion follow the same joinEnv, inter, adjustSet and cutEnv operations, including noncanonical sparse trees. Nonempty models HOL's inhabited source value type."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean",
     "lean_name": "lookup_adjustVar_adjustSet",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
