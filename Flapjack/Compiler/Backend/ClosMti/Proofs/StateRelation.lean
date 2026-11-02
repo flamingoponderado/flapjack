@@ -119,6 +119,86 @@ theorem stateRel_updateRefs {C F : Type} {source target : State C F}
   exact ⟨oracle, sourceCode, targetCode, maxApp, positive, clock, ffi, globals,
     fmapRel_update refs key left right values, compiler, nextOracle⟩
 
+/-- Replacing both FFI states preserves the relation. -/
+theorem stateRel_withFfi {C F : Type} {source target : State C F}
+    (related : StateRel source target) (ffi : HolFfiState F) :
+    StateRel { source with ffi := ffi } { target with ffi := ffi } := by
+  obtain ⟨oracle, sourceCode, targetCode, maxApp, positive, clock, _, globals, refs, compiler, nextOracle⟩ := related
+  exact ⟨oracle, sourceCode, targetCode, maxApp, positive, clock, rfl, globals, refs, compiler, nextOracle⟩
+
+/-- Replacing both global lists with related lists preserves the relation. -/
+theorem stateRel_withGlobals {C F : Type} {source target : State C F}
+    (related : StateRel source target) (left right : List (Option Value))
+    (globals : List.Forall₂ (ValueRelOpt source.maxApp) left right) :
+    StateRel { source with globals := left } { target with globals := right } := by
+  obtain ⟨oracle, sourceCode, targetCode, maxApp, positive, clock, ffi, _, refs, compiler, nextOracle⟩ := related
+  exact ⟨oracle, sourceCode, targetCode, maxApp, positive, clock, ffi, globals, refs, compiler, nextOracle⟩
+
+/-- The multi-argument state relation meets the generic simple-state
+conditions used by primitive-operation simulations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "simple_state_rel"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleStateRel {C F : Type} (maxApp : Nat) :
+    ClosProps.simpleStateRel (ValueRel maxApp)
+      (fun (s t : State C F) => s.maxApp = maxApp ∧ StateRel s t) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro s t ptr ⟨missing, eq, states⟩
+    have lookup := stateRel_lookupRefs states ptr
+    cases left : s.refs.lookup ptr <;> simp_all [OptionRel]
+  · intro bytes t s ptr ⟨found, eq, states⟩
+    have lookup := stateRel_lookupRefs states ptr
+    rw [found] at lookup
+    cases left : s.refs.lookup ptr with
+    | none => simp [OptionRel, left] at lookup
+    | some value =>
+      have refs : RefRel s.maxApp value (.byteArray bytes) := by simpa [OptionRel, left] using lookup
+      cases refs
+      rfl
+  · intro values t s ptr ⟨found, eq, states⟩
+    have lookup := stateRel_lookupRefs states ptr
+    rw [found] at lookup
+    cases left : s.refs.lookup ptr with
+    | none => simp [OptionRel, left] at lookup
+    | some value =>
+      have refs : RefRel s.maxApp value (.valueArray values) := by simpa [OptionRel, left] using lookup
+      cases refs with
+      | valueArray leftValues _ rel =>
+        exact ⟨leftValues, rfl, by simpa [eq] using rel⟩
+  · intro mode value t s ptr ⟨found, eq, states⟩
+    have lookup := stateRel_lookupRefs states ptr
+    rw [found] at lookup
+    cases left : s.refs.lookup ptr with
+    | none => simp [OptionRel, left] at lookup
+    | some old =>
+      have refs : RefRel s.maxApp old (.thunk mode value) := by simpa [OptionRel, left] using lookup
+      cases refs with
+      | thunk _ leftValue _ rel =>
+        exact ⟨leftValue, rfl, by simpa [eq] using rel⟩
+  · intro s t ⟨eq, states⟩
+    obtain ⟨_, _, _, _, _, _, ffi, globals, refs, _, _⟩ := states
+    refine ⟨ffi.symm, refs.1, ?_⟩
+    have same : ValueRelOpt maxApp = ClosProps.optionRel (ValueRel maxApp) := by
+      funext a b; cases a <;> cases b <;> rfl
+    simpa [eq, same] using globals
+  · intro ffi s t ⟨eq, states⟩
+    exact ⟨eq, stateRel_withFfi states ffi⟩
+  · intro bytes s t ptr ⟨eq, states⟩
+    exact ⟨eq, stateRel_updateRefs states ptr _ _ (.byteArray bytes)⟩
+  · intro s t ptr xs ys ⟨⟨eq, states⟩, values⟩
+    apply And.intro eq
+    apply stateRel_updateRefs states ptr _ _
+    exact .valueArray xs ys (by simpa [eq] using values)
+  · intro s t ptr mode v w ⟨⟨eq, states⟩, values⟩
+    apply And.intro eq
+    apply stateRel_updateRefs states ptr _ _
+    exact .thunk mode v w (by simpa [eq] using values)
+  · intro s t xs ys ⟨⟨eq, states⟩, values⟩
+    apply And.intro eq
+    apply stateRel_withGlobals states xs ys
+    have same : ValueRelOpt maxApp = ClosProps.optionRel (ValueRel maxApp) := by
+      funext a b; cases a <;> cases b <;> rfl
+    simpa [eq, same] using values
+
 /-- Thunk inspection preserves its error classification and relates values
 when it finds a thunk. This relation is Lean-side simulation infrastructure. -/
 inductive DestThunkRel (maxApp : Nat) : DestThunkResult → DestThunkResult → Prop where

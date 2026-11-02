@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
 import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
 import Flapjack.Compiler.Backend.Semantics.ClosSem
+import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
 import Mathlib.Data.List.Forall2
 
 /-! Proof-side relations for the multi-argument introduction simulation. -/
@@ -126,6 +127,40 @@ theorem valueRel_target_closure {maxApp : Nat} {source : Value}
   cases related with
   | closure args₁ _ env₁ _ _ body₁ _ names arityRel code envRel argsRel =>
     exact ⟨args₁, env₁, names, body₁, rfl, arityRel, code, envRel, argsRel⟩
+
+/-- The multi-argument value relation meets the generic simple-value
+conditions used by primitive-operation simulations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "simple_val_rel"]
+theorem simpleValRel (maxApp : Nat) : ClosProps.simpleValRel (ValueRel maxApp) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro x n
+    constructor
+    · intro h; cases h; rfl
+    · intro h; subst x; exact .number n
+  · intro x fields tag
+    constructor
+    · intro h
+      cases h with
+      | block _ left _ rel => exact ⟨left, rfl, rel⟩
+    · rintro ⟨left, rfl, rel⟩
+      exact .block tag left fields rel
+  · intro x word
+    constructor
+    · intro h; cases h; rfl
+    · intro h; subst x; exact .word64 word
+  · intro x bytes
+    constructor
+    · intro h; cases h; rfl
+    · intro h; subst x; exact .byteVector bytes
+  · intro x address flag
+    constructor
+    · intro h; cases h; rfl
+    · intro h; subst x; exact .refPtr flag address
+  · intro body arity env args loc x h
+    cases h
+    trivial
+  · intro index funs env args loc x h
+    cases h <;> trivial
 
 /-- A source-related target function has positive arity. -/
 theorem functionRel_target_arity_pos {maxApp : Nat} {source target : Nat × ClosLang.Exp}

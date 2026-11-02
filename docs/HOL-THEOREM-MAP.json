@@ -1,5 +1,53 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "hol_name": "isClos_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/SimpleRelations.lean",
+    "lean_name": "isClos",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed is_closure_typed cases: ordinary and recursive closure constructors return true and the five scalar, block, vector and reference constructors return false. Reviewed ClosSem.Value carrier is used."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "hol_name": "simple_val_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/SimpleRelations.lean",
+    "lean_name": "simpleValRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared simple_value_relation_typed: arbitrary value relation, scalar iff clauses, block field list relation, and both source-closure conditions preserve all types, binder order, hypotheses and conclusions. Fixed word64 and word8 lists use reviewed value carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "hol_name": "simple_state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/SimpleRelations.lean",
+    "lean_name": "simpleStateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "reviewer": "Compared all ten clauses of simple_state_relation_typed. Source and target compiler carriers remain independently polymorphic, with shared FFI carrier. Missing, byte-array, value-array and thunk lookups; FFI, domain and global observations; and FFI, reference and global updates retain the original directions and hypotheses. HOL FDOM equality is pointwise lookup-domain equivalence; updateEq implements HOL equality update. The imported reviewed State carrier has canonical refs and code maps with a local re-exported lookup/support roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "simple_val_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "lean_name": "simpleValRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared mti_simple_value_relation_typed: for arbitrary max_app the reviewed multi-argument ValueRel satisfies the reviewed generic simpleValRel without additional hypotheses. Lean checks every source constructor case."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "simple_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/StateRelation.lean",
+    "lean_name": "simpleStateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "reviewer": "Compared mti_simple_state_relation_typed: for arbitrary max_app and independent compiler and FFI carriers, the reviewed generic simpleStateRel holds for ValueRel and the relation requiring source maxApp equality together with reviewed StateRel. No extra hypotheses are added. The imported reviewed State carrier has canonical refs and code maps with a same-module re-exported lookup/support roundtrip witness."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "dest_thunk_ret",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Thunk.lean",
