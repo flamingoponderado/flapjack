@@ -8243,7 +8243,7 @@ run_probe clos_mti_collect_args_probeScript.sml clos_mti_collect_args_probe.out 
   "$cake_dir/compiler/backend/proofs/clos_mtiProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_mti_install_probeScript.sml clos_mti_install_probe.out \
-  do_install_replay_typed \
+  do_install_replay_typed state_rel_opt_rel_refs_replay_typed rel_update_thunk_replay_typed \
   "$cake_dir/compiler/backend/proofs/clos_mtiProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe pan_to_word_crep_inst_ok_probeScript.sml pan_to_word_crep_inst_ok_probe.out \

@@ -1,6 +1,24 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "rel_update_thunk",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/StateRelation.lean",
+    "lean_name": "relUpdateThunk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "targetRefs", "sourceRefs"],
+    "reviewer": "Compared the original local theorem and hypothesis-free typed replay in clos_mti_install_probe.out: the shared compiler and FFI carriers, state and value relations, singleton pointer, failure implication, target-map success implication and existential source map/state update are unchanged. The state fields and standalone reference maps use canonical finite support. Compared the specialized updateThunk and storeThunk branches with the typed closure semantics: pointer flag and singleton guards, thunk inspection, unevaluated-store guard and HOL-equality update agree for these Nat/closure-value carriers. The state roundtrip witnesses the two state fields; this is source comparison, not a cross-language equivalence proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "state_rel_opt_rel_refs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/StateRelation.lean",
+    "lean_name": "stateRelOptRelRefs",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the original local theorem and its hypothesis-free typed proof replay in clos_mti_install_probe.out. Both states share independent compiler and FFI carriers; both directions retain their lookup equality premise and existential lookup with the original option lifting of refRel. The state uses the reviewed canonical finite-support refs and code maps and the local roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "do_install_lemma",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Install.lean",
     "lean_name": "doInstallLemma",

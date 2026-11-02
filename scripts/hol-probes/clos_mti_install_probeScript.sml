@@ -9,6 +9,43 @@ val _ = set_trace "BasicProvers.var_eq_old" 1;
 fun bring_fwd_ctors th ty = map ((fn s => Parse.bring_to_front_overload s {Name = s, Thy = th}) o term_to_string) (TypeBase.constructors_of ty);
 val _ = bring_fwd_ctors "closLang" ``:closLang$exp``;
 
+(* Replay the local lookup lemma used by the thunk-update case. *)
+Theorem state_rel_opt_rel_refs_replay:
+  (state_rel s1 s2 ∧ FLOOKUP s1.refs n = r1 ⇒
+     ∃r2. FLOOKUP s2.refs n = r2 ∧ OPTREL (ref_rel s1.max_app) r1 r2) ∧
+  (state_rel s1 s2 ∧ FLOOKUP s2.refs n = r2 ⇒
+     ∃r1. FLOOKUP s1.refs n = r1 ∧ OPTREL (ref_rel s1.max_app) r1 r2)
+Proof
+  rw [] \\ gvs [state_rel_def, FMAP_REL_def, FLOOKUP_DEF] \\ rw []
+QED
+
+Theorem rel_update_thunk_replay:
+  state_rel s1 s2 ∧
+  LIST_REL (v_rel s1.max_app) vs ys ⇒
+    (update_thunk [RefPtr v ptr] s2.refs ys = NONE ⇒
+       update_thunk [RefPtr v ptr] s1.refs vs = NONE) ∧
+    (update_thunk [RefPtr v ptr] s2.refs ys = SOME refs2 ⇒
+       ∃refs1. update_thunk [RefPtr v ptr] s1.refs vs = SOME refs1 ∧
+               state_rel (s1 with refs := refs1) (s2 with refs := refs2))
+Proof
+  rw []
+  \\ gvs [oneline update_thunk_def, AllCaseEqs()] \\ rw []
+  \\ gvs [oneline dest_thunk_def, AllCaseEqs()]
+  \\ (
+    gvs [Once v_rel_cases, oneline store_thunk_def, AllCaseEqs()]
+    \\ TRY (
+      drule_all (cj 2 state_rel_opt_rel_refs_replay) \\ rw [OPTREL_def]
+      \\ rgs [Once ref_rel_cases])
+    \\ TRY (
+      drule (cj 1 state_rel_opt_rel_refs_replay) \\ strip_tac
+      \\ first_x_assum dxrule \\ rw [OPTREL_def] \\ gvs []
+      \\ imp_res_tac (cj 2 state_rel_opt_rel_refs_replay) \\ gvs [OPTREL_def]
+      \\ rgs [Once ref_rel_cases])
+    \\ gvs [state_rel_def, FMAP_REL_def, FLOOKUP_UPDATE] \\ rw []
+    \\ simp [ref_rel_def]
+    \\ metis_tac [])
+QED
+
 (* Replay the source's local do_install_lemma with the original proof. *)
 val do_install_inst =
   simple_val_rel_do_install
@@ -39,8 +76,10 @@ Proof
   \\ fs [PAIR_FST_SND_EQ] \\ rveq \\ fs []
 QED
 
-val _ = if null (hyp do_install_replay) then
-  (print "do_install_replay_typed=";
-   Lib.with_flag (Globals.show_types,true) print_term (concl do_install_replay);
-   print "\n")
-  else raise Fail "do_install_replay has hypotheses";
+fun show_thm label th =
+  if null (hyp th) then
+    (print label; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
+  else raise Fail (label ^ " has hypotheses");
+val _ = show_thm "do_install_replay_typed=" do_install_replay;
+val _ = show_thm "state_rel_opt_rel_refs_replay_typed=" state_rel_opt_rel_refs_replay;
+val _ = show_thm "rel_update_thunk_replay_typed=" rel_update_thunk_replay;

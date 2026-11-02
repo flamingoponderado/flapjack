@@ -3,8 +3,9 @@ application collectors and replays the nested function/application definitions,
 accumulator lemmas, syntax preservation and reconstruction invariants. Regenerate with
 `HOL_PROBE_ONLY=clos_mti_collect_args_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`clos_mti_install_probe.out` replays the original local installation simulation
-with its HOL proof and captures its inferred types. Regenerate with
+`clos_mti_install_probe.out` replays the original local installation, reference
+lookup, and thunk-update simulations with their HOL proofs and captures their
+inferred types. Regenerate with
 `HOL_PROBE_ONLY=clos_mti_install_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The replay supports source review; it does not prove cross-language equivalence.
 

@@ -108,6 +108,22 @@ theorem stateRel_lookupRefs {C F : Type} {source target : State C F}
     OptionRel (RefRel source.maxApp) (source.refs.lookup key) (target.refs.lookup key) := by
   exact fmapRel_lookup related.2.2.2.2.2.2.2.2.1 key
 
+/-- Either reference lookup can be completed with the related lookup from the
+other state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "state_rel_opt_rel_refs"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRelOptRelRefs {C F : Type} (source target : State C F) (key : Nat)
+    (left right : Option (Ref Value)) :
+    (StateRel source target ∧ source.refs.lookup key = left →
+      ∃ right', target.refs.lookup key = right' ∧ OptionRel (RefRel source.maxApp) left right') ∧
+    (StateRel source target ∧ target.refs.lookup key = right →
+      ∃ left', source.refs.lookup key = left' ∧ OptionRel (RefRel source.maxApp) left' right) := by
+  constructor
+  · rintro ⟨states, lookup⟩
+    exact ⟨target.refs.lookup key, rfl, lookup ▸ stateRel_lookupRefs states key⟩
+  · rintro ⟨states, lookup⟩
+    exact ⟨source.refs.lookup key, rfl, lookup ▸ stateRel_lookupRefs states key⟩
+
 /-- Updating both reference stores with related entries preserves the state
 relation. This is a Lean-side step toward the source thunk-update theorem. -/
 theorem stateRel_updateRefs {C F : Type} {source target : State C F}
@@ -299,8 +315,8 @@ theorem storeThunk_related {C F : Type} {source target : State C F}
         | evaluated => simp [storeThunk, sourceLookup, targetLookup]
 
 /-- Thunk updates with related values fail together or produce related
-states. This follows the source thunk-update simulation but remains untagged
-until the Lean thunk operations have completed source correspondence review. -/
+states. This helper quantifies over successful target maps in its conclusion;
+the source-shaped theorem follows below. -/
 theorem updateThunk_related {C F : Type} {source target : State C F}
     {left right : List Value} (states : StateRel source target)
     (values : List.Forall₂ (ValueRel source.maxApp) left right) (flag : Bool) (key : Nat) :
@@ -348,5 +364,28 @@ theorem updateThunk_related {C F : Type} {source target : State C F}
             cases destRel
           | isThunk mode' value' => simp [updateThunk, sourceDest, targetDest]
       | cons head tail => simp [updateThunk]
+
+/-- The closure state roundtrips through its canonical finite-map view. -/
+theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- Source-shaped thunk-update simulation, with the target reference map
+quantified outside both implications. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "rel_update_thunk"
+  (fmap_as_finite_support_relation := [State.refs, State.code, targetRefs, sourceRefs])]
+theorem relUpdateThunk {C F : Type} (source target : State C F)
+    (left right : List Value) (flag : Bool) (key : Nat)
+    (targetRefs : HolFiniteMapExact Nat (Ref Value))
+    (related : StateRel source target ∧ List.Forall₂ (ValueRel source.maxApp) left right) :
+    (updateThunk [.refPtr flag key] target.refs right = none →
+      updateThunk [.refPtr flag key] source.refs left = none) ∧
+    (updateThunk [.refPtr flag key] target.refs right = some targetRefs →
+      ∃ (sourceRefs : HolFiniteMapExact Nat (Ref Value)),
+        updateThunk [.refPtr flag key] source.refs left = some sourceRefs ∧
+        StateRel { source with refs := sourceRefs } { target with refs := targetRefs }) := by
+  obtain ⟨failure, success⟩ := updateThunk_related related.1 related.2 flag key
+  exact ⟨failure, success targetRefs⟩
 
 end Flapjack.Compiler.Backend.ClosMti
