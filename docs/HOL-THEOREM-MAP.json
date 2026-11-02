@@ -1,5 +1,45 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_nil_source",
+    "reviewer": "Compared the empty expression-list clause at line 815 and the typed HOL equation: arbitrary environment and state, with independent compiler and FFI types; returns the same state and an empty value list. Other evaluator clauses remain under review."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluateDecs_nil_source",
+    "reviewer": "Compared the empty declaration-list clause at line 815 and typed HOL equation: arbitrary state with independent compiler and FFI types; returns that state with no error. Other evaluator clauses remain under review."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluateDecs_cons_source",
+    "reviewer": "Compared the original line-815 declaration-list clause: evaluates one declaration, applies fix_clock to its state, continues exactly on NONE and otherwise returns the error. The captured typed theorem is the later rebound equation after HOL rewrites away fix_clock; Lean proves the original form using its unconditional clock bound. The full evaluator remains under review."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluateDec_source",
+    "reviewer": "Compared the line-815 single-declaration clause and typed HOL equation: evaluates under the empty environment, accepts exactly the singleton Unitv result, and propagates evaluation errors. The HOL equation compiler renders the unit test as patterns; the Lean statement retains the original if. The full evaluator remains under review."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/StateRelation.lean",
     "lean_name": "StateRel",
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",

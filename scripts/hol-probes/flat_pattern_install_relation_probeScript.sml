@@ -49,6 +49,10 @@ val _ = show_thm "encode_pat_pcon_clause=" (List.nth (CONJUNCTS flat_patternTheo
 val _ = show_thm "compile_pats=" flat_patternTheory.compile_pats_def;
 val _ = show_thm "compile_exp_all=" flat_patternTheory.compile_exp_def;
 val _ = show_thm "compile_dec=" flat_patternTheory.compile_dec_def;
+val _ = show_thm "flat_evaluate_nil=" (List.nth (CONJUNCTS flatSemTheory.evaluate_def, 0));
+val _ = show_thm "flat_evaluate_dec=" (List.nth (CONJUNCTS flatSemTheory.evaluate_def, 14));
+val _ = show_thm "flat_evaluate_decs_nil=" (List.nth (CONJUNCTS flatSemTheory.evaluate_def, 15));
+val _ = show_thm "flat_evaluate_decs_cons=" (List.nth (CONJUNCTS flatSemTheory.evaluate_def, 16));
 val _ = show_thm "comp_is_const_row=" pattern_compTheory.is_const_row_def;
 val _ = show_thm "comp_is_any=" pattern_compTheory.is_Any_def;
 val _ = show_thm "comp_is_or_row=" pattern_compTheory.is_Or_row_def;
