@@ -219,6 +219,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Return
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.SeqCases
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.If
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Move
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Fragment
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordTotal
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordLabels
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
