@@ -16,6 +16,8 @@ val _ = show_thm "install_relation=" flat_patternProofTheory.install_conf_rel_de
 val _ = show_thm "compile_exp_con_clause=" (List.nth (CONJUNCTS flat_patternTheory.compile_exp_def, 3));
 val _ = show_thm "compile_exp_app_clause=" (List.nth (CONJUNCTS flat_patternTheory.compile_exp_def, 5));
 val _ = show_thm "compile_exp_letrec_clause=" (List.nth (CONJUNCTS flat_patternTheory.compile_exp_def, 8));
+val _ = show_thm "encode_pat_pcon_clause=" (List.nth (CONJUNCTS flat_patternTheory.encode_pat_def, 3));
+val _ = show_thm "compile_pats=" flat_patternTheory.compile_pats_def;
 val _ = show_thm "decs_semantics=" flat_patternProofTheory.compile_decs_semantics;
 val _ = show_thm "basic_values=" flatPropsTheory.simple_basic_val_rel_def;
 val _ = show_thm "value_contents=" flatPropsTheory.v_container_xs_def;

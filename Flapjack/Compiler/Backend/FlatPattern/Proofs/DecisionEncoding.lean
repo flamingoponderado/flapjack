@@ -13,12 +13,6 @@ def encodeMatchResult {A : Type} : Flapjack.SemanticPrimitivesHOL.MatchResult A 
   | .noMatch => .failure
   | .typeError => .typeFailure
 
-/-- The auxiliary pattern traversal agrees with mapping the pattern encoding. -/
-theorem encodePats_eq_map (patterns : List FlatLang.Pat) : encodePats patterns = patterns.map encodePat := by
-  induction patterns with
-  | nil => rfl
-  | cons pattern patterns ih => simp [encodePats, ih]
-
 mutual
 /-- Project flat values into the pattern compiler's abstract value domain. -/
 def encodeValue : FlatSem.Value → PatternSemantics.Term

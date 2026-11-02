@@ -1,5 +1,21 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Encode.lean",
+    "lean_name": "encodePat_pcon_source",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "encode_pat_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed constructor conjunct: arbitrary optional constructor/type-group tag and child-pattern list, the three source tag cases retain the constructor and constructor-list but drop the type-group id, and children use MAP encode_pat. The checked helper connects this to the executed recursive list traversal."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Patterns.lean",
+    "lean_name": "compilePats_source",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "compile_pats_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed wrapper: all seven source inputs, original branch map, naive ZIP branch, zero-based MAPi decision rows, pattern_comp call, and fromList branch tree passed to decode_dtree. The theorem uses the executed compiler; source correspondence of the constituent passes remains a separate obligation."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileOrder.lean",
     "lean_name": "compileExp_letrec_source",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",

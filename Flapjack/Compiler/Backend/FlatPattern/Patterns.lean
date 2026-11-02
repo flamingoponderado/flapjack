@@ -54,6 +54,19 @@ def compilePats (_cfg : Config) (naive : Bool) (t : Tra) (i : Nat)
     let pats := ps.zipIdx.map fun ((p, _), j) => (encodePat p, j)
     decodeDtree t (branchTree branches) v default (PatternComp.comp pats)
 
+/-- Branch compilation in the source's indexed-map and sparse-tree shape. -/
+@[hol "cakeml/compiler/backend/flat_patternScript.sml" "compile_pats_def"]
+theorem compilePats_source (cfg : Config) (naive : Bool) (t : Tra) (i : Nat)
+    (v default : FlatLang.Exp) (ps : List (FlatLang.Pat × FlatLang.Exp)) :
+    compilePats cfg naive t i v default ps =
+      let branches := ps.map (compilePatRhs t i v)
+      if naive then
+        naivePatternMatches t v (List.zip (ps.map Prod.fst) branches) default
+      else
+        let pats := ps.mapIdx (fun j (p, _) => (encodePat p, j))
+        decodeDtree t (sptFromList branches) v default (PatternComp.comp pats) := by
+  simp only [compilePats, branchTree, List.mapIdx_eq_zipIdx_map]
+
 /-- Run the source `compile_pats` algorithm with an explicit budget for naive
 matching. `none` reports exhaustion; the original total declaration and a
 proof of a sufficient naive-matching bound remain open. -/
