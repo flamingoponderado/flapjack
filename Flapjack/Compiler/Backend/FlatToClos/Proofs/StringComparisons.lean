@@ -38,7 +38,7 @@ theorem evaluate_stringCompare {C F : Type} (env : FlatSem.Environment FlatSem.V
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -119,7 +119,7 @@ theorem evaluate_stringAltCompare {C F : Type} (env : FlatSem.Environment FlatSe
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]

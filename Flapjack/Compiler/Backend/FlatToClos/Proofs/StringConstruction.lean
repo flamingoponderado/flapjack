@@ -107,7 +107,7 @@ theorem evaluate_stringImplode {C F : Type} (env : FlatSem.Environment FlatSem.V
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -214,7 +214,7 @@ theorem evaluate_stringConcat {C F : Type} (env : FlatSem.Environment FlatSem.Va
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with

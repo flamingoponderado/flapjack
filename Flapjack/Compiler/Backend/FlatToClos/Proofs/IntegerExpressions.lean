@@ -88,7 +88,7 @@ theorem evaluate_intAdd {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -178,7 +178,7 @@ theorem evaluate_intSub {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -268,7 +268,7 @@ theorem evaluate_intMul {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -358,7 +358,7 @@ theorem evaluate_intDiv {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -445,7 +445,7 @@ theorem evaluate_intMod {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -532,7 +532,7 @@ theorem evaluate_intCmpLt {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -614,7 +614,7 @@ theorem evaluate_intCmpLeq {C F : Type} (env : FlatSem.Environment FlatSem.Value
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -696,7 +696,7 @@ theorem evaluate_intCmpGt {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -778,7 +778,7 @@ theorem evaluate_intCmpGeq {C F : Type} (env : FlatSem.Environment FlatSem.Value
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -860,7 +860,7 @@ theorem evaluate_intEquality {C F : Type} (env : FlatSem.Environment FlatSem.Val
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -941,7 +941,7 @@ theorem evaluate_charEquality {C F : Type} (env : FlatSem.Environment FlatSem.Va
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -1027,7 +1027,7 @@ theorem evaluate_word8Equality {C F : Type} (env : FlatSem.Environment FlatSem.V
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -1113,7 +1113,7 @@ theorem evaluate_word64Equality {C F : Type} (env : FlatSem.Environment FlatSem.
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -1194,7 +1194,7 @@ theorem evaluate_stringEquality {C F : Type} (env : FlatSem.Environment FlatSem.
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -1276,7 +1276,7 @@ theorem evaluate_float64Equality {C F : Type} (env : FlatSem.Environment FlatSem
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -1356,7 +1356,7 @@ theorem evaluate_boolEquality {C F : Type} (env : FlatSem.Environment FlatSem.Va
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]

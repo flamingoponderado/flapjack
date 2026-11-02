@@ -101,30 +101,51 @@ private theorem reverse_noMti (xs : List ClosLang.Exp) (safe : noMtiList xs) :
 theorem compileExp_noMti (m : List (Option MlString)) (exp : FlatLang.Exp) :
     noMti (compileExp m exp) := by
   induction m, exp using compileExp.induct
-      (motive_2 := fun m fs => noMtiFuns (compileFuns m fs))
-      (motive_3 := fun m xs => noMtiList (compileExps m xs)) with
+      (motive2 := fun m fs => noMtiFuns (compileFuns m fs))
+      (motive3 := fun m xs => noMtiList (compileExps m xs)) with
   | case1 m t e ih => simpa [compileExp, noMti] using ih
   | case2 m t l => cases l <;> simp [compileExp, compileLit, noMti, noMtiList]
   | case3 m t v => simp [compileExp, noMti]
   | case4 m t tag es ih =>
-    simp only [compileExp, noMti_smartCons, ← noMtiList_iff]
-    exact reverse_noMti _ ih
-  | case5 m t u x ih | case6 m t u x ih => simpa [compileExp] using ih
-  | case7 m t op es h1 h2 ih =>
-    simpa only [compileExp] using compileOp_noMti t op _ (reverse_noMti _ ih)
-  | case8 m t v e ih => simpa [compileExp, noMti] using ih
-  | case9 m t a b c iha ihb ihc => simp [compileExp, noMti, iha, ihb, ihc]
-  | case10 m t vo a b iha ihb => simp [compileExp, noMti, noMtiList, iha, ihb]
-  | case11 m t e ps => simp [compileExp, noMti, noMtiList]
-  | case12 m t e v h ihe ihh => simp [compileExp, noMti, ihe, ihh]
-  | case13 m t e ps h ih => simpa only [compileExp] using ih
-  | case14 m t fs e newM ihf ihe =>
+    rw [compileExp.eq_def]
+    dsimp only
+    split <;> simpa [noMti_smartCons, ← noMtiList_iff] using ih
+  | case5 m t op es x found ih =>
+    rw [compileExp.eq_def]
+    dsimp only
+    rw [found]
+    exact ih
+  | case6 m t op es found ih =>
+    rw [compileExp.eq_def]
+    dsimp only
+    rw [found]
+    exact compileOp_noMti t op _ (reverse_noMti _ ih)
+  | case7 m t v e ih => simpa [compileExp, noMti] using ih
+  | case8 m t a b c iha ihb ihc => simp [compileExp, noMti, iha, ihb, ihc]
+  | case9 m t vo a b iha ihb => simp [compileExp, noMti, noMtiList, iha, ihb]
+  | case10 m t e ps => simp [compileExp, noMti, noMtiList]
+  | case11 m t e ps v h found ihe ihh =>
+    rw [compileExp.eq_def]
+    dsimp only
+    rw [found]
+    simpa [noMti] using And.intro ihe ihh
+  | case12 m t e ps found ih =>
+    rw [compileExp.eq_def]
+    dsimp only
+    rw [found]
+    exact ih
+  | case13 m t fs e newM ihf ihe =>
     simp only [compileExp, noMti, true_and]
+    change noMti (compileExp (fs.attach.map (fun x => some x.val.1) ++ m) e) at ihe
+    change noMtiFuns (compileFuns (fs.attach.map (fun x => some x.val.1) ++ m) fs) at ihf
+    have namesEq : fs.attach.map (fun x => some x.val.1) = fs.map (fun x => some x.1) :=
+      List.attach_map_val (f := fun x : MlString × MlString × FlatLang.Exp => some x.1)
+    rw [namesEq] at ihe ihf
     exact ⟨ihe, ihf⟩
-  | case15 m => simp [compileExps, noMtiList]
-  | case16 m e es ihe ihes => simp [compileExps, noMtiList, ihe, ihes]
-  | case17 m => simp [compileFuns, noMtiFuns]
-  | case18 m f v e fs ihe ihfs => simp [compileFuns, noMtiFuns, ihe, ihfs]
+  | case14 m => simp [compileFuns, noMtiFuns]
+  | case15 m f v e fs ihe ihfs => simp [compileFuns, noMtiFuns, ihe, ihfs]
+  | case16 m => simp [compileExps, noMtiList]
+  | case17 m e es ihe ihes => simp [compileExps, noMtiList, ihe, ihes]
 
 /-- Flapjack helper: compilation of any flat declaration list has pre-MTI
 syntax. The HOL theorem additionally states two other syntax properties. -/

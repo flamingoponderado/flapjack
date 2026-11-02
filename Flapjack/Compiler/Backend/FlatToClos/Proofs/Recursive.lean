@@ -42,7 +42,7 @@ theorem recClosureList_related (funs : List (VarN × VarN × FlatLang.Exp))
 theorem compileFuns_length (names : List (Option MlString)) (funs : List (VarN × VarN × FlatLang.Exp)) :
     (compileFuns names funs).length = funs.length := by
   induction funs with
-  | nil => rfl
+  | nil => simp [compileFuns]
   | cons first rest ih =>
     rcases first with ⟨name, arg, body⟩
     simp [compileFuns, ih]
@@ -103,7 +103,7 @@ theorem compileFuns_unary (names : List (Option MlString)) (funs : List (VarN ×
     (maxApp : Nat) (positive : 1 ≤ maxApp) :
     (compileFuns names funs).all (fun (arity, _) => arity ≤ maxApp && arity != 0) = true := by
   induction funs with
-  | nil => rfl
+  | nil => simp [compileFuns]
   | cons first rest ih =>
     rcases first with ⟨name, arg, body⟩
     simp [compileFuns, positive, ih]

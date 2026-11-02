@@ -15,41 +15,52 @@ def nameIndex (v : Option MlString) : List (Option MlString) → Nat
 mutual
 /-- Compile one expression. This is an implementation helper for the
 list-valued HOL `compile`; the source's singleton results always have length
-one. The two nested conversion patterns implement `dest_nop`. -/
-def compileExp (m : List (Option MlString)) : FlatLang.Exp → ClosLang.Exp
+one. -/
+def compileExp (m : List (Option MlString)) (expression : FlatLang.Exp) : ClosLang.Exp :=
+  match expression with
   | .raise t e => .raise t (compileExp m e)
   | .lit t l => compileLit t l
   | .varLocal t v => .var t (nameIndex (some v) m)
   | .con t n es =>
       let tag := match n with | some (tag, _) => tag | none => 0
       smartCons t tag (compileExps m es).reverse
-  | .app _ (.src (.fromTo .intT (.wordT .w8)))
-      [.app _ (.src (.fromTo .charT .intT)) [x]] => compileExp m x
-  | .app _ (.src (.fromTo .intT .charT))
-      [.app _ (.src (.fromTo (.wordT .w8) .intT)) [x]] => compileExp m x
-  | .app t op es => compileOp t op (compileExps m es).reverse
+  | .app t op es =>
+      match _found : destNop op es with
+      | some x => compileExp m x
+      | none => compileOp t op (compileExps m es).reverse
   | .fn t v e => .fn t none none 1 (compileExp (some v :: m) e)
   | .if_ t a b c => .ifThenElse t (compileExp m a) (compileExp m b) (compileExp m c)
   | .let_ t vo e1 e2 => .let t [compileExp m e1] (compileExp (vo :: m) e2)
   | .mat t _ _ => .op t (.intOp (.const 0)) []
-  | .handle t e [(.pvar v, h)] =>
-      .handle t (compileExp m e) (compileExp (some v :: m) h)
-  | .handle _ e _ => compileExp m e
+  | .handle t e rows =>
+      match _found : destPat rows with
+      | some (v, h) => .handle t (compileExp m e) (compileExp (some v :: m) h)
+      | none => compileExp m e
   | .letrec t funs e =>
       let newM := funs.map (fun (f, _, _) => some f) ++ m
       .letrec (funs.map fun (f, _, _) => joinStrings t f) none none
         (compileFuns newM funs) (compileExp newM e)
+termination_by sizeOf expression
+decreasing_by
+  all_goals simp_wf
+  all_goals try (simpa using destNop_size t op es x _found)
+  all_goals try (have rowsEq := destPat_eq_some rows v h _found; subst rows; simp_all)
+  all_goals try omega
 
 /-- Compile expressions in source order. -/
-def compileExps (m : List (Option MlString)) : List FlatLang.Exp → List ClosLang.Exp
+def compileExps (m : List (Option MlString)) (expressions : List FlatLang.Exp) : List ClosLang.Exp :=
+  match expressions with
   | [] => []
   | e :: es => compileExp m e :: compileExps m es
+termination_by sizeOf expressions
 
 /-- Compile recursive function bodies with the recursive environment in scope. -/
-def compileFuns (m : List (Option MlString)) :
-    List (MlString × MlString × FlatLang.Exp) → List (Nat × ClosLang.Exp)
+def compileFuns (m : List (Option MlString)) (functions : List (MlString × MlString × FlatLang.Exp)) :
+    List (Nat × ClosLang.Exp) :=
+  match functions with
   | [] => []
   | (_, v, e) :: fs => (1, compileExp (some v :: m) e) :: compileFuns m fs
+termination_by sizeOf functions
 end
 
 /-- List-valued flat-to-closure translation; interpreter attachment is a

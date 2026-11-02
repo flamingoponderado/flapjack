@@ -36,7 +36,7 @@ theorem evaluate_floatAbs {C F : Type} (env : FlatSem.Environment FlatSem.Value)
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -115,7 +115,7 @@ theorem evaluate_floatNeg {C F : Type} (env : FlatSem.Environment FlatSem.Value)
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -194,7 +194,7 @@ theorem evaluate_floatSqrt {C F : Type} (env : FlatSem.Environment FlatSem.Value
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -275,7 +275,7 @@ theorem evaluate_floatAdd {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -365,7 +365,7 @@ theorem evaluate_floatSub {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -455,7 +455,7 @@ theorem evaluate_floatMul {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -545,7 +545,7 @@ theorem evaluate_floatDiv {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -638,7 +638,7 @@ theorem evaluate_floatFma {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]

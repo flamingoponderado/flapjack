@@ -25,7 +25,7 @@ theorem evaluate_lenEq {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [List.reverse_singleton, flatFix, failure]
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, List.reverse_singleton] at argSim ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, List.reverse_singleton] at argSim ⊢
   rw [FlatSem.evaluate] at notTypeError ⊢
   rw [ClosSem.evaluate, closFix]
   simp only [List.reverse_singleton, flatFix] at notTypeError ⊢
@@ -72,7 +72,7 @@ theorem evaluate_tagLenEq {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [List.reverse_singleton, flatFix, failure]
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, List.reverse_singleton] at argSim ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, List.reverse_singleton] at argSim ⊢
   rw [FlatSem.evaluate] at notTypeError ⊢
   rw [ClosSem.evaluate, closFix]
   simp only [List.reverse_singleton, flatFix] at notTypeError ⊢

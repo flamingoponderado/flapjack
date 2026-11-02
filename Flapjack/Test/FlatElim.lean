@@ -179,20 +179,29 @@ example : compileOp .none (.src (.fromTo .intT (.wordT .w8))) [.var .none 7] =
 example : Flapjack.Compiler.Backend.FlatToClos.compile []
     [.let_ .none (some (ofString "x")) (.lit .none (.intLit 4))
       (.varLocal .none (ofString "x"))] =
-    [.let .none [.op .none (.intOp (.const 4)) []] (.var .none 0)] := rfl
+    [.let .none [.op .none (.intOp (.const 4)) []] (.var .none 0)] := by
+  simp only [compile, Compiler.Backend.FlatToClos.compileExps, Compiler.Backend.FlatToClos.compileExp]
+  rfl
 example : Flapjack.Compiler.Backend.FlatToClos.compile []
     [.con .none (some (4, none)) [.lit .none (.intLit 1), .lit .none (.intLit 2)]] =
-    [.op .none (.blockOp (.constant (.constCons 4 [.constInt 1, .constInt 2]))) []] := rfl
+    [.op .none (.blockOp (.constant (.constCons 4 [.constInt 1, .constInt 2]))) []] := by
+  simp only [compile, Compiler.Backend.FlatToClos.compileExps, Compiler.Backend.FlatToClos.compileExp]
+  rfl
 #guard compile_let && compile_constructor
 example : destNop (.src (.fromTo .intT (.wordT .w8)))
     [.app .none (.src (.fromTo .charT .intT)) [lit]] = some lit := rfl
 example : Flapjack.Compiler.Backend.FlatToClos.compile []
     [.app .none (.src (.fromTo .intT (.wordT .w8)))
       [.app .none (.src (.fromTo .charT .intT)) [lit]]] =
-    [.op .none (.intOp (.const 1)) []] := rfl
+    [.op .none (.intOp (.const 1)) []] := by
+  simp only [lit, compile, Compiler.Backend.FlatToClos.compileExps,
+    Compiler.Backend.FlatToClos.compileExp, destNop]
+  rfl
 #guard compile_nop
 example : Flapjack.Compiler.Backend.FlatToClos.compileProg [] =
-    [Flapjack.Compiler.Backend.ClosInterp.compileInit false] := rfl
+    [Flapjack.Compiler.Backend.ClosInterp.compileInit false] := by
+  simp only [compileProg, compileDecs, compile, Compiler.Backend.FlatToClos.compileExps]
+  rfl
 #guard closure_empty_program
 #guard Flapjack.Compiler.Backend.ClosLang.hasInstallList
   [.fn (ofString "f") none none 1 (.op .none .install [])] == closure_install_detect
@@ -203,7 +212,9 @@ example : Flapjack.Compiler.Backend.ClosInterp.compileInit false =
 #guard closure_init_false
 example : (Flapjack.Compiler.Backend.FlatToClos.incCompileDecs [] :
     List Flapjack.Compiler.Backend.ClosLang.Exp × List Nat) =
-    ([.op .none (.blockOp (.cons 0)) []], []) := rfl
+    ([.op .none (.blockOp (.cons 0)) []], []) := by
+  simp only [incCompileDecs, compileDecs, compile, Compiler.Backend.FlatToClos.compileExps, Compiler.Backend.FlatToClos.compileExp]
+  rfl
 #guard incremental_empty
 #guard [Flapjack.Compiler.Backend.ClosInterp.canInterpretOp (.blockOp (.cons 3)) 1,
   Flapjack.Compiler.Backend.ClosInterp.canInterpretOp (.blockOp (.cons 2)) 1] == interpreter_arity

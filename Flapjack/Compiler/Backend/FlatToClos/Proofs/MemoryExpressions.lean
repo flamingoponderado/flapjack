@@ -37,7 +37,7 @@ theorem evaluate_ref {C F : Type} (env : FlatSem.Environment FlatSem.Value)
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -108,7 +108,7 @@ theorem evaluate_byteArrayLength {C F : Type} (env : FlatSem.Environment FlatSem
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -186,7 +186,7 @@ theorem evaluate_arrayLength {C F : Type} (env : FlatSem.Environment FlatSem.Val
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with

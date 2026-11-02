@@ -107,21 +107,10 @@ theorem compile_intToWord8_regular (names : List (Option MlString)) (trace : Bac
     (regular : destNop (.src (.fromTo .intT (.wordT .w8))) [argument] = none) :
     compileExp names (.app trace (.src (.fromTo .intT (.wordT .w8))) [argument]) =
       .op trace (.intOp .mod) [.op trace (.intOp (.const 256)) [], compileExp names argument] := by
-  cases argument <;> simp_all [destNop, compileExp, compileExps, compileOp, arg1]
-  case app innerTrace op innerArgs =>
-    cases op <;> try simp_all [compileExp, compileExps, compileOp, arg1]
-    case src operation =>
-      cases operation <;> try simp_all [compileExp, compileExps, compileOp, arg1]
-      case fromTo sourceType targetType =>
-        cases sourceType <;> cases targetType <;>
-          simp_all [compileExp, compileExps, compileOp, arg1]
-        case charT.intT =>
-          cases innerArgs with
-          | nil => simp [compileExp, compileExps, compileOp, arg1]
-          | cons first rest =>
-            cases rest with
-            | nil => simp at regular
-            | cons second rest => simp [compileExp, compileExps, compileOp, arg1]
+  rw [compileExp.eq_def]
+  dsimp only
+  rw [regular]
+  simp [compileOp, compileExps, arg1]
 
 /-- The byte no-op recognizer identifies exactly the character-to-integer
 argument shape. -/
@@ -187,13 +176,21 @@ theorem evaluate_intToWord8_nonUnary {C F : Type} (env : FlatSem.Environment Fla
   have compiled : compileExp names (.app trace (.src (.fromTo .intT (.wordT .w8))) args) =
       .let .none (compileExps names args).reverse (.var .none 0) := by
     cases args with
-    | nil => rfl
+    | nil => simp [compileExp, destNop, compileOp, arg1, compileExps]
     | cons first rest =>
       cases rest with
       | nil => simp at wrong
       | cons second rest =>
+        have noNop : destNop (.src (.fromTo .intT (.wordT .w8))) (first :: second :: rest) = none := by
+          cases found : destNop (.src (.fromTo .intT (.wordT .w8))) (first :: second :: rest) with
+          | none => rfl
+          | some x =>
+            rcases destNop_shape _ _ x found with ⟨_, _, eq⟩ | ⟨_, _, eq⟩ <;> cases eq
+        rw [compileExp.eq_def]
+        dsimp only
+        rw [noNop]
         cases h : (compileExps names rest).reverse <;>
-          simp [compileExp, compileOp, arg1, compileExps, List.reverse_cons, h]
+          simp [compileOp, arg1, compileExps, List.reverse_cons, h]
   have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
   have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
   have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by

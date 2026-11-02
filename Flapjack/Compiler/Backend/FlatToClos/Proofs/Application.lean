@@ -26,7 +26,7 @@ theorem evaluate_application {C F : Type} (env : FlatSem.Environment FlatSem.Val
       .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace (.src .opapp) [function, argument]] := by
   unfold EvalSim at argumentSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, arg2, List.reverse_cons, List.reverse_nil,
+  simp only [compile, compileExps, compileExp, destNop, compileOp, arg2, List.reverse_cons, List.reverse_nil,
     List.nil_append, List.cons_append] at argumentSim ⊢
   rw [FlatSem.evaluate] at notTypeError ⊢
   rw [ClosSem.evaluate]

@@ -64,7 +64,7 @@ theorem compileExps_reverse (names : List (Option MlString)) (expressions : List
   have mapEq : ∀ xs : List FlatLang.Exp, compileExps names xs = xs.map (compileExp names) := by
     intro xs
     induction xs with
-    | nil => rfl
+    | nil => simp [compileExps]
     | cons head tail ih => simp [compileExps, ih]
   simp [mapEq]
 
@@ -145,7 +145,9 @@ theorem evaluate_con {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp] at ⊢
+  simp only [compile, compileExps] at ⊢
+  rw [compileExp.eq_def]
+  dsimp only
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, smartCons_evaluate, ClosSem.evaluate, ClosSem.fixClock_evaluate]
   cases flatRun : FlatSem.evaluate env source arguments.reverse with
@@ -396,7 +398,9 @@ theorem evaluate_handle {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [failure]
   have bodySim := bodySim bodyNotTypeError
   unfold EvalSim at bodySim ⊢
-  simp only [compile, compileExps, compileExp] at bodySim ⊢
+  simp only [compile, compileExps] at bodySim ⊢
+  rw [compileExp.eq_def]
+  dsimp [destPat]
   rw [FlatSem.evaluate, flatFix] at notTypeError ⊢
   rw [ClosSem.evaluate, closFix]
   cases flatRun : FlatSem.evaluate env source [body] with

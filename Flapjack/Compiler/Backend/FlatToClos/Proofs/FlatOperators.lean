@@ -57,7 +57,7 @@ theorem evaluate_flatDirect_wrong {C F : Type} (env : FlatSem.Environment FlatSe
   simp only [compile, compileExps] at ⊢
   have compiled : compileExp names (.app trace op args) =
       .op trace targetOp (compileExps names args).reverse := by
-    cases direct <;> simp [compileExp, compileOp]
+    cases direct <;> simp [compileExp, destNop, compileOp]
   rw [compiled, FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -97,11 +97,11 @@ theorem flatLetOp_compile_wrong (names : List (Option MlString)) (trace : Backen
   cases kind with
   | globalAlloc count =>
     exact ⟨trace, .op trace (.globOp .allocGlobal) [.op trace (.intOp (.const (Int.ofNat count))) []],
-      by simp [compileExp, compileOp]⟩
+      by simp [compileExp, destNop, compileOp]⟩
   | el index =>
     simp [flatOpArity] at expected
     subst arity
-    rcases args with _ | ⟨a, _ | ⟨b, rest⟩⟩ <;> simp_all [compileExp, compileOp, compileExps, arg1]
+    rcases args with _ | ⟨a, _ | ⟨b, rest⟩⟩ <;> simp_all [compileExp, destNop, compileOp, compileExps, arg1]
     all_goals
       split
       · rename_i h
@@ -111,7 +111,7 @@ theorem flatLetOp_compile_wrong (names : List (Option MlString)) (trace : Backen
   | id =>
     simp [flatOpArity] at expected
     subst arity
-    rcases args with _ | ⟨a, _ | ⟨b, rest⟩⟩ <;> simp_all [compileExp, compileOp, compileExps, arg1]
+    rcases args with _ | ⟨a, _ | ⟨b, rest⟩⟩ <;> simp_all [compileExp, destNop, compileOp, compileExps, arg1]
     all_goals
       split
       · rename_i h

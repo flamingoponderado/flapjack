@@ -49,7 +49,7 @@ theorem evaluate_assignment {C F : Type} (env : FlatSem.Environment FlatSem.Valu
     simp only [failure]
   have valueSim := valueSim valueNotTypeError
   unfold EvalSim at valueSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, arg2, List.reverse_cons, List.reverse_nil,
+  simp only [compile, compileExps, compileExp, destNop, compileOp, arg2, List.reverse_cons, List.reverse_nil,
     List.nil_append, List.cons_append] at valueSim ⊢
   rw [FlatSem.evaluate] at notTypeError ⊢
   rw [ClosSem.evaluate, ClosSem.fixClock_evaluate]

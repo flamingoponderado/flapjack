@@ -192,7 +192,7 @@ theorem evaluate_checkedByteRead {C F : Type} (env : FlatSem.Environment FlatSem
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -343,7 +343,7 @@ theorem evaluate_checkedArrayRead {C F : Type} (env : FlatSem.Environment FlatSe
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -426,7 +426,7 @@ theorem evaluate_uncheckedArrayRead {C F : Type} (env : FlatSem.Environment Flat
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -518,7 +518,7 @@ theorem evaluate_uncheckedByteRead {C F : Type} (env : FlatSem.Environment FlatS
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]

@@ -38,7 +38,7 @@ theorem evaluate_word64ToInt {C F : Type} (env : FlatSem.Environment FlatSem.Val
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -117,7 +117,7 @@ theorem evaluate_intToWord64 {C F : Type} (env : FlatSem.Environment FlatSem.Val
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -196,7 +196,7 @@ theorem evaluate_charToInt {C F : Type} (env : FlatSem.Environment FlatSem.Value
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -274,7 +274,7 @@ theorem evaluate_charToWord8 {C F : Type} (env : FlatSem.Environment FlatSem.Val
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -352,7 +352,7 @@ theorem evaluate_word8ToChar {C F : Type} (env : FlatSem.Environment FlatSem.Val
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -430,7 +430,7 @@ theorem evaluate_floatToWord64 {C F : Type} (env : FlatSem.Environment FlatSem.V
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -508,7 +508,7 @@ theorem evaluate_word64ToFloat {C F : Type} (env : FlatSem.Environment FlatSem.V
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -584,7 +584,7 @@ theorem evaluate_word8ToInt_singleton {C F : Type} (env : FlatSem.Environment Fl
     | mk next result => simp_all
   have argSim := argSim argNotTypeError
   unfold EvalSim at argSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, arg1, List.reverse_singleton, id_eq] at argSim ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, arg1, List.reverse_singleton, id_eq] at argSim ⊢
   rw [evaluate_flat_conversion] at notTypeError ⊢
   cases flatRun : FlatSem.evaluate env source [argument] with
   | mk next flatResult =>
@@ -626,7 +626,7 @@ theorem evaluate_word8ToInt_nonUnary {C F : Type} (env : FlatSem.Environment Fla
   have compiled : compileOp trace (.src (.fromTo (.wordT .w8) .intT)) (compileExps names args).reverse =
       .let .none (compileExps names args).reverse (.var .none 0) := by
     cases args with
-    | nil => rfl
+    | nil => simp [compileOp, arg1, compileExps]
     | cons first rest =>
       cases rest with
       | nil => simp at wrong
@@ -642,7 +642,7 @@ theorem evaluate_word8ToInt_nonUnary {C F : Type} (env : FlatSem.Environment Fla
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compiled] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compiled] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]

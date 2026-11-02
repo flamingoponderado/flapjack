@@ -31,7 +31,7 @@ theorem evaluate_id {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (argumentSim : EvalSim env names values source target [argument]) :
     EvalSim env names values source target [.app trace .id [argument]] := by
   unfold EvalSim at argumentSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, arg1, List.reverse_singleton] at argumentSim ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, arg1, List.reverse_singleton] at argumentSim ⊢
   rw [evaluate_flat_id]
   exact argumentSim
 
@@ -87,7 +87,7 @@ theorem evaluate_char_word_nop {C F : Type} (env : FlatSem.Environment FlatSem.V
       [.app outerTrace (.src (.fromTo .intT (.wordT .w8)))
         [.app innerTrace (.src (.fromTo .charT .intT)) [argument]]] := by
   unfold EvalSim at argumentSim ⊢
-  simp only [compile, compileExps, compileExp] at argumentSim ⊢
+  simp only [compile, compileExps, compileExp, destNop] at argumentSim ⊢
   rw [evaluate_flat_conversion, evaluate_flat_conversion] at notTypeError ⊢
   cases flatRun : FlatSem.evaluate env source [argument] with
   | mk next flatResult =>
@@ -130,7 +130,7 @@ theorem evaluate_word_char_nop {C F : Type} (env : FlatSem.Environment FlatSem.V
       [.app outerTrace (.src (.fromTo .intT .charT))
         [.app innerTrace (.src (.fromTo (.wordT .w8) .intT)) [argument]]] := by
   unfold EvalSim at argumentSim ⊢
-  simp only [compile, compileExps, compileExp] at argumentSim ⊢
+  simp only [compile, compileExps, compileExp, destNop] at argumentSim ⊢
   rw [evaluate_flat_conversion, evaluate_flat_conversion] at notTypeError ⊢
   cases flatRun : FlatSem.evaluate env source [argument] with
   | mk next flatResult =>

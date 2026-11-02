@@ -30,7 +30,7 @@ theorem compile_rejectedConversion (names : List (Option MlString)) (trace : Bac
     (args : List FlatLang.Exp) :
     compileExp names (.app trace (.src (.fromTo sourceType targetType)) args) =
       .let .none (compileExps names args).reverse (.var .none 0) := by
-  cases sourceType <;> cases targetType <;> simp_all [conversionSupported, compileExp, compileOp]
+  cases sourceType <;> cases targetType <;> simp_all [conversionSupported, compileExp, destNop, compileOp]
   all_goals
     rename_i width
     cases width <;> simp_all

@@ -104,7 +104,7 @@ theorem evaluate_checkedVectorRead {C F : Type} (env : FlatSem.Environment FlatS
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -182,7 +182,7 @@ theorem evaluate_uncheckedVectorRead {C F : Type} (env : FlatSem.Environment Fla
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -267,7 +267,7 @@ theorem evaluate_vectorLength {C F : Type} (env : FlatSem.Environment FlatSem.Va
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -341,7 +341,7 @@ theorem evaluate_stringLength {C F : Type} (env : FlatSem.Environment FlatSem.Va
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -476,7 +476,7 @@ theorem evaluate_checkedStringRead {C F : Type} (env : FlatSem.Environment FlatS
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -552,7 +552,7 @@ theorem evaluate_vectorFromList {C F : Type} (env : FlatSem.Environment FlatSem.
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -637,7 +637,7 @@ theorem evaluate_stringExplode {C F : Type} (env : FlatSem.Environment FlatSem.V
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -722,7 +722,7 @@ theorem evaluate_listAppend {C F : Type} (env : FlatSem.Environment FlatSem.Valu
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -814,7 +814,7 @@ theorem evaluate_configGC {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]

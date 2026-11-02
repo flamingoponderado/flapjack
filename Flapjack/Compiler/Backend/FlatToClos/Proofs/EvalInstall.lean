@@ -162,7 +162,7 @@ theorem evaluate_eval_related {C F : Type} (env : FlatSem.Environment FlatSem.Va
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
   simp only [compile, compileExps_reverse] at argsSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [evaluate_eval] at notTypeError ⊢
   rw [evaluate_install]
   cases flatRun : FlatSem.evaluate env source args.reverse with

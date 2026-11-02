@@ -36,7 +36,7 @@ theorem evaluate_boolNot {C F : Type} (env : FlatSem.Environment FlatSem.Value)
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
   simp only [compile, compileExps_reverse] at argSim
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -112,7 +112,7 @@ theorem evaluate_rejectedArithFallback {C F : Type} (env : FlatSem.Environment F
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, compiled] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compiled] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -192,7 +192,7 @@ theorem evaluate_rejectedBoolArith {C F : Type} (env : FlatSem.Environment FlatS
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, compileArith] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, compileArith] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]

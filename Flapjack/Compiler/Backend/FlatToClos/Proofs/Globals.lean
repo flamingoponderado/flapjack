@@ -34,7 +34,7 @@ theorem evaluate_globalAlloc {C F : Type} (env : FlatSem.Environment FlatSem.Val
       some (ClosSem.unitValue, { target with globals := target.globals ++ List.replicate count none }) := by
     simp [ClosSem.applyGlobal]
   simp only [Int.ofNat_eq_natCast] at allocated
-  simp [EvalSim, compile, compileExps, compileExp, compileOp, FlatSem.evaluate, FlatSem.fixClock,
+  simp [EvalSim, compile, compileExps, compileExp, destNop, compileOp, FlatSem.evaluate, FlatSem.fixClock,
     FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, ClosSem.evaluate, ClosSem.fixClock,
     ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp, allocated, updated,
     FlatSem.unitValue, ClosSem.unitValue, EvalResultRel.value (.cons (ValueRel.tuple .nil) .nil)]
@@ -101,7 +101,7 @@ theorem evaluate_globalInit {C F : Type} (env : FlatSem.Environment FlatSem.Valu
     simp only [List.reverse_singleton, flatFix, failure]
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, List.reverse_singleton] at argSim ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, List.reverse_singleton] at argSim ⊢
   rw [FlatSem.evaluate] at notTypeError ⊢
   rw [ClosSem.evaluate, closFix]
   simp only [List.reverse_singleton, flatFix] at notTypeError ⊢
@@ -181,7 +181,7 @@ theorem evaluate_globalLookup {C F : Type} (env : FlatSem.Environment FlatSem.Va
         FlatSem.doAppFlat, slot] at notTypeError
     | some value =>
       obtain ⟨targetValue, targetFound, related⟩ := globalLookup_related source target index value states slot
-      simp [EvalSim, compile, compileExps, compileExp, compileOp, FlatSem.evaluate, FlatSem.fixClock,
+      simp [EvalSim, compile, compileExps, compileExp, destNop, compileOp, FlatSem.evaluate, FlatSem.fixClock,
         FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, slot, ClosSem.evaluate, ClosSem.fixClock,
         ClosSem.doApp, ClosSem.applyGlobal, targetFound, states,
         EvalResultRel.value (.cons related .nil)]

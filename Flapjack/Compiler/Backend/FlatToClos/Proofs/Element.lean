@@ -97,7 +97,7 @@ theorem evaluate_element {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp only [List.reverse_singleton, flatFix, failure]
   have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, arg1, List.reverse_singleton] at argSim ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp, arg1, List.reverse_singleton] at argSim ⊢
   rw [FlatSem.evaluate] at notTypeError ⊢
   rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluate_element_args]
   simp only [List.reverse_singleton, flatFix] at notTypeError ⊢

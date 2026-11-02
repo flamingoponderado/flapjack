@@ -27,7 +27,7 @@ theorem evaluate_rejectedTest {C F : Type} (env : FlatSem.Environment FlatSem.Va
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compiled] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compiled] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]

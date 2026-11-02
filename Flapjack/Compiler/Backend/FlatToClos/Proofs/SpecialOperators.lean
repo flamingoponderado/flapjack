@@ -28,7 +28,7 @@ theorem binarySpecial_compile_wrong (names : List (Option MlString)) (trace : Ba
       .let .none (compileExps names args).reverse (.var .none 0) := by
   rcases special with rfl | rfl <;>
     rcases args with _ | ⟨a, _ | ⟨b, _ | ⟨c, rest⟩⟩⟩ <;>
-    simp_all [compileExp, compileOp, compileExps, arg2]
+    simp_all [compileExp, destNop, compileOp, compileExps, arg2]
   all_goals
     split
     · rename_i h

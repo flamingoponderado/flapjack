@@ -20,10 +20,10 @@ private theorem reverseSafe (xs : List ClosLang.Exp) (safe : ClosProps.esgcFreeL
 theorem compileExp_safe (m : List (Option MlString)) (exp : FlatLang.Exp) :
     FlatProps.noMat exp = true → FlatProps.esgcFree exp → ClosProps.esgcFree (compileExp m exp) := by
   induction m, exp using compileExp.induct
-      (motive_2 := fun m fs => FlatProps.noMatFuns fs = true →
+      (motive2 := fun m fs => FlatProps.noMatFuns fs = true →
         FlatProps.funGlobals fs = emptyGlobalBag →
         ClosProps.funGlobals (compileFuns m fs) = emptyGlobalBag)
-      (motive_3 := fun m xs => FlatProps.noMatList xs = true → FlatProps.esgcFreeList xs →
+      (motive3 := fun m xs => FlatProps.noMatList xs = true → FlatProps.esgcFreeList xs →
         ClosProps.esgcFreeList (compileExps m xs)) with
   | case1 m t e ih => simpa [compileExp, FlatProps.noMat, FlatProps.esgcFree, ClosProps.esgcFree] using ih
   | case2 m t l =>
@@ -34,48 +34,54 @@ theorem compileExp_safe (m : List (Option MlString)) (exp : FlatLang.Exp) :
     intro noMat safe
     simp only [FlatProps.noMat] at noMat
     simp only [FlatProps.esgcFree] at safe
-    simp only [compileExp, esgcFree_smartCons]
-    exact reverseSafe _ (ih noMat safe)
-  | case5 m t u x ih =>
+    rw [compileExp.eq_def]
+    dsimp only
+    split <;> simpa [esgcFree_smartCons] using reverseSafe _ (ih noMat safe)
+  | case5 m t op es x found ih =>
     intro noMat safe
-    simp [FlatProps.noMat, FlatProps.noMatList] at noMat
-    simp [FlatProps.esgcFree, FlatProps.esgcFreeList] at safe
-    simpa [compileExp] using ih noMat safe
-  | case6 m t u x ih =>
-    intro noMat safe
-    simp [FlatProps.noMat, FlatProps.noMatList] at noMat
-    simp [FlatProps.esgcFree, FlatProps.esgcFreeList] at safe
-    simpa [compileExp] using ih noMat safe
-  | case7 m t op es h1 h2 ih =>
+    obtain ⟨u, rfl, rfl⟩ | ⟨u, rfl, rfl⟩ := destNop_shape op es x found
+    all_goals simp [FlatProps.noMat, FlatProps.noMatList] at noMat
+    all_goals simp [FlatProps.esgcFree, FlatProps.esgcFreeList] at safe
+    all_goals rw [compileExp.eq_def]; dsimp only; rw [found]
+    all_goals exact ih noMat safe
+  | case6 m t op es found ih =>
     intro noMat safe
     simp only [FlatProps.noMat] at noMat
     simp only [FlatProps.esgcFree] at safe
-    simpa only [compileExp] using compileOp_safe t op _ (reverseSafe _ (ih noMat safe))
-  | case8 m t v e ih =>
+    rw [compileExp.eq_def]
+    dsimp only
+    rw [found]
+    exact compileOp_safe t op _ (reverseSafe _ (ih noMat safe))
+  | case7 m t v e ih =>
     intro noMat safe
     simp only [FlatProps.noMat] at noMat
     simp only [FlatProps.esgcFree] at safe
     have h := compileExp_globals (some v :: m) e noMat
     rw [safe, shiftEmpty] at h
     simpa [compileExp, ClosProps.esgcFree] using h
-  | case9 m t a b c iha ihb ihc =>
+  | case8 m t a b c iha ihb ihc =>
     intro noMat safe
     simp only [FlatProps.noMat, Bool.and_eq_true] at noMat
     simp only [FlatProps.esgcFree] at safe
     simp only [compileExp, ClosProps.esgcFree]
     exact ⟨iha noMat.1.1 safe.1, ihb noMat.1.2 safe.2.1, ihc noMat.2 safe.2.2⟩
-  | case10 m t vo a b iha ihb =>
+  | case9 m t vo a b iha ihb =>
     intro noMat safe
     simp only [FlatProps.noMat, Bool.and_eq_true] at noMat
     simp only [FlatProps.esgcFree] at safe
     simp [compileExp, ClosProps.esgcFree, ClosProps.esgcFreeList, iha noMat.1 safe.1, ihb noMat.2 safe.2]
-  | case11 m t e ps => simp [FlatProps.noMat]
-  | case12 m t e v h ihe ihh =>
+  | case10 m t e ps => simp [FlatProps.noMat]
+  | case11 m t e ps v h found ihe ihh =>
+    have rowsEq := destPat_eq_some ps v h found
+    subst ps
     intro noMat safe
     simp only [FlatProps.noMat, Bool.and_eq_true] at noMat
     simp only [FlatProps.esgcFree, FlatProps.esgcFreeRows] at safe
-    simp [compileExp, ClosProps.esgcFree, ihe noMat.1 safe.1, ihh noMat.2 safe.2.1]
-  | case13 m t e ps h ih =>
+    rw [compileExp.eq_def]
+    dsimp only
+    rw [found]
+    simpa [ClosProps.esgcFree] using And.intro (ihe noMat.1 safe.1) (ihh noMat.2 safe.2.1)
+  | case12 m t e ps found ih =>
     intro noMat _
     cases ps with
     | nil => simp [FlatProps.noMat] at noMat
@@ -85,21 +91,18 @@ theorem compileExp_safe (m : List (Option MlString)) (exp : FlatLang.Exp) :
       | cons next rest => simp [FlatProps.noMat] at noMat
       | nil =>
         cases pat <;> simp [FlatProps.noMat] at noMat
-        case pvar => exact False.elim (h _ body rfl)
-  | case14 m t fs e newM ihf ihe =>
+        case pvar => simp [destPat] at found
+  | case13 m t fs e newM ihf ihe =>
     intro noMat safe
     simp only [FlatProps.noMat, Bool.and_eq_true] at noMat
     simp only [FlatProps.esgcFree] at safe
     simp only [compileExp, ClosProps.esgcFree]
+    have namesEq : fs.attach.map (fun x => some x.val.1) = fs.map (fun x => some x.1) :=
+      List.attach_map_val (f := fun x : MlString × MlString × FlatLang.Exp => some x.1)
+    simp only [newM, namesEq] at ihf ihe
     exact ⟨ihf noMat.1 safe.2, ihe noMat.2 safe.1⟩
-  | case15 m => simp [compileExps, ClosProps.esgcFreeList]
-  | case16 m e es ihe ihes =>
-    rename_i noMat safe
-    simp only [FlatProps.noMatList, Bool.and_eq_true] at noMat
-    simp only [FlatProps.esgcFreeList] at safe
-    simp [compileExps, ClosProps.esgcFreeList, ihe noMat.1 safe.1, ihes noMat.2 safe.2]
-  | case17 m => simp [compileFuns, ClosProps.funGlobals]
-  | case18 m f v e fs ihe ihfs =>
+  | case14 m => simp [compileFuns, ClosProps.funGlobals]
+  | case15 m f v e fs ihe ihfs =>
     rename_i noMat safe
     simp only [FlatProps.noMatFuns, Bool.and_eq_true] at noMat
     simp only [FlatProps.funGlobals, FlatProps.unionGlobalBag_eq_empty] at safe
@@ -107,6 +110,12 @@ theorem compileExp_safe (m : List (Option MlString)) (exp : FlatLang.Exp) :
     rw [safe.1, shiftEmpty] at h
     simp only [compileFuns, ClosProps.funGlobals, h, ihfs noMat.2 safe.2]
     exact (FlatProps.unionGlobalBag_eq_empty _ _).mpr ⟨rfl, rfl⟩
+  | case16 m => simp [compileExps, ClosProps.esgcFreeList]
+  | case17 m e es ihe ihes =>
+    rename_i noMat safe
+    simp only [FlatProps.noMatList, Bool.and_eq_true] at noMat
+    simp only [FlatProps.esgcFreeList] at safe
+    simp [compileExps, ClosProps.esgcFreeList, ihe noMat.1 safe.1, ihes noMat.2 safe.2]
 
 private theorem flatSafeList_iff (xs : List FlatLang.Exp) :
     FlatProps.esgcFreeList xs ↔ ∀ e ∈ xs, FlatProps.esgcFree e := by

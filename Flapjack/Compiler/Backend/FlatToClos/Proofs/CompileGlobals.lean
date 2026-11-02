@@ -53,9 +53,9 @@ private theorem closGlobals_reverse (xs : List ClosLang.Exp) :
 theorem compileExp_globals (m : List (Option MlString)) (exp : FlatLang.Exp) :
     FlatProps.noMat exp = true → ClosProps.setGlobals (compileExp m exp) = shiftGlobalBag (FlatProps.setGlobals exp) := by
   induction m, exp using compileExp.induct
-      (motive_2 := fun m fs => FlatProps.noMatFuns fs = true →
+      (motive2 := fun m fs => FlatProps.noMatFuns fs = true →
         ClosProps.funGlobals (compileFuns m fs) = shiftGlobalBag (FlatProps.funGlobals fs))
-      (motive_3 := fun m xs => FlatProps.noMatList xs = true →
+      (motive3 := fun m xs => FlatProps.noMatList xs = true →
         ClosProps.elistGlobals (compileExps m xs) = shiftGlobalBag (FlatProps.elistGlobals xs)) with
   | case1 m t e ih => simpa [compileExp, FlatProps.noMat, FlatProps.setGlobals, ClosProps.setGlobals] using ih
   | case2 m t l =>
@@ -65,53 +65,58 @@ theorem compileExp_globals (m : List (Option MlString)) (exp : FlatLang.Exp) :
   | case4 m t tag es ih =>
     intro safe
     simp only [FlatProps.noMat] at safe
-    simp only [compileExp, setGlobals_smartCons, closGlobals_reverse, FlatProps.setGlobals]
-    exact ih safe
-  | case5 m t u x ih =>
+    rw [compileExp.eq_def]
+    dsimp only
+    split <;> simpa [setGlobals_smartCons, closGlobals_reverse, FlatProps.setGlobals] using ih safe
+  | case5 m t op es x found ih =>
     intro safe
-    simp [FlatProps.noMat, FlatProps.noMatList] at safe
-    simpa [compileExp, FlatProps.setGlobals, FlatProps.elistGlobals, FlatProps.opGlobalBag,
+    obtain ⟨u, rfl, rfl⟩ | ⟨u, rfl, rfl⟩ := destNop_shape op es x found
+    all_goals simp [FlatProps.noMat, FlatProps.noMatList] at safe
+    all_goals rw [compileExp.eq_def]; dsimp only; rw [found]
+    all_goals simpa [FlatProps.setGlobals, FlatProps.elistGlobals, FlatProps.opGlobalBag,
       unionEmptyR] using ih safe
-  | case6 m t u x ih =>
-    intro safe
-    simp [FlatProps.noMat, FlatProps.noMatList] at safe
-    simpa [compileExp, FlatProps.setGlobals, FlatProps.elistGlobals, FlatProps.opGlobalBag,
-      unionEmptyR] using ih safe
-  | case7 m t op es h1 h2 ih =>
+  | case6 m t op es found ih =>
     intro safe
     have hs := ih (by simpa [FlatProps.noMat] using safe)
     simp only [FlatProps.setGlobals, shiftUnion, shiftOp]
     have hop := compileOp_globals t op (compileExps m es).reverse
     simp only [closGlobals_reverse, hs] at hop
-    simp only [compileExp]
+    rw [compileExp.eq_def]
+    dsimp only
+    rw [found]
     rw [hop]
     funext key
     simp [unionGlobalBag, Nat.add_comm]
-  | case8 m t v e ih =>
+  | case7 m t v e ih =>
     intro safe
     simp only [FlatProps.noMat] at safe
     simpa [compileExp, FlatProps.noMat, FlatProps.setGlobals, ClosProps.setGlobals] using ih safe
-  | case9 m t a b c iha ihb ihc =>
+  | case8 m t a b c iha ihb ihc =>
     intro safe
     simp only [FlatProps.noMat, Bool.and_eq_true] at safe
     simp only [compileExp, FlatProps.setGlobals, ClosProps.setGlobals, shiftUnion]
     rw [iha safe.1.1, ihb safe.1.2, ihc safe.2]
-  | case10 m t vo a b iha ihb =>
+  | case9 m t vo a b iha ihb =>
     intro safe
     simp only [FlatProps.noMat, Bool.and_eq_true] at safe
     simp only [compileExp, FlatProps.setGlobals, ClosProps.setGlobals, ClosProps.elistGlobals, shiftUnion]
     rw [iha safe.1, ihb safe.2]
     funext key
     simp [unionGlobalBag, emptyGlobalBag, Nat.add_comm]
-  | case11 m t e ps => simp [FlatProps.noMat]
-  | case12 m t e v h ihe ihh =>
+  | case10 m t e ps => simp [FlatProps.noMat]
+  | case11 m t e ps v h found ihe ihh =>
+    have rowsEq := destPat_eq_some ps v h found
+    subst ps
     intro safe
     simp only [FlatProps.noMat, Bool.and_eq_true] at safe
-    simp only [compileExp, FlatProps.setGlobals, FlatProps.rowGlobals, ClosProps.setGlobals, shiftUnion]
+    rw [compileExp.eq_def]
+    dsimp only
+    rw [found]
+    simp only [FlatProps.setGlobals, FlatProps.rowGlobals, ClosProps.setGlobals, shiftUnion]
     rw [ihe safe.1, ihh safe.2]
     funext key
     simp [unionGlobalBag, emptyGlobalBag, shiftEmpty]
-  | case13 m t e ps h ih =>
+  | case12 m t e ps found ih =>
     intro safe
     cases ps with
     | nil => simp [FlatProps.noMat] at safe
@@ -121,24 +126,27 @@ theorem compileExp_globals (m : List (Option MlString)) (exp : FlatLang.Exp) :
       | cons next rest => simp [FlatProps.noMat] at safe
       | nil =>
         cases pat <;> simp [FlatProps.noMat] at safe
-        case pvar v => exact False.elim (h v body rfl)
-  | case14 m t fs e newM ihf ihe =>
+        case pvar v => simp [destPat] at found
+  | case13 m t fs e newM ihf ihe =>
     intro safe
     simp only [FlatProps.noMat, Bool.and_eq_true] at safe
     simp only [compileExp, FlatProps.setGlobals, ClosProps.setGlobals, shiftUnion]
+    have namesEq : fs.attach.map (fun x => some x.val.1) = fs.map (fun x => some x.1) :=
+      List.attach_map_val (f := fun x : MlString × MlString × FlatLang.Exp => some x.1)
+    simp only [newM, namesEq] at ihf ihe
     rw [ihf safe.1, ihe safe.2]
-  | case15 m => simp [compileExps, FlatProps.elistGlobals, ClosProps.elistGlobals, shiftEmpty]
-  | case16 m e es ihe ihes =>
-    rename_i safe
-    simp only [FlatProps.noMatList, Bool.and_eq_true] at safe
-    simp only [compileExps, FlatProps.elistGlobals, ClosProps.elistGlobals, shiftUnion]
-    rw [ihe safe.1, ihes safe.2]
-  | case17 m => simp [compileFuns, FlatProps.funGlobals, ClosProps.funGlobals, shiftEmpty]
-  | case18 m f v e fs ihe ihfs =>
+  | case14 m => simp [compileFuns, FlatProps.funGlobals, ClosProps.funGlobals, shiftEmpty]
+  | case15 m f v e fs ihe ihfs =>
     rename_i safe
     simp only [FlatProps.noMatFuns, Bool.and_eq_true] at safe
     simp only [compileFuns, FlatProps.funGlobals, ClosProps.funGlobals, shiftUnion]
     rw [ihe safe.1, ihfs safe.2]
+  | case16 m => simp [compileExps, FlatProps.elistGlobals, ClosProps.elistGlobals, shiftEmpty]
+  | case17 m e es ihe ihes =>
+    rename_i safe
+    simp only [FlatProps.noMatList, Bool.and_eq_true] at safe
+    simp only [compileExps, FlatProps.elistGlobals, ClosProps.elistGlobals, shiftUnion]
+    rw [ihe safe.1, ihes safe.2]
 
 private theorem compileExps_globals (m : List (Option MlString)) (xs : List FlatLang.Exp)
     (safe : FlatProps.noMatList xs = true) :

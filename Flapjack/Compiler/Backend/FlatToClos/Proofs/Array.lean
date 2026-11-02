@@ -105,7 +105,7 @@ theorem evaluate_allocFixed {C F : Type} (env : FlatSem.Environment FlatSem.Valu
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
   simp only [compile, compileExps_reverse] at argsSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -296,7 +296,7 @@ theorem evaluate_allocByteArray {C F : Type} (env : FlatSem.Environment FlatSem.
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
@@ -359,7 +359,7 @@ theorem evaluate_allocArray {C F : Type} (env : FlatSem.Environment FlatSem.Valu
     simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]

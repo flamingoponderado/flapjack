@@ -49,7 +49,7 @@ theorem evaluate_rejectedSourceOp {C F : Type} (env : FlatSem.Environment FlatSe
   simp only [compile, compileExps] at ⊢
   have compiled : compileExp names (.app trace (.src op) args) =
       .let .none (compileExps names args).reverse (.var .none 0) := by
-    rcases rejected with rfl | rfl | rfl <;> simp [compileExp, compileOp]
+    rcases rejected with rfl | rfl | rfl <;> simp [compileExp, destNop, compileOp]
   rw [compiled, FlatSem.evaluate, ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with

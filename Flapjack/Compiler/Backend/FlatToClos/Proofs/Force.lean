@@ -10,7 +10,7 @@ application used by closure thunk forcing. -/
 theorem compile_force_application (name : MlString) :
     compile [some name] [FlatSem.appUnit (.varLocal .none name)] =
       [ClosSem.appUnit (.var .none 0)] := by
-  simp [compile, compileExps, compileExp, FlatSem.appUnit, ClosSem.appUnit,
+  simp [compile, compileExps, compileExp, destNop, FlatSem.appUnit, ClosSem.appUnit,
     compileOp, arg2, smartCons, nameIndex]
 
 /-- Binding related thunk payloads produces the related one-variable
@@ -55,7 +55,7 @@ theorem evaluate_force {C F : Type} (env : FlatSem.Environment FlatSem.Value)
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
   simp only [compile, compileExps_reverse] at argsSim
-  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps, compileExp, destNop, compileOp] at ⊢
   rw [FlatSem.evaluate, flatFix] at notTypeError ⊢
   rw [ClosSem.evaluate, ClosSem.fixClock_evaluate]
   cases flatArgs : FlatSem.evaluate env source args.reverse with

@@ -107571,7 +107571,7 @@
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "dest_pat_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared all typed clauses in flat_to_clos_helpers_probe: the singleton variable pattern returns its mlstring and arbitrary independent payload; empty, other-pattern and longer lists return NONE. Lean now preserves the HOL-polymorphic payload. The current executed compiler inlines these handler cases instead of invoking destPat; production-path use remains separate."
+    "reviewer": "Compared all typed clauses in flat_to_clos_helpers_probe: the singleton variable pattern returns its mlstring and arbitrary independent payload; empty, other-pattern and longer lists return NONE. Lean preserves the HOL-polymorphic payload, and the executed compiler calls destPat for handler selection."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
@@ -107683,7 +107683,7 @@
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "dest_nop_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed flat_to_clos_helpers_probe equation and expanded fallbacks: only the singleton nested Char-to-Int followed by Int-to-Word8, or Word8-to-Int followed by Int-to-Char, returns its inner expression. Trace fields remain arbitrary and every other operator or argument shape returns NONE. The current executed compiler inlines these cases instead of invoking destNop; production-path use remains separate."
+    "reviewer": "Compared the typed flat_to_clos_helpers_probe equation and expanded fallbacks: only the singleton nested Char-to-Int followed by Int-to-Word8, or Word8-to-Int followed by Int-to-Char, returns its inner expression. Trace fields remain arbitrary and every other operator or argument shape returns NONE. The executed compiler calls destNop before lowering operators."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosLang/HasInstall.lean",

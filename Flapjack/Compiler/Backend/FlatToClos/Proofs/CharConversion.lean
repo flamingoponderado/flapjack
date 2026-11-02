@@ -105,24 +105,10 @@ theorem compile_intToChar_regular (names : List (Option MlString)) (trace : Back
         (.ifThenElse trace (.op trace (.intOp .less)
           [.var trace 0, .op .none (.intOp (.const 255)) []])
           (.raise trace (.op trace (.blockOp (.cons 1)) [])) (.var trace 0))) := by
-  cases argument <;> simp_all [destNop, compileExp, compileExps, compileOp]
-  case app innerTrace op innerArgs =>
-    cases op <;> try simp_all [compileExp, compileExps, compileOp, arg1]
-    case src operation =>
-      cases operation <;> try simp_all [compileExp, compileExps, compileOp]
-      case fromTo sourceType targetType =>
-        cases sourceType <;> cases targetType <;>
-          simp_all [compileExp, compileExps, compileOp, arg1]
-        case wordT.intT width =>
-          cases width with
-          | w64 => simp [compileExp, compileExps, compileOp]
-          | w8 =>
-            cases innerArgs with
-            | nil => simp [compileExp, compileExps, compileOp, arg1]
-            | cons first rest =>
-              cases rest with
-              | nil => simp at regular
-              | cons second rest => simp [compileExp, compileExps, compileOp, arg1]
+  rw [compileExp.eq_def]
+  dsimp only
+  rw [regular]
+  simp [compileOp, compileExps]
 
 /-- The character no-op recognizer identifies exactly the byte-to-integer
 argument shape. -/
@@ -193,11 +179,20 @@ theorem evaluate_intToChar_nonUnary {C F : Type} (env : FlatSem.Environment Flat
           [.var trace 0, .op .none (.intOp (.const 255)) []])
           (.raise trace (.op trace (.blockOp (.cons 1)) [])) (.var trace 0))) := by
     cases args with
-    | nil => rfl
+    | nil => simp [compileExp, destNop, compileOp, compileExps]
     | cons first rest =>
       cases rest with
       | nil => simp at wrong
-      | cons second rest => simp [compileExp, compileOp]
+      | cons second rest =>
+        have noNop : destNop (.src (.fromTo .intT .charT)) (first :: second :: rest) = none := by
+          cases found : destNop (.src (.fromTo .intT .charT)) (first :: second :: rest) with
+          | none => rfl
+          | some x =>
+            rcases destNop_shape _ _ x found with ⟨_, _, eq⟩ | ⟨_, _, eq⟩ <;> cases eq
+        rw [compileExp.eq_def]
+        dsimp only
+        rw [noNop]
+        rfl
   have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
   have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
   have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
