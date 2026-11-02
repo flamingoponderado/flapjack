@@ -66,6 +66,44 @@ theorem introExp_eq_let (maxApp : Nat) (expression : ClosLang.Exp) (trace : Back
       introExp_handle, introExp_tick, introExp_op, introExp_app_none,
       introExp_fn_none, introExp_letrec_none]
 
+/-- Introduction preserves an exception handler and transforms both bodies. -/
+theorem introExp_eq_handle (maxApp : Nat) (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
+    (targetBody targetHandler : ClosLang.Exp) (unary : ClosProps.noMti expression)
+    (transformed : introExp maxApp expression = .handle trace targetBody targetHandler) :
+    ∃ body handler, expression = .handle trace body handler ∧
+      ClosProps.noMti body ∧ ClosProps.noMti handler ∧
+      targetBody = introExp maxApp body ∧ targetHandler = introExp maxApp handler := by
+  cases expression <;>
+    simp_all [ClosProps.noMti, introExp_var, introExp_if, introExp_let, introExp_raise,
+      introExp_handle, introExp_tick, introExp_op, introExp_app_none,
+      introExp_fn_none, introExp_letrec_none]
+
+/-- Introduction preserves a conditional and transforms its three branches. -/
+theorem introExp_eq_if (maxApp : Nat) (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
+    (targetCondition targetYes targetNo : ClosLang.Exp) (unary : ClosProps.noMti expression)
+    (transformed : introExp maxApp expression = .ifThenElse trace targetCondition targetYes targetNo) :
+    ∃ condition yes no, expression = .ifThenElse trace condition yes no ∧
+      ClosProps.noMti condition ∧ ClosProps.noMti yes ∧ ClosProps.noMti no ∧
+      targetCondition = introExp maxApp condition ∧ targetYes = introExp maxApp yes ∧
+      targetNo = introExp maxApp no := by
+  cases expression <;>
+    simp_all [ClosProps.noMti, introExp_var, introExp_if, introExp_let, introExp_raise,
+      introExp_handle, introExp_tick, introExp_op, introExp_app_none,
+      introExp_fn_none, introExp_letrec_none]
+
+/-- Related closure values either decode to the same Boolean or both fail to
+decode. -/
+theorem valueRel_asBool {maxApp : Nat} {left right : Value}
+    (related : ValueRel maxApp left right) : asBool left = asBool right := by
+  cases related <;> try rfl
+  case block tag left right fields =>
+    cases fields with
+    | nil => rfl
+    | cons head tail =>
+      cases tag with
+      | zero => rfl
+      | succ tag => cases tag <;> rfl
+
 /-- Empty target code is simulated by empty source code. -/
 theorem evaluateRel_nil {C F : Type} (sourceCode : List ClosLang.Exp) :
     @EvaluateRelAt C F sourceCode [] := by
@@ -392,5 +430,193 @@ theorem evaluateRel_let {C F : Type} (trace : BackendCommon.Tra)
             · rw [evaluate, fixClock_evaluate, sourceBindingsRun]
               exact sourceBodyRun
             · simpa [maxEq] using bodyRel
+
+/-- Exception handlers preserve successful values and aborts, and run related
+handlers when the bodies raise related values. -/
+theorem evaluateRel_handle {C F : Type} (trace : BackendCommon.Tra)
+    (targetBody targetHandler : ClosLang.Exp)
+    (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
+    (handlerIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetHandler])
+    (sourceCode : List ClosLang.Exp) :
+    @EvaluateRelAt C F sourceCode [.handle trace targetBody targetHandler] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+  have length := codeRel_length code
+  cases sourceCode with
+  | nil => simp at length
+  | cons expression rest =>
+    cases rest with
+    | cons next tail => simp at length
+    | nil =>
+      have unary : ClosProps.noMti expression := code.1 expression (by simp)
+      have transformed : introExp source.maxApp expression = .handle trace targetBody targetHandler := by
+        simpa [introList] using code.2.symm
+      obtain ⟨body, handler, rfl, bodyUnary, handlerUnary, bodyEq, handlerEq⟩ :=
+        introExp_eq_handle source.maxApp expression trace targetBody targetHandler unary transformed
+      have bodyCode : CodeRel source.maxApp [body] [targetBody] := by
+        simp [CodeRel, introList, bodyUnary, bodyEq]
+      cases targetBodyRun : evaluate [targetBody] targetEnv target with
+      | mk bodyResult targetMiddle =>
+        obtain ⟨sourceBodyResult, sourceMiddle, sourceBodyRun, bodyRel, middleStates⟩ :=
+          bodyIH [body] targetEnv target sourceEnv targetMiddle source bodyResult
+            targetBodyRun env states bodyCode
+        have maxEq : sourceMiddle.maxApp = source.maxApp := by
+          have preserved := ClosProps.evaluate_const.1 [body] sourceEnv source
+          simpa [sourceBodyRun] using preserved
+        cases bodyResult with
+        | val targetValues =>
+          cases sourceBodyResult with
+          | err error => simp [resultRel] at bodyRel
+          | val sourceValues =>
+            rw [evaluate, fixClock_evaluate, targetBodyRun] at run
+            simp only [Prod.mk.injEq] at run
+            obtain ⟨rfl, rfl⟩ := run
+            exact ⟨.val sourceValues, sourceMiddle,
+              by rw [evaluate, fixClock_evaluate, sourceBodyRun], bodyRel, middleStates⟩
+        | err targetError =>
+          cases sourceBodyResult with
+          | val values => simp [resultRel] at bodyRel
+          | err sourceError =>
+            cases targetError with
+            | abort targetReason =>
+              cases sourceError with
+              | raise value => simp [resultRel, excRel] at bodyRel
+              | abort sourceReason =>
+                rw [evaluate, fixClock_evaluate, targetBodyRun] at run
+                simp only [Prod.mk.injEq] at run
+                obtain ⟨rfl, rfl⟩ := run
+                exact ⟨.err (.abort sourceReason), sourceMiddle,
+                  by rw [evaluate, fixClock_evaluate, sourceBodyRun], bodyRel, middleStates⟩
+            | raise targetValue =>
+              cases sourceError with
+              | abort reason => simp [resultRel, excRel] at bodyRel
+              | raise sourceValue =>
+                have valueRel : ValueRel sourceMiddle.maxApp sourceValue targetValue := by
+                  simpa [resultRel, excRel, maxEq] using bodyRel
+                have extended : List.Forall₂ (ValueRel sourceMiddle.maxApp)
+                    (sourceValue :: sourceEnv) (targetValue :: targetEnv) :=
+                  .cons valueRel (by simpa [maxEq] using env)
+                have handlerCode : CodeRel sourceMiddle.maxApp [handler] [targetHandler] := by
+                  simp [CodeRel, introList, handlerUnary, handlerEq, maxEq]
+                have targetHandlerRun : evaluate [targetHandler] (targetValue :: targetEnv) targetMiddle =
+                    (targetResult, targetFinal) := by
+                  rw [evaluate, fixClock_evaluate, targetBodyRun] at run
+                  exact run
+                obtain ⟨sourceResult, sourceFinal, sourceHandlerRun, handlerRel, finalStates⟩ :=
+                  handlerIH [handler] (targetValue :: targetEnv) targetMiddle (sourceValue :: sourceEnv)
+                    targetFinal sourceMiddle targetResult targetHandlerRun extended middleStates handlerCode
+                refine ⟨sourceResult, sourceFinal, ?_, ?_, finalStates⟩
+                · rw [evaluate, fixClock_evaluate, sourceBodyRun]
+                  exact sourceHandlerRun
+                · simpa [maxEq] using handlerRel
+
+/-- Conditional evaluation takes corresponding branches on related Boolean
+values, and rejects a non-Boolean condition on both sides. -/
+theorem evaluateRel_if {C F : Type} (trace : BackendCommon.Tra)
+    (targetCondition targetYes targetNo : ClosLang.Exp)
+    (conditionIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetCondition])
+    (yesIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetYes])
+    (noIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetNo])
+    (sourceCode : List ClosLang.Exp) :
+    @EvaluateRelAt C F sourceCode [.ifThenElse trace targetCondition targetYes targetNo] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+  have length := codeRel_length code
+  cases sourceCode with
+  | nil => simp at length
+  | cons expression rest =>
+    cases rest with
+    | cons next tail => simp at length
+    | nil =>
+      have unary : ClosProps.noMti expression := code.1 expression (by simp)
+      have transformed : introExp source.maxApp expression =
+          .ifThenElse trace targetCondition targetYes targetNo := by
+        simpa [introList] using code.2.symm
+      obtain ⟨condition, yes, no, rfl, conditionUnary, yesUnary, noUnary,
+        conditionEq, yesEq, noEq⟩ :=
+          introExp_eq_if source.maxApp expression trace targetCondition targetYes targetNo unary transformed
+      have conditionCode : CodeRel source.maxApp [condition] [targetCondition] := by
+        simp [CodeRel, introList, conditionUnary, conditionEq]
+      cases targetConditionRun : evaluate [targetCondition] targetEnv target with
+      | mk conditionResult targetMiddle =>
+        obtain ⟨sourceConditionResult, sourceMiddle, sourceConditionRun, conditionRel, middleStates⟩ :=
+          conditionIH [condition] targetEnv target sourceEnv targetMiddle source conditionResult
+            targetConditionRun env states conditionCode
+        have maxEq : sourceMiddle.maxApp = source.maxApp := by
+          have preserved := ClosProps.evaluate_const.1 [condition] sourceEnv source
+          simpa [sourceConditionRun] using preserved
+        cases conditionResult with
+        | err targetError =>
+          cases sourceConditionResult with
+          | val values => simp [resultRel] at conditionRel
+          | err sourceError =>
+            rw [evaluate, fixClock_evaluate, targetConditionRun] at run
+            simp only [Prod.mk.injEq] at run
+            obtain ⟨rfl, rfl⟩ := run
+            exact ⟨.err sourceError, sourceMiddle,
+              by rw [evaluate, fixClock_evaluate, sourceConditionRun], conditionRel, middleStates⟩
+        | val targetValues =>
+          cases sourceConditionResult with
+          | err sourceError => simp [resultRel] at conditionRel
+          | val sourceValues =>
+            have targetLength := evaluate_length.1 [targetCondition] targetEnv target targetMiddle
+              targetValues targetConditionRun
+            have sourceLength := evaluate_length.1 [condition] sourceEnv source sourceMiddle
+              sourceValues sourceConditionRun
+            cases targetValues with
+            | nil => simp at targetLength
+            | cons targetValue targetRest =>
+              cases targetRest with
+              | cons value tail => simp at targetLength
+              | nil =>
+                cases sourceValues with
+                | nil => simp at sourceLength
+                | cons sourceValue sourceRest =>
+                  cases sourceRest with
+                  | cons value tail => simp at sourceLength
+                  | nil =>
+                    have valueRel : ValueRel source.maxApp sourceValue targetValue := by
+                      simpa [resultRel] using conditionRel
+                    have sameBool := valueRel_asBool valueRel
+                    have envMiddle : List.Forall₂ (ValueRel sourceMiddle.maxApp) sourceEnv targetEnv := by
+                      simpa [maxEq] using env
+                    cases boolRun : asBool targetValue with
+                    | none =>
+                      have sourceBool : asBool sourceValue = none := sameBool.trans boolRun
+                      rw [evaluate, fixClock_evaluate, targetConditionRun] at run
+                      simp [boolRun] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      refine ⟨.err (.abort .typeError), sourceMiddle, ?_, by simp [resultRel, excRel], middleStates⟩
+                      rw [evaluate, fixClock_evaluate, sourceConditionRun]
+                      simp [sourceBool]
+                    | some conditionValue =>
+                      have sourceBool : asBool sourceValue = some conditionValue := sameBool.trans boolRun
+                      cases conditionValue with
+                      | false =>
+                        have branchCode : CodeRel sourceMiddle.maxApp [no] [targetNo] := by
+                          simp [CodeRel, introList, noUnary, noEq, maxEq]
+                        have targetBranchRun : evaluate [targetNo] targetEnv targetMiddle =
+                            (targetResult, targetFinal) := by
+                          rw [evaluate, fixClock_evaluate, targetConditionRun] at run
+                          simpa [boolRun] using run
+                        obtain ⟨sourceResult, sourceFinal, sourceRun, branchRel, finalStates⟩ :=
+                          noIH [no] targetEnv targetMiddle sourceEnv targetFinal sourceMiddle targetResult
+                            targetBranchRun envMiddle middleStates branchCode
+                        refine ⟨sourceResult, sourceFinal, ?_, ?_, finalStates⟩
+                        · rw [evaluate, fixClock_evaluate, sourceConditionRun]
+                          simpa [sourceBool] using sourceRun
+                        · simpa [maxEq] using branchRel
+                      | true =>
+                        have branchCode : CodeRel sourceMiddle.maxApp [yes] [targetYes] := by
+                          simp [CodeRel, introList, yesUnary, yesEq, maxEq]
+                        have targetBranchRun : evaluate [targetYes] targetEnv targetMiddle =
+                            (targetResult, targetFinal) := by
+                          rw [evaluate, fixClock_evaluate, targetConditionRun] at run
+                          simpa [boolRun] using run
+                        obtain ⟨sourceResult, sourceFinal, sourceRun, branchRel, finalStates⟩ :=
+                          yesIH [yes] targetEnv targetMiddle sourceEnv targetFinal sourceMiddle targetResult
+                            targetBranchRun envMiddle middleStates branchCode
+                        refine ⟨sourceResult, sourceFinal, ?_, ?_, finalStates⟩
+                        · rw [evaluate, fixClock_evaluate, sourceConditionRun]
+                          simpa [sourceBool] using sourceRun
+                        · simpa [maxEq] using branchRel
 
 end Flapjack.Compiler.Backend.ClosMti
