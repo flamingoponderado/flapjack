@@ -216,6 +216,12 @@ configuration and `arm8_next`/`arm8_ok`/`arm8_proj`, and proves
 `arm8TargetL3_targetOk`, the `targetOk` half of `encoderCorrect`.  The record is
 tagged `arm8_target_def` and recorded as `pending_statement_review`: the
 `arm8_ast`/`arm8_enc`/`EncodeBitMask` definitions it depends on are still
-mechanically rendered and not source-reviewed.  The per-instruction
-`encoder_correct` simulation proofs remain #1239; `encoderCorrect` is proved
-only for the closed model.
+mechanically rendered and not source-reviewed.
+
+`Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Skip.lean` starts the
+L3 `encoder_correct` case split with the `Skip` reductions: the emitted `NOP`
+bytes, the full `Decode`/`Run` reductions for that word, and the
+`Mem`/`Fetch`/`NextStateARM8` reductions (PC advance by four, `branch_hint`
+cleared) on a state holding those bytes.  The `asmStep`/`targetStateRel`
+interference simulation and the remaining instruction cases are #1239;
+`encoderCorrect` is proved only for the closed model.

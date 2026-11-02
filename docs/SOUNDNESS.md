@@ -316,9 +316,11 @@ The following are open review or verification obligations:
       still no transition refinement: the closed `arm8Next` is not shown to
       agree with L3 `NextStateARM8`, the rendered equations have not been
       source-reviewed (so `arm8TargetL3` is tagged only
-      `pending_statement_review`), and there is no L3 `arm8_encoder_correct`
-      port, no proof about arbitrary ARMv8 code, and no theorem that the model
-      agrees with real AArch64 hardware or with L3.
+      `pending_statement_review`).  `L3/CorrectnessEncoding/Skip.lean` proves
+      the `Skip` encoding/`Decode`/`Run`/`Mem`/`Fetch`/`NextStateARM8`
+      reductions, but there is no L3 `arm8_encoder_correct` port, no proof
+      about arbitrary ARMv8 code, and no theorem that the model agrees with
+      real AArch64 hardware or with L3.
       The trusted compiler claim therefore rests on the closed model plus the
       parity evidence, not on an L3 refinement.
     - **Proof port status.** The structural length lemmas at the start of
