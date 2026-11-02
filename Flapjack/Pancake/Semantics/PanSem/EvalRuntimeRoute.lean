@@ -328,6 +328,77 @@ def PanSemRiscV64ProgramInput.toOwner (input : PanSemRiscV64ProgramInput σ) :
   baseAddress := input.initial.source.baseAddress
   topAddress := input.initial.source.topAddress
 
+/-- Declaration evaluation retains the context collected before initializers run. -/
+theorem panSemDeclarationsWithStructs_preserve
+    (structs : StructContext) (access : Option (PanValueMemoryAccess (RiscV.Word 64)))
+    (route : Option (PanExprEvaluator (RiscV.Word 64))) :
+    ∀ decls (state result : PanValueProgramState (RiscV.Word 64)),
+      state.structs = structs →
+      evalPanValueDeclarationsWithStructs structs state decls access route = some result →
+      result.structs = structs := by
+  intro decls
+  induction decls with
+  | nil =>
+    intro state result hs h
+    simp only [evalPanValueDeclarationsWithStructs, Option.some.injEq] at h
+    subst result
+    exact hs
+  | cons d ds ih =>
+    intro state result hs h
+    cases d with
+    | name name fields =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      exact ih state result hs h
+    | function declaration =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      split at h
+      · exact ih _ result rfl h
+      · contradiction
+    | decl shape name expression =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      cases hv : evalPanValueExpWith route structs (fun _ => none) state.globals state.memory
+          state.baseAddress state.topAddress state.bytesInWord expression access with
+      | none => simp [hv] at h
+      | some value =>
+        simp only [hv, Option.bind_eq_bind, Option.bind_some] at h
+        split at h
+        · exact ih _ result rfl h
+        · contradiction
+    | exnDecl name shape =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      split at h
+      · contradiction
+      · split at h
+        · exact ih _ result rfl h
+        · contradiction
+
+theorem panSemCachedProgramRoute_eq (owner : PanSemState (RiscV.Word 64) (FfiState σ))
+    (structs : StructContext) (locals globals : VarName → Option (PanValue (RiscV.Word 64)))
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (base top : RiscV.Word 64) (e : Exp (RiscV.Word 64)) :
+    (let cache := panSemExpressionContextCache structs;
+      fun _structs locals globals memory base top _bytes _access e =>
+        evalPanSemStateExpViaHOLCached cache
+          { owner with
+            structs := structs
+            locals := locals
+            globals := globals
+            memory := memory
+            baseAddress := base
+            topAddress := top } rfl e) structs locals globals memory base top
+      panSemBitVec64BytesInWord (some (panSemBitVec64MemoryAccess owner)) e =
+    evalPanValueExp structs locals globals memory base top panSemBitVec64BytesInWord e
+      (some (panSemBitVec64MemoryAccess owner)) := by
+  simpa [evalPanSemStateExp_64_eq_previous, panSemBitVec64MemoryAccess] using
+    (evalPanSemStateExpViaHOLCached_eq
+      { owner with
+        structs := structs
+        locals := locals
+        globals := globals
+        memory := memory
+        baseAddress := base
+        topAddress := top } e)
+
 /-- RV64 declaration-to-entry execution through the HOL expression route.
     The input supplies the source memory domains and byte order. A non-RV64
     byte count keeps the generic evaluator, preserving its previous behavior. -/
@@ -340,18 +411,32 @@ def panSemEvaluateRiscV64ProgramViaHOL
     (entry : FunName) (arguments : List (Exp (RiscV.Word 64)))
     (memoryHandler : Option (PanValueMemoryFfiHandler (RiscV.Word 64) σ) := none) :
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
-  if input.initial.source.bytesInWord = panSemBitVec64BytesInWord then
-    evalPanValueFfiClockProgram context input.initial clock primitive handler fuel decls entry arguments
-      (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner)) (memoryHandler := memoryHandler)
-      (evaluator := some (fun structs locals globals memory base top _bytes _access e =>
-      evalPanSemStateExpViaHOLGuarded
-        { input.toOwner with
-          structs := structs
-          locals := locals
-          globals := globals
-          memory := memory
-          baseAddress := base
-          topAddress := top } e))
+  if input.initial.source.bytesInWord = panSemBitVec64BytesInWord then do
+    let structs ← collectPanValueStructs decls input.initial.source.structs
+    let run := (let cache := panSemExpressionContextCache structs;
+      fun _structs locals globals memory base top _bytes _access e =>
+        evalPanSemStateExpViaHOLCached cache
+          { input.toOwner with
+            structs := structs
+            locals := locals
+            globals := globals
+            memory := memory
+            baseAddress := base
+            topAddress := top } rfl e)
+    let state ← evalPanValueDeclarationsWithStructs structs
+      { input.initial.source with structs := structs } decls
+      (some (panSemBitVec64MemoryAccess input.toOwner)) (some run)
+    let (outcome, nextClock) ← evalPanValueFfiClockProgramCodeCall context primitive handler
+      state fuel state.globals state.memory input.initial.ffi clock entry arguments
+      (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner))
+      (memoryHandler := memoryHandler) (evaluator := some run)
+    match lookupInfo entry state.returnShapes, outcome with
+    | some shape, .control (.returned locals globals memory ffi [value]) =>
+        if panShapeMatches (panValueShape state.structs value) shape then
+          some (.control (.returned locals globals memory ffi [value]), nextClock)
+        else none
+    | some _, .control (.returned _ _ _ _ _) => none
+    | _, outcome => some (outcome, nextClock)
   else
     evalPanValueFfiClockProgram context input.initial clock primitive handler fuel decls entry arguments
       (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner)) (memoryHandler := memoryHandler)
@@ -373,11 +458,70 @@ theorem panSemEvaluateRiscV64ProgramViaHOL_eq
   unfold panSemEvaluateRiscV64ProgramViaHOL
   split
   · rename_i hbytes
-    apply evalPanValueFfiClockProgram_route_eq
-    intro structs locals globals memory base top e
-    rw [evalPanSemStateExpViaHOLGuarded_eq, evalPanSemStateExp_64_eq_previous]
-    rw [hbytes]
-    rfl
+    simp only [evalPanValueFfiClockProgram, evalPanValueDeclarations]
+    cases hc : collectPanValueStructs decls input.initial.source.structs with
+    | none => simp
+    | some structs =>
+      simp only [Option.bind_eq_bind, Option.bind_some]
+      have hd := evalPanValueDeclarationsWithStructs_route_eq structs
+        input.initial.source.bytesInWord (some (panSemBitVec64MemoryAccess input.toOwner))
+        ((let cache := panSemExpressionContextCache structs;
+      fun _structs locals globals memory base top _bytes _access e =>
+        evalPanSemStateExpViaHOLCached cache
+          { input.toOwner with
+            structs := structs
+            locals := locals
+            globals := globals
+            memory := memory
+            baseAddress := base
+            topAddress := top } rfl e))
+        (fun globals memory base top e => by
+          simpa [hbytes] using panSemCachedProgramRoute_eq input.toOwner structs
+            (fun _ => none) globals memory base top e) decls
+        { input.initial.source with structs := structs } rfl
+      rw [hd]
+      cases hs : evalPanValueDeclarationsWithStructs structs
+          { input.initial.source with structs := structs } decls
+          (some (panSemBitVec64MemoryAccess input.toOwner)) none with
+      | none => simp
+      | some state =>
+        simp only [Option.bind_some]
+        have hstructs : state.structs = structs :=
+          panSemDeclarationsWithStructs_preserve structs _ _ decls _ state rfl hs
+        have hb : state.bytesInWord = input.initial.source.bytesInWord :=
+          evalPanValueDeclarationsWithStructs_bytesInWord structs _ _ decls
+            { input.initial.source with structs := structs } state hs
+        simp only [evalPanValueFfiClockProgramCodeCall]
+        cases hcode : panValueProgramStateCodeMap state with
+        | none => simp
+        | some code =>
+          simp only [Option.bind_eq_bind, Option.bind_some]
+          have hrun := (evalPanValueFfiClockCode_route_eq context primitive handler state.structs code
+            (fun exception => lookupInfo exception state.exceptions) state.baseAddress state.topAddress
+            state.bytesInWord (some (panSemBitVec64MemoryAccess input.toOwner))
+            (some (PanValueCallContracts.mk state.returnShapes state.exceptions state.parameterShapes))
+            memoryHandler ((let cache := panSemExpressionContextCache structs;
+      fun _structs locals globals memory base top _bytes _access e =>
+        evalPanSemStateExpViaHOLCached cache
+          { input.toOwner with
+            structs := structs
+            locals := locals
+            globals := globals
+            memory := memory
+            baseAddress := base
+            topAddress := top } rfl e))
+            (fun locals globals memory e => by
+              simpa [hstructs, hb, hbytes] using
+                panSemCachedProgramRoute_eq input.toOwner structs locals globals memory
+                  state.baseAddress state.topAddress e) fuel).1
+            (fun _ => none) state.globals state.memory input.initial.ffi clock none entry arguments false
+          rw [hrun]
+          congr 1
+          funext result
+          rcases result with ⟨outcome, nextClock⟩
+          cases outcome <;> simp_all
+          all_goals split <;> simp_all
+          all_goals split <;> simp_all
   · rfl
 
 end Flapjack

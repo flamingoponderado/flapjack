@@ -179,6 +179,30 @@ private def programDecls : List (Decl W) :=
      { name := "main", inline := false, exported := true, params := []
        body := .return (.var .global "g"), returnShape := .one }]
 
+/- The final structure context is collected before initializers, even when
+   its declaration follows them. Both initialization and entry use that cache. -/
+private def programDeclsWithLaterStruct := programDecls ++ [.name "S" [("field", .one)]]
+
+#guard (match collectPanValueStructs programDeclsWithLaterStruct [] with
+  | some structs => (panSemExpressionContextCache structs).ranged
+  | none => false)
+#guard observesWord
+  (panSemEvaluateRiscV64ProgramViaHOL sourceFfiContext
+    (programInput (sourceCodeState false true) 8)
+    10 sourcePrimitive sourceFfiHandler 20 programDeclsWithLaterStruct "main" []) 0x88
+
+/- A non-byte name in the collected context selects the String fallback while
+   preserving the initializer and entry result. -/
+private def programDeclsWithFallbackStruct := programDecls ++ [.name "Ā" [("field", .one)]]
+
+#guard (match collectPanValueStructs programDeclsWithFallbackStruct [] with
+  | some structs => !(panSemExpressionContextCache structs).ranged
+  | none => false)
+#guard observesWord
+  (panSemEvaluateRiscV64ProgramViaHOL sourceFfiContext
+    (programInput (sourceCodeState false true) 8)
+    10 sourcePrimitive sourceFfiHandler 20 programDeclsWithFallbackStruct "main" []) 0x88
+
 /- This exercises both the declaration initializer and the entry body through
    the state-derived HOL route. The expected bytes come from the HOL probe. -/
 #guard observesWord
