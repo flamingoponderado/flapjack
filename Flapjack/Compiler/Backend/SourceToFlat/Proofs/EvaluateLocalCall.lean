@@ -17,12 +17,7 @@ theorem factoredInvariant_decClock {C F : Type} [Nonempty C]
     (source : State F) (flat : FlatSem.State C F)
     (invariant : factoredInvariant interp transform gen genv idxs source flat) :
     factoredInvariant interp transform gen genv idxs (EvaluateHOL.decClock source) (FlatSem.decClock flat) := by
-  obtain ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, genInv, fin⟩ := invariant
-  have decStates : StateRel genv (EvaluateHOL.decClock source) (FlatSem.decClock flat) := by
-    cases states with
-    | intro nonempty refs clock ffi =>
-      exact .intro _ _ nonempty refs (by simp [EvaluateHOL.decClock, FlatSem.decClock, clock]) ffi
-  exact ⟨cOk, tysOk, decStates, range, invs, orac, globals, reserved, genInv, fin⟩
+  exact (invariantDecClock interp transform gen genv idxs source flat invariant).2
 
 /-- Looking up a compiled recursive function preserves its name and argument
 and compiles its body under the same recursive environment. -/

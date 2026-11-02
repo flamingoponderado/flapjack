@@ -15,6 +15,11 @@ parses of local domain, lookup, append and singleton statements, including
 both namespace name types. It supports review of the environment lemmas, not
 the full pass theorem; local source parses are not HOL proof replays.
 
+`source_to_flat_invariant_clock_probe.out` captures the inferred statements
+of the original source-to-flat invariant clock replacement and decrement
+theorems, including their independent compiler and FFI carriers. These support
+source review of the Lean ports, not the complete pass correctness theorem.
+
 `source_to_flat_mapi_probe.out` captures the inferred types and statements of
 `mapi_map` and `FILTER_MAPi_ID` from the pinned source-to-flat proof. Their
 Lean counterparts establish the corresponding indexed-map and filtering

@@ -1129,6 +1129,24 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "hol_name": "invariant_change_clock",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "invariantChangeClock",
+    "reviewer": "Compared the inferred statement in source_to_flat_invariant_clock_probe.out with the original source: an invariant implies the same invariant after setting both clocks to an arbitrary common natural. Source FFI and flat compiler payload types remain independent; the HOL type inhabitance needed by THE is explicit. The c and tys fields are the reviewed canonical global-environment finite maps used by the invariant."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "hol_name": "invariant_dec_clock",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
+    "lean_name": "invariantDecClock",
+    "reviewer": "Compared the inferred statement in source_to_flat_invariant_clock_probe.out with the original source: the invariant implies equality of the source and flat clocks and the invariant after both source dec_clock operations. Source FFI and flat compiler payload types remain independent; the HOL type inhabitance needed by THE is explicit. The c and tys fields are the reviewed canonical global-environment finite maps used by the invariant."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": [
       "c",
       "tys"

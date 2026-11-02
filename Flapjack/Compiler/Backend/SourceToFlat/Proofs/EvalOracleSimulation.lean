@@ -31,6 +31,39 @@ noncomputable def factoredInvariant {C F : Type} [Nonempty C]
   evalRefInv (flat.globals.take 1) (flat.refs.take 1) ∧ envGenInv gen ∧
   finIdxMatch flat.globals.length idxs.2.1 (srcOracNextCfg interp source.evalState)
 
+/-- Replacing both clocks by the same value preserves the simulation invariant. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_change_clock"
+  (fmap_as_finite_support := [c, tys])]
+theorem invariantChangeClock {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (clock : Nat)
+    (valid : factoredInvariant interp transform gen genv idxs source flat) :
+    factoredInvariant interp transform gen genv idxs
+      { source with clock := clock } { flat with clock := clock } := by
+  obtain ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, genInv, fin⟩ := valid
+  have updated : StateRel genv { source with clock := clock } { flat with clock := clock } := by
+    cases states with
+    | intro nonempty refs _ ffi => exact .intro _ _ nonempty refs rfl ffi
+  exact ⟨cOk, tysOk, updated, range, invs, orac, globals, reserved, genInv, fin⟩
+
+/-- Related states have equal clocks and remain related after decrementing both. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "invariant_dec_clock"
+  (fmap_as_finite_support := [c, tys])]
+theorem invariantDecClock {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (valid : factoredInvariant interp transform gen genv idxs source flat) :
+    source.clock = flat.clock ∧
+      factoredInvariant interp transform gen genv idxs (EvaluateHOL.decClock source) (FlatSem.decClock flat) := by
+  have same := (stateRel_iff genv source flat).mp valid.2.2.1 |>.2.2.1
+  refine ⟨same, ?_⟩
+  simpa [EvaluateHOL.decClock, FlatSem.decClock, same] using
+    invariantChangeClock interp transform gen genv idxs source flat (flat.clock - 1) valid
+
 /-- Shrinking the reserved block preserves the invariant. This supporting
 lemma has no separate HOL declaration. -/
 theorem factoredInvariant_shrink {C F : Type} [Nonempty C]
