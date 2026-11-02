@@ -349,6 +349,17 @@ def panSemExpressionView {σ : Type}
     (panSemExpressionShadow_finite (panSemExpressionIsolated state)
       (panSemExpressionHolFfi state) hmem hloc hglob)
 
+/-- Executable decision procedure for the expression view's memory domain. -/
+@[instance_reducible] def panSemExpressionViewMemDecider {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : ∃ keys : List MlS, ∀ key,
+      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hglob : ∃ keys : List MlS, ∀ key,
+      state.globals (toStringOfBytes key) ≠ none → key ∈ keys) :
+    DecidablePred (panSemExpressionView state hmem hloc hglob).memaddrs :=
+  fun address => inferInstanceAs (Decidable (state.memaddrs address = true))
+
 /-- Production expression evaluation agrees with its finite HOL expression
     view without any premise on code, exception shapes, or FFI. Local/global
     support, word-valued domain memory, and byte-ranged names remain explicit. -/
@@ -363,10 +374,61 @@ theorem evalPanSemStateExp_isolatedView_agree {σ : Type}
     (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
     Option.map panValueToHOL (evalPanSemStateExp state e) =
       @PanSemStateFiniteExact.evalHOLFinite 64 σ _ (panSemExpressionView state hmem hloc hglob)
-        (fun address => inferInstanceAs (Decidable (state.memaddrs address = true))) (expToHOL e) := by
+        (panSemExpressionViewMemDecider state hmem hloc hglob) (expToHOL e) := by
   exact evalPanSemStateExp_expressionView_agree (panSemExpressionIsolated state)
     (panSemExpressionHolFfi state) (panSemExpressionIsolated_ffiRel state)
     hmem hloc hglob hranged e he
+
+/-- Execute a production expression through the finite HOL evaluator and
+    decode its result back to `PanValue`. The support and memory proofs are
+    erased at runtime; the executable state and expression supply the data. -/
+def evalPanSemStateExpViaHOL {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : ∃ keys : List MlS, ∀ key,
+      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hglob : ∃ keys : List MlS, ∀ key,
+      state.globals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (e : Exp (RiscV.Word 64)) : Option (PanValue (RiscV.Word 64)) :=
+  (@PanSemStateFiniteExact.evalHOLFinite 64 σ _ (panSemExpressionView state hmem hloc hglob)
+    (panSemExpressionViewMemDecider state hmem hloc hglob) (expToHOL e)).map
+      panValueOfHOL
+
+/-- Re-encoding the adapter's result recovers the HOL evaluator's full
+    optional result, including failure, without a byte-range premise. -/
+theorem evalPanSemStateExpViaHOL_toHOL {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : ∃ keys : List MlS, ∀ key,
+      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hglob : ∃ keys : List MlS, ∀ key,
+      state.globals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (e : Exp (RiscV.Word 64)) :
+    Option.map panValueToHOL (evalPanSemStateExpViaHOL state hmem hloc hglob e) =
+      @PanSemStateFiniteExact.evalHOLFinite 64 σ _ (panSemExpressionView state hmem hloc hglob)
+        (panSemExpressionViewMemDecider state hmem hloc hglob) (expToHOL e) := by
+  simp [evalPanSemStateExpViaHOL, Option.map_map, Function.comp_def]
+
+/-- The HOL-backed executable adapter and the state-owned production
+    evaluator return exactly the same optional production value. -/
+theorem evalPanSemStateExpViaHOL_eq {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : ∃ keys : List MlS, ∀ key,
+      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hglob : ∃ keys : List MlS, ∀ key,
+      state.globals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    evalPanSemStateExpViaHOL state hmem hloc hglob e = evalPanSemStateExp state e := by
+  unfold evalPanSemStateExpViaHOL
+  have hagree := congrArg (Option.map panValueOfHOL)
+    (evalPanSemStateExp_isolatedView_agree state hmem hloc hglob hranged e he)
+  cases hresult : evalPanSemStateExp state e with
+  | none => simpa only [hresult, Option.map_none] using hagree.symm
+  | some value =>
+      have hr := evalPanSemStateExp_byteRanged state hranged e he value hresult
+      simpa only [hresult, Option.map_some, panValueOfHOL_panValueToHOL value hr] using hagree.symm
 
 /-- The clocked evaluator's counted expression result agrees with the same
     expression-only HOL view after removing the instrumentation count. -/
@@ -384,7 +446,7 @@ theorem evalPanValueExpCounted_isolatedView_agree {σ : Type}
           state.baseAddress state.topAddress panSemBitVec64BytesInWord e
           (memoryAccess := some (panSemBitVec64MemoryAccess state))) =
       @PanSemStateFiniteExact.evalHOLFinite 64 σ _ (panSemExpressionView state hmem hloc hglob)
-        (fun address => inferInstanceAs (Decidable (state.memaddrs address = true))) (expToHOL e) := by
+        (panSemExpressionViewMemDecider state hmem hloc hglob) (expToHOL e) := by
   simp only [evalPanValueExpCounted, Option.map_map, Function.comp_def]
   change Option.map panValueToHOL
     (evalPanValueExp state.structs state.locals state.globals state.memory

@@ -411,6 +411,28 @@ private theorem bridgeExecUnboundedGlobals : ∃ keys : List MlS, ∀ key,
   refine ⟨[], ?_⟩
   simp [bridgeExecUnboundedShapes, bridgeExecWordState, bridgeExecProdState]
 
+/- Run through the HOL-backed executable adapter, not only its agreement
+   theorem: the word's first little-endian byte is the original HOL row 136. -/
+#guard (match evalPanSemStateExpViaHOL bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+    bridgeExecUnboundedLocals bridgeExecUnboundedGlobals (.loadByte (.const 0)) with
+  | some (.word value) => value == (0x88 : W)
+  | _ => false)
+#guard (evalPanSemStateExpViaHOL bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+  bridgeExecUnboundedLocals bridgeExecUnboundedGlobals (.var .local "missing")).isNone
+#guard (match evalPanSemStateExpViaHOL bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+    bridgeExecUnboundedLocals bridgeExecUnboundedGlobals
+    (.op .add [.const 1, .const 2, .const 3]) with
+  | some (.word value) => value == (6 : W)
+  | _ => false)
+
+example :
+    evalPanSemStateExpViaHOL bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+      bridgeExecUnboundedLocals bridgeExecUnboundedGlobals (.loadByte (.const 0)) =
+      evalPanSemStateExp bridgeExecUnboundedShapes (.loadByte (.const 0)) :=
+  evalPanSemStateExpViaHOL_eq bridgeExecUnboundedShapes bridgeExecWordMemoryRel
+    bridgeExecUnboundedLocals bridgeExecUnboundedGlobals bridgeExecWordRanged
+    (.loadByte (.const 0)) trivial
+
 example :
     Option.map panValueToHOL
       (evalPanSemStateExp bridgeExecUnboundedShapes (.loadByte (.const 0))) =
