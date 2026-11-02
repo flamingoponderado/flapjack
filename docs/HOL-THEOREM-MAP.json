@@ -100617,6 +100617,26 @@
     "reviewer": "Source comparison: memory_rel_ByteArray_words_IMP and its typed capture retain the complete memory relation, reference lookup, good_dimindex and real-address hypotheses. The existential header and separation frame, exact write_bytes payload over the functional memory graph, and both decoded-length conclusions match HOL. store uses the canonical finite-support map and all memory words share the source positive word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality/List.lean",
+    "lean_name": "wordEqThm0_listNil",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_thm0",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: this is the empty-list case of the second conjunct of word_eq_thm0, compared with the source and typed capture. It retains every original hypothesis and conclusion and the independently polymorphic unused t1 and t2 binders. This case does not assemble the full theorem. store uses the canonical finite-support map and target words share the positive HOL dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality/List.lean",
+    "lean_name": "wordEqThm0_listCons",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_thm0",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: this is the cons/cons case of the second conjunct of word_eq_thm0, compared with the source simultaneous induction and typed capture. The only additional hypotheses are the original first-conjunct induction instance for the heads and second-conjunct induction instance for the tails, with independent t1 and t2 types retained. It retains all memory, length, domain, sized comparison, depth and resource hypotheses and the full existential conclusion. This case does not assemble the full theorem. store uses the canonical finite-support map and target words share the positive HOL dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueArray.lean",
     "lean_name": "memoryRel_valueArrayImp",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
