@@ -1,34 +1,32 @@
 import Flapjack.HolRef
 import Flapjack.Basis.Pure.MlString
+import Flapjack.Compiler.Encoders.Arm8.Encode
 
 /-!
-# L3 ARMv8 model: the machine-state carriers
+# L3 ARMv8 model: datatypes and the machine-state carrier
 
 Counterpart of the `Record`/`Construct` declarations of the L3-generated
-`HOL/examples/l3-machine-code/arm8/model/arm8Script.sml` that make up the
-`arm8_state` carrier and its nested control-register records: `ProcState`
-(lines 8-10), `TCR_EL1` (12-13), `TCR_EL2_EL3` (15), `SCTLRType` (17-20),
-`BranchType` (22-27), `exception` (362-365) and `arm8_state` (367-375), in
-source order.  The renderings follow the RISC-V L3 port
-(`Flapjack/RiscV/L3/Types.lean`): L3 `F n`/`FTy n` is `BitVec n`, `bTy` is
-`Bool`, `sTy` (HOL `string`, a `char list`) is `List HolChar`, `PTy` is `×`,
-`OTy` is `Option`, `LTy` is `List`, and `ATy (a, b)` (an L3 map, the HOL
-function type) is `a → b`.  Names are HOL's, with `«»` quoting where Lean
-requires it.
-
-The rest of the model's types (`AccType`, `ShiftType`, `ExtendType`,
-`LogicalOp`, `MemOp`, `MemBarrierOp`, `MoveWideOp`, `RevOp`, `SystemHintOp`,
-`PSTATEField`, `System`, `Debug`, `LoadStore`, `Branch`, `CRCExt`, `Data`,
-`instruction`, `MachineCode`) are not declared here: the emitted-instruction
-carrier and its instruction-level companions are tracked in issue #1229, and
-`ShiftType`/`MoveWideOp` are already ported in
+`HOL/examples/l3-machine-code/arm8/model/arm8Script.sml`, in source order:
+`ProcState` (8-10), `TCR_EL1` (12-13), `TCR_EL2_EL3` (15), `SCTLRType` (17-20),
+`BranchType` (22-27), `AccType` (29-35), `ExtendType` (42-46), `LogicalOp`
+(48-50), `MemOp` (52-53), `MemBarrierOp` (55-58), `RevOp` (64-67),
+`SystemHintOp` (69-73), `PSTATEField` (75-78), `System` (80-88), `Debug`
+(90-93), `LoadStore` (95-224), `Branch` (226-234), `CRCExt` (236-241), `Data`
+(243-349), `instruction` (351-358), `MachineCode` (360), `exception` (362-365)
+and `arm8_state` (367-375).  `ShiftType` (37-40) and `MoveWideOp` (60-62) are
+already ported, with Lean constructor names, in
 `Flapjack/Compiler/Encoders/Arm8/Encode.lean`.
 
+The renderings follow the RISC-V L3 port (`Flapjack/RiscV/L3/Types.lean`): L3
+`F n`/`FTy n` is `BitVec n`, `bTy` is `Bool`, `nTy` is `Nat`, `sTy` (HOL
+`string`, a `char list`) is `List HolChar`, `PTy` is `×`, `OTy` is `Option`,
+`LTy` is `List`, and `ATy (a, b)` (an L3 map, the HOL function type) is `a → b`.
+Names are HOL's, with `«»` quoting where Lean requires it.
+
 `scripts/tests/test_hol_l3_types_to_lean.py` checks that this block is exactly
-the `scripts/l3_types_to_lean.py` rendering of those seven declarations.  The
-generator is a mechanical transcription aid; it does not establish
-HOL-to-Lean equivalence, and the reviewed manifest rows record the source
-comparison.
+the `scripts/l3_types_to_lean.py` rendering of those declarations.  The
+generator is a mechanical transcription aid; it does not establish HOL-to-Lean
+equivalence, and the reviewed manifest rows record the source comparison.
 -/
 
 namespace Flapjack.Compiler.Encoders.Arm8.L3
@@ -84,6 +82,218 @@ inductive BranchType where
   | BranchType_UNKNOWN
   deriving DecidableEq, Repr, Inhabited
 
+/-- HOL L3 datatype `AccType` (`arm8Script.sml:29`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "AccType"]
+inductive AccType where
+  | AccType_NORMAL
+  | AccType_VEC
+  | AccType_STREAM
+  | AccType_VECSTREAM
+  | AccType_ATOMIC
+  | AccType_ORDERED
+  | AccType_UNPRIV
+  | AccType_IFETCH
+  | AccType_PTW
+  | AccType_DC
+  | AccType_IC
+  | AccType_AT
+  deriving DecidableEq, Repr, Inhabited
+
+/-- HOL L3 datatype `ExtendType` (`arm8Script.sml:42`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "ExtendType"]
+inductive ExtendType where
+  | ExtendType_UXTB
+  | ExtendType_UXTH
+  | ExtendType_UXTW
+  | ExtendType_UXTX
+  | ExtendType_SXTB
+  | ExtendType_SXTH
+  | ExtendType_SXTW
+  | ExtendType_SXTX
+  deriving DecidableEq, Repr, Inhabited
+
+/-- HOL L3 datatype `LogicalOp` (`arm8Script.sml:48`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "LogicalOp"]
+inductive LogicalOp where
+  | LogicalOp_AND
+  | LogicalOp_ORR
+  | LogicalOp_EOR
+  deriving DecidableEq, Repr, Inhabited
+
+/-- HOL L3 datatype `MemOp` (`arm8Script.sml:52`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "MemOp"]
+inductive MemOp where
+  | MemOp_LOAD
+  | MemOp_STORE
+  | MemOp_PREFETCH
+  deriving DecidableEq, Repr, Inhabited
+
+/-- HOL L3 datatype `MemBarrierOp` (`arm8Script.sml:55`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "MemBarrierOp"]
+inductive MemBarrierOp where
+  | MemBarrierOp_DSB
+  | MemBarrierOp_DMB
+  | MemBarrierOp_ISB
+  deriving DecidableEq, Repr, Inhabited
+
+/-- HOL L3 datatype `RevOp` (`arm8Script.sml:64`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "RevOp"]
+inductive RevOp where
+  | RevOp_RBIT
+  | RevOp_REV16
+  | RevOp_REV32
+  | RevOp_REV64
+  deriving DecidableEq, Repr, Inhabited
+
+/-- HOL L3 datatype `SystemHintOp` (`arm8Script.sml:69`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "SystemHintOp"]
+inductive SystemHintOp where
+  | SystemHintOp_NOP
+  | SystemHintOp_YIELD
+  | SystemHintOp_WFE
+  | SystemHintOp_WFI
+  | SystemHintOp_SEV
+  | SystemHintOp_SEVL
+  deriving DecidableEq, Repr, Inhabited
+
+/-- HOL L3 datatype `PSTATEField` (`arm8Script.sml:75`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "PSTATEField"]
+inductive PSTATEField where
+  | PSTATEField_DAIFSet
+  | PSTATEField_DAIFClr
+  | PSTATEField_SP
+  deriving DecidableEq, Repr, Inhabited
+
+/-- HOL L3 datatype `System` (`arm8Script.sml:80`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "System"]
+inductive System where
+  | ExceptionReturn
+  | HypervisorCall (a0 : (BitVec 16))
+  | MoveImmediateProcState (a0 : (PSTATEField × (BitVec 4)))
+  | MoveSystemRegister (a0 : (Bool × ((BitVec 3) × ((BitVec 3) × ((BitVec 3) × ((BitVec 4) × ((BitVec 4) × (BitVec 5))))))))
+  | SecureMonitorCall (a0 : (BitVec 16))
+  | SupervisorCall (a0 : (BitVec 16))
+  | SystemInstruction (a0 : ((BitVec 3) × ((BitVec 3) × ((BitVec 4) × ((BitVec 4) × (Bool × (BitVec 5)))))))
+  deriving DecidableEq, Repr, Inhabited
+
+/-- HOL L3 datatype `Debug` (`arm8Script.sml:90`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Debug"]
+inductive Debug where
+  | Breakpoint (a0 : (BitVec 16))
+  | DebugRestore
+  | DebugSwitch (a0 : (BitVec 2))
+  | Halt (a0 : (BitVec 16))
+  deriving DecidableEq, Repr, Inhabited
+
+/-- HOL L3 datatype `LoadStore` (`arm8Script.sml:95`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "LoadStore"]
+inductive LoadStore where
+  | «LoadLiteral@32» (a0 : ((BitVec 32) × (MemOp × (Bool × ((BitVec 64) × (BitVec 5))))))
+  | «LoadLiteral@64» (a0 : ((BitVec 64) × (MemOp × (Bool × ((BitVec 64) × (BitVec 5))))))
+  | «LoadStoreAcquire@16» (a0 : ((BitVec 16) × (MemOp × (AccType × (Bool × (Bool × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))))))
+  | «LoadStoreAcquire@32» (a0 : ((BitVec 32) × (MemOp × (AccType × (Bool × (Bool × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))))))
+  | «LoadStoreAcquire@64» (a0 : ((BitVec 64) × (MemOp × (AccType × (Bool × (Bool × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))))))
+  | «LoadStoreAcquire@8» (a0 : ((BitVec 8) × (MemOp × (AccType × (Bool × (Bool × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))))))
+  | «LoadStoreAcquirePair@128» (a0 : ((BitVec 128) × (MemOp × (AccType × (Bool × (Bool × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))))))
+  | «LoadStoreAcquirePair@64» (a0 : ((BitVec 64) × (MemOp × (AccType × (Bool × (Bool × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))))))
+  | «LoadStoreImmediate@16» (a0 : ((BitVec 16) × (Bool × (MemOp × (AccType × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × ((BitVec 64) × ((BitVec 5) × (BitVec 5))))))))))))))
+  | «LoadStoreImmediate@32» (a0 : ((BitVec 32) × (Bool × (MemOp × (AccType × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × ((BitVec 64) × ((BitVec 5) × (BitVec 5))))))))))))))
+  | «LoadStoreImmediate@64» (a0 : ((BitVec 64) × (Bool × (MemOp × (AccType × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × ((BitVec 64) × ((BitVec 5) × (BitVec 5))))))))))))))
+  | «LoadStoreImmediate@8» (a0 : ((BitVec 8) × (Bool × (MemOp × (AccType × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × ((BitVec 64) × ((BitVec 5) × (BitVec 5))))))))))))))
+  | «LoadStorePair@32» (a0 : ((BitVec 32) × (MemOp × (AccType × (Bool × (Bool × (Bool × (Bool × (Bool × ((BitVec 64) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))))))))))
+  | «LoadStorePair@64» (a0 : ((BitVec 64) × (MemOp × (AccType × (Bool × (Bool × (Bool × (Bool × (Bool × ((BitVec 64) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))))))))))
+  | «LoadStoreRegister@16» (a0 : ((BitVec 16) × (Bool × (MemOp × (Bool × ((BitVec 5) × (ExtendType × (Nat × ((BitVec 5) × (BitVec 5))))))))))
+  | «LoadStoreRegister@32» (a0 : ((BitVec 32) × (Bool × (MemOp × (Bool × ((BitVec 5) × (ExtendType × (Nat × ((BitVec 5) × (BitVec 5))))))))))
+  | «LoadStoreRegister@64» (a0 : ((BitVec 64) × (Bool × (MemOp × (Bool × ((BitVec 5) × (ExtendType × (Nat × ((BitVec 5) × (BitVec 5))))))))))
+  | «LoadStoreRegister@8» (a0 : ((BitVec 8) × (Bool × (MemOp × (Bool × ((BitVec 5) × (ExtendType × (Nat × ((BitVec 5) × (BitVec 5))))))))))
+  deriving BEq, Repr, Inhabited
+
+/-- HOL L3 datatype `Branch` (`arm8Script.sml:226`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Branch"]
+inductive Branch where
+  | BranchConditional (a0 : ((BitVec 64) × (BitVec 4)))
+  | BranchImmediate (a0 : ((BitVec 64) × BranchType))
+  | BranchRegister (a0 : ((BitVec 5) × BranchType))
+  | «CompareAndBranch@32» (a0 : ((BitVec 32) × (Bool × ((BitVec 64) × (BitVec 5)))))
+  | «CompareAndBranch@64» (a0 : ((BitVec 64) × (Bool × ((BitVec 64) × (BitVec 5)))))
+  | «TestBitAndBranch@32» (a0 : ((BitVec 32) × ((BitVec 6) × (Bool × ((BitVec 64) × (BitVec 5))))))
+  | «TestBitAndBranch@64» (a0 : ((BitVec 64) × ((BitVec 6) × (Bool × ((BitVec 64) × (BitVec 5))))))
+  deriving DecidableEq, Repr, Inhabited
+
+/-- HOL L3 datatype `CRCExt` (`arm8Script.sml:236`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "CRCExt"]
+inductive CRCExt where
+  | «CRC@16» (a0 : ((BitVec 16) × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
+  | «CRC@32» (a0 : ((BitVec 32) × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
+  | «CRC@64» (a0 : ((BitVec 64) × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
+  | «CRC@8» (a0 : ((BitVec 8) × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
+  deriving DecidableEq, Repr, Inhabited
+
+/-- HOL L3 datatype `Data` (`arm8Script.sml:243`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Data"]
+inductive Data where
+  | «AddSubCarry@32» (a0 : ((BitVec 32) × (Bool × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))))
+  | «AddSubCarry@64» (a0 : ((BitVec 64) × (Bool × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))))
+  | «AddSubExtendRegister@32» (a0 : ((BitVec 32) × (Bool × (Bool × ((BitVec 5) × (ExtendType × ((BitVec 3) × ((BitVec 5) × (BitVec 5)))))))))
+  | «AddSubExtendRegister@64» (a0 : ((BitVec 64) × (Bool × (Bool × ((BitVec 5) × (ExtendType × ((BitVec 3) × ((BitVec 5) × (BitVec 5)))))))))
+  | «AddSubImmediate@32» (a0 : ((BitVec 32) × (Bool × (Bool × ((BitVec 32) × ((BitVec 5) × (BitVec 5)))))))
+  | «AddSubImmediate@64» (a0 : ((BitVec 64) × (Bool × (Bool × ((BitVec 64) × ((BitVec 5) × (BitVec 5)))))))
+  | «AddSubShiftedRegister@32» (a0 : ((BitVec 32) × (Bool × (Bool × (ShiftType × ((BitVec 5) × ((BitVec 6) × ((BitVec 5) × (BitVec 5)))))))))
+  | «AddSubShiftedRegister@64» (a0 : ((BitVec 64) × (Bool × (Bool × (ShiftType × ((BitVec 5) × ((BitVec 6) × ((BitVec 5) × (BitVec 5)))))))))
+  | «BitfieldMove@32» (a0 : ((BitVec 32) × (Bool × (Bool × ((BitVec 32) × ((BitVec 32) × (Nat × (Nat × ((BitVec 5) × (BitVec 5))))))))))
+  | «BitfieldMove@64» (a0 : ((BitVec 64) × (Bool × (Bool × ((BitVec 64) × ((BitVec 64) × (Nat × (Nat × ((BitVec 5) × (BitVec 5))))))))))
+  | «ConditionalCompareImmediate@32» (a0 : ((BitVec 32) × (Bool × ((BitVec 32) × ((BitVec 4) × ((Bool × (Bool × (Bool × Bool))) × (BitVec 5)))))))
+  | «ConditionalCompareImmediate@64» (a0 : ((BitVec 64) × (Bool × ((BitVec 64) × ((BitVec 4) × ((Bool × (Bool × (Bool × Bool))) × (BitVec 5)))))))
+  | «ConditionalCompareRegister@32» (a0 : ((BitVec 32) × (Bool × ((BitVec 4) × ((Bool × (Bool × (Bool × Bool))) × ((BitVec 5) × (BitVec 5)))))))
+  | «ConditionalCompareRegister@64» (a0 : ((BitVec 64) × (Bool × ((BitVec 4) × ((Bool × (Bool × (Bool × Bool))) × ((BitVec 5) × (BitVec 5)))))))
+  | «ConditionalSelect@32» (a0 : ((BitVec 32) × (Bool × (Bool × ((BitVec 4) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))))
+  | «ConditionalSelect@64» (a0 : ((BitVec 64) × (Bool × (Bool × ((BitVec 4) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))))
+  | «CountLeading@32» (a0 : ((BitVec 32) × (Bool × ((BitVec 5) × (BitVec 5)))))
+  | «CountLeading@64» (a0 : ((BitVec 64) × (Bool × ((BitVec 5) × (BitVec 5)))))
+  | «Division@32» (a0 : ((BitVec 32) × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
+  | «Division@64» (a0 : ((BitVec 64) × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
+  | «ExtractRegister@32» (a0 : ((BitVec 32) × ((BitVec 6) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
+  | «ExtractRegister@64» (a0 : ((BitVec 64) × ((BitVec 6) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
+  | «LogicalImmediate@32» (a0 : ((BitVec 32) × (LogicalOp × (Bool × ((BitVec 32) × ((BitVec 5) × (BitVec 5)))))))
+  | «LogicalImmediate@64» (a0 : ((BitVec 64) × (LogicalOp × (Bool × ((BitVec 64) × ((BitVec 5) × (BitVec 5)))))))
+  | «LogicalShiftedRegister@32» (a0 : ((BitVec 32) × (LogicalOp × (Bool × (Bool × (ShiftType × (Nat × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))))))
+  | «LogicalShiftedRegister@64» (a0 : ((BitVec 64) × (LogicalOp × (Bool × (Bool × (ShiftType × (Nat × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))))))
+  | «MoveWide@32» (a0 : ((BitVec 32) × (MoveWideOp × ((BitVec 2) × ((BitVec 16) × (BitVec 5))))))
+  | «MoveWide@64» (a0 : ((BitVec 64) × (MoveWideOp × ((BitVec 2) × ((BitVec 16) × (BitVec 5))))))
+  | «MultiplyAddSub@32» (a0 : ((BitVec 32) × (Bool × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))))
+  | «MultiplyAddSub@64» (a0 : ((BitVec 64) × (Bool × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))))
+  | MultiplyAddSubLong (a0 : (Bool × (Bool × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))))
+  | MultiplyHigh (a0 : (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))
+  | «Reverse@32» (a0 : ((BitVec 32) × (RevOp × ((BitVec 5) × (BitVec 5)))))
+  | «Reverse@64» (a0 : ((BitVec 64) × (RevOp × ((BitVec 5) × (BitVec 5)))))
+  | «Shift@32» (a0 : ((BitVec 32) × (ShiftType × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
+  | «Shift@64» (a0 : ((BitVec 64) × (ShiftType × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
+  deriving BEq, Repr, Inhabited
+
+/-- HOL L3 datatype `instruction` (`arm8Script.sml:351`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "instruction"]
+inductive instruction where
+  | Address (a0 : (Bool × ((BitVec 64) × (BitVec 5))))
+  | Branch (a0 : Branch)
+  | CRCExt (a0 : CRCExt)
+  | ClearExclusive (a0 : (BitVec 4))
+  | Data (a0 : Data)
+  | Debug (a0 : Debug)
+  | Hint (a0 : SystemHintOp)
+  | LoadStore (a0 : LoadStore)
+  | MemoryBarrier (a0 : (MemBarrierOp × (BitVec 4)))
+  | Reserved
+  | System (a0 : System)
+  | Unallocated
+  deriving BEq, Repr, Inhabited
+
+/-- HOL L3 datatype `MachineCode` (`arm8Script.sml:360`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "MachineCode"]
+inductive MachineCode where
+  | ARM8 (a0 : (BitVec 32))
+  | BadCode (a0 : List HolChar)
+  deriving DecidableEq, Repr, Inhabited
+
 /-- HOL L3 datatype `exception` (`arm8Script.sml:362`). -/
 @[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "exception"]
 inductive exception where
@@ -113,5 +323,4 @@ structure arm8_state where
   branch_hint : (Option BranchType)
   exception : exception
   deriving Inhabited
-
 end Flapjack.Compiler.Encoders.Arm8.L3

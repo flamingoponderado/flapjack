@@ -99428,5 +99428,133 @@
     "lean_name": "arm8Ok",
     "statement_status": "reviewed_exact",
     "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): cakeml/compiler/encoders/arm8/arm8_targetScript.sml:20-27 defines arm8_ok ms <=> ms.PSTATE.EL = 0w /\\ ~ms.SCTLR_EL1.E0E /\\ ~ms.SCTLR_EL1.SA0 /\\ ~ms.TCR_EL1.TBI1 /\\ ~ms.TCR_EL1.TBI0 /\\ ms.exception = NoException /\\ aligned 2 ms.PC. Lean arm8Ok is the same seven-way Bool conjunction: decide for the two equalities (HOL word and datatype equality) and holAligned, the reviewed exact port of HOL aligned, for the alignment conjunct. No conjunct is added, dropped or weakened."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "AccType",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "AccType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:29-35, Datatype with 12 nullary constructors AccType_NORMAL, AccType_VEC, AccType_STREAM, AccType_VECSTREAM, AccType_ATOMIC, AccType_ORDERED, AccType_UNPRIV, AccType_IFETCH, AccType_PTW, AccType_DC, AccType_IC, AccType_AT, in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "ExtendType",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "ExtendType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:42-46, Datatype with eight nullary constructors ExtendType_UXTB, ExtendType_UXTH, ExtendType_UXTW, ExtendType_UXTX, ExtendType_SXTB, ExtendType_SXTH, ExtendType_SXTW, ExtendType_SXTX, in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "LogicalOp",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "LogicalOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:48-50, Datatype with three nullary constructors LogicalOp_AND, LogicalOp_ORR, LogicalOp_EOR, in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "MemOp",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "MemOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:52-53, Datatype with three nullary constructors MemOp_LOAD, MemOp_STORE, MemOp_PREFETCH, in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "MemBarrierOp",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "MemBarrierOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:55-58, Datatype with three nullary constructors MemBarrierOp_DSB, MemBarrierOp_DMB, MemBarrierOp_ISB, in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "RevOp",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "RevOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:64-67, Datatype with four nullary constructors RevOp_RBIT, RevOp_REV16, RevOp_REV32, RevOp_REV64, in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "SystemHintOp",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "SystemHintOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:69-73, Datatype with six nullary constructors SystemHintOp_NOP, SystemHintOp_YIELD, SystemHintOp_WFE, SystemHintOp_WFI, SystemHintOp_SEV, SystemHintOp_SEVL, in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "PSTATEField",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "PSTATEField",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:75-78, Datatype with three nullary constructors PSTATEField_DAIFSet, PSTATEField_DAIFClr, PSTATEField_SP, in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "System",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "System",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:80-88, Datatype with seven constructors ExceptionReturn (nullary), HypervisorCall (word16), MoveImmediateProcState (PSTATEField × word4), MoveSystemRegister (Bool × (word3 × (word3 × (word3 × (word4 × (word4 × word5)))))), SecureMonitorCall (word16), SupervisorCall (word16), SystemInstruction (word3 × (word3 × (word4 × (word4 × (Bool × word5))))), with the payload tuple arities and field types matching the L3 Import declaration. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "Debug",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "Debug",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:90-93, Datatype with constructors Breakpoint (word16), DebugRestore (nullary), DebugSwitch (word2), Halt (word16), in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "LoadStore",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "LoadStore",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:95-224, Datatype with the 17 constructors LoadLiteral@32/64, LoadStoreAcquire@8/16/32/64, LoadStoreAcquirePair@64/128, LoadStoreImmediate@8/16/32/64, LoadStorePair@32/64, LoadStoreRegister@8/16/32/64, each carrying the L3 payload product (MemOp, AccType, ExtendType and the listed word widths) with the same nesting. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "Branch",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "Branch",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:226-234, Datatype with BranchConditional (word64 × word4), BranchImmediate (word64 × BranchType), BranchRegister (word5 × BranchType), CompareAndBranch@32/64 (word32/64 × Bool × (word64 × word5)), TestBitAndBranch@32/64 (word32/64 × (word6 × (Bool × (word64 × word5)))), in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "CRCExt",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "CRCExt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:236-241, Datatype with CRC@8/16/32/64, each carrying (word8/16/32/64 × (Bool × (word5 × (word5 × word5)))), in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "Data",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "Data",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:243-349, Datatype with the 35 data-processing constructors from AddSubCarry@32 through Shift@64, each carrying the L3 payload product with the same nesting, word widths, ShiftType/MoveWideOp/LogicalOp/RevOp fields and Nat shift amounts. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "instruction",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "instruction",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:351-358, Datatype with Address (Bool × (word64 × word5)), Branch (Branch), CRCExt (CRCExt), ClearExclusive (word4), Data (Data), Debug (Debug), Hint (SystemHintOp), LoadStore (LoadStore), MemoryBarrier (MemBarrierOp × word4), Reserved (nullary), System (System), Unallocated (nullary), in that order. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "MachineCode",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Types.lean",
+    "lean_name": "MachineCode",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): L3 Import declaration at HOL/examples/l3-machine-code/arm8/model/arm8Script.sml:360, Datatype with ARM8 (word32) and BadCode (string), in that order; the string payload is rendered as List HolChar. Rendered mechanically by scripts/l3_types_to_lean.py and checked against the model by scripts/tests/test_hol_l3_types_to_lean.py. Fixed word widths are BitVec n (F n/FTy n); bTy is Bool, nTy is Nat, sTy (HOL string = char list) is List HolChar, PTy is ×, OTy is Option, LTy is List, ATy (L3 map = HOL function type) is →. No field, constructor, hypothesis or side condition is added or dropped. `LoadStore`, `Data` and `instruction` derive `BEq` rather than `DecidableEq` because Lean cannot derive `DecidableEq` for their deeply nested payloads; that is a Lean instance choice, not a carrier change."
   }
 ]

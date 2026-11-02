@@ -163,11 +163,16 @@ parity fixtures remain the executable evidence.
 ## L3 carrier and validity gate
 
 `Flapjack/Compiler/Encoders/Arm8/L3/Types.lean` ports the L3-generated
-`arm8_state` carrier and the records it contains (`ProcState`, `TCR_EL1`,
-`TCR_EL2_EL3`, `SCTLRType`, `BranchType`, `exception`) exactly as declared in
-`HOL/examples/l3-machine-code/arm8/model/arm8Script.sml`.  The file is the
-mechanical output of `scripts/l3_types_to_lean.py` for those declarations, and
-`scripts/tests/test_hol_l3_types_to_lean.py` checks it against the model.
+carriers from `HOL/examples/l3-machine-code/arm8/model/arm8Script.sml`: the
+`arm8_state` record and its control-register records (`ProcState`, `TCR_EL1`,
+`TCR_EL2_EL3`, `SCTLRType`, `BranchType`, `exception`), plus `AccType`,
+`ExtendType`, `LogicalOp`, `MemOp`, `MemBarrierOp`, `RevOp`, `SystemHintOp`,
+`PSTATEField`, `System`, `Debug`, `LoadStore`, `Branch`, `CRCExt`, `Data`,
+`instruction` and `MachineCode`.  `ShiftType` and `MoveWideOp` remain in
+`Encode.lean`, where they were already ported with Lean constructor names.  The
+file is the mechanical output of `scripts/l3_types_to_lean.py` for those
+declarations, and `scripts/tests/test_hol_l3_types_to_lean.py` checks it against
+the model.
 
 `Flapjack/Compiler/Encoders/Arm8/L3/Target.lean` ports CakeML's `arm8_proj`
 and `arm8_ok` over that carrier.  `arm8Ok_of_closed` proves that the closed
@@ -176,8 +181,14 @@ validity gate; the L3-only privilege, control-register and exception fields are
 explicit hypotheses because the closed carrier does not model them.  This is a
 validity-condition refinement only.
 
-The L3 transition semantics (`Next`/`Fetch`/`Decode`/`Run`) and the full
-`arm8$instruction` carrier are not ported, so `arm8_next`/`arm8_target` are not
-yet L3 instances and `encoderCorrect` remains proved only for the closed model.
-The remaining work is tracked in issues #1229 (carrier and transition gaps) and
-#1239 (L3 target correctness chain).
+The L3 transition semantics (`Next`/`Fetch`/`Decode`/`Run`) are not ported,
+so `arm8_next`/`arm8_target` are not yet L3 instances and `encoderCorrect`
+remains proved only for the closed model.  `scripts/l3/export_arm8_defs.sml`
+exports the pinned HOL definition closure for those functions, and
+`scripts/hol_terms_to_lean.py --thy=arm8` renders it, but the closure currently
+stops at the HOL `bitstring`/FCP library: `AddWithCarry`, `Decode`, `Run` and
+the `dfn'*` instruction functions are stated over `bool ** 'N` (FCP)
+bit-vectors, and Flapjack does not yet provide `w2v`, `shiftr`, `testbit`,
+`PAD_LEFT`, `FLAT` or `IN`.  Porting that library, then the transition
+semantics, then the L3 encoder-correctness cases is the remaining work of
+#1239; #1229 tracks the individual carrier and semantics gaps.

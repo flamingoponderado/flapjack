@@ -22,6 +22,9 @@ from pathlib import Path
 
 sys.setrecursionlimit(1000000)
 
+# HOL theory holding the L3 model datatypes/constants (riscv or arm8).
+MODEL_THY = 'riscv'
+
 # ---------------------------------------------------------------------------
 # S-expression reader
 
@@ -190,7 +193,7 @@ def ty_lean(t) -> str:
         return 'HolRounding'
     if key == ('binary_ieee', 'float_compare'):
         return 'HolFloatCompare'
-    if t.thy == 'riscv':
+    if t.thy == MODEL_THY:
         return ident(t.op)
     raise Unrenderable(f'type {t}')
 
@@ -378,7 +381,7 @@ class Renderer:
                 match_ty(generic[0], c.ty, inst)
                 name = '(' + name + ''.join(f' ({tyvar_name(v)} := {ty_lean(inst[v])})' for v in generic[1] if v in inst) + ')'
             return name if not args else '(' + name + ''.join(' ' + self.atom(a, env) for a in args) + ')'
-        if c.thy == 'riscv':
+        if c.thy == MODEL_THY:
             return self.riscv_const(c, args, env)
         if c.name.endswith('_CASE'):
             return self.case(c, args, env)
@@ -412,7 +415,7 @@ class Renderer:
             return self.case(c, args, env)
         # a constructor of a riscv datatype
         _, rng = fun_parts(c.ty)
-        if isinstance(rng, Ty) and rng.thy == 'riscv':
+        if isinstance(rng, Ty) and rng.thy == MODEL_THY:
             arity = len(fun_parts(c.ty)[0])
             return self.eta(c, args, env, arity,
                             lambda xs, raw: (f'{ident(rng.op)}.{ident(n)}' if not xs else
@@ -457,19 +460,19 @@ class Renderer:
 
     def datatype_info(self, t):
         """[(constructor, arity)] for a case scrutinee type."""
-        if isinstance(t, Ty) and t.thy == 'riscv' and t.op in self.types and 'ctors' in self.types[t.op]:
+        if isinstance(t, Ty) and t.thy == MODEL_THY and t.op in self.types and 'ctors' in self.types[t.op]:
             info = self.types[t.op]
             return list(zip(info['ctors'], info['arity']))
-        if isinstance(t, Ty) and t.thy == 'riscv' and t.op in self.types and 'fields' in self.types[t.op]:
+        if isinstance(t, Ty) and t.thy == MODEL_THY and t.op in self.types and 'fields' in self.types[t.op]:
             return [('mk', len(self.types[t.op]['fields']))]
         if isinstance(t, Ty) and (t.thy, t.op) in BUILTIN_CASES:
             return BUILTIN_CASES[(t.thy, t.op)]
         return None
 
     def pattern(self, t, ctor, names):
-        if isinstance(t, Ty) and t.thy == 'riscv' and 'fields' in self.types.get(t.op, {}):
+        if isinstance(t, Ty) and t.thy == MODEL_THY and 'fields' in self.types.get(t.op, {}):
             return '⟨' + ', '.join(names) + '⟩'
-        if isinstance(t, Ty) and t.thy == 'riscv':
+        if isinstance(t, Ty) and t.thy == MODEL_THY:
             return f'.{ident(ctor)}' + ''.join(' ' + n for n in names)
         key = (t.thy, t.op)
         if key == ('option', 'option'):
@@ -980,6 +983,10 @@ def tuple_pattern(r, p, env):
 
 
 def main(argv):
+    global MODEL_THY
+    for arg in argv[3:]:
+        if arg.startswith('--thy='):
+            MODEL_THY = arg.removeprefix('--thy=')
     sexp_path, types_lean = argv[1], argv[2]
     data = read_sexps(Path(sexp_path).read_text())
     types = parse_types(Path(types_lean).read_text())

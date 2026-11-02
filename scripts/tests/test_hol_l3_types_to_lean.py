@@ -7,8 +7,14 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 RENDER = runpy.run_path(str(ROOT / 'scripts' / 'l3_types_to_lean.py'))['render']
 MODEL = 'HOL/examples/l3-machine-code/riscv/model/riscvScript.sml'
 ARM8_MODEL = 'HOL/examples/l3-machine-code/arm8/model/arm8Script.sml'
-ARM8_STATE_CARRIERS = ['ProcState', 'TCR_EL1', 'TCR_EL2_EL3', 'SCTLRType',
-                       'BranchType', 'exception', 'arm8_state']
+ARM8_TYPES = ['ProcState', 'TCR_EL1', 'TCR_EL2_EL3', 'SCTLRType', 'BranchType',
+              'AccType', 'ExtendType', 'LogicalOp', 'MemOp', 'MemBarrierOp',
+              'RevOp', 'SystemHintOp', 'PSTATEField', 'System', 'Debug',
+              'LoadStore', 'Branch', 'CRCExt', 'Data', 'instruction',
+              'MachineCode', 'exception', 'arm8_state']
+# `DecidableEq` derivation fails for these deeply nested carriers; `BEq` is
+# enough for the rendered L3 definitions, which compare with `==`.
+ARM8_BEQ_ONLY = ('LoadStore', 'Data', 'instruction')
 
 
 class L3TypesToLeanTest(unittest.TestCase):
@@ -19,9 +25,9 @@ class L3TypesToLeanTest(unittest.TestCase):
         end = committed.rindex('end Flapjack.RiscV.L3')
         self.assertEqual(committed[start:end].rstrip('\n'), rendered.rstrip('\n'))
 
-    def test_arm8_state_carriers_match_model(self):
+    def test_arm8_types_match_model(self):
         rendered = RENDER((ROOT / ARM8_MODEL).read_text(), ARM8_MODEL,
-                          ARM8_STATE_CARRIERS)
+                          ARM8_TYPES, ARM8_BEQ_ONLY)
         committed = (ROOT / 'Flapjack/Compiler/Encoders/Arm8/L3/Types.lean').read_text()
         start = committed.index('/-- HOL L3 ')
         end = committed.rindex('end Flapjack.Compiler.Encoders.Arm8.L3')

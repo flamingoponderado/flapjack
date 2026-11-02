@@ -14,13 +14,14 @@ import re, sys, runpy
 from pathlib import Path
 
 
-def render(text: str, HOLPATH: str, only: list[str] | None = None) -> str:
+def render(text: str, HOLPATH: str, only: list[str] | None = None,
+           beq_only: tuple[str, ...] = ()) -> str:
     decls = runpy.run_path(str(Path(__file__).with_name('hol_sml_declarations.py')))['l3_type_declarations'](text)
     lines = text.splitlines(keepends=True)
     KW = {'done','at','by','fun','have','show','from','let','in','if','then','else','do','match','with','end',
           'open','where','deriving','structure','inductive','instance','def','theorem','for','unless','return','try','catch','finally','mut','break','continue','Type','Prop','Sort','true','false','true','not','and','or','namespace','section','variable','universe','import','export','private','protected','partial','noncomputable','macro','syntax','notation','infix','set_option','attribute','local','scoped','calc','suffices','obtain','this','fun','λ','Option','List','Nat','Bool','String'}
     def ident(n):
-        return '«'+n+'»' if (n in KW or "'" in n) else n
+        return '«'+n+'»' if (n in KW or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", n)) else n
     class P:
         def __init__(s,t): s.t=t; s.i=0
         def ws(s):
@@ -91,13 +92,17 @@ def render(text: str, HOLPATH: str, only: list[str] | None = None) -> str:
             fun=any(hasfun(t) for _,t in items)
             res.append('/-- HOL L3 record `%s` (`%s:%d`). -/\n%s\nstructure %s where\n'%(n,script,start,tag,ident(n)))
             for f,t in items: res.append('  %s : %s\n'%(ident(f),t))
-            res.append('  deriving Inhabited\n\n' if fun else '  deriving DecidableEq, Repr, Inhabited\n\n')
+            res.append('  deriving Inhabited\n\n' if fun else
+                       ('  deriving BEq, Repr, Inhabited\n\n' if n in beq_only else
+                        '  deriving DecidableEq, Repr, Inhabited\n\n'))
         else:
             fun=any(hasfun(t) for _,a in items for t in a)
             res.append('/-- HOL L3 datatype `%s` (`%s:%d`). -/\n%s\ninductive %s where\n'%(n,script,start,tag,ident(n)))
             for c,args in items:
                 res.append('  | %s%s\n'%(ident(c),''.join(' (a%d : %s)'%(k,t) for k,t in enumerate(args))))
-            res.append('  deriving Inhabited\n\n' if fun else '  deriving DecidableEq, Repr, Inhabited\n\n')
+            res.append('  deriving Inhabited\n\n' if fun else
+                       ('  deriving BEq, Repr, Inhabited\n\n' if n in beq_only else
+                        '  deriving DecidableEq, Repr, Inhabited\n\n'))
     return ''.join(res)
 
 
