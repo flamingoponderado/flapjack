@@ -1,5 +1,68 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_globalAlloc_source",
+    "reviewer": "Compared the typed original GlobalVarAlloc case and fallback: an empty argument list appends exactly n empty globals and returns Unitv; all other arguments fail. Compiler and FFI state types remain independent. Other primitive cases remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_globalInit_source",
+    "reviewer": "Compared the typed original GlobalVarInit case and fallback: exactly one argument updates an in-range NONE slot, returns Unitv, and all other cases fail. Optional list lookup combines the original bounds and IS_NONE tests, and List.set is the bounded LUPDATE. Other primitive cases remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_globalLookup_source",
+    "reviewer": "Compared the typed original GlobalVarLookup case and fallback: an empty argument list and an in-range SOME slot return its value with unchanged state; all other cases fail. Optional lookup combines the original bounds and IS_SOME tests. Other primitive cases remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_tagLenEq_source",
+    "reviewer": "Compared the typed original TagLenEq case and fallback: exactly one named constructor returns Boolv of the tag and length comparisons, independent of the constructor type field; all other arguments fail. Other primitive cases remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_lenEq_source",
+    "reviewer": "Compared the typed original LenEq case and fallback: exactly one constructor, named or tuple, returns Boolv of its length comparison; all other arguments fail. Other primitive cases remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_el_source",
+    "reviewer": "Compared both typed original El cases and fallback: a constructor returns its indexed field only within bounds; a location permits only index zero and a successful reference lookup; all other inputs fail. Optional list lookup combines the original bound and EL. Other primitive cases remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_id_source",
+    "reviewer": "Compared the typed original Id case and fallback: exactly one value returns unchanged with the original state; any other argument list fails. Other primitive cases remain separate."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": [
