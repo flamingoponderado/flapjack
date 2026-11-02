@@ -29,6 +29,26 @@ example {C F : Type} (s : State C F) :
 example {C F : Type} (s : State C F) :
     doApp s (.src (.shift .w8 .lsl 2)) [.litv (.word8 7)] = some (s, .val (.litv (.word8 28))) := by rfl
 example {C F : Type} (s : State C F) :
+    doApp s (.src (.shift .w64 .ror 65)) [.litv (.word64 3)] =
+      some (s, .val (.litv (.word64 0x8000000000000001))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.shift .w8 .lsl 2)) [.litv (.word64 7)] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src .equality) [.litv (.intLit 7), .litv (.intLit 7)] =
+      some (s, .val (boolValue true)) := by
+  simp [doApp, doAppNumeric, doEq, Flapjack.SemanticPrimitivesHOL.litSameType]
+example {C F : Type} (s : State C F) :
+    doApp s (.src .equality) [.litv (.intLit 7), .litv (.word8 7)] = none := by
+  simp [doApp, doAppNumeric, doEq, Flapjack.SemanticPrimitivesHOL.litSameType]
+example {C F : Type} (s : State C F) :
+    doApp s (.src .equality) [.litv (.intLit 7)] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.test (.compare .lt) .intT)) [.litv (.intLit 7), .litv (.intLit 8)] =
+      some (s, .val (boolValue true)) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src (.test .equal .intT)) [.litv (.intLit 7), .litv (.word8 7)] = none := by
+  simp [doApp, doAppNumeric, doTest, checkType]
+example {C F : Type} (s : State C F) :
     doApp s (.globalVarAlloc 2) [] = some ({ s with globals := s.globals ++ [none, none] }, .val unitValue) := by rfl
 example {C F : Type} (s : State C F) :
     doApp { s with refs := [] } (.src .opref) [.litv (.intLit 7)] =

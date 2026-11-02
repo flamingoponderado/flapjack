@@ -70,6 +70,20 @@ val _ = show_eval "data_thunk_alloc=" ``OPTION_MAP (λ(s,r). (s.refs,r))
     (Src (ThunkOp (AllocThunk NotEvaluated))) [Litv (IntLit 5)])``;
 val _ = show_eval "numeric_shift=" ``OPTION_MAP SND
   (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Shift W8 Lsl 2)) [Litv (Word8 7w)])``;
+val _ = show_word_eval "numeric_shift64_rotate=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Shift W64 Ror 65)) [Litv (Word64 3w)])``;
+val _ = show_eval "numeric_shift_wrong_width=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Shift W8 Lsl 2)) [Litv (Word64 7w)])``;
+val _ = show_eval "numeric_equality_true=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Equality) [Litv (IntLit 7); Litv (IntLit 7)])``;
+val _ = show_eval "numeric_equality_bad_type=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Equality) [Litv (IntLit 7); Litv (Word8 7w)])``;
+val _ = show_eval "numeric_equality_bad_arity=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Equality) [Litv (IntLit 7)])``;
+val _ = show_eval "numeric_test_compare=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Test (Compare Lt) IntT)) [Litv (IntLit 7); Litv (IntLit 8)])``;
+val _ = show_eval "numeric_test_bad_type=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Test Equal IntT)) [Litv (IntLit 7); Litv (Word8 7w)])``;
 val _ = show_eval "data_copy_overlap=" ``OPTION_MAP (λ(s,r). (s.refs,r))
   (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [W8array [1w;2w;3w;4w]])
     (Src CopyAw8Aw8) [Loc T 0; Litv (IntLit 0); Litv (IntLit 3); Loc T 0; Litv (IntLit 1)])``;

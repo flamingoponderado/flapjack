@@ -1,5 +1,41 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyCompareSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_shift8_source",
+    "reviewer": "Compared the typed flat do_app shift clause and fallback for all argument lists, specializing the original word size to W8. The source do_shift definition accepts only a Word8 literal and uses the same shift lookup; other literals and arities fail. The independent compiler and FFI state payloads are preserved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyCompareSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_shift64_source",
+    "reviewer": "Compared the typed flat do_app shift clause and fallback for all argument lists, specializing the original word size to W64. The source do_shift definition accepts only a Word64 literal and uses the same shift lookup; other literals and arities fail. The independent compiler and FFI state payloads are preserved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyCompareSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_equality_source",
+    "reviewer": "Compared the typed original equality case and fallback for arbitrary argument lists. Exactly two operands use flat do_eq, with its type error mapped to NONE and its Boolean result to Boolv; both state payload types remain independent."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyCompareSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_test_source",
+    "reviewer": "Compared the typed original test case and fallback for arbitrary argument lists, test and primitive type. Exactly two operands use flat do_test, with its type error mapped to NONE and its Boolean result to Boolv; both state payload types remain independent. Floating tests inherit the rational-cut model."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
     "hol_name": "do_app_def",
