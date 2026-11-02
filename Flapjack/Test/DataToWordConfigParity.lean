@@ -33,6 +33,18 @@ private def conf : Config :=
     hasLongdiv := false, hasFpOps := false, hasFpTern := false, be := false,
     callEmptyFfi := false, gcKind := .simple }
 
+-- Three original `real_addr` observations exercise every branch.
+#guard match realAddr (width := 64) { conf with tagBits := 0, lenBits := 0, padBits := 1 } 4 with
+  | .op .add [.lookup .currHeap, .op .sub [.var 4, .const w]] => w.toNat == 1
+  | _ => false
+#guard match realAddr (width := 64) conf 4 with
+  | .op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const w)] => w.toNat == 5
+  | _ => false
+#guard match realAddr (width := 64) { conf with padBits := 0 } 4 with
+  | .op .add [.lookup .currHeap, .shift .lsl (.shift .lsr (.var 4) (.const l)) (.const k)] =>
+    l.toNat == 5 && k.toNat == 3
+  | _ => false
+
 -- The original compiler's catch-all assignment emits Skip at the same label.
 #guard ([ (.intOp .greater, [1, 2]), (.intOp .greaterEq, [1, 2]), (.globOp .allocGlobal, []),
     (.memOp .concatByteVec, [1]), (.memOp .fromListByte, [1]) ] :

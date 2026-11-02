@@ -115392,5 +115392,14 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison against data_to_wordProofScript.sml:1768-1777 and typed literal replay in data_to_word_option_le_probe.out: independent word width, compiler and FFI carriers; stack limit, heap byte count divided by width DIV 8, length size, 64-bit flag and both FP fields match. WordSemStateFiniteExact.store uses the canonical finite-support map; holFapply preserves the unspecified out-of-domain value and wordSemTheWord preserves HOL unspecified Loc completion. Positive-width BitVec represents HOL words. The local canonical witness checks the state roundtrip; it does not independently prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "real_addr_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "realAddr",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared data_to_wordScript.sml:137-147 and typed HOL definition capture in data_to_word_config_probe.out. The source shift overload is backend_common.word_shift and the ShiftN overload inserts a width-indexed word constant. All three conditions, natural subtraction, CurrHeap lookup, variable and word-expression constructor order agree; positive width represents the HOL word dimension. The three original 64-bit branch evaluations are replayed by the Lean parity module. The tagged definition is the production compiler helper; these checks are not a cross-language proof."
   }
 ]

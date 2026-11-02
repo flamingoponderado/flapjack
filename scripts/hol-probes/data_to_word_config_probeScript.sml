@@ -1,5 +1,6 @@
 load "preamble"; load "data_to_wordTheory";
 open bossLib; open HolKernel Parse; open preamble; open data_to_wordTheory;
+val _ = Globals.linewidth := 1000000;
 
 val print_eval = fn label => fn q =>
   (print label; print "="; print_term (rconc (EVAL q)); print "\n");
@@ -21,3 +22,9 @@ val _ = print_eval "assign_greater_eq_fallback" ``(assign ^conf 4 7 3 (closLang$
 val _ = print_eval "assign_alloc_global_fallback" ``(assign ^conf 4 7 3 (closLang$GlobOp AllocGlobal) [] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "assign_concat_byte_vec_fallback" ``(assign ^conf 4 7 3 (closLang$MemOp ConcatByteVec) [1] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "assign_from_list_byte_fallback" ``(assign ^conf 4 7 3 (closLang$MemOp FromListByte) [1] NONE : 64 wordLang$prog # num)``;
+
+val _ = (print "real_addr_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.real_addr_def); print "\n");
+val _ = print_eval "real_addr_sub_64" ``(real_addr (^conf with <|tag_bits := 0; len_bits := 0; pad_bits := 1|>) 4 : 64 wordLang$exp)``;
+val _ = print_eval "real_addr_right_64" ``(real_addr ^conf 4 : 64 wordLang$exp)``;
+val _ = print_eval "real_addr_both_64" ``(real_addr (^conf with pad_bits := 0) 4 : 64 wordLang$exp)``;

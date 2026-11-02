@@ -9,3 +9,7 @@ assign_greater_eq_fallback=(Skip,7)
 assign_alloc_global_fallback=(Skip,7)
 assign_concat_byte_vec_fallback=(Skip,7)
 assign_from_list_byte_fallback=(Skip,7)
+real_addr_def_typed=∀(conf :config) (r :num). (real_addr conf r :α exp) = (let (k :num) = shift (:α); (l :num) = shift_length conf in if k = l ∧ conf.len_bits = (0 :num) ∧ conf.tag_bits = (0 :num) then (Op Add [(Lookup CurrHeap :α exp); (Op Sub [(Var r :α exp); (Const (1w :α word) :α exp)] :α exp)] :α exp) else if k ≤ conf.pad_bits + (1 :num) then (Op Add [(Lookup CurrHeap :α exp); ShiftN Lsr (Var r :α exp) (l − k)] :α exp) else (Op Add [(Lookup CurrHeap :α exp); ShiftN Lsl (ShiftN Lsr (Var r :α exp) l) k] :α exp))
+real_addr_sub_64=Op Add [Lookup CurrHeap; Op Sub [Var 4; Const 1w]]
+real_addr_right_64=Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 5]
+real_addr_both_64=Op Add [Lookup CurrHeap; ShiftN Lsl (ShiftN Lsr (Var 4) 5) 3]

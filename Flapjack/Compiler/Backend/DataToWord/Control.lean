@@ -46,8 +46,10 @@ private def silentFfi {width : Nat} (conf : Config) (n : Nat) (names : WordLangC
 def giveUp {width : Nat} : WordLangProgHOL (BitVec width) :=
   .seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet)))
 
-/-- Internal word-address construction for supported load cases; the
-standalone width-indexed HOL definition remains to be reviewed and tagged. -/
+/-- Construct a word-language heap address from a tagged pointer, following
+the original three branches for the architecture and pointer layout. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "real_addr_def"
+  (words_as_type_indexed_bitvec)]
 def realAddr {width : Nat} [NeZero width] (conf : Config) (r : Nat) : WordLangExpHOL (BitVec width) :=
   let k := wordShiftAmount width
   let l := shiftLength conf
