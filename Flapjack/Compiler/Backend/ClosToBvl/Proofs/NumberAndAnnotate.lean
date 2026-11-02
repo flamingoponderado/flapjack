@@ -50,6 +50,80 @@ theorem number_annotate_semantics {C F : Type} (ffi : HolFfiState F) (maxApp num
     numberedSafe numberedOracleSafe numberedNonfail
   exact annotateEq.symm.trans numberEq
 
+/-- Multi-argument introduction, numbering and annotation preserve the current
+Lean observations for unary input and dynamic compiler results. This is not a
+reviewed HOL correspondence or a whole-compiler theorem. -/
+theorem mti_number_annotate_semantics {C F : Type} (ffi : HolFfiState F) (maxApp number : Nat)
+    (oracle : CompileOracle (Nat × C)) (compiler : Compiler C) (program : List ClosLang.Exp)
+    (positive : 1 ≤ maxApp)
+    (unary : ∀ e ∈ program, noMti e)
+    (oracleUnary : ∀ index, (oracle index).2.2 = [] ∧
+      ∀ e ∈ (oracle index).2.1, noMti e)
+    (notFail : semantics ffi maxApp HolFiniteMapExact.empty oracle
+      (pureCc (ClosMti.compileInc maxApp)
+        (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc) (pureCc ClosAnnotate.compileInc compiler)))
+      program ≠ .fail) :
+    semantics ffi maxApp HolFiniteMapExact.empty
+      (pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc)
+        (pureCo (ClosMti.compileInc maxApp) ∘ oracle)) compiler
+      (ClosAnnotate.annotateList 0 (ClosNumber.renumberList number (ClosMti.introList maxApp program)).2) =
+    semantics ffi maxApp HolFiniteMapExact.empty oracle
+      (pureCc (ClosMti.compileInc maxApp)
+        (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc) (pureCc ClosAnnotate.compileInc compiler)))
+      program := by
+  let transformedOracle : CompileOracle (Nat × C) := pureCo (ClosMti.compileInc maxApp) ∘ oracle
+  let transformed := ClosMti.introList maxApp program
+  have mtiEq := ClosMti.semantics_introMulti_candidate ffi maxApp oracle
+    (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc) (pureCc ClosAnnotate.compileInc compiler))
+    program positive oracleUnary unary
+  have safe := noMtiList_syntactic maxApp positive program unary
+  have transformedSafe : ¬ containsAppSome maxApp transformed :=
+    ClosMti.introList_numberingSafe maxApp program positive unary
+  have transformedVars : everyFnVarsNone transformed :=
+    (ClosMti.introList_varsNone maxApp program).mp safe.1
+  have transformedOracleSafe : ∀ index, (transformedOracle index).2.2 = [] ∧
+      ¬ containsAppSome maxApp (transformedOracle index).2.1 ∧
+      everyFnVarsNone (transformedOracle index).2.1 := by
+    intro index
+    change (ClosMti.compileInc maxApp (oracle index).2).2 = [] ∧
+      ¬ containsAppSome maxApp (ClosMti.compileInc maxApp (oracle index).2).1 ∧
+      everyFnVarsNone (ClosMti.compileInc maxApp (oracle index).2).1
+    exact ⟨rfl, ClosMti.introList_numberingSafe maxApp _ positive (oracleUnary index).2,
+      (ClosMti.introList_varsNone maxApp _).mp
+        (noMtiList_syntactic maxApp positive _ (oracleUnary index).2).1⟩
+  have transformedNotFail : semantics ffi maxApp HolFiniteMapExact.empty transformedOracle
+      (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc) (pureCc ClosAnnotate.compileInc compiler))
+      transformed ≠ .fail := by
+    simpa [transformedOracle, transformed, ← mtiEq] using notFail
+  have combined := number_annotate_semantics ffi maxApp number transformedOracle compiler transformed
+    transformedNotFail transformedSafe transformedVars transformedOracleSafe
+  exact combined.trans mtiEq.symm
+
+/-- Observation preservation for the actual fuelled multi-argument pass
+followed by numbering and annotation. -/
+theorem compileFuel_number_annotate_semantics {C F : Type} (ffi : HolFfiState F)
+    (fuel maxApp number : Nat) (oracle : CompileOracle (Nat × C))
+    (compiler : Compiler C) (program : List ClosLang.Exp)
+    (positive : 1 ≤ maxApp)
+    (unary : ∀ e ∈ program, noMti e)
+    (oracleUnary : ∀ index, (oracle index).2.2 = [] ∧
+      ∀ e ∈ (oracle index).2.1, noMti e)
+    (notFail : semantics ffi maxApp HolFiniteMapExact.empty oracle
+      (pureCc (ClosMti.compileInc maxApp)
+        (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc) (pureCc ClosAnnotate.compileInc compiler)))
+      program ≠ .fail) :
+    ∃ transformed, ClosMti.compileFuel fuel true maxApp program = some transformed ∧
+      semantics ffi maxApp HolFiniteMapExact.empty
+        (pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc)
+          (pureCo (ClosMti.compileInc maxApp) ∘ oracle)) compiler
+        (ClosAnnotate.annotateList 0 (ClosNumber.renumberList number transformed).2) =
+      semantics ffi maxApp HolFiniteMapExact.empty oracle
+        (pureCc (ClosMti.compileInc maxApp)
+          (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc) (pureCc ClosAnnotate.compileInc compiler)))
+        program := by
+  exact ⟨ClosMti.introList maxApp program, ClosMti.compileFuel_introList fuel maxApp program,
+    mti_number_annotate_semantics ffi maxApp number oracle compiler program positive unary oracleUnary notFail⟩
+
 /-- The executed incremental marker survives annotation and determines the
 entry label. A singleton marker is retained when the source batch is empty. -/
 theorem extract_numbered_annotated (number : Nat) (program : List ClosLang.Exp) :
