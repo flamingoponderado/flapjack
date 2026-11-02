@@ -10,9 +10,9 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
 mutual
-/-- The source-shaped value relation, including captured environments and
-recursive closures. It remains untagged until its inductive presentation and
-the imported semantic carriers are reviewed against HOL. -/
+/-- The source value relation, including captured environments and recursive
+closures. Source-shaped cases and induction are proved in `ValueRelInduction`. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel"]
 inductive ValueRel : FlatSem.Value → ClosSem.Value → Prop where
   | loc (flag index) : ValueRel (.loc flag index) (.refPtr flag index)
   | int (value) : ValueRel (.litv (.intLit value)) (.number value)
@@ -39,7 +39,8 @@ inductive ValueRel : FlatSem.Value → ClosSem.Value → Prop where
 
 /-- Every visible source binding has a related value at its first de Bruijn
 index. The explicit lookup result is a positivity-friendly presentation of
-the corresponding HOL inductive rule. -/
+the corresponding HOL inductive rule; `envRel_hol_cases` proves its source shape. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel"]
 inductive EnvRel : FlatSem.Environment FlatSem.Value → List (Option MlString) → List ClosSem.Value → Prop where
   | intro {env names values}
       (present : ∀ name value, env.v.lookup name = some value →

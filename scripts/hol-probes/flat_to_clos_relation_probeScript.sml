@@ -5,6 +5,7 @@ val _ = Globals.linewidth := 1000000;
 val _ = set_trace "Unicode" 0;
 val _ = (print "findi_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl indexedListsTheory.findi_def); print "\n");
 val _ = (print "compile_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.compile_def); print "\n");
+val _ = (print "compile_decs_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.compile_decs_def); print "\n");
 val _ = (print "compile_op_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.compile_op_def); print "\n");
 val _ = (print "compile_arith_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.compile_arith_def); print "\n");
 val _ = (print "copy_str_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.CopyByteStr_def); print "\n");

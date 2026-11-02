@@ -3356,6 +3356,22 @@
     "reviewer": "Compared the polymorphic findi_typed capture from flat_to_clos_relation_probe: the empty list gives zero and a cons gives zero on equality or one plus the recursive result. HOL equality is represented with classical Lean equality; no equality instance is added to the declaration's type."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "v_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelation.lean",
+    "lean_name": "ValueRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed rules, cases and induction in flat_to_clos_relation_probe with both mutually defined Lean relations and the reviewed flat/closure value carriers. All literal, location, constructor, vector, closure and recursive-closure cases retain their fields and conditions. valueRel_hol_cases and valueRel_hol_induction establish the source-shaped case and least-relation induction; singleton HD, bounded EL, recursive function mapping and match-freedom conversions are kernel-checked in ValueRelInduction. The executed compile definition is separately reviewed against every source equation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "v_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelation.lean",
+    "lean_name": "EnvRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed mutual rule, cases and induction in flat_to_clos_relation_probe. envRel_hol_cases proves that the positivity-friendly lookup premises are the original ALOOKUP, findi bound and EL relation, including first-match shadowing; valueRel_hol_induction supplies the corresponding induction premise. nameIndex_eq_holFindi and envLookup_source_shape check the index conversions."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "evaluate_match_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateMatch.lean",
@@ -107764,16 +107780,16 @@
     "lean_name": "compile",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "compile_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "List-valued source equations rendered through singleton expression traversal; independent typed HOL capture and full source, ordering and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all thirteen typed compile_typed clauses in flat_to_clos_relation_probe, including input/output carriers, list sequencing, reversed arguments, no-op and handler fallbacks, trace and name types, and recursive-body order. compile_source_equations kernel-checks those clauses for the executed singleton traversal, using the reviewed source helpers and the proved HOL findi, bounded HD and compileFuns correspondences."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Compile.lean",
     "lean_name": "compileDecs",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "compile_decs_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "List-valued source equations rendered through singleton expression traversal; independent typed HOL capture and full source, ordering and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed compile_decs_typed clauses in flat_to_clos_relation_probe: empty input gives empty output, and a declaration is compiled in an empty environment before the remaining declarations. compileDecs_source_equations kernel-checks the source equations for the executed list traversal."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",

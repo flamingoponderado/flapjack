@@ -300,7 +300,7 @@ run_probe flat_props_evaluate_match_probeScript.sml flat_props_evaluate_match_pr
   "$cake_dir/compiler/backend/semantics/flatPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe flat_to_clos_relation_probeScript.sml flat_to_clos_relation_probe.out \
-  findi_typed compile_typed compile_op_typed compile_arith_typed copy_str_typed copy_aw8_typed \
+  findi_typed compile_typed compile_decs_typed compile_op_typed compile_arith_typed copy_str_typed copy_aw8_typed \
   rules_typed induction_typed cases_typed state_rel_typed store_rel_typed compile_correct_typed \
   "$cake_dir/compiler/backend/proofs/flat_to_closProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
