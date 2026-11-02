@@ -15,6 +15,11 @@ spec.loader.exec_module(parity)
 
 # Each program makes the computed result observable through an output call.
 CASES = {
+    'polymorphic_box_tuple_match': "datatype 'a box = Box 'a; fun get (Box x) = x; val p = (get (Box 14), get (Box True)); val _ = print_int (case p of (n, True) => n + 12 | _ => 17);",
+    'stateful_map_fold': 'val r = Ref 4; fun bump n = (r := !r+n; !r); val xs = List.map bump [1,3]; val _ = print_int (!r + List.foldl (fn x => fn y => x+y) 0 xs);',
+    'recursive_exception_search': 'exception Stop int; fun find xs = case xs of [] => 0 | x::rest => if x = 19 then raise Stop x else find rest; val _ = print_int ((find [12,19,1]) handle Stop n => n+12);',
+    'higher_order_tree_fold': 'datatype tree = Leaf int | Branch (tree * tree); fun fold f z t = case t of Leaf n => f z n | Branch (l,r) => fold f (fold f z l) r; val _ = print_int (fold (fn x => fn y => x+y) 7 (Branch (Leaf 3, Leaf 16)));',
+    'qualified_datatype_closure_reuse': 'structure A = struct datatype t = K int; fun get (K x) = x; end; structure B = struct val k = A.K 16; fun f n = A.get k+n; end; val _ = print_int (B.f 13 + B.f 16);',
     'tmc_list_enabled': 'fun f n = if n = 0 then [] else n::f (n-1); val _ = print_int (List.length (f 9));',
     'tmc_tree_enabled': 'datatype t = A int | B (t * t); fun f n = if n = 0 then A 0 else B (f (n-1), A n); val _ = print_int (case f 3 of A x => x | B (A x,_) => x | _ => 5);',
     'tmc_list_disabled': 'fun f n = if n = 0 then [] else n::f (n-1); val _ = print_int (List.length (f 9));',
