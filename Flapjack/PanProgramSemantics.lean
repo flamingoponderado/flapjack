@@ -193,6 +193,53 @@ theorem evalPanValueDeclarations_route_eq
     simp only [Option.bind_eq_bind, Option.bind_some]
     exact evalPanValueDeclarationsWithStructs_route_eq structs bytes access run (h structs) decls _ hs
 
+/-- Declaration evaluation retains the context collected before initializers run. -/
+theorem evalPanValueDeclarationsWithStructs_structs
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (access : Option (PanValueMemoryAccess α))
+    (route : Option (PanExprEvaluator α)) :
+    ∀ decls (state result : PanValueProgramState α),
+      state.structs = structs →
+      evalPanValueDeclarationsWithStructs structs state decls access route = some result →
+      result.structs = structs := by
+  intro decls
+  induction decls with
+  | nil =>
+    intro state result hs h
+    simp only [evalPanValueDeclarationsWithStructs, Option.some.injEq] at h
+    subst result
+    exact hs
+  | cons d ds ih =>
+    intro state result hs h
+    cases d with
+    | name name fields =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      exact ih state result hs h
+    | function declaration =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      split at h
+      · exact ih _ result rfl h
+      · contradiction
+    | decl shape name expression =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      cases hv : evalPanValueExpWith route structs (fun _ => none) state.globals state.memory
+          state.baseAddress state.topAddress state.bytesInWord expression access with
+      | none => simp [hv] at h
+      | some value =>
+        simp only [hv, Option.bind_eq_bind, Option.bind_some] at h
+        split at h
+        · exact ih _ result rfl h
+        · contradiction
+    | exnDecl name shape =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      split at h
+      · contradiction
+      · split at h
+        · exact ih _ result rfl h
+        · contradiction
+
 /-- Declaration evaluation preserves the source word size for every route. -/
 theorem evalPanValueDeclarationsWithStructs_bytesInWord
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]

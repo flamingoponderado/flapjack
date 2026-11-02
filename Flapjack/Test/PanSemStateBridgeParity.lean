@@ -460,16 +460,19 @@ private def bridgeExecInvalidMemory :=
   | some (.word value) => value == (148 : W)
   | _ => false)
 
+private def cachedGuard (s : PanSemState W (FfiState Unit)) (e : Exp W) : Bool :=
+  panSemExpressionUsesHOLCached (panSemExpressionContextCache s.structs) s e
+
 /- Assert the route decision itself: matching results alone would not show
    whether evaluation used HOL or the compatibility fallback. -/
-#guard panSemExpressionUsesHOL bridgeExecInfiniteMaps
+#guard cachedGuard bridgeExecInfiniteMaps
   (.op .add [.var .local "x", .var .global "g", .loadByte (.const 0)])
-#guard !(panSemExpressionUsesHOL bridgeExecInfiniteMaps (.var .local "Ā"))
-#guard !(panSemExpressionUsesHOL
+#guard !(cachedGuard bridgeExecInfiniteMaps (.var .local "Ā"))
+#guard !(cachedGuard
   { bridgeExecInfiniteMaps with
     locals := fun _ => some (.nStruct "Ā" []) }
   (.var .local "x"))
-#guard !(panSemExpressionUsesHOL
+#guard !(cachedGuard
   { bridgeExecInfiniteMaps with
     structs := [("Ā", { fields := [], size := 0 })] }
   (.const 1))

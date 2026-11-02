@@ -671,24 +671,31 @@ def panSemByteKeyMapToHOL {α : Type}
 /-- Runtime expression view. Memory is totalized as for `panSemMemoryExactOf`;
     correspondence with the production evaluator requires word-valued memory
     on the domain, but no proof is required to construct or execute this view. -/
+def panSemExpressionSliceRuntimeViewWithStructs {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (e : Exp (RiscV.Word 64)) (structs : StructContextExact) : PanSemStateFiniteExact 64 σ :=
+  let slice := panSemExpressionSlice state e
+  { locals := panSemByteKeyMapToHOL slice.locals panValueToHOL
+      (panSemExpressionSlice_locals_finite state e)
+    globals := panSemByteKeyMapToHOL slice.globals panValueToHOL
+      (panSemExpressionSlice_globals_finite state e)
+    structs := structs
+    code := HolFiniteMapExact.empty
+    eshapes := HolFiniteMapExact.empty
+    memory := panSemMemoryExactOf state.memory
+    memaddrs := fun address => state.memaddrs address = true
+    shMemaddrs := fun address => state.sharedMemaddrs address = true
+    clock := state.clock
+    be := state.be
+    ffi := panSemExpressionHolFfi state
+    baseAddr := state.baseAddress
+    topAddr := state.topAddress }
+
+/-- The ordinary runtime view derives its HOL structure context from the state. -/
 def panSemExpressionSliceRuntimeView {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ))
-    (e : Exp (RiscV.Word 64)) : PanSemStateFiniteExact 64 σ where
-  locals := panSemByteKeyMapToHOL (panSemExpressionSlice state e).locals panValueToHOL
-    (panSemExpressionSlice_locals_finite state e)
-  globals := panSemByteKeyMapToHOL (panSemExpressionSlice state e).globals panValueToHOL
-    (panSemExpressionSlice_globals_finite state e)
-  structs := panStructContextToHOL state.structs
-  code := HolFiniteMapExact.empty
-  eshapes := HolFiniteMapExact.empty
-  memory := panSemMemoryExactOf state.memory
-  memaddrs := fun address => state.memaddrs address = true
-  shMemaddrs := fun address => state.sharedMemaddrs address = true
-  clock := state.clock
-  be := state.be
-  ffi := panSemExpressionHolFfi state
-  baseAddr := state.baseAddress
-  topAddr := state.topAddress
+    (e : Exp (RiscV.Word 64)) : PanSemStateFiniteExact 64 σ :=
+  panSemExpressionSliceRuntimeViewWithStructs state e (panStructContextToHOL state.structs)
 
 /-- The executable view is the existing finite expression view whenever the
     source memory meets the representation invariant. -/

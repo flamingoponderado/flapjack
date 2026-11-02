@@ -198,7 +198,7 @@ def evalPanSemStateExpViaHOLCached (cache : PanSemExpressionContextCache)
   if panSemExpressionUsesHOLCached cache s e then
     let state := panSemExpressionWordDomain s
     (@PanSemStateFiniteExact.evalHOLFinite 64 σ _
-      { panSemExpressionSliceRuntimeView state e with structs := cache.hol }
+      (panSemExpressionSliceRuntimeViewWithStructs state e cache.hol)
       (fun address => inferInstanceAs (Decidable (state.memaddrs address = true))) (expToHOL e)).map
         panValueOfHOL
   else evalPanSemStateExp s e
@@ -328,50 +328,6 @@ def PanSemRiscV64ProgramInput.toOwner (input : PanSemRiscV64ProgramInput σ) :
   baseAddress := input.initial.source.baseAddress
   topAddress := input.initial.source.topAddress
 
-/-- Declaration evaluation retains the context collected before initializers run. -/
-theorem panSemDeclarationsWithStructs_preserve
-    (structs : StructContext) (access : Option (PanValueMemoryAccess (RiscV.Word 64)))
-    (route : Option (PanExprEvaluator (RiscV.Word 64))) :
-    ∀ decls (state result : PanValueProgramState (RiscV.Word 64)),
-      state.structs = structs →
-      evalPanValueDeclarationsWithStructs structs state decls access route = some result →
-      result.structs = structs := by
-  intro decls
-  induction decls with
-  | nil =>
-    intro state result hs h
-    simp only [evalPanValueDeclarationsWithStructs, Option.some.injEq] at h
-    subst result
-    exact hs
-  | cons d ds ih =>
-    intro state result hs h
-    cases d with
-    | name name fields =>
-      simp only [evalPanValueDeclarationsWithStructs] at h
-      exact ih state result hs h
-    | function declaration =>
-      simp only [evalPanValueDeclarationsWithStructs] at h
-      split at h
-      · exact ih _ result rfl h
-      · contradiction
-    | decl shape name expression =>
-      simp only [evalPanValueDeclarationsWithStructs] at h
-      cases hv : evalPanValueExpWith route structs (fun _ => none) state.globals state.memory
-          state.baseAddress state.topAddress state.bytesInWord expression access with
-      | none => simp [hv] at h
-      | some value =>
-        simp only [hv, Option.bind_eq_bind, Option.bind_some] at h
-        split at h
-        · exact ih _ result rfl h
-        · contradiction
-    | exnDecl name shape =>
-      simp only [evalPanValueDeclarationsWithStructs] at h
-      split at h
-      · contradiction
-      · split at h
-        · exact ih _ result rfl h
-        · contradiction
-
 theorem panSemCachedProgramRoute_eq (owner : PanSemState (RiscV.Word 64) (FfiState σ))
     (structs : StructContext) (locals globals : VarName → Option (PanValue (RiscV.Word 64)))
     (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
@@ -487,7 +443,7 @@ theorem panSemEvaluateRiscV64ProgramViaHOL_eq
       | some state =>
         simp only [Option.bind_some]
         have hstructs : state.structs = structs :=
-          panSemDeclarationsWithStructs_preserve structs _ _ decls _ state rfl hs
+          evalPanValueDeclarationsWithStructs_structs structs _ _ decls _ state rfl hs
         have hb : state.bytesInWord = input.initial.source.bytesInWord :=
           evalPanValueDeclarationsWithStructs_bytesInWord structs _ _ decls
             { input.initial.source with structs := structs } state hs

@@ -17,6 +17,11 @@ That handler is a String/PanValue analogue rather than a direct HOL definition;
 the exact definition is `panPrimopHOLExact` and no HOL tag is claimed for the
 runner. `TotalEvalExpBridge` records the production/exact handler relation and
 its byte-rangedness proof.
+
+These are source-semantics execution entry points. `flapjack-compile` translates
+a source program; it does not run the source evaluator while compiling it.
+Consequently these entries do not assert that the compiler executable calls
+`panSem` evaluation or that the compiled target program uses this evaluator.
 -/
 
 namespace Flapjack
