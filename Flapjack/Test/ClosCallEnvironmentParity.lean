@@ -6,7 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateAppExpression
+import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -144,6 +144,12 @@ private def closedGroupResult : State := codeList 10 closedGroup closedGroupAfte
 private def closedGroupCode : Flapjack.HolFiniteMapExact Nat (Nat × ClosLang.Exp) :=
   Flapjack.HolFiniteMapExact.empty.update (11, (1, .var .none 0))
 
+-- A generated entry takes precedence over an older entry with the same label.
+example : logicalAssocLookup 11
+    (codeList 10 [(1, .var .none 0)] (.ln, [(11, 2, .var .none 9)])).2 =
+    some (1, .var .none 0) := by
+  exact codeList_lookup 10 [(1, .var .none 0)] (.ln, [(11, 2, .var .none 9)]) 0 1 (.var .none 0) rfl
+
 -- Distinct locations for a two-function group imply the group invariant.
 example (names : List Flapjack.Basis.Pure.MlString.MlString) :
     recClosureWellFormed 10 [(1, .var .none 0), (2, .var .none 1)] := by
@@ -187,6 +193,23 @@ private theorem closedGroupRelation : recClosureRelFuel 5 closedGroupResult ∅ 
         closedGroupCode, Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE] using lookup
     · simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach,
         logicalAssocLookup, List.find?, equal] at lookup
+
+-- The closure relation identifies both the generated stub and its code.
+example : ∃ trace convertedBody,
+    ([(1, .call .none 0 11 [.var .none 0])] : List (Nat × ClosLang.Exp))[0]? =
+      some (1, .call trace 0 11 (ClosCall.variables trace 1)) ∧
+    closedGroupCode.lookup 11 = some (1, convertedBody) := by
+  exact recClosureRelFuel_known_stub 5 closedGroupResult ∅ closedGroupCode 10 closedGroup
+    [(1, .call .none 0 11 [.var .none 0])] 0 1 (.var .none 0) closedGroupRelation rfl (by simp)
+
+-- The direct-call evaluator resolves that stub at the declared arity.
+example : ∃ trace convertedBody,
+    ([(1, .call .none 0 11 [.var .none 0])] : List (Nat × ClosLang.Exp))[0]? =
+      some (1, .call trace 0 11 (ClosCall.variables trace 1)) ∧
+    ClosSem.findCode 11 [ClosSem.Value.number 7] closedGroupCode = some ([.number 7], convertedBody) := by
+  exact recClosureRelFuel_known_findCode 5 closedGroupResult ∅ closedGroupCode 10 closedGroup
+    [(1, .call .none 0 11 [.var .none 0])] 0 1 (.var .none 0) [.number 7] rfl
+    closedGroupRelation rfl (by simp)
 
 -- A group with a captured variable follows the open-closure alternative.
 private theorem openGroupRelation : recClosureRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 10
