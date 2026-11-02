@@ -237,7 +237,9 @@ immediate forms (`Arith.lean`, `AddSubImmediate.lean`), and `shift` with a
 register operand plus its `.ror` immediate form (`Shift.lean`,
 `ShiftImmediate.lean`), `div` (`Division.lean`), and the `longMul` instruction
 pair `MultiplyHigh` + `MultiplyAddSub@64` (`Multiply.lean`, which also proves
-that the high half of the unsigned 128-bit product is `r / 2 ^ 64`).  Each records the emitted word, the `Decode` inverse,
+that the high half of the unsigned 128-bit product is `r / 2 ^ 64`).
+`ConditionalSelect.lean` records the same facts for `ConditionalSelect@64`, the
+select used by the `addOverflow` and `subOverflow` lowerings.  Each records the emitted word, the `Decode` inverse,
 the `Run` reduction and the `asmCaseOne` interference simulation for its
 constructor; all are Flapjack case splits of the single HOL theorem
 `arm8_encoder_correct` and carry no `@[hol]` tags of their own.
@@ -245,8 +247,9 @@ constructor; all are Flapjack case splits of the single HOL theorem
 Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
 `DecodeBitMasks`/`BitfieldMove`), the two-instruction `longMul` case theorem
 (its instruction facts are in `Multiply.lean`), and the `longDiv`, `addCarry`,
-`addOverflow`, `subOverflow`, `Mem`, `Fp`, `Jump`, `JumpCmp`, `Call`,
-`JumpReg` and `Loc` constructors.  `longDiv` lowers to
+`addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
+`ConditionalSelect.lean`), `Mem`, `Fp`, `Jump`, `JumpCmp`, `Call`, `JumpReg`
+and `Loc` constructors.  `longDiv` lowers to
 `arm8EncodeFail`, so its case cannot be a faithful lowering without the
 intended instruction sequence.  The assembling `encoderCorrect arm8TargetL3`
 theorem waits on the remaining cases.
