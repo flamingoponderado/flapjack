@@ -1155,4 +1155,68 @@ theorem arm8ConstT4_mem (ms : arm8_state) (v : BitVec 64) (r : Nat) :
 theorem arm8ConstT4_exc (ms : arm8_state) (v : BitVec 64) (r : Nat) :
     (arm8ConstT4 ms v r).exception = ms.exception := rfl
 
+/-- The `i`-th of four consecutive words is a valid aligned code address. -/
+theorem mem_allPcs_four_l3 (p : BitVec 64) (i : Nat) (hi : i < 4) :
+    p + BitVec.ofNat 64 (i * 4) ∈ allPcs 16 p 2 := by
+  rw [allPcs_eq]
+  refine ⟨i, ?_, rfl⟩
+  have h4 : (2 : Nat) ^ 2 = 4 := by norm_num
+  omega
+
+/-- Alignment after one more four-byte word. -/
+theorem holAligned_add_four (pc : BitVec 64) (h : holAligned 2 pc = true) :
+    holAligned 2 (pc + 4) = true := by
+  have h4 : holAligned 2 (4 : BitVec 64) = true := by rw [holAligned_iff]; decide
+  rw [(alignedAddSub 2 pc 4 h4).1, h]
+theorem holAligned_add_eight (pc : BitVec 64) (h : holAligned 2 pc = true) :
+    holAligned 2 (pc + 8) = true := by
+  have h8 : holAligned 2 (8 : BitVec 64) = true := by rw [holAligned_iff]; decide
+  rw [(alignedAddSub 2 pc 8 h8).1, h]
+theorem holAligned_add_twelve (pc : BitVec 64) (h : holAligned 2 pc = true) :
+    holAligned 2 (pc + 12) = true := by
+  have h12 : holAligned 2 (12 : BitVec 64) = true := by rw [holAligned_iff]; decide
+  rw [(alignedAddSub 2 pc 12 h12).1, h]
+theorem holAligned_add_sixteen (pc : BitVec 64) (h : holAligned 2 pc = true) :
+    holAligned 2 (pc + 16) = true := by
+  have h16 : holAligned 2 (16 : BitVec 64) = true := by rw [holAligned_iff]; decide
+  rw [(alignedAddSub 2 pc 16 h16).1, h]
+
+/-- Registers other than the destination are untouched by the chain. -/
+theorem arm8ConstT4_reg_ne (ms : arm8_state) (v : BitVec 64) (r j : Nat)
+    (hr : r < 32) (hj : j < 32) (hjr : j ≠ r) :
+    (arm8ConstT4 ms v r).REG (BitVec.ofNat 5 j) = ms.REG (BitVec.ofNat 5 j) := by
+  have hne : (BitVec.ofNat 5 r) ≠ (BitVec.ofNat 5 j) := by
+    intro hh
+    apply hjr
+    have ht := congrArg BitVec.toNat hh
+    rw [BitVec.toNat_ofNat, BitVec.toNat_ofNat] at ht
+    have hr32 : r % 2 ^ 5 = r := Nat.mod_eq_of_lt (by omega)
+    have hj32 : j % 2 ^ 5 = j := Nat.mod_eq_of_lt (by omega)
+    omega
+  have h4 : (arm8ConstT4 ms v r).REG (BitVec.ofNat 5 j) =
+      (arm8ConstT3 ms v r).REG (BitVec.ofNat 5 j) := by
+    show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 r) _ (arm8ConstT3 ms v r).REG
+      (BitVec.ofNat 5 j) = _
+    simp only [Flapjack.RiscV.L3.holUpdate]
+    exact if_neg hne
+  have h3 : (arm8ConstT3 ms v r).REG (BitVec.ofNat 5 j) =
+      (arm8ConstT2 ms v r).REG (BitVec.ofNat 5 j) := by
+    show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 r) _ (arm8ConstT2 ms v r).REG
+      (BitVec.ofNat 5 j) = _
+    simp only [Flapjack.RiscV.L3.holUpdate]
+    exact if_neg hne
+  have h2 : (arm8ConstT2 ms v r).REG (BitVec.ofNat 5 j) =
+      (arm8ConstT1 ms v r).REG (BitVec.ofNat 5 j) := by
+    show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 r) _ (arm8ConstT1 ms v r).REG
+      (BitVec.ofNat 5 j) = _
+    simp only [Flapjack.RiscV.L3.holUpdate]
+    exact if_neg hne
+  have h1 : (arm8ConstT1 ms v r).REG (BitVec.ofNat 5 j) =
+      ms.REG (BitVec.ofNat 5 j) := by
+    show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 r) _ ms.REG (BitVec.ofNat 5 j) = _
+    simp only [Flapjack.RiscV.L3.holUpdate]
+    exact if_neg hne
+  rw [h4, h3, h2, h1]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
+
