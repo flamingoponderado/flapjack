@@ -1,0 +1,1 @@
+env_rel_list_typed=!(xs :(mlstring # semanticPrimitives$v) list) (ys :(mlstring # v) list). env_rel (genv :global_env) (alist_to_ns xs :(mlstring, mlstring, semanticPrimitives$v) namespace) ys <=> LIST_REL (\(x :mlstring # semanticPrimitives$v) (y :mlstring # v). FST x = FST y /\ (v_rel genv (SND x) (SND y) :bool)) xs ys

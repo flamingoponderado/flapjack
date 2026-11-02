@@ -1,10 +1,17 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
 
-/-! Inversion facts for the factored source-to-flat value relation. These are
-Flapjack infrastructure, rather than separately tagged HOL equations. -/
+/-! Inversion facts for the source-to-flat value relation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open Flapjack.Compiler.Backend.BackendCommon
+
+namespace EnvRelListReview
+
+/-- The global environment uses the reviewed finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+
+end EnvRelListReview
 
 /-- A related source closure must be a compiled flat closure with related
 captured locals and a compatible global environment. This is an inversion
@@ -192,6 +199,8 @@ theorem envRel_bind_iff (genv : GlobalEnv) (name : VarN) (source : SemanticPrimi
 
 /-- An association-list source environment relates exactly when corresponding
 names agree and corresponding values satisfy the factored relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_rel_LIST_REL"
+  (fmap_as_finite_support := [c, tys])]
 theorem envRel_alist_iff (genv : GlobalEnv)
     (sourceEnv : List (VarN × SemanticPrimitivesHOL.Value)) (flatEnv : List (VarN × FlatSem.Value)) :
     EnvRel genv (alistToNs sourceEnv) flatEnv ↔

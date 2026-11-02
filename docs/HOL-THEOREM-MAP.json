@@ -1224,6 +1224,18 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_rel_LIST_REL",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",
+    "lean_name": "envRel_alist_iff",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "reviewer": "Compared the typed source_to_flat_envrel_probe statement: source and flat lists contain mlstring names and their respective value carriers, and the namespace uses mlstring for both name types. The reviewed alistToNs and EnvRel preserve the same ordered entries, including duplicates. List.Forall₂ relates the same names and values as HOL LIST_REL, with no additional hypotheses. The referenced GlobalEnv uses the reviewed c and tys canonical finite maps; the local witness re-exports its roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "v_rel",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRel.lean",
     "lean_name": "GlobalEnvInv",

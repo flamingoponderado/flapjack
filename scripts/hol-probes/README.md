@@ -1,3 +1,7 @@
+`source_to_flat_envrel_probe.out` captures the fully typed original
+`env_rel_LIST_REL` statement, including both namespace name types. It supports
+review of the Lean association-list relation, not the full pass theorem.
+
 `source_to_flat_mapi_probe.out` captures the inferred types and statements of
 `mapi_map` and `FILTER_MAPi_ID` from the pinned source-to-flat proof. Their
 Lean counterparts establish the corresponding indexed-map and filtering
