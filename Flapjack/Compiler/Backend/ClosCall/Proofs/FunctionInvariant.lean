@@ -3,7 +3,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.KnownOrigins
 
 /-! Connecting function extraction to the direct-call closure invariant. -/
 namespace Flapjack.Compiler.Backend.ClosCall
-open Flapjack ClosLang ClosProps
+open Flapjack ClosLang ClosProps ClosSem SemanticPrimitivesHOL SemanticPrimitivesProps
 
 /-- The source function's annotation, distinctness, and label-freshness
 conditions imply the three corresponding recursive-closure conditions. -/
@@ -213,5 +213,83 @@ theorem callsFuel_fn_open_source (fuel : Nat)
   exact callsFuel_fn_open_invariant fuel name loc arity body probeBody body' initial afterProbe afterOpen g
     allowed code bodyProbe notClosed retry wf initialWf nestedFresh ownFresh growth
     (fn_source_coverage name loc arity body afterOpen allowed coverage) ownAllowed included
+
+/-- The actual successful function traversal establishes its closure relation
+under the enclosing pass's source invariants. This handles both branches
+without assuming the closure relation or the closedness decision. -/
+theorem callsFuel_fn_relation (fuel : Nat)
+    (name : Basis.Pure.MlString.MlString) (loc arity : Nat) (body out : ClosLang.Exp)
+    (initial final g : State) (allowed : Set Nat) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (run : callsFuel (fuel + 1) (.fn name (some loc) none arity body) initial = some (out, final))
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.fn name (some loc) none arity body])
+    (annotations : everyFnVarsNone [.fn name (some loc) none arity body])
+    (distinct : (codeLocations [.fn name (some loc) none arity body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.fn name (some loc) none arity body]) initial)
+    (growth : stateExtends final g)
+    (coverage : ∀ k ∈ codeLocations [.fn name (some loc) none arity body],
+      ¬ sptDomain final.1 k → k ∈ allowed)
+    (included : codeIncludes final.2 code) :
+    ∃ targetBody, out = .fn name (some loc) none arity targetBody ∧
+      recClosureRelFuel (fuel + 1) g allowed code loc [(arity, body)] [(arity, targetBody)] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure] at run
+  obtain ⟨⟨probeBody, afterProbe⟩, probe, check, closedCheck, rest⟩ := run
+  cases check with
+  | false =>
+    simp only [Bool.false_eq_true, ↓reduceIte, Option.bind_eq_some_iff,
+      Option.some.injEq, Prod.mk.injEq] at rest
+    obtain ⟨⟨targetBody, afterOpen⟩, retry, rfl, rfl⟩ := rest
+    have notClosed : ¬(∀ n, freeVarExp n probeBody → n < arity) := by
+      intro closed
+      have yes := (closedFuel_fn fuel name (some loc) none arity probeBody).mpr closed
+      rw [closedCheck] at yes
+      contradiction
+    exact ⟨targetBody, rfl, (callsFuel_fn_open_source fuel name loc arity body probeBody targetBody
+      initial afterProbe afterOpen g allowed code probe notClosed retry initialWf locations annotations
+      distinct fresh growth coverage included).2⟩
+  | true =>
+    simp only [↓reduceIte, Option.some.injEq, Prod.mk.injEq] at rest
+    obtain ⟨rfl, rfl⟩ := rest
+    have closed := (closedFuel_fn fuel name (some loc) none arity probeBody).mp closedCheck
+    have coverage' : ∀ k ∈ codeLocations [.fn name (some loc) none arity body],
+        ¬ sptDomain afterProbe.1 k → k ∈ allowed := by
+      simpa [codeList] using coverage
+    exact ⟨.call .none 0 (loc + 1) (ClosCall.variables .none arity), rfl,
+      (callsFuel_fn_closed_source fuel name loc arity body probeBody initial afterProbe g allowed code
+        probe closed initialWf locations annotations distinct fresh growth coverage' included).2⟩
+
+/-- Source-driven function evaluation after an actual direct-call pass run.
+This fuel-aware case does not yet establish the compiler-oracle and growing
+well-formedness conclusions of the full HOL simulation theorem. -/
+theorem callsFuel_fn_evaluate {C F : Type} (fuel : Nat)
+    (name : Basis.Pure.MlString.MlString) (loc arity : Nat) (body out : ClosLang.Exp)
+    (initial final g : State) (allowed : Set Nat)
+    (sourceEnv targetEnv : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceResult : Result (List ClosSem.Value) ClosSem.Value) (sourceFinal : ClosSem.State (NumSet × C) F)
+    (sourceRun : evaluate [.fn name (some loc) none arity body] sourceEnv source = (sourceResult, sourceFinal))
+    (notType : sourceResult ≠ .err (.abort .typeError))
+    (run : callsFuel (fuel + 1) (.fn name (some loc) none arity body) initial = some (out, final))
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.fn name (some loc) none arity body])
+    (annotations : everyFnVarsNone [.fn name (some loc) none arity body])
+    (distinct : (codeLocations [.fn name (some loc) none arity body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.fn name (some loc) none arity body]) initial)
+    (growth : stateExtends final g)
+    (coverage : ∀ k ∈ codeLocations [.fn name (some loc) none arity body],
+      ¬ sptDomain final.1 k → k ∈ allowed)
+    (included : codeIncludes final.2 target.code)
+    (envs : EnvRelFuel (fuel + 1) g allowed target.code sourceEnv targetEnv 0 [(0, out)])
+    (states : StateRelFuel (fuel + 1) g allowed source target) :
+    ∃ targetResult targetFinal,
+      evaluate [out] targetEnv target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel (fuel + 1) g allowed targetFinal.code))
+        (ValueRelFuel (fuel + 1) g allowed targetFinal.code) sourceResult targetResult ∧
+      StateRelFuel (fuel + 1) g allowed sourceFinal targetFinal ∧
+      (∀ key value, target.code.lookup key = some value → targetFinal.code.lookup key = some value) := by
+  obtain ⟨targetBody, rfl, closure⟩ := callsFuel_fn_relation fuel name loc arity body out
+    initial final g allowed target.code run initialWf locations annotations distinct fresh growth coverage included
+  exact evaluate_fn_fuel (fuel + 1) g allowed name loc arity body targetBody sourceEnv targetEnv
+    source target sourceResult sourceFinal sourceRun notType envs states closure
 
 end Flapjack.Compiler.Backend.ClosCall

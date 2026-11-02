@@ -228,6 +228,53 @@ example {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
   · exact states
   · simpa [targetCode, closedGroup] using closedGroupRelation
 
+-- The function relation is derived from the pass run, without supplying it
+-- as an assumption to the evaluation simulation.
+example {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (source : ClosSem.State (Flapjack.NumSet × C) F) (target : ClosSem.State C F)
+    (states : StateRelFuel 5 closedGroupResult ∅ source target)
+    (targetCode : target.code = closedGroupCode) (arityOk : 1 ≤ source.maxApp) :
+    ∃ result final,
+      ClosSem.evaluate [.fn name (some 10) none 1 (.call .none 0 11 [.var .none 0])] [] target = (result, final) ∧
+      Flapjack.SemanticPrimitivesProps.resultRel
+        (List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ final.code))
+        (ValueRelFuel 5 closedGroupResult ∅ final.code)
+        (.val [.closure (some 10) [] [] 1 (.var .none 0)]) result ∧
+      StateRelFuel 5 closedGroupResult ∅ source final ∧
+      (∀ key value, target.code.lookup key = some value → final.code.lookup key = some value) := by
+  apply callsFuel_fn_evaluate 4 name 10 1 (.var .none 0)
+    (.fn name (some 10) none 1 (.call .none 0 11 [.var .none 0]))
+    closedGroupInitial closedGroupResult closedGroupResult ∅ [] [] source target
+    (.val [.closure (some 10) [] [] 1 (.var .none 0)]) source
+  · simp [ClosSem.evaluate, arityOk]
+  · simp
+  · rfl
+  · constructor
+    · ext label
+      simp only [closedGroupInitial, Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
+      rintro ⟨key, member, _⟩
+      change Flapjack.sptDomain (.ln : Flapjack.NumSet) key at member
+      simp [Flapjack.sptDomain, Flapjack.sptLookup] at member
+    · simp [closedGroupInitial]
+  · simp [everyFnLocationSome, fnLocationSomeExp]
+  · simp [everyFnVarsNone, fnVarsNoneExp]
+  · simp [codeLocations, codeLocationsExp]
+  · simp [LabelsFresh, closedGroupInitial]
+  · apply stateExtends_refl
+    simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
+  · simp [codeLocations, codeLocationsExp, closedGroupResult, closedGroup, codeList,
+      closedGroupAfter, closedGroupInitial, insertEach, Flapjack.sptDomain, Flapjack.sptLookup, Flapjack.sptInsert]
+  · rw [targetCode]
+    intro key value lookup
+    by_cases equal : key = 11
+    · subst key
+      simpa [closedGroupResult, closedGroup, closedGroupAfter, codeList, logicalAssocLookup, List.find?,
+        closedGroupCode, Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE] using lookup
+    · simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach,
+        logicalAssocLookup, List.find?, equal] at lookup
+  · exact .equalLength rfl .nil
+  · exact states
+
 -- Extending code preserves a captured direct-call closure in an environment.
 example : EnvRelFuel 5 closedGroupResult ∅
     (closedGroupCode.update (12, (1, .var .none 0)))
