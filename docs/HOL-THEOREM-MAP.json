@@ -100575,6 +100575,18 @@
     "reviewer": "Source comparison: the typed replay of local word_mem_eq_thm retains the arbitrary separation frame and complete functional memory graph, equal list lengths, and exact equality-result conclusion. Address and payload word widths remain independent and positive."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ByteArray.lean",
+    "lean_name": "memoryRel_byteArrayWordsImp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_ByteArray_words_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_ByteArray_words_IMP and its typed capture retain the complete memory relation, reference lookup, good_dimindex and real-address hypotheses. The existential header and separation frame, exact write_bytes payload over the functional memory graph, and both decoded-length conclusions match HOL. store uses the canonical finite-support map and all memory words share the source positive word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueEquality.lean",
     "lean_name": "doEq_iff_vbEqSize",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
