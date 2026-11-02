@@ -93,7 +93,7 @@ def decCallState (clock : Nat) (code : PanSemCodeMap Word64) :
 def decCallEvaluate (clock : Nat) (code : PanSemCodeMap Word64)
     (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit × PanSemState Word64 (FfiState Unit)) :=
-  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+  panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (decCallState clock code) program
 
 def nestedBadShapeExpectedState : PanSemState Word64 (FfiState Unit) :=

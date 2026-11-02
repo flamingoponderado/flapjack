@@ -196,6 +196,7 @@ def evaluateSourceCallWithConflictingReturnContract :=
     statefulTestHandler (BitVec.ofNat 64 8)
     (emptyPanSourceState 10 sourceIdCode)
     (.call none "id" [.const (BitVec.ofNat 64 7)] : Prog Word64)
+    (memoryAccess := some (panSemBitVec64MemoryAccess (emptyPanSourceState 10 sourceIdCode)))
     (contracts := some sourceConflictingReturnContracts)
 
 def evaluateSourceCallStructArgument :=
@@ -306,6 +307,7 @@ def evaluateSourceDecCallWithConflictingReturnContract :=
     (emptyPanSourceState 10 sourceIdCode)
     (.decCall "answer" .one "id" [.const (BitVec.ofNat 64 7)]
       (.return (.var .local "answer")) : Prog Word64)
+    (memoryAccess := some (panSemBitVec64MemoryAccess (emptyPanSourceState 10 sourceIdCode)))
     (contracts := some sourceConflictingReturnContracts)
 
 /-- Direct HOL row `deccall_tick_restores_existing_local`: the source code-map
@@ -343,6 +345,12 @@ def evaluateSourceNestedCallWithPostState :=
     statefulTestHandler
     (emptyPanSourceState 10 sourceRecursiveCode)
     (.call none "f" [] : Prog Word64)
+
+def evaluateLegacyNestedCallWithPostState :=
+  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    statefulTestHandler (BitVec.ofNat 64 8)
+    (emptyPanSourceState 10 sourceRecursiveCode)
+    (.call none "f" [] : Prog Word64) (memoryAccess := none)
 
 def evaluateSourceRecursiveCallTimeout :=
   panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
@@ -422,6 +430,13 @@ def evaluateSourceDecCallBadReturnShape :=
           (.word (BitVec.ofNat 64 42)) })
     (.decCall "answer" (.comb []) "badret" [] .skip : Prog Word64)
 
+def evaluateLegacyDecCallBadReturnShape :=
+  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    statefulTestHandler (BitVec.ofNat 64 8)
+    ({ emptyPanSourceState 10 sourceBadDecCallShapeCode with
+        locals := updatePanValueMap (fun _ => none) "keep" (.word (BitVec.ofNat 64 42)) })
+    (.decCall "answer" (.comb []) "badret" [] .skip : Prog Word64) (memoryAccess := none)
+
 /-! The original HOL probe rows `recursive_call_missing_function`,
     `recursive_deccall_missing_function`, `recursive_call_bad_argument`, and
     `recursive_deccall_bad_argument` all observe `(Error, clock, x)`. These
@@ -468,6 +483,12 @@ def evaluateSourceCallBadDestination :=
     statefulTestHandler sourceBadCallDestinationState
     (.call (some (some (.local, "answer"), none)) "id"
       [.const (BitVec.ofNat 64 7)] : Prog Word64)
+
+def evaluateLegacyCallBadDestination :=
+  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    statefulTestHandler (BitVec.ofNat 64 8) sourceBadCallDestinationState
+    (.call (some (some (.local, "answer"), none)) "id"
+      [.const (BitVec.ofNat 64 7)] : Prog Word64) (memoryAccess := none)
 
 private def isSourceReturnedWord
     (result : Option (PanValueFfiClockResult Word64 Unit))
@@ -532,12 +553,16 @@ def observeSourceCallAssigned : Bool :=
       | _ => false
   | _ => false
 
-def observeSourceCallBadDestination : Bool :=
-  match evaluateSourceCallBadDestination with
+private def callBadDestinationOK
+    (result : Option (PanValueFfiClockResult Word64 Unit × PanSemState Word64 (FfiState Unit))) : Bool :=
+  match result with
   | some ((.control (.error locals _ _ _), clock), postState) =>
       clock == 9 && (locals "answer").isNone && postState.clock == 9 &&
         (postState.locals "answer").isNone
   | _ => false
+
+def observeSourceCallBadDestination : Bool := callBadDestinationOK evaluateSourceCallBadDestination
+#guard callBadDestinationOK evaluateLegacyCallBadDestination
 
 def observeSourceCallRaisesException : Bool :=
   match evaluateSourceCallRaisesException with
@@ -579,15 +604,20 @@ def observeSourceNestedCodeCall := isSourceReturnedWord evaluateSourceNestedCall
 def observeSourceNestedOrdinaryCall := isSourceReturnedWord
   evaluateSourceNestedOrdinaryCall (BitVec.ofNat 64 7) 8
 
-def observeSourceCodePreservedAfterRecursion : Bool :=
-  match evaluateSourceNestedCallWithPostState with
-  | some (_, postState) =>
+private def sourceCodePreservedAfterRecursion
+    (result : Option (PanValueFfiClockResult Word64 Unit × PanSemState Word64 (FfiState Unit))) : Bool :=
+  match result with
+  | some ((.control (.returned _ _ _ _ [.word returned]), clock), postState) =>
       match panSemCodeLookup postState.code "f", panSemCodeLookup postState.code "g" with
       | some (_, .decCall "nested" .one "g" [] _, .one),
           some ([], .return (.const value), .one) =>
-          value == BitVec.ofNat 64 7
+          returned == BitVec.ofNat 64 7 && clock == 8 && value == BitVec.ofNat 64 7
       | _, _ => false
-  | none => false
+  | _ => false
+
+def observeSourceCodePreservedAfterRecursion : Bool :=
+  sourceCodePreservedAfterRecursion evaluateSourceNestedCallWithPostState
+#guard sourceCodePreservedAfterRecursion evaluateLegacyNestedCallWithPostState
 
 /-- The generic state-owned code invariant applies to the original HOL-backed
     nested Call/DecCall case, independently of its returned result. -/
@@ -647,8 +677,9 @@ def observeSourceCallBadReturnShape : Bool :=
 
 /-- Full post-state guard for `recursive_deccall_bad_declared_shape` in the
     direct `pan_sem_e2e_probe.out` HOL oracle. -/
-def observeSourceDecCallBadReturnShape : Bool :=
-  match evaluateSourceDecCallBadReturnShape with
+private def decCallBadReturnShapeOK
+    (result : Option (PanValueFfiClockResult Word64 Unit × PanSemState Word64 (FfiState Unit))) : Bool :=
+  match result with
   | some ((.control (.error resultLocals resultGlobals resultMemory resultFfi), clock),
       postState) =>
       let zero := BitVec.ofNat 64 0
@@ -669,6 +700,9 @@ def observeSourceDecCallBadReturnShape : Bool :=
         !postState.be && postState.baseAddress == BitVec.ofNat 64 0 &&
         postState.topAddress == BitVec.ofNat 64 100
   | _ => false
+
+def observeSourceDecCallBadReturnShape : Bool := decCallBadReturnShapeOK evaluateSourceDecCallBadReturnShape
+#guard decCallBadReturnShapeOK evaluateLegacyDecCallBadReturnShape
 
 def isSourceErrorPreservingX
     (result : Option (PanValueFfiClockResult Word64 Unit))

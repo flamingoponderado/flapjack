@@ -42,7 +42,7 @@ def decState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
 
 def decEvaluate (clock fuel : Nat) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit) :=
-  panSemEvaluateCodeStateWithFuel statefulTestContext statefulTestPrimitive
+  panSemEvaluateCodeStateWithFuel (memoryAccess := none) statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (fuel + 1) (decState clock) program
 
 def decBodyLocals : VarName → Option (PanValue Word64) :=

@@ -14,7 +14,7 @@ Source reference: `cakeml/pancake/semantics/panSemScript.sml:556-736`
 whose `code` field is a finite map. `PanSemEvaluateState` is the existing
 list-backed executable compatibility boundary. `panSemEvaluateCodeState`
 resolves every recursive Call and DecCall from the source state's code map,
-but its optional no-access default is a legacy compatibility path. HOL-facing
+    but choosing no memory access is a legacy compatibility path. HOL-facing
 RV64 evaluation uses `panSemEvaluateRiscV64CodeState`, which derives its
 memory access from the state.
 
@@ -869,7 +869,7 @@ def panSemEvaluateCodeStateWithFuel
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (fuel : Nat)
     (state : PanSemState α (FfiState σ)) (program : Prog α)
-    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (memoryAccess : Option (PanValueMemoryAccess α))
     (contracts : Option PanValueCallContracts := none)
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none) :
     Option (PanValueFfiClockResult α σ) :=
@@ -880,7 +880,7 @@ def panSemEvaluateCodeStateWithFuel
     (memoryAccess := memoryAccess) (contracts := contracts)
     (memoryHandler := memoryHandler)
 
-/-- Code-map entry with a finite-map-derived fuel bound. The no-access default
+/-- Code-map entry with a finite-map-derived fuel bound. Choosing no access
     is a legacy compatibility mode; use the state-derived memory-model entry
     for HOL-facing evaluation. -/
 def panSemEvaluateCodeState
@@ -892,7 +892,7 @@ def panSemEvaluateCodeState
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanSemState α (FfiState σ))
     (program : Prog α)
-    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (memoryAccess : Option (PanValueMemoryAccess α))
     (contracts : Option PanValueCallContracts := none)
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none) :
     Option (PanValueFfiClockResult α σ) :=
@@ -959,8 +959,8 @@ theorem panSemCodeStateAfter_preserves_code
     | timeout _ _ _ _ => rfl
     | control control => cases control <;> rfl
 
-/-- Compatibility code-map entry paired with its post-state projection. The
-    no-access default has the same limitations as `panSemEvaluateCodeState`;
+/-- Code-map entry paired with its post-state projection. Choosing no access
+    has the same limitations as `panSemEvaluateCodeState`;
     the RV64 state-owned post-state entry is in `PanSemStateEval`. -/
 def panSemEvaluateCodeStateWithPostState
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -971,7 +971,7 @@ def panSemEvaluateCodeStateWithPostState
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanSemState α (FfiState σ))
     (program : Prog α)
-    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (memoryAccess : Option (PanValueMemoryAccess α))
     (contracts : Option PanValueCallContracts := none)
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none) :
     Option (PanValueFfiClockResult α σ × PanSemState α (FfiState σ)) := do
@@ -1019,12 +1019,13 @@ theorem panSemEvaluateCodeStateWithPostState_preserves_code
     (program : Prog α)
     (result : PanValueFfiClockResult α σ)
     (postState : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none)
     (heval : panSemEvaluateCodeStateWithPostState context primitive handler
-      bytesInWord state program = some (result, postState)) :
+      bytesInWord state program (memoryAccess := memoryAccess) = some (result, postState)) :
     postState.code = state.code := by
   unfold panSemEvaluateCodeStateWithPostState at heval
   cases hresult : panSemEvaluateCodeState context primitive handler bytesInWord
-      state program with
+      state program (memoryAccess := memoryAccess) with
   | none => simp [hresult] at heval
   | some evaluated =>
       simp [hresult] at heval
@@ -1044,9 +1045,10 @@ theorem panSemEvaluateCodeStateWithPostState_tick
     (context : PanValueFfiContext α)
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
-    (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     panSemEvaluateCodeStateWithPostState context primitive handler bytesInWord state
-        (.tick : Prog α) =
+        (.tick : Prog α) (memoryAccess := memoryAccess) =
       if state.clock = 0 then
         some ((.timeout (fun _ => none) state.globals state.memory state.ffi, 0),
           { state with locals := fun _ => none })
@@ -1072,9 +1074,10 @@ theorem panSemEvaluateCodeStateWithPostState_skip
     (context : PanValueFfiContext α)
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
-    (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     panSemEvaluateCodeStateWithPostState context primitive handler bytesInWord state
-        (.skip : Prog α) =
+        (.skip : Prog α) (memoryAccess := memoryAccess) =
       some ((.control (.normal state.locals state.globals state.memory state.ffi),
           state.clock), state) := by
   simp [panSemEvaluateCodeStateWithPostState, panSemEvaluateCodeState,
@@ -1102,7 +1105,7 @@ theorem panSemEvaluateCodeStateWithFuel_assign
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (fuel : Nat) (state : PanSemState α (FfiState σ))
     (vk : VarKind) (name : VarName) (value : Exp α) :
-    panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord (fuel + 1)
+    panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord (fuel + 1)
         state (.assign vk name value : Prog α) =
       match evalPanValueExp state.structs state.locals state.globals state.memory
           state.baseAddress state.topAddress bytesInWord value with
@@ -1260,13 +1263,13 @@ theorem panSemEvaluateCodeStateWithFuel_dec
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (fuel : Nat) (state : PanSemState α (FfiState σ))
     (name : VarName) (shape : Shape) (value : Exp α) (body : Prog α) :
-    panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord (fuel + 1)
+    panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord (fuel + 1)
         state (.dec name shape value body : Prog α) =
       match evalPanValueExp state.structs state.locals state.globals state.memory
           state.baseAddress state.topAddress bytesInWord value with
       | some evaluated =>
           if panShapeMatches (panValueShape state.structs evaluated) shape then
-            (panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord fuel
+            (panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord fuel
                 { state with
                   locals := updatePanValueMap state.locals name evaluated } body).map
               (fun result =>
@@ -1308,7 +1311,7 @@ theorem panSemEvaluateCodeStateWithFuel_primitive
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (fuel : Nat) (state : PanSemState α (FfiState σ))
     (name : VarName) (operator : PrimOp) (arguments : List (Exp α)) :
-    panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord (fuel + 1)
+    panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord (fuel + 1)
         state (.primitive name operator arguments : Prog α) =
       match evalPanValueExps state.structs state.locals state.globals state.memory
           state.baseAddress state.topAddress bytesInWord arguments with
@@ -1377,15 +1380,15 @@ theorem panSemEvaluateCodeStateWithFuel_seq
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (fuel : Nat) (state : PanSemState α (FfiState σ))
     (first second : Prog α) :
-    panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord (fuel + 1)
+    panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord (fuel + 1)
         state (.seq first second : Prog α) =
-      match panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord fuel
+      match panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord fuel
           state first with
       | some firstStep =>
           let fixedStep := fixPanClock state.clock firstStep
           match fixedStep.1 with
           | .control (.normal nextLocals nextGlobals nextMemory nextFfi) =>
-              panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord fuel
+              panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord fuel
                 { state with
                   locals := nextLocals
                   globals := nextGlobals

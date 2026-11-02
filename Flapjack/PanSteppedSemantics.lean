@@ -247,7 +247,7 @@ def evalPanValueFieldsCounted [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul �
     (memory : α → Option (PanValue α))
     (baseAddress topAddress bytesInWord : α)
     (fields : List (FieldName × Exp α))
-    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
+    (memoryAccess : Option (PanValueMemoryAccess α)) :
     Option (List (FieldName × PanValue α) × Nat) :=
   (evalPanValueExp.evalPanValueFields structs locals globals memory
       baseAddress topAddress bytesInWord fields (memoryAccess := memoryAccess)).map
@@ -317,7 +317,7 @@ theorem evalPanValueFieldsCounted_fst
     (memory : α → Option (PanValue α))
     (baseAddress topAddress bytesInWord : α)
     (fields : List (FieldName × Exp α))
-    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
+    (memoryAccess : Option (PanValueMemoryAccess α)) :
     (evalPanValueFieldsCounted structs locals globals memory baseAddress topAddress
       bytesInWord fields (memoryAccess := memoryAccess)).map (fun result => result.1) =
       evalPanValueExp.evalPanValueFields structs locals globals memory
@@ -333,7 +333,7 @@ theorem evalPanValueFieldsCounted_snd
     (memory : α → Option (PanValue α))
     (baseAddress topAddress bytesInWord : α)
     (fields : List (FieldName × Exp α))
-    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
+    (memoryAccess : Option (PanValueMemoryAccess α)) :
     (evalPanValueFieldsCounted structs locals globals memory baseAddress topAddress
       bytesInWord fields (memoryAccess := memoryAccess)).map Prod.snd =
       (evalPanValueExp.evalPanValueFields structs locals globals memory

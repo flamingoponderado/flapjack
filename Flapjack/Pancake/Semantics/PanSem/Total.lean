@@ -20,9 +20,11 @@ and `evaluate : prog # state -> result option # state` (lines 556-736) returns
 the result paired with the final state, with HOL's `NONE` for a normal
 completion.
 
-The executed production evaluator `panSemEvaluateCodeStateWithPostState`
-returns an `Option` of a structured control result whose outcome embeds the
-state components, so its statements cannot carry an exact HOL `evaluate` tag.
+The generic code-map evaluator `panSemEvaluateCodeStateWithPostState` requires
+an explicit memory-access choice and returns an `Option` of a structured
+control result whose outcome embeds the state components. Its statements
+therefore cannot carry an exact HOL `evaluate` tag. The RV64 state-owned
+post-state entry derives access from the state.
 This module starts the genuinely HOL-shaped total interface:
 
 * `PanSemProgResult` is an existing helper carrier whose `normal` constructor
@@ -395,10 +397,11 @@ theorem panSemEvaluateCodeStateWithPostState_skip_total
     (context : PanValueFfiContext α)
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
-    (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     (panSemEvaluateCodeStateWithPostState context primitive handler bytesInWord state
-        (.skip : Prog α)).map panSemTotalOfExecuted = some (panSemEvaluateSkip state) := by
-  rw [panSemEvaluateCodeStateWithPostState_skip]
+        (.skip : Prog α) (memoryAccess := memoryAccess)).map panSemTotalOfExecuted = some (panSemEvaluateSkip state) := by
+  rw [panSemEvaluateCodeStateWithPostState_skip (memoryAccess := memoryAccess)]
   rfl
 
 /-- The executed source evaluator's `Tick` projection is exactly the total
@@ -410,10 +413,11 @@ theorem panSemEvaluateCodeStateWithPostState_tick_total
     (context : PanValueFfiContext α)
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
-    (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     (panSemEvaluateCodeStateWithPostState context primitive handler bytesInWord state
-        (.tick : Prog α)).map panSemTotalOfExecuted = some (panSemEvaluateTick state) := by
-  rw [panSemEvaluateCodeStateWithPostState_tick]
+        (.tick : Prog α) (memoryAccess := memoryAccess)).map panSemTotalOfExecuted = some (panSemEvaluateTick state) := by
+  rw [panSemEvaluateCodeStateWithPostState_tick (memoryAccess := memoryAccess)]
   by_cases hclock : state.clock = 0 <;>
     simp [panSemTotalOfExecuted, panSemEvaluateTick, panSemProgResultOfClockResult, hclock]
 
@@ -426,9 +430,10 @@ theorem panSemEvaluateCodeStateWithPostState_break_total
     (context : PanValueFfiContext α)
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
-    (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     (panSemEvaluateCodeStateWithPostState context primitive handler bytesInWord state
-        (.break : Prog α)).map panSemTotalOfExecuted = some (panSemEvaluateBreak state) := by
+        (.break : Prog α) (memoryAccess := memoryAccess)).map panSemTotalOfExecuted = some (panSemEvaluateBreak state) := by
   simp [panSemEvaluateCodeStateWithPostState, panSemEvaluateCodeState,
     panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemCodeStateAfter,
     panSemTotalOfExecuted, panSemEvaluateBreak, panSemProgResultOfClockResult,
@@ -443,9 +448,10 @@ theorem panSemEvaluateCodeStateWithPostState_continue_total
     (context : PanValueFfiContext α)
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
-    (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     (panSemEvaluateCodeStateWithPostState context primitive handler bytesInWord state
-        (.continue : Prog α)).map panSemTotalOfExecuted =
+        (.continue : Prog α) (memoryAccess := memoryAccess)).map panSemTotalOfExecuted =
       some (panSemEvaluateContinue state) := by
   simp [panSemEvaluateCodeStateWithPostState, panSemEvaluateCodeState,
     panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemCodeStateAfter,

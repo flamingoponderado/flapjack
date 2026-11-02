@@ -46,12 +46,12 @@ def assignState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
     topAddress := BitVec.ofNat 64 100 }
 
 def assignEvaluate (clock : Nat) (program : Prog Word64) : AssignResult :=
-  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+  panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (assignState clock) program
 
 def assignEvaluateFuel (clock fuel : Nat) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit) :=
-  panSemEvaluateCodeStateWithFuel statefulTestContext statefulTestPrimitive
+  panSemEvaluateCodeStateWithFuel (memoryAccess := none) statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (fuel + 1) (assignState clock) program
 
 def assignLocalWrite : VarName → Option (PanValue Word64) :=

@@ -2256,7 +2256,7 @@ example :
     panPropsALookupEq, structCompileShape, structCompileShapeWF]
 
 example :
-    panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8) finiteMapState.runtime (.skip : Prog Word64) =
       some ((.control (.normal finiteMapState.runtime.locals finiteMapState.runtime.globals
           finiteMapState.runtime.memory finiteMapState.runtime.ffi),
@@ -2265,7 +2265,7 @@ example :
     statefulTestPrimitive statefulTestHandler (BitVec.ofNat 64 8) finiteMapState).1
 
 example :
-    panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8)
         (panStructConvertFiniteState finiteMapContext finiteMapState).runtime
         (structCompileProg finiteMapContext (.skip : Prog Word64)) =
@@ -2280,11 +2280,11 @@ example :
     statefulTestPrimitive statefulTestHandler (BitVec.ofNat 64 8) finiteMapState).2
 
 example :
-    panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8)
         (panStructConvertFiniteState finiteMapContext finiteMapState).runtime
         (structCompileProg finiteMapContext (.skip : Prog Word64)) =
-      (panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+      (panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8) finiteMapState.runtime
         (.skip : Prog Word64)).map
         (fun (result, postState) =>
@@ -2444,7 +2444,7 @@ example : True := by
   trivial
 
 example :
-    panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
       statefulTestHandler (BitVec.ofNat 64 8) finiteMapState.runtime (.break : Prog Word64) =
       some ((.control (.broke finiteMapState.runtime.locals finiteMapState.runtime.globals
         finiteMapState.runtime.memory finiteMapState.runtime.ffi),
@@ -2453,7 +2453,7 @@ example :
     statefulTestHandler (BitVec.ofNat 64 8) finiteMapState.runtime
 
 example :
-    panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
       statefulTestHandler (BitVec.ofNat 64 8)
       (panStructConvertState finiteMapContext finiteMapState.runtime)
       (structCompileProg finiteMapContext (.break : Prog Word64)) =
@@ -2546,7 +2546,7 @@ example : True := by
   trivial
 
 example :
-    panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
       statefulTestHandler (BitVec.ofNat 64 8) finiteMapState.runtime
       (.continue : Prog Word64) =
       some ((.control (.continued finiteMapState.runtime.locals finiteMapState.runtime.globals
@@ -2556,7 +2556,7 @@ example :
     statefulTestHandler (BitVec.ofNat 64 8) finiteMapState.runtime
 
 example :
-    panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
       statefulTestHandler (BitVec.ofNat 64 8)
       (panStructConvertState finiteMapContext finiteMapState.runtime)
       (structCompileProg finiteMapContext (.continue : Prog Word64)) =
@@ -2666,7 +2666,7 @@ both continue with normal control and decrement to clock two, preserving
 locals, globals, memory, and FFI state. -/
 
 example :
-    panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
       statefulTestHandler (BitVec.ofNat 64 8) finiteMapState.runtime (.tick : Prog Word64) =
       some ((.control (.normal finiteMapState.runtime.locals finiteMapState.runtime.globals
         finiteMapState.runtime.memory finiteMapState.runtime.ffi), 2),
@@ -2675,7 +2675,7 @@ example :
     panStructFiniteStateFromMaps, finiteMapRuntime]
 
 example :
-    panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
       statefulTestHandler (BitVec.ofNat 64 8)
       (panStructConvertFiniteState finiteMapContext
         (finiteMapStateAtClock 3)).runtime
@@ -2698,7 +2698,7 @@ example :
     structCompileShapeWF]
 
 example :
-    panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
       statefulTestHandler (BitVec.ofNat 64 8)
       (finiteMapStateAtClock 0).runtime (.tick : Prog Word64) =
       some ((.timeout (fun _ => none) (finiteMapStateAtClock 0).runtime.globals
@@ -2708,7 +2708,7 @@ example :
     finiteMapState, panStructFiniteStateFromMaps, finiteMapRuntime]
 
 example :
-    panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
       statefulTestHandler (BitVec.ofNat 64 8)
       (panStructConvertFiniteState finiteMapContext
         (finiteMapStateAtClock 0)).runtime

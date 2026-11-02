@@ -49,21 +49,8 @@ theorem panStructContextOfHOL_byteRanged (c : StructContextExact) :
 def panSemExecStateOfHOLWithKeys {σ : Type}
     (exact : PanSemStateFiniteExact 64 σ)
     [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
-    (ffi : FfiState σ) (keys : List MlS) : PanSemState (RiscV.Word 64) (FfiState σ) where
-  locals := fun name => Option.map panValueOfHOL (exact.locals.lookup (ofString name))
-  globals := fun name => Option.map panValueOfHOL (exact.globals.lookup (ofString name))
-  structs := panStructContextOfHOL exact.structs
-  code := mlFunctionToInfoMap (fun key => Option.map panLangEntryOfHOL (exact.code.lookup key)) keys
-  exceptionShapes := fun name => Option.map Flapjack.Pancake.PanLang.shapeOfHOL
-    (exact.eshapes.lookup (ofString name))
-  memory := fun address => some (.word (holWordLabBits (exact.memory address)))
-  memaddrs := fun address => decide (exact.memaddrs address)
-  sharedMemaddrs := fun address => decide (exact.shMemaddrs address)
-  clock := exact.clock
-  be := exact.be
-  ffi := ffi
-  baseAddress := exact.baseAddr
-  topAddress := exact.topAddr
+    (ffi : FfiState σ) (keys : List MlS) : PanSemState (RiscV.Word 64) (FfiState σ) :=
+  panSemStateOfExactWithKeys exact.toExact ffi keys
 
 /-- A complete explicit key list yields a state related to the HOL state. -/
 theorem panSemExecStateOfHOLWithKeys_rel {σ : Type}
@@ -204,14 +191,17 @@ theorem panSemExpressionIsolated_ffiRel {σ : Type}
     simp [panSemExpressionIsolated, panSemExpressionHolFfi, trivialFfiState, OracleResultRel,
       OutcomeRel]
 
+/-- Finite support of a production lookup at the byte-representable keys
+    that correspond to HOL `mlstring` values. -/
+def PanSemByteKeyFiniteSupport {α : Type} (lookup : String → Option α) : Prop :=
+  ∃ keys : List MlS, ∀ key, lookup (toStringOfBytes key) ≠ none → key ∈ keys
+
 /-- Local and global support suffice for the shadow's four HOL finite maps. -/
 theorem panSemExpressionShadow_finite {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ)) (ffi : HolFfiState σ)
     (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
-    (hloc : ∃ keys : List MlS, ∀ key,
-      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
-    (hglob : ∃ keys : List MlS, ∀ key,
-      state.globals (toStringOfBytes key) ≠ none → key ∈ keys) :
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals) :
     (panSemStateToExact (panSemExecStateWithHolFfi (panSemExpressionShadow state) ffi)
       (panSemMemoryExactOf state.memory) hmem).FiniteSupport := by
   obtain ⟨localKeys, hlocalKeys⟩ := hloc
@@ -238,12 +228,7 @@ noncomputable def panSemExecStateOfHOL {σ : Type}
     (exact : PanSemStateFiniteExact 64 σ)
     [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
     (ffi : FfiState σ) : PanSemState (RiscV.Word 64) (FfiState σ) :=
-  let state := panSemStateOfExact exact.toExact exact.code.finiteSupport
-  { locals := state.locals, globals := state.globals, structs := state.structs,
-    code := state.code, exceptionShapes := state.exceptionShapes, memory := state.memory,
-    memaddrs := state.memaddrs, sharedMemaddrs := state.sharedMemaddrs,
-    clock := state.clock, be := state.be, ffi := ffi,
-    baseAddress := state.baseAddress, topAddress := state.topAddress }
+  panSemExecStateOfHOLWithKeys exact ffi (Classical.choose exact.code.finiteSupport)
 
 /-- The decoded state has a related executable representation when the FFI
     states are related; no additional code-support premise is needed. -/
@@ -252,13 +237,8 @@ theorem panSemExecStateOfHOL_rel {σ : Type}
     [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
     (ffi : FfiState σ) (hffi : FfiStateRel ffi exact.ffi) :
     PanSemStateRelExec (panSemExecStateOfHOL exact ffi) exact.toExact := by
-  have h := panSemStateRel_ofExact exact.toExact exact.code.finiteSupport
-  rcases h with ⟨hloc, hglob, hstruct, hcode, hshapes, hmem, hdom, hshared,
-    hclock, hbe, _, hbase, htop⟩
-  simpa [PanSemStateRelExec, panSemExecStateOfHOL, panSemStateOfExact] using
-    And.intro hloc (And.intro hglob (And.intro hstruct (And.intro hcode
-      (And.intro hshapes (And.intro hmem (And.intro hdom (And.intro hshared
-        (And.intro hclock (And.intro hbe (And.intro hffi (And.intro hbase htop)))))))))))
+  exact panSemExecStateOfHOLWithKeys_rel exact ffi hffi _
+    (Classical.choose_spec exact.code.finiteSupport)
 
 /-- Decoding a HOL state establishes the runtime range invariant for its
     stored values and structure context, including at non-ranged lookup keys. -/
@@ -266,16 +246,7 @@ theorem panSemExecStateOfHOL_ranged {σ : Type}
     (exact : PanSemStateFiniteExact 64 σ)
     [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
     (ffi : FfiState σ) : PanSemStateRelExecRanged (panSemExecStateOfHOL exact ffi) := by
-  refine ⟨?_, ?_, ?_⟩
-  · intro name value hvalue
-    simp only [panSemExecStateOfHOL, panSemStateOfExact, Option.map_eq_some_iff] at hvalue
-    obtain ⟨v, _, rfl⟩ := hvalue
-    exact panValueOfHOL_byteRanged v
-  · intro name value hvalue
-    simp only [panSemExecStateOfHOL, panSemStateOfExact, Option.map_eq_some_iff] at hvalue
-    obtain ⟨v, _, rfl⟩ := hvalue
-    exact panValueOfHOL_byteRanged v
-  · exact panStructContextOfHOL_byteRanged exact.structs
+  exact panSemExecStateOfHOLWithKeys_ranged exact ffi _
 
 /-- The clocked production evaluator uses `evalPanValueExpCounted` for
     expression results. After discarding its Flapjack step count and encoding
@@ -321,10 +292,8 @@ theorem evalPanSemStateExp_expressionView_agree {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ)) (ffi : HolFfiState σ)
     (hffi : FfiStateRel state.ffi ffi)
     (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
-    (hloc : ∃ keys : List MlS, ∀ key,
-      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
-    (hglob : ∃ keys : List MlS, ∀ key,
-      state.globals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals)
     (hranged : PanSemStateRelExecRanged state)
     (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
     Option.map panValueToHOL (evalPanSemStateExp state e) =
@@ -340,10 +309,8 @@ theorem evalPanSemStateExp_expressionView_agree {σ : Type}
 def panSemExpressionView {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ))
     (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
-    (hloc : ∃ keys : List MlS, ∀ key,
-      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
-    (hglob : ∃ keys : List MlS, ∀ key,
-      state.globals (toStringOfBytes key) ≠ none → key ∈ keys) : PanSemStateFiniteExact 64 σ :=
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals) : PanSemStateFiniteExact 64 σ :=
   panSemFiniteViewOfExec (panSemExpressionShadow (panSemExpressionIsolated state))
     (panSemExpressionHolFfi state) hmem
     (panSemExpressionShadow_finite (panSemExpressionIsolated state)
@@ -353,12 +320,13 @@ def panSemExpressionView {σ : Type}
 @[instance_reducible] def panSemExpressionViewMemDecider {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ))
     (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
-    (hloc : ∃ keys : List MlS, ∀ key,
-      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
-    (hglob : ∃ keys : List MlS, ∀ key,
-      state.globals (toStringOfBytes key) ≠ none → key ∈ keys) :
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals) :
     DecidablePred (panSemExpressionView state hmem hloc hglob).memaddrs :=
-  fun address => inferInstanceAs (Decidable (state.memaddrs address = true))
+  panSemFiniteViewOfExec_decidableMemaddrs
+    (panSemExpressionShadow (panSemExpressionIsolated state)) (panSemExpressionHolFfi state) hmem
+    (panSemExpressionShadow_finite (panSemExpressionIsolated state)
+      (panSemExpressionHolFfi state) hmem hloc hglob)
 
 /-- Production expression evaluation agrees with its finite HOL expression
     view without any premise on code, exception shapes, or FFI. Local/global
@@ -366,10 +334,8 @@ def panSemExpressionView {σ : Type}
 theorem evalPanSemStateExp_isolatedView_agree {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ))
     (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
-    (hloc : ∃ keys : List MlS, ∀ key,
-      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
-    (hglob : ∃ keys : List MlS, ∀ key,
-      state.globals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals)
     (hranged : PanSemStateRelExecRanged state)
     (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
     Option.map panValueToHOL (evalPanSemStateExp state e) =
@@ -385,10 +351,8 @@ theorem evalPanSemStateExp_isolatedView_agree {σ : Type}
 def evalPanSemStateExpViaHOL {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ))
     (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
-    (hloc : ∃ keys : List MlS, ∀ key,
-      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
-    (hglob : ∃ keys : List MlS, ∀ key,
-      state.globals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals)
     (e : Exp (RiscV.Word 64)) : Option (PanValue (RiscV.Word 64)) :=
   (@PanSemStateFiniteExact.evalHOLFinite 64 σ _ (panSemExpressionView state hmem hloc hglob)
     (panSemExpressionViewMemDecider state hmem hloc hglob) (expToHOL e)).map
@@ -399,10 +363,8 @@ def evalPanSemStateExpViaHOL {σ : Type}
 theorem evalPanSemStateExpViaHOL_toHOL {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ))
     (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
-    (hloc : ∃ keys : List MlS, ∀ key,
-      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
-    (hglob : ∃ keys : List MlS, ∀ key,
-      state.globals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals)
     (e : Exp (RiscV.Word 64)) :
     Option.map panValueToHOL (evalPanSemStateExpViaHOL state hmem hloc hglob e) =
       @PanSemStateFiniteExact.evalHOLFinite 64 σ _ (panSemExpressionView state hmem hloc hglob)
@@ -414,10 +376,8 @@ theorem evalPanSemStateExpViaHOL_toHOL {σ : Type}
 theorem evalPanSemStateExpViaHOL_eq {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ))
     (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
-    (hloc : ∃ keys : List MlS, ∀ key,
-      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
-    (hglob : ∃ keys : List MlS, ∀ key,
-      state.globals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals)
     (hranged : PanSemStateRelExecRanged state)
     (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
     evalPanSemStateExpViaHOL state hmem hloc hglob e = evalPanSemStateExp state e := by
@@ -435,10 +395,8 @@ theorem evalPanSemStateExpViaHOL_eq {σ : Type}
 theorem evalPanValueExpCounted_isolatedView_agree {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ))
     (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
-    (hloc : ∃ keys : List MlS, ∀ key,
-      state.locals (toStringOfBytes key) ≠ none → key ∈ keys)
-    (hglob : ∃ keys : List MlS, ∀ key,
-      state.globals (toStringOfBytes key) ≠ none → key ∈ keys)
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals)
     (hranged : PanSemStateRelExecRanged state)
     (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
     Option.map (fun result => panValueToHOL result.1)

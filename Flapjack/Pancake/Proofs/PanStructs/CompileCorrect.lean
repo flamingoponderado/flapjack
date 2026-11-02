@@ -3719,7 +3719,7 @@ theorem panStructSourceBreakEvaluation
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord state (.break : Prog α) =
       some ((.control (.broke state.locals state.globals state.memory state.ffi),
           state.clock), state) := by
@@ -3737,10 +3737,10 @@ theorem panStructBreakEvaluatorProjection
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord (panStructConvertState context state)
         (structCompileProg context (.break : Prog α)) =
-      (panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+      (panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord state (.break : Prog α)).map
     (fun (result, postState) =>
           (panStructConvertClockResult result,
@@ -3769,7 +3769,7 @@ theorem panStructCompileCorrectBreakCase
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanStructFiniteState α (FfiState σ))
-    (hsourceBreak : panSemEvaluateCodeStateWithPostState evaluationContext
+    (hsourceBreak : panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext
       primitive handler bytesInWord state.runtime (.break : Prog α) =
         some ((.control (.broke state.runtime.locals state.runtime.globals
           state.runtime.memory state.runtime.ffi), state.runtime.clock), state.runtime))
@@ -3786,7 +3786,7 @@ theorem panStructCompileCorrectBreakCase
     (_hstructInfos : structInfosOk state.runtime.structs)
     (hlocalsMap : panStructShapeMapEq context.locals state.runtime.locals)
     (hglobalsMap : panStructShapeMapEq context.globals state.runtime.globals) :
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord (panStructConvertFiniteState context state).runtime
         (structCompileProg context (.break : Prog α)) =
       some ((.control (.broke
@@ -3806,7 +3806,7 @@ theorem panStructCompileCorrectBreakCase
     primitive handler bytesInWord state.runtime
   rw [hsourceBreak] at hprojection
   have htarget :
-      panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+      panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
           bytesInWord (panStructConvertFiniteState context state).runtime
           (structCompileProg context (.break : Prog α)) =
         some ((.control (.broke
@@ -3835,7 +3835,7 @@ theorem panStructSourceContinueEvaluation
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord state (.continue : Prog α) =
       some ((.control (.continued state.locals state.globals state.memory state.ffi),
           state.clock), state) := by
@@ -3853,10 +3853,10 @@ theorem panStructContinueEvaluatorProjection
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord (panStructConvertState context state)
         (structCompileProg context (.continue : Prog α)) =
-      (panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+      (panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord state (.continue : Prog α)).map
     (fun (result, postState) =>
           (panStructConvertClockResult result,
@@ -3884,7 +3884,7 @@ theorem panStructCompileCorrectContinueCase
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanStructFiniteState α (FfiState σ))
-    (hsourceContinue : panSemEvaluateCodeStateWithPostState evaluationContext
+    (hsourceContinue : panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext
       primitive handler bytesInWord state.runtime (.continue : Prog α) =
         some ((.control (.continued state.runtime.locals state.runtime.globals
           state.runtime.memory state.runtime.ffi), state.runtime.clock), state.runtime))
@@ -3901,7 +3901,7 @@ theorem panStructCompileCorrectContinueCase
     (_hstructInfos : structInfosOk state.runtime.structs)
     (hlocalsMap : panStructShapeMapEq context.locals state.runtime.locals)
     (hglobalsMap : panStructShapeMapEq context.globals state.runtime.globals) :
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord (panStructConvertFiniteState context state).runtime
         (structCompileProg context (.continue : Prog α)) =
       some ((.control (.continued
@@ -3921,7 +3921,7 @@ theorem panStructCompileCorrectContinueCase
     primitive handler bytesInWord state.runtime
   rw [hsourceContinue] at hprojection
   have htarget :
-      panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+      panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
           bytesInWord (panStructConvertFiniteState context state).runtime
           (structCompileProg context (.continue : Prog α)) =
         some ((.control (.continued
@@ -4544,11 +4544,11 @@ theorem panStructSkipEvaluatorSupport
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord state (.skip : Prog α) =
       some ((.control (.normal state.locals state.globals state.memory state.ffi),
           state.clock), state) ∧
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord (panStructConvertState context state)
         (structCompileProg context (.skip : Prog α)) =
       some ((.control (.normal (panStructConvertState context state).locals
@@ -4578,11 +4578,11 @@ theorem panStructSkipFiniteMapEvaluatorSupport
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanStructFiniteState α (FfiState σ)) :
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord state.runtime (.skip : Prog α) =
       some ((.control (.normal state.runtime.locals state.runtime.globals
           state.runtime.memory state.runtime.ffi), state.runtime.clock), state.runtime) ∧
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord (panStructConvertFiniteState context state).runtime
         (structCompileProg context (.skip : Prog α)) =
       some ((.control (.normal (panStructConvertFiniteState context state).runtime.locals
@@ -4609,10 +4609,10 @@ theorem panStructFiniteMapSkipEvaluationProjection
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanStructFiniteState α (FfiState σ)) :
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord (panStructConvertFiniteState context state).runtime
         (structCompileProg context (.skip : Prog α)) =
-      (panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+      (panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord state.runtime (.skip : Prog α)).map
         (fun (result, postState) =>
           (panStructConvertClockResult result, panStructConvertState context postState)) := by
@@ -4639,7 +4639,7 @@ theorem panStructCompileCorrectSkipCase
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanStructFiniteState α (FfiState σ))
-    (hsourceSkip : panSemEvaluateCodeStateWithPostState evaluationContext
+    (hsourceSkip : panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext
       primitive handler bytesInWord state.runtime (.skip : Prog α) =
         some ((.control (.normal state.runtime.locals state.runtime.globals
           state.runtime.memory state.runtime.ffi), state.runtime.clock), state.runtime))
@@ -4656,7 +4656,7 @@ theorem panStructCompileCorrectSkipCase
     (_hstructInfos : structInfosOk state.runtime.structs)
     (hlocalsMap : panStructShapeMapEq context.locals state.runtime.locals)
     (hglobalsMap : panStructShapeMapEq context.globals state.runtime.globals) :
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord (panStructConvertFiniteState context state).runtime
         (structCompileProg context (.skip : Prog α)) =
       some ((.control (.normal
@@ -4676,7 +4676,7 @@ theorem panStructCompileCorrectSkipCase
     evaluationContext primitive handler bytesInWord state
   rw [hsourceSkip] at hprojection
   have htarget :
-      panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+      panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
           bytesInWord (panStructConvertFiniteState context state).runtime
           (structCompileProg context (.skip : Prog α)) =
         some ((.control (.normal
@@ -4709,10 +4709,10 @@ theorem panStructTickEvaluatorSupport
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord (panStructConvertState context state)
         (structCompileProg context (.tick : Prog α)) =
-      (panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+      (panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord state (.tick : Prog α)).map
         (fun (result, postState) =>
           (panStructConvertClockResult result,
@@ -4759,10 +4759,10 @@ theorem panStructCompileCorrectTickCase
     (_hstructInfos : structInfosOk state.runtime.structs)
     (hlocalsMap : panStructShapeMapEq context.locals state.runtime.locals)
     (hglobalsMap : panStructShapeMapEq context.globals state.runtime.globals) :
-    panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+    panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord (panStructConvertFiniteState context state).runtime
         (structCompileProg context (.tick : Prog α)) =
-      (panSemEvaluateCodeStateWithPostState evaluationContext primitive handler
+      (panSemEvaluateCodeStateWithPostState (memoryAccess := none) evaluationContext primitive handler
         bytesInWord state.runtime (.tick : Prog α)).map
         (fun (result, postState) =>
           (panStructConvertClockResult result,
