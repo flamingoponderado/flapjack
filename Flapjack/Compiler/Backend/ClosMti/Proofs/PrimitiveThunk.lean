@@ -108,6 +108,15 @@ theorem primitiveSimulation_ordinary {C F : Type} (op : ClosLang.Op)
     | allocThunk mode => exact primitiveSimulation_thunk_alloc mode
     | updateThunk mode => exact primitiveSimulation_thunk_update mode
 
+/-- Every ordinary operation preserves the clock-bounded simulation. -/
+theorem evaluateRel_allOrdinaryWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra) (op : ClosLang.Op)
+    (targetArgs sourceCode : List ClosLang.Exp)
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
+    (argsIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode targetArgs) :
+    @EvaluateRelWithin C F limit sourceCode [.op trace op targetArgs] :=
+  evaluateRel_ordinaryWithin limit trace op targetArgs sourceCode notInstall notForce argsIH
+    (primitiveSimulation_ordinary op notInstall notForce)
+
 /-- Every ordinary operation expression satisfies the backward evaluation
 simulation under its argument induction hypothesis. -/
 theorem evaluateRel_allOrdinary {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.Op)

@@ -91,15 +91,14 @@ theorem introExp_eq_letrec (maxApp : Nat) (expression : ClosLang.Exp)
       introExp_handle, introExp_tick, introExp_op, introExp_app_none,
       introExp_fn_none, introExp_letrec_none]
 
-/-- Recursive bindings build related closure environments and then invoke the
-body induction hypothesis. -/
-theorem evaluateRel_letrec {C F : Type} (names : List Basis.Pure.MlString.MlString)
+/-- Recursive bindings preserve a clock-bounded body simulation. -/
+theorem evaluateRel_letrecWithin {C F : Type} (limit : Nat) (names : List Basis.Pure.MlString.MlString)
     (location : Option Nat) (vars : Option (List Nat))
     (targetFunctions : List (Nat × ClosLang.Exp)) (targetBody : ClosLang.Exp)
-    (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
+    (bodyIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode [targetBody])
     (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode [.letrec names location vars targetFunctions targetBody] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+    @EvaluateRelWithin C F limit sourceCode [.letrec names location vars targetFunctions targetBody] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult clock run env states code
   have length := codeRel_length code
   cases sourceCode with
   | nil => simp at length
@@ -137,8 +136,20 @@ theorem evaluateRel_letrec {C F : Type} (names : List Basis.Pure.MlString.MlStri
           target = (targetResult, targetFinal) := by
         simpa [evaluate, targetValid] using run
       obtain ⟨sourceResult, sourceFinal, sourceBodyRun, bodyRel, finalStates⟩ :=
-        bodyIH [body] _ target _ targetFinal source targetResult targetBodyRun extended states bodyCode
+        bodyIH [body] _ target _ targetFinal source targetResult clock targetBodyRun extended states bodyCode
       refine ⟨sourceResult, sourceFinal, ?_, bodyRel, finalStates⟩
       simpa [evaluate, valid.1] using sourceBodyRun
+
+/-- The unrestricted recursive-binding case, retained for existing callers. -/
+theorem evaluateRel_letrec {C F : Type} (names : List Basis.Pure.MlString.MlString)
+    (location : Option Nat) (vars : Option (List Nat))
+    (targetFunctions : List (Nat × ClosLang.Exp)) (targetBody : ClosLang.Exp)
+    (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
+    (sourceCode : List ClosLang.Exp) :
+    @EvaluateRelAt C F sourceCode [.letrec names location vars targetFunctions targetBody] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult
+  exact evaluateRel_letrecWithin source.clock names location vars targetFunctions targetBody
+    (fun code => evaluateRelAt_within source.clock code _ (bodyIH code)) sourceCode
+    targetEnv target sourceEnv targetFinal source targetResult (by omega)
 
 end Flapjack.Compiler.Backend.ClosMti

@@ -16,16 +16,15 @@ theorem introExp_eq_op (maxApp : Nat) (expression : ClosLang.Exp) (trace : Backe
       introExp_handle, introExp_tick, introExp_op, introExp_app_none,
       introExp_fn_none, introExp_letrec_none]
 
-/-- Ordinary operations preserve the evaluation simulation when their
-primitive dispatcher satisfies the separately proved simulation. This helper
-is parameterized by that dispatcher property; it is not the full HOL case. -/
-theorem evaluateRel_ordinary {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.Op)
+/-- Ordinary operations preserve a clock-bounded simulation when their
+primitive dispatcher satisfies the separately proved simulation. -/
+theorem evaluateRel_ordinaryWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra) (op : ClosLang.Op)
     (targetArgs sourceCode : List ClosLang.Exp)
     (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs)
+    (argsIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode targetArgs)
     (primitive : @PrimitiveSimulation C F op) :
-    @EvaluateRelAt C F sourceCode [.op trace op targetArgs] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+    @EvaluateRelWithin C F limit sourceCode [.op trace op targetArgs] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult clock run env states code
   have length := codeRel_length code
   cases sourceCode with
   | nil => simp at length
@@ -43,7 +42,7 @@ theorem evaluateRel_ordinary {C F : Type} (trace : BackendCommon.Tra) (op : Clos
       cases targetArgsRun : evaluate targetArgs targetEnv target with
       | mk argsResult targetMiddle =>
         obtain ⟨sourceArgsResult, sourceMiddle, sourceArgsRun, argsRel, middleStates⟩ :=
-          argsIH args targetEnv target sourceEnv targetMiddle source argsResult targetArgsRun env states argsCode
+          argsIH args targetEnv target sourceEnv targetMiddle source argsResult clock targetArgsRun env states argsCode
         have maxEq : sourceMiddle.maxApp = source.maxApp := by
           have preserved := ClosProps.evaluate_const.1 args sourceEnv source
           simpa [sourceArgsRun] using preserved
@@ -102,6 +101,18 @@ theorem evaluateRel_ordinary {C F : Type} (trace : BackendCommon.Tra) (op : Clos
               · have valueRel' : ValueRel source.maxApp sourceValue targetValue := by
                   simpa [maxEq] using valueRel
                 simpa [resultRel] using List.Forall₂.cons valueRel' List.Forall₂.nil
+
+/-- The unrestricted ordinary-operation case, retained for existing callers. -/
+theorem evaluateRel_ordinary {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.Op)
+    (targetArgs sourceCode : List ClosLang.Exp)
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
+    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs)
+    (primitive : @PrimitiveSimulation C F op) :
+    @EvaluateRelAt C F sourceCode [.op trace op targetArgs] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult
+  exact evaluateRel_ordinaryWithin source.clock trace op targetArgs sourceCode notInstall notForce
+    (fun code => evaluateRelAt_within source.clock code _ (argsIH code)) primitive
+    targetEnv target sourceEnv targetFinal source targetResult (by omega)
 
 /-- Integer expressions satisfy the backward evaluation simulation given the
 argument induction hypothesis. -/

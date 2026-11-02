@@ -140,13 +140,14 @@ theorem introExp_eq_install (maxApp : Nat) (expression : ClosLang.Exp) (trace : 
       introExp_handle, introExp_tick, introExp_op, introExp_app_none,
       introExp_fn_none, introExp_letrec_none]
 
-/-- Installation expressions simulate backwards using their argument and
-smaller-clock installed-program induction hypotheses. -/
-theorem evaluateRel_install {C F : Type} (trace : BackendCommon.Tra)
+/-- Installation expressions preserve a clock-bounded simulation using the
+smaller-clock installed-program hypothesis. -/
+theorem evaluateRel_installWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
     (targetArgs sourceCode : List ClosLang.Exp)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs)
+    (argsIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode targetArgs)
     (targetEnv : List ClosSem.Value) (target : State C F) (sourceEnv : List ClosSem.Value)
     (targetFinal source : State C F) (targetResult : Result (List ClosSem.Value) ClosSem.Value)
+    (sourceClock : source.clock ≤ limit)
     (programIH : InstalledProgramIH (C := C) (F := F) target.clock)
     (run : evaluate [.op trace .install targetArgs] targetEnv target = (targetResult, targetFinal))
     (env : List.Forall₂ (ValueRel source.maxApp) sourceEnv targetEnv)
@@ -173,7 +174,7 @@ theorem evaluateRel_install {C F : Type} (trace : BackendCommon.Tra)
       cases targetArgsRun : evaluate targetArgs targetEnv target with
       | mk argsResult targetMiddle =>
         obtain ⟨sourceArgsResult, sourceMiddle, sourceArgsRun, argsRel, middleStates⟩ :=
-          argsIH args targetEnv target sourceEnv targetMiddle source argsResult targetArgsRun env states argsCode
+          argsIH args targetEnv target sourceEnv targetMiddle source argsResult sourceClock targetArgsRun env states argsCode
         have maxEq : sourceMiddle.maxApp = source.maxApp := by
           have preserved := ClosProps.evaluate_const.1 args sourceEnv source
           simpa [sourceArgsRun] using preserved
@@ -213,5 +214,24 @@ theorem evaluateRel_install {C F : Type} (trace : BackendCommon.Tra)
             · rw [evaluate_install_eq, sourceArgsRun]
               exact sourceContinuation
             · simpa [maxEq] using continuationRel
+
+/-- The unrestricted installation case, retained for existing callers. -/
+theorem evaluateRel_install {C F : Type} (trace : BackendCommon.Tra)
+    (targetArgs sourceCode : List ClosLang.Exp)
+    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs)
+    (targetEnv : List ClosSem.Value) (target : State C F) (sourceEnv : List ClosSem.Value)
+    (targetFinal source : State C F) (targetResult : Result (List ClosSem.Value) ClosSem.Value)
+    (programIH : InstalledProgramIH (C := C) (F := F) target.clock)
+    (run : evaluate [.op trace .install targetArgs] targetEnv target = (targetResult, targetFinal))
+    (env : List.Forall₂ (ValueRel source.maxApp) sourceEnv targetEnv)
+    (states : StateRel source target)
+    (code : CodeRel source.maxApp sourceCode [.op trace .install targetArgs]) :
+    ∃ sourceResult sourceFinal,
+      evaluate sourceCode sourceEnv source = (sourceResult, sourceFinal) ∧
+      resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
+        sourceResult targetResult ∧ StateRel sourceFinal targetFinal :=
+  evaluateRel_installWithin source.clock trace targetArgs sourceCode
+    (fun code => evaluateRelAt_within source.clock code _ (argsIH code))
+    targetEnv target sourceEnv targetFinal source targetResult (by omega) programIH run env states code
 
 end Flapjack.Compiler.Backend.ClosMti

@@ -105,13 +105,14 @@ theorem destThunkRel_target_isThunk {maxApp : Nat} {source : DestThunkResult}
 
 /-- Forcing related thunks preserves the backward result and state relation,
 using the generated application as the evaluator induction hypothesis. -/
-theorem runForced_related {C F : Type} (source target : State C F)
+theorem runForced_relatedWithin {C F : Type} (limit : Nat) (source target : State C F)
     (sourceValues targetValues : List Value)
     (targetResult : SemanticPrimitivesHOL.Result (List Value) Value) (targetFinal : State C F)
     (run : runForced targetValues target = (targetResult, targetFinal))
     (states : StateRel source target)
     (values : List.Forall₂ (ValueRel source.maxApp) sourceValues targetValues)
-    (forceIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [appUnit (.var .none 0)]) :
+    (clock : source.clock ≤ limit)
+    (forceIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode [appUnit (.var .none 0)]) :
     ∃ sourceResult sourceFinal,
       runForced sourceValues source = (sourceResult, sourceFinal) ∧
       resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
@@ -144,7 +145,7 @@ theorem runForced_related {C F : Type} (source target : State C F)
       | mk forcedResult targetLast =>
         obtain ⟨sourceForceResult, sourceLast, sourceForceRun, forcedRel, finalStates⟩ :=
           forceIH [appUnit (.var .none 0)] [targetValue] target [sourceValue] targetLast source forcedResult
-            targetForceRun (List.Forall₂.cons valueRel .nil) states (forceApplication_codeRel source.maxApp)
+            clock targetForceRun (List.Forall₂.cons valueRel .nil) states (forceApplication_codeRel source.maxApp)
         have maxEq : sourceLast.maxApp = source.maxApp := by
           have preserved := ClosProps.evaluate_const.1 [appUnit (.var .none 0)] [sourceValue] source
           simpa [sourceForceRun] using preserved
@@ -183,14 +184,28 @@ theorem runForced_related {C F : Type} (source target : State C F)
                 by simp [runForced, sourceDest, sourceForceRun, sourceUpdate],
                 by simpa [resultRel, maxEq] using output, updatedStates⟩
 
-/-- Forced-thunk expressions satisfy the backward simulation under their
-argument and generated-application induction hypotheses. -/
-theorem evaluateRel_force {C F : Type} (trace : BackendCommon.Tra)
-    (targetArgs sourceCode : List ClosLang.Exp)
-    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs)
+/-- The unrestricted force continuation, retained for existing callers. -/
+theorem runForced_related {C F : Type} (source target : State C F)
+    (sourceValues targetValues : List Value)
+    (targetResult : SemanticPrimitivesHOL.Result (List Value) Value) (targetFinal : State C F)
+    (run : runForced targetValues target = (targetResult, targetFinal))
+    (states : StateRel source target)
+    (values : List.Forall₂ (ValueRel source.maxApp) sourceValues targetValues)
     (forceIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [appUnit (.var .none 0)]) :
-    @EvaluateRelAt C F sourceCode [.op trace (.thunkOp .forceThunk) targetArgs] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+    ∃ sourceResult sourceFinal,
+      runForced sourceValues source = (sourceResult, sourceFinal) ∧
+      resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
+        sourceResult targetResult ∧ StateRel sourceFinal targetFinal :=
+  runForced_relatedWithin source.clock source target sourceValues targetValues targetResult targetFinal
+    run states values (by omega) (fun code => evaluateRelAt_within source.clock code _ (forceIH code))
+
+/-- Forced-thunk expressions preserve the clock-bounded simulation. -/
+theorem evaluateRel_forceWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
+    (targetArgs sourceCode : List ClosLang.Exp)
+    (argsIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode targetArgs)
+    (forceIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode [appUnit (.var .none 0)]) :
+    @EvaluateRelWithin C F limit sourceCode [.op trace (.thunkOp .forceThunk) targetArgs] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult clock run env states code
   have length := codeRel_length code
   cases sourceCode with
   | nil => simp at length
@@ -209,10 +224,14 @@ theorem evaluateRel_force {C F : Type} (trace : BackendCommon.Tra)
       cases targetArgsRun : evaluate targetArgs targetEnv target with
       | mk argsResult targetMiddle =>
         obtain ⟨sourceArgsResult, sourceMiddle, sourceArgsRun, argsRel, middleStates⟩ :=
-          argsIH args targetEnv target sourceEnv targetMiddle source argsResult targetArgsRun env states argsCode
+          argsIH args targetEnv target sourceEnv targetMiddle source argsResult clock targetArgsRun env states argsCode
         have maxEq : sourceMiddle.maxApp = source.maxApp := by
           have preserved := ClosProps.evaluate_const.1 args sourceEnv source
           simpa [sourceArgsRun] using preserved
+        have middleClock : sourceMiddle.clock ≤ limit := by
+          have preserved := evaluate_clock_le args sourceEnv source
+          simp only [sourceArgsRun] at preserved
+          omega
         cases argsResult with
         | err targetError =>
           cases sourceArgsResult with
@@ -233,11 +252,23 @@ theorem evaluateRel_force {C F : Type} (trace : BackendCommon.Tra)
               rw [evaluate_force_eq, targetArgsRun] at run
               exact run
             obtain ⟨sourceResult, sourceFinal, sourceContinuation, continuationRel, finalStates⟩ :=
-              runForced_related sourceMiddle targetMiddle sourceValues targetValues targetResult targetFinal
-                targetContinuation middleStates valuesRel forceIH
+              runForced_relatedWithin limit sourceMiddle targetMiddle sourceValues targetValues targetResult targetFinal
+                targetContinuation middleStates valuesRel middleClock forceIH
             refine ⟨sourceResult, sourceFinal, ?_, ?_, finalStates⟩
             · rw [evaluate_force_eq, sourceArgsRun]
               exact sourceContinuation
             · simpa [maxEq] using continuationRel
+
+/-- The unrestricted force case, retained for existing callers. -/
+theorem evaluateRel_force {C F : Type} (trace : BackendCommon.Tra)
+    (targetArgs sourceCode : List ClosLang.Exp)
+    (argsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetArgs)
+    (forceIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [appUnit (.var .none 0)]) :
+    @EvaluateRelAt C F sourceCode [.op trace (.thunkOp .forceThunk) targetArgs] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult
+  exact evaluateRel_forceWithin source.clock trace targetArgs sourceCode
+    (fun code => evaluateRelAt_within source.clock code _ (argsIH code))
+    (fun code => evaluateRelAt_within source.clock code _ (forceIH code))
+    targetEnv target sourceEnv targetFinal source targetResult (by omega)
 
 end Flapjack.Compiler.Backend.ClosMti

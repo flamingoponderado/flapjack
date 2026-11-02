@@ -20,6 +20,36 @@ def EvaluateRelAt {C F : Type} (sourceCode targetCode : List ClosLang.Exp) : Pro
       resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
         sourceResult targetResult ∧ StateRel sourceFinal targetFinal
 
+/-- The target-driven simulation restricted to a maximum source clock.
+This interface lets structural induction hypotheses be used inside a
+clock-first mutual induction; it is Lean-side proof infrastructure. -/
+def EvaluateRelWithin {C F : Type} (limit : Nat) (sourceCode targetCode : List ClosLang.Exp) : Prop :=
+  ∀ (targetEnv : List Value) (target : State C F) (sourceEnv : List Value)
+    (targetFinal : State C F) (source : State C F)
+    (targetResult : SemanticPrimitivesHOL.Result (List Value) Value),
+    source.clock ≤ limit → evaluate targetCode targetEnv target = (targetResult, targetFinal) →
+    List.Forall₂ (ValueRel source.maxApp) sourceEnv targetEnv →
+    StateRel source target → CodeRel source.maxApp sourceCode targetCode →
+    ∃ sourceResult sourceFinal,
+      evaluate sourceCode sourceEnv source = (sourceResult, sourceFinal) ∧
+      resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
+        sourceResult targetResult ∧ StateRel sourceFinal targetFinal
+
+/-- An unrestricted simulation is valid at any clock bound. -/
+theorem evaluateRelAt_within {C F : Type} (limit : Nat) (sourceCode targetCode : List ClosLang.Exp)
+    (simulation : EvaluateRelAt (C := C) (F := F) sourceCode targetCode) :
+    EvaluateRelWithin (C := C) (F := F) limit sourceCode targetCode := by
+  intro targetEnv target sourceEnv targetFinal source targetResult _
+  exact simulation targetEnv target sourceEnv targetFinal source targetResult
+
+/-- A simulation valid at one bound is valid at every smaller bound. -/
+theorem evaluateRelWithin_mono {C F : Type} {lower upper : Nat}
+    {sourceCode targetCode : List ClosLang.Exp} (bound : lower ≤ upper)
+    (simulation : EvaluateRelWithin (C := C) (F := F) upper sourceCode targetCode) :
+    EvaluateRelWithin (C := C) (F := F) lower sourceCode targetCode := by
+  intro targetEnv target sourceEnv targetFinal source targetResult clock
+  exact simulation targetEnv target sourceEnv targetFinal source targetResult (by omega)
+
 /-- A unary source expression can transform into a variable only if it was
 the same variable. -/
 theorem introExp_eq_var (maxApp : Nat) (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
@@ -214,15 +244,14 @@ theorem evaluateRel_call {C F : Type} (sourceCode : List ClosLang.Exp)
         simpa [introList] using code.2.symm
       exact (introExp_ne_call source.maxApp expression trace ticks location args unary transformed).elim
 
-/-- The multi-expression case composes the simulations for the first
-expression and the remaining list. -/
-theorem evaluateRel_cons {C F : Type} (targetHead targetSecond : ClosLang.Exp)
+/-- The multi-expression case composes simulations at a common clock bound. -/
+theorem evaluateRel_consWithin {C F : Type} (limit : Nat) (targetHead targetSecond : ClosLang.Exp)
     (targetTail : List ClosLang.Exp)
-    (headIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetHead])
-    (tailIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode (targetSecond :: targetTail))
+    (headIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode [targetHead])
+    (tailIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode (targetSecond :: targetTail))
     (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode (targetHead :: targetSecond :: targetTail) := by
-  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+    @EvaluateRelWithin C F limit sourceCode (targetHead :: targetSecond :: targetTail) := by
+  intro targetEnv target sourceEnv targetFinal source targetResult clock run env states code
   have length := codeRel_length code
   cases sourceCode with
   | nil => simp at length
@@ -236,7 +265,7 @@ theorem evaluateRel_cons {C F : Type} (targetHead targetSecond : ClosLang.Exp)
       | mk headResult targetMiddle =>
         obtain ⟨sourceHeadResult, sourceMiddle, sourceHeadRun, headRel, middleStates⟩ :=
           headIH [sourceHead] targetEnv target sourceEnv targetMiddle source headResult
-            targetHeadRun env states parts.1
+            clock targetHeadRun env states parts.1
         have maxEq : sourceMiddle.maxApp = source.maxApp := by
           have preserved := ClosProps.evaluate_const.1 [sourceHead] sourceEnv source
           simpa [sourceHeadRun] using preserved
@@ -244,6 +273,10 @@ theorem evaluateRel_cons {C F : Type} (targetHead targetSecond : ClosLang.Exp)
           simpa [maxEq] using env
         have tailCode : CodeRel sourceMiddle.maxApp (sourceSecond :: sourceTail)
             (targetSecond :: targetTail) := by simpa [maxEq] using parts.2
+        have middleClock : sourceMiddle.clock ≤ limit := by
+          have preserved := evaluate_clock_le [sourceHead] sourceEnv source
+          simp only [sourceHeadRun] at preserved
+          omega
         cases headResult with
         | err targetError =>
           cases sourceHeadResult with
@@ -280,7 +313,7 @@ theorem evaluateRel_cons {C F : Type} (targetHead targetSecond : ClosLang.Exp)
                     | mk targetTailResult targetLast =>
                       obtain ⟨sourceTailResult, sourceFinal, sourceTailRun, tailRel, finalStates⟩ :=
                         tailIH (sourceSecond :: sourceTail) targetEnv targetMiddle sourceEnv targetLast
-                          sourceMiddle targetTailResult targetTailRun envMiddle middleStates tailCode
+                          sourceMiddle targetTailResult middleClock targetTailRun envMiddle middleStates tailCode
                       cases targetTailResult with
                       | err targetError =>
                         rw [evaluate, fixClock_evaluate, targetHeadRun, targetTailRun] at run
@@ -306,13 +339,26 @@ theorem evaluateRel_cons {C F : Type} (targetHead targetSecond : ClosLang.Exp)
                               simpa [resultRel, maxEq] using tailRel
                             simpa [resultRel] using List.Forall₂.cons valuesRel restRel
 
-/-- The tick case either times out in both states or invokes the body
-induction hypothesis after decrementing both clocks. -/
-theorem evaluateRel_tick {C F : Type} (trace : BackendCommon.Tra) (targetBody : ClosLang.Exp)
-    (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
+/-- The unrestricted multi-expression case, retained for existing callers. -/
+theorem evaluateRel_cons {C F : Type} (targetHead targetSecond : ClosLang.Exp)
+    (targetTail : List ClosLang.Exp)
+    (headIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetHead])
+    (tailIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode (targetSecond :: targetTail))
     (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode [.tick trace targetBody] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+    @EvaluateRelAt C F sourceCode (targetHead :: targetSecond :: targetTail) := by
+  intro targetEnv target sourceEnv targetFinal source targetResult
+  exact evaluateRel_consWithin source.clock targetHead targetSecond targetTail
+    (fun code => evaluateRelAt_within source.clock code _ (headIH code))
+    (fun code => evaluateRelAt_within source.clock code _ (tailIH code)) sourceCode
+    targetEnv target sourceEnv targetFinal source targetResult (by omega)
+
+/-- The tick case preserves a clock-bounded simulation. -/
+theorem evaluateRel_tickWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
+    (targetBody : ClosLang.Exp)
+    (bodyIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode [targetBody])
+    (sourceCode : List ClosLang.Exp) :
+    @EvaluateRelWithin C F limit sourceCode [.tick trace targetBody] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult clock run env states code
   have length := codeRel_length code
   cases sourceCode with
   | nil => simp at length
@@ -344,16 +390,27 @@ theorem evaluateRel_tick {C F : Type} (trace : BackendCommon.Tra) (targetBody : 
             (targetResult, targetFinal) := by simpa [evaluate, zero] using run
         obtain ⟨result, final, bodyRun, resultRel, finalStates⟩ :=
           bodyIH [body] targetEnv (decClock 1 target) sourceEnv targetFinal (decClock 1 source)
-            targetResult targetRun env decStates bodyCode
+            targetResult (by simp [decClock]; omega) targetRun env decStates bodyCode
         exact ⟨result, final, by simpa [evaluate, sourceNonzero] using bodyRun,
           resultRel, finalStates⟩
 
-/-- Raising propagates related body errors or raises related singleton values. -/
-theorem evaluateRel_raise {C F : Type} (trace : BackendCommon.Tra) (targetBody : ClosLang.Exp)
+/-- The unrestricted tick case, retained for existing callers. -/
+theorem evaluateRel_tick {C F : Type} (trace : BackendCommon.Tra) (targetBody : ClosLang.Exp)
     (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
     (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode [.raise trace targetBody] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+    @EvaluateRelAt C F sourceCode [.tick trace targetBody] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult
+  exact evaluateRel_tickWithin source.clock trace targetBody
+    (fun code => evaluateRelAt_within source.clock code _ (bodyIH code)) sourceCode
+    targetEnv target sourceEnv targetFinal source targetResult (by omega)
+
+/-- Raising preserves a clock-bounded simulation of its body. -/
+theorem evaluateRel_raiseWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
+    (targetBody : ClosLang.Exp)
+    (bodyIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode [targetBody])
+    (sourceCode : List ClosLang.Exp) :
+    @EvaluateRelWithin C F limit sourceCode [.raise trace targetBody] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult clock run env states code
   have length := codeRel_length code
   cases sourceCode with
   | nil => simp at length
@@ -372,7 +429,7 @@ theorem evaluateRel_raise {C F : Type} (trace : BackendCommon.Tra) (targetBody :
       | mk bodyResult targetMiddle =>
         obtain ⟨sourceBodyResult, sourceFinal, sourceBodyRun, bodyRel, finalStates⟩ :=
           bodyIH [body] targetEnv target sourceEnv targetMiddle source bodyResult
-            targetBodyRun env states bodyCode
+            clock targetBodyRun env states bodyCode
         cases bodyResult with
         | err targetError =>
           cases sourceBodyResult with
@@ -412,15 +469,24 @@ theorem evaluateRel_raise {C F : Type} (trace : BackendCommon.Tra) (targetBody :
                       by rw [evaluate, sourceBodyRun]; rfl,
                       by simpa [resultRel, excRel] using valueRel, finalStates⟩
 
-/-- Local bindings preserve the relation on the extended environments and
-then use the body induction hypothesis. -/
-theorem evaluateRel_let {C F : Type} (trace : BackendCommon.Tra)
-    (targetBindings : List ClosLang.Exp) (targetBody : ClosLang.Exp)
-    (bindingsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetBindings)
+/-- The unrestricted raise case, retained for existing callers. -/
+theorem evaluateRel_raise {C F : Type} (trace : BackendCommon.Tra) (targetBody : ClosLang.Exp)
     (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
     (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode [.let trace targetBindings targetBody] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+    @EvaluateRelAt C F sourceCode [.raise trace targetBody] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult
+  exact evaluateRel_raiseWithin source.clock trace targetBody
+    (fun code => evaluateRelAt_within source.clock code _ (bodyIH code)) sourceCode
+    targetEnv target sourceEnv targetFinal source targetResult (by omega)
+
+/-- Local bindings preserve a clock-bounded simulation. -/
+theorem evaluateRel_letWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
+    (targetBindings : List ClosLang.Exp) (targetBody : ClosLang.Exp)
+    (bindingsIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode targetBindings)
+    (bodyIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode [targetBody])
+    (sourceCode : List ClosLang.Exp) :
+    @EvaluateRelWithin C F limit sourceCode [.let trace targetBindings targetBody] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult clock run env states code
   have length := codeRel_length code
   cases sourceCode with
   | nil => simp at length
@@ -439,10 +505,14 @@ theorem evaluateRel_let {C F : Type} (trace : BackendCommon.Tra)
       | mk bindingsResult targetMiddle =>
         obtain ⟨sourceBindingsResult, sourceMiddle, sourceBindingsRun, bindingsRel, middleStates⟩ :=
           bindingsIH bindings targetEnv target sourceEnv targetMiddle source bindingsResult
-            targetBindingsRun env states bindingsCode
+            clock targetBindingsRun env states bindingsCode
         have maxEq : sourceMiddle.maxApp = source.maxApp := by
           have preserved := ClosProps.evaluate_const.1 bindings sourceEnv source
           simpa [sourceBindingsRun] using preserved
+        have middleClock : sourceMiddle.clock ≤ limit := by
+          have preserved := evaluate_clock_le bindings sourceEnv source
+          simp only [sourceBindingsRun] at preserved
+          omega
         cases bindingsResult with
         | err targetError =>
           cases sourceBindingsResult with
@@ -470,21 +540,33 @@ theorem evaluateRel_let {C F : Type} (trace : BackendCommon.Tra)
               exact run
             obtain ⟨sourceResult, sourceFinal, sourceBodyRun, bodyRel, finalStates⟩ :=
               bodyIH [body] (targetValues ++ targetEnv) targetMiddle (sourceValues ++ sourceEnv)
-                targetFinal sourceMiddle targetResult targetBodyRun extended middleStates bodyCode
+                targetFinal sourceMiddle targetResult middleClock targetBodyRun extended middleStates bodyCode
             refine ⟨sourceResult, sourceFinal, ?_, ?_, finalStates⟩
             · rw [evaluate, fixClock_evaluate, sourceBindingsRun]
               exact sourceBodyRun
             · simpa [maxEq] using bodyRel
 
-/-- Exception handlers preserve successful values and aborts, and run related
-handlers when the bodies raise related values. -/
-theorem evaluateRel_handle {C F : Type} (trace : BackendCommon.Tra)
-    (targetBody targetHandler : ClosLang.Exp)
+/-- The unrestricted local-binding case, retained for existing callers. -/
+theorem evaluateRel_let {C F : Type} (trace : BackendCommon.Tra)
+    (targetBindings : List ClosLang.Exp) (targetBody : ClosLang.Exp)
+    (bindingsIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode targetBindings)
     (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
-    (handlerIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetHandler])
     (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode [.handle trace targetBody targetHandler] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+    @EvaluateRelAt C F sourceCode [.let trace targetBindings targetBody] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult
+  exact evaluateRel_letWithin source.clock trace targetBindings targetBody
+    (fun code => evaluateRelAt_within source.clock code _ (bindingsIH code))
+    (fun code => evaluateRelAt_within source.clock code _ (bodyIH code)) sourceCode
+    targetEnv target sourceEnv targetFinal source targetResult (by omega)
+
+/-- Exception handlers preserve a clock-bounded simulation. -/
+theorem evaluateRel_handleWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
+    (targetBody targetHandler : ClosLang.Exp)
+    (bodyIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode [targetBody])
+    (handlerIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode [targetHandler])
+    (sourceCode : List ClosLang.Exp) :
+    @EvaluateRelWithin C F limit sourceCode [.handle trace targetBody targetHandler] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult clock run env states code
   have length := codeRel_length code
   cases sourceCode with
   | nil => simp at length
@@ -503,10 +585,14 @@ theorem evaluateRel_handle {C F : Type} (trace : BackendCommon.Tra)
       | mk bodyResult targetMiddle =>
         obtain ⟨sourceBodyResult, sourceMiddle, sourceBodyRun, bodyRel, middleStates⟩ :=
           bodyIH [body] targetEnv target sourceEnv targetMiddle source bodyResult
-            targetBodyRun env states bodyCode
+            clock targetBodyRun env states bodyCode
         have maxEq : sourceMiddle.maxApp = source.maxApp := by
           have preserved := ClosProps.evaluate_const.1 [body] sourceEnv source
           simpa [sourceBodyRun] using preserved
+        have middleClock : sourceMiddle.clock ≤ limit := by
+          have preserved := evaluate_clock_le [body] sourceEnv source
+          simp only [sourceBodyRun] at preserved
+          omega
         cases bodyResult with
         | val targetValues =>
           cases sourceBodyResult with
@@ -548,22 +634,34 @@ theorem evaluateRel_handle {C F : Type} (trace : BackendCommon.Tra)
                   exact run
                 obtain ⟨sourceResult, sourceFinal, sourceHandlerRun, handlerRel, finalStates⟩ :=
                   handlerIH [handler] (targetValue :: targetEnv) targetMiddle (sourceValue :: sourceEnv)
-                    targetFinal sourceMiddle targetResult targetHandlerRun extended middleStates handlerCode
+                    targetFinal sourceMiddle targetResult middleClock targetHandlerRun extended middleStates handlerCode
                 refine ⟨sourceResult, sourceFinal, ?_, ?_, finalStates⟩
                 · rw [evaluate, fixClock_evaluate, sourceBodyRun]
                   exact sourceHandlerRun
                 · simpa [maxEq] using handlerRel
 
-/-- Conditional evaluation takes corresponding branches on related Boolean
-values, and rejects a non-Boolean condition on both sides. -/
-theorem evaluateRel_if {C F : Type} (trace : BackendCommon.Tra)
-    (targetCondition targetYes targetNo : ClosLang.Exp)
-    (conditionIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetCondition])
-    (yesIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetYes])
-    (noIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetNo])
+/-- The unrestricted handler case, retained for existing callers. -/
+theorem evaluateRel_handle {C F : Type} (trace : BackendCommon.Tra)
+    (targetBody targetHandler : ClosLang.Exp)
+    (bodyIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetBody])
+    (handlerIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetHandler])
     (sourceCode : List ClosLang.Exp) :
-    @EvaluateRelAt C F sourceCode [.ifThenElse trace targetCondition targetYes targetNo] := by
-  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+    @EvaluateRelAt C F sourceCode [.handle trace targetBody targetHandler] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult
+  exact evaluateRel_handleWithin source.clock trace targetBody targetHandler
+    (fun code => evaluateRelAt_within source.clock code _ (bodyIH code))
+    (fun code => evaluateRelAt_within source.clock code _ (handlerIH code)) sourceCode
+    targetEnv target sourceEnv targetFinal source targetResult (by omega)
+
+/-- Conditional evaluation preserves a clock-bounded simulation. -/
+theorem evaluateRel_ifWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra)
+    (targetCondition targetYes targetNo : ClosLang.Exp)
+    (conditionIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode [targetCondition])
+    (yesIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode [targetYes])
+    (noIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode [targetNo])
+    (sourceCode : List ClosLang.Exp) :
+    @EvaluateRelWithin C F limit sourceCode [.ifThenElse trace targetCondition targetYes targetNo] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult clock run env states code
   have length := codeRel_length code
   cases sourceCode with
   | nil => simp at length
@@ -584,10 +682,14 @@ theorem evaluateRel_if {C F : Type} (trace : BackendCommon.Tra)
       | mk conditionResult targetMiddle =>
         obtain ⟨sourceConditionResult, sourceMiddle, sourceConditionRun, conditionRel, middleStates⟩ :=
           conditionIH [condition] targetEnv target sourceEnv targetMiddle source conditionResult
-            targetConditionRun env states conditionCode
+            clock targetConditionRun env states conditionCode
         have maxEq : sourceMiddle.maxApp = source.maxApp := by
           have preserved := ClosProps.evaluate_const.1 [condition] sourceEnv source
           simpa [sourceConditionRun] using preserved
+        have middleClock : sourceMiddle.clock ≤ limit := by
+          have preserved := evaluate_clock_le [condition] sourceEnv source
+          simp only [sourceConditionRun] at preserved
+          omega
         cases conditionResult with
         | err targetError =>
           cases sourceConditionResult with
@@ -644,7 +746,7 @@ theorem evaluateRel_if {C F : Type} (trace : BackendCommon.Tra)
                           simpa [boolRun] using run
                         obtain ⟨sourceResult, sourceFinal, sourceRun, branchRel, finalStates⟩ :=
                           noIH [no] targetEnv targetMiddle sourceEnv targetFinal sourceMiddle targetResult
-                            targetBranchRun envMiddle middleStates branchCode
+                            middleClock targetBranchRun envMiddle middleStates branchCode
                         refine ⟨sourceResult, sourceFinal, ?_, ?_, finalStates⟩
                         · rw [evaluate, fixClock_evaluate, sourceConditionRun]
                           simpa [sourceBool] using sourceRun
@@ -658,11 +760,26 @@ theorem evaluateRel_if {C F : Type} (trace : BackendCommon.Tra)
                           simpa [boolRun] using run
                         obtain ⟨sourceResult, sourceFinal, sourceRun, branchRel, finalStates⟩ :=
                           yesIH [yes] targetEnv targetMiddle sourceEnv targetFinal sourceMiddle targetResult
-                            targetBranchRun envMiddle middleStates branchCode
+                            middleClock targetBranchRun envMiddle middleStates branchCode
                         refine ⟨sourceResult, sourceFinal, ?_, ?_, finalStates⟩
                         · rw [evaluate, fixClock_evaluate, sourceConditionRun]
                           simpa [sourceBool] using sourceRun
                         · simpa [maxEq] using branchRel
+
+/-- The unrestricted conditional case, retained for existing callers. -/
+theorem evaluateRel_if {C F : Type} (trace : BackendCommon.Tra)
+    (targetCondition targetYes targetNo : ClosLang.Exp)
+    (conditionIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetCondition])
+    (yesIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetYes])
+    (noIH : ∀ sourceCode, @EvaluateRelAt C F sourceCode [targetNo])
+    (sourceCode : List ClosLang.Exp) :
+    @EvaluateRelAt C F sourceCode [.ifThenElse trace targetCondition targetYes targetNo] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult
+  exact evaluateRel_ifWithin source.clock trace targetCondition targetYes targetNo
+    (fun code => evaluateRelAt_within source.clock code _ (conditionIH code))
+    (fun code => evaluateRelAt_within source.clock code _ (yesIH code))
+    (fun code => evaluateRelAt_within source.clock code _ (noIH code)) sourceCode
+    targetEnv target sourceEnv targetFinal source targetResult (by omega)
 
 /-- Collected unary functions evaluate to related source and target closures. -/
 theorem evaluateRel_fn {C F : Type} (name : Basis.Pure.MlString.MlString)

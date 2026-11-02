@@ -46,8 +46,8 @@ theorem evaluate_collected_app_related {C F : Type} (source target : State C F)
     (headCode : CodeRel source.maxApp [sourceHead] [targetHead])
     (lengthEq : sourceArgs.length = traces.length) (bound : sourceArgs.length ≤ source.maxApp)
     (nonempty : targetArgs ≠ [])
-    (argsIH : EvaluateRelAt (C := C) (F := F) sourceArgs targetArgs)
-    (headIH : EvaluateRelAt (C := C) (F := F) [sourceHead] [targetHead])
+    (argsIH : EvaluateRelWithin (C := C) (F := F) source.clock sourceArgs targetArgs)
+    (headIH : EvaluateRelWithin (C := C) (F := F) source.clock [sourceHead] [targetHead])
     (appIH : ∀ (s t : State C F) (sv tv : Value) (sa ta : List Value),
       s.clock ≤ source.clock → StateRel s t → ValueRel s.maxApp sv tv →
       List.Forall₂ (ValueRel s.maxApp) sa ta → sa.length ≤ s.maxApp →
@@ -67,7 +67,8 @@ theorem evaluate_collected_app_related {C F : Type} (source target : State C F)
   cases targetArgsRun : evaluate targetArgs targetEnv target with
   | mk targetArgsResult targetMiddle =>
     obtain ⟨sourceArgsResult, sourceMiddle, sourceArgsRun, argsRelated, middleStates⟩ :=
-      argsIH targetEnv target sourceEnv targetMiddle source targetArgsResult targetArgsRun envRel states argsCode
+      argsIH targetEnv target sourceEnv targetMiddle source targetArgsResult (by omega)
+        targetArgsRun envRel states argsCode
     have middleMax : sourceMiddle.maxApp = source.maxApp := by
       have invariant := ClosProps.evaluate_const.1 sourceArgs sourceEnv source
       simpa [sourceArgsRun] using invariant
@@ -90,7 +91,8 @@ theorem evaluate_collected_app_related {C F : Type} (source target : State C F)
         cases targetHeadRun : evaluate [targetHead] targetEnv targetMiddle with
         | mk targetHeadResult targetLast =>
           obtain ⟨sourceHeadResult, sourceLast, sourceHeadRun, headRelated, lastStates⟩ :=
-            headIH targetEnv targetMiddle sourceEnv targetLast sourceMiddle targetHeadResult targetHeadRun
+            headIH targetEnv targetMiddle sourceEnv targetLast sourceMiddle targetHeadResult
+              middleClock targetHeadRun
               (by simpa [middleMax] using envRel) middleStates (by simpa [middleMax] using headCode)
           have lastMax : sourceLast.maxApp = source.maxApp := by
             have invariant := ClosProps.evaluate_const.1 [sourceHead] sourceEnv sourceMiddle
@@ -146,8 +148,8 @@ theorem evaluate_collected_app_step {C F : Type} (source target : State C F)
     (headCode : CodeRel source.maxApp [sourceHead] [targetHead])
     (lengthEq : sourceArgs.length = traces.length) (bound : sourceArgs.length ≤ source.maxApp)
     (nonempty : targetArgs ≠ [])
-    (argsIH : EvaluateRelAt (C := C) (F := F) sourceArgs targetArgs)
-    (headIH : EvaluateRelAt (C := C) (F := F) [sourceHead] [targetHead])
+    (argsIH : EvaluateRelWithin (C := C) (F := F) source.clock sourceArgs targetArgs)
+    (headIH : EvaluateRelWithin (C := C) (F := F) source.clock [sourceHead] [targetHead])
     (bodyIH : ∀ sourceBody targetBody,
       EvaluateRelBelow (C := C) (F := F) source.clock [sourceBody] [targetBody])
     (appIH : ∀ (s t : State C F) (sv tv : Value) (sa ta : List Value),
@@ -181,8 +183,8 @@ theorem evaluate_introApp_step {C F : Type} (source target : State C F)
     (envRel : List.Forall₂ (ValueRel source.maxApp) sourceEnv targetEnv)
     (safe : ClosProps.noMti (.app trace none head [arg]))
     (collected : collectApps source.maxApp [arg] head = (collectedArgs, collectedHead))
-    (argsIH : EvaluateRelAt (C := C) (F := F) collectedArgs (introList source.maxApp collectedArgs))
-    (headIH : EvaluateRelAt (C := C) (F := F) [collectedHead] [introExp source.maxApp collectedHead])
+    (argsIH : EvaluateRelWithin (C := C) (F := F) source.clock collectedArgs (introList source.maxApp collectedArgs))
+    (headIH : EvaluateRelWithin (C := C) (F := F) source.clock [collectedHead] [introExp source.maxApp collectedHead])
     (bodyIH : ∀ sourceBody targetBody,
       EvaluateRelBelow (C := C) (F := F) source.clock [sourceBody] [targetBody])
     (appIH : ∀ (s t : State C F) (sv tv : Value) (sa ta : List Value),
@@ -235,16 +237,17 @@ theorem evaluate_introApp_step {C F : Type} (source target : State C F)
 /-- Target-driven application-expression simulation, with structural
 hypotheses for the target head and arguments and smaller-clock hypotheses
 for body evaluation and application. The enclosing induction remains open. -/
-theorem evaluateRel_app {C F : Type} (trace : BackendCommon.Tra) (location : Option Nat)
+theorem evaluateRel_app {C F : Type} (limit : Nat) (trace : BackendCommon.Tra) (location : Option Nat)
     (targetHead : ClosLang.Exp) (targetArgs sourceCode : List ClosLang.Exp)
-    (argsIH : ∀ sourceArgs, EvaluateRelAt (C := C) (F := F) sourceArgs targetArgs)
-    (headIH : ∀ sourceHead, EvaluateRelAt (C := C) (F := F) [sourceHead] [targetHead])
+    (argsIH : ∀ sourceArgs, EvaluateRelWithin (C := C) (F := F) limit sourceArgs targetArgs)
+    (headIH : ∀ sourceHead, EvaluateRelWithin (C := C) (F := F) limit [sourceHead] [targetHead])
     (targetEnv : List Value) (target : State C F) (sourceEnv : List Value)
     (targetFinal source : State C F) (targetResult : SemanticPrimitivesHOL.Result (List Value) Value)
+    (clock : source.clock ≤ limit)
     (bodyIH : ∀ sourceBody targetBody,
-      EvaluateRelBelow (C := C) (F := F) source.clock [sourceBody] [targetBody])
+      EvaluateRelBelow (C := C) (F := F) limit [sourceBody] [targetBody])
     (appIH : ∀ (s t : State C F) (sv tv : Value) (sa ta : List Value),
-      s.clock < source.clock → StateRel s t → ValueRel s.maxApp sv tv →
+      s.clock < limit → StateRel s t → ValueRel s.maxApp sv tv →
       List.Forall₂ (ValueRel s.maxApp) sa ta → sa.length ≤ s.maxApp →
       resultRel (List.Forall₂ (ValueRel s.maxApp)) (ValueRel s.maxApp)
         (evaluateApps sv sa s).1 (evaluateApp none tv ta t).1 ∧
@@ -272,16 +275,28 @@ theorem evaluateRel_app {C F : Type} (trace : BackendCommon.Tra) (location : Opt
         introExp_eq_app source.maxApp expression trace location targetHead targetArgs unary transformed
       subst expression
       subst location
-      have sourceArgsIH : EvaluateRelAt (C := C) (F := F) collectedArgs
+      have sourceArgsIH : EvaluateRelWithin (C := C) (F := F) source.clock collectedArgs
           (introList source.maxApp collectedArgs) := by
         rw [← targetArgsEq]
-        exact argsIH collectedArgs
-      have sourceHeadIH : EvaluateRelAt (C := C) (F := F) [collectedHead]
+        exact evaluateRelWithin_mono clock (argsIH collectedArgs)
+      have sourceHeadIH : EvaluateRelWithin (C := C) (F := F) source.clock [collectedHead]
           [introExp source.maxApp collectedHead] := by
         rw [← targetHeadEq]
-        exact headIH collectedHead
+        exact evaluateRelWithin_mono clock (headIH collectedHead)
+      have sourceBodyIH : ∀ sourceBody targetBody,
+          EvaluateRelBelow (C := C) (F := F) source.clock [sourceBody] [targetBody] := by
+        intro sourceBody targetBody targetEnv target sourceEnv targetFinal source targetResult smaller
+        exact bodyIH sourceBody targetBody targetEnv target sourceEnv targetFinal source targetResult (by omega)
+      have sourceAppIH : ∀ (s t : State C F) (sv tv : Value) (sa ta : List Value),
+          s.clock < source.clock → StateRel s t → ValueRel s.maxApp sv tv →
+          List.Forall₂ (ValueRel s.maxApp) sa ta → sa.length ≤ s.maxApp →
+          resultRel (List.Forall₂ (ValueRel s.maxApp)) (ValueRel s.maxApp)
+            (evaluateApps sv sa s).1 (evaluateApp none tv ta t).1 ∧
+          StateRel (evaluateApps sv sa s).2 (evaluateApp none tv ta t).2 := by
+        intro s t sv tv sa ta smaller
+        exact appIH s t sv tv sa ta (by omega)
       have related := evaluate_introApp_step source target sourceEnv targetEnv trace head arg collectedArgs
-        collectedHead states envRel unary collected sourceArgsIH sourceHeadIH bodyIH appIH
+        collectedHead states envRel unary collected sourceArgsIH sourceHeadIH sourceBodyIH sourceAppIH
       rw [transformed, run] at related
       cases sourceRun : evaluate [.app trace none head [arg]] sourceEnv source with
       | mk sourceResult sourceFinal =>
