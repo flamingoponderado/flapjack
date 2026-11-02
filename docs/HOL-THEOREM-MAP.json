@@ -1,5 +1,21 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/StateRelation.lean",
+    "lean_name": "StateRel",
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "state_rel_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed source definition: source and target share the compiler-state and FFI payload types, while those two types are independent. Clock, pointwise store relation, FFI equality, pointwise optional-global relation and installation relation have the same orientations and order."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/StateRelation.lean",
+    "lean_name": "stateRel_initial",
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "state_rel_initial_state",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source implication: arbitrary independent compiler-state and FFI payload types, arbitrary clock and two installation configurations; their installation relation is the sole premise and the conclusion relates the corresponding initial states."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelation.lean",
     "lean_name": "ValueRel",
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -1922,8 +1938,8 @@
     "hol_name": "sv_rel_def",
     "lean_path": "Flapjack/SemanticPrimitivesProps/StoreRelation.lean",
     "lean_name": "storeValueRel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; evaluator, value and store carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed source constructor pair with independent left and right payload types: references use the relation, fixed word8 arrays use equality, value arrays use LIST_REL, thunks require equal modes and related payloads, and every mixed constructor pair is false."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",

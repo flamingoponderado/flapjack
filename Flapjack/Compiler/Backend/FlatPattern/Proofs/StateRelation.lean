@@ -6,8 +6,8 @@ import Flapjack.SemanticPrimitivesProps.StoreRelation
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
-/-- Proof-side flat state relation. Correspondence of this state relation to
-the HOL `state_rel` declaration remains pending. -/
+/-- The flat-pattern state relation, including installation configurations. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "state_rel_def"]
 def StateRel {C F : Type} (cfg : Config) (source target : FlatSem.State C F) : Prop :=
   target.clock = source.clock ∧
   List.Forall₂ (storeValueRel ValueRel) source.refs target.refs ∧
@@ -15,9 +15,9 @@ def StateRel {C F : Type} (cfg : Config) (source target : FlatSem.State C F) : P
   List.Forall₂ (optionRel ValueRel) source.globals target.globals ∧
   installConfRel cfg source.evalConfig target.evalConfig
 
-/-- Initial flat states satisfy the proof-side state relation whenever their
-installation configurations are related. This helper is not yet a reviewed
-port of the corresponding HOL theorem. -/
+/-- Initial flat states satisfy the relation when their installation
+configurations are related. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "state_rel_initial_state"]
 theorem stateRel_initial {C F : Type} (cfg : Config) (ffi : HolFfiState F) (clock : Nat)
     (source target : FlatSem.InstallConfig C) (related : installConfRel cfg source target) :
     StateRel cfg (FlatSem.initialState ffi clock source) (FlatSem.initialState ffi clock target) := by
