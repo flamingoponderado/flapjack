@@ -4,6 +4,35 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateRecursiveApplication
 namespace Flapjack.Compiler.Backend.ClosMti
 open Flapjack ClosSem SemanticPrimitivesProps
 
+/-- A transformed application comes from an unannotated unary source
+application, with head and argument list produced by the collector. -/
+theorem introExp_eq_app (maxApp : Nat) (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
+    (location : Option Nat) (targetHead : ClosLang.Exp) (targetArgs : List ClosLang.Exp)
+    (unary : ClosProps.noMti expression)
+    (transformed : introExp maxApp expression = .app trace location targetHead targetArgs) :
+    ∃ head arg collectedArgs collectedHead,
+      expression = .app trace none head [arg] ∧ location = none ∧
+      collectApps maxApp [arg] head = (collectedArgs, collectedHead) ∧
+      targetHead = introExp maxApp collectedHead ∧ targetArgs = introList maxApp collectedArgs := by
+  cases expression
+  case app sourceTrace sourceLocation sourceHead sourceArgs =>
+    simp only [ClosProps.noMti] at unary
+    obtain ⟨arity, rfl, _, _⟩ := unary
+    cases sourceArgs with
+    | nil => simp at arity
+    | cons arg rest =>
+      cases rest with
+      | cons next tail => simp at arity
+      | nil =>
+        cases found : collectApps maxApp [arg] sourceHead with
+        | mk args head =>
+          simp only [introExp_app_none, found] at transformed
+          simp only [ClosLang.Exp.app.injEq] at transformed
+          obtain ⟨rfl, rfl, headEq, argsEq⟩ := transformed
+          exact ⟨sourceHead, arg, args, head, rfl, rfl, found, headEq.symm, argsEq.symm⟩
+  all_goals simp_all [ClosProps.noMti, introExp_var, introExp_if, introExp_let, introExp_raise,
+    introExp_handle, introExp_tick, introExp_op, introExp_fn_none, introExp_letrec_none]
+
 /-- A collected application simulates its reconstructed unary applications,
 assuming simulations for the collected arguments, head, and value application.
 The latter is available at the same clock; the enclosing mutual induction and
@@ -202,5 +231,61 @@ theorem evaluate_introApp_step {C F : Type} (source target : State C F)
     simp [introExp_app_none, collected]
   rw [targetEq, rebuilt]
   exact result
+
+/-- Target-driven application-expression simulation, with structural
+hypotheses for the target head and arguments and smaller-clock hypotheses
+for body evaluation and application. The enclosing induction remains open. -/
+theorem evaluateRel_app {C F : Type} (trace : BackendCommon.Tra) (location : Option Nat)
+    (targetHead : ClosLang.Exp) (targetArgs sourceCode : List ClosLang.Exp)
+    (argsIH : ∀ sourceArgs, EvaluateRelAt (C := C) (F := F) sourceArgs targetArgs)
+    (headIH : ∀ sourceHead, EvaluateRelAt (C := C) (F := F) [sourceHead] [targetHead])
+    (targetEnv : List Value) (target : State C F) (sourceEnv : List Value)
+    (targetFinal source : State C F) (targetResult : SemanticPrimitivesHOL.Result (List Value) Value)
+    (bodyIH : ∀ sourceBody targetBody,
+      EvaluateRelBelow (C := C) (F := F) source.clock [sourceBody] [targetBody])
+    (appIH : ∀ (s t : State C F) (sv tv : Value) (sa ta : List Value),
+      s.clock < source.clock → StateRel s t → ValueRel s.maxApp sv tv →
+      List.Forall₂ (ValueRel s.maxApp) sa ta → sa.length ≤ s.maxApp →
+      resultRel (List.Forall₂ (ValueRel s.maxApp)) (ValueRel s.maxApp)
+        (evaluateApps sv sa s).1 (evaluateApp none tv ta t).1 ∧
+      StateRel (evaluateApps sv sa s).2 (evaluateApp none tv ta t).2)
+    (run : evaluate [.app trace location targetHead targetArgs] targetEnv target = (targetResult, targetFinal))
+    (envRel : List.Forall₂ (ValueRel source.maxApp) sourceEnv targetEnv)
+    (states : StateRel source target)
+    (code : CodeRel source.maxApp sourceCode [.app trace location targetHead targetArgs]) :
+    ∃ sourceResult sourceFinal,
+      evaluate sourceCode sourceEnv source = (sourceResult, sourceFinal) ∧
+      resultRel (List.Forall₂ (ValueRel source.maxApp)) (ValueRel source.maxApp)
+        sourceResult targetResult ∧ StateRel sourceFinal targetFinal := by
+  have length := codeRel_length code
+  cases sourceCode with
+  | nil => simp at length
+  | cons expression rest =>
+    cases rest with
+    | cons next tail => simp at length
+    | nil =>
+      have unary : ClosProps.noMti expression := code.1 expression (by simp)
+      have transformed : introExp source.maxApp expression = .app trace location targetHead targetArgs := by
+        simpa [introList] using code.2.symm
+      obtain ⟨head, arg, collectedArgs, collectedHead, expressionEq, locationEq,
+        collected, targetHeadEq, targetArgsEq⟩ :=
+        introExp_eq_app source.maxApp expression trace location targetHead targetArgs unary transformed
+      subst expression
+      subst location
+      have sourceArgsIH : EvaluateRelAt (C := C) (F := F) collectedArgs
+          (introList source.maxApp collectedArgs) := by
+        rw [← targetArgsEq]
+        exact argsIH collectedArgs
+      have sourceHeadIH : EvaluateRelAt (C := C) (F := F) [collectedHead]
+          [introExp source.maxApp collectedHead] := by
+        rw [← targetHeadEq]
+        exact headIH collectedHead
+      have related := evaluate_introApp_step source target sourceEnv targetEnv trace head arg collectedArgs
+        collectedHead states envRel unary collected sourceArgsIH sourceHeadIH bodyIH appIH
+      rw [transformed, run] at related
+      cases sourceRun : evaluate [.app trace none head [arg]] sourceEnv source with
+      | mk sourceResult sourceFinal =>
+        rw [sourceRun] at related
+        exact ⟨sourceResult, sourceFinal, rfl, related.1, related.2⟩
 
 end Flapjack.Compiler.Backend.ClosMti
