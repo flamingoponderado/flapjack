@@ -175,4 +175,88 @@ theorem evaluate_rewritten_call_eq_known_stub {C F : Type}
   · simp
   · simp
 
+/-- A known-location application of a generated stub agrees with its
+rewritten direct call when the argument cost is available. The application
+starts after argument evaluation, with the same one-tick allowance. -/
+theorem evaluate_rewritten_call_eq_known_app {C F : Type}
+    (trace stubTrace : BackendCommon.Tra) (label address : Nat)
+    (args : List ClosLang.Exp) (env values stubEnv : List ClosSem.Value)
+    (function : ClosSem.Value) (state afterArgs : ClosSem.State C F) (body : ClosLang.Exp)
+    (argsRun : evaluate args env state = (.val values, afterArgs))
+    (code : afterArgs.code.lookup label = some (values.length, body))
+    (enough : values.length ≤ afterArgs.clock)
+    (closure : destClosure afterArgs.maxApp (some address) function values =
+      some (.fullApp (.call stubTrace 0 label (ClosCall.variables stubTrace values.length)) stubEnv [])) :
+    evaluate [.call trace values.length label args] env { state with clock := state.clock + 1 } =
+      evaluateApp (some address) function values { afterArgs with clock := afterArgs.clock + 1 } := by
+  have nonempty : values ≠ [] := by
+    intro empty
+    have smaller := destClosure_full_remaining_lt afterArgs.maxApp (some address) function values stubEnv [] _ closure
+    simp [empty] at smaller
+  have shift : afterArgs.clock + 1 - values.length = afterArgs.clock - values.length + 1 := by omega
+  have stateEq : decClock values.length { afterArgs with clock := afterArgs.clock + 1 } =
+      { decClock values.length afterArgs with clock := (decClock values.length afterArgs).clock + 1 } := by
+    simp [decClock, shift]
+  rw [evaluate_rewritten_call_eq_known_stub trace stubTrace label afterArgs.maxApp address args env values
+    stubEnv function state afterArgs body argsRun code enough closure]
+  cases values with
+  | nil => contradiction
+  | cons first rest =>
+    rw [evaluateApp]
+    rw [closure]
+    simp only [List.length_cons, List.length_nil, Nat.sub_zero]
+    have enough' : ¬ afterArgs.clock + 1 < rest.length + 1 := by simp only [List.length_cons] at enough; omega
+    simp only [enough', ↓reduceIte, fixClock_evaluate]
+    simp only [List.length_cons] at stateEq
+    rw [stateEq]
+    cases run : evaluate [.call stubTrace 0 label (ClosCall.variables stubTrace (first :: rest).length)] stubEnv
+        { decClock (first :: rest).length afterArgs with
+          clock := (decClock (first :: rest).length afterArgs).clock + 1 } with
+    | mk result final =>
+      cases result with
+      | err error => rfl
+      | val resultValues =>
+        obtain ⟨value, rfl⟩ := evaluate_singleton_value _ _ _ _ resultValues run
+        simp [evaluateApp]
+
+/-- A related known-location closure supplies the installed stub and code
+entry needed by the direct-call/application comparison. This is still a
+local target-side equality, not a source-to-target pass simulation. -/
+theorem related_known_app_eq_rewritten_call {C F : Type}
+    (fuel : Nat) (g : State) (allowed : Set Nat) (trace : BackendCommon.Tra) (address : Nat)
+    (source target : ClosSem.Value) (sourceValues targetValues : List ClosSem.Value)
+    (sourceBody : ClosLang.Exp) (sourceBodyEnv sourceRest : List ClosSem.Value)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state afterArgs : ClosSem.State C F)
+    (argsRun : evaluate args env state = (.val targetValues, afterArgs))
+    (enough : targetValues.length ≤ afterArgs.clock)
+    (sourceClosure : destClosure afterArgs.maxApp (some address) source sourceValues =
+      some (.fullApp sourceBody sourceBodyEnv sourceRest))
+    (functions : ValueRelFuel fuel g allowed afterArgs.code source target)
+    (values : List.Forall₂ (ValueRelFuel fuel g allowed afterArgs.code) sourceValues targetValues)
+    (notAllowed : address ∉ allowed) :
+    evaluate [.call trace targetValues.length (address + 1) args] env
+        { state with clock := state.clock + 1 } =
+      evaluateApp (some address) target targetValues { afterArgs with clock := afterArgs.clock + 1 } := by
+  obtain ⟨stubTrace, stubEnv, convertedBody, _, _, _, _, _, _, targetClosure, _, found, _, _, _, _, _⟩ :=
+    destClosure_known_direct fuel g allowed afterArgs.code afterArgs.maxApp address source target
+      sourceValues targetValues sourceBody sourceBodyEnv sourceRest sourceClosure functions values notAllowed
+  have code : afterArgs.code.lookup (address + 1) = some (targetValues.length, convertedBody) := by
+    unfold findCode at found
+    cases h : afterArgs.code.lookup (address + 1) with
+    | none => simp [h] at found
+    | some entry =>
+      rcases entry with ⟨arity, expression⟩
+      simp only [h, bind, Option.bind_some] at found
+      split at found
+      · rename_i same
+        simp only [Option.some.injEq, Prod.mk.injEq] at found
+        obtain ⟨_, rfl⟩ := found
+        rw [same]
+      · simp at found
+  have targetClosure' : destClosure afterArgs.maxApp (some address) target targetValues =
+      some (.fullApp (.call stubTrace 0 (address + 1) (ClosCall.variables stubTrace targetValues.length)) stubEnv []) := by
+    simpa [values.length_eq] using targetClosure
+  exact evaluate_rewritten_call_eq_known_app trace stubTrace (address + 1) address args env targetValues
+    stubEnv target state afterArgs convertedBody argsRun code enough targetClosure'
+
 end Flapjack.Compiler.Backend.ClosCall
