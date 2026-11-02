@@ -49,6 +49,17 @@ theorem arm8Decode_addSubShiftedRegister (op : Bool) (s : Bool)
     simp [holV2w_one_true, holV2w_one_false, holV2w_two_zero, holV2w_five,
       holV2w_six, DecodeShift, ShiftType2num, num2ShiftType]
 
+/-- The four encoded bytes of `AddSubShiftedRegister@64`. -/
+theorem arm8EncodeBytes_addSubShiftedRegister (op s : Bool) (shift : ShiftType)
+    (rm : BitVec 5) (amount : BitVec 6) (rn rd : BitVec 5) :
+    arm8Encode (.Data (.«AddSubShiftedRegister@64»
+      ((1 : BitVec 64), (op, (s, (shift, (rm, (amount, (rn, rd))))))))) =
+      [BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord op s shift rm amount rn rd >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord op s shift rm amount rn rd >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord op s shift rm amount rn rd >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord op s shift rm amount rn rd >>> 24).toNat)] := by
+  rw [arm8Encode, arm8Encode_addSubShiftedRegister]
+
 /-- `Run` of `AddSubShiftedRegister@64` with the `lsl` shift: add or subtract
 the shifted register through `AddWithCarry`, write the result to `rd`, and
 optionally set the flags. -/

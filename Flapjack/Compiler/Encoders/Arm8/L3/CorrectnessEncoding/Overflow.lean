@@ -163,4 +163,82 @@ theorem arm8Next_conditionalSelect_zero (ms : arm8_state) (rd : Nat) (hrd : rd �
   dsimp only [s']
   rfl
 
+/-- The encoded bytes of the `addOverflow` lowering: the flag-setting add
+followed by the `VC` select. -/
+theorem arm8Enc_addOverflow (destination result sourceLeft sourceRight : Nat) :
+    arm8Enc (.inst (.arith (.addOverflow destination result sourceLeft sourceRight))) =
+      arm8Encode (.Data (.«AddSubShiftedRegister@64»
+        (1, false, true, .lsl, BitVec.ofNat 5 sourceLeft, 0,
+          BitVec.ofNat 5 result, BitVec.ofNat 5 destination))) ++
+      arm8Encode (.Data (.«ConditionalSelect@64»
+        (1, false, true, 7, 31, 31, BitVec.ofNat 5 sourceRight))) := by
+  rw [arm8Enc]
+  simp [arm8Ast]
+
+/-- The encoded bytes of the `subOverflow` lowering: the flag-setting
+subtract followed by the `VC` select. -/
+theorem arm8Enc_subOverflow (destination result sourceLeft sourceRight : Nat) :
+    arm8Enc (.inst (.arith (.subOverflow destination result sourceLeft sourceRight))) =
+      arm8Encode (.Data (.«AddSubShiftedRegister@64»
+        (1, true, true, .lsl, BitVec.ofNat 5 sourceLeft, 0,
+          BitVec.ofNat 5 result, BitVec.ofNat 5 destination))) ++
+      arm8Encode (.Data (.«ConditionalSelect@64»
+        (1, false, true, 7, 31, 31, BitVec.ofNat 5 sourceRight))) := by
+  rw [arm8Enc]
+  simp [arm8Ast]
+
+/-- The two-instruction overflow lowerings encode to eight bytes. -/
+theorem arm8Enc_addOverflow_length (destination result sourceLeft sourceRight : Nat) :
+    (arm8Enc (.inst (.arith (.addOverflow destination result sourceLeft sourceRight)))).length = 8 := by
+  rw [arm8Enc_addOverflow]
+  simp [arm8Encode_length]
+
+/-- The two-instruction overflow lowerings encode to eight bytes. -/
+theorem arm8Enc_subOverflow_length (destination result sourceLeft sourceRight : Nat) :
+    (arm8Enc (.inst (.arith (.subOverflow destination result sourceLeft sourceRight)))).length = 8 := by
+  rw [arm8Enc_subOverflow]
+  simp [arm8Encode_length]
+
+/-- The overflow flag `AddWithCarry` sets for an add: the wrapped sum differs
+from the mathematical sum. -/
+theorem arm8AddWithCarry_overflow_add (x y : BitVec 64) :
+    (AddWithCarry (TN := 64) (x, (y, false))).2.2.2.2 =
+      !((x + y).toInt == x.toInt + y.toInt) := by
+  simp only [AddWithCarry, Bool.false_eq_true, if_false, Nat.add_zero]
+  rw [(BitVec.add_def x y).symm]
+  simp
+
+/-- The signed value of the complement plus one is the negation. -/
+theorem arm8ToInt_not_add_one (y : BitVec 64) : (~~~y).toInt + 1 = -y.toInt := by
+  have hy := y.isLt
+  have hcast : ((2 ^ 64 - 1 - y.toNat : ℕ) : ℤ) =
+      ((2 ^ 64 : ℕ) : ℤ) - 1 - ((y.toNat : ℕ) : ℤ) := by
+    have hle : y.toNat ≤ 2 ^ 64 - 1 := by omega
+    omega
+  rw [BitVec.toInt_eq_toNat_bmod, BitVec.toInt_eq_toNat_bmod, BitVec.toNat_not]
+  rw [Int.bmod_def, Int.bmod_def, hcast]
+  have h1 : ((((2 ^ 64 : ℕ) : ℤ) - 1 - ((y.toNat : ℕ) : ℤ)) % (((2 ^ 64 : ℕ) : ℤ))) =
+      ((2 ^ 64 : ℕ) : ℤ) - 1 - ((y.toNat : ℕ) : ℤ) := by
+    apply Int.emod_eq_of_lt <;> omega
+  have h2 : ((((y.toNat : ℕ) : ℤ)) % (((2 ^ 64 : ℕ) : ℤ))) = ((y.toNat : ℕ) : ℤ) := by
+    apply Int.emod_eq_of_lt <;> omega
+  rw [h1, h2]
+  split <;> split <;> omega
+
+/-- The overflow flag `AddWithCarry` sets for a subtract: the wrapped
+difference differs from the mathematical difference. -/
+theorem arm8AddWithCarry_overflow_sub (x y : BitVec 64) :
+    (AddWithCarry (TN := 64) (x, (~~~y, true))).2.2.2.2 =
+      !((x - y).toInt == x.toInt - y.toInt) := by
+  simp only [AddWithCarry, if_true]
+  have hres : BitVec.ofNat 64 (x.toNat + (~~~y).toNat + 1) = x - y := by
+    rw [BitVec.ofNat_add, BitVec.ofNat_add, BitVec.ofNat_toNat, BitVec.ofNat_toNat,
+      BitVec.setWidth_eq, BitVec.setWidth_eq, BitVec.add_assoc, BitVec.sub_eq_add_neg,
+      ← BitVec.neg_eq_not_add]
+  rw [hres]
+  congr 2
+  have h := arm8ToInt_not_add_one y
+  rw [show Int.ofNat 1 = (1 : Int) from rfl]
+  omega
+
 end Flapjack.Compiler.Encoders.Arm8.L3

@@ -62,6 +62,17 @@ theorem arm8Decode_conditionalSelect (cond : BitVec 4) (rm rn rd : BitVec 5) :
     BitVec.getLsbD_setWidth]
   simp [holV2w_one_false, holV2w_one_true, holV2w_four, holV2w_five]
 
+/-- The four encoded bytes of `ConditionalSelect@64`. -/
+theorem arm8EncodeBytes_conditionalSelect (op o2 : Bool) (cond : BitVec 4)
+    (rm rn rd : BitVec 5) :
+    arm8Encode (.Data (.«ConditionalSelect@64»
+      ((1 : BitVec 64), (op, (o2, (cond, (rm, (rn, rd)))))))) =
+      [BitVec.ofNat 8 ((arm8ConditionalSelectWord op o2 cond rm rn rd >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8ConditionalSelectWord op o2 cond rm rn rd >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8ConditionalSelectWord op o2 cond rm rn rd >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8ConditionalSelectWord op o2 cond rm rn rd >>> 24).toNat)] := by
+  rw [arm8Encode, arm8Encode_conditionalSelect]
+
 /-- `Run` of `ConditionalSelect@64`: write `Rn` when the condition holds, and
 otherwise `Rm` (optionally inverted and/or incremented) to `Rd`. -/
 theorem arm8Run_conditionalSelect (op o2 : Bool) (cond : BitVec 4)
