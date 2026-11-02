@@ -625,7 +625,7 @@ run_probe pan_mem_load_probeScript.sml pan_mem_load_probe.out \
   one_hit recursive_mem_loads_two_words recursive_comb_two_words \
   recursive_named_two_fields "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_state_eval_probeScript.sml pan_sem_state_eval_probe.out \
-  word_load_hit eval_nested_load_shape pan_sem_state_eval_done \
+  word_load_hit eval_nested_load_shape nstruct_load_byte_little nstruct_load_byte_big nstruct_load_byte_outside_domain pan_sem_state_eval_done \
   "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_mem_domain_probeScript.sml pan_sem_mem_domain_probe.out \
   domain_load_hit domain_load_miss_present domain_store_then_load_hit \
@@ -1427,7 +1427,7 @@ run_probe pan_sh_mem_store_probeScript.sml pan_sh_mem_store_probe.out \
   zero_width_domain_error nonzero_width_domain_error \
   "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_eval_probeScript.sml pan_eval_probe.out \
-  eval_const eval_probe_done \
+  eval_const eval_nfield_first_duplicate eval_nfield_missing_field eval_nfield_missing_struct eval_probe_done \
   "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
 run_probe pan_mrec_probeScript.sml pan_mrec_probe.out \
   mrec_ret mrec_external \

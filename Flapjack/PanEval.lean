@@ -7,12 +7,12 @@ Source reference:
 `cakeml/pancake/semantics/pan_itreeSemScript.sml:79-158`.
 This source-shaped context supplies the bstate projections used by `eval_def`;
 the executable expression recursion is delegated to the production
-`evalPanValueExp`.  That recursion is only cluster-faithful: constants, local
-and global variables, `RStruct`/`RField`, and the address/word-size leaves match
-`eval_def`, but `NStruct`/`NField` use `lookupInfo`/`panValueFieldsHaveShapes`
-and the `Load`/`Load32`/`LoadByte`/`Op` clusters do not read memory through the
-HOL state's `memaddrs`, endianness, and byte width (see the `evalPanValueExp`
-docstring and bead `flapjack-pxn.18.3.6.9` for the faithful port).
+`evalPanValueExp`. Its no-access default is a compatibility evaluator: it
+cannot recover HOL's memory domain or endianness from this context and must
+not be used as exact `eval_def` semantics. The state-owned RV64 interface
+supplies those inputs and has an all-constructor checked agreement with the
+finite HOL evaluator under the representation conditions documented in
+`PanSem/EvalExecutedBridge.lean`.
 -/
 
 namespace Flapjack

@@ -199,6 +199,54 @@ def panSemEvaluateRiscV64CodeState [NeZero 64]
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
   panSemEvaluateWordCodeState context primitive handler state program
 
+/-- State-owned RV64 source evaluation with its projected post-state. The
+    memory domain, byte order, and word operations are derived from `state`,
+    exactly as in `panSemEvaluateRiscV64CodeState`. -/
+def panSemEvaluateRiscV64CodeStateWithPostState
+    (context : PanValueFfiContext (RiscV.Word 64))
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (program : Prog (RiscV.Word 64)) :
+    Option (PanValueFfiClockResult (RiscV.Word 64) σ ×
+      PanSemState (RiscV.Word 64) (FfiState σ)) :=
+  (panSemEvaluateRiscV64CodeState context primitive handler state program).map
+    (fun result => (result, panSemCodeStateAfter state result))
+
+/-- The state-owned post-state entry is the general compatibility entry with
+    the state's RV64 memory access supplied explicitly. -/
+theorem panSemEvaluateRiscV64CodeStateWithPostState_eq
+    (context : PanValueFfiContext (RiscV.Word 64))
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (program : Prog (RiscV.Word 64)) :
+    panSemEvaluateRiscV64CodeStateWithPostState context primitive handler state program =
+      panSemEvaluateCodeStateWithPostState context primitive handler
+        panSemBitVec64BytesInWord state program
+        (memoryAccess := some (panSemBitVec64MemoryAccess state)) := by
+  simp [panSemEvaluateRiscV64CodeStateWithPostState, panSemEvaluateRiscV64CodeState,
+    panSemEvaluateWordCodeState, panSemEvaluateCodeStateWithMemoryModel,
+    panSemEvaluateCodeStateWithPostState_eq_map, panSemBytesInWord_64,
+    panSemBitVec64MemoryAccess, panSemBitVec64WordModel]
+
+/-- The state-owned post-state entry preserves the source code map on every
+    successful result, independently of the program's outcome. -/
+theorem panSemEvaluateRiscV64CodeStateWithPostState_preserves_code
+    (context : PanValueFfiContext (RiscV.Word 64))
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (program : Prog (RiscV.Word 64))
+    (result : PanValueFfiClockResult (RiscV.Word 64) σ)
+    (postState : PanSemState (RiscV.Word 64) (FfiState σ))
+    (heval : panSemEvaluateRiscV64CodeStateWithPostState context primitive handler state program =
+      some (result, postState)) : postState.code = state.code := by
+  unfold panSemEvaluateRiscV64CodeStateWithPostState at heval
+  cases hresult : panSemEvaluateRiscV64CodeState context primitive handler state program with
+  | none => simp [hresult] at heval
+  | some evaluated =>
+      simp [hresult] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact panSemCodeStateAfter_preserves_code state evaluated
+
 /-- The production-width runner is extensionally unchanged by routing it
     through the width-indexed model. This is equality of the full optional
     clock result, including every source failure and post-state. -/
