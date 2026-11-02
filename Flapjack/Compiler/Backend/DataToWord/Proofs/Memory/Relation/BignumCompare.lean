@@ -8,6 +8,20 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Misc.Multiword
 open Classical
 noncomputable section
 
+/-- A small integer lies between every negative and every nonnegative bignum.
+    This arithmetic fact supplies the mixed representation comparison case. -/
+theorem smallBignumCompare {width : Nat} [NeZero width] (i1 i2 : Int)
+    (good : goodDimindex width) (small : smallInt width i1) (large : ¬ smallInt width i2) :
+    i1 ≠ i2 ∧ wordCmpRes (width := width) i1 i2 = if i2 < 0 then 2 else 0 := by
+  rcases good with hw | hw <;> subst width <;> norm_num [smallInt] at small large
+  all_goals by_cases negative : i2 < 0
+  all_goals have neq : i1 ≠ i2 := by omega
+  all_goals refine ⟨neq, ?_⟩
+  all_goals simp only [negative, ↓reduceIte, wordCmpRes, neq]
+  all_goals split
+  all_goals try simp_all
+  all_goals omega
+
 /-- Comparing equal-length magnitude lists in sign-adjusted order yields the
     original integer comparison code. This is Flapjack infrastructure for the
     source memory-relation comparison theorem. -/
@@ -291,6 +305,137 @@ theorem memoryRel_bothBignumCompare {width : Nat} [NeZero width] (conf : DataToW
     simpa only [h] using equal h
   · simp only [h, ↓reduceIte]
     exact unequal h
+
+/-- A related small integer compared with a bignum is ordered by the
+    bignum header's sign bit. This is Flapjack infrastructure for the original
+    number-comparison theorem. -/
+theorem memoryRel_smallBignumCompare {width : Nat} [NeZero width] (conf : DataToWord.Config) (be : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (i1 i2 : Int) (v1 v2 : WordLocW width) (vars : List (DataSem.Value × WordLocW width)) :
+    memoryRel conf be next refs space store memory domain ((.number i1, v1) :: (.number i2, v2) :: vars) ∧
+      goodDimindex width ∧ smallInt width i1 ∧ ¬ smallInt width i2 →
+    i1 ≠ i2 ∧ ∃ w2 address header : BitVec width,
+      v2 = .word w2 ∧ getRealAddr conf store w2 = some address ∧
+      memory address = .word header ∧ domain address = true ∧
+      wordCmpRes (width := width) i1 i2 = if header &&& 16 = 0 then 0 else 2 := by
+  rintro ⟨rel, good, small, large⟩
+  have tail := memoryRel_tail conf be next refs space store memory domain (.number i1, v1) ((.number i2, v2) :: vars) rel
+  obtain ⟨w, address, frame, loc, addr, mem, dom, _, _, _, _, _, sign, _⟩ :=
+    memoryRel_bignumWords conf be next refs space store memory domain i2 v2 vars ⟨tail, large, good⟩
+  obtain ⟨different, correct⟩ := smallBignumCompare i1 i2 good small large
+  refine ⟨different, w, address, _, loc, addr, mem, dom, ?_⟩
+  have maskBit (x : BitVec width) : (x &&& 16 = 0) ↔ x.getLsbD 4 = false := by
+    rcases good with hw | hw <;> subst width <;> bv_decide
+  by_cases negative : i2 < 0
+  · have bit := sign.mpr negative
+    have maskNe : makeHeader (width := width) conf (((if i2 < 0 then 1 else 0) <<< 2) ||| 3)
+        (n2mw i2.natAbs : List (BitVec width)).length &&& 16 ≠ 0 := by
+      intro h
+      have := (maskBit _).mp h
+      simp_all
+    simp only [negative, ↓reduceIte] at correct
+    simp only [maskNe, ↓reduceIte]
+    exact correct
+  · have bit : (makeHeader (width := width) conf (((if i2 < 0 then 1 else 0) <<< 2) ||| 3)
+        (n2mw i2.natAbs : List (BitVec width)).length).getLsbD 4 = false := by
+      cases h : (makeHeader (width := width) conf (((if i2 < 0 then 1 else 0) <<< 2) ||| 3)
+        (n2mw i2.natAbs : List (BitVec width)).length).getLsbD 4 with
+      | false => rfl
+      | true => exact (negative (sign.mp h)).elim
+    have maskEq := (maskBit _).mpr bit
+    simp only [negative, ↓reduceIte] at correct
+    simp only [maskEq, ↓reduceIte]
+    exact correct
+
+/-- Related integers have the original immediate and bignum comparison behavior. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_Number_cmp"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_numberCmp {width : Nat} [NeZero width] (conf : DataToWord.Config) (be : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (i1 i2 : Int) (v1 v2 : WordLocW width) (vars : List (DataSem.Value × WordLocW width)) :
+    memoryRel conf be next refs space store memory domain ((.number i1, v1) :: (.number i2, v2) :: vars) ∧
+      goodDimindex width →
+    ∃ w1 w2 : BitVec width, v1 = .word w1 ∧ v2 = .word w2 ∧
+      if w1.getLsbD 0 = false ∧ w2.getLsbD 0 = false then
+        (i1 < i2 ↔ w1.slt w2 = true) ∧ (i1 = i2 ↔ w1 = w2)
+      else if w1.getLsbD 0 = false ∧ w2.getLsbD 0 = true then
+        i1 ≠ i2 ∧ ∃ a x2 : BitVec width, getRealAddr conf store w2 = some a ∧
+          memory a = .word x2 ∧ domain a = true ∧
+          wordCmpRes (width := width) i1 i2 = if x2 &&& 16 = 0 then 0 else 2
+      else if w1.getLsbD 0 = true ∧ w2.getLsbD 0 = true then
+        ∃ a1 x1 a2 x2 : BitVec width, getRealAddr conf store w1 = some a1 ∧
+          memory a1 = .word x1 ∧ domain a1 = true ∧ getRealAddr conf store w2 = some a2 ∧
+          memory a2 = .word x2 ∧ domain a2 = true ∧
+          if x1 = x2 then
+            let a := if x1 &&& 16 = 0 then a1 else a2
+            let b := if x1 &&& 16 = 0 then a2 else a1
+            wordCmpLoop (WordGcFunctions.decodeLength conf x1)
+              (a + StackRemove.bytesInWord width * WordGcFunctions.decodeLength conf x1)
+              (b + StackRemove.bytesInWord width * WordGcFunctions.decodeLength conf x2)
+              domain memory = some (wordCmpRes i1 i2)
+          else wordCmpRes (width := width) i1 i2 =
+            if x1 &&& 16 = 0 then
+              if x2 &&& 16 = 0 then
+                if WordGcFunctions.decodeLength conf x1 < WordGcFunctions.decodeLength conf x2 then 0 else 2
+              else 2
+            else if x2 &&& 16 = 0 then 0 else
+              if WordGcFunctions.decodeLength conf x1 < WordGcFunctions.decodeLength conf x2 then 2 else 0
+      else True := by
+  rintro ⟨rel, good⟩
+  have tail := memoryRel_tail conf be next refs space store memory domain (.number i1, v1) ((.number i2, v2) :: vars) rel
+  obtain ⟨w1, loc1, bit1⟩ := memoryRel_anyNumberImp conf be next refs space store memory domain
+    i1 v1 ((.number i2, v2) :: vars) ⟨good, rel⟩
+  obtain ⟨w2, loc2, bit2⟩ := memoryRel_anyNumberImp conf be next refs space store memory domain
+    i2 v2 vars ⟨good, tail⟩
+  refine ⟨w1, w2, loc1, loc2, ?_⟩
+  by_cases small1 : smallInt width i1
+  · have low1 : w1.getLsbD 0 = false := by
+      have no : w1.getLsbD 0 ≠ true := by simpa [small1] using bit1
+      cases h : w1.getLsbD 0 <;> simp_all
+    by_cases small2 : smallInt width i2
+    · have low2 : w2.getLsbD 0 = false := by
+        have no : w2.getLsbD 0 ≠ true := by simpa [small2] using bit2
+        cases h : w2.getLsbD 0 <;> simp_all
+      obtain ⟨p1, p2, hp1, hp2, less⟩ := memoryRel_numberLess conf be next refs space store memory domain
+        i1 i2 v1 v2 vars ⟨rel, small1, small2, good⟩
+      have eq1 : w1 = p1 := WordLocW.word.inj (loc1.symm.trans hp1)
+      have eq2 : w2 = p2 := WordLocW.word.inj (loc2.symm.trans hp2)
+      obtain ⟨q1, q2, hq1, hq2, same⟩ := memoryRel_numberEq conf be next refs space store memory domain
+        i1 i2 v1 v2 vars ⟨rel, Or.inl small1, good⟩
+      have eq3 : w1 = q1 := WordLocW.word.inj (loc1.symm.trans hq1)
+      have eq4 : w2 = q2 := WordLocW.word.inj (loc2.symm.trans hq2)
+      simp only [low1, low2, and_self, ↓reduceIte]
+      exact ⟨by simpa [← eq1, ← eq2] using less.symm,
+        by simpa [← eq3, ← eq4] using same.symm⟩
+    · have low2 : w2.getLsbD 0 = true := bit2.mpr small2
+      obtain ⟨different, p2, a, header, hp2, addr, mem, dom, cmp⟩ :=
+        memoryRel_smallBignumCompare conf be next refs space store memory domain
+          i1 i2 v1 v2 vars ⟨rel, good, small1, small2⟩
+      have eq2 : w2 = p2 := WordLocW.word.inj (loc2.symm.trans hp2)
+      simp only [low1, low2, Bool.true_eq_false, and_false, ↓reduceIte, and_self]
+      refine ⟨different, a, header, ?_, mem, dom, cmp⟩
+      simpa [eq2] using addr
+  · have low1 : w1.getLsbD 0 = true := bit1.mpr small1
+    by_cases small2 : smallInt width i2
+    · have low2 : w2.getLsbD 0 = false := by
+        have no : w2.getLsbD 0 ≠ true := by simpa [small2] using bit2
+        cases h : w2.getLsbD 0 <;> simp_all
+      simp [low1, low2]
+    · have low2 : w2.getLsbD 0 = true := bit2.mpr small2
+      obtain ⟨p1, p2, a1, a2, h1, h2, hp1, hp2, addr1, mem1, dom1, addr2, mem2, dom2, cmp⟩ :=
+        memoryRel_bothBignumCompare conf be next refs space store memory domain
+          i1 i2 v1 v2 vars ⟨rel, good, small1, small2⟩
+      have eq1 : w1 = p1 := WordLocW.word.inj (loc1.symm.trans hp1)
+      have eq2 : w2 = p2 := WordLocW.word.inj (loc2.symm.trans hp2)
+      simp only [low1, low2, Bool.true_eq_false, false_and, ↓reduceIte, and_self]
+      refine ⟨a1, h1, a2, h2, ?_, mem1, dom1, ?_, mem2, dom2, ?_⟩
+      · simpa [eq1] using addr1
+      · simpa [eq2] using addr2
+      · simpa only [BitVec.and_comm] using cmp
 
 end
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

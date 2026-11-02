@@ -100656,6 +100656,16 @@
     "reviewer": "Source comparison: memory_rel_bignum_cmp and its typed capture retain the two-number memory relation, good_dimindex and both non-small hypotheses, all six existential words, both location and decoded-address equalities, both header reads, and the original implication that unequal headers with equal decoded lengths have different masked sign bits. store uses the canonical finite-support map and all words share the positive HOL dimension."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BignumCompare.lean",
+    "lean_name": "memoryRel_numberCmp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Number_cmp",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared the complete source theorem and typed capture: the only hypotheses are the original two-number memory relation and good_dimindex; the same existential target words and immediate/immediate, immediate/bignum, bignum/bignum and remaining branches are retained. Signed word comparison uses slt, the length comparison uses unsigned BitVec ordering, and the bignum branches retain both address and memory facts, sign masks, decoded lengths and exact comparison-loop result. store uses the canonical finite-support map and target words share the positive HOL dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueArray.lean",
     "lean_name": "memoryRel_valueArrayImp",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
