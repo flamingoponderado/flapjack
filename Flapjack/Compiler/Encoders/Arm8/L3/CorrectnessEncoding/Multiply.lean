@@ -407,31 +407,4 @@ theorem arm8X_longMulT1 (ms : arm8_state) (hi : BitVec 64) (d : BitVec 5)
   simp [X, Flapjack.RiscV.L3.holUpdate, Ne.symm h]
 
 
-/-- The zero register, written as the plain `31` numeral at width 5, reads as
-zero. `rw` needs this form: the literal that `arm8_ast` puts into the state is
-`OfNat.ofNat 31`, which is definitionally but not syntactically
-`BitVec.ofNat 5 31`. -/
-theorem arm8X_zero_ofNat (st : arm8_state) :
-    X (TN := 64) (31 : BitVec 5) st = (0 : BitVec 64) := by
-  show X (TN := 64) (BitVec.ofNat 5 31) st = (0 : BitVec 64)
-  simp [X]
-
-/-- `BitVec.ofNat 5` is injective on register numbers below 32. -/
-theorem arm8Reg_eq {a b : Nat} (ha : a < 32) (hb : b < 32) :
-    (BitVec.ofNat 5 a = BitVec.ofNat 5 b) ↔ a = b := by
-  constructor
-  · intro h
-    have h' := congrArg BitVec.toNat h
-    rw [BitVec.toNat_ofNat, BitVec.toNat_ofNat] at h'
-    have ha' : a % 2 ^ 5 = a := Nat.mod_eq_of_lt (by omega)
-    have hb' : b % 2 ^ 5 = b := Nat.mod_eq_of_lt (by omega)
-    omega
-  · intro h; rw [h]
-
-/-- The plain `0` numeral at width 64 is the additive identity, in the form `rw`
-matches. -/
-theorem arm8Zero_add (x : BitVec 64) : (0 : BitVec 64) + x = x := by
-  show BitVec.ofNat 64 0 + x = x
-  exact BitVec.zero_add x
-
 end Flapjack.Compiler.Encoders.Arm8.L3

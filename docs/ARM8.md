@@ -242,7 +242,10 @@ one-step `arm8Next_multiplyHigh` / `arm8Next_multiplyAddSub` reductions and
 their `Arm8L3Agree` congruence lemmas and the fact that both steps leave
 memory unchanged, plus the eight-byte encoded shape `arm8Enc_longMul`).
 `ConditionalSelect.lean` records the same facts for `ConditionalSelect@64`, the
-select used by the `addOverflow` and `subOverflow` lowerings, `Carry.lean`
+select used by the `addOverflow` and `subOverflow` lowerings, and
+`Overflow.lean` adds `ConditionHolds` at `VC`, the flag-setting
+`AddSubShiftedRegister@64` step and the two `arm8Next` reductions that the
+overflow lowerings need, `Carry.lean`
 does the same for `AddSubCarry@64`, which the `addCarry` lowering uses twice,
 and `Compare.lean` records `ConditionalCompareImmediate@64`'s word, `e_sf`,
 `e_data`/`Encode`, `Run` and decoder inverse.  Each records the emitted word, the `Decode` inverse,
