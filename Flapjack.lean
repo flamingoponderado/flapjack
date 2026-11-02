@@ -406,6 +406,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyMemory
+import Flapjack.Compiler.Backend.Semantics.ClosSem.MemoryChoice
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Measure
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel

@@ -113587,6 +113587,26 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "do_app_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/MemoryChoice.lean",
+    "lean_name": "doApp_concatByteVec_choice",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared concat_choice_typed with this case of the original do_app: arbitrary closure value and independently polymorphic state are retained, the guarded choice has the same byte-vector list predicate, failure is the type error, and success flattens the same chunks while retaining the state. The checked lemmas characterize the deterministic traversal and prove the exact guarded-choice branch. The reviewed state uses canonical refs and code maps with the local roundtrip witness. The assembled dispatcher inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "do_app_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/MemoryChoice.lean",
+    "lean_name": "doApp_fromListByte_choice",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared from_list_choice_typed with this case of the original do_app: arbitrary closure value and independently polymorphic state are retained, the guarded choice has the same list of naturals and per-element 256 bound, failure is the type error, and success converts those naturals to word8 while retaining the state. The checked characterization and reconstruction connect the actual decoder to this source choice. The reviewed state uses canonical refs and code maps with the local roundtrip witness. The assembled dispatcher inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "Unit_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
     "lean_name": "unitValue",

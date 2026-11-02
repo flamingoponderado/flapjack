@@ -409,7 +409,7 @@ run_probe clos_sem_basic_probeScript.sml clos_sem_basic_probe.out \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_memory_probeScript.sml clos_sem_memory_probe.out \
-  array_element negative_index byte_update overlap_copy loose_end strict_end \
+  concat_choice_typed from_list_choice_typed array_element negative_index byte_update overlap_copy loose_end strict_end \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_evaluate_probeScript.sml clos_sem_evaluate_probe.out \
