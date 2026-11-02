@@ -254,7 +254,9 @@ constructor; all are Flapjack case splits of the single HOL theorem
 `arm8_encoder_correct` and carry no `@[hol]` tags of their own.
 
 `LongMul.lean` assembles those facts into the two-instruction `longMul` case
-theorem with `n = 1` (`asserts 1`, `asserts2 2`).
+theorem with `n = 1` (`asserts 1`, `asserts2 2`), and `Overflow.lean` does the
+same for `addOverflow` and `subOverflow`: the flag-setting add or subtract
+followed by the `VC` select.
 
 Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
 `DecodeBitMasks`/`BitfieldMove`), and the `longDiv`, `addCarry`,
