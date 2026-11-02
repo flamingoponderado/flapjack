@@ -46,6 +46,52 @@ val _ = show "memory_rel_Block_MEM_typed" data_to_word_memoryProofTheory.memory_
 val _ = show "memory_rel_pointer_eq_typed" data_to_word_memoryProofTheory.memory_rel_pointer_eq;
 val _ = show "memory_rel_ptr_eq_typed" data_to_word_memoryProofTheory.memory_rel_ptr_eq;
 val _ = show "memory_rel_simple_eq_typed" data_to_word_memoryProofTheory.memory_rel_simple_eq;
+val _ = show "word_header_def_typed" data_to_word_memoryProofTheory.word_header_def;
+val _ = show "fix_clock_def_typed" data_to_word_memoryProofTheory.fix_clock_def;
+val fix_clock_imp_replay = prove(
+  ``!ck l x. data_to_word_memoryProof$fix_clock ck l x = SOME (w,l1,ck1) ==> ck1 <= ck /\ l1 <= l``,
+  ho_match_mp_tac data_to_word_memoryProofTheory.fix_clock_ind
+  >> fs [data_to_word_memoryProofTheory.fix_clock_def] >> rw []);
+val _ = show "fix_clock_IMP_replay_typed" fix_clock_imp_replay;
+val _ = show "word_is_clos_def_typed" data_to_word_memoryProofTheory.word_is_clos_def;
+val _ = show "word_eq_def_rebound_typed" data_to_word_memoryProofTheory.word_eq_def;
+val _ = show "word_eq_LESS_EQ_typed" data_to_word_memoryProofTheory.word_eq_LESS_EQ;
+val fix_clock_word_eq_replay = prove(
+  ``data_to_word_memoryProof$fix_clock ck l
+      (data_to_word_memoryProof$word_eq c st dm m l ck w1 w2) =
+    data_to_word_memoryProof$word_eq c st dm m l ck w1 w2``,
+  Cases_on `data_to_word_memoryProof$word_eq c st dm m l ck w1 w2` >> fs [data_to_word_memoryProofTheory.fix_clock_def]
+  >> PairCases_on `x` >> fs [data_to_word_memoryProofTheory.fix_clock_def] >> rw []
+  >> imp_res_tac data_to_word_memoryProofTheory.word_eq_LESS_EQ >> fs []);
+val word_eq_list_original_replay = prove(
+  ``data_to_word_memoryProof$word_eq_list c st dm m l ck w a1 (a2:'a word) =
+      if w = 0w then SOME (1w,l,ck) else
+      if ~(a1 IN dm) \/ ~(a2 IN dm) \/ l = 0 \/ ck = 0 then NONE else
+      case (m a1,m a2) of
+      | (Word w1, Word w2) =>
+        (case fix_clock (ck-1) (l-1) (word_eq c st dm m (l-1) (ck-1) w1 w2) of
+         | NONE => NONE
+         | SOME (x,l',ck') => if x <> 1w then SOME (x,l',ck) else
+                            if l' = 0 then NONE else
+                              word_eq_list c st dm m (l'-1) ck (w-1w)
+                                (a1 + bytes_in_word) (a2 + bytes_in_word))
+      | _ => NONE``,
+  PURE_REWRITE_TAC [fix_clock_word_eq_replay]
+  >> MATCH_ACCEPT_TAC (CONJUNCT2 data_to_word_memoryProofTheory.word_eq_def));
+val _ = show "word_eq_original_first_typed" (CONJUNCT1 data_to_word_memoryProofTheory.word_eq_def);
+val _ = show "word_eq_list_original_replay_typed" word_eq_list_original_replay;
+val _ = show "word_eq_equal64" (EVAL ``data_to_word_memoryProof$word_eq
+  (c:data_to_word$config) st dm m 7 5 (8w:word64) 8w``);
+val _ = show "word_eq_immediate64" (EVAL ``data_to_word_memoryProof$word_eq
+  (c:data_to_word$config) st dm m 7 5 (8w:word64) 12w``);
+val _ = show "word_eq_list_empty64" (EVAL ``data_to_word_memoryProof$word_eq_list
+  (c:data_to_word$config) st dm m 3 2 (0w:word64) 16w 24w``);
+val _ = show "word_eq_list_one64" (EVAL ``data_to_word_memoryProof$word_eq_list
+  (c:data_to_word$config) st (\(a:word64). T) (\a. wordLang$Word (4w:word64))
+  3 2 (1w:word64) 16w 24w``);
+val _ = show "word_eq_list_clock_zero64" (EVAL ``data_to_word_memoryProof$word_eq_list
+  (c:data_to_word$config) st (\(a:word64). T) (\a. wordLang$Word (4w:word64))
+  3 0 (1w:word64) 16w 24w``);
 val _ = show "heap_expand_typed" gc_sharedTheory.heap_expand_def;
 val _ = show "gen_starts_in_store_typed" data_to_word_memoryProofTheory.gen_starts_in_store_def;
 val _ = show "gen_starts_in_store_IMP_typed" data_to_word_memoryProofTheory.gen_starts_in_store_IMP;

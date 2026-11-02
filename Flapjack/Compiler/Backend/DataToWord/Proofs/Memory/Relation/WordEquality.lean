@@ -1,0 +1,198 @@
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SimpleEquality
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.CompareLoop
+
+/-! Word-level equality model from the data-to-word memory proof. -/
+namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
+open Flapjack
+
+/-- The header reader's finite store argument has the canonical lookup codec. -/
+theorem holFmapAsFiniteSupportParamWitness_wordHeader_store {width : Nat} [NeZero width]
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).lookup key = store.lookup key ∧
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).finiteSupport = store.finiteSupport ∧
+    MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store) = store := by
+  cases store
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Decode a pointer and read its in-domain word header. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_header_def"
+  (fmap_as_finite_support_parameters := [store]) (words_as_type_indexed_bitvec)]
+def wordHeader {addressWidth : Nat} {valueWidth : Nat} [NeZero addressWidth] [NeZero valueWidth] (conf : Config)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW addressWidth)) (address : BitVec addressWidth)
+    (domain : BitVec addressWidth → Bool) (memory : BitVec addressWidth → WordLocW valueWidth) :
+    Option (BitVec addressWidth × BitVec valueWidth) := do
+  let real ← getRealAddr conf store address
+  if domain real then
+    match memory real with
+    | .word header => some (real, header)
+    | .loc .. => none
+  else none
+
+/-- Clamp both remaining clocks of a successful result to their input bounds. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "fix_clock_def"]
+def fixClock {α : Type} (clock limit : Nat) : Option (α × Nat × Nat) → Option (α × Nat × Nat)
+  | none => none
+  | some (value, remaining, remainingClock) =>
+    some (value, if limit < remaining then limit else remaining,
+      if clock < remainingClock then clock else remainingClock)
+
+/-- A successful clamped result stays within both input bounds. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "fix_clock_IMP"]
+theorem fixClock_imp {α : Type} (clock limit : Nat) (x : Option (α × Nat × Nat))
+    (value : α) (remaining remainingClock : Nat)
+    (h : fixClock clock limit x = some (value, remaining, remainingClock)) :
+    remainingClock ≤ clock ∧ remaining ≤ limit := by
+  cases x with
+  | none => simp [fixClock] at h
+  | some result =>
+    rcases result with ⟨v, l, ck⟩
+    simp only [fixClock, Option.some.injEq, Prod.mk.injEq] at h
+    rcases h with ⟨_, rfl, rfl⟩
+    split <;> split <;> omega
+
+/-- Recognize the two source closure tags in a word header. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_is_clos_def"
+  (words_as_type_indexed_bitvec)]
+def wordIsClos {width : Nat} [NeZero width] (conf : Config) (header : BitVec width) : Prop :=
+  let mask := holWordSlice (width - conf.lenSize - 1) 2 (~~~(0 : BitVec width)) ||| 2
+  (header &&& mask) = BitVec.ofNat width (16 * 30 + 2) ∨
+    (header &&& mask) = BitVec.ofNat width (16 * 31 + 2)
+
+instance {width : Nat} [NeZero width] (conf : Config) (header : BitVec width) :
+    Decidable (wordIsClos conf header) := by
+  unfold wordIsClos
+  infer_instance
+
+/-- The word comparator's finite store argument has the canonical lookup codec. -/
+theorem holFmapAsFiniteSupportParamWitness_wordEq_store {width : Nat} [NeZero width]
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).lookup key = store.lookup key ∧
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).finiteSupport = store.finiteSupport ∧
+    MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store) = store := by
+  cases store
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- The list comparator's finite store argument has the canonical lookup codec. -/
+theorem holFmapAsFiniteSupportParamWitness_wordEqList_store {width : Nat} [NeZero width]
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (key : WordStoreHOL) :
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).lookup key = store.lookup key ∧
+    (MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store)).finiteSupport = store.finiteSupport ∧
+    MemoryStoreBroad.ofBroad (MemoryStoreBroad.toBroad store) = store := by
+  cases store
+  exact ⟨rfl, rfl, rfl⟩
+
+/- Word equality and its list worker, with the source's explicit recursion
+and stack clocks. -/
+mutual
+
+/-- Source word-equality evaluator, with both resource clocks. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_eq_def" 13982
+  (fmap_as_finite_support_parameters := [store]) (words_as_type_indexed_bitvec)]
+def wordEq {width : Nat} [NeZero width] (conf : Config)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+    (limit clock : Nat) (w1 w2 : BitVec width) : Option (BitVec width × Nat × Nat) :=
+  if w1 = w2 then some (1, limit, clock)
+  else if !(w1.getLsbD 0 && w2.getLsbD 0) then some (0, limit, clock)
+  else match wordHeader conf store w1 domain memory, wordHeader conf store w2 domain memory with
+    | some (a1, h1), some (a2, h2) =>
+      if h1 &&& 12 = 0 then
+        if wordIsClos conf h1 then some (1, limit, clock)
+        else if h1 ≠ h2 then some (0, limit, clock)
+        else if limit = 0 then none
+        else wordEqList conf store domain memory (limit - 1) clock (WordGcFunctions.decodeLength conf h1)
+          (a1 + StackRemove.bytesInWord width) (a2 + StackRemove.bytesInWord width)
+      else if h1 ≠ h2 then some (0, limit, clock)
+      else if !h1.getLsbD 2 then some (0, limit, clock)
+      else if !h1.getLsbD 3 && h1.getLsbD 4 then some (0, limit, clock)
+      else if limit ≤ (WordGcFunctions.decodeLength conf h1).toNat then none
+      else match wordCmpLoop (WordGcFunctions.decodeLength conf h1)
+          (a1 + StackRemove.bytesInWord width * WordGcFunctions.decodeLength conf h1)
+          (a2 + StackRemove.bytesInWord width * WordGcFunctions.decodeLength conf h1) domain memory with
+        | none => none
+        | some res => some (res, limit - 1 - (WordGcFunctions.decodeLength conf h1).toNat, clock)
+    | _, _ => none
+termination_by limit
+decreasing_by omega
+
+/-- Source word-list equality worker, including clock clamping. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_eq_def" 13982
+  (fmap_as_finite_support_parameters := [store]) (words_as_type_indexed_bitvec)]
+def wordEqList {width : Nat} [NeZero width] (conf : Config)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+    (limit clock : Nat) (count a1 a2 : BitVec width) : Option (BitVec width × Nat × Nat) :=
+  if count = 0 then some (1, limit, clock)
+  else if domain a1 = false ∨ domain a2 = false ∨ limit = 0 ∨ clock = 0 then none
+  else match memory a1, memory a2 with
+    | .word w1, .word w2 =>
+      match _resultEq : fixClock (clock - 1) (limit - 1)
+          (wordEq conf store domain memory (limit - 1) (clock - 1) w1 w2) with
+      | none => none
+      | some (x, remaining, _) =>
+        if x ≠ 1 then some (x, remaining, clock)
+        else if remaining = 0 then none
+        else wordEqList conf store domain memory (remaining - 1) clock (count - 1)
+          (a1 + StackRemove.bytesInWord width) (a2 + StackRemove.bytesInWord width)
+    | _, _ => none
+termination_by limit
+decreasing_by
+  all_goals simp_wf
+  all_goals try omega
+  have bounds := fixClock_imp _ _ _ _ _ _ _resultEq
+  omega
+
+end
+
+/-- Both word-comparison workers return clocks bounded by their inputs. This
+Flapjack helper groups the two source conjuncts at a fixed initial limit. -/
+theorem wordEq_boundsAux {width : Nat} [NeZero width] (conf : Config)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width) (limit : Nat) :
+    (∀ clock w1 w2 result remaining remainingClock,
+      wordEq conf store domain memory limit clock w1 w2 = some (result, remaining, remainingClock) →
+      remaining ≤ limit ∧ remainingClock ≤ clock) ∧
+    (∀ clock count a1 a2 result remaining remainingClock,
+      wordEqList conf store domain memory limit clock count a1 a2 = some (result, remaining, remainingClock) →
+      remaining ≤ limit ∧ remainingClock ≤ clock) := by
+  induction limit using Nat.strong_induction_on with
+  | h limit ih =>
+    constructor
+    · intro clock w1 w2 result remaining remainingClock outcome
+      rw [wordEq] at outcome
+      repeat' first | split at outcome | contradiction
+      all_goals try simp_all
+      all_goals try omega
+      have bounded := (ih (limit - 1) (by omega)).2 _ _ _ _ _ _ _ outcome
+      omega
+    · intro clock count a1 a2 result remaining remainingClock outcome
+      rw [wordEqList] at outcome
+      repeat' first | split at outcome | contradiction
+      all_goals try simp_all
+      all_goals have clamp := @fixClock_imp (BitVec width)
+      all_goals try grind
+      have resultBound := (ih _ ?_).2 _ _ _ _ _ _ _ outcome
+      · grind
+      · grind
+
+/-- Neither word equality nor its list worker increases either clock. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "word_eq_LESS_EQ"
+  (fmap_as_finite_support_relation := [store1, store2]) (words_as_type_indexed_bitvec)]
+theorem wordEq_lessEq {width : Nat} [NeZero width] :
+    (∀ (conf : Config) (store1 : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+      (limit clock : Nat) (w1 w2 result : BitVec width) (remaining remainingClock : Nat),
+      wordEq conf store1 domain memory limit clock w1 w2 = some (result, remaining, remainingClock) →
+      remaining ≤ limit ∧ remainingClock ≤ clock) ∧
+    (∀ (conf : Config) (store2 : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+      (limit clock : Nat) (count a1 a2 result : BitVec width) (remaining remainingClock : Nat),
+      wordEqList conf store2 domain memory limit clock count a1 a2 = some (result, remaining, remainingClock) →
+      remaining ≤ limit ∧ remainingClock ≤ clock) := by
+  constructor
+  · intro conf store domain memory limit clock w1 w2 result remaining remainingClock outcome
+    exact (wordEq_boundsAux conf store domain memory limit).1 clock w1 w2 result remaining remainingClock outcome
+  · intro conf store domain memory limit clock count a1 a2 result remaining remainingClock outcome
+    exact (wordEq_boundsAux conf store domain memory limit).2 clock count a1 a2 result remaining remainingClock outcome
+
+end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

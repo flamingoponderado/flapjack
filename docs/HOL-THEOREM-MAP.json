@@ -100487,6 +100487,82 @@
     "reviewer": "Source comparison: memory_rel_simple_eq and its typed data_to_word_memory_repr capture. The complete theorem retains the original memory relation, source equality result and good_dimindex, existential target words, location equations and low-bit disjunction implying agreement of word equality with the result Boolean. It covers numbers, word64, blocks, references and impossible constructor combinations without additional assumptions. store is the canonical finite-support map and the target words use the shared positive HOL word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "wordHeader",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_header_def",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_header_def and its typed capture preserve independent positive address and stored-word widths, the original store, decoded address, domain check and word-or-location memory branches. The canonical finite-support witness covers the store parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "fixClock",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "fix_clock_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: fix_clock_def and its typed capture preserve the polymorphic result carrier, NONE case and both original clock clamps."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "fixClock_imp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "fix_clock_IMP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: local fix_clock_IMP and its typed replay preserve the arbitrary result carrier and both original bounds, in the same order."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "wordIsClos",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_is_clos_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_is_clos_def and its typed capture retain both closure tag alternatives; tag_mask is expanded as its original word slice and the source closure constants are 30 and 31."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "wordEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_def",
+    "hol_line": 13982,
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the original word_eq_def at line 13982 and typed first-clause capture preserve shared positive word width, all input arguments, branches and original recursive clocks. The store uses the checked canonical finite-support parameter witness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "wordEqList",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_def",
+    "hol_line": 13982,
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the original word_eq_def at line 13982 and typed original-clause replay preserve the count, domain checks, both clocks, fix_clock application, result cases and recursive updates. The later source rebind removes fix_clock only after proving it redundant. The store uses the checked canonical finite-support parameter witness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "wordEq_lessEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_LESS_EQ",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store1",
+      "store2"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: word_eq_LESS_EQ and its typed capture preserve both universally quantified conjuncts independently, their full successful-result premises and both clock bounds. store1 and store2 are the independently quantified canonical finite-support stores."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
