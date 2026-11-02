@@ -7,6 +7,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
+import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallClock
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -698,5 +699,14 @@ example {C F : Type}
     obtain ⟨rfl, _⟩ := run
     exact exprSimFuel_var 5 (.ln, []) ∅ .none 0
   · exact bodyIH
+
+-- A stub consumes its extra tick and passes only its declared argument prefix.
+example {C F : Type} (state : ClosSem.State C F)
+    (code : state.code.lookup 11 = some (1, .var .none 0)) :
+    ClosSem.evaluate [.call .none 0 11 (ClosCall.variables .none 1)]
+      [.number 7, .number 9] { state with clock := state.clock + 1 } =
+      (.val [.number 7], state) := by
+  rw [evaluate_generated_stub .none 11 1 (.var .none 0) _ state (by simp) code]
+  simp [ClosSem.evaluate]
 
 end Flapjack.Test.ClosCallEnvironmentParity
