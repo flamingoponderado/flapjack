@@ -144,6 +144,17 @@ private def closedGroupResult : State := codeList 10 closedGroup closedGroupAfte
 private def closedGroupCode : Flapjack.HolFiniteMapExact Nat (Nat × ClosLang.Exp) :=
   Flapjack.HolFiniteMapExact.empty.update (11, (1, .var .none 0))
 
+-- Distinct locations for a two-function group imply the group invariant.
+example (names : List Flapjack.Basis.Pure.MlString.MlString) :
+    recClosureWellFormed 10 [(1, .var .none 0), (2, .var .none 1)] := by
+  have invariants := letrec_source_invariants names 10
+    [(1, .var .none 0), (2, .var .none 1)] (.var .none 2) closedGroupInitial
+  apply (invariants ?_ ?_ ?_ ?_).1
+  · simp [everyFnLocationSome, fnLocationSomeExp, fnLocationSomeFuns]
+  · simp [everyFnVarsNone, fnVarsNoneExp, fnVarsNoneFuns]
+  · simp [codeLocations, codeLocationsExp, codeLocationsFuns, List.range_succ]
+  · simp [LabelsFresh, closedGroupInitial]
+
 -- A real closed group is related to its generated direct-call stub and code.
 private theorem closedGroupRelation : recClosureRelFuel 5 closedGroupResult ∅ closedGroupCode 10 closedGroup
     [(1, .call .none 0 11 [.var .none 0])] := by
