@@ -416,4 +416,22 @@ theorem evaluate_oracleAuxEmpty {C F : Type} :
   · intro location function args state empty
     exact (all state.clock).1 location function args state rfl empty
 
+/-- Primitive evaluation needs only the initial oracle condition: the
+general oracle-preservation theorem supplies it after argument evaluation. -/
+theorem evaluate_op_wellFormedFuel_of_oracle {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (oracleEmpty : OracleAuxEmpty state.compileOracle)
+    (argsIH : EvalWellFormedFuel fuel g allowed code (evaluate args env state))
+    (installIH : ∀ (program : List ClosLang.Exp) (start : ClosSem.State C F),
+      start.clock < state.clock → StateWellFormedFuel fuel g allowed code start →
+      EvalWellFormedFuel fuel g allowed code (evaluate program [] start))
+    (forceIH : op = .thunkOp .forceThunk → ∀ (value : ClosSem.Value) (start : ClosSem.State C F),
+      start.clock ≤ state.clock → ValueWellFormedFuel fuel g allowed code value →
+      StateWellFormedFuel fuel g allowed code start →
+      EvalWellFormedFuel fuel g allowed code (evaluate [appUnit (.var .none 0)] [value] start)) :
+    EvalWellFormedFuel fuel g allowed code (evaluate [.op trace op args] env state) := by
+  apply evaluate_op_wellFormedFuel trace op args env state argsIH ?_ installIH forceIH
+  exact ((evaluate_oracleAuxEmpty (C := C) (F := F)).1 args env state oracleEmpty) 0
+
 end Flapjack.Compiler.Backend.ClosCall

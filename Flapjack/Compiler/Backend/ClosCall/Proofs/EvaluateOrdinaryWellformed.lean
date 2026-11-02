@@ -62,9 +62,10 @@ theorem evaluate_op_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowe
     (argsIH : EvalWellFormedFuel fuel g allowed code (evaluate args env state))
     (oracleEmpty : ((evaluate args env state).2.compileOracle 0).2.2 = [])
     (installIH : ∀ (program : List ClosLang.Exp) (start : ClosSem.State C F),
-      StateWellFormedFuel fuel g allowed code start → EvalWellFormedFuel fuel g allowed code (evaluate program [] start))
-    (forceIH : ∀ (value : ClosSem.Value) (start : ClosSem.State C F),
-      ValueWellFormedFuel fuel g allowed code value → StateWellFormedFuel fuel g allowed code start →
+      start.clock < state.clock → StateWellFormedFuel fuel g allowed code start →
+      EvalWellFormedFuel fuel g allowed code (evaluate program [] start))
+    (forceIH : op = .thunkOp .forceThunk → ∀ (value : ClosSem.Value) (start : ClosSem.State C F),
+      start.clock ≤ state.clock → ValueWellFormedFuel fuel g allowed code value → StateWellFormedFuel fuel g allowed code start →
       EvalWellFormedFuel fuel g allowed code (evaluate [appUnit (.var .none 0)] [value] start)) :
     EvalWellFormedFuel fuel g allowed code (evaluate [.op trace op args] env state) := by
   have ordinary : ∀ op, op ≠ .install → op ≠ .thunkOp .forceThunk →
@@ -75,7 +76,7 @@ theorem evaluate_op_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowe
   | install => exact evaluate_install_wellFormedFuel trace args env state argsIH oracleEmpty installIH
   | thunkOp operation =>
     cases operation with
-    | forceThunk => exact evaluate_force_wellFormedFuel trace args env state argsIH forceIH
+    | forceThunk => exact evaluate_force_wellFormedFuel trace args env state argsIH (forceIH rfl)
     | allocThunk mode => exact ordinary _ (by simp) (by simp)
     | updateThunk mode => exact ordinary _ (by simp) (by simp)
   | label | ffi | intOp | wordOp | blockOp | globOp | memOp => exact ordinary _ (by simp) (by simp)

@@ -109,7 +109,8 @@ theorem evaluate_let_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allow
     (envWf : ValuesWellFormedFuel fuel g allowed code env)
     (bindingsIH : EvalWellFormedFuel fuel g allowed code (evaluate bindings env state))
     (bodyIH : ∀ (bodyEnv : List ClosSem.Value) (start : ClosSem.State C F),
-      ValuesWellFormedFuel fuel g allowed code bodyEnv → StateWellFormedFuel fuel g allowed code start →
+      start.clock ≤ state.clock → ValuesWellFormedFuel fuel g allowed code bodyEnv →
+      StateWellFormedFuel fuel g allowed code start →
       EvalWellFormedFuel fuel g allowed code (evaluate [body] bodyEnv start)) :
     EvalWellFormedFuel fuel g allowed code (evaluate [.let trace bindings body] env state) := by
   cases bindingsRun : evaluate bindings env state with
@@ -118,7 +119,10 @@ theorem evaluate_let_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allow
     rw [evaluate, fixClock_evaluate, bindingsRun]
     cases result with
     | err error => exact bindingsIH
-    | val values => exact bodyIH (values ++ env) final (valuesWellFormedFuel_append bindingsIH.1 envWf) bindingsIH.2
+    | val values =>
+      have bound := evaluate_clock_le bindings env state
+      rw [bindingsRun] at bound
+      exact bodyIH (values ++ env) final bound (valuesWellFormedFuel_append bindingsIH.1 envWf) bindingsIH.2
 
 /-- A handler receives a well-formed raised payload, and other outcomes are
 propagated without changing the invariant. -/
@@ -128,7 +132,8 @@ theorem evaluate_handle_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {al
     (envWf : ValuesWellFormedFuel fuel g allowed code env)
     (bodyIH : EvalWellFormedFuel fuel g allowed code (evaluate [body] env state))
     (handlerIH : ∀ (bodyEnv : List ClosSem.Value) (start : ClosSem.State C F),
-      ValuesWellFormedFuel fuel g allowed code bodyEnv → StateWellFormedFuel fuel g allowed code start →
+      start.clock ≤ state.clock → ValuesWellFormedFuel fuel g allowed code bodyEnv →
+      StateWellFormedFuel fuel g allowed code start →
       EvalWellFormedFuel fuel g allowed code (evaluate [handler] bodyEnv start)) :
     EvalWellFormedFuel fuel g allowed code (evaluate [.handle trace body handler] env state) := by
   cases bodyRun : evaluate [body] env state with
@@ -140,7 +145,10 @@ theorem evaluate_handle_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {al
     | err error =>
       cases error with
       | abort reason => exact bodyIH
-      | raise value => exact handlerIH (value :: env) final (.cons bodyIH.1 envWf) bodyIH.2
+      | raise value =>
+        have bound := evaluate_clock_le [body] env state
+        rw [bodyRun] at bound
+        exact handlerIH (value :: env) final bound (.cons bodyIH.1 envWf) bodyIH.2
 
 /-- Conditional evaluation either reports a type error or evaluates one of
 its branches from the well-formed state produced by the condition. -/
@@ -148,8 +156,8 @@ theorem evaluate_if_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowe
     {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra)
     (condition yes no : ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (conditionIH : EvalWellFormedFuel fuel g allowed code (evaluate [condition] env state))
-    (yesIH : ∀ (start : ClosSem.State C F), StateWellFormedFuel fuel g allowed code start → EvalWellFormedFuel fuel g allowed code (evaluate [yes] env start))
-    (noIH : ∀ (start : ClosSem.State C F), StateWellFormedFuel fuel g allowed code start → EvalWellFormedFuel fuel g allowed code (evaluate [no] env start)) :
+    (yesIH : ∀ (start : ClosSem.State C F), start.clock ≤ state.clock → StateWellFormedFuel fuel g allowed code start → EvalWellFormedFuel fuel g allowed code (evaluate [yes] env start))
+    (noIH : ∀ (start : ClosSem.State C F), start.clock ≤ state.clock → StateWellFormedFuel fuel g allowed code start → EvalWellFormedFuel fuel g allowed code (evaluate [no] env start)) :
     EvalWellFormedFuel fuel g allowed code (evaluate [.ifThenElse trace condition yes no] env state) := by
   cases conditionRun : evaluate [condition] env state with
   | mk result final =>
@@ -159,12 +167,14 @@ theorem evaluate_if_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowe
     | err error => exact conditionIH
     | val values =>
       obtain ⟨value, rfl⟩ := evaluate_singleton_value condition env state final values conditionRun
+      have bound := evaluate_clock_le [condition] env state
+      rw [conditionRun] at bound
       cases choice : asBool value with
       | none => simpa [choice, EvalWellFormedFuel, ResultWellFormedFuel] using conditionIH.2
       | some choiceValue =>
         cases choiceValue with
-        | false => simpa [choice] using noIH final conditionIH.2
-        | true => simpa [choice] using yesIH final conditionIH.2
+        | false => simpa [choice] using noIH final bound conditionIH.2
+        | true => simpa [choice] using yesIH final bound conditionIH.2
 
 /-- Sequential expression lists preserve well-formedness when the head and
 tail evaluation induction hypotheses do. -/
@@ -172,7 +182,7 @@ theorem evaluate_cons_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allo
     {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (first second : ClosLang.Exp)
     (rest : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (headIH : EvalWellFormedFuel fuel g allowed code (evaluate [first] env state))
-    (tailIH : ∀ (start : ClosSem.State C F), StateWellFormedFuel fuel g allowed code start →
+    (tailIH : ∀ (start : ClosSem.State C F), start.clock ≤ state.clock → StateWellFormedFuel fuel g allowed code start →
       EvalWellFormedFuel fuel g allowed code (evaluate (second :: rest) env start)) :
     EvalWellFormedFuel fuel g allowed code (evaluate (first :: second :: rest) env state) := by
   cases headRun : evaluate [first] env state with
@@ -186,7 +196,9 @@ theorem evaluate_cons_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allo
       have headWf : ValueWellFormedFuel fuel g allowed code head := by
         cases headIH.1 with
         | cons firstWf restWf => exact firstWf
-      have tailWf := tailIH headFinal headIH.2
+      have bound := evaluate_clock_le [first] env state
+      rw [headRun] at bound
+      have tailWf := tailIH headFinal bound headIH.2
       cases tailRun : evaluate (second :: rest) env headFinal with
       | mk tailResult final =>
         rw [tailRun] at tailWf
@@ -221,10 +233,10 @@ theorem evaluate_app_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allow
     (function : ClosLang.Exp) (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (stateWf : StateWellFormedFuel fuel g allowed code state)
     (argsIH : EvalWellFormedFuel fuel g allowed code (evaluate args env state))
-    (fnIH : ∀ (start : ClosSem.State C F), StateWellFormedFuel fuel g allowed code start →
+    (fnIH : ∀ (start : ClosSem.State C F), start.clock ≤ state.clock → StateWellFormedFuel fuel g allowed code start →
       EvalWellFormedFuel fuel g allowed code (evaluate [function] env start))
     (appIH : ∀ (value : ClosSem.Value) (values : List ClosSem.Value) (start : ClosSem.State C F),
-      ValueWellFormedFuel fuel g allowed code value → ValuesWellFormedFuel fuel g allowed code values →
+      start.clock ≤ state.clock → ValueWellFormedFuel fuel g allowed code value → ValuesWellFormedFuel fuel g allowed code values →
       StateWellFormedFuel fuel g allowed code start →
       EvalWellFormedFuel fuel g allowed code (evaluateApp location value values start)) :
     EvalWellFormedFuel fuel g allowed code (evaluate [.app trace location function args] env state) := by
@@ -241,7 +253,9 @@ theorem evaluate_app_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allow
       | err error => exact argsIH
       | val values =>
         rw [fixClock_evaluate]
-        have fnWf := fnIH final argsIH.2
+        have argsBound := evaluate_clock_le (first :: rest) env state
+        rw [argsRun] at argsBound
+        have fnWf := fnIH final argsBound argsIH.2
         cases fnRun : evaluate [function] env final with
         | mk fnResult fnFinal =>
           rw [fnRun] at fnWf
@@ -252,8 +266,11 @@ theorem evaluate_app_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allow
             have valueWf : ValueWellFormedFuel fuel g allowed code fnValue := by
               cases fnWf.1 with
               | cons head tail => exact head
+            have fnBound := evaluate_clock_le [function] env final
+            rw [fnRun] at fnBound
+            dsimp only at argsBound fnBound
             simpa [EvalWellFormedFuel, fixClock_evaluate, fnRun] using
-              appIH fnValue values fnFinal valueWf argsIH.1 fnWf.2
+              appIH fnValue values fnFinal (by omega) valueWf argsIH.1 fnWf.2
 
 /-- A closure application preserves the bounded invariant if body evaluation
 and subsequent applications preserve it at smaller clocks. -/

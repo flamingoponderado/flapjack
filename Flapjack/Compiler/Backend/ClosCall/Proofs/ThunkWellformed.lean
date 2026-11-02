@@ -47,7 +47,8 @@ theorem evaluate_force_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {all
     {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra)
     (args : List ClosLang.Exp) (env : List Value) (state : ClosSem.State C F)
     (argsIH : EvalWellFormedFuel fuel g allowed code (evaluate args env state))
-    (bodyIH : ∀ (value : Value) (start : ClosSem.State C F), ValueWellFormedFuel fuel g allowed code value →
+    (bodyIH : ∀ (value : Value) (start : ClosSem.State C F), start.clock ≤ state.clock →
+      ValueWellFormedFuel fuel g allowed code value →
       StateWellFormedFuel fuel g allowed code start →
       EvalWellFormedFuel fuel g allowed code (evaluate [appUnit (.var .none 0)] [value] start)) :
     EvalWellFormedFuel fuel g allowed code
@@ -69,7 +70,9 @@ theorem evaluate_force_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {all
           simpa [EvalWellFormedFuel, ResultWellFormedFuel, inspected] using
             And.intro (ValuesWellFormedFuel.cons valueWf .nil) argsIH.2
         | notEvaluated =>
-          have bodyWf := bodyIH value argsFinal valueWf argsIH.2
+          have argsBound := evaluate_clock_le args env state
+          rw [argsRun] at argsBound
+          have bodyWf := bodyIH value argsFinal argsBound valueWf argsIH.2
           cases bodyRun : evaluate [appUnit (.var .none 0)] [value] argsFinal with
           | mk bodyResult bodyFinal =>
             rw [bodyRun] at bodyWf

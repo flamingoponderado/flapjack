@@ -183,7 +183,7 @@ theorem evaluate_install_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {a
     (argsIH : EvalWellFormedFuel fuel g allowed code (evaluate args env state))
     (oracleEmpty : ((evaluate args env state).2.compileOracle 0).2.2 = [])
     (bodyIH : ∀ (program : List ClosLang.Exp) (start : ClosSem.State C F),
-      StateWellFormedFuel fuel g allowed code start →
+      start.clock < state.clock → StateWellFormedFuel fuel g allowed code start →
       EvalWellFormedFuel fuel g allowed code (evaluate program [] start)) :
     EvalWellFormedFuel fuel g allowed code (evaluate [.op trace .install args] env state) := by
   cases argsRun : evaluate args env state with
@@ -210,7 +210,11 @@ theorem evaluate_install_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {a
           have programEq : program = expressions := by
             split at resultEq <;> simp_all
           have nonempty : program ≠ [] := by simpa [programEq] using programNonempty
-          have bodyWf := bodyIH program installFinal installWf
+          have argsBound := evaluate_clock_le args env state
+          rw [argsRun] at argsBound
+          dsimp only at argsBound
+          have installBound := doInstall_success_clock values.reverse argsFinal installFinal program installRun
+          have bodyWf := bodyIH program installFinal (by omega) installWf
           cases bodyRun : evaluate program [] installFinal with
           | mk bodyResult bodyFinal =>
             rw [bodyRun] at bodyWf
