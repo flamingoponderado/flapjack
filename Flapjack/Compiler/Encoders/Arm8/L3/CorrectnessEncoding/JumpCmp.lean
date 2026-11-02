@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Overflow
+import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddSubImmediate
 import Flapjack.Compiler.Encoders.Arm8.Machine.JumpCmpCase
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.BranchConditional
 
@@ -1153,5 +1154,319 @@ theorem arm8Next_logicalImmediate_ands (ms : arm8_state) (imm : BitVec 64) (rn :
   dsimp only [i]
   rw [hrun]
   rfl
+
+/-! ## The immediate ordering compare: `SUBS` on `AddSubImmediate@64` -/
+
+/-- The four encoded bytes of the set-flags low-immediate compare word. -/
+theorem arm8EncodeBytes_addSubImmediateS_low (op : Bool) (imm : BitVec 64) (rn rd : BitVec 5)
+    (hlow : imm &&& ~~~(4095 : BitVec 64) = (0 : BitVec 64)) :
+    arm8Encode (.Data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd))) =
+      [BitVec.ofNat 8 ((arm8AddSubImmediateWordS op false (holWordExtract 12 11 0 imm) rn rd >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8AddSubImmediateWordS op false (holWordExtract 12 11 0 imm) rn rd >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8AddSubImmediateWordS op false (holWordExtract 12 11 0 imm) rn rd >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8AddSubImmediateWordS op false (holWordExtract 12 11 0 imm) rn rd >>> 24).toNat)] := by
+  rw [arm8Encode, arm8Encode_addSubImmediateS_low op imm rn rd hlow]
+
+/-- The four encoded bytes of the set-flags high-immediate compare word. -/
+theorem arm8EncodeBytes_addSubImmediateS_high (op : Bool) (imm : BitVec 64) (rn rd : BitVec 5)
+    (hne : ¬ ((imm &&& ~~~(4095 : BitVec 64)) == (0 : BitVec 64)) = true)
+    (hhigh : imm &&& ~~~(16773120 : BitVec 64) = (0 : BitVec 64)) :
+    arm8Encode (.Data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd))) =
+      [BitVec.ofNat 8 ((arm8AddSubImmediateWordS op true (holWordExtract 12 23 12 imm) rn rd >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8AddSubImmediateWordS op true (holWordExtract 12 23 12 imm) rn rd >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8AddSubImmediateWordS op true (holWordExtract 12 23 12 imm) rn rd >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8AddSubImmediateWordS op true (holWordExtract 12 23 12 imm) rn rd >>> 24).toNat)] := by
+  rw [arm8Encode, arm8Encode_addSubImmediateS_high op imm rn rd hne hhigh]
+
+/-- `Run` of the `SUBS` compare on a low twelve-bit immediate: `Rn - imm` sets
+the flags from `AddWithCarry`; the `XZR` destination discards the value. -/
+theorem arm8Run_addSubImmediate_setflags_xzr_eq (imm : BitVec 64) (rn : BitVec 5)
+    (st : arm8_state) (hrn : rn ≠ 31) :
+    Run (instruction.Data (Data.«AddSubImmediate@64»
+      ((1 : BitVec 64), (true, (true, (imm, (rn, 31))))))) st =
+      { st with
+        PSTATE :=
+          { st.PSTATE with
+            N := (AddWithCarry (TN := 64) (X (TN := 64) rn st, (~~~imm, true))).2.1,
+            Z := (AddWithCarry (TN := 64) (X (TN := 64) rn st, (~~~imm, true))).2.2.1,
+            C := (AddWithCarry (TN := 64) (X (TN := 64) rn st, (~~~imm, true))).2.2.2.1,
+            V := (AddWithCarry (TN := 64) (X (TN := 64) rn st, (~~~imm, true))).2.2.2.2 } } := by
+  have hb : (rn == BitVec.ofNat 5 31) = false := by
+    rw [beq_eq_false_iff_ne]
+    exact hrn
+  simp only [Run, «dfn'AddSubImmediate», SetTheFlags, «write'X», hb, Bool.false_eq_true, if_false]
+  simp
+
+/-- One `arm8Next` step on the set-flags low-immediate compare word: the flags
+come from `Rn - imm`, the destination is `XZR`, and `PC` advances by four. -/
+theorem arm8Next_addSubImmediateS_low (ms : arm8_state) (imm : BitVec 64) (rn : BitVec 5)
+    (hlow : imm &&& ~~~(4095 : BitVec 64) = (0 : BitVec 64))
+    (hrn : rn ≠ 31)
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC =
+      BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+        (holWordExtract 12 11 0 imm) rn 31 >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) =
+      BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+        (holWordExtract 12 11 0 imm) rn 31 >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) =
+      BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+        (holWordExtract 12 11 0 imm) rn 31 >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) =
+      BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+        (holWordExtract 12 11 0 imm) rn 31 >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next ms =
+      { ms with
+        branch_hint := none,
+        PC := ms.PC + 4,
+        PSTATE :=
+          { ms.PSTATE with
+            N := (AddWithCarry (TN := 64) (X (TN := 64) rn ms, (~~~imm, true))).2.1,
+            Z := (AddWithCarry (TN := 64) (X (TN := 64) rn ms, (~~~imm, true))).2.2.1,
+            C := (AddWithCarry (TN := 64) (X (TN := 64) rn ms, (~~~imm, true))).2.2.2.1,
+            V := (AddWithCarry (TN := 64) (X (TN := 64) rn ms, (~~~imm, true))).2.2.2.2 } } := by
+  let i : instruction := instruction.Data (Data.«AddSubImmediate@64»
+    ((1 : BitVec 64), (true, (true, (imm, (rn, 31))))))
+  have hdec : Decode (arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 imm) rn 31) = i := by
+    dsimp only [i]
+    exact arm8Decode_addSubImmediateS_low true imm rn 31 hlow
+  have hrun := arm8Run_addSubImmediate_setflags_xzr_eq imm rn { ms with branch_hint := none } hrn
+  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
+    dsimp only [i]
+    rw [hrun]
+  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
+    dsimp only [i]
+    rw [hrun]
+    simpa using hexc0
+  have hn := arm8Next_word ms (arm8AddSubImmediateWordS true false
+    (holWordExtract 12 11 0 imm) rn 31) i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
+  unfold arm8Next
+  rw [hn]
+  dsimp only [i]
+  rw [hrun]
+  rfl
+
+/-- One `arm8Next` step on the set-flags high-immediate compare word. -/
+theorem arm8Next_addSubImmediateS_high (ms : arm8_state) (imm : BitVec 64) (rn : BitVec 5)
+    (hhigh : imm &&& ~~~(16773120 : BitVec 64) = (0 : BitVec 64))
+    (hrn : rn ≠ 31)
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC =
+      BitVec.ofNat 8 ((arm8AddSubImmediateWordS true true
+        (holWordExtract 12 23 12 imm) rn 31 >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) =
+      BitVec.ofNat 8 ((arm8AddSubImmediateWordS true true
+        (holWordExtract 12 23 12 imm) rn 31 >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) =
+      BitVec.ofNat 8 ((arm8AddSubImmediateWordS true true
+        (holWordExtract 12 23 12 imm) rn 31 >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) =
+      BitVec.ofNat 8 ((arm8AddSubImmediateWordS true true
+        (holWordExtract 12 23 12 imm) rn 31 >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next ms =
+      { ms with
+        branch_hint := none,
+        PC := ms.PC + 4,
+        PSTATE :=
+          { ms.PSTATE with
+            N := (AddWithCarry (TN := 64) (X (TN := 64) rn ms, (~~~imm, true))).2.1,
+            Z := (AddWithCarry (TN := 64) (X (TN := 64) rn ms, (~~~imm, true))).2.2.1,
+            C := (AddWithCarry (TN := 64) (X (TN := 64) rn ms, (~~~imm, true))).2.2.2.1,
+            V := (AddWithCarry (TN := 64) (X (TN := 64) rn ms, (~~~imm, true))).2.2.2.2 } } := by
+  let i : instruction := instruction.Data (Data.«AddSubImmediate@64»
+    ((1 : BitVec 64), (true, (true, (imm, (rn, 31))))))
+  have hdec : Decode (arm8AddSubImmediateWordS true true
+      (holWordExtract 12 23 12 imm) rn 31) = i := by
+    dsimp only [i]
+    exact arm8Decode_addSubImmediateS_high true imm rn 31 hhigh
+  have hrun := arm8Run_addSubImmediate_setflags_xzr_eq imm rn { ms with branch_hint := none } hrn
+  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
+    dsimp only [i]
+    rw [hrun]
+  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
+    dsimp only [i]
+    rw [hrun]
+    simpa using hexc0
+  have hn := arm8Next_word ms (arm8AddSubImmediateWordS true true
+    (holWordExtract 12 23 12 imm) rn 31) i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
+  unfold arm8Next
+  rw [hn]
+  dsimp only [i]
+  rw [hrun]
+  rfl
+
+/-- Applying `arm8Next` to two states that agree on `d` and carry the same
+`ANDS` immediate compare word gives states that still agree. -/
+theorem arm8Next_logicalImmediate_ands_agree (d : BitVec 64 → Prop)
+    (s t : arm8_state) (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
+    (imm : BitVec 64) (rn : BitVec 5)
+    (N : BitVec 1) (imms immr : BitVec 6) (opc2 : BitVec 2)
+    (hbm : EncodeBitMask imm = some (N, (imms, immr)))
+    (hop : EncodeLogicalOp (.LogicalOp_AND, true) = some opc2)
+    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
+    (hb0 : t.MEM t.PC = BitVec.ofNat 8
+      ((arm8LogicalImmediateWord opc2 N imms immr rn 31 >>> 0).toNat))
+    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8
+      ((arm8LogicalImmediateWord opc2 N imms immr rn 31 >>> 8).toNat))
+    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8
+      ((arm8LogicalImmediateWord opc2 N imms immr rn 31 >>> 16).toNat))
+    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8
+      ((arm8LogicalImmediateWord opc2 N imms immr rn 31 >>> 24).toNat)) :
+    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
+  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
+  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
+  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
+  have hal : Aligned (TN := 64) (s.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa [← h.pc] using (holAligned_iff 2 s.PC).mp halign
+  have halt : Aligned (TN := 64) (t.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 t.PC).mp halignt
+  have hs0 : s.MEM s.PC = BitVec.ofNat 8
+      ((arm8LogicalImmediateWord opc2 N imms immr rn 31 >>> 0).toNat) := by
+    rw [h.pc]
+    exact (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
+  have hs1 : s.MEM (s.PC + 1) = BitVec.ofNat 8
+      ((arm8LogicalImmediateWord opc2 N imms immr rn 31 >>> 8).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
+  have hs2 : s.MEM (s.PC + 2) = BitVec.ofNat 8
+      ((arm8LogicalImmediateWord opc2 N imms immr rn 31 >>> 16).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
+  have hs3 : s.MEM (s.PC + 3) = BitVec.ofNat 8
+      ((arm8LogicalImmediateWord opc2 N imms immr rn 31 >>> 24).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
+  have hss := arm8Next_logicalImmediate_ands s imm rn N imms immr opc2 hbm hop
+    hexc0 hs0 hs1 hs2 hs3 hal he0 hel
+  have htt := arm8Next_logicalImmediate_ands t imm rn N imms immr opc2 hbm hop
+    hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  have hrn : X (TN := 64) rn s = X (TN := 64) rn t := arm8X_congr_or_zero h rn
+  rw [hss, htt]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simp [h.pc]
+  · exact h.reg
+  · simp only [h.pstate, hrn]
+  · simp [h.sctlr]
+  · simp [h.tcr]
+  · simp [h.exc]
+  · intro a ha
+    exact h.mem a ha
+
+/-- Applying `arm8Next` to two states that agree on `d` and carry the same
+set-flags low-immediate compare word gives states that still agree. -/
+theorem arm8Next_addSubImmediateS_low_agree (d : BitVec 64 → Prop)
+    (s t : arm8_state) (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
+    (imm : BitVec 64) (rn : BitVec 5)
+    (hlow : imm &&& ~~~(4095 : BitVec 64) = (0 : BitVec 64)) (hrn : rn ≠ 31)
+    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
+    (hb0 : t.MEM t.PC = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true false (holWordExtract 12 11 0 imm) rn 31 >>> 0).toNat))
+    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true false (holWordExtract 12 11 0 imm) rn 31 >>> 8).toNat))
+    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true false (holWordExtract 12 11 0 imm) rn 31 >>> 16).toNat))
+    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true false (holWordExtract 12 11 0 imm) rn 31 >>> 24).toNat)) :
+    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
+  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
+  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
+  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
+  have hal : Aligned (TN := 64) (s.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa [← h.pc] using (holAligned_iff 2 s.PC).mp halign
+  have halt : Aligned (TN := 64) (t.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 t.PC).mp halignt
+  have hs0 : s.MEM s.PC = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true false (holWordExtract 12 11 0 imm) rn 31 >>> 0).toNat) := by
+    rw [h.pc]
+    exact (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
+  have hs1 : s.MEM (s.PC + 1) = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true false (holWordExtract 12 11 0 imm) rn 31 >>> 8).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
+  have hs2 : s.MEM (s.PC + 2) = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true false (holWordExtract 12 11 0 imm) rn 31 >>> 16).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
+  have hs3 : s.MEM (s.PC + 3) = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true false (holWordExtract 12 11 0 imm) rn 31 >>> 24).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
+  have hss := arm8Next_addSubImmediateS_low s imm rn hlow hrn hexc0 hs0 hs1 hs2 hs3 hal he0 hel
+  have htt := arm8Next_addSubImmediateS_low t imm rn hlow hrn hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  have hrnx : X (TN := 64) rn s = X (TN := 64) rn t := arm8X_congr_or_zero h rn
+  rw [hss, htt]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simp [h.pc]
+  · exact h.reg
+  · simp only [h.pstate, hrnx]
+  · simp [h.sctlr]
+  · simp [h.tcr]
+  · simp [h.exc]
+  · intro a ha
+    exact h.mem a ha
+
+/-- Applying `arm8Next` to two states that agree on `d` and carry the same
+set-flags high-immediate compare word gives states that still agree. -/
+theorem arm8Next_addSubImmediateS_high_agree (d : BitVec 64 → Prop)
+    (s t : arm8_state) (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
+    (imm : BitVec 64) (rn : BitVec 5)
+    (hhigh : imm &&& ~~~(16773120 : BitVec 64) = (0 : BitVec 64)) (hrn : rn ≠ 31)
+    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
+    (hb0 : t.MEM t.PC = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true true (holWordExtract 12 23 12 imm) rn 31 >>> 0).toNat))
+    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true true (holWordExtract 12 23 12 imm) rn 31 >>> 8).toNat))
+    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true true (holWordExtract 12 23 12 imm) rn 31 >>> 16).toNat))
+    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true true (holWordExtract 12 23 12 imm) rn 31 >>> 24).toNat)) :
+    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
+  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
+  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
+  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
+  have hal : Aligned (TN := 64) (s.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa [← h.pc] using (holAligned_iff 2 s.PC).mp halign
+  have halt : Aligned (TN := 64) (t.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 t.PC).mp halignt
+  have hs0 : s.MEM s.PC = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true true (holWordExtract 12 23 12 imm) rn 31 >>> 0).toNat) := by
+    rw [h.pc]
+    exact (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
+  have hs1 : s.MEM (s.PC + 1) = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true true (holWordExtract 12 23 12 imm) rn 31 >>> 8).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
+  have hs2 : s.MEM (s.PC + 2) = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true true (holWordExtract 12 23 12 imm) rn 31 >>> 16).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
+  have hs3 : s.MEM (s.PC + 3) = BitVec.ofNat 8
+      ((arm8AddSubImmediateWordS true true (holWordExtract 12 23 12 imm) rn 31 >>> 24).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
+  have hss := arm8Next_addSubImmediateS_high s imm rn hhigh hrn hexc0 hs0 hs1 hs2 hs3 hal he0 hel
+  have htt := arm8Next_addSubImmediateS_high t imm rn hhigh hrn hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  have hrnx : X (TN := 64) rn s = X (TN := 64) rn t := arm8X_congr_or_zero h rn
+  rw [hss, htt]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simp [h.pc]
+  · exact h.reg
+  · simp only [h.pstate, hrnx]
+  · simp [h.sctlr]
+  · simp [h.tcr]
+  · simp [h.exc]
+  · intro a ha
+    exact h.mem a ha
 
 end Flapjack.Compiler.Encoders.Arm8.L3

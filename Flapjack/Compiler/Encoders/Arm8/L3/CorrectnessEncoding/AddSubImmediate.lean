@@ -368,4 +368,77 @@ theorem arm8_encoder_correct_binop_addsub_imm (op : Bool) (bop : HolBinop)
     change holAligned 2 (ms.PC + 4) = true
     exact hal4
 
+/-- The set-flags word for `AddSubImmediate@64` (`S := T`, the compare shape
+`arm8_ast` emits for the ordering `JumpCmp` forms). -/
+def arm8AddSubImmediateWordS (op : Bool) (hi : Bool) (imm12 : BitVec 12)
+    (rn rd : BitVec 5) : BitVec 32 :=
+  BitVec.setWidth 32 ((1 : BitVec 1) ++
+    BitVec.setWidth 31 (holV2w 1 [op] ++
+      BitVec.setWidth 30 (holV2w 1 [true] ++
+        BitVec.setWidth 29 ((BitVec.ofNat 7 (if hi then 69 else 68)) ++
+          BitVec.setWidth 22 (imm12 ++ BitVec.setWidth 10 (rn ++ rd))))))
+
+/-- The two-branch body of the rendered `e_data` for the set-flags
+`AddSubImmediate@64`. -/
+theorem arm8EData_addSubImmediateS (op : Bool) (imm : BitVec 64) (rn rd : BitVec 5) :
+    e_data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd)) =
+      (if ((imm &&& ~~~(4095 : BitVec 64)) == (0 : BitVec 64)) then
+        MachineCode.ARM8 (arm8AddSubImmediateWordS op false (holWordExtract 12 11 0 imm) rn rd)
+      else if ((imm &&& ~~~(16773120 : BitVec 64)) == (0 : BitVec 64)) then
+        MachineCode.ARM8 (arm8AddSubImmediateWordS op true (holWordExtract 12 23 12 imm) rn rd)
+      else MachineCode.BadCode [BitVec.ofNat 8 65, BitVec.ofNat 8 100, BitVec.ofNat 8 100,
+        BitVec.ofNat 8 83, BitVec.ofNat 8 117, BitVec.ofNat 8 98, BitVec.ofNat 8 73,
+        BitVec.ofNat 8 109, BitVec.ofNat 8 109, BitVec.ofNat 8 101, BitVec.ofNat 8 100,
+        BitVec.ofNat 8 105, BitVec.ofNat 8 97, BitVec.ofNat 8 116, BitVec.ofNat 8 101]) := rfl
+
+/-- `Encode` of a set-flags immediate that fits the low twelve bits. -/
+theorem arm8Encode_addSubImmediateS_low (op : Bool) (imm : BitVec 64) (rn rd : BitVec 5)
+    (hlow : imm &&& ~~~(4095 : BitVec 64) = (0 : BitVec 64)) :
+    Encode (.Data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd))) =
+      MachineCode.ARM8 (arm8AddSubImmediateWordS op false (holWordExtract 12 11 0 imm) rn rd) := by
+  have hc : ((imm &&& ~~~(4095 : BitVec 64)) == (0 : BitVec 64)) = true := by
+    rw [beq_iff_eq]; exact hlow
+  rw [show Encode (.Data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd))) =
+      e_data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd)) from rfl,
+    arm8EData_addSubImmediateS, hc]
+  rw [if_pos rfl]
+
+/-- `Encode` of a set-flags immediate whose twelve bits are shifted by twelve. -/
+theorem arm8Encode_addSubImmediateS_high (op : Bool) (imm : BitVec 64) (rn rd : BitVec 5)
+    (hne : ¬ ((imm &&& ~~~(4095 : BitVec 64)) == (0 : BitVec 64)) = true)
+    (hhigh : imm &&& ~~~(16773120 : BitVec 64) = (0 : BitVec 64)) :
+    Encode (.Data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd))) =
+      MachineCode.ARM8 (arm8AddSubImmediateWordS op true (holWordExtract 12 23 12 imm) rn rd) := by
+  have hc2 : ((imm &&& ~~~(16773120 : BitVec 64)) == (0 : BitVec 64)) = true := by
+    rw [beq_iff_eq]; exact hhigh
+  rw [show Encode (.Data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd))) =
+      e_data (.«AddSubImmediate@64» (1, op, true, imm, rn, rd)) from rfl,
+    arm8EData_addSubImmediateS, hc2, if_neg hne]
+  rw [if_pos rfl]
+
+/-- The rendered `Decode` inverts the set-flags low-immediate word. -/
+theorem arm8Decode_addSubImmediateS_low (op : Bool) (imm : BitVec 64) (rn rd : BitVec 5)
+    (hlow : imm &&& ~~~(4095 : BitVec 64) = (0 : BitVec 64)) :
+    Decode (arm8AddSubImmediateWordS op false (holWordExtract 12 11 0 imm) rn rd) =
+      instruction.Data (Data.«AddSubImmediate@64» (1, op, true, imm, rn, rd)) := by
+  have himm := arm8AddSubImmediate_low_eq imm hlow
+  simp only [arm8AddSubImmediateWordS, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  cases op <;>
+    simp [holV2w_two_zero, holV2w_five, holV2w_twelve,
+      arm8HolV2w_one_false, arm8HolV2w_one_true, himm]
+
+/-- The rendered `Decode` inverts the set-flags high-immediate word. -/
+theorem arm8Decode_addSubImmediateS_high (op : Bool) (imm : BitVec 64) (rn rd : BitVec 5)
+    (hhigh : imm &&& ~~~(16773120 : BitVec 64) = (0 : BitVec 64)) :
+    Decode (arm8AddSubImmediateWordS op true (holWordExtract 12 23 12 imm) rn rd) =
+      instruction.Data (Data.«AddSubImmediate@64» (1, op, true, imm, rn, rd)) := by
+  have himm := arm8AddSubImmediate_high_eq imm hhigh
+  simp only [arm8AddSubImmediateWordS, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  cases op <;>
+    simp [arm8HolV2w_two_one, holV2w_five, holV2w_twelve,
+      arm8HolV2w_one_false, arm8HolV2w_one_true] <;>
+    exact himm
+
 end Flapjack.Compiler.Encoders.Arm8.L3
