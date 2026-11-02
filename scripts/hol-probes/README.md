@@ -1,3 +1,8 @@
+`source_to_flat_mapi_probe.out` captures the inferred types and statements of
+`mapi_map` and `FILTER_MAPi_ID` from the pinned source-to-flat proof. Their
+Lean counterparts establish the corresponding indexed-map and filtering
+identities; the capture supports source review, not pass correctness.
+
 `data_to_word_fragment_comp_probe.out` captures the inferred type of the
 original `data_to_word$comp` and representative 64-bit results for nested
 control flow, numeric constants, Boolean operations, nullary constructor tests,

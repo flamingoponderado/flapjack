@@ -112719,6 +112719,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "mapi_map",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileExp.lean",
+    "lean_name": "mapIdx_map",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: source_to_flat_mapi_probe records the original universally quantified theorem and the three independent polymorphic element types. HOL MAPi and Lean List.mapIdx both start at zero and pass each position and element to the function, while HOL MAP and Lean List.map preserve order. The two equalities and argument order match; there are no hypotheses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "FILTER_MAPi_ID",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileExp.lean",
+    "lean_name": "filter_mapIdx_eq_self",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: source_to_flat_mapi_probe records independent source and mapped element types and the free Boolean predicate. HOL FILTER and Lean List.filter retain elements satisfying that predicate, and MAPi and List.mapIdx use the same zero-based index. The bounded HOL EL is Lean's indexed lookup with the bound provided as a proof; both directions quantify every in-range index, and neither statement has other premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "bind_locals_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindLocals.lean",
     "lean_name": "bindLocals",

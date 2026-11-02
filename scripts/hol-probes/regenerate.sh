@@ -271,6 +271,10 @@ run_probe() {
   done
 }
 
+run_probe source_to_flat_mapi_probeScript.sml source_to_flat_mapi_probe.out \
+  mapi_map_typed filter_mapi_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe clos_to_bvl_incremental_probeScript.sml clos_to_bvl_incremental_probe.out \
   incremental_aux incremental_empty incremental_closure incremental_mti_aux incremental_mti_empty incremental_call_closure incremental_call_mti incremental_known_globals incremental_known_default \
   "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
