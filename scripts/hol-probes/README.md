@@ -1,3 +1,13 @@
+`data_to_word_fragment_comp_probe.out` captures the inferred type of the
+original `data_to_word$comp` and representative 64-bit results for nested
+control flow, numeric constants, Boolean operations, nullary constructor tests,
+and label/global-pointer assignments. `DataToWordFragmentCompilerParity.lean`
+checks the same results in Lean, and `fragmentCompile64_agrees` proves that the
+source-shaped fragment traversal agrees with the executed compiler for every
+program in `VerifiedFragment`. These are partial correspondence evidence, not
+a proof of equivalence with the complete HOL compiler. Regenerate with
+`HOL_PROBE_ONLY=data_to_word_fragment_comp_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `clos_mti_collect_args_probe.out` captures the typed original argument and
 application collectors and replays the nested function/application definitions,
 accumulator lemmas, syntax preservation and reconstruction invariants. Regenerate with

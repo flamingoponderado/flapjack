@@ -559,6 +559,9 @@ run_probe mti_ops_word_probeScript.sml mti_ops_word_probe.out \
 run_probe tmc_ops_word_probeScript.sml tmc_ops_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe data_to_word_fragment_comp_probeScript.sml data_to_word_fragment_comp_probe.out \
+  comp_type fragment "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
 run_probe tmc_program_word_probeScript.sml tmc_program_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
