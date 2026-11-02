@@ -227,6 +227,23 @@ def structured_source(rng):
         f'local datatype t = A int | B in fun f x = case x of A y => y | B => {a}; val y = f (A {b}) end;',
         f'fun f (a,b,c) = fn (x,y) => (c,b,a,y,x); val y = f ({a},{b},{c}) ({b},{a});',
         f'val x = let val x = {a} in let val y = fn z => (x,z) in y {b} end end;',
+        f'fun even xs = case xs of [] => True | x::rest => odd rest '
+        f'and odd xs = case xs of [] => False | x::rest => even rest; '
+        f'val y = if even [{a},{b},{c}] then {b} else {c};',
+        f'fun make x = let fun f y z = (x,y,z) in f end; '
+        f'val y = make {a} {b} {c};',
+        f'datatype t = A int | B t t; '
+        f'fun fold f x = case x of A n => f n | B l r => fold f l; '
+        f'val y = fold (fn n => (n,{a})) (B (A {b}) (A {c}));',
+        f'exception E int; exception F int; '
+        f'fun f x = ((raise E x) handle E n => raise F n) '
+        f'handle F n => (n,{b}); val y = f {c};',
+        f'structure A = struct val x = {a}; fun f y = (x,y) end; '
+        f'structure B = struct val x = A.f {b}; fun f y = (x,A.f y) end; '
+        f'val y = B.f {c};',
+        f'fun f xs = case xs of [] => {a} | x::rest => '
+        f'(case rest of [] => x | y::tail => y); '
+        f'val y = f [{a},{b},{c}];',
     ])
 
 
