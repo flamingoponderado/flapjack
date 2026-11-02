@@ -13,7 +13,7 @@ HOL development or ready for production use.
 
 The intended target is Pancake source compiled to RISC-V. An experimental second
 backend compiles to MIPS32 (little-endian MIPS32r2) for the Ziren zkVM; item 9
-describes its separate trust base. Other backends are out of scope. The CakeML checkout in `cakeml` is the reference for
+describes its separate trust base. An experimental x86-64 backend targets the CakeML x64 assembly; item 11 describes its trust base. Other backends are out of scope. The CakeML checkout in `cakeml` is the reference for
 the ASTs, pass ordering, semantics, compiler, and correctness theorem. The
 current source-facing command is documented in the repository README and is
 implemented by `Flapjack.CompileMain`.
@@ -312,6 +312,53 @@ The following are open review or verification obligations:
       not yet provide; `asr` is only a word64 specialization of HOL's library
       `word_asr_n2w`. The Flapjack `encoderCorrect arm8Target` theorem is a
       closed-subset analogue, not the HOL L3 theorem.
+
+11. The x86-64 backend emits byte-identical machine code to the original
+    CakeML x64 target, and its correctness theorem is proved against a closed
+    model of the emitted instruction subset, not CakeML's L3 x86-64 semantics.
+    - **What is checked.** `flapjack-compile --target=x64` emits exactly the
+      same code bytes as `cake --pancake --target=x64` for the checked-in
+      corpus in `scripts/x64/parity/` (24 fixtures), for 1500 differentially
+      fuzzed programs, and for the 244 standalone Pancake programs embedded in
+      `cakeml/pancake/**/*.sml`, of which 87 are accepted by the original
+      compiler and therefore actually compared. `scripts/x64/check-parity.py` exits 0 against
+      the original `cake` binary, and the executed `flapjack-compile
+      --target=x64` reproduces every checked-in fixture. `Flapjack/Compiler/
+      Encoders/X64/Machine/` defines a closed machine model for the emitted
+      instruction forms; `TargetProof.lean` proves `encOk x64Config` and
+      `targetOk x64Target`, the decoder inverses are complete for the emitted
+      subset, and `Machine/Complete.lean` proves `x64EncoderCorrect :
+      encoderCorrect x64Target` from `targetOk` and all 42 instruction cases.
+      `Pancake/Proofs/PanToTarget/X64Instance.lean` instantiates
+      `panToTargetCompileSemantics` at the closed model with `backendConfigOk`
+      and the machine-config facts discharged, and
+      `X64NativeCLICorrect.lean`'s `x64CLIOutput_correct` connects every
+      successful `flapjack-compile --target=x64` run to the Pancake semantics
+      of the parsed declarations under the original non-configuration
+      premises. These theorems use no native computation: their axiom
+      footprint is exactly `propext`, `Classical.choice`, `Quot.sound`.
+    - **What is not checked.** The closed model is not CakeML's full L3
+      x86-64 semantics: `x64EncoderCorrect` is Flapjack's closed-subset
+      analogue of HOL's per-target theorem, not a port of it, so the model's
+      faithfulness to real x86-64 execution remains an external assumption; the
+      parity evidence above does not establish it, because it compares emitted
+      bytes rather than model execution. Flags are modelled per
+      emitted instruction rather than by an L3 `Run` port, `div` failure and
+      `comisd` unordered handling are approximated, and SSE `min`/`max` are
+      approximated; floating-point results use `holFp64*` and therefore agree
+      with the source semantics by construction, not by a model refinement.
+      Unknown instruction words set `failed`. The parity evidence compares
+      emitted assembly and bytes only: it does not run the closed model against
+      CakeML's L3 `NextStateX64` or against hardware, so it cannot establish a
+      semantic connection between them. No refinement relation from the closed
+      model to the L3 model is proved or claimed, and `x64EncoderCorrect` is a
+      theorem about the closed model alone. CakeML's L3 x86-64 model
+      (`HOL/examples/l3-machine-code/x64/model/x64Script.sml`) — its
+      `NextStateX64` transition, the `x64_ok` MXCSR and exception validity
+      condition, and the full instruction semantics — is not ported, so this is
+      not the HOL `x64_encoder_correct` theorem. No `@[hol]` tag is claimed for
+      any declaration in the machine model, and no `reviewed_*` row for it is
+      present in `docs/HOL-THEOREM-MAP.json`.
 
 ## Stack bounds and liveness
 

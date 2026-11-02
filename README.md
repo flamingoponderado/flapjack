@@ -36,7 +36,12 @@ Flapjack is an in-progress Lean 4 port of the formally verified Pancake compiler
   full L3 semantics) and instantiates the Pancake-to-machine-code theorem at
   that model; see [`docs/ARM8.md`](docs/ARM8.md) and
   [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) item 10.
-- Other backends, including 32-bit ARM and x86, have not yet been ported to Lean.
+- An x86-64 backend follows CakeML's `x64` target. Its source-to-assembly
+  output is byte-for-byte parity-tested against the original Pancake compiler.
+  The machine model is a closed model for the emitted instruction subset, not a
+  port of CakeML's full L3 x86-64 semantics; see [`docs/X64.md`](docs/X64.md).
+- Other backends, including 32-bit ARM and 32-bit x86, have not yet been ported
+  to Lean.
 - The CakeML front end has not been ported to Lean.
 
 The Lean specifications and their implications still require independent review. See
@@ -86,6 +91,13 @@ same, and the assembly frame is a `mipsel` GNU assembler file
 
 ```sh
 lake exe flapjack-compile --target=mips32 program.pnk > program.mips32.S
+```
+
+For the x86-64 target, pass `--target=x64`; the output is a GNU x86-64
+assembler file in CakeML's `x64_export` frame (see [`docs/X64.md`](docs/X64.md)):
+
+```sh
+lake exe flapjack-compile --target=x64 program.pnk > program.x64.S
 ```
 
 The original reference compiler can be run locally with:
