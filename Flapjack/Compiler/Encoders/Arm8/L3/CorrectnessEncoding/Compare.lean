@@ -9,8 +9,8 @@ set_option maxRecDepth 10000
 `arm8_ast` uses this instruction in the `addCarry` lowering
 (`ConditionalCompareImmediate@64 (1, false, 0, 0, (false, false, true, false),
 resultCarry)`): it compares `resultCarry` with zero and stores the resulting
-condition flags.  This module records the word, the `e_sf` field and the `Run`
-semantics; the conditional `e_data` and the decoder inverse are still open.
+condition flags.  This module records the word, the `e_sf` field, the `Run` semantics and the
+decoder inverse; the conditional `e_data` equation is still open.
 -/
 
 namespace Flapjack.Compiler.Encoders.Arm8.L3
@@ -55,5 +55,17 @@ theorem arm8Run_conditionalCompare (opc : Bool) (imm : BitVec 64) (cd : BitVec 4
             | (_u_, flags) => SetTheFlags (true, flags) st))
        else SetTheFlags (true, (n, (z, (c, v)))) st) := by
   simp only [Run, «dfn'ConditionalCompareImmediate»]
+
+
+/-- The rendered `Decode` inverts `arm8ConditionalCompareWord` for the
+`opc = false` and `nzcv = (false, false, true, false)` form used by `arm8_ast`. -/
+theorem arm8Decode_conditionalCompare (imm5 : BitVec 5) (cd : BitVec 4) (rn : BitVec 5) :
+    Decode (arm8ConditionalCompareWord false imm5 cd false false true false rn) =
+      instruction.Data (Data.«ConditionalCompareImmediate@64»
+        ((1 : BitVec 64), (false, (BitVec.setWidth 64 imm5,
+          (cd, ((false, (false, (true, false))), rn)))))) := by
+  simp only [arm8ConditionalCompareWord, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_one_false, holV2w_one_true, holV2w_four, holV2w_five]
 
 end Flapjack.Compiler.Encoders.Arm8.L3
