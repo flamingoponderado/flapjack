@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectApps
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+import Mathlib.Data.List.Induction
 
 /-! Application-reconstruction lemmas for the current Lean closure evaluator.
 These are untagged until the evaluator and its carriers are reviewed against HOL. -/
@@ -119,6 +120,135 @@ theorem evaluateApps_snoc_badClosure {C F : Type} (args : List ClosSem.Value)
     split <;> simp_all
   rw [evaluateApps_snoc]
   rw [badApp]
+
+/-- Applying one argument to a unary closure whose body is another function
+captures that argument and consumes one clock tick. This is a property of the
+current Lean evaluator, whose HOL correspondence remains open. -/
+theorem evaluateApp_nestedFn {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (body : ClosLang.Exp) (env : List ClosSem.Value) (x : ClosSem.Value)
+    (state : ClosSem.State C F) (maxApp : 1 ≤ state.maxApp) (clock : 1 ≤ state.clock) :
+    ClosSem.evaluateApp none (.closure none [] env 1 (.fn name none none 1 body)) [x] state =
+      (.val [.closure none [] (x :: env) 1 body], ClosSem.decClock 1 state) := by
+  rw [ClosSem.evaluateApp]
+  split
+  · simp_all [ClosSem.destClosure, ClosSem.checkLoc]
+  · simp_all [ClosSem.destClosure, ClosSem.checkLoc]
+  · rename_i expression captured rest found
+    simp [ClosSem.destClosure, ClosSem.checkLoc, maxApp] at found
+    obtain ⟨rfl, rfl, rfl⟩ := found
+    have nonzero : state.clock ≠ 0 := by omega
+    simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.decClock, maxApp, nonzero,
+      ClosSem.evaluateApp]
+
+/-- Applying no more arguments than there are nested unary functions captures
+them in order and consumes one tick per argument. This is stated over the
+current Lean evaluator, pending its HOL correspondence review. -/
+theorem evaluateApps_nestedFns_short {C F : Type} (args : List ClosSem.Value)
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (body : ClosLang.Exp)
+    (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (clock : args.length ≤ state.clock) (lengths : args.length ≤ names.length)
+    (maxApp : 1 ≤ state.maxApp) :
+    evaluateApps (.closure none [] env 1 (mkFns names body)) args state =
+      (.val [.closure none [] (args ++ env) 1 (mkFns (names.drop args.length) body)],
+        ClosSem.decClock args.length state) := by
+  induction args using List.reverseRecOn generalizing names env state with
+  | nil => simp [evaluateApps, ClosSem.decClock]
+  | append_singleton args x ih =>
+    cases names with
+    | nil => simp at lengths
+    | cons name names =>
+      have clockOne : 1 ≤ state.clock := by simp at clock; omega
+      have tailClock : args.length ≤ (ClosSem.decClock 1 state).clock := by
+        simp [ClosSem.decClock] at *; omega
+      have tailLength : args.length ≤ names.length := by simp at lengths; omega
+      have tailMax : 1 ≤ (ClosSem.decClock 1 state).maxApp := by
+        simpa [ClosSem.decClock] using maxApp
+      rw [evaluateApps_snoc]
+      simp only [mkFns]
+      rw [evaluateApp_nestedFn name (mkFns names body) env x state maxApp clockOne]
+      simp only
+      rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
+      simp [List.length_append, ClosSem.decClock, List.append_assoc, Nat.sub_sub,
+        Nat.add_comm]
+
+/-- A unary closure application with no remaining clock times out before
+evaluating its body. -/
+theorem evaluateApp_unary_timeout {C F : Type}
+    (body : ClosLang.Exp) (env : List ClosSem.Value) (x : ClosSem.Value)
+    (state : ClosSem.State C F) (maxApp : 1 ≤ state.maxApp) (clock : state.clock = 0) :
+    ClosSem.evaluateApp none (.closure none [] env 1 body) [x] state =
+      (.err (.abort .timeoutError), { state with clock := 0 }) := by
+  rw [ClosSem.evaluateApp]
+  split
+  · simp_all [ClosSem.destClosure, ClosSem.checkLoc]
+  · simp_all [ClosSem.destClosure, ClosSem.checkLoc]
+  · rename_i expression captured rest found
+    simp [ClosSem.destClosure, ClosSem.checkLoc, maxApp] at found
+    obtain ⟨rfl, rfl, rfl⟩ := found
+    simp [clock]
+
+/-- If the clock runs out while consuming nested unary functions, the
+reconstructed chain returns the timeout and leaves its clock at zero. -/
+theorem evaluateApps_nestedFns_timeout {C F : Type} (args : List ClosSem.Value)
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (body : ClosLang.Exp)
+    (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (clock : state.clock < args.length) (lengths : args.length ≤ names.length)
+    (maxApp : 1 ≤ state.maxApp) :
+    evaluateApps (.closure none [] env 1 (mkFns names body)) args state =
+      (.err (.abort .timeoutError), { state with clock := 0 }) := by
+  induction args using List.reverseRecOn generalizing names env state with
+  | nil => simp at clock
+  | append_singleton args x ih =>
+    cases names with
+    | nil => simp at lengths
+    | cons name names =>
+      rw [evaluateApps_snoc]
+      simp only [mkFns]
+      by_cases zero : state.clock = 0
+      · rw [evaluateApp_unary_timeout (.fn name none none 1 (mkFns names body)) env x state maxApp zero]
+      · have clockOne : 1 ≤ state.clock := by omega
+        have tailClock : (ClosSem.decClock 1 state).clock < args.length := by
+          simp [ClosSem.decClock] at *; omega
+        have tailLength : args.length ≤ names.length := by simp at lengths; omega
+        have tailMax : 1 ≤ (ClosSem.decClock 1 state).maxApp := by
+          simpa [ClosSem.decClock] using maxApp
+        rw [evaluateApp_nestedFn name (mkFns names body) env x state maxApp clockOne]
+        simp only
+        rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
+        simp [ClosSem.decClock]
+
+/-- Timeout also occurs before reaching the final body when there are more
+arguments than nested functions and the clock is no larger than their count. -/
+theorem evaluateApps_nestedFns_timeout_long {C F : Type} (args : List ClosSem.Value)
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (body : ClosLang.Exp)
+    (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (clock : state.clock ≤ names.length) (lengths : names.length < args.length)
+    (maxApp : 1 ≤ state.maxApp) :
+    evaluateApps (.closure none [] env 1 (mkFns names body)) args state =
+      (.err (.abort .timeoutError), { state with clock := 0 }) := by
+  induction args using List.reverseRecOn generalizing names env state with
+  | nil => simp at lengths
+  | append_singleton args x ih =>
+    rw [evaluateApps_snoc]
+    cases names with
+    | nil =>
+      have zero : state.clock = 0 := by simp at clock; omega
+      simp only [mkFns]
+      rw [evaluateApp_unary_timeout body env x state maxApp zero]
+    | cons name names =>
+      simp only [mkFns]
+      by_cases zero : state.clock = 0
+      · rw [evaluateApp_unary_timeout (.fn name none none 1 (mkFns names body)) env x state maxApp zero]
+      · have clockOne : 1 ≤ state.clock := by omega
+        have tailClock : (ClosSem.decClock 1 state).clock ≤ names.length := by
+          simp [ClosSem.decClock] at *; omega
+        have tailLength : names.length < args.length := by simp at lengths; omega
+        have tailMax : 1 ≤ (ClosSem.decClock 1 state).maxApp := by
+          simpa [ClosSem.decClock] using maxApp
+        rw [evaluateApp_nestedFn name (mkFns names body) env x state maxApp clockOne]
+        simp only
+        rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
+        simp [ClosSem.decClock]
 
 /-- Reconstructed applications propagate an error from their argument list.
 This is a Lean-side evaluator property; HOL correspondence is still pending. -/
