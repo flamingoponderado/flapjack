@@ -37,4 +37,28 @@ example {C F : Type} (s : State C F) :
     doApp { s with refs := [.w8array [1, 2, 3, 4]] } (.src .copyAw8Aw8)
       [.loc true 0, .litv (.intLit 0), .litv (.intLit 3), .loc true 0, .litv (.intLit 1)] =
       some ({ s with refs := [.w8array [1, 1, 2, 3]] }, .val unitValue) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp { s with refs := [.w8array [0, 0, 0]] } (.src .copyStrAw8)
+      [.litv (.strLit (ofString "ABC")), .litv (.intLit 1), .litv (.intLit 2),
+        .loc true 0, .litv (.intLit 1)] =
+      some ({ s with refs := [.w8array [0, 66, 67]] }, .val unitValue) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp { s with refs := [.w8array [0, 65, 255]] } (.src .copyAw8Str)
+      [.loc true 0, .litv (.intLit 1), .litv (.intLit 2)] =
+      some ({ s with refs := [.w8array [0, 65, 255]] }, .val (.litv (.strLit (.implode [65, 255])))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp { s with refs := [.w8array [0]] } (.src .copyStrAw8)
+      [.litv (.strLit (ofString "A")), .litv (.intLit 0), .litv (.intLit 1),
+        .loc true 0, .litv (.intLit (-1))] =
+      some ({ s with refs := [.w8array [0]] }, .err (.raise subscriptExnV)) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp { s with refs := [.refv (.litv (.intLit 1))] } (.src .copyAw8Str)
+      [.loc true 0, .litv (.intLit 0), .litv (.intLit 1)] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp { s with refs := [.w8array [3, 5, 7]] } (.src .xorAw8StrUnsafe)
+      [.loc true 0, .litv (.strLit (ofString "AB"))] =
+      some ({ s with refs := [.w8array [66, 71, 7]] }, .val unitValue) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp { s with refs := [.w8array [3]] } (.src .xorAw8StrUnsafe)
+      [.loc true 0, .litv (.strLit (ofString "AB"))] = none := by rfl
 end Flapjack.Test.CakeFlatSemApplyCompleteParity

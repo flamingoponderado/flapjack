@@ -328,7 +328,7 @@ run_probe cake_flat_sem_evaluate_probeScript.sml cake_flat_sem_evaluate_probe.ou
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe cake_flat_sem_apply_probeScript.sml cake_flat_sem_apply_probe.out \
-  do_app_typed global_alloc global_init global_reinit global_lookup global_missing tag_match tag_mismatch tuple_length field_index ref_field ref_bad_index identity ref_alloc ref_assign byte_safe_oob byte_unsafe_oob array_negative array_update array_wrong_store data_strlen data_strsub_negative data_vector_sub data_vector_unsafe data_copy data_copy_oob data_thunk_alloc numeric_shift data_copy_overlap \
+  do_app_typed global_alloc global_init global_reinit global_lookup global_missing tag_match tag_mismatch tuple_length field_index ref_field ref_bad_index identity ref_alloc ref_assign byte_safe_oob byte_unsafe_oob array_negative array_update array_wrong_store data_strlen data_strsub_negative data_vector_sub data_vector_unsafe data_copy data_copy_oob data_thunk_alloc numeric_shift data_copy_overlap data_copy_string_to_bytes data_copy_bytes_to_string data_copy_negative_dest data_copy_wrong_store data_xor_bytes data_xor_short \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_int_probeScript.sml clos_sem_int_probe.out \
@@ -710,7 +710,7 @@ run_probe cake_source_control_probeScript.sml cake_source_control_probe.out \
   if_type combine_type if_true if_false if_invalid and_true and_false constructors duplicates failure "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_array_probeScript.sml cake_source_array_probe.out \
-  copy_type slice dest negative_offset negative_length src_short dest_short dest_negative endpoint bytes "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+  copy_type words_to_chars_type chars_to_words_type words_to_chars_def chars_to_words_def slice dest negative_offset negative_length src_short dest_short dest_negative endpoint bytes "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_primitive_probeScript.sml cake_source_primitive_probe.out \
   check_type shift8_type shift64_type bool_ok bool_bad word_ok word_bad lsl8 lsr8 asr8 ror8 asr64 ror64 "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"

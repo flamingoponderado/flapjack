@@ -1,4 +1,8 @@
 copy_type=:α list # int -> int -> (α list # int) option -> α list option
+words_to_chars_type=:word8 list -> string
+chars_to_words_type=:string -> word8 list
+words_to_chars_def=⊢ ∀(ws :word8 list). ws_to_chars ws = MAP (λ(w :word8). CHR (w2n w)) ws
+chars_to_words_def=⊢ ∀(cs :string). chars_to_ws cs = MAP (λ(c :char). (i2w ((&ORD c) :int) :word8)) cs
 slice=SOME [(2 :num); (3 :num)]
 dest=SOME [(9 :num); (2 :num); (3 :num); (9 :num)]
 negative_offset=(NONE :num list option)

@@ -1,5 +1,50 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyCopySource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_copyStrStr_source",
+    "reviewer": "Compared the corresponding complete typed HOL do_app case and fallback for arbitrary argument lists. The exact three string and integer arguments feed the reviewed copy_array; a failed copy raises the subscript exception and a successful copy returns the selected string. HolChar and word8 are the reviewed canonical eight-bit carriers, so the source ORD/CHR word conversions preserve their byte values. Independent compiler and FFI state types are retained. Other dispatcher cases remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyCopySource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_copyStrAw8_source",
+    "reviewer": "Compared the corresponding complete typed HOL do_app case and fallback for arbitrary argument lists. The five source arguments require a destination byte array, convert its bytes to characters, and update it only after a successful bounded copy. Invalid bounds raise the subscript exception, and missing or wrong stores fail. HolChar and word8 are the reviewed canonical eight-bit carriers, so the source ORD/CHR word conversions preserve their byte values. Independent compiler and FFI state types are retained. Other dispatcher cases remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyCopySource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_copyAw8Str_source",
+    "reviewer": "Compared the corresponding complete typed HOL do_app case and fallback for arbitrary argument lists. The source location must contain a byte array; the selected byte range is converted to a string or a subscript exception is raised. HolChar and word8 are the reviewed canonical eight-bit carriers, so the source ORD/CHR word conversions preserve their byte values. Independent compiler and FFI state types are retained. Other dispatcher cases remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyCopySource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_copyAw8Aw8_source",
+    "reviewer": "Compared the corresponding complete typed HOL do_app case and fallback for arbitrary argument lists. Both locations must contain byte arrays; copy_array reads the original source and destination snapshots, so overlapping copies preserve the HOL behavior, then store_assign commits the result. HolChar and word8 are the reviewed canonical eight-bit carriers, so the source ORD/CHR word conversions preserve their byte values. Independent compiler and FFI state types are retained. Other dispatcher cases remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyCopySource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_xorAw8StrUnsafe_source",
+    "reviewer": "Compared the corresponding complete typed HOL do_app case and fallback for arbitrary argument lists. The source string bytes XOR the destination prefix; a short or missing destination fails, and the reviewed xorBytes retains the unchanged destination suffix. HolChar and word8 are the reviewed canonical eight-bit carriers, so the source ORD/CHR word conversions preserve their byte values. Independent compiler and FFI state types are retained. Other dispatcher cases remain separate."
+  },
+  {
     "statement_status": "reviewed_exact",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/StoreSource.lean",
     "lean_name": "storeLookup_source",
@@ -110289,8 +110334,8 @@
     "hol_name": "chars_to_ws_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Array.lean",
     "lean_name": "charsToWords",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed HOL char-list to word8-list map: each result is the eight-bit word of ORD. Under the reviewed HolChar convention, each character is its canonical eight-bit value, so the conversion is identity. The probe captures the typed source equation and endpoint bytes."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110305,8 +110350,8 @@
     "hol_name": "ws_to_chars_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Array.lean",
     "lean_name": "wordsToChars",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed HOL word8-list to char-list map: each character is CHR of the word ordinal. Under the reviewed HolChar convention, both are canonical eight-bit values and that conversion preserves every bit. The probe captures the typed source equation and endpoint bytes."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
