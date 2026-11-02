@@ -230,6 +230,34 @@ def backend_options(rng):
     return [rng.choice(group) for group in rng.sample(groups, rng.randrange(1, 5))]
 
 
+def config_mutations(rng):
+    """Exercise configuration validation and first-occurrence precedence."""
+    values = {
+        'multi': ['true', 'false', 'True', '', '1'],
+        'known': ['true', 'false', 'bad'], 'call': ['true', 'false', 'bad'],
+        'max_app': ['0', '1', '3', 'bad', ''],
+        'inline_factor': ['0', '1', '2', 'bad', ''],
+        'max_body_size': ['0', '1', '2', 'bad', ''],
+        'tag_bits': ['0', '1', '2', 'bad', ''],
+        'len_bits': ['0', '1', '8', 'bad', ''],
+        'pad_bits': ['0', '1', '2', 'bad', ''],
+        'len_size': ['0', '1', '8', 'bad', ''],
+        'hash_size': ['0', '1', '9', 'bad', ''],
+        'gc': ['none', 'simple', 'gen', 'gen1', 'gen0,2', 'bad'],
+        'reg_alg': ['0', '1', '2', '4', 'bad', ''],
+        'jump': ['true', 'false', 'bad'],
+        'main_return': ['true', 'false', 'bad'],
+        'split': ['true', 'false', 'bad'],
+        'exp_cut': ['0', '1', 'bad', ''],
+        'inline_size': ['0', '1', 'bad', ''],
+    }
+    flags = []
+    for _ in range(rng.randrange(1, 4)):
+        name = rng.choice(list(values))
+        flags.append(f'--{name}={rng.choice(values[name])}')
+    return flags
+
+
 def mutated_source(rng):
     """Make one reproducible insertion, deletion, or replacement in source."""
     source = rng.choice([
@@ -350,6 +378,8 @@ def main():
                        help='compare generated nested closures, bindings and patterns')
     modes.add_argument('--backend-options', action='store_true',
                        help='compare accepted programs with varied backend options')
+    modes.add_argument('--config-mutations', action='store_true',
+                       help='compare successful and rejected configuration combinations')
     modes.add_argument('--display-mutations', action='store_true',
                        help='compare type and S-expression display output for mutated source and bytes')
     modes.add_argument('--sexp-mutations', action='store_true',
@@ -382,10 +412,12 @@ def main():
     for index in range(count):
         extra_flags = (['--sexp=true', rng.choice(['--types', '--print_sexp', '--skip_type_inference=true'])]
                        if args.sexp_mutations else backend_options(rng) if args.backend_options else
+                       config_mutations(rng) if args.config_mutations else
                        rng.choice([['--types'], ['--print_sexp'], ['--types', '--print_sexp'],
                                    ['--print_sexp', '--skip_type_inference=true']])
                        if args.display_mutations else [])
         source = (sexp_mutated_source(rng, sexp_seeds) if args.sexp_mutations else
+                  'val x = 1;' if args.config_mutations else
                   'fun f x y = let fun g z = (x,y,z) in g y end; val z = f 1 2;' if args.backend_options else
                   corpus[index][0] if args.corpus else
                   rng.choice([deep_mutated_source, unicode_mutated_source, byte_mutated_source])(rng) if args.display_mutations else
@@ -395,7 +427,7 @@ def main():
                   mutated_source(rng) if args.mutations else structured_source(rng) if args.structured else
                   rich_source(rng) if args.rich else
                   'fun f x = ' + expression(rng, rng.randrange(1, 4)) + '; val _ = print_int (f 2);')
-        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations or args.unicode_mutations or args.byte_mutations or args.structured or args.backend_options or args.display_mutations or args.sexp_mutations
+        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations or args.unicode_mutations or args.byte_mutations or args.structured or args.backend_options or args.config_mutations or args.display_mutations or args.sexp_mutations
         try:
             original = run(args.reference, source, args.timeout, exclude_prelude, extra_flags)
             candidate = run(args.cake, source, args.timeout, exclude_prelude, extra_flags)
@@ -404,7 +436,7 @@ def main():
         expected = (original.returncode, original.stdout, original.stderr)
         actual = (candidate.returncode, candidate.stdout, candidate.stderr)
         if ((args.corpus and original.returncode != corpus[index][1]) or
-                (not (args.mutations or args.deep_mutations or args.unicode_mutations or args.byte_mutations or args.display_mutations or args.sexp_mutations or args.corpus) and original.returncode != 0) or
+                (not (args.mutations or args.deep_mutations or args.unicode_mutations or args.byte_mutations or args.config_mutations or args.display_mutations or args.sexp_mutations or args.corpus) and original.returncode != 0) or
                 actual != expected):
             def describe(result):
                 return (f'exit={result.returncode} stdout_sha256={hashlib.sha256(result.stdout).hexdigest()} '

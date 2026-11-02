@@ -458,6 +458,21 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 Seed `287601` also matched 80 backend-option cases against the pinned compiler;
 seeds `93171` and `8740163` each matched 100.
 
+Use `--config-mutations` to compare successful and rejected combinations of
+numeric, Boolean, allocator and GC options, including repeated options and
+invalid values. It checks complete output, diagnostics and exit status with
+the prelude excluded:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --config-mutations --seed 482906 --count 200
+```
+
+This samples configuration handling; it does not establish parity for all
+combinations or programs. Seed `482906` matched 200 cases, including 15 with
+repeated option names. A separate structured-source run (seed `931816`, 60
+cases) and arbitrary-byte mutation run (seed `936331`, 500 cases) also matched
+the pinned compiler.
+
 Use `--display-mutations` to compare `--types`, `--print_sexp`, their
 combination, and S-expression output with type inference disabled. The input
 generator mutates nested declarations, Unicode and arbitrary bytes, and compares
