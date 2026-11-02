@@ -70,9 +70,7 @@ theorem arm8Run_multiplyHigh (u : Bool) (rm rn rd : BitVec 5) (st : arm8_state) 
 /-- The high half of the unsigned 128-bit product is `r / 2 ^ 64` with
 `r = a.toNat * b.toNat`. -/
 theorem arm8MultiplyHigh_high (a b : BitVec 64) :
-    holWordExtract 64 127 64
-      (ExtendWord (TM := 64) (TN := 128) (a, false) *
-        ExtendWord (TM := 64) (TN := 128) (b, false)) =
+    holWordExtract 64 127 64 (BitVec.setWidth 128 a * BitVec.setWidth 128 b) =
       BitVec.ofNat 64 ((a.toNat * b.toNat) / 2 ^ 64) := by
   have ha : (BitVec.setWidth 128 a).toNat = a.toNat := by
     rw [BitVec.toNat_setWidth]
@@ -89,7 +87,6 @@ theorem arm8MultiplyHigh_high (a b : BitVec 64) :
       = a.toNat * b.toNat % 2 ^ 128 := by
     rw [BitVec.toNat_mul, ha, hb]
   have hexp : min 127 (128 - 1) + 1 - 64 = 64 := by norm_num
-  simp only [ExtendWord, Bool.false_eq_true, if_false]
   simp only [Flapjack.RiscV.L3.holWordExtract, hprod, hexp]
   rw [Nat.mod_eq_of_lt hlt, Nat.shiftRight_eq_div_pow]
   rw [Nat.mod_eq_of_lt (by omega)]
@@ -368,5 +365,16 @@ theorem arm8EncodeBytes_multiplyAddSub (rm ra rn rd : BitVec 5) :
        BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn rd >>> 24).toNat)] := by
   unfold arm8Encode
   rw [arm8Encode_multiplyAddSub]
+
+
+/-- The value `MultiplyHigh` writes, read off the two source registers of a
+valid machine state. -/
+theorem arm8MultiplyHigh_extract (ms : arm8_state) (sl sr : Nat)
+    (hsl : sl < 32) (hsl31 : sl ≠ 31) (hsr : sr < 32) (hsr31 : sr ≠ 31) :
+    holWordExtract 64 127 64
+      (BitVec.setWidth 128 (X (TN := 64) (BitVec.ofNat 5 sl) ms) *
+        BitVec.setWidth 128 (X (TN := 64) (BitVec.ofNat 5 sr) ms)) =
+      BitVec.ofNat 64 ((ms.REG (BitVec.ofNat 5 sl)).toNat * (ms.REG (BitVec.ofNat 5 sr)).toNat / 2 ^ 64) := by
+  rw [arm8X_of_valid _ hsl31 hsl, arm8X_of_valid _ hsr31 hsr, arm8MultiplyHigh_high]
 
 end Flapjack.Compiler.Encoders.Arm8.L3
