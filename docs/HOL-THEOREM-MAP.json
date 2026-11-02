@@ -1,5 +1,37 @@
 [
   {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeOption_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexpopt_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured polymorphic option result, NONE branch, and existential SOME branch, including the proper constructor list and decoder equality."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "destString_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "odestSEXSTR_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both captured equivalences, the byte-oriented S-expression string constructor and exact mlstring carrier; the reverse direction uses the reviewed canonical control-decoding theorem."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeList_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexplist_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured polymorphic result type and existential proper-list encoding with the pointwise option-map equality."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodePair_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexppair_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both independent polymorphic result types, the four existential components, and all equality conjuncts in the captured statement."
+  },
+  {
     "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
     "lean_name": "typeDefsexp",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",

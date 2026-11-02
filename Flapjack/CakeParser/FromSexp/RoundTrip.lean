@@ -1,4 +1,4 @@
-import Flapjack.CakeParser.FromSexp.Control
+import Flapjack.CakeParser.FromSexp.Control.Canonical
 import Flapjack.CakeParser.FromSexp.Operators
 import Flapjack.CakeParser.FromSexp.Ast
 
@@ -36,6 +36,29 @@ theorem optsexp_injective (left right : Option Sexp) : optsexp left = optsexp ri
 theorem destString_sexstr (bytes : List HolChar) : destString (sexstr bytes) = some (.implode bytes) := by
   simp [destString, sexstr, decode_encode_control]
 
+/-- Successful string decoding accepts exactly the canonical encoding. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "odestSEXSTR_SOME"]
+theorem destString_some (s : Sexp) (y : MlString) :
+    (destString s = some y ↔ s = sexstr y.explode) ∧
+    (some y = destString s ↔ s = sexstr y.explode) := by
+  have forward : destString s = some y → s = sexstr y.explode := by
+    intro h
+    cases s with
+    | str bytes =>
+      cases hd : decodeControl bytes with
+      | none => simp [destString, hd] at h
+      | some decoded =>
+        simp [destString, hd] at h
+        subst y
+        simp [sexstr, encode_decode_control bytes decoded hd]
+    | sym _ | num _ | cons _ _ => simp [destString] at h
+  have backward : s = sexstr y.explode → destString s = some y := by
+    intro h
+    subst s
+    cases y with
+    | implode bytes => exact destString_sexstr bytes
+  exact ⟨⟨forward, backward⟩, ⟨fun h => forward h.symm, fun h => (backward h).symm⟩⟩
+
 /-- Decoding an encoded identifier returns the original identifier. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpid_odestSEXSTR_idsexp"]
 theorem decodeId_idsexp (id : Ident MlString MlString) : decodeId destString (idsexp id) = some id := by
@@ -66,6 +89,139 @@ theorem decodeList_listsexp {α : Type} (f : Sexp → Option α) (g : α → Sex
     have hi := ih ht
     simp only [listsexp] at hi
     simp [listsexp, decodeList, hx, hi]
+
+/-- Successful list decoding identifies a proper encoded list and its elements. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplist_SOME"]
+theorem decodeList_some {α : Type} (f : Sexp → Option α) (s : Sexp) (xs : List α) :
+    decodeList f s = some xs ↔ ∃ ys, s = listsexp ys ∧ ys.map f = xs.map some := by
+  constructor
+  · intro h
+    induction s generalizing xs with
+    | sym name =>
+      simp only [decodeList] at h
+      split at h
+      next heq =>
+        simp only [Option.some.injEq] at h
+        subst xs
+        refine ⟨[], ?_, rfl⟩
+        simp only [beq_iff_eq] at heq
+        subst name
+        rfl
+      next => contradiction
+    | num _ | str _ => simp [decodeList] at h
+    | cons head tail _ ih =>
+      cases hh : f head with
+      | none => simp [decodeList, hh] at h
+      | some x =>
+        cases ht : decodeList f tail with
+        | none => simp [decodeList, hh, ht] at h
+        | some rest =>
+          simp [decodeList, hh, ht] at h
+          subst xs
+          obtain ⟨ys, rfl, maps⟩ := ih rest ht
+          refine ⟨head :: ys, ?_, ?_⟩
+          · simp [listsexp]
+          · simp [hh, maps]
+  · rintro ⟨ys, rfl, maps⟩
+    induction ys generalizing xs with
+    | nil =>
+      cases xs with
+      | nil => rfl
+      | cons _ _ => simp at maps
+    | cons y ys ih =>
+      cases xs with
+      | nil => simp at maps
+      | cons x xs =>
+        simp only [List.map_cons, List.cons.injEq] at maps
+        have tail := ih xs maps.2
+        simp only [listsexp] at tail
+        simp [listsexp, decodeList, maps.1, tail]
+
+/-- Successful pair decoding identifies the encoded components. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexppair_SOME"]
+theorem decodePair_some {α β : Type} (f : Sexp → Option α) (g : Sexp → Option β)
+    (s : Sexp) (p : α × β) : decodePair f g s = some p ↔
+      ∃ x y a b, f x = some a ∧ g y = some b ∧ s = .cons x y ∧ p = (a, b) := by
+  cases s with
+  | sym _ | num _ | str _ => simp [decodePair]
+  | cons x y =>
+    cases hf : f x <;> cases hg : g y <;> simp [decodePair, hf, hg, eq_comm]
+
+/-- The identity list decoder recognizes exactly proper S-expression lists.
+This specializes `sexplist_SOME` for Flapjack's constructor helper. -/
+theorem decodeList_some_identity (s : Sexp) (xs : List Sexp) :
+    decodeList some s = some xs ↔ s = listsexp xs := by
+  constructor
+  · intro h
+    obtain ⟨ys, encoded, maps⟩ := (decodeList_some some s xs).mp h
+    have same : ys = xs := (List.map_inj_right (fun _ _ => Option.some.inj)).mp maps
+    simpa [same] using encoded
+  · intro h
+    subst s
+    simpa using decodeList_listsexp some id xs (by simp)
+
+/-- A stripped constructor has precisely a symbol followed by a proper list.
+This describes Flapjack's `stripConstructor` helper. -/
+theorem stripConstructor_some (s : Sexp) (name : List HolChar) (args : List Sexp) :
+    stripConstructor s = some (name, args) ↔ s = .cons (.sym name) (listsexp args) := by
+  cases s with
+  | sym _ | num _ | str _ => simp [stripConstructor]
+  | cons head tail =>
+    cases head with
+    | sym tag =>
+      cases ht : decodeList some tail with
+      | none =>
+        have hn : ∀ xs, tail ≠ listsexp xs := by
+          intro xs heq
+          have := (decodeList_some_identity tail xs).mpr heq
+          simp [ht] at this
+        simp [stripConstructor, ht, hn]
+      | some values =>
+        have heq : tail = listsexp values := (decodeList_some_identity tail values).mp ht
+        simp only [stripConstructor, ht, Sexp.cons.injEq, Sexp.sym.injEq]
+        rw [heq, listsexp_injective]
+        simp
+    | num _ | str _ | cons _ _ => simp [stripConstructor]
+
+/-- Successful option decoding identifies the original option encoding. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpopt_SOME"]
+theorem decodeOption_some {α : Type} (f : Sexp → Option α) (s : Sexp) (opt : Option α) :
+    decodeOption f s = some opt ↔
+      (opt = none ∧ s = .sym ((ofString "NONE").explode)) ∨
+      ∃ x s0, opt = some x ∧ f s0 = some x ∧
+        s = listsexp [.sym ((ofString "SOME").explode), s0] := by
+  cases s with
+  | sym name =>
+    simp [decodeOption, listsexp]
+    constructor
+    · rintro ⟨h1, h2⟩
+      exact ⟨h2.symm, h1⟩
+    · rintro ⟨h1, h2⟩
+      exact ⟨h2, h1.symm⟩
+  | num _ | str _ => simp [decodeOption, stripConstructor, listsexp]
+  | cons head tail =>
+    have encoded (s0 : Sexp) :
+        Sexp.cons head tail = listsexp [.sym ((ofString "SOME").explode), s0] ↔
+          stripConstructor (.cons head tail) = some (((ofString "SOME").explode), [s0]) := by
+      rw [stripConstructor_some]
+      rfl
+    simp only [encoded]
+    cases h : stripConstructor (.cons head tail) with
+    | none => simp [decodeOption, h]
+    | some pair =>
+      rcases pair with ⟨name, args⟩
+      cases args with
+      | nil => simp [decodeOption, h]
+      | cons value rest =>
+        cases rest with
+        | nil =>
+          simp [decodeOption, h]
+          constructor
+          · rintro ⟨hn, x, hf, ho⟩
+            exact ⟨x, ho.symm, hf, hn⟩
+          · rintro ⟨x, ho, hf, hn⟩
+            exact ⟨hn, x, hf, ho.symm⟩
+        | cons another rest => simp [decodeOption, h]
 
 /-- Pointwise decoding correctness lifts to encoded options. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpopt_optsexp"]
