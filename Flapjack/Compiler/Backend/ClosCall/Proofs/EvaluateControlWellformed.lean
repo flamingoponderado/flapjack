@@ -178,6 +178,91 @@ theorem evaluate_app_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allow
             simpa [EvalWellFormedFuel, fixClock_evaluate, fnRun] using
               appIH fnValue values fnFinal valueWf argsIH.1 fnWf.2
 
+/-- A closure application preserves the bounded invariant if body evaluation
+and subsequent applications preserve it at smaller clocks. -/
+theorem evaluateApp_wellFormedFuel_step {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (location : Option Nat)
+    (function : ClosSem.Value) (args : List ClosSem.Value) (state : ClosSem.State C F)
+    (functionWf : ValueWellFormedFuel fuel g allowed code function)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (bodyIH : ∀ (body : ClosLang.Exp) (env : List ClosSem.Value) (start : ClosSem.State C F),
+      start.clock < state.clock → ValuesWellFormedFuel fuel g allowed code env →
+      StateWellFormedFuel fuel g allowed code start →
+      EvalWellFormedFuel fuel g allowed code (evaluate [body] env start))
+    (appIH : ∀ (value : ClosSem.Value) (rest : List ClosSem.Value) (start : ClosSem.State C F),
+      start.clock < state.clock → ValueWellFormedFuel fuel g allowed code value →
+      ValuesWellFormedFuel fuel g allowed code rest → StateWellFormedFuel fuel g allowed code start →
+      EvalWellFormedFuel fuel g allowed code (evaluateApp location value rest start)) :
+    EvalWellFormedFuel fuel g allowed code (evaluateApp location function args state) := by
+  cases args with
+  | nil =>
+    rw [evaluateApp]
+    change ValuesWellFormedFuel fuel g allowed code [function] ∧ _
+    exact ⟨.cons functionWf .nil, stateWf⟩
+  | cons first rest =>
+    rw [evaluateApp]
+    cases found : destClosure state.maxApp location function (first :: rest) with
+    | none => simpa [found, EvalWellFormedFuel, ResultWellFormedFuel] using stateWf
+    | some kind =>
+      cases kind with
+      | partialApp value =>
+        have valueWf := destClosure_partial_wellFormedFuel state.maxApp location function
+          (first :: rest) value functionWf argsWf found
+        dsimp only
+        split
+        · simpa [EvalWellFormedFuel, ResultWellFormedFuel] using stateWellFormedFuel_clock stateWf 0
+        · exact ⟨.cons valueWf .nil, stateWellFormedFuel_clock stateWf _⟩
+      | fullApp body bodyEnv remaining =>
+        have ⟨envWf, remainingWf⟩ := destClosure_full_wellFormedFuel state.maxApp location function
+          (first :: rest) bodyEnv remaining body functionWf argsWf found
+        have remainingLt := destClosure_full_remaining_lt state.maxApp location function (first :: rest)
+          bodyEnv remaining body found
+        let cost := (first :: rest).length - remaining.length
+        have costPositive : 0 < cost := Nat.sub_pos_of_lt remainingLt
+        dsimp only
+        split
+        · simpa [EvalWellFormedFuel, ResultWellFormedFuel] using stateWellFormedFuel_clock stateWf 0
+        · rename_i enough
+          rw [fixClock_evaluate]
+          have smaller : (decClock cost state).clock < state.clock := by simp [decClock]; omega
+          have bodyWf := bodyIH body bodyEnv (decClock cost state) smaller envWf
+            (stateWellFormedFuel_clock stateWf _)
+          cases bodyRun : evaluate [body] bodyEnv (decClock cost state) with
+          | mk result final =>
+            rw [bodyRun] at bodyWf
+            have bodyBound : final.clock ≤ (decClock cost state).clock := by
+              have bound := evaluate_clock_le [body] bodyEnv (decClock cost state)
+              simpa [bodyRun] using bound
+            cases result with
+            | err error => exact bodyWf
+            | val values =>
+              obtain ⟨value, rfl⟩ := evaluate_singleton_value body bodyEnv (decClock cost state) final values bodyRun
+              cases bodyWf.1 with
+              | cons valueWf tail =>
+                exact appIH value remaining final (by omega) valueWf remainingWf bodyWf.2
+
+/-- Once evaluation of closure bodies preserves the invariant, so does an
+entire sequence of partial and over-applications. -/
+theorem evaluateApp_wellFormedFuel_of_body {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (location : Option Nat)
+    (bodyWf : ∀ (body : ClosLang.Exp) (env : List ClosSem.Value) (start : ClosSem.State C F),
+      ValuesWellFormedFuel fuel g allowed code env → StateWellFormedFuel fuel g allowed code start →
+      EvalWellFormedFuel fuel g allowed code (evaluate [body] env start))
+    (function : ClosSem.Value) (args : List ClosSem.Value) (state : ClosSem.State C F)
+    (functionWf : ValueWellFormedFuel fuel g allowed code function)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args)
+    (stateWf : StateWellFormedFuel fuel g allowed code state) :
+    EvalWellFormedFuel fuel g allowed code (evaluateApp location function args state) := by
+  generalize clockEq : state.clock = clock
+  induction clock using Nat.strong_induction_on generalizing function args state with
+  | h clock ih =>
+    apply evaluateApp_wellFormedFuel_step location function args state functionWf argsWf stateWf
+    · intro body env start _ envWf startWf
+      exact bodyWf body env start envWf startWf
+    · intro value rest start smaller valueWf restWf startWf
+      exact ih start.clock (by omega) value rest start valueWf restWf startWf rfl
+
 /-- Tick either times out with an unchanged well-formed store or evaluates
 its body after decrementing the clock. -/
 theorem evaluate_tick_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
