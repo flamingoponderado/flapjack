@@ -346,6 +346,123 @@ theorem decodeTypeList_typesexpList (ts : List AstT) :
 termination_by sizeOf ts
 end
 
+/-- Successful type decoding yields the source-shaped encoding. This is the
+reverse direction of `typesexp_sexptype` over the executed decoder. -/
+theorem decodeType_canonical (s : Sexp) : ∀ t, decodeType s = some t → typesexp t = s := by
+  induction s using decodeType.induct
+      (motive2 := fun x => ∀ ts, decodeTypeList x = some ts → listsexp (ts.map typesexp) = x) with
+  | case1 name value terminator hterm =>
+    intro t h
+    simp [decodeType, hterm] at h
+  | case2 name value terminator hterm hname =>
+    intro t h
+    cases hv : destString value with
+    | none => simp [decodeType, hterm, hname, hv] at h
+    | some v =>
+      simp [decodeType, hterm, hname, hv] at h
+      subst t
+      have enc := (destString_some value v).1.mp hv
+      simp only [beq_iff_eq] at hname
+      simp only [bne_iff_ne, not_not] at hterm
+      simp [typesexp, listsexp, enc, hname, hterm]
+      constructor <;> rfl
+  | case3 name value terminator hterm hnot hname ih =>
+    intro t h
+    cases hv : decodeTypeList value with
+    | none => simp [decodeType, hterm, hnot, hname, hv] at h
+    | some ts =>
+      simp [decodeType, hterm, hnot, hname, hv] at h
+      subst t
+      have enc := ih ts hv
+      simp only [listsexp] at enc
+      simp only [beq_iff_eq] at hname
+      simp only [bne_iff_ne, not_not] at hterm
+      simp [typesexp, typesexpList_eq_map, listsexp, enc, hname, hterm]
+      constructor <;> rfl
+  | case4 name value terminator hterm hnot hname =>
+    intro t h
+    simp [decodeType, hterm, hnot, hname] at h
+  | case5 name a b terminator hterm =>
+    intro t h
+    simp [decodeType, hterm] at h
+  | case6 name a b terminator hterm hname iha ihb =>
+    intro t h
+    cases ha : decodeType a with
+    | none => simp [decodeType, hterm, hname, ha] at h
+    | some ta =>
+      cases hb : decodeType b with
+      | none => simp [decodeType, hterm, hname, ha, hb] at h
+      | some tb =>
+        simp [decodeType, hterm, hname, ha, hb] at h
+        subst t
+        have ea := iha ta ha
+        have eb := ihb tb hb
+        simp only [beq_iff_eq] at hname
+        simp only [bne_iff_ne, not_not] at hterm
+        simp [typesexp, listsexp, ea, eb, hname, hterm]
+        constructor <;> rfl
+  | case7 name a b terminator hterm hnot hname ih =>
+    intro t h
+    cases ha : decodeTypeList a with
+    | none => simp [decodeType, hterm, hnot, hname, ha] at h
+    | some ts =>
+      cases hb : decodeId destString b with
+      | none => simp [decodeType, hterm, hnot, hname, ha, hb] at h
+      | some id =>
+        simp [decodeType, hterm, hnot, hname, ha, hb] at h
+        subst t
+        have ea := ih ts ha
+        have eb := (decodeId_some id b).mp hb
+        simp only [listsexp] at ea
+        simp only [beq_iff_eq] at hname
+        simp only [bne_iff_ne, not_not] at hterm
+        simp [typesexp, typesexpList_eq_map, listsexp, ea, eb, hname, hterm]
+        constructor <;> rfl
+  | case8 name a b terminator hterm hnot hname =>
+    intro t h
+    simp [decodeType, hterm, hnot, hname] at h
+  | case9 x h1 h2 =>
+    intro t h
+    rw [decodeType.eq_def] at h
+    split at h <;> simp_all
+  | case10 head tail ihh iht ts h =>
+    cases hh : decodeType head with
+    | none => simp [decodeTypeList, hh] at h
+    | some t =>
+      cases ht : decodeTypeList tail with
+      | none => simp [decodeTypeList, hh, ht] at h
+      | some rest =>
+        simp [decodeTypeList, hh, ht] at h
+        subst ts
+        have eh := ihh t hh
+        have et := iht rest ht
+        simp only [listsexp] at et
+        simp [listsexp, eh, et]
+  | case11 name hn ts h =>
+    simp [decodeTypeList, hn] at h
+    subst ts
+    simp only [beq_iff_eq] at hn
+    simp [listsexp, hn]
+    rfl
+  | case12 name hn ts h =>
+    simp [decodeTypeList, hn] at h
+  | case13 x h1 h2 ts h =>
+    rw [decodeTypeList.eq_def] at h
+    split at h <;> simp_all
+
+/-- Type decoding succeeds exactly on the canonical encoding, in both
+orientations of option equality. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "typesexp_sexptype"]
+theorem decodeType_some (s : Sexp) (t : AstT) :
+    (decodeType s = some t ↔ typesexp t = s) ∧
+    (some t = decodeType s ↔ typesexp t = s) := by
+  have forward : decodeType s = some t → typesexp t = s := decodeType_canonical s t
+  have backward : typesexp t = s → decodeType s = some t := by
+    intro h
+    subst s
+    exact decodeType_typesexp t
+  exact ⟨⟨forward, backward⟩, ⟨fun h => forward h.symm, fun h => (backward h).symm⟩⟩
+
 /-- Encoding CakeML type syntax is injective. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "typesexp_11"]
 theorem typesexp_injective (left right : AstT) :

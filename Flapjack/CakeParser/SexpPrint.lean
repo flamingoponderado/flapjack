@@ -1,8 +1,8 @@
 import Flapjack.CakeParser.Sexp
 
 /-! Byte-oriented S-expression rendering for the CakeML `--print_sexp` path.
-This is infrastructure for the AST encoder: the executable does not yet use
-it, and correspondence with HOL's printer has not been proved. -/
+The executable uses this renderer; correspondence with HOL's printer has not
+been proved. -/
 namespace Flapjack.CakeParser.Sexp
 open Flapjack.Basis.Pure.MlString
 

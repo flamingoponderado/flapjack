@@ -2,9 +2,9 @@ import Flapjack.CakeParser.FromSexp.Ast
 import Flapjack.CakeParser.SexpPrint
 import Flapjack.CakeParser.FromSexp.Encode
 
-/-! CakeML AST encoding for the S-expression output path. The recursive
-traversals are executable infrastructure pending source correspondence review;
-they are not yet tagged as HOL ports. -/
+/-! CakeML AST encoding for the S-expression output path. The executable
+aliases use the source-reviewed definitions in `FromSexp.Encode`; the whole
+program wrapper is Flapjack-specific. -/
 namespace Flapjack.CakeParser.ToSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Misc.Location

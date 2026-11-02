@@ -1,6 +1,14 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeType_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "typesexp_sexptype",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified sexp and ast_t carriers and both option-equality equivalences. The proof follows the executed type and type-list decoder recursion, using canonical identifier and byte-string decoding."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
     "lean_name": "decodeId_some",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "idsexp_sexpid_odestSEXSTR",
