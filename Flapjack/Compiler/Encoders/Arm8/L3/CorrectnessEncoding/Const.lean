@@ -685,4 +685,200 @@ theorem arm8_encoder_correct_const_single (r : Nat) (v : BitVec 64)
   · exact arm8_encoder_correct_const_orr r v N imms immr s1 s2 ms h hnone hnone2
       (by rw [hbm]; rfl) hbm
 
+
+/-! ## The four-instruction `MoveWide .k` shape -/
+
+/-- `arm8_ast` of the four-`MoveWide` constant. -/
+theorem arm8Ast_const_movK (r : Nat) (v : BitVec 64)
+    (h0 : arm8EncMovImm v = none) (h1 : arm8EncMovImm (~~~v) = none)
+    (h : (EncodeBitMask v).isSome = false) :
+    arm8Ast (.inst (.const r v)) =
+      [.Data (.«MoveWide@64» (1, .k, 0, BitVec.ofNat 16 ((v >>> 0).toNat), BitVec.ofNat 5 r)),
+       .Data (.«MoveWide@64» (1, .k, 1, BitVec.ofNat 16 ((v >>> 16).toNat), BitVec.ofNat 5 r)),
+       .Data (.«MoveWide@64» (1, .k, 2, BitVec.ofNat 16 ((v >>> 32).toNat), BitVec.ofNat 5 r)),
+       .Data (.«MoveWide@64» (1, .k, 3, BitVec.ofNat 16 ((v >>> 48).toNat), BitVec.ofNat 5 r))] := by
+  simp [arm8Ast, h0, h1, h]
+
+/-- Bits below sixteen are unchanged by reduction modulo `2 ^ 16`. -/
+theorem testBit_mod_65536 (x i : Nat) (hi : i < 16) : (x % 65536).testBit i = x.testBit i := by
+  have h : (65536 : Nat) = 2 ^ 16 := by norm_num
+  rw [h, Nat.testBit_mod_two_pow]
+  simp [hi]
+
+/-- The four 16-bit insertions of the `MoveWide .k` lowering reproduce `v`. -/
+theorem arm8MoveWideK_chain (x v : BitVec 64) :
+    Flapjack.RiscV.L3.holBitFieldInsert 63 48 (BitVec.ofNat 16 ((v >>> 48).toNat))
+      (Flapjack.RiscV.L3.holBitFieldInsert 47 32 (BitVec.ofNat 16 ((v >>> 32).toNat))
+        (Flapjack.RiscV.L3.holBitFieldInsert 31 16 (BitVec.ofNat 16 ((v >>> 16).toNat))
+          (Flapjack.RiscV.L3.holBitFieldInsert 15 0 (BitVec.ofNat 16 ((v >>> 0).toNat)) x))) = v := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  simp only [Flapjack.RiscV.L3.holBitFieldInsert, Flapjack.getLsbD_holFcpWord, hi,
+    decide_true, Bool.true_and]
+  interval_cases i <;>
+    simp [BitVec.getElem_eq_testBit_toNat, testBit_mod_65536]
+
+
+/-- `arm8_enc` of a `MoveWide .k` instruction is the four bytes of its word. -/
+theorem arm8Encode_movK (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5) :
+    arm8Encode (.Data (.«MoveWide@64» (1, .k, hw, imm16, rd))) =
+      [BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 24).toNat)] := by
+  rw [arm8Encode, arm8Encode_moveWide]
+
+/-- One `arm8Next` step on a state holding the encoded `MoveWide .k` word inserts
+that 16-bit chunk into the destination register. -/
+theorem arm8Next_movK (ms : arm8_state) (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5)
+    (hrd : rd ≠ 31) (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next ms =
+      { ms with branch_hint := none, REG := holUpdate rd (Flapjack.RiscV.L3.holBitFieldInsert (hw.toNat * 16 + 15) (hw.toNat * 16) imm16 (X rd ms)) ms.REG, PC := ms.PC + 4 } := by
+  have hdec : Decode (arm8MoveWideWord .k hw imm16 rd) =
+      instruction.Data (Data.«MoveWide@64» (1, .k, hw, imm16, rd)) :=
+    arm8Decode_moveWide .k hw imm16 rd
+  have hbr : (Run (instruction.Data (Data.«MoveWide@64» (1, .k, hw, imm16, rd)))
+      { ms with branch_hint := none }).branch_hint = none := by
+    rw [arm8Run_moveWide_k]
+    rw [if_neg hrd]
+  have hexc : (Run (instruction.Data (Data.«MoveWide@64» (1, .k, hw, imm16, rd)))
+      { ms with branch_hint := none }).exception = exception.NoException := by
+    rw [arm8Run_moveWide_k]
+    rw [if_neg hrd]
+    exact hexc0
+  have hn := arm8Next_word ms (arm8MoveWideWord .k hw imm16 rd)
+    (instruction.Data (Data.«MoveWide@64» (1, .k, hw, imm16, rd)))
+    hdec hbr hexc h0 h1 h2 h3 hal he0 hel
+  unfold arm8Next
+  rw [hn]
+  rw [arm8Run_moveWide_k]
+  rw [if_neg hrd]
+  rfl
+
+
+/-! ## Memory-free instructions and the run machinery -/
+
+/-- An instruction whose `Run` does not write memory. -/
+def MemFree (i : instruction) : Prop := ∀ s : arm8_state, (Run i s).MEM = s.MEM
+
+theorem memFree_moveWide_z (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5) :
+    MemFree (instruction.Data (Data.«MoveWide@64» (1, .z, hw, imm16, rd))) := by
+  intro s
+  rw [arm8Run_moveWide_z]
+  split <;> rfl
+
+theorem memFree_moveWide_n (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5) :
+    MemFree (instruction.Data (Data.«MoveWide@64» (1, .n, hw, imm16, rd))) := by
+  intro s
+  rw [arm8Run_moveWide_n]
+  split <;> rfl
+
+theorem memFree_moveWide_k (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5) :
+    MemFree (instruction.Data (Data.«MoveWide@64» (1, .k, hw, imm16, rd))) := by
+  intro s
+  rw [arm8Run_moveWide_k]
+  split <;> rfl
+
+/-- A two-bit word is one of its four values. -/
+theorem bitvec2_cases (x : BitVec 2) : x = 0 ∨ x = 1 ∨ x = 2 ∨ x = 3 := by
+  have hx : x = BitVec.ofNat 2 x.toNat := by
+    rw [BitVec.ofNat_toNat, BitVec.setWidth_eq]
+  rw [hx]
+  have hlt : x.toNat < 4 := by simpa using x.isLt
+  interval_cases x.toNat <;> simp
+
+/-- `write'SP` does not write memory. -/
+theorem writeSP_mem (imm : BitVec 64) (s : arm8_state) : («write'SP» imm s).MEM = s.MEM := by
+  unfold «write'SP»
+  by_cases hs : s.PSTATE.SPS = false
+  · simp [hs]
+  · have hs' : s.PSTATE.SPS = true := by cases h : s.PSTATE.SPS <;> simp_all
+    simp only [hs', Bool.not_true]
+    rcases bitvec2_cases s.PSTATE.EL with h | h | h | h <;> simp [h]
+
+theorem memFree_logicalImmediate_orr (imm : BitVec 64) (rd : BitVec 5) :
+    MemFree (instruction.Data (Data.«LogicalImmediate@64» (1, .LogicalOp_ORR, false, imm, 31, rd))) := by
+  intro s
+  rw [arm8Run_logicalImmediate_orr]
+  split
+  · exact writeSP_mem imm s
+  · rfl
+
+
+/-- `arm8_enc` of the four-`MoveWide` constant is the concatenation of the four
+encoded words. -/
+theorem arm8Enc_const_movK (r : Nat) (v : BitVec 64)
+    (h0 : arm8EncMovImm v = none) (h1 : arm8EncMovImm (~~~v) = none)
+    (h : (EncodeBitMask v).isSome = false) :
+    arm8Enc (.inst (.const r v)) =
+      (arm8Encode (.Data (.«MoveWide@64» (1, .k, 0, BitVec.ofNat 16 ((v >>> 0).toNat), BitVec.ofNat 5 r))) ++
+       (arm8Encode (.Data (.«MoveWide@64» (1, .k, 1, BitVec.ofNat 16 ((v >>> 16).toNat), BitVec.ofNat 5 r))) ++
+        (arm8Encode (.Data (.«MoveWide@64» (1, .k, 2, BitVec.ofNat 16 ((v >>> 32).toNat), BitVec.ofNat 5 r))) ++
+         arm8Encode (.Data (.«MoveWide@64» (1, .k, 3, BitVec.ofNat 16 ((v >>> 48).toNat), BitVec.ofNat 5 r)))))) := by
+  rw [arm8Enc, arm8Ast_const_movK r v h0 h1 h]
+  simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil]
+
+/-- The four-`MoveWide` constant encodes to sixteen bytes. -/
+theorem arm8Enc_const_movK_length (r : Nat) (v : BitVec 64)
+    (h0 : arm8EncMovImm v = none) (h1 : arm8EncMovImm (~~~v) = none)
+    (h : (EncodeBitMask v).isSome = false) :
+    (arm8Enc (.inst (.const r v))).length = 16 := by
+  rw [arm8Enc_const_movK r v h0 h1 h]
+  simp only [arm8Encode_movK, List.length_append, List.length_cons, List.length_nil]
+
+
+/-- One `MoveWide .k` step preserves agreement on the source domain. -/
+theorem arm8Next_movK_agree (d : BitVec 64 → Prop) (s t : arm8_state)
+    (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
+    (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5) (hrd : rd ≠ 31)
+    (hf : ∀ j, j < 4 → d (s.PC + BitVec.ofNat 64 j))
+    (hb0 : s.MEM s.PC = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 0).toNat))
+    (hb1 : s.MEM (s.PC + 1) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 8).toNat))
+    (hb2 : s.MEM (s.PC + 2) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 16).toNat))
+    (hb3 : s.MEM (s.PC + 3) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 24).toNat)) :
+    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
+  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
+  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
+  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
+  have hal : Aligned (TN := 64) (s.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 s.PC).mp halign
+  have halt : Aligned (TN := 64) (t.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 t.PC).mp halignt
+  have hd0 : d s.PC := by simpa using hf 0 (by omega)
+  have hd1 : d (s.PC + 1) := by simpa using hf 1 (by omega)
+  have hd2 : d (s.PC + 2) := by simpa using hf 2 (by omega)
+  have hd3 : d (s.PC + 3) := by simpa using hf 3 (by omega)
+  have ht0 : t.MEM t.PC = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 0).toNat) := by
+    rw [← h.pc]
+    exact (h.mem s.PC hd0).symm.trans hb0
+  have ht1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 8).toNat) := by
+    rw [← h.pc]
+    exact (h.mem (s.PC + 1) hd1).symm.trans hb1
+  have ht2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 16).toNat) := by
+    rw [← h.pc]
+    exact (h.mem (s.PC + 2) hd2).symm.trans hb2
+  have ht3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 24).toNat) := by
+    rw [← h.pc]
+    exact (h.mem (s.PC + 3) hd3).symm.trans hb3
+  have hs := arm8Next_movK s hw imm16 rd hrd hexc0 hb0 hb1 hb2 hb3 hal he0 hel
+  have ht := arm8Next_movK t hw imm16 rd hrd hexc0t ht0 ht1 ht2 ht3 halt he0t helt
+  rw [hs, ht]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simp [h.pc]
+  · simp only [X, h.reg]
+  · simp [h.pstate]
+  · simp [h.sctlr]
+  · simp [h.tcr]
+  · simp [h.exc]
+  · intro a ha
+    simp only [h.mem a ha]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
