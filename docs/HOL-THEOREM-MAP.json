@@ -1,6 +1,14 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeDec_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "decsexp_sexpdec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both captured equivalences over the original sexp and dec carriers. The forward direction follows all executed declaration and recursive declaration-list cases; the reverse uses the reviewed decoding round trip."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
     "lean_name": "decodeTypeDef_some",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "type_defsexp_sexptype_def",

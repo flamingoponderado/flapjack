@@ -53,7 +53,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/parsing/lexer_implScript.sml` | `Flapjack/CakeParser/LexerImpl.lean` |
 | `semantics/gramScript.sml` | `Flapjack/CakeParser/Grammar.lean` |
 | `compiler/parsing/pegexec_cml_foScript.sml` | `Flapjack/CakeParser/PegChecks.lean` and `Flapjack/CakeParser/PegActions.lean` |
-| `compiler/parsing/fromSexpScript.sml` | `Flapjack/CakeParser/FromSexp.lean` and `Flapjack/CakeParser/FromSexp/Operators.lean`, `Ast.lean`, `Encode.lean`, `Control.lean`, `RoundTrip.lean` (total AST decoders, source-shaped encoders and round-trip lemmas through complete declaration lists, plus canonical component and expression decoding; full input-parser correspondence review is open) |
+| `compiler/parsing/fromSexpScript.sml` | `Flapjack/CakeParser/FromSexp.lean` and `Flapjack/CakeParser/FromSexp/Operators.lean`, `Ast.lean`, `Encode.lean`, `Control.lean`, `RoundTrip.lean` (total AST decoders, source-shaped encoders and round-trip lemmas through complete declaration lists, plus canonical decoding through whole declaration lists; full input-parser correspondence review is open) |
 | `HOL/examples/formal-languages/context-free/simpleSexpPEGScript.sml` | `Flapjack/CakeParser/Sexp.lean` (untagged direct, bounded parser; PEG equivalence and CakeML AST conversion remain open) |
 | `pancake/pan_to_targetScript.sml` | `Flapjack/Pancake/PanToTarget.lean` |
 | `pancake/proofs/pan_to_targetProofScript.sml` | `Flapjack/Pancake/Proofs/PanToTarget.lean` and its `PanToTarget/` submodules |
