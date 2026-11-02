@@ -152,12 +152,27 @@ theorem ctorInter_eq_HOL (xs ys : Option (List Ctor)) : ctorInter xs ys = ctorIn
   cases xs <;> cases ys <;> simp [ctorInter, ctorInterHOL, ctorKeep_eq_HOL]
 end SourcePolymorphic
 
+/-- The known-sibling constructor case uses the unrestricted HOL-shaped
+duplicate elimination at the concrete constructor carrier. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "ctors_of_def"]
+theorem ctorsOf_siblings_source (tag : Nat) (siblings : List (Nat × Nat)) (qs : List Pat) :
+    ctorsOf (.cons (some (tag, some siblings)) qs) =
+      some (ctorNubHOL (.tagC tag qs.length :: tagCtors siblings)) := by
+  simp only [ctorsOf, ctorNub_eq_HOL]
+
 /-- Combine the constructor information in a matrix's first column. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "col_ctors_def"]
 def colCtors : List (List Pat) → Option (List Ctor)
   | [] => none
   | [] :: rows => colCtors rows
   | (p :: _) :: rows => ctorInter (ctorsOf p) (colCtors rows)
+
+/-- The nonempty-row case uses the unrestricted HOL-shaped intersection at
+the concrete constructor carrier. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "col_ctors_def"]
+theorem colCtors_cons_source (p : Pat) (rest : List Pat) (rows : List (List Pat)) :
+    colCtors ((p :: rest) :: rows) = ctorInterHOL (ctorsOf p) (colCtors rows) := by
+  simp only [colCtors, ctorInter_eq_HOL]
 
 /-- Specialize a row for a constructor, preserving the argument order. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "spec_row_def"]

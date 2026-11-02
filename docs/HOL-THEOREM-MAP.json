@@ -1,6 +1,22 @@
 [
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "ctorsOf_siblings_source",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "ctors_of_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source known-sibling constructor clause: preserve the natural tag, child-list length and sibling list and apply the polymorphic source duplicate elimination. The proof rewrites the executed Ctor specialization to its source-shaped operation without additional premises."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "colCtors_cons_source",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "col_ctors_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source nonempty-row clause: combine the head pattern's constructor information and the recursive tail using polymorphic source intersection. The proof rewrites the executed Ctor specialization to its source-shaped operation without additional premises."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
     "lean_name": "ctorNubHOL",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
     "hol_name": "ctor_nub_def",
