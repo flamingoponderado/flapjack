@@ -100626,6 +100626,16 @@
     "reviewer": "Source comparison: memory_rel_ByteArray_words_IMP and its typed capture retain the complete memory relation, reference lookup, good_dimindex and real-address hypotheses. The existential header and separation frame, exact write_bytes payload over the functional memory graph, and both decoded-length conclusions match HOL. store uses the canonical finite-support map and all memory words share the source positive word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality/Complete.lean",
+    "lean_name": "wordEqThm0",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_thm0",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared the complete two-conjunct source statement and inferred HOL types: both universally quantified value and list clauses retain the original memory relation, sized equality, depth, resource and dimension hypotheses, list lengths and address-domain assumptions, and existential target result, equality equivalence and resource bound. The list clause retains independently polymorphic t1 and t2 binders. The proof assembles the source constructor cases by simultaneous well-founded induction and adds no simulation or target-evaluation hypothesis. store uses the canonical finite-support map and target words share the positive HOL dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality/Reference.lean",
     "lean_name": "wordEqThm0_refPtrTrue",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
