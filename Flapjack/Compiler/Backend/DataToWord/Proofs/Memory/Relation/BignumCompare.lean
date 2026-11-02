@@ -106,6 +106,55 @@ theorem bignumWordLoop {width : Nat} [NeZero width] (i1 i2 : Int)
     | none => simpa [outcome] using loop.trans (congrArg some correct)
     | some flag => cases flag <;> simpa [outcome] using loop.trans (congrArg some correct)
 
+/-- Under equal signs, equal magnitudes are exactly equal integers. -/
+theorem bignumMagnitudeEq (i1 i2 : Int) (sameSign : (i1 < 0 ↔ i2 < 0)) :
+    i1.natAbs = i2.natAbs ↔ i1 = i2 := by
+  cases i1 <;> cases i2 <;> simp_all
+  all_goals omega
+
+/-- Comparing equally long bignum payloads in their stored order returns one
+    exactly when the source integers agree. -/
+theorem bignumWordEqualityLoop {width : Nat} [NeZero width] (i1 i2 : Int)
+    (frame1 frame2 : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (a1 a2 : BitVec width) (domain : BitVec width → Bool) (memory : BitVec width → WordLocW width)
+    (good : goodDimindex width) (sameSign : (i1 < 0 ↔ i2 < 0))
+    (sameLength : (n2mw i1.natAbs : List (BitVec width)).length =
+      (n2mw i2.natAbs : List (BitVec width)).length)
+    (bound : (n2mw i1.natAbs : List (BitVec width)).length < 2 ^ width)
+    (first : SetSep.star (Misc.wordList (a1 + StackRemove.bytesInWord width)
+      ((n2mw i1.natAbs : List (BitVec width)).map WordLocW.word)) frame1
+      (SetSep.fun2Set (memory, fun a => domain a = true)))
+    (second : SetSep.star (Misc.wordList (a2 + StackRemove.bytesInWord width)
+      ((n2mw i2.natAbs : List (BitVec width)).map WordLocW.word)) frame2
+      (SetSep.fun2Set (memory, fun a => domain a = true))) :
+    ∃ result : BitVec width,
+      wordCmpLoop (BitVec.ofNat width (n2mw i1.natAbs : List (BitVec width)).length)
+        (a1 + StackRemove.bytesInWord width * BitVec.ofNat width (n2mw i1.natAbs : List (BitVec width)).length)
+        (a2 + StackRemove.bytesInWord width * BitVec.ofNat width (n2mw i1.natAbs : List (BitVec width)).length)
+        domain memory = some result ∧ (i1 = i2 ↔ result = 1) := by
+  have loop := wordCmpLoopThm (n2mw i1.natAbs) (n2mw i2.natAbs) frame1 frame2 a1 a2 domain memory
+    ⟨sameLength, bound, first, second⟩
+  have comparison := mwCmpThm (n2mw (width := width) i1.natAbs) (n2mw i2.natAbs) sameLength.symm
+  rw [mw2n_n2mw, mw2n_n2mw] at comparison
+  have magnitudes := bignumMagnitudeEq i1 i2 sameSign
+  by_cases same : i1.natAbs = i2.natAbs
+  · have result : mwCmp (n2mw (width := width) i1.natAbs) (n2mw i2.natAbs) = none := by simpa [same] using comparison
+    refine ⟨1, ?_, ?_⟩
+    · simpa [result] using loop
+    · simp [magnitudes.mp same]
+  · have different : i1 ≠ i2 := fun h => same (magnitudes.mpr h)
+    by_cases less : i1.natAbs < i2.natAbs
+    · have result : mwCmp (n2mw (width := width) i1.natAbs) (n2mw i2.natAbs) = some true := by
+        simpa [same, less] using comparison
+      refine ⟨0, ?_, ?_⟩
+      · simpa [result] using loop
+      · rcases good with h | h <;> subst width <;> simp [different]
+    · have result : mwCmp (n2mw (width := width) i1.natAbs) (n2mw i2.natAbs) = some false := by
+        simpa [same, less] using comparison
+      refine ⟨2, ?_, ?_⟩
+      · simpa [result] using loop
+      · rcases good with h | h <;> subst width <;> simp [different]
+
 /-- Related large integers with identical headers compare correctly through
     the concrete word loop. This is a Flapjack helper for the original number
     comparison theorem, whose unequal-header cases remain separate. -/
