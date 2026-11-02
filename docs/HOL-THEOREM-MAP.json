@@ -116067,5 +116067,21 @@
   "lean_name": "stateExtends_trans",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared source lines 138-142 and inferred statement in clos_call_wfg_probe.out: the two state-extension premises and conclusion agree, retaining all three independent carrier types. Lean checks the proofs; source comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "code_locs_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/CodeLocations.lean",
+  "lean_name": "codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed source clauses in clos_call_wfg_probe.out: singleton helper and list recursion preserve ordered appends, the missing-location default, and the recursive-group range. codeLocationsFuns_map proves its function-body helper equals the source mapped traversal; Lean uses the original Exp carrier. Lean checks the helper proofs; source comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "recclosure_wf_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/RecClosure.lean",
+  "lean_name": "recClosureWellFormed",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 254-259 and inferred polymorphic statement in clos_call_wfg_probe.out: the function-pair first component is independently polymorphic, both annotation predicates use mapped bodies, and group-range disjointness and code-location distinctness retain their original sets and order. Lean checks the helper proofs; source comparison does not establish cross-language equivalence."
 }
 ]

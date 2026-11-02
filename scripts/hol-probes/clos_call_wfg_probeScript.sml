@@ -7,6 +7,9 @@ val _ = (print "subg_def="; Lib.with_flag (Globals.show_types,true) print_term (
 val _ = (print "subg_refl="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.subg_refl); print "\n");
 val _ = (print "subg_trans="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.subg_trans); print "\n");
 val _ = (print "calls_subg="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_subg); print "\n");
+val _ = (print "code_locs_type="; print_type (type_of ``closProps$code_locs``); print "\n");
+val _ = (print "code_locs_def="; Lib.with_flag (Globals.show_types,true) print_term (concl closPropsTheory.code_locs_def); print "\n");
+val _ = (print "recclosure_wf_def="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.recclosure_wf_def); print "\n");
 val _ = (print "wfg_type="; print_type (type_of ``clos_callProof$wfg``); print "\n");
 val _ = (print "wfg_prime_type="; print_type (type_of ``clos_callProof$wfg'``); print "\n");
 val _ = (print "wfg_def="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.wfg_def); print "\n");
@@ -15,3 +18,7 @@ val _ = (print "wfg_prime_code_type="; Lib.with_flag (Globals.show_types,true) p
 val _ = (print "calls_wfg_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_wfg); print "\n");
 val subg_cases = CONV_RULE (RAND_CONV (SIMP_CONV (srw_ss()) [])) (EVAL ``(clos_callProof$subg (sptree$LN,[(1,2)]) (sptree$LN,[(2,3);(1,2)]), clos_callProof$subg (sptree$LN,[(1,2)]) (sptree$LN,[(1,3);(1,2)]), clos_callProof$subg (sptree$LN,[(1,2)]) (sptree$LN,[(1,3)]))``);
 val _ = (print "subg_cases="; print_term (rhs (concl subg_cases)); print "\n");
+val location_cases = EVAL ``(closProps$code_locs [closLang$Letrec [«f»;«g»] (SOME 10) NONE [(1,closLang$Fn «h» (SOME 6) NONE 1 (closLang$Var None 0));(0,closLang$Var None 0)] (closLang$Fn «k» (SOME 20) NONE 1 (closLang$Var None 0))], closProps$code_locs [closLang$Fn «f» NONE NONE 1 (closLang$Var None 0)])``;
+val _ = (print "location_cases="; print_term (rhs (concl location_cases)); print "\n");
+val recclosure_cases = CONV_RULE (RAND_CONV (SIMP_CONV (srw_ss()) [])) (EVAL ``(clos_callProof$recclosure_wf 10 [(T,closLang$Var None 0)], clos_callProof$recclosure_wf 10 [(T,closLang$Fn «f» (SOME 10) NONE 1 (closLang$Var None 0))])``);
+val _ = (print "recclosure_cases="; print_term (rhs (concl recclosure_cases)); print "\n");

@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
+import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -62,5 +63,24 @@ example : ¬stateExtends ((.ln, [(1, 2)]) : Flapjack.Spt Unit × List (Nat × Na
   intro extension
   have lookup := extension.2.1 1 2
   simp [logicalAssocLookup, List.find?] at lookup
+
+-- `clos_call_wfg_probe.out`: nested locations precede the group's range,
+-- followed by the enclosing body; missing locations use the source default.
+example : codeLocations [.letrec [ofString "f", ofString "g"] (some 10) none
+    [(1, .fn (ofString "h") (some 6) none 1 (.var .none 0)), (0, .var .none 0)]
+    (.fn (ofString "k") (some 20) none 1 (.var .none 0))] = [6, 10, 12, 20] := by
+  rfl
+
+example : codeLocations [.fn (ofString "f") none none 1 (.var .none 0)] = [0] := by
+  rfl
+
+example : recClosureWellFormed 10 ([((true : Bool), .var .none 0)] : List (Bool × Exp)) := by
+  simp [recClosureWellFormed, everyFnLocationSome, fnLocationSomeExp, everyFnVarsNone,
+    fnVarsNoneExp, codeLocations, codeLocationsExp]
+
+example : ¬recClosureWellFormed 10
+    ([((true : Bool), .fn (ofString "f") (some 10) none 1 (.var .none 0))] : List (Bool × Exp)) := by
+  simp [recClosureWellFormed, everyFnLocationSome, fnLocationSomeExp, everyFnVarsNone,
+    fnVarsNoneExp, codeLocations, codeLocationsExp, Set.disjoint_left]
 
 end Flapjack.Test.ClosCallEnvironmentParity

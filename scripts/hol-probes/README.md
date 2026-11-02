@@ -345,7 +345,7 @@ the complete carrier correspondence remains under review.
 
 `clos_call_code_list_probe.out` captures the polymorphic source type and typed label-accounting theorems for the direct-call code-list helper, together with a concrete example replayed by the executable-pass parity tests.
 
-`clos_call_wfg_probe.out` captures the inferred polymorphic compiler-state invariants, state-extension relation and their structural theorems, together with the original full-pass statements.
+`clos_call_wfg_probe.out` captures the inferred polymorphic compiler-state and recursive-closure invariants, state-extension and location-traversal definitions, and their structural theorems. Its state-extension and location-order cases are replayed in Lean.
 
 `clos_call_env_rel_probe.out` captures the original closure free-variable equations, the polymorphic direct-call environment relation and its structural theorems, and positive and negative binder and environment examples replayed in Lean.
 
