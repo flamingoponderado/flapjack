@@ -5,6 +5,8 @@ fun show label tm =
   (print label; print "="; print_term (rhs (concl (EVAL tm))); print "\n");
 fun showSimp label tm =
   (print label; print "="; print_term (rhs (concl (CONV_RULE (RAND_CONV (SIMP_CONV (srw_ss()) [])) (EVAL tm)))); print "\n");
+fun showDef label th =
+  (print label; print "="; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n");
 val _ = show "control" ``MAP fromSexp$decode_control
   ["abc"; "\\\\"; "\\00"; "\\1F"; "\\7F"; "\\FF"; "\\20"; "\\5C";
    "\\1f"; "\\FG"; "\\"; [CHR 31]; "x\\00y"]``;
@@ -38,6 +40,14 @@ val _ = (print "sexpdec_typed=";
 val _ = (print "sexp_constructors_typed=";
   print_type (type_of ``(SX_CONS, SX_SYM, SX_NUM, SX_STR)``);
   print "\n");
+val _ = showDef "decode_control_typed" fromSexpTheory.decode_control_def;
+val _ = showDef "odestSEXSTR_typed" fromSexpTheory.odestSEXSTR_def;
+val _ = showDef "sexplist_typed" fromSexpTheory.sexplist_def;
+val _ = showDef "sexppair_typed" fromSexpTheory.sexppair_def;
+val _ = showDef "sexpopt_typed" fromSexpTheory.sexpopt_def;
+val _ = showDef "sexplit_typed" fromSexpTheory.sexplit_def;
+val _ = showDef "sexplocpt_typed" fromSexpTheory.sexplocpt_def;
+val _ = showDef "sexplocn_typed" fromSexpTheory.sexplocn_def;
 val _ = show "lists" ``MAP (fromSexp$sexplist fromSexp$odestSXNUM)
   [⟪⟫; ⟪1; 2; 3⟫; ⟪1 • 2⟫; ⟪SX_STR "x"⟫]``;
 val _ = show "option" ``MAP (fromSexp$sexpopt fromSexp$odestSXNUM)

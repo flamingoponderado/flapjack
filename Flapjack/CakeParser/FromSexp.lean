@@ -21,6 +21,7 @@ def upperHex (c : HolChar) : Option Nat :=
 /-- Decode the canonical control-character encoding used inside AST strings.
 Printable characters must remain literal; only uppercase hexadecimal escapes
 of non-printable bytes and doubled backslashes are accepted. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "decode_control_def"]
 def decodeControl : List HolChar → Option (List HolChar)
   | [] => some []
   | c :: rest =>
@@ -41,11 +42,13 @@ def decodeControl : List HolChar → Option (List HolChar)
     else if isPrint c then (decodeControl rest).map (c :: ·) else none
 
 /-- Decode a string-valued S-expression to the HOL byte-string carrier. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "odestSEXSTR_def"]
 def destString : Sexp → Option MlString
   | .str data => (decodeControl data).map MlString.implode
   | _ => none
 
 /-- Decode a proper S-expression list, rejecting an improper tail. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplist_def"]
 def decodeList (decode : Sexp → Option α) : Sexp → Option (List α)
   | .cons head tail => do
     let head ← decode head
@@ -55,6 +58,7 @@ def decodeList (decode : Sexp → Option α) : Sexp → Option (List α)
   | _ => none
 
 /-- Decode a pair from a cons cell; the tail is the second component itself. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexppair_def"]
 def decodePair {α β : Type} (left : Sexp → Option α) (right : Sexp → Option β) : Sexp → Option (α × β)
   | .cons a b => do some (← left a, ← right b)
   | _ => none
@@ -65,6 +69,7 @@ def stripConstructor : Sexp → Option (List HolChar × List Sexp)
   | _ => none
 
 /-- Decode HOL's `NONE` or `(SOME x)` representation. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpopt_def"]
 def decodeOption (decode : Sexp → Option α) (sexp : Sexp) : Option (Option α) :=
   match sexp with
   | .sym name => if name == ascii "NONE" then some none else none
@@ -102,6 +107,7 @@ def decodeId (decode : Sexp → Option α) : Sexp → Option (Ident MlString α)
 
 /-- Decode all six literal forms, including the original word bounds and
 rejection of negative zero. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplit_def"]
 def decodeLiteral (sexp : Sexp) : Option Lit :=
   match sexp with
   | .num n => some (.intLit (Int.ofNat n))
@@ -129,6 +135,7 @@ def decodeLiteral (sexp : Sexp) : Option Lit :=
     | _ => none
 
 /-- Decode a source location point. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplocpt_def"]
 def decodeLocPoint (sexp : Sexp) : Option Misc.Location.Locn :=
   match sexp with
   | .sym name =>
@@ -141,6 +148,7 @@ def decodeLocPoint (sexp : Sexp) : Option Misc.Location.Locn :=
     | _ => none
 
 /-- Decode a pair of source location points. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplocn_def"]
 def decodeLoc (sexp : Sexp) : Option Misc.Location.Locs := do
   let args ← decodeList some sexp
   match args with

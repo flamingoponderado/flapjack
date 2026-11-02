@@ -1,5 +1,69 @@
 [
   {
+    "lean_path": "Flapjack/CakeParser/FromSexp.lean",
+    "lean_name": "decodeControl",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "decode_control_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all source equations and captured inferred types: printable characters pass through, doubled backslashes decode to one backslash, and two uppercase hex digits decode exactly non-printable bytes; malformed and printable hex escapes fail. HolChar is the established eight-bit HOL character carrier."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp.lean",
+    "lean_name": "destString",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "odestSEXSTR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source equations and captured inferred types: SX_STR maps the decoded character list through mlstring implode; every other S-expression constructor returns NONE."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp.lean",
+    "lean_name": "decodeList",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexplist_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete source definition and captured inferred types: the polymorphic element decoder and recursive proper-list decoder must both succeed on a cons; the nil symbol yields an empty list and all other tails fail."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp.lean",
+    "lean_name": "decodePair",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexppair_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete source definition and captured inferred types: the independently polymorphic left and right decoders consume the head and tail of an SX_CONS, respectively; all other constructors fail."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp.lean",
+    "lean_name": "decodeOption",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexpopt_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source definition and captured inferred types: the NONE symbol yields SOME NONE, while a proper one-argument SOME applies the polymorphic decoder; all other forms fail."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp.lean",
+    "lean_name": "decodeLiteral",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexplit_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every source clause and captured inferred types: natural and negative integer literals, decoded strings and singleton characters, and word8, word64 and float64 literals have the same bounds and failure conditions, including rejection of negative zero. Fixed word widths match the source lit carrier."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp.lean",
+    "lean_name": "decodeLocPoint",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexplocpt_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all source equations and captured inferred types: unk and eof symbols select their location points, and a proper two-number list produces POSN; all other forms fail."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp.lean",
+    "lean_name": "decodeLoc",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexplocn_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete source definition and captured inferred type: a proper two-element list whose elements decode as location points produces Locs; any decoding or arity failure returns NONE."
+  },
+  {
     "lean_path": "Flapjack/CakeParser/FromSexp/Ast.lean",
     "lean_name": "decodeTypeDef",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
