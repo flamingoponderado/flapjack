@@ -115971,5 +115971,13 @@
   "lean_name": "codeListSource_labels",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared source line 456 and the inferred statement in clos_call_code_list_probe.out: GENLIST is the native range/map, with the same reversed labels and existing suffix. Lean checks the proof; this comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "code_list_IS_SUFFIX",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Suffix.lean",
+  "lean_name": "codeListSource_suffix",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source line 509 and the inferred polymorphic statement in clos_call_code_list_probe.out. HOL IS_SUFFIX takes the containing list first; Lean IsSuffix takes the suffix first. Both assert that the incoming code is a suffix of the generated code. Lean checks the proof; this comparison does not establish cross-language equivalence."
 }
 ]
