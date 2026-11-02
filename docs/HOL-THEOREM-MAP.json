@@ -1,5 +1,13 @@
 [
   {
+    "lean_path": "Flapjack/Misc/Sptree/FromList.lean",
+    "lean_name": "sptFromList",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "fromList_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured polymorphic spt_from_list definition: fold the source list left to right from (0, LN), insert each arbitrary payload at the current natural index, increment that index, and return the resulting Spt tree. The executed flat pattern compiler now uses this definition for its branch table."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
     "lean_name": "FactoredPrecondition1",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.FlatPattern.NaiveTotal
 import Flapjack.Compiler.Backend.FlatPattern.Encode
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.PatternComp.Decision
+import Flapjack.Misc.Sptree.FromList
 
 /-! Bounded execution of the flat pattern compiler's branch lowering. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
@@ -40,8 +41,7 @@ def naivePatternMatchesFuel (fuel : Nat) (t : Tra) (v : FlatLang.Exp) :
 
 /-- Build the indexed branch table used by the flat pattern compiler. -/
 def branchTree (branches : List FlatLang.Exp) : Spt FlatLang.Exp :=
-  (branches.foldl (fun (state : Nat × Spt FlatLang.Exp) branch =>
-    (state.1 + 1, sptInsert state.1 branch state.2)) (0, .ln)).2
+  sptFromList branches
 
 /-- Compile pattern branches using the original naive or decision-tree path. -/
 @[hol "cakeml/compiler/backend/flat_patternScript.sml" "compile_pats_def"]

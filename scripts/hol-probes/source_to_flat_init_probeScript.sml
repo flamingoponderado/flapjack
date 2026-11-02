@@ -23,6 +23,7 @@ val _ = show_thm "source_alloc_env_ref=" source_to_flatTheory.alloc_env_ref_def;
 val _ = show_thm "source_lookup_env_id=" source_to_flatTheory.lookup_env_id_def;
 val _ = show_thm "source_store_env_id=" source_to_flatTheory.store_env_id_def;
 val _ = show_thm "source_inc_compile_prog=" source_to_flatTheory.inc_compile_prog_def;
+val _ = show_thm "spt_from_list=" sptreeTheory.fromList_def;
 val _ = show_thm "initial_env_ok=" source_to_flatProofTheory.init_genv_ok;
 val _ = show_thm "initial_types_ok=" source_to_flatProofTheory.init_genv_tys_ok;
 val _ = show_thm "keep_global_allocation=" source_to_flatProofTheory.keep_glob_alloc;

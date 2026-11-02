@@ -42,7 +42,7 @@ theorem branchFold_lookup (branches : List FlatLang.Exp) (start : Nat) (tree : S
 /-- Each branch stored by the compiler is found at its original index. -/
 theorem branchTree_lookup (branches : List FlatLang.Exp) (index : Nat) (branch : FlatLang.Exp)
     (atIndex : branches[index]? = some branch) : sptLookup index (branchTree branches) = some branch := by
-  simpa [branchTree] using branchFold_lookup branches 0 .ln index branch atIndex
+  simpa [branchTree, sptFromList] using branchFold_lookup branches 0 .ln index branch atIndex
 
 /-- The decision-tree branch lowering evaluates the same selected source row
 as the flat matcher, provided matching does not type-fail. -/
