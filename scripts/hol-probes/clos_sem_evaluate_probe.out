@@ -1,3 +1,13 @@
+ref_value_array_type=:α list -> α ref
+ref_byte_array_type=:word8 list -> α ref
+ref_thunk_type=:thunk_mode -> α -> α ref
+value_number_type=:int -> v
+value_word64_type=:word64 -> v
+value_block_type=:num -> v list -> v
+value_byte_vector_type=:word8 list -> v
+value_ref_ptr_type=:bool -> num -> v
+value_closure_type=:num option -> v list -> v list -> num -> closLang$exp -> v
+value_recclosure_type=:num option -> v list -> v list -> (num # closLang$exp) list -> num -> v
 state_globals_type=:(γ, 'ffi) state -> v option list
 state_refs_type=:(γ, 'ffi) state -> (num |-> v ref)
 state_ffi_type=:(γ, 'ffi) state -> 'ffi ffi_state

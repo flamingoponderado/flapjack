@@ -1,5 +1,53 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "code_rel_def",
+    "lean_name": "CodeRel",
+    "reviewer": "Compared code_rel_typed with the complete source definition: EVERY no_mti is universal membership, and the target equals reviewed introList on the source. codeRel_iff_executed separately connects this relation to the executed pass for every fuel."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "f_rel_def",
+    "lean_name": "FunctionRel",
+    "reviewer": "Compared function_rel_typed and source: both product arguments have natural arity and closure-expression body; the same body and name-list witnesses satisfy the same code, bound, no-mti, source unary, body, and target-arity conditions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "code_rel_IMP_LENGTH",
+    "lean_name": "codeRel_length",
+    "reviewer": "Compared code_rel_length_typed: every code relation implies target length equals source length, without extra hypotheses; both lists and the max_app parameter match."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "v_rel",
+    "lean_name": "ValueRel",
+    "reviewer": "Compared all eight clauses in value_rel_rules_typed and source, including scalar widths, list relations, unary-to-multi closures, recursive closures and partial recursive closures. GENLIST is range/map; bounded Lean indexing corresponds to EL under the same explicit index bound. The reviewed Value and Exp carriers and reviewed CodeRel and FunctionRel are used."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "v_rel_opt_def",
+    "lean_name": "ValueRelOpt",
+    "reviewer": "Compared all four typed source clauses: two absent values relate, two present values use reviewed ValueRel, and mixed constructors do not relate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "ref_rel",
+    "lean_name": "RefRel",
+    "reviewer": "Compared ref_rel_rules_typed and all source clauses: identical byte vectors, related value-array lists, and identical thunk modes with related values. The imported Ref and Value carriers and ValueRel have been source reviewed."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/clos_mtiScript.sml",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
     "statement_status": "reviewed_exact",
@@ -112909,16 +112957,16 @@
     "hol_name": "ref",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
     "lean_name": "Ref",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed constructor in clos_sem_evaluate_probe.out with closSemScript.sml: polymorphic value arrays preserve their element type, byte arrays retain fixed word8, and thunks retain the reviewed thunk_mode and element type. List carriers and constructor arities match."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "v",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
     "lean_name": "Value",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed constructor in clos_sem_evaluate_probe.out with closSemScript.sml: integers, fixed word64, block tags and recursive lists, byte vectors, reference flags and addresses, closure fields, and recursive-function pairs match the Lean datatype. The imported ClosLang.Exp carrier is reviewed exact."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",

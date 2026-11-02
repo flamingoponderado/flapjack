@@ -1,4 +1,5 @@
 load "preamble"; load "clos_mtiTheory"; load "closPropsTheory";
+load "clos_mtiProofTheory";
 open HolKernel Parse bossLib preamble clos_mtiTheory closPropsTheory;
 val _ = new_theory "flapjack_clos_mti_collect_args_replay";
 val _ = Globals.linewidth := 1000000;
@@ -139,3 +140,9 @@ val _ = show "collect_apps_no_mti_typed" collect_apps_no_mti;
 val _ = show "intro_multi_def_typed" clos_mtiTheory.intro_multi_def;
 val _ = show "intro_multi_length_typed" clos_mtiTheory.intro_multi_length;
 val _ = show "intro_multi_sing_typed" clos_mtiTheory.intro_multi_sing;
+val _ = show "code_rel_typed" clos_mtiProofTheory.code_rel_def;
+val _ = show "code_rel_length_typed" clos_mtiProofTheory.code_rel_IMP_LENGTH;
+val _ = show "function_rel_typed" clos_mtiProofTheory.f_rel_def;
+val _ = show "value_rel_rules_typed" clos_mtiProofTheory.v_rel_rules;
+val _ = show "value_rel_opt_typed" clos_mtiProofTheory.v_rel_opt_def;
+val _ = show "ref_rel_rules_typed" clos_mtiProofTheory.ref_rel_rules;

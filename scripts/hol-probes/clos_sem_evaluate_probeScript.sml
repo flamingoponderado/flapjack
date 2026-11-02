@@ -6,6 +6,16 @@ fun show_thm label th =
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
 fun typ label tm = (print label; print_type (type_of tm); print "\n");
+val _ = typ "ref_value_array_type=" ``closSem$ValueArray``;
+val _ = typ "ref_byte_array_type=" ``closSem$ByteArray``;
+val _ = typ "ref_thunk_type=" ``closSem$Thunk``;
+val _ = typ "value_number_type=" ``closSem$Number``;
+val _ = typ "value_word64_type=" ``closSem$Word64``;
+val _ = typ "value_block_type=" ``closSem$Block``;
+val _ = typ "value_byte_vector_type=" ``closSem$ByteVector``;
+val _ = typ "value_ref_ptr_type=" ``closSem$RefPtr``;
+val _ = typ "value_closure_type=" ``closSem$Closure``;
+val _ = typ "value_recclosure_type=" ``closSem$Recclosure``;
 val _ = typ "state_globals_type=" ``λ(s:('c,'ffi) closSem$state). s.globals``;
 val _ = typ "state_refs_type=" ``λ(s:('c,'ffi) closSem$state). s.refs``;
 val _ = typ "state_ffi_type=" ``λ(s:('c,'ffi) closSem$state). s.ffi``;

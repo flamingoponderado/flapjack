@@ -360,6 +360,7 @@ run_probe clos_sem_memory_probeScript.sml clos_sem_memory_probe.out \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_evaluate_probeScript.sml clos_sem_evaluate_probe.out \
+  ref_value_array_type ref_byte_array_type ref_thunk_type value_number_type value_word64_type value_block_type value_byte_vector_type value_ref_ptr_type value_closure_type value_recclosure_type \
   state_globals_type state_refs_type state_ffi_type state_clock_type state_compile_type \
   state_oracle_type state_code_type state_max_app_type dec_clock_typed fix_clock_typed initial_state_typed \
   evaluate_typed variable missing conditional raise_handle zero_tick call_closure \
@@ -8238,7 +8239,7 @@ run_probe data_to_word_option_le_probeScript.sml data_to_word_option_le_probe.ou
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_mti_collect_args_probeScript.sml clos_mti_collect_args_probe.out \
-  mk_fns_def_typed collect_args_def_typed collect_args_imp_typed collect_args_ok_imp_typed collect_apps_def_typed collect_apps_acc_typed collect_apps_cons_lemma_typed collect_apps_cons_typed mk_apps_def_typed collect_apps_rebuild_typed collect_apps_no_mti_typed intro_multi_def_typed intro_multi_length_typed intro_multi_sing_typed \
+  mk_fns_def_typed collect_args_def_typed collect_args_imp_typed collect_args_ok_imp_typed collect_apps_def_typed collect_apps_acc_typed collect_apps_cons_lemma_typed collect_apps_cons_typed mk_apps_def_typed collect_apps_rebuild_typed collect_apps_no_mti_typed intro_multi_def_typed intro_multi_length_typed intro_multi_sing_typed code_rel_typed code_rel_length_typed function_rel_typed value_rel_rules_typed value_rel_opt_typed ref_rel_rules_typed \
   "$cake_dir/compiler/backend/proofs/clos_mtiProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe pan_to_word_crep_inst_ok_probeScript.sml pan_to_word_crep_inst_ok_probe.out \
