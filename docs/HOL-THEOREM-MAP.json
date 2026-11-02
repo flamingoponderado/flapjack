@@ -1,6 +1,46 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ListRelations.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "list_to_v_INJ",
+    "lean_name": "listToValue_inj",
+    "reviewer": "Compared list_to_value_inj_typed: two lists of reviewed closure values encode equally exactly when the lists are equal; no extra hypotheses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ListRelations.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "vr_list_to_v",
+    "lean_name": "valueRel_listToValue",
+    "reviewer": "Compared vr_list_to_value_typed: for an arbitrary relation satisfying simpleValRel, a source value relates to an encoded target list exactly when it is an encoded list whose elements are pointwise related. The original universal relation parameter and both value-list carriers are retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ListRelations.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "simple_val_rel_APPEND",
+    "lean_name": "simpleValRel_append",
+    "reviewer": "Compared simple_value_append_typed: the same four value lists and arbitrary relation satisfy the conjunction of simpleValRel and the two encoded-list relations, yielding the relation between their pairwise appends."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ListRelations.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "vr_list_NONE",
+    "lean_name": "valueRel_list_none",
+    "reviewer": "Compared vr_list_none_typed: the same conjunction of simpleValRel, source-to-target value relation and failed target decoding implies failed source decoding."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ListRelations.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "simple_val_rel_list",
+    "lean_name": "simpleValRel_list",
+    "reviewer": "Compared simple_value_list_typed: the same conjunction of simpleValRel, related values and successful target decoding yields an existential source list, related encoded values and its successful decoding."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
     "hol_name": "isClos_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/SimpleRelations.lean",
     "lean_name": "isClos",
@@ -113104,8 +113144,8 @@
     "hol_name": "Boolv_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
     "lean_name": "boolValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared bool_value_typed and Boolv_def: true and false select the reviewed trueTag and falseTag and produce an empty closure block. The input is Bool and result the reviewed Value carrier."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
@@ -113120,16 +113160,16 @@
     "hol_name": "v_to_list_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
     "lean_name": "valueToList",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every value_to_list_typed clause: empty blocks accept only nilTag; exactly two fields accept only consTag and recursively decode the tail; every other constructor or block arity yields none. The reviewed Value and list-tag carriers match."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "list_to_v_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
     "lean_name": "listToValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared list_to_value_typed: empty lists become nilTag blocks with no fields and cons lists become consTag blocks with the original head followed by recursively encoded tail. The reviewed Value and list-tag carriers match."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
