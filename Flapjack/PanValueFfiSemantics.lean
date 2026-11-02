@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.PanSteppedSemantics
+public import Flapjack.PanExpressionEvaluator
 public import Flapjack.Ffi
 
 @[expose] public section
@@ -396,9 +396,10 @@ def panValueAssignLocalResult
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
     (ffi : FfiState σ) (name : VarName) (value : Exp α)
-    (memoryAccess : Option (PanValueMemoryAccess α)) : Option (PanValueFfiSteppedResult α σ) :=
-  match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-      value (memoryAccess := memoryAccess) with
+    (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) : Option (PanValueFfiSteppedResult α σ) :=
+  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      value memoryAccess with
   | none => some (.error locals globals memory ffi, 0)
   | some (value, valueSteps) =>
       if panValueAssignmentValid structs locals globals .local name value then
@@ -413,9 +414,10 @@ def panValueAssignGlobalResult
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
     (ffi : FfiState σ) (name : VarName) (value : Exp α)
-    (memoryAccess : Option (PanValueMemoryAccess α)) : Option (PanValueFfiSteppedResult α σ) :=
-  match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-      value (memoryAccess := memoryAccess) with
+    (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) : Option (PanValueFfiSteppedResult α σ) :=
+  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      value memoryAccess with
   | none => some (.error locals globals memory ffi, 0)
   | some (value, valueSteps) =>
       if panValueAssignmentValid structs locals globals .global name value then
@@ -432,10 +434,11 @@ def panValueDecAccepted
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
-    (value : Exp α) (memoryAccess : Option (PanValueMemoryAccess α)) (shape : Shape) :
+    (value : Exp α) (memoryAccess : Option (PanValueMemoryAccess α)) (shape : Shape)
+    (evaluator : Option (PanExprEvaluator α) := none) :
     Option (PanValue α × Nat) :=
-  match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-      value (memoryAccess := memoryAccess) with
+  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      value memoryAccess with
   | none => none
   | some (evaluated, valueSteps) =>
       if panShapeMatches (panValueShape structs evaluated) shape then
@@ -449,10 +452,11 @@ def panValueDecAcceptedValue
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
-    (value : Exp α) (memoryAccess : Option (PanValueMemoryAccess α)) (shape : Shape) :
+    (value : Exp α) (memoryAccess : Option (PanValueMemoryAccess α)) (shape : Shape)
+    (evaluator : Option (PanExprEvaluator α) := none) :
     Option (PanValue α) :=
-  match evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
-      value (memoryAccess := memoryAccess) with
+  match evalPanValueExpWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      value memoryAccess with
   | none => none
   | some evaluated =>
       if panShapeMatches (panValueShape structs evaluated) shape then some evaluated else none
@@ -465,10 +469,11 @@ def panValueIteConditionValue
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
-    (condition : Exp α) (memoryAccess : Option (PanValueMemoryAccess α)) :
+    (condition : Exp α) (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
     Option α :=
-  match evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
-      condition (memoryAccess := memoryAccess) with
+  match evalPanValueExpWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      condition memoryAccess with
   | some (.word value) => some value
   | _ => none
 
@@ -484,9 +489,10 @@ def panValuePrimitiveResult
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
     (ffi : FfiState σ) (name : VarName) (operator : PrimOp) (arguments : List (Exp α))
     (memoryAccess : Option (PanValueMemoryAccess α))
-    (primitive : PanPrimitiveHandler α) : Option (PanValueFfiSteppedResult α σ) :=
-  match evalPanValueExpsCounted structs locals globals memory baseAddress topAddress bytesInWord
-      arguments (memoryAccess := memoryAccess) with
+    (primitive : PanPrimitiveHandler α)
+    (evaluator : Option (PanExprEvaluator α) := none) : Option (PanValueFfiSteppedResult α σ) :=
+  match evalPanValueExpsCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      arguments memoryAccess with
   | none => some (.error locals globals memory ffi, 0)
   | some (values, valueSteps) =>
       match primitive operator values with
@@ -510,13 +516,14 @@ def panValueStoreResult
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
     (ffi : FfiState σ) (address value : Exp α)
-    (memoryAccess : Option (PanValueMemoryAccess α)) : Option (PanValueFfiSteppedResult α σ) :=
-  match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-      address (memoryAccess := memoryAccess) with
+    (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) : Option (PanValueFfiSteppedResult α σ) :=
+  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      address memoryAccess with
   | none => some (.error locals globals memory ffi, 0)
   | some (address, addressSteps) =>
-      match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-          value (memoryAccess := memoryAccess) with
+      match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+          value memoryAccess with
       | none => some (.error locals globals memory ffi, addressSteps)
       | some (value, valueSteps) =>
           match address with
@@ -536,13 +543,14 @@ def panValueStore32Result
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
     (ffi : FfiState σ) (address value : Exp α)
-    (memoryAccess : Option (PanValueMemoryAccess α)) : Option (PanValueFfiSteppedResult α σ) :=
-  match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-      address (memoryAccess := memoryAccess) with
+    (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) : Option (PanValueFfiSteppedResult α σ) :=
+  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      address memoryAccess with
   | none => some (.error locals globals memory ffi, 0)
   | some (address, addressSteps) =>
-      match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-          value (memoryAccess := memoryAccess) with
+      match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+          value memoryAccess with
       | none => some (.error locals globals memory ffi, addressSteps)
       | some (value, valueSteps) =>
           match address, value with
@@ -568,13 +576,14 @@ def panValueStoreByteResult
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
     (ffi : FfiState σ) (address value : Exp α)
-    (memoryAccess : Option (PanValueMemoryAccess α)) : Option (PanValueFfiSteppedResult α σ) :=
-  match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-      address (memoryAccess := memoryAccess) with
+    (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) : Option (PanValueFfiSteppedResult α σ) :=
+  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      address memoryAccess with
   | none => some (.error locals globals memory ffi, 0)
   | some (address, addressSteps) =>
-      match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-          value (memoryAccess := memoryAccess) with
+      match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+          value memoryAccess with
       | none => some (.error locals globals memory ffi, addressSteps)
       | some (value, valueSteps) =>
           match address, value with
@@ -603,9 +612,10 @@ def panValueShMemLoadResult
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
     (ffi : FfiState σ) (size : OpSize) (kind : VarKind) (name : VarName) (address : Exp α)
-    (memoryAccess : Option (PanValueMemoryAccess α)) : Option (PanValueFfiSteppedResult α σ) :=
-  match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-      address (memoryAccess := memoryAccess) with
+    (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) : Option (PanValueFfiSteppedResult α σ) :=
+  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      address memoryAccess with
   | none => some (.error locals globals memory ffi, 0)
   | some (address, addressSteps) =>
       match address with
@@ -636,13 +646,14 @@ def panValueShMemStoreResult
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
     (ffi : FfiState σ) (size : OpSize) (address value : Exp α)
-    (memoryAccess : Option (PanValueMemoryAccess α)) : Option (PanValueFfiSteppedResult α σ) :=
-  match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-      address (memoryAccess := memoryAccess) with
+    (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) : Option (PanValueFfiSteppedResult α σ) :=
+  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      address memoryAccess with
   | none => some (.error locals globals memory ffi, 0)
   | some (address, addressSteps) =>
-      match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-          value (memoryAccess := memoryAccess) with
+      match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+          value memoryAccess with
       | none => some (.error locals globals memory ffi, addressSteps)
       | some (value, valueSteps) =>
           match address, value with
@@ -664,10 +675,11 @@ def panValueIteCondition
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
-    (condition : Exp α) (memoryAccess : Option (PanValueMemoryAccess α)) :
+    (condition : Exp α) (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
     Option (α × Nat) :=
-  match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-      condition (memoryAccess := memoryAccess) with
+  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      condition memoryAccess with
   | some (.word value, steps) => some (value, steps)
   | _ => none
 
@@ -699,10 +711,11 @@ def panValueCallArguments
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
-    (arguments : List (Exp α)) (memoryAccess : Option (PanValueMemoryAccess α)) :
+    (arguments : List (Exp α)) (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
     Option (List (PanValue α) × Nat) :=
-  evalPanValueExpsCounted structs locals globals memory baseAddress topAddress bytesInWord
-    arguments (memoryAccess := memoryAccess)
+  evalPanValueExpsCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+    arguments memoryAccess
 
 /-- Uncounted evaluation of a call's argument list; the clocked counterpart of
 `panValueCallArguments`. -/
@@ -712,10 +725,11 @@ def panValueCallArgumentsValue
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
-    (arguments : List (Exp α)) (memoryAccess : Option (PanValueMemoryAccess α)) :
+    (arguments : List (Exp α)) (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
     Option (List (PanValue α)) :=
-  evalPanValueExps structs locals globals memory baseAddress topAddress bytesInWord
-    arguments (memoryAccess := memoryAccess)
+  evalPanValueExpsWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+    arguments memoryAccess
 
 /-- Result of the `Return` leaf.  HOL returns `SOME Error` with the unchanged
 state when the expression fails to evaluate or the payload exceeds the limit. -/
@@ -725,10 +739,11 @@ def panValueReturnResult
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
-    (ffi : FfiState σ) (value : Exp α) (memoryAccess : Option (PanValueMemoryAccess α)) :
+    (ffi : FfiState σ) (value : Exp α) (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
     Option (PanValueFfiSteppedResult α σ) :=
-  match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-      value (memoryAccess := memoryAccess) with
+  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      value memoryAccess with
   | none => some (.error locals globals memory ffi, 0)
   | some (value, valueSteps) =>
       if panValuePayloadWithinLimit structs value then
@@ -745,10 +760,11 @@ def panValueRaiseResult
     (structs : StructContext) (baseAddress topAddress bytesInWord : α)
     (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
     (ffi : FfiState σ) (contracts : Option PanValueCallContracts)
-    (exception : VarName) (value : Exp α) (memoryAccess : Option (PanValueMemoryAccess α)) :
+    (exception : VarName) (value : Exp α) (memoryAccess : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
     Option (PanValueFfiSteppedResult α σ) :=
-  match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-      value (memoryAccess := memoryAccess) with
+  match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
+      value memoryAccess with
   | none => some (.error locals globals memory ffi, 0)
   | some (value, valueSteps) =>
       if panValueExceptionValid structs contracts exception value &&
@@ -773,11 +789,12 @@ def panValueFfiExtCallSteps
     (function : FunName)
     (configuration configurationLength array arrayLength : Exp α)
     (memoryAccess : Option (PanValueMemoryAccess α))
-    (memoryHandler : Option (PanValueMemoryFfiHandler α σ)) :
+    (memoryHandler : Option (PanValueMemoryFfiHandler α σ))
+    (evaluator : Option (PanExprEvaluator α) := none) :
     Option (PanValueFfiSteppedResult α σ) :=
-  match evalPanValueExpsCounted structs locals globals memory baseAddress topAddress bytesInWord
+  match evalPanValueExpsCountedWith evaluator structs locals globals memory baseAddress topAddress bytesInWord
       [configuration, configurationLength, array, arrayLength]
-      (memoryAccess := memoryAccess) with
+      memoryAccess with
   | none => some (.error locals globals memory ffi, 0)
   | some (values, expressionSteps) => do
       let [.word configuration, .word configurationLength, .word array, .word arrayLength] := values |
