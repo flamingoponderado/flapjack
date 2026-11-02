@@ -29,7 +29,6 @@ and carriers still require review against HOL. -/
 theorem cakeToOptimizedBvi_semantics_proofSide {C F : Type} [Nonempty C]
     (fuel inlineLimit cutSize : Nat) (splitSeq tailEnabled tmcEnabled : Bool)
     (interp : Option (Value → Option (SourceToFlat.Config × (Nat × OptimizationConfig C))))
-    (transform : List AstHOL.Dec → List AstHOL.Dec)
     (source : State F) (sourceEnv : SemEnv Value) (sourceConfig nextSource : SourceToFlat.Config)
     (flatConfig : FlatSem.InstallConfig (Nat × OptimizationConfig C)) (compiler : BviSem.Compiler C)
     (declarations : List AstHOL.Dec) (expressions : List ClosLang.Exp)
@@ -38,7 +37,7 @@ theorem cakeToOptimizedBvi_semantics_proofSide {C F : Type} [Nonempty C]
     (cache : Spt (Nat × Bvl.Exp)) (optimized : List (Nat × Nat × Bvl.Exp))
     (targetStart targetNext : Nat) (lowered beforeTmc afterTmc final : List (Nat × Nat × Bvi.Exp))
     (tailLast tmcLast : Nat) (bviCache : Spt (Nat × Bvi.Exp))
-    (precondition : SourceToFlat.FactoredPrecondition interp transform source sourceEnv sourceConfig
+    (precondition : SourceToFlat.SourcePrecondition interp source sourceEnv sourceConfig
       flatConfig (SourceToSource.compile declarations))
     (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
     (positive : 0 < config.maxApp)
@@ -75,7 +74,7 @@ theorem cakeToOptimizedBvi_semantics_proofSide {C F : Type} [Nonempty C]
             (BvlInline.Proofs.letOpOracle splitSeq cutSize
               (BvlInline.Proofs.removeTicksCo ∘ BvlInline.Proofs.inCo inlineLimit
                 (closureFuture config.maxApp (sourceClosureOracle flatConfig)))))))) compiler targetStart) := by
-  have sourceBehavior := cakeCompileToClosFuel_semantics_proofSide fuel interp transform source sourceEnv sourceConfig nextSource
+  have sourceBehavior := cakeCompileToClosFuel_semantics_exists fuel interp source sourceEnv sourceConfig nextSource
     flatConfig (sourceClosureCompiler config.maxApp inlineLimit cutSize splitSeq tailEnabled tmcEnabled compiler)
     declarations expressions config.maxApp precondition safe positive production sourceRun
   have nonfail : ClosSem.semantics source.ffi config.maxApp HolFiniteMapExact.empty (sourceClosureOracle flatConfig)
@@ -97,7 +96,6 @@ source-to-BVI behavior composition. -/
 theorem cakeConfiguredToBvi_semantics_proofSide {C F : Type} [Nonempty C]
     (fuel : Nat) (bvlConfig : BvlToBvi.Config)
     (interp : Option (Value → Option (SourceToFlat.Config × (Nat × OptimizationConfig C))))
-    (transform : List AstHOL.Dec → List AstHOL.Dec)
     (source : State F) (sourceEnv : SemEnv Value) (sourceConfig nextSource : SourceToFlat.Config)
     (flatConfig : FlatSem.InstallConfig (Nat × OptimizationConfig C)) (compiler : BviSem.Compiler C)
     (declarations : List AstHOL.Dec) (expressions : List ClosLang.Exp)
@@ -110,7 +108,7 @@ theorem cakeConfiguredToBvi_semantics_proofSide {C F : Type} [Nonempty C]
     (resultCode : List (Nat × Nat × Bvi.Exp)) (resultNames : Spt Basis.Pure.MlString.MlString)
     (run : SourceToFlat.compileCakeToBviConfiguredFuel fuel sourceConfig config bvlConfig declarations =
       some (resultSource, resultClosure, resultConfig, resultCode, resultNames))
-    (precondition : SourceToFlat.FactoredPrecondition interp transform source sourceEnv sourceConfig
+    (precondition : SourceToFlat.SourcePrecondition interp source sourceEnv sourceConfig
       flatConfig (SourceToSource.compile declarations))
     (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
     (positive : 0 < config.maxApp)
@@ -148,7 +146,7 @@ theorem cakeConfiguredToBvi_semantics_proofSide {C F : Type} [Nonempty C]
               (BvlInline.Proofs.removeTicksCo ∘ BvlInline.Proofs.inCo bvlConfig.inlineSizeLimit
                 (closureFuture config.maxApp (sourceClosureOracle flatConfig)))))))) compiler resultClosure.start) := by
   have behavior := cakeToOptimizedBvi_semantics_proofSide fuel bvlConfig.inlineSizeLimit bvlConfig.expCut
-    bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc interp transform source sourceEnv sourceConfig nextSource
+    bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc interp source sourceEnv sourceConfig nextSource
     flatConfig compiler declarations expressions config current output program compiled names cache optimized targetStart targetNext
     lowered beforeTmc afterTmc final tailLast tmcLast bviCache precondition safe positive production sourceRun mti calls known
     preprocess closureRun optimizedRun lowerRun tailRun tmcRun inlineRun numberSafe varsSafe oracleSafe oracleState initialBound

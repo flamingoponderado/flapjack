@@ -61,4 +61,27 @@ theorem cakeCompileToClosFuel_semantics_proofSide {C F : Type} [Nonempty C]
   exact cakeCompileProg_semantics_proofSide interp transform source sourceEnv sourceConfig flatConfig compiler
     declarations maxApp precondition safe positive production
 
+/-- Source preprocessing and the executable source-to-closure pass preserve
+behavior under the source pass's existential precondition. This composition
+still depends on the stated closure compiler and positivity conditions. -/
+theorem cakeCompileToClosFuel_semantics_exists {C F : Type} [Nonempty C]
+    (fuel : Nat) (interp : Option (Value → Option (SourceToFlat.Config × C)))
+    (source : State F) (sourceEnv : SemEnv Value) (sourceConfig nextConfig : SourceToFlat.Config)
+    (flatConfig : FlatSem.InstallConfig C) (compiler : ClosSem.Compiler C)
+    (declarations : List AstHOL.Dec) (program : List ClosLang.Exp) (maxApp : Nat)
+    (precondition : SourceToFlat.SourcePrecondition interp source sourceEnv sourceConfig
+      flatConfig (SourceToSource.compile declarations))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (positive : 0 < maxApp)
+    (production : flatConfig.compile = pureCc incCompileDecs compiler)
+    (run : SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (nextConfig, program)) :
+    Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+      (ClosSem.semantics source.ffi maxApp HolFiniteMapExact.empty
+        (pureCo incCompileDecs ∘ flatConfig.compileOracle) compiler program) := by
+  obtain ⟨transform, factored⟩ :=
+    (SourceToFlat.sourcePrecondition_iff interp source sourceEnv sourceConfig flatConfig
+      (SourceToSource.compile declarations)).mp precondition
+  exact cakeCompileToClosFuel_semantics_proofSide fuel interp transform source sourceEnv sourceConfig
+    nextConfig flatConfig compiler declarations program maxApp factored safe positive production run
+
 end Flapjack.Compiler.Backend.FlatToClos
