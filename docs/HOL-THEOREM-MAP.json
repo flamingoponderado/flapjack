@@ -1,5 +1,14 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
+    "lean_name": "initGlobalEnvInv",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "init_global_env_inv_def",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the captured typed source definition: the semantic environment's value type is independently polymorphic, values are empty, constructor modules are empty, and each constructor entry follows the same lookup, optional type-group and map-lookup cases. Both global finite maps use the canonical carrier with a local roundtrip witness; the subsequent equivalence relates this source-shaped condition to the factored simulation."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
     "lean_name": "idxBlock_union_final",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

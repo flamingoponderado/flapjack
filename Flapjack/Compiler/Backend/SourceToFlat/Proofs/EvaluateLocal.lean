@@ -539,6 +539,27 @@ theorem factoredDecIH_all {C F : Type} [Nonempty C]
   exact (factoredAllBounded (F := F) interp transform source.clock).2 decs genv env nextEnv sourceEnv trace
     source sourceLast flat start finish next other n n' gen nextGen flatDecs result (Nat.le_refl _)
 
+namespace InitialEnv
+/-- The canonical finite-map carrier used by the initial environment. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+
+/-- The source's initial global-environment condition, with canonical finite maps. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "init_global_env_inv_def"
+  (fmap_as_finite_support := [c, tys])]
+def initGlobalEnvInv {α : Type} (genv : GlobalEnv) (compMap : Environment) (env : SemEnv α) : Prop :=
+  env.v = nsEmpty ∧
+    match env.c with
+    | .bind entries modules => modules = [] ∧ ∀ entry ∈ entries,
+        match nsLookup compMap.c (.short entry.1) with
+        | none => False
+        | some (cn, tyGroup) =>
+          genv.c.lookup ((cn, tyGroup.map Prod.fst), entry.2.1) = some entry.2.2 ∧
+          match tyGroup with
+          | none => True
+          | some (tyId, ctors) => genv.tys.lookup tyId = some ctors
+end InitialEnv
+
 /-- The original initialization condition expressed using the preliminary
 factored global relation. Full cross-language correspondence remains under review. -/
 def FactoredInitGlobalEnvInv (genv : GlobalEnv) (compMap : Environment) (env : SemEnv Value) : Prop :=
@@ -548,6 +569,33 @@ def FactoredInitGlobalEnvInv (genv : GlobalEnv) (compMap : Environment) (env : S
         ∃ cn tyGroup, nsLookup compMap.c (.short name) = some (cn, tyGroup) ∧
           genv.c.lookup ((cn, tyGroup.map Prod.fst), arity) = some stamp ∧
           ∀ tyId ctors, tyGroup = some (tyId, ctors) → genv.tys.lookup tyId = some ctors
+
+/-- The factored initialization condition has exactly the source case shape. -/
+theorem factoredInitGlobalEnvInv_iff (genv : GlobalEnv) (compMap : Environment) (env : SemEnv Value) :
+    FactoredInitGlobalEnvInv genv compMap env ↔ InitialEnv.initGlobalEnvInv genv compMap env := by
+  unfold FactoredInitGlobalEnvInv InitialEnv.initGlobalEnvInv
+  cases env.c with
+  | bind entries modules =>
+    simp only
+    constructor <;> rintro ⟨values, empty, entriesValid⟩ <;> refine ⟨values, empty, ?_⟩
+    · rintro ⟨name, arity, stamp⟩ member
+      obtain ⟨cn, tyGroup, found, lookup, types⟩ := entriesValid name arity stamp member
+      simp only [found]
+      refine ⟨lookup, ?_⟩
+      cases tyGroup with
+      | none => trivial
+      | some group => exact types group.1 group.2 rfl
+    · intro name arity stamp member
+      have entry := entriesValid (name, arity, stamp) member
+      cases found : nsLookup compMap.c (.short name) with
+      | none => simp [found] at entry
+      | some pair =>
+        rcases pair with ⟨cn, tyGroup⟩
+        simp only [found] at entry
+        refine ⟨cn, tyGroup, rfl, entry.1, ?_⟩
+        intro tyId ctors eq
+        subst tyGroup
+        exact entry.2
 
 private theorem constructorLookup_member {α : Type} (entries : List (ConN × α)) (name : ConN) (value : α)
     (found : entries.lookup name = some value) : (name, value) ∈ entries := by
@@ -960,7 +1008,7 @@ noncomputable def FactoredPrecondition1 {C F : Type} [Nonempty C]
   (match srcOracNextCfg interp source.evalState with
     | none => True | some nextConfig => nextConfig = (compileProg config decs).1) ∧
   config.next.vidx = 0 ∧ source.refs = [] ∧
-  FactoredInitGlobalEnvInv initGenv config.modEnv sourceEnv ∧
+  InitialEnv.initGlobalEnvInv initGenv config.modEnv sourceEnv ∧
   initEvalStateOk source.evalState ∧ idxPrev initGenvNext config.next ∧
   (∀ entry ∈ initGenvEntries, match entry.2 with
     | .typeStamp _ index => index < source.nextTypeStamp
@@ -1001,7 +1049,8 @@ theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
   obtain ⟨n, next, outEnv, outGen, body⟩ := compiledResult
   have actual := factoredCompileProg_initial interp transform config decs sourceEnv source sourceLast
     (FlatSem.initialState source.ffi source.clock evalConfig)
-    n next outEnv outGen body result bodyCompiled sourceRun rfl rfl initialEnv safe startVar initialIdx emptyStore
+    n next outEnv outGen body result bodyCompiled sourceRun rfl rfl
+    ((factoredInitGlobalEnvInv_iff _ _ _).mpr initialEnv) safe startVar initialIdx emptyStore
     initialEval steps oracle stamps sourceRefs rfl rfl oracleConfig
   obtain ⟨finalFlat, nextGenv, flatError, flatRun, states, success, errors⟩ := actual
   refine ⟨finalFlat, nextGenv, flatError, ?_, states, ?_, ?_⟩
