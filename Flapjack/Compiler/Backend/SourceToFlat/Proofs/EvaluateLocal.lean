@@ -997,11 +997,12 @@ theorem factoredCompileProg_initial {C F : Type} [Nonempty C]
   · simpa [emptyStore, emptyConfig] using initEvalStateOk_envGenRel source.evalState initialEval
   · exact compileProg_envGenFutureRel interp source.evalState config decs n next outEnv outGen body compiled oracleConfig
 
-/-- Whole-program preconditions over the factored global environment
-relation. The relation's cross-language correspondence remains under review. -/
-noncomputable def FactoredPrecondition1 {C F : Type} [Nonempty C]
+/-- The source whole-program precondition, preserving independent compiler,
+FFI, and initial-environment value types. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "precondition1_def"]
+noncomputable def FactoredPrecondition1 {C F A : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (source : State F) (sourceEnv : SemEnv Value) (config : Config)
+    (source : State F) (sourceEnv : SemEnv A) (config : Config)
     (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) : Prop :=
   srcOracStepInvs interp transform source.evalState ∧
   oracRel interp transform source.evalState evalConfig ∧
@@ -1015,10 +1016,11 @@ noncomputable def FactoredPrecondition1 {C F : Type} [Nonempty C]
     | .exnStamp index => index < source.nextExnStamp) ∧
   config.envs = emptyConfig.envs
 
-/-- Changing the source clock preserves the factored program precondition. -/
-theorem factoredPrecondition1_changeClock {C F : Type} [Nonempty C]
+/-- Changing the source clock preserves the whole-program precondition. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "precondition1_change_clock"]
+theorem factoredPrecondition1_changeClock {C F A : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (source : State F) (sourceEnv : SemEnv Value) (config : Config)
+    (source : State F) (sourceEnv : SemEnv A) (config : Config)
     (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (clock : Nat)
     (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs) :
     FactoredPrecondition1 interp transform { source with clock } sourceEnv config evalConfig decs := by

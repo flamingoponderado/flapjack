@@ -1,6 +1,22 @@
 [
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
+    "lean_name": "FactoredPrecondition1",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "precondition1_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the full typed precondition1 capture: compiler payload, FFI state and initial environment value types are independent; all ten source conjuncts and the optional next-configuration case are retained in order. The initial global condition uses its reviewed canonical finite-map carrier, the source oracle THE uses HOL inhabitation, and EVERY is expressed by membership quantification."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
+    "lean_name": "factoredPrecondition1_changeClock",
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "precondition1_change_clock",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source implication: for independent compiler, FFI and environment value types, the same precondition holds when the source clock alone is replaced with an arbitrary natural number."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
     "lean_name": "initGlobalEnvInv",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "init_global_env_inv_def",
@@ -3483,24 +3499,24 @@
     "hol_name": "init_eval_state_ok_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
     "lean_name": "initEvalStateOk",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original definitions and evaluated initial values captured in source_to_flat_init_probe.out; full carrier and representation review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source equations: NONE is true, EvalDecs is false, and EvalOracle requires generation zero and one empty generation. The concrete EvalState and nested semantic environment list carriers match."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "init_genv_ty_els_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
     "lean_name": "initGenvTyEntries",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original definitions and evaluated initial values captured in source_to_flat_init_probe.out; full carrier and representation review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed source entries and evaluated constructors: Boolean entries are false then true, and list entries reverse the cons then nil source list, preserving each tag, arity and mlstring stamp."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "init_genv_els_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
     "lean_name": "initGenvEntries",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original definitions and evaluated initial values captured in source_to_flat_init_probe.out; full carrier and representation review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source definition and evaluated entries: flatten each type group in order, retain tag, type id, arity and stamp, then append the four nullary exceptions in source order."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -3519,8 +3535,8 @@
     "hol_name": "init_genv_next",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
     "lean_name": "initGenvNext",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original definitions and evaluated initial values captured in source_to_flat_init_probe.out; full carrier and representation review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source definition and evaluated result: vidx is zero; tidx and eidx are successors of the maximum type and exception stamp indices respectively, with zero for the other stamp constructor. maxList has the source MAX_LIST equations."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
