@@ -92,4 +92,56 @@ theorem encodeHeader_eq {width : Nat} [NeZero width] (conf : Config) (t1 l1 t2 l
   · rintro ⟨rfl, rfl⟩
     exact e1.symm.trans e2
 
+/-- A successfully encoded constructor header exposes its tag under the source
+mask, and the tag fits in a machine word with four low bits reserved. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "encode_header_tag_mask"
+  (words_as_type_indexed_bitvec)]
+theorem encodeHeader_tagMask {width : Nat} [NeZero width] (conf : Config) (tag len : Nat) (w : BitVec width)
+    (encoded : encodeHeader conf (4 * tag) len = some w) (good : goodDimindex width) :
+    tag < 2 ^ width / 16 ∧
+    (w &&& (holWordSlice (width - conf.lenSize - 1) 2 (~~~(0 : BitVec width)) ||| 2)) =
+      BitVec.ofNat width (16 * tag + 2) := by
+  have bounds : 4 * tag < 2 ^ (width - conf.lenSize - 2) ∧ 4 * tag < 2 ^ width / 16 ∧
+      len < 2 ^ (width - 4) ∧ len < 2 ^ conf.lenSize := by
+    by_contra no
+    simp [encodeHeader, no] at encoded
+  have weq : makeHeader conf (BitVec.ofNat width (4 * tag)) len = w := by
+    simpa [encodeHeader, bounds] using encoded
+  constructor
+  · omega
+  · rw [← weq]
+    apply BitVec.eq_of_getLsbD_eq
+    intro i hi
+    have hwidth : 4 ≤ width := by rcases good with h | h <;> omega
+    have modtwo : 2 % 2 ^ width = 2 := Nat.mod_eq_of_lt (by
+      have p := Nat.pow_le_pow_right (n := 2) (by decide) (show 2 ≤ width by omega)
+      omega)
+    have bitResult (j : Nat) (hj : 2 ≤ j) :
+        (16 * tag + 2).testBit j = (4 * tag).testBit (j - 2) := by
+      have div : (16 * tag + 2) / 4 = 4 * tag := by omega
+      conv_lhs => rw [show j = (j - 2) + 2 by omega, Nat.testBit_add]
+      simpa using congrArg (fun n : Nat => n.testBit (j - 2)) div
+    simp only [BitVec.getLsbD_and, BitVec.getLsbD_or, holWordSlice, getLsbD_holFcpWord,
+      hi, decide_true, Bool.true_and, BitVec.getLsbD_not]
+    simp [makeHeader, BitVec.getElem_eq_testBit_toNat, hi, modtwo]
+    by_cases low : i < 2
+    · have cases : i = 0 ∨ i = 1 := by omega
+      rcases cases with rfl | rfl <;> simp [Nat.testBit, Nat.shiftRight_eq_div_pow] <;> omega
+    · have two : 2 ≤ i := by omega
+      rw [bitResult i two]
+      have three : (3 : Nat).testBit i = false := Nat.testBit_lt_two_pow (by
+        have p := Nat.pow_le_pow_right (n := 2) (by decide) two
+        omega)
+      have b2 : (2 : Nat).testBit i = false := Nat.testBit_lt_two_pow (by
+        have p := Nat.pow_le_pow_right (n := 2) (by decide) two
+        omega)
+      have ib : i - 2 < width := by omega
+      by_cases high : width ≤ i + conf.lenSize
+      · have hp : width - conf.lenSize - 2 ≤ i - 2 := by omega
+        have pow := Nat.pow_le_pow_right (n := 2) (by decide) hp
+        have z : (4 * tag).testBit (i - 2) = false := Nat.testBit_lt_two_pow (by omega)
+        simp [two, three, b2, ib, high, z, show ¬ i ≤ width - conf.lenSize - 1 by omega]
+      · simp [two, three, b2, ib, high, show i ≤ width - conf.lenSize - 1 by omega,
+          show i ≤ width - 1 by omega]
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

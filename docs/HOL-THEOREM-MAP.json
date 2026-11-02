@@ -100307,6 +100307,15 @@
     "reviewer": "Source comparison: encode_header_EQ and its typed data_to_word_memory_repr capture preserve both successful header encodings, the len_size + 2 < dimindex condition, and equivalence of word equality with equality of both tags and lengths. The proof handles every positive HOL word width, using the source bounds to recover each tag and length bit independently."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockHeaderInjective.lean",
+    "lean_name": "encodeHeader_tagMask",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "encode_header_tag_mask",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: encode_header_tag_mask and its typed data_to_word_memory_repr capture preserve the successful encoding and good_dimindex hypotheses, the dimword / 16 tag bound, and the masked word equality. The source tag_mask is expanded using its original word-slice definition; the target word has the same positive width throughout."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockEquality.lean",
     "lean_name": "memoryRel_blocksDistinctImmediate",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
@@ -100522,6 +100531,18 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison: word_is_clos_def and its typed capture retain both closure tag alternatives; tag_mask is expanded as its original word slice and the source closure constants are 30 and 31."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
+    "lean_name": "memoryRel_isClos",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_isClos",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_isClos and the typed replay of the local HOL theorem retain the complete memory relation, set pointer bit, decoded real address, word-valued memory read and good_dimindex hypotheses, and the equivalence between source isClos and word_is_clos. store uses the canonical finite-support map, all words share one positive width, and the source isClos definition uses the same two closure tags and nonempty-children condition."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",

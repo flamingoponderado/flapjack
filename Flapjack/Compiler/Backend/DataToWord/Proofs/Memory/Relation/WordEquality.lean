@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SimpleEquality
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.CompareLoop
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeaderInjective
 
 /-! Word-level equality model from the data-to-word memory proof. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -62,6 +63,55 @@ instance {width : Nat} [NeZero width] (conf : Config) (header : BitVec width) :
     Decidable (wordIsClos conf header) := by
   unfold wordIsClos
   infer_instance
+
+/-- A related pointer names a closure exactly when its stored header has a closure tag. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_isClos"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_isClos {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (space : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (stamp tag : Nat) (values : List Flapjack.Compiler.Backend.DataSem.Value) (w a header : BitVec width)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) :
+    memoryRel conf bigEndian next refs space store memory domain ((.block stamp tag values, .word w) :: vars) ∧
+      w.getLsbD 0 = true ∧ getRealAddr conf store w = some a ∧ memory a = .word header ∧ goodDimindex width →
+    (Flapjack.Compiler.Backend.DataSem.isClosure tag values ↔ wordIsClos conf header) := by
+  rintro ⟨rel, low, addr, contents, good⟩
+  obtain ⟨w', weq, cases⟩ := memoryRel_blockImp conf bigEndian next refs space store memory domain
+    stamp tag values (.word w) vars ⟨rel, good⟩
+  have ww : w' = w := by cases weq; rfl
+  subst w'
+  have nonempty : values ≠ [] := by
+    intro empty
+    simp only [empty, ↓reduceIte] at cases
+    rw [low] at cases
+    exact Bool.noConfusion cases.2.1
+  simp only [nonempty, ↓reduceIte] at cases
+  obtain ⟨a', h', _, _, _, addr', contents', _, _, _, encoded, _⟩ := cases
+  have aa : a' = a := Option.some.inj (addr'.symm.trans addr)
+  subst a'
+  have hh : h' = header := WordLocW.word.inj (contents'.symm.trans contents)
+  subst h'
+  obtain ⟨bound, mask⟩ := encodeHeader_tagMask conf tag values.length header encoded good
+  have range : 16 * tag + 2 < 2 ^ width := by
+    rcases good with hw | hw <;> subst width <;> norm_num at bound ⊢ <;> omega
+  have c30 : 16 * 30 + 2 < 2 ^ width := by
+    rcases good with hw | hw <;> subst width <;> norm_num
+  have c31 : 16 * 31 + 2 < 2 ^ width := by
+    rcases good with hw | hw <;> subst width <;> norm_num
+  simp only [Flapjack.Compiler.Backend.DataSem.isClosure, wordIsClos, mask]
+  constructor
+  · rintro ⟨(rfl | rfl), _⟩ <;> simp
+  · rintro (h | h)
+    · refine ⟨Or.inl ?_, nonempty⟩
+      have h' := congrArg BitVec.toNat h
+      simp [BitVec.toNat_ofNat, Nat.mod_eq_of_lt range, Nat.mod_eq_of_lt c30] at h'
+      omega
+    · refine ⟨Or.inr ?_, nonempty⟩
+      have h' := congrArg BitVec.toNat h
+      simp [BitVec.toNat_ofNat, Nat.mod_eq_of_lt range, Nat.mod_eq_of_lt c31] at h'
+      omega
+
 
 /-- The word comparator's finite store argument has the canonical lookup codec. -/
 theorem holFmapAsFiniteSupportParamWitness_wordEq_store {width : Nat} [NeZero width]

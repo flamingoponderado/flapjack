@@ -170,6 +170,20 @@ val _ = show "memory_rel_CodePtr_typed" data_to_word_memoryProofTheory.memory_re
 val _ = show "memory_rel_Block_IMP_typed" data_to_word_memoryProofTheory.memory_rel_Block_IMP;
 val _ = load "preamble";
 open preamble wordsTheory data_to_word_memoryProofTheory dataSemTheory wordLangTheory;
+val memory_rel_isClos_replay = prove(
+  ``memory_rel c be ts refs sp st m dm ((Block ts1 t1 v1,Word (w1:'a word))::vars) /\
+    word_bit 0 w1 /\ get_real_addr c st w1 = SOME a' /\ m a' = Word x' /\
+    good_dimindex (:'a) ==> (isClos t1 v1 <=> word_is_clos c x')``,
+  rw [] >> old_drule memory_rel_Block_IMP >> fs [word_bit] >> rw []
+  >> fs [word_is_clos_def] >> old_drule encode_header_tag_mask >> fs [] >> strip_tac
+  >> fs [isClos_def]
+  >> `4 <= dimindex (:'a)` by fs [good_dimindex_def]
+  >> fs [EXP_SUB,X_LT_DIV,LEFT_ADD_DISTRIB]
+  >> `(16 * t1 + 2) < dimword (:α)` by
+       (fs [good_dimindex_def,dimword_def] >> rfs []) >> fs []
+  >> fs [good_dimindex_def,dimword_def,
+         backend_commonTheory.partial_app_tag_def,backend_commonTheory.closure_tag_def]);
+val _ = show "memory_rel_isClos_replay_typed" memory_rel_isClos_replay;
 val eq_explode_append_replay = prove(
   ``!xs ys a. eq_explode a m dm (xs ++ ys) =
       eq_explode a m dm xs ++ eq_explode (a + n2w (LENGTH xs) * bytes_in_word) m dm ys``,
@@ -206,6 +220,7 @@ val _ = show "memory_rel_tag_limit_typed" data_to_word_memoryProofTheory.memory_
 val _ = show "memory_rel_test_nil_eq_typed" data_to_word_memoryProofTheory.memory_rel_test_nil_eq;
 val _ = show "memory_rel_test_none_eq_typed" data_to_word_memoryProofTheory.memory_rel_test_none_eq;
 val _ = show "encode_header_EQ_typed" data_to_word_memoryProofTheory.encode_header_EQ;
+val _ = show "encode_header_tag_mask_typed" data_to_word_memoryProofTheory.encode_header_tag_mask;
 val _ = show "word_cmp_res_def_typed" data_to_word_memoryProofTheory.word_cmp_res_def;
 val _ = show "word_cmp_loop_def_typed" data_to_word_memoryProofTheory.word_cmp_loop_def;
 val _ = show "word_cmp_loop_refl_typed" data_to_word_memoryProofTheory.word_cmp_loop_refl;
