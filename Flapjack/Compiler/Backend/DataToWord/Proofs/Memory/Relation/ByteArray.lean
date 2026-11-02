@@ -38,7 +38,9 @@ private theorem byteHeap {width : Nat} [NeZero width] (conf : DataToWord.Config)
           StackRemove.bytesInWord width) ((DataToWord.writeBytes bytes words be).map WordLocW.word)) rest) whole ∧
       words.length < 2 ^ (width - 4) ∧
       WordGcFunctions.decodeLength conf (DataToWord.makeByteHeader conf flag bytes.length) =
-        BitVec.ofNat width words.length := by
+        BitVec.ofNat width words.length ∧
+      bytes.length + 2 ^ (if width = 32 then 2 else 3) <
+        2 ^ (conf.lenSize + (if width = 32 then 2 else 3)) := by
   obtain ⟨before, after, heapEq, indexEq⟩ := heapLookup_split heap index (bytesRep be flag bytes words) found
   subst heap
   subst index
@@ -49,7 +51,8 @@ private theorem byteHeap {width : Nat} [NeZero width] (conf : DataToWord.Config)
   obtain ⟨_, _, _, ⟨_, _, _, _, ⟨_, _, _, ⟨_, _, _, _, pure⟩, _⟩⟩, _⟩ := facts
   have bounds := pure.2
   rw [extractStar] at assertion
-  exact ⟨_, assertion, bounds.1, bounds.2.1⟩
+  refine ⟨_, assertion, bounds.1, bounds.2.1, ?_⟩
+  simpa only [decide_eq_true_eq, true_and] using bounds.2.2
 
 /-- A related byte-array reference exposes its concrete packed word payload. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_ByteArray_words_IMP"
@@ -110,7 +113,7 @@ theorem memoryRel_byteArrayWordsImp {width : Nat} [NeZero width] (conf : DataToW
           have eq := Option.some.inj (addr.symm.trans addrCalc)
           simpa [BitVec.mul_comm] using eq
         subst address
-        obtain ⟨frame, split, bound, decoded⟩ := byteHeap conf heap ptr bytes
+        obtain ⟨frame, split, bound, decoded, _⟩ := byteHeap conf heap ptr bytes
           (List.replicate (bytes.length / (width / 8) + 1) 0) be flag curr _ _ cell heapAssertion
         simp only [List.length_replicate] at bound decoded
         have power : 2 ^ (width - 4) ≤ 2 ^ width := Nat.pow_le_pow_right (by decide) (by omega)
@@ -150,7 +153,9 @@ theorem memoryRel_byteArrayHeader {width : Nat} [NeZero width] (conf : DataToWor
     ∃ w address, location = .word w ∧ w.getLsbD 0 = true ∧
       getRealAddr conf store w = some address ∧ getRealSimpleAddr conf store w = some address ∧
       memory address = .word (DataToWord.makeByteHeader conf flag bytes.length) ∧ domain address = true ∧
-      conf.lenSize + 7 < width := by
+      conf.lenSize + 7 < width ∧
+      bytes.length + 2 ^ (if width = 32 then 2 else 3) <
+        2 ^ (conf.lenSize + (if width = 32 then 2 else 3)) := by
   obtain ⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, _, _⟩ := rel
   obtain ⟨roots, inv, addresses⟩ := wordInv
   obtain ⟨_, _, _, _, stackInv⟩ := inv
@@ -185,7 +190,7 @@ theorem memoryRel_byteArrayHeader {width : Nat} [NeZero width] (conf : DataToWor
         obtain ⟨curr, other, _, _, stored, _, _, _, _, _, _, _, heapAssertion⟩ := heapMem.2.2.2.2.2.2.2
         have addrCalc := getRealAddr_getAddr conf store heap ptr _ curr (.word 0)
           ⟨heapMem.1, cell, stored, good⟩
-        obtain ⟨frame, split, _, _⟩ := byteHeap conf heap ptr bytes
+        obtain ⟨frame, split, _, _, headerBound⟩ := byteHeap conf heap ptr bytes
           (List.replicate (bytes.length / (width / 8) + 1) 0) be flag curr _ _ cell heapAssertion
         obtain ⟨left, right, partition, singleton, _⟩ := split
         have member : left (curr + StackRemove.bytesInWord width * BitVec.ofNat width ptr,
@@ -197,7 +202,7 @@ theorem memoryRel_byteArrayHeader {width : Nat} [NeZero width] (conf : DataToWor
           exact Or.inl member
         obtain ⟨memEq, inDomain⟩ := (SetSep.fun2SetThm memory _ _ _).mp graph
         refine ⟨getAddr conf ptr (.word 0), curr + StackRemove.bytesInWord width * BitVec.ofNat width ptr,
-          locEq, getAddr_lowBit conf ptr _, ?_, ?_, memEq, inDomain, heapMem.2.2.2.2.1⟩
+          locEq, getAddr_lowBit conf ptr _, ?_, ?_, memEq, inDomain, heapMem.2.2.2.2.1, headerBound⟩
         · simpa [BitVec.mul_comm] using addrCalc.2
         · simpa [BitVec.mul_comm] using addrCalc.1
 

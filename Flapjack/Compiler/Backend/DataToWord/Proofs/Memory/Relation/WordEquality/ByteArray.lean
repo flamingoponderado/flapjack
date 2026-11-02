@@ -1,11 +1,70 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCompare
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArray
 
 /-! Comparison of packed byte-array payloads. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend Flapjack.Misc.Multiword
 open Classical
 noncomputable section
+
+/-- Recover an in-range length bit from a byte-array header. -/
+theorem byteHeaderLengthBit {width : Nat} [NeZero width] (conf : DataToWord.Config) (flag : Bool)
+    (len i : Nat) (good : goodDimindex width) (configBound : conf.lenSize + 7 < width)
+    (hi : i < conf.lenSize + (if width = 32 then 2 else 3)) :
+    (DataToWord.makeByteHeader (width := width) conf flag len).getLsbD
+      (i + (width - (if width = 32 then 2 else 3) - conf.lenSize)) =
+      (len + 2 ^ (if width = 32 then 2 else 3)).testBit i := by
+  rcases good with hw | hw <;> subst width
+  · have pos : i + (32 - 2 - conf.lenSize) < 32 := by simp at hi; omega
+    have high : 5 ≤ i + (32 - 2 - conf.lenSize) := by omega
+    have iBound : i < 32 := by simp at hi; omega
+    have notLess : ¬ i + (32 - 2 - conf.lenSize) < 32 - 2 - conf.lenSize := by omega
+    have pow := Nat.pow_le_pow_right (n := 2) (by decide) high
+    have z7 : (7 : Nat).testBit (i + (32 - 2 - conf.lenSize)) = false := Nat.testBit_lt_two_pow (by omega)
+    have z23 : (23 : Nat).testBit (i + (32 - 2 - conf.lenSize)) = false := Nat.testBit_lt_two_pow (by omega)
+    cases flag <;> simp [DataToWord.makeByteHeader, pos, notLess]
+    all_goals simp only [BitVec.getElem_eq_testBit_toNat, BitVec.toNat_ofNat,
+      Nat.testBit_mod_two_pow, iBound, decide_true, Bool.true_and, z7, z23, Bool.or_false]
+  · have pos : i + (64 - 3 - conf.lenSize) < 64 := by simp at hi; omega
+    have high : 5 ≤ i + (64 - 3 - conf.lenSize) := by omega
+    have iBound : i < 64 := by simp at hi; omega
+    have notLess : ¬ i + (64 - 3 - conf.lenSize) < 64 - 3 - conf.lenSize := by omega
+    have pow := Nat.pow_le_pow_right (n := 2) (by decide) high
+    have z7 : (7 : Nat).testBit (i + (64 - 3 - conf.lenSize)) = false := Nat.testBit_lt_two_pow (by omega)
+    have z23 : (23 : Nat).testBit (i + (64 - 3 - conf.lenSize)) = false := Nat.testBit_lt_two_pow (by omega)
+    cases flag <;> simp [DataToWord.makeByteHeader, pos, notLess]
+    all_goals simp only [BitVec.getElem_eq_testBit_toNat, BitVec.toNat_ofNat,
+      Nat.testBit_mod_two_pow, iBound, decide_true, Bool.true_and, z7, z23, Bool.or_false]
+
+/-- Equal valid byte-array headers have equal byte lengths, even when their
+    comparison flags differ. -/
+theorem byteHeaderLengthInjective {width : Nat} [NeZero width] (conf : DataToWord.Config)
+    (flag1 flag2 : Bool) (len1 len2 : Nat) (good : goodDimindex width)
+    (configBound : conf.lenSize + 7 < width)
+    (bound1 : len1 + 2 ^ (if width = 32 then 2 else 3) <
+      2 ^ (conf.lenSize + (if width = 32 then 2 else 3)))
+    (bound2 : len2 + 2 ^ (if width = 32 then 2 else 3) <
+      2 ^ (conf.lenSize + (if width = 32 then 2 else 3)))
+    (same : DataToWord.makeByteHeader (width := width) conf flag1 len1 =
+      DataToWord.makeByteHeader conf flag2 len2) : len1 = len2 := by
+  have lengths : len1 + 2 ^ (if width = 32 then 2 else 3) = len2 + 2 ^ (if width = 32 then 2 else 3) := by
+    apply Nat.eq_of_testBit_eq
+    intro i
+    by_cases hi : i < conf.lenSize + (if width = 32 then 2 else 3)
+    · have bits := congrArg (fun w : BitVec width => w.getLsbD
+          (i + (width - (if width = 32 then 2 else 3) - conf.lenSize))) same
+      rw [byteHeaderLengthBit conf flag1 len1 i good configBound hi,
+        byteHeaderLengthBit conf flag2 len2 i good configBound hi] at bits
+      exact bits
+    · have power : 2 ^ (conf.lenSize + (if width = 32 then 2 else 3)) ≤ 2 ^ i :=
+        Nat.pow_le_pow_right (by decide) (by omega)
+      have first : (len1 + 2 ^ (if width = 32 then 2 else 3)).testBit i = false :=
+        Nat.testBit_lt_two_pow (by omega)
+      have second : (len2 + 2 ^ (if width = 32 then 2 else 3)).testBit i = false :=
+        Nat.testBit_lt_two_pow (by omega)
+      rw [first, second]
+  omega
 
 /-- Packing preserves the number of payload words. -/
 private theorem packedLength {width : Nat} [NeZero width] (be : Bool)
@@ -62,6 +121,68 @@ theorem byteArrayWordEqualityLoop {width : Nat} [NeZero width] (be : Bool)
       refine ⟨2, ?_, ?_⟩
       · simpa [xsLength, result] using loop
       · rcases good with h | h <;> subst width <;> simp [equal]
+
+/-- Equal content-comparison byte-array headers lead to a word loop whose
+    equality result agrees with the source bytes. -/
+theorem memoryRel_byteArraysEqualHeaderLoop {width : Nat} [NeZero width] (conf : DataToWord.Config) (be : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (index1 index2 : Nat) (bytes1 bytes2 : List (BitVec 8)) (w1 w2 a1 a2 : BitVec width)
+    (vars : List (DataSem.Value × WordLocW width))
+    (rel : memoryRel conf be next refs space store memory domain
+      ((.refPtr true index1, .word w1) :: (.refPtr true index2, .word w2) :: vars))
+    (found1 : sptLookup index1 refs = some (.byteArray true bytes1))
+    (found2 : sptLookup index2 refs = some (.byteArray true bytes2))
+    (addr1 : getRealAddr conf store w1 = some a1) (addr2 : getRealAddr conf store w2 = some a2)
+    (good : goodDimindex width)
+    (sameHeader : DataToWord.makeByteHeader (width := width) conf true bytes1.length =
+      DataToWord.makeByteHeader conf true bytes2.length) :
+    ∃ result : BitVec width,
+      wordCmpLoop (WordGcFunctions.decodeLength conf (DataToWord.makeByteHeader conf true bytes1.length))
+        (a1 + StackRemove.bytesInWord width * WordGcFunctions.decodeLength conf (DataToWord.makeByteHeader conf true bytes1.length))
+        (a2 + StackRemove.bytesInWord width * WordGcFunctions.decodeLength conf (DataToWord.makeByteHeader conf true bytes1.length))
+        domain memory = some result ∧ (bytes1 = bytes2 ↔ result = 1) := by
+  have tail := memoryRel_tail conf be next refs space store memory domain (.refPtr true index1, .word w1)
+    ((.refPtr true index2, .word w2) :: vars) rel
+  obtain ⟨p1, q1, loc1, _, real1, _, mem1, _, config, lenBound1⟩ :=
+    memoryRel_byteArrayHeader conf be next refs space store memory domain true true index1 bytes1 (.word w1)
+      ((.refPtr true index2, .word w2) :: vars) rel found1 good
+  obtain ⟨p2, q2, loc2, _, real2, _, mem2, _, _, lenBound2⟩ :=
+    memoryRel_byteArrayHeader conf be next refs space store memory domain true true index2 bytes2 (.word w2)
+      vars tail found2 good
+  have wp1 := WordLocW.word.inj loc1
+  have wp2 := WordLocW.word.inj loc2
+  subst p1
+  subst p2
+  have aq1 := Option.some.inj (real1.symm.trans addr1)
+  have aq2 := Option.some.inj (real2.symm.trans addr2)
+  subst q1
+  subst q2
+  have equalLengths := byteHeaderLengthInjective conf true true bytes1.length bytes2.length good config lenBound1 lenBound2 sameHeader
+  obtain ⟨h1, frame1, actual1, words1, bound1, count1⟩ :=
+    memoryRel_byteArrayWordsImp conf be next refs space store memory domain true true index1 bytes1 w1 a1
+      ((.refPtr true index2, .word w2) :: vars) ⟨rel, found1, good, addr1⟩
+  obtain ⟨h2, frame2, actual2, words2, bound2, count2⟩ :=
+    memoryRel_byteArrayWordsImp conf be next refs space store memory domain true true index2 bytes2 w2 a2
+      vars ⟨tail, found2, good, addr2⟩
+  have hh1 := WordLocW.word.inj (actual1.symm.trans mem1)
+  have hh2 := WordLocW.word.inj (actual2.symm.trans mem2)
+  subst h1
+  subst h2
+  rw [← sameHeader] at words2 count2 bound2
+  let count := (WordGcFunctions.decodeLength conf (DataToWord.makeByteHeader (width := width) conf true bytes1.length)).toNat
+  let zeroWords : List (BitVec width) := List.replicate count 0
+  have countEq : count = bytes1.length / (width / 8) + 1 := count1
+  have cap : bytes1.length ≤ zeroWords.length * (width / 8) := by
+    simp only [zeroWords, List.length_replicate, countEq]
+    rcases good with hw | hw <;> subst width <;> norm_num <;> omega
+  have countBound : zeroWords.length < 2 ^ width := by simpa [zeroWords, count] using bound1
+  have countEnough : zeroWords.length ≤ bytes1.length / (width / 8) + 1 := by simp [zeroWords, countEq]
+  obtain ⟨result, loop, correct⟩ := byteArrayWordEqualityLoop be zeroWords bytes1 bytes2 frame1 frame2
+    a1 a2 domain memory good equalLengths cap countEnough countBound words1 words2
+  refine ⟨result, ?_, correct⟩
+  simpa [zeroWords, count] using loop
 
 end
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

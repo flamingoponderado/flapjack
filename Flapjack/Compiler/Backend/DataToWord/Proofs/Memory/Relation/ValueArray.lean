@@ -155,7 +155,7 @@ theorem memoryRel_refPtrTrueImp {width : Nat} [NeZero width] (conf : DataToWord.
       memoryRel_valueArrayImp conf be next refs space store memory domain true index values location vars ⟨rel, found, good⟩
     exact ⟨w, address, header, loc, low, by simp [bit3, bit2], real, simple, mem, indom⟩
   | byteArray flag bytes =>
-    obtain ⟨w, address, loc, low, real, simple, mem, indom, bound⟩ :=
+    obtain ⟨w, address, loc, low, real, simple, mem, indom, bound, _⟩ :=
       memoryRel_byteArrayHeader conf be next refs space store memory domain true flag index bytes location vars rel found good
     obtain ⟨bit3, bit2⟩ := byteHeaderBits conf bytes.length flag good bound
     exact ⟨w, address, DataToWord.makeByteHeader conf flag bytes.length,
