@@ -109246,8 +109246,8 @@
     "lean_name": "collectApps",
     "hol_path": "cakeml/compiler/backend/clos_mtiScript.sml",
     "hol_name": "collect_apps_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed carrier and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared clos_mtiScript.sml:68-74 and all inferred constructor cases in clos_mti_collect_args_probe.out. The trace and optional location carriers are native, with exact ClosLang.Exp and List carriers. App with location NONE recurses only when the original accumulator and argument lengths fit max_app, appending arguments in order; the overflow branch and every other constructor return the original pair. The source comparison and typed capture do not prove cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviInline.lean",
@@ -115479,5 +115479,53 @@
     "lean_name": "collectArgsUnary",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared HOL source lines 188-201 and typed replay: the same collection equality and no_mti premise, existential native mlstring list, reconstructed nested unary functions, exact count and residual no_mti conclusion. The original definition or theorem was replayed with inferred types in clos_mti_collect_args_probe.out; Lean proof is kernel checked. Source and Lean use the reviewed production collector and no_mti predicate. These checks do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "mk_Apps_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/CollectApps.lean",
+    "lean_name": "mkApps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 254-257: recursive unary App construction retains native tra, argument and order. Original theorem or definition replayed with inferred types in clos_mti_collect_args_probe.out; Lean proof kernel checked against the reviewed production collector and no_mti predicate. This does not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "collect_apps_acc",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/CollectApps.lean",
+    "lean_name": "collectAppsPrefix",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 211-221: original five quantified inputs and result prefix existential, without added assumptions. Original theorem or definition replayed with inferred types in clos_mti_collect_args_probe.out; Lean proof kernel checked against the reviewed production collector and no_mti predicate. This does not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "collect_apps_cons_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/CollectApps.lean",
+    "lean_name": "collectAppsConsLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 223-242: original biconditional relates the adjusted limit, initial accumulator, ordered suffix and residual expression. Original theorem or definition replayed with inferred types in clos_mti_collect_args_probe.out; Lean proof kernel checked against the reviewed production collector and no_mti predicate. This does not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "collect_apps_cons",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/CollectApps.lean",
+    "lean_name": "collectAppsCons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 244-252: the original singleton accumulator equality and nonzero limit imply the reduced-limit result. Original theorem or definition replayed with inferred types in clos_mti_collect_args_probe.out; Lean proof kernel checked against the reviewed production collector and no_mti predicate. This does not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "collect_apps_no_mti",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/CollectApps.lean",
+    "lean_name": "collectAppsNoMti",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 312-321: original collection equality, no_mti expression and EVERY accumulator premises imply both corresponding outputs; native List membership formulation is logically EVERY. Original theorem or definition replayed with inferred types in clos_mti_collect_args_probe.out; Lean proof kernel checked against the reviewed production collector and no_mti predicate. This does not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "collect_apps_IMP_mk_Apps",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/CollectApps.lean",
+    "lean_name": "collectAppsRebuild",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared source lines 259-280: original quantifier order includes the unused accumulator, preserved in Lean; empty accumulator, no_mti, existential tra list, list ZIP order, equal lengths and upper bound match. HOL ZIP and Lean zip both truncate on unequal lists. Original theorem or definition replayed with inferred types in clos_mti_collect_args_probe.out; Lean proof kernel checked against the reviewed production collector and no_mti predicate. This does not establish cross-language equivalence."
   }
 ]

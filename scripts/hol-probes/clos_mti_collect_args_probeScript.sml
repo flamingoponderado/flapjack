@@ -2,6 +2,10 @@ load "preamble"; load "clos_mtiTheory"; load "closPropsTheory";
 open HolKernel Parse bossLib preamble clos_mtiTheory closPropsTheory;
 val _ = new_theory "flapjack_clos_mti_collect_args_replay";
 val _ = Globals.linewidth := 1000000;
+val _ = temp_delsimps ["NORMEQ_CONV"];
+val _ = diminish_srw_ss ["ABBREV"];
+fun bring_fwd_ctors th ty = map ((fn s => Parse.bring_to_front_overload s {Name = s, Thy = th}) o term_to_string) (TypeBase.constructors_of ty);
+val _ = bring_fwd_ctors "closLang" ``:closLang$exp``;
 
 (* Literal replays of clos_mtiProofScript.sml:63-66 and 177-201. *)
 Definition mk_Fns_def:
@@ -35,6 +39,88 @@ Proof
   \\ qexists_tac `t::ts` \\ rw [mk_Fns_def]
 QED
 
+Theorem collect_apps_acc:
+    !max_app acc e res s.
+      collect_apps max_app acc e = (res,s) ==>
+      ?other. res = acc ++ other
+Proof
+  recInduct collect_apps_ind \\ rw []
+  \\ pop_assum mp_tac
+  \\ simp [collect_apps_def]
+  \\ IF_CASES_TAC \\ fs []
+  \\ rw [] \\ res_tac \\ fs []
+QED
+
+Theorem collect_apps_cons_lemma:
+    !e1 m ys other e2.
+      collect_apps (m+LENGTH ys) ys e1 = (ys ++ other,e2) <=>
+      collect_apps m [] e1 = (other,e2)
+Proof
+  Induct \\ fs [collect_apps_def]
+  \\ rw [] \\ Cases_on `o'` \\ fs [collect_apps_def]
+  \\ rw [] \\ fs []
+  \\ fs [LESS_EQ_EXISTS]
+  \\ Cases_on `collect_apps (p + LENGTH l) l e1`
+  \\ drule collect_apps_acc
+  \\ strip_tac \\ rveq \\ fs []
+  \\ Cases_on `collect_apps (p + (LENGTH l + LENGTH ys)) (ys ++ l) e1`
+  \\ drule collect_apps_acc
+  \\ strip_tac \\ rveq \\ fs []
+  \\ pop_assum mp_tac
+  \\ `(LENGTH l + LENGTH ys) = LENGTH (ys ++ l)` by fs []
+  \\ asm_rewrite_tac []
+  \\ rfs []
+QED
+
+Theorem collect_apps_cons:
+    !e1 m x other e2.
+      collect_apps m [x] e1 = (x::other,e2) /\ m <> 0 ==>
+      collect_apps (m-1) [] e1 = (other,e2)
+Proof
+  once_rewrite_tac [collect_apps_cons_lemma |> GSYM
+       |> Q.SPECL [`e1`,`m`,`[x]`]
+       |> SIMP_RULE std_ss [LENGTH,APPEND]] \\ rw []
+QED
+
+Definition mk_Apps_def:
+  mk_Apps e [] = e /\
+  mk_Apps e ((t,other)::ts) = App t NONE (mk_Apps e ts) [other]
+End
+
+Theorem collect_apps_IMP_mk_Apps:
+  !e max_app (acc:closLang$exp list) other e3.
+      collect_apps max_app [] e = (other,e3) /\ no_mti e ==>
+      ?ts. e = mk_Apps e3 (ZIP (ts, other)) /\ LENGTH other = LENGTH ts /\
+           LENGTH other <= max_app
+Proof
+  Induct \\ fs [] \\ rw []
+  \\ fs [collect_apps_def] \\ rveq
+  \\ TRY (qexists_tac `[]` \\ fs [mk_Apps_def]
+          \\ FULL_CASE_TAC \\ fs [] \\ rveq \\ fs [mk_Apps_def] \\ NO_TAC)
+  \\ fs [no_mti_def] \\ rveq
+  \\ fs [collect_apps_def] \\ rveq
+  \\ FULL_CASE_TAC \\ fs [] \\ rveq
+  \\ TRY (qexists_tac `[]` \\ fs [mk_Apps_def] \\ NO_TAC)
+  \\ fs [no_mti_def]
+  \\ imp_res_tac collect_apps_acc \\ rveq \\ fs []
+  \\ Cases_on `l` \\ gvs []
+  \\ drule (GEN_ALL collect_apps_cons) \\ fs []
+  \\ strip_tac \\ first_x_assum drule
+  \\ strip_tac \\ rveq \\ fs []
+  \\ qexists_tac `t::ts` \\ fs [ZIP,mk_Apps_def]
+QED
+
+Theorem collect_apps_no_mti:
+   !k aux e res e1.
+      collect_apps k aux e = (res,e1) /\
+      no_mti e /\ EVERY no_mti aux ==>
+      EVERY no_mti res /\ no_mti e1
+Proof
+  recInduct collect_apps_ind
+  \\ rw [collect_apps_def] \\ fs []
+  \\ fs [no_mti_def, ETA_THM]
+QED
+
 fun show label th =
   if null (hyp th) then
     (print label; print "="; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
@@ -43,3 +129,10 @@ val _ = show "mk_fns_def_typed" mk_Fns_def;
 val _ = show "collect_args_def_typed" collect_args_def;
 val _ = show "collect_args_imp_typed" collect_args_IMP;
 val _ = show "collect_args_ok_imp_typed" collect_args_ok_IMP;
+val _ = show "collect_apps_def_typed" collect_apps_def;
+val _ = show "collect_apps_acc_typed" collect_apps_acc;
+val _ = show "collect_apps_cons_lemma_typed" collect_apps_cons_lemma;
+val _ = show "collect_apps_cons_typed" collect_apps_cons;
+val _ = show "mk_apps_def_typed" mk_Apps_def;
+val _ = show "collect_apps_rebuild_typed" collect_apps_IMP_mk_Apps;
+val _ = show "collect_apps_no_mti_typed" collect_apps_no_mti;

@@ -1,6 +1,6 @@
-`clos_mti_collect_args_probe.out` captures the typed original argument
-collector and replays the nested-unary-function definition and both collector
-invariants. Regenerate with
+`clos_mti_collect_args_probe.out` captures the typed original argument and
+application collectors and replays the nested function/application definitions,
+accumulator lemmas, syntax preservation and reconstruction invariants. Regenerate with
 `HOL_PROBE_ONLY=clos_mti_collect_args_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `data_to_word_memory_repr_probe.out` captures typed heap representation,

@@ -516,6 +516,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
 import Flapjack.Compiler.Backend.ClosMti
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Total
 import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
+import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectApps
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.Proofs.FullTotal
