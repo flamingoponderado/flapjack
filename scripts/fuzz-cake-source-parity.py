@@ -218,10 +218,10 @@ def rich_source(rng):
     return f'fun f x y = {body}; val z = f 1 2;'
 
 
-def structured_source(rng):
-    """Generate accepted programs that exercise closures, patterns and modules."""
+def structured_sources(rng):
+    """Build accepted programs that exercise closures, patterns and modules."""
     a, b, c = (rng.randrange(1000) for _ in range(3))
-    return rng.choice([
+    return [
         f'datatype t = A | B int | C int int; '
         f'fun f x = case x of A => {a} | B n => n | C n m => m; val y = f (C {b} {c});',
         f'fun f x = let fun g y = fn z => (x,y,z) in g {a} end; val y = f {b} {c};',
@@ -253,7 +253,39 @@ def structured_source(rng):
         f'fun f xs = case xs of [] => {a} | x::rest => '
         f'(case rest of [] => x | y::tail => y); '
         f'val y = f [{a},{b},{c}];',
-    ])
+        f"datatype 'a option = Nothing | Just 'a; "
+        f'fun map f x = case x of Nothing => Nothing | Just y => Just (f y); '
+        f'val y = map (fn n => (n,{a})) (Just {b});',
+        f'datatype t = A int | B int int | C; '
+        f'fun f x = case x of (A n, B m k) => (n,m,k) '
+        f'| (B n m, A k) => (k,n,m) | _ => ({a},{b},{c}); '
+        f'val y = f (A {b}, B {c} {a});',
+        f'exception E int int; exception F int; '
+        f'fun f x = ((raise E x {a}) handle E n m => raise F n) '
+        f'handle F n => n; val y = f {b};',
+        f'fun make x = let fun even xs = case xs of [] => x | _::ys => odd ys '
+        f'and odd xs = case xs of [] => {a} | _::ys => even ys in even end; '
+        f'val y = make {b} [{a},{b},{c}];',
+        f'structure M = struct exception E int; datatype t = A | B int; '
+        f'fun get x = case x of A => raise E {a} | B n => n end; '
+        f'val y = M.get M.A handle M.E n => (case n of _ => {b});',
+        f'local val x = {a}; fun make y = fn z => (x,y,z) '
+        f'in fun f z = make {b} z; val y = f {c} end;',
+        f'datatype t = A | B t | C t t; '
+        f'fun mirror x = case x of A => A | B y => B (mirror y) '
+        f'| C y z => C (mirror z) (mirror y); val y = (mirror (C (B A) A),{a});',
+        f'fun f p = case p of ([], y) => y | (x::xs, y) => '
+        f'(case xs of [] => x | z::zs => z); '
+        f'val y = f ([{a},{b}],{c});',
+        f'fun f x = let val x = (x,{a}); fun g y = let val x = (y,x) '
+        f'in fn z => (x,z) end in g {b} end; val y = f {c} {a};',
+        f'exception E; fun f x = (if x then raise E else {a}) '
+        f'handle E => {b}; val y = f True;',
+    ]
+
+
+def structured_source(rng):
+    return rng.choice(structured_sources(rng))
 
 
 def backend_options(rng):
@@ -414,10 +446,14 @@ def main():
                        help='compare fixed language-feature and standard-prelude programs')
     modes.add_argument('--structured', action='store_true',
                        help='compare accepted closure, datatype, pattern and module programs')
+    modes.add_argument('--structured-all', action='store_true',
+                        help='compare every structured program template once')
     modes.add_argument('--rich', action='store_true',
                        help='compare generated nested closures, bindings and patterns')
     modes.add_argument('--backend-options', action='store_true',
                        help='compare accepted programs with varied backend options')
+    modes.add_argument('--structured-options', action='store_true',
+                        help='compare structured programs with varied backend options')
     modes.add_argument('--config-mutations', action='store_true',
                        help='compare successful and rejected configuration combinations')
     modes.add_argument('--display-mutations', action='store_true',
@@ -447,11 +483,12 @@ def main():
             sexp_seeds.append(result.stderr.strip())
     corpus = [(source, status, True) for source, status in SOURCE_CORPUS]
     corpus += [(source, 0, False) for source in BASIS_CORPUS]
-    count = len(corpus) if args.corpus else args.count
+    structured = structured_sources(rng) if args.structured_all else []
+    count = len(corpus) if args.corpus else len(structured) if args.structured_all else args.count
     sexp_outcomes = {}
     for index in range(count):
         extra_flags = (['--sexp=true', rng.choice(['--types', '--print_sexp', '--skip_type_inference=true'])]
-                       if args.sexp_mutations else backend_options(rng) if args.backend_options else
+                       if args.sexp_mutations else backend_options(rng) if args.backend_options or args.structured_options else
                        config_mutations(rng) if args.config_mutations else
                        rng.choice([['--types'], ['--print_sexp'], ['--types', '--print_sexp'],
                                    ['--print_sexp', '--skip_type_inference=true']])
@@ -460,14 +497,15 @@ def main():
                   'val x = 1;' if args.config_mutations else
                   'fun f x y = let fun g z = (x,y,z) in g y end; val z = f 1 2;' if args.backend_options else
                   corpus[index][0] if args.corpus else
+                  structured[index] if args.structured_all else
                   rng.choice([deep_mutated_source, unicode_mutated_source, byte_mutated_source])(rng) if args.display_mutations else
                   byte_mutated_source(rng) if args.byte_mutations else
                   unicode_mutated_source(rng) if args.unicode_mutations else
                   deep_mutated_source(rng) if args.deep_mutations else
-                  mutated_source(rng) if args.mutations else structured_source(rng) if args.structured else
+                  mutated_source(rng) if args.mutations else structured_source(rng) if args.structured or args.structured_options else
                   rich_source(rng) if args.rich else
                   'fun f x = ' + expression(rng, rng.randrange(1, 4)) + '; val _ = print_int (f 2);')
-        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations or args.unicode_mutations or args.byte_mutations or args.structured or args.backend_options or args.config_mutations or args.display_mutations or args.sexp_mutations
+        exclude_prelude = corpus[index][2] if args.corpus else args.mutations or args.deep_mutations or args.unicode_mutations or args.byte_mutations or args.structured or args.structured_all or args.backend_options or args.structured_options or args.config_mutations or args.display_mutations or args.sexp_mutations
         try:
             original = run(args.reference, source, args.timeout, exclude_prelude, extra_flags)
             candidate = run(args.cake, source, args.timeout, exclude_prelude, extra_flags)

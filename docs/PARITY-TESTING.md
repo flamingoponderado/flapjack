@@ -447,6 +447,24 @@ prelude. Seed `857196` matched the pinned compiler on 100 complete outputs:
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured --seed 857196 --count 100
 ```
 
+Use `--structured-all` to exercise every structured template once with the
+same generated constants. The templates include polymorphic datatypes, nested
+constructor patterns, mutually recursive captured functions, qualified
+exceptions, and local shadowing. All 26 templates matched the pinned compiler
+with seed `78124`:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-all --seed 78124
+```
+
+Use `--structured-options` to combine those programs with varied optimizer,
+allocator, garbage collector, and backend settings. Seed `71443` matched 70
+complete outputs:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 71443 --count 70 --timeout 60
+```
+
 Use `--rich` for recursively generated integer programs that combine tuple
 patterns, nested local functions, higher-order closures, and shadowed bindings.
 These programs use the standard prelude, so the run checks complete assembly
@@ -542,7 +560,8 @@ seed `651291` matched 600 cases. Seeds `803471`, `723987`, and `419023`
 matched another 200, 300, and 1,000 cases respectively. Seed `729081` matched
 200 cases; seed `1973104` matched 200 more. Single-edit mutation
 seed `945701` matched 400 cases.
-Deep-mutation seed `49730019` matched 400 further cases.
+Deep-mutation seed `49730019` matched 400 further cases, and seed `782349`
+matched 1,200 cases.
 
 Use `--unicode-mutations` to mutate source containing multibyte characters,
 comments, strings and diagnostic locations. Seed `325579` matched 400 cases
