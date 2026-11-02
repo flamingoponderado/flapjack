@@ -1991,7 +1991,7 @@ theorem evalPanValueDeclarationsWithStructs_one_fun_last
       | name name fields => simp [isDecl, isExnDecl] at hhead
       | decl shape name expression =>
           rw [evalPanValueDeclarationsWithStructs_function_decl_commute]
-          simp only [evalPanValueDeclarationsWithStructs]
+          simp only [evalPanValueDeclarationsWithStructs, evalPanValueExpWith_none]
           cases hval : evalPanValueExp structs (fun _ => none) state.globals
               state.memory state.baseAddress state.topAddress state.bytesInWord
               expression (memoryAccess := memoryAccess) with
