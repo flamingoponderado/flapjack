@@ -340,9 +340,8 @@ theorem closureFuel_target_bound (tree : Spt NumSet) (reachable : NumSet) :
   omega
 
 open Classical in
-/-- Total lookup-based closure with the same recursive clauses as HOL. This
-proof-side definition is untagged pending source review of the fold carrier
-and equation. -/
+/-- Total lookup-based closure used to establish the equation of the executed
+fuelled implementation. This proof-side helper is not used by the compiler. -/
 noncomputable def closure (reachable : NumSet) (tree : Spt NumSet) : NumSet :=
   if sptSubspt (foldUnion .ln (sptInter tree reachable)) reachable then reachable
   else closure (sptUnion reachable (foldUnion .ln (sptInter tree reachable))) tree
@@ -378,6 +377,19 @@ theorem closureFuel_target_eq_closure (tree : Spt NumSet) (reachable : NumSet) :
 theorem closureTotal_eq_closure (reachable : NumSet) (tree : Spt NumSet) :
     closureTotal reachable tree = closure reachable tree := by
   simp [closureTotal, closureFuel_target_eq_closure]
+
+open Classical in
+/-- The executable closure satisfies the original recursive equation on every
+input, including noncanonical sparse trees. -/
+@[hol "HOL/examples/algorithms/spt_closureScript.sml" "closure_spt_def"]
+theorem closureTotal_step (reachable : NumSet) (tree : Spt NumSet) :
+    closureTotal reachable tree =
+      let nodes := foldUnion .ln (sptInter tree reachable)
+      if sptSubspt nodes reachable then reachable
+      else closureTotal (sptUnion reachable nodes) tree := by
+  classical
+  simp only [closureTotal_eq_closure]
+  rw [closure]
 
 /-- Fuelled closure preserves every input key. -/
 theorem closureFuel_preserves (tree : Spt NumSet) (fuel : Nat) (initial result : NumSet)

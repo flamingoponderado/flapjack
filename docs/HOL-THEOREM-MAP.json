@@ -4547,8 +4547,16 @@
     "hol_name": "closure_spt_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
     "lean_name": "closureTotal",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed HOL closure equation captured in flat_elim_closure_probe.out. Lean proves the executed fuelled result equals its source-shaped recursive closure; full fold and carrier correspondence review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed closure_spt_def capture and HOL spt_fold_def, subspt_lookup, union_def and inter_def against the executed Lean closure. NumSet is Unit-valued constructor-for-constructor Spt; foldUnion retains left-subtree, node, right-subtree order; sptInter preserves left payloads and HOL branch collapse; sptUnion preserves left bias; sptSubspt matches the lookup relation, including noncanonical trees. The checked closureTotal_eq_closure proves the target-count fuel always returns the source-shaped recursive result, and closureTotal_step establishes the complete original equation for the executed definition."
+  },
+  {
+    "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
+    "hol_name": "closure_spt_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Reachability.lean",
+    "lean_name": "closureTotal_step",
+    "statement_status": "reviewed_exact",
+    "reviewer": "The pinned typed closure_spt_def equation is kernel-checked for the executed closureTotal on all Unit-valued sparse trees. Compared fold order, exact intersection and union constructors, and lookup-defined subspt with the HOL sources; no tree well-formedness assumption is introduced. The production fuel bound is discharged by closureTotal_eq_closure."
   },
   {
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
