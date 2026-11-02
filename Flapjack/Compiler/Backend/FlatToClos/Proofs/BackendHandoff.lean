@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Syntactic
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BviStages
 import Flapjack.Compiler.Backend.BviToData.Proofs.Semantics
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordStages
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberAndAnnotate
 
 /-! Conditional source-to-BVI behavior composition. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -91,6 +92,59 @@ theorem sourceClosureOracle_syntactic {C : Type} (config : FlatSem.InstallConfig
     · simp [sourceClosureOracle, pureCo, h, incCompileDecs]
     · simpa [sourceClosureOracle, Function.comp_def, pureCo, h, incCompileDecs] using props.2.2 positive
     · simpa [sourceClosureOracle, Function.comp_def, pureCo, h, incCompileDecs] using props.2.1
+
+/-- Source compilation followed by the executed multi-argument pass,
+numbering and annotation has an observable source behavior. The source-pass
+precondition and callback relation remain assumptions, and the participating
+semantics have not yet been reviewed as a HOL correspondence. -/
+theorem cakeToAnnotatedMti_semantics_proofSide {C F : Type} [Nonempty C]
+    (fuel maxApp number : Nat)
+    (interp : Option (Value → Option (SourceToFlat.Config × (Nat × C))))
+    (source : State F) (sourceEnv : SemEnv Value) (sourceConfig nextSource : SourceToFlat.Config)
+    (flatConfig : FlatSem.InstallConfig (Nat × C)) (compiler : ClosSem.Compiler C)
+    (declarations : List AstHOL.Dec) (expressions : List ClosLang.Exp)
+    (precondition : SourceToFlat.SourcePrecondition interp source sourceEnv sourceConfig
+      flatConfig (SourceToSource.compile declarations))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (positive : 0 < maxApp)
+    (production : flatConfig.compile = pureCc (incCompileDecs (α := Nat × Nat × ClosLang.Exp))
+      (pureCc (ClosMti.compileInc (Input := List (Nat × Nat × ClosLang.Exp)) maxApp)
+        (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc) (pureCc ClosAnnotate.compileInc compiler))))
+    (sourceRun : SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (nextSource, expressions)) :
+    ∃ transformed, ClosMti.compileFuel fuel true maxApp expressions = some transformed ∧
+      Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+        (ClosSem.semantics source.ffi maxApp HolFiniteMapExact.empty
+          (pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc)
+            (pureCo (ClosMti.compileInc maxApp) ∘ sourceClosureOracle flatConfig)) compiler
+          (ClosAnnotate.annotateList 0 (ClosNumber.renumberList number transformed).2)) := by
+  let intermediate : ClosSem.Compiler (Nat × C) := pureCc (ClosMti.compileInc maxApp)
+    (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc) (pureCc ClosAnnotate.compileInc compiler))
+  have sourceBehavior := cakeCompileToClosFuel_semantics_exists fuel interp source sourceEnv sourceConfig
+    nextSource flatConfig intermediate declarations expressions maxApp precondition safe positive production sourceRun
+  have nonfail : ClosSem.semantics source.ffi maxApp HolFiniteMapExact.empty
+      (sourceClosureOracle flatConfig) intermediate expressions ≠ .fail := by
+    intro failure
+    rw [failure] at sourceBehavior
+    exact safe sourceBehavior
+  have unary : ∀ e ∈ expressions, ClosProps.noMti e := by
+    have output := congrArg (Option.map Prod.snd) sourceRun
+    have same : compileProg (SourceToFlat.compileTotal sourceConfig (SourceToSource.compile declarations)).2 = expressions := by
+      apply Option.some.inj
+      simpa [SourceToFlat.compileCakeToClosFuel, SourceToFlat.compileToClosFuel, SourceToFlat.compile] using output
+    rw [← same]
+    exact compileProg_noMti _
+  have oracleUnary : ∀ index, ((sourceClosureOracle flatConfig) index).2.2 = [] ∧
+      ∀ e ∈ ((sourceClosureOracle flatConfig) index).2.1, ClosProps.noMti e := by
+    intro index
+    change (incCompileDecs (flatConfig.compileOracle index).2).2 = [] ∧
+      ∀ e ∈ (incCompileDecs (flatConfig.compileOracle index).2).1, ClosProps.noMti e
+    exact ⟨rfl, incCompileDecs_noMti _⟩
+  obtain ⟨transformed, compiled, behavior⟩ := compileFuel_number_annotate_semantics
+    source.ffi fuel maxApp number (sourceClosureOracle flatConfig) compiler expressions
+    positive unary oracleUnary nonfail
+  refine ⟨transformed, compiled, ?_⟩
+  rw [behavior]
+  exact sourceBehavior
 
 /-- The source-to-closure compiler, the production closure driver with its
 optional optimizations disabled, and the implemented BVL/BVI pipeline produce
