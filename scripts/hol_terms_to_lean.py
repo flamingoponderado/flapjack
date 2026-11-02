@@ -396,16 +396,16 @@ class Renderer:
     # -- generated riscv constants -----------------------------------------
     def riscv_const(self, c: Const, args, env) -> str:
         n = c.name
-        m = re.fullmatch(r'recordtype\.([A-Za-z_]+)\.seldef\.([A-Za-z0-9_\']+)_fupd', n)
+        m = re.fullmatch(r'recordtype\.([A-Za-z0-9_]+)\.seldef\.([A-Za-z0-9_\']+)_fupd', n)
         if m:
             field = ident(m.group(2))
             return self.eta(c, args, env, 2,
                             lambda xs, raw: f'(let r := {xs[1]}; {{ r with {field} := {xs[0]} r.{field} }})')
-        m = re.fullmatch(r'recordtype\.([A-Za-z_]+)\.seldef\.([A-Za-z0-9_\']+)', n)
+        m = re.fullmatch(r'recordtype\.([A-Za-z0-9_]+)\.seldef\.([A-Za-z0-9_\']+)', n)
         if m:
             field = ident(m.group(2))
             return self.eta(c, args, env, 1, lambda xs, raw: f'{xs[0]}.{field}')
-        m = re.fullmatch(r'recordtype\.([A-Za-z_]+)', n)
+        m = re.fullmatch(r'recordtype\.([A-Za-z0-9_]+)', n)
         if m:
             tname = m.group(1)
             arity = len(fun_parts(c.ty)[0])

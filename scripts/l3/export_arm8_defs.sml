@@ -13,10 +13,13 @@ open HolKernel boolLib bossLib;
 val thys = ["arm8", "arm8_step"];
 fun def_for c =
   let val {Name, Thy, ...} = dest_thy_const c
+      fun fetch n = SOME (n, DB.fetch Thy n) handle _ => NONE
   in if mem Thy thys then
        (case List.find (fn (n,_) => n = Name ^ "_def") (DB.definitions Thy) of
           SOME (n, th) => SOME (n, th)
-        | NONE => (SOME (Name ^ "_def", DB.fetch Thy (Name ^ "_def")) handle _ => NONE))
+        | NONE => (case fetch (Name ^ "_def") of
+                     SOME r => SOME r
+                   | NONE => fetch (Name ^ "_thm")))
      else NONE end;
 fun cmp ((a,b),(c,d)) = case String.compare (a,c) of EQUAL => String.compare (b,d) | x => x;
 val seen = ref (HOLset.empty cmp);

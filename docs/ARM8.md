@@ -184,11 +184,17 @@ validity-condition refinement only.
 The L3 transition semantics (`Next`/`Fetch`/`Decode`/`Run`) are not ported,
 so `arm8_next`/`arm8_target` are not yet L3 instances and `encoderCorrect`
 remains proved only for the closed model.  `scripts/l3/export_arm8_defs.sml`
-exports the pinned HOL definition closure for those functions, and
+exports the pinned HOL definition closure for those functions (129 definitions,
+including the L3 `...2num`/`num2...` conversions), and
 `scripts/hol_terms_to_lean.py --thy=arm8` renders it, but the closure currently
 stops at the HOL `bitstring`/FCP library: `AddWithCarry`, `Decode`, `Run` and
 the `dfn'*` instruction functions are stated over `bool ** 'N` (FCP)
-bit-vectors, and Flapjack does not yet provide `w2v`, `shiftr`, `testbit`,
-`PAD_LEFT`, `FLAT` or `IN`.  Porting that library, then the transition
-semantics, then the L3 encoder-correctness cases is the remaining work of
-#1239; #1229 tracks the individual carrier and semantics gaps.
+bit-vectors, and Flapjack does not yet provide the required `bitstring`
+operations (`w2v`, `shiftr`, `testbit`, `replicate`, `rotate`, `shiftl`,
+`bxor`, `field`, `v2n`), the list operations `PAD_LEFT`, `PAD_RIGHT`, `FLAT`,
+`HD`, `LENGTH` and `REVERSE`, the set operations `IN`, `EMPTY` and `INSERT`, or
+the word/integer helpers `word_ror`, `word_msb`, `int_add` and `Num`.
+Multi-clause `...2num` equations also need a `match` rendering.  Porting that
+library, then the transition semantics, then the L3 encoder-correctness cases
+is the remaining work of #1239; #1229 tracks the individual carrier and
+semantics gaps.
