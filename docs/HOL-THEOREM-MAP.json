@@ -100641,6 +100641,18 @@
     "reviewer": "Source comparison: memory_rel_Word64_IMP and its typed capture retain the full memory relation and good_dimindex hypotheses, existential natural heap index, real address and header, pointer representation, memory and domain facts, tag bits, and both width-dependent payload and header branches. At the permitted 32-bit width the shifted and resized words implement extracts 63..32 and 31..0; at 64 bits resizing implements extract 63..0. store uses the canonical finite-support map and target words share the positive HOL dimension."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality/Word64.lean",
+    "lean_name": "wordEqThm0_word64",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_eq_thm0",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: this is the Word64/Word64 case of the first conjunct of word_eq_thm0, compared with the source proof case and typed capture. It retains the original memory relation, sized comparison, depth clock, resource bound and good_dimindex hypotheses and the existential target result, equality equivalence and remaining-resource bound, with no added hypotheses. This case does not assemble the full theorem. store uses the canonical finite-support map and target words share the positive HOL dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueArray.lean",
     "lean_name": "memoryRel_refPtrTrueImp",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

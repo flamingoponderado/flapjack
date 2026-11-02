@@ -235,6 +235,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordMemoryEqu
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArray
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueArray
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Word64
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Word64
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCompare
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockEquality
