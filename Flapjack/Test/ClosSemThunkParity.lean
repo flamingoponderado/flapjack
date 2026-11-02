@@ -16,8 +16,12 @@ example : destThunk [.refPtr true 0] unforced = .badRef := rfl
 example : destThunk [.refPtr false 0] unforced = .isThunk .notEvaluated (.number 5) := rfl
 example : destThunk [.refPtr true 0] array = .notThunk := rfl
 example : (updateThunk [.refPtr false 0] unforced [.number 7]).map (fun refs => refs.lookup 0) =
-    some (some (.thunk .evaluated (.number 7))) := rfl
+    some (some (.thunk .evaluated (.number 7))) := by
+  simp [updateThunk, destThunk, storeThunk, unforced, HolFiniteMapExact.updateEq, FUPDATE_HOL]
 example : updateThunk [.refPtr false 0] forced [.number 7] = none := rfl
 example : updateThunk [.refPtr false 0] unforced [.refPtr false 0] = none := rfl
+example : badThunkUpdate .evaluated (.refPtr false 0) unforced = true := rfl
+example : badThunkUpdate .notEvaluated (.refPtr false 0) unforced = false := rfl
+example : badThunkUpdate .evaluated (.number 5) HolFiniteMapExact.empty = false := rfl
 
 end Flapjack.Test.ClosSemThunkParity

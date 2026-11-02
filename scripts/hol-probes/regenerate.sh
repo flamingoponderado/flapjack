@@ -401,7 +401,7 @@ run_probe clos_sem_install_probeScript.sml clos_sem_install_probe.out \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_thunk_probeScript.sml clos_sem_thunk_probe.out \
-  dest_typed store_typed update_typed bad_typed missing ref_flag unevaluated array update repeat_update nested_update \
+  dest_typed store_typed update_typed bad_typed missing ref_flag unevaluated array update repeat_update nested_update bad_evaluated_thunk bad_unevaluated_thunk bad_evaluated_number \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_sem_basic_probeScript.sml clos_sem_basic_probe.out \

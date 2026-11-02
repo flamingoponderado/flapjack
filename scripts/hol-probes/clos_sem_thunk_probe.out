@@ -9,3 +9,6 @@ array=NotThunk
 update=SOME (SOME (Thunk Evaluated (Number 7)))
 repeat_update=T
 nested_update=T
+bad_evaluated_thunk=T
+bad_unevaluated_thunk=F
+bad_evaluated_number=F

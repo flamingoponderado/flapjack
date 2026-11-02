@@ -22,3 +22,8 @@ val _ = show_eval "repeat_update=" ``IS_NONE
   (closSem$update_thunk [RefPtr F 0] (FEMPTY |+ (0,Thunk Evaluated (Number 5))) [Number 7])``;
 val _ = show_eval "nested_update=" ``IS_NONE
   (closSem$update_thunk [RefPtr F 0] (FEMPTY |+ (0,Thunk NotEvaluated (Number 5))) [RefPtr F 0])``;
+val _ = show_eval "bad_evaluated_thunk=" ``closSem$bad_thunk_update Evaluated (RefPtr F 0)
+  (FEMPTY |+ (0,Thunk NotEvaluated (Number 5)))``;
+val _ = show_eval "bad_unevaluated_thunk=" ``closSem$bad_thunk_update NotEvaluated (RefPtr F 0)
+  (FEMPTY |+ (0,Thunk NotEvaluated (Number 5)))``;
+val _ = show_eval "bad_evaluated_number=" ``closSem$bad_thunk_update Evaluated (Number 5) FEMPTY``;

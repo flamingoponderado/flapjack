@@ -198,7 +198,7 @@ the complete carrier correspondence remains under review.
 
 `clos_sem_basic_probe.out` captures the typed closure primitive dispatcher and block tag, length, Boolean, extension and constant observations. It also replays the universal `Build` fallback for arbitrary parts, arguments, and state; Lean checks the corresponding `doApp_build_fallback` theorem. `Flapjack/Test/ClosSemBasicParity.lean` checks the concrete cases. The full primitive dispatcher correspondence review remains open.
 
-`clos_sem_thunk_probe.out` captures typed closure thunk operations and missing, flagged, array, valid-update, repeated-update and nested-thunk observations. `Flapjack/Test/ClosSemThunkParity.lean` replays the concrete cases; the proof-side store relation connects flat and closure thunk inspection and successful updates, pending cross-language review.
+`clos_sem_thunk_probe.out` captures typed closure thunk operations and missing, flagged, array, valid-update, repeated-update, nested-thunk and bad-update observations. `Flapjack/Test/ClosSemThunkParity.lean` replays the concrete cases; the proof-side store relation connects flat and closure thunk inspection and successful updates, pending cross-language review.
 
 `clos_sem_install_probe.out` captures typed closure installation, payload decoders and clock theorems, along with invalid-arity observations. Lean checks decoder uniqueness, related flat-to-closure payloads and installation clock facts. These captures support source review but do not prove cross-language equivalence.
 
