@@ -1087,4 +1087,71 @@ theorem arm8_encoder_correct_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64)
   · simp only [asserts2, Nat.reduceAdd, Nat.reduceSub]
     exact ⟨hP'1, hP'2, trivial⟩
 
+/-! ## The immediate compare shapes: `LogicalImmediate@64` and
+`AddSubImmediate@64` with `S := T` into `XZR` -/
+
+/-- `Run` of the `ANDS` compare on an immediate: the `AND` result sets `N`, `Z`
+and clears `C`, `V`; the `XZR` destination discards the value. -/
+theorem arm8Run_logicalImmediate_ands_eq (imm : BitVec 64) (rn : BitVec 5) (st : arm8_state) :
+    Run (instruction.Data (Data.«LogicalImmediate@64»
+      ((1 : BitVec 64), (.LogicalOp_AND, (true, (imm, (rn, 31))))))) st =
+      { st with
+        PSTATE :=
+          { st.PSTATE with
+            N := BitVec.msb (X (TN := 64) rn st &&& imm),
+            Z := (X (TN := 64) rn st &&& imm) == (0 : BitVec 64),
+            C := false,
+            V := false } } := by
+  simp only [Run, «dfn'LogicalImmediate», SetTheFlags, «write'X», Bool.and_eq_true,
+    Bool.not_true]
+  rfl
+
+/-- One `arm8Next` step on the `ANDS` immediate compare word. -/
+theorem arm8Next_logicalImmediate_ands (ms : arm8_state) (imm : BitVec 64) (rn : BitVec 5)
+    (N : BitVec 1) (imms immr : BitVec 6) (opc2 : BitVec 2)
+    (hbm : EncodeBitMask imm = some (N, (imms, immr)))
+    (hop : EncodeLogicalOp (.LogicalOp_AND, true) = some opc2)
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC =
+      BitVec.ofNat 8 ((arm8LogicalImmediateWord opc2 N imms immr rn 31 >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) =
+      BitVec.ofNat 8 ((arm8LogicalImmediateWord opc2 N imms immr rn 31 >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) =
+      BitVec.ofNat 8 ((arm8LogicalImmediateWord opc2 N imms immr rn 31 >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) =
+      BitVec.ofNat 8 ((arm8LogicalImmediateWord opc2 N imms immr rn 31 >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next ms =
+      { ms with
+        branch_hint := none,
+        PC := ms.PC + 4,
+        PSTATE :=
+          { ms.PSTATE with
+            N := BitVec.msb (X (TN := 64) rn ms &&& imm),
+            Z := (X (TN := 64) rn ms &&& imm) == (0 : BitVec 64),
+            C := false,
+            V := false } } := by
+  let i : instruction := instruction.Data (Data.«LogicalImmediate@64»
+    ((1 : BitVec 64), (.LogicalOp_AND, (true, (imm, (rn, 31))))))
+  have hdec : Decode (arm8LogicalImmediateWord opc2 N imms immr rn 31) = i := by
+    dsimp only [i]
+    exact arm8Decode_logicalImmediate .LogicalOp_AND true imm rn 31 N imms immr opc2 hbm
+      (by rw [hop])
+  have hrun := arm8Run_logicalImmediate_ands_eq imm rn { ms with branch_hint := none }
+  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
+    dsimp only [i]
+    rw [hrun]
+  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
+    dsimp only [i]
+    rw [hrun]
+    simpa using hexc0
+  have hn := arm8Next_word ms (arm8LogicalImmediateWord opc2 N imms immr rn 31)
+    i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
+  unfold arm8Next
+  rw [hn]
+  dsimp only [i]
+  rw [hrun]
+  rfl
+
 end Flapjack.Compiler.Encoders.Arm8.L3

@@ -331,9 +331,14 @@ compare step at `PC` (the `ANDS` or `SUBS`-into-`XZR` shape, chosen by
 `n = 1`.  The taken branch goes to `PC + a` with the branch hint set; the
 untaken branch advances by four more.  The source side follows `asmUpd`'s
 `wordCmpHOL` choice, matched to `ConditionHolds (cmp_cond cmp)` by the flag
-semantics above.  The immediate-operand form is still open: its
-`LogicalImmediate@64`/`AddSubImmediate@64` compare instructions need
-set-flags variants of the existing encode lemmas.
+semantics above.  The immediate-operand form is still open.  Its `is_test` compare is an
+`ANDS` on a `LogicalImmediate@64`, whose `Run`/`Next` facts are recorded
+(`arm8Run_logicalImmediate_ands_eq`, `arm8Next_logicalImmediate_ands`; the
+set-flags bit lives in the opcode, as for `LogicalShiftedRegister@64`).  Its
+ordering compare is an `AddSubImmediate@64` with `S := T`, which needs a new
+word: `arm8AddSubImmediateWord` hardcodes the `S` bit to `false`, so the
+set-flags word, its `Encode`/`Decode` inverse and the matching `Run`/`Next`
+lemmas still have to be added.
 
 `JumpReg.lean` does the same for `BranchRegister (r, JMP)`: the word, its
 `Encode`/`Decode` inverse and the `Run` reduction, where `PC` becomes the
