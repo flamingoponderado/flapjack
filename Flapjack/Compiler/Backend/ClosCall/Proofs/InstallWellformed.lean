@@ -96,7 +96,8 @@ theorem evaluate_install_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
     (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (argsIH : OracleAuxEmpty (evaluate args env state).2.compileOracle)
     (bodyIH : ∀ (program : List ClosLang.Exp) (start : ClosSem.State C F),
-      OracleAuxEmpty start.compileOracle → OracleAuxEmpty (evaluate program [] start).2.compileOracle) :
+      start.clock < state.clock → OracleAuxEmpty start.compileOracle →
+      OracleAuxEmpty (evaluate program [] start).2.compileOracle) :
     OracleAuxEmpty (evaluate [.op trace .install args] env state).2.compileOracle := by
   cases argsRun : evaluate args env state with
   | mk argsResult argsFinal =>
@@ -113,7 +114,11 @@ theorem evaluate_install_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
         | err error => exact installOracle
         | val program =>
           dsimp only
-          have bodyOracle := bodyIH program installFinal installOracle
+          have argsBound := evaluate_clock_le args env state
+          rw [argsRun] at argsBound
+          dsimp only at argsBound
+          have installBound := doInstall_success_clock values.reverse argsFinal installFinal program installRun
+          have bodyOracle := bodyIH program installFinal (by omega) installOracle
           cases bodyRun : evaluate program [] installFinal with
           | mk result final =>
             rw [bodyRun] at bodyOracle
@@ -125,7 +130,7 @@ theorem evaluate_force_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
     (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (argsIH : OracleAuxEmpty (evaluate args env state).2.compileOracle)
     (bodyIH : ∀ (value : ClosSem.Value) (start : ClosSem.State C F),
-      OracleAuxEmpty start.compileOracle →
+      start.clock ≤ state.clock → OracleAuxEmpty start.compileOracle →
       OracleAuxEmpty (evaluate [appUnit (.var .none 0)] [value] start).2.compileOracle) :
     OracleAuxEmpty (evaluate [.op trace (.thunkOp .forceThunk) args] env state).2.compileOracle := by
   cases argsRun : evaluate args env state with
@@ -143,7 +148,9 @@ theorem evaluate_force_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
         cases mode with
         | evaluated => exact argsIH
         | notEvaluated =>
-          have bodyOracle := bodyIH value argsFinal argsIH
+          have argsBound := evaluate_clock_le args env state
+          rw [argsRun] at argsBound
+          have bodyOracle := bodyIH value argsFinal argsBound argsIH
           cases bodyRun : evaluate [appUnit (.var .none 0)] [value] argsFinal with
           | mk result final =>
             rw [bodyRun] at bodyOracle

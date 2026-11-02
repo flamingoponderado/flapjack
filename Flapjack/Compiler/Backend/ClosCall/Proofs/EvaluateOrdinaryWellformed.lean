@@ -86,9 +86,10 @@ theorem evaluate_op_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
     (op : ClosLang.Op) (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (argsIH : OracleAuxEmpty (evaluate args env state).2.compileOracle)
     (installIH : ∀ (program : List ClosLang.Exp) (start : ClosSem.State C F),
-      OracleAuxEmpty start.compileOracle → OracleAuxEmpty (evaluate program [] start).2.compileOracle)
-    (forceIH : ∀ (value : ClosSem.Value) (start : ClosSem.State C F),
-      OracleAuxEmpty start.compileOracle →
+      start.clock < state.clock → OracleAuxEmpty start.compileOracle →
+      OracleAuxEmpty (evaluate program [] start).2.compileOracle)
+    (forceIH : op = .thunkOp .forceThunk → ∀ (value : ClosSem.Value) (start : ClosSem.State C F),
+      start.clock ≤ state.clock → OracleAuxEmpty start.compileOracle →
       OracleAuxEmpty (evaluate [appUnit (.var .none 0)] [value] start).2.compileOracle) :
     OracleAuxEmpty (evaluate [.op trace op args] env state).2.compileOracle := by
   have ordinary : ∀ op, op ≠ .install → op ≠ .thunkOp .forceThunk →
@@ -99,7 +100,7 @@ theorem evaluate_op_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
   | install => exact evaluate_install_oracleAuxEmpty trace args env state argsIH installIH
   | thunkOp operation =>
     cases operation with
-    | forceThunk => exact evaluate_force_oracleAuxEmpty trace args env state argsIH forceIH
+    | forceThunk => exact evaluate_force_oracleAuxEmpty trace args env state argsIH (forceIH rfl)
     | allocThunk mode => exact ordinary _ (by simp) (by simp)
     | updateThunk mode => exact ordinary _ (by simp) (by simp)
   | label | ffi | intOp | wordOp | blockOp | globOp | memOp => exact ordinary _ (by simp) (by simp)

@@ -45,7 +45,8 @@ theorem evaluate_let_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
     (bindings : List ClosLang.Exp) (body : ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (bindingsIH : OracleAuxEmpty (evaluate bindings env state).2.compileOracle)
     (bodyIH : ∀ (bodyEnv : List ClosSem.Value) (start : ClosSem.State C F),
-      OracleAuxEmpty start.compileOracle → OracleAuxEmpty (evaluate [body] bodyEnv start).2.compileOracle) :
+      start.clock ≤ state.clock → OracleAuxEmpty start.compileOracle →
+      OracleAuxEmpty (evaluate [body] bodyEnv start).2.compileOracle) :
     OracleAuxEmpty (evaluate [.let trace bindings body] env state).2.compileOracle := by
   cases run : evaluate bindings env state with
   | mk result final =>
@@ -53,14 +54,18 @@ theorem evaluate_let_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
     rw [evaluate, fixClock_evaluate, run]
     cases result with
     | err error => exact bindingsIH
-    | val values => exact bodyIH (values ++ env) final bindingsIH
+    | val values =>
+      have bound := evaluate_clock_le bindings env state
+      rw [run] at bound
+      exact bodyIH (values ++ env) final bound bindingsIH
 
 /-- Handlers preserve the oracle produced before an exception is raised. -/
 theorem evaluate_handle_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
     (body handler : ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (bodyIH : OracleAuxEmpty (evaluate [body] env state).2.compileOracle)
     (handlerIH : ∀ (bodyEnv : List ClosSem.Value) (start : ClosSem.State C F),
-      OracleAuxEmpty start.compileOracle → OracleAuxEmpty (evaluate [handler] bodyEnv start).2.compileOracle) :
+      start.clock ≤ state.clock → OracleAuxEmpty start.compileOracle →
+      OracleAuxEmpty (evaluate [handler] bodyEnv start).2.compileOracle) :
     OracleAuxEmpty (evaluate [.handle trace body handler] env state).2.compileOracle := by
   cases run : evaluate [body] env state with
   | mk result final =>
@@ -71,15 +76,18 @@ theorem evaluate_handle_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
     | err error =>
       cases error with
       | abort reason => exact bodyIH
-      | raise value => exact handlerIH (value :: env) final bodyIH
+      | raise value =>
+        have bound := evaluate_clock_le [body] env state
+        rw [run] at bound
+        exact handlerIH (value :: env) final bound bodyIH
 
 /-- Both conditional branches start with the condition's resulting oracle. -/
 theorem evaluate_if_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
     (condition yes no : ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (conditionIH : OracleAuxEmpty (evaluate [condition] env state).2.compileOracle)
-    (yesIH : ∀ (start : ClosSem.State C F), OracleAuxEmpty start.compileOracle →
+    (yesIH : ∀ (start : ClosSem.State C F), start.clock ≤ state.clock → OracleAuxEmpty start.compileOracle →
       OracleAuxEmpty (evaluate [yes] env start).2.compileOracle)
-    (noIH : ∀ (start : ClosSem.State C F), OracleAuxEmpty start.compileOracle →
+    (noIH : ∀ (start : ClosSem.State C F), start.clock ≤ state.clock → OracleAuxEmpty start.compileOracle →
       OracleAuxEmpty (evaluate [no] env start).2.compileOracle) :
     OracleAuxEmpty (evaluate [.ifThenElse trace condition yes no] env state).2.compileOracle := by
   cases run : evaluate [condition] env state with
@@ -90,18 +98,20 @@ theorem evaluate_if_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
     | err error => exact conditionIH
     | val values =>
       obtain ⟨value, rfl⟩ := evaluate_singleton_value condition env state final values run
+      have bound := evaluate_clock_le [condition] env state
+      rw [run] at bound
       cases choice : asBool value with
       | none => simpa [choice] using conditionIH
       | some flag =>
         cases flag with
-        | false => simpa [choice] using noIH final conditionIH
-        | true => simpa [choice] using yesIH final conditionIH
+        | false => simpa [choice] using noIH final bound conditionIH
+        | true => simpa [choice] using yesIH final bound conditionIH
 
 /-- Sequencing passes the first expression's oracle to the remaining list. -/
 theorem evaluate_cons_oracleAuxEmpty {C F : Type} (first second : ClosLang.Exp)
     (rest : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (headIH : OracleAuxEmpty (evaluate [first] env state).2.compileOracle)
-    (tailIH : ∀ (start : ClosSem.State C F), OracleAuxEmpty start.compileOracle →
+    (tailIH : ∀ (start : ClosSem.State C F), start.clock ≤ state.clock → OracleAuxEmpty start.compileOracle →
       OracleAuxEmpty (evaluate (second :: rest) env start).2.compileOracle) :
     OracleAuxEmpty (evaluate (first :: second :: rest) env state).2.compileOracle := by
   cases run : evaluate [first] env state with
@@ -113,7 +123,9 @@ theorem evaluate_cons_oracleAuxEmpty {C F : Type} (first second : ClosLang.Exp)
     | val values =>
       cases tailRun : evaluate (second :: rest) env final with
       | mk tailResult tailFinal =>
-        have tailEmpty := tailIH final headIH
+        have bound := evaluate_clock_le [first] env state
+        rw [run] at bound
+        have tailEmpty := tailIH final bound headIH
         rw [tailRun] at tailEmpty
         cases tailResult <;> exact tailEmpty
 
@@ -122,10 +134,11 @@ theorem evaluate_app_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra) (lo
     (function : ClosLang.Exp) (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (stateEmpty : OracleAuxEmpty state.compileOracle)
     (argsIH : OracleAuxEmpty (evaluate args env state).2.compileOracle)
-    (fnIH : ∀ (start : ClosSem.State C F), OracleAuxEmpty start.compileOracle →
+    (fnIH : ∀ (start : ClosSem.State C F), start.clock ≤ state.clock → OracleAuxEmpty start.compileOracle →
       OracleAuxEmpty (evaluate [function] env start).2.compileOracle)
     (appIH : ∀ (value : ClosSem.Value) (values : List ClosSem.Value) (start : ClosSem.State C F),
-      OracleAuxEmpty start.compileOracle → OracleAuxEmpty (evaluateApp location value values start).2.compileOracle) :
+      start.clock ≤ state.clock → OracleAuxEmpty start.compileOracle →
+      OracleAuxEmpty (evaluateApp location value values start).2.compileOracle) :
     OracleAuxEmpty (evaluate [.app trace location function args] env state).2.compileOracle := by
   cases args with
   | nil => simpa [evaluate] using stateEmpty
@@ -140,7 +153,9 @@ theorem evaluate_app_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra) (lo
       | err error => exact argsIH
       | val values =>
         rw [fixClock_evaluate]
-        have fnEmpty := fnIH final argsIH
+        have argsBound := evaluate_clock_le (first :: rest) env state
+        rw [run] at argsBound
+        have fnEmpty := fnIH final argsBound argsIH
         cases fnRun : evaluate [function] env final with
         | mk fnResult fnFinal =>
           rw [fnRun] at fnEmpty
@@ -148,7 +163,10 @@ theorem evaluate_app_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra) (lo
           | err error => exact fnEmpty
           | val fnValues =>
             obtain ⟨fnValue, rfl⟩ := evaluate_singleton_value function env final fnFinal fnValues fnRun
-            simpa using appIH fnValue values fnFinal fnEmpty
+            have fnBound := evaluate_clock_le [function] env final
+            rw [fnRun] at fnBound
+            dsimp only at argsBound fnBound
+            simpa using appIH fnValue values fnFinal (by omega) fnEmpty
 
 /-- A closure application preserves oracle emptiness if body evaluation and
 subsequent applications do so at smaller clocks. -/
@@ -213,7 +231,8 @@ theorem evaluate_call_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
     (ticks label : Nat) (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (argsIH : OracleAuxEmpty (evaluate args env state).2.compileOracle)
     (bodyIH : ∀ (body : ClosLang.Exp) (bodyEnv : List ClosSem.Value) (start : ClosSem.State C F),
-      OracleAuxEmpty start.compileOracle → OracleAuxEmpty (evaluate [body] bodyEnv start).2.compileOracle) :
+      start.clock < state.clock → OracleAuxEmpty start.compileOracle →
+      OracleAuxEmpty (evaluate [body] bodyEnv start).2.compileOracle) :
     OracleAuxEmpty (evaluate [.call trace ticks label args] env state).2.compileOracle := by
   cases run : evaluate args env state with
   | mk result final =>
@@ -229,7 +248,10 @@ theorem evaluate_call_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
         simp only [found]
         split
         · simpa using argsIH
-        · exact bodyIH body bodyEnv (decClock (ticks + 1) final) argsIH
+        · have bound := evaluate_clock_le args env state
+          rw [run] at bound
+          dsimp only at bound
+          exact bodyIH body bodyEnv (decClock (ticks + 1) final) (by simp [decClock]; omega) argsIH
 
 /-- Recursive binding construction leaves the oracle unchanged before the body. -/
 theorem evaluate_letrec_oracleAuxEmpty {C F : Type}
@@ -248,5 +270,150 @@ theorem evaluate_letrec_oracleAuxEmpty {C F : Type}
       | none => simpa [found] using stateEmpty
       | some captured => simpa [found] using bodyIH _
   · simpa [valid] using stateEmpty
+
+/-- Evaluation and closure application preserve an oracle whose auxiliary
+code is always empty. This is a Flapjack invariant of the proof-side
+evaluator, not an asserted HOL theorem port. -/
+theorem evaluate_oracleAuxEmpty {C F : Type} :
+    (∀ (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F),
+      OracleAuxEmpty state.compileOracle → OracleAuxEmpty (evaluate expressions env state).2.compileOracle) ∧
+    (∀ (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value) (state : ClosSem.State C F),
+      OracleAuxEmpty state.compileOracle → OracleAuxEmpty (evaluateApp location function args state).2.compileOracle) := by
+  have all : ∀ clock : Nat,
+      (∀ (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value) (state : ClosSem.State C F),
+        state.clock = clock → OracleAuxEmpty state.compileOracle →
+        OracleAuxEmpty (evaluateApp location function args state).2.compileOracle) ∧
+      (∀ (weight : Nat) (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F),
+        state.clock = clock → expsWeight expressions = weight → OracleAuxEmpty state.compileOracle →
+        OracleAuxEmpty (evaluate expressions env state).2.compileOracle) := by
+    intro clock
+    induction clock using Nat.strongRecOn with
+    | ind clock clockIH =>
+      have appAll : ∀ (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
+          (state : ClosSem.State C F), state.clock = clock → OracleAuxEmpty state.compileOracle →
+          OracleAuxEmpty (evaluateApp location function args state).2.compileOracle := by
+        intro location function args state stateClock empty
+        apply evaluateApp_oracleAuxEmpty_step location function args state empty
+        · intro body env start smaller startEmpty
+          exact (clockIH start.clock (by omega)).2 (expsWeight [body]) [body] env start rfl rfl startEmpty
+        · intro value rest start smaller startEmpty
+          exact (clockIH start.clock (by omega)).1 location value rest start rfl startEmpty
+      constructor
+      · exact appAll
+      · intro weight
+        induction weight using Nat.strongRecOn with
+        | ind weight weightIH =>
+          have exprIH : ∀ (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F),
+              state.clock ≤ clock → expsWeight expressions < weight → OracleAuxEmpty state.compileOracle →
+              OracleAuxEmpty (evaluate expressions env state).2.compileOracle := by
+            intro expressions env state clockLe weightLt empty
+            rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
+            · exact (clockIH state.clock clockLt).2 (expsWeight expressions) expressions env state rfl rfl empty
+            · exact weightIH (expsWeight expressions) weightLt expressions env state clockEq rfl empty
+          have smaller : ∀ (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F),
+              state.clock < clock → OracleAuxEmpty state.compileOracle →
+              OracleAuxEmpty (evaluate expressions env state).2.compileOracle := by
+            intro expressions env state clockLt empty
+            exact (clockIH state.clock clockLt).2 (expsWeight expressions) expressions env state rfl rfl empty
+          have appBound : ∀ (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
+              (state : ClosSem.State C F), state.clock ≤ clock → OracleAuxEmpty state.compileOracle →
+              OracleAuxEmpty (evaluateApp location function args state).2.compileOracle := by
+            intro location function args state clockLe empty
+            rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
+            · exact (clockIH state.clock clockLt).1 location function args state rfl empty
+            · exact appAll location function args state clockEq empty
+          intro expressions env state stateClock measure empty
+          cases expressions with
+          | nil => exact evaluate_nil_oracleAuxEmpty env state empty
+          | cons first rest =>
+            cases rest with
+            | cons second tail =>
+              apply evaluate_cons_oracleAuxEmpty first second tail env state
+              · apply exprIH [first] env state (by omega) ?_ empty
+                simp only [expsWeight] at measure ⊢
+                have := expWeight_pos second
+                omega
+              · intro start bound startEmpty
+                apply exprIH (second :: tail) env start (by omega) ?_ startEmpty
+                simp only [expsWeight] at measure ⊢
+                have := expWeight_pos first
+                omega
+            | nil =>
+              cases first with
+              | var trace index => exact evaluate_var_oracleAuxEmpty trace index env state empty
+              | fn name location selected arity body => exact evaluate_fn_oracleAuxEmpty name location arity selected body env state empty
+              | raise trace body =>
+                apply evaluate_raise_oracleAuxEmpty trace body env state
+                apply exprIH [body] env state (by omega) ?_ empty
+                simp only [expsWeight, expWeight] at measure ⊢; omega
+              | tick trace body =>
+                apply evaluate_tick_oracleAuxEmpty trace body env state empty
+                apply exprIH [body] env (decClock 1 state) ?_ ?_ empty
+                · simp [decClock]; omega
+                · simp only [expsWeight, expWeight] at measure ⊢; omega
+              | op trace op args =>
+                apply evaluate_op_oracleAuxEmpty trace op args env state
+                · apply exprIH args env state (by omega) ?_ empty
+                  simp only [expsWeight] at measure ⊢
+                  have := opWeight_gt trace op args
+                  omega
+                · intro program start bound startEmpty
+                  exact smaller program [] start (by omega) startEmpty
+                · intro forceEq value start bound startEmpty
+                  subst op
+                  apply exprIH [appUnit (.var .none 0)] [value] start (by omega) ?_ startEmpty
+                  have h := appUnit_var_weight
+                  simp only [expsWeight, expWeight] at measure
+                  simp only [appUnit, expsWeight, expWeight] at h ⊢
+                  omega
+              | «let» trace bindings body =>
+                apply evaluate_let_oracleAuxEmpty trace bindings body env state
+                · apply exprIH bindings env state (by omega) ?_ empty
+                  simp only [expsWeight, expWeight] at measure ⊢; omega
+                · intro bodyEnv start bound startEmpty
+                  apply exprIH [body] bodyEnv start (by omega) ?_ startEmpty
+                  simp only [expsWeight, expWeight] at measure ⊢; omega
+              | letrec names location selected fns body =>
+                apply evaluate_letrec_oracleAuxEmpty names location selected fns body env state empty
+                intro bodyEnv
+                apply exprIH [body] bodyEnv state (by omega) ?_ empty
+                simp only [expsWeight, expWeight] at measure ⊢; omega
+              | ifThenElse trace condition yes no =>
+                apply evaluate_if_oracleAuxEmpty trace condition yes no env state
+                · apply exprIH [condition] env state (by omega) ?_ empty
+                  simp only [expsWeight, expWeight] at measure ⊢; omega
+                · intro start bound startEmpty
+                  apply exprIH [yes] env start (by omega) ?_ startEmpty
+                  simp only [expsWeight, expWeight] at measure ⊢; omega
+                · intro start bound startEmpty
+                  apply exprIH [no] env start (by omega) ?_ startEmpty
+                  simp only [expsWeight, expWeight] at measure ⊢; omega
+              | handle trace body handler =>
+                apply evaluate_handle_oracleAuxEmpty trace body handler env state
+                · apply exprIH [body] env state (by omega) ?_ empty
+                  simp only [expsWeight, expWeight] at measure ⊢; omega
+                · intro bodyEnv start bound startEmpty
+                  apply exprIH [handler] bodyEnv start (by omega) ?_ startEmpty
+                  simp only [expsWeight, expWeight] at measure ⊢; omega
+              | call trace ticks location args =>
+                apply evaluate_call_oracleAuxEmpty trace ticks location args env state
+                · apply exprIH args env state (by omega) ?_ empty
+                  simp only [expsWeight, expWeight] at measure ⊢; omega
+                · intro body bodyEnv start bound startEmpty
+                  exact smaller [body] bodyEnv start (by omega) startEmpty
+              | app trace location function args =>
+                apply evaluate_app_oracleAuxEmpty trace location function args env state empty
+                · apply exprIH args env state (by omega) ?_ empty
+                  simp only [expsWeight, expWeight] at measure ⊢; omega
+                · intro start bound startEmpty
+                  apply exprIH [function] env start (by omega) ?_ startEmpty
+                  simp only [expsWeight, expWeight] at measure ⊢; omega
+                · intro value values start bound startEmpty
+                  exact appBound location value values start (by omega) startEmpty
+  constructor
+  · intro expressions env state empty
+    exact (all state.clock).2 (expsWeight expressions) expressions env state rfl rfl empty
+  · intro location function args state empty
+    exact (all state.clock).1 location function args state rfl empty
 
 end Flapjack.Compiler.Backend.ClosCall
