@@ -6,7 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateHandle
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateList
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -299,5 +299,14 @@ example {C F : Type} :
   apply exprSimFuel_handle 5 (.ln, []) ∅ .none <;> try simp
   · exact exprSimFuel_raise 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 0)
   · exact exprSimFuel_var 5 (.ln, []) ∅ .none 1
+
+-- Sequences may use different environment slots and propagate exceptions.
+example {C F : Type} :
+    ExprsSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+      [.var .none 0, .raise .none (.var .none 1)]
+      [.var .none 0, .raise .none (.var .none 1)] := by
+  apply exprsSimFuel_of_forall₂ 5 (.ln, []) ∅ (by simp)
+  exact .cons (exprSimFuel_var 5 (.ln, []) ∅ .none 0)
+    (.cons (exprSimFuel_raise 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 1)) .nil)
 
 end Flapjack.Test.ClosCallEnvironmentParity
