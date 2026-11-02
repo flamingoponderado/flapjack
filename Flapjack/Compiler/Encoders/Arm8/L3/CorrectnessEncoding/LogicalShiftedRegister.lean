@@ -318,10 +318,6 @@ theorem arm8Encode_logicalShiftedRegister_xor_neg (rm rd : BitVec 5) :
       MachineCode.ARM8 (arm8LogicalShiftedRegisterWord (1 : BitVec 2) true .lsl 0 rm 31#5 rd) := by
   rfl
 
-/-- `X` of the zero register is zero. -/
-theorem arm8X_zero (st : arm8_state) : X (TN := 64) 31#5 st = (0 : BitVec 64) := by
-  simp [X]
-
 /-- The `binop` `Xor` immediate `-1` constructor of `encoder_correct
 arm8TargetL3`, lowered to the inverted `ORR` against the zero register. -/
 theorem arm8_encoder_correct_binop_xor_neg (destination source : Nat) (value : BitVec 64)

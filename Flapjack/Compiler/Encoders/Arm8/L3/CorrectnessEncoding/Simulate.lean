@@ -176,6 +176,23 @@ theorem mem_allPcs_eight_l3 (p : BitVec 64) (i : Nat) (hi : i < 2) :
   have h4 : (2 : Nat) ^ 2 = 4 := by norm_num
   omega
 
+/-- `X` of the zero register is zero. -/
+theorem arm8X_zero (st : arm8_state) : X (TN := 64) 31#5 st = (0 : BitVec 64) := by
+  simp [X]
+
+/-- Reading a non-`SP` register commutes with `Arm8L3Agree`. -/
+theorem arm8X_congr {d : BitVec 64 → Prop} {s t : arm8_state} (h : Arm8L3Agree d s t)
+    {n : BitVec 5} (hn : n ≠ 31#5) : X (TN := 64) n s = X (TN := 64) n t := by
+  simp [X, h.reg, hn]
+
+/-- The zero register reads as zero in every state, so `X` agrees there without
+a register-agreement hypothesis. -/
+theorem arm8X_congr_or_zero {d : BitVec 64 → Prop} {s t : arm8_state}
+    (h : Arm8L3Agree d s t) (n : BitVec 5) : X (TN := 64) n s = X (TN := 64) n t := by
+  by_cases hn : n = 31#5
+  · rw [hn, arm8X_zero, arm8X_zero]
+  · exact arm8X_congr h hn
+
 /-- The zero register, written as the plain `31` numeral at width 5, reads as
 zero. `rw` needs this form: the literal that `arm8_ast` puts into the state is
 `OfNat.ofNat 31`, which is definitionally but not syntactically

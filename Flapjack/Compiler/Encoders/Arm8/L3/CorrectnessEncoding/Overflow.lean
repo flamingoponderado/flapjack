@@ -241,4 +241,98 @@ theorem arm8AddWithCarry_overflow_sub (x y : BitVec 64) :
   rw [show Int.ofNat 1 = (1 : Int) from rfl]
   omega
 
+/-- Applying `arm8Next` to two states that agree on `d` and carry the
+flag-setting `AddSubShiftedRegister@64` word gives states that still agree. -/
+theorem arm8Next_addSubShiftedRegister_setflags_agree (d : BitVec 64 → Prop)
+    (s t : arm8_state) (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
+    (op : Bool) (rm rn : BitVec 5) (rd : Nat) (hrd : rd ≠ 31) (hlt : rd < 32)
+    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
+    (hb0 : t.MEM t.PC = BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord op true ShiftType.lsl rm 0 rn (BitVec.ofNat 5 rd) >>> 0).toNat))
+    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord op true ShiftType.lsl rm 0 rn (BitVec.ofNat 5 rd) >>> 8).toNat))
+    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord op true ShiftType.lsl rm 0 rn (BitVec.ofNat 5 rd) >>> 16).toNat))
+    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord op true ShiftType.lsl rm 0 rn (BitVec.ofNat 5 rd) >>> 24).toNat)) :
+    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
+  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
+  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
+  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
+  have hal : Aligned (TN := 64) (s.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa [← h.pc] using (holAligned_iff 2 s.PC).mp halign
+  have halt : Aligned (TN := 64) (t.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 t.PC).mp halignt
+  have hs0 : s.MEM s.PC = BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord op true ShiftType.lsl rm 0 rn (BitVec.ofNat 5 rd) >>> 0).toNat) := by
+    rw [h.pc]
+    exact (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
+  have hs1 : s.MEM (s.PC + 1) = BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord op true ShiftType.lsl rm 0 rn (BitVec.ofNat 5 rd) >>> 8).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
+  have hs2 : s.MEM (s.PC + 2) = BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord op true ShiftType.lsl rm 0 rn (BitVec.ofNat 5 rd) >>> 16).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
+  have hs3 : s.MEM (s.PC + 3) = BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord op true ShiftType.lsl rm 0 rn (BitVec.ofNat 5 rd) >>> 24).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
+  have hss := arm8Next_addSubShiftedRegister_setflags s op rm rn rd hrd hlt hexc0 hs0 hs1 hs2 hs3 hal he0 hel
+  have htt := arm8Next_addSubShiftedRegister_setflags t op rm rn rd hrd hlt hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  have hrn : X (TN := 64) rn s = X (TN := 64) rn t := arm8X_congr_or_zero h rn
+  have hrm : X (TN := 64) rm s = X (TN := 64) rm t := arm8X_congr_or_zero h rm
+  rw [hss, htt]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simp [h.pc]
+  · simp only [h.reg, hrn, hrm]
+  · simp only [h.pstate, hrn, hrm]
+  · simp [h.sctlr]
+  · simp [h.tcr]
+  · simp [h.exc]
+  · intro a ha
+    simp only [h.mem a ha]
+
+/-- Applying `arm8Next` to two states that agree on `d` and carry the overflow
+`ConditionalSelect@64` word gives states that still agree. -/
+theorem arm8Next_conditionalSelect_zero_agree (d : BitVec 64 → Prop)
+    (s t : arm8_state) (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
+    (rd : Nat) (hrd : rd ≠ 31) (hlt : rd < 32)
+    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
+    (hb0 : t.MEM t.PC = BitVec.ofNat 8 ((arm8ConditionalSelectWord false true 7 31 31 (BitVec.ofNat 5 rd) >>> 0).toNat))
+    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((arm8ConditionalSelectWord false true 7 31 31 (BitVec.ofNat 5 rd) >>> 8).toNat))
+    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8ConditionalSelectWord false true 7 31 31 (BitVec.ofNat 5 rd) >>> 16).toNat))
+    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8ConditionalSelectWord false true 7 31 31 (BitVec.ofNat 5 rd) >>> 24).toNat)) :
+    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
+  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
+  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
+  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
+  have hal : Aligned (TN := 64) (s.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa [← h.pc] using (holAligned_iff 2 s.PC).mp halign
+  have halt : Aligned (TN := 64) (t.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 t.PC).mp halignt
+  have hs0 : s.MEM s.PC = BitVec.ofNat 8 ((arm8ConditionalSelectWord false true 7 31 31 (BitVec.ofNat 5 rd) >>> 0).toNat) := by
+    rw [h.pc]
+    exact (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
+  have hs1 : s.MEM (s.PC + 1) = BitVec.ofNat 8 ((arm8ConditionalSelectWord false true 7 31 31 (BitVec.ofNat 5 rd) >>> 8).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
+  have hs2 : s.MEM (s.PC + 2) = BitVec.ofNat 8 ((arm8ConditionalSelectWord false true 7 31 31 (BitVec.ofNat 5 rd) >>> 16).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
+  have hs3 : s.MEM (s.PC + 3) = BitVec.ofNat 8 ((arm8ConditionalSelectWord false true 7 31 31 (BitVec.ofNat 5 rd) >>> 24).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
+  have hss := arm8Next_conditionalSelect_zero s rd hrd hlt hexc0 hs0 hs1 hs2 hs3 hal he0 hel
+  have htt := arm8Next_conditionalSelect_zero t rd hrd hlt hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  have hcond : ConditionHolds (7 : BitVec 4) s = ConditionHolds (7 : BitVec 4) t := by
+    simp only [ConditionHolds, h.pstate]
+  rw [hss, htt]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simp [h.pc]
+  · simp only [h.reg, hcond]
+  · simp only [h.pstate]
+  · simp [h.sctlr]
+  · simp [h.tcr]
+  · simp [h.exc]
+  · intro a ha
+    simp only [h.mem a ha]
+
 end Flapjack.Compiler.Encoders.Arm8.L3

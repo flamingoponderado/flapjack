@@ -202,19 +202,6 @@ theorem arm8Next_multiplyAddSub (ms : arm8_state) (rm ra rn : BitVec 5) (n : Nat
 
 /-! ## Agreement lemmas for the two `longMul` steps -/
 
-/-- Reading a non-`SP` register commutes with `Arm8L3Agree`. -/
-theorem arm8X_congr {d : BitVec 64 → Prop} {s t : arm8_state} (h : Arm8L3Agree d s t)
-    {n : BitVec 5} (hn : n ≠ 31#5) : X (TN := 64) n s = X (TN := 64) n t := by
-  simp [X, h.reg, hn]
-
-/-- The zero register reads as zero in every state, so `X` agrees there without
-a register-agreement hypothesis. -/
-theorem arm8X_congr_or_zero {d : BitVec 64 → Prop} {s t : arm8_state}
-    (h : Arm8L3Agree d s t) (n : BitVec 5) : X (TN := 64) n s = X (TN := 64) n t := by
-  by_cases hn : n = 31#5
-  · rw [hn, arm8X_zero, arm8X_zero]
-  · exact arm8X_congr h hn
-
 /-- Applying `arm8Next` to two states that agree on `d` and carry the
 `MultiplyHigh` word gives states that still agree. -/
 theorem arm8Next_multiplyHigh_agree (d : BitVec 64 → Prop) (s t : arm8_state)
