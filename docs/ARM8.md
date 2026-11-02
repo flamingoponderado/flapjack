@@ -239,7 +239,8 @@ register operand plus its `.ror` immediate form (`Shift.lean`,
 pair `MultiplyHigh` + `MultiplyAddSub@64` (`Multiply.lean`, which also proves
 that the high half of the unsigned 128-bit product is `r / 2 ^ 64`, plus the
 one-step `arm8Next_multiplyHigh` / `arm8Next_multiplyAddSub` reductions and
-their `Arm8L3Agree` congruence lemmas).
+their `Arm8L3Agree` congruence lemmas and the fact that both steps leave
+memory unchanged).
 `ConditionalSelect.lean` records the same facts for `ConditionalSelect@64`, the
 select used by the `addOverflow` and `subOverflow` lowerings, `Carry.lean`
 does the same for `AddSubCarry@64`, which the `addCarry` lowering uses twice,

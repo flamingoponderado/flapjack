@@ -302,4 +302,33 @@ theorem arm8Next_multiplyAddSub_agree (d : BitVec 64 → Prop) (s t : arm8_state
   · intro a ha
     simp only [h.mem a ha]
 
+
+/-- The `MultiplyHigh` step leaves memory unchanged. -/
+theorem arm8Next_multiplyHigh_mem (ms : arm8_state) (rm rn : BitVec 5) (n : Nat)
+    (hn : n < 32) (h31 : n ≠ 31) (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    ∀ x, (arm8Next ms).MEM x = ms.MEM x := by
+  rw [arm8Next_multiplyHigh ms rm rn n hn h31 hexc0 h0 h1 h2 h3 hal he0 hel]
+  intro x
+  rfl
+
+/-- The `MultiplyAddSub@64` step leaves memory unchanged. -/
+theorem arm8Next_multiplyAddSub_mem (ms : arm8_state) (rm ra rn : BitVec 5) (n : Nat)
+    (hn : n < 32) (h31 : n ≠ 31) (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    ∀ x, (arm8Next ms).MEM x = ms.MEM x := by
+  rw [arm8Next_multiplyAddSub ms rm ra rn n hn h31 hexc0 h0 h1 h2 h3 hal he0 hel]
+  intro x
+  rfl
+
 end Flapjack.Compiler.Encoders.Arm8.L3
