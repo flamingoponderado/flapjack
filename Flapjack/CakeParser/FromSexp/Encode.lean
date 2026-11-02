@@ -134,7 +134,7 @@ def opSym (s : String) : Sexp := .sym (ascii s)
 
 def opShiftName : Shift → String
   | .lsl => "Lsl" | .lsr => "Lsr" | .asr => "Asr" | .ror => "Ror"
-private def opMode : ThunkMode → Sexp
+def opMode : ThunkMode → Sexp
   | .evaluated => opSym "Evaluated" | .notEvaluated => opSym "NotEvaluated"
 
 /-- Encode an AST primitive operator. -/

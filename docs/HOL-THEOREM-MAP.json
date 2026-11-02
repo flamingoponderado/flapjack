@@ -1,6 +1,14 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeOp_canonical",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "opsexp_sexpop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured sexp and op carriers and one-way canonical-encoding conclusion. The proof handles nullary names, shifts, thunk modes, FFI byte strings and paired arithmetic, conversion and test operands in the executed decoder."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
     "lean_name": "decodeArith_canonical",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "sexparith_arithsexp",

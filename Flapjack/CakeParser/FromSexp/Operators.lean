@@ -39,7 +39,8 @@ def decodeLog (s : Sexp) : Option Lop := do
   match ← symbolName s with
   | "Andalso" => some .andalso | "Orelse" => some .orelse | _ => none
 
-private def decodeSimpleOp (name : String) : Option Op :=
+/-- Decode the nullary primitive names used by the operator dispatcher. -/
+def decodeSimpleOp (name : String) : Option Op :=
   match name with
   | "Equality" => some .equality | "Opapp" => some .opapp
   | "Opassign" => some .opassign | "Opref" => some .opref | "Opderef" => some .opderef

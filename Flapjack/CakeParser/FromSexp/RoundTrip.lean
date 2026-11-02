@@ -1137,6 +1137,14 @@ theorem testsexp_injective (a b : Test) : testsexp a = testsexp b ↔ a = b := b
   · rintro rfl
     rfl
 
+/-- The nullary operator dispatcher yields the canonical symbol. This is
+Flapjack infrastructure for the operator inverse theorem. -/
+theorem decodeSimpleOp_canonical (name : String) (op : Op) (h : decodeSimpleOp name = some op) :
+    opsexp op = .sym ((ofString name).explode) := by
+  unfold decodeSimpleOp at h
+  split at h <;> simp_all
+  all_goals subst op; rfl
+
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpop_opsexp"]
 theorem decodeOp_opsexp (op : Op) : decodeOp (opsexp op) = some op := by
   cases op <;> try decide
@@ -1157,6 +1165,122 @@ theorem decodeOp_opsexp (op : Op) : decodeOp (opsexp op) = some op := by
     | forceThunk => decide
     | allocThunk mode => cases mode <;> decide
     | updateThunk mode => cases mode <;> decide
+
+/-- Successful operator decoding yields the canonical encoding. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "opsexp_sexpop"]
+theorem decodeOp_canonical (s : Sexp) (op : Op) (h : decodeOp s = some op) : opsexp op = s := by
+  cases s with
+  | sym bytes =>
+    cases hs : symbolName (.sym bytes) with
+    | none => simp [decodeOp, hs] at h
+    | some name =>
+      simp [decodeOp, hs] at h
+      have shape := symbolName_canonical (.sym bytes) name hs
+      exact (decodeSimpleOp_canonical name op h).trans shape.symm
+  | num _ | str _ => simp [decodeOp] at h
+  | cons head tail =>
+    cases head with
+    | sym name =>
+      cases tail with
+      | str bytes =>
+        simp only [decodeOp] at h
+        split at h
+        next isFfi =>
+          cases hv : destString (.str bytes) with
+          | none => simp [hv] at h
+          | some value =>
+            simp [hv] at h
+            subst op
+            have encoded := (destString_some (.str bytes) value).1.mp hv
+            simp only [beq_iff_eq] at isFfi
+            have eq := congrArg (fun text => (ofString text).explode) isFfi
+            simp only [ofString_toStringOfBytes, MlString.explode_implode] at eq
+            simp [opsexp, opSym, encoded, eq]
+            rfl
+        next notFfi => simp at h
+      | sym mode =>
+        simp only [decodeOp, symbolName] at h
+        dsimp at h
+        split at h <;> simp_all
+        all_goals split at h <;> simp_all
+        all_goals
+          first | (have hn := h.1; have ho := h.2; subst op) | subst op
+          have en : name = (ofString (toStringOfBytes (.implode name))).explode := by
+            simp [ofString_toStringOfBytes]
+          have em : mode = (ofString (toStringOfBytes (.implode mode))).explode := by
+            simp [ofString_toStringOfBytes]
+          rw [en, em]
+          clear en em
+          simp_all [opsexp, opSym, opMode]
+          constructor <;> rfl
+      | num n =>
+        simp only [decodeOp] at h
+        split at h <;> simp_all
+        all_goals
+          subst op
+          rename_i _ heq
+          have eq := congrArg (fun text => (ofString text).explode) heq
+          simp only [ofString_toStringOfBytes, MlString.explode_implode] at eq
+          simp [opsexp, opSym, opShiftName, eq]
+          rfl
+      | cons left right =>
+        simp only [decodeOp] at h
+        dsimp at h
+        split at h
+        next isArith =>
+          cases ha : decodeArith left with
+          | none => simp [ha] at h
+          | some arith =>
+            cases hb : decodePrimType right with
+            | none => simp [ha, hb] at h
+            | some ty =>
+              simp [ha, hb] at h
+              subst op
+              have ea := decodeArith_canonical left arith ha
+              have eb := decodePrimType_canonical right ty hb
+              simp only [beq_iff_eq] at isArith
+              have en := congrArg (fun text => (ofString text).explode) isArith
+              simp only [ofString_toStringOfBytes, MlString.explode_implode] at en
+              simp [opsexp, opSym, ea, eb, en]
+              rfl
+        next notArith =>
+          split at h
+          next isFromTo =>
+            cases ha : decodePrimType left with
+            | none => simp [ha] at h
+            | some fromTy =>
+              cases hb : decodePrimType right with
+              | none => simp [ha, hb] at h
+              | some toTy =>
+                simp [ha, hb] at h
+                subst op
+                have ea := decodePrimType_canonical left fromTy ha
+                have eb := decodePrimType_canonical right toTy hb
+                simp only [beq_iff_eq] at isFromTo
+                have en := congrArg (fun text => (ofString text).explode) isFromTo
+                simp only [ofString_toStringOfBytes, MlString.explode_implode] at en
+                simp [opsexp, opSym, ea, eb, en]
+                rfl
+          next notFromTo =>
+            split at h
+            next isTest =>
+              cases ha : decodeTest left with
+              | none => simp [ha] at h
+              | some test =>
+                cases hb : decodePrimType right with
+                | none => simp [ha, hb] at h
+                | some ty =>
+                  simp [ha, hb] at h
+                  subst op
+                  have ea := decodeTest_canonical left test ha
+                  have eb := decodePrimType_canonical right ty hb
+                  simp only [beq_iff_eq] at isTest
+                  have en := congrArg (fun text => (ofString text).explode) isTest
+                  simp only [ofString_toStringOfBytes, MlString.explode_implode] at en
+                  simp [opsexp, opSym, ea, eb, en]
+                  rfl
+            next _ => simp at h
+    | num _ | str _ | cons _ _ => simp [decodeOp] at h
 
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "opsexp_11"]
 theorem opsexp_injective (a b : Op) : opsexp a = opsexp b ↔ a = b := by
