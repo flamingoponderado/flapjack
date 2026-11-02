@@ -164,6 +164,11 @@ CASES = {
     'print_sexp_explore': 'val n = 42;',
     'print_sexp_type_error': 'val x = missing;',
     'print_sexp_parse_error': 'val x = ;',
+    'hidden_type_shadow': 'local datatype t = A in val x = A end; datatype t = B; val y : t = x;',
+    'hidden_type_compile': 'local datatype t = A in val x = A end; val y : int = x;',
+    'hidden_type_unary': "local datatype 'a t = A 'a in val x = A 1 end; val y : int = x;",
+    'hidden_type_binary': "local datatype ('a,'b) t = A 'a 'b in val x = A 1 2 end; val y : int = x;",
+    'hidden_type_function': 'local datatype t = A in val x = A end; val y : int -> int = fn z => x;',
 }
 
 CASE_ARGS = {
@@ -221,10 +226,16 @@ CASE_ARGS = {
     'print_sexp_explore': ['--print_sexp', '--explore', '--exclude_prelude=true'],
     'print_sexp_type_error': ['--print_sexp', '--exclude_prelude=true'],
     'print_sexp_parse_error': ['--print_sexp', '--exclude_prelude=true'],
+    'hidden_type_shadow': ['--types', '--exclude_prelude=true'],
+    'hidden_type_compile': ['--exclude_prelude=true'],
+    'hidden_type_unary': ['--types', '--exclude_prelude=true'],
+    'hidden_type_binary': ['--types', '--exclude_prelude=true'],
+    'hidden_type_function': ['--types', '--exclude_prelude=true'],
 }
 ERROR_CASES = {'types_print_sexp_type_error', 'types_explore_parse_error',
                'explore_parse_error', 'explore_type_error', 'explore_sexp_parse_error', 'explore_sexp_type_error',
-               'print_sexp_type_error', 'print_sexp_parse_error'}
+               'print_sexp_type_error', 'print_sexp_parse_error', 'hidden_type_shadow', 'hidden_type_compile',
+               'hidden_type_unary', 'hidden_type_binary', 'hidden_type_function'}
 
 def run(executable, source, name):
     process = subprocess.run([str(executable), '--target=riscv', *CASE_ARGS.get(name, [])], input=source.encode('ascii'),
@@ -246,7 +257,7 @@ def main():
         for name, row in rows.items():
             expected_exit = 1 if name in ERROR_CASES else 0
             is_types = (any(flag in CASE_ARGS.get(name, []) for flag in ('--types', '--print_sexp')) or
-                        (name in ERROR_CASES and '--explore' in CASE_ARGS.get(name, [])))
+                        name in ERROR_CASES)
             if (row['exit_code'] != expected_exit or
                     (row['stdout_bytes'] != 0 if is_types else row['stdout_bytes'] == 0) or
                     (row['stderr_bytes'] == 0 if is_types else row['stderr_bytes'] != 0)):

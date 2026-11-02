@@ -32,8 +32,12 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
       (.typeMismatch (.app [.app [] 5, .app [] 5] 4) (.app [.app [] 1, .uvar 1] 4))) ==
   some (ofString "### ERROR: type error\nType mismatch between int -> int and bool -> _1 at line 1\n\nval x = 1 + True;\n           ^^^^^^^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
--- A user-defined type needs a name from the inference environment.
-#guard (renderTypeMismatch [] (.located loc (.typeMismatch (.app [] 5) (.app [] 15)))).isNone
+-- A type hidden by a local declaration is printed by numeric identifier.
+#guard renderTypeMismatch [] (.located loc (.typeMismatch (.app [] 5) (.app [] 15))) ==
+  some (ofString "### ERROR: type error\nType mismatch between int and 15 at line 1\n\n\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
+
+#guard renderTypeMismatch [] (.located loc (.typeMismatch (.app [.app [] 15] 6) (.app [] 4))) ==
+  some (ofString "### ERROR: type error\nType mismatch between 15 list and <bad function type> at line 1\n\n\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
 #guard renderTypeMismatch [] (.located loc
     (.typeMismatchNames [(15, ofString "M.t")] (.app [] 5) (.app [] 15))) ==

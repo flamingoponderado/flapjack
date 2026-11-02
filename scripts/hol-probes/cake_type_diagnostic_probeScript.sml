@@ -18,3 +18,9 @@ val _ = (print "named="; print_term named; print "\n");
 val qualified = rhs (concl (EVAL ``infer_t$inf_type_to_string
   (Bind [] [(«M», Bind [(«t»,([],Tapp [] 15))] [])]) (Infer_Tapp [] 15)``));
 val _ = (print "qualified="; print_term qualified; print "\n");
+val hidden = rhs (concl (EVAL ``infer_t$inf_type_to_string (Bind [] [])
+  (Infer_Tapp [Infer_Tapp [] 15] 6)``));
+val _ = (print "hidden="; print_term hidden; print "\n");
+val bad_function = rhs (concl (EVAL ``infer_t$inf_type_to_string (Bind [] [])
+  (Infer_Tapp [] 4)``));
+val _ = (print "bad_function="; print_term bad_function; print "\n");

@@ -62,7 +62,8 @@ private def parens (threshold : Nat) (part : String × Nat) : String :=
   if threshold < part.2 then "(" ++ part.1 ++ ")" else part.1
 
 /- The supplied names preserve the lookup order of the inference environment.
-If the bounded traversal did not retain a name, rendering remains unsupported. -/
+As in `type_ident_to_string`, an identifier absent from that environment is
+rendered as its decimal number. -/
 mutual
 private def typeString (names : List (Nat × MlString)) : InferT → Option (String × Nat)
   | .uvar n => some ("_" ++ toString n, 0)
@@ -72,7 +73,7 @@ private def typeString (names : List (Nat × MlString)) : InferT → Option (Str
       let a ← typeString names a
       let b ← typeString names b
       some (parens 2 a ++ " -> " ++ parens 3 b, 3)
-    | _ => none
+    | _ => some ("<bad function type>", 0)
   | .app ts 9 => match ts with
     | [] => some ("unit", 0)
     | [t] => typeString names t
@@ -82,7 +83,7 @@ private def typeString (names : List (Nat × MlString)) : InferT → Option (Str
   | .app ts name => do
     let name ← match builtinTypeName name with
       | some name => some name
-      | none => (names.lookup name).map toStringOfBytes
+      | none => some ((names.lookup name).map toStringOfBytes |>.getD (toString name))
     match ts with
     | [] => some (name, 0)
     | [t] => do
@@ -110,8 +111,8 @@ private def renderTypes (input : List HolChar) (loc : Locs) (names : List (Nat �
       ascii " and " ++ ascii right.1 ++ ascii " at " ++ sourceLocation input (some loc) ++
       ascii "\nProgram exited with nonzero exit code.\n")
 
-/-- Render failed constraints when their type names were retained from the
-inference environment. Unknown names remain unsupported. -/
+/-- Render failed constraints, using numeric identifiers for type names that
+are no longer in the inference environment. -/
 def renderTypeMismatch (input : List HolChar) : Error → Option (List HolChar)
   | .located loc (.typeMismatch left right) => renderTypes input loc [] left right
   | .located loc (.typeMismatchNames names left right) => renderTypes input loc names left right

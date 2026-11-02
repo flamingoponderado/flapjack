@@ -773,7 +773,7 @@ run_probe cake_undefined_diagnostic_probeScript.sml cake_undefined_diagnostic_pr
   infer constructor type_constructor "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
 
 run_probe cake_type_diagnostic_probeScript.sml cake_type_diagnostic_probe.out \
-  function nested tuple variable named qualified "$cake_dir/compiler/inference/infer_tScript.sml" "$cake_dir/compiler/inference"
+  function nested tuple variable named qualified hidden bad_function "$cake_dir/compiler/inference/infer_tScript.sml" "$cake_dir/compiler/inference"
 
 run_probe cake_duplicate_datatype_probeScript.sml cake_duplicate_datatype_probe.out \
   first constructor "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
