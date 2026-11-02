@@ -43,6 +43,10 @@ probe_needs_refresh() {
     [[ "$(basename "$probe")" == clos_call_env_rel_probeScript.sml &&
        ( "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == clos_call_free_correct_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/clos_callScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/semantics/closPropsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/db_varsScript.sml" -nt "$output" ) ]] ||
     [[ "$(basename "$probe")" == data_sem_stack_probeScript.sml &&
        "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == source_to_flat_opassign_probeScript.sml &&
@@ -573,6 +577,9 @@ run_probe clos_call_wfg_probeScript.sml clos_call_wfg_probe.out \
 
 run_probe clos_call_env_rel_probeScript.sml clos_call_env_rel_probe.out \
   fv_type fv1_type fv_def fv1_def env_rel_type env_rel_def env_rel_mono env_rel_cong fv_cases fv_negative env_cases "$cake_dir/compiler/backend/semantics/closPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_call_free_correct_probeScript.sml clos_call_free_correct_probe.out \
+  free_thm closed_fn_fv closed_cases "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe tmc_program_word_probeScript.sml tmc_program_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"

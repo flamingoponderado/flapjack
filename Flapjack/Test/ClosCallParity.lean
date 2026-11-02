@@ -5,6 +5,15 @@ namespace Flapjack.Test.ClosCallParity
 open Flapjack.Compiler.Backend ClosCall
 open Flapjack.Basis.Pure.MlString
 
+-- `clos_call_free_correct_probe.out`: bound arguments and let-bound values
+-- do not count as captured variables, while references beyond them do.
+#guard closedFuel 100 (.fn (ofString "f") (some 4) none 2 (.var .none 1)) == some true
+#guard closedFuel 100 (.fn (ofString "f") (some 4) none 2 (.var .none 2)) == some false
+#guard closedFuel 100 (.fn (ofString "f") (some 4) none 1
+    (.let .none [.var .none 0] (.var .none 1))) == some true
+#guard closedFuel 100 (.fn (ofString "f") (some 4) none 1
+    (.let .none [.var .none 0] (.var .none 2))) == some false
+
 -- `clos_call_code_list_probe.out`: preserve existing code and prepend new
 -- bodies in reverse order, with the original odd-offset labels.
 #guard match codeList 10 [(2, .var .none 4), (0, .var .none 9), (1, .var .none 2)]
