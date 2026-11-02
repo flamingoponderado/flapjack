@@ -1,13 +1,14 @@
 import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+import Flapjack.SemanticPrimitivesProps.ResultRelation
 
 /-! Installation simulation for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti
 open Flapjack ClosSem BackendProps SemanticPrimitivesHOL
 
 /-- Non-type-error installation outcomes are simulated by the transformed
-oracle. This is a partial Lean-side result: the source theorem also covers
-type errors and has not yet been assembled. -/
+oracle. This helper supplies the successful and timeout cases of the full
+installation simulation below. -/
 theorem doInstall_nonType_related {C F : Type} (source target : State C F)
     (sourceValues targetValues : List ClosSem.Value)
     (result : Result (List ClosLang.Exp) ClosSem.Value)
@@ -140,8 +141,7 @@ theorem doInstall_typeError_related {C F : Type} (source target : State C F)
 /-- Installation is simulated in both the error and success cases for the
 proof-side closure semantics. Errors are identical here because installation
 can only abort; successful programs are related by multi-argument introduction.
-The HOL theorem is not claimed until the underlying evaluator and state
-representations have been reviewed. -/
+The source-shaped theorem below states the original error relation. -/
 theorem doInstall_related {C F : Type} (source target : State C F)
     (sourceValues targetValues : List ClosSem.Value)
     (result : Result (List ClosLang.Exp) ClosSem.Value) (final : State C F)
@@ -181,5 +181,52 @@ theorem doInstall_related {C F : Type} (source target : State C F)
       subst result
       exact ⟨introList source.maxApp expressions, targetFinal,
         maxEq, related, nonempty, code, targetRun⟩
+
+/-- Installation errors are aborts; the installation operation cannot raise
+an exception value. -/
+theorem doInstall_error_abort {C F : Type} (values : List ClosSem.Value)
+    (state final : State C F) (error : ErrorResult ClosSem.Value)
+    (run : doInstall values state = (.err error, final)) :
+    ∃ reason, error = .abort reason := by
+  classical
+  unfold doInstall at run
+  repeat' first | split at run | simp_all
+  all_goals exact ⟨_, run.1.symm⟩
+
+namespace InstallLemma
+/-- The closure state uses the canonical finite-support maps. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end InstallLemma
+
+/-- Installation preserves related closure states and relates both error and
+success outcomes. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "do_install_lemma"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstallLemma {C F : Type} (source target : State C F)
+    (sourceValues targetValues : List ClosSem.Value)
+    (related : StateRel source target ∧
+      List.Forall₂ (ValueRel source.maxApp) sourceValues targetValues) :
+    match (generalizing := false) doInstall sourceValues source with
+    | (.err error, final) => ∃ targetError targetFinal,
+        doInstall targetValues target = (.err targetError, targetFinal) ∧
+        SemanticPrimitivesProps.excRel (ValueRel source.maxApp) error targetError ∧
+        final.maxApp = source.maxApp ∧ StateRel final targetFinal
+    | (.val expressions, final) => ∃ targetExpressions targetFinal,
+        (final.maxApp = source.maxApp ∧ StateRel final targetFinal) ∧
+        expressions ≠ [] ∧ CodeRel source.maxApp expressions targetExpressions ∧
+        doInstall targetValues target = (.val targetExpressions, targetFinal) := by
+  cases run : doInstall sourceValues source with
+  | mk result final =>
+    have simulation := doInstall_related source target sourceValues targetValues
+      result final related.1 related.2 run
+    cases result with
+    | err error =>
+      obtain ⟨reason, rfl⟩ := doInstall_error_abort sourceValues source final error run
+      obtain ⟨targetFinal, targetRun, maxEq, states⟩ := simulation
+      exact ⟨.abort reason, targetFinal, targetRun, rfl, maxEq, states⟩
+    | val expressions => simpa only [and_assoc] using simulation
 
 end Flapjack.Compiler.Backend.ClosMti

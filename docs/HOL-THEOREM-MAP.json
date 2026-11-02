@@ -1,5 +1,14 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "do_install_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Install.lean",
+    "lean_name": "doInstallLemma",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the original local theorem and its hypothesis-free typed proof replay in clos_mti_install_probe.out. Both states share independent compiler and FFI carriers; the hypotheses are exactly stateRel and the list of related values. The case split retains the existential target error, original excRel, preserved maxApp and stateRel, or the existential nonempty code-related target program and target evaluation. The reviewed installation definition, closure relations and source-shaped result relation use the same carriers. The imported state uses canonical finite-support refs and code and the local roundtrip witness records that representation only."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "do_install_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Install.lean",

@@ -3,6 +3,11 @@ application collectors and replays the nested function/application definitions,
 accumulator lemmas, syntax preservation and reconstruction invariants. Regenerate with
 `HOL_PROBE_ONLY=clos_mti_collect_args_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`clos_mti_install_probe.out` replays the original local installation simulation
+with its HOL proof and captures its inferred types. Regenerate with
+`HOL_PROBE_ONLY=clos_mti_install_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The replay supports source review; it does not prove cross-language equivalence.
+
 `data_to_word_memory_repr_probe.out` captures typed heap representation,
 pointer projection, byte-header and word-payload definitions and the valid
 payload classification theorem, heap assertions, append theorem, heap/store
