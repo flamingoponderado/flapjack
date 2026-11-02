@@ -497,6 +497,114 @@ theorem compileCallMtiFuel_mtiOnly (fuel : Nat) (config : Config) (expressions :
          else config.nextLoc + max 1 transformed.length + 1) transformed with
     | mk next numberedExpressions => simp
 
+/-- Erasing the enabled multi-argument flag after its traversal yields a
+no-optimization run with the same emitted code and entry point. Name tables
+are existential here because the production driver receives the original
+expressions for naming. -/
+theorem compileCallMtiFuel_mtiOnly_erasure (fuel : Nat) (config output : Config)
+    (expressions : List ClosLang.Exp) (compiled : List (Nat × Nat × Bvl.Exp))
+    (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (enabled : config.doMti = true) (calls : config.doCall = false) (known : config.knownConf = none)
+    (run : compileCallMtiFuel? fuel config expressions = some (output, compiled, names)) :
+    ∃ current program output' names',
+      compileCommonNoOpts? { config with doMti := false } (ClosMti.introList config.maxApp expressions) =
+        some (current, program) ∧
+      compileNoOpts? { config with doMti := false } (ClosMti.introList config.maxApp expressions) =
+        some (output', compiled, names') ∧ output'.start = output.start := by
+  let transformed := ClosMti.introList config.maxApp expressions
+  let next := config.nextLoc + max 1 transformed.length
+  let aligned := if next % 2 = 0 then next else next + 1
+  cases numbered : ClosNumber.renumberList aligned transformed with
+  | mk nextLoc numberedExpressions =>
+    let current := { config with doMti := false, start := config.nextLoc, nextLoc := nextLoc, knownConf := none, callState := (.ln, []) }
+    let program := ClosAnnotate.compile (chainExps config.nextLoc numberedExpressions)
+    have preprocess : compileCommonNoOpts? { config with doMti := false } transformed =
+        some (current, program) := by
+      simp [compileCommonNoOpts?, calls, known, next, aligned, numbered, current, program]
+    have prepared : compilePrepared? config { current with doMti := config.doMti } expressions program =
+        some (output, compiled, names) := by
+      rw [compileCallMtiFuel_mtiOnly fuel config expressions calls known] at run
+      simpa [enabled, ClosMti.compileFuel_introList, transformed, preprocess] using run
+    obtain ⟨names', reference⟩ := compilePrepared_entries { config with doMti := false } current transformed program
+    obtain ⟨actualNames, actual⟩ := compilePrepared_entries config { current with doMti := config.doMti } expressions program
+    have result := Option.some.inj (prepared.symm.trans actual)
+    have codeEq : compiled = codeSort (initialCompiledEntries current.maxApp current.start program) := by
+      simpa using congrArg (fun x => x.2.1) result
+    have startEq : output.start = numStubs current.maxApp - 1 := by
+      simpa using congrArg (fun x => x.1.start) result
+    refine ⟨current, program, { current with start := numStubs current.maxApp - 1 }, names', ?_, ?_, ?_⟩
+    · exact preprocess
+    · change compileNoOpts? { config with doMti := false } transformed = _
+      rw [compileNoOpts?, preprocess]
+      simpa [codeEq] using reference
+    · exact startEq.symm
+
+/-- The executed closure driver with multi-argument introduction enabled
+preserves the current Lean observations through BVL conversion when the
+known-function and direct-call passes are disabled. The numbered incremental
+oracle must be consistent and start beyond the initial program's locations.
+This conditional composition is not a reviewed HOL correctness theorem. -/
+theorem compileCallMtiFuel_mtiOnly_semantics {C F : Type} (ffi : HolFfiState F)
+    (fuel : Nat) (config current output : Config) (expressions : List ClosLang.Exp)
+    (program : List (Nat × Nat × ClosLang.Exp)) (compiled : List (Nat × Nat × Bvl.Exp))
+    (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (oracle : CompileOracle (Nat × C)) (targetCompiler : BvlSem.Compiler C)
+    (enabled : config.doMti = true) (calls : config.doCall = false) (known : config.knownConf = none)
+    (positive : 1 ≤ config.maxApp)
+    (unary : ∀ e ∈ expressions, noMti e)
+    (oracleUnary : ∀ index, (oracle index).2.2 = [] ∧ ∀ e ∈ (oracle index).2.1, noMti e)
+    (preprocess : compileCommonNoOpts? { config with doMti := false }
+      (ClosMti.introList config.maxApp expressions) = some (current, program))
+    (run : compileCallMtiFuel? fuel config expressions = some (output, compiled, names))
+    (nonfail : semantics ffi config.maxApp HolFiniteMapExact.empty oracle
+      (pureCc (ClosMti.compileInc config.maxApp)
+        (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+          (pureCc ClosAnnotate.compileInc (pureCc (compileInc config.maxApp) targetCompiler)))) expressions ≠ .fail)
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc)
+      (pureCo (ClosMti.compileInc (Output := Nat × Nat × ClosLang.Exp) config.maxApp) ∘ oracle))
+    (initialBound : current.nextLoc ≤ (oracle 0).1.1) :
+    BvlSem.semantics ffi (sptFromAList compiled)
+      (pureCo (compileInc config.maxApp) ∘ pureCo ClosAnnotate.compileInc ∘
+        stateCo (ClosNumber.ignoreTable ClosNumber.compileInc)
+          (pureCo (ClosMti.compileInc config.maxApp) ∘ oracle)) targetCompiler output.start =
+      semantics ffi config.maxApp HolFiniteMapExact.empty oracle
+        (pureCc (ClosMti.compileInc config.maxApp)
+          (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+            (pureCc ClosAnnotate.compileInc (pureCc (compileInc config.maxApp) targetCompiler)))) expressions := by
+  let transformed := ClosMti.introList config.maxApp expressions
+  let transformedOracle : CompileOracle (Nat × C) := pureCo (ClosMti.compileInc config.maxApp) ∘ oracle
+  let intermediate := stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+    (pureCc ClosAnnotate.compileInc (pureCc (compileInc config.maxApp) targetCompiler))
+  have mtiEq := ClosMti.semantics_introMulti_candidate ffi config.maxApp oracle intermediate expressions
+    positive oracleUnary unary
+  have transformedNonfail : semantics ffi config.maxApp HolFiniteMapExact.empty transformedOracle
+      intermediate transformed ≠ .fail := by
+    simpa [transformedOracle, transformed, ← mtiEq] using nonfail
+  have transformedSafe : ¬ containsAppSome config.maxApp transformed :=
+    ClosMti.introList_numberingSafe config.maxApp expressions positive unary
+  have transformedVars : everyFnVarsNone transformed :=
+    (ClosMti.introList_varsNone config.maxApp expressions).mp
+      (noMtiList_syntactic config.maxApp positive expressions unary).1
+  have transformedOracleSafe : ∀ index, (transformedOracle index).2.2 = [] ∧
+      ¬ containsAppSome config.maxApp (transformedOracle index).2.1 ∧
+      everyFnVarsNone (transformedOracle index).2.1 := by
+    intro index
+    change (ClosMti.compileInc config.maxApp (oracle index).2).2 = [] ∧
+      ¬ containsAppSome config.maxApp (ClosMti.compileInc config.maxApp (oracle index).2).1 ∧
+      everyFnVarsNone (ClosMti.compileInc config.maxApp (oracle index).2).1
+    exact ⟨rfl, ClosMti.introList_numberingSafe config.maxApp _ positive (oracleUnary index).2,
+      (ClosMti.introList_varsNone config.maxApp _).mp
+        (noMtiList_syntactic config.maxApp positive _ (oracleUnary index).2).1⟩
+  obtain ⟨current', program', output', names', pre', compiled', starts⟩ :=
+    compileCallMtiFuel_mtiOnly_erasure fuel config output expressions compiled names enabled calls known run
+  have equal := Option.some.inj (pre'.symm.trans preprocess)
+  cases equal
+  have compiledEq := compileNoOpts_source_semantics ffi { config with doMti := false } current output'
+    transformed program compiled names' transformedOracle targetCompiler pre' compiled' transformedNonfail
+    transformedSafe transformedVars transformedOracleSafe oracleState initialBound
+  rw [starts] at compiledEq
+  exact compiledEq.trans mtiEq.symm
+
 /-- The production closure driver inherits the no-optimization source
 behavior theorem when all optional closure optimizations are disabled. -/
 theorem compileCallMtiFuel_noOpts_semantics {C F : Type} (ffi : HolFfiState F)
