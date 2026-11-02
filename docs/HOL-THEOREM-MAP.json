@@ -100363,6 +100363,24 @@
     "reviewer": "Source comparison: the simplified word_cmp_loop_refl theorem and its typed capture quantify the same loop counter, shared address, domain, memory and result word; any successful self-comparison returns 1. The proof applies for every positive HOL word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordCompare.lean",
+    "lean_name": "wordCmpLoopThm",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "word_cmp_loop_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed replay of local word_cmp_loop_thm retains the equal-length and dimword bounds, both separated word-list assertions over the same functional memory graph, the original final addresses, and the complete SOME result computed from mw_cmp. All word occurrences share the positive HOL width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordCompare.lean",
+    "lean_name": "mw2nInj",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "mw2n_inj",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: mw2n_inj and its typed capture preserve the ordered list-length hypothesis and equivalence between decoded magnitude equality and equality of the original word lists. The word width is the same positive HOL dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockElement.lean",
     "lean_name": "wordListAppend",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
@@ -101631,6 +101649,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison: mw2n_def and its typed data_to_word_memory_repr capture. The empty case is zero and each word contributes its unsigned natural value plus dimword times the decoded tail."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Multiword.lean",
+    "lean_name": "mwCmp",
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "mw_cmp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: mw_cmp_def and its typed capture retain the empty-first-list result, comparison of LAST elements, recursive FRONT of both lists, and unsigned comparison on unequal final words. Lean dropLast implements HOL FRONT, including the empty-list case; holLast preserves the source's unspecified LAST [] independently."
   },
   {
     "lean_path": "Flapjack/Misc/Multiword.lean",

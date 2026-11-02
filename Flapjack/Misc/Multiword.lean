@@ -1,4 +1,5 @@
 import Flapjack.HolRef
+import Flapjack.Misc.ListEl
 
 /-! Multiword integer encodings from the HOL multiword library. -/
 namespace Flapjack.Misc.Multiword
@@ -28,6 +29,19 @@ def i2mw {width : Nat} [NeZero width] (i : Int) : Bool × List (BitVec width) :=
 def mw2n {width : Nat} [NeZero width] : List (BitVec width) → Nat
   | [] => 0
   | x :: xs => x.toNat + 2 ^ width * mw2n xs
+
+/-- Compare word lists from the most significant end, preserving HOL's
+unspecified `LAST []` when the second list is shorter. -/
+@[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "mw_cmp_def"
+  (words_as_type_indexed_bitvec)]
+noncomputable def mwCmp {width : Nat} [NeZero width] (xs ys : List (BitVec width)) : Option Bool :=
+  if xs = [] then none
+  else if holLast xs = holLast ys then mwCmp xs.dropLast ys.dropLast
+  else some (decide (holLast xs < holLast ys))
+termination_by xs.length
+decreasing_by
+  simp only [List.length_dropLast]
+  cases xs <;> simp_all
 
 /-- Decode a sign-and-magnitude representation as a signed integer. -/
 @[hol "HOL/examples/machine-code/multiword/multiwordScript.sml" "mw2i_def"

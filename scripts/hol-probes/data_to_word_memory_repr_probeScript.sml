@@ -208,6 +208,28 @@ val _ = load "preamble";
 val _ = load "helperLib";
 open preamble wordsTheory data_to_word_memoryProofTheory dataSemTheory wordLangTheory;
 open helperLib set_sepTheory wordSemTheory;
+open multiwordTheory;
+val word_cmp_loop_thm_replay = prove(
+  ``!xs1 (xs2:'a word list) f1 f2 (a1:'a word) a2.
+      LENGTH xs1 = LENGTH xs2 /\ LENGTH xs1 < dimword (:'a) /\
+      (word_list (a1 + bytes_in_word) (MAP Word xs1) * f1) (fun2set (m,dm)) /\
+      (word_list (a2 + bytes_in_word) (MAP Word xs2) * f2) (fun2set (m,dm)) ==>
+      word_cmp_loop (n2w (LENGTH xs1)) (a1 + bytes_in_word * n2w (LENGTH xs1))
+        (a2 + bytes_in_word * n2w (LENGTH xs1)) dm m =
+        SOME (case mw_cmp xs1 xs2 of NONE => 1w | SOME T => 0w | SOME F => 2w)``,
+  ho_match_mp_tac mw_cmp_ind >> rw []
+  >> `xs1 = [] \/ ∃y1 ys1. xs1 = SNOC y1 ys1` by metis_tac [SNOC_CASES]
+  >> `xs2 = [] \/ ∃y2 ys2. xs2 = SNOC y2 ys2` by metis_tac [SNOC_CASES]
+  >> simp [Once mw_cmp_def] >> fs []
+  >> once_rewrite_tac [word_cmp_loop_def]
+  >> full_simp_tac std_ss [GSYM SNOC_APPEND,FRONT_SNOC] >> fs []
+  >> fs [ADD1] >> rfs []
+  >> fs [GSYM word_add_n2w,WORD_LEFT_ADD_DISTRIB]
+  >> fs [SNOC_APPEND,word_list_APPEND,miscTheory.word_list_def,SEP_CLAUSES]
+  >> SEP_R_TAC >> rfs [] >> SEP_R_TAC >> fs []
+  >> IF_CASES_TAC >> fs [] >> rw []
+  >> first_x_assum match_mp_tac >> metis_tac [STAR_ASSOC]);
+val _ = show "word_cmp_loop_thm_replay_typed" word_cmp_loop_thm_replay;
 val word_mem_eq_thm_replay = prove(
   ``!xs ys a ff.
       (word_list a (MAP Word xs) * ff) (fun2set (m,dm)) /\ LENGTH xs = LENGTH ys ==>
@@ -273,6 +295,11 @@ val _ = show "encode_header_EQ_typed" data_to_word_memoryProofTheory.encode_head
 val _ = show "encode_header_tag_mask_typed" data_to_word_memoryProofTheory.encode_header_tag_mask;
 val _ = show "word_cmp_res_def_typed" data_to_word_memoryProofTheory.word_cmp_res_def;
 val _ = show "word_cmp_loop_def_typed" data_to_word_memoryProofTheory.word_cmp_loop_def;
+val _ = show "mw_cmp_def_typed" multiwordTheory.mw_cmp_def;
+val _ = show "mw2n_inj_typed" data_to_word_memoryProofTheory.mw2n_inj;
+val _ = show "mw_cmp_equal32" (EVAL ``multiword$mw_cmp [1w:word32;2w] [1w;2w]``);
+val _ = show "mw_cmp_low_less32" (EVAL ``multiword$mw_cmp [1w:word32;2w] [4w;2w]``);
+val _ = show "mw_cmp_high_greater32" (EVAL ``multiword$mw_cmp [1w:word32;3w] [4w;2w]``);
 val _ = show "word_cmp_loop_refl_typed" data_to_word_memoryProofTheory.word_cmp_loop_refl;
 val _ = show "memory_rel_Add_typed" data_to_word_memoryProofTheory.memory_rel_Add;
 val _ = show "memory_rel_Sub_typed" data_to_word_memoryProofTheory.memory_rel_Sub;
