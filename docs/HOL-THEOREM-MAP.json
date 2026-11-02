@@ -100463,6 +100463,30 @@
     "reviewer": "Source comparison: memory_rel_pointer_eq and its typed data_to_word_memory_repr capture. The complete theorem preserves arbitrary source values, a shared target word location, the original full memory relation, good_dimindex, successful do_eq result and the conclusion that its Boolean is true. Structural recursion handles every constructor, using the reviewed block, reference, number and word64 cases. store is the canonical finite-support map and target words share the positive HOL word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/SimpleEquality.lean",
+    "lean_name": "memoryRel_ptrEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_ptr_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_ptr_eq and its typed data_to_word_memory_repr capture. The complete theorem retains the source full memory relation with shared word location, do_eq result, good_dimindex, and Boolean conclusion. It applies the independently reviewed pointer-equality theorem with the source premise order. store is the canonical finite-support map and the target words use the shared positive HOL word width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/SimpleEquality.lean",
+    "lean_name": "memoryRel_simpleEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_simple_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_simple_eq and its typed data_to_word_memory_repr capture. The complete theorem retains the original memory relation, source equality result and good_dimindex, existential target words, location equations and low-bit disjunction implying agreement of word equality with the result Boolean. It covers numbers, word64, blocks, references and impossible constructor combinations without additional assumptions. store is the canonical finite-support map and the target words use the shared positive HOL word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
