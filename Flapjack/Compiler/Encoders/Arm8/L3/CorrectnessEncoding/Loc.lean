@@ -26,6 +26,42 @@ def arm8AddressWord (imm : BitVec 64) (rd : BitVec 5) : BitVec 32 :=
       BitVec.setWidth 29 ((BitVec.ofNat 5 16) ++
         BitVec.setWidth 24 (holWordExtract 19 20 2 imm ++ rd))))
 
+/-- Bit `i` of `x % 4` is bit `i` of `x` for `i < 2`. -/
+theorem arm8TestBit_mod_four (x i : Nat) (hi : i < 2) : (x % 4).testBit i = x.testBit i := by
+  have h := Nat.testBit_mod_two_pow x 2 i
+  rw [show (2 : Nat) ^ 2 = 4 from rfl] at h
+  rw [h]
+  simp [hi]
+
+/-- The bits 20:2 of a word sit at positions `i - 2` after a two-bit shift. -/
+theorem arm8TestBit_shift_mod (x i : Nat) (h2 : 2 ≤ i) (hi : i < 21) :
+    (x >>> 2 % 524288).testBit (i - 2) = x.testBit i := by
+  have h := Nat.testBit_mod_two_pow (x >>> 2) 19 (i - 2)
+  rw [show (2 : Nat) ^ 19 = 524288 from rfl] at h
+  rw [h]
+  rw [Nat.testBit_shiftRight]
+  have h3 : 2 + (i - 2) = i := by omega
+  rw [h3]
+  simp [show i - 2 < 19 from by omega]
+
+/-- The 21-bit address immediate reassembles to the low 21 bits of the
+offset. -/
+theorem arm8AddressBits (imm : BitVec 64) :
+    (holWordExtract 19 20 2 imm ++ holWordExtract 2 1 0 imm) = BitVec.setWidth 21 imm := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  simp only [holWordExtract, Flapjack.RiscV.L3.holWordExtract, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth, BitVec.getLsbD_ofNat]
+  norm_num
+  by_cases h2 : i < 2
+  · rw [if_pos h2, arm8TestBit_mod_four _ _ h2]
+    simp [BitVec.getLsbD, h2, hi]
+    omega
+  · have h19 : i - 2 < 19 := by omega
+    have h64 : i - 2 < 64 := by omega
+    rw [if_neg h2, arm8TestBit_shift_mod _ _ (by omega) (by omega)]
+    simp [BitVec.getLsbD, h19, h64, hi]
+
 /-- `Encode` of an in-range `Address` is the address word. -/
 theorem arm8Encode_address (imm : BitVec 64) (rd : BitVec 5)
     (h : BitVec.signExtend 64 (BitVec.setWidth 21
