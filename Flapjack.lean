@@ -529,6 +529,7 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveAlloc
 import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveArray
 import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveBlock
 import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveByteVector
+import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateForce
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.Proofs.FullTotal
