@@ -100587,6 +100587,24 @@
     "reviewer": "Source comparison: memory_rel_ByteArray_words_IMP and its typed capture retain the complete memory relation, reference lookup, good_dimindex and real-address hypotheses. The existential header and separation frame, exact write_bytes payload over the functional memory graph, and both decoded-length conclusions match HOL. store uses the canonical finite-support map and all memory words share the source positive word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BytePacking.lean",
+    "lean_name": "getByte_bytesToWord",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "get_byte_bytes_to_word",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: get_byte_bytes_to_word and its typed capture retain the quantified byte list and initial word, both index bounds, word-size equality, good_dimindex condition, and byte extraction result. Lean's indexed list access carries the source in-bounds hypothesis as its proof; the word width is the same positive HOL dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BytePacking.lean",
+    "lean_name": "writeBytesInj",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "write_bytes_inj",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: write_bytes_inj and its typed capture retain good_dimindex, the universally quantified original destination words and byte lists, all three length hypotheses, and the exact equality equivalence for the same byte order. Byte inputs remain fixed at eight bits and destination words use the positive HOL dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueEquality.lean",
     "lean_name": "doEq_iff_vbEqSize",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
