@@ -1,12 +1,15 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.Configuration
+import Flapjack.Compiler.Encoders.Arm8.L3.Target.State
+import Flapjack.Misc.BytesInMemory
+import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
 
 set_option maxHeartbeats 4000000
 
 /-!
-# L3 ARMv8 encoder correctness: the `Skip` reductions
+# L3 ARMv8 encoder correctness: the `Skip` case
 
-The concrete reductions needed by the `encoder_correct arm8TargetL3` `Skip`
-case, mirroring `Flapjack/RiscV/CorrectnessEncoding/Skip.lean`:
+The `Skip` constructor case of the L3 `encoder_correct arm8TargetL3` port,
+mirroring `Flapjack/RiscV/CorrectnessEncoding/Skip.lean`:
 
 * `arm8Ast_skip` / `arm8Enc_skip`: `Skip` lowers to `NoOperation` and encodes
   to the AArch64 `NOP` word `0xD503201F` (little-endian bytes `1F 20 03 D5`).
@@ -19,15 +22,17 @@ case, mirroring `Flapjack/RiscV/CorrectnessEncoding/Skip.lean`:
   return the `NOP` word without changing the state.
 * `arm8Next_nop`: `NextStateARM8` advances the PC by four and clears
   `branch_hint`, returning `some`.
+* `arm8_encoder_correct_skip`: the full `encoder_correct` `Skip` clause — the
+  existential witness `n = 0`, every interference environment, the original
+  code-byte/PC assertion, and the outside-domain byte conclusion.
 
-The remaining `Skip` obligations are the `asmStep`/`targetStateRel`
-simulation under interference (`asserts`/`asserts2`) and the post-state
-relation; they are not proved here.
+The other `arm8_ast` cases of `encoder_correct` are not ported here.
 -/
 
 namespace Flapjack.Compiler.Encoders.Arm8.L3
 
-open Flapjack Compiler.Encoders.Asm
+open Flapjack Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.AsmProps
+open Flapjack.Compiler.Encoders.Arm8.L3.Target
 
 /-- `Skip` lowers to the `NoOperation` instruction. -/
 theorem arm8Ast_skip : arm8Ast (HolAsm.inst HolInst.skip) = [NoOperation] := rfl
@@ -41,6 +46,11 @@ theorem arm8Encode_nop : arm8Encode NoOperation =
 theorem arm8Enc_skip : arm8Enc (HolAsm.inst HolInst.skip) =
     [BitVec.ofNat 8 31, BitVec.ofNat 8 32, BitVec.ofNat 8 3, BitVec.ofNat 8 213] := by
   simp [arm8Enc, arm8Ast_skip, arm8Encode_nop]
+
+/-- The emitted `Skip` encoding is four bytes long. -/
+theorem arm8Enc_skip_length : (arm8Enc (HolAsm.inst HolInst.skip)).length = 4 := by
+  rw [arm8Enc_skip]
+  simp
 
 /-- The rendered L3 `Decode` returns `Hint NOP` on the emitted `NOP` word. -/
 theorem arm8Decode_nop :
@@ -112,5 +122,174 @@ theorem arm8Next_nop (ms : arm8_state)
   simp only [Next, NextStateARM8]
   rw [hfetch]
   simp [arm8Decode_nop, arm8Run_nop, hexc]
+
+/-- Wrapped address reassociation for the byte walk (Flapjack infrastructure). -/
+theorem addOneOffset {width : Nat} (a : BitVec width) (j : Nat) :
+    (a + 1) + BitVec.ofNat width j = a + BitVec.ofNat width (j + 1) := by
+  rw [BitVec.ofNat_add, BitVec.add_assoc]
+  congr 1
+  exact BitVec.add_comm _ _
+
+/-- The `j`-th byte of a byte list in memory, for every `j` below the length. -/
+theorem bytesInMemoryHOL_get {width : Nat} [NeZero width]
+    {a : BitVec width} {bs : List (BitVec 8)} {m : BitVec width → BitVec 8}
+    {d : BitVec width → Prop} (h : bytesInMemoryHOL a bs m d) :
+    ∀ j, j < bs.length → m (a + BitVec.ofNat width j) = bs.getD j 0 := by
+  revert h
+  induction bs generalizing a with
+  | nil => intro _ j hj; simp at hj
+  | cons x xs ih =>
+      intro h j hj
+      obtain ⟨hx, hd, ht⟩ := h
+      cases j with
+      | zero => simpa using hx
+      | succ j =>
+          have hj' : j < xs.length := by simpa using hj
+          have hrec := ih ht j hj'
+          rw [← addOneOffset]
+          simpa using hrec
+
+/-- The `j`-th byte of a byte list in memory lies in the domain. -/
+theorem bytesInMemoryHOL_domain {width : Nat} [NeZero width]
+    {a : BitVec width} {bs : List (BitVec 8)} {m : BitVec width → BitVec 8}
+    {d : BitVec width → Prop} (h : bytesInMemoryHOL a bs m d) :
+    ∀ j, j < bs.length → d (a + BitVec.ofNat width j) := by
+  revert h
+  induction bs generalizing a with
+  | nil => intro _ j hj; simp at hj
+  | cons x xs ih =>
+      intro h j hj
+      obtain ⟨hx, hd, ht⟩ := h
+      cases j with
+      | zero => simpa using hd
+      | succ j =>
+          have hj' : j < xs.length := by simpa using hj
+          have hrec := ih ht j hj'
+          rw [← addOneOffset]
+          simpa using hrec
+
+/-- `Aligned` at size four is the signed 20-bit alignment predicate used by
+`arm8_ok` (Flapjack infrastructure; HOL `arm8_ok` uses `aligned 2`). -/
+theorem Aligned_four_iff (pc : BitVec 64) :
+    Aligned (TN := 64) (pc, 4) = true ↔ pc.toNat % 4 = 0 := by
+  simp only [Aligned, Align, beq_iff_eq]
+  constructor
+  · intro h
+    have ht := congrArg BitVec.toNat h
+    have hle : 4 * (pc.toNat / 4) ≤ pc.toNat := by
+      rw [Nat.mul_comm]; exact Nat.div_mul_le_self _ _
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt hle pc.isLt)] at ht
+    rw [ht]
+    exact Nat.mul_mod_right 4 (pc.toNat / 4)
+  · intro h
+    apply BitVec.eq_of_toNat_eq
+    have hle : 4 * (pc.toNat / 4) ≤ pc.toNat := by
+      rw [Nat.mul_comm]
+      exact Nat.div_mul_le_self _ _
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt hle pc.isLt),
+      Nat.mul_comm 4 (pc.toNat / 4), Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero h)]
+
+/-- The `Skip` constructor of `encoder_correct arm8TargetL3`: one
+`NextStateARM8` step from a state holding the emitted `NOP` bytes only advances
+the PC by four. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
+theorem arm8_encoder_correct_skip (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (HolAsm.inst HolInst.skip) s2 ∧
+      targetStateRel arm8TargetL3 s1 ms) :
+    ∃ n : Nat, ∀ env : Nat → arm8_state → arm8_state,
+      interferenceOk env (arm8Proj s1.memDomain) →
+      let pcs := allPcs (arm8ConfigL3.encode (HolAsm.inst HolInst.skip)).length s1.pc
+      asserts n (fun k s => env (n - k) (arm8Next s)) ms
+        (fun ms' => arm8Ok ms' = true ∧
+          (∀ pc, pc ∈ pcs 0 → ms'.MEM pc = ms.MEM pc) ∧
+          ms'.PC ∈ pcs arm8ConfigL3.codeAlignment)
+        (fun ms' => targetStateRel arm8TargetL3 s2 ms') ∧
+      asserts2 (n + 1) (fun k => env (n + 1 - k)) arm8Next ms
+        (fun ms1 ms2 => ∀ x, ¬ s1.memDomain x → ms1.MEM x = ms2.MEM x) := by
+  obtain ⟨hs, hr⟩ := h
+  have hb := hs.1
+  simp only [arm8ConfigL3] at hb
+  rw [arm8Enc_skip] at hb
+  obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
+  rw [arm8TargetL3_stateOk] at hok
+  rw [arm8TargetL3_getPc] at hpc
+  rw [arm8TargetL3_getByte] at hmem
+  rw [arm8TargetL3_getReg] at hreg
+  change arm8Ok ms = true at hok
+  change ms.PC = s1.pc at hpc
+  change ∀ a, s1.memDomain a → ms.MEM a = s1.mem a at hmem
+  change ∀ i, i < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains i = false →
+    ms.REG (BitVec.ofNat 5 i) = s1.regs i at hreg
+  have hdom := bytesInMemoryHOL_domain hb
+  have hbm : bytesInMemoryHOL ms.PC (arm8Enc (HolAsm.inst HolInst.skip)) ms.MEM s1.memDomain := by
+    rw [hpc]
+    exact bytesInMemory_changeMem _ _ _ _ _ ⟨hb, fun n hn => (hmem _ (hdom n hn)).symm⟩
+  have hlen : (arm8Enc (HolAsm.inst HolInst.skip)).length = 4 := arm8Enc_skip_length
+  have h0 : ms.MEM ms.PC = BitVec.ofNat 8 31 := by
+    have := bytesInMemoryHOL_get hbm 0 (by rw [hlen]; omega)
+    rw [arm8Enc_skip] at this
+    simpa using this
+  have h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 32 := by
+    have := bytesInMemoryHOL_get hbm 1 (by rw [hlen]; omega)
+    rw [arm8Enc_skip] at this
+    simpa using this
+  have h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 3 := by
+    have := bytesInMemoryHOL_get hbm 2 (by rw [hlen]; omega)
+    rw [arm8Enc_skip] at this
+    simpa using this
+  have h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 213 := by
+    have := bytesInMemoryHOL_get hbm 3 (by rw [hlen]; omega)
+    rw [arm8Enc_skip] at this
+    simpa using this
+  have hfields := (arm8Ok_iff ms).mp hok
+  obtain ⟨hel, he0, hsa0, htbi1, htbi0, hexc, halign⟩ := hfields
+  have hal : Aligned (TN := 64) (ms.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 ms.PC).mp halign
+  have hn := arm8Next_nop ms h0 h1 h2 h3 hal he0 hel hexc
+  have hnext : arm8Next ms = { ms with branch_hint := none, PC := ms.PC + 4 } := by
+    unfold arm8Next
+    rw [hn]
+    rfl
+  have hupd := hs.2.2.2.2.1
+  simp only [arm8ConfigL3] at hupd
+  simp only [arm8Enc_skip, List.length_cons, List.length_nil] at hupd
+  have hs2 : s2 = { s1 with pc := s1.pc + BitVec.ofNat 64 4 } := by
+    rw [← hupd]
+    simp [asmUpd, instUpd, updPc]
+  have hs2dom : s2.memDomain = s1.memDomain := by rw [hs2]
+  have hq : targetStateRel arm8TargetL3 s2 { ms with branch_hint := none, PC := ms.PC + 4 } := by
+    rw [hs2]
+    have h4 : holAligned 2 (4 : BitVec 64) = true := by
+      rw [holAligned_iff]; decide
+    have hal4 : holAligned 2 (ms.PC + 4) = true := by
+      rw [(alignedAddSub 2 ms.PC 4 h4).1, halign]
+    have hokPost : arm8Ok { ms with branch_hint := none, PC := ms.PC + 4 } = true := by
+      simp [arm8Ok, hel, he0, hsa0, htbi1, htbi0, hexc]
+      exact hal4
+    refine ⟨hokPost, ?_, ?_, ?_, ?_⟩
+    · simp [hpc]
+    · intro a ha
+      simp only [arm8TargetL3_getByte]
+      exact hmem a ha
+    · intro i hi
+      simp only [arm8TargetL3_getReg]
+      exact hreg i hi
+    · intro i hi
+      simp [arm8ConfigL3] at hi
+  refine ⟨0, ?_⟩
+  intro env hinter
+  constructor
+  · simp only [asserts]
+    rw [hnext]
+    have hproj := hinter 0 { ms with branch_hint := none, PC := ms.PC + 4 }
+    have hproj' : arm8Proj s2.memDomain (env 0 { ms with branch_hint := none, PC := ms.PC + 4 }) =
+        arm8Proj s2.memDomain { ms with branch_hint := none, PC := ms.PC + 4 } := by
+      rw [hs2dom]
+      exact hproj
+    exact (arm8TargetL3_targetOk.2 _ _ s2 hproj').1.mpr hq
+  · simp only [asserts2]
+    rw [hnext]
+    exact ⟨fun _ _ => rfl, trivial⟩
 
 end Flapjack.Compiler.Encoders.Arm8.L3
