@@ -6,22 +6,30 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Install
 /-! Executed BVI stage witnesses for the configured source pipeline. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
-/-- Flapjack infrastructure: a successful configured source-to-BVI run
-contains the actual tail-recursion, TMC, and inlining executions, and stores
-the inliner's resulting cache in its returned configuration. -/
-theorem configured_bvi_stage_witnesses (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
+/-- A successful configured run contains successful executions of every
+source-to-BVI stage, with the returned state and code assembled from those
+executions. This is Flapjack pipeline infrastructure. -/
+theorem configured_bvi_all_stage_witnesses (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
     (config : BvlToBvi.Config) (decls : List AstHOL.Dec)
     (resultSource : Config) (resultClosure : ClosToBvl.Config) (resultConfig : BvlToBvi.Config)
     (output : List (Nat × Nat × Bvi.Exp)) (names : Spt Basis.Pure.MlString.MlString)
     (run : compileCakeToBviConfiguredFuel fuel source closure config decls =
       some (resultSource, resultClosure, resultConfig, output, names)) :
-    ∃ beforeTail afterTail afterTmc tailLast tmcLast cache,
+    ∃ source' exps closure' bvl names' inlines optimized start beforeTail next1 tailLast afterTail
+      tmcLast afterTmc cache,
+      compileCakeToClosFuel fuel source decls = some (source', exps) ∧
+      ClosToBvl.compileCallMtiFuel? fuel closure exps = some (closure', bvl, names') ∧
+      BvlInline.compileProgFuel fuel config.inlineSizeLimit config.expCut config.splitMainAtSeq bvl =
+        some (inlines, optimized) ∧
+      BvlToBvi.compileProgFuel fuel fuel closure'.start 0 optimized = some (start, beforeTail, next1) ∧
       BviTailrec.compileProgFuel fuel config.doTailrec (Flapjack.bvlNumStubs + 2) beforeTail =
         some (tailLast, afterTail) ∧
       BviTmc.compileProgFuel fuel config.doTmc (Flapjack.bvlNumStubs + 3) afterTail =
         some (tmcLast, afterTmc) ∧
       BviInline.compileProgFuel fuel afterTmc = some (cache, output) ∧
-      resultConfig.bviInlines = cache := by
+      resultSource = source' ∧ resultClosure = { closure' with start := start } ∧
+      resultConfig = { config with inlines := inlines, bviInlines := cache, nextName1 := next1, nextName2 := tailLast, nextName3 := tmcLast } ∧
+      names = BvlToBvi.getNames (output.map fun (n, _, _) => n) names' := by
   unfold compileCakeToBviConfiguredFuel at run
   cases first : compileCakeToClosFuel fuel source decls with
   | none => simp [first] at run
@@ -34,8 +42,8 @@ theorem configured_bvi_stage_witnesses (fuel : Nat) (source : Config) (closure :
       cases third : BvlInline.compileProgFuel fuel config.inlineSizeLimit config.expCut config.splitMainAtSeq bvl with
       | none => simp [first, second, third] at run
       | some thirdResult =>
-        obtain ⟨inlines, bvl'⟩ := thirdResult
-        cases fourth : BvlToBvi.compileProgFuel fuel fuel closure'.start 0 bvl' with
+        obtain ⟨inlines, optimized⟩ := thirdResult
+        cases fourth : BvlToBvi.compileProgFuel fuel fuel closure'.start 0 optimized with
         | none => simp [first, second, third, fourth] at run
         | some fourthResult =>
           obtain ⟨start, beforeTail, next1⟩ := fourthResult
@@ -52,11 +60,35 @@ theorem configured_bvi_stage_witnesses (fuel : Nat) (source : Config) (closure :
               | some seventhResult =>
                 obtain ⟨cache, code⟩ := seventhResult
                 simp [first, second, third, fourth, fifth, sixth, seventh] at run
-                obtain ⟨_, _, configEq, outputEq, _⟩ := run
+                obtain ⟨sourceEq, closureEq, configEq, outputEq, namesEq⟩ := run
                 subst code
-                refine ⟨beforeTail, afterTail, afterTmc, tailLast, tmcLast, cache,
-                  fifth, sixth, seventh, ?_⟩
-                rw [← configEq]
+                refine ⟨source', exps, closure', bvl, names', inlines, optimized, start, beforeTail,
+                  next1, tailLast, afterTail, tmcLast, afterTmc, cache, ?_⟩
+                simp_all
+
+/-- Flapjack infrastructure: a successful configured source-to-BVI run
+contains the actual tail-recursion, TMC, and inlining executions, and stores
+the inliner's resulting cache in its returned configuration. -/
+theorem configured_bvi_stage_witnesses (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
+    (config : BvlToBvi.Config) (decls : List AstHOL.Dec)
+    (resultSource : Config) (resultClosure : ClosToBvl.Config) (resultConfig : BvlToBvi.Config)
+    (output : List (Nat × Nat × Bvi.Exp)) (names : Spt Basis.Pure.MlString.MlString)
+    (run : compileCakeToBviConfiguredFuel fuel source closure config decls =
+      some (resultSource, resultClosure, resultConfig, output, names)) :
+    ∃ beforeTail afterTail afterTmc tailLast tmcLast cache,
+      BviTailrec.compileProgFuel fuel config.doTailrec (Flapjack.bvlNumStubs + 2) beforeTail =
+        some (tailLast, afterTail) ∧
+      BviTmc.compileProgFuel fuel config.doTmc (Flapjack.bvlNumStubs + 3) afterTail =
+        some (tmcLast, afterTmc) ∧
+      BviInline.compileProgFuel fuel afterTmc = some (cache, output) ∧
+      resultConfig.bviInlines = cache := by
+  obtain ⟨source', exps, closure', bvl, names', inlines, optimized, start, beforeTail,
+    next1, tailLast, afterTail, tmcLast, afterTmc, cache, _, _, _, _, tailRun, tmcRun,
+    inlineRun, _, _, configEq, _⟩ :=
+    configured_bvi_all_stage_witnesses fuel source closure config decls resultSource resultClosure
+      resultConfig output names run
+  refine ⟨beforeTail, afterTail, afterTmc, tailLast, tmcLast, cache, tailRun, tmcRun, inlineRun, ?_⟩
+  rw [configEq]
 
 /-- Flapjack infrastructure: the inlining stage in a successful configured
 pipeline preserves the TMC output labels and stores its cache. -/

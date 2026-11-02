@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.SourcePreprocessing
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.LoweringHandoff
 import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Syntactic
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BviStages
 
 /-! Conditional source-to-BVI behavior composition. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -21,6 +22,42 @@ noncomputable abbrev sourceClosureCompiler {C : Type} (maxApp inlineLimit cutSiz
     ClosSem.Compiler (Nat × OptimizationConfig C) :=
   stateCc (ClosNumber.ignoreTable ClosNumber.compileInc) (pureCc ClosAnnotate.compileInc
     (pureCc (compileInc maxApp) (optimizationCallback inlineLimit cutSize splitSeq tailEnabled tmcEnabled compiler)))
+
+/-- A successful configured source-to-BVI run contains a source-to-closure
+execution whose behavior is an observable source behavior. This composition
+still assumes the source precondition and compiler callback relation. -/
+theorem configuredSourceClosure_semantics {C F : Type} [Nonempty C]
+    (fuel : Nat) (bvlConfig : BvlToBvi.Config)
+    (interp : Option (Value → Option (SourceToFlat.Config × (Nat × OptimizationConfig C))))
+    (source : State F) (sourceEnv : SemEnv Value) (sourceConfig : SourceToFlat.Config)
+    (flatConfig : FlatSem.InstallConfig (Nat × OptimizationConfig C)) (compiler : BviSem.Compiler C)
+    (declarations : List AstHOL.Dec) (config : ClosToBvl.Config)
+    (resultSource : SourceToFlat.Config) (resultClosure : ClosToBvl.Config) (resultConfig : BvlToBvi.Config)
+    (resultCode : List (Nat × Nat × Bvi.Exp)) (resultNames : Spt Basis.Pure.MlString.MlString)
+    (run : SourceToFlat.compileCakeToBviConfiguredFuel fuel sourceConfig config bvlConfig declarations =
+      some (resultSource, resultClosure, resultConfig, resultCode, resultNames))
+    (precondition : SourceToFlat.SourcePrecondition interp source sourceEnv sourceConfig
+      flatConfig (SourceToSource.compile declarations))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (positive : 0 < config.maxApp)
+    (production : flatConfig.compile = pureCc incCompileDecs
+      (sourceClosureCompiler config.maxApp bvlConfig.inlineSizeLimit bvlConfig.expCut
+        bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc compiler)) :
+    ∃ expressions,
+      SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (resultSource, expressions) ∧
+      Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+        (ClosSem.semantics source.ffi config.maxApp HolFiniteMapExact.empty
+          (sourceClosureOracle flatConfig)
+          (sourceClosureCompiler config.maxApp bvlConfig.inlineSizeLimit bvlConfig.expCut
+            bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc compiler) expressions) := by
+  obtain ⟨source', expressions, _, _, _, _, _, _, _, _, _, _, _, _, _, sourceRun,
+    _, _, _, _, _, _, sourceEq, _⟩ :=
+    SourceToFlat.configured_bvi_all_stage_witnesses fuel sourceConfig config bvlConfig declarations
+      resultSource resultClosure resultConfig resultCode resultNames run
+  subst source'
+  exact ⟨expressions, sourceRun,
+    cakeCompileToClosFuel_semantics_exists fuel interp source sourceEnv sourceConfig resultSource
+      flatConfig _ declarations expressions config.maxApp precondition safe positive production sourceRun⟩
 
 /-- Successful source-to-closure compilation supplies the syntactic invariants
 required by closure numbering and annotation. -/
