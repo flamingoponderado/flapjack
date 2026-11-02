@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 
 /-! Fuel-aware well-formed values and related-value witnesses. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -115,6 +116,36 @@ theorem valuesWellFormedFuel_of_forall {fuel : Nat} {g : State} {allowed : Set N
     intro value member
     exact all value (by simp [member])
 
+/-- Selecting environment variables preserves well-formedness, including
+repeated indices and arbitrary selection order. -/
+theorem lookupVars_wellFormedFuel {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (indices : List Nat)
+    (env selected : List ClosSem.Value) (wf : ValuesWellFormedFuel fuel g allowed code env)
+    (lookup : ClosSem.lookupVars indices env = some selected) :
+    ValuesWellFormedFuel fuel g allowed code selected := by
+  induction indices generalizing selected with
+  | nil => simp [ClosSem.lookupVars] at lookup; subst selected; exact .nil
+  | cons index rest ih =>
+    simp only [ClosSem.lookupVars, Bind.bind, Option.bind_eq_some_iff, Option.some.injEq] at lookup
+    obtain ⟨value, found, tail, tailFound, rfl⟩ := lookup
+    have member : value ∈ env := by
+      obtain ⟨bound, eq⟩ := List.getElem?_eq_some_iff.mp found
+      simpa only [eq] using List.getElem_mem bound
+    exact .cons (valuesWellFormedFuel_mem wf member) (ih tail tailFound)
+
+/-- Closure environment restriction preserves well-formedness. -/
+theorem closEnv_wellFormedFuel {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (restrict : Bool) (indices : List Nat)
+    (env selected : List ClosSem.Value) (wf : ValuesWellFormedFuel fuel g allowed code env)
+    (run : ClosSem.closEnv restrict indices env = some selected) :
+    ValuesWellFormedFuel fuel g allowed code selected := by
+  cases restrict with
+  | false =>
+    simp [ClosSem.closEnv] at run
+    subst selected
+    exact wf
+  | true => exact lookupVars_wellFormedFuel indices env selected wf (by simpa [ClosSem.closEnv] using run)
+
 /-- The bundle of recursive closures sharing a well-formed environment is
 well formed at every generated index. -/
 theorem recClosureBundle_wellFormedFuel {fuel : Nat} {g : State} {allowed : Set Nat}
@@ -128,6 +159,48 @@ theorem recClosureBundle_wellFormedFuel {fuel : Nat} {g : State} {allowed : Set 
   intro value member
   obtain ⟨index, _, rfl⟩ := List.mem_map.mp member
   exact .recclosure .nil envWf closure
+
+/-- Successful recursive-closure construction preserves well-formedness of
+the selected environment and generated closure bundle. -/
+theorem buildRecc_wellFormedFuel {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (restrict : Bool) (loc : Nat)
+    (env : List ClosSem.Value) (indices : List Nat) (fns targets : List (Nat × ClosLang.Exp))
+    (result : List ClosSem.Value) (envWf : ValuesWellFormedFuel fuel g allowed code env)
+    (closure : recClosureRelFuel fuel g allowed code loc fns targets)
+    (run : ClosSem.buildRecc restrict (some loc) env indices fns = some result) :
+    ValuesWellFormedFuel fuel g allowed code result := by
+  simp only [ClosSem.buildRecc, Bind.bind, Option.bind_eq_some_iff, Pure.pure, Option.some.injEq] at run
+  obtain ⟨captured, captureRun, rfl⟩ := run
+  exact recClosureBundle_wellFormedFuel loc captured fns targets
+    (closEnv_wellFormedFuel restrict indices env captured envWf captureRun) closure
+
+/-- Successful evaluation of a numbered function produces a well-formed
+closure and leaves state unchanged, provided its function group satisfies
+the bounded closure relation. -/
+theorem evaluate_fn_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)}
+    (name : Flapjack.Basis.Pure.MlString.MlString) (loc arity : Nat)
+    (selected : Option (List Nat)) (body : ClosLang.Exp) (targets : List (Nat × ClosLang.Exp))
+    (env : List ClosSem.Value) (state next : ClosSem.State C F) (value : ClosSem.Value)
+    (envWf : ValuesWellFormedFuel fuel g allowed code env)
+    (closure : recClosureRelFuel fuel g allowed code loc [(arity, body)] targets)
+    (run : ClosSem.evaluate [.fn name (some loc) selected arity body] env state = (.val [value], next)) :
+    ValueWellFormedFuel fuel g allowed code value ∧ next = state := by
+  by_cases valid : arity ≤ state.maxApp ∧ arity ≠ 0
+  · cases selected with
+    | none =>
+      simp [ClosSem.evaluate, valid] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact ⟨.closure .nil envWf closure, rfl⟩
+    | some indices =>
+      cases found : ClosSem.lookupVars indices env with
+      | none => simp [ClosSem.evaluate, valid, found] at run
+      | some captured =>
+        have capturedWf := lookupVars_wellFormedFuel indices env captured envWf found
+        simp [ClosSem.evaluate, valid, found] at run
+        obtain ⟨rfl, rfl⟩ := run
+        exact ⟨.closure .nil capturedWf closure, rfl⟩
+  · cases selected <;> simp [ClosSem.evaluate, valid] at run
 
 /-- A list made from members of a well-formed list is well formed. -/
 theorem valuesWellFormedFuel_of_subset {fuel : Nat} {g : State} {allowed : Set Nat}
