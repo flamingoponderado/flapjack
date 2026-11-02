@@ -136,6 +136,22 @@ private def isErrorControlResult
 def littleEndianState : PanSemState Word64 Unit := sourceState false true true
 def bigEndianState : PanSemState Word64 Unit := sourceState true true true
 
+/- These named-field cases mirror `pan_eval_probe.out`. The duplicate stored
+   field is intentional: HOL's ALOOKUP returns the first occurrence even for
+   a value that was not constructed by the NStruct expression clause. -/
+private def namedFieldState : PanSemState Word64 Unit :=
+  { littleEndianState with
+    structs := [("Pair", { fields := [("left", .one), ("right", .one)], size := 2 })]
+    locals := fun name => if name == "v" then
+      some (.nStruct "Pair" [("left", .word 3), ("left", .word 4)]) else none }
+
+#guard isWordResult (evalPanSemStateExp namedFieldState
+  (.nField "left" (.var .local "v"))) 3
+#guard isNoneResult (evalPanSemStateExp namedFieldState
+  (.nField "missing" (.var .local "v")))
+#guard isNoneResult (evalPanSemStateExp { namedFieldState with structs := [] }
+  (.nField "left" (.var .local "v")))
+
 def sourceFfiOracle : FfiOracle Unit := fun _ state _ bytes => .returned state bytes
 
 def sourceFfiState : FfiState Unit :=
