@@ -75,6 +75,7 @@ val _ = show "memory_rel_ValueArray_IMP_typed" data_to_word_memoryProofTheory.me
 val _ = show "memory_rel_Word64_IMP_typed" data_to_word_memoryProofTheory.memory_rel_Word64_IMP;
 val _ = show "memory_rel_Number_bignum_IMP_ALT_typed" data_to_word_memoryProofTheory.memory_rel_Number_bignum_IMP_ALT;
 val _ = show "memory_rel_Number_bignum_header_typed" data_to_word_memoryProofTheory.memory_rel_Number_bignum_header;
+val _ = show "memory_rel_bignum_cmp_typed" data_to_word_memoryProofTheory.memory_rel_bignum_cmp;
 val _ = show "memory_rel_RefPtr_T_IMP_typed" data_to_word_memoryProofTheory.memory_rel_RefPtr_T_IMP;
 val _ = show "memory_rel_Loc_typed" data_to_word_memoryProofTheory.memory_rel_Loc;
 val _ = show "get_byte_bytes_to_word_typed" data_to_word_memoryProofTheory.get_byte_bytes_to_word;
