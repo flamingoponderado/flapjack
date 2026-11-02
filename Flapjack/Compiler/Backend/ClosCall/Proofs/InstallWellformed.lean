@@ -1,9 +1,29 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ThunkWellformed
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
 
 /-! Source-state well-formedness during dynamic installation. -/
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack ClosSem SemanticPrimitivesHOL
+
+/-- Every source oracle entry has an empty auxiliary code list. This is the
+specific consequence needed from the full source compiler-oracle invariant. -/
+def OracleAuxEmpty {C : Type} (oracle : ClosSem.CompileOracle C) : Prop :=
+  ∀ index, (oracle index).2.2 = []
+
+/-- Shifting a source oracle preserves empty auxiliary code at every entry. -/
+theorem oracleAuxEmpty_shift {C : Type} (oracle : ClosSem.CompileOracle C) (offset : Nat)
+    (empty : OracleAuxEmpty oracle) : OracleAuxEmpty (holShiftSeq offset oracle) := by
+  intro index
+  exact empty (index + offset)
+
+/-- A successful ordinary primitive does not change the compiler oracle. -/
+theorem doApp_oracleAuxEmpty {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
+    (state next : ClosSem.State C F) (value : ClosSem.Value)
+    (empty : OracleAuxEmpty state.compileOracle)
+    (run : doApp op args state = .val (value, next)) : OracleAuxEmpty next.compileOracle := by
+  rw [(doApp_codeOracle op args state next value run).2]
+  exact empty
 
 /-- A rejected installation leaves the state unchanged. -/
 theorem doInstall_typeError_state {C F : Type} (values : List ClosSem.Value) (state next : ClosSem.State C F)
@@ -41,6 +61,96 @@ theorem doInstall_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed 
     subst auxiliary
     subst next
     simpa [StateWellFormedFuel, HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL] using stateWf
+
+/-- Installation preserves empty auxiliary code throughout the source
+oracle, including rejected and timed-out installations. -/
+theorem doInstall_oracleAuxEmpty {C F : Type} (values : List ClosSem.Value)
+    (state next : ClosSem.State C F) (result : Result (List ClosLang.Exp) ClosSem.Value)
+    (oracleEmpty : OracleAuxEmpty state.compileOracle)
+    (run : doInstall values state = (result, next)) : OracleAuxEmpty next.compileOracle := by
+  by_cases typeError : result = .err (.abort .typeError)
+  · subst result
+    have same := doInstall_typeError_state values state next run
+    subst next
+    exact oracleEmpty
+  · obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, finalEq, _⟩ :=
+      doInstall_nonType_parts values state next result run typeError
+    subst next
+    exact oracleAuxEmpty_shift state.compileOracle 1 oracleEmpty
+
+/-- Installation preserves both the state and oracle parts of the bounded
+invariant when all source oracle entries have empty auxiliary code. -/
+theorem doInstall_wellFormedFuel_withOracle {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (values : List ClosSem.Value)
+    (state next : ClosSem.State C F) (result : Result (List ClosLang.Exp) ClosSem.Value)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (oracleEmpty : OracleAuxEmpty state.compileOracle)
+    (run : doInstall values state = (result, next)) :
+    StateWellFormedFuel fuel g allowed code next ∧ OracleAuxEmpty next.compileOracle :=
+  ⟨doInstall_wellFormedFuel values state next result stateWf (oracleEmpty 0) run,
+    doInstall_oracleAuxEmpty values state next result oracleEmpty run⟩
+
+/-- The install expression preserves empty auxiliary code in the oracle,
+assuming its argument and installed-program induction hypotheses. -/
+theorem evaluate_install_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (argsIH : OracleAuxEmpty (evaluate args env state).2.compileOracle)
+    (bodyIH : ∀ (program : List ClosLang.Exp) (start : ClosSem.State C F),
+      OracleAuxEmpty start.compileOracle → OracleAuxEmpty (evaluate program [] start).2.compileOracle) :
+    OracleAuxEmpty (evaluate [.op trace .install args] env state).2.compileOracle := by
+  cases argsRun : evaluate args env state with
+  | mk argsResult argsFinal =>
+    rw [argsRun] at argsIH
+    rw [evaluate, fixClock_evaluate, argsRun]
+    cases argsResult with
+    | err error => simpa using argsIH
+    | val values =>
+      dsimp only
+      cases installRun : doInstall values.reverse argsFinal with
+      | mk installResult installFinal =>
+        have installOracle := doInstall_oracleAuxEmpty values.reverse argsFinal installFinal installResult argsIH installRun
+        cases installResult with
+        | err error => exact installOracle
+        | val program =>
+          dsimp only
+          have bodyOracle := bodyIH program installFinal installOracle
+          cases bodyRun : evaluate program [] installFinal with
+          | mk result final =>
+            rw [bodyRun] at bodyOracle
+            cases result <;> exact bodyOracle
+
+/-- Forcing a thunk preserves empty auxiliary code in the oracle, assuming
+the corresponding argument and forced-body induction hypotheses. -/
+theorem evaluate_force_oracleAuxEmpty {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (argsIH : OracleAuxEmpty (evaluate args env state).2.compileOracle)
+    (bodyIH : ∀ (value : ClosSem.Value) (start : ClosSem.State C F),
+      OracleAuxEmpty start.compileOracle →
+      OracleAuxEmpty (evaluate [appUnit (.var .none 0)] [value] start).2.compileOracle) :
+    OracleAuxEmpty (evaluate [.op trace (.thunkOp .forceThunk) args] env state).2.compileOracle := by
+  cases argsRun : evaluate args env state with
+  | mk argsResult argsFinal =>
+    rw [argsRun] at argsIH
+    rw [evaluate, fixClock_evaluate, argsRun]
+    cases argsResult with
+    | err error => exact argsIH
+    | val values =>
+      dsimp only
+      cases inspected : destThunk values argsFinal.refs with
+      | badRef => exact argsIH
+      | notThunk => exact argsIH
+      | isThunk mode value =>
+        cases mode with
+        | evaluated => exact argsIH
+        | notEvaluated =>
+          have bodyOracle := bodyIH value argsFinal argsIH
+          cases bodyRun : evaluate [appUnit (.var .none 0)] [value] argsFinal with
+          | mk result final =>
+            rw [bodyRun] at bodyOracle
+            cases result with
+            | err error => simpa [bodyRun] using bodyOracle
+            | val forced =>
+              cases stored : updateThunk values final.refs forced <;> simpa [bodyRun, stored] using bodyOracle
 
 /-- The final element of a nonempty list is a member of that list. -/
 private theorem holLast_mem_nonempty {A : Type} [Nonempty A] (values : List A) (nonempty : values ≠ []) :
