@@ -113549,8 +113549,8 @@
     "hol_name": "get_global_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
     "lean_name": "getGlobal",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared get_global_typed: the index is num and the list element type is independently polymorphic; an in-bounds index returns SOME of the element and an out-of-bounds index returns NONE. Lean's List.getElem? has the same bounds and result. The global_present, global_empty and global_out_of_bounds HOL observations distinguish populated and empty optional elements from an absent index."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
@@ -113562,11 +113562,19 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "make_const_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/ApplyBasic.lean",
+    "lean_name": "makeConst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared make_const_typed and all four source equations: integer and fixed word64 values are preserved, string constants become byte vectors, and constructor tags and recursively mapped fields are preserved. The reviewed MlString carrier represents HOL chars by their eight-bit ordinals, so n2w of ORD is the identity for every character; constant_bytes and the Lean replay exercise 0, 128 and 255 alongside negative integers and the maximum word64. The reviewed ClosLang.Const and ClosSem.Value carriers match."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "Unit_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
     "lean_name": "unitValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared unit_typed and backend_commonScript.sml tuple_tag_def: Unit has the reviewed closure Value carrier and is the Block with tag 0 and an empty value list."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",

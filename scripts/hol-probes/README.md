@@ -196,7 +196,7 @@ the complete carrier correspondence remains under review.
 
 `clos_sem_memory_probe.out` captures closure array, byte-update, overlap-copy and byte-bounds observations. `Flapjack/Test/ClosSemMemoryParity.lean` replays them, except that the HOL byte-update capture retains an unreduced word-existence condition. The assembled dispatcher and finite-map correspondence remain pending review.
 
-`clos_sem_basic_probe.out` captures the typed closure primitive dispatcher and block tag, length, Boolean, extension and constant observations. It also replays the universal `Build` fallback for arbitrary parts, arguments, and state; Lean checks the corresponding `doApp_build_fallback` theorem. `Flapjack/Test/ClosSemBasicParity.lean` checks the concrete cases. The full primitive dispatcher correspondence review remains open.
+`clos_sem_basic_probe.out` captures the typed closure primitive dispatcher, constant conversion, global lookup and unit value, with block tag, length, Boolean, extension, global-slot and constant observations including bytes 0, 128 and 255. It also replays the universal `Build` fallback for arbitrary parts, arguments, and state; Lean checks the corresponding `doApp_build_fallback` theorem. `Flapjack/Test/ClosSemBasicParity.lean` checks the concrete cases. The full primitive dispatcher correspondence review remains open.
 
 `clos_sem_thunk_probe.out` captures typed closure thunk operations and missing, flagged, array, valid-update, repeated-update, nested-thunk and bad-update observations. `Flapjack/Test/ClosSemThunkParity.lean` replays the concrete cases; the proof-side store relation connects flat and closure thunk inspection and successful updates, pending cross-language review.
 

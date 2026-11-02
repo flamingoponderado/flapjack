@@ -12,7 +12,10 @@ def asBool : Value → Option Bool
   | .block 1 [] => some true
   | _ => none
 
-/-- Translate a closure constant to its runtime value. -/
+/-- Translate a closure constant to its runtime value. HOL characters are
+represented by their eight-bit ordinal, so converting each exploded character
+with `n2w ∘ ORD` is the identity on this carrier. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "make_const_def"]
 def makeConst : ClosLang.Const → Value
   | .constInt value => .number value
   | .constWord64 value => .word64 value

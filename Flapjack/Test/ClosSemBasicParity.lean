@@ -4,6 +4,11 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
 namespace Flapjack.Test.ClosSemBasicParity
 open Flapjack.Compiler.Backend.ClosSem
 
+example : getGlobal 0 [some (3 : Nat), none] = some (some 3) := rfl
+example : getGlobal 1 [some (3 : Nat), none] = some none := rfl
+example : getGlobal 2 [some (3 : Nat), none] = none := rfl
+example : unitValue = .block 0 [] := rfl
+
 example {C F : Type} (s : State C F) :
     applyBlock (.tagLenEq 2 1) [.block 2 [.number 9]] s = some (.block 1 [], s) := rfl
 example {C F : Type} (s : State C F) :
@@ -18,5 +23,9 @@ example {C F : Type} (s : State C F) :
 example {C F : Type} (s : State C F) :
     applyBlock (.constant (.constCons 4 [.constInt 3, .constInt 7])) [] s =
       some (.block 4 [.number 3, .number 7], s) := by simp [applyBlock, makeConst]
+example : makeConst (.constCons 4 [.constInt (-3), .constWord64 18446744073709551615,
+    .constStr (.implode [0, 128, 255])]) =
+    .block 4 [.number (-3), .word64 18446744073709551615, .byteVector [0, 128, 255]] := by
+  simp [makeConst]
 
 end Flapjack.Test.ClosSemBasicParity
