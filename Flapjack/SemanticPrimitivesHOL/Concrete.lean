@@ -1,6 +1,6 @@
 import Flapjack.SemanticPrimitivesHOL
 
-/-! First-order source values used by dynamic compilation. Statement review is pending. -/
+/-! First-order source values used by dynamic compilation. -/
 namespace Flapjack.SemanticPrimitivesHOL
 
 mutual

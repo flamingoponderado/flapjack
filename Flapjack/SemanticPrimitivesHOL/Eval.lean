@@ -4,7 +4,7 @@ import Flapjack.SemanticPrimitivesHOL.EvalState
 
 /-! Proof-side dynamic compilation semantics. The equality of arbitrary source
 values uses Lean's classical decision procedure, so `doEval` is noncomputable;
-it is not the executable compiler path. Statement review is pending. -/
+it is not the executable compiler path. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL
 

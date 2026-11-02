@@ -2,6 +2,20 @@ load "evaluateTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+fun show_thm label th =
+  if null (hyp th) then (print label; print_term (concl th); print "\n")
+  else raise Fail (label ^ " has hypotheses");
+val _ = show_thm "compiler_agrees_definition=" semanticPrimitivesTheory.compiler_agrees_def;
+val _ = show_thm "do_eval_definition=" semanticPrimitivesTheory.do_eval_def;
+val _ = show_thm "do_eval_res_definition=" evaluateTheory.do_eval_res_def;
+val _ = show_thm "list_type_num_definition=" semanticPrimitivesTheory.list_type_num_def;
+val _ = show_thm "value_to_list_definition=" semanticPrimitivesTheory.v_to_list_def;
+val _ = show_thm "maybe_all_list_definition=" semanticPrimitivesTheory.maybe_all_list_def;
+val _ = show_thm "value_to_word8_definition=" semanticPrimitivesTheory.v_to_word8_def;
+val _ = show_thm "value_to_word64_definition=" semanticPrimitivesTheory.v_to_word64_def;
+val _ = show_thm "value_to_word8_list_definition=" semanticPrimitivesTheory.v_to_word8_list_def;
+val _ = show_thm "value_to_word64_list_definition=" semanticPrimitivesTheory.v_to_word64_list_def;
+val _ = show_thm "concrete_value_definition=" semanticPrimitivesTheory.concrete_v_def;
 val _ = (print "agrees_type="; print_type (type_of ``semanticPrimitives$compiler_agrees``); print "\n");
 val _ = (print "eval_type="; print_type (type_of ``semanticPrimitives$do_eval``); print "\n");
 val _ = (print "result_type="; print_type (type_of ``evaluate$do_eval_res``); print "\n");

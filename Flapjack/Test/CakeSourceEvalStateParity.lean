@@ -17,6 +17,7 @@ private def oracle : EvalOracleState :=
   state.generation == 2 && state.envs.length == 3
 #guard (lookupEnv oracle (0, 0)).isSome
 #guard (lookupEnv oracle (1, 0)).isNone
+#guard (lookupEnv oracle (0, 1)).isNone
 #guard match declareEnv (some (.evalDecs decs)) emptyEnv with
   | some (.env _ (2, 3), some (.evalDecs state)) => state.envIdCounter == (2, 4, 9)
   | _ => false
@@ -28,6 +29,10 @@ private def oracle : EvalOracleState :=
 #guard match resetEnvGeneration (some (.evalDecs decs))
     (some (.evalDecs { decs with envIdCounter := (4, 5, 11) })) with
   | some (.evalDecs state) => state.envIdCounter == (2, 3, 11)
+  | _ => false
+#guard match resetEnvGeneration (some (.evalDecs decs))
+    (some (.evalOracle { oracle with generation := 7 })) with
+  | some (.evalOracle state) => state.generation == 7
   | _ => false
 
 end Flapjack.Test.CakeSourceEvalStateParity

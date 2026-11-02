@@ -686,7 +686,7 @@ run_probe cake_source_conversions_probeScript.sml cake_source_conversions_probe.
   id_type chars_type word64_type list_roundtrip malformed chars strings identifier word8 bad_word8 "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_thunk_probeScript.sml cake_source_thunk_probe.out \
-  thunk_op_type dest_type good bad ordinary update nested operation xor_tail xor_short "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+  dest_definition update_definition bad_update_definition thunk_op_definition do_opapp_definition is_thunk_type thunk_op_type dest_type good bad ordinary update nested operation xor_tail xor_short "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_program_semantics_probeScript.sml cake_program_semantics_probe.out \
   evaluate_type semantics_type empty_terminates empty_result "$cake_dir/semantics/semanticsScript.sml" "$cake_dir/semantics"
@@ -698,13 +698,13 @@ run_probe cake_source_evaluate_clock_probeScript.sml cake_source_evaluate_clock_
   fix_type list_type clock_lemma eval_clock_lemma full_evaluate_ind evaluate_ind fix_clock_evaluate evaluate_clock raise_clock fixed zero failure "$cake_dir/semantics/evaluateScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_eval_state_probeScript.sml cake_source_eval_state_probe.out \
-  declare_type reset_type decs oracle lookup invalid_lookup declared_decs declared_oracle invalid_decl reset "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+  nat_to_value_definition lookup_definition add_decs_definition add_env_definition declare_definition reset_definition declare_type reset_type decs oracle lookup invalid_lookup invalid_inner_lookup declared_decs declared_oracle invalid_decl reset reset_mixed "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_concrete_probeScript.sml cake_source_concrete_probe.out \
   type literal location tree closure nested_closure environment "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_eval_probeScript.sml cake_source_eval_probe.out \
-  agrees_type eval_type result_type missing oracle decs mismatch abort "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+  compiler_agrees_definition do_eval_definition do_eval_res_definition list_type_num_definition value_to_list_definition maybe_all_list_definition value_to_word8_definition value_to_word64_definition value_to_word8_list_definition value_to_word64_list_definition concrete_value_definition agrees_type eval_type result_type missing oracle decs mismatch abort "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_control_probeScript.sml cake_source_control_probe.out \
   if_type combine_type if_true if_false if_invalid and_true and_false constructors duplicates failure "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"

@@ -110148,8 +110148,8 @@
     "hol_name": "do_opapp_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Operations.lean",
     "lean_name": "doOpApp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed do_opapp_definition case: only a closure or a recursive closure followed by one argument is accepted. Recursive application requires distinct names, finds the original function, and binds its argument on the complete recursive environment."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110172,16 +110172,16 @@
     "hol_name": "list_type_num_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "listTypeNum",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed list_type_num_definition: the source list type stamp is natural one."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "maybe_all_list_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "maybeAllList",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed maybe_all_list_definition: the payload type is arbitrary, empty succeeds, the first NONE fails, and SOME values preserve their original order."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110196,8 +110196,8 @@
     "hol_name": "nat_to_v_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "natToValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared nat_to_value_definition: a natural is embedded in an integer literal in the original source value carrier."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110228,40 +110228,40 @@
     "hol_name": "v_to_list_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "valueToList",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed value_to_list_definition cases: only the exact stamped nil and binary cons constructors decode, recursively preserving head order; malformed stamps, arities and other values return NONE."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "v_to_word64_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "valueToWord64",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed value_to_word64_definition: only a Word64 literal succeeds and its result has the fixed 64-bit carrier."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "v_to_word64_list_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "valueToWord64List",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed value_to_word64_list_definition: first decode a source list, then map fixed-width Word64 decoding and reject any failed element."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "v_to_word8_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "valueToWord8",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed value_to_word8_definition: only a Word8 literal succeeds and its result has the fixed eight-bit carrier."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "v_to_word8_list_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "valueToWord8List",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed value_to_word8_list_definition: first decode a source list, then map fixed-width Word8 decoding and reject any failed element."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110276,8 +110276,8 @@
     "hol_name": "dest_thunk_ret",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
     "lean_name": "DestThunkResult",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original BadRef, NotThunk and IsThunk constructors and captured IsThunk type thunk_mode -> v -> dest_thunk_ret; their Lean fields use the exact source thunk mode and value carriers."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110300,32 +110300,32 @@
     "hol_name": "bad_thunk_update_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
     "lean_name": "badThunkUpdate",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed bad_update_definition: the guard is true exactly for Evaluated mode and a destination inspection other than NotThunk."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "dest_thunk_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
     "lean_name": "destThunk",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed dest_definition cases: only a singleton location looks up the store; missing references and flagged thunks give BadRef, non-thunks give NotThunk, and both thunk modes retain their values."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "thunk_op_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
     "lean_name": "thunkOp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed thunk_op_definition: independent FFI and error payload types are retained; allocation and false-flagged update apply the same bad-update guard and store operation, preserve FFI, and return the same location or unit value. ForceThunk and other arities return NONE."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "update_thunk_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
     "lean_name": "updateThunk",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed update_definition cases: only a false-flagged singleton location and singleton replacement reach the NotThunk guard and store assignment of an evaluated thunk; all other shapes or inspection results return NONE."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110671,80 +110671,80 @@
     "hol_name": "add_decs_generation_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/EvalState.lean",
     "lean_name": "addDecsGeneration",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed add_decs_definition: retain the other state fields and replace the counter triple with next generation, zero and next generation plus one."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "add_env_generation_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/EvalState.lean",
     "lean_name": "addEnvGeneration",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed add_env_definition: retain the other state fields, set the generation to the old environment list length and append one empty generation."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "declare_env_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/EvalState.lean",
     "lean_name": "declareEnv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed declare_definition cases: no state fails; EvalDecs returns the current environment identifier and increments its second component; EvalOracle requires an in-range generation, returns its two natural-valued indices and updates only that generation with the appended environment. The checked lookup guard ensures the list update is in range."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "lookup_env_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/EvalState.lean",
     "lean_name": "lookupEnv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed lookup_definition: both generation and position use optional list lookup; either out-of-range lookup returns NONE."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "reset_env_generation_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/EvalState.lean",
     "lean_name": "resetEnvGeneration",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed reset_definition cases: matching EvalDecs states retain the old first two counters and new next-generation counter; matching EvalOracle states retain the previous generation; mismatched or missing states return the current state."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "concrete_v_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Concrete.lean",
     "lean_name": "concreteValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed concrete_value_definition value cases: literals and locations succeed, constructors and vectors recurse over their elements, and closures, recursive closures and Eval environments fail."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "concrete_v_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Concrete.lean",
     "lean_name": "concreteValues",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed concrete_value_definition list cases: empty succeeds and cons requires both the head and tail to be concrete."
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
     "hol_name": "do_eval_res_def",
     "lean_path": "Flapjack/EvaluateHOL.lean",
     "lean_name": "doEvalRes",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed do_eval_res_definition: the FFI state type and error payload type are independent. Failed doEval returns the original state with a type abort; success updates only evalState and returns the environment and declarations."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "compiler_agrees_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Eval.lean",
     "lean_name": "compilerAgrees",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed compiler_agrees_definition: compiler arguments and fixed word widths match, compiler output and both decoded lists must match, and both new and previous compiler states must be concrete. Failed compilation or decoding gives false."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "do_eval_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Eval.lean",
     "lean_name": "doEval",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed do_eval_definition cases: EvalDecs accepts exactly the source six-value form, checks decoder, prior state, concreteness and compiler agreement, then updates compiler state and generation. EvalOracle invokes its callback, looks up the returned environment and advances the oracle generation. All failures return NONE."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",

@@ -1,6 +1,6 @@
 import Flapjack.SemanticPrimitivesHOL.Conversions
 
-/-! Source Eval environment-generation bookkeeping. Statement review is pending. -/
+/-! Source Eval environment-generation bookkeeping. -/
 namespace Flapjack.SemanticPrimitivesHOL
 
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "lookup_env_def"]

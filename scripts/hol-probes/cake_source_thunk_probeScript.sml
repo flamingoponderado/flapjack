@@ -3,6 +3,15 @@ load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+fun show_thm label th =
+  if null (hyp th) then (print label; print_term (concl th); print "\n")
+  else raise Fail (label ^ " has hypotheses");
+val _ = show_thm "dest_definition=" semanticPrimitivesTheory.dest_thunk_def;
+val _ = show_thm "update_definition=" semanticPrimitivesTheory.update_thunk_def;
+val _ = show_thm "bad_update_definition=" semanticPrimitivesTheory.bad_thunk_update_def;
+val _ = show_thm "thunk_op_definition=" semanticPrimitivesTheory.thunk_op_def;
+val _ = show_thm "do_opapp_definition=" semanticPrimitivesTheory.do_opapp_def;
+val _ = (print "is_thunk_type="; print_type (type_of ``semanticPrimitives$IsThunk``); print "\n");
 val _ = (print "thunk_op_type="; print_type (type_of ``semanticPrimitives$thunk_op``); print "\n");
 val _ = (print "dest_type="; print_type (type_of ``semanticPrimitives$dest_thunk``); print "\n");
 val good = rhs (concl (EVAL ``semanticPrimitives$dest_thunk [Loc F 0]
