@@ -1,7 +1,6 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 
-/-! Successful-result length properties for the clocked flat evaluator.
-The evaluator remains pending HOL correspondence review. -/
+/-! Successful-result length properties for the clocked flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 

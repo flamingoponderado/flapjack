@@ -2,8 +2,8 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyClock
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 import Lean.Elab.Tactic.Omega
 
-/-! Clock-preservation prerequisites for flat evaluation. The full mutual
-evaluator clock theorem remains open. -/
+/-! Clock preservation for flat evaluation and its declaration projections.
+The source-shaped theorem is stated in `EvaluateSource`. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.SemanticPrimitivesHOL
 
@@ -474,7 +474,7 @@ theorem evaluateDec_clock {C F : Type} (state : State C F) (declaration : FlatLa
   | val values => dsimp only; split <;> exact bound
 
 /-- Clock preservation in explicit result-pair form for expressions, single
-declarations, and declaration lists. The evaluator remains under HOL review. -/
+declarations, and declaration lists. -/
 theorem evaluate_clock_spec {C F : Type} :
     (∀ (env : Environment Value) (state next : State C F) (expressions : List FlatLang.Exp)
       (result : Result (List Value) Value), evaluate env state expressions = (next, result) →

@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
 
 /-! Unbounded flat evaluation compared with the original HOL observations in
 `cake_flat_sem_evaluate_probe.out`. -/
@@ -17,6 +17,53 @@ example {C F : Type} (s : State C F) :
 example {C F : Type} (s : State C F) :
     evaluate env { s with clock := 4 } [.varLocal .none x] =
       ({ s with clock := 4 }, .err (.abort .typeError)) := by simp [evaluate, env, x]
+example {C F : Type} (s : State C F) :
+    evaluate ⟨[(x, .litv (.intLit 1)), (x, .litv (.intLit 2))]⟩ { s with clock := 4 }
+      [.varLocal .none x] = ({ s with clock := 4 }, .val [.litv (.intLit 1)]) := by
+  simp [evaluate, x]
+example {C F : Type} (s : State C F) :
+    evaluate ⟨[(x, .litv (.intLit 1))]⟩ { s with clock := 4 }
+      [.let_ .none (some x) (.lit .none (.intLit 2)) (.varLocal .none x)] =
+        ({ s with clock := 4 }, .val [.litv (.intLit 2)]) := by
+  simp [evaluate, fixClock, x]
+example {C F : Type} (s : State C F) :
+    evaluate env { s with clock := 4 }
+      [.if_ .none (.lit .none (.intLit 1)) (.lit .none (.intLit 2)) (.lit .none (.intLit 3))] =
+        ({ s with clock := 4 }, .err (.abort .typeError)) := by
+  simp [evaluate, fixClock, doIf]
+example {C F : Type} (s : State C F) :
+    evaluate env { s with clock := 4 }
+      [.raise .none (.lit .none (.intLit 9)), .lit .none (.intLit 2)] =
+        ({ s with clock := 4 }, .err (.raise (.litv (.intLit 9)))) := by
+  simp [evaluate, fixClock]
+example {C F : Type} (s : State C F) :
+    evaluate env { s with clock := 4 }
+      [.handle .none (.raise .none (.lit .none (.intLit 9))) []] =
+        ({ s with clock := 4 }, .err (.raise (.litv (.intLit 9)))) := by
+  simp [evaluate, fixClock, selectRow, pmatchRows]
+example {C F : Type} (s : State C F) :
+    evaluate env { s with clock := 4 }
+      [.handle .none (.raise .none (.lit .none (.intLit 8))) [(.pvar x, .varLocal .none x)]] =
+        ({ s with clock := 4 }, .val [.litv (.intLit 8)]) := by
+  rw [evaluate_handle_source]
+  simp [evaluate_raise_source, evaluate_lit_source, evaluate_varLocal_source,
+    Flapjack.holHd, fixClock, pmatchRows, pmatch, Flapjack.Compiler.Backend.FlatLang.patBindings, x]
+example {C F : Type} (s : State C F) :
+    evaluate env { s with clock := 4 }
+      [.letrec (ofString "trace")
+        [(ofString "f", x, .lit .none (.intLit 1)), (ofString "f", ofString "y", .lit .none (.intLit 2))]
+        (.lit .none (.intLit 3))] = ({ s with clock := 4 }, .err (.abort .typeError)) := by
+  simp [evaluate]
+example {C F : Type} (s : State C F) :
+    evaluate env { s with clock := 4 } [.app .none (.src .opapp) [.lit .none (.intLit 1)]] =
+      ({ s with clock := 4 }, .err (.abort .typeError)) := by
+  simp [evaluate, fixClock, doOpApp]
+example {C F : Type} (s : State C F) :
+    evaluate env { s with clock := 4 }
+      [.mat .none (.lit .none (.intLit 1)) [(.pas (.pvar x) x, .lit .none (.intLit 3))]] =
+        ({ s with clock := 4 }, .err (.abort .typeError)) := by
+  rw [evaluate_mat_source]
+  simp [evaluate_lit_source, fixClock, pmatchRows, pmatch, Flapjack.Compiler.Backend.FlatLang.patBindings]
 example {C F : Type} (s : State C F) :
     evaluate env { s with clock := 4 } [call] =
       ({ s with clock := 3 }, .val [.litv (.intLit 7)]) := by

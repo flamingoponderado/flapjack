@@ -1,17 +1,21 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Measure
 import Flapjack.Misc.ListEl
 
-/-! Clocked flat evaluation without an extra fuel parameter. The definition is
-untagged pending complete review against HOL and the source numeric carrier.
-Lean currently fails to derive the generated functional induction principle for
-this mutual well-founded definition; `EvaluateClock` proves clock preservation
-using an explicit induction over the clock and expression-weight measure. -/
+/-! Clocked flat evaluation without an extra fuel parameter. Lean currently
+fails to derive the generated functional induction principle for this mutual
+well-founded definition; `EvaluateClock` proves clock preservation using an
+explicit induction over the clock and expression-weight measure. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Basis.Pure.MlString
 
 private noncomputable def headValue (values : List Value) : Value :=
   @Flapjack.holHd Value ⟨unitValue⟩ values
+
+/-- Unfold the evaluator's private head wrapper to the shared HOL head model.
+This is Flapjack proof infrastructure, not a separate HOL declaration. -/
+theorem headValue_eq_holHd (values : List Value) :
+    headValue values = @Flapjack.holHd Value ⟨unitValue⟩ values := rfl
 
 private def typeError {C F : Type} (state : State C F) : EvalResult C F :=
   (state, .err (.abort .typeError))
@@ -39,6 +43,7 @@ noncomputable def applyResult {C F : Type} (state : State C F) (op : FlatLang.Op
 
 mutual
 /-- Evaluate flat expressions using the original clock, without fuel. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "evaluate_def" 815]
 noncomputable def evaluate {C F : Type} (env : Environment Value) (state : State C F)
     (expressions : List FlatLang.Exp) : EvalResult C F :=
   match expressions with
@@ -148,6 +153,7 @@ decreasing_by
   all_goals try omega
 
 /-- Evaluate a list of flat declarations using the original clock. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "evaluate_def" 815]
 noncomputable def evaluateDecs {C F : Type} (state : State C F) (declarations : List FlatLang.Exp) :
     State C F × Option (ErrorResult Value) :=
   match declarations with
@@ -170,6 +176,7 @@ end
 
 /-- Evaluate one flat declaration, accepting exactly the unit result. This
 projection is kept separate for comparison with the original mutual clauses. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "evaluate_def" 815]
 noncomputable def evaluateDec {C F : Type} (state : State C F) (declaration : FlatLang.Exp) :
     State C F × Option (ErrorResult Value) :=
   let next := evaluate ⟨[]⟩ state [declaration]

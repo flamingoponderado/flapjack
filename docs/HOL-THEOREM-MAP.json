@@ -1,5 +1,173 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_clock",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_clock_source",
+    "reviewer": "Compared evaluate_clock_typed: the quantified environment, expression list, result and next state, followed by the single-declaration and declaration-list conjuncts, retain their original binder order and state types. The proof derives all three inequalities from the kernel-checked evaluator clock bound. Compiler and FFI payload types remain independent; the evaluator inherits the reviewed floating-point rational-cut dependency."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "fix_clock_evaluate",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "fixClock_evaluations_source",
+    "reviewer": "Compared fix_clock_evaluate_typed: all three equalities use one state and the original expression, declaration and declaration-list result carriers. The proof applies the kernel-checked clock-clamp equalities. Compiler and FFI payload types remain independent; the evaluator inherits the reviewed floating-point rational-cut dependency."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_cons_cons_source",
+    "reviewer": "Compared the typed line-815 source equation and reviewed carriers. The original multi-expression clause clamps the first evaluation, propagates either error, and prefixes HOL HD of its values to the tail result. Compiler and FFI payload types remain independent; remaining end-to-end correctness is not established."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_lit_source",
+    "reviewer": "Compared the typed line-815 source equation and reviewed carriers. A literal returns its single corresponding flat value without changing state. Compiler and FFI payload types remain independent; remaining end-to-end correctness is not established."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_varLocal_source",
+    "reviewer": "Compared the typed line-815 source equation and reviewed carriers. The original ALOOKUP returns the first local binding, or a type error on missing names. Compiler and FFI payload types remain independent; remaining end-to-end correctness is not established."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_fn_source",
+    "reviewer": "Compared the typed line-815 source equation and reviewed carriers. A function captures the original flat environment and returns one closure; trace and argument names remain independent. Compiler and FFI payload types remain independent; remaining end-to-end correctness is not established."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_raise_source",
+    "reviewer": "Compared the typed line-815 source equation and reviewed carriers. Raise propagates operand errors and raises HOL HD of successful values without a clock clamp. Compiler and FFI payload types remain independent; remaining end-to-end correctness is not established."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_con_source",
+    "reviewer": "Compared the typed line-815 source equation and reviewed carriers. Both named and tuple constructors evaluate reversed arguments and reverse their values back, preserving any error and output state. Compiler and FFI payload types remain independent; remaining end-to-end correctness is not established."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_let_source",
+    "reviewer": "Compared the typed line-815 source equation and reviewed carriers. The original let clause clamps the first result and optionally prefixes the HOL HD binding before evaluating the body. Compiler and FFI payload types remain independent; remaining end-to-end correctness is not established."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_if_source",
+    "reviewer": "Compared the typed line-815 source equation and reviewed carriers. The conditional clamps the first result, uses the original do_if on HOL HD, rejects non-Booleans and evaluates the selected branch. Compiler and FFI payload types remain independent; remaining end-to-end correctness is not established."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_handle_source",
+    "reviewer": "Compared the typed line-815 source equation and reviewed carriers. The handler clamps the body result and preserves unhandled outcomes; raised values inspect every row, reject type errors and duplicate bindings, preserve no-match exceptions, and evaluate the selected body in the extended environment. Compiler and FFI payload types remain independent; remaining end-to-end correctness is not established."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_mat_source",
+    "reviewer": "Compared the typed line-815 source equation and reviewed carriers. The match clause clamps the body, uses HOL HD, rejects row type errors and duplicate bindings, raises bind_exn_v on no match, and evaluates the selected body with its bindings. Compiler and FFI payload types remain independent; remaining end-to-end correctness is not established."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_app_source",
+    "reviewer": "Compared the typed line-815 source equation and reviewed carriers. Application clamps reversed-argument evaluation, restores source order for function application, do_eval and do_app, preserves the unreversed thunk arguments, updates the Eval configuration before the clock check, decrements clock only for calls and Eval, and retains thunk force/update and primitive error cases. Compiler and FFI payload types remain independent; remaining end-to-end correctness is not established."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate_letrec_source",
+    "reviewer": "Compared the typed line-815 source equation and reviewed carriers. The recursive binding case tests distinct function names and either extends the original environment with build_rec_env or returns a type error. Compiler and FFI payload types remain independent; remaining end-to-end correctness is not established."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateExact.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluate",
+    "reviewer": "Compared all original expression-list and singleton-expression clauses with the corresponding source-shaped equations in EvaluateSource, including HD, reverse order, pattern errors, clock clamping, call and Eval clock decrement, thunk forcing and FFI results. The arbitrary HD empty value uses the shared HOL ARB model; compiler and FFI carriers remain independent. Floating operations inherit the reviewed rational-cut dependency; this review does not establish cross-language equivalence or pass correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateExact.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluateDecs",
+    "reviewer": "Compared both original declaration-list clauses. The Lean implementation folds evaluate_dec into the list recursion; evaluateDecs_cons_source proves its original fix_clock formulation using clock preservation, and the empty case returns the input state and NONE. Compiler and FFI carriers remain independent. Floating operations inherit the reviewed rational-cut dependency; this review does not establish cross-language equivalence or pass correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateExact.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 815,
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluateDec",
+    "reviewer": "Compared the original declaration clause: run one expression in the empty environment, accept precisely [Unitv], preserve the resulting state and propagate errors. Compiler and FFI carriers remain independent. Floating operations inherit the reviewed rational-cut dependency; this review does not establish cross-language equivalence or pass correctness."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Apply.lean",
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
     "hol_name": "do_app_def",
