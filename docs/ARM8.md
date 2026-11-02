@@ -237,7 +237,8 @@ immediate forms (`Arith.lean`, `AddSubImmediate.lean`), and `shift` with a
 register operand plus its `.ror` immediate form (`Shift.lean`,
 `ShiftImmediate.lean`), `div` (`Division.lean`), and the `longMul` instruction
 pair `MultiplyHigh` + `MultiplyAddSub@64` (`Multiply.lean`, which also proves
-that the high half of the unsigned 128-bit product is `r / 2 ^ 64`).
+that the high half of the unsigned 128-bit product is `r / 2 ^ 64`, plus the
+one-step `arm8Next_multiplyHigh` / `arm8Next_multiplyAddSub` reductions).
 `ConditionalSelect.lean` records the same facts for `ConditionalSelect@64`, the
 select used by the `addOverflow` and `subOverflow` lowerings.  Each records the emitted word, the `Decode` inverse,
 the `Run` reduction and the `asmCaseOne` interference simulation for its

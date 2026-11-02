@@ -139,4 +139,67 @@ theorem arm8Run_multiplyAddSub (o0 : Bool) (rm ra rn rd : BitVec 5) (st : arm8_s
         else X (TN := 64) ra st + X (TN := 64) rn st * X (TN := 64) rm st), rd) st := by
   simp only [Run, «dfn'MultiplyAddSub»]
 
+
+/-! ## The single-step reductions of the two `longMul` instructions -/
+
+/-- One `arm8Next` step on the `MultiplyHigh` word writes the top half of the
+unsigned 128-bit product of `Rn` and `Rm` to register `n`. -/
+theorem arm8Next_multiplyHigh (ms : arm8_state) (rm rn : BitVec 5) (n : Nat)
+    (hn : n < 32) (h31 : n ≠ 31) (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n) >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next ms =
+      { ms with branch_hint := none, REG := holUpdate (BitVec.ofNat 5 n) (holWordExtract 64 127 64 (BitVec.setWidth 128 (X (TN := 64) rn ms) * BitVec.setWidth 128 (X (TN := 64) rm ms))) ms.REG, PC := ms.PC + 4 } := by
+  have hdec : Decode (arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n)) =
+      instruction.Data (Data.MultiplyHigh (false, (rm, (rn, BitVec.ofNat 5 n)))) :=
+    arm8Decode_multiplyHigh rm rn _
+  have hbr : (Run (instruction.Data (Data.MultiplyHigh (false, (rm, (rn, BitVec.ofNat 5 n))))) ({ ms with branch_hint := none })).branch_hint = none := by
+    rw [arm8Run_multiplyHigh]
+    rw [arm8WriteX_of_valid _ _ h31 hn]
+  have hexc : (Run (instruction.Data (Data.MultiplyHigh (false, (rm, (rn, BitVec.ofNat 5 n))))) ({ ms with branch_hint := none })).exception = exception.NoException := by
+    rw [arm8Run_multiplyHigh]
+    rw [arm8WriteX_of_valid _ _ h31 hn]
+    simpa using hexc0
+  have hn' := arm8Next_word ms (arm8MultiplyHighWord false rm rn (BitVec.ofNat 5 n))
+    (instruction.Data (Data.MultiplyHigh (false, (rm, (rn, BitVec.ofNat 5 n)))))
+    hdec hbr hexc h0 h1 h2 h3 hal he0 hel
+  unfold arm8Next
+  rw [hn', arm8Run_multiplyHigh, arm8WriteX_of_valid _ _ h31 hn]
+  simp only [ExtendWord, Bool.false_eq_true, if_false, holThe]
+  rfl
+
+/-- One `arm8Next` step on the `MultiplyAddSub@64` word writes `Ra + Rn * Rm`
+to register `n`. -/
+theorem arm8Next_multiplyAddSub (ms : arm8_state) (rm ra rn : BitVec 5) (n : Nat)
+    (hn : n < 32) (h31 : n ≠ 31) (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n) >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next ms =
+      { ms with branch_hint := none, REG := holUpdate (BitVec.ofNat 5 n) (X (TN := 64) ra ms + X (TN := 64) rn ms * X (TN := 64) rm ms) ms.REG, PC := ms.PC + 4 } := by
+  have hdec : Decode (arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n)) =
+      instruction.Data (Data.«MultiplyAddSub@64» ((1 : BitVec 64), (false, (rm, (ra, (rn, BitVec.ofNat 5 n)))))) :=
+    arm8Decode_multiplyAddSub rm ra rn _
+  have hbr : (Run (instruction.Data (Data.«MultiplyAddSub@64» ((1 : BitVec 64), (false, (rm, (ra, (rn, BitVec.ofNat 5 n))))))) ({ ms with branch_hint := none })).branch_hint = none := by
+    rw [arm8Run_multiplyAddSub]
+    rw [arm8WriteX_of_valid _ _ h31 hn]
+  have hexc : (Run (instruction.Data (Data.«MultiplyAddSub@64» ((1 : BitVec 64), (false, (rm, (ra, (rn, BitVec.ofNat 5 n))))))) ({ ms with branch_hint := none })).exception = exception.NoException := by
+    rw [arm8Run_multiplyAddSub]
+    rw [arm8WriteX_of_valid _ _ h31 hn]
+    simpa using hexc0
+  have hn' := arm8Next_word ms (arm8MultiplyAddSubWord false rm ra rn (BitVec.ofNat 5 n))
+    (instruction.Data (Data.«MultiplyAddSub@64» ((1 : BitVec 64), (false, (rm, (ra, (rn, BitVec.ofNat 5 n)))))))
+    hdec hbr hexc h0 h1 h2 h3 hal he0 hel
+  unfold arm8Next
+  rw [hn', arm8Run_multiplyAddSub, arm8WriteX_of_valid _ _ h31 hn]
+  simp only [holThe]
+  rfl
+
 end Flapjack.Compiler.Encoders.Arm8.L3
