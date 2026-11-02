@@ -1,7 +1,6 @@
 import Flapjack.CakeParser.FromSexp
 
-/-! Operator decoding for the CakeML S-expression format. Untagged pending
-complete source and carrier correspondence review. -/
+/-! Operator decoding for the CakeML S-expression format. -/
 namespace Flapjack.CakeParser.FromSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString Flapjack.AstHOL
 
@@ -9,6 +8,7 @@ private def symbolName : Sexp → Option String
   | .sym bytes => some (toStringOfBytes (.implode bytes))
   | _ => none
 
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexparith_def"]
 def decodeArith (s : Sexp) : Option Arith := do
   match ← symbolName s with
   | "Add" => some .add | "Sub" => some .sub | "Mul" => some .mul
@@ -17,12 +17,14 @@ def decodeArith (s : Sexp) : Option Arith := do
   | "Or" => some .or | "Not" => some .not | "Sqrt" => some .sqrt
   | "FMA" => some .fma | _ => none
 
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "decode_prim_type_def"]
 def decodePrimType (s : Sexp) : Option PrimType := do
   match ← symbolName s with
   | "BoolT" => some .boolT | "IntT" => some .intT | "CharT" => some .charT
   | "StrT" => some .strT | "Word8T" => some (.wordT .w8)
   | "Word64T" => some (.wordT .w64) | "Float64T" => some .float64T | _ => none
 
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "decode_test_def"]
 def decodeTest (s : Sexp) : Option Test := do
   match ← symbolName s with
   | "Equal" => some .equal | "Less" => some (.compare .lt)
@@ -31,6 +33,7 @@ def decodeTest (s : Sexp) : Option Test := do
   | "AltLessEq" => some (.altCompare .leq) | "AltGreater" => some (.altCompare .gt)
   | "AltGreaterEq" => some (.altCompare .geq) | _ => none
 
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplog_def"]
 def decodeLog (s : Sexp) : Option Lop := do
   match ← symbolName s with
   | "Andalso" => some .andalso | "Orelse" => some .orelse | _ => none
@@ -56,6 +59,7 @@ private def decodeSimpleOp (name : String) : Option Op :=
   | "Eval" => some .eval | "Envid" => some .envId | _ => none
 
 /-- Decode the original operator encoding, including its dotted-pair payloads. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpop_def"]
 def decodeOp (s : Sexp) : Option Op :=
   match s with
   | .sym _ => (symbolName s).bind decodeSimpleOp

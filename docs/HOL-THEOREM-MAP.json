@@ -1,5 +1,45 @@
 [
   {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Operators.lean",
+    "lean_name": "decodeArith",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexparith_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all symbol cases and captured inferred types: each arithmetic name selects the same arith constructor and all other symbols or S-expression constructors fail. The byte-to-String intermediate is used only for comparison against ASCII constants and preserves byte equality."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Operators.lean",
+    "lean_name": "decodePrimType",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "decode_prim_type_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all symbol cases and captured inferred types: the seven primitive types, including fixed 8- and 64-bit word constructors, match the source; other inputs fail. The byte-to-String intermediate preserves equality to the ASCII names."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Operators.lean",
+    "lean_name": "decodeTest",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "decode_test_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all symbol cases and captured inferred types: equality and the four ordinary and four alternate comparisons map to the corresponding test constructors; other inputs fail. The byte-to-String intermediate preserves equality to the ASCII names."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Operators.lean",
+    "lean_name": "decodeLog",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexplog_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all source cases and captured inferred types: Andalso and Orelse symbols select their logical operators and other inputs fail. The byte-to-String intermediate preserves equality to the ASCII names."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Operators.lean",
+    "lean_name": "decodeOp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexpop_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every source clause and captured inferred types: simple symbols, decoded FFI byte strings, thunk modes, 8-/64-bit shifts, and dotted arithmetic, conversion and test payloads return the same op constructors, with the same failure cases. Internal byte-to-String conversion is confined to equality with ASCII constructor names; the FFI result remains the exact mlstring carrier."
+  },
+  {
     "lean_path": "Flapjack/CakeParser/FromSexp.lean",
     "lean_name": "decodeControl",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",

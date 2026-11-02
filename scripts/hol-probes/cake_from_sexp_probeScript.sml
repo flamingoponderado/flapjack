@@ -48,6 +48,11 @@ val _ = showDef "sexpopt_typed" fromSexpTheory.sexpopt_def;
 val _ = showDef "sexplit_typed" fromSexpTheory.sexplit_def;
 val _ = showDef "sexplocpt_typed" fromSexpTheory.sexplocpt_def;
 val _ = showDef "sexplocn_typed" fromSexpTheory.sexplocn_def;
+val _ = showDef "sexparith_typed" fromSexpTheory.sexparith_def;
+val _ = showDef "decode_prim_type_typed" fromSexpTheory.decode_prim_type_def;
+val _ = showDef "decode_test_typed" fromSexpTheory.decode_test_def;
+val _ = showDef "sexplog_typed" fromSexpTheory.sexplog_def;
+val _ = showDef "sexpop_typed" fromSexpTheory.sexpop_def;
 val _ = show "lists" ``MAP (fromSexp$sexplist fromSexp$odestSXNUM)
   [⟪⟫; ⟪1; 2; 3⟫; ⟪1 • 2⟫; ⟪SX_STR "x"⟫]``;
 val _ = show "option" ``MAP (fromSexp$sexpopt fromSexp$odestSXNUM)
