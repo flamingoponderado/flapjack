@@ -80,6 +80,17 @@ theorem envRelFuel_iff (fuel : Nat) (g : State) (allowed : Set Nat)
         obtain ⟨_, _, h⟩ := related x used
         exact h
 
+/-- Build a fuel-related environment for arbitrary expressions from a
+target witness for each source value. The independent proof that HOL's
+well-formed values supply these witnesses is still required. -/
+theorem envRelFuel_exists_of_values (fuel : Nat) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (env : List ClosSem.Value)
+    (values : ∀ value ∈ env, ∃ target, ValueRelFuel fuel g allowed code value target) :
+    ∃ target, ∀ offset fns, EnvRelFuel fuel g allowed code env target offset fns := by
+  obtain ⟨target, related⟩ := envRel_exists_of_values (ValueRelFuel fuel g allowed code) env values
+  exact ⟨target, fun offset fns => (envRelFuel_iff fuel g allowed code env target offset fns).mpr
+    (related offset fns)⟩
+
 /-- Related numbers have the same value. -/
 theorem valueRelFuel_number_iff (fuel : Nat) (g : State) (allowed : Set Nat)
     (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (n : Int) (target : ClosSem.Value) :

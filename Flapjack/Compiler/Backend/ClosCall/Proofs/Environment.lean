@@ -15,6 +15,25 @@ def envRel {A B : Type} (R : A → B → Prop) (env1 : List A) (env2 : List B)
     ∀ x, (∃ fn ∈ fns, freeVar (fn.1 + offset + x) fn.2) →
       ∃ (left : x < env1.length) (right : x < env2.length), R env1[x] env2[x]
 
+/-- If every source value has a related target value, construct one
+pointwise-related environment that works for any requested function bodies.
+This generic helper does not establish the well-formedness premise used by
+the HOL theorem. -/
+theorem envRel_exists_of_values {A B : Type} (R : A → B → Prop) (env : List A)
+    (related : ∀ value ∈ env, ∃ target, R value target) :
+    ∃ target, ∀ offset fns, envRel R env target offset fns := by
+  have pointwise : ∃ target, List.Forall₂ R env target := by
+    induction env with
+    | nil => exact ⟨[], .nil⟩
+    | cons value rest ih =>
+      obtain ⟨target, head⟩ := related value (by simp)
+      obtain ⟨tail, tailRel⟩ := ih (by
+        intro item member
+        exact related item (by simp [member]))
+      exact ⟨target :: tail, .cons head tailRel⟩
+  obtain ⟨target, values⟩ := pointwise
+  exact ⟨target, fun _ _ => by simp [envRel, values.length_eq, values]⟩
+
 private theorem forall₂_mono_members {A B : Type} {R R' : A → B → Prop}
     {xs : List A} {ys : List B} (related : List.Forall₂ R xs ys)
     (change : ∀ x ∈ xs, ∀ y ∈ ys, R x y → R' x y) : List.Forall₂ R' xs ys := by

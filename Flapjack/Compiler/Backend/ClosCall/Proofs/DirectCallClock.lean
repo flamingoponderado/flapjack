@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateApplication
 import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
+import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
 
 /-! Clock and argument behavior of generated direct calls. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -399,5 +400,36 @@ theorem known_app_rewritten_call_events_fuel {C F : Type}
     (some address) targetFun targetValues afterArgs 1
   rw [targetRun, ← direct] at events
   simpa only [finalStates.1] using events
+
+/-- A pure function expression can be evaluated in a constructed related
+environment to obtain a related closure value without changing target state.
+Supplying witnesses for source environment values remains a separate
+well-formedness obligation. -/
+theorem pure_function_valueRelFuel {C F : Type}
+    (fuel : Nat) (g : State) (allowed : Set Nat)
+    (sourceFn targetFn : ClosLang.Exp) (sourceEnv : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValue : ClosSem.Value)
+    (sourceRun : evaluate [sourceFn] sourceEnv source = (.val [sourceValue], source))
+    (targetPure : ClosLang.pure targetFn = true)
+    (values : ∀ value ∈ sourceEnv, ∃ targetValue, ValueRelFuel fuel g allowed target.code value targetValue)
+    (states : StateRelFuel fuel g allowed source target)
+    (fnIH : ExprSimFuel (C := C) (F := F) fuel g allowed sourceFn targetFn) :
+    ∃ targetValue, ValueRelFuel fuel g allowed target.code sourceValue targetValue := by
+  obtain ⟨targetEnv, envs⟩ := envRelFuel_exists_of_values fuel g allowed target.code sourceEnv values
+  obtain ⟨targetResult, targetFinal, targetRun, results, _, _⟩ :=
+    fnIH sourceEnv targetEnv source target (.val [sourceValue]) source sourceRun (by simp)
+      (envs 0 [(0, targetFn)]) states
+  have notType : targetResult ≠ .err (.abort .typeError) := by
+    intro error
+    subst targetResult
+    simp [resultRel] at results
+  have pureList : ClosLang.pureList [targetFn] = true := by simp [ClosLang.pureList, targetPure]
+  obtain ⟨targetValues, rfl, rfl⟩ := ClosProps.evaluate_pure [targetFn] targetEnv target targetFinal
+    targetResult pureList targetRun notType
+  cases results with
+  | cons head tail =>
+    cases tail
+    exact ⟨_, head⟩
 
 end Flapjack.Compiler.Backend.ClosCall
