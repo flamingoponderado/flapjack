@@ -163,9 +163,8 @@ def removeFlatProgFuel (fuel : Nat) (code : List Exp) : Option (List Exp) :=
     let (roots, tree) := analyseCode code
     (closureFuel fuel roots tree).map (fun reachable => removeUnreachable reachable code)
 
-/-- Total dead-code elimination in the original pass order. Its closure
-recurrence is proved in `Proofs.Reachability`; the full cross-language pass
-correspondence remains to be reviewed. -/
+/-- Total dead-code elimination in the original pass order. Its executable
+closure recurrence is proved in `Proofs.Reachability`. -/
 @[hol "cakeml/compiler/backend/flat_elimScript.sml" "remove_flat_prog_def"]
 def removeFlatProgTotal (code : List Exp) : List Exp :=
   if code.any hasEvalDec then code

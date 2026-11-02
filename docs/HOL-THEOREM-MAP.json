@@ -4531,16 +4531,16 @@
     "hol_name": "compile_flat_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Eliminate.lean",
     "lean_name": "compileFlatTotal",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed HOL pass composition captured in source_to_flat_init_probe.out. The executed pipeline composes total elimination and pattern compilation; complete dependency correspondence review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed compile_flat capture: removeFlatProgTotal first processes the input list, then FlatPattern.compileDec with the supplied pattern configuration maps over the resulting list in order. Both executed constituent definitions have reviewed source counterparts."
   },
   {
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
     "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Eliminate.lean",
     "lean_name": "compileTotal",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed HOL whole-pass equation captured in source_to_flat_init_probe.out. The executed pipeline uses the resulting configuration and flat pass; complete dependency correspondence review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed compile capture: compileProg returns the next configuration and flat declarations; compileFlatTotal uses the next configuration pattern field, and the returned pair contains that same configuration and transformed list. The executed constituent definitions have reviewed source counterparts."
   },
   {
     "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
@@ -4563,8 +4563,8 @@
     "hol_name": "remove_flat_prog_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
     "lean_name": "removeFlatProgTotal",
-    "statement_status": "pending_statement_review",
-    "reviewer": "The production path follows the original Eval guard, analysis, closure and filtering order; full cross-language carrier and dependency review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed remove_flat_prog_definition capture and its reviewed components: an Eval anywhere returns the input unchanged; otherwise analyseCode provides roots and dependencies, closureTotal computes reachable roots, and removeUnreachable filters the original code in order. The executable closure satisfies the original equation for all sparse trees."
   },
   {
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
@@ -106811,96 +106811,96 @@
     "lean_name": "isHidden",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "is_hidden_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed is_hidden_definition clauses, including only unary global initialization, singleton match and default-false cases; constructor-list recursion implements EVERY in order and function bodies remain hidden."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
     "lean_name": "totalPat",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "total_pat_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed total_pat_definition pattern clauses, including nullary and recursive constructor patterns, aliases and the default-false case."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
     "lean_name": "totalPatList",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "total_pat_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed total_pat_definition list clauses: empty is true and cons requires the head and tail recursively."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
     "lean_name": "isPure",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "is_pure_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed is_pure_definition clause, including handlers ignoring their branch expressions, global initialization arguments, and pattern matches requiring all bodies pure and a total pattern. List and branch helpers implement the HOL EVERY and EXISTS traversals."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
     "lean_name": "hasEval",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "has_Eval_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every expression clause of the typed has_eval_definition capture. The Op equality is the decidable structural equality on the reviewed exact Op carrier; recursive expression, branch and function traversals retain the original disjunctions."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
     "lean_name": "hasEvalList",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "has_Eval_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed has_Eval_list clauses: empty is false and cons is the disjunction of head and tail."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
     "lean_name": "hasEvalPats",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "has_Eval_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed has_Eval_pats clauses: the pattern is ignored, expression and tail are traversed in source order."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
     "lean_name": "hasEvalFuns",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "has_Eval_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed has_Eval_funs clauses: both names are ignored and the body and tail are traversed in source order."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
     "lean_name": "destGlobalVarInit",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "dest_GlobalVarInit_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed dest_init_definition capture: GlobalVarInit returns its natural index, every other operator returns NONE."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
     "lean_name": "destGlobalVarLookup",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "dest_GlobalVarLookup_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed dest_lookup_definition capture: GlobalVarLookup returns its natural index, every other operator returns NONE."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
     "lean_name": "findLoc",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "find_loc_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all expression and list clauses in the typed find_loc_definition capture, including nested function bodies and handlers. The shared findGlobals traversal selects only GlobalVarInit; checked findGlobalsPats_eq_map and findGlobalsFuns_eq_map establish the HOL map projections. Its exact sparse-tree unions and insertions preserve the source tree representation."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
     "lean_name": "findLookups",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "find_lookups_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all expression and list clauses in the typed find_lookups_definition capture, including nested function bodies and handlers. The shared findGlobals traversal selects only GlobalVarLookup; checked findGlobalsPats_eq_map and findGlobalsFuns_eq_map establish the HOL map projections. Its exact sparse-tree unions and insertions preserve the source tree representation."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
@@ -106915,8 +106915,8 @@
     "lean_name": "analyseExp",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "analyse_exp_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed analyse_exp_definition capture: pure hidden expressions use empty roots, pure visible expressions use location roots, both map each location to lookups, and impure expressions union locations and lookups and map them to empty sets. The sparse-tree map retains all constructors."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
@@ -106931,8 +106931,8 @@
     "lean_name": "analyseCode",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "analyse_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed analyse_code_definition capture: empty gives the pair of empty trees and cons combines the analysed head with the recursive tail using codeAnalysisUnion, in that order."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
@@ -106955,8 +106955,8 @@
     "lean_name": "hasEvalDec",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "has_Eval_dec_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed has_eval_dec_definition capture: this delegates directly to the reviewed hasEval expression analysis."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",

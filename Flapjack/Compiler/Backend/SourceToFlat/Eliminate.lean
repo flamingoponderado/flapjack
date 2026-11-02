@@ -14,7 +14,7 @@ def compileProgElim (c : Config) (p : List AstHOL.Dec) : Option (Config × List 
   (FlatElim.removeFlatProg code).map (fun code' => (c', code'))
 
 /-- Flat elimination followed by pattern compilation, in the original pass
-order. Full cross-language review of the constituent passes remains open. -/
+order. -/
 @[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_flat_def"]
 def compileFlatTotal (cfg : FlatPattern.Config) (code : List FlatLang.Exp) : List FlatLang.Exp :=
   (FlatElim.removeFlatProgTotal code).map (FlatPattern.compileDec cfg)
@@ -24,7 +24,7 @@ def compileFlat (cfg : FlatPattern.Config) (code : List FlatLang.Exp) : Option (
   some (compileFlatTotal cfg code)
 
 /-- Complete source-to-flat pass, using the output configuration's pattern
-settings. Full cross-language review of its constituent passes remains open. -/
+settings. -/
 @[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_def"]
 def compileTotal (c : Config) (p : List AstHOL.Dec) : Config × List FlatLang.Exp :=
   let (next, code) := compileProg c p

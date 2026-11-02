@@ -67,6 +67,20 @@ open Flapjack.Test.CakeMLFlatOracle
 #guard (removeUnreachable (.ls 7 : Spt Nat) [.app .none (.globalVarInit 0) [lit]]).length == 1
 #guard (removeUnreachable (.ls true : Spt Bool) [.app .none (.globalVarInit 0) [lit]]).length == 1
 
+-- Captured by flat_elim_closure_probe: both function bodies and handler
+-- branches contribute global accesses, while Eval is detected recursively.
+private def nestedAnalysis : Exp :=
+  .letrec (ofString "group")
+    [(ofString "f", ofString "x", .app .none (.globalVarInit 1)
+      [.app .none (.globalVarLookup 4) []])]
+    (.handle .none (.app .none (.globalVarLookup 2) [])
+      [(.pany, .app .none (.globalVarInit 3) [.app .none (.src .eval) []])])
+#guard findLoc nestedAnalysis == sptInsert 1 () (sptInsert 3 () .ln)
+#guard findLookups nestedAnalysis == sptInsert 2 () (sptInsert 4 () .ln)
+#guard hasEval nestedAnalysis
+#guard !isHidden nestedAnalysis
+#guard !isPure nestedAnalysis
+
 -- An assignment containing a lookup is effectful and immediately reachable.
 #guard isPure set2 == impure_lookup_init
 #guard isHidden set2 == hidden_lookup_init
