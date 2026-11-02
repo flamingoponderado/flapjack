@@ -274,12 +274,17 @@ unchanged.  `arm8Next_branchImmediate` shows that the branch hint is set, so
 `NextStateARM8` does not advance `PC` by four, and
 `arm8_encoder_correct_jump` assembles the `Jump` case with `n = 0`.
 
+`Call.lean` repeats that for the `CALL`-typed `BranchImmediate` (bit 31 set):
+its word, `Encode`/`Decode` inverse and `Run` reduction, where the return
+address `PC + 4` also goes to the link register (`X30`), plus
+`arm8_encoder_correct_call` with `n = 0`.
+
 Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
 `DecodeBitMasks`/`BitfieldMove`), and the `longDiv`, `addCarry`,
 `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
 `ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in `Carry.lean` and its
 `ConditionalCompareImmediate@64` facts in `Compare.lean`), `Mem`,
-`Fp`, `JumpCmp`, `Call`, `JumpReg` and the out-of-range `Loc` constructors.
+`Fp`, `JumpCmp`, `JumpReg` and the out-of-range `Loc` constructors.
 `longDiv` lowers to `arm8EncodeFail`, so its case cannot be a faithful lowering
 without the intended instruction sequence.  The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
