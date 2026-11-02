@@ -383,4 +383,10 @@ theorem arm8X_update_other (st : arm8_state) (a b : BitVec 5) (v : BitVec 64) (h
     X (TN := 64) a { st with REG := holUpdate b v st.REG } = X (TN := 64) a st := by
   simp [X, Flapjack.RiscV.L3.holUpdate, Ne.symm h]
 
+
+/-- A 64-bit product is the `ofNat` of the product of the `toNat`s. -/
+theorem arm8Mul_ofNat (a b : BitVec 64) :
+    a * b = BitVec.ofNat 64 (a.toNat * b.toNat) := by
+  rfl
+
 end Flapjack.Compiler.Encoders.Arm8.L3
