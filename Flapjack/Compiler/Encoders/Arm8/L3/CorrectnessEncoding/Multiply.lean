@@ -331,4 +331,22 @@ theorem arm8Next_multiplyAddSub_mem (ms : arm8_state) (rm ra rn : BitVec 5) (n :
   intro x
   rfl
 
+
+/-- The encoded bytes of the `longMul` lowering: `MultiplyHigh` then
+`MultiplyAddSub@64` against the zero register. -/
+theorem arm8Enc_longMul (destinationLeft destinationRight sourceLeft sourceRight : Nat) :
+    arm8Enc (.inst (.arith (.longMul destinationLeft destinationRight sourceLeft sourceRight))) =
+      arm8Encode (.Data (.MultiplyHigh (false, BitVec.ofNat 5 sourceRight,
+        BitVec.ofNat 5 sourceLeft, BitVec.ofNat 5 destinationLeft))) ++
+      arm8Encode (.Data (.«MultiplyAddSub@64» (1, false, BitVec.ofNat 5 sourceRight, 31,
+        BitVec.ofNat 5 sourceLeft, BitVec.ofNat 5 destinationRight))) := by
+  rw [arm8Enc]
+  simp [arm8Ast]
+
+/-- The `longMul` lowering is eight bytes long. -/
+theorem arm8Enc_longMul_length (destinationLeft destinationRight sourceLeft sourceRight : Nat) :
+    (arm8Enc (.inst (.arith (.longMul destinationLeft destinationRight sourceLeft sourceRight)))).length = 8 := by
+  rw [arm8Enc_longMul]
+  simp [arm8Encode_length]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
