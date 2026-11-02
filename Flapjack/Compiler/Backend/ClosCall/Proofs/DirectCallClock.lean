@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateApplication
 import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
 
 /-! Clock and argument behavior of generated direct calls. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -356,5 +357,47 @@ theorem known_app_to_rewritten_call_fuel {C F : Type}
     sourceValues targetValues sourceBody sourceBodyEnv sourceRest args env target afterArgs argsRun
     sourceClosure' functions values notAllowed
   exact ⟨targetResult, targetFinal, direct.trans shifted, results, finalStates, growth⟩
+
+/-- The source application's event trace is a prefix of the rewritten
+call's trace, including when the source times out. The extra target tick may
+let the call continue, so this does not claim equality of timeout results. -/
+theorem known_app_rewritten_call_events_fuel {C F : Type}
+    (fuel : Nat) (g : State) (allowed : Set Nat) (trace : BackendCommon.Tra) (address : Nat)
+    (sourceFun targetFun : ClosSem.Value) (sourceValues targetValues : List ClosSem.Value)
+    (sourceBody : ClosLang.Exp) (sourceBodyEnv sourceRest : List ClosSem.Value)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target afterArgs : ClosSem.State C F)
+    (sourceResult : Result (List ClosSem.Value) ClosSem.Value) (sourceFinal : ClosSem.State (NumSet × C) F)
+    (argsRun : evaluate args env target = (.val targetValues, afterArgs))
+    (sourceRun : evaluateApp (some address) sourceFun sourceValues source = (sourceResult, sourceFinal))
+    (notType : sourceResult ≠ .err (.abort .typeError))
+    (sourceClosure : destClosure source.maxApp (some address) sourceFun sourceValues =
+      some (.fullApp sourceBody sourceBodyEnv sourceRest))
+    (functions : ValueRelFuel fuel g allowed afterArgs.code sourceFun targetFun)
+    (values : List.Forall₂ (ValueRelFuel fuel g allowed afterArgs.code) sourceValues targetValues)
+    (states : StateRelFuel fuel g allowed source afterArgs)
+    (notAllowed : address ∉ allowed) (distinct : (g.2.map Prod.fst).Nodup)
+    (bodyIH : ∀ (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+        (left right : ClosLang.Exp) (location : Nat) (leftFns rightFns : List (Nat × ClosLang.Exp))
+        (index arity : Nat),
+      recClosureRelFuel fuel g allowed code location leftFns rightFns →
+      leftFns[index]? = some (arity, left) → rightFns[index]? = some (arity, right) →
+      ExprSimFuel (C := C) (F := F) fuel g allowed left right) :
+    sourceFinal.ffi.ioEvents <+:
+      (evaluate [.call trace targetValues.length (address + 1) args] env
+        { target with clock := target.clock + 1 }).2.ffi.ioEvents := by
+  obtain ⟨targetResult, targetFinal, targetRun, _, finalStates, _⟩ :=
+    appSimFuel_of_bodies fuel g allowed (some address) distinct bodyIH sourceFun targetFun sourceValues targetValues
+      source afterArgs sourceResult sourceFinal sourceRun notType functions values states
+  have sourceClosure' : destClosure afterArgs.maxApp (some address) sourceFun sourceValues =
+      some (.fullApp sourceBody sourceBodyEnv sourceRest) := by
+    simpa [← states.2.2.1] using sourceClosure
+  have direct := related_known_app_eq_rewritten_call fuel g allowed trace address sourceFun targetFun
+    sourceValues targetValues sourceBody sourceBodyEnv sourceRest args env target afterArgs argsRun
+    sourceClosure' functions values notAllowed
+  have events := (evaluate_addClock_ioEvents_prefix (C := C) (F := F)).2
+    (some address) targetFun targetValues afterArgs 1
+  rw [targetRun, ← direct] at events
+  simpa only [finalStates.1] using events
 
 end Flapjack.Compiler.Backend.ClosCall
