@@ -2,6 +2,18 @@ load "semanticPrimitivesTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+fun show_thm label th =
+  if null (hyp th) then (print label; print_term (concl th); print "\n")
+  else raise Fail (label ^ " has hypotheses");
+val _ = show_thm "do_eq_definition=" semanticPrimitivesTheory.do_eq_def;
+val _ = show_thm "check_type_definition=" semanticPrimitivesTheory.check_type_def;
+val _ = show_thm "dest_lit_definition=" semanticPrimitivesTheory.dest_Litv_def;
+val _ = show_thm "num_cmp_definition=" semanticPrimitivesTheory.num_cmp_def;
+val _ = show_thm "int_cmp_definition=" semanticPrimitivesTheory.int_cmp_def;
+val _ = show_thm "shift8_definition=" semanticPrimitivesTheory.shift8_lookup_def;
+val _ = show_thm "shift64_definition=" semanticPrimitivesTheory.shift64_lookup_def;
+val _ = show_thm "do_test_definition=" semanticPrimitivesTheory.do_test_def;
+val _ = (print "eq_val_type="; print_type (type_of ``semanticPrimitives$Eq_val``); print "\n");
 val _ = (print "type="; print_type (type_of ``semanticPrimitives$do_test``); print "\n");
 val int_eq = rhs (concl ((SIMP_CONV (srw_ss()) [semanticPrimitivesTheory.do_test_def,
   semanticPrimitivesTheory.check_type_def, semanticPrimitivesTheory.do_eq_def,

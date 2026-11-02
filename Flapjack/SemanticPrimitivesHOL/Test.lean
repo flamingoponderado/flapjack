@@ -3,7 +3,7 @@ import Flapjack.SemanticPrimitivesHOL.Operations
 import Flapjack.FpSemHOL
 
 /-! Source primitive comparisons. Floating-point operations inherit the
-reviewed rational-cut assumption of `FpSemHOL`; statement review is pending. -/
+reviewed rational-cut assumption of `FpSemHOL`. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL
 

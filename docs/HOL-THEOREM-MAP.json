@@ -110124,24 +110124,24 @@
     "hol_name": "eq_result",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Operations.lean",
     "lean_name": "EqResult",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original eq_result datatype and typed eq_val_type capture: Eq_val carries a Boolean and Eq_type_error carries no fields."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "do_eq_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Operations.lean",
     "lean_name": "doEq",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed do_eq_definition value clauses: literals require the same literal type, locations require both reference flags, constructors require matching stamps and lengths or matching type, vectors compare equal lengths, all closure pairings return true, Eval environments compare their identifier pair, and other pairs are type errors."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "do_eq_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Operations.lean",
     "lean_name": "doEqList",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed do_eq_definition list clauses: empty lists compare true, the first false or type error short-circuits, successful heads recurse, and unequal lengths compare false."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110831,48 +110831,48 @@
     "hol_name": "check_type_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Primitives.lean",
     "lean_name": "checkType",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed check_type_definition cases: only exact stamped Boolean values and their corresponding integer, character, string, fixed-width word or floating-bit literals pass each source primitive type."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "dest_Litv_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Primitives.lean",
     "lean_name": "destLitv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed dest_lit_definition: Litv returns its literal and all other source value constructors return NONE."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "shift64_lookup_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Primitives.lean",
     "lean_name": "shift64Lookup",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed shift64_definition selector: left, logical right, arithmetic right and rotate right use the matching fixed-width 64-bit operations and natural shift count. The pinned source probe covers width-crossing arithmetic and rotation cases."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "shift8_lookup_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Primitives.lean",
     "lean_name": "shift8Lookup",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed shift8_definition selector: left, logical right, arithmetic right and rotate right use the matching fixed-width eight-bit operations and natural shift count. The pinned source probe covers width-crossing arithmetic and rotation cases."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "int_cmp_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Compare.lean",
     "lean_name": "intCmp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four typed int_cmp_definition clauses: integer Lt, Leq, Gt and Geq have the same operand order and inclusive cases."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "num_cmp_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Compare.lean",
     "lean_name": "numCmp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four typed num_cmp_definition clauses: natural Lt, Leq, Gt and Geq have the same operand order and inclusive cases."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110887,8 +110887,8 @@
     "hol_name": "do_test_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Test.lean",
     "lean_name": "doTest",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (pending source review): floating-point branches call qualified FpSemHOL comparisons and inherit the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8.",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed do_test_definition clauses: Equal first checks both operand types, uses IEEE equality for Float64 and doEq otherwise; Compare accepts Int, Char, Word8, Float64 and String, while AltCompare accepts only String. Other combinations give Eq_type_error. Floating comparison inherits the rational-cut assumption recorded in SOUNDNESS item 8.",
     "inherits_reals_as_rational_cuts": true
   },
   {

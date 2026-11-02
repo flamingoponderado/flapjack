@@ -1,6 +1,6 @@
 import Flapjack.SemanticPrimitivesHOL.Primitives
 
-/-! Source numeric and byte-string comparisons. Statement review is pending. -/
+/-! Source numeric and byte-string comparisons. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.Basis.Pure.MlString
 

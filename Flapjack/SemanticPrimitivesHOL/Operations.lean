@@ -1,6 +1,6 @@
 import Flapjack.SemanticPrimitivesHOL
 
-/-! Source equality and function application. Statement review is pending. -/
+/-! Source equality and function application. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL Flapjack.NamespaceHOL
 

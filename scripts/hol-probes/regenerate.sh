@@ -719,7 +719,7 @@ run_probe cake_source_compare_probeScript.sml cake_source_compare_probe.out \
   num_type int_type str_type natural integer lex fast same_length byte "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_test_probeScript.sml cake_source_test_probe.out \
-  type int_eq mismatch word64 int_compare str_normal str_fast "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+  do_eq_definition check_type_definition dest_lit_definition num_cmp_definition int_cmp_definition shift8_definition shift64_definition do_test_definition eq_val_type type int_eq mismatch word64 int_compare str_normal str_fast "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
   missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"

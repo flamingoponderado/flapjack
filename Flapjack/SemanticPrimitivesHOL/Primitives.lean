@@ -1,6 +1,6 @@
 import Flapjack.SemanticPrimitivesHOL.Control
 
-/-! Source literal type checks and fixed-width shifts. Statement review is pending. -/
+/-! Source literal type checks and fixed-width shifts. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
