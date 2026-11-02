@@ -2781,6 +2781,7 @@ import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Const
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Arith
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
+import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalImmediateBinop
 import Flapjack.Compiler.Encoders.Arm8.L3.Target
 import Flapjack.Compiler.Encoders.Arm8.L3.Target.State
 import Flapjack.Compiler.Encoders.Arm8.Machine.State
