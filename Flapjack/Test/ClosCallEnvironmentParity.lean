@@ -202,6 +202,23 @@ example : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
     (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) := by
   exact .closure closedGroupRelation .nil (.equalLength rfl .nil)
 
+-- Extending code preserves a captured direct-call closure in an environment.
+example : EnvRelFuel 5 closedGroupResult ∅
+    (closedGroupCode.update (12, (1, .var .none 0)))
+    [.closure (some 10) [] [] 1 (.var .none 0)]
+    [.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])]
+    0 [(0, .var .none 0)] := by
+  apply envRelFuel_mono (code := closedGroupCode)
+  · exact .equalLength rfl (.cons (.closure closedGroupRelation .nil (.equalLength rfl .nil)) .nil)
+  · apply stateExtends_refl
+    simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
+  · exact Set.Subset.rfl
+  · intro key value lookup
+    by_cases same : key = 12
+    · subst key
+      simp [closedGroupCode, Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE] at lookup
+    · simpa [Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE, Ne.symm same] using lookup
+
 example : ValueRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty
     (.closure (some 10) [] [.number 42] 1 (.var .none 1))
     (.closure (some 10) [] [.number 42] 1 (.var .none 1)) := by
