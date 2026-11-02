@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.Elements
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCardinality
 
 /-! Constructing ancestor chains from source value depth. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -77,6 +78,38 @@ theorem memoryRel_depthLimit {width : Nat} [NeZero width] (conf : DataToWord.Con
         · simp only [vDepth, empty, ↓reduceIte, List.length_append, List.length_cons, List.length_nil]
           omega
         · simpa [List.map_append, List.append_assoc] using lsChain
+
+/-- A related source value's depth is bounded by the number of machine words.
+    This combines the source chain and cardinality theorems for later resource bounds. -/
+theorem memoryRel_depthWordBound {width : Nat} [NeZero width] (conf : DataToWord.Config) (be : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (v : Value) (location : WordLocW width) (vars : List (Value × WordLocW width))
+    (rel : memoryRel conf be next refs space store memory domain ((v, location) :: vars))
+    (good : goodDimindex width) : vDepth v ≤ 2 ^ width := by
+  have single : memoryRel conf be next refs space store memory domain [(v, location)] := by
+    apply memoryRel_rearrange conf be next refs space store memory domain _ _ ?_ rel
+    intro p hp
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hp ⊢
+    exact Or.inl hp
+  obtain ⟨ls, extended, depth, chain⟩ := memoryRel_depthLimit conf be next refs space
+    store memory domain v location [] ⟨single, by simp [elementsList], good⟩
+  let related := ls ++ [(v, location)]
+  have relation : memoryRel conf be next refs space store memory domain related := by simpa [related] using extended
+  have chain' : elementsList (related.map Prod.fst) := by simpa [related] using chain
+  have distinct := memoryRel_elementsListDistinct conf be next refs space store memory domain
+    (related.map Prod.fst) related ⟨relation, chain', rfl, good⟩
+  have nonempty : related ≠ [] := by simp [related]
+  have words := memoryRel_elementsListWords conf be next refs space store memory domain
+    (related.map Prod.fst) related ⟨relation, chain', rfl, good⟩ nonempty
+  have bound := wordListLimit (related.tail.map Prod.snd) ⟨by simpa using words, distinct⟩
+  have len : related.tail.length = ls.length := by
+    cases ls with
+    | nil => simp [related]
+    | cons a rest => simp [related]
+  rw [List.length_map, len, ← depth] at bound
+  exact bound
 
 end
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
