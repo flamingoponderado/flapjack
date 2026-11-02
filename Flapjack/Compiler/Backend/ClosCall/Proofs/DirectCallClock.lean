@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateApplication
+import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueWellformed
 import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
@@ -403,8 +404,7 @@ theorem known_app_rewritten_call_events_fuel {C F : Type}
 
 /-- A pure function expression can be evaluated in a constructed related
 environment to obtain a related closure value without changing target state.
-Supplying witnesses for source environment values remains a separate
-well-formedness obligation. -/
+The fuel-aware well-formedness invariant is still proof-side infrastructure. -/
 theorem pure_function_valueRelFuel {C F : Type}
     (fuel : Nat) (g : State) (allowed : Set Nat)
     (sourceFn targetFn : ClosLang.Exp) (sourceEnv : List ClosSem.Value)
@@ -412,11 +412,11 @@ theorem pure_function_valueRelFuel {C F : Type}
     (sourceValue : ClosSem.Value)
     (sourceRun : evaluate [sourceFn] sourceEnv source = (.val [sourceValue], source))
     (targetPure : ClosLang.pure targetFn = true)
-    (values : ∀ value ∈ sourceEnv, ∃ targetValue, ValueRelFuel fuel g allowed target.code value targetValue)
+    (wf : ValuesWellFormedFuel fuel g allowed target.code sourceEnv)
     (states : StateRelFuel fuel g allowed source target)
     (fnIH : ExprSimFuel (C := C) (F := F) fuel g allowed sourceFn targetFn) :
     ∃ targetValue, ValueRelFuel fuel g allowed target.code sourceValue targetValue := by
-  obtain ⟨targetEnv, envs⟩ := envRelFuel_exists_of_values fuel g allowed target.code sourceEnv values
+  obtain ⟨targetEnv, _, envs⟩ := envRelFuel_exists_of_wellFormed fuel g allowed target.code sourceEnv wf
   obtain ⟨targetResult, targetFinal, targetRun, results, _, _⟩ :=
     fnIH sourceEnv targetEnv source target (.val [sourceValue]) source sourceRun (by simp)
       (envs 0 [(0, targetFn)]) states

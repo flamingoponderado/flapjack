@@ -58,6 +58,27 @@ theorem recClosureRelFuel_length (fuel : Nat) (g : State) (allowed : Set Nat)
     simp only [List.length_map] at length
     simp [List.length_zip, length]
 
+/-- A related singleton group remains a singleton with the original arity.
+This is a bounded-traversal counterpart of the shape fact used to construct
+a related ordinary closure. -/
+theorem recClosureRelFuel_singleton (fuel : Nat) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc arity : Nat)
+    (body : ClosLang.Exp) (targets : List (Nat × ClosLang.Exp))
+    (related : recClosureRelFuel fuel g allowed code loc [(arity, body)] targets) :
+    ∃ targetBody, targets = [(arity, targetBody)] := by
+  obtain ⟨g0, _, _, _, _, bodies, afterProbe, _, alternatives⟩ := related
+  rcases alternatives with ⟨_, ⟨trace, index, targetEq⟩, _⟩ |
+      ⟨_, openBodies, afterOpen, openRun, targetEq, _⟩
+  · exact ⟨_, by simpa [callsListSource] using targetEq⟩
+  · have length := callsListBounded_length fuel ([(arity, body)].map Prod.snd) g0 afterOpen openBodies openRun
+    have size : openBodies.length = 1 := by simpa using length
+    cases openBodies with
+    | nil => simp at size
+    | cons first rest =>
+      cases rest with
+      | nil => exact ⟨first, by simpa using targetEq⟩
+      | cons second rest => simp at size
+
 /-- The relation's two alternatives agree with the actual executable
 recursive-group closedness decision. -/
 theorem recClosureRelFuel_executableCases (fuel : Nat) (g : State) (allowed : Set Nat)
