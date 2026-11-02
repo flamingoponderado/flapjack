@@ -2791,6 +2791,7 @@ import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LongMul
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ConditionalSelect
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Carry
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Overflow
+import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Loc
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Compare
 import Flapjack.Compiler.Encoders.Arm8.L3.Target
 import Flapjack.Compiler.Encoders.Arm8.L3.Target.State

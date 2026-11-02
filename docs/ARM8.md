@@ -258,6 +258,10 @@ theorem with `n = 1` (`asserts 1`, `asserts2 2`), and `Overflow.lean` does the
 same for `addOverflow` and `subOverflow`: the flag-setting add or subtract
 followed by the `VC` select.
 
+`Loc.lean` records the `Address` instruction's word, its `Encode` shape (given
+the in-range reassembly of the 21-bit immediate) and its `Run` semantics; the
+`Loc` case theorem itself is not yet assembled.
+
 Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
 `DecodeBitMasks`/`BitfieldMove`), and the `longDiv`, `addCarry`,
 `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
