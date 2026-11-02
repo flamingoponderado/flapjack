@@ -3356,6 +3356,71 @@
     "reviewer": "Compared the polymorphic findi_typed capture from flat_to_clos_relation_probe: the empty list gives zero and a cons gives zero on equality or one plus the recursive result. HOL equality is represented with classical Lean equality; no equality instance is added to the declaration's type."
   },
   {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "lookup_vars_def",
+    "lean_path": "Flapjack/Misc/LookupVars.lean",
+    "lean_name": "lookupVars",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both polymorphic lookup_vars_typed clauses in clos_sem_call_helpers_probe. Empty indices return an empty list; a cons rejects an out-of-range index or prepends the selected value to recursive lookup. lookupVars_cons_source proves the HOL bound-and-EL formulation, including order and failure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "find_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Call.lean",
+    "lean_name": "findCode",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["code"],
+    "reviewer": "Compared find_code_typed in clos_sem_call_helpers_probe: map key, argument element and code body types remain three independent type variables; lookup failure and the arity check retain both source outcomes. The code parameter is the canonical finite-support map and has the local lookup/codec roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "check_loc_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Call.lean",
+    "lean_name": "checkLoc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared check_loc_typed in clos_sem_call_helpers_probe: the location type remains polymorphic, NONE checks only the maximum argument count, and SOME requires matching arity, zero supplied arguments and equal locations. Classical equality adds no instance parameter."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "app_kind",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Call.lean",
+    "lean_name": "AppKind",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed constructor captures in clos_sem_call_helpers_probe: partial application carries one closure value; full application carries one closure expression and two independent value lists."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "dest_closure_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Call.lean",
+    "lean_name": "destClosure",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_closure_typed in clos_sem_call_helpers_probe for ordinary closures, recursive closures and all other values. destClosure_closure_source and destClosure_recclosure_source kernel-check the original guard, HOL EL bound, partial/full branch order, location offset and reversed take/drop environment order. Out-of-range recursive indices return NONE without observing HOL's unspecified EL."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "dest_closure_length",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Call.lean",
+    "lean_name": "destClosure_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_closure_length_typed in clos_sem_call_helpers_probe: every successful full application leaves a strictly shorter argument remainder. The source's unused so_far binder retains its independent polymorphic type."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "clos_env_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Call.lean",
+    "lean_name": "closEnv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared clos_env_typed in clos_sem_call_helpers_probe: the environment element type remains polymorphic, restriction calls the reviewed lookup_vars, and the unrestricted case returns the original environment."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "build_recc_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Call.lean",
+    "lean_name": "buildRecc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared build_recc_typed in clos_sem_call_helpers_probe: failed environment restriction returns NONE, and success generates recursive closures in increasing index order over the selected environment and original function list. Lean's range/map is the standard GENLIST translation."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
     "hol_name": "v_rel",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelation.lean",

@@ -304,6 +304,10 @@ run_probe flat_to_clos_relation_probeScript.sml flat_to_clos_relation_probe.out 
   rules_typed induction_typed cases_typed state_rel_typed store_rel_typed inc_compile_typed install_rel_typed compile_correct_typed \
   "$cake_dir/compiler/backend/proofs/flat_to_closProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe clos_sem_call_helpers_probeScript.sml clos_sem_call_helpers_probe.out \
+  find_code_typed check_loc_typed partial_type full_type dest_closure_typed lookup_vars_typed clos_env_typed build_recc_typed dest_closure_length_typed \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe source_to_flat_mapi_probeScript.sml source_to_flat_mapi_probe.out \
   mapi_map_typed filter_mapi_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"

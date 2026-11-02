@@ -35,6 +35,12 @@ match evaluator used by source-to-flat correctness. Its Lean counterpart
 retains all three match outcomes and the distinct-binding check. The capture
 supports source review, not cross-language equivalence.
 
+`clos_sem_call_helpers_probe.out` captures fully typed code lookup, location
+checking, application constructors and closure splitting, polymorphic indexed
+environment lookup and restriction, recursive closure construction, and the
+full-application length theorem. These captures support source review, not
+closure-evaluator or compiler correctness.
+
 `flat_to_clos_relation_probe.out` captures the original typed value and
 environment relation rules, induction and cases, state and store relations,
 polymorphic incremental and installation relations, complete compiler

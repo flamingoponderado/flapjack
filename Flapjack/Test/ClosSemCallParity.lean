@@ -14,10 +14,13 @@ example : destClosure 3 none (.closure none [] [.number 9] 2 body) [.number 1] =
     some (.partialApp (.closure none [.number 1] [.number 9] 2 body)) := rfl
 example : destClosure 3 none (.closure none [] [.number 9] 2 body) [.number 1, .number 2, .number 3] =
     some (.fullApp body [.number 2, .number 3, .number 9] [.number 1]) := rfl
-example : destClosure 3 (some 4) (.closure (some 3) [] [] 1 body) [.number 1] = none := rfl
+example : destClosure 3 (some 4) (.closure (some 3) [] [] 1 body) [.number 1] = none := by
+  simp [destClosure, checkLoc]
 example : destClosure 3 (some 12) (.recclosure (some 10) [] [] funs 1) [.number 7] =
     some (.fullApp body2 [.number 7, .recclosure (some 10) [] [] funs 0,
-      .recclosure (some 10) [] [] funs 1] []) := rfl
+      .recclosure (some 10) [] [] funs 1] []) := by
+  simp [destClosure, checkLoc, funs]
+  rfl
 example : destClosure 3 none (.recclosure none [] [] [(1, body)] 1) [.number 7] = none := rfl
 
 end Flapjack.Test.ClosSemCallParity

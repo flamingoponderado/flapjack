@@ -228,7 +228,8 @@ example : ∃ trace env convertedBody,
     destClosure_known_direct 5 closedGroupResult ∅ closedGroupCode 2 10
       (.closure (some 10) [] [] 1 (.var .none 0))
       (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0]))
-      [.number 7] [.number 7] (.var .none 0) [.number 7] [] rfl values args (by simp)
+      [.number 7] [.number 7] (.var .none 0) [.number 7] []
+      (by simp [ClosSem.destClosure, ClosSem.checkLoc]) values args (by simp)
   exact ⟨trace, env, convertedBody, targetRun, found⟩
 
 -- A group with a captured variable follows the open-closure alternative.

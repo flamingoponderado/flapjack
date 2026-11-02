@@ -1,31 +1,48 @@
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+import Flapjack.Misc.LookupVars
 
 /-! Closure application and code lookup for the closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosSem
 
-/-- A direct call accepts a code entry only at its declared arity. The
-finite-map representation still requires cross-language review. -/
-def findCode {α : Type} (location : Nat) (args : List α)
-    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) : Option (List α × ClosLang.Exp) := do
+private def maptoBroadlookup {α β : Type} (f : HolFiniteMapExact α β) : α → Option β := f.lookup
+private def mapofBroad {α β : Type} (lookup : α → Option β)
+    (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact α β :=
+  ⟨lookup, support⟩
+
+/-- The source code map has the canonical lookup/support roundtrip. -/
+theorem holFmapAsFiniteSupportParamWitness_findCode_code {κ β : Type}
+    (code : HolFiniteMapExact κ (Nat × β)) :
+    mapofBroad (maptoBroadlookup code) code.finiteSupport = code := by
+  cases code
+  rfl
+
+/-- A direct call accepts a code entry only at its declared arity. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "find_code_def"
+  (fmap_as_finite_support_parameters := [code])]
+def findCode {κ α β : Type} (location : κ) (args : List α)
+    (code : HolFiniteMapExact κ (Nat × β)) : Option (List α × β) := do
   let (arity, body) ← code.lookup location
   if args.length = arity then some (args, body) else none
 
-/-- Check the optional direct-call location and application arity. This
-proof-side definition remains untagged pending source correspondence review. -/
-def checkLoc (maxApp : Nat) (requested location : Option Nat)
-    (parameters arguments supplied : Nat) : Bool :=
-  match requested with
-  | none => decide (arguments ≤ maxApp)
-  | some address => decide (parameters = arguments ∧ supplied = 0 ∧ some address = location)
+/-- Check the optional direct-call location and application arity. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "check_loc_def"]
+noncomputable def checkLoc {α : Type} (maxApp : Nat) (requested location : Option α)
+    (parameters arguments supplied : Nat) : Bool := by
+  classical
+  exact match requested with
+    | none => decide (arguments ≤ maxApp)
+    | some address => decide (parameters = arguments ∧ supplied = 0 ∧ some address = location)
 
 /-- Result of examining a closure application. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "app_kind"]
 inductive AppKind where
   | partialApp : Value → AppKind
   | fullApp : ClosLang.Exp → List Value → List Value → AppKind
 
 /-- Split argument lists exactly as the closure evaluator does, allowing
 partial and over-application and constructing all recursive closures. -/
-def destClosure (maxApp : Nat) (requested : Option Nat) (function : Value)
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "dest_closure_def"]
+noncomputable def destClosure (maxApp : Nat) (requested : Option Nat) (function : Value)
     (args : List Value) : Option AppKind :=
   match function with
   | .closure location supplied env arity body =>
@@ -52,6 +69,50 @@ def destClosure (maxApp : Nat) (requested : Option Nat) (function : Value)
             (args.reverse.drop needed |>.reverse))
       else none
   | _ => none
+
+/-- The ordinary closure clause in the source's full-before-partial form. -/
+theorem destClosure_closure_source (maxApp : Nat) (requested location : Option Nat)
+    (supplied env args : List Value) (arity : Nat) (body : ClosLang.Exp) :
+    destClosure maxApp requested (.closure location supplied env arity body) args =
+      if checkLoc maxApp requested location arity args.length supplied.length = true ∧ supplied.length < arity then
+        if ¬ (args.length + supplied.length < arity) then
+          some (.fullApp body (args.reverse.take (arity - supplied.length) |>.reverse |>.append (supplied ++ env))
+            (args.reverse.drop (arity - supplied.length) |>.reverse))
+        else some (.partialApp (.closure location (args ++ supplied) env arity body))
+      else none := by
+  by_cases valid : checkLoc maxApp requested location arity args.length supplied.length = true ∧ supplied.length < arity <;>
+    by_cases partialCase : args.length + supplied.length < arity <;> simp [destClosure, valid, partialCase]
+
+/-- The recursive closure clause uses HOL `EL` only under its original
+index bound and keeps the same application and captured-environment order. -/
+theorem destClosure_recclosure_source (maxApp : Nat) (requested location : Option Nat)
+    (supplied env args : List Value) (functions : List (Nat × ClosLang.Exp)) (index : Nat) :
+    destClosure maxApp requested (.recclosure location supplied env functions index) args =
+      let entry := @Flapjack.holEl (Nat × ClosLang.Exp) ⟨(0, .var .none 0)⟩ index functions
+      let arity := entry.1
+      let body := entry.2
+      if functions.length ≤ index ∨
+          checkLoc maxApp requested (location.map (fun loc => 2 * index + loc)) arity args.length supplied.length = false ∨
+          ¬ (supplied.length < arity) then none
+      else
+        let recursive := (List.range functions.length).map (fun i => Value.recclosure location [] env functions i)
+        if ¬ (args.length + supplied.length < arity) then
+          some (.fullApp body (args.reverse.take (arity - supplied.length) |>.reverse |>.append (supplied ++ recursive ++ env))
+            (args.reverse.drop (arity - supplied.length) |>.reverse))
+        else some (.partialApp (.recclosure location (args ++ supplied) env functions index)) := by
+  letI : Nonempty (Nat × ClosLang.Exp) := ⟨(0, .var .none 0)⟩
+  by_cases bound : index < functions.length
+  · have get := List.getElem?_eq_getElem (l := functions) bound
+    rw [Flapjack.holEl_eq_getElem index functions bound]
+    cases entry : functions[index]'bound with
+    | mk arity body =>
+      by_cases check : checkLoc maxApp requested (location.map (fun loc => 2 * index + loc))
+          arity args.length supplied.length = true <;>
+        by_cases enough : supplied.length < arity <;>
+        by_cases partialCase : args.length + supplied.length < arity <;>
+        simp [destClosure, get, entry, Nat.not_le_of_gt bound, check, enough, partialCase]
+  · have outside : functions.length ≤ index := Nat.le_of_not_gt bound
+    simp [destClosure, outside]
 
 /-- A full application consumes at least one argument. This ensures that
 repeated application of an over-applied result can be well founded. -/
@@ -90,20 +151,22 @@ theorem destClosure_full_remaining_lt (maxApp : Nat) (requested : Option Nat)
           omega
       · simp at result
 
-/-- Gather selected environment values in order, rejecting an invalid index.
-This helper is proof-side infrastructure for closure environment restriction. -/
-def lookupVars {α : Type} : List Nat → List α → Option (List α)
-  | [], _ => some []
-  | index :: indices, env => do
-    let value ← env[index]?
-    let values ← lookupVars indices env
-    some (value :: values)
+/-- A full application consumes an argument; the source's unused `so_far`
+parameter remains independently polymorphic. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "dest_closure_length"]
+theorem destClosure_length {α : Type} (maxApp : Nat) (requested : Option Nat)
+    (function : Value) (args : List Value) (body : ClosLang.Exp) (env rest : List Value) (_soFar : α)
+    (result : destClosure maxApp requested function args = some (.fullApp body env rest)) :
+    rest.length < args.length :=
+  destClosure_full_remaining_lt maxApp requested function args env rest body result
 
 /-- Restrict an environment when requested by the closure optimizer. -/
-def closEnv (restrict : Bool) (names : List Nat) (env : List Value) : Option (List Value) :=
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "clos_env_def"]
+def closEnv {α : Type} (restrict : Bool) (names : List Nat) (env : List α) : Option (List α) :=
   if restrict then lookupVars names env else some env
 
 /-- Construct the recursive closure bundle over the selected environment. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "build_recc_def"]
 def buildRecc (restrict : Bool) (location : Option Nat) (env : List Value)
     (names : List Nat) (functions : List (Nat × ClosLang.Exp)) : Option (List Value) := do
   let captured ← closEnv restrict names env
