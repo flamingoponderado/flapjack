@@ -335,6 +335,23 @@ section DecodedState
 local instance : DecidablePred bridgeExecExactState.memaddrs := fun _ => isFalse id
 local instance : DecidablePred bridgeExecExactState.shMemaddrs := fun _ => isFalse id
 
+/- This codec runs with explicit code keys; unlike the choice-backed codec it
+   can be evaluated by the runtime. -/
+#guard (match evalPanSemStateExp (panSemExecStateOfHOLWithKeys bridgeExecExactState bridgeProdFfi [])
+    (expOfHOL (.const 7)) with
+  | some (.word value) => value == (7 : W)
+  | _ => false)
+#guard (evalPanSemStateExp (panSemExecStateOfHOLWithKeys bridgeExecExactState bridgeProdFfi [])
+  (expOfHOL (.loadByte (.const 0)))).isNone
+
+example :
+    Option.map panValueToHOL
+      (evalPanSemStateExp (panSemExecStateOfHOLWithKeys bridgeExecExactState bridgeProdFfi [])
+        (expOfHOL (.const 7))) = some (.val (.word 7)) := by
+  rw [evalPanSemStateExp_decodeWithKeys_agree bridgeExecExactState bridgeProdFfi bridgeFfiStateRel
+    [] (by intro key h; exact False.elim (h rfl))]
+  rfl
+
 example :
     Option.map panValueToHOL
       (evalPanSemStateExp (panSemExecStateOfHOL bridgeExecExactState bridgeProdFfi)
