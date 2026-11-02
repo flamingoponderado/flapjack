@@ -95,6 +95,8 @@ locnsexp_sexplocpt0_typed=sexplocpt (s :sexp) = SOME (z :locn) ⇒ locnsexp z = 
 locnsexp_sexplocpt_typed=(sexplocpt (s :sexp) = SOME (z :locn) ⇔ locnsexp z = s) ∧ (SOME z = sexplocpt s ⇔ locnsexp z = s)
 locnsexp_sexplocn_typed=(sexplocn (s :sexp) = SOME (z :locs) ⇔ locssexp z = s) ∧ (SOME z = sexplocn s ⇔ locssexp z = s)
 opsexp_sexpop_typed=sexpop (s :sexp) = SOME (p :op) ⇒ opsexp p = s
+expsexp_sexpexp_typed=(sexpexp (s :sexp) = SOME (e :exp) ⇔ expsexp e = s) ∧ (SOME e = sexpexp s ⇔ expsexp e = s)
+type_defsexp_sexptype_def_typed=(sexptype_def (s :sexp) = SOME (x :(mlstring list # mlstring # (mlstring # ast_t list) list) list) ⇔ type_defsexp x = s) ∧ (SOME x = sexptype_def s ⇔ type_defsexp x = s)
 lists=[SOME []; SOME [1; 2; 3]; NONE; NONE]
 option=[SOME NONE; SOME (SOME 5); NONE; NONE]
 identifier=[SOME (Short «x»); SOME (Long «M» (Short «x»)); NONE; SOME (Long «A» (Long «B» (Short «x»))); NONE; NONE]

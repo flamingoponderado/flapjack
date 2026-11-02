@@ -1,6 +1,22 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeTypeDef_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "type_defsexp_sexptype_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both captured equivalences and the nested list, pair, mlstring and ast_t carriers; the canonicality proof uses the executed decoders and reviewed component inverses."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeExp_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "expsexp_sexpexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both captured equivalences over sexp and the exact exp carrier. The reverse proof follows the executed expression, function-list, expression-list, and pattern-clause decoders, using reviewed canonical component results."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
     "lean_name": "decodeOp_canonical",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "opsexp_sexpop",

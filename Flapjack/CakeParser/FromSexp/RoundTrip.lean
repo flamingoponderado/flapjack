@@ -203,6 +203,28 @@ theorem decodeList_some {α : Type} (f : Sexp → Option α) (s : Sexp) (xs : Li
         simp only [listsexp] at tail
         simp [listsexp, decodeList, maps.1, tail]
 
+/-- A list decoder inherits canonicality from its element decoder. This is
+Flapjack infrastructure assembled from the source list inverse theorem. -/
+theorem decodeList_canonical {α : Type} (f : Sexp → Option α) (g : α → Sexp)
+    (element : ∀ s x, f s = some x → g x = s)
+    (s : Sexp) (xs : List α) (h : decodeList f s = some xs) :
+    listsexp (xs.map g) = s := by
+  obtain ⟨ys, rfl, maps⟩ := (decodeList_some f s xs).mp h
+  clear h
+  have same : xs.map g = ys := by
+    induction ys generalizing xs with
+    | nil =>
+      cases xs with
+      | nil => rfl
+      | cons _ _ => simp at maps
+    | cons y ys ih =>
+      cases xs with
+      | nil => simp at maps
+      | cons x xs =>
+        simp only [List.map_cons, List.cons.injEq] at maps
+        simp [element y x maps.1, ih xs maps.2]
+  rw [same]
+
 /-- Successful pair decoding identifies the encoded components. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexppair_SOME"]
 theorem decodePair_some {α β : Type} (f : Sexp → Option α) (g : Sexp → Option β)
@@ -474,6 +496,35 @@ theorem decodeType_some (s : Sexp) (t : AstT) :
     subst s
     exact decodeType_typesexp t
   exact ⟨⟨forward, backward⟩, ⟨fun h => forward h.symm, fun h => (backward h).symm⟩⟩
+
+/-- The executed type-list decoder accepts only canonical encoded lists. -/
+theorem decodeTypeList_canonical (s : Sexp) (ts : List AstT)
+    (h : decodeTypeList s = some ts) : listsexp (ts.map typesexp) = s := by
+  induction s generalizing ts with
+  | sym name =>
+    simp only [decodeTypeList] at h
+    split at h
+    next hn =>
+      simp at h
+      subst ts
+      simp only [beq_iff_eq] at hn
+      simp [listsexp, hn]
+      rfl
+    next => contradiction
+  | num _ | str _ => simp [decodeTypeList] at h
+  | cons head tail _ ih =>
+    cases hh : decodeType head with
+    | none => simp [decodeTypeList, hh] at h
+    | some t =>
+      cases ht : decodeTypeList tail with
+      | none => simp [decodeTypeList, hh, ht] at h
+      | some rest =>
+        simp [decodeTypeList, hh, ht] at h
+        subst ts
+        have eh := decodeType_canonical head t hh
+        have et := ih rest ht
+        simp only [listsexp] at et
+        simp [listsexp, eh, et]
 
 /-- Encoding CakeML type syntax is injective. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "typesexp_11"]
@@ -1296,6 +1347,22 @@ theorem destString_expsexpString (s : MlString) : destString (expsexpString s) =
   cases s with
   | implode bytes => simp [expsexpString, destString_sexstr]
 
+/-- The expression encoder's byte-string helper is canonical. -/
+theorem expsexpString_canonical (s : Sexp) (name : MlString) (h : destString s = some name) :
+    expsexpString name = s := by
+  simpa [expsexpString] using ((destString_some s name).1.mp h).symm
+
+/-- Optional expression-bound names decode only from their canonical form. -/
+theorem decodeStringOption_canonical (s : Sexp) (name : Option MlString)
+    (h : decodeOption destString s = some name) : optsexp (name.map expsexpString) = s := by
+  rcases (decodeOption_some destString s name).mp h with ⟨rfl, rfl⟩ | ⟨x, s0, rfl, hx, hs⟩
+  · rfl
+  · have eq := expsexpString_canonical s0 x hx
+    subst s0
+    rw [hs]
+    simp [optsexp, listsexp]
+    rfl
+
 /-- The expression-list encoder helper is the source's map. -/
 theorem expsexpList_eq_map (es : List Exp) : expsexpList es = es.map expsexp := by
   induction es with
@@ -1418,6 +1485,360 @@ theorem decodeFunctions_expsexpFuns (fs : List (VarN × VarN × Exp)) :
 termination_by sizeOf fs
 end
 
+/-- Successful expression decoding yields the source-shaped encoding. This is
+the reverse direction of `expsexp_sexpexp` over the executed decoder. -/
+theorem decodeExp_canonical (s : Sexp) : ∀ e, decodeExp s = some e → expsexp e = s := by
+  induction s using decodeExp.induct
+      (motive2 := fun x => ∀ fs, decodeFunctions x = some fs → listsexp (expsexpFuns fs) = x)
+      (motive3 := fun x => ∀ es, decodeExpList x = some es → listsexp (expsexpList es) = x)
+      (motive4 := fun x => ∀ ps, decodeClauses x = some ps → listsexp (expsexpClauses ps) = x) with
+  | case1 name a term ht =>
+    intro e h
+    simp [decodeExp, ht] at h
+  | case2 name a term ht hn ih =>
+    intro e h
+    cases h0 : decodeExp a with
+    | none => simp [decodeExp, ht, hn, h0] at h
+    | some ea =>
+      simp [decodeExp, ht, hn, h0] at h
+      subst e
+      have e0 := ih ea h0
+      simp only [beq_iff_eq] at hn
+      simp only [bne_iff_ne, not_not] at ht
+      simp [expsexp, expsexpNode, listsexp, e0, hn, ht]
+      constructor <;> rfl
+  | case3 name a term ht hn0 hn =>
+    intro e h
+    cases h0 : decodeLiteral a with
+    | none => simp [decodeExp, ht, hn0, hn, h0] at h
+    | some lit =>
+      simp [decodeExp, ht, hn0, hn, h0] at h
+      subst e
+      have e0 := decodeLiteral_canonical a lit h0
+      simp only [beq_iff_eq] at hn
+      simp only [bne_iff_ne, not_not] at ht
+      simp [expsexp, expsexpNode, listsexp, e0, hn, ht]
+      constructor <;> rfl
+  | case4 name a term ht hn0 hn1 hn =>
+    intro e h
+    cases h0 : decodeId destString a with
+    | none => simp [decodeExp, ht, hn0, hn1, hn, h0] at h
+    | some id =>
+      simp [decodeExp, ht, hn0, hn1, hn, h0] at h
+      subst e
+      have e0 := ((decodeId_some id a).mp h0).symm
+      simp only [beq_iff_eq] at hn
+      simp only [bne_iff_ne, not_not] at ht
+      simp [expsexp, expsexpNode, listsexp, e0, hn, ht]
+      constructor <;> rfl
+  | case5 name a term ht hn0 hn1 hn2 =>
+    intro e h
+    simp [decodeExp, ht, hn0, hn1, hn2] at h
+  | case6 name a b term ht =>
+    intro e h
+    simp [decodeExp, ht] at h
+  | case7 name a b term ht hn iha ihb =>
+    intro e h
+    cases h0 : decodeExp a with
+    | none => simp [decodeExp, ht, hn, h0] at h
+    | some ea =>
+      cases h1 : decodeClauses b with
+      | none => simp [decodeExp, ht, hn, h0, h1] at h
+      | some eb =>
+        simp [decodeExp, ht, hn, h0, h1] at h
+        subst e
+        have e0 := iha ea h0
+        have e1 := ihb eb h1
+        simp only [listsexp] at e1
+        simp only [beq_iff_eq] at hn
+        simp only [bne_iff_ne, not_not] at ht
+        simp [expsexp, expsexpNode, listsexp, e0, e1, hn, ht]
+        constructor <;> rfl
+  | case8 name a b term ht hn0 hn ihb =>
+    intro e h
+    cases h0 : decodeOption (decodeId destString) a with
+    | none => simp [decodeExp, ht, hn0, hn, h0] at h
+    | some ea =>
+      cases h1 : decodeExpList b with
+      | none => simp [decodeExp, ht, hn0, hn, h0, h1] at h
+      | some eb =>
+        simp [decodeExp, ht, hn0, hn, h0, h1] at h
+        subst e
+        have e0 := decodeIdOption_canonical a ea h0
+        have e1 := ihb eb h1
+        simp only [listsexp] at e1
+        simp only [beq_iff_eq] at hn
+        simp only [bne_iff_ne, not_not] at ht
+        simp [expsexp, expsexpNode, listsexp, e0, e1, hn, ht]
+        constructor <;> rfl
+  | case9 name a b term ht hn0 hn1 hn ihb =>
+    intro e h
+    cases h0 : destString a with
+    | none => simp [decodeExp, ht, hn0, hn1, hn, h0] at h
+    | some ea =>
+      cases h1 : decodeExp b with
+      | none => simp [decodeExp, ht, hn0, hn1, hn, h0, h1] at h
+      | some eb =>
+        simp [decodeExp, ht, hn0, hn1, hn, h0, h1] at h
+        subst e
+        have e0 := expsexpString_canonical a ea h0
+        have e1 := ihb eb h1
+        simp only [beq_iff_eq] at hn
+        simp only [bne_iff_ne, not_not] at ht
+        simp [expsexp, expsexpNode, listsexp, e0, e1, hn, ht]
+        constructor <;> rfl
+  | case10 name a b term ht hn0 hn1 hn2 hn ihb =>
+    intro e h
+    cases h0 : decodeOp a with
+    | none => simp [decodeExp, ht, hn0, hn1, hn2, hn, h0] at h
+    | some ea =>
+      cases h1 : decodeExpList b with
+      | none => simp [decodeExp, ht, hn0, hn1, hn2, hn, h0, h1] at h
+      | some eb =>
+        simp [decodeExp, ht, hn0, hn1, hn2, hn, h0, h1] at h
+        subst e
+        have e0 := decodeOp_canonical a ea h0
+        have e1 := ihb eb h1
+        simp only [listsexp] at e1
+        simp only [beq_iff_eq] at hn
+        simp only [bne_iff_ne, not_not] at ht
+        simp [expsexp, expsexpNode, listsexp, e0, e1, hn, ht]
+        constructor <;> rfl
+  | case11 name a b term ht hn0 hn1 hn2 hn3 hn iha ihb =>
+    intro e h
+    cases h0 : decodeExp a with
+    | none => simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn, h0] at h
+    | some ea =>
+      cases h1 : decodeClauses b with
+      | none => simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn, h0, h1] at h
+      | some eb =>
+        simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn, h0, h1] at h
+        subst e
+        have e0 := iha ea h0
+        have e1 := ihb eb h1
+        simp only [listsexp] at e1
+        simp only [beq_iff_eq] at hn
+        simp only [bne_iff_ne, not_not] at ht
+        simp [expsexp, expsexpNode, listsexp, e0, e1, hn, ht]
+        constructor <;> rfl
+  | case12 name a b term ht hn0 hn1 hn2 hn3 hn4 hn iha ihb =>
+    intro e h
+    cases h0 : decodeFunctions a with
+    | none => simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn4, hn, h0] at h
+    | some ea =>
+      cases h1 : decodeExp b with
+      | none => simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn4, hn, h0, h1] at h
+      | some eb =>
+        simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn4, hn, h0, h1] at h
+        subst e
+        have e0 := iha ea h0
+        simp only [listsexp] at e0
+        have e1 := ihb eb h1
+        simp only [beq_iff_eq] at hn
+        simp only [bne_iff_ne, not_not] at ht
+        simp [expsexp, expsexpNode, listsexp, e0, e1, hn, ht]
+        constructor <;> rfl
+  | case13 name a b term ht hn0 hn1 hn2 hn3 hn4 hn5 hn iha =>
+    intro e h
+    cases h0 : decodeExp a with
+    | none => simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn4, hn5, hn, h0] at h
+    | some ea =>
+      cases h1 : decodeType b with
+      | none => simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn4, hn5, hn, h0, h1] at h
+      | some eb =>
+        simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn4, hn5, hn, h0, h1] at h
+        subst e
+        have e0 := iha ea h0
+        have e1 := (decodeType_some b eb).1.mp h1
+        simp only [beq_iff_eq] at hn
+        simp only [bne_iff_ne, not_not] at ht
+        simp [expsexp, expsexpNode, listsexp, e0, e1, hn, ht]
+        constructor <;> rfl
+  | case14 name a b term ht hn0 hn1 hn2 hn3 hn4 hn5 hn6 hn iha =>
+    intro e h
+    cases h0 : decodeExp a with
+    | none => simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn4, hn5, hn6, hn, h0] at h
+    | some ea =>
+      cases h1 : decodeLoc b with
+      | none => simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn4, hn5, hn6, hn, h0, h1] at h
+      | some eb =>
+        simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn4, hn5, hn6, hn, h0, h1] at h
+        subst e
+        have e0 := iha ea h0
+        have e1 := (decodeLoc_some b eb).1.mp h1
+        simp only [beq_iff_eq] at hn
+        simp only [bne_iff_ne, not_not] at ht
+        simp [expsexp, expsexpNode, listsexp, e0, e1, hn, ht]
+        constructor <;> rfl
+  | case15 name a b term ht hn0 hn1 hn2 hn3 hn4 hn5 hn6 hn7 =>
+    intro e h
+    simp [decodeExp, ht, hn0, hn1, hn2, hn3, hn4, hn5, hn6, hn7] at h
+  | case16 name a b c term ht =>
+    intro e h
+    simp [decodeExp, ht] at h
+  | case17 name a b c term ht hn ihb ihc =>
+    intro e h
+    cases h0 : decodeLog a with
+    | none => simp [decodeExp, ht, hn, h0] at h
+    | some ea =>
+      cases h1 : decodeExp b with
+      | none => simp [decodeExp, ht, hn, h0, h1] at h
+      | some eb =>
+        cases h2 : decodeExp c with
+        | none => simp [decodeExp, ht, hn, h0, h1, h2] at h
+        | some ec =>
+          simp [decodeExp, ht, hn, h0, h1, h2] at h
+          subst e
+          have e0 := (decodeLog_some a ea).1.mp h0
+          have e1 := ihb eb h1
+          have e2 := ihc ec h2
+          simp only [beq_iff_eq] at hn
+          simp only [bne_iff_ne, not_not] at ht
+          simp [expsexp, expsexpNode, listsexp, e0, e1, e2, hn, ht]
+          constructor <;> rfl
+  | case18 name a b c term ht hn0 hn iha ihb ihc =>
+    intro e h
+    cases h0 : decodeExp a with
+    | none => simp [decodeExp, ht, hn0, hn, h0] at h
+    | some ea =>
+      cases h1 : decodeExp b with
+      | none => simp [decodeExp, ht, hn0, hn, h0, h1] at h
+      | some eb =>
+        cases h2 : decodeExp c with
+        | none => simp [decodeExp, ht, hn0, hn, h0, h1, h2] at h
+        | some ec =>
+          simp [decodeExp, ht, hn0, hn, h0, h1, h2] at h
+          subst e
+          have e0 := iha ea h0
+          have e1 := ihb eb h1
+          have e2 := ihc ec h2
+          simp only [beq_iff_eq] at hn
+          simp only [bne_iff_ne, not_not] at ht
+          simp [expsexp, expsexpNode, listsexp, e0, e1, e2, hn, ht]
+          constructor <;> rfl
+  | case19 name a b c term ht hn0 hn1 hn ihb ihc =>
+    intro e h
+    cases h0 : decodeOption destString a with
+    | none => simp [decodeExp, ht, hn0, hn1, hn, h0] at h
+    | some ea =>
+      cases h1 : decodeExp b with
+      | none => simp [decodeExp, ht, hn0, hn1, hn, h0, h1] at h
+      | some eb =>
+        cases h2 : decodeExp c with
+        | none => simp [decodeExp, ht, hn0, hn1, hn, h0, h1, h2] at h
+        | some ec =>
+          simp [decodeExp, ht, hn0, hn1, hn, h0, h1, h2] at h
+          subst e
+          have e0 := decodeStringOption_canonical a ea h0
+          have e1 := ihb eb h1
+          have e2 := ihc ec h2
+          simp only [beq_iff_eq] at hn
+          simp only [bne_iff_ne, not_not] at ht
+          simp [expsexp, expsexpNode, listsexp, e0, e1, e2, hn, ht]
+          constructor <;> rfl
+  | case20 name a b c term ht hn0 hn1 hn2 =>
+    intro e h
+    simp [decodeExp, ht, hn0, hn1, hn2] at h
+  | case21 x h1 h2 h3 =>
+    intro e h
+    rw [decodeExp.eq_def] at h
+    split at h <;> simp_all
+  | case22 name arg body tail ihBody ihTail fs h =>
+    cases hn : destString name with
+    | none => simp [decodeFunctions, hn] at h
+    | some n =>
+      cases ha : destString arg with
+      | none => simp [decodeFunctions, hn, ha] at h
+      | some a =>
+        cases hb : decodeExp body with
+        | none => simp [decodeFunctions, hn, ha, hb] at h
+        | some b =>
+          cases ht : decodeFunctions tail with
+          | none => simp [decodeFunctions, hn, ha, hb, ht] at h
+          | some rest =>
+            simp [decodeFunctions, hn, ha, hb, ht] at h
+            subst fs
+            have en := expsexpString_canonical name n hn
+            have ea := expsexpString_canonical arg a ha
+            have eb := ihBody b hb
+            have et := ihTail rest ht
+            simp only [listsexp] at et
+            simp [expsexpFuns, listsexp, en, ea, eb, et]
+  | case23 name hn fs h =>
+    simp [decodeFunctions, hn] at h
+    subst fs
+    simp only [beq_iff_eq] at hn
+    simp [expsexpFuns, listsexp, hn]
+    rfl
+  | case24 name hn fs h => simp [decodeFunctions, hn] at h
+  | case25 x h1 h2 fs h =>
+    rw [decodeFunctions.eq_def] at h
+    split at h <;> simp_all
+    exfalso
+    apply h1 <;> rfl
+  | case26 head tail ihHead ihTail es h =>
+    cases hh : decodeExp head with
+    | none => simp [decodeExpList, hh] at h
+    | some e =>
+      cases ht : decodeExpList tail with
+      | none => simp [decodeExpList, hh, ht] at h
+      | some rest =>
+        simp [decodeExpList, hh, ht] at h
+        subst es
+        have eh := ihHead e hh
+        have et := ihTail rest ht
+        simp only [listsexp] at et
+        simp [expsexpList, listsexp, eh, et]
+  | case27 name hn es h =>
+    simp [decodeExpList, hn] at h
+    subst es
+    simp only [beq_iff_eq] at hn
+    simp [expsexpList, listsexp, hn]
+    rfl
+  | case28 name hn es h => simp [decodeExpList, hn] at h
+  | case29 x h1 h2 es h =>
+    rw [decodeExpList.eq_def] at h
+    split at h <;> simp_all
+  | case30 pat body tail ihBody ihTail ps h =>
+    cases hp : decodePattern pat with
+    | none => simp [decodeClauses, hp] at h
+    | some p =>
+      cases hb : decodeExp body with
+      | none => simp [decodeClauses, hp, hb] at h
+      | some b =>
+        cases ht : decodeClauses tail with
+        | none => simp [decodeClauses, hp, hb, ht] at h
+        | some rest =>
+          simp [decodeClauses, hp, hb, ht] at h
+          subst ps
+          have ep := decodePattern_canonical pat p hp
+          have eb := ihBody b hb
+          have et := ihTail rest ht
+          simp only [listsexp] at et
+          simp [expsexpClauses, listsexp, ep, eb, et]
+  | case31 name hn ps h =>
+    simp [decodeClauses, hn] at h
+    subst ps
+    simp only [beq_iff_eq] at hn
+    simp [expsexpClauses, listsexp, hn]
+    rfl
+  | case32 name hn ps h => simp [decodeClauses, hn] at h
+  | case33 x h1 h2 ps h =>
+    rw [decodeClauses.eq_def] at h
+    split at h <;> simp_all
+
+/-- Expression decoding succeeds exactly on the canonical encoding. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "expsexp_sexpexp"]
+theorem decodeExp_some (s : Sexp) (e : Exp) :
+    (decodeExp s = some e ↔ expsexp e = s) ∧
+    (some e = decodeExp s ↔ expsexp e = s) := by
+  have forward : decodeExp s = some e → expsexp e = s := decodeExp_canonical s e
+  have backward : expsexp e = s → decodeExp s = some e := by
+    intro h
+    subst s
+    exact decodeExp_expsexp e
+  exact ⟨⟨forward, backward⟩, ⟨fun h => forward h.symm, fun h => (backward h).symm⟩⟩
+
 /-- Expression encoding is injective. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "expsexp_11"]
 theorem expsexp_injective (left right : Exp) (h : expsexp left = expsexp right) : left = right := by
@@ -1454,6 +1875,43 @@ theorem decodeTypeDef_typeDefsexp (td : TypeDef) : decodeTypeDef (typeDefsexp td
   intro x _
   rcases x with ⟨vs, name, cs⟩
   simp [decodePair, decodeStringList, destString_expsexpString, decodeTypeDefConstructors]
+
+/-- Successful decoding of datatype definitions implies canonical encoding. -/
+theorem decodeTypeDef_canonical (s : Sexp) (td : TypeDef)
+    (h : decodeTypeDef s = some td) : typeDefsexp td = s := by
+  have strings : ∀ s xs, decodeList destString s = some xs →
+      listsexp (xs.map expsexpString) = s :=
+    decodeList_canonical destString expsexpString expsexpString_canonical
+  have constructors : ∀ s xs, decodeList (decodePair destString decodeTypeList) s = some xs →
+      listsexp (xs.map (fun (name, ts) => .cons (expsexpString name)
+        (listsexp (ts.map typesexp)))) = s := by
+    apply decodeList_canonical
+    intro s p hp
+    obtain ⟨x, y, a, b, ha, hb, rfl, rfl⟩ :=
+      (decodePair_some destString decodeTypeList s p).mp hp
+    simp [expsexpString_canonical x a ha, decodeTypeList_canonical y b hb]
+  unfold decodeTypeDef at h
+  unfold typeDefsexp
+  apply decodeList_canonical _ _ ?_ s td h
+  intro s p hp
+  obtain ⟨x, y, a, b, ha, hb, rfl, rfl⟩ :=
+    (decodePair_some (decodeList destString)
+      (decodePair destString (decodeList (decodePair destString decodeTypeList))) s p).mp hp
+  obtain ⟨u, v, c, d, hc, hd, rfl, rfl⟩ :=
+    (decodePair_some destString (decodeList (decodePair destString decodeTypeList)) y b).mp hb
+  simp [strings x a ha, expsexpString_canonical u c hc, constructors v d hd]
+
+/-- A datatype definition decodes exactly when it is its canonical encoding. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "type_defsexp_sexptype_def"]
+theorem decodeTypeDef_some (s : Sexp) (td : TypeDef) :
+    (decodeTypeDef s = some td ↔ typeDefsexp td = s) ∧
+    (some td = decodeTypeDef s ↔ typeDefsexp td = s) := by
+  have forward := decodeTypeDef_canonical s td
+  have backward : typeDefsexp td = s → decodeTypeDef s = some td := by
+    intro h
+    rw [← h]
+    exact decodeTypeDef_typeDefsexp td
+  exact ⟨⟨forward, backward⟩, ⟨fun h => forward h.symm, fun h => (backward h).symm⟩⟩
 
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "type_defsexp_11"]
 theorem typeDefsexp_injective (a b : TypeDef) : typeDefsexp a = typeDefsexp b ↔ a = b := by
