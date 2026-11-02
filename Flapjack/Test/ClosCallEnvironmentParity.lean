@@ -6,7 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateList
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateLet
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -308,5 +308,16 @@ example {C F : Type} :
   apply exprsSimFuel_of_forall₂ 5 (.ln, []) ∅ (by simp)
   exact .cons (exprSimFuel_var 5 (.ln, []) ∅ .none 0)
     (.cons (exprSimFuel_raise 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 1)) .nil)
+
+-- The body can refer past two newly bound values into the outer environment.
+example {C F : Type} :
+    ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+      (.let .none [.var .none 0, .var .none 1] (.var .none 2))
+      (.let .none [.var .none 0, .var .none 1] (.var .none 2)) := by
+  apply exprSimFuel_let 5 (.ln, []) ∅ .none <;> try simp
+  · apply exprsSimFuel_of_forall₂ 5 (.ln, []) ∅ (by simp)
+    exact .cons (exprSimFuel_var 5 (.ln, []) ∅ .none 0)
+      (.cons (exprSimFuel_var 5 (.ln, []) ∅ .none 1) .nil)
+  · exact exprSimFuel_var 5 (.ln, []) ∅ .none 2
 
 end Flapjack.Test.ClosCallEnvironmentParity
