@@ -23,8 +23,8 @@ def makeConst : ClosLang.Const → Value
   | .constCons tag values => .block tag (values.map makeConst)
 termination_by c => sizeOf c
 
-/-- Closure global operations; `none` denotes the original type error.
-This is a proof-side dispatcher, pending finite-map and source review. -/
+/-- Factored closure global operations; `none` denotes the original type error.
+These cases form part of the reviewed `doApp` dispatcher. -/
 def applyGlobal {C F : Type} (op : ClosLang.GlobOp) (args : List Value) (state : State C F) :
     Option (Value × State C F) :=
   match op, args with

@@ -5,6 +5,10 @@ unit_typed=Unit = Block tuple_tag ([] :v list)
 taglen=SOME (Block 1 [])
 length=SOME (Block 1 [])
 bool_test=SOME (Block 0 [])
+bool_test_equal=SOME (Block 1 [])
+bool_test_invalid=NONE
+bool_not_false=SOME (Block 1 [])
+bool_not_invalid=NONE
 extend=SOME (Block 2 [Number 8; Number 2; Number 3])
 extend_invalid=NONE
 constant=SOME (Block 4 [Number 3; Number 7])

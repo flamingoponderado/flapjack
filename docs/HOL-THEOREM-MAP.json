@@ -113598,6 +113598,16 @@
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "do_app_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Apply.lean",
+    "lean_name": "doApp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared every source branch and fully typed apply_typed against the assembled dispatcher and its factored global, block, memory, integer and word helpers. Global initialization and bounds, block and Boolean cases, byte and array allocation, reads, writes and copies, string comparison, FFI return/final behavior, thunk guards and all unmatched cases retain the source arguments, state updates and errors. asBool_eq_some characterizes the original Boolean tests, intToByte_iff characterizes byte choices, leastUnusedRef_unused/minimal establish the least unused address, and the MemoryChoice case proofs establish both byte-list guarded choices including failure. The reviewed State retains independent compiler and FFI carriers and canonical refs and code maps with the local roundtrip witness. Floating-point cases inherit reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8; this review and probes do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "do_app_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/MemoryChoice.lean",
     "lean_name": "doApp_fromListByte_choice",
     "statement_status": "reviewed_fmap_as_finite_support",

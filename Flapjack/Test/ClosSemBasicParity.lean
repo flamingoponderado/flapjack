@@ -16,6 +16,14 @@ example {C F : Type} (s : State C F) :
 example {C F : Type} (s : State C F) :
     applyBlock (.boolTest .equal) [.block 0 [], .block 1 []] s = some (.block 0 [], s) := rfl
 example {C F : Type} (s : State C F) :
+    applyBlock (.boolTest .equal) [.block 1 [], .block 1 []] s = some (.block 1 [], s) := rfl
+example {C F : Type} (s : State C F) :
+    applyBlock (.boolTest .equal) [.block 2 [], .block 1 []] s = none := rfl
+example {C F : Type} (s : State C F) :
+    applyBlock .boolNot [.block 0 []] s = some (.block 1 [], s) := rfl
+example {C F : Type} (s : State C F) :
+    applyBlock .boolNot [.block 1 [.number 0]] s = none := rfl
+example {C F : Type} (s : State C F) :
     applyBlock (.consExtend 2) [.block 0 [.number 1, .number 2, .number 3], .number 1, .number 2,
       .number 3, .number 8] s = some (.block 2 [.number 8, .number 2, .number 3], s) := rfl
 example {C F : Type} (s : State C F) :

@@ -72,9 +72,9 @@ def byteNumbers : List Value → Option (List (BitVec 8))
     some (byte :: rest)
   | _ => none
 
-/-- Closure memory operations. Invalid argument shapes, bounds and store
-entries return `none`, representing the original type error. This proof-side
-dispatcher remains untagged pending finite-map and source review. -/
+/-- Factored closure memory operations. Invalid argument shapes, bounds and
+store entries return `none`, representing the original type error. These cases
+form part of the reviewed `doApp` dispatcher. -/
 noncomputable def applyMemory {C F : Type} (op : ClosLang.MemOp) (args : List Value) (state : State C F) :
     Option (Value × State C F) := by
   let result (value : Value) := some (value, state)

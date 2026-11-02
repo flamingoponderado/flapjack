@@ -5,10 +5,19 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
 namespace Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL
 
+namespace DoAppPort
+/-- The closure state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end DoAppPort
+
 /-- Closure primitive application. Install and force-thunk control flow are
 handled by the evaluator; their ordinary primitive fallback is a type error.
-The complete dispatcher is proof-side and remains untagged pending review of
-the source clauses, finite-map representation and floating-point assumptions. -/
+The floating-point cases inherit the rational-cut assumptions of `FpSemHOL`. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "do_app_def"
+  (fmap_as_finite_support := [refs, code])]
 noncomputable def doApp {C F : Type} (op : ClosLang.Op) (args : List Value) (state : State C F) :
     Result (Value × State C F) Value :=
   let fail : Result (Value × State C F) Value := .err (.abort .typeError)
