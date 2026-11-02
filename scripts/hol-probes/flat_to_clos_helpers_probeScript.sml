@@ -1,0 +1,17 @@
+load "flat_to_closTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+fun show name th = (print (name ^ "="); Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n");
+val _ = show "dest_pat_typed" flat_to_closTheory.dest_pat_def;
+val _ = show "compile_lit_typed" flat_to_closTheory.compile_lit_def;
+val _ = show "arg1_typed" flat_to_closTheory.arg1_def;
+val _ = show "arg2_typed" flat_to_closTheory.arg2_def;
+val _ = show "join_strings_typed" flat_to_closTheory.join_strings_def;
+val _ = show "dest_nop_typed" flat_to_closTheory.dest_nop_def;
+val _ = show "dest_constant_typed" flat_to_closTheory.dest_Constant_def;
+val _ = show "dest_constants_typed" flat_to_closTheory.dest_Constants_def;
+val _ = show "smart_cons_typed" flat_to_closTheory.SmartCons_def;
+fun eval name term = (print (name ^ "="); print_term (rhs (concl (EVAL term))); print "\n");
+val _ = eval "dest_pat_numeric" ``flat_to_clos$dest_pat [(flatLang$Pvar «x», 42n)]``;
+val _ = eval "smart_cons_fold" ``flat_to_clos$SmartCons None 5 [closLang$Op None (IntOp (Const 7)) []; closLang$Op None (IntOp (Const 9)) []]``;

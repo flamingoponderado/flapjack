@@ -107570,64 +107570,64 @@
     "lean_name": "destPat",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "dest_pat_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed clauses in flat_to_clos_helpers_probe: the singleton variable pattern returns its mlstring and arbitrary independent payload; empty, other-pattern and longer lists return NONE. Lean now preserves the HOL-polymorphic payload. The current executed compiler inlines these handler cases instead of invoking destPat; production-path use remains separate."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
     "lean_name": "compileLit",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "compile_lit_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed flat_to_clos_helpers_probe equation and reviewed literal and closure carriers: integers remain Int, character ORD and Word8 w2n become their natural byte values embedded in Int, strings preserve native MlString, and both Word64 and Float64 retain their fixed 64-bit payload in ConstWord64. All six clauses emit the original trace and empty argument list. The executed compiler calls compileLit."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
     "lean_name": "arg1",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "arg1_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed flat_to_clos_helpers_probe equation: an arbitrary closure-expression function is applied only to a singleton; all other list lengths produce Let None xs (Var None 0). The reviewed closure-expression and trace carriers are unchanged, and the executed operator compiler calls arg1."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
     "lean_name": "arg2",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "arg2_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed flat_to_clos_helpers_probe equation: the arbitrary binary closure-expression function is applied in list order only at length two; all other lengths produce Let None xs (Var None 0). The reviewed closure-expression and trace carriers are unchanged, and the executed operator compiler calls arg2."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
     "lean_name": "joinStrings",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "join_strings_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed flat_to_clos_helpers_probe equation: both arguments and the result use native byte-backed MlString. Empty explode is exactly zero strlen; otherwise both concatenate x, the single underscore byte and y in order. The executed recursive-function compiler calls joinStrings."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
     "lean_name": "destConstant",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "dest_Constant_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed flat_to_clos_helpers_probe clauses over the reviewed closure syntax: empty-argument Constant, integer Const and nullary Cons return the same constant; every other expression, operator or nonempty argument list returns NONE. The executed smartCons calls destConstant through destConstants."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
     "lean_name": "destConstants",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "dest_Constants_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed flat_to_clos_helpers_probe clauses: empty input yields SOME []; each cons checks destConstant then the tail, propagates either NONE, and preserves the original order of successful constants. The executed smartCons calls destConstants."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
     "lean_name": "smartCons",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "SmartCons_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed flat_to_clos_helpers_probe equation: empty input emits a nullary Cons; failed constant extraction emits Cons with the original arguments; success emits Constant (ConstCons tag (REVERSE cs)) with no arguments. All branches preserve the original trace and tag, and the executed expression compiler calls smartCons."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Arith.lean",
@@ -107682,8 +107682,8 @@
     "lean_name": "destNop",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "dest_nop_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Two source conversion patterns transcribed; independent typed HOL capture and complete source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed flat_to_clos_helpers_probe equation and expanded fallbacks: only the singleton nested Char-to-Int followed by Int-to-Word8, or Word8-to-Int followed by Int-to-Char, returns its inner expression. Trace fields remain arbitrary and every other operator or argument shape returns NONE. The current executed compiler inlines these cases instead of invoking destNop; production-path use remains separate."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosLang/HasInstall.lean",

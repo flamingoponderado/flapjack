@@ -5,9 +5,10 @@ import Flapjack.Compiler.Backend.ClosLang.Syntax
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString Flapjack.Compiler.Backend.BackendCommon
 
-/-- Extract the single variable branch used by closure-language handlers. -/
+/-- Extract the single variable branch used by closure-language handlers.
+The current compiler inlines these two cases instead of calling this helper. -/
 @[hol "cakeml/compiler/backend/flat_to_closScript.sml" "dest_pat_def"]
-def destPat : List (FlatLang.Pat × FlatLang.Exp) → Option (MlString × FlatLang.Exp)
+def destPat {α : Type} : List (FlatLang.Pat × α) → Option (MlString × α)
   | [(.pvar v, h)] => some (v, h)
   | _ => none
 
@@ -39,7 +40,8 @@ def arg2 (xs : List ClosLang.Exp) (f : ClosLang.Exp → ClosLang.Exp → ClosLan
 def joinStrings (x y : MlString) : MlString :=
   if x.explode.isEmpty then y else MlString.concat [x, ofString "_", y]
 
-/-- Recognize the two source conversion pairs removed before operator lowering. -/
+/-- Recognize the two source conversion pairs removed before operator lowering.
+The current compiler inlines these patterns instead of calling this helper. -/
 @[hol "cakeml/compiler/backend/flat_to_closScript.sml" "dest_nop_def"]
 def destNop (op : FlatLang.Op) (es : List FlatLang.Exp) : Option FlatLang.Exp :=
   match op, es with

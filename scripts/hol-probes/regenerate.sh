@@ -271,6 +271,10 @@ run_probe() {
   done
 }
 
+run_probe flat_to_clos_helpers_probeScript.sml flat_to_clos_helpers_probe.out \
+  dest_pat_typed compile_lit_typed arg1_typed arg2_typed join_strings_typed dest_nop_typed dest_constant_typed dest_constants_typed smart_cons_typed dest_pat_numeric smart_cons_fold \
+  "$cake_dir/compiler/backend/flat_to_closScript.sml" "$cake_dir/compiler/backend"
+
 run_probe backend_fp_config_probeScript.sml backend_fp_config_probe.out \
   ensure_fp_config_typed riscv_fp_config armv7_three_fp_config armv7_two_fp_config riscv_three_fp_config \
   "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend/riscv"

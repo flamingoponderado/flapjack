@@ -1,3 +1,9 @@
+`flat_to_clos_helpers_probe.out` captures the fully typed original literal,
+argument, name, conversion and constant-folding helper definitions. It also
+evaluates a polymorphic handler-pattern payload and constant-folding order;
+`Flapjack/Test/FlatToClosHelpersParity.lean` replays those cases in Lean.
+The capture supports source review, not full pass correctness.
+
 `backend_fp_config_probe.out` captures the typed backend floating-point
 configuration equation and capability results for RISC-V and ARMv7 register
 boundaries. It supports source review and target-specific regression checks,
