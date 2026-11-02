@@ -8232,7 +8232,7 @@ run_probe data_to_word_space_control_probeScript.sml data_to_word_space_control_
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe data_to_word_option_le_probeScript.sml data_to_word_option_le_probe.out \
-  option_le_SOME_typed \
+  option_le_SOME_typed get_limits_def_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe pan_to_word_crep_inst_ok_probeScript.sml pan_to_word_crep_inst_ok_probe.out \

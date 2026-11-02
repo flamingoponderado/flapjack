@@ -115380,5 +115380,17 @@
     "refs"
   ],
   "reviewer": "Compared the typed original in bvi_sem_state_probe.out: when the original clock covers ticks + 1, decrementing that budget commutes with an arbitrary added allowance. Compiler and FFI state types remain independent and the same-module canonical state roundtrip covers refs."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+    "hol_name": "get_limits_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Limits.lean",
+    "lean_name": "getLimits",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against data_to_wordProofScript.sml:1768-1777 and typed literal replay in data_to_word_option_le_probe.out: independent word width, compiler and FFI carriers; stack limit, heap byte count divided by width DIV 8, length size, 64-bit flag and both FP fields match. WordSemStateFiniteExact.store uses the canonical finite-support map; holFapply preserves the unspecified out-of-domain value and wordSemTheWord preserves HOL unspecified Loc completion. Positive-width BitVec represents HOL words. The local canonical witness checks the state roundtrip; it does not independently prove cross-language equivalence."
+  }
 ]
