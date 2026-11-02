@@ -2,8 +2,8 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
 import Flapjack.SemanticPrimitivesHOL.Array
 import Flapjack.SemanticPrimitivesHOL.Thunk
 
-/-! Flat string and byte-array copy operations. This is part of the original
-primitive dispatcher, which has not yet been assembled or reviewed in full. -/
+/-! Flat string and byte-array copy operations, assembled with the other
+primitive cases in `FlatSem.Apply`. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 

@@ -3,7 +3,7 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
 
 /-! Flat source-operation cases for strings, lists, vectors and thunks. The
-complete primitive dispatcher is not yet assembled. -/
+complete dispatcher is assembled in `FlatSem.Apply`. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 

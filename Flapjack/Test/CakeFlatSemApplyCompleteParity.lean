@@ -7,6 +7,15 @@ open Flapjack.Compiler.Backend.FlatSem
 open Flapjack.Basis.Pure.MlString
 
 example {C F : Type} (s : State C F) :
+    doApp s (.src .opapp) [.litv (.intLit 1), .litv (.intLit 2)] = none := by rfl
+example {C F : Type} (s : State C F) : doApp s (.src .eval) [] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp { s with refs := [.refv (.litv (.intLit 7))] } (.src .opderef) [.loc true 0] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src .aallocEmpty) [.litv (.intLit 4)] = none := by rfl
+example {C F : Type} (s : State C F) : doApp s (.src .envId) [] = none := by rfl
+
+example {C F : Type} (s : State C F) :
     doApp s (.src .strlen) [.litv (.strLit (ofString "abc"))] =
       some (s, .val (.litv (.intLit 3))) := by rfl
 example {C F : Type} (s : State C F) :

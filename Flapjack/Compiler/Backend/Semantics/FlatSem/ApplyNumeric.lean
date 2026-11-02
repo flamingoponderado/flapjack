@@ -1,8 +1,9 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Test
 import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
 
-/-! Numeric cases of flat primitive application. The reused source numeric
-dispatcher and the assembled flat dispatcher remain subject to source review. -/
+/-! Numeric cases of flat primitive application. The reused source dispatcher
+has its own pending whole-definition review; flat case equations are in the
+`Apply*Source` submodules. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 

@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem
 
-/-! Flat-specific primitive operations. The complete `do_app` also includes
-source operations and is not yet assembled. -/
+/-! Flat-specific primitive operations. The complete dispatcher also includes
+source operations and is assembled in `FlatSem.Apply`. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.SemanticPrimitivesHOL
 

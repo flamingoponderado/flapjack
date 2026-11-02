@@ -18,6 +18,16 @@ fun show_int_eval label tm =
 fun show_word_eval label tm = (print label; print_term (rhs (concl
   ((EVAL THENC DEPTH_CONV (CHANGED_CONV wordsLib.WORD_EVAL_CONV) THENC EVAL) tm))); print "\n");
 val _ = show_thm "do_app_typed=" flatSemTheory.do_app_def;
+val _ = show_eval "fallback_opapp=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Opapp) [Litv (IntLit 1); Litv (IntLit 2)])``;
+val _ = show_eval "fallback_eval=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Eval) [])``;
+val _ = show_eval "fallback_opderef=" ``OPTION_MAP SND
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [Refv (Litv (IntLit 7))]) (Src Opderef) [Loc T 0])``;
+val _ = show_eval "fallback_aalloc_empty=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src AallocEmpty) [Litv (IntLit 4)])``;
+val _ = show_eval "fallback_envid=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Env_id) [])``;
 val _ = show_eval "global_alloc=" ``OPTION_MAP (λ(s,r). (s.globals,r))
   (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with globals := []) (GlobalVarAlloc 2) [])``;
 val _ = show_eval "global_init=" ``OPTION_MAP (λ(s,r). (s.globals,r))

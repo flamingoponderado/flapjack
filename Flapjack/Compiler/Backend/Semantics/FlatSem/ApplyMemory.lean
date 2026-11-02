@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
 
-/-! Flat primitive application for references and arrays. The complete
-`do_app` also includes non-memory cases and is not yet assembled. -/
+/-! Reference and array cases of flat primitive application. The complete
+dispatcher is assembled in `FlatSem.Apply`. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 

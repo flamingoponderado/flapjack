@@ -4,13 +4,14 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyData
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyCopy
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyNumeric
 
-/-! Assembled flat primitive application. Full correspondence with HOL remains
-open, including review of the reused source numeric and floating-point model. -/
+/-! Flat primitive application. Floating-point operations inherit the
+rational-cut assumptions of the source numeric model. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 
-/-- Assemble flat and source primitive cases. Unknown source operations return
-failure, as do operations handled specially by the evaluator. This declaration
-is untagged pending a complete clause-by-clause HOL and carrier review. -/
+/-- Assemble the flat and source primitive cases, including the original
+failure fallback and operations handled specially by the evaluator. The
+case equations are reviewed in the `Apply*Source` submodules. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]
 noncomputable def doApp {C F : Type} (state : State C F) (op : FlatLang.Op) (values : List Value) :
     Option (State C F × Flapjack.SemanticPrimitivesHOL.Result Value Value) :=
   match op with

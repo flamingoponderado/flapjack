@@ -1,5 +1,59 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Apply.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp",
+    "reviewer": "Compared the complete typed original dispatcher, its state/value/op carriers and each case with the assembled partial dispatchers. The reviewed ApplyFlatSource, ApplyCompareSource, ApplyArithmeticSource, ApplyMemorySource, ApplyCopySource and ApplyDataSource equations cover all original cases and the source-operation fallback, including malformed operands, bounds errors, thunk updates, FFI final events and independent compiler/FFI state types. The source numeric and float cases preserve the reviewed binary64 rational-cut dependency; representation and probes do not constitute a cross-language proof."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_opapp_source",
+    "reviewer": "Compared the original Opapp case for arbitrary argument lists: do_app returns NONE because evaluate handles function application. Compiler and FFI payload types remain independent."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_eval_source",
+    "reviewer": "Compared the original Eval case for arbitrary argument lists: do_app returns NONE because evaluate handles dynamic evaluation. Compiler and FFI payload types remain independent."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_opderef_source",
+    "reviewer": "Compared the typed original source-operation fallback: Opderef has no preceding flat do_app case and returns NONE for every argument list. Compiler and FFI payload types remain independent."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_aallocEmpty_source",
+    "reviewer": "Compared the typed original source-operation fallback: AallocEmpty has no preceding flat do_app case and returns NONE for every argument list. Compiler and FFI payload types remain independent."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_envId_source",
+    "reviewer": "Compared the typed original source-operation fallback: Env_id has no preceding flat do_app case and returns NONE for every argument list. Compiler and FFI payload types remain independent."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyArithmeticSource.lean",
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
     "hol_name": "do_app_def",
