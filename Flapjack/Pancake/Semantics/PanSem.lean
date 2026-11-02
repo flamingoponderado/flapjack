@@ -12,9 +12,11 @@ public import Flapjack.PanValueFfiClockSemantics
 Source reference: `cakeml/pancake/semantics/panSemScript.sml:556-736`
 (`evaluate_def`). The HOL source evaluates one `panLang$prog` against a state
 whose `code` field is a finite map. `PanSemEvaluateState` is the existing
-list-backed executable compatibility boundary. `panSemEvaluateCodeState` is
-the production source-state entry point: it resolves every recursive Call and
-DecCall from the finite-support `PanSemState.code` map.
+list-backed executable compatibility boundary. `panSemEvaluateCodeState`
+resolves every recursive Call and DecCall from the source state's code map,
+but its optional no-access default is a legacy compatibility path. HOL-facing
+RV64 evaluation uses `panSemEvaluateRiscV64CodeState`, which derives its
+memory access from the state.
 
 The fuel is only Lean's termination guard. The compatibility entry point uses
 its legacy function list; the source-state entry point derives fuel from the
@@ -878,7 +880,9 @@ def panSemEvaluateCodeStateWithFuel
     (memoryAccess := memoryAccess) (contracts := contracts)
     (memoryHandler := memoryHandler)
 
-/-- Production source-state entry point with a finite-map-derived fuel bound. -/
+/-- Code-map entry with a finite-map-derived fuel bound. The no-access default
+    is a legacy compatibility mode; use the state-derived memory-model entry
+    for HOL-facing evaluation. -/
 def panSemEvaluateCodeState
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -955,7 +959,9 @@ theorem panSemCodeStateAfter_preserves_code
     | timeout _ _ _ _ => rfl
     | control control => cases control <;> rfl
 
-/-- Source-state entry point paired with its post-state projection. -/
+/-- Compatibility code-map entry paired with its post-state projection. The
+    no-access default has the same limitations as `panSemEvaluateCodeState`;
+    the RV64 state-owned post-state entry is in `PanSemStateEval`. -/
 def panSemEvaluateCodeStateWithPostState
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]

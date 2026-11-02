@@ -258,6 +258,20 @@ private def observesReturnedWord
   (panSemEvaluateRiscV64CodeState sourceFfiContext sourcePrimitive sourceFfiHandler
     (sourceCodeState false false) (.return (.loadByte (.const 0))))
 
+/- The post-state entry follows the same state-owned memory path, including
+   byte order and rejection outside the source memory domain. -/
+#guard observesReturnedWord
+  ((panSemEvaluateRiscV64CodeStateWithPostState sourceFfiContext sourcePrimitive sourceFfiHandler
+    (sourceCodeState false true) (.return (.loadByte (.const 0)))).map Prod.fst)
+  (BitVec.ofNat 64 0x88)
+#guard observesReturnedWord
+  ((panSemEvaluateRiscV64CodeStateWithPostState sourceFfiContext sourcePrimitive sourceFfiHandler
+    (sourceCodeState true true) (.return (.loadByte (.const 0)))).map Prod.fst)
+  (BitVec.ofNat 64 0x11)
+#guard isErrorControlResult
+  ((panSemEvaluateRiscV64CodeStateWithPostState sourceFfiContext sourcePrimitive sourceFfiHandler
+    (sourceCodeState false false) (.return (.loadByte (.const 0)))).map Prod.fst)
+
 #guard isWordResult
   (evalPanSemStateExp littleEndianState (.load .one (.const 0)))
   sourceMemoryWord
