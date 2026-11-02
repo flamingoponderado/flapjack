@@ -264,12 +264,22 @@ reassembly of the 21-bit immediate and the sign-extend roundtrip from the
 signed-20-bit range; `arm8_encoder_correct_loc_small` assembles the in-range
 `Loc` case. The six-instruction out-of-range lowering is still open.
 
+`Branch.lean` records the `JMP`-typed `BranchImmediate` instruction: its word
+(`btype = CALL` bit, the `00101` opcode and the 26-bit immediate), the
+`Encode`/`Decode` inverse, the reassembly of the branch immediate and the
+sign-extend roundtrip from the signed-28-bit range, and the `Run` reduction.
+The latter needs `arm8_ok`'s `EL = 0`, `TBI0 = false` and `TBI1 = false`: those
+make `BranchTo` skip the top-byte masking and write the target to `PC`
+unchanged.  `arm8Next_branchImmediate` shows that the branch hint is set, so
+`NextStateARM8` does not advance `PC` by four, and
+`arm8_encoder_correct_jump` assembles the `Jump` case with `n = 0`.
+
 Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
 `DecodeBitMasks`/`BitfieldMove`), and the `longDiv`, `addCarry`,
 `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
 `ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in `Carry.lean` and its
 `ConditionalCompareImmediate@64` facts in `Compare.lean`), `Mem`,
-`Fp`, `Jump`, `JumpCmp`, `Call`, `JumpReg` and `Loc` constructors.  `longDiv` lowers to
-`arm8EncodeFail`, so its case cannot be a faithful lowering without the
-intended instruction sequence.  The assembling `encoderCorrect arm8TargetL3`
-theorem waits on the remaining cases.
+`Fp`, `JumpCmp`, `Call`, `JumpReg` and the out-of-range `Loc` constructors.
+`longDiv` lowers to `arm8EncodeFail`, so its case cannot be a faithful lowering
+without the intended instruction sequence.  The assembling
+`encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
