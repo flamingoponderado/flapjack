@@ -122,6 +122,34 @@ Proof
   \\ fs [no_mti_def, ETA_THM]
 QED
 
+(* Literal replay of closPropsScript.sml:2165-2185, which is local in HOL. *)
+val case_eq_thms = pair_case_eq::bool_case_eq::list_case_eq::option_case_eq::map TypeBase.case_eq_of
+  [``:'a ffi_result``, ``:v``, ``:'a ref``, ``:closLang$op``, ``:closLang$mem_op``,
+   ``:closLang$int_op``, ``:closLang$word_op``, ``:closLang$block_op``, ``:closLang$glob_op``,
+   ``:word_size``, ``:eq_result``, ``:('a,'b) result``, ``:'a error_result``, ``:app_kind``]
+  |> LIST_CONJ;
+Theorem v_rel_do_eq_replay:
+    simple_val_rel vr ==>
+    (!y1 y2 x1 x2.
+      vr x1 y1 /\ vr x2 y2 ==>
+      do_eq x1 x2 = do_eq y1 y2) /\
+    (!y1 y2 x1 x2.
+      LIST_REL vr x1 y1 /\ LIST_REL vr x2 y2 ==>
+      do_eq_list x1 x2 = do_eq_list y1 y2)
+Proof
+  strip_tac \\ fs [simple_val_rel_def]
+  \\ ho_match_mp_tac closSemTheory.do_eq_ind \\ rw []
+  THEN1
+   (Cases_on `y1` \\ fs [] \\ rfs [] \\ rveq \\ fs []
+    \\ Cases_on `y2` \\ rfs [closSemTheory.do_eq_def]
+    \\ res_tac \\ fs [isClos_cases]
+    \\ imp_res_tac LIST_REL_LENGTH \\ fs [])
+  \\ once_rewrite_tac [closSemTheory.do_eq_def]
+  \\ fs [case_eq_thms]
+  \\ Cases_on `do_eq y1 y2` \\ fs []
+  \\ Cases_on `b` \\ fs []
+QED
+
 fun show label th =
   if null (hyp th) then
     (print label; print "="; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
@@ -162,3 +190,4 @@ val _ = show "vr_list_none_typed" closPropsTheory.vr_list_NONE;
 val _ = show "simple_value_append_typed" closPropsTheory.simple_val_rel_APPEND;
 val _ = show "list_to_value_inj_typed" closPropsTheory.list_to_v_INJ;
 val _ = show "simple_value_list_typed" closPropsTheory.simple_val_rel_list;
+val _ = show "value_equality_relation_typed" v_rel_do_eq_replay;

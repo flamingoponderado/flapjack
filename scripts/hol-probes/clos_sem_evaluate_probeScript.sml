@@ -43,3 +43,4 @@ val _ = show_thm "update_thunk_typed=" closSemTheory.update_thunk_def;
 val _ = show_thm "value_to_list_typed=" closSemTheory.v_to_list_def;
 val _ = show_thm "list_to_value_typed=" closSemTheory.list_to_v_def;
 val _ = show_thm "bool_value_typed=" closSemTheory.Boolv_def;
+val _ = show_thm "closure_equality_typed=" closSemTheory.do_eq_def;

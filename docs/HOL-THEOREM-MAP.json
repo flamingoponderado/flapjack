@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "hol_name": "v_rel_do_eq",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Equality.lean",
+    "lean_name": "simpleValRel_doEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed local theorem replay value_equality_relation_typed with closPropsScript.sml:2165-2185. Under the same simpleValRel premise, the first conjunct quantifies independently over four values and the second independently over four value lists, each with the same pair of relation premises and equality conclusion. The reviewed doEq and doEqList implement the source value/list clauses, and the helper proofs preserve closure and type-error cases. The probe replays the original local proof; it does not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ListRelations.lean",
     "statement_status": "reviewed_exact",
     "hol_name": "list_to_v_INJ",
@@ -113176,16 +113184,16 @@
     "hol_name": "do_eq_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
     "lean_name": "doEq",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared closure_equality_typed and do_eq_def: integer, fixed-word, byte-vector and block comparisons, length and tag checks, reference-flag error, all closure-pair true cases and all mismatched-constructor errors match the source. The paired doEqList handles the other conjunct. Reviewed Value and EqResult carriers are used."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "do_eq_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem.lean",
     "lean_name": "doEqList",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the list conjuncts of closure_equality_typed and do_eq_def: two empty lists return true, paired heads continue only after true, false or type error is returned immediately, and mismatched lengths return false. The paired doEq handles the value conjunct; reviewed Value and EqResult carriers are used."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",

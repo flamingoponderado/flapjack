@@ -34,3 +34,4 @@ vr_list_none_typed=∀(x :v) (x1 :v) (vr :v -> v -> bool). simple_val_rel vr ∧
 simple_value_append_typed=∀(xs1 :v list) (ys1 :v list) (xs2 :v list) (ys2 :v list) (vr :v -> v -> bool). simple_val_rel vr ∧ vr (list_to_v xs1) (list_to_v xs2) ∧ vr (list_to_v ys1) (list_to_v ys2) ⇒ vr (list_to_v (xs1 ++ ys1)) (list_to_v (xs2 ++ ys2))
 list_to_value_inj_typed=∀(xs :v list) (ys :v list). list_to_v xs = list_to_v ys ⇔ xs = ys
 simple_value_list_typed=∀(x :v) (x1 :v) (xs :v list) (vr :v -> v -> bool). simple_val_rel vr ∧ vr x x1 ∧ v_to_list x1 = SOME xs ⇒ ∃(xs1 :v list). vr (list_to_v xs1) (list_to_v xs) ∧ v_to_list x = SOME xs1
+value_equality_relation_typed=simple_val_rel (vr :v -> v -> bool) ⇒ (∀(y1 :v) (y2 :v) (x1 :v) (x2 :v). vr x1 y1 ∧ vr x2 y2 ⇒ do_eq x1 x2 = do_eq y1 y2) ∧ ∀(y1 :v list) (y2 :v list) (x1 :v list) (x2 :v list). LIST_REL vr x1 y1 ∧ LIST_REL vr x2 y2 ⇒ do_eq_list x1 x2 = do_eq_list y1 y2
