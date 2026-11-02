@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Differentially test mutated CakeML S-expression input against a pinned compiler."""
 import argparse
+import hashlib
 import importlib.util
 import random
 import subprocess
@@ -20,6 +21,19 @@ BYTES = [b'(', b')', b' ', b'.', b'\n', b'\t', b'\r', b'"', b'\\', b"'",
          b'0', b'9', b'a', b'_', b'\x00', b'\xff']
 FLAGS = ['--target=riscv', '--sexp=true', '--print_sexp', '--exclude_prelude=true',
          '--skip_type_inference=true']
+COMPILE_FLAGS = ['--target=riscv', '--sexp=true', '--exclude_prelude=true',
+                 '--skip_type_inference=true']
+PRIMITIVES = [
+    'Opapp', 'Opassign', 'Opref', 'Opderef', 'Equality', 'Aw8alloc', 'Aw8sub',
+    'Aw8length', 'Aw8update', 'CopyStrStr', 'CopyStrAw8', 'CopyAw8Str',
+    'CopyAw8Aw8', 'Strsub', 'Strlen', 'Implode', 'Explode', 'Strcat',
+    'VfromList', 'Vsub', 'Vlength', 'Aalloc', 'AallocEmpty', 'Asub', 'Alength',
+    'Aupdate', 'ConfigGC', 'ListAppend', '(FFI . "test")', '(Arith Add . IntT)',
+    '(Arith Mul . BoolT)', '(FromTo IntT . StrT)', '(Shift8Lsl . 3)', 'Eval',
+    'Envid', 'Vsubunsafe', 'Asubunsafe', 'Aupdateunsafe', 'Aw8subunsafe',
+    'Aw8updateunsafe', 'XorAw8Strunsafe', 'AallocFixed', 'ForceThunk',
+    '(AllocThunk . Evaluated)', '(UpdateThunk . NotEvaluated)',
+]
 
 
 def mutate(rng):
@@ -37,8 +51,8 @@ def mutate(rng):
     return bytes(source)
 
 
-def run(executable, source, timeout):
-    result = subprocess.run([str(executable), *FLAGS], input=source, capture_output=True, timeout=timeout)
+def run(executable, source, timeout, flags=FLAGS):
+    result = subprocess.run([str(executable), *flags], input=source, capture_output=True, timeout=timeout)
     return result.returncode, result.stdout, result.stderr
 
 
@@ -49,6 +63,8 @@ def main():
     parser.add_argument('--seed', type=int, default=9127304)
     parser.add_argument('--count', type=int, default=1200)
     parser.add_argument('--timeout', type=float, default=15)
+    parser.add_argument('--primitive-arities', action='store_true',
+                        help='also compare complete compiled output for bootstrap primitives at arities 0 through 3')
     args = parser.parse_args()
     parity.check_pinned_reference(args.reference)
     rng = random.Random(args.seed)
@@ -60,6 +76,20 @@ def main():
             raise SystemExit(f'case {index}, seed {args.seed}: {source!r}\n'
                              f'original: {expected!r}\nflapjack: {actual!r}')
     print(f'{args.count} mutated S-expression inputs matched (seed {args.seed})')
+    if args.primitive_arities:
+        for primitive in PRIMITIVES:
+            for arity in range(4):
+                arguments = ' '.join(['(Lit 1)'] * arity)
+                source = f'((Dlet (unk unk) "x" (App {primitive} ({arguments}))))'.encode('ascii')
+                expected = run(args.reference, source, args.timeout, COMPILE_FLAGS)
+                actual = run(args.cake, source, args.timeout, COMPILE_FLAGS)
+                if actual != expected:
+                    def summary(result):
+                        code, stdout, stderr = result
+                        return (code, len(stdout), hashlib.sha256(stdout).hexdigest(), stderr)
+                    raise SystemExit(f'primitive {primitive}, arity {arity}: {source!r}\n'
+                                     f'original: {summary(expected)!r}\nflapjack: {summary(actual)!r}')
+        print(f'{len(PRIMITIVES) * 4} bootstrap primitive/arity outputs matched')
 
 
 if __name__ == '__main__':

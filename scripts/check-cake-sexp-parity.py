@@ -52,6 +52,11 @@ RAW_PROGRAMS = {
     'dynamic_eval': '((Dlet (unk unk) "x" (App Eval ((Lit 0) (Lit 0) (Lit 0) (Lit 0) (Con NONE nil) (Con NONE nil)))))',
     'evaluated_thunk': '((Dlet (unk unk) "x" (App (AllocThunk . Evaluated) ((Lit 1)))) (Dlet (unk unk) "y" (App ForceThunk ((Var (Short "x"))))))',
     'pending_thunk': '((Dlet (unk unk) "x" (App (AllocThunk . NotEvaluated) ((Fun "v" (Lit 7))))) (Dlet (unk unk) "y" (App ForceThunk ((Var (Short "x"))))))',
+    'direct_ffi': '((Dlet (unk unk) "x" (App (FFI . "test") ((Lit 1) (Lit 1)))))',
+    'fixed_allocation': '((Dlet (unk unk) "x" (App AallocFixed ((Lit 1) (Lit 1)))))',
+    'unsafe_byte_subscript': '((Dlet (unk unk) "x" (App Aw8subunsafe ((Lit 1) (Lit 1)))))',
+    'unsafe_byte_xor': '((Dlet (unk unk) "x" (App XorAw8Strunsafe ((Lit 1) (Lit 1) (Lit 1)))))',
+    'pending_thunk_update': '((Dlet (unk unk) "x" (App (UpdateThunk . NotEvaluated) ((Lit 1) (Lit 1)))))',
 }
 RAW_FLAGS = ['--sexp=true', '--target=riscv', '--skip_type_inference=true', '--exclude_prelude=true']
 BAD_INPUTS = ['', '(', '(1 . 2)', '(garbage)', '((Dlet))', '((Denv "\\\\20"))']

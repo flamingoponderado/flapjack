@@ -898,8 +898,10 @@ float-pattern and empty-match diagnostics, error precedence, and type, assembly,
 and S-expression output modes. It checks large inputs with 20,000 declarations
 and a 100,000-byte name. With type inference disabled, complete-output cases
 also exercise direct,
-sequential, module, and local `Denv` declarations and the `Envid` and `Eval`
-primitives. To compare a
+sequential, module, and local `Denv` declarations, `Envid`, `Eval`, FFI,
+fixed allocation, unsafe byte operations, and thunk primitives. These AST
+fixtures compare compiler output; they do not establish successful execution
+of the supplied primitive arguments. To compare a
 complete exported compiler AST, add `--bootstrap-sexp /path/to/compiler.sexpr`
 alongside `--check-reference`; this compares type-reporting output with type
 inference disabled, using the bootstrap's heap and stack settings. The direct
@@ -909,7 +911,10 @@ AST-decoder correspondence have not been proved.
 `python3 scripts/fuzz-cake-sexp-input.py --reference /path/to/pinned/cake`
 compares exit status, stdout and stderr for mutated S-expression AST inputs,
 including malformed delimiters and arbitrary byte values. The seed and count
-can be changed to explore additional cases.
+can be changed to explore additional cases. Add `--primitive-arities` to
+compare complete compiled output for 45 bootstrap primitives at arities zero
+through three with type inference disabled. This also exercises malformed
+primitive applications without claiming they are well typed.
 
 An additional unverified bootstrap provides an original compiler built from
 the pinned translated CakeML compiler AST. Given the pinned CakeML and HOL
