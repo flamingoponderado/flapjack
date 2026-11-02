@@ -833,44 +833,47 @@ theorem arm8Enc_const_movK_length (r : Nat) (v : BitVec 64)
   simp only [arm8Encode_movK, List.length_append, List.length_cons, List.length_nil]
 
 
-/-- One `MoveWide .k` step preserves agreement on the source domain. -/
+/-- One `MoveWide .k` step preserves agreement on the source domain.  The byte
+facts are stated for `t`; agreement gives them for `s`. -/
 theorem arm8Next_movK_agree (d : BitVec 64 → Prop) (s t : arm8_state)
     (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
     (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5) (hrd : rd ≠ 31)
-    (hf : ∀ j, j < 4 → d (s.PC + BitVec.ofNat 64 j))
-    (hb0 : s.MEM s.PC = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 0).toNat))
-    (hb1 : s.MEM (s.PC + 1) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 8).toNat))
-    (hb2 : s.MEM (s.PC + 2) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 16).toNat))
-    (hb3 : s.MEM (s.PC + 3) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 24).toNat)) :
+    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
+    (hb0 : t.MEM t.PC = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 0).toNat))
+    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 8).toNat))
+    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 16).toNat))
+    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 24).toNat)) :
     Arm8L3Agree d (arm8Next s) (arm8Next t) := by
   have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
   obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
   obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
   have hal : Aligned (TN := 64) (s.PC, 4) = true := by
     rw [Aligned_four_iff]
-    simpa using (holAligned_iff 2 s.PC).mp halign
+    simpa [← h.pc] using (holAligned_iff 2 s.PC).mp halign
   have halt : Aligned (TN := 64) (t.PC, 4) = true := by
     rw [Aligned_four_iff]
     simpa using (holAligned_iff 2 t.PC).mp halignt
-  have hd0 : d s.PC := by simpa using hf 0 (by omega)
-  have hd1 : d (s.PC + 1) := by simpa using hf 1 (by omega)
-  have hd2 : d (s.PC + 2) := by simpa using hf 2 (by omega)
-  have hd3 : d (s.PC + 3) := by simpa using hf 3 (by omega)
-  have ht0 : t.MEM t.PC = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 0).toNat) := by
-    rw [← h.pc]
-    exact (h.mem s.PC hd0).symm.trans hb0
-  have ht1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 8).toNat) := by
-    rw [← h.pc]
-    exact (h.mem (s.PC + 1) hd1).symm.trans hb1
-  have ht2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 16).toNat) := by
-    rw [← h.pc]
-    exact (h.mem (s.PC + 2) hd2).symm.trans hb2
-  have ht3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 24).toNat) := by
-    rw [← h.pc]
-    exact (h.mem (s.PC + 3) hd3).symm.trans hb3
-  have hs := arm8Next_movK s hw imm16 rd hrd hexc0 hb0 hb1 hb2 hb3 hal he0 hel
-  have ht := arm8Next_movK t hw imm16 rd hrd hexc0t ht0 ht1 ht2 ht3 halt he0t helt
-  rw [hs, ht]
+  have hd0 : d t.PC := by simpa using hf 0 (by omega)
+  have hd1 : d (t.PC + 1) := by simpa using hf 1 (by omega)
+  have hd2 : d (t.PC + 2) := by simpa using hf 2 (by omega)
+  have hd3 : d (t.PC + 3) := by simpa using hf 3 (by omega)
+  have hs0 : s.MEM s.PC = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 0).toNat) := by
+    rw [h.pc]
+    exact (h.mem t.PC hd0).trans hb0
+  have hs1 : s.MEM (s.PC + 1) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 8).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 1) hd1).trans hb1
+  have hs2 : s.MEM (s.PC + 2) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 16).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 2) hd2).trans hb2
+  have hs3 : s.MEM (s.PC + 3) = BitVec.ofNat 8 ((arm8MoveWideWord .k hw imm16 rd >>> 24).toNat) := by
+    rw [h.pc]
+    exact (h.mem (t.PC + 3) hd3).trans hb3
+  have hsf : ∀ j, j < 4 → d (s.PC + BitVec.ofNat 64 j) := by
+    intro j hj; rw [h.pc]; exact hf j hj
+  have hss := arm8Next_movK s hw imm16 rd hrd hexc0 hs0 hs1 hs2 hs3 hal he0 hel
+  have htt := arm8Next_movK t hw imm16 rd hrd hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  rw [hss, htt]
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simp [h.pc]
   · simp only [X, h.reg]
@@ -880,5 +883,276 @@ theorem arm8Next_movK_agree (d : BitVec 64 → Prop) (s t : arm8_state)
   · simp [h.exc]
   · intro a ha
     simp only [h.mem a ha]
+
+
+/-! ## The four-instruction shape, step by step -/
+
+/-- The four `MoveWide .k` words of the constant lowering. -/
+abbrev arm8ConstMovKWord (k : Nat) (v : BitVec 64) (r : Nat) : BitVec 32 :=
+  arm8MoveWideWord .k (BitVec.ofNat 2 k) (BitVec.ofNat 16 ((v >>> (k * 16)).toNat))
+    (BitVec.ofNat 5 r)
+
+/-- The four `MoveWide .k` instructions of the constant lowering. -/
+abbrev arm8ConstMovKInsn (k : Nat) (v : BitVec 64) (r : Nat) : instruction :=
+  .Data (.«MoveWide@64» (1, .k, BitVec.ofNat 2 k, BitVec.ofNat 16 ((v >>> (k * 16)).toNat),
+    BitVec.ofNat 5 r))
+
+/-- The state after the first `MoveWide .k` step. -/
+def arm8ConstT1 (ms : arm8_state) (v : BitVec 64) (r : Nat) : arm8_state :=
+  { ms with branch_hint := none, REG := holUpdate (BitVec.ofNat 5 r) (Flapjack.RiscV.L3.holBitFieldInsert 15 0 (BitVec.ofNat 16 ((v >>> 0).toNat)) (X (BitVec.ofNat 5 r) ms)) ms.REG, PC := ms.PC + 4 }
+
+/-- The state after the second `MoveWide .k` step. -/
+def arm8ConstT2 (ms : arm8_state) (v : BitVec 64) (r : Nat) : arm8_state :=
+  { arm8ConstT1 ms v r with branch_hint := none, REG := holUpdate (BitVec.ofNat 5 r) (Flapjack.RiscV.L3.holBitFieldInsert 31 16 (BitVec.ofNat 16 ((v >>> 16).toNat)) (X (BitVec.ofNat 5 r) (arm8ConstT1 ms v r))) (arm8ConstT1 ms v r).REG, PC := (arm8ConstT1 ms v r).PC + 4 }
+
+/-- The state after the third `MoveWide .k` step. -/
+def arm8ConstT3 (ms : arm8_state) (v : BitVec 64) (r : Nat) : arm8_state :=
+  { arm8ConstT2 ms v r with branch_hint := none, REG := holUpdate (BitVec.ofNat 5 r) (Flapjack.RiscV.L3.holBitFieldInsert 47 32 (BitVec.ofNat 16 ((v >>> 32).toNat)) (X (BitVec.ofNat 5 r) (arm8ConstT2 ms v r))) (arm8ConstT2 ms v r).REG, PC := (arm8ConstT2 ms v r).PC + 4 }
+
+/-- The state after the fourth `MoveWide .k` step. -/
+def arm8ConstT4 (ms : arm8_state) (v : BitVec 64) (r : Nat) : arm8_state :=
+  { arm8ConstT3 ms v r with branch_hint := none, REG := holUpdate (BitVec.ofNat 5 r) (Flapjack.RiscV.L3.holBitFieldInsert 63 48 (BitVec.ofNat 16 ((v >>> 48).toNat)) (X (BitVec.ofNat 5 r) (arm8ConstT3 ms v r))) (arm8ConstT3 ms v r).REG, PC := (arm8ConstT3 ms v r).PC + 4 }
+
+
+/-- BitVec literal reassociation helpers for the four-instruction chain. -/
+theorem bv_add_4_1 (a : BitVec 64) : a + 4 + 1 = a + 5 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bv_add_4_2 (a : BitVec 64) : a + 4 + 2 = a + 6 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bv_add_4_3 (a : BitVec 64) : a + 4 + 3 = a + 7 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bv_add_4_4 (a : BitVec 64) : a + 4 + 4 = a + 8 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bv_add_8_1 (a : BitVec 64) : a + 8 + 1 = a + 9 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bv_add_8_2 (a : BitVec 64) : a + 8 + 2 = a + 10 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bv_add_8_3 (a : BitVec 64) : a + 8 + 3 = a + 11 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bv_add_8_4 (a : BitVec 64) : a + 8 + 4 = a + 12 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bv_add_12_1 (a : BitVec 64) : a + 12 + 1 = a + 13 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bv_add_12_2 (a : BitVec 64) : a + 12 + 2 = a + 14 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bv_add_12_3 (a : BitVec 64) : a + 12 + 3 = a + 15 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bv_add_12_4 (a : BitVec 64) : a + 12 + 4 = a + 16 := by
+  rw [BitVec.add_assoc]; congr 1
+
+/-- `Aligned` at size four from `holAligned 2`. -/
+theorem aligned_of_holAligned (pc : BitVec 64) (h : holAligned 2 pc = true) :
+    Aligned (TN := 64) (pc, 4) = true := by
+  rw [Aligned_four_iff]
+  simpa using (holAligned_iff 2 pc).mp h
+
+/-- The first `MoveWide .k` step reaches `arm8ConstT1`. -/
+theorem arm8Next_constT1 (ms : arm8_state) (v : BitVec 64) (r : Nat)
+    (hrd : (BitVec.ofNat 5 r) ≠ (31 : BitVec 5))
+    (hexc0 : ms.exception = exception.NoException)
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
+    (hb0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8ConstMovKWord 0 v r >>> 0).toNat))
+    (hb1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8ConstMovKWord 0 v r >>> 8).toNat))
+    (hb2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8ConstMovKWord 0 v r >>> 16).toNat))
+    (hb3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8ConstMovKWord 0 v r >>> 24).toNat)) :
+    arm8Next ms = arm8ConstT1 ms v r := by
+  unfold arm8ConstT1
+  exact arm8Next_movK ms 0 (BitVec.ofNat 16 ((v >>> 0).toNat)) (BitVec.ofNat 5 r)
+    hrd hexc0 hb0 hb1 hb2 hb3 hal he0 hel
+
+/-- The second `MoveWide .k` step reaches `arm8ConstT2`. -/
+theorem arm8Next_constT2 (ms : arm8_state) (v : BitVec 64) (r : Nat)
+    (hrd : (BitVec.ofNat 5 r) ≠ (31 : BitVec 5))
+    (hexc0 : ms.exception = exception.NoException)
+    (hal4 : Aligned (TN := 64) (ms.PC + 4, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
+    (hb4 : ms.MEM (ms.PC + 4) = BitVec.ofNat 8 ((arm8ConstMovKWord 1 v r >>> 0).toNat))
+    (hb5 : ms.MEM (ms.PC + 5) = BitVec.ofNat 8 ((arm8ConstMovKWord 1 v r >>> 8).toNat))
+    (hb6 : ms.MEM (ms.PC + 6) = BitVec.ofNat 8 ((arm8ConstMovKWord 1 v r >>> 16).toNat))
+    (hb7 : ms.MEM (ms.PC + 7) = BitVec.ofNat 8 ((arm8ConstMovKWord 1 v r >>> 24).toNat)) :
+    arm8Next (arm8ConstT1 ms v r) = arm8ConstT2 ms v r := by
+  unfold arm8ConstT2
+  have ht1pc : (arm8ConstT1 ms v r).PC = ms.PC + 4 := rfl
+  have ht1mem : ∀ a, (arm8ConstT1 ms v r).MEM a = ms.MEM a := fun _ => rfl
+  refine arm8Next_movK (arm8ConstT1 ms v r) 1 (BitVec.ofNat 16 ((v >>> 16).toNat))
+    (BitVec.ofNat 5 r) hrd ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · show (arm8ConstT1 ms v r).exception = exception.NoException
+    exact hexc0
+  · show (arm8ConstT1 ms v r).MEM (arm8ConstT1 ms v r).PC = _
+    rw [ht1pc, ht1mem]; simpa [arm8ConstMovKWord] using hb4
+  · show (arm8ConstT1 ms v r).MEM ((arm8ConstT1 ms v r).PC + 1) = _
+    rw [ht1pc, ht1mem, bv_add_4_1]; simpa [arm8ConstMovKWord] using hb5
+  · show (arm8ConstT1 ms v r).MEM ((arm8ConstT1 ms v r).PC + 2) = _
+    rw [ht1pc, ht1mem, bv_add_4_2]; simpa [arm8ConstMovKWord] using hb6
+  · show (arm8ConstT1 ms v r).MEM ((arm8ConstT1 ms v r).PC + 3) = _
+    rw [ht1pc, ht1mem, bv_add_4_3]; simpa [arm8ConstMovKWord] using hb7
+  · show Aligned (TN := 64) ((arm8ConstT1 ms v r).PC, 4) = true
+    rw [ht1pc]; exact hal4
+  · show (arm8ConstT1 ms v r).SCTLR_EL1.E0E = false
+    exact he0
+  · show (arm8ConstT1 ms v r).PSTATE.EL = (0 : BitVec 2)
+    exact hel
+
+/-- The third `MoveWide .k` step reaches `arm8ConstT3`. -/
+theorem arm8Next_constT3 (ms : arm8_state) (v : BitVec 64) (r : Nat)
+    (hrd : (BitVec.ofNat 5 r) ≠ (31 : BitVec 5))
+    (hexc0 : ms.exception = exception.NoException)
+    (hal8 : Aligned (TN := 64) (ms.PC + 8, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
+    (hb8 : ms.MEM (ms.PC + 8) = BitVec.ofNat 8 ((arm8ConstMovKWord 2 v r >>> 0).toNat))
+    (hb9 : ms.MEM (ms.PC + 9) = BitVec.ofNat 8 ((arm8ConstMovKWord 2 v r >>> 8).toNat))
+    (hb10 : ms.MEM (ms.PC + 10) = BitVec.ofNat 8 ((arm8ConstMovKWord 2 v r >>> 16).toNat))
+    (hb11 : ms.MEM (ms.PC + 11) = BitVec.ofNat 8 ((arm8ConstMovKWord 2 v r >>> 24).toNat)) :
+    arm8Next (arm8ConstT2 ms v r) = arm8ConstT3 ms v r := by
+  unfold arm8ConstT3
+  have ht1pc : (arm8ConstT1 ms v r).PC = ms.PC + 4 := rfl
+  have ht2pc : (arm8ConstT2 ms v r).PC = ms.PC + 8 := by
+    show (arm8ConstT1 ms v r).PC + 4 = ms.PC + 8
+    rw [ht1pc, bv_add_4_4]
+  have ht2mem : ∀ a, (arm8ConstT2 ms v r).MEM a = ms.MEM a := fun _ => rfl
+  have ht2exc : (arm8ConstT2 ms v r).exception = exception.NoException := hexc0
+  have ht2e0 : (arm8ConstT2 ms v r).SCTLR_EL1.E0E = false := he0
+  have ht2el : (arm8ConstT2 ms v r).PSTATE.EL = (0 : BitVec 2) := hel
+  refine arm8Next_movK (arm8ConstT2 ms v r) 2 (BitVec.ofNat 16 ((v >>> 32).toNat))
+    (BitVec.ofNat 5 r) hrd ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · exact ht2exc
+  · show (arm8ConstT2 ms v r).MEM (arm8ConstT2 ms v r).PC = _
+    rw [ht2pc, ht2mem]; simpa [arm8ConstMovKWord] using hb8
+  · show (arm8ConstT2 ms v r).MEM ((arm8ConstT2 ms v r).PC + 1) = _
+    rw [ht2pc, ht2mem, bv_add_8_1]; simpa [arm8ConstMovKWord] using hb9
+  · show (arm8ConstT2 ms v r).MEM ((arm8ConstT2 ms v r).PC + 2) = _
+    rw [ht2pc, ht2mem, bv_add_8_2]; simpa [arm8ConstMovKWord] using hb10
+  · show (arm8ConstT2 ms v r).MEM ((arm8ConstT2 ms v r).PC + 3) = _
+    rw [ht2pc, ht2mem, bv_add_8_3]; simpa [arm8ConstMovKWord] using hb11
+  · show Aligned (TN := 64) ((arm8ConstT2 ms v r).PC, 4) = true
+    rw [ht2pc]; exact hal8
+  · exact ht2e0
+  · exact ht2el
+
+/-- The fourth `MoveWide .k` step reaches `arm8ConstT4`. -/
+theorem arm8Next_constT4 (ms : arm8_state) (v : BitVec 64) (r : Nat)
+    (hrd : (BitVec.ofNat 5 r) ≠ (31 : BitVec 5))
+    (hexc0 : ms.exception = exception.NoException)
+    (hal12 : Aligned (TN := 64) (ms.PC + 12, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
+    (hb12 : ms.MEM (ms.PC + 12) = BitVec.ofNat 8 ((arm8ConstMovKWord 3 v r >>> 0).toNat))
+    (hb13 : ms.MEM (ms.PC + 13) = BitVec.ofNat 8 ((arm8ConstMovKWord 3 v r >>> 8).toNat))
+    (hb14 : ms.MEM (ms.PC + 14) = BitVec.ofNat 8 ((arm8ConstMovKWord 3 v r >>> 16).toNat))
+    (hb15 : ms.MEM (ms.PC + 15) = BitVec.ofNat 8 ((arm8ConstMovKWord 3 v r >>> 24).toNat)) :
+    arm8Next (arm8ConstT3 ms v r) = arm8ConstT4 ms v r := by
+  unfold arm8ConstT4
+  have ht1pc : (arm8ConstT1 ms v r).PC = ms.PC + 4 := rfl
+  have ht2pc : (arm8ConstT2 ms v r).PC = ms.PC + 8 := by
+    show (arm8ConstT1 ms v r).PC + 4 = ms.PC + 8
+    rw [ht1pc, bv_add_4_4]
+  have ht3pc : (arm8ConstT3 ms v r).PC = ms.PC + 12 := by
+    show (arm8ConstT2 ms v r).PC + 4 = ms.PC + 12
+    rw [ht2pc, bv_add_8_4]
+  have ht3mem : ∀ a, (arm8ConstT3 ms v r).MEM a = ms.MEM a := fun _ => rfl
+  have ht3exc : (arm8ConstT3 ms v r).exception = exception.NoException := hexc0
+  have ht3e0 : (arm8ConstT3 ms v r).SCTLR_EL1.E0E = false := he0
+  have ht3el : (arm8ConstT3 ms v r).PSTATE.EL = (0 : BitVec 2) := hel
+  refine arm8Next_movK (arm8ConstT3 ms v r) 3 (BitVec.ofNat 16 ((v >>> 48).toNat))
+    (BitVec.ofNat 5 r) hrd ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · exact ht3exc
+  · show (arm8ConstT3 ms v r).MEM (arm8ConstT3 ms v r).PC = _
+    rw [ht3pc, ht3mem]; simpa [arm8ConstMovKWord] using hb12
+  · show (arm8ConstT3 ms v r).MEM ((arm8ConstT3 ms v r).PC + 1) = _
+    rw [ht3pc, ht3mem, bv_add_12_1]; simpa [arm8ConstMovKWord] using hb13
+  · show (arm8ConstT3 ms v r).MEM ((arm8ConstT3 ms v r).PC + 2) = _
+    rw [ht3pc, ht3mem, bv_add_12_2]; simpa [arm8ConstMovKWord] using hb14
+  · show (arm8ConstT3 ms v r).MEM ((arm8ConstT3 ms v r).PC + 3) = _
+    rw [ht3pc, ht3mem, bv_add_12_3]; simpa [arm8ConstMovKWord] using hb15
+  · show Aligned (TN := 64) ((arm8ConstT3 ms v r).PC, 4) = true
+    rw [ht3pc]; exact hal12
+  · exact ht3e0
+  · exact ht3el
+
+
+/-- `holUpdate` at its own key. -/
+theorem holUpdate_self {α β : Type} [DecidableEq α] (a : α) (b : β) (f : α → β) :
+    Flapjack.RiscV.L3.holUpdate a b f a = b := by
+  simp [Flapjack.RiscV.L3.holUpdate]
+
+/-- Register value after the first `MoveWide .k` step. -/
+theorem arm8ConstT1_reg (ms : arm8_state) (v : BitVec 64) (r : Nat) :
+    (arm8ConstT1 ms v r).REG (BitVec.ofNat 5 r) =
+      Flapjack.RiscV.L3.holBitFieldInsert 15 0 (BitVec.ofNat 16 ((v >>> 0).toNat))
+        (X (BitVec.ofNat 5 r) ms) := by
+  show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 r)
+      (Flapjack.RiscV.L3.holBitFieldInsert 15 0 (BitVec.ofNat 16 ((v >>> 0).toNat))
+        (X (BitVec.ofNat 5 r) ms)) ms.REG (BitVec.ofNat 5 r) = _
+  rw [holUpdate_self]
+
+/-- Register value after the second `MoveWide .k` step. -/
+theorem arm8ConstT2_reg (ms : arm8_state) (v : BitVec 64) (r : Nat) :
+    (arm8ConstT2 ms v r).REG (BitVec.ofNat 5 r) =
+      Flapjack.RiscV.L3.holBitFieldInsert 31 16 (BitVec.ofNat 16 ((v >>> 16).toNat))
+        (X (BitVec.ofNat 5 r) (arm8ConstT1 ms v r)) := by
+  show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 r)
+      (Flapjack.RiscV.L3.holBitFieldInsert 31 16 (BitVec.ofNat 16 ((v >>> 16).toNat))
+        (X (BitVec.ofNat 5 r) (arm8ConstT1 ms v r))) (arm8ConstT1 ms v r).REG
+      (BitVec.ofNat 5 r) = _
+  rw [holUpdate_self]
+
+/-- Register value after the third `MoveWide .k` step. -/
+theorem arm8ConstT3_reg (ms : arm8_state) (v : BitVec 64) (r : Nat) :
+    (arm8ConstT3 ms v r).REG (BitVec.ofNat 5 r) =
+      Flapjack.RiscV.L3.holBitFieldInsert 47 32 (BitVec.ofNat 16 ((v >>> 32).toNat))
+        (X (BitVec.ofNat 5 r) (arm8ConstT2 ms v r)) := by
+  show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 r)
+      (Flapjack.RiscV.L3.holBitFieldInsert 47 32 (BitVec.ofNat 16 ((v >>> 32).toNat))
+        (X (BitVec.ofNat 5 r) (arm8ConstT2 ms v r))) (arm8ConstT2 ms v r).REG
+      (BitVec.ofNat 5 r) = _
+  rw [holUpdate_self]
+
+/-- Register value after the fourth `MoveWide .k` step. -/
+theorem arm8ConstT4_reg_step (ms : arm8_state) (v : BitVec 64) (r : Nat) :
+    (arm8ConstT4 ms v r).REG (BitVec.ofNat 5 r) =
+      Flapjack.RiscV.L3.holBitFieldInsert 63 48 (BitVec.ofNat 16 ((v >>> 48).toNat))
+        (X (BitVec.ofNat 5 r) (arm8ConstT3 ms v r)) := by
+  show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 r)
+      (Flapjack.RiscV.L3.holBitFieldInsert 63 48 (BitVec.ofNat 16 ((v >>> 48).toNat))
+        (X (BitVec.ofNat 5 r) (arm8ConstT3 ms v r))) (arm8ConstT3 ms v r).REG
+      (BitVec.ofNat 5 r) = _
+  rw [holUpdate_self]
+
+/-- The four-instruction chain writes `v` into the destination register. -/
+theorem arm8ConstT4_reg (ms : arm8_state) (v : BitVec 64) (r : Nat)
+    (hrd : (BitVec.ofNat 5 r) ≠ (31 : BitVec 5)) :
+    (arm8ConstT4 ms v r).REG (BitVec.ofNat 5 r) = v := by
+  have hbeq : (BitVec.ofNat 5 r == BitVec.ofNat 5 31) = false := by
+    rw [beq_eq_false_iff_ne]; exact hrd
+  rw [arm8ConstT4_reg_step]
+  simp only [X, hbeq, Bool.false_eq_true, if_false, BitVec.setWidth_eq]
+  rw [arm8ConstT3_reg]
+  simp only [X, hbeq, Bool.false_eq_true, if_false, BitVec.setWidth_eq]
+  rw [arm8ConstT2_reg]
+  simp only [X, hbeq, Bool.false_eq_true, if_false, BitVec.setWidth_eq]
+  rw [arm8ConstT1_reg]
+  simp only [X, hbeq, Bool.false_eq_true, if_false, BitVec.setWidth_eq]
+  rw [arm8MoveWideK_chain (ms.REG (BitVec.ofNat 5 r)) v]
+
+/-- The four-instruction chain advances the PC by sixteen. -/
+theorem arm8ConstT4_pc (ms : arm8_state) (v : BitVec 64) (r : Nat) :
+    (arm8ConstT4 ms v r).PC = ms.PC + 16 := by
+  have h1 : (arm8ConstT1 ms v r).PC = ms.PC + 4 := rfl
+  have h2 : (arm8ConstT2 ms v r).PC = ms.PC + 8 := by
+    show (arm8ConstT1 ms v r).PC + 4 = ms.PC + 8
+    rw [h1, bv_add_4_4]
+  have h3 : (arm8ConstT3 ms v r).PC = ms.PC + 12 := by
+    show (arm8ConstT2 ms v r).PC + 4 = ms.PC + 12
+    rw [h2, bv_add_8_4]
+  show (arm8ConstT3 ms v r).PC + 4 = ms.PC + 16
+  rw [h3, bv_add_12_4]
+
+/-- The four-instruction chain leaves memory untouched. -/
+theorem arm8ConstT4_mem (ms : arm8_state) (v : BitVec 64) (r : Nat) :
+    ∀ a, (arm8ConstT4 ms v r).MEM a = ms.MEM a := fun _ => rfl
+
+/-- The four-instruction chain leaves the exception flag untouched. -/
+theorem arm8ConstT4_exc (ms : arm8_state) (v : BitVec 64) (r : Nat) :
+    (arm8ConstT4 ms v r).exception = ms.exception := rfl
 
 end Flapjack.Compiler.Encoders.Arm8.L3
