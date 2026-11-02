@@ -389,4 +389,13 @@ theorem arm8Mul_ofNat (a b : BitVec 64) :
     a * b = BitVec.ofNat 64 (a.toNat * b.toNat) := by
   rfl
 
+
+/-- Reading a register other than the written one through the intermediate
+`longMul` state is unchanged. -/
+theorem arm8X_longMulT1 (ms : arm8_state) (hi : BitVec 64) (d : BitVec 5)
+    {a : BitVec 5} (h : a ≠ d) :
+    X (TN := 64) a { ms with branch_hint := none, REG := holUpdate d hi ms.REG, PC := ms.PC + 4 } =
+      X (TN := 64) a ms := by
+  simp [X, Flapjack.RiscV.L3.holUpdate, Ne.symm h]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
