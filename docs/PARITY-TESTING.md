@@ -427,7 +427,8 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 Use `--rich` for recursively generated integer programs that combine tuple
 patterns, nested local functions, higher-order closures, and shadowed bindings.
 These programs use the standard prelude, so the run checks complete assembly
-for accepted programs rather than only diagnostics for unbound arithmetic names:
+for accepted programs rather than only diagnostics for unbound arithmetic names.
+Seed `7438291` matched 40 complete outputs from the pinned compiler:
 
 ```sh
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 31428 --count 40
@@ -481,6 +482,7 @@ seed `651291` matched 600 cases. Seeds `803471`, `723987`, and `419023`
 matched another 200, 300, and 1,000 cases respectively. Seed `729081` matched
 200 cases; seed `1973104` matched 200 more. Single-edit mutation
 seed `945701` matched 400 cases.
+Deep-mutation seed `49730019` matched 400 further cases.
 
 Use `--unicode-mutations` to mutate source containing multibyte characters,
 comments, strings and diagnostic locations. Seed `325579` matched 400 cases

@@ -76,6 +76,50 @@ theorem evaluateApps_singleton {C F : Type} (fn : ClosSem.Value) (args : List Cl
           | nil => exact ⟨value, rfl⟩
           | cons other tail => simp at length
 
+/-- Applying the last argument first decomposes a reconstructed application
+chain. This uses the Lean evaluator; its HOL correspondence remains open. -/
+theorem evaluateApps_snoc {C F : Type} (args : List ClosSem.Value) (x fn : ClosSem.Value)
+    (state : ClosSem.State C F) :
+    evaluateApps fn (args ++ [x]) state =
+      match ClosSem.evaluateApp none fn [x] state with
+      | (.val [value], next) => evaluateApps value args next
+      | result => result := by
+  induction args generalizing fn state with
+  | nil =>
+    simp only [List.nil_append, evaluateApps]
+    cases h : ClosSem.evaluateApp none fn [x] state with
+    | mk result next =>
+      cases result with
+      | err error => rfl
+      | val values =>
+        cases values with
+        | nil => rfl
+        | cons value rest =>
+          cases rest <;> rfl
+  | cons y ys ih =>
+    simp only [List.cons_append, evaluateApps, ih]
+    cases h : ClosSem.evaluateApp none fn [x] state with
+    | mk result next =>
+      cases result with
+      | err error => rfl
+      | val values =>
+        cases values with
+        | nil => rfl
+        | cons value rest =>
+          cases rest <;> rfl
+
+/-- A failed closure lookup for the final argument stops the whole chain
+with the original state and a type error. -/
+theorem evaluateApps_snoc_badClosure {C F : Type} (args : List ClosSem.Value)
+    (x fn : ClosSem.Value) (state : ClosSem.State C F)
+    (bad : ClosSem.destClosure state.maxApp none fn [x] = none) :
+    evaluateApps fn (args ++ [x]) state = (.err (.abort .typeError), state) := by
+  have badApp : ClosSem.evaluateApp none fn [x] state = (.err (.abort .typeError), state) := by
+    rw [ClosSem.evaluateApp]
+    split <;> simp_all
+  rw [evaluateApps_snoc]
+  rw [badApp]
+
 /-- Reconstructed applications propagate an error from their argument list.
 This is a Lean-side evaluator property; HOL correspondence is still pending. -/
 theorem mkApps_argument_error {C F : Type} (traces : List BackendCommon.Tra)
