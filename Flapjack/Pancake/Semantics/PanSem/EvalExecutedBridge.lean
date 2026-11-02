@@ -550,4 +550,420 @@ theorem evalPanValueFieldsCounted_agree {σ : Type}
     (fun p hp => evalPanValueExp_agree state exact hrel hranged p.2 (he p hp))
   simpa [evalPanValueFieldsCounted, Option.map_map, Function.comp_def] using h
 
+
+/-- Restrict the function-backed source maps to the names used by one
+    expression. This expression-only view is finite even if the surrounding
+    executable state uses unrestricted lookup functions. -/
+def panSemExpressionSlice {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (e : Exp (RiscV.Word 64)) : PanSemState (RiscV.Word 64) (FfiState σ) :=
+  { state with
+    locals := fun name => if name ∈ expLocalVars e then state.locals name else none
+    globals := fun name => if name ∈ expGlobalVars e then state.globals name else none }
+
+theorem panSemExpressionSlice_locals_finite {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (e : Exp (RiscV.Word 64)) :
+    PanSemByteKeyFiniteSupport (panSemExpressionSlice state e).locals := by
+  refine ⟨(expLocalVars e).map ofString, ?_⟩
+  intro key hkey
+  have hm : toStringOfBytes key ∈ expLocalVars e := by
+    by_cases h : toStringOfBytes key ∈ expLocalVars e
+    · exact h
+    · simp [panSemExpressionSlice, h] at hkey
+  exact List.mem_map.mpr ⟨toStringOfBytes key, hm, ofString_toStringOfBytes key⟩
+
+theorem panSemExpressionSlice_globals_finite {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (e : Exp (RiscV.Word 64)) :
+    PanSemByteKeyFiniteSupport (panSemExpressionSlice state e).globals := by
+  refine ⟨(expGlobalVars e).map ofString, ?_⟩
+  intro key hkey
+  have hm : toStringOfBytes key ∈ expGlobalVars e := by
+    by_cases h : toStringOfBytes key ∈ expGlobalVars e
+    · exact h
+    · simp [panSemExpressionSlice, h] at hkey
+  exact List.mem_map.mpr ⟨toStringOfBytes key, hm, ofString_toStringOfBytes key⟩
+
+theorem panSemExpressionSlice_ranged {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (e : Exp (RiscV.Word 64))
+    (hranged : PanSemStateRelExecRanged state) :
+    PanSemStateRelExecRanged (panSemExpressionSlice state e) := by
+  refine ⟨?_, ?_, hranged.2.2⟩
+  · intro name value h
+    by_cases hm : name ∈ expLocalVars e
+    · exact hranged.1 name value (by simpa [panSemExpressionSlice, hm] using h)
+    · simp [panSemExpressionSlice, hm] at h
+  · intro name value h
+    by_cases hm : name ∈ expGlobalVars e
+    · exact hranged.2.1 name value (by simpa [panSemExpressionSlice, hm] using h)
+    · simp [panSemExpressionSlice, hm] at h
+
+/-- HOL-backed evaluation using only the finite set of lookups referenced by
+    the expression. It does not require finite support of the original maps. -/
+def evalPanSemStateExpViaHOLSlice {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (e : Exp (RiscV.Word 64)) : Option (PanValue (RiscV.Word 64)) :=
+  evalPanSemStateExpViaHOL (panSemExpressionSlice state e) hmem
+    (panSemExpressionSlice_locals_finite state e)
+    (panSemExpressionSlice_globals_finite state e) e
+
+/-- Trimming unused lookup keys does not affect source expression evaluation. -/
+theorem evalPanSemStateExp_expressionSlice {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (e : Exp (RiscV.Word 64)) :
+    evalPanSemStateExp (panSemExpressionSlice state e) e = evalPanSemStateExp state e := by
+  rw [evalPanSemStateExp_64_eq_previous, evalPanSemStateExp_64_eq_previous]
+  apply evalPanValueExp_lookup_congr
+  · intro name hm
+    simp [panSemExpressionSlice, hm]
+  · intro name hm
+    simp [panSemExpressionSlice, hm]
+
+/-- The finite slice adapter returns the production result under the byte-name
+    and memory representation invariants, without map-support assumptions. -/
+theorem evalPanSemStateExpViaHOLSlice_eq {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    evalPanSemStateExpViaHOLSlice state hmem e = evalPanSemStateExp state e := by
+  exact (evalPanSemStateExpViaHOL_eq (panSemExpressionSlice state e) hmem
+    (panSemExpressionSlice_locals_finite state e)
+    (panSemExpressionSlice_globals_finite state e)
+    (panSemExpressionSlice_ranged state e hranged) e he).trans
+      (evalPanSemStateExp_expressionSlice state e)
+
+/-- Convert a byte-keyed lookup with finite support to the canonical HOL map.
+    The support witness is erased; the executable lookup remains unchanged. -/
+def panSemByteKeyMapToHOL {α : Type}
+    (lookup : String → Option α) (encode : α → β)
+    (finite : PanSemByteKeyFiniteSupport lookup) : HolFiniteMapExact MlS β where
+  lookup key := (lookup (toStringOfBytes key)).map encode
+  finiteSupport := by
+    obtain ⟨keys, hkeys⟩ := finite
+    refine ⟨keys, ?_⟩
+    intro key hkey
+    apply hkeys key
+    intro hnone
+    simp [hnone] at hkey
+
+/-- Runtime expression view. Memory is totalized as for `panSemMemoryExactOf`;
+    correspondence with the production evaluator requires word-valued memory
+    on the domain, but no proof is required to construct or execute this view. -/
+def panSemExpressionSliceRuntimeView {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (e : Exp (RiscV.Word 64)) : PanSemStateFiniteExact 64 σ where
+  locals := panSemByteKeyMapToHOL (panSemExpressionSlice state e).locals panValueToHOL
+    (panSemExpressionSlice_locals_finite state e)
+  globals := panSemByteKeyMapToHOL (panSemExpressionSlice state e).globals panValueToHOL
+    (panSemExpressionSlice_globals_finite state e)
+  structs := panStructContextToHOL state.structs
+  code := HolFiniteMapExact.empty
+  eshapes := HolFiniteMapExact.empty
+  memory := panSemMemoryExactOf state.memory
+  memaddrs := fun address => state.memaddrs address = true
+  shMemaddrs := fun address => state.sharedMemaddrs address = true
+  clock := state.clock
+  be := state.be
+  ffi := panSemExpressionHolFfi state
+  baseAddr := state.baseAddress
+  topAddr := state.topAddress
+
+/-- The executable view is the existing finite expression view whenever the
+    source memory meets the representation invariant. -/
+theorem panSemExpressionSliceRuntimeView_eq {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (e : Exp (RiscV.Word 64)) :
+    panSemExpressionSliceRuntimeView state e =
+      panSemExpressionView (panSemExpressionSlice state e) hmem
+        (panSemExpressionSlice_locals_finite state e)
+        (panSemExpressionSlice_globals_finite state e) := by
+  rfl
+
+/-- Evaluate an expression via the reviewed HOL evaluator without requiring
+    runtime proof arguments or finite support of the original source maps.
+    Its memory totalization matches the production evaluator on states with
+    word-valued memory throughout the source domain. -/
+def evalPanSemStateExpViaHOLRuntime {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (e : Exp (RiscV.Word 64)) : Option (PanValue (RiscV.Word 64)) :=
+  (@PanSemStateFiniteExact.evalHOLFinite 64 σ _ (panSemExpressionSliceRuntimeView state e)
+    (fun address => inferInstanceAs (Decidable (state.memaddrs address = true))) (expToHOL e)).map
+      panValueOfHOL
+
+/-- The proof-free runtime adapter agrees with production on the reviewed
+    memory and byte-name representation boundary. -/
+theorem evalPanSemStateExpViaHOLRuntime_eq {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    evalPanSemStateExpViaHOLRuntime state e = evalPanSemStateExp state e := by
+  exact evalPanSemStateExpViaHOLSlice_eq state hmem hranged e he
+
+/-- For the production partial-memory carrier, retain only domain addresses
+    containing a word. The resulting state has a total HOL word-memory view. -/
+def panSemExpressionWordDomain {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    PanSemState (RiscV.Word 64) (FfiState σ) :=
+  { state with memaddrs := fun address => state.memaddrs address &&
+      match state.memory address with
+      | some (.word _) => true
+      | _ => false }
+
+theorem panSemExpressionWordDomain_memoryRel {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    PanSemMemoryRel (panSemExpressionWordDomain state).memaddrs
+      (panSemExpressionWordDomain state).memory (panSemMemoryExactOf state.memory) := by
+  apply panSemMemoryRel_of_partial
+  intro address h
+  simp only [panSemExpressionWordDomain, Bool.and_eq_true] at h
+  cases hv : state.memory address with
+  | none => simp [hv] at h
+  | some value =>
+      cases value with
+      | word bits => exact ⟨bits, hv⟩
+      | rStruct fields => simp [hv] at h
+      | nStruct name fields => simp [hv] at h
+
+/-- Proof-free expression evaluation via HOL with a domain restricted to
+    present word cells. This preserves HOL memory's total-word representation
+    while retaining production failure for missing or non-word cells. -/
+def evalPanSemStateExpViaHOLWordDomain {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (e : Exp (RiscV.Word 64)) : Option (PanValue (RiscV.Word 64)) :=
+  evalPanSemStateExpViaHOLRuntime (panSemExpressionWordDomain state) e
+
+/-- The restricted-domain HOL route agrees with the state-owned evaluator on
+    that same domain, for byte-ranged names. -/
+theorem evalPanSemStateExpViaHOLWordDomain_eq_restricted {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    evalPanSemStateExpViaHOLWordDomain state e =
+      evalPanSemStateExp (panSemExpressionWordDomain state) e := by
+  exact evalPanSemStateExpViaHOLRuntime_eq (panSemExpressionWordDomain state)
+    (panSemExpressionWordDomain_memoryRel state) hranged e he
+
+/-- Restricting the domain to present word cells does not change any source
+    expression result. In particular, failed partial-memory reads remain
+    failures instead of becoming reads of the totalized zero cell. -/
+private theorem panSemWordDomain_readWord (s : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    panValueFlatReadWord s.memory panSemBitVec64BytesInWord
+      (some (panSemWordMemoryAccess (panSemExpressionWordDomain s))) =
+    panValueFlatReadWord s.memory panSemBitVec64BytesInWord
+      (some (panSemWordMemoryAccess s)) := by
+  funext a
+  simp only [panValueFlatReadWord, panSemWordMemoryAccess, panValueMemoryAccessOfModel,
+    panSemExpressionWordDomain]
+  by_cases hd : s.memaddrs a = true
+  · simp only [hd, Bool.true_and]
+    cases hm : s.memory a with
+    | none => simp
+    | some v => cases v <;> simp
+  · simp [hd]
+private theorem panSemWordDomain_readByte (s : PanSemState (RiscV.Word 64) (FfiState σ)) (a : RiscV.Word 64) :
+    (panSemWordMemoryAccess (panSemExpressionWordDomain s)).readByte
+      (panSemWordMemoryAccess (panSemExpressionWordDomain s)).domain s.memory panSemBitVec64BytesInWord a =
+    (panSemWordMemoryAccess s).readByte (panSemWordMemoryAccess s).domain s.memory panSemBitVec64BytesInWord a := by
+  simp only [panSemWordMemoryAccess, panValueMemoryAccessOfModel,
+    panSemExpressionWordDomain, panModelReadByte]
+  generalize h : (panSemWordModel (width := 64)).byteAlign panSemBitVec64BytesInWord a = aligned
+  by_cases hd : s.memaddrs aligned = true
+  · simp only [hd, Bool.true_and]
+    cases hm : s.memory aligned with
+    | none => simp [hm, panValueWordMemory]
+    | some v => cases v <;> simp [hm, panValueWordMemory]
+  · simp [hd]
+private theorem panSemWordDomain_read32 (s : PanSemState (RiscV.Word 64) (FfiState σ)) (a : RiscV.Word 64) :
+    (panSemWordMemoryAccess (panSemExpressionWordDomain s)).read32
+      (panSemWordMemoryAccess (panSemExpressionWordDomain s)).domain s.memory panSemBitVec64BytesInWord a =
+    (panSemWordMemoryAccess s).read32 (panSemWordMemoryAccess s).domain s.memory panSemBitVec64BytesInWord a := by
+  simp only [panSemWordMemoryAccess, panValueMemoryAccessOfModel,
+    panSemExpressionWordDomain, panModelRead32]
+  split
+  · generalize h : (panSemWordModel (width := 64)).byteAlign panSemBitVec64BytesInWord a = aligned
+    by_cases hd : s.memaddrs aligned = true
+    · simp only [hd, Bool.true_and]
+      cases hm : s.memory aligned with
+      | none => simp [hm, panValueWordMemory]
+      | some v => cases v <;> simp [hm, panValueWordMemory]
+    · simp [hd]
+  · rfl
+theorem evalPanSemStateExp_wordDomain (s : PanSemState (RiscV.Word 64) (FfiState σ))
+    (e : Exp (RiscV.Word 64)) :
+    evalPanSemStateExp (panSemExpressionWordDomain s) e = evalPanSemStateExp s e := by
+  rw [evalPanSemStateExp_64_eq_previous, evalPanSemStateExp_64_eq_previous]
+  have hw := panSemWordDomain_readWord s
+  have hb := panSemWordDomain_readByte s
+  have hi := panSemWordDomain_read32 s
+  have hload : ∀ shape address,
+      panValueFlatLoad s.structs s.memory panSemBitVec64BytesInWord address shape
+        (some (panSemWordMemoryAccess (panSemExpressionWordDomain s))) =
+      panValueFlatLoad s.structs s.memory panSemBitVec64BytesInWord address shape
+        (some (panSemWordMemoryAccess s)) := by
+    intro shape address
+    simp only [panValueFlatLoad, hw]
+  change evalPanValueExp s.structs s.locals s.globals s.memory s.baseAddress s.topAddress
+      panSemBitVec64BytesInWord e (some (panSemWordMemoryAccess (panSemExpressionWordDomain s))) =
+    evalPanValueExp s.structs s.locals s.globals s.memory s.baseAddress s.topAddress
+      panSemBitVec64BytesInWord e (some (panSemWordMemoryAccess s))
+  have hmain : ∀ (e : Exp (RiscV.Word 64)) (access : Option (PanValueMemoryAccess (RiscV.Word 64))),
+      evalPanValueExp s.structs s.locals s.globals s.memory s.baseAddress s.topAddress
+        panSemBitVec64BytesInWord e (some (panSemWordMemoryAccess (panSemExpressionWordDomain s))) =
+      evalPanValueExp s.structs s.locals s.globals s.memory s.baseAddress s.topAddress
+        panSemBitVec64BytesInWord e (some (panSemWordMemoryAccess s)) := by
+    apply evalPanValueExp.induct
+      (motive1 := fun es _ =>
+        evalPanValueExp.evalPanValueExps s.structs s.locals s.globals s.memory s.baseAddress s.topAddress
+          panSemBitVec64BytesInWord es (some (panSemWordMemoryAccess (panSemExpressionWordDomain s))) =
+        evalPanValueExp.evalPanValueExps s.structs s.locals s.globals s.memory s.baseAddress s.topAddress
+          panSemBitVec64BytesInWord es (some (panSemWordMemoryAccess s)))
+      (motive2 := fun e _ =>
+        evalPanValueExp s.structs s.locals s.globals s.memory s.baseAddress s.topAddress
+          panSemBitVec64BytesInWord e (some (panSemWordMemoryAccess (panSemExpressionWordDomain s))) =
+        evalPanValueExp s.structs s.locals s.globals s.memory s.baseAddress s.topAddress
+          panSemBitVec64BytesInWord e (some (panSemWordMemoryAccess s)))
+      (motive3 := fun fs _ =>
+        evalPanValueExp.evalPanValueFields s.structs s.locals s.globals s.memory s.baseAddress s.topAddress
+          panSemBitVec64BytesInWord fs (some (panSemWordMemoryAccess (panSemExpressionWordDomain s))) =
+        evalPanValueExp.evalPanValueFields s.structs s.locals s.globals s.memory s.baseAddress s.topAddress
+          panSemBitVec64BytesInWord fs (some (panSemWordMemoryAccess s)))
+    all_goals
+      intros
+      simp only [evalPanValueExp, evalPanValueExp.evalPanValueExps,
+        evalPanValueExp.evalPanValueFields, *]
+    all_goals rfl
+
+  exact hmain e none
+
+/-- The proof-free HOL route agrees with the state-owned evaluator for every
+    memory map, assuming only the byte-name boundary. -/
+theorem evalPanSemStateExpViaHOLWordDomain_eq {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    evalPanSemStateExpViaHOLWordDomain state e = evalPanSemStateExp state e :=
+  (evalPanSemStateExpViaHOLWordDomain_eq_restricted state hranged e he).trans
+    (evalPanSemStateExp_wordDomain state e)
+
+/-- Execute a list of source expressions through the same finite HOL view as
+    `evalPanSemStateExpViaHOL`. This is the adapter needed for call and
+    primitive arguments; failure of any expression fails the whole list. -/
+def evalPanSemStateExpsViaHOL {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals)
+    (es : List (Exp (RiscV.Word 64))) : Option (List (PanValue (RiscV.Word 64))) :=
+  (@PanSemStateFiniteExact.evalListHOLFinite 64 σ _ (panSemExpressionView state hmem hloc hglob)
+    (panSemExpressionViewMemDecider state hmem hloc hglob) (es.map expToHOL)).map
+      (List.map panValueOfHOL)
+
+/-- Re-encoding the list adapter recovers the exact finite HOL result,
+    including failure. -/
+theorem evalPanSemStateExpsViaHOL_toHOL {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals)
+    (es : List (Exp (RiscV.Word 64))) :
+    Option.map (List.map panValueToHOL) (evalPanSemStateExpsViaHOL state hmem hloc hglob es) =
+      @PanSemStateFiniteExact.evalListHOLFinite 64 σ _ (panSemExpressionView state hmem hloc hglob)
+        (panSemExpressionViewMemDecider state hmem hloc hglob) (es.map expToHOL) := by
+  simp [evalPanSemStateExpsViaHOL, Option.map_map, List.map_map, Function.comp_def]
+
+/-- Counted call arguments agree with the isolated finite HOL view of the
+    production state. As with the single-expression theorem, this requires no
+    assumptions about the code map, exception shapes, or FFI. -/
+theorem evalPanValueExpsCounted_isolatedView_agree {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals)
+    (hranged : PanSemStateRelExecRanged state)
+    (es : List (Exp (RiscV.Word 64))) (he : ∀ e ∈ es, ExpByteRanged e) :
+    Option.map (fun result => result.1.map panValueToHOL)
+        (evalPanValueExpsCounted state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord es
+          (memoryAccess := some (panSemBitVec64MemoryAccess state))) =
+      @PanSemStateFiniteExact.evalListHOLFinite 64 σ _ (panSemExpressionView state hmem hloc hglob)
+        (panSemExpressionViewMemDecider state hmem hloc hglob) (es.map expToHOL) := by
+  have h := @evalPanValueExps_eq_evalListHOLExact_of σ state.structs state.locals
+    state.globals state.memory state.baseAddress state.topAddress
+    panSemBitVec64BytesInWord (some (panSemBitVec64MemoryAccess state))
+    (panSemExpressionView state hmem hloc hglob)
+    (panSemExpressionViewMemDecider state hmem hloc hglob) es
+    (fun e h => by
+      simpa [evalPanSemStateExp_64_eq_previous] using
+        evalPanSemStateExp_isolatedView_agree state hmem hloc hglob hranged e (he e h))
+  simpa [evalPanValueExpsCounted, evalPanValueExps, Option.map_map, Function.comp_def] using h
+
+/-- Decoding the finite HOL argument list agrees with the state-owned source
+    evaluator when source names and values satisfy the byte-range boundary. -/
+theorem evalPanSemStateExpsViaHOL_eq {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals)
+    (hranged : PanSemStateRelExecRanged state)
+    (es : List (Exp (RiscV.Word 64))) (he : ∀ e ∈ es, ExpByteRanged e) :
+    evalPanSemStateExpsViaHOL state hmem hloc hglob es = evalPanSemStateExps state es := by
+  have hagree := evalPanValueExpsCounted_isolatedView_agree state hmem hloc hglob hranged es he
+  simp only [evalPanValueExpsCounted, Option.map_map, Function.comp_def] at hagree
+  rw [← evalPanSemStateExps_64_eq_previous] at hagree
+  unfold evalPanSemStateExpsViaHOL
+  have hdecode := congrArg (Option.map (List.map panValueOfHOL)) hagree
+  cases hvalues : evalPanSemStateExps state es with
+  | none => simpa [hvalues] using hdecode.symm
+  | some values =>
+      have hstruct : evalPanSemStateExp state (.rStruct es) = some (.rStruct values) := by
+        have hvals := hvalues
+        rw [evalPanSemStateExps_64_eq_previous] at hvals
+        unfold evalPanValueExps at hvals
+        rw [evalPanSemStateExp_64_eq_previous]
+        simp [evalPanValueExp, hvals]
+      have hnames : Flapjack.Pancake.PanLang.ListExpByteRanged es := by
+        exact (Flapjack.Pancake.PanLang.listExpByteRanged_iff_forall_mem es).2 he
+      have hr := evalPanSemStateExp_byteRanged state hranged (.rStruct es) hnames _ hstruct
+      have hv : ∀ value ∈ values, PanValueByteRanged value := by
+        simpa [PanValueByteRanged] using hr
+      have hround : (values.map panValueToHOL).map panValueOfHOL = values := by
+        calc
+          (values.map panValueToHOL).map panValueOfHOL = values.map id := by
+            rw [List.map_map]
+            apply List.map_congr_left
+            intro value hvalue
+            exact panValueOfHOL_panValueToHOL value (hv value hvalue)
+          _ = values := List.map_id values
+      simpa [hvalues, Option.map_map, Function.comp_def, hround] using hdecode.symm
+
+/-- Counted named-field expressions agree with the isolated finite HOL view,
+    including failures from a field expression. -/
+theorem evalPanValueFieldsCounted_isolatedView_agree {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))
+    (hloc : PanSemByteKeyFiniteSupport state.locals)
+    (hglob : PanSemByteKeyFiniteSupport state.globals)
+    (hranged : PanSemStateRelExecRanged state)
+    (fields : List (FieldName × Exp (RiscV.Word 64)))
+    (he : ∀ p ∈ fields, ExpByteRanged p.2) :
+    Option.map (fun result => result.1.map (fun p => (ofString p.1, panValueToHOL p.2)))
+        (evalPanValueFieldsCounted state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord fields
+          (memoryAccess := some (panSemBitVec64MemoryAccess state))) =
+      @PanSemStateFiniteExact.evalListFieldsHOLFinite 64 σ _
+        (panSemExpressionView state hmem hloc hglob)
+        (panSemExpressionViewMemDecider state hmem hloc hglob)
+        (fields.map (fun p => (ofString p.1, expToHOL p.2))) := by
+  have h := @evalPanValueFields_eq_evalListFieldsHOLExact_of σ state.structs state.locals
+    state.globals state.memory state.baseAddress state.topAddress
+    panSemBitVec64BytesInWord (some (panSemBitVec64MemoryAccess state))
+    (panSemExpressionView state hmem hloc hglob)
+    (panSemExpressionViewMemDecider state hmem hloc hglob) fields
+    (fun p hp => by
+      simpa [evalPanSemStateExp_64_eq_previous] using
+        evalPanSemStateExp_isolatedView_agree state hmem hloc hglob hranged p.2 (he p hp))
+  simpa [evalPanValueFieldsCounted, Option.map_map, Function.comp_def] using h
+
 end Flapjack
