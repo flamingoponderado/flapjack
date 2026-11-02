@@ -116083,5 +116083,16 @@
   "lean_name": "recClosureWellFormed",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared source lines 254-259 and inferred polymorphic statement in clos_call_wfg_probe.out: the function-pair first component is independently polymorphic, both annotation predicates use mapped bodies, and group-range disjointness and code-location distinctness retain their original sets and order. Lean checks the helper proofs; source comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "code_includes_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeIncludes.lean",
+  "lean_name": "codeIncludes",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "code"
+  ],
+  "reviewer": "Compared source lines 261-263 and inferred definition in clos_call_wfg_probe.out: key and value types remain independently polymorphic, with the same universally quantified association lookup implication. logicalAssocLookup implements HOL ALOOKUP with logical equality and no extra equality instance. The finite-map input uses the canonical finite-support representation and same-module lookup/support roundtrip witness. Lean checks the witness, not cross-language equivalence."
 }
 ]
