@@ -37,8 +37,9 @@ supports source review, not cross-language equivalence.
 
 `flat_to_clos_relation_probe.out` captures the original typed value and
 environment relation rules, induction and cases, state and store relations,
-complete compiler correctness statement, operator and arithmetic lowering,
-and expanded byte-copy quotations. It also captures the polymorphic HOL
+polymorphic incremental and installation relations, complete compiler
+correctness statement, operator and arithmetic lowering, and expanded byte-copy
+quotations. It also captures the polymorphic HOL
 `findi` definition used by the environment relation. The captured rules support
 source review; they do not establish cross-language equivalence.
 

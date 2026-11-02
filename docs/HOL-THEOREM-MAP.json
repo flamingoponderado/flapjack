@@ -3372,6 +3372,40 @@
     "reviewer": "Compared the typed mutual rule, cases and induction in flat_to_clos_relation_probe. envRel_hol_cases proves that the positivity-friendly lookup premises are the original ALOOKUP, findi bound and EL relation, including first-match shadowing; valueRel_hol_induction supplies the corresponding induction premise. nameIndex_eq_holFindi and envLookup_source_shape check the index conversions."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "store_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+    "lean_name": "StoreRel",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["target"],
+    "reviewer": "Compared store_rel_typed in flat_to_clos_relation_probe, including all four store constructors and the out-of-range lookup condition. storeRel_hol_cases kernel-checks the bounded HOL EL and optional-index formulations. The target is the canonical finite-support translation of the HOL finite map, with its same-module lookup/codec roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "inc_compile_decs'_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+    "lean_name": "incCompileDecsProofSide",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared inc_compile_typed in flat_to_clos_relation_probe: compile the input declarations, append compilation of the unit constructor, and return an independently polymorphic empty list. This is the original unoptimized proof-side callback; production incremental compilation additionally inserts the interpreter."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "install_config_rel'_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+    "lean_name": "installConfigRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared install_rel_typed in flat_to_clos_relation_probe: every source oracle program is match-free, the oracle is pure_co of the unoptimized callback composed with the source oracle, and the source compiler is pure_cc of that callback and the supplied compiler. The oracle and compiler result-list payloads are independent type variables, as in HOL; callback byte and word widths remain 8 and 64."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+    "lean_name": "StateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared all typed state_rel_typed conjuncts in flat_to_clos_relation_probe: max_app, equal FFI and clocks, store relation, nonempty closure globals, optional value relations on their tail, and the primed installation relation. Compiler and FFI state carriers are independent and shared across the two states as in HOL. The imported closure state owns the reviewed canonical refs and code finite maps; its local roundtrip witness is re-exported here."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "evaluate_match_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateMatch.lean",

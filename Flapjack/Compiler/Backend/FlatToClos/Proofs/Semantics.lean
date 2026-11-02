@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Executable
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileCorrectShape
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
 
 /-!
@@ -197,7 +198,7 @@ theorem sourceCompileProg_semantics_proofSide {C F : Type} [Nonempty C]
         (pureCo incCompileDecs ∘ flatConfig.compileOracle) compiler
         (compileProg (SourceToFlat.compileTotal sourceConfig declarations).2)) := by
   let code := (SourceToFlat.compileTotal sourceConfig declarations).2
-  let oracle := pureCo incCompileDecsProofSide ∘ flatConfig.compileOracle
+  let oracle : ClosSem.CompileOracle C := pureCo incCompileDecsProofSide ∘ flatConfig.compileOracle
   let intermediateCompiler := pureCc ClosInterp.insertProgram compiler
   have sourceSem := SourceToFlat.factoredCompile_semantics interp transform source sourceEnv sourceConfig
     flatConfig declarations precondition safe

@@ -3,14 +3,27 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.State
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
 import Flapjack.Compiler.Backend.BackendProps.Pure
 import Flapjack.Misc.ShiftSeq
+import Flapjack.Misc.ListEl
 
 /-! State relations for the proof-side flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendProps
 
-/-- Correspondence between the flat list store and the closure finite map.
-The proof-side finite-map representation and value relation remain under
-cross-language review. -/
+private def maptoBroadlookup {α β : Type} (f : HolFiniteMapExact α β) : α → Option β := f.lookup
+private def mapofBroad {α β : Type} (lookup : α → Option β)
+    (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact α β :=
+  ⟨lookup, support⟩
+
+/-- The canonical closure-reference map roundtrips through its lookup view. -/
+theorem holFmapAsFiniteSupportParamWitness_StoreRel_target
+    (target : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)) :
+    mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by
+  cases target
+  rfl
+
+/-- Correspondence between the flat list store and the closure finite map. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "store_rel_def"
+  (fmap_as_finite_support_parameters := [target])]
 def StoreRel (source : Store FlatSem.Value) (target : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)) : Prop :=
   ∀ index, match (source[index]? : Option (StoreValue FlatSem.Value)) with
   | none => target.lookup index = none
@@ -19,14 +32,40 @@ def StoreRel (source : Store FlatSem.Value) (target : HolFiniteMapExact Nat (Clo
   | some (.varray values) => ∃ values', target.lookup index = some (.valueArray values') ∧ List.Forall₂ ValueRel values values'
   | some (.thunk mode value) => ∃ value', target.lookup index = some (.thunk mode value') ∧ ValueRel value value'
 
-/-- The unoptimized incremental program used in the installation relation. -/
-def incCompileDecsProofSide (decs : List FlatLang.Exp) : ClosSem.Program :=
+/-- Optional indexing in `StoreRel` has the source's bound-and-`EL` shape. -/
+theorem storeRel_hol_cases (source : Store FlatSem.Value)
+    (target : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)) :
+    StoreRel source target ↔ ∀ index,
+      if source.length ≤ index then target.lookup index = none
+      else match @Flapjack.holEl (StoreValue FlatSem.Value) ⟨.w8array []⟩ index source with
+        | .refv value => ∃ value', target.lookup index = some (.valueArray [value']) ∧ ValueRel value value'
+        | .w8array bytes => target.lookup index = some (.byteArray bytes)
+        | .varray values => ∃ values', target.lookup index = some (.valueArray values') ∧ List.Forall₂ ValueRel values values'
+        | .thunk mode value => ∃ value', target.lookup index = some (.thunk mode value') ∧ ValueRel value value' := by
+  letI : Nonempty (StoreValue FlatSem.Value) := ⟨.w8array []⟩
+  unfold StoreRel
+  constructor <;> intro related index
+  all_goals
+    by_cases bound : index < source.length
+    · cases entry : source[index]'bound <;>
+        simpa [Nat.not_le_of_gt bound, List.getElem?_eq_getElem bound,
+          Flapjack.holEl_eq_getElem index source bound, entry] using related index
+    · have outside : source.length ≤ index := Nat.le_of_not_gt bound
+      simpa [outside, List.getElem?_eq_none outside] using related index
+
+/-- The unoptimized incremental program used in the proof's installation
+relation. The executed incremental compiler additionally inserts the interpreter. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "inc_compile_decs'_def"]
+def incCompileDecsProofSide {α : Type} (decs : List FlatLang.Exp) : List ClosLang.Exp × List α :=
   (compileDecs decs ++ compileDecs [.con .none none []], [])
 
 /-- Dynamic compilation uses the same downstream callback after translating
-each flat program. Correspondence of these proof-side carriers remains open. -/
-def installConfigRel {C : Type} (source : FlatSem.InstallConfig C)
-    (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C) : Prop :=
+each flat program; oracle and compiler payload types are independent. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "install_config_rel'_def"]
+def installConfigRel {C OraclePayload CompilerPayload : Type} (source : FlatSem.InstallConfig C)
+    (oracle : Nat → C × (List ClosLang.Exp × List OraclePayload))
+    (compiler : C → (List ClosLang.Exp × List CompilerPayload) →
+      Option (List (BitVec 8) × List (BitVec 64) × C)) : Prop :=
   (∀ index, FlatProps.noMatDecs (source.compileOracle index).2 = true) ∧
   oracle = pureCo incCompileDecsProofSide ∘ source.compileOracle ∧
   source.compile = pureCc incCompileDecsProofSide compiler
@@ -51,8 +90,15 @@ def optionalValueRel : Option FlatSem.Value → Option ClosSem.Value → Prop
   | some source, some target => ValueRel source target
   | _, _ => False
 
-/-- The source-shaped state relation, using the proof-side value and finite
-map representations. It remains untagged pending correspondence review. -/
+/-- The closure state's finite-map fields roundtrip through their lookup view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- The source state relation for flat-to-closure evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support := [refs, code])]
 def StateRel {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F) : Prop :=
   1 ≤ target.maxApp ∧ source.ffi = target.ffi ∧ source.clock = target.clock ∧
   StoreRel source.refs target.refs ∧ target.globals ≠ [] ∧

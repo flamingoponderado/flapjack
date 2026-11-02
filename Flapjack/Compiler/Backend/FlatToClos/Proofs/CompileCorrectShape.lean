@@ -1,0 +1,84 @@
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Correctness
+import Flapjack.SemanticPrimitivesProps.ResultRelation
+
+/-! Source-shaped flat-to-closure compiler simulation. The closure evaluator
+and some of its operations still require HOL correspondence review, so this
+assembly is not tagged as the original pass theorem. -/
+namespace Flapjack.Compiler.Backend.FlatToClos
+open Flapjack.Basis.Pure.MlString Flapjack.SemanticPrimitivesHOL
+
+/-- The specialized expression relation implies the source result relation. -/
+theorem evalResultRel_to_source {source target}
+    (related : EvalResultRel source target) :
+    SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel source target := by
+  cases related with
+  | value values => exact values
+  | raise values => exact values
+  | abort error => rfl
+
+/-- The declaration relation supplies the source's independently polymorphic
+success-list witness; HOL types are inhabited. -/
+theorem decResultRel_to_source {α : Type} [Nonempty α] {source target}
+    (related : DecResultRel source target) :
+    ∃ values : List α, SemanticPrimitivesProps.resultRel
+      (List.Forall₂ (fun (_ : α) (_ : ClosSem.Value) => True)) ValueRel
+      (match source with | none => .val values | some error => .err error) target := by
+  cases related with
+  | success values =>
+    let inhabitant : α := Classical.choice inferInstance
+    refine ⟨values.map (fun _ => inhabitant), ?_⟩
+    change List.Forall₂ (fun (_ : α) (_ : ClosSem.Value) => True) (values.map (fun _ => inhabitant)) values
+    induction values with
+    | nil => exact .nil
+    | cons head tail ih => exact .cons trivial ih
+  | raise values => exact ⟨[], values⟩
+  | abort error => exact ⟨[], rfl⟩
+
+/-- Both source theorem conjuncts follow from the complete Lean simulations.
+The target closure evaluator remains unreviewed against HOL. -/
+theorem compileCorrect_sourceShape {C F α : Type} [Nonempty α] :
+    (∀ (env : FlatSem.Environment FlatSem.Value) (source : FlatSem.State C F) (expressions : List FlatLang.Exp)
+      (names : List (Option MlString)) (values : List ClosSem.Value)
+      (result : Result (List FlatSem.Value) FlatSem.Value) (sourceLast : FlatSem.State C F)
+      (target : ClosSem.State C F),
+      FlatSem.evaluate env source expressions = (sourceLast, result) ∧ StateRel source target ∧
+      EnvRel env names values ∧ expressions.all FlatProps.noMat = true ∧
+      result ≠ .err (.abort .typeError) →
+      ∃ targetResult targetLast,
+        ClosSem.evaluate (compile names expressions) values target = (targetResult, targetLast) ∧
+        StateRel sourceLast targetLast ∧
+        SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel result targetResult) ∧
+    (∀ (source : FlatSem.State C F) (declarations : List FlatLang.Exp)
+      (result : Option (ErrorResult FlatSem.Value)) (sourceLast : FlatSem.State C F) (target : ClosSem.State C F),
+      FlatSem.evaluateDecs source declarations = (sourceLast, result) ∧ StateRel source target ∧
+      FlatProps.noMatDecs declarations = true ∧ result ≠ some (.abort .typeError) →
+      ∃ targetResult targetLast,
+        ClosSem.evaluate (compileDecs declarations) [] target = (targetResult, targetLast) ∧
+        StateRel sourceLast targetLast ∧
+        ∃ values : List α, SemanticPrimitivesProps.resultRel
+          (List.Forall₂ (fun (_ : α) (_ : ClosSem.Value) => True)) ValueRel
+          (match result with | none => .val values | some error => .err error) targetResult) := by
+  constructor
+  · intro env source expressions names values result sourceLast target premises
+    obtain ⟨run, states, environments, safe, notTypeError⟩ := premises
+    have noMat : FlatProps.noMatList expressions = true := by simpa [FlatProps.noMatList_eq_all] using safe
+    have noError : (FlatSem.evaluate env source expressions).2 ≠ .err (.abort .typeError) := by
+      simpa [run] using notTypeError
+    have simulated := evaluate_simulation env names values source target expressions states environments noMat noError
+    have relation : StateRel sourceLast (ClosSem.evaluate (compile names expressions) values target).2 ∧
+        EvalResultRel result (ClosSem.evaluate (compile names expressions) values target).1 := by
+      simpa [EvalSim, run] using simulated
+    exact ⟨_, _, Prod.eta _, relation.1, evalResultRel_to_source relation.2⟩
+  · intro source declarations result sourceLast target premises
+    obtain ⟨run, states, safe, notTypeError⟩ := premises
+    have noError : (FlatSem.evaluateDecs source declarations).2 ≠ some (.abort .typeError) := by
+      simpa [run] using notTypeError
+    have simulated := evaluate_decs_simulation source target declarations states safe noError
+    have relation : StateRel sourceLast (ClosSem.evaluate (compileDecs declarations) [] target).2 ∧
+        DecResultRel result (ClosSem.evaluate (compileDecs declarations) [] target).1 := by
+      simpa [DecSim, run] using simulated
+    obtain ⟨values, resultRel⟩ := decResultRel_to_source (α := α) relation.2
+    refine ⟨_, _, Prod.eta _, relation.1, values, ?_⟩
+    cases result <;> exact resultRel
+
+end Flapjack.Compiler.Backend.FlatToClos

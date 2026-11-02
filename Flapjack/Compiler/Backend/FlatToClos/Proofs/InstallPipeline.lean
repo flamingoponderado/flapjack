@@ -33,7 +33,7 @@ theorem production_installConfigRel {C : Type} (source : FlatSem.InstallConfig C
     (compiler : ClosSem.Compiler C)
     (safe : ∀ index, FlatProps.noMatDecs (source.compileOracle index).2 = true)
     (production : source.compile = pureCc incCompileDecs compiler) :
-    installConfigRel source (pureCo incCompileDecsProofSide ∘ source.compileOracle)
+    installConfigRel source (pureCo (incCompileDecsProofSide (α := Nat × Nat × ClosLang.Exp)) ∘ source.compileOracle)
       (pureCc ClosInterp.insertProgram compiler) := by
   refine ⟨safe, rfl, ?_⟩
   simpa only [incrementalCompiler_factor] using production

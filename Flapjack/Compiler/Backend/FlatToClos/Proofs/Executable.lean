@@ -235,7 +235,8 @@ theorem sourceCompileProg_production_observation {C F : Type} [Nonempty C]
       subst error
       exact noTypeError rfl
   have oracleSafe : ∀ index,
-      ((BackendProps.pureCo incCompileDecsProofSide ∘ flatConfig.compileOracle) index).2.2 = [] := by
+      ((BackendProps.pureCo (incCompileDecsProofSide (α := Nat × Nat × ClosLang.Exp)) ∘
+        flatConfig.compileOracle) index).2.2 = [] := by
     intro index
     cases h : flatConfig.compileOracle index
     simp [BackendProps.pureCo, h, incCompileDecsProofSide]
