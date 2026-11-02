@@ -1,5 +1,13 @@
 [
   {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Control/Canonical.lean",
+    "lean_name": "encode_decode_control",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "encode_decode_control",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete source and captured inferred type: for any two HOL byte-character lists, successful decode_control input = SOME result implies input = encode_control result. The executed Lean decoder and encoder preserve the source's uppercase hexadecimal, printable-byte and doubled-backslash rules; HolChar is the established eight-bit HOL character carrier."
+  },
+  {
     "lean_path": "Flapjack/CakeParser/FromSexp/Control.lean",
     "lean_name": "decode_encode_control",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",

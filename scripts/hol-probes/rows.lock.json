@@ -136,7 +136,7 @@
     {"bytes": 9996, "out": "cake_flat_sem_pattern_probe.out", "rows": 12, "sha256": "ac8603b48fc15562eff5a72dbf625c8b3afff5674172133642f9e6bfcecbc650"},
     {"bytes": 5048, "out": "cake_flat_sem_test_probe.out", "rows": 8, "sha256": "7fcb51d792127570ceed7adc0bbc2f61fd1690a6eb4a482f49471c4e188d67c5"},
     {"bytes": 2834, "out": "cake_flat_sem_thunk_probe.out", "rows": 11, "sha256": "3a46c00aa09d574426044f54ebb4af468e20d411d8e296050e718d324e66f3bb"},
-    {"bytes": 1319, "out": "cake_from_sexp_probe.out", "rows": 10, "sha256": "87b2911c10ca8196b955c40c10668a8827dd4c481b57a29b7ae60b0673af4e19"},
+    {"bytes": 1429, "out": "cake_from_sexp_probe.out", "rows": 11, "sha256": "64dd041d1d7189877f2a9f54e5686f95c7fb101a56712022e64661de2d26ae1c"},
     {"bytes": 524, "out": "cake_infer_core_probe.out", "rows": 5, "sha256": "329b30136b3a8606b02df44e2300814e48835132f65cad4754583d1eeb214a69"},
     {"bytes": 474, "out": "cake_infer_decl_probe.out", "rows": 3, "sha256": "cf0f39e404c8351a9784fc8f207d3fd600fb36fe3478047ce04faab0a3fee4c3"},
     {"bytes": 258, "out": "cake_inference_probe.out", "rows": 4, "sha256": "de9670fd961201d1040270dc44b917aefca33bd5d53e221ecf255595e40010bb"},

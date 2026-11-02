@@ -9,6 +9,9 @@ val _ = show "control" ``MAP fromSexp$decode_control
 val _ = (print "decode_encode_control_typed=";
   Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.decode_encode_control);
   print "\n");
+val _ = (print "encode_decode_control_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.encode_decode_control);
+  print "\n");
 val _ = show "lists" ``MAP (fromSexp$sexplist fromSexp$odestSXNUM)
   [⟪⟫; ⟪1; 2; 3⟫; ⟪1 • 2⟫; ⟪SX_STR "x"⟫]``;
 val _ = show "option" ``MAP (fromSexp$sexpopt fromSexp$odestSXNUM)
