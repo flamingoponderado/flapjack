@@ -6,7 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateTick
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateRaise
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -272,5 +272,13 @@ example {C F : Type} :
     ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅
       (.tick .none (.var .none 0)) (.tick .none (.var .none 0)) := by
   exact exprSimFuel_tick 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 0)
+
+-- Raising a ticked variable composes the three simulations.
+example {C F : Type} :
+    ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+      (.raise .none (.tick .none (.var .none 0)))
+      (.raise .none (.tick .none (.var .none 0))) := by
+  exact exprSimFuel_raise 5 (.ln, []) ∅ .none _ _
+    (exprSimFuel_tick 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 0))
 
 end Flapjack.Test.ClosCallEnvironmentParity
