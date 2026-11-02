@@ -74,4 +74,112 @@ theorem doInstall_nonType_related {C F : Type} (source target : State C F)
         have rel := stateRel_shiftClock states (source.clock - 1) 1
         simpa [targetFinal, clockEq, sourceEmpty] using rel
 
+/-- If the source installation fails with a type error, the transformed
+installation also fails with a type error and leaves its state unchanged.
+This is a Lean-side case of the installation simulation. -/
+theorem doInstall_typeError_related {C F : Type} (source target : State C F)
+    (sourceValues targetValues : List ClosSem.Value) (states : StateRel source target)
+    (values : List.Forall₂ (ValueRel source.maxApp) sourceValues targetValues)
+    (sourceError : (doInstall sourceValues source).1 = .err (.abort .typeError)) :
+    doInstall targetValues target = (.err (.abort .typeError), target) := by
+  classical
+  by_contra failure
+  have targetNotType : (doInstall targetValues target).1 ≠ .err (.abort .typeError) := by
+    intro isType
+    unfold doInstall at isType failure
+    repeat' first | split at isType | split at failure | simp_all
+  obtain ⟨byteValue, wordValue, bytes, words, config, expressions, auxiliary, nextConfig,
+    valueEq, bytesRun, wordsRun, oracleRun, compileRun, _, _, nextEq, nonempty, _, _⟩ :=
+    doInstall_nonType_parts targetValues target (doInstall targetValues target).2
+      (doInstall targetValues target).1 (Prod.eta _) targetNotType
+  subst targetValues
+  cases values with
+  | cons bytesRel rest =>
+    cases rest with
+    | cons wordsRel rest =>
+      cases rest
+      rename_i sourceByte sourceWord
+      have sourceBytes : valueToBytes sourceByte = some bytes := by
+        rw [ClosProps.simpleValRel_valueToBytes (ValueRel source.maxApp) sourceByte byteValue
+          ⟨simpleValRel source.maxApp, bytesRel⟩, bytesRun]
+      have sourceWords : valueToWords sourceWord = some words := by
+        rw [ClosProps.simpleValRel_valueToWords sourceWord wordValue (ValueRel source.maxApp)
+          ⟨simpleValRel source.maxApp, wordsRel⟩, wordsRun]
+      obtain ⟨safe, _, _, _, _, _, _, _, _, compilerEq, oracleEq⟩ := states
+      cases sourceOracle : source.compileOracle 0 with
+      | mk sourceConfig program =>
+        cases program with
+        | mk sourceExpressions sourceAuxiliary =>
+          have empty : sourceAuxiliary = [] := by
+            simpa [sourceOracle] using (safe 0).1
+          subst sourceAuxiliary
+          have targetOracle : target.compileOracle 0 =
+              (sourceConfig, introList source.maxApp sourceExpressions, []) := by
+            rw [oracleEq]
+            simp [pureCo, compileInc, sourceOracle]
+          rw [targetOracle] at oracleRun
+          simp only [Prod.mk.injEq] at oracleRun
+          obtain ⟨rfl, rfl, rfl⟩ := oracleRun
+          have sourceCompile : source.compile sourceConfig (sourceExpressions, []) =
+              some (bytes, words, nextConfig) := by
+            rw [compilerEq]
+            simpa [pureCc, compileInc] using compileRun
+          have sourceNextEq : (holShiftSeq 1 source.compileOracle 0).1 = nextConfig := by
+            rw [oracleEq] at nextEq
+            simpa [holShiftSeq, pureCo] using nextEq
+          have sourceNonempty : sourceExpressions ≠ [] := by
+            intro empty
+            apply nonempty
+            subst sourceExpressions
+            have length := introList_length source.maxApp []
+            exact List.eq_nil_of_length_eq_zero (by simpa using length)
+          simp [doInstall, sourceBytes, sourceWords, sourceOracle, sourceCompile,
+            sourceNextEq, sourceNonempty] at sourceError
+          split at sourceError <;> simp_all
+
+/-- Installation is simulated in both the error and success cases for the
+proof-side closure semantics. Errors are identical here because installation
+can only abort; successful programs are related by multi-argument introduction.
+The HOL theorem is not claimed until the underlying evaluator and state
+representations have been reviewed. -/
+theorem doInstall_related {C F : Type} (source target : State C F)
+    (sourceValues targetValues : List ClosSem.Value)
+    (result : Result (List ClosLang.Exp) ClosSem.Value) (final : State C F)
+    (states : StateRel source target)
+    (values : List.Forall₂ (ValueRel source.maxApp) sourceValues targetValues)
+    (run : doInstall sourceValues source = (result, final)) :
+    match (generalizing := false) result with
+    | .err error => ∃ targetFinal,
+        doInstall targetValues target = (.err error, targetFinal) ∧
+        final.maxApp = source.maxApp ∧ StateRel final targetFinal
+    | .val expressions => ∃ targetExpressions targetFinal,
+        final.maxApp = source.maxApp ∧ StateRel final targetFinal ∧ expressions ≠ [] ∧
+        CodeRel source.maxApp expressions targetExpressions ∧
+        doInstall targetValues target = (.val targetExpressions, targetFinal) := by
+  classical
+  by_cases typeError : result = .err (.abort .typeError)
+  · have sourceFinal : final = source := by
+      rw [typeError] at run
+      unfold doInstall at run
+      repeat' first | split at run | simp_all
+    have targetRun := doInstall_typeError_related source target sourceValues targetValues states values
+      (by rw [run, typeError])
+    subst final
+    clear run
+    subst result
+    exact ⟨target, targetRun, rfl, states⟩
+  · obtain ⟨expressions, targetFinal, targetRun, resultEq, nonempty, code, maxEq, related⟩ :=
+      doInstall_nonType_related source target sourceValues targetValues result final
+        states values run typeError
+    by_cases zero : source.clock = 0
+    · simp only [zero, if_pos] at resultEq targetRun
+      clear run typeError
+      subst result
+      exact ⟨targetFinal, targetRun, maxEq, related⟩
+    · simp only [zero, if_false] at resultEq targetRun
+      clear run typeError
+      subst result
+      exact ⟨introList source.maxApp expressions, targetFinal,
+        maxEq, related, nonempty, code, targetRun⟩
+
 end Flapjack.Compiler.Backend.ClosMti
