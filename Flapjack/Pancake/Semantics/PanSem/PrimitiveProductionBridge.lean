@@ -46,34 +46,32 @@ theorem panSemEvaluateRiscV64CodeStateWithProductionPrimop_eq
 
 
 /-- Declaration-to-entry RV64 source execution with the production primitive
-    handler and the guarded HOL expression route. The owner supplies the
-    source memory domains and byte order for both declarations and the body. -/
+    handler and the guarded HOL expression route. The input owns the source
+    memory domains and byte order for both declarations and the body. -/
 def panSemEvaluateRiscV64ProgramWithProductionPrimop
     (context : PanValueFfiContext (RiscV.Word 64))
-    (initial : PanValueFfiProgramState (RiscV.Word 64) σ)
-    (owner : PanSemState (RiscV.Word 64) (FfiState σ))
+    (input : PanSemRiscV64ProgramInput σ)
     (clock : Nat) (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
     (fuel : Nat) (decls : List (Decl (RiscV.Word 64)))
     (entry : FunName) (arguments : List (Exp (RiscV.Word 64)))
     (memoryHandler : Option (PanValueMemoryFfiHandler (RiscV.Word 64) σ) := none) :
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
-  panSemEvaluateRiscV64ProgramViaHOL context initial owner clock panPrimopHOL handler
+  panSemEvaluateRiscV64ProgramViaHOL context input clock panPrimopHOL handler
     fuel decls entry arguments (memoryHandler := memoryHandler)
 
 /-- The concrete declaration-to-entry route retains the full previous result. -/
 theorem panSemEvaluateRiscV64ProgramWithProductionPrimop_eq
     (context : PanValueFfiContext (RiscV.Word 64))
-    (initial : PanValueFfiProgramState (RiscV.Word 64) σ)
-    (owner : PanSemState (RiscV.Word 64) (FfiState σ))
+    (input : PanSemRiscV64ProgramInput σ)
     (clock : Nat) (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
     (fuel : Nat) (decls : List (Decl (RiscV.Word 64)))
     (entry : FunName) (arguments : List (Exp (RiscV.Word 64)))
     (memoryHandler : Option (PanValueMemoryFfiHandler (RiscV.Word 64) σ) := none) :
-    panSemEvaluateRiscV64ProgramWithProductionPrimop context initial owner clock handler
+    panSemEvaluateRiscV64ProgramWithProductionPrimop context input clock handler
       fuel decls entry arguments (memoryHandler := memoryHandler) =
-    evalPanValueFfiClockProgram context initial clock panPrimopHOL handler fuel decls entry arguments
-      (memoryAccess := some (panSemBitVec64MemoryAccess owner)) (memoryHandler := memoryHandler) :=
-  panSemEvaluateRiscV64ProgramViaHOL_eq context initial owner clock panPrimopHOL handler
+    evalPanValueFfiClockProgram context input.initial clock panPrimopHOL handler fuel decls entry arguments
+      (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner)) (memoryHandler := memoryHandler) :=
+  panSemEvaluateRiscV64ProgramViaHOL_eq context input clock panPrimopHOL handler
     fuel decls entry arguments (memoryHandler := memoryHandler)
 
 end Flapjack

@@ -557,9 +557,11 @@ theorem evalPanValueFieldsCounted_agree {σ : Type}
 def panSemExpressionSlice {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ))
     (e : Exp (RiscV.Word 64)) : PanSemState (RiscV.Word 64) (FfiState σ) :=
+  let localNames := expLocalVars e
+  let globalNames := expGlobalVars e
   { state with
-    locals := fun name => if name ∈ expLocalVars e then state.locals name else none
-    globals := fun name => if name ∈ expGlobalVars e then state.globals name else none }
+    locals := fun name => if name ∈ localNames then state.locals name else none
+    globals := fun name => if name ∈ globalNames then state.globals name else none }
 
 theorem panSemExpressionSlice_locals_finite {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ)) (e : Exp (RiscV.Word 64)) :

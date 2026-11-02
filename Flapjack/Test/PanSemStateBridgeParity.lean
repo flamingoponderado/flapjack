@@ -460,6 +460,20 @@ private def bridgeExecInvalidMemory :=
   | some (.word value) => value == (148 : W)
   | _ => false)
 
+/- Assert the route decision itself: matching results alone would not show
+   whether evaluation used HOL or the compatibility fallback. -/
+#guard panSemExpressionUsesHOL bridgeExecInfiniteMaps
+  (.op .add [.var .local "x", .var .global "g", .loadByte (.const 0)])
+#guard !(panSemExpressionUsesHOL bridgeExecInfiniteMaps (.var .local "Ā"))
+#guard !(panSemExpressionUsesHOL
+  { bridgeExecInfiniteMaps with
+    locals := fun _ => some (.nStruct "Ā" []) }
+  (.var .local "x"))
+#guard !(panSemExpressionUsesHOL
+  { bridgeExecInfiniteMaps with
+    structs := [("Ā", { fields := [], size := 0 })] }
+  (.const 1))
+
 /- Guarded execution uses the HOL route for byte names, including malformed
    memory, and falls back for names outside HOL mlstring's byte range. -/
 #guard (match evalPanSemStateExpViaHOLGuarded bridgeExecInfiniteMaps

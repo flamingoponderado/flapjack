@@ -168,72 +168,31 @@ theorem panSemWordDomain_eq_of_inputs (s : PanSemState (RiscV.Word 64) (FfiState
   exact hroute.trans ((evalPanSemStateExp_expressionSlice (panSemExpressionWordDomain s) e).trans
     (evalPanSemStateExp_wordDomain s e))
 
-def evalPanSemStateExpViaHOLGuarded (s : PanSemState (RiscV.Word 64) (FfiState σ))
-    (e : Exp (RiscV.Word 64)) : Option (PanValue (RiscV.Word 64)) :=
+/-- Inspect the exact per-expression dispatch decision. A false result means
+    execution takes the generic String-compatible fallback. -/
+def panSemExpressionUsesHOL (s : PanSemState (RiscV.Word 64) (FfiState σ))
+    (e : Exp (RiscV.Word 64)) : Bool :=
   letI := panSemExpRangedDec e
   letI := panSemExpressionInputsRangedDec s e
-  if ExpByteRanged e ∧ PanSemExpressionInputsRanged s e then
+  decide (ExpByteRanged e ∧ PanSemExpressionInputsRanged s e)
+
+/-- Run the HOL expression evaluator when the observable guard accepts the
+    inputs, otherwise preserve the generic evaluator's String behavior. -/
+def evalPanSemStateExpViaHOLGuarded (s : PanSemState (RiscV.Word 64) (FfiState σ))
+    (e : Exp (RiscV.Word 64)) : Option (PanValue (RiscV.Word 64)) :=
+  if panSemExpressionUsesHOL s e then
     evalPanSemStateExpViaHOLWordDomain s e
   else evalPanSemStateExp s e
 
 theorem evalPanSemStateExpViaHOLGuarded_eq (s : PanSemState (RiscV.Word 64) (FfiState σ))
     (e : Exp (RiscV.Word 64)) : evalPanSemStateExpViaHOLGuarded s e = evalPanSemStateExp s e := by
-  unfold evalPanSemStateExpViaHOLGuarded
+  letI := panSemExpRangedDec e
+  letI := panSemExpressionInputsRangedDec s e
+  unfold evalPanSemStateExpViaHOLGuarded panSemExpressionUsesHOL
   split
   · rename_i h
-    exact panSemWordDomain_eq_of_inputs s e h.1 h.2
+    exact panSemWordDomain_eq_of_inputs s e (of_decide_eq_true h).1 (of_decide_eq_true h).2
   · rfl
-
-
-/-- Evaluate arguments using the guarded HOL expression route, stopping at the
-    first failed argument as the original source evaluator does. -/
-def evalPanSemStateExpsViaHOLGuarded
-    (s : PanSemState (RiscV.Word 64) (FfiState σ))
-    (es : List (Exp (RiscV.Word 64))) : Option (List (PanValue (RiscV.Word 64))) :=
-  es.mapM (evalPanSemStateExpViaHOLGuarded s)
-
-/-- Guarded argument evaluation agrees with the existing state-owned list
-    evaluator, including failures, for every executable state. -/
-theorem evalPanSemStateExpsViaHOLGuarded_eq
-    (s : PanSemState (RiscV.Word 64) (FfiState σ))
-    (es : List (Exp (RiscV.Word 64))) :
-    evalPanSemStateExpsViaHOLGuarded s es = evalPanSemStateExps s es := by
-  rw [evalPanSemStateExps_64_eq_previous]
-  unfold evalPanSemStateExpsViaHOLGuarded evalPanValueExps
-  induction es with
-  | nil => simp [evalPanValueExp.evalPanValueExps]
-  | cons e es ih =>
-      simp only [List.mapM_cons, evalPanValueExp.evalPanValueExps,
-        evalPanSemStateExpViaHOLGuarded_eq, evalPanSemStateExp_64_eq_previous, ih]
-
-
-/-- The RV64 route for a fixed source domain and byte order. Its callers must
-    use the matching state-derived memory access and the eight-byte word size;
-    `panSemHOLExpressionRoute_eq` proves agreement under those inputs. -/
-def panSemHOLExpressionRoute {σ : Type}
-    (owner : PanSemState (RiscV.Word 64) (FfiState σ)) : PanExprEvaluator (RiscV.Word 64) :=
-  fun structs locals globals memory base top _bytes _access e =>
-    evalPanSemStateExpViaHOLGuarded
-      { owner with
-        structs := structs
-        locals := locals
-        globals := globals
-        memory := memory
-        baseAddress := base
-        topAddress := top } e
-
-theorem panSemHOLExpressionRoute_eq {σ : Type}
-    (owner : PanSemState (RiscV.Word 64) (FfiState σ))
-    (structs : StructContext) (locals globals : VarName → Option (PanValue (RiscV.Word 64)))
-    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
-    (base top : RiscV.Word 64) (e : Exp (RiscV.Word 64)) :
-    panSemHOLExpressionRoute owner structs locals globals memory base top panSemBitVec64BytesInWord
-      (some (panSemBitVec64MemoryAccess owner)) e =
-    evalPanValueExp structs locals globals memory base top panSemBitVec64BytesInWord e
-      (some (panSemBitVec64MemoryAccess owner)) := by
-  rw [panSemHOLExpressionRoute, evalPanSemStateExpViaHOLGuarded_eq,
-    evalPanSemStateExp_64_eq_previous]
-  rfl
 
 
 /-- State-owned RV64 code evaluation with the guarded HOL expression route.
@@ -249,7 +208,15 @@ def panSemEvaluateRiscV64CodeStateViaHOL
     state.exceptionShapes state.baseAddress state.topAddress panSemBitVec64BytesInWord
     (panSemCodeEvaluateFuel state program) state.locals state.globals state.memory state.ffi
     state.clock program (memoryAccess := some (panSemBitVec64MemoryAccess state))
-    (evaluator := some (panSemHOLExpressionRoute state))
+    (evaluator := some (fun structs locals globals memory base top _bytes _access e =>
+      evalPanSemStateExpViaHOLGuarded
+        { state with
+          structs := structs
+          locals := locals
+          globals := globals
+          memory := memory
+          baseAddress := base
+          topAddress := top } e))
 
 /-- State-owned RV64 HOL-routed code evaluation with its observable post-state. -/
 def panSemEvaluateRiscV64CodeStateViaHOLWithPostState
@@ -274,9 +241,18 @@ theorem panSemEvaluateRiscV64CodeStateViaHOL_eq
       panSemEvaluateRiscV64CodeState context primitive handler state program := by
   have hroute := evalPanValueFfiClockCode_route_eq context primitive handler state.structs state.code
     state.exceptionShapes state.baseAddress state.topAddress panSemBitVec64BytesInWord
-    (some (panSemBitVec64MemoryAccess state)) none none (panSemHOLExpressionRoute state)
-    (fun locals globals memory e => panSemHOLExpressionRoute_eq state state.structs locals globals
-      memory state.baseAddress state.topAddress e) (panSemCodeEvaluateFuel state program)
+    (some (panSemBitVec64MemoryAccess state)) none none (fun structs locals globals memory base top _bytes _access e =>
+      evalPanSemStateExpViaHOLGuarded
+        { state with
+          structs := structs
+          locals := locals
+          globals := globals
+          memory := memory
+          baseAddress := base
+          topAddress := top } e)
+    (fun locals globals memory e => by
+      rw [evalPanSemStateExpViaHOLGuarded_eq, evalPanSemStateExp_64_eq_previous]
+      rfl) (panSemCodeEvaluateFuel state program)
   simpa [panSemEvaluateRiscV64CodeStateViaHOL, panSemEvaluateRiscV64CodeState,
     panSemEvaluateWordCodeState, panSemEvaluateCodeStateWithMemoryModel,
     panSemEvaluateCodeState, panSemEvaluateCodeStateWithFuel,
@@ -296,48 +272,82 @@ theorem panSemEvaluateRiscV64CodeStateViaHOLWithPostState_eq
     panSemEvaluateRiscV64CodeStateWithPostState, panSemEvaluateRiscV64CodeStateViaHOL_eq]
 
 
+/-- A single RV64 program input owns both its declaration state and the
+    source memory domains and byte order used throughout evaluation. -/
+structure PanSemRiscV64ProgramInput (σ : Type) where
+  initial : PanValueFfiProgramState (RiscV.Word 64) σ
+  memaddrs : RiscV.Word 64 → Bool
+  sharedMemaddrs : RiscV.Word 64 → Bool
+  bigEndian : Bool
+
+/-- Build the expression-route owner from the same input as the declarations;
+    code and locals are supplied by the runner and are unused by expressions. -/
+def PanSemRiscV64ProgramInput.toOwner (input : PanSemRiscV64ProgramInput σ) :
+    PanSemState (RiscV.Word 64) (FfiState σ) where
+  locals := fun _ => none
+  globals := input.initial.source.globals
+  structs := input.initial.source.structs
+  code := []
+  exceptionShapes := fun _ => none
+  memory := input.initial.source.memory
+  memaddrs := input.memaddrs
+  sharedMemaddrs := input.sharedMemaddrs
+  clock := 0
+  be := input.bigEndian
+  ffi := input.initial.ffi
+  baseAddress := input.initial.source.baseAddress
+  topAddress := input.initial.source.topAddress
+
 /-- RV64 declaration-to-entry execution through the HOL expression route.
-    The owner supplies the source memory domains and byte order. A non-RV64
+    The input supplies the source memory domains and byte order. A non-RV64
     byte count keeps the generic evaluator, preserving its previous behavior. -/
 def panSemEvaluateRiscV64ProgramViaHOL
     (context : PanValueFfiContext (RiscV.Word 64))
-    (initial : PanValueFfiProgramState (RiscV.Word 64) σ)
-    (owner : PanSemState (RiscV.Word 64) (FfiState σ))
+    (input : PanSemRiscV64ProgramInput σ)
     (clock : Nat) (primitive : PanPrimitiveHandler (RiscV.Word 64))
     (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
     (fuel : Nat) (decls : List (Decl (RiscV.Word 64)))
     (entry : FunName) (arguments : List (Exp (RiscV.Word 64)))
     (memoryHandler : Option (PanValueMemoryFfiHandler (RiscV.Word 64) σ) := none) :
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
-  if initial.source.bytesInWord = panSemBitVec64BytesInWord then
-    evalPanValueFfiClockProgram context initial clock primitive handler fuel decls entry arguments
-      (memoryAccess := some (panSemBitVec64MemoryAccess owner)) (memoryHandler := memoryHandler)
-      (evaluator := some (panSemHOLExpressionRoute owner))
+  if input.initial.source.bytesInWord = panSemBitVec64BytesInWord then
+    evalPanValueFfiClockProgram context input.initial clock primitive handler fuel decls entry arguments
+      (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner)) (memoryHandler := memoryHandler)
+      (evaluator := some (fun structs locals globals memory base top _bytes _access e =>
+      evalPanSemStateExpViaHOLGuarded
+        { input.toOwner with
+          structs := structs
+          locals := locals
+          globals := globals
+          memory := memory
+          baseAddress := base
+          topAddress := top } e))
   else
-    evalPanValueFfiClockProgram context initial clock primitive handler fuel decls entry arguments
-      (memoryAccess := some (panSemBitVec64MemoryAccess owner)) (memoryHandler := memoryHandler)
+    evalPanValueFfiClockProgram context input.initial clock primitive handler fuel decls entry arguments
+      (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner)) (memoryHandler := memoryHandler)
 
 /-- The declaration-to-entry HOL route preserves the complete prior result
     for all source inputs, including the non-RV64-byte-count fallback. -/
 theorem panSemEvaluateRiscV64ProgramViaHOL_eq
     (context : PanValueFfiContext (RiscV.Word 64))
-    (initial : PanValueFfiProgramState (RiscV.Word 64) σ)
-    (owner : PanSemState (RiscV.Word 64) (FfiState σ))
+    (input : PanSemRiscV64ProgramInput σ)
     (clock : Nat) (primitive : PanPrimitiveHandler (RiscV.Word 64))
     (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
     (fuel : Nat) (decls : List (Decl (RiscV.Word 64)))
     (entry : FunName) (arguments : List (Exp (RiscV.Word 64)))
     (memoryHandler : Option (PanValueMemoryFfiHandler (RiscV.Word 64) σ) := none) :
-    panSemEvaluateRiscV64ProgramViaHOL context initial owner clock primitive handler fuel decls
+    panSemEvaluateRiscV64ProgramViaHOL context input clock primitive handler fuel decls
       entry arguments (memoryHandler := memoryHandler) =
-    evalPanValueFfiClockProgram context initial clock primitive handler fuel decls entry arguments
-      (memoryAccess := some (panSemBitVec64MemoryAccess owner)) (memoryHandler := memoryHandler) := by
+    evalPanValueFfiClockProgram context input.initial clock primitive handler fuel decls entry arguments
+      (memoryAccess := some (panSemBitVec64MemoryAccess input.toOwner)) (memoryHandler := memoryHandler) := by
   unfold panSemEvaluateRiscV64ProgramViaHOL
   split
   · rename_i hbytes
     apply evalPanValueFfiClockProgram_route_eq
     intro structs locals globals memory base top e
-    simpa [hbytes] using panSemHOLExpressionRoute_eq owner structs locals globals memory base top e
+    rw [evalPanSemStateExpViaHOLGuarded_eq, evalPanSemStateExp_64_eq_previous]
+    rw [hbytes]
+    rfl
   · rfl
 
 end Flapjack

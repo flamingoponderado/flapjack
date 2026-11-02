@@ -104,20 +104,36 @@ private def routedCallState :=
     routedCallState (.call none "id" [.loadByte (.const 0)])) 0x88
 
 
-/- Direct HOL rows from pan_sem_call_return_shape_probe.out: good and bad
-   callee returns both consume one clock, and a bad shape yields Error. -/
-private def routedReturnState (body : Prog W) :=
-  { sourceCodeState false true with
+/- The same Call and DecCall cases as pan_sem_call_return_shape_probe.out,
+   specialized to the RV64 runner (the HOL probe uses 8-bit words). The caller
+   starts with a binding, so the post-error lookup distinguishes cleared locals. -/
+private def routedReturnState (shape : Shape) :=
+  { sourceCodeState false false with
     clock := 5
-    code := [("callee", ([], body, .one))] }
+    locals := fun name => if name == "caller" then some (.word 3) else none
+    memory := fun _ => some (.word 0)
+    code := [("callee", ([], .return (.const 7), shape))] }
 
 #guard (match panSemEvaluateRiscV64CodeStateViaHOL sourceFfiContext sourcePrimitive sourceFfiHandler
-    (routedReturnState (.return (.const 7))) (.call none "callee" []) with
-  | some (.control (.returned _ _ _ _ [.word value]), clock) => value == 7 && clock == 4
+    (routedReturnState .one) (.call none "callee" []) with
+  | some (.control (.returned _ _ _ _ [.word value]), _) => value == 7
   | _ => false)
 #guard (match panSemEvaluateRiscV64CodeStateViaHOL sourceFfiContext sourcePrimitive sourceFfiHandler
-    (routedReturnState (.return (.rStruct []))) (.call none "callee" []) with
+    (routedReturnState (.comb [.one, .one])) (.call none "callee" []) with
   | some (.control (.error locals _ _ _), clock) => (locals "caller").isNone && clock == 4
+  | _ => false)
+#guard (match panSemEvaluateRiscV64CodeStateViaHOL sourceFfiContext sourcePrimitive sourceFfiHandler
+    (routedReturnState (.comb [.one, .one])) (.decCall "dest" .one "callee" [] .skip) with
+  | some (.control (.error locals _ _ _), clock) => (locals "caller").isNone && clock == 4
+  | _ => false)
+
+private def routedParamReturnState :=
+  { routedReturnState (.comb [.one, .one]) with
+    code := [("callee", ([("x", .one)], .return (.const 7), .comb [.one, .one]))] }
+
+#guard (match panSemEvaluateRiscV64CodeStateViaHOL sourceFfiContext sourcePrimitive sourceFfiHandler
+    routedParamReturnState (.call none "callee" [.const 4]) with
+  | some (.control (.error locals _ _ _), _) => (locals "x").isNone
   | _ => false)
 
 private def initialProgram (owner : PanSemState W (FfiState Unit)) (bytes : W) :
@@ -134,6 +150,13 @@ private def initialProgram (owner : PanSemState W (FfiState Unit)) (bytes : W) :
         bytesInWord := bytes }
     ffi := owner.ffi }
 
+private def programInput (owner : PanSemState W (FfiState Unit)) (bytes : W) :
+    PanSemRiscV64ProgramInput Unit :=
+  { initial := initialProgram owner bytes
+    memaddrs := owner.memaddrs
+    sharedMemaddrs := owner.sharedMemaddrs
+    bigEndian := owner.be }
+
 private def programDecls : List (Decl W) :=
   [.decl .one "g" (.loadByte (.const 0)),
    .function
@@ -144,19 +167,19 @@ private def programDecls : List (Decl W) :=
    the state-derived HOL route. The expected bytes come from the HOL probe. -/
 #guard observesWord
   (panSemEvaluateRiscV64ProgramViaHOL sourceFfiContext
-    (initialProgram (sourceCodeState false true) 8) (sourceCodeState false true)
+    (programInput (sourceCodeState false true) 8)
     10 sourcePrimitive sourceFfiHandler 20 programDecls "main" []) 0x88
 #guard observesWord
   (panSemEvaluateRiscV64ProgramViaHOL sourceFfiContext
-    (initialProgram (sourceCodeState true true) 8) (sourceCodeState true true)
+    (programInput (sourceCodeState true true) 8)
     10 sourcePrimitive sourceFfiHandler 20 programDecls "main" []) 0x11
 #guard (panSemEvaluateRiscV64ProgramViaHOL sourceFfiContext
-    (initialProgram (sourceCodeState false false) 8) (sourceCodeState false false)
+    (programInput (sourceCodeState false false) 8)
     10 sourcePrimitive sourceFfiHandler 20 programDecls "main" []).isNone
 
 #guard observesWord
   (panSemEvaluateRiscV64ProgramWithProductionPrimop sourceFfiContext
-    (initialProgram (sourceCodeState true true) 8) (sourceCodeState true true)
+    (programInput (sourceCodeState true true) 8)
     10 sourceFfiHandler 20 programDecls "main" []) 0x11
 
 /- A deliberately changed route proves declaration evaluation itself calls the
