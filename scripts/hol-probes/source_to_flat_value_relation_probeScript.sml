@@ -10,6 +10,8 @@ val _ = show_type "value_rel_type=" ``source_to_flatProof$v_rel``;
 val _ = show_type "env_rel_type=" ``source_to_flatProof$env_rel``;
 val _ = show_type "global_inv_type=" ``source_to_flatProof$global_env_inv``;
 val _ = show_thm "value_rel_rules=" source_to_flatProofTheory.v_rel_rules;
+val _ = show_thm "value_rel_induction=" source_to_flatProofTheory.v_rel_ind;
+val _ = show_thm "value_rel_cases=" source_to_flatProofTheory.v_rel_cases;
 val _ = show_thm "env_rel_LIST_REL=" source_to_flatProofTheory.env_rel_LIST_REL;
 
 (* Replay the original local case-equation construction. *)
