@@ -57,6 +57,12 @@ theorem holV2w_five (w : BitVec 5) :
     holV2w 5 [w[4], w[3], w[2], w[1], w[0]] = w := by
   exact holV2w_holW2v w
 
+/-- Nineteen-bit roundtrip through the `getElem` bit list used by `Decode`. -/
+theorem holV2w_nineteen (w : BitVec 19) :
+    holV2w 19 [w[18], w[17], w[16], w[15], w[14], w[13], w[12], w[11], w[10], w[9], w[8], w[7],
+      w[6], w[5], w[4], w[3], w[2], w[1], w[0]] = w := by
+  exact holV2w_holW2v w
+
 /-- Sixteen-bit roundtrip through the `getElem` bit list used by `Decode`. -/
 theorem holV2w_sixteen (w : BitVec 16) :
     holV2w 16 [w[15], w[14], w[13], w[12], w[11], w[10], w[9], w[8], w[7], w[6], w[5], w[4], w[3],
