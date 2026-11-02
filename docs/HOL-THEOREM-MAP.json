@@ -1,6 +1,30 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "typesexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "typesexp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four captured type syntax equations and carriers; the recursive list helper is proved equal to the source MAP. The executable uses this definition."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeType_typesexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexptype_typesexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured ast_t carrier and decode-encode result equality."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "typesexp_injective",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "typesexp_11",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified ast_t equality equivalence."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
     "lean_name": "listsexp",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "listsexp_def",

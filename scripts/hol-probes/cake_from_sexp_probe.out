@@ -38,6 +38,9 @@ sexpid_odestSEXSTR_idsexp_typed=sexpid odestSEXSTR (idsexp (i :(mlstring, mlstri
 sexplist_listsexp_rwt_typed=(∀(x :α). MEM x (l :α list) ⇒ (f :sexp -> α option) ((g :α -> sexp) x) = SOME x) ⇒ sexplist f (listsexp (MAP g l)) = SOME l
 sexpopt_optsexp_typed=(∀(y :α). (x :α option) = SOME y ⇒ (f :sexp -> α option) ((g :α -> sexp) y) = x) ⇒ sexpopt f (optsexp (OPTION_MAP g x)) = SOME x
 idsexp_11_typed=∀(i1 :(mlstring, mlstring) id) (i2 :(mlstring, mlstring) id). idsexp i1 = idsexp i2 ⇔ i1 = i2
+typesexp_typed=(∀(s :mlstring). typesexp (Atvar s) = listsexp [SX_SYM "Atvar"; SEXSTR (explode s)]) ∧ (∀(t2 :ast_t) (t1 :ast_t). typesexp (Atfun t1 t2) = listsexp [SX_SYM "Atfun"; typesexp t1; typesexp t2]) ∧ (∀(ts :ast_t list). typesexp (Attup ts) = listsexp [SX_SYM "Attup"; listsexp (MAP (λ(a :ast_t). typesexp a) ts)]) ∧ ∀(ts :ast_t list) (tc :(mlstring, mlstring) id). typesexp (Atapp ts tc) = listsexp [SX_SYM "Atapp"; listsexp (MAP (λ(a :ast_t). typesexp a) ts); idsexp tc]
+sexptype_typesexp_typed=sexptype (typesexp (t :ast_t)) = SOME t
+typesexp_11_typed=∀(t1 :ast_t) (t2 :ast_t). typesexp t1 = typesexp t2 ⇔ t1 = t2
 lists=[SOME []; SOME [1; 2; 3]; NONE; NONE]
 option=[SOME NONE; SOME (SOME 5); NONE; NONE]
 identifier=[SOME (Short «x»); SOME (Long «M» (Short «x»)); NONE; SOME (Long «A» (Long «B» (Short «x»))); NONE; NONE]

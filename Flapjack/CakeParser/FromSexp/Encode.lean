@@ -5,6 +5,7 @@ import Flapjack.AstHOL.Syntax
 namespace Flapjack.CakeParser.FromSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString
 open Flapjack.NamespaceHOL
+open Flapjack.AstHOL
 
 private def ascii (s : String) : List HolChar := (ofString s).explode
 
@@ -39,5 +40,22 @@ def optsexp : Option Sexp → Sexp
 def idsexp : Ident MlString MlString → Sexp
   | .short name => listsexp [.sym (ascii "Short"), sexstr name.explode]
   | .long moduleName rest => listsexp [.sym (ascii "Long"), sexstr moduleName.explode, idsexp rest]
+
+mutual
+/-- Encode CakeML type syntax. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "typesexp_def"]
+def typesexp : AstT → Sexp
+  | .atvar name => listsexp [.sym (ascii "Atvar"), sexstr name.explode]
+  | .atfun left right => listsexp [.sym (ascii "Atfun"), typesexp left, typesexp right]
+  | .attup types => listsexp [.sym (ascii "Attup"), listsexp (typesexpList types)]
+  | .atapp types id => listsexp [.sym (ascii "Atapp"), listsexp (typesexpList types), idsexp id]
+termination_by t => sizeOf t
+
+/-- Recursive map used by `typesexp` for nested type lists. -/
+def typesexpList : List AstT → List Sexp
+  | [] => []
+  | t :: ts => typesexp t :: typesexpList ts
+termination_by ts => sizeOf ts
+end
 
 end Flapjack.CakeParser.FromSexp

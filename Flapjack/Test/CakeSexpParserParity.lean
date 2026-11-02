@@ -64,7 +64,9 @@ example : [render (sym "nil"), render (.num 12345), render (str "a\"b\\c"),
 example (name : MlString) :
     Flapjack.CakeParser.ToSexp.type (.atvar name) =
       Flapjack.CakeParser.ToSexp.node "Atvar" [Flapjack.CakeParser.ToSexp.str name] := by
-  rw [Flapjack.CakeParser.ToSexp.type]
+  simp [Flapjack.CakeParser.FromSexp.typesexp, Flapjack.CakeParser.ToSexp.node,
+    Flapjack.CakeParser.ToSexp.sym, Flapjack.CakeParser.ToSexp.str]
+  rfl
 
 example : Flapjack.CakeParser.ToSexp.encodeControl [0, 31, 32, 92, 127, 255] =
     bytes "\\00\\1F \\\\\\7F\\FF" := by decide

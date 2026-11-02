@@ -22,19 +22,7 @@ def str (s : MlString) : Sexp := FromSexp.sexstr s.explode
 
 abbrev ident := FromSexp.idsexp
 
-mutual
-def type : AstT → Sexp
-  | .atvar n => node "Atvar" [str n]
-  | .atfun a b => node "Atfun" [type a, type b]
-  | .attup ts => node "Attup" [list (typeList ts)]
-  | .atapp ts id => node "Atapp" [list (typeList ts), ident id]
-termination_by t => sizeOf t
-
-private def typeList : List AstT → List Sexp
-  | [] => []
-  | t :: ts => type t :: typeList ts
-termination_by ts => sizeOf ts
-end
+abbrev type := FromSexp.typesexp
 
 def literal : Lit → Sexp
   | .intLit (.ofNat n) => .num n

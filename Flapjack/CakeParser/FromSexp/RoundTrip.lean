@@ -3,6 +3,13 @@ import Flapjack.CakeParser.FromSexp.Control
 /-! S-expression list, option and identifier encoder correspondence. -/
 namespace Flapjack.CakeParser.FromSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL
+open Flapjack.AstHOL
+
+/-- The recursive encoder helper implements the source's `MAP typesexp`. -/
+theorem typesexpList_eq_map (ts : List AstT) : typesexpList ts = ts.map typesexp := by
+  induction ts with
+  | nil => simp [typesexpList]
+  | cons t ts ih => simp [typesexpList, ih]
 
 /-- Encoding a proper S-expression list is injective. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "listsexp_11"]
@@ -78,6 +85,50 @@ theorem idsexp_injective (left right : Ident MlString MlString) :
   · intro h
     have decoded := congrArg (decodeId destString) h
     simpa [decodeId_idsexp] using decoded
+  · intro h
+    subst right
+    rfl
+
+mutual
+/-- Decoding encoded CakeML type syntax returns the original type. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexptype_typesexp"]
+theorem decodeType_typesexp (t : AstT) : decodeType (typesexp t) = some t := by
+  cases t with
+  | atvar name =>
+    cases name with
+    | implode bytes => simp (config := { decide := true }) [typesexp, listsexp, decodeType, destString_sexstr]
+  | atfun left right =>
+    simp (config := { decide := true }) [typesexp, listsexp, decodeType, decodeType_typesexp left, decodeType_typesexp right]
+  | attup types =>
+    have ih := decodeTypeList_typesexpList types
+    simp only [listsexp] at ih
+    simp (config := { decide := true }) [typesexp, listsexp, decodeType, ih]
+  | atapp types id =>
+    have ih := decodeTypeList_typesexpList types
+    simp only [listsexp] at ih
+    simp (config := { decide := true }) [typesexp, listsexp, decodeType, ih, decodeId_idsexp]
+termination_by sizeOf t
+
+/-- The recursive type-list helper round trips each member. -/
+theorem decodeTypeList_typesexpList (ts : List AstT) :
+    decodeTypeList (listsexp (typesexpList ts)) = some ts := by
+  cases ts with
+  | nil => simp (config := { decide := true }) [typesexpList, listsexp, decodeTypeList]
+  | cons t ts =>
+    have ih := decodeTypeList_typesexpList ts
+    simp only [listsexp] at ih
+    simp [typesexpList, listsexp, decodeTypeList, decodeType_typesexp t, ih]
+termination_by sizeOf ts
+end
+
+/-- Encoding CakeML type syntax is injective. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "typesexp_11"]
+theorem typesexp_injective (left right : AstT) :
+    typesexp left = typesexp right ↔ left = right := by
+  constructor
+  · intro h
+    have decoded := congrArg decodeType h
+    simpa [decodeType_typesexp] using decoded
   · intro h
     subst right
     rfl
