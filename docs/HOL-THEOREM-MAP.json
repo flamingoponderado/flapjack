@@ -105675,48 +105675,48 @@
     "lean_name": "globAlloc",
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
     "hol_name": "glob_alloc_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source_glob_alloc capture: both next_indices and config inputs retain their source carriers; the emitted Let/App/Con has omTra on all nodes, no binding, natural subtraction of the variable counters, and empty arguments."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
     "lean_name": "allocEnvRef",
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
     "hol_name": "alloc_env_ref_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source_alloc_env_ref capture: GlobalVarInit at slot zero contains a Src Opref application to the nullary untagged constructor, with None traces on all three nodes."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
     "lean_name": "compileProg",
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
     "hol_name": "compile_prog_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the full typed source_compile_prog capture: increment the incoming variable counter, start the empty generation at the prior environment-store next index, pass the same trace and counter to compileDecs, insert its generated map at that index, update precisely next/envs/modEnv, and prefix global allocation and the environment reference in order. The production source-to-flat path uses this definition."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
     "lean_name": "lookupEnvId",
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
     "hol_name": "lookup_env_id_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source_lookup_env_id capture: use the two natural-number pair components for successive Spt lookups and return emptyEnv on either failure; preserve a successful environment exactly."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
     "lean_name": "storeEnvId",
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
     "hol_name": "store_env_id_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source_store_env_id capture: bind the same mlstring r to global slot zero and emit the same assignment of envIdTuple with None traces and argument order."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
     "lean_name": "incCompileProg",
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
     "hol_name": "inc_compile_prog_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source_inc_compile_prog capture: look up the prior environment, compile with the unincremented next counters and fresh generation, insert the extended environment and generation at their original keys, update only next/envs, and return the global allocation followed by compiled declarations and storeEnvId in order. The production incremental source-to-flat path uses this definition."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
