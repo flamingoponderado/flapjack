@@ -100626,6 +100626,14 @@
     "reviewer": "Source comparison: memory_rel_ByteArray_words_IMP and its typed capture retain the complete memory relation, reference lookup, good_dimindex and real-address hypotheses. The existential header and separation frame, exact write_bytes payload over the functional memory graph, and both decoded-length conclusions match HOL. store uses the canonical finite-support map and all memory words share the source positive word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth/Elements.lean",
+    "lean_name": "elementsListAllBlocks",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "elements_list_all_blocks",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete source and captured inferred type: an ancestor chain that is nonempty and whose HOL head is a block has EVERY element a block and is SORTED by strictly increasing vb_size. Lean holHd and holSorted are the existing HOL list operations; List.Forall translates the propositional EVERY predicate."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth/BlockPointer.lean",
     "lean_name": "memoryRel_blockPtrEq",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
