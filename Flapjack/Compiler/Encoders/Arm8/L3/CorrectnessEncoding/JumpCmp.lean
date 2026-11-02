@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Overflow
 import Flapjack.Compiler.Encoders.Arm8.Machine.JumpCmpCase
+import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.BranchConditional
 
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 10000
@@ -316,5 +317,177 @@ theorem arm8AndCmp_semantics (cmp : Cmp) (x y : BitVec 64) (hT : isTest cmp = tr
   case notLess => simp [isTest] at hT
   case notLower => simp [isTest] at hT
   case notTest => simp only [wordCmpHOL, AndOp.and, bne]; rfl
+
+/-! ## The `JumpCmp` lowering: instruction list, encoding and offsets -/
+
+/-- `JumpCmp` with a register operand lowers to the flag-setting compare and
+the conditional branch on `cmp_cond`. -/
+theorem arm8Ast_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64) :
+    arm8Ast (.jumpCmp cmp r (.reg t) a) =
+      [.Data (if isTest cmp then
+                .«LogicalShiftedRegister@64»
+                  (1, .LogicalOp_AND, false, true, .lsl, 0, t, r, 31)
+              else
+                .«AddSubShiftedRegister@64»
+                  (1, true, true, .lsl, t, 0, r, 31)),
+       .Branch (.BranchConditional (a - 4, arm8CmpCond cmp))] := rfl
+
+/-- `JumpCmp` with an immediate operand lowers to the flag-setting compare and
+the conditional branch on `cmp_cond`. -/
+theorem arm8Ast_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64) :
+    arm8Ast (.jumpCmp cmp r (.imm v) a) =
+      [.Data (if isTest cmp then
+                .«LogicalImmediate@64» (1, .LogicalOp_AND, true, v, r, 31)
+              else
+                .«AddSubImmediate@64» (1, true, true, v, r, 31)),
+       .Branch (.BranchConditional (a - 4, arm8CmpCond cmp))] := rfl
+
+/-- The encoded bytes of the register `JumpCmp` lowering. -/
+theorem arm8Enc_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64) :
+    arm8Enc (.jumpCmp cmp r (.reg t) a) =
+      arm8Encode (.Data (if isTest cmp then
+                  .«LogicalShiftedRegister@64»
+                    (1, .LogicalOp_AND, false, true, .lsl, 0, t, r, 31)
+                else
+                  .«AddSubShiftedRegister@64»
+                    (1, true, true, .lsl, t, 0, r, 31))) ++
+      arm8Encode (.Branch (.BranchConditional (a - 4, arm8CmpCond cmp))) := by
+  simp [arm8Enc, arm8Ast_jumpCmp_reg]
+
+/-- The encoded bytes of the immediate `JumpCmp` lowering. -/
+theorem arm8Enc_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64) :
+    arm8Enc (.jumpCmp cmp r (.imm v) a) =
+      arm8Encode (.Data (if isTest cmp then
+                  .«LogicalImmediate@64» (1, .LogicalOp_AND, true, v, r, 31)
+                else
+                  .«AddSubImmediate@64» (1, true, true, v, r, 31))) ++
+      arm8Encode (.Branch (.BranchConditional (a - 4, arm8CmpCond cmp))) := by
+  simp [arm8Enc, arm8Ast_jumpCmp_imm]
+
+/-- The register `JumpCmp` lowering encodes to eight bytes. -/
+theorem arm8Enc_jumpCmp_reg_length (cmp : Cmp) (r t : Nat) (a : BitVec 64) :
+    (arm8Enc (.jumpCmp cmp r (.reg t) a)).length = 8 := by
+  rw [arm8Enc_jumpCmp_reg, List.length_append, arm8Encode_length, arm8Encode_length]
+
+/-- The immediate `JumpCmp` lowering encodes to eight bytes. -/
+theorem arm8Enc_jumpCmp_imm_length (cmp : Cmp) (r : Nat) (v a : BitVec 64) :
+    (arm8Enc (.jumpCmp cmp r (.imm v) a)).length = 8 := by
+  rw [arm8Enc_jumpCmp_imm, List.length_append, arm8Encode_length, arm8Encode_length]
+
+/-- The `cjump` offset window of `arm8ConfigL3` gives the conditional-branch
+encoder's twenty-one-bit range and the four-byte alignment. -/
+theorem arm8CjumpOk_of_asm (cmp : Cmp) (r : Nat) (ri : HolRegImm 64) (a : BitVec 64)
+    (h : asmOkExact (.jumpCmp cmp r ri a) arm8ConfigL3 = true) :
+    (-1048572 : Int) ≤ a.toInt ∧ a.toInt ≤ 1048579 ∧ a.toNat % 4 = 0 := by
+  simp only [asmOkExact, arm8ConfigL3, asmCjumpOffsetOkExact, asmOffsetOkExact,
+    Bool.and_eq_true] at h
+  obtain ⟨⟨⟨hlo, hhi⟩, hal⟩, _⟩ := h
+  have hlo' := arm8OfDecideTrue _ hlo
+  have hhi' := arm8OfDecideTrue _ hhi
+  have hmod : a.toNat % 4 = 0 := by simpa [asmAligned] using hal
+  refine ⟨hlo', ?_, hmod⟩
+  simpa using hhi'
+
+/-- The encoded branch offset `a - 4` is in the signed twenty-one-bit range and
+four-byte aligned when the target `a` is in the `cjump` window. -/
+theorem arm8CjumpOffsetOk (a : BitVec 64)
+    (hlo : (-1048572 : Int) ≤ a.toInt) (hhi : a.toInt ≤ 1048579)
+    (hmod : a.toNat % 4 = 0) :
+    (-(2 ^ 20 : Int) ≤ (a - 4).toInt ∧ (a - 4).toInt ≤ 2 ^ 20 - 1) ∧
+      (a - 4).toNat % 4 = 0 := by
+  have hInt : (a - 4).toInt = a.toInt - 4 := by
+    rw [BitVec.toInt_sub]
+    have h4 : BitVec.toInt (4 : BitVec 64) = 4 := by decide
+    rw [h4]
+    apply (Int.bmod_eq_iff (by norm_num : (0 : Nat) < 2 ^ 64)).2
+    refine ⟨?_, ?_, ⟨0, by norm_num⟩⟩ <;> norm_num <;> omega
+  have hNat : (a - 4).toNat % 4 = 0 := by
+    rw [BitVec.toNat_sub]
+    have h4 : (4 : BitVec 64).toNat = 4 := by decide
+    rw [h4]
+    omega
+  exact ⟨⟨by rw [hInt]; omega, by rw [hInt]; omega⟩, hNat⟩
+
+/-- The four encoded bytes of the `ANDS` compare word. -/
+theorem arm8EncodeBytes_logicalShiftedRegister_ands (rm rn rd : BitVec 5) :
+    arm8Encode (.Data (.«LogicalShiftedRegister@64»
+      ((1 : BitVec 64), (.LogicalOp_AND, (false, (true, (ShiftType.lsl,
+        (0, (rm, (rn, rd)))))))))) =
+      [BitVec.ofNat 8 ((arm8LogicalShiftedRegisterWord (3 : BitVec 2) false .lsl 0 rm rn rd >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8LogicalShiftedRegisterWord (3 : BitVec 2) false .lsl 0 rm rn rd >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8LogicalShiftedRegisterWord (3 : BitVec 2) false .lsl 0 rm rn rd >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8LogicalShiftedRegisterWord (3 : BitVec 2) false .lsl 0 rm rn rd >>> 24).toNat)] := by
+  rw [arm8Encode, arm8Encode_logicalShiftedRegister_ands]
+
+/-- The `asmCmpOkExact` conjuncts of a register `JumpCmp`: both the source and
+the right operand are valid registers. -/
+theorem arm8CmpOk_of_asm (cmp : Cmp) (r t : Nat) (a : BitVec 64)
+    (h : asmOkExact (.jumpCmp cmp r (.reg t) a) arm8ConfigL3 = true) :
+    r < 32 ∧ arm8ConfigL3.avoidRegs.contains r = false ∧ r ≠ 31 ∧
+      t < 32 ∧ arm8ConfigL3.avoidRegs.contains t = false ∧ t ≠ 31 := by
+  simp only [asmOkExact, arm8ConfigL3, asmCmpOkExact, asmRegImmOkExact,
+    Bool.and_eq_true] at h
+  obtain ⟨_, hs, hr⟩ := h
+  obtain ⟨h1, h2, h3⟩ := regOk_of_asmL3 hs
+  obtain ⟨h4, h5, h6⟩ := regOk_of_asmL3 hr
+  exact ⟨h1, h2, h3, h4, h5, h6⟩
+
+/-- The eight encoded bytes of a `test` register `JumpCmp` lowering: the `ANDS`
+compare word followed by the conditional-branch word. -/
+theorem arm8Enc_jumpCmp_reg_test (cmp : Cmp) (r t : Nat) (a : BitVec 64)
+    (hT : isTest cmp = true)
+    (hround : BitVec.signExtend 64 (BitVec.setWidth 21
+      (holWordExtract 19 20 2 (a - 4) ++ BitVec.ofNat 2 0)) = a - 4) :
+    arm8Enc (.jumpCmp cmp r (.reg t) a) =
+      [BitVec.ofNat 8 ((arm8LogicalShiftedRegisterWord (3 : BitVec 2) false ShiftType.lsl 0
+          (BitVec.ofNat 5 t) (BitVec.ofNat 5 r) 31 >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8LogicalShiftedRegisterWord (3 : BitVec 2) false ShiftType.lsl 0
+          (BitVec.ofNat 5 t) (BitVec.ofNat 5 r) 31 >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8LogicalShiftedRegisterWord (3 : BitVec 2) false ShiftType.lsl 0
+          (BitVec.ofNat 5 t) (BitVec.ofNat 5 r) 31 >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8LogicalShiftedRegisterWord (3 : BitVec 2) false ShiftType.lsl 0
+          (BitVec.ofNat 5 t) (BitVec.ofNat 5 r) 31 >>> 24).toNat),
+       BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
+          (arm8CmpCond cmp) >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
+          (arm8CmpCond cmp) >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
+          (arm8CmpCond cmp) >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
+          (arm8CmpCond cmp) >>> 24).toNat)] := by
+  rw [arm8Enc_jumpCmp_reg]
+  rw [if_pos hT]
+  rw [arm8EncodeBytes_logicalShiftedRegister_ands,
+    arm8EncodeBytes_branchConditional _ _ hround]
+  rfl
+
+/-- The eight encoded bytes of an ordering register `JumpCmp` lowering: the
+`SUBS` compare word followed by the conditional-branch word. -/
+theorem arm8Enc_jumpCmp_reg_ord (cmp : Cmp) (r t : Nat) (a : BitVec 64)
+    (hNT : isTest cmp = false)
+    (hround : BitVec.signExtend 64 (BitVec.setWidth 21
+      (holWordExtract 19 20 2 (a - 4) ++ BitVec.ofNat 2 0)) = a - 4) :
+    arm8Enc (.jumpCmp cmp r (.reg t) a) =
+      [BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord true true ShiftType.lsl
+          (BitVec.ofNat 5 t) 0 (BitVec.ofNat 5 r) 31 >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord true true ShiftType.lsl
+          (BitVec.ofNat 5 t) 0 (BitVec.ofNat 5 r) 31 >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord true true ShiftType.lsl
+          (BitVec.ofNat 5 t) 0 (BitVec.ofNat 5 r) 31 >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8AddSubShiftedRegisterWord true true ShiftType.lsl
+          (BitVec.ofNat 5 t) 0 (BitVec.ofNat 5 r) 31 >>> 24).toNat),
+       BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
+          (arm8CmpCond cmp) >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
+          (arm8CmpCond cmp) >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
+          (arm8CmpCond cmp) >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
+          (arm8CmpCond cmp) >>> 24).toNat)] := by
+  rw [arm8Enc_jumpCmp_reg]
+  rw [if_neg (by simp [hNT])]
+  rw [arm8EncodeBytes_addSubShiftedRegister,
+    arm8EncodeBytes_branchConditional _ _ hround]
+  rfl
 
 end Flapjack.Compiler.Encoders.Arm8.L3

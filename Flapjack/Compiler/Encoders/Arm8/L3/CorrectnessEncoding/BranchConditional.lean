@@ -152,6 +152,70 @@ theorem arm8BranchCondWord_cd (imm19 : BitVec 19) (cd : BitVec 4) :
       arm8BranchCondWord_cd_bit imm19 cd 0 (by decide)],
     holV2w_holW2v]
 
+/-- The bits 20:2 of a word sit at positions `i - 2` after a two-bit shift
+masked to nineteen bits. -/
+theorem arm8TestBit_shift_mod19 (x i : Nat) (h2 : 2 ≤ i) (hi : i < 21) :
+    (x >>> 2 % 524288).testBit (i - 2) = x.testBit i := by
+  have h := Nat.testBit_mod_two_pow (x >>> 2) 19 (i - 2)
+  rw [show (2 : Nat) ^ 19 = 524288 from rfl] at h
+  rw [h]
+  rw [Nat.testBit_shiftRight]
+  have h3 : 2 + (i - 2) = i := by omega
+  rw [h3]
+  simp [show i - 2 < 19 from by omega]
+
+/-- The 19-bit branch immediate followed by two zero bits reassembles to the
+low 21 bits of a four-byte-aligned offset. -/
+theorem arm8BranchCondBits (imm : BitVec 64) (hal : imm.toNat % 4 = 0) :
+    holWordExtract 19 20 2 imm ++ BitVec.ofNat 2 0 = BitVec.setWidth 21 imm := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  simp only [holWordExtract, Flapjack.RiscV.L3.holWordExtract, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth, BitVec.getLsbD_ofNat]
+  norm_num
+  by_cases h2 : i < 2
+  · have him : imm.getLsbD i = false := by
+      simp [BitVec.getLsbD, arm8TestBit_mod_four_zero imm.toNat i hal h2]
+    rw [him]
+    simp [h2, hi]
+  · have h19 : i - 2 < 19 := by omega
+    have h64 : i - 2 < 64 := by omega
+    rw [arm8TestBit_shift_mod19 imm.toNat i (by omega) (by omega)]
+    simp [BitVec.getLsbD, h2, h19, h64, hi]
+
+/-- The signed value of the low 21 bits of an offset in the signed 21-bit
+branch range is the offset itself. -/
+theorem arm8BranchCondSignExtend (imm : BitVec 64)
+    (hlo : -(2 ^ 20 : Int) ≤ imm.toInt) (hhi : imm.toInt ≤ 2 ^ 20 - 1) :
+    BitVec.signExtend 64 (BitVec.setWidth 21 imm) = imm := by
+  apply BitVec.eq_of_toInt_eq
+  rw [BitVec.toInt_signExtend, BitVec.toInt_setWidth, BitVec.toInt_eq_toNat_bmod]
+  norm_num
+  have hdvd64 : ((2 ^ 64 : ℕ) : ℤ) ∣ imm.toInt - ((imm.toNat : ℕ) : ℤ) := by
+    rw [BitVec.toInt_eq_toNat_bmod]
+    exact ((Int.bmod_eq_iff (by norm_num : 0 < 2 ^ 64)).mp rfl).2.2
+  have hdvd21 : ((2 ^ 21 : ℕ) : ℤ) ∣ imm.toInt - ((imm.toNat : ℕ) : ℤ) := by
+    obtain ⟨c, hc⟩ := hdvd64
+    refine ⟨c * (2 ^ 43 : ℤ), ?_⟩
+    rw [hc]
+    push_cast
+    omega
+  have hb21 : 0 < (2 ^ 21 : ℕ) := by norm_num
+  rw [← BitVec.toInt_eq_toNat_bmod]
+  refine (Int.bmod_eq_iff hb21).mpr ⟨?_, ?_, hdvd21⟩
+  · push_cast; omega
+  · push_cast; omega
+
+/-- The conditional-branch immediate reassembles to the offset when the offset
+is in the signed 21-bit range and four-byte aligned. -/
+theorem arm8BranchCondRoundtrip (imm : BitVec 64)
+    (hlo : -(2 ^ 20 : Int) ≤ imm.toInt) (hhi : imm.toInt ≤ 2 ^ 20 - 1)
+    (hal : imm.toNat % 4 = 0) :
+    BitVec.signExtend 64 (BitVec.setWidth 21
+      (holWordExtract 19 20 2 imm ++ BitVec.ofNat 2 0)) = imm := by
+  rw [arm8BranchCondBits imm hal]
+  exact arm8BranchCondSignExtend imm hlo hhi
+
 /-- `Encode` of a `BranchConditional` in the signed 21-bit range is the
 conditional-branch word. -/
 theorem arm8Encode_branchConditional (imm : BitVec 64) (cd : BitVec 4)
