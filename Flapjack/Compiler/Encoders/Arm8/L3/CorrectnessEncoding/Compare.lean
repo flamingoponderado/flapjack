@@ -10,7 +10,7 @@ set_option maxRecDepth 10000
 (`ConditionalCompareImmediate@64 (1, false, 0, 0, (false, false, true, false),
 resultCarry)`): it compares `resultCarry` with zero and stores the resulting
 condition flags.  This module records the word, the `e_sf` field, the `Run` semantics and the
-decoder inverse; the conditional `e_data` equation is still open.
+decoder inverse.
 -/
 
 namespace Flapjack.Compiler.Encoders.Arm8.L3
@@ -67,5 +67,32 @@ theorem arm8Decode_conditionalCompare (imm5 : BitVec 5) (cd : BitVec 4) (rn : Bi
   simp only [arm8ConditionalCompareWord, Decode, boolify32, BitVec.getLsbD_append,
     BitVec.getLsbD_setWidth]
   simp [holV2w_one_false, holV2w_one_true, holV2w_four, holV2w_five]
+
+
+/-- `e_data` of `ConditionalCompareImmediate@64`: the ARM8 word when the
+immediate fits five bits, and `BadCode` otherwise (Flapjack infrastructure; a
+readable statement of a mechanically rendered term). -/
+theorem arm8EData_conditionalCompare (opc : Bool) (imm : BitVec 64) (cd : BitVec 4)
+    (n z c v : Bool) (rn : BitVec 5) :
+    e_data (.«ConditionalCompareImmediate@64» ((1 : BitVec 64), (opc, (imm, (cd, ((n, (z, (c, v))), rn)))))) =
+      (if (imm == BitVec.setWidth 64 (BitVec.setWidth 5 imm)) then
+        MachineCode.ARM8 (arm8ConditionalCompareWord opc (BitVec.setWidth 5 imm) cd n z c v rn)
+      else MachineCode.BadCode (List.map (fun c => BitVec.ofNat 8 c)
+        [67, 111, 110, 100, 105, 116, 105, 111, 110, 97, 108, 67, 111, 109, 112, 97, 114,
+         101, 73, 109, 109, 101, 100, 105, 97, 116, 101])) := by
+  rfl
+
+
+/-- `Encode` of `ConditionalCompareImmediate@64` is its `e_data` (Flapjack
+infrastructure; no separately named HOL declaration). -/
+theorem arm8Encode_conditionalCompare (opc : Bool) (imm : BitVec 64) (cd : BitVec 4)
+    (n z c v : Bool) (rn : BitVec 5) :
+    Encode (.Data (.«ConditionalCompareImmediate@64» ((1 : BitVec 64), (opc, (imm, (cd, ((n, (z, (c, v))), rn))))))) =
+      (if (imm == BitVec.setWidth 64 (BitVec.setWidth 5 imm)) then
+        MachineCode.ARM8 (arm8ConditionalCompareWord opc (BitVec.setWidth 5 imm) cd n z c v rn)
+      else MachineCode.BadCode (List.map (fun c => BitVec.ofNat 8 c)
+        [67, 111, 110, 100, 105, 116, 105, 111, 110, 97, 108, 67, 111, 109, 112, 97, 114,
+         101, 73, 109, 109, 101, 100, 105, 97, 116, 101])) := by
+  simp only [Encode, arm8EData_conditionalCompare]
 
 end Flapjack.Compiler.Encoders.Arm8.L3
