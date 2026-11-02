@@ -6,7 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateIf
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateHandle
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -290,5 +290,14 @@ example {C F : Type} :
   · exact exprSimFuel_var 5 (.ln, []) ∅ .none 0
   · exact exprSimFuel_var 5 (.ln, []) ∅ .none 1
   · exact exprSimFuel_raise 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 2)
+
+-- An exception handler binds the payload before evaluating its body.
+example {C F : Type} :
+    ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+      (.handle .none (.raise .none (.var .none 0)) (.var .none 1))
+      (.handle .none (.raise .none (.var .none 0)) (.var .none 1)) := by
+  apply exprSimFuel_handle 5 (.ln, []) ∅ .none <;> try simp
+  · exact exprSimFuel_raise 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 0)
+  · exact exprSimFuel_var 5 (.ln, []) ∅ .none 1
 
 end Flapjack.Test.ClosCallEnvironmentParity

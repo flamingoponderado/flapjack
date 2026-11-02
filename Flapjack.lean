@@ -576,6 +576,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateVariable
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateTick
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateRaise
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateIf
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateHandle
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.Proofs.FullTotal
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
