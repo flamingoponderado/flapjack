@@ -4,6 +4,73 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.BlockWellformed
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack ClosSem
 
+/-- Memory operations whose successful results contain no source values and
+whose execution does not alter the store. -/
+inductive ScalarMemoryOp : ClosLang.MemOp → Prop where
+  | length : ScalarMemoryOp .length
+  | lengthByte : ScalarMemoryOp .lengthByte
+  | derefByte : ScalarMemoryOp .derefByte
+  | concatByteVec : ScalarMemoryOp .concatByteVec
+  | fromListByte : ScalarMemoryOp .fromListByte
+  | lengthByteVec : ScalarMemoryOp .lengthByteVec
+  | derefByteVec : ScalarMemoryOp .derefByteVec
+  | copyByte : ScalarMemoryOp (.copyByte true)
+  | stringCmp (fast : Bool) (op : Opb) : ScalarMemoryOp (.stringCmp fast op)
+  | boundsCheckArray : ScalarMemoryOp .boundsCheckArray
+  | boundsCheckByte (loose : Bool) : ScalarMemoryOp (.boundsCheckByte loose)
+  | configGC : ScalarMemoryOp .configGC
+
+/-- Successful scalar memory operations produce well-formed values and do
+not change the state. -/
+theorem applyMemory_scalar_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (op : ClosLang.MemOp) (args : List Value)
+    (state next : ClosSem.State C F) (result : Value)
+    (scalar : ScalarMemoryOp op) (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (run : applyMemory op args state = some (result, next)) :
+    ValueWellFormedFuel fuel g allowed code result ∧ StateWellFormedFuel fuel g allowed code next := by
+  cases scalar <;> unfold applyMemory at run
+  all_goals repeat' split at run
+  all_goals simp_all [Bind.bind, Option.bind_eq_some_iff]
+  all_goals try (obtain ⟨rfl, _⟩ := run; exact .number _)
+  all_goals try (obtain ⟨rfl, _⟩ := run; exact boolValue_wellFormedFuel fuel g allowed code _)
+  all_goals try (obtain ⟨rfl, _⟩ := run; exact .block _ .nil)
+  all_goals try (obtain ⟨_, _, rfl, rfl⟩ := run; exact ⟨.number _, stateWf⟩)
+  all_goals try (obtain ⟨_, _, rfl, rfl⟩ := run; exact ⟨.byteVector _, stateWf⟩)
+  all_goals try (obtain ⟨_, _, _, _, rfl, rfl⟩ := run; exact ⟨.byteVector _, stateWf⟩)
+  case h_19 =>
+    obtain ⟨entry, _, run⟩ := run
+    cases entry with
+    | valueArray values => simp at run
+    | thunk mode value => simp at run
+    | byteArray bytes =>
+      simp [Option.bind_eq_some_iff] at run
+      obtain ⟨_, _, rfl, rfl⟩ := run
+      exact ⟨.byteVector _, stateWf⟩
+
+/-- Byte-vector-to-list conversion builds a well-formed list of numbers. -/
+theorem applyMemory_toListByte_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (args : List Value)
+    (state next : ClosSem.State C F) (result : Value)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (run : applyMemory .toListByte args state = some (result, next)) :
+    ValueWellFormedFuel fuel g allowed code result ∧ StateWellFormedFuel fuel g allowed code next := by
+  cases args with
+  | nil => simp [applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | cons second rest => simp [applyMemory] at run
+    | nil =>
+      cases first with
+      | byteVector bytes =>
+        simp [applyMemory] at run
+        obtain ⟨rfl, rfl⟩ := run
+        refine ⟨listToValue_wellFormedFuel ?_, stateWf⟩
+        apply valuesWellFormedFuel_of_forall
+        intro value member
+        obtain ⟨byte, _, rfl⟩ := List.mem_map.mp member
+        exact .number _
+      | number | word64 | block | refPtr | closure | recclosure => simp [applyMemory] at run
+
 /-- A list filled with a well-formed value is well formed. -/
 theorem valuesWellFormedFuel_replicate {fuel : Nat} {g : State} {allowed : Set Nat}
     {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (count : Nat) (value : Value)
@@ -238,6 +305,26 @@ theorem doApp_memory_result_of_apply {C F : Type} {fuel : Nat} {g : State} {allo
   | some pair =>
     obtain ⟨value, next⟩ := pair
     simpa [doApp, applied, PrimitiveResultWellFormedFuel] using success value next applied
+
+/-- Scalar memory operations preserve the dispatcher result invariant,
+including rejected input shapes and failed bounds checks. -/
+theorem doApp_scalarMemory_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (op : ClosLang.MemOp)
+    (args : List Value) (state : ClosSem.State C F)
+    (scalar : ScalarMemoryOp op) (stateWf : StateWellFormedFuel fuel g allowed code state) :
+    PrimitiveResultWellFormedFuel fuel g allowed code (doApp (.memOp op) args state) := by
+  apply doApp_memory_result_of_apply op args state
+  intro value next run
+  exact applyMemory_scalar_wellFormedFuel op args state next value scalar stateWf run
+
+/-- Byte-vector-to-list dispatch preserves the primitive result invariant. -/
+theorem doApp_toListByte_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (args : List Value) (state : ClosSem.State C F)
+    (stateWf : StateWellFormedFuel fuel g allowed code state) :
+    PrimitiveResultWellFormedFuel fuel g allowed code (doApp (.memOp .toListByte) args state) := by
+  apply doApp_memory_result_of_apply .toListByte args state
+  intro value next run
+  exact applyMemory_toListByte_wellFormedFuel args state next value stateWf run
 
 /-- Indexed block and array reads preserve the primitive result invariant. -/
 theorem doApp_el_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
