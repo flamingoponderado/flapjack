@@ -6,14 +6,24 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 import Flapjack.EvaluateHOL.ClockFull
 import Flapjack.EvaluateProps.Length
 
-/-! Composition of expression simulations over the factored source-to-flat
-relations. These declarations are untagged until the relations and the flat
-evaluator have completed HOL correspondence review. -/
+/-! Composition of expression simulations over the source-to-flat relations.
+The expression simulations remain untagged pending evaluator review. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 
+namespace ResultRelPort
+
+/-- Roundtrip for the global carrier's canonical finite maps. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env :=
+  GlobalEnv.holFmapAsFiniteSupportWitness env
+
+end ResultRelPort
+
 /-- Relate successful results using an arbitrary payload relation, raised
 exceptions using the value relation, and identical aborts. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "result_rel"
+  (fmap_as_finite_support := [c, tys])]
 inductive ResultRel {α β : Type} (payload : GlobalEnv → α → β → Prop) (genv : GlobalEnv) :
     Result α SemanticPrimitivesHOL.Value → Result β FlatSem.Value → Prop where
   | value {source flat} (related : payload genv source flat) : ResultRel payload genv (.val source) (.val flat)

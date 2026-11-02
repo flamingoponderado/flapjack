@@ -27,6 +27,16 @@ val _ = (print "state_clock_type="; print_type (type_of ``λ(s:'ffi semanticPrim
 val _ = (print "state_refs_type="; print_type (type_of ``λ(s:'ffi semanticPrimitives$state). s.refs``); print "\n");
 val _ = (print "state_type_stamp_type="; print_type (type_of ``λ(s:'ffi semanticPrimitives$state). s.next_type_stamp``); print "\n");
 val _ = (print "state_exn_stamp_type="; print_type (type_of ``λ(s:'ffi semanticPrimitives$state). s.next_exn_stamp``); print "\n");
+val _ = (print "abort_type_error_type="; print_type (type_of ``semanticPrimitives$Rtype_error``); print "\n");
+val _ = (print "abort_timeout_type="; print_type (type_of ``semanticPrimitives$Rtimeout_error``); print "\n");
+val _ = (print "abort_ffi_type="; print_type (type_of ``semanticPrimitives$Rffi_error``); print "\n");
+val _ = (print "error_raise_type="; print_type (type_of ``semanticPrimitives$Rraise``); print "\n");
+val _ = (print "error_abort_type="; print_type (type_of ``semanticPrimitives$Rabort``); print "\n");
+val _ = (print "result_value_type="; print_type (type_of ``semanticPrimitives$Rval``); print "\n");
+val _ = (print "result_error_type="; print_type (type_of ``semanticPrimitives$Rerr``); print "\n");
+val _ = (print "match_none_type="; print_type (type_of ``semanticPrimitives$No_match``); print "\n");
+val _ = (print "match_error_type="; print_type (type_of ``semanticPrimitives$Match_type_error``); print "\n");
+val _ = (print "match_success_type="; print_type (type_of ``semanticPrimitives$Match``); print "\n");
 val _ = (print "closure_type="; print_type (type_of ``semanticPrimitives$Closure``); print "\n");
 val _ = (print "recclosure_type="; print_type (type_of ``semanticPrimitives$Recclosure``); print "\n");
 val _ = (print "store_assign_type="; print_type (type_of ``semanticPrimitives$store_assign``); print "\n");

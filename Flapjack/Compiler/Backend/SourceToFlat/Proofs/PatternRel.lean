@@ -4,14 +4,22 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternStamps
 import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 import Flapjack.SemanticPrimitivesHOL.PatternMatch
 
-/-! Match-result infrastructure over the factored source-to-flat value relation.
-Its full correspondence to HOL remains open. -/
+/-! Match-result relation and pattern simulation infrastructure. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 
-/-- Flapjack representation of the match-result relation. The source binding
-suffix is not related to the flat bindings. This is untagged until the
-underlying value relation is reviewed against HOL. -/
+namespace MatchResultRelPort
+
+/-- Roundtrip for the global carrier's canonical finite maps. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env :=
+  GlobalEnv.holFmapAsFiniteSupportWitness env
+
+end MatchResultRelPort
+
+/-- The match-result relation leaves the source binding suffix unrelated. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "match_result_rel_def"
+  (fmap_as_finite_support := [c, tys])]
 def MatchResultRel (genv : GlobalEnv) (suffix : List (VarN × SemanticPrimitivesHOL.Value)) :
     MatchResult (List (VarN × SemanticPrimitivesHOL.Value)) →
     MatchResult (List (VarN × FlatSem.Value)) → Prop
@@ -21,7 +29,9 @@ def MatchResultRel (genv : GlobalEnv) (suffix : List (VarN × SemanticPrimitives
   | .typeError, _ => True
   | _, _ => False
 
-/-- Flapjack infrastructure exposing the original three possible result shapes. -/
+/-- Related match results have one of the original three possible shapes. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "match_result_rel_imp"
+  (fmap_as_finite_support := [c, tys])]
 theorem matchResultRel_cases (genv : GlobalEnv) (suffix : List (VarN × SemanticPrimitivesHOL.Value))
     (source : MatchResult (List (VarN × SemanticPrimitivesHOL.Value)))
     (flat : MatchResult (List (VarN × FlatSem.Value)))

@@ -636,14 +636,42 @@ theorem factoredInitGlobalEnvInv_imp (genv : GlobalEnv) (compMap : Environment) 
         have member := constructorLookup_member entries name (arity, stamp) (by simpa [nsLookup] using found)
         exact entriesValid name arity stamp member
 
-/-- HOL-shaped combined environment relation using the preliminary factored
-value and global relations. Its full HOL correspondence remains under review. -/
+namespace EnvAllRelPort
+
+/-- Roundtrip for the global carrier's canonical finite maps. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env :=
+  GlobalEnv.holFmapAsFiniteSupportWitness env
+
+end EnvAllRelPort
+
+/-- Combined local and global environment relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_all_rel"
+  (fmap_as_finite_support := [c, tys])]
 def FactoredEnvAllRel (genv : GlobalEnv) (compMap : Environment) (sourceEnv : SemEnv Value)
     (flatEnv : FlatSem.Environment FlatSem.Value) (locals : List VarN) : Prop :=
   ∃ (baseEnv : SemEnv Value) (sourceLocal : Namespace ModN VarN Value) (bindings : List (VarN × Value)),
     sourceEnv = { baseEnv with v := nsAppend sourceLocal baseEnv.v } ∧
     sourceLocal = alistToNs bindings ∧ bindings.map Prod.fst = locals ∧
     GlobalEnvInv genv compMap (fun name => name ∈ locals) baseEnv ∧ EnvRel genv sourceLocal flatEnv.v
+
+/-- The definition exposes the original combined-environment case shape.
+This is Flapjack infrastructure, with no separately named HOL theorem. -/
+theorem factoredEnvAllRel_source_cases (genv : GlobalEnv) (compMap : Environment)
+    (sourceEnv : SemEnv Value) (flatEnv : FlatSem.Environment FlatSem.Value) (locals : List VarN) :
+    FactoredEnvAllRel genv compMap sourceEnv flatEnv locals ↔
+      ∃ sourceLocal baseEnv flatValues,
+        sourceEnv = { baseEnv with v := nsAppend sourceLocal baseEnv.v } ∧
+        flatEnv = ⟨flatValues⟩ ∧
+        (∃ bindings, sourceLocal = alistToNs bindings ∧ bindings.map Prod.fst = locals) ∧
+        GlobalEnvInv genv compMap (fun name => name ∈ locals) baseEnv ∧
+        EnvRel genv sourceLocal flatValues := by
+  constructor
+  · rintro ⟨base, sourceLocal, bindings, sourceEq, localEq, names, globals, localsRel⟩
+    exact ⟨sourceLocal, base, flatEnv.v, sourceEq, by cases flatEnv; rfl,
+      ⟨bindings, localEq, names⟩, globals, localsRel⟩
+  · rintro ⟨sourceLocal, base, values, sourceEq, rfl, ⟨bindings, localEq, names⟩, globals, localsRel⟩
+    exact ⟨base, sourceLocal, bindings, sourceEq, localEq, names, globals, localsRel⟩
 
 /-- The factored combined environment relation determines the flat local
 names. -/

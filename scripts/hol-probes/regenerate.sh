@@ -376,7 +376,7 @@ run_probe source_to_flat_pmatch_statement_probeScript.sml source_to_flat_pmatch_
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_state_pattern_probeScript.sml source_to_flat_state_pattern_probe.out \
-  store_rel_rules state_rel_rules state_rel_cases match_result_def match_result_imp store_same_type store_assign store_alloc allocate_ref assign_ref assign_wrong_type assign_missing \
+  store_rel_rules state_rel_rules state_rel_cases result_rel_rules result_rel_cases env_all_rel_rules env_all_rel_cases match_result_def match_result_imp store_same_type store_assign store_alloc allocate_ref assign_ref assign_wrong_type assign_missing \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_global_env_probeScript.sml source_to_flat_global_env_probe.out \
@@ -671,7 +671,7 @@ run_probe cake_source_apply_probeScript.sml cake_source_apply_probe.out \
   do_app_type ref_alloc ref_assign ref_invalid ref_wrong_type list_append shift8 eq_mismatch byte_alloc byte_negative byte_read byte_safe_oob byte_unsafe_oob byte_update array_fixed array_update array_negative vector_unsafe substring substring_oob byte_copy_overlap string_copy_byte byte_xor byte_xor_short string_sub_negative env_id ffi_empty thunk_alloc ffi_return ffi_final int_div_pos int_div_neg int_mod_neg int_div_zero int_to_w8 int_to_char_bad word_add bool_not arith_bad_type "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_store_probeScript.sml cake_source_store_probe.out \
-  type_stamp_type exn_stamp_type sem_env_v_type sem_env_c_type litv_type conv_type loc_type vector_type env_type store_ref_type store_bytes_type store_array_type store_thunk_type decs_compiler_state_type decs_env_counter_type decs_decode_type oracle_source_type oracle_envs_type oracle_generation_type eval_decs_type eval_oracle_type state_clock_type state_refs_type state_type_stamp_type state_exn_stamp_type closure_type recclosure_type store_assign_type compiler_type oracle_type state_ffi_type state_eval_type ref_same thunk_update thunk_final allocation lookup update invalid wrong_type "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+  type_stamp_type exn_stamp_type sem_env_v_type sem_env_c_type litv_type conv_type loc_type vector_type env_type store_ref_type store_bytes_type store_array_type store_thunk_type decs_compiler_state_type decs_env_counter_type decs_decode_type oracle_source_type oracle_envs_type oracle_generation_type eval_decs_type eval_oracle_type state_clock_type state_refs_type state_type_stamp_type state_exn_stamp_type abort_type_error_type abort_timeout_type abort_ffi_type error_raise_type error_abort_type result_value_type result_error_type match_none_type match_error_type match_success_type closure_type recclosure_type store_assign_type compiler_type oracle_type state_ffi_type state_eval_type ref_same thunk_update thunk_final allocation lookup update invalid wrong_type "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_constructor_probeScript.sml cake_source_constructor_probe.out \
   find_type build_env_type same_type same_ctor exn_type check wrong_arity build "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"

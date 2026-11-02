@@ -1,6 +1,54 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "hol_name": "result_rel",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateControl.lean",
+    "lean_name": "ResultRel",
+    "reviewer": "Compared all three typed HOL rules and generated cases: the arbitrary success payload relation has independently polymorphic left and right payloads; raised values use the reviewed value relation; abort values must be identical. Result and error carriers match the source. The global environment uses its reviewed canonical c and tys finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "hol_name": "match_result_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternRel.lean",
+    "lean_name": "MatchResultRel",
+    "reviewer": "Compared every typed original match-result clause, including source type error relating to any target result, paired no-match, successful binding prefix followed by the original suffix, and all remaining false cases. Both matching-result carriers and the local-environment relation have been reviewed. The global environment uses its reviewed canonical c and tys finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "hol_name": "match_result_rel_imp",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternRel.lean",
+    "lean_name": "matchResultRel_cases",
+    "reviewer": "Compared the typed original implication: the only premise is match-result correspondence and the conclusion is the same disjunction of source type error, paired no-match, or paired successful matches. The global environment uses its reviewed canonical c and tys finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "hol_name": "env_all_rel",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocal.lean",
+    "lean_name": "FactoredEnvAllRel",
+    "reviewer": "Compared the typed HOL rule and generated cases: a source local namespace comes from an association list with exactly the given local names, the base environment satisfies the global invariant outside those names, the local environments relate, and the source and flat environments are the specified records. factoredEnvAllRel_source_cases checks record extensionality and the complete existential case. The global environment uses its reviewed canonical c and tys finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/StateRel.lean",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": [
@@ -108952,24 +109000,24 @@
     "hol_name": "abort",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "Abort",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed HOL abort constructors: type error and timeout are nullary; FFI error carries the reviewed final-event type."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "error_result",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "ErrorResult",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the two typed HOL error_result constructors: raised exceptions carry an arbitrary payload and aborts carry the same non-polymorphic abort type."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "result",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "Result",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed HOL result constructors: successful and error payloads have independently polymorphic types; error values carry error_result of the error payload type."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -109176,8 +109224,8 @@
     "hol_name": "match_result",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "MatchResult",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the three typed HOL match_result constructors and order: no match, match type error, and successful match with an arbitrary payload."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",

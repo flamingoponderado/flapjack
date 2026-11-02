@@ -7,6 +7,10 @@ fun show_thm label th =
 val _ = show_thm "store_rel_rules=" source_to_flatProofTheory.sv_rel_rules;
 val _ = show_thm "state_rel_rules=" source_to_flatProofTheory.s_rel_rules;
 val _ = show_thm "state_rel_cases=" source_to_flatProofTheory.s_rel_cases;
+val _ = show_thm "result_rel_rules=" source_to_flatProofTheory.result_rel_rules;
+val _ = show_thm "result_rel_cases=" source_to_flatProofTheory.result_rel_cases;
+val _ = show_thm "env_all_rel_rules=" source_to_flatProofTheory.env_all_rel_rules;
+val _ = show_thm "env_all_rel_cases=" source_to_flatProofTheory.env_all_rel_cases;
 val _ = show_thm "match_result_def=" source_to_flatProofTheory.match_result_rel_def;
 val _ = show_thm "match_result_imp=" source_to_flatProofTheory.match_result_rel_imp;
 val _ = show_thm "store_same_type=" semanticPrimitivesTheory.store_v_same_type_def;
