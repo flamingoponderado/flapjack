@@ -218,11 +218,11 @@ theorem progMono (context : PanValueFfiContext α) (primitive : PanPrimitiveHand
     cases hv : evalPanValueExpCounted structs locals globals memory baseAddress topAddress
         bytesInWord valueExp ma with
     | none =>
-      simp only [panValueDecAccepted, hv, Option.elim_none] at h ⊢
+      simp only [panValueDecAccepted, evalPanValueExpCountedWith_none, hv, Option.elim_none] at h ⊢
       exact h
     | some pair =>
       obtain ⟨value, valueSteps⟩ := pair
-      simp only [panValueDecAccepted, hv] at h ⊢
+      simp only [panValueDecAccepted, evalPanValueExpCountedWith_none, hv] at h ⊢
       by_cases hshape : panShapeMatches (panValueShape structs value) shape
       · simp only [hshape, if_true, Option.elim_some, Option.bind_eq_bind] at h ⊢
         cases hb : evalPanValueFfiProgSteps context primitive handler structs functions
