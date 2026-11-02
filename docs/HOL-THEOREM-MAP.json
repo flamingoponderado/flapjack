@@ -1,5 +1,13 @@
 [
   {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Ast.lean",
+    "lean_name": "decodeExp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexpexp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all source clauses and captured inferred type: the expression constructors decode the same proper argument lists, literals, names, operators, annotations and recursively nested expressions. The structural list helpers implement the source's sexplist and sexppair calls for expression lists, pattern clauses and function triples; malformed lists, names and arities fail. The executed decoder has no expression recursion fuel."
+  },
+  {
     "lean_path": "Flapjack/CakeParser/FromSexp.lean",
     "lean_name": "decodePattern",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",

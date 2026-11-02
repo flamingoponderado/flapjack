@@ -148,6 +148,26 @@ private def nestedPattern (depth : Nat) : Sexp :=
 example : (decodePattern (nestedPattern 64)).map CakeParser.ToSexp.pattern = some (nestedPattern 64) ∧
     (decodePatternFuel 64 (nestedPattern 64)).isNone = true := by native_decide
 
+private def expressionInputs : List Sexp :=
+  [node "Lit" [.num 1], node "Var" [node "Short" [str "x"]],
+   node "Raise" [node "Lit" [.num 1]],
+   node "Fun" [str "x", node "Var" [node "Short" [str "x"]]],
+   node "Con" [sym "NONE", list [node "Lit" [.num 1], node "Lit" [.num 2]]],
+   node "Mat" [node "Lit" [.num 1], list [.cons (str "x") (node "Lit" [.num 2])]],
+   node "Letrec" [list [.cons (str "f") (.cons (str "x") (node "Lit" [.num 1]))], node "Lit" [.num 2]],
+   node "If" [node "Lit" [.num 1], node "Lit" [.num 2], node "Lit" [.num 3]],
+   node "App" [sym "Opref", .cons (node "Lit" [.num 1]) (sym "bad")],
+   node "Mat" [node "Lit" [.num 1], list [str "x"]], node "Lit" [.num 1, .num 2]]
+
+example : expressionInputs.map (fun e => (decodeExp e).map CakeParser.ToSexp.exp) =
+    (expressionInputs.take 8).map some ++ [none, none, none] := by native_decide
+
+private def nestedExpression (depth : Nat) : Sexp :=
+  (List.replicate depth ()).foldr (fun _ rest => node "Raise" [rest]) (node "Lit" [.num 1])
+
+example : (decodeExp (nestedExpression 64)).map CakeParser.ToSexp.exp = some (nestedExpression 64) ∧
+    (decodeExpFuel 64 (nestedExpression 64)).isNone = true := by native_decide
+
 example : [decodeOp (sym "Equality"), decodeOp (sym "Opapp"), decodeOp (sym "Aw8subunsafe"),
     decodeOp (sym "ForceThunk"), decodeOp (sym "Envid"), decodeOp (.cons (sym "FFI") (str "x\\00y")),
     decodeOp (.cons (sym "AllocThunk") (sym "Evaluated")),

@@ -3,6 +3,8 @@ open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun show label tm =
   (print label; print "="; print_term (rhs (concl (EVAL tm))); print "\n");
+fun showSimp label tm =
+  (print label; print "="; print_term (rhs (concl (CONV_RULE (RAND_CONV (SIMP_CONV (srw_ss()) [])) (EVAL tm)))); print "\n");
 val _ = show "control" ``MAP fromSexp$decode_control
   ["abc"; "\\\\"; "\\00"; "\\1F"; "\\7F"; "\\FF"; "\\20"; "\\5C";
    "\\1f"; "\\FG"; "\\"; [CHR 31]; "x\\00y"]``;
@@ -20,6 +22,9 @@ val _ = (print "sexptype_typed=";
   print "\n");
 val _ = (print "sexppat_typed=";
   Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.sexppat_def);
+  print "\n");
+val _ = (print "sexpexp_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.sexpexp_def);
   print "\n");
 val _ = (print "sexp_constructors_typed=";
   print_type (type_of ``(SX_CONS, SX_SYM, SX_NUM, SX_STR)``);
@@ -61,6 +66,21 @@ val _ = show "patterns" ``MAP fromSexp$sexppat
      ⟪⟪SX_SYM "Pref"; SX_STR "x"⟫; ⟪SX_SYM "Pany"⟫⟫⟫;
    ⟪SX_SYM "Pcon"; SX_SYM "NONE"; SX_CONS (SX_STR "x") (SX_SYM "bad")⟫;
    SX_CONS (SX_SYM "Pany") (SX_SYM "bad")]``;
+val _ = showSimp "expressions" ``MAP fromSexp$sexpexp
+  [⟪SX_SYM "Lit"; 1⟫;
+   ⟪SX_SYM "Var"; ⟪SX_SYM "Short"; SX_STR "x"⟫⟫;
+   ⟪SX_SYM "Raise"; ⟪SX_SYM "Lit"; 1⟫⟫;
+   ⟪SX_SYM "Fun"; SX_STR "x"; ⟪SX_SYM "Var"; ⟪SX_SYM "Short"; SX_STR "x"⟫⟫⟫;
+   ⟪SX_SYM "Con"; SX_SYM "NONE"; ⟪⟪SX_SYM "Lit"; 1⟫; ⟪SX_SYM "Lit"; 2⟫⟫⟫;
+   ⟪SX_SYM "Mat"; ⟪SX_SYM "Lit"; 1⟫;
+      ⟪SX_CONS (SX_STR "x") ⟪SX_SYM "Lit"; 2⟫⟫⟫;
+   ⟪SX_SYM "Letrec";
+      ⟪SX_CONS (SX_STR "f") (SX_CONS (SX_STR "x") ⟪SX_SYM "Lit"; 1⟫)⟫;
+      ⟪SX_SYM "Lit"; 2⟫⟫;
+   ⟪SX_SYM "If"; ⟪SX_SYM "Lit"; 1⟫; ⟪SX_SYM "Lit"; 2⟫; ⟪SX_SYM "Lit"; 3⟫⟫;
+   ⟪SX_SYM "App"; SX_SYM "Opref"; SX_CONS (⟪SX_SYM "Lit"; 1⟫) (SX_SYM "bad")⟫;
+   ⟪SX_SYM "Mat"; ⟪SX_SYM "Lit"; 1⟫; ⟪SX_STR "x"⟫⟫;
+   ⟪SX_SYM "Lit"; 1; 2⟫]``;
 val _ = show "operators" ``MAP fromSexp$sexpop
   [SX_SYM "Equality"; SX_SYM "Opapp"; SX_SYM "Aw8subunsafe"; SX_SYM "ForceThunk";
    SX_SYM "Envid"; ⟪SX_SYM "FFI" • SX_STR "x\\00y"⟫;
