@@ -1,5 +1,6 @@
 import Flapjack.RiscV.SourceRuntimeBackendOutput
 import Flapjack.SemanticPrimitivesHOL
+import Flapjack.SemanticPrimitivesHOL.StoreSource
 import Flapjack.SemanticPrimitivesHOL.PatternMatch
 import Flapjack.SemanticPrimitivesHOL.Operations
 import Flapjack.SemanticPrimitivesHOL.Conversions
@@ -410,6 +411,7 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlatSource
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemorySource
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
 import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
 import Flapjack.Compiler.Backend.SourceToFlat.CompileProg

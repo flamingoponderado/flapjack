@@ -1,5 +1,156 @@
 [
   {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/StoreSource.lean",
+    "lean_name": "storeLookup_source",
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "store_lookup_def",
+    "reviewer": "Kernel-checked the typed original guarded lookup equation for every payload and index; the dependent bound witnesses the in-range list access."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/StoreSource.lean",
+    "lean_name": "storeAssign_source",
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "store_assign_def",
+    "reviewer": "Kernel-checked the typed original guarded assignment equation for every payload and index, including the store-type check and bounded list update."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_opref_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Reference allocation accepts exactly one value and appends a reference. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_opassign_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Reference assignment accepts a location and value, returning Unitv exactly when store_assign succeeds. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_aallocFixed_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Fixed allocation accepts all argument lists and stores the values in order. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_aalloc_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Value-array allocation checks the signed size and otherwise replicates the initial value. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_aw8alloc_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Byte-array allocation checks the signed size and otherwise replicates the initial byte. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_alength_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Value-array length requires a location containing the matching store constructor. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_aw8length_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Byte-array length requires a location containing the matching store constructor. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_asub_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Safe value-array reads raise the subscript exception for negative or out-of-range indices. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_asubUnsafe_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Unsafe value-array reads return NONE for negative or out-of-range indices. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_aupdate_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Safe value-array updates raise the subscript exception for bad bounds and otherwise use store_assign. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_aupdateUnsafe_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Unsafe value-array updates return NONE for bad bounds and otherwise use store_assign. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_aw8sub_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Safe byte-array reads raise the subscript exception for negative or out-of-range indices. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_aw8subUnsafe_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Unsafe byte-array reads return NONE for negative or out-of-range indices. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_aw8update_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Safe byte-array updates raise the subscript exception for bad bounds and otherwise use store_assign. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
+    "statement_status": "reviewed_exact",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyMemorySource.lean",
+    "lean_name": "doApp_aw8updateUnsafe_source",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the corresponding typed HOL do_app case and fallback for arbitrary argument lists. Unsafe byte-array updates return NONE for bad bounds and otherwise use store_assign. Nonnegative Int.toNat agrees with Num (ABS i); optional indexing combines the source bounds and EL tests, while List.set and Option.map express LUPDATE and successful store assignment. The independent compiler and FFI state types are preserved. This reviews only this case of the dispatcher."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
     "hol_name": "do_app_def",
@@ -109223,40 +109374,40 @@
     "hol_name": "empty_store_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "emptyStore",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed HOL empty_store equation: the empty list is polymorphic over the store payload."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "store_alloc_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "storeAlloc",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed HOL allocation equation: append the supplied store value and return the old list length, for an arbitrary payload type."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "store_assign_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "storeAssign",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed HOL assignment equation: only an in-range slot with a compatible existing store type is replaced; otherwise return NONE. storeAssign_source kernel-checks the guarded equation and bounded list update."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "store_lookup_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "storeLookup",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed HOL lookup equation for arbitrary payloads: optional list indexing returns the indexed value precisely when the index is below the list length. storeLookup_source kernel-checks the original guarded equation."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "store_v_same_type_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "storeValueSameType",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed HOL case: matching references, byte arrays and value arrays are compatible; a not-evaluated thunk can be replaced by either thunk mode; all remaining cases fail. The polymorphic payload and fixed-width byte carriers match."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",

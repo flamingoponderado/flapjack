@@ -44,6 +44,11 @@ val _ = (print "compiler_type="; print_type (type_of ``λ(s:semanticPrimitives$e
 val _ = (print "oracle_type="; print_type (type_of ``λ(s:semanticPrimitives$eval_oracle_state). s.custom_do_eval``); print "\n");
 val _ = (print "state_ffi_type="; print_type (type_of ``λ(s:'ffi semanticPrimitives$state). s.ffi``); print "\n");
 val _ = (print "state_eval_type="; print_type (type_of ``λ(s:'ffi semanticPrimitives$state). s.eval_state``); print "\n");
+val _ = (print "store_same_type_def="; print_thm semanticPrimitivesTheory.store_v_same_type_def; print "\n");
+val _ = (print "empty_store_def="; print_thm semanticPrimitivesTheory.empty_store_def; print "\n");
+val _ = (print "store_lookup_def="; print_thm semanticPrimitivesTheory.store_lookup_def; print "\n");
+val _ = (print "store_alloc_def="; print_thm semanticPrimitivesTheory.store_alloc_def; print "\n");
+val _ = (print "store_assign_def="; print_thm semanticPrimitivesTheory.store_assign_def; print "\n");
 val ref_same = rhs (concl (EVAL ``semanticPrimitives$store_v_same_type (Refv (1:num)) (Refv 2)``));
 val _ = (print "ref_same="; print_term ref_same; print "\n");
 val thunk_update = rhs (concl (EVAL ``semanticPrimitives$store_v_same_type

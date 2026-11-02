@@ -40,6 +40,11 @@ compiler_type=:eval_decs_state -> (num # num) # v # dec list -> (v # word8 list 
 oracle_type=:eval_oracle_state -> v list -> (num -> (num # num) # v # dec list) -> ((num # num) # (num -> (num # num) # v # dec list) # dec list) option
 state_ffi_type=:'ffi state -> 'ffi ffi_state
 state_eval_type=:'ffi state -> eval_state option
+store_same_type_def=⊢ ∀(v1 :α store_v) (v2 :α store_v). store_v_same_type v1 v2 ⇔ case (v1,v2) of (Refv v9,Refv v19) => T | (Refv v9,(W8array v20 :α store_v)) => F | (Refv v9,Varray v21) => F | (Refv v9,Thunk v22 v23) => F | ((W8array v10 :α store_v),Refv v29) => F | ((W8array v10 :α store_v),(W8array v30 :α store_v)) => T | ((W8array v10 :α store_v),Varray v31) => F | ((W8array v10 :α store_v),Thunk v32 v33) => F | (Varray v11,Refv v39) => F | (Varray v11,(W8array v40 :α store_v)) => F | (Varray v11,Varray v41) => T | (Varray v11,Thunk v42 v43) => F | (Thunk v12 v13,Refv v49) => F | (Thunk v12 v13,(W8array v50 :α store_v)) => F | (Thunk v12 v13,Varray v51) => F | (Thunk Evaluated v13,Thunk v52 v53) => F | (Thunk NotEvaluated v13,Thunk v52 v53) => T
+empty_store_def=⊢ (empty_store :α store_v list) = ([] :α store_v list)
+store_lookup_def=⊢ ∀(l :num) (st :α store_v list). store_lookup l st = if l < LENGTH st then SOME st❲l❳ else (NONE :α store_v option)
+store_alloc_def=⊢ ∀(v :α store_v) (st :α store_v list). store_alloc v st = (st ++ [v],LENGTH st)
+store_assign_def=⊢ ∀(n :num) (v :α store_v) (st :α store_v list). store_assign n v st = if n < LENGTH st ∧ store_v_same_type st❲n❳ v then SOME st❲n ↦ v❳ else (NONE :α store_v list option)
 ref_same=T
 thunk_update=T
 thunk_final=F
