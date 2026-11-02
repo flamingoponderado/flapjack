@@ -4,6 +4,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Constant
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BoolNot
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BoolTest
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.LessConst
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockEmpty
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagEmpty
 
 /-! Inductive simulation for the currently established data-language fragment. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
@@ -113,6 +115,8 @@ inductive VerifiedFragment : DataLang.Prog → Prop where
   | skip : VerifiedFragment .skip
   | tick : VerifiedFragment .tick
   | move (dest src : Nat) : VerifiedFragment (.move dest src)
+  | blockTagEmpty (dest src tag : Nat) : VerifiedFragment (.assign dest (.blockOp (.tagLenEq tag 0)) [src] none)
+  | blockEmpty (dest src : Nat) : VerifiedFragment (.assign dest (.blockOp (.lenEq 0)) [src] none)
   | lessConst (dest src n : Nat) : VerifiedFragment (.assign dest (.intOp (.lessConstSmall n)) [src] none)
   | boolTest (dest left right : Nat) (test : AstHOL.Test) :
       VerifiedFragment (.assign dest (.blockOp (.boolTest test)) [left, right] none)
@@ -146,6 +150,12 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
   | move dest src =>
     intro label source target locs related safe
     exact Or.inl (move64_of_safe conf secn label l1 l2 source target locs related dest src safe)
+  | blockTagEmpty dest src tag =>
+    intro label source target locs related safe
+    exact Or.inl (assignBlockTagEmpty64_of_safe conf secn label l1 l2 source target locs related dest src tag safe)
+  | blockEmpty dest src =>
+    intro label source target locs related safe
+    exact Or.inl (assignBlockEmpty64_of_safe conf secn label l1 l2 source target locs related dest src safe)
   | lessConst dest src n =>
     intro label source target locs related safe
     exact Or.inl (assignLessConst64_of_safe conf secn label l1 l2 source target locs related dest src n safe)
