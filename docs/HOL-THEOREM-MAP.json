@@ -100660,5 +100660,13 @@
   "lean_name": "arm8_encoder_correct_longDiv",
   "statement_status": "pending_statement_review",
   "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): the LongDiv constructor case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:487) with the full encoder_correct_def premise (asmStep + targetStateRel). The case is vacuous because HOL arith_ok admits LongDiv only when c.ISA = x86_64 (asmScript.sml:214-216) and the L3 config is ARMv8; pending because the rendered asmOk/arith_ok definitions it uses are mechanically rendered and not yet source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/JumpCmp.lean",
+  "lean_name": "arm8_encoder_correct_jumpCmp_reg",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-02 (issue #1239): the JumpCmp register-operand case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:666) with the full encoder_correct_def premise (asmStep + targetStateRel), existential n = 1 for the two-instruction lowering (flag-setting compare, then BranchConditional on cmp_cond), every environment, interference preservation, the code-byte/PC assertion and the outside-domain byte conclusion. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/ConditionHolds/BranchTo definitions and the machine model's jumpCmp_flags_* lemmas it reuses are mechanically rendered and not yet source-reviewed."
 }
 ]

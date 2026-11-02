@@ -323,9 +323,17 @@ tabulates the rendered `ConditionTest` on the eight `cmp_cond` codes, and
 and `_imm`), its eight encoded bytes for both the `test` and the ordering
 register forms, the `cjump` window facts `asmOkExact` supplies
 (`arm8CjumpOk_of_asm`), the encoded offset `a - 4` in the signed 21-bit range
-(`arm8CjumpOffsetOk`), and the compare's register-validity conjuncts.  What
-remains for the `JumpCmp` case theorem is the two-instruction simulation
-itself.
+(`arm8CjumpOffsetOk`), and the compare's register-validity conjuncts.
+
+`arm8_encoder_correct_jumpCmp_reg` then assembles the register case: the
+compare step at `PC` (the `ANDS` or `SUBS`-into-`XZR` shape, chosen by
+`isTest`), the conditional branch at `PC + 4`, and the two `arm8Next` steps at
+`n = 1`.  The taken branch goes to `PC + a` with the branch hint set; the
+untaken branch advances by four more.  The source side follows `asmUpd`'s
+`wordCmpHOL` choice, matched to `ConditionHolds (cmp_cond cmp)` by the flag
+semantics above.  The immediate-operand form is still open: its
+`LogicalImmediate@64`/`AddSubImmediate@64` compare instructions need
+set-flags variants of the existing encode lemmas.
 
 `JumpReg.lean` does the same for `BranchRegister (r, JMP)`: the word, its
 `Encode`/`Decode` inverse and the `Run` reduction, where `PC` becomes the
@@ -349,7 +357,7 @@ Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
 `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
 `ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in `Carry.lean` and its
 `ConditionalCompareImmediate@64` facts in `Compare.lean`), `Mem`, and the
-`JumpCmp` case theorem itself (its compare instructions, conditional branch and
-`cmp_cond` flag semantics are proved; the two-instruction simulation is not).
+the immediate `JumpCmp` form (the register form's compare, branch, flag
+semantics and two-instruction simulation are proved).
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
