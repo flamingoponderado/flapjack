@@ -56,6 +56,15 @@ sexplog_logsexp_typed=sexplog (logsexp (l :lop)) = SOME l
 locnsexp_11_typed=locnsexp (p1 :locn) = locnsexp (p2 :locn) ⇔ p1 = p2
 locssexp_11_typed=∀(l1 :locs) (l2 :locs). locssexp l1 = locssexp l2 ⇔ l1 = l2
 logsexp_11_typed=∀(l1 :lop) (l2 :lop). logsexp l1 = logsexp l2 ⇔ l1 = l2
+arithsexp_typed=arithsexp Add = SX_SYM "Add" ∧ arithsexp Sub = SX_SYM "Sub" ∧ arithsexp Mul = SX_SYM "Mul" ∧ arithsexp Div = SX_SYM "Div" ∧ arithsexp Mod = SX_SYM "Mod" ∧ arithsexp And = SX_SYM "And" ∧ arithsexp Xor = SX_SYM "Xor" ∧ arithsexp Or = SX_SYM "Or" ∧ arithsexp Not = SX_SYM "Not" ∧ arithsexp Neg = SX_SYM "Neg" ∧ arithsexp Abs = SX_SYM "Abs" ∧ arithsexp Sqrt = SX_SYM "Sqrt" ∧ arithsexp FMA = SX_SYM "FMA"
+prim_typesexp_typed=prim_typesexp BoolT = SX_SYM "BoolT" ∧ prim_typesexp IntT = SX_SYM "IntT" ∧ prim_typesexp CharT = SX_SYM "CharT" ∧ prim_typesexp StrT = SX_SYM "StrT" ∧ prim_typesexp (WordT W8) = SX_SYM "Word8T" ∧ prim_typesexp (WordT W64) = SX_SYM "Word64T" ∧ prim_typesexp Float64T = SX_SYM "Float64T"
+testsexp_typed=testsexp Equal = SX_SYM "Equal" ∧ testsexp (Compare Lt) = SX_SYM "Less" ∧ testsexp (Compare Leq) = SX_SYM "LessEq" ∧ testsexp (Compare Gt) = SX_SYM "Greater" ∧ testsexp (Compare Geq) = SX_SYM "GreaterEq" ∧ testsexp (AltCompare Lt) = SX_SYM "AltLess" ∧ testsexp (AltCompare Leq) = SX_SYM "AltLessEq" ∧ testsexp (AltCompare Gt) = SX_SYM "AltGreater" ∧ testsexp (AltCompare Geq) = SX_SYM "AltGreaterEq"
+arithsexp_sexparith_typed=∀(x :arith). sexparith (arithsexp x) = SOME x
+sexpprim_type_testsexp_typed=∀(x :prim_type). decode_prim_type (prim_typesexp x) = SOME x
+sexptest_testsexp_typed=∀(x :test). decode_test (testsexp x) = SOME x
+arithsexp_11_typed=∀(l1 :arith) (l2 :arith). arithsexp l1 = arithsexp l2 ⇔ l1 = l2
+prim_typesexp_11_typed=∀(l1 :prim_type) (l2 :prim_type). prim_typesexp l1 = prim_typesexp l2 ⇔ l1 = l2
+testsexp_11_typed=∀(l1 :test) (l2 :test). testsexp l1 = testsexp l2 ⇔ l1 = l2
 lists=[SOME []; SOME [1; 2; 3]; NONE; NONE]
 option=[SOME NONE; SOME (SOME 5); NONE; NONE]
 identifier=[SOME (Short «x»); SOME (Long «M» (Short «x»)); NONE; SOME (Long «A» (Long «B» (Short «x»))); NONE; NONE]

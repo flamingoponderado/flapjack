@@ -77,6 +77,28 @@ def logsexp : Lop → Sexp
   | .andalso => .sym (ascii "Andalso")
   | .orelse => .sym (ascii "Orelse")
 
+/-- Encode an arithmetic operator. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "arithsexp_def"]
+def arithsexp (op : Arith) : Sexp := .sym (ascii (match op with
+  | .add => "Add" | .sub => "Sub" | .mul => "Mul" | .div => "Div"
+  | .mod => "Mod" | .neg => "Neg" | .and => "And" | .xor => "Xor"
+  | .or => "Or" | .not => "Not" | .abs => "Abs" | .sqrt => "Sqrt" | .fma => "FMA"))
+
+/-- Encode a primitive type. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "prim_typesexp_def"]
+def primTypesexp (type : PrimType) : Sexp := .sym (ascii (match type with
+  | .boolT => "BoolT" | .intT => "IntT" | .charT => "CharT" | .strT => "StrT"
+  | .wordT .w8 => "Word8T" | .wordT .w64 => "Word64T" | .float64T => "Float64T"))
+
+/-- Encode a comparison test. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "testsexp_def"]
+def testsexp (test : Test) : Sexp := .sym (ascii (match test with
+  | .equal => "Equal"
+  | .compare .lt => "Less" | .compare .leq => "LessEq"
+  | .compare .gt => "Greater" | .compare .geq => "GreaterEq"
+  | .altCompare .lt => "AltLess" | .altCompare .leq => "AltLessEq"
+  | .altCompare .gt => "AltGreater" | .altCompare .geq => "AltGreaterEq"))
+
 /-- Encode CakeML literal syntax. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "litsexp_def"]
 def litsexp : Lit → Sexp

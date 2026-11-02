@@ -1,6 +1,78 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "arithsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "arithsexp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all thirteen captured arithmetic-operator equations. The executable uses this definition."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "primTypesexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "prim_typesexp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all captured primitive-type equations, including both word widths. The executable uses this definition."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "testsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "testsexp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all nine captured comparison-test equations. The executable uses this definition."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeArith_arithsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "arithsexp_sexparith",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured arith carrier and decode-encode equality."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodePrimType_primTypesexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexpprim_type_testsexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured prim_type carrier and decode-encode equality."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeTest_testsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexptest_testsexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured test carrier and decode-encode equality."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "arithsexp_injective",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "arithsexp_11",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified arithmetic-operator equality equivalence."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "primTypesexp_injective",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "prim_typesexp_11",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified primitive-type equality equivalence."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "testsexp_injective",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "testsexp_11",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified comparison-test equality equivalence."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
     "lean_name": "locnsexp",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "locnsexp_def",

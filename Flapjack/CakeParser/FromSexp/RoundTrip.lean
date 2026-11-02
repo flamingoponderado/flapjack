@@ -275,4 +275,48 @@ theorem logsexp_injective (a b : Lop) : logsexp a = logsexp b ↔ a = b := by
   · rintro rfl
     rfl
 
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "arithsexp_sexparith"]
+theorem decodeArith_arithsexp (op : Arith) : decodeArith (arithsexp op) = some op := by
+  cases op <;> decide
+
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpprim_type_testsexp"]
+theorem decodePrimType_primTypesexp (type : PrimType) :
+    decodePrimType (primTypesexp type) = some type := by
+  cases type with
+  | wordT width => cases width <;> decide
+  | boolT | intT | charT | strT | float64T => decide
+
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexptest_testsexp"]
+theorem decodeTest_testsexp (test : Test) : decodeTest (testsexp test) = some test := by
+  cases test with
+  | equal => decide
+  | compare op | altCompare op => cases op <;> decide
+
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "arithsexp_11"]
+theorem arithsexp_injective (a b : Arith) : arithsexp a = arithsexp b ↔ a = b := by
+  constructor
+  · intro h
+    have decoded := congrArg decodeArith h
+    simpa [decodeArith_arithsexp] using decoded
+  · rintro rfl
+    rfl
+
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "prim_typesexp_11"]
+theorem primTypesexp_injective (a b : PrimType) : primTypesexp a = primTypesexp b ↔ a = b := by
+  constructor
+  · intro h
+    have decoded := congrArg decodePrimType h
+    simpa [decodePrimType_primTypesexp] using decoded
+  · rintro rfl
+    rfl
+
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "testsexp_11"]
+theorem testsexp_injective (a b : Test) : testsexp a = testsexp b ↔ a = b := by
+  constructor
+  · intro h
+    have decoded := congrArg decodeTest h
+    simpa [decodeTest_testsexp] using decoded
+  · rintro rfl
+    rfl
+
 end Flapjack.CakeParser.FromSexp

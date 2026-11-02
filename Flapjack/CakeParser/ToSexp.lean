@@ -28,19 +28,9 @@ abbrev literal := FromSexp.litsexp
 
 abbrev pattern := FromSexp.patsexp
 
-private def arith : Arith → Sexp := fun x => sym <| match x with
-  | .add => "Add" | .sub => "Sub" | .mul => "Mul" | .div => "Div"
-  | .mod => "Mod" | .neg => "Neg" | .and => "And" | .xor => "Xor"
-  | .or => "Or" | .not => "Not" | .abs => "Abs" | .sqrt => "Sqrt" | .fma => "FMA"
-private def primType : PrimType → Sexp := fun x => sym <| match x with
-  | .boolT => "BoolT" | .intT => "IntT" | .charT => "CharT" | .strT => "StrT"
-  | .wordT .w8 => "Word8T" | .wordT .w64 => "Word64T" | .float64T => "Float64T"
-private def cmpName : Opb → String
-  | .lt => "Less" | .leq => "LessEq" | .gt => "Greater" | .geq => "GreaterEq"
-private def test : Test → Sexp
-  | .equal => sym "Equal"
-  | .compare c => sym (cmpName c)
-  | .altCompare c => sym ("Alt" ++ cmpName c)
+private abbrev arith := FromSexp.arithsexp
+private abbrev primType := FromSexp.primTypesexp
+private abbrev test := FromSexp.testsexp
 private def shiftName : Shift → String
   | .lsl => "Lsl" | .lsr => "Lsr" | .asr => "Asr" | .ror => "Ror"
 private def mode : ThunkMode → Sexp
