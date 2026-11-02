@@ -456,7 +456,8 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 ```
 
 Seed `287601` also matched 80 backend-option cases against the pinned compiler;
-seeds `93171` and `8740163` each matched 100.
+seeds `93171`, `8740163` and `381762` each matched 100. Rich-program seed
+`627118` matched 40 complete outputs.
 
 Use `--config-mutations` to compare successful and rejected combinations of
 numeric, Boolean, allocator and GC options, including repeated options and
