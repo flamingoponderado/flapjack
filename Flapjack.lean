@@ -2770,7 +2770,9 @@ import Flapjack.Compiler.Encoders.Arm8.Configuration
 import Flapjack.Compiler.Encoders.Arm8.TargetProof
 import Flapjack.Compiler.Encoders.Arm8.L3.Types
 import Flapjack.Compiler.Encoders.Arm8.L3.Defs
+import Flapjack.Compiler.Encoders.Arm8.L3.Ast
 import Flapjack.Compiler.Encoders.Arm8.L3.Target
+import Flapjack.Compiler.Encoders.Arm8.L3.Target.State
 import Flapjack.Compiler.Encoders.Arm8.Machine.State
 import Flapjack.Compiler.Encoders.Arm8.Machine.Decode
 import Flapjack.Compiler.Encoders.Arm8.Machine.Execute

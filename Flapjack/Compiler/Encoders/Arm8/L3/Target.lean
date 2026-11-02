@@ -11,11 +11,13 @@ import Flapjack.Misc.Option
 Counterparts of CakeML's `arm8_proj` and `arm8_ok`
 (`cakeml/compiler/encoders/arm8/arm8_targetScript.sml`, lines 343-353), stated
 over the L3 `arm8_state` carrier of `Flapjack/Compiler/Encoders/Arm8/L3/Types.lean`
-rather than the closed `Arm8State`.  The L3 `arm8_next`/`arm8_target` pair is
-*not* ported here: `arm8_next = THE o NextStateARM8` needs the pinned L3
-transition semantics (`Next`/`Fetch`/`Decode`/`Run` in
-`HOL/examples/l3-machine-code/arm8/model/arm8Script.sml`), which is the
-remaining work of issue #1239.
+rather than the closed `Arm8State`.  `arm8_next = THE o NextStateARM8` is
+stated here over the L3 carrier, using the rendered `NextStateARM8` closure of
+`L3/Defs.lean`; the `arm8_target` record follows in
+`Flapjack/Compiler/Encoders/Arm8/L3/Target/State.lean`.  That record is not an
+exact `arm8_target_def` port because its `config` field uses the closed-model
+`arm8Config`; the exact L3 `arm8_config` carrier is tracked in #1229.  The
+per-instruction simulation proofs remain the work of #1239.
 
 The final theorem links the closed model's validity condition to the L3 gate:
 under `arm8StateRel`, the closed `arm8StateOk` implies L3 `arm8_ok`, with the

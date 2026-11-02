@@ -309,13 +309,16 @@ The following are open review or verification obligations:
       transition-definition closure are ported: `L3/Support.lean` supplies the
       bitstring/FCP/list/set/word/integer helpers, and `L3/Defs.lean` renders
       the 129 definitions reachable from `NextStateARM8` (118 tagged
-      `pending_statement_review`), with `L3/Target.lean`'s `arm8_next`.  There
-      is still no transition refinement: the closed `arm8Next` is not shown to
+      `pending_statement_review`), with `L3/Target.lean`'s `arm8_next`,
+      `L3/Ast.lean`'s `arm8_encode`, and `L3/Target/State.lean`'s untagged
+      `arm8TargetL3` plus the kernel-checked `arm8TargetL3_targetOk`.  There is
+      still no transition refinement: the closed `arm8Next` is not shown to
       agree with L3 `NextStateARM8`, the rendered equations have not been
-      source-reviewed, `arm8_target` awaits the full L3 `arm8_config` carrier
-      (#1229), and there is no L3 `arm8_encoder_correct` port, no proof about
-      arbitrary ARMv8 code, and no theorem that the model agrees with real
-      AArch64 hardware or with L3.
+      source-reviewed, `arm8TargetL3` is not an exact `arm8_target` port
+      because its config is the closed-model `arm8Config` (`arm8_ast` and the
+      exact `arm8_config` carrier are #1229), and there is no L3
+      `arm8_encoder_correct` port, no proof about arbitrary ARMv8 code, and no
+      theorem that the model agrees with real AArch64 hardware or with L3.
       The trusted compiler claim therefore rests on the closed model plus the
       parity evidence, not on an L3 refinement.
     - **Proof port status.** The structural length lemmas at the start of
