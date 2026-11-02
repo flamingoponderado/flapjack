@@ -294,17 +294,22 @@ register's value.  The target's alignment is forced by `asm_step`'s
 `~s2.failed` premise, since `JumpReg` lowers to `assert (aligned 2 a)`.
 `arm8_encoder_correct_jumpReg` assembles that case with `n = 0`.
 
+`LongDiv.lean` records that the `LongDiv` constructor is vacuous too: the
+CakeML `arith_ok` admits `LongDiv` only on `x86_64`, while the L3
+`arm8_config` has `ISA = ARMv8`, so `asm_step` cannot hold.
+`arm8_encoder_correct_longDiv` proves the case from that contradiction,
+matching the HOL proof's `LongDiv` branch.
+
 `Fp.lean` records that the `FP` constructor is vacuous: `arm8_ast` lowers it to
 the fail list, and `arm8_config` has no FP registers, so `fp_ok` rejects every
 FP operation and `asm_step` cannot hold.  `arm8_encoder_correct_fp` proves the
 case from that contradiction, matching the HOL proof's `FP` branch.
 
 Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
-`DecodeBitMasks`/`BitfieldMove`), the `longDiv` case, `addCarry`,
+`DecodeBitMasks`/`BitfieldMove`), `addCarry`,
 `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
 `ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in `Carry.lean` and its
 `ConditionalCompareImmediate@64` facts in `Compare.lean`), `Mem` and
 `JumpCmp`.
-`longDiv` lowers to `arm8EncodeFail`, so its case cannot be a faithful lowering
-without the intended instruction sequence.  The assembling
+The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
