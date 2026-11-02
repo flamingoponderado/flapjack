@@ -130,6 +130,87 @@ theorem applyMemory_elBlock_wellFormedFuel {C F : Type} {fuel : Nat} {g : State}
       have member : value ∈ values := by simpa only [eq] using List.getElem_mem bound
       exact ⟨valuesWellFormedFuel_mem valuesWf member, stateWf⟩
 
+/-- Every accepted `el` argument form preserves well-formedness. -/
+theorem applyMemory_el_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (args : List Value)
+    (state next : ClosSem.State C F) (result : Value)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args)
+    (run : applyMemory .el args state = some (result, next)) :
+    ValueWellFormedFuel fuel g allowed code result ∧ StateWellFormedFuel fuel g allowed code next := by
+  cases args with
+  | nil => simp [applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [applyMemory] at run
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp [applyMemory] at run
+      | nil =>
+        cases second with
+        | number index =>
+          cases first with
+          | block tag fields =>
+            have blockWf := valuesWellFormedFuel_mem argsWf (value := .block tag fields) (by simp)
+            cases blockWf with
+            | block _ fieldsWf => exact applyMemory_elBlock_wellFormedFuel state next tag fields index result stateWf fieldsWf run
+          | refPtr flag key => exact applyMemory_elArray_wellFormedFuel state next flag key index result stateWf run
+          | number | word64 | byteVector | closure | recclosure => simp [applyMemory] at run
+        | word64 | block | byteVector | refPtr | closure | recclosure =>
+          cases first <;> simp [applyMemory] at run
+
+/-- Every successful array allocation preserves the invariant. -/
+theorem applyMemory_refArray_all_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (args : List Value)
+    (state next : ClosSem.State C F) (result : Value)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args)
+    (run : applyMemory .refArray args state = some (result, next)) :
+    ValueWellFormedFuel fuel g allowed code result ∧ StateWellFormedFuel fuel g allowed code next := by
+  cases args with
+  | nil => simp [applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [applyMemory] at run
+    | cons value rest =>
+      cases rest with
+      | cons extra rest => simp [applyMemory] at run
+      | nil =>
+        cases first with
+        | number count =>
+          exact applyMemory_refArray_wellFormedFuel state next count value result stateWf
+            (valuesWellFormedFuel_mem argsWf (by simp)) run
+        | word64 | block | byteVector | refPtr | closure | recclosure => simp [applyMemory] at run
+
+/-- Every successful value-array update preserves the invariant. -/
+theorem applyMemory_update_all_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (args : List Value)
+    (state next : ClosSem.State C F) (result : Value)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args)
+    (run : applyMemory .update args state = some (result, next)) :
+    ValueWellFormedFuel fuel g allowed code result ∧ StateWellFormedFuel fuel g allowed code next := by
+  cases args with
+  | nil => simp [applyMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [applyMemory] at run
+    | cons second rest =>
+      cases rest with
+      | nil => simp [applyMemory] at run
+      | cons value rest =>
+        cases rest with
+        | cons extra rest => simp [applyMemory] at run
+        | nil =>
+          cases first with
+          | refPtr flag key =>
+            cases second with
+            | number index =>
+              exact applyMemory_update_wellFormedFuel state next flag key index value result stateWf
+                (valuesWellFormedFuel_mem argsWf (by simp)) run
+            | word64 | block | byteVector | refPtr | closure | recclosure => simp [applyMemory] at run
+          | number | word64 | block | byteVector | closure | recclosure => simp [applyMemory] at run
+
 /-- Reference allocation preserves the primitive result invariant for all
 well-formed arguments. -/
 theorem doApp_ref_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
@@ -143,5 +224,49 @@ theorem doApp_ref_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {a
     obtain ⟨value, next⟩ := pair
     simpa [doApp, applied, PrimitiveResultWellFormedFuel] using
       applyMemory_ref_wellFormedFuel state next args value stateWf argsWf applied
+
+/-- Lift a successful memory-operation preservation proof through the
+primitive dispatcher, which converts unsuccessful operations to aborts. -/
+theorem doApp_memory_result_of_apply {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (op : ClosLang.MemOp)
+    (args : List Value) (state : ClosSem.State C F)
+    (success : ∀ value next, applyMemory op args state = some (value, next) →
+      ValueWellFormedFuel fuel g allowed code value ∧ StateWellFormedFuel fuel g allowed code next) :
+    PrimitiveResultWellFormedFuel fuel g allowed code (doApp (.memOp op) args state) := by
+  cases applied : applyMemory op args state with
+  | none => simp [doApp, applied, PrimitiveResultWellFormedFuel]
+  | some pair =>
+    obtain ⟨value, next⟩ := pair
+    simpa [doApp, applied, PrimitiveResultWellFormedFuel] using success value next applied
+
+/-- Indexed block and array reads preserve the primitive result invariant. -/
+theorem doApp_el_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (args : List Value) (state : ClosSem.State C F)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args) :
+    PrimitiveResultWellFormedFuel fuel g allowed code (doApp (.memOp .el) args state) := by
+  apply doApp_memory_result_of_apply .el args state
+  intro value next run
+  exact applyMemory_el_wellFormedFuel args state next value stateWf argsWf run
+
+/-- Array allocation preserves the primitive result invariant. -/
+theorem doApp_refArray_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (args : List Value) (state : ClosSem.State C F)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args) :
+    PrimitiveResultWellFormedFuel fuel g allowed code (doApp (.memOp .refArray) args state) := by
+  apply doApp_memory_result_of_apply .refArray args state
+  intro value next run
+  exact applyMemory_refArray_all_wellFormedFuel args state next value stateWf argsWf run
+
+/-- Value-array updates preserve the primitive result invariant. -/
+theorem doApp_update_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (args : List Value) (state : ClosSem.State C F)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args) :
+    PrimitiveResultWellFormedFuel fuel g allowed code (doApp (.memOp .update) args state) := by
+  apply doApp_memory_result_of_apply .update args state
+  intro value next run
+  exact applyMemory_update_all_wellFormedFuel args state next value stateWf argsWf run
 
 end Flapjack.Compiler.Backend.ClosCall
