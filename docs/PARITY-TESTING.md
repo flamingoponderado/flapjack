@@ -880,9 +880,9 @@ sequential, module, and local `Denv` declarations and the `Envid` and `Eval`
 primitives. To compare a
 complete exported compiler AST, add `--bootstrap-sexp /path/to/compiler.sexpr`
 alongside `--check-reference`; this compares type-reporting output with type
-inference disabled, using the bootstrap's heap and stack settings. The parser
-remains bounded, and whole-parser and AST-decoder equivalence with HOL has not
-been proved.
+inference disabled, using the bootstrap's heap and stack settings. The direct
+S-expression parser is total; its equivalence with the HOL PEG and whole
+AST-decoder correspondence have not been proved.
 
 An additional unverified bootstrap provides an original compiler built from
 the pinned translated CakeML compiler AST. Given the pinned CakeML and HOL

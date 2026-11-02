@@ -38,6 +38,17 @@ example : [parse [9, 10, 120, 13], parse [0], parse [127], parse [128],
     parse [34, 31, 34], parse [34, 126, 34], parse [120, 128]] =
     [some (sym "x"), none, none, none, none, some (str "~"), none] := by native_decide
 
+-- Compare the new parser with the former size-bounded worker over short inputs
+-- containing delimiters, whitespace, quotes, escapes, digits and symbols.
+private def parserAlphabet : List HolChar := [0, 9, 32, 34, 39, 40, 41, 46, 48, 92, 97, 127]
+private def parserInputs : List (List HolChar) :=
+  [[]] ++ parserAlphabet.map (· :: []) ++
+    parserAlphabet.flatMap (fun a => parserAlphabet.map (fun b => [a, b])) ++
+    parserAlphabet.flatMap (fun a => parserAlphabet.flatMap (fun b => parserAlphabet.map (fun c => [a, b, c])))
+
+example : parserInputs.all (fun input => parse input == parseFuel (2 * input.length + 2) input) = true := by
+  native_decide
+
 -- The printer observations are captured from the pinned HOL `print_sexp`.
 example : [render (sym "nil"), render (.num 12345), render (str "a\"b\\c"),
     render (list [.num 1, .num 2]), render (.cons (.num 1) (.num 2)),
