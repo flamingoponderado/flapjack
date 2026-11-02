@@ -10,9 +10,9 @@ open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString
 open Flapjack.AstHOL Flapjack.NamespaceHOL
 
 private def ascii (s : String) : List HolChar := (ofString s).explode
-private def isPrint (c : HolChar) : Bool := 32 ≤ c.toNat && c.toNat < 127
+def isPrint (c : HolChar) : Bool := 32 ≤ c.toNat && c.toNat < 127
 
-private def upperHex (c : HolChar) : Option Nat :=
+def upperHex (c : HolChar) : Option Nat :=
   let n := c.toNat
   if 48 ≤ n && n ≤ 57 then some (n - 48)
   else if 65 ≤ n && n ≤ 70 then some (n - 65 + 10)

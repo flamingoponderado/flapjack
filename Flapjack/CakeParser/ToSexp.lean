@@ -16,7 +16,7 @@ def option (s : Option Sexp) : Sexp := match s with
   | none => sym "NONE"
   | some x => node "SOME" [x]
 
-private def hexDigit (n : Nat) : HolChar :=
+def hexDigit (n : Nat) : HolChar :=
   BitVec.ofNat 8 (if n < 10 then 48 + n else 65 + n - 10)
 
 def encodeControl (bytes : List HolChar) : List HolChar := bytes.flatMap fun c =>

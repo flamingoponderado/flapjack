@@ -6,6 +6,9 @@ fun show label tm =
 val _ = show "control" ``MAP fromSexp$decode_control
   ["abc"; "\\\\"; "\\00"; "\\1F"; "\\7F"; "\\FF"; "\\20"; "\\5C";
    "\\1f"; "\\FG"; "\\"; [CHR 31]; "x\\00y"]``;
+val _ = (print "decode_encode_control_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.decode_encode_control);
+  print "\n");
 val _ = show "lists" ``MAP (fromSexp$sexplist fromSexp$odestSXNUM)
   [⟪⟫; ⟪1; 2; 3⟫; ⟪1 • 2⟫; ⟪SX_STR "x"⟫]``;
 val _ = show "option" ``MAP (fromSexp$sexpopt fromSexp$odestSXNUM)

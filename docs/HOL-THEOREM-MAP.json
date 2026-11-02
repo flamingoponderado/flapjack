@@ -1,5 +1,13 @@
 [
   {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Control.lean",
+    "lean_name": "decode_encode_control",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "decode_encode_control",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete HOL theorem and inferred type: every HOL byte-character list decoded after encode_control is SOME of the original list. The executed Lean encoder uses the same doubled backslash, printable ASCII and uppercase two-digit hexadecimal cases; the decoder accepts precisely those forms and rejects printable hexadecimal escapes. HolChar is the established eight-bit HOL character carrier."
+  },
+  {
     "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
     "hol_name": "LENGTH_n2mw_LESS_LENGTH_n2mw",
     "lean_path": "Flapjack/Misc/Multiword/Length.lean",

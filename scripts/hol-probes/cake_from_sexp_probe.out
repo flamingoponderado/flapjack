@@ -1,4 +1,5 @@
 control=[SOME "abc"; SOME "\\"; SOME "\^@"; SOME "\^_"; SOME "\127"; SOME "\255"; NONE; NONE; NONE; NONE; NONE; NONE; SOME "x\^@y"]
+decode_encode_control_typed=∀(ls :string). decode_control (encode_control ls) = SOME ls
 lists=[SOME []; SOME [1; 2; 3]; NONE; NONE]
 option=[SOME NONE; SOME (SOME 5); NONE; NONE]
 identifier=[SOME (Short «x»); SOME (Long «M» (Short «x»)); NONE]

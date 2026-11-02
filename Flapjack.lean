@@ -251,6 +251,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.Limit
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.Size
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.ResourceLimit
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Termination
+import Flapjack.CakeParser.FromSexp.Control
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.BlockPointer
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.List
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
