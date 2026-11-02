@@ -1,9 +1,10 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateApplication
 import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
 
 /-! Clock and argument behavior of generated direct calls. -/
 namespace Flapjack.Compiler.Backend.ClosCall
-open Flapjack ClosSem SemanticPrimitivesHOL
+open Flapjack ClosSem SemanticPrimitivesHOL SemanticPrimitivesProps
 
 private theorem lookupVars_append {A : Type} (xs ys : List Nat) (env : List A) :
     lookupVars (xs ++ ys) env = (do
@@ -296,5 +297,64 @@ theorem related_known_app_eq_rewritten_call {C F : Type}
     simpa [values.length_eq] using targetClosure
   exact evaluate_rewritten_call_eq_known_app_all trace stubTrace (address + 1) address args env targetValues
     stubEnv target state afterArgs convertedBody argsRun code targetClosure'
+
+/-- A non-timeout source application is simulated by the rewritten call
+with one extra target tick. The stated body induction hypothesis and the
+fuel-aware relations are proof infrastructure, not the complete HOL result. -/
+theorem known_app_to_rewritten_call_fuel {C F : Type}
+    (fuel : Nat) (g : State) (allowed : Set Nat) (trace : BackendCommon.Tra) (address : Nat)
+    (sourceFun targetFun : ClosSem.Value) (sourceValues targetValues : List ClosSem.Value)
+    (sourceBody : ClosLang.Exp) (sourceBodyEnv sourceRest : List ClosSem.Value)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target afterArgs : ClosSem.State C F)
+    (sourceResult : Result (List ClosSem.Value) ClosSem.Value) (sourceFinal : ClosSem.State (NumSet × C) F)
+    (argsRun : evaluate args env target = (.val targetValues, afterArgs))
+    (sourceRun : evaluateApp (some address) sourceFun sourceValues source = (sourceResult, sourceFinal))
+    (notType : sourceResult ≠ .err (.abort .typeError))
+    (notTimeout : sourceResult ≠ .err (.abort .timeoutError))
+    (sourceClosure : destClosure source.maxApp (some address) sourceFun sourceValues =
+      some (.fullApp sourceBody sourceBodyEnv sourceRest))
+    (functions : ValueRelFuel fuel g allowed afterArgs.code sourceFun targetFun)
+    (values : List.Forall₂ (ValueRelFuel fuel g allowed afterArgs.code) sourceValues targetValues)
+    (states : StateRelFuel fuel g allowed source afterArgs)
+    (notAllowed : address ∉ allowed) (distinct : (g.2.map Prod.fst).Nodup)
+    (bodyIH : ∀ (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+        (left right : ClosLang.Exp) (location : Nat) (leftFns rightFns : List (Nat × ClosLang.Exp))
+        (index arity : Nat),
+      recClosureRelFuel fuel g allowed code location leftFns rightFns →
+      leftFns[index]? = some (arity, left) → rightFns[index]? = some (arity, right) →
+      ExprSimFuel (C := C) (F := F) fuel g allowed left right) :
+    ∃ targetResult targetFinal,
+      evaluate [.call trace targetValues.length (address + 1) args] env
+          { target with clock := target.clock + 1 } =
+        (targetResult, { targetFinal with clock := targetFinal.clock + 1 }) ∧
+      resultRel (List.Forall₂ (ValueRelFuel fuel g allowed targetFinal.code))
+        (ValueRelFuel fuel g allowed targetFinal.code) sourceResult targetResult ∧
+      StateRelFuel fuel g allowed sourceFinal targetFinal ∧
+      (∀ key value, afterArgs.code.lookup key = some value → targetFinal.code.lookup key = some value) := by
+  obtain ⟨targetResult, targetFinal, targetRun, results, finalStates, growth⟩ :=
+    appSimFuel_of_bodies fuel g allowed (some address) distinct bodyIH sourceFun targetFun sourceValues targetValues
+      source afterArgs sourceResult sourceFinal sourceRun notType functions values states
+  have targetNotTimeout : targetResult ≠ .err (.abort .timeoutError) := by
+    intro bad
+    subst targetResult
+    cases sourceResult with
+    | val value => simp [resultRel] at results
+    | err error =>
+      cases error with
+      | raise value => simp [resultRel, excRel] at results
+      | abort reason =>
+        simp [resultRel, excRel] at results
+        subst reason
+        exact notTimeout rfl
+  have shifted := (evaluate_addClock (C := C) (F := F)).2 (some address) targetFun targetValues
+    afterArgs targetFinal targetResult 1 targetRun targetNotTimeout
+  have sourceClosure' : destClosure afterArgs.maxApp (some address) sourceFun sourceValues =
+      some (.fullApp sourceBody sourceBodyEnv sourceRest) := by
+    simpa [← states.2.2.1] using sourceClosure
+  have direct := related_known_app_eq_rewritten_call fuel g allowed trace address sourceFun targetFun
+    sourceValues targetValues sourceBody sourceBodyEnv sourceRest args env target afterArgs argsRun
+    sourceClosure' functions values notAllowed
+  exact ⟨targetResult, targetFinal, direct.trans shifted, results, finalStates, growth⟩
 
 end Flapjack.Compiler.Backend.ClosCall
