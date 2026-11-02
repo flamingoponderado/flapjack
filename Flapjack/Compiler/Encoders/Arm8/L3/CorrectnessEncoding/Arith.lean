@@ -229,14 +229,12 @@ theorem arm8_encoder_correct_binop_addsub_reg (op : Bool) (bop : HolBinop)
       { ms with branch_hint := none, REG := holUpdate (BitVec.ofNat 5 destination) v ms.REG } := by
     rw [arm8Run_addSubShiftedRegister]
     cases op
-    · simp only [SetTheFlags, Bool.false_eq_true, if_false, if_true, ShiftReg, ShiftValue,
-        BitVec.shiftLeft_zero, BitVec.toNat_ofNat, Nat.zero_mod]
+    · simp only [SetTheFlags, Bool.false_eq_true, if_false, ShiftReg, ShiftValue]
       rw [arm8WriteX_of_valid _ _ hd31 hdlt, arm8X_of_valid _ hs31 hslt, arm8X_of_valid _ hr31 hrlt]
-      simp [arm8AddWithCarry_add, BitVec.setWidth_eq, holUpdate, v]
-    · simp only [SetTheFlags, Bool.false_eq_true, if_false, if_true, ShiftReg, ShiftValue,
-        BitVec.shiftLeft_zero, BitVec.toNat_ofNat, Nat.zero_mod]
+      simp [arm8AddWithCarry_add, holUpdate, v]
+    · simp only [SetTheFlags, Bool.false_eq_true, if_false, ShiftReg, ShiftValue]
       rw [arm8WriteX_of_valid _ _ hd31 hdlt, arm8X_of_valid _ hs31 hslt, arm8X_of_valid _ hr31 hrlt]
-      simp [arm8AddWithCarry_sub, BitVec.setWidth_eq, holUpdate, v]
+      simp [arm8AddWithCarry_sub, holUpdate, v]
   have hnext : arm8Next ms = { ms with branch_hint := none, REG := holUpdate (BitVec.ofNat 5 destination) v ms.REG, PC := ms.PC + 4 } := by
     unfold arm8Next
     rw [hn, hrun]
