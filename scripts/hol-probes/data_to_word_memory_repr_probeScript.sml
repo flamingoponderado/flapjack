@@ -351,6 +351,7 @@ val _ = show "n2mw_typed" multiwordTheory.n2mw_def;
 val _ = show "mw2n_def_typed" multiwordTheory.mw2n_def;
 val _ = show "mw2i_def_typed" multiwordTheory.mw2i_def;
 val _ = show "mw2n_n2mw_typed" multiwordTheory.mw2n_n2mw;
+val _ = show "LENGTH_n2mw_LESS_LENGTH_n2mw_typed" multiwordTheory.LENGTH_n2mw_LESS_LENGTH_n2mw;
 val _ = show "mw2i_i2mw_typed" multiwordTheory.mw2i_i2mw;
 val _ = show "bytes_to_word_typed" byteTheory.bytes_to_word_def;
 val _ = show "write_bytes_typed" data_to_wordTheory.write_bytes_def;

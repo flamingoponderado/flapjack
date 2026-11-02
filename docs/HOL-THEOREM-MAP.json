@@ -1,5 +1,14 @@
 [
   {
+    "hol_path": "HOL/examples/machine-code/multiword/multiwordScript.sml",
+    "hol_name": "LENGTH_n2mw_LESS_LENGTH_n2mw",
+    "lean_path": "Flapjack/Misc/Multiword/Length.lean",
+    "lean_name": "n2mw_length_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared with the source theorem and its captured inferred type: arbitrary natural m and n with m ≤ n yield the same ordering of n2mw digit lengths. Both lists use the same positive HOL word dimension."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "get_vars_reverse",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/Variables.lean", "lean_name": "getVars_reverse",
     "statement_status": "reviewed_exact",

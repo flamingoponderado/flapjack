@@ -202,6 +202,7 @@ n2mw_typed=∀(n :num). (n2mw n :α word list) = if n = (0 :num) then ([] :α wo
 mw2n_def_typed=mw2n ([] :α word list) = (0 :num) ∧ ∀(x :α word) (xs :α word list). mw2n (x::xs) = w2n x + dimword (:α) * mw2n xs
 mw2i_def_typed=mw2i (F,(xs :α word list)) = ((&mw2n xs) :int) ∧ mw2i (T,xs) = -((&mw2n xs) :int)
 mw2n_n2mw_typed=∀(n :num). mw2n (n2mw n :α word list) = n
+LENGTH_n2mw_LESS_LENGTH_n2mw_typed=∀(m :num) (n :num). m ≤ n ⇒ LENGTH (n2mw m :α word list) ≤ LENGTH (n2mw n :α word list)
 mw2i_i2mw_typed=∀(i :int). mw2i (i2mw i :bool # α word list) = i
 bytes_to_word_typed=∀(w :α word) (k :num) (bs :word8 list) (be :bool) (a :α word). bytes_to_word k a bs w be = if k = (0 :num) then w else case bs of ([] :word8 list) => w | b::bs' => set_byte a b (bytes_to_word (k − (1 :num)) (a + (1w :α word)) bs' w be) be
 write_bytes_typed=(∀(bs :word8 list) (be :bool). write_bytes bs ([] :α word list) be = ([] :α word list)) ∧ ∀(bs :word8 list) (w :α word) (ws :α word list) (be :bool). write_bytes bs (w::ws) be = (let (k :num) = dimindex (:α) DIV (8 :num) in bytes_to_word k (0w :α word) bs w be::write_bytes (DROP k bs) ws be)
