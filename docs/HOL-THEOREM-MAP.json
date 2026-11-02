@@ -100626,6 +100626,22 @@
     "reviewer": "Source comparison: memory_rel_ByteArray_words_IMP and its typed capture retain the complete memory relation, reference lookup, good_dimindex and real-address hypotheses. The existential header and separation frame, exact write_bytes payload over the functional memory graph, and both decoded-length conclusions match HOL. store uses the canonical finite-support map and all memory words share the source positive word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth.lean",
+    "lean_name": "vDepth",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "v_depth_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all constructor equations and captured inferred types: a block has the empty/nonempty increment plus the maximum recursive child depth, and the four other value constructors have depth zero. The mutually recursive vDepthMax implements MAX_LIST over mapped child depths with the same empty-list value and maximum operation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth.lean",
+    "lean_name": "elementsList",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "elements_list_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all three source equations and captured inferred types: empty and singleton lists are true; a longer list requires its second value to be a block whose field list contains the first value, and recurses on the tail."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordCardinality.lean",
     "lean_name": "wordListLimit",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
