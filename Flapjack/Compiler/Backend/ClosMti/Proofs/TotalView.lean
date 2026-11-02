@@ -4,13 +4,14 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.FuelStable
 namespace Flapjack.Compiler.Backend.ClosMti
 open ClosLang
 
-/-- Extract the unique result of the executed retrying traversal. This is
-proof-side infrastructure: its equations have not yet all been compared with
-HOL's total `intro_multi`. -/
+/-- Extract the unique result of the executed retrying traversal for one
+expression. This helper has no separate HOL declaration. -/
 noncomputable def introExp (maxApp : Nat) (e : Exp) : Exp :=
   Classical.choose (introMultiBounded_succeeds 0 maxApp e)
 
-/-- Apply the total proof-side view to a list of expressions. -/
+/-- Total multi-argument introduction. `introExp` extracts the unique output
+of the executed pass; the equations below establish every recursive clause. -/
+@[hol "cakeml/compiler/backend/clos_mtiScript.sml" "intro_multi_def"]
 noncomputable def introList (maxApp : Nat) (es : List Exp) : List Exp :=
   es.map (introExp maxApp)
 
@@ -55,9 +56,16 @@ theorem compileFuel_introList (fuel maxApp : Nat) (es : List Exp) :
     simp [List.mapM_cons, introExp_bounded, ih]
 
 /-- The proof-side total list traversal preserves the number of expressions. -/
+@[hol "cakeml/compiler/backend/clos_mtiScript.sml" "intro_multi_length"]
 theorem introList_length (maxApp : Nat) (es : List Exp) :
     (introList maxApp es).length = es.length := by
   simp [introList]
+
+/-- Transforming one expression returns exactly one expression. -/
+@[hol "cakeml/compiler/backend/clos_mtiScript.sml" "intro_multi_sing"]
+theorem introList_singleton (e : Exp) (maxApp : Nat) :
+    ∃ result, introList maxApp [e] = [result] := by
+  exact ⟨introExp maxApp e, rfl⟩
 
 /-- The total list traversal commutes with a leading expression. -/
 theorem introList_cons (maxApp : Nat) (e : Exp) (es : List Exp) :

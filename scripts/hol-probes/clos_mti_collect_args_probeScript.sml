@@ -136,3 +136,6 @@ val _ = show "collect_apps_cons_typed" collect_apps_cons;
 val _ = show "mk_apps_def_typed" mk_Apps_def;
 val _ = show "collect_apps_rebuild_typed" collect_apps_IMP_mk_Apps;
 val _ = show "collect_apps_no_mti_typed" collect_apps_no_mti;
+val _ = show "intro_multi_def_typed" clos_mtiTheory.intro_multi_def;
+val _ = show "intro_multi_length_typed" clos_mtiTheory.intro_multi_length;
+val _ = show "intro_multi_sing_typed" clos_mtiTheory.intro_multi_sing;

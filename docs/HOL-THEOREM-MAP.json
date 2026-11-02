@@ -1,5 +1,29 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/clos_mtiScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "intro_multi_def",
+    "lean_name": "introList",
+    "reviewer": "Compared every typed equation in clos_mti_collect_args_probe.out with introList and its kernel-checked introExp equations: empty and cons lists, variables, conditionals, let, raise, handle, tick, call, both application cases, all function and recursive-function annotation cases, and operations. Native Exp, tra and mlstring carriers are retained. introExp extracts the unique result of introMultiBounded; introList_fuel and compileFuel_introList connect the equations to the executed pass for every fuel. The collector cases use the separately reviewed collectArgs and collectApps. This is source comparison and Lean verification, not a cross-language equivalence proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_mtiScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "intro_multi_length",
+    "lean_name": "introList_length",
+    "reviewer": "Compared the universally quantified typed source theorem in clos_mti_collect_args_probe.out: both relate the length of intro_multi max_app es to the original list length, with no hypotheses. The reviewed introList preserves list length and is the executed pass output by compileFuel_introList."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_mtiScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
+    "statement_status": "reviewed_exact",
+    "hol_name": "intro_multi_sing",
+    "lean_name": "introList_singleton",
+    "reviewer": "Compared the typed source theorem in clos_mti_collect_args_probe.out: for every expression and max_app there exists an expression whose singleton list is the result. The reviewed introList is the executed pass output by compileFuel_introList."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/State.lean",
     "statement_status": "reviewed_fmap_as_finite_support",

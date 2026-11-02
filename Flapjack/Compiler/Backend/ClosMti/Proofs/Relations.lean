@@ -7,14 +7,12 @@ import Mathlib.Data.List.Forall2
 namespace Flapjack.Compiler.Backend.ClosMti
 open ClosLang ClosSem
 
-/-- Relate source code to the executed fuel-based pass. The source HOL relation
-uses the total `intro_multi`; this is untagged until its correspondence with
-`compileFuel` has been established. -/
+/-- Relate source code to the executed fuel-based pass. The extra fuel parameter
+makes this a Lean-side relation, even though the pass is fuel independent. -/
 def CodeRel (fuel maxApp : Nat) (source target : List ClosLang.Exp) : Prop :=
   (∀ e ∈ source, ClosProps.noMti e) ∧ compileFuel fuel true maxApp source = some target
 
-/-- The relation to the executed pass can be expressed using its total
-proof-side view. HOL correspondence for that view remains to be reviewed. -/
+/-- The relation to the executed pass can be expressed using its total view. -/
 theorem codeRel_iff_introList (fuel maxApp : Nat) (source target : List ClosLang.Exp) :
     CodeRel fuel maxApp source target ↔
       (∀ e ∈ source, ClosProps.noMti e) ∧ target = introList maxApp source := by
