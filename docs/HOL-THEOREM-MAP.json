@@ -100626,6 +100626,16 @@
     "reviewer": "Source comparison: memory_rel_ByteArray_words_IMP and its typed capture retain the complete memory relation, reference lookup, good_dimindex and real-address hypotheses. The existential header and separation frame, exact write_bytes payload over the functional memory graph, and both decoded-length conclusions match HOL. store uses the canonical finite-support map and all memory words share the source positive word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth/Elements.lean",
+    "lean_name": "memoryRel_elementsListWords",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_elements_list_words",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared the complete source and captured inferred type: the memory relation, ancestor-chain predicate, exact first-projection equality, good_dimindex and nonempty-list hypotheses imply EVERY isWord on the tail of the second projection. Lean List.all is the Boolean EVERY translation. store uses the canonical finite-support map and word locations share the positive HOL word dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth.lean",
     "lean_name": "vDepth",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
