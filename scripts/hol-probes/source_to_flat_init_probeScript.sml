@@ -17,6 +17,7 @@ val _ = show_thm "precondition1=" source_to_flatProofTheory.precondition1_def;
 val _ = show_thm "precondition1_change_clock=" source_to_flatProofTheory.precondition1_change_clock;
 val _ = show_thm "precondition=" source_to_flatProofTheory.precondition_def;
 val _ = show_thm "source_compile_semantics=" source_to_flatProofTheory.compile_semantics;
+val _ = show_thm "source_compile_correct=" source_to_flatProofTheory.compile_correct;
 val _ = show_thm "source_compile_prog=" source_to_flatTheory.compile_prog_def;
 val _ = show_thm "source_glob_alloc=" source_to_flatTheory.glob_alloc_def;
 val _ = show_thm "source_alloc_env_ref=" source_to_flatTheory.alloc_env_ref_def;

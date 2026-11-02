@@ -368,6 +368,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalList
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalPrimitive
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalArray
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileCorrectShape
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EnvironmentDomain
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
