@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.OperatorInduction
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelInduction
 
 /-! Clock-and-weight induction for the proof-side flat-to-closure evaluator.
 The semantic carriers and relations remain under HOL correspondence review;

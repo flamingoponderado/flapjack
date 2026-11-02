@@ -3348,6 +3348,14 @@
     "reviewer": "Compared all typed source value cases: literal and location require the same payload, constructor retains the optional tag, vector retains only its shape, and closure and recursive closure are false. The flat value and literal carriers are reviewed."
   },
   {
+    "hol_path": "HOL/src/list/src/indexedListsScript.sml",
+    "hol_name": "findi_def",
+    "lean_path": "Flapjack/Misc/IndexedLists.lean",
+    "lean_name": "holFindi",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the polymorphic findi_typed capture from flat_to_clos_relation_probe: the empty list gives zero and a cons gives zero on equality or one plus the recursive result. HOL equality is represented with classical Lean equality; no equality instance is added to the declaration's type."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "evaluate_match_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateMatch.lean",
@@ -107724,32 +107732,32 @@
     "lean_name": "compileArith",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "compile_arith_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed compile_arith_typed clause in flat_to_clos_relation_probe with the executed definition and reviewed AST and closure carriers. Integer add/subtract/multiply and division/modulus checks, floating operations, word operations, unconditional Boolean branch, fallback and div_tag agree."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/CopyByte.lean",
     "lean_name": "copyByteStr",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "CopyByteStr_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source quotation transcribed; typed HOL capture and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the expanded typed copy_str_typed quotation in flat_to_clos_relation_probe. The three range checks, exception tag, trace fields, index order 0/1/2 and final CopyByte true operands match the factored Lean expression."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/CopyByte.lean",
     "lean_name": "copyByteAw8",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "CopyByteAw8_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source quotation transcribed; typed HOL capture and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the expanded typed copy_aw8_typed quotation in flat_to_clos_relation_probe. The outer checks use indices 2/3/4, the inner checks use 0 and 2/0/1, and CopyByte false retains all five operands, trace fields and exception tag."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Op.lean",
     "lean_name": "compileOp",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "compile_op_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source operator clauses transcribed; complete typed HOL capture and branch-by-branch source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed compile_op_typed source branch in flat_to_clos_relation_probe with the executed definition and reviewed flat/closure and primitive carriers. Direct operators, arity fallbacks, comparisons, checked array and byte operations, allocation, arithmetic, supported conversions and both explicit floating conversion fallbacks match, including trace fields and exception tags. The factored copy and arithmetic helpers have separately reviewed source definitions."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Compile.lean",

@@ -35,6 +35,13 @@ match evaluator used by source-to-flat correctness. Its Lean counterpart
 retains all three match outcomes and the distinct-binding check. The capture
 supports source review, not cross-language equivalence.
 
+`flat_to_clos_relation_probe.out` captures the original typed value and
+environment relation rules, induction and cases, state and store relations,
+complete compiler correctness statement, operator and arithmetic lowering,
+and expanded byte-copy quotations. It also captures the polymorphic HOL
+`findi` definition used by the environment relation. The captured rules support
+source review; they do not establish cross-language equivalence.
+
 `source_to_flat_mapi_probe.out` captures the inferred types and statements of
 `mapi_map` and `FILTER_MAPi_ID` from the pinned source-to-flat proof. Their
 Lean counterparts establish the corresponding indexed-map and filtering

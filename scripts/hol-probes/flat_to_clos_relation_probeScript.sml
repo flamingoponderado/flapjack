@@ -1,0 +1,17 @@
+load "flat_to_closProofTheory";
+open HolKernel Parse boolLib bossLib;
+open flat_to_closProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "findi_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl indexedListsTheory.findi_def); print "\n");
+val _ = (print "compile_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.compile_def); print "\n");
+val _ = (print "compile_op_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.compile_op_def); print "\n");
+val _ = (print "compile_arith_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.compile_arith_def); print "\n");
+val _ = (print "copy_str_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.CopyByteStr_def); print "\n");
+val _ = (print "copy_aw8_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl flat_to_closTheory.CopyByteAw8_def); print "\n");
+val _ = (print "rules_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_rules); print "\n");
+val _ = (print "induction_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_ind); print "\n");
+val _ = (print "cases_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_cases); print "\n");
+val _ = (print "state_rel_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl state_rel_def); print "\n");
+val _ = (print "store_rel_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl store_rel_def); print "\n");
+val _ = (print "compile_correct_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_correct); print "\n");
