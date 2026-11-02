@@ -159,6 +159,15 @@ BASIS_CORPUS = [
     'val _ = print (Int.toString ~123);',
     'val _ = print_int (Vector.sub (Vector.fromList [1,2,3]) 1);',
     'val _ = print_int (List.hd (List.rev [1,2,3]));',
+    'fun f xs = List.foldr (fn x => fn n => x - n) 0 xs; val _ = print_int (f [1,2,3,4]);',
+    'val a = Array.fromList [5,6,7]; val _ = Array.update a 1 8; val _ = print_int (Array.length a + Array.sub a 1);',
+    'exception E; fun f n = if n = 0 then raise E else n; val x = (f 0 handle E => 7); val _ = print_int x;',
+    'val x = Word64.xorb (Word64.fromInt 123) (Word64.fromInt 456); val _ = print_int (Word64.toInt x);',
+    'datatype t = N int | P t t; fun size x = case x of N n => n | P l r => size l + size r; '
+    'val _ = print_int (size (P (N 2) (N 3)));',
+    'val a = Array.array 1 0; fun f x = (Array.update a 0 (Array.sub a 0 + x); Array.sub a 0); '
+    'val _ = print_int (f 3 + f 7);',
+    'fun f x = let fun g y = fn z => x + y + z in g end; val _ = print_int (f 1 2 3);',
 ]
 
 

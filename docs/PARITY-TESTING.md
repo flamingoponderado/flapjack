@@ -405,6 +405,16 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 python3 scripts/fuzz-cake-sexp-input.py --reference /var/tmp/flapjack-pinned-cake --seed 904188 --count 500
 ```
 
+Seed `214381` also matched 80 compilations with varied backend options. The
+source corpus includes complete-output comparisons for array mutation,
+recursive datatypes, exception handling, higher-order calls, and Word64
+operations; rerun the corpus with `--corpus`:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --backend-options --seed 214381 --count 80 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus --timeout 60
+```
+
 The CakeML command has an exploratory complete-output regression suite:
 `lake build cake` followed by `python3 scripts/check-cake-cli-parity.py`.
 It checks the entire stdout and stderr (byte count and SHA-256), and exit
