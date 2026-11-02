@@ -445,7 +445,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                 (some modLocation) [adjustVar x, adjustVar y] none),
               .move 2 [(adjustVar dest, 1)]])], l + 2)
       | .mult, _ | .div, _ | .mod, _ => some (.skip, l)
-      | _, _ => none
+      | _, _ => some (.skip, l)
   | l, .assign dest (.wordOp (.wordTest _ test)) args _ =>
       match args, test with
       | [x, y], .equal => some (boolResult dest .equal (adjustVar x) (.reg (adjustVar y)), l)
@@ -824,7 +824,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
           some (.seq (.store (.op .add [realAddr conf (adjustVar base), offset]) (adjustVar value))
             (.assign (adjustVar dest) (.const 2)), l)
       | .update, _ | .updateCons, _ => some (.skip, l)
-      | _, _ => none
+      | _, _ => some (.skip, l)
   | l, .assign dest (.thunkOp (.allocThunk mode)) args _ =>
       match args with
       | [arg] =>
@@ -883,6 +883,9 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
               (some installCodeLocation) [code, data, 1] none)], l + 1)
       | _ => some (.skip, l)
   | l, .assign dest (.label n) _ _ => some (.locValue (adjustVar dest) n, l)
+  -- HOL's final assignment case returns Skip for operations that should
+  -- have been lowered by earlier passes, including AllocGlobal and Constant.
+  | l, .assign _ _ _ _ => some (.skip, l)
   | l, .force ret loc v =>
       match encodeHeader (width := width) conf 14 1 with
       | none => some (giveUp, l)
@@ -912,6 +915,4 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       let (handler, next) ← compileControl? conf secn (l + 2) handler
       pure (.call (some (ns.map adjustVar, adjustSets names, .skip, secn, l))
         target (args.map adjustVar) (some (adjustVar n, handler, secn, l + 1)), next)
-  | _, _ => none
-
 end Flapjack.Compiler.Backend.DataToWord

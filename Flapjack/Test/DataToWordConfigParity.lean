@@ -21,7 +21,7 @@ import Flapjack.Test.TmcOpsWordOracle
 /-!
 # `data_to_word` configuration helpers: original-oracle rows
 
-Kernel replay of the six rows of `scripts/hol-probes/data_to_word_config_probe.out`.
+Kernel replay of `scripts/hol-probes/data_to_word_config_probe.out`.
 -/
 
 namespace Flapjack.Test.DataToWordConfigParity
@@ -32,6 +32,14 @@ private def conf : Config :=
   { tagBits := 1, lenBits := 2, padBits := 3, lenSize := 16, hasDiv := false,
     hasLongdiv := false, hasFpOps := false, hasFpTern := false, be := false,
     callEmptyFfi := false, gcKind := .simple }
+
+-- The original compiler's catch-all assignment emits Skip at the same label.
+#guard ([ (.intOp .greater, [1, 2]), (.intOp .greaterEq, [1, 2]), (.globOp .allocGlobal, []),
+    (.memOp .concatByteVec, [1]), (.memOp .fromListByte, [1]) ] :
+      List (Flapjack.Compiler.Backend.ClosLang.Op × List Nat)).all fun (op, args) =>
+  match compileControl? (width := 64) conf 4 7 (.assign 3 op args none) with
+  | some (.skip, 7) => true
+  | _ => false
 
 #guard match (do
     let (p0, n0) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagEq 30)) [1] none)
