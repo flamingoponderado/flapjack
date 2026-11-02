@@ -100626,6 +100626,16 @@
     "reviewer": "Source comparison: memory_rel_ByteArray_words_IMP and its typed capture retain the complete memory relation, reference lookup, good_dimindex and real-address hypotheses. The existential header and separation frame, exact write_bytes payload over the functional memory graph, and both decoded-length conclusions match HOL. store uses the canonical finite-support map and all memory words share the source positive word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth/BlockPointer.lean",
+    "lean_name": "memoryRel_blockPtrEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Block_ptr_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared the full source theorem and captured inferred type: the original memory relation for two blocks paired with the same arbitrary word location and good_dimindex imply equality of the complete source blocks, including timestamps and fields. store uses the canonical finite-support map and word locations use the positive HOL word dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Depth/Elements.lean",
     "lean_name": "memoryRel_elementsListWords",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
