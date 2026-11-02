@@ -35,6 +35,15 @@ inductive ValuesWellFormedFuel (fuel : Nat) (g : State) (allowed : Set Nat)
       ValuesWellFormedFuel fuel g allowed code values → ValuesWellFormedFuel fuel g allowed code (value :: values)
 end
 
+/-- Well-formed successful values and exception payloads; aborts have no
+payload to check. This predicate is local to the fuel-aware simulation. -/
+def ResultWellFormedFuel (fuel : Nat) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
+    Flapjack.SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value → Prop
+  | .val values => ValuesWellFormedFuel fuel g allowed code values
+  | .err (.raise value) => ValueWellFormedFuel fuel g allowed code value
+  | .err (.abort _) => True
+
 /-- Extending compiler state, allowed locations, and installed code
 preserves fuel-aware well-formedness of a value. -/
 theorem valueWellFormedFuel_mono {fuel : Nat} {g g' : State} {allowed allowed' : Set Nat}
@@ -201,6 +210,55 @@ theorem evaluate_fn_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowe
         obtain ⟨rfl, rfl⟩ := run
         exact ⟨.closure .nil capturedWf closure, rfl⟩
   · cases selected <;> simp [ClosSem.evaluate, valid] at run
+
+/-- A numbered recursive binding preserves result well-formedness when its
+body does so for well-formed environments. The closure relation is the
+separate compiler-invariant premise needed to construct recursive values. -/
+theorem evaluate_letrec_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)}
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (loc : Nat)
+    (selected : Option (List Nat)) (fns targets : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (envWf : ValuesWellFormedFuel fuel g allowed code env)
+    (closure : recClosureRelFuel fuel g allowed code loc fns targets)
+    (bodyIH : ∀ bodyEnv, ValuesWellFormedFuel fuel g allowed code bodyEnv →
+      ResultWellFormedFuel fuel g allowed code (ClosSem.evaluate [body] bodyEnv state).1) :
+    ResultWellFormedFuel fuel g allowed code
+      (ClosSem.evaluate [.letrec names (some loc) selected fns body] env state).1 := by
+  rw [ClosSem.evaluate.eq_def]
+  by_cases valid : fns.all (fun (arity, _) => arity ≤ state.maxApp && arity != 0) = true
+  · simp only [valid, ↓reduceIte]
+    cases selected with
+    | none =>
+      simp only
+      apply bodyIH
+      exact valuesWellFormedFuel_append (recClosureBundle_wellFormedFuel loc env fns targets envWf closure) envWf
+    | some indices =>
+      cases found : ClosSem.lookupVars indices env with
+      | none => simp [found, ResultWellFormedFuel]
+      | some captured =>
+        simp only [found]
+        apply bodyIH
+        exact valuesWellFormedFuel_append
+          (recClosureBundle_wellFormedFuel loc captured fns targets
+            (lookupVars_wellFormedFuel indices env captured envWf found) closure) envWf
+  · simp [valid, ResultWellFormedFuel]
+
+/-- Variable evaluation returns a well-formed value, or a type-error abort
+when the index is absent. -/
+theorem evaluate_var_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra) (index : Nat)
+    (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (envWf : ValuesWellFormedFuel fuel g allowed code env) :
+    ResultWellFormedFuel fuel g allowed code (ClosSem.evaluate [.var trace index] env state).1 := by
+  cases lookup : env[index]? with
+  | none => simp [ClosSem.evaluate, lookup, ResultWellFormedFuel]
+  | some value =>
+    have member : value ∈ env := by
+      obtain ⟨bound, eq⟩ := List.getElem?_eq_some_iff.mp lookup
+      simpa only [eq] using List.getElem_mem bound
+    simpa [ClosSem.evaluate, lookup, ResultWellFormedFuel] using
+      ValuesWellFormedFuel.cons (valuesWellFormedFuel_mem envWf member) .nil
 
 /-- A list made from members of a well-formed list is well formed. -/
 theorem valuesWellFormedFuel_of_subset {fuel : Nat} {g : State} {allowed : Set Nat}
