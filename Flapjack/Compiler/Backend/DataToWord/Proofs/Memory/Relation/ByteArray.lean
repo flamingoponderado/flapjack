@@ -137,5 +137,69 @@ theorem memoryRel_byteArrayWordsImp {width : Nat} [NeZero width] (conf : DataToW
         · rw [decodedNat]
           exact countBound
 
+/-- Header facts for a related byte array. This is Flapjack infrastructure
+for the source reference-header classification theorem. -/
+theorem memoryRel_byteArrayHeader {width : Nat} [NeZero width] (conf : DataToWord.Config) (be : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref DataSem.Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (bit flag : Bool) (index : Nat) (bytes : List (BitVec 8)) (location : WordLocW width)
+    (vars : List (DataSem.Value × WordLocW width))
+    (rel : memoryRel conf be next refs space store memory domain ((.refPtr bit index, location) :: vars))
+    (found : sptLookup index refs = some (.byteArray flag bytes)) (good : goodDimindex width) :
+    ∃ w address, location = .word w ∧ w.getLsbD 0 = true ∧
+      getRealAddr conf store w = some address ∧ getRealSimpleAddr conf store w = some address ∧
+      memory address = .word (DataToWord.makeByteHeader conf flag bytes.length) ∧ domain address = true ∧
+      conf.lenSize + 7 < width := by
+  obtain ⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, _, _⟩ := rel
+  obtain ⟨roots, inv, addresses⟩ := wordInv
+  obtain ⟨_, _, _, _, stackInv⟩ := inv
+  obtain ⟨f, tf, _, _, _, _, _, _, _, values, referenceInv⟩ := stackInv
+  cases roots with
+  | nil => cases values
+  | cons root rest =>
+    cases values with
+    | cons related _ =>
+      cases addresses with
+      | cons projected _ =>
+        have rootEq := valueInv_byteRefAddress conf bit index refs root f tf heap flag bytes found related
+        have domainF : mapDomain f index := by
+          rcases (valueInv_refPtr conf bit index refs root f tf heap).mp related with ordinary | thunk | inlined
+          · exact ordinary.1
+          · obtain ⟨_, _, _, eq, _⟩ := thunk
+            rw [found] at eq
+            cases eq
+          · obtain ⟨_, eq, _⟩ := inlined
+            rw [found] at eq
+            cases eq
+        obtain ⟨ptr, ffound⟩ := domainF
+        have reachable : reachableRefs ((DataSem.Value.refPtr bit index) :: vars.map Prod.fst) refs index := by
+          exact ⟨.refPtr bit index, index, by simp, by simp [getRefs], Relation.ReflTransGen.refl⟩
+        have cellInv := referenceInv index ⟨reachable, ⟨ptr, ffound⟩⟩
+        have cell : heapLookup ptr heap = some
+            (bytesRep be flag bytes (List.replicate (bytes.length / (width / 8) + 1) 0)) := by
+          simpa [bcRefInv, ffound, found] using cellInv
+        rw [holFapply_of_lookup ffound] at rootEq
+        rw [rootEq] at projected
+        have locEq : location = .word (getAddr conf ptr (.word 0)) := by simpa [wordAddr] using projected.symm
+        obtain ⟨curr, other, _, _, stored, _, _, _, _, _, _, _, heapAssertion⟩ := heapMem.2.2.2.2.2.2.2
+        have addrCalc := getRealAddr_getAddr conf store heap ptr _ curr (.word 0)
+          ⟨heapMem.1, cell, stored, good⟩
+        obtain ⟨frame, split, _, _⟩ := byteHeap conf heap ptr bytes
+          (List.replicate (bytes.length / (width / 8) + 1) 0) be flag curr _ _ cell heapAssertion
+        obtain ⟨left, right, partition, singleton, _⟩ := split
+        have member : left (curr + StackRemove.bytesInWord width * BitVec.ofNat width ptr,
+            .word (DataToWord.makeByteHeader conf flag bytes.length)) := by rw [singleton]
+        have graph : SetSep.fun2Set (memory, fun a => domain a = true)
+            (curr + StackRemove.bytesInWord width * BitVec.ofNat width ptr,
+              .word (DataToWord.makeByteHeader conf flag bytes.length)) := by
+          rw [← partition.1]
+          exact Or.inl member
+        obtain ⟨memEq, inDomain⟩ := (SetSep.fun2SetThm memory _ _ _).mp graph
+        refine ⟨getAddr conf ptr (.word 0), curr + StackRemove.bytesInWord width * BitVec.ofNat width ptr,
+          locEq, getAddr_lowBit conf ptr _, ?_, ?_, memEq, inDomain, heapMem.2.2.2.2.1⟩
+        · simpa [BitVec.mul_comm] using addrCalc.2
+        · simpa [BitVec.mul_comm] using addrCalc.1
+
 end
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

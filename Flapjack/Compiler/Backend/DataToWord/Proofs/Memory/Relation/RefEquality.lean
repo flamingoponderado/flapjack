@@ -202,8 +202,9 @@ theorem memoryRel_refPtrExists {width : Nat} [NeZero width] (conf : Config) (big
       · obtain ⟨value, found, _⟩ := inlined
         exact ⟨.thunk .evaluated value, found⟩
 
-/-- A pointer-comparison reference cannot denote a mutable block. This is a
-Flapjack helper for the source reference-header proof. -/
+/-- A pointer-comparison reference cannot denote a mutable block. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_MutBlock_IMP_F"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
 theorem memoryRel_refPtrTrueNotMutBlock {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool)
     (next : Nat) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
     (space : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
@@ -212,8 +213,9 @@ theorem memoryRel_refPtrTrueNotMutBlock {width : Nat} [NeZero width] (conf : Con
     (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width))
     (tag : Nat) (finalised : Bool) (left : List Flapjack.Compiler.Backend.DataSem.Value)
     (child : Flapjack.Compiler.Backend.DataSem.Value) (right : List Flapjack.Compiler.Backend.DataSem.Value)
-    (inv : memoryRel conf bigEndian next refs space store memory domain ((.refPtr true index, location) :: vars))
-    (found : sptLookup index refs = some (.mutBlock tag finalised left child right)) : False := by
+    (h : memoryRel conf bigEndian next refs space store memory domain ((.refPtr true index, location) :: vars) ∧
+      sptLookup index refs = some (.mutBlock tag finalised left child right)) : False := by
+  obtain ⟨inv, found⟩ := h
   obtain ⟨heap, limit, a, sp, sp1, gens, _, wordInv, _, _⟩ := inv
   obtain ⟨roots, inv, _⟩ := wordInv
   obtain ⟨_, _, _, _, stackInv⟩ := inv

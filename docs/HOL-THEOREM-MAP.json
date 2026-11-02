@@ -100617,6 +100617,42 @@
     "reviewer": "Source comparison: memory_rel_ByteArray_words_IMP and its typed capture retain the complete memory relation, reference lookup, good_dimindex and real-address hypotheses. The existential header and separation frame, exact write_bytes payload over the functional memory graph, and both decoded-length conclusions match HOL. store uses the canonical finite-support map and all memory words share the source positive word width."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueArray.lean",
+    "lean_name": "memoryRel_valueArrayImp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_ValueArray_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_ValueArray_IMP and its typed capture retain the memory relation, array lookup and good_dimindex hypotheses, existential pointer and header, all original tag-bit facts, both address decodings, memory and domain facts, decoded length, and length bound. store uses the canonical finite-support map and all target words share the positive HOL dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueArray.lean",
+    "lean_name": "memoryRel_refPtrTrueImp",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_RefPtr_T_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_RefPtr_T_IMP and its typed capture retain the comparison-reference memory relation and good_dimindex hypotheses, existential pointer, address and header, exact bit equivalence, both address decodings, memory contents and domain membership. store uses the canonical finite-support map and all target words share the positive HOL dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/RefEquality.lean",
+    "lean_name": "memoryRel_refPtrTrueNotMutBlock",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_MutBlock_IMP_F",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: the typed replay of local memory_rel_MutBlock_IMP_F retains the comparison-reference memory relation, exact mutable-block lookup, and False conclusion without any good_dimindex hypothesis. store uses the canonical finite-support map and all target words share the positive HOL dimension."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BytePacking.lean",
     "lean_name": "getByte_bytesToWord",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

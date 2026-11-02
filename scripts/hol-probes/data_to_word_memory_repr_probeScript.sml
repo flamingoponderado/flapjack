@@ -70,6 +70,8 @@ val _ = show "do_eq_IMP_vb_eq_size_typed" data_to_word_memoryProofTheory.do_eq_I
 val _ = show "vb_eq_size_IMP_do_eq_typed" data_to_word_memoryProofTheory.vb_eq_size_IMP_do_eq;
 val _ = show "memory_rel_ptr_vb_eq_typed" data_to_word_memoryProofTheory.memory_rel_ptr_vb_eq;
 val _ = show "memory_rel_ByteArray_words_IMP_typed" data_to_word_memoryProofTheory.memory_rel_ByteArray_words_IMP;
+val _ = show "memory_rel_ValueArray_IMP_typed" data_to_word_memoryProofTheory.memory_rel_ValueArray_IMP;
+val _ = show "memory_rel_RefPtr_T_IMP_typed" data_to_word_memoryProofTheory.memory_rel_RefPtr_T_IMP;
 val _ = show "memory_rel_Loc_typed" data_to_word_memoryProofTheory.memory_rel_Loc;
 val _ = show "get_byte_bytes_to_word_typed" data_to_word_memoryProofTheory.get_byte_bytes_to_word;
 val _ = show "write_bytes_inj_typed" data_to_word_memoryProofTheory.write_bytes_inj;
@@ -210,6 +212,12 @@ val _ = load "helperLib";
 open preamble wordsTheory data_to_word_memoryProofTheory dataSemTheory wordLangTheory;
 open helperLib set_sepTheory wordSemTheory;
 open multiwordTheory;
+val memory_rel_MutBlock_IMP_F_replay = prove(
+  ``memory_rel c be ts refs sp st m dm ((RefPtr T p,v:'a word_loc)::vars) /\
+    lookup p refs = SOME (MutBlock tg fin ls cv rs) ==> F``,
+  strip_tac >> fs [memory_rel_def,word_ml_inv_def,abs_ml_inv_def,
+                   bc_stack_ref_inv_def,v_inv_RefPtr_T,word_addr_def]);
+val _ = show "memory_rel_MutBlock_IMP_F_replay_typed" memory_rel_MutBlock_IMP_F_replay;
 val word_cmp_loop_thm_replay = prove(
   ``!xs1 (xs2:'a word list) f1 f2 (a1:'a word) a2.
       LENGTH xs1 = LENGTH xs2 /\ LENGTH xs1 < dimword (:'a) /\
