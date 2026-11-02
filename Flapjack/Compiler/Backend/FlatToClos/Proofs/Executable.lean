@@ -5,6 +5,8 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.NoMat
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallPipeline
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
+import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
 
 /-! Connecting the proof-side declaration simulation to the initializer used
 by the executed flat-to-closure compilation. This is Flapjack infrastructure;
@@ -251,5 +253,76 @@ theorem sourceCompileProg_production_observation {C F : Type} [Nonempty C]
   refine ⟨extra, result, finalTarget, resultRel, ?_, ?_⟩
   · exact states.2.1.trans ffiEq
   · cases result <;> simpa [compileProg, result', incrementalOracle_factor] using targetRun
+
+/-- Continue the production source-to-closure observation through
+multi-argument introduction. The unary invariants for the compiled program
+and incremental oracle are established by the actual flat-to-closure pass.
+The participating evaluators and cross-language correspondences remain under
+review; this is not an end-to-end HOL correctness theorem. -/
+theorem sourceCompileProg_mti_observation {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (SourceToFlat.Config × C)))
+    (transform : List AstHOL.Dec → List AstHOL.Dec)
+    (source : State F) (sourceEnv : SemEnv Value) (sourceConfig : SourceToFlat.Config)
+    (flatConfig : FlatSem.InstallConfig C) (compiler : ClosSem.Compiler C)
+    (declarations : List AstHOL.Dec) (maxApp clock fuel : Nat)
+    (precondition : SourceToFlat.FactoredPrecondition interp transform source sourceEnv sourceConfig flatConfig declarations)
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (positive : 0 < maxApp)
+    (production : flatConfig.compile = BackendProps.pureCc
+      (incCompileDecs (α := Nat × Nat × ClosLang.Exp))
+      (BackendProps.pureCc (ClosMti.compileInc (Input := List (Nat × Nat × ClosLang.Exp)) maxApp) compiler)) :
+    ∃ (extra : Nat) (result : Result (List ClosSem.Value) ClosSem.Value)
+      (finalTarget : ClosSem.State C F) (transformedResult : Result (List ClosSem.Value) ClosSem.Value)
+      (transformedFinal : ClosSem.State C F) (transformed : List ClosLang.Exp),
+      ClosMti.compileFuel fuel true maxApp (compileProg (SourceToFlat.compileTotal sourceConfig declarations).2) =
+        some transformed ∧
+      DecResultRel (FlatSem.evaluateDecs (FlatSem.initialState source.ffi clock flatConfig)
+        (SourceToFlat.compileTotal sourceConfig declarations).2).2 result ∧
+      (FlatSem.evaluateDecs (FlatSem.initialState source.ffi clock flatConfig)
+        (SourceToFlat.compileTotal sourceConfig declarations).2).1.ffi = finalTarget.ffi ∧
+      SemanticPrimitivesProps.resultRel
+        (List.Forall₂ (ClosMti.ValueRel maxApp)) (ClosMti.ValueRel maxApp)
+        (match result with
+         | .val values => .val (ClosSem.unitValue :: values)
+         | .err error => .err error) transformedResult ∧
+      finalTarget.ffi = transformedFinal.ffi ∧
+      ClosSem.evaluate transformed []
+        (ClosSem.initialState source.ffi maxApp HolFiniteMapExact.empty
+          (BackendProps.pureCo (ClosMti.compileInc (Input := List (Nat × Nat × ClosLang.Exp)) maxApp) ∘
+            (BackendProps.pureCo (incCompileDecs (α := Nat × Nat × ClosLang.Exp)) ∘ flatConfig.compileOracle))
+          compiler (extra + clock)) =
+        (transformedResult, transformedFinal) := by
+  let oracle : ClosSem.CompileOracle C := BackendProps.pureCo incCompileDecs ∘ flatConfig.compileOracle
+  have oracleSafe : ∀ n, (oracle n).2.2 = [] ∧ ∀ e ∈ (oracle n).2.1, ClosProps.noMti e := by
+    intro n
+    change (incCompileDecs (α := Nat × Nat × ClosLang.Exp) (flatConfig.compileOracle n).2).2 = [] ∧
+      ∀ e ∈ (incCompileDecs (α := Nat × Nat × ClosLang.Exp) (flatConfig.compileOracle n).2).1,
+        ClosProps.noMti e
+    exact ⟨rfl, incCompileDecs_noMti _⟩
+  obtain ⟨extra, result, finalTarget, flatRel, ffiEq, run⟩ :=
+    sourceCompileProg_production_observation interp transform source sourceEnv sourceConfig flatConfig
+      (BackendProps.pureCc (ClosMti.compileInc maxApp) compiler) declarations maxApp clock
+      precondition safe positive production
+  let sourceState := ClosSem.initialState source.ffi maxApp HolFiniteMapExact.empty oracle
+    (BackendProps.pureCc (ClosMti.compileInc maxApp) compiler) (extra + clock)
+  let targetState := ClosSem.initialState source.ffi maxApp HolFiniteMapExact.empty
+    (BackendProps.pureCo (ClosMti.compileInc maxApp) ∘ oracle) compiler (extra + clock)
+  let sourceResult := match result with
+    | .val values => Result.val (ClosSem.unitValue :: values)
+    | .err error => Result.err error
+  have sourceRun : ClosSem.evaluate (compileProg (SourceToFlat.compileTotal sourceConfig declarations).2) []
+      sourceState = (sourceResult, finalTarget) := by
+    cases result <;> simpa [sourceState, sourceResult, oracle] using run
+  have states : ClosMti.StateRel sourceState targetState :=
+    ClosMti.initialStates_related source.ffi maxApp (extra + clock) oracle compiler positive oracleSafe
+  obtain ⟨transformedResult, transformedFinal, targetRun, related, finalStates⟩ :=
+    ClosMti.introMulti_correct_candidate (compileProg (SourceToFlat.compileTotal sourceConfig declarations).2)
+      [] [] sourceState targetState finalTarget sourceResult sourceRun (compileProg_noMti _) .nil states
+  refine ⟨extra, result, finalTarget, transformedResult, transformedFinal,
+    ClosMti.introList maxApp (compileProg (SourceToFlat.compileTotal sourceConfig declarations).2),
+    ClosMti.compileFuel_introList fuel maxApp _, flatRel, ffiEq, ?_, ?_, ?_⟩
+  · simpa [sourceState, ClosSem.initialState, sourceResult] using related
+  · exact finalStates.2.2.2.2.2.2.1.symm
+  · simpa [sourceState, targetState, ClosSem.initialState, oracle] using targetRun
 
 end Flapjack.Compiler.Backend.FlatToClos
