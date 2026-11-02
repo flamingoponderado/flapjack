@@ -88,4 +88,91 @@ theorem evaluate_rewritten_call {C F : Type} (trace : BackendCommon.Tra) (label 
   · have short : afterArgs.clock < values.length := by omega
     simp [findCode, code, short]
 
+/-- Once the argument cost is available, the rewritten call and the generated
+closure stub enter the same installed body with the same arguments and state.
+This connects the local call and stub clock facts, not the full pass proof. -/
+theorem evaluate_rewritten_call_eq_stub {C F : Type}
+    (trace stubTrace : BackendCommon.Tra) (label : Nat)
+    (args : List ClosLang.Exp) (env values stubEnv : List ClosSem.Value)
+    (state afterArgs : ClosSem.State C F) (body : ClosLang.Exp)
+    (argsRun : evaluate args env state = (.val values, afterArgs))
+    (code : afterArgs.code.lookup label = some (values.length, body))
+    (enough : values.length ≤ afterArgs.clock)
+    (bound : values.length ≤ stubEnv.length)
+    (prefixEq : stubEnv.take values.length = values) :
+    evaluate [.call trace values.length label args] env { state with clock := state.clock + 1 } =
+      evaluate [.call stubTrace 0 label (ClosCall.variables stubTrace values.length)] stubEnv
+        { decClock values.length afterArgs with clock := (decClock values.length afterArgs).clock + 1 } := by
+  rw [evaluate_rewritten_call trace label args env values state afterArgs body argsRun code]
+  rw [if_neg (Nat.not_lt.mpr enough)]
+  rw [evaluate_generated_stub stubTrace label values.length body stubEnv _ bound]
+  · rw [prefixEq]
+  · simpa [decClock] using code
+
+/-- A successful known-location full application puts exactly the supplied
+arguments at the front of its body environment and leaves no over-application. -/
+theorem destClosure_known_prefix (maxApp address : Nat) (function : ClosSem.Value)
+    (args env rest : List ClosSem.Value) (body : ClosLang.Exp)
+    (run : destClosure maxApp (some address) function args = some (.fullApp body env rest)) :
+    ∃ captured, env = args ++ captured ∧ rest = [] := by
+  have takeRev : (args.reverse.take args.length).reverse = args := by
+    simpa only [List.length_reverse, List.reverse_reverse] using
+      congrArg List.reverse (List.take_length (l := args.reverse))
+  cases function <;> simp only [destClosure] at run <;> try contradiction
+  case closure location supplied captured arity expression =>
+    split at run
+    · rename_i valid
+      have facts : arity = args.length ∧ supplied.length = 0 := by
+        simp only [Bool.and_eq_true, decide_eq_true_eq, checkLoc] at valid
+        exact ⟨valid.1.1, valid.1.2.1⟩
+      obtain ⟨arityEq, suppliedEq⟩ := facts
+      have suppliedNil : supplied = [] := by cases supplied <;> simp_all
+      subst supplied
+      split at run
+      · simp at run
+      · simp [arityEq] at run
+        obtain ⟨_, rfl, rfl⟩ := run
+        exact ⟨captured, by rw [takeRev], by simp⟩
+    · simp at run
+  case recclosure location supplied captured functions index =>
+    split at run
+    · simp at run
+    · rename_i arity expression found
+      split at run
+      · rename_i valid
+        have facts : arity = args.length ∧ supplied.length = 0 := by
+          simp only [Bool.and_eq_true, decide_eq_true_eq, checkLoc] at valid
+          exact ⟨valid.1.1, valid.1.2.1⟩
+        obtain ⟨arityEq, suppliedEq⟩ := facts
+        have suppliedNil : supplied = [] := by cases supplied <;> simp_all
+        subst supplied
+        split at run
+        · simp at run
+        · simp [arityEq] at run
+          obtain ⟨_, rfl, rfl⟩ := run
+          exact ⟨(List.range functions.length).map
+            (fun i => ClosSem.Value.recclosure location [] captured functions i) ++ captured,
+            by rw [takeRev], by simp⟩
+      · simp at run
+
+/-- The environment condition for the call/stub comparison follows from
+successful known-location closure decomposition. -/
+theorem evaluate_rewritten_call_eq_known_stub {C F : Type}
+    (trace stubTrace : BackendCommon.Tra) (label maxApp address : Nat)
+    (args : List ClosLang.Exp) (env values stubEnv : List ClosSem.Value)
+    (function : ClosSem.Value) (state afterArgs : ClosSem.State C F) (body : ClosLang.Exp)
+    (argsRun : evaluate args env state = (.val values, afterArgs))
+    (code : afterArgs.code.lookup label = some (values.length, body))
+    (enough : values.length ≤ afterArgs.clock)
+    (closure : destClosure maxApp (some address) function values =
+      some (.fullApp (.call stubTrace 0 label (ClosCall.variables stubTrace values.length)) stubEnv [])) :
+    evaluate [.call trace values.length label args] env { state with clock := state.clock + 1 } =
+      evaluate [.call stubTrace 0 label (ClosCall.variables stubTrace values.length)] stubEnv
+        { decClock values.length afterArgs with clock := (decClock values.length afterArgs).clock + 1 } := by
+  obtain ⟨captured, rfl, _⟩ := destClosure_known_prefix maxApp address function values stubEnv [] _ closure
+  apply evaluate_rewritten_call_eq_stub trace stubTrace label args env values (values ++ captured)
+    state afterArgs body argsRun code enough
+  · simp
+  · simp
+
 end Flapjack.Compiler.Backend.ClosCall
