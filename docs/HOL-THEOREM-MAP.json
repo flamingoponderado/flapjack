@@ -100563,6 +100563,54 @@
     "reviewer": "Source comparison: word_eq_LESS_EQ and its typed capture preserve both universally quantified conjuncts independently, their full successful-result premises and both clock bounds. store1 and store2 are the independently quantified canonical finite-support stores."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockExplode.lean",
+    "lean_name": "eqAssum",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "eq_assum_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: eq_assum_def and its typed data_to_word_memory_repr capture. The unused memory parameter and list element type are independent of the positive address word width. Both the empty and nonempty cases preserve the original domain test and modular word stride."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockExplode.lean",
+    "lean_name": "eqExplode",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "eq_explode_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: eq_explode_def and its typed data_to_word_memory_repr capture. The unused domain parameter, list element type and memory result type remain independent of the positive address word width. Both original recursive equations and word stride are retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockExplode.lean",
+    "lean_name": "eqExplode_append",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "eq_explode_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: eq_explode_APPEND and its typed data_to_word_memory_repr capture. The local theorem and typed replay retain independent list, memory-result and unused domain carriers, arbitrary lists and the original word-offset equation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockExplode.lean",
+    "lean_name": "eqAssum_append",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "eq_assum_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: eq_assum_APPEND and its typed data_to_word_memory_repr capture. The local theorem and typed replay retain independent list and unused memory carriers, arbitrary lists and the original word-offset equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/BlockExplode.lean",
+    "lean_name": "memoryRel_blockExplode",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_Block_explode",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_Block_explode and its typed capture retain the full memory relation, pointer low bit, real-address and good_dimindex premises, and both the exploded memory relation and domain predicate conclusions. The proof exposes each indexed child through memory_rel_El_any and rearranges the resulting stack. store is the canonical finite-support map and target words share the positive HOL word width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/StackPermute.lean",
     "lean_name": "absMlInv_stackPermute",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

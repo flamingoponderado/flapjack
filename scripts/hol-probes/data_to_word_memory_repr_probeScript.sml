@@ -56,6 +56,9 @@ val _ = show "fix_clock_IMP_replay_typed" fix_clock_imp_replay;
 val _ = show "word_is_clos_def_typed" data_to_word_memoryProofTheory.word_is_clos_def;
 val _ = show "word_eq_def_rebound_typed" data_to_word_memoryProofTheory.word_eq_def;
 val _ = show "word_eq_LESS_EQ_typed" data_to_word_memoryProofTheory.word_eq_LESS_EQ;
+val _ = show "eq_assum_def_typed" data_to_word_memoryProofTheory.eq_assum_def;
+val _ = show "eq_explode_def_typed" data_to_word_memoryProofTheory.eq_explode_def;
+val _ = show "memory_rel_Block_explode_typed" data_to_word_memoryProofTheory.memory_rel_Block_explode;
 val fix_clock_word_eq_replay = prove(
   ``data_to_word_memoryProof$fix_clock ck l
       (data_to_word_memoryProof$word_eq c st dm m l ck w1 w2) =
@@ -160,6 +163,18 @@ val _ = show "memory_rel_CodePtr_typed" data_to_word_memoryProofTheory.memory_re
 val _ = show "memory_rel_Block_IMP_typed" data_to_word_memoryProofTheory.memory_rel_Block_IMP;
 val _ = load "preamble";
 open preamble wordsTheory data_to_word_memoryProofTheory dataSemTheory wordLangTheory;
+val eq_explode_append_replay = prove(
+  ``!xs ys a. eq_explode a m dm (xs ++ ys) =
+      eq_explode a m dm xs ++ eq_explode (a + n2w (LENGTH xs) * bytes_in_word) m dm ys``,
+  Induct >> fs [eq_explode_def, ADD1, byteTheory.bytes_in_word_def, word_mul_n2w]
+  >> fs [RIGHT_ADD_DISTRIB] >> fs [GSYM word_add_n2w]);
+val _ = show "eq_explode_APPEND_replay_typed" eq_explode_append_replay;
+val eq_assum_append_replay = prove(
+  ``!xs ys a. eq_assum a m dm (xs ++ ys) <=>
+      eq_assum a m dm xs /\ eq_assum (a + n2w (LENGTH xs) * bytes_in_word) m dm ys``,
+  Induct >> fs [eq_assum_def, ADD1, byteTheory.bytes_in_word_def, word_mul_n2w]
+  >> fs [RIGHT_ADD_DISTRIB] >> fs [GSYM word_add_n2w] >> rw [] >> eq_tac >> rw []);
+val _ = show "eq_assum_APPEND_replay_typed" eq_assum_append_replay;
 val block_block_small_eq_replay = prove(
   ``data_to_word_memoryProof$memory_rel c be ts refs sp st m dm
       ((dataSem$Block ts1 t1 v1,wordLang$Word (w1:'a word))::(dataSem$Block ts2 t2 v2,wordLang$Word w2)::vars) /\
