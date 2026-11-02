@@ -233,6 +233,41 @@ theorem regOk_of_asmL3 {r : Nat} (h : asmRegOkExact r arm8ConfigL3 = true) :
   · rintro rfl
     simp at h2
 
+/-- `X` of a valid register number reads the register file directly. -/
+theorem arm8X_of_valid (ms : arm8_state) {n : Nat} (hn : n ≠ 31) (hlt : n < 32) :
+    X (TN := 64) (BitVec.ofNat 5 n) ms = ms.REG (BitVec.ofNat 5 n) := by
+  have hne : BitVec.ofNat 5 n ≠ 31#5 := by
+    intro hh
+    have hto := congrArg BitVec.toNat hh
+    rw [BitVec.toNat_ofNat] at hto
+    have h31 : (31#5).toNat = 31 := by decide
+    rw [h31] at hto
+    have hn32 : n % 2 ^ 5 = n := Nat.mod_eq_of_lt (by omega)
+    omega
+  simp only [X, BitVec.setWidth_eq]
+  split
+  · exact absurd (by simpa using ‹(BitVec.ofNat 5 n == 31#5) = true›) hne
+  · rfl
+
+/-- `write'X` of a valid register number updates the register file. -/
+theorem arm8WriteX_of_valid (s : arm8_state) (v : BitVec 64) {n : Nat}
+    (hn : n ≠ 31) (hlt : n < 32) :
+    «write'X» (TN := 64) (v, BitVec.ofNat 5 n) s =
+      { s with REG := holUpdate (BitVec.ofNat 5 n) v s.REG } := by
+  have hne : BitVec.ofNat 5 n ≠ 31#5 := by
+    intro hh
+    have hto := congrArg BitVec.toNat hh
+    rw [BitVec.toNat_ofNat] at hto
+    have h31 : (31#5).toNat = 31 := by decide
+    rw [h31] at hto
+    have hn32 : n % 2 ^ 5 = n := Nat.mod_eq_of_lt (by omega)
+    omega
+  have hcond : (!(BitVec.ofNat 5 n == 31#5)) = true := by
+    cases hb : (BitVec.ofNat 5 n == 31#5)
+    · rfl
+    · exact absurd (by simpa using hb) hne
+  simp only [«write'X», BitVec.setWidth_eq, hcond, if_true]
+
 /-- One constructor of `encoder_correct arm8TargetL3` from a one-instruction
 lowering: the single `arm8Next` step executes `i`, which writes `v` into the
 destination register and changes nothing else. -/
