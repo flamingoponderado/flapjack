@@ -6,7 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.ClosCall.Proofs.PartialApplication
+import Flapjack.Compiler.Backend.ClosCall.Proofs.FullApplication
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -241,6 +241,32 @@ private theorem openTwoArgRelation : recClosureRelFuel 5 (.ln, []) {10} Flapjack
   · simp [codeLocations, codeLocationsExp, codeLocationsFuns]
   · simp [codeIncludes, logicalAssocLookup_nil]
 
+-- Full recursive application relates consumed arguments, recursive slots,
+-- captured values, and the arguments left for over-application.
+example : ∃ body env rest,
+    ClosSem.destClosure 3 none (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+      [.number 3, .number 7, .number 9] = some (.fullApp body env rest) ∧
+    EnvRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty
+      [.number 7, .number 9, .recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0, .number 42]
+      env 0 [(0, body)] ∧
+    List.Forall₂ (ValueRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty) [.number 3] rest := by
+  have sourceRun : ClosSem.destClosure 3 none
+      (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0) [.number 3, .number 7, .number 9] =
+    some (.fullApp (.var .none 2)
+      [.number 7, .number 9, .recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0, .number 42]
+      [.number 3]) := rfl
+  have functions : ValueRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty
+      (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
+      (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0) :=
+    .recclosure openTwoArgRelation .nil (.equalLength rfl (.cons (.number 42) .nil))
+  have args : List.Forall₂ (ValueRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty)
+      [.number 3, .number 7, .number 9] [.number 3, .number 7, .number 9] :=
+    .cons (.number 3) (.cons (.number 7) (.cons (.number 9) .nil))
+  obtain ⟨body, env, rest, _, _, _, _, _, targetRun, bodyEnv, restRel, _⟩ :=
+    destClosure_full_fuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 3 none
+      _ _ _ _ _ _ _ sourceRun functions args
+  exact ⟨body, env, rest, targetRun, bodyEnv, restRel⟩
+
 -- A one-argument partial application preserves a captured recursive closure.
 example : ∃ targetPartial,
     ClosSem.destClosure 2 none (.recclosure (some 10) [] [.number 42] [(2, .var .none 2)] 0)
@@ -293,6 +319,25 @@ example : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
     (.closure (some 10) [] [] 1 (.var .none 0))
     (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) := by
   exact .closure closedGroupRelation .nil (.equalLength rfl .nil)
+
+-- An over-applied extracted closure keeps its remaining argument related.
+example : ∃ body env rest,
+    ClosSem.destClosure 2 none
+      (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) [.number 3, .number 7] =
+        some (.fullApp body env rest) ∧
+    EnvRelFuel 5 closedGroupResult ∅ closedGroupCode [.number 7] env 0 [(0, body)] ∧
+    List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ closedGroupCode) [.number 3] rest := by
+  have sourceRun : ClosSem.destClosure 2 none (.closure (some 10) [] [] 1 (.var .none 0))
+      [.number 3, .number 7] = some (.fullApp (.var .none 0) [.number 7] [.number 3]) := rfl
+  have functions : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
+      (.closure (some 10) [] [] 1 (.var .none 0))
+      (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) :=
+    .closure closedGroupRelation .nil (.equalLength rfl .nil)
+  have args : List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ closedGroupCode)
+      [.number 3, .number 7] [.number 3, .number 7] := .cons (.number 3) (.cons (.number 7) .nil)
+  obtain ⟨body, env, rest, _, _, _, _, _, targetRun, bodyEnv, restRel, _⟩ :=
+    destClosure_full_fuel 5 closedGroupResult ∅ closedGroupCode 2 none _ _ _ _ _ _ _ sourceRun functions args
+  exact ⟨body, env, rest, targetRun, bodyEnv, restRel⟩
 
 -- A recursive group binds related recursive closures before its body runs.
 example {C F : Type} (names : List Flapjack.Basis.Pure.MlString.MlString)
