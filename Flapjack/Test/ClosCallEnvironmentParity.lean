@@ -3,6 +3,9 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
 import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
 import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
+import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
+import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -141,7 +144,7 @@ private def closedGroupCode : Flapjack.HolFiniteMapExact Nat (Nat × ClosLang.Ex
   Flapjack.HolFiniteMapExact.empty.update (11, (1, .var .none 0))
 
 -- A real closed group is related to its generated direct-call stub and code.
-example : recClosureRelFuel 5 closedGroupResult ∅ closedGroupCode 10 closedGroup
+private theorem closedGroupRelation : recClosureRelFuel 5 closedGroupResult ∅ closedGroupCode 10 closedGroup
     [(1, .call .none 0 11 [.var .none 0])] := by
   refine ⟨closedGroupInitial, ?_, ?_, ?_, ?_, [.var .none 0], closedGroupAfter, ?_, Or.inl ?_⟩
   · simp [closedGroup, recClosureWellFormed, everyFnLocationSome, fnLocationSomeExp,
@@ -170,7 +173,7 @@ example : recClosureRelFuel 5 closedGroupResult ∅ closedGroupCode 10 closedGro
           logicalAssocLookup, List.find?, equal] at lookup
 
 -- A group with a captured variable follows the open-closure alternative.
-example : recClosureRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 10
+private theorem openGroupRelation : recClosureRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 10
     [(1, .var .none 1)] [(1, .var .none 1)] := by
   refine ⟨(.ln, []), ?_, ?_, ?_, ?_, [.var .none 1], insertEach 10 1 (.ln, []), ?_, Or.inr ?_⟩
   · simp [recClosureWellFormed, everyFnLocationSome, fnLocationSomeExp,
@@ -192,5 +195,38 @@ example : recClosureRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 10
     · simp [groupLocationsCovered, codeLocations, codeLocationsExp]
     · simp
     · simp [codeIncludes, logicalAssocLookup_nil]
+
+example : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
+    (.closure (some 10) [] [] 1 (.var .none 0))
+    (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) := by
+  exact .closure closedGroupRelation .nil (.equalLength rfl .nil)
+
+example : ValueRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty
+    (.closure (some 10) [] [.number 42] 1 (.var .none 1))
+    (.closure (some 10) [] [.number 42] 1 (.var .none 1)) := by
+  exact .closure openGroupRelation .nil (.equalLength rfl (.cons (.number 42) .nil))
+
+-- `clos_call_env_rel_probe.out`: reference relations preserve heterogeneous
+-- element relations and reject different thunk modes or constructors.
+example : refRel (fun (n : Nat) (b : Bool) => (n = 1) ↔ b = true)
+    (.valueArray [1, 0]) (.valueArray [true, false]) := by
+  simp [refRel]
+
+example : ¬refRel (fun (n : Nat) (b : Bool) => (n = 1) ↔ b = true)
+    (.thunk .evaluated 1) (.thunk .notEvaluated true) := by
+  simp [refRel]
+
+example : ¬refRel (fun (n : Nat) (b : Bool) => (n = 1) ↔ b = true)
+    (.valueArray [1]) (.byteArray [1]) := by
+  simp [refRel]
+
+-- Related closures remain indistinguishable to the executable equality op.
+example : Flapjack.Compiler.Backend.ClosSem.doEq
+      (.closure (some 10) [] [] 1 (.var .none 0)) (.number 4) =
+    Flapjack.Compiler.Backend.ClosSem.doEq
+      (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) (.number 4) := by
+  apply valueRelFuel_doEq 5 closedGroupResult ∅ closedGroupCode
+  · exact .closure closedGroupRelation .nil (.equalLength rfl .nil)
+  · exact .number 4
 
 end Flapjack.Test.ClosCallEnvironmentParity

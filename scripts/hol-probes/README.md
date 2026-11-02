@@ -347,7 +347,7 @@ the complete carrier correspondence remains under review.
 
 `clos_call_wfg_probe.out` captures the inferred polymorphic compiler-state and recursive-closure invariants, state-extension, code-inclusion and location-traversal definitions, and their structural theorems. Its state-extension, code-inclusion and location-order cases are replayed in Lean.
 
-`clos_call_env_rel_probe.out` captures the original closure free-variable equations, the polymorphic direct-call environment relation and its structural theorems, and positive and negative binder and environment examples replayed in Lean.
+`clos_call_env_rel_probe.out` captures the original closure free-variable equations, polymorphic reference and direct-call environment relations, their structural theorems, and positive and negative binder, reference and environment examples replayed in Lean.
 
 `clos_call_free_correct_probe.out` captures the original free-analysis and closed-function statements and replays closedness decisions in the executable Lean pass. Its group cases include unequal lengths, which HOL's `EVERY2` rejects; the Lean fold correspondence proves the length precondition before comparing results.
 

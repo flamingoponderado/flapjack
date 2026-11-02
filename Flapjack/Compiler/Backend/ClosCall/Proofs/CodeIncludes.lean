@@ -34,6 +34,14 @@ theorem codeIncludes_of_stateExtends {A K V : Type} (g0 g1 : Spt A × List (K ×
   intro key value lookup
   exact included key value (growth.2.1 key value lookup)
 
+/-- Extending a finite code map preserves every included binding. -/
+theorem codeIncludes_mono {K V : Type} (al : List (K × V))
+    (code code' : HolFiniteMapExact K V)
+    (growth : ∀ key value, code.lookup key = some value → code'.lookup key = some value)
+    (included : codeIncludes al code) : codeIncludes al code' := by
+  intro key value lookup
+  exact growth key value (included key value lookup)
+
 /-- Installing all code produced by a successful traversal also installs
 the bindings present before that traversal. -/
 theorem callsListBounded_codeIncludes_initial (fuel : Nat) (es : List ClosLang.Exp)

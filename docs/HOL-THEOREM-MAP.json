@@ -116110,5 +116110,13 @@
   "lean_name": "callsListSource",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared source lines 219-224 and the typed definition in clos_call_stub_probe.out: trace and index inputs, recursive location increments, natural arity, generated arguments and independently polymorphic ignored payload agree. callsList_eq_source proves agreement with the executed specialization. Lean checks the agreement proof; source comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "ref_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/RefRelations.lean",
+  "lean_name": "refRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed source clauses in clos_call_env_rel_probe.out: independent value types, LIST_REL for arrays, fixed word8 byte-list equality, thunk-mode equality and related payloads, and false for every constructor mismatch. The Lean Ref carrier and fixed byte widths match. Source comparison does not establish cross-language equivalence."
 }
 ]

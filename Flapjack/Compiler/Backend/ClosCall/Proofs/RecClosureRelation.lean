@@ -84,4 +84,31 @@ theorem recClosureRelFuel_executableCases (fuel : Nat) (g : State) (allowed : Se
   · exact Or.inr ⟨(groupClosedFuel_false_iff fuel fns1 bodies length).mpr notClosed,
       openBodies, afterOpen, run, target⟩
 
+/-- Extending compiler state, permitted locations and installed code
+preserves the fuel-aware recursive-closure relation. -/
+theorem recClosureRelFuel_mono (fuel : Nat) (g g' : State) (allowed allowed' : Set Nat)
+    (code code' : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (fns1 fns2 : List (Nat × ClosLang.Exp))
+    (related : recClosureRelFuel fuel g allowed code loc fns1 fns2)
+    (stateGrowth : stateExtends g g') (allowedGrowth : allowed ⊆ allowed')
+    (codeGrowth : ∀ key value, code.lookup key = some value → code'.lookup key = some value) :
+    recClosureRelFuel fuel g' allowed' code' loc fns1 fns2 := by
+  obtain ⟨g0, wf, well, nestedFresh, ownFresh, bodies, afterProbe, probe, alternatives⟩ := related
+  refine ⟨g0, wf, well, nestedFresh, ownFresh, bodies, afterProbe, probe, ?_⟩
+  rcases alternatives with ⟨closed, target, stateRel, covered, included⟩ |
+      ⟨notClosed, openBodies, afterOpen, run, target, stateRel, covered, ownAllowed, included⟩
+  · left
+    refine ⟨closed, target, stateExtends_trans _ _ _ stateRel stateGrowth, ?_, ?_⟩
+    · intro k member notKnown
+      exact allowedGrowth (covered k member notKnown)
+    · exact codeIncludes_mono _ code code' codeGrowth included
+  · right
+    refine ⟨notClosed, openBodies, afterOpen, run, target,
+      stateExtends_trans _ _ _ stateRel stateGrowth, ?_, ?_, ?_⟩
+    · intro k member notKnown
+      exact allowedGrowth (covered k member notKnown)
+    · intro i bound
+      exact allowedGrowth (ownAllowed i bound)
+    · exact codeIncludes_mono _ code code' codeGrowth included
+
 end Flapjack.Compiler.Backend.ClosCall
