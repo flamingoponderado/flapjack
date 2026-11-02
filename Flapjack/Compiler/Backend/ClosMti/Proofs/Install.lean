@@ -229,4 +229,41 @@ theorem doInstallLemma {C F : Type} (source target : State C F)
       exact ⟨.abort reason, targetFinal, targetRun, rfl, maxEq, states⟩
     | val expressions => simpa only [and_assoc] using simulation
 
+/-- Invert the installation simulation from a target outcome. This is a
+Lean-side consequence of the source-shaped installation lemma, used by the
+backward evaluator simulation. -/
+theorem doInstall_reverse_related {C F : Type} (source target : State C F)
+    (sourceValues targetValues : List ClosSem.Value)
+    (targetResult : Result (List ClosLang.Exp) ClosSem.Value) (targetFinal : State C F)
+    (states : StateRel source target)
+    (values : List.Forall₂ (ValueRel source.maxApp) sourceValues targetValues)
+    (run : doInstall targetValues target = (targetResult, targetFinal)) :
+    match (generalizing := false) targetResult with
+    | .err targetError => ∃ sourceError sourceFinal,
+        doInstall sourceValues source = (.err sourceError, sourceFinal) ∧
+        SemanticPrimitivesProps.excRel (ValueRel source.maxApp) sourceError targetError ∧
+        sourceFinal.maxApp = source.maxApp ∧ StateRel sourceFinal targetFinal
+    | .val targetExpressions => ∃ sourceExpressions sourceFinal,
+        (sourceFinal.maxApp = source.maxApp ∧ StateRel sourceFinal targetFinal) ∧
+        sourceExpressions ≠ [] ∧ CodeRel source.maxApp sourceExpressions targetExpressions ∧
+        doInstall sourceValues source = (.val sourceExpressions, sourceFinal) := by
+  have forward := doInstallLemma source target sourceValues targetValues ⟨states, values⟩
+  cases sourceRun : doInstall sourceValues source with
+  | mk sourceResult sourceFinal =>
+    cases sourceResult with
+    | err sourceError =>
+      simp only [sourceRun] at forward
+      obtain ⟨targetError, middle, targetRun, errors, maxEq, related⟩ := forward
+      rw [run] at targetRun
+      simp only [Prod.mk.injEq] at targetRun
+      obtain ⟨rfl, rfl⟩ := targetRun
+      exact ⟨sourceError, sourceFinal, rfl, errors, maxEq, related⟩
+    | val sourceExpressions =>
+      simp only [sourceRun] at forward
+      obtain ⟨targetExpressions, middle, ⟨maxEq, related⟩, nonempty, code, targetRun⟩ := forward
+      rw [run] at targetRun
+      simp only [Prod.mk.injEq] at targetRun
+      obtain ⟨rfl, rfl⟩ := targetRun
+      exact ⟨sourceExpressions, sourceFinal, ⟨maxEq, related⟩, nonempty, code, rfl⟩
+
 end Flapjack.Compiler.Backend.ClosMti

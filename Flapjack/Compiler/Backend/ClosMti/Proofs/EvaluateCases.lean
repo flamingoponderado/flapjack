@@ -91,6 +91,24 @@ theorem introExp_eq_if (maxApp : Nat) (expression : ClosLang.Exp) (trace : Backe
       introExp_handle, introExp_tick, introExp_op, introExp_app_none,
       introExp_fn_none, introExp_letrec_none]
 
+/-- A transformed function comes from an unannotated unary source function;
+argument collection determines the target arity and body. -/
+theorem introExp_eq_fn (maxApp : Nat) (expression : ClosLang.Exp)
+    (name : Basis.Pure.MlString.MlString) (location : Option Nat) (vars : Option (List Nat))
+    (arity : Nat) (targetBody : ClosLang.Exp) (unary : ClosProps.noMti expression)
+    (transformed : introExp maxApp expression = .fn name location vars arity targetBody) :
+    ∃ body rest, expression = .fn name none none 1 body ∧ ClosProps.noMti body ∧
+      location = none ∧ vars = none ∧ collectArgs maxApp 1 body = (arity, rest) ∧
+      targetBody = introExp maxApp rest := by
+  cases expression <;>
+    simp_all [ClosProps.noMti, introExp_var, introExp_if, introExp_let, introExp_raise,
+      introExp_handle, introExp_tick, introExp_op, introExp_app_none,
+      introExp_fn_none, introExp_letrec_none]
+  case fn sourceName sourceLocation sourceVars sourceArity sourceBody =>
+    cases found : collectArgs maxApp 1 sourceBody with
+    | mk count body =>
+      simp_all
+
 /-- Related closure values either decode to the same Boolean or both fail to
 decode. -/
 theorem valueRel_asBool {maxApp : Nat} {left right : Value}
@@ -618,5 +636,46 @@ theorem evaluateRel_if {C F : Type} (trace : BackendCommon.Tra)
                         · rw [evaluate, fixClock_evaluate, sourceConditionRun]
                           simpa [sourceBool] using sourceRun
                         · simpa [maxEq] using branchRel
+
+/-- Collected unary functions evaluate to related source and target closures. -/
+theorem evaluateRel_fn {C F : Type} (name : Basis.Pure.MlString.MlString)
+    (location : Option Nat) (vars : Option (List Nat)) (arity : Nat)
+    (targetBody : ClosLang.Exp) (sourceCode : List ClosLang.Exp) :
+    @EvaluateRelAt C F sourceCode [.fn name location vars arity targetBody] := by
+  intro targetEnv target sourceEnv targetFinal source targetResult run env states code
+  have length := codeRel_length code
+  cases sourceCode with
+  | nil => simp at length
+  | cons expression rest =>
+    cases rest with
+    | cons next tail => simp at length
+    | nil =>
+      have unary : ClosProps.noMti expression := code.1 expression (by simp)
+      have transformed : introExp source.maxApp expression = .fn name location vars arity targetBody := by
+        simpa [introList] using code.2.symm
+      obtain ⟨body, remaining, rfl, bodyUnary, rfl, rfl, collected, targetBodyEq⟩ :=
+        introExp_eq_fn source.maxApp expression name location vars arity targetBody unary transformed
+      have maxPos : 1 ≤ source.maxApp := by
+        have agreement := stateRel_clock_maxApp states
+        omega
+      have arityBounds := collectArgsBounds source.maxApp 1 body arity remaining collected maxPos
+      obtain ⟨names, bodyEq, arityEq, remainingUnary⟩ :=
+        collectArgsUnary source.maxApp 1 body arity remaining collected bodyUnary
+      have targetMax : target.maxApp = source.maxApp := (stateRel_clock_maxApp states).2.1.symm
+      have targetBound : arity ≤ target.maxApp := by simpa [targetMax] using arityBounds.2
+      have arityNonzero : arity ≠ 0 := by omega
+      have closureCode : CodeRel source.maxApp [remaining] [targetBody] := by
+        simp [CodeRel, introList, remainingUnary, targetBodyEq]
+      have closures : ValueRel source.maxApp
+          (.closure none [] sourceEnv 1 body) (.closure none [] targetEnv arity targetBody) := by
+        rw [bodyEq]
+        have result := ValueRel.closure [] [] sourceEnv targetEnv arity remaining targetBody names
+          (by simpa using arityEq.symm) closureCode env List.Forall₂.nil
+        simpa using result
+      simp [evaluate, targetBound, arityNonzero] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨.val [.closure none [] sourceEnv 1 body], source, ?_, ?_, states⟩
+      · simp [evaluate, maxPos]
+      · simpa [resultRel] using List.Forall₂.cons closures List.Forall₂.nil
 
 end Flapjack.Compiler.Backend.ClosMti
