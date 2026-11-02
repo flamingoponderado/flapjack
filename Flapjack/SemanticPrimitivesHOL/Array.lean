@@ -1,6 +1,6 @@
 import Flapjack.SemanticPrimitivesHOL
 
-/-! Source array-copy and byte/character conversions. Statement review is pending. -/
+/-! Source array-copy and byte/character conversions. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.Basis.Pure.MlString
 

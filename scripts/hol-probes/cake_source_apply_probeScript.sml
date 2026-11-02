@@ -2,6 +2,30 @@ load "semanticPrimitivesTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+fun show_thm label th =
+  if null (hyp th) then (print label; print_term (concl th); print "\n")
+  else raise Fail (label ^ " has hypotheses");
+val _ = show_thm "do_app_definition=" semanticPrimitivesTheory.do_app_def;
+val _ = show_thm "do_arith_definition=" semanticPrimitivesTheory.do_arith_def;
+val _ = show_thm "do_conversion_definition=" semanticPrimitivesTheory.do_conversion_def;
+val opref_equation = prove (
+  ``∀s (t:'ffi ffi$ffi_state) v.
+      semanticPrimitives$do_app (s,t) ast$Opref [v] =
+      SOME ((s ++ [Refv v],t), Rval (Loc T (LENGTH s)))``,
+  simp [semanticPrimitivesTheory.do_app_def, semanticPrimitivesTheory.store_alloc_def]);
+val _ = show_thm "opref_equation=" opref_equation;
+val fixed_equation = prove (
+  ``∀s (t:'ffi ffi$ffi_state) vs.
+      semanticPrimitives$do_app (s,t) ast$AallocFixed vs =
+      SOME ((s ++ [Varray vs],t), Rval (Loc T (LENGTH s)))``,
+  simp [semanticPrimitivesTheory.do_app_def, semanticPrimitivesTheory.store_alloc_def]);
+val _ = show_thm "fixed_equation=" fixed_equation;
+val config_equation = prove (
+  ``∀s (t:'ffi ffi$ffi_state) a b.
+      semanticPrimitives$do_app (s,t) ast$ConfigGC [Litv (IntLit a); Litv (IntLit b)] =
+      SOME ((s,t), Rval (Conv NONE []))``,
+  simp [semanticPrimitivesTheory.do_app_def]);
+val _ = show_thm "config_equation=" config_equation;
 val _ = (print "do_app_type="; print_type (type_of ``semanticPrimitives$do_app``); print "\n");
 val exists_eq = CONV_RULE (DEPTH_CONV ETA_CONV) (prove (``∀a:'a. ∃x. a = x``, metis_tac []));
 fun capture name tm =

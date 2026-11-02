@@ -2,8 +2,7 @@ import Flapjack.SemanticPrimitivesHOL.Apply
 import Flapjack.SemanticPrimitivesHOL.Test
 
 /-! Source primitive arithmetic and the assembled application dispatcher.
-The dispatcher uses the existing rational-cut floating-point model. The
-complete declaration is pending full source and carrier review. -/
+The dispatcher uses the existing rational-cut floating-point model. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
@@ -74,8 +73,8 @@ noncomputable def floatArith (action : Arith) (values : List Value) : Option Val
 
 /-- Source primitive application. The `doAppBasic` and numeric cases together
 cover the original dispatch; `opapp` and `eval` are handled by the evaluator
-and return `none` here, as in HOL. The full clause and carrier review is
-pending. Floating-point behavior inherits the rational-cut assumption used by
+and return `none` here, as in HOL. Floating-point behavior inherits the
+rational-cut assumption used by
 `fpSemFpUopComp`, `fpSemFpBopComp`, `fpSemFpfma`, and `doTest`. -/
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "do_app_def"]
 noncomputable def doApp {σ : Type} (state : Store Value × HolFfiState σ) (op : Op)
@@ -90,5 +89,28 @@ noncomputable def doApp {σ : Type} (state : Store Value × HolFfiState σ) (op 
   | _ => match doAppNumericCore state op values with
     | some result => result
     | none => (doAppBasic state op values).getD none
+
+/-- Source reference allocation preserves the FFI state and returns the old
+store length as the new location. -/
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "do_app_def"]
+theorem doApp_opref {σ : Type} (store : Store Value) (ffi : HolFfiState σ) (value : Value) :
+    doApp (store, ffi) .opref [value] =
+      some ((store ++ [.refv value], ffi), .val (.loc true store.length)) := by
+  rfl
+
+/-- Fixed array allocation retains all supplied values in order. -/
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "do_app_def"]
+theorem doApp_aallocFixed {σ : Type} (store : Store Value) (ffi : HolFfiState σ)
+    (values : List Value) :
+    doApp (store, ffi) .aallocFixed values =
+      some ((store ++ [.varray values], ffi), .val (.loc true store.length)) := by
+  rfl
+
+/-- Source GC configuration accepts two integers and leaves the state intact. -/
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "do_app_def"]
+theorem doApp_configGC {σ : Type} (store : Store Value) (ffi : HolFfiState σ) (a b : Int) :
+    doApp (store, ffi) .configGC [.litv (.intLit a), .litv (.intLit b)] =
+      some ((store, ffi), .val (.conv none [])) := by
+  rfl
 
 end Flapjack.SemanticPrimitivesHOL

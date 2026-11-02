@@ -110156,16 +110156,16 @@
     "hol_name": "id_type_num_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "idTypeNum",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed id_type_num_definition: the original identifier datatype stamp is natural four."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "list_to_v_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "listToValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed list_to_value_definition clauses: empty and cons encode the exact source names, list type stamp and argument order. valueToList_listToValue proves the full decoding round trip in Lean; the original HOL probe proves the matching universally quantified statement."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110188,8 +110188,8 @@
     "hol_name": "maybe_to_v_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "maybeToValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed maybe_to_value_definition clauses: NONE and SOME use the original constructor names and option type stamp, with zero and one arguments respectively."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110204,24 +110204,24 @@
     "hol_name": "option_type_num_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "optionTypeNum",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed option_type_num_definition: the original option datatype stamp is natural two."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "v_to_char_list_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "valueToCharList",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed value_to_chars_definition case: only the exact nil stamp and binary cons stamp with a character head are decoded; malformed shapes, non-character heads and recursive failures return NONE. HOL strings and Lean List HolChar both retain the original byte characters."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "v_to_id_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "valueToId",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed value_to_id_definition cases: Short requires one string literal, Long requires a string head and recursively decoded tail, exact stamps are checked and all other values fail."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110268,8 +110268,8 @@
     "hol_name": "vs_to_string_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
     "lean_name": "valuesToString",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed values_to_string_definition clause: empty gives the empty MlString, string literal heads concatenate in order and any non-string element fails. MlString.concat over two arguments appends the same underlying byte lists as HOL strcat."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110663,8 +110663,36 @@
     "hol_name": "do_app_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/ApplyNumeric.lean",
     "lean_name": "doApp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: the pinned cake_source_apply_probe records the inferred polymorphic FFI, state, operation, and result type and exercises the dispatcher. Complete clause, imported-carrier, and floating-point correspondence review remains pending; the inherited rational-cut assumption is documented beside doApp."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared every typed do_app_definition case in cake_source_apply_probe.out with the assembled numeric and basic dispatchers, including argument shapes, guarded arithmetic and conversions, safe and unsafe bounds, byte and array copies, list encodings, Eval and Opapp fallback, thunk operations, and FFI return and final cases. HOL characters and word8s use the reviewed identical eight-bit carrier; FFI state remains independently polymorphic. The original proof and Lean source equations cover reference allocation, fixed array allocation and GC configuration. Floating operations inherit the rational-cut assumption in SOUNDNESS item 8; these checks do not prove cross-language correspondence."
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "do_app_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/ApplyNumeric.lean",
+    "lean_name": "doApp_opref",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete Opref clause and typed opref_equation HOL replay: allocate Refv at the end of the store, preserve arbitrary FFI state and return the old length as a true-flagged location. The equation invokes doApp and inherits its floating-point assumption through the declaration dependency."
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "do_app_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/ApplyNumeric.lean",
+    "lean_name": "doApp_aallocFixed",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete AallocFixed clause and typed fixed_equation HOL replay: preserve an arbitrary value list in the appended Varray, preserve arbitrary FFI state and return the old length as a true-flagged location. The equation invokes doApp and inherits its floating-point assumption through the declaration dependency."
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "do_app_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/ApplyNumeric.lean",
+    "lean_name": "doApp_configGC",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete ConfigGC clause and typed config_equation HOL replay: any two integer literals return the unit constructor without changing the store or arbitrary FFI state. The equation invokes doApp and inherits its floating-point assumption through the declaration dependency."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",

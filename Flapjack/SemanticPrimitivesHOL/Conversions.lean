@@ -1,6 +1,6 @@
 import Flapjack.SemanticPrimitivesHOL
 
-/-! Source value encodings used by evaluator primitives. Statement review is pending. -/
+/-! Source value encodings used by evaluator primitives. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Basis.Pure.MlString
 
@@ -26,6 +26,14 @@ termination_by value => sizeOf value
 def listToValue : List Value → Value
   | [] => .conv (some (.typeStamp (ofString "[]") listTypeNum)) []
   | head :: tail => .conv (some (.typeStamp (ofString "::") listTypeNum)) [head, listToValue tail]
+
+/-- Decoding an encoded list preserves every source value in order. This is
+Flapjack proof infrastructure, not a separate HOL declaration. -/
+theorem valueToList_listToValue (values : List Value) :
+    valueToList (listToValue values) = some values := by
+  induction values with
+  | nil => simp [valueToList, listToValue]
+  | cons head tail ih => simp [valueToList, listToValue, ih]
 
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "v_to_char_list_def"]
 def valueToCharList : Value → Option (List HolChar)
