@@ -4085,7 +4085,7 @@ run_probe word_remove_must_terminate_probeScript.sml word_remove_must_terminate_
 # `data_to_word` pointer-layout helpers: `shift_length`, `small_shift_length`
 # and `get_gen_size` (empty, in range, overflowing) at 64 and 32 bits.
 run_probe data_to_word_config_probeScript.sml data_to_word_config_probe.out \
-  shift_length gen_size_three_32 assign_greater_fallback assign_greater_eq_fallback assign_alloc_global_fallback assign_concat_byte_vec_fallback assign_from_list_byte_fallback real_addr_def_typed real_addr_sub_64 real_addr_right_64 real_addr_both_64 shift_var_def_typed give_up_def_typed shift_zero_64 shift_large_asr_64 shift_large_lsl_64 shift_rotate_multiple_64 shift_rotate_wrap_64 give_up_64 list_seq_def_typed store_each_def_typed mem_eq_list_def_typed silent_ffi_def_typed store_each_64 mem_eq_list_64 silent_ffi_off_64 silent_ffi_on_64 \
+  shift_length gen_size_three_32 assign_greater_fallback assign_greater_eq_fallback assign_alloc_global_fallback assign_concat_byte_vec_fallback assign_from_list_byte_fallback real_addr_def_typed real_addr_sub_64 real_addr_right_64 real_addr_both_64 shift_var_def_typed give_up_def_typed shift_zero_64 shift_large_asr_64 shift_large_lsl_64 shift_rotate_multiple_64 shift_rotate_wrap_64 give_up_64 list_seq_def_typed store_each_def_typed mem_eq_list_def_typed silent_ffi_def_typed store_each_64 mem_eq_list_64 silent_ffi_off_64 silent_ffi_on_64 fp_cmp_inst_typed fp_bop_inst_typed fp_uop_inst_typed fp_top_inst_typed \
   "$cake_dir/compiler/backend/data_to_wordScript.sml" \
   "$cake_dir/compiler/backend"
 
@@ -8230,6 +8230,11 @@ run_probe data_to_word_gc_stack_probeScript.sml data_to_word_gc_stack_probe.out 
   stack_rel_typed the_global_typed contains_loc_typed limits_inv_typed join_env_typed flat_typed flat_append_typed \
   lookup_adjust_var_adjust_set_typed adjust_var_IN_adjust_set_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_fp64_probeScript.sml data_to_word_fp64_probe.out entry \
+  "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+run_probe data_to_word_fp32_probeScript.sml data_to_word_fp32_probe.out entry \
+  "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe data_to_word_space_control_probeScript.sml data_to_word_space_control_probe.out \
   do_space_code_const_typed cut_state_opt_ffi_typed MEM_join_env_cut_env_typed \

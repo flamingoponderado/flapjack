@@ -120,6 +120,69 @@ private def writeWord64On32 {width : Nat} [NeZero width] (conf : Config) (header
       shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
       .const 1])]
 
+/-- Select the floating-point comparison instruction and operand order. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "fp_cmp_inst_def"]
+def fpCmpInst : FpCmp → WordLangFp
+  | .less => .fpLess 3 0 1
+  | .lessEqual => .fpLessEqual 3 0 1
+  | .greater => .fpLess 3 1 0
+  | .greaterEqual => .fpLessEqual 3 1 0
+  | .equal => .fpEqual 3 0 1
+
+/-- Select the floating-point binary arithmetic instruction. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "fp_bop_inst_def"]
+def fpBopInst : FpBop → WordLangFp
+  | .add => .fpAdd 0 0 1
+  | .sub => .fpSub 0 0 1
+  | .mul => .fpMul 0 0 1
+  | .div => .fpDiv 0 0 1
+
+/-- Select the floating-point unary arithmetic instruction. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "fp_uop_inst_def"]
+def fpUopInst : FpUop → WordLangFp
+  | .abs => .fpAbs 1 0
+  | .neg => .fpNeg 1 0
+  | .sqrt => .fpSqrt 1 0
+
+/-- Select the floating-point ternary arithmetic instruction. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "fp_top_inst_def"]
+def fpTopInst : FpTop → WordLangFp
+  | .fma => .fpFma 0 1 2
+
+/-- Operand layout for the floating-point lowering sequences. -/
+private def fpOperand (source position : Nat) : Nat × Nat × Nat × Nat × Nat × Nat :=
+  match position with
+  | 0 => (source, 3, 15, 11, 13, 0)
+  | 1 => (source, 5, 17, 21, 23, 1)
+  | _ => (source, 7, 19, 31, 33, 2)
+
+/-- Load floating-point operands in the order used by the source compiler. -/
+private def fpLoads {width : Nat} [NeZero width] (conf : Config) (sources : List Nat) :
+    List (WordLangProgHOL (BitVec width)) :=
+  let operands := sources.zipIdx |>.map fun (source, position) => fpOperand source position
+  let bytes := BitVec.ofNat width (width / 8)
+  if width = 64 then
+    (operands.map fun (source, reg, _, _, _, _) =>
+      .assign reg (.load (.op .add [realAddr conf (adjustVar source), .const bytes]))) ++
+    (operands.map fun (_, reg, _, _, _, fp) => .inst (.fp (.fpMovFromReg fp reg reg)))
+  else
+    (operands.map fun (source, _, addr, _, _, _) => .assign addr (realAddr conf (adjustVar source))) ++
+    (operands.flatMap fun (_, _, addr, low, high, _) => [
+      .assign low (.load (.op .add [.var addr, .const bytes])),
+      .assign high (.load (.op .add [.var addr, .const (2 * bytes)]))]) ++
+    (operands.map fun (_, _, _, low, high, fp) => .inst (.fp (.fpMovFromReg fp high low)))
+
+/-- Emit a floating-point result allocation after its instruction. -/
+private def fpResult {width : Nat} [NeZero width] (conf : Config) (dest : Nat)
+    (sources : List Nat) (operation : WordLangFp) (resultFp : Nat) : WordLangProgHOL (BitVec width) :=
+  let words := if width = 64 then 1 else 2
+  match encodeHeader (width := width) conf 3 words with
+  | none => giveUp
+  | some header =>
+    let transfer := if width = 64 then .fpMovToReg 3 5 resultFp else .fpMovToReg 5 3 resultFp
+    let store := if width = 64 then writeWord64 conf header dest else writeWord64On32 conf header dest 5 3
+    wordListSeq (fpLoads conf sources ++ [.inst (.fp operation), .inst (.fp transfer), store])
+
 /-- Internal pointer-field construction for nonempty constructor allocation;
 the standalone HOL helpers remain to be reviewed. -/
 def pointerBits {width : Nat} (conf : Config) (tag len : Nat) : BitVec width :=
@@ -463,21 +526,43 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       | [x, y], .compare .lt => some (boolResult dest .lower (adjustVar x) (.reg (adjustVar y)), l)
       | [x, y], .compare .leq => some (boolResult dest .notLower (adjustVar y) (.reg (adjustVar x)), l)
       | _, _ => some (.skip, l)
-  | l, .assign _ (.wordOp (.fpCmp _)) args _ =>
+  | l, .assign dest (.wordOp (.fpCmp comparison)) args _ =>
       match args with
-      | [_, _] => if !conf.hasFpOps then some (giveUp, l) else none
+      | [left, right] =>
+          if !conf.hasFpOps then some (giveUp, l)
+          else
+            let bytes := BitVec.ofNat width (width / 8)
+            let finish : List (WordLangProgHOL (BitVec width)) := [
+              .inst (.fp (fpCmpInst comparison)),
+              .assign (adjustVar dest) (.op .add [shiftVar .lsl 3 4, .const 2])]
+            if width = 64 then
+              some (wordListSeq ([
+                .assign 3 (.load (.op .add [realAddr conf (adjustVar left), .const bytes])),
+                .assign 5 (.load (.op .add [realAddr conf (adjustVar right), .const bytes])),
+                .inst (.fp (.fpMovFromReg 0 3 3)), .inst (.fp (.fpMovFromReg 1 5 5))] ++ finish), l)
+            else
+              some (wordListSeq ([
+                .assign 15 (realAddr conf (adjustVar left)), .assign 17 (realAddr conf (adjustVar right)),
+                .assign 11 (.load (.op .add [.var 15, .const bytes])),
+                .assign 13 (.load (.op .add [.var 15, .const (2 * bytes)])),
+                .assign 21 (.load (.op .add [.var 17, .const bytes])),
+                .assign 23 (.load (.op .add [.var 17, .const (2 * bytes)])),
+                .inst (.fp (.fpMovFromReg 0 13 11)), .inst (.fp (.fpMovFromReg 1 23 21))] ++ finish), l)
       | _ => some (.skip, l)
-  | l, .assign _ (.wordOp (.fpBop _)) args _ =>
+  | l, .assign dest (.wordOp (.fpBop operation)) args _ =>
       match args with
-      | [_, _] => if !conf.hasFpOps then some (giveUp, l) else none
+      | [left, right] => if !conf.hasFpOps then some (giveUp, l)
+          else some (fpResult conf dest [left, right] (fpBopInst operation) 0, l)
       | _ => some (.skip, l)
-  | l, .assign _ (.wordOp (.fpUop _)) args _ =>
+  | l, .assign dest (.wordOp (.fpUop operation)) args _ =>
       match args with
-      | [_] => if !conf.hasFpOps then some (giveUp, l) else none
+      | [source] => if !conf.hasFpOps then some (giveUp, l)
+          else some (fpResult conf dest [source] (fpUopInst operation) 1, l)
       | _ => some (.skip, l)
-  | l, .assign _ (.wordOp (.fpTop _)) args _ =>
+  | l, .assign dest (.wordOp (.fpTop operation)) args _ =>
       match args with
-      | [_, _, _] => if !conf.hasFpOps || !conf.hasFpTern then some (giveUp, l) else none
+      | [first, second, third] => if !conf.hasFpOps || !conf.hasFpTern then some (giveUp, l)
+          else some (fpResult conf dest [first, second, third] (fpTopInst operation) 0, l)
       | _ => some (.skip, l)
   | l, .assign dest (.wordOp (.wordOpw .w8 op)) args _ =>
       match args with

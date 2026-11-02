@@ -231,7 +231,7 @@ private def matchesFpFallback (op : ClosLang.WordOp) (args : List Nat) : Bool :=
   | some (.seq (.assign 1 (.const value)) (.alloc 1 (.ls (), .ln)), 2) => value == 0xffffffffffffffff
   | _ => false
 #guard (compileControl? (width := 64) { conf with hasFpOps := true } 5 2
-  (.assign 3 (.wordOp (.fpBop .add)) [1, 2] none)).isNone
+  (.assign 3 (.wordOp (.fpBop .add)) [1, 2] none)).isSome
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.fpUop .neg)) [] none) with
   | some (.skip, 2) => true
   | _ => false

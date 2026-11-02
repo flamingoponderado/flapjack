@@ -3381,6 +3381,7 @@ import Flapjack.Test.CakeFrontendStagesParity
 import Flapjack.Test.CakeClosureStagesParity
 import Flapjack.Test.CakeBviStagesParity
 import Flapjack.Test.CakeDataStagesParity
+import Flapjack.Test.DataToWordFloatingParity
 import Flapjack.Test.CakeWordStagesParity
 import Flapjack.Test.CakeWordOptimiseStagesParity
 import Flapjack.CakeParser.FromSexp

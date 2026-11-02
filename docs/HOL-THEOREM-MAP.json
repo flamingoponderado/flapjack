@@ -115775,6 +115775,38 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "fp_cmp_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "fpCmpInst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lines 1117–1122 with typed data_to_word_config probe: all five fpSem comparison constructors select the same asm floating-point opcode and exact registers, including operand reversal for greater comparisons. The executed lowering uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "fp_bop_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "fpBopInst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lines 1129–1133 with typed data_to_word_config probe: all four binary fpSem constructors select the corresponding asm opcode with registers 0, 0, 1. The executed lowering uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "fp_uop_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "fpUopInst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lines 1136–1139 with typed data_to_word_config probe: negation, absolute value and square root select the corresponding asm opcode with registers 1, 0. The executed lowering uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "fp_top_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "fpTopInst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lines 1125–1126 with typed data_to_word_config probe: the sole fpSem ternary constructor selects FPFma with registers 0, 1, 2. The executed lowering uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "real_addr_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "realAddr",

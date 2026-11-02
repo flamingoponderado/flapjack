@@ -29,3 +29,7 @@ store_each_64=Seq (Store (Op Add [Var 2; Const 8w]) 4) (Seq (Store (Op Add [Var 
 mem_eq_list_64=Seq (Assign 5 (Load (Op Add [Var 3; Const 8w]))) (If Equal 5 (Imm 3w) (Seq (Assign 5 (Load (Op Add [Var 3; Const 16w]))) (If Equal 5 (Imm 7w) (Assign 1 TRUE_CONST) Skip)) Skip)
 silent_ffi_off_64=Skip
 silent_ffi_on_64=Seq (Assign 3 (Const 0w)) (Seq (Assign 7 (Op Sub [Lookup NextFree; Lookup CurrHeap])) (Seq (Assign 9 (Lookup HeapLength)) (FFI «» 7 3 9 3 (LN,LN))))
+fp_cmp_inst_typed=fp_cmp_inst FP_Less = FPLess (3 :num) (0 :num) (1 :num) ∧ fp_cmp_inst FP_LessEqual = FPLessEqual (3 :num) (0 :num) (1 :num) ∧ fp_cmp_inst FP_Greater = FPLess (3 :num) (1 :num) (0 :num) ∧ fp_cmp_inst FP_GreaterEqual = FPLessEqual (3 :num) (1 :num) (0 :num) ∧ fp_cmp_inst FP_Equal = FPEqual (3 :num) (0 :num) (1 :num)
+fp_bop_inst_typed=fp_bop_inst FP_Add = FPAdd (0 :num) (0 :num) (1 :num) ∧ fp_bop_inst FP_Sub = FPSub (0 :num) (0 :num) (1 :num) ∧ fp_bop_inst FP_Mul = FPMul (0 :num) (0 :num) (1 :num) ∧ fp_bop_inst FP_Div = FPDiv (0 :num) (0 :num) (1 :num)
+fp_uop_inst_typed=fp_uop_inst FP_Neg = FPNeg (1 :num) (0 :num) ∧ fp_uop_inst FP_Abs = FPAbs (1 :num) (0 :num) ∧ fp_uop_inst FP_Sqrt = FPSqrt (1 :num) (0 :num)
+fp_top_inst_typed=fp_top_inst FP_Fma = FPFma (0 :num) (1 :num) (2 :num)

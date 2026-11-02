@@ -50,3 +50,7 @@ val _ = print_eval "store_each_64" ``(StoreEach 2 [4;6] 8w : 64 wordLang$prog)``
 val _ = print_eval "mem_eq_list_64" ``(MemEqList 8w [3w;7w] : 64 wordLang$prog)``;
 val _ = print_eval "silent_ffi_off_64" ``(SilentFFI ^conf 3 (LN,LN) : 64 wordLang$prog)``;
 val _ = print_eval "silent_ffi_on_64" ``(SilentFFI (^conf with call_empty_ffi := T) 3 (LN,LN) : 64 wordLang$prog)``;
+val _ = (print "fp_cmp_inst_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl fp_cmp_inst_def); print "\n");
+val _ = (print "fp_bop_inst_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl fp_bop_inst_def); print "\n");
+val _ = (print "fp_uop_inst_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl fp_uop_inst_def); print "\n");
+val _ = (print "fp_top_inst_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl fp_top_inst_def); print "\n");
