@@ -78,4 +78,84 @@ theorem arm8Decode_moveWide (opc : MoveWideOp) (hw : BitVec 2) (imm16 : BitVec 1
   cases opc <;> simp [holV2w_one_true, holV2w_two_zero, holV2w_two_two,
     holV2w_two_three, holV2w_two, holV2w_five, holV2w_sixteen]
 
+/-- Inserting a 16-bit immediate into the zero word at `pos` is a left shift
+(Flapjack infrastructure for the bitstring/FCP `bit_field_insert` rendering). -/
+theorem holBitFieldInsert_zero_shift (pos : Nat) (imm16 : BitVec 16) :
+    holBitFieldInsert (pos + 15) pos imm16 (BitVec.ofNat 64 0) =
+      (BitVec.setWidth 64 imm16) <<< pos := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  simp only [holBitFieldInsert, Flapjack.RiscV.L3.holBitFieldInsert]
+  rw [Flapjack.getLsbD_holFcpWord]
+  simp only [hi, decide_true, Bool.true_and]
+  rw [BitVec.getLsbD_shiftLeft, BitVec.getLsbD_setWidth]
+  simp only [hi, decide_true, Bool.true_and]
+  by_cases h1 : i < pos
+  · simp [h1]
+  · by_cases h2 : i ≤ pos + 15
+    · have hp : pos ≤ i := by omega
+      have hc : i - pos < 64 := by omega
+      simp [h1, h2, hp, hc]
+    · have h3 : 16 ≤ i - pos := by omega
+      rw [BitVec.getLsbD_of_ge imm16 (i - pos) h3]
+      simp [h1, h2]
+
+/-- `Run` of `MoveWide@64` with opcode `z`: write the shifted immediate. -/
+theorem arm8Run_moveWide_z (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5)
+    (s : arm8_state) :
+    Run (instruction.Data (Data.«MoveWide@64» (1, .z, hw, imm16, rd))) s =
+      if rd = 31 then s else
+        { s with REG := holUpdate rd ((BitVec.setWidth 64 imm16) <<< (hw.toNat * 16)) s.REG } := by
+  simp only [Run, «dfn'MoveWide», «write'X»]
+  simp only [show (MoveWideOp.z == MoveWideOp.n) = false from by decide,
+    show (MoveWideOp.z == MoveWideOp.k) = false from by decide]
+  simp only [Bool.false_eq_true, if_false]
+  have hpos : (BitVec.setWidth 6 (hw ++ (BitVec.ofNat 4 0))).toNat = hw.toNat * 16 := by
+    rw [BitVec.setWidth_eq, BitVec.toNat_append]
+    simp [BitVec.toNat_ofNat, Nat.shiftLeft_eq]
+  rw [hpos]
+  simp only [BitVec.ofNat_eq_ofNat] at *
+  rw [holBitFieldInsert_zero_shift (hw.toNat * 16) imm16]
+  simp
+
+/-- `Run` of `MoveWide@64` with opcode `n`: write the complemented shifted
+immediate. -/
+theorem arm8Run_moveWide_n (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5)
+    (s : arm8_state) :
+    Run (instruction.Data (Data.«MoveWide@64» (1, .n, hw, imm16, rd))) s =
+      if rd = 31 then s else
+        { s with REG :=
+            (holUpdate rd (~~~((BitVec.setWidth 64 imm16) <<< (hw.toNat * 16))) s.REG) } := by
+  simp only [Run, «dfn'MoveWide», «write'X»]
+  simp only [show (MoveWideOp.n == MoveWideOp.n) = true from by decide,
+    show (MoveWideOp.n == MoveWideOp.k) = false from by decide]
+  simp only [Bool.false_eq_true, if_false, if_true]
+  have hpos : (BitVec.setWidth 6 (hw ++ (BitVec.ofNat 4 0))).toNat = hw.toNat * 16 := by
+    rw [BitVec.setWidth_eq, BitVec.toNat_append]
+    simp [BitVec.toNat_ofNat, Nat.shiftLeft_eq]
+  rw [hpos]
+  simp only [BitVec.ofNat_eq_ofNat] at *
+  rw [holBitFieldInsert_zero_shift (hw.toNat * 16) imm16]
+  simp
+
+/-- `Run` of `MoveWide@64` with opcode `k`: insert the immediate into the
+existing register value. -/
+theorem arm8Run_moveWide_k (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5)
+    (s : arm8_state) :
+    Run (instruction.Data (Data.«MoveWide@64» (1, .k, hw, imm16, rd))) s =
+      if rd = 31 then s else
+        { s with REG :=
+            (holUpdate rd (holBitFieldInsert (hw.toNat * 16 + 15) (hw.toNat * 16) imm16 (X rd s)) s.REG) } := by
+  simp only [Run, «dfn'MoveWide», «write'X»]
+  simp only [show (MoveWideOp.k == MoveWideOp.n) = false from by decide,
+    show (MoveWideOp.k == MoveWideOp.k) = true from by decide]
+  simp only [Bool.false_eq_true, if_false, if_true]
+  have hpos : (BitVec.setWidth 6 (hw ++ (BitVec.ofNat 4 0))).toNat = hw.toNat * 16 := by
+    rw [BitVec.setWidth_eq, BitVec.toNat_append]
+    simp [BitVec.toNat_ofNat, Nat.shiftLeft_eq]
+  rw [hpos]
+  simp only [BitVec.ofNat_eq_ofNat] at *
+  simp
+
+
 end Flapjack.Compiler.Encoders.Arm8.L3
