@@ -234,24 +234,6 @@ theorem bindRecNames_bindLocals (names : List VarN) (traces : List BackendCommon
     rw [ih]
     simp [bindLocals, nsBindList]
 
-/-- Appending related local environments preserves their value relation. -/
-theorem envRel_nsAppend (genv : GlobalEnv)
-    (left right : Namespace ModN VarN Value) (flatLeft flatRight : List (VarN × FlatSem.Value))
-    (leftRel : EnvRel genv left flatLeft) (rightRel : EnvRel genv right flatRight) :
-    EnvRel genv (nsAppend left right) (flatLeft ++ flatRight) := by
-  induction flatLeft generalizing left with
-  | nil =>
-    cases leftRel
-    cases right
-    simpa [nsAppend, nsEmpty] using rightRel
-  | cons head tail ih =>
-    cases leftRel with
-    | bind name value env flatEnv flat hEnv hValue =>
-      have extended := EnvRel.bind genv name value (nsAppend env right) (tail ++ flatRight) flat (ih env hEnv) hValue
-      cases env
-      cases right
-      simpa [nsAppend, nsBind] using extended
-
 /-- Namespace concatenation is associative. -/
 theorem local_nsAppend_assoc (a b c : Namespace ModN VarN Value) :
     nsAppend (nsAppend a b) c = nsAppend a (nsAppend b c) := by

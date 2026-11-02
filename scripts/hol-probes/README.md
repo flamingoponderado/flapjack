@@ -1,6 +1,8 @@
 `source_to_flat_envrel_probe.out` captures the fully typed original
-`env_rel_LIST_REL` statement, including both namespace name types. It supports
-review of the Lean association-list relation, not the full pass theorem.
+`env_rel_LIST_REL` and `env_rel_bind_one` statements, along with typed source
+parses of local domain, lookup, append and singleton statements, including
+both namespace name types. It supports review of the environment lemmas, not
+the full pass theorem; local source parses are not HOL proof replays.
 
 `source_to_flat_mapi_probe.out` captures the inferred types and statements of
 `mapi_map` and `FILTER_MAPi_ID` from the pinned source-to-flat proof. Their

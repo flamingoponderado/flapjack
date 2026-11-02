@@ -272,7 +272,7 @@ run_probe() {
 }
 
 run_probe source_to_flat_envrel_probeScript.sml source_to_flat_envrel_probe.out \
-  env_rel_list_typed \
+  env_rel_list_typed env_rel_dom_typed env_rel_lookup_typed env_rel_append_typed env_rel_one_typed env_rel_bind_one_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_mapi_probeScript.sml source_to_flat_mapi_probe.out \

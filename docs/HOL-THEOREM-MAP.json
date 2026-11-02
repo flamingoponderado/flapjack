@@ -1236,6 +1236,51 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_rel_dom",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",
+    "lean_name": "envRel_dom",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the typed local source statement parsed in source_to_flat_envrel_probe: the same related namespace and flat association list yield an ordered source association list whose names equal the flat names. The source and flat values have their distinct original carriers and both namespace name types are mlstring. GlobalEnv uses the reviewed canonical finite maps; the local witness re-exports its roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_rel_lookup",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateCases.lean",
+    "lean_name": "envRel_alist_lookup",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the typed local source statement parsed in source_to_flat_envrel_probe: successful lookup of an mlstring name in the source association list and its environment relation imply a related flat value found under that name. HOL ALOOKUP and Lean List.lookup both use first-match association-list lookup with the reviewed exact mlstring equality, including duplicate keys; the source and flat value carriers remain distinct. Curried premises express the original conjunction. GlobalEnv uses the reviewed canonical finite maps; the local witness re-exports its roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_rel_append",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",
+    "lean_name": "envRel_nsAppend",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the typed local source statement parsed in source_to_flat_envrel_probe: two related environments imply the same namespace append and flat-list append are related, with the original source and flat carriers and mlstring namespace names. Curried Lean premises express the original conjunction. GlobalEnv uses the reviewed canonical finite maps; the local witness re-exports its roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_rel_one",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",
+    "lean_name": "envRel_one",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the typed local source statement parsed in source_to_flat_envrel_probe: a binding into an empty source namespace is related exactly when the flat environment is a singleton with the same name and a related value. The original free variables are universally generalized in Lean. GlobalEnv uses the reviewed canonical finite maps; the local witness re-exports its roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_rel_bind_one",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",
+    "lean_name": "envRel_bind_one",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Compared the exported fully typed theorem in source_to_flat_envrel_probe: the same related value and environment hypotheses imply related source binding and flat-list cons, preserving the original binder order. Curried Lean premises express the original conjunction. GlobalEnv uses the reviewed canonical finite maps; the local witness re-exports its roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "v_rel",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRel.lean",
     "lean_name": "GlobalEnvInv",

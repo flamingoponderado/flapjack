@@ -222,4 +222,61 @@ theorem envRel_alist_iff (genv : GlobalEnv)
         cases hName
         exact ⟨flat, tail, hValue, (ih tail).mpr hEnv, rfl⟩
 
+/-- Related environments have association lists with the same names. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_rel_dom"
+  (fmap_as_finite_support := [c, tys])]
+theorem envRel_dom (genv : GlobalEnv) (env : Namespace ModN VarN SemanticPrimitivesHOL.Value)
+    (flatEnv : List (VarN × FlatSem.Value)) (related : EnvRel genv env flatEnv) :
+    ∃ entries, env = alistToNs entries ∧ entries.map Prod.fst = flatEnv.map Prod.fst := by
+  induction flatEnv generalizing env with
+  | nil =>
+    cases related
+    exact ⟨[], rfl, rfl⟩
+  | cons first rest ih =>
+    cases related with
+    | bind name value env flatEnv flat hEnv hValue =>
+      obtain ⟨entries, rfl, names⟩ := ih env hEnv
+      exact ⟨(name, value) :: entries, rfl, by simp [names]⟩
+
+/-- Appending related environments preserves their relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_rel_append"
+  (fmap_as_finite_support := [c, tys])]
+theorem envRel_nsAppend (genv : GlobalEnv)
+    (left right : Namespace ModN VarN SemanticPrimitivesHOL.Value)
+    (flatLeft flatRight : List (VarN × FlatSem.Value))
+    (leftRel : EnvRel genv left flatLeft) (rightRel : EnvRel genv right flatRight) :
+    EnvRel genv (nsAppend left right) (flatLeft ++ flatRight) := by
+  induction flatLeft generalizing left with
+  | nil =>
+    cases leftRel
+    cases right
+    simpa [nsAppend, nsEmpty] using rightRel
+  | cons head tail ih =>
+    cases leftRel with
+    | bind name value env flatEnv flat hEnv hValue =>
+      have extended := EnvRel.bind genv name value (nsAppend env right) (tail ++ flatRight) flat (ih env hEnv) hValue
+      cases env
+      cases right
+      simpa [nsAppend, nsBind] using extended
+
+/-- A one-binding source environment relates exactly to a related singleton. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_rel_one"
+  (fmap_as_finite_support := [c, tys])]
+theorem envRel_one (genv : GlobalEnv) (name : VarN) (source : SemanticPrimitivesHOL.Value)
+    (flatEnv : List (VarN × FlatSem.Value)) :
+    EnvRel genv (nsBind name source nsEmpty) flatEnv ↔
+      ∃ flat, flatEnv = [(name, flat)] ∧ ValueRel genv source flat := by
+  rw [envRel_bind_iff]
+  simp [envRel_empty_iff, and_comm]
+
+/-- Extending related environments with related values preserves the relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_rel_bind_one"
+  (fmap_as_finite_support := [c, tys])]
+theorem envRel_bind_one (genv : GlobalEnv) (env : Namespace ModN VarN SemanticPrimitivesHOL.Value)
+    (flat : FlatSem.Value) (name : VarN) (source : SemanticPrimitivesHOL.Value)
+    (flatEnv : List (VarN × FlatSem.Value))
+    (valueRel : ValueRel genv source flat) (envRel : EnvRel genv env flatEnv) :
+    EnvRel genv (nsBind name source env) ((name, flat) :: flatEnv) :=
+  .bind genv name source env flatEnv flat envRel valueRel
+
 end Flapjack.Compiler.Backend.SourceToFlat

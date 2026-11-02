@@ -11,6 +11,14 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.BackendCommon
 
+namespace EnvRelLookupReview
+
+/-- The global environment uses the reviewed finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+
+end EnvRelLookupReview
+
 /-- A local lookup in related environments produces a related flat value. -/
 theorem envRel_lookup (genv : GlobalEnv) (source : Namespace ModN VarN SemanticPrimitivesHOL.Value)
     (flat : List (VarN × FlatSem.Value)) (related : EnvRel genv source flat)
@@ -34,6 +42,18 @@ theorem envRel_lookup (genv : GlobalEnv) (source : Namespace ModN VarN SemanticP
         obtain ⟨found, hfound, hrel⟩ := envRel_lookup genv _ flatEnv envRel name value lookup
         exact ⟨found, by simpa [List.lookup_cons, neq] using hfound, hrel⟩
 termination_by flat.length
+
+/-- An association-list lookup is preserved by related local environments. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_rel_lookup"
+  (fmap_as_finite_support := [c, tys])]
+theorem envRel_alist_lookup (genv : GlobalEnv) (source : List (VarN × SemanticPrimitivesHOL.Value))
+    (name : VarN) (value : SemanticPrimitivesHOL.Value) (flat : List (VarN × FlatSem.Value))
+    (lookup : source.lookup name = some value) (related : EnvRel genv (alistToNs source) flat) :
+    ∃ flatValue, ValueRel genv value flatValue ∧ flat.lookup name = some flatValue := by
+  have sourceLookup : nsLookup (alistToNs source : Namespace ModN VarN SemanticPrimitivesHOL.Value)
+      (.short name) = some value := by simpa [alistToNs, nsLookup] using lookup
+  obtain ⟨flatValue, flatLookup, valueRel⟩ := envRel_lookup genv (alistToNs source) flat related name value sourceLookup
+  exact ⟨flatValue, valueRel, flatLookup⟩
 
 /-- A literal has the same value and preserves related states on both sides. -/
 theorem evaluate_literal_related {C F : Type} (genv : GlobalEnv) (compMap : Environment)
