@@ -15,6 +15,17 @@ spec.loader.exec_module(parity)
 
 # Each program makes the computed result observable through an output call.
 CASES = {
+    'qualified_exception_handler': 'structure A = struct exception E int; fun f x = raise E x end; val _ = print_int ((A.f 5) handle A.E n => n+1);',
+    'nested_module_constructor': 'structure A = struct structure B = struct datatype t = C int; val x = C 3 end end; val _ = print_int (case A.B.x of A.B.C n => n);',
+    'aliased_tuple_pattern': 'fun f (x as (a,b)) = case x of (c,d) => a+b+c+d; val _ = print_int (f (3,4));',
+    'higher_order_reference_update': 'val r = Ref (fn x => x+1); val _ = r := (fn x => x*2); val _ = print_int ((!r) 3);',
+    'nested_local_scope': 'local val x = 4 in local val y = x+1 in val z = y+1 end end; val _ = print_int z;',
+    'mutual_datatype': 'datatype a = A b | Z and b = B a | Y; fun f x = case x of Z => 0 | A Y => 1 | A (B _) => 2; val _ = print_int (f (A Y));',
+    'array_modify': 'val a = Array.fromList [1,2,3]; val _ = Array.modify (fn x => x+2) a; val _ = print_int (Array.sub a 2);',
+    'exception_pattern_alternatives': 'exception E int; fun f n = ((raise E n) handle E 0 => 1 | E k => k+2); val _ = print_int (f 4);',
+    'reference_pattern': 'val r = Ref 4; val _ = print_int (case r of Ref n => n);',
+    'value_restriction_empty_vector': 'val v = Vector.fromList []; val _ = print_int (Vector.length v);',
+    'unsupported_record_syntax': 'val x = {a=1,b=2}; val _ = print_int (#a x + #b x);',
     'polymorphic_box_tuple_match': "datatype 'a box = Box 'a; fun get (Box x) = x; val p = (get (Box 14), get (Box True)); val _ = print_int (case p of (n, True) => n + 12 | _ => 17);",
     'stateful_map_fold': 'val r = Ref 4; fun bump n = (r := !r+n; !r); val xs = List.map bump [1,3]; val _ = print_int (!r + List.foldl (fn x => fn y => x+y) 0 xs);',
     'recursive_exception_search': 'exception Stop int; fun find xs = case xs of [] => 0 | x::rest => if x = 19 then raise Stop x else find rest; val _ = print_int ((find [12,19,1]) handle Stop n => n+12);',
@@ -238,6 +249,7 @@ CASE_ARGS = {
     'hidden_type_function': ['--types', '--exclude_prelude=true'],
 }
 ERROR_CASES = {'types_print_sexp_type_error', 'types_explore_parse_error',
+               'value_restriction_empty_vector', 'unsupported_record_syntax',
                'explore_parse_error', 'explore_type_error', 'explore_sexp_parse_error', 'explore_sexp_type_error',
                'print_sexp_type_error', 'print_sexp_parse_error', 'hidden_type_shadow', 'hidden_type_compile',
                'hidden_type_unary', 'hidden_type_binary', 'hidden_type_function'}

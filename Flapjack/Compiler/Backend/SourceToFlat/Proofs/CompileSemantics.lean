@@ -5,8 +5,8 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.ProgramSimulation
 
 /-!
 Composition of the source-to-flat program simulation with flat elimination and
-pattern compilation. The component simulations use preliminary factored
-relations; this is not yet a reviewed port of the original HOL theorem.
+pattern compilation. The factored lemmas are proof infrastructure; the final
+`sourceCompile_semantics` theorem has been compared with its HOL counterpart.
 -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
