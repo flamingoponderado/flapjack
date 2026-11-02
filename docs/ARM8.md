@@ -227,3 +227,23 @@ cleared), the `asmStep`/`targetStateRel` interference simulation with `n = 0`,
 and the outside-domain byte conclusion.  The remaining instruction cases and
 the assembling `encoderCorrect arm8TargetL3` theorem are #1239;
 `encoderCorrect` is proved only for the closed model.
+
+The further case modules under `CorrectnessEncoding/` cover, so far, the
+`const` constructors (`MoveWide.lean`, `Bytes.lean`, `Simulate.lean`,
+`Const.lean`), the `binop` logical-immediate and shifted-register forms
+(`LogicalImmediate.lean`, `LogicalShiftedRegister.lean`,
+`LogicalImmediateBinop.lean`), the `binop` add/sub shifted-register and
+immediate forms (`Arith.lean`, `AddSubImmediate.lean`), and `shift` with a
+register operand plus its `.ror` immediate form (`Shift.lean`,
+`ShiftImmediate.lean`).  Each records the emitted word, the `Decode` inverse,
+the `Run` reduction and the `asmCaseOne` interference simulation for its
+constructor; all are Flapjack case splits of the single HOL theorem
+`arm8_encoder_correct` and carry no `@[hol]` tags of their own.
+
+Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
+`DecodeBitMasks`/`BitfieldMove`), and the `div`, `longMul`, `longDiv`,
+`addCarry`, `addOverflow`, `subOverflow`, `Mem`, `Fp`, `Jump`, `JumpCmp`,
+`Call`, `JumpReg` and `Loc` constructors.  `longDiv` lowers to
+`arm8EncodeFail`, so its case cannot be a faithful lowering without the
+intended instruction sequence.  The assembling `encoderCorrect arm8TargetL3`
+theorem waits on the remaining cases.

@@ -2784,6 +2784,7 @@ import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegi
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalImmediateBinop
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddSubImmediate
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Shift
+import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftImmediate
 import Flapjack.Compiler.Encoders.Arm8.L3.Target
 import Flapjack.Compiler.Encoders.Arm8.L3.Target.State
 import Flapjack.Compiler.Encoders.Arm8.Machine.State
