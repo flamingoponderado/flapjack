@@ -1,12 +1,21 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
 
-/-! Source-to-flat store and state relations. These use the factored value
-relation, whose full correspondence to the original HOL relation remains open. -/
+/-! Source-to-flat store and state relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.SemanticPrimitivesHOL
 
-/-- Flapjack infrastructure relating source and flat store entries. This is
-untagged until the underlying value relation is reviewed against HOL. -/
+namespace StateRelPort
+
+/-- Roundtrip for the global carrier's canonical finite maps. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env :=
+  GlobalEnv.holFmapAsFiniteSupportWitness env
+
+end StateRelPort
+
+/-- Relate source and flat store entries pointwise through the value relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "sv_rel"
+  (fmap_as_finite_support := [c, tys])]
 inductive StoreValueRel (genv : GlobalEnv) : StoreValue SemanticPrimitivesHOL.Value →
     StoreValue FlatSem.Value → Prop where
   | refv {v v'} (related : ValueRel genv v v') : StoreValueRel genv (.refv v) (.refv v')
@@ -28,9 +37,9 @@ theorem storeValueSameType_related (genv : GlobalEnv)
   | varray related => cases newRel <;> rfl
   | thunk mode related => cases mode <;> cases newRel <;> rfl
 
-/-- Flapjack infrastructure relating evaluator states. The flat store has the
-original reserved leading entry; no relationship is imposed on that entry.
-This is untagged until the underlying value relation is reviewed against HOL. -/
+/-- Relate evaluator states; the flat store's reserved first entry is arbitrary. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "s_rel"
+  (fmap_as_finite_support := [c, tys])]
 inductive StateRel {C F : Type} (genv : GlobalEnv) :
     SemanticPrimitivesHOL.State F → FlatSem.State C F → Prop where
   | intro (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
@@ -39,9 +48,7 @@ inductive StateRel {C F : Type} (genv : GlobalEnv) :
       (clock : source.clock = flat.clock)
       (ffi : source.ffi = flat.ffi) : StateRel genv source flat
 
-/-- Unfold the factored state relation into the four conditions used by the
-original state-relation rule. Correspondence of the underlying value
-relation remains a separate obligation. -/
+/-- Unfold the state relation into the four conditions used by its rule. -/
 theorem stateRel_iff {C F : Type} (genv : GlobalEnv)
     (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) :
     StateRel genv source flat ↔

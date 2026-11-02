@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/StateRel.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "hol_name": "sv_rel",
+    "lean_name": "StoreValueRel",
+    "reviewer": "Compared all four typed HOL rules and generated cases: references and thunks use the reviewed value relation, byte arrays retain the identical fixed-width list, and value arrays use the pointwise value relation. Thunk mode and both store payload carriers match the source. The global environment retains its reviewed canonical c and tys finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/StateRel.lean",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "hol_name": "s_rel",
+    "lean_name": "StateRel",
+    "reviewer": "Compared the typed HOL state relation rule and generated cases: compiler-state and FFI payload types remain independent, while the two states share the FFI payload. The flat reference store is nonempty; the source store relates pointwise to its tail; clocks and FFI states agree. The reserved entry and all other state fields are unconstrained. State and store carriers were compared with typed original projections. The global environment retains its reviewed canonical c and tys finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "v_rel",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRel.lean",
     "lean_name": "ValueRel",
@@ -108968,16 +108992,16 @@
     "hol_name": "store",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "Store",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL store type abbreviation: a list of store_v values over an arbitrary payload type, with no additional constraints."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "store_v",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "StoreValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four typed HOL store_v constructors: polymorphic reference payload, fixed word8 list, polymorphic value list, and thunk mode with polymorphic payload. The mode and positive-width byte-word carriers are reviewed exact."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -109096,56 +109120,56 @@
     "hol_name": "compiler_args",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "CompilerArgs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL compiler_args abbreviation and typed oracle projection: a natural-number pair, source value and source declaration list, with the same product nesting."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "compiler_fun",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "CompilerFun",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL compiler_fun abbreviation and typed compiler projection: compiler_args to an optional source value, byte list and 64-bit word list, with the original product nesting."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "eval_decs_state",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "EvalDecsState",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four HOL eval_decs_state fields and typed projections: compiler function, source-value compiler state, triple of naturals and value-to-optional-declaration-list decoder."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "eval_oracle_fun",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "EvalOracleFun",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL eval_oracle_fun abbreviation and typed oracle projection: natural indices map to compiler_args without additional constraints."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "eval_oracle_state",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "EvalOracleState",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four HOL eval_oracle_state fields and typed projections: indexed compiler arguments, custom Eval callback with independently returned oracle, nested lists of source environments, and a natural generation. Product nesting and optional result match the source."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "eval_state",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "EvalState",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the two typed HOL eval_state constructors: EvalDecs carries eval_decs_state and EvalOracle carries eval_oracle_state."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "state",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "State",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all six HOL source-state fields and their typed projections: clock, source value store, independently polymorphic FFI state, type and exception stamp counters, and optional Eval state. The carrier does not impose any extra field invariant."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
