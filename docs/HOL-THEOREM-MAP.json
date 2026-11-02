@@ -1,5 +1,21 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelation.lean",
+    "lean_name": "ValueRel",
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "v_rel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four typed source mutual rules and complete captured induction/case principles against the reviewed flat value, environment and syntax carriers. Basic contents use List.Forall₂; closure and recursive-closure bodies and bounds match the source. The kernel-checked source-shaped rules, induction and cases establish the same least relation with the positivity-friendly environment rule."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelation.lean",
+    "lean_name": "EnvRel",
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "v_rel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source environment rule over natural bounds and flat value environments. The explicit domain and paired-lookup premises are equivalent to the source bounded ALOOKUP_rel by envRel_iff_lookup; the source-shaped mutual induction and cases establish that this positivity rendering preserves the least relation."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
     "lean_name": "valueRel_basic_source",
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",

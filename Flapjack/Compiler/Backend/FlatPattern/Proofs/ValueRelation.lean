@@ -7,9 +7,10 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.Compiler.Backend.FlatSem Flapjack.Compiler.Backend.FlatProps
 
 mutual
-/-- Proof-side value relation corresponding to the source inductive rules.
-Its environment rule expands lookup cases for Lean positivity; the exact HOL
-inductive declaration and correspondence still require review. -/
+/-- Source value relation. The mutual environment rule expands option lookups
+for positivity; source-shaped induction and case principles are proved in
+`ValueRelationInduction`. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "v_rel"]
 inductive ValueRel : Value → Value → Prop where
   | basic {left right} (shape : simpleBasicValRel left right)
       (contents : List.Forall₂ ValueRel (valueContainerXs left) (valueContainerXs right)) : ValueRel left right
@@ -22,8 +23,9 @@ inductive ValueRel : Value → Value → Prop where
       ValueRel (.recclosure left funs name)
         (.recclosure right (funs.map fun (f, x, body) => (f, x, compileDec cfg body)) name)
 
-/-- Bounded environment relation with explicit lookup cases. This positivity
-rendering is not yet a reviewed port of the HOL inductive rule. -/
+/-- Bounded source environment relation, with equivalent explicit option
+lookup cases for positivity. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "v_rel"]
 inductive EnvRel : Nat → Environment Value → Environment Value → Prop where
   | intro {n left right}
       (domain : ∀ name, decNameToNum name < n →
@@ -34,8 +36,7 @@ inductive EnvRel : Nat → Environment Value → Environment Value → Prop wher
 end
 
 /-- The explicit domain and value premises are equivalent to the original
-bounded association-list lookup relation. This Flapjack witness checks the
-positivity rendering inside Lean, not its cross-language correspondence. -/
+bounded association-list lookup relation. -/
 theorem envRel_iff_lookup (n : Nat) (left right : Environment Value) :
     EnvRel n left right ↔ aLookupRel (fun name => decNameToNum name < n) ValueRel left.v right.v := by
   constructor

@@ -6,8 +6,7 @@ import Flapjack.SemanticPrimitivesProps.StoreRelation
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
-/-- Proof-side flat state relation. Its value relation uses the explicit
-positivity rendering documented in `ValueRelation.lean`; correspondence to
+/-- Proof-side flat state relation. Correspondence of this state relation to
 the HOL `state_rel` declaration remains pending. -/
 def StateRel {C F : Type} (cfg : Config) (source target : FlatSem.State C F) : Prop :=
   target.clock = source.clock ∧

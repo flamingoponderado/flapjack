@@ -68,6 +68,8 @@ val _ = show_thm "basic_values=" flatPropsTheory.simple_basic_val_rel_def;
 val _ = show_thm "value_contents=" flatPropsTheory.v_container_xs_def;
 val _ = show_thm "store_relation=" semanticPrimitivesPropsTheory.sv_rel_def;
 val _ = show_thm "value_relation_rules=" flat_patternProofTheory.v_rel_rules;
+val _ = show_thm "value_relation_induction=" flat_patternProofTheory.v_rel_ind;
+val _ = show_thm "value_relation_cases=" flat_patternProofTheory.v_rel_cases;
 val _ = show_thm "value_rule_basic=" (List.nth (CONJUNCTS flat_patternProofTheory.v_rel_rules, 0));
 val _ = show_thm "value_rule_closure=" (List.nth (CONJUNCTS flat_patternProofTheory.v_rel_rules, 1));
 val _ = show_thm "value_rule_recclosure=" (List.nth (CONJUNCTS flat_patternProofTheory.v_rel_rules, 2));
