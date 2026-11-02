@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+import Flapjack.Compiler.Backend.FlatProps.EvaluateMatch
 
 /-! Connecting source row selection to source evaluation. These Flapjack
 helpers use the full clocked evaluator but are not HOL theorem ports. -/
@@ -81,6 +82,19 @@ noncomputable def flatEvaluateMatch {C F : Type} (env : FlatSem.Environment Flat
   match FlatSem.selectRow state rows value errorValue with
   | .error error => (state, .err error)
   | .ok (bindings, body) => FlatSem.evaluate { env with v := bindings ++ env.v } state [body]
+
+/-- The simulation helper is the source flat-properties match evaluator. -/
+theorem flatEvaluateMatch_eq_flatProps {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (state : FlatSem.State C F) (value errorValue : FlatSem.Value)
+    (rows : List (FlatLang.Pat × FlatLang.Exp)) :
+    flatEvaluateMatch env state value errorValue rows = FlatProps.evaluateMatch env state value rows errorValue := by
+  unfold flatEvaluateMatch FlatSem.selectRow FlatProps.evaluateMatch
+  cases FlatSem.pmatchRows rows state value with
+  | typeError => rfl
+  | noMatch => rfl
+  | «match» matchResult =>
+    rcases matchResult with ⟨bindings, pattern, body⟩
+    by_cases unique : (FlatLang.patBindings pattern).Nodup <;> simp [unique]
 
 /-- Relate source match evaluation to the corresponding flat row selection.
 The body hypothesis is the expression induction hypothesis for each row,

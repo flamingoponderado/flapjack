@@ -25,6 +25,11 @@ global-vector and constructor-map consequences, index-range shrinking with
 and without a generation change, and reserved Eval-reference update. These
 statements support review of their Lean ports, not pass correctness.
 
+`flat_props_evaluate_match_probe.out` captures the fully typed flat-properties
+match evaluator used by source-to-flat correctness. Its Lean counterpart
+retains all three match outcomes and the distinct-binding check. The capture
+supports source review, not cross-language equivalence.
+
 `source_to_flat_mapi_probe.out` captures the inferred types and statements of
 `mapi_map` and `FILTER_MAPi_ID` from the pinned source-to-flat proof. Their
 Lean counterparts establish the corresponding indexed-map and filtering

@@ -80,7 +80,7 @@ theorem sourceCompileCorrect_match {C F : Type} [Nonempty C]
     (flatSafe : FlatSem.pmatchRows flatRows flat flatValue ≠ .typeError)
     (errorRel : ValueRel genv errorValue flatError) :
     ∃ flatLast flatResult nextGenv,
-      flatEvaluateMatch flatEnv flat flatValue flatError flatRows = (flatLast, flatResult) ∧
+      FlatProps.evaluateMatch flatEnv flat flatValue flatRows flatError = (flatLast, flatResult) ∧
       EvalResultRel nextGenv result flatResult ∧ StateRel nextGenv sourceLast flatLast ∧
       ((match result with | .err (.abort _) => False | _ => True) →
         factoredInvariant interp transform gen nextGenv idxs sourceLast flatLast ∧
@@ -93,7 +93,11 @@ theorem sourceCompileCorrect_match {C F : Type} [Nonempty C]
     factoredCompileMatch interp transform genv start finish other source sourceLast flat env flatEnv locals
       traces trace comp gen value errorValue flatValue flatError rows result run envRel length inv generation
       valueRel errorRel flatSafe safe
-  refine ⟨flatLast, flatResult, nextGenv, target, results, states, ?_⟩
+  have target' : FlatProps.evaluateMatch flatEnv flat flatValue
+      (compilePes trace { comp with v := bindLocals traces locals comp.v } rows) flatError =
+      (flatLast, flatResult) := by
+    simpa only [flatEvaluateMatch_eq_flatProps] using target
+  refine ⟨flatLast, flatResult, nextGenv, target', results, states, ?_⟩
   cases result with
   | val values =>
     intro _

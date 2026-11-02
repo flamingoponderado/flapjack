@@ -3331,6 +3331,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "evaluate_match_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateMatch.lean",
+    "lean_name": "evaluateMatch",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared every clause and inferred type in flat_props_evaluate_match_probe: type errors and missing matches return the same errors and unchanged state; selected rows check distinct pattern bindings and evaluate the selected singleton body under bindings appended to the prior environment. Compiler payload and FFI state types remain independent. The called evaluator inherits the reviewed rational-cut real model."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "v_container_xs_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
     "lean_name": "valueContainerXs",
