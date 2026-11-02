@@ -1095,7 +1095,8 @@ theorem panSemEvaluateCodeStateWithPostState_skip
     (distinct from Lean `none`, which now denotes a missing evaluation result).
     This is an untagged boundary equation because
     the structured result is reduced rather than HOL's `(prog_result, state)`
-    pair. -/
+    pair. This equation uses the no-access compatibility path; state-owned memory access
+    is not covered by it. -/
 theorem panSemEvaluateCodeStateWithFuel_assign
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1253,7 +1254,8 @@ theorem panSemEvaluateCodeStateWithFuel_assign_state_memory
     phrased against the finite-map-derived entry point. This is an untagged
     boundary equation because the structured result is reduced rather than HOL's
     `(prog_result, state)` pair. Reference:
-    cakeml/pancake/semantics/panSemScript.sml:558-565 (`Dec`). -/
+    cakeml/pancake/semantics/panSemScript.sml:558-565 (`Dec`). This equation uses the no-access compatibility path; state-owned memory access
+    is not covered by it. -/
 theorem panSemEvaluateCodeStateWithFuel_dec
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1301,7 +1303,8 @@ theorem panSemEvaluateCodeStateWithFuel_dec
     `(SOME Error, s)`), distinct from a missing `none` evaluation result. This is
     an untagged boundary equation because the structured result is reduced
     rather than HOL's `(prog_result, state)` pair. Reference:
-    cakeml/pancake/semantics/panSemScript.sml:573-582 (`Primitive`). -/
+    cakeml/pancake/semantics/panSemScript.sml:573-582 (`Primitive`). This equation uses the no-access compatibility path; state-owned memory access
+    is not covered by it. -/
 theorem panSemEvaluateCodeStateWithFuel_primitive
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1370,7 +1373,8 @@ theorem panSemEvaluateCodeStateWithFuel_primitive
     other outcome (including an explicit `Error`) is returned unchanged. This is
     an untagged boundary equation because the structured result is reduced
     rather than HOL's `(prog_result, state)` pair. Reference:
-    cakeml/pancake/semantics/panSemScript.sml:615-618 (`Seq`). -/
+    cakeml/pancake/semantics/panSemScript.sml:615-618 (`Seq`). This equation uses the no-access compatibility path; state-owned memory access
+    is not covered by it. -/
 theorem panSemEvaluateCodeStateWithFuel_seq
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]

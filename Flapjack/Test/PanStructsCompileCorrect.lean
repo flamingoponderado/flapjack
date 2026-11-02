@@ -2370,7 +2370,7 @@ example : True := by
   trivial
 
 example : True := by
-  have _hcase := panStructCompileCorrectBreakCase finiteMapContext statefulTestContext
+  have _hcase := panStructCompileCorrectBreakCase (memoryAccess := none) finiteMapContext statefulTestContext
       statefulTestPrimitive statefulTestHandler (BitVec.ofNat 64 8) finiteMapState
       (panStructSourceBreakEvaluation statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8) finiteMapState.runtime)
@@ -2463,7 +2463,7 @@ example :
         finiteMapState.runtime.memory finiteMapState.runtime.ffi),
         finiteMapState.runtime.clock),
         panStructConvertState finiteMapContext finiteMapState.runtime) := by
-  have hprojection := panStructBreakEvaluatorProjection finiteMapContext
+  have hprojection := panStructBreakEvaluatorProjection (memoryAccess := none) finiteMapContext
     statefulTestContext statefulTestPrimitive statefulTestHandler
     (BitVec.ofNat 64 8) finiteMapState.runtime
   rw [panStructSourceBreakEvaluation statefulTestContext statefulTestPrimitive
@@ -2472,7 +2472,7 @@ example :
     panStructConvertClockOutcome, panStructConvertControlResult] using hprojection
 
 example : True := by
-  have _hcase := panStructCompileCorrectContinueCase finiteMapContext statefulTestContext
+  have _hcase := panStructCompileCorrectContinueCase (memoryAccess := none) finiteMapContext statefulTestContext
       statefulTestPrimitive statefulTestHandler (BitVec.ofNat 64 8) finiteMapState
       (panStructSourceContinueEvaluation statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8) finiteMapState.runtime)
@@ -2566,7 +2566,7 @@ example :
         finiteMapState.runtime.memory finiteMapState.runtime.ffi),
         finiteMapState.runtime.clock),
         panStructConvertState finiteMapContext finiteMapState.runtime) := by
-  have hprojection := panStructContinueEvaluatorProjection finiteMapContext
+  have hprojection := panStructContinueEvaluatorProjection (memoryAccess := none) finiteMapContext
     statefulTestContext statefulTestPrimitive statefulTestHandler
     (BitVec.ofNat 64 8) finiteMapState.runtime
   rw [panStructSourceContinueEvaluation statefulTestContext statefulTestPrimitive
@@ -2576,7 +2576,7 @@ example :
 
 private theorem finiteMapTickCaseRegression (clock : Nat) : True := by
   let state := finiteMapStateAtClock clock
-  have _hcase := panStructCompileCorrectTickCase finiteMapContext statefulTestContext
+  have _hcase := panStructCompileCorrectTickCase (memoryAccess := none) finiteMapContext statefulTestContext
       statefulTestPrimitive statefulTestHandler (BitVec.ofNat 64 8) state
       (by rfl)
       (by
