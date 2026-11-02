@@ -149,9 +149,11 @@ theorem recClosureRelFuel_known_lookup (fuel : Nat) (g : State) (allowed : Set N
     (related : recClosureRelFuel fuel g allowed code loc sourceFns targetFns)
     (sourceLookup : sourceFns[index]? = some (arity, sourceBody))
     (notAllowed : 2 * index + loc ∉ allowed) :
-    ∃ trace stubIndex convertedBody,
+    ∃ trace stubIndex convertedBody initial bodies afterProbe,
       targetFns = callsListSource trace stubIndex loc sourceFns ∧
-      code.lookup (loc + 2 * index + 1) = some (arity, convertedBody) := by
+      code.lookup (loc + 2 * index + 1) = some (arity, convertedBody) ∧
+      callsListBounded fuel (sourceFns.map Prod.snd) (insertEach loc sourceFns.length initial) =
+        some (bodies, afterProbe) ∧ bodies[index]? = some convertedBody := by
   have indexBound : index < sourceFns.length := (List.getElem?_eq_some_iff.mp sourceLookup).choose
   obtain ⟨initial, _, _, _, _, bodies, afterProbe, probe, alternatives⟩ := related
   rcases alternatives with ⟨_, ⟨trace, stubIndex, target⟩, growth, _, included⟩ |
@@ -166,7 +168,7 @@ theorem recClosureRelFuel_known_lookup (fuel : Nat) (g : State) (allowed : Set N
     have bodyLookup : bodies[index]? = some convertedBody := List.getElem?_eq_getElem bodyBound
     have pairLookup := zip_lookup (sourceFns.map Prod.fst) bodies index arity convertedBody arityLookup bodyLookup
     have generated := codeList_lookup loc ((sourceFns.map Prod.fst).zip bodies) afterProbe index arity convertedBody pairLookup
-    exact ⟨trace, stubIndex, convertedBody, target, included _ _ generated⟩
+    exact ⟨trace, stubIndex, convertedBody, initial, bodies, afterProbe, target, included _ _ generated, probe, bodyLookup⟩
   · exact False.elim (notAllowed (ownAllowed index indexBound))
 
 /-- At a known non-open location, the selected target closure is a direct
@@ -180,7 +182,7 @@ theorem recClosureRelFuel_known_stub (fuel : Nat) (g : State) (allowed : Set Nat
     ∃ trace convertedBody,
       targetFns[index]? = some (arity, .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity)) ∧
       code.lookup (loc + 2 * index + 1) = some (arity, convertedBody) := by
-  obtain ⟨trace, stubIndex, convertedBody, target, codeLookup⟩ :=
+  obtain ⟨trace, stubIndex, convertedBody, _, _, _, target, codeLookup, _, _⟩ :=
     recClosureRelFuel_known_lookup fuel g allowed code loc sourceFns targetFns index arity sourceBody
       related sourceLookup notAllowed
   refine ⟨trace, convertedBody, ?_, codeLookup⟩
@@ -203,5 +205,61 @@ theorem recClosureRelFuel_known_findCode (fuel : Nat) (g : State) (allowed : Set
     recClosureRelFuel_known_stub fuel g allowed code loc sourceFns targetFns index arity sourceBody
       related sourceLookup notAllowed
   exact ⟨trace, convertedBody, stub, by simp [findCode, codeLookup, argsLength]⟩
+
+/-- A known-location full application selects a direct-call stub whose code
+is present at the requested label. Exact arity leaves no extra arguments. -/
+theorem destClosure_known_direct (fuel : Nat) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (maxApp address : Nat)
+    (source target : ClosSem.Value) (sourceArgs targetArgs : List ClosSem.Value)
+    (sourceBody : ClosLang.Exp) (sourceBodyEnv sourceRest : List ClosSem.Value)
+    (sourceRun : destClosure maxApp (some address) source sourceArgs = some (.fullApp sourceBody sourceBodyEnv sourceRest))
+    (values : ValueRelFuel fuel g allowed code source target)
+    (args : List.Forall₂ (ValueRelFuel fuel g allowed code) sourceArgs targetArgs)
+    (notAllowed : address ∉ allowed) :
+    ∃ (trace : BackendCommon.Tra) (targetBodyEnv : List ClosSem.Value) (convertedBody : ClosLang.Exp)
+      (base index : Nat) (sourceFns : List (Nat × ClosLang.Exp)) (initial afterProbe : State)
+      (bodies : List ClosLang.Exp),
+      destClosure maxApp (some address) target targetArgs =
+        some (.fullApp (.call trace 0 (address + 1) (ClosCall.variables trace sourceArgs.length)) targetBodyEnv []) ∧
+      EnvRelFuel fuel g allowed code sourceBodyEnv targetBodyEnv 0
+        [(0, .call trace 0 (address + 1) (ClosCall.variables trace sourceArgs.length))] ∧
+      findCode (address + 1) targetArgs code = some (targetArgs, convertedBody) ∧ sourceRest = [] ∧
+      address = 2 * index + base ∧ sourceFns[index]? = some (sourceArgs.length, sourceBody) ∧
+      callsListBounded fuel (sourceFns.map Prod.snd) (insertEach base sourceFns.length initial) =
+        some (bodies, afterProbe) ∧ bodies[index]? = some convertedBody := by
+  obtain ⟨targetBody, targetBodyEnv, targetRest, base, sourceFns, targetFns, index, arity,
+      targetRun, envs, restRel, closure, sourceLookup, targetLookup, known⟩ :=
+    destClosure_full_fuel fuel g allowed code maxApp (some address) source target sourceArgs targetArgs
+      sourceBody sourceBodyEnv sourceRest sourceRun values args
+  obtain ⟨addressEq, arityEq, sourceRestEq⟩ := known address rfl
+  have targetRestEq : targetRest = [] := by
+    have length := restRel.length_eq
+    rw [sourceRestEq] at length
+    cases targetRest with
+    | nil => rfl
+    | cons head tail => simp at length
+  have notOpen : 2 * index + base ∉ allowed := by simpa [← addressEq] using notAllowed
+  have targetArity : targetArgs.length = arity := args.length_eq.symm.trans arityEq.symm
+  obtain ⟨trace, stubIndex, convertedBody, initial, bodies, afterProbe, targetFnsEq, codeLookup, traversal, bodyLookup⟩ :=
+    recClosureRelFuel_known_lookup fuel g allowed code base sourceFns targetFns index arity sourceBody
+      closure sourceLookup notOpen
+  have stub : targetFns[index]? =
+      some (arity, .call trace 0 (base + 2 * index + 1) (ClosCall.variables trace arity)) := by
+    rw [targetFnsEq]
+    exact callsListSource_lookup trace stubIndex base sourceFns index arity sourceBody sourceLookup
+  have found : findCode (base + 2 * index + 1) targetArgs code = some (targetArgs, convertedBody) := by
+    simp [findCode, codeLookup, targetArity]
+  rw [targetLookup] at stub
+  have bodyEq : targetBody = .call trace 0 (base + 2 * index + 1) (ClosCall.variables trace arity) := by
+    simpa using stub
+  have labelEq : base + 2 * index + 1 = address + 1 := by omega
+  subst targetBody
+  subst targetRest
+  refine ⟨trace, targetBodyEnv, convertedBody, base, index, sourceFns, initial, afterProbe, bodies,
+    ?_, ?_, ?_, sourceRestEq, addressEq, ?_, traversal, bodyLookup⟩
+  · simpa [labelEq, arityEq] using targetRun
+  · simpa [labelEq, arityEq] using envs
+  · simpa [labelEq] using found
+  · simpa [arityEq] using sourceLookup
 
 end Flapjack.Compiler.Backend.ClosCall

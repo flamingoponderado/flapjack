@@ -71,7 +71,7 @@ theorem evaluateApp_full_fuel {C F : Type} (fuel : Nat) (g : State) (allowed : S
     | cons head tail => simp at len
   have maxApp := states.2.2.1
   obtain ⟨targetBody, targetBodyEnv, targetRest, loc, sourceFns, targetFns, index, arity,
-      targetClosure, bodyEnv, restRel, closure, sourceLookup, targetLookup⟩ :=
+      targetClosure, bodyEnv, restRel, closure, sourceLookup, targetLookup, _⟩ :=
     destClosure_full_fuel fuel g allowed target.code source.maxApp requested sourceFun targetFun
       sourceArgs targetArgs sourceBody sourceBodyEnv sourceRest sourceClosure functions args
   have targetClosure' : destClosure target.maxApp requested targetFun targetArgs =

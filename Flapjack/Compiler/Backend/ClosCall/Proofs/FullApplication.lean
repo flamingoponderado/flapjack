@@ -44,7 +44,9 @@ theorem destClosure_full_fuel (fuel : Nat) (g : State) (allowed : Set Nat)
       EnvRelFuel fuel g allowed code sourceBodyEnv targetBodyEnv 0 [(0, targetBody)] ∧
       List.Forall₂ (ValueRelFuel fuel g allowed code) sourceRest targetRest ∧
       recClosureRelFuel fuel g allowed code loc sourceFns targetFns ∧
-      sourceFns[index]? = some (arity, sourceBody) ∧ targetFns[index]? = some (arity, targetBody) := by
+      sourceFns[index]? = some (arity, sourceBody) ∧ targetFns[index]? = some (arity, targetBody) ∧
+      (∀ address, requested = some address →
+        address = 2 * index + loc ∧ arity = sourceArgs.length ∧ sourceRest = []) := by
   have argsLength := args.length_eq
   cases values with
   | number | word64 | block | byteVector | refPtr => simp [destClosure] at sourceRun
@@ -79,8 +81,18 @@ theorem destClosure_full_fuel (fuel : Nat) (g : State) (allowed : Set Nat)
           simpa [List.append_assoc] using h
         refine ⟨targetFnBody, (targetArgs.reverse.take needed).reverse ++ targetSupplied ++ targetEnv,
           (targetArgs.reverse.drop needed).reverse, loc, [(arity, sourceBody)], [(arity, targetFnBody)], 0, arity,
-          ?_, bodyEnv, splitArgs.2, closure, rfl, rfl⟩
-        simp [destClosure, ← argsLength, ← suppliedLength, valid, undersaturated, needed, List.append_assoc]
+          ?_, bodyEnv, splitArgs.2, closure, rfl, rfl, ?_⟩
+        · simp [destClosure, ← argsLength, ← suppliedLength, valid, undersaturated, needed, List.append_assoc]
+        · intro address request
+          have both := valid
+          simp only [Bool.and_eq_true, decide_eq_true_eq] at both
+          have check := both.1
+          rw [request] at check
+          have facts : arity = sourceArgs.length ∧ sourceSupplied.length = 0 ∧ address = loc := by
+            simpa [checkLoc] using check
+          obtain ⟨arityEq, suppliedEq, addressEq⟩ := facts
+          subst address
+          simp [suppliedEq, arityEq]
     · simp [destClosure, valid] at sourceRun
   | @recclosure loc sourceSupplied targetSupplied sourceEnv targetEnv sourceFns targetFns index closure supplied envs =>
     have suppliedLength := supplied.length_eq
@@ -151,9 +163,19 @@ theorem destClosure_full_fuel (fuel : Nat) (g : State) (allowed : Set Nat)
             refine ⟨targetFnBody,
               (targetArgs.reverse.take needed).reverse ++ targetSupplied ++ targetRecursive ++ targetEnv,
               (targetArgs.reverse.drop needed).reverse, loc, sourceFns, targetFns, index, arity,
-              ?_, bodyEnv, splitArgs.2, closure, sourceLookup, targetLookup⟩
-            simp [destClosure, targetLookup, ← argsLength, ← suppliedLength, valid, undersaturated,
-              needed, targetRecursive, List.append_assoc]
+              ?_, bodyEnv, splitArgs.2, closure, sourceLookup, targetLookup, ?_⟩
+            · simp [destClosure, targetLookup, ← argsLength, ← suppliedLength, valid, undersaturated,
+                needed, targetRecursive, List.append_assoc]
+            · intro address request
+              have both := valid
+              simp only [Bool.and_eq_true, decide_eq_true_eq] at both
+              have check := both.1
+              rw [request] at check
+              have facts : arity = sourceArgs.length ∧ sourceSupplied.length = 0 ∧ address = 2 * index + loc := by
+                simpa [checkLoc] using check
+              obtain ⟨arityEq, suppliedEq, addressEq⟩ := facts
+              subst address
+              simp [suppliedEq, arityEq]
         · simp [destClosure, sourceLookup, valid] at sourceRun
 
 end Flapjack.Compiler.Backend.ClosCall

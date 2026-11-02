@@ -211,6 +211,25 @@ example : ∃ trace convertedBody,
     [(1, .call .none 0 11 [.var .none 0])] 0 1 (.var .none 0) [.number 7] rfl
     closedGroupRelation rfl (by simp)
 
+-- A known-location application selects the stub and its installed body.
+example : ∃ trace env convertedBody,
+    ClosSem.destClosure 2 (some 10)
+      (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) [.number 7] =
+        some (.fullApp (.call trace 0 11 (ClosCall.variables trace 1)) env []) ∧
+    ClosSem.findCode 11 [ClosSem.Value.number 7] closedGroupCode = some ([.number 7], convertedBody) := by
+  have values : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
+      (.closure (some 10) [] [] 1 (.var .none 0))
+      (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0])) :=
+    .closure closedGroupRelation .nil (.equalLength rfl .nil)
+  have args : List.Forall₂ (ValueRelFuel 5 closedGroupResult ∅ closedGroupCode)
+      [.number 7] [.number 7] := .cons (.number 7) .nil
+  obtain ⟨trace, env, convertedBody, _, _, _, _, _, _, targetRun, _, found, _⟩ :=
+    destClosure_known_direct 5 closedGroupResult ∅ closedGroupCode 2 10
+      (.closure (some 10) [] [] 1 (.var .none 0))
+      (.closure (some 10) [] [] 1 (.call .none 0 11 [.var .none 0]))
+      [.number 7] [.number 7] (.var .none 0) [.number 7] [] rfl values args (by simp)
+  exact ⟨trace, env, convertedBody, targetRun, found⟩
+
 -- A group with a captured variable follows the open-closure alternative.
 private theorem openGroupRelation : recClosureRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 10
     [(1, .var .none 1)] [(1, .var .none 1)] := by
