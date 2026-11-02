@@ -1,7 +1,7 @@
 import Flapjack.CakeParser.FromSexp.Ast
 
-/-! Finite observations from `cake_from_sexp_probe.out`. The decoder and its
-carrier have not yet completed source correspondence review. -/
+/-! Finite observations from `cake_from_sexp_probe.out`. The bounded AST
+decoders beyond identifiers have not yet completed source correspondence review. -/
 namespace Flapjack.Test.CakeFromSexpParity
 open Flapjack.CakeParser.Sexp Flapjack.CakeParser.FromSexp
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
@@ -37,6 +37,24 @@ example : [decodeIdFuel destString 10 (node "Short" [str "x"]),
     decodeIdFuel destString 10 (node "Long" [str "M", node "Short" [str "x"]]),
     decodeIdFuel destString 10 (node "Long" [str "M", sym "x"])] =
     [some (.short (ofString "x")), some (.long (ofString "M") (.short (ofString "x"))), none] := by native_decide
+
+example : [decodeId destString (node "Short" [str "x"]),
+    decodeId destString (node "Long" [str "M", node "Short" [str "x"]]),
+    decodeId destString (node "Long" [str "M", sym "x"]),
+    decodeId destString (node "Long" [str "A", node "Long" [str "B", node "Short" [str "x"]]]),
+    decodeId destString (.cons (sym "Short") (.cons (str "x") (sym "bad"))),
+    decodeId destString (node "Long" [str "A", node "Short" [str "x"], .num 1])] =
+    [some (.short (ofString "x")), some (.long (ofString "M") (.short (ofString "x"))), none,
+     some (.long (ofString "A") (.long (ofString "B") (.short (ofString "x")))), none, none] := by native_decide
+
+private def nestedIdentifier (depth : Nat) : Sexp :=
+  (List.replicate depth ()).foldr (fun _ rest => node "Long" [str "M", rest]) (node "Short" [str "x"])
+
+private def expectedIdentifier (depth : Nat) : Ident MlString MlString :=
+  (List.replicate depth ()).foldr (fun _ rest => .long (ofString "M") rest) (.short (ofString "x"))
+
+example : decodeId destString (nestedIdentifier 64) = some (expectedIdentifier 64) ∧
+    decodeIdFuel destString 64 (nestedIdentifier 64) = none := by native_decide
 
 example : [decodeLiteral (.num 0), decodeLiteral (.num 12), decodeLiteral (str "a\\00b"),
     decodeLiteral (node "-" [.num 0]), decodeLiteral (node "-" [.num 12]),

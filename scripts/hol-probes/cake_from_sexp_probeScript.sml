@@ -12,6 +12,12 @@ val _ = (print "decode_encode_control_typed=";
 val _ = (print "encode_decode_control_typed=";
   Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.encode_decode_control);
   print "\n");
+val _ = (print "sexpid_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.sexpid_def);
+  print "\n");
+val _ = (print "sexp_constructors_typed=";
+  print_type (type_of ``(SX_CONS, SX_SYM, SX_NUM, SX_STR)``);
+  print "\n");
 val _ = show "lists" ``MAP (fromSexp$sexplist fromSexp$odestSXNUM)
   [⟪⟫; ⟪1; 2; 3⟫; ⟪1 • 2⟫; ⟪SX_STR "x"⟫]``;
 val _ = show "option" ``MAP (fromSexp$sexpopt fromSexp$odestSXNUM)
@@ -19,7 +25,10 @@ val _ = show "option" ``MAP (fromSexp$sexpopt fromSexp$odestSXNUM)
 val _ = show "identifier" ``MAP (fromSexp$sexpid fromSexp$odestSEXSTR)
   [⟪SX_SYM "Short"; SX_STR "x"⟫;
    ⟪SX_SYM "Long"; SX_STR "M"; ⟪SX_SYM "Short"; SX_STR "x"⟫⟫;
-   ⟪SX_SYM "Long"; SX_STR "M"; SX_SYM "x"⟫]``;
+   ⟪SX_SYM "Long"; SX_STR "M"; SX_SYM "x"⟫;
+   ⟪SX_SYM "Long"; SX_STR "A"; ⟪SX_SYM "Long"; SX_STR "B"; ⟪SX_SYM "Short"; SX_STR "x"⟫⟫⟫;
+   SX_CONS (SX_SYM "Short") (SX_CONS (SX_STR "x") (SX_SYM "bad"));
+   ⟪SX_SYM "Long"; SX_STR "A"; ⟪SX_SYM "Short"; SX_STR "x"⟫; SX_NUM 1⟫]``;
 val _ = show "literals" ``MAP fromSexp$sexplit
   [0; 12; SX_STR "a\\00b"; ⟪SX_SYM "-"; 0⟫; ⟪SX_SYM "-"; 12⟫;
    ⟪SX_SYM "char"; SX_STR "z"⟫; ⟪SX_SYM "char"; SX_STR "ab"⟫;

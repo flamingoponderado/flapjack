@@ -1,4 +1,5 @@
 import Flapjack.Basis.Pure.MlString
+import Flapjack.HolRef
 
 /-! Byte-oriented S-expression parser for the CakeML bootstrap input path.
 The grammar follows HOL's `simpleSexpPEG`, but this direct, fuel-bounded
@@ -8,6 +9,7 @@ namespace Flapjack.CakeParser.Sexp
 open Flapjack.Basis.Pure.MlString
 
 /-- S-expression carrier corresponding to the four HOL constructors. -/
+@[hol "HOL/examples/formal-languages/context-free/simpleSexpScript.sml" "sexp"]
 inductive Sexp where
   | cons (head tail : Sexp)
   | sym (bytes : List HolChar)

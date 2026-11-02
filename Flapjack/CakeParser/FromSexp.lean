@@ -2,9 +2,9 @@ import Flapjack.CakeParser.Sexp
 import Flapjack.AstHOL.Syntax
 
 /-! Shared conversions for CakeML's S-expression AST format, following
-`compiler/parsing/fromSexpScript.sml`. The S-expression carrier and bounded
-identifier traversal have not yet completed HOL correspondence review; these
-declarations are untagged. The executable's S-expression path uses them. -/
+`compiler/parsing/fromSexpScript.sml`. The S-expression carrier and total
+identifier decoder are source-reviewed; the other bounded AST decoders still
+need correspondence review. The executable's S-expression path uses them. -/
 namespace Flapjack.CakeParser.FromSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString
 open Flapjack.AstHOL Flapjack.NamespaceHOL
@@ -89,6 +89,17 @@ def decodeIdFuel (decode : Sexp → Option α) : Nat → Sexp → Option (Ident 
       else none
     | _ => none
 
+/-- Decode an identifier by structural recursion on the S-expression. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpid_def"]
+def decodeId (decode : Sexp → Option α) : Sexp → Option (Ident MlString α)
+  | .cons (.sym name) (.cons value (.sym terminator)) =>
+    if name == ascii "Short" && terminator == ascii "nil" then (decode value).map Ident.short else none
+  | .cons (.sym name) (.cons modName (.cons rest (.sym terminator))) =>
+    if name == ascii "Long" && terminator == ascii "nil" then do
+      some (.long (← destString modName) (← decodeId decode rest))
+    else none
+  | _ => none
+
 /-- Decode all six literal forms, including the original word bounds and
 rejection of negative zero. -/
 def decodeLiteral (sexp : Sexp) : Option Lit :=
@@ -150,7 +161,7 @@ def decodeTypeFuel : Nat → Sexp → Option AstT
       if name == ascii "Atfun" then do
         some (.atfun (← decodeTypeFuel fuel a) (← decodeTypeFuel fuel b))
       else if name == ascii "Atapp" then do
-        some (.atapp (← decodeList (decodeTypeFuel fuel) a) (← decodeIdFuel destString fuel b))
+        some (.atapp (← decodeList (decodeTypeFuel fuel) a) (← decodeId destString b))
       else none
     | _ => none
 
@@ -170,7 +181,7 @@ def decodePatternFuel : Nat → Sexp → Option Pat
         else none
       | [a, b] =>
         if name == ascii "Pcon" then do
-          some (.pcon (← decodeOption (decodeIdFuel destString fuel) a)
+          some (.pcon (← decodeOption (decodeId destString) a)
             (← decodeList (decodePatternFuel fuel) b))
         else if name == ascii "Pas" then do
           some (.pas (← decodePatternFuel fuel a) (← destString b))

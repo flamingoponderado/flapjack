@@ -1,9 +1,11 @@
 control=[SOME "abc"; SOME "\\"; SOME "\^@"; SOME "\^_"; SOME "\127"; SOME "\255"; NONE; NONE; NONE; NONE; NONE; NONE; SOME "x\^@y"]
 decode_encode_control_typed=∀(ls :string). decode_control (encode_control ls) = SOME ls
 encode_decode_control_typed=∀(ls :string) (r :string). decode_control ls = SOME r ⇒ ls = encode_control r
+sexpid_typed=∀(s :sexp) (p :sexp -> α option). sexpid p s = do ((nm :string),(args :sexp list)) <- dstrip_sexp s; do assert (nm = "Short" ∧ LENGTH args = (1 :num)); OPTION_MAP (Short :α -> (mlstring, α) id) (p args❲(0 :num)❳) od ++ do assert (nm = "Long" ∧ LENGTH args = (2 :num)); OPTION_MAP2 (Long :mlstring -> (mlstring, α) id -> (mlstring, α) id) (odestSEXSTR args❲(0 :num)❳) (sexpid p args❲(1 :num)❳) od od
+sexp_constructors_typed=:(sexp -> sexp -> sexp) # (string -> sexp) # (num -> sexp) # (string -> sexp)
 lists=[SOME []; SOME [1; 2; 3]; NONE; NONE]
 option=[SOME NONE; SOME (SOME 5); NONE; NONE]
-identifier=[SOME (Short «x»); SOME (Long «M» (Short «x»)); NONE]
+identifier=[SOME (Short «x»); SOME (Long «M» (Short «x»)); NONE; SOME (Long «A» (Long «B» (Short «x»))); NONE; NONE]
 literals=[SOME (IntLit 0); SOME (IntLit 12); SOME (StrLit «a\^@b»); NONE; SOME (IntLit (-12)); SOME (Char #"z"); NONE; SOME (Word8 255w); NONE; SOME (Word64 0xFFFFFFFFFFFFFFFFw); NONE; SOME (Float64 42w)]
 locations=[SOME (Locs UNKNOWNpt EOFpt); SOME (Locs (POSN 1 2) (POSN 3 4)); NONE; NONE]
 types=[SOME (Atvar «a»); SOME (Atfun (Atvar «a») (Attup [])); SOME (Atapp [Atvar «a»] (Short «list»)); NONE]

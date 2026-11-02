@@ -24,6 +24,7 @@ PROGRAMS = {
     'datatype_match': 'datatype t = A | B int; val _ = print_int (case B 3 of A => 0 | B n => n);',
     'exception': 'exception E int; val _ = print_int ((raise E 4) handle E n => n);',
     'module': 'structure M = struct val x = 42; end; val _ = print_int M.x;',
+    'nested_module': 'structure A = struct structure B = struct val x = 42 end end; val y = A.B.x;',
     'conditional': 'fun f x = if x then 1 else 2; val _ = print_int (f True);',
     'list': 'val _ = print_int (List.length [1,2,3]);',
     'local': 'local val x = 1 in val y = x end;',

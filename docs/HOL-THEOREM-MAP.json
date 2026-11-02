@@ -1,5 +1,21 @@
 [
   {
+    "lean_path": "Flapjack/CakeParser/Sexp.lean",
+    "lean_name": "Sexp",
+    "hol_path": "HOL/examples/formal-languages/context-free/simpleSexpScript.sml",
+    "hol_name": "sexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the four source datatype constructors and their captured inferred types: binary cons, byte-character-list symbol, natural number, and byte-character-list string. HolChar is the established eight-bit HOL character carrier."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp.lean",
+    "lean_name": "decodeId",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexpid_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete recursive source definition and captured inferred type: a proper one-argument Short applies the supplied polymorphic decoder, a proper two-argument Long decodes its mlstring module name and recursively decodes the remaining identifier, and every other constructor, arity, or improper argument list fails. Structural recursion replaces the former executable fuel bound."
+  },
+  {
     "lean_path": "Flapjack/CakeParser/FromSexp/Control/Canonical.lean",
     "lean_name": "encode_decode_control",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",

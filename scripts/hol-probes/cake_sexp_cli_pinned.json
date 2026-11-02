@@ -324,6 +324,25 @@
           "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       }
+    },
+    "nested_module": {
+      "sexp": "\n((Dmod \"A\" ((Dmod \"B\" ((Dlet ((0 50) (0 62)) \"x\" (Lannot (Lit 42) ((0 61) (0 62)))))))) (Dlet ((0 76) (0 90)) \"y\" (Lannot (Var (Long \"A\" (Long \"B\" (Short \"x\")))) ((0 87) (0 90)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21326,
+          "stderr_sha256": "a0d2660371930bc143b33048a1c51b2e4fb8523ad9963df411219fb1c1585626"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 325497,
+          "stdout_sha256": "e989dcf4bdd37d5f56136c1a7522de348bd4599b198e6c5e45db5216e77e3bc8",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
     }
   },
   "failures": [

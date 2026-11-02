@@ -19,12 +19,12 @@ def decodeExpFuel : Nat → Sexp → Option Exp
     | [a] =>
       if name == ascii "Raise" then exp a |>.map Exp.raise
       else if name == ascii "Lit" then decodeLiteral a |>.map Exp.lit
-      else if name == ascii "Var" then decodeIdFuel destString fuel a |>.map Exp.var
+      else if name == ascii "Var" then decodeId destString a |>.map Exp.var
       else none
     | [a, b] =>
       if name == ascii "Handle" then do some (.handle (← exp a) (← clauses b))
       else if name == ascii "Con" then do
-        some (.con (← decodeOption (decodeIdFuel destString fuel) a) (← decodeList exp b))
+        some (.con (← decodeOption (decodeId destString) a) (← decodeList exp b))
       else if name == ascii "Fun" then do some (.fn (← destString a) (← exp b))
       else if name == ascii "App" then do some (.app (← decodeOp a) (← decodeList exp b))
       else if name == ascii "Mat" then do some (.mat (← exp a) (← clauses b))
