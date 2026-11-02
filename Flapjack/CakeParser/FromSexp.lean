@@ -3,7 +3,7 @@ import Flapjack.AstHOL.Syntax
 
 /-! Shared conversions for CakeML's S-expression AST format, following
 `compiler/parsing/fromSexpScript.sml`. The S-expression carrier and total
-identifier and type decoders are source-reviewed; the other bounded AST
+identifier, type and pattern decoders are source-reviewed; the other bounded AST
 decoders still need correspondence review. The executable's S-expression path
 uses them. -/
 namespace Flapjack.CakeParser.FromSexp
@@ -218,5 +218,37 @@ def decodePatternFuel : Nat → Sexp → Option Pat
           some (.ptannot (← decodePatternFuel fuel a) (← decodeType b))
         else none
       | _ => none
+
+mutual
+/-- Decode pattern syntax by recursion on its S-expression structure. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexppat_def"]
+def decodePattern : Sexp → Option Pat
+  | .str bytes => (destString (.str bytes)).map Pat.pvar
+  | .cons (.sym name) (.sym terminator) =>
+    if name == ascii "Pany" && terminator == ascii "nil" then some .pany else none
+  | .cons (.sym name) (.cons a (.sym terminator)) =>
+    if terminator != ascii "nil" then none
+    else if name == ascii "Plit" then (decodeLiteral a).map Pat.plit
+    else if name == ascii "Pref" then (decodePattern a).map Pat.pref
+    else none
+  | .cons (.sym name) (.cons a (.cons b (.sym terminator))) =>
+    if terminator != ascii "nil" then none
+    else if name == ascii "Pcon" then do
+      some (.pcon (← decodeOption (decodeId destString) a) (← decodePatternList b))
+    else if name == ascii "Pas" then do
+      some (.pas (← decodePattern a) (← destString b))
+    else if name == ascii "Ptannot" then do
+      some (.ptannot (← decodePattern a) (← decodeType b))
+    else none
+  | _ => none
+termination_by sexp => sizeOf sexp
+
+/-- Flapjack recursion helper implementing `sexplist sexppat`. -/
+def decodePatternList : Sexp → Option (List Pat)
+  | .cons head tail => do some ((← decodePattern head) :: (← decodePatternList tail))
+  | .sym name => if name == ascii "nil" then some [] else none
+  | _ => none
+termination_by sexp => sizeOf sexp
+end
 
 end Flapjack.CakeParser.FromSexp

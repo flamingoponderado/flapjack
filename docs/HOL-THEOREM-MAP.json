@@ -1,6 +1,14 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp.lean",
+    "lean_name": "decodePattern",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexppat_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete source and captured inferred type: bare strings decode Pvar, and proper constructor forms decode Pany, Plit, Pcon, Pas, Pref and Ptannot with the original argument order, recursive pattern lists, identifier options and type decoder. Other forms and malformed lists fail. The mutually recursive Lean list helper implements sexplist sexppat without the former executable fuel bound."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp.lean",
     "lean_name": "decodeType",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "sexptype_def",

@@ -312,7 +312,7 @@ run_probe source_to_flat_log_probeScript.sml source_to_flat_log_probe.out \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe cake_from_sexp_probeScript.sml cake_from_sexp_probe.out \
-  control decode_encode_control_typed encode_decode_control_typed sexpid_typed sexptype_typed sexp_constructors_typed lists option identifier literals locations types patterns operators \
+  control decode_encode_control_typed encode_decode_control_typed sexpid_typed sexptype_typed sexppat_typed sexp_constructors_typed lists option identifier literals locations types patterns operators \
   "$cake_dir/compiler/parsing/fromSexpScript.sml" "$cake_dir/compiler/parsing"
 
 run_probe cake_sexp_parser_probeScript.sml cake_sexp_parser_probe.out \

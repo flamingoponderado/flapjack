@@ -13,7 +13,7 @@ def decodeExpFuel : Nat → Sexp → Option Exp
   | fuel + 1, sexp => do
     let (name, args) ← stripConstructor sexp
     let exp := decodeExpFuel fuel
-    let clauses := decodeList (decodePair (decodePatternFuel fuel) exp)
+    let clauses := decodeList (decodePair decodePattern exp)
     let funs := decodeList (decodePair destString (decodePair destString exp))
     match args with
     | [a] =>
@@ -63,7 +63,7 @@ def decodeDecFuel : Nat → Sexp → Option Dec
       else none
     | [a, b, c] =>
       if name == ascii "Dlet" then do
-        some (.dlet (← decodeLoc a) (← decodePatternFuel fuel b) (← decodeExpFuel fuel c))
+        some (.dlet (← decodeLoc a) (← decodePattern b) (← decodeExpFuel fuel c))
       else if name == ascii "Dexn" then do
         some (.dexn (← decodeLoc a) (← destString b) (← decodeTypeList c))
       else none

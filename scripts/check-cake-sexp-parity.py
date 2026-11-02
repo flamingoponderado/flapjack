@@ -22,6 +22,7 @@ PROGRAMS = {
     'word': 'val x = 0w42;',
     'function': 'fun f x = x + 1; val _ = print_int (f 3);',
     'datatype_match': 'datatype t = A | B int; val _ = print_int (case B 3 of A => 0 | B n => n);',
+    'nested_pattern': 'datatype t = L int | N t t; fun f t = case t of N (L x) (L y) => x+y | _ => 0; val z = f (N (L 1) (L 2));',
     'exception': 'exception E int; val _ = print_int ((raise E 4) handle E n => n);',
     'module': 'structure M = struct val x = 42; end; val _ = print_int M.x;',
     'nested_module': 'structure A = struct structure B = struct val x = 42 end end; val y = A.B.x;',

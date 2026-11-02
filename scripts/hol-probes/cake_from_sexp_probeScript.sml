@@ -18,6 +18,9 @@ val _ = (print "sexpid_typed=";
 val _ = (print "sexptype_typed=";
   Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.sexptype_def);
   print "\n");
+val _ = (print "sexppat_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.sexppat_def);
+  print "\n");
 val _ = (print "sexp_constructors_typed=";
   print_type (type_of ``(SX_CONS, SX_SYM, SX_NUM, SX_STR)``);
   print "\n");
@@ -53,7 +56,11 @@ val _ = show "patterns" ``MAP fromSexp$sexppat
    ⟪SX_SYM "Pcon"; SX_SYM "NONE"; ⟪SX_STR "x"; ⟪SX_SYM "Pany"⟫⟫⟫;
    ⟪SX_SYM "Pas"; ⟪SX_SYM "Pref"; SX_STR "x"⟫; SX_STR "y"⟫;
    ⟪SX_SYM "Ptannot"; SX_STR "x"; ⟪SX_SYM "Atvar"; SX_STR "a"⟫⟫;
-   ⟪SX_SYM "Pany"; 1⟫]``;
+   ⟪SX_SYM "Pany"; 1⟫;
+   ⟪SX_SYM "Pcon"; SX_SYM "NONE";
+     ⟪⟪SX_SYM "Pref"; SX_STR "x"⟫; ⟪SX_SYM "Pany"⟫⟫⟫;
+   ⟪SX_SYM "Pcon"; SX_SYM "NONE"; SX_CONS (SX_STR "x") (SX_SYM "bad")⟫;
+   SX_CONS (SX_SYM "Pany") (SX_SYM "bad")]``;
 val _ = show "operators" ``MAP fromSexp$sexpop
   [SX_SYM "Equality"; SX_SYM "Opapp"; SX_SYM "Aw8subunsafe"; SX_SYM "ForceThunk";
    SX_SYM "Envid"; ⟪SX_SYM "FFI" • SX_STR "x\\00y"⟫;

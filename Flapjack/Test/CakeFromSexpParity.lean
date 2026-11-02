@@ -128,6 +128,26 @@ private def nestedType (depth : Nat) : Sexp :=
 example : (decodeType (nestedType 64)).map CakeParser.ToSexp.type = some (nestedType 64) ∧
     (decodeTypeFuel 64 (nestedType 64)).isNone = true := by native_decide
 
+private def patternInputs : List Sexp :=
+  [str "x", node "Pany" [], node "Plit" [.num 42],
+   node "Pcon" [sym "NONE", list [str "x", node "Pany" []]],
+   node "Pas" [node "Pref" [str "x"], str "y"],
+   node "Ptannot" [str "x", node "Atvar" [str "a"]],
+   node "Pany" [.num 1],
+   node "Pcon" [sym "NONE", list [node "Pref" [str "x"], node "Pany" []]],
+   node "Pcon" [sym "NONE", .cons (str "x") (sym "bad")],
+   .cons (sym "Pany") (sym "bad")]
+
+example : patternInputs.map (fun p => (decodePattern p).map CakeParser.ToSexp.pattern) =
+    (patternInputs.take 6).map some ++
+      [none, some (node "Pcon" [sym "NONE", list [node "Pref" [str "x"], node "Pany" []]]), none, none] := by native_decide
+
+private def nestedPattern (depth : Nat) : Sexp :=
+  (List.replicate depth ()).foldr (fun _ rest => node "Pref" [rest]) (str "x")
+
+example : (decodePattern (nestedPattern 64)).map CakeParser.ToSexp.pattern = some (nestedPattern 64) ∧
+    (decodePatternFuel 64 (nestedPattern 64)).isNone = true := by native_decide
+
 example : [decodeOp (sym "Equality"), decodeOp (sym "Opapp"), decodeOp (sym "Aw8subunsafe"),
     decodeOp (sym "ForceThunk"), decodeOp (sym "Envid"), decodeOp (.cons (sym "FFI") (str "x\\00y")),
     decodeOp (.cons (sym "AllocThunk") (sym "Evaluated")),
