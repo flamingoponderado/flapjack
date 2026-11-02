@@ -398,4 +398,10 @@ theorem arm8X_longMulT1 (ms : arm8_state) (hi : BitVec 64) (d : BitVec 5)
       X (TN := 64) a ms := by
   simp [X, Flapjack.RiscV.L3.holUpdate, Ne.symm h]
 
+
+/-- The zero register, written as `BitVec.ofNat 5 31`, reads as zero. -/
+theorem arm8X_zero_ofNat (st : arm8_state) :
+    X (TN := 64) (BitVec.ofNat 5 31) st = (0 : BitVec 64) := by
+  simp [X]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
