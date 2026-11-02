@@ -81,6 +81,8 @@ odestSEXSTR_SOME_typed=(odestSEXSTR (s :sexp) = SOME (y :mlstring) ⇔ s = SEXST
 sexplist_SOME_typed=sexplist (f :sexp -> α option) (s :sexp) = SOME (ls :α list) ⇔ ∃(l :sexp list). s = listsexp l ∧ MAP f l = MAP (SOME :α -> α option) ls
 sexppair_SOME_typed=sexppair (f1 :sexp -> α option) (f2 :sexp -> β option) (s :sexp) = SOME (p :α # β) ⇔ ∃(x :sexp) (y :sexp) (a :α) (b :β). f1 x = SOME a ∧ f2 y = SOME b ∧ s = ⟪x • y⟫ ∧ p = (a,b)
 sexpopt_SOME_typed=sexpopt (f :sexp -> α option) (s :sexp) = SOME (opt :α option) ⇔ opt = (NONE :α option) ∧ s = SX_SYM "NONE" ∨ ∃(x :α) (s0 :sexp). opt = SOME x ∧ f s0 = SOME x ∧ s = listsexp [SX_SYM "SOME"; s0]
+idsexp_sexpid_odestSEXSTR_typed=∀(y :(mlstring, mlstring) id) (x :sexp). sexpid odestSEXSTR x = SOME y ⇔ x = idsexp y
+idsexp_sexpid_odestSEXSTR_prime_typed=(sexpid odestSEXSTR (x :sexp) = SOME (y :(mlstring, mlstring) id) ⇔ x = idsexp y) ∧ (SOME y = sexpid odestSEXSTR x ⇔ x = idsexp y)
 lists=[SOME []; SOME [1; 2; 3]; NONE; NONE]
 option=[SOME NONE; SOME (SOME 5); NONE; NONE]
 identifier=[SOME (Short «x»); SOME (Long «M» (Short «x»)); NONE; SOME (Long «A» (Long «B» (Short «x»))); NONE; NONE]

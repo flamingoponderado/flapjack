@@ -74,6 +74,72 @@ theorem decodeId_idsexp (id : Ident MlString MlString) : decodeId destString (id
       simp [idsexp, listsexp, decodeId, sexstr, destString, decode_encode_control, ih]
       constructor <;> rfl
 
+/-- A successfully decoded identifier has its canonical S-expression shape. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "idsexp_sexpid_odestSEXSTR"]
+theorem decodeId_some (id : Ident MlString MlString) (s : Sexp) :
+    decodeId destString s = some id ↔ s = idsexp id := by
+  constructor
+  · intro h
+    induction s using decodeId.induct generalizing id with
+    | case1 name value terminator condition =>
+      have eqs : name = (ofString "Short").explode ∧ terminator = (ofString "nil").explode := by
+        simp only [Bool.and_eq_true, beq_iff_eq] at condition
+        constructor
+        · convert condition.1 using 1
+          rfl
+        · convert condition.2 using 1
+          rfl
+      cases hv : destString value with
+      | none => simp [decodeId, condition, hv] at h
+      | some v =>
+        simp [decodeId, condition, hv] at h
+        subst id
+        have encoded := (destString_some value v).1.mp hv
+        rcases eqs with ⟨rfl, rfl⟩
+        simp [idsexp, listsexp, encoded]
+        constructor <;> rfl
+    | case2 name value terminator condition => simp [decodeId, condition] at h
+    | case3 name moduleName rest terminator condition ih =>
+      have eqs : name = (ofString "Long").explode ∧ terminator = (ofString "nil").explode := by
+        simp only [Bool.and_eq_true, beq_iff_eq] at condition
+        constructor
+        · convert condition.1 using 1
+          rfl
+        · convert condition.2 using 1
+          rfl
+      cases hv : destString moduleName with
+      | none => simp [decodeId, condition, hv] at h
+      | some v =>
+        cases hr : decodeId destString rest with
+        | none => simp [decodeId, condition, hv, hr] at h
+        | some tail =>
+          simp [decodeId, condition, hv, hr] at h
+          subst id
+          have encoded := (destString_some moduleName v).1.mp hv
+          have encodedRest := ih tail hr
+          rcases eqs with ⟨rfl, rfl⟩
+          simp [idsexp, listsexp, encoded, encodedRest]
+          constructor <;> rfl
+    | case4 name moduleName rest terminator condition => simp [decodeId, condition] at h
+    | case5 s hshort hlong =>
+      rw [decodeId.eq_def] at h
+      split at h <;> simp_all
+  · intro h
+    subst s
+    exact decodeId_idsexp id
+
+/-- Identifier canonicality in both orientations of option equality. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "idsexp_sexpid_odestSEXSTR'"]
+theorem decodeId_some_both (s : Sexp) (id : Ident MlString MlString) :
+    (decodeId destString s = some id ↔ s = idsexp id) ∧
+    (some id = decodeId destString s ↔ s = idsexp id) := by
+  refine ⟨decodeId_some id s, ?_⟩
+  constructor
+  · intro h
+    exact (decodeId_some id s).mp h.symm
+  · intro h
+    exact ((decodeId_some id s).mpr h).symm
+
 /-- Pointwise decoding correctness lifts to encoded proper lists. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplist_listsexp_rwt"]
 theorem decodeList_listsexp {α : Type} (f : Sexp → Option α) (g : α → Sexp) (xs : List α)

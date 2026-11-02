@@ -1,6 +1,22 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeId_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "idsexp_sexpid_odestSEXSTR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified identifier and S-expression carriers, equality orientations, and canonical encoding conclusion. The proof follows the production decoder recursion and the reviewed canonical byte-string theorem."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeId_some_both",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "idsexp_sexpid_odestSEXSTR'",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both captured equivalences and their equality orientations over the exact mlstring identifier carrier."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
     "lean_name": "decodeOption_some",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "sexpopt_SOME",
