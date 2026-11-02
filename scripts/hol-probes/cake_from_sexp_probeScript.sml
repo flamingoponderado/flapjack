@@ -115,6 +115,16 @@ val _ = showDef "sexpopt_SOME_typed" fromSexpTheory.sexpopt_SOME;
 val _ = showDef "idsexp_sexpid_odestSEXSTR_typed" fromSexpTheory.idsexp_sexpid_odestSEXSTR;
 val _ = showDef "idsexp_sexpid_odestSEXSTR_prime_typed" fromSexpTheory.idsexp_sexpid_odestSEXSTR';
 val _ = showDef "typesexp_sexptype_typed" fromSexpTheory.typesexp_sexptype;
+val _ = showDef "litsexp_sexplit_typed" fromSexpTheory.litsexp_sexplit;
+val _ = showDef "patsexp_sexppat0_typed" fromSexpTheory.patsexp_sexppat0;
+val _ = showDef "patsexp_sexppat_typed" fromSexpTheory.patsexp_sexppat;
+val _ = showDef "sexparith_arithsexp_typed" fromSexpTheory.sexparith_arithsexp;
+val _ = showDef "decode_prim_type_prim_typesexp_typed" fromSexpTheory.decode_prim_type_prim_typesexp;
+val _ = showDef "decode_test_testsexp_typed" fromSexpTheory.decode_test_testsexp;
+val _ = showDef "logsexp_sexplog_typed" fromSexpTheory.logsexp_sexplog;
+val _ = showDef "locnsexp_sexplocpt0_typed" fromSexpTheory.locnsexp_sexplocpt0;
+val _ = showDef "locnsexp_sexplocpt_typed" fromSexpTheory.locnsexp_sexplocpt;
+val _ = showDef "locnsexp_sexplocn_typed" fromSexpTheory.locnsexp_sexplocn;
 val _ = show "lists" ``MAP (fromSexp$sexplist fromSexp$odestSXNUM)
   [⟪⟫; ⟪1; 2; 3⟫; ⟪1 • 2⟫; ⟪SX_STR "x"⟫]``;
 val _ = show "option" ``MAP (fromSexp$sexpopt fromSexp$odestSXNUM)

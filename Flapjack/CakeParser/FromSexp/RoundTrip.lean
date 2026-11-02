@@ -289,6 +289,18 @@ theorem decodeOption_some {α : Type} (f : Sexp → Option α) (s : Sexp) (opt :
             exact ⟨hn, x, hf, ho.symm⟩
         | cons another rest => simp [decodeOption, h]
 
+/-- Successful decoding of an optional identifier yields its canonical
+encoding. This specializes the source option and identifier inverse lemmas. -/
+theorem decodeIdOption_canonical (s : Sexp) (id : Option (Ident MlString MlString))
+    (h : decodeOption (decodeId destString) s = some id) : optsexp (id.map idsexp) = s := by
+  rcases (decodeOption_some (decodeId destString) s id).mp h with ⟨rfl, rfl⟩ | ⟨x, s0, rfl, hx, hs⟩
+  · rfl
+  · have eq := (decodeId_some x s0).mp hx
+    subst s0
+    rw [hs]
+    simp [optsexp, listsexp]
+    rfl
+
 /-- Pointwise decoding correctness lifts to encoded options. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpopt_optsexp"]
 theorem decodeOption_optsexp {α : Type} (f : Sexp → Option α) (g : α → Sexp) (x : Option α)
@@ -475,6 +487,106 @@ theorem typesexp_injective (left right : AstT) :
     subst right
     rfl
 
+/-- Successful literal decoding yields the source-shaped encoding. This is
+the reverse direction of `litsexp_sexplit` for the executed decoder. -/
+theorem decodeLiteral_canonical (s : Sexp) (lit : Lit) (h : decodeLiteral s = some lit) : litsexp lit = s := by
+  cases s with
+  | num n =>
+    simp [decodeLiteral] at h
+    subst lit
+    rfl
+  | str bytes =>
+    cases hs : destString (.str bytes) with
+    | none => simp [decodeLiteral, hs] at h
+    | some value =>
+      simp [decodeLiteral, hs] at h
+      subst lit
+      simpa [litsexp] using ((destString_some (.str bytes) value).1.mp hs).symm
+  | sym name => simp [decodeLiteral, stripConstructor] at h
+  | cons head tail =>
+    cases hs : stripConstructor (.cons head tail) with
+    | none => simp [decodeLiteral, hs] at h
+    | some pair =>
+      rcases pair with ⟨name, args⟩
+      have shape := (stripConstructor_some _ _ _).mp hs
+      cases args with
+      | nil => simp [decodeLiteral, hs] at h
+      | cons arg rest =>
+        cases rest with
+        | cons a r => simp [decodeLiteral, hs] at h
+        | nil =>
+          simp only [decodeLiteral, hs] at h
+          dsimp at h
+          split at h
+          next neg =>
+            cases arg with
+            | num n =>
+              cases n with
+              | zero => simp at h
+              | succ n =>
+                simp at h
+                subst lit
+                simp only [beq_iff_eq] at neg
+                rw [shape]
+                have ineg : -1 + -(n : Int) = Int.negSucc n := by omega
+                rw [ineg]
+                simp [litsexp, listsexp, neg]
+                rfl
+            | sym _ | str _ | cons _ _ => simp at h
+          next notNeg =>
+            split at h
+            next charName =>
+              cases hd : destString arg with
+              | none => simp [hd] at h
+              | some val =>
+                cases val with
+                | implode bytes =>
+                  cases bytes with
+                  | nil => simp [hd] at h
+                  | cons c cs =>
+                    cases cs with
+                    | nil =>
+                      simp [hd] at h
+                      subst lit
+                      have eqArg := (destString_some arg (.implode [c])).1.mp hd
+                      simp only [beq_iff_eq] at charName
+                      rw [shape]
+                      simp [litsexp, listsexp, charName, eqArg]
+                      rfl
+                    | cons d ds => simp [hd] at h
+            next notChar =>
+              cases arg with
+              | num n =>
+                dsimp at h
+                split at h
+                next word8 =>
+                  simp at h
+                  subst lit
+                  simp only [Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq] at word8
+                  rw [shape]
+                  simp [litsexp, listsexp, word8.1, BitVec.toNat_ofNat, Nat.mod_eq_of_lt word8.2]
+                  rfl
+                next notWord8 =>
+                  split at h
+                  next word64 =>
+                    simp at h
+                    subst lit
+                    simp only [Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq] at word64
+                    rw [shape]
+                    simp [litsexp, listsexp, word64.1, BitVec.toNat_ofNat, Nat.mod_eq_of_lt word64.2]
+                    rfl
+                  next notWord64 =>
+                    split at h
+                    next float64 =>
+                      simp at h
+                      subst lit
+                      simp only [Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq] at float64
+                      rw [shape]
+                      simp [litsexp, listsexp, float64.1, BitVec.toNat_ofNat, Nat.mod_eq_of_lt float64.2]
+                      rfl
+                    next _ => simp at h
+              | sym _ | str _ | cons _ _ => simp at h
+
 /-- Decoding an encoded literal returns the original literal. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplit_litsexp"]
 theorem decodeLiteral_litsexp (l : Lit) : decodeLiteral (litsexp l) = some l := by
@@ -497,6 +609,19 @@ theorem decodeLiteral_litsexp (l : Lit) : decodeLiteral (litsexp l) = some l := 
       stripConstructor, decodeList, w.isLt]
   | float64 w => simp (config := { decide := true }) [litsexp, listsexp, decodeLiteral,
       stripConstructor, decodeList, w.isLt]
+
+/-- Literal decoding succeeds exactly on the canonical encoding, in both
+orientations of option equality. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "litsexp_sexplit"]
+theorem decodeLiteral_some (s : Sexp) (lit : Lit) :
+    (decodeLiteral s = some lit ↔ litsexp lit = s) ∧
+    (some lit = decodeLiteral s ↔ litsexp lit = s) := by
+  have forward : decodeLiteral s = some lit → litsexp lit = s := decodeLiteral_canonical s lit
+  have backward : litsexp lit = s → decodeLiteral s = some lit := by
+    intro h
+    subst s
+    exact decodeLiteral_litsexp lit
+  exact ⟨⟨forward, backward⟩, ⟨fun h => forward h.symm, fun h => (backward h).symm⟩⟩
 
 /-- Encoding CakeML literals is injective. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "litsexp_11"]
@@ -559,6 +684,157 @@ theorem decodePatternList_patsexpList (ps : List Pat) :
 termination_by sizeOf ps
 end
 
+/-- Every successfully decoded pattern has its canonical encoding. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "patsexp_sexppat0"]
+theorem decodePattern_canonical (s : Sexp) : ∀ p, decodePattern s = some p → patsexp p = s := by
+  induction s using decodePattern.induct
+      (motive2 := fun x => ∀ ps, decodePatternList x = some ps → listsexp (ps.map patsexp) = x) with
+  | case1 bytes =>
+    intro p h
+    cases hd : destString (.str bytes) with
+    | none => simp [decodePattern, hd] at h
+    | some name =>
+      simp [decodePattern, hd] at h
+      subst p
+      have enc := (destString_some (.str bytes) name).1.mp hd
+      simpa [patsexp] using enc.symm
+  | case2 name terminator hn =>
+    intro p h
+    simp [decodePattern, hn] at h
+    subst p
+    simp only [Bool.and_eq_true, beq_iff_eq] at hn
+    simp [patsexp, listsexp, hn.1, hn.2]
+    constructor <;> rfl
+  | case3 name terminator hn =>
+    intro p h
+    simp [decodePattern, hn] at h
+  | case4 name a terminator ht =>
+    intro p h
+    simp [decodePattern, ht] at h
+  | case5 name a terminator ht hn =>
+    intro p h
+    cases ha : decodeLiteral a with
+    | none => simp [decodePattern, ht, hn, ha] at h
+    | some lit =>
+      simp [decodePattern, ht, hn, ha] at h
+      subst p
+      have ea := (decodeLiteral_some a lit).1.mp ha
+      simp only [beq_iff_eq] at hn
+      simp only [bne_iff_ne, not_not] at ht
+      simp [patsexp, listsexp, ea, hn, ht]
+      constructor <;> rfl
+  | case6 name a terminator ht hnot hn ih =>
+    intro p h
+    cases ha : decodePattern a with
+    | none => simp [decodePattern, ht, hnot, hn, ha] at h
+    | some pat =>
+      simp [decodePattern, ht, hnot, hn, ha] at h
+      subst p
+      have ea := ih pat ha
+      simp only [beq_iff_eq] at hn
+      simp only [bne_iff_ne, not_not] at ht
+      simp [patsexp, listsexp, ea, hn, ht]
+      constructor <;> rfl
+  | case7 name a terminator ht hnot hn =>
+    intro p h
+    simp [decodePattern, ht, hnot, hn] at h
+  | case8 name a b terminator ht =>
+    intro p h
+    simp [decodePattern, ht] at h
+  | case9 name a b terminator ht hn ih =>
+    intro p h
+    cases ha : decodeOption (decodeId destString) a with
+    | none => simp [decodePattern, ht, hn, ha] at h
+    | some id =>
+      cases hb : decodePatternList b with
+      | none => simp [decodePattern, ht, hn, ha, hb] at h
+      | some ps =>
+        simp [decodePattern, ht, hn, ha, hb] at h
+        subst p
+        have ea := decodeIdOption_canonical a id ha
+        have eb := ih ps hb
+        simp only [listsexp] at eb
+        simp only [beq_iff_eq] at hn
+        simp only [bne_iff_ne, not_not] at ht
+        simp [patsexp, patsexpList_eq_map, listsexp, ea, eb, hn, ht]
+        constructor <;> rfl
+  | case10 name a b terminator ht hnot hn ih =>
+    intro p h
+    cases ha : decodePattern a with
+    | none => simp [decodePattern, ht, hnot, hn, ha] at h
+    | some pat =>
+      cases hb : destString b with
+      | none => simp [decodePattern, ht, hnot, hn, ha, hb] at h
+      | some id =>
+        simp [decodePattern, ht, hnot, hn, ha, hb] at h
+        subst p
+        have ea := ih pat ha
+        have eb := (destString_some b id).1.mp hb
+        simp only [beq_iff_eq] at hn
+        simp only [bne_iff_ne, not_not] at ht
+        simp [patsexp, listsexp, ea, eb, hn, ht]
+        constructor <;> rfl
+  | case11 name a b terminator ht hnot1 hnot2 hn ih =>
+    intro p h
+    cases ha : decodePattern a with
+    | none => simp [decodePattern, ht, hnot1, hnot2, hn, ha] at h
+    | some pat =>
+      cases hb : decodeType b with
+      | none => simp [decodePattern, ht, hnot1, hnot2, hn, ha, hb] at h
+      | some ty =>
+        simp [decodePattern, ht, hnot1, hnot2, hn, ha, hb] at h
+        subst p
+        have ea := ih pat ha
+        have eb := (decodeType_some b ty).1.mp hb
+        simp only [beq_iff_eq] at hn
+        simp only [bne_iff_ne, not_not] at ht
+        simp [patsexp, listsexp, ea, eb, hn, ht]
+        constructor <;> rfl
+  | case12 name a b terminator ht hnot1 hnot2 hn =>
+    intro p h
+    simp [decodePattern, ht, hnot1, hnot2, hn] at h
+  | case13 x h1 h2 h3 h4 =>
+    intro p h
+    rw [decodePattern.eq_def] at h
+    split at h <;> simp_all
+  | case14 head tail ihh iht ps h =>
+    cases hh : decodePattern head with
+    | none => simp [decodePatternList, hh] at h
+    | some p =>
+      cases ht : decodePatternList tail with
+      | none => simp [decodePatternList, hh, ht] at h
+      | some rest =>
+        simp [decodePatternList, hh, ht] at h
+        subst ps
+        have eh := ihh p hh
+        have et := iht rest ht
+        simp only [listsexp] at et
+        simp [listsexp, eh, et]
+  | case15 name hn ps h =>
+    simp [decodePatternList, hn] at h
+    subst ps
+    simp only [beq_iff_eq] at hn
+    simp [listsexp, hn]
+    rfl
+  | case16 name hn ps h =>
+    simp [decodePatternList, hn] at h
+  | case17 x h1 h2 ps h =>
+    rw [decodePatternList.eq_def] at h
+    split at h <;> simp_all
+
+/-- Pattern decoding succeeds exactly on the canonical encoding, in both
+orientations of option equality. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "patsexp_sexppat"]
+theorem decodePattern_some (s : Sexp) (p : Pat) :
+    (decodePattern s = some p ↔ patsexp p = s) ∧
+    (some p = decodePattern s ↔ patsexp p = s) := by
+  have forward : decodePattern s = some p → patsexp p = s := decodePattern_canonical s p
+  have backward : patsexp p = s → decodePattern s = some p := by
+    intro h
+    subst s
+    exact decodePattern_patsexp p
+  exact ⟨⟨forward, backward⟩, ⟨fun h => forward h.symm, fun h => (backward h).symm⟩⟩
+
 /-- Encoding CakeML patterns is injective. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "patsexp_11"]
 theorem patsexp_injective (left right : Pat) : patsexp left = patsexp right ↔ left = right := by
@@ -575,6 +851,53 @@ theorem patsexp_injective (left right : Pat) : patsexp left = patsexp right ↔ 
 theorem decodeLocPoint_locnsexp (point : Locn) : decodeLocPoint (locnsexp point) = some point := by
   cases point <;> simp (config := { decide := true }) [locnsexp, decodeLocPoint, listsexp, decodeList]
 
+/-- Successful location-point decoding yields the canonical encoding. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "locnsexp_sexplocpt0"]
+theorem decodeLocPoint_canonical (s : Sexp) (z : Locn) (h : decodeLocPoint s = some z) : locnsexp z = s := by
+  cases s with
+  | sym name =>
+    simp only [decodeLocPoint] at h
+    split at h
+    next unk =>
+      simp at h
+      subst z
+      simp only [beq_iff_eq] at unk
+      simp [locnsexp, unk]
+      rfl
+    next notUnk =>
+      split at h
+      next eof =>
+        simp at h
+        subst z
+        simp only [beq_iff_eq] at eof
+        simp [locnsexp, eof]
+        rfl
+      next _ => simp at h
+  | num _ | str _ => simp [decodeLocPoint, decodeList] at h
+  | cons head tail =>
+    cases hs : decodeList some (.cons head tail) with
+    | none => simp [decodeLocPoint, hs] at h
+    | some xs =>
+      have shape := (decodeList_some_identity (.cons head tail) xs).mp hs
+      cases xs with
+      | nil => simp [decodeLocPoint, hs] at h
+      | cons a rest =>
+        cases rest with
+        | nil => simp [decodeLocPoint, hs] at h
+        | cons b rest =>
+          cases rest with
+          | cons c more => simp [decodeLocPoint, hs] at h
+          | nil =>
+            cases a with
+            | num row =>
+              cases b with
+              | num col =>
+                simp [decodeLocPoint, hs] at h
+                subst z
+                simpa [locnsexp] using shape.symm
+              | sym _ | str _ | cons _ _ => simp [decodeLocPoint, hs] at h
+            | sym _ | str _ | cons _ _ => simp [decodeLocPoint, hs] at h
+
 /-- Source locations round trip through S-expressions. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplocn_locnsexp"]
 theorem decodeLoc_locssexp (loc : Locs) : decodeLoc (locssexp loc) = some loc := by
@@ -583,10 +906,97 @@ theorem decodeLoc_locssexp (loc : Locs) : decodeLoc (locssexp loc) = some loc :=
     simp (config := { decide := true }) [locssexp, listsexp, decodeLoc, decodeList,
       decodeLocPoint_locnsexp]
 
+/-- Location-point decoding succeeds exactly on the canonical encoding. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "locnsexp_sexplocpt"]
+theorem decodeLocPoint_some (s : Sexp) (z : Locn) :
+    (decodeLocPoint s = some z ↔ locnsexp z = s) ∧
+    (some z = decodeLocPoint s ↔ locnsexp z = s) := by
+  have forward : decodeLocPoint s = some z → locnsexp z = s := decodeLocPoint_canonical s z
+  have backward : locnsexp z = s → decodeLocPoint s = some z := by
+    intro h
+    subst s
+    exact decodeLocPoint_locnsexp z
+  exact ⟨⟨forward, backward⟩, ⟨fun h => forward h.symm, fun h => (backward h).symm⟩⟩
+
+/-- Location decoding succeeds exactly on the canonical encoding. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "locnsexp_sexplocn"]
+theorem decodeLoc_some (s : Sexp) (z : Locs) :
+    (decodeLoc s = some z ↔ locssexp z = s) ∧
+    (some z = decodeLoc s ↔ locssexp z = s) := by
+  have forward : decodeLoc s = some z → locssexp z = s := by
+    intro h
+    unfold decodeLoc at h
+    cases hs : decodeList some s with
+    | none => simp [hs] at h
+    | some xs =>
+      have shape := (decodeList_some_identity s xs).mp hs
+      cases xs with
+      | nil => simp [hs] at h
+      | cons a rest =>
+        cases rest with
+        | nil => simp [hs] at h
+        | cons b rest =>
+          cases rest with
+          | cons c more => simp [hs] at h
+          | nil =>
+            cases ha : decodeLocPoint a with
+            | none => simp [hs, ha] at h
+            | some left =>
+              cases hb : decodeLocPoint b with
+              | none => simp [hs, ha, hb] at h
+              | some right =>
+                simp [hs, ha, hb] at h
+                subst z
+                have ea := decodeLocPoint_canonical a left ha
+                have eb := decodeLocPoint_canonical b right hb
+                simpa [locssexp, ea, eb] using shape.symm
+  have backward : locssexp z = s → decodeLoc s = some z := by
+    intro h
+    subst s
+    exact decodeLoc_locssexp z
+  exact ⟨⟨forward, backward⟩, ⟨fun h => forward h.symm, fun h => (backward h).symm⟩⟩
+
 /-- Logical operators round trip through S-expressions. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplog_logsexp"]
 theorem decodeLog_logsexp (op : Lop) : decodeLog (logsexp op) = some op := by
   cases op <;> decide
+
+/-- A symbol name decoded for operator dispatch determines its original bytes.
+This describes Flapjack's `symbolName` helper. -/
+theorem symbolName_canonical (s : Sexp) (name : String) (h : symbolName s = some name) :
+    s = .sym ((ofString name).explode) := by
+  cases s with
+  | sym bytes =>
+    simp [symbolName] at h
+    subst name
+    simp [ofString_toStringOfBytes]
+  | num _ | str _ | cons _ _ => simp [symbolName] at h
+
+/-- A successfully decoded logical operator has its canonical encoding. -/
+theorem decodeLog_canonical (s : Sexp) (z : Lop) (h : decodeLog s = some z) : logsexp z = s := by
+  cases s with
+  | sym name =>
+    cases z <;> simp [decodeLog, symbolName] at h <;> split at h <;> simp_all
+    all_goals
+      rename_i _ heq
+      have eq := congrArg (fun text => (ofString text).explode) heq
+      simp only [ofString_toStringOfBytes, MlString.explode_implode] at eq
+      simp only [logsexp, Sexp.sym.injEq]
+      convert eq.symm using 1
+      rfl
+  | num _ | str _ | cons _ _ => simp [decodeLog, symbolName] at h
+
+/-- Logical operator decoding succeeds exactly on the canonical encoding. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "logsexp_sexplog"]
+theorem decodeLog_some (s : Sexp) (z : Lop) :
+    (decodeLog s = some z ↔ logsexp z = s) ∧
+    (some z = decodeLog s ↔ logsexp z = s) := by
+  have forward : decodeLog s = some z → logsexp z = s := decodeLog_canonical s z
+  have backward : logsexp z = s → decodeLog s = some z := by
+    intro h
+    subst s
+    exact decodeLog_logsexp z
+  exact ⟨⟨forward, backward⟩, ⟨fun h => forward h.symm, fun h => (backward h).symm⟩⟩
 
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "locnsexp_11"]
 theorem locnsexp_injective (a b : Locn) : locnsexp a = locnsexp b ↔ a = b := by
@@ -631,6 +1041,74 @@ theorem decodeTest_testsexp (test : Test) : decodeTest (testsexp test) = some te
   cases test with
   | equal => decide
   | compare op | altCompare op => cases op <;> decide
+
+/-- Successful arithmetic-operator decoding yields the canonical symbol. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexparith_arithsexp"]
+theorem decodeArith_canonical (s : Sexp) (z : Arith) (h : decodeArith s = some z) : arithsexp z = s := by
+  cases s with
+  | sym name =>
+    cases z <;> simp [decodeArith, symbolName] at h <;> split at h <;> simp_all
+    all_goals
+      rename_i _ heq
+      have eq := congrArg (fun text => (ofString text).explode) heq
+      simp only [ofString_toStringOfBytes, MlString.explode_implode] at eq
+      simp only [arithsexp, Sexp.sym.injEq]
+      convert eq.symm using 1
+      rfl
+  | num _ | str _ | cons _ _ => simp [decodeArith, symbolName] at h
+
+/-- Successful primitive-type decoding yields the canonical symbol. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "decode_prim_type_prim_typesexp"]
+theorem decodePrimType_canonical (s : Sexp) (z : PrimType) (h : decodePrimType s = some z) : primTypesexp z = s := by
+  cases s with
+  | sym name =>
+    cases z with
+    | wordT width =>
+      cases width <;> simp [decodePrimType, symbolName] at h <;> split at h <;> simp_all
+      all_goals
+        rename_i _ heq
+        have eq := congrArg (fun text => (ofString text).explode) heq
+        simp only [ofString_toStringOfBytes, MlString.explode_implode] at eq
+        simp only [primTypesexp, Sexp.sym.injEq]
+        convert eq.symm using 1
+        rfl
+    | boolT | intT | charT | strT | float64T =>
+      simp [decodePrimType, symbolName] at h
+      split at h <;> simp_all
+      all_goals
+        rename_i _ heq
+        have eq := congrArg (fun text => (ofString text).explode) heq
+        simp only [ofString_toStringOfBytes, MlString.explode_implode] at eq
+        simp only [primTypesexp, Sexp.sym.injEq]
+        convert eq.symm using 1
+        rfl
+  | num _ | str _ | cons _ _ => simp [decodePrimType, symbolName] at h
+
+/-- Successful comparison-test decoding yields the canonical symbol. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "decode_test_testsexp"]
+theorem decodeTest_canonical (s : Sexp) (z : Test) (h : decodeTest s = some z) : testsexp z = s := by
+  cases s with
+  | sym name =>
+    cases z with
+    | equal =>
+      simp [decodeTest, symbolName] at h
+      split at h <;> simp_all
+      rename_i _ heq
+      have eq := congrArg (fun text => (ofString text).explode) heq
+      simp only [ofString_toStringOfBytes, MlString.explode_implode] at eq
+      simp only [testsexp, Sexp.sym.injEq]
+      convert eq.symm using 1
+      rfl
+    | compare op | altCompare op =>
+      cases op <;> simp [decodeTest, symbolName] at h <;> split at h <;> simp_all
+      all_goals
+        rename_i _ heq
+        have eq := congrArg (fun text => (ofString text).explode) heq
+        simp only [ofString_toStringOfBytes, MlString.explode_implode] at eq
+        simp only [testsexp, Sexp.sym.injEq]
+        convert eq.symm using 1
+        rfl
+  | num _ | str _ | cons _ _ => simp [decodeTest, symbolName] at h
 
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "arithsexp_11"]
 theorem arithsexp_injective (a b : Arith) : arithsexp a = arithsexp b ↔ a = b := by

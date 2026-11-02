@@ -4,7 +4,8 @@ import Flapjack.CakeParser.FromSexp
 namespace Flapjack.CakeParser.FromSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString Flapjack.AstHOL
 
-private def symbolName : Sexp → Option String
+/-- Decode a symbol's byte name for the executable operator dispatch. -/
+def symbolName : Sexp → Option String
   | .sym bytes => some (toStringOfBytes (.implode bytes))
   | _ => none
 

@@ -1,6 +1,86 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeArith_canonical",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexparith_arithsexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured sexp and arith carriers and canonical-symbol implication."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodePrimType_canonical",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "decode_prim_type_prim_typesexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured sexp and prim_type carriers and canonical-symbol implication, including both fixed word sizes."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeTest_canonical",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "decode_test_testsexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured sexp and test carriers and canonical-symbol implication."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeLog_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "logsexp_sexplog",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both captured equivalences over sexp and lop."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeLocPoint_canonical",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "locnsexp_sexplocpt0",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured sexp and locn carriers and canonical-encoding implication."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeLocPoint_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "locnsexp_sexplocpt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both captured equivalences over sexp and locn."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeLoc_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "locnsexp_sexplocn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both captured equivalences over sexp and locs, including both location endpoints."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodePattern_canonical",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "patsexp_sexppat0",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified sexp and pat carriers and implication; the proof follows the executed pattern and pattern-list decoder recursion."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodePattern_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "patsexp_sexppat",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both captured equivalences over sexp and pat, with the exact option-equality orientations."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeLiteral_some",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "litsexp_sexplit",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both captured equivalences over sexp and the exact literal carrier. The reverse proof checks negative-zero rejection, character byte length, canonical string decoding, and 8- and 64-bit word bounds in the executed decoder."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
     "lean_name": "decodeType_some",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "typesexp_sexptype",

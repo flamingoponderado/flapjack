@@ -84,6 +84,16 @@ sexpopt_SOME_typed=sexpopt (f :sexp -> α option) (s :sexp) = SOME (opt :α opti
 idsexp_sexpid_odestSEXSTR_typed=∀(y :(mlstring, mlstring) id) (x :sexp). sexpid odestSEXSTR x = SOME y ⇔ x = idsexp y
 idsexp_sexpid_odestSEXSTR_prime_typed=(sexpid odestSEXSTR (x :sexp) = SOME (y :(mlstring, mlstring) id) ⇔ x = idsexp y) ∧ (SOME y = sexpid odestSEXSTR x ⇔ x = idsexp y)
 typesexp_sexptype_typed=∀(s :sexp) (t :ast_t). (sexptype s = SOME t ⇔ typesexp t = s) ∧ (SOME t = sexptype s ⇔ typesexp t = s)
+litsexp_sexplit_typed=(sexplit (s :sexp) = SOME (l :lit) ⇔ litsexp l = s) ∧ (SOME l = sexplit s ⇔ litsexp l = s)
+patsexp_sexppat0_typed=∀(s :sexp) (p :pat). sexppat s = SOME p ⇒ patsexp p = s
+patsexp_sexppat_typed=(sexppat (s :sexp) = SOME (p :pat) ⇔ patsexp p = s) ∧ (SOME p = sexppat s ⇔ patsexp p = s)
+sexparith_arithsexp_typed=sexparith (s :sexp) = SOME (arith :arith) ⇒ arithsexp arith = s
+decode_prim_type_prim_typesexp_typed=decode_prim_type (s0 :sexp) = SOME (prim_type :prim_type) ⇒ prim_typesexp prim_type = s0
+decode_test_testsexp_typed=decode_test (s :sexp) = SOME (test :test) ⇒ testsexp test = s
+logsexp_sexplog_typed=(sexplog (s :sexp) = SOME (z :lop) ⇔ logsexp z = s) ∧ (SOME z = sexplog s ⇔ logsexp z = s)
+locnsexp_sexplocpt0_typed=sexplocpt (s :sexp) = SOME (z :locn) ⇒ locnsexp z = s
+locnsexp_sexplocpt_typed=(sexplocpt (s :sexp) = SOME (z :locn) ⇔ locnsexp z = s) ∧ (SOME z = sexplocpt s ⇔ locnsexp z = s)
+locnsexp_sexplocn_typed=(sexplocn (s :sexp) = SOME (z :locs) ⇔ locssexp z = s) ∧ (SOME z = sexplocn s ⇔ locssexp z = s)
 lists=[SOME []; SOME [1; 2; 3]; NONE; NONE]
 option=[SOME NONE; SOME (SOME 5); NONE; NONE]
 identifier=[SOME (Short «x»); SOME (Long «M» (Short «x»)); NONE; SOME (Long «A» (Long «B» (Short «x»))); NONE; NONE]
