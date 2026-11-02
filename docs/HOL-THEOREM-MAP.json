@@ -1,5 +1,21 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileOrder.lean",
+    "lean_name": "compileExp_con_source",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured typed constructor conjunct: arbitrary flat-pattern config, trace, optional constructor/type identifier and expression list; the same compile_exps over the reversed list, returned metadata, and reversed output. The proof establishes equivalence to the executed direct-order traversal."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileOrder.lean",
+    "lean_name": "compileExp_app_source",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured typed application conjunct: arbitrary flat-pattern config, trace, operator and expression list; the same reverse/traverse/reverse order and disjunction with op_sets_globals. The proof establishes equivalence to the executed direct-order traversal."
+  },
+  {
     "lean_path": "Flapjack/Misc/Sptree/FromList.lean",
     "lean_name": "sptFromList",
     "hol_path": "hol4/src/finite_maps/sptreeScript.sml",

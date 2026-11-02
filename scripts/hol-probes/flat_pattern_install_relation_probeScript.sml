@@ -13,6 +13,8 @@ val _ = show_thm "pure_co_comp=" backendPropsTheory.pure_co_comb_pure_co;
 val _ = show_thm "pure_co_id=" backendPropsTheory.pure_co_I;
 val _ = show_thm "pure_cc_id=" backendPropsTheory.pure_cc_I;
 val _ = show_thm "install_relation=" flat_patternProofTheory.install_conf_rel_def;
+val _ = show_thm "compile_exp_con_clause=" (List.nth (CONJUNCTS flat_patternTheory.compile_exp_def, 3));
+val _ = show_thm "compile_exp_app_clause=" (List.nth (CONJUNCTS flat_patternTheory.compile_exp_def, 5));
 val _ = show_thm "decs_semantics=" flat_patternProofTheory.compile_decs_semantics;
 val _ = show_thm "basic_values=" flatPropsTheory.simple_basic_val_rel_def;
 val _ = show_thm "value_contents=" flatPropsTheory.v_container_xs_def;

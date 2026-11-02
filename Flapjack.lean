@@ -22,6 +22,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateControl
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateEval
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateApp
 import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleInduction
+import Flapjack.Compiler.Backend.FlatPattern.CompileOrder
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.InstallRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ConfigIrrelevance
 import Flapjack.Compiler.Backend.FlatProps.ValueBasics

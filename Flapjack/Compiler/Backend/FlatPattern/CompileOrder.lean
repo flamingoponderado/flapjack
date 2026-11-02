@@ -54,4 +54,30 @@ theorem compileExps_reverse (cfg : Config) (xs : List FlatLang.Exp) :
               simp only [List.reverse_cons, compileExps_append, ih, ht, hx, compileExps]
               simp [Nat.max_comm, Bool.or_comm]
 
+/-- Constructor compilation satisfies the source's reverse/traverse/reverse equation. -/
+@[hol "cakeml/compiler/backend/flat_patternScript.sml" "compile_exp_def"]
+theorem compileExp_con_source (cfg : Config) (t : BackendCommon.Tra)
+    (tag : Option (FlatLang.CtorId × FlatLang.TypeId)) (xs : List FlatLang.Exp) :
+    compileExp cfg (.con t tag xs) =
+      let (i, sg, ys) := compileExps cfg xs.reverse
+      (i, sg, .con t tag ys.reverse) := by
+  rw [compileExps_reverse]
+  cases h : compileExps cfg xs with
+  | mk i rest =>
+    cases rest with
+    | mk sg ys => simp [compileExp, h]
+
+/-- Application compilation satisfies the source's reverse/traverse/reverse equation. -/
+@[hol "cakeml/compiler/backend/flat_patternScript.sml" "compile_exp_def"]
+theorem compileExp_app_source (cfg : Config) (t : BackendCommon.Tra)
+    (op : FlatLang.Op) (xs : List FlatLang.Exp) :
+    compileExp cfg (.app t op xs) =
+      let (i, sg, ys) := compileExps cfg xs.reverse
+      (i, sg || opSetsGlobals op, .app t op ys.reverse) := by
+  rw [compileExps_reverse]
+  cases h : compileExps cfg xs with
+  | mk i rest =>
+    cases rest with
+    | mk sg ys => simp [compileExp, h]
+
 end Flapjack.Compiler.Backend.FlatPattern
