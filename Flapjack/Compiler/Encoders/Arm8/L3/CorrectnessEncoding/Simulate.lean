@@ -106,4 +106,68 @@ def CaseGoal (i : HolAsm 64) (s1 s2 : AsmState 64) (ms : arm8_state) : Prop :=
       asserts2 (n + 1) (fun k => env (n + 1 - k)) arm8Next ms
         (fun ms1 ms2 => ∀ x, ¬ s1.memDomain x → ms1.MEM x = ms2.MEM x)
 
+/-- One constructor of `encoder_correct arm8TargetL3` from any one-instruction
+lowering: the single `arm8Next` step executes `i`, which writes `v` into the
+destination register `r` and changes nothing else (Flapjack infrastructure;
+the `const` and `arith` one-instruction shapes both use it).  The source-state
+update facts are hypotheses because `asmUpd` inspects the instruction. -/
+theorem asmCaseOne (inst : HolInst 64) (r : Nat) (v : BitVec 64) (i : instruction)
+    (t : arm8_state) (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (.inst inst) s2 ∧ targetStateRel arm8TargetL3 s1 ms)
+    (hast : arm8Ast (.inst inst) = [i])
+    (hnext : arm8Next ms = t)
+    (htpc : t.PC = ms.PC + 4)
+    (htmem : ∀ x, t.MEM x = ms.MEM x)
+    (htreg : ∀ k, k < 32 → k ≠ r → t.REG (BitVec.ofNat 5 k) = ms.REG (BitVec.ofNat 5 k))
+    (htval : t.REG (BitVec.ofNat 5 r) = v)
+    (htok : arm8Ok t = true)
+    (hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 4)
+    (hs2mem : ∀ x, s2.mem x = s1.mem x)
+    (hs2dom : s2.memDomain = s1.memDomain)
+    (hs2regs : ∀ k, s2.regs k = if k = r then v else s1.regs k) :
+    CaseGoal (.inst inst) s1 s2 ms := by
+  obtain ⟨hs, hr⟩ := h
+  obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
+  rw [arm8TargetL3_stateOk] at hok
+  rw [arm8TargetL3_getPc] at hpc
+  rw [arm8TargetL3_getByte] at hmem
+  rw [arm8TargetL3_getReg] at hreg
+  change ms.PC = s1.pc at hpc
+  change ∀ a, s1.memDomain a → ms.MEM a = s1.mem a at hmem
+  change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+    ms.REG (BitVec.ofNat 5 k) = s1.regs k at hreg
+  have hq : targetStateRel arm8TargetL3 s2 t := by
+    refine ⟨htok, ?_, ?_, ?_, ?_⟩
+    · change t.PC = s2.pc
+      rw [htpc, hs2pc, hpc]
+      simp
+    · change ∀ a, s2.memDomain a → t.MEM a = s2.mem a
+      intro a ha
+      rw [htmem, hs2mem]
+      exact hmem a (hs2dom ▸ ha)
+    · change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+        t.REG (BitVec.ofNat 5 k) = s2.regs k
+      intro k hk
+      by_cases hkr : k = r
+      · rw [hkr, htval, hs2regs r, if_pos rfl]
+      · rw [htreg k hk.1 hkr, hs2regs k, if_neg hkr]
+        exact hreg k hk
+    · intro k hk
+      simp [arm8ConfigL3] at hk
+  refine ⟨0, ?_⟩
+  intro env henv
+  constructor
+  · change targetStateRel arm8TargetL3 s2 (env 0 (arm8Next ms))
+    rw [hnext]
+    have hagree : Arm8L3Agree s2.memDomain (env 0 t) t := by
+      rw [← arm8Proj_eq_iff]
+      have hh := henv 0 t
+      rw [hs2dom]
+      exact hh
+    exact targetStateRel_congr hagree hq
+  · refine ⟨fun x _ => ?_, trivial⟩
+    rw [hnext]
+    exact (htmem x).symm
+
 end Flapjack.Compiler.Encoders.Arm8.L3
+

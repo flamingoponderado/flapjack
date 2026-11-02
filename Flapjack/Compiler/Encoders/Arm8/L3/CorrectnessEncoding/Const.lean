@@ -249,15 +249,6 @@ theorem constCaseOne (r : Nat) (v : BitVec 64) (i : instruction) (t : arm8_state
     (htok : arm8Ok t = true)
     : CaseGoal (.inst (.const r v)) s1 s2 ms := by
   obtain ⟨hs, hr⟩ := h
-  obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
-  rw [arm8TargetL3_stateOk] at hok
-  rw [arm8TargetL3_getPc] at hpc
-  rw [arm8TargetL3_getByte] at hmem
-  rw [arm8TargetL3_getReg] at hreg
-  change ms.PC = s1.pc at hpc
-  change ∀ a, s1.memDomain a → ms.MEM a = s1.mem a at hmem
-  change ∀ i, i < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains i = false →
-    ms.REG (BitVec.ofNat 5 i) = s1.regs i at hreg
   have hupd := hs.2.2.2.2.1
   simp only [arm8ConfigL3] at hupd
   have henclen : (arm8Enc (.inst (.const r v))).length = 4 := by
@@ -272,39 +263,8 @@ theorem constCaseOne (r : Nat) (v : BitVec 64) (i : instruction) (t : arm8_state
     rw [← hupd]; simp [asmUpd, instUpd, updPc, updReg]
   have hs2regs : ∀ j, s2.regs j = if j = r then v else s1.regs j := by
     intro j; rw [← hupd]; simp [asmUpd, instUpd, updPc, updReg]
-  have hq : targetStateRel arm8TargetL3 s2 t := by
-    refine ⟨htok, ?_, ?_, ?_, ?_⟩
-    · change t.PC = s2.pc
-      rw [htpc, hs2pc, hpc]
-      simp
-    · change ∀ a, s2.memDomain a → t.MEM a = s2.mem a
-      intro a ha
-      rw [htmem, hs2mem]
-      exact hmem a (hs2dom ▸ ha)
-    · change ∀ j, j < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains j = false →
-        t.REG (BitVec.ofNat 5 j) = s2.regs j
-      intro j hj
-      by_cases hjr : j = r
-      · rw [hjr, htval, hs2regs r, if_pos rfl]
-      · rw [htreg j hj.1 hjr, hs2regs j, if_neg hjr]
-        exact hreg j hj
-    · intro j hj
-      simp [arm8ConfigL3] at hj
-  refine ⟨0, ?_⟩
-  intro env henv
-  constructor
-  · change targetStateRel arm8TargetL3 s2 (env 0 (arm8Next ms))
-    rw [hnext]
-    have hagree : Arm8L3Agree s2.memDomain (env 0 t) t := by
-      rw [← arm8Proj_eq_iff]
-      have hh := henv 0 t
-      rw [hs2dom]
-      exact hh
-    exact targetStateRel_congr hagree hq
-  · refine ⟨fun x _ => ?_, trivial⟩
-    rw [hnext]
-    exact (htmem x).symm
-
+  exact asmCaseOne (.const r v) r v i t s1 s2 ms ⟨hs, hr⟩ hast hnext htpc htmem htreg htval htok
+    hs2pc hs2mem hs2dom hs2regs
 
 /-- The word emitted for a zeroing `MoveWide` constant. -/
 abbrev arm8ConstMovZWord (imm16 : BitVec 16) (hw : BitVec 2) (r : Nat) : BitVec 32 :=
