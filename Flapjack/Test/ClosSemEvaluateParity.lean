@@ -36,6 +36,14 @@ example {C F : Type} (s : State C F) :
       .val [.number 7] := by
   simp [evaluate, fixClock, doApp, applyBlock, applyNumeric, doIntApp, asBool]
 example {C F : Type} (s : State C F) :
+    (evaluate [.ifThenElse .none (.op .none (.blockOp (.cons 2)) [])
+      (.op .none (.intOp (.const 7)) []) (.op .none (.intOp (.const 9)) [])] [] s).1 =
+      .err (.abort .typeError) := by
+  simp [evaluate, fixClock, doApp, applyBlock, asBool]
+example {C F : Type} (s : State C F) :
+    (evaluate [.app .none none (.var .none 0) []] [.number 7] s).1 =
+      .err (.abort .typeError) := by simp [evaluate]
+example {C F : Type} (s : State C F) :
     (evaluate [.handle .none (.raise .none (.op .none (.intOp (.const 7)) []))
       (.var .none 0)] [] s).1 = .val [.number 7] := by
   simp [evaluate, fixClock, doApp, applyNumeric, doIntApp]

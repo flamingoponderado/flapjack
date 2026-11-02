@@ -113587,6 +113587,56 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "AppUnit_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Measure.lean",
+    "lean_name": "appUnit",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared app_unit_typed: an arbitrary closure expression is applied with no source trace or direct location to one nullary Cons 0 operation, itself without trace. The reviewed ClosLang.Exp carrier matches."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 708,
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/EvaluateExact.lean",
+    "lean_name": "evaluate",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared every original source equation at line 708 and the fully typed rebound evaluate_typed equations at line 900: list sequencing, variables, conditional, let, raise/handle, primitive operations, installation, thunk forcing, closures, recursive closures, application, ticks and direct calls retain the source states, values, guards, argument order, errors and clock costs. The Boolean decoder's asBool_cases matches the two source equality tests. holHd and holLast preserve their independent unspecified empty cases; fixClock_evaluate establishes that source termination clamps do not affect results, as in the original rebound theorem. The source-shaped updateThunk and reviewed helpers retain the original thunk and finite-map behavior. The State carrier has independent compiler and FFI types and canonical refs and code maps with a local roundtrip witness. The dispatcher inherits reals_as_rational_cuts and SOUNDNESS item 8; the review and parity probes are not a cross-language proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 708,
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/EvaluateExact.lean",
+    "lean_name": "evaluateApp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared both evaluate_app clauses in the original line-708 mutual definition and the fully typed rebound evaluate_typed: empty arguments return the function; nonempty arguments use reviewed destClosure, preserve type errors, partial and full clock checks and zero-clock timeout, subtract the same consumed argument count, and recurse only on a singleton successful body result. The original termination clamp is retained and fixClock_evaluate shows it has no effect, matching the rebound source. The independently polymorphic compiler and FFI state uses canonical refs and code maps with a local roundtrip witness. Floating-point dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8; source review and probes are not a cross-language proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/EvaluateClockSource.lean",
+    "lean_name": "evaluate_clock_source",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared evaluate_clock_typed: each conjunct quantifies its own independent compiler and FFI carriers, arbitrary evaluation result and final state, and concludes the same final-clock bound from the same evaluation equation. The checked theorem assembles the existing clock bounds without extra premises. Each reviewed State uses canonical refs and code maps with a local roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "fix_clock_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/EvaluateClockSource.lean",
+    "lean_name": "fixClock_evaluate_source",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared fix_clock_evaluate_typed: for arbitrary expression list, environment and independently polymorphic compiler and FFI state, clamping its evaluation result to its input state leaves the result unchanged. The theorem reuses the kernel-checked clock bound. The reviewed State has canonical refs and code maps with a local roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "do_app_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/MemoryChoice.lean",
     "lean_name": "doApp_concatByteVec_choice",

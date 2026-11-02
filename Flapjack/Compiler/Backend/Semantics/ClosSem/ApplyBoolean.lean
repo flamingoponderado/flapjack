@@ -18,4 +18,29 @@ theorem asBool_eq_some (value : Value) (flag : Bool) :
   | number _ | word64 _ | byteVector _ | refPtr _ _ | closure _ _ _ _ _ | recclosure _ _ _ _ _ =>
     cases flag <;> simp [asBool, boolValue]
 
+open Classical in
+/-- Decoding a condition chooses exactly the same branch as HOL's two
+successive Boolean-value equality checks. -/
+theorem asBool_cases {α : Type} (value : Value) (yes no invalid : α) :
+    (match asBool value with
+      | some true => yes
+      | some false => no
+      | none => invalid) =
+    (if value = boolValue true then yes else if value = boolValue false then no else invalid) := by
+  classical
+  by_cases isTrue : value = boolValue true
+  · subst value
+    simp [asBool, boolValue, BackendCommon.trueTag]
+  · by_cases isFalse : value = boolValue false
+    · subst value
+      simp [asBool, boolValue, BackendCommon.trueTag, BackendCommon.falseTag]
+    · have decoded : asBool value = none := by
+        cases result : asBool value with
+        | none => rfl
+        | some flag =>
+          cases flag with
+          | false => exact False.elim (isFalse ((asBool_eq_some value false).mp result))
+          | true => exact False.elim (isTrue ((asBool_eq_some value true).mp result))
+      simp [decoded, isTrue, isFalse]
+
 end Flapjack.Compiler.Backend.ClosSem

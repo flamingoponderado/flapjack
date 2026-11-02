@@ -192,7 +192,7 @@ and executed checked builders. Regenerate with
 `HOL_PROBE_ONLY=clos_to_bvl_recursive_types_probeScript.sml scripts/hol-probes/regenerate.sh`;
 the complete carrier correspondence remains under review.
 
-`clos_sem_evaluate_probe.out` captures the typed closure evaluator and variable, conditional, exception, timeout and closure-call observations. It also captures the typed installation definition and function carrier used in the finite-map representation review. `Flapjack/Test/ClosSemEvaluateParity.lean` replays the evaluator cases with both the extra-bound evaluator and the clocked unbounded evaluator. Full evaluator correspondence remains open.
+`clos_sem_evaluate_probe.out` captures the typed closure evaluator, its clock theorems, force-thunk application helper, and variable, conditional, exception, timeout and closure-call observations. It also captures the typed installation definition and function carrier used in the finite-map representation review. `Flapjack/Test/ClosSemEvaluateParity.lean` replays the evaluator cases with both the extra-bound evaluator and the clocked unbounded evaluator. The clocked evaluator is source-reviewed; these checks do not establish cross-language equivalence.
 
 `clos_sem_memory_probe.out` captures fully typed concatenation and byte-list choice clauses, plus closure array, byte-update, overlap-copy and byte-bounds observations. `Flapjack/Test/ClosSemMemoryParity.lean` replays the concrete cases, except that the HOL byte-update capture retains an unreduced word-existence condition. `ClosSem/MemoryChoice.lean` proves the two source-shaped choice cases for the source-reviewed dispatcher.
 

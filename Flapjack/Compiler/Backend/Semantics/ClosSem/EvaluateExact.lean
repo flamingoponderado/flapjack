@@ -1,9 +1,16 @@
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 
-/-! Clocked closure evaluation without an external recursion bound. This
-proof-side evaluator remains untagged pending source and carrier review. -/
+/-! Clocked closure evaluation without an external recursion bound. -/
 namespace Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL
+
+namespace EvaluatePort
+/-- The closure state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end EvaluatePort
 
 private noncomputable def headValue (values : List Value) : Value :=
   @Flapjack.holHd Value ⟨unitValue⟩ values
@@ -28,6 +35,8 @@ private def timeoutError {C F : Type} (state : State C F) : EvalResult C F :=
 
 mutual
 /-- Evaluate closure expressions using the HOL clock. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "evaluate_def" 708
+  (fmap_as_finite_support := [refs, code])]
 noncomputable def evaluate {C F : Type} (expressions : List ClosLang.Exp)
     (env : List Value) (state : State C F) : EvalResult C F :=
   match expressions with
@@ -146,6 +155,8 @@ decreasing_by
   all_goals try omega
 
 /-- Apply a closure, consuming its argument list and clock. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "evaluate_def" 708
+  (fmap_as_finite_support := [refs, code])]
 noncomputable def evaluateApp {C F : Type} (location : Option Nat) (function : Value)
     (args : List Value) (state : State C F) : EvalResult C F :=
   match args with

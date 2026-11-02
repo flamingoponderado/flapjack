@@ -50,6 +50,7 @@ theorem opWeight_gt (trace : BackendCommon.Tra) (op : ClosLang.Op) (args : List 
   case thunkOp operation => cases operation <;> simp [expWeight] <;> omega
 
 /-- Apply an expression to unit when forcing a thunk. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "AppUnit_def"]
 def appUnit (expression : ClosLang.Exp) : ClosLang.Exp :=
   .app .none none expression [.op .none (.blockOp (.cons 0)) []]
 
