@@ -102060,6 +102060,22 @@
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 4628-4634, binders !p s t; evaluate (p,s) = (NONE,t) ⇒ stack_size t.stack = stack_size s.stack; from evaluate_stack_swap and s_key_eq_stack_size as in HOL. State carrier WordSemStateFiniteExact width C F (alpha word width, independent beta/gamma as C/F) with the reviewed fmap_as_finite_support [fpRegs, store] and words qualifiers. Inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8) through evaluate/inst. Typed capture word_props_code_grows probe (show_types, no hypotheses)."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean",
+    "lean_name": "lookup_adjustVar_adjustSet",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "lookup_adjust_var_adjust_set",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: lines 379–386 and typed data_to_word_gc_stack capture. Both sides use a unit-valued sparse tree and the same adjusted natural-number key. The generalized helper proves lookup through the production adjustSet, including noncanonical trees and absent names; specialization preserves the original equality without extra hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/AdjustedSet.lean",
+    "lean_name": "adjustVar_mem_adjustSet",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "adjust_var_IN_adjust_set",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: lines 388–392 and typed data_to_word_gc_stack capture. Both sides quantify a natural name and unit-valued sparse tree and equate membership in the original and adjusted domains; sptDomain is defined by lookup presence, as in HOL."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRel.lean",
     "lean_name": "joinEnv",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",

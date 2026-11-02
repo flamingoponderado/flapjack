@@ -12,3 +12,5 @@ val _ = show "limits_inv_typed" data_to_word_gcProofTheory.limits_inv_def;
 val _ = show "join_env_typed" data_to_word_gcProofTheory.join_env_def;
 val _ = show "flat_typed" data_to_word_gcProofTheory.flat_def;
 val _ = show "flat_append_typed" data_to_word_gcProofTheory.flat_APPEND;
+val _ = show "lookup_adjust_var_adjust_set_typed" data_to_word_gcProofTheory.lookup_adjust_var_adjust_set;
+val _ = show "adjust_var_IN_adjust_set_typed" data_to_word_gcProofTheory.adjust_var_IN_adjust_set;

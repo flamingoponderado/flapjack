@@ -8228,6 +8228,7 @@ run_probe data_to_word_memory_repr_probeScript.sml data_to_word_memory_repr_prob
 
 run_probe data_to_word_gc_stack_probeScript.sml data_to_word_gc_stack_probe.out \
   stack_rel_typed the_global_typed contains_loc_typed limits_inv_typed join_env_typed flat_typed flat_append_typed \
+  lookup_adjust_var_adjust_set_typed adjust_var_IN_adjust_set_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe data_to_word_space_control_probeScript.sml data_to_word_space_control_probe.out \
