@@ -140,6 +140,36 @@ theorem evaluateApp_nestedFn {C F : Type} (name : Flapjack.Basis.Pure.MlString.M
     simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.decClock, maxApp, nonzero,
       ClosSem.evaluateApp]
 
+/-- A unary closure with a clock tick available evaluates its body with the
+argument added to its environment. The evaluator correspondence is pending. -/
+theorem evaluateApp_unary {C F : Type} (body : ClosLang.Exp) (env : List ClosSem.Value)
+    (x : ClosSem.Value) (state : ClosSem.State C F)
+    (maxApp : 1 ≤ state.maxApp) (clock : 1 ≤ state.clock) :
+    ClosSem.evaluateApp none (.closure none [] env 1 body) [x] state =
+      ClosSem.evaluate [body] (x :: env) (ClosSem.decClock 1 state) := by
+  rw [ClosSem.evaluateApp]
+  split
+  · simp_all [ClosSem.destClosure, ClosSem.checkLoc]
+  · simp_all [ClosSem.destClosure, ClosSem.checkLoc]
+  · rename_i expression captured rest found
+    simp [ClosSem.destClosure, ClosSem.checkLoc, maxApp] at found
+    obtain ⟨rfl, rfl, rfl⟩ := found
+    have nonzero : state.clock ≠ 0 := by omega
+    simp only [List.length_cons, List.length_nil, Nat.sub_zero, Nat.zero_add,
+      Nat.lt_one_iff, nonzero, ↓reduceIte]
+    rw [ClosSem.fixClock_evaluate]
+    cases run : ClosSem.evaluate [body] (x :: env) (ClosSem.decClock 1 state) with
+    | mk result next =>
+      cases result with
+      | err error => rfl
+      | val values =>
+        cases values with
+        | nil => rfl
+        | cons value rest =>
+          cases rest with
+          | nil => simp [ClosSem.evaluateApp]
+          | cons other rest => rfl
+
 /-- Applying no more arguments than there are nested unary functions captures
 them in order and consumes one tick per argument. This is stated over the
 current Lean evaluator, pending its HOL correspondence review. -/
@@ -249,6 +279,45 @@ theorem evaluateApps_nestedFns_timeout_long {C F : Type} (args : List ClosSem.Va
         simp only
         rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
         simp [ClosSem.decClock]
+
+/-- When the nested functions and their final unary closure are fully applied,
+evaluate the body with the consumed arguments and continue with the remainder.
+This is a Lean-evaluator result pending the source correspondence review. -/
+theorem evaluateApps_nestedFns_long {C F : Type} (args : List ClosSem.Value)
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (body : ClosLang.Exp)
+    (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (clock : names.length < state.clock) (lengths : names.length < args.length)
+    (maxApp : 1 ≤ state.maxApp) :
+    evaluateApps (.closure none [] env 1 (mkFns names body)) args state =
+      match ClosSem.evaluate [body]
+          ((args.reverse.take (1 + names.length)).reverse ++ env)
+          (ClosSem.decClock (1 + names.length) state) with
+      | (.val [value], next) => evaluateApps value ((args.reverse.drop (1 + names.length)).reverse) next
+      | result => result := by
+  induction args using List.reverseRecOn generalizing names env state with
+  | nil => simp at lengths
+  | append_singleton args x ih =>
+    rw [evaluateApps_snoc]
+    cases names with
+    | nil =>
+      have clockOne : 1 ≤ state.clock := by simp at clock; omega
+      simp only [mkFns]
+      rw [evaluateApp_unary body env x state maxApp clockOne]
+      simp [List.reverse_append]
+    | cons name names =>
+      have clockOne : 1 ≤ state.clock := by simp at clock; omega
+      have tailClock : names.length < (ClosSem.decClock 1 state).clock := by
+        simp [ClosSem.decClock] at *; omega
+      have tailLength : names.length < args.length := by simp at lengths; omega
+      have tailMax : 1 ≤ (ClosSem.decClock 1 state).maxApp := by
+        simpa [ClosSem.decClock] using maxApp
+      simp only [mkFns]
+      rw [evaluateApp_nestedFn name (mkFns names body) env x state maxApp clockOne]
+      simp only
+      rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
+      simp [List.reverse_append, ClosSem.decClock, Nat.sub_sub, Nat.add_comm]
+      simp [show 1 + (names.length + 1) = Nat.succ (names.length + 1) by omega,
+        List.append_assoc]
 
 /-- Reconstructed applications propagate an error from their argument list.
 This is a Lean-side evaluator property; HOL correspondence is still pending. -/
