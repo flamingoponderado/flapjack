@@ -210,7 +210,9 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustedSet
 import Flapjack.Compiler.Backend.DataToWord.Proofs.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Total
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeRelation
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StubLabels
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordTotal
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordLabels
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap

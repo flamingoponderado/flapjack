@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.ToWord
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Total
 import Flapjack.Compiler.Backend.WordBignum.Proofs.GenerateTotal
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeRelation
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StubLabels
 
 /-! Totality of the configured 64-bit word-lowering suffix. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -80,5 +80,25 @@ theorem compileCakeToWord64ConfiguredFuel_codeRel (fuel : Nat)
   refine ⟨_, compileCakeToWord64ConfiguredFuel_code fuel source nextSource closure nextClosure
     bvlConfig nextBvlConfig word declarations bviCode names bviRun, ?_⟩
   exact DataToWord.Proofs.Gc.codeRel64_of_entries word (BviToData.compileProg bviCode) distinct
+
+/-- The configured output establishes the data-to-word code relation when
+the BVI labels are distinct and lie beyond the reserved runtime-stub range. -/
+theorem compileCakeToWord64ConfiguredFuel_codeRel_of_bviLabels (fuel : Nat)
+    (source nextSource : Config) (closure nextClosure : ClosToBvl.Config)
+    (bvlConfig nextBvlConfig : BvlToBvi.Config) (word : DataToWord.Config)
+    (declarations : List AstHOL.Dec) (bviCode : List (Nat × Nat × Bvi.Exp))
+    (names : Spt Basis.Pure.MlString.MlString)
+    (bviRun : compileCakeToBviConfiguredFuel fuel source closure bvlConfig declarations =
+      some (nextSource, nextClosure, nextBvlConfig, bviCode, names))
+    (distinct : (bviCode.map Prod.fst).Nodup)
+    (above : ∀ label ∈ bviCode.map Prod.fst, dataNumStubs ≤ label) :
+    ∃ code, compileCakeToWord64ConfiguredFuel fuel source closure bvlConfig word declarations =
+      some (nextSource, nextClosure, nextBvlConfig, code, names) ∧
+      DataToWord.Proofs.Gc.codeRel64 word (sptFromAList (BviToData.compileProg bviCode)) (sptFromAList code) := by
+  apply compileCakeToWord64ConfiguredFuel_codeRel fuel source nextSource closure nextClosure
+    bvlConfig nextBvlConfig word declarations bviCode names bviRun
+  apply DataToWord.Proofs.Gc.runtimeStubs64_append_labels
+  · simpa [DataToWord.Proofs.Gc.bviToData_labels] using distinct
+  · simpa [DataToWord.Proofs.Gc.bviToData_labels] using above
 
 end Flapjack.Compiler.Backend.SourceToFlat
