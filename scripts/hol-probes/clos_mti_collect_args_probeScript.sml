@@ -191,3 +191,6 @@ val _ = show "simple_value_append_typed" closPropsTheory.simple_val_rel_APPEND;
 val _ = show "list_to_value_inj_typed" closPropsTheory.list_to_v_INJ;
 val _ = show "simple_value_list_typed" closPropsTheory.simple_val_rel_list;
 val _ = show "value_equality_relation_typed" v_rel_do_eq_replay;
+val _ = show "simple_value_to_bytes_typed" closPropsTheory.simple_val_rel_v_to_bytes;
+val _ = show "simple_word_left_typed" closPropsTheory.simple_val_rel_Word64_left;
+val _ = show "simple_value_to_words_typed" closPropsTheory.simple_val_rel_v_to_words;

@@ -1,5 +1,45 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "v_to_bytes_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Install.lean",
+    "lean_name": "valueToBytes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared value_to_bytes_typed: HOL option choice selects a word8 list exactly when reviewed valueToList yields its map through Number and natural-to-integer conversion of w2n. Lean uses fixed BitVec 8 toNat with the same predicate and option choice. valueToBytes_eq_some kernel-checks uniqueness of any witness, so differing choice implementations select the same option."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "v_to_words_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Install.lean",
+    "lean_name": "valueToWords",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared value_to_words_typed: HOL option choice selects a word64 list exactly when reviewed valueToList yields its Word64 map. Lean uses fixed BitVec 64 and the same predicate; valueToWords_eq_some kernel-checks witness uniqueness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "hol_name": "simple_val_rel_Word64_left",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/DecodeRelations.lean",
+    "lean_name": "simpleValRel_word64_left",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared simple_word_left_typed: under the sole simpleValRel premise, every target value and fixed word64 satisfy the same relation iff target equality. The reviewed Value carrier retains fixed 64-bit words."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "hol_name": "simple_val_rel_v_to_bytes",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/DecodeRelations.lean",
+    "lean_name": "simpleValRel_valueToBytes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared simple_value_to_bytes_typed: the same conjunction of simpleValRel and vr x y implies equality of the reviewed byte decoders, with no extra hypotheses. The proof covers both failure and all successful word8 lists."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "hol_name": "simple_val_rel_v_to_words",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/DecodeRelations.lean",
+    "lean_name": "simpleValRel_valueToWords",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared simple_value_to_words_typed: for all closure values, the same conjunction of simpleValRel and vr x y implies equality of the reviewed word64 decoders, without extra hypotheses. The proof covers failure and successful lists."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
     "hol_name": "v_rel_do_eq",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Equality.lean",

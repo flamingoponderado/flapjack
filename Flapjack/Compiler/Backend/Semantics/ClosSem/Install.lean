@@ -5,14 +5,16 @@ import Flapjack.Misc.ShiftSeq
 namespace Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL
 
-/-- Decode a list of integer-encoded byte words. The choice is unique but
-this operation remains untagged until source and carrier review is complete. -/
+/-- Decode a list of integer-encoded byte words using the source choice. The
+matching list, when present, is unique by `valueToBytes_eq_some`. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "v_to_bytes_def"]
 noncomputable def valueToBytes (value : Value) : Option (List (BitVec 8)) := by
   classical
   exact if h : ∃ bytes, valueToList value = some (bytes.map (fun b => .number b.toNat)) then
     some (Classical.choose h) else none
 
 /-- Decode a list of 64-bit words. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "v_to_words_def"]
 noncomputable def valueToWords (value : Value) : Option (List (BitVec 64)) := by
   classical
   exact if h : ∃ words, valueToList value = some (words.map Value.word64) then

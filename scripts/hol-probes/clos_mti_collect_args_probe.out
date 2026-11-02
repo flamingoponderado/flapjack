@@ -35,3 +35,6 @@ simple_value_append_typed=∀(xs1 :v list) (ys1 :v list) (xs2 :v list) (ys2 :v l
 list_to_value_inj_typed=∀(xs :v list) (ys :v list). list_to_v xs = list_to_v ys ⇔ xs = ys
 simple_value_list_typed=∀(x :v) (x1 :v) (xs :v list) (vr :v -> v -> bool). simple_val_rel vr ∧ vr x x1 ∧ v_to_list x1 = SOME xs ⇒ ∃(xs1 :v list). vr (list_to_v xs1) (list_to_v xs) ∧ v_to_list x = SOME xs1
 value_equality_relation_typed=simple_val_rel (vr :v -> v -> bool) ⇒ (∀(y1 :v) (y2 :v) (x1 :v) (x2 :v). vr x1 y1 ∧ vr x2 y2 ⇒ do_eq x1 x2 = do_eq y1 y2) ∧ ∀(y1 :v list) (y2 :v list) (x1 :v list) (x2 :v list). LIST_REL vr x1 y1 ∧ LIST_REL vr x2 y2 ⇒ do_eq_list x1 x2 = do_eq_list y1 y2
+simple_value_to_bytes_typed=simple_val_rel (vr :v -> v -> bool) ∧ vr (x :v) (y :v) ⇒ v_to_bytes x = v_to_bytes y
+simple_word_left_typed=simple_val_rel (vr :v -> v -> bool) ⇒ ∀(x :v) (w :word64). vr (Word64 w :v) x ⇔ x = (Word64 w :v)
+simple_value_to_words_typed=∀(x :v) (y :v). simple_val_rel (vr :v -> v -> bool) ∧ vr x y ⇒ v_to_words x = v_to_words y
