@@ -169,6 +169,73 @@ theorem source_to_annotatedChain_semantics {C F : Type} (ffi : HolFfiState F) (m
   rw [mapEq, chainEq] at annotationEq
   exact annotationEq.symm
 
+/-- Multi-argument introduction and numbering followed by construction and
+annotation of the installed chain preserve the current Lean observations.
+This is the production ordering before closure-to-BVL lowering when the
+known-function and direct-call optimizations are disabled; the proof is not a
+reviewed HOL correspondence. -/
+theorem mti_number_annotatedChain_semantics {C F : Type} (ffi : HolFfiState F)
+    (fuel maxApp number start : Nat) (expressions : List ClosLang.Exp)
+    (oracle : CompileOracle (Nat × C)) (compiler : Compiler C)
+    (positive : 1 ≤ maxApp) (nonempty : expressions ≠ [])
+    (unary : ∀ e ∈ expressions, noMti e)
+    (oracleUnary : ∀ index, (oracle index).2.2 = [] ∧
+      ∀ e ∈ (oracle index).2.1, noMti e)
+    (nonfail : semantics ffi maxApp HolFiniteMapExact.empty oracle
+      (pureCc (ClosMti.compileInc maxApp)
+        (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc) (pureCc ClosAnnotate.compileInc compiler)))
+      expressions ≠ .fail) :
+    ∃ transformed, ClosMti.compileFuel fuel true maxApp expressions = some transformed ∧
+      semantics ffi maxApp
+        (initialSourceCode (ClosAnnotate.compile (chainExps start (ClosNumber.renumberList number transformed).2)))
+        (pureCo ClosAnnotate.compileInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc)
+          (pureCo (ClosMti.compileInc maxApp) ∘ oracle)) compiler [.call .none 0 start []] =
+      semantics ffi maxApp HolFiniteMapExact.empty oracle
+        (pureCc (ClosMti.compileInc maxApp)
+          (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc) (pureCc ClosAnnotate.compileInc compiler)))
+        expressions := by
+  let transformed := ClosMti.introList maxApp expressions
+  let transformedOracle : CompileOracle (Nat × C) := pureCo (ClosMti.compileInc maxApp) ∘ oracle
+  let numbered := (ClosNumber.renumberList number transformed).2
+  let numberedOracle := stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) transformedOracle
+  have numberedEq := ClosNumber.semantics_mti_then_number ffi maxApp number oracle
+    (pureCc ClosAnnotate.compileInc compiler) expressions positive unary oracleUnary nonfail
+  have transformedVars : everyFnVarsNone transformed :=
+    (ClosMti.introList_varsNone maxApp expressions).mp (noMtiList_syntactic maxApp positive expressions unary).1
+  have numberedVars : everyFnVarsNone numbered :=
+    (ClosNumber.renumberList_varsNone transformed number).mpr transformedVars
+  have numberedNonempty : numbered ≠ [] := by
+    intro empty
+    have len := ClosNumber.renumberList_length transformed number
+    change numbered.length = transformed.length at len
+    rw [empty] at len
+    have originalLength : transformed.length = expressions.length := ClosMti.introList_length maxApp expressions
+    exact nonempty (List.eq_nil_of_length_eq_zero (by simpa [← originalLength] using len.symm))
+  have transformedOracleSafe : ∀ index, (transformedOracle index).2.2 = [] ∧
+      everyFnVarsNone (transformedOracle index).2.1 := by
+    intro index
+    change (ClosMti.compileInc maxApp (oracle index).2).2 = [] ∧
+      everyFnVarsNone (ClosMti.compileInc maxApp (oracle index).2).1
+    exact ⟨rfl, (ClosMti.introList_varsNone maxApp _).mp
+      (noMtiList_syntactic maxApp positive _ (oracleUnary index).2).1⟩
+  have numberedOracleSafe : ∀ index, everyFnVarsNone (numberedOracle index).2.1 ∧
+      everyFnVarsNone ((numberedOracle index).2.2.map (fun (_, _, body) => body)) := by
+    intro index
+    constructor
+    · simpa [numberedOracle, stateCo, ClosNumber.ignoreTable, ClosNumber.compileInc_varsNone] using
+        (transformedOracleSafe index).2
+    · simp [numberedOracle, stateCo, ClosNumber.ignoreTable, (transformedOracleSafe index).1, everyFnVarsNone]
+  have numberedAux : ∀ index, (numberedOracle index).2.2 = [] := by
+    intro index
+    simpa [numberedOracle, stateCo, ClosNumber.ignoreTable] using (transformedOracleSafe index).1
+  have numberedNonfail : semantics ffi maxApp HolFiniteMapExact.empty numberedOracle
+      (pureCc ClosAnnotate.compileInc compiler) numbered ≠ .fail := by
+    simpa [numberedOracle, transformedOracle, numbered, transformed, ← numberedEq] using nonfail
+  have chainEq := source_to_annotatedChain_semantics ffi maxApp start numbered numberedOracle compiler
+    numberedNonempty numberedVars numberedOracleSafe numberedAux numberedNonfail
+  refine ⟨transformed, ClosMti.compileFuel_introList fuel maxApp expressions, ?_⟩
+  exact chainEq.trans numberedEq
+
 /-- The no-optimization compiler preserves a nonempty source batch through
 numbering, chain construction, annotation and BVL conversion, assuming a
 consistent future oracle and a bound on its first numbering state. -/
@@ -408,6 +475,27 @@ theorem compileCallMtiFuel_noOpts (fuel : Nat) (config : Config) (expressions : 
        else config.nextLoc + max 1 expressions.length + 1) expressions with
   | mk next transformed =>
     simp
+
+/-- With known-function and direct-call conversion disabled, the full driver
+executes the same preprocessing as the no-optimization driver on the actual
+multi-argument output. The original expressions are retained for the name
+table, as in the production driver. -/
+theorem compileCallMtiFuel_mtiOnly (fuel : Nat) (config : Config) (expressions : List ClosLang.Exp)
+    (calls : config.doCall = false) (known : config.knownConf = none) :
+    compileCallMtiFuel? fuel config expressions = (do
+      let transformed ← ClosMti.compileFuel fuel config.doMti config.maxApp expressions
+      let (current, program) ← compileCommonNoOpts? { config with doMti := false } transformed
+      compilePrepared? config { current with doMti := config.doMti } expressions program) := by
+  simp only [compileCallMtiFuel?, compileCommonNoOpts?, calls, known, ClosKnown.compileFuel,
+    ClosCall.compileFuel, Bool.false_or, Bool.false_eq_true, ↓reduceIte,
+    Option.bind_eq_bind, Option.bind]
+  cases mti : ClosMti.compileFuel fuel config.doMti config.maxApp expressions with
+  | none => rfl
+  | some transformed =>
+    cases numbered : ClosNumber.renumberList
+        (if (config.nextLoc + max 1 transformed.length) % 2 = 0 then config.nextLoc + max 1 transformed.length
+         else config.nextLoc + max 1 transformed.length + 1) transformed with
+    | mk next numberedExpressions => simp
 
 /-- The production closure driver inherits the no-optimization source
 behavior theorem when all optional closure optimizations are disabled. -/
