@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
+import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -38,5 +39,28 @@ example : ¬envRel (· = ·) ([1, 2] : List Nat) [1, 3] 0 [] := by
 
 example : envRel (· = ·) ([1, 2] : List Nat) [1, 2] 0 [] := by
   simp [envRel, List.forall₂_cons_left_iff]
+
+-- `clos_call_wfg_probe.out`: adding distinct code preserves old lookup,
+-- while duplicate or replaced bindings do not constitute an extension.
+example : stateExtends ((.ln, [(1, 2)]) : Flapjack.Spt Unit × List (Nat × Nat))
+    (.ln, [(2, 3), (1, 2)]) := by
+  refine ⟨?_, ?_, by simp⟩
+  · intro key member
+    exact ⟨member, rfl⟩
+  · intro key value lookup
+    by_cases equal : key = 1
+    · subst key
+      simpa [logicalAssocLookup, List.find?] using lookup
+    · simp [logicalAssocLookup, List.find?, equal] at lookup
+
+example : ¬stateExtends ((.ln, [(1, 2)]) : Flapjack.Spt Unit × List (Nat × Nat))
+    (.ln, [(1, 3), (1, 2)]) := by
+  simp [stateExtends]
+
+example : ¬stateExtends ((.ln, [(1, 2)]) : Flapjack.Spt Unit × List (Nat × Nat))
+    (.ln, [(1, 3)]) := by
+  intro extension
+  have lookup := extension.2.1 1 2
+  simp [logicalAssocLookup, List.find?] at lookup
 
 end Flapjack.Test.ClosCallEnvironmentParity

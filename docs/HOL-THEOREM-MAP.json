@@ -116043,5 +116043,29 @@
   "lean_name": "envRel_congr",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared typed source statement: the curried membership premises and pointwise iff agree, with independent element types and the same environment-relation biconditional. Typed source captured in clos_call_env_rel_probe.out; Lean checks the proof, not cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "subg_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateExtension.lean",
+  "lean_name": "stateExtends",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 126-130 and inferred types in clos_call_wfg_probe.out: three independent sparse-map value, association key and association payload types; exact Spt and lookup-based subspt relation; logicalAssocLookup_nil/cons establish first-match logical-equality ALOOKUP with no extra equality instance; target-label distinctness preserved. Lean checks the proofs; source comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "subg_refl",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateExtension.lean",
+  "lean_name": "stateExtends_refl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 132-136 and inferred statement in clos_call_wfg_probe.out: the single distinct-target-label premise and full state extension conclusion agree, with the three independent types. Lean checks the proofs; source comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "subg_trans",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateExtension.lean",
+  "lean_name": "stateExtends_trans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 138-142 and inferred statement in clos_call_wfg_probe.out: the two state-extension premises and conclusion agree, retaining all three independent carrier types. Lean checks the proofs; source comparison does not establish cross-language equivalence."
 }
 ]
