@@ -497,6 +497,8 @@ mutual recursion, Unicode strings, hexadecimal literals, character escapes
 and rejected syntax; these
 exercise compilation as well as parsing and inference. It is a
 finite regression sample, not evidence for all programs using those forms.
+The basis-enabled cases also retain observable calls through string concatenation,
+list mapping and reversal, integer formatting, and vector construction and indexing.
 The corpus also compares full type-error diagnostics for duplicate pattern
 variables, recursive unification, constructor arguments, tuple patterns,
 qualified function application, and an error following UTF-8 source text.

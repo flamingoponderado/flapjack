@@ -121,6 +121,11 @@ BASIS_CORPUS = [
     'fun even n = if n = 0 then 1 else odd (n-1) and odd n = if n = 0 then 0 else even (n-1); val _ = print_int (even 8);',
     'val _ = print (String.substring "abcdef" 2 3);',
     'fun f xs = List.foldl (fn x => fn a => a + x*x) 0 xs; val _ = print_int (f [1,2,3,4]);',
+    'val _ = print (String.concat ["a", "b"]);',
+    'val _ = print_int (List.hd (List.map (fn x => x + 1) [1,2,3]));',
+    'val _ = print (Int.toString ~123);',
+    'val _ = print_int (Vector.sub (Vector.fromList [1,2,3]) 1);',
+    'val _ = print_int (List.hd (List.rev [1,2,3]));',
 ]
 
 
