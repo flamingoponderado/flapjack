@@ -1,0 +1,18 @@
+load "closPropsTheory"; load "clos_callProofTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "fv_type="; print_type (type_of ``closProps$fv``); print "\n");
+val _ = (print "fv1_type="; print_type (type_of ``closProps$fv1``); print "\n");
+val _ = (print "fv_def="; Lib.with_flag (Globals.show_types,true) print_term (concl closPropsTheory.fv_def); print "\n");
+val _ = (print "fv1_def="; Lib.with_flag (Globals.show_types,true) print_term (concl closPropsTheory.fv1_def); print "\n");
+val _ = (print "env_rel_type="; print_type (type_of ``clos_callProof$env_rel``); print "\n");
+val _ = (print "env_rel_def="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.env_rel_def); print "\n");
+val _ = (print "env_rel_mono="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.env_rel_mono); print "\n");
+val _ = (print "env_rel_cong="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.env_rel_cong); print "\n");
+val fv_cases = EVAL ``(closProps$fv 1 [closLang$Let None [closLang$Var None 2] (closLang$Var None 2)], closProps$fv 0 [closLang$Fn «f» NONE NONE 2 (closLang$Var None 2)], closProps$fv 0 [closLang$Letrec [«f»;«g»] (SOME 10) NONE [(1,closLang$Var None 3);(0,closLang$Var None 1)] (closLang$Var None 0)], closProps$fv 0 [closLang$Handle None (closLang$Var None 2) (closLang$Var None 1)])``;
+val _ = (print "fv_cases="; print_term (rhs (concl fv_cases)); print "\n");
+val fv_negative = EVAL ``(closProps$fv 1 [closLang$Let None [closLang$Var None 2] (closLang$Var None 1)], closProps$fv 0 [closLang$Fn «f» NONE NONE 2 (closLang$Var None 1)], closProps$fv 0 [closLang$Letrec [«f»;«g»] (SOME 10) NONE [(1,closLang$Var None 1);(0,closLang$Var None 1)] (closLang$Var None 0)], closProps$fv 0 [closLang$Handle None (closLang$Var None 2) (closLang$Var None 0)])``;
+val _ = (print "fv_negative="; print_term (rhs (concl fv_negative)); print "\n");
+val env_cases = CONV_RULE (RAND_CONV (SIMP_CONV (srw_ss()) [])) (EVAL ``(clos_callProof$env_rel ($= :num -> num -> bool) [1;2] [1] 0 [(0,closLang$Var None 0)], clos_callProof$env_rel ($= :num -> num -> bool) [1;2] [1] 0 [(0,closLang$Var None 1)], clos_callProof$env_rel ($= :num -> num -> bool) [1;2] [1;3] 0 [], clos_callProof$env_rel ($= :num -> num -> bool) [1;2] [1;2] 0 [])``);
+val _ = (print "env_cases="; print_term (rhs (concl env_cases)); print "\n");

@@ -321,6 +321,7 @@ import Flapjack.Test.BvlConstParity
 import Flapjack.Test.BviTailrecParity
 import Flapjack.Test.BviTmcParity
 import Flapjack.Test.ClosCallParity
+import Flapjack.Test.ClosCallEnvironmentParity
 import Flapjack.Test.ClosKnownHelpersParity
 import Flapjack.Test.ClosKnownParity
 import Flapjack.Test.ClosOpParity

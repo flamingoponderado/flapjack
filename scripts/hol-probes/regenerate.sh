@@ -40,6 +40,9 @@ probe_needs_refresh() {
   local probe="$2"
   local source="$3"
   [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == clos_call_env_rel_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ) ]] ||
     [[ "$(basename "$probe")" == data_sem_stack_probeScript.sml &&
        "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == source_to_flat_opassign_probeScript.sml &&
@@ -567,6 +570,9 @@ run_probe clos_call_code_list_probeScript.sml clos_call_code_list_probe.out \
 
 run_probe clos_call_wfg_probeScript.sml clos_call_wfg_probe.out \
   wfg_type wfg_prime_type wfg_def wfg_prime_def wfg_prime_code_type calls_wfg_type "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_call_env_rel_probeScript.sml clos_call_env_rel_probe.out \
+  fv_type fv1_type fv_def fv1_def env_rel_type env_rel_def env_rel_mono env_rel_cong fv_cases fv_negative env_cases "$cake_dir/compiler/backend/semantics/closPropsScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe tmc_program_word_probeScript.sml tmc_program_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"

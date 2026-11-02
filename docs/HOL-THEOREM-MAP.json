@@ -116003,5 +116003,45 @@
   "lean_name": "weaklyWellFormed_codeListSource",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared source lines 728-736 and inferred statement in clos_call_wfg_probe.out, including three independent types, binder order, prior weak invariant and generated-location domain subset. The executed codeList is kernel-proved equal to codeListSource. Lean checks the proof; source comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "fv_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/FreeVars.lean",
+  "lean_name": "freeVars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all thirteen typed source clauses captured in clos_call_env_rel_probe.out with the structural list/expression/function helpers: nil, multi-element disjunction, singleton cases, binder shifts, and recursive-group existential (proved equivalent by freeVarFuns_exists). Original exp constructors and fixed-width carriers are used. Typed source captured in clos_call_env_rel_probe.out; Lean checks the proof, not cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "fv1_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/FreeVars.lean",
+  "lean_name": "freeVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source definition: singleton wrapper over fv with the same index and expression. Typed source captured in clos_call_env_rel_probe.out; Lean checks the proof, not cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "env_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Environment.lean",
+  "lean_name": "envRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source definition, including independent element types and arbitrary relation. For equal lengths List.Forall\u2082 matches LIST_REL; otherwise both bounds guard the indexed relation. Lean dependent index witnesses express the original bounds conjunction, and the function-body existential retains the same variable shift. Typed source captured in clos_call_env_rel_probe.out; Lean checks the proof, not cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "env_rel_mono",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Environment.lean",
+  "lean_name": "envRel_mono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source statement: the curried membership and relation implication is equivalent to the HOL conjunction premise, with independent element types and the same environments and closure bodies. Typed source captured in clos_call_env_rel_probe.out; Lean checks the proof, not cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "env_rel_cong",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Environment.lean",
+  "lean_name": "envRel_congr",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed source statement: the curried membership premises and pointwise iff agree, with independent element types and the same environment-relation biconditional. Typed source captured in clos_call_env_rel_probe.out; Lean checks the proof, not cross-language equivalence."
 }
 ]
