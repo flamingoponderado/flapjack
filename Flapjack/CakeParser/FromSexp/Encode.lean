@@ -130,4 +130,38 @@ def patsexpList : List Pat → List Sexp
 termination_by ps => sizeOf ps
 end
 
+def opSym (s : String) : Sexp := .sym (ascii s)
+
+def opShiftName : Shift → String
+  | .lsl => "Lsl" | .lsr => "Lsr" | .asr => "Asr" | .ror => "Ror"
+private def opMode : ThunkMode → Sexp
+  | .evaluated => opSym "Evaluated" | .notEvaluated => opSym "NotEvaluated"
+
+/-- Encode an AST primitive operator. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "opsexp_def"]
+def opsexp : Op → Sexp
+  | .arith a p => .cons (opSym "Arith") (.cons (arithsexp a) (primTypesexp p))
+  | .fromTo a b => .cons (opSym "FromTo") (.cons (primTypesexp a) (primTypesexp b))
+  | .shift width sh n => .cons (opSym ("Shift" ++ (if width == .w8 then "8" else "64") ++ opShiftName sh)) (.num n)
+  | .test t p => .cons (opSym "Test") (.cons (testsexp t) (primTypesexp p))
+  | .thunkOp (.allocThunk m) => .cons (opSym "AllocThunk") (opMode m)
+  | .thunkOp (.updateThunk m) => .cons (opSym "UpdateThunk") (opMode m)
+  | .ffi s => .cons (opSym "FFI") (sexstr s.explode)
+  | x => opSym <| match x with
+    | .equality => "Equality" | .opapp => "Opapp" | .opassign => "Opassign"
+    | .opref => "Opref" | .opderef => "Opderef" | .aw8alloc => "Aw8alloc"
+    | .aw8sub => "Aw8sub" | .aw8length => "Aw8length" | .aw8update => "Aw8update"
+    | .copyStrStr => "CopyStrStr" | .copyStrAw8 => "CopyStrAw8" | .copyAw8Str => "CopyAw8Str"
+    | .copyAw8Aw8 => "CopyAw8Aw8" | .xorAw8StrUnsafe => "XorAw8Strunsafe"
+    | .implode => "Implode" | .explode => "Explode" | .strsub => "Strsub"
+    | .strlen => "Strlen" | .strcat => "Strcat" | .vfromList => "VfromList"
+    | .vsub => "Vsub" | .vlength => "Vlength" | .aalloc => "Aalloc"
+    | .aallocEmpty => "AallocEmpty" | .aallocFixed => "AallocFixed" | .asub => "Asub"
+    | .alength => "Alength" | .aupdate => "Aupdate" | .vsubUnsafe => "Vsubunsafe"
+    | .asubUnsafe => "Asubunsafe" | .aupdateUnsafe => "Aupdateunsafe"
+    | .aw8subUnsafe => "Aw8subunsafe" | .aw8updateUnsafe => "Aw8updateunsafe"
+    | .thunkOp .forceThunk => "ForceThunk" | .listAppend => "ListAppend"
+    | .configGC => "ConfigGC" | .eval => "Eval" | .envId => "Envid"
+    | _ => "" -- Covered by the outer cases.
+
 end Flapjack.CakeParser.FromSexp

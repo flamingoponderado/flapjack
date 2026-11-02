@@ -319,4 +319,34 @@ theorem testsexp_injective (a b : Test) : testsexp a = testsexp b ↔ a = b := b
   · rintro rfl
     rfl
 
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpop_opsexp"]
+theorem decodeOp_opsexp (op : Op) : decodeOp (opsexp op) = some op := by
+  cases op <;> try decide
+  case arith a p =>
+    simp (config := { decide := true }) [opsexp, opSym, decodeOp, decodeArith_arithsexp, decodePrimType_primTypesexp]
+  case fromTo a b =>
+    simp (config := { decide := true }) [opsexp, opSym, decodeOp, decodePrimType_primTypesexp]
+  case test t p =>
+    simp (config := { decide := true }) [opsexp, opSym, decodeOp, decodeTest_testsexp, decodePrimType_primTypesexp]
+  case shift width shift n =>
+    cases width <;> cases shift <;> simp (config := { decide := true }) [opsexp, opSym, opShiftName, decodeOp]
+    all_goals rfl
+  case ffi s =>
+    cases s with
+    | implode bytes => simp (config := { decide := true }) [opsexp, opSym, decodeOp, sexstr, destString, decode_encode_control]
+  case thunkOp thunk =>
+    cases thunk with
+    | forceThunk => decide
+    | allocThunk mode => cases mode <;> decide
+    | updateThunk mode => cases mode <;> decide
+
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "opsexp_11"]
+theorem opsexp_injective (a b : Op) : opsexp a = opsexp b ↔ a = b := by
+  constructor
+  · intro h
+    have decoded := congrArg decodeOp h
+    simpa [decodeOp_opsexp] using decoded
+  · rintro rfl
+    rfl
+
 end Flapjack.CakeParser.FromSexp

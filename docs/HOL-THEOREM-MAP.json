@@ -1,6 +1,30 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "opsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "opsexp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every captured operator equation, including shifts, FFI byte names, thunk modes, and paired arithmetic, conversion, and test operands. The executable uses this definition."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeOp_opsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexpop_opsexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured op carrier and decode-encode equality; the proof covers all constructors and their payloads."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "opsexp_injective",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "opsexp_11",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified operator equality equivalence."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
     "lean_name": "arithsexp",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "arithsexp_def",

@@ -28,38 +28,7 @@ abbrev literal := FromSexp.litsexp
 
 abbrev pattern := FromSexp.patsexp
 
-private abbrev arith := FromSexp.arithsexp
-private abbrev primType := FromSexp.primTypesexp
-private abbrev test := FromSexp.testsexp
-private def shiftName : Shift → String
-  | .lsl => "Lsl" | .lsr => "Lsr" | .asr => "Asr" | .ror => "Ror"
-private def mode : ThunkMode → Sexp
-  | .evaluated => sym "Evaluated" | .notEvaluated => sym "NotEvaluated"
-
-def op : Op → Sexp
-  | .arith a p => .cons (sym "Arith") (.cons (arith a) (primType p))
-  | .fromTo a b => .cons (sym "FromTo") (.cons (primType a) (primType b))
-  | .shift width sh n => .cons (sym ("Shift" ++ (if width == .w8 then "8" else "64") ++ shiftName sh)) (.num n)
-  | .test t p => .cons (sym "Test") (.cons (test t) (primType p))
-  | .thunkOp (.allocThunk m) => .cons (sym "AllocThunk") (mode m)
-  | .thunkOp (.updateThunk m) => .cons (sym "UpdateThunk") (mode m)
-  | .ffi s => .cons (sym "FFI") (str s)
-  | x => sym <| match x with
-    | .equality => "Equality" | .opapp => "Opapp" | .opassign => "Opassign"
-    | .opref => "Opref" | .opderef => "Opderef" | .aw8alloc => "Aw8alloc"
-    | .aw8sub => "Aw8sub" | .aw8length => "Aw8length" | .aw8update => "Aw8update"
-    | .copyStrStr => "CopyStrStr" | .copyStrAw8 => "CopyStrAw8" | .copyAw8Str => "CopyAw8Str"
-    | .copyAw8Aw8 => "CopyAw8Aw8" | .xorAw8StrUnsafe => "XorAw8Strunsafe"
-    | .implode => "Implode" | .explode => "Explode" | .strsub => "Strsub"
-    | .strlen => "Strlen" | .strcat => "Strcat" | .vfromList => "VfromList"
-    | .vsub => "Vsub" | .vlength => "Vlength" | .aalloc => "Aalloc"
-    | .aallocEmpty => "AallocEmpty" | .aallocFixed => "AallocFixed" | .asub => "Asub"
-    | .alength => "Alength" | .aupdate => "Aupdate" | .vsubUnsafe => "Vsubunsafe"
-    | .asubUnsafe => "Asubunsafe" | .aupdateUnsafe => "Aupdateunsafe"
-    | .aw8subUnsafe => "Aw8subunsafe" | .aw8updateUnsafe => "Aw8updateunsafe"
-    | .thunkOp .forceThunk => "ForceThunk" | .listAppend => "ListAppend"
-    | .configGC => "ConfigGC" | .eval => "Eval" | .envId => "Envid"
-    | _ => "" -- Covered by the outer cases.
+abbrev op := FromSexp.opsexp
 
 abbrev locPoint := FromSexp.locnsexp
 abbrev loc := FromSexp.locssexp
