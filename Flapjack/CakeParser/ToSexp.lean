@@ -1,5 +1,6 @@
 import Flapjack.CakeParser.FromSexp.Ast
 import Flapjack.CakeParser.SexpPrint
+import Flapjack.CakeParser.FromSexp.Encode
 
 /-! CakeML AST encoding for the S-expression output path. The recursive
 traversals are executable infrastructure pending source correspondence review;
@@ -16,16 +17,10 @@ def option (s : Option Sexp) : Sexp := match s with
   | none => sym "NONE"
   | some x => node "SOME" [x]
 
-def hexDigit (n : Nat) : HolChar :=
-  BitVec.ofNat 8 (if n < 10 then 48 + n else 65 + n - 10)
+abbrev hexDigit := FromSexp.hexDigit
+abbrev encodeControl := FromSexp.encodeControl
 
-def encodeControl (bytes : List HolChar) : List HolChar := bytes.flatMap fun c =>
-  let n := c.toNat
-  if n == 92 then [c, c]
-  else if 32 ≤ n && n < 127 then [c]
-  else [BitVec.ofNat 8 92, hexDigit (n / 16), hexDigit (n % 16)]
-
-def str (s : MlString) : Sexp := .str (encodeControl s.explode)
+def str (s : MlString) : Sexp := FromSexp.sexstr s.explode
 
 def ident : Ident MlString MlString → Sexp
   | .short n => node "Short" [str n]

@@ -1,5 +1,53 @@
 [
   {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "encodeControl",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "encode_control_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete source equations and captured inferred types: a backslash doubles, printable ASCII is copied, and each other byte is written as backslash plus two uppercase hex digits. HolChar is the established eight-bit HOL character carrier; the executed AST encoder uses this definition."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "sexstr",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "SEXSTR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete source definition and captured inferred type: SEXSTR constructs SX_STR from the control encoding of a HOL byte-character list. The executable's mlstring wrapper calls this definition after explode."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Control.lean",
+    "lean_name": "sexstr_injective",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "SEXSTR_11",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the full source statement and captured inferred type: two SEXSTR values are equal exactly when their input byte-character lists are equal."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Control.lean",
+    "lean_name": "sexstr_distinct",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "SEXSTR_distinct",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four source conjuncts and captured inferred types: SEXSTR differs from symbol, number and cons, and its equality to a string constructor is exactly equality of the encoded bytes."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Control.lean",
+    "lean_name": "encode_control_remove",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "encode_control_remove",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete source statement and captured inferred type: EVERY isPrint and absence of backslash imply that encoding leaves the byte-character list unchanged. Lean List.all is the Boolean EVERY translation."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Control.lean",
+    "lean_name": "sexstr_remove",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "SEXSTR_remove",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete source statement and captured inferred type: EVERY isPrint and absence of backslash imply that SEXSTR is SX_STR of the unchanged byte-character list. Lean List.all is the Boolean EVERY translation."
+  },
+  {
     "lean_path": "Flapjack/CakeParser/FromSexp/Operators.lean",
     "lean_name": "decodeArith",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",

@@ -5,7 +5,7 @@ namespace Flapjack.CakeParser.FromSexp
 open Flapjack.Basis.Pure.MlString
 
 private theorem upperHex_spec (c : HolChar) (n : Nat) (h : upperHex c = some n) :
-    n < 16 ∧ ToSexp.hexDigit n = c := by
+    n < 16 ∧ hexDigit n = c := by
   simp only [upperHex, Bool.and_eq_true, decide_eq_true_eq] at h
   split at h
   next digits =>
@@ -14,7 +14,7 @@ private theorem upperHex_spec (c : HolChar) (n : Nat) (h : upperHex c = some n) 
     constructor
     · omega
     · apply BitVec.eq_of_toNat_eq
-      simp only [ToSexp.hexDigit, BitVec.toNat_ofNat]
+      simp only [hexDigit, BitVec.toNat_ofNat]
       have below : c.toNat < 256 := c.isLt
       have d : c.toNat - 48 < 10 := by omega
       simp only [d, ↓reduceIte]
@@ -27,7 +27,7 @@ private theorem upperHex_spec (c : HolChar) (n : Nat) (h : upperHex c = some n) 
       constructor
       · omega
       · apply BitVec.eq_of_toNat_eq
-        simp only [ToSexp.hexDigit, BitVec.toNat_ofNat]
+        simp only [hexDigit, BitVec.toNat_ofNat]
         have below : c.toNat < 256 := c.isLt
         have d : ¬ c.toNat - 65 + 10 < 10 := by omega
         simp only [d, ↓reduceIte]
@@ -37,7 +37,7 @@ private theorem upperHex_spec (c : HolChar) (n : Nat) (h : upperHex c = some n) 
 /-- Successful decoding accepts only the canonical control encoding. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "encode_decode_control"]
 theorem encode_decode_control (xs r : List HolChar) (h : decodeControl xs = some r) :
-    xs = ToSexp.encodeControl r := by
+    xs = encodeControl r := by
   cases xs with
   | nil =>
     simp [decodeControl] at h
@@ -60,7 +60,7 @@ theorem encode_decode_control (xs r : List HolChar) (h : decodeControl xs = some
             have recursiveEq := encode_decode_control ds rest hd
             have cd : c = d := BitVec.eq_of_toNat_eq (slash.trans double.symm)
             subst d
-            simpa [ToSexp.encodeControl, slash] using congrArg (fun t => c :: c :: t) recursiveEq
+            simpa [encodeControl, slash] using congrArg (fun t => c :: c :: t) recursiveEq
         · simp only [double, beq_iff_eq, ↓reduceIte] at h
           cases ds with
           | nil => simp at h
@@ -100,11 +100,11 @@ theorem encode_decode_control (xs r : List HolChar) (h : decodeControl xs = some
                     have notPrint : ¬ (32 ≤ 16 * a + b ∧ 16 * a + b < 127) := by
                       simpa [isPrint, byteNat] using printable
                     have notSlashNat : 16 * a + b ≠ 92 := by simpa [byteNat] using notSlash
-                    have encodedHead : ToSexp.encodeControl [BitVec.ofNat 8 (16 * a + b)] = [c, d, e] := by
-                      simp [ToSexp.encodeControl, byteNat, notSlashNat, notPrint, hexHigh, hexLow, dEq, eEq, first]
-                    have append : ToSexp.encodeControl (BitVec.ofNat 8 (16 * a + b) :: rest) =
-                        ToSexp.encodeControl [BitVec.ofNat 8 (16 * a + b)] ++ ToSexp.encodeControl rest := by
-                      simp [ToSexp.encodeControl]
+                    have encodedHead : encodeControl [BitVec.ofNat 8 (16 * a + b)] = [c, d, e] := by
+                      simp [encodeControl, byteNat, notSlashNat, notPrint, hexHigh, hexLow, dEq, eEq, first]
+                    have append : encodeControl (BitVec.ofNat 8 (16 * a + b) :: rest) =
+                        encodeControl [BitVec.ofNat 8 (16 * a + b)] ++ encodeControl rest := by
+                      simp [encodeControl]
                     rw [append, encodedHead, ← recursiveEq]
                     rfl
     · simp only [slash, beq_iff_eq, ↓reduceIte] at h
@@ -118,7 +118,7 @@ theorem encode_decode_control (xs r : List HolChar) (h : decodeControl xs = some
           have recursiveEq := encode_decode_control cs rest hd
           have range : 32 ≤ c.toNat ∧ c.toNat < 127 := by
             simpa [isPrint] using printable
-          simpa [ToSexp.encodeControl, slash, range.1, range.2] using congrArg (List.cons c) recursiveEq
+          simpa [encodeControl, slash, range.1, range.2] using congrArg (List.cons c) recursiveEq
       · simp [printable] at h
 termination_by xs.length
 
