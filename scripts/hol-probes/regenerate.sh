@@ -584,7 +584,7 @@ run_probe clos_call_env_rel_probeScript.sml clos_call_env_rel_probe.out \
   fv_type fv1_type fv_def fv1_def env_rel_type env_rel_def env_rel_mono env_rel_cong fv_cases fv_negative env_cases "$cake_dir/compiler/backend/semantics/closPropsScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_call_free_correct_probeScript.sml clos_call_free_correct_probe.out \
-  free_thm closed_fn_fv closed_cases "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
+  free_thm closed_fn_fv closed_cases group_cases "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_call_stub_probeScript.sml clos_call_stub_probe.out \
   variables_type variables_def calls_list_type calls_list_def calls_list_mapi cases "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosCall.Stubs
+import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
 
 /-! Replay original `clos_call_frontend_probe.out` cases. -/
 namespace Flapjack.Test.ClosCallParity
@@ -16,6 +17,23 @@ open Flapjack.Basis.Pure.MlString
   | [(2, .call .none 0 11 [.var .none 0, .var .none 1]),
      (0, .call .none 0 13 []), (1, .call .none 0 15 [.var .none 0])] => true
   | _ => false
+
+-- `clos_call_free_correct_probe.out`: matching function and body counts
+-- agree with HOL's EVERY2 test, including rejection of an open body.
+#guard groupClosedFuel 100 [(1, .var .none 0), (2, .var .none 1)]
+    [.var .none 0, .var .none 1] == some true
+#guard groupClosedFuel 100 [(1, .var .none 0), (2, .var .none 1)]
+    [.var .none 0, .var .none 2] == some false
+
+-- The fold zips its inputs; the pass proof establishes equal lengths before
+-- comparing it with EVERY2, which rejects mismatched lists.
+#guard groupClosedFuel 100 [(1, .var .none 0), (2, .var .none 1)]
+    [.var .none 0] == some true
+example : ¬ List.Forall₂
+    (fun (fn : Nat × ClosLang.Exp) (e : ClosLang.Exp) =>
+      ∀ n, ClosProps.freeVarExp n e → n < fn.1)
+    [(1, .var .none 0), (2, .var .none 1)] [.var .none 0] := by
+  simp
 
 -- `clos_call_free_correct_probe.out`: bound arguments and let-bound values
 -- do not count as captured variables, while references beyond them do.

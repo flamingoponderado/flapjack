@@ -1,3 +1,4 @@
 free_thm=!(xs :closLang$exp list). (let ((ys :closLang$exp list),(l :db_var_set)) = free xs in !(n :num). (fv n ys <=> has_var n l) /\ (fv n xs <=> has_var n l))
 closed_fn_fv=(closed (Fn (t :mlstring) (loco :num option) (vs :num list option) (args :num) (e :closLang$exp)) :bool) <=> !(v :num). fv v [e] ==> v < args
 closed_cases=(T,F,T,F)
+group_cases=(T,F,F)
