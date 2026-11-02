@@ -68,19 +68,6 @@ theorem arm8Run_addSubShiftedRegister (op : Bool) (rm : BitVec 5) (amount : BitV
 
 /-! ## The `binop` register `add`/`sub` constructors -/
 
-/-- The result half of `AddWithCarry` for a non-inverted operand. -/
-theorem arm8AddWithCarry_add (x y : BitVec 64) :
-    (AddWithCarry (TN := 64) (x, (y, false))).1 = x + y := by
-  simp only [AddWithCarry, Bool.false_eq_true, if_false, Nat.add_zero]
-  rw [BitVec.add_def]
-
-/-- The result half of `AddWithCarry` for an inverted operand with carry in. -/
-theorem arm8AddWithCarry_sub (x y : BitVec 64) :
-    (AddWithCarry (TN := 64) (x, (~~~y, true))).1 = x - y := by
-  simp only [AddWithCarry, if_true]
-  rw [BitVec.ofNat_add, ← BitVec.add_def, BitVec.add_assoc, BitVec.sub_eq_add_neg,
-    ← BitVec.neg_eq_not_add]
-
 /-- The `binop` register `add`/`sub` constructor of `encoder_correct arm8TargetL3`,
 lowered to `AddSubShiftedRegister@64` with an `lsl` shift by zero. -/
 theorem arm8_encoder_correct_binop_addsub_reg (op : Bool) (bop : HolBinop)

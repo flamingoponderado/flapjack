@@ -233,6 +233,19 @@ theorem regOk_of_asmL3 {r : Nat} (h : asmRegOkExact r arm8ConfigL3 = true) :
   · rintro rfl
     simp at h2
 
+/-- The result half of `AddWithCarry` for a non-inverted operand. -/
+theorem arm8AddWithCarry_add (x y : BitVec 64) :
+    (AddWithCarry (TN := 64) (x, (y, false))).1 = x + y := by
+  simp only [AddWithCarry, Bool.false_eq_true, if_false, Nat.add_zero]
+  rw [BitVec.add_def]
+
+/-- The result half of `AddWithCarry` for an inverted operand with carry in. -/
+theorem arm8AddWithCarry_sub (x y : BitVec 64) :
+    (AddWithCarry (TN := 64) (x, (~~~y, true))).1 = x - y := by
+  simp only [AddWithCarry, if_true]
+  rw [BitVec.ofNat_add, ← BitVec.add_def, BitVec.add_assoc, BitVec.sub_eq_add_neg,
+    ← BitVec.neg_eq_not_add]
+
 /-- `X` of a valid register number reads the register file directly. -/
 theorem arm8X_of_valid (ms : arm8_state) {n : Nat} (hn : n ≠ 31) (hlt : n < 32) :
     X (TN := 64) (BitVec.ofNat 5 n) ms = ms.REG (BitVec.ofNat 5 n) := by
