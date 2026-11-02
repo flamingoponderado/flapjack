@@ -100533,6 +100533,58 @@
     "reviewer": "Source comparison: word_is_clos_def and its typed capture retain both closure tag alternatives; tag_mask is expanded as its original word slice and the source closure constants are 30 and 31."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueEquality.lean",
+    "lean_name": "vbEqSize",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "vb_eq_size_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: the value clauses of vb_eq_size_def and its typed capture preserve both closure checks, block tag and length tests, every reference and immutable byte-array case, numeric and word64 equality, error cases, and all work counts. The reference payload type is independent of the data values, as in HOL."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueEquality.lean",
+    "lean_name": "vbEqSizeList",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "vb_eq_size_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: the list clauses of vb_eq_size_def and its typed capture preserve the empty and unequal-length results, error propagation, false-result short circuit, and recursive work-count arithmetic. The reference payload type is independent of the data values, as in HOL."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueEquality.lean",
+    "lean_name": "doEq_iff_vbEqSize",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "do_eq_IFF_vb_eq_size",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: do_eq_IFF_vb_eq_size and its typed capture retain both universally quantified value and list equivalences, the existential work count, and the shared polymorphic reference payload type."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueEquality.lean",
+    "lean_name": "doEq_imp_vbEqSize",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "do_eq_IMP_vb_eq_size",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: do_eq_IMP_vb_eq_size and its typed capture retain the successful source equality hypothesis, existential count conclusion, and independent polymorphic reference payload."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueEquality.lean",
+    "lean_name": "vbEqSize_imp_doEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "vb_eq_size_IMP_do_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison: vb_eq_size_IMP_do_eq and its typed capture retain the successful sized comparison hypothesis, same boolean source equality conclusion, and independent polymorphic reference payload."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ValueEquality.lean",
+    "lean_name": "memoryRel_ptr_vbEq",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_ptr_vb_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison: memory_rel_ptr_vb_eq and its typed capture retain the shared word location, memory relation, sized equality result and good_dimindex hypotheses, and boolean truth conclusion. store uses the canonical finite-support map and all target words share one positive width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/WordEquality.lean",
     "lean_name": "memoryRel_isClos",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",

@@ -54,6 +54,29 @@ val fix_clock_imp_replay = prove(
   >> fs [data_to_word_memoryProofTheory.fix_clock_def] >> rw []);
 val _ = show "fix_clock_IMP_replay_typed" fix_clock_imp_replay;
 val _ = show "word_is_clos_def_typed" data_to_word_memoryProofTheory.word_is_clos_def;
+val _ = show "vb_eq_size_def_typed" data_to_word_memoryProofTheory.vb_eq_size_def;
+val _ = show "do_eq_IFF_vb_eq_size_typed" data_to_word_memoryProofTheory.do_eq_IFF_vb_eq_size;
+val _ = show "do_eq_IMP_vb_eq_size_typed" data_to_word_memoryProofTheory.do_eq_IMP_vb_eq_size;
+val _ = show "vb_eq_size_IMP_do_eq_typed" data_to_word_memoryProofTheory.vb_eq_size_IMP_do_eq;
+val _ = show "memory_rel_ptr_vb_eq_typed" data_to_word_memoryProofTheory.memory_rel_ptr_vb_eq;
+val _ = show "vb_eq_size_numbers" (EVAL ``data_to_word_memoryProof$vb_eq_size
+  (sptree$LN : num bvlSem$ref sptree$num_map) (dataSem$Number 7) (dataSem$Number 7)``);
+val _ = show "vb_eq_size_blocks" (EVAL ``data_to_word_memoryProof$vb_eq_size
+  (sptree$LN : num bvlSem$ref sptree$num_map)
+  (dataSem$Block 0 2 [dataSem$Number 7; dataSem$Number 8])
+  (dataSem$Block 1 2 [dataSem$Number 7; dataSem$Number 9])``);
+val _ = show "vb_eq_size_closures" (EVAL ``data_to_word_memoryProof$vb_eq_size
+  (sptree$LN : num bvlSem$ref sptree$num_map)
+  (dataSem$Block 0 30 [dataSem$Number 7]) (dataSem$Block 0 31 [dataSem$Number 9])``);
+val _ = show "vb_eq_size_closure_mismatch" (EVAL ``data_to_word_memoryProof$vb_eq_size
+  (sptree$LN : num bvlSem$ref sptree$num_map)
+  (dataSem$Block 0 30 [dataSem$Number 7]) (dataSem$Block 0 2 [dataSem$Number 7])``);
+val _ = show "vb_eq_size_list_short_circuit" (EVAL ``data_to_word_memoryProof$vb_eq_size_list
+  (sptree$LN : num bvlSem$ref sptree$num_map)
+  [dataSem$Number 7; dataSem$CodePtr 1] [dataSem$Number 8; dataSem$CodePtr 1]``);
+val _ = show "vb_eq_size_list_error" (EVAL ``data_to_word_memoryProof$vb_eq_size_list
+  (sptree$LN : num bvlSem$ref sptree$num_map)
+  [dataSem$Number 7; dataSem$CodePtr 1] [dataSem$Number 7; dataSem$CodePtr 1]``);
 val _ = show "word_eq_def_rebound_typed" data_to_word_memoryProofTheory.word_eq_def;
 val _ = show "word_eq_LESS_EQ_typed" data_to_word_memoryProofTheory.word_eq_LESS_EQ;
 val _ = show "word_eq_add_clock_typed" data_to_word_memoryProofTheory.word_eq_add_clock;

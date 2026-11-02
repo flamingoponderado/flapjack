@@ -230,6 +230,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Address
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockTests
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeaderInjective
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueEquality
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockEquality
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
