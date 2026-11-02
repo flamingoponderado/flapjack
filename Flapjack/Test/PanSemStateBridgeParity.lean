@@ -1,6 +1,7 @@
 import Flapjack.Pancake.Semantics.PanSem.StateBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+import Flapjack.Pancake.Semantics.PanSem.EvalExecutedBridge
 import Flapjack.Pancake.Semantics.PanSemStateEval
 
 /-!
@@ -327,6 +328,27 @@ def bridgeExecExactState : PanSemStateFiniteExact 64 Unit :=
     ffi := bridgeHolFfi
     baseAddr := 0
     topAddr := 100 }
+
+/- The constructed executable state supplies the representation and range
+   premises itself; an out-of-domain load has the original HOL failure. -/
+section DecodedState
+local instance : DecidablePred bridgeExecExactState.memaddrs := fun _ => isFalse id
+local instance : DecidablePred bridgeExecExactState.shMemaddrs := fun _ => isFalse id
+
+example :
+    Option.map panValueToHOL
+      (evalPanSemStateExp (panSemExecStateOfHOL bridgeExecExactState bridgeProdFfi)
+        (expOfHOL (.const 7))) = some (.val (.word 7)) := by
+  rw [evalPanSemStateExp_decode_agree bridgeExecExactState bridgeProdFfi bridgeFfiStateRel]
+  rfl
+
+example :
+    Option.map panValueToHOL
+      (evalPanSemStateExp (panSemExecStateOfHOL bridgeExecExactState bridgeProdFfi)
+        (expOfHOL (.loadByte (.const 0)))) = none := by
+  rw [evalPanSemStateExp_decode_agree bridgeExecExactState bridgeProdFfi bridgeFfiStateRel]
+  rfl
+end DecodedState
 
 /-- The concrete fixture satisfies the executed-carrier state relation. -/
 theorem bridgeStateRelExec :

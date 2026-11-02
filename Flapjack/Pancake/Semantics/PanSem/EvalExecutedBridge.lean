@@ -8,8 +8,86 @@ public import Flapjack.PanSteppedSemantics
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang
-  (ExpByteRanged ExpHOL expToHOL expOfHOL expToHOL_expOfHOL)
-open Flapjack.Basis.Pure.MlString (ofString)
+  (ExpByteRanged ExpHOL expToHOL expOfHOL expToHOL_expOfHOL StructContextExact
+    StructContextByteRanged StructInfoByteRanged ListParamByteRanged ParamByteRanged
+    structContextOfHOL structInfoOfHOL paramOfHOL)
+open Flapjack.Basis.Pure.MlString (ofString toStringOfBytes)
+
+/-- Values decoded from HOL contain only byte-ranged names. -/
+theorem panValueOfHOL_byteRanged {width : Nat} [NeZero width] (v : ValueHOL width) :
+    PanValueByteRanged (panValueOfHOL v) := by
+  induction v using panValueOfHOL.induct with
+  | case1 w => simp [panValueOfHOL, PanValueByteRanged]
+  | case2 values ih =>
+      simp only [panValueOfHOL, PanValueByteRanged, List.mem_map]
+      intro v hv
+      obtain ⟨source, hsource, rfl⟩ := hv
+      exact ih source hsource
+  | case3 name fields ih =>
+      simp only [panValueOfHOL, PanValueByteRanged]
+      refine ⟨nameRanged_toStringOfBytes_bridge name, ?_⟩
+      intro field hf
+      obtain ⟨source, hsource, rfl⟩ := List.mem_map.mp hf
+      exact ⟨nameRanged_toStringOfBytes_bridge source.1, ih source hsource⟩
+
+/-- A HOL structure context decodes to byte-ranged production identifiers. -/
+theorem panStructContextOfHOL_byteRanged (c : StructContextExact) :
+    StructContextByteRanged (panStructContextOfHOL c).toHOL := by
+  rw [toHOL_panStructContextOfHOL]
+  intro entry hentry
+  obtain ⟨source, hsource, rfl⟩ := List.mem_map.mp hentry
+  refine ⟨nameRanged_toStringOfBytes_bridge source.1, ?_⟩
+  change ListParamByteRanged (source.2.fields.map paramOfHOL)
+  intro field hfield
+  obtain ⟨original, _, rfl⟩ := List.mem_map.mp hfield
+  exact ⟨nameRanged_toStringOfBytes_bridge original.1,
+    shapeOfHOL_byteRanged_bridge original.2⟩
+
+/-- Decode the finite HOL state to the executable state carrier, using an
+    explicitly supplied executable FFI state. The finite code support and
+    decidable domains come from the HOL state and its caller. -/
+noncomputable def panSemExecStateOfHOL {σ : Type}
+    (exact : PanSemStateFiniteExact 64 σ)
+    [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
+    (ffi : FfiState σ) : PanSemState (RiscV.Word 64) (FfiState σ) :=
+  let state := panSemStateOfExact exact.toExact exact.code.finiteSupport
+  { locals := state.locals, globals := state.globals, structs := state.structs,
+    code := state.code, exceptionShapes := state.exceptionShapes, memory := state.memory,
+    memaddrs := state.memaddrs, sharedMemaddrs := state.sharedMemaddrs,
+    clock := state.clock, be := state.be, ffi := ffi,
+    baseAddress := state.baseAddress, topAddress := state.topAddress }
+
+/-- The decoded state has a related executable representation when the FFI
+    states are related; no additional code-support premise is needed. -/
+theorem panSemExecStateOfHOL_rel {σ : Type}
+    (exact : PanSemStateFiniteExact 64 σ)
+    [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
+    (ffi : FfiState σ) (hffi : FfiStateRel ffi exact.ffi) :
+    PanSemStateRelExec (panSemExecStateOfHOL exact ffi) exact.toExact := by
+  have h := panSemStateRel_ofExact exact.toExact exact.code.finiteSupport
+  rcases h with ⟨hloc, hglob, hstruct, hcode, hshapes, hmem, hdom, hshared,
+    hclock, hbe, _, hbase, htop⟩
+  simpa [PanSemStateRelExec, panSemExecStateOfHOL, panSemStateOfExact] using
+    And.intro hloc (And.intro hglob (And.intro hstruct (And.intro hcode
+      (And.intro hshapes (And.intro hmem (And.intro hdom (And.intro hshared
+        (And.intro hclock (And.intro hbe (And.intro hffi (And.intro hbase htop)))))))))))
+
+/-- Decoding a HOL state establishes the runtime range invariant for its
+    stored values and structure context, including at non-ranged lookup keys. -/
+theorem panSemExecStateOfHOL_ranged {σ : Type}
+    (exact : PanSemStateFiniteExact 64 σ)
+    [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
+    (ffi : FfiState σ) : PanSemStateRelExecRanged (panSemExecStateOfHOL exact ffi) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro name value hvalue
+    simp only [panSemExecStateOfHOL, panSemStateOfExact, Option.map_eq_some_iff] at hvalue
+    obtain ⟨v, _, rfl⟩ := hvalue
+    exact panValueOfHOL_byteRanged v
+  · intro name value hvalue
+    simp only [panSemExecStateOfHOL, panSemStateOfExact, Option.map_eq_some_iff] at hvalue
+    obtain ⟨v, _, rfl⟩ := hvalue
+    exact panValueOfHOL_byteRanged v
+  · exact panStructContextOfHOL_byteRanged exact.structs
 
 /-- The clocked production evaluator uses `evalPanValueExpCounted` for
     expression results. After discarding its Flapjack step count and encoding
@@ -46,6 +124,36 @@ theorem evalPanValueExpCounted_agree_ofHOL {σ : Type}
   simpa only [expToHOL_expOfHOL] using
     evalPanValueExpCounted_agree state exact hrel hranged (expOfHOL e)
       (expOfHOL_byteRanged_bridge e)
+
+/-- Every finite HOL state and HOL expression can be evaluated by the
+    state-owned production evaluator after decoding. Finite code support and
+    all expression/value/context byte-range obligations are discharged by the
+    codecs; the supplied executable FFI state must still be related to HOL's. -/
+theorem evalPanSemStateExp_decode_agree {σ : Type}
+    (exact : PanSemStateFiniteExact 64 σ)
+    [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
+    (ffi : FfiState σ) (hffi : FfiStateRel ffi exact.ffi) (e : ExpHOL 64) :
+    Option.map panValueToHOL (evalPanSemStateExp (panSemExecStateOfHOL exact ffi) (expOfHOL e)) =
+      exact.evalHOLFinite e := by
+  simpa only [expToHOL_expOfHOL] using
+    evalPanSemStateExp_agree (panSemExecStateOfHOL exact ffi) exact
+      (panSemExecStateOfHOL_rel exact ffi hffi) (panSemExecStateOfHOL_ranged exact ffi)
+      (expOfHOL e) (expOfHOL_byteRanged_bridge e)
+
+/-- The counted evaluator used by the clocked source runner has the same
+    HOL-origin correspondence after discarding the instrumentation count. -/
+theorem evalPanValueExpCounted_decode_agree {σ : Type}
+    (exact : PanSemStateFiniteExact 64 σ)
+    [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
+    (ffi : FfiState σ) (hffi : FfiStateRel ffi exact.ffi) (e : ExpHOL 64) :
+    let state := panSemExecStateOfHOL exact ffi
+    Option.map (fun result => panValueToHOL result.1)
+        (evalPanValueExpCounted state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord (expOfHOL e)
+          (memoryAccess := some (panSemBitVec64MemoryAccess state))) =
+      exact.evalHOLFinite e := by
+  exact evalPanValueExpCounted_agree_ofHOL (panSemExecStateOfHOL exact ffi) exact
+    (panSemExecStateOfHOL_rel exact ffi hffi) (panSemExecStateOfHOL_ranged exact ffi) e
 
 /-- The same correspondence for the counted argument-list evaluator used by
     clocked calls and primitives, including list evaluation failure. -/
