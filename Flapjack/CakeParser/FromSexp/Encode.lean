@@ -6,6 +6,7 @@ namespace Flapjack.CakeParser.FromSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString
 open Flapjack.NamespaceHOL
 open Flapjack.AstHOL
+open Flapjack.Misc.Location
 
 private def ascii (s : String) : List HolChar := (ofString s).explode
 
@@ -57,6 +58,24 @@ def typesexpList : List AstT → List Sexp
   | t :: ts => typesexp t :: typesexpList ts
 termination_by ts => sizeOf ts
 end
+
+/-- Encode a source location point. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "locnsexp_def"]
+def locnsexp : Locn → Sexp
+  | .unknownPt => .sym (ascii "unk")
+  | .eofPt => .sym (ascii "eof")
+  | .posn row col => listsexp [.num row, .num col]
+
+/-- Encode a source location. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "locssexp_def"]
+def locssexp : Locs → Sexp
+  | .locs a b => listsexp [locnsexp a, locnsexp b]
+
+/-- Encode a short-circuit logical operator. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "logsexp_def"]
+def logsexp : Lop → Sexp
+  | .andalso => .sym (ascii "Andalso")
+  | .orelse => .sym (ascii "Orelse")
 
 /-- Encode CakeML literal syntax. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "litsexp_def"]

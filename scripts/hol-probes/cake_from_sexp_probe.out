@@ -47,6 +47,15 @@ litsexp_11_typed=∀(l1 :lit) (l2 :lit). litsexp l1 = litsexp l2 ⇔ l1 = l2
 patsexp_typed=patsexp Pany = listsexp [SX_SYM "Pany"] ∧ (∀(s :mlstring). patsexp (Pvar s) = SEXSTR (explode s)) ∧ (∀(l :lit). patsexp (Plit l) = listsexp [SX_SYM "Plit"; litsexp l]) ∧ (∀(ps :pat list) (cn :(mlstring, mlstring) id option). patsexp (Pcon cn ps) = listsexp [SX_SYM "Pcon"; optsexp (OPTION_MAP idsexp cn); listsexp (MAP (λ(a :pat). patsexp a) ps)]) ∧ (∀(p :pat) (i :mlstring). patsexp (Pas p i) = listsexp [SX_SYM "Pas"; patsexp p; SEXSTR (explode i)]) ∧ (∀(p :pat). patsexp (Pref p) = listsexp [SX_SYM "Pref"; patsexp p]) ∧ ∀(t :ast_t) (p :pat). patsexp (Ptannot p t) = listsexp [SX_SYM "Ptannot"; patsexp p; typesexp t]
 sexppat_patsexp_typed=sexppat (patsexp (p :pat)) = SOME p
 patsexp_11_typed=∀(p1 :pat) (p2 :pat). patsexp p1 = patsexp p2 ⇔ p1 = p2
+locnsexp_typed=(∀(n1 :num) (n2 :num). locnsexp (POSN n1 n2) = listsexp (MAP $& [n1; n2])) ∧ locnsexp UNKNOWNpt = SX_SYM "unk" ∧ locnsexp EOFpt = SX_SYM "eof"
+locssexp_typed=∀(p1 :locn) (p2 :locn). locssexp (Locs p1 p2) = listsexp (MAP locnsexp [p1; p2])
+logsexp_typed=logsexp Andalso = SX_SYM "Andalso" ∧ logsexp Orelse = SX_SYM "Orelse"
+sexplocpt_locnsexp_typed=sexplocpt (locnsexp (p :locn)) = SOME p
+sexplocn_locnsexp_typed=sexplocn (locssexp (l :locs)) = SOME l
+sexplog_logsexp_typed=sexplog (logsexp (l :lop)) = SOME l
+locnsexp_11_typed=locnsexp (p1 :locn) = locnsexp (p2 :locn) ⇔ p1 = p2
+locssexp_11_typed=∀(l1 :locs) (l2 :locs). locssexp l1 = locssexp l2 ⇔ l1 = l2
+logsexp_11_typed=∀(l1 :lop) (l2 :lop). logsexp l1 = logsexp l2 ⇔ l1 = l2
 lists=[SOME []; SOME [1; 2; 3]; NONE; NONE]
 option=[SOME NONE; SOME (SOME 5); NONE; NONE]
 identifier=[SOME (Short «x»); SOME (Long «M» (Short «x»)); NONE; SOME (Long «A» (Long «B» (Short «x»))); NONE; NONE]

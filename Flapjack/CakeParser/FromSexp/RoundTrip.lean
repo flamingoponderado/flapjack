@@ -1,9 +1,11 @@
 import Flapjack.CakeParser.FromSexp.Control
+import Flapjack.CakeParser.FromSexp.Operators
 
 /-! S-expression list, option and identifier encoder correspondence. -/
 namespace Flapjack.CakeParser.FromSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL
 open Flapjack.AstHOL
+open Flapjack.Misc.Location
 
 /-- The recursive encoder helper implements the source's `MAP typesexp`. -/
 theorem typesexpList_eq_map (ts : List AstT) : typesexpList ts = ts.map typesexp := by
@@ -226,6 +228,51 @@ theorem patsexp_injective (left right : Pat) : patsexp left = patsexp right ↔ 
     simpa [decodePattern_patsexp] using decoded
   · intro h
     subst right
+    rfl
+
+/-- Source location points round trip through S-expressions. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplocpt_locnsexp"]
+theorem decodeLocPoint_locnsexp (point : Locn) : decodeLocPoint (locnsexp point) = some point := by
+  cases point <;> simp (config := { decide := true }) [locnsexp, decodeLocPoint, listsexp, decodeList]
+
+/-- Source locations round trip through S-expressions. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplocn_locnsexp"]
+theorem decodeLoc_locssexp (loc : Locs) : decodeLoc (locssexp loc) = some loc := by
+  cases loc with
+  | locs a b =>
+    simp (config := { decide := true }) [locssexp, listsexp, decodeLoc, decodeList,
+      decodeLocPoint_locnsexp]
+
+/-- Logical operators round trip through S-expressions. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplog_logsexp"]
+theorem decodeLog_logsexp (op : Lop) : decodeLog (logsexp op) = some op := by
+  cases op <;> decide
+
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "locnsexp_11"]
+theorem locnsexp_injective (a b : Locn) : locnsexp a = locnsexp b ↔ a = b := by
+  constructor
+  · intro h
+    have decoded := congrArg decodeLocPoint h
+    simpa [decodeLocPoint_locnsexp] using decoded
+  · rintro rfl
+    rfl
+
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "locssexp_11"]
+theorem locssexp_injective (a b : Locs) : locssexp a = locssexp b ↔ a = b := by
+  constructor
+  · intro h
+    have decoded := congrArg decodeLoc h
+    simpa [decodeLoc_locssexp] using decoded
+  · rintro rfl
+    rfl
+
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "logsexp_11"]
+theorem logsexp_injective (a b : Lop) : logsexp a = logsexp b ↔ a = b := by
+  constructor
+  · intro h
+    have decoded := congrArg decodeLog h
+    simpa [decodeLog_logsexp] using decoded
+  · rintro rfl
     rfl
 
 end Flapjack.CakeParser.FromSexp

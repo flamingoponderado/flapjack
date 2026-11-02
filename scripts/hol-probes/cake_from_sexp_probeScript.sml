@@ -78,6 +78,15 @@ val _ = showDef "litsexp_11_typed" fromSexpTheory.litsexp_11;
 val _ = showDef "patsexp_typed" fromSexpTheory.patsexp_def;
 val _ = showDef "sexppat_patsexp_typed" fromSexpTheory.sexppat_patsexp;
 val _ = showDef "patsexp_11_typed" fromSexpTheory.patsexp_11;
+val _ = showDef "locnsexp_typed" fromSexpTheory.locnsexp_def;
+val _ = showDef "locssexp_typed" fromSexpTheory.locssexp_def;
+val _ = showDef "logsexp_typed" fromSexpTheory.logsexp_def;
+val _ = showDef "sexplocpt_locnsexp_typed" fromSexpTheory.sexplocpt_locnsexp;
+val _ = showDef "sexplocn_locnsexp_typed" fromSexpTheory.sexplocn_locnsexp;
+val _ = showDef "sexplog_logsexp_typed" fromSexpTheory.sexplog_logsexp;
+val _ = showDef "locnsexp_11_typed" fromSexpTheory.locnsexp_11;
+val _ = showDef "locssexp_11_typed" fromSexpTheory.locssexp_11;
+val _ = showDef "logsexp_11_typed" fromSexpTheory.logsexp_11;
 val _ = show "lists" ``MAP (fromSexp$sexplist fromSexp$odestSXNUM)
   [⟪⟫; ⟪1; 2; 3⟫; ⟪1 • 2⟫; ⟪SX_STR "x"⟫]``;
 val _ = show "option" ``MAP (fromSexp$sexpopt fromSexp$odestSXNUM)

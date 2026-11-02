@@ -71,14 +71,9 @@ def op : Op → Sexp
     | .configGC => "ConfigGC" | .eval => "Eval" | .envId => "Envid"
     | _ => "" -- Covered by the outer cases.
 
-def locPoint : Locn → Sexp
-  | .unknownPt => sym "unk" | .eofPt => sym "eof"
-  | .posn row col => list [.num row, .num col]
-def loc : Locs → Sexp
-  | .locs a b => list [locPoint a, locPoint b]
-
-def log : Lop → Sexp
-  | .andalso => sym "Andalso" | .orelse => sym "Orelse"
+abbrev locPoint := FromSexp.locnsexp
+abbrev loc := FromSexp.locssexp
+abbrev log := FromSexp.logsexp
 
 mutual
 def exp : Exp → Sexp
