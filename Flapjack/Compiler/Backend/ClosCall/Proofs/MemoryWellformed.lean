@@ -47,6 +47,64 @@ theorem applyMemory_scalar_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} 
       obtain ⟨_, _, rfl, rfl⟩ := run
       exact ⟨.byteVector _, stateWf⟩
 
+/-- Memory operations that write only byte arrays. -/
+inductive ByteWriteMemoryOp : ClosLang.MemOp → Prop where
+  | allocate : ByteWriteMemoryOp (.refByte false)
+  | update : ByteWriteMemoryOp .updateByte
+  | copy : ByteWriteMemoryOp (.copyByte false)
+  | xor : ByteWriteMemoryOp .xorByte
+
+/-- Successful byte-array writes and allocations preserve the source-state
+invariant and return a well-formed pointer or unit value. -/
+theorem applyMemory_byteWrite_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (op : ClosLang.MemOp) (args : List Value)
+    (state next : ClosSem.State C F) (result : Value)
+    (writeOp : ByteWriteMemoryOp op) (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (run : applyMemory op args state = some (result, next)) :
+    ValueWellFormedFuel fuel g allowed code result ∧ StateWellFormedFuel fuel g allowed code next := by
+  cases writeOp <;> unfold applyMemory at run
+  all_goals repeat' split at run
+  all_goals simp_all [Bind.bind, Option.bind_eq_some_iff]
+  case h_5.isFalse =>
+    obtain ⟨_, _, rfl, rfl⟩ := run
+    exact ⟨.refPtr _ _, stateWellFormedFuel_updateRef stateWf _ (.byteArray _) trivial⟩
+  case h_1.isFalse =>
+    obtain ⟨_, _, rfl, rfl⟩ := run
+    exact ⟨.block _ .nil, stateWellFormedFuel_updateRef stateWf _ (.byteArray _) trivial⟩
+  case h_16 =>
+    obtain ⟨entry, _, run⟩ := run
+    cases entry with
+    | valueArray values => simp at run
+    | thunk mode value => simp at run
+    | byteArray bytes =>
+      simp [Option.bind_eq_some_iff] at run
+      obtain ⟨_, _, rfl, rfl⟩ := run
+      exact ⟨.block _ .nil, stateWellFormedFuel_updateRef stateWf _ (.byteArray _) trivial⟩
+  case h_17 =>
+    obtain ⟨entry, _, run⟩ := run
+    cases entry with
+    | valueArray values => simp at run
+    | thunk mode value => simp at run
+    | byteArray source =>
+      simp only [Option.bind_eq_some_iff] at run
+      obtain ⟨entry, _, run⟩ := run
+      cases entry with
+      | valueArray values => simp at run
+      | thunk mode value => simp at run
+      | byteArray bytes =>
+        simp [Option.bind_eq_some_iff] at run
+        obtain ⟨_, _, rfl, rfl⟩ := run
+        exact ⟨.block _ .nil, stateWellFormedFuel_updateRef stateWf _ (.byteArray _) trivial⟩
+  case h_20 =>
+    obtain ⟨entry, _, run⟩ := run
+    cases entry with
+    | valueArray values => simp at run
+    | thunk mode value => simp at run
+    | byteArray bytes =>
+      simp [Option.bind_eq_some_iff] at run
+      obtain ⟨_, _, rfl, rfl⟩ := run
+      exact ⟨.block _ .nil, stateWellFormedFuel_updateRef stateWf _ (.byteArray _) trivial⟩
+
 /-- Byte-vector-to-list conversion builds a well-formed list of numbers. -/
 theorem applyMemory_toListByte_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
     {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (args : List Value)
@@ -317,6 +375,16 @@ theorem doApp_scalarMemory_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : 
   intro value next run
   exact applyMemory_scalar_wellFormedFuel op args state next value scalar stateWf run
 
+/-- Byte-array allocation and writes preserve the dispatcher invariant. -/
+theorem doApp_byteWrite_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (op : ClosLang.MemOp)
+    (args : List Value) (state : ClosSem.State C F)
+    (writeOp : ByteWriteMemoryOp op) (stateWf : StateWellFormedFuel fuel g allowed code state) :
+    PrimitiveResultWellFormedFuel fuel g allowed code (doApp (.memOp op) args state) := by
+  apply doApp_memory_result_of_apply op args state
+  intro value next run
+  exact applyMemory_byteWrite_wellFormedFuel op args state next value writeOp stateWf run
+
 /-- Byte-vector-to-list dispatch preserves the primitive result invariant. -/
 theorem doApp_toListByte_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
     {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (args : List Value) (state : ClosSem.State C F)
@@ -355,5 +423,42 @@ theorem doApp_update_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State}
   apply doApp_memory_result_of_apply .update args state
   intro value next run
   exact applyMemory_update_all_wellFormedFuel args state next value stateWf argsWf run
+
+/-- Every memory primitive preserves the fuel-aware value and state
+invariants, including rejected operations and malformed arguments. -/
+theorem doApp_memory_result_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (op : ClosLang.MemOp)
+    (args : List Value) (state : ClosSem.State C F)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (argsWf : ValuesWellFormedFuel fuel g allowed code args) :
+    PrimitiveResultWellFormedFuel fuel g allowed code (doApp (.memOp op) args state) := by
+  cases op with
+  | ref => exact doApp_ref_result_wellFormedFuel args state stateWf argsWf
+  | update => exact doApp_update_result_wellFormedFuel args state stateWf argsWf
+  | el => exact doApp_el_result_wellFormedFuel args state stateWf argsWf
+  | refArray => exact doApp_refArray_result_wellFormedFuel args state stateWf argsWf
+  | toListByte => exact doApp_toListByte_result_wellFormedFuel args state stateWf
+  | length => exact doApp_scalarMemory_result_wellFormedFuel .length args state .length stateWf
+  | lengthByte => exact doApp_scalarMemory_result_wellFormedFuel .lengthByte args state .lengthByte stateWf
+  | derefByte => exact doApp_scalarMemory_result_wellFormedFuel .derefByte args state .derefByte stateWf
+  | concatByteVec => exact doApp_scalarMemory_result_wellFormedFuel .concatByteVec args state .concatByteVec stateWf
+  | fromListByte => exact doApp_scalarMemory_result_wellFormedFuel .fromListByte args state .fromListByte stateWf
+  | lengthByteVec => exact doApp_scalarMemory_result_wellFormedFuel .lengthByteVec args state .lengthByteVec stateWf
+  | derefByteVec => exact doApp_scalarMemory_result_wellFormedFuel .derefByteVec args state .derefByteVec stateWf
+  | boundsCheckArray => exact doApp_scalarMemory_result_wellFormedFuel .boundsCheckArray args state .boundsCheckArray stateWf
+  | boundsCheckByte loose => exact doApp_scalarMemory_result_wellFormedFuel (.boundsCheckByte loose) args state (.boundsCheckByte loose) stateWf
+  | stringCmp fast cmp => exact doApp_scalarMemory_result_wellFormedFuel (.stringCmp fast cmp) args state (.stringCmp fast cmp) stateWf
+  | configGC => exact doApp_scalarMemory_result_wellFormedFuel .configGC args state .configGC stateWf
+  | updateByte => exact doApp_byteWrite_result_wellFormedFuel .updateByte args state .update stateWf
+  | xorByte => exact doApp_byteWrite_result_wellFormedFuel .xorByte args state .xor stateWf
+  | copyByte flag =>
+    cases flag with
+    | false => exact doApp_byteWrite_result_wellFormedFuel (.copyByte false) args state .copy stateWf
+    | true => exact doApp_scalarMemory_result_wellFormedFuel (.copyByte true) args state .copyByte stateWf
+  | refByte flag =>
+    cases flag with
+    | false => exact doApp_byteWrite_result_wellFormedFuel (.refByte false) args state .allocate stateWf
+    | true => simp [doApp, applyMemory, PrimitiveResultWellFormedFuel]
+  | mutCons | updateCons | finaliseCons => simp [doApp, applyMemory, PrimitiveResultWellFormedFuel]
 
 end Flapjack.Compiler.Backend.ClosCall
