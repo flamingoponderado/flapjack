@@ -1,0 +1,10 @@
+load "clos_callTheory"; load "clos_callProofTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "wfg_type="; print_type (type_of ``clos_callProof$wfg``); print "\n");
+val _ = (print "wfg_prime_type="; print_type (type_of ``clos_callProof$wfg'``); print "\n");
+val _ = (print "wfg_def="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.wfg_def); print "\n");
+val _ = (print "wfg_prime_def="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.wfg'_def); print "\n");
+val _ = (print "wfg_prime_code_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.wfg'_code_list); print "\n");
+val _ = (print "calls_wfg_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_wfg); print "\n");

@@ -115979,5 +115979,29 @@
   "lean_name": "codeListSource_suffix",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared source line 509 and the inferred polymorphic statement in clos_call_code_list_probe.out. HOL IS_SUFFIX takes the containing list first; Lean IsSuffix takes the suffix first. Both assert that the incoming code is a suffix of the generated code. Lean checks the proof; this comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "wfg_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Wellformed.lean",
+  "lean_name": "wellFormed",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 151-155 and inferred type in clos_call_wfg_probe.out. Both independently polymorphic carriers, set equality to successor image of the sptree domain, and distinct label condition agree. The exact Spt constructors and lookup clauses match HOL; domain membership uses HOL domain_lookup. Lean checks the proof; source comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "wfg'_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Wellformed.lean",
+  "lean_name": "weaklyWellFormed",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 146-149 and inferred type in clos_call_wfg_probe.out. Both independently polymorphic carriers and the subset of successor-image domain agree. The exact Spt constructors and lookup clauses match HOL; domain membership uses HOL domain_lookup. Lean checks the proof; source comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
+  "hol_name": "wfg'_code_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Wellformed.lean",
+  "lean_name": "weaklyWellFormed_codeListSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 728-736 and inferred statement in clos_call_wfg_probe.out, including three independent types, binder order, prior weak invariant and generated-location domain subset. The executed codeList is kernel-proved equal to codeListSource. Lean checks the proof; source comparison does not establish cross-language equivalence."
 }
 ]

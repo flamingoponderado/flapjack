@@ -565,6 +565,9 @@ run_probe data_to_word_fragment_comp_probeScript.sml data_to_word_fragment_comp_
 run_probe clos_call_code_list_probeScript.sml clos_call_code_list_probe.out \
   code_list_type fst_type snd_type map_fst_type suffix_type example "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend"
 
+run_probe clos_call_wfg_probeScript.sml clos_call_wfg_probe.out \
+  wfg_type wfg_prime_type wfg_def wfg_prime_def wfg_prime_code_type calls_wfg_type "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe tmc_program_word_probeScript.sml tmc_program_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 

@@ -1,0 +1,6 @@
+wfg_type=:'a sptree$num_map # (num # 'b) list -> bool
+wfg_prime_type=:'a sptree$num_map # (num # 'b) list -> bool
+wfg_def=!(g :'a sptree$num_map # (num # 'b) list). wfg g <=> set (MAP (FST :num # 'b -> num) (SND g)) = IMAGE SUC (domain (FST g) :num -> bool) /\ ALL_DISTINCT (MAP (FST :num # 'b -> num) (SND g))
+wfg_prime_def=!(g :'a sptree$num_map # (num # 'b) list). wfg' g <=> set (MAP (FST :num # 'b -> num) (SND g)) SUBSET IMAGE SUC (domain (FST g) :num -> bool)
+wfg_prime_code_type=!(ls :('a # 'b) list) (g :'c sptree$num_map # (num # 'a # 'b) list) (loc :num). wfg' g /\ set (GENLIST (\(i :num). loc + (2 :num) * i) (LENGTH ls)) SUBSET (domain (FST g) :num -> bool) ==> wfg' (code_list loc ls g)
+calls_wfg_type=!(xs :closLang$exp list) (g0 :sptree$num_set # (num # num # closLang$exp) list) (ys :closLang$exp list) (g :sptree$num_set # (num # num # closLang$exp) list). calls xs g0 = (ys,g) /\ ALL_DISTINCT (code_locs xs) /\ DISJOINT (IMAGE SUC (set (code_locs xs))) (set (MAP (FST :num # num # closLang$exp -> num) (SND g0))) /\ every_Fn_SOME xs /\ wfg g0 ==> wfg g
