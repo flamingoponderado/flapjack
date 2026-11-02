@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateTick
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -228,5 +229,31 @@ example : Flapjack.Compiler.Backend.ClosSem.doEq
   apply valueRelFuel_doEq 5 closedGroupResult ∅ closedGroupCode
   · exact .closure closedGroupRelation .nil (.equalLength rfl .nil)
   · exact .number 4
+
+-- A used variable is simulated even when the source environment is longer.
+example {C F : Type} (source : ClosSem.State (Flapjack.NumSet × C) F) (target : ClosSem.State C F)
+    (states : StateRelFuel 5 (.ln, []) ∅ source target) :
+    ∃ result final,
+      ClosSem.evaluate [.var .none 0] [.number 7] target = (result, final) ∧
+      Flapjack.SemanticPrimitivesProps.resultRel
+        (List.Forall₂ (ValueRelFuel 5 (.ln, []) ∅ target.code))
+        (ValueRelFuel 5 (.ln, []) ∅ target.code) (.val [.number 7]) result ∧
+      StateRelFuel 5 (.ln, []) ∅ source final := by
+  have envs : EnvRelFuel 5 (.ln, []) ∅ target.code [.number 7, .number 8] [.number 7]
+      0 [(0, .var .none 0)] := by
+    apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+    simp [envRel, freeVar, freeVars, freeVarExp, ValueRelFuel.number]
+  apply evaluate_var_fuel 5 (.ln, []) ∅ .none 0 [.number 7, .number 8] [.number 7]
+    source target (.val [.number 7]) source
+  · simp [ClosSem.evaluate]
+  · simp
+  · exact envs
+  · exact states
+
+-- The structural induction composes a tick with its variable body.
+example {C F : Type} :
+    ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+      (.tick .none (.var .none 0)) (.tick .none (.var .none 0)) := by
+  exact exprSimFuel_tick 5 (.ln, []) ∅ .none _ _ (exprSimFuel_var 5 (.ln, []) ∅ .none 0)
 
 end Flapjack.Test.ClosCallEnvironmentParity
