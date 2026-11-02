@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.Total
+import Flapjack.Compiler.Backend.ClosMti.Proofs.FuelStable
 import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
 import Flapjack.Compiler.Backend.Semantics.ClosSem
 import Mathlib.Data.List.Forall2
@@ -82,6 +82,11 @@ theorem codeRel_length {fuel maxApp : Nat} {source target : List ClosLang.Exp}
     (related : CodeRel fuel maxApp source target) : target.length = source.length := by
   apply ClosLang.mapM_length source (introMultiBounded fuel maxApp) target
   simpa [CodeRel, compileFuel] using related.2
+
+/-- The executed code relation is independent of the initial traversal fuel. -/
+theorem codeRel_fuel_independent (fuel₁ fuel₂ maxApp : Nat) (source target : List ClosLang.Exp) :
+    CodeRel fuel₁ maxApp source target ↔ CodeRel fuel₂ maxApp source target := by
+  simp [CodeRel, compileFuel_fuel_independent fuel₁ fuel₂ true maxApp source]
 
 /-- The executed code relation splits over matching list heads. -/
 theorem codeRel_cons {fuel maxApp : Nat} (x y : ClosLang.Exp) (xs ys : List ClosLang.Exp) :
