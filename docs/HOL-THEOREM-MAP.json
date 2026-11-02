@@ -110012,112 +110012,112 @@
     "hol_name": "bool_type_num_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "boolTypeNum",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared bool_type_num_def: the source Boolean type stamp is natural zero."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "Boolv_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "boolValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed bool_value_definition capture: true and false select the exact MlString constructor name, shared zero Boolean type stamp, and empty argument list."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "build_conv_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "buildConv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed build_conv_definition: absent name builds an unstamped value; present name requires namespace lookup and uses its stamp without checking the stored arity."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "build_rec_env_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "buildRecEnv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed build_rec_env_definition: fold the function triples right-to-left over the provided namespace, binding each name to a Recclosure containing the original entire group and closure environment."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "ctor_same_type_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "ctorSameType",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed ctor_same_type_definition: both NONE succeed, two SOME values use sameType, and mixed options fail."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "do_con_check_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "doConCheck",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed con_check_definition: absent constructor always succeeds; a present constructor must resolve in the exact namespace and its arity must match."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "find_recfun_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "findRecFun",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed find_recfun_definition: the argument and body payload types are independently polymorphic; scan in order and return the first matching pair."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "lit_same_type_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "litSameType",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all six matching constructor pairs and all cross-constructor cases in lit_same_type_definition; the fixed word and floating-bit literal carriers match HOL."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "one_con_check_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "oneConCheck",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed one_con_check_definition cases: only Con checks its optional constructor and expression-list length, while every other expression returns true."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "same_ctor_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "sameCtor",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed same_ctor_definition: constructor equality is structural equality on the exact Stamp and MlString carriers."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "same_type_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "sameType",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed same_type_definition cases: datatype stamps compare only their natural type ids, exception stamps always match, and mixed constructors fail."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "can_pmatch_all_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/PatternMatch.lean",
     "lean_name": "canPmatchAll",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed can_pmatch_all_definition clauses: each pattern is matched with empty bindings and a type error immediately returns false; no-match and successful matches continue."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "pmatch_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/PatternMatch.lean",
     "lean_name": "pmatch",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed source_pmatch_definition expression clauses, including literal mismatch versus type error, namespace arity and stamp checks, reference-store lookup, alias binding order and annotation erasure. Constructors and literal carriers match the HOL types."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "pmatch_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/PatternMatch.lean",
     "lean_name": "pmatchList",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed source_pmatch_definition list clauses. An earlier non-match still examines the remaining patterns for type errors; successful bindings flow left-to-right and unequal lengths fail."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -110751,56 +110751,56 @@
     "hol_name": "build_constrs_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
     "lean_name": "buildConstrs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed build_constrs_definition: argument list payload type is arbitrary, names and natural stamp are retained, and arity is list length. Pinned HOL captures and Lean tests cover independent Nat and Bool payloads."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "build_tdefs_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
     "lean_name": "buildTdefs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed build_tdefs_definition clauses: the empty namespace equals alist_to_ns empty; recursive type definitions increment the stamp, reverse the current constructor bindings and append the recursive namespace before them."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "check_dup_ctors_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
     "lean_name": "checkDupCtors",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed check_dup_ctors_definition: its always-true fold extracts constructor names in original order and ALL_DISTINCT is list Nodup."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "combine_dec_result_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
     "lean_name": "combineDecResult",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed combine_dec_result_definition: the error payload type is independent, errors pass through, and successful environment fields append the new namespace before the prior namespace."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "do_if_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
     "lean_name": "doIf",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed do_if_definition: branch type is arbitrary and the exact two Boolean values select their respective branches; every other value returns NONE."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "do_log_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
     "lean_name": "doLog",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed do_log_definition and Boolv_def: Andalso true and Orelse false select the expression, the other Boolean cases return the original value, and all non-Boolean values return NONE."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "extend_dec_env_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
     "lean_name": "extendDecEnv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed extend_dec_env_definition: source-value environments are appended new before old in both namespace fields."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",

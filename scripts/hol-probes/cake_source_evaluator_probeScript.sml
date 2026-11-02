@@ -2,6 +2,34 @@ load "evaluateTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+fun show_thm label th =
+  if null (hyp th) then (print label; print_term (concl th); print "\n")
+  else raise Fail (label ^ " has hypotheses");
+val _ = show_thm "source_evaluate_definition=" evaluateTheory.full_evaluate_def;
+val _ = show_thm "con_check_definition=" semanticPrimitivesTheory.do_con_check_def;
+val _ = show_thm "one_con_check_definition=" semanticPrimitivesTheory.one_con_check_def;
+val _ = show_thm "build_conv_definition=" semanticPrimitivesTheory.build_conv_def;
+val _ = show_thm "lit_same_type_definition=" semanticPrimitivesTheory.lit_same_type_def;
+val _ = show_thm "same_type_definition=" semanticPrimitivesTheory.same_type_def;
+val _ = show_thm "same_ctor_definition=" semanticPrimitivesTheory.same_ctor_def;
+val _ = show_thm "ctor_same_type_definition=" semanticPrimitivesTheory.ctor_same_type_def;
+val _ = show_thm "bool_type_num_definition=" semanticPrimitivesTheory.bool_type_num_def;
+val _ = show_thm "bool_value_definition=" semanticPrimitivesTheory.Boolv_def;
+val _ = show_thm "source_pmatch_definition=" semanticPrimitivesTheory.pmatch_def;
+val _ = show_thm "can_pmatch_all_definition=" semanticPrimitivesTheory.can_pmatch_all_def;
+val _ = show_thm "build_rec_env_definition=" semanticPrimitivesTheory.build_rec_env_def;
+val _ = show_thm "find_recfun_definition=" semanticPrimitivesTheory.find_recfun_def;
+val _ = show_thm "do_log_definition=" semanticPrimitivesTheory.do_log_def;
+val _ = show_thm "do_if_definition=" semanticPrimitivesTheory.do_if_def;
+val _ = show_thm "build_constrs_definition=" semanticPrimitivesTheory.build_constrs_def;
+val _ = show_thm "build_tdefs_definition=" semanticPrimitivesTheory.build_tdefs_def;
+val _ = show_thm "check_dup_ctors_definition=" semanticPrimitivesTheory.check_dup_ctors_def;
+val _ = show_thm "combine_dec_result_definition=" semanticPrimitivesTheory.combine_dec_result_def;
+val _ = show_thm "extend_dec_env_definition=" semanticPrimitivesTheory.extend_dec_env_def;
+val _ = (print "build_constrs_nat="; print_term (rhs (concl (EVAL
+  ``semanticPrimitives$build_constrs 3 [(«A», [4n; 5n])]``))); print "\n");
+val _ = (print "build_constrs_bool="; print_term (rhs (concl (EVAL
+  ``semanticPrimitives$build_constrs 3 [(«A», [T; F])]``))); print "\n");
 val _ = (print "evaluate_type="; print_type (type_of ``evaluate$evaluate``); print "\n");
 val _ = (print "match_type="; print_type (type_of ``evaluate$evaluate_match``); print "\n");
 val _ = (print "decs_type="; print_type (type_of ``evaluate$evaluate_decs``); print "\n");

@@ -16,6 +16,13 @@ private def x : AstHOL.Exp := .var (.short (ofString "x"))
 #guard match doLog .andalso (boolValue false) x with
   | some (.val (.conv (some (.typeStamp name 0)) [])) => name == ofString "False"
   | _ => false
+-- HOL build_constrs is polymorphic in the constructor argument payloads.
+#guard match buildConstrs 3 [(ofString "A", ([4, 5] : List Nat))] with
+  | [(name, 2, .typeStamp stampName 3)] => name == ofString "A" && stampName == name
+  | _ => false
+#guard match buildConstrs 3 [(ofString "A", [true, false])] with
+  | [(name, 2, .typeStamp stampName 3)] => name == ofString "A" && stampName == name
+  | _ => false
 #guard match NamespaceHOL.nsLookup (buildTdefs 5
     [([], ofString "t", [(ofString "A", [])]), ([], ofString "u", [(ofString "A", [])])])
     (.short (ofString "A")) with

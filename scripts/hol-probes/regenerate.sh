@@ -692,7 +692,7 @@ run_probe cake_program_semantics_probeScript.sml cake_program_semantics_probe.ou
   evaluate_type semantics_type empty_terminates empty_result "$cake_dir/semantics/semanticsScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_evaluator_probeScript.sml cake_source_evaluator_probe.out \
-  evaluate_type match_type decs_type literal raise type_error call_zero call_one match_bind match_empty declaration "$cake_dir/semantics/evaluateScript.sml" "$cake_dir/semantics"
+  source_evaluate_definition con_check_definition one_con_check_definition build_conv_definition lit_same_type_definition same_type_definition same_ctor_definition ctor_same_type_definition bool_type_num_definition bool_value_definition source_pmatch_definition can_pmatch_all_definition build_rec_env_definition find_recfun_definition do_log_definition do_if_definition build_constrs_definition build_tdefs_definition check_dup_ctors_definition combine_dec_result_definition extend_dec_env_definition build_constrs_nat build_constrs_bool evaluate_type match_type decs_type literal raise type_error call_zero call_one match_bind match_empty declaration "$cake_dir/semantics/evaluateScript.sml" "$cake_dir/semantics"
 
 run_probe cake_source_evaluate_clock_probeScript.sml cake_source_evaluate_clock_probe.out \
   fix_type list_type clock_lemma eval_clock_lemma full_evaluate_ind evaluate_ind fix_clock_evaluate evaluate_clock raise_clock fixed zero failure "$cake_dir/semantics/evaluateScript.sml" "$cake_dir/semantics"

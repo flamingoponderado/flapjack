@@ -1,7 +1,7 @@
 import Flapjack.SemanticPrimitivesHOL
 
 /-! Source pattern matching, including the original distinction between a
-non-matching value and a type error. Statement review is pending. -/
+non-matching value and a type error. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL Flapjack.NamespaceHOL
 

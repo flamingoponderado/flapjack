@@ -1,6 +1,6 @@
 import Flapjack.SemanticPrimitivesHOL.Thunk
 
-/-! Source control and declaration helpers. Statement review is pending. -/
+/-! Source control and declaration helpers. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Basis.Pure.MlString
 
@@ -75,7 +75,7 @@ theorem doLog_success_boolean (op : Lop) (value : Value) (expr : AstHOL.Exp) (re
     exact ⟨b, valueEq⟩
 
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "build_constrs_def"]
-def buildConstrs (stamp : Nat) (constructors : List (ConN × List AstT)) : List (ConN × Nat × Stamp) :=
+def buildConstrs {α : Type} (stamp : Nat) (constructors : List (ConN × List α)) : List (ConN × Nat × Stamp) :=
   constructors.map fun (name, args) => (name, args.length, .typeStamp name stamp)
 
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "build_tdefs_def"]
