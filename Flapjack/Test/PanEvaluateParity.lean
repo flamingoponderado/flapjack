@@ -339,8 +339,8 @@ def evaluateSourceNestedOrdinaryCall :=
     (.call none "f" [] : Prog Word64)
 
 def evaluateSourceNestedCallWithPostState :=
-  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
-    statefulTestHandler (BitVec.ofNat 64 8)
+  panSemEvaluateRiscV64CodeStateWithPostState statefulTestContext statefulTestPrimitive
+    statefulTestHandler
     (emptyPanSourceState 10 sourceRecursiveCode)
     (.call none "f" [] : Prog Word64)
 
@@ -415,8 +415,8 @@ def evaluateSourceCallBadReturnShape :=
     (.call none "badret" [] : Prog Word64)
 
 def evaluateSourceDecCallBadReturnShape :=
-  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
-    statefulTestHandler (BitVec.ofNat 64 8)
+  panSemEvaluateRiscV64CodeStateWithPostState statefulTestContext statefulTestPrimitive
+    statefulTestHandler
     ({ emptyPanSourceState 10 sourceBadDecCallShapeCode with
         locals := updatePanValueMap (fun _ => none) "keep"
           (.word (BitVec.ofNat 64 42)) })
@@ -464,8 +464,8 @@ def sourceBadCallDestinationState : PanSemState Word64 (FfiState Unit) :=
         (.rStruct [.word (BitVec.ofNat 64 0), .word (BitVec.ofNat 64 0)]) }
 
 def evaluateSourceCallBadDestination :=
-  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
-    statefulTestHandler (BitVec.ofNat 64 8) sourceBadCallDestinationState
+  panSemEvaluateRiscV64CodeStateWithPostState statefulTestContext statefulTestPrimitive
+    statefulTestHandler sourceBadCallDestinationState
     (.call (some (some (.local, "answer"), none)) "id"
       [.const (BitVec.ofNat 64 7)] : Prog Word64)
 
@@ -596,9 +596,9 @@ theorem sourceNestedCallPreservesCode
     (postState : PanSemState Word64 (FfiState Unit))
     (heval : evaluateSourceNestedCallWithPostState = some (result, postState)) :
     postState.code = (emptyPanSourceState 10 sourceRecursiveCode).code := by
-  exact panSemEvaluateCodeStateWithPostState_preserves_code
+  exact panSemEvaluateRiscV64CodeStateWithPostState_preserves_code
     statefulTestContext statefulTestPrimitive statefulTestHandler
-    (BitVec.ofNat 64 8) (emptyPanSourceState 10 sourceRecursiveCode)
+    (emptyPanSourceState 10 sourceRecursiveCode)
     (.call none "f" []) result postState heval
 
 def observeSourceRecursiveCallTimeout :=
