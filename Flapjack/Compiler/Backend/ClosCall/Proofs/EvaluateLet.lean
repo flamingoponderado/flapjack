@@ -4,7 +4,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateList
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack ClosSem SemanticPrimitivesHOL SemanticPrimitivesProps
 
-private theorem freeVars_of_mem (x : Nat) (e : ClosLang.Exp) (es : List ClosLang.Exp)
+theorem freeVars_of_mem (x : Nat) (e : ClosLang.Exp) (es : List ClosLang.Exp)
     (member : e ∈ es) (free : ClosProps.freeVarExp x e) : ClosProps.freeVars x es := by
   induction es with
   | nil => simp at member

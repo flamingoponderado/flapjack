@@ -6,7 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateApplication
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateAppExpression
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -628,5 +628,33 @@ example {C F : Type} :
     exact .cons (exprSimFuel_var 5 (.ln, []) ∅ .none 0)
       (.cons (exprSimFuel_var 5 (.ln, []) ∅ .none 1) .nil)
   · exact exprSimFuel_var 5 (.ln, []) ∅ .none 2
+
+-- A location-free application traverses its arguments and function and
+-- composes their simulations with the application evaluator.
+example {C F : Type}
+    (bodyIH : ∀ (code : Flapjack.HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+        (sourceBody targetBody : ClosLang.Exp) (location : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp))
+        (index arity : Nat),
+      recClosureRelFuel 5 (.ln, []) ∅ code location sourceFns targetFns →
+      sourceFns[index]? = some (arity, sourceBody) → targetFns[index]? = some (arity, targetBody) →
+      ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅ sourceBody targetBody) :
+    ∃ targetFn targetArgs,
+      ClosLang.Exp.app .none none (.var .none 0) [.var .none 1] = .app .none none targetFn targetArgs ∧
+      ExprSimFuel (C := C) (F := F) 5 (.ln, []) ∅
+        (.app .none none (.var .none 0) [.var .none 1]) (.app .none none targetFn targetArgs) := by
+  apply callsFuel_app_none_sim 5 (.ln, []) ∅ .none (.var .none 0) [.var .none 1]
+    (.ln, []) (.ln, []) (.app .none none (.var .none 0) [.var .none 1])
+  · rfl
+  · simp
+  · intro targetArgs middle run
+    simp [callsListFuel, callsFuel] at run
+    obtain ⟨rfl, rfl⟩ := run
+    apply exprsSimFuel_of_forall₂ 5 (.ln, []) ∅ (by simp)
+    exact .cons (exprSimFuel_var 5 (.ln, []) ∅ .none 1) .nil
+  · intro targetFn middle run
+    simp [callsFuel] at run
+    obtain ⟨rfl, _⟩ := run
+    exact exprSimFuel_var 5 (.ln, []) ∅ .none 0
+  · exact bodyIH
 
 end Flapjack.Test.ClosCallEnvironmentParity
