@@ -6,7 +6,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
 import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateFunction
+import Flapjack.Compiler.Backend.ClosCall.Proofs.FunctionInvariant
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity
@@ -147,7 +147,11 @@ private def closedGroupCode : Flapjack.HolFiniteMapExact Nat (Nat × ClosLang.Ex
 -- A real closed group is related to its generated direct-call stub and code.
 private theorem closedGroupRelation : recClosureRelFuel 5 closedGroupResult ∅ closedGroupCode 10 closedGroup
     [(1, .call .none 0 11 [.var .none 0])] := by
-  refine ⟨closedGroupInitial, ?_, ?_, ?_, ?_, [.var .none 0], closedGroupAfter, ?_, Or.inl ?_⟩
+  have result := callsFuel_fn_closed_invariant 4 (Flapjack.Basis.Pure.MlString.ofString "") 10 1
+    (.var .none 0) (.var .none 0) closedGroupInitial closedGroupAfter closedGroupResult ∅ closedGroupCode
+  apply result ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ |>.2
+  · rfl
+  · simp [freeVarExp]
   · simp [closedGroup, recClosureWellFormed, everyFnLocationSome, fnLocationSomeExp,
       everyFnVarsNone, fnVarsNoneExp, codeLocations, codeLocationsExp]
   · constructor
@@ -159,24 +163,27 @@ private theorem closedGroupRelation : recClosureRelFuel 5 closedGroupResult ∅ 
     · simp [closedGroupInitial]
   · simp [closedGroupInitial]
   · simp [closedGroupInitial]
-  · rfl
-  · refine ⟨?_, ⟨.none, 0, rfl⟩, ?_, ?_, ?_⟩
-    · simp [groupClosed, closedGroup, freeVarExp]
-    · apply stateExtends_refl
-      simp [closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
-    · simp [groupLocationsCovered, closedGroup, codeLocations, codeLocationsExp]
-    · intro key value lookup
-      by_cases equal : key = 11
-      · subst key
-        simpa [closedGroup, closedGroupAfter, codeList, logicalAssocLookup, List.find?,
-          closedGroupCode, Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE] using lookup
-      · simp [closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach,
-          logicalAssocLookup, List.find?, equal] at lookup
+  · apply stateExtends_refl
+    simp [closedGroupResult, closedGroup, closedGroupAfter, closedGroupInitial, codeList, insertEach]
+  · simp [groupLocationsCovered, codeLocations, codeLocationsExp]
+  · intro key value lookup
+    by_cases equal : key = 11
+    · subst key
+      simpa [closedGroupAfter, codeList, logicalAssocLookup, List.find?,
+        closedGroupCode, Flapjack.HolFiniteMapExact.update, Flapjack.FUPDATE] using lookup
+    · simp [closedGroupAfter, closedGroupInitial, codeList, insertEach,
+        logicalAssocLookup, List.find?, equal] at lookup
 
 -- A group with a captured variable follows the open-closure alternative.
 private theorem openGroupRelation : recClosureRelFuel 5 (.ln, []) {10} Flapjack.HolFiniteMapExact.empty 10
     [(1, .var .none 1)] [(1, .var .none 1)] := by
-  refine ⟨(.ln, []), ?_, ?_, ?_, ?_, [.var .none 1], insertEach 10 1 (.ln, []), ?_, Or.inr ?_⟩
+  have result := callsFuel_fn_open_invariant 4 (Flapjack.Basis.Pure.MlString.ofString "") 10 1
+    (.var .none 1) (.var .none 1) (.var .none 1)
+    (.ln, []) (insertEach 10 1 (.ln, [])) (.ln, []) (.ln, []) {10} Flapjack.HolFiniteMapExact.empty
+  apply result ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ |>.2
+  · rfl
+  · simp [freeVarExp]
+  · rfl
   · simp [recClosureWellFormed, everyFnLocationSome, fnLocationSomeExp,
       everyFnVarsNone, fnVarsNoneExp, codeLocations, codeLocationsExp]
   · constructor
@@ -188,14 +195,11 @@ private theorem openGroupRelation : recClosureRelFuel 5 (.ln, []) {10} Flapjack.
     · simp
   · simp
   · simp
-  · rfl
-  · refine ⟨?_, [.var .none 1], (.ln, []), rfl, rfl, ?_, ?_, ?_, ?_⟩
-    · simp [groupClosed, freeVarExp]
-    · apply stateExtends_refl
-      simp
-    · simp [groupLocationsCovered, codeLocations, codeLocationsExp]
-    · simp
-    · simp [codeIncludes, logicalAssocLookup_nil]
+  · apply stateExtends_refl
+    simp
+  · simp [groupLocationsCovered, codeLocations, codeLocationsExp]
+  · simp
+  · simp [codeIncludes, logicalAssocLookup_nil]
 
 example : ValueRelFuel 5 closedGroupResult ∅ closedGroupCode
     (.closure (some 10) [] [] 1 (.var .none 0))
