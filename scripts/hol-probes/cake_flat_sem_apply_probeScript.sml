@@ -91,3 +91,35 @@ val _ = show_word_eval "data_xor_bytes=" ``OPTION_MAP (λ(s,r). (s.refs,r))
 val _ = show_eval "data_xor_short=" ``OPTION_MAP SND
   (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [W8array [3w]])
     (Src XorAw8Str_unsafe) [Loc T 0; Litv (StrLit «AB»)])``;
+val _ = show_eval "data_implode=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Implode)
+    [flatSem$list_to_v [Litv (Char #"A"); Litv (Char #"B")]])``;
+val _ = show_eval "data_explode=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Explode) [Litv (StrLit «AB»)])``;
+val _ = show_eval "data_strcat_bad=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Strcat)
+    [flatSem$list_to_v [Litv (StrLit «A»); Litv (IntLit 1)]])``;
+val _ = show_eval "data_vector_from_list=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src VfromList)
+    [flatSem$list_to_v [Litv (IntLit 1); Litv (IntLit 2)]])``;
+val _ = show_eval "data_vector_length=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Vlength)
+    [Vectorv [Litv (IntLit 1); Litv (IntLit 2)]])``;
+val _ = show_eval "data_append=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src ListAppend)
+    [flatSem$list_to_v [Litv (IntLit 1)]; flatSem$list_to_v [Litv (IntLit 2)]])``;
+val _ = show_eval "data_config_gc=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src ConfigGC)
+    [Litv (IntLit (-3)); Litv (IntLit 7)])``;
+val _ = show_eval "data_thunk_update=" ``OPTION_MAP (λ(s,r). (s.refs,r))
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [Thunk NotEvaluated (Litv (IntLit 1))])
+    (Src (ThunkOp (UpdateThunk Evaluated))) [Loc F 0; Litv (IntLit 2)])``;
+val _ = show_eval "data_thunk_bad_location=" ``OPTION_MAP SND
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [Thunk NotEvaluated (Litv (IntLit 1))])
+    (Src (ThunkOp (UpdateThunk Evaluated))) [Loc T 0; Litv (IntLit 2)])``;
+val _ = show_eval "data_ffi_empty=" ``OPTION_MAP (λ(s,r). (s.refs,r))
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [W8array [1w;2w]])
+    (Src (FFI «»)) [Litv (StrLit «x»); Loc T 0])``;
+val _ = show_eval "data_ffi_bad_store=" ``OPTION_MAP SND
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [Refv (Litv (IntLit 1))])
+    (Src (FFI «x»)) [Litv (StrLit «»); Loc T 0])``;

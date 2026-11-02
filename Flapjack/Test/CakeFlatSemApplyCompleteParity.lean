@@ -61,4 +61,45 @@ example {C F : Type} (s : State C F) :
 example {C F : Type} (s : State C F) :
     doApp { s with refs := [.w8array [3]] } (.src .xorAw8StrUnsafe)
       [.loc true 0, .litv (.strLit (ofString "AB"))] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src .implode) [listToValue [.litv (.char 65), .litv (.char 66)]] =
+      some (s, .val (.litv (.strLit (.implode [65, 66])))) := by
+  simp [doApp, doAppNumeric, doAppMemory, doAppData, valueToCharList, listToValue,
+    Flapjack.Compiler.Backend.BackendCommon.nilTag, Flapjack.Compiler.Backend.BackendCommon.consTag, listId]
+example {C F : Type} (s : State C F) :
+    doApp s (.src .explode) [.litv (.strLit (ofString "AB"))] =
+      some (s, .val (listToValue [.litv (.char 65), .litv (.char 66)])) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src .strcat) [listToValue [.litv (.strLit (ofString "A")), .litv (.intLit 1)]] = none := by
+  simp [doApp, doAppNumeric, doAppMemory, doAppData, valueToList, listToValue, valuesToString,
+    Flapjack.Compiler.Backend.BackendCommon.nilTag, Flapjack.Compiler.Backend.BackendCommon.consTag, listId]
+example {C F : Type} (s : State C F) :
+    doApp s (.src .vfromList) [listToValue [.litv (.intLit 1), .litv (.intLit 2)]] =
+      some (s, .val (.vectorv [.litv (.intLit 1), .litv (.intLit 2)])) := by
+  simp [doApp, doAppNumeric, doAppMemory, doAppData, valueToList, listToValue,
+    Flapjack.Compiler.Backend.BackendCommon.nilTag, Flapjack.Compiler.Backend.BackendCommon.consTag, listId]
+example {C F : Type} (s : State C F) :
+    doApp s (.src .vlength) [.vectorv [.litv (.intLit 1), .litv (.intLit 2)]] =
+      some (s, .val (.litv (.intLit 2))) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp s (.src .listAppend) [listToValue [.litv (.intLit 1)], listToValue [.litv (.intLit 2)]] =
+      some (s, .val (listToValue [.litv (.intLit 1), .litv (.intLit 2)])) := by
+  simp [doApp, doAppNumeric, doAppMemory, doAppData, valueToList, listToValue,
+    Flapjack.Compiler.Backend.BackendCommon.nilTag, Flapjack.Compiler.Backend.BackendCommon.consTag, listId]
+example {C F : Type} (s : State C F) :
+    doApp s (.src .configGC) [.litv (.intLit (-3)), .litv (.intLit 7)] = some (s, .val unitValue) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp { s with refs := [.thunk .notEvaluated (.litv (.intLit 1))] }
+      (.src (.thunkOp (.updateThunk .evaluated))) [.loc false 0, .litv (.intLit 2)] =
+      some ({ s with refs := [.thunk .evaluated (.litv (.intLit 2))] }, .val unitValue) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp { s with refs := [.thunk .notEvaluated (.litv (.intLit 1))] }
+      (.src (.thunkOp (.updateThunk .evaluated))) [.loc true 0, .litv (.intLit 2)] = none := by rfl
+example {C F : Type} (s : State C F) :
+    doApp { s with refs := [.w8array [1, 2]] } (.src (.ffi (ofString "")))
+      [.litv (.strLit (ofString "x")), .loc true 0] =
+      some ({ s with refs := [.w8array [1, 2]] }, .val unitValue) := by rfl
+example {C F : Type} (s : State C F) :
+    doApp { s with refs := [.refv (.litv (.intLit 1))] } (.src (.ffi (ofString "x")))
+      [.litv (.strLit (ofString "")), .loc true 0] = none := by rfl
 end Flapjack.Test.CakeFlatSemApplyCompleteParity

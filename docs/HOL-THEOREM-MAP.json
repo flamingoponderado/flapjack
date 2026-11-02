@@ -1,5 +1,122 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_implode_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. A singleton valid flat character list becomes a string; failed decoding and other argument lists fail. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_explode_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. A singleton string is mapped to character literals and encoded as the original flat list. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_strsub_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. A string and integer return the indexed character, raising the subscript exception for negative or out-of-range indices. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_strlen_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. A singleton string returns its HOL character length. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_strcat_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. A singleton flat list is decoded and concatenated only when every element is a string literal. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_vfromList_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. A singleton valid flat list becomes a vector with the same elements. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_vsub_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. A vector and integer return the indexed value, raising the subscript exception for negative or out-of-range indices. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_vsubUnsafe_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. A vector and integer return the indexed value, failing for negative or out-of-range indices. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_vlength_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. A singleton vector returns its element count. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_listAppend_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. Two flat lists are decoded and re-encoded with their elements appended in order. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_configGC_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. Exactly two integer literals return unit without changing state. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_thunk_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. Allocation rejects bad thunk updates before allocating a non-reference location; update requires a non-reference location and a successful typed store assignment. Other operations and arguments fail. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyDataSource.lean",
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_app_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "doApp_ffi_source",
+    "reviewer": "Compared the complete typed original do_app case and fallback for arbitrary argument lists. The FFI case requires a string configuration and byte-array location; successful FFI and store assignment update both state fields, while a final FFI event returns the original state and abort. Wrong arguments or store types fail. Reviewed flat list, character, thunk, FFI and store carriers and helpers are retained; Int.toNat agrees with Num (ABS i) in the nonnegative branch. Compiler and FFI payload types remain independent. This reviews only this dispatcher case."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyCopySource.lean",
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
     "hol_name": "do_app_def",

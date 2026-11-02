@@ -413,6 +413,7 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlatSource
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemorySource
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyCopySource
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyDataSource
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
 import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
 import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
