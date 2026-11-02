@@ -451,6 +451,18 @@ cases against the pinned compiler:
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --display-mutations --seed 811091 --count 500
 ```
 
+Use `--sexp-mutations` to exercise the bootstrap input path. It first asks the
+pinned compiler to print S-expressions for several source programs, then
+replaces individual atoms, including constructor names and numeric fields.
+It compares complete output and exit status in type, S-expression display,
+and inference-disabled compilation modes; both accepted and rejected inputs
+are covered. Seed `67129643` matched 300 cases, including accepted and rejected
+inputs in all three modes:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --sexp-mutations --seed 67129643 --count 300
+```
+
 Add `--mutations` to apply reproducible single-character edits to small
 declarations with the prelude excluded. This mode compares successful output
 and rejection diagnostics alike, including complete stderr and exit status;
