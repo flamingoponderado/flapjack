@@ -4,6 +4,83 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateOrdinaryWellformed
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack ClosSem SemanticPrimitivesHOL
 
+/-- An empty expression list returns an empty value list without changing
+the well-formed state. -/
+theorem evaluate_nil_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)}
+    (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (stateWf : StateWellFormedFuel fuel g allowed code state) :
+    EvalWellFormedFuel fuel g allowed code (evaluate [] env state) := by
+  rw [evaluate]
+  exact ⟨.nil, stateWf⟩
+
+/-- A variable lookup leaves the state unchanged, including on a type error. -/
+theorem evaluate_var_state_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)} (trace : BackendCommon.Tra) (index : Nat)
+    (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (envWf : ValuesWellFormedFuel fuel g allowed code env)
+    (stateWf : StateWellFormedFuel fuel g allowed code state) :
+    EvalWellFormedFuel fuel g allowed code (evaluate [.var trace index] env state) := by
+  refine ⟨evaluate_var_wellFormedFuel trace index env state envWf, ?_⟩
+  cases lookup : env[index]? <;> simpa [evaluate, lookup] using stateWf
+
+/-- Numbered function creation preserves both the value and state
+invariants, given the bounded relation for its body. -/
+theorem evaluate_fn_state_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)}
+    (name : Flapjack.Basis.Pure.MlString.MlString) (loc arity : Nat)
+    (selected : Option (List Nat)) (body : ClosLang.Exp) (targets : List (Nat × ClosLang.Exp))
+    (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (envWf : ValuesWellFormedFuel fuel g allowed code env)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (closure : recClosureRelFuel fuel g allowed code loc [(arity, body)] targets) :
+    EvalWellFormedFuel fuel g allowed code (evaluate [.fn name (some loc) selected arity body] env state) := by
+  by_cases valid : arity ≤ state.maxApp ∧ arity ≠ 0
+  · cases selected with
+    | none =>
+      simpa [evaluate, valid, EvalWellFormedFuel, ResultWellFormedFuel] using
+        And.intro (ValuesWellFormedFuel.cons (.closure .nil envWf closure) .nil) stateWf
+    | some indices =>
+      cases found : lookupVars indices env with
+      | none => simpa [evaluate, valid, found, EvalWellFormedFuel, ResultWellFormedFuel] using stateWf
+      | some captured =>
+        have capturedWf := lookupVars_wellFormedFuel indices env captured envWf found
+        simpa [evaluate, valid, found, EvalWellFormedFuel, ResultWellFormedFuel] using
+          And.intro (ValuesWellFormedFuel.cons (.closure .nil capturedWf closure) .nil) stateWf
+  · cases selected <;> simpa [evaluate, valid, EvalWellFormedFuel, ResultWellFormedFuel] using stateWf
+
+/-- Recursive closure construction preserves the state invariant as well as
+the result invariant when the body preserves both for well-formed inputs. -/
+theorem evaluate_letrec_state_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)}
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (loc : Nat)
+    (selected : Option (List Nat)) (fns targets : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (envWf : ValuesWellFormedFuel fuel g allowed code env)
+    (stateWf : StateWellFormedFuel fuel g allowed code state)
+    (closure : recClosureRelFuel fuel g allowed code loc fns targets)
+    (bodyIH : ∀ bodyEnv, ValuesWellFormedFuel fuel g allowed code bodyEnv →
+      EvalWellFormedFuel fuel g allowed code (evaluate [body] bodyEnv state)) :
+    EvalWellFormedFuel fuel g allowed code
+      (evaluate [.letrec names (some loc) selected fns body] env state) := by
+  rw [evaluate.eq_def]
+  by_cases valid : fns.all (fun (arity, _) => arity ≤ state.maxApp && arity != 0) = true
+  · simp only [valid, ↓reduceIte]
+    cases selected with
+    | none =>
+      simp only
+      exact bodyIH _ (valuesWellFormedFuel_append
+        (recClosureBundle_wellFormedFuel loc env fns targets envWf closure) envWf)
+    | some indices =>
+      cases found : lookupVars indices env with
+      | none => simpa [found, EvalWellFormedFuel, ResultWellFormedFuel] using stateWf
+      | some captured =>
+        simp only [found]
+        exact bodyIH _ (valuesWellFormedFuel_append
+          (recClosureBundle_wellFormedFuel loc captured fns targets
+            (lookupVars_wellFormedFuel indices env captured envWf found) closure) envWf)
+  · simpa [valid, EvalWellFormedFuel, ResultWellFormedFuel] using stateWf
+
 /-- Raising a successfully evaluated value preserves its well-formedness;
 an error in the argument is propagated unchanged. -/
 theorem evaluate_raise_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
