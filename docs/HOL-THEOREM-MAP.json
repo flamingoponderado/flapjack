@@ -1,5 +1,13 @@
 [
   {
+    "lean_path": "Flapjack/CakeParser/FromSexp.lean",
+    "lean_name": "decodeType",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexptype_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete source definition and captured inferred type: Atvar decodes one mlstring; Atfun recursively decodes two types; Attup recursively decodes a proper type list; Atapp decodes a proper type list and a polymorphic identifier. All other arities, improper lists and unrecognized constructors fail. The mutually recursive Lean list helper implements sexplist sexptype and removes the former executable fuel bound."
+  },
+  {
     "lean_path": "Flapjack/CakeParser/Sexp.lean",
     "lean_name": "Sexp",
     "hol_path": "HOL/examples/formal-languages/context-free/simpleSexpScript.sml",

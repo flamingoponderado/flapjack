@@ -29,7 +29,7 @@ def decodeExpFuel : Nat → Sexp → Option Exp
       else if name == ascii "App" then do some (.app (← decodeOp a) (← decodeList exp b))
       else if name == ascii "Mat" then do some (.mat (← exp a) (← clauses b))
       else if name == ascii "Letrec" then do some (.letrec (← funs a) (← exp b))
-      else if name == ascii "Tannot" then do some (.tannot (← exp a) (← decodeTypeFuel fuel b))
+      else if name == ascii "Tannot" then do some (.tannot (← exp a) (← decodeType b))
       else if name == ascii "Lannot" then do some (.lannot (← exp a) (← decodeLoc b))
       else none
     | [a, b, c] =>
@@ -40,10 +40,11 @@ def decodeExpFuel : Nat → Sexp → Option Exp
       else none
     | _ => none
 
-/-- Decode a type definition's constructor and parameter lists. -/
-def decodeTypeDefFuel (fuel : Nat) : Sexp → Option TypeDef :=
+/-- Decode a type definition's constructor and parameter lists. The retained
+fuel argument is no longer used by the total type decoder. -/
+def decodeTypeDefFuel (_fuel : Nat) : Sexp → Option TypeDef :=
   decodeList (decodePair (decodeList destString)
-    (decodePair destString (decodeList (decodePair destString (decodeList (decodeTypeFuel fuel))))))
+    (decodePair destString (decodeList (decodePair destString decodeTypeList))))
 
 /-- Decode declarations, including nested modules and local declarations. -/
 def decodeDecFuel : Nat → Sexp → Option Dec
@@ -64,11 +65,11 @@ def decodeDecFuel : Nat → Sexp → Option Dec
       if name == ascii "Dlet" then do
         some (.dlet (← decodeLoc a) (← decodePatternFuel fuel b) (← decodeExpFuel fuel c))
       else if name == ascii "Dexn" then do
-        some (.dexn (← decodeLoc a) (← destString b) (← decodeList (decodeTypeFuel fuel) c))
+        some (.dexn (← decodeLoc a) (← destString b) (← decodeTypeList c))
       else none
     | [a, b, c, d] =>
       if name == ascii "Dtabbrev" then do
-        some (.dtabbrev (← decodeLoc a) (← decodeList destString b) (← destString c) (← decodeTypeFuel fuel d))
+        some (.dtabbrev (← decodeLoc a) (← decodeList destString b) (← destString c) (← decodeType d))
       else none
     | _ => none
 

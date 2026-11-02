@@ -15,6 +15,9 @@ val _ = (print "encode_decode_control_typed=";
 val _ = (print "sexpid_typed=";
   Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.sexpid_def);
   print "\n");
+val _ = (print "sexptype_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term (concl fromSexpTheory.sexptype_def);
+  print "\n");
 val _ = (print "sexp_constructors_typed=";
   print_type (type_of ``(SX_CONS, SX_SYM, SX_NUM, SX_STR)``);
   print "\n");
@@ -41,7 +44,10 @@ val _ = show "types" ``MAP fromSexp$sexptype
   [⟪SX_SYM "Atvar"; SX_STR "a"⟫;
    ⟪SX_SYM "Atfun"; ⟪SX_SYM "Atvar"; SX_STR "a"⟫; ⟪SX_SYM "Attup"; ⟪⟫⟫⟫;
    ⟪SX_SYM "Atapp"; ⟪⟪SX_SYM "Atvar"; SX_STR "a"⟫⟫; ⟪SX_SYM "Short"; SX_STR "list"⟫⟫;
-   ⟪SX_SYM "Atvar"; SX_SYM "x"⟫]``;
+   ⟪SX_SYM "Atvar"; SX_SYM "x"⟫;
+   ⟪SX_SYM "Attup"; ⟪⟪SX_SYM "Atvar"; SX_STR "a"⟫; ⟪SX_SYM "Atvar"; SX_STR "b"⟫⟫⟫;
+   ⟪SX_SYM "Attup"; SX_CONS (⟪SX_SYM "Atvar"; SX_STR "a"⟫) (SX_SYM "bad")⟫;
+   ⟪SX_SYM "Atfun"; ⟪SX_SYM "Atvar"; SX_STR "a"⟫⟫]``;
 val _ = show "patterns" ``MAP fromSexp$sexppat
   [SX_STR "x"; ⟪SX_SYM "Pany"⟫; ⟪SX_SYM "Plit"; 42⟫;
    ⟪SX_SYM "Pcon"; SX_SYM "NONE"; ⟪SX_STR "x"; ⟪SX_SYM "Pany"⟫⟫⟫;

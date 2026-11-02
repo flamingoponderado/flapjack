@@ -1,7 +1,8 @@
 import Flapjack.CakeParser.FromSexp.Ast
+import Flapjack.CakeParser.ToSexp
 
-/-! Finite observations from `cake_from_sexp_probe.out`. The bounded AST
-decoders beyond identifiers have not yet completed source correspondence review. -/
+/-! Finite observations from `cake_from_sexp_probe.out`. The remaining bounded
+AST decoders have not yet completed source correspondence review. -/
 namespace Flapjack.Test.CakeFromSexpParity
 open Flapjack.CakeParser.Sexp Flapjack.CakeParser.FromSexp
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
@@ -108,6 +109,24 @@ private def patternCases : Bool := Id.run do
   return (decodePatternFuel 20 (node "Pany" [.num 1])).isNone
 
 example : typeCases = true ∧ patternCases = true := by native_decide
+
+example : [decodeType (node "Atvar" [str "a"]),
+    decodeType (node "Atfun" [node "Atvar" [str "a"], node "Attup" [list []]]),
+    decodeType (node "Atapp" [list [node "Atvar" [str "a"]], node "Short" [str "list"]]),
+    decodeType (node "Atvar" [sym "x"]),
+    decodeType (node "Attup" [list [node "Atvar" [str "a"], node "Atvar" [str "b"]]]),
+    decodeType (node "Attup" [.cons (node "Atvar" [str "a"]) (sym "bad")]),
+    decodeType (node "Atfun" [node "Atvar" [str "a"]])].map (Option.map CakeParser.ToSexp.type) =
+    [some (node "Atvar" [str "a"]),
+     some (node "Atfun" [node "Atvar" [str "a"], node "Attup" [list []]]),
+     some (node "Atapp" [list [node "Atvar" [str "a"]], node "Short" [str "list"]]), none,
+     some (node "Attup" [list [node "Atvar" [str "a"], node "Atvar" [str "b"]]]), none, none] := by native_decide
+
+private def nestedType (depth : Nat) : Sexp :=
+  (List.replicate depth ()).foldr (fun _ rest => node "Attup" [list [rest]]) (node "Atvar" [str "a"])
+
+example : (decodeType (nestedType 64)).map CakeParser.ToSexp.type = some (nestedType 64) ∧
+    (decodeTypeFuel 64 (nestedType 64)).isNone = true := by native_decide
 
 example : [decodeOp (sym "Equality"), decodeOp (sym "Opapp"), decodeOp (sym "Aw8subunsafe"),
     decodeOp (sym "ForceThunk"), decodeOp (sym "Envid"), decodeOp (.cons (sym "FFI") (str "x\\00y")),

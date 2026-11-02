@@ -343,6 +343,25 @@
           "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       }
+    },
+    "nested_type_alias": {
+      "sexp": "\n((Dtabbrev ((0 0) (0 40)) nil \"t\" (Atapp ((Attup ((Atapp ((Atapp nil (Short \"int\"))) (Short \"list\")) (Atapp nil (Short \"bool\"))))) (Short \"list\"))) (Dlet ((0 44) (0 84)) (Ptannot \"x\" (Atapp nil (Short \"t\"))) (Lannot (Con (SOME (Short \"::\")) ((Lannot (Con NONE ((Lannot (Con (SOME (Short \"::\")) ((Lannot (Lit 1) ((0 67) (0 67))) (Con (SOME (Short \"::\")) ((Lannot (Lit 2) ((0 70) (0 70))) (Con (SOME (Short \"[]\")) nil))))) ((0 65) (0 72))) (Lannot (Con (SOME (Short \"True\")) nil) ((0 76) (0 80))))) ((0 63) (0 82))) (Con (SOME (Short \"[]\")) nil))) ((0 61) (0 84)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21334,
+          "stderr_sha256": "c8001b8b974f8e602c8664ba09a9d8f2c6a783943e4b11360415c6f22ebfca11"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 325124,
+          "stdout_sha256": "d76eb8176eb30fdc6f6ad3628f33025d8468b1542664d3882d7d28b2de94af15",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
     }
   },
   "failures": [

@@ -29,6 +29,7 @@ PROGRAMS = {
     'list': 'val _ = print_int (List.length [1,2,3]);',
     'local': 'local val x = 1 in val y = x end;',
     'type_alias': 'type t = int list; val x : t = [1];',
+    'nested_type_alias': 'type t = (int list * bool) list; val x : t = [([1,2], True)];',
     'array': 'val a = Array.array 3 1; val _ = Array.update a 1 4; val _ = print_int (Array.sub a 1);',
     'closure': 'val x = fn x => fn y => x+y;',
     'recursive_list': 'fun f n = if n = 0 then [] else n :: f (n - 1); val _ = print_int (List.length (f 7));',

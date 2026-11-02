@@ -3,8 +3,9 @@ import Flapjack.AstHOL.Syntax
 
 /-! Shared conversions for CakeML's S-expression AST format, following
 `compiler/parsing/fromSexpScript.sml`. The S-expression carrier and total
-identifier decoder are source-reviewed; the other bounded AST decoders still
-need correspondence review. The executable's S-expression path uses them. -/
+identifier and type decoders are source-reviewed; the other bounded AST
+decoders still need correspondence review. The executable's S-expression path
+uses them. -/
 namespace Flapjack.CakeParser.FromSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString
 open Flapjack.AstHOL Flapjack.NamespaceHOL
@@ -165,6 +166,34 @@ def decodeTypeFuel : Nat → Sexp → Option AstT
       else none
     | _ => none
 
+mutual
+/-- Decode type syntax by recursion on its S-expression structure. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexptype_def"]
+def decodeType : Sexp → Option AstT
+  | .cons (.sym name) (.cons a (.sym terminator)) =>
+    if terminator != ascii "nil" then none
+    else if name == ascii "Atvar" then (destString a).map AstT.atvar
+    else if name == ascii "Attup" then (decodeTypeList a).map AstT.attup
+    else none
+  | .cons (.sym name) (.cons a (.cons b (.sym terminator))) =>
+    if terminator != ascii "nil" then none
+    else if name == ascii "Atfun" then do
+      some (.atfun (← decodeType a) (← decodeType b))
+    else if name == ascii "Atapp" then do
+      some (.atapp (← decodeTypeList a) (← decodeId destString b))
+    else none
+  | _ => none
+termination_by sexp => sizeOf sexp
+
+/-- Decode a proper list of types; this is a Flapjack recursion helper for the
+source definition's `sexplist sexptype` call. -/
+def decodeTypeList : Sexp → Option (List AstT)
+  | .cons head tail => do some ((← decodeType head) :: (← decodeTypeList tail))
+  | .sym name => if name == ascii "nil" then some [] else none
+  | _ => none
+termination_by sexp => sizeOf sexp
+end
+
 /-- Decode CakeML patterns, with an explicit recursion bound. -/
 def decodePatternFuel : Nat → Sexp → Option Pat
   | 0, _ => none
@@ -186,7 +215,7 @@ def decodePatternFuel : Nat → Sexp → Option Pat
         else if name == ascii "Pas" then do
           some (.pas (← decodePatternFuel fuel a) (← destString b))
         else if name == ascii "Ptannot" then do
-          some (.ptannot (← decodePatternFuel fuel a) (← decodeTypeFuel fuel b))
+          some (.ptannot (← decodePatternFuel fuel a) (← decodeType b))
         else none
       | _ => none
 
