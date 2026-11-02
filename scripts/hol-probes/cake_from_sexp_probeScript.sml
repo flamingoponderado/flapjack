@@ -99,6 +99,9 @@ val _ = showDef "testsexp_11_typed" fromSexpTheory.testsexp_11;
 val _ = showDef "opsexp_typed" fromSexpTheory.opsexp_def;
 val _ = showDef "sexpop_opsexp_typed" fromSexpTheory.sexpop_opsexp;
 val _ = showDef "opsexp_11_typed" fromSexpTheory.opsexp_11;
+val _ = showDef "expsexp_typed" fromSexpTheory.expsexp_def;
+val _ = showDef "sexpexp_expsexp_typed" fromSexpTheory.sexpexp_expsexp;
+val _ = showDef "expsexp_11_typed" fromSexpTheory.expsexp_11;
 val _ = show "lists" ``MAP (fromSexp$sexplist fromSexp$odestSXNUM)
   [⟪⟫; ⟪1; 2; 3⟫; ⟪1 • 2⟫; ⟪SX_STR "x"⟫]``;
 val _ = show "option" ``MAP (fromSexp$sexpopt fromSexp$odestSXNUM)

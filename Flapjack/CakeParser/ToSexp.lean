@@ -34,39 +34,7 @@ abbrev locPoint := FromSexp.locnsexp
 abbrev loc := FromSexp.locssexp
 abbrev log := FromSexp.logsexp
 
-mutual
-def exp : Exp → Sexp
-  | .raise e => node "Raise" [exp e]
-  | .handle e ps => node "Handle" [exp e, list (expClauses ps)]
-  | .lit l => node "Lit" [literal l]
-  | .con id es => node "Con" [option (id.map ident), list (expList es)]
-  | .var id => node "Var" [ident id]
-  | .fn n e => node "Fun" [str n, exp e]
-  | .app o es => node "App" [op o, list (expList es)]
-  | .log o a b => node "Log" [log o, exp a, exp b]
-  | .if_ a b c => node "If" [exp a, exp b, exp c]
-  | .mat e ps => node "Mat" [exp e, list (expClauses ps)]
-  | .let_ n a b => node "Let" [option (n.map str), exp a, exp b]
-  | .letrec fs e => node "Letrec" [list (expFuns fs), exp e]
-  | .tannot e t => node "Tannot" [exp e, type t]
-  | .lannot e l => node "Lannot" [exp e, loc l]
-termination_by e => sizeOf e
-
-private def expList : List Exp → List Sexp
-  | [] => []
-  | e :: es => exp e :: expList es
-termination_by es => sizeOf es
-
-private def expClauses : List (Pat × Exp) → List Sexp
-  | [] => []
-  | (p, e) :: ps => .cons (pattern p) (exp e) :: expClauses ps
-termination_by ps => sizeOf ps
-
-private def expFuns : List (VarN × VarN × Exp) → List Sexp
-  | [] => []
-  | (f, x, e) :: fs => .cons (str f) (.cons (str x) (exp e)) :: expFuns fs
-termination_by fs => sizeOf fs
-end
+abbrev exp := FromSexp.expsexp
 
 def typeDef (td : TypeDef) : Sexp := list <| td.map fun (vs, name, cs) =>
   .cons (list (vs.map str)) (.cons (str name) (list (cs.map fun (c, ts) =>

@@ -1,6 +1,30 @@
 [
   {
     "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
+    "lean_name": "expsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "expsexp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all fourteen captured expression equations and carriers, including optional names, pattern-expression pairs, function triples, and location annotations. The three recursive list helpers are proved equal to the source maps. The executable uses this definition."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "decodeExp_expsexp",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "sexpexp_expsexp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured exp carrier and decode-encode equality; the proof covers all expression constructors and recursive list cases."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/RoundTrip.lean",
+    "lean_name": "expsexp_injective",
+    "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
+    "hol_name": "expsexp_11",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the captured universally quantified one-way expression equality implication."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/FromSexp/Encode.lean",
     "lean_name": "opsexp",
     "hol_path": "cakeml/compiler/parsing/fromSexpScript.sml",
     "hol_name": "opsexp_def",

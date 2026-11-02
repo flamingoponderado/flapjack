@@ -164,4 +164,45 @@ def opsexp : Op → Sexp
     | .configGC => "ConfigGC" | .eval => "Eval" | .envId => "Envid"
     | _ => "" -- Covered by the outer cases.
 
+def expsexpNode (name : String) (xs : List Sexp) : Sexp :=
+  listsexp (.sym (ascii name) :: xs)
+
+def expsexpString (s : MlString) : Sexp := sexstr s.explode
+
+mutual
+/-- Encode CakeML expression syntax. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "expsexp_def"]
+def expsexp : Exp → Sexp
+  | .raise e => expsexpNode "Raise" [expsexp e]
+  | .handle e ps => expsexpNode "Handle" [expsexp e, listsexp (expsexpClauses ps)]
+  | .lit l => expsexpNode "Lit" [litsexp l]
+  | .con id es => expsexpNode "Con" [optsexp (id.map idsexp), listsexp (expsexpList es)]
+  | .var id => expsexpNode "Var" [idsexp id]
+  | .fn n e => expsexpNode "Fun" [expsexpString n, expsexp e]
+  | .app o es => expsexpNode "App" [opsexp o, listsexp (expsexpList es)]
+  | .log o a b => expsexpNode "Log" [logsexp o, expsexp a, expsexp b]
+  | .if_ a b c => expsexpNode "If" [expsexp a, expsexp b, expsexp c]
+  | .mat e ps => expsexpNode "Mat" [expsexp e, listsexp (expsexpClauses ps)]
+  | .let_ n a b => expsexpNode "Let" [optsexp (n.map expsexpString), expsexp a, expsexp b]
+  | .letrec fs e => expsexpNode "Letrec" [listsexp (expsexpFuns fs), expsexp e]
+  | .tannot e t => expsexpNode "Tannot" [expsexp e, typesexp t]
+  | .lannot e l => expsexpNode "Lannot" [expsexp e, locssexp l]
+termination_by e => sizeOf e
+
+def expsexpList : List Exp → List Sexp
+  | [] => []
+  | e :: es => expsexp e :: expsexpList es
+termination_by es => sizeOf es
+
+def expsexpClauses : List (Pat × Exp) → List Sexp
+  | [] => []
+  | (p, e) :: ps => .cons (patsexp p) (expsexp e) :: expsexpClauses ps
+termination_by ps => sizeOf ps
+
+def expsexpFuns : List (VarN × VarN × Exp) → List Sexp
+  | [] => []
+  | (f, x, e) :: fs => .cons (expsexpString f) (.cons (expsexpString x) (expsexp e)) :: expsexpFuns fs
+termination_by fs => sizeOf fs
+end
+
 end Flapjack.CakeParser.FromSexp

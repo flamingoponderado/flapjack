@@ -1,5 +1,6 @@
 import Flapjack.CakeParser.FromSexp.Control
 import Flapjack.CakeParser.FromSexp.Operators
+import Flapjack.CakeParser.FromSexp.Ast
 
 /-! S-expression list, option and identifier encoder correspondence. -/
 namespace Flapjack.CakeParser.FromSexp
@@ -348,5 +349,138 @@ theorem opsexp_injective (a b : Op) : opsexp a = opsexp b ↔ a = b := by
     simpa [decodeOp_opsexp] using decoded
   · rintro rfl
     rfl
+
+/-- The string helper used in expression encoding is reversed by `destString`. -/
+theorem destString_expsexpString (s : MlString) : destString (expsexpString s) = some s := by
+  cases s with
+  | implode bytes => simp [expsexpString, destString_sexstr]
+
+/-- The expression-list encoder helper is the source's map. -/
+theorem expsexpList_eq_map (es : List Exp) : expsexpList es = es.map expsexp := by
+  induction es with
+  | nil => simp [expsexpList]
+  | cons e es ih => simp [expsexpList, ih]
+
+/-- The clause encoder helper is the source's map over pattern-expression pairs. -/
+theorem expsexpClauses_eq_map (clauses : List (Pat × Exp)) :
+    expsexpClauses clauses = clauses.map (fun (p, e) => .cons (patsexp p) (expsexp e)) := by
+  induction clauses with
+  | nil => simp [expsexpClauses]
+  | cons clause clauses ih =>
+    rcases clause with ⟨p, e⟩
+    simp [expsexpClauses, ih]
+
+/-- The recursive-function encoder helper is the source's map over triples. -/
+theorem expsexpFuns_eq_map (fs : List (VarN × VarN × Exp)) :
+    expsexpFuns fs = fs.map (fun (f, x, e) =>
+      .cons (expsexpString f) (.cons (expsexpString x) (expsexp e))) := by
+  induction fs with
+  | nil => simp [expsexpFuns]
+  | cons f fs ih =>
+    rcases f with ⟨name, arg, body⟩
+    simp [expsexpFuns, ih]
+
+mutual
+/-- Decoding encoded CakeML expressions returns the original expression. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexpexp_expsexp"]
+theorem decodeExp_expsexp (e : Exp) : decodeExp (expsexp e) = some e := by
+  cases e with
+  | raise e =>
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp, decodeExp_expsexp e]
+  | handle e clauses =>
+    have ih := decodeClauses_expsexpClauses clauses
+    simp only [listsexp] at ih
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp, decodeExp_expsexp e, ih]
+  | lit l =>
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp, decodeLiteral_litsexp]
+  | con id es =>
+    have hid : decodeOption (decodeId destString) (optsexp (id.map idsexp)) = some id := by
+      apply decodeOption_optsexp
+      intro y hy
+      subst id
+      simp [decodeId_idsexp]
+    have ih := decodeExpList_expsexpList es
+    simp only [listsexp] at ih
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp, hid, ih]
+  | var id =>
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp, decodeId_idsexp]
+  | fn name body =>
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp,
+      destString_expsexpString, decodeExp_expsexp body]
+  | app op es =>
+    have ih := decodeExpList_expsexpList es
+    simp only [listsexp] at ih
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp, decodeOp_opsexp, ih]
+  | log op a b =>
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp,
+      decodeLog_logsexp, decodeExp_expsexp a, decodeExp_expsexp b]
+  | if_ a b c =>
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp,
+      decodeExp_expsexp a, decodeExp_expsexp b, decodeExp_expsexp c]
+  | mat e clauses =>
+    have ih := decodeClauses_expsexpClauses clauses
+    simp only [listsexp] at ih
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp, decodeExp_expsexp e, ih]
+  | let_ name a b =>
+    have hn : decodeOption destString (optsexp (name.map expsexpString)) = some name := by
+      apply decodeOption_optsexp
+      intro y hy
+      subst name
+      simp [destString_expsexpString]
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp,
+      hn, decodeExp_expsexp a, decodeExp_expsexp b]
+  | letrec fs e =>
+    have ih := decodeFunctions_expsexpFuns fs
+    simp only [listsexp] at ih
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp, ih, decodeExp_expsexp e]
+  | tannot e t =>
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp,
+      decodeExp_expsexp e, decodeType_typesexp]
+  | lannot e l =>
+    simp (config := { decide := true }) [expsexp, expsexpNode, listsexp, decodeExp,
+      decodeExp_expsexp e, decodeLoc_locssexp]
+termination_by sizeOf e
+
+/-- Encoded expression lists round trip. -/
+theorem decodeExpList_expsexpList (es : List Exp) :
+    decodeExpList (listsexp (expsexpList es)) = some es := by
+  cases es with
+  | nil => simp (config := { decide := true }) [expsexpList, listsexp, decodeExpList]
+  | cons e es =>
+    have ih := decodeExpList_expsexpList es
+    simp only [listsexp] at ih
+    simp [expsexpList, listsexp, decodeExpList, decodeExp_expsexp e, ih]
+termination_by sizeOf es
+
+/-- Encoded pattern-expression clauses round trip. -/
+theorem decodeClauses_expsexpClauses (clauses : List (Pat × Exp)) :
+    decodeClauses (listsexp (expsexpClauses clauses)) = some clauses := by
+  cases clauses with
+  | nil => simp (config := { decide := true }) [expsexpClauses, listsexp, decodeClauses]
+  | cons clause clauses =>
+    rcases clause with ⟨p, e⟩
+    have ih := decodeClauses_expsexpClauses clauses
+    simp only [listsexp] at ih
+    simp [expsexpClauses, listsexp, decodeClauses, decodePattern_patsexp, decodeExp_expsexp e, ih]
+termination_by sizeOf clauses
+
+/-- Encoded recursive-function lists round trip. -/
+theorem decodeFunctions_expsexpFuns (fs : List (VarN × VarN × Exp)) :
+    decodeFunctions (listsexp (expsexpFuns fs)) = some fs := by
+  cases fs with
+  | nil => simp (config := { decide := true }) [expsexpFuns, listsexp, decodeFunctions]
+  | cons f fs =>
+    rcases f with ⟨name, arg, body⟩
+    have ih := decodeFunctions_expsexpFuns fs
+    simp only [listsexp] at ih
+    simp [expsexpFuns, listsexp, decodeFunctions, destString_expsexpString, decodeExp_expsexp body, ih]
+termination_by sizeOf fs
+end
+
+/-- Expression encoding is injective. -/
+@[hol "cakeml/compiler/parsing/fromSexpScript.sml" "expsexp_11"]
+theorem expsexp_injective (left right : Exp) (h : expsexp left = expsexp right) : left = right := by
+  have decoded := congrArg decodeExp h
+  simpa [decodeExp_expsexp] using decoded
 
 end Flapjack.CakeParser.FromSexp
