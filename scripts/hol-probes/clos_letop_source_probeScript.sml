@@ -95,3 +95,27 @@ val do_install_lemma_replay = prove(
   \\ fs [closPropsTheory.simple_val_rel_def, simple_state_rel_replay] \\ rw [] \\ fs [v_rel_cases]
   \\ EVAL_TAC \\ fs [FUN_EQ_THM]);
 val _ = show "do_install_lemma_replay_typed" do_install_lemma_replay;
+val state_rel_opt_rel_refs_replay = prove(
+  ``(state_rel s1 s2 /\ FLOOKUP s1.refs n = r1 ==>
+     ?r2. FLOOKUP s2.refs n = r2 /\ OPTREL ref_rel r1 r2) /\
+    (state_rel s1 s2 /\ FLOOKUP s2.refs n = r2 ==>
+     ?r1. FLOOKUP s1.refs n = r1 /\ OPTREL ref_rel r1 r2)``,
+  rw [] \\ gvs [state_rel_def, FMAP_REL_def, FLOOKUP_DEF] \\ rw []);
+val rel_update_thunk_replay = prove(
+  ``state_rel s1 s2 /\ LIST_REL v_rel vs ys ==>
+    (update_thunk [RefPtr v ptr] s1.refs vs = NONE ==>
+       update_thunk [RefPtr v ptr] s2.refs ys = NONE) /\
+    (update_thunk [RefPtr v ptr] s1.refs vs = SOME refs1 ==>
+       ?refs2. update_thunk [RefPtr v ptr] s2.refs ys = SOME refs2 /\
+               state_rel (s1 with refs := refs1) (s2 with refs := refs2))``,
+  rw []
+  \\ gvs [oneline update_thunk_def, AllCaseEqs()] \\ rw []
+  \\ gvs [oneline dest_thunk_def, AllCaseEqs()]
+  \\ (gvs [Once v_rel_cases, oneline store_thunk_def, AllCaseEqs(), PULL_EXISTS]
+    \\ rpt (imp_res_tac state_rel_opt_rel_refs_replay \\ rw []
+      \\ gvs [oneline OPTREL_THM]
+      \\ FULL_CASE_TAC \\ gvs []
+      \\ rgs [Once ref_rel_cases])
+    \\ gvs [state_rel_def, FMAP_REL_def, FLOOKUP_UPDATE] \\ rw []
+    \\ simp [Once ref_rel_cases]));
+val _ = show "rel_update_thunk_replay_typed" rel_update_thunk_replay;

@@ -123044,5 +123044,45 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_let_op_typed and the operation installation case of evaluate_ind_typed in clos_known_syntax_probe.out. The source argument and successful-installation program induction hypotheses retain their original evaluation and installation guards. The source run, related environments and states, code relation, and existential target result and state are unchanged. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "rel_update_thunk",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Force.lean",
+  "lean_name": "rel_update_thunk",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "State.refs",
+    "State.code",
+    "sourceRefs",
+    "targetRefs"
+  ],
+  "reviewer": "Compared the typed replay of the original local proof in clos_letop_source_probe.out. The original pointer, related-state and value-list premises, source-update failure and success implications, existential target map, updated-state relation, and shared independent compiler and FFI carriers agree. State refs and code and standalone result maps use canonical finite maps with the local state roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateForce.lean",
+  "lean_name": "evaluate_let_op_force",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed and the forcing branch of evaluate_ind_typed in clos_known_syntax_probe.out. The source argument induction hypothesis and successful-argument, unevaluated-thunk guarded generated-call hypothesis retain their original conditions; installation is inapplicable. Source evaluation, related environments and states, code relation, and existential target result and state are retained. The proof covers invalid references, evaluated thunks, generated-call errors and updates. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Operation.lean",
+  "lean_name": "evaluate_let_op_op",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed and the operation case of evaluate_ind_typed in clos_known_syntax_probe.out: argument, successful-installation, and force-thunk induction hypotheses retain their original guards, along with the source evaluation, related environments and states, code relation, existential target result and state. The assembled case covers ordinary operations, installation and forcing without extra premises. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining mutual evaluator cases."
 }
 ]
