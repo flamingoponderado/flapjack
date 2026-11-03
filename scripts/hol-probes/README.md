@@ -134,8 +134,9 @@ operations used by closure annotation, including sparse-tree traversal order.
 `clos_fvs_correctness_probe.out` captures the source traversal, optimized
 singleton/list equations, length and compiler definitions, code, function,
 value, reference and state relations, a typed replay of the local clock-decrement
-lemma, the inferred types of the local primitive lemma's statement, evaluator
-simulation and whole-program correctness statement. These
+lemma, the inferred types of transcribed local primitive, payload-decoding and
+installation statements, evaluator simulation and whole-program correctness
+statement. The local statement captures are not HOL proof replays. These
 captures support review; the evaluator proof covers the empty-list, sequencing,
 variable, conditional, let, raise, handler, function, recursive-let,
 application, direct-call and tick cases, with the remaining cases still open.

@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Relations
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Primitive
+import Flapjack.Compiler.Backend.ClosFvs.Proofs.Install
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean

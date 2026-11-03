@@ -2143,6 +2143,31 @@
     "reviewer": "Compared the local source statement and do_app_statement_typed, an inferred-type capture of a transcription of that statement. Both states share independent compiler and FFI carriers, and the state and value-list hypotheses and both error and success branches retain their original shapes. The proof instantiates the generic simple-value and simple-state primitive theorem with the source relations, including reference updates and globals. The closure state has canonical refs and code finite maps with a local roundtrip witness; the primitive evaluator inherits the reviewed rational-cut real model. The typed transcription is not a replay of the local HOL proof, and source review and Lean checking do not establish cross-language equivalence."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "v_rel_IMP_v_to_bytes",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Install.lean",
+    "lean_name": "valueRel_bytes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source statement and bytes_statement_typed, an inferred-type capture of its transcription. The same value relation premise and target-to-source byte-decoder equality are retained. The typed transcription is not a replay of the local HOL proof; source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "v_rel_IMP_v_to_words",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Install.lean",
+    "lean_name": "valueRel_words",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source statement and words_statement_typed, an inferred-type capture of its transcription. The same value relation premise and target-to-source 64-bit word-decoder equality are retained. The typed transcription is not a replay of the local HOL proof; source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "do_install_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Install.lean",
+    "lean_name": "doInstallLemma",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the local source statement and install_statement_typed, an inferred-type capture of its transcription. Both states share independent compiler and FFI carriers. The original state and argument-list premises, exception and state conclusions on failure, and state, nonempty source program, code relation and target evaluation conclusions on success are retained. The proof covers wrong argument counts, decoding and callback failures, rejected checks and timeout after the oracle update. The state uses canonical refs and code finite maps with the local roundtrip witness. The typed transcription is not a replay of the local HOL proof; source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
     "hol_name": "semantics_annotate",
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/InstalledSemantics.lean",

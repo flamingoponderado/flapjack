@@ -29,5 +29,17 @@ val do_app_statement = ``clos_fvsProof$state_rel (s :('c,'ffi) closSem$state) t 
     | Rval (x, s1) => ?y t1. clos_fvsProof$v_rel x y /\
          clos_fvsProof$state_rel s1 t1 /\ closSem$do_app opp ys t = Rval (y, t1)``;
 val _ = (print "do_app_statement_typed="; print_term do_app_statement; print "\n");
+val bytes_statement = ``clos_fvsProof$v_rel x y ==> closSem$v_to_bytes y = closSem$v_to_bytes x``;
+val words_statement = ``clos_fvsProof$v_rel x y ==> closSem$v_to_words y = closSem$v_to_words x``;
+val install_statement = ``clos_fvsProof$state_rel (s :('c,'ffi) closSem$state) t /\
+  LIST_REL clos_fvsProof$v_rel xs ys ==>
+  case closSem$do_install xs s of
+    | (Rerr err1, s1) => ?err2 t1. closSem$do_install ys t = (Rerr err2, t1) /\
+         exc_rel clos_fvsProof$v_rel err1 err2 /\ clos_fvsProof$state_rel s1 t1
+    | (Rval exps1, s1) => ?exps2 t1. clos_fvsProof$state_rel s1 t1 /\ exps1 <> [] /\
+         clos_fvsProof$code_rel 0 exps1 exps2 /\ closSem$do_install ys t = (Rval exps2, t1)``;
+val _ = (print "bytes_statement_typed="; print_term bytes_statement; print "\n");
+val _ = (print "words_statement_typed="; print_term words_statement; print "\n");
+val _ = (print "install_statement_typed="; print_term install_statement; print "\n");
 val _ = show "evaluate_remove_typed=" clos_fvsProofTheory.evaluate_remove_fvs;
 val _ = show "semantics_compile_typed=" clos_fvsProofTheory.semantics_compile;
