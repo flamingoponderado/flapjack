@@ -3,6 +3,19 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
   "hol_name": "lift_exps_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftEvaluate.lean",
+  "lean_name": "liftExpsThmBind",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared lift_exps_thm_typed and the original lift_exps functional induction: this is the general binding case with the source false dont_lift and absent dest_Op dest_Cons guards, and the sole induction hypothesis is the original statement for the tail with the extended accumulator and incremented index. Its conclusion retains the original result, error, state and arbitrary-environment obligations. The independent compiler and FFI state parameters use the canonical refs and code maps and the local roundtrip witness; the evaluator inherits the rational-cut real representation. The complete theorem still requires the constructor case and assembly."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "lift_exps_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftEvaluate.lean",
   "lean_name": "liftExpsThmNil",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
