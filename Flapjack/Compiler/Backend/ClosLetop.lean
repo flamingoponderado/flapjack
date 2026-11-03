@@ -5,7 +5,9 @@ import Flapjack.Compiler.Backend.ClosLang.Budget
 namespace Flapjack.Compiler.Backend.ClosLetop
 open ClosLang
 
-private def varList (xs : List Exp) (arity : Nat) : Bool :=
+/-- Arity-based implementation of the variable-list check used by the
+bounded compiler. This is Flapjack execution infrastructure. -/
+def varListArity (xs : List Exp) (arity : Nat) : Bool :=
   xs.length == arity && (xs.zip (List.range arity)).all fun (x, n) =>
     match x with | .var _ m => m == n | _ => false
 
@@ -22,7 +24,7 @@ def compileFuel : Nat → Exp → Option Exp
           let xs ← xs.mapM visit
           let body ← visit body
           match body with
-          | .op _ op args => if varList args xs.length then pure (.op t op xs) else pure (.let t xs body)
+          | .op _ op args => if varListArity args xs.length then pure (.op t op xs) else pure (.let t xs body)
           | _ => pure (.let t xs body)
       | .raise t x => do pure (.raise t (← visit x))
       | .handle t x y => do pure (.handle t (← visit x) (← visit y))
