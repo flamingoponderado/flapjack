@@ -351,4 +351,175 @@ theorem arm8Next_addSubCarry (ms : arm8_state) (s : Bool) (rm rn rd : BitVec 5)
   simp only [holThe, setTheFlags_eq]
   split <;> simp [arm8X_branchHint]
 
+/-- `SetTheFlags` preserves the `PSTATE` agreement of two states. -/
+theorem setTheFlags_pstate_congr (b : Bool) (flags : Bool × (Bool × (Bool × Bool)))
+    (s t : arm8_state) (h : s.PSTATE = t.PSTATE) :
+    (SetTheFlags (b, flags) s).PSTATE = (SetTheFlags (b, flags) t).PSTATE := by
+  by_cases hb : b = true <;> simp [setTheFlags_eq, hb, h]
+
+/-- The `SUBS XZR, rn, #0` step preserves agreement. -/
+theorem arm8Next_addSubImmediateS_zero_agree (d : BitVec 64 → Prop)
+    (s t : arm8_state) (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
+    (rn : BitVec 5) (hrn : rn ≠ 31)
+    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
+    (hb0 : t.MEM t.PC = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) rn 31 >>> 0).toNat))
+    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) rn 31 >>> 8).toNat))
+    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) rn 31 >>> 16).toNat))
+    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) rn 31 >>> 24).toNat)) :
+    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
+  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
+  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
+  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
+  have hal : Aligned (TN := 64) (s.PC, 4) = true := aligned_of_holAligned s.PC halign
+  have halt : Aligned (TN := 64) (t.PC, 4) = true := aligned_of_holAligned t.PC halignt
+  have hs0 := (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
+  have hs1 := (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
+  have hs2 := (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
+  have hs3 := (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
+  rw [← h.pc] at hs0 hs1 hs2 hs3
+  have hss := arm8Next_addSubImmediateS_zero s rn hrn hexc0 hs0 hs1 hs2 hs3 hal he0 hel
+  have htt := arm8Next_addSubImmediateS_zero t rn hrn hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  have hx : X (TN := 64) rn s = X (TN := 64) rn t := arm8X_congr_or_zero h rn
+  rw [hss, htt]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simp [h.pc]
+  · exact h.reg
+  · simp only [h.pstate, hx]
+  · simp [h.sctlr]
+  · simp [h.tcr]
+  · simp [h.exc]
+  · intro a ha
+    exact h.mem a ha
+
+/-- The `ConditionalCompareImmediate@64` zero compare preserves agreement. -/
+theorem arm8Next_conditionalCompare_zero_agree (d : BitVec 64 → Prop)
+    (s t : arm8_state) (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
+    (rn : BitVec 5)
+    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
+    (hb0 : t.MEM t.PC = BitVec.ofNat 8 ((arm8ConditionalCompareWord false
+      (0 : BitVec 5) (0 : BitVec 4) false false true false rn >>> 0).toNat))
+    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((arm8ConditionalCompareWord false
+      (0 : BitVec 5) (0 : BitVec 4) false false true false rn >>> 8).toNat))
+    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8ConditionalCompareWord false
+      (0 : BitVec 5) (0 : BitVec 4) false false true false rn >>> 16).toNat))
+    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8ConditionalCompareWord false
+      (0 : BitVec 5) (0 : BitVec 4) false false true false rn >>> 24).toNat)) :
+    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
+  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
+  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
+  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
+  have hal : Aligned (TN := 64) (s.PC, 4) = true := aligned_of_holAligned s.PC halign
+  have halt : Aligned (TN := 64) (t.PC, 4) = true := aligned_of_holAligned t.PC halignt
+  have hs0 := (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
+  have hs1 := (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
+  have hs2 := (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
+  have hs3 := (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
+  rw [← h.pc] at hs0 hs1 hs2 hs3
+  have hss := arm8Next_conditionalCompare_zero s rn hexc0 hs0 hs1 hs2 hs3 hal he0 hel
+  have htt := arm8Next_conditionalCompare_zero t rn hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  have hx : X (TN := 64) rn s = X (TN := 64) rn t := arm8X_congr_or_zero h rn
+  have hcd : ConditionHolds (0 : BitVec 4) { s with branch_hint := none } =
+      ConditionHolds (0 : BitVec 4) { t with branch_hint := none } :=
+    arm8ConditionHolds_congr (0 : BitVec 4) (by rw [h.pstate])
+  rw [hss, htt, hcd]
+  split_ifs with hc
+  · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · simp [h.pc]
+    · exact h.reg
+    · have hX : X (TN := 64) rn { s with branch_hint := none } =
+          X (TN := 64) rn { t with branch_hint := none } := by
+        rw [show X (TN := 64) rn { s with branch_hint := none } = X (TN := 64) rn s from rfl,
+          show X (TN := 64) rn { t with branch_hint := none } = X (TN := 64) rn t from rfl, hx]
+      rw [hX, h.pstate]
+    · simp [h.sctlr]
+    · simp [h.tcr]
+    · simp [h.exc]
+    · intro a ha
+      exact h.mem a ha
+  · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · simp [h.pc]
+    · exact h.reg
+    · simp [h.pstate]
+    · simp [h.sctlr]
+    · simp [h.tcr]
+    · simp [h.exc]
+    · intro a ha
+      exact h.mem a ha
+
+/-- The `AddSubCarry@64` step preserves agreement. -/
+theorem arm8Next_addSubCarry_agree (d : BitVec 64 → Prop)
+    (s t : arm8_state) (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
+    (sb : Bool) (rm rn rd : BitVec 5) (hrd : rd ≠ 31)
+    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
+    (hb0 : t.MEM t.PC = BitVec.ofNat 8 ((arm8AddSubCarryWord false sb rm rn rd >>> 0).toNat))
+    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((arm8AddSubCarryWord false sb rm rn rd >>> 8).toNat))
+    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8AddSubCarryWord false sb rm rn rd >>> 16).toNat))
+    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8AddSubCarryWord false sb rm rn rd >>> 24).toNat)) :
+    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
+  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
+  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
+  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
+  have hal : Aligned (TN := 64) (s.PC, 4) = true := aligned_of_holAligned s.PC halign
+  have halt : Aligned (TN := 64) (t.PC, 4) = true := aligned_of_holAligned t.PC halignt
+  have hs0 := (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
+  have hs1 := (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
+  have hs2 := (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
+  have hs3 := (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
+  rw [← h.pc] at hs0 hs1 hs2 hs3
+  have hss := arm8Next_addSubCarry s sb rm rn rd hrd hexc0 hs0 hs1 hs2 hs3 hal he0 hel
+  have htt := arm8Next_addSubCarry t sb rm rn rd hrd hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  have hx : X (TN := 64) rn s = X (TN := 64) rn t := arm8X_congr_or_zero h rn
+  have hxm : X (TN := 64) rm s = X (TN := 64) rm t := arm8X_congr_or_zero h rm
+  rw [hss, htt]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simp [h.pc]
+  · simp only [h.reg, hx, hxm, h.pstate]
+  · simp only [setTheFlags_pstate_congr sb _ _ _ h.pstate, h.pstate, hx, hxm]
+  · simp [h.sctlr]
+  · simp [h.tcr]
+  · simp [h.exc]
+  · intro a ha
+    exact h.mem a ha
+
+/-- The `MoveWide .z` zeroing step preserves agreement. -/
+theorem arm8Next_moveWide_z_zero_agree (d : BitVec 64 → Prop)
+    (s t : arm8_state) (h : Arm8L3Agree d s t) (hok : arm8Ok s = true)
+    (rd : BitVec 5) (hrd : rd ≠ 31)
+    (hf : ∀ j, j < 4 → d (t.PC + BitVec.ofNat 64 j))
+    (hb0 : t.MEM t.PC = BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2)
+      (0 : BitVec 16) rd >>> 0).toNat))
+    (hb1 : t.MEM (t.PC + 1) = BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2)
+      (0 : BitVec 16) rd >>> 8).toNat))
+    (hb2 : t.MEM (t.PC + 2) = BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2)
+      (0 : BitVec 16) rd >>> 16).toNat))
+    (hb3 : t.MEM (t.PC + 3) = BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2)
+      (0 : BitVec 16) rd >>> 24).toNat)) :
+    Arm8L3Agree d (arm8Next s) (arm8Next t) := by
+  have hokt : arm8Ok t = true := by rw [← arm8Ok_congr h]; exact hok
+  obtain ⟨hel, he0, _, _, _, hexc0, halign⟩ := (arm8Ok_iff s).mp hok
+  obtain ⟨helt, he0t, _, _, _, hexc0t, halignt⟩ := (arm8Ok_iff t).mp hokt
+  have hal : Aligned (TN := 64) (s.PC, 4) = true := aligned_of_holAligned s.PC halign
+  have halt : Aligned (TN := 64) (t.PC, 4) = true := aligned_of_holAligned t.PC halignt
+  have hs0 := (h.mem t.PC (by simpa using hf 0 (by omega))).trans hb0
+  have hs1 := (h.mem (t.PC + 1) (by simpa using hf 1 (by omega))).trans hb1
+  have hs2 := (h.mem (t.PC + 2) (by simpa using hf 2 (by omega))).trans hb2
+  have hs3 := (h.mem (t.PC + 3) (by simpa using hf 3 (by omega))).trans hb3
+  rw [← h.pc] at hs0 hs1 hs2 hs3
+  have hss := arm8Next_moveWide_z_zero s rd hrd hexc0 hs0 hs1 hs2 hs3 hal he0 hel
+  have htt := arm8Next_moveWide_z_zero t rd hrd hexc0t hb0 hb1 hb2 hb3 halt he0t helt
+  rw [hss, htt]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simp [h.pc]
+  · simp [h.reg]
+  · simp [h.pstate]
+  · simp [h.sctlr]
+  · simp [h.tcr]
+  · simp [h.exc]
+  · intro a ha
+    exact h.mem a ha
+
 end Flapjack.Compiler.Encoders.Arm8.L3
