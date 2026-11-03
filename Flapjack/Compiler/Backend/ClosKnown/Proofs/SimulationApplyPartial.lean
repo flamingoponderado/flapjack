@@ -358,4 +358,53 @@ theorem knownAppPartialCase {C F : Type} (loc1 : Option Nat) (sourceFn : Value)
   cases sourceRun
   exact ⟨targetResult, targetFinal, targetRun, resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩
 
+/-- An annotation selected from a sound function approximation is valid for
+the related runtime closure. This is Flapjack infrastructure for the
+application case of the optimizer simulation. -/
+theorem annotatedApplicationLocation (c : Config) (g : Spt ValApprox)
+    (approx : ValApprox) (source target : Value) (loc : Option Nat) (arity address : Nat)
+    (decision : decideInlineHOL c approx loc arity = .annotate address)
+    (sound : ValApproxVal approx source) (related : ValueRel c g source target) :
+    loptRel target arity loc (some address) := by
+  cases sound with
+  | other v => simp [decideInlineHOL] at decision
+  | int i => simp [decideInlineHOL] at decision
+  | tuple tag approxs values rel => simp [decideInlineHOL] at decision
+  | closNoInline closureLoc n env body =>
+    simp only [decideInlineHOL] at decision
+    split at decision <;> simp_all
+    cases related with
+    | closure _ _ supplied2 env1a env1b env2a env2b _ _ body2 aenv
+        safe fv suppliedRelated envRelated approx bodyRelated =>
+      cases suppliedRelated
+      simp_all [loptRel]
+  | clos closureLoc n size body env =>
+    simp only [decideInlineHOL] at decision
+    split at decision <;> simp_all
+    split at decision <;> simp_all
+    cases related with
+    | closure _ _ supplied2 env1a env1b env2a env2b _ _ body2 aenv
+        safe fv suppliedRelated envRelated approx bodyRelated =>
+      cases suppliedRelated
+      simp_all [loptRel]
+  | recNoInline closureLoc n base env fns index conditions =>
+    simp only [decideInlineHOL] at decision
+    split at decision <;> simp_all
+    cases related with
+    | recclosure _ _ supplied2 env1a env1b env2a env2b _ fns2 _ aenv
+        safe fv suppliedRelated envRelated approx functionsRelated =>
+      cases suppliedRelated
+      obtain ⟨locEq, bound, arityEq⟩ := conditions
+      have bound2 : index < fns2.length := by simpa [← functionsRelated.length_eq] using bound
+      have entryRel := List.Forall₂.get functionsRelated bound bound2
+      let _ : Nonempty (Nat × ClosLang.Exp) := ⟨(0, .var .none 0)⟩
+      rw [Flapjack.holEl_eq_getElem index fns bound] at arityEq
+      simp only [loptRel]
+      right
+      refine ⟨trivial, bound2, ?_, ?_, trivial⟩
+      · omega
+      · rw [Flapjack.holEl_eq_getElem index fns bound,
+          Flapjack.holEl_eq_getElem index fns2 bound2]
+        exact entryRel.1
+
 end Flapjack.Compiler.Backend.ClosKnown.Simulation.ApplyPartial
