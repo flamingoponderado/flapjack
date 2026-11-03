@@ -2,6 +2,58 @@
 {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
   "hol_name": "simple_val_rel_do_app_rev",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PrimitiveBlock.lean",
+  "lean_name": "simpleValRelDoAppRevConstant",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared simple_val_rel_do_app_rev_typed in clos_known_syntax_probe.out and the source proof’s BlockOp Constant case. The original simple value and state relations, argument relation, target-result case split, existential source result, and independent compiler/shared FFI carriers are retained. Canonical finite-map state fields have the local roundtrip witness; the evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "simple_val_rel_do_app_rev",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PrimitiveBlock.lean",
+  "lean_name": "simpleValRelDoAppRevEqualConst",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared simple_val_rel_do_app_rev_typed in clos_known_syntax_probe.out and the source proof’s BlockOp EqualConst case. The original simple value and state relations, argument relation, target-result case split, existential source result, and independent compiler/shared FFI carriers are retained. Canonical finite-map state fields have the local roundtrip witness; the evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "simple_val_rel_do_app_rev",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PrimitiveBlock.lean",
+  "lean_name": "simpleValRelDoAppRevBounds",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared simple_val_rel_do_app_rev_typed in clos_known_syntax_probe.out and the source proof’s BlockOp BoundsCheckBlock case. The original simple value and state relations, argument relation, target-result case split, existential source result, and independent compiler/shared FFI carriers are retained. Canonical finite-map state fields have the local roundtrip witness; the evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "simple_val_rel_do_app_rev",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PrimitiveBlock.lean",
+  "lean_name": "simpleValRelDoAppRevBuild",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared simple_val_rel_do_app_rev_typed in clos_known_syntax_probe.out and the source proof’s BlockOp Build case. The original simple value and state relations, argument relation, target-result case split, existential source result, and independent compiler/shared FFI carriers are retained. Canonical finite-map state fields have the local roundtrip witness; the evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "simple_val_rel_do_app_rev",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PrimitiveGlobal.lean",
   "lean_name": "simpleValRelDoAppRevGlobal",
   "statement_status": "reviewed_fmap_as_finite_support",

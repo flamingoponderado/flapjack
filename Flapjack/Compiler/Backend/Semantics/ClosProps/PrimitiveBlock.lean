@@ -157,4 +157,109 @@ theorem simpleValRelDoAppRevElemAt {C D F : Type} (index : Nat) (vr : Value → 
       | number | word64 | byteVector | refPtr | closureClosure | closureRec | recClosure | recRec =>
         simp [doApp, applyBlock, excRel]
 
+/-- Constant values are related to themselves under a simple relation. This
+is Flapjack proof infrastructure. -/
+theorem makeConstRelated (vr : Value → Value → Prop) (simple : simpleValRel vr)
+    (constant : ClosLang.Const) : vr (makeConst constant) (makeConst constant) := by
+  cases constant with
+  | constInt value => simpa [makeConst] using (simple.1 (.number value) value).2 rfl
+  | constWord64 value => simpa [makeConst] using (simple.2.2.1 (.word64 value) value).2 rfl
+  | constStr value => simpa [makeConst] using (simple.2.2.2.1 (.byteVector value.explode) value.explode).2 rfl
+  | constCons tag constants =>
+    simp only [makeConst]
+    apply (simple.2.1 _ _ _).2
+    refine ⟨_, rfl, ?_⟩
+    have worker : ∀ xs : List ClosLang.Const, (∀ x ∈ xs, x ∈ constants) →
+        List.Forall₂ vr (xs.map makeConst) (xs.map makeConst) := by
+      intro xs member
+      induction xs with
+      | nil => exact .nil
+      | cons first rest ih =>
+        apply List.Forall₂.cons
+        · have contained : first ∈ constants := member first (by simp)
+          exact makeConstRelated vr simple first
+        · apply ih
+          intro x hx
+          exact member x (by simp [hx])
+    exact worker constants (by intro x hx; exact hx)
+termination_by sizeOf constant
+decreasing_by
+  simp_wf
+  have bound := List.sizeOf_lt_of_mem contained
+  omega
+
+/-- Constant-construction case of the reverse primitive simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_do_app_rev"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleValRelDoAppRevConstant {C D F : Type} (constant : ClosLang.Const)
+    (vr : Value → Value → Prop) (sr : State C F → State D F → Prop)
+    (s : State C F) (t : State D F) (xs ys : List Value)
+    (h : simpleValRel vr ∧ simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ vr xs ys) :
+    match doApp (.blockOp (.constant constant)) ys t with
+    | .err err2 => ∃ err1, doApp (.blockOp (.constant constant)) xs s = .err err1 ∧ excRel vr err1 err2
+    | .val (y, t1) => ∃ x s1, vr x y ∧ sr s1 t1 ∧ doApp (.blockOp (.constant constant)) xs s = .val (x, s1) := by
+  obtain ⟨simple, _, states, values⟩ := h
+  cases values with
+  | nil => simp [doApp, applyBlock, makeConstRelated vr simple, states]
+  | cons head tail => simp [doApp, applyBlock, excRel]
+
+/-- Constant-comparison case of the reverse primitive simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_do_app_rev"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleValRelDoAppRevEqualConst {C D F : Type} (constant : ClosLang.ConstPart)
+    (vr : Value → Value → Prop) (sr : State C F → State D F → Prop)
+    (s : State C F) (t : State D F) (xs ys : List Value)
+    (h : simpleValRel vr ∧ simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ vr xs ys) :
+    match doApp (.blockOp (.equalConst constant)) ys t with
+    | .err err2 => ∃ err1, doApp (.blockOp (.equalConst constant)) xs s = .err err1 ∧ excRel vr err1 err2
+    | .val (y, t1) => ∃ x s1, vr x y ∧ sr s1 t1 ∧ doApp (.blockOp (.equalConst constant)) xs s = .val (x, s1) := by
+  obtain ⟨simple, _, states, values⟩ := h
+  cases values with
+  | nil => simp [doApp, applyBlock, excRel]
+  | @cons x y _ _ head tail =>
+    cases tail with
+    | cons next rest => simp [doApp, applyBlock, excRel]
+    | nil =>
+      have view := simpleValRel_view vr simple x y head
+      cases constant <;> cases view <;>
+        simp [doApp, applyBlock, excRel, states, simpleValRel_boolValue, simple]
+
+/-- Block bounds-check case of the reverse primitive simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_do_app_rev"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleValRelDoAppRevBounds {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F) (xs ys : List Value)
+    (h : simpleValRel vr ∧ simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ vr xs ys) :
+    match doApp (.blockOp .boundsCheckBlock) ys t with
+    | .err err2 => ∃ err1, doApp (.blockOp .boundsCheckBlock) xs s = .err err1 ∧ excRel vr err1 err2
+    | .val (y, t1) => ∃ x s1, vr x y ∧ sr s1 t1 ∧ doApp (.blockOp .boundsCheckBlock) xs s = .val (x, s1) := by
+  obtain ⟨simple, _, states, values⟩ := h
+  cases values with
+  | nil => simp [doApp, applyBlock, excRel]
+  | @cons x1 y1 _ _ first rest =>
+    cases rest with
+    | nil => simp [doApp, applyBlock, excRel]
+    | @cons x2 y2 _ _ second rest =>
+      cases rest with
+      | cons third rest => simp [doApp, applyBlock, excRel]
+      | nil =>
+        have view1 := simpleValRel_view vr simple x1 y1 first
+        have view2 := simpleValRel_view vr simple x2 y2 second
+        cases view1 <;> cases view2 <;> simp_all [doApp, applyBlock, excRel]
+        rename_i tag left right rel index
+        have lengths := rel.length_eq
+        simp [← lengths, simpleValRel_boolValue, simple]
+
+/-- The unsupported Build primitive fails on both sides. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_do_app_rev"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleValRelDoAppRevBuild {C D F : Type} (parts : List ClosLang.ConstPart)
+    (vr : Value → Value → Prop) (sr : State C F → State D F → Prop)
+    (s : State C F) (t : State D F) (xs ys : List Value)
+    (_h : simpleValRel vr ∧ simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ vr xs ys) :
+    match doApp (.blockOp (.build parts)) ys t with
+    | .err err2 => ∃ err1, doApp (.blockOp (.build parts)) xs s = .err err1 ∧ excRel vr err1 err2
+    | .val (y, t1) => ∃ x s1, vr x y ∧ sr s1 t1 ∧ doApp (.blockOp (.build parts)) xs s = .val (x, s1) := by
+  simp [doApp_build_fallback, excRel]
+
 end Flapjack.Compiler.Backend.ClosProps.PrimitiveBlock
