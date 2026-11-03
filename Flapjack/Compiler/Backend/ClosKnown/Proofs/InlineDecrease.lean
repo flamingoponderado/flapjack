@@ -5,6 +5,16 @@ checked Flapjack implementation. The option-valued wrappers are infrastructure;
 the corresponding total source theorem is in `Inline.DecisionCorrect`. -/
 namespace Flapjack.Compiler.Backend.ClosKnown
 
+/-- An inlining decision containing a body requires a positive factor. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "decide_inline_LetInline"]
+theorem decideInlineLetInline {L : Type} (c : Config) (approx : ValApprox) (loc : Option L)
+    (arity : Nat) (body : ClosLang.Exp)
+    (h : decideInlineHOL c approx loc arity = .letInline body) : 0 < c.inlineFactor := by
+  by_cases zero : c.inlineFactor = 0
+  · cases loc <;> cases approx <;> simp [decideInlineHOL, zero] at h <;>
+      split at h <;> simp_all
+  · omega
+
 theorem inlineFactor_positive_of_letInline (fuel : Nat) (c : Config) (approx : ValApprox)
     (loc : Option Nat) (arity : Nat) (body : ClosLang.Exp)
     (h : decideInlineFuel fuel c approx loc arity = some (.letInline body)) :

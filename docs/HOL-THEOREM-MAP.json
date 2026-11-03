@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "mk_Ticks_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Fuel.lean",
+    "lean_name": "ticks",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared mk_ticks_typed, including the trace, index, count and expression carriers. The zero case returns the expression, and the recursive case increments the index, decrements the count, and wraps the expression with Tick using backend_common.mk_cons. This is the helper called by the executable known-function traversal."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
     "hol_name": "known_op_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/KnownOp.lean",
     "lean_name": "knownOpHOL",
@@ -19,7 +27,7 @@
   {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
     "hol_name": "clos_gen_noinline_def",
-    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Compile.lean",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Fuel.lean",
     "lean_name": "closGenNoInline",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared clos_gen_noinline_typed: the ignored pair payload is independently polymorphic, the empty case returns an empty list, and each recursive case retains the arity, location plus twice the index, and incremented index. The production path calls this definition; noInline_eq_zip proves equality with the previous indexed implementation for all inputs."
@@ -51,7 +59,7 @@
   {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
     "hol_name": "decide_inline_LetInline",
-    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline/DecisionCorrect.lean",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InlineDecrease.lean",
     "lean_name": "decideInlineLetInline",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared decide_inline_positive_typed: the optional location retains its independent polymorphic payload type, and the original decision equality implies positivity of the same configuration's inline factor."

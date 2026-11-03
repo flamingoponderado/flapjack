@@ -317,6 +317,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.ZeroInlineTotal
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftTotal
 import Flapjack.Compiler.Backend.ClosOp.Proofs.EqMeasure
 import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartTotal
+import Flapjack.Compiler.Backend.ClosOp.Proofs.FuelStable
 import Flapjack.Compiler.Backend.WordBignum.CompileExp
 import Flapjack.Compiler.Backend.WordBignum.Helpers
 import Flapjack.Compiler.Backend.WordBignum.Mini

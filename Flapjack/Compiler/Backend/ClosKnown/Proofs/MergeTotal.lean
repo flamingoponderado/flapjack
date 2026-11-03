@@ -41,7 +41,7 @@ theorem mergeFuel_succeeds (fuel : Nat) (a b : ValApprox) (bound : approxBudget 
     | tuple tag xs =>
       cases b with
       | tuple tag' ys =>
-        have bx : approxListBudget xs < fuel := by simp_all [approxBudget] <;> omega
+        have bx : approxListBudget xs < fuel := by (simp_all [approxBudget]; omega)
         obtain ⟨merged, hm⟩ := mapM_succeeds (xs.zip ys) (fun p => mergeFuel fuel p.1 p.2) (by
           intro p hp
           have member := zip_fst_mem xs ys p hp

@@ -45,6 +45,11 @@ private def input : List ClosLang.Exp :=
    .op .none (.globOp (.global 2)) []]
 
 -- Zero initial fuel forces the production retry with inlining disabled.
+-- A zero initial fuel also succeeds through an actual inlining decision.
+#guard match knownListBounded 0 (mkConfig 8 2) (input.take 1) [] .ln with
+  | some ([(.let _ [_] (.let _ [_] (.tick _ (.var _ 0))), .int 42)], .ln) => true
+  | _ => false
+
 #guard match knownListBounded 0 (mkConfig 8 0)
     [.op .none (.intOp (.const 5)) []] [] .ln with
   | some ([(.op .none (.intOp (.const 5)) [], .int 5)], .ln) => true
@@ -59,6 +64,15 @@ private def input : List ClosLang.Exp :=
        decide (name = ofString "f") && match sptToAList config.valApproxSpt with
        | [(2, .int 5)] => true
        | _ => false
+  | _ => false
+
+-- The complete pass no longer fails on positive inlining at zero initial fuel.
+#guard match compileFuel 0 (some (mkConfig 8 2)) input with
+  | some (some _,
+      [.let .none [.fn _ (some 4) none 1 (.var .none 0)]
+        (.let .none [.op .none (.intOp (.const 42)) []] (.var .none 0)),
+       .op .none (.globOp (.setGlobal 2)) [_],
+       .op .none (.intOp (.const 5)) []]) => true
   | _ => false
 
 end Flapjack.Test.ClosKnownParity
