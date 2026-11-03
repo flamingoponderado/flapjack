@@ -2,6 +2,48 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationLet.lean",
+  "lean_name": "knownCorrect0Let",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed (typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. KnownSimulationAt unfolds to the complete expression conjunct; the original binding induction hypothesis and result-dependent successful-binding body induction hypothesis are retained without additional assumptions. The proof relates the bound values using known_correct_approx, retains the original free-variable and oracle conditions, and establishes the existential target run and final relations. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationCons.lean",
+  "lean_name": "knownCorrect0Cons",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed (typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. KnownSimulationAt unfolds to the complete expression conjunct; the original head induction hypothesis and result-dependent successful-head tail induction hypothesis are retained with no additional premises. Both early errors and successful sequential execution preserve the source existential target run and final relations. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "subspt_known_elist_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SubsptComposition.lean",
+  "lean_name": "subsptKnownElistGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subspt_composition_typed in clos_known_syntax_probe.out. The source binders, both source traversal equations, initial-to-final tree inclusion, disjoint write bags and both intermediate inclusion conclusions are retained. Bag disjointness is expressed pointwise by one of the two multiplicities being zero. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "subspt_known_op_elist_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SubsptComposition.lean",
+  "lean_name": "subsptKnownOpElistGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subspt_op_composition_typed in clos_known_syntax_probe.out. The source binders, the source traversal and primitive-operation equations, initial-to-final tree inclusion, disjoint write bags and both intermediate inclusion conclusions are retained. Bag disjointness is expressed pointwise by one of the two multiplicities being zero. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Simulation.lean",
   "lean_name": "knownCorrect0Nil",
   "statement_status": "reviewed_fmap_as_finite_support",

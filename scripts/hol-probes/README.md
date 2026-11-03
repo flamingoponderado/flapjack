@@ -10,6 +10,8 @@ It also captures the tree-extension, oracle monotonicity, and global-disjointnes
 
 The local `known_correct0` simulation statement is replayed with both conjuncts and inferred types, alongside the original evaluator induction rule. The Lean cases are partial progress toward that simulation.
 
+The same capture includes the tree-inclusion composition lemmas used to split sequential optimizer traversals and their primitive-operation counterpart.
+
 `clos_known_syntax_probe.out` captures the unrestricted evaluator oracle-shift statement and the oracle and uniqueness preservation theorems with inferred types. These captures support source review, not cross-language equivalence.
 
 `clos_known_syntax_probe.out` captures typed oracle-disjointness, finite-prefix bag membership, and optimizer preservation declarations. These support source review, not cross-language equivalence.

@@ -55,6 +55,8 @@ val _ = show "known_oracle_subspt_shift_typed=" clos_knownProofTheory.oracle_gap
 val _ = show "known_oracle_subspt_evaluate_typed=" clos_knownProofTheory.oracle_gapprox_subspt_evaluate;
 val _ = show "known_op_subspt_typed=" clos_knownProofTheory.known_op_subspt;
 val _ = show "known_subspt_typed=" clos_knownProofTheory.known_subspt;
+val _ = show "known_subspt_composition_typed=" clos_knownProofTheory.subspt_known_elist_globals;
+val _ = show "known_subspt_op_composition_typed=" clos_knownProofTheory.subspt_known_op_elist_globals;
 val _ = show "known_state_oracle_disjoint_typed=" clos_knownProofTheory.state_oracle_mglobals_disjoint_def;
 val _ = show "known_state_oracle_disjoint_evaluate_typed=" clos_knownProofTheory.state_oracle_mglobals_disjoint_evaluate_suff;
 val _ = show "known_co_fn_none_typed=" clos_knownProofTheory.co_every_Fn_vs_NONE_def;
