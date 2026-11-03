@@ -3,6 +3,32 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "do_app_ssgc",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcIntOp",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed and the original integer operation split: only the operation constructor is specialized; the original execution, input safety and state safety premises and complete success and raise conclusions are retained. Here all integer operators, argument shapes and failure branches are covered; successful results are safe numbers or Booleans. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcWordOp",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed and the original word operation split: only the operation constructor is specialized; the original execution, input safety and state safety premises and complete success and raise conclusions are retained. Here all integer-width and floating-point word operators, argument shapes and failure branches are covered; successful results are safe scalars or Booleans. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
   "lean_name": "doAppSsgcSetGlobal",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [

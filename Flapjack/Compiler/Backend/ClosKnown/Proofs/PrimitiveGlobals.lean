@@ -133,6 +133,70 @@ theorem doAppSsgcIntConst {C F : Type} (i : Int) (args : List ClosSem.Value)
     simp [ClosSem.doApp, applyNumeric, doIntApp, vsgcFree, stateSafe, mglobalsExtendRefl]
   | cons x xs => simp [ClosSem.doApp, applyNumeric, doIntApp]
 
+/-- Every successful integer operation yields a safe scalar or Boolean value.
+This is proof infrastructure for the source primitive-safety theorem. -/
+private theorem intResultSafe (op : ClosLang.IntOp) (args : List ClosSem.Value)
+    (value : ClosSem.Value) (run : doIntApp op args = some value) : vsgcFree value := by
+  unfold doIntApp at run
+  repeat' split at run
+  all_goals simp_all
+  all_goals aesop (add simp [vsgcFree]) (add safe apply [vsgcFreeBool])
+
+/-- Every integer operation satisfies the complete primitive-safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcIntOp {C F : Type} (op : ClosLang.IntOp) (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.intOp op) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.intOp op) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, stateSafe⟩
+  cases found : doIntApp op args with
+  | none => simp [ClosSem.doApp, applyNumeric, found]
+  | some value =>
+    have valueSafe := intResultSafe op args value found
+    simp [ClosSem.doApp, applyNumeric, found, valueSafe, stateSafe, mglobalsExtendRefl]
+
+/-- Integral word primitives return safe scalar or Boolean values. This is
+proof infrastructure for the source primitive-safety theorem. -/
+private theorem integralWordResultSafe (op : ClosLang.WordOp) (args : List ClosSem.Value)
+    (value : ClosSem.Value) (run : doWordAppIntegral op args = some value) : vsgcFree value := by
+  unfold doWordAppIntegral at run
+  repeat' split at run
+  all_goals simp_all
+  all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq]
+  all_goals try (solve | aesop (add simp [vsgcFree]) (add safe apply [vsgcFreeBool]))
+
+/-- Floating-point and integral word operations return safe values. This is
+proof infrastructure for the source primitive-safety theorem. -/
+private theorem wordResultSafe (op : ClosLang.WordOp) (args : List ClosSem.Value)
+    (value : ClosSem.Value) (run : doWordApp op args = some value) : vsgcFree value := by
+  unfold doWordApp at run
+  repeat' split at run
+  all_goals simp_all
+  all_goals try (solve | aesop (add simp [vsgcFree]) (add safe apply [vsgcFreeBool, integralWordResultSafe]))
+
+/-- Every word operation satisfies the complete primitive-safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcWordOp {C F : Type} (op : ClosLang.WordOp) (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.wordOp op) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.wordOp op) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, stateSafe⟩
+  cases found : doWordApp op args with
+  | none => simp [ClosSem.doApp, applyNumeric, found]
+  | some value =>
+    have valueSafe := wordResultSafe op args value found
+    simp [ClosSem.doApp, applyNumeric, found, valueSafe, stateSafe, mglobalsExtendRefl]
+
 /-- The constructor case builds a safe block from safe arguments. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
   (fmap_as_finite_support := [refs, code])]
