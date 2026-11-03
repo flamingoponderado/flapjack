@@ -31,6 +31,36 @@ theorem uniqueSetGlobalsShift {α β : Type} (es : List ClosLang.Exp)
   simp only [List.flatten_append, elistGlobals_append] at bound ⊢
   omega
 
+/-- Uniqueness descends to the source subexpressions of every compound form. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "unique_set_globals_subexps" 194]
+theorem uniqueSetGlobalsSubexps {α β : Type} (co : Nat → α × List ClosLang.Exp × β)
+    (x1 x2 x3 : ClosLang.Exp) (xs : List ClosLang.Exp)
+    (t : BackendCommon.Tra) (opn : ClosLang.Op) (srcName : Basis.Pure.MlString.MlString)
+    (srcNames : List Basis.Pure.MlString.MlString) (locOpt : Option Nat) (vsOpt : Option (List Nat))
+    (numArgs ticks dest : Nat) (fns : List (Nat × ClosLang.Exp)) :
+    (uniqueSetGlobals (x1 :: x2 :: xs) co →
+      uniqueSetGlobals [x1] co ∧ uniqueSetGlobals (x2 :: xs) co) ∧
+    (uniqueSetGlobals [.ifThenElse t x1 x2 x3] co →
+      uniqueSetGlobals [x1] co ∧ uniqueSetGlobals [x2] co ∧ uniqueSetGlobals [x3] co) ∧
+    (uniqueSetGlobals [.let t xs x2] co → uniqueSetGlobals xs co ∧ uniqueSetGlobals [x2] co) ∧
+    (uniqueSetGlobals [.raise t x1] co → uniqueSetGlobals [x1] co) ∧
+    (uniqueSetGlobals [.handle t x1 x2] co → uniqueSetGlobals [x1] co ∧ uniqueSetGlobals [x2] co) ∧
+    (uniqueSetGlobals [.op t opn xs] co → uniqueSetGlobals xs co) ∧
+    (uniqueSetGlobals [.fn srcName locOpt vsOpt numArgs x1] co → uniqueSetGlobals [x1] co) ∧
+    (uniqueSetGlobals [.letrec srcNames locOpt vsOpt fns x1] co →
+      uniqueSetGlobals [x1] co ∧ uniqueSetGlobals (fns.map Prod.snd) co) ∧
+    (uniqueSetGlobals [.app t locOpt x1 xs] co → uniqueSetGlobals [x1] co ∧ uniqueSetGlobals xs co) ∧
+    (uniqueSetGlobals [.tick t x1] co → uniqueSetGlobals [x1] co) ∧
+    (uniqueSetGlobals [.call t ticks dest xs] co → uniqueSetGlobals xs co) := by
+  simp only [uniqueSetGlobals, elistGlobals_append, forall_and]
+  repeat' constructor
+  all_goals
+    intro h n k
+    have bound := h n k
+    simp only [elistGlobals, setGlobals, funGlobals_eq_elist,
+      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero] at bound ⊢
+    omega
+
 /-- Uniqueness includes the original program's own write bag. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "unique_set_globals_IMP_es_distinct_elist_globals"]
 theorem uniqueSetGlobalsDistinct {α β : Type} (es : List ClosLang.Exp)
@@ -54,6 +84,31 @@ theorem nilUniqueSetGlobals {α β : Type} (es : List ClosLang.Exp)
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "mglobals_disjoint_def"]
 def mglobalsDisjoint {α : Type} (globals : List (Option α)) (xs : List ClosLang.Exp) : Prop :=
   Disjoint (mappedGlobals globals) {k | elistGlobals xs k ≠ 0}
+
+/-- Disjointness distributes through the source compound-expression forms. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "mglobals_disjoint_rw"]
+theorem mglobalsDisjointRw {α : Type} (s : List (Option α))
+    (x y x1 x2 x3 : ClosLang.Exp) (xs : List ClosLang.Exp)
+    (tr : BackendCommon.Tra) (opn : ClosLang.Op)
+    (srcNames : List Basis.Pure.MlString.MlString) (locOpt : Option Nat)
+    (vs : Option (List Nat)) (fns : List (Nat × ClosLang.Exp)) (ticks dest : Nat) :
+    (mglobalsDisjoint s (x :: y :: xs) ↔ mglobalsDisjoint s [x] ∧ mglobalsDisjoint s (y :: xs)) ∧
+    (mglobalsDisjoint s [.let tr xs x] ↔ mglobalsDisjoint s xs ∧ mglobalsDisjoint s [x]) ∧
+    (mglobalsDisjoint s [.handle tr x1 x2] ↔ mglobalsDisjoint s [x1] ∧ mglobalsDisjoint s [x2]) ∧
+    (mglobalsDisjoint s [.ifThenElse tr x1 x2 x3] ↔
+      mglobalsDisjoint s [x1] ∧ mglobalsDisjoint s [x2] ∧ mglobalsDisjoint s [x3]) ∧
+    (mglobalsDisjoint s [.raise tr x] ↔ mglobalsDisjoint s [x]) ∧
+    (mglobalsDisjoint s [.tick tr x] ↔ mglobalsDisjoint s [x]) ∧
+    (mglobalsDisjoint s [.call tr ticks dest xs] ↔ mglobalsDisjoint s xs) ∧
+    (mglobalsDisjoint s [.op tr opn xs] ↔
+      mglobalsDisjoint s xs ∧ Disjoint (mappedGlobals s) {k | opGlobalBag opn k ≠ 0}) ∧
+    (mglobalsDisjoint s [.app tr locOpt x1 xs] ↔ mglobalsDisjoint s [x1] ∧ mglobalsDisjoint s xs) ∧
+    (mglobalsDisjoint s [.letrec srcNames locOpt vs fns x1] ↔
+      mglobalsDisjoint s (fns.map Prod.snd) ∧ mglobalsDisjoint s [x1]) := by
+  simp only [mglobalsDisjoint, Set.disjoint_left, Set.mem_ofPred_eq, not_not,
+    elistGlobals, setGlobals, funGlobals_eq_elist, FlatProps.unionGlobalBag,
+    FlatProps.emptyGlobalBag, Nat.add_zero, Nat.add_eq_zero_iff, forall_and]
+  tauto
 
 /-- Safe evaluation preserves disjointness from another expression list when
 the expressions and future oracle programs have unique global writes. -/

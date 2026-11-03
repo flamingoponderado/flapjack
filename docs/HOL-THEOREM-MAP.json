@@ -1,6 +1,23 @@
 [
 {
     "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "unique_set_globals_subexps",
+  "hol_line": 194,
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/UniqueGlobals.lean",
+    "lean_name": "uniqueSetGlobalsSubexps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original declaration and inferred HOL types captured in clos_known_syntax_probe.out. All eleven source conjunctions, constructor arguments and shared variables match the inferred source types, including independent oracle payload types and exact mlstring carriers. BAG_ALL_DISTINCT uses its reviewed pointwise multiplicity formulation. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "mglobals_disjoint_rw",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/UniqueGlobals.lean",
+    "lean_name": "mglobalsDisjointRw",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original declaration and inferred HOL types captured in clos_known_syntax_probe.out. All ten source equivalences and their shared variables match the inferred source types, including the independent option payload and exact mlstring carriers. Bag support is represented by nonzero multiplicity. Source review and Lean checking do not establish cross-language equivalence."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
     "hol_name": "unique_set_globals_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/UniqueGlobals.lean",
     "lean_name": "uniqueSetGlobals",

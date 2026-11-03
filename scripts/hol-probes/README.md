@@ -1,4 +1,4 @@
-`clos_known_syntax_probe.out` captures the inferred oracle uniqueness, global disjointness, and preservation statements used by `UniqueGlobals.lean`. These captures support source review, not cross-language equivalence.
+`clos_known_syntax_probe.out` captures the inferred oracle uniqueness, subexpression decomposition, global disjointness, and preservation statements used by `UniqueGlobals.lean`. These captures support source review, not cross-language equivalence.
 
 `clos_known_syntax_probe.out` captures the exported evaluator and application global-safety theorems as well as a typed replay of their original local mutual statement. These support source review, not cross-language equivalence.
 
