@@ -1,6 +1,152 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "exp_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Relations.lean",
+  "lean_name": "expRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_exp_rel_typed in clos_known_syntax_probe.out. All existential optimizer inputs and the subtree, safety and singleton traversal conditions are retained. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "exp_rel_upd_inline_factor",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Relations.lean",
+  "lean_name": "expRelUpdateInlineFactor",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_exp_rel_update_typed in clos_known_syntax_probe.out. The complete function equality retains the same configuration update and quantification. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "exp_rel_dec_inline_factor",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Relations.lean",
+  "lean_name": "expRelDecInlineFactor",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_exp_rel_dec_typed in clos_known_syntax_probe.out. The same two expression relations and all parameters are retained. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "f_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Relations.lean",
+  "lean_name": "fRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_f_rel_typed in clos_known_syntax_probe.out. Both function pairs, arity equality and replicated approximation environment are retained. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "f_rel_upd_inline_factor",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Relations.lean",
+  "lean_name": "fRelUpdateInlineFactor",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_f_rel_update_typed in clos_known_syntax_probe.out. The complete function equality is preserved. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "loptrel_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Relations.lean",
+  "lean_name": "loptRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_loptrel_typed in clos_known_syntax_probe.out. Unchanged annotation and closure or recursive-closure annotation cases retain their exact side conditions and bounded HOL EL. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "next_g_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Relations.lean",
+  "lean_name": "nextG",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "reviewer": "Compared known_next_g_typed in clos_known_syntax_probe.out. The initial oracle entry and product projection have the source types; compiler and FFI carriers remain independent. Source review and Lean checking do not establish cross-language equivalence. The state uses canonical finite-support refs and code with the local roundtrip witness.",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ]
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_app_exact_rw",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/AppExact.lean",
+  "lean_name": "evaluateAppExactRw",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "reviewer": "Compared known_evaluate_app_exact_typed in clos_known_syntax_probe.out. Both original premises, the full timeout result and exact body evaluation with captured environment and decremented clock are retained. Source review and Lean checking do not establish cross-language equivalence. The state uses canonical finite-support refs and code with the local roundtrip witness. The evaluator inherits rational-cut reals.",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ValueRelation.lean",
+  "lean_name": "valueRelSourceEquations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_v_rel_typed in clos_known_syntax_probe.out. All seven source equations are kernel-checked for the inductive relation, including existential closure prefixes, source syntax and free-variable conditions, and recursive function-body relations. The recursive value relation is an inductive Lean proposition, characterized by these equations over finite values. Source review and Lean checking do not establish cross-language equivalence.",
+  "hol_line": 2619
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_app_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ValueRelation.lean",
+  "lean_name": "valueRelApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_v_rel_app_typed in clos_known_syntax_probe.out. All source cases are retained, including the optional argument approximations and empty partial-argument requirement. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_app_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ValueRelation.lean",
+  "lean_name": "valueRelAppNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_v_rel_app_none_typed in clos_known_syntax_probe.out. The equation at absent argument approximations has the original relation and parameters. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_subspt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ValueRelation.lean",
+  "lean_name": "valueRelSubspt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_v_rel_subspt_typed in clos_known_syntax_probe.out. The source value-relation and sparse-tree extension premises and relation conclusion are retained. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_LIST_REL_subspt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ValueRelation.lean",
+  "lean_name": "valueRelListSubspt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_v_rel_list_subspt_typed in clos_known_syntax_probe.out. The source pairwise relation and sparse-tree extension imply the same pairwise relation at the larger tree. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_upd_inline_factor",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ValueRelation.lean",
+  "lean_name": "valueRelUpdateInlineFactor",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_v_rel_update_typed in clos_known_syntax_probe.out. The original function equality covers all trees and values. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "ref_rel",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ValueRelation.lean",
+  "lean_name": "RefRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_ref_rel_rules_typed in clos_known_syntax_probe.out. The three inductive rules retain byte arrays, pairwise-related value arrays and same-mode thunks. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "ref_rel_subspt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ValueRelation.lean",
+  "lean_name": "refRelSubspt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_ref_rel_subspt_typed in clos_known_syntax_probe.out. The source reference-relation and sparse-tree extension premises and relation conclusion are retained. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "ref_rel_upd_inline_factor",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ValueRelation.lean",
+  "lean_name": "refRelUpdateInlineFactor",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_ref_rel_update_typed in clos_known_syntax_probe.out. The original function equality covers all trees and references. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct_approx",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CorrectApproxApp.lean",
   "lean_name": "knownCorrectApproxApp",
