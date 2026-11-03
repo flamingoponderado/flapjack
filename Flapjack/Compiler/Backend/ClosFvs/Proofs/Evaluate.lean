@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Relations
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 
 /-! Evaluator cases for free-variable removal correctness. -/
@@ -418,5 +419,125 @@ theorem evaluate_remove_fvs_let {C F : Type} (trace : BackendCommon.Tra)
         refine ⟨targetBodyResult, targetLast, ?_, bodyRel, lastRel⟩
         rw [evaluate, fixClock_evaluate, targetRun]
         exact targetBodyRun
+
+/-- The value relation preserves the Boolean observation used by conditionals. -/
+theorem valueRel_asBool {left right : Value} (related : ValueRel left right) :
+    asBool left = asBool right := by
+  cases related with
+  | block tag left right entries =>
+    cases entries with
+    | nil => rfl
+    | cons head tail => cases tag <;> simp [asBool]
+  | number _ | word64 _ | byteVector _ | refPtr _ _ => rfl
+  | closure => rfl
+  | recclosure => rfl
+
+/-- Conditional evaluation preserves both Boolean branches and the
+type-error result for a non-Boolean condition. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "evaluate_remove_fvs"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_remove_fvs_if {C F : Type} (trace : BackendCommon.Tra)
+    (condition yes no : ClosLang.Exp) (env : List Value) (source : State C F)
+    (conditionIH : ∀ (result : Result (List Value) Value) (next : State C F)
+        (code : List ClosLang.Exp) (nextEnv : List Value) (target : State C F),
+      evaluate [condition] env source = (result, next) ∧ List.Forall₂ ValueRel env nextEnv ∧
+        StateRel source target ∧ CodeRel env.length [condition] code →
+      ∃ targetResult targetNext, evaluate code nextEnv target = (targetResult, targetNext) ∧
+        ResultRel result targetResult ∧ StateRel next targetNext)
+    (yesIH : ∀ (values : List Value) (middle : State C F),
+      evaluate [condition] env source = (.val values, middle) →
+      boolValue true = @Flapjack.holHd Value ⟨unitValue⟩ values →
+      ∀ (result : Result (List Value) Value) (next : State C F)
+        (code : List ClosLang.Exp) (nextEnv : List Value) (target : State C F),
+        evaluate [yes] env middle = (result, next) ∧ List.Forall₂ ValueRel env nextEnv ∧
+          StateRel middle target ∧ CodeRel env.length [yes] code →
+        ∃ targetResult targetNext, evaluate code nextEnv target = (targetResult, targetNext) ∧
+          ResultRel result targetResult ∧ StateRel next targetNext)
+    (noIH : ∀ (values : List Value) (middle : State C F),
+      evaluate [condition] env source = (.val values, middle) →
+      boolValue true ≠ @Flapjack.holHd Value ⟨unitValue⟩ values →
+      boolValue false = @Flapjack.holHd Value ⟨unitValue⟩ values →
+      ∀ (result : Result (List Value) Value) (next : State C F)
+        (code : List ClosLang.Exp) (nextEnv : List Value) (target : State C F),
+        evaluate [no] env middle = (result, next) ∧ List.Forall₂ ValueRel env nextEnv ∧
+          StateRel middle target ∧ CodeRel env.length [no] code →
+        ∃ targetResult targetNext, evaluate code nextEnv target = (targetResult, targetNext) ∧
+          ResultRel result targetResult ∧ StateRel next targetNext)
+    (result : Result (List Value) Value) (sourceNext : State C F)
+    (targetCode : List ClosLang.Exp) (nextEnv : List Value) (target : State C F)
+    (premises : evaluate [.ifThenElse trace condition yes no] env source = (result, sourceNext) ∧
+      List.Forall₂ ValueRel env nextEnv ∧ StateRel source target ∧
+      CodeRel env.length [.ifThenElse trace condition yes no] targetCode) :
+    ∃ targetResult targetNext,
+      evaluate targetCode nextEnv target = (targetResult, targetNext) ∧
+      ResultRel result targetResult ∧ StateRel sourceNext targetNext := by
+  obtain ⟨run, envRel, states, code⟩ := premises
+  have codeEq : targetCode = [.ifThenElse trace (removeSing env.length condition)
+      (removeSing env.length yes) (removeSing env.length no)] := by
+    simpa [CodeRel, removeList, removeSing] using code
+  rw [codeEq]
+  cases conditionRun : evaluate [condition] env source with
+  | mk conditionResult middle =>
+    obtain ⟨targetResult, targetMiddle, targetRun, related, middleRel⟩ :=
+      conditionIH conditionResult middle [removeSing env.length condition] nextEnv target
+        ⟨conditionRun, envRel, states, by simp [CodeRel, removeList]⟩
+    cases conditionResult with
+    | err error =>
+      rw [evaluate, fixClock_evaluate, conditionRun] at run
+      cases run
+      cases targetResult with
+      | val values => cases error <;> simp [ResultRel] at related
+      | err targetError =>
+        exact ⟨.err targetError, targetMiddle,
+          by rw [evaluate, fixClock_evaluate, targetRun], related, middleRel⟩
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value condition env source middle values conditionRun
+      cases targetResult with
+      | err error => cases error <;> simp [ResultRel] at related
+      | val targetValues =>
+        cases related with
+        | cons valueRel tailRel =>
+          cases tailRel
+          rename_i targetValue
+          have boolEq : asBool value = asBool targetValue := valueRel_asBool valueRel
+          cases decision : asBool value with
+          | none =>
+            have targetDecision : asBool targetValue = none := boolEq.symm.trans decision
+            rw [evaluate, fixClock_evaluate, conditionRun] at run
+            simp [decision] at run
+            obtain ⟨rfl, rfl⟩ := run
+            exact ⟨.err (.abort .typeError), targetMiddle,
+              by rw [evaluate, fixClock_evaluate, targetRun]; simp [targetDecision], rfl, middleRel⟩
+          | some flag =>
+            have targetDecision : asBool targetValue = some flag := boolEq.symm.trans decision
+            cases flag with
+            | false =>
+              have valueEq : boolValue false = value := ((asBool_eq_some value false).mp decision).symm
+              have notTrue : boolValue true ≠ value := by
+                rw [← valueEq]
+                simp [boolValue, BackendCommon.trueTag, BackendCommon.falseTag]
+              have branchRun : evaluate [no] env middle = (result, sourceNext) := by
+                rw [evaluate, fixClock_evaluate, conditionRun] at run
+                simpa [decision] using run
+              obtain ⟨targetBranchResult, targetLast, targetBranchRun, branchRel, lastRel⟩ :=
+                noIH [value] middle conditionRun (by simpa [Flapjack.holHd] using notTrue)
+                  (by simpa [Flapjack.holHd] using valueEq) result sourceNext
+                  [removeSing env.length no] nextEnv targetMiddle
+                  ⟨branchRun, envRel, middleRel, by simp [CodeRel, removeList]⟩
+              refine ⟨targetBranchResult, targetLast, ?_, branchRel, lastRel⟩
+              rw [evaluate, fixClock_evaluate, targetRun]
+              simpa [targetDecision] using targetBranchRun
+            | true =>
+              have valueEq : boolValue true = value := ((asBool_eq_some value true).mp decision).symm
+              have branchRun : evaluate [yes] env middle = (result, sourceNext) := by
+                rw [evaluate, fixClock_evaluate, conditionRun] at run
+                simpa [decision] using run
+              obtain ⟨targetBranchResult, targetLast, targetBranchRun, branchRel, lastRel⟩ :=
+                yesIH [value] middle conditionRun (by simpa [Flapjack.holHd] using valueEq)
+                  result sourceNext [removeSing env.length yes] nextEnv targetMiddle
+                  ⟨branchRun, envRel, middleRel, by simp [CodeRel, removeList]⟩
+              refine ⟨targetBranchResult, targetLast, ?_, branchRel, lastRel⟩
+              rw [evaluate, fixClock_evaluate, targetRun]
+              simpa [targetDecision] using targetBranchRun
 
 end Flapjack.Compiler.Backend.ClosFvs
