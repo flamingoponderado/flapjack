@@ -1,6 +1,35 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "adj_orac_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "adjOracRel",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared adj_orac_rel_typed: the source and target compiler configurations remain independent, the FFI carrier is shared, callback results map only their configuration, and the target state copies all other fields while mapping the oracle. The imported canonical closure state and local roundtrip witness account for refs and code. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "do_app_adj_orac_Rerr",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "doAppAdjOracErr",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared do_app_adj_orac_err_typed: for the same operation and arguments, an error on the first related state yields exactly that error on the second. Compiler-state carriers are independent and the FFI carrier shared. The canonical closure state fields are qualified; primitive semantics inherit the repository's rational-cut real model. Source review does not establish cross-language equivalence.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "do_app_adj_orac_Rval",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "doAppAdjOracVal",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared do_app_adj_orac_val_typed: a successful primitive on the first related state yields the same value and an existential related target state. Compiler-state carriers are independent and the FFI carrier shared. The canonical closure state fields are qualified; primitive semantics inherit the repository's rational-cut real model. Source review does not establish cross-language equivalence.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
   "hol_name": "dest_closure_none_loc",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ClosureLocation.lean",
   "lean_name": "destClosureNoneLoc",
