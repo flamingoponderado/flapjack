@@ -72,6 +72,40 @@ theorem evaluate_generated_stub {C F : Type} (trace : BackendCommon.Tra) (label 
   rw [fixClock_evaluate, evaluate_variables trace arity env _ bound]
   simp [findCode, code, List.length_take, Nat.min_eq_left bound, decClock]
 
+/-- A generated stub with a valid code entry times out at zero clock. This
+Flapjack-specific evaluator fact records why a pass simulation cannot in
+general demand the same starting clock on both sides. -/
+theorem evaluate_generated_stub_zero_clock {C F : Type} (trace : BackendCommon.Tra) (label arity : Nat)
+    (body : ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (bound : arity ≤ env.length) (code : state.code.lookup label = some (arity, body)) :
+    evaluate [.call trace 0 label (ClosCall.variables trace arity)] env { state with clock := 0 } =
+      (.err (.abort .timeoutError), { state with clock := 0 }) := by
+  rw [evaluate, fixClock_evaluate, evaluate_variables trace arity env _ bound]
+  simp [findCode, code, List.length_take, Nat.min_eq_left bound]
+
+/-- Even a variable body can return at zero clock while its generated stub
+times out. This Flapjack-specific counterexample rules out a general
+same-starting-clock body-to-stub simulation. -/
+theorem generated_stub_ne_variable_zero_clock {C F : Type} (trace : BackendCommon.Tra) (label : Nat)
+    (value : ClosSem.Value) (state : ClosSem.State C F)
+    (code : state.code.lookup label = some (1, .var .none 0)) :
+    evaluate [.call trace 0 label (ClosCall.variables trace 1)] [value] { state with clock := 0 } ≠
+      evaluate [.var .none 0] [value] { state with clock := 0 } := by
+  rw [evaluate_generated_stub_zero_clock trace label 1 (.var .none 0) [value] state (by simp) code]
+  simp [evaluate]
+
+/-- A stub needs exactly one tick in addition to any allowance already
+supplied to its installed body. This Flapjack-specific evaluator lemma helps
+compose existential clock allowances; it is not a pass correctness theorem. -/
+theorem evaluate_generated_stub_with_allowance {C F : Type} (trace : BackendCommon.Tra)
+    (label arity extraClock : Nat) (body : ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (bound : arity ≤ env.length) (code : state.code.lookup label = some (arity, body)) :
+    evaluate [.call trace 0 label (ClosCall.variables trace arity)] env
+      { state with clock := state.clock + (extraClock + 1) } =
+      evaluate [body] (env.take arity) { state with clock := state.clock + extraClock } := by
+  simpa [Nat.add_assoc] using
+    evaluate_generated_stub trace label arity body env { state with clock := state.clock + extraClock } bound code
+
 /-- A rewritten direct call spends its extra tick as part of the call cost.
 This is a local evaluator fact; it does not establish the pass simulation. -/
 theorem evaluate_rewritten_call {C F : Type} (trace : BackendCommon.Tra) (label : Nat)

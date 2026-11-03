@@ -406,6 +406,34 @@ def InstalledProgramSimBelow {C F : Type} (passFuel fuel limit : Nat) (compiler 
       targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
 
+/-- Installed-program simulation with existential target clock allowance.
+This is Flapjack-specific infrastructure, not a HOL correctness theorem. -/
+def InstalledProgramSimBelowWithClock {C F : Type} (passFuel fuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (g : State) (allowed : Set Nat)
+    (program targetProgram : List ClosLang.Exp) : Prop :=
+  ∀ (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F),
+    source.clock < limit →
+    evaluate program [] source = (result, final) →
+    result ≠ .err (.abort .typeError) →
+    StateWellFormedFuel fuel g allowed target.code source →
+    StateRelFuel fuel g allowed source target →
+    IncrementalInstallReady g source target →
+    source.compile = compileIncFuelCallback passFuel compiler → target.compile = compiler →
+    target.compileOracle = compileIncFuelOracle passFuel source.compileOracle →
+    ∃ extraClock finalG targetResult targetFinal,
+      stateExtends g finalG ∧
+      evaluate targetProgram [] { target with clock := target.clock + extraClock } = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel fuel finalG allowed targetFinal.code))
+        (ValueRelFuel fuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel fuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel fuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
+
 /-- A successfully installed source program can use the list-simulation
 induction hypothesis at the compiler state produced by the actual incremental
 pass. This is the installed-program part of the Lean-side simulation; the
@@ -1789,7 +1817,10 @@ def GrowingExprsSimFrom {C F : Type} (passFuel relationFuel : Nat) (compiler : C
         (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
 
 /-- Clock-bounded pass-state simulation for well-founded induction over
-installed programs. This is Flapjack-specific simulation infrastructure. -/
+installed programs. This is Flapjack-specific simulation infrastructure.
+It demands equal starting clocks and therefore cannot express the general
+HOL `calls_correct` result: generated direct-call stubs can require an extra
+target tick, as shown by `generated_stub_ne_variable_zero_clock`. -/
 def GrowingExprsSimFromBelow {C F : Type} (passFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C)
     (required : State) (allowed : Set Nat) (sourceExps targetExps : List ClosLang.Exp) : Prop :=
   ∀ (g : State), stateExtends required g →
@@ -1808,6 +1839,37 @@ def GrowingExprsSimFromBelow {C F : Type} (passFuel relationFuel limit : Nat) (c
       target.compileOracle = compileIncFuelOracle passFuel source.compileOracle →
       ∃ finalG targetResult targetFinal,
         stateExtends g finalG ∧ evaluate targetExps targetEnv target = (targetResult, targetFinal) ∧
+        resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+          (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+        StateRelFuel relationFuel finalG allowed final targetFinal ∧
+        StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+        IncrementalInstallReady finalG final targetFinal ∧
+        final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+        targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+        (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
+
+/-- Clock-bounded expression simulation with an existential target-clock
+allowance. This is Flapjack-specific infrastructure motivated by HOL
+`calls_correct`, not a port of that theorem: its other invariants and
+conclusions have not yet been matched to HOL. -/
+def GrowingExprsSimFromBelowWithClock {C F : Type} (passFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (required : State) (allowed : Set Nat) (sourceExps targetExps : List ClosLang.Exp) : Prop :=
+  ∀ (g : State), stateExtends required g →
+    ∀ (sourceEnv targetEnv : List ClosSem.Value)
+      (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+      (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+      (final : ClosSem.State (NumSet × C) F),
+      source.clock < limit →
+      evaluate sourceExps sourceEnv source = (result, final) →
+      result ≠ .err (.abort .typeError) →
+      EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 (targetExps.map (0, ·)) →
+      ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv →
+      StateWellFormedFuel relationFuel g allowed target.code source →
+      StateRelFuel relationFuel g allowed source target → IncrementalInstallReady g source target →
+      source.compile = compileIncFuelCallback passFuel compiler → target.compile = compiler →
+      target.compileOracle = compileIncFuelOracle passFuel source.compileOracle →
+      ∃ extraClock finalG targetResult targetFinal,
+        stateExtends g finalG ∧ evaluate targetExps targetEnv { target with clock := target.clock + extraClock } = (targetResult, targetFinal) ∧
         resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
           (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
         StateRelFuel relationFuel finalG allowed final targetFinal ∧
@@ -1916,7 +1978,8 @@ def GrowingAppSim {C F : Type} (passFuel relationFuel : Nat) (compiler : ClosSem
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
 
 /-- Clock-bounded application simulation for the well-founded evaluator
-induction. This is Flapjack-specific simulation infrastructure. -/
+induction. This Flapjack-specific interface requires equal starting clocks;
+the HOL correctness theorem instead permits extra target clock. -/
 def GrowingAppSimClockBelow {C F : Type} (passFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C)
     (allowed : Set Nat) (loc : Option Nat) : Prop :=
   ∀ (g : State) (function targetFunction : ClosSem.Value) (args targetArgs : List ClosSem.Value)
@@ -1935,6 +1998,35 @@ def GrowingAppSimClockBelow {C F : Type} (passFuel relationFuel limit : Nat) (co
     target.compileOracle = compileIncFuelOracle passFuel source.compileOracle →
     ∃ finalG targetResult targetFinal,
       stateExtends g finalG ∧ evaluateApp loc targetFunction targetArgs target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
+
+/-- Clock-bounded application simulation with an existential target-clock
+allowance. This is Flapjack-specific infrastructure, not a HOL theorem port. -/
+def GrowingAppSimClockBelowWithClock {C F : Type} (passFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (allowed : Set Nat) (loc : Option Nat) : Prop :=
+  ∀ (g : State) (function targetFunction : ClosSem.Value) (args targetArgs : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F),
+    source.clock < limit →
+    evaluateApp loc function args source = (result, final) → result ≠ .err (.abort .typeError) →
+    ValueRelFuel relationFuel g allowed target.code function targetFunction →
+    List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) args targetArgs →
+    ValueWellFormedFuel relationFuel g allowed target.code function →
+    ValuesWellFormedFuel relationFuel g allowed target.code args →
+    StateWellFormedFuel relationFuel g allowed target.code source → StateRelFuel relationFuel g allowed source target →
+    IncrementalInstallReady g source target →
+    source.compile = compileIncFuelCallback passFuel compiler → target.compile = compiler →
+    target.compileOracle = compileIncFuelOracle passFuel source.compileOracle →
+    ∃ extraClock finalG targetResult targetFinal,
+      stateExtends g finalG ∧ evaluateApp loc targetFunction targetArgs { target with clock := target.clock + extraClock } = (targetResult, targetFinal) ∧
       resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
         (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
       StateRelFuel relationFuel finalG allowed final targetFinal ∧
@@ -3413,6 +3505,39 @@ theorem growingExprsSimFrom_below {C F : Type} (passFuel relationFuel limit : Na
   intro g growth sourceEnv targetEnv source target result final _
   exact sim g growth sourceEnv targetEnv source target result final
 
+/-- A same-clock simulation is a special case of the clock-allowing
+interface. This is Flapjack-specific infrastructure. -/
+theorem growingExprsSimFromBelow_withClock {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat)
+    (sourceExps targetExps : List ClosLang.Exp)
+    (sim : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed sourceExps targetExps) :
+    GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler required allowed sourceExps targetExps := by
+  intro g growth sourceEnv targetEnv source target result final clock run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  obtain ⟨finalG, targetResult, targetFinal, extended, targetRun, related, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩ :=
+    sim g growth sourceEnv targetEnv source target result final clock run notType envs envWf sourceWf states ready
+      sourceCompiler targetCompiler oracle
+  refine ⟨0, finalG, targetResult, targetFinal, extended, ?_, related, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩
+  simpa using targetRun
+
+/-- A same-clock application simulation is a special case of the
+clock-allowing interface. This is Flapjack-specific infrastructure. -/
+theorem growingAppSimClockBelow_withClock {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (loc : Option Nat)
+    (sim : GrowingAppSimClockBelow (F := F) passFuel relationFuel limit compiler allowed loc) :
+    GrowingAppSimClockBelowWithClock (F := F) passFuel relationFuel limit compiler allowed loc := by
+  intro g function targetFunction args targetArgs source target result final clock run notType functions arguments
+    functionWf argsWf stateWf states ready sourceCompiler targetCompiler oracle
+  obtain ⟨finalG, targetResult, targetFinal, extended, targetRun, related, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩ :=
+    sim g function targetFunction args targetArgs source target result final clock run notType functions arguments
+      functionWf argsWf stateWf states ready sourceCompiler targetCompiler oracle
+  refine ⟨0, finalG, targetResult, targetFinal, extended, ?_, related, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩
+  simpa using targetRun
+
 /-- A clock-bounded simulation can be used at a smaller clock bound. This
 is Flapjack-specific simulation infrastructure. -/
 theorem growingExprsSimFromBelow_mono_clock {C F : Type} (passFuel relationFuel smaller larger : Nat)
@@ -3430,6 +3555,16 @@ theorem growingExprsSimFromBelow_mono_state {C F : Type} (passFuel relationFuel 
     (sourceExps targetExps : List ClosLang.Exp) (growth : stateExtends smaller larger)
     (sim : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler smaller allowed sourceExps targetExps) :
     GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler larger allowed sourceExps targetExps := by
+  intro g extended
+  exact sim g (stateExtends_trans smaller larger g growth extended)
+
+/-- A clock-allowing simulation remains valid above an extension of its
+required pass state. This is Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelowWithClock_mono_state {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (smaller larger : State) (allowed : Set Nat)
+    (sourceExps targetExps : List ClosLang.Exp) (growth : stateExtends smaller larger)
+    (sim : GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler smaller allowed sourceExps targetExps) :
+    GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler larger allowed sourceExps targetExps := by
   intro g extended
   exact sim g (stateExtends_trans smaller larger g growth extended)
 
@@ -3464,6 +3599,20 @@ theorem growingExprsSimFromBelow_installedBelow {C F : Type} (passFuel relationF
     (program targetProgram : List ClosLang.Exp)
     (sim : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler g allowed program targetProgram) :
     InstalledProgramSimBelow (C := C) (F := F) passFuel relationFuel limit compiler g allowed program targetProgram := by
+  intro source target result final clock run notType sourceWf states ready sourceCompiler targetCompiler oracle
+  have envs : EnvRelFuel relationFuel g allowed target.code [] [] 0 (targetProgram.map (0, ·)) := by
+    apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+    simp [envRel]
+  exact sim g (stateExtends_refl g ready.well.2) [] [] source target result final clock run notType envs .nil
+    sourceWf states ready sourceCompiler targetCompiler oracle
+
+/-- A clock-allowing pass-state simulation supplies the corresponding
+installed-program simulation. This is Flapjack-specific infrastructure. -/
+theorem growingExprsSimFromBelowWithClock_installedBelow {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (g : State) (allowed : Set Nat)
+    (program targetProgram : List ClosLang.Exp)
+    (sim : GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler g allowed program targetProgram) :
+    InstalledProgramSimBelowWithClock (C := C) (F := F) passFuel relationFuel limit compiler g allowed program targetProgram := by
   intro source target result final clock run notType sourceWf states ready sourceCompiler targetCompiler oracle
   have envs : EnvRelFuel relationFuel g allowed target.code [] [] 0 (targetProgram.map (0, ·)) := by
     apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
@@ -6415,6 +6564,120 @@ theorem growingExprsSimFromBelow_of_forall₂ {C F : Type} (passFuel relationFue
                   targetOuter, .cons grownValue tailRel, finalStates, finalWf, finalReady, finalCompiler,
                   targetFinalCompiler, finalOracle, combinedGrowth⟩
 
+/-- Clock-allowing single-expression simulations compose through list
+evaluation. The allowances are added after extending a successful head run.
+This is Flapjack-specific simulation infrastructure, not a HOL theorem port. -/
+theorem growingExprsSimFromBelowWithClock_of_forall₂ {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat)
+    {sourceExps targetExps : List ClosLang.Exp}
+    (sims : List.Forall₂ (fun source target =>
+      GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler required allowed [source] [target])
+      sourceExps targetExps) :
+    GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler required allowed sourceExps targetExps := by
+  induction sims with
+  | nil =>
+    intro g _ sourceEnv targetEnv source target result final clock run _ _ _ stateWf states ready sourceCompiler targetCompiler oracle
+    have eq : result = .val [] ∧ final = source := by simpa [evaluate] using run.symm
+    obtain ⟨rfl, rfl⟩ := eq
+    exact ⟨0, g, .val [], target, stateExtends_refl g ready.well.2, by simp [evaluate], .nil,
+      states, stateWf, ready, sourceCompiler, targetCompiler, oracle, fun _ _ h => h⟩
+  | @cons sourceHead targetHead sourceTail targetTail headSim tailSims tailIH =>
+    intro g requiredGrowth sourceEnv targetEnv source target result final clock run notType envs envWf stateWf states ready
+      sourceCompiler targetCompiler oracle
+    have headEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, targetHead)] := by
+      apply envRelFuel_subset envs
+      intro item member
+      simp only [List.mem_singleton] at member
+      subst item
+      simp
+    cases headRun : evaluate [sourceHead] sourceEnv source with
+    | mk headResult headFinal =>
+      have headSafe : headResult ≠ .err (.abort .typeError) := by
+        intro bad
+        subst headResult
+        have outer := ClosProps.evaluate_cons_error sourceHead sourceTail sourceEnv source headFinal (.abort .typeError) headRun
+        have eq : result = .err (.abort .typeError) := by rw [run] at outer; exact (Prod.mk.inj outer).1
+        exact notType eq
+      obtain ⟨headExtra, headG, targetHeadResult, targetHeadFinal, headExt, targetHeadRun, headRel, headStates,
+        headWf, headReady, headCompiler, targetHeadCompiler, headOracle, headGrowth⟩ :=
+        headSim g requiredGrowth sourceEnv targetEnv source target headResult headFinal clock headRun headSafe headEnv envWf
+          stateWf states ready sourceCompiler targetCompiler oracle
+      cases headResult with
+      | err error =>
+        cases targetHeadResult with
+        | val values => simp [resultRel] at headRel
+        | err targetError =>
+          have eq : result = .err error ∧ final = headFinal := by
+            have outer := ClosProps.evaluate_cons_error sourceHead sourceTail sourceEnv source headFinal error headRun
+            rw [run] at outer
+            exact Prod.mk.inj outer
+          obtain ⟨rfl, rfl⟩ := eq
+          exact ⟨headExtra, headG, .err targetError, targetHeadFinal, headExt,
+            ClosProps.evaluate_cons_error targetHead targetTail targetEnv { target with clock := target.clock + headExtra } targetHeadFinal targetError targetHeadRun,
+            headRel, headStates, headWf, headReady, headCompiler, targetHeadCompiler, headOracle, headGrowth⟩
+      | val values =>
+        obtain ⟨value, rfl⟩ := evaluate_singleton_value sourceHead sourceEnv source headFinal values headRun
+        cases targetHeadResult with
+        | err error => simp [resultRel] at headRel
+        | val targetValues =>
+          obtain ⟨targetValue, rfl⟩ := evaluate_singleton_value targetHead targetEnv { target with clock := target.clock + headExtra } targetHeadFinal targetValues targetHeadRun
+          have valueRel : ValueRelFuel relationFuel headG allowed targetHeadFinal.code value targetValue := by
+            simpa [resultRel] using headRel
+          have tailEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+              (targetTail.map (0, ·)) := by
+            apply envRelFuel_subset envs
+            intro item member
+            simp only [List.map_cons, List.mem_cons]
+            exact Or.inr member
+          have tailEnv' := envRelFuel_mono tailEnv headExt Set.Subset.rfl headGrowth
+          have tailEnvWf := valuesWellFormedFuel_mono envWf headExt Set.Subset.rfl headGrowth
+          cases tailRun : evaluate sourceTail sourceEnv headFinal with
+          | mk tailResult tailFinal =>
+            have sourceOuter := ClosProps.evaluate_cons_value sourceHead sourceTail sourceEnv source headFinal value headRun
+            rw [run, tailRun] at sourceOuter
+            have tailSafe : tailResult ≠ .err (.abort .typeError) := by
+              intro bad
+              subst tailResult
+              simp only at sourceOuter
+              exact notType (Prod.mk.inj sourceOuter).1
+            have headClock : headFinal.clock < limit := by
+              have bound := evaluate_clock_le [sourceHead] sourceEnv source
+              rw [headRun] at bound
+              exact Nat.lt_of_le_of_lt bound clock
+            have requiredHead := stateExtends_trans required g headG requiredGrowth headExt
+            obtain ⟨tailExtra, finalG, targetTailResult, targetFinal, tailExt, targetTailRun, tailRel, finalStates,
+              finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, tailGrowth⟩ :=
+              tailIH headG requiredHead sourceEnv targetEnv headFinal targetHeadFinal tailResult tailFinal headClock tailRun tailSafe
+                tailEnv' tailEnvWf headWf headStates headReady headCompiler targetHeadCompiler headOracle
+            have shiftedHead := (evaluate_addClock (C := C) (F := F)).1 [targetHead] targetEnv
+              { target with clock := target.clock + headExtra } targetHeadFinal (.val [targetValue]) tailExtra
+              targetHeadRun (by simp)
+            have targetOuter := ClosProps.evaluate_cons_value targetHead targetTail targetEnv
+              { target with clock := target.clock + (headExtra + tailExtra) }
+              { targetHeadFinal with clock := targetHeadFinal.clock + tailExtra } targetValue
+              (by simpa [Nat.add_assoc] using shiftedHead)
+            rw [targetTailRun] at targetOuter
+            have combinedExt := stateExtends_trans g headG finalG headExt tailExt
+            have combinedGrowth : ∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry :=
+              fun key entry found => tailGrowth key entry (headGrowth key entry found)
+            cases tailResult with
+            | err error =>
+              cases targetTailResult with
+              | val vs => simp [resultRel] at tailRel
+              | err targetError =>
+                obtain ⟨rfl, rfl⟩ := Prod.mk.inj sourceOuter
+                exact ⟨headExtra + tailExtra, finalG, .err targetError, targetFinal, combinedExt, targetOuter, tailRel, finalStates,
+                  finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, combinedGrowth⟩
+            | val tailValues =>
+              cases targetTailResult with
+              | err error => simp [resultRel] at tailRel
+              | val targetTailValues =>
+                obtain ⟨rfl, rfl⟩ := Prod.mk.inj sourceOuter
+                have grownValue := valueRelFuel_mono valueRel tailExt Set.Subset.rfl tailGrowth
+                exact ⟨headExtra + tailExtra, finalG, .val (targetValue :: targetTailValues), targetFinal, combinedExt,
+                  targetOuter, .cons grownValue tailRel, finalStates, finalWf, finalReady, finalCompiler,
+                  targetFinalCompiler, finalOracle, combinedGrowth⟩
+
 /-- A successful list traversal composes expression simulations that need
 their own generated pass states, using label freshness to show that each
 intermediate state extends into the final pass state. -/
@@ -6606,6 +6869,102 @@ theorem callsListBounded_growing_below {C F : Type} (passFuel relationFuel trave
     · intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
       exact exprIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
 
+/-- Clock-allowing list traversal and retry composition. Expression
+cases and eligibility remain assumptions; this is Flapjack-specific
+simulation infrastructure. -/
+theorem callsListFuel_growing_below_withClock {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListFuel traversalFuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialWf : wellFormed initial) (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      expression ∈ source → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler after allowed [expression] [output]) :
+    GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler final allowed source target := by
+  apply growingExprsSimFromBelowWithClock_of_forall₂ passFuel relationFuel limit compiler final allowed
+  induction traversalFuel generalizing source target initial final with
+  | zero =>
+    cases source with
+    | nil => simp [callsListFuel] at run; obtain ⟨rfl, _⟩ := run; exact .nil
+    | cons e es => simp [callsListFuel] at run
+  | succ depth ih =>
+    cases source with
+    | nil => simp [callsListFuel] at run; obtain ⟨rfl, _⟩ := run; exact .nil
+    | cons e es =>
+      simp only [callsListFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+        Option.some.injEq, Prod.mk.injEq] at run
+      obtain ⟨⟨e', middle⟩, headRun, ⟨es', next⟩, tailRun, rfl, rfl⟩ := run
+      have allDistinct : (codeLocationsExp e ++ codeLocations es).Nodup := by
+        simpa [codeLocations] using distinct
+      have allFresh : LabelsFresh (codeLocationsExp e ++ codeLocations es) initial := by
+        simpa [codeLocations] using fresh
+      have headDistinct := List.Nodup.of_append_left allDistinct
+      have tailDistinct := List.Nodup.of_append_right allDistinct
+      have headFresh : LabelsFresh (codeLocationsExp e) initial := by
+        intro loc member
+        exact allFresh loc (List.mem_append_left _ member)
+      have middleFresh : LabelsFresh (codeLocations es) middle := by
+        have labels := callsFuel_labelsBound depth e initial middle e' headRun
+        intro loc member labelMember
+        rcases labels (loc + 1) labelMember with old | ⟨origin, originMember, equal⟩
+        · exact allFresh loc (List.mem_append_right _ member) old
+        · have unequal := (List.nodup_append.mp allDistinct).2.2 origin originMember loc member
+          exact unequal (Nat.add_right_cancel equal.symm)
+      have singletonRun : callsListFuel (depth + 1) [e] initial = some ([e'], middle) := by
+        simp [callsListFuel, headRun]
+      have middleWf := callsListFuel_wellFormed (depth + 1) [e] initial middle [e'] singletonRun
+        (by simpa [codeLocations] using headDistinct) (by simpa [codeLocations] using headFresh) initialWf
+      have boundedTail : callsListBounded depth es middle = some (es', next) := by
+        simp [callsListBounded, tailRun]
+      have tailExt := callsListBounded_stateExtends depth es middle next es' boundedTail tailDistinct middleFresh middleWf.2
+      refine List.Forall₂.cons ?_ ?_
+      · exact growingExprsSimFromBelowWithClock_mono_state passFuel relationFuel limit compiler middle next allowed [e] [e'] tailExt
+          (exprIH depth (by omega) e e' initial middle headRun headDistinct headFresh initialWf
+            (eligibleIH depth (by omega) e e' initial middle (by simp) headRun))
+      · apply ih es es' middle next tailRun tailDistinct middleFresh middleWf
+        · intro n bound expression output before after member exprRun
+          exact eligibleIH n (by omega) expression output before after (by simp [member]) exprRun
+        · intro n bound expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
+          exact exprIH n (by omega) expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
+
+/-- The production retry wrapper inherits the simulation above its final
+pass state, whether its initial traversal succeeds or it uses the structural
+retry budget. -/
+theorem callsListBounded_growing_below_withClock {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListBounded traversalFuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialWf : wellFormed initial) (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max traversalFuel (listBudget source + 1) → ∀ expression output before after,
+      expression ∈ source → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max traversalFuel (listBudget source + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler after allowed [expression] [output]) :
+    GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler final allowed source target := by
+  unfold callsListBounded at run
+  cases first : callsListFuel traversalFuel source initial with
+  | none =>
+    simp only [first] at run
+    exact callsListFuel_growing_below_withClock passFuel relationFuel _ limit compiler allowed source target initial final
+      run distinct fresh initialWf eligible eligibleIH exprIH
+  | some result =>
+    have equal : result = (target, final) := by simpa [first] using run
+    subst result
+    apply callsListFuel_growing_below_withClock passFuel relationFuel traversalFuel limit compiler allowed source target initial final
+      first distinct fresh initialWf eligible
+    · intro depth bound expression output before after member expressionRun
+      exact eligibleIH depth (by omega) expression output before after member expressionRun
+    · intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
+      exact exprIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
+
 /-- The incremental pass exposes a list simulation above its emitted state,
 subject to the expression-case induction and source conditions. The premise
 `wellFormed (known, [])` restricts this result to an empty known-location
@@ -6684,6 +7043,33 @@ theorem compileIncFuel_growing_below_with_existing {C F : Type} (passFuel relati
   exact callsListBounded_growing_below passFuel relationFuel passFuel limit compiler allowed program.1 converted.1
     g (nextKnown, converted.2 ++ g.2) merged distinct fresh initialWf eligible eligibleIH exprIH
 
+/-- Incremental conversion composes clock-allowing expression cases at
+the merged compiler state. The expression induction remains an assumption.
+This is Flapjack-specific infrastructure, not a HOL theorem port. -/
+theorem compileIncFuel_growing_below_with_existing_clock {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (g : State) (program : ClosSem.Program)
+    (nextKnown : NumSet) (converted : ClosSem.Program)
+    (run : compileIncFuel? passFuel g.1 program = some (nextKnown, converted))
+    (distinct : (codeLocations program.1).Nodup)
+    (fresh : LabelsFresh (codeLocations program.1) g) (initialWf : wellFormed g)
+    (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      expression ∈ program.1 → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler after allowed [expression] [output]) :
+    GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler
+      (nextKnown, converted.2 ++ g.2) allowed program.1 converted.1 := by
+  have traversal := compileIncFuel_traversal passFuel g.1 program nextKnown converted run
+  have appended := callsListBounded_appendAux passFuel program.1 (g.1, []) g.2
+  have merged : callsListBounded passFuel program.1 g =
+      some (converted.1, (nextKnown, converted.2 ++ g.2)) := by
+    simpa [appendAux, traversal] using appended
+  exact callsListBounded_growing_below_withClock passFuel relationFuel passFuel limit compiler allowed program.1 converted.1
+    g (nextKnown, converted.2 ++ g.2) merged distinct fresh initialWf eligible eligibleIH exprIH
+
 /-- A successful incremental pass supplies the installed-program simulation
 at its merged compiler state, assuming the expression-case induction and its
 eligibility conditions. This is Flapjack-specific infrastructure. -/
@@ -6727,6 +7113,29 @@ theorem compileIncFuel_installedBelow_from_bounded_cases {C F : Type} (passFuel 
       (nextKnown, converted.2 ++ g.2) allowed program.1 converted.1 := by
   apply growingExprsSimFromBelow_installedBelow
   exact compileIncFuel_growing_below_with_existing passFuel relationFuel limit compiler allowed g program nextKnown converted
+    run distinct fresh initialWf eligible eligibleIH exprIH
+
+/-- Clock-allowing expression cases supply clock-allowing installed-program
+simulation at the merged pass state. This is Flapjack-specific infrastructure;
+the expression induction remains open. -/
+theorem compileIncFuel_installedBelow_withClock_from_cases {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (g : State) (program : ClosSem.Program)
+    (nextKnown : NumSet) (converted : ClosSem.Program)
+    (run : compileIncFuel? passFuel g.1 program = some (nextKnown, converted))
+    (distinct : (codeLocations program.1).Nodup)
+    (fresh : LabelsFresh (codeLocations program.1) g) (initialWf : wellFormed g)
+    (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      expression ∈ program.1 → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler after allowed [expression] [output]) :
+    InstalledProgramSimBelowWithClock (C := C) (F := F) passFuel relationFuel limit compiler
+      (nextKnown, converted.2 ++ g.2) allowed program.1 converted.1 := by
+  apply growingExprsSimFromBelowWithClock_installedBelow
+  exact compileIncFuel_growing_below_with_existing_clock passFuel relationFuel limit compiler allowed g program nextKnown converted
     run distinct fresh initialWf eligible eligibleIH exprIH
 
 /-- The successful install case obtains the installed-program simulation
