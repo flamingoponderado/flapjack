@@ -686,6 +686,19 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationTotal.lean",
+  "lean_name": "knownCorrect0",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed (the source-local theorem replay) against both conjuncts after unfolding KnownSimulationAt and KnownAppSimulationAt. All source quantifiers, premises, existential target evaluations, final value/state relations and oracle conclusions are retained. The proof assembles the evaluator cases by well-founded induction over clock and expression weight. The source and target compiler carriers and shared FFI carrier remain independently quantified; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationApp.lean",
   "lean_name": "knownCorrect0App",
   "statement_status": "reviewed_fmap_as_finite_support",
