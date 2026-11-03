@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.Target.State
 import Flapjack.Misc.BytesInMemory
+import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
 import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
 
 /-!
@@ -14,13 +15,6 @@ namespace Flapjack.Compiler.Encoders.Arm8.L3
 open Flapjack Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.AsmProps
 open Flapjack.Compiler.Encoders.Arm8.L3.Target
 
-/-- Wrapped address reassociation for the byte walk (Flapjack infrastructure). -/
-theorem addOneOffset {width : Nat} (a : BitVec width) (j : Nat) :
-    (a + 1) + BitVec.ofNat width j = a + BitVec.ofNat width (j + 1) := by
-  rw [BitVec.ofNat_add, BitVec.add_assoc]
-  congr 1
-  exact BitVec.add_comm _ _
-
 /-- The `j`-th byte of a byte list in memory, for every `j` below the length. -/
 theorem bytesInMemoryHOL_get {width : Nat} [NeZero width]
     {a : BitVec width} {bs : List (BitVec 8)} {m : BitVec width → BitVec 8}
@@ -34,25 +28,6 @@ theorem bytesInMemoryHOL_get {width : Nat} [NeZero width]
       obtain ⟨hx, hd, ht⟩ := h
       cases j with
       | zero => simpa using hx
-      | succ j =>
-          have hj' : j < xs.length := by simpa using hj
-          have hrec := ih ht j hj'
-          rw [← addOneOffset]
-          simpa using hrec
-
-/-- The `j`-th byte of a byte list in memory lies in the domain. -/
-theorem bytesInMemoryHOL_domain {width : Nat} [NeZero width]
-    {a : BitVec width} {bs : List (BitVec 8)} {m : BitVec width → BitVec 8}
-    {d : BitVec width → Prop} (h : bytesInMemoryHOL a bs m d) :
-    ∀ j, j < bs.length → d (a + BitVec.ofNat width j) := by
-  revert h
-  induction bs generalizing a with
-  | nil => intro _ j hj; simp at hj
-  | cons x xs ih =>
-      intro h j hj
-      obtain ⟨hx, hd, ht⟩ := h
-      cases j with
-      | zero => simpa using hd
       | succ j =>
           have hj' : j < xs.length := by simpa using hj
           have hrec := ih ht j hj'

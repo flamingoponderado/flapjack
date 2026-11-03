@@ -61,22 +61,17 @@ def renderings(root=ROOT):
         emitted, failed = renderer.main(["renderer", export.name, str(root / "Flapjack/RiscV/L3/Types.lean")])
     if failed:
         raise ValueError("unrendered original definitions: " + repr(failed))
-    return {(thy, name): (body, nc) for thy, name, _, body, _, nc in emitted}
+    return {(thy, name): (body, nc) for thy, name, _, _, body, _, nc in emitted}
 
 
 def lean_decl_names(emitted):
-    """The Lean declaration name of each emitted definition.
+    """The Lean declaration name each emitted definition was rendered under.
 
-    `hol_terms_to_lean.main` prefixes a definition shared by two theories with
-    its theory name (`arm8_step_NextStateARM8`), exactly as the RISC-V export
-    does for its two `Fetch` roots.  Mirror that here, and refuse a collision
-    rather than letting one entry overwrite the other.
+    This is the name `hol_terms_to_lean.main` chose (including its
+    theory-prefix disambiguation for a constant defined in two theories), not a
+    rule re-implemented here.
     """
-    counts = {}
-    for thy, name, *_ in emitted:
-        counts[name] = counts.get(name, 0) + 1
-    return {(thy, name): (thy + "_" + name if counts[name] > 1 else name)
-            for thy, name, *_ in emitted}
+    return {(thy, name): lean for thy, name, lean, *_ in emitted}
 
 
 def arm8_renderings(root=ROOT):
@@ -90,7 +85,7 @@ def arm8_renderings(root=ROOT):
         raise ValueError("unrendered original ARM8 definitions: " + repr(failed))
     names = lean_decl_names(emitted)
     result = {}
-    for thy, name, _, body, _, nc in emitted:
+    for thy, name, _, _, body, _, nc in emitted:
         key = names[(thy, name)].strip("«»")
         if key in result:
             raise ValueError("ambiguous ARM8 Lean declaration name: " + key)

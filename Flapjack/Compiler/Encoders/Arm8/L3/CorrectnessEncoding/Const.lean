@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalImmediate
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Simulate
+import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
 
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 10000
@@ -26,47 +27,6 @@ open Flapjack Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.A
 open Flapjack.Compiler.Encoders.Arm8.L3.Target
 
 /-! ## Reconstructing a word from its `arm8EncMovImm` chunk -/
-
-/-- A word whose bits are all outside the mask `M` agrees with `w &&& M`. -/
-theorem and_not_eq_zero_eq (w M : BitVec 64) (h : w &&& ~~~M = 0) : w &&& M = w := by
-  apply BitVec.eq_of_getLsbD_eq
-  intro i hi
-  rw [BitVec.getLsbD_and]
-  have hb := congrArg (fun x : BitVec 64 => x.getLsbD i) h
-  have hz : (0 : BitVec 64).getLsbD i = false := by simp
-  simp only [BitVec.getLsbD_and, BitVec.getLsbD_not, hi, decide_true, hz] at hb
-  cases hm : M.getLsbD i with
-  | false =>
-      simp only [hm, Bool.not_false, Bool.and_true] at hb
-      rw [hb, Bool.false_and]
-  | true =>
-      simp only [hm, Bool.not_true, Bool.and_false, Bool.and_true] at hb ⊢
-
-/-- `toNat` of a left shift of an `ofNat` word. -/
-theorem toNat_ofNat_shiftLeft (imm k : Nat) :
-    (BitVec.ofNat 64 imm <<< k).toNat = (imm * 2 ^ k) % 2 ^ 64 := by
-  rw [BitVec.toNat_shiftLeft, BitVec.toNat_ofNat, Nat.shiftLeft_eq, Nat.mod_mul_mod]
-
-/-- A natural number that agrees with the mask of the `k`-th 16-bit block only
-has bits inside that block: it is a multiple of `2 ^ k` whose quotient fits in
-16 bits, and the quotient reproduces it. -/
-theorem blockDiv (x k : Nat) (hx : x &&& ((2 ^ 16 - 1) * 2 ^ k) = x) :
-    x / 2 ^ k % 2 ^ 16 = x / 2 ^ k ∧ x / 2 ^ k * 2 ^ k = x := by
-  have hle : x ≤ (2 ^ 16 - 1) * 2 ^ k := by
-    have h := Nat.and_le_right (n := x) (m := (2 ^ 16 - 1) * 2 ^ k)
-    rwa [hx] at h
-  have hlow : x &&& (2 ^ k - 1) = 0 := by
-    rw [← hx, Nat.and_assoc]
-    have hz : ((2 ^ 16 - 1) * 2 ^ k) &&& (2 ^ k - 1) = 0 := by
-      rw [Nat.and_two_pow_sub_one_eq_mod, Nat.mul_comm (2 ^ 16 - 1) (2 ^ k),
-        Nat.mul_mod_right]
-    rw [hz, Nat.and_zero]
-  have hmod : x % 2 ^ k = 0 := by
-    rw [← Nat.and_two_pow_sub_one_eq_mod, hlow]
-  have hdvd : 2 ^ k ∣ x := Nat.dvd_of_mod_eq_zero hmod
-  have hdiv : x / 2 ^ k ≤ 2 ^ 16 - 1 :=
-    Nat.div_le_of_le_mul (by rw [Nat.mul_comm]; exact hle)
-  exact ⟨Nat.mod_eq_of_lt (by omega), Nat.div_mul_cancel hdvd⟩
 
 /-- The immediate of one `arm8EncMovImm` branch reproduces the masked word. -/
 theorem arm8MovWideImm_value (v : BitVec 64) (k imm16 : Nat) (hk : k ≤ 48)

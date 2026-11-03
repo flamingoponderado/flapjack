@@ -50,7 +50,7 @@ class L3FpDefsTest(unittest.TestCase):
             export.write_bytes(gzip.decompress((ROOT / 'scripts/l3/riscv_defs.sexp.gz').read_bytes()))
             emitted, failed = module.main(['renderer', *self.args(export)[1:]])
         self.assertFalse(failed)
-        bodies = {name: text for _, name, _, text, _, _ in emitted}
+        bodies = {name: text for _, name, _, _, text, _, _ in emitted}
         exception = bodies["raise'exception"]
         self.assertIn('{Ta : Type} [Nonempty Ta]', exception)
         self.assertIn('(Flapjack.holArb Ta)', exception)
@@ -68,7 +68,7 @@ class L3FpDefsTest(unittest.TestCase):
             args = ['renderer', *self.args(export)[1:]]
             model, failed = module.main([*args, '--roots=riscv$Fetch'])
             self.assertFalse(failed)
-            model_body = next(text for thy, name, _, text, _, _ in model if (thy, name) == ('riscv', 'Fetch'))
+            model_body = next(text for thy, name, _, _, text, _, _ in model if (thy, name) == ('riscv', 'Fetch'))
             self.assertIn('def Fetch (_u_ : Unit)', model_body)
             self.assertIn('FetchResult.F_Error', model_body)
             self.assertIn('Internal.FETCH_MISALIGNED', model_body)
@@ -82,7 +82,7 @@ class L3FpDefsTest(unittest.TestCase):
             # isolated root keeps its natural name.
             combined, failed = module.main([*args, '--roots=riscv$Fetch,riscv_step$NextRISCV'])
             self.assertFalse(failed)
-            bodies = {(thy, name): text for thy, name, _, text, _, _ in combined}
+            bodies = {(thy, name): text for thy, name, _, _, text, _, _ in combined}
             self.assertIn('def riscv_Fetch ', bodies[('riscv', 'Fetch')])
             self.assertIn('def riscv_step_Fetch (s : riscv_state)', bodies[('riscv_step', 'Fetch')])
             self.assertIn('rawReadInst (holThe w)', bodies[('riscv_step', 'Fetch')])

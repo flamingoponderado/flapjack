@@ -2768,6 +2768,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Skip
    umbrella until its old identity-map assumptions are repaired. -/
 
 import Flapjack.Compiler.Encoders.Arm8.Encode
+import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
 import Flapjack.Compiler.Encoders.Arm8.Target
 import Flapjack.Compiler.Encoders.Arm8.Configuration
 import Flapjack.Compiler.Encoders.Arm8.TargetProof

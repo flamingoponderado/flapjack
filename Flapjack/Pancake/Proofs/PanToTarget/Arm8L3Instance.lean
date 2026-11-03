@@ -25,8 +25,11 @@ open Flapjack.Compiler.Backend.Arm8Config Flapjack.Compiler.Encoders.Arm8.L3
 open Flapjack.Compiler.Encoders.Arm8.L3.Target
 
 /-- The top theorem's configuration-only heap bound, decided for Pancake's ARMv8
-configuration (Flapjack-specific; no HOL original). -/
-theorem arm8PancakeHeapLimit_lt :
+configuration (Flapjack-specific; no HOL original).  `Arm8Instance.lean` proves
+the same statement as `arm8PancakeHeapLimit_lt`; this module does not import it,
+and Lean lets the two same-named declarations coexist silently (the later import
+wins), so the L3 copy is renamed rather than left to shadow it. -/
+theorem arm8PancakeHeapLimitL3_lt :
     (wordSemBytesInWord : BitVec 64).toNat *
         (2 * DataToWord.maxHeapLimit 64
           (Flapjack.Compiler.pancakeBackendConf arm8BackendConfig).dataConf - 1) < 2 ^ 64 := by
@@ -103,6 +106,6 @@ theorem panToTargetCompileSemanticsArm8L3 {σ : Type}
     ⟨hcomp, hgood, hparams, hnodup, hcode, hlocals, hglobals, heids, heshapes, hcfg,
       arm8MachineConfigOkL3 mc hmc, hinit, by rw [hconfig]; decide, hpos, hsize, hlt, hbase,
       halloc, hheapLen, htop, hglobLe, hmemaddrs, halign, hadj2, hadj4, hlo, hhi, hheap,
-      arm8PancakeHeapLimit_lt, hffi, hbe, trivial, hinst, hstart, hfail⟩
+      arm8PancakeHeapLimitL3_lt, hffi, hbe, trivial, hinst, hstart, hfail⟩
 
 end Flapjack.Pancake.Proofs.PanToTarget
