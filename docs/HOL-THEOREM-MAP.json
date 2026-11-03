@@ -1,5 +1,94 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "red_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Reduction.lean",
+    "lean_name": "RedRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_rules_typed: all seven original rules retain source carriers, operator membership list, including independently quantified n, exact list concatenations, traces and premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "red_rel_nil",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Reduction.lean",
+    "lean_name": "redRelNil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_nil_typed: empty input reduces exactly to empty output."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "red_rel_EVERY",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Reduction.lean",
+    "lean_name": "redRelEvery",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_every_typed: EVERY singleton expression reduction to empty implies the entire list reduces to empty; Lean expresses EVERY by membership."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "simple_exp_red_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Reduction.lean",
+    "lean_name": "simpleExpRedRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared simple_exp_red_rel_typed: EVERY simple expression implies reduction of the same list to empty, using membership-based EVERY."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "red_rel_ConjList",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Reduction.lean",
+    "lean_name": "redRelConjList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_conj_typed: reduction of a list to empty implies the singleton source conjunction reduces to empty."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "red_rel_eq_pure",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Reduction.lean",
+    "lean_name": "redRelEqPure",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_eq_pure_typed: simplicity of both original inputs implies the singleton source eq_pure reduces to empty."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "red_rel_exists_append",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Reduction.lean",
+    "lean_name": "redRelExistsAppend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_exists_append_typed: the iff retains the two existential residuals, their head and tail relations, and append order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "IMP_red_rel_cons_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Reduction.lean",
+    "lean_name": "redRelConsZero",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_cons_zero_typed: the conjunction of singleton and tail reductions yields their concatenated residuals."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "IMP_red_rel_append",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Reduction.lean",
+    "lean_name": "redRelAppend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_append_typed: the four list binders, two reduction premises, concatenated inputs and concatenated residuals agree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "IMP_red_rel_cons",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Reduction.lean",
+    "lean_name": "redRelCons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_cons_typed: an empty head residual and tail reduction imply the same tail residual for the combined input."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "IMP_red_rel_cons_1",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Reduction.lean",
+    "lean_name": "redRelConsOne",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_cons_one_typed: any head is retained in front of both input and residual when the tail reduces."
+  }
+,
+  {
     "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
     "hol_name": "eq_any_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
