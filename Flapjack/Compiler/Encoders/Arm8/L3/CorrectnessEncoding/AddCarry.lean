@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Compare
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpCmp
 import Flapjack.Compiler.Encoders.Arm8.Machine.MulCarryCase
+import Flapjack.HolRef
 
 set_option maxHeartbeats 12000000
 set_option maxRecDepth 10000
@@ -1219,6 +1220,7 @@ theorem arm8Next_moveWide_z_zero_mem (s : arm8_state) (rd : BitVec 5)
 instructions of the CakeML lowering (`SUBS XZR, sr, #0`; `CCMP rc, #0, #0, EQ`;
 `ADC d, rc, sl`; `MOVZ sr, #0`; `ADC sr, sr, XZR`) compute the source-side
 `arith_upd` sum and carry. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_addCarry (d rc sl sr : Nat)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.arith (.addCarry d rc sl sr))) s2 ∧

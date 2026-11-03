@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfieldMasks
+import Flapjack.HolRef
 
 set_option maxHeartbeats 12000000
 set_option maxRecDepth 10000
@@ -19,6 +20,7 @@ open Flapjack Compiler.Encoders.Arm8 Compiler.Encoders.Asm Compiler.Encoders.Asm
 open Flapjack.Compiler.Encoders.Arm8.L3.Target
 
 /-- The `.lsr` immediate constructor of `encoder_correct arm8TargetL3`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_shift_lsr_imm (destination source : Nat) (value : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.arith (.shift .lsr destination source (.imm value)))) s2 ∧
@@ -196,6 +198,7 @@ theorem arm8_encoder_correct_shift_lsr_imm (destination source : Nat) (value : B
 
 
 /-- The `.asr` immediate constructor of `encoder_correct arm8TargetL3`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_shift_asr_imm (destination source : Nat) (value : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.arith (.shift .asr destination source (.imm value)))) s2 ∧
@@ -374,6 +377,7 @@ theorem arm8_encoder_correct_shift_asr_imm (destination source : Nat) (value : B
     exact hal4
 
 /-- The `.lsl` immediate constructor of `encoder_correct arm8TargetL3`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_shift_lsl_imm (destination source : Nat) (value : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.arith (.shift .lsl destination source (.imm value)))) s2 ∧

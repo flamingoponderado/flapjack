@@ -100692,5 +100692,37 @@
   "lean_name": "arm8LslMaskIdentity",
   "statement_status": "pending_statement_review",
   "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): HOL lsl (arm8_targetProofScript.sml:103) states that with r = n2w ((64 - n) MOD 64) and q = r + 63w, masking the rotate right x #>> (w2n r) by (tmask && wmask) from DecodeBitMasks (1w, q, r, F) is the logical shift left x << n. The Lean statement keeps the same Abbrev hypotheses for r and q, the same DecodeBitMasks hypothesis, the same masks and shift. Pending because the rendered DecodeBitMasks/Replicate/holRotate definitions it reasons through are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/AddCarry.lean",
+  "lean_name": "arm8_encoder_correct_addCarry",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the AddCarry case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:486, next_tac 4): the five-instruction lowering (flag-setting SUBS XZR, ConditionalCompareImmediate under EQ, AddSubCarry into r1, MoveWide .z zeroing r4, closing AddSubCarry into r4) with the same asmStep/targetStateRel premise, n = 0, every environment, and the carry-out/sum register conclusion. Pending because the rendered arm8Next/arm8Ok/Decode/AddWithCarry definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/ShiftBitfieldCase.lean",
+  "lean_name": "arm8_encoder_correct_shift_lsr_imm",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Shift Lsr immediate case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:417): the single BitfieldMove@64 the lowering emits, with the same asmStep/targetStateRel premise and the logical-shift-right register conclusion. Pending because the rendered arm8Next/arm8Ok/Decode/DecodeBitMasks definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/ShiftBitfieldCase.lean",
+  "lean_name": "arm8_encoder_correct_shift_asr_imm",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Shift Asr immediate case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:417): the single BitfieldMove@64 the lowering emits, with the same asmStep/targetStateRel premise and the arithmetic-shift-right register conclusion. Pending because the rendered arm8Next/arm8Ok/Decode/DecodeBitMasks definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/ShiftBitfieldCase.lean",
+  "lean_name": "arm8_encoder_correct_shift_lsl_imm",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Shift Lsl immediate case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:417): the single BitfieldMove@64 the lowering emits, with the same asmStep/targetStateRel premise and the logical-shift-left register conclusion. Pending because the rendered arm8Next/arm8Ok/Decode/DecodeBitMasks definitions it uses are mechanically rendered and not yet source-reviewed."
  }
 ]
