@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+  "hol_name": "code_locs_remove_fvs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/CodeLocations.lean",
+  "lean_name": "removeList_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source theorem and regenerated fvs_code_locations_typed: the complete ordered code-location list is equal before and after the source-shaped traversal; the free-variable bound is universally quantified when applicable. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+  "hol_name": "code_locs_remove_ticks",
+  "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/CodeLocations.lean",
+  "lean_name": "removeList_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source theorem and regenerated ticks_code_locations_typed: the complete ordered code-location list is equal before and after the source-shaped traversal; the free-variable bound is universally quantified when applicable. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "code_locs_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/CodeLocations.lean",
+  "lean_name": "compileList_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source theorem and regenerated letop_code_locations_typed: the complete ordered code-location list is equal before and after the source-shaped traversal; the free-variable bound is universally quantified when applicable. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "val_approx_every_Fn_SOME_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLocations.lean",
