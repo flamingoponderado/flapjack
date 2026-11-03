@@ -475,9 +475,27 @@ alignment half is what makes `CheckAlignment` a no-op regardless of
 `SCTLR_EL1.A`; `arm8Aligned_eight_iff` converts between the rendered
 `Aligned` and the `8 ∣ a.toNat` form.
 
-Still open for #1239: the load case theorem itself (the three-way split over
-`off.msb` and the scaled form), the two-instruction `AddSubImmediate@64` +
-`LoadStoreImmediate` constructor, and the remaining case theorems covering
-the load/store forms.
+`arm8_encoder_correct_mem_load_neg` (`Mem.lean`) is the first `Mem` case
+theorem: the unscaled `imm9` load branch.  It takes the two branch conditions
+as case hypotheses — the offset is its own signed nine-bit form (`hsx`, what
+`arm8_ast` tests) and is negative (`hmsb`, which makes the `unsigned_offset`
+field `false`, so `e_LoadStoreImmediate` cannot reach the scaled twelve-bit
+clause) — then emits the single nine-bit word, decodes it back to the same
+`LoadStoreImmediate@64`, runs it through `LoadStoreSingle`, and closes with
+`asmCaseOneMem`.  The loaded value is `(readMemWord (s1.regs base + off) 8 s1).1`,
+matched to `Mem`'s eight-byte read by `arm8Mem_eight_value`.
+
+`arm8Mem_eight_pair` gives the full `Mem` pair (value and unchanged state) from
+the byte agreement.  `NextStateARM8` runs the instruction on
+`{ ms with branch_hint := none }`, and that pair is re-derived for the cleared
+state directly rather than by a congruence lemma: `Mem` unfolds to a `holFor`
+fold over the whole state, so the fold is not syntactically invariant under the
+record update.
+
+Still open for #1239: the remaining `Mem` cases (the non-negative scaled
+twelve-bit form, the non-negative unscaled form, the store forms and the 16/8-bit
+widths), the two-instruction `AddSubImmediate@64` + `LoadStoreImmediate`
+constructor for far offsets, and the remaining case theorems covering the other
+instruction groups.
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.

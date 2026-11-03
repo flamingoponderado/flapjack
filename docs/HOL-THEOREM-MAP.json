@@ -100724,5 +100724,13 @@
   "lean_name": "arm8_encoder_correct_shift_lsl_imm",
   "statement_status": "pending_statement_review",
   "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Shift Lsl immediate case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:417): the single BitfieldMove@64 the lowering emits, with the same asmStep/targetStateRel premise and the logical-shift-left register conclusion. Pending because the rendered arm8Next/arm8Ok/Decode/DecodeBitMasks definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "lean_name": "arm8_encoder_correct_mem_load_neg",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem load case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) on the unscaled imm9 path: the single LoadStoreImmediate@64 the lowering emits for an offset that is its own signed nine-bit form and negative, with the same asmStep/targetStateRel premise, existential n = 0, every environment, interference preservation, the code-byte/PC assertion and the outside-domain byte conclusion. The two case hypotheses (nine-bit fit, negative sign) are the branch conditions arm8_ast and e_LoadStoreImmediate inspect, not part of encoder_correct_def. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment definitions it uses are mechanically rendered and not yet source-reviewed."
  }
 ]
