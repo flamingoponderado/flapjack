@@ -1,3 +1,5 @@
+`clos_known_syntax_probe.out` captures the optimizer safety theorem, its consequences, the source induction rule, and tick-write preservation. These typed captures support source review, not cross-language equivalence.
+
 `clos_known_syntax_probe.out` captures the complete inferred approximation-correctness statement and optimizer induction rule. The checked base cases retain their source assumptions; the complete optimizer theorem remains open.
 
 `clos_known_syntax_probe.out` captures the unrestricted evaluator oracle-shift statement and the oracle and uniqueness preservation theorems with inferred types. These captures support source review, not cross-language equivalence.

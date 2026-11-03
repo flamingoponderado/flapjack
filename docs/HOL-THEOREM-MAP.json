@@ -1,6 +1,142 @@
 [
 {
     "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyNil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source Nil induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyVar",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source Var induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyCons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source Cons induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyRaise",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source Raise induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyTick",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source Tick induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyIf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source If induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyLet",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source Let induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyHandle",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source Handle induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyCall",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source Call induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source Op induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyFn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source Fn induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyLetrec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source Letrec induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "knownPreservesSafetyApp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_preserves_esgc_free_0_typed and known_ind_typed with the source App induction case. The source optimizer equation, expression and approximation safety premises, global safety premise, complete bag bound and all three safety conclusions are retained. Induction hypotheses follow the source recursion, including the dependent inline and recursive-group hypotheses where applicable. BAG subset is represented by pointwise multiplicity comparison. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafetyTotal.lean",
+    "lean_name": "knownPreservesSafety",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred HOL statement captured in clos_known_syntax_probe.out. All original premises and four conclusions are retained; knownSafetyAll assembles every source case using the total traversal induction. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_preserves_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafetyTotal.lean",
+    "lean_name": "knownPreservesEsgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred HOL statement captured in clos_known_syntax_probe.out. The three original expression, approximation and global-safety conclusions and all premises are retained. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_elglobals_dont_grow",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafetyTotal.lean",
+    "lean_name": "knownElglobalsDontGrow",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the inferred HOL statement captured in clos_known_syntax_probe.out. The source bag-subset conclusion is represented by the pointwise multiplicity comparison, retaining all original premises. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "mk_Ticks_set_globals",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+    "lean_name": "ticksSetGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared mk_ticks_set_globals_typed: the trace, start index, tick count and expression are arbitrary, and the original complete bag equality is retained."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
     "hol_name": "known_correct_approx",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CorrectApprox.lean",
     "lean_name": "knownCorrectApproxNil",
