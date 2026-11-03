@@ -1916,6 +1916,42 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "remove_ticks_Call_IMP_mk_Ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateCall.lean",
+    "lean_name": "remove_ticks_Call_IMP_mk_Ticks",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_call_ticks_typed and remove_sing_eq_typed: a call produced by removal has zero ticks and comes from a call under leading ticks, with the source and target arguments related by removal. removeList is the source-proven equivalent traversal. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "remove_ticks_Tick",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateTick.lean",
+    "lean_name": "remove_ticks_Tick",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_tick_typed and remove_sing_eq_typed: removing ticks from a singleton cannot produce a singleton tick. removeList is the source-proven equivalent traversal. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateCall.lean",
+    "lean_name": "evaluate_remove_ticks_call",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the first evaluate_remove_ticks_typed conjunct and direct-call case of evaluate_ind_typed in clos_known_syntax_probe.out. The argument induction hypothesis, target run, related environments and states, code relation, and existential source clock, result, state and conclusions are retained without extra premises. The body induction hypothesis is unnecessary because the related post-argument states have empty code; the proof covers propagated argument errors and missing code after successful arguments. State refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateTick.lean",
+    "lean_name": "evaluate_remove_ticks_tick",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the first evaluate_remove_ticks_typed conjunct and target-tick case of evaluate_ind_typed in clos_known_syntax_probe.out. The target run, related environments and states, code relation, and existential source clock, result, state and conclusions are retained without extra premises. The original body induction hypothesis is unnecessary because the code relation is impossible. State refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "remove_ticks_Letrec_IMP_mk_Ticks",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateLetrec.lean",
     "lean_name": "remove_ticks_Letrec_IMP_mk_Ticks",
