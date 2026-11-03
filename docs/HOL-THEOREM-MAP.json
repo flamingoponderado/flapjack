@@ -2193,6 +2193,26 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "evaluate_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Simulation.lean",
+    "lean_name": "evaluate_remove_fvs",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared both conjuncts of evaluate_remove_typed against the complete source statement. The expression conjunct retains the source evaluation, environment, state and code premises and existential target evaluation, result and state conclusions; the application conjunct retains the source application, function, argument and state premises and corresponding existential conclusions. Both states share independently polymorphic compiler and FFI carriers; there is no non-type-error or target-evaluation assumption. The proof assembles the source-shaped cases by clock and expression-weight induction. The state uses canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or whole-program correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "remove_fvs_correct",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Simulation.lean",
+    "lean_name": "remove_fvs_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared remove_correct_typed and the source statement: the original source evaluation, environment and state premises and existential target evaluation of removeList at the source environment length, result relation and final state relation are retained. Both states share independently polymorphic compiler and FFI carriers. The state uses canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. The separate removeBounded_correct helper connects this theorem to the executed bounded-retry list traversal. Source review and Lean checking do not establish cross-language equivalence or whole-program correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
     "hol_name": "dest_closure_SOME_IMP",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/EvaluateApp.lean",
     "lean_name": "destClosure_some_shape",

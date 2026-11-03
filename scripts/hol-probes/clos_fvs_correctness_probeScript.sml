@@ -52,4 +52,5 @@ val _ = (print "update_thunk_statement_typed="; print_term update_thunk_statemen
 val _ = show "dest_closure_some_typed=" clos_fvsProofTheory.dest_closure_SOME_IMP;
 val _ = show "dest_closure_full_typed=" clos_fvsProofTheory.dest_closure_SOME_Full_app;
 val _ = show "evaluate_remove_typed=" clos_fvsProofTheory.evaluate_remove_fvs;
+val _ = show "remove_correct_typed=" clos_fvsProofTheory.remove_fvs_correct;
 val _ = show "semantics_compile_typed=" clos_fvsProofTheory.semantics_compile;
