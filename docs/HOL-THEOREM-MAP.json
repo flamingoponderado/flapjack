@@ -1,5 +1,121 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+  "hol_name": "compile_inc_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Compile.lean",
+  "lean_name": "compileInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_compile_inc_typed in clos_known_syntax_probe.out. The auxiliary program component remains independently polymorphic. The executable incremental path calls this definition, and compileIncFuel_eq_previous proves equality to its previous composition for all inputs. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateRelation.lean",
+  "lean_name": "StateRel",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "reviewer": "Compared known_state_rel_typed in clos_known_syntax_probe.out. All source state fields, oracle conditions, finite-map and value relations, and state_cc/state_co incremental transformations are retained with a shared independent compiler carrier and FFI carrier. Source review and Lean checking do not establish cross-language equivalence. The closure state uses canonical finite-support refs and code with the local roundtrip witness.",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ]
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "compile_inc_upd_inline_factor",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateRelation.lean",
+  "lean_name": "compileIncUpdateInlineFactor",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_compile_inc_update_replay_typed in clos_known_syntax_probe.out. The original local statement was replayed with its source proof; its auxiliary type remains independently polymorphic. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_rel_upd_inline_factor",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateRelation.lean",
+  "lean_name": "stateRelUpdateInlineFactor",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "reviewer": "Compared known_state_rel_update_typed in clos_known_syntax_probe.out. The complete equality of state relation functions is retained for independent compiler and FFI carriers. Source review and Lean checking do not establish cross-language equivalence. The closure state uses canonical finite-support refs and code with the local roundtrip witness.",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ]
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_rel_subspt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateRelation.lean",
+  "lean_name": "stateRelSubspt",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "reviewer": "Compared known_state_rel_subspt_typed in clos_known_syntax_probe.out. The state-relation and sparse-tree extension premises and the larger-tree relation conclusion are retained. Source review and Lean checking do not establish cross-language equivalence. The closure state uses canonical finite-support refs and code with the local roundtrip witness.",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ]
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_rel_get_global_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateRelation.lean",
+  "lean_name": "stateRelGetGlobal",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "reviewer": "Compared known_state_rel_get_global_typed in clos_known_syntax_probe.out. The same-index source lookup implies an existential target lookup and value relation. Source review and Lean checking do not establish cross-language equivalence. The closure state uses canonical finite-support refs and code with the local roundtrip witness.",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ]
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "oracle_state_sgc_free_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateOracle.lean",
+  "lean_name": "oracleStateSgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_state_oracle_safety_typed in clos_known_syntax_probe.out. The oracle index and both payload types remain independent polymorphic carriers. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "oracle_state_sgc_free_shift_seq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateOracle.lean",
+  "lean_name": "oracleStateSgcFreeShift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_state_oracle_safety_shift_typed in clos_known_syntax_probe.out. The source Nat-indexed oracle, independent payloads, safety premise and universally quantified shifted-oracle conclusion are retained. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_rel_co_elist_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateOracle.lean",
+  "lean_name": "stateRelCoElistGlobals",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "reviewer": "Compared known_state_rel_co_globals_typed in clos_known_syntax_probe.out. Both source safety premises and the same oracle-indexed bag-subset conclusion are retained, expressed pointwise on multiplicity. Source review and Lean checking do not establish cross-language equivalence. The closure state uses canonical finite-support refs and code with the local roundtrip witness.",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ]
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_rel_first_n_exps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateOracle.lean",
+  "lean_name": "stateRelFirstNExps",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "reviewer": "Compared known_state_rel_first_n_typed in clos_known_syntax_probe.out. The full oracle-prefix bag-subset conclusion and source state-safety assumptions are retained, expressed pointwise on multiplicity. Source review and Lean checking do not establish cross-language equivalence. The closure state uses canonical finite-support refs and code with the local roundtrip witness.",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ]
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_rel_unique_set_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateOracle.lean",
+  "lean_name": "stateRelUniqueSetGlobals",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "reviewer": "Compared known_state_rel_unique_typed in clos_known_syntax_probe.out. The source state and oracle safety, state relation, and source uniqueness premises imply target uniqueness for the same program. Source review and Lean checking do not establish cross-language equivalence. The closure state uses canonical finite-support refs and code with the local roundtrip witness.",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ]
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "exp_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Relations.lean",

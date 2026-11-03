@@ -336,6 +336,8 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxLetrec
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.AppExact
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracle
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.IncrementalAgreement
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreserveSafetyTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
 import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety

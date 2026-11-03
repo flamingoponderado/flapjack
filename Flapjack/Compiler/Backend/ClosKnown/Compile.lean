@@ -10,6 +10,14 @@ def knownListBounded (_fuel : Nat) (c : Config) (xs : List Exp) (env : List ValA
     (globals : Spt ValApprox) : Option (List (Exp × ValApprox) × Spt ValApprox) :=
   some (knownListTotal c xs env globals)
 
+/-- Run the incremental known-function traversal, retaining the auxiliary
+program component unchanged. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "compile_inc_def"]
+def compileInc {α : Type} (c : Config) (g : Spt ValApprox) (program : List Exp × α) :
+    Spt ValApprox × List Exp × α :=
+  let (eas, next) := knownListTotal (resetInlineFactor c) program.1 [] g
+  (next, eas.map Prod.fst, program.2)
+
 /-- Apply free-variable cleanup, approximation, tick removal and let-op cleanup. -/
 def compileFuel (fuel : Nat) (config : Option Config) (es : List Exp) : Option (Option Config × List Exp) := do
   match config with
@@ -35,8 +43,8 @@ def compileIncFuel (fuel : Nat) (config : Option Config)
   | some c =>
       let es ← program.1.mapM (ClosFvs.removeBounded fuel 0)
       let static := { resetInlineFactor c with valApproxSpt := .ln }
-      let (es, globals) ← knownListBounded fuel static es [] previousGlobals
-      let es ← es.mapM fun (e, _) => do
+      let (globals, es, _) := compileInc static previousGlobals (es, program.2)
+      let es ← es.mapM fun e => do
         let e ← ClosTicks.removeBounded fuel e
         ClosLetop.compileBounded fuel e
       pure (optionUpdValSpt globals config, (es, []))

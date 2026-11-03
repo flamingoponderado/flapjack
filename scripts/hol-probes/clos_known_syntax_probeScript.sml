@@ -41,6 +41,21 @@ val _ = show "known_ref_rel_subspt_typed=" clos_knownProofTheory.ref_rel_subspt;
 val _ = show "known_ref_rel_update_typed=" clos_knownProofTheory.ref_rel_upd_inline_factor;
 val _ = show "known_loptrel_typed=" clos_knownProofTheory.loptrel_def;
 val _ = show "known_next_g_typed=" clos_knownProofTheory.next_g_def;
+val _ = show "known_compile_inc_typed=" clos_knownTheory.compile_inc_def;
+val _ = show "known_state_rel_typed=" clos_knownProofTheory.state_rel_def;
+val _ = show "known_state_rel_subspt_typed=" clos_knownProofTheory.state_rel_subspt;
+val _ = show "known_state_rel_update_typed=" clos_knownProofTheory.state_rel_upd_inline_factor;
+val _ = show "known_state_rel_get_global_typed=" clos_knownProofTheory.state_rel_get_global_IMP;
+val _ = show "known_state_oracle_safety_typed=" clos_knownProofTheory.oracle_state_sgc_free_def;
+val _ = show "known_state_oracle_safety_shift_typed=" clos_knownProofTheory.oracle_state_sgc_free_shift_seq;
+val _ = show "known_state_rel_co_globals_typed=" clos_knownProofTheory.state_rel_co_elist_globals;
+val _ = show "known_state_rel_first_n_typed=" clos_knownProofTheory.state_rel_first_n_exps;
+val _ = show "known_state_rel_unique_typed=" clos_knownProofTheory.state_rel_unique_set_globals;
+val known_compile_inc_update_replay = Q.prove(
+  `clos_known$compile_inc ((c:clos_known$config) with inline_factor := k) = clos_known$compile_inc c`,
+  simp [clos_knownTheory.compile_inc_def, FUN_EQ_THM, pairTheory.FORALL_PROD,
+        clos_knownTheory.reset_inline_factor_def]);
+val _ = show "known_compile_inc_update_replay_typed=" known_compile_inc_update_replay;
 val _ = show "known_evaluate_app_exact_typed=" clos_knownProofTheory.evaluate_app_exact_rw;
 val _ = show "mk_ticks_set_globals_typed=" clos_knownProofTheory.mk_Ticks_set_globals;
 val _ = show "known_preserves_esgc_free_0_typed=" clos_knownProofTheory.known_preserves_esgc_free_0;

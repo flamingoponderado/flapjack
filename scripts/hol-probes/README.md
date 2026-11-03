@@ -4,6 +4,8 @@
 
 `clos_known_syntax_probe.out` also captures the typed expression, value, reference and application relations used by the semantic simulation, together with their tree-extension and inline-factor lemmas. These captures support source review, not the complete simulation proof.
 
+The same probe captures the incremental optimizer and state relation, including a typed replay of the local inline-factor lemma and the oracle-write preservation statements.
+
 `clos_known_syntax_probe.out` captures the unrestricted evaluator oracle-shift statement and the oracle and uniqueness preservation theorems with inferred types. These captures support source review, not cross-language equivalence.
 
 `clos_known_syntax_probe.out` captures typed oracle-disjointness, finite-prefix bag membership, and optimizer preservation declarations. These support source review, not cross-language equivalence.
