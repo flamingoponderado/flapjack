@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "code_locs_mk_Ticks",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InlineCodeLocations.lean",
+  "lean_name": "ticks_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the complete source theorem and regenerated ticks_code_locs_typed, including the polymorphic location carrier for the inline decision. The source-shaped location list and premises agree. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "contains_closures_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InlineCodeLocations.lean",
+  "lean_name": "containsClosures_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the complete source theorem and regenerated contains_closures_code_locs_typed, including the polymorphic location carrier for the inline decision. The source-shaped location list and premises agree. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "code_locs_decide_inline",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InlineCodeLocations.lean",
+  "lean_name": "decideInline_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the complete source theorem and regenerated inline_code_locs_typed, including the polymorphic location carrier for the inline decision. The source-shaped location list and premises agree. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
   "hol_name": "code_locs_remove_fvs",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/CodeLocations.lean",

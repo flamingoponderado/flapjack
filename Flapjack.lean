@@ -318,6 +318,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalSyntax
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalSyntaxTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalLocationsTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CodeLocations
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineCodeLocations
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracle
 import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracleSimulation
