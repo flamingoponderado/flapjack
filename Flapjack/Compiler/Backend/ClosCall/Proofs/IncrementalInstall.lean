@@ -2797,4 +2797,120 @@ theorem callsFuel_app_known_growing_at {C F : Type} (passFuel relationFuel trave
       sourceArgs initial passFinal out passRun known purity notAllowed argsIH fnIH argsWf fnWf appIH g sourceEnv targetEnv
       source target result final run notType envs envWf sourceWf states ready sourceCompiler targetCompiler oracle
 
+/-- A source direct call with a non-type-error result can only propagate an
+argument error, since the source state has no installed code. -/
+theorem growingExprsSim_call {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra) (ticks label : Nat)
+    (sourceArgs targetArgs : List ClosLang.Exp)
+    (argsIH : GrowingExprsSim (F := F) passFuel relationFuel compiler allowed sourceArgs targetArgs) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed
+      [.call trace ticks label sourceArgs] [.call trace ticks label targetArgs] := by
+  intro g sourceEnv targetEnv source target result final run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  have argsEnv := envRelFuel_call_args trace ticks label targetArgs (by simpa using envs)
+  rw [evaluate, fixClock_evaluate] at run
+  cases argsRun : evaluate sourceArgs sourceEnv source with
+  | mk argsResult argsFinal =>
+    have argsSafe : argsResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst argsResult
+      have eq : result = .err (.abort .typeError) := by simpa [argsRun] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨argsG, targetArgsResult, targetArgsFinal, argsExt, targetArgsRun, argsRel, argsStates,
+      argsWf, argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩ :=
+      argsIH g sourceEnv targetEnv source target argsResult argsFinal argsRun argsSafe argsEnv envWf
+        sourceWf states ready sourceCompiler targetCompiler oracle
+    cases argsResult with
+    | err error =>
+      cases targetArgsResult with
+      | val values => simp [resultRel] at argsRel
+      | err targetError =>
+        have eq : result = .err error ∧ final = argsFinal := by simpa [argsRun] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨argsG, .err targetError, targetArgsFinal, argsExt, ?_, argsRel, argsStates, argsWf,
+          argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩
+        rw [evaluate, fixClock_evaluate, targetArgsRun]
+    | val values =>
+      have empty : argsFinal.code = HolFiniteMapExact.empty := argsStates.2.2.2.2.2
+      have bad : result = .err (.abort .typeError) := by
+        simpa [argsRun, findCode, empty, HolFiniteMapExact.empty] using congrArg Prod.fst run.symm
+      exact (notType bad).elim
+
+/-- The direct-call traversal composes the actual transformed arguments with
+the growing-state source-call simulation. -/
+theorem callsFuel_call_growing_sim {C F : Type} (passFuel relationFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra) (ticks label : Nat)
+    (args : List ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.call trace ticks label args) initial = some (out, final))
+    (argsIH : ∀ target, callsListFuel traversalFuel args initial = some (target, final) →
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed args target) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [.call trace ticks label args] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetArgs, next⟩, argsRun, rfl, rfl⟩ := run
+  exact growingExprsSim_call passFuel relationFuel compiler allowed trace ticks label args targetArgs (argsIH targetArgs argsRun)
+
+/-- All application traversal branches compose the growing-state argument,
+function and closure-application hypotheses at the given evaluation state. -/
+theorem callsFuel_app_growing_at {C F : Type} (passFuel relationFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra) (location : Option Nat)
+    (sourceFn : ClosLang.Exp) (sourceArgs : List ClosLang.Exp) (initial passFinal : State) (out : ClosLang.Exp)
+    (passRun : callsFuel (traversalFuel + 1) (.app trace location sourceFn sourceArgs) initial = some (out, passFinal))
+    (notAllowed : ∀ address, location = some address →
+      (sptLookup address passFinal.1).isSome = true → address ∉ allowed)
+    (argsIH : ∀ targetArgs middle, callsListFuel traversalFuel sourceArgs initial = some (targetArgs, middle) →
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed sourceArgs targetArgs)
+    (fnIH : ∀ targetFn middle, callsFuel traversalFuel sourceFn middle = some (targetFn, passFinal) →
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [sourceFn] [targetFn])
+    (argsWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate sourceArgs env state))
+    (fnWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [sourceFn] env state))
+    (appIH : GrowingAppSim (F := F) passFuel relationFuel compiler allowed location)
+    (g : State) (sourceEnv targetEnv : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (run : evaluate [.app trace location sourceFn sourceArgs] sourceEnv source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (envs : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, out)])
+    (envWf : ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target) (ready : IncrementalInstallReady g source target)
+    (sourceCompiler : source.compile = compileIncFuelCallback passFuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (oracle : target.compileOracle = compileIncFuelOracle passFuel source.compileOracle) :
+    ∃ finalG targetResult targetFinal,
+      stateExtends g finalG ∧ evaluate [out] targetEnv target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  cases location with
+  | none =>
+    have sim := callsFuel_app_none_growing_sim passFuel relationFuel traversalFuel compiler allowed trace
+      sourceFn sourceArgs initial passFinal out passRun argsIH fnIH argsWf fnWf appIH
+    exact sim g sourceEnv targetEnv source target result final run notType (by simpa using envs) envWf sourceWf
+      states ready sourceCompiler targetCompiler oracle
+  | some address =>
+    cases found : sptLookup address passFinal.1 with
+    | none =>
+      have sim := callsFuel_app_unknown_growing_sim passFuel relationFuel traversalFuel compiler allowed trace address
+        sourceFn sourceArgs initial passFinal out passRun found argsIH fnIH argsWf fnWf appIH
+      exact sim g sourceEnv targetEnv source target result final run notType (by simpa using envs) envWf sourceWf
+        states ready sourceCompiler targetCompiler oracle
+    | some value =>
+      have known : (sptLookup address passFinal.1).isSome = true := by simp [found]
+      exact callsFuel_app_known_growing_at passFuel relationFuel traversalFuel compiler allowed trace address sourceFn
+        sourceArgs initial passFinal out passRun known (notAllowed address rfl known) argsIH fnIH argsWf fnWf appIH
+        g sourceEnv targetEnv source target result final run notType envs envWf sourceWf states ready sourceCompiler targetCompiler oracle
+
 end Flapjack.Compiler.Backend.ClosCall
