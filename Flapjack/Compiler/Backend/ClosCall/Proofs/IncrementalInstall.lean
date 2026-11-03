@@ -1243,4 +1243,242 @@ theorem callsFuel_ordinaryOp_growing_sim {C F : Type} (passFuel relationFuel tra
   exact growingExprsSim_ordinaryOp passFuel relationFuel compiler allowed trace op args targetArgs
     notInstall notForce (argsIH targetArgs argsRun) argsWf
 
+/-- Restoring the surrounding clock does not alter installation invariants. -/
+theorem incrementalInstallReady_fixClock {C F : Type} (g : State)
+    (source sourceNext : ClosSem.State (NumSet × C) F) (target targetNext : ClosSem.State C F)
+    (ready : IncrementalInstallReady g sourceNext targetNext) :
+    IncrementalInstallReady g (fixClock source ((), sourceNext)).2 (fixClock target ((), targetNext)).2 := by
+  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩ := ready
+  exact ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩
+
+/-- Condition evaluation and either branch simulate with the compiler state
+and oracle invariants produced by the condition. -/
+theorem growingExprsSim_if {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (sc sy sn tc ty tn : ClosLang.Exp)
+    (conditionIH : GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [sc] [tc])
+    (yesIH : GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [sy] [ty])
+    (noIH : GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [sn] [tn]) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed
+      [.ifThenElse trace sc sy sn] [.ifThenElse trace tc ty tn] := by
+  intro g sourceEnv targetEnv source target sourceResult sourceFinal run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  have ifEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .ifThenElse trace tc ty tn)] := by simpa using envs
+  have conditionEnv := envRelFuel_if_part trace tc ty tn tc (Or.inl rfl) ifEnv
+  cases condRun : evaluate [sc] sourceEnv source with
+  | mk condResult condFinal =>
+    have condSafe : condResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst condResult
+      have eq : sourceResult = .err (.abort .typeError) := by
+        simpa [evaluate, condRun, fixClock] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨condG, targetCondResult, targetCondFinal, condExt, targetCondRun, condRel, condStates,
+      condWf, condReady, condCompiler, targetCondCompiler, condOracle, condGrowth⟩ :=
+      conditionIH g sourceEnv targetEnv source target condResult condFinal condRun condSafe
+        (by simpa using conditionEnv) envWf sourceWf states ready sourceCompiler targetCompiler oracle
+    let sourceNext := (fixClock source ((), condFinal)).2
+    let targetNext := (fixClock target ((), targetCondFinal)).2
+    have nextStates : StateRelFuel relationFuel condG allowed sourceNext targetNext :=
+      stateRelFuel_fixClock source target () () states.2.1 condStates
+    have nextWf : StateWellFormedFuel relationFuel condG allowed targetNext.code sourceNext := by
+      simpa [sourceNext, targetNext, fixClock] using
+        stateWellFormedFuel_clock condWf (min source.clock condFinal.clock)
+    have nextReady : IncrementalInstallReady condG sourceNext targetNext :=
+      incrementalInstallReady_fixClock condG source condFinal target targetCondFinal condReady
+    have nextCompiler : sourceNext.compile = compileIncFuelCallback passFuel compiler := by
+      simpa [sourceNext, fixClock] using condCompiler
+    have nextTargetCompiler : targetNext.compile = compiler := by
+      simpa [targetNext, fixClock] using targetCondCompiler
+    have nextOracle : targetNext.compileOracle = compileIncFuelOracle passFuel sourceNext.compileOracle := by
+      simpa [sourceNext, targetNext, fixClock] using condOracle
+    have nextGrowth : ∀ key entry, target.code.lookup key = some entry → targetNext.code.lookup key = some entry := condGrowth
+    cases condResult with
+    | err error =>
+      cases targetCondResult with
+      | val values => simp [resultRel] at condRel
+      | err targetError =>
+        have eq : sourceResult = .err error ∧ sourceFinal = sourceNext := by
+          simpa [evaluate, condRun, fixClock, sourceNext] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨condG, .err targetError, targetNext, condExt, ?_, condRel, nextStates, nextWf, nextReady,
+          nextCompiler, nextTargetCompiler, nextOracle, nextGrowth⟩
+        simp [evaluate, targetCondRun, fixClock, targetNext]
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value sc sourceEnv source condFinal values condRun
+      cases targetCondResult with
+      | err error => simp [resultRel] at condRel
+      | val targetValues =>
+        obtain ⟨targetValue, rfl⟩ := evaluate_singleton_value tc targetEnv target targetCondFinal targetValues targetCondRun
+        have valueRel : ValueRelFuel relationFuel condG allowed targetCondFinal.code value targetValue := by
+          simpa [resultRel] using condRel
+        have boolEq := valueRelFuel_asBool valueRel
+        cases boolRun : asBool value with
+        | none =>
+          have eq : sourceResult = .err (.abort .typeError) := by
+            simpa [evaluate, condRun, fixClock, boolRun] using congrArg Prod.fst run.symm
+          exact (notType eq).elim
+        | some choice =>
+          have targetBool : asBool targetValue = some choice := boolEq.symm.trans boolRun
+          have branchEnvWf := valuesWellFormedFuel_mono envWf condExt Set.Subset.rfl nextGrowth
+          cases choice with
+          | false =>
+            have branchEnv := envRelFuel_if_part trace tc ty tn tn (Or.inr (Or.inr rfl)) ifEnv
+            have branchEnv' := envRelFuel_mono branchEnv condExt Set.Subset.rfl nextGrowth
+            have branchRun : evaluate [sn] sourceEnv sourceNext = (sourceResult, sourceFinal) := by
+              simpa [evaluate, condRun, fixClock, boolRun, sourceNext] using run
+            obtain ⟨finalG, result, final, extended, targetRun, related, finalStates, finalWf, finalReady,
+              finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+              noIH condG sourceEnv targetEnv sourceNext targetNext sourceResult sourceFinal branchRun notType
+                (by simpa using branchEnv') branchEnvWf nextWf nextStates nextReady nextCompiler nextTargetCompiler nextOracle
+            refine ⟨finalG, result, final, stateExtends_trans g condG finalG condExt extended, ?_, related,
+              finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, ?_⟩
+            · simpa [evaluate, targetCondRun, fixClock, targetBool, targetNext] using targetRun
+            · intro key entry found
+              exact growth key entry (nextGrowth key entry found)
+          | true =>
+            have branchEnv := envRelFuel_if_part trace tc ty tn ty (Or.inr (Or.inl rfl)) ifEnv
+            have branchEnv' := envRelFuel_mono branchEnv condExt Set.Subset.rfl nextGrowth
+            have branchRun : evaluate [sy] sourceEnv sourceNext = (sourceResult, sourceFinal) := by
+              simpa [evaluate, condRun, fixClock, boolRun, sourceNext] using run
+            obtain ⟨finalG, result, final, extended, targetRun, related, finalStates, finalWf, finalReady,
+              finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+              yesIH condG sourceEnv targetEnv sourceNext targetNext sourceResult sourceFinal branchRun notType
+                (by simpa using branchEnv') branchEnvWf nextWf nextStates nextReady nextCompiler nextTargetCompiler nextOracle
+            refine ⟨finalG, result, final, stateExtends_trans g condG finalG condExt extended, ?_, related,
+              finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, ?_⟩
+            · simpa [evaluate, targetCondRun, fixClock, targetBool, targetNext] using targetRun
+            · intro key entry found
+              exact growth key entry (nextGrowth key entry found)
+
+/-- The direct-call traversal's conditional case composes its three actual
+child outputs under the growing compiler-state simulation. -/
+theorem callsFuel_if_growing_sim {C F : Type} (passFuel relationFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (condition yes no : ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.ifThenElse trace condition yes no) initial = some (out, final))
+    (conditionIH : ∀ target middle, callsFuel traversalFuel condition initial = some (target, middle) →
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [condition] [target])
+    (yesIH : ∀ target before after, callsFuel traversalFuel yes before = some (target, after) →
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [yes] [target])
+    (noIH : ∀ target middle, callsFuel traversalFuel no middle = some (target, final) →
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [no] [target]) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [.ifThenElse trace condition yes no] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetCondition, middle1⟩, conditionRun, ⟨targetYes, middle2⟩, yesRun,
+    ⟨targetNo, next⟩, noRun, rfl, rfl⟩ := run
+  exact growingExprsSim_if passFuel relationFuel compiler allowed trace condition yes no targetCondition targetYes targetNo
+    (conditionIH targetCondition middle1 conditionRun) (yesIH targetYes middle1 middle2 yesRun)
+    (noIH targetNo middle2 noRun)
+
+/-- Let bindings and the body compose while carrying any compiler-state
+growth from the bindings into the body's environment and invariants. -/
+theorem growingExprsSim_let {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (sourceBindings targetBindings : List ClosLang.Exp) (sourceBody targetBody : ClosLang.Exp)
+    (bindingsIH : GrowingExprsSim (F := F) passFuel relationFuel compiler allowed sourceBindings targetBindings)
+    (bindingsWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate sourceBindings env state))
+    (bodyIH : GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [sourceBody] [targetBody]) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed
+      [.let trace sourceBindings sourceBody] [.let trace targetBindings targetBody] := by
+  intro g sourceEnv targetEnv source target result final run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  have letEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .let trace targetBindings targetBody)] := by simpa using envs
+  have bindingsEnv := envRelFuel_let_bindings trace targetBindings targetBody letEnv
+  have bindingWf := bindingsWf g target.code sourceEnv source envWf sourceWf ready.auxEmpty
+  cases bindingRun : evaluate sourceBindings sourceEnv source with
+  | mk bindingResult bindingFinal =>
+    rw [bindingRun] at bindingWf
+    have bindingSafe : bindingResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst bindingResult
+      have eq : result = .err (.abort .typeError) := by
+        simpa [evaluate, bindingRun, fixClock] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨bindingG, targetBindingResult, targetBindingFinal, bindingExt, targetBindingRun, bindingRel,
+      bindingStates, bindingStateWf, bindingReady, bindingCompiler, targetBindingCompiler, bindingOracle, bindingGrowth⟩ :=
+      bindingsIH g sourceEnv targetEnv source target bindingResult bindingFinal bindingRun bindingSafe
+        bindingsEnv envWf sourceWf states ready sourceCompiler targetCompiler oracle
+    let sourceNext := (fixClock source ((), bindingFinal)).2
+    let targetNext := (fixClock target ((), targetBindingFinal)).2
+    have nextStates : StateRelFuel relationFuel bindingG allowed sourceNext targetNext :=
+      stateRelFuel_fixClock source target () () states.2.1 bindingStates
+    have nextWf : StateWellFormedFuel relationFuel bindingG allowed targetNext.code sourceNext := by
+      simpa [sourceNext, targetNext, fixClock] using
+        stateWellFormedFuel_clock bindingStateWf (min source.clock bindingFinal.clock)
+    have nextReady : IncrementalInstallReady bindingG sourceNext targetNext :=
+      incrementalInstallReady_fixClock bindingG source bindingFinal target targetBindingFinal bindingReady
+    have nextCompiler : sourceNext.compile = compileIncFuelCallback passFuel compiler := by
+      simpa [sourceNext, fixClock] using bindingCompiler
+    have nextTargetCompiler : targetNext.compile = compiler := by simpa [targetNext, fixClock] using targetBindingCompiler
+    have nextOracle : targetNext.compileOracle = compileIncFuelOracle passFuel sourceNext.compileOracle := by
+      simpa [sourceNext, targetNext, fixClock] using bindingOracle
+    have nextGrowth : ∀ key entry, target.code.lookup key = some entry → targetNext.code.lookup key = some entry := bindingGrowth
+    cases bindingResult with
+    | err error =>
+      cases targetBindingResult with
+      | val values => simp [resultRel] at bindingRel
+      | err targetError =>
+        have eq : result = .err error ∧ final = sourceNext := by
+          simpa [evaluate, bindingRun, fixClock, sourceNext] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨bindingG, .err targetError, targetNext, bindingExt, ?_, bindingRel, nextStates, nextWf, nextReady,
+          nextCompiler, nextTargetCompiler, nextOracle, nextGrowth⟩
+        simp [evaluate, targetBindingRun, fixClock, targetNext]
+    | val sourceValues =>
+      cases targetBindingResult with
+      | err error => simp [resultRel] at bindingRel
+      | val targetValues =>
+        have valuesRel : List.Forall₂ (ValueRelFuel relationFuel bindingG allowed targetNext.code) sourceValues targetValues := bindingRel
+        have valuesLength : sourceValues.length = targetBindings.length := by
+          have targetLength := (evaluate_length (C := C) (F := F)).1 targetBindings targetEnv target
+            targetBindingFinal targetValues targetBindingRun
+          exact valuesRel.length_eq.trans targetLength
+        have outerEnv := envRelFuel_let_body_outer trace targetBindings targetBody letEnv
+        have outerEnv' := envRelFuel_mono outerEnv bindingExt Set.Subset.rfl nextGrowth
+        have bodyEnv : EnvRelFuel relationFuel bindingG allowed targetNext.code (sourceValues ++ sourceEnv)
+            (targetValues ++ targetEnv) 0 [(0, targetBody)] := by
+          apply envRelFuel_prepend valuesRel
+          simpa [valuesLength] using outerEnv'
+        have bodyEnvWf : ValuesWellFormedFuel relationFuel bindingG allowed targetNext.code (sourceValues ++ sourceEnv) :=
+          valuesWellFormedFuel_mono (valuesWellFormedFuel_append bindingWf.1 envWf) bindingExt Set.Subset.rfl nextGrowth
+        have bodyRun : evaluate [sourceBody] (sourceValues ++ sourceEnv) sourceNext = (result, final) := by
+          simpa [evaluate, bindingRun, fixClock, sourceNext] using run
+        obtain ⟨finalG, targetResult, targetFinal, extended, targetRun, related, finalStates, finalWf, finalReady,
+          finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+          bodyIH bindingG (sourceValues ++ sourceEnv) (targetValues ++ targetEnv) sourceNext targetNext result final
+            bodyRun notType (by simpa using bodyEnv) bodyEnvWf nextWf nextStates nextReady nextCompiler nextTargetCompiler nextOracle
+        refine ⟨finalG, targetResult, targetFinal, stateExtends_trans g bindingG finalG bindingExt extended, ?_, related,
+          finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, ?_⟩
+        · simpa [evaluate, targetBindingRun, fixClock, targetNext] using targetRun
+        · intro key entry found
+          exact growth key entry (nextGrowth key entry found)
+
+/-- The direct-call traversal's let case composes its actual binding and body
+outputs, conditional on source binding well-formedness. -/
+theorem callsFuel_let_growing_sim {C F : Type} (passFuel relationFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (bindings : List ClosLang.Exp) (body : ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.let trace bindings body) initial = some (out, final))
+    (bindingsIH : ∀ target middle, callsListFuel traversalFuel bindings initial = some (target, middle) →
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed bindings target)
+    (bindingsWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate bindings env state))
+    (bodyIH : ∀ target middle, callsFuel traversalFuel body middle = some (target, final) →
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [body] [target]) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [.let trace bindings body] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetBindings, middle⟩, bindingsRun, ⟨targetBody, next⟩, bodyRun, rfl, rfl⟩ := run
+  exact growingExprsSim_let passFuel relationFuel compiler allowed trace bindings targetBindings body targetBody
+    (bindingsIH targetBindings middle bindingsRun) bindingsWf (bodyIH targetBody middle bodyRun)
+
 end Flapjack.Compiler.Backend.ClosCall
