@@ -1,3 +1,5 @@
+`clos_known_syntax_probe.out` captures the unrestricted evaluator oracle-shift statement and the oracle and uniqueness preservation theorems with inferred types. These captures support source review, not cross-language equivalence.
+
 `clos_known_syntax_probe.out` captures typed oracle-disjointness, finite-prefix bag membership, and optimizer preservation declarations. These support source review, not cross-language equivalence.
 
 `clos_known_syntax_probe.out` captures the full typed `known` traversal, its length theorem, and its global-change statements. `SourceEquations.lean` provides checked source-shaped equations for the executed traversal. The typed source comparison and Lean checks are review evidence, not a cross-language equivalence proof.

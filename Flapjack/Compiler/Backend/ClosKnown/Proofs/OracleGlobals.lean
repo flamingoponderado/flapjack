@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxEvaluate
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateOracleAdvance
 
 /-! Disjointness of approximation domains from future oracle writes. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.OracleGlobals
@@ -177,5 +178,54 @@ theorem elistGlobalsFirstNExpsShift {α β : Type} (i k : Nat)
   have indexed : elistGlobals ((Flapjack.holShiftSeq m co) (k - m)).2.1 i ≠ 0 := by
     simpa [Flapjack.holShiftSeq, Nat.sub_add_cancel (Nat.le_of_lt h1)] using written
   exact elistGlobalsFirstNExps i (k - m) (Flapjack.holShiftSeq m co) indexed n (by omega)
+
+/-- Every evaluation advances the compile oracle by some finite amount. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_IMP_shift_seq"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateImpShiftSeq {C F : Type} (es : List ClosLang.Exp) (env : List ClosSem.Value)
+    (s0 : State C F) (res : Flapjack.SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (s : State C F) (run : evaluate es env s0 = (res, s)) :
+    ∃ k, s.compileOracle = Flapjack.holShiftSeq k s0.compileOracle :=
+  evaluate_oracle_advance.1 es env s0 s res run
+
+/-- Evaluation preserves global-write uniqueness for an arbitrary program. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "unique_set_globals_evaluate"
+  (fmap_as_finite_support := [refs, code])]
+theorem uniqueSetGlobalsEvaluate {C F : Type} (es xs : List ClosLang.Exp)
+    (env : List ClosSem.Value) (s1 s2 : State C F)
+    (res : Flapjack.SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (h : uniqueSetGlobals xs s1.compileOracle ∧ evaluate es env s1 = (res, s2)) :
+    uniqueSetGlobals xs s2.compileOracle := by
+  obtain ⟨n, shift⟩ := evaluateImpShiftSeq es env s1 res s2 h.2
+  rw [shift]
+  exact uniqueSetGlobalsShift xs s1.compileOracle h.1 n
+
+/-- Evaluation preserves oracle disjointness for any approximation tree. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "oracle_gapprox_disjoint_evaluate"
+  (fmap_as_finite_support := [refs, code])]
+theorem oracleGapproxDisjointEvaluate {C F α : Type} (g : Spt α)
+    (s0 : State C F) (es : List ClosLang.Exp) (env : List ClosSem.Value)
+    (res : Flapjack.SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value) (s1 : State C F)
+    (h : oracleGapproxDisjoint g s0.compileOracle ∧ evaluate es env s0 = (res, s1)) :
+    oracleGapproxDisjoint g s1.compileOracle := by
+  obtain ⟨n, shift⟩ := evaluateImpShiftSeq es env s0 res s1 h.2
+  rw [shift]
+  exact oracleGapproxDisjointShift g s0.compileOracle h.1 n
+
+/-- Evaluating and optimizing the same unique program preserves oracle
+approximation disjointness in the final state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "oracle_gapprox_disjoint_lemma"
+  (fmap_as_finite_support := [refs, code])]
+theorem oracleGapproxDisjointLemma {C F : Type}
+    (xs : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : State C F)
+    (res : Flapjack.SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value) (s : State C F)
+    (c : Config) (aenv : List ValApprox) (g0 : Spt ValApprox)
+    (eas : List (ClosLang.Exp × ValApprox)) (g : Spt ValApprox)
+    (h : evaluate xs env s0 = (res, s) ∧ knownListTotal c xs aenv g0 = (eas, g) ∧
+      uniqueSetGlobals xs s0.compileOracle ∧ oracleGapproxDisjoint g0 s0.compileOracle) :
+    oracleGapproxDisjoint g s.compileOracle := by
+  obtain ⟨n, shift⟩ := evaluateImpShiftSeq xs env s0 res s h.1
+  rw [shift]
+  exact oracleGapproxDisjointShiftUnique c xs aenv g0 eas g s0 n ⟨h.2.1, h.2.2.1, h.2.2.2⟩
 
 end Flapjack.Compiler.Backend.ClosKnown.OracleGlobals
