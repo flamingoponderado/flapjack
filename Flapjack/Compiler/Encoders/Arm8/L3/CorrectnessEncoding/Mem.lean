@@ -424,4 +424,32 @@ theorem arm8Ast_store_single (dest base : Nat) (off : BitVec 64)
   simp only [arm8Ast, arm8LoadStoreAst]
   simp [h1]
 
+
+/-- The one-instruction load lowering encodes to four bytes. -/
+theorem arm8Enc_load_single_length (dest base : Nat) (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    (arm8Enc (.inst (.mem .load dest (.addr base off)))).length = 4 := by
+  rw [arm8Enc, arm8Ast_load_single dest base off hsx]
+  simp [arm8Encode_length]
+
+/-- The one-instruction store lowering encodes to four bytes. -/
+theorem arm8Enc_store_single_length (dest base : Nat) (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    (arm8Enc (.inst (.mem .store dest (.addr base off)))).length = 4 := by
+  rw [arm8Enc, arm8Ast_store_single dest base off hsx]
+  simp [arm8Encode_length]
+
+/-- The L3 eight-byte read is the source's `readMemWord` value, from the state
+relation and the eight-address domain fact alone (Flapjack infrastructure). -/
+theorem arm8Mem_eight_value (ms : arm8_state) (s : AsmState 64) (address : BitVec 64)
+    (hal : Aligned (TN := 64) (address, 8) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
+    (hbe : s.be = false)
+    (hrel : ∀ a, s.memDomain a → ms.MEM a = s.mem a)
+    (hdom : ∀ k, k < 8 → s.memDomain (address + BitVec.ofNat 64 k)) :
+    (Mem (TN := 64) (address, (8, AccType.AccType_NORMAL)) ms).1 =
+      (readMemWord (resultWidth := 64) address 8 s).1 :=
+  arm8Mem_eight_eq_readMemWord ms s address hal he0 hel hbe
+    (fun i hi => hrel _ (hdom i hi))
+
 end Flapjack.Compiler.Encoders.Arm8.L3
