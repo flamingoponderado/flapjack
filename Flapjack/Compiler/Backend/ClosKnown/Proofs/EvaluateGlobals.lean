@@ -660,5 +660,102 @@ theorem evaluateChangedGlobalsLetrec {C F : Type}
       rcases run with ⟨rfl, rfl⟩ <;>
       exact ⟨safe, by simp [rsgcFree], 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
 
+
+/-- A successful code lookup returns the original arguments and a body with
+no global writes in a safe state. This helper has no separate HOL declaration. -/
+private theorem findCodeSafe {C F : Type} (location : Nat) (args selected : List ClosSem.Value)
+    (body : ClosLang.Exp) (state : ClosSem.State C F) (safe : ssgcFree state)
+    (found : findCode location args state.code = some (selected, body)) :
+    selected = args ∧ setGlobals body = emptyGlobalBag := by
+  change (state.code.lookup location).bind
+    (fun entry => if args.length = entry.1 then some (args, entry.2) else none) = some (selected, body) at found
+  simp only [Option.bind_eq_some_iff] at found
+  rcases found with ⟨⟨arity, codeBody⟩, lookup, found⟩
+  split at found <;> simp_all
+  exact safe.1 _ _ _ lookup
+
+
+/-- Direct calls preserve global safety under the source argument and
+conditional code-body induction hypotheses. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsCall {C F : Type} (trace : BackendCommon.Tra)
+    (ticks location : Nat) (args : List ClosLang.Exp) (env : List ClosSem.Value)
+    (s0 : ClosSem.State C F) (argsIH : EvalGlobalsInvariant args env s0)
+    (bodyIH : ∀ values next callArgs body,
+      evaluate args env s0 = (.val values, next) →
+      findCode location values next.code = some (callArgs, body) →
+      ¬ next.clock < ticks + 1 → EvalGlobalsInvariant [body] callArgs (decClock (ticks + 1) next))
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.call trace ticks location args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.call trace ticks location args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.call trace ticks location args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  rcases h with ⟨run, safe, expressionSafe, envSafe⟩
+  have argsSafe : ∀ e ∈ args, esgcFree e := by
+    apply (esgcFreeList_iff args).1
+    simpa [esgcFree] using expressionSafe (.call trace ticks location args) (by simp)
+  cases argsRun : evaluate args env s0 with
+  | mk argsResult next =>
+    have ⟨nextSafe, argsResultSafe, n, nextOracle, argsFrame⟩ :=
+      argsIH argsResult next ⟨argsRun, safe, argsSafe, envSafe⟩
+    have clockBound : next.clock ≤ s0.clock := by
+      simpa [argsRun] using evaluate_clock_le args env s0
+    have frame : mglobalsExtend s0.globals
+        ({k | elistGlobals [.call trace ticks location args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) next.globals := by
+      simpa [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag] using argsFrame
+    cases argsResult with
+    | err error =>
+      simp only [evaluate, argsRun, fixClock] at run
+      rcases run with ⟨rfl, rfl⟩
+      exact ⟨(ssgcFreeClock next (fun clock => min s0.clock clock)).2 nextSafe,
+        argsResultSafe, n, nextOracle, frame⟩
+    | val values =>
+      cases codeRun : findCode location values next.code with
+      | none =>
+        simp [evaluate, argsRun, fixClock, Nat.min_eq_right clockBound, codeRun] at run
+        rcases run with ⟨rfl, rfl⟩
+        exact ⟨nextSafe, by simp [rsgcFree], n, nextOracle, frame⟩
+      | some pair =>
+        rcases pair with ⟨callArgs, body⟩
+        have ⟨sameArgs, noWrites⟩ := findCodeSafe location values callArgs body next nextSafe codeRun
+        have callArgsSafe : ∀ v ∈ callArgs, vsgcFree v := by
+          subst callArgs
+          simpa [rsgcFree] using argsResultSafe
+        have bodySafe : ∀ e ∈ [body], esgcFree e := by
+          simpa using setGlobalsEmptyEsgcFree body noWrites
+        by_cases timeout : next.clock < ticks + 1
+        · simp [evaluate, argsRun, fixClock, Nat.min_eq_right clockBound, codeRun, timeout] at run
+          rcases run with ⟨rfl, rfl⟩
+          exact ⟨(ssgcFreeClock next (fun _ => 0)).2 nextSafe,
+            by simp [rsgcFree], n, nextOracle, frame⟩
+        · cases bodyRun : evaluate [body] callArgs (decClock (ticks + 1) next) with
+          | mk bodyResult last =>
+            have startSafe := (ssgcFreeDecClock (ticks + 1) next).2 nextSafe
+            have ⟨lastSafe, resultSafe, m, lastOracle, bodyFrame⟩ :=
+              bodyIH values next callArgs body argsRun codeRun timeout bodyResult last
+                ⟨bodyRun, startSafe, bodySafe, callArgsSafe⟩
+            have finalOracle : last.compileOracle = Flapjack.holShiftSeq (n + m) s0.compileOracle := by
+              simpa only [decClock, nextOracle, shiftSeqAdd] using lastOracle
+            have frame2 : mglobalsExtend next.globals
+                {k | elistGlobals (List.flatten (firstNExps (Flapjack.holShiftSeq n s0.compileOracle) m)) k ≠ 0}
+                last.globals := by
+              simpa [decClock, nextOracle, elistGlobals, noWrites, FlatProps.unionGlobalBag, emptyGlobalBag] using bodyFrame
+            have composed := mglobalsExtendTrans _ _ _ _ _ ⟨argsFrame, frame2⟩
+            have finalFrame : mglobalsExtend s0.globals
+                ({k | elistGlobals [.call trace ticks location args] k ≠ 0} ∪
+                 {k | elistGlobals (List.flatten (firstNExps s0.compileOracle (n + m))) k ≠ 0}) last.globals := by
+              rw [Nat.add_comm n m, firstNExpsWritesShift]
+              simpa [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag,
+                Set.union_assoc] using composed
+            simp [evaluate, argsRun, fixClock, Nat.min_eq_right clockBound, codeRun, timeout, bodyRun] at run
+            rcases run with ⟨rfl, rfl⟩
+            exact ⟨lastSafe, resultSafe, n + m, finalOracle, finalFrame⟩
+
 end EvaluateGlobalsPort
 end Flapjack.Compiler.Backend.ClosKnown

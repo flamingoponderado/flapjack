@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.Compiler.Backend.FlatProps.Globals
+import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
 
 /-! Closure-language global initialization bags and closure safety. -/
 namespace Flapjack.Compiler.Backend.ClosProps
@@ -77,5 +78,15 @@ theorem esgcFreeList_iff (xs : List ClosLang.Exp) :
   induction xs with
   | nil => simp [esgcFreeList]
   | cons x xs ih => simp [esgcFreeList, ih]
+
+
+/-- An expression with no global writes is safe for closure capture. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "set_globals_empty_esgc_free"]
+theorem setGlobalsEmptyEsgcFree (expression : ClosLang.Exp) :
+    setGlobals expression = emptyGlobalBag → esgcFree expression := by
+  induction expression using setGlobals.induct
+    (motive2 := fun _ => True)
+    (motive3 := fun es => elistGlobals es = emptyGlobalBag → esgcFreeList es) <;>
+    simp_all [setGlobals, elistGlobals, esgcFree, esgcFreeList, FlatProps.unionGlobalBag_eq_empty]
 
 end Flapjack.Compiler.Backend.ClosProps

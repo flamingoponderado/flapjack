@@ -104,6 +104,7 @@ val _ = show "shift_seq_add_typed=" clos_knownProofTheory.shift_seq_add;
 val _ = show "ssgc_free_co_shift_seq_typed=" clos_knownProofTheory.ssgc_free_co_shift_seq;
 val _ = show "ssgc_free_do_install_typed=" clos_knownProofTheory.ssgc_free_do_install;
 val _ = show "do_install_ssgc_typed=" clos_knownProofTheory.do_install_ssgc;
+val _ = show "set_globals_empty_esgc_free_typed=" closPropsTheory.set_globals_empty_esgc_free;
 val _ = show "vsgc_free_typed=" closPropsTheory.vsgc_free_def;
 val _ = show "rsgc_free_typed=" closPropsTheory.rsgc_free_def;
 val _ = show "ssgc_free_typed=" closPropsTheory.ssgc_free_def;
