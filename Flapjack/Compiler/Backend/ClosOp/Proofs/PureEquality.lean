@@ -419,4 +419,172 @@ theorem eqPureThmOneConstructorMatch {C F : Type} (tx : BackendCommon.Tra)
   rw [result]
   exact evaluateConjListTrue _ _ env s _ ⟨headRun, recResult⟩
 
+/-- Generalized list statement used in the original pure-equality induction.
+This is proof infrastructure, not a separately named HOL theorem. -/
+private def PureListCorrect {C F : Type} (env : List Value) (s : State C F)
+    (pairs : List (ClosLang.Exp × ClosLang.Exp)) : Prop :=
+  ∀ (hs : List (Value × Value)) (flag : Bool),
+    List.Forall₂ (fun p q => evaluate [p.1, p.2] env s = (.val [q.1, q.2], s) ∧
+      SimpleExp p.1 ∧ SimpleExp p.2) pairs hs ∧
+    doEqList (hs.map Prod.fst) (hs.map Prod.snd) = .val flag ∧
+    (∀ e ∈ Flapjack.appListAppend (eqPureList pairs), SimpleExp e) →
+    evaluate [conjList (Flapjack.appListAppend (eqPureList pairs))] env s =
+      (.val [boolValue flag], s)
+
+private theorem doEqListSingleton (x y : Value) : doEqList [x] [y] = doEq x y := by
+  rw [doEqList]
+  cases h : doEq x y with
+  | typeError => rfl
+  | val b => cases b <;> simp [doEqList]
+
+private theorem singletonCorrect {C F : Type} (env : List Value) (s : State C F)
+    (x y : ClosLang.Exp)
+    (single : ∀ (vx vy : Value) (flag : Bool),
+      evaluate [x, y] env s = (.val [vx, vy], s) ∧ SimpleExp x ∧ SimpleExp y ∧
+        doEq vx vy = .val flag →
+      evaluate [eqPure x y] env s = (.val [boolValue flag], s)) :
+    PureListCorrect env s [(x, y)] := by
+  intro hs flag ⟨rel, cmp, _⟩
+  cases rel with
+  | cons head tail =>
+    cases tail
+    rename_i value
+    rcases value with ⟨vx, vy⟩
+    simp only [List.map_cons, List.map_nil, doEqListSingleton] at cmp
+    exact single vx vy flag ⟨head.1, head.2.1, head.2.2, cmp⟩
+
+private theorem consSome (x : ClosLang.Exp) (tag : Nat) (args : List ClosLang.Exp)
+    (h : cons x = some (tag, args)) :
+    ∃ trace, x = .op trace (.blockOp (.cons tag)) args := by
+  rw [destOpCons_eq_previous] at h
+  cases x <;> try simp at h
+  case op trace op args =>
+    cases op <;> try simp at h
+    case blockOp op => cases op <;> simp_all
+
+private theorem pureListCorrect {C F : Type} (env : List Value) (s : State C F)
+    (pairs : List (ClosLang.Exp × ClosLang.Exp)) : PureListCorrect env s pairs := by
+  fun_induction eqPureList pairs
+  case case1 =>
+    intro hs flag ⟨rel, cmp, _⟩
+    cases rel
+    simp only [List.map_nil, doEqList] at cmp
+    cases cmp
+    rw [eqPureList, Flapjack.appListAppend, Flapjack.appendAux, conjList, mkBool,
+      evaluate_ordinaryOp_eq _ _ _ _ _ (by simp) (by simp)]
+    simp [evaluate, doApp, applyBlock, boolValue, BackendCommon.trueTag]
+  case case2 x y z direct =>
+    apply singletonCorrect
+    intro vx vy flag h
+    exact eqPureThmDirect x y z vx vy env s flag direct h
+  case case3 x y direct noX noY =>
+    apply singletonCorrect
+    intro vx vy flag h
+    exact eqPureThmFallback x y vx vy env s flag direct noX noY h
+  case case4 x y direct tagX xs tagY ys hx hy different =>
+    obtain ⟨tx, rfl⟩ := consSome x tagX xs hx
+    obtain ⟨ty, rfl⟩ := consSome y tagY ys hy
+    apply singletonCorrect
+    intro vx vy flag h
+    exact eqPureThmConstructorMismatch tx ty tagX tagY xs ys vx vy env s flag direct different h
+  case case5 x y direct tagX xs tagY ys hx hy same ih =>
+    obtain ⟨tx, rfl⟩ := consSome x tagX xs hx
+    obtain ⟨ty, rfl⟩ := consSome y tagY ys hy
+    have same' : (tagX != tagY || xs.length != ys.length) = false := by
+      cases v : (tagX != tagY || xs.length != ys.length) <;> simp_all
+    apply singletonCorrect
+    intro vx vy flag h
+    exact eqPureThmConstructorMatch tx ty tagX tagY xs ys vx vy env s flag direct same' ih h
+  case case6 x y direct tag xs hx hy fields ih =>
+    obtain ⟨tx, rfl⟩ := consSome x tag xs hx
+    apply singletonCorrect
+    intro vx vy flag h
+    obtain ⟨runX, _⟩ := purePair _ _ vx vy env s h.2.1 h.1
+    obtain ⟨valuesX, _, valueEq, _⟩ := pureConstructor tx tag xs env s vx runX
+    have shape : ∃ tagY fieldsY, vy = .block tagY fieldsY := by
+      have cmp := h.2.2.2
+      rw [valueEq] at cmp
+      cases vy <;> try simp [doEq] at cmp
+      case block => exact ⟨_, _, rfl⟩
+    obtain ⟨tagY, fieldsY, rfl⟩ := shape
+    cases test : (tag != tagY || xs.length != fieldsY.length) with
+    | true => exact eqPureThmOneConstructorMismatch tx tag tagY xs y vx fieldsY env s flag direct hy test h
+    | false => exact eqPureThmOneConstructorMatch tx tag tagY xs y vx fieldsY env s flag direct hy test ih h
+  case case7 x y direct tag ys hx hy ih =>
+    apply singletonCorrect
+    intro vx vy flag h
+    obtain ⟨runX, runY⟩ := purePair x y vx vy env s h.2.1 h.1
+    have swapped : evaluate [y, x] env s = (.val [vy, vx], s) := by
+      rw [ClosProps.evaluate_cons_value y [x] env s s vy runY, runX]
+    have cmp : doEq vy vx = .val flag := by rw [ClosProps.doEqSym.1, h.2.2.2]
+    have rel : List.Forall₂ (fun p q => evaluate [p.1, p.2] env s = (.val [q.1, q.2], s) ∧
+        SimpleExp p.1 ∧ SimpleExp p.2) [(y, x)] [(vy, vx)] :=
+      .cons ⟨swapped, h.2.2.1, h.2.1⟩ .nil
+    have outputSimple := eqPureSimple [(y, x)] (by simpa using And.intro h.2.2.1 h.2.1)
+    have result := ih [(vy, vx)] flag ⟨rel, by simpa [doEqListSingleton] using cmp, outputSimple⟩
+    have same : eqPure x y = eqPure y x := by
+      unfold eqPure
+      rw [eqPureList, direct]
+      dsimp only
+      split
+      all_goals simp_all [cons, destOp, destCons]
+    change evaluate [eqPure x y] env s = (.val [boolValue flag], s)
+    rw [same]
+    exact result
+  case case8 p q rest ihHead ihTail =>
+    rcases p with ⟨px, py⟩
+    intro hs flag ⟨rel, cmp, simple⟩
+    cases rel with
+    | cons head tail =>
+      rename_i value values
+      have flatten : Flapjack.appListAppend (eqPureList ((px, py) :: q :: rest)) =
+          Flapjack.appListAppend (eqPureList [(px, py)]) ++
+            Flapjack.appListAppend (eqPureList (q :: rest)) := by
+        conv_lhs => rw [eqPureList]
+        exact (Flapjack.appListAppend_thm _ _ []).1
+      rw [flatten] at simple ⊢
+      have simpleHead : ∀ e ∈ Flapjack.appListAppend (eqPureList [(px, py)]), SimpleExp e := by
+        intro e he
+        exact simple e (List.mem_append_left _ he)
+      have simpleTail : ∀ e ∈ Flapjack.appListAppend (eqPureList (q :: rest)), SimpleExp e := by
+        intro e he
+        exact simple e (List.mem_append_right _ he)
+      have pureHead : ∀ e ∈ Flapjack.appListAppend (eqPureList [(px, py)]), ClosLang.pure e = true := by
+        intro e he
+        exact simpleExpPure e (simpleHead e he)
+      simp only [List.map_cons, doEqList] at cmp
+      cases first : doEq value.1 value.2 with
+      | typeError => simp [first] at cmp
+      | val b =>
+        cases b with
+        | false =>
+          simp only [first] at cmp
+          cases cmp
+          have headEval := ihHead [value] false
+            ⟨.cons head .nil, by simpa [doEqListSingleton] using first, simpleHead⟩
+          exact evaluateConjListAppendFalse _ _ env s ⟨headEval, pureHead⟩
+        | true =>
+          simp only [first] at cmp
+          have headEval := ihHead [value] true
+            ⟨.cons head .nil, by simpa [doEqListSingleton] using first, simpleHead⟩
+          have tailEval := ihTail values flag ⟨tail, cmp, simpleTail⟩
+          rw [evaluateConjListAppendTrue _ _ env s ⟨headEval, pureHead⟩]
+          exact tailEval
+
+/-- The source pure-equality builder preserves the comparison of simple
+expressions that evaluate without changing the state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_pure_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem eqPureThm {C F : Type} (x y : ClosLang.Exp) (vx vy : Value)
+    (env : List Value) (s : State C F) (b : Bool)
+    (h : evaluate [x, y] env s = (.val [vx, vy], s) ∧ SimpleExp x ∧ SimpleExp y ∧
+      doEq vx vy = .val b) :
+    evaluate [eqPure x y] env s = (.val [boolValue b], s) := by
+  have rel : List.Forall₂ (fun p q => evaluate [p.1, p.2] env s = (.val [q.1, q.2], s) ∧
+      SimpleExp p.1 ∧ SimpleExp p.2) [(x, y)] [(vx, vy)] :=
+    .cons ⟨h.1, h.2.1, h.2.2.1⟩ .nil
+  have simple := eqPureSimple [(x, y)] (by simpa using And.intro h.2.1 h.2.2.1)
+  exact pureListCorrect env s [(x, y)] [(vx, vy)] b
+    ⟨rel, by simpa [doEqListSingleton] using h.2.2.2, simple⟩
+
 end Flapjack.Compiler.Backend.ClosOp
