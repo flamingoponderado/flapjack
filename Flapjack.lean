@@ -712,6 +712,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantOrdinaryOp
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantThunk
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantForce
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantDirectCall
+import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantRecursiveBinding
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallImpureSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StateWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.NumericWellformed
