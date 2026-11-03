@@ -355,6 +355,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveGlobal
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBytes
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveMemory
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveAlloc
+import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveThunk
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCons
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationHandle
