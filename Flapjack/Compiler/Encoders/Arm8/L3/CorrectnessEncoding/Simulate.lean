@@ -227,6 +227,7 @@ theorem asmCaseOneMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
     rw [hnext]
     exact (htmemOut x hx).symm
 
+
 /-- The two PCs covered by an 8-byte, 4-byte-aligned code window. -/
 theorem mem_allPcs_eight_l3 (p : BitVec 64) (i : Nat) (hi : i < 2) :
     p + BitVec.ofNat 64 (i * 4) ∈ allPcs 8 p 2 := by
@@ -234,6 +235,97 @@ theorem mem_allPcs_eight_l3 (p : BitVec 64) (i : Nat) (hi : i < 2) :
   refine ⟨i, ?_, rfl⟩
   have h4 : (2 : Nat) ^ 2 = 4 := by norm_num
   omega
+
+/-- Two `arm8Next` steps for a two-instruction lowering: the first step leaves
+memory alone outside the source domain, the second may write inside it and
+writes `v` into `r`.  The interference environment is applied between the steps,
+so the second step is taken on an arbitrary agreeing state (`hnext2`,
+`hnext2_out`). -/
+theorem asmCaseTwoMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
+    (t1 t2 : arm8_state) (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (.inst inst) s2 ∧ targetStateRel arm8TargetL3 s1 ms)
+    (hnext1 : arm8Next ms = t1)
+    (hnext2 : ∀ (u : arm8_state), Arm8L3Agree s1.memDomain u t1 → arm8Next u = t2)
+    (hnext2_out : ∀ (u : arm8_state), Arm8L3Agree s1.memDomain u t1 →
+      ∀ x, ¬ s1.memDomain x → (arm8Next u).MEM x = u.MEM x)
+    (hlen : (arm8Enc (.inst inst)).length = 8)
+    (htok1 : arm8Ok t1 = true)
+    (htpc1 : t1.PC = ms.PC + 4)
+    (htmem1 : ∀ x, ¬ s1.memDomain x → t1.MEM x = ms.MEM x)
+    (htcode1 : ∀ pc, pc ∈ allPcs (arm8Enc (.inst inst)).length s1.pc 0 →
+      t1.MEM pc = ms.MEM pc)
+    (htok2 : arm8Ok t2 = true)
+    (htpc2 : t2.PC = ms.PC + 8)
+    (htmemIn : ∀ x, s1.memDomain x → t2.MEM x = s2.mem x)
+    (htreg : ∀ k, k < 32 → k ≠ r → t2.REG (BitVec.ofNat 5 k) = ms.REG (BitVec.ofNat 5 k))
+    (htval : t2.REG (BitVec.ofNat 5 r) = v)
+    (hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 8)
+    (hs2dom : s2.memDomain = s1.memDomain)
+    (hs2regs : ∀ k, s2.regs k = if k = r then v else s1.regs k) :
+    CaseGoal (.inst inst) s1 s2 ms := by
+  obtain ⟨hs, hr⟩ := h
+  obtain ⟨hok, hpc, _hmem, hreg, hfp⟩ := hr
+  rw [arm8TargetL3_stateOk] at hok
+  rw [arm8TargetL3_getPc] at hpc
+  rw [arm8TargetL3_getReg] at hreg
+  change ms.PC = s1.pc at hpc
+  change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+    ms.REG (BitVec.ofNat 5 k) = s1.regs k at hreg
+  have hq : targetStateRel arm8TargetL3 s2 t2 := by
+    refine ⟨htok2, ?_, ?_, ?_, ?_⟩
+    · change t2.PC = s2.pc
+      rw [htpc2, hs2pc, hpc]
+      simp
+    · change ∀ a, s2.memDomain a → t2.MEM a = s2.mem a
+      intro a ha
+      exact htmemIn a (hs2dom ▸ ha)
+    · change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+        t2.REG (BitVec.ofNat 5 k) = s2.regs k
+      intro k hk
+      by_cases hkr : k = r
+      · rw [hkr, htval, hs2regs r, if_pos rfl]
+      · rw [htreg k hk.1 hkr, hs2regs k, if_neg hkr]
+        exact hreg k hk
+    · intro k hk
+      simp [arm8ConfigL3] at hk
+  have hcode : allPcs (arm8Enc (.inst inst)).length s1.pc 0 ⊆ s1.memDomain :=
+    bytesInMemory_allPcs (arm8Enc (.inst inst)) s1.pc s1.mem s1.memDomain 0 hs.1
+  refine ⟨1, ?_⟩
+  intro env henv
+  have hagree0 : Arm8L3Agree s1.memDomain (env 0 t1) t1 := by
+    rw [← arm8Proj_eq_iff]
+    exact henv 0 t1
+  have hagree1 : Arm8L3Agree s2.memDomain (env 1 t2) t2 := by
+    rw [← arm8Proj_eq_iff]
+    have hh := henv 1 t2
+    rw [hs2dom]
+    exact hh
+  constructor
+  · change (arm8Ok (env 0 (arm8Next ms)) = true ∧
+        (∀ pc, pc ∈ allPcs (arm8Enc (.inst inst)).length s1.pc 0 →
+          (env 0 (arm8Next ms)).MEM pc = ms.MEM pc) ∧
+        (env 0 (arm8Next ms)).PC ∈ allPcs (arm8Enc (.inst inst)).length s1.pc 2) ∧
+      targetStateRel arm8TargetL3 s2 (env 1 (arm8Next (env 0 (arm8Next ms))))
+    rw [hnext1]
+    constructor
+    · refine ⟨?_, ?_, ?_⟩
+      · rw [arm8Ok_congr hagree0]; exact htok1
+      · intro pc hpc'
+        exact (hagree0.mem pc (hcode hpc')).trans (htcode1 pc hpc')
+      · rw [hagree0.pc, htpc1, hpc, hlen]
+        simpa using mem_allPcs_eight_l3 s1.pc 1 (by norm_num)
+    · rw [hnext2 (env 0 t1) hagree0]
+      exact targetStateRel_congr hagree1 hq
+  · change (∀ x, ¬ s1.memDomain x → ms.MEM x = (arm8Next ms).MEM x) ∧
+      (∀ x, ¬ s1.memDomain x →
+        (env 0 (arm8Next ms)).MEM x = (arm8Next (env 0 (arm8Next ms))).MEM x) ∧ True
+    rw [hnext1]
+    refine ⟨?_, ?_, trivial⟩
+    · intro x hx
+      exact (htmem1 x hx).symm
+    · intro x hx
+      exact (hnext2_out (env 0 t1) hagree0 x hx).symm
+
 
 /-- `X` of the zero register is zero. -/
 theorem arm8X_zero (st : arm8_state) : X (TN := 64) 31#5 st = (0 : BitVec 64) := by

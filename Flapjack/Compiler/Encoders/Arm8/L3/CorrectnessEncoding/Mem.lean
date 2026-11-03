@@ -4900,6 +4900,72 @@ theorem arm8_encoder_correct_mem_store16_scaled (dest base : Nat) (off : BitVec 
     · rw [if_neg hk]
 
 
+/-! ## The far-offset two-instruction lowering
+
+When the offset is neither its own signed nine-bit form nor the scaled
+twelve-bit form, `arm8_load_store_ast` emits an `AddSubImmediate@64` into the
+scratch register 26 followed by a `LoadStoreImmediate` against it.  These are
+the lowering equations and the branch condition they depend on.
+-/
+
+theorem arm8FarCond (off : BitVec 64)
+    (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)))
+    (hfar : off.msb = true ∨
+      ¬(off = (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> 3).toNat)) <<< 3)) :
+    (decide (off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) &&
+      (!!off.msb || decide (off ≠
+        (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> 3).toNat)) <<< 3))) = true := by
+  have h1 : decide (off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) = true :=
+    decide_eq_true hnsx
+  have h2 : (!!off.msb || decide (off ≠
+      (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> 3).toNat)) <<< 3)) = true := by
+    rcases hfar with h | h
+    · rw [h]; rfl
+    · have h' : decide (off ≠
+          (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> 3).toNat)) <<< 3) = true :=
+        decide_eq_true h
+      rw [h']
+      cases hb : (!!off.msb) <;> rfl
+  rw [h1, h2]
+  rfl
+
+theorem arm8Ast_load_far (dest base : Nat) (off : BitVec 64)
+    (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)))
+    (hfar : off.msb = true ∨
+      ¬(off = (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> 3).toNat)) <<< 3)) :
+    arm8Ast (.inst (.mem .load dest (.addr base off))) =
+      [.Data (.«AddSubImmediate@64»
+         (1, off.msb, false,
+          (if !off.msb then off - (0xFF : BitVec 64) else -off - (0x100 : BitVec 64)),
+          BitVec.ofNat 5 base, 26)),
+       .LoadStore (.«LoadStoreImmediate@64»
+         (3, false, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false, false,
+          !off.msb,
+          (if !off.msb then (0xFF : BitVec 64) else -(0x100 : BitVec 64)),
+          26, BitVec.ofNat 5 dest))] := by
+  simp only [arm8Ast, arm8LoadStoreAst]
+  rw [if_pos (arm8FarCond off hnsx hfar)]
+  simp [Bool.not_not]
+
+theorem arm8Ast_store_far (dest base : Nat) (off : BitVec 64)
+    (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)))
+    (hfar : off.msb = true ∨
+      ¬(off = (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> 3).toNat)) <<< 3)) :
+    arm8Ast (.inst (.mem .store dest (.addr base off))) =
+      [.Data (.«AddSubImmediate@64»
+         (1, off.msb, false,
+          (if !off.msb then off - (0xFF : BitVec 64) else -off - (0x100 : BitVec 64)),
+          BitVec.ofNat 5 base, 26)),
+       .LoadStore (.«LoadStoreImmediate@64»
+         (3, false, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
+          !off.msb,
+          (if !off.msb then (0xFF : BitVec 64) else -(0x100 : BitVec 64)),
+          26, BitVec.ofNat 5 dest))] := by
+  simp only [arm8Ast, arm8LoadStoreAst]
+  rw [if_pos (arm8FarCond off hnsx hfar)]
+  simp [Bool.not_not]
+
+
 /-- The `.mem .load` constructor of `encoder_correct arm8TargetL3` on the
 unscaled `imm9` path of `e_LoadStoreImmediate`.
 
