@@ -2,7 +2,8 @@
 rules, their purity theorems, and the lifting, direct-equality, and equality-tree
 simplicity invariants, the complete typed reduction-relation rules, and
 their list, conjunction and pure-equality consequences, and the full lifting
-reduction invariant, direct-equality correspondence and reduction reflexivity. These
+reduction invariant, direct-equality correspondence, reduction reflexivity,
+and the full smart-operation reduction theorem. These
 captures support source review, not full pass correctness.
 
 `flat_to_clos_helpers_probe.out` captures the fully typed original literal,

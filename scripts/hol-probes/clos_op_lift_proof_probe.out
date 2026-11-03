@@ -23,3 +23,4 @@ red_rel_cons_one_typed=red_rel (xs :closLang$exp list) (ys :closLang$exp list) �
 lift_red_rel_typed=∀(xs :closLang$exp list) (n :num) (binds :closLang$exp list) (ys :closLang$exp list) (k :num) (binds2 :closLang$exp list). lift_exps xs n binds = (ys,k,binds2) ⇒ ∃(zs :closLang$exp list). red_rel xs zs ∧ red_rel (DROP (LENGTH binds) binds2) zs
 eq_direct_red_rel_typed=eq_direct (x :closLang$exp) (y :closLang$exp) = SOME (z :closLang$exp) ⇒ ∃(ys :closLang$exp list). red_rel [x; y] ys ∧ red_rel [z] ys
 red_rel_refl_typed=∀(xs :closLang$exp list). red_rel xs xs
+smart_red_rel_typed=∀(t :tra) (op :closLang$op) (xs :closLang$exp list). ∃(ys :closLang$exp list). red_rel [Op t op xs] ys ∧ red_rel [SmartOp t op xs] ys

@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "red_rel_exists",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartReduction.lean",
+    "lean_name": "smartRed",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_red_rel_typed: for every source trace, operation and expression list, there exists one residual reducing both the original singleton Op and the executed source SmartOp. No additional assumptions are introduced; the proof covers fallback, constructor, integer and equality optimization branches."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "eq_direct_red_rel",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/EqDirectReduction.lean",
     "lean_name": "directRed",

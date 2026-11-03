@@ -31,3 +31,4 @@ val _ = show "red_rel_cons_one_typed" clos_opProofTheory.IMP_red_rel_cons_1;
 val _ = show "lift_red_rel_typed" clos_opProofTheory.lift_exps_red_rel;
 val _ = show "eq_direct_red_rel_typed" clos_opProofTheory.eq_direct_red_rel;
 val _ = show "red_rel_refl_typed" clos_opProofTheory.red_rel_refl;
+val _ = show "smart_red_rel_typed" clos_opProofTheory.red_rel_exists;
