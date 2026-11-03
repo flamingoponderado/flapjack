@@ -1,4 +1,4 @@
-`clos_ticks_source_probe.out` captures the typed tick-removal traversal, its equivalence to the original list pass, the polymorphic incremental compiler, the simulation relations, their clock and length theorems, a typed replay of the local clock-decrement result, the tick-sequence and mutual evaluator-simulation statements, and variable, raise and handler inversion through tick removal. These captures support source review, not cross-language equivalence.
+`clos_ticks_source_probe.out` captures the typed tick-removal traversal, its equivalence to the original list pass, the polymorphic incremental compiler, the simulation relations, their clock and length theorems, a typed replay of the local clock-decrement result, the tick-sequence and mutual evaluator-simulation statements, and variable, raise, handler and let inversion through tick removal. These captures support source review, not cross-language equivalence.
 
 `clos_known_syntax_probe.out` captures the optimizer safety theorem, its consequences, the source induction rule, and tick-write preservation. These typed captures support source review, not cross-language equivalence.
 
