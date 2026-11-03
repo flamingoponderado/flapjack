@@ -329,6 +329,8 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleGlobals
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApprox
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxIf
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxLet
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxFn
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxOpTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreserveSafetyTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
 import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
