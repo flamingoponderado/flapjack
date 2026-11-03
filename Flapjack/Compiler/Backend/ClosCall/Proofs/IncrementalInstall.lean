@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalCode
+import Flapjack.Compiler.Backend.ClosCall.Proofs.AuxiliaryAppend
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantDirectCall
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantListSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallWellformed
@@ -3506,8 +3507,8 @@ theorem callsListBounded_growing_from {C F : Type} (passFuel relationFuel traver
 /-- The incremental pass exposes a list simulation above its emitted state,
 subject to the expression-case induction and source conditions. The premise
 `wellFormed (known, [])` restricts this result to an empty known-location
-domain; later incremental calls require a proof that the traversal preserves
-an appended existing auxiliary-code list. -/
+domain. The subsequent `compileIncFuel_growing_with_existing` handles an
+existing well-formed auxiliary-code list. -/
 theorem compileIncFuel_growing_from {C F : Type} (passFuel relationFuel : Nat)
     (compiler : ClosSem.Compiler C) (allowed : Set Nat) (known : NumSet) (program : ClosSem.Program)
     (nextKnown : NumSet) (converted : ClosSem.Program)
@@ -3526,5 +3527,32 @@ theorem compileIncFuel_growing_from {C F : Type} (passFuel relationFuel : Nat)
   have fresh : LabelsFresh (codeLocations program.1) (known, []) := by simp [LabelsFresh]
   exact callsListBounded_growing_from passFuel relationFuel passFuel compiler allowed program.1 converted.1
     (known, []) (nextKnown, converted.2) traversal distinct fresh initialWf eligible eligibleIH exprIH
+
+/-- Incremental conversion also admits a simulation above its emitted code
+merged with a well-formed existing auxiliary state. The expression cases and
+their eligibility conditions remain hypotheses of this composition lemma. -/
+theorem compileIncFuel_growing_with_existing {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (g : State) (program : ClosSem.Program)
+    (nextKnown : NumSet) (converted : ClosSem.Program)
+    (run : compileIncFuel? passFuel g.1 program = some (nextKnown, converted))
+    (distinct : (codeLocations program.1).Nodup)
+    (fresh : LabelsFresh (codeLocations program.1) g) (initialWf : wellFormed g)
+    (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      expression ∈ program.1 → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFrom (F := F) passFuel relationFuel compiler after allowed [expression] [output]) :
+    GrowingExprsSimFrom (F := F) passFuel relationFuel compiler
+      (nextKnown, converted.2 ++ g.2) allowed program.1 converted.1 := by
+  have traversal := compileIncFuel_traversal passFuel g.1 program nextKnown converted run
+  have appended := callsListBounded_appendAux passFuel program.1 (g.1, []) g.2
+  have merged : callsListBounded passFuel program.1 g =
+      some (converted.1, (nextKnown, converted.2 ++ g.2)) := by
+    simpa [appendAux, traversal] using appended
+  exact callsListBounded_growing_from passFuel relationFuel passFuel compiler allowed program.1 converted.1
+    g (nextKnown, converted.2 ++ g.2) merged distinct fresh initialWf eligible eligibleIH exprIH
 
 end Flapjack.Compiler.Backend.ClosCall
