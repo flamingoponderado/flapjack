@@ -1,6 +1,58 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "SmartOp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
+  "lean_name": "smartOpThmEqual",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared smart_op_thm_typed and the original list_split3 source proof: this is the two-operand BlockOp Equal case, including integer folding, direct recognition, lifting and fallback. It retains the original evaluation and non-type-error premises and the exact SmartOp evaluation conclusion. Independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the clocked evaluator inherits rational-cut reals. This case alone does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "SmartOp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
+  "lean_name": "smartOpThmNil",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared smart_op_thm_typed and the original list_split3 source proof: this is the empty operand-list case. It retains the original evaluation and non-type-error premises and the exact SmartOp evaluation conclusion. Independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the clocked evaluator inherits rational-cut reals. This case alone does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "SmartOp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
+  "lean_name": "smartOpThmMany",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared smart_op_thm_typed and the original list_split3 source proof: this is the operand lists of at least three expressions. It retains the original evaluation and non-type-error premises and the exact SmartOp evaluation conclusion. Independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the clocked evaluator inherits rational-cut reals. This case alone does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "SmartOp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
+  "lean_name": "smartOpThmUnaryNoConstructor",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared smart_op_thm_typed and the original list_split3 source proof: this is the unary operand case when the source constructor matcher fails. It retains the original evaluation and non-type-error premises and the exact SmartOp evaluation conclusion. Independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the clocked evaluator inherits rational-cut reals. This case alone does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
   "hol_name": "eq_pure_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/PureEquality.lean",
   "lean_name": "eqPureThm",
