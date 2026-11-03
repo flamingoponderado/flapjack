@@ -1,5 +1,10 @@
 `clos_known_syntax_probe.out` captures the optimizer safety theorem, its consequences, the source induction rule, and tick-write preservation. These typed captures support source review, not cross-language equivalence.
 
+`clos_number_correctness_probe.out` captures the typed value-relation rules,
+state relation, mutual evaluator simulation and whole-program semantics theorem
+from closure numbering. These support review of the proof-side Lean simulation;
+they do not establish carrier correspondence or compiler equivalence.
+
 `clos_known_syntax_probe.out` captures the complete inferred approximation-correctness statement and optimizer induction rule. The checked expression cases retain their source assumptions and induction hypotheses; `CorrectApproxTotal.lean` assembles them into the source-shaped approximation theorem. This is not the complete optimizer correctness theorem.
 
 `clos_known_syntax_probe.out` also captures the typed expression, value, reference and application relations used by the semantic simulation, together with their tree-extension and inline-factor lemmas. These captures support source review, not the complete simulation proof.

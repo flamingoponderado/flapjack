@@ -171,4 +171,39 @@ theorem evaluate_simulation {C F : Type} :
     exact (all source.clock).1 source rfl function nextFunction args nextArgs target result next
       run noType related argsRel states
 
+/-- The mutual simulation in explicit source-statement shape. This is
+proof-side infrastructure: the state and value carriers still need HOL
+correspondence review before it can be classified as a HOL theorem port. -/
+theorem evaluate_simulation_sourceShape {C F : Type} :
+    (∀ (tmp : List ClosLang.Exp × List Value × State (Nat × C) F)
+      (xs : List ClosLang.Exp) (env : List Value) (source : State (Nat × C) F)
+      (nextEnv : List Value) (target : State C F) (result : Result (List Value) Value)
+      (sourceNext : State (Nat × C) F) (start : Nat),
+      tmp = (xs, env, source) ∧ evaluate xs env source = (result, sourceNext) ∧
+        result ≠ .err (.abort .typeError) →
+      ¬ ClosProps.containsAppSome source.maxApp xs ∧
+        List.Forall₂ (ValueRel source.maxApp) env nextEnv ∧ StateRel source target →
+      ∃ targetResult targetNext,
+        evaluate (renumberList start xs).2 nextEnv target = (targetResult, targetNext) ∧
+        ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext) ∧
+    (∀ (location : Option Nat) (function : Value) (args : List Value)
+      (source : State (Nat × C) F) (result : Result (List Value) Value)
+      (sourceNext : State (Nat × C) F) (nextFunction : Value) (nextArgs : List Value)
+      (target : State C F),
+      evaluateApp location function args source = (result, sourceNext) ∧
+        result ≠ .err (.abort .typeError) →
+      ValueRel source.maxApp function nextFunction ∧ location = none ∧
+        List.Forall₂ (ValueRel source.maxApp) args nextArgs ∧ StateRel source target →
+      ∃ targetResult targetNext,
+        evaluateApp location nextFunction nextArgs target = (targetResult, targetNext) ∧
+        ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext) := by
+  constructor
+  · intro tmp xs env source nextEnv target result sourceNext start ⟨_, run, noType⟩ ⟨safe, envRel, states⟩
+    exact evaluate_simulation.1 xs env nextEnv source target result sourceNext start run noType safe envRel states
+  · intro location function args source result sourceNext nextFunction nextArgs target ⟨run, noType⟩
+      ⟨related, loc, argsRel, states⟩
+    subst location
+    exact evaluate_simulation.2 function nextFunction args nextArgs source target result sourceNext
+      run noType related argsRel states
+
 end Flapjack.Compiler.Backend.ClosNumber
