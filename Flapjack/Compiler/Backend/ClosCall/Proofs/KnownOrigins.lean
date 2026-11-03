@@ -23,7 +23,9 @@ private theorem label_persists {first last : State} (suffix : first.2 <:+ last.2
   rw [← eq, List.map_append]
   exact List.mem_append_right _ member
 
-private theorem knownBound_trans {first middle last : State}
+/-- Composing known-location bounds preserves newly emitted labels when the
+intermediate code remains a suffix. This is Flapjack-specific infrastructure. -/
+theorem knownBound_trans {first middle last : State}
     (left : KnownBound first middle) (right : KnownBound middle last)
     (suffix : middle.2 <:+ last.2) : KnownBound first last := by
   intro key member

@@ -134,7 +134,8 @@ theorem callsListFuel_lookup_run_weak (fuel : Nat) (source target : List Exp) (i
     (sourceLookup : source[index]? = some e) (targetLookup : target[index]? = some out) :
     ∃ depth before after, depth < fuel ∧ callsFuel depth e before = some (out, after) ∧
       (codeLocationsExp e).Nodup ∧ LabelsFresh (codeLocationsExp e) before ∧
-      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧ stateExtends after final := by
+      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧
+      KnownBound initial before ∧ initial.2 <:+ before.2 ∧ stateExtends after final := by
   induction fuel generalizing source target initial final index with
   | zero =>
     cases source with
@@ -177,12 +178,17 @@ theorem callsListFuel_lookup_run_weak (fuel : Nat) (source target : List Exp) (i
           simp [callsListBounded, tailRun]
         have tailExt := callsListBounded_stateExtends depth tail middle next tailOut boundedTail
           tailDistinct middleFresh middleDistinct
-        exact ⟨depth, initial, middle, by omega, headRun, headDistinct, headFresh, initialDistinct, initialWeak, tailExt⟩
+        exact ⟨depth, initial, middle, by omega, headRun, headDistinct, headFresh, initialDistinct, initialWeak,
+          (fun _ known => Or.inl known), List.suffix_refl _, tailExt⟩
       | succ index =>
         simp only [List.getElem?_cons_succ] at sourceLookup targetLookup
-        obtain ⟨n, before, after, depthLt, selected, selectedDistinct, selectedFresh, beforeWf, beforeWeak, extended⟩ :=
+        obtain ⟨n, before, after, depthLt, selected, selectedDistinct, selectedFresh, beforeWf, beforeWeak,
+          known, suffix, extended⟩ :=
           ih tail tailOut middle next tailRun tailDistinct middleFresh middleDistinct middleWeak index sourceLookup targetLookup
-        exact ⟨n, before, after, by omega, selected, selectedDistinct, selectedFresh, beforeWf, beforeWeak, extended⟩
+        have initialKnown := callsFuel_knownBound depth head initial middle headOut headRun
+        have initialSuffix := callsFuel_suffix depth head initial middle headOut headRun
+        exact ⟨n, before, after, by omega, selected, selectedDistinct, selectedFresh, beforeWf, beforeWeak,
+          knownBound_trans initialKnown known suffix, initialSuffix.trans suffix, extended⟩
 
 /-- The bounded retry wrapper exposes the selected single-expression run,
 including its freshness and state extension, whether the first attempt or
@@ -243,7 +249,8 @@ theorem callsListBounded_lookup_run_weak (fuel : Nat) (source target : List Exp)
     ∃ depth before after, depth < max fuel (listBudget source + 1) ∧
       callsFuel depth e before = some (out, after) ∧
       (codeLocationsExp e).Nodup ∧ LabelsFresh (codeLocationsExp e) before ∧
-      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧ stateExtends after final := by
+      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧
+      KnownBound initial before ∧ initial.2 <:+ before.2 ∧ stateExtends after final := by
   unfold callsListBounded at run
   cases first : callsListFuel fuel source initial with
   | none =>
@@ -252,10 +259,12 @@ theorem callsListBounded_lookup_run_weak (fuel : Nat) (source target : List Exp)
   | some value =>
     have eq : value = (target, final) := by simpa [first] using run
     subst value
-    obtain ⟨depth, before, after, depthLt, selected, selectedDistinct, selectedFresh, beforeWf, beforeWeak, extended⟩ :=
+    obtain ⟨depth, before, after, depthLt, selected, selectedDistinct, selectedFresh, beforeWf, beforeWeak,
+      known, suffix, extended⟩ :=
       callsListFuel_lookup_run_weak fuel source target initial final first distinct fresh initialDistinct initialWeak index e out
         sourceLookup targetLookup
-    exact ⟨depth, before, after, by omega, selected, selectedDistinct, selectedFresh, beforeWf, beforeWeak, extended⟩
+    exact ⟨depth, before, after, by omega, selected, selectedDistinct, selectedFresh, beforeWf, beforeWeak,
+      known, suffix, extended⟩
 
 /-- An entry of an open recursive group identifies the corresponding
 single-expression traversal through the zipped arities and bodies. -/

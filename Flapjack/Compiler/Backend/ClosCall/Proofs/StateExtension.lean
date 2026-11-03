@@ -74,7 +74,10 @@ for a subsequent traversal. -/
 theorem weaklyWellFormed_complete_aux (before later : State)
     (weak : weaklyWellFormed before) (beforeDistinct : (before.2.map Prod.fst).Nodup)
     (laterWf : wellFormed later) (growth : stateExtends before later) :
-    ∃ suffix, wellFormed (appendAux before suffix) ∧ stateExtends (appendAux before suffix) later := by
+    ∃ suffix, wellFormed (appendAux before suffix) ∧ stateExtends (appendAux before suffix) later ∧
+      List.Sublist suffix later.2 ∧
+      (∀ label ∈ suffix.map Prod.fst, ∃ key, sptDomain before.1 key ∧ label = key + 1) ∧
+      (∀ label ∈ suffix.map Prod.fst, label ∉ before.2.map Prod.fst) := by
   classical
   let suffix := later.2.filter (fun entry =>
     decide (entry.1 ∈ Set.image Nat.succ (sptDomain before.1) ∧ entry.1 ∉ before.2.map Prod.fst))
@@ -122,23 +125,89 @@ theorem weaklyWellFormed_complete_aux (before later : State)
         · rw [entryEq]
           exact ⟨key, known, equal⟩
         · simpa [entryEq] using old
-  refine ⟨suffix, ⟨labels, completedDistinct⟩, growth.1, ?_, laterWf.2⟩
-  intro key value found
-  rw [logicalAssocLookup_nat] at found ⊢
-  have member := sptAListLookup_mem key (before.2 ++ suffix) value found
-  rcases List.mem_append.mp member with old | new
-  · have oldLookup : sptAListLookup key before.2 = some value := by
-      apply sptAListLookup_eq_of_mem_unique key value before.2 old
+  refine ⟨suffix, ⟨labels, completedDistinct⟩, ⟨growth.1, ?_, laterWf.2⟩, List.filter_sublist, ?_, ?_⟩
+  · intro key value found
+    rw [logicalAssocLookup_nat] at found ⊢
+    have member := sptAListLookup_mem key (before.2 ++ suffix) value found
+    rcases List.mem_append.mp member with old | new
+    · have oldLookup : sptAListLookup key before.2 = some value := by
+        apply sptAListLookup_eq_of_mem_unique key value before.2 old
+        intro other otherMem
+        have injective := (List.nodup_map_iff_inj_on (List.Nodup.of_map Prod.fst beforeDistinct)).mp beforeDistinct
+        exact congrArg Prod.snd (injective _ otherMem _ old rfl)
+      exact (logicalAssocLookup_nat key later.2).symm ▸ growth.2.1 key value
+        ((logicalAssocLookup_nat key before.2).trans oldLookup)
+    · have laterMember := ((suffixMember (key, value)).mp new).1
+      apply sptAListLookup_eq_of_mem_unique key value later.2 laterMember
       intro other otherMem
-      have injective := (List.nodup_map_iff_inj_on (List.Nodup.of_map Prod.fst beforeDistinct)).mp beforeDistinct
-      exact congrArg Prod.snd (injective _ otherMem _ old rfl)
-    exact (logicalAssocLookup_nat key later.2).symm ▸ growth.2.1 key value
-      ((logicalAssocLookup_nat key before.2).trans oldLookup)
-  · have laterMember := ((suffixMember (key, value)).mp new).1
-    apply sptAListLookup_eq_of_mem_unique key value later.2 laterMember
+      have injective := (List.nodup_map_iff_inj_on (List.Nodup.of_map Prod.fst laterWf.2)).mp laterWf.2
+      exact congrArg Prod.snd (injective _ otherMem _ laterMember rfl)
+  · intro label member
+    obtain ⟨entry, entryMem, entryEq⟩ := List.mem_map.mp member
+    obtain ⟨key, known, equal⟩ := ((suffixMember entry).mp entryMem).2.1
+    exact ⟨key, known, entryEq.symm.trans equal.symm⟩
+  · intro label member
+    obtain ⟨entry, entryMem, entryEq⟩ := List.mem_map.mp member
+    simpa [entryEq] using ((suffixMember entry).mp entryMem).2.2
+
+private theorem sptAListLookup_append {V : Type} (key : Nat) (front back : List (Nat × V)) :
+    sptAListLookup key (front ++ back) =
+      (match sptAListLookup key front with
+       | some value => some value
+       | none => sptAListLookup key back) := by
+  induction front with
+  | nil => rfl
+  | cons entry rest ih =>
+    obtain ⟨label, value⟩ := entry
+    by_cases same : key = label <;> simp [sptAListLookup, same, ih]
+
+/-- Appending bindings already present in a later compiler state preserves
+extension into that state. The state being appended to may have acquired new
+bindings since the suffix was chosen. This is Flapjack-specific infrastructure. -/
+theorem stateExtends_appendAux_of_sublist (state later : State) (suffix : List (Nat × Nat × ClosLang.Exp))
+    (growth : stateExtends state later) (sub : List.Sublist suffix later.2) :
+    stateExtends (appendAux state suffix) later := by
+  refine ⟨growth.1, ?_, growth.2.2⟩
+  intro key value found
+  change logicalAssocLookup key (state.2 ++ suffix) = some value at found
+  rw [logicalAssocLookup_nat, sptAListLookup_append] at found
+  cases old : sptAListLookup key state.2 with
+  | some oldValue =>
+    simp [old] at found
+    subst value
+    exact growth.2.1 key oldValue ((logicalAssocLookup_nat key state.2).trans old)
+  | none =>
+    simp [old] at found
+    have entry := sub.subset (sptAListLookup_mem key suffix value found)
+    rw [logicalAssocLookup_nat]
+    apply sptAListLookup_eq_of_mem_unique key value later.2 entry
     intro other otherMem
-    have injective := (List.nodup_map_iff_inj_on (List.Nodup.of_map Prod.fst laterWf.2)).mp laterWf.2
-    exact congrArg Prod.snd (injective _ otherMem _ laterMember rfl)
+    have distinct := growth.2.2
+    have injective := (List.nodup_map_iff_inj_on (List.Nodup.of_map Prod.fst distinct)).mp distinct
+    exact congrArg Prod.snd (injective _ otherMem _ entry rfl)
+
+/-- A completion drawn from a later state stays fresh for locations whose
+already-known entries are present in the old code list. The same suffix
+continues to extend into the later state after any intermediate state that
+already extends into it. This is Flapjack-specific infrastructure. -/
+theorem weaklyWellFormed_complete_aux_fresh (before after later : State) (locations : List Nat)
+    (weak : weaklyWellFormed before) (beforeDistinct : (before.2.map Prod.fst).Nodup)
+    (laterWf : wellFormed later) (beforeGrowth : stateExtends before later)
+    (afterGrowth : stateExtends after later) (fresh : LabelsFresh locations before)
+    (knownCovered : ∀ loc ∈ locations, sptDomain before.1 loc → loc + 1 ∈ before.2.map Prod.fst) :
+    ∃ suffix, wellFormed (appendAux before suffix) ∧ LabelsFresh locations (appendAux before suffix) ∧
+      stateExtends (appendAux after suffix) later := by
+  obtain ⟨suffix, completedWf, _, sub, origins, absent⟩ :=
+    weaklyWellFormed_complete_aux before later weak beforeDistinct laterWf beforeGrowth
+  refine ⟨suffix, completedWf, ?_, stateExtends_appendAux_of_sublist after later suffix afterGrowth sub⟩
+  intro loc locMember labelMember
+  simp only [appendAux, List.map_append, List.mem_append] at labelMember
+  rcases labelMember with old | new
+  · exact fresh loc locMember old
+  · obtain ⟨key, known, eq⟩ := origins (loc + 1) new
+    have keyEq : key = loc := by omega
+    subst key
+    exact absent (loc + 1) new (knownCovered loc locMember known)
 
 private theorem knownExt_subspt (initial final : State) (growth : KnownExt initial final) :
     sptSubspt initial.1 final.1 := by

@@ -93,6 +93,7 @@ theorem recClosureRelFuel_probe_body (fuel : Nat) (g : State) (allowed : Set Nat
       callsFuel depth body before = some (transformed, after) ∧
       (codeLocationsExp body).Nodup ∧ LabelsFresh (codeLocationsExp body) before ∧
       (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧
+      (∀ k ∈ codeLocationsExp body, sptDomain before.1 k → k + 1 ∈ before.2.map Prod.fst) ∧
       stateExtends before afterProbe ∧ stateExtends after afterProbe ∧
       ((groupClosed fns1 bodies ∧
         (∃ trace stubIndex, fns2 = callsListSource trace stubIndex loc fns1) ∧
@@ -120,11 +121,35 @@ theorem recClosureRelFuel_probe_body (fuel : Nat) (g : State) (allowed : Set Nat
   have initialDistinct : ((insertEach loc fns1.length g0).2.map Prod.fst).Nodup := by
     simpa [insertEach] using initialWf.2
   have initialWeak := weaklyWellFormed_insertEach loc fns1.length g0 (wellFormed_weak g0 initialWf)
-  obtain ⟨depth, before, after, depthLt, selected, bodyDistinct, bodyFresh, beforeDistinct, beforeWeak, extended⟩ :=
+  obtain ⟨depth, before, after, depthLt, selected, bodyDistinct, bodyFresh, beforeDistinct, beforeWeak,
+    knownBound, initialSuffix, extended⟩ :=
     callsListBounded_lookup_run_weak fuel (fns1.map Prod.snd) bodies (insertEach loc fns1.length g0) afterProbe
       probe well.2.2.2 fresh initialDistinct initialWeak index body bodies[index] sourceIndex targetIndex
   have initialFresh : LabelsFresh (codeLocations (fns1.map Prod.snd)) g0 := by
     simpa [LabelsFresh] using nestedFresh
+  have knownCovered : ∀ k ∈ codeLocationsExp body, sptDomain before.1 k → k + 1 ∈ before.2.map Prod.fst := by
+    intro k bodyMember known
+    rcases knownBound k known with initialKnown | emitted
+    · rcases (insertEach_domain loc fns1.length g0 k).mp initialKnown with old | ⟨i, bound, eq⟩
+      · have initialLabel : k + 1 ∈ g0.2.map Prod.fst := by
+          have labelIn : k + 1 ∈ {label | label ∈ g0.2.map Prod.fst} := by
+            rw [initialWf.1]
+            exact ⟨k, old, rfl⟩
+          exact labelIn
+        have probeLabel : k + 1 ∈ (insertEach loc fns1.length g0).2.map Prod.fst := by
+          simpa [insertEach] using initialLabel
+        obtain ⟨front, suffixEq⟩ := initialSuffix
+        rw [← suffixEq, List.map_append]
+        exact List.mem_append_right _ probeLabel
+      · have bodyIn : body ∈ fns1.map Prod.snd := by
+          exact List.mem_of_getElem? sourceIndex
+        have nested : k ∈ codeLocations (fns1.map Prod.snd) :=
+          (mem_codeLocations k (fns1.map Prod.snd)).mpr ⟨body, bodyIn, bodyMember⟩
+        subst k
+        have nested' : 2 * i + loc ∈ codeLocations (fns1.map Prod.snd) := by
+          simpa [Nat.add_comm] using nested
+        exact (recClosureWellFormed_disjoint loc fns1 well i bound nested').elim
+    · exact emitted
   have singleton : callsListBounded (depth + 1) [body] before = some ([bodies[index]], after) := by
     simp [callsListBounded, callsListFuel, selected]
   have beforeAfter := callsListBounded_stateExtends (depth + 1) [body] before after [bodies[index]] singleton
@@ -164,7 +189,7 @@ theorem recClosureRelFuel_probe_body (fuel : Nat) (g : State) (allowed : Set Nat
       exact ⟨closed, stubs, stateExtends_trans _ _ _ probeExt codeExt, codeExt, coverage, included⟩
     · exact Or.inr openCase
   exact ⟨g0, bodies, afterProbe, bodies[index], depth, before, after, initialWf, initialFresh, probe, targetIndex, depthLt,
-    selected, bodyDistinct, bodyFresh, beforeDistinct, beforeWeak, beforeProbe, extended, alternatives'⟩
+    selected, bodyDistinct, bodyFresh, beforeDistinct, beforeWeak, knownCovered, beforeProbe, extended, alternatives'⟩
 
 /-- A related target body is either a generated stub or the result of an
 actual open-group body traversal whose state extends into the current state.
