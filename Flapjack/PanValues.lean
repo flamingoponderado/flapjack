@@ -2786,8 +2786,9 @@ abbrev PanPrimitiveHandler (α : Type u) :=
   PrimOp → List (PanValue α) → Option (PanValue α)
 
 /-! Bare-metal accelerator calls may update both the local environment and
-    source memory.  This is separate from the stateful CakeML FFI handler in
-    `PanValueFfiSemantics`, whose state transition models byte-array FFI. -/
+    source memory.  This is separate from the stateful CakeML FFI handler
+    `PanValueStatefulFfiHandler` in `PanValueFfiCore`, whose state transition
+    models byte-array FFI. -/
 abbrev PanValueAcceleratorFfiHandler (α : Type u) :=
   FunName → α → α → α → α →
     (VarName → Option (PanValue α)) →

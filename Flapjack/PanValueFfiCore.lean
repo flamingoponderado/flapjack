@@ -427,26 +427,6 @@ def panValueAssignGlobalResult
         some (.normal locals (updatePanValueMap globals name value) memory ffi, valueSteps + 1)
       else some (.error locals globals memory ffi, valueSteps + 1)
 
-/-- Acceptance test for the `Dec` leaf.  HOL's `Dec` returns `SOME Error` with
-the unchanged state both when the initialiser does not evaluate and when its
-shape does not match; this helper returns the accepted value with its step count
-in the successful case and `none` otherwise. -/
-def panValueDecAccepted
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (structs : StructContext) (baseAddress topAddress bytesInWord : α)
-    (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
-    (value : Exp α) (memoryAccess : Option (PanValueMemoryAccess α)) (shape : Shape) :
-    Option (PanValue α × Nat) :=
-  match evalPanValueExpCounted structs locals globals memory baseAddress topAddress bytesInWord
-      value memoryAccess with
-  | none => none
-  | some (evaluated, valueSteps) =>
-      if panShapeMatches (panValueShape structs evaluated) shape then
-        some (evaluated, valueSteps)
-      else none
-
 /-- Uncounted acceptance test for `Dec`, used by the clocked evaluators. -/
 def panValueDecAcceptedValue
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]

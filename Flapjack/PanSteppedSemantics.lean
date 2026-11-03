@@ -11,11 +11,12 @@ The fuel argument of the existing evaluator in `PanValues` is a recursion
 guard. It is deliberately not a cost: sequence evaluation restarts the guard
 for its second component and loop evaluation restarts it for the next
 iteration. This module keeps that evaluator intact and adds a parallel
-evaluator whose successful result carries a compositional source-step count.
+statement evaluator whose successful result carries a compositional
+source-step count.
 
-The count is the number of source evaluation rules visited. Every expression
-node costs one step plus the costs of its recursively evaluated operands; list
-traversal itself is free. Every statement/control constructor costs one step,
+The count is the number of source evaluation rules visited. Expressions are
+evaluated and counted by `PanValueExpCounted` (one step per expression node,
+plus its operands' steps). Every statement/control constructor costs one step,
 while a call contributes one step for the call plus argument, callee, and any
 resumed handler/continuation steps. `fuel` remains only the bound needed to
 make the recursive definition executable.

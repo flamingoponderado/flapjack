@@ -9,9 +9,11 @@ along the call graph — sub-proofs carried at different fuels have to be brough
 to a common fuel, and that needs **fuel monotonicity**: a successful run is
 unchanged, same control result *and* same step count, by any larger fuel.
 
-Flapjack does not have it. `Flapjack.PanSteppedSemantics` proves the `_fst`/
-`_snd` projections relating the stepped evaluator to the unstepped one, but
-nothing about varying the fuel, so no two cost lemmas can currently be combined.
+Flapjack does not have it. `Flapjack.PanValueExpCounted` proves the `_fst`/
+`_snd` projections relating the counted expression evaluator to the uncounted
+one, and `Flapjack.PanSteppedSemantics` proves `_fst` projections for its
+stepped statement evaluator, but nothing about varying the fuel, so no two cost
+lemmas can currently be combined.
 This module supplies it for Flapjack's public stepped stateful-FFI evaluator:
 
 * `progMono` / `callMono` — the mutually recursive
