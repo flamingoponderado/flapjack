@@ -5239,6 +5239,15 @@
     "reviewer": "Compared compile_correct_typed and the original two conjuncts: arbitrary initial related states and environments, no-Mat and non-type-error premises, existential target result and state, post-state relation and the source result relations all match. The declaration conjunct retains the independent success-list payload type; Nonempty models HOL type inhabitation and its witness is constructed without a successful-target premise. Source and target share the source's compiler and FFI types; the reviewed closure state uses canonical refs and code maps with the local roundtrip witness. The source and target evaluators, compiler, relations and no-Mat predicates are source-reviewed; evaluator floating-point dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8. The assembled theorem is kernel-checked; source review and HOL probes are not a cross-language equivalence proof."
   },
   {
+    "hol_path": "HOL/src/finite_maps/alistScript.sml",
+    "hol_name": "alist_to_fmap_def",
+    "lean_path": "Flapjack/FiniteMap/AlistExact.lean",
+    "lean_name": "alistToFmap",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "Compared alist_to_fmap_typed and alist_to_fmap_clauses_typed with HOL's right fold. The key and value types remain independently polymorphic with no caller-supplied equality instance; the canonical result updates the reversed list so the first occurrence wins. The unconditional lookup witness compares the result with an independent raw-map operation, and lookup_alistToFmap_head and lookup_alistToFmap_tail check duplicate and distinct-key behavior. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
     "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
     "hol_name": "FEMPTY_DEF",
     "lean_path": "Flapjack/FiniteMap/EmptyExact.lean",

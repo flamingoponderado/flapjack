@@ -121,6 +121,13 @@ source review; they do not establish cross-language equivalence.
 `finite_map_empty_probe.out` captures the polymorphic HOL empty-map definition
 and its lookup equation used to review the canonical empty-map producer.
 
+`finite_map_alist_probe.out` captures the polymorphic association-list map
+definition and its cons and lookup equations, including first-entry behavior.
+
+`clos_annotate_semantics_probe.out` captures the typed whole-program annotation
+statement, including the original arbitrary installed-code association list.
+The Lean source-shaped result still awaits annotation-traversal review.
+
 `clos_interp_review_probe.out` captures the typed installation traversal,
 interpreter expressions, optimizer, initializer, attachment and incremental
 flat-to-closure program composition. `clos_interp_semantics_probe.out` captures

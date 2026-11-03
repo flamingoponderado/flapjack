@@ -44,6 +44,7 @@ the cited name occurs in one of the two syntactic forms.
 
 | HOL script | Lean counterpart |
 | --- | --- |
+| `HOL/src/finite_maps/alistScript.sml` | `Flapjack/FiniteMap/AlistExact.lean` (canonical finite-support association-list map and first-entry lookup properties) |
 | `compiler/backend/backend_passesScript.sml` | `Flapjack/Compiler/Backend/BackendPasses/Frontend.lean`, `BackendPasses/Closure.lean`, `BackendPasses/Bvi.lean`, `BackendPasses/Data.lean`, `BackendPasses/Word.lean`, `BackendPasses/WordOptimise.lean` and `BackendPasses/Stack.lean` (explorer snapshots through lab filtering) |
 | `compiler/backend/presLangScript.sml` | `Flapjack/Compiler/Backend/PresLang/Config.lean`, `PresLang/Source.lean`, `PresLang/Flat.lean`, `PresLang/Clos.lean`, `PresLang/Bvl.lean`, `PresLang/Bvi.lean`, `PresLang/Data.lean`, `PresLang/Asm.lean`, `PresLang/Lab.lean`, `PresLang/Word.lean` and `PresLang/Stack.lean` (explorer display; representation review and explorer wiring remain open) |
 | `semantics/tokensScript.sml` | `Flapjack/CakeParser/Tokens.lean` |
@@ -75,7 +76,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/bvl_jumpScript.sml` | `Flapjack/Compiler/Backend/BvlJump.lean` (statement review remains open) |
 | `compiler/backend/db_varsScript.sml` | `Flapjack/Compiler/Backend/DbVars.lean` (statement review remains open) |
 | `compiler/backend/clos_annotateScript.sml` | `Flapjack/Compiler/Backend/ClosAnnotate/Free.lean` and `ClosAnnotate/Shift.lean` (statement review remains open) |
-| `compiler/backend/proofs/clos_annotateProofScript.sml` | `Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants.lean` and `CodeLocations.lean` (annotation invariants and location containment; source statement review remains open) |
+| `compiler/backend/proofs/clos_annotateProofScript.sml` | `Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants.lean` and `CodeLocations.lean` (annotation invariants and location containment); `ClosAnnotate/Proofs/InstalledSemantics.lean` derives the source-shaped observational statement for arbitrary installed code, pending review of the annotation and free-variable traversals |
 | `compiler/backend/flat_elimScript.sml` | `Flapjack/Compiler/Backend/FlatElim/Analysis.lean`, `FlatElim/Reachability.lean` and `FlatElim/Proofs/Reachability.lean` (analyses, removal criterion and total closure with a proved sufficient bound; exact whole-pass correspondence remains open, declarations pending statement review); `SourceToFlat/Eliminate.lean` composes the pass with program compilation |
 | `compiler/backend/flat_patternScript.sml` | `Flapjack/Compiler/Backend/FlatPattern/Config.lean`, `FlatPattern/Names.lean`, `FlatPattern/Encode.lean`, `FlatPattern/Decode.lean`, `FlatPattern/BindingsTotal.lean`, `FlatPattern/NaiveTotal.lean`, `FlatPattern/Patterns.lean`, `FlatPattern/CompileTotal.lean` (total pattern branch and expression compilation; declarations pending statement review) |
 | `compiler/backend/proofs/flat_patternProofScript.sml` | `Flapjack/Compiler/Backend/FlatPattern/Proofs/` (pattern compiler proof components, source-shaped value-relation rules, induction and cases, global-initialization invariants, and installation relation) |

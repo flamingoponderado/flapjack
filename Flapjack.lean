@@ -1086,6 +1086,7 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.LocalSteps
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Evaluate
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotateCorrect
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.SemanticsCorrect
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.VarsNone
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberAndAnnotate
 import Flapjack.Compiler.Backend.Semantics.ClosSem.InstallGrowth
@@ -2019,6 +2020,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.FiniteMap.Comparison
 import Flapjack.FiniteMap.Comparison.Properties
+import Flapjack.FiniteMap.AlistExact
 import Flapjack.Misc.BalancedMap.Core
 import Flapjack.Misc.BalancedMap.Insert
 import Flapjack.Misc.BalancedMap.Invariants
