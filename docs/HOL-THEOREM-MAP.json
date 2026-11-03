@@ -1,5 +1,64 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "hol_name": "every_Fn_SOME_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/FnAnnotations.lean",
+    "lean_name": "everyFnLocationSome",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared fn_some_def_typed and every source clause: function and recursive-group location options, all expression cases, body and list ordering, and native identifier carriers match. fnLocationSomeFuns_eq_map proves the recursive-body helper corresponds to MAP SND."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "hol_name": "no_Labels_def",
+    "hol_line": 3566,
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Syntactic/LabelsAndArity.lean",
+    "lean_name": "noLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared labels_def_typed and all eleven source cases: the Op clause rejects every Label and every child satisfies the predicate; all other constructors, list conjunctions and mapped recursive bodies agree. Helper map and membership equivalences are kernel checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+    "hol_name": "obeys_max_app_def",
+    "hol_line": 3542,
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Syntactic/LabelsAndArity.lean",
+    "lean_name": "obeysMaxApp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared max_app_def_typed and all eleven source cases, including the application length bound, argument and function traversal, recursive bodies and Op case. Helper map and membership equivalences are kernel checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "every_Fn_SOME_SmartOp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartAnnotations.lean",
+    "lean_name": "smartSome",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_fn_some_typed: the source annotation predicate on singleton optimized and original expressions is equivalent."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "every_Fn_vs_NONE_SmartOp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartAnnotations.lean",
+    "lean_name": "smartNone",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_fn_none_typed: the original argument-list annotation premise implies the singleton optimized-expression predicate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "no_Labels_SmartOp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartAnnotations.lean",
+    "lean_name": "smartNoLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_labels_typed: the optimized and original expressions have equivalent source no_Labels predicates."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "obeys_max_app_SmartOp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartAnnotations.lean",
+    "lean_name": "smartArity",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_max_app_typed: EVERY original argument obeying k implies the optimized expression obeys k; Lean expresses EVERY by membership."
+  }
+,
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "fv1_eq_pure",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartFreeVars.lean",
