@@ -4029,6 +4029,32 @@ theorem recClosureRelFuel_known_body_arity_withClock {C F : Type} (passFuel rela
     related' sourceLookup targetLookup notAllowed sourceBound (by simpa using envs) envWf sourceWf states ready
     sourceCompiler targetCompiler oracle (bodyIH larger growth)
 
+/-- If a probe state can be completed with an auxiliary-code suffix that is
+fresh for the body and whose final state extends into the installed compiler
+state, the ordinary well-formed traversal induction applies to that probe.
+Constructing such a suffix for every probe remains an obligation. This is
+Flapjack-specific simulation infrastructure, not a HOL theorem port. -/
+theorem probeBody_sim_of_completed_state {C F : Type} (passFuel relationFuel limit depth : Nat)
+    (compiler : ClosSem.Compiler C) (g : State) (allowed : Set Nat)
+    (body converted : ClosLang.Exp) (before after : State) (suffix : List (Nat × Nat × ClosLang.Exp))
+    (run : callsFuel depth body before = some (converted, after))
+    (distinct : (codeLocationsExp body).Nodup)
+    (fresh : LabelsFresh (codeLocationsExp body) (appendAux before suffix))
+    (completedWf : wellFormed (appendAux before suffix))
+    (completedGrowth : stateExtends (appendAux after suffix) g)
+    (exprIH : ∀ initial final,
+      callsFuel depth body initial = some (converted, final) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) initial →
+      wellFormed initial →
+      GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler final allowed [body] [converted]) :
+    GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler g allowed [body] [converted] := by
+  have completedRun : callsFuel depth body (appendAux before suffix) =
+      some (converted, appendAux after suffix) := by
+    simpa [run] using (callsFuel_appendAux_pair depth).1 body before suffix
+  exact growingExprsSimFromBelowWithClock_mono_state passFuel relationFuel limit compiler
+    (appendAux after suffix) g allowed [body] [converted] completedGrowth
+    (exprIH (appendAux before suffix) (appendAux after suffix) completedRun distinct fresh completedWf)
+
 /-- Related closure bodies satisfy the arity-restricted application
 interface in both extracted and open groups, assuming the respective actual
 body-traversal simulations. Probe states need only have distinct labels;

@@ -166,6 +166,23 @@ theorem generated_stub_ne_variable_zero_clock {C F : Type} (trace : BackendCommo
   rw [evaluate_generated_stub_zero_clock trace label 1 (.var .none 0) [value] state (by simp) code]
   simp [evaluate]
 
+/-- A body can use only its first argument even when its declared arity is
+two. On a one-element environment the body succeeds, but its generated stub
+fails while reading the missing second argument, regardless of clock or code.
+This Flapjack-specific counterexample explains the argument-bound premise in
+the closure-body simulation interface. -/
+theorem generated_stub_ne_variable_short_env {C F : Type} (trace : BackendCommon.Tra) (label : Nat)
+    (value : ClosSem.Value) (state : ClosSem.State C F) :
+    evaluate [.call trace 0 label (ClosCall.variables trace 2)] [value] state =
+      (.err (.abort .typeError), state) ∧
+    evaluate [.var .none 0] [value] state = (.val [value], state) := by
+  have first : evaluate [.var trace 0] [value] state = (.val [value], state) := by simp [evaluate]
+  have argsRun : evaluate (ClosCall.variables trace 2) [value] state = (.err (.abort .typeError), state) := by
+    have run := ClosProps.evaluate_cons_value (.var trace 0) [.var trace 1] [value] state state value first
+    change evaluate [.var trace 0, .var trace 1] [value] state = _
+    simpa [evaluate] using run
+  simp [evaluate, argsRun, fixClock]
+
 /-- A stub needs exactly one tick in addition to any allowance already
 supplied to its installed body. This Flapjack-specific evaluator lemma helps
 compose existential clock allowances; it is not a pass correctness theorem. -/
