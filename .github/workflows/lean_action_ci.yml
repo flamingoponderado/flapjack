@@ -28,6 +28,13 @@ jobs:
       - name: Check non-test modules are warning-free
         run: ./scripts/check-warnings.sh
 
+      - name: Check the stepped source semantics is a removable leaf (#1251)
+        # No library module outside Flapjack/Test/ may import the modules in
+        # scripts/stepped-modules.txt, which are moving to stepped-flapjack.
+        run: |
+          python3 -m unittest discover -s scripts/tests -p 'test_check_stepped_import_closure.py'
+          python3 scripts/check-stepped-import-closure.py
+
       - name: Check @[hol] cross-references point at existing HOL declarations
         run: |
           # Tagged HOL/ declarations are verified against the pinned gitlink
