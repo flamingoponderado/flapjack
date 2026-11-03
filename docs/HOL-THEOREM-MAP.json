@@ -1,6 +1,40 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "eq_pure_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/PureEquality.lean",
+  "lean_name": "eqPureThmDirect",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eq_pure_thm_typed and the source eq_pure_list case in which directEq x y produces a result, the corresponding original recursive case. The original paired evaluation, simple-expression and do_eq premises and output evaluation conclusion are retained. The independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the clocked evaluator inherits rational-cut reals. This case does not establish the complete pure-equality theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "eq_pure_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/PureEquality.lean",
+  "lean_name": "eqPureThmFallback",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eq_pure_thm_typed and the source eq_pure_list case in which directEq and both constructor recognizers fail, the corresponding original fallback case. The original paired evaluation, simple-expression and do_eq premises and output evaluation conclusion are retained. The independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the clocked evaluator inherits rational-cut reals. This case does not establish the complete pure-equality theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "do_eq_sym",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/EqualitySym.lean",
+  "lean_name": "doEqSym",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_do_eq_sym_typed: both independent universal value and value-list comparisons have the original symmetric equality conclusions. The proof uses the original closure value and do_eq carriers, including fixed 64-bit words and HOL byte lists."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
   "hol_name": "eq_direct_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/DirectEvaluate.lean",
   "lean_name": "eqDirectThm",

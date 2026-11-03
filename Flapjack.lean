@@ -335,6 +335,7 @@ import Flapjack.Compiler.Backend.ClosOp.Proofs.DontLiftEvaluate
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftEvaluate
 import Flapjack.Compiler.Backend.ClosOp.Proofs.PureEvaluate
 import Flapjack.Compiler.Backend.ClosOp.Proofs.DirectEvaluate
+import Flapjack.Compiler.Backend.ClosOp.Proofs.PureEquality
 import Flapjack.Compiler.Backend.WordBignum.CompileExp
 import Flapjack.Compiler.Backend.WordBignum.Helpers
 import Flapjack.Compiler.Backend.WordBignum.Mini
@@ -1301,6 +1302,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Declarations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvalInstall
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
+import Flapjack.Compiler.Backend.Semantics.ClosProps.EqualitySym
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
