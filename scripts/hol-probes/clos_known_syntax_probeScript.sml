@@ -158,6 +158,12 @@ val _ = show "evaluate_changed_globals_typed=" clos_knownProofTheory.evaluate_ch
 val _ = show "evaluate_app_changed_globals_typed=" clos_knownProofTheory.evaluate_app_changed_globals;
 val _ = show "evaluate_ind_typed=" closSemTheory.evaluate_ind;
 
+(* Typed replays of source-local decoder preservation statements. *)
+val _ = (print "known_v_rel_bytes_statement_typed="; print_term
+ ``clos_knownProof$v_rel c g x y ==> closSem$v_to_bytes y = closSem$v_to_bytes x``; print "\n");
+val _ = (print "known_v_rel_words_statement_typed="; print_term
+ ``clos_knownProof$v_rel c g x y ==> closSem$v_to_words y = closSem$v_to_words x``; print "\n");
+
 (* The local optimizer simulation statement with both conjuncts and inferred types. *)
 val _ = (print "known_correct0_statement_typed="; print_term
  ``(!xs env1full (s0:(clos_known$val_approx sptree$num_map#'c,'ffi) closSem$state) res1 s env1 xenv1

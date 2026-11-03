@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_IMP_v_to_bytes",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationDecode.lean",
+  "lean_name": "valueRelImpValueToBytes",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source-local statement and its typed replay known_v_rel_bytes_statement_typed in clos_known_syntax_probe.out. Both preserve the complete optional byte decoder result in the original direction under the optimizer value relation. The Lean proof derives the general simple-value relation and applies the closure semantics decoder theorem. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_IMP_v_to_words",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationDecode.lean",
+  "lean_name": "valueRelImpValueToWords",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source-local statement and its typed replay known_v_rel_words_statement_typed in clos_known_syntax_probe.out. Both preserve the complete optional 64-bit-word decoder result in the original direction under the optimizer value relation. The Lean proof derives the general simple-value relation and applies the closure semantics decoder theorem. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationLetrec.lean",
   "lean_name": "knownCorrect0Letrec",
