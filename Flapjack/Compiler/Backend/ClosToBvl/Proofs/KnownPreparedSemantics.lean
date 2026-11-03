@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownPipelineSemantics
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalLocationsTotal
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
 
 /-! Composition of known-function optimization and prepared BVL compilation. -/
@@ -45,7 +46,6 @@ theorem known_pipeline_prepared_semantics {C F : Type} (ffi : HolFfiState F)
     (compile : compilePrepared? original current program (ClosAnnotate.compile (chainExps start optimizedOutput)) =
       some (output, compiled, names))
     (distinct : (compiled.map Prod.fst).Nodup)
-    (optimizedLocations : everyFnLocationSome (optimized.map Prod.fst))
     (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
     (initialBelow : ∀ location ∈ compiled.map Prod.fst, location < boundary 0)
     (futureDistinct : ∀ i, ((compileInc maxApp
@@ -53,9 +53,7 @@ theorem known_pipeline_prepared_semantics {C F : Type} (ffi : HolFfiState F)
     (ranges : ∀ i location, location ∈ (compileInc maxApp
       (ClosAnnotate.compileInc (knownClosureFuture knownConfig oracle i).2)).map Prod.fst →
       boundary i ≤ location ∧ location < boundary (i + 1))
-    (knownFutureLocations : ∀ i, everyFnLocationSome
-      (stateCo (ClosKnown.compileInc knownConfig)
-        (pureCo fvsInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) i).2.1) :
+    :
     BvlSem.semantics ffi (sptFromAList compiled)
       (pureCo (compileInc maxApp) ∘ pureCo ClosAnnotate.compileInc ∘ knownClosureFuture knownConfig oracle)
       targetCompiler output.start =
@@ -74,6 +72,17 @@ theorem known_pipeline_prepared_semantics {C F : Type} (ffi : HolFfiState F)
       (pureCo ClosAnnotate.compileInc ∘ knownClosureFuture knownConfig oracle)
       (pureCc (compileInc current.maxApp) targetCompiler) [.call .none 0 current.start []] ≠ .fail := by
     simpa [maxAppEq, startEq, knownClosureFuture] using chainEq ▸ nonfail
+  have numberedLocations : ∀ i, everyFnLocationSome
+      (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle i).2.1 := by
+    intro i
+    simpa [stateCo, ClosNumber.ignoreTable] using
+      ClosNumber.compileInc_locations (oracle i).1.1 (oracle i).2.1
+  have knownLocations := ClosKnown.TraversalLocations.syntaxOracleOk_outputLocations knownConfig
+    (ClosNumber.renumberList number program).2
+    (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) globals optimized knownSafe.1
+    (ClosNumber.renumberList_locations program number) numberedLocations knownSafe.2
+  have optimizedLocations := knownLocations.1
+  have knownFutureLocations := knownLocations.2
   have outputLocations : everyFnLocationSome optimizedOutput := by
     have outputEq := Option.some.inj ((ticks_letop_bounded fuel (optimized.map Prod.fst)).symm.trans optRun)
     rw [← outputEq]

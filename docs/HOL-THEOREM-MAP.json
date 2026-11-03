@@ -1,5 +1,165 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_every_Fn_SOME_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLocations.lean",
+  "lean_name": "valApproxLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source declaration and its typed locations probe: approximation constructors, tree lookup, inputs and output location conditions match. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "globals_approx_every_Fn_SOME_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLocations.lean",
+  "lean_name": "globalsApproxLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source declaration and its typed locations probe: approximation constructors, tree lookup, inputs and output location conditions match. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_every_Fn_SOME_merge",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLocations.lean",
+  "lean_name": "valApproxLocationsMerge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source declaration and its typed locations probe: approximation constructors, tree lookup, inputs and output location conditions match. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLocations.lean",
+  "lean_name": "knownOpLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source declaration and its typed locations probe: approximation constructors, tree lookup, inputs and output location conditions match. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "decide_inline_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLocations.lean",
+  "lean_name": "decideInlineLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source declaration and its typed locations probe: approximation constructors, tree lookup, inputs and output location conditions match. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "clos_gen_no_inline_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLocations.lean",
+  "lean_name": "closGenNoInlineLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source declaration and its typed locations probe: approximation constructors, tree lookup, inputs and output location conditions match. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsNil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source Nil traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source Var traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsCons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source Cons traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsRaise",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source Raise traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsTick",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source Tick traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsCall",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source Call traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsOp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source Op traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsIf",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source If traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsLet",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source Let traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsHandle",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source Handle traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsFn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source Fn traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source App traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
+  "lean_name": "knownLocationsLetrec",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_locations_typed and the source Letrec traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocationsTotal.lean",
+  "lean_name": "knownEveryFnLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source theorem and known_locations_typed: the three location invariants of the input imply the corresponding three traversal output invariants without extra assumptions. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
   "hol_name": "remove_fvs_every_Fn_SOME",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",

@@ -27,6 +27,13 @@ val _ = show "known_op_vars_none_typed=" clos_knownProofTheory.known_op_every_Fn
 val _ = show "decide_inline_vars_none_typed=" clos_knownProofTheory.decide_inline_every_Fn_vs_NONE;
 val _ = show "clos_gen_vars_none_typed=" clos_knownProofTheory.clos_gen_no_inline_every_Fn_vs_NONE;
 val _ = show "known_vars_none_typed=" clos_knownProofTheory.known_every_Fn_vs_NONE;
+val _ = show "val_approx_locations_typed=" clos_knownProofTheory.val_approx_every_Fn_SOME_def;
+val _ = show "globals_approx_locations_typed=" clos_knownProofTheory.globals_approx_every_Fn_SOME_def;
+val _ = show "merge_locations_typed=" clos_knownProofTheory.val_approx_every_Fn_SOME_merge;
+val _ = show "known_op_locations_typed=" clos_knownProofTheory.known_op_every_Fn_SOME;
+val _ = show "decide_inline_locations_typed=" clos_knownProofTheory.decide_inline_every_Fn_SOME;
+val _ = show "clos_gen_locations_typed=" clos_knownProofTheory.clos_gen_no_inline_every_Fn_SOME;
+val _ = show "known_locations_typed=" clos_knownProofTheory.known_every_Fn_SOME;
 val _ = show "fvs_locations_typed=" clos_fvsProofTheory.remove_fvs_every_Fn_SOME;
 val _ = show "ticks_locations_typed=" clos_ticksProofTheory.remove_ticks_every_Fn_SOME;
 val _ = show "letop_locations_typed=" clos_letopProofTheory.let_op_every_Fn_SOME;
