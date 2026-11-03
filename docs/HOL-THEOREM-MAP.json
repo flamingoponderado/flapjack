@@ -3,6 +3,66 @@
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
   "hol_name": "evaluate_adj_orac",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracNil",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL empty-list evaluator case: the original same-result, non-type-error, adjusted-state hypotheses and existential adjusted final state are retained, including the independent unused quantified variable. The imported canonical state witness covers refs and code. This case is not the assembled mutual theorem; source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracVar",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL variable case, retaining the original hypotheses and same-result existential conclusion, including the independent unused quantified variable. The canonical state witness covers refs and code. This case is not the assembled mutual theorem; source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracFn",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL closure-construction case, including capture, arity checks and unchanged value, source hypotheses, target existential and the independent unused quantified variable. The canonical state witness covers refs and code. This case is not the assembled mutual theorem; source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracRaise",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL raise case: source hypotheses, same-result existential conclusion and body induction hypothesis are retained, including the independent unused quantified variable. The canonical state witness covers refs and code. This case is not the assembled mutual theorem; source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracTick",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL tick case, retaining source hypotheses, same-result existential conclusion, positive-clock body induction hypothesis and independent unused quantified variable. The canonical state witness covers refs and code. This case is not the assembled mutual theorem; source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracCons",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL nonempty-list case, retaining source hypotheses, same-result existential conclusion, head and conditional tail induction hypotheses, and the independent unused quantified variable. The canonical state witness covers refs and code. This case is not the assembled mutual theorem; source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
   "lean_name": "evaluateAdjOracOrdinaryOp",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs", "code"],

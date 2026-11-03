@@ -2,6 +2,8 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 
 /-! Closure-state relation for changing the compiler-oracle configuration. -/
 namespace Flapjack.Compiler.Backend.ClosProps.AdjustOracle
@@ -201,6 +203,133 @@ def EvalAt {C D F : Type} (cc : Compiler D) (f : C → D)
     evaluate expressions env s = (result, next) ∧
     result ≠ .err (.abort .typeError) ∧ adjOracRel cc f s t →
     ∃ target, evaluate expressions env t = (result, target) ∧ adjOracRel cc f next target
+
+/-- Empty-list case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracNil {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (env : List Value) (s : State C F) : EvalAt cc f [] env s := by
+  intro result next t ⟨run, _, rel⟩
+  simp [evaluate] at run
+  obtain ⟨rfl, rfl⟩ := run
+  exact ⟨t, by simp [evaluate], rel⟩
+
+/-- Variable case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracVar {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (trace : BackendCommon.Tra) (index : Nat) (env : List Value) (s : State C F) :
+    EvalAt cc f [.var trace index] env s := by
+  intro result next t ⟨run, _, rel⟩
+  cases found : env[index]? <;> simp [evaluate, found] at run
+  all_goals obtain ⟨rfl, rfl⟩ := run
+  all_goals exact ⟨t, by simp [evaluate, found], rel⟩
+
+/-- Closure-construction case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracFn {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (name : Basis.Pure.MlString.MlString) (loc : Option Nat) (selected : Option (List Nat))
+    (arity : Nat) (body : ClosLang.Exp) (env : List Value) (s : State C F) :
+    EvalAt cc f [.fn name loc selected arity body] env s := by
+  intro result next t ⟨run, _, rel⟩
+  have maxEq : t.maxApp = s.maxApp := by rcases rel with ⟨_, rfl⟩; rfl
+  by_cases valid : arity ≤ s.maxApp ∧ arity ≠ 0
+  · cases selected with
+    | none =>
+      simp [evaluate, valid] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact ⟨t, by simp [evaluate, maxEq, valid], rel⟩
+    | some indices =>
+      cases capture : lookupVars indices env <;> simp [evaluate, valid, capture] at run
+      all_goals obtain ⟨rfl, rfl⟩ := run
+      all_goals exact ⟨t, by simp [evaluate, maxEq, valid, capture], rel⟩
+  · cases selected <;> simp [evaluate, valid] at run
+    all_goals obtain ⟨rfl, rfl⟩ := run
+    all_goals exact ⟨t, by simp [evaluate, maxEq, valid], rel⟩
+
+/-- Raise case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracRaise {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (trace : BackendCommon.Tra) (body : ClosLang.Exp) (env : List Value) (s : State C F)
+    (bodyIH : EvalAt cc f [body] env s) : EvalAt cc f [.raise trace body] env s := by
+  intro result next t ⟨run, noType, rel⟩
+  rw [evaluate] at run ⊢
+  cases bodyRun : evaluate [body] env s with
+  | mk bodyResult middle =>
+    rw [bodyRun] at run
+    have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
+      intro bad
+      rw [bad] at run
+      cases run
+      exact noType rfl
+    obtain ⟨target, targetRun, targetRel⟩ := bodyIH bodyResult middle t ⟨bodyRun, bodySafe, rel⟩
+    rw [targetRun]
+    cases bodyResult <;> cases run <;> exact ⟨target, rfl, targetRel⟩
+
+/-- Tick case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracTick {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (trace : BackendCommon.Tra) (body : ClosLang.Exp) (env : List Value) (s : State C F)
+    (bodyIH : s.clock ≠ 0 → EvalAt cc f [body] env (decClock 1 s)) :
+    EvalAt cc f [.tick trace body] env s := by
+  intro result next t ⟨run, noType, rel⟩
+  have clockEq : t.clock = s.clock := by rcases rel with ⟨_, rfl⟩; rfl
+  by_cases zero : s.clock = 0
+  · simp [evaluate, zero] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨t, by simp [evaluate, clockEq, zero], rel⟩
+  · have reduced : adjOracRel cc f (decClock 1 s) (decClock 1 t) := by
+      rcases rel with ⟨compatible, rfl⟩
+      exact ⟨compatible, rfl⟩
+    have bodyRun : evaluate [body] env (decClock 1 s) = (result, next) := by
+      simpa [evaluate, zero] using run
+    obtain ⟨target, targetRun, targetRel⟩ := bodyIH zero result next (decClock 1 t)
+      ⟨bodyRun, noType, reduced⟩
+    exact ⟨target, by simpa [evaluate, clockEq, zero] using targetRun, targetRel⟩
+
+/-- Nonempty list case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracCons {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (first second : ClosLang.Exp) (rest : List ClosLang.Exp) (env : List Value) (s : State C F)
+    (firstIH : EvalAt cc f [first] env s)
+    (restIH : ∀ values middle, evaluate [first] env s = (.val values, middle) →
+      EvalAt cc f (second :: rest) env middle) :
+    EvalAt cc f (first :: second :: rest) env s := by
+  intro result next t ⟨run, noType, rel⟩
+  cases firstRun : evaluate [first] env s with
+  | mk firstResult middle =>
+    cases firstResult with
+    | err error =>
+      rw [evaluate_cons_error first (second :: rest) env s middle error firstRun] at run
+      have safe : (Flapjack.SemanticPrimitivesHOL.Result.err error :
+          Flapjack.SemanticPrimitivesHOL.Result (List Value) Value) ≠ .err (.abort .typeError) := by
+        cases run
+        exact noType
+      obtain ⟨targetMiddle, targetRun, middleRel⟩ := firstIH (.err error) middle t ⟨firstRun, safe, rel⟩
+      cases run
+      exact ⟨targetMiddle, evaluate_cons_error first (second :: rest) env t targetMiddle error targetRun, middleRel⟩
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value first env s middle values firstRun
+      obtain ⟨targetMiddle, targetRun, middleRel⟩ :=
+        firstIH (.val [value]) middle t ⟨firstRun, by simp, rel⟩
+      rw [evaluate_cons_value first (second :: rest) env s middle value firstRun] at run
+      rw [evaluate_cons_value first (second :: rest) env t targetMiddle value targetRun]
+      cases restRun : evaluate (second :: rest) env middle with
+      | mk restResult last =>
+        rw [restRun] at run
+        have restSafe : restResult ≠ .err (.abort .typeError) := by
+          intro bad
+          rw [bad] at run
+          cases run
+          exact noType rfl
+        obtain ⟨targetLast, targetRest, lastRel⟩ :=
+          restIH [value] middle firstRun restResult last targetMiddle ⟨restRun, restSafe, middleRel⟩
+        rw [targetRest]
+        cases restResult <;> cases run <;> exact ⟨targetLast, rfl, lastRel⟩
 
 /-- Ordinary-operation case of the source oracle-adjustment evaluator
 simulation, with the induction hypothesis for its argument expressions. -/
