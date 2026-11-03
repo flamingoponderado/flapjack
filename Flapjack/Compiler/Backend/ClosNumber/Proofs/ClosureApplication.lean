@@ -47,6 +47,39 @@ theorem renumberFuns_eq_bundle (functions : List (Nat × ClosLang.Exp)) (start :
     obtain ⟨arity, body⟩ := f
     simp [renumberFuns, renumberList, ih]
 
+/-- The recursive-function traversal threads exactly the same next location
+as numbering the list of bodies. This is supporting infrastructure for the
+source traversal, with no separate HOL declaration. -/
+theorem renumberFuns_next_eq (functions : List (Nat × ClosLang.Exp)) (start : Nat) :
+    (renumberFuns start functions).1 = (renumberList start (functions.map Prod.snd)).1 := by
+  induction functions generalizing start with
+  | nil => rfl
+  | cons function rest ih =>
+    obtain ⟨arity, body⟩ := function
+    simpa [renumberFuns, renumberList] using ih (renumber start body).1
+
+/-- The function-bundle traversal agrees in both returned components with
+numbering bodies and reattaching their original arities. This helper has no
+separate HOL declaration. -/
+theorem renumberFuns_eq_numberedBodies (functions : List (Nat × ClosLang.Exp)) (start : Nat) :
+    renumberFuns start functions =
+      ((renumberList start (functions.map Prod.snd)).1,
+        (functions.map Prod.fst).zip (renumberList start (functions.map Prod.snd)).2) := by
+  apply Prod.ext
+  · exact renumberFuns_next_eq functions start
+  · exact renumberFuns_eq_bundle functions start
+
+/-- The executed recursive-binding clause in the source's map-and-zip shape.
+This supporting equation has no separate HOL declaration. -/
+theorem renumber_letrec_source (names : List Flapjack.AstHOL.VarN) (location : Option Nat)
+    (selected : Option (List Nat)) (functions : List (Nat × ClosLang.Exp))
+    (body : ClosLang.Exp) (start : Nat) :
+    renumber start (.letrec names location selected functions body) =
+      let (next, bodies) := renumberList start (functions.map Prod.snd)
+      let (finish, nextBody) := renumber (next + 2 * bodies.length) body
+      (finish, .letrec names (some next) selected ((functions.map Prod.fst).zip bodies) nextBody) := by
+  simp [renumber, renumberFuns_eq_numberedBodies, renumberList_length]
+
 /-- Recursive-bundle numbering preserves the arity validation test. -/
 theorem renumberFuns_all_arities (functions : List (Nat × ClosLang.Exp)) (start maxApp : Nat) :
     ((renumberFuns start functions).2.all (fun (arity, _) => arity ≤ maxApp && arity != 0)) =

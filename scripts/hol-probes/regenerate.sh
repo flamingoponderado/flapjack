@@ -345,7 +345,7 @@ run_probe clos_known_syntax_probeScript.sml clos_known_syntax_probe.out \
   "$cake_dir/compiler/backend/proofs/clos_knownProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_number_correctness_probeScript.sml clos_number_correctness_probe.out \
-  v_rel_rules_typed state_rel_typed renumber_correct_typed semantics_number_typed \
+  renumber_def_typed compile_inc_def_typed make_even_def_typed ignore_table_def_typed v_rel_rules_typed state_rel_typed renumber_correct_typed semantics_number_typed \
   "$cake_dir/compiler/backend/proofs/clos_numberProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_to_bvl_state_relation_probeScript.sml clos_to_bvl_state_relation_probe.out \

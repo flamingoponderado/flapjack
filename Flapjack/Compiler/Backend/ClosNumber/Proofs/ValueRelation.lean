@@ -9,9 +9,8 @@ namespace Flapjack.Compiler.Backend.ClosNumber
 open Flapjack.Compiler.Backend.ClosSem
 
 /-- Values corresponding across closure numbering. Closure locations may
-change, while bodies are numbered and captured environments remain related.
-This is source-shaped infrastructure for the numbering simulation; its
-carrier and HOL correspondence have not yet been reviewed. -/
+change, while bodies are numbered and captured environments remain related. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "v_rel"]
 inductive ValueRel (maxApp : Nat) : Value → Value → Prop where
   | number (value : Int) : ValueRel maxApp (.number value) (.number value)
   | word64 (value : BitVec 64) : ValueRel maxApp (.word64 value) (.word64 value)

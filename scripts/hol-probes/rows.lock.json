@@ -199,7 +199,7 @@
     {"bytes": 37800, "out": "clos_lang_syntax_probe.out", "rows": 20, "sha256": "3bfe22adef0811f9fce565230f5b0578e96e3c8311f7a74d1d726c018e6dbd10"},
     {"bytes": 22261, "out": "clos_mti_collect_args_probe.out", "rows": 40, "sha256": "5713141258f3f12b8c76de225da207d8d753375a11e09661e66ab919ab68dd7f"},
     {"bytes": 1664, "out": "clos_mti_install_probe.out", "rows": 3, "sha256": "3501fb62154c495f9e4256a6e45be91a4fe02beb3a93c5ca06a4658653567925"},
-    {"bytes": 4759, "out": "clos_number_correctness_probe.out", "rows": 4, "sha256": "c5b769f83960329aa83a3e13129bf79850f87cacaaa24ac5213b1153e3fa7575"},
+    {"bytes": 8624, "out": "clos_number_correctness_probe.out", "rows": 8, "sha256": "e2c3c43669b382b94bcb02e8b1d127dc65a82da00cc0d722ad2c0d2f9e2cdc3e"},
     {"bytes": 19629, "out": "clos_op_definitions_probe.out", "rows": 28, "sha256": "586ebd73addb9b395da58183dd0084a7fdd186368557235d0c3d9b54a17b91bd"},
     {"bytes": 2937, "out": "clos_op_frontend_probe.out", "rows": 6, "sha256": "a1b664929c9a70cef3f0b0064feb1fbb347b38ac32457796b48235c6d81dbe8c"},
     {"bytes": 20892, "out": "clos_op_lift_proof_probe.out", "rows": 67, "sha256": "daf89a1378fcb2289e1a5b845aac9ddf48a29912483d7e161917d36fe8b2b1ad"},
