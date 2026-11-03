@@ -69,8 +69,7 @@ theorem clocked_while_body_same_matches_cake :
       cases fuel with
       | zero => simp [evalPanValueFfiClockProg]
       | succ fuel =>
-          simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-            evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl])
+          simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl])
   exact hsame 2 1 (fun _ => none) (fun _ => none)
     (fun _ => none) evaluatorFfi none none none
 
@@ -133,8 +132,7 @@ theorem clocked_seq_first_congr_matches_cake :
     (fun _ _ => none) evaluatorHandler [] [] 0 0 8 1 1
     (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi
     .skip (.annot "tag" "text") .tick none none none
-  simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
+  simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 theorem clocked_seq_second_congr_matches_cake :
     evalPanValueFfiClockProg evaluatorContext (fun _ _ => none)
@@ -151,8 +149,7 @@ theorem clocked_seq_second_congr_matches_cake :
   cases fuel with
   | zero => simp [evalPanValueFfiClockProg]
   | succ fuel =>
-      simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-        evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
+      simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 /-! A common upper fuel restores the semantic equality after the explicit
     fixed-fuel gap witness: the transformed side succeeds at fuel 2, while
@@ -174,10 +171,8 @@ theorem clocked_seq_assoc_common_fuel_matches_cake :
     (.skip : Prog Nat) (.seq .skip (.seq .skip .skip))
     (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi 1
     none none none
-  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-      evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, seqAssoc]
-  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-      evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
+  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, seqAssoc]
+  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
   · decide
   · decide
 
@@ -2036,8 +2031,7 @@ theorem clocked_seq_normal_exposes_components :
     (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi
     .tick .skip (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi 1
     none none none
-  simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
+  simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 theorem clocked_ret_to_tail_common_fuel_matches_cake :
     evalPanValueFfiClockProg evaluatorContext (fun _ _ => none)
@@ -2056,9 +2050,8 @@ theorem clocked_ret_to_tail_common_fuel_matches_cake :
     (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi 2
     none none none
   · simp [retToTail, seqCallRet, evalPanValueFfiClockProg,
-      evalPanValueFfiClockLeaf, evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
-  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-      evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
+      evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
   · decide
   · decide
 
@@ -2103,8 +2096,7 @@ theorem clocked_pan_simp_source_common_fuel_matches_cake :
     none none none
   · simp [panSimpProg, retToTail, seqAssoc, evalPanValueFfiClockProg]
   · simp [seqAssoc, evalPanValueFfiClockProg]
-  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-      evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
+  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
   · decide
   · decide
   · decide
@@ -2127,8 +2119,7 @@ theorem clocked_pan_simp_source_result_common_fuel :
     none none none
   · simp [panSimpProg, retToTail, seqAssoc, evalPanValueFfiClockProg]
   · simp [seqAssoc, evalPanValueFfiClockProg]
-  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-      evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
+  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
   · decide
   · decide
   · decide
@@ -2531,8 +2522,7 @@ example : PanValueFfiClockNormalAdequateProgFrom 1 evaluatorContext
       simp only [progCallFuel, PanValueFfiClockWhileExitsNormally]
       exact Or.inr (Or.inr ⟨5, by simp [evalPanValueExp], by decide, hclockNe,
         locals, globals, memory, ffi, decPanClock clock, by
-          simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-            evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]⟩))
+          simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]⟩))
 
 /-! The fuel-indexed while-exit certificate underpinning the nonzero-condition
 `While` adequacy constructor. -/
@@ -2553,8 +2543,7 @@ example : PanValueFfiClockNormalAdequateProgFromFloor 0 0 evaluatorContext
   all_goals
     intro clock _ locals globals memory ffi
     exact ⟨locals, globals, memory, ffi, clock, by
-      simp [progCallFuel, evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-        evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl], by omega⟩
+      simp [progCallFuel, evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl], by omega⟩
 
 /-! Discharging the explicit floor premise: an adequate (clock-unbounded)
     program has trivial floor `0`, the input bound can be raised, and a

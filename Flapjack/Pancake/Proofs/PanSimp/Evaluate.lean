@@ -57,19 +57,18 @@ theorem evalPanValueFfiClockLeaf_skip
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
     (baseAddress topAddress bytesInWord : α)
     (clock : Nat) (locals globals : VarName → Option (PanValue α))
     (memory : α → Option (PanValue α)) (ffi : FfiState σ)
     (memoryAccess : Option (PanValueMemoryAccess α) := none)
     (contracts : Option PanValueCallContracts := none)
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none) :
-    evalPanValueFfiClockLeaf context primitive handler structs functions
+    evalPanValueFfiClockLeaf context primitive handler structs
         baseAddress topAddress bytesInWord clock locals globals memory ffi
         (.skip : Prog α) (memoryAccess := memoryAccess) (contracts := contracts)
         (memoryHandler := memoryHandler) =
       some (.control (.normal locals globals memory ffi), clock) := by
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 /-- Clocked counterpart of Cake's `evaluate_seq_skip`
     (`pan_simpProofScript.sml:46-50`): a trailing `Skip` is absorbed. -/
@@ -822,7 +821,6 @@ theorem evalPanValueFfiClockLeaf_return_var
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
     (baseAddress topAddress bytesInWord : α)
     (clock : Nat) (locals globals : VarName → Option (PanValue α))
     (memory : α → Option (PanValue α)) (ffi : FfiState σ)
@@ -831,11 +829,11 @@ theorem evalPanValueFfiClockLeaf_return_var
     (mh : Option (PanValueMemoryFfiHandler α σ))
     (hlookup : locals name = some value)
     (hwithin : panValuePayloadWithinLimit structs value = true) :
-    evalPanValueFfiClockLeaf context primitive handler structs functions
+    evalPanValueFfiClockLeaf context primitive handler structs
         baseAddress topAddress bytesInWord clock locals globals memory ffi
         (.return (.var .local name)) ma c mh =
       some (.control (.returned (fun _ => none) globals memory ffi [value]), clock) := by
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueReturnResult,
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueReturnResult,
     evalPanValueExpWith, evalPanValueExp, hlookup, hwithin]
 
 /-- Fusion of the `pan_simp` tail-call pattern.  When a call whose return value
@@ -881,7 +879,7 @@ theorem evalPanValueFfiClockProg_seq_call_return_returned
   simp only [evalPanValueFfiClockProg]
   rw [hcall]
   simp only [Option.bind_eq_bind, Option.bind_some]
-  exact evalPanValueFfiClockLeaf_return_var context primitive handler structs functions
+  exact evalPanValueFfiClockLeaf_return_var context primitive handler structs
     baseAddress topAddress bytesInWord callClock assignedLocals assignedGlobals
     nextMemory nextFfi returnedName value ma c mh hlookup hwithin
 
@@ -972,7 +970,7 @@ theorem evalPanValueFfiClockProg_seq_call_return_tail_call
       assignedLocals finalGlobals memoryAccess hargs hlookup hbind hclock hbody hwithin
       hassign]
     simp only [Option.bind_eq_bind, Option.bind_some]
-    exact evalPanValueFfiClockLeaf_return_var context primitive handler structs functions
+    exact evalPanValueFfiClockLeaf_return_var context primitive handler structs
       baseAddress topAddress bytesInWord finalClock assignedLocals finalGlobals
       finalMemory finalFfi returnName value memoryAccess none none hlookupReturn hpayload
   rw [hL, hR]
@@ -1483,18 +1481,17 @@ theorem evalPanValueFfiClockLeaf_annot
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
     (baseAddress topAddress bytesInWord : α)
     (clock : Nat) (locals globals : VarName → Option (PanValue α))
     (memory : α → Option (PanValue α)) (ffi : FfiState σ)
     (tag text : String)
     (ma : Option (PanValueMemoryAccess α)) (c : Option PanValueCallContracts)
     (mh : Option (PanValueMemoryFfiHandler α σ)) :
-    evalPanValueFfiClockLeaf context primitive handler structs functions
+    evalPanValueFfiClockLeaf context primitive handler structs
         baseAddress topAddress bytesInWord clock locals globals memory ffi
         (.annot tag text) ma c mh =
       some (.control (.normal locals globals memory ffi), clock) := by
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 theorem evalPanValueFfiClockProg_annot_some
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -3649,7 +3646,7 @@ theorem evalPanValueFfiClockProg_leaf_some
         baseAddress topAddress bytesInWord (fuel + 1) locals globals memory ffi clock
         program ma c mh = some (.control result, clock) := by
   cases hleaf <;>
-    simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiClockLeafWith,
+    simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
       hcontrol]
 
 /-- Fuel adequacy for the leaf fragment: once the leaf's control result

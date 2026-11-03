@@ -109,8 +109,7 @@ theorem clockedNonword_full : clockedEvaluate 5 nonwordProgram =
       (extState 5).memory statefulTestFfiState), 5), extState 5) := by
   simp (config := { decide := true }) [clockedEvaluate, panSemEvaluateCodeStateWithPostState,
     panSemEvaluateCodeState, panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel,
-    panSemCodeStateAfter, evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueFfiExtCallResult, evalPanValueExpsWith,
+    panSemCodeStateAfter, evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueFfiExtCallResult, evalPanValueExpsWith,
     evalPanValueExps, evalPanValueExp.evalPanValueExps, evalPanValueExp, extState,
     nonwordProgram]
 
@@ -119,8 +118,7 @@ theorem clockedArgFail_full : clockedEvaluate 5 argFailProgram =
       (extState 5).memory statefulTestFfiState), 5), extState 5) := by
   simp (config := { decide := true }) [clockedEvaluate, panSemEvaluateCodeStateWithPostState,
     panSemEvaluateCodeState, panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel,
-    panSemCodeStateAfter, evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueFfiExtCallResult, evalPanValueExpsWith,
+    panSemCodeStateAfter, evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueFfiExtCallResult, evalPanValueExpsWith,
     evalPanValueExps, evalPanValueExp.evalPanValueExps, evalPanValueExp, extState,
     argFailProgram]
 
@@ -129,8 +127,7 @@ theorem clockedReadFail_full : clockedEvaluate 5 readFailProgram (some emptyAcce
       (extState 5).memory statefulTestFfiState), 5), extState 5) := by
   simp (config := { decide := true }) [clockedEvaluate, panSemEvaluateCodeStateWithPostState,
     panSemEvaluateCodeState, panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel,
-    panSemCodeStateAfter, evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueFfiExtCallResult, evalPanValueExpsWith,
+    panSemCodeStateAfter, evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueFfiExtCallResult, evalPanValueExpsWith,
     evalPanValueExps, evalPanValueExp.evalPanValueExps, evalPanValueExp, extState,
     readFailProgram, panValueFfiExtCall, emptyRead_one, statefulTestContext]
 

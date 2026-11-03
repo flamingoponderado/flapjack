@@ -3726,7 +3726,7 @@ theorem panStructSourceBreakEvaluation
           state.clock), state) := by
   simp [panSemEvaluateCodeStateWithPostState, panSemEvaluateCodeState,
     panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemCodeStateAfter,
-    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
+    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 /-- Source/converted evaluator projection for production Break states. -/
 theorem panStructBreakEvaluatorProjection
@@ -3845,7 +3845,7 @@ theorem panStructSourceContinueEvaluation
           state.clock), state) := by
   simp [panSemEvaluateCodeStateWithPostState, panSemEvaluateCodeState,
     panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemCodeStateAfter,
-    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
+    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 /-- Source/converted evaluator projection for production Continue states. -/
 theorem panStructContinueEvaluatorProjection
