@@ -30,6 +30,7 @@ val _ = show "known_preserves_esgc_free_0_typed=" clos_knownProofTheory.known_pr
 val _ = show "known_elglobals_dont_grow_typed=" clos_knownProofTheory.known_elglobals_dont_grow;
 val _ = show "known_preserves_esgc_free_typed=" clos_knownProofTheory.known_preserves_esgc_free;
 val _ = show "known_changed_globals_typed=" clos_knownProofTheory.known_changed_globals;
+val _ = show "known_unchanged_globals_typed=" clos_knownProofTheory.known_unchanged_globals;
 val _ = show "known_changed_globals_alt_set_typed=" clos_knownProofTheory.known_changed_globals_alt_set;
 val _ = show "state_globals_approx_known_mglobals_disjoint_typed=" clos_knownProofTheory.state_globals_approx_known_mglobals_disjoint;
 val _ = show "evaluate_IMP_shift_seq_typed=" clos_knownProofTheory.evaluate_IMP_shift_seq;

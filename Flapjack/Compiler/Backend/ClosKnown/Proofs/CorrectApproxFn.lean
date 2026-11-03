@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApprox
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownUnchanged
 
 /-! Closure-creation case of known-function approximation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox.Fn
@@ -87,15 +88,17 @@ theorem knownCorrectApproxFn {C F : Type} (c : Config) (name : Basis.Pure.MlStri
   have bodyEmpty : setGlobals body = FlatProps.emptyGlobalBag := by
     have h := safe (.fn name loc selected arity body) (by simp)
     simpa [esgcFree] using h
-  have disjointBody : mglobalsDisjoint s0.globals [body] := by
-    simp [mglobalsDisjoint, elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, bodyEmpty]
+  have emptyBody : elistGlobals [body] = FlatProps.emptyGlobalBag := by
+    funext i
+    simp [elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, bodyEmpty]
   cases hk : knownListTotal c [body] (List.replicate arity .other ++ aenv) g0 with
   | mk bodyEas bodyG =>
     obtain ⟨bodyExpr, bodyApprox, bodyEq⟩ :=
       knownListTotal_single_result c body (List.replicate arity .other ++ aenv) g0 bodyG bodyEas hk
     subst bodyEas
-    have preserved := ApproxEvaluate.stateGlobalsApproxKnownDisjoint c [body]
-      (List.replicate arity .other ++ aenv) g0 [(bodyExpr, bodyApprox)] bodyG s0 ⟨hk, disjointBody, approx⟩
+    have unchanged := KnownUnchanged.knownUnchangedGlobals c [body]
+      (List.replicate arity .other ++ aenv) g0 [(bodyExpr, bodyApprox)] bodyG ⟨hk, emptyBody⟩
+    have preserved : stateGlobalsApprox s0 bodyG := by simpa [← unchanged] using approx
     have resultApprox := fnResultApprox c name loc selected arity body (env ++ extra) s0 res s run
     have sameState : s = s0 := by
       rw [evaluate.eq_def] at run
