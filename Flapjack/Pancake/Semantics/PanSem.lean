@@ -2108,7 +2108,7 @@ theorem panSemEvaluateCodeState_call_error_of_returnShapeMismatch
               | zero => omega
               | succ fuel =>
                   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall,
-                    panValueCallArgumentsValue, 
+                    panValueCallArgumentsValue,
                     evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueReturnResult,
                     evalPanValueExpCounted, evalPanValueExp, hargs, hlookupCall, hclock,
                     panValueShape, panShapeMatches, decPanClock]
@@ -2181,7 +2181,7 @@ theorem panSemEvaluateCodeState_call_error_of_returnShapeMismatch_param
               | zero => omega
               | succ fuel =>
                   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall,
-                    panValueCallArgumentsValue, 
+                    panValueCallArgumentsValue,
                     evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueReturnResult,
                     evalPanValueExpCounted, evalPanValueExp, hargs, hlookupCall, hclock,
                     panValueShape, panShapeMatches, decPanClock]
@@ -2311,7 +2311,7 @@ theorem panSemEvaluateCodeState_decCall_error_of_returnShapeMismatch
   have hsucc5 : tail + 5 = Nat.succ (tail + 4) := by omega
   rw [hsucc5, hsucc4, hsucc3, hsucc2, hsucc1]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeDecCall,
-    evalPanValueFfiClockCodeCall, panValueCallArgumentsValue, 
+    evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
     evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpCounted, evalPanValueExp,
     hargs, hcallee, hclock, panValueShape, panShapeMatches, decPanClock]
 

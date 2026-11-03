@@ -72,8 +72,9 @@ def panValueFfiClockClearTimeoutLocals :
     the statements that neither recurse nor touch the clock; each is the
     control result of the corresponding `PanValueFfiCore` helper.  `Tick`,
     `Dec`, `Seq`, `If`, `While`, `Call` and `DecCall` are handled by the clocked
-    evaluators themselves and never reach this function; it returns `none` for
-    the compound ones. -/
+    evaluators themselves and never reach this function.  It returns `none` for
+    them, so an evaluator that forgot its own `Tick` clause would fail instead
+    of silently skipping the clock. -/
 def evalPanValueFfiLeafControl
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -89,7 +90,7 @@ def evalPanValueFfiLeafControl
     (evaluator : Option (PanExprEvaluator α) := none) :
     Option (PanValueFfiControlResult α σ) :=
   let result : Option (PanValueFfiSteppedResult α σ) := match program with
-    | .skip | .tick | .annot _ _ => some (.normal locals globals memory ffi, 1)
+    | .skip | .annot _ _ => some (.normal locals globals memory ffi, 1)
     | .break => some (.broke locals globals memory ffi, 1)
     | .continue => some (.continued locals globals memory ffi, 1)
     | .assign .local name value =>
@@ -126,11 +127,12 @@ def evalPanValueFfiLeafControl
     | .shMemStore size address value =>
         panValueShMemStoreResult context structs baseAddress topAddress bytesInWord locals globals
           memory ffi size address value memoryAccess evaluator
-    | .dec .. | .seq .. | .ite .. | .while .. | .call .. | .decCall .. => none
+    | .tick | .dec .. | .seq .. | .ite .. | .while .. | .call .. | .decCall .. => none
   result.map Prod.fst
 
-/-- The leaf statements that `evalPanValueFfiClockProg` hands to
-    `evalPanValueFfiClockLeaf`. -/
+/-- The leaf statements: exactly those that `evalPanValueFfiClockProg` hands
+    to `evalPanValueFfiClockLeaf`, i.e. every constructor except `Tick` and the
+    compound statements. -/
 inductive PanValueFfiLeafProg : Prog α → Prop
   | skip : PanValueFfiLeafProg (.skip : Prog α)
   | assign (kind : VarKind) (name : VarName) (value : Exp α) :
@@ -151,6 +153,7 @@ inductive PanValueFfiLeafProg : Prog α → Prop
       PanValueFfiLeafProg (.shMemLoad size kind name address)
   | shMemStore (size : OpSize) (address value : Exp α) :
       PanValueFfiLeafProg (.shMemStore size address value)
+  | annot (tag text : String) : PanValueFfiLeafProg (.annot tag text)
 
 /-- The leaf clauses of the clocked evaluators: the leaf's control result at the
     unchanged clock. -/

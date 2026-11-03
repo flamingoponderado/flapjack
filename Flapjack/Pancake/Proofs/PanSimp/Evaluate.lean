@@ -3622,7 +3622,7 @@ theorem evalPanValueFfiClockProg_decCall_finalFfi_some_progCallFuel
 
 /-! ## Leaf success equation
 
-Every constructor that is neither recursive nor `tick`/`annot` is dispatched by
+Every constructor that is neither recursive nor `tick` is dispatched by
 `evalPanValueFfiClockProg` to `evalPanValueFfiClockLeaf`, which returns the
 control result of `evalPanValueFfiLeafControl` at the unchanged clock.  The
 predicate `PanValueFfiLeafProg` records exactly that class, and the success
@@ -3652,8 +3652,8 @@ theorem evalPanValueFfiClockProg_leaf_some
     simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiClockLeafWith,
       hcontrol]
 
-/-- Fuel adequacy for the leaf fragment: once the step evaluator succeeds at
-    unit fuel, the clocked evaluator returns the same control result at any
+/-- Fuel adequacy for the leaf fragment: once the leaf's control result
+    (`evalPanValueFfiLeafControl`) is known, the clocked evaluator returns it at any
     fuel dominating `progSize program`.  This turns the `fuel + 1` leaf equation
     into a `progSize`-indexed statement. -/
 theorem evalPanValueFfiClockProg_leaf_some_progSize

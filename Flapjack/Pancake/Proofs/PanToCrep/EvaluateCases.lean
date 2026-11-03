@@ -227,7 +227,7 @@ theorem panSemEvaluateCodeState_skip
   cases hfuel : panSemCodeEvaluateFuel state (.skip : Prog α) with
   | zero => omega
   | succ fuel =>
-      simp [evalPanValueFfiClockCodeProg, 
+      simp [evalPanValueFfiClockCodeProg,
         evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- State-boundary Skip case for the source-run-implies-target-run direction
@@ -389,7 +389,7 @@ theorem panSemEvaluateCodeState_break
   cases hfuel : panSemCodeEvaluateFuel state (.break : Prog α) with
   | zero => omega
   | succ fuel =>
-      simp [evalPanValueFfiClockCodeProg, 
+      simp [evalPanValueFfiClockCodeProg,
         evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- Actual-state Break case for the source-run-implies-target-run direction of
@@ -477,7 +477,7 @@ theorem panSemEvaluateCodeState_continue
   cases hfuel : panSemCodeEvaluateFuel state (.continue : Prog α) with
   | zero => omega
   | succ fuel =>
-      simp [evalPanValueFfiClockCodeProg, 
+      simp [evalPanValueFfiClockCodeProg,
         evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- Actual-state Continue case for the source-run-implies-target-run direction
@@ -697,7 +697,7 @@ theorem panSemEvaluateCodeState_annot
   cases hfuel : panSemCodeEvaluateFuel state (.annot tag text) with
   | zero => omega
   | succ fuel =>
-      simp [evalPanValueFfiClockCodeProg, 
+      simp [evalPanValueFfiClockCodeProg,
         evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- Actual-state Annot case for HOL `pc_compile_correct`. The source annotation
@@ -2230,7 +2230,7 @@ theorem panSemEvaluateCodeState_decCallTick_ofEntry
   rw [hfuelConcrete]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeDecCall,
     evalPanValueFfiClockCodeCall,
-    panValueCallArgumentsValue, 
+    panValueCallArgumentsValue,
     evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpCounted,
     evalPanValueExp, hargs, hcallee, hclockNonzero,
     hcontinuationClockNonzero, panValueShape, panShapeMatches,
