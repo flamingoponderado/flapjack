@@ -217,7 +217,7 @@ theorem evaluate_known_probe_stub {C F : Type} (fuel : Nat) (g : State) (allowed
       evaluate [targetBody] env { state with clock := state.clock + (extraClock + 1) } =
         evaluate [convertedBody] (env.take arity) { state with clock := state.clock + extraClock } := by
   obtain ⟨trace, convertedBody, depth, before, after, afterProbe, _, targetStub, codeLookup,
-    depthBound, selectedRun, distinct, fresh, beforeDistinct, extended, _, closed, _⟩ :=
+    depthBound, selectedRun, distinct, fresh, beforeDistinct, _, _, extended, _, closed, _⟩ :=
     recClosureRelFuel_known_probe_body fuel g allowed state.code loc sourceFns targetFns index arity sourceBody
       related sourceLookup notAllowed
   have bodyEq : targetBody = .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity) := by

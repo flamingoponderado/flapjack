@@ -3976,7 +3976,7 @@ theorem recClosureRelFuel_known_body_sim_withClock {C F : Type} (passFuel relati
       targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
   obtain ⟨trace, converted, depth, before, after, _, _, targetStub, codeLookup,
-    depthBound, selectedRun, distinct, fresh, beforeDistinct, _, _, closed, _⟩ :=
+    depthBound, selectedRun, distinct, fresh, beforeDistinct, _, _, _, _, closed, _⟩ :=
     recClosureRelFuel_known_probe_body relationFuel g allowed target.code loc sourceFns targetFns
       index arity body related sourceLookup notAllowed
   have bodyEq : targetBody = .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity) := by
@@ -4072,7 +4072,7 @@ theorem recClosureRelFuel_body_arity_withClock {C F : Type} (passFuel relationFu
       depth < max relationFuel (listBudget (sourceFns.map Prod.snd) + 1) →
       callsFuel depth body before = some (converted, after) →
       (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before →
-      (before.2.map Prod.fst).Nodup →
+      (before.2.map Prod.fst).Nodup → weaklyWellFormed before →
       (∀ n, ClosProps.freeVarExp n converted → n < arity) →
       GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler larger allowed [body] [converted])
     (openIH : ∀ larger, stateExtends g larger → ∀ depth before after,
@@ -4089,7 +4089,7 @@ theorem recClosureRelFuel_body_arity_withClock {C F : Type} (passFuel relationFu
   rcases recClosureRelFuel_body_traversal_cases relationFuel larger allowed target.code loc sourceFns targetFns
       index arity body targetBody related' sourceLookup targetLookup with
     ⟨trace, converted, depth, before, after, _, _, bodyEq, codeLookup, depthBound, selectedRun,
-      distinct, fresh, beforeDistinct, _, _, closed, _⟩ |
+      distinct, fresh, beforeDistinct, beforeWeak, _, _, _, closed, _⟩ |
     ⟨depth, before, after, depthBound, selectedRun, distinct, fresh, beforeWf, extended⟩
   · have stubEnv : EnvRelFuel relationFuel larger allowed target.code sourceEnv targetEnv 0
         [(0, .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity))] := by
@@ -4099,7 +4099,7 @@ theorem recClosureRelFuel_body_arity_withClock {C F : Type} (passFuel relationFu
         arity converted sourceEnv targetEnv stubEnv sourceBound closed
     obtain ⟨extraClock, finalG, targetResult, targetFinal, finalExt, targetRun, resultRelated,
       finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩ :=
-      probeIH larger growth converted depth before after depthBound selectedRun distinct fresh beforeDistinct closed
+      probeIH larger growth converted depth before after depthBound selectedRun distinct fresh beforeDistinct beforeWeak closed
         larger (stateExtends_refl larger ready.well.2) sourceEnv (targetEnv.take arity) source target result final
         clock run notType (by simpa using bodyEnv) envWf sourceWf states ready sourceCompiler targetCompiler oracle
     refine ⟨extraClock + 1, finalG, targetResult, targetFinal, finalExt, ?_, resultRelated, finalStates,

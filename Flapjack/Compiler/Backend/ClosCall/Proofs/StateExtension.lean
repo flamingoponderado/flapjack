@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.KnownOrigins
+import Flapjack.Compiler.Backend.ClosCall.Proofs.AuxiliaryAppend
 
 /-! Extension of direct-call compiler states and their auxiliary code. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -64,6 +65,80 @@ theorem stateExtends_trans {A K V : Type} (g1 g2 g3 : Spt A × List (K × V))
     exact ⟨last, secondEq.trans firstEq⟩
   · intro key value lookup
     exact h23.2.1 key value (h12.2.1 key value lookup)
+
+/-- The missing bindings for a weakly well-formed state can be taken from a
+well-formed extension. The suffix contains precisely the later bindings whose
+labels correspond to an already-known location but are not yet in the old
+code list. This Flapjack-specific construction does not yet prove freshness
+for a subsequent traversal. -/
+theorem weaklyWellFormed_complete_aux (before later : State)
+    (weak : weaklyWellFormed before) (beforeDistinct : (before.2.map Prod.fst).Nodup)
+    (laterWf : wellFormed later) (growth : stateExtends before later) :
+    ∃ suffix, wellFormed (appendAux before suffix) ∧ stateExtends (appendAux before suffix) later := by
+  classical
+  let suffix := later.2.filter (fun entry =>
+    decide (entry.1 ∈ Set.image Nat.succ (sptDomain before.1) ∧ entry.1 ∉ before.2.map Prod.fst))
+  have suffixMember : ∀ entry, entry ∈ suffix ↔ entry ∈ later.2 ∧
+      entry.1 ∈ Set.image Nat.succ (sptDomain before.1) ∧ entry.1 ∉ before.2.map Prod.fst := by
+    intro entry
+    simp [suffix]
+  have suffixDistinct : (suffix.map Prod.fst).Nodup := by
+    have sub : List.Sublist suffix later.2 := List.filter_sublist
+    exact laterWf.2.sublist (sub.map Prod.fst)
+  have completedDistinct : ((before.2 ++ suffix).map Prod.fst).Nodup := by
+    rw [List.map_append]
+    apply List.nodup_append.mpr
+    refine ⟨beforeDistinct, suffixDistinct, ?_⟩
+    intro x xmem y ymem equal
+    obtain ⟨entry, entryMem, entryEq⟩ := List.mem_map.mp ymem
+    have absent := ((suffixMember entry).mp entryMem).2.2
+    apply absent
+    have same : entry.1 = x := entryEq.trans equal.symm
+    simpa [same] using xmem
+  have labels : {label | label ∈ (before.2 ++ suffix).map Prod.fst} =
+      Set.image Nat.succ (sptDomain before.1) := by
+    ext label
+    simp only [Set.mem_ofPred_eq, List.map_append, List.mem_append]
+    constructor
+    · intro member
+      rcases member with old | new
+      · exact weak old
+      · obtain ⟨entry, entryMem, entryEq⟩ := List.mem_map.mp new
+        simpa [← entryEq] using ((suffixMember entry).mp entryMem).2.1
+    · intro member
+      by_cases old : label ∈ before.2.map Prod.fst
+      · exact Or.inl old
+      · right
+        obtain ⟨key, known, equal⟩ := member
+        have laterKnown : sptDomain later.1 key := (growth.1 key known).1
+        have laterLabel : label ∈ later.2.map Prod.fst := by
+          have inSet : label ∈ {label | label ∈ later.2.map Prod.fst} := by
+            rw [laterWf.1]
+            exact ⟨key, laterKnown, equal⟩
+          exact inSet
+        obtain ⟨entry, entryMem, entryEq⟩ := List.mem_map.mp laterLabel
+        apply List.mem_map.mpr
+        refine ⟨entry, (suffixMember entry).mpr ⟨entryMem, ?_, ?_⟩, entryEq⟩
+        · rw [entryEq]
+          exact ⟨key, known, equal⟩
+        · simpa [entryEq] using old
+  refine ⟨suffix, ⟨labels, completedDistinct⟩, growth.1, ?_, laterWf.2⟩
+  intro key value found
+  rw [logicalAssocLookup_nat] at found ⊢
+  have member := sptAListLookup_mem key (before.2 ++ suffix) value found
+  rcases List.mem_append.mp member with old | new
+  · have oldLookup : sptAListLookup key before.2 = some value := by
+      apply sptAListLookup_eq_of_mem_unique key value before.2 old
+      intro other otherMem
+      have injective := (List.nodup_map_iff_inj_on (List.Nodup.of_map Prod.fst beforeDistinct)).mp beforeDistinct
+      exact congrArg Prod.snd (injective _ otherMem _ old rfl)
+    exact (logicalAssocLookup_nat key later.2).symm ▸ growth.2.1 key value
+      ((logicalAssocLookup_nat key before.2).trans oldLookup)
+  · have laterMember := ((suffixMember (key, value)).mp new).1
+    apply sptAListLookup_eq_of_mem_unique key value later.2 laterMember
+    intro other otherMem
+    have injective := (List.nodup_map_iff_inj_on (List.Nodup.of_map Prod.fst laterWf.2)).mp laterWf.2
+    exact congrArg Prod.snd (injective _ otherMem _ laterMember rfl)
 
 private theorem knownExt_subspt (initial final : State) (growth : KnownExt initial final) :
     sptSubspt initial.1 final.1 := by

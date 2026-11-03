@@ -92,7 +92,8 @@ theorem recClosureRelFuel_probe_body (fuel : Nat) (g : State) (allowed : Set Nat
       depth < max fuel (listBudget (fns1.map Prod.snd) + 1) ∧
       callsFuel depth body before = some (transformed, after) ∧
       (codeLocationsExp body).Nodup ∧ LabelsFresh (codeLocationsExp body) before ∧
-      (before.2.map Prod.fst).Nodup ∧ stateExtends after afterProbe ∧
+      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧
+      stateExtends before afterProbe ∧ stateExtends after afterProbe ∧
       ((groupClosed fns1 bodies ∧
         (∃ trace stubIndex, fns2 = callsListSource trace stubIndex loc fns1) ∧
         stateExtends (codeList loc ((fns1.map Prod.fst).zip bodies) afterProbe) g ∧
@@ -117,13 +118,19 @@ theorem recClosureRelFuel_probe_body (fuel : Nat) (g : State) (allowed : Set Nat
     simpa [LabelsFresh, insertEach] using nestedFresh
   have initialDistinct : ((insertEach loc fns1.length g0).2.map Prod.fst).Nodup := by
     simpa [insertEach] using initialWf.2
-  obtain ⟨depth, before, after, depthLt, selected, bodyDistinct, bodyFresh, beforeDistinct, extended⟩ :=
-    callsListBounded_lookup_run_distinct fuel (fns1.map Prod.snd) bodies (insertEach loc fns1.length g0) afterProbe
-      probe well.2.2.2 fresh initialDistinct index body bodies[index] sourceIndex targetIndex
+  have initialWeak := weaklyWellFormed_insertEach loc fns1.length g0 (wellFormed_weak g0 initialWf)
+  obtain ⟨depth, before, after, depthLt, selected, bodyDistinct, bodyFresh, beforeDistinct, beforeWeak, extended⟩ :=
+    callsListBounded_lookup_run_weak fuel (fns1.map Prod.snd) bodies (insertEach loc fns1.length g0) afterProbe
+      probe well.2.2.2 fresh initialDistinct initialWeak index body bodies[index] sourceIndex targetIndex
   have initialFresh : LabelsFresh (codeLocations (fns1.map Prod.snd)) g0 := by
     simpa [LabelsFresh] using nestedFresh
+  have singleton : callsListBounded (depth + 1) [body] before = some ([bodies[index]], after) := by
+    simp [callsListBounded, callsListFuel, selected]
+  have beforeAfter := callsListBounded_stateExtends (depth + 1) [body] before after [bodies[index]] singleton
+    (by simpa [codeLocations] using bodyDistinct) (by simpa [codeLocations] using bodyFresh) beforeDistinct
+  have beforeProbe := stateExtends_trans before after afterProbe beforeAfter extended
   exact ⟨g0, bodies, afterProbe, bodies[index], depth, before, after, initialWf, initialFresh, probe, targetIndex, depthLt,
-    selected, bodyDistinct, bodyFresh, beforeDistinct, extended, alternatives⟩
+    selected, bodyDistinct, bodyFresh, beforeDistinct, beforeWeak, beforeProbe, extended, alternatives⟩
 
 /-- A related target body is either a generated stub or the result of an
 actual open-group body traversal whose state extends into the current state.
