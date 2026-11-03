@@ -68,9 +68,13 @@ uses HOL word/bitstring carriers, while the Lean encoder is fixed at width 64
 with `Nat`/`BitVec` carriers.
 
 The remaining helpers `lsl`, `lsr`, `asr2` and `ror` are stated with HOL's
-`bitstring`/FCP rotate operations (`#>>`, `v2w`, `w2v`, `shiftr`), which
-Flapjack does not yet have; porting them is a separate library task and does not
-need the machine semantics.  `asr` is just HOL's library theorem
+`bitstring`/FCP rotate operations (`#>>`, `v2w`, `w2v`, `shiftr`).
+`L3/Support.lean` now supplies those operations (`holRotate`, `holShiftr`,
+`holShiftl`, `holField`, `holTestbit`, `holV2w`, `holBitwise`, `holReplicate`),
+and `L3/CorrectnessEncoding/ShiftBitfieldMasks.lean` restates HOL's `lsr` and
+`lsl` as `arm8LsrMaskIdentity`/`arm8LslMaskIdentity` (tagged,
+`pending_statement_review`); `asr_mask` combines HOL's `asr2` mask statement with
+the shift reasoning and remains untagged.  `asr` is just HOL's library theorem
 `word_asr_n2w` specialized to word64, with no ARM8-specific proof content.
 
 The main HOL theorem `arm8_encoder_correct` is stated about CakeML's full L3
@@ -80,10 +84,11 @@ ARMv8 model (`HOL/examples/l3-machine-code/arm8/model/arm8Script.sml` and
 `encoderCorrect arm8TargetL3` obligation for the instructions the backend emits
 in `L3/CorrectnessEncoding/Complete.lean`; see "L3 carrier and validity gate"
 below. The closed subset model is retained for the executable driver, which
-still runs `arm8Config` rather than `arm8ConfigL3`. Both `encoderCorrect`
-theorems are infrastructure: the assembling theorems carry no `@[hol]` tag, and
-the per-case theorems are tagged `arm8_encoder_correct` but remain
-`pending_statement_review`, so neither is a claimed exact HOL port.
+still runs `arm8Config` rather than `arm8ConfigL3`. The L3 assembling theorem
+`arm8EncoderCorrectL3` and its 64 case theorems are tagged
+`arm8_encoder_correct` and `reviewed_exact`; the closed-model
+`arm8EncoderCorrect` is Flapjack infrastructure with no HOL original, because it
+is about the closed model rather than HOL's `arm8_target`.
 
 ## Closed ARMv8 machine model (new)
 
@@ -222,9 +227,9 @@ and proves `arm8ConfigL3_encOk`.
 `arm8TargetL3 : HolAsmTarget 64 arm8_state Arm8L3Projection` from the exact L3
 configuration and `arm8_next`/`arm8_ok`/`arm8_proj`, and proves
 `arm8TargetL3_targetOk`, the `targetOk` half of `encoderCorrect`.  The record is
-tagged `arm8_target_def` and recorded as `pending_statement_review`: the
-`arm8_ast`/`arm8_enc`/`EncodeBitMask` definitions it depends on are still
-mechanically rendered and not source-reviewed.
+tagged `arm8_target_def` and `reviewed_exact`, as are `arm8Ast`, `arm8Enc` and
+`arm8ValidImmediate`; the rendered `Encode`/`Decode`/`Run`/`NextStateARM8`
+closure it unfolds to remains `pending_statement_review` (see below).
 
 `Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Skip.lean` proves the
 `Skip` constructor case of the L3 `encoder_correct` port
@@ -232,9 +237,10 @@ mechanically rendered and not source-reviewed.
 bytes, the full `Decode`/`Run` reductions for that word, the
 `Mem`/`Fetch`/`NextStateARM8` reductions (PC advance by four, `branch_hint`
 cleared), the `asmStep`/`targetStateRel` interference simulation with `n = 0`,
-and the outside-domain byte conclusion.  The remaining instruction cases and
-the assembling `encoderCorrect arm8TargetL3` theorem are #1239;
-`encoderCorrect` is proved only for the closed model.
+and the outside-domain byte conclusion.  The other instruction cases live in the
+sibling modules under `CorrectnessEncoding/`, and `Complete.lean` assembles them
+into `arm8EncoderCorrectL3 : encoderCorrect arm8TargetL3` with no extra
+hypothesis.
 
 The further case modules under `CorrectnessEncoding/` cover, so far, the
 `const` constructors (`MoveWide.lean`, `Bytes.lean`, `Simulate.lean`,
@@ -430,8 +436,8 @@ substituted, and the corresponding mask identity, then close through
 `asmCaseOne`.  `.lsl` needs its two computed field values (`63w - n2w n` and
 `-n2w n`) pinned first; `interval_cases` over the 64 admissible shift amounts
 does that.  All four case theorems from this batch (`addCarry` and the three
-shift-immediate forms) carry the shared `arm8_encoder_correct` tag with
-`pending_statement_review` manifest rows.
+shift-immediate forms) carry the shared `arm8_encoder_correct` tag and
+`reviewed_exact` manifest rows.
 
 `Mem.lean` now records the two `LoadStoreImmediate@64` word shapes
 `e_LoadStoreImmediate` emits — the signed nine-bit form and the scaled

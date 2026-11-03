@@ -64,6 +64,21 @@ def renderings(root=ROOT):
     return {(thy, name): (body, nc) for thy, name, _, body, _, nc in emitted}
 
 
+def lean_decl_names(emitted):
+    """The Lean declaration name of each emitted definition.
+
+    `hol_terms_to_lean.main` prefixes a definition shared by two theories with
+    its theory name (`arm8_step_NextStateARM8`), exactly as the RISC-V export
+    does for its two `Fetch` roots.  Mirror that here, and refuse a collision
+    rather than letting one entry overwrite the other.
+    """
+    counts = {}
+    for thy, name, *_ in emitted:
+        counts[name] = counts.get(name, 0) + 1
+    return {(thy, name): (thy + "_" + name if counts[name] > 1 else name)
+            for thy, name, *_ in emitted}
+
+
 def arm8_renderings(root=ROOT):
     renderer = module("l3_drift_renderer_arm8", root / "scripts/hol_terms_to_lean.py")
     with tempfile.NamedTemporaryFile(mode="w") as export:
@@ -73,7 +88,14 @@ def arm8_renderings(root=ROOT):
                                          str(root / ARM8_DIR / "Types.lean"), "--thy=arm8"])
     if failed:
         raise ValueError("unrendered original ARM8 definitions: " + repr(failed))
-    return {name.strip("«»"): (body, nc) for thy, name, _, body, _, nc in emitted}
+    names = lean_decl_names(emitted)
+    result = {}
+    for thy, name, _, body, _, nc in emitted:
+        key = names[(thy, name)].strip("«»")
+        if key in result:
+            raise ValueError("ambiguous ARM8 Lean declaration name: " + key)
+        result[key] = (body, nc)
+    return result
 
 def rendered_for(key, generated):
     path, name = key.split(":", 1)

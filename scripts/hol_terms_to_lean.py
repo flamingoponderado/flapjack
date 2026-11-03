@@ -768,27 +768,19 @@ def special_sqrt_fp(r, c, args, env):
         f'(holFp{width}ToFloat {xs[1]})).2)')
 
 
-def fresh_binder(base, texts):
-    """A binder name that occurs in none of the rendered operand texts.
-
-    `pred_set$INSERT` renders as a predicate lambda; a fixed binder name would
-    capture a free variable of the same name in either operand.
-    """
-    name = base
-    while any(re.search(r'(?<![A-Za-z0-9_.«])' + re.escape(name) + r'(?![A-Za-z0-9_»])', t)
-              for t in texts):
-        name += "'"
-    return name
-
-
 def free_vars(t, bound=frozenset()):
-    """The free HOL variables of a term, as (name, type) pairs."""
+    """The free HOL variables of a term, as (name, type) pairs.
+
+    HOL identifies a variable by its name *and* type, so a lambda binds only
+    its own `(name, type)`: a differently typed variable of the same name stays
+    free.
+    """
     if isinstance(t, Var):
-        return set() if t.name in bound else {(t.name, t.ty)}
+        return set() if (t.name, t.ty) in bound else {(t.name, t.ty)}
     if isinstance(t, Comb):
         return free_vars(t.f, bound) | free_vars(t.x, bound)
     if isinstance(t, Lam):
-        return free_vars(t.body, bound | {t.v.name})
+        return free_vars(t.body, bound | {(t.v.name, t.v.ty)})
     return set()
 
 
@@ -1094,6 +1086,24 @@ for _name in ('LT', 'EQ', 'GT', 'UN'):
         0, lambda r, c, xs, raw, name=_name: f'HolFloatCompare.{name.lower()}')
 
 
+def type_binders(head_ty, params) -> str:
+    """The implicit width/type binders for a definition's quantified types.
+
+    HOL type variables range over nonempty carriers; FCP index variables become
+    `Nat` widths with a `NeZero` discharge.
+    """
+    tvs = tyvars(head_ty, [])
+    for p in params:
+        tyvars(type_of(p), tvs)
+    width_tvs = fcp_tyvars(head_ty, [])
+    for p in params:
+        fcp_tyvars(type_of(p), width_tvs)
+    return ''.join(
+        f'{{{tyvar_name(v)} : Nat}} [NeZero {tyvar_name(v)}] ' if v in width_tvs
+        else f'{{{tyvar_name(v)} : Type}} [Nonempty {tyvar_name(v)}] '
+        for v in tvs)
+
+
 def render_multi(r: Renderer, lean_name: str, out) -> tuple[str, bool]:
     """A `match` for a multi-clause definition with one parameter.
 
@@ -1103,9 +1113,10 @@ def render_multi(r: Renderer, lean_name: str, out) -> tuple[str, bool]:
     clause, which is unreachable at every model call site.
 
     The rendering is only justified when every clause defines the same
-    one-argument constant and the equation binds every width or type variable
-    of its type; a later clause with more parameters, a different head
-    constant, or an unbound variable is reported instead of emitted.
+    one-argument constant; a later clause with more parameters or a different
+    head constant is reported instead of emitted.  The definition's width and
+    type variables are bound by the same `type_binders` the single-clause path
+    emits.
     """
     f0, params0, _ = out[0]
     if len(params0) != 1:
@@ -1136,18 +1147,7 @@ def render_multi(r: Renderer, lean_name: str, out) -> tuple[str, bool]:
         arms.append(f'| {pat} => {body}')
     if numerals:
         arms.append(f'| _ => {r.tm(out[0][2], env)}')
-    # The single-clause path emits these binders; without them a clause over a
-    # width or type variable would be ill-typed.
-    tvs = tyvars(f0.ty, [])
-    for f, params, _ in out:
-        tyvars(type_of(params[0]), tvs)
-    width_tvs = fcp_tyvars(f0.ty, [])
-    for f, params, _ in out:
-        fcp_tyvars(type_of(params[0]), width_tvs)
-    tv_binders = ''.join(
-        f'{{{tyvar_name(v)} : Nat}} [NeZero {tyvar_name(v)}] ' if v in width_tvs
-        else f'{{{tyvar_name(v)} : Type}} [Nonempty {tyvar_name(v)}] '
-        for v in tvs)
+    tv_binders = type_binders(f0.ty, [params[0] for _, params, _ in out])
     defined_name = r.defined.get((f0.thy, f0.name)) if isinstance(f0, Const) else None
     recursive = defined_name is not None and any(
         re.search(r'(?<![A-Za-z0-9_.«])' + re.escape(defined_name) + r'(?![A-Za-z0-9_»])', b)
@@ -1207,17 +1207,7 @@ def render_def(r: Renderer, lean_name: str, term) -> tuple[str, bool]:
     binders = [re.sub(r'^\(([^ ]+) :', lambda m: '(' + unused(m.group(1), body) + ' :', b) for b in binders]
     recursive = isinstance(f, Const) and (f.thy, f.name) in r.defined and \
         re.search(r'(?<![A-Za-z0-9_.«])' + re.escape(r.defined[(f.thy, f.name)]) + r'(?![A-Za-z0-9_»])', body) is not None
-    tvs = tyvars(type_of(lhs), [])
-    for p in params:
-        tyvars(type_of(p), tvs)
-    # HOL type variables range over nonempty carriers. No chosen Lean default is required.
-    width_tvs = fcp_tyvars(type_of(lhs), [])
-    for p in params:
-        fcp_tyvars(type_of(p), width_tvs)
-    tv_binders = ''.join(
-        f'{{{tyvar_name(v)} : Nat}} [NeZero {tyvar_name(v)}] ' if v in width_tvs
-        else f'{{{tyvar_name(v)} : Type}} [Nonempty {tyvar_name(v)}] '
-        for v in tvs)
+    tv_binders = type_binders(type_of(lhs), params)
     head = f'def {lean_name} ' + tv_binders + ' '.join(binders) + f' : {result_ty} :=\n  {body}'
     return head, recursive
 

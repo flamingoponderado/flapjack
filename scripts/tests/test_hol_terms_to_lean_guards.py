@@ -17,7 +17,6 @@ Comb = M['Comb']
 Ty = M['Ty']
 Renderer = M['Renderer']
 Unrenderable = M['Unrenderable']
-fresh_binder = M['fresh_binder']
 insert_predicate = M['insert_predicate']
 symbolic_field_bounds = M['symbolic_field_bounds']
 render_multi = M['render_multi']
@@ -67,6 +66,14 @@ class InsertTest(unittest.TestCase):
         self.assertEqual(self.render(Var("x'", NUM), Var('s', NUM), ['x_', 's']),
                          '(fun x => x = x_ || s x)')
 
+    def test_free_variable_of_a_different_type_is_still_taken(self):
+        # HOL variables are (name, type) pairs: binding `x : num` does not bind
+        # a free `x : word64`, so the predicate binder must not reuse `x`.
+        xw = Var('x', word(64))
+        lam = Lam(Var('x', NUM), xw)
+        self.assertEqual(self.render(lam, Var('s', NUM), ['(fun x => x)', 's']),
+                         "(fun x' => x' = (fun x => x) || s x')")
+
     def test_bound_x_does_not_force_a_rename(self):
         # `(fun x => x) INSERT s` binds its own `x`; the predicate binder may
         # stay `x` because no free variable named `x` can be captured.
@@ -74,8 +81,6 @@ class InsertTest(unittest.TestCase):
                                      ['(fun x => x)', 's']),
                          '(fun x => x = (fun x => x) || s x)')
 
-    def test_fresh_binder_leaves_unrelated_names_alone(self):
-        self.assertEqual(fresh_binder('x', ['y', 's']), 'x')
 
 
 class BitFieldInsertBoundsTest(unittest.TestCase):
