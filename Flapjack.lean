@@ -1297,6 +1297,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Identity
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Declarations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvalInstall
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
 import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations

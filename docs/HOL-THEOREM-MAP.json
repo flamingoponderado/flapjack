@@ -1,4 +1,69 @@
 [
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_IMP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/EvaluateAppend.lean",
+  "lean_name": "evaluateImpLength",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original in clos_op_lift_proof_probe.out: Successful evaluation returns one value per expression, with the original length equality direction. The state retains independent compiler and FFI carrier types. The imported state uses canonical refs and code finite maps with the local roundtrip witness; the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_SING",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/EvaluateAppend.lean",
+  "lean_name": "evaluateSing",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original in clos_op_lift_proof_probe.out: Successful singleton evaluation returns an existential singleton value list. The state retains independent compiler and FFI carrier types. The imported state uses canonical refs and code finite maps with the local roundtrip witness; the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_CONS",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/EvaluateAppend.lean",
+  "lean_name": "evaluateCons",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original in clos_op_lift_proof_probe.out: The head and tail are sequenced with the original error propagation and HOL HD on the head value list. The state retains independent compiler and FFI carrier types. The imported state uses canonical refs and code finite maps with the local roundtrip witness; the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/EvaluateAppend.lean",
+  "lean_name": "evaluateAppend",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original in clos_op_lift_proof_probe.out: The original nested cases propagate errors and concatenate successful values while threading the exact intermediate state. The state retains independent compiler and FFI carrier types. The imported state uses canonical refs and code finite maps with the local roundtrip witness; the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_SNOC",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/EvaluateAppend.lean",
+  "lean_name": "evaluateSnoc",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original in clos_op_lift_proof_probe.out: HOL SNOC is translated to append of a singleton, preserving the original sequencing cases. The state retains independent compiler and FFI carrier types. The imported state uses canonical refs and code finite maps with the local roundtrip witness; the clocked evaluator inherits the rational-cut real representation."
+},
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "dont_lift_Rval",
