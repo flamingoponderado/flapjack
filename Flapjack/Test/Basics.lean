@@ -18,7 +18,6 @@ import Flapjack.Word
 import Flapjack.RiscV.Backend
 import Flapjack.RiscV.Calls
 import Flapjack.RiscV.Link
-import Flapjack.WordSemantics
 
 namespace Flapjack
 
@@ -29,14 +28,6 @@ example : RiscV.Architecture.width .rv32i = 32 := by
 
 example : RiscV.accessAligned .read (0 : RiscV.Word 32) 4 = none := by
   decide
-
-example : RiscV.writeRegister (RiscV.zeroState 32) 0 (7 : RiscV.Word 32) =
-    RiscV.zeroState 32 := by
-  simp [RiscV.writeRegister]
-
-example (state : RiscV.State 32) (source : Fin 32) (immediate : RiscV.Word 32) :
-    (RiscV.execute state (.addi 0 source immediate)).pc = state.pc + 4 := by
-  simp [RiscV.execute, RiscV.nextPc, RiscV.writeRegister]
 
 def sampleShape : Shape := .comb [.one, .comb [.one, .one]]
 

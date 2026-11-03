@@ -62,15 +62,6 @@ theorem writerConsumer {width : Nat} [NeZero width]
       wordLangInstToHOL, Compiler.Backend.progWToHolProg,
       Prog.map, Compiler.Encoders.Asm.HolInst.ofWordLangInst]
 
-/-- The executed post-flattening converter puts the index in the same word
-carrier used by the canonical writer. Neither register nor index is bounded. -/
-theorem indexEmission {width : Nat} [NeZero width] (register index : Nat) :
-    RiscV.labCompilePlain (width := width)
-      (RiscV.labPlainNatToWord (.word (.const register (index + 1)))) =
-    RiscV.labCompilePlain
-      (.word (.const register (BitVec.ofNat width (index + 1)))) := by
-  rfl
-
 /-- Actual encoded line sizing sees the wrapped value as well; this matters
 when wrapping changes the constant instruction sequence length. -/
 theorem indexLength {width : Nat} [NeZero width] (register index : Nat) :

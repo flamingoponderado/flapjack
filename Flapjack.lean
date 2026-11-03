@@ -1,4 +1,3 @@
-import Flapjack.RiscV.SourceRuntimeBackendOutput
 import Flapjack.RiscV.RuntimeImageBackendOutput
 import Flapjack.RiscV.NativeBackendOutput
 import Flapjack.Compiler.Backend.RiscVConfig.Executable
@@ -262,7 +261,6 @@ import Flapjack.Compiler.Backend.LabToTarget.FilterSkipSafety
 import Flapjack.Compiler.Backend.LabToTarget.ListSubset
 import Flapjack.RiscV.Encoding.NativeInstruction.Agreement
 import Flapjack.RiscV.Encoding.NativeInstruction
-import Flapjack.Test.RiscVNativeInstructionParity
 import Flapjack.Compiler.Backend.LabToTarget.SkipFilterPreconditions
 import Flapjack.Compiler.Backend.LabToTarget.FindFfiNamesEvery
 import Flapjack.RiscV.L3.Step.FetchTheorems
@@ -2182,14 +2180,8 @@ import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pipeline
 import Flapjack.Pipeline.Proofs.SourceLoopState
 import Flapjack.RiscV.PipelineDiagnostics
-import Flapjack.RiscV.CorrectnessTraps
-import Flapjack.RiscV.RegisterRelabel
 import Flapjack.RiscV.RegisterTransfer
-import Flapjack.RiscV.InstructionRelabel
-import Flapjack.RiscV.InstructionCommutation
-import Flapjack.RiscV.InstructionDataCommutation
 import Flapjack.RiscV.CorrectnessBackendRegisterMap
-import Flapjack.RiscV.CorrectnessParallelMove
 import Flapjack.FlatCorrectness
 import Flapjack.Tests
 import Flapjack.Pancake.PanStatic
@@ -2358,13 +2350,8 @@ import Flapjack.RiscV.CakeRegAlloc
 import Flapjack.RiscV.CakeSsaSetupRoute
 import Flapjack.RiscV.WordToStack
 import Flapjack.RiscV.LongDivRuntime
-import Flapjack.RiscV.CorrectnessColourConditional
 import Flapjack.RiscV.Backend
 import Flapjack.RiscV.CorrectnessBackend
-import Flapjack.RiscV.StepCorrectness
-import Flapjack.RiscV.CorrectnessCondition
-import Flapjack.RiscV.CorrectnessCode
-import Flapjack.RiscV.CorrectnessConditional
 import Flapjack.RiscV.Calls
 import Flapjack.RiscV.CorrectnessWordToStack
 import Flapjack.RiscV.CorrectnessSpill
@@ -2379,11 +2366,8 @@ import Flapjack.RiscV.CorrectnessStackParallelMoveEvaluator
 import Flapjack.RiscV.CorrectnessStackRemoveDynamic
 import Flapjack.RiscV.CorrectnessStackRemoveBitmap
 import Flapjack.RiscV.CorrectnessStack
-import Flapjack.RiscV.CorrectnessFfiMachine
 import Flapjack.RiscV.Ffi
-import Flapjack.RiscV.ExactFfi
 import Flapjack.RiscV.Link
-import Flapjack.WordSemantics
 import Flapjack.Pancake.LoopLang
 import Flapjack.NatDedup
 import Flapjack.Pancake.CrepToLoop

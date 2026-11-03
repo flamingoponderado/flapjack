@@ -21,11 +21,6 @@ example :
       .mustTerminate (.assign 7 (.var 6)) := by
   simp [wordApplyColour, wordApplyColourExp]
 
-example [NeZero 64] (state : State 64) (program : WordProg (Word 64)) :
-    RiscV.evalWordProg state (.mustTerminate program) =
-      RiscV.evalWordProg state program := by
-  simp [RiscV.evalWordProg]
-
 example [BEq Nat] (config : WordStackConfig) (program : WordProg Nat) :
     wordToStackProgNat config (.mustTerminate program) =
       wordToStackProgNat config program := by

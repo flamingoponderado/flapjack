@@ -31,42 +31,6 @@ def project (width : Nat) : StackProg Nat → Option (StackProg (BitVec width))
       some (.inst (.arith (.shift operator destination left (.reg right))))
   | _ => none
 
-/-- Numeric bound on the macro's own Nat field, independently of the shared
-word-payload invariant, retains the exact constant supplied to the assembler. -/
-theorem const_emission {width : Nat} [NeZero width] (destination value : Nat)
-    (hvalue : value < 2 ^ width) :
-    labCompilePlain (width := width) (.const destination value) =
-      labCompilePlain (.word (.const destination (BitVec.ofNat width value))) := by
-  cases hd : registerOfNat destination <;>
-    by_cases hv : value < 2 ^ 11 <;>
-    simp [labCompilePlain, labRegisterOfNat_portToStack_all,
-      portZeroRegister, registerOfNat, BitVec.toNat_ofNat,
-      Nat.mod_eq_of_lt hvalue, labConstInstructions, hv]
-
-/-- All register conversion failures are retained, without a success premise. -/
-theorem arith_emission {width : Nat} [NeZero width]
-    (operator : BinOp) (destination left right : Nat) :
-    labCompilePlain (width := width) (.arith operator destination left right) =
-      labCompilePlain (.word (.arith (.binOp operator destination left (.reg right)))) := by
-  cases hd : registerOfNat destination <;>
-    cases hl : registerOfNat left <;>
-    cases hr : registerOfNat right <;> cases operator <;>
-    simp [labCompilePlain, labBinOpInstruction, wordArithToInstructions,
-      wordArithToInstruction, labRegisterOfNat_portToStack_all, hd, hl, hr] <;> rfl
-
-/-- Variable ROR retains the reserved-register rejection and all five emitted
-instructions; ordinary shifts retain both register errors and instructions. -/
-theorem shift_emission {width : Nat} [NeZero width]
-    (operator : Shift) (destination left right : Nat) :
-    labCompilePlain (width := width) (.shift operator destination left right) =
-      labCompilePlain (.word (.arith (.shift operator destination left (.reg right)))) := by
-  cases hd : registerOfNat destination <;>
-    cases hl : registerOfNat left <;>
-    cases hr : registerOfNat right <;> cases operator <;>
-    simp [labCompilePlain, labShiftInstructions, wordArithToInstructions,
-      wordArithToInstruction, labRegisterOfNat_portToStack_all,
-      portZeroRegister, Bool.or_assoc, hd, hl, hr]
-
 /-- Exact leaf lengths, needed before replacing any label-positioning input. -/
 theorem const_length {width : Nat} [NeZero width] (destination value : Nat)
     (hvalue : value < 2 ^ width) :

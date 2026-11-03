@@ -120,18 +120,6 @@ example :
   decide +kernel
 
 example :
-    let state : State 8 :=
-      writeRegister
-        (writeRegister
-          (writeRegister (zeroState 8) 29 255) 28 1) 27 1
-    let final := executeInstructions state
-      [.sltu 31 0 27, .add 27 29 28, .sltu 28 27 28,
-        .add 27 27 31, .sltu 31 27 31, .or 28 28 31]
-    (readRegister final 27, readRegister final 28) =
-      (BitVec.ofNat 8 1, BitVec.ofNat 8 1) := by
-  decide
-
-example :
     let config : WordStackConfig :=
       { locations := [(0, .stack 2), (1, .stack 3),
           (2, .stack 4), (3, .stack 5), (4, .stack 6)],
