@@ -5256,6 +5256,179 @@ theorem arm8Ast_store_far (dest base : Nat) (off : BitVec 64)
   rw [if_pos (arm8FarCond off hnsx hfar)]
   simp [Bool.not_not]
 
+/-- The far branch condition of the three `arm8_load_store_ast` variants: they
+ test the same predicate, with the offset shifted by the log2 of the transfer
+ size (3 for the eight-byte form, 2 for four bytes, 1 for two). -/
+theorem arm8FarCondOf (off : BitVec 64) (shift : BitVec 64)
+    (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)))
+    (hfar : off.msb = true ∨
+      ¬(off = (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> shift).toNat)) <<< shift)) :
+    (decide (off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) &&
+      (!!off.msb || decide (off ≠
+        (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> shift).toNat)) <<< shift))) = true := by
+  have h1 : decide (off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) = true :=
+    decide_eq_true hnsx
+  have h2 : (!!off.msb || decide (off ≠
+      (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> shift).toNat)) <<< shift)) = true := by
+    rcases hfar with h | h
+    · rw [h]; rfl
+    · have h' : decide (off ≠
+          (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> shift).toNat)) <<< shift) = true :=
+        decide_eq_true h
+      rw [h']
+      cases hb : (!!off.msb) <;> rfl
+  rw [h1, h2]
+  rfl
+
+/-- `arm8_load_store_ast32`'s two-instruction branch for `.mem .load32`: the
+ same `AddSubImmediate@64` into scratch register 26 followed by a
+ `LoadStoreImmediate@32` against it. -/
+theorem arm8Ast_load_far32 (dest base : Nat) (off : BitVec 64)
+    (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)))
+    (hfar : off.msb = true ∨
+      ¬(off = (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> 2).toNat)) <<< 2)) :
+    arm8Ast (.inst (.mem .load32 dest (.addr base off))) =
+      [.Data (.«AddSubImmediate@64»
+         (1, off.msb, false,
+          (if !off.msb then off - (0xFF : BitVec 64) else -off - (0x100 : BitVec 64)),
+          BitVec.ofNat 5 base, 26)),
+       .LoadStore (.«LoadStoreImmediate@32»
+         (BitVec.ofNat 32 2, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+          false, !off.msb,
+          (if !off.msb then (0xFF : BitVec 64) else -(0x100 : BitVec 64)),
+          26, BitVec.ofNat 5 dest))] := by
+  simp only [arm8Ast, arm8LoadStoreAst32]
+  rw [if_pos (arm8FarCondOf off 2 hnsx hfar)]
+  simp [Bool.not_not]
+
+/-- `arm8_load_store_ast32`'s two-instruction branch for `.mem .store32`. -/
+theorem arm8Ast_store_far32 (dest base : Nat) (off : BitVec 64)
+    (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)))
+    (hfar : off.msb = true ∨
+      ¬(off = (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> 2).toNat)) <<< 2)) :
+    arm8Ast (.inst (.mem .store32 dest (.addr base off))) =
+      [.Data (.«AddSubImmediate@64»
+         (1, off.msb, false,
+          (if !off.msb then off - (0xFF : BitVec 64) else -off - (0x100 : BitVec 64)),
+          BitVec.ofNat 5 base, 26)),
+       .LoadStore (.«LoadStoreImmediate@32»
+         (BitVec.ofNat 32 2, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+          false, !off.msb,
+          (if !off.msb then (0xFF : BitVec 64) else -(0x100 : BitVec 64)),
+          26, BitVec.ofNat 5 dest))] := by
+  simp only [arm8Ast, arm8LoadStoreAst32]
+  rw [if_pos (arm8FarCondOf off 2 hnsx hfar)]
+  simp [Bool.not_not]
+
+/-- `arm8_load_store_ast16`'s two-instruction branch for `.mem .load16`. -/
+theorem arm8Ast_load_far16 (dest base : Nat) (off : BitVec 64)
+    (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)))
+    (hfar : off.msb = true ∨
+      ¬(off = (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> 1).toNat)) <<< 1)) :
+    arm8Ast (.inst (.mem .load16 dest (.addr base off))) =
+      [.Data (.«AddSubImmediate@64»
+         (1, off.msb, false,
+          (if !off.msb then off - (0xFF : BitVec 64) else -off - (0x100 : BitVec 64)),
+          BitVec.ofNat 5 base, 26)),
+       .LoadStore (.«LoadStoreImmediate@16»
+         (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+          false, !off.msb,
+          (if !off.msb then (0xFF : BitVec 64) else -(0x100 : BitVec 64)),
+          26, BitVec.ofNat 5 dest))] := by
+  simp only [arm8Ast, arm8LoadStoreAst16]
+  rw [if_pos (arm8FarCondOf off 1 hnsx hfar)]
+  simp [Bool.not_not]
+
+/-- `arm8_load_store_ast16`'s two-instruction branch for `.mem .store16`. -/
+theorem arm8Ast_store_far16 (dest base : Nat) (off : BitVec 64)
+    (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)))
+    (hfar : off.msb = true ∨
+      ¬(off = (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> 1).toNat)) <<< 1)) :
+    arm8Ast (.inst (.mem .store16 dest (.addr base off))) =
+      [.Data (.«AddSubImmediate@64»
+         (1, off.msb, false,
+          (if !off.msb then off - (0xFF : BitVec 64) else -off - (0x100 : BitVec 64)),
+          BitVec.ofNat 5 base, 26)),
+       .LoadStore (.«LoadStoreImmediate@16»
+         (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+          false, !off.msb,
+          (if !off.msb then (0xFF : BitVec 64) else -(0x100 : BitVec 64)),
+          26, BitVec.ofNat 5 dest))] := by
+  simp only [arm8Ast, arm8LoadStoreAst16]
+  rw [if_pos (arm8FarCondOf off 1 hnsx hfar)]
+  simp [Bool.not_not]
+
+/-- The four-byte `Mem` pair at an address whose bytes agree with the source
+ (Flapjack infrastructure; the four-byte analogue of `arm8Mem_eight_pair`). -/
+theorem arm8Mem_four_pair (ms : arm8_state) (s : AsmState 64) (address : BitVec 64)
+    (hal : Aligned (TN := 64) (address, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
+    (hbe : s.be = false)
+    (hmem : ∀ i, i < 4 →
+      ms.MEM (address + BitVec.ofNat 64 i) = s.mem (address + BitVec.ofNat 64 i)) :
+    Mem (TN := 32) (address, (4, AccType.AccType_NORMAL)) ms =
+      (BitVec.setWidth 32 (readMemWord (resultWidth := 64) address 4 s).1, ms) := by
+  have hp := arm8Mem_four_of_bytes ms address s.mem hmem hal he0 hel
+  have hv := arm8Mem_four_eq_readMemWord ms s address hal he0 hel hbe hmem
+  rw [hp] at hv
+  have h32 : holV2w 32 (holW2v (s.mem (address + BitVec.ofNat 64 3)) ++
+      (holW2v (s.mem (address + BitVec.ofNat 64 2)) ++
+        (holW2v (s.mem (address + BitVec.ofNat 64 1)) ++ holW2v (s.mem address)))) =
+      BitVec.setWidth 32 (readMemWord (resultWidth := 64) address 4 s).1 := by
+    have := congrArg (BitVec.setWidth 32) hv
+    simpa using this
+  rw [hp]
+  exact Prod.ext h32 rfl
+
+/-- The two-byte `Mem` pair at an address whose bytes agree with the source. -/
+theorem arm8Mem_two_pair (ms : arm8_state) (s : AsmState 64) (address : BitVec 64)
+    (hal : Aligned (TN := 64) (address, 2) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
+    (hbe : s.be = false)
+    (hmem : ∀ i, i < 2 →
+      ms.MEM (address + BitVec.ofNat 64 i) = s.mem (address + BitVec.ofNat 64 i)) :
+    Mem (TN := 16) (address, (2, AccType.AccType_NORMAL)) ms =
+      (BitVec.setWidth 16 (readMemWord (resultWidth := 64) address 2 s).1, ms) := by
+  have hp := arm8Mem_two_of_bytes ms address s.mem hmem hal he0 hel
+  have hv := arm8Mem_two_eq_readMemWord ms s address hal he0 hel hbe hmem
+  rw [hp] at hv
+  have h16 : holV2w 16 (holW2v (s.mem (address + BitVec.ofNat 64 1)) ++
+      holW2v (s.mem address)) =
+      BitVec.setWidth 16 (readMemWord (resultWidth := 64) address 2 s).1 := by
+    have := congrArg (BitVec.setWidth 16) hv
+    simpa using this
+  rw [hp]
+  exact Prod.ext h16 rfl
+
+/-- The L3 four-byte write agrees on the source domain across agreeing states
+ (`arm8WriteMem_four` plus `writeMemN_congr`). -/
+theorem arm8WriteMem_four_congr {d : BitVec 64 → Prop} (s t : arm8_state)
+    (hmem : ∀ a, d a → s.MEM a = t.MEM a)
+    (address : BitVec 64) (value : BitVec 32) (acctype : AccType)
+    (hal : Aligned (TN := 64) (address, 4) = true)
+    (he0 : s.SCTLR_EL1.E0E = false) (hel : s.PSTATE.EL = (0 : BitVec 2))
+    (he0t : t.SCTLR_EL1.E0E = false) (helt : t.PSTATE.EL = (0 : BitVec 2)) :
+    ∀ a, d a → («write'Mem» (TN := 32) (value, (address, (4, acctype))) s).MEM a =
+      («write'Mem» (TN := 32) (value, (address, (4, acctype))) t).MEM a := by
+  intro a ha
+  rw [arm8WriteMem_four s address value acctype hal he0 hel a,
+    arm8WriteMem_four t address value acctype hal he0t helt a]
+  exact writeMemN_congr hmem 4 address (BitVec.setWidth 64 value) a ha
+
+/-- The L3 two-byte write agrees on the source domain across agreeing states. -/
+theorem arm8WriteMem_two_congr {d : BitVec 64 → Prop} (s t : arm8_state)
+    (hmem : ∀ a, d a → s.MEM a = t.MEM a)
+    (address : BitVec 64) (value : BitVec 16) (acctype : AccType)
+    (hal : Aligned (TN := 64) (address, 2) = true)
+    (he0 : s.SCTLR_EL1.E0E = false) (hel : s.PSTATE.EL = (0 : BitVec 2))
+    (he0t : t.SCTLR_EL1.E0E = false) (helt : t.PSTATE.EL = (0 : BitVec 2)) :
+    ∀ a, d a → («write'Mem» (TN := 16) (value, (address, (2, acctype))) s).MEM a =
+      («write'Mem» (TN := 16) (value, (address, (2, acctype))) t).MEM a := by
+  intro a ha
+  rw [arm8WriteMem_two s address value acctype hal he0 hel a,
+    arm8WriteMem_two t address value acctype hal he0t helt a]
+  exact writeMemN_congr hmem 2 address (BitVec.setWidth 64 value) a ha
+
 
 /-! ## The far-offset case theorems
 
