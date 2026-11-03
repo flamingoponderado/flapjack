@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosTicks.Source
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
 
 /-! Closure annotation invariance for tick removal. -/
 namespace Flapjack.Compiler.Backend.ClosTicks
@@ -37,6 +38,42 @@ theorem removeFuns_varsNone (fns : List (Nat × Exp)) : fnVarsNoneFuns (removeFu
   | cons pair fns =>
     cases pair with
     | mk arity body => simp [removeFuns, fnVarsNoneFuns, removeSing_varsNone body, removeFuns_varsNone fns]
+termination_by sizeOf fns
+decreasing_by all_goals subst_vars; simp_wf <;> omega
+end
+
+mutual
+/-- Tick removal preserves the location condition on one expression. -/
+theorem removeSing_locations (e : Exp) : fnLocationSomeExp (removeSing e) ↔ fnLocationSomeExp e := by
+  cases e with
+  | var t n => simp [removeSing, fnLocationSomeExp]
+  | ifThenElse t x y z => simp [removeSing, fnLocationSomeExp, removeSing_locations x, removeSing_locations y, removeSing_locations z]
+  | «let» t xs body => simp [removeSing, fnLocationSomeExp, removeList_locations xs, removeSing_locations body]
+  | raise t x => simp [removeSing, fnLocationSomeExp, removeSing_locations x]
+  | handle t x y => simp [removeSing, fnLocationSomeExp, removeSing_locations x, removeSing_locations y]
+  | tick t x => simp [removeSing, fnLocationSomeExp, removeSing_locations x]
+  | call t ticks dest xs => simp [removeSing, fnLocationSomeExp, removeList_locations xs]
+  | app t loc x xs => simp [removeSing, fnLocationSomeExp, removeSing_locations x, removeList_locations xs]
+  | fn name loc vs arity body => simp [removeSing, fnLocationSomeExp, removeSing_locations body]
+  | letrec names loc vs fns body => simp [removeSing, fnLocationSomeExp, removeFuns_locations fns, removeSing_locations body]
+  | op t op xs => simp [removeSing, fnLocationSomeExp, removeList_locations xs]
+termination_by sizeOf e
+
+/-- Tick removal preserves present function locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_every_Fn_SOME"]
+theorem removeList_locations (xs : List Exp) : everyFnLocationSome (removeList xs) ↔ everyFnLocationSome xs := by
+  cases xs with
+  | nil => simp [removeList, everyFnLocationSome]
+  | cons x xs => simp [removeList, everyFnLocationSome, removeSing_locations x, removeList_locations xs]
+termination_by sizeOf xs
+
+/-- The same location invariant for recursive function bundles. -/
+theorem removeFuns_locations (fns : List (Nat × Exp)) : fnLocationSomeFuns (removeFuns fns) ↔ fnLocationSomeFuns fns := by
+  cases fns with
+  | nil => simp [removeFuns, fnLocationSomeFuns]
+  | cons pair fns =>
+    cases pair with
+    | mk arity body => simp [removeFuns, fnLocationSomeFuns, removeSing_locations body, removeFuns_locations fns]
 termination_by sizeOf fns
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 end

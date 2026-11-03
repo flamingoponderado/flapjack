@@ -45,8 +45,7 @@ theorem known_pipeline_prepared_semantics {C F : Type} (ffi : HolFfiState F)
     (compile : compilePrepared? original current program (ClosAnnotate.compile (chainExps start optimizedOutput)) =
       some (output, compiled, names))
     (distinct : (compiled.map Prod.fst).Nodup)
-    (locations : ∀ name arity body, (name, arity, body) ∈ chainExps start optimizedOutput →
-      everyFnLocationSome [body])
+    (optimizedLocations : everyFnLocationSome (optimized.map Prod.fst))
     (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
     (initialBelow : ∀ location ∈ compiled.map Prod.fst, location < boundary 0)
     (futureDistinct : ∀ i, ((compileInc maxApp
@@ -54,8 +53,9 @@ theorem known_pipeline_prepared_semantics {C F : Type} (ffi : HolFfiState F)
     (ranges : ∀ i location, location ∈ (compileInc maxApp
       (ClosAnnotate.compileInc (knownClosureFuture knownConfig oracle i).2)).map Prod.fst →
       boundary i ≤ location ∧ location < boundary (i + 1))
-    (futureLocations : ∀ i, everyFnLocationSome (knownClosureFuture knownConfig oracle i).2.1 ∧
-      ∀ entry ∈ (knownClosureFuture knownConfig oracle i).2.2, everyFnLocationSome [entry.2.2]) :
+    (knownFutureLocations : ∀ i, everyFnLocationSome
+      (stateCo (ClosKnown.compileInc knownConfig)
+        (pureCo fvsInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) i).2.1) :
     BvlSem.semantics ffi (sptFromAList compiled)
       (pureCo (compileInc maxApp) ∘ pureCo ClosAnnotate.compileInc ∘ knownClosureFuture knownConfig oracle)
       targetCompiler output.start =
@@ -74,6 +74,23 @@ theorem known_pipeline_prepared_semantics {C F : Type} (ffi : HolFfiState F)
       (pureCo ClosAnnotate.compileInc ∘ knownClosureFuture knownConfig oracle)
       (pureCc (compileInc current.maxApp) targetCompiler) [.call .none 0 current.start []] ≠ .fail := by
     simpa [maxAppEq, startEq, knownClosureFuture] using chainEq ▸ nonfail
+  have outputLocations : everyFnLocationSome optimizedOutput := by
+    have outputEq := Option.some.inj ((ticks_letop_bounded fuel (optimized.map Prod.fst)).symm.trans optRun)
+    rw [← outputEq]
+    exact (ClosLetop.compileList_locations _).mpr ((ClosTicks.removeList_locations _).mpr optimizedLocations)
+  have locations : ∀ name arity body, (name, arity, body) ∈ chainExps start optimizedOutput →
+      everyFnLocationSome [body] := by
+    have chain := (chainExps_annotations start optimizedOutput).1.mpr outputLocations
+    intro name arity body member
+    apply ClosNumber.locations_member _ body chain
+    exact List.mem_map.mpr ⟨(name, arity, body), member, rfl⟩
+  have futureLocations : ∀ i, everyFnLocationSome (knownClosureFuture knownConfig oracle i).2.1 ∧
+      ∀ entry ∈ (knownClosureFuture knownConfig oracle i).2.2, everyFnLocationSome [entry.2.2] := by
+    intro i
+    constructor
+    · simpa [knownClosureFuture, pureCo, letopInc, ticksInc, ClosLetop.compileInc, ClosTicks.compileInc] using
+        (ClosLetop.compileList_locations _).mpr ((ClosTicks.removeList_locations _).mpr (knownFutureLocations i))
+    · simp [knownClosureFuture, pureCo, letopInc, ClosLetop.compileInc]
   have compiledEq := compilePrepared_annotated_semantics ffi original current output program
     (chainExps start optimizedOutput) compiled names (knownClosureFuture knownConfig oracle)
     targetCompiler boundary compile chainNonfail distinct locations monotone initialBelow

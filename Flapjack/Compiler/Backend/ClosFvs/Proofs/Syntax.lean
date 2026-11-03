@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosFvs.Source
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Production
@@ -53,6 +54,56 @@ theorem removeFuns_varsNone (functions : List (Nat × Exp)) (count captured : Na
     cases first with
     | mk arity body =>
       simp [removeFuns, fnVarsNoneFuns, removeSing_varsNone body, removeFuns_varsNone rest]
+termination_by sizeOf functions
+decreasing_by all_goals subst_vars; simp_wf <;> omega
+
+end
+
+mutual
+
+/-- Free-variable cleanup preserves present function locations on an
+expression. This helper has no standalone HOL declaration. -/
+theorem removeSing_locations (expression : Exp) (bound : Nat) :
+    fnLocationSomeExp (removeSing bound expression) ↔ fnLocationSomeExp expression := by
+  cases expression with
+  | var trace n => simp [removeSing, fnLocationSomeExp]; split <;> simp [fnLocationSomeExp, everyFnLocationSome]
+  | ifThenElse trace condition yes no =>
+    simp [removeSing, fnLocationSomeExp, removeSing_locations condition, removeSing_locations yes, removeSing_locations no]
+  | «let» trace bindings body =>
+    simp [removeSing, fnLocationSomeExp, removeList_locations bindings, removeSing_locations body]
+  | raise trace body => simp [removeSing, fnLocationSomeExp, removeSing_locations body]
+  | handle trace body handler =>
+    simp [removeSing, fnLocationSomeExp, removeSing_locations body, removeSing_locations handler]
+  | tick trace body => simp [removeSing, fnLocationSomeExp, removeSing_locations body]
+  | call trace ticks location args => simp [removeSing, fnLocationSomeExp, removeList_locations args]
+  | app trace location function args =>
+    simp [removeSing, fnLocationSomeExp, removeSing_locations function, removeList_locations args]
+  | fn name location vars arity body => simp [removeSing, fnLocationSomeExp, removeSing_locations body]
+  | letrec names location vars functions body =>
+    simp [removeSing, fnLocationSomeExp, removeFuns_locations functions, removeSing_locations body]
+  | op trace op args => simp [removeSing, fnLocationSomeExp, removeList_locations args]
+termination_by sizeOf expression
+
+/-- Cleanup preserves present function locations in an expression list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_every_Fn_SOME"]
+theorem removeList_locations (expressions : List Exp) (bound : Nat) :
+    everyFnLocationSome (removeList bound expressions) ↔ everyFnLocationSome expressions := by
+  cases expressions with
+  | nil => simp [removeList, everyFnLocationSome]
+  | cons first rest =>
+    simp [removeList, everyFnLocationSome, removeSing_locations first, removeList_locations rest]
+termination_by sizeOf expressions
+
+/-- The same invariant for recursive function bundles. This helper has no
+standalone HOL declaration. -/
+theorem removeFuns_locations (functions : List (Nat × Exp)) (count captured : Nat) :
+    fnLocationSomeFuns (removeFuns count captured functions) ↔ fnLocationSomeFuns functions := by
+  cases functions with
+  | nil => simp [removeFuns, fnLocationSomeFuns]
+  | cons first rest =>
+    cases first with
+    | mk arity body =>
+      simp [removeFuns, fnLocationSomeFuns, removeSing_locations body, removeFuns_locations rest]
 termination_by sizeOf functions
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 

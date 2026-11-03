@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosLetop.Source
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
 
 /-! Closure annotation invariance for let-operation cleanup. -/
 namespace Flapjack.Compiler.Backend.ClosLetop
@@ -65,6 +66,70 @@ theorem compileFuns_varsNone (fns : List (Nat × Exp)) : fnVarsNoneFuns (compile
   | cons pair fns =>
     cases pair with
     | mk arity body => simp [compileFuns, fnVarsNoneFuns, compileSing_varsNone body, compileFuns_varsNone fns]
+termination_by sizeOf fns
+decreasing_by all_goals subst_vars; simp_wf <;> omega
+end
+
+/-- Recognized variable lists contain no annotated function nodes. -/
+theorem varList_locations {α : Type} (n : Nat) (xs : List Exp) (ys : List α)
+    (h : varList n xs ys = true) : everyFnLocationSome xs := by
+  induction xs generalizing n ys with
+  | nil => simp [everyFnLocationSome]
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp [varList] at h
+    | cons y ys =>
+      cases x <;> simp [varList] at h
+      case var t index =>
+        simp only [everyFnLocationSome, fnLocationSomeExp, true_and]
+        exact ih (n + 1) ys h.2
+
+/-- A recognized operation body has no function locations. -/
+theorem destOp_locations {α : Type} (body : Exp) (args : List α) (op : Op)
+    (h : destOp body args = some op) : fnLocationSomeExp body := by
+  cases body <;> simp [destOp] at h
+  case op trace opn xs =>
+    simpa [fnLocationSomeExp] using varList_locations 0 xs args h.1
+
+mutual
+/-- Let-operation cleanup preserves the condition on one expression. -/
+theorem compileSing_locations (e : Exp) : fnLocationSomeExp (compileSing e) ↔ fnLocationSomeExp e := by
+  cases e with
+  | var t n => simp [compileSing, fnLocationSomeExp]
+  | ifThenElse t x y z => simp [compileSing, fnLocationSomeExp, compileSing_locations x, compileSing_locations y, compileSing_locations z]
+  | «let» t xs body =>
+    simp only [compileSing]
+    cases h : destOp (compileSing body) (compileList xs) with
+    | none => simp [fnLocationSomeExp, compileList_locations xs, compileSing_locations body]
+    | some op =>
+      have bodySafe := destOp_locations _ _ _ h
+      have original := (compileSing_locations body).mp bodySafe
+      simp [fnLocationSomeExp, compileList_locations xs, original]
+  | raise t x => simp [compileSing, fnLocationSomeExp, compileSing_locations x]
+  | handle t x y => simp [compileSing, fnLocationSomeExp, compileSing_locations x, compileSing_locations y]
+  | tick t x => simp [compileSing, fnLocationSomeExp, compileSing_locations x]
+  | call t ticks dest xs => simp [compileSing, fnLocationSomeExp, compileList_locations xs]
+  | app t loc x xs => simp [compileSing, fnLocationSomeExp, compileSing_locations x, compileList_locations xs]
+  | fn name loc vs arity body => simp [compileSing, fnLocationSomeExp, compileSing_locations body]
+  | letrec names loc vs fns body => simp [compileSing, fnLocationSomeExp, compileFuns_locations fns, compileSing_locations body]
+  | op t op xs => simp [compileSing, fnLocationSomeExp, compileList_locations xs]
+termination_by sizeOf e
+
+/-- Let-operation cleanup preserves present function locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "let_op_every_Fn_SOME"]
+theorem compileList_locations (xs : List Exp) : everyFnLocationSome (compileList xs) ↔ everyFnLocationSome xs := by
+  cases xs with
+  | nil => simp [compileList, everyFnLocationSome]
+  | cons x xs => simp [compileList, everyFnLocationSome, compileSing_locations x, compileList_locations xs]
+termination_by sizeOf xs
+
+/-- The same location invariant for recursive function bundles. -/
+theorem compileFuns_locations (fns : List (Nat × Exp)) : fnLocationSomeFuns (compileFuns fns) ↔ fnLocationSomeFuns fns := by
+  cases fns with
+  | nil => simp [compileFuns, fnLocationSomeFuns]
+  | cons pair fns =>
+    cases pair with
+    | mk arity body => simp [compileFuns, fnLocationSomeFuns, compileSing_locations body, compileFuns_locations fns]
 termination_by sizeOf fns
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 end
