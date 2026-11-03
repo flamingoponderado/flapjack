@@ -167,14 +167,25 @@ theorem setTheFlags_reg (b : Bool) (n z c v : Bool) (s : arm8_state) :
     (SetTheFlags (b, (n, (z, (c, v)))) s).REG = s.REG := by
   simp only [SetTheFlags]; split <;> rfl
 
+theorem arm8X_branchHint (n : BitVec 5) (s : arm8_state) :
+    X (TN := 64) n { s with branch_hint := none } = X (TN := 64) n s := rfl
+
 theorem conditionHolds_branchHint (cd : BitVec 4) (s : arm8_state) :
     ConditionHolds cd { s with branch_hint := none } = ConditionHolds cd s := rfl
 
-theorem setTheFlags_eq (b : Bool) (n z c v : Bool) (s : arm8_state) :
-    SetTheFlags (b, (n, (z, (c, v)))) s =
+theorem setTheFlags_eq (b : Bool) (flags : Bool × (Bool × (Bool × Bool)))
+    (s : arm8_state) :
+    SetTheFlags (b, flags) s =
       if b then
-        { s with PSTATE := { s.PSTATE with N := n, Z := z, C := c, V := v } }
+        { s with
+          PSTATE :=
+            { s.PSTATE with
+              N := flags.1,
+              Z := flags.2.1,
+              C := flags.2.2.1,
+              V := flags.2.2.2 } }
       else s := by
+  obtain ⟨n, z, c, v⟩ := flags
   simp only [SetTheFlags]
 
 theorem writeX_branchHint (v : BitVec 64) (n : BitVec 5) (s : arm8_state) :
