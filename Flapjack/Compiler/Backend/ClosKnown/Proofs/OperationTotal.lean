@@ -9,9 +9,5 @@ theorem knownOpFuel_succeeds (fuel : Nat) (op : Op) (args : List ValApprox)
     (globals : Spt ValApprox) : ∃ result, knownOpFuel fuel op args globals = some result := by
   unfold knownOpFuel
   repeat' (first | split | exact ⟨_, rfl⟩)
-  case h_2 =>
-    rename_i op' args' n a tail v old lookup
-    obtain ⟨result, h⟩ := mergeBounded_succeeds fuel old a
-    exact ⟨_, by simp [h]; rfl⟩
 
 end Flapjack.Compiler.Backend.ClosKnown

@@ -254,12 +254,19 @@ ERROR_CASES = {'types_print_sexp_type_error', 'types_explore_parse_error',
                'print_sexp_type_error', 'print_sexp_parse_error', 'hidden_type_shadow', 'hidden_type_compile',
                'hidden_type_unary', 'hidden_type_binary', 'hidden_type_function'}
 
-def run(executable, source, name):
-    process = subprocess.run([str(executable), '--target=riscv', *CASE_ARGS.get(name, [])], input=source.encode('ascii'),
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+def execute(executable, source, name):
+    return subprocess.run([str(executable), '--target=riscv', *CASE_ARGS.get(name, [])], input=source.encode('ascii'),
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+
+
+def observation(process):
     return {'exit_code': process.returncode,
             'stdout_bytes': len(process.stdout), 'stdout_sha256': hashlib.sha256(process.stdout).hexdigest(),
             'stderr_bytes': len(process.stderr), 'stderr_sha256': hashlib.sha256(process.stderr).hexdigest()}
+
+
+def run(executable, source, name):
+    return observation(execute(executable, source, name))
 
 
 def main():
@@ -296,12 +303,19 @@ def main():
         parity.check_pinned_reference(args.check_reference)
     for name, source in CASES.items():
         want = expected['cases'][name]
-        if args.check_reference and run(args.check_reference, source, name) != want:
+        reference = execute(args.check_reference, source, name) if args.check_reference else None
+        if reference is not None and observation(reference) != want:
             raise SystemExit(f'{name}: pinned reference no longer matches its capture')
-        got = run(args.cake, source, name)
+        actual = execute(args.cake, source, name)
+        got = observation(actual)
         if got != want:
             raise SystemExit(f'{name}: output mismatch\nexpected {want}\nactual   {got}')
-        print(f'{name}: complete stdout, stderr and exit status match pinned CakeML', flush=True)
+        if reference is not None:
+            if (actual.returncode, actual.stdout, actual.stderr) != (reference.returncode, reference.stdout, reference.stderr):
+                raise SystemExit(f'{name}: direct output comparison with pinned CakeML failed')
+            print(f'{name}: stdout and stderr bytes and exit status match pinned CakeML', flush=True)
+        else:
+            print(f'{name}: output hashes, lengths and exit status match pinned captures', flush=True)
 
 
 if __name__ == '__main__':

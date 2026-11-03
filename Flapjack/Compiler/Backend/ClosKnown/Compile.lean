@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosKnown.Inline
+import Flapjack.Compiler.Backend.ClosKnown.Merge
 import Flapjack.Compiler.Backend.ClosFvs
 import Flapjack.Compiler.Backend.ClosTicks
 import Flapjack.Compiler.Backend.ClosLetop
@@ -24,6 +25,58 @@ def mergeFuel : Nat → ValApprox → ValApprox → Option ValApprox
   | _ + 1, .int a, .int b => some (if a == b then .int a else .other)
   | _ + 1, _, _ => some .other
 
+/-- Flapjack infrastructure relating the old checked pair traversal to the
+total list helper; there is no separate HOL declaration for the retry. -/
+private theorem mergeListHOL_eq_of_mapM_success (fuel : Nat)
+    (ih : ∀ a b result, mergeFuel fuel a b = some result → mergeHOL a b = result) :
+    ∀ xs ys result, ((xs.zip ys).mapM fun (x, y) => mergeFuel fuel x y) = some result →
+      mergeListHOL xs ys = result := by
+  intro xs
+  induction xs with
+  | nil =>
+    intro ys result h
+    simp at h
+    subst result
+    simp [mergeListHOL]
+  | cons x xs ihxs =>
+    intro ys result h
+    cases ys with
+    | nil =>
+      simp at h
+      subst result
+      simp [mergeListHOL]
+    | cons y ys =>
+      simp only [List.zip_cons_cons, List.mapM_cons, Option.bind_eq_bind] at h
+      cases he : mergeFuel fuel x y with
+      | none => simp [he] at h
+      | some v =>
+        cases ht : (xs.zip ys).mapM (fun (x, y) => mergeFuel fuel x y) with
+        | none => simp [he, ht] at h
+        | some vs =>
+          simp [he, ht] at h
+          subst result
+          simp [mergeListHOL, ih x y v he, ihxs ys vs ht]
+
+/-- Flapjack infrastructure showing preservation of a successful old merge;
+HOL has no fuel-bounded merge to which this theorem could correspond. -/
+theorem mergeHOL_eq_of_success : ∀ fuel a b result,
+    mergeFuel fuel a b = some result → mergeHOL a b = result := by
+  intro fuel
+  induction fuel with
+  | zero => simp [mergeFuel]
+  | succ fuel ih =>
+    intro a b result h
+    cases a <;> cases b <;> simp only [mergeFuel, mergeHOL] at *
+    all_goals try { split at h <;> simp_all }
+    all_goals try { simp_all }
+    case succ.tuple.tuple tag xs tag₂ ys =>
+      split at h
+      · simp_all <;> grind
+      · cases hs : (xs.zip ys).mapM (fun (x, y) => mergeFuel fuel x y) with
+        | none => simp [hs] at h
+        | some out =>
+          have hl := mergeListHOL_eq_of_mapM_success fuel ih xs ys out hs
+          simp_all
 mutual
 /-- Structural fuel bound for one approximation. -/
 def approxBudget : ValApprox → Nat
@@ -40,12 +93,11 @@ termination_by xs => sizeOf xs
 decreasing_by all_goals simp_wf <;> omega
 end
 
-/-- Preserve a successful merge and retry exhausted tuple traversal with a
-structural bound on the first approximation. -/
-def mergeBounded (fuel : Nat) (a b : ValApprox) : Option ValApprox :=
-  match mergeFuel fuel a b with
-  | some result => some result
-  | none => mergeFuel (max fuel (approxBudget a + 1)) a b
+/-- The source merge is total; the fuel parameter is retained for callers of
+this checked interface. `mergeHOL_eq_of_success` proves agreement whenever the
+former fuel-bounded traversal succeeds. -/
+def mergeBounded (_fuel : Nat) (a b : ValApprox) : Option ValApprox :=
+  some (mergeHOL a b)
 
 /-- Propagate approximations through original global and constructor operations. -/
 def knownOpFuel (fuel : Nat) (op : Op) (args : List ValApprox) (globals : Spt ValApprox) :

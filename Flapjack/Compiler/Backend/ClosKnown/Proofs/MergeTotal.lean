@@ -60,17 +60,30 @@ theorem mergeFuel_succeeds (fuel : Nat) (a b : ValApprox) (bound : approxBudget 
 
 /-- The executable merge retry cannot exhaust traversal fuel. -/
 theorem mergeBounded_succeeds (fuel : Nat) (a b : ValApprox) :
-    ∃ result, mergeBounded fuel a b = some result := by
-  cases h : mergeFuel fuel a b with
-  | some result => exact ⟨result, by simp [mergeBounded, h]⟩
+    ∃ result, mergeBounded fuel a b = some result :=
+  ⟨mergeHOL a b, rfl⟩
+
+/-- Every previously successful fuel-bounded result is preserved. This is
+Flapjack infrastructure, with no HOL fuel-bounded counterpart. -/
+theorem mergeBounded_eq_of_success (fuel : Nat) (a b result : ValApprox)
+    (success : mergeFuel fuel a b = some result) : mergeBounded fuel a b = some result := by
+  simp [mergeBounded, mergeHOL_eq_of_success fuel a b result success]
+
+/-- The total source implementation agrees with the former retrying interface
+for every input, including inputs that exhausted the first traversal. This is
+Flapjack infrastructure; HOL has no corresponding fuel-bounded interface. -/
+theorem mergeBounded_eq_previous (fuel : Nat) (a b : ValApprox) :
+    mergeBounded fuel a b =
+      match mergeFuel fuel a b with
+      | some result => some result
+      | none => mergeFuel (max fuel (approxBudget a + 1)) a b := by
+  cases first : mergeFuel fuel a b with
+  | some result =>
+    exact mergeBounded_eq_of_success fuel a b result first
   | none =>
     have bound : approxBudget a < max fuel (approxBudget a + 1) := by omega
     obtain ⟨result, done⟩ := mergeFuel_succeeds (max fuel (approxBudget a + 1)) a b bound
-    exact ⟨result, by simp [mergeBounded, h, done]⟩
-
-/-- Retrying preserves every previously successful merge result. -/
-theorem mergeBounded_eq_of_success (fuel : Nat) (a b result : ValApprox)
-    (success : mergeFuel fuel a b = some result) : mergeBounded fuel a b = some result := by
-  simp [mergeBounded, success]
+    rw [done]
+    exact congrArg some (mergeHOL_eq_of_success _ _ _ _ done)
 
 end Flapjack.Compiler.Backend.ClosKnown

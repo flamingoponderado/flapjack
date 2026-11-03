@@ -1,6 +1,15 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "merge_def",
+    "hol_line": 278,
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Merge.lean",
+    "lean_name": "mergeHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared merge_typed and the original definition at line 278, including both Impossible cases, equal-length and equal-tag tuples, every closure field and the fallback. mergeListHOL_eq_zip checks the source-order pair traversal used for equal-length MAP2. Kernel-checked LawfulBEq instances establish structural equality of the complete closure expression and nested constants. The production wrapper calls this total function; mergeBounded_eq_previous proves agreement with the former fuel-and-retry algorithm under the current equality instance."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
     "hol_name": "clos_gen_noinline_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Compile.lean",
     "lean_name": "closGenNoInline",
