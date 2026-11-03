@@ -33,3 +33,7 @@ val _ = show "fv_max_append_typed=" clos_knownProofTheory.fv_max_append;
 val _ = show "fv_max_less_typed=" clos_knownProofTheory.fv_max_less;
 val _ = show "fv_max_rw_typed=" clos_knownProofTheory.fv_max_rw;
 val _ = show "fv_max_ticks_typed=" clos_knownProofTheory.fv_max_mk_Ticks;
+val _ = show "val_approx_val_rules_typed=" clos_knownProofTheory.val_approx_val_rules;
+val _ = show "val_approx_merge_left_typed=" clos_knownProofTheory.val_approx_val_merge_I_lemma;
+val _ = show "val_approx_merge_typed=" clos_knownProofTheory.val_approx_val_merge_I;
+val _ = show "known_merge_comm_typed=" clos_knownPropsTheory.merge_comm;

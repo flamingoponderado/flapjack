@@ -118,7 +118,7 @@ the original closure-detection
 traversal, the inliner size definitions and their HOL properties, recursive
 closure approximation generation, tick construction, and the
 free-variable and inlining-decision definitions, plus the free-variable-bound
-definition and its source theorems. Regenerate with
+and approximation-to-value relations and their source theorems. Regenerate with
 `HOL_PROBE_ONLY=clos_known_syntax_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `data_to_word_memory_repr_probe.out` captures typed heap representation,

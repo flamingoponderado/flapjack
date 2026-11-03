@@ -1,6 +1,38 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_val",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxValue.lean",
+  "lean_name": "ValApproxVal",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared val_approx_val_rules_typed: all six source rules retain the same constructor types, list relation, recursive closure bounds, HOL EL and side conditions, including the unrestricted Other and absent Impossible case."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_val_merge_I_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxValue.lean",
+  "lean_name": "valApproxValMergeLeft",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared val_approx_merge_left_typed: every value related to the first approximation remains related after merging an arbitrary second approximation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_val_merge_I",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxValue.lean",
+  "lean_name": "valApproxValMerge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared val_approx_merge_typed: either source approximation related to the same value suffices for the merged approximation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "merge_comm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "mergeComm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_merge_comm_typed: source merge is commutative for both complete val_approx carriers. Tuple subvalues are compared recursively and all closure-expression equality tests use the reviewed lawful comparison."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "fv_max_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
   "lean_name": "fvMax",
