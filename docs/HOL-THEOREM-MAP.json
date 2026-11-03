@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "contains_closures_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline.lean",
+    "lean_name": "containsClosuresHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared contains_closures_typed and every list and expression clause, including short-circuit order for conditionals, bindings, handlers and applications and immediate true for functions and recursive bindings. The executable inlining decision now calls this total traversal; containsClosuresFuel_correct proves each successful old fuel traversal has the same result, and containsClosuresBounded_eq_retry proves agreement with the prior complete retry for every input. Typed source capture and Lean checking do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
     "hol_name": "option_val_approx_spt_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
     "lean_name": "optionValApproxSpt",

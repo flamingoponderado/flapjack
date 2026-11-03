@@ -6,6 +6,27 @@ import Flapjack.Compiler.Backend.ClosLang.Budget
 namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosLang
 
+mutual
+/-- The original list-valued closure-presence predicate. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "contains_closures_def"]
+def containsClosuresHOL : List Exp → Bool
+  | [] => false
+  | e :: es => containsClosuresExpHOL e || containsClosuresHOL es
+termination_by es => sizeOf es
+
+/-- Single-expression helper for the source list traversal. -/
+def containsClosuresExpHOL : Exp → Bool
+  | .var .. => false
+  | .fn .. | .letrec .. => true
+  | .ifThenElse _ x y z => containsClosuresExpHOL x || containsClosuresExpHOL y || containsClosuresExpHOL z
+  | .let _ xs body => containsClosuresHOL xs || containsClosuresExpHOL body
+  | .raise _ body | .tick _ body => containsClosuresExpHOL body
+  | .handle _ x y => containsClosuresExpHOL x || containsClosuresExpHOL y
+  | .op _ _ xs | .call _ _ _ xs => containsClosuresHOL xs
+  | .app _ _ fn xs => containsClosuresExpHOL fn || containsClosuresHOL xs
+termination_by e => sizeOf e
+end
+
 /-- Compute the source size metric; ticks contribute no node. -/
 def sizeFuel : Nat → Exp → Option Nat
   | 0, _ => none
@@ -45,11 +66,10 @@ def sizeBounded (fuel : Nat) (e : Exp) : Option Nat :=
   | some result => some result
   | none => sizeFuel (max fuel (expBudget e + 1)) e
 
-/-- Preserve successful closure tests and retry exhaustion with a structural bound. -/
-def containsClosuresBounded (fuel : Nat) (e : Exp) : Option Bool :=
-  match containsClosuresFuel fuel e with
-  | some result => some result
-  | none => containsClosuresFuel (max fuel (expBudget e + 1)) e
+/-- The executed closure check uses the total source traversal. The fuel
+argument is retained for the surrounding checked optimizer interface. -/
+def containsClosuresBounded (_fuel : Nat) (e : Exp) : Option Bool :=
+  some (containsClosuresHOL [e])
 
 /-- Construct the original closure approximation from its size bound. -/
 def closApproxFuel (fuel maxSize loc arity : Nat) (body : Exp) : Option ValApprox := do
