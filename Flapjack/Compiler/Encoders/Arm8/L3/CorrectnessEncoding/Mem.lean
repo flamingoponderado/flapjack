@@ -199,4 +199,66 @@ theorem arm8Encode_loadStoreImm9_store (offset : BitVec 64) (rn rt : BitVec 5)
         (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) :=
   arm8ELoadStoreImm9_store offset rn rt hfall hsx
 
+
+/-- `holV2w` at nine bits roundtrips through the `getElem` bit list. -/
+theorem arm8HolV2w_nine (w : BitVec 9) :
+    holV2w 9 [w[8], w[7], w[6], w[5], w[4], w[3], w[2], w[1], w[0]] = w :=
+  holV2w_holW2v w
+
+/-- `holV2w` at twelve bits roundtrips through the `getElem` bit list. -/
+theorem arm8HolV2w_twelve (w : BitVec 12) :
+    holV2w 12 [w[11], w[10], w[9], w[8], w[7], w[6], w[5], w[4], w[3], w[2], w[1], w[0]] = w :=
+  holV2w_holW2v w
+
+/-- The rendered `Decode` inverts the twelve-bit `LoadStoreImmediate@64` load
+word. -/
+theorem arm8Decode_loadStoreImm12_load (imm12 : BitVec 12) (rn rt : BitVec 5) :
+    Decode (arm8LoadStoreImm12Word (BitVec.ofNat 2 3) (BitVec.ofNat 2 1) imm12 rn rt) =
+      instruction.LoadStore (LoadStore.«LoadStoreImmediate@64»
+        (3, false, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false, false,
+         true, ((BitVec.setWidth 64 imm12) <<< 3), rn, rt)) := by
+  simp only [arm8LoadStoreImm12Word, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_two_one, holV2w_two_three, holV2w_five, arm8HolV2w_twelve,
+    BitVec.toNat_ofNat, Nat.mod_eq_of_lt, LoadStoreImmediate, LoadStoreImmediateN]
+
+
+/-- The rendered `Decode` inverts the twelve-bit `LoadStoreImmediate@64` store
+word. -/
+theorem arm8Decode_loadStoreImm12_store (imm12 : BitVec 12) (rn rt : BitVec 5) :
+    Decode (arm8LoadStoreImm12Word (BitVec.ofNat 2 3) (BitVec.ofNat 2 0) imm12 rn rt) =
+      instruction.LoadStore (LoadStore.«LoadStoreImmediate@64»
+        (3, false, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
+         true, ((BitVec.setWidth 64 imm12) <<< 3), rn, rt)) := by
+  simp only [arm8LoadStoreImm12Word, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_two_zero, holV2w_two_three, holV2w_five, arm8HolV2w_twelve,
+    BitVec.toNat_ofNat, Nat.mod_eq_of_lt, LoadStoreImmediate, LoadStoreImmediateN]
+
+/-- The rendered `Decode` inverts the nine-bit `LoadStoreImmediate@64` load
+word. -/
+theorem arm8Decode_loadStoreImm9_load (imm9 : BitVec 9) (rn rt : BitVec 5) :
+    Decode (arm8LoadStoreImm9Word (BitVec.ofNat 2 3) (BitVec.ofNat 2 1) imm9
+        (BitVec.ofNat 1 0) rn rt) =
+      instruction.LoadStore (LoadStore.«LoadStoreImmediate@64»
+        (3, false, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false, false,
+         false, BitVec.signExtend 64 imm9, rn, rt)) := by
+  simp only [arm8LoadStoreImm9Word, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_one_false, holV2w_two_one, holV2w_two_three, holV2w_five,
+    arm8HolV2w_nine, LoadStoreImmediate, LoadStoreImmediateN]
+
+/-- The rendered `Decode` inverts the nine-bit `LoadStoreImmediate@64` store
+word. -/
+theorem arm8Decode_loadStoreImm9_store (imm9 : BitVec 9) (rn rt : BitVec 5) :
+    Decode (arm8LoadStoreImm9Word (BitVec.ofNat 2 3) (BitVec.ofNat 2 0) imm9
+        (BitVec.ofNat 1 0) rn rt) =
+      instruction.LoadStore (LoadStore.«LoadStoreImmediate@64»
+        (3, false, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
+         false, BitVec.signExtend 64 imm9, rn, rt)) := by
+  simp only [arm8LoadStoreImm9Word, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_one_false, holV2w_two_zero, holV2w_two_three, holV2w_five,
+    arm8HolV2w_nine, LoadStoreImmediate, LoadStoreImmediateN]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
