@@ -425,7 +425,7 @@ does that.  All four case theorems from this batch (`addCarry` and the three
 shift-immediate forms) carry the shared `arm8_encoder_correct` tag with
 `pending_statement_review` manifest rows.
 
-Still open for #1239: `addOverflow`, `subOverflow` (their
-`ConditionalSelect@64` facts exist in `ConditionalSelect.lean`), and `Mem`.
+Still open for #1239: `Mem` (the seven load/store forms, including the
+two-instruction `AddSubImmediate@64` + `LoadStoreImmediate` shape).
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
