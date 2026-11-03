@@ -21,5 +21,13 @@ val state_rel_dec_clock_replay = Q.prove (
    clos_fvsProof$state_rel (closSem$dec_clock 1 s1) (closSem$dec_clock 1 s2)`,
   simp [clos_fvsProofTheory.state_rel_def, closSemTheory.dec_clock_def]);
 val _ = show "state_rel_dec_clock_typed=" state_rel_dec_clock_replay;
+val do_app_statement = ``clos_fvsProof$state_rel (s :('c,'ffi) closSem$state) t /\
+  LIST_REL clos_fvsProof$v_rel xs ys ==>
+  case closSem$do_app opp xs s of
+    | Rerr err1 => ?err2. closSem$do_app opp ys t = Rerr err2 /\
+                           exc_rel clos_fvsProof$v_rel err1 err2
+    | Rval (x, s1) => ?y t1. clos_fvsProof$v_rel x y /\
+         clos_fvsProof$state_rel s1 t1 /\ closSem$do_app opp ys t = Rval (y, t1)``;
+val _ = (print "do_app_statement_typed="; print_term do_app_statement; print "\n");
 val _ = show "evaluate_remove_typed=" clos_fvsProofTheory.evaluate_remove_fvs;
 val _ = show "semantics_compile_typed=" clos_fvsProofTheory.semantics_compile;
