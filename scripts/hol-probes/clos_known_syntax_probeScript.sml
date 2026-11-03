@@ -26,6 +26,7 @@ val _ = show "merge_vars_none_typed=" clos_knownProofTheory.val_approx_every_Fn_
 val _ = show "known_op_vars_none_typed=" clos_knownProofTheory.known_op_every_Fn_vs_NONE;
 val _ = show "decide_inline_vars_none_typed=" clos_knownProofTheory.decide_inline_every_Fn_vs_NONE;
 val _ = show "clos_gen_vars_none_typed=" clos_knownProofTheory.clos_gen_no_inline_every_Fn_vs_NONE;
+val _ = show "known_vars_none_typed=" clos_knownProofTheory.known_every_Fn_vs_NONE;
 val _ = show "monotonic_unique_set_globals_typed=" clos_knownProofTheory.monotonic_unique_set_globals;
 val _ = show "monotonic_gapprox_disjoint_typed=" clos_knownProofTheory.monotonic_gapprox_disjoint;
 val _ = show "state_oracle_domain_typed=" clos_knownProofTheory.state_oracle_domain;

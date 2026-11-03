@@ -1,5 +1,69 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalSyntax.lean",
+  "lean_name": "knownVarsNil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_vars_none_typed and the source empty-list traversal case. The original input expression, approximation environment and global tree invariants imply the three output invariants; the result equation and any recursive induction hypotheses expose the actual source traversal cases. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalSyntax.lean",
+  "lean_name": "knownVarsVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_vars_none_typed and the source variable traversal case. The original input expression, approximation environment and global tree invariants imply the three output invariants; the result equation and any recursive induction hypotheses expose the actual source traversal cases. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalSyntax.lean",
+  "lean_name": "knownVarsCons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_vars_none_typed and the source sequential-list traversal case. The original input expression, approximation environment and global tree invariants imply the three output invariants; the result equation and any recursive induction hypotheses expose the actual source traversal cases. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalSyntax.lean",
+  "lean_name": "knownVarsRaise",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_vars_none_typed and the source raise traversal case. The original input expression, approximation environment and global tree invariants imply the three output invariants; the result equation and any recursive induction hypotheses expose the actual source traversal cases. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalSyntax.lean",
+  "lean_name": "knownVarsTick",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_vars_none_typed and the source tick traversal case. The original input expression, approximation environment and global tree invariants imply the three output invariants; the result equation and any recursive induction hypotheses expose the actual source traversal cases. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalSyntax.lean",
+  "lean_name": "knownVarsCall",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_vars_none_typed and the source direct-call traversal case. The original input expression, approximation environment and global tree invariants imply the three output invariants; the result equation and any recursive induction hypotheses expose the actual source traversal cases. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalSyntax.lean",
+  "lean_name": "knownVarsOp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_vars_none_typed and the source primitive-operation traversal case. The original input expression, approximation environment and global tree invariants imply the three output invariants; the result equation and any recursive induction hypotheses expose the actual source traversal cases. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalSyntax.lean",
+  "lean_name": "knownVarsIf",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_vars_none_typed and the source conditional traversal case. The original input expression, approximation environment and global tree invariants imply the three output invariants; the result equation and any recursive induction hypotheses expose the actual source traversal cases. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml", "hol_name": "val_approx_every_Fn_vs_NONE_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxSyntax.lean", "lean_name": "valApproxVarsNone",
   "statement_status": "reviewed_exact",
