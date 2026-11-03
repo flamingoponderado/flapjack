@@ -200,4 +200,97 @@ theorem writeX_mem (v : BitVec 64) (n : BitVec 5) (s : arm8_state) :
     («write'X» (v, n) s).MEM = s.MEM := by
   simp only [«write'X»]; split <;> rfl
 
+/-- The `AddWithCarry` zero-compare equation in the `BitVec.ofNat` form the
+rendered instruction produces. -/
+theorem arm8AddWithCarry_add_zero_ofNat (x : BitVec 64) :
+    AddWithCarry (TN := 64) (x, (BitVec.ofNat 64 0, false)) =
+      (x, (BitVec.msb x, ((x == BitVec.ofNat 64 0), (false, false)))) :=
+  arm8AddWithCarry_add_zero x
+
+/-- `Run` of the `ConditionalCompareImmediate@64` that follows the zero compare
+in the `addCarry` lowering. -/
+theorem arm8Run_conditionalCompare_zero (rn : BitVec 5) (st : arm8_state) :
+    Run (instruction.Data (Data.«ConditionalCompareImmediate@64»
+      ((1 : BitVec 64), (false, ((0 : BitVec 64), ((0 : BitVec 4),
+        ((false, (false, (true, false))), rn))))))) st =
+      if ConditionHolds (0 : BitVec 4) st then
+        SetTheFlags (true, (AddWithCarry (TN := 64) (X (TN := 64) rn st,
+          ((0 : BitVec 64), false))).2) st
+      else SetTheFlags (true, (false, (false, (true, false)))) st := by
+  rw [arm8Run_conditionalCompare]
+  simp only [Bool.false_eq_true, if_false]
+
+/-- One `arm8Next` step on the `ConditionalCompareImmediate@64` that follows the
+zero compare in the `addCarry` lowering: compare `rn` with zero under `EQ`, or
+set the literal `nzcv` when `EQ` does not hold. -/
+theorem arm8Next_conditionalCompare_zero (ms : arm8_state) (rn : BitVec 5)
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8ConditionalCompareWord false
+      (0 : BitVec 5) (0 : BitVec 4) false false true false rn >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8ConditionalCompareWord false
+      (0 : BitVec 5) (0 : BitVec 4) false false true false rn >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8ConditionalCompareWord false
+      (0 : BitVec 5) (0 : BitVec 4) false false true false rn >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8ConditionalCompareWord false
+      (0 : BitVec 5) (0 : BitVec 4) false false true false rn >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next ms =
+      if ConditionHolds (0 : BitVec 4) { ms with branch_hint := none } then
+        { ms with
+          branch_hint := none,
+          PC := ms.PC + 4,
+          PSTATE :=
+            { ms.PSTATE with
+              N := BitVec.msb (X (TN := 64) rn { ms with branch_hint := none }),
+              Z := (X (TN := 64) rn { ms with branch_hint := none }) == (0 : BitVec 64),
+              C := false,
+              V := false } }
+      else
+        { ms with
+          branch_hint := none,
+          PC := ms.PC + 4,
+          PSTATE :=
+            { ms.PSTATE with N := false, Z := false, C := true, V := false } } := by
+  let i : instruction := instruction.Data (Data.«ConditionalCompareImmediate@64»
+    ((1 : BitVec 64), (false, ((0 : BitVec 64), ((0 : BitVec 4),
+      ((false, (false, (true, false))), rn))))))
+  have himm : ((0 : BitVec 64) == BitVec.setWidth 64 (BitVec.setWidth 5
+      (0 : BitVec 64))) = true := by
+    rw [beq_iff_eq]; simp
+  have henc : Encode (.Data (.«ConditionalCompareImmediate@64»
+      ((1 : BitVec 64), (false, ((0 : BitVec 64), ((0 : BitVec 4),
+        ((false, (false, (true, false))), rn))))))) =
+      MachineCode.ARM8 (arm8ConditionalCompareWord false (0 : BitVec 5)
+        (0 : BitVec 4) false false true false rn) := by
+    rw [arm8Encode_conditionalCompare, if_pos himm]
+    simp
+  have hdec : Decode (arm8ConditionalCompareWord false (0 : BitVec 5)
+      (0 : BitVec 4) false false true false rn) = i := by
+    dsimp only [i]
+    exact arm8Decode_conditionalCompare (0 : BitVec 5) (0 : BitVec 4) rn
+  have hrun := arm8Run_conditionalCompare_zero rn { ms with branch_hint := none }
+  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
+    dsimp only [i]
+    rw [hrun]
+    split
+    · rw [setTheFlags_branchHint]
+    · rw [setTheFlags_branchHint]
+  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
+    dsimp only [i]
+    rw [hrun]
+    split
+    · rw [setTheFlags_exception]; simpa using hexc0
+    · rw [setTheFlags_exception]; simpa using hexc0
+  have hn := arm8Next_word ms (arm8ConditionalCompareWord false (0 : BitVec 5)
+    (0 : BitVec 4) false false true false rn) i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
+  unfold arm8Next
+  rw [hn]
+  dsimp only [i]
+  rw [hrun]
+  simp only [holThe, setTheFlags_eq]
+  split
+  · simp [arm8AddWithCarry_add_zero_ofNat]
+  · simp
+
 end Flapjack.Compiler.Encoders.Arm8.L3
