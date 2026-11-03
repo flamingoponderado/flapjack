@@ -58,4 +58,32 @@ theorem tmask_lsr_getLsbD (n i : Nat) (hn : n < 64) (hi : i < 64) :
   have hiff : (n ≤ 63 - i) ↔ (i < 64 - n) := by omega
   simp [hiff]
 
+/-- The `Lsr`/`Asr` wmask is the all-ones word: rotating the all-ones word
+leaves it unchanged. -/
+theorem wmask_lsr (n : Nat) (hn : n < 64) :
+    Replicate (TN := 64) (holRotate (holPadLeft false 64 (Ones 64)) n) =
+      BitVec.allOnes 64 := by
+  interval_cases n <;> decide
+
+/-- `arm8_targetProofScript.sml`'s `lsr`: masking the rotate right by the
+`Lsr` masks is the logical shift right. -/
+theorem lsr_mask (x : BitVec 64) (n : Nat) (hn : n < 64) :
+    ((x.rotateRight n &&& Replicate (holRotate (holPadLeft false 64 (Ones 64)) n)) &&&
+      Replicate (holPadLeft false 64 (Ones (63 - n + 1)))) = x >>> n := by
+  rw [wmask_lsr n hn, BitVec.and_allOnes]
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  rw [BitVec.getLsbD_and, BitVec.getLsbD_rotateRight, BitVec.getLsbD_ushiftRight,
+    tmask_lsr_getLsbD n i hn hi, Nat.mod_eq_of_lt hn]
+  by_cases h : i < 64 - n
+  · simp [h]
+  · simp [h]
+    have hge : 64 ≤ n + i := by omega
+    have hfalse : x.getLsbD (n + i) = false := by
+      simp only [BitVec.getLsbD]
+      rw [Nat.testBit_lt_two_pow]
+      calc x.toNat < 2 ^ 64 := x.isLt
+        _ ≤ 2 ^ (n + i) := Nat.pow_le_pow_right (by norm_num) hge
+    rw [hfalse]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
