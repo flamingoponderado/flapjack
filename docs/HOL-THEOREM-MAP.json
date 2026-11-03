@@ -1916,6 +1916,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "semantics_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Semantics.lean",
+    "lean_name": "semantics_remove_ticks",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared semantics_remove_ticks_typed and remove_sing_eq_typed: the original source non-failure premise, empty auxiliary oracle entries, positive maximum application, empty code maps, pure compiler/oracle composition and source-to-target semantics equality are retained. Compiler configuration and FFI payload types remain independent. The proof uses the reverse evaluator simulation with existential extra source clock, stability of non-timeout evaluations and monotone trace limits; semantics_bounded separately connects the executed retry. holEmpty is the reviewed canonical finite-map producer, and the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or end-to-end compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "rel_update_thunk",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Force.lean",
     "lean_name": "rel_update_thunk",

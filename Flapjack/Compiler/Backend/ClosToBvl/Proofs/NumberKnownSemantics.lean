@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.ClosNumber.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Semantics
+import Flapjack.Compiler.Backend.ClosTicks.Proofs.Semantics
 
 /-! Observational composition of numbering and known-function optimization. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -115,6 +116,47 @@ theorem number_known_annotate_semantics {C F : Type} (ffi : HolFfiState F) (maxA
     simpa [HolFiniteMapExact.alistToFmap, HolFiniteMapExact.holEmpty,
       HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL, ClosAnnotate.compile] using annotated
   exact annotationEq.trans knownEq
+
+/-- Tick removal followed by annotation preserves observations under the
+original pass invariants. This is Flapjack composition infrastructure and
+does not yet include let-operation cleanup. -/
+theorem ticks_annotate_semantics {C F : Type} (ffi : HolFfiState F) (fuel maxApp : Nat)
+    (oracle : CompileOracle C) (compiler : Compiler C) (program : List ClosLang.Exp)
+    (notFail : semantics ffi maxApp HolFiniteMapExact.holEmpty oracle
+      (pureCc ClosTicks.compileInc (pureCc ClosAnnotate.compileInc compiler)) program ≠ .fail)
+    (tickSafe : (∀ n, (oracle n).2.2 = []) ∧ 1 ≤ maxApp)
+    (annotationSafe :
+      let co : CompileOracle C := pureCo ClosTicks.compileInc ∘ oracle
+      everyFnVarsNone (ClosTicks.removeList program) ∧
+      ∀ n, everyFnVarsNone (co n).2.1 ∧
+        everyFnVarsNone ((co n).2.2.map (fun (_, _, body) => body))) :
+    ∃ transformed, program.mapM (ClosTicks.removeBounded fuel) = some transformed ∧
+      semantics ffi maxApp HolFiniteMapExact.holEmpty
+        (pureCo ClosAnnotate.compileInc ∘ pureCo ClosTicks.compileInc ∘ oracle)
+        compiler (ClosAnnotate.annotateList 0 transformed) =
+      semantics ffi maxApp HolFiniteMapExact.holEmpty oracle
+        (pureCc ClosTicks.compileInc (pureCc ClosAnnotate.compileInc compiler)) program := by
+  let co : CompileOracle C := pureCo ClosTicks.compileInc ∘ oracle
+  have ticksEq := ClosTicks.semantics_remove_ticks ffi maxApp oracle
+    (pureCc ClosAnnotate.compileInc compiler) program notFail tickSafe
+  have ticksNonfail : semantics ffi maxApp HolFiniteMapExact.holEmpty co
+      (pureCc ClosAnnotate.compileInc compiler) (ClosTicks.removeList program) ≠ .fail := by
+    rw [← ticksEq]
+    exact notFail
+  have annotated := ClosAnnotate.semanticsAnnotate_sourceShape ffi maxApp [] co compiler
+    (ClosTicks.removeList program) (by
+      simpa [HolFiniteMapExact.alistToFmap, HolFiniteMapExact.holEmpty,
+        HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL] using ticksNonfail)
+    ⟨annotationSafe.1, by simp [everyFnVarsNone], annotationSafe.2⟩
+  have annotationEq : semantics ffi maxApp HolFiniteMapExact.holEmpty
+      (pureCo ClosAnnotate.compileInc ∘ co) compiler
+      (ClosAnnotate.annotateList 0 (ClosTicks.removeList program)) =
+      semantics ffi maxApp HolFiniteMapExact.holEmpty co
+        (pureCc ClosAnnotate.compileInc compiler) (ClosTicks.removeList program) := by
+    simpa [HolFiniteMapExact.alistToFmap, HolFiniteMapExact.holEmpty,
+      HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL, ClosAnnotate.compile] using annotated
+  exact ⟨ClosTicks.removeList program, ClosTicks.removeBounded_list_eq_source fuel program,
+    annotationEq.trans ticksEq.symm⟩
 
 /-- Numbering, executable free-variable removal, known-function optimization
 and annotation preserve observations when the original pass invariants hold.
