@@ -123003,5 +123003,46 @@
   "lean_name": "doAppLemma",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the typed original local proof replay in clos_letop_source_probe.out: related states and argument lists yield existential related target errors or related values and states, with the same operation and independent shared compiler and FFI carriers. Canonical refs and code have a local roundtrip witness, and primitive evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "v_rel_IMP_v_to_bytes",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Install.lean",
+  "lean_name": "valueRel_bytes",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local statement and the typed HOL replay in clos_letop_source_probe.out: related values decode to equal optional byte lists in the same direction. The replay derives the statement using the original generic value-relation theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "v_rel_IMP_v_to_words",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Install.lean",
+  "lean_name": "valueRel_words",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local statement and the typed HOL replay in clos_letop_source_probe.out: related values decode to equal optional lists of fixed 64-bit words in the same direction. The replay derives the statement using the original generic value-relation theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "do_install_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Install.lean",
+  "lean_name": "doInstallLemma",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared the typed replay of the original local proof in clos_letop_source_probe.out. Related states and argument lists yield existential related installation errors or a nonempty source program, related target program and related states, preserving independent shared compiler and FFI carriers. Canonical refs and code have a local roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateInstall.lean",
+  "lean_name": "evaluate_let_op_install",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed and the operation installation case of evaluate_ind_typed in clos_known_syntax_probe.out. The source argument and successful-installation program induction hypotheses retain their original evaluation and installation guards. The source run, related environments and states, code relation, and existential target result and state are unchanged. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
 }
 ]

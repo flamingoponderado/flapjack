@@ -70,3 +70,28 @@ val do_app_lemma_replay = prove(
   match_mp_tac closPropsTheory.simple_val_rel_do_app
   \\ fs [closPropsTheory.simple_val_rel_def, simple_state_rel_replay] \\ rw [] \\ fs [v_rel_cases]);
 val _ = show "do_app_lemma_replay_typed" do_app_lemma_replay;
+val simple_val_rel_replay = prove(
+  ``closProps$simple_val_rel clos_letopProof$v_rel``,
+  fs [closPropsTheory.simple_val_rel_def] \\ rw [] \\ fs [v_rel_cases]);
+val value_bytes_replay = prove(
+  ``v_rel x y ==> v_to_bytes y = v_to_bytes x``,
+  metis_tac [closPropsTheory.simple_val_rel_v_to_bytes, simple_val_rel_replay]);
+val _ = show "value_bytes_replay_typed" value_bytes_replay;
+val value_words_replay = prove(
+  ``v_rel x y ==> v_to_words y = v_to_words x``,
+  metis_tac [closPropsTheory.simple_val_rel_v_to_words, simple_val_rel_replay]);
+val _ = show "value_words_replay_typed" value_words_replay;
+val do_install_lemma_replay = prove(
+  ``state_rel s t /\ LIST_REL v_rel xs ys ==>
+    case do_install xs s of
+      | (Rerr err1, s1) => ?err2 t1. do_install ys t = (Rerr err2, t1) /\
+                            exc_rel v_rel err1 err2 /\ state_rel s1 t1
+      | (Rval exps1, s1) => ?exps2 t1. state_rel s1 t1 /\ (~ (exps1 = [])) /\
+                               code_rel exps1 exps2 /\
+                               do_install ys t = (Rval exps2, t1)``,
+  ho_match_mp_tac (Q.SPEC `compile_inc` closPropsTheory.simple_val_rel_do_install)
+  \\ fs [simple_state_rel_replay, closPropsTheory.simple_compile_state_rel_def, state_rel_def]
+  \\ fs [compile_inc_def, pairTheory.FORALL_PROD, LENGTH_let_op, code_rel_def]
+  \\ fs [closPropsTheory.simple_val_rel_def, simple_state_rel_replay] \\ rw [] \\ fs [v_rel_cases]
+  \\ EVAL_TAC \\ fs [FUN_EQ_THM]);
+val _ = show "do_install_lemma_replay_typed" do_install_lemma_replay;
