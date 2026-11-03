@@ -1,6 +1,58 @@
 [
 {
     "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_correct_approx",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CorrectApprox.lean",
+    "lean_name": "knownCorrectApproxNil",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared known_correct_approx_typed and known_ind_typed in clos_known_syntax_probe.out. This is the empty-list source induction case, with all original hypotheses and both conclusions retained. The state compile payload is the original approximation-tree product with an independent compiler carrier; the FFI carrier is independent. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_correct_approx",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CorrectApprox.lean",
+    "lean_name": "knownCorrectApproxVar",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared known_correct_approx_typed and known_ind_typed in clos_known_syntax_probe.out. This is the variable source induction case. The related prefix of the runtime environment and arbitrary extra suffix are retained, and an out-of-prefix index uses Other. The state compile payload is the original approximation-tree product with an independent compiler carrier; the FFI carrier is independent. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_correct_approx",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CorrectApprox.lean",
+    "lean_name": "knownCorrectApproxRaise",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared known_correct_approx_typed and known_ind_typed in clos_known_syntax_probe.out. This is the Raise source induction case. The single induction hypothesis is exactly the full source predicate for the body, as captured by known_ind_typed; both error and value operand results are covered. The state compile payload is the original approximation-tree product with an independent compiler carrier; the FFI carrier is independent. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_correct_approx",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CorrectApprox.lean",
+    "lean_name": "knownCorrectApproxTick",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared known_correct_approx_typed and known_ind_typed in clos_known_syntax_probe.out. This is the Tick source induction case. The single induction hypothesis is exactly the full source predicate for the body, as captured by known_ind_typed; the proof covers zero-clock timeout and the decremented-clock body. The state compile payload is the original approximation-tree product with an independent compiler carrier; the FFI carrier is independent. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
     "hol_name": "evaluate_IMP_shift_seq",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
     "lean_name": "evaluateImpShiftSeq",
