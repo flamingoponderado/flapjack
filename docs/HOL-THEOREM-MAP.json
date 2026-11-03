@@ -2134,6 +2134,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "evaluate_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_remove_fvs_install",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the first evaluate_remove_typed conjunct and installation branch of the operation case in evaluate_ind_typed from clos_known_syntax_probe.out. The argument induction hypothesis is at the original state, and the installed-program hypothesis applies only after successful argument evaluation and successful do_install, at the returned state and empty environment. The forcing induction hypothesis is inapplicable for Install. Original evaluation, environment, state and code premises and existential target evaluation, result and state conclusions are retained, including argument, install and installed-program errors and related HOL LAST values for nonempty successful programs. The closure state has canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining mutual evaluator cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
     "hol_name": "do_app_lemma",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Primitive.lean",
     "lean_name": "doAppLemma",
