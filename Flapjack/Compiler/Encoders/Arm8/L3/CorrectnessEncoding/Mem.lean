@@ -529,4 +529,19 @@ theorem arm8MemLoad_domain (op : HolMemop) (r base : Nat) (off : BitVec 64)
   have h := memLoadDomain op r base off s1 s2 3 pc (by simpa using hspec) hupd hbe hok
   simpa using h
 
+
+/-- Extracting the low nine bits of a 64-bit word is its nine-bit truncation. -/
+theorem arm8HolWordExtract_nine (off : BitVec 64) :
+    holWordExtract 9 8 0 off = BitVec.ofNat 9 off.toNat := by
+  apply BitVec.eq_of_toNat_eq
+  simp [Flapjack.RiscV.L3.holWordExtract, BitVec.toNat_ofNat, BitVec.toNat_setWidth]
+
+/-- An offset that is its own signed nine-bit form is recovered from the nine
+bits `e_LoadStoreImmediate` extracts. -/
+theorem arm8SignExtend_nine (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    BitVec.signExtend 64 (holWordExtract 9 8 0 off) = off := by
+  rw [arm8HolWordExtract_nine, ← hsx]
+
+
 end Flapjack.Compiler.Encoders.Arm8.L3
