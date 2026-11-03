@@ -98,14 +98,15 @@ theorem arm8ELoadStoreImm12_store (offset : BitVec 64) (rn rt : BitVec 5)
   all_goals first | rfl | exact absurd hguard hg
 
 /-- `e_load_store` of `LoadStoreImmediate@64` on the signed nine-bit path for
-`MemOp_LOAD`. -/
-theorem arm8ELoadStoreImm9_load (offset : BitVec 64) (rn rt : BitVec 5)
-    (hfall : (offset ==
-      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 3))) <<< 3) = false)
+`MemOp_LOAD`, for either value of the `unsigned_offset` field. -/
+theorem arm8ELoadStoreImm9_load (offset : BitVec 64) (unsigned_offset : Bool)
+    (rn rt : BitVec 5)
+    (hfall : (unsigned_offset && (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 3))) <<< 3)) = false)
     (hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) :
     e_load_store (.«LoadStoreImmediate@64»
         (3, false, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false, false,
-         true, offset, rn, rt)) =
+         unsigned_offset, offset, rn, rt)) =
       MachineCode.ARM8 (arm8LoadStoreImm9Word (BitVec.ofNat 2 3) (BitVec.ofNat 2 1)
         (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) := by
   have hs : BitVec.setWidth 2 (3 : BitVec 64) = (BitVec.ofNat 2 3) := by decide
@@ -118,23 +119,30 @@ theorem arm8ELoadStoreImm9_load (offset : BitVec 64) (rn rt : BitVec 5)
   have hsx' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
     rw [beq_iff_eq]; exact hsx
   have hnf : ((!false : Bool) = true) := rfl
-  have hfall' : ¬((offset ==
-      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 3))) <<< 3) = true) := by
-    intro h; rw [hfall] at h; simp at h
   simp only [e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm, hunpriv, hpref,
-    hstore, Bool.false_eq_true, if_false, hnf, if_true, Bool.true_and, Bool.and_true, holV2w_one_false]
+    hstore, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+    holV2w_one_false]
   split_ifs with hg
-  all_goals first | rfl | exact absurd hg hfall'
+  all_goals first
+    | rfl
+    | exact absurd hsx' ‹_›
+    | (exfalso
+       have h1 : (unsigned_offset && (offset == (BitVec.setWidth 64
+           (holWordExtract 12 11 0 (offset >>> 3))) <<< 3)) = true := by
+         simpa [Bool.and_true] using hg
+       rw [hfall] at h1
+       simp at h1)
 
 /-- `e_load_store` of `LoadStoreImmediate@64` on the signed nine-bit path for
-`MemOp_STORE`. -/
-theorem arm8ELoadStoreImm9_store (offset : BitVec 64) (rn rt : BitVec 5)
-    (hfall : (offset ==
-      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 3))) <<< 3) = false)
+`MemOp_STORE`, for either value of the `unsigned_offset` field. -/
+theorem arm8ELoadStoreImm9_store (offset : BitVec 64) (unsigned_offset : Bool)
+    (rn rt : BitVec 5)
+    (hfall : (unsigned_offset && (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 3))) <<< 3)) = false)
     (hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) :
     e_load_store (.«LoadStoreImmediate@64»
         (3, false, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
-         true, offset, rn, rt)) =
+         unsigned_offset, offset, rn, rt)) =
       MachineCode.ARM8 (arm8LoadStoreImm9Word (BitVec.ofNat 2 3) (BitVec.ofNat 2 0)
         (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) := by
   have hs : BitVec.setWidth 2 (3 : BitVec 64) = (BitVec.ofNat 2 3) := by decide
@@ -146,13 +154,18 @@ theorem arm8ELoadStoreImm9_store (offset : BitVec 64) (rn rt : BitVec 5)
   have hsx' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
     rw [beq_iff_eq]; exact hsx
   have hnf : ((!false : Bool) = true) := rfl
-  have hfall' : ¬((offset ==
-      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 3))) <<< 3) = true) := by
-    intro h; rw [hfall] at h; simp at h
   simp only [e_load_store, e_LoadStoreImmediate, hs, h3, hnrm, hunpriv, hpref, hstore,
-    Bool.false_eq_true, if_false, hnf, if_true, Bool.true_and, Bool.and_true, holV2w_one_false]
+    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true, holV2w_one_false]
   split_ifs with hg
-  all_goals first | rfl | exact absurd hg hfall'
+  all_goals first
+    | rfl
+    | exact absurd hsx' ‹_›
+    | (exfalso
+       have h1 : (unsigned_offset && (offset == (BitVec.setWidth 64
+           (holWordExtract 12 11 0 (offset >>> 3))) <<< 3)) = true := by
+         simpa [Bool.and_true] using hg
+       rw [hfall] at h1
+       simp at h1)
 
 /-- `Encode` of the twelve-bit `LoadStoreImmediate@64` load. -/
 theorem arm8Encode_loadStoreImm12_load (offset : BitVec 64) (rn rt : BitVec 5)
@@ -177,28 +190,30 @@ theorem arm8Encode_loadStoreImm12_store (offset : BitVec 64) (rn rt : BitVec 5)
   arm8ELoadStoreImm12_store offset rn rt hoff
 
 /-- `Encode` of the nine-bit `LoadStoreImmediate@64` load. -/
-theorem arm8Encode_loadStoreImm9_load (offset : BitVec 64) (rn rt : BitVec 5)
-    (hfall : (offset ==
-      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 3))) <<< 3) = false)
+theorem arm8Encode_loadStoreImm9_load (offset : BitVec 64) (unsigned_offset : Bool)
+    (rn rt : BitVec 5)
+    (hfall : (unsigned_offset && (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 3))) <<< 3)) = false)
     (hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) :
     Encode (.LoadStore (.«LoadStoreImmediate@64»
         (3, false, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false, false,
-         true, offset, rn, rt))) =
+         unsigned_offset, offset, rn, rt))) =
       MachineCode.ARM8 (arm8LoadStoreImm9Word (BitVec.ofNat 2 3) (BitVec.ofNat 2 1)
         (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) :=
-  arm8ELoadStoreImm9_load offset rn rt hfall hsx
+  arm8ELoadStoreImm9_load offset unsigned_offset rn rt hfall hsx
 
 /-- `Encode` of the nine-bit `LoadStoreImmediate@64` store. -/
-theorem arm8Encode_loadStoreImm9_store (offset : BitVec 64) (rn rt : BitVec 5)
-    (hfall : (offset ==
-      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 3))) <<< 3) = false)
+theorem arm8Encode_loadStoreImm9_store (offset : BitVec 64) (unsigned_offset : Bool)
+    (rn rt : BitVec 5)
+    (hfall : (unsigned_offset && (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 3))) <<< 3)) = false)
     (hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) :
     Encode (.LoadStore (.«LoadStoreImmediate@64»
         (3, false, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
-         true, offset, rn, rt))) =
+         unsigned_offset, offset, rn, rt))) =
       MachineCode.ARM8 (arm8LoadStoreImm9Word (BitVec.ofNat 2 3) (BitVec.ofNat 2 0)
         (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) :=
-  arm8ELoadStoreImm9_store offset rn rt hfall hsx
+  arm8ELoadStoreImm9_store offset unsigned_offset rn rt hfall hsx
 
 
 /-- `holV2w` at nine bits roundtrips through the `getElem` bit list. -/
