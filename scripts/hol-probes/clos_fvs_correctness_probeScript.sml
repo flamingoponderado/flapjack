@@ -41,5 +41,13 @@ val install_statement = ``clos_fvsProof$state_rel (s :('c,'ffi) closSem$state) t
 val _ = (print "bytes_statement_typed="; print_term bytes_statement; print "\n");
 val _ = (print "words_statement_typed="; print_term words_statement; print "\n");
 val _ = (print "install_statement_typed="; print_term install_statement; print "\n");
+val update_thunk_statement = ``clos_fvsProof$state_rel (s1 :('c,'ffi) closSem$state) s2 /\
+  LIST_REL clos_fvsProof$v_rel vs ys ==>
+    (closSem$update_thunk [closSem$RefPtr v ptr] s1.refs vs = NONE ==>
+       closSem$update_thunk [closSem$RefPtr v ptr] s2.refs ys = NONE) /\
+    (closSem$update_thunk [closSem$RefPtr v ptr] s1.refs vs = SOME refs1 ==>
+       ?refs2. closSem$update_thunk [closSem$RefPtr v ptr] s2.refs ys = SOME refs2 /\
+               clos_fvsProof$state_rel (s1 with refs := refs1) (s2 with refs := refs2))``;
+val _ = (print "update_thunk_statement_typed="; print_term update_thunk_statement; print "\n");
 val _ = show "evaluate_remove_typed=" clos_fvsProofTheory.evaluate_remove_fvs;
 val _ = show "semantics_compile_typed=" clos_fvsProofTheory.semantics_compile;

@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Relations
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Primitive
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Install
+import Flapjack.Compiler.Backend.ClosFvs.Proofs.Force
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
@@ -1170,5 +1171,161 @@ theorem evaluate_remove_fvs_install {C F : Type} (trace : BackendCommon.Tra)
                     ?_, .cons lastRel .nil, finalRel⟩
                   rw [evaluate_install_eq, targetArgsRun]
                   simp [runInstalled, targetInstall, targetProgramRun]
+
+/-- Forcing simulates thunk inspection, the generated call, and its update. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "evaluate_remove_fvs"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_remove_fvs_force {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (env : List Value) (source : State C F)
+    (argsIH : ∀ (result : Result (List Value) Value) (next : State C F)
+        (code : List ClosLang.Exp) (nextEnv : List Value) (target : State C F),
+      evaluate args env source = (result, next) ∧ List.Forall₂ ValueRel env nextEnv ∧
+        StateRel source target ∧ CodeRel env.length args code →
+      ∃ targetResult targetNext, evaluate code nextEnv target = (targetResult, targetNext) ∧
+        ResultRel result targetResult ∧ StateRel next targetNext)
+    (forceIH : ∀ (values : List Value) (middle : State C F) (value : Value),
+      evaluate args env source = (.val values, middle) →
+      destThunk values middle.refs = .isThunk .notEvaluated value →
+      ∀ (result : Result (List Value) Value) (next : State C F)
+        (code : List ClosLang.Exp) (nextEnv : List Value) (target : State C F),
+        evaluate [appUnit (.var .none 0)] [value] middle = (result, next) ∧
+          List.Forall₂ ValueRel [value] nextEnv ∧ StateRel middle target ∧
+          CodeRel 1 [appUnit (.var .none 0)] code →
+        ∃ targetResult targetNext, evaluate code nextEnv target = (targetResult, targetNext) ∧
+          ResultRel result targetResult ∧ StateRel next targetNext)
+    (result : Result (List Value) Value) (sourceNext : State C F)
+    (targetCode : List ClosLang.Exp) (nextEnv : List Value) (target : State C F)
+    (premises : evaluate [.op trace (.thunkOp .forceThunk) args] env source = (result, sourceNext) ∧
+      List.Forall₂ ValueRel env nextEnv ∧ StateRel source target ∧
+      CodeRel env.length [.op trace (.thunkOp .forceThunk) args] targetCode) :
+    ∃ targetResult targetNext,
+      evaluate targetCode nextEnv target = (targetResult, targetNext) ∧
+      ResultRel result targetResult ∧ StateRel sourceNext targetNext := by
+  obtain ⟨run, envRel, states, code⟩ := premises
+  have codeEq : targetCode = [.op trace (.thunkOp .forceThunk) (removeList env.length args)] := by
+    simpa [CodeRel, removeList, removeSing] using code
+  rw [codeEq]
+  cases argsRun : evaluate args env source with
+  | mk argsResult middle =>
+    obtain ⟨targetArgsResult, targetMiddle, targetArgsRun, argsRel, middleRel⟩ :=
+      argsIH argsResult middle (removeList env.length args) nextEnv target
+        ⟨argsRun, envRel, states, rfl⟩
+    cases argsResult with
+    | err error =>
+      rw [evaluate, fixClock_evaluate, argsRun] at run
+      cases run
+      cases targetArgsResult with
+      | val values => cases error <;> simp [ResultRel] at argsRel
+      | err targetError =>
+        exact ⟨.err targetError, targetMiddle,
+          by rw [evaluate, fixClock_evaluate, targetArgsRun], argsRel, middleRel⟩
+    | val values =>
+      cases targetArgsResult with
+      | err error => cases error <;> simp [ResultRel] at argsRel
+      | val targetValues =>
+        have inspected := destThunk_list_related middle targetMiddle values targetValues argsRel middleRel
+        rw [evaluate, fixClock_evaluate, argsRun] at run
+        dsimp only at run
+        cases sourceThunk : destThunk values middle.refs with
+        | badRef =>
+          cases targetThunk : destThunk targetValues targetMiddle.refs <;>
+            simp [DestThunkRel, sourceThunk, targetThunk] at inspected
+          rw [sourceThunk] at run
+          cases run
+          refine ⟨.err (.abort .typeError), targetMiddle, ?_, rfl, middleRel⟩
+          rw [evaluate, fixClock_evaluate, targetArgsRun]
+          dsimp only
+          rw [targetThunk]
+          simp
+        | notThunk =>
+          cases targetThunk : destThunk targetValues targetMiddle.refs <;>
+            simp [DestThunkRel, sourceThunk, targetThunk] at inspected
+          rw [sourceThunk] at run
+          cases run
+          refine ⟨.err (.abort .typeError), targetMiddle, ?_, rfl, middleRel⟩
+          rw [evaluate, fixClock_evaluate, targetArgsRun]
+          dsimp only
+          rw [targetThunk]
+          simp
+        | isThunk mode value =>
+          cases targetThunk : destThunk targetValues targetMiddle.refs with
+          | badRef => simp [DestThunkRel, sourceThunk, targetThunk] at inspected
+          | notThunk => simp [DestThunkRel, sourceThunk, targetThunk] at inspected
+          | isThunk targetMode targetValue =>
+            have rel : mode = targetMode ∧ ValueRel value targetValue := by
+              simpa [DestThunkRel, sourceThunk, targetThunk] using inspected
+            obtain ⟨rfl, valueRel⟩ := rel
+            cases mode with
+            | evaluated =>
+              rw [sourceThunk] at run
+              cases run
+              refine ⟨.val [targetValue], targetMiddle, ?_, .cons valueRel .nil, middleRel⟩
+              rw [evaluate, fixClock_evaluate, targetArgsRun]
+              dsimp only
+              rw [targetThunk]
+            | notEvaluated =>
+              cases forceRun : evaluate [appUnit (.var .none 0)] [value] middle with
+              | mk forceResult last =>
+                obtain ⟨targetForceResult, targetLast, targetForceRun, forceRel, lastRel⟩ :=
+                  forceIH values middle value argsRun sourceThunk forceResult last [appUnit (.var .none 0)]
+                    [targetValue] targetMiddle ⟨forceRun, .cons valueRel .nil, middleRel,
+                      by simp [CodeRel, removeList, removeSing, appUnit]⟩
+                cases forceResult with
+                | err error =>
+                  rw [sourceThunk] at run
+                  dsimp only at run
+                  rw [forceRun] at run
+                  cases run
+                  cases targetForceResult with
+                  | val vals => cases error <;> simp [ResultRel] at forceRel
+                  | err targetError =>
+                    refine ⟨.err targetError, targetLast, ?_, forceRel, lastRel⟩
+                    rw [evaluate, fixClock_evaluate, targetArgsRun]
+                    dsimp only
+                    rw [targetThunk]
+                    dsimp only
+                    rw [targetForceRun]
+                | val forced =>
+                  cases targetForceResult with
+                  | err error => cases error <;> simp [ResultRel] at forceRel
+                  | val targetForced =>
+                    have update := updateThunk_related last targetLast values targetValues forced targetForced
+                      argsRel forceRel lastRel
+                    cases updateRun : updateThunk values last.refs forced with
+                    | none =>
+                      have targetUpdate : updateThunk targetValues targetLast.refs targetForced = none := by
+                        simpa [updateRun] using update
+                      rw [sourceThunk] at run
+                      dsimp only at run
+                      rw [forceRun] at run
+                      dsimp only at run
+                      rw [updateRun] at run
+                      cases run
+                      refine ⟨.err (.abort .typeError), targetLast, ?_, rfl, lastRel⟩
+                      rw [evaluate, fixClock_evaluate, targetArgsRun]
+                      dsimp only
+                      rw [targetThunk]
+                      dsimp only
+                      rw [targetForceRun]
+                      dsimp only
+                      rw [targetUpdate]
+                      simp
+                    | some refs =>
+                      rw [updateRun] at update
+                      obtain ⟨targetRefs, targetUpdate, updatedRel⟩ := update
+                      rw [sourceThunk] at run
+                      dsimp only at run
+                      rw [forceRun] at run
+                      dsimp only at run
+                      rw [updateRun] at run
+                      cases run
+                      refine ⟨.val targetForced, { targetLast with refs := targetRefs }, ?_, forceRel, updatedRel⟩
+                      rw [evaluate, fixClock_evaluate, targetArgsRun]
+                      dsimp only
+                      rw [targetThunk]
+                      dsimp only
+                      rw [targetForceRun]
+                      dsimp only
+                      rw [targetUpdate]
 
 end Flapjack.Compiler.Backend.ClosFvs

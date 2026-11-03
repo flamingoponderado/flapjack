@@ -2144,6 +2144,25 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "rel_update_thunk",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Force.lean",
+    "lean_name": "rel_update_thunk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "sourceRefs", "targetRefs"],
+    "reviewer": "Compared the local source statement and update_thunk_statement_typed, an inferred-type capture of its transcription. Both states share independent compiler and FFI carriers; the state and value-list premises, singleton pointer, failure implication, successful source map premise, existential target map and updated-state relation are retained. State fields and standalone reference-map binders use canonical finite support with a local state roundtrip witness. The typed transcription is not a replay of the local HOL proof; source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "evaluate_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_remove_fvs_force",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the first evaluate_remove_typed conjunct and the force-thunk branch of evaluate_ind_typed in clos_known_syntax_probe.out. The argument induction hypothesis is at the original state; the generated-call hypothesis applies only after successful arguments and inspection of a not-yet-evaluated thunk. The installation hypothesis is inapplicable for ForceThunk. Original evaluation, environment, state and code premises and existential target evaluation, result and state conclusions are retained, including invalid references, already-evaluated values, generated-call errors, and failed and successful updates. The closure state has canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining mutual evaluator cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
     "hol_name": "do_app_lemma",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Primitive.lean",
     "lean_name": "doAppLemma",
