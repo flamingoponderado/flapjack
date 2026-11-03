@@ -3,6 +3,19 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_op_correct_approx",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
+  "lean_name": "knownOpCorrectApproxEl",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_op_correct_approx_typed with the original MemOp El case: the operation alone is specialized, and all four original premises and both conclusions are retained for arbitrary arguments and states. The proof assembles the source pattern cases and shows successful block and reference-array reads leave the state unchanged. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This operation case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_correct_approx",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
   "lean_name": "knownOpCorrectApproxElTuple",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [

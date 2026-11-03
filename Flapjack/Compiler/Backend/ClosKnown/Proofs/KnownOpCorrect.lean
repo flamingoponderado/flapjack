@@ -270,5 +270,73 @@ theorem knownOpCorrectApproxElImpossibleSecond {C F : Type} (first : ValApprox)
     cases tail with
     | cons second _ => cases second
 
+/-- A successful indexed read leaves the closure state unchanged. This is
+proof infrastructure for the indexed-read optimizer case. -/
+private theorem elState {C F : Type} (vs : List Value) (s0 s : State C F) (v : Value)
+    (run : doApp (.memOp .el) vs s0 = .val (v, s)) : s = s0 := by
+  have successful : applyMemory .el vs s0 = some (v, s) := by
+    cases h : applyMemory .el vs s0 with
+    | none => simp [doApp, h] at run
+    | some pair =>
+      have eq : pair = (v, s) := by simpa [doApp, h] using run
+      exact congrArg some eq
+  cases vs with
+  | nil => simp [applyMemory] at successful
+  | cons x xs =>
+    cases xs with
+    | nil => simp [applyMemory] at successful
+    | cons y ys =>
+      cases ys with
+      | cons z zs => simp [applyMemory] at successful
+      | nil =>
+        cases x <;> cases y <;> simp [applyMemory] at successful
+        all_goals repeat' (split at successful <;> simp_all)
+        all_goals rcases successful with ⟨_, successful⟩
+        all_goals obtain ⟨_, _, eq⟩ := Option.bind_eq_some_iff.mp successful
+        all_goals cases eq; rfl
+
+/-- Indexed reads preserve global approximations and soundly approximate the
+selected value for all argument lists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_op_correct_approx"
+  (fmap_as_finite_support := [refs, code])]
+theorem knownOpCorrectApproxEl {C F : Type} (args : List ValApprox)
+    (g0 : Spt ValApprox) (a : ValApprox) (g : Spt ValApprox)
+    (vs : List Value) (s0 : State C F) (v : Value) (s : State C F)
+    (known : knownOpHOL (.memOp .el) args g0 = (a, g))
+    (run : doApp (.memOp .el) vs s0 = .val (v, s))
+    (rel : List.Forall₂ ValApproxVal args vs) (globals : stateGlobalsApprox s0 g0) :
+    stateGlobalsApprox s g ∧ ValApproxVal a v := by
+  have state := elState vs s0 s v run
+  subst s
+  cases args with
+  | nil =>
+    simp only [knownOpHOL, Prod.mk.injEq] at known
+    rcases known with ⟨rfl, rfl⟩
+    exact ⟨globals, .other _⟩
+  | cons first rest =>
+    cases first with
+    | impossible => exact knownOpCorrectApproxElImpossibleFirst rest g0 a g vs s0 v s0 known run rel globals
+    | _ =>
+      cases rest with
+      | nil =>
+        simp only [knownOpHOL, Prod.mk.injEq] at known
+        rcases known with ⟨rfl, rfl⟩
+        exact ⟨globals, .other _⟩
+      | cons second tail =>
+        cases second with
+        | impossible => exact knownOpCorrectApproxElImpossibleSecond _ tail g0 a g vs s0 v s0 known run rel globals
+        | _ =>
+          cases tail with
+          | cons next tail =>
+            simp only [knownOpHOL, Prod.mk.injEq] at known
+            rcases known with ⟨rfl, rfl⟩
+            exact ⟨globals, .other _⟩
+          | nil =>
+            first
+            | exact knownOpCorrectApproxElTuple _ _ _ g0 a g vs s0 v s0 known run rel globals
+            | simp only [knownOpHOL, Prod.mk.injEq] at known
+              rcases known with ⟨rfl, rfl⟩
+              exact ⟨globals, .other _⟩
+
 end KnownOpCorrect
 end Flapjack.Compiler.Backend.ClosKnown
