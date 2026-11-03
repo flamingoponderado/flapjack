@@ -1,5 +1,44 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcIntConst",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed with the original integer constant case: only the operation is specialized, with the evaluation equality, EVERY value-safety and state-safety premises and both universally quantified success and raise conclusions unchanged. In this case successful execution returns the safe numeric constant and preserves the state. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full source theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcCons",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed with the original block constructor case: only the operation is specialized, with the evaluation equality, EVERY value-safety and state-safety premises and both universally quantified success and raise conclusions unchanged. In this case the block contains exactly the safe input values and the state is preserved. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full source theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcGlobal",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed with the original global read case: only the operation is specialized, with the evaluation equality, EVERY value-safety and state-safety premises and both universally quantified success and raise conclusions unchanged. In this case both static and dynamic successful reads yield a value safe by the state invariant and preserve the state. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full source theorem."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
   "hol_name": "vsgc_free_def",
   "hol_line": 1800,
