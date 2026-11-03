@@ -6,7 +6,7 @@ open Flapjack.SemanticPrimitivesHOL
 
 /-- Recursive closures are described by the generated approximation list.
 This is Flapjack proof infrastructure. -/
-private theorem recClosuresApprox (loc : Option Nat) (captures : List ClosSem.Value)
+theorem recClosuresApprox (loc : Option Nat) (captures : List ClosSem.Value)
     (fns : List (Nat × ClosLang.Exp)) :
     List.Forall₂ ValApproxVal
       (match loc with | none => List.replicate fns.length .other | some n => closGenNoInline n 0 fns)

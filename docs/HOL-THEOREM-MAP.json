@@ -2,6 +2,16 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationLetrec.lean",
+  "lean_name": "knownCorrect0Letrec",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out. The recursive-closure evaluator case retains the original body induction hypothesis, including the arity checks, closure generator, optional capture lookup and environment extension. KnownSimulationAt unfolds to the original expression conjunct. Source and target states have independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationHandle.lean",
   "lean_name": "knownCorrect0Handle",
   "statement_status": "reviewed_fmap_as_finite_support",
