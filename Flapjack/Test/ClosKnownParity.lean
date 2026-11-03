@@ -44,6 +44,34 @@ private def input : List ClosLang.Exp :=
    .op .none (.globOp (.setGlobal 2)) [.op .none (.intOp (.const 5)) []],
    .op .none (.globOp (.global 2)) []]
 
+-- These three complete traversal results are captured as `known_inline`,
+-- `known_letrec_globals`, and `known_impure_inline` in the original HOL probe.
+#guard match knownListTotal (mkConfig 8 2) (input.take 1) [] .ln with
+  | ([(.let .none [.fn name (some 4) none 1 (.var .none 0)]
+       (.let .none [.op .none (.intOp (.const 42)) []] (.tick .none (.var .none 0))),
+       .int 42)], .ln) => decide (name = ofString "f")
+  | _ => false
+
+#guard match knownListTotal (mkConfig 8 2)
+    [.letrec [ofString "f"] (some 4) none
+      [(0, .op .none (.globOp (.setGlobal 3)) [.op .none (.intOp (.const 7)) []])]
+      (.op .none (.globOp (.global 3)) [])] [] .ln with
+  | ([(.letrec [name] (some 4) none
+       [(0, .op .none (.globOp (.setGlobal 3)) [.op .none (.intOp (.const 7)) []])]
+       (.op .none (.globOp (.global 3)) []), .other)], .ln) => decide (name = ofString "f")
+  | _ => false
+
+#guard match knownListTotal (mkConfig 8 2)
+    [.app .none none
+      (.let .none [.op .none (.globOp (.setGlobal 2)) [.op .none (.intOp (.const 5)) []]] fn)
+      [.op .none (.intOp (.const 42)) []]] [] .ln with
+  | ([(.let .none [.op .none (.intOp (.const 42)) [],
+       .let .none [.op .none (.globOp (.setGlobal 2)) [.op .none (.intOp (.const 5)) []]]
+         (.fn name (some 4) none 1 (.var .none 0))]
+       (.tick .none (.var .none 0)), .int 42)], .bn (.ls (.int 5)) .ln) =>
+      decide (name = ofString "f")
+  | _ => false
+
 -- Zero initial fuel forces the production retry with inlining disabled.
 -- A zero initial fuel also succeeds through an actual inlining decision.
 #guard match knownListBounded 0 (mkConfig 8 2) (input.take 1) [] .ln with

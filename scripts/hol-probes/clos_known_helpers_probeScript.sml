@@ -24,3 +24,29 @@ val _ = (print "inline="; print_term (rhs (concl (EVAL ``
   clos_known$decide_inline c (clos_known$Clos 4 1 body 3) (SOME 9) 1;
   clos_known$decide_inline c (clos_known$Clos 4 1 (closLang$Var None 1) 1) NONE 1;
   clos_known$decide_inline c (clos_known$Clos 4 1 (closLang$Fn «x» NONE NONE 1 (closLang$Var None 0)) 1) NONE 1]``))); print "\n");
+val _ = (print "known_inline="; print_term (rhs (concl (EVAL ``
+ let c = clos_known$mk_config 8 2 in
+ clos_known$known c [closLang$Let None [closLang$Fn «f» (SOME 4) NONE 1 (closLang$Var None 0)]
+   (closLang$App None NONE (closLang$Var None 0) [closLang$Op None (closLang$IntOp (closLang$Const 42)) []])]
+   [] LN``))); print "\n");
+val _ = (print "known_letrec_globals="; print_term (rhs (concl (EVAL ``
+ let c = clos_known$mk_config 8 2 in
+ clos_known$known c [closLang$Letrec [«f»] (SOME 4) NONE
+   [(0,closLang$Op None (closLang$GlobOp (closLang$SetGlobal 3))
+     [closLang$Op None (closLang$IntOp (closLang$Const 7)) []])]
+   (closLang$Op None (closLang$GlobOp (closLang$Global 3)) [])] [] LN``))); print "\n");
+val _ = (print "known_impure_inline="; print_term (rhs (concl (EVAL ``
+ let c = clos_known$mk_config 8 2 in
+ clos_known$known c [closLang$App None NONE
+   (closLang$Let None [closLang$Op None (closLang$GlobOp (closLang$SetGlobal 2))
+      [closLang$Op None (closLang$IntOp (closLang$Const 5)) []]]
+      (closLang$Fn «f» (SOME 4) NONE 1 (closLang$Var None 0)))
+   [closLang$Op None (closLang$IntOp (closLang$Const 42)) []]] [] LN``))); print "\n");
+val _ = (print "known_impure_tree="; print_term (rhs (concl (EVAL ``
+ let c = clos_known$mk_config 8 2 in
+ let (_,g) = clos_known$known c [closLang$App None NONE
+   (closLang$Let None [closLang$Op None (closLang$GlobOp (closLang$SetGlobal 2))
+      [closLang$Op None (closLang$IntOp (closLang$Const 5)) []]]
+      (closLang$Fn «f» (SOME 4) NONE 1 (closLang$Var None 0)))
+   [closLang$Op None (closLang$IntOp (closLang$Const 42)) []]] [] LN in
+ g = BN (LS (clos_known$Int 5)) LN``))); print "\n");

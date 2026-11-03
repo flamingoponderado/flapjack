@@ -455,7 +455,7 @@ the complete carrier correspondence remains under review.
 
 `clos_call_stub_probe.out` records the polymorphic source stub-generator types and clauses and checks their generated argument order and labels against the Lean source-shaped and executable forms.
 
-`clos_known_helpers_probe.out` captures closure free-variable cleanup, tick removal, let-operation cleanup and inlining decisions, including trace preservation and size limits. These support the bounded known-function pass.
+`clos_known_helpers_probe.out` captures closure free-variable cleanup, tick removal, let-operation cleanup and inlining decisions, including trace preservation and size limits. Its complete known-traversal rows also cover ordinary inlining, recursive-body global writes, and evaluation order for an impure function expression. These rows are replayed by `Flapjack.Test.ClosKnownParity` against the executed total traversal.
 
 `clos_op_frontend_probe.out` captures smart arithmetic, constructor inspection,
 equality expansion, trace retention, effectful binding order, signed division

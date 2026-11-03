@@ -717,7 +717,7 @@ run_probe clos_call_frontend_probeScript.sml clos_call_frontend_probe.out \
   free closed open apps letrec "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_known_helpers_probeScript.sml clos_known_helpers_probe.out \
-  fvs ticks letop decisions inline "$cake_dir/compiler/backend/clos_knownScript.sml" "$cake_dir/compiler/backend"
+  fvs ticks letop decisions inline known_inline known_letrec_globals known_impure_inline known_impure_tree "$cake_dir/compiler/backend/clos_knownScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_known_frontend_probeScript.sml clos_known_frontend_probe.out \
   merge knownop compiled "$cake_dir/compiler/backend/clos_knownScript.sml" "$cake_dir/compiler/backend"
