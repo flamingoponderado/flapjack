@@ -33,3 +33,5 @@ smart_cons_typed=∀(xs :closLang$exp list). SmartOp (t :tra) (BlockOp (Cons (n 
 smart_install_typed=SmartOp (t :tra) Install = Op t Install
 smart_code_locs_typed=LIST_TO_BAG (code_locs [SmartOp (t :tra) (op :closLang$op) (xs :closLang$exp list)]) = LIST_TO_BAG (code_locs [Op t op xs])
 list_to_bag_alt_typed=∀(l :α list) (x :α). LIST_TO_BAG l x = LENGTH (FILTER ($= x) l)
+lift_exps_fv_typed=∀(xs :closLang$exp list) (n :num) (binds :closLang$exp list) (ys :closLang$exp list) (k :num) (binds2 :closLang$exp list). lift_exps xs n binds = (ys,k,binds2) ∧ n = LENGTH binds ⇒ k = LENGTH binds2 ∧ (∀(l :num). fv l binds2 ⇒ fv l xs ∨ fv l binds) ∧ ∀(l :num). fv l ys ⇒ l < k
+fv_conj_list_typed=∀(xs :closLang$exp list). fv1 (n :num) (ConjList xs) ⇔ fv n xs

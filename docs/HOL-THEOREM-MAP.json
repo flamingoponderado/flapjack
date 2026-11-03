@@ -1,6 +1,23 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "lift_exps_fv",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftFreeVars.lean",
+    "lean_name": "liftExpsFV",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lift_exps_fv_typed: the full source result equation and initial index-equals-binding-length premise imply all three original conjuncts, including final length, free-variable origin and bound on every free output index. Uses the reviewed source free-variable predicates."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "fv1_ConjList",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftFreeVars.lean",
+    "lean_name": "freeVarConjList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared fv_conj_list_typed: for every source expression list and arbitrary index, the singleton conjunction and original list have equivalent source free-variable membership."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "SmartOp_Const",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartFixed.lean",
     "lean_name": "smartConst",

@@ -6,7 +6,8 @@ reduction invariant, direct-equality correspondence, reduction reflexivity,
 the full smart-operation reduction theorem, and its purity, global-write,
 closure-safety consequences, and the constant, constructor and installation
 unchanged-operation theorems, the source code-location bag theorem and the
-HOL list-to-bag counting characterization. These
+HOL list-to-bag counting characterization, and free-variable invariants for
+lifting and conjunctions. These
 captures support source review, not full pass correctness.
 
 `flat_to_clos_helpers_probe.out` captures the fully typed original literal,
