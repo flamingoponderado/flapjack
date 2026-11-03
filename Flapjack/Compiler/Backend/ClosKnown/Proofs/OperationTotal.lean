@@ -6,8 +6,7 @@ namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosLang
 
 theorem knownOpFuel_succeeds (fuel : Nat) (op : Op) (args : List ValApprox)
-    (globals : Spt ValApprox) : ∃ result, knownOpFuel fuel op args globals = some result := by
-  unfold knownOpFuel
-  repeat' (first | split | exact ⟨_, rfl⟩)
+    (globals : Spt ValApprox) : ∃ result, knownOpFuel fuel op args globals = some result :=
+  ⟨knownOpHOL op args globals, rfl⟩
 
 end Flapjack.Compiler.Backend.ClosKnown

@@ -93,7 +93,8 @@ The replay supports source review; it does not prove cross-language equivalence.
 
 `clos_known_syntax_probe.out` captures the typed known-function syntax
 precondition, HOL's bag-distinctness definition, and the optional-config
-approximation lookup and update definitions, the source approximation merge,
+approximation lookup and update definitions, the source approximation merge and
+known-operation definition,
 the original closure-detection
 traversal, the inliner size definitions and their HOL properties, recursive
 closure approximation generation, and the
@@ -438,7 +439,9 @@ the complete carrier correspondence remains under review.
 
 `clos_op_frontend_probe.out` captures smart arithmetic, constructor inspection, equality expansion, trace retention and effectful binding order. The bounded Lean operation simplifier is checked against these selected original outputs.
 
-`clos_known_frontend_probe.out` captures approximation merging, global updates and closure inlining. `full_clos_known_cake_word_probe.out` and `full_default_frontend_word_probe.out` capture complete word programs with known-function optimization enabled; the latter uses the default BVL optimization settings for the selected 64-bit nested-function example.
+`clos_known_frontend_probe.out` captures approximation merging, global updates,
+index and malformed-tree edge cases, and closure inlining.
+`full_clos_known_cake_word_probe.out` and `full_default_frontend_word_probe.out` capture complete word programs with known-function optimization enabled; the latter uses the default BVL optimization settings for the selected 64-bit nested-function example.
 
 `cake_lexer_probe.out` captures CakeML tokens and source locations for identifiers, numbers, nested comments, strings, characters, FFI names and lexical errors. `cake_lexer_chunks_probe.out` captures top-level semicolon grouping and incomplete trailing input. The bounded Lean lexer consumes the HOL byte-character carrier; CakeML parsing and type inference remain separate work.
 

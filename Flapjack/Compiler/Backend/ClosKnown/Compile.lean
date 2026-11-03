@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.ClosKnown.Inline
-import Flapjack.Compiler.Backend.ClosKnown.Merge
+import Flapjack.Compiler.Backend.ClosKnown.KnownOp
 import Flapjack.Compiler.Backend.ClosFvs
 import Flapjack.Compiler.Backend.ClosTicks
 import Flapjack.Compiler.Backend.ClosLetop
@@ -99,8 +99,9 @@ former fuel-bounded traversal succeeds. -/
 def mergeBounded (_fuel : Nat) (a b : ValApprox) : Option ValApprox :=
   some (mergeHOL a b)
 
-/-- Propagate approximations through original global and constructor operations. -/
-def knownOpFuel (fuel : Nat) (op : Op) (args : List ValApprox) (globals : Spt ValApprox) :
+/-- Previous checked operation, retained only for the Flapjack preservation proof;
+HOL has no fuel-bounded version of `known_op`. -/
+private def knownOpFuelPrevious (fuel : Nat) (op : Op) (args : List ValApprox) (globals : Spt ValApprox) :
     Option (ValApprox × Spt ValApprox) := do
   match op, args with
   | .globOp (.global n), [] => pure ((sptLookup n globals).getD .other, globals)
@@ -116,6 +117,38 @@ def knownOpFuel (fuel : Nat) (op : Op) (args : List ValApprox) (globals : Spt Va
   | .memOp .el, .impossible :: _ => pure (.impossible, globals)
   | .memOp .el, _ :: .impossible :: _ => pure (.impossible, globals)
   | _, _ => pure (.other, globals)
+
+/-- The checked interface now runs the source total operation directly. -/
+def knownOpFuel (_fuel : Nat) (op : Op) (args : List ValApprox) (globals : Spt ValApprox) :
+    Option (ValApprox × Spt ValApprox) :=
+  some (knownOpHOL op args globals)
+
+/-- Flapjack preservation proof for the former checked implementation; this
+fuel-bounded interface has no separate HOL original. -/
+theorem knownOpFuel_eq_previous (fuel : Nat) (op : Op) (args : List ValApprox) (globals : Spt ValApprox) :
+    knownOpFuel fuel op args globals = knownOpFuelPrevious fuel op args globals := by
+  unfold knownOpFuel
+  symm
+  unfold knownOpFuelPrevious knownOpHOL
+  cases op with
+  | intOp o => cases o <;> simp
+  | blockOp o => cases o <;> simp
+  | globOp o => cases o <;> cases args <;> simp [mergeBounded] <;> (try split) <;> simp_all
+  | memOp o =>
+    cases o <;> try simp
+    case el =>
+      cases args with
+      | nil => rfl
+      | cons a rest =>
+        cases rest with
+        | nil => cases a <;> simp
+        | cons b tail =>
+          cases tail with
+          | nil =>
+            cases a <;> cases b <;> simp <;>
+              (try split) <;> simp_all
+          | cons c tail => cases a <;> cases b <;> simp
+  | _ => simp
 
 private def ticks (trace : BackendCommon.Tra) : Nat → Nat → Exp → Exp
   | _, 0, e => e

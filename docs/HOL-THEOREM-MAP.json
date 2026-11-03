@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "known_op_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/KnownOp.lean",
+    "lean_name": "knownOpHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_op_typed and every source clause. The global carrier is the constructor-for-constructor spt tree; lookup and insert were compared with the pinned HOL definitions, including non-well-formed trees. Tuple EL uses the source signed bounds and a checked in-range list index. The executed wrapper calls this total operation; knownOpFuel_eq_previous proves equality with the former implementation for every operation, argument list and tree. The regenerated edge probe checks negative and out-of-range indices, impossible arguments, extra arguments and an invalid tree update."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
     "hol_name": "merge_def",
     "hol_line": 278,
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Merge.lean",

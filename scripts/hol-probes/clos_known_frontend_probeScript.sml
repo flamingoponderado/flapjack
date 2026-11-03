@@ -12,6 +12,15 @@ val _ = (print "knownop="; print_term (rhs (concl (EVAL ``
  let (b,g) = clos_known$known_op (closLang$GlobOp (closLang$Global 2)) [] g in
  let (c,g) = clos_known$known_op (closLang$MemOp closLang$El) [clos_known$Tuple 0 [clos_known$Int 8;clos_known$Int 9];clos_known$Int 1] g in
  (a,b,c,toAList g)``))); print "\n");
+val _ = (print "knownop_edges="; print_term (rhs (concl (EVAL ``
+ let g = BN LN LN in
+ ([FST (clos_known$known_op (closLang$GlobOp (closLang$Global 0)) [] g);
+   FST (clos_known$known_op (closLang$GlobOp (closLang$Global 0)) [clos_known$Int 4] (LS (clos_known$Int 6)));
+   FST (clos_known$known_op (closLang$MemOp closLang$El) [clos_known$Tuple 0 [clos_known$Int 8];clos_known$Int (~1)] g);
+   FST (clos_known$known_op (closLang$MemOp closLang$El) [clos_known$Tuple 0 [clos_known$Int 8];clos_known$Int 1] g);
+   FST (clos_known$known_op (closLang$MemOp closLang$El) [clos_known$Int 4;clos_known$Impossible] g);
+   FST (clos_known$known_op (closLang$MemOp closLang$El) [clos_known$Tuple 0 [clos_known$Int 8];clos_known$Int 0;clos_known$Other] g)],
+  SND (clos_known$known_op (closLang$GlobOp (closLang$SetGlobal 0)) [clos_known$Int 7] g) = BS LN (clos_known$Int 7) LN)``))); print "\n");
 val _ = (print "compiled="; print_term (rhs (concl (EVAL ``
  let c = clos_known$mk_config 8 2 in
  let fn = closLang$Fn «f» (SOME 4) NONE 1 (closLang$Var None 0) in

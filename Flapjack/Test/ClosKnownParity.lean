@@ -23,6 +23,21 @@ private def h : ClosLang.Exp := .var .none 1
   | some (.other, .int 5, .int 9, [(2, .int 5)]) => true
   | _ => false
 
+-- `knownop_edges` also observes the exact update shape of a non-well-formed tree.
+#guard Id.run do
+  let g : Flapjack.Spt ValApprox := .bn .ln .ln
+  let values := [
+    (knownOpHOL (.globOp (.global 0)) [] g).1,
+    (knownOpHOL (.globOp (.global 0)) [.int 4] (.ls (.int 6))).1,
+    (knownOpHOL (.memOp .el) [.tuple 0 [.int 8], .int (-1)] g).1,
+    (knownOpHOL (.memOp .el) [.tuple 0 [.int 8], .int 1] g).1,
+    (knownOpHOL (.memOp .el) [.int 4, .impossible] g).1,
+    (knownOpHOL (.memOp .el) [.tuple 0 [.int 8], .int 0, .other] g).1]
+  let updated := (knownOpHOL (.globOp (.setGlobal 0)) [.int 7] g).2
+  return match values, updated with
+    | [.other, .other, .other, .other, .impossible, .other], .bs .ln (.int 7) .ln => true
+    | _, _ => false
+
 private def fn : ClosLang.Exp := .fn (ofString "f") (some 4) none 1 (.var .none 0)
 private def input : List ClosLang.Exp :=
   [.let .none [fn] (.app .none none (.var .none 0) [.op .none (.intOp (.const 42)) []]),
