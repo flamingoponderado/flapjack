@@ -33,6 +33,29 @@ theorem relatedRefs {C D F : Type} (vr : Value → Value → Prop)
       obtain ⟨left, source, related⟩ := simple.2.2.2.1 mode value t s ptr ⟨target, states⟩
       simpa [target, source, optionRel, refRel] using related
 
+/-- Updating corresponding list positions preserves their relation. This is
+Flapjack proof infrastructure. -/
+private theorem relatedSet {A B : Type} {r : A → B → Prop} {xs : List A} {ys : List B}
+    (related : List.Forall₂ r xs ys) (index : Nat) (x : A) (y : B) (h : r x y) :
+    List.Forall₂ r (xs.set index x) (ys.set index y) := by
+  induction related generalizing index with
+  | nil => simp
+  | cons head tail ih =>
+    cases index with
+    | zero => exact .cons h tail
+    | succ index => exact .cons head (ih index)
+
+/-- Pointwise-related lists have related optional indexed reads. This is
+Flapjack proof infrastructure. -/
+private theorem relatedLookup {A B : Type} {r : A → B → Prop} {xs : List A} {ys : List B}
+    (related : List.Forall₂ r xs ys) (index : Nat) : optionRel r xs[index]? ys[index]? := by
+  induction related generalizing index with
+  | nil => simp [optionRel]
+  | cons head tail ih =>
+    cases index with
+    | zero => exact head
+    | succ index => exact ih index
+
 /-- Value-array length case of the reverse primitive simulation. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_do_app_rev"
   (fmap_as_finite_support := [refs, code])]
@@ -130,5 +153,88 @@ theorem simpleValRelDoAppRevDerefByte {C D F : Type} (vr : Value → Value → P
           | some byte =>
             have number : vr (.number byte.toNat) (.number byte.toNat) := (simple.1 _ _).2 rfl
             simp [negative, number, states]
+
+/-- Value-array update case of the reverse primitive simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_do_app_rev"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleValRelDoAppRevUpdateArray {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F) (xs ys : List Value)
+    (h : simpleValRel vr ∧ simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ vr xs ys) :
+    match doApp (.memOp .update) ys t with
+    | .err err2 => ∃ err1, doApp (.memOp .update) xs s = .err err1 ∧ excRel vr err1 err2
+    | .val (y, t1) => ∃ x s1, vr x y ∧ sr s1 t1 ∧ doApp (.memOp .update) xs s = .val (x, s1) := by
+  obtain ⟨simple, stateProps, states, values⟩ := h
+  cases values with
+  | nil => simp [doApp, applyMemory, excRel]
+  | @cons x1 y1 _ _ first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, excRel]
+    | @cons x2 y2 _ _ second tail =>
+      cases tail with
+      | nil => simp [doApp, applyMemory, excRel]
+      | @cons x3 y3 _ _ third tail =>
+        cases tail with
+        | cons fourth rest => simp [doApp, applyMemory, excRel]
+        | nil =>
+          have firstView := simpleValRel_view vr simple x1 y1 first
+          have secondView := simpleValRel_view vr simple x2 y2 second
+          cases firstView <;> cases secondView <;> simp_all [doApp, applyMemory, excRel]
+          rename_i flag ptr index
+          have lookup := relatedRefs vr sr stateProps s t states ptr
+          cases left : s.refs.lookup ptr <;> cases right : t.refs.lookup ptr <;>
+            simp_all [optionRel]
+          rename_i a b
+          cases a <;> cases b <;> simp_all [refRel]
+          rename_i fields nextFields
+          have lengths := lookup.length_eq
+          by_cases invalid : index < 0 ∨ index.toNat ≥ fields.length
+          · simp [← lengths, invalid]
+          · have updated := stateProps.2.2.2.2.2.2.2.1 s t ptr _ _
+              ⟨states, relatedSet lookup index.toNat x3 y3 third⟩
+            have unit : vr unitValue unitValue := (simple.2.1 _ [] _).2 ⟨[], rfl, .nil⟩
+            simp [← lengths, invalid, unit, updated]
+
+/-- Indexed reads from blocks and value arrays preserve the reverse primitive
+simulation, including missing entries and invalid indices. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_do_app_rev"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleValRelDoAppRevEl {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F) (xs ys : List Value)
+    (h : simpleValRel vr ∧ simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ vr xs ys) :
+    match doApp (.memOp .el) ys t with
+    | .err err2 => ∃ err1, doApp (.memOp .el) xs s = .err err1 ∧ excRel vr err1 err2
+    | .val (y, t1) => ∃ x s1, vr x y ∧ sr s1 t1 ∧ doApp (.memOp .el) xs s = .val (x, s1) := by
+  obtain ⟨simple, stateProps, states, values⟩ := h
+  cases values with
+  | nil => simp [doApp, applyMemory, excRel]
+  | @cons x1 y1 _ _ first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, excRel]
+    | @cons x2 y2 _ _ second tail =>
+      cases tail with
+      | cons third rest => simp [doApp, applyMemory, excRel]
+      | nil =>
+        have firstView := simpleValRel_view vr simple x1 y1 first
+        have secondView := simpleValRel_view vr simple x2 y2 second
+        cases firstView <;> cases secondView <;> simp_all [doApp, applyMemory, excRel]
+        case block.number tag fields nextFields rel index =>
+          by_cases neg : index < 0
+          · simp [neg]
+          · have reads := relatedLookup rel index.toNat
+            cases l : fields[index.toNat]? <;> cases r : nextFields[index.toNat]? <;>
+              simp_all [optionRel]
+            simp [show ¬ index < 0 by omega, reads, states]
+        case refPtr.number flag ptr index =>
+          have lookup := relatedRefs vr sr stateProps s t states ptr
+          cases l : s.refs.lookup ptr <;> cases r : t.refs.lookup ptr <;> simp_all [optionRel]
+          rename_i a b
+          cases a <;> cases b <;> simp_all [refRel]
+          rename_i fields nextFields
+          by_cases neg : index < 0
+          · simp [neg]
+          · have reads := relatedLookup lookup index.toNat
+            cases l : fields[index.toNat]? <;> cases r : nextFields[index.toNat]? <;>
+              simp_all [optionRel]
+            simp [show ¬ index < 0 by omega, reads, states]
 
 end Flapjack.Compiler.Backend.ClosProps.PrimitiveMemory
