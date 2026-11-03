@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfieldCase
+import Flapjack.Compiler.Encoders.Arm8.Machine.MemCase
 
 set_option maxHeartbeats 12000000
 set_option maxRecDepth 10000
@@ -310,10 +311,10 @@ assembles (Flapjack infrastructure; the eight-byte analogue of
 theorem holV2w_eight_bytes (b0 b1 b2 b3 b4 b5 b6 b7 : BitVec 8) :
     holV2w 64 (holW2v b7 ++ (holW2v b6 ++ (holW2v b5 ++ (holW2v b4 ++
       (holW2v b3 ++ (holW2v b2 ++ (holW2v b1 ++ holW2v b0))))))) =
-      (BitVec.setWidth 64 b7) <<< 56 ||| (BitVec.setWidth 64 b6) <<< 48 |||
-      (BitVec.setWidth 64 b5) <<< 40 ||| (BitVec.setWidth 64 b4) <<< 32 |||
-      (BitVec.setWidth 64 b3) <<< 24 ||| (BitVec.setWidth 64 b2) <<< 16 |||
-      (BitVec.setWidth 64 b1) <<< 8 ||| (BitVec.setWidth 64 b0) := by
+      (BitVec.setWidth 64 b7) <<< (56 : Nat) ||| (BitVec.setWidth 64 b6) <<< (48 : Nat) |||
+      (BitVec.setWidth 64 b5) <<< (40 : Nat) ||| (BitVec.setWidth 64 b4) <<< (32 : Nat) |||
+      (BitVec.setWidth 64 b3) <<< (24 : Nat) ||| (BitVec.setWidth 64 b2) <<< (16 : Nat) |||
+      (BitVec.setWidth 64 b1) <<< (8 : Nat) ||| (BitVec.setWidth 64 b0) := by
   apply BitVec.eq_of_getLsbD_eq
   intro i hi
   simp only [Flapjack.RiscV.L3.holV2w, holW2v, List.length_append, List.length_map,
@@ -321,5 +322,47 @@ theorem holV2w_eight_bytes (b0 b1 b2 b3 b4 b5 b6 b7 : BitVec 8) :
   rw [getLsbD_holFcpWord]
   simp only [hi, decide_true, Bool.true_and]
   interval_cases i <;> simp [List.getD_eq_getElem?_getD]
+
+
+/-- The L3 eight-byte read is the source's `readMemWord` value, given the byte
+agreement and little-endian addressing (Flapjack infrastructure). -/
+theorem arm8Mem_eight_eq_readMemWord (ms : arm8_state) (s : AsmState 64)
+    (address : BitVec 64)
+    (hal : Aligned (TN := 64) (address, 8) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
+    (hbe : s.be = false)
+    (hmem : ∀ i : Nat, i < 8 →
+      ms.MEM (address + BitVec.ofNat 64 i) = s.mem (address + BitVec.ofNat 64 i)) :
+    (Mem (TN := 64) (address, (8, AccType.AccType_NORMAL)) ms).1 =
+      (readMemWord (resultWidth := 64) address 8 s).1 := by
+  have h0 : ms.MEM address = s.mem address := by
+    simpa using hmem 0 (by omega)
+  have h1 : ms.MEM (address + BitVec.ofNat 64 1) = s.mem (address + BitVec.ofNat 64 1) :=
+    hmem 1 (by omega)
+  have h2 : ms.MEM (address + BitVec.ofNat 64 2) = s.mem (address + BitVec.ofNat 64 2) :=
+    hmem 2 (by omega)
+  have h3 : ms.MEM (address + BitVec.ofNat 64 3) = s.mem (address + BitVec.ofNat 64 3) :=
+    hmem 3 (by omega)
+  have h4 : ms.MEM (address + BitVec.ofNat 64 4) = s.mem (address + BitVec.ofNat 64 4) :=
+    hmem 4 (by omega)
+  have h5 : ms.MEM (address + BitVec.ofNat 64 5) = s.mem (address + BitVec.ofNat 64 5) :=
+    hmem 5 (by omega)
+  have h6 : ms.MEM (address + BitVec.ofNat 64 6) = s.mem (address + BitVec.ofNat 64 6) :=
+    hmem 6 (by omega)
+  have h7 : ms.MEM (address + BitVec.ofNat 64 7) = s.mem (address + BitVec.ofNat 64 7) :=
+    hmem 7 (by omega)
+  rw [arm8Mem_eight ms address
+    (s.mem address)
+    (s.mem (address + BitVec.ofNat 64 1))
+    (s.mem (address + BitVec.ofNat 64 2))
+    (s.mem (address + BitVec.ofNat 64 3))
+    (s.mem (address + BitVec.ofNat 64 4))
+    (s.mem (address + BitVec.ofNat 64 5))
+    (s.mem (address + BitVec.ofNat 64 6))
+    (s.mem (address + BitVec.ofNat 64 7))
+    h0 h1 h2 h3 h4 h5 h6 h7 hal he0 hel]
+  rw [readMemWord_fst address 8 s hbe, readBytes_eight]
+  rw [holV2w_eight_bytes]
+  simp only [BitVec.ofNat_eq_ofNat]
 
 end Flapjack.Compiler.Encoders.Arm8.L3
