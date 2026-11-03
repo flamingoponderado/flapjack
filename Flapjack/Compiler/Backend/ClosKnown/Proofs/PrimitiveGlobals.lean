@@ -489,6 +489,110 @@ theorem doAppSsgcGlobOp {C F : Type} (op : ClosLang.GlobOp) (args : List ClosSem
   | globalsPtr => exact doAppSsgcGlobalsPtr args s0 res h
   | setGlobalsPtr => exact doAppSsgcSetGlobalsPtr args s0 res h
 
+/-- Replacing a reference with a byte array and changing the FFI state
+preserves closure state safety. This helper has no separate HOL declaration. -/
+private theorem ssgcFreeUpdateByteArray {C F : Type} (s : State C F) (index : Nat)
+    (bytes : List (BitVec 8)) (ffi : HolFfiState F) (safe : ssgcFree s) :
+    ssgcFree {s with refs := s.refs.updateEq (index, .byteArray bytes), ffi := ffi} := by
+  rcases safe with ⟨code, arrays, thunks, globals, oracle⟩
+  refine ⟨code, ?_, ?_, globals, oracle⟩
+  · intro key values found
+    by_cases same : key = index
+    · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] at found
+    · apply arrays key values
+      simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using found
+  · intro key mode value found
+    by_cases same : key = index
+    · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] at found
+    · apply thunks key mode value
+      simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using found
+
+/-- External calls satisfy the complete source primitive-safety conclusion. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcFfi {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (args : List ClosSem.Value) (s0 : State C F)
+    (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.ffi name) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.ffi name) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, stateSafe⟩
+  simp only [ClosSem.doApp]
+  repeat' split
+  all_goals simp_all [vsgcFreeUnit, mglobalsExtendRefl]
+  all_goals exact ssgcFreeUpdateByteArray _ _ _ _ stateSafe
+
+/-- Replacing a reference with a thunk carrying a safe value preserves state
+safety. This helper has no separate HOL declaration. -/
+private theorem ssgcFreeUpdateThunk {C F : Type} (s : State C F) (index : Nat)
+    (mode : Flapjack.AstHOL.ThunkMode) (value : ClosSem.Value)
+    (safe : ssgcFree s) (valueSafe : vsgcFree value) :
+    ssgcFree {s with refs := s.refs.updateEq (index, .thunk mode value)} := by
+  rcases safe with ⟨code, arrays, thunks, globals, oracle⟩
+  refine ⟨code, ?_, ?_, globals, oracle⟩
+  · intro key values found
+    by_cases same : key = index
+    · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] at found
+    · apply arrays key values
+      simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using found
+  · intro key mode' value' found
+    by_cases same : key = index
+    · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] at found
+      rcases found with ⟨_, rfl⟩
+      exact valueSafe
+    · apply thunks key mode' value'
+      simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using found
+
+/-- Every thunk operation satisfies the complete primitive-safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcThunkOp {C F : Type} (op : Flapjack.AstHOL.ThunkOp)
+    (args : List ClosSem.Value) (s0 : State C F)
+    (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.thunkOp op) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.thunkOp op) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, argsSafe, stateSafe⟩
+  simp only [ClosSem.doApp]
+  repeat' split
+  all_goals simp_all [vsgcFree, vsgcFreeUnit, mglobalsExtendRefl]
+  all_goals apply ssgcFreeUpdateThunk <;> assumption
+
+/-- A direct label primitive follows the source type-error fallback. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcLabel {C F : Type} (label : Nat) (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.label label) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.label label) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, _⟩
+  simp [ClosSem.doApp]
+
+/-- Installation is handled by the evaluator; direct primitive application
+follows the source type-error fallback. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcInstall {C F : Type} (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp .install args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag .install k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, _⟩
+  simp [ClosSem.doApp]
+
 end DoAppSafety
 
 end Flapjack.Compiler.Backend.ClosKnown
