@@ -467,4 +467,66 @@ theorem arm8Mem_eight_value (ms : arm8_state) (s : AsmState 64) (address : BitVe
   arm8Mem_eight_eq_readMemWord ms s address hal he0 hel hbe
     (fun i hi => hrel _ (hdom i hi))
 
+
+/-- The rendered `Aligned` at eight bytes is `8 ∣ a.toNat`. -/
+theorem arm8Aligned_eight_iff (a : BitVec 64) :
+    Aligned (TN := 64) (a, 8) = true ↔ a.toNat % 8 = 0 := by
+  simp only [Aligned, Align, beq_iff_eq]
+  constructor
+  · intro h
+    have h1 := congrArg BitVec.toNat h
+    simp only [BitVec.toNat_ofNat] at h1
+    have hle : 8 * (a.toNat / 8) ≤ a.toNat := by
+      rw [Nat.mul_comm]; exact Nat.div_mul_le_self a.toNat 8
+    have hlt : 8 * (a.toNat / 8) < 2 ^ 64 := by omega
+    rw [Nat.mod_eq_of_lt hlt] at h1
+    omega
+  · intro h
+    apply BitVec.eq_of_toNat_eq
+    rw [BitVec.toNat_ofNat]
+    have hdvd : 8 ∣ a.toNat := Nat.dvd_of_mod_eq_zero h
+    have heq : 8 * (a.toNat / 8) = a.toNat := by
+      rw [Nat.mul_comm]; exact Nat.div_mul_cancel hdvd
+    have hlt : 8 * (a.toNat / 8) < 2 ^ 64 := by rw [heq]; exact a.isLt
+    rw [Nat.mod_eq_of_lt hlt, heq]
+
+/-- `holAligned` at three bits is the rendered `Aligned` at eight bytes. -/
+theorem arm8Aligned_eight_of_holAligned (a : BitVec 64)
+    (h : holAligned 3 a = true) : Aligned (TN := 64) (a, 8) = true := by
+  rw [arm8Aligned_eight_iff]
+  have h' := (holAligned_iff 3 a).mp h
+  simpa using h'
+
+
+/-- A successful eight-byte load has its effective address aligned: the source
+`mem_load` asserts `aligned (LOG2 n)`, and `asm_step` carries `¬ s2.failed`
+(Flapjack infrastructure; the alignment half of `memLoadDomain`). -/
+theorem arm8MemLoad_aligned (op : HolMemop) (r base : Nat) (off : BitVec 64)
+    (s1 s2 : AsmState 64) (pc : BitVec 64)
+    (hspec : memOp (width := 64) op = memLoad (width := 64) 8)
+    (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
+    (hbe : s1.be = false) (hok : ¬ s2.failed) :
+    Aligned (TN := 64) (s1.regs base + off, 8) = true := by
+  have hfail : s2.failed = false := boolOfNotTrue hok
+  rw [← hupd] at hfail
+  simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
+  have h3 : holLOG2 8 = 3 := holLOG_UNIQUE 2 8 3 ⟨by decide, by decide⟩
+  rw [h3] at hal
+  exact arm8Aligned_eight_of_holAligned _ (by simpa using hal)
+
+
+/-- A successful eight-byte load has its eight addresses in the source memory
+domain (Flapjack infrastructure; the domain half of `memLoadDomain`, at the
+L3 `asmUpd` shape). -/
+theorem arm8MemLoad_domain (op : HolMemop) (r base : Nat) (off : BitVec 64)
+    (s1 s2 : AsmState 64) (pc : BitVec 64)
+    (hspec : memOp (width := 64) op = memLoad (width := 64) 8)
+    (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
+    (hbe : s1.be = false) (hok : ¬ s2.failed) :
+    ∀ k, k < 8 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) := by
+  have h := memLoadDomain op r base off s1 s2 3 pc (by simpa using hspec) hupd hbe hok
+  simpa using h
+
 end Flapjack.Compiler.Encoders.Arm8.L3
