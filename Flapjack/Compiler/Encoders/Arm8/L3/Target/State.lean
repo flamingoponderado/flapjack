@@ -16,11 +16,13 @@ The record uses the exact L3 `arm8_config` carrier
 (`L3/Configuration.lean`) and the rendered `arm8_next`/`arm8_ok`/`arm8_proj`:
 `next = THE o NextStateARM8`, `get_pc = arm8_state_PC`,
 `get_reg = \s. REG s o n2w`, `get_byte = MEM`, `state_ok = arm8_ok`,
-`proj = arm8_proj`.  HOL omits `get_fp_reg` from the record literal; as in
-`RiscV.Target`, it is projected from the canonical arbitrary whole target
-record rather than independently chosen.  The `config` field still depends on
-the mechanically rendered `arm8_ast`/`arm8_enc` and `EncodeBitMask`, so the
-declaration is `pending_statement_review` until those are source-reviewed.
+`proj = arm8_proj`.  HOL omits `get_fp_reg` from the record literal; HOL
+elaborates the literal as a chain of updates over `ARB` of the target record
+(`src/datatype/record/RecordType.sml`), so the omitted field is
+`(ARB : target).get_fp_reg`, and the Lean record takes that same projection of
+an arbitrary whole target record.  Reviewed exact over the L3 carriers; the
+`config` field's callees (`arm8_ast`/`arm8_enc` and the rendered
+`EncodeBitMask`) are themselves reviewed or recorded in the manifest.
 -/
 
 namespace Flapjack.Compiler.Encoders.Arm8.L3.Target

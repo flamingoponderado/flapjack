@@ -24,11 +24,11 @@ instruction list. -/
 def arm8EncodeFail : List instruction := [NoOperation]
 
 /-- `arm8_encode` (`arm8_targetScript.sml:34-38`): little-endian bytes of the
-L3 `Encode` result, or four zero bytes for `BadCode`.
-
-    Tagged `pending_statement_review`: the statement is a direct transcription,
-    but its callee `Encode` is itself a mechanically rendered (unreviewed) L3
-    definition. -/
+L3 `Encode` result, or four zero bytes for `BadCode`.  Reviewed exact: the
+`ARM8` clause extracts the same four bytes (`BitVec.ofNat 8 ((w >>> 8k).toNat)`
+for `(8k+7 >< 8k) w`), `BadCode` gives four zero bytes, and `MachineCode` has
+exactly those two constructors.  The callee `Encode` remains a mechanically
+rendered L3 definition (`pending_statement_review`). -/
 @[hol "cakeml/compiler/encoders/arm8/arm8_targetScript.sml" "arm8_encode_def"]
 noncomputable def arm8Encode (i : instruction) : List (BitVec 8) :=
   match Encode i with

@@ -580,18 +580,26 @@ and `cakeml/compiler/encoders/arm8/arm8_targetScript.sml`:
   `avoid_regs = [18, 26, 31]`, `link_reg = SOME 30`, `two_reg_arith = F`,
   `big_endian = F`, `code_alignment = 2`, `ISA = ARMv8`, `encode = arm8_enc`).
 - `arm8_target_def` lists `next`, `config`, `get_pc`, `get_reg`, `get_byte`,
-  `state_ok` and `proj`, and omits `get_fp_reg` (HOL fills an omitted record
-  field with `ARB`).  `arm8TargetL3` sets the same seven fields and takes
-  `getFpReg` from `(holArb (HolAsmTarget 64 arm8_state Arm8L3Projection)).getFpReg`;
-  since `fp_reg_count = 0`, `target_state_rel`'s `get_fp_reg` conjunct is
-  vacuous and `target_ok` never reads it, so the choice cannot affect the
-  theorems.  This is a representation choice, recorded rather than certified.
+  `state_ok` and `proj`, and omits `get_fp_reg`.  HOL elaborates a record
+  literal as a chain of updates over `ARB` of the record type
+  (`src/datatype/record/RecordType.sml`), so the omitted field is exactly
+  `(ARB : target).get_fp_reg`; `arm8TargetL3` sets the same seven fields and
+  takes `getFpReg` from `(holArb (HolAsmTarget 64 arm8_state Arm8L3Projection)).getFpReg`,
+  the same projection of an arbitrary whole target record.
 
 These comparisons confirm the carriers and equations above at the level of
-field lists, orders, types and constants.  They do **not** promote the
-`pending_statement_review` rows: the rendered transition and encoding
-definitions in `Defs.lean` are still only mechanically rendered, and no
-declaration is claimed as an exact HOL port.
+field lists, orders, types and constants.  They promote to `reviewed_exact`
+the declarations that match HOL clause-for-clause under the documented
+representations (`arm8_state` and the other L3 datatypes, `arm8Proj`,
+`arm8Ok`, `arm8Next`, `arm8EncMovImm`, `arm8CmpCond`, `arm8Shv`,
+`arm8LoadStoreAst{,32,16}`, `NoOperation`, `arm8EncodeFail`,
+`arm8ValidImmediate`, `arm8ConfigL3`, `arm8Encode`, `arm8Ast`, `arm8Enc` and
+`arm8TargetL3`).  The 129-definition `Fetch`/`Decode`/`Run` closure in
+`Defs.lean` and the per-constructor case theorems stay
+`pending_statement_review`: the former are mechanical renderings whose
+representation mapping is documented but not individually reviewed, and the
+latter are case splits of one HOL theorem whose branch hypotheses are
+discharged only by the dispatchers.
 
 ### Transition behaviour and lowering comparison
 
@@ -634,13 +642,11 @@ Checked against the same pinned source:
   agree: `(15 >< 0) i` is `BitVec.ofNat 16 ((i >>> 0).toNat)` and likewise for
   the other three halves, `n2w r` is the `Nat`-to-`BitVec 5` cast, `~word_msb a`
   is `!offset.msb`, `x = Asr` is `sh == .asr`, `0x1Fw` is `31`, and `^temp` is
-  `26`.  The one non-syntactic clause is `Loc`'s range test: HOL compares
-  unsigned `≤` against `sw2sw (INT_MINw: word20)` and
-  `sw2sw (INT_MAXw: word20)`, while Lean uses signed `BitVec.sle` against
-  `BitVec.signExtend 64 (BitVec.ofNat 20 0x80000)` and
-  `BitVec.signExtend 64 (BitVec.ofNat 20 0x7FFFF)`.  Both accept exactly
-  `[-524288, 524287]`, so the clause is equivalent but not syntactically
-  identical; `arm8Ast` therefore stays `pending_statement_review`.
+  `26`.  `Loc`'s range test compares against `sw2sw (INT_MINw: word20)` and
+  `sw2sw (INT_MAXw: word20)`; HOL's `≤` on words is `word_le`, which is the
+  signed comparison (`z ∨ n = v` from the subtraction flags), so Lean's signed
+  `BitVec.sle` against `BitVec.signExtend 64 (BitVec.ofNat 20 0x80000)` and
+  `BitVec.signExtend 64 (BitVec.ofNat 20 0x7FFFF)` is the same test.
 - `arm8_encode_def` maps the `ARM8` word to its four little-endian bytes
   (`(7 >< 0) w` etc. as `BitVec.ofNat 8 ((w >>> k).toNat)`) and `BadCode` to
   four zero bytes; `arm8_encode_fail_def` is `[NoOperation]`; `arm8_enc_def` is
