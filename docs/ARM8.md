@@ -331,14 +331,33 @@ compare step at `PC` (the `ANDS` or `SUBS`-into-`XZR` shape, chosen by
 `n = 1`.  The taken branch goes to `PC + a` with the branch hint set; the
 untaken branch advances by four more.  The source side follows `asmUpd`'s
 `wordCmpHOL` choice, matched to `ConditionHolds (cmp_cond cmp)` by the flag
-semantics above.  The immediate-operand form is still open.  Its `is_test` compare is an
-`ANDS` on a `LogicalImmediate@64`, whose `Run`/`Next` facts are recorded
-(`arm8Run_logicalImmediate_ands_eq`, `arm8Next_logicalImmediate_ands`; the
-set-flags bit lives in the opcode, as for `LogicalShiftedRegister@64`).  Its
-ordering compare is an `AddSubImmediate@64` with `S := T`, which needs a new
-word: `arm8AddSubImmediateWord` hardcodes the `S` bit to `false`, so the
-set-flags word, its `Encode`/`Decode` inverse and the matching `Run`/`Next`
-lemmas still have to be added.
+semantics above.
+
+The immediate-operand form uses the same branch word and the same two compare
+shapes on an immediate operand.  Its `is_test` compare is an `ANDS` on a
+`LogicalImmediate@64` (`arm8Run_logicalImmediate_ands_eq`,
+`arm8Next_logicalImmediate_ands`, and `arm8Next_logicalImmediate_ands_agree`
+for the two-state simulation; the set-flags bit lives in the opcode, as for
+`LogicalShiftedRegister@64`).  Its ordering compare is an `AddSubImmediate@64`
+with `S := T`, which `arm8AddSubImmediateWord` (hardcoded to `S := F`) does not
+cover, so `AddSubImmediate.lean` adds `arm8AddSubImmediateWordS`, the
+`e_data` two-branch body `arm8EData_addSubImmediateS`, and the
+`Encode`/`Decode` inverses for the low twelve-bit and the shifted high
+immediate windows (`arm8Encode_addSubImmediateS_low`/`_high`,
+`arm8Decode_addSubImmediateS_low`/`_high`).  `JumpCmp.lean` then records the
+`Run` equation `arm8Run_addSubImmediate_setflags_xzr_eq` (flags from
+`AddWithCarry` on `Rn - imm`, the `XZR` destination discarded), the one-step
+`arm8Next_addSubImmediateS_low`/`_high`, and their `_agree` lemmas.  The
+register operand's `SP`-capable `if n = 31 then SP else X n` branch is
+discharged from the config's `avoidRegs` list, so the `Run` equations are
+stated with `rn ≠ 31`.
+
+`arm8_encoder_correct_jumpCmp_imm` then assembles the immediate case at
+`n = 1`, splitting on the three accepted encodings the config's
+`valid_immediate` admits: the `ANDS` immediate for `Test`/`NotTest`
+(`EncodeBitMask`), and the low and high `SUBS` immediate windows for the six
+ordering comparisons (`arm8ValidImmediate_test`/`_ord` and
+`arm8CmpOk_of_asm_imm` record that split).
 
 `JumpReg.lean` does the same for `BranchRegister (r, JMP)`: the word, its
 `Encode`/`Decode` inverse and the `Run` reduction, where `PC` becomes the
@@ -361,8 +380,6 @@ Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
 `DecodeBitMasks`/`BitfieldMove`), `addCarry`,
 `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
 `ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in `Carry.lean` and its
-`ConditionalCompareImmediate@64` facts in `Compare.lean`), `Mem`, and the
-the immediate `JumpCmp` form (the register form's compare, branch, flag
-semantics and two-instruction simulation are proved).
+`ConditionalCompareImmediate@64` facts in `Compare.lean`), and `Mem`.
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
