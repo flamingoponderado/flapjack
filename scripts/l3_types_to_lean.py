@@ -1,14 +1,23 @@
 """Render the L3 Import Construct/Record declarations of an L3 model script as Lean.
 
-Usage: scripts/l3_types_to_lean.py MODEL_SCRIPT HOL_PATH [DECL ...]
+Usage: scripts/l3_types_to_lean.py MODEL_SCRIPT HOL_PATH [DECL ...] [--beq-only NAME,...]
 
 Prints, in source order, one tagged Lean `inductive` per `Construct` type and one tagged
 `structure` per `Record`, with the type renderings documented in
 `Flapjack/RiscV/L3/Types.lean`. With trailing DECL arguments, only the named declarations
 are emitted (used for the ARM8 state carriers, which are a subset of the model's types).
+`--beq-only` lists the declarations that derive `BEq` instead of `DecidableEq`, because Lean
+cannot derive `DecidableEq` for their deeply nested payloads. The committed ARM8 carriers are
+reproduced by
+
+    scripts/l3_types_to_lean.py HOL/examples/l3-machine-code/arm8/model/arm8Script.sml \
+        HOL/examples/l3-machine-code/arm8/model/arm8Script.sml ProcState ... arm8_state \
+        --beq-only LoadStore,Data,instruction
+
 `scripts/tests/test_hol_l3_types_to_lean.py` checks that the committed RISC-V carriers are
-exactly the full output and that the ARM8 carriers are exactly the filtered output. This is
-a mechanical transcription aid; it does not establish HOL-to-Lean equivalence.
+exactly the full output, that the ARM8 carriers are exactly the filtered output, and that the
+CLI reproduces both. This is a mechanical transcription aid; it does not establish
+HOL-to-Lean equivalence.
 """
 import re, sys, runpy
 from pathlib import Path
@@ -107,4 +116,25 @@ def render(text: str, HOLPATH: str, only: list[str] | None = None,
 
 
 if __name__ == "__main__":
-    print(render(Path(sys.argv[1]).read_text(), sys.argv[2], sys.argv[3:] or None))
+    args = sys.argv[1:]
+    beq_only: tuple[str, ...] = ()
+    positional: list[str] = []
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == '--beq-only':
+            if i + 1 >= len(args):
+                raise SystemExit('--beq-only needs a comma-separated NAME list')
+            beq_only = tuple(n for n in args[i + 1].split(',') if n)
+            i += 2
+        elif a.startswith('--beq-only='):
+            beq_only = tuple(n for n in a.split('=', 1)[1].split(',') if n)
+            i += 1
+        else:
+            positional.append(a)
+            i += 1
+    if len(positional) < 2:
+        raise SystemExit('usage: l3_types_to_lean.py MODEL_SCRIPT HOL_PATH [DECL ...] '
+                         '[--beq-only NAME,...]')
+    print(render(Path(positional[0]).read_text(), positional[1],
+                 positional[2:] or None, beq_only))

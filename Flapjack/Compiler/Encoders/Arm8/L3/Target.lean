@@ -13,11 +13,12 @@ Counterparts of CakeML's `arm8_proj` and `arm8_ok`
 over the L3 `arm8_state` carrier of `Flapjack/Compiler/Encoders/Arm8/L3/Types.lean`
 rather than the closed `Arm8State`.  `arm8_next = THE o NextStateARM8` is
 stated here over the L3 carrier, using the rendered `NextStateARM8` closure of
-`L3/Defs.lean`; the `arm8_target` record follows in
-`Flapjack/Compiler/Encoders/Arm8/L3/Target/State.lean`.  That record is not an
-exact `arm8_target_def` port because its `config` field uses the closed-model
-`arm8Config`; the exact L3 `arm8_config` carrier is tracked in #1229.  The
-per-instruction simulation proofs remain the work of #1239.
+`L3/Defs.lean`; the `arm8_target` record is `arm8TargetL3` in
+`Flapjack/Compiler/Encoders/Arm8/L3/Target/State.lean`, the exact
+`arm8_target_def` instance over the L3 `arm8_config` carrier (`arm8ConfigL3`,
+`L3/Configuration.lean`).  The per-instruction simulation proofs are the tagged
+`arm8_encoder_correct` case theorems in `L3/CorrectnessEncoding/`, assembled as
+`arm8EncoderCorrectL3`.
 
 The final theorem links the closed model's validity condition to the L3 gate:
 under `arm8StateRel`, the closed `arm8StateOk` implies L3 `arm8_ok`, with the
@@ -52,9 +53,10 @@ def arm8Ok (s : arm8_state) : Bool :=
   decide (s.exception = exception.NoException) && holAligned 2 s.PC
 
 /-- CakeML's `arm8_next` (`arm8_targetScript.sml:15`): the L3 `NextStateARM8`
-step, projected with `THE`.  This is the transition over the L3 carrier; the
-`arm8_target` record and the encoder-correctness chain still need the full L3
-`arm8_config` carrier (#1229) and the simulation proofs (#1239). -/
+step, projected with `THE`.  This is the transition over the L3 carrier;
+`arm8TargetL3` (`L3/Target/State.lean`) is the exact `arm8_target_def` instance
+that uses it, and `arm8EncoderCorrectL3` assembles the tagged per-instruction
+cases over it. -/
 @[hol "cakeml/compiler/encoders/arm8/arm8_targetScript.sml" "arm8_next_def"]
 noncomputable def arm8Next (s : arm8_state) : arm8_state :=
   holThe (NextStateARM8 s)

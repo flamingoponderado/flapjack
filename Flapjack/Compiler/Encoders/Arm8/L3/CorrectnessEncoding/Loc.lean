@@ -249,7 +249,10 @@ theorem arm8Enc_loc_small_length (register : Nat) (offset : BitVec 64)
 
 /-- The in-range `Loc` constructor of `encoder_correct arm8TargetL3`: the
 single `Address` instruction writes `PC + offset` to the register and advances
-`PC` by four. -/
+`PC` by four.  `hrange` is HOL's own branch test -- the proof does
+`Cases_on 'sw2sw INT_MINw <= c /\ c <= sw2sw INT_MAXw'` at `print_tac "Loc"`
+-- not an added hypothesis: `Complete.lean` splits on it exactly as HOL does,
+so the assembled `arm8EncoderCorrectL3` assumes nothing. -/
 @[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_loc_small (register : Nat) (offset : BitVec 64)
     (hrange : arm8LocInRange offset = true)

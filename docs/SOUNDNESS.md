@@ -305,26 +305,33 @@ The following are open review or verification obligations:
       ANDS-immediate `Rd`); the ANDS-immediate case relies on `setflags = true`,
       since the non-flag-setting logical-immediate slot means SP.  That per-slot
       AArch64 fact is an external assumption, not checked by the model.  Unknown
-      instruction words set `failed`.  The L3 carriers, projection, validity gate and the
-      transition-definition closure are ported: `L3/Support.lean` supplies the
-      bitstring/FCP/list/set/word/integer helpers, and `L3/Defs.lean` renders
-      the 129 definitions reachable from `NextStateARM8` (118 tagged
-      `pending_statement_review`), with `L3/Target.lean`'s `arm8_next`,
-      `L3/Ast.lean`'s `arm8_ast`/`arm8_enc`, `L3/Configuration.lean`'s exact
-      `arm8_config` and `arm8ConfigL3_encOk`, and `L3/Target/State.lean`'s
-      `arm8TargetL3` plus the kernel-checked `arm8TargetL3_targetOk`.  There is
-      still no transition refinement: the closed `arm8Next` is not shown to
-      agree with L3 `NextStateARM8`, the rendered equations have not been
-      source-reviewed (so `arm8TargetL3` is tagged only
-      `pending_statement_review`).  `L3/CorrectnessEncoding/Skip.lean` proves
-      the `Skip` constructor case of `encoder_correct` (the encoding,
-      `Decode`/`Run`/`Mem`/`Fetch`/`NextStateARM8` reductions and the
-      interference simulation), but the other instruction cases and the
-      assembling L3 `arm8_encoder_correct` theorem are open, and there is no
-      proof about arbitrary ARMv8 code or that the model agrees with real
-      AArch64 hardware or with L3.
-      The trusted compiler claim therefore rests on the closed model plus the
-      parity evidence, not on an L3 refinement.
+      instruction words set `failed`.  The L3 carriers, projection, validity gate,
+      target record, configuration, lowering and transition-definition closure
+      are ported: `L3/Support.lean` supplies the
+      bitstring/FCP/list/set/word/integer helpers, `L3/Defs.lean` renders the
+      129 definitions reachable from `NextStateARM8` (118 tagged
+      `pending_statement_review`), `L3/Target.lean` has `arm8_next`, `L3/Ast.lean`
+      the lowering `arm8_ast`/`arm8_enc`, `L3/Configuration.lean` the exact
+      `arm8_config` and `arm8ConfigL3_encOk`, and `L3/Target/State.lean` the
+      `arm8TargetL3` record.  `L3/CorrectnessEncoding/` proves all 64
+      per-constructor cases of `encoder_correct` and the assembling
+      `arm8EncoderCorrectL3 : encoderCorrect arm8TargetL3`, together with
+      `arm8TargetL3_targetOk`; those 66 declarations and the target,
+      configuration and lowering definitions are `reviewed_exact`.  The
+      encoder-correctness theorem therefore applies to the L3 target directly,
+      with no added hypothesis, and needs no closed-model-to-L3 transition
+      refinement: it is stated over `NextStateARM8` from the start.  The
+      exactness of those statements is conditional on the `Defs.lean`
+      renderings they unfold to, which remain `pending_statement_review`
+      (mechanically rendered and drift-checked against the exported HOL terms
+      by `scripts/l3/check-renderings.py`, but not individually certified), and
+      every declaration whose constant closure reaches the FP renderings
+      inherits the item 8 real-rendering assumption.  There is no proof about
+      arbitrary ARMv8 code, and nothing shows that the model agrees with real
+      AArch64 hardware.  The trusted compiler claim still rests on the closed
+      model plus the parity evidence: the executed driver emits the closed
+      subset, and the L3 chain is the semantic evidence for that subset's
+      encodings, conditional on the rendering assumption above.
     - **Proof port status.** The structural length lemmas at the start of
       `arm8_targetProofScript.sml`, the word64 conjunct of
       `Decode_EncodeBitMask`, `mul_long`, and the length half of

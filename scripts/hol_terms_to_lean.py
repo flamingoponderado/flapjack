@@ -767,23 +767,64 @@ def special_sqrt_fp(r, c, args, env):
         f'(holFp{width}ToFloat {xs[1]})).2)')
 
 
+def fresh_binder(base, texts):
+    """A binder name that occurs in none of the rendered operand texts.
+
+    `pred_set$INSERT` renders as a predicate lambda; a fixed binder name would
+    capture a free variable of the same name in either operand.
+    """
+    name = base
+    while any(re.search(r'(?<![A-Za-z0-9_.«])' + re.escape(name) + r'(?![A-Za-z0-9_»])', t)
+              for t in texts):
+        name += "'"
+    return name
+
+
+def insert_predicate(xs):
+    x = fresh_binder('x', [xs[0], xs[1]])
+    return f'(fun {x} => {x} = {xs[0]} || {xs[1]} {x})'
+
+
+def symbolic_field_bounds(high, low, width):
+    """True for `high = low + (width - 1)` with a literal step.
+
+    That is the only non-literal shape whose inserted field is known to cover
+    exactly the input word; it is the ARM8 MoveWide form
+    `bit_field_insert (pos + 15) pos imm` with a 16-bit `imm`.
+    """
+    h, args = strip_comb(high)
+    if not (is_const(h, 'arithmetic', '+') and len(args) == 2):
+        return False
+    left, right = args
+    step = nat_literal(right)
+    if step is None:
+        left, right = right, left
+        step = nat_literal(right)
+    return step is not None and step == width - 1 and left == low
+
+
 def special_bit_field_insert(r, c, args, env):
     # HOL raw FCP indexing is unspecified outside the input width. Unlike
-    # word_bit, bit_field_insert does not add that bound itself. Every call
-    # in the pinned model has literal bounds; require their source-side
-    # guarantee before using the getLsbD-based helper.
+    # word_bit, bit_field_insert does not add that bound itself, so a rendering
+    # is only justified where the call is known in range.
     if len(args) < 3:
-        raise Unrenderable('bit_field_insert requires checked literal bounds')
-    high, low = nat_literal(args[0]), nat_literal(args[1])
+        raise Unrenderable('bit_field_insert requires checked bounds')
+    high_n, low_n = nat_literal(args[0]), nat_literal(args[1])
     width = word_width(type_of(args[2]))
-    if high is None or low is None:
-        # Non-literal bounds (ARM8 MoveWide uses `pos + 15` with
-        # pos in {0,16,32,48} and a 16-bit input): emit the generic helper.
-        # Its getLsbD-based indexing is exact for every in-range call.
+    if high_n is not None and low_n is not None:
+        if width is None or (low_n <= high_n and high_n - low_n >= width):
+            raise Unrenderable('bit_field_insert input index may exceed word width')
         return r.eta(c, args, env, 4,
                      lambda xs, raw: f'(holBitFieldInsert {xs[0]} {xs[1]} {xs[2]} {xs[3]})')
-    if width is None or (low <= high and high - low >= width):
-        raise Unrenderable('bit_field_insert input index may exceed word width')
+    # Non-literal bounds: only the documented ARM8 MoveWide call is allowed.
+    # It is `bit_field_insert (pos + 15) pos (imm : word16)` with
+    # pos = Num (hw << 4) for a 2-bit hw, so pos <= 48 and high <= 63 < 64 at
+    # every call site, and the field covers exactly the 16-bit input word.  Any
+    # other symbolic bound is not known in range and is reported instead.
+    if width is None:
+        raise Unrenderable('bit_field_insert symbolic input width')
+    if not symbolic_field_bounds(args[0], args[1], width):
+        raise Unrenderable('bit_field_insert non-literal bounds are not checked in range')
     return r.eta(c, args, env, 4,
                  lambda xs, raw: f'(holBitFieldInsert {xs[0]} {xs[1]} {xs[2]} {xs[3]})')
 
@@ -969,7 +1010,7 @@ CONSTANTS = {
     ('list', 'REVERSE'): (1, lambda r, c, xs, raw: f'({xs[0]}.reverse)'),
     ('bool', 'IN'): (2, lambda r, c, xs, raw: f'({xs[1]} {xs[0]})'),
     ('pred_set', 'EMPTY'): (0, lambda r, c, xs, raw: '(fun _ => false)'),
-    ('pred_set', 'INSERT'): (2, lambda r, c, xs, raw: f'(fun x => x = {xs[0]} || {xs[1]} x)'),
+    ('pred_set', 'INSERT'): (2, lambda r, c, xs, raw: insert_predicate(xs)),
     ('words', 'word_ror'): (2, lambda r, c, xs, raw: f'(BitVec.rotateRight {xs[0]} {xs[1]})'),
     ('words', 'word_msb'): (1, lambda r, c, xs, raw: f'(BitVec.msb {xs[0]})'),
     ('words', 'word_hi'): (2, lambda r, c, xs, raw: f'(holWordHi {xs[0]} {xs[1]})'),
@@ -1021,13 +1062,25 @@ def render_multi(r: Renderer, lean_name: str, out) -> tuple[str, bool]:
     numeral per constructor index).  HOL leaves `num2...` unspecified above the
     highest index; the Lean rendering adds a total default arm from the first
     clause, which is unreachable at every model call site.
+
+    The rendering is only justified when every clause defines the same
+    one-argument constant and the equation binds every width or type variable
+    of its type; a later clause with more parameters, a different head
+    constant, or an unbound variable is reported instead of emitted.
     """
     f0, params0, _ = out[0]
     if len(params0) != 1:
         raise Unrenderable(f'{len(out)} clauses')
+    for f, params, _ in out:
+        if len(params) != 1:
+            raise Unrenderable(f'{len(out)} clauses: clause arity differs')
+        if not (isinstance(f, Const) and isinstance(f0, Const)
+                and (f.thy, f.name) == (f0.thy, f0.name)):
+            raise Unrenderable(f'{len(out)} clauses: clauses define different constants')
     param_ty = type_of(params0[0])
     arg, env = r.bind(Var('arg0', param_ty), {})
     arms = []
+    bodies = []
     numerals = True
     for f, params, rhs in out:
         p = params[0]
@@ -1040,13 +1093,30 @@ def render_multi(r: Renderer, lean_name: str, out) -> tuple[str, bool]:
         else:
             raise Unrenderable(f'{len(out)} clauses')
         body = r.tm(rhs, env)
+        bodies.append(body)
         arms.append(f'| {pat} => {body}')
     if numerals:
         arms.append(f'| _ => {r.tm(out[0][2], env)}')
+    # The single-clause path emits these binders; without them a clause over a
+    # width or type variable would be ill-typed.
+    tvs = tyvars(f0.ty, [])
+    for f, params, _ in out:
+        tyvars(type_of(params[0]), tvs)
+    width_tvs = fcp_tyvars(f0.ty, [])
+    for f, params, _ in out:
+        fcp_tyvars(type_of(params[0]), width_tvs)
+    tv_binders = ''.join(
+        f'{{{tyvar_name(v)} : Nat}} [NeZero {tyvar_name(v)}] ' if v in width_tvs
+        else f'{{{tyvar_name(v)} : Type}} [Nonempty {tyvar_name(v)}] '
+        for v in tvs)
+    defined_name = r.defined.get((f0.thy, f0.name)) if isinstance(f0, Const) else None
+    recursive = defined_name is not None and any(
+        re.search(r'(?<![A-Za-z0-9_.«])' + re.escape(defined_name) + r'(?![A-Za-z0-9_»])', b)
+        for b in bodies)
     result_ty = ty_lean(fun_parts(f0.ty)[1])
-    text = (f'def {lean_name} ({arg} : {ty_lean(param_ty)}) : {result_ty} :=\n'
+    text = (f'def {lean_name} ' + tv_binders + f'({arg} : {ty_lean(param_ty)}) : {result_ty} :=\n'
             f'  match {arg} with\n  ' + '\n  '.join(arms))
-    return text, False
+    return text, recursive
 
 
 def render_def(r: Renderer, lean_name: str, term) -> tuple[str, bool]:

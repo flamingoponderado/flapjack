@@ -744,7 +744,10 @@ theorem mem_allPcs_six_l3 (p : BitVec 64) (i : Nat) (hi : i < 6) :
 /-- The out-of-range `Loc` constructor of `encoder_correct arm8TargetL3`: the
 `Address` instruction, four `MoveWide .k` insertions of the offset into the
 temporary register 26, and a final `AddSubShiftedRegister@64` write `PC +
-offset` into the destination and advance `PC` by 24. -/
+offset` into the destination and advance `PC` by 24.  `hfalse` is the false
+branch of HOL's own `Cases_on` on the `Loc` range test, not an added
+hypothesis: `Complete.lean` splits on it exactly as HOL does, so the assembled
+`arm8EncoderCorrectL3` assumes nothing. -/
 @[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_loc_big (register : Nat) (offset : BitVec 64)
     (hrange : arm8LocInRange offset = false)

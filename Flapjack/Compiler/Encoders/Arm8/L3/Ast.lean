@@ -9,9 +9,11 @@ import Flapjack.Compiler.Encoders.Arm8.Target
 The byte-level encoder from `cakeml/compiler/encoders/arm8/arm8_targetScript.sml`
 that `arm8_config` uses.  `arm8_encode` turns one L3 `instruction` into four
 bytes; `arm8_encode_fail` is the `NoOperation` list used by `arm8_ast` for
-unavailable operations.  The full `arm8_ast` lowering (from `asm` instructions
-to L3 `instruction` values) and the exact `arm8_config` record are still to be
-ported; the closed-model `arm8Ast`/`arm8Config` remain separate.
+unavailable operations.  This file also carries the full `arm8_ast` lowering
+(from `asm` instructions to L3 `instruction` values); the exact `arm8_config`
+record is in `L3/Configuration.lean` and the `arm8_target` record in
+`L3/Target/State.lean`.  The closed-model `arm8Ast`/`arm8Config` remain
+separate.
 -/
 
 namespace Flapjack.Compiler.Encoders.Arm8.L3

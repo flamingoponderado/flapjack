@@ -601,14 +601,30 @@ rendering and with no added hypothesis.  The 64 per-constructor case theorems ar
 `reviewed_exact`: each is the named branch of HOL's `arm8_encoder_correct`
 (`print_tac "Skip"` … `print_tac "Loc"`), states `CaseGoal` for that
 instruction under exactly the original `asmStep`/`targetStateRel` premise, and
-takes only the lowering's branch tests as parameters, which the dispatchers in
-`Complete.lean` discharge.  Their statements' constant closure reaches the
+takes only the lowering's branch tests as parameters.  Those parameters are
+HOL's own `Cases_on` branch tests, not added hypotheses: the `Loc` case, for
+example, carries `hrange` (in range) or `hfalse` (out of range) exactly as HOL
+splits on `sw2sw INT_MINw <= c /\ c <= sw2sw INT_MAXw`, and the dispatchers in
+`Complete.lean` split both ways, so nothing survives into
+`arm8EncoderCorrectL3`.  Their statements' constant closure reaches the
 `(reals_as_rational_cuts)`-tagged FP renderings through `asmStep`'s FP updates,
 so their manifest rows record `inherits_reals_as_rational_cuts` and inherit the
-`docs/SOUNDNESS.md` item 8 real-rendering assumption.  The 129-definition
-`Fetch`/`Decode`/`Run` closure in `Defs.lean` stays
-`pending_statement_review`: those are mechanical renderings whose
-representation mapping is documented but not individually reviewed.
+`docs/SOUNDNESS.md` item 8 real-rendering assumption.
+
+**What `reviewed_exact` means here.**  It records a declaration-level
+comparison: the Lean statement or definition was checked clause-for-clause
+against its own HOL declaration under the documented representations.  It does
+not certify the rendered `Defs.lean` closure that these statements unfold to
+(`Encode`, `Decode`, `Run`, `NextStateARM8`), which remains
+`pending_statement_review` -- mechanically rendered, but not individually
+compared with HOL.  The exactness of the encoder-correctness chain is therefore
+conditional on that rendering assumption: if a rendered equation differed from
+HOL, the theorem would be about a slightly different machine.  Unlike the
+RISC-V renderings, the ARM8 renderings have no committed export artifact and no
+drift gate (`scripts/l3/arm8_defs.sexp.gz` is produced by
+`scripts/l3/export_arm8_defs.sml` but is not checked in, and
+`scripts/l3/check-renderings.py` covers `Flapjack/RiscV/L3` only), so this
+assumption is documented rather than machine-checked.
 
 ### Transition behaviour and lowering comparison
 
@@ -712,10 +728,17 @@ Remaining assumptions and open items:
   closure in `Defs.lean` remains `pending_statement_review`: those are
   mechanical renderings of the pinned L3 model whose representation mapping is
   documented but not individually certified, so the rendered transition
-  equations are compared but not claimed as exact HOL ports.  Every declaration
+  equations are compared but not claimed as exact HOL ports, and the
+  `reviewed_exact` claims above are conditional on them.  Every declaration
   whose constant closure reaches the `(reals_as_rational_cuts)` FP renderings
   records `inherits_reals_as_rational_cuts` and inherits the
   `docs/SOUNDNESS.md` item 8 real-rendering assumption.
+- The ARM8 renderings have no committed `scripts/l3/arm8_defs.sexp.gz` export
+  and are not covered by `scripts/l3/check-renderings.py` (which covers the
+  RISC-V closure only), so there is no drift gate for `Arm8/L3/Defs.lean`.
+  Committing the export and extending the gate is the
+  mechanical step that would let the `Defs.lean` declarations be reviewed
+  declaration-by-declaration instead of as a documented block.
 - The executed compiler path (`Flapjack/Arm8/NativeSource.lean`) still uses the
   closed `arm8Config` and its `validImmediate` (`encodeBitMask`, a `Nat`-valued
   rendering), not `arm8ConfigL3`/`arm8ValidImmediate` (`EncodeBitMask`).  The

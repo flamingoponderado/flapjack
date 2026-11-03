@@ -1,6 +1,8 @@
 """The committed L3 RISC-V carriers are exactly the mechanical rendering of the model script."""
 import pathlib
 import runpy
+import subprocess
+import sys
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -32,6 +34,25 @@ class L3TypesToLeanTest(unittest.TestCase):
         start = committed.index('/-- HOL L3 ')
         end = committed.rindex('end Flapjack.Compiler.Encoders.Arm8.L3')
         self.assertEqual(committed[start:end].rstrip('\n'), rendered.rstrip('\n'))
+
+    def test_cli_reproduces_arm8_types(self):
+        # The documented invocation must reproduce the committed carriers,
+        # including the `--beq-only` declarations.
+        out = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts' / 'l3_types_to_lean.py'),
+             ARM8_MODEL, ARM8_MODEL, *ARM8_TYPES, '--beq-only', ','.join(ARM8_BEQ_ONLY)],
+            capture_output=True, text=True, check=True)
+        committed = (ROOT / 'Flapjack/Compiler/Encoders/Arm8/L3/Types.lean').read_text()
+        start = committed.index('/-- HOL L3 ')
+        end = committed.rindex('end Flapjack.Compiler.Encoders.Arm8.L3')
+        self.assertEqual(committed[start:end].rstrip('\n'), out.stdout.rstrip('\n'))
+
+    def test_cli_rejects_missing_beq_only_value(self):
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts' / 'l3_types_to_lean.py'),
+             ARM8_MODEL, ARM8_MODEL, '--beq-only'],
+            capture_output=True, text=True)
+        self.assertNotEqual(proc.returncode, 0)
 
 
 if __name__ == '__main__':
