@@ -439,9 +439,16 @@ preserves it outside, which is what `CaseGoal`'s interference condition asks
 for.  `arm8Mem_eight` (`Mem.lean`) reads the eight little-endian bytes of a
 word load, the eight-byte analogue of `Bytes.lean`'s `arm8Mem_word`.
 
-Still open for #1239: the byte-value bridge (`holV2w` of the eight-byte list
-against `readBytes_eight`), the `Run` memory semantics for `LoadStoreSingle`,
-the two-instruction `AddSubImmediate@64` + `LoadStoreImmediate` constructor,
-and the eight case theorems covering the load/store forms.
+`holV2w_eight_bytes` identifies the MSB-first byte list with the OR-of-shifts
+form `readBytes_eight` produces, and `arm8Mem_eight_eq_readMemWord` matches the
+L3 eight-byte read against the source's `(readMemWord a 8 s).1` — it reuses
+`readMemWord_fst` and `readBytes_eight` from the non-L3 `MemCase`, both stated
+purely over `AsmState`.  The shift counts are pinned to `Nat` because
+`readBytes_eight` uses `Nat` shifts while the L3 side had inferred `BitVec`
+ones.
+
+Still open for #1239: the `Run` memory semantics for `LoadStoreSingle`, the
+two-instruction `AddSubImmediate@64` + `LoadStoreImmediate` constructor, and
+the eight case theorems covering the load/store forms.
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
