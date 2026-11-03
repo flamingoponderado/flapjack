@@ -3,6 +3,32 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "do_app_ssgc",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcMemOp",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed with the original source. The only specialization is that opn is MemOp op; all input hypotheses and both complete conclusions remain. The proof covers all constructors, including read-only and error fallback cases. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgc",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed with the original source. The operation and argument list, independent state type parameters, execution equation, safe-input and safe-state assumptions, and both universally quantified success and raised-result conclusions match the captured HOL type. All primitive-operation cases are assembled without additional hypotheses. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
   "lean_name": "doAppSsgcMemUpdateByte",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [

@@ -900,6 +900,108 @@ theorem doAppSsgcMemCopyByte {C F : Type} (flag : Bool) (args : List ClosSem.Val
     have frame := doAppMglobals _ _ _ _ _ run
     simp [ClosSem.doApp, found, valueSafe, nextSafe, oracle, frame]
 
+
+/-- Operations whose successful memory results leave the state unchanged.
+This classifier has no separate HOL declaration. -/
+private inductive SimpleMemory : ClosLang.MemOp → Prop
+  | length : SimpleMemory .length
+  | lengthByte : SimpleMemory .lengthByte
+  | derefByte : SimpleMemory .derefByte
+  | concatByteVec : SimpleMemory .concatByteVec
+  | fromListByte : SimpleMemory .fromListByte
+  | toListByte : SimpleMemory .toListByte
+  | lengthByteVec : SimpleMemory .lengthByteVec
+  | derefByteVec : SimpleMemory .derefByteVec
+  | stringCmp (fast op) : SimpleMemory (.stringCmp fast op)
+  | boundsCheckArray : SimpleMemory .boundsCheckArray
+  | boundsCheckByte (loose) : SimpleMemory (.boundsCheckByte loose)
+  | mutCons (tag size) : SimpleMemory (.mutCons tag size)
+  | updateCons : SimpleMemory .updateCons
+  | finaliseCons : SimpleMemory .finaliseCons
+  | configGC : SimpleMemory .configGC
+
+/-- Successful classified operations return a safe value and preserve safety.
+This helper has no separate HOL declaration. -/
+private theorem memorySimpleSafe {C F : Type} (op : ClosLang.MemOp) (args : List ClosSem.Value)
+    (s0 s : State C F) (value : ClosSem.Value) (stateSafe : ssgcFree s0)
+    (simple : SimpleMemory op) (run : applyMemory op args s0 = some (value, s)) :
+    vsgcFree value ∧ ssgcFree s := by
+  cases simple <;> unfold applyMemory at run <;> repeat' split at run <;> simp_all
+  all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
+  all_goals try (solve | aesop (add simp [vsgcFree]) (add safe apply [vsgcFreeBool, vsgcFreeUnit]))
+  all_goals try (solve | rcases run with ⟨rfl, _⟩; apply listToValueSafe; simp [vsgcFree])
+
+
+/-- Read-only and rejected memory operations preserve safety; this is a Lean
+helper, with no separate HOL declaration. -/
+private theorem doAppSsgcSimpleMemory {C F : Type} (op : ClosLang.MemOp)
+    (args : List ClosSem.Value) (s0 : State C F)
+    (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (simple : SimpleMemory op)
+    (h : ClosSem.doApp (.memOp op) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.memOp op) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, stateSafe⟩
+  cases found : applyMemory op args s0 with
+  | none => simp [ClosSem.doApp, found]
+  | some pair =>
+    rcases pair with ⟨value, next⟩
+    have run : ClosSem.doApp (.memOp op) args s0 = .val (value, next) := by
+      simp [ClosSem.doApp, found]
+    have ⟨valueSafe, nextSafe⟩ := memorySimpleSafe op args s0 next value stateSafe simple found
+    have oracle := (ClosSem.doApp_codeOracle _ _ _ _ _ run).2
+    have frame := doAppMglobals _ _ _ _ _ run
+    simp [ClosSem.doApp, found, valueSafe, nextSafe, oracle, frame]
+
+/-- Every memory operation satisfies the complete primitive-safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcMemOp {C F : Type} (op : ClosLang.MemOp) (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.memOp op) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.memOp op) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  cases op with
+  | ref => exact doAppSsgcMemRef args s0 res h
+  | update => exact doAppSsgcMemUpdate args s0 res h
+  | el => exact doAppSsgcMemEl args s0 res h
+  | refByte flag => exact doAppSsgcMemRefByte flag args s0 res h
+  | refArray => exact doAppSsgcMemRefArray args s0 res h
+  | updateByte => exact doAppSsgcMemUpdateByte args s0 res h
+  | copyByte flag => exact doAppSsgcMemCopyByte flag args s0 res h
+  | xorByte => exact doAppSsgcMemXorByte args s0 res h
+  | _ => exact doAppSsgcSimpleMemory _ args s0 res (by constructor) h
+
+
+/-- Applying any primitive to safe values in a safe state preserves the
+closure-safety invariant and the source global-extension property. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgc {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp op args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag op k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  cases op with
+  | label n => exact doAppSsgcLabel n args s0 res h
+  | ffi name => exact doAppSsgcFfi name args s0 res h
+  | intOp op => exact doAppSsgcIntOp op args s0 res h
+  | wordOp op => exact doAppSsgcWordOp op args s0 res h
+  | blockOp op => exact doAppSsgcBlockOp op args s0 res h
+  | globOp op => exact doAppSsgcGlobOp op args s0 res h
+  | memOp op => exact doAppSsgcMemOp op args s0 res h
+  | install => exact doAppSsgcInstall args s0 res h
+  | thunkOp op => exact doAppSsgcThunkOp op args s0 res h
+
 end DoAppSafety
 
 end Flapjack.Compiler.Backend.ClosKnown
