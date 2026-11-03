@@ -433,10 +433,15 @@ unfolding to `dfn'LoadStoreImmediate`.  The nine-bit form decodes to the
 `b10 = 0` branch (no writeback, `unsigned_offset = false`), which is the branch
 the L3 lowering reaches.
 
-Still open for #1239: the memory-aware assembly lemma (the `asmCaseOne` shape
-assumes the instruction changes no memory, which fails for stores and for the
-two-instruction `AddSubImmediate@64` + `LoadStoreImmediate` form), the `Run`
-memory semantics for `LoadStoreSingle`, and the eight case theorems covering
-the load/store forms.
+`asmCaseOneMem` (`Simulate.lean`) is the memory-aware `CaseGoal` constructor:
+it keeps memory inside the source domain following the source update and
+preserves it outside, which is what `CaseGoal`'s interference condition asks
+for.  `arm8Mem_eight` (`Mem.lean`) reads the eight little-endian bytes of a
+word load, the eight-byte analogue of `Bytes.lean`'s `arm8Mem_word`.
+
+Still open for #1239: the byte-value bridge (`holV2w` of the eight-byte list
+against `readBytes_eight`), the `Run` memory semantics for `LoadStoreSingle`,
+the two-instruction `AddSubImmediate@64` + `LoadStoreImmediate` constructor,
+and the eight case theorems covering the load/store forms.
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.

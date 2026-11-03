@@ -275,4 +275,32 @@ theorem arm8Run_loadStoreImmediate (size : BitVec 64) (regsize_word : Bool) (mem
          offset, n, t) st := by
   simp only [Run]
 
+
+/-- `Mem` reads the eight little-endian bytes of a word load and returns their
+word without changing the state (Flapjack infrastructure; the eight-byte
+analogue of `arm8Mem_word` in `Bytes.lean`). -/
+theorem arm8Mem_eight (ms : arm8_state) (address : BitVec 64)
+    (b0 b1 b2 b3 b4 b5 b6 b7 : BitVec 8)
+    (h0 : ms.MEM address = b0)
+    (h1 : ms.MEM (address + BitVec.ofNat 64 1) = b1)
+    (h2 : ms.MEM (address + BitVec.ofNat 64 2) = b2)
+    (h3 : ms.MEM (address + BitVec.ofNat 64 3) = b3)
+    (h4 : ms.MEM (address + BitVec.ofNat 64 4) = b4)
+    (h5 : ms.MEM (address + BitVec.ofNat 64 5) = b5)
+    (h6 : ms.MEM (address + BitVec.ofNat 64 6) = b6)
+    (h7 : ms.MEM (address + BitVec.ofNat 64 7) = b7)
+    (hal : Aligned (TN := 64) (address, 8) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    Mem (TN := 64) (address, (8, AccType.AccType_NORMAL)) ms =
+      (holV2w 64 (holW2v b7 ++ (holW2v b6 ++ (holW2v b5 ++ (holW2v b4 ++
+        (holW2v b3 ++ (holW2v b2 ++ (holW2v b1 ++ holW2v b0))))))), ms) := by
+  simp only [Mem]
+  simp [holFor]
+  constructor
+  · rw [CheckAlignment_aligned ms address 8 AccType.AccType_NORMAL false hal]
+    rw [BigEndian_false ms hel he0]
+    simp only [Bool.false_eq_true, if_false]
+    rw [h0, h1, h2, h3, h4, h5, h6, h7]
+  · exact CheckAlignment_aligned ms address 8 AccType.AccType_NORMAL false hal
+
 end Flapjack.Compiler.Encoders.Arm8.L3
