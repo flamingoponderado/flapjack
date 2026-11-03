@@ -309,8 +309,8 @@ The following are open review or verification obligations:
       target record, configuration, lowering and transition-definition closure
       are ported: `L3/Support.lean` supplies the
       bitstring/FCP/list/set/word/integer helpers, `L3/Defs.lean` renders the
-      129 definitions reachable from `NextStateARM8` (118 tagged
-      `pending_statement_review`), `L3/Target.lean` has `arm8_next`, `L3/Ast.lean`
+      129 definitions reachable from `NextStateARM8` (118 tagged: 117
+      `pending_statement_review` and `NoOperation` `reviewed_exact`), `L3/Target.lean` has `arm8_next`, `L3/Ast.lean`
       the lowering `arm8_ast`/`arm8_enc`, `L3/Configuration.lean` the exact
       `arm8_config` and `arm8ConfigL3_encOk`, and `L3/Target/State.lean` the
       `arm8TargetL3` record.  `L3/CorrectnessEncoding/` proves all 64

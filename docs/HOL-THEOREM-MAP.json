@@ -101342,6 +101342,6 @@
     "lean_path": "Flapjack/Compiler/Backend/Arm8Config/ProofsL3.lean",
     "lean_name": "arm8InitOkL3",
     "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): arm8_configProofScript.sml:75-78 Theorem arm8_init_ok: is_arm8_machine_config mc ==> mc_init_ok arm8_config arm8_backend_config mc. The Lean statement is mcInitOk arm8ConfigL3 pancakeArm8BackendConfig mc under the tagged isArm8MachineConfigL3, i.e. the same three arguments at the tagged arm8_config_def configuration and CakeML's ARMv8 backend configuration; the proof evaluates the concrete stack names through arm8Names_lookup_eq as HOL's EVAL_TAC does. No native_decide."
+    "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): arm8_configProofScript.sml:75-78 Theorem arm8_init_ok: is_arm8_machine_config mc ==> mc_init_ok arm8_config arm8_backend_config mc. The Lean statement is mcInitOk arm8ConfigL3 arm8BackendConfig mc under the tagged isArm8MachineConfigL3: the same three arguments, with arm8BackendConfig the L3 arm8_backend_config and arm8ConfigL3 the tagged arm8_config_def configuration. The proof evaluates the concrete stack names through arm8Names_lookup_eq as HOL's EVAL_TAC does. The Pancake form mcInitOk arm8ConfigL3 pancakeArm8BackendConfig mc is a separate untagged corollary, arm8InitOkL3_pancake, since mcInitOk reads only stackConf.regNames and dataConf.be and pancake_backend_conf preserves both. No native_decide."
   }
 ]

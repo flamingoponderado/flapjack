@@ -59,20 +59,29 @@ theorem arm8MachineConfigOkL3
     decide
 
 /-- HOL `arm8_init_ok` (`arm8_configProofScript.sml:75-78`):
-`is_arm8_machine_config mc ⇒ mc_init_ok arm8_config arm8_backend_config mc`
-at the L3 ARMv8 target and CakeML's ARMv8 backend configuration. -/
+`is_arm8_machine_config mc ⇒ mc_init_ok arm8_config arm8_backend_config mc`. -/
 @[hol "cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml" "arm8_init_ok"]
 theorem arm8InitOkL3 (mc : MachineConfig 64 arm8_state Arm8L3Projection) :
     isArm8MachineConfigL3 mc →
-      mcInitOk arm8ConfigL3 pancakeArm8BackendConfig mc := by
+      mcInitOk arm8ConfigL3 arm8BackendConfig mc := by
   rintro ⟨htarget, hlen, hptr, hlen2, hptr2, hcallee⟩
-  have hnames : pancakeArm8BackendConfig.stackConf.regNames = arm8Names := rfl
-  have hbe : pancakeArm8BackendConfig.dataConf.be = false := rfl
+  have hnames : arm8BackendConfig.stackConf.regNames = arm8Names := rfl
+  have hbe : arm8BackendConfig.dataConf.be = false := rfl
   have hfind : StackNames.findNameSpt arm8Names = arm8NameMap :=
     funext arm8Names_lookup_eq
   simp only [mcInitOk, htarget, arm8TargetL3_config, hlen, hptr, hlen2, hptr2, hcallee,
     hnames, hfind, hbe, arm8NameMap, arm8ConfigL3]
   and_intros
   all_goals decide
+
+/-- `mc_init_ok` reads only `stackConf.regNames` and `dataConf.be`, which
+`pancake_backend_conf` preserves, so the Pancake form of `arm8InitOkL3`
+follows without changing the statement (Flapjack-specific; no HOL original). -/
+theorem arm8InitOkL3_pancake (mc : MachineConfig 64 arm8_state Arm8L3Projection) :
+    isArm8MachineConfigL3 mc →
+      mcInitOk arm8ConfigL3 pancakeArm8BackendConfig mc := by
+  intro h
+  unfold mcInitOk at *
+  exact arm8InitOkL3 mc h
 
 end Flapjack.Compiler.Backend.Arm8Config

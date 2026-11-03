@@ -204,8 +204,9 @@ the 129-definition HOL closure reachable from `NextStateARM8` and
 `scripts/l3/export_arm8_defs.sml`; the export is committed as
 `scripts/l3/arm8_defs.sexp.gz` and `scripts/l3/check-renderings.py` compares
 every definition in the file against it (129 definitions, two documented
-handwritten exceptions).  118 declarations carry `@[hol]` tags and
-are recorded as `pending_statement_review` in `docs/HOL-THEOREM-MAP.json`: the
+handwritten exceptions).  118 declarations carry `@[hol]` tags; 117 are recorded as
+`pending_statement_review` in `docs/HOL-THEOREM-MAP.json` and `NoOperation` is
+`reviewed_exact`: the
 rendering maps FCP to `BitVec`, bitstrings to `List Bool`, sets to predicates,
 `HD []` to `false`, and adds a total default arm to `num2...`, so the equations
 are not claimed as exact ports until source review.  The ten
@@ -762,8 +763,11 @@ tagged `arm8_machine_config_ok` and `reviewed_exact`): the encoder-correctness
 component is
 `arm8EncoderCorrectL3`, the encoding invariant `arm8ConfigL3_encOk`, and the
 five register guards are decided.  `arm8InitOkL3` (tagged `arm8_init_ok`,
-`reviewed_exact`) proves `mc_init_ok` at the L3
-configuration and `BackendProofL3.lean` proves the 27 `backend_config_ok`
+`reviewed_exact`) proves `mc_init_ok arm8_config arm8_backend_config mc` at the
+L3 `arm8BackendConfig`; the Pancake form (`pancake_backend_conf
+arm8_backend_config`) is the untagged corollary `arm8InitOkL3_pancake`, because
+`mcInitOk` reads only `stackConf.regNames` and `dataConf.be`.
+`BackendProofL3.lean` proves the 27 `backend_config_ok`
 conjuncts (`arm8BackendConfigOkL3`); the only field differing from the closed
 `arm8Config` is `valid_imm`, so that proof follows the closed-model one with
 `arm8ValidImmediate`.

@@ -99,7 +99,7 @@ theorem panToTargetCompileSemanticsArm8L3 {σ : Type}
   have hconfig : mc.target.config = arm8ConfigL3 := by rw [hmc.1]; rfl
   have hcfg := arm8BackendConfigOkL3
   rw [← hconfig] at hcfg
-  have hinit := arm8InitOkL3 mc hmc
+  have hinit := arm8InitOkL3_pancake mc hmc
   rw [← hconfig] at hinit
   exact panToTargetCompileSemantics _ mc pan_code bytes bitmaps c' stack_max s ms globals_size
     heap_len adj_ptr2 adj_ptr4 ffi cbspace data_sp start

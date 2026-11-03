@@ -1270,7 +1270,10 @@ def main(argv):
     data = read_sexps(Path(sexp_path).read_text())
     types = parse_types(Path(types_lean).read_text())
     extra = EXTRA_TYPES_PATH.get(MODEL_THY)
-    if extra is not None and extra.exists():
+    if extra is not None:
+        if not extra.exists():
+            raise FileNotFoundError(
+                f'configured extra types file for {MODEL_THY} is missing: {extra}')
         # Only add datatypes the model Types module does not declare: the extra
         # module may carry same-named carriers with different constructor
         # spellings (ARM8 Encode.lean has its own closed-model `MemOp`).
