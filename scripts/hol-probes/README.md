@@ -1,3 +1,5 @@
+`clos_known_syntax_probe.out` captures the exported evaluator and application global-safety theorems as well as a typed replay of their original local mutual statement. These support source review, not cross-language equivalence.
+
 `clos_known_syntax_probe.out` captures the typed empty-global-write closure-safety lemma used for direct code calls. The capture supports source review, not full evaluator correctness.
 
 `clos_known_syntax_probe.out` includes the inferred closure evaluator induction rule, used to compare the sequential case induction hypotheses. The capture supports source review, not full evaluator correctness.

@@ -68,6 +68,8 @@ val _ = show "known_op_changed_globals_typed=" clos_knownProofTheory.known_op_ch
 val _ = show "known_op_changed_globals_cases_typed=" clos_knownProofTheory.known_op_changed_globals_cases;
 val _ = show "known_op_changed_globals_alt_set_typed=" clos_knownProofTheory.known_op_changed_globals_alt_set;
 val _ = show "do_app_ssgc_typed=" clos_knownProofTheory.do_app_ssgc;
+val _ = show "evaluate_changed_globals_typed=" clos_knownProofTheory.evaluate_changed_globals;
+val _ = show "evaluate_app_changed_globals_typed=" clos_knownProofTheory.evaluate_app_changed_globals;
 val _ = show "evaluate_ind_typed=" closSemTheory.evaluate_ind;
 
 (* Local theorem: replay the original statement with explicit theory qualifiers. *)

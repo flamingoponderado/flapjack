@@ -2,6 +2,45 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobalsTotal.lean",
+  "lean_name": "evaluateChangedGlobalsMutual",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the local typed replay and exported typed source captures in clos_known_syntax_probe.out. The declaration retains both original evaluator and application conjuncts, including their independently quantified inputs, safe-state and environment premises, result safety, existential oracle shift and permitted global writes. The clock and expression-weight induction assembles every source case without additional hypotheses. Compiler and FFI state carriers remain independent; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Lean checking and typed source comparison do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobalsTotal.lean",
+  "lean_name": "evaluateChangedGlobals",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the local typed replay and exported typed source captures in clos_known_syntax_probe.out. The declaration retains the complete evaluator conjunct, including its initial safety hypotheses and all four conclusions. The clock and expression-weight induction assembles every source case without additional hypotheses. Compiler and FFI state carriers remain independent; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Lean checking and typed source comparison do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_app_changed_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobalsTotal.lean",
+  "lean_name": "evaluateAppChangedGlobals",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the local typed replay and exported typed source captures in clos_known_syntax_probe.out. The declaration retains the complete application conjunct, including safe closure and argument assumptions and all four conclusions. The clock and expression-weight induction assembles every source case without additional hypotheses. Compiler and FFI state carriers remain independent; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Lean checking and typed source comparison do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
   "lean_name": "evaluateChangedGlobalsOpForceThunk",
   "statement_status": "reviewed_fmap_as_finite_support",
