@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberKnownSemantics
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileProduction
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalSyntaxTotal
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Syntax
 
@@ -46,10 +47,7 @@ theorem number_fvs_known_ticks_letop_annotate_semantics {C F : Type} (ffi : HolF
       let xs := (ClosNumber.renumberList number program).2
       syntaxOracleOk knownConfig xs numberedCo globals ∧
       ClosKnown.knownListTotal knownConfig (ClosFvs.compile xs) [] .ln = (optimized, globals))
-    (annotationSafe :
-      let knownCo : CompileOracle C := stateCo (ClosKnown.compileInc knownConfig)
-        (pureCo fvsInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
-      everyFnVarsNone (optimized.map Prod.fst) ∧ ∀ n, everyFnVarsNone (knownCo n).2.1) :
+    :
     ∃ fvsOutput optimizedOutput,
       (ClosNumber.renumberList number program).2.mapM (ClosFvs.removeBounded fuel 0) = some fvsOutput ∧
       ((optimized.map Prod.fst).mapM fun e => do
@@ -101,6 +99,11 @@ theorem number_fvs_known_ticks_letop_annotate_semantics {C F : Type} (ffi : HolF
   have knownAux : ∀ n, (knownCo n).2.2 = [] := by
     intro n
     simp [knownCo, stateCo, ClosKnown.compileInc, co, pureCo, fvsInc, ClosFvs.compileInc]
+  have annotationSafe : everyFnVarsNone (optimized.map Prod.fst) ∧
+      ∀ n, everyFnVarsNone (knownCo n).2.1 := by
+    simpa [knownCo, co, fvsInc] using
+      ClosKnown.TraversalSyntax.syntaxOracleOk_outputVarsNone knownConfig numbered numberedCo
+        globals optimized knownSafe.1 knownSafe.2
   let ticksCo : CompileOracle C := pureCo ticksInc ∘ knownCo
   let ticksOutput := ClosTicks.removeList (optimized.map Prod.fst)
   have ticksEq := ClosTicks.semantics_remove_ticks ffi maxApp knownCo
