@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownPipelineSemantics
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalLocationsTotal
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownLabelOracle
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
 
 /-! Composition of known-function optimization and prepared BVL compilation. -/
@@ -7,25 +8,18 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosProps
 open Flapjack.Compiler.Backend.BackendProps Flapjack.Compiler.Backend.ClosKnown
 
-/-- The future closure program after numbering and the known-function,
-free-variable, tick and let-operation passes. -/
-noncomputable abbrev knownClosureFuture {C : Type} (knownConfig : ClosKnown.Config)
-    (oracle : CompileOracle (Nat × (Spt ValApprox × C))) : CompileOracle C :=
-  pureCo letopInc ∘ pureCo ticksInc ∘ stateCo (ClosKnown.compileInc knownConfig)
-    (pureCo fvsInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
-
 /-- The known-function closure pipeline and prepared BVL conversion preserve
 observations when their existing syntax, label-boundary and compilation
 invariants hold. This is Lean-side pass composition, not a HOL declaration;
-the location and oracle boundary premises still need to be derived from the
-complete compiler driver. -/
+the initial compiled-label bound and source-run premises still need to be
+derived from the complete compiler driver. -/
 theorem known_pipeline_prepared_semantics {C F : Type} (ffi : HolFfiState F)
     (fuel maxApp number start : Nat) (knownConfig : ClosKnown.Config)
     (oracle : CompileOracle (Nat × (Spt ValApprox × C))) (targetCompiler : BvlSem.Compiler C)
     (program : List ClosLang.Exp) (optimized : List (ClosLang.Exp × ValApprox))
     (globals : Spt ValApprox) (optimizedOutput : List ClosLang.Exp)
     (original current output : Config) (compiled : List (Nat × Nat × Bvl.Exp))
-    (names : Spt Flapjack.Basis.Pure.MlString.MlString) (boundary : Nat → Nat)
+    (names : Spt Flapjack.Basis.Pure.MlString.MlString)
     (positive : 1 ≤ maxApp)
     (nonfail : semantics ffi maxApp HolFiniteMapExact.holEmpty oracle
       (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
@@ -46,13 +40,8 @@ theorem known_pipeline_prepared_semantics {C F : Type} (ffi : HolFfiState F)
     (compile : compilePrepared? original current program (ClosAnnotate.compile (chainExps start optimizedOutput)) =
       some (output, compiled, names))
     (distinct : (compiled.map Prod.fst).Nodup)
-    (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
-    (initialBelow : ∀ location ∈ compiled.map Prod.fst, location < boundary 0)
-    (futureDistinct : ∀ i, ((compileInc maxApp
-      (ClosAnnotate.compileInc (knownClosureFuture knownConfig oracle i).2)).map Prod.fst).Nodup)
-    (ranges : ∀ i location, location ∈ (compileInc maxApp
-      (ClosAnnotate.compileInc (knownClosureFuture knownConfig oracle i).2)).map Prod.fst →
-      boundary i ≤ location ∧ location < boundary (i + 1))
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+    (initialBelow : ∀ location ∈ compiled.map Prod.fst, location < (oracle 0).1.1 + numStubs maxApp)
     :
     BvlSem.semantics ffi (sptFromAList compiled)
       (pureCo (compileInc maxApp) ∘ pureCo ClosAnnotate.compileInc ∘ knownClosureFuture knownConfig oracle)
@@ -100,9 +89,16 @@ theorem known_pipeline_prepared_semantics {C F : Type} (ffi : HolFfiState F)
     · simpa [knownClosureFuture, pureCo, letopInc, ticksInc, ClosLetop.compileInc, ClosTicks.compileInc] using
         (ClosLetop.compileList_locations _).mpr ((ClosTicks.removeList_locations _).mpr (knownFutureLocations i))
     · simp [knownClosureFuture, pureCo, letopInc, ClosLetop.compileInc]
+  let boundary := fun i => (oracle i).1.1 + numStubs maxApp
+  have monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j := by
+    intro i j order
+    exact Nat.add_le_add_right (numberingOracle_state_monotone oracle oracleState order) _
+  have labels := knownClosureFuture_labels maxApp knownConfig oracle oracleState
+  have futureDistinct := fun i => (labels i).1
+  have ranges := fun i => (labels i).2
   have compiledEq := compilePrepared_annotated_semantics ffi original current output program
     (chainExps start optimizedOutput) compiled names (knownClosureFuture knownConfig oracle)
-    targetCompiler boundary compile chainNonfail distinct locations monotone initialBelow
+    targetCompiler boundary compile chainNonfail distinct locations monotone (by simpa [boundary] using initialBelow)
     (by simpa [maxAppEq] using futureDistinct) (by simpa [maxAppEq] using ranges) futureLocations
   apply Eq.trans ?_ chainEq
   simpa [maxAppEq, startEq, knownClosureFuture] using compiledEq

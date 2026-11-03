@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "known_Op_Const",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownLabelOracle.lean",
+  "lean_name": "knownOpConst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_op_const_typed and the full source equation: a leading nonnegative integer marker yields the same marker paired with its integer approximation, followed by the unchanged recursive result and global tree. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_code_locs_bag",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",

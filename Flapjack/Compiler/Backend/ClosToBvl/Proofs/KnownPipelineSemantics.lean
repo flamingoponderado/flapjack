@@ -26,6 +26,14 @@ abbrev fvsInc : ClosureProgram → ClosureProgram := ClosFvs.compileInc
 abbrev ticksInc : ClosureProgram → ClosureProgram := ClosTicks.compileInc
 abbrev letopInc : ClosureProgram → ClosureProgram := ClosLetop.compileInc
 
+/-- The future closure program after numbering and the known-function,
+free-variable, tick and let-operation passes. -/
+noncomputable abbrev knownClosureFuture {C : Type} (knownConfig : ClosKnown.Config)
+    (oracle : CompileOracle (Nat × (Spt ValApprox × C))) : CompileOracle C :=
+  pureCo letopInc ∘ pureCo ticksInc ∘ stateCo (ClosKnown.compileInc knownConfig)
+    (pureCo fvsInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
+
+
 /-- Numbering, free-variable cleanup, known-function optimization, tick
 removal, let-operation cleanup and annotation preserve closure observations
 under their source invariants. Installing the annotated entry chain has the
