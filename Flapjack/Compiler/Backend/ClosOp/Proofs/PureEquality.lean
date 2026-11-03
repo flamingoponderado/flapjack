@@ -322,4 +322,101 @@ theorem eqPureThmOneConstructorMismatch {C F : Type} (tx : BackendCommon.Tra)
   rw [result]
   exact evaluateConjListFalse _ _ env s headRun
 
+/-- Projection expressions evaluate each field of an already evaluated block.
+This is proof infrastructure. -/
+private theorem fieldProjectionRel {C F : Type} (y : ClosLang.Exp) (tag : Nat)
+    (fields : List Value) (n : Nat) (env : List Value) (s : State C F)
+    (lengthEq : fields.length = n)
+    (run : evaluate [y] env s = (.val [.block tag fields], s)) :
+    List.Forall₂ (fun i v =>
+      evaluate [.op .none (.blockOp (.elemAt i)) [y]] env s = (.val [v], s))
+      (List.range n) fields := by
+  apply List.forall₂_iff_get.mpr
+  refine ⟨by simp [lengthEq], ?_⟩
+  intro i h1 h2
+  simp only [List.get_eq_getElem, List.getElem_range]
+  rw [evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp), run]
+  simp [doApp, applyBlock, List.getElem?_eq_getElem h2]
+
+/-- One-constructor branch with matching runtime tag and field count, using
+the source induction hypothesis for its generated projection pairs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_pure_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem eqPureThmOneConstructorMatch {C F : Type} (tx : BackendCommon.Tra)
+    (tagX tagY : Nat) (xs : List ClosLang.Exp) (y : ClosLang.Exp)
+    (vx : Value) (fieldsY : List Value) (env : List Value) (s : State C F) (b : Bool)
+    (direct : directEq (.op tx (.blockOp (.cons tagX)) xs) y = none)
+    (noY : cons y = none)
+    (same : (tagX != tagY || xs.length != fieldsY.length) = false)
+    (ih : let fields := (xs.reverse.zip (List.range xs.length)).map fun p =>
+        (p.1, ClosLang.Exp.op .none (.blockOp (.elemAt p.2)) [y])
+      ∀ (hs : List (Value × Value)) (flag : Bool),
+        List.Forall₂ (fun p q => evaluate [p.1, p.2] env s = (.val [q.1, q.2], s) ∧
+          SimpleExp p.1 ∧ SimpleExp p.2) fields hs ∧
+        doEqList (hs.map Prod.fst) (hs.map Prod.snd) = .val flag ∧
+        (∀ e ∈ Flapjack.appListAppend (eqPureList fields), SimpleExp e) →
+        evaluate [conjList (Flapjack.appListAppend (eqPureList fields))] env s =
+          (.val [boolValue flag], s))
+    (h : evaluate [.op tx (.blockOp (.cons tagX)) xs, y] env s =
+        (.val [vx, .block tagY fieldsY], s) ∧
+      SimpleExp (.op tx (.blockOp (.cons tagX)) xs) ∧ SimpleExp y ∧
+      doEq vx (.block tagY fieldsY) = .val b) :
+    evaluate [eqPure (.op tx (.blockOp (.cons tagX)) xs) y] env s =
+      (.val [boolValue b], s) := by
+  obtain ⟨runX, runY⟩ := purePair _ _ vx (.block tagY fieldsY) env s h.2.1 h.1
+  obtain ⟨valuesX, argsX, rfl, lenX⟩ := pureConstructor tx tagX xs env s vx runX
+  have tagEq : tagX = tagY := by simp at same; exact same.1
+  have lengthEq : xs.length = fieldsY.length := by simp at same; exact same.2
+  have valuesLength : valuesX.reverse.length = fieldsY.length := by simpa [lenX] using lengthEq
+  have listEq : doEqList valuesX.reverse fieldsY = .val b := by
+    have eq := h.2.2.2
+    rw [doEq, if_pos ⟨tagEq, valuesLength⟩] at eq
+    exact eq
+  have simpleX : ∀ x ∈ xs, SimpleExp x := by cases h.2.1 with | cons _ _ _ children => exact children
+  have relX := pureEvalList xs valuesX env s simpleX argsX
+  have projections := fieldProjectionRel y tagY fieldsY xs.length env s lengthEq.symm runY
+  have zipped := forall₂Zip (List.rel_reverse relX) projections
+  let fields := (xs.reverse.zip (List.range xs.length)).map fun p =>
+    (p.1, ClosLang.Exp.op .none (.blockOp (.elemAt p.2)) [y])
+  have paired : List.Forall₂ (fun p q => evaluate [p.1, p.2] env s = (.val [q.1, q.2], s) ∧
+      SimpleExp p.1 ∧ SimpleExp p.2) fields (valuesX.reverse.zip fieldsY) := by
+    apply List.forall₂_map_left_iff.mpr
+    apply List.Forall₂.imp ?_ zipped
+    rintro ⟨ex, index⟩ ⟨v1, v2⟩ ⟨⟨rx, sx⟩, ry⟩
+    refine ⟨?_, sx, SimpleExp.elemAt _ _ _ h.2.2.1⟩
+    rw [ClosProps.evaluate_cons_value ex _ env s s v1 rx, ry]
+  have pairSimple : ∀ p ∈ fields, SimpleExp p.1 ∧ SimpleExp p.2 := by
+    intro p hp
+    simp only [fields, List.mem_map] at hp
+    obtain ⟨⟨e, index⟩, member, rfl⟩ := hp
+    exact ⟨simpleX e (List.mem_reverse.mp (List.of_mem_zip member).1),
+      SimpleExp.elemAt _ _ _ h.2.2.1⟩
+  have outSimple := eqPureSimple fields pairSimple
+  have mappedEq : doEqList ((valuesX.reverse.zip fieldsY).map Prod.fst)
+      ((valuesX.reverse.zip fieldsY).map Prod.snd) = .val b := by
+    rw [List.map_fst_zip (Nat.le_of_eq valuesLength),
+      List.map_snd_zip (Nat.le_of_eq valuesLength.symm)]
+    exact listEq
+  have recResult := ih (valuesX.reverse.zip fieldsY) b ⟨paired, mappedEq, outSimple⟩
+  have flatten (e : ClosLang.Exp) (tree : Flapjack.AppList ClosLang.Exp) :
+      Flapjack.appListAppend (.append (.list [e]) tree) = e :: Flapjack.appListAppend tree := by
+    rw [(Flapjack.appListAppend_thm (.list [e]) tree []).1]
+    rfl
+  have result : eqPure (.op tx (.blockOp (.cons tagX)) xs) y =
+      conjList (.op .none (.blockOp (.tagLenEq tagX xs.length)) [y] ::
+        Flapjack.appListAppend (eqPureList fields)) := by
+    unfold eqPure
+    rw [eqPureList, direct]
+    dsimp only
+    split
+    all_goals try solve | simp_all [cons, destOp, destCons]
+    all_goals simp_all [cons, destOp, destCons, fields]
+  have headRun : evaluate [.op .none (.blockOp (.tagLenEq tagX xs.length)) [y]] env s =
+      (.val [boolValue true], s) := by
+    rw [evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp), runY]
+    subst tagY
+    simp [doApp, applyBlock, lengthEq]
+  rw [result]
+  exact evaluateConjListTrue _ _ env s _ ⟨headRun, recResult⟩
+
 end Flapjack.Compiler.Backend.ClosOp
