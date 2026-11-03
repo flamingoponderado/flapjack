@@ -2788,6 +2788,7 @@ import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftImmediate
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfield
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfieldMasks
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfieldCase
+import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Mem
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Division
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Multiply
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LongMul
