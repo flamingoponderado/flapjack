@@ -594,7 +594,10 @@ representations (`arm8_state` and the other L3 datatypes, `arm8Proj`,
 `arm8Ok`, `arm8Next`, `arm8EncMovImm`, `arm8CmpCond`, `arm8Shv`,
 `arm8LoadStoreAst{,32,16}`, `NoOperation`, `arm8EncodeFail`,
 `arm8ValidImmediate`, `arm8ConfigL3`, `arm8Encode`, `arm8Ast`, `arm8Enc` and
-`arm8TargetL3`).  The 64 per-constructor case theorems are also
+`arm8TargetL3`).  The assembling theorem `arm8EncoderCorrectL3` and its
+`target_ok` conjunct `arm8TargetL3_targetOk` are `reviewed_exact` as well: they
+are HOL's `arm8_encoder_correct` and its local `arm8_target_ok`, at the L3
+rendering and with no added hypothesis.  The 64 per-constructor case theorems are also
 `reviewed_exact`: each is the named branch of HOL's `arm8_encoder_correct`
 (`print_tac "Skip"` … `print_tac "Loc"`), states `CaseGoal` for that
 instruction under exactly the original `asmStep`/`targetStateRel` premise, and
@@ -670,10 +673,12 @@ Checked against the same pinned source:
   L3 target record; its dispatchers supply every branch test through
   `by_cases`, so no extra hypothesis survives.  `arm8Ok`, `arm8Proj`,
   `arm8Next`, `arm8EncMovImm`, `arm8CmpCond`, `arm8Shv`, `isTest` and the three
-  `arm8_load_store_ast*` definitions are `reviewed_exact`; the case theorems and
-  the four `Ast.lean` definitions remain `pending_statement_review` because
-  their statements depend on the rendered `Decode`/`Run`/`Encode` equations and
-  on the `Loc` reformulation above.
+  `arm8_load_store_ast*` definitions are `reviewed_exact`, as are the four
+  `Ast.lean` definitions (`arm8LoadStoreAst{,32,16}` and `arm8Ast`), the
+  assembling `arm8EncoderCorrectL3` and `arm8TargetL3_targetOk`, and all 64
+  case theorems.  The rendered `Decode`/`Run`/`Encode` equations those
+  statements rest on remain `pending_statement_review`; the `Loc` reformulation
+  above is reviewed.
 
 ## L3 machine configuration and downstream compiler theorem
 
@@ -694,16 +699,23 @@ tagged `panToTargetCompileSemantics` theorem at that machine configuration
 compiler-correctness theorem applies to the L3 ARMv8 target with HOL's original
 hypotheses (`backend_config_ok`, `mc_conf_ok`, `mc_init_ok`, the register
 relations and `pan_installed`).  Like the closed-model `Arm8Instance`, it is
-untagged Flapjack infrastructure: it has no single HOL original, and it inherits
-the case theorems' `pending_statement_review` status.
+untagged Flapjack infrastructure: it has no single HOL original.  Its encoder
+component is the reviewed `arm8EncoderCorrectL3`, so it inherits that theorem's
+`docs/SOUNDNESS.md` item 8 real-rendering assumption and nothing else.
 
 Remaining assumptions and open items:
 
-- Every L3 declaration here is `pending_statement_review` in
-  `docs/HOL-THEOREM-MAP.json`.  Nothing has been source-reviewed against the
-  pinned HOL scripts, so no theorem or definition is claimed as an exact HOL
-  port; the chain is kernel-checked but its carriers and statements are not yet
-  certified equal to HOL's.
+- The carriers, the target record and configuration, the lowering, all 64
+  `arm8_encoder_correct` case theorems, the assembling `arm8EncoderCorrectL3`
+  and `arm8TargetL3_targetOk` are `reviewed_exact` in
+  `docs/HOL-THEOREM-MAP.json`.  The 129-definition `Fetch`/`Decode`/`Run`
+  closure in `Defs.lean` remains `pending_statement_review`: those are
+  mechanical renderings of the pinned L3 model whose representation mapping is
+  documented but not individually certified, so the rendered transition
+  equations are compared but not claimed as exact HOL ports.  Every declaration
+  whose constant closure reaches the `(reals_as_rational_cuts)` FP renderings
+  records `inherits_reals_as_rational_cuts` and inherits the
+  `docs/SOUNDNESS.md` item 8 real-rendering assumption.
 - The executed compiler path (`Flapjack/Arm8/NativeSource.lean`) still uses the
   closed `arm8Config` and its `validImmediate` (`encodeBitMask`, a `Nat`-valued
   rendering), not `arm8ConfigL3`/`arm8ValidImmediate` (`EncodeBitMask`).  The
@@ -712,5 +724,5 @@ Remaining assumptions and open items:
   the executed driver's assembly and hex against the original CakeML Pancake
   compiler on fifteen checked-in cases, and all fifteen pass.  Compiler-output
   parity alone does not establish semantic agreement with the L3 model; the
-  semantic chain above is the evidence for that, modulo the pending statement
-  review.
+  semantic chain above is the evidence for that, modulo the `Defs.lean`
+  rendering assumption.

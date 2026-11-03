@@ -523,11 +523,11 @@ instruction, every interference environment, both assertions.  This is the
 obligation `mc_conf_ok` asks of a machine configuration, so it is what
 instantiates the Pancake-to-target theorem at the L3 ARMv8 model.
 
-This theorem is Flapjack infrastructure: it is the analogue of HOL's
-`arm8_encoder_correct`
-(`cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml`), proved by
-dispatching each `HolInst` constructor to its case theorem, so it carries no
-`@[hol]` tag and no claim of a HOL port beyond the case theorems' tags. -/
+This is the assembling theorem of HOL's `arm8_encoder_correct`: it states
+`encoder_correct arm8_target` at the L3 rendering, with `target_ok` supplied
+by `arm8TargetL3_targetOk` and every `HolInst` constructor dispatched to its
+tagged case theorem.  It adds no hypothesis beyond HOL's statement. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8EncoderCorrectL3 : encoderCorrect arm8TargetL3 := by
   refine ⟨arm8TargetL3_targetOk, ?_⟩
   intro s1 i s2 ms h

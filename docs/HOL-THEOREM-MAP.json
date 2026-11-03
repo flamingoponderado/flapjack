@@ -101301,5 +101301,22 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Shift branch of HOL's arm8_encoder_correct (cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml:333; print_tac \"Shift\" at line 430). The Lean statement is CaseGoal (.inst (.arith (.shift .ror destination source (.imm value)))) under exactly the original premise asmStep arm8ConfigL3 s1 (.inst (.arith (.shift .ror destination source (.imm value)))) s2 \u2227 targetStateRel arm8TargetL3 s1 ms; no target-run, range, successful-pass or final-relation premise is added. No branch hypothesis is needed. The conclusion CaseGoal is exactly the per-instruction body of encoderCorrect (existential n, every projection-preserving environment, the code/PC/state intermediate predicate, the complete final targetStateRel and the outside-domain asserts2). The branch hypotheses are discharged by the dispatchers in Complete.lean, so the assembled arm8EncoderCorrectL3 carries none of them. The statement's constant closure reaches the (reals_as_rational_cuts)-tagged FP renderings through asmStep's FP updates, so the row records inherits_reals_as_rational_cuts and inherits the SOUNDNESS item 8 real-rendering assumption; the theorem performs no real rendering of its own."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+    "hol_name": "arm8_target_ok",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Target/State.lean",
+    "lean_name": "arm8TargetL3_targetOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): HOL's local arm8_target_ok (arm8_targetProofScript.sml:313) states target_ok arm8_target; the Lean statement is targetOk arm8TargetL3, the same predicate at the reviewed arm8_target_def rendering (arm8TargetL3, reviewed_exact) and the reviewed arm8_config_def rendering (arm8ConfigL3, reviewed_exact). Same binders and conjuncts: enc_ok t.config and the projection-determined readable state; no hypothesis is added and none is dropped. HOL proves it by rewriting target_ok_def/target_state_rel_def/arm8_ok_def with arm8_encoding and bit-blasting, which is the same obligation the Lean proof discharges through arm8ConfigL3_encOk and arm8TargetL3_targetOkProjection. The declaration's constant closure does not reach the (reals_as_rational_cuts) FP renderings, so no inherited-assumption marker is recorded."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+    "hol_name": "arm8_encoder_correct",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Complete.lean",
+    "lean_name": "arm8EncoderCorrectL3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the assembling theorem of HOL's arm8_encoder_correct (arm8_targetProofScript.sml:333), whose whole statement is encoder_correct arm8_target. The Lean statement is encoderCorrect arm8TargetL3, the same predicate at the reviewed arm8_target_def rendering with the reviewed arm8_config_def configuration; it carries no hypothesis of its own, exactly as HOL's theorem. HOL proves it by simp with arm8_target_ok (ported as arm8TargetL3_targetOk, reviewed_exact) and then splitting on the instruction; the Lean proof supplies the same target_ok conjunct and dispatches every HolInst constructor to its tagged arm8_encoder_correct case theorem, so no branch hypothesis survives into the assembled statement. The statement's constant closure reaches the (reals_as_rational_cuts)-tagged FP renderings through asmStep's FP updates, so the row records inherits_reals_as_rational_cuts and inherits the SOUNDNESS item 8 real-rendering assumption; the theorem performs no real rendering of its own.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

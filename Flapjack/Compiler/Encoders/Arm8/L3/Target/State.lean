@@ -136,8 +136,11 @@ theorem arm8TargetL3_targetOkProjection (ms1 ms2 : arm8_state) (s : AsmState 64)
 
 /-- `target_ok` for the L3 ARMv8 target: the exact L3 configuration is `enc_ok`
 and the projection determines the readable state.  This is the `targetOk`
-conjunct of `encoderCorrect`; the transition simulation and the
-per-instruction `encoder_correct` cases remain open (#1239). -/
+conjunct of `encoderCorrect`, and the L3 instance of HOL's local
+`arm8_target_ok`; the per-instruction cases are the tagged case theorems in
+`CorrectnessEncoding` and are assembled in
+`arm8EncoderCorrectL3`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_target_ok"]
 theorem arm8TargetL3_targetOk : targetOk arm8TargetL3 := by
   refine ⟨arm8ConfigL3_encOk, ?_⟩
   intro ms1 ms2 s hproj
