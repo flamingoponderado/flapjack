@@ -55,6 +55,8 @@ theorem doInstall_nonType_incremental {C F : Type} (fuel relationFuel : Nat) (g 
       expressions = (source.compileOracle 0).2.1 ∧ expressions ≠ [] ∧
       targetFinal.code = target.code.updateListEq converted.2 ∧
       targetFinal.compileOracle = holShiftSeq 1 target.compileOracle ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       StateRelFuel relationFuel g allowed final targetFinal ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
   classical
@@ -120,17 +122,48 @@ theorem doInstall_nonType_incremental {C F : Type} (fuel relationFuel : Nat) (g 
           code := target.code.updateListEq converted.2
           compileOracle := holShiftSeq 1 target.compileOracle
           clock := target.clock - 1 }
-      refine ⟨expressions, converted, nextConfig.1, targetFinal, ?_, ?_, resultEq, ?_, nonempty, rfl, rfl, ?_, ?_⟩
+      refine ⟨expressions, converted, nextConfig.1, targetFinal, ?_, ?_, resultEq, ?_, nonempty,
+        rfl, rfl, ?_, ?_, ?_, ?_, ?_⟩
       · simpa [oracleRun] using convertedRun
       · by_cases zero : source.clock = 0 <;>
           simp [doInstall, targetBytes, targetWords, targetOracleRun, targetCompileRun,
             targetNext, targetNonempty, generated.1, targetFinal, ← states.2.1, zero] <;>
           exact targetFresh'
       · simp [oracleRun]
+      · simpa [finalEq] using sourceCompiler
+      · exact targetCompiler
+      · rw [finalEq]
+        change holShiftSeq 1 target.compileOracle =
+          compileIncFuelOracle fuel (holShiftSeq 1 source.compileOracle)
+        rw [targetOracle]
+        exact (compileIncFuelOracle_shift fuel 1 source.compileOracle).symm
       · rw [finalEq]
         have grown := stateRelFuel_extendCode states (target.code.updateListEq converted.2) distinctState codeGrowth
         have clocked := stateRelFuel_decClock grown 1
         simpa [StateRelFuel, targetFinal, decClock, HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL] using clocked
       · exact codeGrowth
+
+/-- After a non-type-error source installation, installing the transformed
+head entry preserves freshness for all entries of the shifted source oracle,
+provided the original later entries were fresh and disjoint from the head.
+This is the future-code component of the invariant, not its full simulation. -/
+theorem doInstall_shiftedOracle_fresh {C F : Type} (fuel : Nat)
+    (source : ClosSem.State (NumSet × C) F) (sourceValues : List ClosSem.Value)
+    (result : SemanticPrimitivesHOL.Result (List ClosLang.Exp) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F) (oldCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (run : doInstall sourceValues source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (fresh : ∀ later, 0 < later → ∀ loc ∈ codeLocations (source.compileOracle later).2.1,
+      oldCode.lookup (loc + 1) = none)
+    (disjoint : ∀ later, 0 < later → ∀ loc ∈ codeLocations (source.compileOracle later).2.1,
+      loc ∉ codeLocations (source.compileOracle 0).2.1) :
+    ∀ index loc, loc ∈ codeLocations (final.compileOracle index).2.1 →
+      (oldCode.updateListEq (compileIncFuelOracle fuel source.compileOracle 0).2.2).lookup (loc + 1) = none := by
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, finalEq, _⟩ :=
+    doInstall_nonType_parts sourceValues source final result run notType
+  have preserved := compileIncFuelOracle_preserves_later_fresh fuel source.compileOracle 0 oldCode fresh disjoint
+  intro index loc member
+  apply preserved (index + 1) (by omega) loc
+  simpa [finalEq, holShiftSeq] using member
 
 end Flapjack.Compiler.Backend.ClosCall
