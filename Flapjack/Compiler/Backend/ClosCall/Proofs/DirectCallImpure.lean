@@ -297,23 +297,28 @@ behavior as applying the evaluated function when the generated stub is
 installed. This does not yet establish the cross-state source simulation. -/
 theorem callsFuel_app_impure_target_eq {C F : Type} (fuel : Nat) (trace stubTrace : BackendCommon.Tra)
     (address : Nat) (function : ClosLang.Exp) (args : List ClosLang.Exp) (initial final : State)
-    (out : ClosLang.Exp) (env values : List ClosSem.Value) (functionValue : ClosSem.Value)
+    (out targetExp : ClosLang.Exp) (targetArgs : List ClosLang.Exp) (middle : State)
+    (env values : List ClosSem.Value) (functionValue : ClosSem.Value)
     (state afterArgs afterFunction : ClosSem.State C F) (stubEnv : List ClosSem.Value) (body : ClosLang.Exp)
     (run : callsFuel (fuel + 1) (.app trace (some address) function args) initial = some (out, final))
     (known : (sptLookup address final.1).isSome = true) (impure : ClosLang.pure function = false)
-    (argsRun : ∀ targetArgs middle, callsListFuel fuel args initial = some (targetArgs, middle) →
-      evaluate targetArgs env state = (.val values, afterArgs))
-    (functionRun : ∀ targetFunction middle, callsFuel fuel function middle = some (targetFunction, final) →
-      evaluate [targetFunction] env afterArgs = (.val [functionValue], afterFunction))
+    (argsTraversal : callsListFuel fuel args initial = some (targetArgs, middle))
+    (functionTraversal : callsFuel fuel function middle = some (targetExp, final))
+    (argsRun : evaluate targetArgs env state = (.val values, afterArgs))
+    (functionRun : evaluate [targetExp] env afterArgs = (.val [functionValue], afterFunction))
     (code : afterFunction.code.lookup (address + 1) = some (values.length, body))
     (closure : destClosure afterFunction.maxApp (some address) functionValue values =
       some (.fullApp (.call stubTrace 0 (address + 1) (ClosCall.variables stubTrace values.length)) stubEnv [])) :
     evaluate [out] env state = evaluateApp (some address) functionValue values afterFunction := by
-  obtain ⟨targetArgs, targetFunction, middle, argsTraversal, functionTraversal, rfl⟩ :=
+  obtain ⟨actualArgs, actualFunction, actualMiddle, actualArgsRun, actualFunctionRun, outEq⟩ :=
     callsFuel_app_impure_shape fuel trace address function args initial final out run known impure
-  exact evaluate_impure_rewrite_eq_known_app trace stubTrace (address + 1) address targetArgs targetFunction
-    env values functionValue state afterArgs afterFunction stubEnv body (argsRun targetArgs middle argsTraversal)
-    (functionRun targetFunction middle functionTraversal) code closure
+  have argsEq := Option.some.inj (argsTraversal.symm.trans actualArgsRun)
+  cases argsEq
+  have functionEq := Option.some.inj (functionTraversal.symm.trans actualFunctionRun)
+  cases functionEq
+  rw [outEq]
+  exact evaluate_impure_rewrite_eq_known_app trace stubTrace (address + 1) address targetArgs targetExp
+    env values functionValue state afterArgs afterFunction stubEnv body argsRun functionRun code closure
 
 /-- A successful location-annotated closure lookup cannot be a partial
 application: the location check requires exact arity and no saved arguments.
@@ -387,16 +392,17 @@ body simulation remains an induction input; the source closure decomposition
 is derived. This Lean-side case is not HOL's complete growing-state theorem. -/
 theorem callsFuel_app_impure_full_sim {C F : Type} (fuel : Nat) (g : State) (allowed : Set Nat)
     (trace : BackendCommon.Tra) (address : Nat) (function : ClosLang.Exp) (args : List ClosLang.Exp)
-    (initial final : State) (out : ClosLang.Exp) (env targetValues : List ClosSem.Value)
+    (initial final middle : State) (out targetExp : ClosLang.Exp) (targetArgs : List ClosLang.Exp)
+    (env targetValues : List ClosSem.Value)
     (sourceFunction targetFunction : ClosSem.Value) (sourceValues : List ClosSem.Value)
     (source : ClosSem.State (NumSet × C) F) (target afterArgs afterFunction : ClosSem.State C F)
     (sourceResult : Result (List ClosSem.Value) ClosSem.Value) (sourceFinal : ClosSem.State (NumSet × C) F)
     (run : callsFuel (fuel + 1) (.app trace (some address) function args) initial = some (out, final))
     (known : (sptLookup address final.1).isSome = true) (impure : ClosLang.pure function = false)
-    (argsRun : ∀ targetArgs middle, callsListFuel fuel args initial = some (targetArgs, middle) →
-      evaluate targetArgs env target = (.val targetValues, afterArgs))
-    (functionRun : ∀ targetExp middle, callsFuel fuel function middle = some (targetExp, final) →
-      evaluate [targetExp] env afterArgs = (.val [targetFunction], afterFunction))
+    (argsTraversal : callsListFuel fuel args initial = some (targetArgs, middle))
+    (functionTraversal : callsFuel fuel function middle = some (targetExp, final))
+    (argsRun : evaluate targetArgs env target = (.val targetValues, afterArgs))
+    (functionRun : evaluate [targetExp] env afterArgs = (.val [targetFunction], afterFunction))
     (sourceRun : evaluateApp (some address) sourceFunction sourceValues source = (sourceResult, sourceFinal))
     (notType : sourceResult ≠ .err (.abort .typeError))
     (nonempty : sourceValues ≠ [])
@@ -441,8 +447,8 @@ theorem callsFuel_app_impure_full_sim {C F : Type} (fuel : Nat) (g : State) (all
       some (.fullApp (.call stubTrace 0 (address + 1) (ClosCall.variables stubTrace targetValues.length)) stubEnv []) := by
     simpa [values.length_eq] using targetClosure
   have targetEq := callsFuel_app_impure_target_eq fuel trace stubTrace address function args initial final out
-    env targetValues targetFunction target afterArgs afterFunction stubEnv convertedBody run known impure
-    argsRun functionRun code targetClosure'
+    targetExp targetArgs middle env targetValues targetFunction target afterArgs afterFunction stubEnv convertedBody
+    run known impure argsTraversal functionTraversal argsRun functionRun code targetClosure'
   obtain ⟨targetResult, targetFinal, targetRun, results, finalStates, growth⟩ :=
     appSimFuel_of_bodies fuel g allowed (some address) distinct bodyIH sourceFunction targetFunction sourceValues targetValues
       source afterFunction sourceResult sourceFinal sourceRun notType functions values states
