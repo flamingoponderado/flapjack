@@ -1,6 +1,6 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownPipelineSemantics
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalLocationsTotal
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownLabelOracle
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownInitialLabels
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
 
 /-! Composition of known-function optimization and prepared BVL compilation. -/
@@ -11,8 +11,8 @@ open Flapjack.Compiler.Backend.BackendProps Flapjack.Compiler.Backend.ClosKnown
 /-- The known-function closure pipeline and prepared BVL conversion preserve
 observations when their existing syntax, label-boundary and compilation
 invariants hold. This is Lean-side pass composition, not a HOL declaration;
-the initial compiled-label bound and source-run premises still need to be
-derived from the complete compiler driver. -/
+the numbering reservation, initial oracle bound, and source-run premises still
+need to be derived from the complete compiler driver. -/
 theorem known_pipeline_prepared_semantics {C F : Type} (ffi : HolFfiState F)
     (fuel maxApp number start : Nat) (knownConfig : ClosKnown.Config)
     (oracle : CompileOracle (Nat × (Spt ValApprox × C))) (targetCompiler : BvlSem.Compiler C)
@@ -39,9 +39,9 @@ theorem known_pipeline_prepared_semantics {C F : Type} (ffi : HolFfiState F)
     (startEq : current.start = start) (maxAppEq : current.maxApp = maxApp)
     (compile : compilePrepared? original current program (ClosAnnotate.compile (chainExps start optimizedOutput)) =
       some (output, compiled, names))
-    (distinct : (compiled.map Prod.fst).Nodup)
+    (numberLower : start + max 1 program.length ≤ number)
     (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
-    (initialBelow : ∀ location ∈ compiled.map Prod.fst, location < (oracle 0).1.1 + numStubs maxApp)
+    (initialBound : (ClosNumber.renumberList number program).1 ≤ (oracle 0).1.1)
     :
     BvlSem.semantics ffi (sptFromAList compiled)
       (pureCo (compileInc maxApp) ∘ pureCo ClosAnnotate.compileInc ∘ knownClosureFuture knownConfig oracle)
@@ -89,6 +89,21 @@ theorem known_pipeline_prepared_semantics {C F : Type} (ffi : HolFfiState F)
     · simpa [knownClosureFuture, pureCo, letopInc, ticksInc, ClosLetop.compileInc, ClosTicks.compileInc] using
         (ClosLetop.compileList_locations _).mpr ((ClosTicks.removeList_locations _).mpr (knownFutureLocations i))
     · simp [knownClosureFuture, pureCo, letopInc, ClosLetop.compileInc]
+  have outputLabels := numberedKnown_output_labels fuel number knownConfig program optimized globals optimizedOutput
+    knownSafe.2 optRun
+  have numberingBound := ClosNumber.renumberList_start_le program number
+  have entryBound : start + max 1 optimizedOutput.length ≤ (ClosNumber.renumberList number program).1 := by
+    rw [outputLabels.1]
+    exact Nat.le_trans numberLower numberingBound
+  have initialLabels := preparedChain_label_properties original current output program start
+    (ClosNumber.renumberList number program).1 optimizedOutput compiled names compile outputLabels.2.1
+    (by intro location member; have b := outputLabels.2.2 location member; omega) entryBound
+  have distinct := initialLabels.1
+  have initialBelow : ∀ location ∈ compiled.map Prod.fst, location < (oracle 0).1.1 + numStubs maxApp := by
+    intro location member
+    have bound := initialLabels.2 location member
+    rw [maxAppEq] at bound
+    omega
   let boundary := fun i => (oracle i).1.1 + numStubs maxApp
   have monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j := by
     intro i j order
