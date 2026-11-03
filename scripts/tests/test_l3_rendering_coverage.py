@@ -14,10 +14,11 @@ class NativeRenderingCoverage(unittest.TestCase):
     def setUpClass(cls):
         cls.actual=m.sources()
         cls.generated=m.renderings()
+        cls.arm8=m.arm8_renderings()
         cls.lock=json.loads(m.LOCK.read_text())
 
     def test_all_delivered_descendants_match_pinned_original(self):
-        m.check(self.actual,self.generated,self.lock)
+        m.check(self.actual,self.generated,self.lock,self.arm8)
         for fragment in ("/MMU/", "/Defs/ReadInst.lean:", "/Step/Fetch.lean:", "/Defs/Decode.lean:", "/Defs/Run.lean:"):
             self.assertTrue(any(fragment in key for key in self.actual))
 
@@ -27,29 +28,34 @@ class NativeRenderingCoverage(unittest.TestCase):
                   dict(self.actual,unexpected="def unexpected := true"),
                   dict(self.actual,**{key:self.actual[key].replace("state.procID","(BitVec.ofNat 8 0)")})]
         for actual in variants:
-            with self.assertRaises(ValueError):m.check(actual,self.generated,self.lock)
+            with self.assertRaises(ValueError):m.check(actual,self.generated,self.lock,self.arm8)
 
     def test_each_handwritten_side_and_review_note_pinned(self):
         for key,exception in self.lock["exceptions"].items():
             actual=dict(self.actual)
             actual[key]+=" + changed"
-            with self.subTest(key=key), self.assertRaises(ValueError):m.check(actual,self.generated,self.lock)
+            with self.subTest(key=key), self.assertRaises(ValueError):m.check(actual,self.generated,self.lock,self.arm8)
             lock=copy.deepcopy(self.lock)
             lock["exceptions"][key]["review_note"]=""
-            with self.assertRaises(ValueError):m.check(self.actual,self.generated,lock)
+            with self.assertRaises(ValueError):m.check(self.actual,self.generated,lock,self.arm8)
             if exception["rendered_sha256"] is not None:
-                generated=dict(self.generated)
-                thy="riscv_step" if "/Step/" in key else "riscv"
                 name=key.split(":",1)[1].strip("«»")
-                body,nc=generated[thy,name]
-                generated[thy,name]=(body+" changed",nc)
+                if key.startswith(m.ARM8_DIR + "/"):
+                    generated=dict(self.arm8)
+                    body,nc=generated[name]
+                    generated[name]=(body+" changed",nc)
+                else:
+                    generated=dict(self.generated)
+                    thy="riscv_step" if "/Step/" in key else "riscv"
+                    body,nc=generated[thy,name]
+                    generated[thy,name]=(body+" changed",nc)
                 with self.assertRaises(ValueError):m.check(self.actual,generated,self.lock)
 
     def test_only_recorded_computability_changes_allowed(self):
         actual=dict(self.actual)
         key=self.lock["noncomputable_overrides"][0]
         actual[key]="noncomputable " + actual[key] if not actual[key].startswith("noncomputable ") else actual[key].removeprefix("noncomputable ")
-        with self.assertRaises(ValueError):m.check(actual,self.generated,self.lock)
+        with self.assertRaises(ValueError):m.check(actual,self.generated,self.lock,self.arm8)
 
     def test_next_uses_step_fetch_and_all_transfer_alternatives(self):
         key="Flapjack/RiscV/L3/Step/Next.lean:NextRISCV"
@@ -62,7 +68,7 @@ class NativeRenderingCoverage(unittest.TestCase):
             self.assertIn("."+constructor,self.actual[key])
         actual=dict(self.actual)
         actual[key]=actual[key].replace("Fetch s", "riscv_Fetch s",1)
-        with self.assertRaises(ValueError):m.check(actual,self.generated,self.lock)
+        with self.assertRaises(ValueError):m.check(actual,self.generated,self.lock,self.arm8)
 
     def test_quoted_whitespace_not_erased(self):
         self.assertNotEqual(m.normalize('def f := "a b"'),m.normalize('def f := "ab"'))
