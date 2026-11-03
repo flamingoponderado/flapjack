@@ -1,20 +1,12 @@
 import Flapjack.RiscV.RegisterNames
 
 /-!
-# Transferring register files across the `riscv_names` map
+# The inverse of the `riscv_names` map
 
 `Flapjack.RiscV.RegisterNames` defines the CakeML `riscv_names` map as a
-function `riscvForward : Fin 32 → Fin 32` on hardware register indices, and
-`Flapjack.RiscV.RegisterRelabel` re-labels a machine state by pushing a map
-through its register file.
-
-To apply `riscv_names` exactly once at the RISC-V boundary, the production
-statement carries *internal* register numbers while the machine model executes
-*hardware* numbers obtained by `riscvForward`.  This file starts the bridge in
-that direction: an explicit inverse `riscvInverse` together with the left and
-right inverse laws, and `transferState`, which re-indexes a machine state so
-that hardware slot `riscvForward name` holds the value of internal register
-`name`.
+function `riscvForward : Fin 32 → Fin 32` on hardware register indices. This
+file gives its explicit inverse `riscvInverse` (and `riscvInverseName` on
+register numbers), together with the left and right inverse laws.
 -/
 
 namespace Flapjack.RiscV
