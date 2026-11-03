@@ -48,3 +48,7 @@ val _ = show "ref_rel_typed" clos_letopProofTheory.ref_rel_rules;
 val _ = show "fmap_rel_typed" clos_letopProofTheory.FMAP_REL_def;
 val _ = show "state_rel_typed" clos_letopProofTheory.state_rel_def;
 val _ = show "evaluate_let_op_typed" clos_letopProofTheory.evaluate_let_op;
+val state_rel_dec_clock_replay = prove(
+  ``state_rel s1 s2 ==> state_rel (dec_clock 1 s1) (dec_clock 1 s2)``,
+  rw [state_rel_def, dec_clock_def, state_component_equality]);
+val _ = show "state_rel_dec_clock_replay_typed" state_rel_dec_clock_replay;

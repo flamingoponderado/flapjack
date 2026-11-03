@@ -122823,5 +122823,147 @@
   "fmap_as_finite_support": ["refs", "code"],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the let case of evaluate_ind_typed in clos_known_syntax_probe.out. The source bindings and successful-bindings body induction hypotheses, source run, related environments and states, code relation, and existential target result, state and conclusions are retained without extra premises. The proof covers binding errors, the ordinary let and optimized operation, including effects. State refs and code have a local canonical roundtrip witness; evaluation inherits the rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
+  "lean_name": "evaluate_let_op_nil",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the corresponding evaluate_ind_typed case in clos_known_syntax_probe.out. The empty expression list yields an empty result and leaves related states unchanged. The source run, related environments and states, code relation and existential target result and state are preserved. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
+  "lean_name": "evaluate_let_op_var",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the corresponding evaluate_ind_typed case in clos_known_syntax_probe.out. Related environments yield related values at the same index, including the shared out-of-range type error. The source run, related environments and states, code relation and existential target result and state are preserved. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
+  "lean_name": "evaluate_let_op_cons",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the corresponding evaluate_ind_typed case in clos_known_syntax_probe.out. The source singleton-head and successful-head tail induction hypotheses are retained; errors propagate and successful singleton results are combined with related tail results. The source run, related environments and states, code relation and existential target result and state are preserved. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
+  "lean_name": "evaluate_let_op_raise",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the corresponding evaluate_ind_typed case in clos_known_syntax_probe.out. The body induction hypothesis handles propagated errors and raises related singleton values. The source run, related environments and states, code relation and existential target result and state are preserved. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
+  "lean_name": "evaluate_let_op_tick",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the corresponding evaluate_ind_typed case in clos_known_syntax_probe.out. The nonzero-clock body induction hypothesis is guarded exactly as in the evaluator induction; zero clocks time out on both sides. The source run, related environments and states, code relation and existential target result and state are preserved. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
+  "lean_name": "evaluate_let_op_handle",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the corresponding evaluate_ind_typed case in clos_known_syntax_probe.out. The body and raised-value handler induction hypotheses preserve related exceptions and extended environments. The source run, related environments and states, code relation and existential target result and state are preserved. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
+  "lean_name": "evaluate_let_op_if",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the corresponding evaluate_ind_typed case in clos_known_syntax_probe.out. The condition and Boolean-guarded branch induction hypotheses preserve both branches and the non-Boolean type error. The source run, related environments and states, code relation and existential target result and state are preserved. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
+  "lean_name": "evaluate_let_op_fn",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the corresponding evaluate_ind_typed case in clos_known_syntax_probe.out. The function case preserves arity checks, optional captured variables, and related closure bodies, including capture failures. The source run, related environments and states, code relation and existential target result and state are preserved. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
+  "lean_name": "evaluate_let_op_app",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the corresponding evaluate_ind_typed case in clos_known_syntax_probe.out. The argument, successful-argument function, and successful-function application induction hypotheses retain the original nonempty and evaluation guards. The source run, related environments and states, code relation and existential target result and state are preserved. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
+  "lean_name": "evaluate_let_op_call",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the corresponding evaluate_ind_typed case in clos_known_syntax_probe.out. The argument induction hypothesis propagates failures; successful arguments encounter empty installed-code maps on both related states, making the source body-induction premise unreachable. The source run, related environments and states, code relation and existential target result and state are preserved. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "state_rel_dec_clock",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
+  "lean_name": "state_rel_dec_clock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared the typed original local proof replay in clos_letop_source_probe.out: related states with shared independent compiler and FFI carriers remain related after decrementing both clocks by one. Canonical refs and code have a local broad-state roundtrip witness."
 }
 ]
