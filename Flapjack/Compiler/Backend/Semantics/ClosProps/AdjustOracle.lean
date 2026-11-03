@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 
 /-! Closure-state relation for changing the compiler-oracle configuration. -/
 namespace Flapjack.Compiler.Backend.ClosProps.AdjustOracle
@@ -134,5 +135,61 @@ theorem doAppAdjOracVal {C D F : Type} (cc : Compiler D) (f : C → D)
   obtain ⟨y, target, same, related, result⟩ := sim
   subst y
   exact ⟨target, result, related⟩
+
+/-- A non-type-error dynamic installation produces the same result and
+preserves the adjusted compiler-oracle relation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_install_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstallAdjOrac {C D F : Type} (cc : Compiler D) (f : C → D)
+    (xs : List Value) (s : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List ClosLang.Exp) Value)
+    (next : State C F) (t : State D F)
+    (h : doInstall xs s = (result, next) ∧ adjOracRel cc f s t ∧
+      result ≠ .err (.abort .typeError)) :
+    ∃ target, doInstall xs t = (result, target) ∧ adjOracRel cc f next target := by
+  classical
+  obtain ⟨run, ⟨compatible, rfl⟩, noType⟩ := h
+  obtain ⟨byteValue, wordValue, bytes, words, config, expressions, auxiliary, nextConfig,
+    valuesEq, bytesRun, wordsRun, oracleRun, compileRun, fresh, nodup, nextConfigEq,
+    nonempty, nextEq, resultEq⟩ := doInstall_nonType_parts xs s next result run noType
+  subst xs
+  let target : State D F := ⟨s.globals, s.refs, s.ffi, s.clock, cc,
+    (fun n => (f (s.compileOracle n).1, (s.compileOracle n).2)), s.code, s.maxApp⟩
+  have targetOracle : target.compileOracle 0 = (f config, expressions, auxiliary) := by
+    simp [target, oracleRun]
+  have targetCompile : cc (f config) (expressions, auxiliary) = some (bytes, words, f nextConfig) := by
+    have h := compatible 0 config (expressions, auxiliary) oracleRun
+    simpa [compileRun] using h.symm
+  have targetConfig : (Flapjack.holShiftSeq 1 target.compileOracle 0).1 = f nextConfig := by
+    simpa [target, Flapjack.holShiftSeq] using congrArg f nextConfigEq
+  let nextTarget := { target with
+    code := target.code.updateListEq auxiliary
+    compileOracle := Flapjack.holShiftSeq 1 target.compileOracle
+    clock := target.clock - 1 }
+  refine ⟨nextTarget, ?_, ?_⟩
+  · rw [resultEq]
+    change doInstall [byteValue, wordValue] target = (_, nextTarget)
+    have targetFresh : ∀ key arity body, (key, arity, body) ∈ auxiliary → target.code.lookup key = none := by
+      intro key arity body member
+      apply fresh key
+      exact List.mem_map.mpr ⟨(key, arity, body), member, rfl⟩
+    have targetCompile' : target.compile (f config) (expressions, auxiliary) =
+        some (bytes, words, f nextConfig) := targetCompile
+    by_cases zero : s.clock = 0
+    · have targetZero : target.clock = 0 := by simpa [target] using zero
+      simp [doInstall, bytesRun, wordsRun, targetOracle, nodup,
+        targetConfig, nonempty, zero, targetZero, nextTarget]
+      simp [targetCompile']
+      exact targetFresh
+    · have targetNonzero : target.clock ≠ 0 := by simpa [target] using zero
+      simp [doInstall, bytesRun, wordsRun, targetOracle, nodup,
+        targetConfig, nonempty, zero, targetNonzero, nextTarget]
+      simp [targetCompile']
+      exact targetFresh
+  · rw [nextEq]
+    constructor
+    · intro n x y eq
+      exact compatible (n + 1) x y (by simpa [Flapjack.holShiftSeq] using eq)
+    · simp only [target, nextTarget, Flapjack.holShiftSeq]
+      congr 1
 
 end Flapjack.Compiler.Backend.ClosProps.AdjustOracle

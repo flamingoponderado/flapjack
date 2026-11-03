@@ -15,6 +15,7 @@ val _ = show "known_co_typed=" clos_knownProofTheory.known_co_def;
 val _ = show "adj_orac_rel_typed=" closPropsTheory.adj_orac_rel_def;
 val _ = show "do_app_adj_orac_err_typed=" closPropsTheory.do_app_adj_orac_Rerr;
 val _ = show "do_app_adj_orac_val_typed=" closPropsTheory.do_app_adj_orac_Rval;
+val _ = show "do_install_adj_orac_typed=" closPropsTheory.do_install_adj_orac;
 val _ = show "monotonic_unique_set_globals_typed=" clos_knownProofTheory.monotonic_unique_set_globals;
 val _ = show "monotonic_gapprox_disjoint_typed=" clos_knownProofTheory.monotonic_gapprox_disjoint;
 val _ = show "state_oracle_domain_typed=" clos_knownProofTheory.state_oracle_domain;

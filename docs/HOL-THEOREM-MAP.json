@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "do_install_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "doInstallAdjOrac",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared do_install_adj_orac_typed: identical input values, the source installation result and final state, the adjusted initial states, and exclusion of type error imply the same target result and an existential adjusted target state. Compiler configuration types remain independent and the FFI carrier shared. The proof covers successful and timeout installations, including code updates, mapped compiler results and oracle shifts. The closure state's canonical refs and code fields use the local roundtrip witness. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
   "hol_name": "adj_orac_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
   "lean_name": "adjOracRel",
