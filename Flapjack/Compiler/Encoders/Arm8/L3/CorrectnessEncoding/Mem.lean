@@ -365,4 +365,34 @@ theorem arm8Mem_eight_eq_readMemWord (ms : arm8_state) (s : AsmState 64)
   rw [holV2w_eight_bytes]
   simp only [BitVec.ofNat_eq_ofNat]
 
+
+/-- `Run` of the `LoadStoreImmediate@64` load with no writeback: the machine
+reads the eight bytes at `X base + offset` and writes the value into `dest`
+(Flapjack infrastructure; the `LoadStoreSingle` clause at the L3 fields). -/
+theorem arm8Run_loadStoreImmediate_load (ms : arm8_state) (offset : BitVec 64)
+    (base dest : BitVec 5) (hbase : (base == (BitVec.ofNat 5 31)) = false) :
+    Run (.LoadStore (.«LoadStoreImmediate@64»
+        (3, false, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false, false,
+         false, offset, base, dest))) ms =
+      (match Mem (TN := 64) ((X (TN := 64) base ms) + offset, (8, .AccType_NORMAL)) ms with
+        | (v, s') => «write'X» (TN := 64) ((BitVec.setWidth 64 v), dest) s') := by
+  have hne : ¬(base = BitVec.ofNat 5 31) := by
+    intro h; rw [h] at hbase; simp at hbase
+  simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, ExtendWord, hbase,
+    if_false, Bool.false_and, Bool.false_eq_true]
+
+/-- `Run` of the `LoadStoreImmediate@64` store with no writeback: the machine
+writes `X dest` into the eight bytes at `X base + offset`. -/
+theorem arm8Run_loadStoreImmediate_store (ms : arm8_state) (offset : BitVec 64)
+    (base dest : BitVec 5) (hbase : (base == (BitVec.ofNat 5 31)) = false) :
+    Run (.LoadStore (.«LoadStoreImmediate@64»
+        (3, false, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
+         false, offset, base, dest))) ms =
+      «write'Mem» (TN := 64)
+        ((X (TN := 64) dest ms), ((X (TN := 64) base ms) + offset, (8, .AccType_NORMAL))) ms := by
+  have hne : ¬(base = BitVec.ofNat 5 31) := by
+    intro h; rw [h] at hbase; simp at hbase
+  simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, hbase,
+    if_false, Bool.false_and, Bool.false_eq_true]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
