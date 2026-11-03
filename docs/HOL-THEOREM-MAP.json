@@ -2163,6 +2163,42 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "evaluate_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/EvaluateOp.lean",
+    "lean_name": "evaluate_remove_fvs_op",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the first evaluate_remove_typed conjunct and the operation case of evaluate_ind_typed in clos_known_syntax_probe.out. EvalAt unfolds to the original evaluation, environment, state and code premises and existential target evaluation, result and state conclusions. The argument, installed-program and forcing induction hypotheses retain the source operation guards and successful intermediate evaluations; redundant quantified result variables and equalities are instantiated to their successful constructors. The proof assembles ordinary, installation and force cases without extra assumptions. The closure state has canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining mutual evaluator cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "evaluate_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/EvaluateApp.lean",
+    "lean_name": "evaluate_remove_fvs_app_nil",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the second evaluate_remove_typed conjunct and the empty-argument application induction case in evaluate_ind_typed from clos_known_syntax_probe.out. The original evaluation, value, argument-list and state premises and existential target evaluation, result and state conclusions are retained without added hypotheses. The closure state has canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the nonempty application case."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "dest_closure_SOME_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/EvaluateApp.lean",
+    "lean_name": "destClosure_some_shape",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_closure_some_typed and the source statement: the successful inspection premise and disjunction of ordinary and recursive closure constructor shapes retain all fields. This is source comparison and Lean checking, not a cross-language equivalence proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "dest_closure_SOME_Full_app",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/EvaluateApp.lean",
+    "lean_name": "destClosure_full_closure",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_closure_full_typed and the ordinary-closure branch of the source proof. The source and target functions specialize the original related-value premise by its closure constructor, retaining exactly the related captured and supplied environments and body code relation; the first argument, tail, successful full inspection and all four original conclusions are retained. The full-application bound follows from the source arity checks. The recursive-closure branch and assembling theorem remain open; source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
     "hol_name": "do_app_lemma",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Primitive.lean",
     "lean_name": "doAppLemma",

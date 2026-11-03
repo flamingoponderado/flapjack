@@ -135,12 +135,12 @@ operations used by closure annotation, including sparse-tree traversal order.
 singleton/list equations, length and compiler definitions, code, function,
 value, reference and state relations, a typed replay of the local clock-decrement
 lemma, the inferred types of transcribed local primitive, payload-decoding,
-installation and thunk-update statements, evaluator simulation and whole-program correctness
+installation and thunk-update statements, closure inspection, evaluator simulation and whole-program correctness
 statement. The local statement captures are not HOL proof replays. These
 captures support review; the evaluator proof covers the empty-list, sequencing,
 variable, conditional, let, raise, handler, function, recursive-let,
-application, direct-call, installation, forcing and tick cases, with the remaining
-cases still open.
+application, direct-call, operation and tick cases, along with empty-argument
+closure application; nonempty closure application remains open.
 
 `clos_interp_review_probe.out` captures the typed installation traversal,
 interpreter expressions, optimizer, initializer, attachment and incremental
