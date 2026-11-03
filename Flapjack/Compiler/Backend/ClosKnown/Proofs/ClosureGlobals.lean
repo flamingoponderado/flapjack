@@ -28,6 +28,20 @@ theorem destClosureFullSgcFree (maxApp : Nat) (location : Option Nat) (f arg0 : 
   all_goals aesop (add simp [vsgcFree, List.mem_append, List.mem_reverse, List.mem_cons, List.mem_map]) (add safe forward [List.mem_of_mem_take, List.mem_of_mem_drop, List.mem_of_getElem?])
 
 
+/-- A partial application of a safe closure to safe values remains safe.
+This is Lean proof infrastructure without a separate HOL declaration. -/
+theorem destClosurePartialSafe (maxApp : Nat) (location : Option Nat)
+    (f : ClosSem.Value) (args : List ClosSem.Value) (value : ClosSem.Value)
+    (fnSafe : vsgcFree f) (argsSafe : ∀ v ∈ args, vsgcFree v)
+    (found : destClosure maxApp location f args = some (.partialApp value)) :
+    vsgcFree value := by
+  cases f <;> simp only [destClosure] at found <;> try contradiction
+  all_goals simp only [vsgcFree] at fnSafe
+  all_goals repeat' split at found
+  all_goals simp_all
+  all_goals subst value
+  all_goals simp_all [vsgcFree, List.mem_append, or_imp]
+
 /-- Updating a reference with a safe thunk preserves state safety. This is a
 Lean helper without a separate HOL declaration. -/
 private theorem updateSafeThunk {C F : Type} (s : State C F) (index : Nat)

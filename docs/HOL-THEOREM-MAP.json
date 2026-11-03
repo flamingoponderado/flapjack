@@ -1,5 +1,18 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateAppChangedGlobalsCons",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the nonempty evaluate_app case of the local source statement with evaluate_ind_typed: the body induction hypothesis is conditional on full application and sufficient clock, and the subsequent-application induction hypothesis additionally requires the evaluated singleton body result. The execution equation, initial safety premises and full state, result, oracle-shift and global-extension conclusions are retained. The proof handles invalid and partial closures, timeouts, body errors and recursive application. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full mutual theorem."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
   "hol_name": "set_globals_empty_esgc_free",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Globals.lean",

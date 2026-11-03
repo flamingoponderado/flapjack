@@ -757,5 +757,120 @@ theorem evaluateChangedGlobalsCall {C F : Type} (trace : BackendCommon.Tra)
             rcases run with ⟨rfl, rfl⟩
             exact ⟨lastSafe, resultSafe, n + m, finalOracle, finalFrame⟩
 
+
+/-- The source global-safety assertion for a fixed closure application.
+This is Lean induction infrastructure, with no separate HOL declaration. -/
+def EvalAppGlobalsInvariant {C F : Type} (location : Option Nat) (f : ClosSem.Value)
+    (args : List ClosSem.Value) (s0 : ClosSem.State C F) : Prop :=
+  ∀ (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F),
+    evaluateApp location f args s0 = (res, s) ∧ ssgcFree s0 ∧ vsgcFree f ∧
+      (∀ v ∈ args, vsgcFree v) →
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0} s.globals
+
+/-- Applying a closure to a nonempty argument list preserves global safety
+under the original conditional body and subsequent-application hypotheses. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAppChangedGlobalsCons {C F : Type} (location : Option Nat)
+    (f first : ClosSem.Value) (args : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (bodyIH : ∀ body env rest,
+      destClosure s0.maxApp location f (first :: args) = some (.fullApp body env rest) →
+      ¬ s0.clock < (first :: args).length - rest.length →
+      EvalGlobalsInvariant [body] env (decClock ((first :: args).length - rest.length) s0))
+    (appIH : ∀ body env rest value next,
+      destClosure s0.maxApp location f (first :: args) = some (.fullApp body env rest) →
+      ¬ s0.clock < (first :: args).length - rest.length →
+      evaluate [body] env (decClock ((first :: args).length - rest.length) s0) = (.val [value], next) →
+      EvalAppGlobalsInvariant location value rest next)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluateApp location f (first :: args) s0 = (res, s) ∧ ssgcFree s0 ∧ vsgcFree f ∧
+      (∀ v ∈ first :: args, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0} s.globals := by
+  rcases h with ⟨run, safe, fnSafe, argsSafe⟩
+  rw [evaluateApp] at run
+  cases closureRun : destClosure s0.maxApp location f (first :: args) with
+  | none =>
+    rw [closureRun] at run
+    simp at run
+    rcases run with ⟨rfl, rfl⟩
+    exact ⟨safe, by simp [rsgcFree], 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
+  | some kind =>
+    rw [closureRun] at run
+    dsimp only at run
+    cases kind with
+    | partialApp value =>
+      dsimp only at run
+      have valueSafe := destClosurePartialSafe _ _ _ _ _ fnSafe argsSafe closureRun
+      by_cases timeout : s0.clock < (first :: args).length
+      · rw [if_pos timeout] at run
+        rcases run with ⟨rfl, rfl⟩
+        exact ⟨(ssgcFreeClock s0 (fun _ => 0)).2 safe,
+          by simp [rsgcFree], 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
+      · rw [if_neg timeout] at run
+        rcases run with ⟨rfl, rfl⟩
+        exact ⟨(ssgcFreeDecClock (first :: args).length s0).2 safe,
+          by simpa [rsgcFree] using valueSafe, 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
+    | fullApp body env rest =>
+      dsimp only at run
+      by_cases timeout : s0.clock < (first :: args).length - rest.length
+      · rw [if_pos timeout] at run
+        rcases run with ⟨rfl, rfl⟩
+        exact ⟨(ssgcFreeClock s0 (fun _ => 0)).2 safe,
+          by simp [rsgcFree], 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
+      · rw [if_neg timeout, fixClock_evaluate] at run
+        have ⟨noWrites, envSafe, restSafe⟩ :=
+          destClosureFullSgcFree _ _ _ _ _ _ _ _ ⟨closureRun, fnSafe, argsSafe first (by simp),
+            by intro v member; exact argsSafe v (by simp [member])⟩
+        have bodySafe : ∀ e ∈ [body], esgcFree e := by
+          simpa using setGlobalsEmptyEsgcFree body noWrites
+        let start := decClock ((first :: args).length - rest.length) s0
+        have startSafe : ssgcFree start := (ssgcFreeDecClock _ s0).2 safe
+        cases bodyRun : evaluate [body] env start with
+        | mk bodyResult next =>
+          have ⟨nextSafe, bodyResultSafe, n, nextOracle, bodyFrame⟩ :=
+            bodyIH body env rest closureRun timeout bodyResult next ⟨bodyRun, startSafe, bodySafe, envSafe⟩
+          have frame : mglobalsExtend s0.globals
+              {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0} next.globals := by
+            simpa [start, decClock, elistGlobals, noWrites, FlatProps.unionGlobalBag, emptyGlobalBag] using bodyFrame
+          have nextOracle' : next.compileOracle = Flapjack.holShiftSeq n s0.compileOracle := by
+            simpa [start, decClock] using nextOracle
+          cases bodyResult with
+          | err error =>
+            dsimp only [start] at bodyRun
+            rw [bodyRun] at run
+            simp only at run
+            rcases run with ⟨rfl, rfl⟩
+            exact ⟨nextSafe, bodyResultSafe, n, nextOracle', frame⟩
+          | val values =>
+            obtain ⟨value, rfl⟩ := evaluate_singleton_value body env start next values bodyRun
+            have valueSafe : vsgcFree value := by simpa [rsgcFree] using bodyResultSafe
+            cases appRun : evaluateApp location value rest next with
+            | mk appResult last =>
+              have ⟨lastSafe, resultSafe, m, lastOracle, appFrame⟩ :=
+                appIH body env rest value next closureRun timeout bodyRun appResult last
+                  ⟨appRun, nextSafe, valueSafe, restSafe⟩
+              have finalOracle : last.compileOracle = Flapjack.holShiftSeq (n + m) s0.compileOracle := by
+                simpa only [nextOracle', shiftSeqAdd] using lastOracle
+              have frame2 : mglobalsExtend next.globals
+                  {k | elistGlobals (List.flatten (firstNExps (Flapjack.holShiftSeq n s0.compileOracle) m)) k ≠ 0}
+                  last.globals := by simpa only [nextOracle'] using appFrame
+              have finalFrame := mglobalsExtendTrans _ _ _ _ _ ⟨frame, frame2⟩
+              have composed : mglobalsExtend s0.globals
+                  {k | elistGlobals (List.flatten (firstNExps s0.compileOracle (n + m))) k ≠ 0} last.globals := by
+                rw [Nat.add_comm n m, firstNExpsWritesShift]
+                exact finalFrame
+              dsimp only [start] at bodyRun
+              rw [bodyRun] at run
+              simp only at run
+              rw [appRun] at run
+              rcases run with ⟨rfl, rfl⟩
+              exact ⟨lastSafe, resultSafe, n + m, finalOracle, composed⟩
+
 end EvaluateGlobalsPort
 end Flapjack.Compiler.Backend.ClosKnown
