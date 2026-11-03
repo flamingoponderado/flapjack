@@ -28,3 +28,8 @@ red_rel_pure_typed=∀(xs :closLang$exp list) (ys :closLang$exp list). red_rel x
 red_rel_globals_typed=∀(xs :closLang$exp list) (ys :closLang$exp list). red_rel xs ys ⇒ elist_globals xs = elist_globals ys
 red_rel_esgc_typed=∀(xs :closLang$exp list) (ys :closLang$exp list). red_rel xs ys ⇒ (EVERY esgc_free xs ⇔ EVERY esgc_free ys)
 smart_simp_typed=(pure (SmartOp (t :tra) (op :closLang$op) (xs :closLang$exp list)) ⇔ pure (Op t op xs)) ∧ set_globals (SmartOp t op xs) = set_globals (Op t op xs) ∧ (esgc_free (SmartOp t op xs) ⇔ esgc_free (Op t op xs))
+smart_const_typed=∀(xs :closLang$exp list). SmartOp (t :tra) (IntOp (Const (i :int))) xs = Op t (IntOp (Const i)) xs
+smart_cons_typed=∀(xs :closLang$exp list). SmartOp (t :tra) (BlockOp (Cons (n :num) :block_op)) xs = Op t (BlockOp (Cons n :block_op)) xs
+smart_install_typed=SmartOp (t :tra) Install = Op t Install
+smart_code_locs_typed=LIST_TO_BAG (code_locs [SmartOp (t :tra) (op :closLang$op) (xs :closLang$exp list)]) = LIST_TO_BAG (code_locs [Op t op xs])
+list_to_bag_alt_typed=∀(l :α list) (x :α). LIST_TO_BAG l x = LENGTH (FILTER ($= x) l)

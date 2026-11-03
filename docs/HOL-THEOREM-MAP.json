@@ -1,6 +1,39 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "SmartOp_Const",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartFixed.lean",
+    "lean_name": "smartConst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_const_typed: for arbitrary trace, integer and expression list, the executed source smart operation leaves IntOp Const unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "SmartOp_Cons",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartFixed.lean",
+    "lean_name": "smartCons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_cons_typed: for arbitrary trace, constructor tag and expression list, the executed source smart operation leaves BlockOp Cons unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "SmartOp_Install",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartFixed.lean",
+    "lean_name": "smartInstall",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_install_typed: the complete function equality over expression lists is retained, with arbitrary source trace."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "code_locs_SmartOp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartFixed.lean",
+    "lean_name": "smartCodeBag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_code_locs_typed and list_to_bag_alt_typed: the source bag is a nat-to-nat function counting equal elements; Lean List.count on Nat has the same filter-length meaning and equality. Both sides use the reviewed exact closure codeLocations traversal. The proof establishes the stronger ordered-list equality first."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "red_rel_pure",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/ReductionInvariants.lean",
     "lean_name": "redPure",
