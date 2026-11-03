@@ -67,7 +67,7 @@ theorem dec_ok_eq :
   unfold decEvaluate decOkOutcome
   rw [panSemEvaluateCodeStateWithFuel_dec]
   simp [panSemEvaluateCodeStateWithFuel, evalPanValueFfiClockCodeProg,
-    evalPanValueFfiClockLeaf, evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueAssignLocalResult,
+    evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueAssignLocalResult,
     evalPanValueExpWith,
     decState, evalPanValueExp, panValueAssignmentValid, panValueShape,
     panShapeMatches, updatePanValueMap, panValueFfiClockRestoreLocal,

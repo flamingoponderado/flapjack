@@ -137,14 +137,14 @@ theorem evalPanValueFfiClockLeaf_clock
     (program : Prog α) (clockValue : Nat) (hleaf : PanValueFfiLeafProg program)
     (memoryAccess : Option (PanValueMemoryAccess α) := none)
     (contracts : Option PanValueCallContracts := none) :
-    (evalPanValueFfiClockLeaf context primitive handler structs functions
+    (evalPanValueFfiClockLeaf context primitive handler structs
       baseAddress topAddress bytesInWord clockValue locals globals memory ffi
       program (memoryAccess := memoryAccess) (contracts := contracts)).map Prod.snd =
       (evalPanValueFfiProgSteps context primitive handler structs functions
         baseAddress topAddress bytesInWord 1 locals globals memory ffi program
         (memoryAccess := memoryAccess) (contracts := contracts)).map
         (fun _ => clockValue) := by
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiClockLeafWith, Function.comp_def,
+  simp [evalPanValueFfiClockLeaf, Function.comp_def,
     evalPanValueFfiLeafControl_eq_steps context primitive handler structs functions
       baseAddress topAddress bytesInWord locals globals memory ffi program hleaf
       memoryAccess contracts]
@@ -178,12 +178,12 @@ theorem evalPanValueFfiClockLeaf_finalFfi
       (memoryAccess := memoryAccess) (contracts := contracts)
       (memoryHandler := memoryHandler) =
       some (.finalFfi finalLocals finalGlobals finalMemory finalFfi event, steps)) :
-    evalPanValueFfiClockLeaf context primitive handler structs functions
+    evalPanValueFfiClockLeaf context primitive handler structs
       baseAddress topAddress bytesInWord clock locals globals memory ffi program
       (memoryAccess := memoryAccess) (contracts := contracts)
       (memoryHandler := memoryHandler) =
       some (.control (.finalFfi finalLocals finalGlobals finalMemory finalFfi event), clock) := by
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiClockLeafWith,
+  simp [evalPanValueFfiClockLeaf,
     evalPanValueFfiLeafControl_eq_steps context primitive handler structs functions
       baseAddress topAddress bytesInWord locals globals memory ffi program hleaf
       memoryAccess contracts memoryHandler, hsteps]
@@ -1623,7 +1623,7 @@ theorem evalPanValueFfiClock_clock_le (context : PanValueFfiContext α) (primiti
     omega
   · -- case12: Prog fallback (leaf)
     intro _fuel locals globals memory ffi clock program memoryAccess contracts memoryHandler hdec hseq hite hcall hdecCall hwhile htick outcome resultClock hrun
-    simp only [evalPanValueFfiClockProg, hdec, hseq, hite, hcall, hdecCall, hwhile, htick, evalPanValueFfiClockLeaf, evalPanValueFfiClockLeafWith, Function.comp_def] at hrun
+    simp only [evalPanValueFfiClockProg, hdec, hseq, hite, hcall, hdecCall, hwhile, htick, evalPanValueFfiClockLeaf, Function.comp_def] at hrun
     rw [Option.map_eq_some_iff] at hrun
     obtain ⟨_, _, heq⟩ := hrun
     injection heq with _ h2
