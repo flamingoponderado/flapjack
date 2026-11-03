@@ -489,6 +489,15 @@ so `unsigned_offset` is `false` and the scaled clause cannot fire) and
 `arm8_encoder_correct_mem_load_pos_unscaled` (non-negative, but not the scaled
 form).
 
+`arm8_encoder_correct_mem_load_scaled` (`Mem.lean`) is the disjoint scaled
+twelve-bit branch: the offset is the scaled form (`hoff`), the nine-bit fit
+still holds (`hsx`, so `arm8_ast` takes its single-instruction branch through
+the first disjunct), and the sign is non-negative (`hmsb`, so
+`unsigned_offset` is `true` and the encoder's first clause fires).  It emits
+the `imm12` word and reuses the same `Run`/`asmCaseOneMem` tail.  The `Run`
+equations for both `LoadStoreImmediate@64` forms now take `unsigned` as a
+parameter, because `dfn'LoadStoreImmediate` ignores that encoding field.
+
 `arm8Mem_eight_pair` gives the full `Mem` pair (value and unchanged state) from
 the byte agreement.  `NextStateARM8` runs the instruction on
 `{ ms with branch_hint := none }`, and that pair is re-derived for the cleared
@@ -496,8 +505,8 @@ state directly rather than by a congruence lemma: `Mem` unfolds to a `holFor`
 fold over the whole state, so the fold is not syntactically invariant under the
 record update.
 
-Still open for #1239: the remaining `Mem` cases (the non-negative scaled
-twelve-bit form, the store forms and the 16/8-bit widths), the two-instruction
+Still open for #1239: the remaining `Mem` cases (the store forms and the
+16/8-bit widths), the two-instruction
 `AddSubImmediate@64` + `LoadStoreImmediate` constructor for far offsets, and the
 remaining case theorems covering the other instruction groups.
 The assembling
