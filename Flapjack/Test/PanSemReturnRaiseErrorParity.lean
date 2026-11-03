@@ -29,7 +29,7 @@ namespace Flapjack.Test.PanSemReturnRaiseErrorParity
 open Flapjack
 open Flapjack.RiscV
 
-abbrev Word64 := Word 64
+private abbrev Word64 := Word 64
 
 def returnRaiseState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
   { locals := fun name =>

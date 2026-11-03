@@ -19,18 +19,18 @@ namespace Flapjack.Test.PanSemStore32ErrorExactParity
 open Flapjack
 open Flapjack.RiscV
 
-abbrev Word64 := Word 64
+private abbrev Word64 := Word 64
 
 private def exactDomain (address : Word64) : Bool := address == 8
 
 /-- A memory access whose store never succeeds: the domain is empty. -/
-def emptyAccess : PanValueMemoryAccess Word64 :=
+private def emptyAccess : PanValueMemoryAccess Word64 :=
   panValueMemoryAccessOfModel panSemBitVec64WordModel (fun _ => false) (fun _ => false) false
 
-def keywordAccess : PanValueMemoryAccess Word64 :=
+private def keywordAccess : PanValueMemoryAccess Word64 :=
   panValueMemoryAccessOfModel panSemBitVec64WordModel exactDomain (fun _ => false) false
 
-def exactMemory : Word64 → Option (PanValue Word64) := fun _ => some (.word 0)
+private def exactMemory : Word64 → Option (PanValue Word64) := fun _ => some (.word 0)
 
 private def exactLegacy (locals : VarName → Option (PanValue Word64)) :
     PanSemEvaluateState Word64 Unit :=
@@ -49,7 +49,7 @@ private def exactStateWith (access : PanValueMemoryAccess Word64)
     (locals : VarName → Option (PanValue Word64)) : PanSemExactState Word64 Unit :=
   { legacy := exactLegacy locals, memoryAccess := access }
 
-def localsWordX : VarName → Option (PanValue Word64) :=
+private def localsWordX : VarName → Option (PanValue Word64) :=
   fun name => if name == "x" then some (.word 3) else none
 
 private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word64) :
@@ -57,7 +57,7 @@ private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word
   panSemEvaluateExactState statefulTestContext statefulTestPrimitive statefulTestHandler
     state program
 
-def isWordOption (expected : Nat) : Option (PanValue Word64) → Bool
+private def isWordOption (expected : Nat) : Option (PanValue Word64) → Bool
   | some (.word value) => value == BitVec.ofNat 64 expected
   | _ => false
 
@@ -69,22 +69,22 @@ private def isErrorKeepingX (clock value : Nat)
       n == clock && isWordOption value (locals "x") && (globals "g").isNone
   | _ => false
 
-def store32AddressFailProgram : Prog Word64 :=
+private def store32AddressFailProgram : Prog Word64 :=
   .store32 (.var .local "z") (.const 7)
 
 private def store32ValueFailProgram : Prog Word64 :=
   .store32 (.const 0) (.var .local "z")
 
-def store32DomainFailProgram : Prog Word64 :=
+private def store32DomainFailProgram : Prog Word64 :=
   .store32 (.const 0) (.const 7)
 
-def storeByteAddressFailProgram : Prog Word64 :=
+private def storeByteAddressFailProgram : Prog Word64 :=
   .storeByte (.var .local "z") (.const 7)
 
 private def storeByteValueFailProgram : Prog Word64 :=
   .storeByte (.const 0) (.var .local "z")
 
-def storeByteDomainFailProgram : Prog Word64 :=
+private def storeByteDomainFailProgram : Prog Word64 :=
   .storeByte (.const 0) (.const 7)
 
 private def store32AddressFailGuard : Bool :=

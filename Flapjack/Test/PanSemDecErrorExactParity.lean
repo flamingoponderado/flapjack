@@ -24,10 +24,10 @@ namespace Flapjack.Test.PanSemDecErrorExactParity
 open Flapjack
 open Flapjack.RiscV
 
-abbrev Word64 := Word 64
+private abbrev Word64 := Word 64
 
 /-- Source memory with a present word cell at address `8` and a zero fallback. -/
-def exactMemory : Word64 → Option (PanValue Word64) :=
+private def exactMemory : Word64 → Option (PanValue Word64) :=
   fun address =>
     if address == 8 then some (.word (BitVec.ofNat 64 0x77)) else some (.word 0)
 
@@ -39,7 +39,7 @@ private def exactAccess : PanValueMemoryAccess Word64 :=
     (fun _ => false) false
 
 /-- Access whose `memaddrs`-style domain is empty, so every read misses. -/
-def emptyAccess : PanValueMemoryAccess Word64 :=
+private def emptyAccess : PanValueMemoryAccess Word64 :=
   panValueMemoryAccessOfModel panSemBitVec64WordModel (fun _ => false)
     (fun _ => false) false
 
@@ -65,17 +65,17 @@ private def exactStateOf (legacy : PanSemEvaluateState Word64 Unit) :
     PanSemExactState Word64 Unit :=
   { legacy := legacy, memoryAccess := exactAccess }
 
-def localsWithX : VarName → Option (PanValue Word64) :=
+private def localsWithX : VarName → Option (PanValue Word64) :=
   fun name => if name == "x" then some (.word 3) else none
 
 /-- State with a present memory cell at address `8` and local `x`. -/
 private def memoryState : PanSemExactState Word64 Unit :=
   exactStateOf <| exactLegacy 5 localsWithX exactMemory none
 
-def decEvalFailProgram : Prog Word64 :=
+private def decEvalFailProgram : Prog Word64 :=
   .dec "d" Shape.one (.load Shape.one (.const 11)) .skip
 
-def decShapeMismatchProgram : Prog Word64 :=
+private def decShapeMismatchProgram : Prog Word64 :=
   .dec "d" (Shape.named "Other") (.const 7) .skip
 
 private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word64) :

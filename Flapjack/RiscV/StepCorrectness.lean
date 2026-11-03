@@ -5,10 +5,10 @@ import Flapjack.RiscV.ParallelMoveCorrectness
 /-!
 # RISC-V step-count contracts
 
-The stepped Pancake source evaluator (now in stepped-flapjack, #1251) records a
-source-step count, while
-the executable RISC-V model consumes one instruction per recursive call.  This
-module makes the machine-side count explicit first.  The resulting equations
+The stepped Pancake source evaluator (now in stepped-flapjack, #1251) records
+a source-step count, while the executable RISC-V model consumes one
+instruction per recursive call.  This module makes the machine-side count
+explicit first.  The resulting equations
 are deliberately independent of a particular instruction-selection strategy:
 they can be composed with the source-to-Word and Word-to-Stack contracts once
 those passes expose their cost relation.

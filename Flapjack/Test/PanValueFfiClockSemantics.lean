@@ -361,4 +361,5 @@ def exactMemoryBranch : Option (PanValueFfiClockResult (Word 64) Unit) :=
         event.outcome = .failed
   | _ => false
 
+
 end Flapjack

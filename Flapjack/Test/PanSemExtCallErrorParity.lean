@@ -28,7 +28,7 @@ namespace Flapjack.Test.PanSemExtCallErrorParity
 
 open Flapjack Flapjack.RiscV
 
-abbrev Word64 := Word 64
+private abbrev Word64 := Word 64
 
 def extState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
   { locals := fun name =>
@@ -83,7 +83,7 @@ def clockedEvaluate (clock : Nat) (program : Prog Word64)
     statefulTestHandler (BitVec.ofNat 64 8) (extState clock) program
     (memoryAccess := memoryAccess)
 
-def isWord (expected : Nat) : Option (PanValue Word64) → Bool
+private def isWord (expected : Nat) : Option (PanValue Word64) → Bool
   | some (.word value) => value == BitVec.ofNat 64 expected
   | _ => false
 
@@ -122,7 +122,7 @@ theorem clockedReadFail_full : clockedEvaluate 5 readFailProgram (some emptyAcce
     evalPanValueExps, evalPanValueExp.evalPanValueExps, evalPanValueExp, extState,
     readFailProgram, panValueFfiExtCall, emptyRead_one, statefulTestContext]
 
-def ffiObservable (ffi : FfiState Unit) : Bool :=
+private def ffiObservable (ffi : FfiState Unit) : Bool :=
   ffi.state == () && decide (ffi.ioEvents = ([] : List FfiEvent))
 
 private def clockedErrorPreserving (clock : Nat)

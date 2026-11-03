@@ -1,5 +1,5 @@
 import Flapjack.RiscV.PanMemory
-import Flapjack.PanValueFfiClockSemantics
+import Flapjack.PanValueFfiCore
 
 /-!
 Executable regressions for the shared Pancake word-cell memory model.

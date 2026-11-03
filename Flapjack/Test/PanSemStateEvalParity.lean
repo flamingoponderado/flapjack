@@ -13,7 +13,7 @@ namespace Flapjack.Test.PanSemStateEvalParity
 
 open Flapjack
 
-abbrev Word64 := RiscV.Word 64
+private abbrev Word64 := RiscV.Word 64
 
 /-! `scripts/hol-probes/crep_runtime_ffi_boundary_probe.out` records the direct
 HOL row `set_byte_0_roundtrip=0x102030405060708w`. Guard both reviewed
@@ -337,6 +337,7 @@ def nestedSourceLoadMatchesOracle : Bool :=
   (sourceState false true false)).sharedRead
     littleEndianState.memory panSemBitVec64BytesInWord .opW 0)
 
+
 /- The executed exact-state `.op` path delegates to the tagged `wordOpHOL`
    list fold for arbitrary operand lists. These build-checked theorems record
    that delegation; the `#guard`s pin the checked-in direct HOL rows for
@@ -439,6 +440,7 @@ example : panMemLoad32HOL (width := 64) holMemory64 (fun a => a = 0) false 1 =
 example : panMemLoad32HOL (width := 64) holMemory64 (fun _ => False) false 0 =
     none := by decide
 
+
 /- Structured `mem_load` port; expected values are the checked-in direct HOL rows
    `mem_load_def_one_hit/one_miss/comb_pair/named_found/named_missing`. -/
 private def structsS : StructContextHOL :=
@@ -478,6 +480,7 @@ private def isNamedField (name field : String) (expected : Word64) :
 #guard sizeOfShWithCtxt structsS (.named "S") == 3
 #guard sizeOfShWithCtxt structsS (.comb [.one, .one]) == 2
 
+
 /- width-24 alignment rows `mem_load_byte_def_w24_addr5=SOME 17w` and
    `mem_load_32_def_w24_addr4=SOME 0x22331122w`. -/
 private def mem24 : RiscV.Word 24 → HolWordLab 24 := fun address =>
@@ -495,6 +498,7 @@ private def mem4 : RiscV.Word 4 → HolWordLab 4 := fun _ => .word 1
 private abbrev dom4 : RiscV.Word 4 → Prop := fun address => address = 1
 
 #guard panMemLoadByteHOL (width := 4) mem4 dom4 false 1 == some (UInt8.ofNat 0)
+
 example : panMemLoadByteHOL (width := 4) mem4 dom4 false 1 =
     some (UInt8.ofNat 0) := by decide
 
@@ -708,6 +712,7 @@ example :
   (panValueFlatLoadFuel_eq_panMemLoadHOL littleEndianState littleEndianState.memory 3).1
     [] (.comb [Shape.one]) 0 (by decide)
 
+
 /-- Capstone: the guarded production `panValueFlatLoad` over the executed RV64
 memory-access state equals the tagged exact `panMemLoadHOL` mapped by
 `HolValue.toPanValue`. -/
@@ -911,6 +916,7 @@ example (value : BitVec 64) :
         (fun _ => none) (fun _ => none) (fun _ => none) 0 0
         panSemBitVec64BytesInWord (some (panSemBitVec64MemoryAccess littleEndianState)) value)
 
+
 /- State-projection clause bridges (bead flapjack-pxn.18.3.6.9.2.6): the leaf
    clauses agree given the environment/state agreement hypotheses. -/
 example (name : VarName) :
@@ -1091,6 +1097,7 @@ instance : DecidablePred storeDomain := fun x => by
       [BitVec.ofNat 8 0x11, BitVec.ofNat 8 0x22] storeMem storeDomain false) 1) != storeMem 1
 #guard ((panWriteBytearrayWord8HOL (width := 8) (5 : RiscV.Word 8)
       [BitVec.ofNat 8 0x11] storeMem storeDomain false) 1) == storeMem 1
+
 
 def holCodecAccess (state : PanSemState (RiscV.Word 64) Unit) :
     PanValueMemoryAccess (RiscV.Word 64) :=

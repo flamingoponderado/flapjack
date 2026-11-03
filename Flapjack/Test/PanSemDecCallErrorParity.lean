@@ -28,7 +28,7 @@ namespace Flapjack.Test.PanSemDecCallErrorParity
 open Flapjack
 open Flapjack.RiscV
 
-abbrev Word64 := Word 64
+private abbrev Word64 := Word 64
 
 /-- The callee returns the constant `7`. -/
 def calleeBody : Prog Word64 :=
@@ -244,6 +244,7 @@ def deccallArgFailMissingGuard : Bool :=
 #guard deccallContinueGuard
 #guard deccallArgFailGuard
 #guard deccallArgFailMissingGuard
+
 def runChecks : IO Bool := do
   let ok := deccallOkGuard
   IO.println (if ok then "PASS panSem DecCall accepted run restores local at callee clock"
@@ -255,9 +256,9 @@ def runChecks : IO Bool := do
   IO.println (if callee then "PASS panSem DecCall failing callee rejected with Error"
     else "FAIL panSem DecCall failing callee rejected with Error")
   let nested := deccallNestedBadShapeGuard
-  IO.println (if nested then "PASS nested DecCall mismatch preserves parameter on the clocked
+  IO.println (if nested then "PASS nested DecCall mismatch preserves parameter on the clocked \
       code-list path"
-    else "FAIL nested DecCall mismatch preserves parameter on the clocked
+    else "FAIL nested DecCall mismatch preserves parameter on the clocked \
       code-list path")
   let missing := deccallMissingGuard
   IO.println (if missing then "PASS panSem Call missing function rejected with Error"

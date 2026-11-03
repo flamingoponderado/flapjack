@@ -1,4 +1,4 @@
-import Flapjack.PanValueFfiClockSemantics
+import Flapjack.PanValueFfiCore
 
 /-! The accelerator-style ExtCall handler is independent of the CakeML
 stateful FFI. In particular, it must still run when a byte-granular

@@ -3,10 +3,10 @@ import Flapjack.PanValueFfiClockSemantics
 /-!
 # Fuel monotonicity for the clocked stateful-FFI evaluators
 
-The clocked half of issue #659. The unclocked evaluators were covered by
-`Flapjack.PanValueFfiFuel` in PR #662, which moved to stepped-flapjack with the
-stepped semantics (#1251). This file states the same thing for the
-explicit-clock evaluators of
+The clocked half of issue #659. The unclocked evaluators are covered by
+`SteppedFlapjack.PanValueFfiFuel` in stepped-flapjack, which was
+`Flapjack.PanValueFfiFuel` (PR #662) until #1251 moved it. This file states
+the same thing for the explicit-clock evaluators of
 `Flapjack.PanValueFfiClockSemantics`: a successful run is unchanged -- same
 outcome, same clock -- by any larger fuel.
 

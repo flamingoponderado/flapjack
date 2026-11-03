@@ -1030,6 +1030,7 @@ def observeShMemStoreDomainFailure : Bool :=
 #guard observeShMemLoadUnbound
 #guard observeShMemLoadDomainFailure
 #guard observeShMemStoreDomainFailure
+
 def runChecks : IO Bool := do
   if observeSkip then IO.println "PASS evaluate skip" else IO.println "FAIL evaluate skip"
   if observeReturn41 then IO.println "PASS evaluate return_41" else IO.println "FAIL evaluate return_41"

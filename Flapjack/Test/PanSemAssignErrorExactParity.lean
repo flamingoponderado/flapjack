@@ -27,16 +27,16 @@ namespace Flapjack.Test.PanSemAssignErrorExactParity
 open Flapjack
 open Flapjack.RiscV
 
-abbrev Word64 := Word 64
+private abbrev Word64 := Word 64
 
 private def exactDomain : Word64 → Bool :=
   fun address => address == 8
 
-def exactAccess : PanValueMemoryAccess Word64 :=
+private def exactAccess : PanValueMemoryAccess Word64 :=
   panValueMemoryAccessOfModel panSemBitVec64WordModel exactDomain
     (fun _ => false) false
 
-def exactMemory : Word64 → Option (PanValue Word64) :=
+private def exactMemory : Word64 → Option (PanValue Word64) :=
   fun _ => some (.word 0)
 
 private def exactLegacy (locals : VarName → Option (PanValue Word64)) :
@@ -57,7 +57,7 @@ private def exactState (locals : VarName → Option (PanValue Word64)) :
     PanSemExactState Word64 Unit :=
   { legacy := exactLegacy locals, memoryAccess := exactAccess }
 
-def localsWordX : VarName → Option (PanValue Word64) :=
+private def localsWordX : VarName → Option (PanValue Word64) :=
   fun name => if name == "x" then some (.word 3) else none
 
 private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word64) :
@@ -81,13 +81,13 @@ private def isErrorKeepingX (clock value : Nat)
       | _ => false
   | _ => false
 
-def assignLocalEvalFailProgram : Prog Word64 :=
+private def assignLocalEvalFailProgram : Prog Word64 :=
   .assign .local "x" (.var .local "z")
 
 private def assignGlobalEvalFailProgram : Prog Word64 :=
   .assign .global "x" (.var .local "z")
 
-def assignFreshLocalProgram : Prog Word64 :=
+private def assignFreshLocalProgram : Prog Word64 :=
   .assign .local "y" (.const 9)
 
 private def assignFreshGlobalProgram : Prog Word64 :=

@@ -1,4 +1,4 @@
-import Flapjack.PanValueFfiClockSemantics
+import Flapjack.PanValueFfiCore
 
 /-! Regression for the bare-metal accelerator FFI boundary.  Unlike the
     CakeML byte-array FFI, the handler receives the source memory map and can

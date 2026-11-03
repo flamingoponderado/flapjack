@@ -1,4 +1,4 @@
-import Flapjack.PanValueFfiClockSemantics
+import Flapjack.PanValueFfiCore
 import Flapjack.RiscV.PanMemory
 
 /-!
@@ -99,32 +99,5 @@ def statefulTestFinalOracle : FfiOracle Unit :=
 
 def statefulTestFinalState : FfiState Unit :=
   { oracle := statefulTestFinalOracle, state := (), ioEvents := [] }
-
-def isErrorControl {α σ : Type} : Option (PanValueFfiControlResult α σ) → Bool
-  | some (.error _ _ _ _) => true
-  | _ => false
-
-def isWordLocal (expected : Word 64) : Option (PanValue (Word 64)) → Bool
-  | some (.word value) => value == expected
-  | _ => false
-
-def statefulPublicProgramState : PanValueFfiProgramState (Word 64) Unit :=
-  { source :=
-      { structs := []
-        globals := fun _ => none
-        functions := []
-        returnShapes := []
-        exceptions := []
-        memory := statefulTestMemory
-        baseAddress := BitVec.ofNat 64 0
-        topAddress := BitVec.ofNat 64 100
-        bytesInWord := BitVec.ofNat 64 8 }
-    ffi := statefulTestFfiState }
-
-def statefulOversizedValues : Exp (Word 64) :=
-  .rStruct (List.replicate 33 (.const (BitVec.ofNat 64 1)))
-
-def statefulOversizedShape : Shape :=
-  .comb (List.replicate 33 .one)
 
 end Flapjack
