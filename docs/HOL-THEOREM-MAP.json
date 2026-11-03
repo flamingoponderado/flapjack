@@ -1916,6 +1916,41 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "remove_ticks_Op_IMP_mk_Ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateOp.lean",
+    "lean_name": "remove_ticks_Op_IMP_mk_Ticks",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_op_ticks_typed and remove_sing_eq_typed: a source expression that removes to an operation is the same operation under leading ticks, with its argument list related by removal. removeList is the source-proven equivalent traversal. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "simple_val_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Primitive.lean",
+    "lean_name": "valueRelSimple",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared simple_val_rel_typed: the tick-removal value relation satisfies the reviewed generic simple value relation, with no additional hypotheses. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "simple_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Primitive.lean",
+    "lean_name": "stateRelSimple",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared simple_state_rel_typed: the tick-removal value and state relations satisfy the reviewed generic simple state relation over the same compiler and FFI carriers. The state uses canonical finite-map refs and code with a local roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "do_app_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Primitive.lean",
+    "lean_name": "doAppLemma",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the original local statement and do_app_lemma_typed HOL replay: for related states and argument lists, target primitive errors or values are matched by source results with the original exception, value and state relations. The compiler and FFI carriers remain independent; refs and code use canonical finite maps with a local roundtrip witness, and primitive evaluation inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "dest_closure_SOME_IMP",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Apply.lean",
     "lean_name": "destClosure_some_shape",
