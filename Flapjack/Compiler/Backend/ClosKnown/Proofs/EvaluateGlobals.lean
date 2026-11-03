@@ -303,5 +303,169 @@ theorem evaluateChangedGlobalsFn {C F : Type} (name : Flapjack.Basis.Pure.MlStri
   · rcases run with ⟨rfl, _⟩
     exact ⟨by simp, 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
 
+
+/-- A let expression's write set is the union of its bindings and body.
+This is Lean proof infrastructure without a separate HOL declaration. -/
+private theorem letWrites (trace : BackendCommon.Tra) (bindings : List ClosLang.Exp)
+    (body : ClosLang.Exp) :
+    {k | elistGlobals [.let trace bindings body] k ≠ 0} =
+      {k | elistGlobals bindings k ≠ 0} ∪ {k | elistGlobals [body] k ≠ 0} := by
+  ext k
+  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag]
+  classical
+  by_cases h : setGlobals body k = 0 <;> simp_all
+
+/-- Let evaluation preserves global safety, assuming the source induction
+hypotheses for its bindings and for the body after successful bindings. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsLet {C F : Type} (trace : BackendCommon.Tra)
+    (bindings : List ClosLang.Exp) (body : ClosLang.Exp) (env : List ClosSem.Value)
+    (s0 : ClosSem.State C F)
+    (bindingsIH : EvalGlobalsInvariant bindings env s0)
+    (bodyIH : ∀ values next, evaluate bindings env s0 = (.val values, next) →
+      EvalGlobalsInvariant [body] (values ++ env) next)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.let trace bindings body] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.let trace bindings body] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.let trace bindings body] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  rcases h with ⟨run, safe, expressionSafe, envSafe⟩
+  have safeParts : esgcFreeList bindings ∧ esgcFree body := by
+    simpa [esgcFree] using expressionSafe (.let trace bindings body) (by simp)
+  have bindingsSafe := (esgcFreeList_iff bindings).1 safeParts.1
+  have bodySafe : ∀ e ∈ [body], esgcFree e := by simpa using safeParts.2
+  cases bindingsRun : evaluate bindings env s0 with
+  | mk bindingsResult next =>
+    have ⟨nextSafe, bindingsResultSafe, n, nextOracle, bindingsFrame⟩ :=
+      bindingsIH bindingsResult next ⟨bindingsRun, safe, bindingsSafe, envSafe⟩
+    have clockBound : next.clock ≤ s0.clock := by
+      simpa [bindingsRun] using evaluate_clock_le bindings env s0
+    cases bindingsResult with
+    | err error =>
+      simp only [evaluate, bindingsRun, fixClock] at run
+      rcases run with ⟨rfl, rfl⟩
+      refine ⟨(ssgcFreeClock next (fun clock => min s0.clock clock)).2 nextSafe,
+        bindingsResultSafe, n, nextOracle, ?_⟩
+      apply mglobalsExtendSubset _ _ _ _ ⟨bindingsFrame, ?_⟩
+      intro k member
+      rcases member with member | member
+      · left; rw [letWrites]; exact Or.inl member
+      · exact Or.inr member
+    | val values =>
+      have extendedSafe : ∀ v ∈ values ++ env, vsgcFree v := by
+        simpa [rsgcFree, List.mem_append, or_imp, forall_and] using And.intro bindingsResultSafe envSafe
+      cases bodyRun : evaluate [body] (values ++ env) next with
+      | mk bodyResult last =>
+        have ⟨lastSafe, bodyResultSafe, m, lastOracle, bodyFrame⟩ :=
+          bodyIH values next bindingsRun bodyResult last ⟨bodyRun, nextSafe, bodySafe, extendedSafe⟩
+        have finalOracle : last.compileOracle = Flapjack.holShiftSeq (n + m) s0.compileOracle := by
+          simpa only [nextOracle, shiftSeqAdd] using lastOracle
+        have frame2 : mglobalsExtend next.globals
+            ({k | elistGlobals [body] k ≠ 0} ∪
+             {k | elistGlobals (List.flatten (firstNExps (Flapjack.holShiftSeq n s0.compileOracle) m)) k ≠ 0})
+            last.globals := by
+          simpa only [nextOracle] using bodyFrame
+        have composed := mglobalsExtendTrans _ _ _ _ _ ⟨bindingsFrame, frame2⟩
+        have finalFrame : mglobalsExtend s0.globals
+            ({k | elistGlobals [.let trace bindings body] k ≠ 0} ∪
+             {k | elistGlobals (List.flatten (firstNExps s0.compileOracle (n + m))) k ≠ 0})
+            last.globals := by
+          rw [letWrites, Nat.add_comm n m, firstNExpsWritesShift]
+          simpa only [Set.union_assoc, Set.union_left_comm, Set.union_comm] using composed
+        simp [evaluate, bindingsRun, fixClock, Nat.min_eq_right clockBound, bodyRun] at run
+        rcases run with ⟨rfl, rfl⟩
+        exact ⟨lastSafe, bodyResultSafe, n + m, finalOracle, finalFrame⟩
+
+
+/-- A handler's write set combines the protected expression and handler.
+This is Lean proof infrastructure without a separate HOL declaration. -/
+private theorem handleWrites (trace : BackendCommon.Tra) (body handler : ClosLang.Exp) :
+    {k | elistGlobals [.handle trace body handler] k ≠ 0} =
+      {k | elistGlobals [body] k ≠ 0} ∪ {k | elistGlobals [handler] k ≠ 0} := by
+  ext k
+  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag]
+  classical
+  by_cases h : setGlobals body k = 0 <;> simp_all
+
+/-- Exception handling preserves global safety under the original body and
+conditional handler induction hypotheses. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsHandle {C F : Type} (trace : BackendCommon.Tra)
+    (body handler : ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (bodyIH : EvalGlobalsInvariant [body] env s0)
+    (handlerIH : ∀ value next, evaluate [body] env s0 = (.err (.raise value), next) →
+      EvalGlobalsInvariant [handler] (value :: env) next)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.handle trace body handler] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.handle trace body handler] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.handle trace body handler] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  rcases h with ⟨run, safe, expressionSafe, envSafe⟩
+  have safeParts : esgcFree body ∧ esgcFree handler := by
+    simpa [esgcFree] using expressionSafe (.handle trace body handler) (by simp)
+  have bodySafe : ∀ e ∈ [body], esgcFree e := by simpa using safeParts.1
+  have handlerSafe : ∀ e ∈ [handler], esgcFree e := by simpa using safeParts.2
+  cases bodyRun : evaluate [body] env s0 with
+  | mk bodyResult next =>
+    have ⟨nextSafe, bodyResultSafe, n, nextOracle, bodyFrame⟩ :=
+      bodyIH bodyResult next ⟨bodyRun, safe, bodySafe, envSafe⟩
+    have clockBound : next.clock ≤ s0.clock := by
+      simpa [bodyRun] using evaluate_clock_le [body] env s0
+    have enlarged : mglobalsExtend s0.globals
+        ({k | elistGlobals [.handle trace body handler] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) next.globals := by
+      apply mglobalsExtendSubset _ _ _ _ ⟨bodyFrame, ?_⟩
+      intro k member
+      rcases member with member | member
+      · left; rw [handleWrites]; exact Or.inl member
+      · exact Or.inr member
+    cases bodyResult with
+    | val values =>
+      simp only [evaluate, bodyRun, fixClock] at run
+      rcases run with ⟨rfl, rfl⟩
+      exact ⟨(ssgcFreeClock next (fun clock => min s0.clock clock)).2 nextSafe,
+        bodyResultSafe, n, nextOracle, enlarged⟩
+    | err error =>
+      cases error with
+      | abort reason =>
+        simp only [evaluate, bodyRun, fixClock] at run
+        rcases run with ⟨rfl, rfl⟩
+        exact ⟨(ssgcFreeClock next (fun clock => min s0.clock clock)).2 nextSafe,
+          bodyResultSafe, n, nextOracle, enlarged⟩
+      | raise value =>
+        have valueSafe : vsgcFree value := by simpa [rsgcFree] using bodyResultSafe
+        have extendedSafe : ∀ v ∈ value :: env, vsgcFree v := by simpa using And.intro valueSafe envSafe
+        cases handlerRun : evaluate [handler] (value :: env) next with
+        | mk handlerResult last =>
+          have ⟨lastSafe, resultSafe, m, lastOracle, handlerFrame⟩ :=
+            handlerIH value next bodyRun handlerResult last ⟨handlerRun, nextSafe, handlerSafe, extendedSafe⟩
+          have finalOracle : last.compileOracle = Flapjack.holShiftSeq (n + m) s0.compileOracle := by
+            simpa only [nextOracle, shiftSeqAdd] using lastOracle
+          have frame2 : mglobalsExtend next.globals
+              ({k | elistGlobals [handler] k ≠ 0} ∪
+               {k | elistGlobals (List.flatten (firstNExps (Flapjack.holShiftSeq n s0.compileOracle) m)) k ≠ 0})
+              last.globals := by
+            simpa only [nextOracle] using handlerFrame
+          have composed := mglobalsExtendTrans _ _ _ _ _ ⟨bodyFrame, frame2⟩
+          have finalFrame : mglobalsExtend s0.globals
+              ({k | elistGlobals [.handle trace body handler] k ≠ 0} ∪
+               {k | elistGlobals (List.flatten (firstNExps s0.compileOracle (n + m))) k ≠ 0})
+              last.globals := by
+            rw [handleWrites, Nat.add_comm n m, firstNExpsWritesShift]
+            simpa only [Set.union_assoc, Set.union_left_comm, Set.union_comm] using composed
+          simp [evaluate, bodyRun, fixClock, Nat.min_eq_right clockBound, handlerRun] at run
+          rcases run with ⟨rfl, rfl⟩
+          exact ⟨lastSafe, resultSafe, n + m, finalOracle, finalFrame⟩
+
 end EvaluateGlobalsPort
 end Flapjack.Compiler.Backend.ClosKnown
