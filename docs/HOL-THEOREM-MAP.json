@@ -1915,6 +1915,42 @@
     "reviewer": "Compared semantics_known_typed in clos_known_syntax_probe.out against all source hypotheses and the whole-program observational equality: the independent compiler and FFI carriers, oracle configuration, empty auxiliary lists, free-variable and syntax conditions, approximation and state invariants, global safety, initial approximation and exact optimizer result are retained. The reviewed polymorphic holEmpty producer represents each original FEMPTY occurrence and has its checked unconditional lookup witness in EmptyExact. The full optimizer simulation supplies related evaluations at all clocks and the source non-failure premise excludes type errors; the theorem assumes no target run or desired observation. Both evaluators inherit the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "mk_Ticks_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Evaluate.lean",
+    "lean_name": "mkTicks",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared mk_ticks_typed in clos_ticks_source_probe.out: the empty trace returns the expression and each trace cons wraps the recursively constructed expression in a Tick with the same annotation. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "remove_ticks_mk_Ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Evaluate.lean",
+    "lean_name": "remove_ticks_mk_Ticks",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_mk_ticks_typed and remove_sing_eq_typed: removal from the tick-wrapped singleton equals removal from the original singleton, using the source-proven equivalent list traversal. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "evaluate_mk_Ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_mk_Ticks",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared evaluate_mk_ticks_typed: independent compiler and FFI carriers, the strict clock comparison, timeout result and zero clock, and body evaluation with exactly the trace length subtracted all match. State refs and code use the canonical finite-map carrier with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_remove_ticks_nil",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the empty target-list case of the first evaluate_remove_ticks_typed conjunct: the target run, related environments and states, source-to-target code relation, existential extra source clock and source result/state, and all three conclusions are retained. No additional premise is added. State refs and code use the canonical finite-map carrier with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/clos_ticksScript.sml",
     "hol_name": "compile_inc_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Source.lean",

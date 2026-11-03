@@ -871,6 +871,7 @@ import Flapjack.Compiler.Backend.ClosFvs.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Total
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Production
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Relations
+import Flapjack.Compiler.Backend.ClosTicks.Proofs.Evaluate
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Total
 import Flapjack.Compiler.Backend.SourceToSource
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
