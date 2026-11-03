@@ -1,6 +1,58 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "mapped_globals_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/MappedGlobals.lean",
+  "lean_name": "mappedGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mapped_globals_typed in clos_known_syntax_probe.out. The global values have arbitrary type, and membership existentially requires a doubly successful lookup. The HOL predicate sets are Lean sets and the list lookup is source-shaped. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "mglobals_extend_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/MappedGlobals.lean",
+  "lean_name": "mglobalsExtend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mglobals_extend_typed in clos_known_syntax_probe.out. The subset condition and same-value preservation outside the permitted set match. The HOL predicate sets are Lean sets and the list lookup is source-shaped. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "mglobals_extend_refl",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/MappedGlobals.lean",
+  "lean_name": "mglobalsExtendRefl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mglobals_extend_refl_typed in clos_known_syntax_probe.out. The global values and permitted set are arbitrary. The HOL predicate sets are Lean sets and the list lookup is source-shaped. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "mglobals_extend_trans",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/MappedGlobals.lean",
+  "lean_name": "mglobalsExtendTrans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mglobals_extend_trans_typed in clos_known_syntax_probe.out. The two source premises and union conclusion retain their order and arbitrary value type. The HOL predicate sets are Lean sets and the list lookup is source-shaped. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "mglobals_extend_SUBSET",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/MappedGlobals.lean",
+  "lean_name": "mglobalsExtendSubset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mglobals_extend_subset_typed in clos_known_syntax_probe.out. The extension and subset premises imply extension by the larger set. The HOL predicate sets are Lean sets and the list lookup is source-shaped. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_globals_approx_subspt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateGlobalsApprox.lean",
+  "lean_name": "stateGlobalsApproxSubspt",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared state_globals_approx_subspt_typed: the source sub-tree and state approximation premises and restricted-map conclusion are retained for arbitrary compiler and FFI state carriers. The spt tree has its literal source constructors and lookup; the state uses canonical finite-support refs and code with the local roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "elist_globals_empty",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",
   "lean_name": "elistGlobalsEmpty",

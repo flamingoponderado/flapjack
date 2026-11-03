@@ -61,4 +61,14 @@ theorem stateGlobalsApproxOracle {C F : Type} (s : State C F) (g : Spt ValApprox
     (f : CompileOracle C → CompileOracle C) :
     stateGlobalsApprox {s with compileOracle := f s.compileOracle} g ↔ stateGlobalsApprox s g := Iff.rfl
 
+/-- Restricting an approximation map preserves its agreement with globals. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "state_globals_approx_subspt"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateGlobalsApproxSubspt {C F : Type} (g0 g : Spt ValApprox) (s : State C F)
+    (h : sptSubspt g0 g ∧ stateGlobalsApprox s g) : stateGlobalsApprox s g0 := by
+  intro k value approx ⟨found, lookup⟩
+  have member : sptMem k g0 := (sptMem_iff_lookup k g0).2 ⟨approx, lookup⟩
+  have equal := (h.1 k member).2
+  exact h.2 k value approx ⟨found, equal.trans lookup⟩
+
 end Flapjack.Compiler.Backend.ClosKnown

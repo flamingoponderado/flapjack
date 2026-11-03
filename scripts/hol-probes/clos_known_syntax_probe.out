@@ -50,3 +50,9 @@ known_length_typed=∀(limit :config) (es :closLang$exp list) (vs :val_approx li
 known_length_eq_typed=known (limit :config) (es :closLang$exp list) (vs :val_approx list) (g0 :val_approx sptree$num_map) = ((alist :(closLang$exp # val_approx) list),(g :val_approx sptree$num_map)) ⇒ LENGTH alist = LENGTH es
 known_sing_typed=∀(limit :config) (e :closLang$exp) (vs :val_approx list) (g :val_approx sptree$num_map). ∃(e' :closLang$exp) (a :val_approx) (g' :val_approx sptree$num_map). known limit [e] vs g = ([(e',a)],g')
 known_sing_eq_typed=∀(limit :config) (e :closLang$exp) (vs :val_approx list) (g0 :val_approx sptree$num_map) (all :(closLang$exp # val_approx) list) (g :val_approx sptree$num_map). known limit [e] vs g0 = (all,g) ⇒ ∃(e' :closLang$exp) (apx :val_approx). all = [(e',apx)]
+mapped_globals_typed=∀(g :α option list). mapped_globals g = {i | ∃(v :α). get_global i g = SOME (SOME v)}
+mglobals_extend_typed=∀(g1 :α option list) (mgs :num -> bool) (g2 :α option list). mglobals_extend g1 mgs g2 ⇔ mapped_globals g2 ⊆ mapped_globals g1 ∪ mgs ∧ ∀(k :num) (v :α). get_global k g2 = SOME (SOME v) ∧ k ∉ mgs ⇒ get_global k g1 = SOME (SOME v)
+mglobals_extend_refl_typed=mglobals_extend (s :α option list) (gs :num -> bool) s
+mglobals_extend_trans_typed=∀(s0 :α option list) (s1 :α option list) (s2 :α option list) (g1 :num -> bool) (g2 :num -> bool). mglobals_extend s0 g1 s1 ∧ mglobals_extend s1 g2 s2 ⇒ mglobals_extend s0 (g1 ∪ g2) s2
+mglobals_extend_subset_typed=∀(s0 :α option list) (s :α option list) (g1 :num -> bool) (g2 :num -> bool). mglobals_extend s0 g1 s ∧ g1 ⊆ g2 ⇒ mglobals_extend s0 g2 s
+state_globals_approx_subspt_typed=∀(g0 :val_approx sptree$num_map) (g :val_approx sptree$num_map) (s :(α, β) state). subspt g0 g ∧ state_globals_approx s g ⇒ state_globals_approx s g0
