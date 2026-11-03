@@ -906,6 +906,9 @@ import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateInstall
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Force
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateForce
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Operation
+import Flapjack.Compiler.Backend.ClosLetop.Proofs.Apply
+import Flapjack.Compiler.Backend.ClosLetop.Proofs.Simulation
+import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 import Flapjack.Compiler.Backend.SourceToSource
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout

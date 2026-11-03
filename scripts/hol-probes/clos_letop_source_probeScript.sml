@@ -119,3 +119,7 @@ val rel_update_thunk_replay = prove(
     \\ gvs [state_rel_def, FMAP_REL_def, FLOOKUP_UPDATE] \\ rw []
     \\ simp [Once ref_rel_cases]));
 val _ = show "rel_update_thunk_replay_typed" rel_update_thunk_replay;
+val _ = show "dest_closure_shape_typed" clos_letopProofTheory.dest_closure_SOME_IMP;
+val _ = show "dest_closure_full_typed" clos_letopProofTheory.dest_closure_SOME_Full_app;
+val _ = show "let_op_correct_typed" clos_letopProofTheory.let_op_correct;
+val _ = show "semantics_let_op_typed" clos_letopProofTheory.semantics_let_op;

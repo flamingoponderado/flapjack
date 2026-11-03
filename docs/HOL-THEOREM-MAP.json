@@ -123084,5 +123084,101 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared evaluate_let_op_typed and the operation case of evaluate_ind_typed in clos_known_syntax_probe.out: argument, successful-installation, and force-thunk induction hypotheses retain their original guards, along with the source evaluation, related environments and states, code relation, existential target result and state. The assembled case covers ordinary operations, installation and forcing without extra premises. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining mutual evaluator cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "dest_closure_SOME_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Apply.lean",
+  "lean_name": "destClosure_some_shape",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dest_closure_shape_typed in clos_letop_source_probe.out: successful inspection implies the original disjunction of ordinary and recursive closure shapes with all fields retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "dest_closure_SOME_Full_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Apply.lean",
+  "lean_name": "destClosure_full_closure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dest_closure_full_typed and the ordinary closure branch of the source proof. The related closure premise specializes to related captures, supplied arguments and body code; the related first argument and tail, full inspection and all four original conclusions are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "dest_closure_SOME_Full_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Apply.lean",
+  "lean_name": "destClosure_full_recclosure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dest_closure_full_typed and the recursive closure branch of the source proof. The related closure premise specializes to related captures, supplied arguments and function bundles; the related first argument and tail, full inspection and all four original conclusions are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "dest_closure_SOME_Full_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Apply.lean",
+  "lean_name": "destClosure_full_related",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dest_closure_full_typed: related functions, first arguments and argument tails and a source full inspection imply existential related target body, environment, remaining arguments and target inspection, with the same application limit and location."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Apply.lean",
+  "lean_name": "evaluate_let_op_app_nil",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the application conjunct of evaluate_let_op_typed and the empty argument case of evaluate_ind_typed. The original source run, related function, argument list and states imply existential related target result and state without added premises. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Apply.lean",
+  "lean_name": "evaluate_let_op_app_cons",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the application conjunct of evaluate_let_op_typed and the nonempty application case of evaluate_ind_typed in clos_known_syntax_probe.out. AppAt and EvalAt unfold to the original simulation statements. The body and recursive application induction hypotheses retain their full-inspection, sufficient-clock and successful-singleton-body guards. Rejected and partial calls, timeout, body errors and over-application are covered. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Simulation.lean",
+  "lean_name": "evaluate_let_op",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared both conjuncts of evaluate_let_op_typed in clos_letop_source_probe.out. Original shared independent compiler and FFI carriers, expression and application runs, value and state relations, code relation and existential target results and states agree. The proof assembles all cases using clock and expression-weight induction. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "let_op_correct",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Simulation.lean",
+  "lean_name": "let_op_correct",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared let_op_correct_typed: original source run, related environments and states and existential target run, related result and state agree; compileList is the source-proven let_op traversal. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "semantics_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Semantics.lean",
+  "lean_name": "semantics_let_op",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": [
+    "Flapjack.HolFiniteMapExact.holEmpty"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared semantics_let_op_typed: original source non-failure premise, empty auxiliary oracle entries, positive maximum application, empty code maps, pure compiler/oracle composition and target-to-source semantics equality agree. Compiler configuration and FFI payload types remain independent. The proof derives equal observations from the complete evaluator simulation; semantics_bounded connects the executed bounded traversal. holEmpty is the reviewed canonical finite-map result producer; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or end-to-end compiler correctness."
 }
 ]
