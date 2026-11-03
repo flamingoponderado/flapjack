@@ -1,6 +1,23 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "eq_direct_red_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/EqDirectReduction.lean",
+    "lean_name": "directRed",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared eq_direct_red_rel_typed: the sole directEq success equation implies an existential residual shared by the source pair and optimized result. The proof handles all three executed matcher stages, including the unreachable composite constant case."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "red_rel_refl",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/EqDirectReduction.lean",
+    "lean_name": "redRelRefl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_refl_typed: every source expression list reduces to itself, without extra assumptions."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "lift_exps_red_rel",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftReduction.lean",
     "lean_name": "liftExpsRedRel",
