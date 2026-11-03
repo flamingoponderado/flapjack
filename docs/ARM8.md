@@ -415,8 +415,17 @@ and `lsl` in their own shape — `DecodeBitMasks` result hypothesis, and for
 the mask value rather than a shift identity, so `asr_mask` remains untagged
 Flapjack infrastructure that combines it with the shift reasoning.
 
-Still open for #1239: the three `shift` immediate case theorems, `addOverflow`,
-`subOverflow` (their `ConditionalSelect@64` facts exist in
-`ConditionalSelect.lean`), and `Mem`.
+`ShiftBitfieldCase.lean` closes the three constructors:
+`arm8_encoder_correct_shift_lsr_imm`, `_asr_imm` and `_lsl_imm` compose the
+rendered `Encode`/`Decode` inverse, the `Run` equation with the masks
+substituted, and the corresponding mask identity, then close through
+`asmCaseOne`.  `.lsl` needs its two computed field values (`63w - n2w n` and
+`-n2w n`) pinned first; `interval_cases` over the 64 admissible shift amounts
+does that.  All four case theorems from this batch (`addCarry` and the three
+shift-immediate forms) carry the shared `arm8_encoder_correct` tag with
+`pending_statement_review` manifest rows.
+
+Still open for #1239: `addOverflow`, `subOverflow` (their
+`ConditionalSelect@64` facts exist in `ConditionalSelect.lean`), and `Mem`.
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
