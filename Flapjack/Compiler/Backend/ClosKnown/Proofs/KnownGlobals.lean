@@ -6,8 +6,7 @@ namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosProps
 
 /-- The total traversal retains global lookups outside the expression's
-write bag. Flapjack infrastructure while full source traversal correspondence
-is under review. -/
+write bag. This helper has no separate HOL declaration. -/
 theorem knownExprTotalLookupUnchanged (c : Config) (e : ClosLang.Exp)
     (env : List ValApprox) (globals : Spt ValApprox) :
     ∀ k, setGlobals e k = 0 →
@@ -27,7 +26,7 @@ theorem knownExprTotalLookupUnchanged (c : Config) (e : ClosLang.Exp)
   all_goals grind
 
 /-- The total list traversal retains lookups outside its write bag. This is
-Flapjack infrastructure pending review of the complete HOL traversal. -/
+This helper has no separate HOL declaration. -/
 theorem knownListTotalLookupUnchanged (c : Config) (xs : List ClosLang.Exp)
     (env : List ValApprox) (globals : Spt ValApprox) (k : Nat)
     (outside : elistGlobals xs k = 0) :
@@ -36,7 +35,8 @@ theorem knownListTotalLookupUnchanged (c : Config) (xs : List ClosLang.Exp)
   simpa [knownExprTotal] using h (by simpa [setGlobals] using outside)
 
 /-- A resulting tree lookup either already held or belongs to the input write
-bag. This is infrastructure for the executed traversal, not yet a HOL port. -/
+bag. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_changed_globals_cases"]
 theorem knownListTotalChangedGlobalsCases (c : Config) (xs : List ClosLang.Exp)
     (env : List ValApprox) (g0 : Spt ValApprox) (result : List (ClosLang.Exp × ValApprox))
     (g : Spt ValApprox) (run : knownListTotal c xs env g0 = (result, g)) :
@@ -48,5 +48,31 @@ theorem knownListTotalChangedGlobalsCases (c : Config) (xs : List ClosLang.Exp)
     rw [run] at unchanged
     simpa [← unchanged] using found
   · exact Or.inr outside
+
+/-- New or changed approximation entries belong to the input write bag. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_changed_globals"]
+theorem knownListTotalChangedGlobals (c : Config) (xs : List ClosLang.Exp)
+    (env : List ValApprox) (g0 : Spt ValApprox) (result : List (ClosLang.Exp × ValApprox))
+    (g : Spt ValApprox) (run : knownListTotal c xs env g0 = (result, g)) :
+    ∀ i, sptMem i g ∧ (sptMem i g0 → sptLookup i g ≠ sptLookup i g0) →
+      elistGlobals xs i ≠ 0 := by
+  intro i ⟨member, changed⟩
+  obtain ⟨value, found⟩ := (sptMem_iff_lookup i g).1 member
+  rcases knownListTotalChangedGlobalsCases c xs env g0 result g run i value found with old | written
+  · have oldMember := (sptMem_iff_lookup i g0).2 ⟨value, old⟩
+    exact False.elim (changed oldMember (found.trans old.symm))
+  · exact written
+
+/-- The result domain is contained in the prior domain and input write set. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_changed_globals_alt_set"]
+theorem knownListTotalChangedGlobalsAltSet (c : Config) (xs : List ClosLang.Exp)
+    (env : List ValApprox) (g0 : Spt ValApprox) (result : List (ClosLang.Exp × ValApprox))
+    (g : Spt ValApprox) (run : knownListTotal c xs env g0 = (result, g)) :
+    ∀ i, sptMem i g → sptMem i g0 ∨ elistGlobals xs i ≠ 0 := by
+  intro i member
+  obtain ⟨value, found⟩ := (sptMem_iff_lookup i g).1 member
+  rcases knownListTotalChangedGlobalsCases c xs env g0 result g run i value found with old | written
+  · exact Or.inl ((sptMem_iff_lookup i g0).2 ⟨value, old⟩)
+  · exact Or.inr written
 
 end Flapjack.Compiler.Backend.ClosKnown

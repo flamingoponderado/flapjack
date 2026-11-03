@@ -1,5 +1,70 @@
 [
 {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "known_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Total.lean",
+    "lean_name": "knownListTotal",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_def_typed, all source clauses, carriers and called helpers. The executed list function uses mutually recursive expression and recursive-group helpers; the source-shaped equations in SourceEquations.lean check each compound case, while Total.lean checks singleton, multi-element and variable cases. Singleton length excludes the default used to express source HD in the review equations. The operation case uses the reviewed SmartOp, matching isGlobal and gO_destApx; the application case uses the original input length and source tick and inline decisions. Recursive function bodies start with the same global tree and their resulting globals are discarded. knownListBounded calls this function in production. Source review and kernel checking do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "known_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Total.lean",
+    "lean_name": "knownListTotal_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_length_typed: the original config, expression list, approximation environment and sparse tree carriers and list-length equality are retained. Source review and kernel checking do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_changed_globals_cases",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownGlobals.lean",
+    "lean_name": "knownListTotalChangedGlobalsCases",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_changed_globals_cases_typed: the complete optimizer equation, arbitrary key and approximation, and unchanged lookup or write-bag membership are retained. Source review and kernel checking do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_changed_globals",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownGlobals.lean",
+    "lean_name": "knownListTotalChangedGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_changed_globals_typed: the source optimizer equation, tree-domain and changed-lookup premises and write-bag support conclusion are retained. Source review and kernel checking do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_changed_globals_alt_set",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownGlobals.lean",
+    "lean_name": "knownListTotalChangedGlobalsAltSet",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_changed_globals_alt_set_typed: the pointwise form is the original domain-subset-of-union conclusion. Source review and kernel checking do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "state_globals_approx_known_mglobals_disjoint",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxEvaluate.lean",
+    "lean_name": "stateGlobalsApproxKnownDisjoint",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "reviewer": "Compared state_globals_approx_known_mglobals_disjoint_typed: the original optimizer, disjointness and approximation premises and final approximation are retained. Compiler and FFI carriers remain independent. The state uses canonical finite-support refs and code with the local roundtrip witness. Source review and kernel checking do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "state_globals_approx_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxEvaluate.lean",
+    "lean_name": "stateGlobalsApproxKnownListEvaluate",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared state_globals_approx_evaluate_typed: the original evaluator and optimizer equations, state and expression safety, disjointness, global uniqueness, approximation premise and conclusion are retained. Compiler and FFI carriers remain independent and the evaluator inherits rational-cut reals. The state uses canonical finite-support refs and code with the local roundtrip witness. Source review and kernel checking do not prove cross-language equivalence."
+  },
+{
     "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
     "hol_name": "gapprox_extend_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OpEvaluateGlobals.lean",

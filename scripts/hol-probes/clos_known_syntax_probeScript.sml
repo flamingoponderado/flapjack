@@ -24,6 +24,9 @@ val _ = show "option_upd_val_spt_typed=" clos_knownTheory.option_upd_val_spt_def
 val _ = show "contains_closures_typed=" clos_knownTheory.contains_closures_def;
 val _ = show "merge_typed=" clos_knownTheory.merge_def;
 val _ = show "known_changed_globals_typed=" clos_knownProofTheory.known_changed_globals;
+val _ = show "known_changed_globals_alt_set_typed=" clos_knownProofTheory.known_changed_globals_alt_set;
+val _ = show "state_globals_approx_known_mglobals_disjoint_typed=" clos_knownProofTheory.state_globals_approx_known_mglobals_disjoint;
+val _ = show "state_globals_approx_evaluate_typed=" clos_knownProofTheory.state_globals_approx_evaluate;
 val _ = show "known_changed_globals_cases_typed=" clos_knownProofTheory.known_changed_globals_cases;
 val _ = show "known_op_typed=" clos_knownTheory.known_op_def;
 val _ = show "get_size_aux_typed=" clos_knownTheory.get_size_aux_def;

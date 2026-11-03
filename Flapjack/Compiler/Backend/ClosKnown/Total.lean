@@ -1,9 +1,9 @@
 import Flapjack.Compiler.Backend.ClosKnown.Fuel
 import Flapjack.Compiler.Backend.ClosOp.Proofs.FuelStable
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineDecrease
-/-! Total Flapjack known-function traversal with a lexicographic termination
-measure. This is not yet tagged as HOL `known_def`: complete correspondence of
-the smart-operation helper to the source remains to be established. -/
+/-! Total known-function traversal with a lexicographic termination measure.
+The list traversal implements the source recursion through mutually recursive
+expression and recursive-group helpers. -/
 namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosLang
 
@@ -17,8 +17,8 @@ def smartTotal (t : BackendCommon.Tra) (op : Op) (xs : List Exp) : Exp :=
 
 
 mutual
- /-- Traverse one expression using the source termination measure. This is
- Flapjack infrastructure until full HOL correspondence is proved. -/
+ /-- Traverse one expression using the source termination measure. This helper
+ has no separate HOL declaration. -/
  def knownExprTotal (c : Config) (e : Exp) (env : List ValApprox) (globals : Spt ValApprox) :
      Exp × ValApprox × Spt ValApprox :=
   match e with
@@ -87,8 +87,10 @@ mutual
      simp only [decInlineFactor]
      omega
 
- /-- Traverse a list in order while threading global approximations. This is
- Flapjack infrastructure until full HOL correspondence is proved. -/
+ /-- Traverse a list in source order while threading global approximations.
+ The source-shaped equations are checked in `Proofs.SourceEquations`; its
+ singleton-head defaults are unreachable by `knownListTotal_length`. -/
+ @[hol "cakeml/compiler/backend/clos_knownScript.sml" "known_def"]
  def knownListTotal (c : Config) (xs : List Exp) (env : List ValApprox) (globals : Spt ValApprox) :
      List (Exp × ValApprox) × Spt ValApprox :=
   match xs with
@@ -113,9 +115,8 @@ mutual
  decreasing_by all_goals (simp_wf; omega)
 end
 
-/-- The total list traversal preserves the number of expressions. This is a
-Flapjack infrastructure fact; it is not yet a port of HOL `known_LENGTH`
-because correspondence of the complete traversal remains to be proved. -/
+/-- The source traversal preserves the number of expressions. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "known_LENGTH"]
 theorem knownListTotal_length (c : Config) (xs : List Exp) (env : List ValApprox)
     (globals : Spt ValApprox) : (knownListTotal c xs env globals).1.length = xs.length := by
   induction xs generalizing globals with
@@ -138,7 +139,7 @@ theorem smartTotal_eq_smartOp (t : BackendCommon.Tra) (op : Op) (xs : List Exp) 
   simp [smartTotal, ClosOp.smartFuel]
 
 /-- A singleton traversal returns precisely the expression traversal's pair.
-This is Flapjack infrastructure; the complete `known_def` comparison remains open. -/
+This is Flapjack infrastructure with no separate HOL declaration. -/
 theorem knownListTotal_single (c : Config) (e : Exp) (env : List ValApprox)
     (globals : Spt ValApprox) :
     knownListTotal c [e] env globals =
@@ -151,7 +152,7 @@ theorem knownListTotal_single (c : Config) (e : Exp) (env : List ValApprox)
 
 /-- The source's multi-element recursion first processes the head and then
 threads its globals through the remaining nonempty list. This is Flapjack
-infrastructure pending review of the complete `known_def`. -/
+infrastructure for the source list equation. -/
 theorem knownListTotal_cons_cons (c : Config) (x y : Exp) (xs : List Exp)
     (env : List ValApprox) (globals : Spt ValApprox) :
     knownListTotal c (x :: y :: xs) env globals =
@@ -166,7 +167,7 @@ theorem knownListTotal_cons_cons (c : Config) (x y : Exp) (xs : List Exp)
     rfl
 
 /-- The traversed list has one element whenever the input has one element.
-This is infrastructure pending review of the complete source traversal. -/
+This is Flapjack infrastructure with no separate HOL declaration. -/
 theorem knownListTotal_single_result (c : Config) (e : Exp) (env : List ValApprox)
     (g0 g : Spt ValApprox) (result : List (Exp × ValApprox))
     (h : knownListTotal c [e] env g0 = (result, g)) :
