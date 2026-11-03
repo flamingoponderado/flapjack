@@ -1,4 +1,10 @@
 syntax_ok_typed=∀(xs :closLang$exp list). syntax_ok xs ⇔ every_Fn_vs_NONE xs ∧ BAG_ALL_DISTINCT (elist_globals xs) ∧ EVERY esgc_free xs
+unique_set_globals_typed=∀(es :closLang$exp list) (co :num -> α # closLang$exp list # β). unique_set_globals es co ⇔ ∀(n :num). BAG_ALL_DISTINCT (elist_globals (es ++ FLAT (first_n_exps co n)))
+unique_set_globals_shift_seq_typed=∀(es :closLang$exp list) (co :num -> α # closLang$exp list # β). unique_set_globals es co ⇒ ∀(k :num). unique_set_globals es (shift_seq k co)
+unique_set_globals_distinct_typed=∀(es :closLang$exp list) (co :num -> α # closLang$exp list # β). unique_set_globals es co ⇒ BAG_ALL_DISTINCT (elist_globals es)
+nil_unique_set_globals_typed=unique_set_globals (es :closLang$exp list) (co :num -> α # closLang$exp list # β) ⇒ unique_set_globals ([] :closLang$exp list) co
+mglobals_disjoint_typed=∀(s :α option list) (xs :closLang$exp list). mglobals_disjoint s xs ⇔ DISJOINT (mapped_globals s) (SET_OF_BAG (elist_globals xs))
+mglobals_disjoint_evaluate_typed=∀(s0 :(α, β) state) (xs :closLang$exp list) (ys :closLang$exp list) (env :v list) (res :(v list, v) result) (s :(α, β) state). evaluate (ys,env,s0) = (res,s) ∧ ssgc_free s0 ∧ EVERY vsgc_free env ∧ EVERY esgc_free ys ∧ unique_set_globals (xs ++ ys) s0.compile_oracle ∧ mglobals_disjoint s0.globals xs ⇒ mglobals_disjoint s.globals xs
 bag_all_distinct_typed=∀(b :α -> num). BAG_ALL_DISTINCT b ⇔ ∀(e :α). b e ≤ (1 :num)
 option_val_approx_spt_typed=∀(kc :config option). option_val_approx_spt kc = case kc of (NONE :config option) => (LN :val_approx sptree$num_map) | SOME kcfg => kcfg.val_approx_spt
 option_upd_val_spt_typed=(∀(spt :val_approx sptree$num_map). option_upd_val_spt spt (NONE :config option) = (NONE :config option)) ∧ ∀(spt :val_approx sptree$num_map) (kc :config). option_upd_val_spt spt (SOME kc) = SOME (kc with val_approx_spt := spt)

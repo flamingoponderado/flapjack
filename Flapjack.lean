@@ -322,6 +322,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.InstallGlobals
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ClosureGlobals
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.EvaluateGlobals
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.EvaluateGlobalsTotal
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.UniqueGlobals
 import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownOpCorrect

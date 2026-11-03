@@ -7,6 +7,12 @@ fun show label th = if null (hyp th) then
   (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show "syntax_ok_typed=" clos_knownProofTheory.syntax_ok_def;
+val _ = show "unique_set_globals_typed=" clos_knownProofTheory.unique_set_globals_def;
+val _ = show "unique_set_globals_shift_seq_typed=" clos_knownProofTheory.unique_set_globals_shift_seq;
+val _ = show "unique_set_globals_distinct_typed=" clos_knownProofTheory.unique_set_globals_IMP_es_distinct_elist_globals;
+val _ = show "nil_unique_set_globals_typed=" clos_knownProofTheory.nil_unique_set_globals;
+val _ = show "mglobals_disjoint_typed=" clos_knownProofTheory.mglobals_disjoint_def;
+val _ = show "mglobals_disjoint_evaluate_typed=" clos_knownProofTheory.mglobals_disjoint_evaluate;
 val _ = show "bag_all_distinct_typed=" bagTheory.BAG_ALL_DISTINCT;
 val _ = show "option_val_approx_spt_typed=" clos_knownTheory.option_val_approx_spt_def;
 val _ = show "option_upd_val_spt_typed=" clos_knownTheory.option_upd_val_spt_def;
