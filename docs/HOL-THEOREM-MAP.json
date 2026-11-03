@@ -1,6 +1,39 @@
 [
 {
     "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "gapprox_extend_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OpEvaluateGlobals.lean",
+    "lean_name": "gapproxExtend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL source and inferred types captured in clos_known_syntax_probe.out. The source tree payload remains polymorphic, and the domain, lookup-change and allowed-index condition is unchanged. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "state_globals_approx_disjoint_extends",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OpEvaluateGlobals.lean",
+    "lean_name": "stateGlobalsApproxDisjointExtends",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "reviewer": "Compared the HOL source and inferred types captured in clos_known_syntax_probe.out. The two states have independent compiler and FFI carriers, and all source disjointness and approximation premises are retained. The state uses canonical finite-support refs and code with the local roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "state_globals_approx_known_op_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OpEvaluateGlobals.lean",
+    "lean_name": "stateGlobalsApproxKnownOpEvaluate",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the HOL source and inferred types captured in clos_known_syntax_probe.out. The evaluator and primitive optimizer equations, all source safety, disjointness and uniqueness premises, and the approximation conclusion are retained. The evaluator inherits rational-cut reals. The state uses canonical finite-support refs and code with the local roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+  },
+{
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
     "hol_name": "unique_set_globals_subexps",
   "hol_line": 194,
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/UniqueGlobals.lean",
