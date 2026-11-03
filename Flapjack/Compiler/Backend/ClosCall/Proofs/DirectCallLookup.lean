@@ -300,7 +300,7 @@ theorem destClosure_known_direct (fuel : Nat) (g : State) (allowed : Set Nat)
       callsListBounded fuel (sourceFns.map Prod.snd) (insertEach base sourceFns.length initial) =
         some (bodies, afterProbe) ∧ bodies[index]? = some convertedBody := by
   obtain ⟨targetBody, targetBodyEnv, targetRest, base, sourceFns, targetFns, index, arity,
-      targetRun, envs, restRel, closure, sourceLookup, targetLookup, known⟩ :=
+      targetRun, envs, restRel, closure, sourceLookup, targetLookup, known, _⟩ :=
     destClosure_full_fuel fuel g allowed code maxApp (some address) source target sourceArgs targetArgs
       sourceBody sourceBodyEnv sourceRest sourceRun values args
   obtain ⟨addressEq, arityEq, sourceRestEq⟩ := known address rfl

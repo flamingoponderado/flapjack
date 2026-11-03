@@ -46,6 +46,27 @@ def recClosureRelFuel (fuel : Nat) (g : State) (allowed : Set Nat)
           (∀ i, i < fns1.length → 2 * i + loc ∈ allowed) ∧
           codeIncludes afterOpen.2 code))
 
+/-- A related group remains related when the compiler state grows and its
+entire code list is installed in a new code map. This Flapjack-specific
+retargeting does not require unrelated old map entries to be preserved. -/
+theorem recClosureRelFuel_retarget (fuel : Nat) (g g' : State) (allowed : Set Nat)
+    (code code' : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (fns1 fns2 : List (Nat × ClosLang.Exp))
+    (related : recClosureRelFuel fuel g allowed code loc fns1 fns2)
+    (growth : stateExtends g g') (included : codeIncludes g'.2 code') :
+    recClosureRelFuel fuel g' allowed code' loc fns1 fns2 := by
+  obtain ⟨g0, well, initialWf, nestedFresh, ownFresh, bodies, afterProbe, probe, alternatives⟩ := related
+  refine ⟨g0, well, initialWf, nestedFresh, ownFresh, bodies, afterProbe, probe, ?_⟩
+  rcases alternatives with ⟨closed, target, ext, covered, _⟩ |
+      ⟨notClosed, openBodies, afterOpen, run, target, ext, covered, ownAllowed, _⟩
+  · left
+    have combined := stateExtends_trans _ _ _ ext growth
+    exact ⟨closed, target, combined, covered, codeIncludes_of_stateExtends _ _ code' combined included⟩
+  · right
+    have combined := stateExtends_trans _ _ _ ext growth
+    exact ⟨notClosed, openBodies, afterOpen, run, target, combined, covered, ownAllowed,
+      codeIncludes_of_stateExtends _ _ code' combined included⟩
+
 /-- The recursive-closure relation is independent of its traversal fuel:
 both bounded traversals return the same result at every initial fuel. This is
 Flapjack-specific infrastructure; correspondence with HOL remains open. -/
