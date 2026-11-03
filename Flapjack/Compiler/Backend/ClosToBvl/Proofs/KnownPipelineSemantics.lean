@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberKnownSemantics
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileProduction
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
 
 /-! Composition of the closure optimization passes used by the compiler. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -40,15 +41,9 @@ theorem number_fvs_known_ticks_letop_annotate_semantics {C F : Type} (ffi : HolF
       ∀ n, (oracle n).2.2 = [] ∧ ¬ containsAppSome maxApp (oracle n).2.1)
     (knownSafe :
       let numberedCo := stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle
-      let co : CompileOracle (Spt ValApprox × C) := pureCo fvsInc ∘ numberedCo
-      let xs := ClosFvs.compile (ClosNumber.renumberList number program).2
-      (∀ n, (co n).2.2 = []) ∧ (∀ n, fvMax 0 (co n).2.1) ∧
-      (∀ n exps extra, (co n).2 = (exps, extra) → ∀ e ∈ exps, esgcFree e) ∧
-      everyFnVarsNone xs ∧ coEveryFnVarsNone co ∧ oracleGapproxSubspt co ∧
-      oracleStateSgcFree co ∧ isStateOracle (ClosKnown.compileInc knownConfig) co ∧
-      uniqueSetGlobals xs co ∧ (∀ e ∈ xs, esgcFree e) ∧ fvMax 0 xs ∧
-      (co 0).1.1 = globals ∧ oracleGapproxDisjoint globals co ∧
-      ClosKnown.knownListTotal knownConfig xs [] .ln = (optimized, globals))
+      let xs := (ClosNumber.renumberList number program).2
+      syntaxOracleOk knownConfig xs numberedCo globals ∧
+      ClosKnown.knownListTotal knownConfig (ClosFvs.compile xs) [] .ln = (optimized, globals))
     (annotationSafe :
       let knownCo : CompileOracle C := stateCo (ClosKnown.compileInc knownConfig)
         (pureCo fvsInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
@@ -100,7 +95,8 @@ theorem number_fvs_known_ticks_letop_annotate_semantics {C F : Type} (ffi : HolF
   have knownEq : semantics ffi maxApp HolFiniteMapExact.holEmpty knownCo afterKnown (optimized.map Prod.fst) =
       semantics ffi maxApp HolFiniteMapExact.holEmpty co knownCompiler transformed :=
     ClosKnown.Semantics.semanticsKnownHOL knownConfig ffi maxApp co afterKnown transformed optimized globals
-      fvsNonfail knownSafe
+      fvsNonfail (syntaxOracleOk_fvsKnownPremises knownConfig numbered numberedCo globals optimized
+        knownSafe.1 knownSafe.2)
   have knownNonfail : semantics ffi maxApp HolFiniteMapExact.holEmpty knownCo afterKnown
       (optimized.map Prod.fst) ≠ .fail := by rw [knownEq, fvsEq, numberEq]; exact notFail
   have knownAux : ∀ n, (knownCo n).2.2 = [] := by
@@ -133,8 +129,7 @@ theorem number_fvs_known_ticks_letop_annotate_semantics {C F : Type} (ffi : HolF
     simpa [HolFiniteMapExact.alistToFmap, HolFiniteMapExact.holEmpty,
       HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL, ClosAnnotate.compile] using annotated
   have knownRun : ClosKnown.knownListTotal knownConfig (ClosFvs.compile numbered) [] .ln = (optimized, globals) := by
-    rcases knownSafe with ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, run⟩
-    exact run
+    exact knownSafe.2
   exact ⟨transformed, letopOutput, ClosFvs.compileBounded_eq_source fuel numbered,
     ticks_letop_bounded fuel (optimized.map Prod.fst),
     known_compileFuel_eq fuel knownConfig numbered optimized globals knownRun,

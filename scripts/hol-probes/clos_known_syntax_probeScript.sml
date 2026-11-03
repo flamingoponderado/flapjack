@@ -9,6 +9,7 @@ fun show label th = if null (hyp th) then
 val _ = show "syntax_ok_typed=" clos_knownProofTheory.syntax_ok_def;
 val _ = show "syntax_oracle_ok_typed=" clos_knownProofTheory.syntax_oracle_ok_def;
 val _ = show "syntax_oracle_ok_state_sgc_free_typed=" clos_knownProofTheory.syntax_oracle_ok_state_sgc_free;
+val _ = show "syntax_oracle_ok_gapprox_subspt_typed=" clos_knownProofTheory.syntax_oracle_ok_gapprox_subspt;
 val _ = show "monotonic_unique_set_globals_typed=" clos_knownProofTheory.monotonic_unique_set_globals;
 val _ = show "monotonic_gapprox_disjoint_typed=" clos_knownProofTheory.monotonic_gapprox_disjoint;
 val _ = show "state_oracle_domain_typed=" clos_knownProofTheory.state_oracle_domain;

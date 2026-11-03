@@ -5990,6 +5990,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "syntax_oracle_ok_gapprox_subspt",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
+    "lean_name": "syntaxOracleOk_gapproxSubspt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared syntax_oracle_ok_gapprox_subspt_typed: the original syntax-oracle condition and initial known traversal of the free-variable-cleaned program imply consecutive sparse-tree inclusion for the original oracle. The fixed closure-program auxiliary carrier and independent oracle configuration carrier agree with the inferred HOL types. Source review and kernel checking do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
     "hol_name": "monotonic_unique_set_globals",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
     "lean_name": "monotonicUniqueSetGlobals",
