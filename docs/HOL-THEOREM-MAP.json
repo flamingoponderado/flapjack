@@ -100980,5 +100980,21 @@
   "lean_name": "arm8_encoder_correct_mem_store_far",
   "statement_status": "pending_statement_review",
   "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem store case of HOL arm8_encoder_correct on the far-offset path, as the dispatching theorem over the two sign branches, on the same `hnsx`/`hfar`/`asmAddrOffsetOkExact` hypotheses as the load one and with the immediate encodability derived internally.  Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8L3Instance.lean",
+  "lean_name": "arm8PancakeHeapLimit_lt",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack infrastructure (ARM8 L3-carrier instance, 2026-11-02): the concrete heap-limit side condition for `pancakeBackendConf arm8BackendConfig`, discharged by kernel `decide`. It has no HOL original because it is the configuration-only bound the top theorem carries; it is identical to the closed-model `Arm8Instance` row and reads only `arm8BackendConfig`, not the target carrier."
+ },
+ {
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8L3Instance.lean",
+  "lean_name": "panToTargetCompileSemanticsArm8L3",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack infrastructure (ARM8 L3-carrier instance, 2026-11-02): instantiates the generic `panToTargetCompileSemantics` theorem at the L3 `arm8TargetL3` (`arm8_state`/`arm8_proj`), supplying `arm8MachineConfigOkL3`, `arm8InitOkL3`, `arm8BackendConfigOkL3` and `arm8EncoderCorrectL3`. It has no single HOL original: the CakeML analogue depends on HOL's `arm8_encoder_correct`, whose Lean case theorems are tagged `arm8_encoder_correct` and remain `pending_statement_review`, so the instantiation is not a claimed HOL port."
  }
 ]

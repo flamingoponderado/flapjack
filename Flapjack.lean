@@ -2838,6 +2838,8 @@ import Flapjack.Compiler.Encoders.Arm8.Machine.ExecuteProof
 import Flapjack.Compiler.Backend.Arm8Config.Names
 import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
 import Flapjack.Compiler.Backend.Arm8Config.Proofs
+import Flapjack.Compiler.Backend.Arm8Config.ProofsL3
+import Flapjack.Compiler.Backend.Arm8Config.BackendProofL3
 import Flapjack.Arm8.NativeSource
 import Flapjack.Arm8.NativeCLIAdapter
 import Flapjack.Compiler.Encoders.Mips32.Encode
@@ -2859,6 +2861,7 @@ import Flapjack.Mips32.TargetProof.Control
 import Flapjack.Mips32.TargetProof.Complete
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32Instance
 import Flapjack.Pancake.Proofs.PanToTarget.Arm8Instance
+import Flapjack.Pancake.Proofs.PanToTarget.Arm8L3Instance
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32InstanceExecutable
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32Source
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32NativeSourceCorrect
