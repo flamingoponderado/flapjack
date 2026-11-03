@@ -1,6 +1,50 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "first_n_exps_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InstallGlobals.lean",
+  "lean_name": "firstNExps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared first_n_exps_typed with the source definition: the three product components remain independently polymorphic and the generated list contains the second component at each index below n. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "ssgc_free_co_shift_seq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InstallGlobals.lean",
+  "lean_name": "ssgcFreeCoShiftSeq",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared ssgc_free_co_shift_seq_typed: an arbitrary safe state remains safe when its compile oracle is shifted by an arbitrary natural number; compiler and FFI types remain independent. The state uses canonical finite-support refs and code with the local roundtrip witness. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "ssgc_free_do_install",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InstallGlobals.lean",
+  "lean_name": "ssgcFreeDoInstall",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared ssgc_free_do_install_typed: the source safety premise implies safety after the same oracle shift and finite-map update with the oracle-zero auxiliary code. Each installed body is safe because the source oracle invariant has an empty aggregate write bag. The state uses canonical finite-support refs and code with the local roundtrip witness. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_install_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InstallGlobals.lean",
+  "lean_name": "doInstallSsgc",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared do_install_ssgc_typed and the original proof: successful installation and initial state safety imply all six original conclusions, including the nonempty program, exact oracle shift, first-program list and unchanged-global extension. The independent compiler and FFI carriers are retained. The state uses canonical finite-support refs and code with the local roundtrip witness. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "do_app_ssgc",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
   "lean_name": "doAppSsgcMemOp",

@@ -1,3 +1,5 @@
+`clos_known_syntax_probe.out` also captures the polymorphic first-program list and the inferred oracle-shift and dynamic-installation global-safety theorems. These support source review, not full pass correctness.
+
 `clos_op_lift_proof_probe.out` also records typed lifting, pure-expression evaluation,
 direct and pure equality correctness, closure-value equality symmetry,
 conjunction evaluation, and let theorems,

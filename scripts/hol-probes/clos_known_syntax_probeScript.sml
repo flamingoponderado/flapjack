@@ -68,6 +68,10 @@ val _ = show "known_op_changed_globals_typed=" clos_knownProofTheory.known_op_ch
 val _ = show "known_op_changed_globals_cases_typed=" clos_knownProofTheory.known_op_changed_globals_cases;
 val _ = show "known_op_changed_globals_alt_set_typed=" clos_knownProofTheory.known_op_changed_globals_alt_set;
 val _ = show "do_app_ssgc_typed=" clos_knownProofTheory.do_app_ssgc;
+val _ = show "first_n_exps_typed=" clos_knownProofTheory.first_n_exps_def;
+val _ = show "ssgc_free_co_shift_seq_typed=" clos_knownProofTheory.ssgc_free_co_shift_seq;
+val _ = show "ssgc_free_do_install_typed=" clos_knownProofTheory.ssgc_free_do_install;
+val _ = show "do_install_ssgc_typed=" clos_knownProofTheory.do_install_ssgc;
 val _ = show "vsgc_free_typed=" closPropsTheory.vsgc_free_def;
 val _ = show "rsgc_free_typed=" closPropsTheory.rsgc_free_def;
 val _ = show "ssgc_free_typed=" closPropsTheory.ssgc_free_def;
