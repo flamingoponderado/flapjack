@@ -122965,5 +122965,43 @@
     "code"
   ],
   "reviewer": "Compared the typed original local proof replay in clos_letop_source_probe.out: related states with shared independent compiler and FFI carriers remain related after decrementing both clocks by one. Canonical refs and code have a local broad-state roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateLetrec.lean",
+  "lean_name": "evaluate_let_op_letrec",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the recursive-binding case of evaluate_ind_typed in clos_known_syntax_probe.out. The original source arity, closure-building and optional-capture guarded body induction hypothesis, source run, related environments and states, code relation, and existential target result and state are retained without extra premises. The proof covers arity and capture failures and related recursive closure groups. Canonical refs and code have a local roundtrip witness; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or the remaining cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "hol_name": "simple_state_rel",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Primitive.lean",
+  "lean_name": "stateRelSimple",
+  "reviewer": "Compared the typed original local proof replay in clos_letop_source_probe.out: the let-operation value and state relations satisfy the generic simple-state relation over shared independent compiler and FFI carriers. The canonical refs and code fields have a local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "hol_name": "do_app_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Primitive.lean",
+  "lean_name": "doAppLemma",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original local proof replay in clos_letop_source_probe.out: related states and argument lists yield existential related target errors or related values and states, with the same operation and independent shared compiler and FFI carriers. Canonical refs and code have a local roundtrip witness, and primitive evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence."
 }
 ]

@@ -52,3 +52,21 @@ val state_rel_dec_clock_replay = prove(
   ``state_rel s1 s2 ==> state_rel (dec_clock 1 s1) (dec_clock 1 s2)``,
   rw [state_rel_def, dec_clock_def, state_component_equality]);
 val _ = show "state_rel_dec_clock_replay_typed" state_rel_dec_clock_replay;
+val simple_state_rel_replay = prove(
+  ``closProps$simple_state_rel clos_letopProof$v_rel clos_letopProof$state_rel``,
+  fs [closPropsTheory.simple_state_rel_def, state_rel_def]
+  \\ rw [] \\ fs [FMAP_REL_def, FLOOKUP_DEF]
+  \\ rfs []
+  \\ TRY (first_x_assum drule \\ fs [ref_rel_cases])
+  \\ fs [FAPPLY_FUPDATE_THM]
+  \\ rw [] \\ fs [ref_rel_cases]);
+val _ = show "simple_state_rel_replay_typed" simple_state_rel_replay;
+val do_app_lemma_replay = prove(
+  ``state_rel s t /\ LIST_REL v_rel xs ys ==>
+    case do_app opp xs s of
+      | Rerr err1 => ?err2. do_app opp ys t = Rerr err2 /\ exc_rel v_rel err1 err2
+      | Rval (x, s1) => ?y t1. v_rel x y /\ state_rel s1 t1 /\
+                               do_app opp ys t = Rval (y, t1)``,
+  match_mp_tac closPropsTheory.simple_val_rel_do_app
+  \\ fs [closPropsTheory.simple_val_rel_def, simple_state_rel_replay] \\ rw [] \\ fs [v_rel_cases]);
+val _ = show "do_app_lemma_replay_typed" do_app_lemma_replay;
