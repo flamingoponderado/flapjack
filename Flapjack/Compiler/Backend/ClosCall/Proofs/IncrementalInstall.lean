@@ -244,10 +244,11 @@ theorem doInstall_nonType_compilerState_growth {C F : Type} (fuel relationFuel :
       targetFinal.code = target.code.updateListEq converted.2 ∧
       codeIncludes (converted.2 ++ g.2) targetFinal.code ∧
       StateRelFuel relationFuel (nextKnown, converted.2 ++ g.2) allowed final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
   obtain ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
-    nonempty, targetCodeEq, _, _, _, oracleEq, finalStates, codeGrowth⟩ :=
+    nonempty, targetCodeEq, _, finalCompiler, targetFinalCompiler, oracleEq, finalStates, codeGrowth⟩ :=
     doInstall_nonType_incremental fuel relationFuel g allowed compiler source target sourceValues targetValues
       result final states values oldWell.2 sourceCompiler targetCompiler targetOracle sourceAuxEmpty
       locationsDistinct fresh run notType
@@ -270,7 +271,100 @@ theorem doInstall_nonType_compilerState_growth {C F : Type} (fuel relationFuel :
     apply codeIncludes_append_after_install g.2 converted.2 target.code oldWell.2 newDistinct included
     simpa [targetCodeEq] using codeGrowth
   refine ⟨expressions, converted, nextKnown, targetFinal, passRun', targetRun, resultEq, exprEq,
-    nonempty, mergedWell, extended, targetCodeEq, combinedIncluded, ?_, oracleEq, codeGrowth⟩
+    nonempty, mergedWell, extended, targetCodeEq, combinedIncluded, ?_, finalCompiler,
+    targetFinalCompiler, oracleEq, codeGrowth⟩
   exact stateRelFuel_mono finalStates extended Set.Subset.rfl
+
+/-- Conditions on the remaining source oracle and target code needed for
+successive incremental installations. This Lean-side invariant does not
+establish evaluation simulation. -/
+structure IncrementalInstallReady {C F : Type} (g : State)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F) : Prop where
+  well : wellFormed g
+  included : codeIncludes g.2 target.code
+  known : g.1 = (source.compileOracle 0).1.1
+  auxEmpty : ∀ index, (source.compileOracle index).2.2 = []
+  distinct : ∀ index, (codeLocations (source.compileOracle index).2.1).Nodup
+  disjoint : ∀ earlier later, earlier < later → ∀ loc ∈ codeLocations (source.compileOracle later).2.1,
+    loc ∉ codeLocations (source.compileOracle earlier).2.1
+  fresh : ∀ index loc, loc ∈ codeLocations (source.compileOracle index).2.1 →
+    target.code.lookup (loc + 1) = none
+
+/-- A non-type-error installation advances the oracle and preserves the
+conditions for later installations, along with the growing state relation.
+The result applies to the actual incremental callback and target code update. -/
+theorem doInstall_nonType_ready {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value)
+    (result : SemanticPrimitivesHOL.Result (List ClosLang.Exp) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (ready : IncrementalInstallReady g source target)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (run : doInstall sourceValues source = (result, final))
+    (notType : result ≠ .err (.abort .typeError)) :
+    ∃ expressions converted nextKnown targetFinal,
+      compileIncFuel? fuel g.1 (expressions, []) = some (nextKnown, converted) ∧
+      doInstall targetValues target =
+        (if source.clock = 0 then .err (.abort .timeoutError) else .val converted.1, targetFinal) ∧
+      result = (if source.clock = 0 then .err (.abort .timeoutError) else .val expressions) ∧
+      expressions = (source.compileOracle 0).2.1 ∧ expressions ≠ [] ∧
+      stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      IncrementalInstallReady (nextKnown, converted.2 ++ g.2) final targetFinal ∧
+      StateRelFuel relationFuel (nextKnown, converted.2 ++ g.2) allowed final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
+    nonempty, newWell, extended, codeEq, included, finalStates, finalCompiler, targetFinalCompiler,
+    oracleEq, growth⟩ :=
+    doInstall_nonType_compilerState_growth fuel relationFuel g allowed compiler source target sourceValues
+      targetValues result final states values ready.well ready.included ready.known sourceCompiler
+      targetCompiler targetOracle (ready.auxEmpty 0) (ready.distinct 0) (ready.fresh 0) run notType
+  obtain ⟨_, _, bytes, words, config, input, aux, nextConfig, _, _, _, oracleRun, compileRun,
+    _, _, nextEq, _, finalEq, _⟩ := doInstall_nonType_parts sourceValues source final result run notType
+  have emptyAux : aux = [] := by simpa [oracleRun] using ready.auxEmpty 0
+  have callback : compileIncFuelCallback fuel compiler config (input, aux) =
+      some (bytes, words, nextConfig) := by simpa [sourceCompiler] using compileRun
+  obtain ⟨actual, actualRun, _⟩ := compileIncFuelCallback_success fuel compiler config.1 config.2
+    (input, aux) bytes words nextConfig.1 nextConfig.2 (by simpa using callback)
+  have inputEq : input = expressions := by simpa [oracleRun] using exprEq.symm
+  have configEq : config.1 = g.1 := by simpa [oracleRun] using ready.known.symm
+  have sameRun : compileIncFuel? fuel config.1 (input, aux) = some (nextKnown, converted) := by
+    simpa [inputEq, configEq, emptyAux] using passRun
+  rw [sameRun] at actualRun
+  have nextKnownEq : nextConfig.1 = nextKnown := congrArg Prod.fst (Option.some.inj actualRun).symm
+  have newKnown : nextKnown = (final.compileOracle 0).1.1 := by
+    rw [finalEq]
+    simpa [nextKnownEq] using congrArg Prod.fst nextEq.symm
+  have laterFresh := doInstall_shiftedOracle_fresh fuel source sourceValues result final target.code run notType
+    (fun later _ => ready.fresh later) (fun later positive => ready.disjoint 0 later positive)
+  have newReady : IncrementalInstallReady (nextKnown, converted.2 ++ g.2) final targetFinal := by
+    refine ⟨newWell, included, newKnown, ?_, ?_, ?_, ?_⟩
+    · intro index
+      simpa [finalEq, holShiftSeq] using ready.auxEmpty (index + 1)
+    · intro index
+      simpa [finalEq, holShiftSeq] using ready.distinct (index + 1)
+    · intro earlier later order loc member
+      have disjoint := ready.disjoint (earlier + 1) (later + 1) (by omega) loc
+        (by simpa [finalEq, holShiftSeq] using member)
+      simpa [finalEq, holShiftSeq] using disjoint
+    · intro index loc member
+      rw [codeEq]
+      have convertedEq : converted = (compileIncFuelOracle fuel source.compileOracle 0).2 := by
+        obtain ⟨k, oraclePass, _⟩ := compileIncFuelOracle_entry fuel source.compileOracle 0
+        have same : compileIncFuel? fuel (source.compileOracle 0).1.1 (source.compileOracle 0).2 =
+            some (nextKnown, converted) := by
+          simpa [oracleRun, emptyAux, configEq, inputEq] using passRun
+        rw [same] at oraclePass
+        exact (Prod.mk.inj (Option.some.inj oraclePass)).2
+      rw [convertedEq]
+      exact laterFresh index loc member
+  refine ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
+    nonempty, extended, newReady, finalStates, finalCompiler, targetFinalCompiler, oracleEq, growth⟩
 
 end Flapjack.Compiler.Backend.ClosCall
