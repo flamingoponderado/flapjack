@@ -3,6 +3,58 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "do_app_ssgc",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcMemEl",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed with the original indexed memory read case: only the operation is specialized; the execution equation, safe-input and safe-state premises and full success and raised-result conclusions are retained. Here reads from safe blocks or safe reference arrays return safe values without changing state. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcMemRef",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed with the original reference allocation case: only the operation is specialized; the execution equation, safe-input and safe-state premises and full success and raised-result conclusions are retained. Here the new value array contains exactly the safe input arguments. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcMemRefArray",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed with the original repeated array allocation case: only the operation is specialized; the execution equation, safe-input and safe-state premises and full success and raised-result conclusions are retained. Here the new value array contains repetitions of the safe input value. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcMemUpdate",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed with the original value-array update case: only the operation is specialized; the execution equation, safe-input and safe-state premises and full success and raised-result conclusions are retained. Here the existing array and replacement value are safe, so updating the reference preserves safety. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
   "lean_name": "doAppSsgcFfi",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [

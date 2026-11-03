@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.MappedGlobals
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallPrimitives
 import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
+import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
 import Aesop
 
 /-! Runtime global changes made by closure primitives. -/
@@ -592,6 +593,153 @@ theorem doAppSsgcInstall {C F : Type} (args : List ClosSem.Value)
     (∀ v, res = .err (.raise v) → vsgcFree v) := by
   rcases h with ⟨rfl, _, _⟩
   simp [ClosSem.doApp]
+
+/-- Successful indexed reads return a safe value and leave the state unchanged.
+This helper has no separate HOL declaration. -/
+private theorem memoryElSafe {C F : Type} (args : List ClosSem.Value)
+    (s0 s : State C F) (value : ClosSem.Value)
+    (argsSafe : ∀ v ∈ args, vsgcFree v) (stateSafe : ssgcFree s0)
+    (run : applyMemory .el args s0 = some (value, s)) : vsgcFree value ∧ s = s0 := by
+  unfold applyMemory at run
+  repeat' split at run
+  all_goals simp_all [vsgcFree]
+  all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
+  all_goals try (solve | aesop (add safe apply [List.mem_of_getElem?]))
+  rcases run with ⟨found, lookup, rfl, rfl⟩
+  have arraySafe := stateSafe.2.1 _ _ (by assumption)
+  exact ⟨arraySafe found (List.mem_of_getElem? lookup), rfl⟩
+
+/-- Indexed memory reads satisfy the full source primitive-safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcMemEl {C F : Type} (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.memOp .el) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.memOp .el) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, argsSafe, stateSafe⟩
+  cases found : applyMemory .el args s0 with
+  | none => simp [ClosSem.doApp, found]
+  | some pair =>
+    rcases pair with ⟨value, next⟩
+    obtain ⟨valueSafe, rfl⟩ := memoryElSafe args s0 next value argsSafe stateSafe found
+    simp [ClosSem.doApp, found, valueSafe, stateSafe, mglobalsExtendRefl]
+
+/-- Replacing a reference with a safe value array preserves state safety.
+This helper has no separate HOL declaration. -/
+private theorem ssgcFreeUpdateArray {C F : Type} (s : State C F) (index : Nat)
+    (values : List ClosSem.Value) (safe : ssgcFree s)
+    (valuesSafe : ∀ v ∈ values, vsgcFree v) :
+    ssgcFree {s with refs := s.refs.updateEq (index, .valueArray values)} := by
+  rcases safe with ⟨code, arrays, thunks, globals, oracle⟩
+  refine ⟨code, ?_, ?_, globals, oracle⟩
+  · intro key values' found
+    by_cases same : key = index
+    · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] at found
+      subst values'
+      exact valuesSafe
+    · apply arrays key values'
+      simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using found
+  · intro key mode value found
+    by_cases same : key = index
+    · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] at found
+    · apply thunks key mode value
+      simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using found
+
+/-- Allocating a reference array from the argument list preserves safety. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcMemRef {C F : Type} (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.memOp .ref) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.memOp .ref) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, argsSafe, stateSafe⟩
+  have newSafe := ssgcFreeUpdateArray s0 (leastUnusedRef s0.refs) args stateSafe argsSafe
+  simp [ClosSem.doApp, applyMemory, vsgcFree, newSafe, mglobalsExtendRefl]
+
+/-- Allocating a repeated-value array preserves state safety. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcMemRefArray {C F : Type} (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.memOp .refArray) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.memOp .refArray) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, argsSafe, stateSafe⟩
+  cases args with
+  | nil => simp [ClosSem.doApp, applyMemory]
+  | cons first rest =>
+    cases rest with
+    | nil => simp [ClosSem.doApp, applyMemory]
+    | cons value rest =>
+      cases rest with
+      | cons extra tail => simp [ClosSem.doApp, applyMemory]
+      | nil =>
+        cases first with
+        | number count =>
+          by_cases negative : count < 0
+          · simp [ClosSem.doApp, applyMemory, negative]
+          · have valueSafe := argsSafe value (by simp)
+            have valuesSafe : ∀ v ∈ List.replicate count.toNat value, vsgcFree v := by
+              intro v member
+              have eq := List.eq_of_mem_replicate member
+              subst v
+              exact valueSafe
+            have newSafe := ssgcFreeUpdateArray s0 (leastUnusedRef s0.refs)
+              (List.replicate count.toNat value) stateSafe valuesSafe
+            simp [ClosSem.doApp, applyMemory, negative, vsgcFree, newSafe, mglobalsExtendRefl]
+        | _ => simp [ClosSem.doApp, applyMemory]
+
+/-- Successful value-array updates return a safe value and preserve state
+safety. This helper has no separate HOL declaration. -/
+private theorem memoryUpdateSafe {C F : Type} (args : List ClosSem.Value)
+    (s0 s : State C F) (value : ClosSem.Value)
+    (argsSafe : ∀ v ∈ args, vsgcFree v) (stateSafe : ssgcFree s0)
+    (run : applyMemory .update args s0 = some (value, s)) :
+    vsgcFree value ∧ ssgcFree s := by
+  unfold applyMemory at run
+  repeat' split at run
+  all_goals simp_all [vsgcFree]
+  have arraySafe := stateSafe.2.1 _ _ (by assumption)
+  rcases run with ⟨rfl, rfl⟩
+  refine ⟨vsgcFreeUnit, ssgcFreeUpdateArray _ _ _ stateSafe ?_⟩
+  intro item member
+  rcases List.mem_or_eq_of_mem_set member with old | new
+  · exact arraySafe item old
+  · subst item; exact argsSafe
+
+/-- Updating a value array preserves the complete primitive-safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcMemUpdate {C F : Type} (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.memOp .update) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.memOp .update) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, argsSafe, stateSafe⟩
+  cases found : applyMemory .update args s0 with
+  | none => simp [ClosSem.doApp, found]
+  | some pair =>
+    rcases pair with ⟨value, next⟩
+    have run : ClosSem.doApp (.memOp .update) args s0 = .val (value, next) := by
+      simp [ClosSem.doApp, found]
+    have ⟨valueSafe, nextSafe⟩ := memoryUpdateSafe args s0 next value argsSafe stateSafe found
+    have oracle := (ClosSem.doApp_codeOracle _ _ _ _ _ run).2
+    have frame := doAppMglobals _ _ _ _ _ run
+    simp [ClosSem.doApp, found, valueSafe, nextSafe, oracle, frame]
 
 end DoAppSafety
 
