@@ -1266,6 +1266,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "decide_inline_LetInline_IMP_Clos_fv_max",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InlineFreeVars.lean",
+  "lean_name": "decideInlineLetInlineFvMax",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared decide_inline_imp_clos_fv_max_typed in clos_known_syntax_probe.out and the source theorem. The location payload remains polymorphic, and the decision, existential closure approximation and original free-variable bound match. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "evaluate_mk_Ticks_rw",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TicksEvaluate.lean",
   "lean_name": "evaluateTicksRw",

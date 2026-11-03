@@ -134,7 +134,7 @@ theorem nonInlineApplicationSimulation {C F : Type} (trace : BackendCommon.Tra)
           rcases run with ⟨rfl, rfl⟩
           exact noType rfl
         obtain ⟨targetValues, targetFnResult, targetMiddle, targetNext, targetArgsRun, targetFnRun,
-          argsRel, fnRel, fnSound, nextSafe, fnSafe, valuesSafe, nextOracleSafe, nextCoSyntax,
+          argsRel, _, fnRel, fnSound, nextSafe, fnSafe, valuesSafe, nextOracleSafe, nextCoSyntax,
           nextUnique, nextDisjoint, nextMono, nextState, nextGlobals, nextStateOracle, nextOracle⟩ :=
           AppPrefix.applicationPrefixSimulation trace loc x (first :: rest) env1full env1 xenv1 env2 xenv2
             s0 middle next t0 values fnResult c aenv g0 g1 g2 argsEas fnExp fnApprox argsIH

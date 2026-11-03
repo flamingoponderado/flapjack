@@ -369,6 +369,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppPrefix
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppNonInline
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.TicksEvaluate
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineClosureRelation
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationHandle
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationIf
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreserveSafetyTotal

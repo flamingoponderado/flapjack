@@ -50,6 +50,7 @@ theorem applicationPrefixSimulation {C F : Type} (trace : BackendCommon.Tra)
       evaluate (argsEas.map Prod.fst) (env2 ++ xenv2) t0 = (.val targetValues, targetMiddle) ∧
       evaluate [fnExp] (env2 ++ xenv2) targetMiddle = (targetFnResult, targetNext) ∧
       List.Forall₂ (ValueRel c (nextG next)) values targetValues ∧
+      List.Forall₂ ValApproxVal (argsEas.map Prod.snd) values ∧
       resultRel (List.Forall₂ (ValueRel c (nextG next))) (ValueRel c (nextG next)) fnResult targetFnResult ∧
       (∀ vs, fnResult = .val vs → List.Forall₂ ValApproxVal [fnApprox] vs) ∧
       ssgcFree next ∧ rsgcFree fnResult ∧ (∀ v ∈ values, vsgcFree v) ∧
@@ -147,7 +148,7 @@ theorem applicationPrefixSimulation {C F : Type} (trace : BackendCommon.Tra)
     have finalMono := oracleGapproxSubsptEvaluate () [x] env1full middle fnResult next ⟨nextMono, fnRun⟩
     exact ⟨targetValues, targetFnResult, targetMiddle, targetNext, targetArgsRun, by simpa using targetFnRun,
       valueRelListSubspt c (nextG middle) values targetValues argsRel (nextG next) fnTree,
-      fnRel, fnApproxResult.2, fnSafety.1, fnSafety.2.1, valuesSafe, finalOracleSafe, finalCoSyntax,
+      argsApprox.2 values rfl, fnRel, fnApproxResult.2, fnSafety.1, fnSafety.2.1, valuesSafe, finalOracleSafe, finalCoSyntax,
       finalUnique, finalStateOracleDisjoint, finalMono, finalState, finalGlobals, finalOracle, finalDisjoint⟩
 
 /-- Once both preliminary evaluations succeed, the source application
