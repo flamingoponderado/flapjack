@@ -1,4 +1,5 @@
-`clos_op_lift_proof_probe.out` also records the typed lifting evaluation and let theorems,
+`clos_op_lift_proof_probe.out` also records typed lifting, pure-expression evaluation,
+conjunction evaluation, and let theorems,
 the typed closure-evaluation list
 sequencing and singleton/length theorems used by expression lifting, and typed simple-expression
 rules, their purity theorems, and the lifting, direct-equality, and equality-tree

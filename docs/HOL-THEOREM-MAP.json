@@ -1,6 +1,53 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "evaluate_EL",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/PureEvaluate.lean",
+  "lean_name": "evaluateEl",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_el_typed: successful state-preserving evaluation, the original index bound and EVERY pure premise imply the in-range HOL EL evaluations for both expression and value lists. HOL EL uses the existing HOL-shaped operation with explicit nonempty carriers. Independent compiler and FFI state carriers use canonical refs and code finite maps with the local roundtrip witness; the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "simpl_exp_Cons_EL",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/PureEvaluate.lean",
+  "lean_name": "simpleExpConsEl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared simple_cons_el_typed: the simple constructor and index bound imply simplicity of the HOL EL child. HOL EL uses the existing HOL-shaped operation with explicit nonempty carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "evaluate_ConjList_F",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/PureEvaluate.lean",
+  "lean_name": "evaluateConjListFalse",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_conj_false_typed: a false head evaluating without a state change yields a false conjunction with the same state. Independent compiler and FFI state carriers use canonical refs and code finite maps with the local roundtrip witness; the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "evaluate_ConjList_T",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/PureEvaluate.lean",
+  "lean_name": "evaluateConjListTrue",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_conj_true_typed: a true head and arbitrary tail result give that exact result for the whole conjunction. Independent compiler and FFI state carriers use canonical refs and code finite maps with the local roundtrip witness; the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
   "hol_name": "lift_exps_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftEvaluate.lean",
   "lean_name": "liftExpsThmCons",

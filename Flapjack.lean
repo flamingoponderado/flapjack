@@ -333,6 +333,7 @@ import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartFreeVars
 import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartAnnotations
 import Flapjack.Compiler.Backend.ClosOp.Proofs.DontLiftEvaluate
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftEvaluate
+import Flapjack.Compiler.Backend.ClosOp.Proofs.PureEvaluate
 import Flapjack.Compiler.Backend.WordBignum.CompileExp
 import Flapjack.Compiler.Backend.WordBignum.Helpers
 import Flapjack.Compiler.Backend.WordBignum.Mini
