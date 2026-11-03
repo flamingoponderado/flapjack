@@ -29,6 +29,16 @@ class NativeRenderingCoverage(unittest.TestCase):
                   dict(self.actual,**{key:self.actual[key].replace("state.procID","(BitVec.ofNat 8 0)")})]
         for actual in variants:
             with self.assertRaises(ValueError):m.check(actual,self.generated,self.lock,self.arm8)
+        # The ARM8 branch of check() must be gated too: a changed body and a
+        # missing declaration are both rejected.
+        arm8_key="Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean:Align"
+        self.assertIn(arm8_key,self.actual)
+        changed=dict(self.actual)
+        changed[arm8_key]=changed[arm8_key].replace("w.toNat / n","w.toNat / (n + 1)")
+        self.assertNotEqual(changed[arm8_key],self.actual[arm8_key])
+        with self.assertRaises(ValueError):m.check(changed,self.generated,self.lock,self.arm8)
+        missing={k:v for k,v in self.actual.items() if k!=arm8_key}
+        with self.assertRaises(ValueError):m.check(missing,self.generated,self.lock,self.arm8)
 
     def test_each_handwritten_side_and_review_note_pinned(self):
         for key,exception in self.lock["exceptions"].items():

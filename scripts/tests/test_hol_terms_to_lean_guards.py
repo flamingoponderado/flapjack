@@ -74,6 +74,20 @@ class InsertTest(unittest.TestCase):
         self.assertEqual(self.render(lam, Var('s', NUM), ['(fun x => x)', 's']),
                          "(fun x' => x' = (fun x => x) || s x')")
 
+    def test_uses_the_renderer_env_names(self):
+        # The operand renders as `u_x`, so the binder `x` captures nothing.
+        env = {('x', NUM): 'u_x'}
+        self.assertEqual(insert_predicate(Renderer({}, {}), env,
+                                          [Var('x', NUM), Var('s', NUM)], ['u_x', 's']),
+                         '(fun x => x = u_x || s x)')
+
+    def test_env_name_collision_renames(self):
+        # Another variable rendered as `x` must not be captured.
+        env = {('y', NUM): 'x'}
+        self.assertEqual(insert_predicate(Renderer({}, {}), env,
+                                          [Var('y', NUM), Var('s', NUM)], ['x', 's']),
+                         "(fun x' => x' = x || s x')")
+
     def test_bound_x_does_not_force_a_rename(self):
         # `(fun x => x) INSERT s` binds its own `x`; the predicate binder may
         # stay `x` because no free variable named `x` can be captured.

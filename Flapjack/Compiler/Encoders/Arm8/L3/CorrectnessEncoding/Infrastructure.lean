@@ -34,8 +34,9 @@ theorem bytesInMemoryHOL_get {width : Nat} [NeZero width]
           rw [← addOneOffset]
           simpa using hrec
 
-/-- `Aligned` at size four is the signed 20-bit alignment predicate used by
-`arm8_ok` (Flapjack infrastructure; HOL `arm8_ok` uses `aligned 2`). -/
+/-- `Aligned` at size four is plain 4-byte alignment (`pc.toNat % 4 = 0`),
+which is what `arm8_ok`'s `aligned 2` requires (Flapjack infrastructure; HOL
+`arm8_ok` uses `aligned 2`). -/
 theorem Aligned_four_iff (pc : BitVec 64) :
     Aligned (TN := 64) (pc, 4) = true ↔ pc.toNat % 4 = 0 := by
   simp only [Aligned, Align, beq_iff_eq]

@@ -110,7 +110,7 @@ def check(actual, generated, lock, arm8):
     overrides = set()
     for key, source in actual.items():
         if key.startswith(ARM8_DIR + "/"):
-            entry = arm8[key.split(":", 1)[1].strip("«»")]
+            entry = arm8.get(key.split(":", 1)[1].strip("«»"))
         else:
             entry = rendered_for(key, generated)
         nc = source.startswith("noncomputable ")

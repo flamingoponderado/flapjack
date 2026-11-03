@@ -425,6 +425,11 @@ class Renderer:
             return self.case(c, args, env)
         if key in SPECIAL:
             return SPECIAL[key](self, c, args, env)
+        if key == ('pred_set', 'INSERT'):
+            # The predicate lambda needs the renderer's own variable names, so
+            # it is handled here where `env` is in scope.
+            return self.eta(c, args, env, 2,
+                            lambda xs, raw: insert_predicate(self, env, raw, xs))
         if key in CONSTANTS:
             arity, fmt = CONSTANTS[key]
             return self.eta(c, args, env, arity,
@@ -570,15 +575,27 @@ def width_expr(t) -> int | str | None:
     return None
 
 
+def word_width_expr(t) -> int | str | None:
+    """The Lean width of a word type (`bool ** N`), or None.
+
+    Unlike `width_expr` this rejects a bare type variable or an index type: the
+    special forms below only apply to words.
+    """
+    if isinstance(t, Ty) and t.thy == 'fcp' and t.op == 'cart' \
+            and t.args[0] == Ty('min', 'bool', ()):
+        return width_expr(t.args[1])
+    return None
+
+
 def width_of_result(c: Const) -> int | str:
-    w = width_expr(fun_parts(c.ty)[1])
+    w = word_width_expr(fun_parts(c.ty)[1])
     if w is None:
         raise Unrenderable(f'{c.name} result width')
     return w
 
 
 def width_of_arg(c: Const, i: int) -> int | str:
-    w = width_expr(fun_parts(c.ty)[0][i])
+    w = word_width_expr(fun_parts(c.ty)[0][i])
     if w is None:
         raise Unrenderable(f'{c.name} argument width')
     return w
@@ -1035,7 +1052,6 @@ CONSTANTS = {
     ('list', 'REVERSE'): (1, lambda r, c, xs, raw: f'({xs[0]}.reverse)'),
     ('bool', 'IN'): (2, lambda r, c, xs, raw: f'({xs[1]} {xs[0]})'),
     ('pred_set', 'EMPTY'): (0, lambda r, c, xs, raw: '(fun _ => false)'),
-    ('pred_set', 'INSERT'): (2, lambda r, c, xs, raw: insert_predicate(r, {}, raw, xs)),
     ('words', 'word_ror'): (2, lambda r, c, xs, raw: f'(BitVec.rotateRight {xs[0]} {xs[1]})'),
     ('words', 'word_msb'): (1, lambda r, c, xs, raw: f'(BitVec.msb {xs[0]})'),
     ('words', 'word_hi'): (2, lambda r, c, xs, raw: f'(holWordHi {xs[0]} {xs[1]})'),
@@ -1246,7 +1262,6 @@ def main(argv):
         # spellings (ARM8 Encode.lean has its own closed-model `MemOp`).
         for name, info in parse_types(extra.read_text()).items():
             types.setdefault(name, info)
-    RENAMED_CTORS = renamed_ctors(types, MODEL_THY)
     defined = {}
     order = []
     for rec in data:
@@ -1254,6 +1269,14 @@ def main(argv):
         lean = ident(name)
         defined[(thy, name)] = lean
         order.append((thy, name, defname, parse_tm(term)))
+    # Only map a constructor name that actually occurs in the export; this keeps
+    # guessed `<Type>_<UPPER>` keys from matching an unrelated constant.
+    hol_consts = set()
+    for _, _, _, term in order:
+        for c in constants_of(term):
+            hol_consts.add((c.thy, c.name))
+    RENAMED_CTORS = {k: v for k, v in renamed_ctors(types, MODEL_THY).items()
+                     if k in hol_consts}
     roots = [arg.removeprefix('--roots=') for arg in argv[3:]
              if arg.startswith('--roots=')]
     if roots:

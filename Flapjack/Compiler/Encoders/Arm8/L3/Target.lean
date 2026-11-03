@@ -81,18 +81,20 @@ theorem arm8Proj_memory (d : BitVec 64 → Prop) (s : arm8_state)
   exact SetSep.fun2SetThm s.MEM d a b
 
 /-- Flapjack relation between the closed `Arm8State` and the L3 `arm8_state` on
-the fields the closed model does model: PC, the four flags, the 31 general
-registers (L3 register 31 is zero), and the byte memory.  The L3-only fields
-(`EL`, `SCTLR_EL1`, `TCR_EL1`, `exception`, `SP_EL*`, `branch_hint`) are not
-constrained here; `arm8Ok_of_closed` takes the ones `arm8_ok` reads as explicit
-hypotheses.  No HOL original. -/
+the fields the closed model does model: PC, the four flags, the general
+registers below 31, and the byte memory.  L3's `REG` is a stored map with no
+zero-register invariant -- only the `X` read function returns zero for index 31
+-- so the stored `REG 31` is left unconstrained.  The L3-only fields (`EL`,
+`SCTLR_EL1`, `TCR_EL1`, `exception`, `SP_EL*`, `branch_hint`) are not
+constrained here either; `arm8Ok_of_closed` takes the ones `arm8_ok` reads as
+explicit hypotheses.  No HOL original. -/
 def arm8StateRel (ms : Arm8State) (l3 : arm8_state) : Prop :=
   l3.PC = ms.pc ∧
   l3.PSTATE.N = ms.n ∧
   l3.PSTATE.Z = ms.z ∧
   l3.PSTATE.C = ms.c ∧
   l3.PSTATE.V = ms.v ∧
-  (∀ r : BitVec 5, l3.REG r = if r.toNat = 31 then 0 else ms.regs r.toNat) ∧
+  (∀ r : BitVec 5, r.toNat < 31 → l3.REG r = ms.regs r.toNat) ∧
   (∀ a : BitVec 64, l3.MEM a = ms.mem a)
 
 /-- The closed model's validity condition implies CakeML's L3 `arm8_ok` on the

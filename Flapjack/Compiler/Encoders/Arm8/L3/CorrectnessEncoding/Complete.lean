@@ -30,10 +30,10 @@ environment.  This is the obligation `mc_conf_ok` asks of a machine
 configuration, so it is what instantiates the Pancake-to-target theorem at the
 L3 ARMv8 model.
 
-This module is Flapjack infrastructure: the analogue of HOL's
-`arm8_encoder_correct`
-(`cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml`), proved by
-dispatching each `HolInst` constructor to its case theorem.
+This module is the port of HOL's `arm8_encoder_correct`
+(`cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml`):
+`arm8EncoderCorrectL3` carries that tag and is `reviewed_exact`, and the proof
+dispatches each `HolInst` constructor to its tagged case theorem.
 -/
 
 namespace Flapjack.Compiler.Encoders.Arm8.L3
