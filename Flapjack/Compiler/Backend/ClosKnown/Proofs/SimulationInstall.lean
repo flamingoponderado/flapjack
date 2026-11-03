@@ -2,6 +2,10 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationDecode
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateRelation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleMonotonic
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracle
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracleDisjoint
+import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownSubspt
 
 /-! Installation prerequisites for the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Install
@@ -172,5 +176,166 @@ theorem relatedInstallNonType {C F : Type} (c : Config)
   refine ⟨_, t1, program, eas, tree, next, targetRun, known, ?_, nextEq, relatedFinal⟩
   rw [clockEq] at finalResult
   by_cases zero : t.clock = 0 <;> simp [zero] at finalResult ⊢ <;> simp [finalResult]
+
+/-- Successful installation supplies the syntax, safety, free-variable and
+oracle conditions needed to evaluate the installed program. This is Flapjack
+proof infrastructure for the installation induction hypothesis. -/
+theorem installedProgramPreconditions {C F : Type} (c : Config) (g : Spt ValApprox)
+    (s : State (Spt ValApprox × C) F) (t : State C F) (values : List ClosSem.Value)
+    (program : List ClosLang.Exp) (s1 : State (Spt ValApprox × C) F)
+    (state : StateRel c g s t) (safe : StateGlobalSafety.ssgcFree s)
+    (oracleSyntax : OracleMonotonic.coEveryFnVarsNone s.compileOracle)
+    (oracleSafe : StateRelation.Oracle.oracleStateSgcFree s.compileOracle)
+    (disjoint : StateOracleDisjoint.stateOracleMglobalsDisjoint s)
+    (mono : OracleMonotonic.oracleGapproxSubspt s.compileOracle)
+    (run : doInstall values s = (.val program, s1)) :
+    StateGlobalSafety.ssgcFree s1 ∧ (∀ e ∈ program, esgcFree e) ∧
+      program ≠ [] ∧ everyFnVarsNone program ∧ fvMax 0 program ∧
+      UniqueGlobalsPort.mglobalsDisjoint s1.globals program ∧
+      StateOracleDisjoint.stateOracleMglobalsDisjoint s1 ∧
+      OracleMonotonic.coEveryFnVarsNone s1.compileOracle ∧
+      StateRelation.Oracle.oracleStateSgcFree s1.compileOracle ∧
+      OracleMonotonic.oracleGapproxSubspt s1.compileOracle := by
+  have installed := doInstallSsgc values s program s1 ⟨run, safe⟩
+  have programEntry : (s.compileOracle 0).2.1 = program := by
+    have entry := installed.2.2.2.2.1
+    simpa [firstNExps] using entry
+  have fnSyntax : everyFnVarsNone program := by
+    rw [← programEntry]
+    exact (oracleSyntax 0 _ _ rfl).1
+  have free : fvMax 0 program := by
+    rw [← programEntry]
+    exact state.2.1 0
+  have sameGlobals : s1.globals = s.globals := by
+    obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, final, _⟩ :=
+      doInstall_nonType_parts values s s1 (.val program) run (by simp)
+    rw [final]
+  have programDisjoint : UniqueGlobalsPort.mglobalsDisjoint s1.globals program := by
+    rw [sameGlobals, ← programEntry]
+    exact disjoint 0
+  have oracleDisjoint : StateOracleDisjoint.stateOracleMglobalsDisjoint s1 := by
+    intro n
+    rw [sameGlobals, installed.2.2.2.1]
+    exact disjoint (n + 1)
+  refine ⟨installed.1, installed.2.1, installed.2.2.1, fnSyntax, free,
+    programDisjoint, oracleDisjoint, ?_, ?_, ?_⟩
+  · rw [installed.2.2.2.1]
+    exact OracleMonotonic.coEveryFnVarsNoneShift s.compileOracle oracleSyntax 1
+  · rw [installed.2.2.2.1]
+    exact StateRelation.Oracle.oracleStateSgcFreeShift s.compileOracle oracleSafe 1
+  · rw [installed.2.2.2.1]
+    exact OracleMonotonic.oracleGapproxSubsptShift s.compileOracle mono 1
+
+/-- If all oracle writes are unique, the first oracle program remains unique
+against the shifted oracle after installation. This is Flapjack proof
+infrastructure for the installed-program induction hypothesis. -/
+theorem firstOracleProgramUnique {A B : Type}
+    (co : Nat → A × List ClosLang.Exp × B)
+    (unique : UniqueGlobalsPort.uniqueSetGlobals [] co) :
+    UniqueGlobalsPort.uniqueSetGlobals (co 0).2.1 (Flapjack.holShiftSeq 1 co) := by
+  intro n key
+  have bound := unique (n + 1) key
+  rw [firstNExpsShiftSeq co n 1] at bound
+  simpa [firstNExps, elistGlobals_append] using bound
+
+/-- A successfully installed program has unique writes relative to the
+remaining oracle whenever the original oracle had unique writes. This is
+Flapjack proof infrastructure for the installation induction hypothesis. -/
+theorem installedProgramUnique {C F : Type} (s : State C F) (values : List ClosSem.Value)
+    (program : List ClosLang.Exp) (s1 : State C F)
+    (safe : StateGlobalSafety.ssgcFree s)
+    (unique : UniqueGlobalsPort.uniqueSetGlobals [] s.compileOracle)
+    (run : doInstall values s = (.val program, s1)) :
+    UniqueGlobalsPort.uniqueSetGlobals program s1.compileOracle := by
+  have installed := doInstallSsgc values s program s1 ⟨run, safe⟩
+  have programEntry : (s.compileOracle 0).2.1 = program := by
+    have entry := installed.2.2.2.2.1
+    simpa [firstNExps] using entry
+  rw [← programEntry, installed.2.2.2.1]
+  exact firstOracleProgramUnique s.compileOracle unique
+
+/-- The installed state's global values satisfy the approximation produced by
+optimizing the installed program. This is Flapjack proof infrastructure for
+the installation induction hypothesis. -/
+theorem installedProgramGlobalsApprox {C F : Type} (c : Config) (tree next : Spt ValApprox)
+    (s : State C F) (values : List ClosSem.Value) (program : List ClosLang.Exp)
+    (s1 : State C F) (eas : List (ClosLang.Exp × ValApprox))
+    (safe : StateGlobalSafety.ssgcFree s)
+    (globals : stateGlobalsApprox s tree)
+    (disjoint : StateOracleDisjoint.stateOracleMglobalsDisjoint s)
+    (known : knownListTotal c program [] tree = (eas, next))
+    (run : doInstall values s = (.val program, s1)) : stateGlobalsApprox s1 next := by
+  have installed := doInstallSsgc values s program s1 ⟨run, safe⟩
+  have programEntry : (s.compileOracle 0).2.1 = program := by
+    have entry := installed.2.2.2.2.1
+    simpa [firstNExps] using entry
+  have programDisjoint : UniqueGlobalsPort.mglobalsDisjoint s.globals program := by
+    rw [← programEntry]
+    exact disjoint 0
+  have after := ApproxEvaluate.stateGlobalsApproxKnownDisjoint c program [] tree eas next s
+    ⟨known, programDisjoint, globals⟩
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, final, _⟩ :=
+    doInstall_nonType_parts values s s1 (.val program) run (by simp)
+  simpa [final, stateGlobalsApprox] using after
+
+/-- Processing the installed program preserves approximation disjointness
+against the shifted oracle. This is Flapjack proof infrastructure for the
+installation induction hypothesis. -/
+theorem installedOracleDisjoint {C F : Type} (c : Config) (tree next : Spt ValApprox)
+    (s : State C F) (values : List ClosSem.Value) (program : List ClosLang.Exp)
+    (s1 : State C F) (eas : List (ClosLang.Exp × ValApprox))
+    (safe : StateGlobalSafety.ssgcFree s)
+    (unique : UniqueGlobalsPort.uniqueSetGlobals [] s.compileOracle)
+    (oracle : OracleGlobals.oracleGapproxDisjoint tree s.compileOracle)
+    (known : knownListTotal c program [] tree = (eas, next))
+    (run : doInstall values s = (.val program, s1)) :
+    OracleGlobals.oracleGapproxDisjoint next s1.compileOracle := by
+  have installed := doInstallSsgc values s program s1 ⟨run, safe⟩
+  have programEntry : (s.compileOracle 0).2.1 = program := by
+    have entry := installed.2.2.2.2.1
+    simpa [firstNExps] using entry
+  rw [installed.2.2.2.1]
+  apply OracleGlobals.oracleGapproxDisjointInstall c s.compileOracle tree eas next
+  exact ⟨by simpa [programEntry] using known, unique, oracle⟩
+
+/-- Successful installation preserves the stateful compiler-oracle
+invariant. This is Flapjack proof infrastructure for the installation
+induction hypothesis. -/
+theorem installedStateOracle {C F : Type} (c : Config)
+    (s : State (Spt ValApprox × C) F) (values : List ClosSem.Value)
+    (program : List ClosLang.Exp) (s1 : State (Spt ValApprox × C) F)
+    (safe : StateGlobalSafety.ssgcFree s)
+    (oracle : isStateOracle (compileInc c) s.compileOracle)
+    (run : doInstall values s = (.val program, s1)) :
+    isStateOracle (compileInc c) s1.compileOracle := by
+  have installed := doInstallSsgc values s program s1 ⟨run, safe⟩
+  rw [installed.2.2.2.1]
+  intro n
+  simpa [Flapjack.holShiftSeq, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using oracle (n + 1)
+
+/-- Optimizing the first oracle program retains its incoming approximation
+tree when oracle writes are unique and disjoint from that tree. This is
+Flapjack proof infrastructure for the installation induction hypothesis. -/
+theorem firstOracleKnownSubspt {A B : Type} (c : Config)
+    (co : Nat → A × List ClosLang.Exp × B) (tree next : Spt ValApprox)
+    (eas : List (ClosLang.Exp × ValApprox))
+    (known : knownListTotal c (co 0).2.1 [] tree = (eas, next))
+    (safe : ∀ e ∈ (co 0).2.1, esgcFree e) (treeSafe : globalsApproxSgcFree tree)
+    (unique : UniqueGlobalsPort.uniqueSetGlobals [] co)
+    (oracle : OracleGlobals.oracleGapproxDisjoint tree co) : sptSubspt tree next := by
+  have writes : ∀ i, elistGlobals (co 0).2.1 i ≤ 1 := by
+    intro i
+    have bound := unique 1 i
+    simpa [UniqueGlobalsPort.uniqueSetGlobals, firstNExps] using bound
+  have distinct : ∀ i, KnownSubspt.domainBag tree i + elistGlobals (co 0).2.1 i ≤ 1 := by
+    intro i
+    by_cases member : sptMem i tree
+    · have zero : elistGlobals (co 0).2.1 i = 0 := by
+        by_contra nonzero
+        exact (Set.disjoint_left.mp (oracle 0)) member nonzero
+      simp [KnownSubspt.domainBag, member, zero]
+    · simpa [KnownSubspt.domainBag, member] using writes i
+  exact (KnownSubspt.knownSubspt c (co 0).2.1 [] tree eas next
+    ⟨known, safe, by simp, treeSafe, distinct⟩).2
 
 end Flapjack.Compiler.Backend.ClosKnown.Simulation.Install
