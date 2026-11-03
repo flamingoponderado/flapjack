@@ -392,6 +392,11 @@ are true and all 120 negative guards are false. This is regression evidence,
 not a replay of the complete original proof or cross-language equivalence.
 Recursive/Call register-bound assembly remains separate unfinished work.
 
+On 2026-11-03, 70 fresh generated structured programs with varied backend
+options matched `/var/tmp/flapjack-pinned-cake` in complete stdout, stderr, and
+exit status (`--structured-options --seed 930218 --count 70 --timeout 60`).
+This finite comparison does not establish parity for arbitrary programs.
+
 On 2026-11-02, additional fresh-seed comparisons against
 `/var/tmp/flapjack-pinned-cake` matched 200 structured source programs and 40
 nested-expression source programs at complete output, as well as 200 Unicode

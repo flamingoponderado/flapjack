@@ -7,7 +7,7 @@ open ClosProps
 
 /-- Outside the source operation's write bag, primitive approximation
 leaves every tree lookup unchanged. This is proof infrastructure. -/
-private theorem knownOpLookupUnchanged (op : ClosLang.Op) (args : List ValApprox)
+theorem knownOpLookupUnchanged (op : ClosLang.Op) (args : List ValApprox)
     (g0 : Spt ValApprox) (a : ValApprox) (g : Spt ValApprox) (key : Nat)
     (known : knownOpHOL op args g0 = (a, g)) (outside : opGlobalBag op key = 0) :
     sptLookup key g = sptLookup key g0 := by
