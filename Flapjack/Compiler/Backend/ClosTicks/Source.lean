@@ -33,4 +33,9 @@ def removeFuns : List (Nat × Exp) → List (Nat × Exp)
   | (arity, body) :: rest => (arity, removeSing body) :: removeFuns rest
 end
 
+/-- Incremental tick removal discards the auxiliary component. -/
+@[hol "cakeml/compiler/backend/clos_ticksScript.sml" "compile_inc_def"]
+def compileInc {α β : Type} (program : List Exp × α) : List Exp × List β :=
+  (removeList program.1, [])
+
 end Flapjack.Compiler.Backend.ClosTicks

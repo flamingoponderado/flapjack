@@ -349,8 +349,8 @@ run_probe clos_fvs_correctness_probeScript.sml clos_fvs_correctness_probe.out \
   "$cake_dir/compiler/backend/proofs/clos_fvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_ticks_source_probeScript.sml clos_ticks_source_probe.out \
-  remove_sing_typed remove_sing_eq_typed compile_inc_typed \
-  "$cake_dir/compiler/backend/clos_ticksScript.sml" "$cake_dir/compiler/backend"
+  remove_sing_typed remove_sing_eq_typed compile_inc_typed code_rel_typed function_rel_typed value_rel_typed ref_rel_typed state_rel_typed code_rel_length_typed state_rel_max_app_typed state_rel_clock_typed state_rel_dec_clock_typed \
+  "$cake_dir/compiler/backend/proofs/clos_ticksProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe db_vars_definitions_probeScript.sml db_vars_definitions_probe.out \
   mk_union_typed list_union_typed db_to_set_acc_typed db_to_set_typed vars_to_list_typed vars_from_list_typed vars_flatten_typed has_var_typed \

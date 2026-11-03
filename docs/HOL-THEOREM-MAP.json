@@ -1916,6 +1916,90 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_ticksScript.sml",
+    "hol_name": "compile_inc_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Source.lean",
+    "lean_name": "compileInc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_inc_typed and remove_sing_eq_typed in clos_ticks_source_probe.out: the input auxiliary carrier and output auxiliary element type are independent, output auxiliary code is empty, and the source list pass agrees with removeList. The production list traversal agrees with removeList by removeBounded_list_eq_source. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "code_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
+    "lean_name": "CodeRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_rel_typed and remove_sing_eq_typed in clos_ticks_source_probe.out: target equals the original tick-removal list pass, represented by its source-proven equivalent removeList. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "f_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
+    "lean_name": "FunctionRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared function_rel_typed: the first pair component remains polymorphic, the components must be equal, and singleton bodies satisfy code_rel. The recursive-closure rule specializes this carrier to natural-number arities. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "v_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
+    "lean_name": "ValueRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared value_rel_typed: all seven rules preserve the original payloads, fixed word widths, independent related argument and environment lists, closure arity and code, and recursive-function relation. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "ref_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
+    "lean_name": "RefRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all three ref_rel_typed rules: byte arrays are unchanged, value arrays are list-related, and thunks preserve their mode and relate their values. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
+    "lean_name": "StateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared state_rel_typed and the source FMAP_REL definition: independent compiler and FFI carriers, empty auxiliary code and code maps, maximum arity and clocks, FFI, related globals and references, and compiler/oracle adapters match. Pointwise option relation gives the original equal-domain lookup relation. The canonical refs and code carriers have a local broad-carrier roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "code_rel_IMP_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
+    "lean_name": "code_rel_IMP_LENGTH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_rel_length_typed: related source and target code lists have equal length, with no additional premise. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "state_rel_IMP_max_app_EQ",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
+    "lean_name": "state_rel_IMP_max_app_EQ",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared state_rel_max_app_typed: related states have equal maximum application arity in the original direction, with independent compiler and FFI carriers. The underlying relation uses the reviewed canonical finite-map fields. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "state_rel_clock",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
+    "lean_name": "state_rel_clock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared state_rel_clock_typed: the exact equivalence relates replacement of both clocks by k to replacing the target clock by the source clock. The underlying relation uses the reviewed canonical finite-map fields. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "state_rel_dec_clock",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
+    "lean_name": "state_rel_dec_clock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the source local theorem and state_rel_dec_clock_typed HOL replay: one tick is decremented on each related state without an extra premise, with independent compiler and FFI carriers. The underlying relation uses the reviewed canonical finite-map fields. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_ticksScript.sml",
     "hol_name": "remove_ticks_sing_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Source.lean",
     "lean_name": "removeSing",
