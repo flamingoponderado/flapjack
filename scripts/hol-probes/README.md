@@ -131,6 +131,11 @@ singleton/list equations, including arbitrary installed code.
 `db_vars_definitions_probe.out` captures the typed De Bruijn variable-set
 operations used by closure annotation, including sparse-tree traversal order.
 
+`clos_fvs_correctness_probe.out` captures the source traversal, optimized
+singleton/list equations, length and compiler definitions, value and state
+relations, evaluator simulation and whole-program correctness statement.
+These captures support review; the evaluator correctness proof remains open.
+
 `clos_interp_review_probe.out` captures the typed installation traversal,
 interpreter expressions, optimizer, initializer, attachment and incremental
 flat-to-closure program composition. `clos_interp_semantics_probe.out` captures

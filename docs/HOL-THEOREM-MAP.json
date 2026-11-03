@@ -1915,6 +1915,38 @@
     "reviewer": "Compared semantics_known_typed in clos_known_syntax_probe.out against all source hypotheses and the whole-program observational equality: the independent compiler and FFI carriers, oracle configuration, empty auxiliary lists, free-variable and syntax conditions, approximation and state invariants, global safety, initial approximation and exact optimizer result are retained. The reviewed polymorphic holEmpty producer represents each original FEMPTY occurrence and has its checked unconditional lookup witness in EmptyExact. The full optimizer simulation supplies related evaluations at all clocks and the source non-failure premise excludes type errors; the theorem assumes no target run or desired observation. Both evaluators inherit the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
+    "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml",
+    "hol_name": "remove_fvs_sing_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean",
+    "lean_name": "removeSing",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed remove_sing_typed expression clauses and the reviewed closure-expression carrier. Out-of-scope variables become MemOp El with empty arguments, each binder uses the original offset, and option-valued capture lists, recursive function arities and traversal order are preserved. removeFuel_eq_source and removeBounded_eq_source kernel-check agreement with every successful executed traversal and its structural retry. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml",
+    "hol_name": "remove_fvs_sing_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean",
+    "lean_name": "removeList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed empty and cons clauses of remove_sing_typed: each source expression is processed at the same bound in order. HOL remove_fvs_sing_eq identifies this list traversal with the original remove_fvs definition. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml",
+    "hol_name": "remove_fvs_sing_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean",
+    "lean_name": "removeFuns",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed empty and cons recursive-function clauses: original arities, order and arity-plus-group-plus-captured binder bounds are preserved. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml",
+    "hol_name": "LENGTH_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean",
+    "lean_name": "removeList_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_length_typed and remove_sing_eq_typed: for every natural bound and expression list, the optimized source-equivalent list traversal preserves length. No extra hypothesis or changed carrier is present. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
     "hol_name": "semantics_annotate",
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/InstalledSemantics.lean",
