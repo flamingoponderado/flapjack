@@ -1,3 +1,5 @@
+`clos_ticks_source_probe.out` captures the typed tick-removal traversal, its equivalence to the original list pass, and the polymorphic incremental compiler. These captures support source review, not cross-language equivalence.
+
 `clos_known_syntax_probe.out` captures the optimizer safety theorem, its consequences, the source induction rule, and tick-write preservation. These typed captures support source review, not cross-language equivalence.
 
 `clos_number_correctness_probe.out` captures the typed numbering traversal,
