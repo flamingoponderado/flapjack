@@ -1,5 +1,41 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml", "hol_name": "val_approx_every_Fn_vs_NONE_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxSyntax.lean", "lean_name": "valApproxVarsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared val_approx_vars_none_typed: tuple entries are checked recursively, inline closure bodies satisfy every_Fn_vs_NONE, and every other approximation constructor is true. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml", "hol_name": "globals_approx_every_Fn_vs_NONE_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxSyntax.lean", "lean_name": "globalsApproxVarsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared globals_approx_vars_none_typed: every successful lookup in the sparse approximation tree has the source annotation invariant. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml", "hol_name": "val_approx_every_Fn_vs_NONE_merge",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxSyntax.lean", "lean_name": "valApproxVarsNoneMerge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared merge_vars_none_typed: both input approximation invariants imply the invariant of the source merge. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml", "hol_name": "known_op_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxSyntax.lean", "lean_name": "knownOpVarsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_op_vars_none_typed: the source primitive approximation equation, safe input approximations and safe initial global tree imply both result and final tree invariants. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml", "hol_name": "decide_inline_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxSyntax.lean", "lean_name": "decideInlineVarsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared decide_inline_vars_none_typed: an invariant approximation and a let-inline decision imply the extracted body has no capture annotations. The optional location's element type remains polymorphic. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml", "hol_name": "clos_gen_no_inline_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxSyntax.lean", "lean_name": "closGenNoInlineVarsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_gen_vars_none_typed: the generated non-inline approximations all satisfy the source invariant for the fixed natural-number and closure-expression pair list and both natural indices. Source review does not establish cross-language equivalence."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
   "hol_name": "remove_ticks_every_Fn_vs_NONE",
   "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Syntax.lean",
