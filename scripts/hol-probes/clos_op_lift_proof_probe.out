@@ -24,3 +24,7 @@ lift_red_rel_typed=∀(xs :closLang$exp list) (n :num) (binds :closLang$exp list
 eq_direct_red_rel_typed=eq_direct (x :closLang$exp) (y :closLang$exp) = SOME (z :closLang$exp) ⇒ ∃(ys :closLang$exp list). red_rel [x; y] ys ∧ red_rel [z] ys
 red_rel_refl_typed=∀(xs :closLang$exp list). red_rel xs xs
 smart_red_rel_typed=∀(t :tra) (op :closLang$op) (xs :closLang$exp list). ∃(ys :closLang$exp list). red_rel [Op t op xs] ys ∧ red_rel [SmartOp t op xs] ys
+red_rel_pure_typed=∀(xs :closLang$exp list) (ys :closLang$exp list). red_rel xs ys ⇒ (EVERY pure xs ⇔ EVERY pure ys)
+red_rel_globals_typed=∀(xs :closLang$exp list) (ys :closLang$exp list). red_rel xs ys ⇒ elist_globals xs = elist_globals ys
+red_rel_esgc_typed=∀(xs :closLang$exp list) (ys :closLang$exp list). red_rel xs ys ⇒ (EVERY esgc_free xs ⇔ EVERY esgc_free ys)
+smart_simp_typed=(pure (SmartOp (t :tra) (op :closLang$op) (xs :closLang$exp list)) ⇔ pure (Op t op xs)) ∧ set_globals (SmartOp t op xs) = set_globals (Op t op xs) ∧ (esgc_free (SmartOp t op xs) ⇔ esgc_free (Op t op xs))

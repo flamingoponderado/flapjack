@@ -32,3 +32,7 @@ val _ = show "lift_red_rel_typed" clos_opProofTheory.lift_exps_red_rel;
 val _ = show "eq_direct_red_rel_typed" clos_opProofTheory.eq_direct_red_rel;
 val _ = show "red_rel_refl_typed" clos_opProofTheory.red_rel_refl;
 val _ = show "smart_red_rel_typed" clos_opProofTheory.red_rel_exists;
+val _ = show "red_rel_pure_typed" clos_opProofTheory.red_rel_pure;
+val _ = show "red_rel_globals_typed" clos_opProofTheory.red_rel_elist_globals;
+val _ = show "red_rel_esgc_typed" clos_opProofTheory.red_rel_esgc_free;
+val _ = show "smart_simp_typed" clos_opProofTheory.SmartOp_simp;

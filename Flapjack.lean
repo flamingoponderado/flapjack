@@ -326,6 +326,7 @@ import Flapjack.Compiler.Backend.ClosOp.Proofs.Reduction
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftReduction
 import Flapjack.Compiler.Backend.ClosOp.Proofs.EqDirectReduction
 import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartReduction
+import Flapjack.Compiler.Backend.ClosOp.Proofs.ReductionInvariants
 import Flapjack.Compiler.Backend.WordBignum.CompileExp
 import Flapjack.Compiler.Backend.WordBignum.Helpers
 import Flapjack.Compiler.Backend.WordBignum.Mini

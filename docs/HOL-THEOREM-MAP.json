@@ -1,6 +1,39 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "red_rel_pure",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/ReductionInvariants.lean",
+    "lean_name": "redPure",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_pure_typed: the same source reduction premise implies the iff of EVERY pure for input and residual; Lean expresses EVERY via membership and pure booleans equal to true."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "red_rel_elist_globals",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/ReductionInvariants.lean",
+    "lean_name": "redGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_globals_typed: the source relation implies equality of complete global-write bags. The imported reviewed source globals use the original num-to-num multiplicity carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "red_rel_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/ReductionInvariants.lean",
+    "lean_name": "redEsgc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared red_rel_esgc_typed: the source reduction premise implies the iff of EVERY closure-safety predicate for the same two lists, expressed by membership in Lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "SmartOp_simp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/ReductionInvariants.lean",
+    "lean_name": "smartSimp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_simp_typed: all three source conjuncts preserve the purity iff, exact global-write bag equality, and closure-safety iff for the executed smart operation and original expression; no additional hypotheses are used."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "red_rel_exists",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartReduction.lean",
     "lean_name": "smartRed",
