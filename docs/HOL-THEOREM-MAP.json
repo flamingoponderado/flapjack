@@ -1916,6 +1916,34 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "dest_closure_SOME_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Apply.lean",
+    "lean_name": "destClosure_some_shape",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_closure_shape_typed: successful closure inspection implies the inspected value is an ordinary or recursive closure, preserving all quantified payloads and without extra premises. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Apply.lean",
+    "lean_name": "evaluate_remove_ticks_app_nil",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the empty-argument case of the second evaluate_remove_ticks_typed conjunct: target application, related functions and argument lists, related states, existential extra source clock and source result/state, and all conclusions are retained without extra premises. State refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Apply.lean",
+    "lean_name": "evaluate_remove_ticks_app_cons",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the nonempty-argument case of the second evaluate_remove_ticks_typed conjunct and evaluate_ind_typed in clos_known_syntax_probe.out. Both original target closure-body and recursive-application induction hypotheses, target run, related functions, arguments and states, and the existential extra source clock, result and state with all conclusions are retained without extra premises. The proof covers rejection, partial application, timeouts, full application and over-application. State refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "remove_ticks_App_IMP_mk_Ticks",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateApp.lean",
     "lean_name": "remove_ticks_App_IMP_mk_Ticks",

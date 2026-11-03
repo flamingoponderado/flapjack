@@ -31,6 +31,7 @@ val _ = show "remove_letrec_ticks_typed" clos_ticksProofTheory.remove_ticks_Letr
 val _ = show "remove_call_ticks_typed" clos_ticksProofTheory.remove_ticks_Call_IMP_mk_Ticks;
 val _ = show "remove_tick_typed" clos_ticksProofTheory.remove_ticks_Tick;
 val _ = show "remove_app_ticks_typed" clos_ticksProofTheory.remove_ticks_App_IMP_mk_Ticks;
+val _ = show "dest_closure_shape_typed" clos_ticksProofTheory.dest_closure_SOME_IMP;
 val state_rel_dec_clock_replay = Q.prove (
   `clos_ticksProof$state_rel (s1 :('c,'ffi) closSem$state) s2 ==>
    clos_ticksProof$state_rel (closSem$dec_clock 1 s1) (closSem$dec_clock 1 s2)`,
