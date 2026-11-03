@@ -1,5 +1,6 @@
 import Flapjack.HolRef
 import Flapjack.RiscV.L3.Support
+import Flapjack.Misc.Words.Log2
 import Flapjack.HolArb
 import Mathlib.Data.BitVec
 import Mathlib.Data.List.Basic
@@ -13,8 +14,11 @@ most-significant bit first) and `fcp` (`bool ** 'N`), and uses the HOL list,
 set, word and integer libraries.  These helpers implement the corresponding
 HOL equations; they are untagged infrastructure because they are total Lean
 renderings of total HOL functions whose out-of-range cases (notably `HD []`
-and `MOD 0`) are unspecified in HOL.  Every caller keeps its original bounds;
-helper availability does not certify an unreviewed model equation.
+and `MOD 0`) are unspecified in HOL.  `integer$Num` is not one of those: HOL
+specifies it for negative arguments too (`Num_neg`, `Num (-a) = Num a`), and
+`Int.natAbs` implements that equation exactly.  Every caller keeps its
+original bounds; helper availability does not certify an unreviewed model
+equation.
 
 The `fcp` carrier `bool ** 'N` is rendered as `BitVec N` by
 `scripts/hol_terms_to_lean.py`; the conversions below are the only bridge
@@ -89,10 +93,6 @@ def holBxor (v1 v2 : List Bool) : List Bool :=
 /-- `bitstring$replicate_def`: `FLAT (GENLIST (K v) n)`. -/
 def holReplicate (v : List Bool) (n : Nat) : List Bool :=
   (List.replicate n v).flatten
-
-/-- `words$word_log2_def`: `n2w (LOG2 (w2n w))`. -/
-def holWordLog2 {width : Nat} (w : BitVec width) : BitVec width :=
-  BitVec.ofNat width (Nat.log2 w.toNat)
 
 /-- `words$word_hi_def`: unsigned greater-than (`c ∧ ¬z`). -/
 def holWordHi {width : Nat} (a b : BitVec width) : Bool :=

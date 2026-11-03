@@ -463,6 +463,7 @@ import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPreservation
 import Flapjack.Compiler.Backend.LabProps.LabelExtractionValidity
 import Flapjack.Misc.Words.Formatting
 import Flapjack.Misc.Words.Replicate
+import Flapjack.Misc.Words.Log2
 import Flapjack.Compiler.Backend.LabToTarget.ZeroLabelExistence
 import Flapjack.Misc.StateTransformer
 import Flapjack.Compiler.Backend.LabToTarget.LabelLookupEvenness

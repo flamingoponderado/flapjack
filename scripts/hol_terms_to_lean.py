@@ -411,7 +411,7 @@ class Renderer:
                     if v not in inst:
                         continue
                     if v in widths:
-                        we = width_expr(inst[v])
+                        we = dimension_expr(inst[v])
                         if we is None:
                             raise Unrenderable(f'{c.name} width instantiation')
                         explicit.append(f' ({tyvar_name(v)} := {we})')
@@ -572,6 +572,21 @@ def width_expr(t) -> int | str | None:
         inner = t.args[1]
         if isinstance(inner, TyVar):
             return tyvar_name(inner.name)
+    return None
+
+
+def dimension_expr(t) -> int | str | None:
+    """A Lean dimension: an int numeral from an fcp index type, or a Nat type variable.
+
+    Unlike `width_expr` this rejects a word type: the dimension of `bool ** N`
+    is `2^N`, not the word length `N`, so instantiating a width variable with a
+    word type fails loudly instead of rendering the length as the dimension.
+    """
+    if isinstance(t, TyVar):
+        return tyvar_name(t.name)
+    if isinstance(t, Ty) and ((t.thy == 'fcp' and t.op in ('bit0', 'bit1'))
+                              or (t.thy == 'one' and t.op == 'one')):
+        return fcp_size(t)
     return None
 
 

@@ -9,7 +9,8 @@ import Flapjack.Misc.Option
 # L3 ARMv8 target: projection, validity gate, and the closed-model link
 
 Counterparts of CakeML's `arm8_proj` and `arm8_ok`
-(`cakeml/compiler/encoders/arm8/arm8_targetScript.sml`, lines 343-353), stated
+(`cakeml/compiler/encoders/arm8/arm8_targetScript.sml`: `arm8_ok_def` at line
+20, `arm8_proj_def` at line 343), stated
 over the L3 `arm8_state` carrier of `Flapjack/Compiler/Encoders/Arm8/L3/Types.lean`
 rather than the closed `Arm8State`.  `arm8_next = THE o NextStateARM8` is
 stated here over the L3 carrier, using the rendered `NextStateARM8` closure of

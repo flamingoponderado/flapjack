@@ -10,8 +10,8 @@ Counterpart of `arm8_config` in
 `arm8Config` (`Flapjack/Compiler/Encoders/Arm8/Configuration.lean`), this record
 uses the exact L3 carriers: `encode := arm8Enc` over `HolAsm 64`, and
 `valid_imm := arm8ValidImmediate` over the rendered L3 `EncodeBitMask`.  It is
-the configuration that the untagged `L3/Target/State.lean` target record needs
-for an exact `arm8_target_def` port.
+the configuration that `arm8TargetL3`, the tagged `arm8_target_def` port in
+`L3/Target/State.lean`, instantiates.
 -/
 
 namespace Flapjack.Compiler.Encoders.Arm8.L3
