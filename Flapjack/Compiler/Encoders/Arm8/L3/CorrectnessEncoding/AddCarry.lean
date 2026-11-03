@@ -293,4 +293,62 @@ theorem arm8Next_conditionalCompare_zero (ms : arm8_state) (rn : BitVec 5)
   · simp [arm8AddWithCarry_add_zero_ofNat]
   · simp
 
+theorem arm8Run_addSubCarry_eq (s : Bool) (rm rn rd : BitVec 5) (st : arm8_state)
+    (hrd : rd ≠ 31) :
+    Run (instruction.Data (Data.«AddSubCarry@64»
+      ((1 : BitVec 64), (false, (s, (rm, (rn, rd))))))) st =
+      (SetTheFlags (s, (AddWithCarry (TN := 64) (X (TN := 64) rn st,
+        (X (TN := 64) rm st, st.PSTATE.C))).2)
+        { st with REG := holUpdate rd (AddWithCarry (TN := 64) (X (TN := 64) rn st,
+          (X (TN := 64) rm st, st.PSTATE.C))).1 st.REG }) := by
+  rw [arm8Run_addSubCarry]
+  simp only [«write'X», Bool.false_eq_true, if_false]
+  have hbeq : (rd == BitVec.ofNat 5 31) = false := beq_eq_false_iff_ne.mpr hrd
+  simp only [hbeq, Bool.not_false, if_true]
+  simp only [setTheFlags_eq]
+  split <;> simp
+
+theorem arm8Next_addSubCarry (ms : arm8_state) (s : Bool) (rm rn rd : BitVec 5)
+    (hrd : rd ≠ 31)
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8AddSubCarryWord false s rm rn rd >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8AddSubCarryWord false s rm rn rd >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8AddSubCarryWord false s rm rn rd >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8AddSubCarryWord false s rm rn rd >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next ms =
+      { ms with
+        branch_hint := none,
+        PC := ms.PC + 4,
+        REG := holUpdate rd (AddWithCarry (TN := 64) (X (TN := 64) rn ms,
+          (X (TN := 64) rm ms, ms.PSTATE.C))).1 ms.REG,
+        PSTATE :=
+          (SetTheFlags (s, (AddWithCarry (TN := 64) (X (TN := 64) rn ms,
+            (X (TN := 64) rm ms, ms.PSTATE.C))).2) ms).PSTATE } := by
+  let i : instruction := instruction.Data (Data.«AddSubCarry@64»
+    ((1 : BitVec 64), (false, (s, (rm, (rn, rd))))))
+  have hdec : Decode (arm8AddSubCarryWord false s rm rn rd) = i := by
+    dsimp only [i]
+    exact arm8Decode_addSubCarry_gen false s rm rn rd
+  have hrun := arm8Run_addSubCarry_eq s rm rn rd { ms with branch_hint := none } hrd
+  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
+    dsimp only [i]
+    rw [hrun]
+    simp only [SetTheFlags]
+    split <;> rfl
+  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
+    dsimp only [i]
+    rw [hrun]
+    simp only [SetTheFlags]
+    split <;> simpa using hexc0
+  have hn := arm8Next_word ms (arm8AddSubCarryWord false s rm rn rd) i hdec hbr hexc
+    h0 h1 h2 h3 hal he0 hel
+  unfold arm8Next
+  rw [hn]
+  dsimp only [i]
+  rw [hrun]
+  simp only [holThe, setTheFlags_eq]
+  split <;> simp [arm8X_branchHint]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
