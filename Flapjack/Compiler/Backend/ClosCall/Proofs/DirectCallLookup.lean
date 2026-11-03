@@ -221,14 +221,15 @@ theorem recClosureRelFuel_known_probe_body (fuel : Nat) (g : State) (allowed : S
       callsFuel depth sourceBody before = some (convertedBody, after) ∧
       (codeLocationsExp sourceBody).Nodup ∧ LabelsFresh (codeLocationsExp sourceBody) before ∧
       (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧
-      stateExtends before afterProbe ∧ stateExtends after afterProbe ∧
+      stateExtends before afterProbe ∧ stateExtends before g ∧
+      stateExtends after afterProbe ∧ stateExtends after g ∧
       bodies[index]? = some convertedBody ∧ (∀ n, ClosProps.freeVarExp n convertedBody → n < arity) ∧
       stateExtends (codeList loc ((sourceFns.map Prod.fst).zip bodies) afterProbe) g := by
   have indexBound : index < sourceFns.length := (List.getElem?_eq_some_iff.mp sourceLookup).choose
   obtain ⟨_, bodies, afterProbe, convertedBody, depth, before, after, _, _, _, selectedBody,
     depthBound, selectedRun, distinct, fresh, beforeDistinct, beforeWeak, beforeExt, extended, alternatives⟩ :=
     recClosureRelFuel_probe_body fuel g allowed code loc sourceFns targetFns index arity sourceBody related sourceLookup
-  rcases alternatives with ⟨closed, ⟨trace, stubIndex, targetEq⟩, codeExt, _, included⟩ |
+  rcases alternatives with ⟨closed, ⟨trace, stubIndex, targetEq⟩, probeExt, codeExt, _, included⟩ |
       ⟨_, _, _, _, _, _, _, ownAllowed, _⟩
   · have stub := callsListSource_lookup trace stubIndex loc sourceFns index arity sourceBody sourceLookup
     have targetStub : targetFns[index]? =
@@ -240,7 +241,8 @@ theorem recClosureRelFuel_known_probe_body (fuel : Nat) (g : State) (allowed : S
     have generated := codeList_lookup loc ((sourceFns.map Prod.fst).zip bodies) afterProbe index arity convertedBody pairLookup
     exact ⟨trace, convertedBody, depth, before, after, afterProbe, bodies, targetStub,
       included _ _ generated, depthBound, selectedRun, distinct, fresh, beforeDistinct,
-      beforeWeak, beforeExt, extended, selectedBody, groupClosed_selected sourceFns bodies index arity sourceBody convertedBody
+      beforeWeak, beforeExt, stateExtends_trans _ _ _ beforeExt probeExt, extended,
+      stateExtends_trans _ _ _ extended probeExt, selectedBody, groupClosed_selected sourceFns bodies index arity sourceBody convertedBody
         closed sourceLookup selectedBody, codeExt⟩
   · exact (notAllowed (ownAllowed index indexBound)).elim
 
@@ -262,7 +264,8 @@ theorem recClosureRelFuel_body_traversal_cases (fuel : Nat) (g : State) (allowed
       callsFuel depth sourceBody before = some (convertedBody, after) ∧
       (codeLocationsExp sourceBody).Nodup ∧ LabelsFresh (codeLocationsExp sourceBody) before ∧
       (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧
-      stateExtends before afterProbe ∧ stateExtends after afterProbe ∧
+      stateExtends before afterProbe ∧ stateExtends before g ∧
+      stateExtends after afterProbe ∧ stateExtends after g ∧
       bodies[index]? = some convertedBody ∧ (∀ n, ClosProps.freeVarExp n convertedBody → n < arity) ∧
       stateExtends (codeList loc ((sourceFns.map Prod.fst).zip bodies) afterProbe) g) ∨
     (∃ depth before after, depth < max fuel (listBudget (sourceFns.map Prod.snd) + 1) ∧
@@ -272,7 +275,7 @@ theorem recClosureRelFuel_body_traversal_cases (fuel : Nat) (g : State) (allowed
   obtain ⟨initial, bodies, afterProbe, convertedBody, depth, before, after, initialWf, initialFresh, _, selectedBody,
     depthBound, selectedRun, distinct, fresh, beforeDistinct, beforeWeak, beforeExt, extended, alternatives⟩ :=
     recClosureRelFuel_probe_body fuel g allowed code loc sourceFns targetFns index arity sourceBody related sourceLookup
-  rcases alternatives with ⟨closed, ⟨trace, stubIndex, targetEq⟩, codeExt, _, included⟩ |
+  rcases alternatives with ⟨closed, ⟨trace, stubIndex, targetEq⟩, probeExt, codeExt, _, included⟩ |
       ⟨_, openBodies, afterOpen, openRun, targetEq, openExt, _, _, _⟩
   · left
     have stub := callsListSource_lookup trace stubIndex loc sourceFns index arity sourceBody sourceLookup
@@ -287,7 +290,8 @@ theorem recClosureRelFuel_body_traversal_cases (fuel : Nat) (g : State) (allowed
     have pairLookup := zip_lookup (sourceFns.map Prod.fst) bodies index arity convertedBody arityLookup selectedBody
     have generated := codeList_lookup loc ((sourceFns.map Prod.fst).zip bodies) afterProbe index arity convertedBody pairLookup
     exact ⟨trace, convertedBody, depth, before, after, afterProbe, bodies, bodyEq, included _ _ generated,
-      depthBound, selectedRun, distinct, fresh, beforeDistinct, beforeWeak, beforeExt, extended, selectedBody,
+      depthBound, selectedRun, distinct, fresh, beforeDistinct, beforeWeak, beforeExt,
+      stateExtends_trans _ _ _ beforeExt probeExt, extended, stateExtends_trans _ _ _ extended probeExt, selectedBody,
       groupClosed_selected sourceFns bodies index arity sourceBody convertedBody closed sourceLookup selectedBody, codeExt⟩
   · right
     have sourceDistinct : (codeLocations (sourceFns.map Prod.snd)).Nodup := by

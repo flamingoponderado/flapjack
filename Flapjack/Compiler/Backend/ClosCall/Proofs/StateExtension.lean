@@ -170,6 +170,23 @@ private theorem lookup_preserved_of_suffix {V : Type} (old new : List (Nat × V)
   have pairEq : (key, other) = (key, value) := injective _ otherMember _ member rfl
   exact congrArg Prod.snd pairEq
 
+/-- Adding generated code extends the incoming compiler state when the
+combined code labels are distinct. This is Flapjack-specific infrastructure
+for following speculative probe states into installed code. -/
+theorem codeList_stateExtends (loc : Nat) (fns : List (Nat × ClosLang.Exp)) (state : State)
+    (distinct : ((codeList loc fns state).2.map Prod.fst).Nodup) :
+    stateExtends state (codeList loc fns state) := by
+  refine ⟨?_, ?_, distinct⟩
+  · intro key member
+    have same : (codeList loc fns state).1 = state.1 := by
+      rw [codeList_eq_source, codeListSource_fst]
+    rw [same]
+    exact ⟨member, rfl⟩
+  · intro key value lookup
+    rw [logicalAssocLookup_nat] at lookup ⊢
+    exact lookup_preserved_of_suffix state.2 (codeList loc fns state).2
+      (codeList_suffix loc fns state) distinct key value lookup
+
 /-- Successful production traversal extends its incoming state when input
 locations are distinct and fresh and incoming code labels are distinct. -/
 theorem callsListBounded_stateExtends (fuel : Nat) (es : List ClosLang.Exp)

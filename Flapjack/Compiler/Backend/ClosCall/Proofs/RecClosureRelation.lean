@@ -96,6 +96,7 @@ theorem recClosureRelFuel_probe_body (fuel : Nat) (g : State) (allowed : Set Nat
       stateExtends before afterProbe ∧ stateExtends after afterProbe ∧
       ((groupClosed fns1 bodies ∧
         (∃ trace stubIndex, fns2 = callsListSource trace stubIndex loc fns1) ∧
+        stateExtends afterProbe g ∧
         stateExtends (codeList loc ((fns1.map Prod.fst).zip bodies) afterProbe) g ∧
         groupLocationsCovered fns1 afterProbe allowed ∧
         codeIncludes (codeList loc ((fns1.map Prod.fst).zip bodies) afterProbe).2 code) ∨
@@ -106,7 +107,7 @@ theorem recClosureRelFuel_probe_body (fuel : Nat) (g : State) (allowed : Set Nat
           groupLocationsCovered fns1 afterOpen allowed ∧
           (∀ i, i < fns1.length → 2 * i + loc ∈ allowed) ∧
           codeIncludes afterOpen.2 code)) := by
-  obtain ⟨g0, well, initialWf, nestedFresh, _, bodies, afterProbe, probe, alternatives⟩ := related
+  obtain ⟨g0, well, initialWf, nestedFresh, ownFresh, bodies, afterProbe, probe, alternatives⟩ := related
   have sourceIndex : (fns1.map Prod.snd)[index]? = some body := by
     simp [List.getElem?_map, sourceLookup]
   have sourceBound : index < fns1.length := (List.getElem?_eq_some_iff.mp sourceLookup).choose
@@ -129,8 +130,41 @@ theorem recClosureRelFuel_probe_body (fuel : Nat) (g : State) (allowed : Set Nat
   have beforeAfter := callsListBounded_stateExtends (depth + 1) [body] before after [bodies[index]] singleton
     (by simpa [codeLocations] using bodyDistinct) (by simpa [codeLocations] using bodyFresh) beforeDistinct
   have beforeProbe := stateExtends_trans before after afterProbe beforeAfter extended
+  have alternatives' :
+      (groupClosed fns1 bodies ∧ (∃ trace stubIndex, fns2 = callsListSource trace stubIndex loc fns1) ∧
+        stateExtends afterProbe g ∧ stateExtends (codeList loc ((fns1.map Prod.fst).zip bodies) afterProbe) g ∧
+        groupLocationsCovered fns1 afterProbe allowed ∧
+        codeIncludes (codeList loc ((fns1.map Prod.fst).zip bodies) afterProbe).2 code) ∨
+      (¬ groupClosed fns1 bodies ∧ ∃ openBodies afterOpen,
+        callsListBounded fuel (fns1.map Prod.snd) g0 = some (openBodies, afterOpen) ∧
+        fns2 = (fns1.map Prod.fst).zip openBodies ∧ stateExtends afterOpen g ∧
+        groupLocationsCovered fns1 afterOpen allowed ∧
+        (∀ i, i < fns1.length → 2 * i + loc ∈ allowed) ∧ codeIncludes afterOpen.2 code) := by
+    rcases alternatives with ⟨closed, stubs, codeExt, coverage, included⟩ | openCase
+    · left
+      have afterDistinct := callsListBounded_labelsDistinct fuel (fns1.map Prod.snd)
+        (insertEach loc fns1.length g0) afterProbe bodies probe well.2.2.2 fresh initialDistinct
+      have bodyLength : bodies.length = fns1.length := by simpa using length
+      have generatedFresh : ∀ i, i < ((fns1.map Prod.fst).zip bodies).length →
+          loc + i * 2 + 1 ∉ afterProbe.2.map Prod.fst := by
+        intro i bound present
+        have indexBound : i < fns1.length := by simp [List.length_zip, bodyLength] at bound; omega
+        have origins := callsListBounded_labelsBound fuel (fns1.map Prod.snd)
+          (insertEach loc fns1.length g0) afterProbe bodies probe
+        rcases origins _ present with old | ⟨origin, member, equal⟩
+        · have old' : 2 * i + loc + 1 ∈ g0.2.map Prod.fst := by
+            simpa [insertEach, Nat.add_comm, Nat.add_left_comm, Nat.add_assoc, Nat.mul_comm] using old
+          exact ownFresh i indexBound old'
+        · have eq : origin = 2 * i + loc := by omega
+          subst origin
+          exact recClosureWellFormed_disjoint loc fns1 well i indexBound member
+      have codeDistinct := codeList_labels_nodup loc ((fns1.map Prod.fst).zip bodies) afterProbe
+        afterDistinct generatedFresh
+      have probeExt := codeList_stateExtends loc ((fns1.map Prod.fst).zip bodies) afterProbe codeDistinct
+      exact ⟨closed, stubs, stateExtends_trans _ _ _ probeExt codeExt, codeExt, coverage, included⟩
+    · exact Or.inr openCase
   exact ⟨g0, bodies, afterProbe, bodies[index], depth, before, after, initialWf, initialFresh, probe, targetIndex, depthLt,
-    selected, bodyDistinct, bodyFresh, beforeDistinct, beforeWeak, beforeProbe, extended, alternatives⟩
+    selected, bodyDistinct, bodyFresh, beforeDistinct, beforeWeak, beforeProbe, extended, alternatives'⟩
 
 /-- A related target body is either a generated stub or the result of an
 actual open-group body traversal whose state extends into the current state.
