@@ -8,9 +8,9 @@ open ClosLang
 
 private theorem cons_budget (x : Exp) (tag : Nat) (ys : List Exp)
     (h : cons x = some (tag, ys)) : listBudget ys < expBudget x := by
-  cases x <;> simp [cons] at h
+  cases x <;> simp [cons, destOp] at h
   case op t op args =>
-    cases op <;> try simp at h
+    cases op <;> try simp [destCons] at h
     case blockOp op =>
       cases op <;> try simp at h
       case cons tag' =>

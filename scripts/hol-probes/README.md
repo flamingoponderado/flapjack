@@ -437,7 +437,13 @@ the complete carrier correspondence remains under review.
 
 `clos_known_helpers_probe.out` captures closure free-variable cleanup, tick removal, let-operation cleanup and inlining decisions, including trace preservation and size limits. These support the bounded known-function pass.
 
-`clos_op_frontend_probe.out` captures smart arithmetic, constructor inspection, equality expansion, trace retention and effectful binding order. The bounded Lean operation simplifier is checked against these selected original outputs.
+`clos_op_frontend_probe.out` captures smart arithmetic, constructor inspection,
+equality expansion, trace retention, effectful binding order, signed division
+and remainder, and zero divisors. `clos_op_definitions_probe.out` records the
+inferred HOL types and clauses of the corresponding matchers and elementary
+smart-operation helpers. Regenerate the latter with
+`HOL_PROBE_ONLY=clos_op_definitions_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The Lean operation simplifier is checked against these selected original outputs.
 
 `clos_known_frontend_probe.out` captures approximation merging, global updates,
 index and malformed-tree edge cases, and closure inlining.

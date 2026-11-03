@@ -8,9 +8,9 @@ open ClosLang
 
 theorem eqNodeWeight_of_cons (x : Exp) (tag : Nat) (xs : List Exp)
     (h : cons x = some (tag, xs)) : eqNodeWeight x = 1 + eqNodesWeight xs := by
-  cases x <;> simp [cons] at h
+  cases x <;> simp [cons, destOp] at h
   case op t op args =>
-    cases op <;> try simp at h
+    cases op <;> try simp [destCons] at h
     case blockOp op =>
       cases op <;> try simp at h
       case cons tag' =>
@@ -23,7 +23,7 @@ theorem eqNodeWeight_of_not_cons (x : Exp) (h : cons x = none) : eqNodeWeight x 
     cases op <;> try simp [eqNodeWeight]
     case blockOp op =>
       cases op <;> try simp [eqNodeWeight]
-      case cons tag => simp [cons] at h
+      case cons tag => simp [cons, destOp, destCons] at h
 
 theorem eqNodesWeight_append (xs ys : List Exp) :
     eqNodesWeight (xs ++ ys) = eqNodesWeight xs + eqNodesWeight ys := by

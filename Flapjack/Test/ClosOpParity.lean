@@ -7,6 +7,29 @@ open Flapjack.Compiler.Backend
 private def c (i : Int) : ClosLang.Exp := .op .none (.intOp (.const i)) []
 private def cons (tag : Nat) (xs : List ClosLang.Exp) : ClosLang.Exp := .op .none (.blockOp (.cons tag)) xs
 
+-- `signed` checks both operations for all sign combinations and zero divisors.
+#guard match [ClosOp.integerOp (.intOp .div) 3 7,
+    ClosOp.integerOp (.intOp .div) (-3) 7,
+    ClosOp.integerOp (.intOp .div) 3 (-7),
+    ClosOp.integerOp (.intOp .div) (-3) (-7),
+    ClosOp.integerOp (.intOp .mod) 3 7,
+    ClosOp.integerOp (.intOp .mod) (-3) 7,
+    ClosOp.integerOp (.intOp .mod) 3 (-7),
+    ClosOp.integerOp (.intOp .mod) (-3) (-7),
+    ClosOp.integerOp (.intOp .div) 0 (-7),
+    ClosOp.integerOp (.intOp .mod) 0 (-7)] with
+  | [some (.op .none (.intOp (.const 2)) []),
+     some (.op .none (.intOp (.const (-3))) []),
+     some (.op .none (.intOp (.const (-3))) []),
+     some (.op .none (.intOp (.const 2)) []),
+     some (.op .none (.intOp (.const 1)) []),
+     some (.op .none (.intOp (.const (-2))) []),
+     some (.op .none (.intOp (.const 2)) []),
+     some (.op .none (.intOp (.const (-1))) []),
+     some (.op .none (.intOp (.const 0)) []),
+     some (.op .none (.intOp (.const 0)) [])] => true
+  | _ => false
+
 #guard match (do
     let a ← ClosOp.smartFuel 100 (.sourceLoc 1 2 3 4) (.intOp .div) [c (-3), c 7]
     let b ← ClosOp.smartFuel 100 .none (.intOp .div) [c 0, c 7]

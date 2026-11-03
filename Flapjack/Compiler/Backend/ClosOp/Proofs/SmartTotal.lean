@@ -10,7 +10,7 @@ theorem smartFuel_succeeds (fuel : Nat) (trace : BackendCommon.Tra) (op : Op) (x
   unfold smartFuel
   repeat' (first | split | exact ⟨_, rfl⟩)
   case h_2 =>
-      rename_i unused x y a b h op' hv d hd
+      rename_i unused x y a h op' hv d hd
       obtain ⟨⟨lifted, n, binds⟩, hl⟩ := liftBounded_succeeds fuel [x, y] 0 []
       simp only [hl]
       cases lifted with

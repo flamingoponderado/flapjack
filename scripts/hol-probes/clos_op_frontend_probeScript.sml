@@ -16,3 +16,14 @@ val _ = (print "ops="; print_term (rhs (concl (EVAL ``
   clos_op$SmartOp None (closLang$BlockOp closLang$Equal) [cons 2 [c 1];cons 3 [c 1]];
   clos_op$SmartOp None (closLang$BlockOp closLang$Equal) [cons 2 [c 1;c 2];cons 2 [c 1;c 3]];
   clos_op$SmartOp None (closLang$BlockOp closLang$Equal) [closLang$Var None 5;cons 2 [c 3;cons 4 []]]]``))); print "\n");
+val _ = (print "signed="; print_term (rhs (concl (EVAL ``
+ [clos_op$int_op (closLang$IntOp closLang$Div) 3 7;
+  clos_op$int_op (closLang$IntOp closLang$Div) (-3) 7;
+  clos_op$int_op (closLang$IntOp closLang$Div) 3 (-7);
+  clos_op$int_op (closLang$IntOp closLang$Div) (-3) (-7);
+  clos_op$int_op (closLang$IntOp closLang$Mod) 3 7;
+  clos_op$int_op (closLang$IntOp closLang$Mod) (-3) 7;
+  clos_op$int_op (closLang$IntOp closLang$Mod) 3 (-7);
+  clos_op$int_op (closLang$IntOp closLang$Mod) (-3) (-7);
+  clos_op$int_op (closLang$IntOp closLang$Div) 0 (-7);
+  clos_op$int_op (closLang$IntOp closLang$Mod) 0 (-7)]``))); print "\n");

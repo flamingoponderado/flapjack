@@ -1,5 +1,165 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "dest_Const_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
+    "lean_name": "destConst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_const_typed: only IntOp Const returns its integer; every other op returns NONE. The executed integer matcher calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "dest_Constant_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
+    "lean_name": "destConstant",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_constant_typed, including fixed word64, native mlstring and integer payloads: those three constants map to the corresponding const_part, and ConstCons and all other operators return NONE. The executable constant matcher calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "dest_Cons_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
+    "lean_name": "destCons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_cons_typed: only BlockOp Cons returns its tag. The executed constructor and nullary-constructor matchers call this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "dest_ElemAt_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
+    "lean_name": "destElemAt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_elem_at_typed: only BlockOp ElemAt returns its index. The executed source-shaped consOp calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "dest_TagEq_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
+    "lean_name": "destTagEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_tag_eq_typed: only BlockOp TagEq returns its tag. The executed source-shaped consOp calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "dest_LenEq_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
+    "lean_name": "destLenEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_len_eq_typed: only BlockOp LenEq returns its length. The executed source-shaped consOp calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "dest_TagLenEq_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
+    "lean_name": "destTagLenEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_tag_len_eq_typed: only BlockOp TagLenEq returns its ordered tag and length pair. The executed source-shaped consOp calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "dest_Op_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
+    "lean_name": "destOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_op_typed: the callback result is independently polymorphic, the Op case returns the callback payload paired with the unchanged argument list, and every other expression returns NONE. The executable matchers call this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "dest_Op_Nil_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
+    "lean_name": "destOpNil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_op_nil_typed: it returns the polymorphic matcher result exactly when dest_Op succeeds and the argument list is empty. The executable integer, nullary-constructor and constant matchers call this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "dest_Op_Consts_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
+    "lean_name": "destOpConsts",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_op_consts_typed: both expressions must be nullary integer constants, returned in input order. The executable binary smart constructor calls this definition; destOpConsts_eq_previous proves agreement with the former pair matcher."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "MakeBool_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
+    "lean_name": "mkBool",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared make_bool_typed: the result is an Op at None with an empty argument list and Cons tag one for true or zero for false. Executed simplifiers call this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "MakeInt_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
+    "lean_name": "mkInt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared make_int_typed: the result is a nullary integer Const Op at None. The executed arithmetic simplifier calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "int_op_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "integerOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared int_op_typed and each operation and operand order against source. HOL int_div floors for nonzero divisors and int_mod satisfies the matching quotient identity; Lean Int.fdiv/fmod have those conventions. The regenerated signed probe checks all sign combinations and both zero-divisor cases. The executable smart constructor calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "cons_op_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "consOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared cons_op_typed, matcher order, index bounds, de Bruijn index subtraction, tag and length comparisons and fallback. The executable calls this source matcher composition; consOp_eq_previous proves agreement with the previous pattern-based implementation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "is_Var_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "isVar",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared is_var_typed: every Var is true independently of trace and index, and every other expression is false. The executable equality simplifier calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "eq_direct_const_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "eqDirectConst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared eq_direct_const_typed: the nullary integer cases produce source booleans or EqualConst operations on the opposite argument; neither match returns NONE. The executed directEq calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "eq_direct_constant_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "eqDirectConstant",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared eq_direct_constant_typed: supported constant payloads use the source q = p comparison, with EqualConst on the opposite argument and NONE for neither match. The executed directEq calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "eq_direct_nil_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "eqDirectNil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared eq_direct_nil_typed: nullary constructors compare tags or generate TagLenEq on the opposite argument; neither match returns NONE. The executed directEq calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "eq_direct_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "directEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared eq_direct_typed: integer, constant and nullary-constructor recognizers run in source order, with the first successful result retained. directEq_eq_previous proves agreement with the former Flapjack implementation for every input; the executable calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "dont_lift_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "dontLift",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dont_lift_typed: a nullary integer constant, nullary constructor, or supported nullary literal is retained, and all other expressions are lifted. The executed lift traversal calls this definition."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
     "hol_name": "mk_Ticks_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Fuel.lean",
