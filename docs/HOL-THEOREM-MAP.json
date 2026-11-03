@@ -100868,5 +100868,53 @@
   "statement_status": "pending_statement_review",
   "lean_name": "arm8_encoder_correct_mem_store16_scaled",
   "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the scaled twelve-bit store16 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@16 imm12 store with the two-byte write. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "lean_name": "arm8_encoder_correct_mem_load_far_neg",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem load case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) on the far-offset path `arm8_ast` lowers to two instructions \u2014 an AddSubImmediate@64 into the scratch register 26 followed by a LoadStoreImmediate@64 against r26 \u2014 with the same asmStep/targetStateRel premise, the existential step count (n = 1, so two NextStateARM8 steps), every environment, interference preservation, the code-byte/PC assertion for the eight emitted bytes and the outside-domain byte conclusion.  The offset is negative, so the lowering computes `-off - 0x100` and takes the signed `-0x100` second instruction.  The encodability hypothesis `hlow` on the computed immediate is a case hypothesis supplied by `asmAddrOffsetOkExact`, not part of encoder_correct_def. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "lean_name": "arm8_encoder_correct_mem_store_far_neg",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem store case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) on the far-offset path `arm8_ast` lowers to two instructions \u2014 an AddSubImmediate@64 into the scratch register 26 followed by a LoadStoreImmediate@64 against r26 \u2014 with the same asmStep/targetStateRel premise, the existential step count (n = 1, so two NextStateARM8 steps), every environment, interference preservation, the code-byte/PC assertion for the eight emitted bytes and the outside-domain byte conclusion.  The store analogue of the negative-offset branch: the same AddSubImmediate@64 into r26, with the store memory obligations discharged through arm8WriteMem_eight and writeMemWord_mem_eight. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "lean_name": "arm8_encoder_correct_mem_load_far_pos",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem load case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) on the far-offset path `arm8_ast` lowers to two instructions \u2014 an AddSubImmediate@64 into the scratch register 26 followed by a LoadStoreImmediate@64 against r26 \u2014 with the same asmStep/targetStateRel premise, the existential step count (n = 1, so two NextStateARM8 steps), every environment, interference preservation, the code-byte/PC assertion for the eight emitted bytes and the outside-domain byte conclusion.  The offset is non-negative and not the scaled twelve-bit form, so the lowering computes `off - 0xFF` and takes the unsigned `+0xFF` second instruction.  `hlow` is again a case hypothesis supplied by `asmAddrOffsetOkExact`. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "lean_name": "arm8_encoder_correct_mem_store_far_pos",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem store case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) on the far-offset path `arm8_ast` lowers to two instructions \u2014 an AddSubImmediate@64 into the scratch register 26 followed by a LoadStoreImmediate@64 against r26 \u2014 with the same asmStep/targetStateRel premise, the existential step count (n = 1, so two NextStateARM8 steps), every environment, interference preservation, the code-byte/PC assertion for the eight emitted bytes and the outside-domain byte conclusion.  The store analogue of the non-negative-offset branch, with the same store memory obligations. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "lean_name": "arm8_encoder_correct_mem_load_far",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem load case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) on the far-offset path `arm8_ast` lowers to two instructions \u2014 an AddSubImmediate@64 into the scratch register 26 followed by a LoadStoreImmediate@64 against r26 \u2014 with the same asmStep/targetStateRel premise, the existential step count (n = 1, so two NextStateARM8 steps), every environment, interference preservation, the code-byte/PC assertion for the eight emitted bytes and the outside-domain byte conclusion.  This dispatching theorem joins the negative and non-negative branches; its hypotheses are exactly the two branch conditions arm8_ast inspects (`hnsx`, `hfar`) plus `hlow`. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "lean_name": "arm8_encoder_correct_mem_store_far",
+  "statement_status": "pending_statement_review",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem store case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) on the far-offset path `arm8_ast` lowers to two instructions \u2014 an AddSubImmediate@64 into the scratch register 26 followed by a LoadStoreImmediate@64 against r26 \u2014 with the same asmStep/targetStateRel premise, the existential step count (n = 1, so two NextStateARM8 steps), every environment, interference preservation, the code-byte/PC assertion for the eight emitted bytes and the outside-domain byte conclusion.  This dispatching theorem joins the store branches on the same branch conditions. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment definitions it uses are mechanically rendered and not yet source-reviewed."
  }
 ]
