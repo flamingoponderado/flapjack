@@ -923,4 +923,186 @@ theorem evaluate_install_growing_args {C F : Type} (fuel relationFuel : Nat) (g 
   exact ⟨middleG, targetResult, targetMiddle, targetRun, extended, related, middleStates, middleWf,
     middleReady, finalCompiler, finalTargetCompiler, finalOracle, growth⟩
 
+/-- Variable evaluation preserves the incremental compiler state and oracle
+invariants while relating the selected environment entries. -/
+theorem growingExprsSim_var {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra) (index : Nat) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [.var trace index] [.var trace index] := by
+  intro g sourceEnv targetEnv source target result final run notType envs _ stateWf states ready
+    sourceCompiler targetCompiler oracle
+  cases lookup : sourceEnv[index]? with
+  | none =>
+    have failed : result = .err (.abort .typeError) := by
+      simpa [evaluate, lookup] using congrArg Prod.fst run.symm
+    exact (notType failed).elim
+  | some value =>
+    have eq : result = .val [value] ∧ final = source := by simpa [evaluate, lookup] using run.symm
+    obtain ⟨rfl, rfl⟩ := eq
+    have related := (envRelFuel_iff relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .var trace index)]).mp (by simpa using envs)
+    have used : ∃ fn ∈ [(0, .var trace index)], ClosProps.freeVar (fn.1 + 0 + index) fn.2 := by
+      refine ⟨(0, .var trace index), by simp, ?_⟩
+      simp [ClosProps.freeVar, ClosProps.freeVars, ClosProps.freeVarExp]
+    obtain ⟨next, nextLookup, valueRel⟩ := envRel_lookup related used lookup
+    exact ⟨g, .val [next], target, stateExtends_refl g ready.well.2, by simp [evaluate, nextLookup],
+      .cons valueRel .nil, states, stateWf, ready, sourceCompiler, targetCompiler, oracle, fun _ _ h => h⟩
+
+/-- Clock updates preserve the installation invariant because it observes
+only the compiler states, oracle and code. -/
+theorem incrementalInstallReady_decClock {C F : Type} (g : State)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F) (amount : Nat)
+    (ready : IncrementalInstallReady g source target) :
+    IncrementalInstallReady g (decClock amount source) (decClock amount target) := by
+  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩ := ready
+  exact ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩
+
+/-- Matching ticks preserve the growing-state simulation of their bodies. -/
+theorem growingExprsSim_tick {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (sourceBody targetBody : ClosLang.Exp)
+    (bodySim : GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [sourceBody] [targetBody]) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed
+      [.tick trace sourceBody] [.tick trace targetBody] := by
+  intro g sourceEnv targetEnv source target result final run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  have clocks := states.2.1
+  by_cases zero : source.clock = 0
+  · have targetZero : target.clock = 0 := by omega
+    have eq : result = .err (.abort .timeoutError) ∧ final = source := by simpa [evaluate, zero] using run.symm
+    obtain ⟨rfl, rfl⟩ := eq
+    exact ⟨g, .err (.abort .timeoutError), target, stateExtends_refl g ready.well.2,
+      by simp [evaluate, targetZero], rfl, states, sourceWf, ready, sourceCompiler, targetCompiler, oracle,
+      fun _ _ h => h⟩
+  · have targetNonzero : target.clock ≠ 0 := by omega
+    have bodyRun : evaluate [sourceBody] sourceEnv (decClock 1 source) = (result, final) := by
+      simpa [evaluate, zero] using run
+    have bodyEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, targetBody)] := by
+      apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+      have h := (envRelFuel_iff relationFuel g allowed target.code sourceEnv targetEnv 0
+        [(0, .tick trace targetBody)]).mp (by simpa using envs)
+      simpa [envRel, ClosProps.freeVar, ClosProps.freeVars, ClosProps.freeVarExp] using h
+    obtain ⟨finalG, targetResult, targetFinal, extended, targetRun, related, finalStates, finalWf,
+      finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+      bodySim g sourceEnv targetEnv (decClock 1 source) (decClock 1 target) result final bodyRun notType
+        (by simpa [decClock] using bodyEnv) envWf (stateWellFormedFuel_clock sourceWf _)
+        (stateRelFuel_decClock states 1) (incrementalInstallReady_decClock g source target 1 ready)
+        (by simpa [decClock] using sourceCompiler) (by simpa [decClock] using targetCompiler)
+        (by simpa [decClock] using oracle)
+    refine ⟨finalG, targetResult, targetFinal, extended, ?_, related, finalStates, finalWf, finalReady,
+      finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+    simpa [evaluate, targetNonzero] using targetRun
+
+/-- Matching raises preserve the growing-state simulation of their bodies. -/
+theorem growingExprsSim_raise {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (sourceBody targetBody : ClosLang.Exp)
+    (bodySim : GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [sourceBody] [targetBody]) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed
+      [.raise trace sourceBody] [.raise trace targetBody] := by
+  intro g sourceEnv targetEnv source target result final run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  have bodyEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, targetBody)] := by
+    apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+    have h := (envRelFuel_iff relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .raise trace targetBody)]).mp (by simpa using envs)
+    simpa [envRel, ClosProps.freeVar, ClosProps.freeVars, ClosProps.freeVarExp] using h
+  cases bodyRun : evaluate [sourceBody] sourceEnv source with
+  | mk bodyResult bodyFinal =>
+    have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst bodyResult
+      have eq : result = .err (.abort .typeError) := by
+        simpa [evaluate, bodyRun] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨finalG, targetResult, targetFinal, extended, targetRun, related, finalStates, finalWf,
+      finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+      bodySim g sourceEnv targetEnv source target bodyResult bodyFinal bodyRun bodySafe (by simpa using bodyEnv)
+        envWf sourceWf states ready sourceCompiler targetCompiler oracle
+    cases bodyResult with
+    | err error =>
+      cases targetResult with
+      | val values => simp [resultRel] at related
+      | err targetError =>
+        have eq : result = .err error ∧ final = bodyFinal := by simpa [evaluate, bodyRun] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        exact ⟨finalG, .err targetError, targetFinal, extended, by simp [evaluate, targetRun], related,
+          finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value sourceBody sourceEnv source bodyFinal values bodyRun
+      cases targetResult with
+      | err error => simp [resultRel] at related
+      | val targetValues =>
+        obtain ⟨targetValue, rfl⟩ := evaluate_singleton_value targetBody targetEnv target targetFinal targetValues targetRun
+        have eq : result = .err (.raise value) ∧ final = bodyFinal := by simpa [evaluate, bodyRun] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        have valueRel : ValueRelFuel relationFuel finalG allowed targetFinal.code value targetValue := by
+          simpa [resultRel] using related
+        exact ⟨finalG, .err (.raise targetValue), targetFinal, extended, by simp [evaluate, targetRun], valueRel,
+          finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+
+/-- The production traversal's variable case has the growing simulation. -/
+theorem callsFuel_var_growing_sim {C F : Type} (passFuel relationFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra) (index : Nat)
+    (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.var trace index) initial = some (out, final)) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [.var trace index] [out] := by
+  simp [callsFuel] at run
+  obtain ⟨rfl, rfl⟩ := run
+  exact growingExprsSim_var passFuel relationFuel compiler allowed trace index
+
+/-- The production traversal's tick case uses its actual body output. -/
+theorem callsFuel_tick_growing_sim {C F : Type} (passFuel relationFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.tick trace body) initial = some (out, final))
+    (bodyIH : ∀ target, callsFuel traversalFuel body initial = some (target, final) →
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [body] [target]) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [.tick trace body] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨target, next⟩, bodyRun, rfl, rfl⟩ := run
+  exact growingExprsSim_tick passFuel relationFuel compiler allowed trace body target (bodyIH target bodyRun)
+
+/-- The production traversal's raise case uses its actual body output. -/
+theorem callsFuel_raise_growing_sim {C F : Type} (passFuel relationFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.raise trace body) initial = some (out, final))
+    (bodyIH : ∀ target, callsFuel traversalFuel body initial = some (target, final) →
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [body] [target]) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [.raise trace body] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨target, next⟩, bodyRun, rfl, rfl⟩ := run
+  exact growingExprsSim_raise passFuel relationFuel compiler allowed trace body target (bodyIH target bodyRun)
+
+/-- The production list traversal composes the smaller-depth expression
+simulations while retaining the growing compiler and oracle invariants. -/
+theorem callsListFuel_growing_sim {C F : Type} (passFuel relationFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListFuel traversalFuel source initial = some (target, final))
+    (exprIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [expression] [output]) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed source target := by
+  apply growingExprsSim_of_forall₂ passFuel relationFuel compiler allowed
+  induction traversalFuel generalizing source target initial final with
+  | zero =>
+    cases source with
+    | nil => simp [callsListFuel] at run; obtain ⟨rfl, _⟩ := run; exact .nil
+    | cons e es => simp [callsListFuel] at run
+  | succ depth ih =>
+    cases source with
+    | nil => simp [callsListFuel] at run; obtain ⟨rfl, _⟩ := run; exact .nil
+    | cons e es =>
+      simp only [callsListFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+        Option.some.injEq, Prod.mk.injEq] at run
+      obtain ⟨⟨e', middle⟩, headRun, ⟨es', next⟩, tailRun, rfl, rfl⟩ := run
+      refine List.Forall₂.cons ?_ ?_
+      · exact exprIH depth (by omega) e e' initial middle headRun
+      · apply ih es es' middle _ tailRun
+        intro n bound expression output before after exprRun
+        exact exprIH n (by omega) expression output before after exprRun
+
 end Flapjack.Compiler.Backend.ClosCall
