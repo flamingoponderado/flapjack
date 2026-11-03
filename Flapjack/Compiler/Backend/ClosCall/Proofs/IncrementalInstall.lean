@@ -370,6 +370,34 @@ theorem doInstall_nonType_ready {C F : Type} (fuel relationFuel : Nat) (g : Stat
   refine ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
     nonempty, extended, newReady, finalStates, finalCompiler, targetFinalCompiler, oracleEq, growth⟩
 
+/-- Simulation at empty environments for source evaluations starting below a
+clock bound. It is Lean-side infrastructure for the installed-program case. -/
+def InstalledProgramSimBelow {C F : Type} (passFuel fuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (g : State) (allowed : Set Nat)
+    (program targetProgram : List ClosLang.Exp) : Prop :=
+  ∀ (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F),
+    source.clock < limit →
+    evaluate program [] source = (result, final) →
+    result ≠ .err (.abort .typeError) →
+    StateWellFormedFuel fuel g allowed target.code source →
+    StateRelFuel fuel g allowed source target →
+    IncrementalInstallReady g source target →
+    source.compile = compileIncFuelCallback passFuel compiler → target.compile = compiler →
+    target.compileOracle = compileIncFuelOracle passFuel source.compileOracle →
+    ∃ finalG targetResult targetFinal,
+      stateExtends g finalG ∧
+      evaluate targetProgram [] target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel fuel finalG allowed targetFinal.code))
+        (ValueRelFuel fuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel fuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel fuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
+
 /-- A successfully installed source program can use the list-simulation
 induction hypothesis at the compiler state produced by the actual incremental
 pass. This is the installed-program part of the Lean-side simulation; the
@@ -394,21 +422,26 @@ theorem doInstall_success_evaluate {C F : Type} (fuel relationFuel : Nat) (g : S
     (notType : result ≠ .err (.abort .typeError))
     (programIH : ∀ nextKnown converted,
       compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) →
-      ExprsSimFuelInvariant (C := C) (F := F) relationFuel
+      InstalledProgramSimBelow (C := C) (F := F) fuel relationFuel source.clock compiler
         (nextKnown, converted.2 ++ g.2) allowed program converted.1) :
-    ∃ nextKnown converted targetInstalled targetResult targetFinal,
+    ∃ nextKnown converted targetInstalled finalG targetResult targetFinal,
       compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) ∧
       doInstall targetValues target = (.val converted.1, targetInstalled) ∧
       IncrementalInstallReady (nextKnown, converted.2 ++ g.2) installed targetInstalled ∧
       stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      stateExtends (nextKnown, converted.2 ++ g.2) finalG ∧
       evaluate converted.1 [] targetInstalled = (targetResult, targetFinal) ∧
-      resultRel (List.Forall₂ (ValueRelFuel relationFuel (nextKnown, converted.2 ++ g.2)
-        allowed targetFinal.code)) (ValueRelFuel relationFuel (nextKnown, converted.2 ++ g.2)
-        allowed targetFinal.code) result targetResult ∧
-      StateRelFuel relationFuel (nextKnown, converted.2 ++ g.2) allowed final targetFinal ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
   obtain ⟨expressions, converted, nextKnown, targetInstalled, passRun, targetRun, resultEq,
-    _, _, extended, newReady, newStates, _, _, _, installGrowth⟩ :=
+    _, _, extended, newReady, newStates, installedCompiler, targetInstalledCompiler,
+    installedOracle, installGrowth⟩ :=
     doInstall_nonType_ready fuel relationFuel g allowed compiler source target sourceValues targetValues
       (.val program) installed ready states values sourceCompiler targetCompiler targetOracle installRun (by simp)
   have nonzero : source.clock ≠ 0 := by
@@ -422,17 +455,16 @@ theorem doInstall_success_evaluate {C F : Type} (fuel relationFuel : Nat) (g : S
   have installedWf := doInstall_wellFormedFuel sourceValues source installed (.val program)
     sourceWf (ready.auxEmpty 0) installRun
   have installedWf' := stateWellFormedFuel_mono installedWf extended Set.Subset.rfl installGrowth
-  have envs : EnvRelFuel relationFuel (nextKnown, converted.2 ++ g.2) allowed targetInstalled.code
-      [] [] 0 (converted.1.map (0, ·)) := by
-    apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
-    simp [envRel]
-  have envWf : ValuesWellFormedFuel relationFuel (nextKnown, converted.2 ++ g.2) allowed
-      targetInstalled.code [] := .nil
-  obtain ⟨targetResult, targetFinal, targetEval, related, finalStates, bodyGrowth⟩ :=
-    programIH nextKnown converted programPass [] [] installed targetInstalled result final programRun notType
-      envs envWf installedWf' newStates
-  exact ⟨nextKnown, converted, targetInstalled, targetResult, targetFinal, programPass, targetInstall,
-    newReady, extended, targetEval, related, finalStates,
+  have smaller : installed.clock < source.clock := by
+    have clock := doInstall_success_clock sourceValues source installed program installRun
+    omega
+  obtain ⟨finalG, targetResult, targetFinal, bodyExtended, targetEval, related, finalStates,
+    finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, bodyGrowth⟩ :=
+    programIH nextKnown converted programPass installed targetInstalled result final smaller programRun notType
+      installedWf' newStates newReady installedCompiler targetInstalledCompiler installedOracle
+  exact ⟨nextKnown, converted, targetInstalled, finalG, targetResult, targetFinal, programPass, targetInstall,
+    newReady, extended, bodyExtended, targetEval, related, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle,
     fun key entry found => bodyGrowth key entry (installGrowth key entry found)⟩
 
 /-- Related nonempty result lists have related HOL last elements. This is
@@ -526,7 +558,7 @@ theorem runInstalled_incremental_sim {C F : Type} (fuel relationFuel : Nat) (g :
     (notType : result ≠ .err (.abort .typeError))
     (programIH : ∀ program nextKnown converted,
       compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) →
-      ExprsSimFuelInvariant (C := C) (F := F) relationFuel
+      InstalledProgramSimBelow (C := C) (F := F) fuel relationFuel source.clock compiler
         (nextKnown, converted.2 ++ g.2) allowed program converted.1) :
     ∃ nextG targetResult targetFinal,
       stateExtends g nextG ∧
@@ -534,6 +566,10 @@ theorem runInstalled_incremental_sim {C F : Type} (fuel relationFuel : Nat) (g :
       resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG allowed targetFinal.code))
         (ValueRelFuel relationFuel nextG allowed targetFinal.code) result targetResult ∧
       StateRelFuel relationFuel nextG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel nextG allowed targetFinal.code final ∧
+      IncrementalInstallReady nextG final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
   unfold ClosProps.AdjustOracle.runInstalled at run ⊢
   cases installRun : doInstall sourceValues source with
@@ -548,7 +584,7 @@ theorem runInstalled_incremental_sim {C F : Type} (fuel relationFuel : Nat) (g :
         cases run
         exact notType (by rw [equal])
       obtain ⟨expressions, converted, nextKnown, targetInstalled, _, targetRun, resultEq,
-        _, _, extended, _, newStates, _, _, _, growth⟩ :=
+        _, _, extended, newReady, newStates, finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
         doInstall_nonType_ready fuel relationFuel g allowed compiler source target sourceValues targetValues
           (.err error) installed ready states values sourceCompiler targetCompiler targetOracle installRun installSafe
       have zero : source.clock = 0 := by
@@ -557,10 +593,13 @@ theorem runInstalled_incremental_sim {C F : Type} (fuel relationFuel : Nat) (g :
       have errorEq : error = .abort .timeoutError := by simpa [zero] using resultEq
       have targetInstall : doInstall targetValues target = (.err (.abort .timeoutError), targetInstalled) := by
         simpa [zero] using targetRun
+      have installedWf := doInstall_wellFormedFuel sourceValues source installed (.err error)
+        sourceWf (ready.auxEmpty 0) installRun
+      have newWf := stateWellFormedFuel_mono installedWf extended Set.Subset.rfl growth
       cases run
       subst error
       refine ⟨(nextKnown, converted.2 ++ g.2), .err (.abort .timeoutError), targetInstalled,
-        extended, ?_, ?_, newStates, growth⟩
+        extended, ?_, ?_, newStates, newWf, newReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩
       · simp [targetInstall]
       · rfl
     | val program =>
@@ -573,8 +612,9 @@ theorem runInstalled_incremental_sim {C F : Type} (fuel relationFuel : Nat) (g :
           rw [bad] at run
           cases run
           exact notType rfl
-        obtain ⟨nextKnown, converted, targetInstalled, targetProgramResult, targetFinal, _, targetInstall,
-          _, extended, targetProgramRun, related, finalStates, growth⟩ :=
+        obtain ⟨nextKnown, converted, targetInstalled, finalG, targetProgramResult, targetFinal, _, targetInstall,
+          _, extended, bodyExtended, targetProgramRun, related, finalStates, finalWf, finalReady,
+          finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
           doInstall_success_evaluate fuel relationFuel g allowed compiler source target sourceValues targetValues
             program installed programResult programFinal ready states sourceWf values sourceCompiler targetCompiler
             targetOracle installRun programRun programSafe (programIH program)
@@ -587,7 +627,9 @@ theorem runInstalled_incremental_sim {C F : Type} (fuel relationFuel : Nat) (g :
           | err targetError =>
             have eq : result = .err sourceError ∧ final = programFinal := by simpa using run.symm
             obtain ⟨rfl, rfl⟩ := eq
-            refine ⟨(nextKnown, converted.2 ++ g.2), .err targetError, targetFinal, extended, ?_, related, finalStates, growth⟩
+            refine ⟨finalG, .err targetError, targetFinal,
+              stateExtends_trans g _ finalG extended bodyExtended, ?_, related, finalStates,
+              finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩
             simp [targetInstall, targetProgramRun]
         | val sourceResults =>
           cases targetProgramResult with
@@ -596,9 +638,10 @@ theorem runInstalled_incremental_sim {C F : Type} (fuel relationFuel : Nat) (g :
             have eq : result = .val [@holLast ClosSem.Value ⟨unitValue⟩ sourceResults] ∧
                 final = programFinal := by simpa using run.symm
             obtain ⟨rfl, rfl⟩ := eq
-            refine ⟨(nextKnown, converted.2 ++ g.2),
+            refine ⟨finalG,
               .val [@holLast ClosSem.Value ⟨unitValue⟩ targetResults], targetFinal,
-              extended, ?_, ?_, finalStates, growth⟩
+              stateExtends_trans g _ finalG extended bodyExtended, ?_, ?_, finalStates,
+              finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩
             · simp [targetInstall, targetProgramRun]
             · exact resultRelated
 
@@ -630,7 +673,7 @@ theorem evaluate_install_incremental_sim {C F : Type} (fuel relationFuel : Nat) 
         (∀ key entry, target.code.lookup key = some entry → targetMiddle.code.lookup key = some entry))
     (programIH : ∀ (middleG : State) program nextKnown converted,
       compileIncFuel? fuel middleG.1 (program, []) = some (nextKnown, converted) →
-      ExprsSimFuelInvariant (C := C) (F := F) relationFuel
+      InstalledProgramSimBelow (C := C) (F := F) fuel relationFuel source.clock compiler
         (nextKnown, converted.2 ++ middleG.2) allowed program converted.1) :
     ∃ nextG targetResult targetFinal,
       stateExtends g nextG ∧
@@ -638,6 +681,10 @@ theorem evaluate_install_incremental_sim {C F : Type} (fuel relationFuel : Nat) 
       resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG allowed targetFinal.code))
         (ValueRelFuel relationFuel nextG allowed targetFinal.code) result targetResult ∧
       StateRelFuel relationFuel nextG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel nextG allowed targetFinal.code final ∧
+      IncrementalInstallReady nextG final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
   rw [ClosProps.AdjustOracle.evaluateInstallEq trace sourceArgs sourceEnv source] at run
   rw [ClosProps.AdjustOracle.evaluateInstallEq trace targetArgs targetEnv target]
@@ -659,18 +706,31 @@ theorem evaluate_install_incremental_sim {C F : Type} (fuel relationFuel : Nat) 
       | val targetValues => simp [resultRel] at argsRelated
       | err targetError =>
         cases run
-        exact ⟨middleG, .err targetError, targetMiddle, firstExt, rfl, argsRelated, middleStates, argsGrowth⟩
+        exact ⟨middleG, .err targetError, targetMiddle, firstExt, rfl, argsRelated, middleStates,
+          middleWf, middleReady, sourceCompiler, targetCompiler, targetOracle, argsGrowth⟩
     | val sourceValues =>
       cases targetArgsResult with
       | err targetError => simp [resultRel] at argsRelated
       | val targetValues =>
         have reversed : List.Forall₂ (ValueRelFuel relationFuel middleG allowed targetMiddle.code)
             sourceValues.reverse targetValues.reverse := List.rel_reverse argsRelated
-        obtain ⟨nextG, targetResult, targetFinal, secondExt, targetRun, related, finalStates, growth⟩ :=
+        have clockBound : sourceMiddle.clock ≤ source.clock := by
+          have bound := evaluate_clock_le sourceArgs sourceEnv source
+          simpa [argsRun] using bound
+        have programIH' : ∀ program nextKnown converted,
+            compileIncFuel? fuel middleG.1 (program, []) = some (nextKnown, converted) →
+            InstalledProgramSimBelow (C := C) (F := F) fuel relationFuel sourceMiddle.clock compiler
+              (nextKnown, converted.2 ++ middleG.2) allowed program converted.1 := by
+          intro program nextKnown converted pass start targetStart bodyResult bodyFinal smaller
+          exact programIH middleG program nextKnown converted pass start targetStart bodyResult bodyFinal
+            (by omega)
+        obtain ⟨nextG, targetResult, targetFinal, secondExt, targetRun, related, finalStates,
+          finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
           runInstalled_incremental_sim fuel relationFuel middleG allowed compiler sourceMiddle targetMiddle
             sourceValues.reverse targetValues.reverse result final middleReady middleStates middleWf reversed
-            sourceCompiler targetCompiler targetOracle run notType (programIH middleG)
+            sourceCompiler targetCompiler targetOracle run notType programIH'
         exact ⟨nextG, targetResult, targetFinal, stateExtends_trans g middleG nextG firstExt secondExt,
-          targetRun, related, finalStates, fun key entry found => growth key entry (argsGrowth key entry found)⟩
+          targetRun, related, finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle,
+          fun key entry found => growth key entry (argsGrowth key entry found)⟩
 
 end Flapjack.Compiler.Backend.ClosCall
