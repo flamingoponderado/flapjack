@@ -39,3 +39,12 @@ val var_list_evaluate_zero_replay = prove(
        |> SIMP_RULE std_ss [APPEND,LENGTH])
   \\ asm_exists_tac \\ fs []);
 val _ = show "var_list_evaluate_zero_replay_typed" var_list_evaluate_zero_replay;
+val _ = show "code_rel_typed" clos_letopProofTheory.code_rel_def;
+val _ = show "code_rel_length_typed" clos_letopProofTheory.code_rel_IMP_LENGTH;
+val _ = show "code_rel_cons_typed" clos_letopProofTheory.code_rel_CONS_CONS;
+val _ = show "function_rel_typed" clos_letopProofTheory.f_rel_def;
+val _ = show "value_rel_typed" clos_letopProofTheory.v_rel_rules;
+val _ = show "ref_rel_typed" clos_letopProofTheory.ref_rel_rules;
+val _ = show "fmap_rel_typed" clos_letopProofTheory.FMAP_REL_def;
+val _ = show "state_rel_typed" clos_letopProofTheory.state_rel_def;
+val _ = show "evaluate_let_op_typed" clos_letopProofTheory.evaluate_let_op;

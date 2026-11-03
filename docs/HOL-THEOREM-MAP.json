@@ -122747,5 +122747,81 @@
   "fmap_as_finite_support": ["refs", "code"],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the typed local HOL proof replay in clos_letop_source_probe.out: both expression lists, values and environment, generic compiler and FFI state carriers, the conjunction and evaluation result equality agree. The canonical state roundtrip witnesses refs and code; evaluation inherits the real-carrier assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "code_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Relations.lean",
+  "lean_name": "CodeRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_rel_typed and let_op_sing_eq_typed in clos_letop_source_probe.out. Both closure expression lists and target-equals-let_op-source equation agree; compileList is the original list traversal."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "f_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Relations.lean",
+  "lean_name": "FunctionRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared function_rel_typed: the first pair components share the same independently polymorphic type, their equality and the singleton code relation are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "v_rel",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Relations.lean",
+  "lean_name": "ValueRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed value_rel_typed rules: integers, fixed 64-bit words, byte vectors, reference pointers, related blocks, closures and recursive closures have matching carriers, fields and premises."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "ref_rel",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Relations.lean",
+  "lean_name": "RefRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed ref_rel_typed rules: identical byte arrays, pointwise related value arrays, and identical thunk modes with related values."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "FMAP_REL_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Relations.lean",
+  "lean_name": "fmapRel",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["first", "second"],
+  "reviewer": "Compared fmap_rel_typed: independent key and two value types, equal domains and source-to-target related lookups agree. The canonical maps have independent lookup and finite-support roundtrip witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "state_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Relations.lean",
+  "lean_name": "StateRel",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared state_rel_typed and fmap_rel_typed: independent compiler and FFI carriers, empty auxiliary code and code maps, maximum arity, clocks, FFI, related globals and references, and compiler/oracle adapters agree. The canonical refs and code carriers have a local broad-state roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "code_rel_IMP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Relations.lean",
+  "lean_name": "codeRel_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_rel_length_typed: related closure expression lists have equal lengths."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "code_rel_CONS_CONS",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Relations.lean",
+  "lean_name": "codeRel_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_rel_cons_typed: related lists with at least two expressions imply related singleton heads and related tails."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateLet.lean",
+  "lean_name": "evaluate_let_op_let",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_let_op_typed in clos_letop_source_probe.out and the let case of evaluate_ind_typed in clos_known_syntax_probe.out. The source bindings and successful-bindings body induction hypotheses, source run, related environments and states, code relation, and existential target result, state and conclusions are retained without extra premises. The proof covers binding errors, the ordinary let and optimized operation, including effects. State refs and code have a local canonical roundtrip witness; evaluation inherits the rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or remaining simulation cases."
 }
 ]
