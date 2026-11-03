@@ -43,3 +43,6 @@ val _ = show "smart_code_locs_typed" clos_opProofTheory.code_locs_SmartOp;
 val _ = show "list_to_bag_alt_typed" containerTheory.LIST_TO_BAG_alt;
 val _ = show "lift_exps_fv_typed" clos_opProofTheory.lift_exps_fv;
 val _ = show "fv_conj_list_typed" clos_opProofTheory.fv1_ConjList;
+val _ = show "fv_eq_pure_typed" clos_opProofTheory.fv1_eq_pure;
+val _ = show "eq_op_fv_typed" clos_opProofTheory.eq_op_fv;
+val _ = show "smart_fv_typed" clos_opProofTheory.fv1_SmartOp;

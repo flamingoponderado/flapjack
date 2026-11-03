@@ -1,6 +1,31 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "fv1_eq_pure",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartFreeVars.lean",
+    "lean_name": "eqPureFV",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared fv_eq_pure_typed: free-variable membership in the source eq_pure result implies membership in one original operand, with no additional premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "eq_op_fv",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartFreeVars.lean",
+    "lean_name": "eqOpFV",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared eq_op_fv_typed: successful source equality optimization and singleton result free-variable membership imply membership in either original singleton operand. The proof uses the full reviewed lifting bounds."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "fv1_SmartOp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartFreeVars.lean",
+    "lean_name": "smartFV",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_fv_typed: for arbitrary index, trace, operation and argument list, free-variable membership in the executed SmartOp implies membership in the original Op, with no extra hypotheses."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "lift_exps_fv",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftFreeVars.lean",
     "lean_name": "liftExpsFV",

@@ -329,6 +329,7 @@ import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartReduction
 import Flapjack.Compiler.Backend.ClosOp.Proofs.ReductionInvariants
 import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartFixed
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftFreeVars
+import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartFreeVars
 import Flapjack.Compiler.Backend.WordBignum.CompileExp
 import Flapjack.Compiler.Backend.WordBignum.Helpers
 import Flapjack.Compiler.Backend.WordBignum.Mini
