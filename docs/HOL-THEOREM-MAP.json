@@ -3,6 +3,56 @@
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
   "hol_name": "evaluate_adj_orac",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracLet",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL let case: same-result non-type-error simulation with binding and body induction hypotheses and the independent unused quantified variable. Canonical state fields use the local witness; evaluator inherits rational-cut reals. This is one case, not the mutual theorem; source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracHandle",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL handler case: source non-type-error hypotheses and same-result existential, body and raised-value handler induction hypotheses, and independent unused quantified variable are retained. Canonical state fields use the local witness; evaluator inherits rational-cut reals. This is one case, not the mutual theorem; source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracIf",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL conditional case: the source non-type-error simulation and condition and branch induction hypotheses are retained, with independent unused quantified variable. Branch decisions use the evaluator's Boolean decoding. Canonical state fields use the local witness; evaluator inherits rational-cut reals. This is one case, not the mutual theorem; source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracLetrec",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL recursive-binding case: the source non-type-error simulation and body induction hypothesis retain capture, arity checks, shared recursive closure environment, and independent unused quantified variable. Canonical state fields use the local witness; evaluator inherits rational-cut reals. This is one case, not the mutual theorem; source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracCall",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL direct-call case: source non-type-error simulation, argument and located-body induction hypotheses, code lookup, clock guard, and independent unused quantified variable are retained. Canonical state fields use the local witness; evaluator inherits rational-cut reals. This is one case, not the mutual theorem; source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
   "lean_name": "evaluateAdjOracNil",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs", "code"],

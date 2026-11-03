@@ -331,6 +331,191 @@ theorem evaluateAdjOracCons {C D F U : Type} (_unused : U) (cc : Compiler D) (f 
         rw [targetRest]
         cases restResult <;> cases run <;> exact ⟨targetLast, rfl, lastRel⟩
 
+/-- Let-binding case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracLet {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (trace : BackendCommon.Tra) (bindings : List ClosLang.Exp) (body : ClosLang.Exp)
+    (env : List Value) (s : State C F) (bindingsIH : EvalAt cc f bindings env s)
+    (bodyIH : ∀ values middle, evaluate bindings env s = (.val values, middle) →
+      EvalAt cc f [body] (values ++ env) middle) :
+    EvalAt cc f [.let trace bindings body] env s := by
+  intro result next t ⟨run, noType, rel⟩
+  cases bindingsRun : evaluate bindings env s with
+  | mk bindingsResult middle =>
+    rw [evaluate, fixClock_evaluate, bindingsRun] at run
+    have bindingsSafe : bindingsResult ≠ .err (.abort .typeError) := by
+      intro bad
+      rw [bad] at run
+      cases run
+      exact noType rfl
+    obtain ⟨targetMiddle, targetRun, middleRel⟩ :=
+      bindingsIH bindingsResult middle t ⟨bindingsRun, bindingsSafe, rel⟩
+    rw [evaluate, fixClock_evaluate, targetRun]
+    cases bindingsResult with
+    | err error => cases run; exact ⟨targetMiddle, rfl, middleRel⟩
+    | val values =>
+      exact bodyIH values middle bindingsRun result next targetMiddle ⟨run, noType, middleRel⟩
+
+/-- Exception-handler case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracHandle {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (trace : BackendCommon.Tra) (body handler : ClosLang.Exp) (env : List Value) (s : State C F)
+    (bodyIH : EvalAt cc f [body] env s)
+    (handlerIH : ∀ value middle, evaluate [body] env s = (.err (.raise value), middle) →
+      EvalAt cc f [handler] (value :: env) middle) :
+    EvalAt cc f [.handle trace body handler] env s := by
+  intro result next t ⟨run, noType, rel⟩
+  cases bodyRun : evaluate [body] env s with
+  | mk bodyResult middle =>
+    rw [evaluate, fixClock_evaluate, bodyRun] at run
+    have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
+      intro bad
+      rw [bad] at run
+      cases run
+      exact noType rfl
+    obtain ⟨targetMiddle, targetRun, middleRel⟩ := bodyIH bodyResult middle t ⟨bodyRun, bodySafe, rel⟩
+    rw [evaluate, fixClock_evaluate, targetRun]
+    cases bodyResult with
+    | val values => cases run; exact ⟨targetMiddle, rfl, middleRel⟩
+    | err error =>
+      cases error with
+      | abort reason => cases run; exact ⟨targetMiddle, rfl, middleRel⟩
+      | raise value =>
+        exact handlerIH value middle bodyRun result next targetMiddle ⟨run, noType, middleRel⟩
+
+/-- Conditional case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracIf {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (trace : BackendCommon.Tra) (condition yes no : ClosLang.Exp) (env : List Value) (s : State C F)
+    (conditionIH : EvalAt cc f [condition] env s)
+    (yesIH : ∀ value middle, evaluate [condition] env s = (.val [value], middle) →
+      asBool value = some true → EvalAt cc f [yes] env middle)
+    (noIH : ∀ value middle, evaluate [condition] env s = (.val [value], middle) →
+      asBool value = some false → EvalAt cc f [no] env middle) :
+    EvalAt cc f [.ifThenElse trace condition yes no] env s := by
+  intro result next t ⟨run, noType, rel⟩
+  cases conditionRun : evaluate [condition] env s with
+  | mk conditionResult middle =>
+    rw [evaluate, fixClock_evaluate, conditionRun] at run
+    have conditionSafe : conditionResult ≠ .err (.abort .typeError) := by
+      intro bad
+      rw [bad] at run
+      cases run
+      exact noType rfl
+    obtain ⟨targetMiddle, targetRun, middleRel⟩ :=
+      conditionIH conditionResult middle t ⟨conditionRun, conditionSafe, rel⟩
+    rw [evaluate, fixClock_evaluate, targetRun]
+    cases conditionResult with
+    | err error => cases run; exact ⟨targetMiddle, rfl, middleRel⟩
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value condition env s middle values conditionRun
+      cases decision : asBool value with
+      | none =>
+        simp [decision] at run
+        exact (noType run.1.symm).elim
+      | some flag =>
+        cases flag with
+        | false =>
+          have branchRun : evaluate [no] env middle = (result, next) := by
+            simpa [Flapjack.holHd, decision] using run
+          obtain ⟨target, targetBranch, targetRel⟩ :=
+            noIH value middle conditionRun decision result next targetMiddle ⟨branchRun, noType, middleRel⟩
+          exact ⟨target, by simpa [Flapjack.holHd, decision] using targetBranch, targetRel⟩
+        | true =>
+          have branchRun : evaluate [yes] env middle = (result, next) := by
+            simpa [Flapjack.holHd, decision] using run
+          obtain ⟨target, targetBranch, targetRel⟩ :=
+            yesIH value middle conditionRun decision result next targetMiddle ⟨branchRun, noType, middleRel⟩
+          exact ⟨target, by simpa [Flapjack.holHd, decision] using targetBranch, targetRel⟩
+
+/-- Recursive-binding case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracLetrec {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (names : List Basis.Pure.MlString.MlString) (loc : Option Nat) (selected : Option (List Nat))
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp) (env : List Value) (s : State C F)
+    (bodyIH : ∀ captured, (functions.all (fun (arity, _) => arity ≤ s.maxApp && arity != 0) = true) →
+      (match selected with | none => some env | some indices => lookupVars indices env) = some captured →
+      EvalAt cc f [body]
+        (((List.range functions.length).map (fun i => Value.recclosure loc [] captured functions i)) ++ env) s) :
+    EvalAt cc f [.letrec names loc selected functions body] env s := by
+  intro result next t ⟨run, noType, rel⟩
+  have maxEq : t.maxApp = s.maxApp := by rcases rel with ⟨_, rfl⟩; rfl
+  by_cases valid : functions.all (fun (arity, _) => arity ≤ s.maxApp && arity != 0) = true
+  · cases selected with
+    | none =>
+      have sourceRun : evaluate [body]
+          (((List.range functions.length).map (fun i => Value.recclosure loc [] env functions i)) ++ env) s =
+          (result, next) := by simpa [evaluate, valid] using run
+      obtain ⟨target, targetRun, targetRel⟩ := bodyIH env valid rfl result next t ⟨sourceRun, noType, rel⟩
+      exact ⟨target, by simpa [evaluate, maxEq, valid] using targetRun, targetRel⟩
+    | some indices =>
+      cases captured : lookupVars indices env with
+      | none =>
+        simp [evaluate, valid, captured] at run
+        exact (noType run.1.symm).elim
+      | some values =>
+        have sourceRun : evaluate [body]
+            (((List.range functions.length).map (fun i => Value.recclosure loc [] values functions i)) ++ env) s =
+            (result, next) := by simpa [evaluate, valid, captured] using run
+        obtain ⟨target, targetRun, targetRel⟩ :=
+          bodyIH values valid captured result next t ⟨sourceRun, noType, rel⟩
+        exact ⟨target, by simpa [evaluate, maxEq, valid, captured] using targetRun, targetRel⟩
+  · cases selected <;> simp [evaluate, valid] at run
+    all_goals exact (noType run.1.symm).elim
+
+/-- Direct-call case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracCall {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (trace : BackendCommon.Tra) (ticks loc : Nat) (args : List ClosLang.Exp)
+    (env : List Value) (s : State C F) (argsIH : EvalAt cc f args env s)
+    (bodyIH : ∀ values middle callEnv body, evaluate args env s = (.val values, middle) →
+      findCode loc values middle.code = some (callEnv, body) → ticks + 1 ≤ middle.clock →
+      EvalAt cc f [body] callEnv (decClock (ticks + 1) middle)) :
+    EvalAt cc f [.call trace ticks loc args] env s := by
+  intro result next t ⟨run, noType, rel⟩
+  cases argsRun : evaluate args env s with
+  | mk argsResult middle =>
+    rw [evaluate, fixClock_evaluate, argsRun] at run
+    have argsSafe : argsResult ≠ .err (.abort .typeError) := by
+      intro bad
+      rw [bad] at run
+      cases run
+      exact noType rfl
+    obtain ⟨targetMiddle, targetRun, middleRel⟩ := argsIH argsResult middle t ⟨argsRun, argsSafe, rel⟩
+    rw [evaluate, fixClock_evaluate, targetRun]
+    cases argsResult with
+    | err error => cases run; exact ⟨targetMiddle, rfl, middleRel⟩
+    | val values =>
+      have codeEq : targetMiddle.code = middle.code := by rcases middleRel with ⟨_, rfl⟩; rfl
+      have clockEq : targetMiddle.clock = middle.clock := by rcases middleRel with ⟨_, rfl⟩; rfl
+      cases codeRun : findCode loc values middle.code with
+      | none =>
+        simp [codeRun] at run
+        exact (noType run.1.symm).elim
+      | some pair =>
+        rcases pair with ⟨callEnv, body⟩
+        by_cases timeout : middle.clock < ticks + 1
+        · simp [codeRun, timeout] at run
+          obtain ⟨rfl, rfl⟩ := run
+          have finalRel : adjOracRel cc f { middle with clock := 0 } { targetMiddle with clock := 0 } := by
+            rcases middleRel with ⟨compatible, rfl⟩
+            exact ⟨compatible, rfl⟩
+          exact ⟨{ targetMiddle with clock := 0 }, by simp [codeEq, codeRun, clockEq, timeout], finalRel⟩
+        · have reduced : adjOracRel cc f (decClock (ticks + 1) middle) (decClock (ticks + 1) targetMiddle) := by
+            rcases middleRel with ⟨compatible, rfl⟩
+            exact ⟨compatible, rfl⟩
+          have bodyRun : evaluate [body] callEnv (decClock (ticks + 1) middle) = (result, next) := by
+            simpa [codeRun, timeout] using run
+          obtain ⟨target, targetBody, targetRel⟩ :=
+            bodyIH values middle callEnv body argsRun codeRun (by omega) result next
+              (decClock (ticks + 1) targetMiddle) ⟨bodyRun, noType, reduced⟩
+          exact ⟨target, by simpa [codeEq, codeRun, clockEq, timeout] using targetBody, targetRel⟩
+
 /-- Ordinary-operation case of the source oracle-adjustment evaluator
 simulation, with the induction hypothesis for its argument expressions. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
