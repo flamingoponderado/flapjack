@@ -257,7 +257,7 @@ CASES = {
     'type_error_duplicate_mutual': 'datatype t = A and u = B | B;',
 }
 
-def run(executable, source, name):
+def execute(executable, source, name):
     flags = ['--target=riscv']
     if name.startswith('types_') or name in ('undefined_types', 'parse_error_types'):
         flags.append('--types')
@@ -344,11 +344,16 @@ def run(executable, source, name):
     if name == 'no_prelude_reg_alg_duplicate': flags.extend(['--reg_alg=1', '--reg_alg=bad'])
     elif name == 'no_prelude_reg_alg_empty': flags.extend(['--reg_alg=', '--reg_alg=3'])
     elif name.startswith('no_prelude_reg_alg_'): flags.append('--reg_alg=' + name.rsplit('_', 1)[1])
-    p = subprocess.run([str(executable), *flags], input=source.encode('ascii'),
-                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+    return subprocess.run([str(executable), *flags], input=source.encode('ascii'),
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+
+def observation(p):
     return {'exit_code': p.returncode, 'stdout_bytes': len(p.stdout),
             'stdout_sha256': hashlib.sha256(p.stdout).hexdigest(),
             'stderr_bytes': len(p.stderr), 'stderr_sha256': hashlib.sha256(p.stderr).hexdigest()}
+
+def run(executable, source, name):
+    return observation(execute(executable, source, name))
 
 def check_reference(executable):
     version = subprocess.check_output([str(executable), '--version'], text=True)
@@ -402,9 +407,13 @@ if __name__ == '__main__':
         want = expected['cases'][name]
         if args.check_reference and run(args.check_reference, source, name) != want:
             raise SystemExit(f'{name}: historical reference no longer matches its capture')
-        if args.check_pinned_reference and run(args.check_pinned_reference, source, name) != want:
+        pinned = execute(args.check_pinned_reference, source, name) if args.check_pinned_reference else None
+        if pinned is not None and observation(pinned) != want:
             raise SystemExit(f'{name}: pinned reference differs from the historical capture')
-        got = run(args.cake, source, name)
+        actual = execute(args.cake, source, name)
+        got = observation(actual)
         if got != want: raise SystemExit(f'{name}: output mismatch\nexpected {want}\nactual   {got}')
+        if pinned is not None and (actual.returncode, actual.stdout, actual.stderr) != (pinned.returncode, pinned.stdout, pinned.stderr):
+            raise SystemExit(f'{name}: direct output comparison with pinned CakeML failed')
         reference = 'pinned and historical references' if args.check_pinned_reference else 'historical reference'
         print(f'{name}: complete stdout, stderr and exit status match the {reference}', flush=True)

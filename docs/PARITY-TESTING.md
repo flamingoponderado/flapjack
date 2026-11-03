@@ -8,6 +8,18 @@ source revisions and the resulting executable's embedded version. Set
 `CAKEML_BUILD_DIR` to choose another persistent build directory. The reference
 submodules in this repository remain read-only.
 
+On 2026-11-03, the pinned bootstrap completed with one HOL build job. Its
+build-produced executable passed `scripts/check-cake-help.py --pinned-reference` and
+`scripts/check-cake-pancake-parity.py --reference`, including the latter's 38
+ASCII lexical diagnostics. These are finite regression checks, not a proof of
+compiler equivalence.
+
+The same executable passed all 236 cases of
+`scripts/check-cake-cli-parity.py --check-pinned-reference`, comparing each
+case's complete stdout, stderr, and exit status directly with Flapjack. It
+also passed all 170 cases of `scripts/check-cake-pinned-parity.py` with
+`--check-reference` and the same direct comparison.
+
 Flapjack is a Lean port of the CakeML Pancake compiler. A regression test is
 useful for porting only when it corresponds to behavior of the original
 Pancake implementation. This applies to source-to-RISC-V tests and to tests
@@ -633,6 +645,9 @@ qualified function application, and an error following UTF-8 source text.
 
 To recheck the recorded historical outputs when that exact binary is available,
 run `python3 scripts/check-cake-cli-parity.py --check-reference /path/to/cake`.
+Pass `--check-pinned-reference /path/to/pinned/cake` to additionally compare
+the pinned compiler's complete stdout and stderr byte for byte and its exit
+status with Flapjack's output, after checking the capture hashes.
 `--record-reference /path/to/cake` checks the same provenance before replacing
 the recorded hashes. A pinned executable comparison is still required for the
 final parity claim. The suite also covers selected parser and type errors, including
@@ -1048,5 +1063,5 @@ reported revisions. A previously exported AST may be supplied with
 `--reuse-sexpr`; its provenance then has to be checked separately. The
 bootstrap depends on the historical compiler and is not a verified pinned
 compiler build or a proof of cross-language equivalence. The CLI checker
-compares the pinned bootstrap, historical captures, and Lean executable using
-the full stdout and stderr lengths and SHA-256 hashes plus exit status.
+checks the historical capture lengths and SHA-256 hashes and directly compares
+stdout, stderr, and exit status between the pinned bootstrap and Lean executable.
