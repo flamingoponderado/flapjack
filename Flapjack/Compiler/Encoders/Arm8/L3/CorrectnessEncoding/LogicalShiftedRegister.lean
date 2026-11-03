@@ -113,6 +113,7 @@ def arm8BopOpcBits (bop : HolBinop) : BitVec 2 :=
 /-- The `binop` register `and`/`or`/`xor` constructor of
 `encoder_correct arm8TargetL3`, lowered to `LogicalShiftedRegister@64` with an
 `lsl` shift by zero and no flag setting. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_binop_logic_reg (bop : HolBinop)
     (hbop : bop = .and ∨ bop = .or ∨ bop = .xor) (destination source right : Nat)
     (s1 s2 : AsmState 64) (ms : arm8_state)
@@ -320,6 +321,7 @@ theorem arm8Encode_logicalShiftedRegister_xor_neg (rm rd : BitVec 5) :
 
 /-- The `binop` `Xor` immediate `-1` constructor of `encoder_correct
 arm8TargetL3`, lowered to the inverted `ORR` against the zero register. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_binop_xor_neg (destination source : Nat) (value : BitVec 64)
     (hneg : value = -1) (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.arith (.binop .xor destination source (.imm value)))) s2 ∧

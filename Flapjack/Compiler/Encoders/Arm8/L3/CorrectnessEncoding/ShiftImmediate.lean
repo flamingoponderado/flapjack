@@ -109,6 +109,7 @@ theorem arm8Run_extract (imms : BitVec 6) (rm rn rd : BitVec 5) (st : arm8_state
 
 /-- The `.ror` immediate constructor of `encoder_correct arm8TargetL3`, lowered
 to the single instruction `ExtractRegister@64`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_shift_ror_imm (destination source : Nat) (value : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.arith (.shift .ror destination source (.imm value)))) s2 ∧

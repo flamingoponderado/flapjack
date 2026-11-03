@@ -179,6 +179,7 @@ theorem arm8Run_addSubImmediate (op : Bool) (imm : BitVec 64) (rn rd : BitVec 5)
 
 /-- The `binop` `add`/`sub` immediate constructor of
 `encoder_correct arm8TargetL3`, lowered to `AddSubImmediate@64`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_binop_addsub_imm (op : Bool) (bop : HolBinop)
     (hbop : bop = if op then .sub else .add) (destination source : Nat) (value : BitVec 64)
     (hvalid : value &&& ~~~(4095 : BitVec 64) = (0 : BitVec 64) ∨

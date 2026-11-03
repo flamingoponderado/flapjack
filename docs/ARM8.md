@@ -594,12 +594,18 @@ representations (`arm8_state` and the other L3 datatypes, `arm8Proj`,
 `arm8Ok`, `arm8Next`, `arm8EncMovImm`, `arm8CmpCond`, `arm8Shv`,
 `arm8LoadStoreAst{,32,16}`, `NoOperation`, `arm8EncodeFail`,
 `arm8ValidImmediate`, `arm8ConfigL3`, `arm8Encode`, `arm8Ast`, `arm8Enc` and
-`arm8TargetL3`).  The 129-definition `Fetch`/`Decode`/`Run` closure in
-`Defs.lean` and the per-constructor case theorems stay
-`pending_statement_review`: the former are mechanical renderings whose
-representation mapping is documented but not individually reviewed, and the
-latter are case splits of one HOL theorem whose branch hypotheses are
-discharged only by the dispatchers.
+`arm8TargetL3`).  The 64 per-constructor case theorems are also
+`reviewed_exact`: each is the named branch of HOL's `arm8_encoder_correct`
+(`print_tac "Skip"` … `print_tac "Loc"`), states `CaseGoal` for that
+instruction under exactly the original `asmStep`/`targetStateRel` premise, and
+takes only the lowering's branch tests as parameters, which the dispatchers in
+`Complete.lean` discharge.  Their statements' constant closure reaches the
+`(reals_as_rational_cuts)`-tagged FP renderings through `asmStep`'s FP updates,
+so their manifest rows record `inherits_reals_as_rational_cuts` and inherit the
+`docs/SOUNDNESS.md` item 8 real-rendering assumption.  The 129-definition
+`Fetch`/`Decode`/`Run` closure in `Defs.lean` stays
+`pending_statement_review`: those are mechanical renderings whose
+representation mapping is documented but not individually reviewed.
 
 ### Transition behaviour and lowering comparison
 

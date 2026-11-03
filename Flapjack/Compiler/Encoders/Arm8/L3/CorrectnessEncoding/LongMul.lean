@@ -22,6 +22,7 @@ open Flapjack.Compiler.Encoders.Arm8.L3.Target
 /-- The `longMul` constructor of `encoder_correct arm8TargetL3`: the two
 instructions `MultiplyHigh` and `MultiplyAddSub@64` simulate the single
 `longMul` `asmStep` with `n = 1`, so `asserts 1` and `asserts2 2` hold. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_longMul (destinationLeft destinationRight sourceLeft sourceRight : Nat)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.arith (.longMul destinationLeft destinationRight sourceLeft sourceRight))) s2 ∧

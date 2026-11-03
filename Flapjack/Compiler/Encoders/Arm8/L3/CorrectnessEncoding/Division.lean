@@ -67,6 +67,7 @@ theorem arm8Run_division (unsigned : Bool) (rm rn rd : BitVec 5) (st : arm8_stat
 
 /-- The `div` constructor of `encoder_correct arm8TargetL3`, lowered to the
 single instruction `Division@64`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_div (destination dividend divisor : Nat)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.arith (.div destination dividend divisor))) s2 ∧

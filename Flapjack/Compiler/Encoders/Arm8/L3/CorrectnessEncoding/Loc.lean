@@ -250,6 +250,7 @@ theorem arm8Enc_loc_small_length (register : Nat) (offset : BitVec 64)
 /-- The in-range `Loc` constructor of `encoder_correct arm8TargetL3`: the
 single `Address` instruction writes `PC + offset` to the register and advances
 `PC` by four. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_loc_small (register : Nat) (offset : BitVec 64)
     (hrange : arm8LocInRange offset = true)
     (s1 s2 : AsmState 64) (ms : arm8_state)

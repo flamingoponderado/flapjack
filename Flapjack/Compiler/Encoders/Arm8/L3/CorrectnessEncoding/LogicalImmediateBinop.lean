@@ -35,6 +35,7 @@ theorem arm8Run_logicalImmediate (opc : LogicalOp) (imm : BitVec 64) (rn rd : Bi
 
 /-- The `binop` immediate `and`/`or` constructor of `encoder_correct
 arm8TargetL3`, lowered to `LogicalImmediate@64` with no flag setting. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_binop_logic_imm (bop : HolBinop)
     (hbop : bop = .and ∨ bop = .or) (destination source : Nat) (value : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
@@ -240,6 +241,7 @@ theorem arm8_encoder_correct_binop_logic_imm (bop : HolBinop)
 
 /-- The `binop` `xor` immediate constructor (immediate not `-1`) of
 `encoder_correct arm8TargetL3`, lowered to `LogicalImmediate@64` with `EOR`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_binop_xor_imm (destination source : Nat) (value : BitVec 64)
     (hne : value ≠ -1) (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.arith (.binop .xor destination source (.imm value)))) s2 ∧

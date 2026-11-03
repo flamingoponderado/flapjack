@@ -358,6 +358,7 @@ theorem arm8Next_conditionalSelect_zero_agree (d : BitVec 64 → Prop)
 /-- The `addOverflow` constructor of `encoder_correct arm8TargetL3`: the
 flag-setting add followed by the `VC` select simulate the single `addOverflow`
 `asmStep` with `n = 1`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_addOverflow (destination result sourceLeft sourceRight : Nat)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1
@@ -632,6 +633,7 @@ theorem arm8_encoder_correct_addOverflow (destination result sourceLeft sourceRi
 /-- The `subOverflow` constructor of `encoder_correct arm8TargetL3`: the
 flag-setting add followed by the `VC` select simulate the single `subOverflow`
 `asmStep` with `n = 1`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_subOverflow (destination result sourceLeft sourceRight : Nat)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1

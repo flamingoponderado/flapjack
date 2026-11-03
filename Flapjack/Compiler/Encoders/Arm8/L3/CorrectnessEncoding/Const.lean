@@ -329,6 +329,7 @@ abbrev arm8ConstOrrWord (N : BitVec 1) (imms immr : BitVec 6) (r : Nat) : BitVec
 /-! ## The zeroing `MoveWide` shape -/
 
 /-- The `MoveWide .z` constructor of `encoder_correct arm8TargetL3`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_const_movZ (r : Nat) (v : BitVec 64) (imm16 : BitVec 16)
     (hw : BitVec 2) (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.const r v)) s2 ∧
@@ -441,6 +442,7 @@ theorem arm8_encoder_correct_const_movZ (r : Nat) (v : BitVec 64) (imm16 : BitVe
 /-! ## The negating `MoveWide` shape -/
 
 /-- The `MoveWide .n` constructor of `encoder_correct arm8TargetL3`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_const_movN (r : Nat) (v : BitVec 64) (imm16 : BitVec 16)
     (hw : BitVec 2) (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.const r v)) s2 ∧
@@ -553,6 +555,7 @@ theorem arm8_encoder_correct_const_movN (r : Nat) (v : BitVec 64) (imm16 : BitVe
 /-! ## The bitmask `LogicalImmediate` shape -/
 
 /-- The `LogicalImmediate ORR` constructor of `encoder_correct arm8TargetL3`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_const_orr (r : Nat) (v : BitVec 64) (N : BitVec 1)
     (imms immr : BitVec 6) (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.const r v)) s2 ∧
@@ -678,6 +681,7 @@ theorem arm8_encoder_correct_const_orr (r : Nat) (v : BitVec 64) (N : BitVec 1)
 /-- The three one-instruction constant lowerings of `encoder_correct
 arm8TargetL3`.  The four-instruction `MoveWide .k` shape is tracked
 separately. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_const_single (r : Nat) (v : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.const r v)) s2 ∧
@@ -1255,6 +1259,7 @@ theorem arm8ConstT3_pc (ms : arm8_state) (v : BitVec 64) (r : Nat) :
 
 /-- The four-instruction `MoveWide .k` constructor of
 `encoder_correct arm8TargetL3`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_const_movK (r : Nat) (v : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.const r v)) s2 ∧
@@ -1640,6 +1645,7 @@ theorem arm8_encoder_correct_const_movK (r : Nat) (v : BitVec 64)
 /-- The `const` constructor of `encoder_correct arm8TargetL3`, by the four
 shapes of `arm8_ast`: zeroing, negating and bitmask `MoveWide`, then the
 four-instruction `MoveWide .k` lowering. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_const (r : Nat) (v : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.const r v)) s2 ∧

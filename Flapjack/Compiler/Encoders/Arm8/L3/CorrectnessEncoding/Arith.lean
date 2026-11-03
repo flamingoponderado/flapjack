@@ -79,6 +79,7 @@ theorem arm8Run_addSubShiftedRegister (op : Bool) (rm : BitVec 5) (amount : BitV
 
 /-- The `binop` register `add`/`sub` constructor of `encoder_correct arm8TargetL3`,
 lowered to `AddSubShiftedRegister@64` with an `lsl` shift by zero. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_binop_addsub_reg (op : Bool) (bop : HolBinop)
     (hbop : bop = if op then .sub else .add) (destination source right : Nat)
     (s1 s2 : AsmState 64) (ms : arm8_state)
