@@ -3,6 +3,19 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_op_correct_approx",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
+  "lean_name": "knownOpCorrectApprox",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_op_correct_approx_typed and the source proof: all operation, argument, approximation, global map, value and state quantifiers, the four premises and both conclusions are retained, including the actual knownOpHOL and doApp. The proof covers every operation and combines the separately checked global, constructor, integer constant and indexed-read cases with global-store frames for other primitives. The closure state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_correct_approx",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
   "lean_name": "knownOpCorrectApproxEl",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [

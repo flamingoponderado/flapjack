@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosKnown.KnownOp
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateGlobalsApprox
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
 
 /-! Cases of the known-operation approximation correctness theorem. -/
 namespace Flapjack.Compiler.Backend.ClosKnown
@@ -337,6 +338,119 @@ theorem knownOpCorrectApproxEl {C F : Type} (args : List ValApprox)
             | simp only [knownOpHOL, Prod.mk.injEq] at known
               rcases known with ⟨rfl, rfl⟩
               exact ⟨globals, .other _⟩
+
+/-- Lift a successful block primitive's global-store frame to the dispatcher. -/
+private theorem blockGlobals {C F : Type} (op : ClosLang.BlockOp) (vs : List Value)
+    (s0 s : State C F) (v : Value)
+    (run : doApp (.blockOp op) vs s0 = .val (v, s)) : s.globals = s0.globals := by
+  cases h : applyBlock op vs s0 with
+  | none => simp [doApp, h] at run
+  | some pair =>
+    have eq : pair = (v, s) := by simpa [doApp, h] using run
+    subst pair
+    exact ClosInterp.applyBlock_globals op vs s0 s v h
+
+/-- Lift a successful memory primitive's global-store frame to the dispatcher. -/
+private theorem memoryGlobals {C F : Type} (op : ClosLang.MemOp) (vs : List Value)
+    (s0 s : State C F) (v : Value)
+    (run : doApp (.memOp op) vs s0 = .val (v, s)) : s.globals = s0.globals := by
+  cases h : applyMemory op vs s0 with
+  | none => simp [doApp, h] at run
+  | some pair =>
+    have eq : pair = (v, s) := by simpa [doApp, h] using run
+    subst pair
+    exact ClosInterp.applyMemory_globals op vs s0 s v h
+
+/-- Lift a successful integer primitive's global-store frame to the dispatcher. -/
+private theorem intGlobals {C F : Type} (op : ClosLang.IntOp) (vs : List Value)
+    (s0 s : State C F) (v : Value)
+    (run : doApp (.intOp op) vs s0 = .val (v, s)) : s.globals = s0.globals := by
+  cases h : applyNumeric (.intOp op) vs s0 with
+  | none => simp [doApp, h] at run
+  | some pair =>
+    have eq : pair = (v, s) := by simpa [doApp, h] using run
+    subst pair
+    exact ClosInterp.applyNumeric_globals _ vs s0 s v h
+
+/-- Lift a successful word primitive's global-store frame to the dispatcher. -/
+private theorem wordGlobals {C F : Type} (op : ClosLang.WordOp) (vs : List Value)
+    (s0 s : State C F) (v : Value)
+    (run : doApp (.wordOp op) vs s0 = .val (v, s)) : s.globals = s0.globals := by
+  cases h : applyNumeric (.wordOp op) vs s0 with
+  | none => simp [doApp, h] at run
+  | some pair =>
+    have eq : pair = (v, s) := by simpa [doApp, h] using run
+    subst pair
+    exact ClosInterp.applyNumeric_globals _ vs s0 s v h
+
+/-- A state with the same globals satisfies the same approximation invariant. -/
+private theorem globalsFrame {C F : Type} (s0 s : State C F) (g : Spt ValApprox)
+    (same : s.globals = s0.globals) (globals : stateGlobalsApprox s0 g) :
+    stateGlobalsApprox s g := by
+  simpa [stateGlobalsApprox, same] using globals
+
+/-- The known-operation approximation is sound for every successful
+primitive application. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_op_correct_approx"
+  (fmap_as_finite_support := [refs, code])]
+theorem knownOpCorrectApprox {C F : Type} (op : ClosLang.Op) (args : List ValApprox)
+    (g0 : Spt ValApprox) (a : ValApprox) (g : Spt ValApprox)
+    (vs : List Value) (s0 : State C F) (v : Value) (s : State C F)
+    (known : knownOpHOL op args g0 = (a, g))
+    (run : doApp op vs s0 = .val (v, s))
+    (rel : List.Forall₂ ValApproxVal args vs) (globals : stateGlobalsApprox s0 g0) :
+    stateGlobalsApprox s g ∧ ValApproxVal a v := by
+  cases op with
+  | globOp op =>
+    cases op with
+    | global index => exact knownOpCorrectApproxGlobal index args g0 a g vs s0 v s known run rel globals
+    | setGlobal index => exact knownOpCorrectApproxSetGlobal index args g0 a g vs s0 v s known run rel globals
+    | allocGlobal => exact knownOpCorrectApproxAllocGlobal args g0 a g vs s0 v s known run rel globals
+    | globalsPtr | setGlobalsPtr => cases vs <;> simp [doApp, applyGlobal] at run
+  | blockOp op =>
+    cases op with
+    | cons tag => exact knownOpCorrectApproxCons tag args g0 a g vs s0 v s known run rel globals
+    | _ =>
+      have same := blockGlobals _ vs s0 s v run
+      simp only [knownOpHOL, Prod.mk.injEq] at known
+      rcases known with ⟨rfl, rfl⟩
+      exact ⟨globalsFrame s0 s g0 same globals, .other _⟩
+  | memOp op =>
+    cases op with
+    | el => exact knownOpCorrectApproxEl args g0 a g vs s0 v s known run rel globals
+    | _ =>
+      have same := memoryGlobals _ vs s0 s v run
+      simp only [knownOpHOL, Prod.mk.injEq] at known
+      rcases known with ⟨rfl, rfl⟩
+      exact ⟨globalsFrame s0 s g0 same globals, .other _⟩
+  | intOp op =>
+    cases op with
+    | const i => exact knownOpCorrectApproxIntConst i args g0 a g vs s0 v s known run rel globals
+    | _ =>
+      have same := intGlobals _ vs s0 s v run
+      simp only [knownOpHOL, Prod.mk.injEq] at known
+      rcases known with ⟨rfl, rfl⟩
+      exact ⟨globalsFrame s0 s g0 same globals, .other _⟩
+  | wordOp op =>
+    have same := wordGlobals op vs s0 s v run
+    simp only [knownOpHOL, Prod.mk.injEq] at known
+    rcases known with ⟨rfl, rfl⟩
+    exact ⟨globalsFrame s0 s g0 same globals, .other _⟩
+  | ffi name =>
+    simp only [knownOpHOL, Prod.mk.injEq] at known
+    rcases known with ⟨rfl, rfl⟩
+    simp only [doApp] at run
+    repeat' split at run
+    all_goals simp_all [stateGlobalsApprox, ValApproxVal.other]
+    all_goals aesop
+  | thunkOp op =>
+    simp only [knownOpHOL, Prod.mk.injEq] at known
+    rcases known with ⟨rfl, rfl⟩
+    simp only [doApp] at run
+    repeat' split at run
+    all_goals simp_all [stateGlobalsApprox, ValApproxVal.other]
+    all_goals aesop
+  | label | install => simp [doApp] at run
 
 end KnownOpCorrect
 end Flapjack.Compiler.Backend.ClosKnown
