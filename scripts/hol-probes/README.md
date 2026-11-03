@@ -1,5 +1,6 @@
 `clos_op_lift_proof_probe.out` also records the typed simple-expression
-rules, their purity theorems, and the lifting simplicity invariant. These
+rules, their purity theorems, and the lifting and direct-equality simplicity
+invariants. These
 captures support source review, not full pass correctness.
 
 `flat_to_clos_helpers_probe.out` captures the fully typed original literal,

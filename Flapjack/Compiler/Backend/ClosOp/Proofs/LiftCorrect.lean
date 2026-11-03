@@ -73,6 +73,62 @@ theorem simpleExpPureEvery (xs : List Exp) (h : ∀ x ∈ xs, SimpleExp x) :
   intro x hx
   exact simpleExpPure x (h x hx)
 
+/-- The integer stage preserves simplicity; internal proof infrastructure. -/
+private theorem eqDirectConstSimple (x y z : Exp) (hx : SimpleExp x) (hy : SimpleExp y)
+    (h : eqDirectConst x y = some z) : SimpleExp z := by
+  unfold eqDirectConst at h
+  split at h <;> simp_all
+  all_goals subst z
+  all_goals first | exact SimpleExp.cons _ _ _ (by simp) | exact SimpleExp.equalInt _ _ _ hx | exact SimpleExp.equalInt _ _ _ hy
+
+/-- Equality against any source constant preserves simplicity. -/
+private theorem equalConstSimple (p : ConstPart) (source e : Exp)
+    (hs : destOpNil destConstant source = some p) (h : SimpleExp e) :
+    SimpleExp (.op .none (.blockOp (.equalConst p)) [e]) := by
+  cases p with
+  | con i xs =>
+    rw [destOpConstant_eq_previous] at hs
+    cases source <;> try simp at hs
+    case op t op args =>
+      cases op <;> try simp at hs
+      case blockOp op =>
+        cases op <;> try simp at hs
+        case constant value => cases value <;> cases args <;> simp at hs
+  | int i => exact SimpleExp.equalInt _ i _ h
+  | str s => exact SimpleExp.equalStr _ s _ h
+  | w64 w => exact SimpleExp.equalWord64 _ w _ h
+
+/-- The constant stage preserves simplicity; internal proof infrastructure. -/
+private theorem eqDirectConstantSimple (x y z : Exp) (hx : SimpleExp x) (hy : SimpleExp y)
+    (h : eqDirectConstant x y = some z) : SimpleExp z := by
+  unfold eqDirectConstant at h
+  split at h <;> simp_all
+  all_goals subst z
+  all_goals try exact SimpleExp.cons _ _ _ (by simp)
+  all_goals first | exact equalConstSimple _ _ _ (by assumption) hx | exact equalConstSimple _ _ _ (by assumption) hy
+
+/-- The nullary-constructor stage preserves simplicity; internal proof infrastructure. -/
+private theorem eqDirectNilSimple (x y z : Exp) (hx : SimpleExp x) (hy : SimpleExp y)
+    (h : eqDirectNil x y = some z) : SimpleExp z := by
+  unfold eqDirectNil at h
+  split at h <;> simp_all
+  all_goals subst z
+  all_goals first | exact SimpleExp.cons _ _ _ (by simp) | exact SimpleExp.tagLenEq _ _ _ _ hx | exact SimpleExp.tagLenEq _ _ _ _ hy
+
+/-- Direct equality simplification preserves simple expressions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_simple_exp"]
+theorem eqDirectSimpleExp (x y z : Exp)
+    (h : directEq x y = some z ∧ SimpleExp x ∧ SimpleExp y) : SimpleExp z := by
+  rcases h with ⟨h, hx, hy⟩
+  cases hc : eqDirectConst x y with
+  | some e => simp [directEq, hc] at h; subst z; exact eqDirectConstSimple x y e hx hy hc
+  | none =>
+    cases hd : eqDirectConstant x y with
+    | some e => simp [directEq, hc, hd] at h; subst z; exact eqDirectConstantSimple x y e hx hy hd
+    | none =>
+      simp [directEq, hc, hd] at h
+      exact eqDirectNilSimple x y z hx hy h
+
 /-- Projection form of the lifting invariant, for induction over the traversal. -/
 private theorem liftSimple (xs : List Exp) (n : Nat) (binds : List Exp) :
     ∀ x ∈ (liftExpsHOL xs n binds).1, SimpleExp x := by

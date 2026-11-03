@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "eq_direct_simple_exp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",
+    "lean_name": "eqDirectSimpleExp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared eq_direct_simple_exp_typed: the same source direct-equality result equation and two simple-expression premises imply simplicity of the result, over the original expression carrier. The proof checks each executed matcher stage and rules out ConstPart.con using the source constant matcher."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "simple_exp",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",
     "lean_name": "SimpleExp",

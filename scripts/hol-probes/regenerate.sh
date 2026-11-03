@@ -733,7 +733,7 @@ run_probe clos_op_definitions_probeScript.sml clos_op_definitions_probe.out \
   "$cake_dir/compiler/backend/clos_opScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_op_lift_proof_probeScript.sml clos_op_lift_proof_probe.out \
-  dont_lift_thm_typed dont_lift_pure_typed lift_acc_typed lift_n_typed lift_length_typed simple_exp_rules_typed simple_exp_pure_typed simple_exp_pure_every_typed lift_simple_exp_typed \
+  dont_lift_thm_typed dont_lift_pure_typed lift_acc_typed lift_n_typed lift_length_typed simple_exp_rules_typed simple_exp_pure_typed simple_exp_pure_every_typed lift_simple_exp_typed eq_direct_simple_exp_typed \
   "$cake_dir/compiler/backend/proofs/clos_opProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe cake_lexer_probeScript.sml cake_lexer_probe.out \
