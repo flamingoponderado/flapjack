@@ -53,8 +53,10 @@ source review; they do not establish cross-language equivalence.
 and its lookup equation used to review the canonical empty-map producer.
 
 `clos_interp_review_probe.out` captures the typed installation traversal,
-interpreter expressions, initializer, attachment and flat-to-closure program
-composition used by the observational theorem review.
+interpreter expressions, optimizer, initializer, attachment and incremental
+flat-to-closure program composition. `clos_interp_semantics_probe.out` captures
+the typed interpreter-attachment observational theorem. These captures support
+source review; they do not establish cross-language equivalence.
 
 `source_to_flat_mapi_probe.out` captures the inferred types and statements of
 `mapi_map` and `FILTER_MAPi_ID` from the pinned source-to-flat proof. Their

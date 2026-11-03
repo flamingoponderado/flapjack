@@ -72,6 +72,34 @@
     "reviewer": "Compared compile_semantics_prime_typed: independent compiler and FFI types, positivity, no-Mat declarations and the primed installation relation form the original conjunction, followed by the original flat non-Fail premise and equality of compiled closure and flat behaviors. The imported reviewed holEmpty is the canonical finite-support representation of the original FEMPTY code argument. The checked proof uses the source-reviewed evaluators and relations; their floating-point dependency inherits reals_as_rational_cuts and SOUNDNESS item 8."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "install_config_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Semantics.lean",
+    "lean_name": "installConfigRelProduction",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared install_rel_unprimed_typed: the compiler configuration type and the oracle and compiler auxiliary payload types are independent; every source oracle declaration list is no-Mat, the oracle is pureCo of reviewed incCompileDecs composed with the source oracle, and the source compiler is the corresponding pureCc."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "semantics_attach_interpreter",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/AttachSemanticsSource.lean",
+    "lean_name": "attachInterpreter_semantics_source",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared attach_semantics_typed: independently polymorphic compiler and FFI types, the original source non-Fail premise, empty auxiliary code for every oracle entry and positive max_app are retained, and the target/source behavior equality has the same direction. insertProgram is definitionally insertion on the first program component paired with identity on the second. The imported reviewed holEmpty represents FEMPTY. Evaluator floating-point dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "compile_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Semantics.lean",
+    "lean_name": "compileSemantics_source",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared compile_semantics_typed: compiler and FFI carriers are independent, the original positivity, no-Mat and unprimed installation relation conjunction and flat non-Fail premise are unchanged, and compiled closure behavior equals flat behavior. The imported reviewed holEmpty represents the original FEMPTY code argument. The proof composes the primed source theorem with the source-shaped interpreter attachment theorem using the kernel-checked production callback and oracle factorizations. Evaluator floating-point dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "initial_state_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/State.lean",
@@ -108048,120 +108076,120 @@
     "lean_name": "canInterpretOp",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "can_interpret_op_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared can_interpret_op_typed: constructor arity and tag checks, zero-argument constants and globals, and every fallback agree. The executed interpreter optimizer uses the reviewed operator carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "canInterpret",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "can_interpret_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every can_interpret_typed expression clause, including optional application locations, unary arity, function and call fallbacks, and recursive tests over the reviewed closure syntax."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "canInterpretList",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "can_interpret_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the two can_interpret_typed list clauses: empty is true and cons combines the original head and tail predicates."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "checkSizeOp",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "check_size_op_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared check_size_op_typed: nullary constructors preserve the budget, nonempty constructors subtract one, integer constants and globals preserve it, and all other operators subtract one using natural subtraction."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "checkSize",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "check_size_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every check_size_typed expression clause, including traversal order, zero-budget short circuit, application decrement and unchanged budget for functions, calls and recursive bindings."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "checkSizeList",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "check_size_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the check_size_typed list clauses: empty preserves the budget and cons tests the head before continuing only if the resulting budget is nonzero."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "nontrivialSize",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "nontrivial_size_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared nontrivial_size_typed: the original threshold is exactly a size-budget traversal from eight resulting in zero."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "toConstantOp",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "to_constant_op_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all to_constant_op_typed branches and fallbacks: integer and block constants, global indices, empty constructors and nonempty constructor tags preserve their source encodings."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "toConstant",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "to_constant_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all to_constant_typed expression clauses: application retains only its first argument or the zero fallback, constructors and tags match, and unsupported function, call and recursive-binding expressions encode zero."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "toConstantList",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "to_constant_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared to_constant_typed list clauses: the empty constructor and recursive pair encoding preserve the original element order."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "optInterp",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "opt_interp_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared opt_interp_typed: only interpretable, nontrivial expressions become a three-stage global-zero interpreter call with two empty environments and the encoded constant; all traces and argument order agree."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "optInterp1",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "opt_interp1_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared opt_interp1_typed: a successful replacement is returned and failure preserves the original expression."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "insertInterp1",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "insert_interp1_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared insert_interp1_typed: a selected expression is replaced; otherwise only Let maps optInterp1 over its bindings and resets the trace to None, while all other constructors are preserved."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
     "lean_name": "insertInterp",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "insert_interp_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared insert_interp_typed: the pass maps reviewed insertInterp1 over the top-level expression list in order."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Compile.lean",
     "lean_name": "incCompileDecs",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "inc_compile_decs_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source composition transcribed; complete source and typed carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared inc_compile_decs_typed: compile declarations, append the separately compiled unit declaration, insert the interpreter, and return an empty auxiliary list independently polymorphic in its element type. The executed incremental compiler uses this definition."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternComp/Decision.lean",

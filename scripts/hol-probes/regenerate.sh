@@ -300,8 +300,12 @@ run_probe flat_props_evaluate_match_probeScript.sml flat_props_evaluate_match_pr
   "$cake_dir/compiler/backend/semantics/flatPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_interp_review_probeScript.sml clos_interp_review_probe.out \
-  has_install_typed interp_el_typed interp_rev_typed interpreter_body_typed interpreter_typed compile_init_typed attach_interpreter_typed compile_prog_typed insert_interp_typed inc_compile_decs_typed \
+  has_install_typed interp_el_typed interp_rev_typed interpreter_body_typed interpreter_typed compile_init_typed attach_interpreter_typed compile_prog_typed can_interpret_op_typed can_interpret_typed check_size_op_typed check_size_typed nontrivial_size_typed to_constant_op_typed to_constant_typed opt_interp_typed opt_interp1_typed insert_interp1_typed insert_interp_typed inc_compile_decs_typed \
   "$cake_dir/compiler/backend/clos_interpScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_interp_semantics_probeScript.sml clos_interp_semantics_probe.out \
+  attach_semantics_typed \
+  "$cake_dir/compiler/backend/proofs/clos_interpProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe finite_map_empty_probeScript.sml finite_map_empty_probe.out \
   fempty_typed flookup_empty_typed \
