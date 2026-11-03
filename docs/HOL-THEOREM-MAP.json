@@ -1,6 +1,39 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "simple_exp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",
+    "lean_name": "SimpleExp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared simple_exp_rules_typed against all thirteen constructors: traces, integers, native mlstring, fixed word64, tag and length carriers, argument arities and recursive premises match. EVERY is expressed as membership-based universal quantification over Lean lists."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "simple_exp_pure",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",
+    "lean_name": "simpleExpPure",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared simple_exp_pure_typed: every source simple expression is pure, with the same expression carrier and reviewed purity predicate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "simple_exp_pure_every",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",
+    "lean_name": "simpleExpPureEvery",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared simple_exp_pure_every_typed: EVERY simple_exp implies EVERY pure on the same list; Lean uses the equivalent membership-based list predicate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "lift_exps_simple_exp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",
+    "lean_name": "liftExpsSimpleExp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lift_simple_exp_typed: the source result equation for the same six arguments implies every resulting expression is simple. Lean expresses EVERY by membership-based universal quantification."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "dont_lift_thm",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",
     "lean_name": "dontLiftCharacterization",

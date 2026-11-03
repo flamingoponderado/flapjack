@@ -11,3 +11,7 @@ val _ = show "dont_lift_pure_typed" clos_opProofTheory.dont_lift_pure;
 val _ = show "lift_acc_typed" clos_opProofTheory.lift_exps_acc;
 val _ = show "lift_n_typed" clos_opProofTheory.lift_exps_n;
 val _ = show "lift_length_typed" clos_opProofTheory.lift_exps_length;
+val _ = show "simple_exp_rules_typed" clos_opProofTheory.simple_exp_rules;
+val _ = show "simple_exp_pure_typed" clos_opProofTheory.simple_exp_pure;
+val _ = show "simple_exp_pure_every_typed" clos_opProofTheory.simple_exp_pure_every;
+val _ = show "lift_simple_exp_typed" clos_opProofTheory.lift_exps_simple_exp;

@@ -4,6 +4,41 @@ import Flapjack.Compiler.Backend.ClosLang.Pure
 /-! Source lifting invariants from the corresponding HOL proof script. -/
 namespace Flapjack.Compiler.Backend.ClosOp
 open ClosLang
+
+/-- The source relation for expressions whose evaluation is simple and pure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "simple_exp"]
+inductive SimpleExp : Exp → Prop where
+  | var t i : SimpleExp (.var t i)
+  | ite t x y z : SimpleExp x → SimpleExp y → SimpleExp z → SimpleExp (.ifThenElse t x y z)
+  | intConst t i : SimpleExp (.op t (.intOp (.const i)) [])
+  | constInt t i : SimpleExp (.op t (.blockOp (.constant (.constInt i))) [])
+  | constStr t i : SimpleExp (.op t (.blockOp (.constant (.constStr i))) [])
+  | constWord64 t i : SimpleExp (.op t (.blockOp (.constant (.constWord64 i))) [])
+  | cons t i xs : (∀ x ∈ xs, SimpleExp x) → SimpleExp (.op t (.blockOp (.cons i)) xs)
+  | equalInt t i x : SimpleExp x → SimpleExp (.op t (.blockOp (.equalConst (.int i))) [x])
+  | equalStr t i x : SimpleExp x → SimpleExp (.op t (.blockOp (.equalConst (.str i))) [x])
+  | equalWord64 t i x : SimpleExp x → SimpleExp (.op t (.blockOp (.equalConst (.w64 i))) [x])
+  | elemAt t i x : SimpleExp x → SimpleExp (.op t (.blockOp (.elemAt i)) [x])
+  | equal t x y : SimpleExp x → SimpleExp y → SimpleExp (.op t (.blockOp .equal) [x, y])
+  | tagLenEq t l y x : SimpleExp x → SimpleExp (.op t (.blockOp (.tagLenEq l y)) [x])
+
+/-- List form of purity, used to connect membership hypotheses to `pureList`. -/
+private theorem pureListOf (xs : List Exp) (h : ∀ x ∈ xs, ClosLang.pure x = true) :
+    pureList xs = true := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih =>
+    simp only [pureList, Bool.and_eq_true]
+    exact ⟨h x (by simp), ih (fun y hy => h y (by simp [hy]))⟩
+
+/-- Every simple expression satisfies the source purity predicate. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "simple_exp_pure"]
+theorem simpleExpPure (x : Exp) (h : SimpleExp x) : pure x = true := by
+  induction h with
+  | cons t i xs hs ih =>
+    simp only [ClosLang.pure, pureOp, Bool.and_true]
+    exact pureListOf xs ih
+  | _ => simp_all [ClosLang.pure, pureList, pureOp]
 /-- Exactly the source literal forms are exempt from lifting. -/
 @[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "dont_lift_thm"]
 theorem dontLiftCharacterization (x : Exp) :
@@ -30,6 +65,36 @@ theorem dontLiftCharacterization (x : Exp) :
 theorem dontLiftPure (x : Exp) (h : dontLift x = true) : pure x = true := by
   rcases (dontLiftCharacterization x).mp h with ⟨t,i,rfl⟩ | ⟨t,i,rfl⟩ | ⟨t,s,rfl⟩ | ⟨t,i,rfl⟩ | ⟨t,w,rfl⟩ <;>
     rfl
+
+/-- A list of simple expressions is a list of pure expressions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "simple_exp_pure_every"]
+theorem simpleExpPureEvery (xs : List Exp) (h : ∀ x ∈ xs, SimpleExp x) :
+    ∀ x ∈ xs, pure x = true := by
+  intro x hx
+  exact simpleExpPure x (h x hx)
+
+/-- Projection form of the lifting invariant, for induction over the traversal. -/
+private theorem liftSimple (xs : List Exp) (n : Nat) (binds : List Exp) :
+    ∀ x ∈ (liftExpsHOL xs n binds).1, SimpleExp x := by
+  fun_induction liftExpsHOL xs n binds <;> simp_all
+  case case2 =>
+    rename_i x xs n binds hd xs1 n1 binds1 hx ih
+    rcases (dontLiftCharacterization x).mp hd with ⟨t,i,rfl⟩ | ⟨t,i,rfl⟩ | ⟨t,s,rfl⟩ | ⟨t,i,rfl⟩ | ⟨t,w,rfl⟩
+    · exact SimpleExp.intConst _ _
+    · exact SimpleExp.cons _ _ _ (by simp)
+    · exact SimpleExp.constStr _ _
+    · exact SimpleExp.constInt _ _
+    · exact SimpleExp.constWord64 _ _
+  case case3 => exact SimpleExp.cons _ _ _ (by assumption)
+  case case4 => exact SimpleExp.var _ _
+
+/-- Every expression returned by the source lifting traversal is simple. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "lift_exps_simple_exp"]
+theorem liftExpsSimpleExp (xs : List Exp) (n : Nat) (binds ys : List Exp) (k : Nat) (binds2 : List Exp)
+    (h : liftExpsHOL xs n binds = (ys, k, binds2)) : ∀ x ∈ ys, SimpleExp x := by
+  have hs := liftSimple xs n binds
+  rw [h] at hs
+  exact hs
 
 /-- Stronger projection form used by the source length theorem. This is
 Flapjack proof infrastructure, not a separate HOL theorem. -/
