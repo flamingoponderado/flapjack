@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberKnownSemantics
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotationCodeSemantics
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileProduction
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
@@ -27,10 +28,11 @@ abbrev letopInc : ClosureProgram → ClosureProgram := ClosLetop.compileInc
 
 /-- Numbering, free-variable cleanup, known-function optimization, tick
 removal, let-operation cleanup and annotation preserve closure observations
-under their source invariants. The theorem uses the executed bounded passes;
-it is Lean-side composition, not a standalone HOL declaration. -/
+under their source invariants. Installing the annotated entry chain has the
+same observation, including for an empty batch. The theorem uses the executed
+bounded passes; it is Lean-side composition, not a standalone HOL declaration. -/
 theorem number_fvs_known_ticks_letop_annotate_semantics {C F : Type} (ffi : HolFfiState F)
-    (fuel maxApp number : Nat) (knownConfig : ClosKnown.Config)
+    (fuel maxApp number start : Nat) (knownConfig : ClosKnown.Config)
     (oracle : CompileOracle (Nat × (Spt ValApprox × C))) (compiler : Compiler C)
     (program : List ClosLang.Exp) (optimized : List (ClosLang.Exp × ValApprox)) (globals : Spt ValApprox)
     (positive : 1 ≤ maxApp)
@@ -60,6 +62,17 @@ theorem number_fvs_known_ticks_letop_annotate_semantics {C F : Type} (ffi : HolF
           stateCo (ClosKnown.compileInc knownConfig)
             (pureCo fvsInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle))
         compiler (ClosAnnotate.annotateList 0 optimizedOutput) =
+      semantics ffi maxApp HolFiniteMapExact.holEmpty oracle
+        (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
+          (pureCc fvsInc
+            (stateCc (ClosKnown.compileInc knownConfig)
+              (pureCc ticksInc (pureCc letopInc
+                (pureCc ClosAnnotate.compileInc compiler)))))) program ∧
+      semantics ffi maxApp (initialSourceCode (ClosAnnotate.compile (chainExps start optimizedOutput)))
+        (pureCo ClosAnnotate.compileInc ∘ pureCo letopInc ∘ pureCo ticksInc ∘
+          stateCo (ClosKnown.compileInc knownConfig)
+            (pureCo fvsInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle))
+        compiler [.call .none 0 start []] =
       semantics ffi maxApp HolFiniteMapExact.holEmpty oracle
         (stateCc (ClosNumber.ignoreTable ClosNumber.compileInc)
           (pureCc fvsInc
@@ -140,9 +153,22 @@ theorem number_fvs_known_ticks_letop_annotate_semantics {C F : Type} (ffi : HolF
       HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL, ClosAnnotate.compile] using annotated
   have knownRun : ClosKnown.knownListTotal knownConfig (ClosFvs.compile numbered) [] .ln = (optimized, globals) := by
     exact knownSafe.2
+  have letopAux : ∀ n, (letopCo n).2.2 = [] := by
+    simp [letopCo, ticksCo, pureCo, letopInc, ClosLetop.compileInc]
+  have chainEq : semantics ffi maxApp
+        (initialSourceCode (ClosAnnotate.compile (chainExps start letopOutput)))
+        (pureCo ClosAnnotate.compileInc ∘ letopCo) compiler [.call .none 0 start []] =
+      semantics ffi maxApp HolFiniteMapExact.holEmpty letopCo
+        (pureCc ClosAnnotate.compileInc compiler) letopOutput := by
+    by_cases nonempty : letopOutput ≠ []
+    · exact source_to_annotatedChain_semantics ffi maxApp start letopOutput letopCo compiler
+        nonempty annotationReady.1 annotationReady.2 letopAux letopNonfail
+    · have empty : letopOutput = [] := by simpa using nonempty
+      rw [empty, emptyAnnotatedChain_semantics, emptySource_semantics]
+  have beforeAnnotation := letopEq.trans (ticksEq.symm.trans (knownEq.trans (fvsEq.trans numberEq)))
   exact ⟨transformed, letopOutput, ClosFvs.compileBounded_eq_source fuel numbered,
     ticks_letop_bounded fuel (optimized.map Prod.fst),
     known_compileFuel_eq fuel knownConfig numbered optimized globals knownRun,
-    annotationEq.trans (letopEq.trans (ticksEq.symm.trans (knownEq.trans (fvsEq.trans numberEq))))⟩
+    annotationEq.trans beforeAnnotation, chainEq.trans beforeAnnotation⟩
 
 end Flapjack.Compiler.Backend.ClosToBvl
