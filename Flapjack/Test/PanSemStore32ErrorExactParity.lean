@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Exact-source PanSem `Store32`/`StoreByte` Error parity
@@ -10,8 +10,8 @@ to evaluate, when the stored-value expression fails to evaluate, or when the
 sized store fails (for example when the aligned address is outside the store's
 domain).  This module checks the corresponding untagged exact-state equations
 in `Flapjack.Pancake.Semantics.PanSem` against the direct HOL oracle
-`scripts/hol-probes/pan_sem_store_error_probe.out` for both the clocked and the
-non-clocked evaluators.
+`scripts/hol-probes/pan_sem_store_error_probe.out`. The checks of the
+non-clocked evaluator moved to stepped-flapjack with the stepped semantics (#1251).
 -/
 
 namespace Flapjack.Test.PanSemStore32ErrorExactParity
@@ -19,18 +19,18 @@ namespace Flapjack.Test.PanSemStore32ErrorExactParity
 open Flapjack
 open Flapjack.RiscV
 
-private abbrev Word64 := Word 64
+abbrev Word64 := Word 64
 
 private def exactDomain (address : Word64) : Bool := address == 8
 
 /-- A memory access whose store never succeeds: the domain is empty. -/
-private def emptyAccess : PanValueMemoryAccess Word64 :=
+def emptyAccess : PanValueMemoryAccess Word64 :=
   panValueMemoryAccessOfModel panSemBitVec64WordModel (fun _ => false) (fun _ => false) false
 
-private def keywordAccess : PanValueMemoryAccess Word64 :=
+def keywordAccess : PanValueMemoryAccess Word64 :=
   panValueMemoryAccessOfModel panSemBitVec64WordModel exactDomain (fun _ => false) false
 
-private def exactMemory : Word64 → Option (PanValue Word64) := fun _ => some (.word 0)
+def exactMemory : Word64 → Option (PanValue Word64) := fun _ => some (.word 0)
 
 private def exactLegacy (locals : VarName → Option (PanValue Word64)) :
     PanSemEvaluateState Word64 Unit :=
@@ -49,7 +49,7 @@ private def exactStateWith (access : PanValueMemoryAccess Word64)
     (locals : VarName → Option (PanValue Word64)) : PanSemExactState Word64 Unit :=
   { legacy := exactLegacy locals, memoryAccess := access }
 
-private def localsWordX : VarName → Option (PanValue Word64) :=
+def localsWordX : VarName → Option (PanValue Word64) :=
   fun name => if name == "x" then some (.word 3) else none
 
 private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word64) :
@@ -57,14 +57,7 @@ private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word
   panSemEvaluateExactState statefulTestContext statefulTestPrimitive statefulTestHandler
     state program
 
-private def nonClockedEvaluate (program : Prog Word64)
-    (memoryAccess : Option (PanValueMemoryAccess Word64) := none) :
-    Option (PanValueFfiSteppedResult Word64 Unit) :=
-  evalPanValueFfiProgramSteps statefulTestContext statefulTestPrimitive statefulTestHandler
-    [] [] 0 100 (BitVec.ofNat 64 8) 5 localsWordX (fun _ => none) exactMemory
-    statefulTestFfiState program (memoryAccess := memoryAccess)
-
-private def isWordOption (expected : Nat) : Option (PanValue Word64) → Bool
+def isWordOption (expected : Nat) : Option (PanValue Word64) → Bool
   | some (.word value) => value == BitVec.ofNat 64 expected
   | _ => false
 
@@ -76,29 +69,22 @@ private def isErrorKeepingX (clock value : Nat)
       n == clock && isWordOption value (locals "x") && (globals "g").isNone
   | _ => false
 
-private def isErrorKeepingXStepped (value : Nat)
-    (result : Option (PanValueFfiSteppedResult Word64 Unit)) : Bool :=
-  match result with
-  | some (.error locals globals _ _, _) =>
-      isWordOption value (locals "x") && (globals "g").isNone
-  | _ => false
-
-private def store32AddressFailProgram : Prog Word64 :=
+def store32AddressFailProgram : Prog Word64 :=
   .store32 (.var .local "z") (.const 7)
 
 private def store32ValueFailProgram : Prog Word64 :=
   .store32 (.const 0) (.var .local "z")
 
-private def store32DomainFailProgram : Prog Word64 :=
+def store32DomainFailProgram : Prog Word64 :=
   .store32 (.const 0) (.const 7)
 
-private def storeByteAddressFailProgram : Prog Word64 :=
+def storeByteAddressFailProgram : Prog Word64 :=
   .storeByte (.var .local "z") (.const 7)
 
 private def storeByteValueFailProgram : Prog Word64 :=
   .storeByte (.const 0) (.var .local "z")
 
-private def storeByteDomainFailProgram : Prog Word64 :=
+def storeByteDomainFailProgram : Prog Word64 :=
   .storeByte (.const 0) (.const 7)
 
 private def store32AddressFailGuard : Bool :=
@@ -125,27 +111,9 @@ private def storeByteDomainFailGuard : Bool :=
   isErrorKeepingX 5 3 (evaluate (exactStateWith emptyAccess localsWordX)
     storeByteDomainFailProgram)
 
-private def store32NonClockedAddressFailGuard : Bool :=
-  isErrorKeepingXStepped 3 (nonClockedEvaluate store32AddressFailProgram
-    (memoryAccess := some keywordAccess))
-
-private def store32NonClockedDomainFailGuard : Bool :=
-  isErrorKeepingXStepped 3 (nonClockedEvaluate store32DomainFailProgram
-    (memoryAccess := some emptyAccess))
-
-private def storeByteNonClockedAddressFailGuard : Bool :=
-  isErrorKeepingXStepped 3 (nonClockedEvaluate storeByteAddressFailProgram
-    (memoryAccess := some keywordAccess))
-
-private def storeByteNonClockedDomainFailGuard : Bool :=
-  isErrorKeepingXStepped 3 (nonClockedEvaluate storeByteDomainFailProgram
-    (memoryAccess := some emptyAccess))
-
 private def store32ErrorGuard : Bool :=
   store32AddressFailGuard && store32ValueFailGuard && store32DomainFailGuard &&
-    storeByteAddressFailGuard && storeByteValueFailGuard && storeByteDomainFailGuard &&
-    store32NonClockedAddressFailGuard && store32NonClockedDomainFailGuard &&
-    storeByteNonClockedAddressFailGuard && storeByteNonClockedDomainFailGuard
+    storeByteAddressFailGuard && storeByteValueFailGuard && storeByteDomainFailGuard
 
 #guard store32ErrorGuard
 
@@ -194,22 +162,6 @@ def runChecks : IO Bool := do
     IO.println "PASS exact-state StoreByte domain failure keeps state and clock"
   else
     IO.println "FAIL exact-state StoreByte domain failure keeps state and clock"
-  if store32NonClockedAddressFailGuard then
-    IO.println "PASS non-clocked Store32 failing address rejected with Error"
-  else
-    IO.println "FAIL non-clocked Store32 failing address rejected with Error"
-  if store32NonClockedDomainFailGuard then
-    IO.println "PASS non-clocked Store32 domain failure rejected with Error"
-  else
-    IO.println "FAIL non-clocked Store32 domain failure rejected with Error"
-  if storeByteNonClockedAddressFailGuard then
-    IO.println "PASS non-clocked StoreByte failing address rejected with Error"
-  else
-    IO.println "FAIL non-clocked StoreByte failing address rejected with Error"
-  if storeByteNonClockedDomainFailGuard then
-    IO.println "PASS non-clocked StoreByte domain failure rejected with Error"
-  else
-    IO.println "FAIL non-clocked StoreByte domain failure rejected with Error"
   pure store32ErrorGuard
 
 end Flapjack.Test.PanSemStore32ErrorExactParity

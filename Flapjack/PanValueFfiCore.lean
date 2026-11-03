@@ -12,12 +12,10 @@ The evaluation context, `SharedMem` load/store, byte-array FFI calls, control
 results, handler types and the non-recursive simple-statement helpers.  The
 helpers follow the leaf clauses of HOL's `panSem$evaluate`: they evaluate
 expressions without counting steps and return the control result.  The clocked
-evaluator (`PanValueFfiClockSemantics`) uses them directly; the stepped
-evaluator (`PanValueFfiSemantics`) has counted versions.
+evaluator (`PanValueFfiClockSemantics`) uses them directly.
 
-This module contains no recursive statement evaluator, so the clocked semantics
-and the compiler can depend on it without depending on the stepped semantics
-(issue #1251).
+The step-counted versions moved to stepped-flapjack with the stepped
+semantics (issue #1251).
 
 The source memory map remains the ordinary Pancake memory.  Shared memory is
 observable only through the FFI state, as in CakeML.  The byte codec is

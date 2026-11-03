@@ -1,5 +1,5 @@
 import Flapjack.PanObservationalSemantics
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Source parity for Pancake `semantics_def`

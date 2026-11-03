@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # PanSem `ExtCall` Error parity
@@ -10,18 +10,16 @@ fails to evaluate, when an argument is not a word, or when the byte read fails.
 The byte-read failure is driven, in the original HOL probe, by an empty
 `memaddrs` set while `memory` still returns `Word 0w`; the argument-evaluation
 failure uses an unbound local.  These guards assert that the production source
-evaluators return an explicit Error control result for all three branches, in
-the non-clocked (`evalPanValueFfiProgSteps`) and clocked
-(`panSemEvaluateCodeStateWithPostState`) evaluators, and that the returned state
-preserves locals, globals, memory and observable FFI cells with an unchanged
-clock.
+evaluator `panSemEvaluateCodeStateWithPostState` returns an explicit Error
+control result for all three branches, and that the returned state preserves
+locals, globals, memory and observable FFI cells with an unchanged clock. The
+same checks of the stepped evaluator `evalPanValueFfiProgSteps` moved to
+stepped-flapjack with the stepped semantics (#1251).
 
 Beyond the sampled `Bool` guards (which can only inspect decidable cells, as
-`PanSemState` has no `DecidableEq`), six kernel-checked
-`clocked*_full`/`nonClocked*_full` reduction theorems establish the exact Error
-result. The clocked theorems equate the entire post-state record, including all
-function fields, with the input state; the non-clocked theorems equate the
-complete control-result payload with its input values.
+`PanSemState` has no `DecidableEq`), three kernel-checked `clocked*_full`
+reduction theorems establish the exact Error result. They equate the entire
+post-state record, including all function fields, with the input state.
 
 The HOL oracle is `scripts/hol-probes/pan_sem_extcall_error_probe.out`.
 -/
@@ -30,7 +28,7 @@ namespace Flapjack.Test.PanSemExtCallErrorParity
 
 open Flapjack Flapjack.RiscV
 
-private abbrev Word64 := Word 64
+abbrev Word64 := Word 64
 
 def extState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
   { locals := fun name =>
@@ -85,14 +83,7 @@ def clockedEvaluate (clock : Nat) (program : Prog Word64)
     statefulTestHandler (BitVec.ofNat 64 8) (extState clock) program
     (memoryAccess := memoryAccess)
 
-def nonClockedEvaluate (program : Prog Word64)
-    (memoryAccess : Option (PanValueMemoryAccess Word64) := none) :
-    Option (PanValueFfiSteppedResult Word64 Unit) :=
-  evalPanValueFfiProgramSteps statefulTestContext statefulTestPrimitive statefulTestHandler
-    [] [] 0 100 (BitVec.ofNat 64 8) 5 (extState 5).locals (extState 5).globals
-    (extState 5).memory statefulTestFfiState program (memoryAccess := memoryAccess)
-
-private def isWord (expected : Nat) : Option (PanValue Word64) → Bool
+def isWord (expected : Nat) : Option (PanValue Word64) → Bool
   | some (.word value) => value == BitVec.ofNat 64 expected
   | _ => false
 
@@ -131,34 +122,7 @@ theorem clockedReadFail_full : clockedEvaluate 5 readFailProgram (some emptyAcce
     evalPanValueExps, evalPanValueExp.evalPanValueExps, evalPanValueExp, extState,
     readFailProgram, panValueFfiExtCall, emptyRead_one, statefulTestContext]
 
-theorem nonClockedNonword_full :
-    (nonClockedEvaluate nonwordProgram).map Prod.fst =
-      some (.error (extState 5).locals (extState 5).globals (extState 5).memory
-        statefulTestFfiState) := by
-  simp (config := { decide := true }) [nonClockedEvaluate, evalPanValueFfiProgramSteps,
-    evalPanValueFfiProgSteps, panValueFfiExtCallSteps, evalPanValueExpsCounted,
-    evalPanValueExps, evalPanValueExp.evalPanValueExps, evalPanValueExp, extState,
-    nonwordProgram]
-
-theorem nonClockedReadFail_full :
-    (nonClockedEvaluate readFailProgram (some emptyAccess)).map Prod.fst =
-      some (.error (extState 5).locals (extState 5).globals (extState 5).memory
-        statefulTestFfiState) := by
-  simp (config := { decide := true }) [nonClockedEvaluate, evalPanValueFfiProgramSteps,
-    evalPanValueFfiProgSteps, panValueFfiExtCallSteps, evalPanValueExpsCounted,
-    evalPanValueExps, evalPanValueExp.evalPanValueExps, evalPanValueExp, extState,
-    readFailProgram, panValueFfiExtCall, emptyRead_one, statefulTestContext]
-
-theorem nonClockedArgFail_full :
-    (nonClockedEvaluate argFailProgram).map Prod.fst =
-      some (.error (extState 5).locals (extState 5).globals (extState 5).memory
-        statefulTestFfiState) := by
-  simp (config := { decide := true }) [nonClockedEvaluate, evalPanValueFfiProgramSteps,
-    evalPanValueFfiProgSteps, panValueFfiExtCallSteps, evalPanValueExpsCounted,
-    evalPanValueExps, evalPanValueExp.evalPanValueExps, evalPanValueExp, extState,
-    argFailProgram]
-
-private def ffiObservable (ffi : FfiState Unit) : Bool :=
+def ffiObservable (ffi : FfiState Unit) : Bool :=
   ffi.state == () && decide (ffi.ioEvents = ([] : List FfiEvent))
 
 private def clockedErrorPreserving (clock : Nat)
@@ -174,35 +138,17 @@ private def clockedErrorPreserving (clock : Nat)
         && isWord 0 (post.memory 0) && ffiObservable post.ffi
   | _ => false
 
-private def isErrorSteppedPreserving
-    (result : Option (PanValueFfiSteppedResult Word64 Unit)) : Bool :=
-  match result with
-  | some (.error locals globals memory ffi, _) =>
-      isWord 3 (locals "x") && isWord 4 (globals "g") && isWord 0 (memory 0)
-        && ffiObservable ffi
-  | _ => false
-
 def clockedNonwordGuard : Bool :=
   clockedErrorPreserving 5 (clockedEvaluate 5 nonwordProgram)
 
 def clockedReadFailGuard : Bool :=
   clockedErrorPreserving 5 (clockedEvaluate 5 readFailProgram (some emptyAccess))
 
-def nonClockedNonwordGuard : Bool :=
-  isErrorSteppedPreserving (nonClockedEvaluate nonwordProgram)
-
-def nonClockedReadFailGuard : Bool :=
-  isErrorSteppedPreserving (nonClockedEvaluate readFailProgram (some emptyAccess))
-
 def clockedArgFailGuard : Bool :=
   clockedErrorPreserving 5 (clockedEvaluate 5 argFailProgram)
 
-def nonClockedArgFailGuard : Bool :=
-  isErrorSteppedPreserving (nonClockedEvaluate argFailProgram)
-
 def extCallErrorGuard : Bool :=
-  clockedNonwordGuard && clockedReadFailGuard && clockedArgFailGuard &&
-    nonClockedNonwordGuard && nonClockedReadFailGuard && nonClockedArgFailGuard
+  clockedNonwordGuard && clockedReadFailGuard && clockedArgFailGuard
 
 #guard extCallErrorGuard
 
@@ -216,15 +162,6 @@ def runChecks : IO Bool := do
   IO.println (if clockedArgFailGuard then
     "PASS panSem ExtCall failed argument evaluation rejected with unchanged state"
     else "FAIL panSem ExtCall failed argument evaluation rejected with unchanged state")
-  IO.println (if nonClockedNonwordGuard then
-    "PASS non-clocked ExtCall non-word argument rejected with unchanged state"
-    else "FAIL non-clocked ExtCall non-word argument rejected with unchanged state")
-  IO.println (if nonClockedReadFailGuard then
-    "PASS non-clocked ExtCall failed byte read rejected with unchanged state"
-    else "FAIL non-clocked ExtCall failed byte read rejected with unchanged state")
-  IO.println (if nonClockedArgFailGuard then
-    "PASS non-clocked ExtCall failed argument evaluation rejected with unchanged state"
-    else "FAIL non-clocked ExtCall failed argument evaluation rejected with unchanged state")
   IO.println (if extCallErrorGuard then
     "PASS panSem ExtCall Error preserves the complete post state (kernel-checked)"
     else "FAIL panSem ExtCall Error preserves the complete post state (kernel-checked)")

@@ -2,7 +2,6 @@ import Flapjack.Pancake.PanSimp
 import Flapjack.Pancake.Proofs.PanSimp
 import Flapjack.Pancake.Proofs.PanSimp.Evaluate
 import Flapjack.Pancake.PanGlobals
-import Flapjack.PanValueFfiEventMonotonicity
 import Flapjack.PanValueFfiClockShift
 import Flapjack.PanValueFfiClockCorrectness
 
@@ -935,8 +934,8 @@ example :
     (by
       intro locals globals memory ffi
       exact ⟨locals, globals, updatePanValueMemory memory 7 (.word 9), ffi, by
-        simp [evalPanValueFfiLeafControl, panValueStoreResult, evalPanValueExpCounted,
-          evalPanValueExp, panValueExpStepCost, panValueStoreWithAccess,
+        simp [evalPanValueFfiLeafControl, panValueStoreResult,
+          evalPanValueExp, panValueStoreWithAccess,
           panValueFlatStoreWords, panValueFlatWords, panValueFlatWordsFuel,
           panValueFlatOffset, updatePanValueMemory]⟩)
 
@@ -1260,8 +1259,8 @@ example :
     (by
       intro locals globals memory ffi
       exact ⟨locals, globals, updatePanValueMemory memory 7 (.word 9), ffi, by
-        simp [evalPanValueFfiLeafControl, panValueStoreResult, evalPanValueExpCounted,
-          evalPanValueExp, panValueExpStepCost, panValueStoreWithAccess,
+        simp [evalPanValueFfiLeafControl, panValueStoreResult,
+          evalPanValueExp, panValueStoreWithAccess,
           panValueFlatStoreWords, panValueFlatWords, panValueFlatWordsFuel,
           panValueFlatOffset, updatePanValueMemory]⟩)
 
@@ -2230,7 +2229,6 @@ theorem seq_call_ret_fallback :
     seqCallRet (.tick : Prog Nat) = .tick := by
   rfl
 
-
 /-! The expected values are the direct HOL evaluation of
     `pan_simp$ret_to_tail` from `pan_simpScript.sml:50-66`. -/
 theorem ret_to_tail_skip :
@@ -2631,7 +2629,6 @@ example : PanValueFfiClockNormalAdequateProgFromFloor 3 3 evaluatorContext
     (PanValueFfiClockNormalProg.seq (.skip : Prog Nat) (.annot "tag" "text")
       PanValueFfiClockNormalProg.skip (PanValueFfiClockNormalProg.annot "tag" "text"))
 
-
 /-- The pan_simp transform of a normal program keeps a floor certificate. -/
 example : PanValueFfiClockNormalAdequateProgFromFloor 3 3 evaluatorContext
     (fun _ _ => none) evaluatorHandler [] [] 0 0 8 7 none none none
@@ -2642,10 +2639,8 @@ example : PanValueFfiClockNormalAdequateProgFromFloor 3 3 evaluatorContext
     (PanValueFfiClockNormalProg.seq (.skip : Prog Nat) (.annot "tag" "text")
       PanValueFfiClockNormalProg.skip (PanValueFfiClockNormalProg.annot "tag" "text"))
 
-
 -- Clock-shift arithmetic needed by a whole-program analogue of Cake
 -- `evaluate_add_clock_eq`.
-
 
 /-! ## Exact HOL helper-slice instantiations
 
@@ -2681,6 +2676,5 @@ example :
       (([(1, (2, 3))] : List (Nat × Nat × Nat)).map
         (fun entry => entry.2.2)).map (fun body => body + 1) :=
   mapSndFEq _ (fun body => body + 1) (fun value => value)
-
 
 end Flapjack.Test.PanSimpParity

@@ -1,4 +1,4 @@
-import Flapjack.PanSteppedSemantics
+import Flapjack.PanValueFfiClockSemantics
 
 /-! The accelerator-style ExtCall handler is independent of the CakeML
 stateful FFI. In particular, it must still run when a byte-granular
@@ -32,21 +32,6 @@ def acceleratorTestProgram : Prog Nat :=
   .seq
     (.extCall "accelerator" (.const 7) (.const 0) (.const 200) (.const 1))
     (.return (.const 0))
-
-def acceleratorTestResult :=
-  evalPanValueSteppedProg (fun _ _ => none) (fun _ _ _ _ _ locals => some locals)
-    [] [] 0 1000 1 20 (fun _ => none) (fun _ => none) (fun _ => none)
-    acceleratorTestProgram
-    (memoryAccess := some acceleratorTestMemoryAccess)
-    (memoryHandler := some acceleratorTestHandler)
-
-#guard
-  acceleratorTestResult.map (fun (result, _) => match result with
-    | .returned _ _ memory [PanValue.word 0] =>
-        match memory 200 with
-        | some (.word 8) => true
-        | _ => false
-    | _ => false) = some true
 
 #guard
   (evalPanValueProgWithPrimitiveCallsAndFfi

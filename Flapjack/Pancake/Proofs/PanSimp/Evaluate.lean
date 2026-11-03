@@ -5157,7 +5157,7 @@ theorem PanValueFfiClockNormalAdequateProg_dec
       (.control (.normal finalLocals finalGlobals finalMemory finalFfi)) finalClock
       hvalueEval hmatch hbodyEval⟩
 
-/-- A leaf program whose per-state stepped evaluation always returns a normal
+/-- A leaf program whose per-state leaf evaluation always returns a normal
     outcome belongs to the normal-adequate fragment at the call-aware budget.
     This covers assignments and memory stores, whose clocked evaluation spends
     no ticks (matching Cake's `evaluate`, where only ticks, calls and while
@@ -6697,7 +6697,7 @@ theorem PanValueFfiClockNormalAdequateProgFromFloor_decCall_returned
       finalClock ma c mh hcallEval (hmatch value) hbodyEvalMax,
     hbodyFloor⟩
 
-/-- A lower-bounded adequate leaf: a program in the leaf fragment whose stepped
+/-- A lower-bounded adequate leaf: a program in the leaf fragment whose leaf
     evaluation returns a normal outcome is lower-bounded normal-adequate for any
     bound, because leaves spend no clock ticks. -/
 theorem PanValueFfiClockNormalAdequateProgFrom_leaf

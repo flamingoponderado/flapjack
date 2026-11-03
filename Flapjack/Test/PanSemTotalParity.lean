@@ -2,7 +2,7 @@ import Flapjack.Pancake.Semantics.PanSem.Total
 import Flapjack.Pancake.Semantics.PanSem.TotalMeasure
 import Flapjack.Pancake.Semantics.PanSem.TotalMeasureIf
 import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Parity for the total PanSem clock-leaf evaluator

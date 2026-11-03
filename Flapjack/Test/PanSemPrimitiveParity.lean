@@ -10,7 +10,7 @@
   (`RStruct [ValWord 3w; ValWord 0w]`).
 -/
 import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 namespace Flapjack.Test.PanSemPrimitiveParity
 

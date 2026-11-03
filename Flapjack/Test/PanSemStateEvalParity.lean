@@ -3,7 +3,6 @@ import Flapjack.Pancake.Semantics.PanSem.PrimitiveProductionBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalSteps
 import Flapjack.Pancake.Semantics.ByteAlignBridge
 import Flapjack.Pancake.WordLang
-import Flapjack.PanValueExpCounted
 
 /-! The expected values are recorded by direct HOL EVAL of the source
 `panSem$eval` probe. The Lean cases exercise the state-derived word and memory
@@ -14,7 +13,7 @@ namespace Flapjack.Test.PanSemStateEvalParity
 
 open Flapjack
 
-private abbrev Word64 := RiscV.Word 64
+abbrev Word64 := RiscV.Word 64
 
 /-! `scripts/hol-probes/crep_runtime_ffi_boundary_probe.out` records the direct
 HOL row `set_byte_0_roundtrip=0x102030405060708w`. Guard both reviewed
@@ -136,24 +135,6 @@ private def isErrorControlResult
 
 def littleEndianState : PanSemState Word64 Unit := sourceState false true true
 def bigEndianState : PanSemState Word64 Unit := sourceState true true true
-
-/- Counted field expressions must use the caller's state-owned access, just as
-   counted expressions and argument lists do. -/
-private def countedByteField (state : PanSemState Word64 Unit) :=
-  evalPanValueFieldsCounted state.structs state.locals state.globals state.memory
-    state.baseAddress state.topAddress panSemBitVec64BytesInWord
-    [("byte", .loadByte (.const 0))]
-    (memoryAccess := some (panSemBitVec64MemoryAccess state))
-
-#guard (countedByteField littleEndianState).map (fun result =>
-  match result.1 with
-  | [("byte", .word value)] => value == (0x88 : Word64)
-  | _ => false) == some true
-#guard (countedByteField bigEndianState).map (fun result =>
-  match result.1 with
-  | [("byte", .word value)] => value == (0x11 : Word64)
-  | _ => false) == some true
-#guard (countedByteField (sourceState false false true)).isNone
 
 /- `pan_sem_state_eval_probe.out` also evaluates the enclosing NStruct. -/
 private def namedByteState (state : PanSemState Word64 Unit) : PanSemState Word64 Unit :=
@@ -356,7 +337,6 @@ def nestedSourceLoadMatchesOracle : Bool :=
   (sourceState false true false)).sharedRead
     littleEndianState.memory panSemBitVec64BytesInWord .opW 0)
 
-
 /- The executed exact-state `.op` path delegates to the tagged `wordOpHOL`
    list fold for arbitrary operand lists. These build-checked theorems record
    that delegation; the `#guard`s pin the checked-in direct HOL rows for
@@ -459,7 +439,6 @@ example : panMemLoad32HOL (width := 64) holMemory64 (fun a => a = 0) false 1 =
 example : panMemLoad32HOL (width := 64) holMemory64 (fun _ => False) false 0 =
     none := by decide
 
-
 /- Structured `mem_load` port; expected values are the checked-in direct HOL rows
    `mem_load_def_one_hit/one_miss/comb_pair/named_found/named_missing`. -/
 private def structsS : StructContextHOL :=
@@ -498,7 +477,6 @@ private def isNamedField (name field : String) (expected : Word64) :
   = none
 #guard sizeOfShWithCtxt structsS (.named "S") == 3
 #guard sizeOfShWithCtxt structsS (.comb [.one, .one]) == 2
-
 
 /- width-24 alignment rows `mem_load_byte_def_w24_addr5=SOME 17w` and
    `mem_load_32_def_w24_addr4=SOME 0x22331122w`. -/
@@ -730,7 +708,6 @@ example :
   (panValueFlatLoadFuel_eq_panMemLoadHOL littleEndianState littleEndianState.memory 3).1
     [] (.comb [Shape.one]) 0 (by decide)
 
-
 /-- Capstone: the guarded production `panValueFlatLoad` over the executed RV64
 memory-access state equals the tagged exact `panMemLoadHOL` mapped by
 `HolValue.toPanValue`. -/
@@ -934,7 +911,6 @@ example (value : BitVec 64) :
         (fun _ => none) (fun _ => none) (fun _ => none) 0 0
         panSemBitVec64BytesInWord (some (panSemBitVec64MemoryAccess littleEndianState)) value)
 
-
 /- State-projection clause bridges (bead flapjack-pxn.18.3.6.9.2.6): the leaf
    clauses agree given the environment/state agreement hypotheses. -/
 example (name : VarName) :
@@ -1115,7 +1091,6 @@ instance : DecidablePred storeDomain := fun x => by
       [BitVec.ofNat 8 0x11, BitVec.ofNat 8 0x22] storeMem storeDomain false) 1) != storeMem 1
 #guard ((panWriteBytearrayWord8HOL (width := 8) (5 : RiscV.Word 8)
       [BitVec.ofNat 8 0x11] storeMem storeDomain false) 1) == storeMem 1
-
 
 def holCodecAccess (state : PanSemState (RiscV.Word 64) Unit) :
     PanValueMemoryAccess (RiscV.Word 64) :=

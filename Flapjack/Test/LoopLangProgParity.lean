@@ -1,5 +1,5 @@
 import Flapjack.Pancake.LoopLang
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 Parity checks for the exact `loopLang$prog` carrier `HolLoopProg`, compared
