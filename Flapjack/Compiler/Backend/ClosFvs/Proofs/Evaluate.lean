@@ -273,4 +273,150 @@ theorem evaluate_remove_fvs_tick {C F : Type} (trace : BackendCommon.Tra)
         ⟨bodyRun, envRel, state_rel_dec_clock source target states, by simp [CodeRel, removeList]⟩
     exact ⟨targetResult, targetNext, by simpa [evaluate, targetNonzero] using targetRun, related, nextRel⟩
 
+/-- Exception handling simulates the body and, when it raises, the handler
+under environments extended by related exception values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "evaluate_remove_fvs"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_remove_fvs_handle {C F : Type} (trace : BackendCommon.Tra)
+    (body handler : ClosLang.Exp) (env : List Value) (source : State C F)
+    (bodyIH : ∀ (result : Result (List Value) Value) (next : State C F)
+        (code : List ClosLang.Exp) (nextEnv : List Value) (target : State C F),
+      evaluate [body] env source = (result, next) ∧ List.Forall₂ ValueRel env nextEnv ∧
+        StateRel source target ∧ CodeRel env.length [body] code →
+      ∃ targetResult targetNext, evaluate code nextEnv target = (targetResult, targetNext) ∧
+        ResultRel result targetResult ∧ StateRel next targetNext)
+    (handlerIH : ∀ (value : Value) (middle : State C F),
+      evaluate [body] env source = (.err (.raise value), middle) →
+      ∀ (result : Result (List Value) Value) (next : State C F)
+        (code : List ClosLang.Exp) (nextEnv : List Value) (target : State C F),
+        evaluate [handler] (value :: env) middle = (result, next) ∧
+          List.Forall₂ ValueRel (value :: env) nextEnv ∧ StateRel middle target ∧
+          CodeRel (value :: env).length [handler] code →
+        ∃ targetResult targetNext, evaluate code nextEnv target = (targetResult, targetNext) ∧
+          ResultRel result targetResult ∧ StateRel next targetNext)
+    (result : Result (List Value) Value) (sourceNext : State C F)
+    (targetCode : List ClosLang.Exp) (nextEnv : List Value) (target : State C F)
+    (premises : evaluate [.handle trace body handler] env source = (result, sourceNext) ∧
+      List.Forall₂ ValueRel env nextEnv ∧ StateRel source target ∧
+      CodeRel env.length [.handle trace body handler] targetCode) :
+    ∃ targetResult targetNext,
+      evaluate targetCode nextEnv target = (targetResult, targetNext) ∧
+      ResultRel result targetResult ∧ StateRel sourceNext targetNext := by
+  obtain ⟨run, envRel, states, code⟩ := premises
+  have codeEq : targetCode = [.handle trace (removeSing env.length body)
+      (removeSing (env.length + 1) handler)] := by
+    simpa [CodeRel, removeList, removeSing] using code
+  rw [codeEq]
+  cases bodyRun : evaluate [body] env source with
+  | mk bodyResult middle =>
+    obtain ⟨targetResult, targetMiddle, targetRun, related, middleRel⟩ :=
+      bodyIH bodyResult middle [removeSing env.length body] nextEnv target
+        ⟨bodyRun, envRel, states, by simp [CodeRel, removeList]⟩
+    cases bodyResult with
+    | val values =>
+      cases targetResult with
+      | err error => cases error <;> simp [ResultRel] at related
+      | val targetValues =>
+        rw [evaluate, fixClock_evaluate, bodyRun] at run
+        cases run
+        exact ⟨.val targetValues, targetMiddle,
+          by rw [evaluate, fixClock_evaluate, targetRun], related, middleRel⟩
+    | err error =>
+      cases error with
+      | abort reason =>
+        cases targetResult with
+        | val values => simp [ResultRel] at related
+        | err targetError =>
+          cases targetError with
+          | raise value => simp [ResultRel] at related
+          | abort targetReason =>
+            rw [evaluate, fixClock_evaluate, bodyRun] at run
+            cases run
+            exact ⟨.err (.abort targetReason), targetMiddle,
+              by rw [evaluate, fixClock_evaluate, targetRun], related, middleRel⟩
+      | raise value =>
+        cases targetResult with
+        | val values => simp [ResultRel] at related
+        | err targetError =>
+          cases targetError with
+          | abort reason => simp [ResultRel] at related
+          | raise targetValue =>
+            have handlerRun : evaluate [handler] (value :: env) middle = (result, sourceNext) := by
+              rw [evaluate, fixClock_evaluate, bodyRun] at run
+              exact run
+            obtain ⟨targetHandlerResult, targetLast, targetHandlerRun, handlerRel, lastRel⟩ :=
+              handlerIH value middle bodyRun result sourceNext [removeSing (env.length + 1) handler]
+                (targetValue :: nextEnv) targetMiddle
+                ⟨handlerRun, .cons related envRel, middleRel, by simp [CodeRel, removeList]⟩
+            refine ⟨targetHandlerResult, targetLast, ?_, handlerRel, lastRel⟩
+            rw [evaluate, fixClock_evaluate, targetRun]
+            exact targetHandlerRun
+
+/-- Let evaluates related bindings before extending both environments for
+the related bodies, or propagates a binding error. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "evaluate_remove_fvs"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_remove_fvs_let {C F : Type} (trace : BackendCommon.Tra)
+    (bindings : List ClosLang.Exp) (body : ClosLang.Exp) (env : List Value) (source : State C F)
+    (bindingsIH : ∀ (result : Result (List Value) Value) (next : State C F)
+        (code : List ClosLang.Exp) (nextEnv : List Value) (target : State C F),
+      evaluate bindings env source = (result, next) ∧ List.Forall₂ ValueRel env nextEnv ∧
+        StateRel source target ∧ CodeRel env.length bindings code →
+      ∃ targetResult targetNext, evaluate code nextEnv target = (targetResult, targetNext) ∧
+        ResultRel result targetResult ∧ StateRel next targetNext)
+    (bodyIH : ∀ (values : List Value) (middle : State C F),
+      evaluate bindings env source = (.val values, middle) →
+      ∀ (result : Result (List Value) Value) (next : State C F)
+        (code : List ClosLang.Exp) (nextEnv : List Value) (target : State C F),
+        evaluate [body] (values ++ env) middle = (result, next) ∧
+          List.Forall₂ ValueRel (values ++ env) nextEnv ∧ StateRel middle target ∧
+          CodeRel (values ++ env).length [body] code →
+        ∃ targetResult targetNext, evaluate code nextEnv target = (targetResult, targetNext) ∧
+          ResultRel result targetResult ∧ StateRel next targetNext)
+    (result : Result (List Value) Value) (sourceNext : State C F)
+    (targetCode : List ClosLang.Exp) (nextEnv : List Value) (target : State C F)
+    (premises : evaluate [.let trace bindings body] env source = (result, sourceNext) ∧
+      List.Forall₂ ValueRel env nextEnv ∧ StateRel source target ∧
+      CodeRel env.length [.let trace bindings body] targetCode) :
+    ∃ targetResult targetNext,
+      evaluate targetCode nextEnv target = (targetResult, targetNext) ∧
+      ResultRel result targetResult ∧ StateRel sourceNext targetNext := by
+  obtain ⟨run, envRel, states, code⟩ := premises
+  have codeEq : targetCode = [.let trace (removeList env.length bindings)
+      (removeSing (env.length + (removeList env.length bindings).length) body)] := by
+    simpa [CodeRel, removeList, removeSing] using code
+  rw [codeEq]
+  cases bindingsRun : evaluate bindings env source with
+  | mk bindingsResult middle =>
+    obtain ⟨targetResult, targetMiddle, targetRun, related, middleRel⟩ :=
+      bindingsIH bindingsResult middle (removeList env.length bindings) nextEnv target
+        ⟨bindingsRun, envRel, states, rfl⟩
+    cases bindingsResult with
+    | err error =>
+      rw [evaluate, fixClock_evaluate, bindingsRun] at run
+      cases run
+      cases targetResult with
+      | val values => cases error <;> simp [ResultRel] at related
+      | err targetError =>
+        exact ⟨.err targetError, targetMiddle,
+          by rw [evaluate, fixClock_evaluate, targetRun], related, middleRel⟩
+    | val values =>
+      cases targetResult with
+      | err error => cases error <;> simp [ResultRel] at related
+      | val targetValues =>
+        have length : values.length = bindings.length :=
+          (evaluate_length (C := C) (F := F)).1 bindings env source middle values bindingsRun
+        have bodyRun : evaluate [body] (values ++ env) middle = (result, sourceNext) := by
+          rw [evaluate, fixClock_evaluate, bindingsRun] at run
+          exact run
+        obtain ⟨targetBodyResult, targetLast, targetBodyRun, bodyRel, lastRel⟩ :=
+          bodyIH values middle bindingsRun result sourceNext
+            [removeSing (env.length + (removeList env.length bindings).length) body]
+            (targetValues ++ nextEnv) targetMiddle
+            ⟨bodyRun, List.rel_append related envRel, middleRel, by
+              simp [CodeRel, removeList, removeList_length, length, Nat.add_comm]⟩
+        refine ⟨targetBodyResult, targetLast, ?_, bodyRel, lastRel⟩
+        rw [evaluate, fixClock_evaluate, targetRun]
+        exact targetBodyRun
+
 end Flapjack.Compiler.Backend.ClosFvs

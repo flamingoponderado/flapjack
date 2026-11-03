@@ -2063,6 +2063,26 @@
     "reviewer": "Compared the first evaluate_remove_typed conjunct and the tick case of evaluate_ind_typed in clos_known_syntax_probe.out. The body induction hypothesis requires the source clock to be nonzero and uses the decremented source state, as in HOL. The original evaluation, environment, state and code premises and existential target evaluation, result and state conclusions are retained, including timeout. The closure state has canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining evaluator cases."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "evaluate_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_remove_fvs_handle",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the first evaluate_remove_typed conjunct and handle case of evaluate_ind_typed in clos_known_syntax_probe.out. The body induction hypothesis is at the original state; the handler induction hypothesis applies at the resulting state and with the raised value prepended only when the body actually raises, as in HOL. The original evaluation, environment, state and code premises and existential target evaluation, result and state conclusions are retained, including normal returns and aborts. The closure state has canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining evaluator cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "evaluate_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_remove_fvs_let",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the first evaluate_remove_typed conjunct and let case of evaluate_ind_typed in clos_known_syntax_probe.out. The bindings induction hypothesis is at the original state; the body induction hypothesis applies at the resulting state and under the values prepended to the environment only when bindings succeed, as in HOL. The original evaluation, environment, state and code premises and existential target evaluation, result and state conclusions are retained, including propagated binding errors. Successful evaluation length supplies the transformed body's bound. The closure state has canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining evaluator cases."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
     "hol_name": "semantics_annotate",
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/InstalledSemantics.lean",
