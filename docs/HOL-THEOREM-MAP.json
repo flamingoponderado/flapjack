@@ -100772,5 +100772,101 @@
   "lean_name": "arm8_encoder_correct_mem_store_scaled",
   "statement_status": "pending_statement_review",
   "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem store case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) on the scaled twelve-bit path: the single LoadStoreImmediate@64 imm12 store, disjoint from arm8_encoder_correct_mem_store_imm9 because the scaled clause fires. Same asmStep/targetStateRel premise and conclusion, and the same arm8WriteMem_eight memory obligations. The three case hypotheses (nine-bit fit, non-negative sign, scaled form) are branch conditions of arm8_ast and e_LoadStoreImmediate, not part of encoder_correct_def. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment/write'Mem definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "statement_status": "pending_statement_review",
+  "lean_name": "arm8_encoder_correct_mem_load32_imm9",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem load case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) at the load32 lowering's unscaled imm9 path: one LoadStoreImmediate@32 (size 2, regsize_word true) with the same asmStep/targetStateRel premise, existential n = 0, every environment, interference preservation, the code-byte/PC assertion and the outside-domain byte conclusion. The machine reads four bytes and zero-extends them; the two case hypotheses (nine-bit fit, scaled-clause miss) are the branch conditions arm8_ast and e_LoadStoreImmediate inspect. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "statement_status": "pending_statement_review",
+  "lean_name": "arm8_encoder_correct_mem_store32_imm9",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem store case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) at the store32 lowering's unscaled imm9 path: one LoadStoreImmediate@32 (size 2, opc 0) writing four bytes, with the same premise and conclusion. The memory obligations are discharged by arm8WriteMem_four against the source's writeMemWord. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment/write'Mem definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "statement_status": "pending_statement_review",
+  "lean_name": "arm8_encoder_correct_mem_load32_scaled",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the scaled twelve-bit load32 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@32 imm12 word with the four-byte read, disjoint from arm8_encoder_correct_mem_load32_imm9 because the scaled clause fires. Same premise and conclusion; the three case hypotheses (nine-bit fit, non-negative sign, scaled form) are branch conditions of arm8_ast and e_LoadStoreImmediate. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "statement_status": "pending_statement_review",
+  "lean_name": "arm8_encoder_correct_mem_store32_scaled",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the scaled twelve-bit store32 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@32 imm12 store with the four-byte write, disjoint from the imm9 store case. Same premise and conclusion, and the same arm8WriteMem_four obligations. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "statement_status": "pending_statement_review",
+  "lean_name": "arm8_encoder_correct_mem_load8_imm9",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem load case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) at the load8 lowering's unscaled imm9 path: one LoadStoreImmediate@8 reading one byte and zero-extending it. The two case hypotheses (nine-bit fit, scaled-clause miss) are the branch conditions arm8_ast and e_LoadStoreImmediate inspect. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "statement_status": "pending_statement_review",
+  "lean_name": "arm8_encoder_correct_mem_store8_imm9",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem store case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) at the store8 lowering's unscaled imm9 path: one LoadStoreImmediate@8 (opc 0) writing one byte. The memory obligations are discharged by arm8WriteMem_one against the source's writeMemWord. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "statement_status": "pending_statement_review",
+  "lean_name": "arm8_encoder_correct_mem_load8_scaled",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the scaled twelve-bit load8 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@8 imm12 word with the one-byte read, disjoint from the imm9 case because the scaled clause fires. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "statement_status": "pending_statement_review",
+  "lean_name": "arm8_encoder_correct_mem_store8_scaled",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the scaled twelve-bit store8 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@8 imm12 store with the one-byte write. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "statement_status": "pending_statement_review",
+  "lean_name": "arm8_encoder_correct_mem_load16_imm9",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem load case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) at the load16 lowering's unscaled imm9 path: one LoadStoreImmediate@16 reading two bytes and zero-extending them. The two case hypotheses (nine-bit fit, scaled-clause miss) are the branch conditions arm8_ast and e_LoadStoreImmediate inspect. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "statement_status": "pending_statement_review",
+  "lean_name": "arm8_encoder_correct_mem_store16_imm9",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem store case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) at the store16 lowering's unscaled imm9 path: one LoadStoreImmediate@16 (opc 0) writing two bytes. The memory obligations are discharged by arm8WriteMem_two against the source's writeMemWord. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "statement_status": "pending_statement_review",
+  "lean_name": "arm8_encoder_correct_mem_load16_scaled",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the scaled twelve-bit load16 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@16 imm12 word with the two-byte read, disjoint from the imm9 case because the scaled clause fires. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
+  "hol_name": "arm8_encoder_correct",
+  "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
+  "statement_status": "pending_statement_review",
+  "lean_name": "arm8_encoder_correct_mem_store16_scaled",
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the scaled twelve-bit store16 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@16 imm12 store with the two-byte write. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
  }
 ]
