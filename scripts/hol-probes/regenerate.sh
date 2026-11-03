@@ -353,7 +353,7 @@ run_probe clos_ticks_source_probeScript.sml clos_ticks_source_probe.out \
   "$cake_dir/compiler/backend/proofs/clos_ticksProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_letop_source_probeScript.sml clos_letop_source_probe.out \
-  var_list_typed dest_op_typed let_op_sing_typed let_op_sing_eq_typed compile_inc_typed \
+  var_list_typed dest_op_typed let_op_sing_typed let_op_sing_eq_typed compile_inc_typed var_list_length_typed var_list_evaluate_replay_typed var_list_evaluate_zero_replay_typed \
   "$cake_dir/compiler/backend/clos_letopScript.sml" "$cake_dir/compiler/backend"
 
 run_probe db_vars_definitions_probeScript.sml db_vars_definitions_probe.out \

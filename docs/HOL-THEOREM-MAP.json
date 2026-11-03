@@ -122717,5 +122717,35 @@
   "lean_name": "refRel",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared all typed source clauses in clos_call_env_rel_probe.out: independent value types, LIST_REL for arrays, fixed word8 byte-list equality, thunk-mode equality and related payloads, and false for every constructor mismatch. The Lean Ref carrier and fixed byte widths match. Source comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "var_list_IMP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/VarListEvaluate.lean",
+  "lean_name": "varList_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem in clos_letop_source_probe.out: the index, closure expression list, independently polymorphic comparison list, recognition hypothesis and length equality agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "var_list_IMP_evaluate",
+  "hol_line": 188,
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/VarListEvaluate.lean",
+  "lean_name": "varListEvaluate",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed local HOL proof replay in clos_letop_source_probe.out: both expression lists, prefix and value lists, generic compiler and FFI state carriers, the conjunction and evaluation result equality agree. The canonical state roundtrip witnesses refs and code; evaluation inherits the real-carrier assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "var_list_IMP_evaluate",
+  "hol_line": 206,
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/VarListEvaluate.lean",
+  "lean_name": "varListEvaluate_zero",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed local HOL proof replay in clos_letop_source_probe.out: both expression lists, values and environment, generic compiler and FFI state carriers, the conjunction and evaluation result equality agree. The canonical state roundtrip witnesses refs and code; evaluation inherits the real-carrier assumption."
 }
 ]
