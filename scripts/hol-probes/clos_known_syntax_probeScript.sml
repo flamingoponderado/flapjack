@@ -67,3 +67,4 @@ val _ = show "state_globals_approx_subspt_typed=" clos_knownProofTheory.state_gl
 val _ = show "known_op_changed_globals_typed=" clos_knownProofTheory.known_op_changed_globals;
 val _ = show "known_op_changed_globals_cases_typed=" clos_knownProofTheory.known_op_changed_globals_cases;
 val _ = show "known_op_changed_globals_alt_set_typed=" clos_knownProofTheory.known_op_changed_globals_alt_set;
+val _ = show "do_app_ssgc_typed=" clos_knownProofTheory.do_app_ssgc;
