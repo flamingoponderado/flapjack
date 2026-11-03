@@ -16,20 +16,22 @@ private theorem subsptTrans {A : Type} (a b c : Spt A)
   obtain ⟨last, e2⟩ := h2 k mid
   exact ⟨last, e2.trans e1⟩
 
-/-- The source induction hypotheses simulate both successful evaluation steps
-of an application. This Flapjack helper also preserves the runtime function
-approximation needed to justify an optimizer-selected call annotation. -/
+/-- After successful argument evaluation, the source induction hypotheses
+simulate the function evaluation, including errors. This Flapjack helper also
+preserves the approximation of any resulting runtime function. -/
 theorem applicationPrefixSimulation {C F : Type} (trace : BackendCommon.Tra)
     (loc : Option Nat) (x : ClosLang.Exp) (xs : List ClosLang.Exp)
     (env1full env1 xenv1 env2 xenv2 : List ClosSem.Value)
     (s0 middle next : State (Spt ValApprox × C) F) (t0 : State C F)
-    (values : List ClosSem.Value) (fn : ClosSem.Value) (c : Config) (aenv : List ValApprox)
+    (values : List ClosSem.Value) (fnResult : Result (List ClosSem.Value) ClosSem.Value)
+    (c : Config) (aenv : List ValApprox)
     (g0 g1 g2 : Spt ValApprox) (argsEas : List (ClosLang.Exp × ValApprox))
     (fnExp : ClosLang.Exp) (fnApprox : ValApprox)
     (argsIH : KnownSimulationAt xs env1full s0)
     (fnIH : KnownSimulationAt [x] env1full middle)
     (argsRun : evaluate xs env1full s0 = (.val values, middle))
-    (fnRun : evaluate [x] env1full middle = (.val [fn], next))
+    (fnRun : evaluate [x] env1full middle = (fnResult, next))
+    (fnNoType : fnResult ≠ .err (.abort .typeError))
     (argsKnown : knownListTotal c xs aenv g0 = (argsEas, g1))
     (fnKnown : knownListTotal c [x] aenv g1 = ([(fnExp, fnApprox)], g2))
     (h : StateRel c (nextG s0) s0 t0 ∧ everyFnVarsNone [.app trace loc x xs] ∧
@@ -44,12 +46,13 @@ theorem applicationPrefixSimulation {C F : Type} (trace : BackendCommon.Tra)
       List.Forall₂ (ValueRel c (nextG s0)) env1 env2 ∧
       uniqueSetGlobals [.app trace loc x xs] s0.compileOracle ∧
       isStateOracle (compileInc c) s0.compileOracle ∧ env1full = env1 ++ xenv1) :
-    ∃ targetValues targetFn targetMiddle targetNext,
+    ∃ targetValues targetFnResult targetMiddle targetNext,
       evaluate (argsEas.map Prod.fst) (env2 ++ xenv2) t0 = (.val targetValues, targetMiddle) ∧
-      evaluate [fnExp] (env2 ++ xenv2) targetMiddle = (.val [targetFn], targetNext) ∧
+      evaluate [fnExp] (env2 ++ xenv2) targetMiddle = (targetFnResult, targetNext) ∧
       List.Forall₂ (ValueRel c (nextG next)) values targetValues ∧
-      ValueRel c (nextG next) fn targetFn ∧ ValApproxVal fnApprox fn ∧
-      ssgcFree next ∧ vsgcFree fn ∧ (∀ v ∈ values, vsgcFree v) ∧
+      resultRel (List.Forall₂ (ValueRel c (nextG next))) (ValueRel c (nextG next)) fnResult targetFnResult ∧
+      (∀ vs, fnResult = .val vs → List.Forall₂ ValApproxVal [fnApprox] vs) ∧
+      ssgcFree next ∧ rsgcFree fnResult ∧ (∀ v ∈ values, vsgcFree v) ∧
       oracleStateSgcFree next.compileOracle ∧ coEveryFnVarsNone next.compileOracle ∧
       uniqueSetGlobals [] next.compileOracle ∧ stateOracleMglobalsDisjoint next ∧
       oracleGapproxSubspt next.compileOracle ∧
@@ -118,44 +121,34 @@ theorem applicationPrefixSimulation {C F : Type} (trace : BackendCommon.Tra)
     have nextOracleApprox := oracleGapproxDisjointLemma xs env1full s0 (.val values) middle
       c aenv g0 argsEas g1 ⟨argsRun, argsKnown, argsUnique, startOracle⟩
     have fnApproxResult := CorrectApprox.Total.knownCorrectApprox c [x] aenv g1 [(fnExp, fnApprox)] g2
-      env1 xenv1 middle (.val [fn]) next ⟨fnKnown, by simpa [envEq] using fnRun, nextUnique,
+      env1 xenv1 middle fnResult next ⟨fnKnown, by simpa [envEq] using fnRun, nextUnique,
         approxRel, argsApprox.1, nextDisjoint, nextOracleApprox, safety.1,
         by simpa [← envEq] using envSafe, fnSafe, approxSafe, optimizerSafe.2.2⟩
-    have fnStep := fnIH (.val [fn]) next env1 xenv1 env2 xenv2 targetMiddle c g1 g2 aenv [(fnExp, fnApprox)]
+    have fnStep := fnIH fnResult next env1 xenv1 env2 xenv2 targetMiddle c g1 g2 aenv [(fnExp, fnApprox)]
       ⟨fnRun, fnKnown, midState, syntaxParts.1, nextCoSyntax, nextDisjoint, midOracle,
         nextStateOracleDisjoint, fnSafe, safety.1, envSafe, approxRel, nextOracleSafe,
         optimizerSafe.2.2, approxSafe, midGlobals, subFn, subsptTrans g2 (nextG s0) (nextG middle) sub1 nextTree,
-        nextMono, freeParts.1, nextRel, nextUnique, midStateOracle, envEq, by simp⟩
+        nextMono, freeParts.1, nextRel, nextUnique, midStateOracle, envEq, fnNoType⟩
     obtain ⟨targetFnResult, targetNext, targetFnRun, fnRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := fnStep
-    cases targetFnResult with
-    | err error => simp [resultRel] at fnRel
-    | val targetFns =>
-      cases fnRel with
-      | cons fnRelated rest =>
-        cases rest
-        have fnSound := fnApproxResult.2 [fn] rfl
-        cases fnSound with
-        | cons fnSound rest =>
-          have fnTree := nextGEvaluateSubspt [x] env1full middle (.val [fn]) next ⟨nextMono, fnRun⟩
-          have fnSafety := EvaluateGlobalsPort.Total.evaluateChangedGlobals [x] env1full middle
-            (.val [fn]) next ⟨fnRun, safety.1, fnSafe, envSafe⟩
-          have valuesSafe : ∀ v ∈ values, vsgcFree v := by simpa [rsgcFree] using safety.2.1
-          have fnValueSafe : vsgcFree fn := by simpa [rsgcFree] using fnSafety.2.1
-          have finalStateOracleDisjoint := stateOracleMglobalsDisjointEvaluate [x] env1full middle
-            (.val [fn]) next ⟨fnRun, safety.1, fnSafe, envSafe, nextUnique,
-              nextDisjoint, nextStateOracleDisjoint⟩
-          have finalUnique := uniqueSetGlobalsEvaluate [x] [] env1full middle next (.val [fn])
-            ⟨nilUniqueSetGlobals [x] middle.compileOracle nextUnique, fnRun⟩
-          obtain ⟨m, fnShifted⟩ := evaluateImpShiftSeq [x] env1full middle (.val [fn]) next fnRun
-          have finalCoSyntax : coEveryFnVarsNone next.compileOracle := by
-            rw [fnShifted]; exact coEveryFnVarsNoneShift middle.compileOracle nextCoSyntax m
-          have finalOracleSafe : oracleStateSgcFree next.compileOracle := by
-            rw [fnShifted]; exact oracleStateSgcFreeShift middle.compileOracle nextOracleSafe m
-          have finalMono := oracleGapproxSubsptEvaluate () [x] env1full middle (.val [fn]) next ⟨nextMono, fnRun⟩
-          exact ⟨targetValues, _, targetMiddle, targetNext, targetArgsRun, by simpa using targetFnRun,
-            valueRelListSubspt c (nextG middle) values targetValues argsRel (nextG next) fnTree,
-            fnRelated, fnSound, fnSafety.1, fnValueSafe, valuesSafe, finalOracleSafe, finalCoSyntax,
-            finalUnique, finalStateOracleDisjoint, finalMono, finalState, finalGlobals, finalOracle, finalDisjoint⟩
+    have fnTree := nextGEvaluateSubspt [x] env1full middle fnResult next ⟨nextMono, fnRun⟩
+    have fnSafety := EvaluateGlobalsPort.Total.evaluateChangedGlobals [x] env1full middle
+      fnResult next ⟨fnRun, safety.1, fnSafe, envSafe⟩
+    have valuesSafe : ∀ v ∈ values, vsgcFree v := by simpa [rsgcFree] using safety.2.1
+    have finalStateOracleDisjoint := stateOracleMglobalsDisjointEvaluate [x] env1full middle
+      fnResult next ⟨fnRun, safety.1, fnSafe, envSafe, nextUnique,
+        nextDisjoint, nextStateOracleDisjoint⟩
+    have finalUnique := uniqueSetGlobalsEvaluate [x] [] env1full middle next fnResult
+      ⟨nilUniqueSetGlobals [x] middle.compileOracle nextUnique, fnRun⟩
+    obtain ⟨m, fnShifted⟩ := evaluateImpShiftSeq [x] env1full middle fnResult next fnRun
+    have finalCoSyntax : coEveryFnVarsNone next.compileOracle := by
+      rw [fnShifted]; exact coEveryFnVarsNoneShift middle.compileOracle nextCoSyntax m
+    have finalOracleSafe : oracleStateSgcFree next.compileOracle := by
+      rw [fnShifted]; exact oracleStateSgcFreeShift middle.compileOracle nextOracleSafe m
+    have finalMono := oracleGapproxSubsptEvaluate () [x] env1full middle fnResult next ⟨nextMono, fnRun⟩
+    exact ⟨targetValues, targetFnResult, targetMiddle, targetNext, targetArgsRun, by simpa using targetFnRun,
+      valueRelListSubspt c (nextG middle) values targetValues argsRel (nextG next) fnTree,
+      fnRel, fnApproxResult.2, fnSafety.1, fnSafety.2.1, valuesSafe, finalOracleSafe, finalCoSyntax,
+      finalUnique, finalStateOracleDisjoint, finalMono, finalState, finalGlobals, finalOracle, finalDisjoint⟩
 
 /-- Once both preliminary evaluations succeed, the source application
 induction hypothesis applies to either an unchanged call or an annotated call.
