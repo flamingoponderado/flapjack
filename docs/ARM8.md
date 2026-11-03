@@ -75,10 +75,15 @@ need the machine semantics.  `asr` is just HOL's library theorem
 
 The main HOL theorem `arm8_encoder_correct` is stated about CakeML's full L3
 ARMv8 model (`HOL/examples/l3-machine-code/arm8/model/arm8Script.sml` and
-`step/arm8_stepScript.sml`). Flapjack does not port that L3 model. Instead, the
-closed subset model below proves the corresponding `encoderCorrect arm8Target`
-obligation for the instructions the backend emits; the Flapjack theorem is
-therefore infrastructure, not a port of the HOL theorem.
+`step/arm8_stepScript.sml`). Flapjack now ports that model (`L3/Types.lean`,
+`L3/Defs.lean`, `L3/Target.lean`, `L3/Ast.lean`) and proves the corresponding
+`encoderCorrect arm8TargetL3` obligation for the instructions the backend emits
+in `L3/CorrectnessEncoding/Complete.lean`; see "L3 carrier and validity gate"
+below. The closed subset model is retained for the executable driver, which
+still runs `arm8Config` rather than `arm8ConfigL3`. Both `encoderCorrect`
+theorems are infrastructure: the assembling theorems carry no `@[hol]` tag, and
+the per-case theorems are tagged `arm8_encoder_correct` but remain
+`pending_statement_review`, so neither is a claimed exact HOL port.
 
 ## Closed ARMv8 machine model (new)
 
@@ -489,12 +494,14 @@ so `unsigned_offset` is `false` and the scaled clause cannot fire) and
 `arm8_encoder_correct_mem_load_pos_unscaled` (non-negative, but not the scaled
 form).
 
-`arm8_encoder_correct_mem_load_scaled` (`Mem.lean`) is the disjoint scaled
-twelve-bit branch: the offset is the scaled form (`hoff`), the nine-bit fit
-still holds (`hsx`, so `arm8_ast` takes its single-instruction branch through
-the first disjunct), and the sign is non-negative (`hmsb`, so
-`unsigned_offset` is `true` and the encoder's first clause fires).  It emits
-the `imm12` word and reuses the same `Run`/`asmCaseOneMem` tail.  The `Run`
+`arm8_encoder_correct_mem_load_scaled` (`Mem.lean`) is the scaled twelve-bit
+branch: the offset is the scaled form (`hoff`) and the sign is non-negative
+(`hmsb`, so `unsigned_offset` is `true` and the encoder's first clause fires).
+It does not need `hsx`: `arm8_load_store_ast`'s one-instruction branch is
+`a = sw2sw ((8 >< 0) a) \/ (unsigned /\ a = scaled)`, so the scaled disjunct
+covers offsets beyond the nine-bit range as well (`arm8ScaledForm_eq` connects
+the `setWidth`/`zeroExtend` forms).  It emits the `imm12` word and reuses the
+same `Run`/`asmCaseOneMem` tail.  The `Run`
 equations for both `LoadStoreImmediate@64` forms now take `unsigned` as a
 parameter, because `dfn'LoadStoreImmediate` ignores that encoding field.
 
@@ -516,9 +523,70 @@ state directly rather than by a congruence lemma: `Mem` unfolds to a `holFor`
 fold over the whole state, so the fold is not syntactically invariant under the
 record update.
 
-Still open for #1239: the remaining `Mem` cases (the 32/16/8-bit widths), the
-two-instruction
-`AddSubImmediate@64` + `LoadStoreImmediate` constructor for far offsets, and the
-remaining case theorems covering the other instruction groups.
-The assembling
-`encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
+The remaining `Mem` widths and the far-offset path are closed in the same
+module.  The two-instruction path is a pair of `AddSubImmediate@64` +
+`LoadStoreImmediate` shapes: a negative offset adds `-off - 0x100` into the
+scratch register 26 and then loads/stores at `-0x100` against it, and a
+non-negative one adds `off - 0xFF` and accesses at `+0xFF`.  Each far case
+takes the encodability of that computed immediate (`hlow`) as a hypothesis,
+because the L3 `AddSubImmediate@64` word shape needs the immediate in the
+twelve-bit window; `arm8FarImm_encodable_of_bounds` proves it from the offset's
+window, and `arm8FarLowNeg`/`arm8FarLowPos` instantiate it at
+`asmAddrOffsetOkExact`.  The 32/16-bit widths repeat the same three branches at
+scaled shifts 2 and 1; the 16-bit offsets are checked by `asmHwOffsetOkExact`,
+which has the same `(-4351, 4350)` window, so
+`arm8FarLowNegOfBounds`/`arm8FarLowPosOfBounds` supply their `hlow` too.
+
+The 8-bit offsets are bounded by `asmByteOffsetOkExact` at `(-256, 4095)`, so
+the far branch is unreachable there: a negative offset is inside `[-256, -1]`
+and therefore its own signed nine-bit form (`arm8NineBitForm_of_byte`), while a
+non-negative one is below `4096` and therefore the zero-shift scaled form
+(`arm8ByteScaledForm`).  The `.mem .load8`/`.store8` dispatchers use those two
+facts instead of a far case.
+
+`Complete.lean` assembles the chain.  Per-operation dispatchers
+(`arm8MemLoadCase` etc.) split on the offset's sign bit and scaled form and
+call the matching case theorem; `arm8MemCase`, `arm8ArithCase` (with
+`arm8BinopCase`/`arm8ShiftCase`), and the remaining constructor cases feed the
+assembling `arm8EncoderCorrectL3 : encoderCorrect arm8TargetL3`, which depends
+only on `propext`, `Classical.choice` and `Quot.sound`.
+
+## L3 machine configuration and downstream compiler theorem
+
+`Flapjack/Compiler/Backend/Arm8Config/ProofsL3.lean` states CakeML's
+`is_arm8_machine_config` over HOL's `arm8_state`/`arm8_proj` carriers
+(`isArm8MachineConfigL3`) and proves `mc_conf_ok` from it
+(`arm8MachineConfigOkL3`): the encoder-correctness component is
+`arm8EncoderCorrectL3`, the encoding invariant `arm8ConfigL3_encOk`, and the
+five register guards are decided.  `arm8InitOkL3` proves `mc_init_ok` at the L3
+configuration and `BackendProofL3.lean` proves the 27 `backend_config_ok`
+conjuncts (`arm8BackendConfigOkL3`); the only field differing from the closed
+`arm8Config` is `valid_imm`, so that proof follows the closed-model one with
+`arm8ValidImmediate`.
+
+`Flapjack/Pancake/Proofs/PanToTarget/Arm8L3Instance.lean` instantiates the
+tagged `panToTargetCompileSemantics` theorem at that machine configuration
+(`panToTargetCompileSemanticsArm8L3`), so the downstream Pancake
+compiler-correctness theorem applies to the L3 ARMv8 target with HOL's original
+hypotheses (`backend_config_ok`, `mc_conf_ok`, `mc_init_ok`, the register
+relations and `pan_installed`).  Like the closed-model `Arm8Instance`, it is
+untagged Flapjack infrastructure: it has no single HOL original, and it inherits
+the case theorems' `pending_statement_review` status.
+
+Remaining assumptions and open items:
+
+- Every L3 declaration here is `pending_statement_review` in
+  `docs/HOL-THEOREM-MAP.json`.  Nothing has been source-reviewed against the
+  pinned HOL scripts, so no theorem or definition is claimed as an exact HOL
+  port; the chain is kernel-checked but its carriers and statements are not yet
+  certified equal to HOL's.
+- The executed compiler path (`Flapjack/Arm8/NativeSource.lean`) still uses the
+  closed `arm8Config` and its `validImmediate` (`encodeBitMask`, a `Nat`-valued
+  rendering), not `arm8ConfigL3`/`arm8ValidImmediate` (`EncodeBitMask`).  The
+  production replacement is tracked separately (#1229).
+- ARM parity is compiler-output parity: `Flapjack/Test/Arm8Parity.lean` compares
+  the executed driver's assembly and hex against the original CakeML Pancake
+  compiler on fifteen checked-in cases, and all fifteen pass.  Compiler-output
+  parity alone does not establish semantic agreement with the L3 model; the
+  semantic chain above is the evidence for that, modulo the pending statement
+  review.
