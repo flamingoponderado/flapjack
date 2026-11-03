@@ -121,4 +121,71 @@ theorem asr_mask (x : BitVec 64) (n : Nat) (hn : n < 64) :
     have h64 : ¬ 64 ≤ i := by omega
     simp [h, hge, hni, h64, hi]
 
+/-- The `Lsl` wmask: bits `n` through 63 set. -/
+def arm8LslMask (n : Nat) : BitVec 64 :=
+  holV2w 64 (List.replicate (64 - n) true ++ List.replicate n false)
+
+/-- `DecodeBitMasks` at the `Lsl` shape `(1, 63w - n2w n, -n2w n, F)`: the
+wmask keeps the bits above `n` and the tmask is all ones. -/
+theorem decodeBitMasks_lsl (n : Nat) (hn : n < 64) :
+    DecodeBitMasks (TM := 64)
+      ((1 : BitVec 1), (BitVec.ofNat 6 ((63 - n) % 64), (BitVec.ofNat 6 ((64 - n) % 64), false))) =
+      some (Replicate (TN := 64)
+          (holRotate (holPadLeft false 64 (Ones ((63 - n) % 64 + 1))) ((64 - n) % 64)),
+        BitVec.allOnes 64) := by
+  interval_cases n <;> decide
+
+/-- The rendered `Lsl` wmask is `arm8LslMask`. -/
+theorem wmask_lsl_eq (n : Nat) (hn : n < 64) :
+    Replicate (TN := 64)
+        (holRotate (holPadLeft false 64 (Ones ((63 - n) % 64 + 1))) ((64 - n) % 64)) =
+      arm8LslMask n := by
+  interval_cases n <;> decide
+
+/-- `arm8LslMask` keeps exactly the bits at positions `n` and above. -/
+theorem arm8LslMask_getLsbD (n i : Nat) (hn : n < 64) (hi : i < 64) :
+    (arm8LslMask n).getLsbD i = decide (n ≤ i) := by
+  have hlen : (List.replicate (64 - n) true ++ List.replicate n false).length = 64 := by
+    simp [List.length_replicate]
+    omega
+  have h63 : 63 - i < 64 := by omega
+  simp only [arm8LslMask, Flapjack.RiscV.L3.holV2w, Flapjack.getLsbD_holFcpWord, hlen, hi,
+    decide_true, Bool.true_and]
+  rw [List.getD_eq_getElem?_getD, List.getElem?_append, List.length_replicate]
+  by_cases h : 63 - i < 64 - n
+  · rw [if_pos h]
+    simp [h]
+    omega
+  · rw [if_neg h]
+    have h2 : 63 - i - (64 - n) < n := by omega
+    rw [List.getElem?_replicate]
+    simp [h2]
+    omega
+
+/-- `arm8_targetProofScript.sml`'s `lsl`: masking the rotate right by the
+`Lsl` masks is the logical shift left. -/
+theorem lsl_mask (x : BitVec 64) (n : Nat) (hn : n < 64) :
+    ((BitVec.allOnes 64 &&&
+        Replicate (TN := 64)
+          (holRotate (holPadLeft false 64 (Ones ((63 - n) % 64 + 1))) ((64 - n) % 64))) &&&
+      x.rotateRight ((64 - n) % 64)) = x <<< n := by
+  rw [wmask_lsl_eq n hn, BitVec.allOnes_and]
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  rw [BitVec.getLsbD_and, BitVec.getLsbD_rotateRight, BitVec.getLsbD_shiftLeft,
+    arm8LslMask_getLsbD n i hn hi]
+  by_cases hn0 : n = 0
+  · subst hn0
+    simp [hi]
+  · have hmod : (64 - n) % 64 = 64 - n := by
+      rw [Nat.mod_eq_of_lt]; omega
+    rw [hmod]
+    have hn64 : 64 - (64 - n) = n := by omega
+    by_cases h : n ≤ i
+    · have hlt : ¬ i < n := by omega
+      simp [hmod, hn64, hlt]
+      omega
+    · have hlt : i < n := by omega
+      simp [hmod, hn64, hlt]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
