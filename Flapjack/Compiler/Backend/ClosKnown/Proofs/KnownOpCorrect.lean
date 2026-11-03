@@ -194,5 +194,81 @@ theorem knownOpCorrectApproxAllocGlobal {C F : Type} (args : List ValApprox)
           exact ⟨globalsAlloc s0 g0 i.toNat globals, .other _⟩
       | _ => simp [doApp, applyGlobal] at run
 
+/-- The tuple-and-integer branch of indexed lookup preserves the relation at
+the selected element, including the optimizer's out-of-bounds fallback. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_op_correct_approx"
+  (fmap_as_finite_support := [refs, code])]
+theorem knownOpCorrectApproxElTuple {C F : Type} (tag : Nat) (elements : List ValApprox)
+    (index : Int) (g0 : Spt ValApprox) (a : ValApprox) (g : Spt ValApprox)
+    (vs : List Value) (s0 : State C F) (v : Value) (s : State C F)
+    (known : knownOpHOL (.memOp .el) [.tuple tag elements, .int index] g0 = (a, g))
+    (run : doApp (.memOp .el) vs s0 = .val (v, s))
+    (rel : List.Forall₂ ValApproxVal [.tuple tag elements, .int index] vs)
+    (globals : stateGlobalsApprox s0 g0) :
+    stateGlobalsApprox s g ∧ ValApproxVal a v := by
+  cases rel with
+  | cons first rest =>
+    cases rest with
+    | cons second rest =>
+      cases rest
+      cases first with
+      | tuple _ _ values elementsRel =>
+        cases second with
+        | int _ =>
+          by_cases bounds : 0 ≤ index ∧ index < Int.ofNat elements.length
+          · have ibound : index.toNat < elements.length := (Int.toNat_lt bounds.1).2 bounds.2
+            have vbound : index.toNat < values.length := by simpa [elementsRel.length_eq] using ibound
+            simp only [knownOpHOL, bounds] at known
+            rcases known with ⟨rfl, rfl⟩
+            have notneg : ¬index < 0 := by omega
+            simp only [doApp, applyMemory, notneg, ↓reduceIte,
+              List.getElem?_eq_getElem vbound, Option.bind_some,
+              SemanticPrimitivesHOL.Result.val.injEq, Prod.mk.injEq] at run
+            rcases run with ⟨rfl, rfl⟩
+            exact ⟨globals, elementsRel.get _ _⟩
+          · simp only [knownOpHOL, bounds, ↓reduceDIte, Prod.mk.injEq] at known
+            rcases known with ⟨rfl, rfl⟩
+            by_cases negative : index < 0
+            · simp [doApp, applyMemory, negative] at run
+            · have nonnegative : 0 ≤ index := by omega
+              have outside : ¬index.toNat < values.length := by
+                intro inside
+                have inside' : index.toNat < elements.length := by
+                  simpa [elementsRel.length_eq] using inside
+                exact bounds ⟨nonnegative, (Int.toNat_lt nonnegative).1 inside'⟩
+              have missing : values[index.toNat]? = none :=
+                List.getElem?_eq_none (Nat.le_of_not_gt outside)
+              simp [doApp, applyMemory, negative, missing] at run
+
+/-- An impossible approximation cannot describe the first runtime argument. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_op_correct_approx"
+  (fmap_as_finite_support := [refs, code])]
+theorem knownOpCorrectApproxElImpossibleFirst {C F : Type} (rest : List ValApprox)
+    (g0 : Spt ValApprox) (a : ValApprox) (g : Spt ValApprox)
+    (vs : List Value) (s0 : State C F) (v : Value) (s : State C F)
+    (_known : knownOpHOL (.memOp .el) (.impossible :: rest) g0 = (a, g))
+    (_run : doApp (.memOp .el) vs s0 = .val (v, s))
+    (rel : List.Forall₂ ValApproxVal (.impossible :: rest) vs)
+    (_globals : stateGlobalsApprox s0 g0) :
+    stateGlobalsApprox s g ∧ ValApproxVal a v := by
+  cases rel with
+  | cons first _ => cases first
+
+/-- An impossible approximation cannot describe the second runtime argument. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_op_correct_approx"
+  (fmap_as_finite_support := [refs, code])]
+theorem knownOpCorrectApproxElImpossibleSecond {C F : Type} (first : ValApprox)
+    (rest : List ValApprox) (g0 : Spt ValApprox) (a : ValApprox) (g : Spt ValApprox)
+    (vs : List Value) (s0 : State C F) (v : Value) (s : State C F)
+    (_known : knownOpHOL (.memOp .el) (first :: .impossible :: rest) g0 = (a, g))
+    (_run : doApp (.memOp .el) vs s0 = .val (v, s))
+    (rel : List.Forall₂ ValApproxVal (first :: .impossible :: rest) vs)
+    (_globals : stateGlobalsApprox s0 g0) :
+    stateGlobalsApprox s g ∧ ValApproxVal a v := by
+  cases rel with
+  | cons _ tail =>
+    cases tail with
+    | cons second _ => cases second
+
 end KnownOpCorrect
 end Flapjack.Compiler.Backend.ClosKnown

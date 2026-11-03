@@ -3,6 +3,45 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_op_correct_approx",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
+  "lean_name": "knownOpCorrectApproxElTuple",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_op_correct_approx_typed with the MemOp El case split on the tuple and integer approximation pattern in known_op_def: all four premises and the two conclusions remain, with the operation and source pattern specialized. In this branch the pairwise relation gives equal lengths and related selected values; an out-of-bounds index cannot return successfully. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_correct_approx",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
+  "lean_name": "knownOpCorrectApproxElImpossibleFirst",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_op_correct_approx_typed with the MemOp El case split on the first-argument Impossible pattern in known_op_def: all four premises and the two conclusions remain, with the operation and source pattern specialized. In this branch the value relation has no Impossible constructor. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_correct_approx",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
+  "lean_name": "knownOpCorrectApproxElImpossibleSecond",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_op_correct_approx_typed with the MemOp El case split on the second-argument Impossible pattern in known_op_def: all four premises and the two conclusions remain, with the operation and source pattern specialized. In this branch the pairwise relation would require an impossible value relation. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_correct_approx",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
   "lean_name": "knownOpCorrectApproxSetGlobal",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
