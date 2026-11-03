@@ -274,7 +274,14 @@ def main():
     parser.add_argument('--record-reference', type=Path, help='capture outputs from the pinned compiler')
     parser.add_argument('--check-reference', type=Path, help='also compare against the pinned compiler')
     parser.add_argument('--cake', type=Path, default=ROOT / '.lake/build/bin/cake')
+    parser.add_argument('--case', action='append', default=[], metavar='NAME',
+                        help='check only the named captured case (repeatable)')
     args = parser.parse_args()
+    unknown = set(args.case) - set(CASES)
+    if unknown:
+        parser.error(f"unknown case(s): {', '.join(sorted(unknown))}")
+    if args.record_reference and args.case:
+        parser.error('--case cannot be used when recording the complete reference fixture')
     if args.record_reference:
         parity.check_pinned_reference(args.record_reference)
         rows = {name: run(args.record_reference, source, name) for name, source in CASES.items()}
@@ -301,7 +308,10 @@ def main():
         raise SystemExit('reference case list has changed')
     if args.check_reference:
         parity.check_pinned_reference(args.check_reference)
+    selected = set(args.case)
     for name, source in CASES.items():
+        if selected and name not in selected:
+            continue
         want = expected['cases'][name]
         reference = execute(args.check_reference, source, name) if args.check_reference else None
         if reference is not None and observation(reference) != want:

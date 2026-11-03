@@ -51,6 +51,33 @@ class DirectComparisonTests(unittest.TestCase):
             with self.subTest(actual=actual), self.assertRaisesRegex(SystemExit, "direct output comparison"):
                 self.run_case(actual)
 
+    def test_selected_case_does_not_run_other_cases(self):
+        capture = {"same": "digest"}
+        fixture = Mock()
+        fixture.read_text.return_value = json.dumps({
+            "cakeml_revision": parity.parity.PINNED_REV,
+            "hol_revision": parity.parity.HOL_REV,
+            "cases": {"first": capture, "second": capture},
+        })
+        result = subprocess.CompletedProcess([], 0, stdout=b"result", stderr=b"")
+        with (patch.object(parity, "CASES", {"first": "source1", "second": "source2"}),
+              patch.object(parity, "FIXTURE", fixture),
+              patch.object(parity, "execute", return_value=result) as execute,
+              patch.object(parity, "observation", return_value=capture),
+              patch.object(sys, "argv", ["parity", "--case", "second"]),
+              contextlib.redirect_stdout(io.StringIO())):
+            parity.main()
+        self.assertEqual(execute.call_count, 1)
+        self.assertEqual(execute.call_args.args[1:], ("source2", "second"))
+
+    def test_partial_reference_recording_is_rejected(self):
+        with (patch.object(parity, "CASES", {"case": "source"}),
+              patch.object(sys, "argv", ["parity", "--case", "case", "--record-reference", "/reference"]),
+              contextlib.redirect_stderr(io.StringIO()),
+              self.assertRaises(SystemExit) as exit_status):
+            parity.main()
+        self.assertEqual(exit_status.exception.code, 2)
+
 
 if __name__ == "__main__":
     unittest.main()

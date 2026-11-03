@@ -692,7 +692,9 @@ basis-enabled programs against complete-output captures from the pinned
 compiler, using output lengths and SHA-256 hashes. Pass
 `--check-reference /var/tmp/flapjack-pinned-cake` to also run the pinned
 executable and compare stdout and stderr directly byte for byte, together with
-the exit status. The cases exercise observable array and byte-array updates,
+the exit status. Pass `--case NAME` (repeatable) to rerun selected captured
+cases; recording reference data always requires the complete corpus. The cases
+exercise observable array and byte-array updates,
 strings, closures, exceptions, lists, vectors, integers and words, plus polymorphic trees,
 local and module declarations, recursive list matches, and tuple patterns. It
 also checks complete no-prelude RISC-V output for mutual recursion, a curried
