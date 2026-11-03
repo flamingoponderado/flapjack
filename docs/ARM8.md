@@ -196,7 +196,10 @@ and integer helpers (`PAD_LEFT`, `FLAT`, `w2v`, `shiftr`, `testbit`, `bxor`,
 the 129-definition HOL closure reachable from `NextStateARM8` and
 `Fetch`/`Decode`/`Run`/`Next`/`Encode`, produced by
 `scripts/hol_terms_to_lean.py --thy=arm8` from
-`scripts/l3/export_arm8_defs.sml`.  118 declarations carry `@[hol]` tags and
+`scripts/l3/export_arm8_defs.sml`; the export is committed as
+`scripts/l3/arm8_defs.sexp.gz` and `scripts/l3/check-renderings.py` compares
+every definition in the file against it (129 definitions, two documented
+handwritten exceptions).  118 declarations carry `@[hol]` tags and
 are recorded as `pending_statement_review` in `docs/HOL-THEOREM-MAP.json`: the
 rendering maps FCP to `BitVec`, bitstrings to `List Bool`, sets to predicates,
 `HD []` to `false`, and adds a total default arm to `num2...`, so the equations
@@ -619,12 +622,18 @@ not certify the rendered `Defs.lean` closure that these statements unfold to
 `pending_statement_review` -- mechanically rendered, but not individually
 compared with HOL.  The exactness of the encoder-correctness chain is therefore
 conditional on that rendering assumption: if a rendered equation differed from
-HOL, the theorem would be about a slightly different machine.  Unlike the
-RISC-V renderings, the ARM8 renderings have no committed export artifact and no
-drift gate (`scripts/l3/arm8_defs.sexp.gz` is produced by
-`scripts/l3/export_arm8_defs.sml` but is not checked in, and
-`scripts/l3/check-renderings.py` covers `Flapjack/RiscV/L3` only), so this
-assumption is documented rather than machine-checked.
+HOL, the theorem would be about a slightly different machine.
+
+That assumption is now machine-checked for transcription drift.
+`scripts/l3/export_arm8_defs.sml` produces the pinned export, committed as
+`scripts/l3/arm8_defs.sexp.gz` (129 definitions), and
+`scripts/l3/check-renderings.py` compares every `Arm8/L3/Defs.lean` definition
+against the rendered export, with two two-sided handwritten exceptions
+(`CountTrailing` and `Poly32Mod2_loop`, whose committed bodies add Lean
+elaboration annotations).  The gate proves the Lean definitions are exactly the
+generator's rendering of the exported HOL terms; it does not prove the
+rendering scheme itself is HOL-equivalent, which is what
+`pending_statement_review` still records.
 
 ### Transition behaviour and lowering comparison
 
@@ -733,12 +742,18 @@ Remaining assumptions and open items:
   whose constant closure reaches the `(reals_as_rational_cuts)` FP renderings
   records `inherits_reals_as_rational_cuts` and inherits the
   `docs/SOUNDNESS.md` item 8 real-rendering assumption.
-- The ARM8 renderings have no committed `scripts/l3/arm8_defs.sexp.gz` export
-  and are not covered by `scripts/l3/check-renderings.py` (which covers the
-  RISC-V closure only), so there is no drift gate for `Arm8/L3/Defs.lean`.
-  Committing the export and extending the gate is the
-  mechanical step that would let the `Defs.lean` declarations be reviewed
-  declaration-by-declaration instead of as a documented block.
+- The ARM8 renderings are drift-gated: `scripts/l3/arm8_defs.sexp.gz` is
+  committed and `scripts/l3/check-renderings.py` covers `Arm8/L3/Defs.lean`
+  (129 definitions, 2 documented handwritten exceptions).  The remaining gap
+  is the rendering scheme itself: `pending_statement_review` records that the
+  generator's translation choices (`HD []`, the total `num2...` default arm,
+  set-as-predicate, FCP out-of-range values) have not been compared
+  declaration-by-declaration with HOL.  That per-declaration review is what
+  would let the `Defs.lean` rows become `reviewed_exact`.
+- The closed-model and L3 proofs of `is_arm8_machine_config ⇒ mc_conf_ok` and
+  `backend_config_ok` are near-duplicates that differ only in the target,
+  configuration and `valid_imm`; making them generic is recorded as follow-up
+  work rather than churned in this PR.
 - The executed compiler path (`Flapjack/Arm8/NativeSource.lean`) still uses the
   closed `arm8Config` and its `validImmediate` (`encodeBitMask`, a `Nat`-valued
   rendering), not `arm8ConfigL3`/`arm8ValidImmediate` (`EncodeBitMask`).  The

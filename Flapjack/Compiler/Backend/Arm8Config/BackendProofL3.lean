@@ -15,6 +15,14 @@ closed-model `arm8Config` is `valid_imm`, so the proof follows
 
 The machine-configuration half of `arm8_configProofScript.sml` over the L3
 carriers is in `Arm8Config.ProofsL3`.  Flapjack-specific instantiation, so untagged.
+
+This proof is a near-duplicate of `Arm8Config.BackendProof.arm8BackendConfigOkRaw`
+in the closed model: `arm8ConfigL3` and `arm8Config` have the same sixteen field
+values except `encode` (the L3 lowering versus the closed subset encoder) and
+`validImm` (`arm8ValidImmediate` versus `validImmediate`), and
+`backend_config_ok` reads only `validImm` of the two.  Keep the two proofs in
+step: a change to either configuration or to `backend_config_ok` must be made in
+both files.
 -/
 
 namespace Flapjack.Compiler.Backend.Arm8Config

@@ -44,15 +44,35 @@ def add(l, r):
     return Comb(Comb(Const('arithmetic', '+', ty), l), r)
 
 
+Lam = M['Lam']
+
+
 class InsertTest(unittest.TestCase):
+    def render(self, a, b, xs):
+        return insert_predicate(Renderer({}, {}), {}, [a, b], xs)
+
     def test_binder_avoids_free_variable(self):
-        self.assertEqual(insert_predicate(['a', 's']), '(fun x => x = a || s x)')
+        self.assertEqual(self.render(Var('a', NUM), Var('s', NUM), ['a', 's']),
+                         '(fun x => x = a || s x)')
 
     def test_binder_renamed_when_operand_uses_x(self):
-        self.assertEqual(insert_predicate(['x', 's']), "(fun x' => x' = x || s x')")
+        self.assertEqual(self.render(Var('x', NUM), Var('s', NUM), ['x', 's']),
+                         "(fun x' => x' = x || s x')")
 
-    def test_binder_renamed_for_both_operands(self):
-        self.assertEqual(insert_predicate(["x'", 'x']), "(fun x'' => x'' = x' || x x'')")
+    def test_binder_renamed_when_either_operand_uses_x(self):
+        self.assertEqual(self.render(Var('s', NUM), Var('x', NUM), ['s', 'x']),
+                         "(fun x' => x' = s || x x')")
+
+    def test_primed_variable_renders_with_underscore_and_does_not_clash(self):
+        self.assertEqual(self.render(Var("x'", NUM), Var('s', NUM), ['x_', 's']),
+                         '(fun x => x = x_ || s x)')
+
+    def test_bound_x_does_not_force_a_rename(self):
+        # `(fun x => x) INSERT s` binds its own `x`; the predicate binder may
+        # stay `x` because no free variable named `x` can be captured.
+        self.assertEqual(self.render(Lam(Var('x', NUM), Var('x', NUM)), Var('s', NUM),
+                                     ['(fun x => x)', 's']),
+                         '(fun x => x = (fun x => x) || s x)')
 
     def test_fresh_binder_leaves_unrelated_names_alone(self):
         self.assertEqual(fresh_binder('x', ['y', 's']), 'x')
@@ -75,11 +95,6 @@ class BitFieldInsertBoundsTest(unittest.TestCase):
         low = Var('pos', NUM)
         self.assertFalse(symbolic_field_bounds(low, low, 16))
 
-    def test_step_larger_than_input_width_is_rejected(self):
-        # A 16-bit input cannot hold `pos + 31` at every `pos`.
-        low = Var('pos', NUM)
-        self.assertFalse(symbolic_field_bounds(add(low, numeral(31)), low, 16))
-        self.assertTrue(symbolic_field_bounds(add(low, numeral(31)), low, 32))
 
 
 def fcp(n):
@@ -98,6 +113,8 @@ WORD16 = word(16)
 WORD64 = word(64)
 BFI_TYPE = Ty('min', 'fun', (NUM, Ty('min', 'fun', (NUM, Ty('min', 'fun', (
     WORD16, Ty('min', 'fun', (WORD64, WORD64))))))))
+BFI_TYPE_NARROW = Ty('min', 'fun', (NUM, Ty('min', 'fun', (NUM, Ty('min', 'fun', (
+    WORD16, Ty('min', 'fun', (WORD16, WORD16))))))))
 
 
 class BitFieldInsertRenderTest(unittest.TestCase):
@@ -121,6 +138,14 @@ class BitFieldInsertRenderTest(unittest.TestCase):
         out = self.render(numeral(15))
         self.assertIn('holBitFieldInsert', out)
 
+    def test_result_width_is_not_required_to_bound_high(self):
+        # HOL's `word_modify` visits only result indices, so a `high` past the
+        # result width still agrees with HOL; the guard bounds the input index
+        # (`high - low < input width`), which is what can differ.
+        self.c = Const('min', 'bit_field_insert', BFI_TYPE_NARROW)
+        out = self.render(add(self.low, numeral(15)))
+        self.assertIn('holBitFieldInsert', out)
+
     def test_unchecked_symbolic_bounds_are_rejected(self):
         with self.assertRaises(Unrenderable):
             self.render(add(self.low, numeral(31)))
@@ -129,6 +154,15 @@ class BitFieldInsertRenderTest(unittest.TestCase):
         self.low = numeral(0)
         with self.assertRaises(Unrenderable):
             self.render(numeral(31))
+
+
+class WidthExprTest(unittest.TestCase):
+    def test_width_one_type_is_one_bit(self):
+        # HOL's `one` index type is `one$one`, not an `fcp` op.
+        self.assertEqual(M['width_expr'](Ty('one', 'one', ())), 1)
+        self.assertEqual(M['width_expr'](Ty('fcp', 'bit1', (Ty('one', 'one', ()),))), 3)
+        self.assertEqual(M['width_expr'](word(1)), 1)
+        self.assertEqual(M['width_expr'](word(16)), 16)
 
 
 class RenderMultiTest(unittest.TestCase):

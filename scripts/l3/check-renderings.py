@@ -33,12 +33,16 @@ def normalize(text):
 def digest(text):
     return hashlib.sha256(normalize(text).encode()).hexdigest()
 
+ARM8_DIR = "Flapjack/Compiler/Encoders/Arm8/L3"
+
+
 def sources(root=ROOT):
     trust = module("l3_drift_comments", root / "scripts/check-native-trust.py")
     result = {}
-    for path in sorted((root / "Flapjack/RiscV/L3").rglob("*.lean")):
-        if not (path.name == "Defs.lean" or "Defs" in path.parts or "Step" in path.parts):
-            continue
+    paths = [p for p in sorted((root / "Flapjack/RiscV/L3").rglob("*.lean"))
+             if p.name == "Defs.lean" or "Defs" in p.parts or "Step" in p.parts]
+    paths += [p for p in sorted((root / ARM8_DIR).rglob("*.lean")) if p.name == "Defs.lean"]
+    for path in paths:
         text = trust.without_comments(path.read_text())
         for start in START.finditer(text):
             end = END.search(text, start.end())
@@ -59,6 +63,18 @@ def renderings(root=ROOT):
         raise ValueError("unrendered original definitions: " + repr(failed))
     return {(thy, name): (body, nc) for thy, name, _, body, _, nc in emitted}
 
+
+def arm8_renderings(root=ROOT):
+    renderer = module("l3_drift_renderer_arm8", root / "scripts/hol_terms_to_lean.py")
+    with tempfile.NamedTemporaryFile(mode="w") as export:
+        export.write(gzip.decompress((root / "scripts/l3/arm8_defs.sexp.gz").read_bytes()).decode())
+        export.flush()
+        emitted, failed = renderer.main(["renderer", export.name,
+                                         str(root / ARM8_DIR / "Types.lean"), "--thy=arm8"])
+    if failed:
+        raise ValueError("unrendered original ARM8 definitions: " + repr(failed))
+    return {name.strip("«»"): (body, nc) for thy, name, _, body, _, nc in emitted}
+
 def rendered_for(key, generated):
     path, name = key.split(":", 1)
     thy = "riscv_step" if "/Step/" in path else "riscv"
@@ -71,12 +87,15 @@ def rendered_for(key, generated):
         body = body.replace(thy + "_Fetch", "Fetch")
     return body, nc
 
-def check(actual, generated, lock):
+def check(actual, generated, lock, arm8=None):
     if set(actual) != set(lock["definitions"]):
         raise ValueError("native definition coverage changed: " + repr(sorted(set(actual) ^ set(lock["definitions"]))))
     overrides = set()
     for key, source in actual.items():
-        entry = rendered_for(key, generated)
+        if key.startswith(ARM8_DIR + "/"):
+            entry = arm8.get(key.split(":", 1)[1].strip("«»")) if arm8 is not None else None
+        else:
+            entry = rendered_for(key, generated)
         nc = source.startswith("noncomputable ")
         source = source.removeprefix("noncomputable ")
         exception = lock["exceptions"].get(key)
@@ -97,5 +116,5 @@ def check(actual, generated, lock):
 
 if __name__ == "__main__":
     lock = json.loads(LOCK.read_text())
-    check(sources(), renderings(), lock)
+    check(sources(), renderings(), lock, arm8_renderings())
     print(f"native rendering drift PASS: {len(lock['definitions'])} whole definitions, {len(lock['exceptions'])} explicit two-sided/manual exceptions")

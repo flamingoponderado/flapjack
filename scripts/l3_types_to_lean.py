@@ -93,7 +93,9 @@ def render(text: str, HOLPATH: str, only: list[str] | None = None,
     def hasfun(t): return '→' in t
     script = Path(HOLPATH).name
     res=[]
+    seen=set()
     for kind,n,items,start in out:
+        seen.add(n)
         if only is not None and n not in only:
             continue
         tag='@[hol "%s" "%s" %d]'%(HOLPATH,n,start) if False else '@[hol "%s" "%s"]'%(HOLPATH,n)
@@ -112,6 +114,12 @@ def render(text: str, HOLPATH: str, only: list[str] | None = None,
             res.append('  deriving Inhabited\n\n' if fun else
                        ('  deriving BEq, Repr, Inhabited\n\n' if n in beq_only else
                         '  deriving DecidableEq, Repr, Inhabited\n\n'))
+    unknown=[n for n in (only or ()) if n not in seen]
+    if unknown:
+        raise ValueError('unknown declaration(s): ' + ', '.join(unknown))
+    unknown=[n for n in beq_only if n not in seen]
+    if unknown:
+        raise ValueError('unknown --beq-only declaration(s): ' + ', '.join(unknown))
     return ''.join(res)
 
 
@@ -136,5 +144,8 @@ if __name__ == "__main__":
     if len(positional) < 2:
         raise SystemExit('usage: l3_types_to_lean.py MODEL_SCRIPT HOL_PATH [DECL ...] '
                          '[--beq-only NAME,...]')
-    print(render(Path(positional[0]).read_text(), positional[1],
-                 positional[2:] or None, beq_only))
+    try:
+        print(render(Path(positional[0]).read_text(), positional[1],
+                     positional[2:] or None, beq_only))
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from None

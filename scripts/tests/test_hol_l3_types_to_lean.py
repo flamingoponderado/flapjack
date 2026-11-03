@@ -54,6 +54,26 @@ class L3TypesToLeanTest(unittest.TestCase):
             capture_output=True, text=True)
         self.assertNotEqual(proc.returncode, 0)
 
+    def test_unknown_declaration_is_an_error(self):
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts' / 'l3_types_to_lean.py'),
+             ARM8_MODEL, ARM8_MODEL, 'SCTRLType'],
+            capture_output=True, text=True)
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn('SCTRLType', proc.stderr)
+
+    def test_unknown_beq_only_name_is_an_error(self):
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts' / 'l3_types_to_lean.py'),
+             ARM8_MODEL, ARM8_MODEL, *ARM8_TYPES, '--beq-only', 'LoadStore,Typo'],
+            capture_output=True, text=True)
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn('Typo', proc.stderr)
+
+    def test_render_rejects_unknown_declaration(self):
+        with self.assertRaises(ValueError):
+            RENDER((ROOT / ARM8_MODEL).read_text(), ARM8_MODEL, ['SCTRLType'])
+
 
 if __name__ == '__main__':
     unittest.main()

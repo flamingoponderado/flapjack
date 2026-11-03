@@ -323,8 +323,10 @@ The following are open review or verification obligations:
       refinement: it is stated over `NextStateARM8` from the start.  The
       exactness of those statements is conditional on the `Defs.lean`
       renderings they unfold to, which remain `pending_statement_review`
-      (mechanically rendered and drift-checked against the exported HOL terms
-      by `scripts/l3/check-renderings.py`, but not individually certified), and
+      (mechanically rendered and drift-checked against the committed
+      `scripts/l3/arm8_defs.sexp.gz` export by `scripts/l3/check-renderings.py`,
+      with two documented handwritten exceptions, but not individually
+      certified), and
       every declaration whose constant closure reaches the FP renderings
       inherits the item 8 real-rendering assumption.  There is no proof about
       arbitrary ARMv8 code, and nothing shows that the model agrees with real

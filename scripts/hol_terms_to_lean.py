@@ -565,7 +565,8 @@ def width_expr(t) -> int | str | None:
     """A Lean width: an int numeral, or the Nat type variable of an fcp cart."""
     if isinstance(t, TyVar):
         return tyvar_name(t.name)
-    if isinstance(t, Ty) and t.thy == 'fcp' and t.op in ('bit0', 'bit1', 'one'):
+    if isinstance(t, Ty) and ((t.thy == 'fcp' and t.op in ('bit0', 'bit1'))
+                              or (t.thy == 'one' and t.op == 'one')):
         return fcp_size(t)
     w = word_width(t)
     if w is not None:
@@ -780,8 +781,36 @@ def fresh_binder(base, texts):
     return name
 
 
-def insert_predicate(xs):
-    x = fresh_binder('x', [xs[0], xs[1]])
+def free_vars(t, bound=frozenset()):
+    """The free HOL variables of a term, as (name, type) pairs."""
+    if isinstance(t, Var):
+        return set() if t.name in bound else {(t.name, t.ty)}
+    if isinstance(t, Comb):
+        return free_vars(t.f, bound) | free_vars(t.x, bound)
+    if isinstance(t, Lam):
+        return free_vars(t.body, bound | {t.v.name})
+    return set()
+
+
+def lean_var_name(name: str) -> str:
+    """The base Lean name `Renderer.bind` gives a HOL variable."""
+    base = re.sub(r"[^A-Za-z0-9_]", "_", name) or 'x'
+    if base.startswith('_'):
+        base = 'u' + base
+    if base[0].isdigit():
+        base = 'x' + base
+    return base
+
+
+def insert_predicate(r, env, args, xs):
+    # Only a free variable of either operand can be captured; a variable bound
+    # by a nested lambda of the same name is unaffected, so the rendered text
+    # alone is not a safe test.  Rendered variables never contain a prime, so
+    # `x'`, `x''`, ... are collision-free against them.
+    taken = {lean_var_name(n) for n, _ in free_vars(args[0]) | free_vars(args[1])}
+    x = 'x'
+    while x in taken:
+        x += "'"
     return f'(fun {x} => {x} = {xs[0]} || {xs[1]} {x})'
 
 
@@ -817,12 +846,20 @@ def special_bit_field_insert(r, c, args, env):
         return r.eta(c, args, env, 4,
                      lambda xs, raw: f'(holBitFieldInsert {xs[0]} {xs[1]} {xs[2]} {xs[3]})')
     # Non-literal bounds: only the documented ARM8 MoveWide call is allowed.
-    # It is `bit_field_insert (pos + 15) pos (imm : word16)` with
-    # pos = Num (hw << 4) for a 2-bit hw, so pos <= 48 and high <= 63 < 64 at
-    # every call site, and the field covers exactly the 16-bit input word.  The
-    # generator checks the shape only (high = low + (input width - 1)); the
-    # range argument for `pos` is documented at that call site, not verified
-    # here.  Any other symbolic bound is reported instead of rendered.
+    # HOL's `bit_field_insert h l a b` is `word_modify (\i. COND (l <= i /\ i <= h)
+    # (a ' (i - l))) b` (wordsScript.sml:280-283), and `word_modify` only visits
+    # the *result* indices `i < dimindex (:result)`.  Every visited index is
+    # either outside `[l, h]` (value `b ' i`) or reads `a ' (i - l)`, so the only
+    # index that can leave the input word is `i - l`, i.e. the rendering is
+    # exact as soon as `h - l < dimindex (:input)`.  The result width therefore
+    # needs no upper bound: an `h` beyond it still updates every visited index.
+    #
+    # The accepted shape is `high = low + (input width - 1)`, which gives
+    # `h - l = dimindex (:input) - 1`; it is the ARM8 MoveWide call
+    # `bit_field_insert (pos + 15) pos (imm : word16)` (with `pos` from a 2-bit
+    # `hw`, so the call is in range at every site, though that argument is
+    # documented there rather than checked here).  Any other symbolic bound is
+    # reported instead of rendered.
     if width is None:
         raise Unrenderable('bit_field_insert symbolic input width')
     if not symbolic_field_bounds(args[0], args[1], width):
@@ -1012,7 +1049,7 @@ CONSTANTS = {
     ('list', 'REVERSE'): (1, lambda r, c, xs, raw: f'({xs[0]}.reverse)'),
     ('bool', 'IN'): (2, lambda r, c, xs, raw: f'({xs[1]} {xs[0]})'),
     ('pred_set', 'EMPTY'): (0, lambda r, c, xs, raw: '(fun _ => false)'),
-    ('pred_set', 'INSERT'): (2, lambda r, c, xs, raw: insert_predicate(xs)),
+    ('pred_set', 'INSERT'): (2, lambda r, c, xs, raw: insert_predicate(r, {}, raw, xs)),
     ('words', 'word_ror'): (2, lambda r, c, xs, raw: f'(BitVec.rotateRight {xs[0]} {xs[1]})'),
     ('words', 'word_msb'): (1, lambda r, c, xs, raw: f'(BitVec.msb {xs[0]})'),
     ('words', 'word_hi'): (2, lambda r, c, xs, raw: f'(holWordHi {xs[0]} {xs[1]})'),

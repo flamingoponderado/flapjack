@@ -12,6 +12,10 @@ at the L3 ARMv8 target: `is_arm8_machine_config` and
 `is_arm8_machine_config mc ⇒ mc_conf_ok mc` over HOL's `arm8_state`/`arm8_proj`
 carriers.  The encoder-correctness obligation is discharged by
 `arm8EncoderCorrectL3` in `L3/CorrectnessEncoding/Complete.lean`.
+
+This file is a near-duplicate of `Arm8Config.Proofs` for the closed model: the
+two differ only in the target record, the configuration and the
+`arm8_state`/`Arm8State` carriers.  Keep the two proofs in step.
 -/
 
 namespace Flapjack.Compiler.Backend.Arm8Config
