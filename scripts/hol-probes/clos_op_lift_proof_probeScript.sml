@@ -68,3 +68,4 @@ val _ = show "evaluate_conj_false_typed" clos_opProofTheory.evaluate_ConjList_F;
 val _ = show "evaluate_conj_true_typed" clos_opProofTheory.evaluate_ConjList_T;
 val _ = show "evaluate_conj_append_false_typed" clos_opProofTheory.evaluate_ConjList_append_F;
 val _ = show "evaluate_conj_append_true_typed" clos_opProofTheory.evaluate_ConjList_append_T;
+val _ = show "eq_direct_thm_typed" clos_opProofTheory.eq_direct_thm;
