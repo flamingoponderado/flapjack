@@ -16,6 +16,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+
+      - name: Check the stepped source semantics is a removable leaf (#1251)
+        # A static check on import headers, run before the build so that a
+        # forbidden import fails fast. Only the umbrellas and the test modules
+        # in scripts/stepped-test-allowlist.txt may reach the modules in
+        # scripts/stepped-modules.txt, which are moving to stepped-flapjack.
+        run: |
+          python3 -m unittest discover -s scripts/tests -p 'test_check_stepped_import_closure.py'
+          python3 scripts/check-stepped-import-closure.py
+
       - uses: leanprover/lean-action@v1
         with:
           use-mathlib-cache: true
@@ -27,13 +37,6 @@ jobs:
 
       - name: Check non-test modules are warning-free
         run: ./scripts/check-warnings.sh
-
-      - name: Check the stepped source semantics is a removable leaf (#1251)
-        # No library module outside Flapjack/Test/ may import the modules in
-        # scripts/stepped-modules.txt, which are moving to stepped-flapjack.
-        run: |
-          python3 -m unittest discover -s scripts/tests -p 'test_check_stepped_import_closure.py'
-          python3 scripts/check-stepped-import-closure.py
 
       - name: Check @[hol] cross-references point at existing HOL declarations
         run: |
