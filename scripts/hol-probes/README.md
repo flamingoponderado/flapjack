@@ -1,3 +1,5 @@
+`clos_known_syntax_probe.out` includes the inferred closure evaluator induction rule, used to compare the sequential case induction hypotheses. The capture supports source review, not full evaluator correctness.
+
 `clos_known_syntax_probe.out` captures the typed oracle-prefix algebra and a typed replay of the local mutual evaluator global-safety statement. These support source review; the evaluator proof remains incomplete.
 
 `clos_known_syntax_probe.out` records the typed full-closure safety theorem and a typed replay of the local thunk-update safety statement. These support source review, not full pass correctness.

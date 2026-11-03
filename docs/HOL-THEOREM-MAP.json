@@ -1,6 +1,19 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsCons",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the source local theorem and evaluate_ind_typed with their captures: the head induction hypothesis is for [first] at the original environment and state, and the tail induction hypothesis is conditional on successful head evaluation and applies to its returned state. The case retains the source evaluation equation, state, expression and environment safety premises and complete result-safety, oracle-shift and global-extension conclusions. The proof uses the evaluator clock bound to show fixClock leaves the returned state unchanged and composes the two oracle prefixes and write sets. The state refs and code use canonical finite support with the local witness; the evaluator inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "first_n_exps_shift_seq",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InstallGlobals.lean",
   "lean_name": "firstNExpsShiftSeq",
