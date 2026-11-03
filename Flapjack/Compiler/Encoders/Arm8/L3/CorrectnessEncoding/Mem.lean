@@ -835,6 +835,242 @@ theorem arm8MemStoreOkExact (destination base : Nat) (off : BitVec 64)
   exact ⟨h'.1.1, h'.1.2, h'.2⟩
 
 
+/-! ## The 32-bit `LoadStoreImmediate@32` layer
+
+The `.load32`/`.store32` lowering emits `LoadStoreImmediate@32` (`size = 2`,
+`regsize_word = true`).  Its word shapes are the same `arm8LoadStoreImm12Word`/
+`arm8LoadStoreImm9Word` at `sz = 2`, and the scaled form shifts by two rather
+than three bits. -/
+
+theorem arm8ELoadStoreImm12_load32 (offset : BitVec 64) (rn rt : BitVec 5)
+    (hoff : offset =
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 2))) <<< 2) :
+    e_load_store (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, true, offset, rn, rt)) =
+      MachineCode.ARM8 (arm8LoadStoreImm12Word (BitVec.ofNat 2 2) (BitVec.ofNat 2 1)
+        (holWordExtract 12 11 0 (offset >>> 2)) rn rt) := by
+  have hs : BitVec.setWidth 2 (BitVec.ofNat 32 2) = (BitVec.ofNat 2 2) := by decide
+  have h2 : (BitVec.ofNat 2 2).toNat = 2 := by decide
+  have hload : (MemOp.MemOp_LOAD == MemOp.MemOp_LOAD) = true := by decide
+  have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+  have hpref : (MemOp.MemOp_LOAD == MemOp.MemOp_PREFETCH) = false := by decide
+  have hstore : (MemOp.MemOp_LOAD == MemOp.MemOp_STORE) = false := by decide
+  have hnf : ((!false : Bool) = true) := rfl
+  have hguard : (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 2))) <<< 2) = true := by
+    rw [beq_iff_eq]; exact hoff
+  simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hload, hnrm, hpref, hstore,
+    Bool.false_eq_true, if_false, hnf, if_true, Bool.true_and, Bool.and_true]
+  split_ifs with hg
+  all_goals first | rfl | exact absurd hguard hg
+
+theorem arm8Encode_loadStoreImm12_load32 (offset : BitVec 64) (rn rt : BitVec 5)
+    (hoff : offset =
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 2))) <<< 2) :
+    Encode (.LoadStore (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, true, offset, rn, rt))) =
+      MachineCode.ARM8 (arm8LoadStoreImm12Word (BitVec.ofNat 2 2) (BitVec.ofNat 2 1)
+        (holWordExtract 12 11 0 (offset >>> 2)) rn rt) :=
+  arm8ELoadStoreImm12_load32 offset rn rt hoff
+
+theorem arm8Decode_loadStoreImm12_load32 (imm12 : BitVec 12) (rn rt : BitVec 5) :
+    Decode (arm8LoadStoreImm12Word (BitVec.ofNat 2 2) (BitVec.ofNat 2 1) imm12 rn rt) =
+      instruction.LoadStore (LoadStore.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, true, ((BitVec.setWidth 64 imm12) <<< 2), rn, rt)) := by
+  simp only [arm8LoadStoreImm12Word, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_two_one, holV2w_two_two, holV2w_five, arm8HolV2w_twelve,
+    BitVec.toNat_ofNat, Nat.mod_eq_of_lt, LoadStoreImmediate, LoadStoreImmediateN]
+
+theorem arm8ELoadStoreImm12_store32 (offset : BitVec 64) (rn rt : BitVec 5)
+    (hoff : offset =
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 2))) <<< 2) :
+    e_load_store (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, true, offset, rn, rt)) =
+      MachineCode.ARM8 (arm8LoadStoreImm12Word (BitVec.ofNat 2 2) (BitVec.ofNat 2 0)
+        (holWordExtract 12 11 0 (offset >>> 2)) rn rt) := by
+  have hs : BitVec.setWidth 2 (BitVec.ofNat 32 2) = (BitVec.ofNat 2 2) := by decide
+  have h2 : (BitVec.ofNat 2 2).toNat = 2 := by decide
+  have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+  have hpref : (MemOp.MemOp_STORE == MemOp.MemOp_PREFETCH) = false := by decide
+  have hstore : (MemOp.MemOp_STORE == MemOp.MemOp_STORE) = true := by decide
+  have hnf : ((!false : Bool) = true) := rfl
+  have hguard : (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 2))) <<< 2) = true := by
+    rw [beq_iff_eq]; exact hoff
+  simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hnrm, hpref, hstore,
+    Bool.false_eq_true, if_false, hnf, if_true, Bool.true_and, Bool.and_true]
+  split_ifs with hg
+  all_goals first | rfl | exact absurd hguard hg
+
+theorem arm8Encode_loadStoreImm12_store32 (offset : BitVec 64) (rn rt : BitVec 5)
+    (hoff : offset =
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 2))) <<< 2) :
+    Encode (.LoadStore (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, true, offset, rn, rt))) =
+      MachineCode.ARM8 (arm8LoadStoreImm12Word (BitVec.ofNat 2 2) (BitVec.ofNat 2 0)
+        (holWordExtract 12 11 0 (offset >>> 2)) rn rt) :=
+  arm8ELoadStoreImm12_store32 offset rn rt hoff
+
+theorem arm8Decode_loadStoreImm12_store32 (imm12 : BitVec 12) (rn rt : BitVec 5) :
+    Decode (arm8LoadStoreImm12Word (BitVec.ofNat 2 2) (BitVec.ofNat 2 0) imm12 rn rt) =
+      instruction.LoadStore (LoadStore.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, true, ((BitVec.setWidth 64 imm12) <<< 2), rn, rt)) := by
+  simp only [arm8LoadStoreImm12Word, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_two_zero, holV2w_two_two, holV2w_five, arm8HolV2w_twelve,
+    BitVec.toNat_ofNat, Nat.mod_eq_of_lt, LoadStoreImmediate, LoadStoreImmediateN]
+
+theorem arm8ELoadStoreImm9_load32 (offset : BitVec 64) (unsigned_offset : Bool)
+    (rn rt : BitVec 5)
+    (hfall : (unsigned_offset && (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 2))) <<< 2)) = false)
+    (hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) :
+    e_load_store (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, unsigned_offset, offset, rn, rt)) =
+      MachineCode.ARM8 (arm8LoadStoreImm9Word (BitVec.ofNat 2 2) (BitVec.ofNat 2 1)
+        (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) := by
+  have hs : BitVec.setWidth 2 (BitVec.ofNat 32 2) = (BitVec.ofNat 2 2) := by decide
+  have h2 : (BitVec.ofNat 2 2).toNat = 2 := by decide
+  have hload : (MemOp.MemOp_LOAD == MemOp.MemOp_LOAD) = true := by decide
+  have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+  have hunpriv : (AccType.AccType_NORMAL == AccType.AccType_UNPRIV) = false := by decide
+  have hpref : (MemOp.MemOp_LOAD == MemOp.MemOp_PREFETCH) = false := by decide
+  have hstore : (MemOp.MemOp_LOAD == MemOp.MemOp_STORE) = false := by decide
+  have hsx' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
+    rw [beq_iff_eq]; exact hsx
+  have hnf : ((!false : Bool) = true) := rfl
+  simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hload, hnrm, hunpriv, hpref,
+    hstore, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+    holV2w_one_false]
+  split_ifs with hg
+  all_goals first
+    | rfl
+    | exact absurd hsx' ‹_›
+    | (exfalso
+       have h1 : (unsigned_offset && (offset == (BitVec.setWidth 64
+           (holWordExtract 12 11 0 (offset >>> 2))) <<< 2)) = true := by
+         simpa [Bool.and_true] using hg
+       rw [hfall] at h1
+       simp at h1)
+
+theorem arm8Encode_loadStoreImm9_load32 (offset : BitVec 64) (unsigned_offset : Bool)
+    (rn rt : BitVec 5)
+    (hfall : (unsigned_offset && (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 2))) <<< 2)) = false)
+    (hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) :
+    Encode (.LoadStore (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, unsigned_offset, offset, rn, rt))) =
+      MachineCode.ARM8 (arm8LoadStoreImm9Word (BitVec.ofNat 2 2) (BitVec.ofNat 2 1)
+        (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) :=
+  arm8ELoadStoreImm9_load32 offset unsigned_offset rn rt hfall hsx
+
+theorem arm8Decode_loadStoreImm9_load32 (imm9 : BitVec 9) (rn rt : BitVec 5) :
+    Decode (arm8LoadStoreImm9Word (BitVec.ofNat 2 2) (BitVec.ofNat 2 1) imm9
+        (BitVec.ofNat 1 0) rn rt) =
+      instruction.LoadStore (LoadStore.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, false, BitVec.signExtend 64 imm9, rn, rt)) := by
+  simp only [arm8LoadStoreImm9Word, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_one_false, holV2w_two_one, holV2w_two_two, holV2w_five,
+    arm8HolV2w_nine, LoadStoreImmediate, LoadStoreImmediateN]
+
+theorem arm8ELoadStoreImm9_store32 (offset : BitVec 64) (unsigned_offset : Bool)
+    (rn rt : BitVec 5)
+    (hfall : (unsigned_offset && (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 2))) <<< 2)) = false)
+    (hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) :
+    e_load_store (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, unsigned_offset, offset, rn, rt)) =
+      MachineCode.ARM8 (arm8LoadStoreImm9Word (BitVec.ofNat 2 2) (BitVec.ofNat 2 0)
+        (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) := by
+  have hs : BitVec.setWidth 2 (BitVec.ofNat 32 2) = (BitVec.ofNat 2 2) := by decide
+  have h2 : (BitVec.ofNat 2 2).toNat = 2 := by decide
+  have hstore : (MemOp.MemOp_STORE == MemOp.MemOp_STORE) = true := by decide
+  have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+  have hpref : (MemOp.MemOp_STORE == MemOp.MemOp_PREFETCH) = false := by decide
+  have hsx' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
+    rw [beq_iff_eq]; exact hsx
+  have hnf : ((!false : Bool) = true) := rfl
+  simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hstore, hnrm, hpref,
+    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true]
+  split_ifs with hg
+  all_goals first
+    | rfl
+    | exact absurd hsx' ‹_›
+    | (exfalso
+       have h1 : (unsigned_offset && (offset == (BitVec.setWidth 64
+           (holWordExtract 12 11 0 (offset >>> 2))) <<< 2)) = true := by
+         simpa [Bool.and_true] using hg
+       rw [hfall] at h1
+       simp at h1)
+
+theorem arm8Encode_loadStoreImm9_store32 (offset : BitVec 64) (unsigned_offset : Bool)
+    (rn rt : BitVec 5)
+    (hfall : (unsigned_offset && (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 2))) <<< 2)) = false)
+    (hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) :
+    Encode (.LoadStore (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, unsigned_offset, offset, rn, rt))) =
+      MachineCode.ARM8 (arm8LoadStoreImm9Word (BitVec.ofNat 2 2) (BitVec.ofNat 2 0)
+        (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) :=
+  arm8ELoadStoreImm9_store32 offset unsigned_offset rn rt hfall hsx
+
+theorem arm8Decode_loadStoreImm9_store32 (imm9 : BitVec 9) (rn rt : BitVec 5) :
+    Decode (arm8LoadStoreImm9Word (BitVec.ofNat 2 2) (BitVec.ofNat 2 0) imm9
+        (BitVec.ofNat 1 0) rn rt) =
+      instruction.LoadStore (LoadStore.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, false, BitVec.signExtend 64 imm9, rn, rt)) := by
+  simp only [arm8LoadStoreImm9Word, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_one_false, holV2w_two_zero, holV2w_two_two, holV2w_five,
+    arm8HolV2w_nine, LoadStoreImmediate, LoadStoreImmediateN]
+
+theorem arm8Ast_load_single32 (dest base : Nat) (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    arm8Ast (.inst (.mem .load32 dest (.addr base off))) =
+      [.LoadStore (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))] := by
+  rw [BitVec.ofNat_toNat] at hsx
+  have h1 : ¬(off ≠ BitVec.signExtend 64 (BitVec.setWidth 9 off)) := fun h => h hsx
+  simp only [arm8Ast, arm8LoadStoreAst32]
+  simp [h1]
+
+theorem arm8Ast_store_single32 (dest base : Nat) (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    arm8Ast (.inst (.mem .store32 dest (.addr base off))) =
+      [.LoadStore (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))] := by
+  rw [BitVec.ofNat_toNat] at hsx
+  have h1 : ¬(off ≠ BitVec.signExtend 64 (BitVec.setWidth 9 off)) := fun h => h hsx
+  simp only [arm8Ast, arm8LoadStoreAst32]
+  simp [h1]
+
+theorem arm8Enc_load_single32_length (dest base : Nat) (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    (arm8Enc (.inst (.mem .load32 dest (.addr base off)))).length = 4 := by
+  rw [arm8Enc, arm8Ast_load_single32 dest base off hsx]
+  simp [arm8Encode_length]
+
+theorem arm8Enc_store_single32_length (dest base : Nat) (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    (arm8Enc (.inst (.mem .store32 dest (.addr base off)))).length = 4 := by
+  rw [arm8Enc, arm8Ast_store_single32 dest base off hsx]
+  simp [arm8Encode_length]
 /-- The `.mem .load` constructor of `encoder_correct arm8TargetL3` on the
 unscaled `imm9` path of `e_LoadStoreImmediate`.
 
