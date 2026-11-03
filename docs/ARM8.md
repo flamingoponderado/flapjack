@@ -498,6 +498,17 @@ the `imm12` word and reuses the same `Run`/`asmCaseOneMem` tail.  The `Run`
 equations for both `LoadStoreImmediate@64` forms now take `unsigned` as a
 parameter, because `dfn'LoadStoreImmediate` ignores that encoding field.
 
+`arm8_encoder_correct_mem_store_imm9` and `_mem_store_scaled` are the store
+counterparts on the same two branches.  The store writes memory, so the
+`asmCaseOneMem` obligations are discharged by `arm8WriteMem_eight`: the L3
+`write'Mem` rendering stores the byte `holV2w 8 (holField (8i+7) (8i))` at
+`address + i`, while the source's `writeMemWord` shifts the value by eight bits
+per step.  `arm8HolByte` identifies the two byte extractions (through
+`holField`/`holShiftr`/`holFixwidth` list indices), and `holUpdate_eight`
+identifies the eight nested `holUpdate`s with the if-chain `writeMemN` uses.
+`arm8WriteMem_eight_out` covers the outside-domain bytes, and
+`arm8WriteMem_only_mem` records that `write'Mem` changes only `MEM`.
+
 `arm8Mem_eight_pair` gives the full `Mem` pair (value and unchanged state) from
 the byte agreement.  `NextStateARM8` runs the instruction on
 `{ ms with branch_hint := none }`, and that pair is re-derived for the cleared
@@ -505,8 +516,8 @@ state directly rather than by a congruence lemma: `Mem` unfolds to a `holFor`
 fold over the whole state, so the fold is not syntactically invariant under the
 record update.
 
-Still open for #1239: the remaining `Mem` cases (the store forms and the
-16/8-bit widths), the two-instruction
+Still open for #1239: the remaining `Mem` cases (the 32/16/8-bit widths), the
+two-instruction
 `AddSubImmediate@64` + `LoadStoreImmediate` constructor for far offsets, and the
 remaining case theorems covering the other instruction groups.
 The assembling
