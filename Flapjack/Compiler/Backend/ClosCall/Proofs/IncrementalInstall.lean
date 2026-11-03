@@ -3,6 +3,8 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantDirectCall
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantListSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallWellformed
 import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracle
+import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantOrdinaryOp
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
 
 /-! Incremental installation under direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -1104,5 +1106,141 @@ theorem callsListFuel_growing_sim {C F : Type} (passFuel relationFuel traversalF
       · apply ih es es' middle _ tailRun
         intro n bound expression output before after exprRun
         exact exprIH n (by omega) expression output before after exprRun
+
+/-- Successful ordinary primitive dispatch preserves the compiler/oracle
+installation conditions on a pair of states. -/
+theorem incrementalInstallReady_doApp {C F : Type} (g : State)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceNext : ClosSem.State (NumSet × C) F) (targetNext : ClosSem.State C F)
+    (sourceArgs targetArgs : List ClosSem.Value) (sourceValue targetValue : ClosSem.Value)
+    (op : ClosLang.Op) (ready : IncrementalInstallReady g source target)
+    (sourceRun : doApp op sourceArgs source = .val (sourceValue, sourceNext))
+    (targetRun : doApp op targetArgs target = .val (targetValue, targetNext)) :
+    IncrementalInstallReady g sourceNext targetNext := by
+  have sourceFields := ClosInterp.doApp_compilerFields op sourceArgs source sourceNext sourceValue sourceRun
+  have targetFields := ClosInterp.doApp_compilerFields op targetArgs target targetNext targetValue targetRun
+  obtain ⟨well, included, known, auxEmpty, distinct, disjoint, fresh⟩ := ready
+  refine ⟨well, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simpa [ClosInterp.CompilerFieldsPreserved, targetFields.2.2.1] using included
+  · simpa [ClosInterp.CompilerFieldsPreserved, sourceFields.2.1] using known
+  · simpa [ClosInterp.CompilerFieldsPreserved, sourceFields.2.1] using auxEmpty
+  · simpa [ClosInterp.CompilerFieldsPreserved, sourceFields.2.1] using distinct
+  · simpa [ClosInterp.CompilerFieldsPreserved, sourceFields.2.1] using disjoint
+  · simpa [ClosInterp.CompilerFieldsPreserved, sourceFields.2.1, targetFields.2.2.1] using fresh
+
+/-- Ordinary primitive operations compose the growing simulation of their
+arguments with primitive simulation and source well-formedness preservation.
+Install and force-thunk are separate evaluator cases. -/
+theorem growingExprsSim_ordinaryOp {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (sourceArgs targetArgs : List ClosLang.Exp)
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
+    (argsSim : GrowingExprsSim (F := F) passFuel relationFuel compiler allowed sourceArgs targetArgs)
+    (argsWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env →
+      StateWellFormedFuel relationFuel g allowed code state → OracleAuxEmpty state.compileOracle →
+      EvalWellFormedFuel relationFuel g allowed code (evaluate sourceArgs env state)) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed
+      [.op trace op sourceArgs] [.op trace op targetArgs] := by
+  intro g sourceEnv targetEnv source target result final run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  have argsEnv := envRelFuel_op_args trace op targetArgs (by simpa using envs)
+  have sourceArgsWf := argsWf g target.code sourceEnv source envWf sourceWf ready.auxEmpty
+  rw [evaluate_ordinaryOp_eq trace op sourceArgs sourceEnv source notInstall notForce] at run
+  cases argsRun : evaluate sourceArgs sourceEnv source with
+  | mk argsResult argsFinal =>
+    rw [argsRun] at sourceArgsWf
+    have argsSafe : argsResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst argsResult
+      have eq : result = .err (.abort .typeError) := by simpa [argsRun] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨argsG, targetArgsResult, targetArgsFinal, argsExt, targetArgsRun, argsRel, argsStates,
+      argsStateWf, argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩ :=
+      argsSim g sourceEnv targetEnv source target argsResult argsFinal argsRun argsSafe argsEnv envWf
+        sourceWf states ready sourceCompiler targetCompiler oracle
+    cases argsResult with
+    | err error =>
+      cases targetArgsResult with
+      | val values => simp [resultRel] at argsRel
+      | err targetError =>
+        have eq : result = .err error ∧ final = argsFinal := by simpa [argsRun] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨argsG, .err targetError, targetArgsFinal, argsExt, ?_, argsRel, argsStates, argsStateWf,
+          argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩
+        simp [evaluate_ordinaryOp_eq trace op targetArgs targetEnv target notInstall notForce, targetArgsRun]
+    | val sourceValues =>
+      cases targetArgsResult with
+      | err error => simp [resultRel] at argsRel
+      | val targetValues =>
+        have valuesRel : List.Forall₂ (ValueRelFuel relationFuel argsG allowed targetArgsFinal.code)
+            sourceValues.reverse targetValues.reverse := List.rel_reverse argsRel
+        have valuesWf : ValuesWellFormedFuel relationFuel argsG allowed targetArgsFinal.code sourceValues := by
+          apply valuesWellFormedFuel_mono _ argsExt Set.Subset.rfl argsGrowth
+          exact sourceArgsWf.1
+        have sim := ClosProps.PrimitiveTotal.simpleValRelDoApp
+          (ValueRelFuel relationFuel argsG allowed targetArgsFinal.code)
+          (fun (s : ClosSem.State (NumSet × C) F) (t : ClosSem.State C F) =>
+            t.code = targetArgsFinal.code ∧ StateRelFuel relationFuel argsG allowed s t)
+          argsFinal targetArgsFinal sourceValues.reverse targetValues.reverse op
+          ⟨valueRelFuel_simple relationFuel argsG allowed targetArgsFinal.code,
+            stateRelFuel_simple relationFuel argsG allowed targetArgsFinal.code⟩ ⟨⟨rfl, argsStates⟩, valuesRel⟩
+        have primWf := doApp_result_wellFormedFuel op sourceValues.reverse argsFinal argsStateWf
+          (valuesWellFormedFuel_reverse valuesWf)
+        cases primRun : doApp op sourceValues.reverse argsFinal with
+        | err error =>
+          simp only [primRun] at sim
+          obtain ⟨targetError, targetPrim, errors⟩ := sim
+          have eq : result = .err error ∧ final = argsFinal := by simpa [argsRun, primRun] using run.symm
+          obtain ⟨rfl, rfl⟩ := eq
+          refine ⟨argsG, .err targetError, targetArgsFinal, argsExt, ?_, errors, argsStates, argsStateWf,
+            argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩
+          simp [evaluate_ordinaryOp_eq trace op targetArgs targetEnv target notInstall notForce, targetArgsRun, targetPrim]
+        | val pair =>
+          obtain ⟨value, sourceFinal⟩ := pair
+          simp only [primRun] at sim primWf
+          obtain ⟨targetValue, targetFinal, valueRel, ⟨codeEq, finalStates⟩, targetPrim⟩ := sim
+          have eq : result = .val [value] ∧ final = sourceFinal := by simpa [argsRun, primRun] using run.symm
+          obtain ⟨rfl, rfl⟩ := eq
+          have finalReady := incrementalInstallReady_doApp argsG argsFinal targetArgsFinal final targetFinal
+            sourceValues.reverse targetValues.reverse value targetValue op argsReady primRun targetPrim
+          have srcFields := ClosInterp.doApp_compilerFields op sourceValues.reverse argsFinal final value primRun
+          have tgtFields := ClosInterp.doApp_compilerFields op targetValues.reverse targetArgsFinal targetFinal targetValue targetPrim
+          refine ⟨argsG, .val [targetValue], targetFinal, argsExt, ?_, ?_, ?_, ?_, finalReady, ?_, ?_, ?_, ?_⟩
+          · simp [evaluate_ordinaryOp_eq trace op targetArgs targetEnv target notInstall notForce, targetArgsRun, targetPrim]
+          · change List.Forall₂ (ValueRelFuel relationFuel argsG allowed targetFinal.code) [value] [targetValue]
+            rw [codeEq]
+            exact .cons valueRel .nil
+          · simpa [codeEq] using finalStates
+          · simpa [codeEq, PrimitiveResultWellFormedFuel] using primWf.2
+          · exact srcFields.1.trans argsCompiler
+          · exact tgtFields.1.trans targetArgsCompiler
+          · rw [tgtFields.2.1, srcFields.2.1]
+            exact argsOracle
+          · intro key entry found
+            rw [codeEq]
+            exact argsGrowth key entry found
+
+/-- The direct-call traversal's ordinary-operation case uses its actual
+transformed argument list and the source well-formedness hypothesis. -/
+theorem callsFuel_ordinaryOp_growing_sim {C F : Type} (passFuel relationFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (args : List ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.op trace op args) initial = some (out, final))
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
+    (argsIH : ∀ target, callsListFuel traversalFuel args initial = some (target, final) →
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed args target)
+    (argsWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env →
+      StateWellFormedFuel relationFuel g allowed code state → OracleAuxEmpty state.compileOracle →
+      EvalWellFormedFuel relationFuel g allowed code (evaluate args env state)) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [.op trace op args] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetArgs, next⟩, argsRun, rfl, rfl⟩ := run
+  exact growingExprsSim_ordinaryOp passFuel relationFuel compiler allowed trace op args targetArgs
+    notInstall notForce (argsIH targetArgs argsRun) argsWf
 
 end Flapjack.Compiler.Backend.ClosCall
