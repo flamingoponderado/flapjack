@@ -457,8 +457,20 @@ four bytes, and `arm8Mem_eight_value` derives the L3 read from the state
 relation plus the eight-address domain fact (the latter comes from
 `memLoadDomain` in the non-L3 `MemCase`, reusing `readMemWord_domain`).
 
+The nine-bit `Encode` equations take `unsigned_offset` as a parameter, since
+`arm8_load_store_ast` emits the nine-bit form with the field `false` (a negative
+offset) as well as `true`.
+
+One semantic point the load case has to discharge: `arm8Ok` does not constrain
+`SCTLR_EL1.A`, but the machine's `Mem` calls `CheckAlignment`, which faults
+when `¬ Aligned (address, 8)` and `SCTLR_EL1.A` is set.  The source is safe
+because `memLoad` ends in `assertState (holAligned (holLOG2 n) a)`, so
+`¬ s2.failed` from `asm_step` gives the effective address aligned — and then
+`CheckAlignment` leaves the state unchanged.
+
 Still open for #1239: the load case theorem itself (the three-way split over
-`off.msb` and the scaled form), the two-instruction `AddSubImmediate@64` +
+`off.msb` and the scaled form, with the alignment and domain facts derived
+from `¬ s2.failed`), the two-instruction `AddSubImmediate@64` +
 `LoadStoreImmediate` constructor, and the remaining case theorems covering
 the load/store forms.
 The assembling
