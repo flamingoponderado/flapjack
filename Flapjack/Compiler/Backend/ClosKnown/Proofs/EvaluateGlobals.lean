@@ -175,5 +175,133 @@ theorem evaluateChangedGlobalsCons {C F : Type} (first second : ClosLang.Exp)
           refine ⟨tailSafe, ?_, n + m, finalOracle, finalFrame⟩
           simpa [rsgcFree] using And.intro (by simpa [rsgcFree] using headResultSafe) (by simpa [rsgcFree] using tailResultSafe)
 
+
+/-- Raising a safe expression result preserves the source global invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsRaise {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (bodyIH : EvalGlobalsInvariant [body] env s0)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.raise trace body] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.raise trace body] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.raise trace body] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  rcases h with ⟨run, safe, expressionsSafe, envSafe⟩
+  have bodySafe : ∀ e ∈ [body], esgcFree e := by
+    simpa [esgcFree] using expressionsSafe (.raise trace body) (by simp)
+  cases bodyRun : evaluate [body] env s0 with
+  | mk bodyResult bodyState =>
+    have prop := bodyIH bodyResult bodyState ⟨bodyRun, safe, bodySafe, envSafe⟩
+    rcases prop with ⟨stateSafe, resultSafe, n, oracle, frame⟩
+    have frame' : mglobalsExtend s0.globals
+        ({k | elistGlobals [.raise trace body] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) bodyState.globals := by
+      simpa [elistGlobals, setGlobals] using frame
+    cases bodyResult with
+    | err error =>
+      simp [evaluate, bodyRun] at run
+      rcases run with ⟨rfl, rfl⟩
+      exact ⟨stateSafe, resultSafe, n, oracle, frame'⟩
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value body env s0 bodyState values bodyRun
+      simp [evaluate, bodyRun] at run
+      rcases run with ⟨rfl, rfl⟩
+      refine ⟨stateSafe, ?_, n, oracle, frame'⟩
+      simpa [rsgcFree] using resultSafe
+
+/-- A tick preserves global safety using the body induction hypothesis when
+its clock is nonzero. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsTick {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (bodyIH : s0.clock ≠ 0 → EvalGlobalsInvariant [body] env (decClock 1 s0))
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.tick trace body] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.tick trace body] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.tick trace body] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  rcases h with ⟨run, safe, expressionsSafe, envSafe⟩
+  by_cases zero : s0.clock = 0
+  · simp [evaluate, zero] at run
+    rcases run with ⟨rfl, rfl⟩
+    exact ⟨safe, by simp [rsgcFree], 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
+  · have bodySafe : ∀ e ∈ [body], esgcFree e := by
+      simpa [esgcFree] using expressionsSafe (.tick trace body) (by simp)
+    have startSafe := (ssgcFreeDecClock 1 s0).2 safe
+    have bodyRun : evaluate [body] env (decClock 1 s0) = (res, s) := by
+      simpa [evaluate, zero] using run
+    have ⟨stateSafe, resultSafe, n, oracle, frame⟩ :=
+      bodyIH zero res s ⟨bodyRun, startSafe, bodySafe, envSafe⟩
+    refine ⟨stateSafe, resultSafe, n, ?_, ?_⟩
+    · simpa [decClock] using oracle
+    · simpa [decClock, elistGlobals, setGlobals] using frame
+
+
+/-- Selecting values from a safe environment preserves value safety. This
+helper has no separate HOL declaration. -/
+private theorem lookupVarsSafe (indices : List Nat) (env selected : List ClosSem.Value)
+    (safe : ∀ v ∈ env, vsgcFree v) (run : lookupVars indices env = some selected) :
+    ∀ v ∈ selected, vsgcFree v := by
+  induction indices generalizing selected with
+  | nil => simp [lookupVars] at run; subst selected; simp
+  | cons index rest ih =>
+    simp only [lookupVars] at run
+    cases found : env[index]? with
+    | none => simp [found] at run
+    | some value =>
+      simp only [found] at run
+      cases remaining : lookupVars rest env with
+      | none => simp [remaining] at run
+      | some values =>
+        simp [remaining] at run
+        subst selected
+        have valueSafe := safe value (List.mem_of_getElem? found)
+        have restSafe := ih values remaining
+        simpa using And.intro valueSafe restSafe
+
+/-- Creating a closure from a safe environment preserves global safety. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsFn {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (location : Option Nat) (selected : Option (List Nat)) (arity : Nat) (body : ClosLang.Exp)
+    (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.fn name location selected arity body] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.fn name location selected arity body] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.fn name location selected arity body] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  rcases h with ⟨run, safe, expressionSafe, envSafe⟩
+  have bodySafe : setGlobals body = emptyGlobalBag := by
+    simpa [esgcFree] using expressionSafe (.fn name location selected arity body) (by simp)
+  unfold evaluate at run
+  repeat' split at run
+  all_goals simp_all [rsgcFree]
+  · rcases run with ⟨rfl, _⟩
+    refine ⟨?_, 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
+    simpa [vsgcFree] using And.intro bodySafe envSafe
+  · split at run <;> simp_all
+    · rcases run with ⟨rfl, _⟩
+      exact ⟨by simp, 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
+    · have selectedSafe := lookupVarsSafe _ _ _ envSafe (by assumption)
+      rcases run with ⟨rfl, _⟩
+      refine ⟨?_, 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
+      simpa [vsgcFree] using And.intro bodySafe selectedSafe
+  · rcases run with ⟨rfl, _⟩
+    exact ⟨by simp, 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
+
 end EvaluateGlobalsPort
 end Flapjack.Compiler.Backend.ClosKnown

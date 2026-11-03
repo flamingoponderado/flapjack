@@ -3,6 +3,45 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "evaluate_changed_globals_0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsRaise",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the local source statement and evaluate_ind_typed in clos_known_syntax_probe.out. This is the Raise case, using the body induction hypothesis at the original environment and state; the evaluation equation, safety premises and complete state, result, oracle-shift and global-write conclusions are retained. The closure state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsTick",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the local source statement and evaluate_ind_typed in clos_known_syntax_probe.out. This is the Tick case, using the body induction hypothesis at the decremented state only when the clock is nonzero; the evaluation equation, safety premises and complete state, result, oracle-shift and global-write conclusions are retained. The closure state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsFn",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the local source statement and evaluate_ind_typed in clos_known_syntax_probe.out. This is the Fn case, with no induction hypothesis and both selected and full captured environments; the evaluation equation, safety premises and complete state, result, oracle-shift and global-write conclusions are retained. The closure state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
   "lean_name": "evaluateChangedGlobalsCons",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
