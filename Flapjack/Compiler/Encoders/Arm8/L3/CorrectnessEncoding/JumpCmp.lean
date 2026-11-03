@@ -1612,11 +1612,11 @@ theorem arm8CmpOk_of_asm_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
   simp only [hne, Bool.false_and, Bool.false_or] at hri
   exact ⟨h1, h2, h3, hri⟩
 
-@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 /-- The immediate `JumpCmp` case: the flag-setting compare against the immediate
 `v` followed by the conditional branch on `cmp_cond`, in each of the three
 accepted encodings (`ANDS` immediate, low `SUBS` immediate, high `SUBS`
 immediate). -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.jumpCmp cmp r (.imm v) a) s2 ∧
