@@ -2,6 +2,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberKnownSemantics
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileProduction
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
+import Flapjack.Compiler.Backend.ClosTicks.Proofs.Syntax
+import Flapjack.Compiler.Backend.ClosLetop.Proofs.Syntax
 
 /-! Composition of the closure optimization passes used by the compiler. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -47,10 +49,7 @@ theorem number_fvs_known_ticks_letop_annotate_semantics {C F : Type} (ffi : HolF
     (annotationSafe :
       let knownCo : CompileOracle C := stateCo (ClosKnown.compileInc knownConfig)
         (pureCo fvsInc ∘ stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle)
-      let co : CompileOracle C := pureCo letopInc ∘ pureCo ticksInc ∘ knownCo
-      everyFnVarsNone (ClosLetop.compileList (ClosTicks.removeList (optimized.map Prod.fst))) ∧
-      ∀ n, everyFnVarsNone (co n).2.1 ∧
-        everyFnVarsNone ((co n).2.2.map (fun (_, _, body) => body))) :
+      everyFnVarsNone (optimized.map Prod.fst) ∧ ∀ n, everyFnVarsNone (knownCo n).2.1) :
     ∃ fvsOutput optimizedOutput,
       (ClosNumber.renumberList number program).2.mapM (ClosFvs.removeBounded fuel 0) = some fvsOutput ∧
       ((optimized.map Prod.fst).mapM fun e => do
@@ -113,6 +112,14 @@ theorem number_fvs_known_ticks_letop_annotate_semantics {C F : Type} (ffi : HolF
   have ticksAux : ∀ n, (ticksCo n).2.2 = [] := by simp [ticksCo, pureCo, ticksInc, ClosTicks.compileInc]
   let letopCo : CompileOracle C := pureCo letopInc ∘ ticksCo
   let letopOutput := ClosLetop.compileList ticksOutput
+  have annotationReady : everyFnVarsNone letopOutput ∧ ∀ n, everyFnVarsNone (letopCo n).2.1 ∧
+      everyFnVarsNone ((letopCo n).2.2.map (fun (_, _, body) => body)) := by
+    constructor
+    · exact (ClosLetop.compileList_varsNone _).mpr ((ClosTicks.removeList_varsNone _).mpr annotationSafe.1)
+    · intro n
+      constructor
+      · exact (ClosLetop.compileList_varsNone _).mpr ((ClosTicks.removeList_varsNone _).mpr (annotationSafe.2 n))
+      · simp [letopCo, ticksCo, pureCo, letopInc, ClosLetop.compileInc, everyFnVarsNone]
   have letopEq := ClosLetop.semantics_let_op ffi maxApp ticksCo
     (pureCc ClosAnnotate.compileInc compiler) ticksOutput ticksNonfail ⟨ticksAux, positive⟩
   have letopNonfail : semantics ffi maxApp HolFiniteMapExact.holEmpty letopCo
@@ -121,7 +128,7 @@ theorem number_fvs_known_ticks_letop_annotate_semantics {C F : Type} (ffi : HolF
   have annotated := ClosAnnotate.semanticsAnnotate_sourceShape ffi maxApp [] letopCo compiler
     letopOutput (by simpa [HolFiniteMapExact.alistToFmap, HolFiniteMapExact.holEmpty,
       HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL] using letopNonfail)
-    ⟨annotationSafe.1, by simp [everyFnVarsNone], annotationSafe.2⟩
+    ⟨annotationReady.1, by simp [everyFnVarsNone], annotationReady.2⟩
   have annotationEq : semantics ffi maxApp HolFiniteMapExact.holEmpty
       (pureCo ClosAnnotate.compileInc ∘ letopCo) compiler (ClosAnnotate.annotateList 0 letopOutput) =
       semantics ffi maxApp HolFiniteMapExact.holEmpty letopCo

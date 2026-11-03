@@ -1,5 +1,21 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+  "hol_name": "remove_ticks_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Syntax.lean",
+  "lean_name": "removeList_varsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared remove_vars_none_typed: the absent closure-capture annotation predicate is equivalent before and after the complete tick-removal list traversal. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "let_op_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Syntax.lean",
+  "lean_name": "compileList_varsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared let_op_vars_none_typed: the absent closure-capture annotation predicate is equivalent before and after the complete let-operation traversal. The optimized let case uses the recognized variable-list property. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_adj_orac",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean", "lean_name": "evaluateAdjOracApp",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"], "inherits_reals_as_rational_cuts": true,

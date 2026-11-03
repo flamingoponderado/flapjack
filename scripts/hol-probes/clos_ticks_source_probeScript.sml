@@ -10,6 +10,7 @@ fun show label th = if null (hyp th) then
 val _ = show "remove_sing_typed" clos_ticksTheory.remove_ticks_sing_def;
 val _ = show "remove_sing_eq_typed" clos_ticksTheory.remove_ticks_sing_eq;
 val _ = show "compile_inc_typed" clos_ticksTheory.compile_inc_def;
+val _ = show "remove_vars_none_typed" clos_ticksProofTheory.remove_ticks_every_Fn_vs_NONE;
 val _ = show "code_rel_typed" clos_ticksProofTheory.code_rel_def;
 val _ = show "function_rel_typed" clos_ticksProofTheory.f_rel_def;
 val _ = show "value_rel_typed" clos_ticksProofTheory.v_rel_rules;

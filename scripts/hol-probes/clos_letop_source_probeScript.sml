@@ -13,6 +13,7 @@ val _ = show "dest_op_typed" clos_letopTheory.dest_op_def;
 val _ = show "let_op_sing_typed" clos_letopTheory.let_op_sing_def;
 val _ = show "let_op_sing_eq_typed" clos_letopTheory.let_op_sing_eq;
 val _ = show "compile_inc_typed" clos_letopTheory.compile_inc_def;
+val _ = show "let_op_vars_none_typed" clos_letopProofTheory.let_op_every_Fn_vs_NONE;
 val _ = show "var_list_length_typed" clos_letopProofTheory.var_list_IMP_LENGTH;
 val var_list_evaluate_replay = prove(
   ``!a2 a1 xs (ys:closLang$exp list) (s:('c,'ffi) closSem$state) env.

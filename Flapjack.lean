@@ -896,6 +896,7 @@ import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateForce
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Operation
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Simulation
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Semantics
+import Flapjack.Compiler.Backend.ClosTicks.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Production
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Total
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.VarListEvaluate
@@ -913,6 +914,7 @@ import Flapjack.Compiler.Backend.ClosLetop.Proofs.Operation
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Apply
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Simulation
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
+import Flapjack.Compiler.Backend.ClosLetop.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownPipelineSemantics
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Syntax
 import Flapjack.Compiler.Backend.SourceToSource
