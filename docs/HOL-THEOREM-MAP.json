@@ -686,6 +686,19 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationApp.lean",
+  "lean_name": "knownCorrect0App",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out. KnownSimulationAt unfolds to the original expression conjunct, and the argument, function-expression and application induction hypotheses retain the source result and nonempty-argument conditions, including the HOL head of the function result. The proof covers empty arguments, unchanged and annotated calls, and both pure and impure inlining, including errors and timeouts. Compiler and FFI carriers remain independent; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationLet.lean",
   "lean_name": "knownCorrect0Let",
   "statement_status": "reviewed_fmap_as_finite_support",
