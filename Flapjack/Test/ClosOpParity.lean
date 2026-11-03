@@ -7,6 +7,19 @@ open Flapjack.Compiler.Backend
 private def c (i : Int) : ClosLang.Exp := .op .none (.intOp (.const i)) []
 private def cons (tag : Nat) (xs : List ClosLang.Exp) : ClosLang.Exp := .op .none (.blockOp (.cons tag)) xs
 
+-- `lift` preserves source-order effects and retains the supplied accumulator.
+#guard match ClosOp.liftExpsHOL [] 2 [.var .none 7] with
+  | ([], 2, [.var .none 7]) => true
+  | _ => false
+
+#guard match ClosOp.liftExpsHOL
+    [cons 2 [.tick .none (.var .none 0), c 3], .var .none 4, c 5]
+    4 [.var .none 7] with
+  | ([.op .none (.blockOp (.cons 2)) [.var .none 4, .op .none (.intOp (.const 3)) []],
+      .var .none 5, .op .none (.intOp (.const 5)) []],
+     6, [.var .none 7, .tick .none (.var .none 0), .var .none 4]) => true
+  | _ => false
+
 -- `signed` checks both operations for all sign combinations and zero divisors.
 #guard match [ClosOp.integerOp (.intOp .div) 3 7,
     ClosOp.integerOp (.intOp .div) (-3) 7,

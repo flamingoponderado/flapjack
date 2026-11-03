@@ -1,5 +1,53 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "dont_lift_thm",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",
+    "lean_name": "dontLiftCharacterization",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dont_lift_thm_typed: the equivalence retains the five source expression forms in order, with native mlstring, integer and fixed word64 payloads, arbitrary traces and empty argument lists. The proof uses the reviewed executable matcher correspondence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "dont_lift_pure",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",
+    "lean_name": "dontLiftPure",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dont_lift_pure_typed: the original dont_lift premise implies the original closLang pure conclusion for the same expression. The proof uses the source-shaped characterization and reviewed purity definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "lift_exps_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "liftExpsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lift_exps_typed and every source clause, including existing bindings, increasing the index only for lifted expressions, recursive constructor children before the remaining expressions, and None traces on constructed expressions. The production checked interface calls this total definition; liftBounded_eq_previous proves equality with the former fuel-and-retry implementation for every input. The regenerated lift observation checks nonzero indices, existing bindings and nested effect order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "lift_exps_acc",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",
+    "lean_name": "liftExpsAcc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lift_acc_typed: all expression-list and natural-number carriers, the source result equation, existential suffix and accumulator append orientation are unchanged. The proof uses induction over the executed source lift."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "lift_exps_n",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",
+    "lean_name": "liftExpsN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lift_n_typed: the full result equation and initial index-equals-binding-length conjunction imply the original final index-equals-length conclusion, over the same expression-list carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "lift_exps_length",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",
+    "lean_name": "liftExpsLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lift_length_typed: the complete source result equation implies input length equals output length, with the original binder order and expression-list carriers."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
     "hol_name": "dest_Const_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/SourceHelpers.lean",
@@ -110274,16 +110322,16 @@
     "lean_name": "pureOp",
     "hol_path": "cakeml/compiler/backend/closLangScript.sml",
     "hol_name": "pure_op_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared pure_op_typed against every source operator case, including both CopyByte flags, all global and memory operations, Install and ThunkOp. The imported Op carrier is the reviewed constructor-for-constructor source datatype."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosLang/Pure.lean",
     "lean_name": "pure",
     "hol_path": "cakeml/compiler/backend/closLangScript.sml",
     "hol_name": "pure_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared pure_typed and all source expression cases, including Handle and Letrec examining only the specified body, all four always-impure forms, and the EVERY traversal of Let and Op lists. The mutual pureList recursion implements EVERY over the reviewed Exp carrier; pureOp is separately reviewed."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free.lean",

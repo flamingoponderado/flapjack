@@ -119,19 +119,6 @@ theorem eqListFuel_agree (a b : Nat) (pairs : List (Exp × Exp)) (x y : List Exp
   have hy2 := eqListFuel_mono (Nat.le_max_right a b) pairs y hy
   exact Option.some.inj (hx2.symm.trans hy2)
 
-/-- A successful retry comes from one of its two checked traversals.
-Flapjack proof infrastructure; no HOL counterpart. -/
-private theorem liftBounded_origin (fuel : Nat) (xs : List Exp) (n : Nat) (binds : List Exp)
-    (result : List Exp × Nat × List Exp) (h : liftBounded fuel xs n binds = some result) :
-    ∃ fuel, liftFuel fuel xs n binds = some result := by
-  unfold liftBounded at h
-  cases hfirst : liftFuel fuel xs n binds with
-  | none => exact ⟨max fuel (listBudget xs + 1), by simpa [hfirst] using h⟩
-  | some value =>
-    simp [hfirst] at h
-    subst result
-    exact ⟨fuel, hfirst⟩
-
 /-- A successful equality retry comes from one of its checked traversals.
 Flapjack proof infrastructure; no HOL counterpart. -/
 private theorem eqListBounded_origin (fuel : Nat) (pairs : List (Exp × Exp)) (result : List Exp)
@@ -146,13 +133,7 @@ private theorem eqListBounded_origin (fuel : Nat) (pairs : List (Exp × Exp)) (r
 
 /-- The total checked lift wrapper is independent of the initial fuel. Flapjack retry infrastructure; no HOL counterpart. -/
 theorem liftBounded_independent (a b : Nat) (xs : List Exp) (n : Nat) (binds : List Exp) :
-    liftBounded a xs n binds = liftBounded b xs n binds := by
-  obtain ⟨x, hx⟩ := liftBounded_succeeds a xs n binds
-  obtain ⟨y, hy⟩ := liftBounded_succeeds b xs n binds
-  obtain ⟨f, hf⟩ := liftBounded_origin a xs n binds x hx
-  obtain ⟨g, hg⟩ := liftBounded_origin b xs n binds y hy
-  have same := liftFuel_agree f g xs n binds x y hf hg
-  simp [hx, hy, same]
+    liftBounded a xs n binds = liftBounded b xs n binds := rfl
 
 /-- The total checked equality wrapper is independent of the initial fuel. Flapjack retry infrastructure; no HOL counterpart. -/
 theorem eqListBounded_independent (a b : Nat) (pairs : List (Exp × Exp)) :

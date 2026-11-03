@@ -27,3 +27,9 @@ val _ = (print "signed="; print_term (rhs (concl (EVAL ``
   clos_op$int_op (closLang$IntOp closLang$Mod) (-3) (-7);
   clos_op$int_op (closLang$IntOp closLang$Div) 0 (-7);
   clos_op$int_op (closLang$IntOp closLang$Mod) 0 (-7)]``))); print "\n");
+val _ = (print "lift="; print_term (rhs (concl (EVAL ``
+ let c = \i. closLang$Op None (closLang$IntOp (closLang$Const i)) [] in
+ let block = closLang$Op None (closLang$BlockOp (closLang$Cons 2))
+   [closLang$Tick None (closLang$Var None 0); c 3] in
+ (clos_op$lift_exps [] 2 [closLang$Var None 7],
+  clos_op$lift_exps [block;closLang$Var None 4;c 5] 4 [closLang$Var None 7])``))); print "\n");

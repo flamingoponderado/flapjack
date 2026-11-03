@@ -45,20 +45,30 @@ theorem liftFuel_succeeds (fuel : Nat) (xs : List Exp) (n : Nat) (binds : List E
           obtain ⟨⟨xs', n'', binds''⟩, ht⟩ := ih xs n' binds' bs
           exact ⟨_, by simp [liftFuel, hd, hc, hy, ht]; rfl⟩
 
-/-- Retried lifting cannot exhaust fuel. -/
+/-- The total source lift cannot exhaust fuel. -/
 theorem liftBounded_succeeds (fuel : Nat) (xs : List Exp) (n : Nat) (binds : List Exp) :
-    ∃ result, liftBounded fuel xs n binds = some result := by
-  cases h : liftFuel fuel xs n binds with
-  | some result => exact ⟨result, by simp [liftBounded, h]⟩
-  | none =>
-    have bound : listBudget xs < max fuel (listBudget xs + 1) := by omega
-    obtain ⟨result, done⟩ := liftFuel_succeeds (max fuel (listBudget xs + 1)) xs n binds bound
-    exact ⟨result, by simp [liftBounded, h, done]⟩
+    ∃ result, liftBounded fuel xs n binds = some result :=
+  ⟨liftExpsHOL xs n binds, rfl⟩
 
 /-- Retrying preserves every successful result of the original traversal. -/
 theorem liftBounded_eq_of_success (fuel : Nat) (xs : List Exp) (n : Nat) (binds : List Exp)
     (result : List Exp × Nat × List Exp) (h : liftFuel fuel xs n binds = some result) :
-    liftBounded fuel xs n binds = some result := by
-  simp [liftBounded, h]
+    liftBounded fuel xs n binds = some result :=
+  congrArg some ((liftFuel_eq_HOL fuel xs n binds result h).symm)
+
+/-- The source lift agrees with the former retrying interface for every input.
+This is Flapjack preservation infrastructure, not a separate HOL theorem. -/
+theorem liftBounded_eq_previous (fuel : Nat) (xs : List Exp) (n : Nat) (binds : List Exp) :
+    liftBounded fuel xs n binds =
+      match liftFuel fuel xs n binds with
+      | some result => some result
+      | none => liftFuel (max fuel (listBudget xs + 1)) xs n binds := by
+  cases first : liftFuel fuel xs n binds with
+  | some result => exact liftBounded_eq_of_success fuel xs n binds result first
+  | none =>
+    have bound : listBudget xs < max fuel (listBudget xs + 1) := by omega
+    obtain ⟨result, done⟩ := liftFuel_succeeds (max fuel (listBudget xs + 1)) xs n binds bound
+    rw [done]
+    exact congrArg some ((liftFuel_eq_HOL _ _ _ _ _ done).symm)
 
 end Flapjack.Compiler.Backend.ClosOp

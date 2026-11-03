@@ -130,6 +130,44 @@ theorem consOp_eq_previous (op : Op) (tag : Nat) (xs : List Exp) :
 @[hol "cakeml/compiler/backend/clos_opScript.sml" "dont_lift_def"]
 def dontLift (e : Exp) : Bool := (intConst e).isSome || (nil e).isSome || (constant e).isSome
 
+/-- Structural decrease for a matched constructor; this is Flapjack
+termination infrastructure rather than a separate HOL theorem. -/
+private theorem consBudgetOfSome (x : Exp) (tag : Nat) (ys : List Exp)
+    (h : cons x = some (tag, ys)) : listBudget ys < expBudget x := by
+  cases x <;> simp [cons, destOp] at h
+  case op t op args =>
+    cases op <;> try simp [destCons] at h
+    case blockOp op =>
+      cases op <;> try simp at h
+      case cons tag =>
+        rcases h with ⟨rfl, rfl⟩
+        simp [expBudget]
+
+/-- Lift effectful expressions in source order, threading index and bindings. -/
+@[hol "cakeml/compiler/backend/clos_opScript.sml" "lift_exps_def"]
+def liftExpsHOL : List Exp → Nat → List Exp → List Exp × Nat × List Exp
+  | [], n, binds => ([], n, binds)
+  | x :: xs, n, binds =>
+    if dontLift x then
+      let (xs, n, binds) := liftExpsHOL xs n binds
+      (x :: xs, n, binds)
+    else match _hc : cons x with
+      | some (tag, ys) =>
+          let (ys, n, binds) := liftExpsHOL ys n binds
+          let (xs, n, binds) := liftExpsHOL xs n binds
+          (.op .none (.blockOp (.cons tag)) ys :: xs, n, binds)
+      | none =>
+          let (xs, next, binds) := liftExpsHOL xs (n + 1) (binds ++ [x])
+          (.var .none n :: xs, next, binds)
+termination_by xs _ _ => listBudget xs
+decreasing_by
+  all_goals simp_wf
+  all_goals try (simp [listBudget]; omega)
+  all_goals
+    have h := consBudgetOfSome x _ _ _hc
+    simp [listBudget]
+    omega
+
 /-- Lift effectful terms into bindings while traversing constructor children
 in source order. -/
 def liftFuel : Nat → List Exp → Nat → List Exp → Option (List Exp × Nat × List Exp)
@@ -148,12 +186,71 @@ def liftFuel : Nat → List Exp → Nat → List Exp → Option (List Exp × Nat
             let (xs, next, binds) ← liftFuel fuel xs (n + 1) (binds ++ [x])
             pure (.var .none n :: xs, next, binds)
 
-/-- Preserve a successful traversal and retry exhaustion with structural fuel. -/
-def liftBounded (fuel : Nat) (xs : List Exp) (n : Nat) (binds : List Exp) :
+/-- Every successful checked lift agrees with the total source traversal.
+This fuel comparison is Flapjack infrastructure, not a HOL theorem. -/
+theorem liftFuel_eq_HOL (fuel : Nat) : ∀ xs n binds result,
+    liftFuel fuel xs n binds = some result → result = liftExpsHOL xs n binds := by
+  induction fuel with
+  | zero =>
+    intro xs n binds result h
+    cases xs <;> simp_all [liftFuel, liftExpsHOL]
+  | succ fuel ih =>
+    intro xs n binds result h
+    cases xs with
+    | nil => simpa [liftFuel, liftExpsHOL] using h.symm
+    | cons x xs =>
+      cases hd : dontLift x with
+      | true =>
+        cases hr : liftFuel fuel xs n binds with
+        | none => simp [liftFuel, hd, hr] at h
+        | some out =>
+          rcases out with ⟨ys, n2, bs⟩
+          have eq := ih xs n binds _ hr
+          simp [liftFuel, hd, hr] at h
+          rw [liftExpsHOL]
+          simp only [hd, if_true]
+          rw [← eq]
+          exact h.symm
+      | false =>
+        cases hc : cons x with
+        | none =>
+          cases hr : liftFuel fuel xs (n + 1) (binds ++ [x]) with
+          | none => simp [liftFuel, hd, hc, hr] at h
+          | some out =>
+            rcases out with ⟨ys, n2, bs⟩
+            have eq := ih xs (n + 1) (binds ++ [x]) _ hr
+            simp [liftFuel, hd, hc, hr] at h
+            rw [liftExpsHOL]
+            simp only [hd, Bool.false_eq_true, if_false]
+            split <;> simp_all
+            rw [← eq]
+            exact h.symm
+        | some pair =>
+          rcases pair with ⟨tag, zs⟩
+          cases hy : liftFuel fuel zs n binds with
+          | none => simp [liftFuel, hd, hc, hy] at h
+          | some val =>
+            rcases val with ⟨ye, yn, yb⟩
+            cases ht : liftFuel fuel xs yn yb with
+            | none => simp [liftFuel, hd, hc, hy, ht] at h
+            | some val =>
+              rcases val with ⟨xe, xn, xb⟩
+              have ey := ih zs n binds _ hy
+              have ex := ih xs yn yb _ ht
+              simp [liftFuel, hd, hc, hy, ht] at h
+              rw [liftExpsHOL]
+              simp only [hd, Bool.false_eq_true, if_false]
+              split <;> simp_all
+              rw [← ey]
+              dsimp only
+              rw [← ex]
+              exact h.symm
+
+
+/-- The checked interface runs the total source lift directly. -/
+def liftBounded (_fuel : Nat) (xs : List Exp) (n : Nat) (binds : List Exp) :
     Option (List Exp × Nat × List Exp) :=
-  match liftFuel fuel xs n binds with
-  | some result => some result
-  | none => liftFuel (max fuel (listBudget xs + 1)) xs n binds
+  some (liftExpsHOL xs n binds)
 
 /-- Produce the source sequence of pure equality checks. -/
 def eqListFuel : Nat → List (Exp × Exp) → Option (List Exp)

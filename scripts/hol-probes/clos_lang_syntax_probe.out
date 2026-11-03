@@ -555,3 +555,60 @@ exp_nchotomy=∀(ee :exp).
   (∃(l0 :mlstring list) (o0 :num option) (o' :num list option)
        (l :(num # exp) list) (e :exp). ee = (Letrec l0 o0 o' l e :exp)) ∨
   ∃(t :tra) (o' :op) (l :exp list). ee = Op t o' l
+pure_op_typed=∀(op :op).
+  pure_op op ⇔
+  case op of
+    Label v8 => T
+  | (FFI v9 :op) => F
+  | IntOp v10 => T
+  | WordOp v11 => T
+  | BlockOp v12 => T
+  | GlobOp (Global v18) => T
+  | GlobOp (SetGlobal v19) => F
+  | GlobOp AllocGlobal => F
+  | GlobOp GlobalsPtr => T
+  | GlobOp SetGlobalsPtr => T
+  | MemOp Ref => F
+  | MemOp Update => F
+  | MemOp El => T
+  | MemOp Length => T
+  | MemOp LengthByte => T
+  | MemOp (RefByte v27) => F
+  | MemOp RefArray => F
+  | MemOp DerefByte => T
+  | MemOp UpdateByte => F
+  | MemOp ConcatByteVec => T
+  | MemOp (CopyByte T) => T
+  | MemOp (CopyByte F) => F
+  | MemOp FromListByte => T
+  | MemOp ToListByte => T
+  | MemOp LengthByteVec => T
+  | MemOp DerefByteVec => T
+  | MemOp (StringCmp v29 v30) => T
+  | MemOp XorByte => F
+  | MemOp BoundsCheckArray => T
+  | MemOp (BoundsCheckByte v31) => T
+  | MemOp (MutCons v32 v33) => T
+  | MemOp UpdateCons => T
+  | MemOp FinaliseCons => T
+  | MemOp ConfigGC => T
+  | Install => F
+  | (ThunkOp v15 :op) => F
+pure_typed=(∀(v1 :num) (v0 :tra). pure (Var v0 v1 :exp) ⇔ T) ∧
+(∀(v2 :tra) (e3 :exp) (e2 :exp) (e1 :exp).
+   pure (If v2 e1 e2 e3 :exp) ⇔ pure e1 ∧ pure e2 ∧ pure e3) ∧
+(∀(v3 :tra) (es :exp list) (e2 :exp).
+   pure (Let v3 es e2) ⇔ EVERY (λ(a :exp). pure a) es ∧ pure e2) ∧
+(∀(v5 :exp) (v4 :tra). pure (Raise v4 v5 :exp) ⇔ F) ∧
+(∀(v6 :tra) (e2 :exp) (e1 :exp). pure (Handle v6 e1 e2 :exp) ⇔ pure e1) ∧
+(∀(v8 :exp) (v7 :tra). pure (Tick v7 v8) ⇔ F) ∧
+(∀(v9 :tra) (v12 :exp list) (v11 :num) (v10 :num).
+   pure (Call v9 v10 v11 v12) ⇔ F) ∧
+(∀(v16 :exp list) (v15 :exp) (v14 :num option) (v13 :tra).
+   pure (App v13 v14 v15 v16 :exp) ⇔ F) ∧
+(∀(v21 :exp) (v20 :num) (v19 :num list option) (v18 :num option)
+     (v17 :mlstring). pure (Fn v17 v18 v19 v20 v21) ⇔ T) ∧
+(∀(x :exp) (v25 :(num # exp) list) (v24 :num list option) (v23 :num option)
+     (v22 :mlstring list). pure (Letrec v22 v23 v24 v25 x :exp) ⇔ pure x) ∧
+∀(v26 :tra) (opn :op) (es :exp list).
+  pure (Op v26 opn es) ⇔ EVERY (λ(a :exp). pure a) es ∧ pure_op opn

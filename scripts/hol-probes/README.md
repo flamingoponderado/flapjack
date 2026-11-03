@@ -439,11 +439,19 @@ the complete carrier correspondence remains under review.
 
 `clos_op_frontend_probe.out` captures smart arithmetic, constructor inspection,
 equality expansion, trace retention, effectful binding order, signed division
-and remainder, and zero divisors. `clos_op_definitions_probe.out` records the
+and remainder, zero divisors, and the source lift result with existing bindings.
+`clos_op_definitions_probe.out` records the
 inferred HOL types and clauses of the corresponding matchers and elementary
 smart-operation helpers. Regenerate the latter with
 `HOL_PROBE_ONLY=clos_op_definitions_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The Lean operation simplifier is checked against these selected original outputs.
+`clos_op_lift_proof_probe.out` captures the typed non-lifting characterization
+and purity theorem, plus the accumulator, index and length invariants from the
+original proof script; regenerate it with
+`HOL_PROBE_ONLY=clos_op_lift_proof_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`clos_lang_syntax_probe.out` captures typed closure-syntax cases and the complete
+source purity definitions. Regenerate it with
+`HOL_PROBE_ONLY=clos_lang_syntax_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `clos_known_frontend_probe.out` captures approximation merging, global updates,
 index and malformed-tree edge cases, and closure inlining.

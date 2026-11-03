@@ -726,11 +726,15 @@ run_probe default_frontend_config_probeScript.sml default_frontend_config_probe.
   state "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_op_frontend_probeScript.sml clos_op_frontend_probe.out \
-  ops signed "$cake_dir/compiler/backend/clos_opScript.sml" "$cake_dir/compiler/backend"
+  ops signed lift "$cake_dir/compiler/backend/clos_opScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_op_definitions_probeScript.sml clos_op_definitions_probe.out \
-  dest_const_typed dest_constant_typed dest_cons_typed dest_elem_at_typed dest_tag_eq_typed dest_len_eq_typed dest_tag_len_eq_typed dest_op_typed dest_op_nil_typed dest_op_consts_typed make_bool_typed make_int_typed int_op_typed cons_op_typed is_var_typed eq_direct_nil_typed eq_direct_const_typed eq_direct_constant_typed eq_direct_typed dont_lift_typed \
+  dest_const_typed dest_constant_typed dest_cons_typed dest_elem_at_typed dest_tag_eq_typed dest_len_eq_typed dest_tag_len_eq_typed dest_op_typed dest_op_nil_typed dest_op_consts_typed make_bool_typed make_int_typed int_op_typed cons_op_typed is_var_typed eq_direct_nil_typed eq_direct_const_typed eq_direct_constant_typed eq_direct_typed dont_lift_typed lift_exps_typed \
   "$cake_dir/compiler/backend/clos_opScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_op_lift_proof_probeScript.sml clos_op_lift_proof_probe.out \
+  dont_lift_thm_typed dont_lift_pure_typed lift_acc_typed lift_n_typed lift_length_typed \
+  "$cake_dir/compiler/backend/proofs/clos_opProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe cake_lexer_probeScript.sml cake_lexer_probe.out \
   basic comments strings errors edge "$cake_dir/semantics/lexer_funScript.sml" "$cake_dir/semantics"
@@ -8638,7 +8642,7 @@ run_probe backend_common_operators_probeScript.sml backend_common_operators_prob
   "$cake_dir/compiler/backend/backend_commonScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_lang_syntax_probeScript.sml clos_lang_syntax_probe.out \
-  const_case_def const_nchotomy const_part_case_def const_part_nchotomy int_op_case_def int_op_nchotomy word_op_case_def word_op_nchotomy block_op_case_def block_op_nchotomy glob_op_case_def glob_op_nchotomy mem_op_case_def mem_op_nchotomy op_case_def op_nchotomy exp_case_def exp_nchotomy \
+  const_case_def const_nchotomy const_part_case_def const_part_nchotomy int_op_case_def int_op_nchotomy word_op_case_def word_op_nchotomy block_op_case_def block_op_nchotomy glob_op_case_def glob_op_nchotomy mem_op_case_def mem_op_nchotomy op_case_def op_nchotomy exp_case_def exp_nchotomy pure_op_typed pure_typed \
   "$cake_dir/compiler/backend/closLangScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_known_config_probeScript.sml clos_known_config_probe.out \
