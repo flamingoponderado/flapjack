@@ -522,4 +522,590 @@ theorem arm8Next_moveWide_z_zero_agree (d : BitVec 64 → Prop)
   · intro a ha
     exact h.mem a ha
 
+/-- The four encoded bytes of the `CCMI rn, #0` word. -/
+theorem arm8EncodeBytes_conditionalCompare (rn : BitVec 5) :
+    arm8Encode (.Data (.«ConditionalCompareImmediate@64»
+      ((1 : BitVec 64), (false, ((0 : BitVec 64), ((0 : BitVec 4),
+        ((false, (false, (true, false))), rn))))))) =
+      [BitVec.ofNat 8 ((arm8ConditionalCompareWord false (0 : BitVec 5) (0 : BitVec 4)
+          false false true false rn >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8ConditionalCompareWord false (0 : BitVec 5) (0 : BitVec 4)
+          false false true false rn >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8ConditionalCompareWord false (0 : BitVec 5) (0 : BitVec 4)
+          false false true false rn >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8ConditionalCompareWord false (0 : BitVec 5) (0 : BitVec 4)
+          false false true false rn >>> 24).toNat)] := by
+  have himm : ((0 : BitVec 64) == BitVec.setWidth 64 (BitVec.setWidth 5
+      (0 : BitVec 64))) = true := by
+    rw [beq_iff_eq]; simp
+  rw [arm8Encode, arm8Encode_conditionalCompare, if_pos himm]
+  simp
+
+/-- The four encoded bytes of an `AddSubCarry@64` word. -/
+theorem arm8EncodeBytes_addSubCarry (sb : Bool) (rm rn rd : BitVec 5) :
+    arm8Encode (.Data (.«AddSubCarry@64»
+      ((1 : BitVec 64), (false, (sb, (rm, (rn, rd))))))) =
+      [BitVec.ofNat 8 ((arm8AddSubCarryWord false sb rm rn rd >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8AddSubCarryWord false sb rm rn rd >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8AddSubCarryWord false sb rm rn rd >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8AddSubCarryWord false sb rm rn rd >>> 24).toNat)] := by
+  rw [arm8Encode, arm8Encode_addSubCarry]
+
+/-- The four encoded bytes of a `MOVZ rd, #0` word. -/
+theorem arm8EncodeBytes_moveWide_z_zero (rd : BitVec 5) :
+    arm8Encode (.Data (.«MoveWide@64»
+      ((1 : BitVec 64), (.z, ((0 : BitVec 2), ((0 : BitVec 16), rd)))))) =
+      [BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) rd >>> 0).toNat),
+       BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) rd >>> 8).toNat),
+       BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) rd >>> 16).toNat),
+       BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) rd >>> 24).toNat)] := by
+  rw [arm8Encode, arm8Encode_moveWide]
+
+/-- The `arm8_ast` lowering of `AddCarry`: the zero compare, the conditional
+compare, the first add-with-carry, the zeroing move and the second
+add-with-carry. -/
+theorem arm8Ast_addCarry (d rc sl sr : Nat) :
+    arm8Ast (.inst (.arith (.addCarry d rc sl sr))) =
+      [.Data (.«AddSubImmediate@64» (1, true, true, 0, sr, 31)),
+       .Data (.«ConditionalCompareImmediate@64»
+         (1, false, 0, 0, (false, false, true, false), rc)),
+       .Data (.«AddSubCarry@64» (1, false, true, sl, rc, d)),
+       .Data (.«MoveWide@64» (1, .z, 0, 0, sr)),
+       .Data (.«AddSubCarry@64» (1, false, false, 31, sr, sr))] := rfl
+
+/-- The encoded bytes of the `addCarry` lowering, as a concatenation. -/
+theorem arm8Enc_addCarry (d rc sl sr : Nat) :
+    arm8Enc (.inst (.arith (.addCarry d rc sl sr))) =
+      arm8Encode (.Data (.«AddSubImmediate@64»
+        (1, true, true, 0, BitVec.ofNat 5 sr, 31))) ++
+      arm8Encode (.Data (.«ConditionalCompareImmediate@64»
+        (1, false, 0, 0, (false, false, true, false), BitVec.ofNat 5 rc))) ++
+      arm8Encode (.Data (.«AddSubCarry@64»
+        (1, false, true, BitVec.ofNat 5 sl, BitVec.ofNat 5 rc, BitVec.ofNat 5 d))) ++
+      arm8Encode (.Data (.«MoveWide@64»
+        (1, .z, 0, 0, BitVec.ofNat 5 sr))) ++
+      arm8Encode (.Data (.«AddSubCarry@64»
+        (1, false, false, 31, BitVec.ofNat 5 sr, BitVec.ofNat 5 sr))) := by
+  rw [arm8Enc, arm8Ast_addCarry]
+  simp
+
+/-- The `addCarry` lowering encodes to twenty bytes. -/
+theorem arm8Enc_addCarry_length (d rc sl sr : Nat) :
+    (arm8Enc (.inst (.arith (.addCarry d rc sl sr)))).length = 20 := by
+  rw [arm8Enc_addCarry]
+  simp [arm8Encode_length]
+
+/-- The register-validity conjuncts of an `addCarry` `asm_ok`. -/
+theorem arm8RegOk_addCarry (d rc sl sr : Nat)
+    (h : asmOkExact (.inst (.arith (.addCarry d rc sl sr))) arm8ConfigL3 = true) :
+    asmRegOkExact d arm8ConfigL3 = true ∧ asmRegOkExact rc arm8ConfigL3 = true ∧
+      asmRegOkExact sl arm8ConfigL3 = true ∧ asmRegOkExact sr arm8ConfigL3 = true := by
+  simp only [asmOkExact, arm8ConfigL3, asmInstOkExact, asmArithOkExact, Bool.and_eq_true,
+    Bool.not_false, Bool.true_or, Bool.true_and] at h
+  exact ⟨h.1.1.1.1, h.1.1.1.2, h.1.1.2, h.1.2⟩
+
+
+
+/-! ## Assembling the `addCarry` case -/
+
+/-- `holAligned 2` after five more four-byte words. -/
+theorem holAligned_add_twenty (pc : BitVec 64) (h : holAligned 2 pc = true) :
+    holAligned 2 (pc + 20) = true := by
+  have h20 : holAligned 2 (20 : BitVec 64) = true := by rw [holAligned_iff]; decide
+  rw [(alignedAddSub 2 pc 20 h20).1, h]
+
+/-- The five aligned four-byte windows of a 20-byte code block. -/
+theorem mem_allPcs_twenty_l3 (p : BitVec 64) (i : Nat) (hi : i < 5) :
+    p + BitVec.ofNat 64 (i * 4) ∈ allPcs 20 p 2 := by
+  rw [allPcs_eq]
+  refine ⟨i, ?_, rfl⟩
+  have h4 : (2 : Nat) ^ 2 = 4 := by norm_num
+  omega
+
+/-- Byte offsets inside the fourth instruction word. -/
+theorem bvAddCarry16_1 (a : BitVec 64) : a + 16 + 1 = a + 17 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bvAddCarry16_2 (a : BitVec 64) : a + 16 + 2 = a + 18 := by
+  rw [BitVec.add_assoc]; congr 1
+theorem bvAddCarry16_3 (a : BitVec 64) : a + 16 + 3 = a + 19 := by
+  rw [BitVec.add_assoc]; congr 1
+
+/-- The `EQ` condition code reads the `Z` flag. -/
+theorem conditionHolds_eq (s : arm8_state) :
+    ConditionHolds (0 : BitVec 4) s = s.PSTATE.Z := by
+  unfold ConditionHolds
+  simp only [ConditionTest, Flapjack.RiscV.L3.holWordExtract]
+  rfl
+
+/-- Reading a register other than the zero register. -/
+theorem arm8X_reg (s : arm8_state) (n : BitVec 5) (hn : n ≠ (31 : BitVec 5)) :
+    X (TN := 64) n s = s.REG n := by
+  have hbeq : (n == BitVec.ofNat 5 31) = false := beq_eq_false_iff_ne.mpr hn
+  simp only [X, hbeq, Bool.false_eq_true, if_false, BitVec.setWidth_eq]
+
+/-- The value half of the rendered `AddWithCarry`. -/
+theorem arm8AddWithCarry_value (x y : BitVec 64) (c : Bool) :
+    (AddWithCarry (TN := 64) (x, (y, c))).1 =
+      BitVec.ofNat 64 (x.toNat + y.toNat + (if c then 1 else 0)) := by
+  rw [arm8AddWithCarry_machine]
+  rfl
+
+/-- The carry flag of the rendered `AddWithCarry` is the unsigned overflow. -/
+theorem arm8AddWithCarry_carry (x y : BitVec 64) (c : Bool) :
+    (AddWithCarry (TN := 64) (x, (y, c))).2.2.2.1 =
+      decide (2 ^ 64 ≤ x.toNat + y.toNat + (if c then 1 else 0)) := by
+  rw [arm8AddWithCarry_machine]
+  show decide ((addWithCarry x y c).1.toNat ≠
+    x.toNat + y.toNat + (if c then 1 else 0)) = _
+  rw [show (addWithCarry x y c).1.toNat =
+    (x.toNat + y.toNat + (if c then 1 else 0)) % 2 ^ 64 from rfl, decide_eq_decide]
+  by_cases h : x.toNat + y.toNat + (if c then 1 else 0) < 2 ^ 64
+  · rw [Nat.mod_eq_of_lt h]
+    exact ⟨fun hh => absurd rfl hh, fun hle => absurd hle (Nat.not_le.mpr h)⟩
+  · have hge : 2 ^ 64 ≤ x.toNat + y.toNat + (if c then 1 else 0) := Nat.le_of_not_lt h
+    have hne : (x.toNat + y.toNat + (if c then 1 else 0)) % 2 ^ 64 ≠
+        x.toNat + y.toNat + (if c then 1 else 0) := by
+      intro hh
+      have := Nat.mod_lt (x.toNat + y.toNat + (if c then 1 else 0)) (by norm_num : 0 < 2 ^ 64)
+      omega
+    exact ⟨fun _ => hge, fun _ => hne⟩
+
+/-! ## The five intermediate states -/
+
+/-- The state after `SUBS XZR, sr, #0`. -/
+abbrev arm8AddCarryT1 (ms : arm8_state) (sr : BitVec 5) : arm8_state :=
+  { ms with
+    branch_hint := none,
+    PC := ms.PC + 4,
+    PSTATE :=
+      { ms.PSTATE with
+        N := BitVec.msb (X (TN := 64) sr ms),
+        Z := (X (TN := 64) sr ms) == (0 : BitVec 64),
+        C := true,
+        V := false } }
+
+/-- The state after `CCMP rc, #0, #0, EQ`. -/
+noncomputable abbrev arm8AddCarryT2 (ms : arm8_state) (rc sr : BitVec 5) : arm8_state :=
+  if ConditionHolds (0 : BitVec 4) (arm8AddCarryT1 ms sr) then
+    { arm8AddCarryT1 ms sr with
+      branch_hint := none,
+      PC := (arm8AddCarryT1 ms sr).PC + 4,
+      PSTATE :=
+        { (arm8AddCarryT1 ms sr).PSTATE with
+          N := BitVec.msb (X (TN := 64) rc (arm8AddCarryT1 ms sr)),
+          Z := (X (TN := 64) rc (arm8AddCarryT1 ms sr)) == (0 : BitVec 64),
+          C := false,
+          V := false } }
+  else
+    { arm8AddCarryT1 ms sr with
+      branch_hint := none,
+      PC := (arm8AddCarryT1 ms sr).PC + 4,
+      PSTATE :=
+        { (arm8AddCarryT1 ms sr).PSTATE with
+          N := false,
+          Z := false,
+          C := true,
+          V := false } }
+
+/-- The state after `ADC d, rc, sl`. -/
+noncomputable abbrev arm8AddCarryT3 (ms : arm8_state) (d rc sl sr : BitVec 5) : arm8_state :=
+  { arm8AddCarryT2 ms rc sr with
+    branch_hint := none,
+    PC := (arm8AddCarryT2 ms rc sr).PC + 4,
+    REG :=
+      holUpdate d
+        (AddWithCarry (TN := 64)
+          (X (TN := 64) rc (arm8AddCarryT2 ms rc sr),
+            (X (TN := 64) sl (arm8AddCarryT2 ms rc sr),
+              (arm8AddCarryT2 ms rc sr).PSTATE.C))).1
+        (arm8AddCarryT2 ms rc sr).REG,
+    PSTATE :=
+      (SetTheFlags (true,
+        (AddWithCarry (TN := 64)
+          (X (TN := 64) rc (arm8AddCarryT2 ms rc sr),
+            (X (TN := 64) sl (arm8AddCarryT2 ms rc sr),
+              (arm8AddCarryT2 ms rc sr).PSTATE.C))).2)
+        (arm8AddCarryT2 ms rc sr)).PSTATE }
+
+/-- The state after `MOVZ sr, #0`. -/
+noncomputable abbrev arm8AddCarryT4 (ms : arm8_state) (d rc sl sr : BitVec 5) : arm8_state :=
+  { arm8AddCarryT3 ms d rc sl sr with
+    branch_hint := none,
+    PC := (arm8AddCarryT3 ms d rc sl sr).PC + 4,
+    REG := holUpdate sr (0 : BitVec 64) (arm8AddCarryT3 ms d rc sl sr).REG }
+
+/-- The state after the closing `ADC sr, sr, XZR`. -/
+noncomputable abbrev arm8AddCarryT5 (ms : arm8_state) (d rc sl sr : BitVec 5) : arm8_state :=
+  { arm8AddCarryT4 ms d rc sl sr with
+    branch_hint := none,
+    PC := (arm8AddCarryT4 ms d rc sl sr).PC + 4,
+    REG :=
+      holUpdate sr
+        (AddWithCarry (TN := 64)
+          (X (TN := 64) sr (arm8AddCarryT4 ms d rc sl sr),
+            (X (TN := 64) (31 : BitVec 5) (arm8AddCarryT4 ms d rc sl sr),
+              (arm8AddCarryT4 ms d rc sl sr).PSTATE.C))).1
+        (arm8AddCarryT4 ms d rc sl sr).REG,
+    PSTATE :=
+      (SetTheFlags (false,
+        (AddWithCarry (TN := 64)
+          (X (TN := 64) sr (arm8AddCarryT4 ms d rc sl sr),
+            (X (TN := 64) (31 : BitVec 5) (arm8AddCarryT4 ms d rc sl sr),
+              (arm8AddCarryT4 ms d rc sl sr).PSTATE.C))).2)
+        (arm8AddCarryT4 ms d rc sl sr)).PSTATE }
+
+/-! ## Structural facts about the intermediate states -/
+
+theorem arm8AddCarryT1_pc (ms : arm8_state) (sr : BitVec 5) :
+    (arm8AddCarryT1 ms sr).PC = ms.PC + 4 := rfl
+
+theorem arm8AddCarryT2_pc (ms : arm8_state) (rc sr : BitVec 5) :
+    (arm8AddCarryT2 ms rc sr).PC = ms.PC + 8 := by
+  dsimp only [arm8AddCarryT2]
+  split <;> bv_omega
+
+theorem arm8AddCarryT3_pc (ms : arm8_state) (d rc sl sr : BitVec 5) :
+    (arm8AddCarryT3 ms d rc sl sr).PC = ms.PC + 12 := by
+  show (arm8AddCarryT2 ms rc sr).PC + 4 = ms.PC + 12
+  rw [arm8AddCarryT2_pc ms rc sr, BitVec.add_assoc]
+  congr 1
+
+theorem arm8AddCarryT4_pc (ms : arm8_state) (d rc sl sr : BitVec 5) :
+    (arm8AddCarryT4 ms d rc sl sr).PC = ms.PC + 16 := by
+  show (arm8AddCarryT3 ms d rc sl sr).PC + 4 = ms.PC + 16
+  rw [arm8AddCarryT3_pc ms d rc sl sr, BitVec.add_assoc]
+  congr 1
+
+theorem arm8AddCarryT5_pc (ms : arm8_state) (d rc sl sr : BitVec 5) :
+    (arm8AddCarryT5 ms d rc sl sr).PC = ms.PC + 20 := by
+  show (arm8AddCarryT4 ms d rc sl sr).PC + 4 = ms.PC + 20
+  rw [arm8AddCarryT4_pc ms d rc sl sr, BitVec.add_assoc]
+  congr 1
+
+theorem arm8AddCarryT1_reg (ms : arm8_state) (sr : BitVec 5) :
+    (arm8AddCarryT1 ms sr).REG = ms.REG := rfl
+
+theorem arm8AddCarryT2_reg (ms : arm8_state) (rc sr : BitVec 5) :
+    (arm8AddCarryT2 ms rc sr).REG = ms.REG := by
+  dsimp only [arm8AddCarryT2]
+  split <;> rfl
+
+theorem arm8AddCarryT1_exc (ms : arm8_state) (sr : BitVec 5) :
+    (arm8AddCarryT1 ms sr).exception = ms.exception := rfl
+
+theorem arm8AddCarryT2_exc (ms : arm8_state) (rc sr : BitVec 5) :
+    (arm8AddCarryT2 ms rc sr).exception = ms.exception := by
+  dsimp only [arm8AddCarryT2]
+  split <;> rfl
+
+theorem arm8AddCarryT2_sctlr (ms : arm8_state) (rc sr : BitVec 5) :
+    (arm8AddCarryT2 ms rc sr).SCTLR_EL1 = ms.SCTLR_EL1 := by
+  dsimp only [arm8AddCarryT2]
+  split <;> rfl
+
+theorem arm8AddCarryT2_tcr (ms : arm8_state) (rc sr : BitVec 5) :
+    (arm8AddCarryT2 ms rc sr).TCR_EL1 = ms.TCR_EL1 := by
+  dsimp only [arm8AddCarryT2]
+  split <;> rfl
+
+theorem arm8AddCarryT1_el (ms : arm8_state) (sr : BitVec 5) :
+    (arm8AddCarryT1 ms sr).PSTATE.EL = ms.PSTATE.EL := rfl
+
+theorem arm8AddCarryT2_el (ms : arm8_state) (rc sr : BitVec 5) :
+    (arm8AddCarryT2 ms rc sr).PSTATE.EL = ms.PSTATE.EL := by
+  dsimp only [arm8AddCarryT2]
+  split <;> rfl
+
+theorem arm8AddCarryT3_el (ms : arm8_state) (d rc sl sr : BitVec 5) :
+    (arm8AddCarryT3 ms d rc sl sr).PSTATE.EL = ms.PSTATE.EL := by
+  have h := arm8AddCarryT2_el ms rc sr
+  simp only [setTheFlags_eq]
+  split_ifs <;> exact h
+
+theorem arm8AddCarryT4_el (ms : arm8_state) (d rc sl sr : BitVec 5) :
+    (arm8AddCarryT4 ms d rc sl sr).PSTATE.EL = ms.PSTATE.EL :=
+  arm8AddCarryT3_el ms d rc sl sr
+
+theorem arm8AddCarryT5_el (ms : arm8_state) (d rc sl sr : BitVec 5) :
+    (arm8AddCarryT5 ms d rc sl sr).PSTATE.EL = ms.PSTATE.EL := by
+  have h := arm8AddCarryT4_el ms d rc sl sr
+  simp only [setTheFlags_eq]
+  split_ifs <;> exact h
+
+theorem arm8AddCarryT1_mem (ms : arm8_state) (sr : BitVec 5) :
+    ∀ a, (arm8AddCarryT1 ms sr).MEM a = ms.MEM a := fun _ => rfl
+
+theorem arm8AddCarryT2_mem (ms : arm8_state) (rc sr : BitVec 5) :
+    ∀ a, (arm8AddCarryT2 ms rc sr).MEM a = ms.MEM a := by
+  dsimp only [arm8AddCarryT2]
+  split <;> intro a <;> rfl
+
+theorem arm8AddCarryT3_mem (ms : arm8_state) (d rc sl sr : BitVec 5) :
+    ∀ a, (arm8AddCarryT3 ms d rc sl sr).MEM a = ms.MEM a :=
+  fun a => arm8AddCarryT2_mem ms rc sr a
+
+theorem arm8AddCarryT4_mem (ms : arm8_state) (d rc sl sr : BitVec 5) :
+    ∀ a, (arm8AddCarryT4 ms d rc sl sr).MEM a = ms.MEM a :=
+  fun a => arm8AddCarryT3_mem ms d rc sl sr a
+
+theorem arm8AddCarryT5_mem (ms : arm8_state) (d rc sl sr : BitVec 5) :
+    ∀ a, (arm8AddCarryT5 ms d rc sl sr).MEM a = ms.MEM a :=
+  fun a => arm8AddCarryT4_mem ms d rc sl sr a
+
+/-! ## `arm8_ok` at each intermediate state -/
+
+theorem arm8Ok_of (ms s : arm8_state)
+    (hel : s.PSTATE.EL = ms.PSTATE.EL)
+    (hsctlr : s.SCTLR_EL1 = ms.SCTLR_EL1)
+    (htcr : s.TCR_EL1 = ms.TCR_EL1)
+    (hexc : s.exception = ms.exception)
+    (hpc : holAligned 2 s.PC = true)
+    (hok : arm8Ok ms = true) : arm8Ok s = true := by
+  obtain ⟨h1, h2, h3, h4, h5, h6, _⟩ := (arm8Ok_iff ms).mp hok
+  rw [arm8Ok_iff]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, hpc⟩
+  · rw [hel]; exact h1
+  · rw [hsctlr]; exact h2
+  · rw [hsctlr]; exact h3
+  · rw [htcr]; exact h4
+  · rw [htcr]; exact h5
+  · rw [hexc]; exact h6
+
+theorem arm8Ok_addCarryT1 (ms : arm8_state) (sr : BitVec 5)
+    (hal : holAligned 2 (ms.PC + 4) = true) (hok : arm8Ok ms = true) :
+    arm8Ok (arm8AddCarryT1 ms sr) = true :=
+  arm8Ok_of ms _ rfl rfl rfl rfl hal hok
+
+theorem arm8Ok_addCarryT2 (ms : arm8_state) (rc sr : BitVec 5)
+    (hal : holAligned 2 (ms.PC + 8) = true) (hok : arm8Ok ms = true) :
+    arm8Ok (arm8AddCarryT2 ms rc sr) = true :=
+  arm8Ok_of ms _ (arm8AddCarryT2_el ms rc sr) (arm8AddCarryT2_sctlr ms rc sr)
+    (arm8AddCarryT2_tcr ms rc sr) (arm8AddCarryT2_exc ms rc sr)
+    (by rw [arm8AddCarryT2_pc ms rc sr]; exact hal) hok
+
+theorem arm8Ok_addCarryT3 (ms : arm8_state) (d rc sl sr : BitVec 5)
+    (hal : holAligned 2 (ms.PC + 12) = true) (hok : arm8Ok ms = true) :
+    arm8Ok (arm8AddCarryT3 ms d rc sl sr) = true :=
+  arm8Ok_of ms _ (arm8AddCarryT3_el ms d rc sl sr) (arm8AddCarryT2_sctlr ms rc sr)
+    (arm8AddCarryT2_tcr ms rc sr) (arm8AddCarryT2_exc ms rc sr)
+    (by rw [arm8AddCarryT3_pc ms d rc sl sr]; exact hal) hok
+
+theorem arm8Ok_addCarryT4 (ms : arm8_state) (d rc sl sr : BitVec 5)
+    (hal : holAligned 2 (ms.PC + 16) = true) (hok : arm8Ok ms = true) :
+    arm8Ok (arm8AddCarryT4 ms d rc sl sr) = true :=
+  arm8Ok_of ms _ (arm8AddCarryT4_el ms d rc sl sr) (arm8AddCarryT2_sctlr ms rc sr)
+    (arm8AddCarryT2_tcr ms rc sr) (arm8AddCarryT2_exc ms rc sr)
+    (by rw [arm8AddCarryT4_pc ms d rc sl sr]; exact hal) hok
+
+theorem arm8Ok_addCarryT5 (ms : arm8_state) (d rc sl sr : BitVec 5)
+    (hal : holAligned 2 (ms.PC + 20) = true) (hok : arm8Ok ms = true) :
+    arm8Ok (arm8AddCarryT5 ms d rc sl sr) = true :=
+  arm8Ok_of ms _ (arm8AddCarryT5_el ms d rc sl sr) (arm8AddCarryT2_sctlr ms rc sr)
+    (arm8AddCarryT2_tcr ms rc sr) (arm8AddCarryT2_exc ms rc sr)
+    (by rw [arm8AddCarryT5_pc ms d rc sl sr]; exact hal) hok
+
+/-! ## The five `arm8Next` steps -/
+
+theorem arm8Next_addCarryT1 (ms : arm8_state) (sr : BitVec 5)
+    (hsr : sr ≠ (31 : BitVec 5))
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) sr 31 >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) sr 31 >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) sr 31 >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) sr 31 >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next ms = arm8AddCarryT1 ms sr :=
+  arm8Next_addSubImmediateS_zero ms sr hsr hexc0 h0 h1 h2 h3 hal he0 hel
+
+theorem arm8Next_addCarryT2 (ms : arm8_state) (rc sr : BitVec 5)
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : (arm8AddCarryT1 ms sr).MEM (arm8AddCarryT1 ms sr).PC = BitVec.ofNat 8
+      ((arm8ConditionalCompareWord false (0 : BitVec 5) (0 : BitVec 4)
+        false false true false rc >>> 0).toNat))
+    (h1 : (arm8AddCarryT1 ms sr).MEM ((arm8AddCarryT1 ms sr).PC + 1) = BitVec.ofNat 8
+      ((arm8ConditionalCompareWord false (0 : BitVec 5) (0 : BitVec 4)
+        false false true false rc >>> 8).toNat))
+    (h2 : (arm8AddCarryT1 ms sr).MEM ((arm8AddCarryT1 ms sr).PC + 2) = BitVec.ofNat 8
+      ((arm8ConditionalCompareWord false (0 : BitVec 5) (0 : BitVec 4)
+        false false true false rc >>> 16).toNat))
+    (h3 : (arm8AddCarryT1 ms sr).MEM ((arm8AddCarryT1 ms sr).PC + 3) = BitVec.ofNat 8
+      ((arm8ConditionalCompareWord false (0 : BitVec 5) (0 : BitVec 4)
+        false false true false rc >>> 24).toNat))
+    (hal : Aligned (TN := 64) ((arm8AddCarryT1 ms sr).PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next (arm8AddCarryT1 ms sr) = arm8AddCarryT2 ms rc sr :=
+  arm8Next_conditionalCompare_zero (arm8AddCarryT1 ms sr) rc hexc0 h0 h1 h2 h3 hal he0 hel
+
+theorem arm8Next_addCarryT3 (ms : arm8_state) (d rc sl sr : BitVec 5)
+    (hd : d ≠ (31 : BitVec 5))
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : (arm8AddCarryT2 ms rc sr).MEM (arm8AddCarryT2 ms rc sr).PC = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false true sl rc d >>> 0).toNat))
+    (h1 : (arm8AddCarryT2 ms rc sr).MEM ((arm8AddCarryT2 ms rc sr).PC + 1) = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false true sl rc d >>> 8).toNat))
+    (h2 : (arm8AddCarryT2 ms rc sr).MEM ((arm8AddCarryT2 ms rc sr).PC + 2) = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false true sl rc d >>> 16).toNat))
+    (h3 : (arm8AddCarryT2 ms rc sr).MEM ((arm8AddCarryT2 ms rc sr).PC + 3) = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false true sl rc d >>> 24).toNat))
+    (hal : Aligned (TN := 64) ((arm8AddCarryT2 ms rc sr).PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next (arm8AddCarryT2 ms rc sr) = arm8AddCarryT3 ms d rc sl sr := by
+  have hx : (arm8AddCarryT2 ms rc sr).exception = exception.NoException := by
+    rw [arm8AddCarryT2_exc ms rc sr]; exact hexc0
+  have hE : (arm8AddCarryT2 ms rc sr).SCTLR_EL1.E0E = false := by
+    rw [arm8AddCarryT2_sctlr ms rc sr]; exact he0
+  have hL : (arm8AddCarryT2 ms rc sr).PSTATE.EL = (0 : BitVec 2) := by
+    rw [arm8AddCarryT2_el ms rc sr]; exact hel
+  rw [arm8Next_addSubCarry (arm8AddCarryT2 ms rc sr) true sl rc d hd hx h0 h1 h2 h3 hal hE hL]
+
+theorem arm8Next_addCarryT4 (ms : arm8_state) (d rc sl sr : BitVec 5)
+    (hsr : sr ≠ (31 : BitVec 5))
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : (arm8AddCarryT3 ms d rc sl sr).MEM (arm8AddCarryT3 ms d rc sl sr).PC = BitVec.ofNat 8
+      ((arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) sr >>> 0).toNat))
+    (h1 : (arm8AddCarryT3 ms d rc sl sr).MEM ((arm8AddCarryT3 ms d rc sl sr).PC + 1) = BitVec.ofNat 8
+      ((arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) sr >>> 8).toNat))
+    (h2 : (arm8AddCarryT3 ms d rc sl sr).MEM ((arm8AddCarryT3 ms d rc sl sr).PC + 2) = BitVec.ofNat 8
+      ((arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) sr >>> 16).toNat))
+    (h3 : (arm8AddCarryT3 ms d rc sl sr).MEM ((arm8AddCarryT3 ms d rc sl sr).PC + 3) = BitVec.ofNat 8
+      ((arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) sr >>> 24).toNat))
+    (hal : Aligned (TN := 64) ((arm8AddCarryT3 ms d rc sl sr).PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next (arm8AddCarryT3 ms d rc sl sr) = arm8AddCarryT4 ms d rc sl sr := by
+  have hx : (arm8AddCarryT3 ms d rc sl sr).exception = exception.NoException := by
+    show (arm8AddCarryT2 ms rc sr).exception = exception.NoException
+    rw [arm8AddCarryT2_exc ms rc sr]; exact hexc0
+  have hE : (arm8AddCarryT3 ms d rc sl sr).SCTLR_EL1.E0E = false := by
+    show (arm8AddCarryT2 ms rc sr).SCTLR_EL1.E0E = false
+    rw [arm8AddCarryT2_sctlr ms rc sr]; exact he0
+  have hL : (arm8AddCarryT3 ms d rc sl sr).PSTATE.EL = (0 : BitVec 2) := by
+    rw [arm8AddCarryT3_el ms d rc sl sr]; exact hel
+  rw [arm8Next_moveWide_z_zero (arm8AddCarryT3 ms d rc sl sr) sr hsr hx h0 h1 h2 h3 hal hE hL]
+
+theorem arm8Next_addCarryT5 (ms : arm8_state) (d rc sl sr : BitVec 5)
+    (hsr : sr ≠ (31 : BitVec 5))
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : (arm8AddCarryT4 ms d rc sl sr).MEM (arm8AddCarryT4 ms d rc sl sr).PC = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false false (31 : BitVec 5) sr sr >>> 0).toNat))
+    (h1 : (arm8AddCarryT4 ms d rc sl sr).MEM ((arm8AddCarryT4 ms d rc sl sr).PC + 1) = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false false (31 : BitVec 5) sr sr >>> 8).toNat))
+    (h2 : (arm8AddCarryT4 ms d rc sl sr).MEM ((arm8AddCarryT4 ms d rc sl sr).PC + 2) = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false false (31 : BitVec 5) sr sr >>> 16).toNat))
+    (h3 : (arm8AddCarryT4 ms d rc sl sr).MEM ((arm8AddCarryT4 ms d rc sl sr).PC + 3) = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false false (31 : BitVec 5) sr sr >>> 24).toNat))
+    (hal : Aligned (TN := 64) ((arm8AddCarryT4 ms d rc sl sr).PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next (arm8AddCarryT4 ms d rc sl sr) = arm8AddCarryT5 ms d rc sl sr := by
+  have hx : (arm8AddCarryT4 ms d rc sl sr).exception = exception.NoException := by
+    show (arm8AddCarryT3 ms d rc sl sr).exception = exception.NoException
+    show (arm8AddCarryT2 ms rc sr).exception = exception.NoException
+    rw [arm8AddCarryT2_exc ms rc sr]; exact hexc0
+  have hE : (arm8AddCarryT4 ms d rc sl sr).SCTLR_EL1.E0E = false := by
+    show (arm8AddCarryT2 ms rc sr).SCTLR_EL1.E0E = false
+    rw [arm8AddCarryT2_sctlr ms rc sr]; exact he0
+  have hL : (arm8AddCarryT4 ms d rc sl sr).PSTATE.EL = (0 : BitVec 2) := by
+    rw [arm8AddCarryT4_el ms d rc sl sr]; exact hel
+  rw [arm8Next_addSubCarry (arm8AddCarryT4 ms d rc sl sr) false (31 : BitVec 5) sr sr
+    hsr hx h0 h1 h2 h3 hal hE hL]
+
+/-! ## The steps leave memory alone -/
+
+theorem arm8Next_addCarryT1_mem (ms : arm8_state) (sr : BitVec 5)
+    (hsr : sr ≠ (31 : BitVec 5))
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) sr 31 >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) sr 31 >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) sr 31 >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) sr 31 >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    ∀ x, (arm8Next ms).MEM x = ms.MEM x := by
+  rw [arm8Next_addCarryT1 ms sr hsr hexc0 h0 h1 h2 h3 hal he0 hel]
+  exact arm8AddCarryT1_mem ms sr
+
+theorem arm8Next_addCarryT2_mem (ms : arm8_state) (rc sr : BitVec 5)
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : (arm8AddCarryT1 ms sr).MEM (arm8AddCarryT1 ms sr).PC = BitVec.ofNat 8
+      ((arm8ConditionalCompareWord false (0 : BitVec 5) (0 : BitVec 4)
+        false false true false rc >>> 0).toNat))
+    (h1 : (arm8AddCarryT1 ms sr).MEM ((arm8AddCarryT1 ms sr).PC + 1) = BitVec.ofNat 8
+      ((arm8ConditionalCompareWord false (0 : BitVec 5) (0 : BitVec 4)
+        false false true false rc >>> 8).toNat))
+    (h2 : (arm8AddCarryT1 ms sr).MEM ((arm8AddCarryT1 ms sr).PC + 2) = BitVec.ofNat 8
+      ((arm8ConditionalCompareWord false (0 : BitVec 5) (0 : BitVec 4)
+        false false true false rc >>> 16).toNat))
+    (h3 : (arm8AddCarryT1 ms sr).MEM ((arm8AddCarryT1 ms sr).PC + 3) = BitVec.ofNat 8
+      ((arm8ConditionalCompareWord false (0 : BitVec 5) (0 : BitVec 4)
+        false false true false rc >>> 24).toNat))
+    (hal : Aligned (TN := 64) ((arm8AddCarryT1 ms sr).PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    ∀ x, (arm8Next (arm8AddCarryT1 ms sr)).MEM x = (arm8AddCarryT1 ms sr).MEM x := by
+  rw [arm8Next_addCarryT2 ms rc sr hexc0 h0 h1 h2 h3 hal he0 hel]
+  intro x
+  exact (arm8AddCarryT2_mem ms rc sr x).trans (arm8AddCarryT1_mem ms sr x).symm
+
+theorem arm8Next_addCarryT3_mem (ms : arm8_state) (d rc sl sr : BitVec 5)
+    (hd : d ≠ (31 : BitVec 5))
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : (arm8AddCarryT2 ms rc sr).MEM (arm8AddCarryT2 ms rc sr).PC = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false true sl rc d >>> 0).toNat))
+    (h1 : (arm8AddCarryT2 ms rc sr).MEM ((arm8AddCarryT2 ms rc sr).PC + 1) = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false true sl rc d >>> 8).toNat))
+    (h2 : (arm8AddCarryT2 ms rc sr).MEM ((arm8AddCarryT2 ms rc sr).PC + 2) = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false true sl rc d >>> 16).toNat))
+    (h3 : (arm8AddCarryT2 ms rc sr).MEM ((arm8AddCarryT2 ms rc sr).PC + 3) = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false true sl rc d >>> 24).toNat))
+    (hal : Aligned (TN := 64) ((arm8AddCarryT2 ms rc sr).PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    ∀ x, (arm8Next (arm8AddCarryT2 ms rc sr)).MEM x = (arm8AddCarryT2 ms rc sr).MEM x := by
+  rw [arm8Next_addCarryT3 ms d rc sl sr hd hexc0 h0 h1 h2 h3 hal he0 hel]
+  intro x
+  exact (arm8AddCarryT3_mem ms d rc sl sr x).trans (arm8AddCarryT2_mem ms rc sr x).symm
+
+theorem arm8Next_addCarryT4_mem (ms : arm8_state) (d rc sl sr : BitVec 5)
+    (hsr : sr ≠ (31 : BitVec 5))
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : (arm8AddCarryT3 ms d rc sl sr).MEM (arm8AddCarryT3 ms d rc sl sr).PC = BitVec.ofNat 8
+      ((arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) sr >>> 0).toNat))
+    (h1 : (arm8AddCarryT3 ms d rc sl sr).MEM ((arm8AddCarryT3 ms d rc sl sr).PC + 1) = BitVec.ofNat 8
+      ((arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) sr >>> 8).toNat))
+    (h2 : (arm8AddCarryT3 ms d rc sl sr).MEM ((arm8AddCarryT3 ms d rc sl sr).PC + 2) = BitVec.ofNat 8
+      ((arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) sr >>> 16).toNat))
+    (h3 : (arm8AddCarryT3 ms d rc sl sr).MEM ((arm8AddCarryT3 ms d rc sl sr).PC + 3) = BitVec.ofNat 8
+      ((arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) sr >>> 24).toNat))
+    (hal : Aligned (TN := 64) ((arm8AddCarryT3 ms d rc sl sr).PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    ∀ x, (arm8Next (arm8AddCarryT3 ms d rc sl sr)).MEM x = (arm8AddCarryT3 ms d rc sl sr).MEM x := by
+  rw [arm8Next_addCarryT4 ms d rc sl sr hsr hexc0 h0 h1 h2 h3 hal he0 hel]
+  intro x
+  exact (arm8AddCarryT4_mem ms d rc sl sr x).trans (arm8AddCarryT3_mem ms d rc sl sr x).symm
+
+theorem arm8Next_addCarryT5_mem (ms : arm8_state) (d rc sl sr : BitVec 5)
+    (hsr : sr ≠ (31 : BitVec 5))
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : (arm8AddCarryT4 ms d rc sl sr).MEM (arm8AddCarryT4 ms d rc sl sr).PC = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false false (31 : BitVec 5) sr sr >>> 0).toNat))
+    (h1 : (arm8AddCarryT4 ms d rc sl sr).MEM ((arm8AddCarryT4 ms d rc sl sr).PC + 1) = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false false (31 : BitVec 5) sr sr >>> 8).toNat))
+    (h2 : (arm8AddCarryT4 ms d rc sl sr).MEM ((arm8AddCarryT4 ms d rc sl sr).PC + 2) = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false false (31 : BitVec 5) sr sr >>> 16).toNat))
+    (h3 : (arm8AddCarryT4 ms d rc sl sr).MEM ((arm8AddCarryT4 ms d rc sl sr).PC + 3) = BitVec.ofNat 8
+      ((arm8AddSubCarryWord false false (31 : BitVec 5) sr sr >>> 24).toNat))
+    (hal : Aligned (TN := 64) ((arm8AddCarryT4 ms d rc sl sr).PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    ∀ x, (arm8Next (arm8AddCarryT4 ms d rc sl sr)).MEM x = (arm8AddCarryT4 ms d rc sl sr).MEM x := by
+  rw [arm8Next_addCarryT5 ms d rc sl sr hsr hexc0 h0 h1 h2 h3 hal he0 hel]
+  intro x
+  exact (arm8AddCarryT5_mem ms d rc sl sr x).trans (arm8AddCarryT4_mem ms d rc sl sr x).symm
+
+
 end Flapjack.Compiler.Encoders.Arm8.L3
