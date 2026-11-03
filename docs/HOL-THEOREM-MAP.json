@@ -4878,6 +4878,15 @@
     "reviewer": "Compared state_rel_refs_lookup_typed: both states share compiler and FFI types; the related-state, source lookup and relocation lookup premises imply an existential target cell with the same reference and value relations. The named state fields and relocation map use canonical finite support, with separate state roundtrips."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "rel_update_thunk",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationForce.lean",
+    "lean_name": "relUpdateThunk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "sourceRefs", "targetRefs"],
+    "reviewer": "Compared the local HOL theorem and inferred-type replay rel_update_thunk_statement_typed: the source compiler carrier is an approximation tree paired with the target compiler carrier, with a shared independent FFI carrier. Both state and value relations, pointer flag and index, source success premise, existential target map and resulting state relation agree. The state fields and reference-map binders use canonical finite support, with the local state roundtrip witness. Reviewed the singleton, thunk inspection and unevaluated-store guards against closure semantics; the proof uses the same state and value relations. This source comparison is not a cross-language equivalence proof."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "rel_update_thunk",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/StateRelation.lean",

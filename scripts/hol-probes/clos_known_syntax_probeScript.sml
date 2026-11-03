@@ -276,3 +276,11 @@ val _ = show "vsgc_free_unit_typed=" closPropsTheory.vsgc_free_Unit;
 val _ = show "vsgc_free_bool_typed=" closPropsTheory.vsgc_free_Boolv;
 val _ = show "ssgc_free_clock_typed=" closPropsTheory.ssgc_free_clockupd;
 val _ = show "ssgc_free_dec_clock_typed=" closPropsTheory.ssgc_free_dec_clock;
+
+(* Local theorem: replay its statement with inferred source and target types. *)
+val _ = (print "rel_update_thunk_statement_typed="; print_term
+  ``clos_knownProof$state_rel c g s1 s2 ∧
+    LIST_REL (clos_knownProof$v_rel c g) vs ys ⇒
+      (closSem$update_thunk [closSem$RefPtr v ptr] s1.refs vs = SOME refs1 ⇒
+       ∃refs2. closSem$update_thunk [closSem$RefPtr v ptr] s2.refs ys = SOME refs2 ∧
+         clos_knownProof$state_rel c g (s1 with refs := refs1) (s2 with refs := refs2))``; print "\n");
