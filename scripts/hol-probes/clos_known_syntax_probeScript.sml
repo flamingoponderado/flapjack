@@ -11,3 +11,7 @@ val _ = show "bag_all_distinct_typed=" bagTheory.BAG_ALL_DISTINCT;
 val _ = show "option_val_approx_spt_typed=" clos_knownTheory.option_val_approx_spt_def;
 val _ = show "option_upd_val_spt_typed=" clos_knownTheory.option_upd_val_spt_def;
 val _ = show "contains_closures_typed=" clos_knownTheory.contains_closures_def;
+val _ = show "get_size_aux_typed=" clos_knownTheory.get_size_aux_def;
+val _ = show "get_size_typed=" clos_knownTheory.get_size_def;
+val _ = show "get_size_sc_aux_correct_typed=" clos_knownTheory.get_size_sc_aux_correct;
+val _ = show "get_size_sc_some_typed=" clos_knownTheory.get_size_sc_SOME;

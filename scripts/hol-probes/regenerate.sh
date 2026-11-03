@@ -341,7 +341,7 @@ run_probe bvl_remove_ticks_probeScript.sml bvl_remove_ticks_probe.out \
   "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_known_syntax_probeScript.sml clos_known_syntax_probe.out \
-  syntax_ok_typed bag_all_distinct_typed option_val_approx_spt_typed option_upd_val_spt_typed contains_closures_typed \
+  syntax_ok_typed bag_all_distinct_typed option_val_approx_spt_typed option_upd_val_spt_typed contains_closures_typed get_size_aux_typed get_size_typed get_size_sc_aux_correct_typed get_size_sc_some_typed \
   "$cake_dir/compiler/backend/proofs/clos_knownProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_to_bvl_state_relation_probeScript.sml clos_to_bvl_state_relation_probe.out \

@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosKnown.Inline
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ContainsCorrect
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.SizeCorrect
 import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
 
@@ -175,14 +176,9 @@ theorem containsClosuresFuel_succeeds (fuel : Nat) (e : Exp) (bound : expBudget 
         · apply ih; have := member_budget_lt xs e he; omega)
       exact ⟨result, by simpa [containsClosuresFuel] using h⟩
 
-/-- Retried size analysis cannot exhaust traversal fuel. -/
+/-- The source size analysis cannot exhaust traversal fuel. -/
 theorem sizeBounded_succeeds (fuel : Nat) (e : Exp) : ∃ result, sizeBounded fuel e = some result := by
-  cases h : sizeFuel fuel e with
-  | some result => exact ⟨result, by simp [sizeBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := sizeFuel_succeeds (max fuel (expBudget e + 1)) e bound
-    exact ⟨result, by simp [sizeBounded, h, done]⟩
+  exact ⟨getSizeHOL e, rfl⟩
 
 /-- Retried closure detection cannot exhaust traversal fuel. -/
 theorem containsClosuresBounded_succeeds (fuel : Nat) (e : Exp) :
@@ -192,7 +188,24 @@ theorem containsClosuresBounded_succeeds (fuel : Nat) (e : Exp) :
 /-- Retrying preserves previously successful size results. -/
 theorem sizeBounded_eq_of_success (fuel : Nat) (e : Exp) (result : Nat)
     (success : sizeFuel fuel e = some result) : sizeBounded fuel e = some result := by
-  simp [sizeBounded, success]
+  have same := sizeFuel_correct fuel e result success
+  simp [sizeBounded, getSizeHOL, getSizeAuxHOL, same]
+
+/-- The source size analysis agrees on every input with the previous bounded
+retry, including when the first attempt exhausts fuel. -/
+theorem sizeBounded_eq_retry (fuel : Nat) (e : Exp) :
+    sizeBounded fuel e =
+      match sizeFuel fuel e with
+      | some result => some result
+      | none => sizeFuel (max fuel (expBudget e + 1)) e := by
+  cases first : sizeFuel fuel e with
+  | some result => exact sizeBounded_eq_of_success fuel e result first
+  | none =>
+    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
+    obtain ⟨result, retry⟩ := sizeFuel_succeeds (max fuel (expBudget e + 1)) e bound
+    rw [retry]
+    have same := sizeFuel_correct _ e result retry
+    simp [sizeBounded, getSizeHOL, getSizeAuxHOL, same]
 
 /-- Retrying preserves previously successful closure-presence results. -/
 theorem containsClosuresBounded_eq_of_success (fuel : Nat) (e : Exp) (result : Bool)

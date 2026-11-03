@@ -27,6 +27,38 @@ def containsClosuresExpHOL : Exp → Bool
 termination_by e => sizeOf e
 end
 
+mutual
+/-- The original size of an expression list; ticks contribute no node. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "get_size_aux_def"]
+def getSizeAuxHOL : List Exp → Nat
+  | [] => 0
+  | e :: es => getSizeExpHOL e + getSizeAuxHOL es
+termination_by es => sizeOf es
+
+/-- Single-expression helper for the source size traversal. -/
+def getSizeExpHOL : Exp → Nat
+  | .var .. => 1
+  | .tick _ e => getSizeExpHOL e
+  | .ifThenElse _ x y z => 1 + getSizeExpHOL x + getSizeExpHOL y + getSizeExpHOL z
+  | .let _ xs body => 1 + getSizeAuxHOL xs + getSizeExpHOL body
+  | .raise _ e | .fn _ _ _ _ e => 1 + getSizeExpHOL e
+  | .handle _ x y => 1 + getSizeExpHOL x + getSizeExpHOL y
+  | .op _ _ xs | .call _ _ _ xs => 1 + getSizeAuxHOL xs
+  | .letrec _ _ _ fs body => 1 + getSizeFunsHOL fs + getSizeExpHOL body
+  | .app _ _ e xs => 1 + getSizeExpHOL e + getSizeAuxHOL xs
+termination_by e => sizeOf e
+
+/-- Helper for the source traversal of recursive-function bodies. -/
+def getSizeFunsHOL : List (Nat × Exp) → Nat
+  | [] => 0
+  | (_, e) :: es => getSizeExpHOL e + getSizeFunsHOL es
+termination_by es => sizeOf es
+end
+
+/-- The original size of one closure expression. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "get_size_def"]
+def getSizeHOL (e : Exp) : Nat := getSizeAuxHOL [e]
+
 /-- Compute the source size metric; ticks contribute no node. -/
 def sizeFuel : Nat → Exp → Option Nat
   | 0, _ => none
@@ -60,11 +92,9 @@ def containsClosuresFuel : Nat → Exp → Option Bool
       | .op _ _ xs | .call _ _ _ xs => any xs
       | .app _ _ x xs => any (x :: xs)
 
-/-- Preserve successful size checks and retry exhaustion with a structural bound. -/
-def sizeBounded (fuel : Nat) (e : Exp) : Option Nat :=
-  match sizeFuel fuel e with
-  | some result => some result
-  | none => sizeFuel (max fuel (expBudget e + 1)) e
+/-- The executed size analysis uses the total source traversal. The fuel
+argument is retained for the surrounding checked optimizer interface. -/
+def sizeBounded (_fuel : Nat) (e : Exp) : Option Nat := some (getSizeHOL e)
 
 /-- The executed closure check uses the total source traversal. The fuel
 argument is retained for the surrounding checked optimizer interface. -/

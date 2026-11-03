@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "get_size_aux_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline.lean",
+    "lean_name": "getSizeAuxHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared get_size_aux_typed: list sums and every expression constructor agree, ticks contribute no node, recursive groups sum their bodies, and all other counted nodes contribute one. getSizeFunsHOL_eq_map proves the recursive-group helper is the original mapped-list traversal. The executed inliner uses the singleton wrapper; sizeFuel_correct and sizeBounded_eq_retry establish agreement with its previous checked retry."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "get_size_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline.lean",
+    "lean_name": "getSizeHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared get_size_typed: the original size of an expression is get_size_aux on its singleton list. The executed inliner calls this definition; sizeBounded_eq_retry proves equality with the previous result for every input and fuel."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
     "hol_name": "contains_closures_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline.lean",
     "lean_name": "containsClosuresHOL",
