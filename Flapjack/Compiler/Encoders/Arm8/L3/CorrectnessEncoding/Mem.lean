@@ -4976,6 +4976,120 @@ second instruction, so each is proved separately and the two branches
 are joined by the dispatching theorems at the end.
 -/
 
+/-- `decide p = true` gives `p` (Flapjack infrastructure; the L3 analogue of
+`arm8OfDecideTrue`, kept local to avoid importing the `Branch` case module). -/
+theorem arm8DecideOfTrue {p : Prop} (inst : Decidable p) (h : @decide p inst = true) : p := by
+  cases inst with
+  | isTrue hp => exact hp
+  | isFalse _ => exact Bool.noConfusion h
+
+/-- The configured address-offset window is the signed range `(-4351, 4350)`. -/
+theorem arm8FarOffsetBounds (off : BitVec 64)
+    (hok : asmAddrOffsetOkExact arm8ConfigL3 off = true) :
+    (-4351 : Int) ≤ off.toInt ∧ off.toInt ≤ 4350 := by
+  simp only [asmAddrOffsetOkExact, arm8ConfigL3, asmOffsetOkExact, Bool.and_eq_true] at hok
+  obtain ⟨⟨hlo, hhi⟩, -⟩ := hok
+  exact ⟨arm8DecideOfTrue _ hlo, arm8DecideOfTrue _ hhi⟩
+
+/-- An offset inside the signed nine-bit range is its own nine-bit form, so an
+offset that is not is outside `[-256, 255]`. -/
+theorem arm8NineBitForm_of_range (off : BitVec 64)
+    (hlo : (-256 : Int) ≤ off.toInt) (hhi : off.toInt ≤ 255) :
+    off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by
+  apply BitVec.eq_of_toInt_eq
+  rw [BitVec.toInt_signExtend_of_le (by omega : 9 ≤ 64), BitVec.toInt_ofNat']
+  rw [← Int.bmod_bmod_of_dvd (by norm_num : (512 : Nat) ∣ 2 ^ 64),
+    ← BitVec.toInt_eq_toNat_bmod]
+  rw [Int.bmod_eq_of_le (m := 512) hlo (by norm_num; omega)]
+
+/-- `Nat.testBit` is false above a bound (Flapjack infrastructure: the
+`Nat.Bitwise` lemma is not in this module's import closure). -/
+theorem arm8NatTestBit_false_of_lt {n i : Nat} (h : n < 2 ^ i) : n.testBit i = false := by
+  simp [Nat.testBit, Nat.shiftRight_eq_div_pow, Nat.div_eq_of_lt h]
+
+/-- The low twelve bits of `4095` are all set. -/
+theorem arm8NatTestBit_4095 {i : Nat} (hi : i < 12) : (4095 : Nat).testBit i = true := by
+  rw [show (4095 : Nat) = 2 ^ 12 - 1 from by norm_num, Nat.testBit_two_pow_sub_one]
+  simp [hi]
+
+/-- A word below `4096` has nothing above its low twelve bits, so the
+complement of `4095` clears it. -/
+theorem arm8AndNot_eq_zero_of_toNat_lt (w : BitVec 64) (h : w.toNat < 4096) :
+    w &&& ~~~(4095 : BitVec 64) = (0 : BitVec 64) := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  rw [BitVec.getLsbD_and]
+  have hz : (0 : BitVec 64).getLsbD i = false := by simp
+  rw [hz]
+  by_cases hi12 : i < 12
+  · have hm : (~~~(4095 : BitVec 64)).getLsbD i = false := by
+      rw [BitVec.getLsbD_not]
+      have h4095 : (4095 : BitVec 64).getLsbD i = true := by
+        simp only [BitVec.getLsbD]
+        exact arm8NatTestBit_4095 hi12
+      rw [h4095]
+      simp [hi]
+    rw [hm, Bool.and_false]
+  · have hw : w.getLsbD i = false := by
+      simp only [BitVec.getLsbD]
+      exact arm8NatTestBit_false_of_lt (by
+        have h2 : 2 ^ 12 ≤ 2 ^ i := Nat.pow_le_pow_right (by norm_num) (by omega)
+        omega)
+    rw [hw, Bool.false_and]
+
+/-- The `AddSubImmediate@64` immediate the far-offset lowering computes is
+encodable: on the far-offset branch the offset is neither its own signed
+nine-bit form nor the scaled twelve-bit form, so it is at least `257` in
+magnitude, and the configured window keeps the computed immediate inside
+`[1, 4095]`. -/
+theorem arm8FarImm_encodable (off : BitVec 64)
+    (hok : asmAddrOffsetOkExact arm8ConfigL3 off = true)
+    (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))) :
+    (if !off.msb then off - (0xFF : BitVec 64) else -off - (0x100 : BitVec 64)) &&&
+      ~~~(4095 : BitVec 64) = (0 : BitVec 64) := by
+  obtain ⟨hlo, hhi⟩ := arm8FarOffsetBounds off hok
+  have hout : ¬((-256 : Int) ≤ off.toInt ∧ off.toInt ≤ 255) := by
+    intro ⟨h1, h2⟩
+    exact hnsx (arm8NineBitForm_of_range off h1 h2)
+  by_cases hmsb : off.msb
+  · have hcond := BitVec.toInt_eq_msb_cond off
+    rw [hmsb] at hcond
+    simp only [if_true] at hcond
+    have hnat : (off.toNat : Int) = off.toInt + 2 ^ 64 := by omega
+    have hle : off.toInt ≤ -257 := by omega
+    have hneg : (-off).toNat = (-off.toInt).toNat := by
+      rw [BitVec.toNat_neg]
+      omega
+    have hbNat : (-off - (0x100 : BitVec 64)).toNat = (-off.toInt - 256).toNat := by
+      rw [BitVec.toNat_sub, hneg]
+      have h256 : (0x100 : BitVec 64).toNat = 256 := by decide
+      rw [h256]
+      omega
+    have hsmall : (-off - (0x100 : BitVec 64)).toNat < 4096 := by
+      rw [hbNat]
+      omega
+    simp only [hmsb, Bool.not_true, Bool.false_eq_true, if_false]
+    exact arm8AndNot_eq_zero_of_toNat_lt _ hsmall
+  · have hmsbf : off.msb = false := by
+      cases hb : off.msb
+      · rfl
+      · exact absurd hb hmsb
+    have hcond := BitVec.toInt_eq_msb_cond off
+    rw [hmsbf] at hcond
+    simp only [Bool.false_eq_true, if_false] at hcond
+    have hge : (256 : Int) ≤ off.toInt := by omega
+    have hnat : off.toNat = off.toInt.toNat := by omega
+    have hbNat : (off - (0xFF : BitVec 64)).toNat = off.toNat - 255 := by
+      rw [BitVec.toNat_sub]
+      have h255 : (0xFF : BitVec 64).toNat = 255 := by decide
+      rw [h255]
+      omega
+    have hsmall : (off - (0xFF : BitVec 64)).toNat < 4096 := by
+      rw [hbNat]
+      omega
+    simp only [hmsbf, Bool.not_false, if_true]
+    exact arm8AndNot_eq_zero_of_toNat_lt _ hsmall
+
 /-- `holUpdate` at its application form for any carrier (Flapjack
 infrastructure: the memory-specialised `holUpdate_apply` does not cover the
 register file). -/
@@ -6927,13 +7041,13 @@ theorem arm8_encoder_correct_mem_load_far (dest base : Nat) (off : BitVec 64)
     (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)))
     (hfar : off.msb = true ∨
       ¬(off = (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> 3).toNat)) <<< 3))
-    (hlow : (if !off.msb then off - (0xFF : BitVec 64) else -off - (0x100 : BitVec 64)) &&&
-        ~~~(4095 : BitVec 64) = (0 : BitVec 64)) :
+    (hok : asmAddrOffsetOkExact arm8ConfigL3 off = true) :
     CaseGoal (.inst (.mem .load dest (.addr base off))) s1 s2 ms := by
+  have hlow := arm8FarImm_encodable off hok hnsx
   by_cases hmsb : off.msb
   · exact arm8_encoder_correct_mem_load_far_neg dest base off s1 s2 ms h hnsx hmsb (by
-      rw [hmsb] at hlow
-      simpa using hlow)
+      simp only [hmsb, Bool.not_true, Bool.false_eq_true, if_false] at hlow
+      exact hlow)
   · have hmsbf : off.msb = false := by
       cases hb : off.msb
       · rfl
@@ -6942,8 +7056,8 @@ theorem arm8_encoder_correct_mem_load_far (dest base : Nat) (off : BitVec 64)
     · rw [htrue] at hmsbf
       exact absurd hmsbf (by decide)
     · exact arm8_encoder_correct_mem_load_far_pos dest base off s1 s2 ms h hnsx hmsbf hscaled (by
-        rw [hmsbf] at hlow
-        simpa using hlow)
+        simp only [hmsbf, Bool.not_false, if_true] at hlow
+        exact hlow)
 
 /-- The far-offset branch of the `.mem .store` constructor: the offset is neither
 its own signed nine-bit form nor the scaled twelve-bit form, so `arm8_ast`
@@ -6956,13 +7070,13 @@ theorem arm8_encoder_correct_mem_store_far (dest base : Nat) (off : BitVec 64)
     (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)))
     (hfar : off.msb = true ∨
       ¬(off = (BitVec.zeroExtend 64 (BitVec.ofNat 12 (off >>> 3).toNat)) <<< 3))
-    (hlow : (if !off.msb then off - (0xFF : BitVec 64) else -off - (0x100 : BitVec 64)) &&&
-        ~~~(4095 : BitVec 64) = (0 : BitVec 64)) :
+    (hok : asmAddrOffsetOkExact arm8ConfigL3 off = true) :
     CaseGoal (.inst (.mem .store dest (.addr base off))) s1 s2 ms := by
+  have hlow := arm8FarImm_encodable off hok hnsx
   by_cases hmsb : off.msb
   · exact arm8_encoder_correct_mem_store_far_neg dest base off s1 s2 ms h hnsx hmsb (by
-      rw [hmsb] at hlow
-      simpa using hlow)
+      simp only [hmsb, Bool.not_true, Bool.false_eq_true, if_false] at hlow
+      exact hlow)
   · have hmsbf : off.msb = false := by
       cases hb : off.msb
       · rfl
@@ -6971,8 +7085,8 @@ theorem arm8_encoder_correct_mem_store_far (dest base : Nat) (off : BitVec 64)
     · rw [htrue] at hmsbf
       exact absurd hmsbf (by decide)
     · exact arm8_encoder_correct_mem_store_far_pos dest base off s1 s2 ms h hnsx hmsbf hscaled (by
-        rw [hmsbf] at hlow
-        simpa using hlow)
+        simp only [hmsbf, Bool.not_false, if_true] at hlow
+        exact hlow)
 
 /-- The `.mem .load` constructor of `encoder_correct arm8TargetL3` on the
 unscaled `imm9` path of `e_LoadStoreImmediate`.
