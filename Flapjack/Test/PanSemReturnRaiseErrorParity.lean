@@ -53,7 +53,7 @@ def returnRaiseEvaluate (clock : Nat) (program : Prog Word64)
   let exceptionShapes := match contracts with
     | none => fun _ => none
     | some contracts => fun name => lookupInfo name contracts.exceptionShapes
-  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+  panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) { initial with exceptionShapes := exceptionShapes } program
     (contracts := contracts)
 

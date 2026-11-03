@@ -1,0 +1,6 @@
+fun 1 main() {
+  var 1 a = 305419896;
+  var 1 b = 12345;
+  var 1 m = a * b;
+  return m;
+}

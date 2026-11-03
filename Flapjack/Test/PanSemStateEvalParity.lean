@@ -136,6 +136,54 @@ private def isErrorControlResult
 def littleEndianState : PanSemState Word64 Unit := sourceState false true true
 def bigEndianState : PanSemState Word64 Unit := sourceState true true true
 
+/- Counted field expressions must use the caller's state-owned access, just as
+   counted expressions and argument lists do. -/
+private def countedByteField (state : PanSemState Word64 Unit) :=
+  evalPanValueFieldsCounted state.structs state.locals state.globals state.memory
+    state.baseAddress state.topAddress panSemBitVec64BytesInWord
+    [("byte", .loadByte (.const 0))]
+    (memoryAccess := some (panSemBitVec64MemoryAccess state))
+
+#guard (countedByteField littleEndianState).map (fun result =>
+  match result.1 with
+  | [("byte", .word value)] => value == (0x88 : Word64)
+  | _ => false) == some true
+#guard (countedByteField bigEndianState).map (fun result =>
+  match result.1 with
+  | [("byte", .word value)] => value == (0x11 : Word64)
+  | _ => false) == some true
+#guard (countedByteField (sourceState false false true)).isNone
+
+/- `pan_sem_state_eval_probe.out` also evaluates the enclosing NStruct. -/
+private def namedByteState (state : PanSemState Word64 Unit) : PanSemState Word64 Unit :=
+  { state with structs := [("Pair", { fields := [("f", .one)], size := 1 })] }
+
+private def namedByteValue (state : PanSemState Word64 Unit) : Option Word64 :=
+  match evalPanSemStateExp (namedByteState state)
+      (.nStruct "Pair" [("f", .loadByte (.const 0))]) with
+  | some (.nStruct "Pair" [("f", .word value)]) => some value
+  | _ => none
+
+#guard namedByteValue littleEndianState == some 0x88
+#guard namedByteValue bigEndianState == some 0x11
+#guard (namedByteValue (sourceState false false true)).isNone
+
+/- These named-field cases mirror `pan_eval_probe.out`. The duplicate stored
+   field is intentional: HOL's ALOOKUP returns the first occurrence even for
+   a value that was not constructed by the NStruct expression clause. -/
+private def namedFieldState : PanSemState Word64 Unit :=
+  { littleEndianState with
+    structs := [("Pair", { fields := [("left", .one), ("right", .one)], size := 2 })]
+    locals := fun name => if name == "v" then
+      some (.nStruct "Pair" [("left", .word 3), ("left", .word 4)]) else none }
+
+#guard isWordResult (evalPanSemStateExp namedFieldState
+  (.nField "left" (.var .local "v"))) 3
+#guard isNoneResult (evalPanSemStateExp namedFieldState
+  (.nField "missing" (.var .local "v")))
+#guard isNoneResult (evalPanSemStateExp { namedFieldState with structs := [] }
+  (.nField "left" (.var .local "v")))
+
 def sourceFfiOracle : FfiOracle Unit := fun _ state _ bytes => .returned state bytes
 
 def sourceFfiState : FfiState Unit :=
@@ -209,6 +257,20 @@ private def observesReturnedWord
 #guard isErrorControlResult
   (panSemEvaluateRiscV64CodeState sourceFfiContext sourcePrimitive sourceFfiHandler
     (sourceCodeState false false) (.return (.loadByte (.const 0))))
+
+/- The post-state entry follows the same state-owned memory path, including
+   byte order and rejection outside the source memory domain. -/
+#guard observesReturnedWord
+  ((panSemEvaluateRiscV64CodeStateWithPostState sourceFfiContext sourcePrimitive sourceFfiHandler
+    (sourceCodeState false true) (.return (.loadByte (.const 0)))).map Prod.fst)
+  (BitVec.ofNat 64 0x88)
+#guard observesReturnedWord
+  ((panSemEvaluateRiscV64CodeStateWithPostState sourceFfiContext sourcePrimitive sourceFfiHandler
+    (sourceCodeState true true) (.return (.loadByte (.const 0)))).map Prod.fst)
+  (BitVec.ofNat 64 0x11)
+#guard isErrorControlResult
+  ((panSemEvaluateRiscV64CodeStateWithPostState sourceFfiContext sourcePrimitive sourceFfiHandler
+    (sourceCodeState false false) (.return (.loadByte (.const 0)))).map Prod.fst)
 
 #guard isWordResult
   (evalPanSemStateExp littleEndianState (.load .one (.const 0)))

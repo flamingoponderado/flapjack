@@ -1991,7 +1991,7 @@ theorem evalPanValueDeclarationsWithStructs_one_fun_last
       | name name fields => simp [isDecl, isExnDecl] at hhead
       | decl shape name expression =>
           rw [evalPanValueDeclarationsWithStructs_function_decl_commute]
-          simp only [evalPanValueDeclarationsWithStructs]
+          simp only [evalPanValueDeclarationsWithStructs, evalPanValueExpWith_none]
           cases hval : evalPanValueExp structs (fun _ => none) state.globals
               state.memory state.baseAddress state.topAddress state.bytesInWord
               expression (memoryAccess := memoryAccess) with
@@ -2054,7 +2054,7 @@ theorem evalPanValueDeclarationsWithStructs_exnDecl_decl_commute
       by_cases hmatch : panShapeMatches (panValueShape structs value) declShape = true <;>
         by_cases hexists : (lookupInfo exception state.exceptions).isSome = true <;>
         by_cases hshape : isWfShape structs shape = true <;>
-        simp [hmatch, hexists, hshape]
+        simp [hexists, hshape]
 
 /-- Bubbling a declaration that commutes with every element of `rest` to the
     end of that list. -/

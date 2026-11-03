@@ -7,4 +7,7 @@ eval_nstruct_ok=T
 eval_nstruct_name_mismatch=T
 eval_nstruct_shape_mismatch=T
 eval_missing_struct=T
+eval_nfield_first_duplicate=T
+eval_nfield_missing_field=T
+eval_nfield_missing_struct=T
 eval_probe_done=0

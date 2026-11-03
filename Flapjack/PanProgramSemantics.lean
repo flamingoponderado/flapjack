@@ -1,5 +1,6 @@
 module
 
+public import Flapjack.PanExpressionEvaluatorBase
 public import Flapjack.PanMemory
 public import Flapjack.PanBst
 
@@ -94,23 +95,23 @@ def evalPanValueDeclarationsWithStructs
     (structs : StructContext) (state : PanValueProgramState α) :
     (declarations : List (Decl α)) →
     (memoryAccess : Option (PanValueMemoryAccess α) := none) →
+    (evaluator : Option (PanExprEvaluator α) := none) →
       Option (PanValueProgramState α)
-  | [], _ => some state
-  | .name _ _ :: declarations, memoryAccess =>
+  | [], _, _ => some state
+  | .name _ _ :: declarations, memoryAccess, evaluator =>
       evalPanValueDeclarationsWithStructs structs state declarations
-        (memoryAccess := memoryAccess)
-  | .decl shape name expression :: declarations, memoryAccess => do
-      let value ← evalPanValueExp structs (fun _ => none) state.globals
-        state.memory state.baseAddress state.topAddress state.bytesInWord expression
-        (memoryAccess := memoryAccess)
+        (memoryAccess := memoryAccess) (evaluator := evaluator)
+  | .decl shape name expression :: declarations, memoryAccess, evaluator => do
+      let value ← evalPanValueExpWith evaluator structs (fun _ => none) state.globals
+        state.memory state.baseAddress state.topAddress state.bytesInWord expression memoryAccess
       if panShapeMatches (panValueShape structs value) shape then
         evalPanValueDeclarationsWithStructs structs
           { state with
               structs := structs
               globals := updatePanValueMap state.globals name value } declarations
-          (memoryAccess := memoryAccess)
+          (memoryAccess := memoryAccess) (evaluator := evaluator)
       else none
-  | .function declaration :: declarations, memoryAccess =>
+  | .function declaration :: declarations, memoryAccess, evaluator =>
       /- CakeML's `evaluate_decls` installs functions without a distinctness
          check on parameter names; `ALL_DISTINCT` is only enforced per call
          in `lookup_code` (`panSemScript.sml:827-831,461-463`). -/
@@ -124,16 +125,16 @@ def evalPanValueDeclarationsWithStructs
               structs := structs
               returnShapes := (declaration.name, declaration.returnShape) :: state.returnShapes
               parameterShapes := (declaration.name, declaration.params) :: state.parameterShapes }
-          declarations (memoryAccess := memoryAccess)
+          declarations (memoryAccess := memoryAccess) (evaluator := evaluator)
       else none
-  | .exnDecl exception shape :: declarations, memoryAccess =>
+  | .exnDecl exception shape :: declarations, memoryAccess, evaluator =>
       if (lookupInfo exception state.exceptions).isSome then none
       else if isWfShape structs shape then
         evalPanValueDeclarationsWithStructs structs
           { state with
               structs := structs
               exceptions := (exception, shape) :: state.exceptions } declarations
-          (memoryAccess := memoryAccess)
+          (memoryAccess := memoryAccess) (evaluator := evaluator)
       else none
 termination_by declarations => sizeOf declarations
 
@@ -144,12 +145,164 @@ def evalPanValueDeclarations
     (state : PanValueProgramState α) :
     (declarations : List (Decl α)) →
     (memoryAccess : Option (PanValueMemoryAccess α) := none) →
+    (evaluator : Option (PanExprEvaluator α) := none) →
       Option (PanValueProgramState α)
-  | declarations, memoryAccess => do
+  | declarations, memoryAccess, evaluator => do
       let structs ← collectPanValueStructs declarations state.structs
       evalPanValueDeclarationsWithStructs structs
         { state with structs := structs } declarations
-        (memoryAccess := memoryAccess)
+        (memoryAccess := memoryAccess) (evaluator := evaluator)
+
+/-- A pointwise-correct expression route preserves declaration evaluation
+    with a fixed structure context and source word size. -/
+theorem evalPanValueDeclarationsWithStructs_route_eq
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (bytes : α) (access : Option (PanValueMemoryAccess α))
+    (run : PanExprEvaluator α)
+    (h : ∀ globals memory base top e,
+      run structs (fun _ => none) globals memory base top bytes access e =
+        evalPanValueExp structs (fun _ => none) globals memory base top bytes e access) :
+    ∀ decls state, state.bytesInWord = bytes →
+      evalPanValueDeclarationsWithStructs structs state decls access (some run) =
+        evalPanValueDeclarationsWithStructs structs state decls access none := by
+  intro decls
+  induction decls with
+  | nil => intro state hs; simp [evalPanValueDeclarationsWithStructs]
+  | cons d ds ih =>
+    intro state hs
+    cases d <;> simp [evalPanValueDeclarationsWithStructs, evalPanValueExpWith, hs, h, ih]
+/-- A pointwise-correct expression route preserves the declaration entry,
+    including structure collection and failures. -/
+theorem evalPanValueDeclarations_route_eq
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (bytes : α) (access : Option (PanValueMemoryAccess α)) (run : PanExprEvaluator α)
+    (h : ∀ structs globals memory base top e,
+      run structs (fun _ => none) globals memory base top bytes access e =
+        evalPanValueExp structs (fun _ => none) globals memory base top bytes e access)
+    (state : PanValueProgramState α) (hs : state.bytesInWord = bytes) (decls : List (Decl α)) :
+    evalPanValueDeclarations state decls access (some run) =
+      evalPanValueDeclarations state decls access none := by
+  simp only [evalPanValueDeclarations]
+  cases hstructs : collectPanValueStructs decls state.structs with
+  | none => simp
+  | some structs =>
+    simp only [Option.bind_eq_bind, Option.bind_some]
+    exact evalPanValueDeclarationsWithStructs_route_eq structs bytes access run (h structs) decls _ hs
+
+/-- Declaration evaluation retains the context collected before initializers run. -/
+theorem evalPanValueDeclarationsWithStructs_structs
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (access : Option (PanValueMemoryAccess α))
+    (route : Option (PanExprEvaluator α)) :
+    ∀ decls (state result : PanValueProgramState α),
+      state.structs = structs →
+      evalPanValueDeclarationsWithStructs structs state decls access route = some result →
+      result.structs = structs := by
+  intro decls
+  induction decls with
+  | nil =>
+    intro state result hs h
+    simp only [evalPanValueDeclarationsWithStructs, Option.some.injEq] at h
+    subst result
+    exact hs
+  | cons d ds ih =>
+    intro state result hs h
+    cases d with
+    | name name fields =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      exact ih state result hs h
+    | function declaration =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      split at h
+      · exact ih _ result rfl h
+      · contradiction
+    | decl shape name expression =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      cases hv : evalPanValueExpWith route structs (fun _ => none) state.globals state.memory
+          state.baseAddress state.topAddress state.bytesInWord expression access with
+      | none => simp [hv] at h
+      | some value =>
+        simp only [hv, Option.bind_eq_bind, Option.bind_some] at h
+        split at h
+        · exact ih _ result rfl h
+        · contradiction
+    | exnDecl name shape =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      split at h
+      · contradiction
+      · split at h
+        · exact ih _ result rfl h
+        · contradiction
+
+/-- Declaration evaluation preserves the source word size for every route. -/
+theorem evalPanValueDeclarationsWithStructs_bytesInWord
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (access : Option (PanValueMemoryAccess α))
+    (route : Option (PanExprEvaluator α)) : ∀ decls state result,
+      evalPanValueDeclarationsWithStructs structs state decls access route = some result →
+        result.bytesInWord = state.bytesInWord := by
+  intro decls
+  induction decls with
+  | nil =>
+    intro state result h
+    simpa [evalPanValueDeclarationsWithStructs] using congrArg (Option.map PanValueProgramState.bytesInWord) h.symm
+  | cons d ds ih =>
+    intro state result h
+    cases d with
+    | name name fields =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      exact ih state result h
+    | function declaration =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      split at h
+      · have hr := ih _ result h
+        exact hr
+      · contradiction
+    | decl shape name expression =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      cases hv : evalPanValueExpWith route structs (fun _ => none) state.globals state.memory
+          state.baseAddress state.topAddress state.bytesInWord expression access with
+      | none => simp [hv] at h
+      | some value =>
+        simp only [hv, Option.bind_eq_bind, Option.bind_some] at h
+        split at h
+        · have hr := ih _ result h
+          exact hr
+        · contradiction
+    | exnDecl name shape =>
+      simp only [evalPanValueDeclarationsWithStructs] at h
+      split at h
+      · contradiction
+      · split at h
+        · have hr := ih _ result h
+          exact hr
+        · contradiction
+
+
+/-- The declaration entry also preserves the source word size. -/
+theorem evalPanValueDeclarations_bytesInWord
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (state result : PanValueProgramState α) (decls : List (Decl α))
+    (access : Option (PanValueMemoryAccess α)) (route : Option (PanExprEvaluator α))
+    (h : evalPanValueDeclarations state decls access route = some result) :
+    result.bytesInWord = state.bytesInWord := by
+  simp only [evalPanValueDeclarations] at h
+  cases hc : collectPanValueStructs decls state.structs with
+  | none => simp [hc] at h
+  | some structs =>
+    simp only [hc, Option.bind_eq_bind, Option.bind_some] at h
+    have hr := evalPanValueDeclarationsWithStructs_bytesInWord structs access route decls _ result h
+    exact hr
 
 /-- Cake's `evaluate_decls_append`
     (`cakeml/pancake/semantics/panPropsScript.sml:1540`): evaluating a
@@ -180,7 +333,7 @@ theorem evalPanValueDeclarationsWithStructs_append
           exact ih state
       | decl shape name expression =>
           rw [List.cons_append]
-          simp only [evalPanValueDeclarationsWithStructs]
+          simp only [evalPanValueDeclarationsWithStructs, evalPanValueExpWith_none]
           cases hval : evalPanValueExp structs (fun _ => none) state.globals
               state.memory state.baseAddress state.topAddress state.bytesInWord
               expression (memoryAccess := memoryAccess) with
@@ -228,7 +381,7 @@ theorem evalPanValueDeclarationsWithStructs_function_decl_commute
       evalPanValueDeclarationsWithStructs structs state
         (.decl shape name expression :: .function declaration :: declarations)
         memoryAccess := by
-  simp only [evalPanValueDeclarationsWithStructs]
+  simp only [evalPanValueDeclarationsWithStructs, evalPanValueExpWith_none]
   cases hval : evalPanValueExp structs (fun _ => none) state.globals
       state.memory state.baseAddress state.topAddress state.bytesInWord
       expression (memoryAccess := memoryAccess) with
@@ -421,7 +574,7 @@ theorem evalPanValueDeclarationsWithStructs_functions_wf
           simp at hmem
           exact ih state state' heval hmem
       | decl shape name expression =>
-          simp only [evalPanValueDeclarationsWithStructs] at heval
+          simp only [evalPanValueDeclarationsWithStructs, evalPanValueExpWith_none] at heval
           cases hval : evalPanValueExp structs (fun _ => none) state.globals
               state.memory state.baseAddress state.topAddress state.bytesInWord
               expression (memoryAccess := memoryAccess) with
@@ -505,7 +658,7 @@ theorem evalPanValueDeclarationsWithStructs_exceptions_wf
           simp at hmem
           exact ih state state' heval hmem
       | decl declShape name expression =>
-          simp only [evalPanValueDeclarationsWithStructs] at heval
+          simp only [evalPanValueDeclarationsWithStructs, evalPanValueExpWith_none] at heval
           cases hval : evalPanValueExp structs (fun _ => none) state.globals
               state.memory state.baseAddress state.topAddress state.bytesInWord
               expression (memoryAccess := memoryAccess) with

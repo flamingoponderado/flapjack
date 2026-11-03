@@ -193,6 +193,7 @@ import Flapjack.Test.PanValueFfiFuel
 import Flapjack.Test.PanValueFfiClockSemantics
 import Flapjack.Test.PanValueWfParity
 import Flapjack.Test.PanSemStateEvalParity
+import Flapjack.Test.PanSemEvalRoutedParity
 import Flapjack.Test.PanCost
 import Flapjack.Test.SourceSemanticsOps
 import Flapjack.Test.PanToCrepExceptionRelation

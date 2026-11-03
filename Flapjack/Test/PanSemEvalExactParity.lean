@@ -1,6 +1,6 @@
 /-
 Parity for the exact-carrier `eval_def` port (`Flapjack/Pancake/Semantics/PanSem/EvalExact.lean`,
-bead flapjack-pxn.18.3.6.9.15).  The nine rows mirror the direct original-HOL
+bead flapjack-pxn.18.3.6.9.15).  The rows mirror the direct original-HOL
 equalities in `scripts/hol-probes/pan_eval_probe.out` (all `T`), which were
 produced from `pan_itreeSemTheory` whose `eval_def` is identical to
 `panSemScript.sml:209`.  The exact carriers (`ValueHOL`, `PanSemStateExact`)
@@ -51,6 +51,12 @@ private def namedPairEq : Option (ValueHOL 8) → Bool
          | _ => false)
   | _ => false
 
+private def namedLocalValue : ValueHOL 8 :=
+  .nStruct (ml "Pair") [(ml "left", .val (.word 3)), (ml "left", .val (.word 4))]
+
+private abbrev namedLocalState : PanSemStateExact 8 Unit :=
+  { exactState with locals := fun name => if name = ml "v" then some namedLocalValue else none }
+
 def evalExactGuard : Bool :=
   wordNat? (evalHOLExact exactState (.const (7 : BitVec 8))) == some 7 &&
   wordNat? (evalHOLExact exactState (.var .local (ml "x"))) == some 5 &&
@@ -64,13 +70,19 @@ def evalExactGuard : Bool :=
     (.nstruct (ml "Pair") [(ml "left", .const (3 : BitVec 8)), (ml "bad", .const (4 : BitVec 8))])) &&
   isNoneResult (evalHOLExact exactState
     (.nstruct (ml "Pair") [(ml "left", .const (3 : BitVec 8)), (ml "right", .rstruct [])])) &&
-  isNoneResult (evalHOLExact { exactState with structs := [] } (.nstruct (ml "Pair") []))
+  isNoneResult (evalHOLExact { exactState with structs := [] } (.nstruct (ml "Pair") [])) &&
+  wordNat? (evalHOLExact namedLocalState
+    (.nfield (ml "left") (.var .local (ml "v")))) == some 3 &&
+  isNoneResult (evalHOLExact namedLocalState
+    (.nfield (ml "missing") (.var .local (ml "v")))) &&
+  isNoneResult (evalHOLExact { namedLocalState with structs := [] }
+    (.nfield (ml "left") (.var .local (ml "v"))))
 
 #guard evalExactGuard
 
 def runChecks : IO Bool := do
   if evalExactGuard then
-    IO.println "PASS exact panSem eval_def over the exact MlString carrier (9 HOL rows)"
+    IO.println "PASS exact panSem eval_def over the exact MlString carrier (12 HOL rows)"
     pure true
   else
     IO.println "FAIL exact panSem eval_def over the exact MlString carrier"

@@ -1,0 +1,9 @@
+fun 1 main() {
+  var 1 i = 0;
+  var 1 acc = 0;
+  while (i < 20) {
+    if (i & 1) { acc = acc + i; } else { acc = acc - i; }
+    i = i + 1;
+  }
+  return acc;
+}
