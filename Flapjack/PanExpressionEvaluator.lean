@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.PanExpressionEvaluatorBase
-public import Flapjack.PanSteppedSemantics
+public import Flapjack.PanValueExpCounted
 
 @[expose] public section
 
