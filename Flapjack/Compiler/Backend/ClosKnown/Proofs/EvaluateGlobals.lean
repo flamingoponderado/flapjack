@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.PrimitiveGlobals
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
 
 /-! Global-write safety during closure evaluation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown
@@ -466,6 +467,198 @@ theorem evaluateChangedGlobalsHandle {C F : Type} (trace : BackendCommon.Tra)
           simp [evaluate, bodyRun, fixClock, Nat.min_eq_right clockBound, handlerRun] at run
           rcases run with ⟨rfl, rfl⟩
           exact ⟨lastSafe, resultSafe, n + m, finalOracle, finalFrame⟩
+
+
+/-- A conditional may write globals in its condition or either branch.
+This is Lean proof infrastructure without a separate HOL declaration. -/
+private theorem ifWrites (trace : BackendCommon.Tra) (condition yes no : ClosLang.Exp) :
+    {k | elistGlobals [.ifThenElse trace condition yes no] k ≠ 0} =
+      {k | elistGlobals [condition] k ≠ 0} ∪
+      {k | elistGlobals [yes] k ≠ 0} ∪ {k | elistGlobals [no] k ≠ 0} := by
+  ext k
+  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag]
+  omega
+
+/-- Conditional evaluation preserves global safety under the original
+condition and branch induction hypotheses. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsIf {C F : Type} (trace : BackendCommon.Tra)
+    (condition yes no : ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (conditionIH : EvalGlobalsInvariant [condition] env s0)
+    (yesIH : ∀ values next, evaluate [condition] env s0 = (.val values, next) →
+      ClosSem.boolValue true = @Flapjack.holHd ClosSem.Value ⟨unitValue⟩ values →
+      EvalGlobalsInvariant [yes] env next)
+    (noIH : ∀ values next, evaluate [condition] env s0 = (.val values, next) →
+      ClosSem.boolValue true ≠ @Flapjack.holHd ClosSem.Value ⟨unitValue⟩ values →
+      ClosSem.boolValue false = @Flapjack.holHd ClosSem.Value ⟨unitValue⟩ values →
+      EvalGlobalsInvariant [no] env next)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.ifThenElse trace condition yes no] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.ifThenElse trace condition yes no] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.ifThenElse trace condition yes no] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  rcases h with ⟨run, safe, expressionSafe, envSafe⟩
+  have safeParts : esgcFree condition ∧ esgcFree yes ∧ esgcFree no := by
+    simpa [esgcFree] using expressionSafe (.ifThenElse trace condition yes no) (by simp)
+  have conditionSafe : ∀ e ∈ [condition], esgcFree e := by simpa using safeParts.1
+  cases conditionRun : evaluate [condition] env s0 with
+  | mk conditionResult next =>
+    have ⟨nextSafe, conditionResultSafe, n, nextOracle, conditionFrame⟩ :=
+      conditionIH conditionResult next ⟨conditionRun, safe, conditionSafe, envSafe⟩
+    have clockBound : next.clock ≤ s0.clock := by
+      simpa [conditionRun] using evaluate_clock_le [condition] env s0
+    have enlarged : mglobalsExtend s0.globals
+        ({k | elistGlobals [.ifThenElse trace condition yes no] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) next.globals := by
+      apply mglobalsExtendSubset _ _ _ _ ⟨conditionFrame, ?_⟩
+      intro k member
+      rcases member with member | member
+      · left; rw [ifWrites]; exact Or.inl (Or.inl member)
+      · exact Or.inr member
+    have finishBranch (branch : ClosLang.Exp)
+        (branchSafe : ∀ e ∈ [branch], esgcFree e)
+        (included : {k | elistGlobals [branch] k ≠ 0} ⊆
+          {k | elistGlobals [.ifThenElse trace condition yes no] k ≠ 0})
+        (branchIH : EvalGlobalsInvariant [branch] env next)
+        (branchRun : evaluate [branch] env next = (res, s)) :
+        ssgcFree s ∧ rsgcFree res ∧ ∃ total,
+          s.compileOracle = Flapjack.holShiftSeq total s0.compileOracle ∧
+          mglobalsExtend s0.globals
+            ({k | elistGlobals [.ifThenElse trace condition yes no] k ≠ 0} ∪
+             {k | elistGlobals (List.flatten (firstNExps s0.compileOracle total)) k ≠ 0}) s.globals := by
+      have ⟨lastSafe, resultSafe, m, lastOracle, branchFrame⟩ :=
+        branchIH res s ⟨branchRun, nextSafe, branchSafe, envSafe⟩
+      refine ⟨lastSafe, resultSafe, n + m, ?_, ?_⟩
+      · simpa only [nextOracle, shiftSeqAdd] using lastOracle
+      · have frame2 : mglobalsExtend next.globals
+            ({k | elistGlobals [branch] k ≠ 0} ∪
+             {k | elistGlobals (List.flatten (firstNExps (Flapjack.holShiftSeq n s0.compileOracle) m)) k ≠ 0})
+            s.globals := by simpa only [nextOracle] using branchFrame
+        have combined := mglobalsExtendTrans _ _ _ _ _ ⟨conditionFrame, frame2⟩
+        apply mglobalsExtendSubset _ _ _ _ ⟨combined, ?_⟩
+        rw [Nat.add_comm n m, firstNExpsWritesShift]
+        intro k member
+        rcases member with (member | member) | (member | member)
+        · left; rw [ifWrites]; exact Or.inl (Or.inl member)
+        · exact Or.inr (Or.inl member)
+        · exact Or.inl (included member)
+        · exact Or.inr (Or.inr member)
+    cases conditionResult with
+    | err error =>
+      simp only [evaluate, conditionRun, fixClock] at run
+      rcases run with ⟨rfl, rfl⟩
+      exact ⟨(ssgcFreeClock next (fun clock => min s0.clock clock)).2 nextSafe,
+        conditionResultSafe, n, nextOracle, enlarged⟩
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value condition env s0 next values conditionRun
+      cases boolRun : asBool value with
+      | none =>
+        simp [evaluate, conditionRun, fixClock, boolRun] at run
+        rcases run with ⟨rfl, rfl⟩
+        exact ⟨(ssgcFreeClock next (fun clock => min s0.clock clock)).2 nextSafe,
+          by simp [rsgcFree], n, nextOracle, enlarged⟩
+      | some flag =>
+        cases flag with
+        | false =>
+          have boolEq : value = ClosSem.boolValue false := (asBool_eq_some value false).1 boolRun
+          have notTrue : ClosSem.boolValue true ≠ value := by simp [boolEq, ClosSem.boolValue, BackendCommon.trueTag, BackendCommon.falseTag]
+          have selectedIH := noIH [value] next conditionRun (by simpa [Flapjack.holHd] using notTrue) (by simpa [Flapjack.holHd] using boolEq.symm)
+          refine finishBranch no (by simpa using safeParts.2.2) ?_ selectedIH ?_
+          · intro k member; rw [ifWrites]; exact Or.inr member
+          · simpa [evaluate, conditionRun, fixClock, Nat.min_eq_right clockBound, boolRun] using run
+        | true =>
+          have boolEq : value = ClosSem.boolValue true := (asBool_eq_some value true).1 boolRun
+          have selectedIH := yesIH [value] next conditionRun (by simpa [Flapjack.holHd] using boolEq.symm)
+          refine finishBranch yes (by simpa using safeParts.2.1) ?_ selectedIH ?_
+          · intro k member; rw [ifWrites]; exact Or.inl (Or.inr member)
+          · simpa [evaluate, conditionRun, fixClock, Nat.min_eq_right clockBound, boolRun] using run
+
+
+/-- Recursive closures built from safe captures and bodies are safe. This is
+Lean proof infrastructure without a separate HOL declaration. -/
+private theorem recursiveClosuresSafe (location : Option Nat) (captures : List ClosSem.Value)
+    (functions : List (Nat × ClosLang.Exp))
+    (capturesSafe : ∀ v ∈ captures, vsgcFree v)
+    (bodiesSafe : funGlobals functions = emptyGlobalBag) :
+    ∀ v ∈ (List.range functions.length).map (fun i => ClosSem.Value.recclosure location [] captures functions i), vsgcFree v := by
+  intro value member
+  obtain ⟨index, _, rfl⟩ := List.mem_map.mp member
+  simpa [vsgcFree, ← funGlobals_eq_elist] using And.intro bodiesSafe capturesSafe
+
+/-- Recursive binding evaluation preserves global safety under the original
+conditional body induction hypothesis. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsLetrec {C F : Type}
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (location : Option Nat)
+    (selected : Option (List Nat)) (functions : List (Nat × ClosLang.Exp))
+    (body : ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (bodyIH : ∀ (buildRc : List ClosSem.Value → List ClosSem.Value)
+      (envdelta : Option (List ClosSem.Value)) (ed : List ClosSem.Value),
+      (∀ entry ∈ functions, entry.1 ≤ s0.maxApp ∧ entry.1 ≠ 0) ∧
+      buildRc = (fun captures => (List.range functions.length).map
+        (fun i => ClosSem.Value.recclosure location [] captures functions i)) ∧
+      envdelta = (match selected with
+        | none => some (buildRc env)
+        | some indices => (lookupVars indices env).map buildRc) ∧
+      envdelta = some ed → EvalGlobalsInvariant [body] (ed ++ env) s0)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.letrec names location selected functions body] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.letrec names location selected functions body] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.letrec names location selected functions body] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  rcases h with ⟨run, safe, expressionSafe, envSafe⟩
+  have safeParts : funGlobals functions = emptyGlobalBag ∧ esgcFree body := by
+    simpa [esgcFree] using expressionSafe (.letrec names location selected functions body) (by simp)
+  have bodySafe : ∀ e ∈ [body], esgcFree e := by simpa using safeParts.2
+  by_cases valid : (functions.all (fun (arity, _) => arity ≤ s0.maxApp && arity != 0)) = true
+  · have allValid : ∀ entry ∈ functions, entry.1 ≤ s0.maxApp ∧ entry.1 ≠ 0 := by
+      simpa [List.all_eq_true] using valid
+    cases selected with
+    | none =>
+      let buildRc := fun captures => (List.range functions.length).map
+        (fun i => ClosSem.Value.recclosure location [] captures functions i)
+      have recSafe := recursiveClosuresSafe location env functions envSafe safeParts.1
+      have extendedSafe : ∀ v ∈ buildRc env ++ env, vsgcFree v := by
+        simpa [buildRc, List.mem_append, or_imp, forall_and] using And.intro recSafe envSafe
+      have ih := bodyIH buildRc (some (buildRc env)) (buildRc env) ⟨allValid, rfl, rfl, rfl⟩
+      have bodyRun : evaluate [body] (buildRc env ++ env) s0 = (res, s) := by
+        simpa [evaluate, valid, buildRc] using run
+      have ⟨lastSafe, resultSafe, n, oracle, frame⟩ := ih res s ⟨bodyRun, safe, bodySafe, extendedSafe⟩
+      refine ⟨lastSafe, resultSafe, n, oracle, ?_⟩
+      simpa [elistGlobals, setGlobals, safeParts.1, FlatProps.unionGlobalBag, emptyGlobalBag] using frame
+    | some indices =>
+      cases selectedRun : lookupVars indices env with
+      | none =>
+        simp [evaluate, valid, selectedRun] at run
+        rcases run with ⟨rfl, rfl⟩
+        exact ⟨safe, by simp [rsgcFree], 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
+      | some captures =>
+        let buildRc := fun captures => (List.range functions.length).map
+          (fun i => ClosSem.Value.recclosure location [] captures functions i)
+        have capturesSafe := lookupVarsSafe indices env captures envSafe selectedRun
+        have recSafe := recursiveClosuresSafe location captures functions capturesSafe safeParts.1
+        have extendedSafe : ∀ v ∈ buildRc captures ++ env, vsgcFree v := by
+          simpa [buildRc, List.mem_append, or_imp, forall_and] using And.intro recSafe envSafe
+        have ih := bodyIH buildRc (some (buildRc captures)) (buildRc captures)
+          ⟨allValid, rfl, by simp [selectedRun], rfl⟩
+        have bodyRun : evaluate [body] (buildRc captures ++ env) s0 = (res, s) := by
+          simpa [evaluate, valid, selectedRun, buildRc] using run
+        have ⟨lastSafe, resultSafe, n, oracle, frame⟩ := ih res s ⟨bodyRun, safe, bodySafe, extendedSafe⟩
+        refine ⟨lastSafe, resultSafe, n, oracle, ?_⟩
+        simpa [elistGlobals, setGlobals, safeParts.1, FlatProps.unionGlobalBag, emptyGlobalBag] using frame
+  · cases selected <;> simp [evaluate, valid] at run <;>
+      rcases run with ⟨rfl, rfl⟩ <;>
+      exact ⟨safe, by simp [rsgcFree], 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
 
 end EvaluateGlobalsPort
 end Flapjack.Compiler.Backend.ClosKnown
