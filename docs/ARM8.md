@@ -452,9 +452,14 @@ ones.
 `TN = 64`), and `arm8Ast_load_single`/`_store_single` pin the one-instruction
 `arm8_ast` branch for an offset that is its own signed nine-bit form.
 
-Still open for #1239: the memory-domain facts a load needs (from
-`¬ s2.failed`), the two-instruction `AddSubImmediate@64` +
-`LoadStoreImmediate` constructor, and the eight case theorems covering the
-load/store forms.
+`arm8Enc_load_single_length`/`_store_single_length` fix the emitted length at
+four bytes, and `arm8Mem_eight_value` derives the L3 read from the state
+relation plus the eight-address domain fact (the latter comes from
+`memLoadDomain` in the non-L3 `MemCase`, reusing `readMemWord_domain`).
+
+Still open for #1239: the load case theorem itself (the three-way split over
+`off.msb` and the scaled form), the two-instruction `AddSubImmediate@64` +
+`LoadStoreImmediate` constructor, and the remaining case theorems covering
+the load/store forms.
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
