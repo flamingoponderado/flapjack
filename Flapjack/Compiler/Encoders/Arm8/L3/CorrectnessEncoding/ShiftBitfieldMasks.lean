@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfield
+import Flapjack.HolRef
 
 set_option maxHeartbeats 12000000
 set_option maxRecDepth 10000
@@ -68,8 +69,9 @@ theorem wmask_lsr (n : Nat) (hn : n < 64) :
 /-- `arm8_targetProofScript.sml`'s `lsr`: masking the rotate right by the
 `Lsr` masks is the logical shift right. -/
 theorem lsr_mask (x : BitVec 64) (n : Nat) (hn : n < 64) :
-    ((x.rotateRight n &&& Replicate (holRotate (holPadLeft false 64 (Ones 64)) n)) &&&
-      Replicate (holPadLeft false 64 (Ones (63 - n + 1)))) = x >>> n := by
+    ((Replicate (TN := 64) (holPadLeft false 64 (Ones (63 - n + 1))) &&&
+        Replicate (TN := 64) (holRotate (holPadLeft false 64 (Ones 64)) n)) &&&
+      x.rotateRight n) = x >>> n := by
   rw [wmask_lsr n hn, BitVec.and_allOnes]
   apply BitVec.eq_of_getLsbD_eq
   intro i hi
@@ -187,5 +189,36 @@ theorem lsl_mask (x : BitVec 64) (n : Nat) (hn : n < 64) :
       omega
     · have hlt : i < n := by omega
       simp [hmod, hn64, hlt]
+
+/-- HOL `lsr`: masking the rotate right by the `DecodeBitMasks` masks is the
+logical shift right. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "lsr"]
+theorem arm8LsrMaskIdentity (n : Nat) (x wmask tmask : BitVec 64) (hn : n < 64)
+    (hmasks : DecodeBitMasks (TM := 64)
+      ((1 : BitVec 1), (BitVec.ofNat 6 63, (BitVec.ofNat 6 n, false))) = some (wmask, tmask)) :
+    ((tmask &&& wmask) &&& x.rotateRight n) = x >>> n := by
+  rw [decodeBitMasks_lsr n hn] at hmasks
+  have hp := Option.some.inj hmasks
+  rw [← (Prod.mk.inj hp).1, ← (Prod.mk.inj hp).2]
+  exact lsr_mask x n hn
+
+/-- HOL `lsl`: masking the rotate right by the `DecodeBitMasks` masks at
+`(1, q, r, F)` with `r = -n` and `q = r + 63w` is the logical shift left. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "lsl"]
+theorem arm8LslMaskIdentity (n : Nat) (x wmask tmask : BitVec 64) (r q : BitVec 6)
+    (hn : n < 64)
+    (hr : r = BitVec.ofNat 6 ((64 - n) % 64))
+    (hq : q = r + BitVec.ofNat 6 63)
+    (hmasks : DecodeBitMasks (TM := 64) ((1 : BitVec 1), (q, (r, false))) = some (wmask, tmask)) :
+    ((tmask &&& wmask) &&& x.rotateRight r.toNat) = x <<< n := by
+  have hq' : q = BitVec.ofNat 6 ((63 - n) % 64) := by
+    rw [hq, hr]
+    interval_cases n <;> decide
+  have hrt : r.toNat = (64 - n) % 64 := by rw [hr, BitVec.toNat_ofNat]; norm_num
+  rw [hq', hr] at hmasks
+  rw [decodeBitMasks_lsl n hn] at hmasks
+  have hp := Option.some.inj hmasks
+  rw [← (Prod.mk.inj hp).1, ← (Prod.mk.inj hp).2, hrt]
+  exact lsl_mask x n hn
 
 end Flapjack.Compiler.Encoders.Arm8.L3
