@@ -741,6 +741,165 @@ theorem doAppSsgcMemUpdate {C F : Type} (args : List ClosSem.Value)
     have frame := doAppMglobals _ _ _ _ _ run
     simp [ClosSem.doApp, found, valueSafe, nextSafe, oracle, frame]
 
+
+/-- Successful byte-array updates preserve state safety; this helper has no separate HOL declaration. -/
+private theorem memoryUpdateByteSafe {C F : Type} (args : List ClosSem.Value)
+    (s0 s : State C F) (value : ClosSem.Value)
+    (stateSafe : ssgcFree s0)
+    (run : applyMemory .updateByte args s0 = some (value, s)) :
+    vsgcFree value ∧ ssgcFree s := by
+  unfold applyMemory at run
+  repeat' split at run
+  all_goals simp_all
+  simp only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at run
+  rcases run with ⟨byte, _, rfl, rfl⟩
+  exact ⟨vsgcFreeUnit, ssgcFreeUpdateByteArray _ _ _ _ stateSafe⟩
+
+
+/-- Byte-array allocation preserves safety; this helper has no separate HOL declaration. -/
+private theorem memoryRefByteSafe {C F : Type} (flag : Bool) (args : List ClosSem.Value)
+    (s0 s : State C F) (value : ClosSem.Value) (stateSafe : ssgcFree s0)
+    (run : applyMemory (.refByte flag) args s0 = some (value, s)) :
+    vsgcFree value ∧ ssgcFree s := by
+  cases flag <;> unfold applyMemory at run <;> repeat' split at run <;> simp_all
+  simp only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at run
+  rcases run with ⟨_, byte, _, rfl, rfl⟩
+  exact ⟨by simp [vsgcFree], ssgcFreeUpdateByteArray _ _ _ _ stateSafe⟩
+
+/-- Byte-array XOR preserves safety; this helper has no separate HOL declaration. -/
+private theorem memoryXorByteSafe {C F : Type} (args : List ClosSem.Value)
+    (s0 s : State C F) (value : ClosSem.Value) (stateSafe : ssgcFree s0)
+    (run : applyMemory .xorByte args s0 = some (value, s)) :
+    vsgcFree value ∧ ssgcFree s := by
+  unfold applyMemory at run
+  repeat' split at run
+  all_goals simp_all
+  simp only [Option.bind_eq_some_iff] at run
+  rcases run with ⟨ref, found, run⟩
+  cases ref <;> simp_all [Option.bind_eq_some_iff]
+  rcases run with ⟨bytes, _, rfl, rfl⟩
+  exact ⟨vsgcFreeUnit, ssgcFreeUpdateByteArray _ _ _ _ stateSafe⟩
+
+
+/-- Byte-array copying preserves safety; this helper has no separate HOL declaration. -/
+private theorem memoryCopyByteSafe {C F : Type} (flag : Bool) (args : List ClosSem.Value)
+    (s0 s : State C F) (value : ClosSem.Value) (stateSafe : ssgcFree s0)
+    (run : applyMemory (.copyByte flag) args s0 = some (value, s)) :
+    vsgcFree value ∧ ssgcFree s := by
+  cases flag <;> unfold applyMemory at run <;> repeat' split at run <;> simp_all
+  · simp only [Option.bind_eq_some_iff] at run
+    rcases run with ⟨ref, _, run⟩
+    cases ref <;> simp_all [Option.bind_eq_some_iff]
+    rcases run with ⟨bytes, _, rfl, rfl⟩
+    exact ⟨vsgcFreeUnit, ssgcFreeUpdateByteArray _ _ _ _ stateSafe⟩
+  · simp only [Option.bind_eq_some_iff] at run
+    rcases run with ⟨ref, _, run⟩
+    cases ref <;> simp_all [Option.bind_eq_some_iff]
+    rcases run with ⟨ref, _, run⟩
+    cases ref <;> simp_all [Option.bind_eq_some_iff]
+    rcases run with ⟨bytes, _, rfl, rfl⟩
+    exact ⟨vsgcFreeUnit, ssgcFreeUpdateByteArray _ _ _ _ stateSafe⟩
+  · simp only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at run
+    rcases run with ⟨bytes, _, rfl, rfl⟩
+    exact ⟨by simp [vsgcFree], stateSafe⟩
+  · simp only [Option.bind_eq_some_iff] at run
+    rcases run with ⟨ref, _, run⟩
+    cases ref <;> simp_all [Option.bind_eq_some_iff]
+    rcases run with ⟨bytes, _, rfl, rfl⟩
+    exact ⟨by simp [vsgcFree], stateSafe⟩
+
+/-- This byte-memory operation satisfies the full source primitive-safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcMemUpdateByte {C F : Type}  (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.memOp .updateByte) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.memOp .updateByte) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, stateSafe⟩
+  cases found : applyMemory .updateByte args s0 with
+  | none => simp [ClosSem.doApp, found]
+  | some pair =>
+    rcases pair with ⟨value, next⟩
+    have run : ClosSem.doApp (.memOp .updateByte) args s0 = .val (value, next) := by
+      simp [ClosSem.doApp, found]
+    have ⟨valueSafe, nextSafe⟩ := memoryUpdateByteSafe args s0 next value stateSafe found
+    have oracle := (ClosSem.doApp_codeOracle _ _ _ _ _ run).2
+    have frame := doAppMglobals _ _ _ _ _ run
+    simp [ClosSem.doApp, found, valueSafe, nextSafe, oracle, frame]
+
+/-- This byte-memory operation satisfies the full source primitive-safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcMemRefByte {C F : Type} (flag : Bool) (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.memOp (.refByte flag)) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.memOp (.refByte flag)) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, stateSafe⟩
+  cases found : applyMemory (.refByte flag) args s0 with
+  | none => simp [ClosSem.doApp, found]
+  | some pair =>
+    rcases pair with ⟨value, next⟩
+    have run : ClosSem.doApp (.memOp (.refByte flag)) args s0 = .val (value, next) := by
+      simp [ClosSem.doApp, found]
+    have ⟨valueSafe, nextSafe⟩ := memoryRefByteSafe flag args s0 next value stateSafe found
+    have oracle := (ClosSem.doApp_codeOracle _ _ _ _ _ run).2
+    have frame := doAppMglobals _ _ _ _ _ run
+    simp [ClosSem.doApp, found, valueSafe, nextSafe, oracle, frame]
+
+/-- This byte-memory operation satisfies the full source primitive-safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcMemXorByte {C F : Type}  (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.memOp .xorByte) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.memOp .xorByte) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, stateSafe⟩
+  cases found : applyMemory .xorByte args s0 with
+  | none => simp [ClosSem.doApp, found]
+  | some pair =>
+    rcases pair with ⟨value, next⟩
+    have run : ClosSem.doApp (.memOp .xorByte) args s0 = .val (value, next) := by
+      simp [ClosSem.doApp, found]
+    have ⟨valueSafe, nextSafe⟩ := memoryXorByteSafe args s0 next value stateSafe found
+    have oracle := (ClosSem.doApp_codeOracle _ _ _ _ _ run).2
+    have frame := doAppMglobals _ _ _ _ _ run
+    simp [ClosSem.doApp, found, valueSafe, nextSafe, oracle, frame]
+
+/-- This byte-memory operation satisfies the full source primitive-safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcMemCopyByte {C F : Type} (flag : Bool) (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.memOp (.copyByte flag)) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.memOp (.copyByte flag)) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, stateSafe⟩
+  cases found : applyMemory (.copyByte flag) args s0 with
+  | none => simp [ClosSem.doApp, found]
+  | some pair =>
+    rcases pair with ⟨value, next⟩
+    have run : ClosSem.doApp (.memOp (.copyByte flag)) args s0 = .val (value, next) := by
+      simp [ClosSem.doApp, found]
+    have ⟨valueSafe, nextSafe⟩ := memoryCopyByteSafe flag args s0 next value stateSafe found
+    have oracle := (ClosSem.doApp_codeOracle _ _ _ _ _ run).2
+    have frame := doAppMglobals _ _ _ _ _ run
+    simp [ClosSem.doApp, found, valueSafe, nextSafe, oracle, frame]
+
 end DoAppSafety
 
 end Flapjack.Compiler.Backend.ClosKnown

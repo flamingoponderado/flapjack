@@ -3,6 +3,58 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "do_app_ssgc",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcMemUpdateByte",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed and the original UpdateByte case: only the operation is specialized; the execution equation, safe-input and safe-state premises and full success and raised-result conclusions are retained. Here a successful update replaces only a byte-array reference, preserving safety. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcMemRefByte",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed and the original RefByte case: only the operation is specialized; the execution equation, safe-input and safe-state premises and full success and raised-result conclusions are retained. Here successful allocation creates a byte-array reference, preserving safety. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcMemXorByte",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed and the original XorByte case: only the operation is specialized; the execution equation, safe-input and safe-state premises and full success and raised-result conclusions are retained. Here successful XOR replaces only a byte-array reference, preserving safety. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
+  "lean_name": "doAppSsgcMemCopyByte",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_ssgc_typed and the original CopyByte case: only the operation is specialized; the execution equation, safe-input and safe-state premises and full success and raised-result conclusions are retained. Here copying either returns a byte vector or replaces a byte-array reference, preserving safety. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "do_app_ssgc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
   "lean_name": "doAppSsgcMemEl",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
