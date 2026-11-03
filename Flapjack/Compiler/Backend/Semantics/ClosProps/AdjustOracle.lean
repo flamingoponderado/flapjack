@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
 
 /-! Closure-state relation for changing the compiler-oracle configuration. -/
 namespace Flapjack.Compiler.Backend.ClosProps.AdjustOracle
@@ -191,5 +192,155 @@ theorem doInstallAdjOrac {C D F : Type} (cc : Compiler D) (f : C → D)
       exact compatible (n + 1) x y (by simpa [Flapjack.holShiftSeq] using eq)
     · simp only [target, nextTarget, Flapjack.holShiftSeq]
       congr 1
+
+/-- Fixed-input evaluator simulation used to state the source theorem's
+structural induction hypotheses. -/
+def EvalAt {C D F : Type} (cc : Compiler D) (f : C → D)
+    (expressions : List ClosLang.Exp) (env : List Value) (s : State C F) : Prop :=
+  ∀ result next (t : State D F),
+    evaluate expressions env s = (result, next) ∧
+    result ≠ .err (.abort .typeError) ∧ adjOracRel cc f s t →
+    ∃ target, evaluate expressions env t = (result, target) ∧ adjOracRel cc f next target
+
+/-- Ordinary-operation case of the source oracle-adjustment evaluator
+simulation, with the induction hypothesis for its argument expressions. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracOrdinaryOp {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (trace : BackendCommon.Tra) (op : ClosLang.Op) (args : List ClosLang.Exp)
+    (env : List Value) (s : State C F) (notInstall : op ≠ .install)
+    (notForce : op ≠ .thunkOp .forceThunk) (argsIH : EvalAt cc f args env s) :
+    EvalAt cc f [.op trace op args] env s := by
+  intro result next t ⟨run, noType, rel⟩
+  rw [evaluate_ordinaryOp_eq trace op args env s notInstall notForce] at run
+  rw [evaluate_ordinaryOp_eq trace op args env t notInstall notForce]
+  cases argsRun : evaluate args env s with
+  | mk argResult middle =>
+    rw [argsRun] at run
+    have argsSafe : argResult ≠ .err (.abort .typeError) := by
+      intro bad
+      rw [bad] at run
+      cases run
+      exact noType rfl
+    obtain ⟨targetMiddle, targetRun, middleRel⟩ := argsIH argResult middle t ⟨argsRun, argsSafe, rel⟩
+    rw [targetRun]
+    cases argResult with
+    | err error =>
+      cases run
+      exact ⟨targetMiddle, rfl, middleRel⟩
+    | val values =>
+      cases appRun : doApp op values.reverse middle with
+      | err error =>
+        simp only [appRun] at run
+        have targetApp := doAppAdjOracErr cc f op values.reverse middle targetMiddle error ⟨appRun, middleRel⟩
+        cases run
+        exact ⟨targetMiddle, by simp [targetApp], middleRel⟩
+      | val pair =>
+        rcases pair with ⟨value, final⟩
+        simp only [appRun] at run
+        obtain ⟨targetFinal, targetApp, finalRel⟩ :=
+          doAppAdjOracVal cc f op values.reverse middle targetMiddle value final ⟨appRun, middleRel⟩
+        cases run
+        exact ⟨targetFinal, by simp [targetApp], finalRel⟩
+
+/-- Installation continuation factored out for the oracle-adjustment
+simulation; this helper has no independent HOL declaration. -/
+noncomputable def runInstalled {C F : Type} (values : List Value) (state : State C F) : EvalResult C F :=
+  match doInstall values state with
+  | (.err error, next) => (.err error, next)
+  | (.val program, next) =>
+    let (result, last) := evaluate program [] next
+    match result with
+    | .err error => (.err error, last)
+    | .val values => (.val [@Flapjack.holLast Value ⟨unitValue⟩ values], last)
+
+/-- Unfold the install operation at its argument evaluation boundary. -/
+theorem evaluateInstallEq {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
+    (env : List Value) (state : State C F) :
+    evaluate [.op trace .install args] env state =
+      match evaluate args env state with
+      | (.err error, next) => (.err error, next)
+      | (.val values, next) => runInstalled values.reverse next := by
+  rw [evaluate, fixClock_evaluate]
+  cases evaluated : evaluate args env state with
+  | mk result next =>
+    cases result with
+    | err error => rfl
+    | val values =>
+      dsimp only
+      unfold runInstalled
+      split <;> simp_all
+      split <;> simp_all
+      rfl
+
+/-- Installation case of the source evaluator simulation. The second
+induction hypothesis applies to the dynamically installed program. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracInstall {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (trace : BackendCommon.Tra) (args : List ClosLang.Exp) (env : List Value) (s : State C F)
+    (argsIH : EvalAt cc f args env s)
+    (installedIH : ∀ values middle program installed,
+      evaluate args env s = (.val values, middle) →
+      doInstall values.reverse middle = (.val program, installed) → EvalAt cc f program [] installed) :
+    EvalAt cc f [.op trace .install args] env s := by
+  intro result next t ⟨run, noType, rel⟩
+  rw [evaluateInstallEq trace args env s] at run
+  rw [evaluateInstallEq trace args env t]
+  cases argsRun : evaluate args env s with
+  | mk argResult middle =>
+    rw [argsRun] at run
+    have argsSafe : argResult ≠ .err (.abort .typeError) := by
+      intro bad
+      rw [bad] at run
+      cases run
+      exact noType rfl
+    obtain ⟨targetMiddle, targetRun, middleRel⟩ := argsIH argResult middle t ⟨argsRun, argsSafe, rel⟩
+    rw [targetRun]
+    cases argResult with
+    | err error =>
+      cases run
+      exact ⟨targetMiddle, rfl, middleRel⟩
+    | val values =>
+      unfold runInstalled at run ⊢
+      dsimp only at run ⊢
+      cases installRun : doInstall values.reverse middle with
+      | mk installResult installed =>
+        rw [installRun] at run
+        cases installResult with
+        | err error =>
+          dsimp only at run
+          have installSafe : (Flapjack.SemanticPrimitivesHOL.Result.err error :
+              Flapjack.SemanticPrimitivesHOL.Result (List ClosLang.Exp) Value) ≠ .err (.abort .typeError) := by
+            intro bad
+            have errorEq : error = .abort .typeError := by cases bad; rfl
+            cases run
+            exact noType (by rw [errorEq])
+          obtain ⟨targetInstalled, targetInstall, installedRel⟩ :=
+            doInstallAdjOrac cc f values.reverse middle (.err error) installed targetMiddle
+              ⟨installRun, middleRel, installSafe⟩
+          rw [targetInstall]
+          cases run
+          exact ⟨targetInstalled, rfl, installedRel⟩
+        | val program =>
+          dsimp only at run
+          obtain ⟨targetInstalled, targetInstall, installedRel⟩ :=
+            doInstallAdjOrac cc f values.reverse middle (.val program) installed targetMiddle
+              ⟨installRun, middleRel, by simp⟩
+          rw [targetInstall]
+          dsimp only
+          cases programRun : evaluate program [] installed with
+          | mk programResult final =>
+            rw [programRun] at run
+            have programSafe : programResult ≠ .err (.abort .typeError) := by
+              intro bad
+              rw [bad] at run
+              cases run
+              exact noType rfl
+            obtain ⟨targetFinal, targetProgram, finalRel⟩ :=
+              installedIH values middle program installed argsRun installRun programResult final targetInstalled
+                ⟨programRun, programSafe, installedRel⟩
+            rw [targetProgram]
+            cases programResult <;> cases run <;> exact ⟨targetFinal, rfl, finalRel⟩
 
 end Flapjack.Compiler.Backend.ClosProps.AdjustOracle

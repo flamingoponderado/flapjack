@@ -1,6 +1,26 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracOrdinaryOp",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL evaluator ordinary-operation case. The same result, non-type-error condition, adjusted initial states and existential adjusted final state are retained, with the argument-evaluation induction hypothesis and operation case distinctions. The original independent unused quantified variable is retained. The canonical state witness covers refs and code; primitive semantics inherit rational-cut reals. This is one case, not the assembled mutual theorem. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
+  "lean_name": "evaluateAdjOracInstall",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the HOL evaluator install case. The same result, non-type-error condition, adjusted initial states and existential adjusted final state are retained, with induction hypotheses for arguments and dynamically installed code. The independent unused quantified variable is retained. The canonical state witness covers refs and code; evaluation inherits rational-cut reals. This is one case, not the assembled mutual theorem. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
   "hol_name": "do_install_adj_orac",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",
   "lean_name": "doInstallAdjOrac",
