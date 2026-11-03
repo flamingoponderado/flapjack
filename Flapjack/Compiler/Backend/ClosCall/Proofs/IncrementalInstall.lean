@@ -3898,6 +3898,76 @@ theorem recClosureRelFuel_target_body_sim_or_stub {C F : Type} (passFuel relatio
   · exact Or.inr (growingExprsSimFromBelow_mono_state passFuel relationFuel limit compiler after g allowed
       [body] [targetBody] extended (exprIH depth before after depthLt selected bodyDistinct bodyFresh beforeWf))
 
+/-- A known generated stub simulates its source body when the actual probe
+traversal supplies a simulation of its converted body. The argument bound is
+provided by closure application; the probe-state expression induction remains
+an explicit assumption because reserved locations need not be fully well
+formed. This is Flapjack-specific infrastructure, not a HOL theorem port. -/
+theorem recClosureRelFuel_known_body_sim_withClock {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (g : State) (allowed : Set Nat) (loc : Nat)
+    (sourceFns targetFns : List (Nat × ClosLang.Exp)) (index arity : Nat)
+    (body targetBody : ClosLang.Exp) (sourceEnv targetEnv : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (clock : source.clock < limit)
+    (run : evaluate [body] sourceEnv source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (related : recClosureRelFuel relationFuel g allowed target.code loc sourceFns targetFns)
+    (sourceLookup : sourceFns[index]? = some (arity, body))
+    (targetLookup : targetFns[index]? = some (arity, targetBody))
+    (notAllowed : 2 * index + loc ∉ allowed)
+    (sourceBound : arity ≤ sourceEnv.length)
+    (envs : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, targetBody)])
+    (envWf : ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (ready : IncrementalInstallReady g source target)
+    (sourceCompiler : source.compile = compileIncFuelCallback passFuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (oracle : target.compileOracle = compileIncFuelOracle passFuel source.compileOracle)
+    (bodyIH : ∀ converted depth before after,
+      depth < max relationFuel (listBudget (sourceFns.map Prod.snd) + 1) →
+      callsFuel depth body before = some (converted, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before →
+      (before.2.map Prod.fst).Nodup →
+      (∀ n, ClosProps.freeVarExp n converted → n < arity) →
+      GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler g allowed [body] [converted]) :
+    ∃ extraClock finalG targetResult targetFinal,
+      stateExtends g finalG ∧
+      evaluate [targetBody] targetEnv { target with clock := target.clock + extraClock } = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨trace, converted, depth, before, after, _, _, targetStub, codeLookup,
+    depthBound, selectedRun, distinct, fresh, beforeDistinct, _, _, closed, _⟩ :=
+    recClosureRelFuel_known_probe_body relationFuel g allowed target.code loc sourceFns targetFns
+      index arity body related sourceLookup notAllowed
+  have bodyEq : targetBody = .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity) := by
+    rw [targetLookup] at targetStub
+    exact (Prod.mk.inj (Option.some.inj targetStub)).2
+  have stubEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity))] := by
+    simpa [bodyEq] using envs
+  obtain ⟨targetBound, bodyEnv⟩ :=
+    envRelFuel_stub_body_prefix relationFuel g allowed target.code trace (loc + 2 * index + 1)
+      arity converted sourceEnv targetEnv stubEnv sourceBound closed
+  obtain ⟨extraClock, finalG, targetResult, targetFinal, extended, targetRun, resultRelated,
+    finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+    bodyIH converted depth before after depthBound selectedRun distinct fresh beforeDistinct closed
+      g (stateExtends_refl g ready.well.2) sourceEnv (targetEnv.take arity) source target result final
+      clock run notType (by simpa using bodyEnv) envWf sourceWf states ready sourceCompiler targetCompiler oracle
+  refine ⟨extraClock + 1, finalG, targetResult, targetFinal, extended, ?_, resultRelated, finalStates,
+    finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+  rw [bodyEq, evaluate_generated_stub_with_allowance trace (loc + 2 * index + 1) arity extraClock
+    converted targetEnv target targetBound codeLookup]
+  exact targetRun
+
 /-- A clock-bounded pass-state simulation supplies the corresponding
 installed-program simulation. This is Flapjack-specific infrastructure. -/
 theorem growingExprsSimFromBelow_installedBelow {C F : Type} (passFuel relationFuel limit : Nat)

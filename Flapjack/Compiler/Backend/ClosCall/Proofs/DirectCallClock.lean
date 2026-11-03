@@ -72,6 +72,78 @@ theorem evaluate_generated_stub {C F : Type} (trace : BackendCommon.Tra) (label 
   rw [fixClock_evaluate, evaluate_variables trace arity env _ bound]
   simp [findCode, code, List.length_take, Nat.min_eq_left bound, decClock]
 
+private theorem freeVars_variables (trace : BackendCommon.Tra) (n : Nat) (indices : List Nat) :
+    ClosProps.freeVars n (indices.map (.var trace)) ↔ n ∈ indices := by
+  induction indices with
+  | nil => simp [ClosProps.freeVars]
+  | cons head tail ih => simp [ClosProps.freeVars, ClosProps.freeVarExp, ih]
+
+/-- The environment relation for a generated stub supplies related argument
+prefixes, and hence the environment relation needed by any body closed at the
+stub's arity. This is Flapjack-specific simulation infrastructure. -/
+theorem envRelFuel_stub_body_prefix (fuel : Nat) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (trace : BackendCommon.Tra)
+    (label arity : Nat) (body : ClosLang.Exp) (sourceEnv targetEnv : List ClosSem.Value)
+    (related : EnvRelFuel fuel g allowed code sourceEnv targetEnv 0
+      [(0, .call trace 0 label (ClosCall.variables trace arity))])
+    (sourceBound : arity ≤ sourceEnv.length)
+    (closed : ∀ n, ClosProps.freeVarExp n body → n < arity) :
+    arity ≤ targetEnv.length ∧
+      EnvRelFuel fuel g allowed code sourceEnv (targetEnv.take arity) 0 [(0, body)] := by
+  have used (n : Nat) (bound : n < arity) :
+      ∃ fn ∈ [(0, .call trace 0 label (ClosCall.variables trace arity))],
+        ClosProps.freeVar (fn.1 + 0 + n) fn.2 := by
+    refine ⟨(0, .call trace 0 label (ClosCall.variables trace arity)), by simp, ?_⟩
+    simpa [ClosProps.freeVar, ClosProps.freeVars, ClosProps.freeVarExp, ClosCall.variables,
+      freeVars_variables] using bound
+  have pointwise : ∀ n, n < arity →
+      ∃ (left : n < sourceEnv.length) (right : n < targetEnv.length),
+        ValueRelFuel fuel g allowed code sourceEnv[n] targetEnv[n] := by
+    intro n bound
+    cases related with
+    | equalLength lengths values =>
+      have left : n < sourceEnv.length := by omega
+      have right : n < targetEnv.length := by omega
+      exact ⟨left, right, values.get left right⟩
+    | unequalLength _ left right rel =>
+      exact ⟨left n (used n bound), right n (used n bound), rel n (used n bound) _ _⟩
+  have targetBound : arity ≤ targetEnv.length := by
+    cases arity with
+    | zero => omega
+    | succ a =>
+      have present := (pointwise a (by omega)).choose_spec.choose
+      omega
+  refine ⟨targetBound, ?_⟩
+  by_cases equal : sourceEnv.length = (targetEnv.take arity).length
+  · apply EnvRelFuel.equalLength equal
+    apply List.forall₂_of_length_eq_of_get equal
+    intro n left right
+    have small : n < arity := by simpa [List.length_take, Nat.min_eq_left targetBound] using right
+    obtain ⟨_, targetIndex, valueRel⟩ := pointwise n small
+    simpa using valueRel
+  · apply EnvRelFuel.unequalLength equal
+    · intro n usedBody
+      obtain ⟨fn, member, free⟩ := usedBody
+      simp only [List.mem_singleton] at member
+      subst fn
+      have free' : ClosProps.freeVarExp n body := by simpa [ClosProps.freeVar, ClosProps.freeVars] using free
+      have small := closed n free'
+      omega
+    · intro n usedBody
+      obtain ⟨fn, member, free⟩ := usedBody
+      simp only [List.mem_singleton] at member
+      subst fn
+      have free' : ClosProps.freeVarExp n body := by simpa [ClosProps.freeVar, ClosProps.freeVars] using free
+      have small := closed n free'
+      simp [List.length_take, Nat.min_eq_left targetBound, small]
+    · intro n usedBody left right
+      obtain ⟨fn, member, free⟩ := usedBody
+      simp only [List.mem_singleton] at member
+      subst fn
+      have free' : ClosProps.freeVarExp n body := by simpa [ClosProps.freeVar, ClosProps.freeVars] using free
+      obtain ⟨_, _, valueRel⟩ := pointwise n (closed n free')
+      simpa using valueRel
+
 /-- A generated stub with a valid code entry times out at zero clock. This
 Flapjack-specific evaluator fact records why a pass simulation cannot in
 general demand the same starting clock on both sides. -/
