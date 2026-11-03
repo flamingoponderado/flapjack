@@ -5989,6 +5989,30 @@
     "reviewer": "Compared syntax_oracle_ok_state_sgc_free_typed with the HOL theorem: the oracle syntax condition and initial traversal equation imply safety of every oracle approximation tree. The proof uses the source recurrence and safety preservation, including the empty initial tree and reset inline factor. Typed source review does not prove cross-language equivalence."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "monotonic_unique_set_globals",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
+    "lean_name": "monotonicUniqueSetGlobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared monotonic_unique_set_globals_typed: arbitrary oracle configuration and auxiliary carriers, strict order of global-write sets, and distinct write bags for the input and each oracle program imply unique writes over all finite prefixes. Both bag representations are functions from natural indices to multiplicities. Source review does not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "monotonic_gapprox_disjoint",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
+    "lean_name": "monotonicGapproxDisjoint",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared monotonic_gapprox_disjoint_typed: the known traversal begins from the empty sparse tree; the monotonic oracle starts at the given bag, which equals the input write bag. Arbitrary oracle carriers and all implication premises are retained. Source review does not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "state_oracle_domain",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
+    "lean_name": "stateOracleDomain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared state_oracle_domain_typed: an incremental state oracle's tree domain at n is pointwise bounded by the initial domain bag plus the write bag of the flattened first n programs. The input auxiliary and oracle configuration carriers remain independently polymorphic; domainBag is the characteristic multiplicity of the sparse-tree domain. Source review does not establish cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
     "hol_name": "init_code_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",
