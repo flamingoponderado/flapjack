@@ -394,8 +394,20 @@ out lands in `sr` and the truncated sum in `d`, exactly as
 `AsmSem.arithUpd` specifies, matching the HOL proof's `AddCarry` branch
 (`next_tac 4`).
 
-Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
-`DecodeBitMasks`/`BitfieldMove`), `addOverflow`, `subOverflow` (their
-`ConditionalSelect@64` facts exist in `ConditionalSelect.lean`), and `Mem`.
+`ShiftBitfield.lean` starts the `shift` `.lsl`/`.lsr`/`.asr` immediate forms,
+which `arm8_ast` lowers to a single `BitfieldMove@64` guarded by
+`DecodeBitMasks`.  It records the emitted word (`arm8BitfieldWord`), the
+`Encode` equation and the two rendered `Decode` inverses — the `opc = 2` form
+(`inzero = T`, `extend = F`) that `Lsl` and `Lsr` emit and the `opc = 0` form
+(`inzero = T`, `extend = T`) that `Asr` emits — plus the `Run` equation for
+`dfn'BitfieldMove` with the masks left symbolic.  The mask algebra of
+`arm8_targetProofScript.sml`'s `lsl`, `lsr` and `asr2` (which turns
+`(tmask && wmask) && x #>> n` into `x >>> n` and the `extend` branch into the
+arithmetic shift) and the three case theorems are still open.
+
+Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate case theorems
+(the `BitfieldMove` encode/decode/run layer is landed, the mask algebra is
+not), `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
+`ConditionalSelect.lean`), and `Mem`.
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
