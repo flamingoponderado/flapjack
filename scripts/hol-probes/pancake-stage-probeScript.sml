@@ -2,8 +2,9 @@
   Dynamic intermediate-stage probe for one Pancake source file.
 
   PANCAKE_SOURCE names a file containing source text.  This is deliberately
-  evaluated by the original CakeML HOL definitions; the companion
-  `flapjack-debug` executable prints the corresponding Lean stages.
+  evaluated by the original CakeML HOL definitions;
+  scripts/parity-debug.py saves its output beside the final-artifact
+  comparison.
 *)
 load "bossLib";
 load "preamble";

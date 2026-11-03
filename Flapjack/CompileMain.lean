@@ -1,5 +1,3 @@
-import Flapjack.RiscV.PipelineDiagnostics
-import Flapjack.RiscV.ArtifactFormat
 import Flapjack.RiscV.NativeCLIAdapter
 import Flapjack.Mips32.NativeCLIAdapter
 import Flapjack.Arm8.NativeCLIAdapter
@@ -15,8 +13,7 @@ successful output to source correctness under explicit source/main, machine,
 installation and resource premises. It identifies the rendering of the compiled
 tuple, not correctness of assembly rendering or startup installation. Assembly
 is the default and `--assembly` is retained as a compatibility alias for `--pancake`. A
-leading `--legacy` selects the previous checked runtime-image route. A leading
-`--target=mips32` selects the MIPS32 (Ziren) backend, `Mips32.NativeSource.compile`, whose
+leading `--target=mips32` selects the MIPS32 (Ziren) backend, `Mips32.NativeSource.compile`, whose
 successful output `mips32CLIOutput_correct` connects to source correctness in the same way.
 A leading `--target=arm8` selects the ARMv8 (AArch64) backend,
 `Arm8.NativeSource.compile`, whose successful output is identified by
@@ -31,17 +28,6 @@ emitted instruction subset, not the full L3 ARMv8 semantics.
 
 namespace Flapjack
 
-def compileRemoveConfig : StackRemoveConfig :=
-  { storeBase := 10
-    currHeap := 12
-    scratch := 31
-    addressScratch := 29
-    stackPointer := 24
-    bytesInWord := 8
-    stackBase := 25
-    wordShift := 3
-    jump := false }
-
 open RiscV.NativeCLI (hexBytes)
 
 inductive OutputFormat where
@@ -51,14 +37,13 @@ inductive OutputFormat where
   deriving DecidableEq
 
 def usage : String :=
-  "Usage: lake exe flapjack-compile [--legacy|--target=riscv64|--target=mips32|--target=arm8|--target=x64] " ++
+  "Usage: lake exe flapjack-compile [--target=riscv64|--target=mips32|--target=arm8|--target=x64] " ++
   "[--assembly|--pancake|--hex|--sections] " ++
   "[SOURCE.pnk]\nRead Pancake source from SOURCE.pnk or stdin. The default, " ++
   "--assembly, and --pancake modes emit the Pancake-compatible assembly " ++
   "frame; --hex emits that frame's code bytes as one lowercase line; " ++
   "--sections emits its sections as <label> <address> <bytes> lines. " ++
-  "--legacy selects the previous runtime-image route instead of the native " ++
-  "whole compiler. --target=mips32 compiles for the MIPS32 (Ziren) target; " ++
+  "--target=mips32 compiles for the MIPS32 (Ziren) target; " ++
   "--target=arm8 compiles for the ARMv8 (AArch64) target; --target=x64 " ++
   "compiles for x86-64; --target=riscv64 " ++
   "is the default."
@@ -99,10 +84,6 @@ def readSource (path : Option String) : IO String := do
       pure (← stdin.readToEnd)
   | some argument => IO.FS.readFile argument
 
-def printSections (sections : List (RiscV.EncodedRiscVSection width)) : IO Unit := do
-  for entry in sections do
-    IO.println (s!"{entry.label} {entry.address.toNat} " ++ hexBytes entry.bytes)
-
 /-- The parser-backed native whole compiler (`RiscV.NativeSource.compile`), rendered from its
 whole tuple by `RiscV.NativeCLI`. This is the default route for every output mode. -/
 def compileMainNative (outputFormat : OutputFormat) (path : Option String) : IO UInt32 := do
@@ -121,40 +102,6 @@ def compileMainNative (outputFormat : OutputFormat) (path : Option String) : IO 
         IO.eprintln s!"warning: {warning}"
       IO.print text
       return 0
-
-/-- The previous checked runtime-image route, selected by a leading `--legacy`. -/
-def compileMainLegacy (arguments : List String) : IO UInt32 := do
-  let some (outputFormat, path) ← parseArguments arguments | return 0
-  let source ← readSource path
-  if outputFormat == .pancake then
-    match compileFlapjackRiscVSourceRuntimeImageChecked (width := 64) .rv64i
-        riscv64BytesInWord (BitVec.ofInt 64) [] compileRemoveConfig
-        "main" source with
-    | .ok image =>
-        for warning in image.warnings do
-          IO.eprintln s!"warning: {repr warning}"
-        IO.print (RiscV.pancakeRuntimeAssembly image.crepe image)
-        return 0
-    | .error error =>
-        IO.eprintln s!"flapjack-compile: {sourceRiscVImageErrorDescription error}"
-        return 1
-  else
-    -- `--sections` and `--hex` render the same native runtime image as the
-    -- assembly frame: its sections, or its concatenated code bytes.
-    match compileFlapjackRiscVSourceRuntimeImageChecked (width := 64) .rv64i
-        riscv64BytesInWord (BitVec.ofInt 64) [] compileRemoveConfig
-        "main" source with
-    | .ok image =>
-        for warning in image.warnings do
-          IO.eprintln s!"warning: {repr warning}"
-        if outputFormat == .sections then
-          printSections image.sections
-        else
-          IO.println (hexBytes (image.sections.flatMap (fun entry => entry.bytes)))
-        return 0
-    | .error error =>
-        IO.eprintln s!"flapjack-compile: {sourceRiscVImageErrorDescription error}"
-        return 1
 
 /-- The MIPS32 (Ziren) compiler (`Mips32.NativeSource.compile`), rendered by
 `Mips32.NativeCLI`. -/
@@ -214,10 +161,9 @@ def compileMainX64 (outputFormat : OutputFormat) (path : Option String) : IO UIn
       return 0
 
 /-- The command: the native whole compiler by default (`--native` is accepted as an
-explicit alias), or the previous route after a leading `--legacy`. -/
+explicit alias). -/
 def compileMain (arguments : List String) : IO UInt32 := do
   match arguments with
-  | "--legacy" :: rest => compileMainLegacy rest
   | "--native" :: rest =>
       let some (outputFormat, path) ← parseArguments rest | return 0
       compileMainNative outputFormat path
