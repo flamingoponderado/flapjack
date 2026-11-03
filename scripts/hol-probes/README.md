@@ -1,3 +1,5 @@
+`clos_known_syntax_probe.out` records the typed full-closure safety theorem and a typed replay of the local thunk-update safety statement. These support source review, not full pass correctness.
+
 `clos_known_syntax_probe.out` also captures the polymorphic first-program list and the inferred oracle-shift and dynamic-installation global-safety theorems. These support source review, not full pass correctness.
 
 `clos_op_lift_proof_probe.out` also records typed lifting, pure-expression evaluation,

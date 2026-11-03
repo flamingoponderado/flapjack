@@ -1,6 +1,27 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "dest_closure_Full_sgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ClosureGlobals.lean",
+  "lean_name": "destClosureFullSgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dest_closure_full_sgc_free_typed with the source theorem: the nonempty argument list, full-application equation and function and argument safety hypotheses imply the same body-write, environment-safety and remaining-argument conclusions. The proof covers both ordinary and recursive closures, including all generated recursive closures. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "update_thunk_ssgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ClosureGlobals.lean",
+  "lean_name": "updateThunkSsgcFree",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "ClosSem.State.refs",
+    "ClosSem.State.code",
+    "refs"
+  ],
+  "reviewer": "Compared update_thunk_ssgc_free_statement_typed with the local source statement and definition of update_thunk: the state-safety, EVERY and successful singleton-pointer update premises and resulting updated-state safety conclusion match, including the arbitrary pointer flag. The state refs and code fields and standalone result map use canonical finite support, with a same-module state roundtrip witness. The probe is a typed replay of the local statement, not an exported HOL theorem or cross-language equivalence proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "first_n_exps_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InstallGlobals.lean",
   "lean_name": "firstNExps",

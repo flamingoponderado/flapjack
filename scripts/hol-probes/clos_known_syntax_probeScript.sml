@@ -68,6 +68,13 @@ val _ = show "known_op_changed_globals_typed=" clos_knownProofTheory.known_op_ch
 val _ = show "known_op_changed_globals_cases_typed=" clos_knownProofTheory.known_op_changed_globals_cases;
 val _ = show "known_op_changed_globals_alt_set_typed=" clos_knownProofTheory.known_op_changed_globals_alt_set;
 val _ = show "do_app_ssgc_typed=" clos_knownProofTheory.do_app_ssgc;
+val _ = show "dest_closure_full_sgc_free_typed=" clos_knownProofTheory.dest_closure_Full_sgc_free;
+(* The theorem is local in the source; print its source statement with inferred types. *)
+val _ = (print "update_thunk_ssgc_free_statement_typed="; print_term
+  ``closProps$ssgc_free s ∧
+    EVERY closProps$vsgc_free vs ∧
+    closSem$update_thunk [closSem$RefPtr v ptr] s.refs vs = SOME refs ⇒
+    closProps$ssgc_free (s with refs := refs)``; print "\n");
 val _ = show "first_n_exps_typed=" clos_knownProofTheory.first_n_exps_def;
 val _ = show "ssgc_free_co_shift_seq_typed=" clos_knownProofTheory.ssgc_free_co_shift_seq;
 val _ = show "ssgc_free_do_install_typed=" clos_knownProofTheory.ssgc_free_do_install;
