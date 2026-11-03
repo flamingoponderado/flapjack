@@ -718,8 +718,9 @@ theorem evalPanValueFfiClockCodeCall_catchesRaisedBody
     abstract hypothesis, so the equation is the generic return-shape rejection
     rather than a fully unfolded concrete entry.  The clock is HOL's `fix_clock`
     clamp `min (decPanClock clock) calleeClock`, and the `Error` carries the
-    callee's returned locals when `preserveReturnLocals` is set (as `DecCall`
-    does) and cleared locals otherwise.  Untagged because the result is the
+    callee's post-state locals `st.locals` regardless of
+    `preserveReturnLocals`, including bindings restored by an enclosing
+    `Dec` after the callee's `Return`.  Untagged because the result is the
     reduced structured pair, not HOL's literal `result option × state` pair. -/
 theorem evalPanValueFfiClockCodeCall_callee_returnedShapeMismatch_error
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
