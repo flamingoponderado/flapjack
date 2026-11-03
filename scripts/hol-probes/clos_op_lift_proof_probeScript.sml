@@ -28,3 +28,4 @@ val _ = show "red_rel_exists_append_typed" clos_opProofTheory.red_rel_exists_app
 val _ = show "red_rel_append_typed" clos_opProofTheory.IMP_red_rel_append;
 val _ = show "red_rel_cons_typed" clos_opProofTheory.IMP_red_rel_cons;
 val _ = show "red_rel_cons_one_typed" clos_opProofTheory.IMP_red_rel_cons_1;
+val _ = show "lift_red_rel_typed" clos_opProofTheory.lift_exps_red_rel;

@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "lift_exps_red_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftReduction.lean",
+    "lean_name": "liftExpsRedRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lift_red_rel_typed: all six source arguments and the full lift result equation imply an existential residual shared by the original expressions and DROP LENGTH binds of the final binding list. The proof handles non-lifted terms, constructor children and newly appended bindings using the reviewed source reduction relation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "red_rel",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Reduction.lean",
     "lean_name": "RedRel",

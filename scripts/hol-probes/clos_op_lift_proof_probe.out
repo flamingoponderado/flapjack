@@ -20,3 +20,4 @@ red_rel_exists_append_typed=red_rel ((h :closLang$exp)::(xs :closLang$exp list))
 red_rel_append_typed=∀(xs :closLang$exp list) (ys :closLang$exp list) (xs1 :closLang$exp list) (ys1 :closLang$exp list). red_rel xs ys ∧ red_rel xs1 ys1 ⇒ red_rel (xs ++ xs1) (ys ++ ys1)
 red_rel_cons_typed=red_rel [(x :closLang$exp)] ([] :closLang$exp list) ∧ red_rel (xs :closLang$exp list) (ys :closLang$exp list) ⇒ red_rel (x::xs) ys
 red_rel_cons_one_typed=red_rel (xs :closLang$exp list) (ys :closLang$exp list) ⇒ red_rel ((x :closLang$exp)::xs) (x::ys)
+lift_red_rel_typed=∀(xs :closLang$exp list) (n :num) (binds :closLang$exp list) (ys :closLang$exp list) (k :num) (binds2 :closLang$exp list). lift_exps xs n binds = (ys,k,binds2) ⇒ ∃(zs :closLang$exp list). red_rel xs zs ∧ red_rel (DROP (LENGTH binds) binds2) zs
