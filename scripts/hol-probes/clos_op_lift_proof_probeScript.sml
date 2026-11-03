@@ -71,3 +71,4 @@ val _ = show "evaluate_conj_append_true_typed" clos_opProofTheory.evaluate_ConjL
 val _ = show "eq_direct_thm_typed" clos_opProofTheory.eq_direct_thm;
 val _ = show "eq_pure_thm_typed" clos_opProofTheory.eq_pure_thm;
 val _ = show "clos_do_eq_sym_typed" closPropsTheory.do_eq_sym;
+val _ = show "clos_do_eq_list_rel_typed" closPropsTheory.do_eq_list_rel;

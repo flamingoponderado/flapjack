@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.ClosSem
+import Mathlib.Data.List.Forall2
 
 /-! Symmetry of the source closure-value equality. -/
 namespace Flapjack.Compiler.Backend.ClosProps
@@ -44,5 +45,33 @@ theorem doEqSym :
   constructor
   · intro x y; exact (all (sizeOf x + 1)).1 x y (by omega)
   · intro xs ys; exact (all (sizeOf xs + 1)).2 xs ys (by omega)
+
+/-- Equal component comparisons give equal list comparisons when both
+input pairs have matching lengths. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "do_eq_list_rel"]
+theorem doEqListRel (l1 l2 l3 l4 : List Value)
+    (h : l1.length = l2.length ∧ l3.length = l4.length ∧
+      List.Forall₂ (fun p q => doEq p.1 p.2 = doEq q.1 q.2)
+        (l1.zip l2) (l3.zip l4)) :
+    doEqList l1 l2 = doEqList l3 l4 := by
+  induction l1 generalizing l2 l3 l4 with
+  | nil =>
+    cases l2 <;> cases l3 <;> cases l4 <;> simp_all [doEqList]
+  | cons x xs ih =>
+    cases l2 with
+    | nil => simp at h
+    | cons y ys =>
+      cases l3 with
+      | nil =>
+        cases l4 <;> simp_all
+      | cons z zs =>
+        cases l4 with
+        | nil => simp at h
+        | cons w ws =>
+          simp only [List.length_cons, Nat.succ.injEq, List.zip_cons_cons,
+            List.forall₂_cons] at h
+          rcases h with ⟨lengthXY, lengthZW, head, tail⟩
+          have tailEq := ih ys zs ws ⟨lengthXY, lengthZW, tail⟩
+          simp only [doEqList, head, tailEq]
 
 end Flapjack.Compiler.Backend.ClosProps

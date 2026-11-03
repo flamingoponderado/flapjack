@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosOp.Proofs.DirectEvaluate
 import Flapjack.Compiler.Backend.ClosOp.Proofs.PureEvaluate
 import Flapjack.Compiler.Backend.Semantics.ClosProps.EqualitySym
+import Flapjack.Compiler.Backend.ClosOp.Proofs.EqPureSimple
 
 /-! Semantic cases for the source pure-equality optimization. -/
 namespace Flapjack.Compiler.Backend.ClosOp
@@ -107,6 +108,54 @@ private theorem pureConstructor {C F : Type} (trace : BackendCommon.Tra) (tag : 
       rcases run with ⟨⟨rfl, _⟩, rfl⟩
       exact ⟨values, rfl, rfl, evaluate_length.1 args env _ _ values argsRun⟩
 
+/-- A successful list of simple expressions can be evaluated pointwise in
+the original state. This is proof infrastructure. -/
+private theorem pureEvalList {C F : Type} (xs : List ClosLang.Exp) (values : List Value)
+    (env : List Value) (s : State C F)
+    (simple : ∀ x ∈ xs, SimpleExp x)
+    (run : evaluate xs env s = (.val values, s)) :
+    List.Forall₂ (fun x v => evaluate [x] env s = (.val [v], s) ∧ SimpleExp x) xs values := by
+  induction xs generalizing values with
+  | nil =>
+    simp only [evaluate, Prod.mk.injEq, Flapjack.SemanticPrimitivesHOL.Result.val.injEq] at run
+    rcases run with ⟨rfl, _⟩
+    exact .nil
+  | cons x xs ih =>
+    have hx := simple x (by simp)
+    have headPure : pureList [x] = true := by simp [pureList, simpleExpPure x hx]
+    cases headRun : evaluate [x] env s with
+    | mk headResult headState =>
+      cases headResult with
+      | err err =>
+        rw [ClosProps.evaluate_cons_error x xs env s headState err headRun] at run
+        cases run
+      | val headValues =>
+        obtain ⟨v, rfl⟩ := evaluate_singleton_value x env s headState headValues headRun
+        obtain ⟨_, _, stateEq⟩ := ClosProps.evaluate_pure [x] env s headState (.val [v])
+          headPure headRun (by simp)
+        subst headState
+        rw [ClosProps.evaluate_cons_value x xs env s s v headRun] at run
+        cases tailRun : evaluate xs env s with
+        | mk tailResult tailState =>
+          cases tailResult with
+          | err err => simp [tailRun] at run
+          | val vs =>
+            simp only [tailRun, Prod.mk.injEq, Flapjack.SemanticPrimitivesHOL.Result.val.injEq] at run
+            rcases run with ⟨rfl, rfl⟩
+            exact .cons ⟨headRun, hx⟩ (ih vs (fun y hy => simple y (by simp [hy])) tailRun)
+
+/-- Zipping two pointwise relations preserves both relations. -/
+private theorem forall₂Zip {α β γ δ : Type} {R : α → γ → Prop} {S : β → δ → Prop}
+    {as : List α} {bs : List β} {cs : List γ} {ds : List δ}
+    (ac : List.Forall₂ R as cs) (bd : List.Forall₂ S bs ds) :
+    List.Forall₂ (fun p q => R p.1 q.1 ∧ S p.2 q.2) (as.zip bs) (cs.zip ds) := by
+  induction ac generalizing bs ds with
+  | nil => cases bd <;> simp
+  | cons h t ih =>
+    cases bd with
+    | nil => simp
+    | cons h' t' => exact .cons ⟨h, h'⟩ (ih t')
+
 /-- Constructor mismatch case of the source pure-equality theorem. -/
 @[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_pure_thm"
   (fmap_as_finite_support := [refs, code])]
@@ -144,5 +193,74 @@ theorem eqPureThmConstructorMismatch {C F : Type} (tx ty : BackendCommon.Tra)
     simp [cons, destOp, destCons, different, Flapjack.appListAppend, Flapjack.appendAux, conjList]
   rw [result, mkBool, evaluate_ordinaryOp_eq _ _ _ _ _ (by simp) (by simp)]
   simp [evaluate, doApp, applyBlock, boolValue, BackendCommon.falseTag]
+
+/-- Matching-constructor case of pure equality, with the source functional
+induction hypothesis for the zipped constructor fields. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_pure_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem eqPureThmConstructorMatch {C F : Type} (tx ty : BackendCommon.Tra)
+    (tagX tagY : Nat) (xs ys : List ClosLang.Exp) (vx vy : Value)
+    (env : List Value) (s : State C F) (b : Bool)
+    (direct : directEq (.op tx (.blockOp (.cons tagX)) xs)
+      (.op ty (.blockOp (.cons tagY)) ys) = none)
+    (same : (tagX != tagY || xs.length != ys.length) = false)
+    (ih : ∀ (hs : List (Value × Value)) (flag : Bool),
+      List.Forall₂ (fun p q => evaluate [p.1, p.2] env s = (.val [q.1, q.2], s) ∧
+        SimpleExp p.1 ∧ SimpleExp p.2) (xs.reverse.zip ys.reverse) hs ∧
+      doEqList (hs.map Prod.fst) (hs.map Prod.snd) = .val flag ∧
+      (∀ e ∈ Flapjack.appListAppend (eqPureList (xs.reverse.zip ys.reverse)), SimpleExp e) →
+      evaluate [conjList (Flapjack.appListAppend (eqPureList (xs.reverse.zip ys.reverse)))]
+        env s = (.val [boolValue flag], s))
+    (h : evaluate [.op tx (.blockOp (.cons tagX)) xs, .op ty (.blockOp (.cons tagY)) ys] env s =
+        (.val [vx, vy], s) ∧
+      SimpleExp (.op tx (.blockOp (.cons tagX)) xs) ∧
+      SimpleExp (.op ty (.blockOp (.cons tagY)) ys) ∧ doEq vx vy = .val b) :
+    evaluate [eqPure (.op tx (.blockOp (.cons tagX)) xs)
+      (.op ty (.blockOp (.cons tagY)) ys)] env s = (.val [boolValue b], s) := by
+  obtain ⟨runX, runY⟩ := purePair _ _ vx vy env s h.2.1 h.1
+  obtain ⟨valuesX, argsX, rfl, lenX⟩ := pureConstructor tx tagX xs env s vx runX
+  obtain ⟨valuesY, argsY, rfl, lenY⟩ := pureConstructor ty tagY ys env s vy runY
+  have tagEq : tagX = tagY := by
+    simp at same
+    exact same.1
+  have lengthEq : xs.length = ys.length := by
+    simp at same
+    exact same.2
+  have valuesLength : valuesX.reverse.length = valuesY.reverse.length := by
+    simpa [lenX, lenY] using lengthEq
+  have listEq : doEqList valuesX.reverse valuesY.reverse = .val b := by
+    have eq := h.2.2.2
+    rw [doEq, if_pos ⟨tagEq, valuesLength⟩] at eq
+    exact eq
+  have simpleX : ∀ x ∈ xs, SimpleExp x := by cases h.2.1 with | cons _ _ _ children => exact children
+  have simpleY : ∀ y ∈ ys, SimpleExp y := by cases h.2.2.1 with | cons _ _ _ children => exact children
+  have relX := pureEvalList xs valuesX env s simpleX argsX
+  have relY := pureEvalList ys valuesY env s simpleY argsY
+  have zipped := forall₂Zip (List.rel_reverse relX) (List.rel_reverse relY)
+  have paired : List.Forall₂ (fun p q => evaluate [p.1, p.2] env s = (.val [q.1, q.2], s) ∧
+      SimpleExp p.1 ∧ SimpleExp p.2) (xs.reverse.zip ys.reverse)
+        (valuesX.reverse.zip valuesY.reverse) := by
+    apply List.Forall₂.imp ?_ zipped
+    rintro ⟨ex, ey⟩ ⟨v1, v2⟩ ⟨⟨rx, sx⟩, ⟨ry, sy⟩⟩
+    refine ⟨?_, sx, sy⟩
+    rw [ClosProps.evaluate_cons_value ex [ey] env s s v1 rx, ry]
+  have pairSimple : ∀ p ∈ xs.reverse.zip ys.reverse, SimpleExp p.1 ∧ SimpleExp p.2 := by
+    intro p hp
+    have members := List.of_mem_zip hp
+    exact ⟨simpleX _ (List.mem_reverse.mp members.1), simpleY _ (List.mem_reverse.mp members.2)⟩
+  have outSimple := eqPureSimple (xs.reverse.zip ys.reverse) pairSimple
+  have mappedEq : doEqList ((valuesX.reverse.zip valuesY.reverse).map Prod.fst)
+      ((valuesX.reverse.zip valuesY.reverse).map Prod.snd) = .val b := by
+    rw [List.map_fst_zip (Nat.le_of_eq valuesLength),
+      List.map_snd_zip (Nat.le_of_eq valuesLength.symm)]
+    exact listEq
+  have recResult := ih (valuesX.reverse.zip valuesY.reverse) b ⟨paired, mappedEq, outSimple⟩
+  have result : eqPure (.op tx (.blockOp (.cons tagX)) xs) (.op ty (.blockOp (.cons tagY)) ys) =
+      conjList (Flapjack.appListAppend (eqPureList (xs.reverse.zip ys.reverse))) := by
+    unfold eqPure
+    rw [eqPureList, direct]
+    simp [cons, destOp, destCons, same]
+  rw [result]
+  exact recResult
 
 end Flapjack.Compiler.Backend.ClosOp
