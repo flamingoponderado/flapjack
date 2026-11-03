@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.MappedGlobals
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallPrimitives
 import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
 import Aesop
 
@@ -211,6 +212,120 @@ theorem doAppSsgcCons {C F : Type} (tag : Nat) (args : List ClosSem.Value)
   rcases h with ⟨rfl, argsSafe, stateSafe⟩
   simp [ClosSem.doApp, applyBlock, vsgcFree, stateSafe, mglobalsExtendRefl]
   exact argsSafe
+
+/-- Literal constants contain no global-writing closures. -/
+private theorem makeConstSafe (constant : ClosLang.Const) : vsgcFree (makeConst constant) := by
+  cases constant with
+  | constInt value => simp [makeConst, vsgcFree]
+  | constWord64 value => simp [makeConst, vsgcFree]
+  | constStr value => simp [makeConst, vsgcFree]
+  | constCons tag fields =>
+    simp only [makeConst, vsgcFree]
+    intro value member
+    obtain ⟨child, childMember, rfl⟩ := List.mem_map.mp member
+    exact makeConstSafe child
+termination_by sizeOf constant
+decreasing_by
+  have h := List.sizeOf_lt_of_mem childMember
+  simp_wf
+  omega
+
+/-- Encoding a list of safe values yields a safe closure value. -/
+private theorem listToValueSafe (values : List ClosSem.Value)
+    (safe : ∀ v ∈ values, vsgcFree v) : vsgcFree (ClosSem.listToValue values) := by
+  induction values with
+  | nil => simp [ClosSem.listToValue, vsgcFree]
+  | cons value rest ih =>
+    simp only [List.mem_cons, forall_eq_or_imp] at safe
+    simp [ClosSem.listToValue, vsgcFree, safe.1, ih safe.2]
+
+/-- Decoding a safe closure list yields safe elements. -/
+private theorem valueToListSafe (value : ClosSem.Value) (values : List ClosSem.Value)
+    (safe : vsgcFree value) (run : ClosSem.valueToList value = some values) :
+    ∀ v ∈ values, vsgcFree v := by
+  cases value with
+  | block tag fields =>
+    cases fields with
+    | nil => simp [ClosSem.valueToList] at run; simp_all
+    | cons head tail =>
+      cases tail with
+      | nil => simp [ClosSem.valueToList] at run
+      | cons next tail =>
+        cases tail with
+        | cons other rest => simp [ClosSem.valueToList] at run
+        | nil =>
+          simp [vsgcFree] at safe
+          simp only [ClosSem.valueToList] at run
+          split at run
+          · cases decoded : ClosSem.valueToList next with
+            | none => simp [decoded] at run
+            | some tailValues =>
+              simp [decoded] at run
+              subst values
+              have tailSafe := valueToListSafe next tailValues safe.2 decoded
+              simpa using And.intro safe.1 tailSafe
+          · simp at run
+  | _ => simp [ClosSem.valueToList] at run
+termination_by sizeOf value
+
+/-- Block primitives produce safe values from safe inputs. This is proof
+infrastructure for the source primitive-safety theorem. -/
+private theorem blockResultSafe {C F : Type} (op : ClosLang.BlockOp) (args : List ClosSem.Value)
+    (state next : State C F) (value : ClosSem.Value)
+    (argsSafe : ∀ v ∈ args, vsgcFree v)
+    (run : applyBlock op args state = some (value, next)) : vsgcFree value := by
+  unfold applyBlock at run
+  repeat' split at run
+  all_goals simp_all [vsgcFree]
+  all_goals try simp_all only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq]
+  all_goals try (solve | aesop (add safe apply [makeConstSafe, vsgcFreeBool]))
+  case h_2 =>
+    rcases run with ⟨rfl, _⟩
+    simpa [vsgcFree] using argsSafe
+  case h_3.isFalse =>
+    rcases run with ⟨rfl, _⟩
+    simp only [vsgcFree]
+    intro v member
+    rcases List.mem_append.mp member with initial | fields
+    · exact argsSafe.2 v initial
+    · exact argsSafe.1 v (List.mem_of_mem_drop (List.mem_of_mem_take fields))
+  case h_6 =>
+    rcases run with ⟨item, found, rfl, _⟩
+    exact argsSafe item (List.mem_of_getElem? found)
+  case h_7 =>
+    rcases run with ⟨left, leftRun, right, rightRun, rfl, _⟩
+    apply listToValueSafe
+    intro v member
+    rcases List.mem_append.mp member with leftMember | rightMember
+    · exact valueToListSafe _ left argsSafe.1 leftRun v leftMember
+    · exact valueToListSafe _ right argsSafe.2 rightRun v rightMember
+  case h_8 =>
+    rcases run with ⟨rfl, _⟩
+    simp [vsgcFree]
+  case h_9 =>
+    rcases run with ⟨values, decoded, rfl, _⟩
+    simpa [vsgcFree] using valueToListSafe _ values argsSafe decoded
+
+/-- Every block operation satisfies the complete primitive-safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcBlockOp {C F : Type} (op : ClosLang.BlockOp) (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.blockOp op) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.blockOp op) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, argsSafe, stateSafe⟩
+  cases found : applyBlock op args s0 with
+  | none => simp [ClosSem.doApp, found]
+  | some pair =>
+    rcases pair with ⟨value, next⟩
+    have valueSafe := blockResultSafe op args s0 next value argsSafe found
+    have equal := ClosInterp.applyBlock_state op args s0 next value found
+    subst next
+    simp [ClosSem.doApp, found, valueSafe, stateSafe, mglobalsExtendRefl]
 
 /-- A successful read returns a safe initialized global and leaves the state
 unchanged. This is proof infrastructure for the source primitive case. -/
