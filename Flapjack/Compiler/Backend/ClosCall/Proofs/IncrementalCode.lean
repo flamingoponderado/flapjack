@@ -41,6 +41,117 @@ theorem compileIncFuel_generated (fuel : Nat) (known : NumSet) (program : ClosSe
   · simp at old
   · exact new
 
+/-- Retrying the list traversal preserves the origin property for every
+newly known location. -/
+theorem callsListBounded_knownBound (fuel : Nat) (es : List ClosLang.Exp) (initial final : State)
+    (out : List ClosLang.Exp) (run : callsListBounded fuel es initial = some (out, final)) :
+    KnownBound initial final := by
+  unfold callsListBounded at run
+  cases first : callsListFuel fuel es initial with
+  | some result =>
+    simp only [first, Option.some.injEq] at run
+    subst result
+    exact callsListFuel_knownBound fuel es initial final out first
+  | none =>
+    simp only [first] at run
+    exact callsListFuel_knownBound _ es initial final out run
+
+/-- Reattach previously generated code to an incremental result. Distinct
+and fresh source locations ensure the combined compiler state remains well
+formed and extends the previous one. -/
+theorem compileIncFuel_merge_state (fuel : Nat) (known : NumSet)
+    (oldCode : List (Nat × Nat × ClosLang.Exp)) (program : ClosSem.Program)
+    (nextKnown : NumSet) (converted : ClosSem.Program)
+    (run : compileIncFuel? fuel known program = some (nextKnown, converted))
+    (oldWell : wellFormed (known, oldCode))
+    (distinct : (codeLocations program.1).Nodup)
+    (fresh : LabelsFresh (codeLocations program.1) (known, oldCode)) :
+    wellFormed (nextKnown, converted.2 ++ oldCode) ∧
+      stateExtends (known, oldCode) (nextKnown, converted.2 ++ oldCode) := by
+  have traversal := compileIncFuel_traversal fuel known program nextKnown converted run
+  have generated := compileIncFuel_generated fuel known program nextKnown converted run distinct
+  have origins := callsListBounded_knownBound fuel program.1 (known, []) (nextKnown, converted.2)
+    converted.1 traversal
+  have weak := callsListBounded_weaklyWellFormed fuel program.1 (known, []) (nextKnown, converted.2)
+    converted.1 traversal (by simp [weaklyWellFormed])
+  have extension := callsListBounded_stateExtends fuel program.1 (known, []) (nextKnown, converted.2)
+    converted.1 traversal distinct (by simp [LabelsFresh]) (by simp)
+  have separate : ∀ label ∈ converted.2.map Prod.fst, label ∉ oldCode.map Prod.fst := by
+    intro label member
+    obtain ⟨loc, locMember, rfl⟩ := generated.2.1 label member
+    exact fresh loc locMember
+  have combinedDistinct : ((converted.2 ++ oldCode).map Prod.fst).Nodup := by
+    simp only [List.map_append]
+    apply List.nodup_append.mpr
+    refine ⟨generated.1, oldWell.2, ?_⟩
+    intro a inNew b inOld equal
+    subst b
+    exact separate a inNew inOld
+  have combinedWell : wellFormed (nextKnown, converted.2 ++ oldCode) := by
+    constructor
+    · apply Set.Subset.antisymm
+      · intro label member
+        simp only [Set.mem_ofPred_eq, List.map_append, List.mem_append] at member
+        cases member with
+        | inl new => exact weak new
+        | inr old =>
+          have oldImage : label ∈ Set.image Nat.succ (sptDomain known) := by
+            rw [← oldWell.1]
+            exact old
+          obtain ⟨loc, knownLoc, rfl⟩ := oldImage
+          exact ⟨loc, generated.2.2 loc knownLoc, rfl⟩
+      · intro label member
+        obtain ⟨loc, knownLoc, rfl⟩ := member
+        simp only [Set.mem_ofPred_eq, List.map_append, List.mem_append]
+        rcases origins loc knownLoc with old | new
+        · right
+          have oldImage : loc + 1 ∈ Set.image Nat.succ (sptDomain known) := ⟨loc, old, by omega⟩
+          rw [← oldWell.1] at oldImage
+          simpa using oldImage
+        · left
+          simpa using new
+    · exact combinedDistinct
+  refine ⟨combinedWell, extension.1, ?_, combinedDistinct⟩
+  intro key value lookup
+  rw [logicalAssocLookup_nat] at lookup ⊢
+  have member := sptAListLookup_mem key oldCode value lookup
+  have inCombined : (key, value) ∈ converted.2 ++ oldCode := List.mem_append_right _ member
+  apply sptAListLookup_eq_of_mem_unique key value (converted.2 ++ oldCode) inCombined
+  intro other otherMember
+  have injective := (List.nodup_map_iff_inj_on (List.Nodup.of_map Prod.fst combinedDistinct)).mp combinedDistinct
+  have eq : (key, other) = (key, value) := injective _ otherMember _ inCombined rfl
+  exact congrArg Prod.snd eq
+
+/-- Installing a list with distinct keys makes every listed binding
+available in the resulting finite map. -/
+theorem lookup_updateListEq_of_mem_unique {V : Type} (code : HolFiniteMapExact Nat V)
+    (entries : List (Nat × V)) (distinct : (entries.map Prod.fst).Nodup)
+    (key : Nat) (value : V) (member : (key, value) ∈ entries) :
+    (code.updateListEq entries).lookup key = some value := by
+  induction entries generalizing code with
+  | nil => simp at member
+  | cons entry entries ih =>
+    obtain ⟨label, item⟩ := entry
+    simp only [List.map_cons, List.nodup_cons] at distinct
+    simp only [List.mem_cons] at member
+    cases member with
+    | inl eq =>
+      cases eq
+      rw [HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL_cons]
+      have same := FLOOKUP_FUPDATE_LIST_HOL_not_mem (FUPDATE_HOL code.lookup (key, value)) entries key distinct.1
+      change FUPDATE_LIST_HOL (FUPDATE_HOL code.lookup (key, value)) entries key =
+        FUPDATE_HOL code.lookup (key, value) key at same
+      rw [same]
+      simp [FUPDATE_HOL]
+    | inr later =>
+      have next := ih (code.updateEq (label, item)) distinct.2 later
+      have updated : (code.updateEq (label, item)).lookup =
+          FUPDATE_HOL code.lookup (label, item) := by
+        funext k
+        exact HolFiniteMapExact.lookup_updateEq code (label, item) k
+      simpa only [HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL_cons,
+        updated] using next
+
 /-- If old target code is absent at successors of the source locations, the
 new auxiliary labels are disjoint from that code. -/
 theorem compileIncFuel_generated_fresh (fuel : Nat) (known : NumSet) (program : ClosSem.Program)

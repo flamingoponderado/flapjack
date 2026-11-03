@@ -166,4 +166,111 @@ theorem doInstall_shiftedOracle_fresh {C F : Type} (fuel : Nat)
   apply preserved (index + 1) (by omega) loc
   simpa [finalEq, holShiftSeq] using member
 
+/-- When the old compiler state's generated code is included in the target
+map, target freshness implies freshness against that old auxiliary list. -/
+theorem labelsFresh_of_codeIncludes (g : State) (locations : List Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (distinct : (g.2.map Prod.fst).Nodup) (included : codeIncludes g.2 code)
+    (fresh : ∀ loc ∈ locations, code.lookup (loc + 1) = none) :
+    LabelsFresh locations g := by
+  intro loc member labelMember
+  obtain ⟨⟨label, value⟩, entryMember, labelEq⟩ := List.mem_map.mp labelMember
+  dsimp at labelEq
+  subst label
+  have lookup : logicalAssocLookup (loc + 1) g.2 = some value := by
+    rw [logicalAssocLookup_nat]
+    apply sptAListLookup_eq_of_mem_unique _ _ _ entryMember
+    intro other otherMember
+    have injective := (List.nodup_map_iff_inj_on (List.Nodup.of_map Prod.fst distinct)).mp distinct
+    have eq : (loc + 1, other) = (loc + 1, value) := injective _ otherMember _ entryMember rfl
+    exact congrArg Prod.snd eq
+  have found := included (loc + 1) value lookup
+  rw [fresh loc member] at found
+  contradiction
+
+/-- The installed map includes both the newly generated entries and the
+previously included entries when installation preserves old lookups. -/
+theorem codeIncludes_append_after_install
+    (oldEntries newEntries : List (Nat × (Nat × ClosLang.Exp)))
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (oldDistinct : (oldEntries.map Prod.fst).Nodup)
+    (newDistinct : (newEntries.map Prod.fst).Nodup)
+    (included : codeIncludes oldEntries code)
+    (growth : ∀ key entry, code.lookup key = some entry →
+      (code.updateListEq newEntries).lookup key = some entry) :
+    codeIncludes (newEntries ++ oldEntries) (code.updateListEq newEntries) := by
+  intro key value lookup
+  rw [logicalAssocLookup_nat] at lookup
+  have member := sptAListLookup_mem key (newEntries ++ oldEntries) value lookup
+  rcases List.mem_append.mp member with newMember | oldMember
+  · exact lookup_updateListEq_of_mem_unique code newEntries newDistinct key value newMember
+  · apply growth key value
+    apply included key value
+    rw [logicalAssocLookup_nat]
+    apply sptAListLookup_eq_of_mem_unique _ _ _ oldMember
+    intro other otherMember
+    have injective := (List.nodup_map_iff_inj_on (List.Nodup.of_map Prod.fst oldDistinct)).mp oldDistinct
+    have eq : (key, other) = (key, value) := injective _ otherMember _ oldMember rfl
+    exact congrArg Prod.snd eq
+
+/-- A successful incremental installation extends the old compiler state
+with its newly generated auxiliary code, provided the old state is well
+formed and included in the pre-install target code. -/
+theorem doInstall_nonType_compilerState_growth {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value)
+    (result : SemanticPrimitivesHOL.Result (List ClosLang.Exp) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (oldWell : wellFormed g) (included : codeIncludes g.2 target.code)
+    (knownEq : g.1 = (source.compileOracle 0).1.1)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (sourceAuxEmpty : (source.compileOracle 0).2.2 = [])
+    (locationsDistinct : (codeLocations (source.compileOracle 0).2.1).Nodup)
+    (fresh : ∀ loc ∈ codeLocations (source.compileOracle 0).2.1, target.code.lookup (loc + 1) = none)
+    (run : doInstall sourceValues source = (result, final))
+    (notType : result ≠ .err (.abort .typeError)) :
+    ∃ expressions converted nextKnown targetFinal,
+      compileIncFuel? fuel g.1 (expressions, []) = some (nextKnown, converted) ∧
+      doInstall targetValues target =
+        (if source.clock = 0 then .err (.abort .timeoutError) else .val converted.1, targetFinal) ∧
+      result = (if source.clock = 0 then .err (.abort .timeoutError) else .val expressions) ∧
+      expressions = (source.compileOracle 0).2.1 ∧ expressions ≠ [] ∧
+      wellFormed (nextKnown, converted.2 ++ g.2) ∧ stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      targetFinal.code = target.code.updateListEq converted.2 ∧
+      codeIncludes (converted.2 ++ g.2) targetFinal.code ∧
+      StateRelFuel relationFuel (nextKnown, converted.2 ++ g.2) allowed final targetFinal ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
+    nonempty, targetCodeEq, _, _, _, oracleEq, finalStates, codeGrowth⟩ :=
+    doInstall_nonType_incremental fuel relationFuel g allowed compiler source target sourceValues targetValues
+      result final states values oldWell.2 sourceCompiler targetCompiler targetOracle sourceAuxEmpty
+      locationsDistinct fresh run notType
+  have passRun' : compileIncFuel? fuel g.1 (expressions, []) = some (nextKnown, converted) := by
+    simpa [knownEq] using passRun
+  have oldFresh : LabelsFresh (codeLocations expressions) g := by
+    apply labelsFresh_of_codeIncludes g (codeLocations expressions) target.code oldWell.2 included
+    simpa [exprEq] using fresh
+  have sourceDistinct : (codeLocations expressions).Nodup := by simpa [exprEq] using locationsDistinct
+  have merged := compileIncFuel_merge_state fuel g.1 g.2 (expressions, []) nextKnown converted
+    passRun' oldWell sourceDistinct oldFresh
+  have gEq : (g.1, g.2) = g := by cases g; rfl
+  have mergedWell : wellFormed (nextKnown, converted.2 ++ g.2) := merged.1
+  have extended : stateExtends g (nextKnown, converted.2 ++ g.2) := by
+    simpa only [gEq] using merged.2
+  have newDistinct : (converted.2.map Prod.fst).Nodup := by
+    exact (compileIncFuel_generated fuel g.1 (expressions, []) nextKnown converted passRun' sourceDistinct).1
+  have combinedIncluded : codeIncludes (converted.2 ++ g.2) targetFinal.code := by
+    rw [targetCodeEq]
+    apply codeIncludes_append_after_install g.2 converted.2 target.code oldWell.2 newDistinct included
+    simpa [targetCodeEq] using codeGrowth
+  refine ⟨expressions, converted, nextKnown, targetFinal, passRun', targetRun, resultEq, exprEq,
+    nonempty, mergedWell, extended, targetCodeEq, combinedIncluded, ?_, oracleEq, codeGrowth⟩
+  exact stateRelFuel_mono finalStates extended Set.Subset.rfl
+
 end Flapjack.Compiler.Backend.ClosCall
