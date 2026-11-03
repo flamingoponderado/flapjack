@@ -3,6 +3,32 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_op_correct_approx",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
+  "lean_name": "knownOpCorrectApproxSetGlobal",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_op_correct_approx_typed with the original global write case: all four premises and the two conclusions remain, with only the operation specialized. For this case the proof handles an empty runtime slot, inserting either the new approximation or its merge with the old one; other keys are unchanged. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_correct_approx",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
+  "lean_name": "knownOpCorrectApproxAllocGlobal",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_op_correct_approx_typed with the original global allocation case: all four premises and the two conclusions remain, with only the operation specialized. For this case the appended slots are empty, preserving every initialized global. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_correct_approx",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
   "lean_name": "knownOpCorrectApproxCons",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
