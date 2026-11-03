@@ -1,5 +1,25 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "simple_val_rel_do_app_rev",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PrimitiveBoolean.lean",
+  "lean_name": "simpleValRelDoAppRevBoolTest",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared simple_val_rel_do_app_rev_typed and the source proof's BoolTest case. The original simple value and state relation assumptions, pointwise argument relation, target-result case split, existential source result, and independent compiler/shared FFI carriers are retained. The canonical state finite maps have the local roundtrip witness; the evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "simple_val_rel_do_app_rev",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PrimitiveBoolean.lean",
+  "lean_name": "simpleValRelDoAppRevBoolNot",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared simple_val_rel_do_app_rev_typed and the source proof's BoolNot case. The original simple value and state relation assumptions, pointwise argument relation, target-result case split, existential source result, and independent compiler/shared FFI carriers are retained. The canonical state finite maps have the local roundtrip witness; the evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "v_rel_IMP_v_to_bytes",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationDecode.lean",
