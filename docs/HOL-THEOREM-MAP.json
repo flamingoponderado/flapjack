@@ -2093,6 +2093,16 @@
     "reviewer": "Compared the first evaluate_remove_typed conjunct and conditional case of evaluate_ind_typed in clos_known_syntax_probe.out. The condition induction hypothesis uses the original state; the true and false branch hypotheses use the resulting state and the original Boolean-value equalities on HOL HD, including the false branch's inequality to true. The original evaluation, environment, state and code premises and existential target evaluation, result and state conclusions are retained, including condition errors and the non-Boolean type error. Related values preserve the Boolean observation, and successful singleton evaluation supplies the head value. The closure state has canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining evaluator cases."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "evaluate_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_remove_fvs_fn",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the first evaluate_remove_typed conjunct and the function case of evaluate_ind_typed in clos_known_syntax_probe.out. This case has no induction hypothesis and retains the original evaluation, environment, state and code premises and existential target evaluation, result and state conclusions. Both whole-environment and selected captures are handled, including matching lookup failures and zero or excessive arity. Successful selection preserves index count and related values, yielding the original closure-body bound. The closure state has canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining evaluator cases."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
     "hol_name": "semantics_annotate",
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/InstalledSemantics.lean",

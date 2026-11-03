@@ -53,6 +53,40 @@ theorem environment_lookup (env nextEnv : List Value) (related : List.Forall₂ 
     | zero => simpa [OptionRel] using head
     | succ index => simpa using ih index
 
+/-- Capturing the same indices in related environments either fails on both
+sides or returns related values, in order. -/
+theorem environment_lookupVars (indices : List Nat) (env nextEnv : List Value)
+    (related : List.Forall₂ ValueRel env nextEnv) :
+    OptionRel (List.Forall₂ ValueRel) (lookupVars indices env) (lookupVars indices nextEnv) := by
+  induction indices with
+  | nil => simp [lookupVars, OptionRel]
+  | cons index rest ih =>
+    have head := environment_lookup env nextEnv related index
+    cases left : env[index]? <;> cases right : nextEnv[index]? <;>
+      simp [OptionRel, left, right] at head
+    · simp [lookupVars, left, right, OptionRel]
+    · rename_i value nextValue
+      cases leftTail : lookupVars rest env <;> cases rightTail : lookupVars rest nextEnv <;>
+        simp [OptionRel, leftTail, rightTail] at ih
+      · simp [lookupVars, left, right, leftTail, rightTail, OptionRel]
+      · simp [lookupVars, left, right, leftTail, rightTail, OptionRel, head, ih]
+
+/-- A successful capture contains one value per selected index. -/
+theorem lookupVars_length (indices : List Nat) (env values : List Value)
+    (found : lookupVars indices env = some values) : values.length = indices.length := by
+  induction indices generalizing values with
+  | nil => simp [lookupVars] at found; subst values; rfl
+  | cons index rest ih =>
+    cases head : env[index]? with
+    | none => simp [lookupVars, head] at found
+    | some value =>
+      cases tail : lookupVars rest env with
+      | none => simp [lookupVars, head, tail] at found
+      | some remaining =>
+        simp [lookupVars, head, tail] at found
+        subst values
+        simp [ih remaining tail]
+
 /-- A source variable, including an out-of-scope one, is simulated by the
 corresponding variable or generated type-error expression. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "evaluate_remove_fvs"
@@ -539,5 +573,68 @@ theorem evaluate_remove_fvs_if {C F : Type} (trace : BackendCommon.Tra)
               refine ⟨targetBranchResult, targetLast, ?_, branchRel, lastRel⟩
               rw [evaluate, fixClock_evaluate, targetRun]
               simpa [targetDecision] using targetBranchRun
+
+/-- Function construction preserves closure values and both capture and
+arity errors. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "evaluate_remove_fvs"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_remove_fvs_fn {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
+    (location : Option Nat) (selected : Option (List Nat)) (arity : Nat) (body : ClosLang.Exp)
+    (env nextEnv : List Value) (source : State C F) (result : Result (List Value) Value)
+    (sourceNext : State C F) (targetCode : List ClosLang.Exp) (target : State C F)
+    (premises : evaluate [.fn name location selected arity body] env source = (result, sourceNext) ∧
+      List.Forall₂ ValueRel env nextEnv ∧ StateRel source target ∧
+      CodeRel env.length [.fn name location selected arity body] targetCode) :
+    ∃ targetResult targetNext,
+      evaluate targetCode nextEnv target = (targetResult, targetNext) ∧
+      ResultRel result targetResult ∧ StateRel sourceNext targetNext := by
+  obtain ⟨run, envRel, states, code⟩ := premises
+  have codeEq : targetCode = [.fn name location selected arity
+      (removeSing (arity + (selected.map List.length).getD env.length) body)] := by
+    simpa [CodeRel, removeList, removeSing] using code
+  rw [codeEq]
+  have maxEq : target.maxApp = source.maxApp := states.2.2.2.1
+  cases selected with
+  | none =>
+    by_cases arityOk : arity ≤ source.maxApp ∧ arity ≠ 0
+    · simp [evaluate, arityOk] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨.val [.closure location [] nextEnv arity (removeSing (arity + env.length) body)],
+        target, ?_, ?_, states⟩
+      · simp [evaluate, maxEq, arityOk]
+      · exact .cons (.closure location [] [] env nextEnv arity body _ envRel .nil (by
+          simp [CodeRel, removeList, Nat.add_comm])) .nil
+    · simp [evaluate, arityOk] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact ⟨.err (.abort .typeError), target, by simp [evaluate, maxEq, arityOk], rfl, states⟩
+  | some indices =>
+    by_cases arityOk : arity ≤ source.maxApp ∧ arity ≠ 0
+    · have captureRel := environment_lookupVars indices env nextEnv envRel
+      cases capture : lookupVars indices env with
+      | none =>
+        cases nextCapture : lookupVars indices nextEnv with
+        | none =>
+          simp [evaluate, arityOk, capture] at run
+          obtain ⟨rfl, rfl⟩ := run
+          exact ⟨.err (.abort .typeError), target,
+            by simp [evaluate, maxEq, arityOk, nextCapture], rfl, states⟩
+        | some values => simp [capture, nextCapture, OptionRel] at captureRel
+      | some values =>
+        cases nextCapture : lookupVars indices nextEnv with
+        | none => simp [capture, nextCapture, OptionRel] at captureRel
+        | some nextValues =>
+          have captures : List.Forall₂ ValueRel values nextValues := by
+            simpa [capture, nextCapture, OptionRel] using captureRel
+          have length := lookupVars_length indices env values capture
+          simp [evaluate, arityOk, capture] at run
+          obtain ⟨rfl, rfl⟩ := run
+          refine ⟨.val [.closure location [] nextValues arity
+            (removeSing (arity + indices.length) body)], target, ?_, ?_, states⟩
+          · simp [evaluate, maxEq, arityOk, nextCapture]
+          · exact .cons (.closure location [] [] values nextValues arity body _ captures .nil (by
+              simp [CodeRel, removeList, length, Nat.add_comm])) .nil
+    · simp [evaluate, arityOk] at run
+      obtain ⟨rfl, rfl⟩ := run
+      exact ⟨.err (.abort .typeError), target, by simp [evaluate, maxEq, arityOk], rfl, states⟩
 
 end Flapjack.Compiler.Backend.ClosFvs

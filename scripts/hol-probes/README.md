@@ -136,7 +136,7 @@ singleton/list equations, length and compiler definitions, code, function,
 value, reference and state relations, a typed replay of the local clock-decrement
 lemma, evaluator simulation and whole-program correctness statement. These
 captures support review; the evaluator proof covers the empty-list, sequencing,
-variable, conditional, let, raise, handler and tick cases, with the remaining
+variable, conditional, let, raise, handler, function and tick cases, with the remaining
 cases still open.
 
 `clos_interp_review_probe.out` captures the typed installation traversal,
