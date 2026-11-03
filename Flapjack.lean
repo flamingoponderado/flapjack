@@ -924,6 +924,8 @@ import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownPipelineSemantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownPreparedSemantics
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownDriverSemantics
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownLoweringHandoff
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownLabelOracle
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownInitialLabels
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Syntax
