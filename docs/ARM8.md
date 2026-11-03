@@ -468,9 +468,15 @@ because `memLoad` ends in `assertState (holAligned (holLOG2 n) a)`, so
 `¬ s2.failed` from `asm_step` gives the effective address aligned — and then
 `CheckAlignment` leaves the state unchanged.
 
+`arm8MemLoad_aligned` and `arm8MemLoad_domain` derive the two facts a load
+case needs from `asm_step`'s `¬ s2.failed`: the effective address is
+eight-byte aligned and its eight bytes are in the source domain.  The
+alignment half is what makes `CheckAlignment` a no-op regardless of
+`SCTLR_EL1.A`; `arm8Aligned_eight_iff` converts between the rendered
+`Aligned` and the `8 ∣ a.toNat` form.
+
 Still open for #1239: the load case theorem itself (the three-way split over
-`off.msb` and the scaled form, with the alignment and domain facts derived
-from `¬ s2.failed`), the two-instruction `AddSubImmediate@64` +
+`off.msb` and the scaled form), the two-instruction `AddSubImmediate@64` +
 `LoadStoreImmediate` constructor, and the remaining case theorems covering
 the load/store forms.
 The assembling
