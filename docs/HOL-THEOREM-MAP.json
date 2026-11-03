@@ -3,7 +3,7 @@
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
   "hol_name": "simple_val_rel_do_app_rev",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PrimitiveMemory.lean",
-  "lean_name": "simpleValRelDoAppRevLength",
+  "lean_name": "simpleValRelDoAppRevLengthArray",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
     "refs",

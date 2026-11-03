@@ -36,7 +36,7 @@ theorem relatedRefs {C D F : Type} (vr : Value → Value → Prop)
 /-- Value-array length case of the reverse primitive simulation. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_do_app_rev"
   (fmap_as_finite_support := [refs, code])]
-theorem simpleValRelDoAppRevLength {C D F : Type} (vr : Value → Value → Prop)
+theorem simpleValRelDoAppRevLengthArray {C D F : Type} (vr : Value → Value → Prop)
     (sr : State C F → State D F → Prop) (s : State C F) (t : State D F) (xs ys : List Value)
     (h : simpleValRel vr ∧ simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ vr xs ys) :
     match doApp (.memOp .length) ys t with
