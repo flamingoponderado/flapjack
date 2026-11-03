@@ -1,6 +1,45 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_correct_approx",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
+  "lean_name": "knownOpCorrectApproxCons",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_op_correct_approx_typed with the original block constructor case: all four premises and the two conclusions remain, with only the operation specialized. In this case the related arguments yield a related block. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_correct_approx",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
+  "lean_name": "knownOpCorrectApproxIntConst",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_op_correct_approx_typed with the original integer constant case: all four premises and the two conclusions remain, with only the operation specialized. In this case a successful application yields the constant value. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_correct_approx",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
+  "lean_name": "knownOpCorrectApproxGlobal",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_op_correct_approx_typed with the original global read case: all four premises and the two conclusions remain, with only the operation specialized. In this case the initial global invariant supplies a present approximation, while an absent approximation is unrestricted. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "state_globals_approx_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateGlobalsApprox.lean",
   "lean_name": "stateGlobalsApprox",
