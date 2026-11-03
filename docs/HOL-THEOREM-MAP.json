@@ -1896,6 +1896,25 @@
     "reviewer": "Compared all seven rules in v_rel_rules_typed and the inductive definition: the integer, fixed 64-bit word, block, byte-vector and reference-pointer cases preserve their exact payloads; closure and recursive-closure rules retain independent location options, both environment relations, application-safety conditions, numbering and original arities. The closure-value and expression carriers are reviewed exact; the reviewed numbering traversal has a checked source-shaped recursive-binding equation. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/StateRelation.lean",
+    "lean_name": "StateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared state_rel_typed, ref_rel_def_typed and fmap_rel_def_typed in clos_number_correctness_probe.out. The independent FFI and compiler carriers, clock/FFI/max-app equalities, callback and oracle adapters, globals, oracle safety and empty code conditions match the original. RefRel specializes the exact three original reference cases to the reviewed value relation; optionRel_lookup_iff proves the pointwise lookup form states equal domains and related entries. Both states use the reviewed canonical refs and code maps with a local broad-carrier roundtrip witness. This representation review and Lean checking do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "renumber_code_locs_correct",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_simulation_sourceShape",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared both fully typed renumber_correct_typed conjuncts in clos_number_correctness_probe.out. The expression case retains the original tmp tuple, evaluation equation, non-type-error condition, application-safety, related environments and states, and the target evaluation/result/state existential. The application case retains its independent location binder, equality to NONE, both value relations and the same existential conclusion. ResultRel spells out the original result_rel for lists and exceptions, including unchanged aborts. The proof derives both cases from the full clock-and-expression-weight mutual evaluator simulation, with no additional simulation premises. The reviewed state relation uses canonical refs and code maps, with a local broad-state roundtrip witness; evaluators inherit the reviewed rational-cut real model. Typed source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
     "hol_name": "evaluate_app_IMP_shift_seq",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",

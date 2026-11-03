@@ -16,8 +16,8 @@ def AppSimulationAt {C F : Type} (source : State (Nat × C) F) : Prop :=
       evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
       ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext
 
-/-- Proof-side mutual simulation. It is untagged until its state and value
-carriers and the complete statement have been reviewed against HOL. -/
+/-- Mutual simulation factored through local Lean predicates. This helper has
+no separate HOL declaration; the source-shaped theorem follows below. -/
 theorem evaluate_simulation {C F : Type} :
     (∀ expressions, EvalSimulation (C := C) (F := F) expressions) ∧
       AppSimulation (C := C) (F := F) := by
@@ -171,9 +171,17 @@ theorem evaluate_simulation {C F : Type} :
     exact (all source.clock).1 source rfl function nextFunction args nextArgs target result next
       run noType related argsRel states
 
-/-- The mutual simulation in explicit source-statement shape. This is
-proof-side infrastructure: the state and value carriers still need HOL
-correspondence review before it can be classified as a HOL theorem port. -/
+namespace EvaluatePort
+/-- The closure state retains both finite maps through the canonical view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end EvaluatePort
+
+/-- The mutual expression and indirect-application numbering simulation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "renumber_code_locs_correct"
+  (fmap_as_finite_support := [refs, code])]
 theorem evaluate_simulation_sourceShape {C F : Type} :
     (∀ (tmp : List ClosLang.Exp × List Value × State (Nat × C) F)
       (xs : List ClosLang.Exp) (env : List Value) (source : State (Nat × C) F)

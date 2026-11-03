@@ -20,9 +20,47 @@ def OptionRel {α β : Type} (relation : α → β → Prop) : Option α → Opt
   | some left, some right => relation left right
   | _, _ => False
 
-/-- Source-shaped numbering state relation. The code and reference stores use
-the proof-side finite-support carrier; exact source correspondence remains
-to be reviewed. -/
+/-- Pointwise option lifting states the same domain equality and related
+lookup results as HOL's finite-map relation. This helper has no separate HOL
+declaration. -/
+theorem optionRel_lookup_iff {K A B : Type} (relation : A → B → Prop)
+    (left : HolFiniteMapExact K A) (right : HolFiniteMapExact K B) :
+    (∀ key, OptionRel relation (left.lookup key) (right.lookup key)) ↔
+      (∀ key, (∃ value, left.lookup key = some value) ↔
+        ∃ value, right.lookup key = some value) ∧
+      (∀ key a b, left.lookup key = some a → right.lookup key = some b → relation a b) := by
+  constructor
+  · intro h
+    constructor
+    · intro key
+      specialize h key
+      cases leftEq : left.lookup key <;> cases rightEq : right.lookup key <;>
+        simp_all [OptionRel]
+    · intro key a b ha hb
+      simpa [ha, hb, OptionRel] using h key
+  · intro ⟨domains, entries⟩ key
+    have same := domains key
+    cases leftEq : left.lookup key with
+    | none =>
+      cases rightEq : right.lookup key with
+      | none => trivial
+      | some b => simp [leftEq, rightEq] at same
+    | some a =>
+      cases rightEq : right.lookup key with
+      | none => simp [leftEq, rightEq] at same
+      | some b => exact entries key a b leftEq rightEq
+
+namespace StateRelationPort
+/-- The closure state retains both finite maps through the canonical view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end StateRelationPort
+
+/-- Numbering state relation over canonical finite-support maps. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support := [refs, code])]
 def StateRel {C F : Type} (source : State (Nat × C) F) (target : State C F) : Prop :=
   source.clock = target.clock ∧ source.ffi = target.ffi ∧ target.maxApp = source.maxApp ∧
   source.compile = stateCc (ignoreTable compileInc) target.compile ∧
