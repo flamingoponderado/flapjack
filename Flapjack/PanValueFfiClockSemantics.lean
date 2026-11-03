@@ -89,10 +89,10 @@ def evalPanValueFfiLeafControl
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
     (evaluator : Option (PanExprEvaluator α) := none) :
     Option (PanValueFfiControlResult α σ) :=
-  let result : Option (PanValueFfiSteppedResult α σ) := match program with
-    | .skip | .annot _ _ => some (.normal locals globals memory ffi, 1)
-    | .break => some (.broke locals globals memory ffi, 1)
-    | .continue => some (.continued locals globals memory ffi, 1)
+  match program with
+    | .skip | .annot _ _ => some (.normal locals globals memory ffi)
+    | .break => some (.broke locals globals memory ffi)
+    | .continue => some (.continued locals globals memory ffi)
     | .assign .local name value =>
         panValueAssignLocalResult structs baseAddress topAddress bytesInWord locals globals
           memory ffi name value memoryAccess evaluator
@@ -112,7 +112,7 @@ def evalPanValueFfiLeafControl
         panValueStoreByteResult structs baseAddress topAddress bytesInWord locals globals memory
           ffi address value memoryAccess evaluator
     | .extCall function config configLength array arrayLength =>
-        panValueFfiExtCallSteps context handler structs baseAddress topAddress bytesInWord
+        panValueFfiExtCallResult context handler structs baseAddress topAddress bytesInWord
           locals globals memory ffi function config configLength array arrayLength
           memoryAccess memoryHandler evaluator
     | .return value =>
@@ -128,7 +128,6 @@ def evalPanValueFfiLeafControl
         panValueShMemStoreResult context structs baseAddress topAddress bytesInWord locals globals
           memory ffi size address value memoryAccess evaluator
     | .tick | .dec .. | .seq .. | .ite .. | .while .. | .call .. | .decCall .. => none
-  result.map Prod.fst
 
 /-- The leaf statements: exactly those that `evalPanValueFfiClockProg` hands
     to `evalPanValueFfiClockLeaf`, i.e. every constructor except `Tick` and the
@@ -236,19 +235,23 @@ theorem evalPanValueFfiClockLeafWith_some_eq
     evalPanValueFfiClockLeaf context primitive handler structs functions base top bytes clock
       locals globals memory ffi program (memoryAccess := access)
       (contracts := contracts) (memoryHandler := mh) := by
-  have hs := evalPanValueExpCountedWith_some_eq run structs locals globals memory base top bytes access h
-  have hl := evalPanValueExpsCountedWith_some_eq run structs locals globals memory base top bytes access h
+  have hs : ∀ e, evalPanValueExpWith (some run) structs locals globals memory base top bytes e
+      access = evalPanValueExpWith none structs locals globals memory base top bytes e access :=
+    fun e => by simp [evalPanValueExpWith, h]
+  have hl : ∀ es, evalPanValueExpsWith (some run) structs locals globals memory base top bytes es
+      access = evalPanValueExpsWith none structs locals globals memory base top bytes es access :=
+    fun es => by
+      simpa [evalPanValueExpsWith] using
+        evalPanValueExpsWith_some_eq run structs locals globals memory base top bytes access h es
   cases program
   case assign kind name value =>
     cases kind <;> simp only [evalPanValueFfiClockLeafWith, evalPanValueFfiClockLeaf,
-      evalPanValueFfiLeafControl, panValueAssignLocalResult, panValueAssignGlobalResult, hs, evalPanValueExpCountedWith_none]
+      evalPanValueFfiLeafControl, panValueAssignLocalResult, panValueAssignGlobalResult, hs]
   all_goals
     simp only [evalPanValueFfiClockLeafWith, evalPanValueFfiClockLeaf,
       evalPanValueFfiLeafControl, panValuePrimitiveResult, panValueStoreResult, panValueStore32Result, panValueStoreByteResult,
-      panValueFfiExtCallSteps, panValueReturnResult, panValueRaiseResult,
-      panValueShMemLoadResult, panValueShMemStoreResult, hs, hl,
-      evalPanValueExpCountedWith_none, evalPanValueExpsCountedWith_none]
-  all_goals rfl
+      panValueFfiExtCallResult, panValueReturnResult, panValueRaiseResult,
+      panValueShMemLoadResult, panValueShMemStoreResult, hs, hl]
 
 
 /-! The functions-list evaluator below is compatibility infrastructure, not a
@@ -755,10 +758,10 @@ mutual
           (memoryHandler := memoryHandler) (evaluator := evaluator)
     | _fuel + 1, locals, globals, memory, ffi, clock,
         .raise exception expression, memoryAccess, _contracts, _memoryHandler, evaluator =>
-        match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress
+        match evalPanValueExpWith evaluator structs locals globals memory baseAddress topAddress
             bytesInWord expression memoryAccess with
         | none => pure (.control (.error locals globals memory ffi), clock)
-        | some (value, _) =>
+        | some value =>
             match exceptionShapes exception with
             | some shape =>
                 if panShapeMatches (panValueShape structs value) shape &&
@@ -842,12 +845,6 @@ theorem evalPanValueFfiClockCode_route_eq
         evalPanValueExp structs locals globals memory base top bytes e access := by
     intro locals globals memory e
     simpa [evalPanValueExpWith] using h locals globals memory e
-  have hcount : ∀ locals globals memory e,
-      evalPanValueExpCountedWith (some run) structs locals globals memory base top bytes e access =
-        evalPanValueExpCounted structs locals globals memory base top bytes e access := by
-    intro locals globals memory e
-    exact evalPanValueExpCountedWith_some_eq run structs locals globals memory base top bytes access
-      (h locals globals memory) e
   have hlist : ∀ locals globals memory es,
       evalPanValueExpsWith (some run) structs locals globals memory base top bytes es access =
         evalPanValueExps structs locals globals memory base top bytes es access := by
@@ -878,8 +875,8 @@ theorem evalPanValueFfiClockCode_route_eq
       simp only [evalPanValueFfiClockCodeDecCall, ih.1, ih.2.2]
     · intro locals globals memory ffi clock program
       cases program <;> simp only [evalPanValueFfiClockCodeProg, panValueDecAcceptedValue,
-        panValueIteConditionValue, evalPanValueExpWith_none, hsingle, hcount,
-        evalPanValueExpCountedWith_none, ih.1, ih.2.1, ih.2.2, hleaf]
+        panValueIteConditionValue, evalPanValueExpWith_none, hsingle,
+        ih.1, ih.2.1, ih.2.2, hleaf]
 
 /-! General source Call exception-dispatch step.  The callee body, argument
 values, return shape, exception payload, and handler program are all

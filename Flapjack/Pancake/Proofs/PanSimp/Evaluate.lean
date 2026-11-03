@@ -836,7 +836,7 @@ theorem evalPanValueFfiClockLeaf_return_var
         (.return (.var .local name)) ma c mh =
       some (.control (.returned (fun _ => none) globals memory ffi [value]), clock) := by
   simp [evalPanValueFfiClockLeaf, evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueReturnResult,
-    evalPanValueExpCounted, evalPanValueExp, hlookup, hwithin]
+    evalPanValueExpWith, evalPanValueExp, hlookup, hwithin]
 
 /-- Fusion of the `pan_simp` tail-call pattern.  When a call whose return value
     is stored in local `returnName` returns normally, the sequence

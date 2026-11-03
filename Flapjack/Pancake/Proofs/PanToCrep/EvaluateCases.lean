@@ -871,7 +871,7 @@ theorem panSemEvaluateCodeState_call_return_const_of_entry
               | succ fuel =>
                   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
                     evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl,
-                    panValueReturnResult, evalPanValueExpCounted, evalPanValueExp,
+                    panValueReturnResult, evalPanValueExpWith, evalPanValueExp,
                     panValueShape, panShapeMatches,
                     hargs, hlookupCall, hclock]
 
@@ -1214,7 +1214,7 @@ theorem panSemEvaluateCodeState_callReturnParameter_ofEntry
   rw [hfuelConcrete]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
     evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl,
-    panValueReturnResult, evalPanValueExpCounted, evalPanValueExp, hargs, hcallee, hclock,
+    panValueReturnResult, evalPanValueExpWith, evalPanValueExp, hargs, hcallee, hclock,
     panValueShape, panShapeMatches, decPanClock]
 
 theorem panSemEvaluateRiscV64CodeState_callReturnParameter_ofEntry
@@ -1303,7 +1303,7 @@ theorem panSemEvaluateRiscV64CodeState_callAssignParameter_ofEntry
   rw [hfuelConcrete]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
     evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl,
-    panValueReturnResult, evalPanValueExpCounted, evalPanValueExp, hargs, hcallee, hclock,
+    panValueReturnResult, evalPanValueExpWith, evalPanValueExp, hargs, hcallee, hclock,
     hassignment, panValueShape, panShapeMatches, decPanClock]
 
 
@@ -1351,7 +1351,7 @@ theorem panSemEvaluateRiscV64CodeState_callRaiseOneWordException_ofEntry
   unfold panSemEvaluateCodeState panSemEvaluateCodeStateWithFuel
   rw [show panSemCodeEvaluateFuel state program = tail + 5 from hfuel]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
-    evalPanValueExpCounted, evalPanValueExp,
+    evalPanValueExpWith, evalPanValueExp,
     hargs, hcallee, hexception, hclock, panValueShape, panShapeMatches,
     decPanClock]
 
@@ -1411,7 +1411,7 @@ theorem panSemEvaluateRiscV64CodeState_callCatchRaiseOneWord_ofEntry
   rw [show panSemCodeEvaluateFuel state program = tail + 5 from hfuel]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
     evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl,
-    panValueReturnResult, evalPanValueExpCounted, evalPanValueExp,
+    panValueReturnResult, evalPanValueExpWith, evalPanValueExp,
     hargs, hcallee, hexception,
     hhandlerLocal, hclock, panValueShape, panShapeMatches, panValueAssignmentValid,
     updatePanValueMap, decPanClock]
@@ -2131,9 +2131,8 @@ theorem panSemEvaluateCodeState_decCallSkip_ofEntry
   simp [evalPanValueFfiClockCodeProg,
     evalPanValueFfiClockCodeDecCall, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
     evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl,
-    panValueReturnResult, evalPanValueExpCounted, evalPanValueExp, hargs, hcallee, hclock,
-    panValueShape, panShapeMatches, panValueFfiClockRestoreLocal,
-    panValueExpStepCost, restorePanValueFfiLocal, decPanClock]
+    panValueReturnResult, evalPanValueExpWith, evalPanValueExp, hargs, hcallee, hclock,
+    panValueShape, panShapeMatches, panValueFfiClockRestoreLocal, restorePanValueFfiLocal, decPanClock]
   all_goals
     funext key
     by_cases hkey : key = name
@@ -2231,10 +2230,10 @@ theorem panSemEvaluateCodeState_decCallTick_ofEntry
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeDecCall,
     evalPanValueFfiClockCodeCall,
     panValueCallArgumentsValue,
-    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpCounted,
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpWith,
     evalPanValueExp, hargs, hcallee, hclockNonzero,
     hcontinuationClockNonzero, panValueShape, panShapeMatches,
-    panValueFfiClockRestoreLocal, panValueExpStepCost,
+    panValueFfiClockRestoreLocal,
     restorePanValueFfiLocal, decPanClock]
   all_goals
     funext key

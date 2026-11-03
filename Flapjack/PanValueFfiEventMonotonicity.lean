@@ -138,7 +138,7 @@ theorem evalPanValueFfiProgSteps_shMemLoad_normal_ioEvents_prefix
       (contracts := contracts) =
       some (.normal nextLocals nextGlobals nextMemory nextFfi, addressSteps + 1)) :
     ffi.ioEvents <+: nextFfi.ioEvents := by
-  simp [evalPanValueFfiProgSteps, panValueShMemLoadResult, haddress] at hresult
+  simp [evalPanValueFfiProgSteps, panValueShMemLoadSteps, haddress] at hresult
   by_cases hvalid :
       panValueSharedLoadValid structs locals globals kind name (.word 0) = true
   · simp [hvalid] at hresult
@@ -182,7 +182,7 @@ theorem evalPanValueFfiProgSteps_shMemLoad_finalFfi_ioEvents_prefix
       some (.finalFfi (fun _ => none) globals memory nextFfi event,
         addressSteps + 1)) :
     ffi.ioEvents <+: nextFfi.ioEvents := by
-  simp [evalPanValueFfiProgSteps, panValueShMemLoadResult, haddress] at hresult
+  simp [evalPanValueFfiProgSteps, panValueShMemLoadSteps, haddress] at hresult
   by_cases hvalid :
       panValueSharedLoadValid structs locals globals kind name (.word 0) = true
   · simp [hvalid] at hresult
@@ -231,7 +231,7 @@ theorem evalPanValueFfiProgSteps_shMemStore_normal_ioEvents_prefix
       some (.normal nextLocals nextGlobals nextMemory nextFfi,
         addressSteps + valueSteps + 1)) :
     ffi.ioEvents <+: nextFfi.ioEvents := by
-  simp [evalPanValueFfiProgSteps, panValueShMemStoreResult, haddress, hvalue] at hresult
+  simp [evalPanValueFfiProgSteps, panValueShMemStoreSteps, haddress, hvalue] at hresult
   cases hstore : panValueFfiSharedStore context ffi size addressWord valueWord with
   | none => simp [hstore] at hresult
   | some result =>
@@ -273,7 +273,7 @@ theorem evalPanValueFfiProgSteps_shMemStore_finalFfi_ioEvents_prefix
       some (.finalFfi locals globals memory nextFfi event,
         addressSteps + valueSteps + 1)) :
     ffi.ioEvents <+: nextFfi.ioEvents := by
-  simp [evalPanValueFfiProgSteps, panValueShMemStoreResult, haddress, hvalue] at hresult
+  simp [evalPanValueFfiProgSteps, panValueShMemStoreSteps, haddress, hvalue] at hresult
   cases hstore : panValueFfiSharedStore context ffi size addressWord valueWord with
   | none => simp [hstore] at hresult
   | some storeResult =>

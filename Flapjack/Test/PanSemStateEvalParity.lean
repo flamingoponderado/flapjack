@@ -3,6 +3,7 @@ import Flapjack.Pancake.Semantics.PanSem.PrimitiveProductionBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalSteps
 import Flapjack.Pancake.Semantics.ByteAlignBridge
 import Flapjack.Pancake.WordLang
+import Flapjack.PanValueExpCounted
 
 /-! The expected values are recorded by direct HOL EVAL of the source
 `panSem$eval` probe. The Lean cases exercise the state-derived word and memory

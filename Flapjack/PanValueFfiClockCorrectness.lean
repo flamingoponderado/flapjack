@@ -114,9 +114,13 @@ theorem evalPanValueFfiLeafControl_eq_steps
         baseAddress topAddress bytesInWord 1 locals globals memory ffi program
         (memoryAccess := memoryAccess) (contracts := contracts)
         (memoryHandler := memoryHandler)).map Prod.fst := by
-  cases hleaf with
-  | assign kind => cases kind <;> simp [evalPanValueFfiLeafControl, evalPanValueFfiProgSteps]
-  | _ => simp [evalPanValueFfiLeafControl, evalPanValueFfiProgSteps]
+  cases hleaf
+  case' assign kind _ _ => cases kind
+  all_goals simp [evalPanValueFfiLeafControl, evalPanValueFfiProgSteps,
+    panValueAssignLocalSteps_fst, panValueAssignGlobalSteps_fst,
+    panValuePrimitiveSteps_fst, panValueStoreSteps_fst, panValueStore32Steps_fst,
+    panValueStoreByteSteps_fst, panValueShMemLoadSteps_fst, panValueShMemStoreSteps_fst,
+    panValueReturnSteps_fst, panValueRaiseSteps_fst, panValueFfiExtCallSteps_fst]
 
 theorem evalPanValueFfiClockLeaf_clock
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
