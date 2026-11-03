@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracle
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracleDisjoint
 import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownSubspt
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
 
 /-! Installation prerequisites for the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Install
@@ -117,6 +118,7 @@ theorem relatedInstallNonType {C F : Type} (c : Config)
     ∃ targetResult t1 program eas tree next,
       doInstall targetValues t = (targetResult, t1) ∧
       knownListTotal (resetInlineFactor c) program [] tree = (eas, next) ∧
+      program = (s.compileOracle 0).2.1 ∧ tree = nextG s ∧
       (result = .err (.abort .timeoutError) ∧ targetResult = .err (.abort .timeoutError) ∨
         result = .val program ∧ targetResult = .val (eas.map Prod.fst)) ∧
       nextG s1 = next ∧ StateRel c (nextG s1) s1 t1 := by
@@ -173,7 +175,9 @@ theorem relatedInstallNonType {C F : Type} (c : Config)
     rw [finalState]
     have p := congrArg Prod.fst nextOracle
     simpa [nextG, Flapjack.holShiftSeq, ← nextTree] using p
-  refine ⟨_, t1, program, eas, tree, next, targetRun, known, ?_, nextEq, relatedFinal⟩
+  have programEq : program = (s.compileOracle 0).2.1 := by simp [entry]
+  have treeEq : tree = nextG s := by simp [nextG, entry]
+  refine ⟨_, t1, program, eas, tree, next, targetRun, known, programEq, treeEq, ?_, nextEq, relatedFinal⟩
   rw [clockEq] at finalResult
   by_cases zero : t.clock = 0 <;> simp [zero] at finalResult ⊢ <;> simp [finalResult]
 
@@ -337,5 +341,83 @@ theorem firstOracleKnownSubspt {A B : Type} (c : Config)
     · simpa [KnownSubspt.domainBag, member] using writes i
   exact (KnownSubspt.knownSubspt c (co 0).2.1 [] tree eas next
     ⟨known, safe, by simp, treeSafe, distinct⟩).2
+
+/-- A successful installation can invoke the original installed-program
+induction hypothesis and produces a related target evaluation. This is
+Flapjack proof infrastructure for the enclosing operation case. -/
+theorem installedProgramSimulation {C F : Type} (c : Config)
+    (s : State (Spt ValApprox × C) F) (t : State C F)
+    (sourceValues targetValues : List ClosSem.Value) (program : List ClosLang.Exp)
+    (s1 final : State (Spt ValApprox × C) F)
+    (res : Result (List ClosSem.Value) ClosSem.Value)
+    (state : StateRel c (nextG s) s t)
+    (safe : StateGlobalSafety.ssgcFree s)
+    (oracleSyntax : OracleMonotonic.coEveryFnVarsNone s.compileOracle)
+    (oracleSafe : StateRelation.Oracle.oracleStateSgcFree s.compileOracle)
+    (disjoint : StateOracleDisjoint.stateOracleMglobalsDisjoint s)
+    (mono : OracleMonotonic.oracleGapproxSubspt s.compileOracle)
+    (unique : UniqueGlobalsPort.uniqueSetGlobals [] s.compileOracle)
+    (globals : stateGlobalsApprox s (nextG s))
+    (oracleDisjoint : OracleGlobals.oracleGapproxDisjoint (nextG s) s.compileOracle)
+    (oracleState : isStateOracle (compileInc c) s.compileOracle)
+    (values : List.Forall₂ (ValueRel c (nextG s)) sourceValues targetValues)
+    (install : doInstall sourceValues s = (.val program, s1))
+    (ih : KnownSimulationAt program [] s1)
+    (run : evaluate program [] s1 = (res, final)) (noType : res ≠ .err (.abort .typeError)) :
+    ∃ targetProgram t1 targetResult targetFinal,
+      doInstall targetValues t = (.val targetProgram, t1) ∧
+      evaluate targetProgram [] t1 = (targetResult, targetFinal) ∧
+      Flapjack.SemanticPrimitivesProps.resultRel (List.Forall₂ (ValueRel c (nextG final)))
+        (ValueRel c (nextG final)) res targetResult ∧
+      StateRel c (nextG final) final targetFinal ∧ stateGlobalsApprox final (nextG final) ∧
+      isStateOracle (compileInc c) final.compileOracle ∧
+      OracleGlobals.oracleGapproxDisjoint (nextG final) final.compileOracle := by
+  obtain ⟨targetInstall, t1, sourceProgram, eas, tree, next, targetRun, known,
+    programEq, treeEq, outcome, nextEq, relatedState⟩ :=
+    relatedInstallNonType c s t sourceValues targetValues (.val program) s1 state mono values install (by simp)
+  rcases outcome with ⟨impossible, _⟩ | ⟨same, rfl⟩
+  · cases impossible
+  · cases same
+    subst tree
+    have pre := installedProgramPreconditions c (nextG s) s t sourceValues program s1
+      state safe oracleSyntax oracleSafe disjoint mono install
+    have uniqueNext := installedProgramUnique s sourceValues program s1 safe unique install
+    have globalsNext := installedProgramGlobalsApprox (resetInlineFactor c) (nextG s) next s
+      sourceValues program s1 eas safe globals disjoint known install
+    have disjointNext := installedOracleDisjoint (resetInlineFactor c) (nextG s) next s
+      sourceValues program s1 eas safe unique oracleDisjoint known install
+    have oracleNext := installedStateOracle c s sourceValues program s1 safe oracleState install
+    have treeSafe : globalsApproxSgcFree (nextG s) := by
+      simpa [nextG, StateRelation.Oracle.oracleStateSgcFree] using oracleSafe 0
+    have sub : sptSubspt (nextG s) next := by
+      apply firstOracleKnownSubspt (resetInlineFactor c) s.compileOracle (nextG s) next eas
+      · simpa [programEq] using known
+      · simpa [programEq] using pre.2.1
+      · exact treeSafe
+      · exact unique
+      · exact oracleDisjoint
+    have refl : sptSubspt next (nextG s1) := by
+      rw [nextEq]
+      intro k member
+      exact ⟨member, rfl⟩
+    have stateReset : StateRel (resetInlineFactor c) (nextG s1) s1 t1 := by
+      simpa [resetInlineFactor, stateRelUpdateInlineFactor] using relatedState
+    have oracleReset : isStateOracle (compileInc (resetInlineFactor c)) s1.compileOracle := by
+      simpa [resetInlineFactor, compileIncUpdateInlineFactor] using oracleNext
+    have nextGlobals : stateGlobalsApprox s1 (nextG s1) := by simpa [nextEq] using globalsNext
+    have nextDisjoint : OracleGlobals.oracleGapproxDisjoint (nextG s1) s1.compileOracle := by
+      simpa [nextEq] using disjointNext
+    have step := ih res final [] [] [] [] t1 (resetInlineFactor c) (nextG s) next [] eas
+      ⟨run, known, stateReset, pre.2.2.2.1, pre.2.2.2.2.2.2.2.1, pre.2.2.2.2.2.1,
+        nextDisjoint, pre.2.2.2.2.2.2.1, pre.2.1, pre.1, by simp, .nil,
+        pre.2.2.2.2.2.2.2.2.1, treeSafe, by simp, nextGlobals, sub, refl,
+        pre.2.2.2.2.2.2.2.2.2, by simpa using pre.2.2.2.2.1, .nil, uniqueNext,
+        oracleReset, rfl, noType⟩
+    obtain ⟨targetResult, targetFinal, evalTarget, resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := step
+    refine ⟨eas.map Prod.fst, t1, targetResult, targetFinal, targetRun, ?_, ?_, ?_, finalGlobals, ?_, finalDisjoint⟩
+    · simpa using evalTarget
+    · simpa [resetInlineFactor, valueRelUpdateInlineFactor] using resultRel
+    · simpa [resetInlineFactor, stateRelUpdateInlineFactor] using finalState
+    · simpa [resetInlineFactor, compileIncUpdateInlineFactor] using finalOracle
 
 end Flapjack.Compiler.Backend.ClosKnown.Simulation.Install
