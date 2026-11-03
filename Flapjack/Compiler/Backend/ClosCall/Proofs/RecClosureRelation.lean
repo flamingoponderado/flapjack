@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
 import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FuelStability
+import Flapjack.Compiler.Backend.ClosCall.Proofs.TraversalLookup
 import Flapjack.Compiler.Backend.ClosCall.Stubs
 
 /-! Fuel-aware recursive-closure relation for direct-call conversion. -/
@@ -53,6 +54,80 @@ theorem recClosureRelFuel_independent (left right : Nat) (g : State) (allowed : 
     recClosureRelFuel left g allowed code loc fns1 fns2 ↔
       recClosureRelFuel right g allowed code loc fns1 fns2 := by
   simp only [recClosureRelFuel, callsListBounded_independent left right]
+
+/-- A selected recursive function has an actual transformed probe body and
+single-expression traversal. The probe's initially reserved locations need
+not form a fully well-formed state. This is Flapjack-specific infrastructure
+for relating closure bodies to the bounded traversal. -/
+theorem recClosureRelFuel_probe_body (fuel : Nat) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (fns1 fns2 : List (Nat × ClosLang.Exp)) (index arity : Nat) (body : ClosLang.Exp)
+    (related : recClosureRelFuel fuel g allowed code loc fns1 fns2)
+    (sourceLookup : fns1[index]? = some (arity, body)) :
+    ∃ g0 bodies afterProbe transformed depth before after,
+      callsListBounded fuel (fns1.map Prod.snd) (insertEach loc fns1.length g0) = some (bodies, afterProbe) ∧
+      bodies[index]? = some transformed ∧
+      depth < max fuel (listBudget (fns1.map Prod.snd) + 1) ∧
+      callsFuel depth body before = some (transformed, after) ∧
+      (codeLocationsExp body).Nodup ∧ LabelsFresh (codeLocationsExp body) before ∧
+      (before.2.map Prod.fst).Nodup ∧ stateExtends after afterProbe ∧
+      ((groupClosed fns1 bodies ∧
+        (∃ trace stubIndex, fns2 = callsListSource trace stubIndex loc fns1) ∧
+        stateExtends (codeList loc ((fns1.map Prod.fst).zip bodies) afterProbe) g ∧
+        groupLocationsCovered fns1 afterProbe allowed ∧
+        codeIncludes (codeList loc ((fns1.map Prod.fst).zip bodies) afterProbe).2 code) ∨
+       (¬ groupClosed fns1 bodies ∧
+        ∃ openBodies afterOpen,
+          callsListBounded fuel (fns1.map Prod.snd) g0 = some (openBodies, afterOpen) ∧
+          fns2 = (fns1.map Prod.fst).zip openBodies ∧ stateExtends afterOpen g ∧
+          groupLocationsCovered fns1 afterOpen allowed ∧
+          (∀ i, i < fns1.length → 2 * i + loc ∈ allowed) ∧
+          codeIncludes afterOpen.2 code)) := by
+  obtain ⟨g0, well, initialWf, nestedFresh, _, bodies, afterProbe, probe, alternatives⟩ := related
+  have sourceIndex : (fns1.map Prod.snd)[index]? = some body := by
+    simp [List.getElem?_map, sourceLookup]
+  have sourceBound : index < fns1.length := (List.getElem?_eq_some_iff.mp sourceLookup).choose
+  have length := callsListBounded_length fuel (fns1.map Prod.snd) (insertEach loc fns1.length g0)
+    afterProbe bodies probe
+  have targetBound : index < bodies.length := by simp only [List.length_map] at length; omega
+  have targetIndex : bodies[index]? = some bodies[index] := by simp [targetBound]
+  have fresh : LabelsFresh (codeLocations (fns1.map Prod.snd)) (insertEach loc fns1.length g0) := by
+    simpa [LabelsFresh, insertEach] using nestedFresh
+  have initialDistinct : ((insertEach loc fns1.length g0).2.map Prod.fst).Nodup := by
+    simpa [insertEach] using initialWf.2
+  obtain ⟨depth, before, after, depthLt, selected, bodyDistinct, bodyFresh, beforeDistinct, extended⟩ :=
+    callsListBounded_lookup_run_distinct fuel (fns1.map Prod.snd) bodies (insertEach loc fns1.length g0) afterProbe
+      probe well.2.2.2 fresh initialDistinct index body bodies[index] sourceIndex targetIndex
+  exact ⟨g0, bodies, afterProbe, bodies[index], depth, before, after, probe, targetIndex, depthLt,
+    selected, bodyDistinct, bodyFresh, beforeDistinct, extended, alternatives⟩
+
+/-- A related target body is either a generated stub or the result of an
+actual open-group body traversal whose state extends into the current state.
+This is Flapjack-specific infrastructure for the closure-body induction. -/
+theorem recClosureRelFuel_target_body (fuel : Nat) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (fns1 fns2 : List (Nat × ClosLang.Exp)) (index arity : Nat) (body targetBody : ClosLang.Exp)
+    (related : recClosureRelFuel fuel g allowed code loc fns1 fns2)
+    (sourceLookup : fns1[index]? = some (arity, body))
+    (targetLookup : fns2[index]? = some (arity, targetBody)) :
+    (∃ trace stubIndex, fns2 = callsListSource trace stubIndex loc fns1) ∨
+      ∃ depth before after, depth < max fuel (listBudget (fns1.map Prod.snd) + 1) ∧
+        callsFuel depth body before = some (targetBody, after) ∧
+        (codeLocationsExp body).Nodup ∧ LabelsFresh (codeLocationsExp body) before ∧
+        wellFormed before ∧ stateExtends after g := by
+  obtain ⟨g0, well, initialWf, nestedFresh, _, bodies, afterProbe, _, alternatives⟩ := related
+  rcases alternatives with ⟨_, stubs, _⟩ | ⟨_, openBodies, afterOpen, openRun, targetEq, openExt, _⟩
+  · exact Or.inl stubs
+  · right
+    have openFresh : LabelsFresh (codeLocations (fns1.map Prod.snd)) g0 := by
+      simpa [LabelsFresh] using nestedFresh
+    have zippedLookup : ((fns1.map Prod.fst).zip openBodies)[index]? = some (arity, targetBody) := by
+      simpa [targetEq] using targetLookup
+    obtain ⟨depth, before, after, depthLt, selected, bodyDistinct, bodyFresh, beforeWf, extended⟩ :=
+      callsListBounded_open_body fuel fns1 openBodies g0 afterOpen openRun well.2.2.2 openFresh initialWf
+        index arity body targetBody sourceLookup zippedLookup
+    exact ⟨depth, before, after, depthLt, selected, bodyDistinct, bodyFresh, beforeWf,
+      stateExtends_trans after afterOpen g extended openExt⟩
 
 /-- A related recursive closure has one target function for every source
 function, in both the extracted and non-extracted cases. -/

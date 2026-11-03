@@ -3433,6 +3433,30 @@ theorem growingExprsSimFromBelow_mono_state {C F : Type} (passFuel relationFuel 
   intro g extended
   exact sim g (stateExtends_trans smaller larger g growth extended)
 
+/-- The open recursive-closure case follows from the actual expression
+traversal induction. Closed groups are returned as the outstanding stub
+case. This is Flapjack-specific simulation infrastructure. -/
+theorem recClosureRelFuel_target_body_sim_or_stub {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (fns1 fns2 : List (Nat × ClosLang.Exp)) (index arity : Nat) (body targetBody : ClosLang.Exp)
+    (related : recClosureRelFuel relationFuel g allowed code loc fns1 fns2)
+    (sourceLookup : fns1[index]? = some (arity, body))
+    (targetLookup : fns2[index]? = some (arity, targetBody))
+    (exprIH : ∀ depth before after,
+      depth < max relationFuel (listBudget (fns1.map Prod.snd) + 1) →
+      callsFuel depth body before = some (targetBody, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before → wellFormed before →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler after allowed [body] [targetBody]) :
+    (∃ trace stubIndex, fns2 = callsListSource trace stubIndex loc fns1) ∨
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler g allowed [body] [targetBody] := by
+  rcases recClosureRelFuel_target_body relationFuel g allowed code loc fns1 fns2 index arity body targetBody
+      related sourceLookup targetLookup with stubs | ⟨depth, before, after, depthLt, selected,
+        bodyDistinct, bodyFresh, beforeWf, extended⟩
+  · exact Or.inl stubs
+  · exact Or.inr (growingExprsSimFromBelow_mono_state passFuel relationFuel limit compiler after g allowed
+      [body] [targetBody] extended (exprIH depth before after depthLt selected bodyDistinct bodyFresh beforeWf))
+
 /-- A clock-bounded pass-state simulation supplies the corresponding
 installed-program simulation. This is Flapjack-specific infrastructure. -/
 theorem growingExprsSimFromBelow_installedBelow {C F : Type} (passFuel relationFuel limit : Nat)
