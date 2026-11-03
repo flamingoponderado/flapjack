@@ -1,5 +1,5 @@
 import Flapjack.PanNbOp
-import Flapjack.PanValueFfiSemantics
+import Flapjack.PanValueFfiCore
 import Flapjack.Pancake.Semantics.PanSemStateEval
 
 /-!

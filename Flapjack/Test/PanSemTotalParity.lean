@@ -2,7 +2,7 @@ import Flapjack.Pancake.Semantics.PanSem.Total
 import Flapjack.Pancake.Semantics.PanSem.TotalMeasure
 import Flapjack.Pancake.Semantics.PanSem.TotalMeasureIf
 import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Parity for the total PanSem clock-leaf evaluator
@@ -80,7 +80,7 @@ def totalState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
 
 def totalEvaluate (state : PanSemState Word64 (FfiState Unit)) (program : Prog Word64) :
     Option (PanSemProgResult Word64 Unit × PanSemState Word64 (FfiState Unit)) :=
-  (panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+  (panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) state program).map panSemTotalOfExecuted
 
 def isWordOption (expected : Nat) (value : Option (PanValue Word64)) : Bool :=
@@ -627,7 +627,7 @@ example :
   simp [panSemEvaluateClockLeaf, totalState]
 
 example :
-    (panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    (panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8) (totalState 5) (.skip : Prog Word64)).map
         panSemTotalOfExecuted = some (panSemEvaluateSkip (totalState 5)) :=
   panSemEvaluateCodeStateWithPostState_skip_total statefulTestContext statefulTestPrimitive
@@ -647,21 +647,21 @@ example :
     (by intro h; cases h)
 
 example :
-    (panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    (panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8) (totalState 5) (.tick : Prog Word64)).map
         panSemTotalOfExecuted = some (panSemEvaluateTick (totalState 5)) :=
   panSemEvaluateCodeStateWithPostState_tick_total statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (totalState 5)
 
 example :
-    (panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    (panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8) (totalState 5) (.break : Prog Word64)).map
         panSemTotalOfExecuted = some (panSemEvaluateBreak (totalState 5)) :=
   panSemEvaluateCodeStateWithPostState_break_total statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (totalState 5)
 
 example :
-    (panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+    (panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
         statefulTestHandler (BitVec.ofNat 64 8) (totalState 5) (.continue : Prog Word64)).map
         panSemTotalOfExecuted = some (panSemEvaluateContinue (totalState 5)) :=
   panSemEvaluateCodeStateWithPostState_continue_total statefulTestContext statefulTestPrimitive

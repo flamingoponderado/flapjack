@@ -5,7 +5,7 @@
   `panSemCodeEvaluateFuel`, not supplied as an `hsourceFuel` premise.
 -/
 import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 namespace Flapjack.Test.PanSemFuelDecompositionParity
 

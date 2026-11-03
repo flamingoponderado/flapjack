@@ -1,5 +1,5 @@
 import Flapjack.PanValueFfiClockCorrectness
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 namespace Flapjack
 open RiscV
@@ -11,7 +11,7 @@ example : (5 : Nat) ≤ 5 := by
       (fun _ => none) (fun _ => none) statefulTestMemory statefulTestFinalState 5
       (.skip : Prog (Word 64)) = some (.control (.normal (fun _ => none) (fun _ => none)
         statefulTestMemory statefulTestFinalState), 5) := by
-    simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps]
+    simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
   exact evalPanValueFfiClockProg_clock_le statefulTestContext statefulTestPrimitive statefulTestHandler
     [] [] (BitVec.ofNat 64 0) (BitVec.ofNat 64 100) (BitVec.ofNat 64 8) 1
     (fun _ => none) (fun _ => none) statefulTestMemory statefulTestFinalState 5

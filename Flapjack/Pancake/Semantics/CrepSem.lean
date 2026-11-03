@@ -3,7 +3,7 @@ module
 public import Flapjack.CrepeSemantics
 public import Flapjack.FiniteMap.Basic
 public import Flapjack.HolRef
-public import Flapjack.PanValueFfiSemantics
+public import Flapjack.PanValueFfiCore
 
 @[expose] public section
 

@@ -16,6 +16,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+
       - uses: leanprover/lean-action@v1
         with:
           use-mathlib-cache: true

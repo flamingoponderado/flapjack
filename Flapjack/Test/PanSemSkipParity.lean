@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Parity for the Pancake `Skip` equation
@@ -40,7 +40,7 @@ def skipState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
     topAddress := BitVec.ofNat 64 100 }
 
 def skipEvaluate (clock : Nat) : SkipResult :=
-  panSemEvaluateCodeStateWithPostState statefulTestContext statefulTestPrimitive
+  panSemEvaluateCodeStateWithPostState (memoryAccess := none) statefulTestContext statefulTestPrimitive
     statefulTestHandler (BitVec.ofNat 64 8) (skipState clock) (.skip : Prog Word64)
 
 def skipOutcome : PanValueFfiClockResult Word64 Unit :=

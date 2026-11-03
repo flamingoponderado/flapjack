@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Exact-source PanSem `If` Error parity
@@ -9,7 +9,8 @@ the unchanged state when the condition expression fails to evaluate or does not
 produce a word value.  This module checks the corresponding untagged exact-state
 equation in `Flapjack.Pancake.Semantics.PanSem` against the direct HOL oracle
 `scripts/hol-probes/pan_sem_ite_e2e_probe.out` (`if_nonword_result=SOME Error`,
-`if_fail_result=SOME Error`) for both the clocked and the non-clocked evaluators.
+`if_fail_result=SOME Error`). The checks of the non-clocked evaluator
+moved to stepped-flapjack with the stepped semantics (#1251).
 -/
 
 namespace Flapjack.Test.PanSemIteErrorExactParity
@@ -51,13 +52,6 @@ private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word
   panSemEvaluateExactState statefulTestContext statefulTestPrimitive statefulTestHandler
     state program
 
-private def nonClockedEvaluate (program : Prog Word64)
-    (memoryAccess : Option (PanValueMemoryAccess Word64) := none) :
-    Option (PanValueFfiSteppedResult Word64 Unit) :=
-  evalPanValueFfiProgramSteps statefulTestContext statefulTestPrimitive statefulTestHandler
-    [] [] 0 100 (BitVec.ofNat 64 8) 5 localsWordX (fun _ => none) exactMemory
-    statefulTestFfiState program (memoryAccess := memoryAccess)
-
 private def isWordOption (expected : Nat) : Option (PanValue Word64) → Bool
   | some (.word value) => value == BitVec.ofNat 64 expected
   | _ => false
@@ -68,13 +62,6 @@ private def isErrorKeepingX (clock value : Nat)
   match result with
   | some (.control (.error locals globals _ _), n) =>
       n == clock && isWordOption value (locals "x") && (globals "g").isNone
-  | _ => false
-
-private def isErrorKeepingXStepped (value : Nat)
-    (result : Option (PanValueFfiSteppedResult Word64 Unit)) : Bool :=
-  match result with
-  | some (.error locals globals _ _, _) =>
-      isWordOption value (locals "x") && (globals "g").isNone
   | _ => false
 
 /-- A non-word condition value (`RStruct []`). -/
@@ -91,16 +78,8 @@ private def iteNonwordGuard : Bool :=
 private def iteFailedGuard : Bool :=
   isErrorKeepingX 5 3 (evaluate (exactState localsWordX) failedConditionProgram)
 
-private def iteNonClockedNonwordGuard : Bool :=
-  isErrorKeepingXStepped 3 (nonClockedEvaluate nonwordConditionProgram
-    (memoryAccess := some exactAccess))
-
-private def iteNonClockedFailedGuard : Bool :=
-  isErrorKeepingXStepped 3 (nonClockedEvaluate failedConditionProgram
-    (memoryAccess := some exactAccess))
-
 private def iteErrorGuard : Bool :=
-  iteNonwordGuard && iteFailedGuard && iteNonClockedNonwordGuard && iteNonClockedFailedGuard
+  iteNonwordGuard && iteFailedGuard
 
 #guard iteErrorGuard
 
@@ -123,14 +102,6 @@ def runChecks : IO Bool := do
     IO.println "PASS exact-state If failing condition keeps state and clock"
   else
     IO.println "FAIL exact-state If failing condition keeps state and clock"
-  if iteNonClockedNonwordGuard then
-    IO.println "PASS non-clocked If non-word condition rejected with Error"
-  else
-    IO.println "FAIL non-clocked If non-word condition rejected with Error"
-  if iteNonClockedFailedGuard then
-    IO.println "PASS non-clocked If failing condition rejected with Error"
-  else
-    IO.println "FAIL non-clocked If failing condition rejected with Error"
   pure iteErrorGuard
 
 end Flapjack.Test.PanSemIteErrorExactParity

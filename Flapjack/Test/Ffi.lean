@@ -1,11 +1,10 @@
 import Flapjack.RiscV.Link
 import Flapjack.Ffi
-import Flapjack.PanValueFfiSemantics
+import Flapjack.PanValueFfiCore
 
 namespace Flapjack
 
 #check @panValueFfiExtCall_returned_ioEvents_prefix
-#check @evalPanValueFfiProgSteps_extCall_returned_ioEvents_prefix
 
 def identityFfiOracle : FfiOracle Unit :=
   fun _ state _ bytes => .returned state bytes
@@ -20,9 +19,6 @@ example (state : FfiState Unit) (name : FfiName)
       .returned nextState nextBytes) :
     state.ioEvents <+: nextState.ioEvents :=
   callFfi_return_ioEvents_prefix state name configuration bytes nextState nextBytes hcall
-
-#check @panValueFfiExtCall_returned_ioEvents_prefix
-#check @evalPanValueFfiProgSteps_extCall_returned_ioEvents_prefix
 
 /-! The four observations below are transcribed from
 `scripts/hol-probes/ffi_call_probe.out`, generated from

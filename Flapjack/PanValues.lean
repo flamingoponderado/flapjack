@@ -1469,8 +1469,12 @@ NOT a statement-exact port of HOL `panSemScript.sml:209 eval_def`
   `memoryAccess` parameter, and `PanValue` stores the raw word in `.word` rather
   than HOL's `Val (Word w)`.
 
-The faithful HOL-shaped expression evaluator, including the state projection and
-the memory-codec clauses, is tracked by bead `flapjack-pxn.18.3.6.9`. -/
+For RV64, `evalPanSemStateExp` supplies state-derived memory access, and
+`evalPanSemStateExp_agree` in `PanSem/TotalEvalExpBridge.lean` proves agreement
+with the finite-support HOL-shaped evaluator through the value and expression
+codecs. That theorem requires related states, byte-ranged runtime names and a
+byte-ranged expression. It does not apply to this function's `none` default or
+establish those invariants for arbitrary initial states and FFI handlers. -/
 def evalPanValueExp [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
@@ -2782,8 +2786,9 @@ abbrev PanPrimitiveHandler (α : Type u) :=
   PrimOp → List (PanValue α) → Option (PanValue α)
 
 /-! Bare-metal accelerator calls may update both the local environment and
-    source memory.  This is separate from the stateful CakeML FFI handler in
-    `PanValueFfiSemantics`, whose state transition models byte-array FFI. -/
+    source memory.  This is separate from the stateful CakeML FFI handler
+    `PanValueStatefulFfiHandler` in `PanValueFfiCore`, whose state transition
+    models byte-array FFI. -/
 abbrev PanValueAcceleratorFfiHandler (α : Type u) :=
   FunName → α → α → α → α →
     (VarName → Option (PanValue α)) →

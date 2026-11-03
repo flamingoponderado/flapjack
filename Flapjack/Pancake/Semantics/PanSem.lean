@@ -12,9 +12,11 @@ public import Flapjack.PanValueFfiClockSemantics
 Source reference: `cakeml/pancake/semantics/panSemScript.sml:556-736`
 (`evaluate_def`). The HOL source evaluates one `panLang$prog` against a state
 whose `code` field is a finite map. `PanSemEvaluateState` is the existing
-list-backed executable compatibility boundary. `panSemEvaluateCodeState` is
-the production source-state entry point: it resolves every recursive Call and
-DecCall from the finite-support `PanSemState.code` map.
+list-backed executable compatibility boundary. `panSemEvaluateCodeState`
+resolves every recursive Call and DecCall from the source state's code map,
+    but choosing no memory access is a legacy compatibility path. HOL-facing
+RV64 evaluation uses `panSemEvaluateRiscV64CodeState`, which derives its
+memory access from the state.
 
 The fuel is only Lean's termination guard. The compatibility entry point uses
 its legacy function list; the source-state entry point derives fuel from the
@@ -867,7 +869,7 @@ def panSemEvaluateCodeStateWithFuel
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (fuel : Nat)
     (state : PanSemState α (FfiState σ)) (program : Prog α)
-    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (memoryAccess : Option (PanValueMemoryAccess α))
     (contracts : Option PanValueCallContracts := none)
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none) :
     Option (PanValueFfiClockResult α σ) :=
@@ -878,7 +880,9 @@ def panSemEvaluateCodeStateWithFuel
     (memoryAccess := memoryAccess) (contracts := contracts)
     (memoryHandler := memoryHandler)
 
-/-- Production source-state entry point with a finite-map-derived fuel bound. -/
+/-- Code-map entry with a finite-map-derived fuel bound. Choosing no access
+    is a legacy compatibility mode; use the state-derived memory-model entry
+    for HOL-facing evaluation. -/
 def panSemEvaluateCodeState
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -888,7 +892,7 @@ def panSemEvaluateCodeState
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanSemState α (FfiState σ))
     (program : Prog α)
-    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (memoryAccess : Option (PanValueMemoryAccess α))
     (contracts : Option PanValueCallContracts := none)
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none) :
     Option (PanValueFfiClockResult α σ) :=
@@ -955,7 +959,9 @@ theorem panSemCodeStateAfter_preserves_code
     | timeout _ _ _ _ => rfl
     | control control => cases control <;> rfl
 
-/-- Source-state entry point paired with its post-state projection. -/
+/-- Code-map entry paired with its post-state projection. Choosing no access
+    has the same limitations as `panSemEvaluateCodeState`;
+    the RV64 state-owned post-state entry is in `PanSemStateEval`. -/
 def panSemEvaluateCodeStateWithPostState
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -965,7 +971,7 @@ def panSemEvaluateCodeStateWithPostState
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (state : PanSemState α (FfiState σ))
     (program : Prog α)
-    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (memoryAccess : Option (PanValueMemoryAccess α))
     (contracts : Option PanValueCallContracts := none)
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none) :
     Option (PanValueFfiClockResult α σ × PanSemState α (FfiState σ)) := do
@@ -1013,12 +1019,13 @@ theorem panSemEvaluateCodeStateWithPostState_preserves_code
     (program : Prog α)
     (result : PanValueFfiClockResult α σ)
     (postState : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none)
     (heval : panSemEvaluateCodeStateWithPostState context primitive handler
-      bytesInWord state program = some (result, postState)) :
+      bytesInWord state program (memoryAccess := memoryAccess) = some (result, postState)) :
     postState.code = state.code := by
   unfold panSemEvaluateCodeStateWithPostState at heval
   cases hresult : panSemEvaluateCodeState context primitive handler bytesInWord
-      state program with
+      state program (memoryAccess := memoryAccess) with
   | none => simp [hresult] at heval
   | some evaluated =>
       simp [hresult] at heval
@@ -1038,9 +1045,10 @@ theorem panSemEvaluateCodeStateWithPostState_tick
     (context : PanValueFfiContext α)
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
-    (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     panSemEvaluateCodeStateWithPostState context primitive handler bytesInWord state
-        (.tick : Prog α) =
+        (.tick : Prog α) (memoryAccess := memoryAccess) =
       if state.clock = 0 then
         some ((.timeout (fun _ => none) state.globals state.memory state.ffi, 0),
           { state with locals := fun _ => none })
@@ -1066,14 +1074,15 @@ theorem panSemEvaluateCodeStateWithPostState_skip
     (context : PanValueFfiContext α)
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
-    (bytesInWord : α) (state : PanSemState α (FfiState σ)) :
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
     panSemEvaluateCodeStateWithPostState context primitive handler bytesInWord state
-        (.skip : Prog α) =
+        (.skip : Prog α) (memoryAccess := memoryAccess) =
       some ((.control (.normal state.locals state.globals state.memory state.ffi),
           state.clock), state) := by
   simp [panSemEvaluateCodeStateWithPostState, panSemEvaluateCodeState,
     panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemCodeStateAfter,
-    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps]
+    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 /-! Exact HOL `evaluate_def` Assign equation
     (`cakeml/pancake/semantics/panSemScript.sml:566-572`) over the production
@@ -1086,7 +1095,8 @@ theorem panSemEvaluateCodeStateWithPostState_skip
     (distinct from Lean `none`, which now denotes a missing evaluation result).
     This is an untagged boundary equation because
     the structured result is reduced rather than HOL's `(prog_result, state)`
-    pair. -/
+    pair. This equation uses the no-access compatibility path; state-owned memory access
+    is not covered by it. -/
 theorem panSemEvaluateCodeStateWithFuel_assign
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1096,7 +1106,7 @@ theorem panSemEvaluateCodeStateWithFuel_assign
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (fuel : Nat) (state : PanSemState α (FfiState σ))
     (vk : VarKind) (name : VarName) (value : Exp α) :
-    panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord (fuel + 1)
+    panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord (fuel + 1)
         state (.assign vk name value : Prog α) =
       match evalPanValueExp state.structs state.locals state.globals state.memory
           state.baseAddress state.topAddress bytesInWord value with
@@ -1121,13 +1131,13 @@ theorem panSemEvaluateCodeStateWithFuel_assign
   | none =>
       cases vk <;>
       simp [panSemEvaluateCodeStateWithFuel, evalPanValueFfiClockCodeProg,
-        evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueAssignLocalResult,
-        panValueAssignGlobalResult, evalPanValueExpCounted, hvalue]
+        evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueAssignLocalResult,
+        panValueAssignGlobalResult, evalPanValueExpWith, hvalue]
   | some evaluated =>
       cases vk <;>
       simp [panSemEvaluateCodeStateWithFuel, evalPanValueFfiClockCodeProg,
-        evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueAssignLocalResult,
-        panValueAssignGlobalResult, evalPanValueExpCounted, hvalue] <;>
+        evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueAssignLocalResult,
+        panValueAssignGlobalResult, evalPanValueExpWith, hvalue] <;>
       split <;> simp
 
 /-- Production source-state `Assign` equation with an explicit memory access.
@@ -1180,13 +1190,13 @@ theorem panSemEvaluateCodeStateWithFuel_assign_withAccess
   | none =>
       cases vk <;>
       simp [panSemEvaluateCodeStateWithFuel, evalPanValueFfiClockCodeProg,
-        evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueAssignLocalResult,
-        panValueAssignGlobalResult, evalPanValueExpCounted, hvalue]
+        evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueAssignLocalResult,
+        panValueAssignGlobalResult, evalPanValueExpWith, hvalue]
   | some evaluated =>
       cases vk <;>
       simp [panSemEvaluateCodeStateWithFuel, evalPanValueFfiClockCodeProg,
-        evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueAssignLocalResult,
-        panValueAssignGlobalResult, evalPanValueExpCounted, hvalue] <;>
+        evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueAssignLocalResult,
+        panValueAssignGlobalResult, evalPanValueExpWith, hvalue] <;>
       split <;> simp
 
 /-- The `Assign` equation instantiated with the state-derived memory access: the
@@ -1244,7 +1254,8 @@ theorem panSemEvaluateCodeStateWithFuel_assign_state_memory
     phrased against the finite-map-derived entry point. This is an untagged
     boundary equation because the structured result is reduced rather than HOL's
     `(prog_result, state)` pair. Reference:
-    cakeml/pancake/semantics/panSemScript.sml:558-565 (`Dec`). -/
+    cakeml/pancake/semantics/panSemScript.sml:558-565 (`Dec`). This equation uses the no-access compatibility path; state-owned memory access
+    is not covered by it. -/
 theorem panSemEvaluateCodeStateWithFuel_dec
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1254,13 +1265,13 @@ theorem panSemEvaluateCodeStateWithFuel_dec
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (fuel : Nat) (state : PanSemState α (FfiState σ))
     (name : VarName) (shape : Shape) (value : Exp α) (body : Prog α) :
-    panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord (fuel + 1)
+    panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord (fuel + 1)
         state (.dec name shape value body : Prog α) =
       match evalPanValueExp state.structs state.locals state.globals state.memory
           state.baseAddress state.topAddress bytesInWord value with
       | some evaluated =>
           if panShapeMatches (panValueShape state.structs evaluated) shape then
-            (panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord fuel
+            (panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord fuel
                 { state with
                   locals := updatePanValueMap state.locals name evaluated } body).map
               (fun result =>
@@ -1292,7 +1303,8 @@ theorem panSemEvaluateCodeStateWithFuel_dec
     `(SOME Error, s)`), distinct from a missing `none` evaluation result. This is
     an untagged boundary equation because the structured result is reduced
     rather than HOL's `(prog_result, state)` pair. Reference:
-    cakeml/pancake/semantics/panSemScript.sml:573-582 (`Primitive`). -/
+    cakeml/pancake/semantics/panSemScript.sml:573-582 (`Primitive`). This equation uses the no-access compatibility path; state-owned memory access
+    is not covered by it. -/
 theorem panSemEvaluateCodeStateWithFuel_primitive
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1302,7 +1314,7 @@ theorem panSemEvaluateCodeStateWithFuel_primitive
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (fuel : Nat) (state : PanSemState α (FfiState σ))
     (name : VarName) (operator : PrimOp) (arguments : List (Exp α)) :
-    panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord (fuel + 1)
+    panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord (fuel + 1)
         state (.primitive name operator arguments : Prog α) =
       match evalPanValueExps state.structs state.locals state.globals state.memory
           state.baseAddress state.topAddress bytesInWord arguments with
@@ -1332,36 +1344,37 @@ theorem panSemEvaluateCodeStateWithFuel_primitive
       state.baseAddress state.topAddress bytesInWord arguments with
   | none =>
       simp [panSemEvaluateCodeStateWithFuel, evalPanValueFfiClockCodeProg,
-        evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValuePrimitiveResult,
-        evalPanValueExpsCounted, hvalues]
+        evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValuePrimitiveResult,
+        evalPanValueExpsWith, hvalues]
   | some values =>
       cases hprim : primitive operator values with
       | none =>
           simp [panSemEvaluateCodeStateWithFuel, evalPanValueFfiClockCodeProg,
-            evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValuePrimitiveResult,
-            evalPanValueExpsCounted, hvalues, hprim]
+            evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValuePrimitiveResult,
+            evalPanValueExpsWith, hvalues, hprim]
       | some evaluated =>
           cases hlocal : state.locals name with
           | none =>
               simp [panSemEvaluateCodeStateWithFuel, evalPanValueFfiClockCodeProg,
-                evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValuePrimitiveResult,
-                evalPanValueExpsCounted, hvalues, hprim, hlocal]
+                evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValuePrimitiveResult,
+                evalPanValueExpsWith, hvalues, hprim, hlocal]
           | some oldValue =>
               by_cases hshape : panShapeMatches (panValueShape state.structs evaluated)
                   (panValueShape state.structs oldValue) = true
               · simp [panSemEvaluateCodeStateWithFuel, evalPanValueFfiClockCodeProg,
-                  evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValuePrimitiveResult,
-                  evalPanValueExpsCounted, hvalues, hprim, hlocal, hshape]
+                  evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValuePrimitiveResult,
+                  evalPanValueExpsWith, hvalues, hprim, hlocal, hshape]
               · simp [panSemEvaluateCodeStateWithFuel, evalPanValueFfiClockCodeProg,
-                  evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValuePrimitiveResult,
-                  evalPanValueExpsCounted, hvalues, hprim, hlocal, hshape]
+                  evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValuePrimitiveResult,
+                  evalPanValueExpsWith, hvalues, hprim, hlocal, hshape]
 /-- Production source-state `Seq` equation. The first command is evaluated and
     its clock clamped to the entry clock (`fix_clock`); a normal (`NONE`)
     outcome continues with the second command in the resulting state, while any
     other outcome (including an explicit `Error`) is returned unchanged. This is
     an untagged boundary equation because the structured result is reduced
     rather than HOL's `(prog_result, state)` pair. Reference:
-    cakeml/pancake/semantics/panSemScript.sml:615-618 (`Seq`). -/
+    cakeml/pancake/semantics/panSemScript.sml:615-618 (`Seq`). This equation uses the no-access compatibility path; state-owned memory access
+    is not covered by it. -/
 theorem panSemEvaluateCodeStateWithFuel_seq
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1371,15 +1384,15 @@ theorem panSemEvaluateCodeStateWithFuel_seq
     (handler : PanValueStatefulFfiHandler α σ)
     (bytesInWord : α) (fuel : Nat) (state : PanSemState α (FfiState σ))
     (first second : Prog α) :
-    panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord (fuel + 1)
+    panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord (fuel + 1)
         state (.seq first second : Prog α) =
-      match panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord fuel
+      match panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord fuel
           state first with
       | some firstStep =>
           let fixedStep := fixPanClock state.clock firstStep
           match fixedStep.1 with
           | .control (.normal nextLocals nextGlobals nextMemory nextFfi) =>
-              panSemEvaluateCodeStateWithFuel context primitive handler bytesInWord fuel
+              panSemEvaluateCodeStateWithFuel (memoryAccess := none) context primitive handler bytesInWord fuel
                 { state with
                   locals := nextLocals
                   globals := nextGlobals
@@ -1560,8 +1573,7 @@ theorem panSemEvaluateExactState_raise_of_eval
       some (.control (.raised (fun _ => none) state.legacy.globals
         state.legacy.memory state.legacy.ffi exception value), state.legacy.clock) := by
   simp [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg,
-    evalPanValueFfiProgSteps, panValueRaiseResult, evalPanValueExpCounted,
+    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiLeafControl, panValueRaiseResult, evalPanValueExpWith,
     PanSemExactState.toEvaluateState, heval, hvalid, hlimit]
 
 /-! Exact source `Return` equation (success case), mirroring the `Raise`
@@ -1586,8 +1598,7 @@ theorem panSemEvaluateExactState_return_of_eval
       some (.control (.returned (fun _ => none) state.legacy.globals
         state.legacy.memory state.legacy.ffi [value]), state.legacy.clock) := by
   simp [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg,
-    evalPanValueFfiProgSteps, panValueReturnResult, evalPanValueExpCounted,
+    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpWith,
     PanSemExactState.toEvaluateState, heval, hlimit]
 
 /-! Exact source `Return` Error paths: an expression that fails to evaluate and
@@ -1611,8 +1622,7 @@ theorem panSemEvaluateExactState_return_error_of_eval_none
       some (.control (.error state.legacy.locals state.legacy.globals
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg,
-    evalPanValueFfiProgSteps, panValueReturnResult, evalPanValueExpCounted,
+    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpWith,
     PanSemExactState.toEvaluateState, heval]
 
 theorem panSemEvaluateExactState_return_error_of_oversized
@@ -1634,8 +1644,7 @@ theorem panSemEvaluateExactState_return_error_of_oversized
       some (.control (.error state.legacy.locals state.legacy.globals
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg,
-    evalPanValueFfiProgSteps, panValueReturnResult, evalPanValueExpCounted,
+    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpWith,
     PanSemExactState.toEvaluateState, heval, hlimit]
 
 /-! Exact source `Raise` Error paths: an expression that fails to evaluate and
@@ -1659,8 +1668,7 @@ theorem panSemEvaluateExactState_raise_error_of_eval_none
       some (.control (.error state.legacy.locals state.legacy.globals
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg,
-    evalPanValueFfiProgSteps, panValueRaiseResult, evalPanValueExpCounted,
+    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiLeafControl, panValueRaiseResult, evalPanValueExpWith,
     PanSemExactState.toEvaluateState, heval]
 
 theorem panSemEvaluateExactState_raise_error_of_invalid
@@ -1684,8 +1692,7 @@ theorem panSemEvaluateExactState_raise_error_of_invalid
       some (.control (.error state.legacy.locals state.legacy.globals
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg,
-    evalPanValueFfiProgSteps, panValueRaiseResult, evalPanValueExpCounted,
+    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiLeafControl, panValueRaiseResult, evalPanValueExpWith,
     PanSemExactState.toEvaluateState, heval, hinvalid]
 
 /-! Exact source `Call` error equations.  HOL evaluates `OPT_MMAP (eval s)
@@ -2095,9 +2102,9 @@ theorem panSemEvaluateCodeState_call_error_of_returnShapeMismatch
               | zero => omega
               | succ fuel =>
                   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall,
-                    panValueCallArgumentsValue, evalPanValueFfiClockLeaf,
-                    evalPanValueFfiProgSteps, panValueReturnResult,
-                    evalPanValueExpCounted, evalPanValueExp, hargs, hlookupCall, hclock,
+                    panValueCallArgumentsValue,
+                    evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueReturnResult,
+                    evalPanValueExpWith, evalPanValueExp, hargs, hlookupCall, hclock,
                     panValueShape, panShapeMatches, decPanClock]
 
 /-- HOL `Call` invalid-return-shape rejection for a callee with one parameter.
@@ -2168,9 +2175,9 @@ theorem panSemEvaluateCodeState_call_error_of_returnShapeMismatch_param
               | zero => omega
               | succ fuel =>
                   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall,
-                    panValueCallArgumentsValue, evalPanValueFfiClockLeaf,
-                    evalPanValueFfiProgSteps, panValueReturnResult,
-                    evalPanValueExpCounted, evalPanValueExp, hargs, hlookupCall, hclock,
+                    panValueCallArgumentsValue,
+                    evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueReturnResult,
+                    evalPanValueExpWith, evalPanValueExp, hargs, hlookupCall, hclock,
                     panValueShape, panShapeMatches, decPanClock]
 
 /-- HOL `Call` invalid-return-shape rejection with the callee body result left as
@@ -2180,7 +2187,8 @@ theorem panSemEvaluateCodeState_call_error_of_returnShapeMismatch_param
     `shape_of retv ≠ return_sh` (`panSemScript.sml:668-670`) makes the call
     return `SOME Error` over the callee post-call state; this states that
     rejection over the state-owned code-map evaluator with HOL's `fix_clock`
-    clamp.  The caller-visible locals are cleared.  Untagged: the executed
+    clamp. The callee's post-state locals are preserved, including bindings
+    restored by a surrounding declaration. Untagged: the executed
     result is the reduced structured pair, not HOL's literal `result option #
     state` pairing.  The functions-list `PanSemExactState` compatibility carrier
     has no source `returnShape`, so this rejection is only available on the
@@ -2224,7 +2232,7 @@ theorem panSemEvaluateCodeState_call_error_of_callee_returnShapeMismatch
     panSemEvaluateCodeState context primitive handler bytesInWord state
       (.call info function arguments) (memoryAccess := memoryAccess)
       (contracts := contracts) (memoryHandler := memoryHandler) =
-        some (.control (.error (fun _ => none) finalGlobals finalMemory
+        some (.control (.error bodyLocals finalGlobals finalMemory
           finalFfi), min (decPanClock state.clock) calleeClock) := by
   unfold panSemEvaluateCodeState panSemEvaluateCodeStateWithFuel
   rw [hfuel]
@@ -2297,8 +2305,8 @@ theorem panSemEvaluateCodeState_decCall_error_of_returnShapeMismatch
   have hsucc5 : tail + 5 = Nat.succ (tail + 4) := by omega
   rw [hsucc5, hsucc4, hsucc3, hsucc2, hsucc1]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeDecCall,
-    evalPanValueFfiClockCodeCall, panValueCallArgumentsValue, evalPanValueFfiClockLeaf,
-    evalPanValueFfiProgSteps, panValueReturnResult, evalPanValueExpCounted, evalPanValueExp,
+    evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
+    evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpWith, evalPanValueExp,
     hargs, hcallee, hclock, panValueShape, panShapeMatches, decPanClock]
 
 /-- HOL `Dec` (`panSemScript.sml:558-565`) whose initialiser expression fails to
@@ -2400,8 +2408,8 @@ theorem panSemEvaluateExactState_primitive_error_of_arguments_none
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValuePrimitiveResult,
-    evalPanValueExpsCounted, harguments]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValuePrimitiveResult,
+    evalPanValueExpsWith, harguments]
 
 theorem panSemEvaluateExactState_primitive_error_of_operator_none
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -2424,8 +2432,8 @@ theorem panSemEvaluateExactState_primitive_error_of_operator_none
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValuePrimitiveResult,
-    evalPanValueExpsCounted, harguments, hprim]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValuePrimitiveResult,
+    evalPanValueExpsWith, harguments, hprim]
 
 theorem panSemEvaluateExactState_primitive_error_of_destination_none
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -2449,8 +2457,8 @@ theorem panSemEvaluateExactState_primitive_error_of_destination_none
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValuePrimitiveResult,
-    evalPanValueExpsCounted, harguments, hprim, hlocal]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValuePrimitiveResult,
+    evalPanValueExpsWith, harguments, hprim, hlocal]
 
 theorem panSemEvaluateExactState_primitive_error_of_shape_mismatch
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -2476,8 +2484,8 @@ theorem panSemEvaluateExactState_primitive_error_of_shape_mismatch
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValuePrimitiveResult,
-    evalPanValueExpsCounted, harguments, hprim, hlocal, hshape]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValuePrimitiveResult,
+    evalPanValueExpsWith, harguments, hprim, hlocal, hshape]
 
 /-- HOL `panSemScript$evaluate_def` `Assign` returns `SOME Error` with the
 unchanged state when the source expression does not evaluate. -/
@@ -2499,9 +2507,9 @@ theorem panSemEvaluateExactState_assign_error_of_eval_none
   cases kind <;>
     simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
       panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState] <;>
-    simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps,
+    simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl,
       panValueAssignLocalResult, panValueAssignGlobalResult,
-      evalPanValueExpCounted, heval]
+      evalPanValueExpWith, heval]
 
 /-- HOL `panSemScript$evaluate_def` `Assign` returns `SOME Error` with the
 unchanged state when the destination fails `is_valid_value`. -/
@@ -2525,9 +2533,9 @@ theorem panSemEvaluateExactState_assign_error_of_invalid
   cases kind <;>
     simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
       panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState] <;>
-    simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps,
+    simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl,
       panValueAssignLocalResult, panValueAssignGlobalResult,
-      evalPanValueExpCounted, heval, hinvalid]
+      evalPanValueExpWith, heval, hinvalid]
 
 /-- HOL `panSemScript$evaluate_def` `Store` returns `SOME Error` with the
 unchanged state when the address expression fails to evaluate. -/
@@ -2548,8 +2556,8 @@ theorem panSemEvaluateExactState_store_error_of_address_none
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueStoreResult,
-    evalPanValueExpCounted, haddress]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueStoreResult,
+    evalPanValueExpWith, haddress]
 
 /-- HOL `panSemScript$evaluate_def` `Store` returns `SOME Error` with the
 unchanged state when the stored-value expression fails to evaluate. -/
@@ -2574,8 +2582,8 @@ theorem panSemEvaluateExactState_store_error_of_value_none
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueStoreResult,
-    evalPanValueExpCounted, haddress, hvalue]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueStoreResult,
+    evalPanValueExpWith, haddress, hvalue]
 
 /-- HOL `panSemScript$evaluate_def` `Store` returns `SOME Error` with the
 unchanged state when the word store fails (for example outside its domain). -/
@@ -2602,8 +2610,8 @@ theorem panSemEvaluateExactState_store_error_of_store_none
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueStoreResult,
-    evalPanValueExpCounted, haddress, hvalue, hstore]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueStoreResult,
+    evalPanValueExpWith, haddress, hvalue, hstore]
 
 /-- HOL `panSemScript$evaluate_def` `Store32` returns `SOME Error` with the
 unchanged state when the address expression fails to evaluate. -/
@@ -2624,8 +2632,8 @@ theorem panSemEvaluateExactState_store32_error_of_address_none
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueStore32Result,
-    evalPanValueExpCounted, haddress]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueStore32Result,
+    evalPanValueExpWith, haddress]
 
 /-- HOL `panSemScript$evaluate_def` `Store32` returns `SOME Error` with the
 unchanged state when the stored-value expression fails to evaluate. -/
@@ -2650,8 +2658,8 @@ theorem panSemEvaluateExactState_store32_error_of_value_none
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueStore32Result,
-    evalPanValueExpCounted, haddress, hvalue]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueStore32Result,
+    evalPanValueExpWith, haddress, hvalue]
 
 /-- HOL `panSemScript$evaluate_def` `Store32` returns `SOME Error` with the
 unchanged state when the 32-bit store fails (for example outside its domain). -/
@@ -2678,8 +2686,8 @@ theorem panSemEvaluateExactState_store32_error_of_store_none
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueStore32Result,
-    evalPanValueExpCounted, haddress, hvalue, hstore]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueStore32Result,
+    evalPanValueExpWith, haddress, hvalue, hstore]
 
 /-- HOL `panSemScript$evaluate_def` `StoreByte` returns `SOME Error` with the
 unchanged state when the address expression fails to evaluate. -/
@@ -2700,8 +2708,8 @@ theorem panSemEvaluateExactState_storeByte_error_of_address_none
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueStoreByteResult,
-    evalPanValueExpCounted, haddress]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueStoreByteResult,
+    evalPanValueExpWith, haddress]
 
 /-- HOL `panSemScript$evaluate_def` `StoreByte` returns `SOME Error` with the
 unchanged state when the stored-value expression fails to evaluate. -/
@@ -2726,8 +2734,8 @@ theorem panSemEvaluateExactState_storeByte_error_of_value_none
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueStoreByteResult,
-    evalPanValueExpCounted, haddress, hvalue]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueStoreByteResult,
+    evalPanValueExpWith, haddress, hvalue]
 
 /-- HOL `panSemScript$evaluate_def` `StoreByte` returns `SOME Error` with the
 unchanged state when the byte store fails (for example outside its domain). -/
@@ -2754,8 +2762,8 @@ theorem panSemEvaluateExactState_storeByte_error_of_store_none
         state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
   simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
     panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueStoreByteResult,
-    evalPanValueExpCounted, haddress, hvalue, hstore]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueStoreByteResult,
+    evalPanValueExpWith, haddress, hvalue, hstore]
 
 /-- HOL `If` (`panSemScript.sml:617-620`) whose condition does not evaluate to a
     word (either the expression fails or it is not a word value) returns

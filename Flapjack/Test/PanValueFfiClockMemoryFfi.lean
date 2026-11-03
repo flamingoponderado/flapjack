@@ -2,8 +2,9 @@ import Flapjack.PanValueFfiClockCorrectness
 import Flapjack.Test.PanValueMemoryFfi
 
 /-! The clocked source evaluator must retain the accelerator-style memory FFI
-    boundary.  This is the same memory-mutating handler used by the stepped
-    evaluator, with the additional observable clock decrement at the call. -/
+    boundary.  This is the same memory-mutating handler that stepped-flapjack
+    uses with the stepped evaluator, with the additional observable clock
+    decrement at the call. -/
 
 namespace Flapjack
 

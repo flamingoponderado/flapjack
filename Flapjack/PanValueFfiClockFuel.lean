@@ -4,8 +4,9 @@ import Flapjack.PanValueFfiClockSemantics
 # Fuel monotonicity for the clocked stateful-FFI evaluators
 
 The clocked half of issue #659. The unclocked evaluators are covered by
-`Flapjack.PanValueFfiFuel` in PR #662; this file is independent of it, and
-states the same thing for the explicit-clock evaluators of
+`SteppedFlapjack.PanValueFfiFuel` in stepped-flapjack, which was
+`Flapjack.PanValueFfiFuel` (PR #662) until #1251 moved it. This file states
+the same thing for the explicit-clock evaluators of
 `Flapjack.PanValueFfiClockSemantics`: a successful run is unchanged -- same
 outcome, same clock -- by any larger fuel.
 
@@ -217,10 +218,10 @@ theorem evalPanValueFfiClockProg_fuel_mono'
     cases hv : evalPanValueExp structs locals globals memory baseAddress topAddress
         bytesInWord valueExp ma with
     | none =>
-      simp only [panValueDecAcceptedValue, hv, Option.elim_none] at h ⊢
+      simp only [panValueDecAcceptedValue, evalPanValueExpWith_none, hv, Option.elim_none] at h ⊢
       exact h
     | some value =>
-      simp only [panValueDecAcceptedValue, hv] at h ⊢
+      simp only [panValueDecAcceptedValue, evalPanValueExpWith_none, hv] at h ⊢
       by_cases hshape : panShapeMatches (panValueShape structs value) shape
       · simp only [hshape, if_true, Option.elim_some,
           Option.bind_eq_bind] at h ⊢
@@ -1335,8 +1336,8 @@ theorem evalPanValueFfiClockCode_fuel_mono_mutual
         evalPanValueFfiClockCodeDecCall_fuel_mono_succ context primitive handler
           structs code exceptionShapes baseAddress topAddress bytesInWord fuel ihProg ihCall⟩
 
-/-- **Fuel monotonicity for the public clocked evaluator.** As with the stepped
-entry point, the clock is preserved exactly; only the fuel is relaxed. -/
+/-- **Fuel monotonicity for the public clocked evaluator.** The clock is
+preserved exactly; only the fuel is relaxed. -/
 theorem evalPanValueFfiClockProgram_fuel_mono
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
