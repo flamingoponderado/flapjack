@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
 /-! Reference inspection in the generic closure primitive simulation. -/
 namespace Flapjack.Compiler.Backend.ClosProps.PrimitiveMemory
 open ClosSem Flapjack.SemanticPrimitivesProps
+open Flapjack.Compiler.Backend.ClosProps.PrimitiveBoolean
 
 /-- The closure state uses canonical finite-map fields. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :
@@ -224,6 +225,7 @@ theorem simpleValRelDoAppRevEl {C D F : Type} (vr : Value → Value → Prop)
             cases l : fields[index.toNat]? <;> cases r : nextFields[index.toNat]? <;>
               simp_all [optionRel]
             simp [show ¬ index < 0 by omega, reads, states]
+
         case refPtr.number flag ptr index =>
           have lookup := relatedRefs vr sr stateProps s t states ptr
           cases l : s.refs.lookup ptr <;> cases r : t.refs.lookup ptr <;> simp_all [optionRel]
@@ -236,5 +238,109 @@ theorem simpleValRelDoAppRevEl {C D F : Type} (vr : Value → Value → Prop)
             cases l : fields[index.toNat]? <;> cases r : nextFields[index.toNat]? <;>
               simp_all [optionRel]
             simp [show ¬ index < 0 by omega, reads, states]
+
+
+/-- Byte-array update case of the reverse primitive simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_do_app_rev"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleValRelDoAppRevUpdateByte {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F) (xs ys : List Value)
+    (h : simpleValRel vr ∧ simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ vr xs ys) :
+    match doApp (.memOp .updateByte) ys t with
+    | .err err2 => ∃ err1, doApp (.memOp .updateByte) xs s = .err err1 ∧ excRel vr err1 err2
+    | .val (y, t1) => ∃ x s1, vr x y ∧ sr s1 t1 ∧ doApp (.memOp .updateByte) xs s = .val (x, s1) := by
+  obtain ⟨simple, stateProps, states, values⟩ := h
+  cases values with
+  | nil => simp [doApp, applyMemory, excRel]
+  | @cons x1 y1 _ _ first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, excRel]
+    | @cons x2 y2 _ _ second tail =>
+      cases tail with
+      | nil => simp [doApp, applyMemory, excRel]
+      | @cons x3 y3 _ _ third tail =>
+        cases tail with
+        | cons fourth rest => simp [doApp, applyMemory, excRel]
+        | nil =>
+          have firstView := simpleValRel_view vr simple x1 y1 first
+          have secondView := simpleValRel_view vr simple x2 y2 second
+          cases firstView <;> cases secondView <;> simp_all [doApp, applyMemory, excRel]
+          have thirdView := simpleValRel_view vr simple x3 y3 third
+          cases thirdView <;> simp_all
+          rename_i flag ptr index byte
+          have lookup := relatedRefs vr sr stateProps s t states ptr
+          cases l : s.refs.lookup ptr <;> cases r : t.refs.lookup ptr <;> simp_all [optionRel]
+          rename_i a b
+          cases a <;> cases b <;> simp_all [refRel]
+          rename_i bytes
+          by_cases invalid : index < 0 ∨ index.toNat ≥ bytes.length
+          · simp [invalid]
+          · cases converted : intToByte byte with
+            | none => simp [invalid]
+            | some value =>
+              have updated := stateProps.2.2.2.2.2.2.1 (bytes.set index.toNat value) s t ptr states
+              have unit : vr unitValue unitValue := (simple.2.1 _ [] _).2 ⟨[], rfl, .nil⟩
+              simp [invalid, unit, updated]
+
+/-- Value-array bounds-check case of the reverse primitive simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_do_app_rev"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleValRelDoAppRevBoundsCheckArray {C D F : Type} (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F) (xs ys : List Value)
+    (h : simpleValRel vr ∧ simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ vr xs ys) :
+    match doApp (.memOp .boundsCheckArray) ys t with
+    | .err err2 => ∃ err1, doApp (.memOp .boundsCheckArray) xs s = .err err1 ∧ excRel vr err1 err2
+    | .val (y, t1) => ∃ x s1, vr x y ∧ sr s1 t1 ∧ doApp (.memOp .boundsCheckArray) xs s = .val (x, s1) := by
+  obtain ⟨simple, stateProps, states, values⟩ := h
+  cases values with
+  | nil => simp [doApp, applyMemory, excRel]
+  | @cons x1 y1 _ _ first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, excRel]
+    | @cons x2 y2 _ _ second tail =>
+      cases tail with
+      | cons third rest => simp [doApp, applyMemory, excRel]
+      | nil =>
+        have firstView := simpleValRel_view vr simple x1 y1 first
+        have secondView := simpleValRel_view vr simple x2 y2 second
+        cases firstView <;> cases secondView <;> simp_all [doApp, applyMemory, excRel]
+        rename_i flag ptr index
+        have lookup := relatedRefs vr sr stateProps s t states ptr
+        cases l : s.refs.lookup ptr <;> cases r : t.refs.lookup ptr <;> simp_all [optionRel]
+        rename_i a b
+        cases a <;> cases b <;> simp_all [refRel]
+        rename_i fields nextFields
+        have lengths := lookup.length_eq
+        simp [← lengths, simpleValRel_boolValue, simple]
+
+/-- Byte-array and byte-vector bounds-check case of the reverse simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_do_app_rev"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleValRelDoAppRevBoundsCheckByte {C D F : Type} (loose : Bool) (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F) (xs ys : List Value)
+    (h : simpleValRel vr ∧ simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ vr xs ys) :
+    match doApp (.memOp (.boundsCheckByte loose)) ys t with
+    | .err err2 => ∃ err1, doApp (.memOp (.boundsCheckByte loose)) xs s = .err err1 ∧ excRel vr err1 err2
+    | .val (y, t1) => ∃ x s1, vr x y ∧ sr s1 t1 ∧ doApp (.memOp (.boundsCheckByte loose)) xs s = .val (x, s1) := by
+  obtain ⟨simple, stateProps, states, values⟩ := h
+  cases values with
+  | nil => simp [doApp, applyMemory, excRel]
+  | @cons x1 y1 _ _ first tail =>
+    cases tail with
+    | nil => simp [doApp, applyMemory, excRel]
+    | @cons x2 y2 _ _ second tail =>
+      cases tail with
+      | cons third rest => simp [doApp, applyMemory, excRel]
+      | nil =>
+        have firstView := simpleValRel_view vr simple x1 y1 first
+        have secondView := simpleValRel_view vr simple x2 y2 second
+        cases firstView <;> cases secondView <;> simp_all [doApp, applyMemory, excRel]
+        case byteVector.number => exact simpleValRel_boolValue vr simple _
+        case refPtr.number flag ptr index =>
+          have lookup := relatedRefs vr sr stateProps s t states ptr
+          cases l : s.refs.lookup ptr <;> cases r : t.refs.lookup ptr <;> simp_all [optionRel]
+          rename_i a b
+          cases a <;> cases b <;> simp_all [refRel]
+          exact simpleValRel_boolValue vr simple _
 
 end Flapjack.Compiler.Backend.ClosProps.PrimitiveMemory
