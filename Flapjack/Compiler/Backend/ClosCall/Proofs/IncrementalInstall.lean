@@ -3246,6 +3246,21 @@ theorem growingExprsSimFrom_mono {C F : Type} (passFuel relationFuel : Nat) (com
   intro g extended
   exact sim g (stateExtends_trans smaller larger g growth extended)
 
+/-- A pass-state-restricted list simulation supplies the installed-program
+simulation at that same state. This is Flapjack-specific infrastructure; the
+smaller-clock bound is retained for the enclosing induction. -/
+theorem growingExprsSimFrom_installedBelow {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (g : State) (allowed : Set Nat)
+    (program targetProgram : List ClosLang.Exp)
+    (sim : GrowingExprsSimFrom (F := F) passFuel relationFuel compiler g allowed program targetProgram) :
+    InstalledProgramSimBelow (C := C) (F := F) passFuel relationFuel limit compiler g allowed program targetProgram := by
+  intro source target result final _ run notType sourceWf states ready sourceCompiler targetCompiler oracle
+  have envs : EnvRelFuel relationFuel g allowed target.code [] [] 0 (targetProgram.map (0, ·)) := by
+    apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+    simp [envRel]
+  exact sim g (stateExtends_refl g ready.well.2) [] [] source target result final run notType envs .nil sourceWf
+    states ready sourceCompiler targetCompiler oracle
+
 /-- Matching ticks preserve a simulation above the required pass state. This is Flapjack-specific simulation infrastructure. -/
 theorem growingExprsSimFrom_tick {C F : Type} (passFuel relationFuel : Nat)
     (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat) (trace : BackendCommon.Tra)
@@ -4206,5 +4221,92 @@ theorem compileIncFuel_growing_with_existing {C F : Type} (passFuel relationFuel
     simpa [appendAux, traversal] using appended
   exact callsListBounded_growing_from passFuel relationFuel passFuel compiler allowed program.1 converted.1
     g (nextKnown, converted.2 ++ g.2) merged distinct fresh initialWf eligible eligibleIH exprIH
+
+/-- A successful incremental pass supplies the installed-program simulation
+at its merged compiler state, assuming the expression-case induction and its
+eligibility conditions. This is Flapjack-specific infrastructure. -/
+theorem compileIncFuel_installedBelow_with_existing {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (g : State) (program : ClosSem.Program)
+    (nextKnown : NumSet) (converted : ClosSem.Program)
+    (run : compileIncFuel? passFuel g.1 program = some (nextKnown, converted))
+    (distinct : (codeLocations program.1).Nodup)
+    (fresh : LabelsFresh (codeLocations program.1) g) (initialWf : wellFormed g)
+    (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      expression ∈ program.1 → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFrom (F := F) passFuel relationFuel compiler after allowed [expression] [output]) :
+    InstalledProgramSimBelow (C := C) (F := F) passFuel relationFuel limit compiler
+      (nextKnown, converted.2 ++ g.2) allowed program.1 converted.1 := by
+  apply growingExprsSimFrom_installedBelow
+  exact compileIncFuel_growing_with_existing passFuel relationFuel compiler allowed g program nextKnown converted
+    run distinct fresh initialWf eligible eligibleIH exprIH
+
+/-- The successful install case obtains the installed-program simulation
+from the actual incremental traversal and the oracle's location invariant.
+The expression-case induction and eligibility remain assumptions. This is
+Flapjack-specific simulation infrastructure. -/
+theorem doInstall_success_evaluate_from_cases {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value) (program : List ClosLang.Exp)
+    (installed : ClosSem.State (NumSet × C) F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (ready : IncrementalInstallReady g source target)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (installRun : doInstall sourceValues source = (.val program, installed))
+    (programRun : evaluate program [] installed = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max fuel (listBudget program + 1) → ∀ expression output before after,
+      expression ∈ program → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max fuel (listBudget program + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFrom (F := F) fuel relationFuel compiler after allowed [expression] [output]) :
+    ∃ nextKnown converted targetInstalled finalG targetResult targetFinal,
+      compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) ∧
+      doInstall targetValues target = (.val converted.1, targetInstalled) ∧
+      IncrementalInstallReady (nextKnown, converted.2 ++ g.2) installed targetInstalled ∧
+      stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      stateExtends (nextKnown, converted.2 ++ g.2) finalG ∧
+      evaluate converted.1 [] targetInstalled = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨expressions, _, _, _, _, _, resultEq, exprEq, _, _, _, _, _, _, _, _⟩ :=
+    doInstall_nonType_ready fuel relationFuel g allowed compiler source target sourceValues targetValues
+      (.val program) installed ready states values sourceCompiler targetCompiler targetOracle installRun (by simp)
+  have nonzero : source.clock ≠ 0 := by
+    intro zero
+    simp [zero] at resultEq
+  have programEq : program = (source.compileOracle 0).2.1 := by
+    have : program = expressions := by simpa [nonzero] using resultEq
+    exact this.trans exprEq
+  have distinct : (codeLocations program).Nodup := by simpa [programEq] using ready.distinct 0
+  have fresh : LabelsFresh (codeLocations program) g := by
+    apply labelsFresh_of_codeIncludes g (codeLocations program) target.code ready.well.2 ready.included
+    simpa [programEq] using ready.fresh 0
+  apply doInstall_success_evaluate fuel relationFuel g allowed compiler source target sourceValues targetValues
+    program installed result final ready states sourceWf values sourceCompiler targetCompiler targetOracle
+    installRun programRun notType
+  intro nextKnown converted passRun
+  exact compileIncFuel_installedBelow_with_existing fuel relationFuel source.clock compiler allowed g (program, [])
+    nextKnown converted passRun distinct fresh ready.well eligible eligibleIH exprIH
 
 end Flapjack.Compiler.Backend.ClosCall
