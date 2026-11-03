@@ -775,4 +775,142 @@ theorem eqDirectThmStringPair {C F : Type} (tx ty : BackendCommon.Tra) (x y : Fl
   cases y
   simp [Flapjack.Basis.Pure.MlString.MlString.explode, eq_comm]
 
+/-- Recover an integer literal from the source matcher. -/
+private theorem intSome (x : ClosLang.Exp) (i : Int) (h : destOpNil destConst x = some i) :
+    ∃ trace, x = .op trace (.intOp (.const i)) [] := by
+  rw [destOpConst_eq_previous] at h
+  cases x <;> try simp at h
+  case op trace op args =>
+    cases op <;> try simp at h
+    case intOp op =>
+      cases op <;> try simp at h
+      case const v =>
+        cases args <;> simp_all
+
+/-- Recover one of the three source constant forms from the matcher. -/
+private theorem constantSome (x : ClosLang.Exp) (c : ConstPart)
+    (h : destOpNil destConstant x = some c) :
+    (∃ trace i, x = .op trace (.blockOp (.constant (.constInt i))) []) ∨
+    (∃ trace str, x = .op trace (.blockOp (.constant (.constStr str))) []) ∨
+    (∃ trace w, x = .op trace (.blockOp (.constant (.constWord64 w))) []) := by
+  rw [destOpConstant_eq_previous] at h
+  cases x <;> try simp at h
+  case op trace op args =>
+    cases op <;> try simp at h
+    case blockOp op =>
+      cases op <;> try simp at h
+      case constant value =>
+        cases value <;> cases args <;> simp_all
+
+/-- Recover a nullary constructor from the source matcher. -/
+private theorem nilSome (x : ClosLang.Exp) (tag : Nat) (h : destOpNil destCons x = some tag) :
+    ∃ trace, x = .op trace (.blockOp (.cons tag)) [] := by
+  rw [destOpConsNil_eq_previous] at h
+  cases x <;> try simp at h
+  case op trace op args =>
+    cases op <;> try simp at h
+    case blockOp op =>
+      cases op <;> try simp at h
+      case cons v => cases args <;> simp_all
+
+/-- Different constant kinds cause the original equality type error. -/
+private theorem constPairError {C F : Type} (tx ty t : BackendCommon.Tra)
+    (x y : ClosLang.Const) (env : List Value) (s : State C F)
+    (bad : ClosSem.doEq (makeConst y) (makeConst x) = .typeError) :
+    evaluate [.op t (.blockOp .equal)
+      [.op tx (.blockOp (.constant x)) [], .op ty (.blockOp (.constant y)) []]] env s =
+        (.err (.abort .typeError), s) := by
+  have evalConst (trace : BackendCommon.Tra) (c : ClosLang.Const) :
+      evaluate [.op trace (.blockOp (.constant c)) []] env s = (.val [makeConst c], s) := by
+    rw [evaluate_ordinaryOp_eq trace _ [] env s (by simp) (by simp)]
+    simp [evaluate, doApp, applyBlock]
+  rw [evaluate_ordinaryOp_eq t _ _ env s (by simp) (by simp)]
+  rw [ClosProps.evaluate_cons_value _ _ env s s (makeConst x) (evalConst tx x)]
+  simp [evalConst, doApp, applyBlock, bad]
+
+/-- Source direct equality preserves evaluation outside type errors. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem eqDirectThm {C F : Type} (x y : ClosLang.Exp) (env : List Value)
+    (s : State C F) (res : Result (List Value) Value) (s1 : State C F)
+    (t : BackendCommon.Tra) (z : ClosLang.Exp)
+    (h : evaluate [.op t (.blockOp .equal) [x, y]] env s = (res, s1) ∧
+      res ≠ .err (.abort .typeError) ∧ directEq x y = some z) :
+    evaluate [z] env s = (res, s1) := by
+  cases ix : destOpNil destConst x with
+  | some i =>
+    obtain ⟨trace, rfl⟩ := intSome x i ix
+    exact eqDirectThmIntLeft trace i y env s s1 res t z h
+  | none =>
+    cases iy : destOpNil destConst y with
+    | some i =>
+      obtain ⟨trace, rfl⟩ := intSome y i iy
+      exact eqDirectThmIntRight trace i x env s s1 res t z h
+    | none =>
+      cases cx : destOpNil destConstant x with
+      | some a =>
+        cases cy : destOpNil destConstant y with
+        | none =>
+          rcases constantSome x a cx with ⟨trace, i, rfl⟩ | ⟨trace, str, rfl⟩ | ⟨trace, w, rfl⟩
+          · exact eqDirectThmBlockIntLeft trace i y env s s1 res t z iy cy h
+          · exact eqDirectThmStringLeft trace str y env s s1 res t z iy cy h
+          · exact eqDirectThmWordLeft trace w y env s s1 res t z iy cy h
+        | some b =>
+          rcases constantSome x a cx with ⟨tx, i, rfl⟩ | ⟨tx, str, rfl⟩ | ⟨tx, w, rfl⟩ <;>
+            rcases constantSome y b cy with ⟨ty, j, rfl⟩ | ⟨ty, str2, rfl⟩ | ⟨ty, w2, rfl⟩
+          all_goals first
+            | exact eqDirectThmBlockIntPair _ _ _ _ env s s1 res t z h
+            | exact eqDirectThmStringPair _ _ _ _ env s s1 res t z h
+            | exact eqDirectThmWordPair _ _ _ _ env s s1 res t z h
+            | rw [constPairError tx ty t (.constInt i) (.constStr str2) env s (by simp [makeConst, ClosSem.doEq])] at h; simp at h
+            | rw [constPairError tx ty t (.constInt i) (.constWord64 w2) env s (by simp [makeConst, ClosSem.doEq])] at h; simp at h
+            | rw [constPairError tx ty t (.constStr str) (.constInt j) env s (by simp [makeConst, ClosSem.doEq])] at h; simp at h
+            | rw [constPairError tx ty t (.constStr str) (.constWord64 w2) env s (by simp [makeConst, ClosSem.doEq])] at h; simp at h
+            | rw [constPairError tx ty t (.constWord64 w) (.constInt j) env s (by simp [makeConst, ClosSem.doEq])] at h; simp at h
+            | rw [constPairError tx ty t (.constWord64 w) (.constStr str2) env s (by simp [makeConst, ClosSem.doEq])] at h; simp at h
+          all_goals exact (h.2.1 h.1.1.symm).elim
+      | none =>
+        cases cy : destOpNil destConstant y with
+        | some b =>
+          rcases constantSome y b cy with ⟨trace, i, rfl⟩ | ⟨trace, str, rfl⟩ | ⟨trace, w, rfl⟩
+          · exact eqDirectThmBlockIntRight trace i x env s s1 res t z ix cx h
+          · exact eqDirectThmStringRight trace str x env s s1 res t z ix cx h
+          · exact eqDirectThmWordRight trace w x env s s1 res t z ix cx h
+        | none =>
+          cases nx : destOpNil destCons x with
+          | some tag =>
+            obtain ⟨trace, rfl⟩ := nilSome x tag nx
+            exact eqDirectThmNilLeft trace tag y env s s1 res t z iy cy h
+          | none =>
+            cases ny : destOpNil destCons y with
+            | some tag =>
+              obtain ⟨trace, rfl⟩ := nilSome y tag ny
+              exact eqDirectThmNilRight trace tag x env s s1 res t z ix cx h
+            | none =>
+              have impossible : directEq x y = none := by
+                have intStage : eqDirectConst x y = none := by
+                  change (match destOpNil destConst x, destOpNil destConst y with
+                    | some a, some b => some (mkBool (a == b))
+                    | some a, none => some (.op .none (.blockOp (.equalConst (.int a))) [y])
+                    | none, some b => some (.op .none (.blockOp (.equalConst (.int b))) [x])
+                    | none, none => none) = _
+                  rw [ix, iy]
+                have constantStage : eqDirectConstant x y = none := by
+                  change (match destOpNil destConstant x, destOpNil destConstant y with
+                    | some a, some b => some (mkBool (decide (b = a)))
+                    | some a, none => some (.op .none (.blockOp (.equalConst a)) [y])
+                    | none, some b => some (.op .none (.blockOp (.equalConst b)) [x])
+                    | none, none => none) = _
+                  rw [cx, cy]
+                have nilStage : eqDirectNil x y = none := by
+                  change (match destOpNil destCons x, destOpNil destCons y with
+                    | some a, some b => some (mkBool (a == b))
+                    | some a, none => some (.op .none (.blockOp (.tagLenEq a 0)) [y])
+                    | none, some b => some (.op .none (.blockOp (.tagLenEq b 0)) [x])
+                    | none, none => none) = _
+                  rw [nx, ny]
+                simp [directEq, intStage, constantStage, nilStage]
+              rw [impossible] at h
+              simp at h
+
 end Flapjack.Compiler.Backend.ClosOp

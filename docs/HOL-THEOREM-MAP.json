@@ -3,6 +3,19 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
   "hol_name": "eq_direct_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/DirectEvaluate.lean",
+  "lean_name": "eqDirectThm",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eq_direct_thm_typed and the complete source proof: the universally quantified expressions, independent compiler and FFI state types, original evaluation, non-type-error and recognizer hypotheses, and equality conclusion agree. The proof covers both operands across integer operations, each of the three source block constants, nullary constructors, failed recognizers, and mixed constant kinds; mismatched kinds contradict the original non-type-error premise. Strings retain the HOL byte-list carrier and words retain the fixed 64-bit carrier. Canonical refs and code finite maps use the local roundtrip witness; the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "eq_direct_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/DirectEvaluate.lean",
   "lean_name": "eqDirectThmBlockIntLeft",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
