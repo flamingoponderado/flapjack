@@ -401,16 +401,22 @@ which `arm8_ast` lowers to a single `BitfieldMove@64` guarded by
 (`inzero = T`, `extend = F`) that `Lsl` and `Lsr` emit and the `opc = 0` form
 (`inzero = T`, `extend = T`) that `Asr` emits — plus the `Run` equation for
 `dfn'BitfieldMove` with the masks left symbolic.  `ShiftBitfieldMasks.lean`
-then ports the mask algebra: `decodeBitMasks_lsr` records
-`DecodeBitMasks (1, 63w, n2w n, F)` at every `n < 64`, `tmask_lsr_getLsbD`
-shows the resulting tmask keeps exactly the low `64 - n` bits, `wmask_lsr`
-shows the wmask is the all-ones word, and `lsr_mask` / `asr_mask` are the Lean
-renderings of HOL's `lsr` and `asr2` — masking the rotate right by these masks
-is the logical shift right, and sign-extending it is the arithmetic shift
-right.
+then ports the mask algebra.  `decodeBitMasks_lsr` and `decodeBitMasks_lsl`
+record the two `DecodeBitMasks` shapes the encoder uses;
+`tmask_lsr_getLsbD` shows the `Lsr`/`Asr` tmask keeps exactly the low `64 - n`
+bits and `wmask_lsr` shows its wmask is the all-ones word;
+`arm8LslMask_getLsbD` shows the `Lsl` wmask keeps bits `n` and above.
+`lsr_mask`, `asr_mask` and `lsl_mask` are the instantiated identities (masking
+the rotate right by these masks is the logical, arithmetic or logical-left
+shift), and `arm8LsrMaskIdentity` / `arm8LslMaskIdentity` restate HOL's `lsr`
+and `lsl` in their own shape — `DecodeBitMasks` result hypothesis, and for
+`lsl` the `Abbrev` definitions of `r` and `q` — carrying `@[hol]` tags with
+`pending_statement_review` manifest rows.  HOL's `asr2` is a statement about
+the mask value rather than a shift identity, so `asr_mask` remains untagged
+Flapjack infrastructure that combines it with the shift reasoning.
 
-Still open for #1239: HOL's `lsl` mask identity, the three `shift` immediate
-case theorems, `addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts
-exist in `ConditionalSelect.lean`), and `Mem`.
+Still open for #1239: the three `shift` immediate case theorems, `addOverflow`,
+`subOverflow` (their `ConditionalSelect@64` facts exist in
+`ConditionalSelect.lean`), and `Mem`.
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
