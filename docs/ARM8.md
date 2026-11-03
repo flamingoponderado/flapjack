@@ -593,6 +593,76 @@ field lists, orders, types and constants.  They do **not** promote the
 definitions in `Defs.lean` are still only mechanically rendered, and no
 declaration is claimed as an exact HOL port.
 
+### Transition behaviour and lowering comparison
+
+Checked against the same pinned source:
+
+- `NextStateARM8_def` is `let s1 = Next s0 in if s1.exception = NoException then
+  SOME s1 else NONE`.  The rendered `NextStateARM8` has the same shape, with `=`
+  rendered as `==` on the `exception` enum, `SOME`/`NONE` as `some`/`none`, and
+  `THE` as `holThe` (whose `none` branch is arbitrary, as HOL's `THE`).  The
+  case theorems prove `NextStateARM8 ms = some t` (for example
+  `arm8Next_word`/`arm8Next_nop`) and then `unfold arm8Next; rw [that]; rfl`,
+  which is HOL's `THE (SOME t) = t`.
+- `Next` is the `Fetch`/`Decode`/`Run` chain.  `Fetch`, `Decode`, `Run`, `Mem`,
+  `write'Mem`, `write'X`, `DecodeBitMasks`, `Encode` and the `dfn'*` execution
+  functions are the mechanical rendering of the 129-definition HOL closure
+  reachable from `NextStateARM8`.  Their representation choices are: HOL FCP
+  vectors become `BitVec` at the same dimension, bitstrings become `List Bool`
+  (most-significant bit first), sets become predicates, `HD []` becomes
+  `false`, and the `num2...` conversions are total with a default arm.  Those
+  choices are recorded beside each declaration and in the
+  `pending_statement_review` manifest rows; the equations are not claimed as
+  exact ports.
+- `arm8_ast_def` is compared clause by clause with `arm8Ast`.  Every clause
+  selects the same `instruction` constructor with the same field order:
+  `Skip` -> `[NoOperation]`; `Const` -> `MoveWide@64` Z/N/K or
+  `LogicalImmediate@64` ORR; `Binop` with a register -> `AddSubShiftedRegister@64`
+  or `LogicalShiftedRegister@64`; `Binop` with an immediate ->
+  `AddSubImmediate@64`, the inverted `ORR` `LogicalShiftedRegister@64` for
+  `Xor -1`, or `LogicalImmediate@64`; `Shift` with an immediate ->
+  `BitfieldMove@64` (with the `Lsl` fields `r = -i`, `s = 63 - i` and the
+  `Ror` `ExtractRegister@64`) or `arm8_encode_fail`; `Shift` with a register ->
+  `Shift@64`; `Div` -> `Division@64`; `LongMul` -> `MultiplyHigh` +
+  `MultiplyAddSub@64`; `LongDiv` and `FP` -> `arm8_encode_fail`; `AddCarry` ->
+  the five-instruction chain; the two overflow forms -> flag-setting
+  `AddSubShiftedRegister@64` + `ConditionalSelect@64`; `Mem` ->
+  `arm8_load_store_ast{,32,16}` or the `LoadStoreImmediate@8` word;
+  `Jump`/`Call`/`JumpReg` -> the three branch forms; `JumpCmp` -> the compare
+  plus `BranchConditional (a - 4w, cmp_cond cmp)`; `Loc` -> `Address` or the
+  six-instruction chain through temporary register 26.  The representations
+  agree: `(15 >< 0) i` is `BitVec.ofNat 16 ((i >>> 0).toNat)` and likewise for
+  the other three halves, `n2w r` is the `Nat`-to-`BitVec 5` cast, `~word_msb a`
+  is `!offset.msb`, `x = Asr` is `sh == .asr`, `0x1Fw` is `31`, and `^temp` is
+  `26`.  The one non-syntactic clause is `Loc`'s range test: HOL compares
+  unsigned `≤` against `sw2sw (INT_MINw: word20)` and
+  `sw2sw (INT_MAXw: word20)`, while Lean uses signed `BitVec.sle` against
+  `BitVec.signExtend 64 (BitVec.ofNat 20 0x80000)` and
+  `BitVec.signExtend 64 (BitVec.ofNat 20 0x7FFFF)`.  Both accept exactly
+  `[-524288, 524287]`, so the clause is equivalent but not syntactically
+  identical; `arm8Ast` therefore stays `pending_statement_review`.
+- `arm8_encode_def` maps the `ARM8` word to its four little-endian bytes
+  (`(7 >< 0) w` etc. as `BitVec.ofNat 8 ((w >>> k).toNat)`) and `BadCode` to
+  four zero bytes; `arm8_encode_fail_def` is `[NoOperation]`; `arm8_enc_def` is
+  `C LIST_BIND arm8_encode o arm8_ast`, rendered as
+  `(arm8Ast instruction).flatMap arm8Encode`.
+- Theorem statements: HOL's `arm8_encoder_correct` is
+  `encoder_correct arm8_target`, and its proof splits on `i`, then on the
+  `inst`/`arith`/`mem` constructors and on the lowering's branch tests.  The
+  Lean case theorems carry the same `arm8_encoder_correct` tag with a suffix
+  naming the case, state `CaseGoal` for that constructor under the same
+  `asmStep`/`targetStateRel` premise, and take the lowering's branch test as a
+  parameter (`hsx`, `hfall`, `hvalid`, `hbop`, `hne`, `hneg`, `hrange`, `hlow`,
+  `hmsb`, `hscaled_ne`).  The assembling `arm8EncoderCorrectL3` is
+  `encoderCorrect arm8TargetL3`, the same statement as HOL's theorem over the
+  L3 target record; its dispatchers supply every branch test through
+  `by_cases`, so no extra hypothesis survives.  `arm8Ok`, `arm8Proj`,
+  `arm8Next`, `arm8EncMovImm`, `arm8CmpCond`, `arm8Shv`, `isTest` and the three
+  `arm8_load_store_ast*` definitions are `reviewed_exact`; the case theorems and
+  the four `Ast.lean` definitions remain `pending_statement_review` because
+  their statements depend on the rendered `Decode`/`Run`/`Encode` equations and
+  on the `Loc` reformulation above.
+
 ## L3 machine configuration and downstream compiler theorem
 
 `Flapjack/Compiler/Backend/Arm8Config/ProofsL3.lean` states CakeML's
