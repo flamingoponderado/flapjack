@@ -5998,6 +5998,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_cc_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
+    "lean_name": "knownCc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_cc_typed and the HOL definition: the disabled case threads the original approximation tree unchanged, and the enabled case composes free-variable removal, stateful known optimization, tick removal and let-operation cleanup in source order. The compiler program and word8/word64 result carriers and arbitrary downstream configuration match. Source review does not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "known_co_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
+    "lean_name": "knownCo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared known_co_typed and the HOL definition: the disabled case projects the identity stateful oracle, and the enabled case composes free-variable removal, stateful known optimization, tick removal and let-operation cleanup in source order. The closure-program carrier and arbitrary downstream configuration match. Source review does not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
     "hol_name": "monotonic_unique_set_globals",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
     "lean_name": "monotonicUniqueSetGlobals",
