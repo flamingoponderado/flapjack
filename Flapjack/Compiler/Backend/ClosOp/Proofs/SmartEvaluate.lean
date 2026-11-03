@@ -176,4 +176,98 @@ theorem smartOpThmUnaryNoConstructor {C F : Type} (t : BackendCommon.Tra) (op : 
     evaluate [smartOp t op [x]] env s = (res, s1) := by
   simpa [smartOp, smartOp', noConstructor] using h.1
 
+/-- Literal integer evaluation used by the binary constant-folding case. -/
+private theorem evalIntLiteral {C F : Type} (t : BackendCommon.Tra) (i : Int)
+    (env : List Value) (s : State C F) :
+    evaluate [.op t (.intOp (.const i)) []] env s = (.val [.number i], s) := by
+  rw [evaluate_ordinaryOp_eq t _ _ env s (by simp) (by simp)]
+  simp [evaluate, doApp, applyNumeric, doIntApp]
+
+/-- Source boolean construction used by constant folding. -/
+private theorem evalBoolLiteral {C F : Type} (b : Bool) (env : List Value) (s : State C F) :
+    evaluate [mkBool b] env s = (.val [boolValue b], s) := by
+  cases b <;> rw [mkBool, evaluate_ordinaryOp_eq _ _ _ _ _ (by simp) (by simp)] <;>
+    simp [evaluate, doApp, applyBlock, boolValue, BackendCommon.falseTag, BackendCommon.trueTag]
+
+/-- The source integer matcher identifies a literal expression. -/
+private theorem intSome (x : ClosLang.Exp) (i : Int) (h : destOpNil destConst x = some i) :
+    ∃ t, x = .op t (.intOp (.const i)) [] := by
+  rw [destOpConst_eq_previous] at h
+  cases x <;> try simp at h
+  case op t op xs =>
+    cases op <;> try simp at h
+    case intOp io =>
+      cases io <;> try simp at h
+      case const j => cases xs <;> simp_all
+
+/-- Binary integer case of the source smart-operation theorem. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "SmartOp_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem smartOpThmInteger {C F : Type} (t : BackendCommon.Tra) (op : ClosLang.IntOp)
+    (x y : ClosLang.Exp) (env : List Value) (s s1 : State C F)
+    (res : Result (List Value) Value)
+    (h : evaluate [.op t (.intOp op) [x, y]] env s = (res, s1) ∧
+      res ≠ .err (.abort .typeError)) :
+    evaluate [smartOp t (.intOp op) [x, y]] env s = (res, s1) := by
+  cases consts : destOpConsts x y with
+  | none => simpa [smartOp, smartOp', consts] using h.1
+  | some pair =>
+    obtain ⟨i, j⟩ := pair
+    cases hx : destOpNil destConst x with
+    | none => simp [destOpConsts, hx] at consts
+    | some a =>
+      cases hy : destOpNil destConst y with
+      | none => simp [destOpConsts, hx, hy] at consts
+      | some b =>
+        simp [destOpConsts, hx, hy] at consts
+        rcases consts with ⟨rfl, rfl⟩
+        obtain ⟨tx, rfl⟩ := intSome x a hx
+        obtain ⟨ty, rfl⟩ := intSome y b hy
+        have operands : evaluate [.op tx (.intOp (.const a)) [], .op ty (.intOp (.const b)) []]
+            env s = (.val [.number a, .number b], s) := by
+          rw [ClosProps.evaluate_cons_value _ _ env s s (.number a) (evalIntLiteral tx a env s),
+            evalIntLiteral ty b env s]
+        rw [evaluate_ordinaryOp_eq t _ _ env s (by simp) (by simp), operands] at h
+        cases op <;> simp [smartOp, smartOp', destOpConsts, hx, hy, integerOp, mkInt,
+          evalIntLiteral, evalBoolLiteral, doApp, applyNumeric, doIntApp] at h ⊢
+        all_goals try exact h.1
+        all_goals try exact (h.2 h.1.1.symm).elim
+        all_goals by_cases zero : a = 0 <;> simp [zero] at h ⊢
+        all_goals try exact h.1
+        all_goals exact (h.2 h.1.1.symm).elim
+
+/-- Other binary operations are unchanged by the source smart operation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "SmartOp_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem smartOpThmOtherBinary {C F : Type} (t : BackendCommon.Tra) (op : ClosLang.Op)
+    (x y : ClosLang.Exp) (env : List Value) (s s1 : State C F)
+    (res : Result (List Value) Value)
+    (notInt : ∀ i, op ≠ .intOp i) (notEqual : op ≠ .blockOp .equal)
+    (h : evaluate [.op t op [x, y]] env s = (res, s1) ∧
+      res ≠ .err (.abort .typeError)) :
+    evaluate [smartOp t op [x, y]] env s = (res, s1) := by
+  cases found : destOpConsts x y with
+  | none =>
+    cases op <;> try simp_all [smartOp, smartOp']
+  | some pair =>
+    obtain ⟨i, j⟩ := pair
+    cases op <;> try simp_all [smartOp, smartOp', integerOp]
+
+/-- Complete two-operand case of the source smart-operation theorem. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "SmartOp_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem smartOpThmBinary {C F : Type} (t : BackendCommon.Tra) (op : ClosLang.Op)
+    (x y : ClosLang.Exp) (env : List Value) (s s1 : State C F)
+    (res : Result (List Value) Value)
+    (h : evaluate [.op t op [x, y]] env s = (res, s1) ∧
+      res ≠ .err (.abort .typeError)) :
+    evaluate [smartOp t op [x, y]] env s = (res, s1) := by
+  cases op with
+  | intOp i => exact smartOpThmInteger t i x y env s s1 res h
+  | blockOp block =>
+    cases block
+    case equal => exact smartOpThmEqual t x y env s s1 res h
+    all_goals apply smartOpThmOtherBinary t _ x y env s s1 res <;> simp_all
+  | _ => apply smartOpThmOtherBinary t _ x y env s s1 res <;> simp_all
+
 end Flapjack.Compiler.Backend.ClosOp
