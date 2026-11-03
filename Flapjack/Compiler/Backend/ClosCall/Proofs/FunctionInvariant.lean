@@ -258,6 +258,30 @@ theorem callsFuel_fn_relation (fuel : Nat)
       (callsFuel_fn_closed_source fuel name loc arity body probeBody initial afterProbe g allowed code
         probe closed initialWf locations annotations distinct fresh growth coverage' included).2⟩
 
+/-- The transformed function is related at any relation fuel, independently
+of traversal fuel. This is Flapjack-specific bounded-adapter infrastructure. -/
+theorem callsFuel_fn_relation_atFuel (fuel relationFuel : Nat)
+    (name : Basis.Pure.MlString.MlString) (loc arity : Nat) (body out : ClosLang.Exp)
+    (initial final g : State) (allowed : Set Nat) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (run : callsFuel (fuel + 1) (.fn name (some loc) none arity body) initial = some (out, final))
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.fn name (some loc) none arity body])
+    (annotations : everyFnVarsNone [.fn name (some loc) none arity body])
+    (distinct : (codeLocations [.fn name (some loc) none arity body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.fn name (some loc) none arity body]) initial)
+    (growth : stateExtends final g)
+    (coverage : ∀ k ∈ codeLocations [.fn name (some loc) none arity body],
+      ¬ sptDomain final.1 k → k ∈ allowed)
+    (included : codeIncludes final.2 code) :
+    ∃ targetBody, out = .fn name (some loc) none arity targetBody ∧
+      recClosureRelFuel relationFuel g allowed code loc [(arity, body)] [(arity, targetBody)] := by
+  obtain ⟨targetBody, output, closure⟩ :=
+    callsFuel_fn_relation fuel name loc arity body out initial final g allowed code run initialWf
+      locations annotations distinct fresh growth coverage included
+  exact ⟨targetBody, output,
+    (recClosureRelFuel_independent (fuel + 1) relationFuel g allowed code loc
+      [(arity, body)] [(arity, targetBody)]).mp closure⟩
+
 /-- Source-driven function evaluation after an actual direct-call pass run.
 This fuel-aware case does not yet establish the compiler-oracle and growing
 well-formedness conclusions of the full HOL simulation theorem. -/

@@ -646,6 +646,33 @@ theorem callsFuel_letrec_relation (fuel : Nat)
       (callsFuel_letrec_closed_final fuel names loc fns body targetBody initial afterProbe final' g probeBodies
         allowed code probe closed continuation initialWf locations annotations distinct fresh growth coverage included).2⟩
 
+/-- The transformed recursive group is related at any relation fuel, not
+only at the traversal fuel used to produce it. This is Flapjack-specific
+adapter infrastructure; it is not a port of a HOL theorem. -/
+theorem callsFuel_letrec_relation_atFuel (fuel relationFuel : Nat)
+    (names : List Basis.Pure.MlString.MlString) (loc : Nat) (fns : List (Nat × ClosLang.Exp))
+    (body out : ClosLang.Exp) (initial final g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (run : callsFuel (fuel + 1) (.letrec names (some loc) none fns body) initial = some (out, final))
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.letrec names (some loc) none fns body])
+    (annotations : everyFnVarsNone [.letrec names (some loc) none fns body])
+    (distinct : (codeLocations [.letrec names (some loc) none fns body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.letrec names (some loc) none fns body]) initial)
+    (growth : stateExtends final g)
+    (coverage : ∀ k ∈ codeLocations [.letrec names (some loc) none fns body],
+      ¬ sptDomain final.1 k → k ∈ allowed)
+    (included : codeIncludes g.2 code) :
+    ∃ targetFns targetBody middle,
+      out = .letrec names (some loc) none targetFns targetBody ∧
+      callsFuel fuel body middle = some (targetBody, final) ∧
+      recClosureRelFuel relationFuel g allowed code loc fns targetFns := by
+  obtain ⟨targetFns, targetBody, middle, output, bodyRun, closure⟩ :=
+    callsFuel_letrec_relation fuel names loc fns body out initial final g allowed code run initialWf
+      locations annotations distinct fresh growth coverage included
+  exact ⟨targetFns, targetBody, middle, output, bodyRun,
+    (recClosureRelFuel_independent fuel relationFuel g allowed code loc fns targetFns).mp closure⟩
+
 /-- Source-driven recursive-binding evaluation after the actual pass run.
 The body hypothesis is the local fuel-aware induction interface; the full
 HOL simulation's oracle and growing-state conclusions remain open. -/

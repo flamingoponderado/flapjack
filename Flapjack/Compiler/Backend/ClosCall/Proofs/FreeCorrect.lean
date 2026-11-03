@@ -240,4 +240,15 @@ theorem closedFuel_fn (fuel : Nat) (name : Flapjack.Basis.Pure.MlString.MlString
     have := bound (n + arity) free
     omega
 
+/-- The production closedness check gives the same result at every fuel:
+its retry is total and the successful result characterizes free variables.
+This is Flapjack-specific infrastructure for the bounded adapter. -/
+theorem closedFuel_independent (left right : Nat) (e : Exp) :
+    closedFuel left e = closedFuel right e := by
+  obtain ⟨a, ha⟩ := closedFuel_succeeds left e
+  obtain ⟨b, hb⟩ := closedFuel_succeeds right e
+  have agree : closedFuel left e = some true ↔ closedFuel right e = some true :=
+    (closedFuel_iff_noFreeVars left e).trans (closedFuel_iff_noFreeVars right e).symm
+  cases a <;> cases b <;> simp_all
+
 end Flapjack.Compiler.Backend.ClosCall

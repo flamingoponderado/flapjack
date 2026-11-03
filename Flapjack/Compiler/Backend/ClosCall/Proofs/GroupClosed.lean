@@ -12,6 +12,13 @@ def groupClosedFuel (fuel : Nat) (fns : List (Nat × Exp)) (bodies : List Exp) :
     if !all then pure false else
       closedFuel fuel (.fn (Flapjack.Basis.Pure.MlString.ofString "") none none pair.1.1 pair.2)) true
 
+/-- The recursive-group closedness decision is independent of the supplied
+fuel, including for lists of different lengths. This is Flapjack-specific
+infrastructure for the bounded adapter. -/
+theorem groupClosedFuel_independent (left right : Nat) (fns : List (Nat × Exp)) (bodies : List Exp) :
+    groupClosedFuel left fns bodies = groupClosedFuel right fns bodies := by
+  simp only [groupClosedFuel, closedFuel_independent left right]
+
 private theorem closedFold_false (fuel : Nat) (pairs : List ((Nat × Exp) × Exp)) :
     pairs.foldlM (fun all pair => do
       if !all then pure false else

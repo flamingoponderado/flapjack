@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
 import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
+import Flapjack.Compiler.Backend.ClosCall.Proofs.FuelStability
 import Flapjack.Compiler.Backend.ClosCall.Stubs
 
 /-! Fuel-aware recursive-closure relation for direct-call conversion. -/
@@ -43,6 +44,15 @@ def recClosureRelFuel (fuel : Nat) (g : State) (allowed : Set Nat)
           groupLocationsCovered fns1 afterOpen allowed ∧
           (∀ i, i < fns1.length → 2 * i + loc ∈ allowed) ∧
           codeIncludes afterOpen.2 code))
+
+/-- The recursive-closure relation is independent of its traversal fuel:
+both bounded traversals return the same result at every initial fuel. This is
+Flapjack-specific infrastructure; correspondence with HOL remains open. -/
+theorem recClosureRelFuel_independent (left right : Nat) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat) (fns1 fns2 : List (Nat × ClosLang.Exp)) :
+    recClosureRelFuel left g allowed code loc fns1 fns2 ↔
+      recClosureRelFuel right g allowed code loc fns1 fns2 := by
+  simp only [recClosureRelFuel, callsListBounded_independent left right]
 
 /-- A related recursive closure has one target function for every source
 function, in both the extracted and non-extracted cases. -/
