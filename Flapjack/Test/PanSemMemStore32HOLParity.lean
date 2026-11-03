@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Exact HOL `mem_store_32` parity

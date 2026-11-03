@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem.TotalEval
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Parity for the measured total `panSemTotalEvaluate`

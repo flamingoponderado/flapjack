@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Faithful source memory access for the panSem `Assign` equation

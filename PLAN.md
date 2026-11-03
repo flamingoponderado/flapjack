@@ -21,6 +21,14 @@ definitions, pass ordering, examples, and proof obligations.
 
 ## Source-semantics equivalence gate (issue #380)
 
+> **Stepped evaluators moved (#1251).** The step-counted source evaluators
+> (`PanSteppedSemantics`, `PanValueFfiSemantics` and the modules built on
+> them) now live in
+> [stepped-flapjack](https://github.com/flamingoponderado/stepped-flapjack)
+> as `SteppedFlapjack.*`. Where this section and the progress list below
+> mention "stepped" evaluators, paths or projections, they describe that code
+> and its history. Flapjack's source semantics is the clocked evaluator.
+
 The source semantics must be CakeML-equivalent before more compiler-
 correctness claims are built on top of it. The reference for this audit is
 `cakeml/pancake/semantics/panSemScript.sml`, with the word-operation
@@ -209,6 +217,10 @@ cannot be performed; the RISC-V regression keeps the successful prefix visible.
      practical.
 
 ## Progress
+
+Entries that mention the stepped evaluator, its fuel monotonicity, the
+clocked-to-stepped projection or `PanCost` refer to code that moved to
+stepped-flapjack in #1251.
 
 - [x] Initialize Lake with a pinned Lean 4.33.1 toolchain.
 - [x] Port the core `panLang` syntax, shape sizing, and nested sequencing.

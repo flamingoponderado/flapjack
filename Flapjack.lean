@@ -1924,7 +1924,6 @@ import Flapjack.Pancake.Semantics.PanSem.Semantics
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
 import Flapjack.Pancake.Semantics.PanSem.EvalExecutedBridge
-import Flapjack.Pancake.Semantics.PanSem.EvalExecutedCountedBridge
 import Flapjack.Pancake.Semantics.PanSem.EvalRuntimeRoute
 import Flapjack.Pancake.Semantics.PanSem.PrimitiveProductionBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalCallBridge
@@ -2324,19 +2323,12 @@ import Flapjack.CompileParamVarsRelation
 import Flapjack.CompileParamVarsSlotBounds
 import Flapjack.PanValues
 import Flapjack.PanValueEvaluatorStability
-import Flapjack.PanValueExpCounted
 import Flapjack.PanValueFfiCore
-import Flapjack.PanSteppedSemantics
 import Flapjack.PanMemory
-import Flapjack.PanValueFfiFuel
 import Flapjack.PanValueFfiClockSemantics
 import Flapjack.PanValueFfiClockFuel
 import Flapjack.PanValueFfiClockCorrectness
 import Flapjack.PanValueFfiClockShift
-import Flapjack.PanValueFfiClockStepsBridge
-import Flapjack.PanValueFfiEventMonotonicity
-import Flapjack.PanValueFfiClockProjection
-import Flapjack.PanCost
 import Flapjack.RiscV.Model
 import Flapjack.RiscV.L3.Types
 import Flapjack.RiscV.Encoding

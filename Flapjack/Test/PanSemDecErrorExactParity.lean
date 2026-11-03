@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 Direct regression for the exact source `PanSemExactState` `Dec` error
@@ -83,14 +83,6 @@ private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word
   panSemEvaluateExactState statefulTestContext statefulTestPrimitive
     statefulTestHandler state program
 
-private def nonClockedEvaluate (program : Prog Word64)
-    (memoryAccess : Option (PanValueMemoryAccess Word64) := none) :
-    Option (PanValueFfiSteppedResult Word64 Unit) :=
-  evalPanValueFfiProgramSteps statefulTestContext statefulTestPrimitive
-    statefulTestHandler [] [] 0 100 (BitVec.ofNat 64 8) 5 localsWithX
-    (fun _ => none) exactMemory statefulTestFfiState program
-    (memoryAccess := memoryAccess)
-
 /-- An `Error` control result at `clock` that keeps local `x` at `localValue`. -/
 private def isErrorKeeping (clock localValue : Nat)
     (result : Option (PanValueFfiClockResult Word64 Unit)) : Bool :=
@@ -105,31 +97,14 @@ private def isErrorKeeping (clock localValue : Nat)
       | _ => false
   | _ => false
 
-/-- A stepped `Error` that keeps local `x` at `localValue`. -/
-private def isErrorKeepingStepped (localValue : Nat)
-    (result : Option (PanValueFfiSteppedResult Word64 Unit)) : Bool :=
-  match result with
-  | some (.error locals _ _ _, _) =>
-      (match locals "x" with
-       | some (.word value) => value == BitVec.ofNat 64 localValue
-       | _ => false)
-  | _ => false
-
 private def decEvalFailGuard : Bool :=
   isErrorKeeping 5 3 (evaluate memoryState decEvalFailProgram)
 
 private def decShapeMismatchGuard : Bool :=
   isErrorKeeping 5 3 (evaluate memoryState decShapeMismatchProgram)
 
-private def decNonClockedEvalFailGuard : Bool :=
-  isErrorKeepingStepped 3 (nonClockedEvaluate decEvalFailProgram (some emptyAccess))
-
-private def decNonClockedShapeMismatchGuard : Bool :=
-  isErrorKeepingStepped 3 (nonClockedEvaluate decShapeMismatchProgram)
-
 private def decErrorGuard : Bool :=
-  decEvalFailGuard && decShapeMismatchGuard &&
-    decNonClockedEvalFailGuard && decNonClockedShapeMismatchGuard
+  decEvalFailGuard && decShapeMismatchGuard
 
 #guard decErrorGuard
 
@@ -140,12 +115,6 @@ def runChecks : IO Bool := do
   IO.println (if decShapeMismatchGuard then
     "PASS exact-state Dec shape mismatch keeps state and clock"
    else "FAIL exact-state Dec shape mismatch keeps state and clock")
-  IO.println (if decNonClockedEvalFailGuard then
-    "PASS non-clocked Dec failing initialiser rejected with Error"
-   else "FAIL non-clocked Dec failing initialiser rejected with Error")
-  IO.println (if decNonClockedShapeMismatchGuard then
-    "PASS non-clocked Dec shape mismatch rejected with Error"
-   else "FAIL non-clocked Dec shape mismatch rejected with Error")
   pure decErrorGuard
 
 end Flapjack.Test.PanSemDecErrorExactParity

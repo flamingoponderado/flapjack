@@ -159,7 +159,6 @@ import Flapjack.Test.Parser
 import Flapjack.Test.DisplayParity
 import Flapjack.Test.ParserStaticExamples
 import Flapjack.Test.ParserParseDefParity
-import Flapjack.Test.PanSteppedSemantics
 import Flapjack.Test.Backend
 import Flapjack.Test.CompileFunctionDistinct
 import Flapjack.Test.Runtime
@@ -188,13 +187,11 @@ import Flapjack.Test.LinearScan
 import Flapjack.Test.LinearScanSource
 import Flapjack.Test.PanMemoryModel
 import Flapjack.Test.CrepeMemorySemantics
-import Flapjack.Test.PanValueFfiSemantics
-import Flapjack.Test.PanValueFfiFuel
+import Flapjack.Test.PanValueFfiCore
 import Flapjack.Test.PanValueFfiClockSemantics
 import Flapjack.Test.PanValueWfParity
 import Flapjack.Test.PanSemStateEvalParity
 import Flapjack.Test.PanSemEvalRoutedParity
-import Flapjack.Test.PanCost
 import Flapjack.Test.SourceSemanticsOps
 import Flapjack.Test.PanToCrepExceptionRelation
 import Flapjack.Test.PanToCrepRelationsParity

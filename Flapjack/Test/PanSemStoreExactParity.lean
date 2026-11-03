@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem.StoreExact
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-! Direct parity for the exact panSem `Store`/`Store32`/`StoreByte` clause
     steps against the original-HOL rows in

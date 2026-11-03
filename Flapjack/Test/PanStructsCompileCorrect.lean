@@ -1,6 +1,6 @@
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
 import Flapjack.RiscV.Model
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-! Regression cases paired with
 `scripts/hol-probes/pan_structs_compile_correct_probe.out` and

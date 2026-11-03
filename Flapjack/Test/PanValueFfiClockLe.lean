@@ -1,5 +1,5 @@
 import Flapjack.PanValueFfiClockCorrectness
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 namespace Flapjack
 open RiscV

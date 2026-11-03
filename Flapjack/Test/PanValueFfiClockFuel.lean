@@ -1,5 +1,5 @@
 import Flapjack.PanValueFfiClockFuel
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-! Executable regressions for clocked fuel monotonicity: raising the fuel
 changes neither the outcome nor the clock.

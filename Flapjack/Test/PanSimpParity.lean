@@ -2,7 +2,6 @@ import Flapjack.Pancake.PanSimp
 import Flapjack.Pancake.Proofs.PanSimp
 import Flapjack.Pancake.Proofs.PanSimp.Evaluate
 import Flapjack.Pancake.PanGlobals
-import Flapjack.PanValueFfiEventMonotonicity
 import Flapjack.PanValueFfiClockShift
 import Flapjack.PanValueFfiClockCorrectness
 
@@ -935,8 +934,8 @@ example :
     (by
       intro locals globals memory ffi
       exact ⟨locals, globals, updatePanValueMemory memory 7 (.word 9), ffi, by
-        simp [evalPanValueFfiLeafControl, panValueStoreResult, evalPanValueExpCounted,
-          evalPanValueExp, panValueExpStepCost, panValueStoreWithAccess,
+        simp [evalPanValueFfiLeafControl, panValueStoreResult,
+          evalPanValueExp, panValueStoreWithAccess,
           panValueFlatStoreWords, panValueFlatWords, panValueFlatWordsFuel,
           panValueFlatOffset, updatePanValueMemory]⟩)
 
@@ -1260,8 +1259,8 @@ example :
     (by
       intro locals globals memory ffi
       exact ⟨locals, globals, updatePanValueMemory memory 7 (.word 9), ffi, by
-        simp [evalPanValueFfiLeafControl, panValueStoreResult, evalPanValueExpCounted,
-          evalPanValueExp, panValueExpStepCost, panValueStoreWithAccess,
+        simp [evalPanValueFfiLeafControl, panValueStoreResult,
+          evalPanValueExp, panValueStoreWithAccess,
           panValueFlatStoreWords, panValueFlatWords, panValueFlatWordsFuel,
           panValueFlatOffset, updatePanValueMemory]⟩)
 
