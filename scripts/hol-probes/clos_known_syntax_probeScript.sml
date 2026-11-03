@@ -49,3 +49,7 @@ val _ = show "val_approx_sgc_free_typed=" clos_knownProofTheory.val_approx_sgc_f
 val _ = show "val_approx_sgc_free_merge_typed=" clos_knownProofTheory.val_approx_sgc_free_merge;
 val _ = show "globals_approx_sgc_free_typed=" clos_knownProofTheory.globals_approx_sgc_free_def;
 val _ = show "known_op_preserves_esgc_free_typed=" clos_knownProofTheory.known_op_preserves_esgc_free;
+val _ = show "elist_globals_empty_typed=" clos_knownProofTheory.elist_globals_empty;
+val _ = show "clos_gen_noinline_safe_typed=" clos_knownProofTheory.clos_gen_noinline_val_approx_sgc_free;
+val _ = show "decide_inline_imp_clos_typed=" clos_knownProofTheory.decide_inline_LetInline_IMP_Clos;
+val _ = show "decide_inline_imp_clos_lopt_typed=" clos_knownProofTheory.decide_inline_LetInline_IMP_Clos_lopt;

@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.ClosKnown.KnownOp
+import Flapjack.Compiler.Backend.ClosKnown.Fuel
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
 import Flapjack.Misc.Sptree
 
 /-! Global-write safety of known-function approximations. -/
@@ -156,5 +158,47 @@ theorem knownOpPreservesEsgcFree (op : ClosLang.Op) (args : List ValApprox)
     simp only [knownOpHOL, Prod.mk.injEq] at known
     rcases known with ⟨rfl, rfl⟩
     exact ⟨by simp [valApproxSgcFree], globals⟩
+
+/-- A list has no global writes exactly when none of its expressions does. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "elist_globals_empty"]
+theorem elistGlobalsEmpty (es : List ClosLang.Exp) :
+    elistGlobals es = emptyGlobalBag ↔ ∀ e ∈ es, setGlobals e = emptyGlobalBag := by
+  induction es with
+  | nil => simp [elistGlobals]
+  | cons e es ih => simp [elistGlobals, FlatProps.unionGlobalBag_eq_empty, ih]
+
+/-- Generated non-inline closure approximations cannot contain global writes. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "clos_gen_noinline_val_approx_sgc_free"]
+theorem closGenNoInlineSafe {α : Type} (n i : Nat) (fns : List (Nat × α)) :
+    ∀ a ∈ closGenNoInline n i fns, valApproxSgcFree a := by
+  induction fns generalizing i with
+  | nil => simp [closGenNoInline]
+  | cons fn rest ih =>
+    cases fn with
+    | mk arity body =>
+      simp only [closGenNoInline, List.mem_cons, forall_eq_or_imp, valApproxSgcFree, true_and]
+      exact ih (i + 1)
+
+/-- A positive inline decision comes from a closure approximation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "decide_inline_LetInline_IMP_Clos"]
+theorem decideInlineLetInlineImpClos {α : Type} (c : Config) (approx : ValApprox)
+    (loc : Option α) (arity : Nat) (body : ClosLang.Exp)
+    (h : decideInlineHOL c approx loc arity = .letInline body) :
+    ∃ m size, approx = .clos m arity body size := by
+  cases loc <;> cases approx <;> simp_all [decideInlineHOL]
+  all_goals split at h <;> simp_all
+  all_goals split at h <;> simp_all
+
+/-- A positive inline decision also agrees with any supplied location. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "decide_inline_LetInline_IMP_Clos_lopt"]
+theorem decideInlineLetInlineImpClosLoc (c : Config) (approx : ValApprox)
+    (loc : Option Nat) (arity : Nat) (body : ClosLang.Exp)
+    (h : decideInlineHOL c approx loc arity = .letInline body) :
+    ∃ m size, approx = .clos m arity body size ∧ (loc = none ∨ loc = some m) := by
+  cases loc with
+  | none =>
+    obtain ⟨m, size, eq⟩ := decideInlineLetInlineImpClos c approx none arity body h
+    exact ⟨m, size, eq, Or.inl rfl⟩
+  | some loc => cases approx <;> simp [decideInlineHOL] at h
 
 end Flapjack.Compiler.Backend.ClosKnown

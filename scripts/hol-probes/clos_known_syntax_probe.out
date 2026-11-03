@@ -41,3 +41,7 @@ val_approx_sgc_free_typed=(∀(n :num) (m :num). val_approx_sgc_free (ClosNoInli
 val_approx_sgc_free_merge_typed=∀(a1 :val_approx) (a2 :val_approx). val_approx_sgc_free a1 ∧ val_approx_sgc_free a2 ⇒ val_approx_sgc_free (merge a1 a2 :val_approx)
 globals_approx_sgc_free_typed=∀(g :val_approx sptree$num_map). globals_approx_sgc_free g ⇔ ∀(n :num) (a :val_approx). lookup n g = SOME a ⇒ val_approx_sgc_free a
 known_op_preserves_esgc_free_typed=∀(opn :closLang$op) (args :val_approx list) (g0 :val_approx sptree$num_map) (a :val_approx) (g :val_approx sptree$num_map). known_op opn args g0 = (a,g) ∧ EVERY val_approx_sgc_free args ∧ globals_approx_sgc_free g0 ⇒ val_approx_sgc_free a ∧ globals_approx_sgc_free g
+elist_globals_empty_typed=∀(es :closLang$exp list). elist_globals es = ({||} :num -> num) ⇔ ∀(e :closLang$exp). MEM e es ⇒ set_globals e = ({||} :num -> num)
+clos_gen_noinline_safe_typed=∀(n :num) (i :num) (fns :(num # α) list). EVERY val_approx_sgc_free (clos_gen_noinline n i fns)
+decide_inline_imp_clos_typed=∀(c :config) (fapx :val_approx) (lopt :α option) (arity :num) (body :closLang$exp). decide_inline c fapx lopt arity = inlD_LetInline body ⇒ ∃(m :num) (s :num). fapx = Clos m arity body s
+decide_inline_imp_clos_lopt_typed=∀(c :config) (fapx :val_approx) (lopt :num option) (arity :num) (body :closLang$exp). decide_inline c fapx lopt arity = inlD_LetInline body ⇒ ∃(m :num) (s :num). fapx = Clos m arity body s ∧ (lopt = (NONE :num option) ∨ lopt = SOME m)

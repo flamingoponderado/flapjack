@@ -1,6 +1,38 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "elist_globals_empty",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",
+  "lean_name": "elistGlobalsEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared elist_globals_empty_typed in clos_known_syntax_probe.out with the original source theorem. The two sides retain the equality of the global-write multiplicity bag to empty and the pointwise membership condition. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "clos_gen_noinline_val_approx_sgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",
+  "lean_name": "closGenNoInlineSafe",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_gen_noinline_safe_typed in clos_known_syntax_probe.out with the original source theorem. Both natural indices and the list payload type remain arbitrary; EVERY is expressed as universal list membership. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "decide_inline_LetInline_IMP_Clos",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",
+  "lean_name": "decideInlineLetInlineImpClos",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared decide_inline_imp_clos_typed in clos_known_syntax_probe.out with the original source theorem. The location option remains polymorphic and both existential natural witnesses and the exact closure equation are retained. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "decide_inline_LetInline_IMP_Clos_lopt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",
+  "lean_name": "decideInlineLetInlineImpClosLoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared decide_inline_imp_clos_lopt_typed in clos_known_syntax_probe.out with the original source theorem. The location carrier is Nat, and the source disjunction and existential closure witnesses are retained. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_op_preserves_esgc_free",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",
   "lean_name": "knownOpPreservesEsgcFree",
