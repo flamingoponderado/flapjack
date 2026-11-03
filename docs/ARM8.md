@@ -425,7 +425,13 @@ does that.  All four case theorems from this batch (`addCarry` and the three
 shift-immediate forms) carry the shared `arm8_encoder_correct` tag with
 `pending_statement_review` manifest rows.
 
-Still open for #1239: `Mem` (the seven load/store forms, including the
-two-instruction `AddSubImmediate@64` + `LoadStoreImmediate` shape).
+`Mem.lean` starts the `Mem` case with the two `LoadStoreImmediate` word shapes
+`e_LoadStoreImmediate` emits — the signed nine-bit form and the scaled
+twelve-bit form.
+
+Still open for #1239: the rest of `Mem` (the `Encode`/`Decode` inverses, the
+`Run` memory semantics and the eight case theorems covering the load/store
+forms, including the two-instruction `AddSubImmediate@64` +
+`LoadStoreImmediate` shape).
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
