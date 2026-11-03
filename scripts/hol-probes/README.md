@@ -1,3 +1,5 @@
+`clos_known_syntax_probe.out` captures the full typed `known` traversal, its length theorem, and its global-change statements. `SourceEquations.lean` provides checked source-shaped equations for the executed traversal; those equations remain Flapjack review infrastructure, not a HOL correspondence proof.
+
 `clos_known_syntax_probe.out` also captures the typed abstract global extension and preservation statements for disjoint extensions and primitive-operation argument evaluation. These captures support source review, not cross-language equivalence.
 
 `clos_known_syntax_probe.out` captures the inferred oracle uniqueness, subexpression decomposition, global disjointness, and preservation statements used by `UniqueGlobals.lean`. These captures support source review, not cross-language equivalence.
