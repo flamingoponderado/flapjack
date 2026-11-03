@@ -70,9 +70,9 @@ def compileIncCallsFuel? (fuel : Nat) (config : Config) (program : ClosSem.Progr
   | none =>
       let program ← prepareIncMtiFuel? fuel config program
       let (next, numbered) := ClosNumber.ignoreTable ClosNumber.compileInc config.nextLoc program
-      let (expressions, callState) ← ClosCall.callsListBounded fuel numbered.1 (config.callState.1, [])
-      let nextConfig := { config with nextLoc := next, callState := (callState.1, []) }
-      let annotated := ClosAnnotate.compileInc (expressions, callState.2)
+      let (callSet, called) ← ClosCall.compileIncFuel? fuel config.callState.1 numbered
+      let nextConfig := { config with nextLoc := next, callState := (callSet, []) }
+      let annotated := ClosAnnotate.compileInc called
       let (start, expressions) := extractName annotated.1
       let compiled ← compileProg? config.maxApp (chainExps start expressions ++ annotated.2)
       pure (nextConfig, compiled)
@@ -86,8 +86,7 @@ def compileIncFuel? (fuel : Nat) (config : Config) (program : ClosSem.Program) :
   let (next, numbered) := ClosNumber.ignoreTable ClosNumber.compileInc config.nextLoc program
   let (knownConf, known) ← ClosKnown.compileIncFuel fuel config.knownConf numbered
   let (callSet, called) ← if config.doCall then do
-    let (es, state) ← ClosCall.callsListBounded fuel known.1 (config.callState.1, [])
-    pure (state.1, (es, state.2))
+    ClosCall.compileIncFuel? fuel config.callState.1 known
   else pure (config.callState.1, known)
   let nextConfig := { config with nextLoc := next, knownConf := knownConf, callState := (callSet, []) }
   let annotated := ClosAnnotate.compileInc called

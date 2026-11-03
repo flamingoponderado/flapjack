@@ -43,9 +43,9 @@ theorem compileIncFuel_directCall_auxDistinct (fuel : Nat) (config : Config)
         ((ClosNumber.ignoreTable ClosNumber.compileInc config.nextLoc prepared).2.1)
         (config.callState.1, []) = some (expressions, state) ∧
       (((ClosAnnotate.compileInc (expressions, state.2)).2).map Prod.fst).Nodup := by
-  simp only [compileIncFuel?, noKnown, ClosKnown.compileIncFuel, Pure.pure, Bind.bind,
+  simp only [compileIncFuel?, ClosCall.compileIncFuel?, noKnown, ClosKnown.compileIncFuel, Pure.pure, Bind.bind,
     Option.bind_eq_some_iff, enabled, ↓reduceIte, Option.some.injEq] at run
-  obtain ⟨prepared, hp, known, hk, ⟨expressions, state⟩, hc, _⟩ := run
+  obtain ⟨prepared, hp, known, hk, called, ⟨⟨expressions, state⟩, hc, _⟩, _⟩ := run
   subst known
   exact ⟨prepared, expressions, state, hp, hc,
     numberedCalls_annotatedAuxDistinct fuel config.nextLoc config.callState.1 prepared expressions state hc⟩

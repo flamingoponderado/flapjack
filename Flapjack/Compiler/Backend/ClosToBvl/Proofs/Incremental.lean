@@ -148,10 +148,10 @@ theorem compileIncCallsFuel_succeeds (fuel : Nat) (config : Config) (program : C
     simp only [compileIncCallsFuel?, call, Bool.not_true, Bool.false_eq_true, if_false, noKnown]
     rw [hp]
     dsimp only [bind, Bind.bind, Option.bind]
+    unfold ClosCall.compileIncFuel?
     rw [hc]
-    dsimp only
+    dsimp only [bind, Bind.bind, Option.bind, pure, Pure.pure]
     rw [checked]
-    rfl
 
 /-- With multi-argument introduction disabled, the callback adapters agree. -/
 theorem compileIncMtiFuelCallback_disabled {C : Type} (fuel : Nat) (downstream : BvlSem.Compiler C)

@@ -182,6 +182,16 @@ def callsListBounded (fuel : Nat) (es : List Exp) (state : State) : Option (List
   | some result => some result
   | none => callsListFuel (max fuel (listBudget es + 1)) es state
 
+/-- The executable incremental direct-call step starts with no auxiliary
+code, discards the input auxiliary code, and returns the updated known set and
+new auxiliary code. Its bounded optional interface differs from HOL's total
+`compile_inc`; correspondence to that definition remains to be proved. -/
+def compileIncFuel? (fuel : Nat) (known : NumSet)
+    (program : List Exp × List (Nat × Nat × Exp)) :
+    Option (NumSet × (List Exp × List (Nat × Nat × Exp))) := do
+  let (expressions, state) ← callsListBounded fuel program.1 (known, [])
+  pure (state.1, (expressions, state.2))
+
 /-- Apply the bounded closure-call pass when enabled. -/
 def compileFuel (fuel : Nat) (enabled : Bool) (es : List Exp) : Option (List Exp × State) :=
   if enabled then callsListBounded fuel es (.ln, []) else some (es, (.ln, []))

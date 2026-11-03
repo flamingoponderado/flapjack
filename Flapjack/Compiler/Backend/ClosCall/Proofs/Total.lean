@@ -140,6 +140,15 @@ theorem callsListBounded_eq_of_success (fuel : Nat) (es : List Exp) (state : Sta
     callsListBounded fuel es state = some result := by
   simp [callsListBounded, success]
 
+/-- The executable incremental direct-call step cannot exhaust traversal
+fuel. This establishes totality of the bounded adapter, not correspondence
+with HOL's unbounded `compile_inc`. -/
+theorem compileIncFuel_succeeds (fuel : Nat) (known : NumSet)
+    (program : List Exp × List (Nat × Nat × Exp)) :
+    ∃ result, compileIncFuel? fuel known program = some result := by
+  obtain ⟨⟨expressions, state⟩, run⟩ := callsListBounded_succeeds fuel program.1 (known, [])
+  exact ⟨(state.1, expressions, state.2), by simp [compileIncFuel?, run]⟩
+
 /-- Whole-program direct-call conversion cannot fail from traversal fuel. -/
 theorem compileFuel_succeeds (fuel : Nat) (enabled : Bool) (es : List Exp) :
     ∃ result, compileFuel fuel enabled es = some result := by
