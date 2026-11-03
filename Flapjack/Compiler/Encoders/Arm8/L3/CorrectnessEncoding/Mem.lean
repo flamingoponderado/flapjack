@@ -395,4 +395,33 @@ theorem arm8Run_loadStoreImmediate_store (ms : arm8_state) (offset : BitVec 64)
   simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, hbase,
     if_false, Bool.false_and, Bool.false_eq_true]
 
+
+/-- `arm8_ast` lowers a load whose offset is its own signed nine-bit form to one
+`LoadStoreImmediate@64` (Flapjack infrastructure; the `arm8_load_store_ast`
+one-instruction branch). -/
+theorem arm8Ast_load_single (dest base : Nat) (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    arm8Ast (.inst (.mem .load dest (.addr base off))) =
+      [.LoadStore (.«LoadStoreImmediate@64»
+        (3, false, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false, false,
+         !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))] := by
+  rw [BitVec.ofNat_toNat] at hsx
+  have h1 : ¬(off ≠ BitVec.signExtend 64 (BitVec.setWidth 9 off)) := fun h => h hsx
+  simp only [arm8Ast, arm8LoadStoreAst]
+  simp [h1]
+
+
+/-- `arm8_ast` lowers a store whose offset is its own signed nine-bit form to one
+`LoadStoreImmediate@64` (Flapjack infrastructure). -/
+theorem arm8Ast_store_single (dest base : Nat) (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    arm8Ast (.inst (.mem .store dest (.addr base off))) =
+      [.LoadStore (.«LoadStoreImmediate@64»
+        (3, false, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
+         !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))] := by
+  rw [BitVec.ofNat_toNat] at hsx
+  have h1 : ¬(off ≠ BitVec.signExtend 64 (BitVec.setWidth 9 off)) := fun h => h hsx
+  simp only [arm8Ast, arm8LoadStoreAst]
+  simp [h1]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
