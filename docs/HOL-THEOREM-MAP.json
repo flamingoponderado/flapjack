@@ -1,6 +1,97 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Simulation.lean",
+  "lean_name": "knownCorrect0Nil",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The Nil evaluator induction case has no induction hypothesis; the full source assumptions and existential target result are retained explicitly. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Simulation.lean",
+  "lean_name": "knownCorrect0Var",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The Var evaluator induction case has no induction hypothesis. KnownSimulationAt unfolds to the complete expression conjunct, with the same binders, assumptions, and existential conclusion; the free-variable bound selects related environment entries. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Simulation.lean",
+  "lean_name": "knownCorrect0AppNil",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The empty-argument application induction case has no induction hypothesis. KnownAppSimulationAt unfolds to the complete application conjunct, including the source argument-specialization side condition and existential target result. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationTick.lean",
+  "lean_name": "knownCorrect0Tick",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The Tick case keeps the source evaluator induction hypothesis conditional on a nonzero source clock. KnownSimulationAt unfolds to the complete expression conjunct; both timeout and recursive execution are covered. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationRaise.lean",
+  "lean_name": "knownCorrect0Raise",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The Raise case retains the source body induction hypothesis, and handles successful values, raised exceptions, and aborts with the original result relation. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationCall.lean",
+  "lean_name": "knownCorrect0Call",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The Call case retains the original argument and successful-callee evaluator induction hypotheses. The source state relation provides empty code after argument evaluation, as in the HOL proof. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationFn.lean",
+  "lean_name": "knownCorrect0Fn",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The Fn evaluator induction case has no induction hypothesis. The source capture annotation and environment split, free-variable bound, value relation and optimized-body expression relation are retained. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "oracle_gapprox_subspt_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleMonotonic.lean",
   "lean_name": "oracleGapproxSubspt",

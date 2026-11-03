@@ -153,6 +153,65 @@ val _ = show "evaluate_changed_globals_typed=" clos_knownProofTheory.evaluate_ch
 val _ = show "evaluate_app_changed_globals_typed=" clos_knownProofTheory.evaluate_app_changed_globals;
 val _ = show "evaluate_ind_typed=" closSemTheory.evaluate_ind;
 
+(* The local optimizer simulation statement with both conjuncts and inferred types. *)
+val _ = (print "known_correct0_statement_typed="; print_term
+ ``(!xs env1full (s0:(clos_known$val_approx sptree$num_map#'c,'ffi) closSem$state) res1 s env1 xenv1
+     env2 xenv2 t0 c g0 g aenv eas.
+      closSem$evaluate (xs, env1full, s0) = (res1, s) /\
+      clos_known$known c xs aenv g0 = (eas, g) /\
+      clos_knownProof$state_rel c (clos_knownProof$next_g s0) s0 t0 /\
+      closProps$every_Fn_vs_NONE xs /\
+      clos_knownProof$co_every_Fn_vs_NONE s0.compile_oracle /\
+      clos_knownProof$mglobals_disjoint s0.globals xs /\
+      clos_knownProof$oracle_gapprox_disjoint (clos_knownProof$next_g s0) s0.compile_oracle /\
+      clos_knownProof$state_oracle_mglobals_disjoint s0 /\
+      EVERY closProps$esgc_free xs /\ closProps$ssgc_free s0 /\
+      EVERY closProps$vsgc_free env1full /\
+      LIST_REL clos_knownProof$val_approx_val aenv env1 /\
+      clos_knownProof$oracle_state_sgc_free s0.compile_oracle /\
+      clos_knownProof$globals_approx_sgc_free g0 /\
+      EVERY clos_knownProof$val_approx_sgc_free aenv /\
+      clos_knownProof$state_globals_approx s0 (clos_knownProof$next_g s0) /\
+      sptree$subspt g0 g /\ sptree$subspt g (clos_knownProof$next_g s0) /\
+      clos_knownProof$oracle_gapprox_subspt s0.compile_oracle /\
+      clos_knownProof$fv_max (LENGTH env1) xs /\
+      LIST_REL (clos_knownProof$v_rel c (clos_knownProof$next_g s0)) env1 env2 /\
+      clos_knownProof$unique_set_globals xs s0.compile_oracle /\
+      backendProps$is_state_oracle (clos_known$compile_inc c) s0.compile_oracle /\
+      env1full = env1 ++ xenv1 /\
+      res1 <> Rerr (Rabort Rtype_error) ==>
+      ?res2 t.
+        closSem$evaluate (MAP FST eas, env2 ++ xenv2, t0) = (res2, t) /\
+        semanticPrimitivesProps$result_rel (LIST_REL (clos_knownProof$v_rel c (clos_knownProof$next_g s))) (clos_knownProof$v_rel c (clos_knownProof$next_g s)) res1 res2 /\
+        clos_knownProof$state_rel c (clos_knownProof$next_g s) s t /\
+        clos_knownProof$state_globals_approx s (clos_knownProof$next_g s) /\
+        backendProps$is_state_oracle (clos_known$compile_inc c) s.compile_oracle /\
+        clos_knownProof$oracle_gapprox_disjoint (clos_knownProof$next_g s) s.compile_oracle) /\
+   (!lopt1 f1 args1 (s0:(clos_known$val_approx sptree$num_map#'c,'ffi) closSem$state) res1 s lopt2 f2 args2 t0 c argsopt.
+      closSem$evaluate_app lopt1 f1 args1 s0 = (res1, s) /\
+      clos_knownProof$v_rel_app c (clos_knownProof$next_g s0) f1 f2 argsopt /\
+      clos_knownProof$oracle_gapprox_disjoint (clos_knownProof$next_g s0) s0.compile_oracle /\
+      clos_knownProof$state_oracle_mglobals_disjoint s0 /\
+      closProps$ssgc_free s0 /\ closProps$vsgc_free f1 /\ EVERY closProps$vsgc_free args1 /\
+      clos_knownProof$oracle_state_sgc_free s0.compile_oracle /\
+      clos_knownProof$co_every_Fn_vs_NONE s0.compile_oracle /\
+      clos_knownProof$unique_set_globals [] s0.compile_oracle /\
+      backendProps$is_state_oracle (clos_known$compile_inc c) s0.compile_oracle /\
+      LIST_REL (clos_knownProof$v_rel c (clos_knownProof$next_g s0)) args1 args2 /\
+      clos_knownProof$state_rel c (clos_knownProof$next_g s0) s0 t0 /\
+      clos_knownProof$state_globals_approx s0 (clos_knownProof$next_g s0) /\
+      clos_knownProof$oracle_gapprox_subspt s0.compile_oracle /\
+      clos_knownProof$loptrel f2 (LENGTH args1) lopt1 lopt2 /\
+      (IS_SOME argsopt ==> argsopt = SOME args1 /\ args1 <> [] /\ ?exp env. closSem$dest_closure s0.max_app lopt1 f1 args1 = SOME (Full_app exp env [])) /\
+      res1 <> Rerr (Rabort Rtype_error) ==>
+      ?res2 t.
+        closSem$evaluate_app lopt2 f2 args2 t0 = (res2, t) /\
+        semanticPrimitivesProps$result_rel (LIST_REL (clos_knownProof$v_rel c (clos_knownProof$next_g s))) (clos_knownProof$v_rel c (clos_knownProof$next_g s)) res1 res2 /\
+        clos_knownProof$state_rel c (clos_knownProof$next_g s) s t /\
+        clos_knownProof$state_globals_approx s (clos_knownProof$next_g s) /\
+        backendProps$is_state_oracle (clos_known$compile_inc c) s.compile_oracle /\
+        clos_knownProof$oracle_gapprox_disjoint (clos_knownProof$next_g s) s.compile_oracle)``; print "\n");
+
 (* Local theorem: replay the original statement with explicit theory qualifiers. *)
 val _ = (print "evaluate_changed_globals_0_statement_typed="; print_term
  ``(!es env (s0:('c,'ffi) closSem$state) res s.
