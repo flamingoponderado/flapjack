@@ -86,4 +86,39 @@ theorem lsr_mask (x : BitVec 64) (n : Nat) (hn : n < 64) :
         _ ≤ 2 ^ (n + i) := Nat.pow_le_pow_right (by norm_num) hge
     rw [hfalse]
 
+/-- `Replicate` of a one-bit list has that bit at every position. -/
+theorem replicate_true_eq : Replicate (TN := 64) [true] = BitVec.allOnes 64 := by decide
+
+theorem replicate_false_eq : Replicate (TN := 64) [false] = (0 : BitVec 64) := by decide
+
+theorem replicate_single_getLsbD (b : Bool) (i : Nat) (hi : i < 64) :
+    (Replicate (TN := 64) [b]).getLsbD i = b := by
+  cases b
+  · rw [replicate_false_eq]; simp
+  · rw [replicate_true_eq]
+    exact BitVec.getElem_allOnes i hi
+
+/-- `arm8_targetProofScript.sml`'s `asr2`: the sign-extended rotate right by
+the `Asr` masks is the arithmetic shift right. -/
+theorem asr_mask (x : BitVec 64) (n : Nat) (hn : n < 64) :
+    ((Replicate (TN := 64) [x.getLsbD 63] &&&
+        ~~~(Replicate (TN := 64) (holPadLeft false 64 (Ones (63 - n + 1))))) |||
+      ((x.rotateRight n &&& Replicate (TN := 64) (holRotate (holPadLeft false 64 (Ones 64)) n)) &&&
+        Replicate (TN := 64) (holPadLeft false 64 (Ones (63 - n + 1))))) = x.sshiftRight n := by
+  have hmsb : x.msb = x.getLsbD 63 := by
+    simp [BitVec.msb, BitVec.getMsbD, BitVec.getLsbD]
+  rw [wmask_lsr n hn, BitVec.and_allOnes]
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  rw [BitVec.getLsbD_or, BitVec.getLsbD_and, BitVec.getLsbD_not, BitVec.getLsbD_and,
+    BitVec.getLsbD_rotateRight, BitVec.getLsbD_sshiftRight, tmask_lsr_getLsbD n i hn hi,
+    Nat.mod_eq_of_lt hn, hmsb, replicate_single_getLsbD _ i hi]
+  by_cases h : i < 64 - n
+  · have hni : n + i < 64 := by omega
+    simp [h, hi, hni]
+  · have hge : 64 ≤ n + i := by omega
+    have hni : ¬ n + i < 64 := by omega
+    have h64 : ¬ 64 ≤ i := by omega
+    simp [h, hge, hni, h64, hi]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
