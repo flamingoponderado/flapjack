@@ -85,6 +85,7 @@ val _ = show "known_changed_globals_alt_set_typed=" clos_knownProofTheory.known_
 val _ = show "state_globals_approx_known_mglobals_disjoint_typed=" clos_knownProofTheory.state_globals_approx_known_mglobals_disjoint;
 val _ = show "evaluate_IMP_shift_seq_typed=" clos_knownProofTheory.evaluate_IMP_shift_seq;
 val _ = show "do_install_IMP_shift_seq_typed=" clos_knownProofTheory.do_install_IMP_shift_seq;
+val _ = show "evaluate_app_IMP_shift_seq_typed=" clos_knownProofTheory.evaluate_app_IMP_shift_seq;
 val _ = show "unique_set_globals_evaluate_typed=" clos_knownProofTheory.unique_set_globals_evaluate;
 val _ = show "oracle_gapprox_disjoint_evaluate_typed=" clos_knownProofTheory.oracle_gapprox_disjoint_evaluate;
 val _ = show "oracle_gapprox_disjoint_lemma_typed=" clos_knownProofTheory.oracle_gapprox_disjoint_lemma;

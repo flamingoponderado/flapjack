@@ -188,6 +188,16 @@ theorem evaluateImpShiftSeq {C F : Type} (es : List ClosLang.Exp) (env : List Cl
     ∃ k, s.compileOracle = Flapjack.holShiftSeq k s0.compileOracle :=
   evaluate_oracle_advance.1 es env s0 s res run
 
+/-- Every closure application advances the compile oracle by a finite amount. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_app_IMP_shift_seq"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAppImpShiftSeq {C F : Type} (location : Option Nat) (function : ClosSem.Value)
+    (args : List ClosSem.Value) (s0 : State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (s : State C F) (run : evaluateApp location function args s0 = (result, s)) :
+    ∃ k, s.compileOracle = Flapjack.holShiftSeq k s0.compileOracle :=
+  evaluate_oracle_advance.2 (s0.clock + 1) location function args s0 s result (Nat.lt_succ_self _) run
+
 /-- Evaluation preserves global-write uniqueness for an arbitrary program. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "unique_set_globals_evaluate"
   (fmap_as_finite_support := [refs, code])]

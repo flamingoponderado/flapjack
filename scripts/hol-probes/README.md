@@ -16,8 +16,9 @@ It also captures the block, Boolean and unit relation facts used to preserve con
 
 `clos_known_syntax_probe.out` captures the unrestricted evaluator oracle-shift statement and the oracle and uniqueness preservation theorems with inferred types. These captures support source review, not cross-language equivalence.
 
-The same probe captures the unrestricted dynamic-installation oracle-shift
-statement and its independent compiler and FFI state carriers.
+The same probe captures the unrestricted dynamic-installation and closure
+application oracle-shift statements and their independent compiler and FFI
+state carriers.
 
 `clos_known_syntax_probe.out` captures typed oracle-disjointness, finite-prefix bag membership, and optimizer preservation declarations. These support source review, not cross-language equivalence.
 
