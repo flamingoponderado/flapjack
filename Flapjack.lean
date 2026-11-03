@@ -318,6 +318,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateGlobalsApprox
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.MappedGlobals
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.OpGlobals
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.PrimitiveGlobals
+import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownOpCorrect
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.MergeTotal

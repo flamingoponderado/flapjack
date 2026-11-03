@@ -1,5 +1,74 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "vsgc_free_def",
+  "hol_line": 1800,
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/GlobalSafety.lean",
+  "lean_name": "vsgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared vsgc_free_typed in clos_known_syntax_probe.out. All value constructors agree: blocks recurse over their members, closures and recursive closures require empty body write bags and recursively safe argument and environment values, and the remaining constructors are true. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "rsgc_free_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/GlobalSafety.lean",
+  "lean_name": "rsgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared rsgc_free_typed in clos_known_syntax_probe.out. Returned lists, aborts, and raised values match the source result cases. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "vsgc_free_Unit",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/GlobalSafety.lean",
+  "lean_name": "vsgcFreeUnit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared vsgc_free_unit_typed in clos_known_syntax_probe.out. The original unit value is safe. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "vsgc_free_Boolv",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/GlobalSafety.lean",
+  "lean_name": "vsgcFreeBool",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared vsgc_free_bool_typed in clos_known_syntax_probe.out. Both values of the arbitrary boolean argument yield safe source Boolean values. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "ssgc_free_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/GlobalSafety.lean",
+  "lean_name": "ssgcFree",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared ssgc_free_typed in clos_known_syntax_probe.out. The five source conjuncts preserve arbitrary code and reference lookups, global membership, and the complete oracle program and auxiliary body requirements. Compiler and FFI state types are independent, and canonical finite-support refs and code use the local state roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "ssgc_free_clockupd",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/GlobalSafety.lean",
+  "lean_name": "ssgcFreeClock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared ssgc_free_clock_typed in clos_known_syntax_probe.out. The arbitrary clock update preserves the safety predicate in both directions. Compiler and FFI state types are independent, and canonical finite-support refs and code use the local state roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "ssgc_free_dec_clock",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/GlobalSafety.lean",
+  "lean_name": "ssgcFreeDecClock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared ssgc_free_dec_clock_typed in clos_known_syntax_probe.out. The source decrement and state safety equivalence are retained. Compiler and FFI state types are independent, and canonical finite-support refs and code use the local state roundtrip witness."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_op_changed_globals_cases",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OpGlobals.lean",
