@@ -5,6 +5,8 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallWellformed
 import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracle
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantOrdinaryOp
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
+import Flapjack.Compiler.Backend.ClosCall.Proofs.FunctionInvariant
+import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantRecursiveBinding
 
 /-! Incremental installation under direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -1639,5 +1641,131 @@ theorem callsFuel_install_growing_at {C F : Type} (passFuel relationFuel travers
   exact evaluate_install_growing_args passFuel relationFuel g allowed compiler trace args targetArgs
     sourceEnv targetEnv source target result final run notType argsEnv envWf sourceWf states ready
     sourceCompiler targetCompiler targetOracle (argsIH targetArgs argsRun) programIH
+
+/-- The actually traversed function creates related closures and leaves the
+growing compiler/oracle invariant intact. Static location and coverage
+conditions are supplied by the enclosing traversal proof. -/
+theorem callsFuel_fn_growing_at {C F : Type} (passFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (name : Basis.Pure.MlString.MlString)
+    (loc arity : Nat) (body out : ClosLang.Exp) (initial passFinal g : State)
+    (passRun : callsFuel (traversalFuel + 1) (.fn name (some loc) none arity body) initial = some (out, passFinal))
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.fn name (some loc) none arity body])
+    (annotations : everyFnVarsNone [.fn name (some loc) none arity body])
+    (distinct : (codeLocations [.fn name (some loc) none arity body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.fn name (some loc) none arity body]) initial)
+    (passGrowth : stateExtends passFinal g)
+    (coverage : ∀ k ∈ codeLocations [.fn name (some loc) none arity body],
+      ¬ sptDomain passFinal.1 k → k ∈ allowed)
+    (sourceEnv targetEnv : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (run : evaluate [.fn name (some loc) none arity body] sourceEnv source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (envs : EnvRelFuel (traversalFuel + 1) g allowed target.code sourceEnv targetEnv 0 [(0, out)])
+    (sourceWf : StateWellFormedFuel (traversalFuel + 1) g allowed target.code source)
+    (states : StateRelFuel (traversalFuel + 1) g allowed source target)
+    (ready : IncrementalInstallReady g source target)
+    (sourceCompiler : source.compile = compileIncFuelCallback passFuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle passFuel source.compileOracle) :
+    ∃ targetResult targetFinal,
+      evaluate [out] targetEnv target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel (traversalFuel + 1) g allowed targetFinal.code))
+        (ValueRelFuel (traversalFuel + 1) g allowed targetFinal.code) result targetResult ∧
+      StateRelFuel (traversalFuel + 1) g allowed final targetFinal ∧
+      StateWellFormedFuel (traversalFuel + 1) g allowed targetFinal.code final ∧
+      IncrementalInstallReady g final targetFinal ∧
+      final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  have included := codeIncludes_of_stateExtends passFinal g target.code passGrowth ready.included
+  obtain ⟨targetBody, rfl, closure⟩ := callsFuel_fn_relation traversalFuel name loc arity body out
+    initial passFinal g allowed target.code passRun initialWf locations annotations distinct fresh passGrowth coverage included
+  have valid : arity ≤ source.maxApp ∧ arity ≠ 0 := by
+    by_contra invalid
+    have bad : result = .err (.abort .typeError) := by
+      simpa [evaluate, invalid] using congrArg Prod.fst run.symm
+    exact notType bad
+  have targetValid : arity ≤ target.maxApp ∧ arity ≠ 0 := by simpa [← states.2.2.1] using valid
+  have eq : result = .val [.closure (some loc) [] sourceEnv arity body] ∧ final = source := by
+    simpa [evaluate, valid] using run.symm
+  obtain ⟨rfl, rfl⟩ := eq
+  have captured := envRelFuel_fn_body name (some loc) arity targetBody envs
+  have valueRel : ValueRelFuel (traversalFuel + 1) g allowed target.code
+      (.closure (some loc) [] sourceEnv arity body) (.closure (some loc) [] targetEnv arity targetBody) :=
+    .closure closure .nil captured
+  exact ⟨.val [.closure (some loc) [] targetEnv arity targetBody], target, by simp [evaluate, targetValid],
+    .cons valueRel .nil, states, sourceWf, ready, sourceCompiler, targetCompiler, targetOracle, fun _ _ h => h⟩
+
+/-- A traversed recursive group enters its actual transformed body with
+related closures and the growing compiler/oracle invariant. -/
+theorem callsFuel_letrec_growing_at {C F : Type} (passFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (names : List Basis.Pure.MlString.MlString)
+    (loc : Nat) (fns : List (Nat × ClosLang.Exp)) (body out : ClosLang.Exp) (initial passFinal g : State)
+    (passRun : callsFuel (traversalFuel + 1) (.letrec names (some loc) none fns body) initial = some (out, passFinal))
+    (bodyIH : ∀ targetBody middle, callsFuel traversalFuel body middle = some (targetBody, passFinal) →
+      GrowingExprsSim (F := F) passFuel traversalFuel compiler allowed [body] [targetBody])
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.letrec names (some loc) none fns body])
+    (annotations : everyFnVarsNone [.letrec names (some loc) none fns body])
+    (distinct : (codeLocations [.letrec names (some loc) none fns body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.letrec names (some loc) none fns body]) initial)
+    (passGrowth : stateExtends passFinal g)
+    (coverage : ∀ k ∈ codeLocations [.letrec names (some loc) none fns body],
+      ¬ sptDomain passFinal.1 k → k ∈ allowed)
+    (sourceEnv targetEnv : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (run : evaluate [.letrec names (some loc) none fns body] sourceEnv source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (envs : EnvRelFuel traversalFuel g allowed target.code sourceEnv targetEnv 0 [(0, out)])
+    (envWf : ValuesWellFormedFuel traversalFuel g allowed target.code sourceEnv)
+    (sourceWf : StateWellFormedFuel traversalFuel g allowed target.code source)
+    (states : StateRelFuel traversalFuel g allowed source target)
+    (ready : IncrementalInstallReady g source target)
+    (sourceCompiler : source.compile = compileIncFuelCallback passFuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle passFuel source.compileOracle) :
+    ∃ finalG targetResult targetFinal,
+      stateExtends g finalG ∧ evaluate [out] targetEnv target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel traversalFuel finalG allowed targetFinal.code))
+        (ValueRelFuel traversalFuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel traversalFuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel traversalFuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨targetFns, targetBody, middle, rfl, bodyPass, closure⟩ :=
+    callsFuel_letrec_relation traversalFuel names loc fns body out initial passFinal g allowed target.code passRun
+      initialWf locations annotations distinct fresh passGrowth coverage ready.included
+  have valid : fns.all (fun (arity, _) => arity ≤ source.maxApp && arity != 0) = true := by
+    by_contra invalid
+    have bad : result = .err (.abort .typeError) := by
+      simpa [evaluate, invalid] using congrArg Prod.fst run.symm
+    exact notType bad
+  have targetValid : targetFns.all (fun (arity, _) => arity ≤ target.maxApp && arity != 0) = true := by
+    have arities := recClosureRelFuel_arities traversalFuel g allowed target.code loc fns targetFns closure
+    have same := congrArg (fun xs : List Nat => xs.all (fun arity => arity ≤ source.maxApp && arity != 0)) arities
+    simp only [List.all_map, Function.comp_def] at same
+    rw [← states.2.2.1, same]
+    exact valid
+  have bodyEnv := envRelFuel_letrec_enter names loc fns targetFns targetBody closure envs
+  have bodyRun : evaluate [body]
+      ((List.range fns.length).map (fun i => .recclosure (some loc) [] sourceEnv fns i) ++ sourceEnv)
+      source = (result, final) := by simpa [evaluate, valid] using run
+  have bodyEnvWf : ValuesWellFormedFuel traversalFuel g allowed target.code
+      ((List.range fns.length).map (fun i => .recclosure (some loc) [] sourceEnv fns i) ++ sourceEnv) :=
+    valuesWellFormedFuel_append (recClosureBundle_wellFormedFuel loc sourceEnv fns targetFns envWf closure) envWf
+  obtain ⟨finalG, targetResult, targetFinal, extended, targetRun, related, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+    bodyIH targetBody middle bodyPass g _ _ source target result final bodyRun notType (by simpa using bodyEnv)
+      bodyEnvWf sourceWf states ready sourceCompiler targetCompiler targetOracle
+  refine ⟨finalG, targetResult, targetFinal, extended, ?_, related, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+  simpa [evaluate, targetValid] using targetRun
 
 end Flapjack.Compiler.Backend.ClosCall
