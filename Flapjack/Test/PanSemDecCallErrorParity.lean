@@ -121,7 +121,7 @@ theorem nestedBadShapeResultExact : nestedBadShapeResult = some
     evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall,
     evalPanValueFfiClockCodeDecCall,
     evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiClockCall,
-    evalPanValueFfiProgSteps, evalPanValueFfiCallSteps,
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, evalPanValueFfiCallSteps,
     evalPanValueExpCounted, evalPanValueExpsCounted, panValueReturnResult,
     panValuePayloadWithinLimit, panValueExpStepCost, updatePanValueMap,
     restorePanValueLocal, restorePanValueFfiLocal, panValueFfiClockRestoreLocal,
@@ -156,7 +156,7 @@ theorem nestedBadShapeClockedListExact : nestedBadShapeClockedListResult = some
       statefulTestFfiState), 8) := by
   simp (config := { decide := true }) [nestedBadShapeClockedListResult,
     evalPanValueFfiClockProg, evalPanValueFfiClockCall, evalPanValueFfiClockLeaf,
-    evalPanValueFfiProgSteps, evalPanValueFfiCallSteps, evalPanValueExpCounted,
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, evalPanValueFfiCallSteps, evalPanValueExpCounted,
     evalPanValueExpsCounted, panValueReturnResult, panValuePayloadWithinLimit,
     panValueExpStepCost, updatePanValueMap, restorePanValueLocal,
     restorePanValueFfiLocal, panValueFfiClockRestoreLocal, fixPanClock, decPanClock,
