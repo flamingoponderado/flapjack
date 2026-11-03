@@ -346,6 +346,8 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCall
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationFn
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCons
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationHandle
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationIf
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreserveSafetyTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
 import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety

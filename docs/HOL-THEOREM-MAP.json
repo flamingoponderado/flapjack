@@ -2,6 +2,56 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationHandle.lean",
+  "lean_name": "knownCorrect0Handle",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed (typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. KnownSimulationAt unfolds to the complete source expression conjunct with its original premises and existential target conclusion. The source body induction hypothesis and raised-exception handler induction hypothesis are retained, including their exact evaluation and error-result conditions. Normal return, abort, and raised-exception paths establish the target run and final relations. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationIf.lean",
+  "lean_name": "knownCorrect0If",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_correct0_statement_typed (typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. KnownSimulationAt unfolds to the complete source expression conjunct with its original premises and existential target conclusion. The source condition, true-branch and false-branch induction hypotheses are retained, including the exact HOL HD Boolean tests. Both branches, condition errors and invalid condition values are covered. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_Block",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationBool.lean",
+  "lean_name": "valueRelBlockTarget",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_v_rel_block_typed in clos_known_syntax_probe.out. The target block tag, existential source fields, and pointwise value relation are retained. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_Boolv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationBool.lean",
+  "lean_name": "valueRelBool",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_v_rel_bool_typed in clos_known_syntax_probe.out. Both directional Boolean iff statements retain the original value relation and equality. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_Unit",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationBool.lean",
+  "lean_name": "valueRelUnit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_v_rel_unit_typed in clos_known_syntax_probe.out. Both directional unit iff statements retain the original value relation and equality. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationLet.lean",
   "lean_name": "knownCorrect0Let",
   "statement_status": "reviewed_fmap_as_finite_support",
