@@ -171,4 +171,95 @@ theorem applicationSimulation_any {C F : Type}
       rw [directRun] at targetRun
       simpa [BvlSem.decClock] using targetRun
 
+namespace CompileExpsCorrectCarrier
+
+/-- The closure state's reference and code maps have canonical finite support. -/
+theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- The BVL state's reference map has canonical finite support. -/
+theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+end CompileExpsCorrectCarrier
+
+/-- The closure-to-BVL expression and application simulations, assembled
+with the original theorem's hypotheses and existential postconditions. The
+lookup predicates express finite-map `FEVERY`, `SUBMAP`, and `FDIFF` through
+the canonical finite-support representation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_correct"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, BvlSem.State.refs, f1, f2])]
+theorem compileExpsCorrect_source {C F : Type} :
+    (∀ (tmp : List ClosLang.Exp × List ClosSem.Value × ClosSem.State C F)
+      (xs : List ClosLang.Exp) (env : List ClosSem.Value) (s1 : ClosSem.State C F)
+      (aux1 : List (Nat × Nat × Bvl.Exp)) (t1 : BvlSem.State C F)
+      (env' : List BvlSem.Value) (f1 : HolFiniteMapExact Nat Nat)
+      (res : Result (List ClosSem.Value) ClosSem.Value) (s2 : ClosSem.State C F)
+      (ys : List Bvl.Exp) (aux2 : List (Nat × Nat × Bvl.Exp)),
+      tmp = (xs, env, s1) ∧ ClosSem.evaluate xs env s1 = (res, s2) ∧
+      res ≠ .err (.abort .typeError) ∧ compileExpsHOL s1.maxApp xs aux1 = (ys, aux2) ∧
+      ClosProps.everyFnLocationSome xs ∧
+      (∀ name arity body, s1.code.lookup name = some (arity, body) → ClosProps.everyFnLocationSome [body]) ∧
+      ClosProps.everyFnVarsSome xs ∧
+      (∀ name arity body, s1.code.lookup name = some (arity, body) → ClosProps.everyFnVarsSome [body]) ∧
+      codeInstalled aux2 t1.code ∧ envRel s1.maxApp f1 t1.refs t1.code env env' ∧ stateRel f1 s1 t1 →
+      ∃ (ck : Nat) (res' : Result (List BvlSem.Value) BvlSem.Value)
+        (t2 : BvlSem.State C F) (f2 : HolFiniteMapExact Nat Nat),
+        BvlSem.evaluate ys env' { t1 with clock := s1.clock + ck } = (res', t2) ∧
+        resultRel (List.Forall₂ (vRel s1.maxApp f2 t2.refs t2.code))
+          (vRel s1.maxApp f2 t2.refs t2.code) res res' ∧
+        stateRel f2 s2 t2 ∧ relocationSubmap f1 f2 ∧
+        unmappedRefsSubmap t1.refs t2.refs f1 f2 ∧
+        (∀ name arity body, s2.code.lookup name = some (arity, body) → ClosProps.everyFnLocationSome [body]) ∧
+        (∀ name arity body, s2.code.lookup name = some (arity, body) → ClosProps.everyFnVarsSome [body]) ∧
+        s2.clock = t2.clock) ∧
+    (∀ (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
+      (s1 : ClosSem.State C F) (res : Result (List ClosSem.Value) ClosSem.Value)
+      (s2 : ClosSem.State C F) (env : List BvlSem.Value) (t1 : BvlSem.State C F)
+      (args' : List BvlSem.Value) (function' : BvlSem.Value) (f1 : HolFiniteMapExact Nat Nat),
+      ClosSem.evaluateApp location function args s1 = (res, s2) ∧ res ≠ .err (.abort .typeError) ∧
+      (∀ name arity body, s1.code.lookup name = some (arity, body) → ClosProps.everyFnLocationSome [body]) ∧
+      (∀ name arity body, s1.code.lookup name = some (arity, body) → ClosProps.everyFnVarsSome [body]) ∧
+      vRel s1.maxApp f1 t1.refs t1.code function function' ∧
+      List.Forall₂ (vRel s1.maxApp f1 t1.refs t1.code) args args' ∧ stateRel f1 s1 t1 →
+      ∃ (ck : Nat) (res' : Result (List BvlSem.Value) BvlSem.Value)
+        (t2 : BvlSem.State C F) (f2 : HolFiniteMapExact Nat Nat),
+        (args'.length ≠ 0 →
+          (match location with
+          | none => BvlSem.evaluate [mkClCall (.var args'.length) ((List.range args'.length).map Bvl.Exp.var)]
+              (args' ++ [function'] ++ env) { t1 with clock := s1.clock + ck }
+          | some address =>
+            match BvlSem.findCode (some (address + numStubs s1.maxApp)) (args' ++ [function']) t1.code with
+            | none => (.err (.abort .typeError), t2)
+            | some (targetEnv, body) =>
+              if s1.clock + ck < args'.length then (.err (.abort .timeoutError), { t1 with clock := 0 })
+              else BvlSem.evaluate [body] targetEnv { t1 with clock := s1.clock + ck - args'.length }) =
+            (res', t2)) ∧
+        resultRel (List.Forall₂ (vRel s1.maxApp f2 t2.refs t2.code))
+          (vRel s1.maxApp f2 t2.refs t2.code) res res' ∧
+        stateRel f2 s2 t2 ∧ relocationSubmap f1 f2 ∧
+        unmappedRefsSubmap t1.refs t2.refs f1 f2 ∧
+        (∀ name arity body, s2.code.lookup name = some (arity, body) → ClosProps.everyFnLocationSome [body]) ∧
+        (∀ name arity body, s2.code.lookup name = some (arity, body) → ClosProps.everyFnVarsSome [body]) ∧
+        s2.clock = t2.clock) := by
+  constructor
+  · intro tmp xs env s1 aux1 t1 env' f1 res s2 ys aux2 hypotheses
+    rcases hypotheses with ⟨_, run, noType, compile, loc, codeLoc, vars, codeVars, installed, envRel, states⟩
+    obtain ⟨ck, res', t2, f2, targetRun, results, finalStates, submap, frame, ⟨finalLoc, finalVars⟩, clock⟩ :=
+      expressionSimulation_all xs s1 s2 t1 env env' f1 aux1 aux2 ys res run noType compile loc
+        ⟨codeLoc, codeVars⟩ vars installed envRel states
+    exact ⟨ck, res', t2, f2, targetRun, results, finalStates, submap, frame, finalLoc, finalVars, clock⟩
+  · intro location function args s1 res s2 env t1 args' function' f1 hypotheses
+    rcases hypotheses with ⟨run, noType, codeLoc, codeVars, functionRel, argsRel, states⟩
+    obtain ⟨ck, res', t2, f2, targetRun, results, finalStates, submap, frame, ⟨finalLoc, finalVars⟩, clock⟩ :=
+      applicationSimulation_any location function args s1 s2 t1 function' args' env f1 res run noType
+        ⟨codeLoc, codeVars⟩ functionRel argsRel states
+    refine ⟨ck, res', t2, f2, ?_, results, finalStates, submap, frame, finalLoc, finalVars, clock⟩
+    intro nonempty
+    exact targetRun (by simpa using nonempty)
+
 end Flapjack.Compiler.Backend.ClosToBvl

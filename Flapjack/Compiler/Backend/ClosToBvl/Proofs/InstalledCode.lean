@@ -9,7 +9,7 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 
 /-- Each auxiliary function produced by compilation is present in the code tree. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "code_installed_def"]
-def codeInstalled (aux : List (Nat × Nat × Bvl.Exp)) (code : Spt (Nat × Bvl.Exp)) : Prop :=
+def codeInstalled {A B : Type} (aux : List (Nat × A × B)) (code : Spt (A × B)) : Prop :=
   ∀ entry ∈ aux, sptLookup entry.1 code = some entry.2
 
 /-- If generated recursive entries and their accumulator are installed,
@@ -51,8 +51,8 @@ def closureCodeInstalled (maxApp : Nat) (code : Spt (Nat × Bvl.Exp))
         codeInstalled aux1 code
 
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "code_installed_subspt"]
-theorem codeInstalled_subspt {aux : List (Nat × Nat × Bvl.Exp)}
-    {code1 code2 : Spt (Nat × Bvl.Exp)}
+theorem codeInstalled_subspt {A B : Type} {aux : List (Nat × A × B)}
+    {code1 code2 : Spt (A × B)}
     (installed : codeInstalled aux code1) (sub : sptSubspt code1 code2) :
     codeInstalled aux code2 := by
   intro entry member

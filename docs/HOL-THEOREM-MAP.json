@@ -1,6 +1,67 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "compile_exps_correct",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateAll.lean",
+    "lean_name": "compileExpsCorrect_source",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "BvlSem.State.refs", "f1", "f2"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared both conjuncts with compile_exps_correct_typed: the shared compiler and FFI carriers, auxiliary tuple equation, evaluator and compilation premises, separate source and code annotations, installed code, environment/value relations, existential target clock/result/state/map, direct and indirect application branches, frame conditions and final clocks match. FEVERY, SUBMAP and FDIFF are represented by their lookup characterizations over the canonical finite-support maps; the separate state witnesses cover closure refs/code and BVL refs while f1/f2 are standalone canonical maps. The curried BVL evaluator is definitionally the reviewed tuple evaluator. Floating-point semantics inherit reals_as_rational_cuts and SOUNDNESS item 8. The kernel-checked theorem and typed HOL probe do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "code_installed_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode.lean",
+    "lean_name": "codeInstalled",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_installed_typed: both tuple payload types remain independent and polymorphic, and each listed label must look up the corresponding pair in the sparse tree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "closure_code_installed_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode.lean",
+    "lean_name": "closureCodeInstalled",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared closure_code_installed_typed: every function entry retains its positive arity bound, existential auxiliary compilation, sparse-tree lookup of the generated recursive body and installed auxiliary code."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "code_installed_subspt",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode.lean",
+    "lean_name": "codeInstalled_subspt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_installed_subspt_typed: the two tuple payload types remain independent and polymorphic, with installed-code and sparse-tree extension hypotheses and the same installed-code conclusion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "cl_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureRelation.lean",
+    "lean_name": "clRel",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Compared cl_rel_rules_typed and all three source constructors: ordinary and singleton recursive closures retain their arity, annotations, compilation and installed-code clauses; mutual recursive closures retain generated locations, arrays, freshness, bounds and annotations. HOL set membership is a Lean predicate; refs use the canonical finite-support lookup codec."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "v_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueRelation.lean",
+    "lean_name": "vRel",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["f", "refs"],
+    "reviewer": "Compared v_rel_rules_typed and all seven constructors, including immutable byte vectors outside the relocation range, recursive value relations, closure layout and partial-application arity and stub conditions. Both map parameters use canonical finite-support lookup codecs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "env_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueRelation.lean",
+    "lean_name": "envRel",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["f", "refs"],
+    "reviewer": "Compared env_rel_typed: an empty source environment permits any target suffix, a nonempty source cannot match an empty target, and cons cells use vRel recursively. Both map parameters use canonical finite-support lookup codecs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
     "hol_name": "state_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/StateRelation.lean",
     "lean_name": "stateRel",
