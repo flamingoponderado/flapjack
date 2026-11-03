@@ -7,6 +7,8 @@ fun show label th = if null (hyp th) then
   (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show "syntax_ok_typed=" clos_knownProofTheory.syntax_ok_def;
+val _ = show "syntax_oracle_ok_typed=" clos_knownProofTheory.syntax_oracle_ok_def;
+val _ = show "syntax_oracle_ok_state_sgc_free_typed=" clos_knownProofTheory.syntax_oracle_ok_state_sgc_free;
 val _ = show "unique_set_globals_subexps_typed=" clos_knownProofTheory.unique_set_globals_subexps;
 val _ = show "unique_set_globals_typed=" clos_knownProofTheory.unique_set_globals_def;
 val _ = show "unique_set_globals_shift_seq_typed=" clos_knownProofTheory.unique_set_globals_shift_seq;

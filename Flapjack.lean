@@ -312,6 +312,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Config
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineTotal
 import Flapjack.Compiler.Backend.ClosKnown.Inline.DecisionCorrect
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxValue
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateGlobalsApprox

@@ -5973,6 +5973,22 @@
     "reviewer": "Compared syntax_ok_typed and bag_all_distinct_typed: the closure expression list must have no function free-variable annotations, each natural-number global multiplicity is at most one, and every expression satisfies esgc_free. HOL bags and the Lean global bag are both functions to natural-number multiplicities. The typed HOL capture supports source review, not cross-language equivalence."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "syntax_oracle_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
+    "lean_name": "syntaxOracleOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared syntax_oracle_ok_typed with the HOL definition, including the fixed closure-program auxiliary type, arbitrary oracle configuration carrier, state recurrence after free-variable removal, initial tree equality, strict ordering of global-write sets, and syntax and empty auxiliary list conditions at every oracle entry. Both global bags map indices to natural multiplicities. Typed source review does not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "syntax_oracle_ok_state_sgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
+    "lean_name": "syntaxOracleOk_stateSgcFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared syntax_oracle_ok_state_sgc_free_typed with the HOL theorem: the oracle syntax condition and initial traversal equation imply safety of every oracle approximation tree. The proof uses the source recurrence and safety preservation, including the empty initial tree and reset inline factor. Typed source review does not prove cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
     "hol_name": "init_code_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",
