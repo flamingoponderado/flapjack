@@ -60,3 +60,4 @@ val _ = show "evaluate_sing_typed" closPropsTheory.evaluate_SING;
 val _ = show "evaluate_cons_typed" closPropsTheory.evaluate_CONS;
 val _ = show "evaluate_append_typed" closPropsTheory.evaluate_APPEND;
 val _ = show "evaluate_snoc_typed" closPropsTheory.evaluate_SNOC;
+val _ = show "lift_exps_thm_typed" clos_opProofTheory.lift_exps_thm;

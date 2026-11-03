@@ -1,5 +1,31 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "lift_exps_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftEvaluate.lean",
+  "lean_name": "liftExpsThmNil",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared lift_exps_thm_typed and the functional induction in the original definition and proof. Empty-list functional-induction case; no additional assumptions. The case conclusion retains the full original hypotheses, existential result, error implication and arbitrary-environment/state value conclusion; the induction-hypothesis abbreviation unfolds to the same statement; the compiler and FFI state parameters remain independent. Canonical refs and code finite maps use the local roundtrip witness; evaluation inherits the rational-cut real representation. These cases do not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "lift_exps_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftEvaluate.lean",
+  "lean_name": "liftExpsThmDontLift",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared lift_exps_thm_typed and the functional induction in the original definition and proof. Literal functional-induction case; the guard is dont_lift and the sole induction hypothesis is the same statement for the recursive tail with unchanged index and accumulator. The case conclusion retains the full original hypotheses, existential result, error implication and arbitrary-environment/state value conclusion; the induction-hypothesis abbreviation unfolds to the same statement; the compiler and FFI state parameters remain independent. Canonical refs and code finite maps use the local roundtrip witness; evaluation inherits the rational-cut real representation. These cases do not establish the complete theorem."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
   "hol_name": "evaluate_IMP_LENGTH",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/EvaluateAppend.lean",
