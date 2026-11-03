@@ -1,5 +1,97 @@
 [
 {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "gapprox_disjoint_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
+    "lean_name": "gapproxDisjoint",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and inferred types captured in clos_known_syntax_probe.out. The sparse-tree payload remains polymorphic; the domain and bag support are unchanged. Bag membership is represented by nonzero multiplicity. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "gapprox_disjoint_rw",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
+    "lean_name": "gapproxDisjointRw",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and inferred types captured in clos_known_syntax_probe.out. Both source equivalences retain the independent tree payload, expression and operation arguments. Bag membership is represented by nonzero multiplicity. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "oracle_gapprox_disjoint_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
+    "lean_name": "oracleGapproxDisjoint",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and inferred types captured in clos_known_syntax_probe.out. The oracle index, tree payload and both oracle payload types remain independently polymorphic. Bag membership is represented by nonzero multiplicity. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "oracle_gapprox_disjoint_shift_seq",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
+    "lean_name": "oracleGapproxDisjointShift",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and inferred types captured in clos_known_syntax_probe.out. The shift count is universal and the oracle and map payloads are independent. Bag membership is represented by nonzero multiplicity. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "oracle_gapprox_disjoint_first_n_exps",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
+    "lean_name": "oracleGapproxDisjointFirstN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and inferred types captured in clos_known_syntax_probe.out. The original equivalence retains every finite flattened oracle prefix and independently polymorphic map and oracle payloads. Bag membership is represented by nonzero multiplicity. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "elist_globals_first_n_exps_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
+    "lean_name": "elistGlobalsFirstNExps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and inferred types captured in clos_known_syntax_probe.out. The original bag membership and bounded prefix premise are retained, with independent oracle payload types. Bag membership is represented by nonzero multiplicity. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "elist_globals_first_n_exps_exists",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
+    "lean_name": "elistGlobalsFirstNExpsExists",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and inferred types captured in clos_known_syntax_probe.out. The original bag membership implies an existential index below the prefix bound, with both independent oracle payloads retained. Bag membership is represented by nonzero multiplicity. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "oracle_gapprox_disjoint_shift_seq_unique_set_globals",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
+    "lean_name": "oracleGapproxDisjointShiftUnique",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "reviewer": "Compared the source and inferred types captured in clos_known_syntax_probe.out. The original optimizer equation, oracle uniqueness and approximation disjointness premises and shifted-oracle conclusion are retained, with independent compiler and FFI state carriers. The state uses canonical finite-support refs and code with the local roundtrip witness. Bag membership is represented by nonzero multiplicity. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "oracle_gapprox_disjoint_Install",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
+    "lean_name": "oracleGapproxDisjointInstall",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and inferred types captured in clos_known_syntax_probe.out. The original first-program optimizer equation, full-oracle uniqueness and old disjointness premises and one-step-shift conclusion are retained, with independent oracle payload types. Bag membership is represented by nonzero multiplicity. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "oracle_gapprox_disjoint_subspt",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
+    "lean_name": "oracleGapproxDisjointSubspt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and inferred types captured in clos_known_syntax_probe.out. The sparse-tree payload, oracle index and both oracle payload types remain independently polymorphic. Bag membership is represented by nonzero multiplicity. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "elist_globals_first_n_exps_shift_seq_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
+    "lean_name": "elistGlobalsFirstNExpsShift",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and inferred types captured in clos_known_syntax_probe.out. The original strict lower and upper index bounds and shifted-prefix membership conclusion are retained. Bag membership is represented by nonzero multiplicity. Source review and Lean checking do not establish cross-language equivalence."
+  },
+{
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
     "hol_name": "known_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Total.lean",
