@@ -178,15 +178,16 @@ fuel. This checked implementation still needs HOL correspondence review. -/
 def compileIncFuel (fuel : Nat) (config : Option Config)
     (program : List Exp × List (Nat × Nat × Exp)) :
     Option (Option Config × (List Exp × List (Nat × Nat × Exp))) := do
+  let previousGlobals := optionValApproxSpt config
   match config with
   | none => pure (none, program)
   | some c =>
       let es ← program.1.mapM (ClosFvs.removeBounded fuel 0)
       let static := { resetInlineFactor c with valApproxSpt := .ln }
-      let (es, globals) ← knownListBounded fuel static es [] c.valApproxSpt
+      let (es, globals) ← knownListBounded fuel static es [] previousGlobals
       let es ← es.mapM fun (e, _) => do
         let e ← ClosTicks.removeBounded fuel e
         ClosLetop.compileBounded fuel e
-      pure (some { c with valApproxSpt := globals }, (es, []))
+      pure (optionUpdValSpt globals config, (es, []))
 
 end Flapjack.Compiler.Backend.ClosKnown

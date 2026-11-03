@@ -1,5 +1,21 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "option_val_approx_spt_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "optionValApproxSpt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared option_val_approx_spt_typed: a disabled optional config returns the empty sparse tree and an enabled config returns its value-approximation tree. The incremental known-function compiler reads its incoming tree through this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "option_upd_val_spt_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "optionUpdValSpt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared option_upd_val_spt_typed: updating a disabled optional config leaves it disabled, while an enabled config changes only its value-approximation tree. The incremental known-function compiler returns its updated config through this definition."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
     "hol_name": "syntax_ok_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Syntax.lean",

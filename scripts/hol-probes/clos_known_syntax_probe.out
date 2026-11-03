@@ -1,2 +1,4 @@
 syntax_ok_typed=∀(xs :closLang$exp list). syntax_ok xs ⇔ every_Fn_vs_NONE xs ∧ BAG_ALL_DISTINCT (elist_globals xs) ∧ EVERY esgc_free xs
 bag_all_distinct_typed=∀(b :α -> num). BAG_ALL_DISTINCT b ⇔ ∀(e :α). b e ≤ (1 :num)
+option_val_approx_spt_typed=∀(kc :config option). option_val_approx_spt kc = case kc of (NONE :config option) => (LN :val_approx sptree$num_map) | SOME kcfg => kcfg.val_approx_spt
+option_upd_val_spt_typed=(∀(spt :val_approx sptree$num_map). option_upd_val_spt spt (NONE :config option) = (NONE :config option)) ∧ ∀(spt :val_approx sptree$num_map) (kc :config). option_upd_val_spt spt (SOME kc) = SOME (kc with val_approx_spt := spt)
