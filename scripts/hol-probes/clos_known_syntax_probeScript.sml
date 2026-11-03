@@ -53,3 +53,8 @@ val _ = show "elist_globals_empty_typed=" clos_knownProofTheory.elist_globals_em
 val _ = show "clos_gen_noinline_safe_typed=" clos_knownProofTheory.clos_gen_noinline_val_approx_sgc_free;
 val _ = show "decide_inline_imp_clos_typed=" clos_knownProofTheory.decide_inline_LetInline_IMP_Clos;
 val _ = show "decide_inline_imp_clos_lopt_typed=" clos_knownProofTheory.decide_inline_LetInline_IMP_Clos_lopt;
+val _ = show "known_def_typed=" clos_knownTheory.known_def;
+val _ = show "known_length_typed=" clos_knownTheory.known_LENGTH;
+val _ = show "known_length_eq_typed=" clos_knownTheory.known_LENGTH_EQ_E;
+val _ = show "known_sing_typed=" clos_knownTheory.known_sing;
+val _ = show "known_sing_eq_typed=" clos_knownTheory.known_sing_EQ_E;

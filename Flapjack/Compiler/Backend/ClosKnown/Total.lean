@@ -131,6 +131,73 @@ theorem knownListTotal_length (c : Config) (xs : List Exp) (env : List ValApprox
         rw [hs] at length
         simp_all
 
+/-- The checked smart constructor is the source-shaped total smart operation.
+This is Flapjack infrastructure for reviewing the executed traversal. -/
+theorem smartTotal_eq_smartOp (t : BackendCommon.Tra) (op : Op) (xs : List Exp) :
+    smartTotal t op xs = ClosOp.smartOp t op xs := by
+  simp [smartTotal, ClosOp.smartFuel]
+
+/-- A singleton traversal returns precisely the expression traversal's pair.
+This is Flapjack infrastructure; the complete `known_def` comparison remains open. -/
+theorem knownListTotal_single (c : Config) (e : Exp) (env : List ValApprox)
+    (globals : Spt ValApprox) :
+    knownListTotal c [e] env globals =
+      let (e', a, g') := knownExprTotal c e env globals
+      ([(e', a)], g') := by
+  cases h : knownExprTotal c e env globals with
+  | mk e' rest =>
+    rcases rest with ⟨a, g'⟩
+    simp [knownListTotal, h]
+
+/-- The source's multi-element recursion first processes the head and then
+threads its globals through the remaining nonempty list. This is Flapjack
+infrastructure pending review of the complete `known_def`. -/
+theorem knownListTotal_cons_cons (c : Config) (x y : Exp) (xs : List Exp)
+    (env : List ValApprox) (globals : Spt ValApprox) :
+    knownListTotal c (x :: y :: xs) env globals =
+      let (first, g1) := knownListTotal c [x] env globals
+      let (rest, g2) := knownListTotal c (y :: xs) env g1
+      (first ++ rest, g2) := by
+  cases h : knownExprTotal c x env globals with
+  | mk e rest =>
+    rcases rest with ⟨a, g⟩
+    simp only [knownListTotal, h]
+    cases knownListTotal c (y :: xs) env g
+    rfl
+
+/-- The traversed list has one element whenever the input has one element.
+This is infrastructure pending review of the complete source traversal. -/
+theorem knownListTotal_single_result (c : Config) (e : Exp) (env : List ValApprox)
+    (g0 g : Spt ValApprox) (result : List (Exp × ValApprox))
+    (h : knownListTotal c [e] env g0 = (result, g)) :
+    ∃ e' a, result = [(e', a)] := by
+  rw [knownListTotal_single] at h
+  cases hx : knownExprTotal c e env g0 with
+  | mk e' rest =>
+    rcases rest with ⟨a, g'⟩
+    simp only [hx, Prod.mk.injEq] at h
+    exact ⟨e', a, h.1.symm⟩
+
+/-- Variable traversal uses the environment approximation when in range and
+the source default otherwise. This is Flapjack traversal infrastructure. -/
+theorem knownListTotal_var (c : Config) (t : BackendCommon.Tra) (index : Nat)
+    (env : List ValApprox) (globals : Spt ValApprox) :
+    knownListTotal c [.var t index] env globals =
+      ([(.var t index, env[index]?.getD .other)], globals) := by
+  simp [knownListTotal, knownExprTotal]
+
+/-- Tick traversal preserves the recursive approximation and globals. This is
+Flapjack infrastructure for comparing the source singleton equation. -/
+theorem knownListTotal_tick (c : Config) (t : BackendCommon.Tra) (e : Exp)
+    (env : List ValApprox) (globals : Spt ValApprox) :
+    knownListTotal c [.tick t e] env globals =
+      let (e', a, g') := knownExprTotal c e env globals
+      ([(.tick t e', a)], g') := by
+  cases h : knownExprTotal c e env globals with
+  | mk e' rest =>
+    rcases rest with ⟨a, g'⟩
+    simp [knownListTotal, knownExprTotal, h]
+
 /-- All checked smart-constructor fuels return the selected total result.
 Flapjack retry infrastructure; no separate HOL theorem. -/
 theorem smartFuel_eq_smartTotal (fuel : Nat) (t : BackendCommon.Tra) (op : Op) (xs : List Exp) :
