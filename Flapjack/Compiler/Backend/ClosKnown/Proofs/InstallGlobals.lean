@@ -142,4 +142,23 @@ theorem doInstallSsgc {C F : Type} (values : List ClosSem.Value) (s0 : State C F
   · simpa [ssgcFree, *] using installed
   · simp [firstNExps, *]
 
+
+/-- A failed installation preserves safety and globals while advancing the
+oracle by a finite shift. This helper has no separate HOL declaration. -/
+theorem doInstallErrorSafety {C F : Type} (values : List ClosSem.Value)
+    (s0 s1 : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
+    (safe : ssgcFree s0) (run : doInstall values s0 = (.err error, s1)) :
+    ssgcFree s1 ∧ rsgcFree (.err error) ∧ ∃ n,
+      s1.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧ s1.globals = s0.globals := by
+  unfold doInstall at run
+  repeat' split at run
+  all_goals simp_all
+  all_goals try (solve | rcases run with ⟨rfl, _⟩; exact ⟨by simp [rsgcFree], 0, shiftSeqZero _⟩)
+  all_goals split at run <;> simp_all
+  all_goals try (solve | rcases run with ⟨rfl, _⟩; exact ⟨by simp [rsgcFree], 0, shiftSeqZero _⟩)
+  rcases run with ⟨rfl, rfl⟩
+  have installed := ssgcFreeDoInstall s0 safe
+  refine ⟨?_, by simp [rsgcFree], ⟨1, rfl⟩, rfl⟩
+  simpa [ssgcFree, *] using installed
+
 end Flapjack.Compiler.Backend.ClosKnown

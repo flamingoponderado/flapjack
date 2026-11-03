@@ -1227,5 +1227,327 @@ theorem evaluateChangedGlobalsOpUpdateThunk {C F : Type} (trace : BackendCommon.
          {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
   exact evaluateOrdinaryOpGlobals trace (.thunkOp (.updateThunk mode)) args env s0 (by simp) (by simp) argsIH res s h
 
+
+/-- Inspecting a thunk in a safe store yields its safe payload and singleton
+pointer. This helper has no separate HOL declaration. -/
+private theorem destThunkSafe {C F : Type} (values : List ClosSem.Value)
+    (s : ClosSem.State C F) (mode : Flapjack.AstHOL.ThunkMode) (value : ClosSem.Value)
+    (safe : ssgcFree s) (found : ClosSem.destThunk values s.refs = .isThunk mode value) :
+    (∃ flag ptr, values = [.refPtr flag ptr]) ∧ vsgcFree value := by
+  unfold ClosSem.destThunk at found
+  repeat' split at found
+  all_goals simp_all
+  exact safe.2.2.1 _ _ _ (by assumption)
+
+
+/-- Forcing a thunk preserves global safety under the original argument and
+conditional thunk-body induction hypotheses. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsOpForceThunk {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (forceIH : ∀ values next value, evaluate args env s0 = (.val values, next) →
+      ClosSem.destThunk values next.refs = .isThunk .notEvaluated value →
+      EvalGlobalsInvariant [appUnit (.var .none 0)] [value] next)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace (.thunkOp .forceThunk) args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace (.thunkOp .forceThunk) args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace (.thunkOp .forceThunk) args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  rcases h with ⟨run, safe, expressionSafe, envSafe⟩
+  have argsSafe : ∀ e ∈ args, esgcFree e := by
+    apply (esgcFreeList_iff args).1
+    simpa [esgcFree] using expressionSafe (.op trace (.thunkOp .forceThunk) args) (by simp)
+  rw [evaluate, fixClock_evaluate] at run
+  cases argsRun : evaluate args env s0 with
+  | mk argsResult next =>
+    have ⟨nextSafe, argsResultSafe, n, nextOracle, argsFrame⟩ :=
+      argsIH argsResult next ⟨argsRun, safe, argsSafe, envSafe⟩
+    have frame : mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace (.thunkOp .forceThunk) args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) next.globals := by
+      rw [opWrites]
+      simpa [opGlobalBag, emptyGlobalBag] using argsFrame
+    cases argsResult with
+    | err error =>
+      simp [argsRun] at run
+      rcases run with ⟨rfl, rfl⟩
+      exact ⟨nextSafe, argsResultSafe, n, nextOracle, frame⟩
+    | val values =>
+      rw [argsRun] at run
+      dsimp only at run
+      cases inspected : ClosSem.destThunk values next.refs with
+      | badRef | notThunk =>
+        rw [inspected] at run
+        simp at run
+        rcases run with ⟨rfl, rfl⟩
+        exact ⟨nextSafe, by simp [rsgcFree], n, nextOracle, frame⟩
+      | isThunk mode value =>
+        have ⟨⟨flag, ptr, valuesEq⟩, valueSafe⟩ := destThunkSafe values next mode value nextSafe inspected
+        cases mode with
+        | evaluated =>
+          rw [inspected] at run
+          simp at run
+          rcases run with ⟨rfl, rfl⟩
+          exact ⟨nextSafe, by simpa [rsgcFree] using valueSafe, n, nextOracle, frame⟩
+        | notEvaluated =>
+          rw [inspected] at run
+          dsimp only at run
+          cases forceRun : evaluate [appUnit (.var .none 0)] [value] next with
+          | mk forceResult last =>
+            have forceExprSafe : ∀ e ∈ [appUnit (.var .none 0)], esgcFree e := by
+              simp [appUnit, esgcFree, esgcFreeList]
+            have ⟨lastSafe, forceResultSafe, m, lastOracle, forceFrame⟩ :=
+              forceIH values next value argsRun inspected forceResult last
+                ⟨forceRun, nextSafe, forceExprSafe, by simpa using valueSafe⟩
+            have finalOracle : last.compileOracle = Flapjack.holShiftSeq (n + m) s0.compileOracle := by
+              simpa only [nextOracle, shiftSeqAdd] using lastOracle
+            have forceFrame' : mglobalsExtend next.globals
+                (∅ ∪ {k | elistGlobals (List.flatten (firstNExps next.compileOracle m)) k ≠ 0}) last.globals := by
+              simpa [appUnit, elistGlobals, setGlobals, opGlobalBag,
+                FlatProps.unionGlobalBag, emptyGlobalBag] using forceFrame
+            have combined := combineOracleFrames s0 next last _ ∅ n m nextOracle argsFrame forceFrame'
+            have finalFrame : mglobalsExtend s0.globals
+                ({k | elistGlobals [.op trace (.thunkOp .forceThunk) args] k ≠ 0} ∪
+                 {k | elistGlobals (List.flatten (firstNExps s0.compileOracle (n + m))) k ≠ 0}) last.globals := by
+              rw [opWrites]
+              simpa [opGlobalBag, emptyGlobalBag] using combined
+            rw [forceRun] at run
+            cases forceResult with
+            | err error =>
+              simp at run
+              rcases run with ⟨rfl, rfl⟩
+              exact ⟨lastSafe, forceResultSafe, n + m, finalOracle, finalFrame⟩
+            | val forced =>
+              dsimp only at run
+              cases updated : updateThunk values last.refs forced with
+              | none =>
+                rw [updated] at run
+                simp at run
+                rcases run with ⟨rfl, rfl⟩
+                exact ⟨lastSafe, by simp [rsgcFree], n + m, finalOracle, finalFrame⟩
+              | some refs =>
+                have forcedSafe : ∀ v ∈ forced, vsgcFree v := by simpa [rsgcFree] using forceResultSafe
+                have updatedSafe : ssgcFree {last with refs := refs} := by
+                  apply updateThunkSsgcFree last flag ptr forced refs
+                  exact ⟨lastSafe, forcedSafe, by simpa [valuesEq] using updated⟩
+                rw [updated] at run
+                simp at run
+                rcases run with ⟨rfl, rfl⟩
+                exact ⟨updatedSafe, forceResultSafe, n + m, finalOracle, finalFrame⟩
+
+
+/-- A program contained in an oracle prefix contributes its writes to the
+flattened prefix. This helper has no separate HOL declaration. -/
+private theorem prefixContainsWrites (programs : List (List ClosLang.Exp)) (program : List ClosLang.Exp)
+    (member : program ∈ programs) :
+    {k | elistGlobals program k ≠ 0} ⊆ {k | elistGlobals programs.flatten k ≠ 0} := by
+  intro k writes
+  change elistGlobals program k ≠ 0 at writes
+  change elistGlobals programs.flatten k ≠ 0
+  induction programs with
+  | nil => simp at member
+  | cons head tail ih =>
+    simp only [List.mem_cons] at member
+    simp only [List.flatten_cons, elistGlobals_append]
+    rcases member with rfl | member
+    · omega
+    · have rest := ih member
+      omega
+
+/-- The HOL last element of a nonempty list belongs to that list. This helper
+has no separate HOL declaration. -/
+private theorem holLastMember {α : Type} [Nonempty α] (xs : List α) (nonempty : xs ≠ []) :
+    Flapjack.holLast xs ∈ xs := by
+  induction xs with
+  | nil => contradiction
+  | cons head tail ih =>
+    cases tail with
+    | nil => simp [Flapjack.holLast]
+    | cons next rest =>
+      rw [Flapjack.holLast_cons]
+      simp only [List.cons_ne_nil, ↓reduceIte]
+      exact List.mem_cons_of_mem _ (ih (by simp))
+
+
+/-- Dynamic installation preserves global safety under the original
+argument and successful-installation body induction hypotheses. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsOpInstall {C F : Type} (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (installIH : ∀ values next program installed,
+      evaluate args env s0 = (.val values, next) →
+      doInstall values.reverse next = (.val program, installed) →
+      EvalGlobalsInvariant program [] installed)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace .install args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace .install args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace .install args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  rcases h with ⟨run, safe, expressionSafe, envSafe⟩
+  have argsSafe : ∀ e ∈ args, esgcFree e := by
+    apply (esgcFreeList_iff args).1
+    simpa [esgcFree] using expressionSafe (.op trace .install args) (by simp)
+  rw [evaluate, fixClock_evaluate] at run
+  cases argsRun : evaluate args env s0 with
+  | mk argsResult next =>
+    have ⟨nextSafe, argsResultSafe, n, nextOracle, argsFrame⟩ :=
+      argsIH argsResult next ⟨argsRun, safe, argsSafe, envSafe⟩
+    have frame : mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace .install args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) next.globals := by
+      rw [opWrites]
+      simpa [opGlobalBag, emptyGlobalBag] using argsFrame
+    cases argsResult with
+    | err error =>
+      simp [argsRun] at run
+      rcases run with ⟨rfl, rfl⟩
+      exact ⟨nextSafe, argsResultSafe, n, nextOracle, frame⟩
+    | val values =>
+      rw [argsRun] at run
+      dsimp only at run
+      cases installRun : doInstall values.reverse next with
+      | mk installResult installed =>
+        cases installResult with
+        | err error =>
+          have ⟨installedSafe, errorSafe, q, installedOracle, globalsEq⟩ :=
+            doInstallErrorSafety values.reverse next installed error nextSafe installRun
+          have installedFrame : mglobalsExtend next.globals
+              (∅ ∪ {k | elistGlobals (List.flatten (firstNExps next.compileOracle q)) k ≠ 0}) installed.globals := by
+            rw [globalsEq]
+            exact mglobalsExtendRefl _ _
+          have combined := combineOracleFrames s0 next installed _ ∅ n q nextOracle argsFrame installedFrame
+          have finalFrame : mglobalsExtend s0.globals
+              ({k | elistGlobals [.op trace .install args] k ≠ 0} ∪
+               {k | elistGlobals (List.flatten (firstNExps s0.compileOracle (n + q))) k ≠ 0}) installed.globals := by
+            rw [opWrites]
+            simpa [opGlobalBag, emptyGlobalBag] using combined
+          have finalOracle : installed.compileOracle = Flapjack.holShiftSeq (n + q) s0.compileOracle := by
+            simpa only [nextOracle, shiftSeqAdd] using installedOracle
+          rw [installRun] at run
+          simp at run
+          rcases run with ⟨rfl, rfl⟩
+          exact ⟨installedSafe, errorSafe, n + q, finalOracle, finalFrame⟩
+        | val program =>
+          have ⟨installedSafe, programSafe, programNonempty, installedOracle, firstProgram, globalsFrame⟩ :=
+            doInstallSsgc values.reverse next program installed ⟨installRun, nextSafe⟩
+          have installedFrame : mglobalsExtend next.globals
+              (∅ ∪ {k | elistGlobals (List.flatten (firstNExps next.compileOracle 1)) k ≠ 0}) installed.globals := by
+            apply mglobalsExtendSubset _ _ _ _ ⟨globalsFrame, ?_⟩
+            simp
+          have firstCombined := combineOracleFrames s0 next installed _ ∅ n 1 nextOracle argsFrame installedFrame
+          have firstOracle : installed.compileOracle = Flapjack.holShiftSeq (n + 1) s0.compileOracle := by
+            simpa only [nextOracle, shiftSeqAdd] using installedOracle
+          cases programRun : evaluate program [] installed with
+          | mk programResult last =>
+            have ⟨lastSafe, programResultSafe, m, lastOracle, programFrame⟩ :=
+              installIH values next program installed argsRun installRun programResult last
+                ⟨programRun, installedSafe, programSafe, by simp⟩
+            have finalOracle : last.compileOracle = Flapjack.holShiftSeq ((n + 1) + m) s0.compileOracle := by
+              simpa only [firstOracle, shiftSeqAdd] using lastOracle
+            have firstCombined' : mglobalsExtend s0.globals
+                ({k | elistGlobals args k ≠ 0} ∪
+                 {k | elistGlobals (List.flatten (firstNExps s0.compileOracle (n + 1))) k ≠ 0}) installed.globals := by
+              simpa using firstCombined
+            have combined := combineOracleFrames s0 installed last _ _ (n + 1) m firstOracle firstCombined' programFrame
+            have programEq : (s0.compileOracle n).2.1 = program := by
+              simpa [firstNExps, nextOracle, Flapjack.holShiftSeq] using firstProgram
+            have programMember : program ∈ firstNExps s0.compileOracle ((n + 1) + m) := by
+              rw [← programEq]
+              exact memFirstNExps n ((n + 1) + m) (by omega) s0.compileOracle
+            have programIncluded := prefixContainsWrites _ _ programMember
+            have finalFrame : mglobalsExtend s0.globals
+                ({k | elistGlobals [.op trace .install args] k ≠ 0} ∪
+                 {k | elistGlobals (List.flatten (firstNExps s0.compileOracle ((n + 1) + m))) k ≠ 0}) last.globals := by
+              apply mglobalsExtendSubset _ _ _ _ ⟨combined, ?_⟩
+              rw [opWrites]
+              simp only [opGlobalBag, emptyGlobalBag, ne_eq, not_true_eq_false, Set.ofPred_false, Set.union_empty]
+              intro k member
+              rcases member with (member | member) | member
+              · exact Or.inl member
+              · exact Or.inr (programIncluded member)
+              · exact Or.inr member
+            rw [installRun] at run
+            dsimp only at run
+            rw [programRun] at run
+            cases programResult with
+            | err error =>
+              simp at run
+              rcases run with ⟨rfl, rfl⟩
+              exact ⟨lastSafe, programResultSafe, (n + 1) + m, finalOracle, finalFrame⟩
+            | val results =>
+              have resultLength := (evaluate_length (C := C) (F := F)).1 program [] installed last results programRun
+              have resultsNonempty : results ≠ [] := by
+                intro empty
+                subst results
+                simp at resultLength
+                exact programNonempty (List.eq_nil_of_length_eq_zero resultLength.symm)
+              have lastSafeValue : vsgcFree (@Flapjack.holLast ClosSem.Value ⟨unitValue⟩ results) := by
+                apply programResultSafe
+                exact @holLastMember ClosSem.Value ⟨unitValue⟩ results resultsNonempty
+              dsimp only at run
+              rcases run with ⟨rfl, rfl⟩
+              refine ⟨lastSafe, ?_, (n + 1) + m, finalOracle, finalFrame⟩
+              simp only [rsgcFree, List.mem_singleton, forall_eq]
+              change vsgcFree (@Flapjack.holLast ClosSem.Value ⟨unitValue⟩ results)
+              exact lastSafeValue
+
+
+/-- Every primitive-expression operation preserves global safety under the
+original argument, installation and thunk-forcing induction hypotheses. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsOp {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.Op)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (installIH : ∀ values next program installed,
+      evaluate args env s0 = (.val values, next) → op = .install →
+      doInstall values.reverse next = (.val program, installed) →
+      EvalGlobalsInvariant program [] installed)
+    (forceIH : ∀ values next value, evaluate args env s0 = (.val values, next) →
+      op ≠ .install → op = .thunkOp .forceThunk →
+      ClosSem.destThunk values next.refs = .isThunk .notEvaluated value →
+      EvalGlobalsInvariant [appUnit (.var .none 0)] [value] next)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace op args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace op args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace op args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  cases op with
+  | label label => exact evaluateChangedGlobalsOpLabel trace label args env s0 argsIH res s h
+  | ffi name => exact evaluateChangedGlobalsOpFfi trace name args env s0 argsIH res s h
+  | intOp op => exact evaluateChangedGlobalsOpInt trace op args env s0 argsIH res s h
+  | wordOp op => exact evaluateChangedGlobalsOpWord trace op args env s0 argsIH res s h
+  | blockOp op => exact evaluateChangedGlobalsOpBlock trace op args env s0 argsIH res s h
+  | globOp op => exact evaluateChangedGlobalsOpGlobal trace op args env s0 argsIH res s h
+  | memOp op => exact evaluateChangedGlobalsOpMemory trace op args env s0 argsIH res s h
+  | install =>
+    apply evaluateChangedGlobalsOpInstall trace args env s0 argsIH ?_ res s h
+    intro values next program installed argsRun installRun
+    exact installIH values next program installed argsRun rfl installRun
+  | thunkOp op =>
+    cases op with
+    | allocThunk mode => exact evaluateChangedGlobalsOpAllocThunk trace mode args env s0 argsIH res s h
+    | updateThunk mode => exact evaluateChangedGlobalsOpUpdateThunk trace mode args env s0 argsIH res s h
+    | forceThunk =>
+      apply evaluateChangedGlobalsOpForceThunk trace args env s0 argsIH ?_ res s h
+      intro values next value argsRun inspected
+      exact forceIH values next value argsRun (by simp) rfl inspected
+
 end EvaluateGlobalsPort
 end Flapjack.Compiler.Backend.ClosKnown
