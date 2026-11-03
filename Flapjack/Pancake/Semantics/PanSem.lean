@@ -2193,7 +2193,8 @@ theorem panSemEvaluateCodeState_call_error_of_returnShapeMismatch_param
     `shape_of retv ≠ return_sh` (`panSemScript.sml:668-670`) makes the call
     return `SOME Error` over the callee post-call state; this states that
     rejection over the state-owned code-map evaluator with HOL's `fix_clock`
-    clamp.  The caller-visible locals are cleared.  Untagged: the executed
+    clamp. The callee's post-state locals are preserved, including bindings
+    restored by a surrounding declaration. Untagged: the executed
     result is the reduced structured pair, not HOL's literal `result option #
     state` pairing.  The functions-list `PanSemExactState` compatibility carrier
     has no source `returnShape`, so this rejection is only available on the
@@ -2237,7 +2238,7 @@ theorem panSemEvaluateCodeState_call_error_of_callee_returnShapeMismatch
     panSemEvaluateCodeState context primitive handler bytesInWord state
       (.call info function arguments) (memoryAccess := memoryAccess)
       (contracts := contracts) (memoryHandler := memoryHandler) =
-        some (.control (.error (fun _ => none) finalGlobals finalMemory
+        some (.control (.error bodyLocals finalGlobals finalMemory
           finalFfi), min (decPanClock state.clock) calleeClock) := by
   unfold panSemEvaluateCodeState panSemEvaluateCodeStateWithFuel
   rw [hfuel]
