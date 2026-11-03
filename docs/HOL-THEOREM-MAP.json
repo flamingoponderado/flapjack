@@ -2195,7 +2195,23 @@
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/EvaluateApp.lean",
     "lean_name": "destClosure_full_closure",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared dest_closure_full_typed and the ordinary-closure branch of the source proof. The source and target functions specialize the original related-value premise by its closure constructor, retaining exactly the related captured and supplied environments and body code relation; the first argument, tail, successful full inspection and all four original conclusions are retained. The full-application bound follows from the source arity checks. The recursive-closure branch and assembling theorem remain open; source comparison and Lean checking do not establish cross-language equivalence."
+    "reviewer": "Compared dest_closure_full_typed and the ordinary-closure branch of the source proof. The source and target functions specialize the original related-value premise by its closure constructor, retaining exactly the related captured and supplied environments and body code relation; the first argument, tail, successful full inspection and all four original conclusions are retained. The full-application bound follows from the source arity checks. The assembled theorem also covers recursive closures; source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "dest_closure_SOME_Full_app",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/EvaluateApp.lean",
+    "lean_name": "destClosure_full_recclosure",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_closure_full_typed and the recursive-closure branch of the source proof. The source and target functions specialize the original related-value premise by its recursive-closure constructor, retaining related captured and supplied environments and function bundles at the original bound. The first argument, tail, successful inspection and all four conclusions remain unchanged; the proof relates the selected function and generated recursive environments. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "dest_closure_SOME_Full_app",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/EvaluateApp.lean",
+    "lean_name": "destClosure_full_related",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_closure_full_typed with the complete source statement: related functions, first arguments and remaining argument lists and successful source inspection imply existential target body, environment and remaining arguments with the original code, value-list and target-inspection conclusions. The proof assembles ordinary and recursive closure branches and eliminates non-closures. Source comparison and Lean checking do not establish cross-language equivalence."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
