@@ -819,8 +819,10 @@ def special_bit_field_insert(r, c, args, env):
     # Non-literal bounds: only the documented ARM8 MoveWide call is allowed.
     # It is `bit_field_insert (pos + 15) pos (imm : word16)` with
     # pos = Num (hw << 4) for a 2-bit hw, so pos <= 48 and high <= 63 < 64 at
-    # every call site, and the field covers exactly the 16-bit input word.  Any
-    # other symbolic bound is not known in range and is reported instead.
+    # every call site, and the field covers exactly the 16-bit input word.  The
+    # generator checks the shape only (high = low + (input width - 1)); the
+    # range argument for `pos` is documented at that call site, not verified
+    # here.  Any other symbolic bound is reported instead of rendered.
     if width is None:
         raise Unrenderable('bit_field_insert symbolic input width')
     if not symbolic_field_bounds(args[0], args[1], width):
