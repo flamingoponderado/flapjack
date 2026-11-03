@@ -1,6 +1,32 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "evaluate_ConjList_append_F",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/PureEvaluate.lean",
+  "lean_name": "evaluateConjListAppendFalse",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed HOL source in clos_op_lift_proof_probe.out: A false prefix and EVERY pure premise imply a false appended conjunction with the same state. The compiler and FFI state carriers remain independent; the canonical refs and code finite maps use the local roundtrip witness and the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "evaluate_ConjList_append_T",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/PureEvaluate.lean",
+  "lean_name": "evaluateConjListAppendTrue",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed HOL source in clos_op_lift_proof_probe.out: A true prefix and EVERY pure premise make the appended conjunction equal the suffix evaluation, including arbitrary result and final state. The compiler and FFI state carriers remain independent; the canonical refs and code finite maps use the local roundtrip witness and the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
   "hol_name": "evaluate_EL",
   "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/PureEvaluate.lean",
   "lean_name": "evaluateEl",

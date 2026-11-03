@@ -66,3 +66,5 @@ val _ = show "evaluate_el_typed" clos_opProofTheory.evaluate_EL;
 val _ = show "simple_cons_el_typed" clos_opProofTheory.simpl_exp_Cons_EL;
 val _ = show "evaluate_conj_false_typed" clos_opProofTheory.evaluate_ConjList_F;
 val _ = show "evaluate_conj_true_typed" clos_opProofTheory.evaluate_ConjList_T;
+val _ = show "evaluate_conj_append_false_typed" clos_opProofTheory.evaluate_ConjList_append_F;
+val _ = show "evaluate_conj_append_true_typed" clos_opProofTheory.evaluate_ConjList_append_T;
