@@ -491,4 +491,288 @@ theorem eqDirectThmWordPair {C F : Type} (tx ty : BackendCommon.Tra) (x y : BitV
   rcases h.1 with ⟨rfl, rfl⟩
   simp only [eq_comm]
 
+
+/-- Block-encoded integer literal evaluation for the constant-recognizer cases. -/
+private theorem evalBlockInt {C F : Type} (trace : BackendCommon.Tra) (w : Int)
+    (env : List Value) (s : State C F) :
+    evaluate [.op trace (.blockOp (.constant (.constInt w))) []] env s =
+      (.val [.number w], s) := by
+  rw [evaluate_ordinaryOp_eq trace _ [] env s (by simp) (by simp)]
+  simp [evaluate, doApp, applyBlock, makeConst]
+
+/-- Comparing a block-encoded integer on the left is equivalent to the source
+equal-constant operation, including its errors. This is proof infrastructure. -/
+private theorem equalBlockIntLeft {C F : Type} (trace t : BackendCommon.Tra) (w : Int)
+    (y : ClosLang.Exp) (env : List Value) (s : State C F) :
+    evaluate [.op t (.blockOp .equal) [.op trace (.blockOp (.constant (.constInt w))) [], y]] env s =
+      evaluate [.op .none (.blockOp (.equalConst (.int w))) [y]] env s := by
+  rw [evaluate_ordinaryOp_eq t _ _ env s (by simp) (by simp),
+    evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp)]
+  rw [ClosProps.evaluate_cons_value _ [y] env s s (.number w) (evalBlockInt trace w env s)]
+  cases run : evaluate [y] env s with
+  | mk result next =>
+    cases result with
+    | err err => simp
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value y env s next values run
+      cases value <;> simp [doApp, applyBlock, ClosSem.doEq, eq_comm]
+
+/-- The symmetric block-encoded integer comparison. This is proof infrastructure. -/
+private theorem equalBlockIntRight {C F : Type} (trace t : BackendCommon.Tra) (w : Int)
+    (x : ClosLang.Exp) (env : List Value) (s : State C F) :
+    evaluate [.op t (.blockOp .equal) [x, .op trace (.blockOp (.constant (.constInt w))) []]] env s =
+      evaluate [.op .none (.blockOp (.equalConst (.int w))) [x]] env s := by
+  rw [evaluate_ordinaryOp_eq t _ _ env s (by simp) (by simp),
+    evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp)]
+  cases run : evaluate [x] env s with
+  | mk result next =>
+    cases result with
+    | err err => rw [ClosProps.evaluate_cons_error x _ env s next err run]
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value x env s next values run
+      rw [ClosProps.evaluate_cons_value x _ env s next value run]
+      cases value <;> simp [evalBlockInt, doApp, applyBlock, ClosSem.doEq]
+
+/-- Source constant-recognizer case with a block-encoded integer literal on the left and
+neither recognizer matching the other operand. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem eqDirectThmBlockIntLeft {C F : Type} (trace : BackendCommon.Tra) (w : Int)
+    (y : ClosLang.Exp) (env : List Value) (s s1 : State C F)
+    (res : Result (List Value) Value) (t : BackendCommon.Tra) (z : ClosLang.Exp)
+    (noInt : destOpNil destConst y = none) (noConstant : destOpNil destConstant y = none)
+    (h : evaluate [.op t (.blockOp .equal) [.op trace (.blockOp (.constant (.constInt w))) [], y]] env s = (res, s1) ∧
+      res ≠ .err (.abort .typeError) ∧
+      directEq (.op trace (.blockOp (.constant (.constInt w))) []) y = some z) :
+    evaluate [z] env s = (res, s1) := by
+  have intStage : eqDirectConst (.op trace (.blockOp (.constant (.constInt w))) []) y = none := by
+    change (match none, destOpNil destConst y with
+      | some a, some b => some (mkBool (a == b))
+      | some a, none => some (.op .none (.blockOp (.equalConst (.int a))) [y])
+      | none, some b => some (.op .none (.blockOp (.equalConst (.int b)))
+          [.op trace (.blockOp (.constant (.constInt w))) []])
+      | none, none => none) = _
+    rw [noInt]
+  have constantStage : eqDirectConstant (.op trace (.blockOp (.constant (.constInt w))) []) y =
+      some (.op .none (.blockOp (.equalConst (.int w))) [y]) := by
+    change (match some (.int w), destOpNil destConstant y with
+      | some a, some b => some (mkBool (decide (b = a)))
+      | some a, none => some (.op .none (.blockOp (.equalConst a)) [y])
+      | none, some b => some (.op .none (.blockOp (.equalConst b))
+          [.op trace (.blockOp (.constant (.constInt w))) []])
+      | none, none => none) = _
+    rw [noConstant]
+  have hz := h.2.2
+  simp [directEq, intStage, constantStage] at hz
+  subst z
+  rw [← equalBlockIntLeft trace t w y env s]
+  exact h.1
+
+/-- Symmetric source constant-recognizer case for a block-encoded integer literal. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem eqDirectThmBlockIntRight {C F : Type} (trace : BackendCommon.Tra) (w : Int)
+    (x : ClosLang.Exp) (env : List Value) (s s1 : State C F)
+    (res : Result (List Value) Value) (t : BackendCommon.Tra) (z : ClosLang.Exp)
+    (noInt : destOpNil destConst x = none) (noConstant : destOpNil destConstant x = none)
+    (h : evaluate [.op t (.blockOp .equal) [x, .op trace (.blockOp (.constant (.constInt w))) []]] env s = (res, s1) ∧
+      res ≠ .err (.abort .typeError) ∧
+      directEq x (.op trace (.blockOp (.constant (.constInt w))) []) = some z) :
+    evaluate [z] env s = (res, s1) := by
+  have intStage : eqDirectConst x (.op trace (.blockOp (.constant (.constInt w))) []) = none := by
+    change (match destOpNil destConst x, none with
+      | some a, some b => some (mkBool (a == b))
+      | some a, none => some (.op .none (.blockOp (.equalConst (.int a)))
+          [.op trace (.blockOp (.constant (.constInt w))) []])
+      | none, some b => some (.op .none (.blockOp (.equalConst (.int b))) [x])
+      | none, none => none) = _
+    rw [noInt]
+  have constantStage : eqDirectConstant x (.op trace (.blockOp (.constant (.constInt w))) []) =
+      some (.op .none (.blockOp (.equalConst (.int w))) [x]) := by
+    change (match destOpNil destConstant x, some (.int w) with
+      | some a, some b => some (mkBool (decide (b = a)))
+      | some a, none => some (.op .none (.blockOp (.equalConst a))
+          [.op trace (.blockOp (.constant (.constInt w))) []])
+      | none, some b => some (.op .none (.blockOp (.equalConst b)) [x])
+      | none, none => none) = _
+    rw [noConstant]
+  have hz := h.2.2
+  simp [directEq, intStage, constantStage] at hz
+  subst z
+  rw [← equalBlockIntRight trace t w x env s]
+  exact h.1
+
+/-- Source constant-folding case for two block-encoded integer literals. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem eqDirectThmBlockIntPair {C F : Type} (tx ty : BackendCommon.Tra) (x y : Int)
+    (env : List Value) (s s1 : State C F) (res : Result (List Value) Value)
+    (t : BackendCommon.Tra) (z : ClosLang.Exp)
+    (h : evaluate [.op t (.blockOp .equal)
+        [.op tx (.blockOp (.constant (.constInt x))) [],
+         .op ty (.blockOp (.constant (.constInt y))) []]] env s = (res, s1) ∧
+      res ≠ .err (.abort .typeError) ∧
+      directEq (.op tx (.blockOp (.constant (.constInt x))) [])
+        (.op ty (.blockOp (.constant (.constInt y))) []) = some z) :
+    evaluate [z] env s = (res, s1) := by
+  have stage : directEq (.op tx (.blockOp (.constant (.constInt x))) [])
+      (.op ty (.blockOp (.constant (.constInt y))) []) =
+      some (mkBool (decide (y = x))) := by
+    change some (mkBool (decide (ConstPart.int y = ConstPart.int x))) = _
+    simp only [ConstPart.int.injEq]
+  rw [stage] at h
+  have hz : z = mkBool (decide (y = x)) := by simpa using h.2.2.symm
+  subst z
+  have evalBool (b : Bool) : evaluate [mkBool b] env s = (.val [boolValue b], s) := by
+    cases b <;> rw [mkBool, evaluate_ordinaryOp_eq _ _ _ _ _ (by simp) (by simp)] <;>
+      simp [evaluate, doApp, applyBlock, boolValue, BackendCommon.falseTag, BackendCommon.trueTag]
+  rw [equalBlockIntLeft tx t x _ env s, evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp)] at h
+  simp [evalBlockInt, doApp, applyBlock] at h
+  rw [evalBool]
+  rcases h.1 with ⟨rfl, rfl⟩
+  simp only [eq_comm]
+
+
+/-- String literal evaluation for the constant-recognizer cases. -/
+private theorem evalString {C F : Type} (trace : BackendCommon.Tra) (w : Flapjack.Basis.Pure.MlString.MlString)
+    (env : List Value) (s : State C F) :
+    evaluate [.op trace (.blockOp (.constant (.constStr w))) []] env s =
+      (.val [.byteVector w.explode], s) := by
+  rw [evaluate_ordinaryOp_eq trace _ [] env s (by simp) (by simp)]
+  simp [evaluate, doApp, applyBlock, makeConst]
+
+/-- Comparing a byte string on the left is equivalent to the source
+equal-constant operation, including its errors. This is proof infrastructure. -/
+private theorem equalStringLeft {C F : Type} (trace t : BackendCommon.Tra) (w : Flapjack.Basis.Pure.MlString.MlString)
+    (y : ClosLang.Exp) (env : List Value) (s : State C F) :
+    evaluate [.op t (.blockOp .equal) [.op trace (.blockOp (.constant (.constStr w))) [], y]] env s =
+      evaluate [.op .none (.blockOp (.equalConst (.str w))) [y]] env s := by
+  rw [evaluate_ordinaryOp_eq t _ _ env s (by simp) (by simp),
+    evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp)]
+  rw [ClosProps.evaluate_cons_value _ [y] env s s (.byteVector w.explode) (evalString trace w env s)]
+  cases run : evaluate [y] env s with
+  | mk result next =>
+    cases result with
+    | err err => simp
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value y env s next values run
+      cases value <;> simp [doApp, applyBlock, ClosSem.doEq]
+
+/-- The symmetric byte string comparison. This is proof infrastructure. -/
+private theorem equalStringRight {C F : Type} (trace t : BackendCommon.Tra) (w : Flapjack.Basis.Pure.MlString.MlString)
+    (x : ClosLang.Exp) (env : List Value) (s : State C F) :
+    evaluate [.op t (.blockOp .equal) [x, .op trace (.blockOp (.constant (.constStr w))) []]] env s =
+      evaluate [.op .none (.blockOp (.equalConst (.str w))) [x]] env s := by
+  rw [evaluate_ordinaryOp_eq t _ _ env s (by simp) (by simp),
+    evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp)]
+  cases run : evaluate [x] env s with
+  | mk result next =>
+    cases result with
+    | err err => rw [ClosProps.evaluate_cons_error x _ env s next err run]
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value x env s next values run
+      rw [ClosProps.evaluate_cons_value x _ env s next value run]
+      cases value <;> simp [evalString, doApp, applyBlock, ClosSem.doEq, eq_comm]
+
+/-- Source constant-recognizer case with a string literal on the left and
+neither recognizer matching the other operand. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem eqDirectThmStringLeft {C F : Type} (trace : BackendCommon.Tra) (w : Flapjack.Basis.Pure.MlString.MlString)
+    (y : ClosLang.Exp) (env : List Value) (s s1 : State C F)
+    (res : Result (List Value) Value) (t : BackendCommon.Tra) (z : ClosLang.Exp)
+    (noInt : destOpNil destConst y = none) (noConstant : destOpNil destConstant y = none)
+    (h : evaluate [.op t (.blockOp .equal) [.op trace (.blockOp (.constant (.constStr w))) [], y]] env s = (res, s1) ∧
+      res ≠ .err (.abort .typeError) ∧
+      directEq (.op trace (.blockOp (.constant (.constStr w))) []) y = some z) :
+    evaluate [z] env s = (res, s1) := by
+  have intStage : eqDirectConst (.op trace (.blockOp (.constant (.constStr w))) []) y = none := by
+    change (match none, destOpNil destConst y with
+      | some a, some b => some (mkBool (a == b))
+      | some a, none => some (.op .none (.blockOp (.equalConst (.int a))) [y])
+      | none, some b => some (.op .none (.blockOp (.equalConst (.int b)))
+          [.op trace (.blockOp (.constant (.constStr w))) []])
+      | none, none => none) = _
+    rw [noInt]
+  have constantStage : eqDirectConstant (.op trace (.blockOp (.constant (.constStr w))) []) y =
+      some (.op .none (.blockOp (.equalConst (.str w))) [y]) := by
+    change (match some (.str w), destOpNil destConstant y with
+      | some a, some b => some (mkBool (decide (b = a)))
+      | some a, none => some (.op .none (.blockOp (.equalConst a)) [y])
+      | none, some b => some (.op .none (.blockOp (.equalConst b))
+          [.op trace (.blockOp (.constant (.constStr w))) []])
+      | none, none => none) = _
+    rw [noConstant]
+  have hz := h.2.2
+  simp [directEq, intStage, constantStage] at hz
+  subst z
+  rw [← equalStringLeft trace t w y env s]
+  exact h.1
+
+/-- Symmetric source constant-recognizer case for a string literal. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem eqDirectThmStringRight {C F : Type} (trace : BackendCommon.Tra) (w : Flapjack.Basis.Pure.MlString.MlString)
+    (x : ClosLang.Exp) (env : List Value) (s s1 : State C F)
+    (res : Result (List Value) Value) (t : BackendCommon.Tra) (z : ClosLang.Exp)
+    (noInt : destOpNil destConst x = none) (noConstant : destOpNil destConstant x = none)
+    (h : evaluate [.op t (.blockOp .equal) [x, .op trace (.blockOp (.constant (.constStr w))) []]] env s = (res, s1) ∧
+      res ≠ .err (.abort .typeError) ∧
+      directEq x (.op trace (.blockOp (.constant (.constStr w))) []) = some z) :
+    evaluate [z] env s = (res, s1) := by
+  have intStage : eqDirectConst x (.op trace (.blockOp (.constant (.constStr w))) []) = none := by
+    change (match destOpNil destConst x, none with
+      | some a, some b => some (mkBool (a == b))
+      | some a, none => some (.op .none (.blockOp (.equalConst (.int a)))
+          [.op trace (.blockOp (.constant (.constStr w))) []])
+      | none, some b => some (.op .none (.blockOp (.equalConst (.int b))) [x])
+      | none, none => none) = _
+    rw [noInt]
+  have constantStage : eqDirectConstant x (.op trace (.blockOp (.constant (.constStr w))) []) =
+      some (.op .none (.blockOp (.equalConst (.str w))) [x]) := by
+    change (match destOpNil destConstant x, some (.str w) with
+      | some a, some b => some (mkBool (decide (b = a)))
+      | some a, none => some (.op .none (.blockOp (.equalConst a))
+          [.op trace (.blockOp (.constant (.constStr w))) []])
+      | none, some b => some (.op .none (.blockOp (.equalConst b)) [x])
+      | none, none => none) = _
+    rw [noConstant]
+  have hz := h.2.2
+  simp [directEq, intStage, constantStage] at hz
+  subst z
+  rw [← equalStringRight trace t w x env s]
+  exact h.1
+
+/-- Source constant-folding case for two byte string literals. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_direct_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem eqDirectThmStringPair {C F : Type} (tx ty : BackendCommon.Tra) (x y : Flapjack.Basis.Pure.MlString.MlString)
+    (env : List Value) (s s1 : State C F) (res : Result (List Value) Value)
+    (t : BackendCommon.Tra) (z : ClosLang.Exp)
+    (h : evaluate [.op t (.blockOp .equal)
+        [.op tx (.blockOp (.constant (.constStr x))) [],
+         .op ty (.blockOp (.constant (.constStr y))) []]] env s = (res, s1) ∧
+      res ≠ .err (.abort .typeError) ∧
+      directEq (.op tx (.blockOp (.constant (.constStr x))) [])
+        (.op ty (.blockOp (.constant (.constStr y))) []) = some z) :
+    evaluate [z] env s = (res, s1) := by
+  have stage : directEq (.op tx (.blockOp (.constant (.constStr x))) [])
+      (.op ty (.blockOp (.constant (.constStr y))) []) =
+      some (mkBool (decide (y = x))) := by
+    change some (mkBool (decide (ConstPart.str y = ConstPart.str x))) = _
+    simp only [ConstPart.str.injEq]
+  rw [stage] at h
+  have hz : z = mkBool (decide (y = x)) := by simpa using h.2.2.symm
+  subst z
+  have evalBool (b : Bool) : evaluate [mkBool b] env s = (.val [boolValue b], s) := by
+    cases b <;> rw [mkBool, evaluate_ordinaryOp_eq _ _ _ _ _ (by simp) (by simp)] <;>
+      simp [evaluate, doApp, applyBlock, boolValue, BackendCommon.falseTag, BackendCommon.trueTag]
+  rw [equalStringLeft tx t x _ env s, evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp)] at h
+  simp [evalString, doApp, applyBlock] at h
+  rw [evalBool]
+  rcases h.1 with ⟨rfl, rfl⟩
+  cases x
+  cases y
+  simp [Flapjack.Basis.Pure.MlString.MlString.explode, eq_comm]
+
 end Flapjack.Compiler.Backend.ClosOp

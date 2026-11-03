@@ -3,6 +3,84 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
   "hol_name": "eq_direct_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/DirectEvaluate.lean",
+  "lean_name": "eqDirectThmBlockIntLeft",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eq_direct_thm_typed and the original eq_direct_constant branch for left block-encoded integer and unmatched other operand. The unmatched branches state the original integer and constant recognizer case guards. The original evaluation, non-type-error and directEq premises and result equality are retained. The independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the evaluator inherits rational-cut reals. This case does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "eq_direct_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/DirectEvaluate.lean",
+  "lean_name": "eqDirectThmBlockIntRight",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eq_direct_thm_typed and the original eq_direct_constant branch for right block-encoded integer and unmatched other operand. The unmatched branches state the original integer and constant recognizer case guards. The original evaluation, non-type-error and directEq premises and result equality are retained. The independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the evaluator inherits rational-cut reals. This case does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "eq_direct_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/DirectEvaluate.lean",
+  "lean_name": "eqDirectThmBlockIntPair",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eq_direct_thm_typed and the original eq_direct_constant branch for two block-encoded integers folded by the constant recognizer. The unmatched branches state the original integer and constant recognizer case guards. The original evaluation, non-type-error and directEq premises and result equality are retained. The independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the evaluator inherits rational-cut reals. This case does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "eq_direct_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/DirectEvaluate.lean",
+  "lean_name": "eqDirectThmStringLeft",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eq_direct_thm_typed and the original eq_direct_constant branch for left HOL mlstring literal and unmatched other operand. The unmatched branches state the original integer and constant recognizer case guards. The original evaluation, non-type-error and directEq premises and result equality are retained. The independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the evaluator inherits rational-cut reals. This case does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "eq_direct_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/DirectEvaluate.lean",
+  "lean_name": "eqDirectThmStringRight",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eq_direct_thm_typed and the original eq_direct_constant branch for right HOL mlstring literal and unmatched other operand. The unmatched branches state the original integer and constant recognizer case guards. The original evaluation, non-type-error and directEq premises and result equality are retained. The independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the evaluator inherits rational-cut reals. This case does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "eq_direct_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/DirectEvaluate.lean",
+  "lean_name": "eqDirectThmStringPair",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eq_direct_thm_typed and the original eq_direct_constant branch for two HOL mlstring literals folded by the constant recognizer; the proof compares their exact exploded byte lists. The unmatched branches state the original integer and constant recognizer case guards. The original evaluation, non-type-error and directEq premises and result equality are retained. The independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the evaluator inherits rational-cut reals. This case does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "eq_direct_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/DirectEvaluate.lean",
   "lean_name": "eqDirectThmWordLeft",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
