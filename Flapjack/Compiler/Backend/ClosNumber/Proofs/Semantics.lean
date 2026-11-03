@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.ClosNumber.Proofs.Evaluate
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
+import Flapjack.FiniteMap.EmptyExact
 
 /-! Observational consequence of the proof-side numbering simulation. -/
 namespace Flapjack.Compiler.Backend.ClosNumber
@@ -69,9 +70,8 @@ theorem initialState_related {C F : Type} (ffi : HolFfiState F) (maxApp clock : 
       (initialState ffi maxApp HolFiniteMapExact.empty (stateCo (ignoreTable compileInc) oracle) compiler clock) := by
   simp [StateRel, initialState, OptionRel, HolFiniteMapExact.empty, safe]
 
-/-- Observational semantics are preserved by closure numbering for a
-non-failing source program. The proof uses the current proof-side evaluator
-and carriers and remains untagged pending HOL correspondence review. -/
+/-- Factored numbering-semantics helper; its separate safety premises are
+assembled into the source theorem below. It has no separate HOL declaration. -/
 theorem semantics_number {C F : Type} (ffi : HolFfiState F) (maxApp number : Nat)
     (oracle : CompileOracle (Nat × C)) (compiler : Compiler C) (program : List ClosLang.Exp)
     (notFail : semantics ffi maxApp HolFiniteMapExact.empty oracle
@@ -154,6 +154,23 @@ theorem semantics_number {C F : Type} (ffi : HolFfiState F) (maxApp number : Nat
       (initialState ffi maxApp HolFiniteMapExact.empty (stateCo (ignoreTable compileInc) oracle) compiler clock)).1 =
         .err (.abort .typeError) from fun ⟨clock, error⟩ => targetSafe clock error, if_false]
   rw [← terminatingEq, ← tracesEq]
+
+/-- Closure numbering preserves whole-program observations for a safe,
+non-failing source program and safe oracle. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "semantics_number"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])]
+theorem semanticsNumberHOL {C F : Type} (ffi : HolFfiState F) (maxApp number : Nat)
+    (oracle : CompileOracle (Nat × C)) (compiler : Compiler C) (program : List ClosLang.Exp)
+    (notFail : semantics ffi maxApp Flapjack.HolFiniteMapExact.holEmpty oracle
+      (stateCc (ignoreTable compileInc) compiler) program ≠ .fail)
+    (safe : ¬ ClosProps.containsAppSome maxApp program ∧
+      ∀ index, (oracle index).2.2 = [] ∧
+        ¬ ClosProps.containsAppSome maxApp (oracle index).2.1) :
+    semantics ffi maxApp Flapjack.HolFiniteMapExact.holEmpty (stateCo (ignoreTable compileInc) oracle) compiler
+      (renumberList number program).2 =
+    semantics ffi maxApp Flapjack.HolFiniteMapExact.holEmpty oracle
+      (stateCc (ignoreTable compileInc) compiler) program :=
+  semantics_number ffi maxApp number oracle compiler program notFail safe.1 safe.2
 
 /-- Multi-argument introduction followed by closure numbering preserves the
 current Lean observations. The intermediate numbering invariants follow from

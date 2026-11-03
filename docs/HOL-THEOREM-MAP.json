@@ -1905,6 +1905,26 @@
     "reviewer": "Compared state_rel_typed, ref_rel_def_typed and fmap_rel_def_typed in clos_number_correctness_probe.out. The independent FFI and compiler carriers, clock/FFI/max-app equalities, callback and oracle adapters, globals, oracle safety and empty code conditions match the original. RefRel specializes the exact three original reference cases to the reviewed value relation; optionRel_lookup_iff proves the pointwise lookup form states equal domains and related entries. Both states use the reviewed canonical refs and code maps with a local broad-carrier roundtrip witness. This representation review and Lean checking do not prove cross-language equivalence."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "semantics_known",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Semantics.lean",
+    "lean_name": "semanticsKnownHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared semantics_known_typed in clos_known_syntax_probe.out against all source hypotheses and the whole-program observational equality: the independent compiler and FFI carriers, oracle configuration, empty auxiliary lists, free-variable and syntax conditions, approximation and state invariants, global safety, initial approximation and exact optimizer result are retained. The reviewed polymorphic holEmpty producer represents each original FEMPTY occurrence and has its checked unconditional lookup witness in EmptyExact. The full optimizer simulation supplies related evaluations at all clocks and the source non-failure premise excludes type errors; the theorem assumes no target run or desired observation. Both evaluators inherit the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "semantics_number",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/Semantics.lean",
+    "lean_name": "semanticsNumberHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared semantics_number_typed in clos_number_correctness_probe.out against the complete source theorem. The original non-failure premise, conjunction of program and oracle safety, independent compiler and FFI carriers, and exact equality of whole-program semantics are retained. The reviewed polymorphic holEmpty producer represents each original FEMPTY occurrence; its unconditional lookup witness is checked in EmptyExact. The proof uses the full numbering simulation to derive matching target evaluations and observations at all clocks; no target run, observation equality or extra safety assumption is supplied. Both evaluators inherit the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "renumber_code_locs_correct",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/Evaluate.lean",

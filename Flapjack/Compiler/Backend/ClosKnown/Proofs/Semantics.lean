@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationTotal
 import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
+import Flapjack.FiniteMap.EmptyExact
 
 /-! Observational correctness of known-function optimization. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Semantics
@@ -99,11 +100,8 @@ theorem initialEvaluationRelated {C F : Type} (c : Config) (ffi : HolFfiState F)
         (targetResult, targetFinal) := by simpa [target] using targetRun
     simpa [source, sourceRun, targetRun'] using observationAll
 
-/-- Known-function optimization preserves the closure-language observation
-under the source theorem's initial-state and oracle conditions. This is
-currently untagged because the theorem's literal empty code map uses the
-canonical finite-map carrier without an explicit state or map parameter on
-which the available representation qualifiers can be placed. -/
+/-- Factored observational helper using the canonical empty map. Its
+source-shaped counterpart is stated below. -/
 theorem semanticsKnown {C F : Type} (c : Config) (ffi : HolFfiState F) (maxApp : Nat)
     (co : CompileOracle (Spt ValApprox × C)) (cc : Compiler C)
     (xs : List ClosLang.Exp) (eas : List (ClosLang.Exp × ValApprox)) (g : Spt ValApprox)
@@ -124,5 +122,23 @@ theorem semanticsKnown {C F : Type} (c : Config) (ffi : HolFfiState F) (maxApp :
     inputSyntax coSyntax mono oracleSafe stateOracle unique exprSafe free nextEq oracleDisjoint known sourceSafe
   exact (semantics_eq_of_related_evaluations ffi maxApp HolFiniteMapExact.empty HolFiniteMapExact.empty
     co (stateCo (compileInc c) co) (stateCc (compileInc c) cc) cc xs (eas.map Prod.fst) same).symm
+
+/-- Known-function optimization preserves whole-program observations under
+the source oracle, syntax and global-approximation conditions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "semantics_known"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])]
+theorem semanticsKnownHOL {C F : Type} (c : Config) (ffi : HolFfiState F) (maxApp : Nat)
+    (co : CompileOracle (Spt ValApprox × C)) (cc : Compiler C)
+    (xs : List ClosLang.Exp) (eas : List (ClosLang.Exp × ValApprox)) (g : Spt ValApprox)
+    (nonFail : semantics ffi maxApp Flapjack.HolFiniteMapExact.holEmpty co (stateCc (compileInc c) cc) xs ≠ .fail)
+    (h : (∀ n, (co n).2.2 = []) ∧ (∀ n, fvMax 0 (co n).2.1) ∧
+      (∀ n exps extra, (co n).2 = (exps, extra) → ∀ e ∈ exps, esgcFree e) ∧
+      everyFnVarsNone xs ∧ coEveryFnVarsNone co ∧ oracleGapproxSubspt co ∧
+      oracleStateSgcFree co ∧ isStateOracle (compileInc c) co ∧ uniqueSetGlobals xs co ∧
+      (∀ e ∈ xs, esgcFree e) ∧ fvMax 0 xs ∧ (co 0).1.1 = g ∧
+      oracleGapproxDisjoint g co ∧ knownListTotal c xs [] .ln = (eas, g)) :
+    semantics ffi maxApp Flapjack.HolFiniteMapExact.holEmpty (stateCo (compileInc c) co) cc (eas.map Prod.fst) =
+      semantics ffi maxApp Flapjack.HolFiniteMapExact.holEmpty co (stateCc (compileInc c) cc) xs :=
+  semanticsKnown c ffi maxApp co cc xs eas g nonFail h
 
 end Flapjack.Compiler.Backend.ClosKnown.Semantics
