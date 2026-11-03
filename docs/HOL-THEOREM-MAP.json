@@ -1916,6 +1916,24 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "remove_ticks_Var_IMP_mk_Ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Evaluate.lean",
+    "lean_name": "remove_ticks_Var_IMP_mk_Ticks",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_var_ticks_typed and remove_sing_eq_typed in clos_ticks_source_probe.out: the singleton variable equality implies the original expression is exactly that variable wrapped in a list of ticks. removeList is the source-proven equivalent list traversal. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_remove_ticks_var",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the target-variable case of the first evaluate_remove_ticks_typed conjunct: the target evaluation, related environments and states, source-to-target code relation, existential extra source clock and source result/state, and all conclusions remain present with no extra premises. The source can contain leading ticks; in-range and out-of-range lookups are both covered. State refs and code use the canonical finite-map carrier with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "mk_Ticks_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Evaluate.lean",
     "lean_name": "mkTicks",

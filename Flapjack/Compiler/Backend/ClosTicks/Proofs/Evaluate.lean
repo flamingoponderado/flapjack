@@ -21,6 +21,25 @@ theorem remove_ticks_mk_Ticks (traces : List BackendCommon.Tra) (expression : Cl
   | nil => rfl
   | cons trace rest ih => simpa [mkTicks, removeList, removeSing] using ih
 
+/-- If tick removal produces a variable, its source consists of that variable
+preceded by zero or more ticks. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_Var_IMP_mk_Ticks"]
+theorem remove_ticks_Var_IMP_mk_Ticks (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
+    (index : Nat) (removed : [ClosLang.Exp.var trace index] = removeList [expression]) :
+    ∃ traces, expression = mkTicks traces (.var trace index) := by
+  cases expression
+  case tick outer body =>
+    have bodyRemoved : [ClosLang.Exp.var trace index] = removeList [body] := by
+      simpa [removeList, removeSing] using removed
+    obtain ⟨traces, equal⟩ := remove_ticks_Var_IMP_mk_Ticks body trace index bodyRemoved
+    exact ⟨outer :: traces, by simp [mkTicks, equal]⟩
+  case var actualTrace actualIndex =>
+    simp [removeList, removeSing] at removed
+    obtain ⟨rfl, rfl⟩ := removed
+    exact ⟨[], rfl⟩
+  all_goals simp [removeList, removeSing] at removed
+termination_by sizeOf expression
+
 namespace EvaluatePort
 /-- The closure state has the reviewed canonical finite-map roundtrip. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :
@@ -80,5 +99,65 @@ theorem evaluate_remove_ticks_nil {C F : Type} (envTarget : List Value)
     simpa using length
   subst sourceCode
   exact ⟨0, .val [], source, by simp [evaluate], .nil, states⟩
+
+/-- Related environments return related values at each common index. -/
+theorem environment_lookup (source target : List Value) (related : List.Forall₂ ValueRel source target)
+    (index : Nat) : ClosFvs.OptionRel ValueRel source[index]? target[index]? := by
+  induction related generalizing index with
+  | nil => simp [ClosFvs.OptionRel]
+  | cons head tail ih =>
+    cases index with
+    | zero => simpa [ClosFvs.OptionRel] using head
+    | succ index => simpa using ih index
+
+/-- The variable case of the reverse tick-removal simulation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "evaluate_remove_ticks"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_remove_ticks_var {C F : Type} (trace : BackendCommon.Tra) (index : Nat)
+    (envTarget : List Value) (target : State C F) (targetResult : Result (List Value) Value)
+    (targetNext : State C F) (envSource : List Value) (source : State C F)
+    (sourceCode : List ClosLang.Exp)
+    (premises : evaluate [.var trace index] envTarget target = (targetResult, targetNext) ∧
+      List.Forall₂ ValueRel envSource envTarget ∧ StateRel source target ∧
+      CodeRel sourceCode [.var trace index]) :
+    ∃ extra sourceResult sourceNext,
+      evaluate sourceCode envSource { source with clock := source.clock + extra } = (sourceResult, sourceNext) ∧
+      ResultRel sourceResult targetResult ∧ StateRel sourceNext targetNext := by
+  obtain ⟨run, envRel, states, code⟩ := premises
+  have length := code_rel_IMP_LENGTH sourceCode [.var trace index] code
+  have singleton : ∃ e, sourceCode = [e] := by
+    cases sourceCode with
+    | nil => simp at length
+    | cons first rest =>
+      cases rest with
+      | nil => exact ⟨first, rfl⟩
+      | cons second rest => simp at length
+  obtain ⟨expression, rfl⟩ := singleton
+  have removed : [ClosLang.Exp.var trace index] = removeList [expression] := code
+  obtain ⟨traces, rfl⟩ := remove_ticks_Var_IMP_mk_Ticks expression trace index removed
+  have lookup := environment_lookup envSource envTarget envRel index
+  have restored : decClock traces.length { source with clock := source.clock + traces.length } = source := by
+    simp [decClock]
+  cases found : envTarget[index]? with
+  | none =>
+    cases sourceFound : envSource[index]? with
+    | some value => simp [ClosFvs.OptionRel, sourceFound, found] at lookup
+    | none =>
+      simp [evaluate, found] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨traces.length, .err (.abort .typeError), source, ?_, rfl, states⟩
+      rw [evaluate_mk_Ticks]
+      simp [restored, evaluate, sourceFound]
+  | some value =>
+    cases sourceFound : envSource[index]? with
+    | none => simp [ClosFvs.OptionRel, sourceFound, found] at lookup
+    | some sourceValue =>
+      have values : ValueRel sourceValue value := by
+        simpa [ClosFvs.OptionRel, sourceFound, found] using lookup
+      simp [evaluate, found] at run
+      obtain ⟨rfl, rfl⟩ := run
+      refine ⟨traces.length, .val [sourceValue], source, ?_, .cons values .nil, states⟩
+      rw [evaluate_mk_Ticks]
+      simp [restored, evaluate, sourceFound]
 
 end Flapjack.Compiler.Backend.ClosTicks
