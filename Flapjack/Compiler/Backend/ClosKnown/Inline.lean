@@ -59,6 +59,81 @@ end
 @[hol "cakeml/compiler/backend/clos_knownScript.sml" "get_size_def"]
 def getSizeHOL (e : Exp) : Nat := getSizeAuxHOL [e]
 
+mutual
+/-- The source's budgeted list traversal, stopping as soon as the budget
+reaches zero. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "get_size_sc_aux_def"]
+def getSizeScAuxHOL (n : Nat) : List Exp → Nat
+  | [] => n
+  | [e] => getSizeScExpHOL n e
+  | e :: next :: es =>
+    if n = 0 then n else
+      let remaining := getSizeScExpHOL n e
+      if remaining = 0 then remaining else getSizeScAuxHOL remaining (next :: es)
+termination_by es => sizeOf es
+
+/-- Single-expression helper for the source's budgeted traversal. -/
+def getSizeScExpHOL (n : Nat) : Exp → Nat
+  | .var .. => n - 1
+  | .tick _ e => getSizeScExpHOL n e
+  | .ifThenElse _ x y z =>
+    let n := n - 1
+    if n = 0 then 0 else
+      let n := getSizeScExpHOL n x
+      if n = 0 then 0 else
+        let n := getSizeScExpHOL n y
+        if n = 0 then 0 else getSizeScExpHOL n z
+  | .let _ xs body =>
+    let n := n - 1
+    if n = 0 then 0 else
+      let n := getSizeScAuxHOL n xs
+      if n = 0 then 0 else getSizeScExpHOL n body
+  | .raise _ e | .fn _ _ _ _ e =>
+    let n := n - 1
+    if n = 0 then 0 else getSizeScExpHOL n e
+  | .handle _ x y =>
+    let n := n - 1
+    if n = 0 then 0 else
+      let n := getSizeScExpHOL n x
+      if n = 0 then 0 else getSizeScExpHOL n y
+  | .op _ _ xs | .call _ _ _ xs =>
+    let n := n - 1
+    if n = 0 then 0 else getSizeScAuxHOL n xs
+  | .letrec _ _ _ fs body =>
+    let n := n - 1
+    if n = 0 then 0 else
+      let n := getSizeScFunsHOL n fs
+      if n = 0 then 0 else getSizeScExpHOL n body
+  | .app _ _ e xs =>
+    let n := n - 1
+    if n = 0 then 0 else
+      let n := getSizeScExpHOL n e
+      if n = 0 then 0 else getSizeScAuxHOL n xs
+termination_by e => sizeOf e
+
+/-- Budgeted traversal of the bodies in a recursive function group. -/
+def getSizeScFunsHOL (n : Nat) : List (Nat × Exp) → Nat
+  | [] => n
+  | (_, e) :: es =>
+    let remaining := getSizeScExpHOL n e
+    if remaining = 0 then 0 else getSizeScFunsHOL remaining es
+termination_by es => sizeOf es
+end
+
+/-- Return the source expression size when it fits within the limit. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "get_size_sc_def"]
+def getSizeScHOL (limit : Nat) (e : Exp) : Option Nat :=
+  let remaining := getSizeScAuxHOL (limit + 1) [e]
+  if remaining = 0 then none else some (limit + 1 - remaining)
+
+/-- Construct the source closure approximation using its short-circuit size
+check. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "clos_approx_def"]
+def closApproxHOL (maxSize loc arity : Nat) (body : Exp) : ValApprox :=
+  match getSizeScHOL maxSize body with
+  | none => .closNoInline loc arity
+  | some size => .clos loc arity body size
+
 /-- Compute the source size metric; ticks contribute no node. -/
 def sizeFuel : Nat → Exp → Option Nat
   | 0, _ => none
@@ -101,10 +176,9 @@ argument is retained for the surrounding checked optimizer interface. -/
 def containsClosuresBounded (_fuel : Nat) (e : Exp) : Option Bool :=
   some (containsClosuresHOL [e])
 
-/-- Construct the original closure approximation from its size bound. -/
-def closApproxFuel (fuel maxSize loc arity : Nat) (body : Exp) : Option ValApprox := do
-  let size ← sizeBounded fuel body
-  pure (if size ≤ maxSize then .clos loc arity body size else .closNoInline loc arity)
+/-- The checked optimizer uses the source closure-approximation definition. -/
+def closApproxFuel (_fuel maxSize loc arity : Nat) (body : Exp) : Option ValApprox :=
+  some (closApproxHOL maxSize loc arity body)
 
 /-- Apply the original inlining decision with explicit traversal fuel. -/
 def decideInlineFuel (fuel : Nat) (c : Config) (approx : ValApprox) (loc : Option Nat)

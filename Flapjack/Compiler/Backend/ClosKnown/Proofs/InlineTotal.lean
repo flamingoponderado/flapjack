@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosKnown.Inline
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ContainsCorrect
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SizeCorrect
+import Flapjack.Compiler.Backend.ClosKnown.Inline.SizeShortCircuit
 import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
 
@@ -232,8 +233,16 @@ theorem containsClosuresBounded_eq_retry (fuel : Nat) (e : Exp) :
 /-- Constructing an approximation cannot fail from size-analysis fuel. -/
 theorem closApproxFuel_succeeds (fuel maxSize loc arity : Nat) (body : Exp) :
     ∃ result, closApproxFuel fuel maxSize loc arity body = some result := by
-  obtain ⟨size, h⟩ := sizeBounded_succeeds fuel body
-  exact ⟨_, by simp [closApproxFuel, h]; rfl⟩
+  exact ⟨closApproxHOL maxSize loc arity body, rfl⟩
+
+/-- The source short-circuit decision agrees with the prior full-size
+implementation, for every expression and bound. -/
+theorem closApproxFuel_eq_fullSize (fuel maxSize loc arity : Nat) (body : Exp) :
+    closApproxFuel fuel maxSize loc arity body = (do
+      let size ← sizeBounded fuel body
+      pure (if size ≤ maxSize then .clos loc arity body size else .closNoInline loc arity)) := by
+  by_cases bound : getSizeHOL body ≤ maxSize <;>
+    simp [closApproxFuel, closApproxHOL, getSizeSc_eq, sizeBounded, bound]
 
 /-- An inlining decision cannot fail from closure or free-variable traversal fuel. -/
 theorem decideInlineFuel_succeeds (fuel : Nat) (c : Config) (approx : ValApprox)

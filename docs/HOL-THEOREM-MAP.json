@@ -1,6 +1,46 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "get_size_sc_aux_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline.lean",
+    "lean_name": "getSizeScAuxHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared get_size_sc_aux_typed and every list and expression clause, including the zero-budget short circuit, tick behavior, and ordered recursive-group traversal. The local recursive helper computes the original mapped body list; the checked subtraction theorem covers every input. The executed closure approximation uses this source traversal."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "get_size_sc_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline.lean",
+    "lean_name": "getSizeScHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared get_size_sc_typed: start with limit plus one, run the singleton budgeted traversal, return NONE at zero and otherwise the consumed size. The production closure-approximation path calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "clos_approx_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline.lean",
+    "lean_name": "closApproxHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared clos_approx_typed: unsuccessful size checks yield ClosNoInline and successful checks retain the original location, arity, body and size in Clos. The checked production path calls this definition; closApproxFuel_eq_fullSize proves its result equals the previous full-size implementation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "get_size_sc_aux_correct",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline/SizeShortCircuit.lean",
+    "lean_name": "getSizeScAuxCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared get_size_sc_aux_correct_typed: the list and natural-number limit have the original types, the independently polymorphic unused quantified argument is retained, and the result is the limit minus the full list size. The mutual proof covers expression, list and recursive-body cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "get_size_sc_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline/SizeShortCircuit.lean",
+    "lean_name": "getSizeScSome",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared get_size_sc_some_typed: a successful size result implies equality with the full source expression size, retaining the original expression, limit and result quantifiers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
     "hol_name": "get_size_aux_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline.lean",
     "lean_name": "getSizeAuxHOL",
