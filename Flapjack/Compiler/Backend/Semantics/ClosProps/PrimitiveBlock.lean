@@ -262,4 +262,61 @@ theorem simpleValRelDoAppRevBuild {C D F : Type} (parts : List ClosLang.ConstPar
     | .val (y, t1) => ∃ x s1, vr x y ∧ sr s1 t1 ∧ doApp (.blockOp (.build parts)) xs s = .val (x, s1) := by
   simp [doApp_build_fallback, excRel]
 
+/-- Block extension case of the reverse primitive simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "simple_val_rel_do_app_rev"
+  (fmap_as_finite_support := [refs, code])]
+theorem simpleValRelDoAppRevConsExtend {C D F : Type} (tag : Nat) (vr : Value → Value → Prop)
+    (sr : State C F → State D F → Prop) (s : State C F) (t : State D F) (xs ys : List Value)
+    (h : simpleValRel vr ∧ simpleStateRel vr sr ∧ sr s t ∧ List.Forall₂ vr xs ys) :
+    match doApp (.blockOp (.consExtend tag)) ys t with
+    | .err err2 => ∃ err1, doApp (.blockOp (.consExtend tag)) xs s = .err err1 ∧ excRel vr err1 err2
+    | .val (y, t1) => ∃ x s1, vr x y ∧ sr s1 t1 ∧ doApp (.blockOp (.consExtend tag)) xs s = .val (x, s1) := by
+  obtain ⟨simple, _, states, values⟩ := h
+  cases values with
+  | nil => simp [doApp, applyBlock, excRel]
+  | @cons x1 y1 _ _ first rest =>
+    have firstView := simpleValRel_view vr simple x1 y1 first
+    cases firstView with
+    | block original fields nextFields fieldsRel =>
+      cases rest with
+      | nil => simp [doApp, applyBlock, excRel]
+      | @cons x2 y2 _ _ lowerRel rest =>
+        have lowerView := simpleValRel_view vr simple x2 y2 lowerRel
+        cases lowerView with
+        | number lower =>
+          cases rest with
+          | nil => simp [doApp, applyBlock, excRel]
+          | @cons x3 y3 _ _ lenRel rest =>
+            have lenView := simpleValRel_view vr simple x3 y3 lenRel
+            cases lenView with
+            | number len =>
+              cases rest with
+              | nil => simp [doApp, applyBlock, excRel]
+              | @cons x4 y4 initial nextInitial totalRel initialRel =>
+                have totalView := simpleValRel_view vr simple x4 y4 totalRel
+                cases totalView with
+                | number total =>
+                  have fieldsLength := fieldsRel.length_eq
+                  have initialLength := initialRel.length_eq
+                  have sliceRel := List.forall₂_take len.toNat (List.forall₂_drop lower.toNat fieldsRel)
+                  have resultRel : vr (.block tag (initial ++ (fields.drop lower.toNat).take len.toNat))
+                      (.block tag (nextInitial ++ (nextFields.drop lower.toNat).take len.toNat)) :=
+                    (simple.2.1 _ _ _).2 ⟨_, rfl, List.rel_append initialRel sliceRel⟩
+                  by_cases invalid : lower < 0 ∨ len < 0 ∨ Int.ofNat fields.length < lower + len ∨
+                      total = 0 ∨ total ≠ Int.ofNat initial.length + len
+                  · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength]
+                    rw [if_pos invalid, if_pos invalid]
+                    exact ⟨_, rfl, rfl⟩
+                  · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength]
+                    rw [if_neg invalid, if_neg invalid]
+                    exact ⟨_, _, resultRel, states, rfl⟩
+                | word64 | block | byteVector | refPtr | closureClosure | closureRec | recClosure | recRec =>
+                  simp [doApp, applyBlock, excRel]
+            | word64 | block | byteVector | refPtr | closureClosure | closureRec | recClosure | recRec =>
+              cases rest <;> simp [doApp, applyBlock, excRel]
+        | word64 | block | byteVector | refPtr | closureClosure | closureRec | recClosure | recRec =>
+          cases rest <;> simp [doApp, applyBlock, excRel]
+    | number | word64 | byteVector | refPtr | closureClosure | closureRec | recClosure | recRec =>
+      cases rest <;> simp [doApp, applyBlock, excRel]
+
 end Flapjack.Compiler.Backend.ClosProps.PrimitiveBlock

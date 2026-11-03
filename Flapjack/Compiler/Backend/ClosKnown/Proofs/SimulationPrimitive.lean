@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationDecode
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateRelation
+import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
 
 /-! Primitive-operation infrastructure for the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Relations.StateRelation
@@ -58,5 +59,30 @@ theorem stateRelSimple {C F : Type} (c : Config) (g : Spt ValApprox) :
   · intro s t xs ys ⟨related, values⟩
     rcases related with ⟨aux, free, codeS, codeT, clock, ffi, maxApp, _, refs, compiler, oracle⟩
     exact ⟨aux, free, codeS, codeT, clock, ffi, maxApp, values, refs, compiler, oracle⟩
+
+namespace PrimitiveSimulation
+
+/-- The closure state uses canonical finite-map fields. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- Primitive operations preserve the known-function simulation relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_lemma"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppLemma {C F : Type} (c : Config) (g : Spt ValApprox)
+    (s : State (Spt ValApprox × C) F) (t : State C F) (xs ys : List Value) (op : ClosLang.Op)
+    (h : StateRel c g s t ∧ List.Forall₂ (ValueRel c g) xs ys) :
+    match doApp op xs s with
+    | .err err1 => ∃ err2, doApp op ys t = .err err2 ∧ Flapjack.SemanticPrimitivesProps.excRel (ValueRel c g) err1 err2
+    | .val (x, s1) => ∃ y t1, ValueRel c g x y ∧ StateRel c g s1 t1 ∧ doApp op ys t = .val (y, t1) := by
+  have result := ClosProps.PrimitiveTotal.simpleValRelDoApp (ValueRel c g) (StateRel c g) s t xs ys op
+    ⟨valueRelSimple c g, stateRelSimple c g⟩ h
+  cases run : doApp op xs s with
+  | err error => simpa [run] using result
+  | val pair => cases pair; simpa [run] using result
+
+end PrimitiveSimulation
 
 end Flapjack.Compiler.Backend.ClosKnown.Relations.StateRelation

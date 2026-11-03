@@ -158,6 +158,16 @@ val _ = show "evaluate_changed_globals_typed=" clos_knownProofTheory.evaluate_ch
 val _ = show "evaluate_app_changed_globals_typed=" clos_knownProofTheory.evaluate_app_changed_globals;
 val _ = show "evaluate_ind_typed=" closSemTheory.evaluate_ind;
 val _ = show "simple_val_rel_do_app_rev_typed=" closPropsTheory.simple_val_rel_do_app_rev;
+val _ = show "simple_val_rel_do_app_typed=" closPropsTheory.simple_val_rel_do_app;
+
+(* Typed replay of the source-local known-optimizer primitive lemma. *)
+val _ = (print "known_do_app_lemma_statement_typed="; print_term
+ ``!c g (s:(clos_known$val_approx sptree$num_map#'c,'ffi) closSem$state) t xs ys opp.
+   clos_knownProof$state_rel c g s t /\ LIST_REL (clos_knownProof$v_rel c g) xs ys ==>
+   case closSem$do_app opp xs s of
+   | Rerr err1 => ?err2. closSem$do_app opp ys t = Rerr err2 /\ exc_rel (clos_knownProof$v_rel c g) err1 err2
+   | Rval (x,s1) => ?y t1. clos_knownProof$v_rel c g x y /\ clos_knownProof$state_rel c g s1 t1 /\
+                           closSem$do_app opp ys t = Rval (y,t1)``; print "\n");
 
 (* Typed replays of source-local decoder preservation statements. *)
 val _ = (print "known_v_rel_bytes_statement_typed="; print_term
