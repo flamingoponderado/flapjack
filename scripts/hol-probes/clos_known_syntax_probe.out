@@ -29,6 +29,8 @@ known_locations_typed=∀(a :config) (b :closLang$exp list) (c :val_approx list)
 ticks_code_locs_typed=∀(a :tra) (b :num) (c :num) (d :closLang$exp). code_locs [(mk_Ticks a b c d :closLang$exp)] = code_locs [d]
 contains_closures_code_locs_typed=∀(es :closLang$exp list). ¬contains_closures es ⇒ code_locs es = ([] :num list)
 inline_code_locs_typed=decide_inline (a :config) (b :val_approx) (c :α option) (d :num) = inlD_LetInline (e :closLang$exp) ⇒ code_locs [e] = ([] :num list)
+known_code_bag_typed=∀(c :config) (xs :closLang$exp list) (aenv :val_approx list) (g0 :val_approx sptree$num_map) (eas :(closLang$exp # val_approx) list) (g :val_approx sptree$num_map). known c xs aenv g0 = (eas,g) ⇒ LIST_TO_BAG (code_locs (MAP (FST :closLang$exp # val_approx -> closLang$exp) eas)) ≤ LIST_TO_BAG (code_locs xs)
+compile_code_bag_typed=(compile (kc :config option) (es :closLang$exp list) :config option # closLang$exp list) = ((kc' :config option),(es' :closLang$exp list)) ⇒ LIST_TO_BAG (code_locs es') ≤ LIST_TO_BAG (code_locs es)
 fvs_locations_typed=∀(fvs :num) (es :closLang$exp list). every_Fn_SOME (remove_fvs fvs es) ⇔ every_Fn_SOME es
 ticks_locations_typed=∀(ls :closLang$exp list). every_Fn_SOME (remove_ticks ls) ⇔ every_Fn_SOME ls
 letop_locations_typed=∀(es :closLang$exp list). every_Fn_SOME (let_op es) ⇔ every_Fn_SOME es

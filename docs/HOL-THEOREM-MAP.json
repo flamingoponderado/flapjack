@@ -1,6 +1,126 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagNil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source Nil traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source Var traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagCons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source Cons traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagRaise",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source Raise traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagTick",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source Tick traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagCall",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source Call traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagOp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source Op traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagIf",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source If traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagLet",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source Let traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagHandle",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source Handle traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagFn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source Fn traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source App traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBag.lean",
+  "lean_name": "knownCodeBagLetrec",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed and the source Letrec traversal case. Pointwise list counts express the source bag inclusion. The result equation and recursive induction hypotheses follow the original traversal case; this is not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalCodeBagTotal.lean",
+  "lean_name": "knownCodeLocationsBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_code_bag_typed: the actual source-shaped known traversal equation implies pointwise count inclusion, the HOL list-to-bag ordering via SUB_BAG_LEQ, with no additional hypotheses. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "compile_code_locs_bag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CodeLocations.lean",
+  "lean_name": "compile_codeLocationsBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_code_bag_typed and both source optimizer branches: the actual source compile equation implies pointwise count inclusion, the HOL list-to-bag ordering via SUB_BAG_LEQ. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "code_locs_mk_Ticks",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InlineCodeLocations.lean",
   "lean_name": "ticks_codeLocations",
