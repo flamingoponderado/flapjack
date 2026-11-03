@@ -3,6 +3,84 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
   "hol_name": "SmartOp_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
+  "lean_name": "smartOpThmTagLen",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared smart_op_thm_typed and the original source proof: unary constructor tag-and-length test. The original evaluation and non-type-error premises and the SmartOp evaluation conclusion are retained. Independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the clocked evaluator inherits rational-cut reals. This case alone does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "SmartOp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
+  "lean_name": "smartOpThmTag",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared smart_op_thm_typed and the original source proof: unary constructor tag test. The original evaluation and non-type-error premises and the SmartOp evaluation conclusion are retained. Independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the clocked evaluator inherits rational-cut reals. This case alone does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "SmartOp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
+  "lean_name": "smartOpThmLen",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared smart_op_thm_typed and the original source proof: unary constructor field-count test. The original evaluation and non-type-error premises and the SmartOp evaluation conclusion are retained. Independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the clocked evaluator inherits rational-cut reals. This case alone does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "SmartOp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
+  "lean_name": "smartOpThmElem",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared smart_op_thm_typed and the original source proof: unary constructor projection including the reversed index and invalid-index fallback. The original evaluation and non-type-error premises and the SmartOp evaluation conclusion are retained. Independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the clocked evaluator inherits rational-cut reals. This case alone does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "SmartOp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
+  "lean_name": "smartOpThmUnary",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared smart_op_thm_typed and the original source proof: complete unary case assembled from constructor matching and unchanged cases. The original evaluation and non-type-error premises and the SmartOp evaluation conclusion are retained. Independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the clocked evaluator inherits rational-cut reals. This case alone does not establish the complete theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "SmartOp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
+  "lean_name": "smartOpThm",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared smart_op_thm_typed and the original source proof: full SmartOp correctness theorem assembled from the original list_split3 cases. The original evaluation and non-type-error premises and the SmartOp evaluation conclusion are retained. Independent compiler and FFI state carriers use canonical refs and code maps with the local roundtrip witness; the clocked evaluator inherits rational-cut reals."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "SmartOp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
   "lean_name": "smartOpThmInteger",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
