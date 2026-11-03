@@ -40,8 +40,7 @@ def optionValueRel (R : ClosSem.Value → BvlSem.Value → Prop) :
 /-- Candidate rendering of the closure-to-BVL state relation. It is not yet
 tagged as the HOL declaration: the source and target state structures both
 have the short name `State`, so the multi-carrier finite-map qualifier cannot
-currently distinguish their `refs` fields. The closure state carrier still
-requires source review against its finite-map roundtrip witness. -/
+currently distinguish their `refs` fields. -/
 def stateRel {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (s : ClosSem.State C F) (t : BvlSem.State C F) : Prop :=
   s.ffi = t.ffi ∧
@@ -85,5 +84,21 @@ theorem stateRel_clock {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (stateRel f s { t with clock } ↔ stateRel f s t) ∧
     (stateRel f { s with clock } t ↔ stateRel f s t) := by
   exact ⟨Iff.rfl, Iff.rfl⟩
+
+/-- Lookup preservation for the candidate state relation. This remains
+untagged until the finite-map qualifier can distinguish the closure and BVL
+state carriers in the corresponding HOL theorem. -/
+theorem stateRel_refs_lookup {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    {s : ClosSem.State C F} {t : BvlSem.State C F} {p p' : Nat}
+    {x : ClosSem.Ref ClosSem.Value}
+    (related : stateRel f s t) (source : s.refs.lookup p = some x)
+    (mapped : f.lookup p = some p') :
+    ∃ x', t.refs.lookup p' = some x' ∧
+      refRel (vRel s.maxApp f t.refs t.code) x x' := by
+  obtain ⟨_, _, _, _, _, _, _, refs, _⟩ := related
+  obtain ⟨y, m, hm, hy, hr⟩ := refs p x source
+  rw [mapped] at hm
+  cases hm
+  exact ⟨y, hy, hr⟩
 
 end Flapjack.Compiler.Backend.ClosToBvl
