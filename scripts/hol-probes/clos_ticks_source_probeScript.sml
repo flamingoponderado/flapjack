@@ -47,6 +47,30 @@ val do_app_lemma_replay = Q.prove (
   metis_tac [closPropsTheory.simple_val_rel_do_app_rev,
     clos_ticksProofTheory.simple_val_rel, clos_ticksProofTheory.simple_state_rel]);
 val _ = show "do_app_lemma_typed" do_app_lemma_replay;
+val bytes_statement = Q.prove (
+  `clos_ticksProof$v_rel x y ==> closSem$v_to_bytes y = closSem$v_to_bytes x`,
+  metis_tac [clos_ticksProofTheory.simple_val_rel, closPropsTheory.simple_val_rel_v_to_bytes]);
+val words_statement = Q.prove (
+  `clos_ticksProof$v_rel x y ==> closSem$v_to_words y = closSem$v_to_words x`,
+  metis_tac [clos_ticksProofTheory.simple_val_rel, closPropsTheory.simple_val_rel_v_to_words]);
+val _ = show "bytes_statement_typed" bytes_statement;
+val _ = show "words_statement_typed" words_statement;
+val do_install_lemma_replay = Q.prove (
+  `clos_ticksProof$state_rel (s :('c,'ffi) closSem$state) t /\
+   LIST_REL clos_ticksProof$v_rel xs ys ==>
+   case closSem$do_install xs s of
+     | (Rerr err1,s1) => ?err2 t1. closSem$do_install ys t = (Rerr err2,t1) /\
+                            exc_rel clos_ticksProof$v_rel err1 err2 /\ clos_ticksProof$state_rel s1 t1
+     | (Rval exps1,s1) => ?exps2 t1. clos_ticksProof$state_rel s1 t1 /\ exps1 <> [] /\
+                            clos_ticksProof$code_rel exps1 exps2 /\
+                            closSem$do_install ys t = (Rval exps2,t1)`,
+  ho_match_mp_tac (Q.SPEC `clos_ticks$compile_inc` closPropsTheory.simple_val_rel_do_install) >>
+  simp [clos_ticksProofTheory.simple_val_rel, clos_ticksProofTheory.simple_state_rel,
+    closPropsTheory.simple_compile_state_rel_def, clos_ticksTheory.compile_inc_def,
+    clos_ticksProofTheory.code_rel_def, clos_ticksProofTheory.state_rel_def,
+    pairTheory.FORALL_PROD, miscTheory.shift_seq_def, backendPropsTheory.pure_co_def, FUN_EQ_THM] >>
+  metis_tac [clos_ticksProofTheory.remove_ticks_IMP_LENGTH]);
+val _ = show "do_install_lemma_typed" do_install_lemma_replay;
 val state_rel_dec_clock_replay = Q.prove (
   `clos_ticksProof$state_rel (s1 :('c,'ffi) closSem$state) s2 ==>
    clos_ticksProof$state_rel (closSem$dec_clock 1 s1) (closSem$dec_clock 1 s2)`,

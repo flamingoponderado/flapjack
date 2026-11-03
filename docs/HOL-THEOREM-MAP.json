@@ -1916,6 +1916,31 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "v_rel_IMP_v_to_bytes",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Install.lean",
+    "lean_name": "valueRel_bytes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source theorem and bytes_statement_typed HOL replay: related values produce equal byte-decoding results in the original direction, with no additional assumptions. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "v_rel_IMP_v_to_words",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Install.lean",
+    "lean_name": "valueRel_words",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source theorem and words_statement_typed HOL replay: related values produce equal word-decoding results in the original direction, with no additional assumptions. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "do_install_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Install.lean",
+    "lean_name": "doInstallLemma",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the local source theorem and do_install_lemma_typed HOL replay: related states and argument lists lead to related exceptions or to nonempty related programs and states, in the original source-to-target direction. The independent compiler and FFI carriers, compiler callback and shifted oracle behavior are preserved. State refs and code use canonical finite maps with a local roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "remove_ticks_Op_IMP_mk_Ticks",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateOp.lean",
     "lean_name": "remove_ticks_Op_IMP_mk_Ticks",
