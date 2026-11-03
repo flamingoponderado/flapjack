@@ -83,4 +83,32 @@ theorem evalPanValueExpsCountedWith_some_eq
   simpa [evalPanValueExpsCountedWith, evalPanValueExpsWith, evalPanValueExpsCounted] using
     congrArg (Option.map (fun vs => (vs, panValueExpsStepCost es))) hlist
 
+/-- The counted result is the uncounted result paired with the static step
+    cost of the expression. -/
+theorem evalPanValueExpCountedWith_eq_map
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (route : Option (PanExprEvaluator α)) (structs : StructContext)
+    (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
+    (base top bytes : α) (e : Exp α) (access : Option (PanValueMemoryAccess α)) :
+    evalPanValueExpCountedWith route structs locals globals memory base top bytes e access =
+      (evalPanValueExpWith route structs locals globals memory base top bytes e access).map
+        (fun v => (v, panValueExpStepCost e)) := by
+  cases route <;> rfl
+
+/-- The counted list result is the uncounted one paired with the static step
+    cost of the list. -/
+theorem evalPanValueExpsCountedWith_eq_map
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (route : Option (PanExprEvaluator α)) (structs : StructContext)
+    (locals globals : VarName → Option (PanValue α)) (memory : α → Option (PanValue α))
+    (base top bytes : α) (es : List (Exp α)) (access : Option (PanValueMemoryAccess α)) :
+    evalPanValueExpsCountedWith route structs locals globals memory base top bytes es access =
+      (evalPanValueExpsWith route structs locals globals memory base top bytes es access).map
+        (fun vs => (vs, panValueExpsStepCost es)) := by
+  cases route <;> rfl
+
 end Flapjack

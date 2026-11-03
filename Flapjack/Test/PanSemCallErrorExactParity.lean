@@ -522,8 +522,8 @@ theorem callInvalidReturnShape_eq :
       omega)
     (by simp [badReturnShapeState, invalidReturnCode, evalPanValueFfiClockCodeProg,
       evalPanValueFfiClockLeaf, evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueReturnResult,
-      evalPanValueExpCounted, evalPanValueExp, panValuePayloadWithinLimit,
-      panValuePayloadSizeFuel, panValueExpStepCost, decPanClock,
+      evalPanValueExpWith, evalPanValueExp, panValuePayloadWithinLimit,
+      panValuePayloadSizeFuel, decPanClock,
       panSemCodeEvaluateFuel, panSemProgFuel, panSemCodeBodyFuel,
       panSemExpListFuel, panSemExpFuel, panSemCallInfoFuel])
     (by simp [badReturnShapeState, invalidReturnCode, panValueShape, panShapeMatches])

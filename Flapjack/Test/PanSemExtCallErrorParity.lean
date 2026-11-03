@@ -110,7 +110,7 @@ theorem clockedNonword_full : clockedEvaluate 5 nonwordProgram =
   simp (config := { decide := true }) [clockedEvaluate, panSemEvaluateCodeStateWithPostState,
     panSemEvaluateCodeState, panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel,
     panSemCodeStateAfter, evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueFfiExtCallSteps, evalPanValueExpsCounted,
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueFfiExtCallResult, evalPanValueExpsWith,
     evalPanValueExps, evalPanValueExp.evalPanValueExps, evalPanValueExp, extState,
     nonwordProgram]
 
@@ -120,7 +120,7 @@ theorem clockedArgFail_full : clockedEvaluate 5 argFailProgram =
   simp (config := { decide := true }) [clockedEvaluate, panSemEvaluateCodeStateWithPostState,
     panSemEvaluateCodeState, panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel,
     panSemCodeStateAfter, evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueFfiExtCallSteps, evalPanValueExpsCounted,
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueFfiExtCallResult, evalPanValueExpsWith,
     evalPanValueExps, evalPanValueExp.evalPanValueExps, evalPanValueExp, extState,
     argFailProgram]
 
@@ -130,7 +130,7 @@ theorem clockedReadFail_full : clockedEvaluate 5 readFailProgram (some emptyAcce
   simp (config := { decide := true }) [clockedEvaluate, panSemEvaluateCodeStateWithPostState,
     panSemEvaluateCodeState, panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel,
     panSemCodeStateAfter, evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueFfiExtCallSteps, evalPanValueExpsCounted,
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueFfiExtCallResult, evalPanValueExpsWith,
     evalPanValueExps, evalPanValueExp.evalPanValueExps, evalPanValueExp, extState,
     readFailProgram, panValueFfiExtCall, emptyRead_one, statefulTestContext]
 
