@@ -503,6 +503,77 @@ theorem doInstall_success_evaluate {C F : Type} (fuel relationFuel : Nat) (g : S
     finalCompiler, targetFinalCompiler, finalOracle,
     fun key entry found => bodyGrowth key entry (installGrowth key entry found)⟩
 
+/-- A successful installation can invoke a clock-allowing simulation of
+the installed program. This is Flapjack-specific induction infrastructure;
+the caller must still account for the allowance in the enclosing evaluation. -/
+theorem doInstall_success_evaluate_withClock {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value) (program : List ClosLang.Exp)
+    (installed : ClosSem.State (NumSet × C) F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (ready : IncrementalInstallReady g source target)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (installRun : doInstall sourceValues source = (.val program, installed))
+    (programRun : evaluate program [] installed = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (programIH : ∀ nextKnown converted,
+      compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) →
+      InstalledProgramSimBelowWithClock (C := C) (F := F) fuel relationFuel source.clock compiler
+        (nextKnown, converted.2 ++ g.2) allowed program converted.1) :
+    ∃ nextKnown converted targetInstalled extraClock finalG targetResult targetFinal,
+      compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) ∧
+      doInstall targetValues target = (.val converted.1, targetInstalled) ∧
+      doInstall targetValues { target with clock := target.clock + extraClock } =
+        (.val converted.1, { targetInstalled with clock := targetInstalled.clock + extraClock }) ∧
+      IncrementalInstallReady (nextKnown, converted.2 ++ g.2) installed targetInstalled ∧
+      stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      stateExtends (nextKnown, converted.2 ++ g.2) finalG ∧
+      evaluate converted.1 [] { targetInstalled with clock := targetInstalled.clock + extraClock } =
+        (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨expressions, converted, nextKnown, targetInstalled, passRun, targetRun, resultEq,
+    _, _, extended, newReady, newStates, installedCompiler, targetInstalledCompiler,
+    installedOracle, installGrowth⟩ :=
+    doInstall_nonType_ready fuel relationFuel g allowed compiler source target sourceValues targetValues
+      (.val program) installed ready states values sourceCompiler targetCompiler targetOracle installRun (by simp)
+  have nonzero : source.clock ≠ 0 := by
+    intro zero
+    simp [zero] at resultEq
+  have programEq : program = expressions := by simpa [nonzero] using resultEq
+  have programPass : compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) := by
+    simpa [programEq] using passRun
+  have targetInstall : doInstall targetValues target = (.val converted.1, targetInstalled) := by
+    simpa [nonzero] using targetRun
+  have installedWf := doInstall_wellFormedFuel sourceValues source installed (.val program)
+    sourceWf (ready.auxEmpty 0) installRun
+  have installedWf' := stateWellFormedFuel_mono installedWf extended Set.Subset.rfl installGrowth
+  have smaller : installed.clock < source.clock := by
+    have clock := doInstall_success_clock sourceValues source installed program installRun
+    omega
+  obtain ⟨extraClock, finalG, targetResult, targetFinal, bodyExtended, targetEval, related, finalStates,
+    finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, bodyGrowth⟩ :=
+    programIH nextKnown converted programPass installed targetInstalled result final smaller programRun notType
+      installedWf' newStates newReady installedCompiler targetInstalledCompiler installedOracle
+  exact ⟨nextKnown, converted, targetInstalled, extraClock, finalG, targetResult, targetFinal,
+    programPass, targetInstall, doInstall_success_addClock targetValues target targetInstalled converted.1
+      extraClock targetInstall, newReady, extended, bodyExtended, targetEval, related, finalStates, finalWf,
+    finalReady, finalCompiler, targetFinalCompiler, finalOracle,
+    fun key entry found => bodyGrowth key entry (installGrowth key entry found)⟩
+
 /-- Related nonempty result lists have related HOL last elements. This is
 used by the install evaluator, which returns only the installed program's
 last result. -/
@@ -7263,6 +7334,73 @@ theorem doInstall_success_evaluate_from_bounded_cases {C F : Type} (fuel relatio
     installRun programRun notType
   intro nextKnown converted passRun
   exact compileIncFuel_installedBelow_from_bounded_cases fuel relationFuel source.clock compiler allowed g (program, [])
+    nextKnown converted passRun distinct fresh ready.well eligible eligibleIH exprIH
+
+
+/-- A successful installation uses clock-allowing expression cases, with
+location conditions supplied by the actual oracle. The expression induction
+remains an assumption. This is Flapjack-specific simulation infrastructure. -/
+theorem doInstall_success_evaluate_withClock_from_cases {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value) (program : List ClosLang.Exp)
+    (installed : ClosSem.State (NumSet × C) F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (ready : IncrementalInstallReady g source target)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (installRun : doInstall sourceValues source = (.val program, installed))
+    (programRun : evaluate program [] installed = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max fuel (listBudget program + 1) → ∀ expression output before after,
+      expression ∈ program → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max fuel (listBudget program + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFromBelowWithClock (F := F) fuel relationFuel source.clock compiler after allowed [expression] [output]) :
+    ∃ nextKnown converted targetInstalled extraClock finalG targetResult targetFinal,
+      compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) ∧
+      doInstall targetValues target = (.val converted.1, targetInstalled) ∧
+      doInstall targetValues { target with clock := target.clock + extraClock } =
+        (.val converted.1, { targetInstalled with clock := targetInstalled.clock + extraClock }) ∧
+      IncrementalInstallReady (nextKnown, converted.2 ++ g.2) installed targetInstalled ∧
+      stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      stateExtends (nextKnown, converted.2 ++ g.2) finalG ∧
+      evaluate converted.1 [] { targetInstalled with clock := targetInstalled.clock + extraClock } =
+        (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨expressions, _, _, _, _, _, resultEq, exprEq, _, _, _, _, _, _, _, _⟩ :=
+    doInstall_nonType_ready fuel relationFuel g allowed compiler source target sourceValues targetValues
+      (.val program) installed ready states values sourceCompiler targetCompiler targetOracle installRun (by simp)
+  have nonzero : source.clock ≠ 0 := by
+    intro zero
+    simp [zero] at resultEq
+  have programEq : program = (source.compileOracle 0).2.1 := by
+    have : program = expressions := by simpa [nonzero] using resultEq
+    exact this.trans exprEq
+  have distinct : (codeLocations program).Nodup := by simpa [programEq] using ready.distinct 0
+  have fresh : LabelsFresh (codeLocations program) g := by
+    apply labelsFresh_of_codeIncludes g (codeLocations program) target.code ready.well.2 ready.included
+    simpa [programEq] using ready.fresh 0
+  apply doInstall_success_evaluate_withClock fuel relationFuel g allowed compiler source target sourceValues targetValues
+    program installed result final ready states sourceWf values sourceCompiler targetCompiler targetOracle
+    installRun programRun notType
+  intro nextKnown converted passRun
+  exact compileIncFuel_installedBelow_withClock_from_cases fuel relationFuel source.clock compiler allowed g (program, [])
     nextKnown converted passRun distinct fresh ready.well eligible eligibleIH exprIH
 
 end Flapjack.Compiler.Backend.ClosCall
