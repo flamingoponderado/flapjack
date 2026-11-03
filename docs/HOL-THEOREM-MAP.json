@@ -1916,6 +1916,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateSequence.lean",
+    "lean_name": "evaluate_remove_ticks_cons",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the first evaluate_remove_ticks_typed conjunct and the list case of evaluate_ind_typed in clos_known_syntax_probe.out. The target head and successful-tail induction hypotheses have their original scope; the target run, related environments and states, code relation, and existential extra source clock, result and state retain the original conclusion. The proof uses non-timeout clock extension to combine the two source allowances, without an additional hypothesis. State refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "remove_ticks_Var_IMP_mk_Ticks",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Evaluate.lean",
     "lean_name": "remove_ticks_Var_IMP_mk_Ticks",
