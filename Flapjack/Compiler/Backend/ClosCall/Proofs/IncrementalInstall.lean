@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalCode
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantDirectCall
+import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantListSimulation
+import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallWellformed
 
 /-! Incremental installation under direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -366,5 +368,141 @@ theorem doInstall_nonType_ready {C F : Type} (fuel relationFuel : Nat) (g : Stat
       exact laterFresh index loc member
   refine ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
     nonempty, extended, newReady, finalStates, finalCompiler, targetFinalCompiler, oracleEq, growth⟩
+
+/-- A successfully installed source program can use the list-simulation
+induction hypothesis at the compiler state produced by the actual incremental
+pass. This is the installed-program part of the Lean-side simulation; the
+argument evaluation and preservation of the oracle invariant through the
+program remain separate obligations. -/
+theorem doInstall_success_evaluate {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value) (program : List ClosLang.Exp)
+    (installed : ClosSem.State (NumSet × C) F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (ready : IncrementalInstallReady g source target)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (installRun : doInstall sourceValues source = (.val program, installed))
+    (programRun : evaluate program [] installed = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (programIH : ∀ nextKnown converted,
+      compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) →
+      ExprsSimFuelInvariant (C := C) (F := F) relationFuel
+        (nextKnown, converted.2 ++ g.2) allowed program converted.1) :
+    ∃ nextKnown converted targetInstalled targetResult targetFinal,
+      compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) ∧
+      doInstall targetValues target = (.val converted.1, targetInstalled) ∧
+      IncrementalInstallReady (nextKnown, converted.2 ++ g.2) installed targetInstalled ∧
+      stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      evaluate converted.1 [] targetInstalled = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel (nextKnown, converted.2 ++ g.2)
+        allowed targetFinal.code)) (ValueRelFuel relationFuel (nextKnown, converted.2 ++ g.2)
+        allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel (nextKnown, converted.2 ++ g.2) allowed final targetFinal ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨expressions, converted, nextKnown, targetInstalled, passRun, targetRun, resultEq,
+    _, _, extended, newReady, newStates, _, _, _, installGrowth⟩ :=
+    doInstall_nonType_ready fuel relationFuel g allowed compiler source target sourceValues targetValues
+      (.val program) installed ready states values sourceCompiler targetCompiler targetOracle installRun (by simp)
+  have nonzero : source.clock ≠ 0 := by
+    intro zero
+    simp [zero] at resultEq
+  have programEq : program = expressions := by simpa [nonzero] using resultEq
+  have programPass : compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) := by
+    simpa [programEq] using passRun
+  have targetInstall : doInstall targetValues target = (.val converted.1, targetInstalled) := by
+    simpa [nonzero] using targetRun
+  have installedWf := doInstall_wellFormedFuel sourceValues source installed (.val program)
+    sourceWf (ready.auxEmpty 0) installRun
+  have installedWf' := stateWellFormedFuel_mono installedWf extended Set.Subset.rfl installGrowth
+  have envs : EnvRelFuel relationFuel (nextKnown, converted.2 ++ g.2) allowed targetInstalled.code
+      [] [] 0 (converted.1.map (0, ·)) := by
+    apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+    simp [envRel]
+  have envWf : ValuesWellFormedFuel relationFuel (nextKnown, converted.2 ++ g.2) allowed
+      targetInstalled.code [] := .nil
+  obtain ⟨targetResult, targetFinal, targetEval, related, finalStates, bodyGrowth⟩ :=
+    programIH nextKnown converted programPass [] [] installed targetInstalled result final programRun notType
+      envs envWf installedWf' newStates
+  exact ⟨nextKnown, converted, targetInstalled, targetResult, targetFinal, programPass, targetInstall,
+    newReady, extended, targetEval, related, finalStates,
+    fun key entry found => bodyGrowth key entry (installGrowth key entry found)⟩
+
+/-- Related nonempty result lists have related HOL last elements. This is
+used by the install evaluator, which returns only the installed program's
+last result. -/
+theorem forall₂_holLast {A B : Type} [Nonempty A] [Nonempty B] {R : A → B → Prop}
+    {xs : List A} {ys : List B} (related : List.Forall₂ R xs ys) (nonempty : xs ≠ []) :
+    R (holLast xs) (holLast ys) := by
+  induction related with
+  | nil => exact (nonempty rfl).elim
+  | @cons a b as bs head tail ih =>
+    cases tail with
+    | nil => simpa [holLast] using head
+    | @cons a' b' as' bs' head' tail' =>
+      simp only [holLast]
+      exact ih (by simp)
+
+/-- Returning the last value of a nonempty installed program preserves the
+result relation, including exceptions and aborts. -/
+theorem resultRel_install_last {C F : Type} {R : ClosSem.Value → ClosSem.Value → Prop}
+    (program : List ClosLang.Exp) (start last : ClosSem.State C F)
+    (source target : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (programNonempty : program ≠ []) (run : evaluate program [] start = (source, last))
+    (related : resultRel (List.Forall₂ R) R source target) :
+    resultRel (List.Forall₂ R) R
+      (match source with
+       | .err error => .err error
+       | .val values => .val [@holLast ClosSem.Value ⟨unitValue⟩ values])
+      (match target with
+       | .err error => .err error
+       | .val values => .val [@holLast ClosSem.Value ⟨unitValue⟩ values]) := by
+  cases source with
+  | err error =>
+    cases target with
+    | err targetError => exact related
+    | val values => exact related.elim
+  | val values =>
+    cases target with
+    | err error => exact related.elim
+    | val targets =>
+      have length := (evaluate_length (C := C) (F := F)).1 program [] start last values run
+      have valuesNonempty : values ≠ [] := by
+        intro empty
+        subst values
+        exact programNonempty (List.eq_nil_of_length_eq_zero length.symm)
+      exact .cons (@forall₂_holLast ClosSem.Value ClosSem.Value ⟨unitValue⟩ ⟨unitValue⟩ R
+        values targets related valuesNonempty) .nil
+
+/-- A successful installation supplies the nonempty-program premise needed
+to relate the evaluator's final-value results. -/
+theorem doInstall_success_resultRel_last {C F : Type} {R : ClosSem.Value → ClosSem.Value → Prop}
+    (values : List ClosSem.Value) (source installed last : ClosSem.State C F)
+    (program : List ClosLang.Exp)
+    (sourceResult targetResult : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (installRun : doInstall values source = (.val program, installed))
+    (programRun : evaluate program [] installed = (sourceResult, last))
+    (related : resultRel (List.Forall₂ R) R sourceResult targetResult) :
+    resultRel (List.Forall₂ R) R
+      (match sourceResult with
+       | .err error => .err error
+       | .val results => .val [@holLast ClosSem.Value ⟨unitValue⟩ results])
+      (match targetResult with
+       | .err error => .err error
+       | .val results => .val [@holLast ClosSem.Value ⟨unitValue⟩ results]) := by
+  obtain ⟨_, _, _, _, _, expressions, _, _, _, _, _, _, _, _, _, _, nonempty, _, resultEq⟩ :=
+    doInstall_nonType_parts values source installed (.val program) installRun (by simp)
+  have programEq : program = expressions := by
+    split at resultEq <;> simp_all
+  have programNonempty : program ≠ [] := by simpa [programEq] using nonempty
+  have lastRelated := resultRel_install_last program installed last sourceResult targetResult
+    programNonempty programRun related
+  cases sourceResult <;> cases targetResult <;> exact lastRelated
 
 end Flapjack.Compiler.Backend.ClosCall
