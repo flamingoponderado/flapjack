@@ -1,6 +1,30 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_changed_globals_cases",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OpGlobals.lean",
+  "lean_name": "knownOpChangedGlobalsCases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_op_changed_globals_cases_typed in clos_known_syntax_probe.out with the source statement. The arbitrary successful output lookup implies either the identical input lookup or membership in the operation write bag. The spt carrier has the literal source constructors and lookup; membership in SET_OF_BAG is nonzero natural multiplicity. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_changed_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OpGlobals.lean",
+  "lean_name": "knownOpChangedGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_op_changed_globals_typed in clos_known_syntax_probe.out with the source statement. The output-domain membership and conditional input-domain change premises imply membership in the operation write bag. The spt carrier has the literal source constructors and lookup; membership in SET_OF_BAG is nonzero natural multiplicity. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_changed_globals_alt_set",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OpGlobals.lean",
+  "lean_name": "knownOpChangedGlobalsAltSet",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_op_changed_globals_alt_set_typed in clos_known_syntax_probe.out with the source statement. The result domain is a subset of the input domain union the operation write bag, stated pointwise. The spt carrier has the literal source constructors and lookup; membership in SET_OF_BAG is nonzero natural multiplicity. Source comparison and Lean checking do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "mapped_globals_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/MappedGlobals.lean",
   "lean_name": "mappedGlobals",

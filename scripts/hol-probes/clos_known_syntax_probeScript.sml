@@ -64,3 +64,6 @@ val _ = show "mglobals_extend_refl_typed=" clos_knownProofTheory.mglobals_extend
 val _ = show "mglobals_extend_trans_typed=" clos_knownProofTheory.mglobals_extend_trans;
 val _ = show "mglobals_extend_subset_typed=" clos_knownProofTheory.mglobals_extend_SUBSET;
 val _ = show "state_globals_approx_subspt_typed=" clos_knownProofTheory.state_globals_approx_subspt;
+val _ = show "known_op_changed_globals_typed=" clos_knownProofTheory.known_op_changed_globals;
+val _ = show "known_op_changed_globals_cases_typed=" clos_knownProofTheory.known_op_changed_globals_cases;
+val _ = show "known_op_changed_globals_alt_set_typed=" clos_knownProofTheory.known_op_changed_globals_alt_set;
