@@ -23,6 +23,7 @@ val _ = show "evaluate_mk_ticks_typed" clos_ticksProofTheory.evaluate_mk_Ticks;
 val _ = show "evaluate_remove_ticks_typed" clos_ticksProofTheory.evaluate_remove_ticks;
 val _ = show "remove_var_ticks_typed" clos_ticksProofTheory.remove_ticks_Var_IMP_mk_Ticks;
 val _ = show "remove_raise_ticks_typed" clos_ticksProofTheory.remove_ticks_Raise_IMP_mk_Ticks;
+val _ = show "remove_handle_ticks_typed" clos_ticksProofTheory.remove_ticks_Handle_IMP_mk_Ticks;
 val state_rel_dec_clock_replay = Q.prove (
   `clos_ticksProof$state_rel (s1 :('c,'ffi) closSem$state) s2 ==>
    clos_ticksProof$state_rel (closSem$dec_clock 1 s1) (closSem$dec_clock 1 s2)`,
