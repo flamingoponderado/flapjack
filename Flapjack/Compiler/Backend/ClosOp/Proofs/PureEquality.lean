@@ -263,4 +263,63 @@ theorem eqPureThmConstructorMatch {C F : Type} (tx ty : BackendCommon.Tra)
   rw [result]
   exact recResult
 
+/-- One-constructor branch when the other value has a different tag or field
+count: the source tag-and-length test short-circuits to false. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "eq_pure_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem eqPureThmOneConstructorMismatch {C F : Type} (tx : BackendCommon.Tra)
+    (tagX tagY : Nat) (xs : List ClosLang.Exp) (y : ClosLang.Exp)
+    (vx : Value) (fieldsY : List Value) (env : List Value) (s : State C F) (b : Bool)
+    (direct : directEq (.op tx (.blockOp (.cons tagX)) xs) y = none)
+    (noY : cons y = none)
+    (different : (tagX != tagY || xs.length != fieldsY.length) = true)
+    (h : evaluate [.op tx (.blockOp (.cons tagX)) xs, y] env s =
+        (.val [vx, .block tagY fieldsY], s) ∧
+      SimpleExp (.op tx (.blockOp (.cons tagX)) xs) ∧ SimpleExp y ∧
+      doEq vx (.block tagY fieldsY) = .val b) :
+    evaluate [eqPure (.op tx (.blockOp (.cons tagX)) xs) y] env s =
+      (.val [boolValue b], s) := by
+  obtain ⟨runX, runY⟩ := purePair _ _ vx (.block tagY fieldsY) env s h.2.1 h.1
+  obtain ⟨valuesX, _, rfl, lenX⟩ := pureConstructor tx tagX xs env s vx runX
+  have mismatch : ¬(tagX = tagY ∧ valuesX.reverse.length = fieldsY.length) := by
+    simp only [Bool.or_eq_true, bne_iff_ne] at different
+    simp only [List.length_reverse, lenX]
+    rcases different with hd | hl
+    · exact fun h => hd h.1
+    · exact fun h => hl h.2
+  have bFalse : b = false := by
+    have eq := h.2.2.2
+    rw [doEq, if_neg mismatch] at eq
+    cases eq
+    rfl
+  subst b
+  let fields := (xs.reverse.zip (List.range xs.length)).map fun p =>
+    (p.1, ClosLang.Exp.op .none (.blockOp (.elemAt p.2)) [y])
+  have flatten (e : ClosLang.Exp) (tree : Flapjack.AppList ClosLang.Exp) :
+      Flapjack.appListAppend (.append (.list [e]) tree) = e :: Flapjack.appListAppend tree := by
+    rw [(Flapjack.appListAppend_thm (.list [e]) tree []).1]
+    rfl
+  have result : eqPure (.op tx (.blockOp (.cons tagX)) xs) y =
+      conjList (.op .none (.blockOp (.tagLenEq tagX xs.length)) [y] ::
+        Flapjack.appListAppend (eqPureList fields)) := by
+    unfold eqPure
+    rw [eqPureList, direct]
+    dsimp only
+    split
+    all_goals try solve | simp_all [cons, destOp, destCons]
+    all_goals simp_all [cons, destOp, destCons, fields]
+  have headRun : evaluate [.op .none (.blockOp (.tagLenEq tagX xs.length)) [y]] env s =
+      (.val [boolValue false], s) := by
+    rw [evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp), runY]
+    simp only [Bool.or_eq_true, bne_iff_ne] at different
+    rcases different with hd | hl
+    · have hd' : tagY ≠ tagX := Ne.symm hd
+      have beq : (tagY == tagX) = false := beq_eq_false_iff_ne.mpr hd'
+      simp [doApp, applyBlock, beq]
+    · have hl' : fieldsY.length ≠ xs.length := Ne.symm hl
+      have beq : (fieldsY.length == xs.length) = false := beq_eq_false_iff_ne.mpr hl'
+      simp [doApp, applyBlock, beq]
+  rw [result]
+  exact evaluateConjListFalse _ _ env s headRun
+
 end Flapjack.Compiler.Backend.ClosOp
