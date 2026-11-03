@@ -198,4 +198,71 @@ theorem entry_semantics_eq {C F : Type} (ffi : HolFfiState F) (maxApp sourceStar
   exact initialEvaluationSimulation_of_entry ffi maxApp sourceStart targetStart sourceCode sourceOracle sourceCompiler
     targetCode targetOracle targetCompiler generic partialStubs force oracle compiledCode annotations entry
 
+private def toBroad (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) := code.lookup
+private def ofBroad (lookup : Nat → Option (Nat × ClosLang.Exp))
+    (finite : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat (Nat × ClosLang.Exp) := ⟨lookup, finite⟩
+
+/-- The source-code finite map roundtrips through its lookup/support view. -/
+theorem holFmapAsFiniteSupportParamWitness_initCodeRelation_code1
+    (code1 : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code1) code1.finiteSupport).lookup key = code1.lookup key ∧
+    (ofBroad (toBroad code1) code1.finiteSupport).finiteSupport = code1.finiteSupport ∧
+    ofBroad (toBroad code1) code1.finiteSupport = code1 := by
+  cases code1
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Installed generic and partial-application stubs and compiled source code. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "init_code_def"
+  (fmap_as_finite_support_parameters := [code1])]
+def initCodeRelation (code1 : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (code2 : Spt (Nat × Bvl.Exp)) (maxApp : Nat) : Prop :=
+  (∀ n, n < maxApp → sptLookup (genericAppFnLocation n) code2 =
+    some (n + 2, generateGenericApp maxApp n)) ∧
+  (∀ total previous, total < maxApp ∧ previous < total →
+    sptLookup (partialAppFnLocation maxApp total previous) code2 =
+      some (total + 1 - previous, generatePartialAppClosureFn total previous)) ∧
+  ∀ name arity body, code1.lookup name = some (arity, body) →
+    ∃ aux1 body2 aux2, compileExpsHOL maxApp [body] aux1 = ([body2], aux2) ∧
+      sptLookup (name + numStubs maxApp) code2 = some (arity, body2) ∧ codeInstalled aux2 code2
+
+/-- The source-code map used by program semantics has the same codec. -/
+theorem holFmapAsFiniteSupportParamWitness_compileProgSemantics_source_code1
+    (code1 : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code1) code1.finiteSupport).lookup key = code1.lookup key ∧
+    (ofBroad (toBroad code1) code1.finiteSupport).finiteSupport = code1.finiteSupport ∧
+    ofBroad (toBroad code1) code1.finiteSupport = code1 :=
+  holFmapAsFiniteSupportParamWitness_initCodeRelation_code1 code1 key
+
+/-- Program-level observational preservation with the original installed-code,
+annotation, oracle, and non-failure hypotheses. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_prog_semantics"
+  (fmap_as_finite_support_parameters := [code1])]
+theorem compileProgSemantics_source {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+    (code1 : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (co1 : ClosSem.CompileOracle C)
+    (cc1 : ClosSem.Compiler C) (start : Nat) (code2 : Spt (Nat × Bvl.Exp))
+    (prog1 : List (Nat × Nat × ClosLang.Exp)) (prog2 : List (Nat × Nat × Bvl.Exp))
+    (nsm1 : Nat) (cc2 : BvlSem.Compiler C) (co2 : BvlSem.CompileOracle C)
+    (hypotheses :
+      ClosSem.semantics ffi maxApp code1 co1 cc1 [.call .none 0 start []] ≠ .fail ∧
+      (∀ name arity body, code1.lookup name = some (arity, body) →
+        ∃ aux1 body2 aux2, compileExpsHOL maxApp [body] aux1 = ([body2], aux2) ∧
+          sptLookup (name + numStubs maxApp) code2 = some (arity, body2) ∧ codeInstalled aux2 code2) ∧
+      compileProgExpsHOL maxApp prog1 = prog2 ∧ initCodeRelation code1 code2 maxApp ∧
+      (∀ name arity body, code1.lookup name = some (arity, body) → ClosProps.everyFnLocationSome [body]) ∧
+      (∀ name arity body, code1.lookup name = some (arity, body) → ClosProps.everyFnVarsSome [body]) ∧
+      sptLookup nsm1 code2 = some (0, initGlobals maxApp (numStubs maxApp + start)) ∧
+      sptLookup (numStubs maxApp - 2) code2 = some (2, forceThunkCode) ∧
+      compileOracleInv maxApp code1 cc1 co1 code2 cc2 co2 ∧ codeInstalled prog2 code2) :
+    BvlSem.semantics ffi code2 co2 cc2 nsm1 =
+      ClosSem.semantics ffi maxApp code1 co1 cc1 [.call .none 0 start []] := by
+  rcases hypotheses with ⟨nonfail, compiled, _, ⟨generic, partialStubs, _⟩, locations, vars, entry, force, oracle, _⟩
+  apply entry_semantics_eq ffi maxApp start nsm1 code1 co1 cc1 code2 co2 cc2 nonfail generic
+    ?_ force oracle compiled ?_ ?_
+  · intro total previous bounds
+    have arithmetic : total + 1 - previous = total - previous + 1 := by omega
+    simpa [arithmetic] using partialStubs total previous bounds
+  · simpa [codeAnnotations, ClosSem.initialState] using And.intro locations vars
+  · simpa [Nat.add_comm] using entry
+
 end Flapjack.Compiler.Backend.ClosToBvl

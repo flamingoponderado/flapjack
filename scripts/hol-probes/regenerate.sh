@@ -341,7 +341,7 @@ run_probe bvl_remove_ticks_probeScript.sml bvl_remove_ticks_probe.out \
   "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_to_bvl_state_relation_probeScript.sml clos_to_bvl_state_relation_probe.out \
-  state_rel_typed state_rel_clock_typed state_rel_refs_lookup_typed cl_rel_rules_typed v_rel_rules_typed env_rel_typed add_args_typed get_num_args_typed code_installed_typed closure_code_installed_typed code_installed_subspt_typed compile_exps_correct_typed \
+  state_rel_typed state_rel_clock_typed state_rel_refs_lookup_typed cl_rel_rules_typed v_rel_rules_typed env_rel_typed add_args_typed get_num_args_typed code_installed_typed closure_code_installed_typed code_installed_subspt_typed init_code_rel_typed compile_prog_semantics_typed compile_exps_correct_typed \
   "$cake_dir/compiler/backend/proofs/clos_to_bvlProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe bvl_sem_values_probeScript.sml bvl_sem_values_probe.out \

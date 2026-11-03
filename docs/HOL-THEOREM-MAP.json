@@ -1,6 +1,25 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "init_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",
+    "lean_name": "initCodeRelation",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["code1"],
+    "reviewer": "Compared init_code_rel_typed: generic and partial stub lookup requirements retain their bounds and original arithmetic, and every source code entry has existential compiled body and installed auxiliary code. The source code parameter uses canonical finite support, with a same-module lookup/support roundtrip; target code remains the HOL sparse tree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "compile_prog_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",
+    "lean_name": "compileProgSemantics_source",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["code1"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared compile_prog_semantics_typed: source and target retain the shared compiler and FFI carriers and all original premises, including the separately stated code compilation, program compilation, initialization, two FEVERY annotations, entry and force stubs, oracle invariant and installed program. The target/source semantics equality is unchanged. FEVERY uses lookup characterization over the canonical source-code map, whose local codec roundtrips lookup and support. The checked proof inherits reals_as_rational_cuts and SOUNDNESS item 8. Typed HOL capture and Lean checking do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
     "hol_name": "compile_exps_correct",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateAll.lean",
     "lean_name": "compileExpsCorrect_source",
