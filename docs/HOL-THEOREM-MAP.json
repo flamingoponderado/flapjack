@@ -1947,6 +1947,73 @@
     "reviewer": "Compared remove_length_typed and remove_sing_eq_typed: for every natural bound and expression list, the optimized source-equivalent list traversal preserves length. No extra hypothesis or changed carrier is present. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
+    "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean",
+    "lean_name": "compile",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_typed and remove_sing_eq_typed: original compile applies remove_fvs to the input list at bound zero, and the typed source equivalence identifies removeList with that original traversal. compileBounded_eq_source proves the executed list retry returns this result. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml",
+    "hol_name": "compile_inc_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean",
+    "lean_name": "compileInc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_inc_typed: the first input component is compiled and the second is discarded; the arbitrary input auxiliary type and output list element type remain independent. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "code_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Relations.lean",
+    "lean_name": "CodeRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_rel_typed and remove_sing_eq_typed: the target list equals source removal at the same bound, using the reviewed list traversal equivalent to original remove_fvs. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "f_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Relations.lean",
+    "lean_name": "FunctionRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared function_rel_typed: both pairs have independent original arities and bodies; the arities are equal and the singleton code relation uses source arity plus the given bound. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "v_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Relations.lean",
+    "lean_name": "ValueRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all seven value_rel_typed rules and the reviewed closure-value carrier: scalar payloads, block list relation, shared closure location, related captured and argument environments, source-shaped singleton code relation, and recursive bundle relation with source environment and bundle lengths are retained. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "ref_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Relations.lean",
+    "lean_name": "RefRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared ref_rel_typed: byte arrays retain identical bytes, value arrays are pointwise related, and thunks retain their mode while relating their payloads. The fixed byte width and closure-value carriers are reviewed exact. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Relations.lean",
+    "lean_name": "StateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared state_rel_typed: empty oracle auxiliary lists and code maps, max-application positivity and equality, clock and FFI equality, related global slots and reference entries, and the original pure compiler/oracle adapters are retained. Pointwise optional lookup states equal domains and related present entries, matching HOL fmap_rel. The two states share the original independent compiler and FFI carriers and canonical refs and code fields, with a local broad-state roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "evaluate_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Evaluate.lean",
+    "lean_name": "evaluate_remove_fvs_nil",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the empty-list case of the first evaluate_remove_typed conjunct: the source evaluation equation, related environments, related states, and original code relation at the source environment length are retained, as are the existential target result and state and all three conclusions. The case adds no induction or other premise. The closure state has the canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining evaluator cases."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
     "hol_name": "semantics_annotate",
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/InstalledSemantics.lean",

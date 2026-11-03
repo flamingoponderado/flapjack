@@ -345,7 +345,7 @@ run_probe clos_known_syntax_probeScript.sml clos_known_syntax_probe.out \
   "$cake_dir/compiler/backend/proofs/clos_knownProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_fvs_correctness_probeScript.sml clos_fvs_correctness_probe.out \
-  remove_sing_typed remove_sing_eq_typed remove_length_typed compile_typed compile_inc_typed value_rel_typed state_rel_typed evaluate_remove_typed semantics_compile_typed \
+  remove_sing_typed remove_sing_eq_typed remove_length_typed compile_typed compile_inc_typed code_rel_typed function_rel_typed value_rel_typed ref_rel_typed state_rel_typed evaluate_remove_typed semantics_compile_typed \
   "$cake_dir/compiler/backend/proofs/clos_fvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe db_vars_definitions_probeScript.sml db_vars_definitions_probe.out \

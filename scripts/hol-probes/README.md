@@ -132,9 +132,10 @@ singleton/list equations, including arbitrary installed code.
 operations used by closure annotation, including sparse-tree traversal order.
 
 `clos_fvs_correctness_probe.out` captures the source traversal, optimized
-singleton/list equations, length and compiler definitions, value and state
-relations, evaluator simulation and whole-program correctness statement.
-These captures support review; the evaluator correctness proof remains open.
+singleton/list equations, length and compiler definitions, code, function,
+value, reference and state relations, evaluator simulation and whole-program
+correctness statement. These captures support review; the evaluator proof
+currently covers only the empty-list case.
 
 `clos_interp_review_probe.out` captures the typed installation traversal,
 interpreter expressions, optimizer, initializer, attachment and incremental

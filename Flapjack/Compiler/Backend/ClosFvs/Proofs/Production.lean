@@ -89,4 +89,9 @@ theorem removeBounded_list_eq_source (fuel bound : Nat) (expressions : List Exp)
   | cons first rest ih =>
     simp [removeList, removeBounded_eq_source, ih]
 
+/-- The executable closed-program cleanup implements the source compiler. -/
+theorem compileBounded_eq_source (fuel : Nat) (expressions : List Exp) :
+    expressions.mapM (removeBounded fuel 0) = some (compile expressions) :=
+  removeBounded_list_eq_source fuel 0 expressions
+
 end Flapjack.Compiler.Backend.ClosFvs

@@ -48,4 +48,14 @@ theorem removeList_length (bound : Nat) (xs : List Exp) : (removeList bound xs).
   | nil => rfl
   | cons x xs ih => simp [removeList, ih]
 
+/-- Free-variable removal for a closed program. -/
+@[hol "cakeml/compiler/backend/clos_fvsScript.sml" "compile_def"]
+def compile (expressions : List Exp) : List Exp := removeList 0 expressions
+
+/-- Incremental removal discards the auxiliary component. The input type and
+output auxiliary element type are independent as in HOL. -/
+@[hol "cakeml/compiler/backend/clos_fvsScript.sml" "compile_inc_def"]
+def compileInc {α β : Type} (program : List Exp × α) : List Exp × List β :=
+  (compile program.1, [])
+
 end Flapjack.Compiler.Backend.ClosFvs
