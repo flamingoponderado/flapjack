@@ -314,6 +314,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Inline.DecisionCorrect
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxValue
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateGlobalsApprox
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.MergeTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ZeroInlineTotal
 import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftTotal

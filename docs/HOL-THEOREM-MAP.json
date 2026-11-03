@@ -1,6 +1,90 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_globals_approx_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateGlobalsApprox.lean",
+  "lean_name": "stateGlobalsApprox",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared state_globals_approx_typed in clos_known_syntax_probe.out. The quantified key, value and approximation, successful nested global lookup and spt lookup, and value relation match. The closure state uses the witnessed canonical finite-support refs and code maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_globals_approx_clock_fupd",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateGlobalsApprox.lean",
+  "lean_name": "stateGlobalsApproxClock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared state_globals_clock_typed in clos_known_syntax_probe.out. The clock update function has type Nat \u2192 Nat. The closure state uses the witnessed canonical finite-support refs and code maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_globals_approx_dec_clock",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateGlobalsApprox.lean",
+  "lean_name": "stateGlobalsApproxDecClock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared state_globals_dec_clock_typed in clos_known_syntax_probe.out. The clock decrement and state retain the source argument types. The closure state uses the witnessed canonical finite-support refs and code maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_globals_approx_refsfupd",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateGlobalsApprox.lean",
+  "lean_name": "stateGlobalsApproxRefs",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared state_globals_refs_typed in clos_known_syntax_probe.out. The update function acts on the canonical finite map of references. The closure state uses the witnessed canonical finite-support refs and code maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_globals_approx_ffifupd",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateGlobalsApprox.lean",
+  "lean_name": "stateGlobalsApproxFfi",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared state_globals_ffi_typed in clos_known_syntax_probe.out. The FFI update is polymorphic in distinct input and output FFI carriers; the remaining state fields are preserved. The closure state uses the witnessed canonical finite-support refs and code maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_globals_approx_codeupd",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateGlobalsApprox.lean",
+  "lean_name": "stateGlobalsApproxCode",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared state_globals_code_typed in clos_known_syntax_probe.out. The update function acts on the canonical finite map of code entries. The closure state uses the witnessed canonical finite-support refs and code maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_globals_approx_coupd",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateGlobalsApprox.lean",
+  "lean_name": "stateGlobalsApproxOracle",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "reviewer": "Compared state_globals_oracle_typed in clos_known_syntax_probe.out. The oracle update preserves the polymorphic compiler configuration and source program tuple. The closure state uses the witnessed canonical finite-support refs and code maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "val_approx_val",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxValue.lean",
   "lean_name": "ValApproxVal",
