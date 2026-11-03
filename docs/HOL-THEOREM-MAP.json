@@ -3,6 +3,45 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
   "hol_name": "lift_exps_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftEvaluate.lean",
+  "lean_name": "liftExpsThmCons",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Constructor functional-induction case: the source matcher determines the constructor, and the two induction hypotheses are exactly the source statement for its arguments and the tail at the first recursive result. Independent compiler and FFI state types use the canonical refs and code maps with a local roundtrip witness; the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "lift_exps_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftEvaluate.lean",
+  "lean_name": "liftExpsThm",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Full theorem assembled by the original lifting functional induction. Its quantified expressions, state carriers, hypotheses, existential result, error implication and universally quantified reconstruction conclusion match lift_exps_thm_typed. Independent compiler and FFI state types use the canonical refs and code maps with a local roundtrip witness; the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "lift_exps_Let",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftEvaluate.lean",
+  "lean_name": "liftExpsLet",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared lift_exps_let_typed: lifting a singleton with empty initial bindings and evaluating the original imply evaluation of the source Let with the same result and state. Independent compiler and FFI state types use the canonical refs and code maps with a local roundtrip witness; the clocked evaluator inherits the rational-cut real representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "lift_exps_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftEvaluate.lean",
   "lean_name": "liftExpsThmBind",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
@@ -10,7 +49,7 @@
     "code"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared lift_exps_thm_typed and the original lift_exps functional induction: this is the general binding case with the source false dont_lift and absent dest_Op dest_Cons guards, and the sole induction hypothesis is the original statement for the tail with the extended accumulator and incremented index. Its conclusion retains the original result, error, state and arbitrary-environment obligations. The independent compiler and FFI state parameters use the canonical refs and code maps and the local roundtrip witness; the evaluator inherits the rational-cut real representation. The complete theorem still requires the constructor case and assembly."
+  "reviewer": "Compared lift_exps_thm_typed and the original lift_exps functional induction: this is the general binding case with the source false dont_lift and absent dest_Op dest_Cons guards, and the sole induction hypothesis is the original statement for the tail with the extended accumulator and incremented index. Its conclusion retains the original result, error, state and arbitrary-environment obligations. The independent compiler and FFI state parameters use the canonical refs and code maps and the local roundtrip witness; the evaluator inherits the rational-cut real representation. This row records only the general binding case."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
