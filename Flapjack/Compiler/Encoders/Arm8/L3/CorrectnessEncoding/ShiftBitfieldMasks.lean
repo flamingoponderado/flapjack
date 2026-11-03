@@ -69,9 +69,8 @@ theorem wmask_lsr (n : Nat) (hn : n < 64) :
 /-- `arm8_targetProofScript.sml`'s `lsr`: masking the rotate right by the
 `Lsr` masks is the logical shift right. -/
 theorem lsr_mask (x : BitVec 64) (n : Nat) (hn : n < 64) :
-    ((Replicate (TN := 64) (holPadLeft false 64 (Ones (63 - n + 1))) &&&
-        Replicate (TN := 64) (holRotate (holPadLeft false 64 (Ones 64)) n)) &&&
-      x.rotateRight n) = x >>> n := by
+    ((x.rotateRight n &&& Replicate (TN := 64) (holRotate (holPadLeft false 64 (Ones 64)) n)) &&&
+      Replicate (TN := 64) (holPadLeft false 64 (Ones (63 - n + 1)))) = x >>> n := by
   rw [wmask_lsr n hn, BitVec.and_allOnes]
   apply BitVec.eq_of_getLsbD_eq
   intro i hi
@@ -200,7 +199,20 @@ theorem arm8LsrMaskIdentity (n : Nat) (x wmask tmask : BitVec 64) (hn : n < 64)
   rw [decodeBitMasks_lsr n hn] at hmasks
   have hp := Option.some.inj hmasks
   rw [← (Prod.mk.inj hp).1, ← (Prod.mk.inj hp).2]
-  exact lsr_mask x n hn
+  calc (Replicate (TN := 64) (holPadLeft false 64 (Ones (63 - n + 1))) &&&
+        Replicate (TN := 64) (holRotate (holPadLeft false 64 (Ones 64)) n)) &&& x.rotateRight n
+      = x.rotateRight n &&&
+        (Replicate (TN := 64) (holPadLeft false 64 (Ones (63 - n + 1))) &&&
+          Replicate (TN := 64) (holRotate (holPadLeft false 64 (Ones 64)) n)) :=
+        BitVec.and_comm _ _
+    _ = x.rotateRight n &&&
+        (Replicate (TN := 64) (holRotate (holPadLeft false 64 (Ones 64)) n) &&&
+          Replicate (TN := 64) (holPadLeft false 64 (Ones (63 - n + 1)))) := by
+        rw [BitVec.and_comm (Replicate (TN := 64) (holPadLeft false 64 (Ones (63 - n + 1))))]
+    _ = (x.rotateRight n &&& Replicate (TN := 64) (holRotate (holPadLeft false 64 (Ones 64)) n)) &&&
+          Replicate (TN := 64) (holPadLeft false 64 (Ones (63 - n + 1))) :=
+        (BitVec.and_assoc _ _ _).symm
+    _ = x >>> n := lsr_mask x n hn
 
 /-- HOL `lsl`: masking the rotate right by the `DecodeBitMasks` masks at
 `(1, q, r, F)` with `r = -n` and `q = r + 63w` is the logical shift left. -/
