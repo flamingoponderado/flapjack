@@ -25,10 +25,12 @@ open Flapjack.Compiler.Encoders.Arm8.L3
 open Flapjack.Compiler.Encoders.Arm8.L3.Target
 open Flapjack.Compiler.Backend.BackendProof
 
-/-- CakeML's `is_arm8_machine_config` (`arm8_configProofScript.sml`) over the L3
-`arm8_state` carrier and the L3 `arm8_proj` projection.  The register roles,
-callee-saved set and target are HOL's; only the state/projection carriers are
-the L3 ones. -/
+/-- HOL `is_arm8_machine_config_def` (`arm8_configProofScript.sml:11-18`):
+`mc.target = arm8_target`, the four heap registers are 1/0/3/2 and the
+callee-saved registers are `[19; 20; ...; 28]`, over the L3 `arm8_state`
+carrier and the L3 `arm8_proj` projection. -/
+@[hol "cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml"
+  "is_arm8_machine_config_def"]
 def isArm8MachineConfigL3
     (mc : MachineConfig 64 arm8_state Arm8L3Projection) : Prop :=
   mc.target = arm8TargetL3 ∧
@@ -38,9 +40,12 @@ def isArm8MachineConfigL3
   mc.ptr2Reg = 2 ∧
   mc.calleeSavedRegs = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
 
-/-- `is_arm8_machine_config mc ⇒ mc_conf_ok mc` at the L3 ARMv8 target: the
+/-- HOL `arm8_machine_config_ok` (`arm8_configProofScript.sml:61-72`):
+`is_arm8_machine_config mc ⇒ mc_conf_ok mc` at the L3 ARMv8 target: the
 encoder-correctness component is `arm8EncoderCorrectL3`, the encoding
 invariant `arm8ConfigL3_encOk`, and the register guards are decided. -/
+@[hol "cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml"
+  "arm8_machine_config_ok"]
 theorem arm8MachineConfigOkL3
     (mc : MachineConfig 64 arm8_state Arm8L3Projection)
     (h : isArm8MachineConfigL3 mc) :
@@ -53,8 +58,10 @@ theorem arm8MachineConfigOkL3
     simp only [arm8TargetL3_config, hlen, hptr, hlen2, hptr2, arm8ConfigL3]
     decide
 
-/-- `arm8_init_ok` at the L3 ARMv8 target and CakeML's ARMv8 backend
-configuration. -/
+/-- HOL `arm8_init_ok` (`arm8_configProofScript.sml:75-78`):
+`is_arm8_machine_config mc ⇒ mc_init_ok arm8_config arm8_backend_config mc`
+at the L3 ARMv8 target and CakeML's ARMv8 backend configuration. -/
+@[hol "cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml" "arm8_init_ok"]
 theorem arm8InitOkL3 (mc : MachineConfig 64 arm8_state Arm8L3Projection) :
     isArm8MachineConfigL3 mc →
       mcInitOk arm8ConfigL3 pancakeArm8BackendConfig mc := by

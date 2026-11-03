@@ -13,12 +13,12 @@ pinned HOL model states its bit-vector helpers over `bitstring` (`bool list`,
 most-significant bit first) and `fcp` (`bool ** 'N`), and uses the HOL list,
 set, word and integer libraries.  These helpers implement the corresponding
 HOL equations; they are untagged infrastructure because they are total Lean
-renderings of total HOL functions whose out-of-range cases (notably `HD []`
-and `MOD 0`) are unspecified in HOL.  `integer$Num` is not one of those: HOL
-specifies it for negative arguments too (`Num_neg`, `Num (-a) = Num a`), and
-`Int.natAbs` implements that equation exactly.  Every caller keeps its
-original bounds; helper availability does not certify an unreviewed model
-equation.
+renderings of total HOL functions whose out-of-range cases (notably `HD []`)
+are unspecified in HOL.  `integer$Num` and `MOD` are not among those: HOL
+specifies `Num (-a) = Num a` (`Num_neg`) and `k MOD 0 = k` (`MOD_0`,
+`arithmeticScript.sml:2579`), and `Int.natAbs` and Lean's `%` implement those
+equations exactly.  Every caller keeps its original bounds; helper
+availability does not certify an unreviewed model equation.
 
 The `fcp` carrier `bool ** 'N` is rendered as `BitVec N` by
 `scripts/hol_terms_to_lean.py`; the conversions below are the only bridge

@@ -15,6 +15,7 @@ Var = M['Var']
 Const = M['Const']
 Comb = M['Comb']
 Ty = M['Ty']
+TyVar = M['TyVar']
 Renderer = M['Renderer']
 Unrenderable = M['Unrenderable']
 insert_predicate = M['insert_predicate']
@@ -94,6 +95,13 @@ class InsertTest(unittest.TestCase):
         self.assertEqual(self.render(Lam(Var('x', NUM), Var('x', NUM)), Var('s', NUM),
                                      ['(fun x => x)', 's']),
                          '(fun x => x = (fun x => x) || s x)')
+
+    def test_escaped_primed_variable_is_compared_by_identifier(self):
+        # `x'` is not in `env`, so `Renderer.var` escapes it as `«x'»`; the
+        # binder must still skip `x'` and take `x''` rather than compare the
+        # escaped text with the plain name.
+        self.assertEqual(self.render(Var('x', NUM), Var("x'", NUM), ['x', '«x\'»']),
+                         "(fun x'' => x'' = x || «x'» x'')")
 
 
 
@@ -178,10 +186,24 @@ class BitFieldInsertRenderTest(unittest.TestCase):
 class WidthExprTest(unittest.TestCase):
     def test_width_one_type_is_one_bit(self):
         # HOL's `one` index type is `one$one`, not an `fcp` op.
-        self.assertEqual(M['width_expr'](Ty('one', 'one', ())), 1)
-        self.assertEqual(M['width_expr'](Ty('fcp', 'bit1', (Ty('one', 'one', ()),))), 3)
-        self.assertEqual(M['width_expr'](word(1)), 1)
-        self.assertEqual(M['width_expr'](word(16)), 16)
+        self.assertEqual(M['dimension_expr'](Ty('one', 'one', ())), 1)
+        self.assertEqual(M['dimension_expr'](Ty('fcp', 'bit1', (Ty('one', 'one', ()),))), 3)
+        self.assertEqual(M['word_width_expr'](word(1)), 1)
+        self.assertEqual(M['word_width_expr'](word(16)), 16)
+
+    def test_type_variable_index_is_a_dimension_variable(self):
+        # The renderer prefixes type variables (`N` -> `TN`).
+        self.assertEqual(M['dimension_expr'](TyVar('N')), 'TN')
+        self.assertEqual(M['word_width_expr'](
+            Ty('fcp', 'cart', (Ty('min', 'bool', ()), TyVar('N')))), 'TN')
+
+    def test_word_width_rejects_non_index_types(self):
+        # An index that is itself a word type denotes `2^8`, not 8; a bare
+        # variable or a non-cart type is not a word.
+        nested = Ty('fcp', 'cart', (Ty('min', 'bool', ()), word(8)))
+        self.assertIsNone(M['word_width_expr'](nested))
+        self.assertIsNone(M['word_width_expr'](TyVar('N')))
+        self.assertIsNone(M['word_width_expr'](Ty('one', 'one', ())))
 
 
 class RenderMultiTest(unittest.TestCase):

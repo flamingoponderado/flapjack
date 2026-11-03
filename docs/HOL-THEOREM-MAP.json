@@ -101318,5 +101318,30 @@
     "statement_status": "reviewed_exact",
     "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the assembling theorem of HOL's arm8_encoder_correct (arm8_targetProofScript.sml:333), whose whole statement is encoder_correct arm8_target. The Lean statement is encoderCorrect arm8TargetL3, the same predicate at the reviewed arm8_target_def rendering with the reviewed arm8_config_def configuration; it carries no hypothesis of its own, exactly as HOL's theorem. HOL proves it by simp with arm8_target_ok (ported as arm8TargetL3_targetOk, reviewed_exact) and then splitting on the instruction; the Lean proof supplies the same target_ok conjunct and dispatches every HolInst constructor to its tagged arm8_encoder_correct case theorem, so no branch hypothesis survives into the assembled statement. The statement's constant closure reaches the (reals_as_rational_cuts)-tagged FP renderings through asmStep's FP updates, so the row records inherits_reals_as_rational_cuts and inherits the SOUNDNESS item 8 real-rendering assumption; the theorem performs no real rendering of its own. This exactness is at the declaration level: the statement or definition was compared clause-for-clause, while the rendered `Defs.lean` equations it unfolds to (`Encode`/`Decode`/`Run`/`NextStateARM8`) remain `pending_statement_review`, so the claim is conditional on that documented mechanical-rendering assumption.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml",
+    "hol_name": "is_arm8_machine_config_def",
+    "lean_path": "Flapjack/Compiler/Backend/Arm8Config/ProofsL3.lean",
+    "lean_name": "isArm8MachineConfigL3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): arm8_configProofScript.sml:11-18 defines is_arm8_machine_config mc <=> mc.target = arm8_target /\\ mc.len_reg = 1 /\\ mc.ptr_reg = 0 /\\ mc.len2_reg = 3 /\\ mc.ptr2_reg = 2 /\\ mc.callee_saved_regs = [19;20;21;22;23;24;25;26;27;28]. The Lean statement is the same six conjuncts in HOL order over MachineConfig 64 arm8_state Arm8L3Projection (HOL's (64, arm8_state, arm8_proj) machine_config), with the tagged arm8TargetL3 standing for arm8_target. The closed-model isArm8MachineConfig is deliberately untagged because its carriers are Arm8State/Arm8Projection; this L3 version is over HOL's carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml",
+    "hol_name": "arm8_machine_config_ok",
+    "lean_path": "Flapjack/Compiler/Backend/Arm8Config/ProofsL3.lean",
+    "lean_name": "arm8MachineConfigOkL3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): arm8_configProofScript.sml:61-72 Theorem arm8_machine_config_ok: is_arm8_machine_config mc ==> mc_conf_ok mc, over the same machine_config. The Lean statement is the same implication with the tagged isArm8MachineConfigL3 and LabToTarget.mcConfOk and no extra premise; the proof discharges the eight mcConfOk conjuncts as HOL does (encoder_correct from the tagged arm8EncoderCorrectL3, the four heap registers and the link register by decide, enc_ok from arm8ConfigL3_encOk, the HOL metis step from asmProps encoder_correct/target_ok). The statement's constant closure reaches the (reals_as_rational_cuts)-tagged FP renderings through arm8TargetL3/asmStep's FP updates, so the row records inherits_reals_as_rational_cuts and inherits the SOUNDNESS item 8 real-rendering assumption; the theorem performs no real rendering of its own.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml",
+    "hol_name": "arm8_init_ok",
+    "lean_path": "Flapjack/Compiler/Backend/Arm8Config/ProofsL3.lean",
+    "lean_name": "arm8InitOkL3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): arm8_configProofScript.sml:75-78 Theorem arm8_init_ok: is_arm8_machine_config mc ==> mc_init_ok arm8_config arm8_backend_config mc. The Lean statement is mcInitOk arm8ConfigL3 pancakeArm8BackendConfig mc under the tagged isArm8MachineConfigL3, i.e. the same three arguments at the tagged arm8_config_def configuration and CakeML's ARMv8 backend configuration; the proof evaluates the concrete stack names through arm8Names_lookup_eq as HOL's EVAL_TAC does. No native_decide."
   }
 ]
