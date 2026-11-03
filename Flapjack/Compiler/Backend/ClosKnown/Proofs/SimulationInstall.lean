@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationDecode
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateRelation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleMonotonic
 
 /-! Installation prerequisites for the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Install
@@ -79,5 +80,97 @@ theorem relatedCompilerCallback {C F : Type} (c : Config) (g : Spt ValApprox)
       simp [callback] at run
       rcases run with ⟨rfl, rfl, rfl, rfl⟩
       exact ⟨rfl, rfl⟩
+
+/-- Shifting both compiler oracles and setting equal clocks preserves the
+state relation after enlarging its approximation tree. This is Flapjack proof
+infrastructure for the installation transition. -/
+theorem relatedShiftedStates {C F : Type} (c : Config) (g next : Spt ValApprox)
+    (s : State (Spt ValApprox × C) F) (t : State C F) (shift clock : Nat)
+    (related : StateRel c g s t) (sub : sptSubspt g next) :
+    StateRel c next { s with clock := clock, compileOracle := Flapjack.holShiftSeq shift s.compileOracle }
+      { t with clock := clock, compileOracle := Flapjack.holShiftSeq shift t.compileOracle } := by
+  have widened := stateRelSubspt c g s t next ⟨related, sub⟩
+  obtain ⟨aux, free, codeS, codeT, _, ffi, maxApp, globals, refs, compiler, oracle⟩ := widened
+  refine ⟨?_, ?_, codeS, codeT, rfl, ffi, maxApp, globals, refs, compiler, ?_⟩
+  · intro n; exact aux (n + shift)
+  · intro n; exact free (n + shift)
+  · rw [oracle]
+    funext n
+    rfl
+
+/-- A non-type-error installation produces related shifted states and either
+the same timeout or the source and optimized oracle programs. This is Flapjack
+proof infrastructure for the optimizer installation case. -/
+theorem relatedInstallNonType {C F : Type} (c : Config)
+    (s : State (Spt ValApprox × C) F) (t : State C F)
+    (sourceValues targetValues : List ClosSem.Value)
+    (result : Result (List ClosLang.Exp) ClosSem.Value)
+    (s1 : State (Spt ValApprox × C) F)
+    (state : StateRel c (nextG s) s t)
+    (mono : OracleMonotonic.oracleGapproxSubspt s.compileOracle)
+    (values : List.Forall₂ (ValueRel c (nextG s)) sourceValues targetValues)
+    (run : doInstall sourceValues s = (result, s1)) (noType : result ≠ .err (.abort .typeError)) :
+    ∃ targetResult t1 program eas tree next,
+      doInstall targetValues t = (targetResult, t1) ∧
+      knownListTotal (resetInlineFactor c) program [] tree = (eas, next) ∧
+      (result = .err (.abort .timeoutError) ∧ targetResult = .err (.abort .timeoutError) ∨
+        result = .val program ∧ targetResult = .val (eas.map Prod.fst)) ∧
+      nextG s1 = next ∧ StateRel c (nextG s1) s1 t1 := by
+  obtain ⟨sourceBytes, sourceWords, targetBytes, targetWords, bytes, words,
+    sourceShape, targetShape, sourceBytesRun, targetBytesRun, sourceWordsRun, targetWordsRun⟩ :=
+    relatedInstallPayload c (nextG s) sourceValues targetValues s s1 result values run noType
+  obtain ⟨sb, sw, bytes', words', configPair, program', auxiliary, nextPair,
+    shape, bytesEq, wordsEq, sourceOracle, callback, _, _, nextOracle, programNonempty, finalState, finalResult⟩ :=
+    doInstall_nonType_parts sourceValues s s1 result run noType
+  rw [sourceShape] at shape
+  simp only [List.cons.injEq, and_true] at shape
+  obtain ⟨rfl, rfl⟩ := shape
+  rw [sourceBytesRun] at bytesEq
+  rw [sourceWordsRun] at wordsEq
+  cases bytesEq
+  cases wordsEq
+  obtain ⟨tree, config, program, eas, next, entry, known, targetOracle⟩ := relatedOracleEntry c (nextG s) s t 0 state
+  rw [entry] at sourceOracle
+  simp only [Prod.mk.injEq] at sourceOracle
+  obtain ⟨rfl, rfl, rfl⟩ := sourceOracle
+  have compiled := relatedCompilerCallback c (nextG s) s t state tree config (program, []) bytes words nextPair.1 nextPair.2 callback
+  have callbackTarget : t.compile config (eas.map Prod.fst, []) = some (bytes, words, nextPair.2) := by
+    simpa [compileInc, known] using compiled.1
+  have nextTree : next = nextPair.1 := by simpa [compileInc, known] using compiled.2
+  have targetNext : (Flapjack.holShiftSeq 1 t.compileOracle 0).1 = nextPair.2 := by
+    have p := congrArg Prod.snd nextOracle
+    simpa [Flapjack.holShiftSeq, state.2.2.2.2.2.2.2.2.2.2, stateCo] using p
+  have targetNonempty : eas.map Prod.fst ≠ [] := by
+    intro empty
+    have len := knownListTotal_length (resetInlineFactor c) program [] tree
+    rw [known] at len
+    have : eas = [] := List.map_eq_nil_iff.mp empty
+    subst eas
+    simp at len
+    exact programNonempty (List.eq_nil_of_length_eq_zero (by omega))
+  let t1 := { t with compileOracle := Flapjack.holShiftSeq 1 t.compileOracle, clock := t.clock - 1 }
+  have targetRun : doInstall targetValues t =
+      (if t.clock = 0 then .err (.abort .timeoutError) else .val (eas.map Prod.fst), t1) := by
+    rw [targetShape]
+    by_cases zero : t.clock = 0 <;>
+      simp [doInstall, targetBytesRun, targetWordsRun, targetOracle, callbackTarget, targetNext,
+        targetNonempty, t1, HolFiniteMapExact.updateListEq, zero]
+  have auxEmpty : s.code.updateListEq ([] : List (Nat × Nat × ClosLang.Exp)) = s.code := by
+    simp [HolFiniteMapExact.updateListEq]
+  rw [auxEmpty] at finalState
+  have sub : sptSubspt (nextG s) (nextG s1) := by
+    rw [finalState]
+    simpa [nextG, Flapjack.holShiftSeq] using mono 0
+  have clockEq : s.clock = t.clock := state.2.2.2.2.1
+  have relatedFinal : StateRel c (nextG s1) s1 t1 := by
+    rw [finalState] at sub ⊢
+    simpa [t1, ← clockEq] using relatedShiftedStates c (nextG s) _ s t 1 (s.clock - 1) state sub
+  have nextEq : nextG s1 = next := by
+    rw [finalState]
+    have p := congrArg Prod.fst nextOracle
+    simpa [nextG, Flapjack.holShiftSeq, ← nextTree] using p
+  refine ⟨_, t1, program, eas, tree, next, targetRun, known, ?_, nextEq, relatedFinal⟩
+  rw [clockEq] at finalResult
+  by_cases zero : t.clock = 0 <;> simp [zero] at finalResult ⊢ <;> simp [finalResult]
 
 end Flapjack.Compiler.Backend.ClosKnown.Simulation.Install
