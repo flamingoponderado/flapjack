@@ -797,4 +797,169 @@ theorem evaluate_remove_fvs_letrec {C F : Type} (names : List Flapjack.AstHOL.Va
       exact ⟨.err (.abort .typeError), target,
         by simp [evaluate, maxEq, removeFuns_all, arityOk], rfl, states⟩
 
+/-- Application first evaluates arguments, then the function, and finally
+uses the application induction hypothesis on the related values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "evaluate_remove_fvs"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_remove_fvs_app {C F : Type} (trace : BackendCommon.Tra)
+    (location : Option Nat) (function : ClosLang.Exp) (args : List ClosLang.Exp)
+    (env : List Value) (source : State C F)
+    (argsIH : 0 < args.length → ∀ (result : Result (List Value) Value) (next : State C F)
+        (code : List ClosLang.Exp) (nextEnv : List Value) (target : State C F),
+      evaluate args env source = (result, next) ∧ List.Forall₂ ValueRel env nextEnv ∧
+        StateRel source target ∧ CodeRel env.length args code →
+      ∃ targetResult targetNext, evaluate code nextEnv target = (targetResult, targetNext) ∧
+        ResultRel result targetResult ∧ StateRel next targetNext)
+    (functionIH : ∀ (values : List Value) (middle : State C F),
+      0 < args.length → evaluate args env source = (.val values, middle) →
+      ∀ (result : Result (List Value) Value) (next : State C F)
+        (code : List ClosLang.Exp) (nextEnv : List Value) (target : State C F),
+        evaluate [function] env middle = (result, next) ∧ List.Forall₂ ValueRel env nextEnv ∧
+          StateRel middle target ∧ CodeRel env.length [function] code →
+        ∃ targetResult targetNext, evaluate code nextEnv target = (targetResult, targetNext) ∧
+          ResultRel result targetResult ∧ StateRel next targetNext)
+    (appIH : ∀ (values : List Value) (middle : State C F) (functions : List Value) (last : State C F),
+      0 < args.length → evaluate args env source = (.val values, middle) →
+      evaluate [function] env middle = (.val functions, last) →
+      ∀ (result : Result (List Value) Value) (next : State C F)
+        (targetFunction : Value) (targetArgs : List Value) (target : State C F),
+        evaluateApp location (@Flapjack.holHd Value ⟨unitValue⟩ functions) values last = (result, next) ∧
+          ValueRel (@Flapjack.holHd Value ⟨unitValue⟩ functions) targetFunction ∧
+          List.Forall₂ ValueRel values targetArgs ∧ StateRel last target →
+        ∃ targetResult targetNext, evaluateApp location targetFunction targetArgs target = (targetResult, targetNext) ∧
+          ResultRel result targetResult ∧ StateRel next targetNext)
+    (result : Result (List Value) Value) (sourceNext : State C F)
+    (targetCode : List ClosLang.Exp) (nextEnv : List Value) (target : State C F)
+    (premises : evaluate [.app trace location function args] env source = (result, sourceNext) ∧
+      List.Forall₂ ValueRel env nextEnv ∧ StateRel source target ∧
+      CodeRel env.length [.app trace location function args] targetCode) :
+    ∃ targetResult targetNext,
+      evaluate targetCode nextEnv target = (targetResult, targetNext) ∧
+      ResultRel result targetResult ∧ StateRel sourceNext targetNext := by
+  obtain ⟨run, envRel, states, code⟩ := premises
+  have codeEq : targetCode = [.app trace location (removeSing env.length function) (removeList env.length args)] := by
+    simpa [CodeRel, removeList, removeSing] using code
+  rw [codeEq]
+  cases args with
+  | nil =>
+    simp [evaluate] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨.err (.abort .typeError), target, by simp [removeList, evaluate], rfl, states⟩
+  | cons first rest =>
+    have nonempty : 0 < (first :: rest).length := by simp
+    cases argsRun : evaluate (first :: rest) env source with
+    | mk argsResult middle =>
+      obtain ⟨targetArgsResult, targetMiddle, targetArgsRun, argsRel, middleRel⟩ :=
+        argsIH nonempty argsResult middle (removeList env.length (first :: rest)) nextEnv target
+          ⟨argsRun, envRel, states, rfl⟩
+      cases argsResult with
+      | err error =>
+        rw [evaluate, fixClock_evaluate, argsRun] at run
+        cases run
+        cases targetArgsResult with
+        | val values => cases error <;> simp [ResultRel] at argsRel
+        | err targetError =>
+          refine ⟨.err targetError, targetMiddle, ?_, argsRel, middleRel⟩
+          simp only [removeList] at targetArgsRun ⊢
+          rw [evaluate, fixClock_evaluate, targetArgsRun]
+          rfl
+      | val values =>
+        cases targetArgsResult with
+        | err error => cases error <;> simp [ResultRel] at argsRel
+        | val targetValues =>
+          cases functionRun : evaluate [function] env middle with
+          | mk functionResult last =>
+            obtain ⟨targetFunctionResult, targetLast, targetFunctionRun, functionRel, lastRel⟩ :=
+              functionIH values middle nonempty argsRun functionResult last [removeSing env.length function]
+                nextEnv targetMiddle ⟨functionRun, envRel, middleRel, by simp [CodeRel, removeList]⟩
+            cases functionResult with
+            | err error =>
+              rw [evaluate, fixClock_evaluate, argsRun] at run
+              simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte] at run
+              rw [fixClock_evaluate, functionRun] at run
+              cases run
+              cases targetFunctionResult with
+              | val functions => cases error <;> simp [ResultRel] at functionRel
+              | err targetError =>
+                refine ⟨.err targetError, targetLast, ?_, functionRel, lastRel⟩
+                simp only [removeList] at targetArgsRun ⊢
+                rw [evaluate, fixClock_evaluate, targetArgsRun]
+                simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte]
+                rw [fixClock_evaluate, targetFunctionRun]
+            | val functions =>
+              obtain ⟨value, rfl⟩ := evaluate_singleton_value function env middle last functions functionRun
+              cases targetFunctionResult with
+              | err error => cases error <;> simp [ResultRel] at functionRel
+              | val targetFunctions =>
+                cases functionRel with
+                | cons valueRel tailRel =>
+                  cases tailRel
+                  rename_i targetValue
+                  have appRun : evaluateApp location value values last = (result, sourceNext) := by
+                    rw [evaluate, fixClock_evaluate, argsRun] at run
+                    simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte] at run
+                    rw [fixClock_evaluate, functionRun] at run
+                    exact run
+                  obtain ⟨targetResult, targetNext, targetRun, related, nextRel⟩ :=
+                    appIH values middle [value] last nonempty argsRun functionRun result sourceNext
+                      targetValue targetValues targetLast ⟨by simpa [Flapjack.holHd] using appRun,
+                        valueRel, argsRel, lastRel⟩
+                  refine ⟨targetResult, targetNext, ?_, related, nextRel⟩
+                  simp only [removeList] at targetArgsRun ⊢
+                  rw [evaluate, fixClock_evaluate, targetArgsRun]
+                  simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte]
+                  rw [fixClock_evaluate, targetFunctionRun]
+                  exact targetRun
+
+/-- Direct calls propagate argument errors or fail equally because related
+states have empty installed code. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "evaluate_remove_fvs"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_remove_fvs_call {C F : Type} (trace : BackendCommon.Tra)
+    (ticks location : Nat) (args : List ClosLang.Exp) (env : List Value) (source : State C F)
+    (argsIH : ∀ (result : Result (List Value) Value) (next : State C F)
+        (code : List ClosLang.Exp) (nextEnv : List Value) (target : State C F),
+      evaluate args env source = (result, next) ∧ List.Forall₂ ValueRel env nextEnv ∧
+        StateRel source target ∧ CodeRel env.length args code →
+      ∃ targetResult targetNext, evaluate code nextEnv target = (targetResult, targetNext) ∧
+        ResultRel result targetResult ∧ StateRel next targetNext)
+    (result : Result (List Value) Value) (sourceNext : State C F)
+    (targetCode : List ClosLang.Exp) (nextEnv : List Value) (target : State C F)
+    (premises : evaluate [.call trace ticks location args] env source = (result, sourceNext) ∧
+      List.Forall₂ ValueRel env nextEnv ∧ StateRel source target ∧
+      CodeRel env.length [.call trace ticks location args] targetCode) :
+    ∃ targetResult targetNext,
+      evaluate targetCode nextEnv target = (targetResult, targetNext) ∧
+      ResultRel result targetResult ∧ StateRel sourceNext targetNext := by
+  obtain ⟨run, envRel, states, code⟩ := premises
+  have codeEq : targetCode = [.call trace ticks location (removeList env.length args)] := by
+    simpa [CodeRel, removeList, removeSing] using code
+  rw [codeEq]
+  cases argsRun : evaluate args env source with
+  | mk argsResult middle =>
+    obtain ⟨targetResult, targetMiddle, targetRun, related, middleRel⟩ :=
+      argsIH argsResult middle (removeList env.length args) nextEnv target
+        ⟨argsRun, envRel, states, rfl⟩
+    cases argsResult with
+    | err error =>
+      rw [evaluate, fixClock_evaluate, argsRun] at run
+      cases run
+      cases targetResult with
+      | val values => cases error <;> simp [ResultRel] at related
+      | err targetError =>
+        exact ⟨.err targetError, targetMiddle,
+          by rw [evaluate, fixClock_evaluate, targetRun], related, middleRel⟩
+    | val values =>
+      cases targetResult with
+      | err error => cases error <;> simp [ResultRel] at related
+      | val targetValues =>
+        have sourceEmpty : middle.code = HolFiniteMapExact.empty := middleRel.2.1
+        have targetEmpty : targetMiddle.code = HolFiniteMapExact.empty := middleRel.2.2.1
+        rw [evaluate, fixClock_evaluate, argsRun] at run
+        simp [findCode, sourceEmpty, HolFiniteMapExact.empty] at run
+        obtain ⟨rfl, rfl⟩ := run
+        refine ⟨.err (.abort .typeError), targetMiddle, ?_, rfl, middleRel⟩
+        rw [evaluate, fixClock_evaluate, targetRun]
+        simp [findCode, targetEmpty, HolFiniteMapExact.empty]
+
 end Flapjack.Compiler.Backend.ClosFvs
