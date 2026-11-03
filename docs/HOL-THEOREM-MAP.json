@@ -27,6 +27,32 @@
     "reviewer": "Compared the original local theorem and its hypothesis-free typed proof replay in clos_mti_install_probe.out. Both states share independent compiler and FFI carriers; the hypotheses are exactly stateRel and the list of related values. The case split retains the existential target error, original excRel, preserved maxApp and stateRel, or the existential nonempty code-related target program and target evaluation. The reviewed installation definition, closure relations and source-shaped result relation use the same carriers. The imported state uses canonical finite-support refs and code and the local roundtrip witness records that representation only."
   },
   {
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "exc_rel_def",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "excRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared exc_rel_typed: the raised payload types are independent, raises use the supplied relation, aborts require equal abort values, and mixed constructors are false. The original error-result carrier is used."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "result_rel_def",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean",
+    "lean_name": "resultRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared result_rel_typed: success and error payloads have four independent types; successful pairs use the first relation, errors use the reviewed exception relation with the second relation, and mixed constructors are false."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileCorrectShape.lean",
+    "lean_name": "compileCorrect_sourceShape",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared compile_correct_typed and the original two conjuncts: arbitrary initial related states and environments, no-Mat and non-type-error premises, existential target result and state, post-state relation and the source result relations all match. The declaration conjunct retains the independent success-list payload type; Nonempty models HOL type inhabitation and its witness is constructed without a successful-target premise. Source and target share the source's compiler and FFI types; the reviewed closure state uses canonical refs and code maps with the local roundtrip witness. The source and target evaluators, compiler, relations and no-Mat predicates are source-reviewed; evaluator floating-point dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8. The assembled theorem is kernel-checked; source review and HOL probes are not a cross-language equivalence proof."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "do_install_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Install.lean",

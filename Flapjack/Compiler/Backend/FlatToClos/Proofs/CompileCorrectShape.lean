@@ -1,11 +1,17 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Correctness
 import Flapjack.SemanticPrimitivesProps.ResultRelation
 
-/-! Source-shaped flat-to-closure compiler simulation. The closure evaluator
-and some of its operations still require HOL correspondence review, so this
-assembly is not tagged as the original pass theorem. -/
+/-! Source-shaped flat-to-closure compiler simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString Flapjack.SemanticPrimitivesHOL
+
+namespace CompileCorrectPort
+/-- The closure state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end CompileCorrectPort
 
 /-- The specialized expression relation implies the source result relation. -/
 theorem evalResultRel_to_source {source target}
@@ -35,7 +41,9 @@ theorem decResultRel_to_source {α : Type} [Nonempty α] {source target}
   | abort error => exact ⟨[], rfl⟩
 
 /-- Both source theorem conjuncts follow from the complete Lean simulations.
-The target closure evaluator remains unreviewed against HOL. -/
+The independently polymorphic success-list type is inhabited, as in HOL. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [refs, code])]
 theorem compileCorrect_sourceShape {C F α : Type} [Nonempty α] :
     (∀ (env : FlatSem.Environment FlatSem.Value) (source : FlatSem.State C F) (expressions : List FlatLang.Exp)
       (names : List (Option MlString)) (values : List ClosSem.Value)

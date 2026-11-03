@@ -17,4 +17,6 @@ val _ = (print "state_rel_typed="; Lib.with_flag (Globals.show_types,true) print
 val _ = (print "store_rel_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl store_rel_def); print "\n");
 val _ = (print "inc_compile_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl inc_compile_decs'_def); print "\n");
 val _ = (print "install_rel_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl install_config_rel'_def); print "\n");
+val _ = (print "exc_rel_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl semanticPrimitivesPropsTheory.exc_rel_def); print "\n");
+val _ = (print "result_rel_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl semanticPrimitivesPropsTheory.result_rel_def); print "\n");
 val _ = (print "compile_correct_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_correct); print "\n");
