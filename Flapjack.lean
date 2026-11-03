@@ -708,6 +708,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantRetainedApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantClosureApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantBodyImpureApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantControlSimulation
+import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantOrdinaryOp
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallImpureSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StateWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.NumericWellformed
