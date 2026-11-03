@@ -733,4 +733,194 @@ theorem evaluate_install_incremental_sim {C F : Type} (fuel relationFuel : Nat) 
           targetRun, related, finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle,
           fun key entry found => growth key entry (argsGrowth key entry found)⟩
 
+/-- A source-driven simulation that carries the incremental compiler and
+oracle invariants through a list of expressions. This Lean-side predicate is
+for composing the cases of the bounded direct-call simulation. -/
+def GrowingExprsSim {C F : Type} (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (allowed : Set Nat) (sourceExps targetExps : List ClosLang.Exp) : Prop :=
+  ∀ (g : State) (sourceEnv targetEnv : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F),
+    evaluate sourceExps sourceEnv source = (result, final) →
+    result ≠ .err (.abort .typeError) →
+    EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 (targetExps.map (0, ·)) →
+    ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv →
+    StateWellFormedFuel relationFuel g allowed target.code source →
+    StateRelFuel relationFuel g allowed source target →
+    IncrementalInstallReady g source target →
+    source.compile = compileIncFuelCallback passFuel compiler → target.compile = compiler →
+    target.compileOracle = compileIncFuelOracle passFuel source.compileOracle →
+    ∃ finalG targetResult targetFinal,
+      stateExtends g finalG ∧
+      evaluate targetExps targetEnv target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
+
+/-- Single-expression simulations compose in evaluation order while threading
+the growing compiler state and installation invariants. -/
+theorem growingExprsSim_of_forall₂ {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat)
+    {sourceExps targetExps : List ClosLang.Exp}
+    (sims : List.Forall₂ (fun source target =>
+      GrowingExprsSim (F := F) passFuel relationFuel compiler allowed [source] [target])
+      sourceExps targetExps) :
+    GrowingExprsSim (F := F) passFuel relationFuel compiler allowed sourceExps targetExps := by
+  induction sims with
+  | nil =>
+    intro g sourceEnv targetEnv source target result final run _ _ _ stateWf states ready sourceCompiler targetCompiler oracle
+    have eq : result = .val [] ∧ final = source := by simpa [evaluate] using run.symm
+    obtain ⟨rfl, rfl⟩ := eq
+    exact ⟨g, .val [], target, stateExtends_refl g ready.well.2, by simp [evaluate], .nil,
+      states, stateWf, ready, sourceCompiler, targetCompiler, oracle, fun _ _ h => h⟩
+  | @cons sourceHead targetHead sourceTail targetTail headSim tailSims tailIH =>
+    intro g sourceEnv targetEnv source target result final run notType envs envWf stateWf states ready
+      sourceCompiler targetCompiler oracle
+    have headEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, targetHead)] := by
+      apply envRelFuel_subset envs
+      intro item member
+      simp only [List.mem_singleton] at member
+      subst item
+      simp
+    cases headRun : evaluate [sourceHead] sourceEnv source with
+    | mk headResult headFinal =>
+      have headSafe : headResult ≠ .err (.abort .typeError) := by
+        intro bad
+        subst headResult
+        have outer := ClosProps.evaluate_cons_error sourceHead sourceTail sourceEnv source headFinal (.abort .typeError) headRun
+        have eq : result = .err (.abort .typeError) := by rw [run] at outer; exact (Prod.mk.inj outer).1
+        exact notType eq
+      obtain ⟨headG, targetHeadResult, targetHeadFinal, headExt, targetHeadRun, headRel, headStates,
+        headWf, headReady, headCompiler, targetHeadCompiler, headOracle, headGrowth⟩ :=
+        headSim g sourceEnv targetEnv source target headResult headFinal headRun headSafe headEnv envWf
+          stateWf states ready sourceCompiler targetCompiler oracle
+      cases headResult with
+      | err error =>
+        cases targetHeadResult with
+        | val values => simp [resultRel] at headRel
+        | err targetError =>
+          have eq : result = .err error ∧ final = headFinal := by
+            have outer := ClosProps.evaluate_cons_error sourceHead sourceTail sourceEnv source headFinal error headRun
+            rw [run] at outer
+            exact Prod.mk.inj outer
+          obtain ⟨rfl, rfl⟩ := eq
+          exact ⟨headG, .err targetError, targetHeadFinal, headExt,
+            ClosProps.evaluate_cons_error targetHead targetTail targetEnv target targetHeadFinal targetError targetHeadRun,
+            headRel, headStates, headWf, headReady, headCompiler, targetHeadCompiler, headOracle, headGrowth⟩
+      | val values =>
+        obtain ⟨value, rfl⟩ := evaluate_singleton_value sourceHead sourceEnv source headFinal values headRun
+        cases targetHeadResult with
+        | err error => simp [resultRel] at headRel
+        | val targetValues =>
+          obtain ⟨targetValue, rfl⟩ := evaluate_singleton_value targetHead targetEnv target targetHeadFinal targetValues targetHeadRun
+          have valueRel : ValueRelFuel relationFuel headG allowed targetHeadFinal.code value targetValue := by
+            simpa [resultRel] using headRel
+          have tailEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+              (targetTail.map (0, ·)) := by
+            apply envRelFuel_subset envs
+            intro item member
+            simp only [List.map_cons, List.mem_cons]
+            exact Or.inr member
+          have tailEnv' := envRelFuel_mono tailEnv headExt Set.Subset.rfl headGrowth
+          have tailEnvWf := valuesWellFormedFuel_mono envWf headExt Set.Subset.rfl headGrowth
+          cases tailRun : evaluate sourceTail sourceEnv headFinal with
+          | mk tailResult tailFinal =>
+            have sourceOuter := ClosProps.evaluate_cons_value sourceHead sourceTail sourceEnv source headFinal value headRun
+            rw [run, tailRun] at sourceOuter
+            have tailSafe : tailResult ≠ .err (.abort .typeError) := by
+              intro bad
+              subst tailResult
+              simp only at sourceOuter
+              exact notType (Prod.mk.inj sourceOuter).1
+            obtain ⟨finalG, targetTailResult, targetFinal, tailExt, targetTailRun, tailRel, finalStates,
+              finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, tailGrowth⟩ :=
+              tailIH headG sourceEnv targetEnv headFinal targetHeadFinal tailResult tailFinal tailRun tailSafe
+                tailEnv' tailEnvWf headWf headStates headReady headCompiler targetHeadCompiler headOracle
+            have targetOuter := ClosProps.evaluate_cons_value targetHead targetTail targetEnv target targetHeadFinal targetValue targetHeadRun
+            rw [targetTailRun] at targetOuter
+            have combinedExt := stateExtends_trans g headG finalG headExt tailExt
+            have combinedGrowth : ∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry :=
+              fun key entry found => tailGrowth key entry (headGrowth key entry found)
+            cases tailResult with
+            | err error =>
+              cases targetTailResult with
+              | val vs => simp [resultRel] at tailRel
+              | err targetError =>
+                obtain ⟨rfl, rfl⟩ := Prod.mk.inj sourceOuter
+                exact ⟨finalG, .err targetError, targetFinal, combinedExt, targetOuter, tailRel, finalStates,
+                  finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, combinedGrowth⟩
+            | val tailValues =>
+              cases targetTailResult with
+              | err error => simp [resultRel] at tailRel
+              | val targetTailValues =>
+                obtain ⟨rfl, rfl⟩ := Prod.mk.inj sourceOuter
+                have grownValue := valueRelFuel_mono valueRel tailExt Set.Subset.rfl tailGrowth
+                exact ⟨finalG, .val (targetValue :: targetTailValues), targetFinal, combinedExt,
+                  targetOuter, .cons grownValue tailRel, finalStates, finalWf, finalReady, finalCompiler,
+                  targetFinalCompiler, finalOracle, combinedGrowth⟩
+
+/-- A growing list simulation supplies the empty-environment, smaller-clock
+simulation needed for an installed program. -/
+theorem growingExprsSim_installedBelow {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (g : State) (allowed : Set Nat)
+    (program targetProgram : List ClosLang.Exp)
+    (sim : GrowingExprsSim (F := F) passFuel relationFuel compiler allowed program targetProgram) :
+    InstalledProgramSimBelow (C := C) (F := F) passFuel relationFuel limit compiler g allowed program targetProgram := by
+  intro source target result final _ run notType sourceWf states ready sourceCompiler targetCompiler oracle
+  have envs : EnvRelFuel relationFuel g allowed target.code [] [] 0 (targetProgram.map (0, ·)) := by
+    apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+    simp [envRel]
+  exact sim g [] [] source target result final run notType envs .nil sourceWf states ready
+    sourceCompiler targetCompiler oracle
+
+/-- A growing list simulation discharges the argument hypothesis of the
+incremental install case at the current source and target states. -/
+theorem evaluate_install_growing_args {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra)
+    (sourceArgs targetArgs : List ClosLang.Exp) (sourceEnv targetEnv : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (run : evaluate [.op trace .install sourceArgs] sourceEnv source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (envs : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 (targetArgs.map (0, ·)))
+    (envWf : ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (ready : IncrementalInstallReady g source target)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (argsSim : GrowingExprsSim (F := F) fuel relationFuel compiler allowed sourceArgs targetArgs)
+    (programIH : ∀ (middleG : State) program nextKnown converted,
+      compileIncFuel? fuel middleG.1 (program, []) = some (nextKnown, converted) →
+      InstalledProgramSimBelow (C := C) (F := F) fuel relationFuel source.clock compiler
+        (nextKnown, converted.2 ++ middleG.2) allowed program converted.1) :
+    ∃ nextG targetResult targetFinal,
+      stateExtends g nextG ∧
+      evaluate [.op trace .install targetArgs] targetEnv target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG allowed targetFinal.code))
+        (ValueRelFuel relationFuel nextG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel nextG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel nextG allowed targetFinal.code final ∧
+      IncrementalInstallReady nextG final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  apply evaluate_install_incremental_sim fuel relationFuel g allowed compiler trace sourceArgs targetArgs
+    sourceEnv targetEnv source target result final run notType ?_ programIH
+  intro sourceResult sourceMiddle argsRun argsSafe
+  obtain ⟨middleG, targetResult, targetMiddle, extended, targetRun, related, middleStates, middleWf,
+    middleReady, finalCompiler, finalTargetCompiler, finalOracle, growth⟩ :=
+    argsSim g sourceEnv targetEnv source target sourceResult sourceMiddle argsRun argsSafe envs envWf sourceWf
+      states ready sourceCompiler targetCompiler targetOracle
+  exact ⟨middleG, targetResult, targetMiddle, targetRun, extended, related, middleStates, middleWf,
+    middleReady, finalCompiler, finalTargetCompiler, finalOracle, growth⟩
+
 end Flapjack.Compiler.Backend.ClosCall
