@@ -78,4 +78,75 @@ theorem arm8AddWithCarry_add_zero (x : BitVec 64) :
   rw [hx, hC, hV, arm8Msb_eq_getLsbD]
   rw [← arm8Beq_eq_decide x 0]
 
+/-- One `arm8Next` step on the `SUBS XZR, rn, #0` compare that starts the
+`addCarry` lowering. -/
+theorem arm8Next_addSubImmediateS_zero (ms : arm8_state) (rn : BitVec 5)
+    (hrn : rn ≠ 31)
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) rn 31 >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) rn 31 >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) rn 31 >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8AddSubImmediateWordS true false
+      (holWordExtract 12 11 0 (0 : BitVec 64)) rn 31 >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next ms =
+      { ms with
+        branch_hint := none,
+        PC := ms.PC + 4,
+        PSTATE :=
+          { ms.PSTATE with
+            N := BitVec.msb (X (TN := 64) rn ms),
+            Z := (X (TN := 64) rn ms) == (0 : BitVec 64),
+            C := true,
+            V := false } } := by
+  have hlow : (0 : BitVec 64) &&& ~~~(4095 : BitVec 64) = (0 : BitVec 64) := by decide
+  have hn := arm8Next_addSubImmediateS_low ms 0 rn hlow hrn hexc0 h0 h1 h2 h3 hal he0 hel
+  rw [hn, arm8AddWithCarry_subs_zero]
+
+/-- One `arm8Next` step on the `MoveWide .z` instruction that zeroes a register
+in the `addCarry` lowering. -/
+theorem arm8Next_moveWide_z_zero (ms : arm8_state) (rd : BitVec 5)
+    (hrd : rd ≠ 31)
+    (hexc0 : ms.exception = exception.NoException)
+    (h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2)
+      (0 : BitVec 16) rd >>> 0).toNat))
+    (h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2)
+      (0 : BitVec 16) rd >>> 8).toNat))
+    (h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2)
+      (0 : BitVec 16) rd >>> 16).toNat))
+    (h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((arm8MoveWideWord .z (0 : BitVec 2)
+      (0 : BitVec 16) rd >>> 24).toNat))
+    (hal : Aligned (TN := 64) (ms.PC, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    arm8Next ms =
+      { ms with
+        branch_hint := none,
+        PC := ms.PC + 4,
+        REG := holUpdate rd (0 : BitVec 64) ms.REG } := by
+  let i : instruction := instruction.Data (Data.«MoveWide@64»
+    ((1 : BitVec 64), (.z, ((0 : BitVec 2), ((0 : BitVec 16), rd)))))
+  have hdec : Decode (arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) rd) = i := by
+    dsimp only [i]
+    exact arm8Decode_moveWide .z (0 : BitVec 2) (0 : BitVec 16) rd
+  have hrun := arm8Run_moveWide_z (0 : BitVec 2) (0 : BitVec 16) rd
+    { ms with branch_hint := none }
+  have hbr : (Run i { ms with branch_hint := none }).branch_hint = none := by
+    dsimp only [i]
+    rw [hrun, if_neg hrd]
+  have hexc : (Run i { ms with branch_hint := none }).exception = exception.NoException := by
+    dsimp only [i]
+    rw [hrun, if_neg hrd]
+    simpa using hexc0
+  have hn := arm8Next_word ms (arm8MoveWideWord .z (0 : BitVec 2) (0 : BitVec 16) rd)
+    i hdec hbr hexc h0 h1 h2 h3 hal he0 hel
+  unfold arm8Next
+  rw [hn]
+  dsimp only [i]
+  rw [hrun, if_neg hrd]
+  rfl
+
 end Flapjack.Compiler.Encoders.Arm8.L3
