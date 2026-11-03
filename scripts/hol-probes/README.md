@@ -133,9 +133,10 @@ operations used by closure annotation, including sparse-tree traversal order.
 
 `clos_fvs_correctness_probe.out` captures the source traversal, optimized
 singleton/list equations, length and compiler definitions, code, function,
-value, reference and state relations, evaluator simulation and whole-program
-correctness statement. These captures support review; the evaluator proof
-currently covers only the empty-list case.
+value, reference and state relations, a typed replay of the local clock-decrement
+lemma, evaluator simulation and whole-program correctness statement. These
+captures support review; the evaluator proof covers the empty-list, sequencing,
+variable, raise and tick cases, with the remaining cases still open.
 
 `clos_interp_review_probe.out` captures the typed installation traversal,
 interpreter expressions, optimizer, initializer, attachment and incremental
