@@ -149,4 +149,44 @@ theorem arm8Next_moveWide_z_zero (ms : arm8_state) (rd : BitVec 5)
   rw [hrun, if_neg hrd]
   rfl
 
+/-! ## Projections through `SetTheFlags` and `write'X` -/
+
+theorem setTheFlags_branchHint (b : Bool) (n z c v : Bool) (s : arm8_state) :
+    (SetTheFlags (b, (n, (z, (c, v)))) s).branch_hint = s.branch_hint := by
+  simp only [SetTheFlags]; split <;> rfl
+
+theorem setTheFlags_exception (b : Bool) (n z c v : Bool) (s : arm8_state) :
+    (SetTheFlags (b, (n, (z, (c, v)))) s).exception = s.exception := by
+  simp only [SetTheFlags]; split <;> rfl
+
+theorem setTheFlags_mem (b : Bool) (n z c v : Bool) (s : arm8_state) :
+    (SetTheFlags (b, (n, (z, (c, v)))) s).MEM = s.MEM := by
+  simp only [SetTheFlags]; split <;> rfl
+
+theorem setTheFlags_reg (b : Bool) (n z c v : Bool) (s : arm8_state) :
+    (SetTheFlags (b, (n, (z, (c, v)))) s).REG = s.REG := by
+  simp only [SetTheFlags]; split <;> rfl
+
+theorem conditionHolds_branchHint (cd : BitVec 4) (s : arm8_state) :
+    ConditionHolds cd { s with branch_hint := none } = ConditionHolds cd s := rfl
+
+theorem setTheFlags_eq (b : Bool) (n z c v : Bool) (s : arm8_state) :
+    SetTheFlags (b, (n, (z, (c, v)))) s =
+      if b then
+        { s with PSTATE := { s.PSTATE with N := n, Z := z, C := c, V := v } }
+      else s := by
+  simp only [SetTheFlags]
+
+theorem writeX_branchHint (v : BitVec 64) (n : BitVec 5) (s : arm8_state) :
+    («write'X» (v, n) s).branch_hint = s.branch_hint := by
+  simp only [«write'X»]; split <;> rfl
+
+theorem writeX_exception (v : BitVec 64) (n : BitVec 5) (s : arm8_state) :
+    («write'X» (v, n) s).exception = s.exception := by
+  simp only [«write'X»]; split <;> rfl
+
+theorem writeX_mem (v : BitVec 64) (n : BitVec 5) (s : arm8_state) :
+    («write'X» (v, n) s).MEM = s.MEM := by
+  simp only [«write'X»]; split <;> rfl
+
 end Flapjack.Compiler.Encoders.Arm8.L3
