@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalCode
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantDirectCall
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantListSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallWellformed
+import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracle
 
 /-! Incremental installation under direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -504,5 +505,172 @@ theorem doInstall_success_resultRel_last {C F : Type} {R : ClosSem.Value → Clo
   have lastRelated := resultRel_install_last program installed last sourceResult targetResult
     programNonempty programRun related
   cases sourceResult <;> cases targetResult <;> exact lastRelated
+
+/-- The installed-program continuation simulates using the actual incremental
+compiler step. The program simulation is an induction hypothesis; this does
+not yet include evaluation of the install expression's arguments. -/
+theorem runInstalled_incremental_sim {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (ready : IncrementalInstallReady g source target)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (run : ClosProps.AdjustOracle.runInstalled sourceValues source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (programIH : ∀ program nextKnown converted,
+      compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) →
+      ExprsSimFuelInvariant (C := C) (F := F) relationFuel
+        (nextKnown, converted.2 ++ g.2) allowed program converted.1) :
+    ∃ nextG targetResult targetFinal,
+      stateExtends g nextG ∧
+      ClosProps.AdjustOracle.runInstalled targetValues target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG allowed targetFinal.code))
+        (ValueRelFuel relationFuel nextG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel nextG allowed final targetFinal ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  unfold ClosProps.AdjustOracle.runInstalled at run ⊢
+  cases installRun : doInstall sourceValues source with
+  | mk installResult installed =>
+    rw [installRun] at run
+    cases installResult with
+    | err error =>
+      have installSafe : (SemanticPrimitivesHOL.Result.err error :
+          SemanticPrimitivesHOL.Result (List ClosLang.Exp) ClosSem.Value) ≠ .err (.abort .typeError) := by
+        intro bad
+        have equal : error = .abort .typeError := by cases bad; rfl
+        cases run
+        exact notType (by rw [equal])
+      obtain ⟨expressions, converted, nextKnown, targetInstalled, _, targetRun, resultEq,
+        _, _, extended, _, newStates, _, _, _, growth⟩ :=
+        doInstall_nonType_ready fuel relationFuel g allowed compiler source target sourceValues targetValues
+          (.err error) installed ready states values sourceCompiler targetCompiler targetOracle installRun installSafe
+      have zero : source.clock = 0 := by
+        by_contra nonzero
+        simp [nonzero] at resultEq
+      have errorEq : error = .abort .timeoutError := by simpa [zero] using resultEq
+      have targetInstall : doInstall targetValues target = (.err (.abort .timeoutError), targetInstalled) := by
+        simpa [zero] using targetRun
+      cases run
+      subst error
+      refine ⟨(nextKnown, converted.2 ++ g.2), .err (.abort .timeoutError), targetInstalled,
+        extended, ?_, ?_, newStates, growth⟩
+      · simp [targetInstall]
+      · rfl
+    | val program =>
+      dsimp only at run
+      cases programRun : evaluate program [] installed with
+      | mk programResult programFinal =>
+        rw [programRun] at run
+        have programSafe : programResult ≠ .err (.abort .typeError) := by
+          intro bad
+          rw [bad] at run
+          cases run
+          exact notType rfl
+        obtain ⟨nextKnown, converted, targetInstalled, targetProgramResult, targetFinal, _, targetInstall,
+          _, extended, targetProgramRun, related, finalStates, growth⟩ :=
+          doInstall_success_evaluate fuel relationFuel g allowed compiler source target sourceValues targetValues
+            program installed programResult programFinal ready states sourceWf values sourceCompiler targetCompiler
+            targetOracle installRun programRun programSafe (programIH program)
+        have resultRelated := doInstall_success_resultRel_last sourceValues source installed programFinal program
+          programResult targetProgramResult installRun programRun related
+        cases programResult with
+        | err sourceError =>
+          cases targetProgramResult with
+          | val targetResults => simp [resultRel] at related
+          | err targetError =>
+            have eq : result = .err sourceError ∧ final = programFinal := by simpa using run.symm
+            obtain ⟨rfl, rfl⟩ := eq
+            refine ⟨(nextKnown, converted.2 ++ g.2), .err targetError, targetFinal, extended, ?_, related, finalStates, growth⟩
+            simp [targetInstall, targetProgramRun]
+        | val sourceResults =>
+          cases targetProgramResult with
+          | err targetError => simp [resultRel] at related
+          | val targetResults =>
+            have eq : result = .val [@holLast ClosSem.Value ⟨unitValue⟩ sourceResults] ∧
+                final = programFinal := by simpa using run.symm
+            obtain ⟨rfl, rfl⟩ := eq
+            refine ⟨(nextKnown, converted.2 ++ g.2),
+              .val [@holLast ClosSem.Value ⟨unitValue⟩ targetResults], targetFinal,
+              extended, ?_, ?_, finalStates, growth⟩
+            · simp [targetInstall, targetProgramRun]
+            · exact resultRelated
+
+/-- Composition of the install expression with its argument and dynamically
+installed-program induction hypotheses. The argument hypothesis carries the
+oracle invariant and compiler state to the point of installation; proving it
+for all expression forms remains part of the enclosing simulation. -/
+theorem evaluate_install_incremental_sim {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra)
+    (sourceArgs targetArgs : List ClosLang.Exp) (sourceEnv targetEnv : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (run : evaluate [.op trace .install sourceArgs] sourceEnv source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (argsIH : ∀ sourceResult sourceMiddle,
+      evaluate sourceArgs sourceEnv source = (sourceResult, sourceMiddle) →
+      sourceResult ≠ .err (.abort .typeError) →
+      ∃ middleG targetResult targetMiddle,
+        evaluate targetArgs targetEnv target = (targetResult, targetMiddle) ∧
+        stateExtends g middleG ∧
+        resultRel (List.Forall₂ (ValueRelFuel relationFuel middleG allowed targetMiddle.code))
+          (ValueRelFuel relationFuel middleG allowed targetMiddle.code) sourceResult targetResult ∧
+        StateRelFuel relationFuel middleG allowed sourceMiddle targetMiddle ∧
+        StateWellFormedFuel relationFuel middleG allowed targetMiddle.code sourceMiddle ∧
+        IncrementalInstallReady middleG sourceMiddle targetMiddle ∧
+        sourceMiddle.compile = compileIncFuelCallback fuel compiler ∧ targetMiddle.compile = compiler ∧
+        targetMiddle.compileOracle = compileIncFuelOracle fuel sourceMiddle.compileOracle ∧
+        (∀ key entry, target.code.lookup key = some entry → targetMiddle.code.lookup key = some entry))
+    (programIH : ∀ (middleG : State) program nextKnown converted,
+      compileIncFuel? fuel middleG.1 (program, []) = some (nextKnown, converted) →
+      ExprsSimFuelInvariant (C := C) (F := F) relationFuel
+        (nextKnown, converted.2 ++ middleG.2) allowed program converted.1) :
+    ∃ nextG targetResult targetFinal,
+      stateExtends g nextG ∧
+      evaluate [.op trace .install targetArgs] targetEnv target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG allowed targetFinal.code))
+        (ValueRelFuel relationFuel nextG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel nextG allowed final targetFinal ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  rw [ClosProps.AdjustOracle.evaluateInstallEq trace sourceArgs sourceEnv source] at run
+  rw [ClosProps.AdjustOracle.evaluateInstallEq trace targetArgs targetEnv target]
+  cases argsRun : evaluate sourceArgs sourceEnv source with
+  | mk argsResult sourceMiddle =>
+    rw [argsRun] at run
+    have argsSafe : argsResult ≠ .err (.abort .typeError) := by
+      intro bad
+      rw [bad] at run
+      cases run
+      exact notType rfl
+    obtain ⟨middleG, targetArgsResult, targetMiddle, targetArgsRun, firstExt, argsRelated,
+      middleStates, middleWf, middleReady, sourceCompiler, targetCompiler, targetOracle, argsGrowth⟩ :=
+      argsIH argsResult sourceMiddle argsRun argsSafe
+    rw [targetArgsRun]
+    cases argsResult with
+    | err error =>
+      cases targetArgsResult with
+      | val targetValues => simp [resultRel] at argsRelated
+      | err targetError =>
+        cases run
+        exact ⟨middleG, .err targetError, targetMiddle, firstExt, rfl, argsRelated, middleStates, argsGrowth⟩
+    | val sourceValues =>
+      cases targetArgsResult with
+      | err targetError => simp [resultRel] at argsRelated
+      | val targetValues =>
+        have reversed : List.Forall₂ (ValueRelFuel relationFuel middleG allowed targetMiddle.code)
+            sourceValues.reverse targetValues.reverse := List.rel_reverse argsRelated
+        obtain ⟨nextG, targetResult, targetFinal, secondExt, targetRun, related, finalStates, growth⟩ :=
+          runInstalled_incremental_sim fuel relationFuel middleG allowed compiler sourceMiddle targetMiddle
+            sourceValues.reverse targetValues.reverse result final middleReady middleStates middleWf reversed
+            sourceCompiler targetCompiler targetOracle run notType (programIH middleG)
+        exact ⟨nextG, targetResult, targetFinal, stateExtends_trans g middleG nextG firstExt secondExt,
+          targetRun, related, finalStates, fun key entry found => growth key entry (argsGrowth key entry found)⟩
 
 end Flapjack.Compiler.Backend.ClosCall
