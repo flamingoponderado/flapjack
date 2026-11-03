@@ -1916,6 +1916,45 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "rel_update_thunk",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Force.lean",
+    "lean_name": "rel_update_thunk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "targetRefs", "sourceRefs"],
+    "reviewer": "Compared the original local theorem and rel_update_thunk_replay_typed HOL replay: target update failure implies source failure, and a target update success yields a source update and related resulting states. The original pointer, values and related-state premises and independent compiler and FFI carriers are retained. State refs and code and the two standalone result maps use canonical finite maps with the local state roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Operation.lean",
+    "lean_name": "evaluate_remove_ticks_op",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the first evaluate_remove_ticks_typed conjunct and operation case of evaluate_ind_typed in clos_known_syntax_probe.out: the target argument, successful-installation and force-thunk induction hypotheses retain their original guards, with the original evaluation, environment, state, code, existential clock and result conclusions. The assembled case covers ordinary operations, installation and forcing without extra premises. State refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Simulation.lean",
+    "lean_name": "evaluate_remove_ticks",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared both evaluate_remove_ticks_typed conjuncts: target expression evaluation and closure application are matched by source evaluation with an existential extra source clock, related results and related states. Quantified programs, environments, values, compiler and FFI carriers and every original premise and conclusion are retained. The proof assembles all original evaluator induction cases. State refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "remove_ticks_correct",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Simulation.lean",
+    "lean_name": "remove_ticks_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared remove_ticks_correct_typed and remove_sing_eq_typed: evaluation of the tick-removed program under related environments and states implies the original program evaluates with an existential additional clock to a related result and state. removeList is the source-proven equivalent list traversal. State refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "v_rel_IMP_v_to_bytes",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Install.lean",
     "lean_name": "valueRel_bytes",

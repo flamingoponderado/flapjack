@@ -1,6 +1,7 @@
 (* Typed source declarations for closure tick removal. *)
+load "preamble";
 load "clos_ticksProofTheory";
-open HolKernel Parse boolLib bossLib;
+open HolKernel Parse boolLib bossLib preamble;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 fun show label th = if null (hyp th) then
@@ -71,6 +72,33 @@ val do_install_lemma_replay = Q.prove (
     pairTheory.FORALL_PROD, miscTheory.shift_seq_def, backendPropsTheory.pure_co_def, FUN_EQ_THM] >>
   metis_tac [clos_ticksProofTheory.remove_ticks_IMP_LENGTH]);
 val _ = show "do_install_lemma_typed" do_install_lemma_replay;
+val _ = show "remove_ticks_correct_typed" clos_ticksProofTheory.remove_ticks_correct;
+val _ = show "semantics_remove_ticks_typed" clos_ticksProofTheory.semantics_remove_ticks;
+val rel_update_thunk_statement = ``
+  clos_ticksProof$state_rel (s1 :('c,'ffi) closSem$state) s2 /\
+  LIST_REL clos_ticksProof$v_rel vs ys ==>
+    (closSem$update_thunk [closSem$RefPtr v ptr] s2.refs ys = NONE ==>
+       closSem$update_thunk [closSem$RefPtr v ptr] s1.refs vs = NONE) /\
+    (closSem$update_thunk [closSem$RefPtr v ptr] s2.refs ys = SOME refs2 ==>
+       ?refs1. closSem$update_thunk [closSem$RefPtr v ptr] s1.refs vs = SOME refs1 /\
+               clos_ticksProof$state_rel (s1 with refs := refs1) (s2 with refs := refs2))``;
+val _ = (print "rel_update_thunk_statement_typed="; print_term rel_update_thunk_statement; print "\n");
+val state_rel_opt_refs_replay = Q.prove (
+  `(clos_ticksProof$state_rel (s1 :('c,'ffi) closSem$state) s2 /\ FLOOKUP s1.refs n = r1 ==>
+      ?r2. FLOOKUP s2.refs n = r2 /\ OPTREL clos_ticksProof$ref_rel r1 r2) /\
+   (clos_ticksProof$state_rel (s1 :('c,'ffi) closSem$state) s2 /\ FLOOKUP s2.refs n = r2 ==>
+      ?r1. FLOOKUP s1.refs n = r1 /\ OPTREL clos_ticksProof$ref_rel r1 r2)`,
+  rw [] >> gvs [clos_ticksProofTheory.state_rel_def, clos_ticksProofTheory.FMAP_REL_def,
+    finite_mapTheory.FLOOKUP_DEF] >> rw []);
+val rel_update_thunk_replay = prove (rel_update_thunk_statement,
+  rw [] >> gvs [oneline closSemTheory.update_thunk_def, AllCaseEqs()] >> rw [] >>
+  gvs [oneline closSemTheory.dest_thunk_def, AllCaseEqs()] >>
+  (gvs [Once clos_ticksProofTheory.v_rel_cases, oneline closSemTheory.store_thunk_def, AllCaseEqs()] >>
+   rpt (imp_res_tac state_rel_opt_refs_replay >> rw [] >>
+     gvs [oneline OPTREL_THM] >> FULL_CASE_TAC >> gvs [] >> rgs [Once clos_ticksProofTheory.ref_rel_cases]) >>
+   gvs [clos_ticksProofTheory.state_rel_def, clos_ticksProofTheory.FMAP_REL_def, finite_mapTheory.FLOOKUP_UPDATE] >> rw [] >>
+   simp [Once clos_ticksProofTheory.ref_rel_cases]));
+val _ = show "rel_update_thunk_replay_typed" rel_update_thunk_replay;
 val state_rel_dec_clock_replay = Q.prove (
   `clos_ticksProof$state_rel (s1 :('c,'ffi) closSem$state) s2 ==>
    clos_ticksProof$state_rel (closSem$dec_clock 1 s1) (closSem$dec_clock 1 s2)`,
