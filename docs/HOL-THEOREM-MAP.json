@@ -2183,6 +2183,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "evaluate_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/EvaluateApp.lean",
+    "lean_name": "evaluate_remove_fvs_app_cons",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the second evaluate_remove_typed conjunct and the nonempty-argument application case of evaluate_ind_typed in clos_known_syntax_probe.out. AppAt and EvalAt unfold to the original simulation statements. The body induction hypothesis is guarded by a successful full inspection and sufficient clock; the recursive application hypothesis additionally requires successful singleton body evaluation at the original decremented clock. Redundant quantified result variables and equalities are instantiated to their constructors. The proof covers rejected and partial calls, timeout, body errors and over-application without extra assumptions. The state has canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or assemble the complete mutual theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
     "hol_name": "dest_closure_SOME_IMP",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/EvaluateApp.lean",
     "lean_name": "destClosure_some_shape",

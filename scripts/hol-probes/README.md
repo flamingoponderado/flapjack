@@ -139,8 +139,8 @@ installation and thunk-update statements, closure inspection, evaluator simulati
 statement. The local statement captures are not HOL proof replays. These
 captures support review; the evaluator proof covers the empty-list, sequencing,
 variable, conditional, let, raise, handler, function, recursive-let,
-application, direct-call, operation and tick cases, along with empty-argument
-closure application; nonempty closure application remains open.
+application, direct-call, operation and tick cases, along with both closure
+application induction cases; the complete mutual theorem remains open.
 
 `clos_interp_review_probe.out` captures the typed installation traversal,
 interpreter expressions, optimizer, initializer, attachment and incremental
