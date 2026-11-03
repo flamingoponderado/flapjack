@@ -544,4 +544,42 @@ theorem arm8SignExtend_nine (off : BitVec 64)
   rw [arm8HolWordExtract_nine, ← hsx]
 
 
+
+/-- The `asm_ok` facts a `.mem` instruction carries: both registers and the
+offset are accepted by `arm8ConfigL3`. -/
+theorem arm8MemLoadOkExact (destination base : Nat) (off : BitVec 64)
+    (h : asmOkExact (.inst (.mem .load destination (.addr base off))) arm8ConfigL3 = true) :
+    asmRegOkExact destination arm8ConfigL3 = true ∧
+      asmRegOkExact base arm8ConfigL3 = true ∧
+      asmAddrOffsetOkExact arm8ConfigL3 off = true := by
+  have h' := h
+  simp only [asmOkExact, asmInstOkExact, Bool.and_eq_true] at h'
+  exact ⟨h'.1.1, h'.1.2, h'.2⟩
+
+/-- `arm8Mem_eight` fed by a per-index byte hypothesis rather than eight
+explicit byte terms (Flapjack infrastructure). -/
+theorem arm8Mem_eight_of_bytes (ms : arm8_state) (address : BitVec 64)
+    (m : BitVec 64 → BitVec 8)
+    (hbytes : ∀ i, i < 8 →
+      ms.MEM (address + BitVec.ofNat 64 i) = m (address + BitVec.ofNat 64 i))
+    (hal : Aligned (TN := 64) (address, 8) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    Mem (TN := 64) (address, (8, AccType.AccType_NORMAL)) ms =
+      (holV2w 64 (holW2v (m (address + BitVec.ofNat 64 7)) ++
+        (holW2v (m (address + BitVec.ofNat 64 6)) ++
+        (holW2v (m (address + BitVec.ofNat 64 5)) ++
+        (holW2v (m (address + BitVec.ofNat 64 4)) ++
+        (holW2v (m (address + BitVec.ofNat 64 3)) ++
+        (holW2v (m (address + BitVec.ofNat 64 2)) ++
+        (holW2v (m (address + BitVec.ofNat 64 1)) ++
+        holW2v (m address)))))))), ms) := by
+  have h0 : ms.MEM address = m address := by simpa using hbytes 0 (by omega)
+  exact arm8Mem_eight ms address (m address) (m (address + BitVec.ofNat 64 1))
+    (m (address + BitVec.ofNat 64 2)) (m (address + BitVec.ofNat 64 3))
+    (m (address + BitVec.ofNat 64 4)) (m (address + BitVec.ofNat 64 5))
+    (m (address + BitVec.ofNat 64 6)) (m (address + BitVec.ofNat 64 7))
+    h0 (hbytes 1 (by omega)) (hbytes 2 (by omega)) (hbytes 3 (by omega))
+    (hbytes 4 (by omega)) (hbytes 5 (by omega)) (hbytes 6 (by omega))
+    (hbytes 7 (by omega)) hal he0 hel
+
 end Flapjack.Compiler.Encoders.Arm8.L3
