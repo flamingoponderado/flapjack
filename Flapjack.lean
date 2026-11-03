@@ -2323,6 +2323,8 @@ import Flapjack.CompileParamVarsRelation
 import Flapjack.CompileParamVarsSlotBounds
 import Flapjack.PanValues
 import Flapjack.PanValueEvaluatorStability
+import Flapjack.PanValueExpCounted
+import Flapjack.PanValueFfiCore
 import Flapjack.PanSteppedSemantics
 import Flapjack.PanMemory
 import Flapjack.PanValueFfiFuel
