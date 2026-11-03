@@ -1,5 +1,101 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_max_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "fvMax",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed source statement in clos_known_syntax_probe.out: definition equating the bound to all free indices being less than n. The HOL free-variable traversal and closure syntax, including mlstring carriers, are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_max_SmartOp",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "fvMaxSmartOp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed source statement in clos_known_syntax_probe.out: preservation of the bound by the executed SmartOp. The HOL free-variable traversal and closure syntax, including mlstring carriers, are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_max_cons",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "fvMaxCons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed source statement in clos_known_syntax_probe.out: cons distribution. The HOL free-variable traversal and closure syntax, including mlstring carriers, are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_max_append",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "fvMaxAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed source statement in clos_known_syntax_probe.out: append distribution. The HOL free-variable traversal and closure syntax, including mlstring carriers, are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_max_less",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "fvMaxLess",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed source statement in clos_known_syntax_probe.out: monotonicity in the bound. The HOL free-variable traversal and closure syntax, including mlstring carriers, are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_max_rw",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "fvMaxVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed source statement in clos_known_syntax_probe.out: variable constructor conjunct. The HOL free-variable traversal and closure syntax, including mlstring carriers, are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_max_rw",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "fvMaxLet",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed source statement in clos_known_syntax_probe.out: let constructor conjunct with its body index shift. The HOL free-variable traversal and closure syntax, including mlstring carriers, are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_max_rw",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "fvMaxFn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed source statement in clos_known_syntax_probe.out: function constructor conjunct with its arity shift. The HOL free-variable traversal and closure syntax, including mlstring carriers, are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_max_rw",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "fvMaxHandle",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed source statement in clos_known_syntax_probe.out: handler constructor conjunct with its one-index shift. The HOL free-variable traversal and closure syntax, including mlstring carriers, are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_max_rw",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "fvMaxLetrec",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed source statement in clos_known_syntax_probe.out: recursive-function-group conjunct with arity and group-length shifts. The HOL free-variable traversal and closure syntax, including mlstring carriers, are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_max_rw",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "fvMaxRw",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed source statement in clos_known_syntax_probe.out: complete conjunction covering every original expression constructor. The HOL free-variable traversal and closure syntax, including mlstring carriers, are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_max_mk_Ticks",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "fvMaxTicks",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the corresponding typed source statement in clos_known_syntax_probe.out: tick-insertion preservation for arbitrary trace, index, count and expression. The HOL free-variable traversal and closure syntax, including mlstring carriers, are preserved."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
   "hol_name": "SmartOp_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
