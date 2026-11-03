@@ -492,6 +492,258 @@ theorem arm8Enc_store_single_length (dest base : Nat) (off : BitVec 64)
   rw [arm8Enc, arm8Ast_store_single dest base off hsx]
   simp [arm8Encode_length]
 
+/-- The scaled twelve-bit form of `arm8_load_store_ast` (a zero-extended
+ twelve-bit slice shifted into place) is the `hoff` form the case theorems use:
+ `setWidth 64` of the low twelve bits of the shifted offset. -/
+theorem arm8ScaledForm_eq (off : BitVec 64) (shift : BitVec 64) :
+    (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> shift).toNat))) =
+      BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> shift)) := by
+  apply BitVec.eq_of_toNat_eq
+  simp [RiscV.L3.holWordExtract]
+
+/-- The one-instruction branch of `arm8_load_store_ast` for `.mem .load`: when
+ the offset is either its own signed nine-bit form or the scaled twelve-bit form
+ at a non-negative offset, `arm8_ast` emits a single `LoadStoreImmediate@64`.
+ This is the negation of the two-instruction condition `arm8_ast` tests, so it
+ also covers scaled offsets beyond the nine-bit range. -/
+theorem arm8Ast_load_single_of_single (dest base : Nat) (off : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 3).toNat))) <<< 3)) = true) :
+    arm8Ast (.inst (.mem .load dest (.addr base off))) =
+      [.LoadStore (.«LoadStoreImmediate@64»
+        (3, false, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false, false,
+         !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))] := by
+  simp only [arm8Ast, arm8LoadStoreAst]
+  split
+  · rename_i hcond
+    rw [Bool.and_eq_true] at hcond
+    obtain ⟨hne, hrest⟩ := hcond
+    have hne' : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by simpa using hne
+    rcases hsingle with hsx | hscaled
+    · exact absurd hsx hne'
+    · rw [Bool.and_eq_true] at hscaled
+      obtain ⟨hunsigned, hbeq⟩ := hscaled
+      rw [beq_iff_eq] at hbeq
+      rw [Bool.or_eq_true] at hrest
+      rcases hrest with hmsb | hne''
+      · have hmsbt : off.msb = true := by simpa using hmsb
+        rw [hmsbt] at hunsigned
+        exact absurd hunsigned (by decide)
+      · have hne : off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 3).toNat))) <<< 3 := by
+          simpa using hne''
+        exact (hne hbeq).elim
+  · rfl
+
+/-- The one-instruction branch of `arm8_load_store_ast` for `.mem .store`
+ (`arm8_load_store_ast` at `arm8_targetScript.sml:78-96`). -/
+theorem arm8Ast_store_single_of_single (dest base : Nat) (off : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 3).toNat))) <<< 3)) = true) :
+    arm8Ast (.inst (.mem .store dest (.addr base off))) =
+      [.LoadStore (.«LoadStoreImmediate@64»
+        (3, false, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
+         !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))] := by
+  simp only [arm8Ast, arm8LoadStoreAst]
+  split
+  · rename_i hcond
+    rw [Bool.and_eq_true] at hcond
+    obtain ⟨hne, hrest⟩ := hcond
+    have hne' : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by simpa using hne
+    rcases hsingle with hsx | hscaled
+    · exact absurd hsx hne'
+    · rw [Bool.and_eq_true] at hscaled
+      obtain ⟨hunsigned, hbeq⟩ := hscaled
+      rw [beq_iff_eq] at hbeq
+      rw [Bool.or_eq_true] at hrest
+      rcases hrest with hmsb | hne''
+      · have hmsbt : off.msb = true := by simpa using hmsb
+        rw [hmsbt] at hunsigned
+        exact absurd hunsigned (by decide)
+      · have hne : off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 3).toNat))) <<< 3 := by
+          simpa using hne''
+        exact (hne hbeq).elim
+  · rfl
+
+/-- The one-instruction branch of `arm8_load_store_ast32` for `.mem .load32`. -/
+theorem arm8Ast_load_single_of_single32 (dest base : Nat) (off : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 2).toNat))) <<< 2)) = true) :
+    arm8Ast (.inst (.mem .load32 dest (.addr base off))) =
+      [.LoadStore (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))] := by
+  simp only [arm8Ast, arm8LoadStoreAst32]
+  split
+  · rename_i hcond
+    rw [Bool.and_eq_true] at hcond
+    obtain ⟨hne, hrest⟩ := hcond
+    have hne' : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by simpa using hne
+    rcases hsingle with hsx | hscaled
+    · exact absurd hsx hne'
+    · rw [Bool.and_eq_true] at hscaled
+      obtain ⟨hunsigned, hbeq⟩ := hscaled
+      rw [beq_iff_eq] at hbeq
+      rw [Bool.or_eq_true] at hrest
+      rcases hrest with hmsb | hne''
+      · have hmsbt : off.msb = true := by simpa using hmsb
+        rw [hmsbt] at hunsigned
+        exact absurd hunsigned (by decide)
+      · have hne : off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 2).toNat))) <<< 2 := by
+          simpa using hne''
+        exact (hne hbeq).elim
+  · rfl
+
+/-- The one-instruction branch of `arm8_load_store_ast32` for `.mem .store32`. -/
+theorem arm8Ast_store_single_of_single32 (dest base : Nat) (off : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 2).toNat))) <<< 2)) = true) :
+    arm8Ast (.inst (.mem .store32 dest (.addr base off))) =
+      [.LoadStore (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))] := by
+  simp only [arm8Ast, arm8LoadStoreAst32]
+  split
+  · rename_i hcond
+    rw [Bool.and_eq_true] at hcond
+    obtain ⟨hne, hrest⟩ := hcond
+    have hne' : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by simpa using hne
+    rcases hsingle with hsx | hscaled
+    · exact absurd hsx hne'
+    · rw [Bool.and_eq_true] at hscaled
+      obtain ⟨hunsigned, hbeq⟩ := hscaled
+      rw [beq_iff_eq] at hbeq
+      rw [Bool.or_eq_true] at hrest
+      rcases hrest with hmsb | hne''
+      · have hmsbt : off.msb = true := by simpa using hmsb
+        rw [hmsbt] at hunsigned
+        exact absurd hunsigned (by decide)
+      · have hne : off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 2).toNat))) <<< 2 := by
+          simpa using hne''
+        exact (hne hbeq).elim
+  · rfl
+
+/-- The one-instruction branch of `arm8_load_store_ast16` for `.mem .load16`. -/
+theorem arm8Ast_load_single_of_single16 (dest base : Nat) (off : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 1).toNat))) <<< 1)) = true) :
+    arm8Ast (.inst (.mem .load16 dest (.addr base off))) =
+      [.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))] := by
+  simp only [arm8Ast, arm8LoadStoreAst16]
+  split
+  · rename_i hcond
+    rw [Bool.and_eq_true] at hcond
+    obtain ⟨hne, hrest⟩ := hcond
+    have hne' : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by simpa using hne
+    rcases hsingle with hsx | hscaled
+    · exact absurd hsx hne'
+    · rw [Bool.and_eq_true] at hscaled
+      obtain ⟨hunsigned, hbeq⟩ := hscaled
+      rw [beq_iff_eq] at hbeq
+      rw [Bool.or_eq_true] at hrest
+      rcases hrest with hmsb | hne''
+      · have hmsbt : off.msb = true := by simpa using hmsb
+        rw [hmsbt] at hunsigned
+        exact absurd hunsigned (by decide)
+      · have hne : off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 1).toNat))) <<< 1 := by
+          simpa using hne''
+        exact (hne hbeq).elim
+  · rfl
+
+/-- The one-instruction branch of `arm8_load_store_ast16` for `.mem .store16`. -/
+theorem arm8Ast_store_single_of_single16 (dest base : Nat) (off : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 1).toNat))) <<< 1)) = true) :
+    arm8Ast (.inst (.mem .store16 dest (.addr base off))) =
+      [.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))] := by
+  simp only [arm8Ast, arm8LoadStoreAst16]
+  split
+  · rename_i hcond
+    rw [Bool.and_eq_true] at hcond
+    obtain ⟨hne, hrest⟩ := hcond
+    have hne' : off ≠ BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) := by simpa using hne
+    rcases hsingle with hsx | hscaled
+    · exact absurd hsx hne'
+    · rw [Bool.and_eq_true] at hscaled
+      obtain ⟨hunsigned, hbeq⟩ := hscaled
+      rw [beq_iff_eq] at hbeq
+      rw [Bool.or_eq_true] at hrest
+      rcases hrest with hmsb | hne''
+      · have hmsbt : off.msb = true := by simpa using hmsb
+        rw [hmsbt] at hunsigned
+        exact absurd hunsigned (by decide)
+      · have hne : off ≠ (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 1).toNat))) <<< 1 := by
+          simpa using hne''
+        exact (hne hbeq).elim
+  · rfl
+
+/-- The one-instruction load lowering encodes to four bytes on the whole
+ single-instruction branch of `arm8_load_store_ast`. -/
+theorem arm8Enc_load_single_length_of_single (dest base : Nat) (off : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 3).toNat))) <<< 3)) = true) :
+    (arm8Enc (.inst (.mem .load dest (.addr base off)))).length = 4 := by
+  rw [arm8Enc, arm8Ast_load_single_of_single dest base off hsingle]
+  simp [arm8Encode_length]
+
+/-- The one-instruction store lowering encodes to four bytes on the whole
+ single-instruction branch of `arm8_load_store_ast`. -/
+theorem arm8Enc_store_single_length_of_single (dest base : Nat) (off : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 3).toNat))) <<< 3)) = true) :
+    (arm8Enc (.inst (.mem .store dest (.addr base off)))).length = 4 := by
+  rw [arm8Enc, arm8Ast_store_single_of_single dest base off hsingle]
+  simp [arm8Encode_length]
+
+/-- The one-instruction `LoadStoreImmediate@32` lowering encodes to four bytes. -/
+theorem arm8Enc_load_single_length_of_single32 (dest base : Nat) (off : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 2).toNat))) <<< 2)) = true) :
+    (arm8Enc (.inst (.mem .load32 dest (.addr base off)))).length = 4 := by
+  rw [arm8Enc, arm8Ast_load_single_of_single32 dest base off hsingle]
+  simp [arm8Encode_length]
+
+/-- The one-instruction `LoadStoreImmediate@32` store lowering encodes to four
+ bytes. -/
+theorem arm8Enc_store_single_length_of_single32 (dest base : Nat) (off : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 2).toNat))) <<< 2)) = true) :
+    (arm8Enc (.inst (.mem .store32 dest (.addr base off)))).length = 4 := by
+  rw [arm8Enc, arm8Ast_store_single_of_single32 dest base off hsingle]
+  simp [arm8Encode_length]
+
+/-- The one-instruction `LoadStoreImmediate@16` lowering encodes to four bytes. -/
+theorem arm8Enc_load_single_length_of_single16 (dest base : Nat) (off : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 1).toNat))) <<< 1)) = true) :
+    (arm8Enc (.inst (.mem .load16 dest (.addr base off)))).length = 4 := by
+  rw [arm8Enc, arm8Ast_load_single_of_single16 dest base off hsingle]
+  simp [arm8Encode_length]
+
+/-- The one-instruction `LoadStoreImmediate@16` store lowering encodes to four
+ bytes. -/
+theorem arm8Enc_store_single_length_of_single16 (dest base : Nat) (off : BitVec 64)
+    (hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 1).toNat))) <<< 1)) = true) :
+    (arm8Enc (.inst (.mem .store16 dest (.addr base off)))).length = 4 := by
+  rw [arm8Enc, arm8Ast_store_single_of_single16 dest base off hsingle]
+  simp [arm8Encode_length]
+
 /-- The little-endian word of four bytes, in the OR-of-shifts form `readBytes`
 assembles (Flapjack infrastructure; the four-byte analogue of
 `holV2w_eight_bytes`). -/
@@ -1859,16 +2111,16 @@ theorem arm8_encoder_correct_mem_store32_imm9 (dest base : Nat) (off : BitVec 64
 
 
 /-- The `.mem .load32` constructor of `encoder_correct arm8TargetL3` on the
-scaled twelve-bit path of `e_LoadStoreImmediate` (`sz = 2`): the branch
-conditions are `hsx`, `hmsb` and `hoff`, as in the eight-byte scaled case, with
-the four-byte read.  The statement awaits source review against
-`arm8_encoder_correct`. -/
+scaled twelve-bit path of `e_LoadStoreImmediate` (`sz = 2`): a non-negative
+offset equal to its scaled twelve-bit form (`hmsb`, `hoff`), which is the whole
+unsigned scaled branch of `arm8_load_store_ast`, whether or not the offset also
+fits signed nine bits, with the four-byte read.  The statement awaits source
+review against `arm8_encoder_correct`. -/
 @[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_mem_load32_scaled (dest base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.mem .load32 dest (.addr base off))) s2 ∧
       targetStateRel arm8TargetL3 s1 ms)
-    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
     (hmsb : off.msb = false)
     (hoff : off = (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 2))) <<< 2) :
     CaseGoal (.inst (.mem .load32 dest (.addr base off))) s1 s2 ms := by
@@ -1904,7 +2156,17 @@ theorem arm8_encoder_correct_mem_load32_scaled (dest base : Nat) (off : BitVec 6
     arm8MemLoad_aligned_four .load32 dest base off s1 s2 _ hspec hupd hbe hnotfail
   have hdom : ∀ k, k < 4 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) :=
     arm8MemLoad_domain_four .load32 dest base off s1 s2 _ hspec hupd hbe hnotfail
-  have hast := arm8Ast_load_single32 dest base off hsx
+  have hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 2).toNat))) <<< 2)) = true := by
+    right
+    have hbeq : (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 2).toNat))) <<< 2) = true := by
+      rw [beq_iff_eq, arm8ScaledForm_eq off 2]
+      exact hoff
+    rw [hmsb]
+    simp only [Bool.not_false, Bool.true_and]
+    exact hbeq
+  have hast := arm8Ast_load_single_of_single32 dest base off hsingle
   have henc : arm8Enc (.inst (.mem .load32 dest (.addr base off))) =
       arm8Encode (.LoadStore (.«LoadStoreImmediate@32»
         (BitVec.ofNat 32 2, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
@@ -1918,7 +2180,7 @@ theorem arm8_encoder_correct_mem_load32_scaled (dest base : Nat) (off : BitVec 6
          false, true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) = MachineCode.ARM8 w :=
     arm8Encode_loadStoreImm12_load32 off (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest) hoff
   have hlen : (arm8Enc (.inst (.mem .load32 dest (.addr base off)))).length = 4 :=
-    arm8Enc_load_single32_length dest base off hsx
+    arm8Enc_load_single_length_of_single32 dest base off hsingle
   have hb := hs.1
   simp only [arm8ConfigL3] at hb
   have hbdom := bytesInMemoryHOL_domain hb
@@ -2081,7 +2343,6 @@ theorem arm8_encoder_correct_mem_store32_scaled (dest base : Nat) (off : BitVec 
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.mem .store32 dest (.addr base off))) s2 ∧
       targetStateRel arm8TargetL3 s1 ms)
-    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
     (hmsb : off.msb = false)
     (hoff : off = (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 2))) <<< 2) :
     CaseGoal (.inst (.mem .store32 dest (.addr base off))) s1 s2 ms := by
@@ -2117,7 +2378,17 @@ theorem arm8_encoder_correct_mem_store32_scaled (dest base : Nat) (off : BitVec 
     arm8MemStore_aligned_four .store32 dest base off s1 s2 _ hspec hupd hbe hnotfail
   have hdom : ∀ k, k < 4 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) :=
     arm8MemStore_domain_four .store32 dest base off s1 s2 _ hspec hupd hbe hnotfail
-  have hast := arm8Ast_store_single32 dest base off hsx
+  have hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 2).toNat))) <<< 2)) = true := by
+    right
+    have hbeq : (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 2).toNat))) <<< 2) = true := by
+      rw [beq_iff_eq, arm8ScaledForm_eq off 2]
+      exact hoff
+    rw [hmsb]
+    simp only [Bool.not_false, Bool.true_and]
+    exact hbeq
+  have hast := arm8Ast_store_single_of_single32 dest base off hsingle
   have henc : arm8Enc (.inst (.mem .store32 dest (.addr base off))) =
       arm8Encode (.LoadStore (.«LoadStoreImmediate@32»
         (BitVec.ofNat 32 2, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
@@ -2131,7 +2402,7 @@ theorem arm8_encoder_correct_mem_store32_scaled (dest base : Nat) (off : BitVec 
          false, true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) = MachineCode.ARM8 w :=
     arm8Encode_loadStoreImm12_store32 off (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest) hoff
   have hlen : (arm8Enc (.inst (.mem .store32 dest (.addr base off)))).length = 4 :=
-    arm8Enc_store_single32_length dest base off hsx
+    arm8Enc_store_single_length_of_single32 dest base off hsingle
   have hb := hs.1
   simp only [arm8ConfigL3] at hb
   have hbdom := bytesInMemoryHOL_domain hb
@@ -4483,15 +4754,15 @@ theorem arm8_encoder_correct_mem_store16_imm9 (dest base : Nat) (off : BitVec 64
     · rw [if_neg hk]
 
 /-- The `.mem .load16` constructor of `encoder_correct arm8TargetL3` on the
-scaled twelve-bit path of `e_LoadStoreImmediate` (`sz = 1`): the branch
-conditions are `hsx`, `hmsb` and `hoff`, with the two-byte read.  The statement
-awaits source review against `arm8_encoder_correct`. -/
+scaled twelve-bit path of `e_LoadStoreImmediate` (`sz = 1`): a non-negative
+offset equal to its scaled twelve-bit form (`hmsb`, `hoff`), whether or not it
+also fits signed nine bits, with the two-byte read.  The statement awaits
+source review against `arm8_encoder_correct`. -/
 @[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_mem_load16_scaled (dest base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.mem .load16 dest (.addr base off))) s2 ∧
       targetStateRel arm8TargetL3 s1 ms)
-    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
     (hmsb : off.msb = false)
     (hoff : off = (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 1))) <<< 1) :
     CaseGoal (.inst (.mem .load16 dest (.addr base off))) s1 s2 ms := by
@@ -4526,7 +4797,17 @@ theorem arm8_encoder_correct_mem_load16_scaled (dest base : Nat) (off : BitVec 6
     arm8MemLoad_aligned_two .load16 dest base off s1 s2 _ hspec hupd hbe hnotfail
   have hdom : ∀ k, k < 2 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) :=
     arm8MemLoad_domain_two .load16 dest base off s1 s2 _ hspec hupd hbe hnotfail
-  have hast := arm8Ast_load_single16 dest base off hsx
+  have hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 1).toNat))) <<< 1)) = true := by
+    right
+    have hbeq : (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 1).toNat))) <<< 1) = true := by
+      rw [beq_iff_eq, arm8ScaledForm_eq off 1]
+      exact hoff
+    rw [hmsb]
+    simp only [Bool.not_false, Bool.true_and]
+    exact hbeq
+  have hast := arm8Ast_load_single_of_single16 dest base off hsingle
   have henc : arm8Enc (.inst (.mem .load16 dest (.addr base off))) =
       arm8Encode (.LoadStore (.«LoadStoreImmediate@16»
         (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
@@ -4540,7 +4821,7 @@ theorem arm8_encoder_correct_mem_load16_scaled (dest base : Nat) (off : BitVec 6
          false, true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) = MachineCode.ARM8 w :=
     arm8Encode_loadStoreImm12_load16 off (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest) hoff
   have hlen : (arm8Enc (.inst (.mem .load16 dest (.addr base off)))).length = 4 :=
-    arm8Enc_load_single16_length dest base off hsx
+    arm8Enc_load_single_length_of_single16 dest base off hsingle
   have hb := hs.1
   simp only [arm8ConfigL3] at hb
   have hbdom := bytesInMemoryHOL_domain hb
@@ -4703,7 +4984,6 @@ theorem arm8_encoder_correct_mem_store16_scaled (dest base : Nat) (off : BitVec 
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.mem .store16 dest (.addr base off))) s2 ∧
       targetStateRel arm8TargetL3 s1 ms)
-    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
     (hmsb : off.msb = false)
     (hoff : off = (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 1))) <<< 1) :
     CaseGoal (.inst (.mem .store16 dest (.addr base off))) s1 s2 ms := by
@@ -4738,7 +5018,17 @@ theorem arm8_encoder_correct_mem_store16_scaled (dest base : Nat) (off : BitVec 
     arm8MemStore_aligned_two .store16 dest base off s1 s2 _ hspec hupd hbe hnotfail
   have hdom : ∀ k, k < 2 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) :=
     arm8MemStore_domain_two .store16 dest base off s1 s2 _ hspec hupd hbe hnotfail
-  have hast := arm8Ast_store_single16 dest base off hsx
+  have hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 1).toNat))) <<< 1)) = true := by
+    right
+    have hbeq : (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 1).toNat))) <<< 1) = true := by
+      rw [beq_iff_eq, arm8ScaledForm_eq off 1]
+      exact hoff
+    rw [hmsb]
+    simp only [Bool.not_false, Bool.true_and]
+    exact hbeq
+  have hast := arm8Ast_store_single_of_single16 dest base off hsingle
   have henc : arm8Enc (.inst (.mem .store16 dest (.addr base off))) =
       arm8Encode (.LoadStore (.«LoadStoreImmediate@16»
         (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
@@ -4752,7 +5042,7 @@ theorem arm8_encoder_correct_mem_store16_scaled (dest base : Nat) (off : BitVec 
          false, true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) = MachineCode.ARM8 w :=
     arm8Encode_loadStoreImm12_store16 off (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest) hoff
   have hlen : (arm8Enc (.inst (.mem .store16 dest (.addr base off)))).length = 4 :=
-    arm8Enc_store_single16_length dest base off hsx
+    arm8Enc_store_single_length_of_single16 dest base off hsingle
   have hb := hs.1
   simp only [arm8ConfigL3] at hb
   have hbdom := bytesInMemoryHOL_domain hb
@@ -7342,7 +7632,6 @@ theorem arm8_encoder_correct_mem_load_scaled (dest base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.mem .load dest (.addr base off))) s2 ∧
       targetStateRel arm8TargetL3 s1 ms)
-    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
     (hmsb : off.msb = false)
     (hoff : off = (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 3))) <<< 3) :
     CaseGoal (.inst (.mem .load dest (.addr base off))) s1 s2 ms := by
@@ -7378,7 +7667,17 @@ theorem arm8_encoder_correct_mem_load_scaled (dest base : Nat) (off : BitVec 64)
   have hmemv : (Mem (TN := 64) ((s1.regs base + off), (8, AccType.AccType_NORMAL)) ms).1 =
       (readMemWord (resultWidth := 64) (s1.regs base + off) 8 s1).1 :=
     arm8Mem_eight_value ms s1 (s1.regs base + off) hal8 he0 hel hbe hmem hdom
-  have hast := arm8Ast_load_single dest base off hsx
+  have hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 3).toNat))) <<< 3)) = true := by
+    right
+    have hbeq : (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 3).toNat))) <<< 3) = true := by
+      rw [beq_iff_eq, arm8ScaledForm_eq off 3]
+      exact hoff
+    rw [hmsb]
+    simp only [Bool.not_false, Bool.true_and]
+    exact hbeq
+  have hast := arm8Ast_load_single_of_single dest base off hsingle
   have henc : arm8Enc (.inst (.mem .load dest (.addr base off))) =
       arm8Encode (.LoadStore (.«LoadStoreImmediate@64»
         (3, false, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false, false,
@@ -7392,7 +7691,7 @@ theorem arm8_encoder_correct_mem_load_scaled (dest base : Nat) (off : BitVec 64)
          true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) = MachineCode.ARM8 w :=
     arm8Encode_loadStoreImm12_load off (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest) hoff
   have hlen : (arm8Enc (.inst (.mem .load dest (.addr base off)))).length = 4 :=
-    arm8Enc_load_single_length dest base off hsx
+    arm8Enc_load_single_length_of_single dest base off hsingle
   have hb := hs.1
   simp only [arm8ConfigL3] at hb
   have hbdom := bytesInMemoryHOL_domain hb
@@ -7749,15 +8048,15 @@ theorem arm8_encoder_correct_mem_store_imm9 (dest base : Nat) (off : BitVec 64)
 
 
 /-- The `.mem .store` constructor of `encoder_correct arm8TargetL3` on the
-scaled twelve-bit path of `e_LoadStoreImmediate`.  The branch conditions are the
-same three the load case uses (`hsx`, `hmsb`, `hoff`); the memory obligations
-are discharged as in the `imm9` store case. -/
+scaled twelve-bit path of `e_LoadStoreImmediate`: a non-negative offset equal to
+its scaled twelve-bit form (`hmsb`, `hoff`), covering scaled offsets beyond the
+signed nine-bit range as well.  The memory obligations are discharged as in the
+`imm9` store case. -/
 @[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
 theorem arm8_encoder_correct_mem_store_scaled (dest base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.mem .store dest (.addr base off))) s2 ∧
       targetStateRel arm8TargetL3 s1 ms)
-    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
     (hmsb : off.msb = false)
     (hoff : off = (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 3))) <<< 3) :
     CaseGoal (.inst (.mem .store dest (.addr base off))) s1 s2 ms := by
@@ -7790,7 +8089,17 @@ theorem arm8_encoder_correct_mem_store_scaled (dest base : Nat) (off : BitVec 64
     arm8MemStore_aligned .store dest base off s1 s2 _ hspec hupd hbe hnotfail
   have hdom : ∀ k, k < 8 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) :=
     arm8MemStore_domain .store dest base off s1 s2 _ hspec hupd hbe hnotfail
-  have hast := arm8Ast_store_single dest base off hsx
+  have hsingle : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat) ∨
+      (!off.msb &&
+        (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 3).toNat))) <<< 3)) = true := by
+    right
+    have hbeq : (off == (BitVec.zeroExtend 64 (BitVec.ofNat 12 ((off >>> 3).toNat))) <<< 3) = true := by
+      rw [beq_iff_eq, arm8ScaledForm_eq off 3]
+      exact hoff
+    rw [hmsb]
+    simp only [Bool.not_false, Bool.true_and]
+    exact hbeq
+  have hast := arm8Ast_store_single_of_single dest base off hsingle
   have henc : arm8Enc (.inst (.mem .store dest (.addr base off))) =
       arm8Encode (.LoadStore (.«LoadStoreImmediate@64»
         (3, false, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
@@ -7804,7 +8113,7 @@ theorem arm8_encoder_correct_mem_store_scaled (dest base : Nat) (off : BitVec 64
          true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) = MachineCode.ARM8 w :=
     arm8Encode_loadStoreImm12_store off (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest) hoff
   have hlen : (arm8Enc (.inst (.mem .store dest (.addr base off)))).length = 4 :=
-    arm8Enc_store_single_length dest base off hsx
+    arm8Enc_store_single_length_of_single dest base off hsingle
   have hb := hs.1
   simp only [arm8ConfigL3] at hb
   have hbdom := bytesInMemoryHOL_domain hb

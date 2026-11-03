@@ -100755,7 +100755,7 @@
   "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
   "lean_name": "arm8_encoder_correct_mem_load_scaled",
   "statement_status": "pending_statement_review",
-  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the scaled twelve-bit load branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): the single LoadStoreImmediate@64 imm12 word e_LoadStoreImmediate emits when the offset is the scaled twelve-bit form and unsigned_offset is true, with the same asmStep/targetStateRel premise, existential n = 0, every environment, interference preservation, the code-byte/PC assertion and the outside-domain byte conclusion. The three case hypotheses (nine-bit fit, non-negative sign, scaled form) are the branch conditions arm8_ast and e_LoadStoreImmediate inspect, not part of encoder_correct_def; the case is disjoint from arm8_encoder_correct_mem_load_imm9, whose hfall says the scaled clause does not fire. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment definitions it uses are mechanically rendered and not yet source-reviewed."
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the unsigned scaled twelve-bit load branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): the single LoadStoreImmediate@64 imm12 word e_LoadStoreImmediate emits when the offset is the scaled twelve-bit form and unsigned_offset is true, with the same asmStep/targetStateRel premise, existential n = 0, every environment, interference preservation, the code-byte/PC assertion and the outside-domain byte conclusion. The two case hypotheses (non-negative sign, scaled form) are branch conditions arm8_ast and e_LoadStoreImmediate inspect, not part of encoder_correct_def; the case is disjoint from arm8_encoder_correct_mem_load_imm9, whose hfall says the scaled clause does not fire. The statement was generalised on 2026-11-03 by dropping the nine-bit-fit hypothesis: arm8_load_store_ast's one-instruction branch is `a = sw2sw ((8 >< 0) a) \\/ (unsigned /\\ a = scaled)`, so a scaled offset beyond the signed nine-bit range (for example 2048, which the -4351..4350 offset gate admits) also lowers to this single imm12 instruction, and arm8Ast_load_single_of_single now covers both halves of that branch. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment definitions it uses are mechanically rendered and not yet source-reviewed."
  },
  {
   "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
@@ -100771,7 +100771,7 @@
   "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
   "lean_name": "arm8_encoder_correct_mem_store_scaled",
   "statement_status": "pending_statement_review",
-  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem store case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) on the scaled twelve-bit path: the single LoadStoreImmediate@64 imm12 store, disjoint from arm8_encoder_correct_mem_store_imm9 because the scaled clause fires. Same asmStep/targetStateRel premise and conclusion, and the same arm8WriteMem_eight memory obligations. The three case hypotheses (nine-bit fit, non-negative sign, scaled form) are branch conditions of arm8_ast and e_LoadStoreImmediate, not part of encoder_correct_def. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment/write'Mem definitions it uses are mechanically rendered and not yet source-reviewed."
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the Mem store case of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536) on the unsigned scaled twelve-bit path: the single LoadStoreImmediate@64 imm12 store, disjoint from arm8_encoder_correct_mem_store_imm9 because the scaled clause fires. Same asmStep/targetStateRel premise and conclusion, and the same arm8WriteMem_eight memory obligations. The two case hypotheses (non-negative sign, scaled form) are branch conditions of arm8_ast and e_LoadStoreImmediate, not part of encoder_correct_def; the nine-bit-fit hypothesis was dropped on 2026-11-03 so the theorem covers scaled offsets beyond the signed nine-bit range, the second half of arm8_load_store_ast's one-instruction branch. Pending because the rendered arm8Next/arm8Ok/Decode/Fetch/Mem/CheckAlignment/write'Mem definitions it uses are mechanically rendered and not yet source-reviewed."
  },
  {
   "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
@@ -100795,7 +100795,7 @@
   "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
   "statement_status": "pending_statement_review",
   "lean_name": "arm8_encoder_correct_mem_load32_scaled",
-  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the scaled twelve-bit load32 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@32 imm12 word with the four-byte read, disjoint from arm8_encoder_correct_mem_load32_imm9 because the scaled clause fires. Same premise and conclusion; the three case hypotheses (nine-bit fit, non-negative sign, scaled form) are branch conditions of arm8_ast and e_LoadStoreImmediate. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the unsigned scaled twelve-bit load32 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@32 imm12 word with the four-byte read, disjoint from arm8_encoder_correct_mem_load32_imm9 because the scaled clause fires. Same premise and conclusion; the two case hypotheses (non-negative sign, scaled form) are branch conditions of arm8_ast and e_LoadStoreImmediate. The nine-bit-fit hypothesis was dropped on 2026-11-03 (arm8Ast_load_single_of_single32 covers both halves of arm8_load_store_ast32's one-instruction branch), so scaled offsets beyond the signed nine-bit range are covered. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
  },
  {
   "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
@@ -100803,7 +100803,7 @@
   "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
   "statement_status": "pending_statement_review",
   "lean_name": "arm8_encoder_correct_mem_store32_scaled",
-  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the scaled twelve-bit store32 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@32 imm12 store with the four-byte write, disjoint from the imm9 store case. Same premise and conclusion, and the same arm8WriteMem_four obligations. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the unsigned scaled twelve-bit store32 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@32 imm12 store with the four-byte write, disjoint from the imm9 store case. Same premise and conclusion, and the same arm8WriteMem_four obligations; the nine-bit-fit hypothesis was dropped on 2026-11-03 so scaled offsets beyond the signed nine-bit range are covered. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
  },
  {
   "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
@@ -100859,7 +100859,7 @@
   "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
   "statement_status": "pending_statement_review",
   "lean_name": "arm8_encoder_correct_mem_load16_scaled",
-  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the scaled twelve-bit load16 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@16 imm12 word with the two-byte read, disjoint from the imm9 case because the scaled clause fires. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the unsigned scaled twelve-bit load16 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@16 imm12 word with the two-byte read, disjoint from the imm9 case because the scaled clause fires; the nine-bit-fit hypothesis was dropped on 2026-11-03 (arm8Ast_load_single_of_single16), so scaled offsets beyond the signed nine-bit range are covered. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
  },
  {
   "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
@@ -100867,7 +100867,7 @@
   "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Mem.lean",
   "statement_status": "pending_statement_review",
   "lean_name": "arm8_encoder_correct_mem_store16_scaled",
-  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the scaled twelve-bit store16 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@16 imm12 store with the two-byte write. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
+  "reviewer": "codewhale source comparison 2026-11-03 (issue #1239): the unsigned scaled twelve-bit store16 branch of HOL arm8_encoder_correct (arm8_targetProofScript.sml:536): one LoadStoreImmediate@16 imm12 store with the two-byte write; the nine-bit-fit hypothesis was dropped on 2026-11-03 (arm8Ast_store_single_of_single16), so scaled offsets beyond the signed nine-bit range are covered. Pending because the rendered definitions it uses are mechanically rendered and not yet source-reviewed."
  },
  {
   "hol_path": "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml",
