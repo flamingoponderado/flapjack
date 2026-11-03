@@ -130,6 +130,6 @@ theorem eqListBounded_independent (a b : Nat) (pairs : List (Exp × Exp)) :
 /-- The complete checked smart constructor is independent of initial fuel. Flapjack retry infrastructure; no HOL counterpart. -/
 theorem smartFuel_independent (a b : Nat) (trace : BackendCommon.Tra) (op : Op) (xs : List Exp) :
     smartFuel a trace op xs = smartFuel b trace op xs := by
-  simp only [smartFuel, liftBounded_independent a b, eqListBounded_independent a b]
+  simp only [smartFuel, liftBounded_independent a b]
 
 end Flapjack.Compiler.Backend.ClosOp

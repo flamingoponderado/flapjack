@@ -325,10 +325,22 @@ def eqListFuel : Nat → List (Exp × Exp) → Option (List Exp)
 def eqListBounded (_fuel : Nat) (pairs : List (Exp × Exp)) : Option (List Exp) :=
   some (appListAppend (eqPureList pairs))
 
-private def conj : List Exp → Exp
+/-- Build a short-circuit conjunction with the source empty and singleton cases. -/
+@[hol "cakeml/compiler/backend/clos_opScript.sml" "ConjList_def"]
+def conjList : List Exp → Exp
   | [] => mkBool true
   | [x] => x
-  | x :: xs => .ifThenElse .none x (conj xs) (mkBool false)
+  | x :: xs => .ifThenElse .none x (conjList xs) (mkBool false)
+
+/-- Decompose a pure equality and join its checks in source order. -/
+@[hol "cakeml/compiler/backend/clos_opScript.sml" "eq_pure_def"]
+def eqPure (x y : Exp) : Exp :=
+  conjList (appListAppend (eqPureList [(x, y)]))
+
+/-- The source equality builder agrees with the former checked interface.
+This preservation fact has no separate HOL declaration. -/
+theorem eqPure_eq_bounded (fuel : Nat) (x y : Exp) :
+    (eqListBounded fuel [(x, y)]).map conjList = some (eqPure x y) := rfl
 
 @[hol "cakeml/compiler/backend/clos_opScript.sml" "is_Var_def"]
 def isVar : Exp → Bool
@@ -356,7 +368,7 @@ def smartFuel (fuel : Nat) (trace : BackendCommon.Tra) (op : Op) (xs : List Exp)
               | none =>
                   let (lifted, _, binds) ← liftBounded fuel [x, y] 0 []
                   match lifted with
-                  | [x, y] => pure (.let .none binds (conj (← eqListBounded fuel [(x, y)])))
+                  | [x, y] => pure (.let .none binds (eqPure x y))
                   | _ => pure default
           | _ => pure default
   | _ => pure default

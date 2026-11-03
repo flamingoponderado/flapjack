@@ -726,10 +726,10 @@ run_probe default_frontend_config_probeScript.sml default_frontend_config_probe.
   state "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_op_frontend_probeScript.sml clos_op_frontend_probe.out \
-  ops signed lift eq_tree "$cake_dir/compiler/backend/clos_opScript.sml" "$cake_dir/compiler/backend"
+  ops signed lift eq_tree conj "$cake_dir/compiler/backend/clos_opScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_op_definitions_probeScript.sml clos_op_definitions_probe.out \
-  dest_const_typed dest_constant_typed dest_cons_typed dest_elem_at_typed dest_tag_eq_typed dest_len_eq_typed dest_tag_len_eq_typed dest_op_typed dest_op_nil_typed dest_op_consts_typed make_bool_typed make_int_typed int_op_typed cons_op_typed is_var_typed eq_direct_nil_typed eq_direct_const_typed eq_direct_constant_typed eq_direct_typed dont_lift_typed lift_exps_typed eq_pure_list_typed \
+  dest_const_typed dest_constant_typed dest_cons_typed dest_elem_at_typed dest_tag_eq_typed dest_len_eq_typed dest_tag_len_eq_typed dest_op_typed dest_op_nil_typed dest_op_consts_typed make_bool_typed make_int_typed int_op_typed cons_op_typed is_var_typed eq_direct_nil_typed eq_direct_const_typed eq_direct_constant_typed eq_direct_typed dont_lift_typed lift_exps_typed eq_pure_list_typed conj_list_typed eq_pure_typed \
   "$cake_dir/compiler/backend/clos_opScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_op_lift_proof_probeScript.sml clos_op_lift_proof_probe.out \

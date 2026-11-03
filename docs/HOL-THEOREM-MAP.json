@@ -1,5 +1,22 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "ConjList_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "conjList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared conj_list_typed: empty yields MakeBool true, singleton is unchanged, and a list of at least two expressions becomes a None-traced If with the recursive tail and MakeBool false. The executed smart constructor uses this definition through eqPure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "eq_pure_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "eqPure",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared eq_pure_typed: the same two closure expressions are decomposed as a singleton pair list, flattened with the reviewed misc append, and combined with ConjList. The smart constructor executes this definition and eqPure_eq_bounded proves definitional agreement with the former composition."
+  }
+,
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "simple_exp_eq_pure_list",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/EqPureSimple.lean",

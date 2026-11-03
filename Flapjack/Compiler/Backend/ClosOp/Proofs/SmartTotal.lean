@@ -20,9 +20,7 @@ theorem smartFuel_succeeds (fuel : Nat) (trace : BackendCommon.Tra) (op : Op) (x
         | nil => exact ⟨_, rfl⟩
         | cons b tail =>
           cases tail with
-          | nil =>
-            obtain ⟨result, he⟩ := eqListBounded_succeeds fuel [(a, b)]
-            exact ⟨_, by simp [he]; rfl⟩
+          | nil => exact ⟨_, rfl⟩
           | cons c tail => exact ⟨_, rfl⟩
 
 end Flapjack.Compiler.Backend.ClosOp

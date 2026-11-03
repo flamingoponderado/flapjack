@@ -43,3 +43,7 @@ val _ = (print "eq_tree="; print_term (rhs (concl (EVAL ``
   clos_op$eq_pure_list [(block 2 [v 0;v 1],block 2 [v 2;v 3])];
   clos_op$eq_pure_list [(block 2 [v 0],block 3 [v 1])];
   clos_op$eq_pure_list [(v 0,v 1);(c 4,v 2)]]``))); print "\n");
+val _ = (print "conj="; print_term (rhs (concl (EVAL ``
+ let v = \i. closLang$Var None i in
+ (clos_op$ConjList [], clos_op$ConjList [v 0],
+  clos_op$ConjList [v 0;v 1;v 2], clos_op$eq_pure (v 0) (v 1))``))); print "\n");

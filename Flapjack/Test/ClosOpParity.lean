@@ -7,6 +7,17 @@ open Flapjack.Compiler.Backend
 private def c (i : Int) : ClosLang.Exp := .op .none (.intOp (.const i)) []
 private def cons (tag : Nat) (xs : List ClosLang.Exp) : ClosLang.Exp := .op .none (.blockOp (.cons tag)) xs
 
+-- `conj` checks empty, singleton and multi-element source clauses.
+#guard match (ClosOp.conjList [], ClosOp.conjList [.var .none 0],
+    ClosOp.conjList [.var .none 0, .var .none 1, .var .none 2],
+    ClosOp.eqPure (.var .none 0) (.var .none 1)) with
+  | (.op .none (.blockOp (.cons 1)) [], .var .none 0,
+     .ifThenElse .none (.var .none 0)
+       (.ifThenElse .none (.var .none 1) (.var .none 2) (.op .none (.blockOp (.cons 0)) []))
+       (.op .none (.blockOp (.cons 0)) []),
+     .op .none (.blockOp .equal) [.var .none 0, .var .none 1]) => true
+  | _ => false
+
 -- `eq_tree` checks the original tree shape and reversed field order.
 #guard match [ClosOp.eqPureList [],
     ClosOp.eqPureList [(.var .none 0, .var .none 1)],
