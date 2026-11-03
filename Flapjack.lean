@@ -348,6 +348,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLetrec
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationDecode
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationPrimitive
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
+import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveNumeric
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCons
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationHandle
