@@ -350,6 +350,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationPrimitive
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationGlobal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationInstallDispatch
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpForce
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpOrdinary
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveNumeric
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveLists
