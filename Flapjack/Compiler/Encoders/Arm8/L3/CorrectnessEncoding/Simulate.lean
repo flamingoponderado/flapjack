@@ -245,7 +245,8 @@ theorem asmCaseTwoMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
     (t1 t2 : arm8_state) (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst inst) s2 ∧ targetStateRel arm8TargetL3 s1 ms)
     (hnext1 : arm8Next ms = t1)
-    (hnext2 : ∀ (u : arm8_state), Arm8L3Agree s1.memDomain u t1 → arm8Next u = t2)
+    (hnext2 : ∀ (u : arm8_state), Arm8L3Agree s1.memDomain u t1 →
+      Arm8L3Agree s1.memDomain (arm8Next u) t2)
     (hnext2_out : ∀ (u : arm8_state), Arm8L3Agree s1.memDomain u t1 →
       ∀ x, ¬ s1.memDomain x → (arm8Next u).MEM x = u.MEM x)
     (hlen : (arm8Enc (.inst inst)).length = 8)
@@ -257,7 +258,8 @@ theorem asmCaseTwoMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
     (htok2 : arm8Ok t2 = true)
     (htpc2 : t2.PC = ms.PC + 8)
     (htmemIn : ∀ x, s1.memDomain x → t2.MEM x = s2.mem x)
-    (htreg : ∀ k, k < 32 → k ≠ r → t2.REG (BitVec.ofNat 5 k) = ms.REG (BitVec.ofNat 5 k))
+    (htreg : ∀ k, k < 32 → arm8ConfigL3.avoidRegs.contains k = false → k ≠ r →
+      t2.REG (BitVec.ofNat 5 k) = ms.REG (BitVec.ofNat 5 k))
     (htval : t2.REG (BitVec.ofNat 5 r) = v)
     (hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 8)
     (hs2dom : s2.memDomain = s1.memDomain)
@@ -284,7 +286,7 @@ theorem asmCaseTwoMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
       intro k hk
       by_cases hkr : k = r
       · rw [hkr, htval, hs2regs r, if_pos rfl]
-      · rw [htreg k hk.1 hkr, hs2regs k, if_neg hkr]
+      · rw [htreg k hk.1 hk.2 hkr, hs2regs k, if_neg hkr]
         exact hreg k hk
     · intro k hk
       simp [arm8ConfigL3] at hk
@@ -295,11 +297,6 @@ theorem asmCaseTwoMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
   have hagree0 : Arm8L3Agree s1.memDomain (env 0 t1) t1 := by
     rw [← arm8Proj_eq_iff]
     exact henv 0 t1
-  have hagree1 : Arm8L3Agree s2.memDomain (env 1 t2) t2 := by
-    rw [← arm8Proj_eq_iff]
-    have hh := henv 1 t2
-    rw [hs2dom]
-    exact hh
   constructor
   · change (arm8Ok (env 0 (arm8Next ms)) = true ∧
         (∀ pc, pc ∈ allPcs (arm8Enc (.inst inst)).length s1.pc 0 →
@@ -314,8 +311,14 @@ theorem asmCaseTwoMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
         exact (hagree0.mem pc (hcode hpc')).trans (htcode1 pc hpc')
       · rw [hagree0.pc, htpc1, hpc, hlen]
         simpa using mem_allPcs_eight_l3 s1.pc 1 (by norm_num)
-    · rw [hnext2 (env 0 t1) hagree0]
-      exact targetStateRel_congr hagree1 hq
+    · have hmid : Arm8L3Agree s2.memDomain (env 1 (arm8Next (env 0 t1)))
+          (arm8Next (env 0 t1)) := by
+        rw [← arm8Proj_eq_iff, hs2dom]
+        exact henv 1 _
+      have hstep : Arm8L3Agree s2.memDomain (arm8Next (env 0 t1)) t2 := by
+        rw [hs2dom]
+        exact hnext2 (env 0 t1) hagree0
+      exact targetStateRel_congr (hmid.trans hstep) hq
   · change (∀ x, ¬ s1.memDomain x → ms.MEM x = (arm8Next ms).MEM x) ∧
       (∀ x, ¬ s1.memDomain x →
         (env 0 (arm8Next ms)).MEM x = (arm8Next (env 0 (arm8Next ms))).MEM x) ∧ True
