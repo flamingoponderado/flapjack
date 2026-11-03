@@ -45,3 +45,6 @@ val _ = show "state_globals_ffi_typed=" clos_knownProofTheory.state_globals_appr
 val _ = show "state_globals_code_typed=" clos_knownProofTheory.state_globals_approx_codeupd;
 val _ = show "state_globals_oracle_typed=" clos_knownProofTheory.state_globals_approx_coupd;
 val _ = show "known_op_correct_approx_typed=" clos_knownProofTheory.known_op_correct_approx;
+val _ = show "val_approx_sgc_free_typed=" clos_knownProofTheory.val_approx_sgc_free_def;
+val _ = show "val_approx_sgc_free_merge_typed=" clos_knownProofTheory.val_approx_sgc_free_merge;
+val _ = show "globals_approx_sgc_free_typed=" clos_knownProofTheory.globals_approx_sgc_free_def;

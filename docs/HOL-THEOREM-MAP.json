@@ -1,6 +1,31 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_sgc_free_def",
+  "hol_line": 248,
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",
+  "lean_name": "valApproxSgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared val_approx_sgc_free_typed in clos_known_syntax_probe.out. All six approximation constructors agree, including recursive EVERY on tuple members and the empty global-write bag for inline closure bodies. Global bags are source functions from natural numbers to natural multiplicities; spt uses the literal tree carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_sgc_free_merge",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",
+  "lean_name": "valApproxSgcFreeMerge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared val_approx_sgc_free_merge_typed in clos_known_syntax_probe.out. Both input safety hypotheses and the safety conclusion over the original merge are retained for arbitrary approximations. Global bags are source functions from natural numbers to natural multiplicities; spt uses the literal tree carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "globals_approx_sgc_free_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",
+  "lean_name": "globalsApproxSgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared globals_approx_sgc_free_typed in clos_known_syntax_probe.out. The universally quantified key and approximation and successful spt lookup implication match. Global bags are source functions from natural numbers to natural multiplicities; spt uses the literal tree carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_op_correct_approx",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownOpCorrect.lean",
   "lean_name": "knownOpCorrectApprox",
