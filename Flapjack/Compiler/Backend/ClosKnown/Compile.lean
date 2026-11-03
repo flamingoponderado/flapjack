@@ -1,4 +1,7 @@
 import Flapjack.Compiler.Backend.ClosKnown.Total
+import Flapjack.Compiler.Backend.ClosFvs.Source
+import Flapjack.Compiler.Backend.ClosTicks.Source
+import Flapjack.Compiler.Backend.ClosLetop.Source
 
 /-! Executable known-function pass. The whole-pass correctness proof remains
 unported. -/
@@ -17,6 +20,15 @@ def compileInc {α : Type} (c : Config) (g : Spt ValApprox) (program : List Exp 
     Spt ValApprox × List Exp × α :=
   let (eas, next) := knownListTotal (resetInlineFactor c) program.1 [] g
   (next, eas.map Prod.fst, program.2)
+
+/-- Apply the source closure optimizer, including its disabled case. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "compile_def"]
+def compile : Option Config → List Exp → Option Config × List Exp
+  | none, es => (none, es)
+  | some c, es =>
+      let (eas, globals) := knownListTotal c (ClosFvs.compile es) [] .ln
+      (some { c with valApproxSpt := globals },
+        ClosLetop.compileList (ClosTicks.removeList (eas.map Prod.fst)))
 
 /-- Apply free-variable cleanup, approximation, tick removal and let-op cleanup. -/
 def compileFuel (fuel : Nat) (config : Option Config) (es : List Exp) : Option (Option Config × List Exp) := do

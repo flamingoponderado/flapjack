@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberKnownSemantics
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileProduction
 
 /-! Composition of the closure optimization passes used by the compiler. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -19,45 +20,6 @@ abbrev ClosureProgram := List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)
 abbrev fvsInc : ClosureProgram → ClosureProgram := ClosFvs.compileInc
 abbrev ticksInc : ClosureProgram → ClosureProgram := ClosTicks.compileInc
 abbrev letopInc : ClosureProgram → ClosureProgram := ClosLetop.compileInc
-
-/-- The executable combined tick and let-operation traversal has the same
-result as the two source-shaped traversals in sequence. This Lean-side
-composition has no standalone HOL declaration. -/
-theorem ticks_letop_bounded (fuel : Nat) (program : List ClosLang.Exp) :
-    (program.mapM fun e => do
-      let e ← ClosTicks.removeBounded fuel e
-      ClosLetop.compileBounded fuel e) =
-      some (ClosLetop.compileList (ClosTicks.removeList program)) := by
-  induction program with
-  | nil => rfl
-  | cons head tail ih =>
-    simp only [ClosTicks.removeBounded_eq_source, ClosLetop.compileBounded_eq_source, bind, Option.bind] at ih
-    simp only [List.mapM_cons]
-    rw [ClosTicks.removeBounded_eq_source]
-    simp only [bind, Option.bind, ClosLetop.compileBounded_eq_source]
-    simp only [ClosTicks.removeBounded_eq_source]
-    rw [ih]
-    rfl
-
-/-- The enabled executable known-function pipeline returns exactly the
-source-shaped free-variable, known, tick and let-operation outputs. This
-Lean-side production agreement has no standalone HOL declaration. -/
-theorem known_compileFuel_eq (fuel : Nat) (config : ClosKnown.Config) (program : List ClosLang.Exp)
-    (optimized : List (ClosLang.Exp × ValApprox)) (globals : Spt ValApprox)
-    (knownRun : ClosKnown.knownListTotal config (ClosFvs.compile program) [] .ln = (optimized, globals)) :
-    ClosKnown.compileFuel fuel (some config) program =
-      some (some { config with valApproxSpt := globals },
-        ClosLetop.compileList (ClosTicks.removeList (optimized.map Prod.fst))) := by
-  simp only [ClosKnown.compileFuel, ClosFvs.compileBounded_eq_source, ClosKnown.knownListBounded,
-    knownRun, bind, Option.bind]
-  have mapEq : (optimized.mapM fun entry => do
-      let e ← ClosTicks.removeBounded fuel entry.1
-      ClosLetop.compileBounded fuel e) =
-      some (ClosLetop.compileList (ClosTicks.removeList (optimized.map Prod.fst))) := by
-    simpa only [List.mapM_map, Function.comp_def] using ticks_letop_bounded fuel (optimized.map Prod.fst)
-  simp only [bind, Option.bind] at mapEq
-  rw [mapEq]
-  rfl
 
 /-- Numbering, free-variable cleanup, known-function optimization, tick
 removal, let-operation cleanup and annotation preserve closure observations

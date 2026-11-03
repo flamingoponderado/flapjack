@@ -123180,5 +123180,13 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared semantics_let_op_typed: original source non-failure premise, empty auxiliary oracle entries, positive maximum application, empty code maps, pure compiler/oracle composition and target-to-source semantics equality agree. Compiler configuration and FFI payload types remain independent. The proof derives equal observations from the complete evaluator simulation; semantics_bounded connects the executed bounded traversal. holEmpty is the reviewed canonical finite-map result producer; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or end-to-end compiler correctness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+  "hol_name": "compile_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Compile.lean",
+  "lean_name": "compile",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_compile_typed in clos_letop_source_probe.out: disabled optimization returns the unchanged expressions and absent configuration; enabled optimization applies free-variable cleanup, the known traversal from empty environment and tree, tick removal, and let-operation cleanup in order, and updates only the approximation-tree field. The source traversals correspond to the referenced original definitions; compileFuel_eq_source proves the executed bounded traversal agrees for every fuel and input. Source comparison and Lean checking do not establish cross-language equivalence or whole-compiler correctness."
 }
 ]

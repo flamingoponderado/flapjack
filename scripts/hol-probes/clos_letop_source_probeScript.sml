@@ -123,3 +123,5 @@ val _ = show "dest_closure_shape_typed" clos_letopProofTheory.dest_closure_SOME_
 val _ = show "dest_closure_full_typed" clos_letopProofTheory.dest_closure_SOME_Full_app;
 val _ = show "let_op_correct_typed" clos_letopProofTheory.let_op_correct;
 val _ = show "semantics_let_op_typed" clos_letopProofTheory.semantics_let_op;
+load "clos_knownTheory";
+val _ = show "known_compile_typed" clos_knownTheory.compile_def;
