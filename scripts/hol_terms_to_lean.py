@@ -27,8 +27,9 @@ MODEL_THY = 'riscv'
 
 # Datatypes ported outside the model Types module.  ARM8's `ShiftType` and
 # `MoveWideOp` live in Flapjack/Compiler/Encoders/Arm8/Encode.lean; parse that
-# file instead of copying its constructor lists here, so a rename or reorder
-# there cannot silently desynchronise the rendering.
+# file instead of copying its constructor lists here.  Case arms are matched to
+# constructors by position, so a *reorder* in that file still needs the drift
+# gate (`scripts/l3/check-renderings.py`) to notice; a rename does not.
 EXTRA_TYPES_PATH = {
     'arm8': Path(__file__).resolve().parents[1] / 'Flapjack/Compiler/Encoders/Arm8/Encode.lean',
 }
@@ -569,14 +570,14 @@ def width_expr(t) -> int | str | None:
     return None
 
 
-def width_of_result(c: Const) -> str:
+def width_of_result(c: Const) -> int | str:
     w = width_expr(fun_parts(c.ty)[1])
     if w is None:
         raise Unrenderable(f'{c.name} result width')
     return w
 
 
-def width_of_arg(c: Const, i: int) -> str:
+def width_of_arg(c: Const, i: int) -> int | str:
     w = width_expr(fun_parts(c.ty)[0][i])
     if w is None:
         raise Unrenderable(f'{c.name} argument width')
@@ -775,22 +776,13 @@ def free_vars(t, bound=frozenset()):
     return set()
 
 
-def lean_var_name(name: str) -> str:
-    """The base Lean name `Renderer.bind` gives a HOL variable."""
-    base = re.sub(r"[^A-Za-z0-9_]", "_", name) or 'x'
-    if base.startswith('_'):
-        base = 'u' + base
-    if base[0].isdigit():
-        base = 'x' + base
-    return base
-
-
 def insert_predicate(r, env, args, xs):
     # Only a free variable of either operand can be captured; a variable bound
     # by a nested lambda of the same name is unaffected, so the rendered text
-    # alone is not a safe test.  Rendered variables never contain a prime, so
-    # `x'`, `x''`, ... are collision-free against them.
-    taken = {lean_var_name(n) for n, _ in free_vars(args[0]) | free_vars(args[1])}
+    # alone is not a safe test.  Take the names the renderer actually gave
+    # those variables from `env` rather than copying its naming rule.  Rendered
+    # variables never contain a prime, so `x'`, `x''`, ... are collision-free.
+    taken = {r.var(Var(n, ty), env) for n, ty in free_vars(args[0]) | free_vars(args[1])}
     x = 'x'
     while x in taken:
         x += "'"
@@ -880,12 +872,18 @@ def special_int_of_num(r, c, args, env):
 # Lean one is the same constructor in the port's spelling (`ShiftType_LSL` ->
 # `lsl`).  Only constructors whose spelled name actually differs are recorded.
 def renamed_ctors(types: dict, thy: str) -> dict:
+    """Constructors whose Lean spelling differs from HOL's `<Type>_<UPPER>`.
+
+    A Lean constructor that already starts with its type name (`MemOp_LOAD`) is
+    spelled as HOL spells it, so no mapping is recorded; only names like
+    `ShiftType_LSL` -> `lsl` get one.
+    """
     out = {}
     for name, info in types.items():
         for ctor in info.get('ctors', []):
-            hol = f'{name}_{ctor.upper()}'
-            if hol != ctor:
-                out[(thy, hol)] = (name, ctor)
+            if ctor.startswith(name + '_'):
+                continue
+            out[(thy, f'{name}_{ctor.upper()}')] = (name, ctor)
     return out
 
 
@@ -1145,9 +1143,7 @@ def render_multi(r: Renderer, lean_name: str, out) -> tuple[str, bool]:
         arms.append(f'| _ => {r.tm(out[0][2], env)}')
     tv_binders = type_binders(f0.ty, [params[0] for _, params, _ in out])
     defined_name = r.defined.get((f0.thy, f0.name)) if isinstance(f0, Const) else None
-    recursive = defined_name is not None and any(
-        re.search(r'(?<![A-Za-z0-9_.«])' + re.escape(defined_name) + r'(?![A-Za-z0-9_»])', b)
-        for b in bodies)
+    recursive = defined_name is not None and any(mentions(defined_name, b) for b in bodies)
     result_ty = ty_lean(fun_parts(f0.ty)[1])
     text = (f'def {lean_name} ' + tv_binders + f'({arg} : {ty_lean(param_ty)}) : {result_ty} :=\n'
             f'  match {arg} with\n  ' + '\n  '.join(arms))
@@ -1202,7 +1198,7 @@ def render_def(r: Renderer, lean_name: str, term) -> tuple[str, bool]:
         body = f'match {name} with\n  | {unused_pattern(pat, body)} =>\n  {body}'
     binders = [re.sub(r'^\(([^ ]+) :', lambda m: '(' + unused(m.group(1), body) + ' :', b) for b in binders]
     recursive = isinstance(f, Const) and (f.thy, f.name) in r.defined and \
-        re.search(r'(?<![A-Za-z0-9_.«])' + re.escape(r.defined[(f.thy, f.name)]) + r'(?![A-Za-z0-9_»])', body) is not None
+        mentions(r.defined[(f.thy, f.name)], body)
     tv_binders = type_binders(type_of(lhs), params)
     head = f'def {lean_name} ' + tv_binders + ' '.join(binders) + f' : {result_ty} :=\n  {body}'
     return head, recursive

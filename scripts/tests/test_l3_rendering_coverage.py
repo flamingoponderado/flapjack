@@ -40,16 +40,17 @@ class NativeRenderingCoverage(unittest.TestCase):
             with self.assertRaises(ValueError):m.check(self.actual,self.generated,lock,self.arm8)
             if exception["rendered_sha256"] is not None:
                 name=key.split(":",1)[1].strip("«»")
+                generated_riscv=dict(self.generated)
+                generated_arm8=dict(self.arm8)
                 if key.startswith(m.ARM8_DIR + "/"):
-                    generated=dict(self.arm8)
-                    body,nc=generated[name]
-                    generated[name]=(body+" changed",nc)
+                    body,nc=generated_arm8[name]
+                    generated_arm8[name]=(body+" changed",nc)
                 else:
-                    generated=dict(self.generated)
                     thy="riscv_step" if "/Step/" in key else "riscv"
-                    body,nc=generated[thy,name]
-                    generated[thy,name]=(body+" changed",nc)
-                with self.assertRaises(ValueError):m.check(self.actual,generated,self.lock)
+                    body,nc=generated_riscv[thy,name]
+                    generated_riscv[thy,name]=(body+" changed",nc)
+                with self.assertRaises(ValueError):
+                    m.check(self.actual,generated_riscv,self.lock,generated_arm8)
 
     def test_only_recorded_computability_changes_allowed(self):
         actual=dict(self.actual)

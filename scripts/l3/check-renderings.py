@@ -104,13 +104,13 @@ def rendered_for(key, generated):
         body = body.replace(thy + "_Fetch", "Fetch")
     return body, nc
 
-def check(actual, generated, lock, arm8=None):
+def check(actual, generated, lock, arm8):
     if set(actual) != set(lock["definitions"]):
         raise ValueError("native definition coverage changed: " + repr(sorted(set(actual) ^ set(lock["definitions"]))))
     overrides = set()
     for key, source in actual.items():
         if key.startswith(ARM8_DIR + "/"):
-            entry = arm8.get(key.split(":", 1)[1].strip("«»")) if arm8 is not None else None
+            entry = arm8[key.split(":", 1)[1].strip("«»")]
         else:
             entry = rendered_for(key, generated)
         nc = source.startswith("noncomputable ")
