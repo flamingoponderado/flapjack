@@ -910,6 +910,7 @@ import Flapjack.Compiler.Backend.ClosLetop.Proofs.Apply
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Simulation
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownPipelineSemantics
+import Flapjack.Compiler.Backend.ClosFvs.Proofs.Syntax
 import Flapjack.Compiler.Backend.SourceToSource
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout

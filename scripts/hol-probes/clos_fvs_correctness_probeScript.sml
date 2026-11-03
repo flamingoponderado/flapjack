@@ -54,3 +54,8 @@ val _ = show "dest_closure_full_typed=" clos_fvsProofTheory.dest_closure_SOME_Fu
 val _ = show "evaluate_remove_typed=" clos_fvsProofTheory.evaluate_remove_fvs;
 val _ = show "remove_correct_typed=" clos_fvsProofTheory.remove_fvs_correct;
 val _ = show "semantics_compile_typed=" clos_fvsProofTheory.semantics_compile;
+val _ = show "remove_vars_none_typed=" clos_fvsProofTheory.remove_fvs_every_Fn_vs_NONE;
+val _ = show "remove_fv_max_typed=" clos_fvsProofTheory.fv_max_remove_fvs;
+val _ = show "remove_set_globals_typed=" clos_fvsProofTheory.remove_fvs_set_globals;
+val _ = show "remove_elist_globals_typed=" clos_fvsProofTheory.remove_fvs_elist_globals;
+val _ = show "remove_esgc_free_typed=" clos_fvsProofTheory.remove_fvs_esgc_free;
