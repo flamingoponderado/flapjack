@@ -437,7 +437,7 @@ theorem panSemEvaluateCodeStateWithPostState_break_total
   simp [panSemEvaluateCodeStateWithPostState, panSemEvaluateCodeState,
     panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemCodeStateAfter,
     panSemTotalOfExecuted, panSemEvaluateBreak, panSemProgResultOfClockResult,
-    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps]
+    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- The executed source evaluator's `Continue` projection is the total
     HOL-shaped `Continue` clause. -/
@@ -456,7 +456,7 @@ theorem panSemEvaluateCodeStateWithPostState_continue_total
   simp [panSemEvaluateCodeStateWithPostState, panSemEvaluateCodeState,
     panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemCodeStateAfter,
     panSemTotalOfExecuted, panSemEvaluateContinue, panSemProgResultOfClockResult,
-    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps]
+    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- HOL `fix_clock` (`cakeml/pancake/semantics/panSemScript.sml:446-449`): clamp
     a returned state's clock to the entry clock. -/

@@ -34,7 +34,7 @@ theorem panSkipEvaluationEquation
       .skip memoryAccess contracts memoryHandler =
       some (.control (.normal locals globals memory ffi), clock) := by
   simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiProgSteps]
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- Flapjack-specific target evaluator unfolding for `Skip`; not a standalone HOL theorem. -/
 theorem crepSkipEvaluationEquation
@@ -78,7 +78,7 @@ theorem panBreakEvaluationEquation
       .break memoryAccess contracts memoryHandler =
       some (.control (.broke locals globals memory ffi), clock) := by
   simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiProgSteps]
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- Flapjack-specific source evaluator unfolding for `Continue`; not a standalone HOL theorem. -/
 theorem panContinueEvaluationEquation
@@ -102,7 +102,7 @@ theorem panContinueEvaluationEquation
       .continue memoryAccess contracts memoryHandler =
       some (.control (.continued locals globals memory ffi), clock) := by
   simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiProgSteps]
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- Flapjack-specific source evaluator unfolding for `Annot`; not a standalone HOL theorem. -/
 theorem panAnnotEvaluationEquation
@@ -127,7 +127,7 @@ theorem panAnnotEvaluationEquation
       (.annot tag text) memoryAccess contracts memoryHandler =
       some (.control (.normal locals globals memory ffi), clock) := by
   simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiProgSteps]
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- Flapjack-specific source evaluator unfolding for `Tick`; not a standalone HOL theorem. -/
 theorem panTickEvaluationEquation
@@ -227,8 +227,8 @@ theorem panSemEvaluateCodeState_skip
   cases hfuel : panSemCodeEvaluateFuel state (.skip : Prog α) with
   | zero => omega
   | succ fuel =>
-      simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf,
-        evalPanValueFfiProgSteps]
+      simp [evalPanValueFfiClockCodeProg,
+        evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- State-boundary Skip case for the source-run-implies-target-run direction
 of HOL `pc_compile_correct`.  Both code relations use the code fields owned
@@ -389,8 +389,8 @@ theorem panSemEvaluateCodeState_break
   cases hfuel : panSemCodeEvaluateFuel state (.break : Prog α) with
   | zero => omega
   | succ fuel =>
-      simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf,
-        evalPanValueFfiProgSteps]
+      simp [evalPanValueFfiClockCodeProg,
+        evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- Actual-state Break case for the source-run-implies-target-run direction of
 HOL `pc_compile_correct`. It proves all runtime, code, exception, and local
@@ -477,8 +477,8 @@ theorem panSemEvaluateCodeState_continue
   cases hfuel : panSemCodeEvaluateFuel state (.continue : Prog α) with
   | zero => omega
   | succ fuel =>
-      simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf,
-        evalPanValueFfiProgSteps]
+      simp [evalPanValueFfiClockCodeProg,
+        evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- Actual-state Continue case for the source-run-implies-target-run direction
 of HOL `pc_compile_correct`. It preserves source and target runtime, code, and
@@ -697,8 +697,8 @@ theorem panSemEvaluateCodeState_annot
   cases hfuel : panSemCodeEvaluateFuel state (.annot tag text) with
   | zero => omega
   | succ fuel =>
-      simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf,
-        evalPanValueFfiProgSteps]
+      simp [evalPanValueFfiClockCodeProg,
+        evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl]
 
 /-- Actual-state Annot case for HOL `pc_compile_correct`. The source annotation
 is evaluated against the production source state; HOL compilation erases it
@@ -870,7 +870,7 @@ theorem panSemEvaluateCodeState_call_return_const_of_entry
               | zero => omega
               | succ fuel =>
                   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
-                    evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps,
+                    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl,
                     panValueReturnResult, evalPanValueExpCounted, evalPanValueExp,
                     panValueShape, panShapeMatches,
                     hargs, hlookupCall, hclock]
@@ -1213,7 +1213,7 @@ theorem panSemEvaluateCodeState_callReturnParameter_ofEntry
     simpa [program] using hfuel
   rw [hfuelConcrete]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
-    evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps,
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl,
     panValueReturnResult, evalPanValueExpCounted, evalPanValueExp, hargs, hcallee, hclock,
     panValueShape, panShapeMatches, decPanClock]
 
@@ -1302,7 +1302,7 @@ theorem panSemEvaluateRiscV64CodeState_callAssignParameter_ofEntry
   have hfuelConcrete : panSemCodeEvaluateFuel state program = tail + 5 := hfuel
   rw [hfuelConcrete]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
-    evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps,
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl,
     panValueReturnResult, evalPanValueExpCounted, evalPanValueExp, hargs, hcallee, hclock,
     hassignment, panValueShape, panShapeMatches, decPanClock]
 
@@ -1410,7 +1410,7 @@ theorem panSemEvaluateRiscV64CodeState_callCatchRaiseOneWord_ofEntry
   unfold panSemEvaluateCodeState panSemEvaluateCodeStateWithFuel
   rw [show panSemCodeEvaluateFuel state program = tail + 5 from hfuel]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
-    evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps,
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl,
     panValueReturnResult, evalPanValueExpCounted, evalPanValueExp,
     hargs, hcallee, hexception,
     hhandlerLocal, hclock, panValueShape, panShapeMatches, panValueAssignmentValid,
@@ -2130,7 +2130,7 @@ theorem panSemEvaluateCodeState_decCallSkip_ofEntry
   rw [hsucc5, hsucc4, hsucc3, hsucc2, hsucc1]
   simp [evalPanValueFfiClockCodeProg,
     evalPanValueFfiClockCodeDecCall, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
-    evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps,
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl,
     panValueReturnResult, evalPanValueExpCounted, evalPanValueExp, hargs, hcallee, hclock,
     panValueShape, panShapeMatches, panValueFfiClockRestoreLocal,
     panValueExpStepCost, restorePanValueFfiLocal, decPanClock]
@@ -2230,8 +2230,8 @@ theorem panSemEvaluateCodeState_decCallTick_ofEntry
   rw [hfuelConcrete]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeDecCall,
     evalPanValueFfiClockCodeCall,
-    panValueCallArgumentsValue, evalPanValueFfiClockLeaf,
-    evalPanValueFfiProgSteps, panValueReturnResult, evalPanValueExpCounted,
+    panValueCallArgumentsValue,
+    evalPanValueFfiClockLeafWith, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpCounted,
     evalPanValueExp, hargs, hcallee, hclockNonzero,
     hcontinuationClockNonzero, panValueShape, panShapeMatches,
     panValueFfiClockRestoreLocal, panValueExpStepCost,
