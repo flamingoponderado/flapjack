@@ -475,6 +475,15 @@ Seed `7438291` matched 40 complete outputs from the pinned compiler:
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 7438291 --count 40
 ```
 
+Further runs against the pinned compiler matched 60 rich programs with seed
+`4198271` and 70 structured programs with varied backend options using seed
+`4839217`. Both runs compare complete output bytes, diagnostics, and status:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 4198271 --count 60 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 4839217 --count 70 --timeout 60
+```
+
 An additional rich run with seed `522901` matched 40 complete outputs, and a
 deep-mutation run with seed `832661` matched output, diagnostics, and exit
 status for 1,000 accepted and rejected inputs. A second deep-mutation run with
@@ -487,6 +496,11 @@ datatypes, and exception handlers with varied backend options. It compares the
 complete output, diagnostics, and exit status with a pinned compiler supplied
 via `--reference`. The 50 cases for that seed matched; the option adds cases to
 the script's other selected checks.
+
+An additional composed-options run with compile seed `593137` matched 40
+complete outputs, including programs that combine closures, mutation, and
+datatypes. These observations are bounded parity evidence, not a proof for
+all programs or compiler options.
 
 Use `--backend-options` to compile a closure-capturing program without the
 prelude while varying combinations of closure, BVL, allocation, GC, and stack
