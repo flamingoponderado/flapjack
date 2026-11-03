@@ -48,6 +48,20 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 18317309 --count 80 --timeout 90
 ```
 
+At frontend branch commit `f5e8c421d`, the `cake` executable also matched
+the pinned original's complete stdout, stderr and exit status for 160 nested
+source mutations, 60 accepted structured programs with varied backend options,
+and 60 generated programs using the standard prelude:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 19301103 --count 160 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 19301104 --count 60 --timeout 120
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 19301105 --count 60 --timeout 90
+```
+
+These generated cases are finite evidence for those inputs, not a general
+output-equivalence proof.
+
 Flapjack is a Lean port of the CakeML Pancake compiler. A regression test is
 useful for porting only when it corresponds to behavior of the original
 Pancake implementation. This applies to source-to-RISC-V tests and to tests
