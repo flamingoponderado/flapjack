@@ -168,6 +168,65 @@ theorem asmCaseOne (inst : HolInst 64) (r : Nat) (v : BitVec 64)
     rw [hnext]
     exact (htmem x).symm
 
+/-- One constructor of `encoder_correct arm8TargetL3` for a one-instruction
+lowering that writes `v` into the destination register `r` and may change
+memory (Flapjack infrastructure; the `Mem` store form needs it because
+`asmCaseOne` assumes the instruction leaves memory unchanged).  Memory inside
+the source domain follows the source update, memory outside it is preserved. -/
+theorem asmCaseOneMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
+    (t : arm8_state) (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (.inst inst) s2 ∧ targetStateRel arm8TargetL3 s1 ms)
+    (hnext : arm8Next ms = t)
+    (htpc : t.PC = ms.PC + 4)
+    (htmemIn : ∀ x, s1.memDomain x → t.MEM x = s2.mem x)
+    (htmemOut : ∀ x, ¬ s1.memDomain x → t.MEM x = ms.MEM x)
+    (htreg : ∀ k, k < 32 → k ≠ r → t.REG (BitVec.ofNat 5 k) = ms.REG (BitVec.ofNat 5 k))
+    (htval : t.REG (BitVec.ofNat 5 r) = v)
+    (htok : arm8Ok t = true)
+    (hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 4)
+    (hs2dom : s2.memDomain = s1.memDomain)
+    (hs2regs : ∀ k, s2.regs k = if k = r then v else s1.regs k) :
+    CaseGoal (.inst inst) s1 s2 ms := by
+  obtain ⟨hs, hr⟩ := h
+  obtain ⟨hok, hpc, _hmem, hreg, hfp⟩ := hr
+  rw [arm8TargetL3_stateOk] at hok
+  rw [arm8TargetL3_getPc] at hpc
+  rw [arm8TargetL3_getReg] at hreg
+  change ms.PC = s1.pc at hpc
+  change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+    ms.REG (BitVec.ofNat 5 k) = s1.regs k at hreg
+  have hq : targetStateRel arm8TargetL3 s2 t := by
+    refine ⟨htok, ?_, ?_, ?_, ?_⟩
+    · change t.PC = s2.pc
+      rw [htpc, hs2pc, hpc]
+      simp
+    · change ∀ a, s2.memDomain a → t.MEM a = s2.mem a
+      intro a ha
+      exact htmemIn a (hs2dom ▸ ha)
+    · change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+        t.REG (BitVec.ofNat 5 k) = s2.regs k
+      intro k hk
+      by_cases hkr : k = r
+      · rw [hkr, htval, hs2regs r, if_pos rfl]
+      · rw [htreg k hk.1 hkr, hs2regs k, if_neg hkr]
+        exact hreg k hk
+    · intro k hk
+      simp [arm8ConfigL3] at hk
+  refine ⟨0, ?_⟩
+  intro env henv
+  constructor
+  · change targetStateRel arm8TargetL3 s2 (env 0 (arm8Next ms))
+    rw [hnext]
+    have hagree : Arm8L3Agree s2.memDomain (env 0 t) t := by
+      rw [← arm8Proj_eq_iff]
+      have hh := henv 0 t
+      rw [hs2dom]
+      exact hh
+    exact targetStateRel_congr hagree hq
+  · refine ⟨fun x hx => ?_, trivial⟩
+    rw [hnext]
+    exact (htmemOut x hx).symm
+
 /-- The two PCs covered by an 8-byte, 4-byte-aligned code window. -/
 theorem mem_allPcs_eight_l3 (p : BitVec 64) (i : Nat) (hi : i < 2) :
     p + BitVec.ofNat 64 (i * 4) ∈ allPcs 8 p 2 := by
