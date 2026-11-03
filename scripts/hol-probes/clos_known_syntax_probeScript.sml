@@ -25,6 +25,7 @@ val _ = show "contains_closures_typed=" clos_knownTheory.contains_closures_def;
 val _ = show "merge_typed=" clos_knownTheory.merge_def;
 val _ = show "known_ind_typed=" clos_knownTheory.known_ind;
 val _ = show "known_correct_approx_typed=" clos_knownProofTheory.known_correct_approx;
+val _ = show "known_preserves_pure_typed=" clos_knownProofTheory.known_preserves_pure;
 val _ = show "known_exp_rel_typed=" clos_knownProofTheory.exp_rel_def;
 val _ = show "known_exp_rel_dec_typed=" clos_knownProofTheory.exp_rel_dec_inline_factor;
 val _ = show "known_exp_rel_update_typed=" clos_knownProofTheory.exp_rel_upd_inline_factor;

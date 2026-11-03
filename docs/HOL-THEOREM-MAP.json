@@ -1266,6 +1266,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_preserves_pure",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreservePure.lean",
+  "lean_name": "knownPreservesPure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_preserves_pure_typed in clos_known_syntax_probe.out against the source and Lean statements. The input traversal equation, all-source-expressions purity assumption and purity of every output expression are retained. The proof covers the executed total traversal, including smart operations. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "decide_inline_LetInline_IMP_Clos_fv_max",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InlineFreeVars.lean",
   "lean_name": "decideInlineLetInlineFvMax",
