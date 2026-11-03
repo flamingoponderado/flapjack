@@ -180,6 +180,136 @@ theorem doAppSsgcGlobal {C F : Type} (index : Nat) (args : List ClosSem.Value)
     obtain ⟨valueSafe, rfl⟩ := globalReadSafe index args s0 next value stateSafe found
     simp [ClosSem.doApp, found, valueSafe, stateSafe, mglobalsExtendRefl]
 
+/-- Updating one global with a safe value preserves state safety. This helper
+has no separate HOL declaration. -/
+private theorem ssgcFreeSetGlobal {C F : Type} (s : State C F) (index : Nat)
+    (value : ClosSem.Value) (stateSafe : ssgcFree s) (valueSafe : vsgcFree value) :
+    ssgcFree {s with globals := s.globals.set index (some value)} := by
+  rcases stateSafe with ⟨code, refs, thunks, globals, oracle⟩
+  refine ⟨code, refs, thunks, ?_, oracle⟩
+  intro v member
+  rcases List.mem_or_eq_of_mem_set member with old | new
+  · exact globals v old
+  · cases new; exact valueSafe
+
+/-- Appending empty global slots preserves state safety. This helper has no
+separate HOL declaration. -/
+private theorem ssgcFreeAllocGlobal {C F : Type} (s : State C F) (count : Nat)
+    (stateSafe : ssgcFree s) :
+    ssgcFree {s with globals := s.globals ++ List.replicate count none} := by
+  rcases stateSafe with ⟨code, refs, thunks, globals, oracle⟩
+  refine ⟨code, refs, thunks, ?_, oracle⟩
+  intro v member
+  simp only [List.mem_append, List.mem_replicate] at member
+  rcases member with old | ⟨_, impossible⟩
+  · exact globals v old
+  · cases impossible
+
+/-- Global writes preserve state safety because the written argument is safe. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcSetGlobal {C F : Type} (index : Nat) (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.globOp (.setGlobal index)) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.globOp (.setGlobal index)) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, argsSafe, stateSafe⟩
+  cases args with
+  | nil => simp [ClosSem.doApp, applyGlobal]
+  | cons value values =>
+    cases values with
+    | cons other tail => simp [ClosSem.doApp, applyGlobal]
+    | nil =>
+      have valueSafe := argsSafe value (by simp)
+      cases slot : getGlobal index s0.globals with
+      | none => simp [ClosSem.doApp, applyGlobal, slot]
+      | some old =>
+        cases old with
+        | some old => simp [ClosSem.doApp, applyGlobal, slot]
+        | none =>
+          have newSafe := ssgcFreeSetGlobal s0 index value stateSafe valueSafe
+          have frame := mglobalsExtendSet s0.globals index value
+          simp [ClosSem.doApp, applyGlobal, slot, vsgcFreeUnit, newSafe,
+            opGlobalBag]
+          exact frame
+
+/-- Global allocation adds only empty slots, so it preserves state safety. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcAllocGlobal {C F : Type} (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.globOp .allocGlobal) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.globOp .allocGlobal) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, stateSafe⟩
+  cases args with
+  | nil => simp [ClosSem.doApp, applyGlobal]
+  | cons value values =>
+    cases values with
+    | cons other tail => simp [ClosSem.doApp, applyGlobal]
+    | nil =>
+      cases value with
+      | number count =>
+        by_cases negative : count < 0
+        · simp [ClosSem.doApp, applyGlobal, negative]
+        · have newSafe := ssgcFreeAllocGlobal s0 count.toNat stateSafe
+          have frame := mglobalsExtendAlloc s0.globals count.toNat
+          simp [ClosSem.doApp, applyGlobal, negative, vsgcFreeUnit, newSafe,
+            opGlobalBag, FlatProps.emptyGlobalBag, frame]
+      | _ => simp [ClosSem.doApp, applyGlobal]
+
+/-- The closure evaluator rejects the global-pointer read operation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcGlobalsPtr {C F : Type} (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.globOp .globalsPtr) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.globOp .globalsPtr) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, _⟩
+  cases args <;> simp [ClosSem.doApp, applyGlobal]
+
+/-- The closure evaluator rejects the global-pointer update operation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcSetGlobalsPtr {C F : Type} (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.globOp .setGlobalsPtr) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.globOp .setGlobalsPtr) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  rcases h with ⟨rfl, _, _⟩
+  cases args <;> simp [ClosSem.doApp, applyGlobal]
+
+/-- Every global operation satisfies the complete primitive safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppSsgcGlobOp {C F : Type} (op : ClosLang.GlobOp) (args : List ClosSem.Value)
+    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
+    (h : ClosSem.doApp (.globOp op) args s0 = res ∧
+      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
+    (∀ v s, res = .val (v, s) →
+      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
+        mglobalsExtend s0.globals {k | opGlobalBag (.globOp op) k ≠ 0} s.globals) ∧
+    (∀ v, res = .err (.raise v) → vsgcFree v) := by
+  cases op with
+  | global index => exact doAppSsgcGlobal index args s0 res h
+  | setGlobal index => exact doAppSsgcSetGlobal index args s0 res h
+  | allocGlobal => exact doAppSsgcAllocGlobal args s0 res h
+  | globalsPtr => exact doAppSsgcGlobalsPtr args s0 res h
+  | setGlobalsPtr => exact doAppSsgcSetGlobalsPtr args s0 res h
+
 end DoAppSafety
 
 end Flapjack.Compiler.Backend.ClosKnown
