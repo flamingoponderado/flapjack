@@ -7,7 +7,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
 
 /-! Clock and argument behavior of generated direct calls. -/
 namespace Flapjack.Compiler.Backend.ClosCall
-open Flapjack ClosSem SemanticPrimitivesHOL SemanticPrimitivesProps
+open Flapjack ClosLang ClosProps ClosSem SemanticPrimitivesHOL SemanticPrimitivesProps
 
 private theorem lookupVars_append {A : Type} (xs ys : List Nat) (env : List A) :
     lookupVars (xs ++ ys) env = (do
@@ -105,6 +105,40 @@ theorem evaluate_generated_stub_with_allowance {C F : Type} (trace : BackendComm
       evaluate [body] (env.take arity) { state with clock := state.clock + extraClock } := by
   simpa [Nat.add_assoc] using
     evaluate_generated_stub trace label arity body env { state with clock := state.clock + extraClock } bound code
+
+/-- At a known non-open closure location, executing the selected generated
+stub enters the converted body found by the same probe traversal, using its
+argument prefix and one extra tick. The traversal's intermediate state is
+only known to have distinct labels. This is Flapjack-specific infrastructure
+for the closure-body simulation. -/
+theorem evaluate_known_probe_stub {C F : Type} (fuel : Nat) (g : State) (allowed : Set Nat)
+    (loc : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp)) (index arity : Nat)
+    (sourceBody targetBody : ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (extraClock : Nat) (bound : arity ≤ env.length)
+    (related : recClosureRelFuel fuel g allowed state.code loc sourceFns targetFns)
+    (sourceLookup : sourceFns[index]? = some (arity, sourceBody))
+    (targetLookup : targetFns[index]? = some (arity, targetBody))
+    (notAllowed : 2 * index + loc ∉ allowed) :
+    ∃ convertedBody depth before after afterProbe,
+      depth < max fuel (listBudget (sourceFns.map Prod.snd) + 1) ∧
+      callsFuel depth sourceBody before = some (convertedBody, after) ∧
+      (codeLocationsExp sourceBody).Nodup ∧ LabelsFresh (codeLocationsExp sourceBody) before ∧
+      (before.2.map Prod.fst).Nodup ∧ stateExtends after afterProbe ∧
+      (∀ n, ClosProps.freeVarExp n convertedBody → n < arity) ∧
+      evaluate [targetBody] env { state with clock := state.clock + (extraClock + 1) } =
+        evaluate [convertedBody] (env.take arity) { state with clock := state.clock + extraClock } := by
+  obtain ⟨trace, convertedBody, depth, before, after, afterProbe, _, targetStub, codeLookup,
+    depthBound, selectedRun, distinct, fresh, beforeDistinct, extended, _, closed, _⟩ :=
+    recClosureRelFuel_known_probe_body fuel g allowed state.code loc sourceFns targetFns index arity sourceBody
+      related sourceLookup notAllowed
+  have bodyEq : targetBody = .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity) := by
+    rw [targetLookup] at targetStub
+    exact (Prod.mk.inj (Option.some.inj targetStub)).2
+  subst targetBody
+  exact ⟨convertedBody, depth, before, after, afterProbe, depthBound, selectedRun, distinct, fresh,
+    beforeDistinct, extended, closed,
+    evaluate_generated_stub_with_allowance trace (loc + 2 * index + 1) arity extraClock convertedBody env state
+      bound codeLookup⟩
 
 /-- A rewritten direct call spends its extra tick as part of the call cost.
 This is a local evaluator fact; it does not establish the pass simulation. -/
