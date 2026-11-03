@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "clos_gen_noinline_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Compile.lean",
+    "lean_name": "closGenNoInline",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared clos_gen_noinline_typed: the ignored pair payload is independently polymorphic, the empty case returns an empty list, and each recursive case retains the arity, location plus twice the index, and incremented index. The production path calls this definition; noInline_eq_zip proves equality with the previous indexed implementation for all inputs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
     "hol_name": "free_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline/Free.lean",
     "lean_name": "freeHOL",
