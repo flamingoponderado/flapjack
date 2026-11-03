@@ -315,6 +315,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracle
+import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracleSimulation
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxValue
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateGlobalsApprox

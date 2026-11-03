@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
+import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracleSimulation
 
 /-! Whole-pass observational composition for the known-function optimizer. -/
 namespace Flapjack.Compiler.Backend.ClosKnown
@@ -69,5 +70,39 @@ theorem semanticsCompileSome {C F : Type} (c : Config) (ffi : HolFfiState F) (ma
     (ClosTicks.removeList (ys.map Prod.fst)) ticksNonfail ⟨taux, positive⟩
   simpa [compile, known, knownCo, knownCc, fco, kco, tco, afterKnown] using
     letopEq.trans (ticksEq.symm.trans (knownEq.trans fvsEq))
+
+local instance : Nonempty Config := ⟨defaultConfig 0⟩
+
+/-- The optional known-function pass preserves closure observations under
+the source syntax-oracle condition when enabled. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "semantics_compile"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])]
+theorem semanticsCompile {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+    (co : CompileOracle (Spt ValApprox × C)) (cc1 : Compiler (Spt ValApprox × C))
+    (xs : List ClosLang.Exp) (knownConf knownConf' : Option Config) (cc : Compiler C)
+    (co1 : CompileOracle C) (es : List ClosLang.Exp)
+    (h : semantics ffi maxApp HolFiniteMapExact.holEmpty co cc1 xs ≠ .fail ∧
+      cc1 = knownCc knownConf cc ∧ co1 = knownCo knownConf co ∧
+      compile knownConf xs = (knownConf', es) ∧
+      (knownConf.isSome → syntaxOracleOk (Flapjack.holThe knownConf) xs co
+        (Flapjack.holThe knownConf').valApproxSpt ∧ 1 ≤ maxApp)) :
+    semantics ffi maxApp HolFiniteMapExact.holEmpty co1 cc es =
+      semantics ffi maxApp HolFiniteMapExact.holEmpty co cc1 xs := by
+  obtain ⟨nonFail, rfl, rfl, compiled, assumption⟩ := h
+  cases knownConf with
+  | none =>
+    simp [compile] at compiled
+    obtain ⟨rfl, rfl⟩ := compiled
+    exact ClosProps.AdjustOracle.semanticsCurryI ffi maxApp HolFiniteMapExact.holEmpty co cc xs
+      (by simpa [knownCc] using nonFail)
+  | some c =>
+    cases known : knownListTotal c (ClosFvs.compile xs) [] .ln with
+    | mk ys g =>
+      simp [compile, known] at compiled
+      obtain ⟨rfl, rfl⟩ := compiled
+      have source := assumption (by simp)
+      have oracle : syntaxOracleOk c xs co g := by simpa [Flapjack.holThe] using source.1
+      have result := semanticsCompileSome c ffi maxApp co cc xs ys g nonFail oracle source.2 known
+      simpa [compile, known] using result
 
 end Flapjack.Compiler.Backend.ClosKnown

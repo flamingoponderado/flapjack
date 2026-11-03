@@ -1,5 +1,53 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean", "lean_name": "evaluateAdjOracApp",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the application-expression case. The source hypotheses, independent unused quantified variable and exact-result existential are retained with argument, function and application induction hypotheses. The canonical state witness covers refs and code; evaluation inherits rational-cut reals. This is a case of the mutual theorem. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean", "lean_name": "evaluateAppAdjOracNil",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and its empty-argument application case. The source hypotheses, independently typed unused variable and exact-result existential are retained. The canonical state witness covers refs and code; evaluation inherits rational-cut reals. This is a case of the mutual theorem. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean", "lean_name": "evaluateAppAdjOracCons",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the nonempty application case, including full and partial closure application, clock checks, body and recursive application induction hypotheses, the unused variable, and exact-result existential. The canonical state witness covers refs and code; evaluation inherits rational-cut reals. This is a case of the mutual theorem. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean", "lean_name": "evaluateAdjOracForce",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed and the force-thunk operation case, including argument and forced-body induction hypotheses, identical thunk lookup and reference update, the unused variable, and exact-result existential. The canonical state witness covers refs and code; evaluation inherits rational-cut reals. This is a case of the mutual theorem. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracleSimulation.lean", "lean_name": "evaluateAdjOrac",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_adj_orac_typed: both expression and closure-application conjuncts retain source result, non-type-error hypothesis, adjusted initial state and existential same-result final state. The independent unused variables in the two conjuncts retain distinct type parameters. The canonical state witness covers refs and code; evaluator reals use rational cuts. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "semantics_adj_orac",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracleSimulation.lean", "lean_name": "semanticsAdjOrac",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared semantics_adj_orac_typed: non-failure, mapped oracle equality and callback compatibility imply exactly the original semantic equality. The compiler configuration carriers are independent and code uses the canonical finite-map parameter witness; evaluation inherits rational-cut reals. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "semantics_CURRY_I",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracleSimulation.lean", "lean_name": "semanticsCurryI",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared semantics_curry_i_typed: non-failure of the identity-state compiler implies the original equality for its projected state oracle. State and downstream configuration carriers remain independent. The code map uses the canonical finite-map parameter witness; evaluation inherits rational-cut reals. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml", "hol_name": "semantics_compile",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean", "lean_name": "semanticsCompile",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared known_semantics_compile_typed: original non-failure, compiler and oracle equalities, optional compilation equation and enabled-case syntax-oracle and positive max-app hypotheses imply the same whole-pass semantics equality. HOL THE uses holThe, including its unspecified NONE case; both option branches are proved. The reviewed holEmpty producer represents FEMPTY; evaluation inherits rational-cut reals. Source review and kernel checking do not establish cross-language equivalence."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
   "hol_name": "evaluate_adj_orac",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AdjustOracle.lean",

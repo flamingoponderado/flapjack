@@ -204,6 +204,14 @@ def EvalAt {C D F : Type} (cc : Compiler D) (f : C → D)
     result ≠ .err (.abort .typeError) ∧ adjOracRel cc f s t →
     ∃ target, evaluate expressions env t = (result, target) ∧ adjOracRel cc f next target
 
+/-- Fixed-input closure-application simulation for the mutual induction. -/
+def AppAt {C D F : Type} (cc : Compiler D) (f : C → D)
+    (location : Option Nat) (function : Value) (args : List Value) (s : State C F) : Prop :=
+  ∀ result next (t : State D F),
+    evaluateApp location function args s = (result, next) ∧
+    result ≠ .err (.abort .typeError) ∧ adjOracRel cc f s t →
+    ∃ target, evaluateApp location function args t = (result, target) ∧ adjOracRel cc f next target
+
 /-- Empty-list case of the source evaluator simulation. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
   (fmap_as_finite_support := [refs, code])]
@@ -515,6 +523,239 @@ theorem evaluateAdjOracCall {C D F U : Type} (_unused : U) (cc : Compiler D) (f 
             bodyIH values middle callEnv body argsRun codeRun (by omega) result next
               (decClock (ticks + 1) targetMiddle) ⟨bodyRun, noType, reduced⟩
           exact ⟨target, by simpa [codeEq, codeRun, clockEq, timeout] using targetBody, targetRel⟩
+
+/-- Application expression case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracApp {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (trace : BackendCommon.Tra) (location : Option Nat) (function : ClosLang.Exp)
+    (args : List ClosLang.Exp) (env : List Value) (s : State C F)
+    (argsIH : 0 < args.length → EvalAt cc f args env s)
+    (functionIH : ∀ values middle, 0 < args.length → evaluate args env s = (.val values, middle) →
+      EvalAt cc f [function] env middle)
+    (appIH : ∀ values middle functions last, 0 < args.length → evaluate args env s = (.val values, middle) →
+      evaluate [function] env middle = (.val functions, last) →
+      AppAt cc f location (@Flapjack.holHd Value ⟨unitValue⟩ functions) values last) :
+    EvalAt cc f [.app trace location function args] env s := by
+  intro result next t ⟨run, noType, rel⟩
+  cases args with
+  | nil =>
+    simp [evaluate] at run
+    exact (noType run.1.symm).elim
+  | cons first rest =>
+    have nonempty : 0 < (first :: rest).length := by simp
+    cases argsRun : evaluate (first :: rest) env s with
+    | mk argsResult middle =>
+      rw [evaluate, fixClock_evaluate, argsRun] at run
+      have argsSafe : argsResult ≠ .err (.abort .typeError) := by
+        intro bad
+        rw [bad] at run
+        cases run
+        exact noType rfl
+      obtain ⟨targetMiddle, targetRun, middleRel⟩ :=
+        argsIH nonempty argsResult middle t ⟨argsRun, argsSafe, rel⟩
+      rw [evaluate, fixClock_evaluate, targetRun]
+      simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte] at run ⊢
+      cases argsResult with
+      | err error => cases run; exact ⟨targetMiddle, rfl, middleRel⟩
+      | val values =>
+        cases functionRun : evaluate [function] env middle with
+        | mk functionResult last =>
+          rw [fixClock_evaluate, functionRun] at run
+          have functionSafe : functionResult ≠ .err (.abort .typeError) := by
+            intro bad
+            rw [bad] at run
+            cases run
+            exact noType rfl
+          obtain ⟨targetLast, targetFunction, lastRel⟩ :=
+            functionIH values middle nonempty argsRun functionResult last targetMiddle
+              ⟨functionRun, functionSafe, middleRel⟩
+          rw [fixClock_evaluate, targetFunction]
+          cases functionResult with
+          | err error => cases run; exact ⟨targetLast, rfl, lastRel⟩
+          | val functions =>
+            exact appIH values middle functions last nonempty argsRun functionRun result next targetLast
+              ⟨run, noType, lastRel⟩
+
+/-- Empty-argument closure application case of the source mutual theorem. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAppAdjOracNil {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (location : Option Nat) (function : Value) (s : State C F) : AppAt cc f location function [] s := by
+  intro result next t ⟨run, _, rel⟩
+  simp [evaluateApp] at run
+  obtain ⟨rfl, rfl⟩ := run
+  exact ⟨t, by simp [evaluateApp], rel⟩
+
+/-- Nonempty closure-application case of the source mutual theorem. The
+induction hypotheses follow the closure body and any remaining arguments. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAppAdjOracCons {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (location : Option Nat) (function arg : Value) (args : List Value) (s : State C F)
+    (bodyIH : ∀ body env rest,
+      destClosure s.maxApp location function (arg :: args) = some (.fullApp body env rest) →
+      (arg :: args).length - rest.length ≤ s.clock →
+      EvalAt cc f [body] env (decClock ((arg :: args).length - rest.length) s))
+    (appIH : ∀ body env rest value middle,
+      destClosure s.maxApp location function (arg :: args) = some (.fullApp body env rest) →
+      (arg :: args).length - rest.length ≤ s.clock →
+      evaluate [body] env (decClock ((arg :: args).length - rest.length) s) = (.val [value], middle) →
+      AppAt cc f location value rest middle) :
+    AppAt cc f location function (arg :: args) s := by
+  intro result next t ⟨run, noType, rel⟩
+  have maxEq : t.maxApp = s.maxApp := by rcases rel with ⟨_, rfl⟩; rfl
+  have clockEq : t.clock = s.clock := by rcases rel with ⟨_, rfl⟩; rfl
+  cases closure : destClosure s.maxApp location function (arg :: args) with
+  | none =>
+    rw [evaluateApp, closure] at run
+    dsimp only at run
+    cases run
+    exact (noType rfl).elim
+  | some kind =>
+    cases kind with
+    | partialApp value =>
+      by_cases timeout : s.clock < (arg :: args).length
+      · rw [evaluateApp, closure] at run
+        dsimp only at run
+        rw [if_pos timeout] at run
+        obtain ⟨rfl, rfl⟩ := run
+        have nextRel : adjOracRel cc f { s with clock := 0 } { t with clock := 0 } := by
+          rcases rel with ⟨compatible, rfl⟩
+          exact ⟨compatible, rfl⟩
+        refine ⟨{ t with clock := 0 }, ?_, nextRel⟩
+        rw [evaluateApp, maxEq, closure]
+        dsimp only
+        rw [clockEq, if_pos timeout]
+        rfl
+      · rw [evaluateApp, closure] at run
+        dsimp only at run
+        rw [if_neg timeout] at run
+        obtain ⟨rfl, rfl⟩ := run
+        have nextRel : adjOracRel cc f (decClock (arg :: args).length s) (decClock (arg :: args).length t) := by
+          rcases rel with ⟨compatible, rfl⟩
+          exact ⟨compatible, rfl⟩
+        refine ⟨decClock (arg :: args).length t, ?_, nextRel⟩
+        rw [evaluateApp, maxEq, closure]
+        dsimp only
+        rw [clockEq, if_neg timeout]
+    | fullApp body env rest =>
+      by_cases timeout : s.clock < (arg :: args).length - rest.length
+      · rw [evaluateApp, closure] at run
+        dsimp only at run
+        rw [if_pos timeout] at run
+        obtain ⟨rfl, rfl⟩ := run
+        have nextRel : adjOracRel cc f { s with clock := 0 } { t with clock := 0 } := by
+          rcases rel with ⟨compatible, rfl⟩
+          exact ⟨compatible, rfl⟩
+        refine ⟨{ t with clock := 0 }, ?_, nextRel⟩
+        rw [evaluateApp, maxEq, closure]
+        dsimp only
+        rw [clockEq, if_pos timeout]
+        rfl
+      · have reduced : adjOracRel cc f (decClock ((arg :: args).length - rest.length) s)
+            (decClock ((arg :: args).length - rest.length) t) := by
+          rcases rel with ⟨compatible, rfl⟩
+          exact ⟨compatible, rfl⟩
+        have enough : (arg :: args).length - rest.length ≤ s.clock := by omega
+        rw [evaluateApp, closure] at run
+        dsimp only at run
+        rw [if_neg timeout, fixClock_evaluate] at run
+        rw [evaluateApp, maxEq, closure]
+        dsimp only
+        rw [clockEq, if_neg timeout, fixClock_evaluate]
+        cases bodyRun : evaluate [body] env (decClock ((arg :: args).length - rest.length) s) with
+        | mk bodyResult middle =>
+          rw [bodyRun] at run
+          have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
+            intro bad
+            rw [bad] at run
+            cases run
+            exact noType rfl
+          obtain ⟨targetMiddle, targetRun, middleRel⟩ :=
+            bodyIH body env rest closure enough bodyResult middle _ ⟨bodyRun, bodySafe, reduced⟩
+          rw [targetRun]
+          cases bodyResult with
+          | err error => cases run; exact ⟨targetMiddle, rfl, middleRel⟩
+          | val values =>
+            cases values with
+            | nil => cases run; exact ⟨targetMiddle, rfl, middleRel⟩
+            | cons value tail =>
+              cases tail with
+              | cons second tail => cases run; exact ⟨targetMiddle, rfl, middleRel⟩
+              | nil =>
+                exact appIH body env rest value middle closure enough bodyRun result next targetMiddle
+                  ⟨run, noType, middleRel⟩
+
+/-- Thunk-forcing operation case of the source evaluator simulation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateAdjOracForce {C D F U : Type} (_unused : U) (cc : Compiler D) (f : C → D)
+    (trace : BackendCommon.Tra) (args : List ClosLang.Exp) (env : List Value) (s : State C F)
+    (argsIH : EvalAt cc f args env s)
+    (forceIH : ∀ values middle value, evaluate args env s = (.val values, middle) →
+      destThunk values middle.refs = .isThunk .notEvaluated value →
+      EvalAt cc f [appUnit (.var .none 0)] [value] middle) :
+    EvalAt cc f [.op trace (.thunkOp .forceThunk) args] env s := by
+  intro result next t ⟨run, noType, rel⟩
+  cases argsRun : evaluate args env s with
+  | mk argsResult middle =>
+    rw [evaluate, fixClock_evaluate, argsRun] at run
+    have argsSafe : argsResult ≠ .err (.abort .typeError) := by
+      intro bad
+      rw [bad] at run
+      cases run
+      exact noType rfl
+    obtain ⟨targetMiddle, targetRun, middleRel⟩ := argsIH argsResult middle t ⟨argsRun, argsSafe, rel⟩
+    rw [evaluate, fixClock_evaluate, targetRun]
+    cases argsResult with
+    | err error => cases run; exact ⟨targetMiddle, rfl, middleRel⟩
+    | val values =>
+      have refsEq : targetMiddle.refs = middle.refs := by rcases middleRel with ⟨_, rfl⟩; rfl
+      dsimp only at run ⊢
+      cases thunkRun : destThunk values middle.refs with
+      | badRef =>
+        rw [thunkRun] at run
+        cases run
+        exact (noType rfl).elim
+      | notThunk =>
+        rw [thunkRun] at run
+        cases run
+        exact (noType rfl).elim
+      | isThunk mode value =>
+        rw [thunkRun] at run
+        rw [refsEq, thunkRun]
+        cases mode with
+        | evaluated => cases run; exact ⟨targetMiddle, rfl, middleRel⟩
+        | notEvaluated =>
+          dsimp only at run ⊢
+          cases forceRun : evaluate [appUnit (.var .none 0)] [value] middle with
+          | mk forceResult last =>
+            rw [forceRun] at run
+            have forceSafe : forceResult ≠ .err (.abort .typeError) := by
+              intro bad
+              rw [bad] at run
+              cases run
+              exact noType rfl
+            obtain ⟨targetLast, targetForce, lastRel⟩ :=
+              forceIH values middle value argsRun thunkRun forceResult last targetMiddle
+                ⟨forceRun, forceSafe, middleRel⟩
+            rw [targetForce]
+            cases forceResult with
+            | err error => cases run; exact ⟨targetLast, rfl, lastRel⟩
+            | val forced =>
+              have lastRefs : targetLast.refs = last.refs := by rcases lastRel with ⟨_, rfl⟩; rfl
+              cases updateRun : updateThunk values last.refs forced with
+              | none =>
+                simp [updateRun] at run
+                exact (noType run.1.symm).elim
+              | some refs =>
+                simp [updateRun] at run
+                obtain ⟨rfl, rfl⟩ := run
+                have updatedRel : adjOracRel cc f { last with refs := refs } { targetLast with refs := refs } := by
+                  rcases lastRel with ⟨compatible, rfl⟩
+                  exact ⟨compatible, rfl⟩
+                exact ⟨{ targetLast with refs := refs }, by simp [lastRefs, updateRun], updatedRel⟩
 
 /-- Ordinary-operation case of the source oracle-adjustment evaluator
 simulation, with the induction hypothesis for its argument expressions. -/
