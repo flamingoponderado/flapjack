@@ -5503,14 +5503,15 @@ theorem arm8AndNot_eq_zero_of_toNat_lt (w : BitVec 64) (h : w.toNat < 4096) :
 /-- The `AddSubImmediate@64` immediate the far-offset lowering computes is
 encodable: on the far-offset branch the offset is neither its own signed
 nine-bit form nor the scaled twelve-bit form, so it is at least `257` in
-magnitude, and the configured window keeps the computed immediate inside
-`[1, 4095]`. -/
-theorem arm8FarImm_encodable (off : BitVec 64)
-    (hok : asmAddrOffsetOkExact arm8ConfigL3 off = true)
+magnitude, and a window inside `[-4351, 4350]` keeps the computed immediate
+inside `[1, 4095]`.  Stated over the offset's window so every configured
+offset check (`addr_offset_ok`, `hw_offset_ok`, `byte_offset_ok`) can supply
+it. -/
+theorem arm8FarImm_encodable_of_bounds (off : BitVec 64)
+    (hlo : (-4351 : Int) ≤ off.toInt) (hhi : off.toInt ≤ 4350)
     (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))) :
     (if !off.msb then off - (0xFF : BitVec 64) else -off - (0x100 : BitVec 64)) &&&
       ~~~(4095 : BitVec 64) = (0 : BitVec 64) := by
-  obtain ⟨hlo, hhi⟩ := arm8FarOffsetBounds off hok
   have hout : ¬((-256 : Int) ≤ off.toInt ∧ off.toInt ≤ 255) := by
     intro ⟨h1, h2⟩
     exact hnsx (arm8NineBitForm_of_range off h1 h2)
@@ -5552,6 +5553,15 @@ theorem arm8FarImm_encodable (off : BitVec 64)
       omega
     simp only [hmsbf, Bool.not_false, if_true]
     exact arm8AndNot_eq_zero_of_toNat_lt _ hsmall
+
+/-- The configured `addr_offset_ok` window supplies the far-immediate bounds. -/
+theorem arm8FarImm_encodable (off : BitVec 64)
+    (hok : asmAddrOffsetOkExact arm8ConfigL3 off = true)
+    (hnsx : ¬(off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))) :
+    (if !off.msb then off - (0xFF : BitVec 64) else -off - (0x100 : BitVec 64)) &&&
+      ~~~(4095 : BitVec 64) = (0 : BitVec 64) := by
+  obtain ⟨hlo, hhi⟩ := arm8FarOffsetBounds off hok
+  exact arm8FarImm_encodable_of_bounds off hlo hhi hnsx
 
 /-- `holUpdate` at its application form for any carrier (Flapjack
 infrastructure: the memory-specialised `holUpdate_apply` does not cover the
