@@ -1732,6 +1732,35 @@ def GrowingExprsSimFrom {C F : Type} (passFuel relationFuel : Nat) (compiler : C
         targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
         (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
 
+/-- Clock-bounded pass-state simulation for well-founded induction over
+installed programs. This is Flapjack-specific simulation infrastructure. -/
+def GrowingExprsSimFromBelow {C F : Type} (passFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (required : State) (allowed : Set Nat) (sourceExps targetExps : List ClosLang.Exp) : Prop :=
+  ∀ (g : State), stateExtends required g →
+    ∀ (sourceEnv targetEnv : List ClosSem.Value)
+      (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+      (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+      (final : ClosSem.State (NumSet × C) F),
+      source.clock < limit →
+      evaluate sourceExps sourceEnv source = (result, final) →
+      result ≠ .err (.abort .typeError) →
+      EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 (targetExps.map (0, ·)) →
+      ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv →
+      StateWellFormedFuel relationFuel g allowed target.code source →
+      StateRelFuel relationFuel g allowed source target → IncrementalInstallReady g source target →
+      source.compile = compileIncFuelCallback passFuel compiler → target.compile = compiler →
+      target.compileOracle = compileIncFuelOracle passFuel source.compileOracle →
+      ∃ finalG targetResult targetFinal,
+        stateExtends g finalG ∧ evaluate targetExps targetEnv target = (targetResult, targetFinal) ∧
+        resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+          (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+        StateRelFuel relationFuel finalG allowed final targetFinal ∧
+        StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+        IncrementalInstallReady finalG final targetFinal ∧
+        final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+        targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+        (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
+
 /-- A traversed recursive group enters its actual transformed body with
 related closures and the growing compiler/oracle invariant. -/
 theorem callsFuel_letrec_growing_at {C F : Type} (passFuel traversalFuel : Nat)
@@ -3261,6 +3290,50 @@ theorem growingExprsSimFrom_installedBelow {C F : Type} (passFuel relationFuel l
   exact sim g (stateExtends_refl g ready.well.2) [] [] source target result final run notType envs .nil sourceWf
     states ready sourceCompiler targetCompiler oracle
 
+/-- An unbounded pass-state simulation is valid at every clock bound. This
+is Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFrom_below {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat)
+    (sourceExps targetExps : List ClosLang.Exp)
+    (sim : GrowingExprsSimFrom (F := F) passFuel relationFuel compiler required allowed sourceExps targetExps) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed sourceExps targetExps := by
+  intro g growth sourceEnv targetEnv source target result final _
+  exact sim g growth sourceEnv targetEnv source target result final
+
+/-- A clock-bounded simulation can be used at a smaller clock bound. This
+is Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelow_mono_clock {C F : Type} (passFuel relationFuel smaller larger : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat)
+    (sourceExps targetExps : List ClosLang.Exp) (bound : smaller ≤ larger)
+    (sim : GrowingExprsSimFromBelow (F := F) passFuel relationFuel larger compiler required allowed sourceExps targetExps) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel smaller compiler required allowed sourceExps targetExps := by
+  intro g growth sourceEnv targetEnv source target result final clock
+  exact sim g growth sourceEnv targetEnv source target result final (Nat.lt_of_lt_of_le clock bound)
+
+/-- A clock-bounded simulation remains valid above an extension of its
+required pass state. This is Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelow_mono_state {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (smaller larger : State) (allowed : Set Nat)
+    (sourceExps targetExps : List ClosLang.Exp) (growth : stateExtends smaller larger)
+    (sim : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler smaller allowed sourceExps targetExps) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler larger allowed sourceExps targetExps := by
+  intro g extended
+  exact sim g (stateExtends_trans smaller larger g growth extended)
+
+/-- A clock-bounded pass-state simulation supplies the corresponding
+installed-program simulation. This is Flapjack-specific infrastructure. -/
+theorem growingExprsSimFromBelow_installedBelow {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (g : State) (allowed : Set Nat)
+    (program targetProgram : List ClosLang.Exp)
+    (sim : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler g allowed program targetProgram) :
+    InstalledProgramSimBelow (C := C) (F := F) passFuel relationFuel limit compiler g allowed program targetProgram := by
+  intro source target result final clock run notType sourceWf states ready sourceCompiler targetCompiler oracle
+  have envs : EnvRelFuel relationFuel g allowed target.code [] [] 0 (targetProgram.map (0, ·)) := by
+    apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+    simp [envRel]
+  exact sim g (stateExtends_refl g ready.well.2) [] [] source target result final clock run notType envs .nil
+    sourceWf states ready sourceCompiler targetCompiler oracle
+
 /-- Matching ticks preserve a simulation above the required pass state. This is Flapjack-specific simulation infrastructure. -/
 theorem growingExprsSimFrom_tick {C F : Type} (passFuel relationFuel : Nat)
     (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat) (trace : BackendCommon.Tra)
@@ -3765,6 +3838,51 @@ theorem evaluate_install_growing_args_from {C F : Type} (fuel relationFuel : Nat
   exact ⟨middleG, targetResult, targetMiddle, targetRun, extended, related, middleStates, middleWf,
     middleReady, finalCompiler, finalTargetCompiler, finalOracle, growth⟩
 
+/-- Clock-bounded argument simulation for the install case. This is
+Flapjack-specific simulation infrastructure. -/
+theorem evaluate_install_growing_args_below {C F : Type} (fuel relationFuel limit : Nat) (required g : State) (requiredGrowth : stateExtends required g)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra)
+    (sourceArgs targetArgs : List ClosLang.Exp) (sourceEnv targetEnv : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (clock : source.clock < limit)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (run : evaluate [.op trace .install sourceArgs] sourceEnv source = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (envs : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 (targetArgs.map (0, ·)))
+    (envWf : ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (ready : IncrementalInstallReady g source target)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (argsSim : GrowingExprsSimFromBelow (F := F) fuel relationFuel limit compiler required allowed sourceArgs targetArgs)
+    (programIH : ∀ (middleG : State) program nextKnown converted,
+      compileIncFuel? fuel middleG.1 (program, []) = some (nextKnown, converted) →
+      InstalledProgramSimBelow (C := C) (F := F) fuel relationFuel source.clock compiler
+        (nextKnown, converted.2 ++ middleG.2) allowed program converted.1) :
+    ∃ nextG targetResult targetFinal,
+      stateExtends g nextG ∧
+      evaluate [.op trace .install targetArgs] targetEnv target = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG allowed targetFinal.code))
+        (ValueRelFuel relationFuel nextG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel nextG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel nextG allowed targetFinal.code final ∧
+      IncrementalInstallReady nextG final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  apply evaluate_install_incremental_sim fuel relationFuel g allowed compiler trace sourceArgs targetArgs
+    sourceEnv targetEnv source target result final run notType ?_ programIH
+  intro sourceResult sourceMiddle argsRun argsSafe
+  obtain ⟨middleG, targetResult, targetMiddle, extended, targetRun, related, middleStates, middleWf,
+    middleReady, finalCompiler, finalTargetCompiler, finalOracle, growth⟩ :=
+    argsSim g requiredGrowth sourceEnv targetEnv source target sourceResult sourceMiddle clock argsRun argsSafe envs envWf sourceWf
+      states ready sourceCompiler targetCompiler targetOracle
+  exact ⟨middleG, targetResult, targetMiddle, targetRun, extended, related, middleStates, middleWf,
+    middleReady, finalCompiler, finalTargetCompiler, finalOracle, growth⟩
+
 /-- The fuel-bounded variable traversal needs no expression induction
 hypothesis. This is Flapjack-specific simulation infrastructure. -/
 theorem callsFuel_var_growing_from {C F : Type} (passFuel relationFuel traversalFuel : Nat)
@@ -3912,6 +4030,614 @@ theorem callsFuel_install_growing_from {C F : Type} (passFuel relationFuel trave
   exact evaluate_install_growing_args_from passFuel relationFuel next g requiredGrowth allowed compiler trace args targetArgs
     sourceEnv targetEnv source target result final run notType argsEnv envWf sourceWf states ready
     sourceCompiler targetCompiler targetOracle (argsIH targetArgs argsRun) (programIH source.clock)
+
+/-- The install case uses a smaller-clock induction hypothesis and
+clock-bounded argument simulation. This is Flapjack-specific infrastructure. -/
+theorem callsFuel_install_growing_below {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (args : List ClosLang.Exp) (initial passFinal : State) (out : ClosLang.Exp)
+    (passRun : callsFuel (traversalFuel + 1) (.op trace .install args) initial = some (out, passFinal))
+    (argsIH : ∀ target, callsListFuel traversalFuel args initial = some (target, passFinal) →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler passFinal allowed args target)
+    (programIH : ∀ clock, clock < limit → ∀ (middleG : State) program nextKnown converted,
+      compileIncFuel? passFuel middleG.1 (program, []) = some (nextKnown, converted) →
+      InstalledProgramSimBelow (C := C) (F := F) passFuel relationFuel clock compiler
+        (nextKnown, converted.2 ++ middleG.2) allowed program converted.1) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler passFinal allowed
+      [.op trace .install args] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at passRun
+  obtain ⟨⟨targetArgs, next⟩, argsRun, rfl, rfl⟩ := passRun
+  intro g requiredGrowth sourceEnv targetEnv source target result final clock run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler targetOracle
+  have argsEnv := envRelFuel_op_args trace .install targetArgs (by simpa using envs)
+  exact evaluate_install_growing_args_below passFuel relationFuel limit next g requiredGrowth allowed compiler trace args targetArgs
+    sourceEnv targetEnv source target clock result final run notType argsEnv envWf sourceWf states ready
+    sourceCompiler targetCompiler targetOracle (argsIH targetArgs argsRun) (programIH source.clock clock)
+
+/-- Clock-bounded tick simulation. This is
+Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelow_tick {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (sourceBody targetBody : ClosLang.Exp)
+    (bodySim : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed [sourceBody] [targetBody]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed
+      [.tick trace sourceBody] [.tick trace targetBody] := by
+  intro g requiredGrowth sourceEnv targetEnv source target result final clock run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  have clocks := states.2.1
+  by_cases zero : source.clock = 0
+  · have targetZero : target.clock = 0 := by omega
+    have eq : result = .err (.abort .timeoutError) ∧ final = source := by simpa [evaluate, zero] using run.symm
+    obtain ⟨rfl, rfl⟩ := eq
+    exact ⟨g, .err (.abort .timeoutError), target, stateExtends_refl g ready.well.2,
+      by simp [evaluate, targetZero], rfl, states, sourceWf, ready, sourceCompiler, targetCompiler, oracle,
+      fun _ _ h => h⟩
+  · have targetNonzero : target.clock ≠ 0 := by omega
+    have bodyRun : evaluate [sourceBody] sourceEnv (decClock 1 source) = (result, final) := by
+      simpa [evaluate, zero] using run
+    have bodyEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, targetBody)] := by
+      apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+      have h := (envRelFuel_iff relationFuel g allowed target.code sourceEnv targetEnv 0
+        [(0, .tick trace targetBody)]).mp (by simpa using envs)
+      simpa [envRel, ClosProps.freeVar, ClosProps.freeVars, ClosProps.freeVarExp] using h
+    obtain ⟨finalG, targetResult, targetFinal, extended, targetRun, related, finalStates, finalWf,
+      finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+      bodySim g requiredGrowth sourceEnv targetEnv (decClock 1 source) (decClock 1 target) result final (by simp [decClock]; omega) bodyRun notType
+        (by simpa [decClock] using bodyEnv) envWf (stateWellFormedFuel_clock sourceWf _)
+        (stateRelFuel_decClock states 1) (incrementalInstallReady_decClock g source target 1 ready)
+        (by simpa [decClock] using sourceCompiler) (by simpa [decClock] using targetCompiler)
+        (by simpa [decClock] using oracle)
+    refine ⟨finalG, targetResult, targetFinal, extended, ?_, related, finalStates, finalWf, finalReady,
+      finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+    simpa [evaluate, targetNonzero] using targetRun
+
+/-- Clock-bounded raise simulation. This is
+Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelow_raise {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (sourceBody targetBody : ClosLang.Exp)
+    (bodySim : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed [sourceBody] [targetBody]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed
+      [.raise trace sourceBody] [.raise trace targetBody] := by
+  intro g requiredGrowth sourceEnv targetEnv source target result final clock run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  have bodyEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, targetBody)] := by
+    apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+    have h := (envRelFuel_iff relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .raise trace targetBody)]).mp (by simpa using envs)
+    simpa [envRel, ClosProps.freeVar, ClosProps.freeVars, ClosProps.freeVarExp] using h
+  cases bodyRun : evaluate [sourceBody] sourceEnv source with
+  | mk bodyResult bodyFinal =>
+    have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst bodyResult
+      have eq : result = .err (.abort .typeError) := by
+        simpa [evaluate, bodyRun] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨finalG, targetResult, targetFinal, extended, targetRun, related, finalStates, finalWf,
+      finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+      bodySim g requiredGrowth sourceEnv targetEnv source target bodyResult bodyFinal clock bodyRun bodySafe (by simpa using bodyEnv)
+        envWf sourceWf states ready sourceCompiler targetCompiler oracle
+    cases bodyResult with
+    | err error =>
+      cases targetResult with
+      | val values => simp [resultRel] at related
+      | err targetError =>
+        have eq : result = .err error ∧ final = bodyFinal := by simpa [evaluate, bodyRun] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        exact ⟨finalG, .err targetError, targetFinal, extended, by simp [evaluate, targetRun], related,
+          finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value sourceBody sourceEnv source bodyFinal values bodyRun
+      cases targetResult with
+      | err error => simp [resultRel] at related
+      | val targetValues =>
+        obtain ⟨targetValue, rfl⟩ := evaluate_singleton_value targetBody targetEnv target targetFinal targetValues targetRun
+        have eq : result = .err (.raise value) ∧ final = bodyFinal := by simpa [evaluate, bodyRun] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        have valueRel : ValueRelFuel relationFuel finalG allowed targetFinal.code value targetValue := by
+          simpa [resultRel] using related
+        exact ⟨finalG, .err (.raise targetValue), targetFinal, extended, by simp [evaluate, targetRun], valueRel,
+          finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+
+/-- Clock-bounded tick traversal. This is
+Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_tick_growing_below {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.tick trace body) initial = some (out, final))
+    (bodyIH : ∀ target, callsFuel traversalFuel body initial = some (target, final) →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [body] [target]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [.tick trace body] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨target, next⟩, bodyRun, rfl, rfl⟩ := run
+  exact growingExprsSimFromBelow_tick passFuel relationFuel limit compiler next allowed trace body target (bodyIH target bodyRun)
+
+/-- Clock-bounded raise traversal. This is
+Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_raise_growing_below {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra) (body : ClosLang.Exp)
+    (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.raise trace body) initial = some (out, final))
+    (bodyIH : ∀ target, callsFuel traversalFuel body initial = some (target, final) →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [body] [target]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [.raise trace body] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨target, next⟩, bodyRun, rfl, rfl⟩ := run
+  exact growingExprsSimFromBelow_raise passFuel relationFuel limit compiler next allowed trace body target (bodyIH target bodyRun)
+
+/-- Clock-bounded conditional simulation. This is
+Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelow_if {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (sc sy sn tc ty tn : ClosLang.Exp)
+    (conditionIH : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed [sc] [tc])
+    (yesIH : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed [sy] [ty])
+    (noIH : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed [sn] [tn]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed
+      [.ifThenElse trace sc sy sn] [.ifThenElse trace tc ty tn] := by
+  intro g requiredGrowth sourceEnv targetEnv source target sourceResult sourceFinal clock run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  have ifEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .ifThenElse trace tc ty tn)] := by simpa using envs
+  have conditionEnv := envRelFuel_if_part trace tc ty tn tc (Or.inl rfl) ifEnv
+  cases condRun : evaluate [sc] sourceEnv source with
+  | mk condResult condFinal =>
+    have condSafe : condResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst condResult
+      have eq : sourceResult = .err (.abort .typeError) := by
+        simpa [evaluate, condRun, fixClock] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨condG, targetCondResult, targetCondFinal, condExt, targetCondRun, condRel, condStates,
+      condWf, condReady, condCompiler, targetCondCompiler, condOracle, condGrowth⟩ :=
+      conditionIH g requiredGrowth sourceEnv targetEnv source target condResult condFinal clock condRun condSafe
+        (by simpa using conditionEnv) envWf sourceWf states ready sourceCompiler targetCompiler oracle
+    let sourceNext := (fixClock source ((), condFinal)).2
+    let targetNext := (fixClock target ((), targetCondFinal)).2
+    have nextClock : sourceNext.clock < limit := by
+      simp only [sourceNext, fixClock]
+      exact Nat.lt_of_le_of_lt (Nat.min_le_left _ _) clock
+    have nextStates : StateRelFuel relationFuel condG allowed sourceNext targetNext :=
+      stateRelFuel_fixClock source target () () states.2.1 condStates
+    have nextWf : StateWellFormedFuel relationFuel condG allowed targetNext.code sourceNext := by
+      simpa [sourceNext, targetNext, fixClock] using
+        stateWellFormedFuel_clock condWf (min source.clock condFinal.clock)
+    have nextReady : IncrementalInstallReady condG sourceNext targetNext :=
+      incrementalInstallReady_fixClock condG source condFinal target targetCondFinal condReady
+    have nextCompiler : sourceNext.compile = compileIncFuelCallback passFuel compiler := by
+      simpa [sourceNext, fixClock] using condCompiler
+    have nextTargetCompiler : targetNext.compile = compiler := by
+      simpa [targetNext, fixClock] using targetCondCompiler
+    have nextOracle : targetNext.compileOracle = compileIncFuelOracle passFuel sourceNext.compileOracle := by
+      simpa [sourceNext, targetNext, fixClock] using condOracle
+    have nextGrowth : ∀ key entry, target.code.lookup key = some entry → targetNext.code.lookup key = some entry := condGrowth
+    cases condResult with
+    | err error =>
+      cases targetCondResult with
+      | val values => simp [resultRel] at condRel
+      | err targetError =>
+        have eq : sourceResult = .err error ∧ sourceFinal = sourceNext := by
+          simpa [evaluate, condRun, fixClock, sourceNext] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨condG, .err targetError, targetNext, condExt, ?_, condRel, nextStates, nextWf, nextReady,
+          nextCompiler, nextTargetCompiler, nextOracle, nextGrowth⟩
+        simp [evaluate, targetCondRun, fixClock, targetNext]
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton_value sc sourceEnv source condFinal values condRun
+      cases targetCondResult with
+      | err error => simp [resultRel] at condRel
+      | val targetValues =>
+        obtain ⟨targetValue, rfl⟩ := evaluate_singleton_value tc targetEnv target targetCondFinal targetValues targetCondRun
+        have valueRel : ValueRelFuel relationFuel condG allowed targetCondFinal.code value targetValue := by
+          simpa [resultRel] using condRel
+        have boolEq := valueRelFuel_asBool valueRel
+        cases boolRun : asBool value with
+        | none =>
+          have eq : sourceResult = .err (.abort .typeError) := by
+            simpa [evaluate, condRun, fixClock, boolRun] using congrArg Prod.fst run.symm
+          exact (notType eq).elim
+        | some choice =>
+          have targetBool : asBool targetValue = some choice := boolEq.symm.trans boolRun
+          have branchEnvWf := valuesWellFormedFuel_mono envWf condExt Set.Subset.rfl nextGrowth
+          cases choice with
+          | false =>
+            have branchEnv := envRelFuel_if_part trace tc ty tn tn (Or.inr (Or.inr rfl)) ifEnv
+            have branchEnv' := envRelFuel_mono branchEnv condExt Set.Subset.rfl nextGrowth
+            have branchRun : evaluate [sn] sourceEnv sourceNext = (sourceResult, sourceFinal) := by
+              simpa [evaluate, condRun, fixClock, boolRun, sourceNext] using run
+            obtain ⟨finalG, result, final, extended, targetRun, related, finalStates, finalWf, finalReady,
+              finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+              noIH condG (stateExtends_trans required g condG requiredGrowth condExt) sourceEnv targetEnv sourceNext targetNext sourceResult sourceFinal nextClock branchRun notType
+                (by simpa using branchEnv') branchEnvWf nextWf nextStates nextReady nextCompiler nextTargetCompiler nextOracle
+            refine ⟨finalG, result, final, stateExtends_trans g condG finalG condExt extended, ?_, related,
+              finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, ?_⟩
+            · simpa [evaluate, targetCondRun, fixClock, targetBool, targetNext] using targetRun
+            · intro key entry found
+              exact growth key entry (nextGrowth key entry found)
+          | true =>
+            have branchEnv := envRelFuel_if_part trace tc ty tn ty (Or.inr (Or.inl rfl)) ifEnv
+            have branchEnv' := envRelFuel_mono branchEnv condExt Set.Subset.rfl nextGrowth
+            have branchRun : evaluate [sy] sourceEnv sourceNext = (sourceResult, sourceFinal) := by
+              simpa [evaluate, condRun, fixClock, boolRun, sourceNext] using run
+            obtain ⟨finalG, result, final, extended, targetRun, related, finalStates, finalWf, finalReady,
+              finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+              yesIH condG (stateExtends_trans required g condG requiredGrowth condExt) sourceEnv targetEnv sourceNext targetNext sourceResult sourceFinal nextClock branchRun notType
+                (by simpa using branchEnv') branchEnvWf nextWf nextStates nextReady nextCompiler nextTargetCompiler nextOracle
+            refine ⟨finalG, result, final, stateExtends_trans g condG finalG condExt extended, ?_, related,
+              finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, ?_⟩
+            · simpa [evaluate, targetCondRun, fixClock, targetBool, targetNext] using targetRun
+            · intro key entry found
+              exact growth key entry (nextGrowth key entry found)
+
+/-- Clock-bounded conditional traversal. This is
+Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_if_growing_below {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (condition yes no : ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.ifThenElse trace condition yes no) initial = some (out, final))
+    (conditionIH : ∀ target middle, callsFuel traversalFuel condition initial = some (target, middle) →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [condition] [target])
+    (yesIH : ∀ target before after, callsFuel traversalFuel yes before = some (target, after) →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [yes] [target])
+    (noIH : ∀ target middle, callsFuel traversalFuel no middle = some (target, final) →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [no] [target]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed
+      [.ifThenElse trace condition yes no] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetCondition, middle1⟩, conditionRun, ⟨targetYes, middle2⟩, yesRun,
+    ⟨targetNo, next⟩, noRun, rfl, rfl⟩ := run
+  exact growingExprsSimFromBelow_if passFuel relationFuel limit compiler next allowed trace condition yes no
+    targetCondition targetYes targetNo (conditionIH targetCondition middle1 conditionRun)
+    (yesIH targetYes middle1 middle2 yesRun) (noIH targetNo middle2 noRun)
+
+/-- Clock-bounded let simulation. This is
+Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelow_let {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (sourceBindings targetBindings : List ClosLang.Exp) (sourceBody targetBody : ClosLang.Exp)
+    (bindingsIH : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed sourceBindings targetBindings)
+    (bindingsWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate sourceBindings env state))
+    (bodyIH : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed [sourceBody] [targetBody]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed
+      [.let trace sourceBindings sourceBody] [.let trace targetBindings targetBody] := by
+  intro g requiredGrowth sourceEnv targetEnv source target result final clock run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  have letEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .let trace targetBindings targetBody)] := by simpa using envs
+  have bindingsEnv := envRelFuel_let_bindings trace targetBindings targetBody letEnv
+  have bindingWf := bindingsWf g target.code sourceEnv source envWf sourceWf ready.auxEmpty
+  cases bindingRun : evaluate sourceBindings sourceEnv source with
+  | mk bindingResult bindingFinal =>
+    rw [bindingRun] at bindingWf
+    have bindingSafe : bindingResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst bindingResult
+      have eq : result = .err (.abort .typeError) := by
+        simpa [evaluate, bindingRun, fixClock] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨bindingG, targetBindingResult, targetBindingFinal, bindingExt, targetBindingRun, bindingRel,
+      bindingStates, bindingStateWf, bindingReady, bindingCompiler, targetBindingCompiler, bindingOracle, bindingGrowth⟩ :=
+      bindingsIH g requiredGrowth sourceEnv targetEnv source target bindingResult bindingFinal clock bindingRun bindingSafe
+        bindingsEnv envWf sourceWf states ready sourceCompiler targetCompiler oracle
+    let sourceNext := (fixClock source ((), bindingFinal)).2
+    let targetNext := (fixClock target ((), targetBindingFinal)).2
+    have nextClock : sourceNext.clock < limit := by
+      simp only [sourceNext, fixClock]
+      exact Nat.lt_of_le_of_lt (Nat.min_le_left _ _) clock
+    have nextStates : StateRelFuel relationFuel bindingG allowed sourceNext targetNext :=
+      stateRelFuel_fixClock source target () () states.2.1 bindingStates
+    have nextWf : StateWellFormedFuel relationFuel bindingG allowed targetNext.code sourceNext := by
+      simpa [sourceNext, targetNext, fixClock] using
+        stateWellFormedFuel_clock bindingStateWf (min source.clock bindingFinal.clock)
+    have nextReady : IncrementalInstallReady bindingG sourceNext targetNext :=
+      incrementalInstallReady_fixClock bindingG source bindingFinal target targetBindingFinal bindingReady
+    have nextCompiler : sourceNext.compile = compileIncFuelCallback passFuel compiler := by
+      simpa [sourceNext, fixClock] using bindingCompiler
+    have nextTargetCompiler : targetNext.compile = compiler := by simpa [targetNext, fixClock] using targetBindingCompiler
+    have nextOracle : targetNext.compileOracle = compileIncFuelOracle passFuel sourceNext.compileOracle := by
+      simpa [sourceNext, targetNext, fixClock] using bindingOracle
+    have nextGrowth : ∀ key entry, target.code.lookup key = some entry → targetNext.code.lookup key = some entry := bindingGrowth
+    cases bindingResult with
+    | err error =>
+      cases targetBindingResult with
+      | val values => simp [resultRel] at bindingRel
+      | err targetError =>
+        have eq : result = .err error ∧ final = sourceNext := by
+          simpa [evaluate, bindingRun, fixClock, sourceNext] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨bindingG, .err targetError, targetNext, bindingExt, ?_, bindingRel, nextStates, nextWf, nextReady,
+          nextCompiler, nextTargetCompiler, nextOracle, nextGrowth⟩
+        simp [evaluate, targetBindingRun, fixClock, targetNext]
+    | val sourceValues =>
+      cases targetBindingResult with
+      | err error => simp [resultRel] at bindingRel
+      | val targetValues =>
+        have valuesRel : List.Forall₂ (ValueRelFuel relationFuel bindingG allowed targetNext.code) sourceValues targetValues := bindingRel
+        have valuesLength : sourceValues.length = targetBindings.length := by
+          have targetLength := (evaluate_length (C := C) (F := F)).1 targetBindings targetEnv target
+            targetBindingFinal targetValues targetBindingRun
+          exact valuesRel.length_eq.trans targetLength
+        have outerEnv := envRelFuel_let_body_outer trace targetBindings targetBody letEnv
+        have outerEnv' := envRelFuel_mono outerEnv bindingExt Set.Subset.rfl nextGrowth
+        have bodyEnv : EnvRelFuel relationFuel bindingG allowed targetNext.code (sourceValues ++ sourceEnv)
+            (targetValues ++ targetEnv) 0 [(0, targetBody)] := by
+          apply envRelFuel_prepend valuesRel
+          simpa [valuesLength] using outerEnv'
+        have bodyEnvWf : ValuesWellFormedFuel relationFuel bindingG allowed targetNext.code (sourceValues ++ sourceEnv) :=
+          valuesWellFormedFuel_mono (valuesWellFormedFuel_append bindingWf.1 envWf) bindingExt Set.Subset.rfl nextGrowth
+        have bodyRun : evaluate [sourceBody] (sourceValues ++ sourceEnv) sourceNext = (result, final) := by
+          simpa [evaluate, bindingRun, fixClock, sourceNext] using run
+        obtain ⟨finalG, targetResult, targetFinal, extended, targetRun, related, finalStates, finalWf, finalReady,
+          finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+          bodyIH bindingG (stateExtends_trans required g bindingG requiredGrowth bindingExt) (sourceValues ++ sourceEnv) (targetValues ++ targetEnv) sourceNext targetNext result final nextClock
+            bodyRun notType (by simpa using bodyEnv) bodyEnvWf nextWf nextStates nextReady nextCompiler nextTargetCompiler nextOracle
+        refine ⟨finalG, targetResult, targetFinal, stateExtends_trans g bindingG finalG bindingExt extended, ?_, related,
+          finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, ?_⟩
+        · simpa [evaluate, targetBindingRun, fixClock, targetNext] using targetRun
+        · intro key entry found
+          exact growth key entry (nextGrowth key entry found)
+
+/-- Clock-bounded handle simulation. This is
+Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelow_handle {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (sb sh tb th : ClosLang.Exp)
+    (bodyIH : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed [sb] [tb])
+    (bodyWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [sb] env state))
+    (handlerIH : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed [sh] [th]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed [.handle trace sb sh] [.handle trace tb th] := by
+  intro g requiredGrowth sourceEnv targetEnv source target sourceResult sourceFinal clock run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  have handleEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+      [(0, .handle trace tb th)] := by simpa using envs
+  have bodyEnv := envRelFuel_handle_body trace tb th handleEnv
+  have sourceBodyWf := bodyWf g target.code sourceEnv source envWf sourceWf ready.auxEmpty
+  cases bodyRun : evaluate [sb] sourceEnv source with
+  | mk bodyResult bodyFinal =>
+    rw [bodyRun] at sourceBodyWf
+    have bodySafe : bodyResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst bodyResult
+      have eq : sourceResult = .err (.abort .typeError) := by
+        simpa [evaluate, bodyRun, fixClock] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨bodyG, targetBodyResult, targetBodyFinal, bodyExt, targetBodyRun, bodyRel, bodyStates,
+      bodyStateWf, bodyReady, bodyCompiler, targetBodyCompiler, bodyOracle, bodyGrowth⟩ :=
+      bodyIH g requiredGrowth sourceEnv targetEnv source target bodyResult bodyFinal clock bodyRun bodySafe
+        (by simpa using bodyEnv) envWf sourceWf states ready sourceCompiler targetCompiler oracle
+    let sourceNext := (fixClock source ((), bodyFinal)).2
+    let targetNext := (fixClock target ((), targetBodyFinal)).2
+    have nextClock : sourceNext.clock < limit := by
+      simp only [sourceNext, fixClock]
+      exact Nat.lt_of_le_of_lt (Nat.min_le_left _ _) clock
+    have nextStates : StateRelFuel relationFuel bodyG allowed sourceNext targetNext :=
+      stateRelFuel_fixClock source target () () states.2.1 bodyStates
+    have nextWf : StateWellFormedFuel relationFuel bodyG allowed targetNext.code sourceNext := by
+      simpa [sourceNext, targetNext, fixClock] using
+        stateWellFormedFuel_clock bodyStateWf (min source.clock bodyFinal.clock)
+    have nextReady : IncrementalInstallReady bodyG sourceNext targetNext :=
+      incrementalInstallReady_fixClock bodyG source bodyFinal target targetBodyFinal bodyReady
+    have nextCompiler : sourceNext.compile = compileIncFuelCallback passFuel compiler := by
+      simpa [sourceNext, fixClock] using bodyCompiler
+    have nextTargetCompiler : targetNext.compile = compiler := by simpa [targetNext, fixClock] using targetBodyCompiler
+    have nextOracle : targetNext.compileOracle = compileIncFuelOracle passFuel sourceNext.compileOracle := by
+      simpa [sourceNext, targetNext, fixClock] using bodyOracle
+    have nextGrowth : ∀ key entry, target.code.lookup key = some entry → targetNext.code.lookup key = some entry := bodyGrowth
+    cases bodyResult with
+    | val sourceValues =>
+      cases targetBodyResult with
+      | err error => simp [resultRel] at bodyRel
+      | val targetValues =>
+        have eq : sourceResult = .val sourceValues ∧ sourceFinal = sourceNext := by
+          simpa [evaluate, bodyRun, fixClock, sourceNext] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨bodyG, .val targetValues, targetNext, bodyExt, ?_, bodyRel, nextStates, nextWf, nextReady,
+          nextCompiler, nextTargetCompiler, nextOracle, nextGrowth⟩
+        simp [evaluate, targetBodyRun, fixClock, targetNext]
+    | err sourceError =>
+      cases targetBodyResult with
+      | val values => simp [resultRel] at bodyRel
+      | err targetError =>
+        cases sourceError with
+        | abort sourceAbort =>
+          cases targetError with
+          | raise value => simp [resultRel, excRel] at bodyRel
+          | abort targetAbort =>
+            have eq : sourceResult = .err (.abort sourceAbort) ∧ sourceFinal = sourceNext := by
+              simpa [evaluate, bodyRun, fixClock, sourceNext] using run.symm
+            obtain ⟨rfl, rfl⟩ := eq
+            refine ⟨bodyG, .err (.abort targetAbort), targetNext, bodyExt, ?_, bodyRel, nextStates, nextWf, nextReady,
+              nextCompiler, nextTargetCompiler, nextOracle, nextGrowth⟩
+            simp [evaluate, targetBodyRun, fixClock, targetNext]
+        | raise sourceValue =>
+          cases targetError with
+          | abort error => simp [resultRel, excRel] at bodyRel
+          | raise targetValue =>
+            have payload : ValueRelFuel relationFuel bodyG allowed targetNext.code sourceValue targetValue := bodyRel
+            have grownEnv := envRelFuel_mono handleEnv bodyExt Set.Subset.rfl nextGrowth
+            have handlerEnv := envRelFuel_handle_enter trace tb th grownEnv payload
+            have payloadWf : ValueWellFormedFuel relationFuel bodyG allowed targetNext.code sourceValue :=
+              valueWellFormedFuel_mono sourceBodyWf.1 bodyExt Set.Subset.rfl nextGrowth
+            have outerWf := valuesWellFormedFuel_mono envWf bodyExt Set.Subset.rfl nextGrowth
+            have handlerRun : evaluate [sh] (sourceValue :: sourceEnv) sourceNext = (sourceResult, sourceFinal) := by
+              simpa [evaluate, bodyRun, fixClock, sourceNext] using run
+            obtain ⟨finalG, result, final, extended, targetRun, related, finalStates, finalWf, finalReady,
+              finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+              handlerIH bodyG (stateExtends_trans required g bodyG requiredGrowth bodyExt) (sourceValue :: sourceEnv) (targetValue :: targetEnv) sourceNext targetNext
+                sourceResult sourceFinal nextClock handlerRun notType (by simpa using handlerEnv) (.cons payloadWf outerWf)
+                nextWf nextStates nextReady nextCompiler nextTargetCompiler nextOracle
+            refine ⟨finalG, result, final, stateExtends_trans g bodyG finalG bodyExt extended, ?_, related,
+              finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, ?_⟩
+            · simpa [evaluate, targetBodyRun, fixClock, targetNext] using targetRun
+            · intro key entry found
+              exact growth key entry (nextGrowth key entry found)
+
+/-- Clock-bounded ordinary-operation simulation. This is
+Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelow_ordinaryOp {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (sourceArgs targetArgs : List ClosLang.Exp)
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
+    (argsSim : GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed sourceArgs targetArgs)
+    (argsWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env →
+      StateWellFormedFuel relationFuel g allowed code state → OracleAuxEmpty state.compileOracle →
+      EvalWellFormedFuel relationFuel g allowed code (evaluate sourceArgs env state)) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed
+      [.op trace op sourceArgs] [.op trace op targetArgs] := by
+  intro g requiredGrowth sourceEnv targetEnv source target result final clock run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  have argsEnv := envRelFuel_op_args trace op targetArgs (by simpa using envs)
+  have sourceArgsWf := argsWf g target.code sourceEnv source envWf sourceWf ready.auxEmpty
+  rw [evaluate_ordinaryOp_eq trace op sourceArgs sourceEnv source notInstall notForce] at run
+  cases argsRun : evaluate sourceArgs sourceEnv source with
+  | mk argsResult argsFinal =>
+    rw [argsRun] at sourceArgsWf
+    have argsSafe : argsResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst argsResult
+      have eq : result = .err (.abort .typeError) := by simpa [argsRun] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨argsG, targetArgsResult, targetArgsFinal, argsExt, targetArgsRun, argsRel, argsStates,
+      argsStateWf, argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩ :=
+      argsSim g requiredGrowth sourceEnv targetEnv source target argsResult argsFinal clock argsRun argsSafe argsEnv envWf
+        sourceWf states ready sourceCompiler targetCompiler oracle
+    cases argsResult with
+    | err error =>
+      cases targetArgsResult with
+      | val values => simp [resultRel] at argsRel
+      | err targetError =>
+        have eq : result = .err error ∧ final = argsFinal := by simpa [argsRun] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨argsG, .err targetError, targetArgsFinal, argsExt, ?_, argsRel, argsStates, argsStateWf,
+          argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩
+        simp [evaluate_ordinaryOp_eq trace op targetArgs targetEnv target notInstall notForce, targetArgsRun]
+    | val sourceValues =>
+      cases targetArgsResult with
+      | err error => simp [resultRel] at argsRel
+      | val targetValues =>
+        have valuesRel : List.Forall₂ (ValueRelFuel relationFuel argsG allowed targetArgsFinal.code)
+            sourceValues.reverse targetValues.reverse := List.rel_reverse argsRel
+        have valuesWf : ValuesWellFormedFuel relationFuel argsG allowed targetArgsFinal.code sourceValues := by
+          apply valuesWellFormedFuel_mono _ argsExt Set.Subset.rfl argsGrowth
+          exact sourceArgsWf.1
+        have sim := ClosProps.PrimitiveTotal.simpleValRelDoApp
+          (ValueRelFuel relationFuel argsG allowed targetArgsFinal.code)
+          (fun (s : ClosSem.State (NumSet × C) F) (t : ClosSem.State C F) =>
+            t.code = targetArgsFinal.code ∧ StateRelFuel relationFuel argsG allowed s t)
+          argsFinal targetArgsFinal sourceValues.reverse targetValues.reverse op
+          ⟨valueRelFuel_simple relationFuel argsG allowed targetArgsFinal.code,
+            stateRelFuel_simple relationFuel argsG allowed targetArgsFinal.code⟩ ⟨⟨rfl, argsStates⟩, valuesRel⟩
+        have primWf := doApp_result_wellFormedFuel op sourceValues.reverse argsFinal argsStateWf
+          (valuesWellFormedFuel_reverse valuesWf)
+        cases primRun : doApp op sourceValues.reverse argsFinal with
+        | err error =>
+          simp only [primRun] at sim
+          obtain ⟨targetError, targetPrim, errors⟩ := sim
+          have eq : result = .err error ∧ final = argsFinal := by simpa [argsRun, primRun] using run.symm
+          obtain ⟨rfl, rfl⟩ := eq
+          refine ⟨argsG, .err targetError, targetArgsFinal, argsExt, ?_, errors, argsStates, argsStateWf,
+            argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩
+          simp [evaluate_ordinaryOp_eq trace op targetArgs targetEnv target notInstall notForce, targetArgsRun, targetPrim]
+        | val pair =>
+          obtain ⟨value, sourceFinal⟩ := pair
+          simp only [primRun] at sim primWf
+          obtain ⟨targetValue, targetFinal, valueRel, ⟨codeEq, finalStates⟩, targetPrim⟩ := sim
+          have eq : result = .val [value] ∧ final = sourceFinal := by simpa [argsRun, primRun] using run.symm
+          obtain ⟨rfl, rfl⟩ := eq
+          have finalReady := incrementalInstallReady_doApp argsG argsFinal targetArgsFinal final targetFinal
+            sourceValues.reverse targetValues.reverse value targetValue op argsReady primRun targetPrim
+          have srcFields := ClosInterp.doApp_compilerFields op sourceValues.reverse argsFinal final value primRun
+          have tgtFields := ClosInterp.doApp_compilerFields op targetValues.reverse targetArgsFinal targetFinal targetValue targetPrim
+          refine ⟨argsG, .val [targetValue], targetFinal, argsExt, ?_, ?_, ?_, ?_, finalReady, ?_, ?_, ?_, ?_⟩
+          · simp [evaluate_ordinaryOp_eq trace op targetArgs targetEnv target notInstall notForce, targetArgsRun, targetPrim]
+          · change List.Forall₂ (ValueRelFuel relationFuel argsG allowed targetFinal.code) [value] [targetValue]
+            rw [codeEq]
+            exact .cons valueRel .nil
+          · simpa [codeEq] using finalStates
+          · simpa [codeEq, PrimitiveResultWellFormedFuel] using primWf.2
+          · exact srcFields.1.trans argsCompiler
+          · exact tgtFields.1.trans targetArgsCompiler
+          · rw [tgtFields.2.1, srcFields.2.1]
+            exact argsOracle
+          · intro key entry found
+            rw [codeEq]
+            exact argsGrowth key entry found
+
+/-- Clock-bounded let traversal. This is
+Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_let_growing_below {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (bindings : List ClosLang.Exp) (body : ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.let trace bindings body) initial = some (out, final))
+    (bindingsIH : ∀ target middle, callsListFuel traversalFuel bindings initial = some (target, middle) →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed bindings target)
+    (bindingsWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate bindings env state))
+    (bodyIH : ∀ target middle, callsFuel traversalFuel body middle = some (target, final) →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [body] [target]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [.let trace bindings body] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetBindings, middle⟩, bindingsRun, ⟨targetBody, next⟩, bodyRun, rfl, rfl⟩ := run
+  exact growingExprsSimFromBelow_let passFuel relationFuel limit compiler next allowed trace bindings targetBindings body targetBody
+    (bindingsIH targetBindings middle bindingsRun) bindingsWf (bodyIH targetBody middle bodyRun)
+
+/-- Clock-bounded handle traversal. This is
+Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_handle_growing_below {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (body handler : ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.handle trace body handler) initial = some (out, final))
+    (bodyIH : ∀ target middle, callsFuel traversalFuel body initial = some (target, middle) →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [body] [target])
+    (bodyWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate [body] env state))
+    (handlerIH : ∀ target middle, callsFuel traversalFuel handler middle = some (target, final) →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [handler] [target]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [.handle trace body handler] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetBody, middle⟩, bodyRun, ⟨targetHandler, next⟩, handlerRun, rfl, rfl⟩ := run
+  exact growingExprsSimFromBelow_handle passFuel relationFuel limit compiler next allowed trace body handler targetBody targetHandler
+    (bodyIH targetBody middle bodyRun) bodyWf (handlerIH targetHandler middle handlerRun)
+
+/-- Clock-bounded ordinaryOp traversal. This is
+Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_ordinaryOp_growing_below {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (args : List ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.op trace op args) initial = some (out, final))
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
+    (argsIH : ∀ target, callsListFuel traversalFuel args initial = some (target, final) →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed args target)
+    (argsWf : ∀ (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env →
+      StateWellFormedFuel relationFuel g allowed code state → OracleAuxEmpty state.compileOracle →
+      EvalWellFormedFuel relationFuel g allowed code (evaluate args env state)) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed [.op trace op args] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetArgs, next⟩, argsRun, rfl, rfl⟩ := run
+  exact growingExprsSimFromBelow_ordinaryOp passFuel relationFuel limit compiler next allowed trace op args targetArgs
+    notInstall notForce (argsIH targetArgs argsRun) argsWf
 
 /-- Appending older auxiliary code preserves the generated pass state when
 the combined code has distinct labels. -/
@@ -4075,6 +4801,113 @@ theorem growingExprsSimFrom_of_forall₂ {C F : Type} (passFuel relationFuel : N
                   targetOuter, .cons grownValue tailRel, finalStates, finalWf, finalReady, finalCompiler,
                   targetFinalCompiler, finalOracle, combinedGrowth⟩
 
+/-- Clock-bounded single-expression simulations compose in evaluation order.
+This is Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelow_of_forall₂ {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat)
+    {sourceExps targetExps : List ClosLang.Exp}
+    (sims : List.Forall₂ (fun source target =>
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed [source] [target])
+      sourceExps targetExps) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler required allowed sourceExps targetExps := by
+  induction sims with
+  | nil =>
+    intro g _ sourceEnv targetEnv source target result final clock run _ _ _ stateWf states ready sourceCompiler targetCompiler oracle
+    have eq : result = .val [] ∧ final = source := by simpa [evaluate] using run.symm
+    obtain ⟨rfl, rfl⟩ := eq
+    exact ⟨g, .val [], target, stateExtends_refl g ready.well.2, by simp [evaluate], .nil,
+      states, stateWf, ready, sourceCompiler, targetCompiler, oracle, fun _ _ h => h⟩
+  | @cons sourceHead targetHead sourceTail targetTail headSim tailSims tailIH =>
+    intro g requiredGrowth sourceEnv targetEnv source target result final clock run notType envs envWf stateWf states ready
+      sourceCompiler targetCompiler oracle
+    have headEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, targetHead)] := by
+      apply envRelFuel_subset envs
+      intro item member
+      simp only [List.mem_singleton] at member
+      subst item
+      simp
+    cases headRun : evaluate [sourceHead] sourceEnv source with
+    | mk headResult headFinal =>
+      have headSafe : headResult ≠ .err (.abort .typeError) := by
+        intro bad
+        subst headResult
+        have outer := ClosProps.evaluate_cons_error sourceHead sourceTail sourceEnv source headFinal (.abort .typeError) headRun
+        have eq : result = .err (.abort .typeError) := by rw [run] at outer; exact (Prod.mk.inj outer).1
+        exact notType eq
+      obtain ⟨headG, targetHeadResult, targetHeadFinal, headExt, targetHeadRun, headRel, headStates,
+        headWf, headReady, headCompiler, targetHeadCompiler, headOracle, headGrowth⟩ :=
+        headSim g requiredGrowth sourceEnv targetEnv source target headResult headFinal clock headRun headSafe headEnv envWf
+          stateWf states ready sourceCompiler targetCompiler oracle
+      cases headResult with
+      | err error =>
+        cases targetHeadResult with
+        | val values => simp [resultRel] at headRel
+        | err targetError =>
+          have eq : result = .err error ∧ final = headFinal := by
+            have outer := ClosProps.evaluate_cons_error sourceHead sourceTail sourceEnv source headFinal error headRun
+            rw [run] at outer
+            exact Prod.mk.inj outer
+          obtain ⟨rfl, rfl⟩ := eq
+          exact ⟨headG, .err targetError, targetHeadFinal, headExt,
+            ClosProps.evaluate_cons_error targetHead targetTail targetEnv target targetHeadFinal targetError targetHeadRun,
+            headRel, headStates, headWf, headReady, headCompiler, targetHeadCompiler, headOracle, headGrowth⟩
+      | val values =>
+        obtain ⟨value, rfl⟩ := evaluate_singleton_value sourceHead sourceEnv source headFinal values headRun
+        cases targetHeadResult with
+        | err error => simp [resultRel] at headRel
+        | val targetValues =>
+          obtain ⟨targetValue, rfl⟩ := evaluate_singleton_value targetHead targetEnv target targetHeadFinal targetValues targetHeadRun
+          have valueRel : ValueRelFuel relationFuel headG allowed targetHeadFinal.code value targetValue := by
+            simpa [resultRel] using headRel
+          have tailEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+              (targetTail.map (0, ·)) := by
+            apply envRelFuel_subset envs
+            intro item member
+            simp only [List.map_cons, List.mem_cons]
+            exact Or.inr member
+          have tailEnv' := envRelFuel_mono tailEnv headExt Set.Subset.rfl headGrowth
+          have tailEnvWf := valuesWellFormedFuel_mono envWf headExt Set.Subset.rfl headGrowth
+          cases tailRun : evaluate sourceTail sourceEnv headFinal with
+          | mk tailResult tailFinal =>
+            have sourceOuter := ClosProps.evaluate_cons_value sourceHead sourceTail sourceEnv source headFinal value headRun
+            rw [run, tailRun] at sourceOuter
+            have tailSafe : tailResult ≠ .err (.abort .typeError) := by
+              intro bad
+              subst tailResult
+              simp only at sourceOuter
+              exact notType (Prod.mk.inj sourceOuter).1
+            have headClock : headFinal.clock < limit := by
+              have bound := evaluate_clock_le [sourceHead] sourceEnv source
+              rw [headRun] at bound
+              exact Nat.lt_of_le_of_lt bound clock
+            have requiredHead := stateExtends_trans required g headG requiredGrowth headExt
+            obtain ⟨finalG, targetTailResult, targetFinal, tailExt, targetTailRun, tailRel, finalStates,
+              finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, tailGrowth⟩ :=
+              tailIH headG requiredHead sourceEnv targetEnv headFinal targetHeadFinal tailResult tailFinal headClock tailRun tailSafe
+                tailEnv' tailEnvWf headWf headStates headReady headCompiler targetHeadCompiler headOracle
+            have targetOuter := ClosProps.evaluate_cons_value targetHead targetTail targetEnv target targetHeadFinal targetValue targetHeadRun
+            rw [targetTailRun] at targetOuter
+            have combinedExt := stateExtends_trans g headG finalG headExt tailExt
+            have combinedGrowth : ∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry :=
+              fun key entry found => tailGrowth key entry (headGrowth key entry found)
+            cases tailResult with
+            | err error =>
+              cases targetTailResult with
+              | val vs => simp [resultRel] at tailRel
+              | err targetError =>
+                obtain ⟨rfl, rfl⟩ := Prod.mk.inj sourceOuter
+                exact ⟨finalG, .err targetError, targetFinal, combinedExt, targetOuter, tailRel, finalStates,
+                  finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, combinedGrowth⟩
+            | val tailValues =>
+              cases targetTailResult with
+              | err error => simp [resultRel] at tailRel
+              | val targetTailValues =>
+                obtain ⟨rfl, rfl⟩ := Prod.mk.inj sourceOuter
+                have grownValue := valueRelFuel_mono valueRel tailExt Set.Subset.rfl tailGrowth
+                exact ⟨finalG, .val (targetValue :: targetTailValues), targetFinal, combinedExt,
+                  targetOuter, .cons grownValue tailRel, finalStates, finalWf, finalReady, finalCompiler,
+                  targetFinalCompiler, finalOracle, combinedGrowth⟩
+
 /-- A successful list traversal composes expression simulations that need
 their own generated pass states, using label freshness to show that each
 intermediate state extends into the final pass state. -/
@@ -4171,6 +5004,101 @@ theorem callsListBounded_growing_from {C F : Type} (passFuel relationFuel traver
     · intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
       exact exprIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
 
+/-- Clock-bounded list traversal and retry composition. These are
+Flapjack-specific simulation lemmas. -/
+theorem callsListFuel_growing_below {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListFuel traversalFuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialWf : wellFormed initial) (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      expression ∈ source → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler after allowed [expression] [output]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed source target := by
+  apply growingExprsSimFromBelow_of_forall₂ passFuel relationFuel limit compiler final allowed
+  induction traversalFuel generalizing source target initial final with
+  | zero =>
+    cases source with
+    | nil => simp [callsListFuel] at run; obtain ⟨rfl, _⟩ := run; exact .nil
+    | cons e es => simp [callsListFuel] at run
+  | succ depth ih =>
+    cases source with
+    | nil => simp [callsListFuel] at run; obtain ⟨rfl, _⟩ := run; exact .nil
+    | cons e es =>
+      simp only [callsListFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+        Option.some.injEq, Prod.mk.injEq] at run
+      obtain ⟨⟨e', middle⟩, headRun, ⟨es', next⟩, tailRun, rfl, rfl⟩ := run
+      have allDistinct : (codeLocationsExp e ++ codeLocations es).Nodup := by
+        simpa [codeLocations] using distinct
+      have allFresh : LabelsFresh (codeLocationsExp e ++ codeLocations es) initial := by
+        simpa [codeLocations] using fresh
+      have headDistinct := List.Nodup.of_append_left allDistinct
+      have tailDistinct := List.Nodup.of_append_right allDistinct
+      have headFresh : LabelsFresh (codeLocationsExp e) initial := by
+        intro loc member
+        exact allFresh loc (List.mem_append_left _ member)
+      have middleFresh : LabelsFresh (codeLocations es) middle := by
+        have labels := callsFuel_labelsBound depth e initial middle e' headRun
+        intro loc member labelMember
+        rcases labels (loc + 1) labelMember with old | ⟨origin, originMember, equal⟩
+        · exact allFresh loc (List.mem_append_right _ member) old
+        · have unequal := (List.nodup_append.mp allDistinct).2.2 origin originMember loc member
+          exact unequal (Nat.add_right_cancel equal.symm)
+      have singletonRun : callsListFuel (depth + 1) [e] initial = some ([e'], middle) := by
+        simp [callsListFuel, headRun]
+      have middleWf := callsListFuel_wellFormed (depth + 1) [e] initial middle [e'] singletonRun
+        (by simpa [codeLocations] using headDistinct) (by simpa [codeLocations] using headFresh) initialWf
+      have boundedTail : callsListBounded depth es middle = some (es', next) := by
+        simp [callsListBounded, tailRun]
+      have tailExt := callsListBounded_stateExtends depth es middle next es' boundedTail tailDistinct middleFresh middleWf.2
+      refine List.Forall₂.cons ?_ ?_
+      · exact growingExprsSimFromBelow_mono_state passFuel relationFuel limit compiler middle next allowed [e] [e'] tailExt
+          (exprIH depth (by omega) e e' initial middle headRun headDistinct headFresh initialWf
+            (eligibleIH depth (by omega) e e' initial middle (by simp) headRun))
+      · apply ih es es' middle next tailRun tailDistinct middleFresh middleWf
+        · intro n bound expression output before after member exprRun
+          exact eligibleIH n (by omega) expression output before after (by simp [member]) exprRun
+        · intro n bound expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
+          exact exprIH n (by omega) expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
+
+/-- The production retry wrapper inherits the simulation above its final
+pass state, whether its initial traversal succeeds or it uses the structural
+retry budget. -/
+theorem callsListBounded_growing_below {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListBounded traversalFuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialWf : wellFormed initial) (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max traversalFuel (listBudget source + 1) → ∀ expression output before after,
+      expression ∈ source → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max traversalFuel (listBudget source + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler after allowed [expression] [output]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler final allowed source target := by
+  unfold callsListBounded at run
+  cases first : callsListFuel traversalFuel source initial with
+  | none =>
+    simp only [first] at run
+    exact callsListFuel_growing_below passFuel relationFuel _ limit compiler allowed source target initial final
+      run distinct fresh initialWf eligible eligibleIH exprIH
+  | some result =>
+    have equal : result = (target, final) := by simpa [first] using run
+    subst result
+    apply callsListFuel_growing_below passFuel relationFuel traversalFuel limit compiler allowed source target initial final
+      first distinct fresh initialWf eligible
+    · intro depth bound expression output before after member expressionRun
+      exact eligibleIH depth (by omega) expression output before after member expressionRun
+    · intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
+      exact exprIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
+
 /-- The incremental pass exposes a list simulation above its emitted state,
 subject to the expression-case induction and source conditions. The premise
 `wellFormed (known, [])` restricts this result to an empty known-location
@@ -4222,6 +5150,33 @@ theorem compileIncFuel_growing_with_existing {C F : Type} (passFuel relationFuel
   exact callsListBounded_growing_from passFuel relationFuel passFuel compiler allowed program.1 converted.1
     g (nextKnown, converted.2 ++ g.2) merged distinct fresh initialWf eligible eligibleIH exprIH
 
+/-- Clock-bounded simulation of incremental conversion with existing code.
+The expression induction and eligibility remain assumptions. This is
+Flapjack-specific simulation infrastructure. -/
+theorem compileIncFuel_growing_below_with_existing {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (g : State) (program : ClosSem.Program)
+    (nextKnown : NumSet) (converted : ClosSem.Program)
+    (run : compileIncFuel? passFuel g.1 program = some (nextKnown, converted))
+    (distinct : (codeLocations program.1).Nodup)
+    (fresh : LabelsFresh (codeLocations program.1) g) (initialWf : wellFormed g)
+    (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      expression ∈ program.1 → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler after allowed [expression] [output]) :
+    GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler
+      (nextKnown, converted.2 ++ g.2) allowed program.1 converted.1 := by
+  have traversal := compileIncFuel_traversal passFuel g.1 program nextKnown converted run
+  have appended := callsListBounded_appendAux passFuel program.1 (g.1, []) g.2
+  have merged : callsListBounded passFuel program.1 g =
+      some (converted.1, (nextKnown, converted.2 ++ g.2)) := by
+    simpa [appendAux, traversal] using appended
+  exact callsListBounded_growing_below passFuel relationFuel passFuel limit compiler allowed program.1 converted.1
+    g (nextKnown, converted.2 ++ g.2) merged distinct fresh initialWf eligible eligibleIH exprIH
+
 /-- A successful incremental pass supplies the installed-program simulation
 at its merged compiler state, assuming the expression-case induction and its
 eligibility conditions. This is Flapjack-specific infrastructure. -/
@@ -4243,6 +5198,28 @@ theorem compileIncFuel_installedBelow_with_existing {C F : Type} (passFuel relat
       (nextKnown, converted.2 ++ g.2) allowed program.1 converted.1 := by
   apply growingExprsSimFrom_installedBelow
   exact compileIncFuel_growing_with_existing passFuel relationFuel compiler allowed g program nextKnown converted
+    run distinct fresh initialWf eligible eligibleIH exprIH
+
+/-- A clock-bounded expression-case induction supplies the installed
+program simulation. This is Flapjack-specific simulation infrastructure. -/
+theorem compileIncFuel_installedBelow_from_bounded_cases {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (g : State) (program : ClosSem.Program)
+    (nextKnown : NumSet) (converted : ClosSem.Program)
+    (run : compileIncFuel? passFuel g.1 program = some (nextKnown, converted))
+    (distinct : (codeLocations program.1).Nodup)
+    (fresh : LabelsFresh (codeLocations program.1) g) (initialWf : wellFormed g)
+    (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      expression ∈ program.1 → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFromBelow (F := F) passFuel relationFuel limit compiler after allowed [expression] [output]) :
+    InstalledProgramSimBelow (C := C) (F := F) passFuel relationFuel limit compiler
+      (nextKnown, converted.2 ++ g.2) allowed program.1 converted.1 := by
+  apply growingExprsSimFromBelow_installedBelow
+  exact compileIncFuel_growing_below_with_existing passFuel relationFuel limit compiler allowed g program nextKnown converted
     run distinct fresh initialWf eligible eligibleIH exprIH
 
 /-- The successful install case obtains the installed-program simulation
@@ -4307,6 +5284,69 @@ theorem doInstall_success_evaluate_from_cases {C F : Type} (fuel relationFuel : 
     installRun programRun notType
   intro nextKnown converted passRun
   exact compileIncFuel_installedBelow_with_existing fuel relationFuel source.clock compiler allowed g (program, [])
+    nextKnown converted passRun distinct fresh ready.well eligible eligibleIH exprIH
+
+/-- A successful installation uses clock-bounded expression cases, with
+location conditions supplied by the actual oracle. This is
+Flapjack-specific simulation infrastructure. -/
+theorem doInstall_success_evaluate_from_bounded_cases {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (compiler : ClosSem.Compiler C)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value) (program : List ClosLang.Exp)
+    (installed : ClosSem.State (NumSet × C) F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (ready : IncrementalInstallReady g source target)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler)
+    (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
+    (installRun : doInstall sourceValues source = (.val program, installed))
+    (programRun : evaluate program [] installed = (result, final))
+    (notType : result ≠ .err (.abort .typeError))
+    (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max fuel (listBudget program + 1) → ∀ expression output before after,
+      expression ∈ program → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max fuel (listBudget program + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFromBelow (F := F) fuel relationFuel source.clock compiler after allowed [expression] [output]) :
+    ∃ nextKnown converted targetInstalled finalG targetResult targetFinal,
+      compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) ∧
+      doInstall targetValues target = (.val converted.1, targetInstalled) ∧
+      IncrementalInstallReady (nextKnown, converted.2 ++ g.2) installed targetInstalled ∧
+      stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      stateExtends (nextKnown, converted.2 ++ g.2) finalG ∧
+      evaluate converted.1 [] targetInstalled = (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+      StateRelFuel relationFuel finalG allowed final targetFinal ∧
+      StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+      IncrementalInstallReady finalG final targetFinal ∧
+      final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
+      targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
+      (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
+  obtain ⟨expressions, _, _, _, _, _, resultEq, exprEq, _, _, _, _, _, _, _, _⟩ :=
+    doInstall_nonType_ready fuel relationFuel g allowed compiler source target sourceValues targetValues
+      (.val program) installed ready states values sourceCompiler targetCompiler targetOracle installRun (by simp)
+  have nonzero : source.clock ≠ 0 := by
+    intro zero
+    simp [zero] at resultEq
+  have programEq : program = (source.compileOracle 0).2.1 := by
+    have : program = expressions := by simpa [nonzero] using resultEq
+    exact this.trans exprEq
+  have distinct : (codeLocations program).Nodup := by simpa [programEq] using ready.distinct 0
+  have fresh : LabelsFresh (codeLocations program) g := by
+    apply labelsFresh_of_codeIncludes g (codeLocations program) target.code ready.well.2 ready.included
+    simpa [programEq] using ready.fresh 0
+  apply doInstall_success_evaluate fuel relationFuel g allowed compiler source target sourceValues targetValues
+    program installed result final ready states sourceWf values sourceCompiler targetCompiler targetOracle
+    installRun programRun notType
+  intro nextKnown converted passRun
+  exact compileIncFuel_installedBelow_from_bounded_cases fuel relationFuel source.clock compiler allowed g (program, [])
     nextKnown converted passRun distinct fresh ready.well eligible eligibleIH exprIH
 
 end Flapjack.Compiler.Backend.ClosCall
