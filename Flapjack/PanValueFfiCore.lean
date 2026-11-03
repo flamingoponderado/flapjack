@@ -665,8 +665,8 @@ def panValueCallTarget
         | none => none
       else none
 
-/-- Uncounted evaluation of a call's argument list; the clocked counterpart of
-`panValueCallArguments`. -/
+/-- Evaluation of a call's argument list.  HOL returns `SOME Error` with the
+unchanged state when this fails. -/
 def panValueCallArgumentsValue
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -720,10 +720,15 @@ def panValueRaiseResult
         some (.raised (fun _ => none) globals memory ffi exception value)
       else some (.error locals globals memory ffi)
 
-/-- Result of the `ExtCall` leaf (`panSemScript.sml:711-729`).  HOL returns
+/-- Result of the `ExtCall` leaf (`panSemScript.sml:716-730`).  HOL returns
 `SOME Error` with the unchanged state when the arguments do not evaluate to four
-words or the byte-array FFI call fails.  An accelerator-style `memoryHandler` is
-tried before the CakeML byte-array path. -/
+words or a byte array cannot be read; `call_FFI` itself always returns
+`FFI_return` or `FFI_final`.  With `memoryAccess`, `panValueFfiExtCall` follows
+that clause.  An accelerator-style `memoryHandler` is tried first.
+
+Without `memoryAccess`, the compatibility `handler` is used instead.  It has no
+HOL counterpart: when it returns `none`, this helper returns `none` (no
+result), not an `.error` control result. -/
 def panValueFfiExtCallResult
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]

@@ -253,7 +253,8 @@ def panValueShMemStoreSteps
                   some (.error locals globals memory ffi, addressSteps + valueSteps + 1)
           | _, _ => some (.error locals globals memory ffi, addressSteps + valueSteps)
 
-/-- Counted condition value of an `If`, used by the executable leaf evaluator. -/
+/-- Counted condition value of an `If`, used by the stepped evaluator; the
+    uncounted counterpart is `panValueIteConditionValue`. -/
 def panValueIteCondition
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]

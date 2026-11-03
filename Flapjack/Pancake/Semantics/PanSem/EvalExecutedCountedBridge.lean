@@ -19,15 +19,11 @@ results belong with the stepped semantics and move with it (issue #1251).
 
 namespace Flapjack
 
-open Flapjack.Pancake.PanLang
-  (MlS ExpByteRanged ExpHOL expToHOL expOfHOL expToHOL_expOfHOL StructContextExact
-    StructContextByteRanged StructInfoByteRanged ListParamByteRanged ParamByteRanged
-    structContextOfHOL structInfoOfHOL paramOfHOL shapeToHOL_shapeOfHOL)
-open Flapjack.Basis.Pure.MlString
-  (ofString toStringOfBytes toStringOfBytes_ofString_of_bytes ofString_toStringOfBytes)
+open Flapjack.Pancake.PanLang (MlS ExpByteRanged ExpHOL expToHOL expOfHOL expToHOL_expOfHOL)
+open Flapjack.Basis.Pure.MlString (ofString)
 
-/-- After discarding its Flapjack step count and encoding
-    the value, its state-derived RV64 result agrees with HOL evaluation under
+/-- The counted expression evaluator agrees with HOL: after discarding its
+    Flapjack step count and encoding the value, its state-derived RV64 result agrees with HOL evaluation under
     the same representation and byte-range conditions as
     `evalPanValueExp_agree`. This does not claim that the step count is a HOL
     clock or extend the result to the optional no-access compatibility path. -/
