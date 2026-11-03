@@ -179,4 +179,38 @@ theorem callsFuel_app_none_sim {C F : Type} (fuel : Nat) (g : State) (allowed : 
   exact exprSimFuel_app fuel g allowed trace none sourceFn targetFn sourceArgs targetArgs length.symm distinct
     (argsIH targetArgs middle argsRun) (fnIH targetFn middle fnRun) bodyIH
 
+/-- A location-annotated application also remains an application when its
+location is absent from the pass state after visiting its arguments and
+function. This is Lean-side case composition, not a standalone HOL theorem. -/
+theorem callsFuel_app_unknown_sim {C F : Type} (fuel : Nat) (g : State) (allowed : Set Nat)
+    (trace : BackendCommon.Tra) (loc : Nat) (sourceFn : ClosLang.Exp) (sourceArgs : List ClosLang.Exp)
+    (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (fuel + 1) (.app trace (some loc) sourceFn sourceArgs) initial = some (out, final))
+    (unknown : sptLookup loc final.1 = none)
+    (distinct : (g.2.map Prod.fst).Nodup)
+    (argsIH : ∀ targetArgs middle, callsListFuel fuel sourceArgs initial = some (targetArgs, middle) →
+      ExprsSimFuel (C := C) (F := F) fuel g allowed sourceArgs targetArgs)
+    (fnIH : ∀ targetFn middle, callsFuel fuel sourceFn middle = some (targetFn, final) →
+      ExprSimFuel (C := C) (F := F) fuel g allowed sourceFn targetFn)
+    (bodyIH : ∀ (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+        (sourceBody targetBody : ClosLang.Exp) (location : Nat) (sourceFns targetFns : List (Nat × ClosLang.Exp))
+        (index arity : Nat),
+      recClosureRelFuel fuel g allowed code location sourceFns targetFns →
+      sourceFns[index]? = some (arity, sourceBody) → targetFns[index]? = some (arity, targetBody) →
+      ExprSimFuel (C := C) (F := F) fuel g allowed sourceBody targetBody) :
+    ∃ targetFn targetArgs, out = .app trace (some loc) targetFn targetArgs ∧
+      ExprSimFuel (C := C) (F := F) fuel g allowed (.app trace (some loc) sourceFn sourceArgs)
+        (.app trace (some loc) targetFn targetArgs) := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure] at run
+  obtain ⟨⟨targetArgs, middle⟩, argsRun, ⟨targetFn, afterFn⟩, fnRun, rest⟩ := run
+  by_cases found : (sptLookup loc afterFn.1).isSome
+  · simp [found] at rest
+    split at rest <;> simp_all
+  · simp [found] at rest
+    obtain ⟨rfl, rfl⟩ := rest
+    have length := callsListFuel_length fuel sourceArgs initial middle targetArgs argsRun
+    refine ⟨targetFn, targetArgs, rfl, ?_⟩
+    exact exprSimFuel_app fuel g allowed trace (some loc) sourceFn targetFn sourceArgs targetArgs length.symm distinct
+      (argsIH targetArgs middle argsRun) (fnIH targetFn middle fnRun) bodyIH
+
 end Flapjack.Compiler.Backend.ClosCall
