@@ -699,6 +699,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallClock
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallImpure
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallPure
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallPureSimulation
+import Flapjack.Compiler.Backend.ClosCall.Proofs.ApplicationSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallImpureSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StateWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.NumericWellformed
