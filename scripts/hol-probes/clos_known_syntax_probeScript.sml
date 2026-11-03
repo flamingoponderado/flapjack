@@ -284,3 +284,5 @@ val _ = (print "rel_update_thunk_statement_typed="; print_term
       (closSem$update_thunk [closSem$RefPtr v ptr] s1.refs vs = SOME refs1 ⇒
        ∃refs2. closSem$update_thunk [closSem$RefPtr v ptr] s2.refs ys = SOME refs2 ∧
          clos_knownProof$state_rel c g (s1 with refs := refs1) (s2 with refs := refs2))``; print "\n");
+
+val _ = show "dest_closure_none_loc_typed=" closPropsTheory.dest_closure_none_loc;

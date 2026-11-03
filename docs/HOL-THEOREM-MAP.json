@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
+  "hol_name": "dest_closure_none_loc",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ClosureLocation.lean",
+  "lean_name": "destClosureNoneLoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dest_closure_none_loc_typed in clos_known_syntax_probe.out with the source theorem and closure semantics. Both conjuncts retain the same Nat bound, optional location, closure value and argument list, partial result or full body/environment/remaining arguments, and original implication including the nonempty remainder condition. The proof handles both ordinary and recursive closures and the source checkLoc condition. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
   "hol_name": "simple_val_rel_do_app_rev",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PrimitiveBlock.lean",
   "lean_name": "simpleValRelDoAppRevConsExtend",
