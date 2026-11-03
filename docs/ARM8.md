@@ -425,13 +425,18 @@ does that.  All four case theorems from this batch (`addCarry` and the three
 shift-immediate forms) carry the shared `arm8_encoder_correct` tag with
 `pending_statement_review` manifest rows.
 
-`Mem.lean` starts the `Mem` case with the two `LoadStoreImmediate` word shapes
+`Mem.lean` now records the two `LoadStoreImmediate@64` word shapes
 `e_LoadStoreImmediate` emits — the signed nine-bit form and the scaled
-twelve-bit form.
+twelve-bit form — together with their `e_load_store`/`Encode` equations and
+`Decode` inverses for both `MemOp_LOAD` and `MemOp_STORE`, and the `Run`
+unfolding to `dfn'LoadStoreImmediate`.  The nine-bit form decodes to the
+`b10 = 0` branch (no writeback, `unsigned_offset = false`), which is the branch
+the L3 lowering reaches.
 
-Still open for #1239: the rest of `Mem` (the `Encode`/`Decode` inverses, the
-`Run` memory semantics and the eight case theorems covering the load/store
-forms, including the two-instruction `AddSubImmediate@64` +
-`LoadStoreImmediate` shape).
+Still open for #1239: the memory-aware assembly lemma (the `asmCaseOne` shape
+assumes the instruction changes no memory, which fails for stores and for the
+two-instruction `AddSubImmediate@64` + `LoadStoreImmediate` form), the `Run`
+memory semantics for `LoadStoreSingle`, and the eight case theorems covering
+the load/store forms.
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.

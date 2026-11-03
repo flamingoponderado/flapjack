@@ -261,4 +261,18 @@ theorem arm8Decode_loadStoreImm9_store (imm9 : BitVec 9) (rn rt : BitVec 5) :
   simp [holV2w_one_false, holV2w_two_zero, holV2w_two_three, holV2w_five,
     arm8HolV2w_nine, LoadStoreImmediate, LoadStoreImmediateN]
 
+
+/-- `Run` of a `LoadStoreImmediate@64` instruction is HOL's
+`dfn'LoadStoreImmediate`. -/
+theorem arm8Run_loadStoreImmediate (size : BitVec 64) (regsize_word : Bool) (memop : MemOp)
+    (acctype : AccType) (signed wb rtunk wback postindex unsigned : Bool)
+    (offset : BitVec 64) (n t : BitVec 5) (st : arm8_state) :
+    Run (.LoadStore (.«LoadStoreImmediate@64»
+        (size, regsize_word, memop, acctype, signed, wb, rtunk, wback, postindex, unsigned,
+         offset, n, t))) st =
+      «dfn'LoadStoreImmediate» (TN := 64)
+        (size, regsize_word, memop, acctype, signed, wb, rtunk, wback, postindex, unsigned,
+         offset, n, t) st := by
+  simp only [Run]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
