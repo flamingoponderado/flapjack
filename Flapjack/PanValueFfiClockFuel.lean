@@ -217,10 +217,10 @@ theorem evalPanValueFfiClockProg_fuel_mono'
     cases hv : evalPanValueExp structs locals globals memory baseAddress topAddress
         bytesInWord valueExp ma with
     | none =>
-      simp only [panValueDecAcceptedValue, hv, Option.elim_none] at h ⊢
+      simp only [panValueDecAcceptedValue, evalPanValueExpWith_none, hv, Option.elim_none] at h ⊢
       exact h
     | some value =>
-      simp only [panValueDecAcceptedValue, hv] at h ⊢
+      simp only [panValueDecAcceptedValue, evalPanValueExpWith_none, hv] at h ⊢
       by_cases hshape : panShapeMatches (panValueShape structs value) shape
       · simp only [hshape, if_true, Option.elim_some,
           Option.bind_eq_bind] at h ⊢
