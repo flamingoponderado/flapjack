@@ -7,6 +7,19 @@ open Flapjack.Compiler.Backend
 private def c (i : Int) : ClosLang.Exp := .op .none (.intOp (.const i)) []
 private def cons (tag : Nat) (xs : List ClosLang.Exp) : ClosLang.Exp := .op .none (.blockOp (.cons tag)) xs
 
+-- `smart_stages` checks failure, fallback, direct equality and integer folding.
+#guard match (ClosOp.eqAny (.var .none 0) (.var .none 1),
+    ClosOp.eqOp (.var .none 0) (.var .none 1), ClosOp.eqOp (c 2) (.var .none 0),
+    ClosOp.smartOp' (7 : Nat) (.blockOp .equal) [.var .none 0, .var .none 1],
+    ClosOp.smartOp' (7 : Nat) (.intOp .add) [c 2, c 3],
+    ClosOp.smartOp (.sourceLoc 1 2 3 4) (.blockOp .equal) [.var .none 0, .var .none 1]) with
+  | (some (.let .none [.var .none 0, .var .none 1]
+       (.op .none (.blockOp .equal) [.var .none 0, .var .none 1])), none,
+     some (.op .none (.blockOp (.equalConst (.int 2))) [.var .none 0]), none,
+     some (.op .none (.intOp (.const 5)) []),
+     .op (.sourceLoc 1 2 3 4) (.blockOp .equal) [.var .none 0, .var .none 1]) => true
+  | _ => false
+
 -- `conj` checks empty, singleton and multi-element source clauses.
 #guard match (ClosOp.conjList [], ClosOp.conjList [.var .none 0],
     ClosOp.conjList [.var .none 0, .var .none 1, .var .none 2],

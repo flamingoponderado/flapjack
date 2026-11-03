@@ -347,9 +347,46 @@ def isVar : Exp → Bool
   | .var _ _ => true
   | _ => false
 
-/-- The closure smart constructor, using the source lifting and equality
-decomposition traversals. -/
-def smartFuel (fuel : Nat) (trace : BackendCommon.Tra) (op : Op) (xs : List Exp) : Option Exp := do
+/-- Lift two expressions before constructing a pure equality test. -/
+@[hol "cakeml/compiler/backend/clos_opScript.sml" "eq_any_def"]
+def eqAny (x y : Exp) : Option Exp :=
+  match liftExpsHOL [x, y] 0 [] with
+  | (x :: y :: _, _, binds) => some (.let .none binds (eqPure x y))
+  | _ => none
+
+/-- Optimize an equality unless both operands are variables. -/
+@[hol "cakeml/compiler/backend/clos_opScript.sml" "eq_op_def"]
+def eqOp (x y : Exp) : Option Exp :=
+  if isVar x && isVar y then none else
+    match directEq x y with
+    | some result => some result
+    | none => eqAny x y
+
+/-- The source smart-operation optimization, with failure left explicit. -/
+@[hol "cakeml/compiler/backend/clos_opScript.sml" "SmartOp'_def"]
+def smartOp' {α : Type} (_trace : α) (op : Op) (xs : List Exp) : Option Exp :=
+  match xs with
+  | [x] =>
+    match cons x with
+    | some (tag, args) => consOp op tag args
+    | none => none
+  | [x, y] =>
+    match destOpConsts x y with
+    | some (i, j) => integerOp op i j
+    | none =>
+      match op with
+      | .blockOp .equal => eqOp x y
+      | _ => none
+  | _ => none
+
+/-- Apply the source smart operation, retaining the original operation on failure. -/
+@[hol "cakeml/compiler/backend/clos_opScript.sml" "SmartOp_def"]
+def smartOp (trace : BackendCommon.Tra) (op : Op) (xs : List Exp) : Exp :=
+  (smartOp' trace op xs).getD (.op trace op xs)
+
+/-- The former combined checked implementation, retained for an all-input
+preservation proof. This is Flapjack infrastructure, not a HOL definition. -/
+def smartFuelPrevious (fuel : Nat) (trace : BackendCommon.Tra) (op : Op) (xs : List Exp) : Option Exp := do
   let default := Exp.op trace op xs
   match xs with
   | [x] =>
@@ -372,5 +409,9 @@ def smartFuel (fuel : Nat) (trace : BackendCommon.Tra) (op : Op) (xs : List Exp)
                   | _ => pure default
           | _ => pure default
   | _ => pure default
+
+/-- Execute the total source smart operation through the checked interface. -/
+def smartFuel (_fuel : Nat) (trace : BackendCommon.Tra) (op : Op) (xs : List Exp) : Option Exp :=
+  some (smartOp trace op xs)
 
 end Flapjack.Compiler.Backend.ClosOp

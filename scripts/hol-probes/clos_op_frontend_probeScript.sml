@@ -47,3 +47,11 @@ val _ = (print "conj="; print_term (rhs (concl (EVAL ``
  let v = \i. closLang$Var None i in
  (clos_op$ConjList [], clos_op$ConjList [v 0],
   clos_op$ConjList [v 0;v 1;v 2], clos_op$eq_pure (v 0) (v 1))``))); print "\n");
+val _ = (print "smart_stages="; print_term (rhs (concl (EVAL ``
+ let v = \i. closLang$Var None i in
+ let c = \i. closLang$Op None (closLang$IntOp (closLang$Const i)) [] in
+ (clos_op$eq_any (v 0) (v 1), clos_op$eq_op (v 0) (v 1),
+  clos_op$eq_op (c 2) (v 0),
+  clos_op$SmartOp' (SourceLoc 1 2 3 4) (closLang$BlockOp closLang$Equal) [v 0;v 1],
+  clos_op$SmartOp' None (closLang$IntOp closLang$Add) [c 2;c 3],
+  clos_op$SmartOp (SourceLoc 1 2 3 4) (closLang$BlockOp closLang$Equal) [v 0;v 1])``))); print "\n");

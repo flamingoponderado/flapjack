@@ -455,6 +455,9 @@ one-sided constructors, unequal tags and multi-pair decomposition. The typed
 `eq_pure_list` equations are captured in `clos_op_definitions_probe.out`.
 The same probe records typed `ConjList` and `eq_pure` definitions, and the
 `conj` observation checks empty, singleton, and multi-expression conjunctions.
+It also captures the typed `eq_any`, `eq_op`, `SmartOp'` and `SmartOp`
+definitions, including the polymorphic unused trace of `SmartOp'`; the
+`smart_stages` observation checks optimization failure and fallback.
 `clos_op_lift_proof_probe.out` captures the typed non-lifting characterization
 and purity theorem, plus the accumulator, index and length invariants from the
 original proof script; regenerate it with

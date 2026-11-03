@@ -30,3 +30,7 @@ val _ = show "lift_exps_typed" clos_opTheory.lift_exps_def;
 val _ = show "eq_pure_list_typed" clos_opTheory.eq_pure_list_def;
 val _ = show "conj_list_typed" clos_opTheory.ConjList_def;
 val _ = show "eq_pure_typed" clos_opTheory.eq_pure_def;
+val _ = show "eq_any_typed" clos_opTheory.eq_any_def;
+val _ = show "eq_op_typed" clos_opTheory.eq_op_def;
+val _ = show "smart_prime_typed" clos_opTheory.SmartOp'_def;
+val _ = show "smart_typed" clos_opTheory.SmartOp_def;

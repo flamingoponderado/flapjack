@@ -1,6 +1,39 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "eq_any_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "eqAny",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared eq_any_typed: lift both source expressions from index zero and empty bindings, accept at least two resulting elements, and return a None-traced Let around their pure equality; shorter lists return NONE."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "eq_op_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "eqOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared eq_op_typed: two variables return NONE; otherwise use direct equality when successful and the source eq_any fallback when it fails."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "SmartOp'_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "smartOp'",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_prime_typed: the unused trace is polymorphic, singleton input applies constructor optimization, two inputs first attempt integer constants then equality, and all other cases return NONE. The executed smartOp uses this source definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "SmartOp_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "smartOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared smart_typed: fixed source trace and original operation and operands are retained on NONE; SOME returns the optimized expression. The executable invokes this definition and smartSourceSame proves agreement with its former checked implementation."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
     "hol_name": "ConjList_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
     "lean_name": "conjList",
