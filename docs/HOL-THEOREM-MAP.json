@@ -1889,6 +1889,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "do_install_IMP_shift_seq",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InstallGlobals.lean",
+    "lean_name": "doInstallOracleShift",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared do_install_IMP_shift_seq_typed in clos_known_syntax_probe.out and the original proof. An arbitrary installation result and final state imply a finite shift of the initial compiler oracle, without additional safety or success hypotheses. The compiler payload and FFI carriers remain independent. The state uses the canonical finite-support refs and code fields with the local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
     "hol_name": "unique_set_globals_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OracleGlobals.lean",
     "lean_name": "uniqueSetGlobalsEvaluate",

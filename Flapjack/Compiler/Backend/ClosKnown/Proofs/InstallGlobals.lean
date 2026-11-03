@@ -60,6 +60,22 @@ theorem shiftSeqAdd {α : Type} (co : Nat → α) (k1 k2 : Nat) :
   funext n
   simp [Flapjack.holShiftSeq, Nat.add_comm, Nat.add_left_comm]
 
+/-- Dynamic installation advances the compiler oracle by a finite amount. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_install_IMP_shift_seq"
+  (fmap_as_finite_support := [refs, code])]
+theorem doInstallOracleShift {C F : Type} (values : List ClosSem.Value)
+    (s0 s1 : State C F) (result : Result (List ClosLang.Exp) ClosSem.Value)
+    (run : doInstall values s0 = (result, s1)) :
+    ∃ k, s1.compileOracle = Flapjack.holShiftSeq k s0.compileOracle := by
+  unfold doInstall at run
+  repeat' split at run
+  all_goals simp_all
+  all_goals try (solve | rcases run with ⟨rfl, _⟩; exact ⟨0, shiftSeqZero _⟩)
+  all_goals split at run <;> simp_all
+  all_goals try (solve | rcases run with ⟨rfl, _⟩; exact ⟨0, shiftSeqZero _⟩)
+  all_goals rcases run with ⟨rfl, rfl⟩
+  all_goals exact ⟨1, rfl⟩
+
 /-- Advancing a safe oracle preserves global-write safety. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "ssgc_free_co_shift_seq"
   (fmap_as_finite_support := [refs, code])]
