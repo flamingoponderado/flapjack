@@ -1702,6 +1702,35 @@ theorem callsFuel_fn_growing_at {C F : Type} (passFuel traversalFuel : Nat)
   exact ⟨.val [.closure (some loc) [] targetEnv arity targetBody], target, by simp [evaluate, targetValid],
     .cons valueRel .nil, states, sourceWf, ready, sourceCompiler, targetCompiler, targetOracle, fun _ _ h => h⟩
 
+/-- Growing simulation restricted to compiler states extending a particular
+pass state. Closure-creation cases need this premise to find the code emitted
+by their traversal. This is Lean-side infrastructure for the enclosing proof. -/
+def GrowingExprsSimFrom {C F : Type} (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (required : State) (allowed : Set Nat) (sourceExps targetExps : List ClosLang.Exp) : Prop :=
+  ∀ (g : State), stateExtends required g →
+    ∀ (sourceEnv targetEnv : List ClosSem.Value)
+      (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+      (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+      (final : ClosSem.State (NumSet × C) F),
+      evaluate sourceExps sourceEnv source = (result, final) →
+      result ≠ .err (.abort .typeError) →
+      EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 (targetExps.map (0, ·)) →
+      ValuesWellFormedFuel relationFuel g allowed target.code sourceEnv →
+      StateWellFormedFuel relationFuel g allowed target.code source →
+      StateRelFuel relationFuel g allowed source target → IncrementalInstallReady g source target →
+      source.compile = compileIncFuelCallback passFuel compiler → target.compile = compiler →
+      target.compileOracle = compileIncFuelOracle passFuel source.compileOracle →
+      ∃ finalG targetResult targetFinal,
+        stateExtends g finalG ∧ evaluate targetExps targetEnv target = (targetResult, targetFinal) ∧
+        resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG allowed targetFinal.code))
+          (ValueRelFuel relationFuel finalG allowed targetFinal.code) result targetResult ∧
+        StateRelFuel relationFuel finalG allowed final targetFinal ∧
+        StateWellFormedFuel relationFuel finalG allowed targetFinal.code final ∧
+        IncrementalInstallReady finalG final targetFinal ∧
+        final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
+        targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
+        (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry)
+
 /-- A traversed recursive group enters its actual transformed body with
 related closures and the growing compiler/oracle invariant. -/
 theorem callsFuel_letrec_growing_at {C F : Type} (passFuel traversalFuel : Nat)
@@ -1709,7 +1738,7 @@ theorem callsFuel_letrec_growing_at {C F : Type} (passFuel traversalFuel : Nat)
     (loc : Nat) (fns : List (Nat × ClosLang.Exp)) (body out : ClosLang.Exp) (initial passFinal g : State)
     (passRun : callsFuel (traversalFuel + 1) (.letrec names (some loc) none fns body) initial = some (out, passFinal))
     (bodyIH : ∀ targetBody middle, callsFuel traversalFuel body middle = some (targetBody, passFinal) →
-      GrowingExprsSim (F := F) passFuel traversalFuel compiler allowed [body] [targetBody])
+      GrowingExprsSimFrom (F := F) passFuel traversalFuel compiler passFinal allowed [body] [targetBody])
     (initialWf : wellFormed initial)
     (locations : everyFnLocationSome [.letrec names (some loc) none fns body])
     (annotations : everyFnVarsNone [.letrec names (some loc) none fns body])
@@ -1765,7 +1794,7 @@ theorem callsFuel_letrec_growing_at {C F : Type} (passFuel traversalFuel : Nat)
     valuesWellFormedFuel_append (recClosureBundle_wellFormedFuel loc sourceEnv fns targetFns envWf closure) envWf
   obtain ⟨finalG, targetResult, targetFinal, extended, targetRun, related, finalStates, finalWf, finalReady,
     finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
-    bodyIH targetBody middle bodyPass g _ _ source target result final bodyRun notType (by simpa using bodyEnv)
+    bodyIH targetBody middle bodyPass g passGrowth _ _ source target result final bodyRun notType (by simpa using bodyEnv)
       bodyEnvWf sourceWf states ready sourceCompiler targetCompiler targetOracle
   refine ⟨finalG, targetResult, targetFinal, extended, ?_, related, finalStates, finalWf, finalReady,
     finalCompiler, targetFinalCompiler, finalOracle, growth⟩
@@ -3197,5 +3226,305 @@ theorem callsFuel_force_growing_of_app {C F : Type} (passFuel relationFuel trave
   exact callsFuel_force_growing_sim passFuel relationFuel traversalFuel compiler allowed trace args initial final out
     run argsIH (forceApplication_growing_sim passFuel relationFuel compiler allowed appIH)
     (forceApplication_growing_wf relationFuel allowed appWf)
+
+/-- An unrestricted growing simulation is valid above every pass state. -/
+theorem growingExprsSim_from {C F : Type} (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (required : State) (allowed : Set Nat) (sourceExps targetExps : List ClosLang.Exp)
+    (sim : GrowingExprsSim (F := F) passFuel relationFuel compiler allowed sourceExps targetExps) :
+    GrowingExprsSimFrom (F := F) passFuel relationFuel compiler required allowed sourceExps targetExps := by
+  intro g _
+  exact sim g
+
+/-- A simulation valid above one pass state is valid above any extension of
+that state. -/
+theorem growingExprsSimFrom_mono {C F : Type} (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (smaller larger : State) (allowed : Set Nat) (sourceExps targetExps : List ClosLang.Exp)
+    (growth : stateExtends smaller larger)
+    (sim : GrowingExprsSimFrom (F := F) passFuel relationFuel compiler smaller allowed sourceExps targetExps) :
+    GrowingExprsSimFrom (F := F) passFuel relationFuel compiler larger allowed sourceExps targetExps := by
+  intro g extended
+  exact sim g (stateExtends_trans smaller larger g growth extended)
+
+/-- Appending older auxiliary code preserves the generated pass state when
+the combined code has distinct labels. -/
+theorem stateExtends_append_aux (known : NumSet) (generated old : List (Nat × (Nat × ClosLang.Exp)))
+    (distinct : ((generated ++ old).map Prod.fst).Nodup) :
+    stateExtends (known, generated) (known, generated ++ old) := by
+  refine ⟨?_, ?_, distinct⟩
+  · intro key member
+    exact ⟨member, rfl⟩
+  · intro key value lookup
+    exact logicalAssocLookup_append_hit generated old key value lookup
+
+/-- The function-creation traversal has a simulation at every runtime state
+extending its generated pass state, under the source location conditions. -/
+theorem callsFuel_fn_growing_from {C F : Type} (passFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (name : Basis.Pure.MlString.MlString)
+    (loc arity : Nat) (body out : ClosLang.Exp) (initial passFinal : State)
+    (passRun : callsFuel (traversalFuel + 1) (.fn name (some loc) none arity body) initial = some (out, passFinal))
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.fn name (some loc) none arity body])
+    (annotations : everyFnVarsNone [.fn name (some loc) none arity body])
+    (distinct : (codeLocations [.fn name (some loc) none arity body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.fn name (some loc) none arity body]) initial)
+    (coverage : ∀ k ∈ codeLocations [.fn name (some loc) none arity body],
+      ¬ sptDomain passFinal.1 k → k ∈ allowed) :
+    GrowingExprsSimFrom (F := F) passFuel (traversalFuel + 1) compiler passFinal allowed
+      [.fn name (some loc) none arity body] [out] := by
+  intro g passGrowth sourceEnv targetEnv source target result final run notType envs _ sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  obtain ⟨targetResult, targetFinal, targetRun, related, finalStates, finalWf, finalReady,
+    finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
+    callsFuel_fn_growing_at passFuel traversalFuel compiler allowed name loc arity body out initial passFinal g
+      passRun initialWf locations annotations distinct fresh passGrowth coverage sourceEnv targetEnv source target result
+      final run notType (by simpa using envs) sourceWf states ready sourceCompiler targetCompiler oracle
+  exact ⟨g, targetResult, targetFinal, stateExtends_refl g ready.well.2, targetRun, related, finalStates,
+    finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, growth⟩
+
+/-- Recursive binding simulation only requires its body's simulation above
+the final pass state, rather than for unrelated runtime compiler states. -/
+theorem callsFuel_letrec_growing_from {C F : Type} (passFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (names : List Basis.Pure.MlString.MlString)
+    (loc : Nat) (fns : List (Nat × ClosLang.Exp)) (body out : ClosLang.Exp) (initial passFinal : State)
+    (passRun : callsFuel (traversalFuel + 1) (.letrec names (some loc) none fns body) initial = some (out, passFinal))
+    (bodyIH : ∀ targetBody middle, callsFuel traversalFuel body middle = some (targetBody, passFinal) →
+      GrowingExprsSimFrom (F := F) passFuel traversalFuel compiler passFinal allowed [body] [targetBody])
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.letrec names (some loc) none fns body])
+    (annotations : everyFnVarsNone [.letrec names (some loc) none fns body])
+    (distinct : (codeLocations [.letrec names (some loc) none fns body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.letrec names (some loc) none fns body]) initial)
+    (coverage : ∀ k ∈ codeLocations [.letrec names (some loc) none fns body],
+      ¬ sptDomain passFinal.1 k → k ∈ allowed) :
+    GrowingExprsSimFrom (F := F) passFuel traversalFuel compiler passFinal allowed
+      [.letrec names (some loc) none fns body] [out] := by
+  intro g passGrowth sourceEnv targetEnv source target result final run notType envs envWf sourceWf states ready
+    sourceCompiler targetCompiler oracle
+  exact callsFuel_letrec_growing_at passFuel traversalFuel compiler allowed names loc fns body out initial passFinal g
+    passRun bodyIH initialWf locations annotations distinct fresh passGrowth coverage sourceEnv targetEnv source target
+    result final run notType (by simpa using envs) envWf sourceWf states ready sourceCompiler targetCompiler oracle
+
+/-- Simulations above a common pass state compose in evaluation order; the
+required pass state remains below each subsequently grown runtime state. -/
+theorem growingExprsSimFrom_of_forall₂ {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (allowed : Set Nat)
+    {sourceExps targetExps : List ClosLang.Exp}
+    (sims : List.Forall₂ (fun source target =>
+      GrowingExprsSimFrom (F := F) passFuel relationFuel compiler required allowed [source] [target])
+      sourceExps targetExps) :
+    GrowingExprsSimFrom (F := F) passFuel relationFuel compiler required allowed sourceExps targetExps := by
+  induction sims with
+  | nil =>
+    intro g _ sourceEnv targetEnv source target result final run _ _ _ stateWf states ready sourceCompiler targetCompiler oracle
+    have eq : result = .val [] ∧ final = source := by simpa [evaluate] using run.symm
+    obtain ⟨rfl, rfl⟩ := eq
+    exact ⟨g, .val [], target, stateExtends_refl g ready.well.2, by simp [evaluate], .nil,
+      states, stateWf, ready, sourceCompiler, targetCompiler, oracle, fun _ _ h => h⟩
+  | @cons sourceHead targetHead sourceTail targetTail headSim tailSims tailIH =>
+    intro g requiredGrowth sourceEnv targetEnv source target result final run notType envs envWf stateWf states ready
+      sourceCompiler targetCompiler oracle
+    have headEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0 [(0, targetHead)] := by
+      apply envRelFuel_subset envs
+      intro item member
+      simp only [List.mem_singleton] at member
+      subst item
+      simp
+    cases headRun : evaluate [sourceHead] sourceEnv source with
+    | mk headResult headFinal =>
+      have headSafe : headResult ≠ .err (.abort .typeError) := by
+        intro bad
+        subst headResult
+        have outer := ClosProps.evaluate_cons_error sourceHead sourceTail sourceEnv source headFinal (.abort .typeError) headRun
+        have eq : result = .err (.abort .typeError) := by rw [run] at outer; exact (Prod.mk.inj outer).1
+        exact notType eq
+      obtain ⟨headG, targetHeadResult, targetHeadFinal, headExt, targetHeadRun, headRel, headStates,
+        headWf, headReady, headCompiler, targetHeadCompiler, headOracle, headGrowth⟩ :=
+        headSim g requiredGrowth sourceEnv targetEnv source target headResult headFinal headRun headSafe headEnv envWf
+          stateWf states ready sourceCompiler targetCompiler oracle
+      cases headResult with
+      | err error =>
+        cases targetHeadResult with
+        | val values => simp [resultRel] at headRel
+        | err targetError =>
+          have eq : result = .err error ∧ final = headFinal := by
+            have outer := ClosProps.evaluate_cons_error sourceHead sourceTail sourceEnv source headFinal error headRun
+            rw [run] at outer
+            exact Prod.mk.inj outer
+          obtain ⟨rfl, rfl⟩ := eq
+          exact ⟨headG, .err targetError, targetHeadFinal, headExt,
+            ClosProps.evaluate_cons_error targetHead targetTail targetEnv target targetHeadFinal targetError targetHeadRun,
+            headRel, headStates, headWf, headReady, headCompiler, targetHeadCompiler, headOracle, headGrowth⟩
+      | val values =>
+        obtain ⟨value, rfl⟩ := evaluate_singleton_value sourceHead sourceEnv source headFinal values headRun
+        cases targetHeadResult with
+        | err error => simp [resultRel] at headRel
+        | val targetValues =>
+          obtain ⟨targetValue, rfl⟩ := evaluate_singleton_value targetHead targetEnv target targetHeadFinal targetValues targetHeadRun
+          have valueRel : ValueRelFuel relationFuel headG allowed targetHeadFinal.code value targetValue := by
+            simpa [resultRel] using headRel
+          have tailEnv : EnvRelFuel relationFuel g allowed target.code sourceEnv targetEnv 0
+              (targetTail.map (0, ·)) := by
+            apply envRelFuel_subset envs
+            intro item member
+            simp only [List.map_cons, List.mem_cons]
+            exact Or.inr member
+          have tailEnv' := envRelFuel_mono tailEnv headExt Set.Subset.rfl headGrowth
+          have tailEnvWf := valuesWellFormedFuel_mono envWf headExt Set.Subset.rfl headGrowth
+          cases tailRun : evaluate sourceTail sourceEnv headFinal with
+          | mk tailResult tailFinal =>
+            have sourceOuter := ClosProps.evaluate_cons_value sourceHead sourceTail sourceEnv source headFinal value headRun
+            rw [run, tailRun] at sourceOuter
+            have tailSafe : tailResult ≠ .err (.abort .typeError) := by
+              intro bad
+              subst tailResult
+              simp only at sourceOuter
+              exact notType (Prod.mk.inj sourceOuter).1
+            have requiredHead := stateExtends_trans required g headG requiredGrowth headExt
+            obtain ⟨finalG, targetTailResult, targetFinal, tailExt, targetTailRun, tailRel, finalStates,
+              finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, tailGrowth⟩ :=
+              tailIH headG requiredHead sourceEnv targetEnv headFinal targetHeadFinal tailResult tailFinal tailRun tailSafe
+                tailEnv' tailEnvWf headWf headStates headReady headCompiler targetHeadCompiler headOracle
+            have targetOuter := ClosProps.evaluate_cons_value targetHead targetTail targetEnv target targetHeadFinal targetValue targetHeadRun
+            rw [targetTailRun] at targetOuter
+            have combinedExt := stateExtends_trans g headG finalG headExt tailExt
+            have combinedGrowth : ∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry :=
+              fun key entry found => tailGrowth key entry (headGrowth key entry found)
+            cases tailResult with
+            | err error =>
+              cases targetTailResult with
+              | val vs => simp [resultRel] at tailRel
+              | err targetError =>
+                obtain ⟨rfl, rfl⟩ := Prod.mk.inj sourceOuter
+                exact ⟨finalG, .err targetError, targetFinal, combinedExt, targetOuter, tailRel, finalStates,
+                  finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, combinedGrowth⟩
+            | val tailValues =>
+              cases targetTailResult with
+              | err error => simp [resultRel] at tailRel
+              | val targetTailValues =>
+                obtain ⟨rfl, rfl⟩ := Prod.mk.inj sourceOuter
+                have grownValue := valueRelFuel_mono valueRel tailExt Set.Subset.rfl tailGrowth
+                exact ⟨finalG, .val (targetValue :: targetTailValues), targetFinal, combinedExt,
+                  targetOuter, .cons grownValue tailRel, finalStates, finalWf, finalReady, finalCompiler,
+                  targetFinalCompiler, finalOracle, combinedGrowth⟩
+
+/-- A successful list traversal composes expression simulations that need
+their own generated pass states, using label freshness to show that each
+intermediate state extends into the final pass state. -/
+theorem callsListFuel_growing_from {C F : Type} (passFuel relationFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListFuel traversalFuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialWf : wellFormed initial) (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      expression ∈ source → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFrom (F := F) passFuel relationFuel compiler after allowed [expression] [output]) :
+    GrowingExprsSimFrom (F := F) passFuel relationFuel compiler final allowed source target := by
+  apply growingExprsSimFrom_of_forall₂ passFuel relationFuel compiler final allowed
+  induction traversalFuel generalizing source target initial final with
+  | zero =>
+    cases source with
+    | nil => simp [callsListFuel] at run; obtain ⟨rfl, _⟩ := run; exact .nil
+    | cons e es => simp [callsListFuel] at run
+  | succ depth ih =>
+    cases source with
+    | nil => simp [callsListFuel] at run; obtain ⟨rfl, _⟩ := run; exact .nil
+    | cons e es =>
+      simp only [callsListFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+        Option.some.injEq, Prod.mk.injEq] at run
+      obtain ⟨⟨e', middle⟩, headRun, ⟨es', next⟩, tailRun, rfl, rfl⟩ := run
+      have allDistinct : (codeLocationsExp e ++ codeLocations es).Nodup := by
+        simpa [codeLocations] using distinct
+      have allFresh : LabelsFresh (codeLocationsExp e ++ codeLocations es) initial := by
+        simpa [codeLocations] using fresh
+      have headDistinct := List.Nodup.of_append_left allDistinct
+      have tailDistinct := List.Nodup.of_append_right allDistinct
+      have headFresh : LabelsFresh (codeLocationsExp e) initial := by
+        intro loc member
+        exact allFresh loc (List.mem_append_left _ member)
+      have middleFresh : LabelsFresh (codeLocations es) middle := by
+        have labels := callsFuel_labelsBound depth e initial middle e' headRun
+        intro loc member labelMember
+        rcases labels (loc + 1) labelMember with old | ⟨origin, originMember, equal⟩
+        · exact allFresh loc (List.mem_append_right _ member) old
+        · have unequal := (List.nodup_append.mp allDistinct).2.2 origin originMember loc member
+          exact unequal (Nat.add_right_cancel equal.symm)
+      have singletonRun : callsListFuel (depth + 1) [e] initial = some ([e'], middle) := by
+        simp [callsListFuel, headRun]
+      have middleWf := callsListFuel_wellFormed (depth + 1) [e] initial middle [e'] singletonRun
+        (by simpa [codeLocations] using headDistinct) (by simpa [codeLocations] using headFresh) initialWf
+      have boundedTail : callsListBounded depth es middle = some (es', next) := by
+        simp [callsListBounded, tailRun]
+      have tailExt := callsListBounded_stateExtends depth es middle next es' boundedTail tailDistinct middleFresh middleWf.2
+      refine List.Forall₂.cons ?_ ?_
+      · exact growingExprsSimFrom_mono passFuel relationFuel compiler middle next allowed [e] [e'] tailExt
+          (exprIH depth (by omega) e e' initial middle headRun headDistinct headFresh initialWf
+            (eligibleIH depth (by omega) e e' initial middle (by simp) headRun))
+      · apply ih es es' middle next tailRun tailDistinct middleFresh middleWf
+        · intro n bound expression output before after member exprRun
+          exact eligibleIH n (by omega) expression output before after (by simp [member]) exprRun
+        · intro n bound expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
+          exact exprIH n (by omega) expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
+
+/-- The production retry wrapper inherits the simulation above its final
+pass state, whether its initial traversal succeeds or it uses the structural
+retry budget. -/
+theorem callsListBounded_growing_from {C F : Type} (passFuel relationFuel traversalFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListBounded traversalFuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialWf : wellFormed initial) (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max traversalFuel (listBudget source + 1) → ∀ expression output before after,
+      expression ∈ source → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max traversalFuel (listBudget source + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFrom (F := F) passFuel relationFuel compiler after allowed [expression] [output]) :
+    GrowingExprsSimFrom (F := F) passFuel relationFuel compiler final allowed source target := by
+  unfold callsListBounded at run
+  cases first : callsListFuel traversalFuel source initial with
+  | none =>
+    simp only [first] at run
+    exact callsListFuel_growing_from passFuel relationFuel _ compiler allowed source target initial final
+      run distinct fresh initialWf eligible eligibleIH exprIH
+  | some result =>
+    have equal : result = (target, final) := by simpa [first] using run
+    subst result
+    apply callsListFuel_growing_from passFuel relationFuel traversalFuel compiler allowed source target initial final
+      first distinct fresh initialWf eligible
+    · intro depth bound expression output before after member expressionRun
+      exact eligibleIH depth (by omega) expression output before after member expressionRun
+    · intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
+      exact exprIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf eligibleExpr
+
+/-- The incremental pass exposes a list simulation above its emitted state,
+subject to the expression-case induction and source conditions. The premise
+`wellFormed (known, [])` restricts this result to an empty known-location
+domain; later incremental calls require a proof that the traversal preserves
+an appended existing auxiliary-code list. -/
+theorem compileIncFuel_growing_from {C F : Type} (passFuel relationFuel : Nat)
+    (compiler : ClosSem.Compiler C) (allowed : Set Nat) (known : NumSet) (program : ClosSem.Program)
+    (nextKnown : NumSet) (converted : ClosSem.Program)
+    (run : compileIncFuel? passFuel known program = some (nextKnown, converted))
+    (distinct : (codeLocations program.1).Nodup) (initialWf : wellFormed ((known, []) : State))
+    (eligible : ClosLang.Exp → State → Prop)
+    (eligibleIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      expression ∈ program.1 → callsFuel depth expression before = some (output, after) → eligible expression after)
+    (exprIH : ∀ depth, depth < max passFuel (listBudget program.1 + 1) → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before →
+      wellFormed before → eligible expression after →
+      GrowingExprsSimFrom (F := F) passFuel relationFuel compiler after allowed [expression] [output]) :
+    GrowingExprsSimFrom (F := F) passFuel relationFuel compiler (nextKnown, converted.2) allowed program.1 converted.1 := by
+  have traversal := compileIncFuel_traversal passFuel known program nextKnown converted run
+  have fresh : LabelsFresh (codeLocations program.1) (known, []) := by simp [LabelsFresh]
+  exact callsListBounded_growing_from passFuel relationFuel passFuel compiler allowed program.1 converted.1
+    (known, []) (nextKnown, converted.2) traversal distinct fresh initialWf eligible eligibleIH exprIH
 
 end Flapjack.Compiler.Backend.ClosCall
