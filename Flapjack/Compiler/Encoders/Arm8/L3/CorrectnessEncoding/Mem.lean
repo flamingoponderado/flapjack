@@ -413,6 +413,40 @@ theorem arm8Run_loadStoreImmediate_store (ms : arm8_state) (offset : BitVec 64)
   simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, hbase,
     if_false, Bool.false_and, Bool.false_eq_true]
 
+/-- `Run` of the `LoadStoreImmediate@32` load with no writeback: the machine
+reads the four bytes at `X base + offset`, zero-extends them to 32 bits, and
+writes the value into `dest` (Flapjack infrastructure; the `LoadStoreSingle`
+clause at the L3 fields, `ExtendWord` with `TM = TN = 32`). -/
+theorem arm8Run_loadStoreImmediate_load32 (ms : arm8_state) (offset : BitVec 64)
+    (unsigned : Bool) (base dest : BitVec 5)
+    (hbase : (base == (BitVec.ofNat 5 31)) = false) :
+    Run (.LoadStore (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, unsigned, offset, base, dest))) ms =
+      «write'X» (TN := 32)
+        ((BitVec.setWidth 32 (Mem (TN := 32) ((X (TN := 64) base ms) + offset, (4, .AccType_NORMAL)) ms).1), dest)
+        (Mem (TN := 32) ((X (TN := 64) base ms) + offset, (4, .AccType_NORMAL)) ms).2 := by
+  have hne : ¬(base = BitVec.ofNat 5 31) := by
+    intro h; rw [h] at hbase; simp at hbase
+  simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, ExtendWord, hbase,
+    if_false, if_true, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
+
+/-- `Run` of the `LoadStoreImmediate@32` store with no writeback: the machine
+writes the low 32 bits of `X dest` into the four bytes at `X base + offset`
+(Flapjack infrastructure). -/
+theorem arm8Run_loadStoreImmediate_store32 (ms : arm8_state) (offset : BitVec 64)
+    (unsigned : Bool) (base dest : BitVec 5)
+    (hbase : (base == (BitVec.ofNat 5 31)) = false) :
+    Run (.LoadStore (.«LoadStoreImmediate@32»
+        (BitVec.ofNat 32 2, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, unsigned, offset, base, dest))) ms =
+      «write'Mem» (TN := 32)
+        ((X (TN := 32) dest ms), ((X (TN := 64) base ms) + offset, (4, .AccType_NORMAL))) ms := by
+  have hne : ¬(base = BitVec.ofNat 5 31) := by
+    intro h; rw [h] at hbase; simp at hbase
+  simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, hbase,
+    if_false, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
+
 
 /-- `arm8_ast` lowers a load whose offset is its own signed nine-bit form to one
 `LoadStoreImmediate@64` (Flapjack infrastructure; the `arm8_load_store_ast`
@@ -456,6 +490,83 @@ theorem arm8Enc_store_single_length (dest base : Nat) (off : BitVec 64)
     (arm8Enc (.inst (.mem .store dest (.addr base off)))).length = 4 := by
   rw [arm8Enc, arm8Ast_store_single dest base off hsx]
   simp [arm8Encode_length]
+
+/-- The little-endian word of four bytes, in the OR-of-shifts form `readBytes`
+assembles (Flapjack infrastructure; the four-byte analogue of
+`holV2w_eight_bytes`). -/
+theorem holV2w_four_bytes (b0 b1 b2 b3 : BitVec 8) :
+    holV2w 32 (holW2v b3 ++ (holW2v b2 ++ (holW2v b1 ++ holW2v b0))) =
+      (BitVec.setWidth 32 b3) <<< (24 : Nat) ||| (BitVec.setWidth 32 b2) <<< (16 : Nat) |||
+      (BitVec.setWidth 32 b1) <<< (8 : Nat) ||| (BitVec.setWidth 32 b0) := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  simp only [Flapjack.RiscV.L3.holV2w, holW2v, List.length_append, List.length_map,
+    List.length_range]
+  rw [getLsbD_holFcpWord]
+  simp only [hi, decide_true, Bool.true_and]
+  interval_cases i <;> simp [List.getD_eq_getElem?_getD]
+
+/-- The zero-extended four-byte read is the 64-bit OR-of-shifts form
+(Flapjack infrastructure). -/
+theorem arm8SetWidth64_four (b0 b1 b2 b3 : BitVec 8) :
+    BitVec.setWidth 64 (holV2w 32 (holW2v b3 ++ (holW2v b2 ++ (holW2v b1 ++ holW2v b0)))) =
+      (BitVec.setWidth 64 b3) <<< (24 : Nat) ||| (BitVec.setWidth 64 b2) <<< (16 : Nat) |||
+      (BitVec.setWidth 64 b1) <<< (8 : Nat) ||| (BitVec.setWidth 64 b0) := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro j hj
+  simp only [Flapjack.RiscV.L3.holV2w, holW2v, List.length_append, List.length_map,
+    List.length_range]
+  rw [BitVec.getLsbD_setWidth, getLsbD_holFcpWord]
+  simp only [hj, decide_true, Bool.true_and]
+  interval_cases j <;> simp [List.getD_eq_getElem?_getD]
+
+
+/-- `Mem` reads the four little-endian bytes of a 32-bit load and returns their
+word without changing the state (Flapjack infrastructure; the four-byte
+analogue of `arm8Mem_eight`). -/
+theorem arm8Mem_four (ms : arm8_state) (address : BitVec 64)
+    (b0 b1 b2 b3 : BitVec 8)
+    (h0 : ms.MEM address = b0)
+    (h1 : ms.MEM (address + BitVec.ofNat 64 1) = b1)
+    (h2 : ms.MEM (address + BitVec.ofNat 64 2) = b2)
+    (h3 : ms.MEM (address + BitVec.ofNat 64 3) = b3)
+    (hal : Aligned (TN := 64) (address, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    Mem (TN := 32) (address, (4, AccType.AccType_NORMAL)) ms =
+      (holV2w 32 (holW2v b3 ++ (holW2v b2 ++ (holW2v b1 ++ holW2v b0))), ms) := by
+  simp only [Mem]
+  simp [holFor]
+  constructor
+  · rw [CheckAlignment_aligned ms address 4 AccType.AccType_NORMAL false hal]
+    rw [BigEndian_false ms hel he0]
+    simp only [Bool.false_eq_true, if_false]
+    rw [h0, h1, h2, h3]
+  · exact CheckAlignment_aligned ms address 4 AccType.AccType_NORMAL false hal
+
+/-- The zero-extended four-byte L3 read is the source's `readMemWord` value,
+given the byte agreement and little-endian addressing (Flapjack
+infrastructure). -/
+theorem arm8Mem_four_eq_readMemWord (ms : arm8_state) (s : AsmState 64) (address : BitVec 64)
+    (hal : Aligned (TN := 64) (address, 4) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
+    (hbe : s.be = false)
+    (hmem : ∀ i, i < 4 → ms.MEM (address + BitVec.ofNat 64 i) = s.mem (address + BitVec.ofNat 64 i)) :
+    BitVec.setWidth 64 (Mem (TN := 32) (address, (4, AccType.AccType_NORMAL)) ms).1 =
+      (readMemWord (resultWidth := 64) address 4 s).1 := by
+  have h0 : ms.MEM address = s.mem address := by simpa using hmem 0 (by omega)
+  have h1 : ms.MEM (address + BitVec.ofNat 64 1) = s.mem (address + BitVec.ofNat 64 1) :=
+    hmem 1 (by omega)
+  have h2 : ms.MEM (address + BitVec.ofNat 64 2) = s.mem (address + BitVec.ofNat 64 2) :=
+    hmem 2 (by omega)
+  have h3 : ms.MEM (address + BitVec.ofNat 64 3) = s.mem (address + BitVec.ofNat 64 3) :=
+    hmem 3 (by omega)
+  rw [arm8Mem_four ms address (s.mem address) (s.mem (address + BitVec.ofNat 64 1))
+    (s.mem (address + BitVec.ofNat 64 2)) (s.mem (address + BitVec.ofNat 64 3)) h0 h1 h2 h3
+    hal he0 hel]
+  rw [readMemWord_fst address 4 s hbe]
+  rw [readBytes_four]
+  exact arm8SetWidth64_four _ _ _ _
+
 
 /-- The L3 eight-byte read is the source's `readMemWord` value, from the state
 relation and the eight-address domain fact alone (Flapjack infrastructure). -/
