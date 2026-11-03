@@ -475,15 +475,19 @@ alignment half is what makes `CheckAlignment` a no-op regardless of
 `SCTLR_EL1.A`; `arm8Aligned_eight_iff` converts between the rendered
 `Aligned` and the `8 ∣ a.toNat` form.
 
-`arm8_encoder_correct_mem_load_neg` (`Mem.lean`) is the first `Mem` case
-theorem: the unscaled `imm9` load branch.  It takes the two branch conditions
-as case hypotheses — the offset is its own signed nine-bit form (`hsx`, what
-`arm8_ast` tests) and is negative (`hmsb`, which makes the `unsigned_offset`
-field `false`, so `e_LoadStoreImmediate` cannot reach the scaled twelve-bit
-clause) — then emits the single nine-bit word, decodes it back to the same
+`arm8_encoder_correct_mem_load_imm9` (`Mem.lean`) is the first `Mem` case
+theorem: the unscaled `imm9` load path.  It takes the two branch conditions as
+case hypotheses — the offset is its own signed nine-bit form (`hsx`, what
+`arm8_ast` tests) and `e_LoadStoreImmediate`'s scaled twelve-bit clause does
+not fire (`hfall`) — then emits the single nine-bit word with
+`unsigned_offset = !off.msb`, decodes it back to the same
 `LoadStoreImmediate@64`, runs it through `LoadStoreSingle`, and closes with
 `asmCaseOneMem`.  The loaded value is `(readMemWord (s1.regs base + off) 8 s1).1`,
-matched to `Mem`'s eight-byte read by `arm8Mem_eight_value`.
+matched to `Mem`'s eight-byte read by `arm8Mem_eight_value`.  Two corollaries
+discharge `hfall` from the sign: `arm8_encoder_correct_mem_load_neg` (negative,
+so `unsigned_offset` is `false` and the scaled clause cannot fire) and
+`arm8_encoder_correct_mem_load_pos_unscaled` (non-negative, but not the scaled
+form).
 
 `arm8Mem_eight_pair` gives the full `Mem` pair (value and unchanged state) from
 the byte agreement.  `NextStateARM8` runs the instruction on
@@ -493,9 +497,8 @@ fold over the whole state, so the fold is not syntactically invariant under the
 record update.
 
 Still open for #1239: the remaining `Mem` cases (the non-negative scaled
-twelve-bit form, the non-negative unscaled form, the store forms and the 16/8-bit
-widths), the two-instruction `AddSubImmediate@64` + `LoadStoreImmediate`
-constructor for far offsets, and the remaining case theorems covering the other
-instruction groups.
+twelve-bit form, the store forms and the 16/8-bit widths), the two-instruction
+`AddSubImmediate@64` + `LoadStoreImmediate` constructor for far offsets, and the
+remaining case theorems covering the other instruction groups.
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.

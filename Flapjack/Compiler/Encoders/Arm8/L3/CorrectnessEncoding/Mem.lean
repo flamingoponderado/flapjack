@@ -597,23 +597,25 @@ theorem arm8Mem_eight_pair (ms : arm8_state) (s : AsmState 64) (address : BitVec
   rw [hp] at hv ⊢
   exact Prod.ext hv rfl
 
-/-- The `.mem .load` constructor of `encoder_correct arm8TargetL3` for an offset
-that is its own signed nine-bit form and negative, so `e_LoadStoreImmediate`
-takes the unscaled `imm9` path.
+/-- The `.mem .load` constructor of `encoder_correct arm8TargetL3` on the
+unscaled `imm9` path of `e_LoadStoreImmediate`.
 
-`hsx` and `hmsb` are the two branch conditions the lowering inspects:
+`hsx` and `hfall` are the two branch conditions the lowering inspects:
 `arm8_ast` emits the single instruction only when `off` is its own signed
 nine-bit form (`hsx`), and `e_LoadStoreImmediate` reaches the `imm9` clause
-only when the twelve-bit scaled form is not also available, which the negative
-sign forces (`hmsb`).  They are case hypotheses of the `Mem` branch, not part
-of `CaseGoal`. -/
+only when its scaled twelve-bit clause does not fire (`hfall`).  They are case
+hypotheses of the `Mem` branch, not part of `CaseGoal`; `hsx` is also a
+hypothesis of `arm8Ast_load_single`, and `hfall` of
+`arm8Encode_loadStoreImm9_load`.  The negative and non-negative unscaled
+branches are the two corollaries below. -/
 @[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
-theorem arm8_encoder_correct_mem_load_neg (dest base : Nat) (off : BitVec 64)
+theorem arm8_encoder_correct_mem_load_imm9 (dest base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (ms : arm8_state)
     (h : asmStep arm8ConfigL3 s1 (.inst (.mem .load dest (.addr base off))) s2 ∧
       targetStateRel arm8TargetL3 s1 ms)
     (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
-    (hmsb : off.msb = true) :
+    (hfall : ((!off.msb) && (off ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 3))) <<< 3)) = false) :
     CaseGoal (.inst (.mem .load dest (.addr base off))) s1 s2 ms := by
   obtain ⟨hs, hr⟩ := h
   obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
@@ -648,10 +650,6 @@ theorem arm8_encoder_correct_mem_load_neg (dest base : Nat) (off : BitVec 64)
       (readMemWord (resultWidth := 64) (s1.regs base + off) 8 s1).1 :=
     arm8Mem_eight_value ms s1 (s1.regs base + off) hal8 he0 hel hbe hmem hdom
   have hast := arm8Ast_load_single dest base off hsx
-  have hfall : ((!off.msb) && (off ==
-      (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 3))) <<< 3)) = false := by
-    rw [hmsb]
-    rfl
   have henc : arm8Enc (.inst (.mem .load dest (.addr base off))) =
       arm8Encode (.LoadStore (.«LoadStoreImmediate@64»
         (3, false, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false, false,
@@ -816,5 +814,35 @@ theorem arm8_encoder_correct_mem_load_neg (dest base : Nat) (off : BitVec 64)
         rw [(alignedAddSub 2 ms.PC 4 h4).1, halign]
       change holAligned 2 (ms.PC + 4) = true
       exact hal4
+
+/-- The negative-offset `imm9` load branch: a negative offset makes the
+`unsigned_offset` field `false`, so `e_LoadStoreImmediate`'s scaled twelve-bit
+clause cannot fire. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
+theorem arm8_encoder_correct_mem_load_neg (dest base : Nat) (off : BitVec 64)
+    (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (.inst (.mem .load dest (.addr base off))) s2 ∧
+      targetStateRel arm8TargetL3 s1 ms)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
+    (hmsb : off.msb = true) :
+    CaseGoal (.inst (.mem .load dest (.addr base off))) s1 s2 ms :=
+  arm8_encoder_correct_mem_load_imm9 dest base off s1 s2 ms h hsx (by rw [hmsb]; rfl)
+
+/-- The non-negative offset that fits signed nine bits but is not the scaled
+twelve-bit form: `e_LoadStoreImmediate` falls through its scaled clause to the
+`imm9` clause. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
+theorem arm8_encoder_correct_mem_load_pos_unscaled (dest base : Nat) (off : BitVec 64)
+    (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (.inst (.mem .load dest (.addr base off))) s2 ∧
+      targetStateRel arm8TargetL3 s1 ms)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
+    (hmsb : off.msb = false)
+    (hscaled : (off ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 3))) <<< 3) = false) :
+    CaseGoal (.inst (.mem .load dest (.addr base off))) s1 s2 ms :=
+  arm8_encoder_correct_mem_load_imm9 dest base off s1 s2 ms h hsx (by
+    rw [hmsb]
+    exact hscaled)
 
 end Flapjack.Compiler.Encoders.Arm8.L3
