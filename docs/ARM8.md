@@ -551,6 +551,48 @@ call the matching case theorem; `arm8MemCase`, `arm8ArithCase` (with
 assembling `arm8EncoderCorrectL3 : encoderCorrect arm8TargetL3`, which depends
 only on `propext`, `Classical.choice` and `Quot.sound`.
 
+### Carrier and statement comparison with the pinned HOL source
+
+Checked against `/home/zksecurity/HOL` at `a390cbabd3a4521bab4ee20281e3e42933a8a3ae`
+and `cakeml/compiler/encoders/arm8/arm8_targetScript.sml`:
+
+- `arm8_state` (`arm8Script.sml:368-375`) has sixteen fields in this order:
+  `MEM : word64 -> word8`, `PC : word64`, `PSTATE : ProcState`,
+  `REG : word5 -> word64`, `SCTLR_EL1/2/3 : SCTLRType`, `SP_EL0..3 : word64`,
+  `TCR_EL1 : TCR_EL1`, `TCR_EL2/3 : TCR_EL2_EL3`,
+  `branch_hint : BranchType option`, `exception : exception`.  The Lean
+  `structure arm8_state` has the same sixteen fields, in the same order, with
+  `BitVec 64`/`BitVec 8`/`BitVec 5` for the fixed-width words and the rendered
+  record types for the control registers.
+- `arm8_next_def` is `THE o NextStateARM8`; Lean's `arm8Next` is
+  `holThe (NextStateARM8 s)`.
+- `valid_immediate_def` is the `INL Add`/`INL Sub`/six ordering-comparison
+  integer-range test and `IS_SOME (EncodeBitMask i)` otherwise; Lean's
+  `arm8ValidImmediate` has the same eight constructors in the same first
+  clause and the same `EncodeBitMask` fallback.
+- `arm8_config_def`'s constants are `off_max12 = w2w (UINT_MAXw: word12) = 4095`,
+  `off_min9 = sw2sw (INT_MINw: 9 word) = -256`, `off_max9 = 255`, so
+  `off_min = -4351` and `off_max = 4350`; `byte_offset = (-256, 4095)`,
+  `jump_offset = (-134217728, 134217727)`,
+  `cjump_offset = (-1048572, 1048579)` and
+  `loc_offset = (-2147483648, 2147483647)`.  `arm8ConfigL3` has all sixteen
+  fields with exactly these values (`reg_count = 32`, `fp_reg_count = 0`,
+  `avoid_regs = [18, 26, 31]`, `link_reg = SOME 30`, `two_reg_arith = F`,
+  `big_endian = F`, `code_alignment = 2`, `ISA = ARMv8`, `encode = arm8_enc`).
+- `arm8_target_def` lists `next`, `config`, `get_pc`, `get_reg`, `get_byte`,
+  `state_ok` and `proj`, and omits `get_fp_reg` (HOL fills an omitted record
+  field with `ARB`).  `arm8TargetL3` sets the same seven fields and takes
+  `getFpReg` from `(holArb (HolAsmTarget 64 arm8_state Arm8L3Projection)).getFpReg`;
+  since `fp_reg_count = 0`, `target_state_rel`'s `get_fp_reg` conjunct is
+  vacuous and `target_ok` never reads it, so the choice cannot affect the
+  theorems.  This is a representation choice, recorded rather than certified.
+
+These comparisons confirm the carriers and equations above at the level of
+field lists, orders, types and constants.  They do **not** promote the
+`pending_statement_review` rows: the rendered transition and encoding
+definitions in `Defs.lean` are still only mechanically rendered, and no
+declaration is claimed as an exact HOL port.
+
 ## L3 machine configuration and downstream compiler theorem
 
 `Flapjack/Compiler/Backend/Arm8Config/ProofsL3.lean` states CakeML's
