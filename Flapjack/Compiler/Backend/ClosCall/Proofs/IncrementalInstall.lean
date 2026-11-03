@@ -4029,6 +4029,62 @@ theorem recClosureRelFuel_known_body_arity_withClock {C F : Type} (passFuel rela
     related' sourceLookup targetLookup notAllowed sourceBound (by simpa using envs) envWf sourceWf states ready
     sourceCompiler targetCompiler oracle (bodyIH larger growth)
 
+/-- Related closure bodies satisfy the arity-restricted application
+interface in both extracted and open groups, assuming the respective actual
+body-traversal simulations. Probe states need only have distinct labels;
+open-group states are fully well formed. This is Flapjack-specific
+infrastructure, not a HOL theorem port. -/
+theorem recClosureRelFuel_body_arity_withClock {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (sourceFns targetFns : List (Nat × ClosLang.Exp)) (index arity : Nat)
+    (body targetBody : ClosLang.Exp)
+    (related : recClosureRelFuel relationFuel g allowed code loc sourceFns targetFns)
+    (sourceLookup : sourceFns[index]? = some (arity, body))
+    (targetLookup : targetFns[index]? = some (arity, targetBody))
+    (probeIH : ∀ larger, stateExtends g larger → ∀ converted depth before after,
+      depth < max relationFuel (listBudget (sourceFns.map Prod.snd) + 1) →
+      callsFuel depth body before = some (converted, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before →
+      (before.2.map Prod.fst).Nodup →
+      (∀ n, ClosProps.freeVarExp n converted → n < arity) →
+      GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler larger allowed [body] [converted])
+    (openIH : ∀ larger, stateExtends g larger → ∀ depth before after,
+      depth < max relationFuel (listBudget (sourceFns.map Prod.snd) + 1) →
+      callsFuel depth body before = some (targetBody, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before →
+      wellFormed before → stateExtends after larger →
+      GrowingExprsSimFromBelowWithClock (F := F) passFuel relationFuel limit compiler larger allowed [body] [targetBody]) :
+    GrowingExprsSimFromBelowWithClockArity (F := F) passFuel relationFuel limit compiler g allowed arity [body] [targetBody] := by
+  intro larger growth sourceEnv targetEnv source target result final clock sourceBound run notType envs envWf sourceWf
+    states ready sourceCompiler targetCompiler oracle
+  have related' := recClosureRelFuel_retarget relationFuel g larger allowed code target.code loc sourceFns targetFns
+    related growth ready.included
+  rcases recClosureRelFuel_body_traversal_cases relationFuel larger allowed target.code loc sourceFns targetFns
+      index arity body targetBody related' sourceLookup targetLookup with
+    ⟨trace, converted, depth, before, after, _, _, bodyEq, codeLookup, depthBound, selectedRun,
+      distinct, fresh, beforeDistinct, _, _, closed, _⟩ |
+    ⟨depth, before, after, depthBound, selectedRun, distinct, fresh, beforeWf, extended⟩
+  · have stubEnv : EnvRelFuel relationFuel larger allowed target.code sourceEnv targetEnv 0
+        [(0, .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity))] := by
+      simpa [bodyEq] using envs
+    obtain ⟨targetBound, bodyEnv⟩ :=
+      envRelFuel_stub_body_prefix relationFuel larger allowed target.code trace (loc + 2 * index + 1)
+        arity converted sourceEnv targetEnv stubEnv sourceBound closed
+    obtain ⟨extraClock, finalG, targetResult, targetFinal, finalExt, targetRun, resultRelated,
+      finalStates, finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩ :=
+      probeIH larger growth converted depth before after depthBound selectedRun distinct fresh beforeDistinct closed
+        larger (stateExtends_refl larger ready.well.2) sourceEnv (targetEnv.take arity) source target result final
+        clock run notType (by simpa using bodyEnv) envWf sourceWf states ready sourceCompiler targetCompiler oracle
+    refine ⟨extraClock + 1, finalG, targetResult, targetFinal, finalExt, ?_, resultRelated, finalStates,
+      finalWf, finalReady, finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩
+    rw [bodyEq, evaluate_generated_stub_with_allowance trace (loc + 2 * index + 1) arity extraClock
+      converted targetEnv target targetBound codeLookup]
+    exact targetRun
+  · exact openIH larger growth depth before after depthBound selectedRun distinct fresh beforeWf extended
+      larger (stateExtends_refl larger ready.well.2) sourceEnv targetEnv source target result final clock run notType
+      envs envWf sourceWf states ready sourceCompiler targetCompiler oracle
+
 /-- A clock-bounded pass-state simulation supplies the corresponding
 installed-program simulation. This is Flapjack-specific infrastructure. -/
 theorem growingExprsSimFromBelow_installedBelow {C F : Type} (passFuel relationFuel limit : Nat)

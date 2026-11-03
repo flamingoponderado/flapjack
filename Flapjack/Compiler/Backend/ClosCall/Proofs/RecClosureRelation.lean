@@ -86,6 +86,7 @@ theorem recClosureRelFuel_probe_body (fuel : Nat) (g : State) (allowed : Set Nat
     (related : recClosureRelFuel fuel g allowed code loc fns1 fns2)
     (sourceLookup : fns1[index]? = some (arity, body)) :
     ∃ g0 bodies afterProbe transformed depth before after,
+      wellFormed g0 ∧ LabelsFresh (codeLocations (fns1.map Prod.snd)) g0 ∧
       callsListBounded fuel (fns1.map Prod.snd) (insertEach loc fns1.length g0) = some (bodies, afterProbe) ∧
       bodies[index]? = some transformed ∧
       depth < max fuel (listBudget (fns1.map Prod.snd) + 1) ∧
@@ -119,7 +120,9 @@ theorem recClosureRelFuel_probe_body (fuel : Nat) (g : State) (allowed : Set Nat
   obtain ⟨depth, before, after, depthLt, selected, bodyDistinct, bodyFresh, beforeDistinct, extended⟩ :=
     callsListBounded_lookup_run_distinct fuel (fns1.map Prod.snd) bodies (insertEach loc fns1.length g0) afterProbe
       probe well.2.2.2 fresh initialDistinct index body bodies[index] sourceIndex targetIndex
-  exact ⟨g0, bodies, afterProbe, bodies[index], depth, before, after, probe, targetIndex, depthLt,
+  have initialFresh : LabelsFresh (codeLocations (fns1.map Prod.snd)) g0 := by
+    simpa [LabelsFresh] using nestedFresh
+  exact ⟨g0, bodies, afterProbe, bodies[index], depth, before, after, initialWf, initialFresh, probe, targetIndex, depthLt,
     selected, bodyDistinct, bodyFresh, beforeDistinct, extended, alternatives⟩
 
 /-- A related target body is either a generated stub or the result of an

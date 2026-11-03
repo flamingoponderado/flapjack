@@ -224,7 +224,7 @@ theorem recClosureRelFuel_known_probe_body (fuel : Nat) (g : State) (allowed : S
       bodies[index]? = some convertedBody ∧ (∀ n, ClosProps.freeVarExp n convertedBody → n < arity) ∧
       stateExtends (codeList loc ((sourceFns.map Prod.fst).zip bodies) afterProbe) g := by
   have indexBound : index < sourceFns.length := (List.getElem?_eq_some_iff.mp sourceLookup).choose
-  obtain ⟨_, bodies, afterProbe, convertedBody, depth, before, after, _, selectedBody,
+  obtain ⟨_, bodies, afterProbe, convertedBody, depth, before, after, _, _, _, selectedBody,
     depthBound, selectedRun, distinct, fresh, beforeDistinct, extended, alternatives⟩ :=
     recClosureRelFuel_probe_body fuel g allowed code loc sourceFns targetFns index arity sourceBody related sourceLookup
   rcases alternatives with ⟨closed, ⟨trace, stubIndex, targetEq⟩, codeExt, _, included⟩ |
@@ -242,6 +242,63 @@ theorem recClosureRelFuel_known_probe_body (fuel : Nat) (g : State) (allowed : S
       extended, selectedBody, groupClosed_selected sourceFns bodies index arity sourceBody convertedBody
         closed sourceLookup selectedBody, codeExt⟩
   · exact (notAllowed (ownAllowed index indexBound)).elim
+
+/-- A selected related body either executes an extracted probe body through a
+generated stub, or is the result of the open-group traversal. Both cases use
+the same source group and selected index. This is Flapjack-specific proof
+infrastructure for closure-body induction. -/
+theorem recClosureRelFuel_body_traversal_cases (fuel : Nat) (g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (sourceFns targetFns : List (Nat × ClosLang.Exp)) (index arity : Nat)
+    (sourceBody targetBody : ClosLang.Exp)
+    (related : recClosureRelFuel fuel g allowed code loc sourceFns targetFns)
+    (sourceLookup : sourceFns[index]? = some (arity, sourceBody))
+    (targetLookup : targetFns[index]? = some (arity, targetBody)) :
+    (∃ trace convertedBody depth before after afterProbe bodies,
+      targetBody = .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity) ∧
+      code.lookup (loc + 2 * index + 1) = some (arity, convertedBody) ∧
+      depth < max fuel (listBudget (sourceFns.map Prod.snd) + 1) ∧
+      callsFuel depth sourceBody before = some (convertedBody, after) ∧
+      (codeLocationsExp sourceBody).Nodup ∧ LabelsFresh (codeLocationsExp sourceBody) before ∧
+      (before.2.map Prod.fst).Nodup ∧ stateExtends after afterProbe ∧
+      bodies[index]? = some convertedBody ∧ (∀ n, ClosProps.freeVarExp n convertedBody → n < arity) ∧
+      stateExtends (codeList loc ((sourceFns.map Prod.fst).zip bodies) afterProbe) g) ∨
+    (∃ depth before after, depth < max fuel (listBudget (sourceFns.map Prod.snd) + 1) ∧
+      callsFuel depth sourceBody before = some (targetBody, after) ∧
+      (codeLocationsExp sourceBody).Nodup ∧ LabelsFresh (codeLocationsExp sourceBody) before ∧
+      wellFormed before ∧ stateExtends after g) := by
+  obtain ⟨initial, bodies, afterProbe, convertedBody, depth, before, after, initialWf, initialFresh, _, selectedBody,
+    depthBound, selectedRun, distinct, fresh, beforeDistinct, extended, alternatives⟩ :=
+    recClosureRelFuel_probe_body fuel g allowed code loc sourceFns targetFns index arity sourceBody related sourceLookup
+  rcases alternatives with ⟨closed, ⟨trace, stubIndex, targetEq⟩, codeExt, _, included⟩ |
+      ⟨_, openBodies, afterOpen, openRun, targetEq, openExt, _, _, _⟩
+  · left
+    have stub := callsListSource_lookup trace stubIndex loc sourceFns index arity sourceBody sourceLookup
+    have targetStub : targetFns[index]? =
+        some (arity, .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity)) := by
+      simpa [targetEq] using stub
+    have bodyEq : targetBody = .call trace 0 (loc + 2 * index + 1) (ClosCall.variables trace arity) := by
+      rw [targetLookup] at targetStub
+      exact (Prod.mk.inj (Option.some.inj targetStub)).2
+    have arityLookup : (sourceFns.map Prod.fst)[index]? = some arity := by
+      simp [List.getElem?_map, sourceLookup]
+    have pairLookup := zip_lookup (sourceFns.map Prod.fst) bodies index arity convertedBody arityLookup selectedBody
+    have generated := codeList_lookup loc ((sourceFns.map Prod.fst).zip bodies) afterProbe index arity convertedBody pairLookup
+    exact ⟨trace, convertedBody, depth, before, after, afterProbe, bodies, bodyEq, included _ _ generated,
+      depthBound, selectedRun, distinct, fresh, beforeDistinct, extended, selectedBody,
+      groupClosed_selected sourceFns bodies index arity sourceBody convertedBody closed sourceLookup selectedBody, codeExt⟩
+  · right
+    have sourceDistinct : (codeLocations (sourceFns.map Prod.snd)).Nodup := by
+      obtain ⟨_, well, _, _, _, _, _, _, _⟩ := related
+      exact well.2.2.2
+    have zippedLookup : ((sourceFns.map Prod.fst).zip openBodies)[index]? = some (arity, targetBody) := by
+      simpa [targetEq] using targetLookup
+    obtain ⟨openDepth, openBefore, openAfter, openDepthBound, openSelected, openDistinct,
+      openFresh, openWf, openExtended⟩ :=
+      callsListBounded_open_body fuel sourceFns openBodies initial afterOpen openRun sourceDistinct initialFresh
+        initialWf index arity sourceBody targetBody sourceLookup zippedLookup
+    exact ⟨openDepth, openBefore, openAfter, openDepthBound, openSelected, openDistinct, openFresh, openWf,
+      stateExtends_trans _ _ _ openExtended openExt⟩
 
 /-- At a known non-open location, the selected target closure is a direct
 call to the converted body present in the target code map. -/
