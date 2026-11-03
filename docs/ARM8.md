@@ -376,22 +376,26 @@ the fail list, and `arm8_config` has no FP registers, so `fp_ok` rejects every
 FP operation and `asm_step` cannot hold.  `arm8_encoder_correct_fp` proves the
 case from that contradiction, matching the HOL proof's `FP` branch.
 
-`AddCarry.lean` starts the `addCarry` lowering, whose five instructions are a
+`AddCarry.lean` closes the `addCarry` lowering, whose five instructions are a
 flag-setting `SUBS XZR, r4, #0`, a `ConditionalCompareImmediate@64` on `r2`
 against zero under `EQ`, an `AddSubCarry@64` into `r1`, a `MoveWide .z` that
-zeroes `r4`, and a final `AddSubCarry@64` into `r4`.  It generalises the
+zeroes `r4`, and a final `AddSubCarry@64` into `r4`.  The file generalises the
 `AddSubCarry@64` decoder to both `opc`/`s` combinations, records the
 `AddWithCarry` facts for the two zero compares
-(`arm8AddWithCarry_subs_zero`, `arm8AddWithCarry_add_zero`), and lands the
-first and fourth steps (`arm8Next_addSubImmediateS_zero`,
-`arm8Next_moveWide_z_zero`) plus the `SetTheFlags`/`write'X` field
-projections.  The `ConditionalCompareImmediate@64` and `AddSubCarry@64` steps
-and the case theorem are still open.
+(`arm8AddWithCarry_subs_zero`, `arm8AddWithCarry_add_zero`), gives each of the
+five steps its `arm8Next_*` equation, its memory-preservation lemma
+(`arm8Next_*_mem`) and its `arm8Ok` preservation, and carries the five
+intermediate states `arm8AddCarryT1..T5` with `PC`/`REG`/`exception`/`EL`/
+`SCTLR_EL1`/`MEM` projections.  The register effect is stated first in
+`readReg` form (`hs2regsR`) so that the goal and `arithUpd`'s body share the
+same `Decidable` instances, then rewritten to the `s1.regs` form through
+`arm8ReadReg_eq`.  `arm8_encoder_correct_addCarry` proves the case: the carry
+out lands in `sr` and the truncated sum in `d`, exactly as
+`AsmSem.arithUpd` specifies, matching the HOL proof's `AddCarry` branch
+(`next_tac 4`).
 
 Still open for #1239: the `shift` `.lsl`/`.lsr`/`.asr` immediate forms (through
-`DecodeBitMasks`/`BitfieldMove`), `addCarry`,
-`addOverflow`, `subOverflow` (their `ConditionalSelect@64` facts exist in
-`ConditionalSelect.lean`), `addCarry` (its `AddSubCarry@64` facts exist in `Carry.lean` and its
-`ConditionalCompareImmediate@64` facts in `Compare.lean`), and `Mem`.
+`DecodeBitMasks`/`BitfieldMove`), `addOverflow`, `subOverflow` (their
+`ConditionalSelect@64` facts exist in `ConditionalSelect.lean`), and `Mem`.
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
