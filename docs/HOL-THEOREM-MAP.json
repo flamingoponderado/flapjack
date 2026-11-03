@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_preserves_esgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",
+  "lean_name": "knownOpPreservesEsgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_op_preserves_esgc_free_typed and the complete source proof: operation, argument list, input and output spt maps and approximation are arbitrary; the known-operation equation, EVERY input safety and global safety premises and both safety conclusions agree. The tuple branch uses membership at the bounded index; global updates use the literal spt lookup/insert and merge-safety theorem. The global-write bag is the HOL natural multiplicity function. Lean checking and source comparison do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "val_approx_sgc_free_def",
   "hol_line": 248,
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",

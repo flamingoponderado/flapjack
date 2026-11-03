@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.ClosKnown.Merge
+import Flapjack.Compiler.Backend.ClosKnown.KnownOp
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
 import Flapjack.Misc.Sptree
 
@@ -54,5 +54,107 @@ theorem valApproxSgcFreeMerge (a b : ValApprox)
       have xbound : sizeOf x + 1 < n := by omega
       exact ih (sizeOf x + 1) xbound x y (by omega) (ha x hx) (hb y hy)
   exact all (sizeOf a + 1) a b (by omega) safe.1 safe.2
+
+/-- Inserting a safe approximation preserves safety of the map. -/
+private theorem globalsInsertSafe (g : Spt ValApprox) (index : Nat) (a : ValApprox)
+    (safe : valApproxSgcFree a) (globals : globalsApproxSgcFree g) :
+    globalsApproxSgcFree (sptInsert index a g) := by
+  intro key value lookup
+  by_cases same : key = index
+  · subst key
+    rw [sptLookup_sptInsert_same] at lookup
+    cases lookup
+    exact safe
+  · rw [sptLookup_sptInsert_ne index key a g same] at lookup
+    exact globals key value lookup
+
+/-- Primitive approximation preserves both value and global safety. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_op_preserves_esgc_free"]
+theorem knownOpPreservesEsgcFree (op : ClosLang.Op) (args : List ValApprox)
+    (g0 : Spt ValApprox) (a : ValApprox) (g : Spt ValApprox)
+    (known : knownOpHOL op args g0 = (a, g))
+    (safe : ∀ x ∈ args, valApproxSgcFree x) (globals : globalsApproxSgcFree g0) :
+    valApproxSgcFree a ∧ globalsApproxSgcFree g := by
+  cases op with
+  | globOp op =>
+    cases op with
+    | global index =>
+      cases args with
+      | nil =>
+        simp only [knownOpHOL, Prod.mk.injEq] at known
+        rcases known with ⟨rfl, rfl⟩
+        cases h : sptLookup index g0 with
+        | none => exact ⟨by simp [valApproxSgcFree], globals⟩
+        | some value => exact ⟨by simpa [h] using globals index value h, globals⟩
+      | cons x xs =>
+        simp only [knownOpHOL, Prod.mk.injEq] at known
+        rcases known with ⟨rfl, rfl⟩
+        exact ⟨by simp [valApproxSgcFree], globals⟩
+    | setGlobal index =>
+      cases args with
+      | nil =>
+        simp only [knownOpHOL, Prod.mk.injEq] at known
+        rcases known with ⟨rfl, rfl⟩
+        exact ⟨by simp [valApproxSgcFree], globals⟩
+      | cons x xs =>
+        have xSafe := safe x (by simp)
+        simp only [knownOpHOL, Prod.mk.injEq] at known
+        rcases known with ⟨rfl, rfl⟩
+        constructor
+        · simp [valApproxSgcFree]
+        · apply globalsInsertSafe _ _ _ _ globals
+          cases h : sptLookup index g0 with
+          | none => exact xSafe
+          | some old => exact valApproxSgcFreeMerge old x ⟨globals index old h, xSafe⟩
+    | _ =>
+      simp only [knownOpHOL, Prod.mk.injEq] at known
+      rcases known with ⟨rfl, rfl⟩
+      exact ⟨by simp [valApproxSgcFree], globals⟩
+  | blockOp op =>
+    cases op with
+    | cons tag =>
+      simp only [knownOpHOL, Prod.mk.injEq] at known
+      rcases known with ⟨rfl, rfl⟩
+      exact ⟨by simpa [valApproxSgcFree] using safe, globals⟩
+    | _ =>
+      simp only [knownOpHOL, Prod.mk.injEq] at known
+      rcases known with ⟨rfl, rfl⟩
+      exact ⟨by simp [valApproxSgcFree], globals⟩
+  | intOp op =>
+    cases op <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
+      rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxSgcFree], globals⟩
+  | memOp op =>
+    cases op with
+    | el =>
+      cases args with
+      | nil =>
+        simp only [knownOpHOL, Prod.mk.injEq] at known
+        rcases known with ⟨rfl, rfl⟩
+        exact ⟨by simp [valApproxSgcFree], globals⟩
+      | cons x xs =>
+        cases xs with
+        | nil =>
+          cases x <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
+            rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxSgcFree], globals⟩
+        | cons y ys =>
+          cases ys with
+          | nil =>
+            cases x <;> cases y <;> simp only [knownOpHOL, Prod.mk.injEq] at known
+            all_goals try (rcases known with ⟨rfl, rfl⟩; exact ⟨by simp [valApproxSgcFree], globals⟩)
+            split at known <;> simp_all [valApproxSgcFree]
+            all_goals rcases known with ⟨rfl, rfl⟩
+            · exact safe _ (List.getElem_mem ..)
+            · simp [valApproxSgcFree]
+          | cons z zs =>
+            cases x <;> cases y <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
+              rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxSgcFree], globals⟩
+    | _ =>
+      simp only [knownOpHOL, Prod.mk.injEq] at known
+      rcases known with ⟨rfl, rfl⟩
+      exact ⟨by simp [valApproxSgcFree], globals⟩
+  | _ =>
+    simp only [knownOpHOL, Prod.mk.injEq] at known
+    rcases known with ⟨rfl, rfl⟩
+    exact ⟨by simp [valApproxSgcFree], globals⟩
 
 end Flapjack.Compiler.Backend.ClosKnown

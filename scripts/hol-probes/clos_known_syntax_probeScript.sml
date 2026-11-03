@@ -48,3 +48,4 @@ val _ = show "known_op_correct_approx_typed=" clos_knownProofTheory.known_op_cor
 val _ = show "val_approx_sgc_free_typed=" clos_knownProofTheory.val_approx_sgc_free_def;
 val _ = show "val_approx_sgc_free_merge_typed=" clos_knownProofTheory.val_approx_sgc_free_merge;
 val _ = show "globals_approx_sgc_free_typed=" clos_knownProofTheory.globals_approx_sgc_free_def;
+val _ = show "known_op_preserves_esgc_free_typed=" clos_knownProofTheory.known_op_preserves_esgc_free;
