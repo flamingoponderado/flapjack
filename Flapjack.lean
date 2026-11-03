@@ -2324,16 +2324,12 @@ import Flapjack.CompileParamVarsRelation
 import Flapjack.CompileParamVarsSlotBounds
 import Flapjack.PanValues
 import Flapjack.PanValueEvaluatorStability
-import Flapjack.PanSteppedSemantics
+import Flapjack.PanValueFfiCore
 import Flapjack.PanMemory
-import Flapjack.PanValueFfiFuel
 import Flapjack.PanValueFfiClockSemantics
 import Flapjack.PanValueFfiClockFuel
 import Flapjack.PanValueFfiClockCorrectness
 import Flapjack.PanValueFfiClockShift
-import Flapjack.PanValueFfiEventMonotonicity
-import Flapjack.PanValueFfiClockProjection
-import Flapjack.PanCost
 import Flapjack.RiscV.Model
 import Flapjack.RiscV.L3.Types
 import Flapjack.RiscV.Encoding

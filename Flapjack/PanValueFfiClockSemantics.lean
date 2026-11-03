@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.PanValueFfiSemantics
+public import Flapjack.PanValueFfiCore
 public import Flapjack.PanBst
 
 @[expose] public section
@@ -67,119 +67,121 @@ def panValueFfiClockClearTimeoutLocals :
   | .control result => .control result
   | .timeout _ globals memory ffi => .timeout (fun _ => none) globals memory ffi
 
+/-- Control result of a simple statement (a leaf) under the clocked
+    semantics, with an optional alternative expression route.  The leaves are
+    the statements that neither recurse nor touch the clock; each is the
+    control result of the corresponding `PanValueFfiCore` helper.  `Tick`,
+    `Dec`, `Seq`, `If`, `While`, `Call` and `DecCall` are handled by the clocked
+    evaluators themselves and never reach this function.  It returns `none` for
+    them, so an evaluator that forgot its own `Tick` clause would fail instead
+    of silently skipping the clock. -/
+def evalPanValueFfiLeafControl
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (baseAddress topAddress bytesInWord : α)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ) (program : Prog α)
+    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (contracts : Option PanValueCallContracts := none)
+    (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    Option (PanValueFfiControlResult α σ) :=
+  match program with
+    | .skip | .annot _ _ => some (.normal locals globals memory ffi)
+    | .break => some (.broke locals globals memory ffi)
+    | .continue => some (.continued locals globals memory ffi)
+    | .assign .local name value =>
+        panValueAssignLocalResult structs baseAddress topAddress bytesInWord locals globals
+          memory ffi name value memoryAccess evaluator
+    | .assign .global name value =>
+        panValueAssignGlobalResult structs baseAddress topAddress bytesInWord locals globals
+          memory ffi name value memoryAccess evaluator
+    | .primitive name op args =>
+        panValuePrimitiveResult structs baseAddress topAddress bytesInWord locals globals memory
+          ffi name op args memoryAccess primitive evaluator
+    | .store address value =>
+        panValueStoreResult structs baseAddress topAddress bytesInWord locals globals memory
+          ffi address value memoryAccess evaluator
+    | .store32 address value =>
+        panValueStore32Result structs baseAddress topAddress bytesInWord locals globals memory
+          ffi address value memoryAccess evaluator
+    | .storeByte address value =>
+        panValueStoreByteResult structs baseAddress topAddress bytesInWord locals globals memory
+          ffi address value memoryAccess evaluator
+    | .extCall function config configLength array arrayLength =>
+        panValueFfiExtCallResult context handler structs baseAddress topAddress bytesInWord
+          locals globals memory ffi function config configLength array arrayLength
+          memoryAccess memoryHandler evaluator
+    | .return value =>
+        panValueReturnResult structs baseAddress topAddress bytesInWord locals globals memory ffi
+          value memoryAccess evaluator
+    | .raise exception value =>
+        panValueRaiseResult structs baseAddress topAddress bytesInWord locals globals memory ffi
+          contracts exception value memoryAccess evaluator
+    | .shMemLoad size kind name address =>
+        panValueShMemLoadResult context structs baseAddress topAddress bytesInWord locals globals
+          memory ffi size kind name address memoryAccess evaluator
+    | .shMemStore size address value =>
+        panValueShMemStoreResult context structs baseAddress topAddress bytesInWord locals globals
+          memory ffi size address value memoryAccess evaluator
+    | .tick | .dec .. | .seq .. | .ite .. | .while .. | .call .. | .decCall .. => none
+
+/-- The leaf statements: exactly those that `evalPanValueFfiClockProg` hands
+    to `evalPanValueFfiClockLeaf`, i.e. every constructor except `Tick` and the
+    compound statements. -/
+inductive PanValueFfiLeafProg : Prog α → Prop
+  | skip : PanValueFfiLeafProg (.skip : Prog α)
+  | assign (kind : VarKind) (name : VarName) (value : Exp α) :
+      PanValueFfiLeafProg (.assign kind name value)
+  | primitive (name : VarName) (operator : PrimOp) (args : List (Exp α)) :
+      PanValueFfiLeafProg (.primitive name operator args)
+  | store (address value : Exp α) : PanValueFfiLeafProg (.store address value)
+  | store32 (address value : Exp α) : PanValueFfiLeafProg (.store32 address value)
+  | storeByte (address value : Exp α) : PanValueFfiLeafProg (.storeByte address value)
+  | break : PanValueFfiLeafProg (.break : Prog α)
+  | continue : PanValueFfiLeafProg (.continue : Prog α)
+  | extCall (function : FunName) (configuration configurationLength array arrayLength : Exp α) :
+      PanValueFfiLeafProg (.extCall function configuration configurationLength array arrayLength)
+  | raise (exception : ExceptionId) (value : Exp α) :
+      PanValueFfiLeafProg (.raise exception value)
+  | return (value : Exp α) : PanValueFfiLeafProg (.return value)
+  | shMemLoad (size : OpSize) (kind : VarKind) (name : VarName) (address : Exp α) :
+      PanValueFfiLeafProg (.shMemLoad size kind name address)
+  | shMemStore (size : OpSize) (address value : Exp α) :
+      PanValueFfiLeafProg (.shMemStore size address value)
+  | annot (tag text : String) : PanValueFfiLeafProg (.annot tag text)
+
+/-- The leaf clauses of the clocked evaluators: the leaf's control result at the
+    unchanged clock.  `evaluator` optionally selects an alternative expression
+    route; the default is the ordinary evaluator. -/
 def evalPanValueFfiClockLeaf
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
-    (baseAddress topAddress bytesInWord : α)
-    (clock : Nat) (locals globals : VarName → Option (PanValue α))
-    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
-    (program : Prog α)
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (baseAddress topAddress bytesInWord : α) (clock : Nat)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ) (program : Prog α)
     (memoryAccess : Option (PanValueMemoryAccess α) := none)
     (contracts : Option PanValueCallContracts := none)
-    (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none) :
-    Option (PanValueFfiClockResult α σ) :=
-  (evalPanValueFfiProgSteps context primitive handler structs functions
-    baseAddress topAddress bytesInWord 1 locals globals memory ffi program
-    (memoryAccess := memoryAccess) (contracts := contracts)
-    (memoryHandler := memoryHandler)).map
-    (fun (result, _) => (.control result, clock))
-
-/-- A clocked leaf may select an alternative expression route. The old leaf
-    remains the default; the selected route is used by every expression-bearing
-    leaf while preserving the original outcome and clock handling. -/
-def evalPanValueFfiClockLeafWith
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
-    (baseAddress topAddress bytesInWord : α) (clock : Nat)
-    (locals globals : VarName → Option (PanValue α))
-    (memory : α → Option (PanValue α)) (ffi : FfiState σ) (program : Prog α)
-    (memoryAccess : Option (PanValueMemoryAccess α))
-    (contracts : Option PanValueCallContracts)
-    (memoryHandler : Option (PanValueMemoryFfiHandler α σ))
-    (evaluator : Option (PanExprEvaluator α)) : Option (PanValueFfiClockResult α σ) :=
-  match evaluator with
-  | none => evalPanValueFfiClockLeaf context primitive handler structs functions
-      baseAddress topAddress bytesInWord clock locals globals memory ffi program
-      (memoryAccess := memoryAccess) (contracts := contracts) (memoryHandler := memoryHandler)
-  | some run =>
-    let eval := some run
-    let result := match program with
-      | .assign .local name value =>
-          panValueAssignLocalResult structs baseAddress topAddress bytesInWord locals globals
-            memory ffi name value memoryAccess eval
-      | .assign .global name value =>
-          panValueAssignGlobalResult structs baseAddress topAddress bytesInWord locals globals
-            memory ffi name value memoryAccess eval
-      | .primitive name op args =>
-          panValuePrimitiveResult structs baseAddress topAddress bytesInWord locals globals memory
-            ffi name op args memoryAccess primitive eval
-      | .store address value =>
-          panValueStoreResult structs baseAddress topAddress bytesInWord locals globals memory
-            ffi address value memoryAccess eval
-      | .store32 address value =>
-          panValueStore32Result structs baseAddress topAddress bytesInWord locals globals memory
-            ffi address value memoryAccess eval
-      | .storeByte address value =>
-          panValueStoreByteResult structs baseAddress topAddress bytesInWord locals globals memory
-            ffi address value memoryAccess eval
-      | .extCall function config configLength array arrayLength =>
-          panValueFfiExtCallSteps context handler structs baseAddress topAddress bytesInWord
-            locals globals memory ffi function config configLength array arrayLength
-            memoryAccess memoryHandler eval
-      | .return value =>
-          panValueReturnResult structs baseAddress topAddress bytesInWord locals globals memory ffi
-            value memoryAccess eval
-      | .raise exception value =>
-          panValueRaiseResult structs baseAddress topAddress bytesInWord locals globals memory ffi
-            contracts exception value memoryAccess eval
-      | .shMemLoad size kind name address =>
-          panValueShMemLoadResult context structs baseAddress topAddress bytesInWord locals globals
-            memory ffi size kind name address memoryAccess eval
-      | .shMemStore size address value =>
-          panValueShMemStoreResult context structs baseAddress topAddress bytesInWord locals globals
-            memory ffi size address value memoryAccess eval
-      | _ => evalPanValueFfiProgSteps context primitive handler structs functions
-          baseAddress topAddress bytesInWord 1 locals globals memory ffi program
-          (memoryAccess := memoryAccess) (contracts := contracts) (memoryHandler := memoryHandler)
-    result.map (fun (outcome, _) => (.control outcome, clock))
-
-@[simp] theorem evalPanValueFfiClockLeafWith_none
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
-    (baseAddress topAddress bytesInWord : α) (clock : Nat)
-    (locals globals : VarName → Option (PanValue α))
-    (memory : α → Option (PanValue α)) (ffi : FfiState σ) (program : Prog α)
-    (memoryAccess : Option (PanValueMemoryAccess α))
-    (contracts : Option PanValueCallContracts) (memoryHandler : Option (PanValueMemoryFfiHandler α σ)) :
-    evalPanValueFfiClockLeafWith context primitive handler structs functions baseAddress topAddress
-      bytesInWord clock locals globals memory ffi program memoryAccess contracts memoryHandler none =
-    evalPanValueFfiClockLeaf context primitive handler structs functions baseAddress topAddress
-      bytesInWord clock locals globals memory ffi program (memoryAccess := memoryAccess)
-      (contracts := contracts) (memoryHandler := memoryHandler) := rfl
+    (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
+    (evaluator : Option (PanExprEvaluator α) := none) : Option (PanValueFfiClockResult α σ) :=
+  (evalPanValueFfiLeafControl context primitive handler structs baseAddress topAddress
+    bytesInWord locals globals memory ffi program memoryAccess contracts memoryHandler
+    evaluator).map (fun outcome => (.control outcome, clock))
 
 /-- A pointwise-correct expression route preserves the complete result of
     every clocked leaf, including errors, state, FFI, and clock. -/
-theorem evalPanValueFfiClockLeafWith_some_eq
+theorem evalPanValueFfiClockLeaf_some_eq
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
     [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
     (base top bytes : α) (clock : Nat)
     (locals globals : VarName → Option (PanValue α))
     (memory : α → Option (PanValue α)) (ffi : FfiState σ) (program : Prog α)
@@ -187,24 +189,27 @@ theorem evalPanValueFfiClockLeafWith_some_eq
     (mh : Option (PanValueMemoryFfiHandler α σ)) (run : PanExprEvaluator α)
     (h : ∀ e, run structs locals globals memory base top bytes access e =
       evalPanValueExp structs locals globals memory base top bytes e access) :
-    evalPanValueFfiClockLeafWith context primitive handler structs functions base top bytes clock
+    evalPanValueFfiClockLeaf context primitive handler structs base top bytes clock
       locals globals memory ffi program access contracts mh (some run) =
-    evalPanValueFfiClockLeaf context primitive handler structs functions base top bytes clock
-      locals globals memory ffi program (memoryAccess := access)
-      (contracts := contracts) (memoryHandler := mh) := by
-  have hs := evalPanValueExpCountedWith_some_eq run structs locals globals memory base top bytes access h
-  have hl := evalPanValueExpsCountedWith_some_eq run structs locals globals memory base top bytes access h
+    evalPanValueFfiClockLeaf context primitive handler structs base top bytes clock
+      locals globals memory ffi program access contracts mh := by
+  have hs : ∀ e, evalPanValueExpWith (some run) structs locals globals memory base top bytes e
+      access = evalPanValueExpWith none structs locals globals memory base top bytes e access :=
+    fun e => by simp [evalPanValueExpWith, h]
+  have hl : ∀ es, evalPanValueExpsWith (some run) structs locals globals memory base top bytes es
+      access = evalPanValueExpsWith none structs locals globals memory base top bytes es access :=
+    fun es => by
+      simpa [evalPanValueExpsWith] using
+        evalPanValueExpsWith_some_eq run structs locals globals memory base top bytes access h es
   cases program
   case assign kind name value =>
-    cases kind <;> simp only [evalPanValueFfiClockLeafWith, evalPanValueFfiClockLeaf,
-      evalPanValueFfiProgSteps, panValueAssignLocalResult, panValueAssignGlobalResult, hs, evalPanValueExpCountedWith_none]
+    cases kind <;> simp only [evalPanValueFfiClockLeaf,
+      evalPanValueFfiLeafControl, panValueAssignLocalResult, panValueAssignGlobalResult, hs]
   all_goals
-    simp only [evalPanValueFfiClockLeafWith, evalPanValueFfiClockLeaf,
-      evalPanValueFfiProgSteps, panValuePrimitiveResult, panValueStoreResult, panValueStore32Result, panValueStoreByteResult,
-      panValueFfiExtCallSteps, panValueReturnResult, panValueRaiseResult,
-      panValueShMemLoadResult, panValueShMemStoreResult, hs, hl,
-      evalPanValueExpCountedWith_none, evalPanValueExpsCountedWith_none]
-  all_goals rfl
+    simp only [evalPanValueFfiClockLeaf,
+      evalPanValueFfiLeafControl, panValuePrimitiveResult, panValueStoreResult, panValueStore32Result, panValueStoreByteResult,
+      panValueFfiExtCallResult, panValueReturnResult, panValueRaiseResult,
+      panValueShMemLoadResult, panValueShMemStoreResult, hs, hl]
 
 
 /-! The functions-list evaluator below is compatibility infrastructure, not a
@@ -447,7 +452,7 @@ mutual
           pure (.control (.normal locals globals memory ffi), decPanClock clock)
     | _fuel + 1, locals, globals, memory, ffi, clock, program, memoryAccess, contracts,
         memoryHandler =>
-        evalPanValueFfiClockLeaf context primitive handler structs functions
+        evalPanValueFfiClockLeaf context primitive handler structs
           baseAddress topAddress bytesInWord clock locals globals memory ffi program
           (memoryAccess := memoryAccess) (contracts := contracts)
           (memoryHandler := memoryHandler)
@@ -711,10 +716,10 @@ mutual
           (memoryHandler := memoryHandler) (evaluator := evaluator)
     | _fuel + 1, locals, globals, memory, ffi, clock,
         .raise exception expression, memoryAccess, _contracts, _memoryHandler, evaluator =>
-        match evalPanValueExpCountedWith evaluator structs locals globals memory baseAddress topAddress
+        match evalPanValueExpWith evaluator structs locals globals memory baseAddress topAddress
             bytesInWord expression memoryAccess with
         | none => pure (.control (.error locals globals memory ffi), clock)
-        | some (value, _) =>
+        | some value =>
             match exceptionShapes exception with
             | some shape =>
                 if panShapeMatches (panValueShape structs value) shape &&
@@ -756,7 +761,7 @@ mutual
         else pure (.control (.normal locals globals memory ffi), decPanClock clock)
     | _fuel + 1, locals, globals, memory, ffi, clock, program, memoryAccess, contracts,
         memoryHandler, evaluator =>
-        evalPanValueFfiClockLeafWith context primitive handler structs []
+        evalPanValueFfiClockLeaf context primitive handler structs
           baseAddress topAddress bytesInWord clock locals globals memory ffi program
           memoryAccess contracts memoryHandler evaluator
     termination_by fuel _ _ _ _ _ _ _ _ _ _ => fuel
@@ -798,12 +803,6 @@ theorem evalPanValueFfiClockCode_route_eq
         evalPanValueExp structs locals globals memory base top bytes e access := by
     intro locals globals memory e
     simpa [evalPanValueExpWith] using h locals globals memory e
-  have hcount : ∀ locals globals memory e,
-      evalPanValueExpCountedWith (some run) structs locals globals memory base top bytes e access =
-        evalPanValueExpCounted structs locals globals memory base top bytes e access := by
-    intro locals globals memory e
-    exact evalPanValueExpCountedWith_some_eq run structs locals globals memory base top bytes access
-      (h locals globals memory) e
   have hlist : ∀ locals globals memory es,
       evalPanValueExpsWith (some run) structs locals globals memory base top bytes es access =
         evalPanValueExps structs locals globals memory base top bytes es access := by
@@ -811,12 +810,13 @@ theorem evalPanValueFfiClockCode_route_eq
     exact evalPanValueExpsWith_some_eq run structs locals globals memory base top bytes access
       (h locals globals memory) es
   have hleaf : ∀ locals globals memory ffi clock program,
-      evalPanValueFfiClockLeafWith context primitive handler structs [] base top bytes clock
+      evalPanValueFfiClockLeaf context primitive handler structs base top bytes clock
         locals globals memory ffi program access contracts mh (some run) =
-      evalPanValueFfiClockLeafWith context primitive handler structs [] base top bytes clock
+      evalPanValueFfiClockLeaf context primitive handler structs base top bytes clock
         locals globals memory ffi program access contracts mh none := by
     intro locals globals memory ffi clock program
-    simpa using evalPanValueFfiClockLeafWith_some_eq context primitive handler structs []
+    exact
+      evalPanValueFfiClockLeaf_some_eq context primitive handler structs
       base top bytes clock locals globals memory ffi program access contracts mh run
       (h locals globals memory)
   intro fuel
@@ -833,8 +833,8 @@ theorem evalPanValueFfiClockCode_route_eq
       simp only [evalPanValueFfiClockCodeDecCall, ih.1, ih.2.2]
     · intro locals globals memory ffi clock program
       cases program <;> simp only [evalPanValueFfiClockCodeProg, panValueDecAcceptedValue,
-        panValueIteConditionValue, evalPanValueExpWith_none, hsingle, hcount,
-        evalPanValueExpCountedWith_none, ih.1, ih.2.1, ih.2.2, hleaf]
+        panValueIteConditionValue, evalPanValueExpWith_none, hsingle,
+        ih.1, ih.2.1, ih.2.2, hleaf]
 
 /-! General source Call exception-dispatch step.  The callee body, argument
 values, return shape, exception payload, and handler program are all

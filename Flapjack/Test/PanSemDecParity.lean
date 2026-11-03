@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 # Parity for the Pancake `Dec` equation
@@ -67,8 +67,8 @@ theorem dec_ok_eq :
   unfold decEvaluate decOkOutcome
   rw [panSemEvaluateCodeStateWithFuel_dec]
   simp [panSemEvaluateCodeStateWithFuel, evalPanValueFfiClockCodeProg,
-    evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueAssignLocalResult,
-    evalPanValueExpCounted,
+    evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueAssignLocalResult,
+    evalPanValueExpWith,
     decState, evalPanValueExp, panValueAssignmentValid, panValueShape,
     panShapeMatches, updatePanValueMap, panValueFfiClockRestoreLocal,
     restorePanValueFfiLocal, decBodyLocals, decRestoredLocals]

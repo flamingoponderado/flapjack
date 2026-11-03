@@ -1,5 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiSemantics
+import Flapjack.Test.PanValueFfiCore
 
 /-!
 Direct regression for the exact source `PanSemExactState` `Call` error
@@ -521,9 +521,9 @@ theorem callInvalidReturnShape_eq :
           invalidReturnCode]
       omega)
     (by simp [badReturnShapeState, invalidReturnCode, evalPanValueFfiClockCodeProg,
-      evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueReturnResult,
-      evalPanValueExpCounted, evalPanValueExp, panValuePayloadWithinLimit,
-      panValuePayloadSizeFuel, panValueExpStepCost, decPanClock,
+      evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueReturnResult,
+      evalPanValueExpWith, evalPanValueExp, panValuePayloadWithinLimit,
+      panValuePayloadSizeFuel, decPanClock,
       panSemCodeEvaluateFuel, panSemProgFuel, panSemCodeBodyFuel,
       panSemExpListFuel, panSemExpFuel, panSemCallInfoFuel])
     (by simp [badReturnShapeState, invalidReturnCode, panValueShape, panShapeMatches])

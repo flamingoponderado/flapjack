@@ -87,65 +87,6 @@ theorem evalPanValueFfiClockProg_while_zero_timeout
   simp [evalPanValueFfiClockProg, panValueIteConditionValue, hcondition, hconditionNonzero,
     panValueFfiClockTimeout]
 
-theorem evalPanValueFfiClockLeaf_clock
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
-    (baseAddress topAddress bytesInWord : α)
-    (_fuel : Nat) (locals globals : VarName → Option (PanValue α))
-    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
-    (program : Prog α) (clockValue : Nat)
-    (memoryAccess : Option (PanValueMemoryAccess α) := none)
-    (contracts : Option PanValueCallContracts := none) :
-    (evalPanValueFfiClockLeaf context primitive handler structs functions
-      baseAddress topAddress bytesInWord clockValue locals globals memory ffi
-      program (memoryAccess := memoryAccess) (contracts := contracts)).map Prod.snd =
-      (evalPanValueFfiProgSteps context primitive handler structs functions
-        baseAddress topAddress bytesInWord 1 locals globals memory ffi program
-        (memoryAccess := memoryAccess) (contracts := contracts)).map
-        (fun _ => clockValue) := by
-  simp [evalPanValueFfiClockLeaf, Function.comp_def]
-
-/-! The leaf adapter also preserves the terminal FFI branch exactly.  This is
-    the source-side counterpart of the \`panSem\` ExtCall/shared-memory
-    \`FinalFFI\` equations (cakeml/pancake/semantics/panSemScript.sml:716-730):
-    the stepped evaluator supplies the complete post-state and event, while
-    the clocked leaf only attaches the unchanged remaining clock. -/
-theorem evalPanValueFfiClockLeaf_finalFfi
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
-    (baseAddress topAddress bytesInWord : α)
-    (clock : Nat) (locals globals : VarName → Option (PanValue α))
-    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
-    (program : Prog α) (finalLocals finalGlobals : VarName → Option (PanValue α))
-    (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ)
-    (event : FfiFinalEvent) (steps : Nat)
-    (memoryAccess : Option (PanValueMemoryAccess α) := none)
-    (contracts : Option PanValueCallContracts := none)
-    (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
-    (hsteps : evalPanValueFfiProgSteps context primitive handler structs functions
-      baseAddress topAddress bytesInWord 1 locals globals memory ffi program
-      (memoryAccess := memoryAccess) (contracts := contracts)
-      (memoryHandler := memoryHandler) =
-      some (.finalFfi finalLocals finalGlobals finalMemory finalFfi event, steps)) :
-    evalPanValueFfiClockLeaf context primitive handler structs functions
-      baseAddress topAddress bytesInWord clock locals globals memory ffi program
-      (memoryAccess := memoryAccess) (contracts := contracts)
-      (memoryHandler := memoryHandler) =
-      some (.control (.finalFfi finalLocals finalGlobals finalMemory finalFfi event), clock) := by
-  simp [evalPanValueFfiClockLeaf, hsteps]
-
 /-! A normal first component passes its complete state and remaining clock to
 the second component.  This is the clocked counterpart of the sequencing rule
 used by the source-to-Loop and Loop-to-Word simulation proofs. -/
@@ -624,48 +565,6 @@ theorem evalPanValueFfiClockProg_call_timeout
       (.call info function arguments) =
       some (.timeout nextLocals nextGlobals nextMemory nextFfi, callClock) := by
   simp [evalPanValueFfiClockProg, hcall]
-
-/-! This is the direct `ExtCall` branch of Cake's `pc_compile_correct`.
-    The source leaf evaluator's terminal FFI event crosses the clocked program
-    boundary unchanged, with only the remaining clock attached. -/
-theorem evalPanValueFfiClockProg_extCall_finalFfi
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
-    (baseAddress topAddress bytesInWord : α) (_fuel clock : Nat)
-    (locals globals : VarName → Option (PanValue α))
-    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
-    (function : FunName) (configuration configurationLength array arrayLength : Exp α)
-    (finalLocals finalGlobals : VarName → Option (PanValue α))
-    (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ)
-    (event : FfiFinalEvent) (steps : Nat)
-    (memoryAccess : Option (PanValueMemoryAccess α) := none)
-    (contracts : Option PanValueCallContracts := none)
-    (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
-    (hsteps : evalPanValueFfiProgSteps context primitive handler structs functions
-      baseAddress topAddress bytesInWord 1 locals globals memory ffi
-      (.extCall function configuration configurationLength array arrayLength)
-      (memoryAccess := memoryAccess) (contracts := contracts)
-      (memoryHandler := memoryHandler) =
-      some (.finalFfi finalLocals finalGlobals finalMemory finalFfi event, steps)) :
-    evalPanValueFfiClockProg context primitive handler structs functions
-      baseAddress topAddress bytesInWord (_fuel + 1) locals globals memory ffi clock
-      (.extCall function configuration configurationLength array arrayLength)
-      (memoryAccess := memoryAccess) (contracts := contracts)
-      (memoryHandler := memoryHandler) =
-      some (.control (.finalFfi finalLocals finalGlobals finalMemory finalFfi event), clock) := by
-  simpa [evalPanValueFfiClockProg] using
-    (evalPanValueFfiClockLeaf_finalFfi context primitive handler structs functions
-      baseAddress topAddress bytesInWord clock locals globals memory ffi
-      (.extCall function configuration configurationLength array arrayLength)
-      finalLocals finalGlobals finalMemory finalFfi event steps
-      (memoryAccess := memoryAccess) (contracts := contracts)
-      (memoryHandler := memoryHandler) hsteps)
 
 /-! This is the standalone `Call_Ret_Return` branch of Cake's
     `pc_compile_correct`: with no destination or handler, a valid returned
@@ -1582,8 +1481,7 @@ theorem evalPanValueFfiClock_clock_le (context : PanValueFfiContext α) (primiti
     intro _fuel locals globals memory ffi clock program memoryAccess contracts memoryHandler hdec hseq hite hcall hdecCall hwhile htick outcome resultClock hrun
     simp only [evalPanValueFfiClockProg, hdec, hseq, hite, hcall, hdecCall, hwhile, htick, evalPanValueFfiClockLeaf, Function.comp_def] at hrun
     rw [Option.map_eq_some_iff] at hrun
-    obtain ⟨pair, _, heq⟩ := hrun
-    obtain ⟨r, s⟩ := pair
+    obtain ⟨_, _, heq⟩ := hrun
     injection heq with _ h2
     omega
 

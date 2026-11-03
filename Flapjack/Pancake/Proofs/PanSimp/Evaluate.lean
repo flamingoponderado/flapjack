@@ -57,19 +57,18 @@ theorem evalPanValueFfiClockLeaf_skip
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
     (baseAddress topAddress bytesInWord : α)
     (clock : Nat) (locals globals : VarName → Option (PanValue α))
     (memory : α → Option (PanValue α)) (ffi : FfiState σ)
     (memoryAccess : Option (PanValueMemoryAccess α) := none)
     (contracts : Option PanValueCallContracts := none)
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none) :
-    evalPanValueFfiClockLeaf context primitive handler structs functions
+    evalPanValueFfiClockLeaf context primitive handler structs
         baseAddress topAddress bytesInWord clock locals globals memory ffi
         (.skip : Prog α) (memoryAccess := memoryAccess) (contracts := contracts)
         (memoryHandler := memoryHandler) =
       some (.control (.normal locals globals memory ffi), clock) := by
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 /-- Clocked counterpart of Cake's `evaluate_seq_skip`
     (`pan_simpProofScript.sml:46-50`): a trailing `Skip` is absorbed. -/
@@ -822,7 +821,6 @@ theorem evalPanValueFfiClockLeaf_return_var
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
     (baseAddress topAddress bytesInWord : α)
     (clock : Nat) (locals globals : VarName → Option (PanValue α))
     (memory : α → Option (PanValue α)) (ffi : FfiState σ)
@@ -831,12 +829,12 @@ theorem evalPanValueFfiClockLeaf_return_var
     (mh : Option (PanValueMemoryFfiHandler α σ))
     (hlookup : locals name = some value)
     (hwithin : panValuePayloadWithinLimit structs value = true) :
-    evalPanValueFfiClockLeaf context primitive handler structs functions
+    evalPanValueFfiClockLeaf context primitive handler structs
         baseAddress topAddress bytesInWord clock locals globals memory ffi
         (.return (.var .local name)) ma c mh =
       some (.control (.returned (fun _ => none) globals memory ffi [value]), clock) := by
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueReturnResult,
-    evalPanValueExpCounted, evalPanValueExp, hlookup, hwithin]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueReturnResult,
+    evalPanValueExpWith, evalPanValueExp, hlookup, hwithin]
 
 /-- Fusion of the `pan_simp` tail-call pattern.  When a call whose return value
     is stored in local `returnName` returns normally, the sequence
@@ -881,7 +879,7 @@ theorem evalPanValueFfiClockProg_seq_call_return_returned
   simp only [evalPanValueFfiClockProg]
   rw [hcall]
   simp only [Option.bind_eq_bind, Option.bind_some]
-  exact evalPanValueFfiClockLeaf_return_var context primitive handler structs functions
+  exact evalPanValueFfiClockLeaf_return_var context primitive handler structs
     baseAddress topAddress bytesInWord callClock assignedLocals assignedGlobals
     nextMemory nextFfi returnedName value ma c mh hlookup hwithin
 
@@ -972,7 +970,7 @@ theorem evalPanValueFfiClockProg_seq_call_return_tail_call
       assignedLocals finalGlobals memoryAccess hargs hlookup hbind hclock hbody hwithin
       hassign]
     simp only [Option.bind_eq_bind, Option.bind_some]
-    exact evalPanValueFfiClockLeaf_return_var context primitive handler structs functions
+    exact evalPanValueFfiClockLeaf_return_var context primitive handler structs
       baseAddress topAddress bytesInWord finalClock assignedLocals finalGlobals
       finalMemory finalFfi returnName value memoryAccess none none hlookupReturn hpayload
   rw [hL, hR]
@@ -1483,18 +1481,17 @@ theorem evalPanValueFfiClockLeaf_annot
     (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ)
     (structs : StructContext)
-    (functions : List (FunName × List VarName × Prog α))
     (baseAddress topAddress bytesInWord : α)
     (clock : Nat) (locals globals : VarName → Option (PanValue α))
     (memory : α → Option (PanValue α)) (ffi : FfiState σ)
     (tag text : String)
     (ma : Option (PanValueMemoryAccess α)) (c : Option PanValueCallContracts)
     (mh : Option (PanValueMemoryFfiHandler α σ)) :
-    evalPanValueFfiClockLeaf context primitive handler structs functions
+    evalPanValueFfiClockLeaf context primitive handler structs
         baseAddress topAddress bytesInWord clock locals globals memory ffi
         (.annot tag text) ma c mh =
       some (.control (.normal locals globals memory ffi), clock) := by
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps]
+  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 theorem evalPanValueFfiClockProg_annot_some
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -3622,33 +3619,11 @@ theorem evalPanValueFfiClockProg_decCall_finalFfi_some_progCallFuel
 
 /-! ## Leaf success equation
 
-Every constructor that is neither recursive nor `tick`/`annot` is dispatched by
-`evalPanValueFfiClockProg` to `evalPanValueFfiClockLeaf`, which runs the
-single-step evaluator `evalPanValueFfiProgSteps` at fuel `1` and wraps the
-control result at the unchanged clock.  The predicate below records exactly
-that class, and the success equation exposes the single-step evaluation as an
-explicit premise. -/
-
-inductive PanValueFfiLeafProg : Prog α → Prop
-  | skip : PanValueFfiLeafProg (.skip : Prog α)
-  | assign (kind : VarKind) (name : VarName) (value : Exp α) :
-      PanValueFfiLeafProg (.assign kind name value)
-  | primitive (name : VarName) (operator : PrimOp) (args : List (Exp α)) :
-      PanValueFfiLeafProg (.primitive name operator args)
-  | store (address value : Exp α) : PanValueFfiLeafProg (.store address value)
-  | store32 (address value : Exp α) : PanValueFfiLeafProg (.store32 address value)
-  | storeByte (address value : Exp α) : PanValueFfiLeafProg (.storeByte address value)
-  | break : PanValueFfiLeafProg (.break : Prog α)
-  | continue : PanValueFfiLeafProg (.continue : Prog α)
-  | extCall (function : FunName) (configuration configurationLength array arrayLength : Exp α) :
-      PanValueFfiLeafProg (.extCall function configuration configurationLength array arrayLength)
-  | raise (exception : ExceptionId) (value : Exp α) :
-      PanValueFfiLeafProg (.raise exception value)
-  | return (value : Exp α) : PanValueFfiLeafProg (.return value)
-  | shMemLoad (size : OpSize) (kind : VarKind) (name : VarName) (address : Exp α) :
-      PanValueFfiLeafProg (.shMemLoad size kind name address)
-  | shMemStore (size : OpSize) (address value : Exp α) :
-      PanValueFfiLeafProg (.shMemStore size address value)
+Every constructor that is neither recursive nor `tick` is dispatched by
+`evalPanValueFfiClockProg` to `evalPanValueFfiClockLeaf`, which returns the
+control result of `evalPanValueFfiLeafControl` at the unchanged clock.  The
+predicate `PanValueFfiLeafProg` records exactly that class, and the success
+equation exposes the leaf's control result as an explicit premise. -/
 
 theorem evalPanValueFfiClockProg_leaf_some
     (context : PanValueFfiContext α)
@@ -3663,19 +3638,19 @@ theorem evalPanValueFfiClockProg_leaf_some
     (ma : Option (PanValueMemoryAccess α)) (c : Option PanValueCallContracts)
     (mh : Option (PanValueMemoryFfiHandler α σ))
     (hleaf : PanValueFfiLeafProg program)
-    (result : PanValueFfiControlResult α σ) (steps : Nat)
-    (hsteps : evalPanValueFfiProgSteps context primitive handler structs functions
-        baseAddress topAddress bytesInWord 1 locals globals memory ffi program
-        (memoryAccess := ma) (contracts := c) (memoryHandler := mh) =
-      some (result, steps)) :
+    (result : PanValueFfiControlResult α σ)
+    (hcontrol : evalPanValueFfiLeafControl context primitive handler structs
+        baseAddress topAddress bytesInWord locals globals memory ffi program ma c mh =
+      some result) :
     evalPanValueFfiClockProg context primitive handler structs functions
         baseAddress topAddress bytesInWord (fuel + 1) locals globals memory ffi clock
         program ma c mh = some (.control result, clock) := by
   cases hleaf <;>
-    simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, hsteps]
+    simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
+      hcontrol]
 
-/-- Fuel adequacy for the leaf fragment: once the step evaluator succeeds at
-    unit fuel, the clocked evaluator returns the same control result at any
+/-- Fuel adequacy for the leaf fragment: once the leaf's control result
+    (`evalPanValueFfiLeafControl`) is known, the clocked evaluator returns it at any
     fuel dominating `progSize program`.  This turns the `fuel + 1` leaf equation
     into a `progSize`-indexed statement. -/
 theorem evalPanValueFfiClockProg_leaf_some_progSize
@@ -3691,11 +3666,10 @@ theorem evalPanValueFfiClockProg_leaf_some_progSize
     (ma : Option (PanValueMemoryAccess α)) (c : Option PanValueCallContracts)
     (mh : Option (PanValueMemoryFfiHandler α σ))
     (hleaf : PanValueFfiLeafProg program)
-    (result : PanValueFfiControlResult α σ) (steps : Nat)
-    (hsteps : evalPanValueFfiProgSteps context primitive handler structs functions
-        baseAddress topAddress bytesInWord 1 locals globals memory ffi program
-        (memoryAccess := ma) (contracts := c) (memoryHandler := mh) =
-      some (result, steps))
+    (result : PanValueFfiControlResult α σ)
+    (hcontrol : evalPanValueFfiLeafControl context primitive handler structs
+        baseAddress topAddress bytesInWord locals globals memory ffi program ma c mh =
+      some result)
     (hfuel : progSize program ≤ fuel) :
     evalPanValueFfiClockProg context primitive handler structs functions
         baseAddress topAddress bytesInWord fuel locals globals memory ffi clock
@@ -3706,7 +3680,7 @@ theorem evalPanValueFfiClockProg_leaf_some_progSize
   | succ k =>
       exact evalPanValueFfiClockProg_leaf_some context primitive handler structs
         functions baseAddress topAddress bytesInWord k locals globals memory ffi
-        clock program ma c mh hleaf result steps hsteps
+        clock program ma c mh hleaf result hcontrol
 
 /-- Leaf adequacy at the call-aware budget `progCallFuel`, which dominates the
     structural size of every leaf program. -/
@@ -3723,18 +3697,17 @@ theorem evalPanValueFfiClockProg_leaf_some_progCallFuel
     (ma : Option (PanValueMemoryAccess α)) (c : Option PanValueCallContracts)
     (mh : Option (PanValueMemoryFfiHandler α σ))
     (hleaf : PanValueFfiLeafProg program)
-    (result : PanValueFfiControlResult α σ) (steps : Nat)
-    (hsteps : evalPanValueFfiProgSteps context primitive handler structs functions
-        baseAddress topAddress bytesInWord 1 locals globals memory ffi program
-        (memoryAccess := ma) (contracts := c) (memoryHandler := mh) =
-      some (result, steps)) :
+    (result : PanValueFfiControlResult α σ)
+    (hcontrol : evalPanValueFfiLeafControl context primitive handler structs
+        baseAddress topAddress bytesInWord locals globals memory ffi program ma c mh =
+      some result) :
     evalPanValueFfiClockProg context primitive handler structs functions
         baseAddress topAddress bytesInWord (progCallFuel callBudget program)
         locals globals memory ffi clock program ma c mh =
       some (.control result, clock) :=
   evalPanValueFfiClockProg_leaf_some_progSize context primitive handler structs
     functions baseAddress topAddress bytesInWord program (progCallFuel callBudget program)
-    locals globals memory ffi clock ma c mh hleaf result steps hsteps
+    locals globals memory ffi clock ma c mh hleaf result hcontrol
     (progSize_le_progCallFuel callBudget program)
 
 
@@ -3777,7 +3750,7 @@ theorem evalPanValueFfiClockProg_normalProg_some_progCallFuel
       exact evalPanValueFfiClockProg_leaf_some_progCallFuel context primitive handler
         structs functions baseAddress topAddress bytesInWord callBudget (.skip : Prog α)
         locals globals memory ffi clock ma c mh PanValueFfiLeafProg.skip
-        (.normal locals globals memory ffi) 1 (by simp [evalPanValueFfiProgSteps])
+        (.normal locals globals memory ffi) (by simp [evalPanValueFfiLeafControl])
   | annot tag text =>
       simpa [progCallFuel] using
         (evalPanValueFfiClockProg_annot_some context primitive handler structs
@@ -5184,7 +5157,7 @@ theorem PanValueFfiClockNormalAdequateProg_dec
       (.control (.normal finalLocals finalGlobals finalMemory finalFfi)) finalClock
       hvalueEval hmatch hbodyEval⟩
 
-/-- A leaf program whose per-state stepped evaluation always returns a normal
+/-- A leaf program whose per-state leaf evaluation always returns a normal
     outcome belongs to the normal-adequate fragment at the call-aware budget.
     This covers assignments and memory stores, whose clocked evaluation spends
     no ticks (matching Cake's `evaluate`, where only ticks, calls and while
@@ -5204,21 +5177,20 @@ theorem PanValueFfiClockNormalAdequateProg_leaf
     (hnormal : ∀ (locals globals : VarName → Option (PanValue α))
         (memory : α → Option (PanValue α)) (ffi : FfiState σ),
         ∃ (finalLocals finalGlobals : VarName → Option (PanValue α))
-          (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ) (steps : Nat),
-          evalPanValueFfiProgSteps context primitive handler structs functions
-            baseAddress topAddress bytesInWord 1 locals globals memory ffi program
-            (memoryAccess := ma) (contracts := c) (memoryHandler := mh) =
-          some (.normal finalLocals finalGlobals finalMemory finalFfi, steps)) :
+          (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ),
+          evalPanValueFfiLeafControl context primitive handler structs
+            baseAddress topAddress bytesInWord locals globals memory ffi program ma c mh =
+          some (.normal finalLocals finalGlobals finalMemory finalFfi)) :
     PanValueFfiClockNormalAdequateProg context primitive handler structs functions
       baseAddress topAddress bytesInWord callBudget ma c mh program := by
   intro locals globals memory ffi clock
-  obtain ⟨finalLocals, finalGlobals, finalMemory, finalFfi, steps, hsteps⟩ :=
+  obtain ⟨finalLocals, finalGlobals, finalMemory, finalFfi, hcontrol⟩ :=
     hnormal locals globals memory ffi
   exact ⟨finalLocals, finalGlobals, finalMemory, finalFfi, clock,
     evalPanValueFfiClockProg_leaf_some_progCallFuel context primitive handler structs
       functions baseAddress topAddress bytesInWord callBudget program locals globals
       memory ffi clock ma c mh hleaf
-      (.normal finalLocals finalGlobals finalMemory finalFfi) steps hsteps⟩
+      (.normal finalLocals finalGlobals finalMemory finalFfi) hcontrol⟩
 
 /-- The clock-indexed variant of `PanValueFfiClockNormalAdequateProg`: a program
     is normal-adequate from a specific initial clock.  Calls require a nonzero
@@ -6106,21 +6078,20 @@ theorem PanValueFfiClockNormalAdequateProgFromFloor_leaf
     (hnormal : ∀ (locals globals : VarName → Option (PanValue α))
         (memory : α → Option (PanValue α)) (ffi : FfiState σ),
         ∃ (finalLocals finalGlobals : VarName → Option (PanValue α))
-          (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ) (steps : Nat),
-          evalPanValueFfiProgSteps context primitive handler structs functions
-            baseAddress topAddress bytesInWord 1 locals globals memory ffi program
-            (memoryAccess := ma) (contracts := c) (memoryHandler := mh) =
-          some (.normal finalLocals finalGlobals finalMemory finalFfi, steps)) :
+          (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ),
+          evalPanValueFfiLeafControl context primitive handler structs
+            baseAddress topAddress bytesInWord locals globals memory ffi program ma c mh =
+          some (.normal finalLocals finalGlobals finalMemory finalFfi)) :
     PanValueFfiClockNormalAdequateProgFromFloor lo lo context primitive handler structs
       functions baseAddress topAddress bytesInWord callBudget ma c mh program := by
   intro clock hclock locals globals memory ffi
-  obtain ⟨finalLocals, finalGlobals, finalMemory, finalFfi, steps, hsteps⟩ :=
+  obtain ⟨finalLocals, finalGlobals, finalMemory, finalFfi, hcontrol⟩ :=
     hnormal locals globals memory ffi
   exact ⟨finalLocals, finalGlobals, finalMemory, finalFfi, clock,
     evalPanValueFfiClockProg_leaf_some_progCallFuel context primitive handler structs
       functions baseAddress topAddress bytesInWord callBudget program locals globals memory
-      ffi clock ma c mh hleaf (.normal finalLocals finalGlobals finalMemory finalFfi) steps
-      hsteps,
+      ffi clock ma c mh hleaf (.normal finalLocals finalGlobals finalMemory finalFfi)
+      hcontrol,
     hclock⟩
 
 /-- A lower-bounded declaration: the value is evaluated at the input clock and
@@ -6726,7 +6697,7 @@ theorem PanValueFfiClockNormalAdequateProgFromFloor_decCall_returned
       finalClock ma c mh hcallEval (hmatch value) hbodyEvalMax,
     hbodyFloor⟩
 
-/-- A lower-bounded adequate leaf: a program in the leaf fragment whose stepped
+/-- A lower-bounded adequate leaf: a program in the leaf fragment whose leaf
     evaluation returns a normal outcome is lower-bounded normal-adequate for any
     bound, because leaves spend no clock ticks. -/
 theorem PanValueFfiClockNormalAdequateProgFrom_leaf
@@ -6746,21 +6717,20 @@ theorem PanValueFfiClockNormalAdequateProgFrom_leaf
     (hnormal : ∀ (locals globals : VarName → Option (PanValue α))
         (memory : α → Option (PanValue α)) (ffi : FfiState σ),
         ∃ (finalLocals finalGlobals : VarName → Option (PanValue α))
-          (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ) (steps : Nat),
-          evalPanValueFfiProgSteps context primitive handler structs functions
-            baseAddress topAddress bytesInWord 1 locals globals memory ffi program
-            (memoryAccess := ma) (contracts := c) (memoryHandler := mh) =
-          some (.normal finalLocals finalGlobals finalMemory finalFfi, steps)) :
+          (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ),
+          evalPanValueFfiLeafControl context primitive handler structs
+            baseAddress topAddress bytesInWord locals globals memory ffi program ma c mh =
+          some (.normal finalLocals finalGlobals finalMemory finalFfi)) :
     PanValueFfiClockNormalAdequateProgFrom lo context primitive handler structs
       functions baseAddress topAddress bytesInWord callBudget ma c mh program := by
   intro clock _ locals globals memory ffi
-  obtain ⟨finalLocals, finalGlobals, finalMemory, finalFfi, steps, hsteps⟩ :=
+  obtain ⟨finalLocals, finalGlobals, finalMemory, finalFfi, hcontrol⟩ :=
     hnormal locals globals memory ffi
   exact ⟨finalLocals, finalGlobals, finalMemory, finalFfi, clock,
     evalPanValueFfiClockProg_leaf_some_progCallFuel context primitive handler structs
       functions baseAddress topAddress bytesInWord callBudget program locals globals memory
-      ffi clock ma c mh hleaf (.normal finalLocals finalGlobals finalMemory finalFfi) steps
-      hsteps⟩
+      ffi clock ma c mh hleaf (.normal finalLocals finalGlobals finalMemory finalFfi)
+      hcontrol⟩
 
 /-- A lower-bounded adequate zero-condition `While` with a floor: the loop exits
     immediately and returns the input clock unchanged, so any bound accepted on

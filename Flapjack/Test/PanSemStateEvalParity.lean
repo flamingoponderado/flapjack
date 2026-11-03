@@ -136,24 +136,6 @@ private def isErrorControlResult
 def littleEndianState : PanSemState Word64 Unit := sourceState false true true
 def bigEndianState : PanSemState Word64 Unit := sourceState true true true
 
-/- Counted field expressions must use the caller's state-owned access, just as
-   counted expressions and argument lists do. -/
-private def countedByteField (state : PanSemState Word64 Unit) :=
-  evalPanValueFieldsCounted state.structs state.locals state.globals state.memory
-    state.baseAddress state.topAddress panSemBitVec64BytesInWord
-    [("byte", .loadByte (.const 0))]
-    (memoryAccess := some (panSemBitVec64MemoryAccess state))
-
-#guard (countedByteField littleEndianState).map (fun result =>
-  match result.1 with
-  | [("byte", .word value)] => value == (0x88 : Word64)
-  | _ => false) == some true
-#guard (countedByteField bigEndianState).map (fun result =>
-  match result.1 with
-  | [("byte", .word value)] => value == (0x11 : Word64)
-  | _ => false) == some true
-#guard (countedByteField (sourceState false false true)).isNone
-
 /- `pan_sem_state_eval_probe.out` also evaluates the enclosing NStruct. -/
 private def namedByteState (state : PanSemState Word64 Unit) : PanSemState Word64 Unit :=
   { state with structs := [("Pair", { fields := [("f", .one)], size := 1 })] }
@@ -516,6 +498,7 @@ private def mem4 : RiscV.Word 4 → HolWordLab 4 := fun _ => .word 1
 private abbrev dom4 : RiscV.Word 4 → Prop := fun address => address = 1
 
 #guard panMemLoadByteHOL (width := 4) mem4 dom4 false 1 == some (UInt8.ofNat 0)
+
 example : panMemLoadByteHOL (width := 4) mem4 dom4 false 1 =
     some (UInt8.ofNat 0) := by decide
 

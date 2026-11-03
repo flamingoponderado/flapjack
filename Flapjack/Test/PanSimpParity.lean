@@ -2,7 +2,6 @@ import Flapjack.Pancake.PanSimp
 import Flapjack.Pancake.Proofs.PanSimp
 import Flapjack.Pancake.Proofs.PanSimp.Evaluate
 import Flapjack.Pancake.PanGlobals
-import Flapjack.PanValueFfiEventMonotonicity
 import Flapjack.PanValueFfiClockShift
 import Flapjack.PanValueFfiClockCorrectness
 
@@ -69,8 +68,7 @@ theorem clocked_while_body_same_matches_cake :
       cases fuel with
       | zero => simp [evalPanValueFfiClockProg]
       | succ fuel =>
-          simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-            evalPanValueFfiProgSteps])
+          simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl])
   exact hsame 2 1 (fun _ => none) (fun _ => none)
     (fun _ => none) evaluatorFfi none none none
 
@@ -133,8 +131,7 @@ theorem clocked_seq_first_congr_matches_cake :
     (fun _ _ => none) evaluatorHandler [] [] 0 0 8 1 1
     (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi
     .skip (.annot "tag" "text") .tick none none none
-  simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiProgSteps]
+  simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 theorem clocked_seq_second_congr_matches_cake :
     evalPanValueFfiClockProg evaluatorContext (fun _ _ => none)
@@ -151,8 +148,7 @@ theorem clocked_seq_second_congr_matches_cake :
   cases fuel with
   | zero => simp [evalPanValueFfiClockProg]
   | succ fuel =>
-      simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-        evalPanValueFfiProgSteps]
+      simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 /-! A common upper fuel restores the semantic equality after the explicit
     fixed-fuel gap witness: the transformed side succeeds at fuel 2, while
@@ -174,10 +170,8 @@ theorem clocked_seq_assoc_common_fuel_matches_cake :
     (.skip : Prog Nat) (.seq .skip (.seq .skip .skip))
     (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi 1
     none none none
-  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-      evalPanValueFfiProgSteps, seqAssoc]
-  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-      evalPanValueFfiProgSteps]
+  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, seqAssoc]
+  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
   · decide
   · decide
 
@@ -215,8 +209,8 @@ theorem clocked_seq_progCallFuel_composes :
     (fun _ _ => none) evaluatorHandler [] [] 0 0 8 7 (.skip : Prog Nat)
     (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi 1 none none none
     PanValueFfiLeafProg.skip
-    (.normal (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi) 1
-    (by simp [evalPanValueFfiProgSteps])
+    (.normal (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi)
+    (by simp [evalPanValueFfiLeafControl])
   have hfirst := evalPanValueFfiClockProg_fuel_mono evaluatorContext
     (fun _ _ => none) evaluatorHandler [] [] 0 0 8
     (fuel := progCallFuel 7 (.skip : Prog Nat))
@@ -939,9 +933,9 @@ example :
     (PanValueFfiLeafProg.store (.const 7) (.const 9))
     (by
       intro locals globals memory ffi
-      exact ⟨locals, globals, updatePanValueMemory memory 7 (.word 9), ffi, 3, by
-        simp [evalPanValueFfiProgSteps, panValueStoreResult, evalPanValueExpCounted,
-          evalPanValueExp, panValueExpStepCost, panValueStoreWithAccess,
+      exact ⟨locals, globals, updatePanValueMemory memory 7 (.word 9), ffi, by
+        simp [evalPanValueFfiLeafControl, panValueStoreResult,
+          evalPanValueExp, panValueStoreWithAccess,
           panValueFlatStoreWords, panValueFlatWords, panValueFlatWordsFuel,
           panValueFlatOffset, updatePanValueMemory]⟩)
 
@@ -1264,9 +1258,9 @@ example :
     (PanValueFfiLeafProg.store (.const 7) (.const 9))
     (by
       intro locals globals memory ffi
-      exact ⟨locals, globals, updatePanValueMemory memory 7 (.word 9), ffi, 3, by
-        simp [evalPanValueFfiProgSteps, panValueStoreResult, evalPanValueExpCounted,
-          evalPanValueExp, panValueExpStepCost, panValueStoreWithAccess,
+      exact ⟨locals, globals, updatePanValueMemory memory 7 (.word 9), ffi, by
+        simp [evalPanValueFfiLeafControl, panValueStoreResult,
+          evalPanValueExp, panValueStoreWithAccess,
           panValueFlatStoreWords, panValueFlatWords, panValueFlatWordsFuel,
           panValueFlatOffset, updatePanValueMemory]⟩)
 
@@ -1819,8 +1813,8 @@ theorem clocked_leaf_skip_matches_steps :
     evaluatorHandler [] [] 0 0 8 1 (fun _ => none) (fun _ => none)
     (fun _ => none) evaluatorFfi 1 (.skip : Prog Nat) none none none
     PanValueFfiLeafProg.skip
-    (.normal (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi) 1
-  simp [evalPanValueFfiProgSteps]
+    (.normal (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi)
+  simp [evalPanValueFfiLeafControl]
 
 /-- The while recursive branch: a nonzero condition and a `normal` body result
     iterate the loop from the body's final state and clock. -/
@@ -2036,8 +2030,7 @@ theorem clocked_seq_normal_exposes_components :
     (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi
     .tick .skip (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi 1
     none none none
-  simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-    evalPanValueFfiProgSteps]
+  simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
 
 theorem clocked_ret_to_tail_common_fuel_matches_cake :
     evalPanValueFfiClockProg evaluatorContext (fun _ _ => none)
@@ -2056,9 +2049,8 @@ theorem clocked_ret_to_tail_common_fuel_matches_cake :
     (fun _ => none) (fun _ => none) (fun _ => none) evaluatorFfi 2
     none none none
   · simp [retToTail, seqCallRet, evalPanValueFfiClockProg,
-      evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps]
-  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-      evalPanValueFfiProgSteps]
+      evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
   · decide
   · decide
 
@@ -2103,8 +2095,7 @@ theorem clocked_pan_simp_source_common_fuel_matches_cake :
     none none none
   · simp [panSimpProg, retToTail, seqAssoc, evalPanValueFfiClockProg]
   · simp [seqAssoc, evalPanValueFfiClockProg]
-  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-      evalPanValueFfiProgSteps]
+  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
   · decide
   · decide
   · decide
@@ -2127,8 +2118,7 @@ theorem clocked_pan_simp_source_result_common_fuel :
     none none none
   · simp [panSimpProg, retToTail, seqAssoc, evalPanValueFfiClockProg]
   · simp [seqAssoc, evalPanValueFfiClockProg]
-  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-      evalPanValueFfiProgSteps]
+  · simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
   · decide
   · decide
   · decide
@@ -2531,8 +2521,7 @@ example : PanValueFfiClockNormalAdequateProgFrom 1 evaluatorContext
       simp only [progCallFuel, PanValueFfiClockWhileExitsNormally]
       exact Or.inr (Or.inr ⟨5, by simp [evalPanValueExp], by decide, hclockNe,
         locals, globals, memory, ffi, decPanClock clock, by
-          simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-            evalPanValueFfiProgSteps]⟩))
+          simp [evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]⟩))
 
 /-! The fuel-indexed while-exit certificate underpinning the nonzero-condition
 `While` adequacy constructor. -/
@@ -2553,8 +2542,7 @@ example : PanValueFfiClockNormalAdequateProgFromFloor 0 0 evaluatorContext
   all_goals
     intro clock _ locals globals memory ffi
     exact ⟨locals, globals, memory, ffi, clock, by
-      simp [progCallFuel, evalPanValueFfiClockProg, evalPanValueFfiClockLeaf,
-        evalPanValueFfiProgSteps], by omega⟩
+      simp [progCallFuel, evalPanValueFfiClockProg, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl], by omega⟩
 
 /-! Discharging the explicit floor premise: an adequate (clock-unbounded)
     program has trivial floor `0`, the input bound can be raised, and a
@@ -2577,7 +2565,7 @@ example : PanValueFfiClockNormalAdequateProgFromFloor 0 0 evaluatorContext
     PanValueFfiLeafProg.skip
     (by
       intro locals globals memory ffi
-      exact ⟨locals, globals, memory, ffi, 1, by simp [evalPanValueFfiProgSteps]⟩)
+      exact ⟨locals, globals, memory, ffi, by simp [evalPanValueFfiLeafControl]⟩)
 
 example : PanValueFfiClockNormalAdequateProgFromFloor 0 0 evaluatorContext
     (fun _ _ => none) evaluatorHandler [] [] 0 0 8 7 none none none
@@ -2593,7 +2581,7 @@ example : PanValueFfiClockNormalAdequateProgFromFloor 0 0 evaluatorContext
       (.skip : Prog Nat) PanValueFfiLeafProg.skip
       (by
         intro locals globals memory ffi
-        exact ⟨locals, globals, memory, ffi, 1, by simp [evalPanValueFfiProgSteps]⟩)
+        exact ⟨locals, globals, memory, ffi, by simp [evalPanValueFfiLeafControl]⟩)
 
 example : PanValueFfiClockNormalAdequateProgFromFloor 0 0 evaluatorContext
     (fun _ _ => none) evaluatorHandler [] [] 0 0 8 7 none none none
@@ -2606,7 +2594,7 @@ example : PanValueFfiClockNormalAdequateProgFromFloor 0 0 evaluatorContext
       (.skip : Prog Nat) PanValueFfiLeafProg.skip
       (by
         intro locals globals memory ffi
-        exact ⟨locals, globals, memory, ffi, 1, by simp [evalPanValueFfiProgSteps]⟩)
+        exact ⟨locals, globals, memory, ffi, by simp [evalPanValueFfiLeafControl]⟩)
   exact PanValueFfiClockNormalAdequateProgFromFloor_ite 0 0 evaluatorContext
     (fun _ _ => none) evaluatorHandler [] [] 0 0 8 7 none none none (.const 5)
     (.skip : Prog Nat) (.skip : Prog Nat) (fun _ _ _ => ⟨5, by simp [evalPanValueExp]⟩)
@@ -2630,7 +2618,7 @@ example : PanValueFfiClockNormalAdequateProgFromFloor 1 0 evaluatorContext
       (.skip : Prog Nat) PanValueFfiLeafProg.skip
       (by
         intro locals globals memory ffi
-        exact ⟨locals, globals, memory, ffi, 1, by simp [evalPanValueFfiProgSteps]⟩)
+        exact ⟨locals, globals, memory, ffi, by simp [evalPanValueFfiLeafControl]⟩)
 
 /-- The inductive normal fragment enters the floor certificate at `floor = lo`. -/
 example : PanValueFfiClockNormalAdequateProgFromFloor 3 3 evaluatorContext
