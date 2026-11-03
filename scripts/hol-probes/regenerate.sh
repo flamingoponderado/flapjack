@@ -299,9 +299,17 @@ run_probe flat_props_evaluate_match_probeScript.sml flat_props_evaluate_match_pr
   evaluate_match_typed \
   "$cake_dir/compiler/backend/semantics/flatPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe clos_interp_review_probeScript.sml clos_interp_review_probe.out \
+  has_install_typed interp_el_typed interp_rev_typed interpreter_body_typed interpreter_typed compile_init_typed attach_interpreter_typed compile_prog_typed insert_interp_typed inc_compile_decs_typed \
+  "$cake_dir/compiler/backend/clos_interpScript.sml" "$cake_dir/compiler/backend"
+
+run_probe finite_map_empty_probeScript.sml finite_map_empty_probe.out \
+  fempty_typed flookup_empty_typed \
+  "$hol_dir/src/finite_maps/finite_mapScript.sml" "$hol_dir/src/finite_maps"
+
 run_probe flat_to_clos_relation_probeScript.sml flat_to_clos_relation_probe.out \
   findi_typed compile_typed compile_decs_typed compile_op_typed compile_arith_typed copy_str_typed copy_aw8_typed \
-  rules_typed induction_typed cases_typed state_rel_typed store_rel_typed inc_compile_typed install_rel_typed exc_rel_typed result_rel_typed compile_correct_typed \
+  rules_typed induction_typed cases_typed state_rel_typed store_rel_typed inc_compile_typed install_rel_typed exc_rel_typed result_rel_typed clos_semantics_typed compile_semantics_prime_typed install_rel_unprimed_typed compile_semantics_typed compile_correct_typed \
   "$cake_dir/compiler/backend/proofs/flat_to_closProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_sem_call_helpers_probeScript.sml clos_sem_call_helpers_probe.out \

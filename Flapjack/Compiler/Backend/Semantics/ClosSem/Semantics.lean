@@ -1,10 +1,20 @@
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 import Flapjack.Misc.LprefixLub
 
-/-! Observations of the proof-side closure evaluator. The evaluator and state
-carriers still require HOL correspondence review. -/
+/-! Observations of the clocked closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL
+
+private def maptoBroadlookup (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) : Nat → Option (Nat × ClosLang.Exp) :=
+  code.lookup
+private def mapofBroad (lookup : Nat → Option (Nat × ClosLang.Exp))
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat (Nat × ClosLang.Exp) := ⟨lookup, support⟩
+
+/-- The supplied code map has the canonical lookup/support roundtrip. -/
+theorem holFmapAsFiniteSupportParamWitness_semantics_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
+    mapofBroad (maptoBroadlookup code) code.finiteSupport = code := by cases code; rfl
 
 /-- A terminating observation of a clocked closure evaluation. -/
 def terminatingObservation {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
@@ -18,9 +28,9 @@ def terminatingObservation {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
      | _ => outcome = HolOutcome.success) ∧
     behavior = HolBehaviour.terminate outcome state.ffi.ioEvents
 
-/-- Observable closure behavior derived from the current proof-side
-evaluator. It remains untagged pending review of that evaluator and its
-carriers against the original semantics. -/
+/-- Observable closure behavior derived from the clocked evaluator. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "semantics_def"
+  (fmap_as_finite_support_parameters := [code])]
 noncomputable def semantics {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
     (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (oracle : CompileOracle C)
     (compiler : Compiler C) (program : List ClosLang.Exp) : HolBehaviour :=

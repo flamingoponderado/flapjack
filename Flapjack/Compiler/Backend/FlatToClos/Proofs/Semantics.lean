@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Executable
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileCorrectShape
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
+import Flapjack.FiniteMap.EmptyExact
 
 /-!
 Observational composition of the proof-side flat-to-closure evaluator and
@@ -178,6 +179,20 @@ theorem compileProg_semantics_proofSide {C F : Type} (ffi : HolFfiState F)
   dsimp only [flat, clos] at tracesEq
   rw [termEq, tracesEq]
   rfl
+
+/-- The original primed observational theorem, with its three premises
+grouped as in the source. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_semantics'"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])]
+theorem compileSemantics_prime_source {C F : Type} (ffi : HolFfiState F)
+    (maxApp : Nat) (config : FlatSem.InstallConfig C) (oracle : ClosSem.CompileOracle C)
+    (compiler : ClosSem.Compiler C) (decs : List FlatLang.Exp) :
+    0 < maxApp ∧ FlatProps.noMatDecs decs = true ∧ installConfigRel config oracle compiler →
+    FlatSem.semantics config ffi decs ≠ .fail →
+    ClosSem.semantics ffi maxApp HolFiniteMapExact.holEmpty oracle compiler (compileProg decs) =
+      FlatSem.semantics config ffi decs := by
+  rintro ⟨positive, matchFree, install⟩ safe
+  exact compileProg_semantics_proofSide ffi maxApp config oracle compiler decs positive install matchFree safe
 
 /-- Under the factored source precondition and actual incremental compiler
 callback, the production closure semantics is an observable source behavior.

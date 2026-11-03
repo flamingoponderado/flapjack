@@ -76,9 +76,16 @@ an arbitrary result payload, as in the original definition. -/
 def fixClock {C F D G R : Type} (state : State C F) (result : R × State D G) : R × State D G :=
   (result.1, { result.2 with clock := min state.clock result.2.clock })
 
+/-- The state carrier roundtrips through its canonical finite-map view. -/
+theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  holFmapAsFiniteSupportWitness
+
 /-- The original closure evaluator starts with empty globals and reference
-store, while code and compilation callbacks are supplied by the caller.
-This proof-side operation awaits the finite-map representation review. -/
+store, while code and compilation callbacks are supplied by the caller. -/
+@[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "initial_state_def"
+  (fmap_as_finite_support_relation := [State.refs, State.code, code])]
 def initialState {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
     (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
     (oracle : CompileOracle C) (compiler : Compiler C) (clock : Nat) : State C F :=

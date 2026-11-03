@@ -44,10 +44,17 @@ closure-evaluator or compiler correctness.
 `flat_to_clos_relation_probe.out` captures the original typed value and
 environment relation rules, induction and cases, state and store relations,
 polymorphic incremental and installation relations, complete compiler
-correctness statement, polymorphic result and exception relations, operator and arithmetic lowering, and expanded byte-copy
+correctness and observational statements, polymorphic result and exception relations, operator and arithmetic lowering, and expanded byte-copy
 quotations. It also captures the polymorphic HOL
 `findi` definition used by the environment relation. The captured rules support
 source review; they do not establish cross-language equivalence.
+
+`finite_map_empty_probe.out` captures the polymorphic HOL empty-map definition
+and its lookup equation used to review the canonical empty-map producer.
+
+`clos_interp_review_probe.out` captures the typed installation traversal,
+interpreter expressions, initializer, attachment and flat-to-closure program
+composition used by the observational theorem review.
 
 `source_to_flat_mapi_probe.out` captures the inferred types and statements of
 `mapi_map` and `FILTER_MAPi_ID` from the pinned source-to-flat proof. Their

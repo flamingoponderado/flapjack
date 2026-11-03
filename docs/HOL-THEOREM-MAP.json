@@ -53,6 +53,44 @@
     "reviewer": "Compared compile_correct_typed and the original two conjuncts: arbitrary initial related states and environments, no-Mat and non-type-error premises, existential target result and state, post-state relation and the source result relations all match. The declaration conjunct retains the independent success-list payload type; Nonempty models HOL type inhabitation and its witness is constructed without a successful-target premise. Source and target share the source's compiler and FFI types; the reviewed closure state uses canonical refs and code maps with the local roundtrip witness. The source and target evaluators, compiler, relations and no-Mat predicates are source-reviewed; evaluator floating-point dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8. The assembled theorem is kernel-checked; source review and HOL probes are not a cross-language equivalence proof."
   },
   {
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "FEMPTY_DEF",
+    "lean_path": "Flapjack/FiniteMap/EmptyExact.lean",
+    "lean_name": "holEmpty",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "Compared fempty_typed and flookup_empty_typed: HOL's empty finite map is polymorphic independently in key and value types and has no binding at any key. The result is the canonical finite-support carrier; the local unconditional lookup witness compares it with the independent raw empty-map codec."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "compile_semantics'",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Semantics.lean",
+    "lean_name": "compileSemantics_prime_source",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared compile_semantics_prime_typed: independent compiler and FFI types, positivity, no-Mat declarations and the primed installation relation form the original conjunction, followed by the original flat non-Fail premise and equality of compiled closure and flat behaviors. The imported reviewed holEmpty is the canonical finite-support representation of the original FEMPTY code argument. The checked proof uses the source-reviewed evaluators and relations; their floating-point dependency inherits reals_as_rational_cuts and SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "initial_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/State.lean",
+    "lean_name": "initialState",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "code"],
+    "reviewer": "Compared initial_state_typed: FFI and compiler configuration carriers are independent, supplied max_app, code, oracle, compiler and clock are retained, and globals and refs begin empty. The code argument and State refs/code fields use canonical finite-support maps; the local State roundtrip witnesses the field representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
+    "hol_name": "semantics_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Semantics.lean",
+    "lean_name": "semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared clos_semantics_typed: for independent FFI and compiler carriers, every clock starts with the supplied initial state, any type error gives Fail priority, guarded choice selects exactly the source terminating outcome and events, and otherwise the divergence trace is the prefix lub over all clocked event lists. The standalone code input is the canonical finite-support map with a local codec roundtrip; the reviewed initialState and evaluator cover their own state fields. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8. This is source review, not a cross-language equivalence proof."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "do_install_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Install.lean",
@@ -107938,72 +107976,72 @@
     "lean_name": "hasInstall",
     "hol_path": "cakeml/compiler/backend/closLangScript.sml",
     "hol_name": "has_install_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all typed has_install_typed clauses and the reviewed Exp carrier. Each expression constructor checks the same subexpressions, Install is true regardless of arguments, and the recursive-function helper is proved equal to hasInstallList on the mapped function bodies by hasInstallFuns_eq_map. The executed interpreter attachment calls this traversal."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosLang/HasInstall.lean",
     "lean_name": "hasInstallList",
     "hol_path": "cakeml/compiler/backend/closLangScript.sml",
     "hol_name": "has_install_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the two typed has_install_typed list clauses: empty is false and a cons combines the same head and recursive tail tests. The reviewed Exp carrier and mutually defined hasInstall are used by executed interpreter attachment."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean",
     "lean_name": "closInterpEl",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "clos_interp_el_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared interp_el_typed and expanded source helpers: zero test, projections, variable indices, unary application order and subtraction arguments match the original closure expression. The reviewed Exp and fixed operator carriers are used."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean",
     "lean_name": "closInterpRev",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "clos_interp_rev_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared interp_rev_typed and expanded source helpers: empty-length test, variable indices, list projections, constructor fields and recursive application order match the original expression. The reviewed Exp carrier is used."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean",
     "lean_name": "closInterpreterBody",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "clos_interpreter_body_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the full expanded interpreter_body_typed expression and source: list and expression dispatch, case tag/length order, variable indices, environment extension, handlers, conditional and tick cases, reverse helper, constructors and fallback agree. The local helpers expand to the source overloads, and reviewed closInterpEl and closInterpRev supply the recursive bodies. Empty names use the native byte-backed MlString carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean",
     "lean_name": "closInterpreter",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "clos_interpreter_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared interpreter_typed: nested unary functions named env and exp have no location or variable restriction and contain the reviewed interpreter body. ASCII source names are preserved by the byte-backed MlString carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean",
     "lean_name": "compileInit",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "compile_init_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_init_typed: allocate one global, select the unary interpreter function or nullary unit constructor by the input Boolean, then set global zero to variable one. Trace fields, names, argument order and the reviewed interpreter expression agree."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean",
     "lean_name": "attachInterpreter",
     "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
     "hol_name": "attach_interpreter_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared attach_interpreter_typed: prepend compileInit of the reviewed hasInstallList result to the unchanged expression list. Both helpers and the closure syntax carrier are reviewed, and the executed compiler uses this definition."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Compile.lean",
     "lean_name": "compileProg",
     "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
     "hol_name": "compile_prog_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source composition transcribed; complete source and typed carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_prog_typed: compile an arbitrary flat declaration list with the reviewed compileDecs and attach the reviewed interpreter initializer to the resulting closure-expression list. The executed compiler uses this composition."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
