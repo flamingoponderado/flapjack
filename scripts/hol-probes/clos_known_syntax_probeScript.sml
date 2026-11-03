@@ -68,6 +68,26 @@ val _ = show "known_op_changed_globals_typed=" clos_knownProofTheory.known_op_ch
 val _ = show "known_op_changed_globals_cases_typed=" clos_knownProofTheory.known_op_changed_globals_cases;
 val _ = show "known_op_changed_globals_alt_set_typed=" clos_knownProofTheory.known_op_changed_globals_alt_set;
 val _ = show "do_app_ssgc_typed=" clos_knownProofTheory.do_app_ssgc;
+
+(* Local theorem: replay the original statement with explicit theory qualifiers. *)
+val _ = (print "evaluate_changed_globals_0_statement_typed="; print_term
+ ``(!es env (s0:('c,'ffi) closSem$state) res s.
+      closSem$evaluate (es, env, s0) = (res, s) /\
+      closProps$ssgc_free s0 /\ EVERY closProps$esgc_free es /\
+      EVERY closProps$vsgc_free env ==>
+        closProps$ssgc_free s /\ closProps$rsgc_free res /\
+        ?n. s.compile_oracle = shift_seq n s0.compile_oracle /\
+          clos_knownProof$mglobals_extend s0.globals
+            (SET_OF_BAG (closProps$elist_globals es) UNION
+             SET_OF_BAG (closProps$elist_globals (FLAT (clos_knownProof$first_n_exps s0.compile_oracle n)))) s.globals) /\
+   (!loc_opt f args (s0:('c,'ffi) closSem$state) res s.
+      closSem$evaluate_app loc_opt f args s0 = (res, s) /\
+      closProps$ssgc_free s0 /\ closProps$vsgc_free f /\ EVERY closProps$vsgc_free args ==>
+        closProps$ssgc_free s /\ closProps$rsgc_free res /\
+        ?n. s.compile_oracle = shift_seq n s0.compile_oracle /\
+          clos_knownProof$mglobals_extend s0.globals
+            (SET_OF_BAG (closProps$elist_globals (FLAT (clos_knownProof$first_n_exps s0.compile_oracle n)))) s.globals)``; print "\n");
+
 val _ = show "dest_closure_full_sgc_free_typed=" clos_knownProofTheory.dest_closure_Full_sgc_free;
 (* The theorem is local in the source; print its source statement with inferred types. *)
 val _ = (print "update_thunk_ssgc_free_statement_typed="; print_term
@@ -76,6 +96,10 @@ val _ = (print "update_thunk_ssgc_free_statement_typed="; print_term
     closSem$update_thunk [closSem$RefPtr v ptr] s.refs vs = SOME refs ⇒
     closProps$ssgc_free (s with refs := refs)``; print "\n");
 val _ = show "first_n_exps_typed=" clos_knownProofTheory.first_n_exps_def;
+val _ = show "first_n_exps_shift_seq_typed=" clos_knownProofTheory.first_n_exps_shift_seq;
+val _ = show "mem_first_n_exps_typed=" clos_knownProofTheory.MEM_first_n_exps;
+val _ = show "shift_seq_zero_typed=" clos_knownProofTheory.shift_seq_zero;
+val _ = show "shift_seq_add_typed=" clos_knownProofTheory.shift_seq_add;
 val _ = show "ssgc_free_co_shift_seq_typed=" clos_knownProofTheory.ssgc_free_co_shift_seq;
 val _ = show "ssgc_free_do_install_typed=" clos_knownProofTheory.ssgc_free_do_install;
 val _ = show "do_install_ssgc_typed=" clos_knownProofTheory.do_install_ssgc;

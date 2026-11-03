@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.MappedGlobals
 import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
@@ -19,6 +20,45 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "first_n_exps_def"]
 def firstNExps {α β γ : Type} (co : Nat → β × α × γ) (n : Nat) : List α :=
   List.ofFn (fun i : Fin n => (co i.val).2.1)
+
+/-- Splitting the sequence of installed programs follows oracle shifts. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "first_n_exps_shift_seq"]
+theorem firstNExpsShiftSeq {α β γ : Type} (co : Nat → α × β × γ) (n k : Nat) :
+    firstNExps co (n + k) = firstNExps co k ++ firstNExps (Flapjack.holShiftSeq k co) n := by
+  rw [Nat.add_comm n k]
+  simp [firstNExps, List.ofFn_add, Flapjack.holShiftSeq, Nat.add_comm]
+
+/-- The global-write set of two successive oracle prefixes is their union.
+This is a Lean helper for the evaluator induction, with no separate HOL declaration. -/
+theorem firstNExpsWritesShift {α γ : Type} (co : Nat → α × List ClosLang.Exp × γ)
+    (n k : Nat) :
+    {i | elistGlobals (List.flatten (firstNExps co (n + k))) i ≠ 0} =
+      {i | elistGlobals (List.flatten (firstNExps co k)) i ≠ 0} ∪
+      {i | elistGlobals (List.flatten (firstNExps (Flapjack.holShiftSeq k co) n)) i ≠ 0} := by
+  ext i
+  rw [firstNExpsShiftSeq]
+  simp [elistGlobals_append]
+  classical
+  by_cases h : elistGlobals (List.flatten (firstNExps co k)) i = 0 <;> simp_all
+
+/-- Every oracle program at an index below the limit occurs in the prefix. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "MEM_first_n_exps"]
+theorem memFirstNExps {α β γ : Type} (k n : Nat) (bound : k < n)
+    (co : Nat → α × β × γ) : (co k).2.1 ∈ firstNExps co n := by
+  exact List.mem_ofFn.mpr ⟨⟨k, bound⟩, rfl⟩
+
+/-- Shifting an oracle by zero leaves it unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "shift_seq_zero"]
+theorem shiftSeqZero {α : Type} (co : Nat → α) : Flapjack.holShiftSeq 0 co = co := by
+  funext n
+  simp [Flapjack.holShiftSeq]
+
+/-- Successive oracle shifts add their offsets. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "shift_seq_add"]
+theorem shiftSeqAdd {α : Type} (co : Nat → α) (k1 k2 : Nat) :
+    Flapjack.holShiftSeq k2 (Flapjack.holShiftSeq k1 co) = Flapjack.holShiftSeq (k1 + k2) co := by
+  funext n
+  simp [Flapjack.holShiftSeq, Nat.add_comm, Nat.add_left_comm]
 
 /-- Advancing a safe oracle preserves global-write safety. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "ssgc_free_co_shift_seq"
