@@ -1,0 +1,8 @@
+mk_union_typed=∀(t1 :db_var_set) (t2 :db_var_set). mk_Union t1 t2 = if t1 = Empty then t2 else if t2 = Empty then t1 else Union t1 t2
+list_union_typed=list_mk_Union ([] :db_var_set list) = Empty ∧ ∀(x :db_var_set) (xs :db_var_set list). list_mk_Union (x::xs) = mk_Union x (list_mk_Union xs)
+db_to_set_acc_typed=(∀(n :num) (s :sptree$num_set). db_to_set_acc n Empty s = s) ∧ (∀(n :num) (v :num) (s :sptree$num_set). db_to_set_acc n (Var v) s = if v < n then s else insert (v − n) () s) ∧ (∀(n :num) (k :num) (d :db_var_set) (s :sptree$num_set). db_to_set_acc n (Shift k d) s = db_to_set_acc (n + k) d s) ∧ ∀(n :num) (v1 :db_var_set) (v2 :db_var_set) (s :sptree$num_set). db_to_set_acc n (Union v1 v2) s = db_to_set_acc n v1 (db_to_set_acc n v2 s)
+db_to_set_typed=∀(db :db_var_set). db_to_set db = db_to_set_acc (0 :num) db (LN :sptree$num_set)
+vars_to_list_typed=∀(db :db_var_set). vars_to_list db = MAP (FST :num # unit -> num) (toAList (db_to_set db))
+vars_from_list_typed=∀(vs :num list). vars_from_list vs = FOLDL (λ(s1 :db_var_set) (v :num). Union (Var v) s1) Empty vs
+vars_flatten_typed=∀(db :db_var_set). vars_flatten db = vars_from_list (vars_to_list db)
+has_var_typed=(∀(n :num). has_var n Empty ⇔ F) ∧ (∀(n :num) (v :num). has_var n (Var v) ⇔ n = v) ∧ (∀(n :num) (k :num) (d :db_var_set). has_var n (Shift k d) ⇔ has_var (n + k) d) ∧ ∀(n :num) (d1 :db_var_set) (d2 :db_var_set). has_var n (Union d1 d2) ⇔ has_var n d1 ∨ has_var n d2

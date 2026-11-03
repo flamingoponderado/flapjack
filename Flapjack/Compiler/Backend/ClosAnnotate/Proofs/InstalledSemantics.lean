@@ -28,9 +28,9 @@ theorem everyFnVarsNone_member (expressions : List ClosLang.Exp)
     · simpa [everyFnVarsNone] using safe.1
     · exact ih safe.2 member
 
-/-- Annotation preserves whole-program observations with installed code.
-The annotation and free-variable traversal declarations still need source
-review, so this source-shaped result is not yet classified as a HOL port. -/
+/-- Annotation preserves whole-program observations with installed code. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "semantics_annotate"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.alistToFmap])]
 theorem semanticsAnnotate_sourceShape {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
     (code : List (Nat × Nat × ClosLang.Exp)) (oracle : CompileOracle C) (compiler : Compiler C)
     (program : List ClosLang.Exp)

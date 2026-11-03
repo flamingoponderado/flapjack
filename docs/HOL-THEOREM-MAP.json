@@ -1915,6 +1915,16 @@
     "reviewer": "Compared semantics_known_typed in clos_known_syntax_probe.out against all source hypotheses and the whole-program observational equality: the independent compiler and FFI carriers, oracle configuration, empty auxiliary lists, free-variable and syntax conditions, approximation and state invariants, global safety, initial approximation and exact optimizer result are retained. The reviewed polymorphic holEmpty producer represents each original FEMPTY occurrence and has its checked unconditional lookup witness in EmptyExact. The full optimizer simulation supplies related evaluations at all clocks and the source non-failure premise excludes type errors; the theorem assumes no target run or desired observation. Both evaluators inherit the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
+    "hol_name": "semantics_annotate",
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/InstalledSemantics.lean",
+    "lean_name": "semanticsAnnotate_sourceShape",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared semantics_annotate_typed with the complete source statement: the independent compiler and FFI carriers, arbitrary installed-code list, non-failure premise, source and installed-code safety, both oracle safety conditions and exact target-to-source semantics equality are preserved. The reviewed annotate_list and annotate_sing traversals match original annotate by the captured annotate_sing_eq, and the reviewed compile clauses retain the original map order. The imported canonical alistToFmap producer renders each original alist_to_fmap result; initialSourceCode_eq_alist establishes its equality to the map actually used by the complete installed-code evaluator proof, including duplicate labels. The proof derives the target evaluation and matching observations from the original premises without assuming either. The evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "semantics_number",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/Semantics.lean",
@@ -114977,72 +114987,72 @@
     "lean_name": "DbVarSet",
     "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
     "hol_name": "db_var_set",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared db_varsScript.sml datatype declaration: Empty, natural-index Var, natural Shift with a recursive set, and binary Union have the same constructor arities and carriers. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
     "lean_name": "mkUnion",
     "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
     "hol_name": "mk_Union_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared mk_union_typed: empty left returns the right operand, otherwise empty right returns left, otherwise Union keeps both in order. The source equality to Empty is represented by constructor matching. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
     "lean_name": "listMkUnion",
     "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
     "hol_name": "list_mk_Union_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared list_union_typed: empty yields Empty and each cons recursively combines its head and tail in the original right-fold order. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
     "lean_name": "dbToSetAcc",
     "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
     "hol_name": "db_to_set_acc_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four db_to_set_acc_typed clauses and independent natural/index and num_set carriers. Var retains the accumulator below the offset and otherwise inserts the subtracted index with unit value; Shift adds the offset; Union traverses its right child before its left. Reviewed the literal HOL spt insert clauses and parity recursion against sptInsert. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
     "lean_name": "dbToSet",
     "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
     "hol_name": "db_to_set_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared db_to_set_typed: the same set is processed with offset zero and the literal empty sparse tree. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
     "lean_name": "varsToList",
     "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
     "hol_name": "vars_to_list_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared vars_to_list_typed: map first projection over toAList of dbToSet, retaining the exact mixed sparse-tree traversal order. Reviewed sptToAList, sptFoldi and lrNext against the pinned sptree definitions, including branch order and offset arithmetic. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
     "lean_name": "varsFromList",
     "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
     "hol_name": "vars_from_list_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared vars_from_list_typed: the left fold inserts Union (Var v) ahead of the prior accumulator starting with Empty, preserving source order. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
     "lean_name": "varsFlatten",
     "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
     "hol_name": "vars_flatten_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared vars_flatten_typed: flatten is exactly varsFromList composed with varsToList on the same carrier. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
     "lean_name": "hasVar",
     "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
     "hol_name": "has_var_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all four has_var_typed clauses: Empty is false, Var compares natural indices, Shift adds its offset, and Union disjoins its two results. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosLang/Pure.lean",
@@ -115065,112 +115075,112 @@
     "lean_name": "const0",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "const_0_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared const_zero_typed: the original trace, zero integer constant, integer operation and empty argument list are preserved. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free.lean",
     "lean_name": "noOverlap",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "no_overlap_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared no_overlap_typed: zero is true and each successor checks that the preceding index is absent before recursing. hasVar and the DbVarSet carrier are reviewed exact. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free.lean",
     "lean_name": "altFreeSing",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "alt_free_sing_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed alt_free_sing clause, including traversal order, union order, closure binder shifts, optional variable annotations, unused pure lets, and call and exception cases. pureList_eq_all proves the original EVERY pure test; altFreeSing_letrec_source checks that the body shift uses the original recursive-function count. The expression and DbVarSet carriers are reviewed exact. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free.lean",
     "lean_name": "altFreeList",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "alt_free_sing_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed empty and cons clauses: source order and right-associated union of the two recursively produced free sets are preserved. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free.lean",
     "lean_name": "altFreeFuns",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "alt_free_sing_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both typed recursive-group clauses: each original arity is retained, its body is annotated, and its free set is shifted by arity plus group size before processing the rest. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
     "lean_name": "getVar",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "get_var_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared get_var_typed and the original zlookup definition: local indices remain unchanged, and an external index uses the same sparse lookup with zero default. The unused first argument remains independently polymorphic. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
     "lean_name": "shiftedEnv",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "shifted_env_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared shifted_env_typed: the empty list yields LN and the cons case inserts the head at the current index into the recursively built tail at the successor index, including duplicate-key precedence. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
     "lean_name": "shiftSing",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "shift_sing_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every typed shift_sing clause, including original traversal order, binder increments, NONE-to-empty live lists, filtering, sparse renaming and recursive-group arity offsets. The expression carrier and sparse-tree operations retain their source shapes. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
     "lean_name": "shiftList",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "shift_sing_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed empty and cons list clauses: each expression uses the same state and the output preserves the input order. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
     "lean_name": "shiftFuns",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "shift_sing_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed empty and cons recursive-function clauses: each arity remains unchanged and its body is shifted using that arity plus the original group size. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
     "lean_name": "annotateSing",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "annotate_sing_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared annotate_sing_typed: free-variable annotation precedes shifting from zero with the original arity and empty sparse tree. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
     "lean_name": "annotateList",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "annotate_list_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared annotate_list_typed and annotate_sing_eq_typed: the list free-variable and shift traversals implement the original annotate function at the same arity and empty sparse tree. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
     "lean_name": "compile",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "compile_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_def_typed and compile_eq_typed: the source singleton annotate and HD are replaced exactly by annotateSing using HOL annotate_sing_eq, retaining each label, arity and original list order. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
     "lean_name": "compileInc",
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "compile_inc_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_inc_def_typed and compile_inc_eq_typed: the main expression list is annotated at arity zero and the auxiliary function list uses compile; the two independently typed product components and order are preserved. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Names.lean",

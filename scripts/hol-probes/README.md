@@ -125,8 +125,11 @@ and its lookup equation used to review the canonical empty-map producer.
 definition and its cons and lookup equations, including first-entry behavior.
 
 `clos_annotate_semantics_probe.out` captures the typed whole-program annotation
-statement, including the original arbitrary installed-code association list.
-The Lean source-shaped result still awaits annotation-traversal review.
+statement, its annotation and shift traversals, and the source's optimized
+singleton/list equations, including arbitrary installed code.
+
+`db_vars_definitions_probe.out` captures the typed De Bruijn variable-set
+operations used by closure annotation, including sparse-tree traversal order.
 
 `clos_interp_review_probe.out` captures the typed installation traversal,
 interpreter expressions, optimizer, initializer, attachment and incremental
