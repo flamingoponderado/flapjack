@@ -1916,6 +1916,24 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "remove_ticks_App_IMP_mk_Ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateApp.lean",
+    "lean_name": "remove_ticks_App_IMP_mk_Ticks",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_app_ticks_typed and remove_sing_eq_typed: a source expression that removes to an application is an application under leading ticks, with the original HD singleton-removal equation for its function and list-removal equation for its arguments. removeList is the source-proven equivalent traversal and holHd models HOL HD. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateApp.lean",
+    "lean_name": "evaluate_remove_ticks_app",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the first evaluate_remove_ticks_typed conjunct and application-expression case of evaluate_ind_typed in clos_known_syntax_probe.out. The target argument, function and application induction hypotheses retain their original nonempty and successful-evaluation guards; the target run, related environments and states, code relation, and existential source clock, result, state and conclusions are retained without extra premises. The proof covers empty arguments, subevaluation errors, related closure application and leading source ticks. State refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "remove_ticks_Call_IMP_mk_Ticks",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateCall.lean",
     "lean_name": "remove_ticks_Call_IMP_mk_Ticks",

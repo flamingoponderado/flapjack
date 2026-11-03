@@ -881,6 +881,7 @@ import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateFn
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateLetrec
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateCall
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateTick
+import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateApp
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Total
 import Flapjack.Compiler.Backend.SourceToSource
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
