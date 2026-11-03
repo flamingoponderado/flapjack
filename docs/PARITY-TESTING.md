@@ -501,12 +501,29 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 Use `--structured-all` to exercise every structured template once with the
 same generated constants. The templates include polymorphic datatypes, nested
 constructor patterns, mutually recursive captured functions, qualified
-exceptions, and local shadowing. All 26 templates matched the pinned compiler
-with seed `78124`:
+exceptions, and local shadowing. The original 26 templates matched the pinned
+compiler with seed `78124`:
 
 ```sh
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-all --seed 78124
 ```
+
+The expanded 34-template set also covers accumulator-based tree traversal,
+polymorphic composition, recursive partitioning, exception payload patterns,
+module shadowing, list patterns, and mutually recursive captured functions.
+All 34 matched complete output and status with seed `5151926`:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-all --seed 5151926 --timeout 90
+```
+
+At frontend commit `a5a36e7b7`, 200 configuration mutations and 100 structured
+programs with varied backend options also matched full output, diagnostics,
+and exit status against the pinned compiler (seeds `6211837` and `31415927`).
+The 32 benchmark and bootstrap-source cases in
+`check-cake-benchmark-parity.py --check-reference` matched as well. These
+samples do not establish general parity. After expanding the templates, 60
+further structured-option cases matched with seed `9151926`.
 
 Use `--structured-options` to combine those programs with varied optimizer,
 allocator, garbage collector, and backend settings. Seed `71443` matched 70

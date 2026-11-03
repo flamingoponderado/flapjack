@@ -281,6 +281,28 @@ def structured_sources(rng):
         f'in fn z => (x,z) end in g {b} end; val y = f {c} {a};',
         f'exception E; fun f x = (if x then raise E else {a}) '
         f'handle E => {b}; val y = f True;',
+        f'datatype tree = E | N int tree tree; '
+        f'fun flatten t acc = case t of E => acc | N n l r => flatten r (flatten l (n::acc)); '
+        f'val y = flatten (N {a} (N {b} E E) (N {c} E E)) [];',
+        f'fun compose f g x = f (g x); '
+        f'fun twice f = compose f f; val y = twice (fn x => x) ({a},{b});',
+        f'fun partition p xs = case xs of [] => ([],[]) | x::rest => '
+        f'let val (yes,no) = partition p rest in '
+        f'if p x then (x::yes,no) else (yes,x::no) end; '
+        f'val y = partition (fn x => case x of 0 => True | _ => False) [{a},{b},{c}];',
+        f'datatype t = A int | B int; exception E t; '
+        f'fun get x = (raise E x) handle E (A n) => (n,{a}) | E (B n) => ({a},n); '
+        f'val y = get (B {b});',
+        f'structure A = struct type t = int; val x : t = {a}; '
+        f'fun f y = (x,y) end; structure B = struct val x = A.f {b}; '
+        f'fun g y = (A.f y,x) end; val y = B.g {c};',
+        f'fun f xs = case xs of [] => [] | [x] => [x] '
+        f'| x::y::rest => x::y::f rest; val y = f [{a},{b},{c}];',
+        f'fun f n = let fun g xs = case xs of [] => n | _::rest => h rest '
+        f'and h xs = case xs of [] => {a} | _::rest => g rest '
+        f'in (g [{b},{c}], h [{c}]) end; val y = f {a};',
+        f'val f = fn x => let val y = (x,{a}) in fn z => (x,y,(z : int)) end; '
+        f'val g = f {b}; val y = (g {c},g {a});',
     ]
 
 
