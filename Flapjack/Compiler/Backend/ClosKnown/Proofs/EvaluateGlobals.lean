@@ -872,5 +872,131 @@ theorem evaluateAppChangedGlobalsCons {C F : Type} (location : Option Nat)
               rcases run with ⟨rfl, rfl⟩
               exact ⟨lastSafe, resultSafe, n + m, finalOracle, composed⟩
 
+
+/-- Combining successive global frames also combines their oracle prefixes.
+This helper has no separate HOL declaration. -/
+private theorem combineOracleFrames {C F : Type} (s0 middle last : ClosSem.State C F)
+    (a b : Set Nat) (n m : Nat)
+    (oracle : middle.compileOracle = Flapjack.holShiftSeq n s0.compileOracle)
+    (first : mglobalsExtend s0.globals
+      (a ∪ {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) middle.globals)
+    (second : mglobalsExtend middle.globals
+      (b ∪ {k | elistGlobals (List.flatten (firstNExps middle.compileOracle m)) k ≠ 0}) last.globals) :
+    mglobalsExtend s0.globals ((a ∪ b) ∪
+      {k | elistGlobals (List.flatten (firstNExps s0.compileOracle (n + m))) k ≠ 0}) last.globals := by
+  have second' : mglobalsExtend middle.globals
+      (b ∪ {k | elistGlobals (List.flatten (firstNExps (Flapjack.holShiftSeq n s0.compileOracle) m)) k ≠ 0}) last.globals := by
+    simpa only [oracle] using second
+  have combined := mglobalsExtendTrans _ _ _ _ _ ⟨first, second'⟩
+  rw [Nat.add_comm n m, firstNExpsWritesShift]
+  simpa only [Set.union_assoc, Set.union_left_comm, Set.union_comm] using combined
+
+/-- An application writes only through its argument expressions and function
+expression. This helper has no separate HOL declaration. -/
+private theorem appWrites (trace : BackendCommon.Tra) (location : Option Nat)
+    (function : ClosLang.Exp) (args : List ClosLang.Exp) :
+    {k | elistGlobals [.app trace location function args] k ≠ 0} =
+      {k | elistGlobals args k ≠ 0} ∪ {k | elistGlobals [function] k ≠ 0} := by
+  ext k
+  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag]
+  omega
+
+/-- Expression-level application preserves global safety under the original
+argument, function and closure-application induction hypotheses. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsApp {C F : Type} (trace : BackendCommon.Tra) (location : Option Nat)
+    (function : ClosLang.Exp) (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : args.length > 0 → EvalGlobalsInvariant args env s0)
+    (fnIH : ∀ values next, args.length > 0 → evaluate args env s0 = (.val values, next) →
+      EvalGlobalsInvariant [function] env next)
+    (appIH : ∀ values next functions last, args.length > 0 →
+      evaluate args env s0 = (.val values, next) → evaluate [function] env next = (.val functions, last) →
+      EvalAppGlobalsInvariant location (@Flapjack.holHd ClosSem.Value ⟨unitValue⟩ functions) values last)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.app trace location function args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.app trace location function args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.app trace location function args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  rcases h with ⟨run, safe, expressionSafe, envSafe⟩
+  have safeParts : esgcFree function ∧ esgcFreeList args := by
+    simpa [esgcFree] using expressionSafe (.app trace location function args) (by simp)
+  have argsSafe := (esgcFreeList_iff args).1 safeParts.2
+  have functionSafe : ∀ e ∈ [function], esgcFree e := by simpa using safeParts.1
+  cases args with
+  | nil =>
+    simp [evaluate] at run
+    rcases run with ⟨rfl, rfl⟩
+    exact ⟨safe, by simp [rsgcFree], 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
+  | cons arg rest =>
+    have positive : (arg :: rest).length > 0 := by simp
+    cases argsRun : evaluate (arg :: rest) env s0 with
+    | mk argsResult next =>
+      have ⟨nextSafe, argsResultSafe, n, nextOracle, argsFrame⟩ :=
+        argsIH positive argsResult next ⟨argsRun, safe, argsSafe, envSafe⟩
+      have nextClock : next.clock ≤ s0.clock := by
+        simpa [argsRun] using evaluate_clock_le (arg :: rest) env s0
+      have enlarged : mglobalsExtend s0.globals
+          ({k | elistGlobals [.app trace location function (arg :: rest)] k ≠ 0} ∪
+           {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) next.globals := by
+        apply mglobalsExtendSubset _ _ _ _ ⟨argsFrame, ?_⟩
+        intro k member
+        rcases member with member | member
+        · left; rw [appWrites]; exact Or.inl member
+        · exact Or.inr member
+      cases argsResult with
+      | err error =>
+        simp only [evaluate, List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte, argsRun, fixClock] at run
+        rcases run with ⟨rfl, rfl⟩
+        exact ⟨(ssgcFreeClock next (fun clock => min s0.clock clock)).2 nextSafe,
+          argsResultSafe, n, nextOracle, enlarged⟩
+      | val values =>
+        cases fnRun : evaluate [function] env next with
+        | mk fnResult mid =>
+          have ⟨midSafe, fnResultSafe, m, midOracle, fnFrame⟩ :=
+            fnIH values next positive argsRun fnResult mid ⟨fnRun, nextSafe, functionSafe, envSafe⟩
+          have midClock : mid.clock ≤ next.clock := by
+            simpa [fnRun] using evaluate_clock_le [function] env next
+          have composed := combineOracleFrames s0 next mid _ _ n m nextOracle argsFrame fnFrame
+          have finalOracle : mid.compileOracle = Flapjack.holShiftSeq (n + m) s0.compileOracle := by
+            simpa only [nextOracle, shiftSeqAdd] using midOracle
+          have finalFrame : mglobalsExtend s0.globals
+              ({k | elistGlobals [.app trace location function (arg :: rest)] k ≠ 0} ∪
+               {k | elistGlobals (List.flatten (firstNExps s0.compileOracle (n + m))) k ≠ 0}) mid.globals := by
+            simpa only [appWrites] using composed
+          cases fnResult with
+          | err error =>
+            simp [evaluate, argsRun, fixClock, Nat.min_eq_right nextClock, fnRun] at run
+            rcases run with ⟨rfl, rfl⟩
+            exact ⟨(ssgcFreeClock mid (fun clock => min next.clock clock)).2 midSafe,
+              fnResultSafe, n + m, finalOracle, finalFrame⟩
+          | val fnValues =>
+            obtain ⟨fnValue, rfl⟩ := evaluate_singleton_value function env next mid fnValues fnRun
+            have fnValueSafe : vsgcFree fnValue := by simpa [rsgcFree] using fnResultSafe
+            have valuesSafe : ∀ v ∈ values, vsgcFree v := by simpa [rsgcFree] using argsResultSafe
+            cases appRun : evaluateApp location fnValue values mid with
+            | mk appResult last =>
+              have appProp := appIH values next [fnValue] mid positive argsRun fnRun
+              have ⟨lastSafe, resultSafe, q, lastOracle, appFrame⟩ :=
+                appProp appResult last ⟨by simpa [Flapjack.holHd] using appRun, midSafe, fnValueSafe, valuesSafe⟩
+              have fullOracle : last.compileOracle = Flapjack.holShiftSeq ((n + m) + q) s0.compileOracle := by
+                simpa only [finalOracle, shiftSeqAdd] using lastOracle
+              have appFrame' : mglobalsExtend mid.globals
+                  (∅ ∪ {k | elistGlobals (List.flatten (firstNExps mid.compileOracle q)) k ≠ 0}) last.globals := by
+                simpa using appFrame
+              have combined := combineOracleFrames s0 mid last _ ∅ (n + m) q finalOracle finalFrame appFrame'
+              have fullFrame : mglobalsExtend s0.globals
+                  ({k | elistGlobals [.app trace location function (arg :: rest)] k ≠ 0} ∪
+                   {k | elistGlobals (List.flatten (firstNExps s0.compileOracle ((n + m) + q))) k ≠ 0}) last.globals := by
+                simpa using combined
+              simp [evaluate, argsRun, fixClock, Nat.min_eq_right nextClock, fnRun,
+                Nat.min_eq_right midClock, appRun] at run
+              rcases run with ⟨rfl, rfl⟩
+              exact ⟨lastSafe, resultSafe, (n + m) + q, fullOracle, fullFrame⟩
+
 end EvaluateGlobalsPort
 end Flapjack.Compiler.Backend.ClosKnown
