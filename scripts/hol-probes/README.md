@@ -9,7 +9,8 @@ unchanged-operation theorems, the source code-location bag theorem and the
 HOL list-to-bag counting characterization, and free-variable invariants for
 lifting, conjunctions, pure equality and smart operations. It also records
 typed function-annotation, label, and maximum-application definitions and
-their smart-operation invariants. These
+their smart-operation invariants, and the typed non-lifted-expression
+evaluation theorems. These
 captures support source review, not full pass correctness.
 
 `flat_to_clos_helpers_probe.out` captures the fully typed original literal,

@@ -1,5 +1,32 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "dont_lift_Rval",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/DontLiftEvaluate.lean",
+    "lean_name": "dontRval",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared dont_lift_rval_typed: independent compiler and FFI carrier types, original conjunction of dont_lift and evaluation, existential singleton value and unchanged state agree. The proof executes the reviewed clocked evaluator on all five non-lifted forms. The imported State uses the reviewed canonical refs and code finite maps with the local roundtrip witness; the evaluator inherits rational-cut floating-point assumptions, although these cases only evaluate literals."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "evaluate_dont_lift",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/DontLiftEvaluate.lean",
+    "lean_name": "evalDont",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs",
+      "code"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared evaluate_dont_lift_typed: the successful singleton evaluation and dont_lift premises imply the same value in arbitrary second environment and state with unchanged state. All states retain the same independent compiler and FFI carrier types as the HOL statement. The imported State uses the reviewed canonical refs and code finite maps with the local roundtrip witness; the evaluator inherits rational-cut floating-point assumptions, although these cases only evaluate literals."
+  }
+,
+  {
     "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
     "hol_name": "every_Fn_SOME_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/FnAnnotations.lean",

@@ -53,3 +53,5 @@ val _ = show "smart_fn_some_typed" clos_opProofTheory.every_Fn_SOME_SmartOp;
 val _ = show "smart_fn_none_typed" clos_opProofTheory.every_Fn_vs_NONE_SmartOp;
 val _ = show "smart_labels_typed" clos_opProofTheory.no_Labels_SmartOp;
 val _ = show "smart_max_app_typed" clos_opProofTheory.obeys_max_app_SmartOp;
+val _ = show "dont_lift_rval_typed" clos_opProofTheory.dont_lift_Rval;
+val _ = show "evaluate_dont_lift_typed" clos_opProofTheory.evaluate_dont_lift;

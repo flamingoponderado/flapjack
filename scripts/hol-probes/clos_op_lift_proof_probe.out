@@ -45,3 +45,5 @@ smart_fn_some_typed=every_Fn_SOME [SmartOp (t :tra) (op :closLang$op) (xs :closL
 smart_fn_none_typed=every_Fn_vs_NONE (xs :closLang$exp list) ⇒ every_Fn_vs_NONE [SmartOp (t :tra) (op :closLang$op) xs]
 smart_labels_typed=no_Labels (SmartOp (t :tra) (op :closLang$op) (xs :closLang$exp list)) ⇔ no_Labels (Op t op xs)
 smart_max_app_typed=EVERY (obeys_max_app (k :num)) (xs :closLang$exp list) ⇒ obeys_max_app k (SmartOp (t :tra) (op :closLang$op) xs)
+dont_lift_rval_typed=dont_lift (x :closLang$exp) ∧ evaluate ([x],(env :v list),(s1 :(α, β) state)) = ((res :(v list, v) result),(s2 :(α, β) state)) ⇒ ∃(v :v). res = (Rval [v] :(v list, v) result) ∧ s2 = s1
+evaluate_dont_lift_typed=evaluate ([(x :closLang$exp)],(env :v list),(s1 :(α, β) state)) = ((Rval [(v :v)] :(v list, v) result),(s2 :(α, β) state)) ∧ dont_lift x ⇒ evaluate ([x],(env1 :v list),(s :(α, β) state)) = ((Rval [v] :(v list, v) result),s)
