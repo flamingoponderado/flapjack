@@ -8,3 +8,4 @@ simple_exp_pure_typed=∀(x :closLang$exp). simple_exp x ⇒ pure x
 simple_exp_pure_every_typed=EVERY simple_exp (xs :closLang$exp list) ⇒ EVERY pure xs
 lift_simple_exp_typed=∀(xs :closLang$exp list) (n :num) (binds :closLang$exp list) (ys :closLang$exp list) (k :num) (binds2 :closLang$exp list). lift_exps xs n binds = (ys,k,binds2) ⇒ EVERY simple_exp ys
 eq_direct_simple_exp_typed=eq_direct (x :closLang$exp) (y :closLang$exp) = SOME (z :closLang$exp) ∧ simple_exp x ∧ simple_exp y ⇒ simple_exp z
+simple_exp_eq_pure_list_typed=∀(xs :(closLang$exp # closLang$exp) list). EVERY (λ((x :closLang$exp),(y :closLang$exp)). simple_exp x ∧ simple_exp y) xs ⇒ EVERY simple_exp (append (eq_pure_list xs))

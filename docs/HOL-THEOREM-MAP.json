@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "simple_exp_eq_pure_list",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/EqPureSimple.lean",
+    "lean_name": "eqPureSimple",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared simple_exp_eq_pure_list_typed: for the same expression-pair list, EVERY simple pair implies EVERY simple expression in the original append flattening of eq_pure_list. Lean expresses EVERY using membership-based universal quantification. The proof follows the executed source-shaped decomposition, including reversed zipped fields and one-sided projections."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
     "hol_name": "eq_pure_list_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",

@@ -16,3 +16,4 @@ val _ = show "simple_exp_pure_typed" clos_opProofTheory.simple_exp_pure;
 val _ = show "simple_exp_pure_every_typed" clos_opProofTheory.simple_exp_pure_every;
 val _ = show "lift_simple_exp_typed" clos_opProofTheory.lift_exps_simple_exp;
 val _ = show "eq_direct_simple_exp_typed" clos_opProofTheory.eq_direct_simple_exp;
+val _ = show "simple_exp_eq_pure_list_typed" clos_opProofTheory.simple_exp_eq_pure_list;
