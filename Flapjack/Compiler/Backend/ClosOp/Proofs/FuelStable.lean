@@ -119,31 +119,13 @@ theorem eqListFuel_agree (a b : Nat) (pairs : List (Exp × Exp)) (x y : List Exp
   have hy2 := eqListFuel_mono (Nat.le_max_right a b) pairs y hy
   exact Option.some.inj (hx2.symm.trans hy2)
 
-/-- A successful equality retry comes from one of its checked traversals.
-Flapjack proof infrastructure; no HOL counterpart. -/
-private theorem eqListBounded_origin (fuel : Nat) (pairs : List (Exp × Exp)) (result : List Exp)
-    (h : eqListBounded fuel pairs = some result) : ∃ fuel, eqListFuel fuel pairs = some result := by
-  unfold eqListBounded at h
-  cases hfirst : eqListFuel fuel pairs with
-  | none => exact ⟨max fuel (eqPairsWeight pairs + 1), by simpa [hfirst] using h⟩
-  | some value =>
-    simp [hfirst] at h
-    subst result
-    exact ⟨fuel, hfirst⟩
-
 /-- The total checked lift wrapper is independent of the initial fuel. Flapjack retry infrastructure; no HOL counterpart. -/
 theorem liftBounded_independent (a b : Nat) (xs : List Exp) (n : Nat) (binds : List Exp) :
     liftBounded a xs n binds = liftBounded b xs n binds := rfl
 
 /-- The total checked equality wrapper is independent of the initial fuel. Flapjack retry infrastructure; no HOL counterpart. -/
 theorem eqListBounded_independent (a b : Nat) (pairs : List (Exp × Exp)) :
-    eqListBounded a pairs = eqListBounded b pairs := by
-  obtain ⟨x, hx⟩ := eqListBounded_succeeds a pairs
-  obtain ⟨y, hy⟩ := eqListBounded_succeeds b pairs
-  obtain ⟨f, hf⟩ := eqListBounded_origin a pairs x hx
-  obtain ⟨g, hg⟩ := eqListBounded_origin b pairs y hy
-  have same := eqListFuel_agree f g pairs x y hf hg
-  simp [hx, hy, same]
+    eqListBounded a pairs = eqListBounded b pairs := rfl
 
 /-- The complete checked smart constructor is independent of initial fuel. Flapjack retry infrastructure; no HOL counterpart. -/
 theorem smartFuel_independent (a b : Nat) (trace : BackendCommon.Tra) (op : Op) (xs : List Exp) :

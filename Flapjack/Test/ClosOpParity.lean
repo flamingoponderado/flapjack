@@ -7,6 +7,26 @@ open Flapjack.Compiler.Backend
 private def c (i : Int) : ClosLang.Exp := .op .none (.intOp (.const i)) []
 private def cons (tag : Nat) (xs : List ClosLang.Exp) : ClosLang.Exp := .op .none (.blockOp (.cons tag)) xs
 
+-- `eq_tree` checks the original tree shape and reversed field order.
+#guard match [ClosOp.eqPureList [],
+    ClosOp.eqPureList [(.var .none 0, .var .none 1)],
+    ClosOp.eqPureList [(cons 2 [c 3, .var .none 0], .var .none 1)],
+    ClosOp.eqPureList [(cons 2 [.var .none 0, .var .none 1], cons 2 [.var .none 2, .var .none 3])],
+    ClosOp.eqPureList [(cons 2 [.var .none 0], cons 3 [.var .none 1])],
+    ClosOp.eqPureList [(.var .none 0, .var .none 1), (c 4, .var .none 2)]] with
+  | [.nil, .list [.op .none (.blockOp .equal) [.var .none 0, .var .none 1]],
+     .append (.list [.op .none (.blockOp (.tagLenEq 2 2)) [.var .none 1]])
+       (.append (.list [.op .none (.blockOp .equal)
+         [.var .none 0, .op .none (.blockOp (.elemAt 0)) [.var .none 1]]])
+         (.list [.op .none (.blockOp (.equalConst (.int 3)))
+           [.op .none (.blockOp (.elemAt 1)) [.var .none 1]]])),
+     .append (.list [.op .none (.blockOp .equal) [.var .none 1, .var .none 3]])
+       (.list [.op .none (.blockOp .equal) [.var .none 0, .var .none 2]]),
+     .list [.op .none (.blockOp (.cons 0)) []],
+     .append (.list [.op .none (.blockOp .equal) [.var .none 0, .var .none 1]])
+       (.list [.op .none (.blockOp (.equalConst (.int 4))) [.var .none 2]])] => true
+  | _ => false
+
 -- `lift` preserves source-order effects and retains the supplied accumulator.
 #guard match ClosOp.liftExpsHOL [] 2 [.var .none 7] with
   | ([], 2, [.var .none 7]) => true

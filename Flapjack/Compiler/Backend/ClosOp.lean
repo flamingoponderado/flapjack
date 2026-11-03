@@ -1,13 +1,13 @@
 import Flapjack.Compiler.Backend.ClosLang.Budget
 import Flapjack.Compiler.Backend.ClosOp.EqBudget
-import Flapjack.Compiler.Backend.ClosOp.SourceHelpers
+import Flapjack.Compiler.Backend.ClosOp.EqWeightProofs
+import Flapjack.Misc.AppList
 
 /-! Bounded infrastructure for the closure smart-operation pass. -/
 namespace Flapjack.Compiler.Backend.ClosOp
 open ClosLang
 
 private def intConst : Exp → Option Int := destOpNil destConst
-def cons : Exp → Option (Nat × List Exp) := destOp destCons
 private def nil : Exp → Option Nat := destOpNil destCons
 private def constant : Exp → Option ConstPart := destOpNil destConstant
 
@@ -252,6 +252,55 @@ def liftBounded (_fuel : Nat) (xs : List Exp) (n : Nat) (binds : List Exp) :
     Option (List Exp × Nat × List Exp) :=
   some (liftExpsHOL xs n binds)
 
+/-- Source equality decomposition, retaining its append-tree structure. -/
+@[hol "cakeml/compiler/backend/clos_opScript.sml" "eq_pure_list_def"]
+def eqPureList : List (Exp × Exp) → AppList Exp
+  | [] => .nil
+  | [(x, y)] =>
+    match directEq x y with
+    | some e => .list [e]
+    | none =>
+      match _hx : cons x, _hy : cons y with
+      | none, none => .list [.op .none (.blockOp .equal) [x, y]]
+      | some (tagX, xs), some (tagY, ys) =>
+        if tagX != tagY || xs.length != ys.length then .list [mkBool false]
+        else eqPureList (xs.reverse.zip ys.reverse)
+      | some (tag, xs), none =>
+        let fields := xs.reverse.zip (List.range xs.length) |>.map fun (e, i) =>
+          (e, Exp.op .none (.blockOp (.elemAt i)) [y])
+        .append (.list [.op .none (.blockOp (.tagLenEq tag xs.length)) [y]]) (eqPureList fields)
+      | none, some (_tag, _ys) => eqPureList [(y, x)]
+  | p :: q :: rest => .append (eqPureList [p]) (eqPureList (q :: rest))
+termination_by pairs => eqPairsWeight pairs
+decreasing_by
+  all_goals simp_wf
+  · have wx := eqNodeWeight_of_cons x tagX xs _hx
+    have wy := eqNodeWeight_of_cons y tagY ys _hy
+    have h := eqPairsWeight_zip_le xs.reverse ys.reverse
+    simp only [eqNodesWeight_reverse] at h
+    simp only [eqPairsWeight, eqPairWeight, Nat.add_zero]
+    rw [wx, wy]
+    split <;> omega
+  · have wx := eqNodeWeight_of_cons x tag xs _hx
+    have wy := eqNodeWeight_of_not_cons y _hy
+    have h := eqPairsWeight_fields_le xs.reverse y (List.range xs.length)
+    simp only [eqNodesWeight_reverse] at h
+    simp only [eqPairsWeight, eqPairWeight, Nat.add_zero]
+    rw [wx, wy]
+    split <;> omega
+  · have wx := eqNodeWeight_of_not_cons x _hx
+    have wy := eqNodeWeight_of_cons y _tag _ys _hy
+    simp only [eqPairsWeight, eqPairWeight, Nat.add_zero]
+    rw [wx, wy]
+    simp
+    split <;> omega
+  · simp only [eqPairsWeight, Nat.add_zero]
+    have : 0 < eqPairWeight q := by unfold eqPairWeight; split <;> omega
+    omega
+  · simp only [eqPairsWeight]
+    have : 0 < eqPairWeight p := by unfold eqPairWeight; split <;> omega
+    omega
+
 /-- Produce the source sequence of pure equality checks. -/
 def eqListFuel : Nat → List (Exp × Exp) → Option (List Exp)
   | _, [] => some []
@@ -272,12 +321,9 @@ def eqListFuel : Nat → List (Exp × Exp) → Option (List Exp)
           | none, some _ => eqListFuel fuel [(y, x)]
       pure (first ++ (← eqListFuel fuel rest))
 
-/-- Preserve a successful equality decomposition and retry exhaustion with
-a constructor-based bound. -/
-def eqListBounded (fuel : Nat) (pairs : List (Exp × Exp)) : Option (List Exp) :=
-  match eqListFuel fuel pairs with
-  | some result => some result
-  | none => eqListFuel (max fuel (eqPairsWeight pairs + 1)) pairs
+/-- Execute the source tree and flatten its result for the smart constructor. -/
+def eqListBounded (_fuel : Nat) (pairs : List (Exp × Exp)) : Option (List Exp) :=
+  some (appListAppend (eqPureList pairs))
 
 private def conj : List Exp → Exp
   | [] => mkBool true
@@ -289,8 +335,8 @@ def isVar : Exp → Bool
   | .var _ _ => true
   | _ => false
 
-/-- The closure smart constructor, with bounded retries for its recursive
-lifting and equality decomposition. -/
+/-- The closure smart constructor, using the source lifting and equality
+decomposition traversals. -/
 def smartFuel (fuel : Nat) (trace : BackendCommon.Tra) (op : Op) (xs : List Exp) : Option Exp := do
   let default := Exp.op trace op xs
   match xs with

@@ -27,3 +27,4 @@ val _ = show "eq_direct_constant_typed" clos_opTheory.eq_direct_constant_def;
 val _ = show "eq_direct_typed" clos_opTheory.eq_direct_def;
 val _ = show "dont_lift_typed" clos_opTheory.dont_lift_def;
 val _ = show "lift_exps_typed" clos_opTheory.lift_exps_def;
+val _ = show "eq_pure_list_typed" clos_opTheory.eq_pure_list_def;

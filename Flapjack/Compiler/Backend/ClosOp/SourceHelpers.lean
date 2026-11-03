@@ -51,6 +51,9 @@ def destOpNil {α : Type} (f : Op → Option α) (e : Exp) : Option α := do
   let (value, args) ← destOp f e
   if args.isEmpty then some value else none
 
+/-- Match constructor operations and retain their arguments. -/
+def cons : Exp → Option (Nat × List Exp) := destOp destCons
+
 @[hol "cakeml/compiler/backend/clos_opScript.sml" "dest_Op_Consts_def"]
 def destOpConsts (x y : Exp) : Option (Int × Int) := do
   let i ← destOpNil destConst x

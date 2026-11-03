@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/clos_opScript.sml",
+    "hol_name": "eq_pure_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp.lean",
+    "lean_name": "eqPureList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared eq_pure_list_typed and every source clause, including exact AppList tree constructors, singleton and multi-pair structure, constructor tag and length checks, reversed zipped fields, zero-based MAPi fields and swapped one-sided case. The executed wrapper flattens this source tree, and eqListBounded_eq_previous proves agreement with the prior retry implementation for every input. The eq_tree probe checks source tree shape and order."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "eq_direct_simple_exp",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftCorrect.lean",

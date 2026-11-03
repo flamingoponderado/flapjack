@@ -450,6 +450,9 @@ inferred HOL types and clauses of the corresponding matchers and elementary
 smart-operation helpers. Regenerate the latter with
 `HOL_PROBE_ONLY=clos_op_definitions_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The Lean operation simplifier is checked against these selected original outputs.
+The `eq_tree` observation preserves append-tree shape and checks field order,
+one-sided constructors, unequal tags and multi-pair decomposition. The typed
+`eq_pure_list` equations are captured in `clos_op_definitions_probe.out`.
 `clos_op_lift_proof_probe.out` captures the typed non-lifting characterization
 and purity theorem, plus the accumulator, index and length invariants from the
 original proof script; regenerate it with
