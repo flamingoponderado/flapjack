@@ -3533,6 +3533,1373 @@ theorem arm8_encoder_correct_mem_store8_scaled (dest base : Nat) (off : BitVec 6
     · rw [if_neg hk]
 
 
+/-! ## The two-byte `Mem` layer
+
+The `load16`/`store16` lowerings emit one `LoadStoreImmediate@16`; its `Mem`
+transfer is two bytes, and the register write is the zero-extended halfword.
+-/
+
+theorem holW2v_length16 (value : BitVec 16) : (holW2v value).length = 16 := by
+  simp [holW2v]
+
+theorem holW2v_getElem?_16 (value : BitVec 16) (m : Nat) :
+    (holW2v value)[m]? = if m < 16 then some (value.getLsbD (15 - m)) else none := by
+  simp only [holW2v, List.getElem?_map]
+  by_cases hm : m < 16
+  · simp [hm]
+  · simp [hm]
+
+theorem holField_two_length (value : BitVec 16) (i : Nat) (hi : i < 2) :
+    (holField (8 * i + 7) (8 * i) (holW2v value)).length = 8 := by
+  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
+  have hge : ¬ (16 - 8 * i < 8) := by omega
+  have hmin : min (16 - 8 * i) 16 = 16 - 8 * i := Nat.min_eq_left (by omega)
+  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length16, hmin, hge, if_false,
+    List.length_take, List.length_drop]
+  omega
+
+theorem holField_two_getElem? (value : BitVec 16) (i j : Nat) (hi : i < 2) (hj : j < 8) :
+    (holField (8 * i + 7) (8 * i) (holW2v value))[7 - j]? =
+      some (value.getLsbD (8 * i + j)) := by
+  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
+  have hge : ¬ (16 - 8 * i < 8) := by omega
+  have hmin : min (16 - 8 * i) 16 = 16 - 8 * i := Nat.min_eq_left (by omega)
+  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length16, List.length_take, hmin, hge,
+    if_false]
+  rw [List.getElem?_drop]
+  rw [show 16 - 8 * i - 8 + (7 - j) = 15 - 8 * i - j by omega]
+  rw [List.getElem?_take_of_lt (by omega : 15 - 8 * i - j < 16 - 8 * i)]
+  rw [holW2v_getElem?_16]
+  have hlt : 15 - 8 * i - j < 16 := by omega
+  have hidx : 15 - (15 - 8 * i - j) = 8 * i + j := by omega
+  simp only [hlt, if_true, hidx]
+
+theorem arm8HolByte16 (value : BitVec 16) (i : Nat) (hi : i < 2) :
+    holV2w 8 (holField (8 * i + 7) (8 * i) (holW2v value)) =
+      (value >>> (8 * i)).setWidth 8 := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro j hj
+  simp only [Flapjack.RiscV.L3.holV2w]
+  rw [getLsbD_holFcpWord]
+  have hlen := holField_two_length value i hi
+  simp only [hj, decide_true, Bool.true_and, hlen, show 8 - 1 - j = 7 - j by omega]
+  rw [List.getD_eq_getElem?_getD, holField_two_getElem? value i j hi hj]
+  simp only [Option.getD_some, BitVec.getLsbD_setWidth, hj, decide_true, Bool.true_and,
+    BitVec.getLsbD_ushiftRight]
+
+theorem arm8ByteSetWidth16_64 (w : BitVec 64) (i : Nat) (hi : i < 2) :
+    (((BitVec.setWidth 64 (BitVec.setWidth 16 w)) >>> (8 * i : Nat)).setWidth 8) =
+      ((w >>> (8 * i : Nat)).setWidth 8) := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro j hj
+  simp only [BitVec.getLsbD_setWidth, hj, decide_true, Bool.true_and,
+    BitVec.getLsbD_ushiftRight]
+  have hk : 8 * i + j < 16 := by omega
+  have h64 : 8 * i + j < 64 := by omega
+  simp [hk, h64]
+
+theorem writeMemN_two_setWidth16 (s : Arm8State) (a w x : BitVec 64) :
+    (writeMemN s 2 a (BitVec.setWidth 64 (BitVec.setWidth 16 w))).mem x =
+      (writeMemN s 2 a w).mem x := by
+  simp only [writeMemN]
+  by_cases h : x = a
+  · simp [h]
+  · simp [h, arm8ByteSetWidth16_64 w 1 (by decide)]
+
+theorem holUpdate_two (address : BitVec 64) (f : BitVec 64 → BitVec 8)
+    (b0 b1 : BitVec 8) (x : BitVec 64) :
+    holUpdate (address + 1#64) b1 (holUpdate address b0 f) x =
+      if x = address then b0
+      else if x = address + 1#64 then b1 else f x := by
+  simp only [holUpdate_apply]
+  by_cases e0 : x = address
+  · subst e0; simp
+  by_cases e1 : x = address + 1#64
+  · subst e1; simp
+  · have h0 : address ≠ x := fun h => e0 h.symm
+    have h1 : address + 1#64 ≠ x := fun h => e1 h.symm
+    simp [e0, e1, h0, h1]
+
+theorem arm8WriteMem_two (ms : arm8_state) (address : BitVec 64) (value : BitVec 16)
+    (acctype : AccType)
+    (hal : Aligned (TN := 64) (address, 2) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
+    (x : BitVec 64) :
+    («write'Mem» (TN := 16) (value, (address, (2, acctype))) ms).MEM x =
+      (writeMemN (memState ms.MEM) 2 address (BitVec.setWidth 64 value)).mem x := by
+  simp only [«write'Mem», writeMemN, memState]
+  simp [holFor, CheckAlignment_aligned ms address 2 acctype true hal,
+    BigEndian_false ms hel he0]
+  have hb0 : holV2w 8 (holField 7 0 (holW2v value)) = BitVec.setWidth 8 value := by
+    simpa using arm8HolByte16 value 0 (by decide)
+  have hb1 : holV2w 8 (holField 15 8 (holW2v value)) = BitVec.setWidth 8 (value >>> 8) := by
+    simpa using arm8HolByte16 value 1 (by decide)
+  rw [hb0, hb1]
+  exact holUpdate_two address ms.MEM _ _ x
+
+theorem arm8WriteMem_two_out (ms : arm8_state) (address : BitVec 64) (value : BitVec 16)
+    (acctype : AccType)
+    (hal : Aligned (TN := 64) (address, 2) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
+    (x : BitVec 64) (hx : ∀ k, k < 2 → x ≠ address + BitVec.ofNat 64 k) :
+    («write'Mem» (TN := 16) (value, (address, (2, acctype))) ms).MEM x = ms.MEM x := by
+  rw [arm8WriteMem_two ms address value acctype hal he0 hel x]
+  have h0 : x ≠ address := by simpa using hx 0 (by omega)
+  have h1 : x ≠ address + 1#64 := by simpa using hx 1 (by omega)
+  simp only [writeMemN, memState]
+  simp [h0, h1]
+
+theorem arm8WriteMem_only_mem_two (ms : arm8_state) (value : BitVec 16) (address : BitVec 64)
+    (acctype : AccType) (hal : Aligned (TN := 64) (address, 2) = true) :
+    («write'Mem» (TN := 16) (value, (address, (2, acctype))) ms) =
+      { ms with MEM := («write'Mem» (TN := 16) (value, (address, (2, acctype))) ms).MEM } := by
+  simp only [«write'Mem»]
+  simp [holFor, CheckAlignment_aligned ms address 2 acctype true hal]
+
+theorem arm8Aligned_two_of_holAligned (a : BitVec 64)
+    (h : holAligned 1 a = true) : Aligned (TN := 64) (a, 2) = true := by
+  have ha : a.toNat % 2 = 0 := by simpa using (holAligned_iff 1 a).mp h
+  simp only [Aligned, Align]
+  rw [beq_iff_eq]
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.toNat_ofNat]
+  rw [Nat.mul_comm, Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero ha)]
+  rw [Nat.mod_eq_of_lt a.isLt]
+
+theorem arm8MemStore_aligned_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
+    (s1 s2 : AsmState 64) (pc : BitVec 64)
+    (hspec : memOp (width := 64) op = memStore (width := 64) 2)
+    (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
+    (hbe : s1.be = false) (hok : ¬ s2.failed) :
+    Aligned (TN := 64) (s1.regs base + off, 2) = true := by
+  have hfail : s2.failed = false := boolOfNotTrue hok
+  rw [← hupd] at hfail
+  simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
+  have h1 : holLOG2 2 = 1 := holLOG_UNIQUE 2 2 1 ⟨by decide, by decide⟩
+  rw [h1] at hal
+  exact arm8Aligned_two_of_holAligned _ (by simpa using hal)
+
+theorem arm8MemStore_domain_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
+    (s1 s2 : AsmState 64) (pc : BitVec 64)
+    (hspec : memOp (width := 64) op = memStore (width := 64) 2)
+    (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
+    (hbe : s1.be = false) (hok : ¬ s2.failed) :
+    ∀ k, k < 2 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) := by
+  have hfail : s2.failed = false := boolOfNotTrue hok
+  rw [← hupd] at hfail
+  simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+  obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
+  exact writeMemWord_domain (s1.regs base + off) 2 (s1.regs r) s1 hbe (not_of_eq_false hf)
+
+theorem arm8MemLoad_aligned_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
+    (s1 s2 : AsmState 64) (pc : BitVec 64)
+    (hspec : memOp (width := 64) op = memLoad (width := 64) 2)
+    (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
+    (hbe : s1.be = false) (hok : ¬ s2.failed) :
+    Aligned (TN := 64) (s1.regs base + off, 2) = true := by
+  have hfail : s2.failed = false := boolOfNotTrue hok
+  rw [← hupd] at hfail
+  simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
+  have h1 : holLOG2 2 = 1 := holLOG_UNIQUE 2 2 1 ⟨by decide, by decide⟩
+  rw [h1] at hal
+  exact arm8Aligned_two_of_holAligned _ (by simpa using hal)
+
+theorem arm8MemLoad_domain_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
+    (s1 s2 : AsmState 64) (pc : BitVec 64)
+    (hspec : memOp (width := 64) op = memLoad (width := 64) 2)
+    (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
+    (hbe : s1.be = false) (hok : ¬ s2.failed) :
+    ∀ k, k < 2 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) := by
+  have h := memLoadDomain op r base off s1 s2 1 pc (by simpa using hspec) hupd hbe hok
+  simpa using h
+
+theorem arm8Mem_two (ms : arm8_state) (address : BitVec 64)
+    (b0 b1 : BitVec 8)
+    (h0 : ms.MEM address = b0)
+    (h1 : ms.MEM (address + BitVec.ofNat 64 1) = b1)
+    (hal : Aligned (TN := 64) (address, 2) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    Mem (TN := 16) (address, (2, AccType.AccType_NORMAL)) ms =
+      (holV2w 16 (holW2v b1 ++ holW2v b0), ms) := by
+  simp only [Mem]
+  simp [holFor]
+  constructor
+  · rw [CheckAlignment_aligned ms address 2 AccType.AccType_NORMAL false hal]
+    rw [BigEndian_false ms hel he0]
+    simp only [Bool.false_eq_true, if_false]
+    rw [h0, h1]
+  · exact CheckAlignment_aligned ms address 2 AccType.AccType_NORMAL false hal
+
+theorem arm8Mem_two_of_bytes (ms : arm8_state) (address : BitVec 64)
+    (m : BitVec 64 → BitVec 8)
+    (hbytes : ∀ i, i < 2 →
+      ms.MEM (address + BitVec.ofNat 64 i) = m (address + BitVec.ofNat 64 i))
+    (hal : Aligned (TN := 64) (address, 2) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
+    Mem (TN := 16) (address, (2, AccType.AccType_NORMAL)) ms =
+      (holV2w 16 (holW2v (m (address + BitVec.ofNat 64 1)) ++ holW2v (m address)), ms) := by
+  have h0 : ms.MEM address = m address := by simpa using hbytes 0 (by omega)
+  exact arm8Mem_two ms address (m address) (m (address + BitVec.ofNat 64 1))
+    h0 (hbytes 1 (by omega)) hal he0 hel
+
+theorem arm8SetWidth64_two (b0 b1 : BitVec 8) :
+    BitVec.setWidth 64 (holV2w 16 (holW2v b1 ++ holW2v b0)) =
+      (BitVec.setWidth 64 b1) <<< (8 : Nat) ||| (BitVec.setWidth 64 b0) := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro j hj
+  simp only [Flapjack.RiscV.L3.holV2w, holW2v, List.length_append, List.length_map,
+    List.length_range]
+  rw [BitVec.getLsbD_setWidth, getLsbD_holFcpWord]
+  simp only [hj, decide_true, Bool.true_and]
+  interval_cases j <;> simp [List.getD_eq_getElem?_getD]
+
+theorem arm8Mem_two_eq_readMemWord (ms : arm8_state) (s : AsmState 64) (address : BitVec 64)
+    (hal : Aligned (TN := 64) (address, 2) = true)
+    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
+    (hbe : s.be = false)
+    (hmem : ∀ i, i < 2 → ms.MEM (address + BitVec.ofNat 64 i) = s.mem (address + BitVec.ofNat 64 i)) :
+    BitVec.setWidth 64 (Mem (TN := 16) (address, (2, AccType.AccType_NORMAL)) ms).1 =
+      (readMemWord (resultWidth := 64) address 2 s).1 := by
+  have h0 : ms.MEM address = s.mem address := by simpa using hmem 0 (by omega)
+  have h1 : ms.MEM (address + BitVec.ofNat 64 1) = s.mem (address + BitVec.ofNat 64 1) :=
+    hmem 1 (by omega)
+  rw [arm8Mem_two ms address (s.mem address) (s.mem (address + BitVec.ofNat 64 1)) h0 h1
+    hal he0 hel]
+  rw [readMemWord_fst address 2 s hbe, readBytes_two]
+  exact arm8SetWidth64_two _ _
+
+
+/-! ## The `LoadStoreImmediate@16` words -/
+
+theorem arm8ELoadStoreImm9_load16 (offset : BitVec 64) (unsigned_offset : Bool)
+    (rn rt : BitVec 5)
+    (hfall : (unsigned_offset && (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 1))) <<< 1)) = false)
+    (hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) :
+    e_load_store (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, unsigned_offset, offset, rn, rt)) =
+      MachineCode.ARM8 (arm8LoadStoreImm9Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 1)
+        (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) := by
+  have hs : BitVec.setWidth 2 (BitVec.ofNat 16 1) = (BitVec.ofNat 2 1) := by decide
+  have h2 : (BitVec.ofNat 2 1).toNat = 1 := by decide
+  have hload : (MemOp.MemOp_LOAD == MemOp.MemOp_LOAD) = true := by decide
+  have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+  have hunpriv : (AccType.AccType_NORMAL == AccType.AccType_UNPRIV) = false := by decide
+  have hpref : (MemOp.MemOp_LOAD == MemOp.MemOp_PREFETCH) = false := by decide
+  have hstore : (MemOp.MemOp_LOAD == MemOp.MemOp_STORE) = false := by decide
+  have hsx' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
+    rw [beq_iff_eq]; exact hsx
+  have hnf : ((!false : Bool) = true) := rfl
+  simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hload, hnrm, hunpriv, hpref,
+    hstore, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+    holV2w_one_false]
+  split_ifs with hg
+  all_goals first
+    | rfl
+    | exact absurd hsx' ‹_›
+    | (exfalso
+       have h1 : (unsigned_offset && (offset == (BitVec.setWidth 64
+           (holWordExtract 12 11 0 (offset >>> 1))) <<< 1)) = true := by
+         simpa [Bool.and_true] using hg
+       rw [hfall] at h1
+       simp at h1)
+
+theorem arm8Encode_loadStoreImm9_load16 (offset : BitVec 64) (unsigned_offset : Bool)
+    (rn rt : BitVec 5)
+    (hfall : (unsigned_offset && (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 1))) <<< 1)) = false)
+    (hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) :
+    Encode (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, unsigned_offset, offset, rn, rt))) =
+      MachineCode.ARM8 (arm8LoadStoreImm9Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 1)
+        (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) :=
+  arm8ELoadStoreImm9_load16 offset unsigned_offset rn rt hfall hsx
+
+theorem arm8Decode_loadStoreImm9_load16 (imm9 : BitVec 9) (rn rt : BitVec 5) :
+    Decode (arm8LoadStoreImm9Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 1) imm9
+        (BitVec.ofNat 1 0) rn rt) =
+      instruction.LoadStore (LoadStore.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, false, BitVec.signExtend 64 imm9, rn, rt)) := by
+  simp only [arm8LoadStoreImm9Word, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_one_false, holV2w_two_one, holV2w_five,
+    arm8HolV2w_nine, LoadStoreImmediate, LoadStoreImmediateN]
+
+theorem arm8ELoadStoreImm9_store16 (offset : BitVec 64) (unsigned_offset : Bool)
+    (rn rt : BitVec 5)
+    (hfall : (unsigned_offset && (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 1))) <<< 1)) = false)
+    (hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) :
+    e_load_store (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, unsigned_offset, offset, rn, rt)) =
+      MachineCode.ARM8 (arm8LoadStoreImm9Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 0)
+        (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) := by
+  have hs : BitVec.setWidth 2 (BitVec.ofNat 16 1) = (BitVec.ofNat 2 1) := by decide
+  have h2 : (BitVec.ofNat 2 1).toNat = 1 := by decide
+  have hstore : (MemOp.MemOp_STORE == MemOp.MemOp_STORE) = true := by decide
+  have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+  have hpref : (MemOp.MemOp_STORE == MemOp.MemOp_PREFETCH) = false := by decide
+  have hsx' : (offset == BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) = true := by
+    rw [beq_iff_eq]; exact hsx
+  have hnf : ((!false : Bool) = true) := rfl
+  simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hstore, hnrm, hpref,
+    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true]
+  split_ifs with hg
+  all_goals first
+    | rfl
+    | exact absurd hsx' ‹_›
+    | (exfalso
+       have h1 : (unsigned_offset && (offset == (BitVec.setWidth 64
+           (holWordExtract 12 11 0 (offset >>> 1))) <<< 1)) = true := by
+         simpa [Bool.and_true] using hg
+       rw [hfall] at h1
+       simp at h1)
+
+theorem arm8Encode_loadStoreImm9_store16 (offset : BitVec 64) (unsigned_offset : Bool)
+    (rn rt : BitVec 5)
+    (hfall : (unsigned_offset && (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 1))) <<< 1)) = false)
+    (hsx : offset = BitVec.signExtend 64 (holWordExtract 9 8 0 offset)) :
+    Encode (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, unsigned_offset, offset, rn, rt))) =
+      MachineCode.ARM8 (arm8LoadStoreImm9Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 0)
+        (holWordExtract 9 8 0 offset) (BitVec.ofNat 1 0) rn rt) :=
+  arm8ELoadStoreImm9_store16 offset unsigned_offset rn rt hfall hsx
+
+theorem arm8Decode_loadStoreImm9_store16 (imm9 : BitVec 9) (rn rt : BitVec 5) :
+    Decode (arm8LoadStoreImm9Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 0) imm9
+        (BitVec.ofNat 1 0) rn rt) =
+      instruction.LoadStore (LoadStore.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, false, BitVec.signExtend 64 imm9, rn, rt)) := by
+  simp only [arm8LoadStoreImm9Word, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_one_false, holV2w_two_zero, holV2w_two_one, holV2w_five,
+    arm8HolV2w_nine, LoadStoreImmediate, LoadStoreImmediateN]
+
+theorem arm8ELoadStoreImm12_load16 (offset : BitVec 64) (rn rt : BitVec 5)
+    (hoff : offset =
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 1))) <<< 1) :
+    e_load_store (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, true, offset, rn, rt)) =
+      MachineCode.ARM8 (arm8LoadStoreImm12Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 1)
+        (holWordExtract 12 11 0 (offset >>> 1)) rn rt) := by
+  have hs : BitVec.setWidth 2 (BitVec.ofNat 16 1) = (BitVec.ofNat 2 1) := by decide
+  have h2 : (BitVec.ofNat 2 1).toNat = 1 := by decide
+  have hload : (MemOp.MemOp_LOAD == MemOp.MemOp_LOAD) = true := by decide
+  have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+  have hpref : (MemOp.MemOp_LOAD == MemOp.MemOp_PREFETCH) = false := by decide
+  have hstore : (MemOp.MemOp_LOAD == MemOp.MemOp_STORE) = false := by decide
+  have hnf : ((!false : Bool) = true) := rfl
+  have hguard : (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 1))) <<< 1) = true := by
+    rw [beq_iff_eq]; exact hoff
+  simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hload, hnrm, hpref, hstore,
+    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true]
+  split_ifs with hg
+  all_goals first | rfl | exact absurd hguard hg
+
+theorem arm8Encode_loadStoreImm12_load16 (offset : BitVec 64) (rn rt : BitVec 5)
+    (hoff : offset =
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 1))) <<< 1) :
+    Encode (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, true, offset, rn, rt))) =
+      MachineCode.ARM8 (arm8LoadStoreImm12Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 1)
+        (holWordExtract 12 11 0 (offset >>> 1)) rn rt) :=
+  arm8ELoadStoreImm12_load16 offset rn rt hoff
+
+theorem arm8Decode_loadStoreImm12_load16 (imm12 : BitVec 12) (rn rt : BitVec 5) :
+    Decode (arm8LoadStoreImm12Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 1) imm12 rn rt) =
+      instruction.LoadStore (LoadStore.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, true, ((BitVec.setWidth 64 imm12) <<< 1), rn, rt)) := by
+  simp only [arm8LoadStoreImm12Word, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_two_one, holV2w_five, arm8HolV2w_twelve,
+    LoadStoreImmediate, LoadStoreImmediateN]
+
+theorem arm8ELoadStoreImm12_store16 (offset : BitVec 64) (rn rt : BitVec 5)
+    (hoff : offset =
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 1))) <<< 1) :
+    e_load_store (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, true, offset, rn, rt)) =
+      MachineCode.ARM8 (arm8LoadStoreImm12Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 0)
+        (holWordExtract 12 11 0 (offset >>> 1)) rn rt) := by
+  have hs : BitVec.setWidth 2 (BitVec.ofNat 16 1) = (BitVec.ofNat 2 1) := by decide
+  have h2 : (BitVec.ofNat 2 1).toNat = 1 := by decide
+  have hnrm : (AccType.AccType_NORMAL == AccType.AccType_NORMAL) = true := by decide
+  have hpref : (MemOp.MemOp_STORE == MemOp.MemOp_PREFETCH) = false := by decide
+  have hstore : (MemOp.MemOp_STORE == MemOp.MemOp_STORE) = true := by decide
+  have hnf : ((!false : Bool) = true) := rfl
+  have hguard : (offset ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 1))) <<< 1) = true := by
+    rw [beq_iff_eq]; exact hoff
+  simp only [e_load_store, e_LoadStoreImmediate, hs, h2, hnrm, hpref, hstore,
+    Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true]
+  split_ifs with hg
+  all_goals first | rfl | exact absurd hguard hg
+
+theorem arm8Encode_loadStoreImm12_store16 (offset : BitVec 64) (rn rt : BitVec 5)
+    (hoff : offset =
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (offset >>> 1))) <<< 1) :
+    Encode (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, true, offset, rn, rt))) =
+      MachineCode.ARM8 (arm8LoadStoreImm12Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 0)
+        (holWordExtract 12 11 0 (offset >>> 1)) rn rt) :=
+  arm8ELoadStoreImm12_store16 offset rn rt hoff
+
+theorem arm8Decode_loadStoreImm12_store16 (imm12 : BitVec 12) (rn rt : BitVec 5) :
+    Decode (arm8LoadStoreImm12Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 0) imm12 rn rt) =
+      instruction.LoadStore (LoadStore.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, true, ((BitVec.setWidth 64 imm12) <<< 1), rn, rt)) := by
+  simp only [arm8LoadStoreImm12Word, Decode, boolify32, BitVec.getLsbD_append,
+    BitVec.getLsbD_setWidth]
+  simp [holV2w_two_zero, holV2w_two_one, holV2w_five, arm8HolV2w_twelve,
+    LoadStoreImmediate, LoadStoreImmediateN]
+
+theorem arm8Ast_load_single16 (dest base : Nat) (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    arm8Ast (.inst (.mem .load16 dest (.addr base off))) =
+      [.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))] := by
+  rw [BitVec.ofNat_toNat] at hsx
+  have h1 : ¬(off ≠ BitVec.signExtend 64 (BitVec.setWidth 9 off)) := fun h => h hsx
+  simp only [arm8Ast, arm8LoadStoreAst16]
+  simp [h1]
+
+theorem arm8Ast_store_single16 (dest base : Nat) (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    arm8Ast (.inst (.mem .store16 dest (.addr base off))) =
+      [.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))] := by
+  rw [BitVec.ofNat_toNat] at hsx
+  have h1 : ¬(off ≠ BitVec.signExtend 64 (BitVec.setWidth 9 off)) := fun h => h hsx
+  simp only [arm8Ast, arm8LoadStoreAst16]
+  simp [h1]
+
+theorem arm8Enc_load_single16_length (dest base : Nat) (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    (arm8Enc (.inst (.mem .load16 dest (.addr base off)))).length = 4 := by
+  rw [arm8Enc, arm8Ast_load_single16 dest base off hsx]
+  simp [arm8Encode_length]
+
+theorem arm8Enc_store_single16_length (dest base : Nat) (off : BitVec 64)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
+    (arm8Enc (.inst (.mem .store16 dest (.addr base off)))).length = 4 := by
+  rw [arm8Enc, arm8Ast_store_single16 dest base off hsx]
+  simp [arm8Encode_length]
+
+theorem setWidth64_setWidth32_of_16 (x : BitVec 16) :
+    BitVec.setWidth 64 (BitVec.setWidth 32 x) = BitVec.setWidth 64 x := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  simp only [BitVec.getLsbD_setWidth]
+  by_cases h16 : i < 16
+  · simp [h16, show i < 32 by omega, show i < 64 by omega]
+  · have h16' : 16 ≤ i := by omega
+    simp [h16', show i < 64 by omega]
+
+theorem arm8Run_loadStoreImmediate_load16 (ms : arm8_state) (offset : BitVec 64)
+    (unsigned : Bool) (base dest : BitVec 5)
+    (hbase : (base == (BitVec.ofNat 5 31)) = false) :
+    Run (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, unsigned, offset, base, dest))) ms =
+      «write'X» (TN := 32)
+        ((BitVec.setWidth 32 (Mem (TN := 16) ((X (TN := 64) base ms) + offset, (2, .AccType_NORMAL)) ms).1), dest)
+        (Mem (TN := 16) ((X (TN := 64) base ms) + offset, (2, .AccType_NORMAL)) ms).2 := by
+  have hne : ¬(base = BitVec.ofNat 5 31) := by
+    intro h; rw [h] at hbase; simp at hbase
+  simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, ExtendWord, hbase,
+    if_false, if_true, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
+
+theorem arm8Run_loadStoreImmediate_store16 (ms : arm8_state) (offset : BitVec 64)
+    (unsigned : Bool) (base dest : BitVec 5)
+    (hbase : (base == (BitVec.ofNat 5 31)) = false) :
+    Run (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, unsigned, offset, base, dest))) ms =
+      «write'Mem» (TN := 16)
+        ((X (TN := 16) dest ms), ((X (TN := 64) base ms) + offset, (2, .AccType_NORMAL))) ms := by
+  have hne : ¬(base = BitVec.ofNat 5 31) := by
+    intro h; rw [h] at hbase; simp at hbase
+  simp only [Run, «dfn'LoadStoreImmediate», LoadStoreSingle, hbase,
+    if_false, Bool.false_and, Bool.false_eq_true, Nat.reduceDiv]
+
+theorem arm8X16_of_valid (ms : arm8_state) {n : Nat} (hn : n ≠ 31) (hlt : n < 32) :
+    X (TN := 16) (BitVec.ofNat 5 n) ms = BitVec.setWidth 16 (ms.REG (BitVec.ofNat 5 n)) := by
+  have hne : BitVec.ofNat 5 n ≠ 31#5 := by
+    intro hh
+    have hto := congrArg BitVec.toNat hh
+    rw [BitVec.toNat_ofNat] at hto
+    have h31 : (31#5).toNat = 31 := by decide
+    rw [h31] at hto
+    have hn32 : n % 2 ^ 5 = n := Nat.mod_eq_of_lt (by omega)
+    omega
+  simp only [X]
+  split
+  · exact absurd (by simpa using ‹(BitVec.ofNat 5 n == 31#5) = true›) hne
+  · rfl
+
+
+/-- The `.mem .load16` constructor of `encoder_correct arm8TargetL3` on the
+unscaled `imm9` path: the `load16` lowering emits one `LoadStoreImmediate@16`,
+and `e_LoadStoreImmediate` reaches its `imm9` clause only when the scaled
+twelve-bit clause does not fire (`hfall`) and `off` is its own signed nine-bit
+form (`hsx`).  The machine reads two bytes and zero-extends them.  The statement
+awaits source review against `arm8_encoder_correct`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
+theorem arm8_encoder_correct_mem_load16_imm9 (dest base : Nat) (off : BitVec 64)
+    (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (.inst (.mem .load16 dest (.addr base off))) s2 ∧
+      targetStateRel arm8TargetL3 s1 ms)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
+    (hfall : ((!off.msb) && (off ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 1))) <<< 1)) = false) :
+    CaseGoal (.inst (.mem .load16 dest (.addr base off))) s1 s2 ms := by
+  obtain ⟨hs, hr⟩ := h
+  obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
+  rw [arm8TargetL3_stateOk] at hok
+  rw [arm8TargetL3_getPc] at hpc
+  rw [arm8TargetL3_getByte] at hmem
+  rw [arm8TargetL3_getReg] at hreg
+  change ms.PC = s1.pc at hpc
+  change ∀ a, s1.memDomain a → ms.MEM a = s1.mem a at hmem
+  change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+    ms.REG (BitVec.ofNat 5 k) = s1.regs k at hreg
+  have hokd : asmRegOkExact dest arm8ConfigL3 = true ∧
+      asmRegOkExact base arm8ConfigL3 = true := by
+    have h' := hs.2.2.2.2.2.2
+    simp only [asmOkExact, asmInstOkExact, Bool.and_eq_true] at h'
+    exact ⟨h'.1.1, h'.1.2⟩
+  obtain ⟨hdlt, hdav, hd31⟩ := regOk_of_asmL3 hokd.1
+  obtain ⟨hslt, hsav, hs31⟩ := regOk_of_asmL3 hokd.2
+  have hfields := (arm8Ok_iff ms).mp hok
+  obtain ⟨hel, he0, hsa0, htbi1, htbi0, hexc0, halign⟩ := hfields
+  have hal : Aligned (TN := 64) (ms.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 ms.PC).mp halign
+  have hbe : s1.be = false := hs.2.2.1
+  have hupd := hs.2.2.2.2.1
+  simp only [arm8ConfigL3] at hupd
+  have hnotfail : ¬ s2.failed := hs.2.2.2.2.2.1
+  have hspec : memOp (width := 64) .load16 = memLoad (width := 64) 2 := rfl
+  have hal1 : Aligned (TN := 64) (s1.regs base + off, 2) = true :=
+    arm8MemLoad_aligned_two .load16 dest base off s1 s2 _ hspec hupd hbe hnotfail
+  have hdom : ∀ k, k < 2 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) :=
+    arm8MemLoad_domain_two .load16 dest base off s1 s2 _ hspec hupd hbe hnotfail
+  have hast := arm8Ast_load_single16 dest base off hsx
+  have henc : arm8Enc (.inst (.mem .load16 dest (.addr base off))) =
+      arm8Encode (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) := by
+    rw [arm8Enc, hast]
+    simp
+  let w : BitVec 32 := arm8LoadStoreImm9Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 1)
+    (holWordExtract 9 8 0 off) (BitVec.ofNat 1 0) (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest)
+  have hencw : Encode (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) = MachineCode.ARM8 w :=
+    arm8Encode_loadStoreImm9_load16 off (!off.msb) (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest)
+      hfall (arm8SignExtend_nine off hsx).symm
+  have hlen : (arm8Enc (.inst (.mem .load16 dest (.addr base off)))).length = 4 :=
+    arm8Enc_load_single16_length dest base off hsx
+  have hb := hs.1
+  simp only [arm8ConfigL3] at hb
+  have hbdom := bytesInMemoryHOL_domain hb
+  have hbms : bytesInMemoryHOL ms.PC (arm8Enc (.inst (.mem .load16 dest (.addr base off))))
+      ms.MEM s1.memDomain := by
+    rw [hpc]
+    exact bytesInMemory_changeMem _ _ _ _ _ ⟨hb, fun n hn => (hmem _ (hbdom n hn)).symm⟩
+  have h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((w >>> 0).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 0 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  have h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((w >>> 8).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 1 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  have h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((w >>> 16).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 2 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  have h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((w >>> 24).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 3 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  let ins : instruction := instruction.LoadStore (LoadStore.«LoadStoreImmediate@16»
+    (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+     false, false, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))
+  have hdec : Decode w = ins := by
+    have hd := arm8Decode_loadStoreImm9_load16 (holWordExtract 9 8 0 off)
+      (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest)
+    rw [arm8SignExtend_nine off hsx] at hd
+    simpa [ins, w] using hd
+  have hbase : (BitVec.ofNat 5 base == (BitVec.ofNat 5 31)) = false := by
+    rw [Bool.eq_false_iff]
+    intro hh
+    apply hs31
+    have hto := congrArg BitVec.toNat (beq_iff_eq.mp hh)
+    rw [BitVec.toNat_ofNat, BitVec.toNat_ofNat] at hto
+    have hb32 : base % 2 ^ 5 = base := Nat.mod_eq_of_lt (by omega)
+    have h31 : 31 % 2 ^ 5 = 31 := by decide
+    omega
+  let v : BitVec 64 := BitVec.setWidth 64 (Mem (TN := 16)
+    ((s1.regs base + off), (2, AccType.AccType_NORMAL)) ms).1
+  have hv : v = (readMemWord (resultWidth := 64) (s1.regs base + off) 2 s1).1 := by
+    show BitVec.setWidth 64 (Mem (TN := 16)
+      ((s1.regs base + off), (2, AccType.AccType_NORMAL)) ms).1 = _
+    exact arm8Mem_two_eq_readMemWord ms s1 (s1.regs base + off) hal1 he0 hel hbe
+      (fun i hi => hmem _ (hdom i hi))
+  have hpairbh : Mem (TN := 16) ((s1.regs base + off), (2, AccType.AccType_NORMAL))
+      { ms with branch_hint := none } =
+      ((Mem (TN := 16) ((s1.regs base + off), (2, AccType.AccType_NORMAL)) ms).1,
+        { ms with branch_hint := none }) := by
+    rw [arm8Mem_two { ms with branch_hint := none } (s1.regs base + off)
+        (ms.MEM (s1.regs base + off)) (ms.MEM (s1.regs base + off + 1#64))
+        rfl rfl hal1 he0 hel,
+      arm8Mem_two ms (s1.regs base + off)
+        (ms.MEM (s1.regs base + off)) (ms.MEM (s1.regs base + off + 1#64))
+        rfl rfl hal1 he0 hel]
+  have hX : X (TN := 64) (BitVec.ofNat 5 base) { ms with branch_hint := none } =
+      s1.regs base := by
+    rw [arm8X_of_valid _ hs31 hslt]
+    exact hreg base ⟨hslt, hsav⟩
+  have hrun : Run ins { ms with branch_hint := none } =
+      { ms with
+        branch_hint := none,
+        REG := holUpdate (BitVec.ofNat 5 dest) v ms.REG } := by
+    rw [show ins = (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, false, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) from rfl]
+    rw [arm8Run_loadStoreImmediate_load16 _ _ _ _ _ hbase]
+    rw [hX, hpairbh]
+    simp only
+    rw [arm8WriteX32_of_valid _ _ hd31 hdlt]
+    rw [show BitVec.setWidth 64 (BitVec.setWidth 32 (Mem (TN := 16)
+      ((s1.regs base + off), (2, AccType.AccType_NORMAL)) ms).1) = v by
+      rw [setWidth64_setWidth32_of_16]]
+  have hbr : (Run ins { ms with branch_hint := none }).branch_hint = none := by
+    rw [hrun]
+  have hexc : (Run ins { ms with branch_hint := none }).exception = exception.NoException := by
+    rw [hrun]
+    show ms.exception = exception.NoException
+    exact hexc0
+  have hn := arm8Next_word ms w ins hdec hbr hexc h0 h1 h2 h3 hal he0 hel
+  have hnext : arm8Next ms =
+      { ms with
+        branch_hint := none,
+        REG := holUpdate (BitVec.ofNat 5 dest) v ms.REG,
+        PC := ms.PC + 4 } := by
+    unfold arm8Next
+    rw [hn, hrun]
+    rfl
+  have hupd4 : asmUpd (.inst (.mem .load16 dest (.addr base off)))
+      (s1.pc + BitVec.ofNat 64 4) s1 = s2 := by
+    rw [← hupd, hlen]
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 4 := by
+    rw [← hupd4]
+    rfl
+  have hs2mem : ∀ x, s2.mem x = s1.mem x := by
+    rw [← hupd4]
+    intro x
+    simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
+      readMemWord_mem_eq_direct]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← hupd4]
+    simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
+      readMemWord_memDomain]
+  have hs2regs : ∀ k, s2.regs k = if k = dest then v else s1.regs k := by
+    intro k
+    rw [hv]
+    rw [← hupd4]
+    simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
+      readMemWord_regs, Flapjack.Compiler.Encoders.AsmSem.readReg, hbe,
+      Bool.false_eq_true, if_false]
+  refine asmCaseOneMem (.mem .load16 dest (.addr base off)) dest v _ s1 s2 ms
+    ⟨hs, ⟨hok, hpc, hmem, hreg, hfp⟩⟩ hnext ?_ ?_ ?_ ?_ ?_ ?_ hs2pc hs2dom hs2regs
+  · rfl
+  · intro x hx
+    show ms.MEM x = s2.mem x
+    rw [hs2mem x]
+    exact hmem x hx
+  · intro x hx
+    show ms.MEM x = ms.MEM x
+    rfl
+  · intro k hk hkne
+    show (if (BitVec.ofNat 5 dest) = (BitVec.ofNat 5 k) then v
+      else ms.REG (BitVec.ofNat 5 k)) = ms.REG (BitVec.ofNat 5 k)
+    rw [if_neg]
+    intro hh
+    apply hkne
+    have := congrArg BitVec.toNat hh
+    rw [BitVec.toNat_ofNat, BitVec.toNat_ofNat] at this
+    have hd32 : dest % 2 ^ 5 = dest := Nat.mod_eq_of_lt (by omega)
+    have hk32 : k % 2 ^ 5 = k := Nat.mod_eq_of_lt (by omega)
+    omega
+  · show (if (BitVec.ofNat 5 dest) = (BitVec.ofNat 5 dest) then v
+      else ms.REG (BitVec.ofNat 5 dest)) = v
+    rw [if_pos rfl]
+  · rw [arm8Ok_iff]
+    refine ⟨hel, he0, hsa0, htbi1, htbi0, ?_, ?_⟩
+    · show ms.exception = exception.NoException
+      exact hexc0
+    · have h4 : holAligned 2 (4 : BitVec 64) = true := by rw [holAligned_iff]; decide
+      have hal4' : holAligned 2 (ms.PC + 4) = true := by
+        rw [(alignedAddSub 2 ms.PC 4 h4).1, halign]
+      change holAligned 2 (ms.PC + 4) = true
+      exact hal4'
+
+/-- The `.mem .store16` constructor of `encoder_correct arm8TargetL3` on the
+unscaled `imm9` path (`opc = 0`), writing two bytes.  The statement awaits source
+review against `arm8_encoder_correct`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
+theorem arm8_encoder_correct_mem_store16_imm9 (dest base : Nat) (off : BitVec 64)
+    (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (.inst (.mem .store16 dest (.addr base off))) s2 ∧
+      targetStateRel arm8TargetL3 s1 ms)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
+    (hfall : ((!off.msb) && (off ==
+      (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 1))) <<< 1)) = false) :
+    CaseGoal (.inst (.mem .store16 dest (.addr base off))) s1 s2 ms := by
+  obtain ⟨hs, hr⟩ := h
+  obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
+  rw [arm8TargetL3_stateOk] at hok
+  rw [arm8TargetL3_getPc] at hpc
+  rw [arm8TargetL3_getByte] at hmem
+  rw [arm8TargetL3_getReg] at hreg
+  change ms.PC = s1.pc at hpc
+  change ∀ a, s1.memDomain a → ms.MEM a = s1.mem a at hmem
+  change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+    ms.REG (BitVec.ofNat 5 k) = s1.regs k at hreg
+  have hokd : asmRegOkExact dest arm8ConfigL3 = true ∧
+      asmRegOkExact base arm8ConfigL3 = true := by
+    have h' := hs.2.2.2.2.2.2
+    simp only [asmOkExact, asmInstOkExact, Bool.and_eq_true] at h'
+    exact ⟨h'.1.1, h'.1.2⟩
+  obtain ⟨hdlt, hdav, hd31⟩ := regOk_of_asmL3 hokd.1
+  obtain ⟨hslt, hsav, hs31⟩ := regOk_of_asmL3 hokd.2
+  have hfields := (arm8Ok_iff ms).mp hok
+  obtain ⟨hel, he0, hsa0, htbi1, htbi0, hexc0, halign⟩ := hfields
+  have hal : Aligned (TN := 64) (ms.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 ms.PC).mp halign
+  have hbe : s1.be = false := hs.2.2.1
+  have hupd := hs.2.2.2.2.1
+  simp only [arm8ConfigL3] at hupd
+  have hnotfail : ¬ s2.failed := hs.2.2.2.2.2.1
+  have hspec : memOp (width := 64) .store16 = memStore (width := 64) 2 := rfl
+  have hal1 : Aligned (TN := 64) (s1.regs base + off, 2) = true :=
+    arm8MemStore_aligned_two .store16 dest base off s1 s2 _ hspec hupd hbe hnotfail
+  have hdom : ∀ k, k < 2 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) :=
+    arm8MemStore_domain_two .store16 dest base off s1 s2 _ hspec hupd hbe hnotfail
+  have hast := arm8Ast_store_single16 dest base off hsx
+  have henc : arm8Enc (.inst (.mem .store16 dest (.addr base off))) =
+      arm8Encode (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) := by
+    rw [arm8Enc, hast]
+    simp
+  let w : BitVec 32 := arm8LoadStoreImm9Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 0)
+    (holWordExtract 9 8 0 off) (BitVec.ofNat 1 0) (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest)
+  have hencw : Encode (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, !off.msb, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) = MachineCode.ARM8 w :=
+    arm8Encode_loadStoreImm9_store16 off (!off.msb) (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest)
+      hfall (arm8SignExtend_nine off hsx).symm
+  have hlen : (arm8Enc (.inst (.mem .store16 dest (.addr base off)))).length = 4 :=
+    arm8Enc_store_single16_length dest base off hsx
+  have hb := hs.1
+  simp only [arm8ConfigL3] at hb
+  have hbdom := bytesInMemoryHOL_domain hb
+  have hbms : bytesInMemoryHOL ms.PC (arm8Enc (.inst (.mem .store16 dest (.addr base off))))
+      ms.MEM s1.memDomain := by
+    rw [hpc]
+    exact bytesInMemory_changeMem _ _ _ _ _ ⟨hb, fun n hn => (hmem _ (hbdom n hn)).symm⟩
+  have h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((w >>> 0).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 0 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  have h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((w >>> 8).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 1 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  have h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((w >>> 16).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 2 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  have h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((w >>> 24).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 3 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  let ins : instruction := instruction.LoadStore (LoadStore.«LoadStoreImmediate@16»
+    (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+     false, false, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))
+  have hdec : Decode w = ins := by
+    have hd := arm8Decode_loadStoreImm9_store16 (holWordExtract 9 8 0 off)
+      (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest)
+    rw [arm8SignExtend_nine off hsx] at hd
+    simpa [ins, w] using hd
+  have hbase : (BitVec.ofNat 5 base == (BitVec.ofNat 5 31)) = false := by
+    rw [Bool.eq_false_iff]
+    intro hh
+    apply hs31
+    have hto := congrArg BitVec.toNat (beq_iff_eq.mp hh)
+    rw [BitVec.toNat_ofNat, BitVec.toNat_ofNat] at hto
+    have hb32 : base % 2 ^ 5 = base := Nat.mod_eq_of_lt (by omega)
+    have h31 : 31 % 2 ^ 5 = 31 := by decide
+    omega
+  let v : BitVec 64 := s1.regs dest
+  have hXb : X (TN := 64) (BitVec.ofNat 5 base) { ms with branch_hint := none } =
+      s1.regs base := by
+    rw [arm8X_of_valid _ hs31 hslt]
+    exact hreg base ⟨hslt, hsav⟩
+  have hXd : X (TN := 16) (BitVec.ofNat 5 dest) { ms with branch_hint := none } =
+      BitVec.setWidth 16 (s1.regs dest) := by
+    rw [arm8X16_of_valid _ hd31 hdlt]
+    rw [hreg dest ⟨hdlt, hdav⟩]
+  have hrun : Run ins { ms with branch_hint := none } =
+      { ms with
+        branch_hint := none,
+        MEM := («write'Mem» (TN := 16)
+          (BitVec.setWidth 16 (s1.regs dest), ((s1.regs base) + off, (2, .AccType_NORMAL)))
+          { ms with branch_hint := none }).MEM } := by
+    rw [show ins = (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, false, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) from rfl]
+    rw [arm8Run_loadStoreImmediate_store16 _ _ _ _ _ hbase]
+    rw [hXb, hXd, arm8WriteMem_only_mem_two _ _ _ _ hal1]
+  have hbr : (Run ins { ms with branch_hint := none }).branch_hint = none := by
+    rw [hrun]
+  have hexc : (Run ins { ms with branch_hint := none }).exception = exception.NoException := by
+    rw [hrun]
+    show ms.exception = exception.NoException
+    exact hexc0
+  have hn := arm8Next_word ms w ins hdec hbr hexc h0 h1 h2 h3 hal he0 hel
+  have hnext : arm8Next ms =
+      { ms with
+        branch_hint := none,
+        MEM := («write'Mem» (TN := 16)
+          (BitVec.setWidth 16 (s1.regs dest), ((s1.regs base) + off, (2, .AccType_NORMAL)))
+          { ms with branch_hint := none }).MEM,
+        PC := ms.PC + 4 } := by
+    unfold arm8Next
+    rw [hn, hrun]
+    rfl
+  have hupd4 : asmUpd (.inst (.mem .store16 dest (.addr base off)))
+      (s1.pc + BitVec.ofNat 64 4) s1 = s2 := by
+    rw [← hupd, hlen]
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 4 := by
+    rw [← hupd4]
+    rfl
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← hupd4]
+    simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+      writeMemWord_memDomain]
+  have hs2regs : ∀ k, s2.regs k = s1.regs k := by
+    intro k
+    rw [← hupd4]
+    simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+      writeMemWord_regs]
+  have hs2mem : ∀ x, s2.mem x =
+      (writeMemWord (valueWidth := 64) (s1.regs base + off) 2 (s1.regs dest) s1).mem x := by
+    intro x
+    rw [← hupd4]
+    simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+      Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false]
+  refine asmCaseOneMem (.mem .store16 dest (.addr base off)) dest v _ s1 s2 ms
+    ⟨hs, ⟨hok, hpc, hmem, hreg, hfp⟩⟩ hnext ?_ ?_ ?_ ?_ ?_ ?_ hs2pc hs2dom ?_
+  · rfl
+  · intro x hx
+    show («write'Mem» (TN := 16)
+      (BitVec.setWidth 16 (s1.regs dest), ((s1.regs base) + off, (2, .AccType_NORMAL)))
+      { ms with branch_hint := none }).MEM x = s2.mem x
+    rw [arm8WriteMem_two { ms with branch_hint := none } (s1.regs base + off)
+      (BitVec.setWidth 16 (s1.regs dest)) .AccType_NORMAL hal1 he0 hel x]
+    rw [writeMemN_two_setWidth16 (memState ms.MEM) (s1.regs base + off) (s1.regs dest) x]
+    rw [← writeMemWord_mem_two s1 ms.MEM (s1.regs base + off) (s1.regs dest) x hbe
+      (hmem x hx).symm]
+    exact (hs2mem x).symm
+  · intro x hx
+    show («write'Mem» (TN := 16)
+      (BitVec.setWidth 16 (s1.regs dest), ((s1.regs base) + off, (2, .AccType_NORMAL)))
+      { ms with branch_hint := none }).MEM x = ms.MEM x
+    exact arm8WriteMem_two_out { ms with branch_hint := none } (s1.regs base + off)
+      (BitVec.setWidth 16 (s1.regs dest)) .AccType_NORMAL hal1 he0 hel x
+      (fun k hk h => hx (h ▸ hdom k hk))
+  · intro k hk hkne
+    show ms.REG (BitVec.ofNat 5 k) = ms.REG (BitVec.ofNat 5 k)
+    rfl
+  · show ms.REG (BitVec.ofNat 5 dest) = v
+    exact hreg dest ⟨hdlt, hdav⟩
+  · rw [arm8Ok_iff]
+    refine ⟨hel, he0, hsa0, htbi1, htbi0, ?_, ?_⟩
+    · show ms.exception = exception.NoException
+      exact hexc0
+    · have h4 : holAligned 2 (4 : BitVec 64) = true := by rw [holAligned_iff]; decide
+      have hal4' : holAligned 2 (ms.PC + 4) = true := by
+        rw [(alignedAddSub 2 ms.PC 4 h4).1, halign]
+      change holAligned 2 (ms.PC + 4) = true
+      exact hal4'
+  · intro k
+    rw [hs2regs k]
+    by_cases hk : k = dest
+    · subst hk
+      rw [if_pos rfl]
+    · rw [if_neg hk]
+
+/-- The `.mem .load16` constructor of `encoder_correct arm8TargetL3` on the
+scaled twelve-bit path of `e_LoadStoreImmediate` (`sz = 1`): the branch
+conditions are `hsx`, `hmsb` and `hoff`, with the two-byte read.  The statement
+awaits source review against `arm8_encoder_correct`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
+theorem arm8_encoder_correct_mem_load16_scaled (dest base : Nat) (off : BitVec 64)
+    (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (.inst (.mem .load16 dest (.addr base off))) s2 ∧
+      targetStateRel arm8TargetL3 s1 ms)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
+    (hmsb : off.msb = false)
+    (hoff : off = (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 1))) <<< 1) :
+    CaseGoal (.inst (.mem .load16 dest (.addr base off))) s1 s2 ms := by
+  obtain ⟨hs, hr⟩ := h
+  obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
+  rw [arm8TargetL3_stateOk] at hok
+  rw [arm8TargetL3_getPc] at hpc
+  rw [arm8TargetL3_getByte] at hmem
+  rw [arm8TargetL3_getReg] at hreg
+  change ms.PC = s1.pc at hpc
+  change ∀ a, s1.memDomain a → ms.MEM a = s1.mem a at hmem
+  change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+    ms.REG (BitVec.ofNat 5 k) = s1.regs k at hreg
+  have hokd : asmRegOkExact dest arm8ConfigL3 = true ∧
+      asmRegOkExact base arm8ConfigL3 = true := by
+    have h' := hs.2.2.2.2.2.2
+    simp only [asmOkExact, asmInstOkExact, Bool.and_eq_true] at h'
+    exact ⟨h'.1.1, h'.1.2⟩
+  obtain ⟨hdlt, hdav, hd31⟩ := regOk_of_asmL3 hokd.1
+  obtain ⟨hslt, hsav, hs31⟩ := regOk_of_asmL3 hokd.2
+  have hfields := (arm8Ok_iff ms).mp hok
+  obtain ⟨hel, he0, hsa0, htbi1, htbi0, hexc0, halign⟩ := hfields
+  have hal : Aligned (TN := 64) (ms.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 ms.PC).mp halign
+  have hbe : s1.be = false := hs.2.2.1
+  have hupd := hs.2.2.2.2.1
+  simp only [arm8ConfigL3] at hupd
+  have hnotfail : ¬ s2.failed := hs.2.2.2.2.2.1
+  have hspec : memOp (width := 64) .load16 = memLoad (width := 64) 2 := rfl
+  have hal1 : Aligned (TN := 64) (s1.regs base + off, 2) = true :=
+    arm8MemLoad_aligned_two .load16 dest base off s1 s2 _ hspec hupd hbe hnotfail
+  have hdom : ∀ k, k < 2 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) :=
+    arm8MemLoad_domain_two .load16 dest base off s1 s2 _ hspec hupd hbe hnotfail
+  have hast := arm8Ast_load_single16 dest base off hsx
+  have henc : arm8Enc (.inst (.mem .load16 dest (.addr base off))) =
+      arm8Encode (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) := by
+    rw [arm8Enc, hast]
+    simp [hmsb]
+  let w : BitVec 32 := arm8LoadStoreImm12Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 1)
+    (holWordExtract 12 11 0 (off >>> 1)) (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest)
+  have hencw : Encode (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) = MachineCode.ARM8 w :=
+    arm8Encode_loadStoreImm12_load16 off (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest) hoff
+  have hlen : (arm8Enc (.inst (.mem .load16 dest (.addr base off)))).length = 4 :=
+    arm8Enc_load_single16_length dest base off hsx
+  have hb := hs.1
+  simp only [arm8ConfigL3] at hb
+  have hbdom := bytesInMemoryHOL_domain hb
+  have hbms : bytesInMemoryHOL ms.PC (arm8Enc (.inst (.mem .load16 dest (.addr base off))))
+      ms.MEM s1.memDomain := by
+    rw [hpc]
+    exact bytesInMemory_changeMem _ _ _ _ _ ⟨hb, fun n hn => (hmem _ (hbdom n hn)).symm⟩
+  have h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((w >>> 0).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 0 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  have h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((w >>> 8).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 1 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  have h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((w >>> 16).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 2 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  have h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((w >>> 24).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 3 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  let ins : instruction := instruction.LoadStore (LoadStore.«LoadStoreImmediate@16»
+    (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+     false, true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))
+  have hdec : Decode w = ins := by
+    have hd := arm8Decode_loadStoreImm12_load16 (holWordExtract 12 11 0 (off >>> 1))
+      (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest)
+    rw [← hoff] at hd
+    simpa [ins, w] using hd
+  have hbase : (BitVec.ofNat 5 base == (BitVec.ofNat 5 31)) = false := by
+    rw [Bool.eq_false_iff]
+    intro hh
+    apply hs31
+    have hto := congrArg BitVec.toNat (beq_iff_eq.mp hh)
+    rw [BitVec.toNat_ofNat, BitVec.toNat_ofNat] at hto
+    have hb32 : base % 2 ^ 5 = base := Nat.mod_eq_of_lt (by omega)
+    have h31 : 31 % 2 ^ 5 = 31 := by decide
+    omega
+  let v : BitVec 64 := BitVec.setWidth 64 (Mem (TN := 16)
+    ((s1.regs base + off), (2, AccType.AccType_NORMAL)) ms).1
+  have hv : v = (readMemWord (resultWidth := 64) (s1.regs base + off) 2 s1).1 := by
+    show BitVec.setWidth 64 (Mem (TN := 16)
+      ((s1.regs base + off), (2, AccType.AccType_NORMAL)) ms).1 = _
+    exact arm8Mem_two_eq_readMemWord ms s1 (s1.regs base + off) hal1 he0 hel hbe
+      (fun i hi => hmem _ (hdom i hi))
+  have hpairbh : Mem (TN := 16) ((s1.regs base + off), (2, AccType.AccType_NORMAL))
+      { ms with branch_hint := none } =
+      ((Mem (TN := 16) ((s1.regs base + off), (2, AccType.AccType_NORMAL)) ms).1,
+        { ms with branch_hint := none }) := by
+    rw [arm8Mem_two { ms with branch_hint := none } (s1.regs base + off)
+        (ms.MEM (s1.regs base + off)) (ms.MEM (s1.regs base + off + 1#64))
+        rfl rfl hal1 he0 hel,
+      arm8Mem_two ms (s1.regs base + off)
+        (ms.MEM (s1.regs base + off)) (ms.MEM (s1.regs base + off + 1#64))
+        rfl rfl hal1 he0 hel]
+  have hX : X (TN := 64) (BitVec.ofNat 5 base) { ms with branch_hint := none } =
+      s1.regs base := by
+    rw [arm8X_of_valid _ hs31 hslt]
+    exact hreg base ⟨hslt, hsav⟩
+  have hrun : Run ins { ms with branch_hint := none } =
+      { ms with
+        branch_hint := none,
+        REG := holUpdate (BitVec.ofNat 5 dest) v ms.REG } := by
+    rw [show ins = (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_LOAD, .AccType_NORMAL, false, false, false, false,
+         false, true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) from rfl]
+    rw [arm8Run_loadStoreImmediate_load16 _ _ _ _ _ hbase]
+    rw [hX, hpairbh]
+    simp only
+    rw [arm8WriteX32_of_valid _ _ hd31 hdlt]
+    rw [show BitVec.setWidth 64 (BitVec.setWidth 32 (Mem (TN := 16)
+      ((s1.regs base + off), (2, AccType.AccType_NORMAL)) ms).1) = v by
+      rw [setWidth64_setWidth32_of_16]]
+  have hbr : (Run ins { ms with branch_hint := none }).branch_hint = none := by
+    rw [hrun]
+  have hexc : (Run ins { ms with branch_hint := none }).exception = exception.NoException := by
+    rw [hrun]
+    show ms.exception = exception.NoException
+    exact hexc0
+  have hn := arm8Next_word ms w ins hdec hbr hexc h0 h1 h2 h3 hal he0 hel
+  have hnext : arm8Next ms =
+      { ms with
+        branch_hint := none,
+        REG := holUpdate (BitVec.ofNat 5 dest) v ms.REG,
+        PC := ms.PC + 4 } := by
+    unfold arm8Next
+    rw [hn, hrun]
+    rfl
+  have hupd4 : asmUpd (.inst (.mem .load16 dest (.addr base off)))
+      (s1.pc + BitVec.ofNat 64 4) s1 = s2 := by
+    rw [← hupd, hlen]
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 4 := by
+    rw [← hupd4]
+    rfl
+  have hs2mem : ∀ x, s2.mem x = s1.mem x := by
+    rw [← hupd4]
+    intro x
+    simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
+      readMemWord_mem_eq_direct]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← hupd4]
+    simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
+      readMemWord_memDomain]
+  have hs2regs : ∀ k, s2.regs k = if k = dest then v else s1.regs k := by
+    intro k
+    rw [hv]
+    rw [← hupd4]
+    simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
+      readMemWord_regs, Flapjack.Compiler.Encoders.AsmSem.readReg, hbe,
+      Bool.false_eq_true, if_false]
+  refine asmCaseOneMem (.mem .load16 dest (.addr base off)) dest v _ s1 s2 ms
+    ⟨hs, ⟨hok, hpc, hmem, hreg, hfp⟩⟩ hnext ?_ ?_ ?_ ?_ ?_ ?_ hs2pc hs2dom hs2regs
+  · rfl
+  · intro x hx
+    show ms.MEM x = s2.mem x
+    rw [hs2mem x]
+    exact hmem x hx
+  · intro x hx
+    show ms.MEM x = ms.MEM x
+    rfl
+  · intro k hk hkne
+    show (if (BitVec.ofNat 5 dest) = (BitVec.ofNat 5 k) then v
+      else ms.REG (BitVec.ofNat 5 k)) = ms.REG (BitVec.ofNat 5 k)
+    rw [if_neg]
+    intro hh
+    apply hkne
+    have := congrArg BitVec.toNat hh
+    rw [BitVec.toNat_ofNat, BitVec.toNat_ofNat] at this
+    have hd32 : dest % 2 ^ 5 = dest := Nat.mod_eq_of_lt (by omega)
+    have hk32 : k % 2 ^ 5 = k := Nat.mod_eq_of_lt (by omega)
+    omega
+  · show (if (BitVec.ofNat 5 dest) = (BitVec.ofNat 5 dest) then v
+      else ms.REG (BitVec.ofNat 5 dest)) = v
+    rw [if_pos rfl]
+  · rw [arm8Ok_iff]
+    refine ⟨hel, he0, hsa0, htbi1, htbi0, ?_, ?_⟩
+    · show ms.exception = exception.NoException
+      exact hexc0
+    · have h4 : holAligned 2 (4 : BitVec 64) = true := by rw [holAligned_iff]; decide
+      have hal4' : holAligned 2 (ms.PC + 4) = true := by
+        rw [(alignedAddSub 2 ms.PC 4 h4).1, halign]
+      change holAligned 2 (ms.PC + 4) = true
+      exact hal4'
+
+/-- The `.mem .store16` constructor of `encoder_correct arm8TargetL3` on the
+scaled twelve-bit path (`sz = 1`, `opc = 0`), with the two-byte write.  The
+statement awaits source review against `arm8_encoder_correct`. -/
+@[hol "cakeml/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" "arm8_encoder_correct"]
+theorem arm8_encoder_correct_mem_store16_scaled (dest base : Nat) (off : BitVec 64)
+    (s1 s2 : AsmState 64) (ms : arm8_state)
+    (h : asmStep arm8ConfigL3 s1 (.inst (.mem .store16 dest (.addr base off))) s2 ∧
+      targetStateRel arm8TargetL3 s1 ms)
+    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat))
+    (hmsb : off.msb = false)
+    (hoff : off = (BitVec.setWidth 64 (holWordExtract 12 11 0 (off >>> 1))) <<< 1) :
+    CaseGoal (.inst (.mem .store16 dest (.addr base off))) s1 s2 ms := by
+  obtain ⟨hs, hr⟩ := h
+  obtain ⟨hok, hpc, hmem, hreg, hfp⟩ := hr
+  rw [arm8TargetL3_stateOk] at hok
+  rw [arm8TargetL3_getPc] at hpc
+  rw [arm8TargetL3_getByte] at hmem
+  rw [arm8TargetL3_getReg] at hreg
+  change ms.PC = s1.pc at hpc
+  change ∀ a, s1.memDomain a → ms.MEM a = s1.mem a at hmem
+  change ∀ k, k < arm8ConfigL3.regCount ∧ arm8ConfigL3.avoidRegs.contains k = false →
+    ms.REG (BitVec.ofNat 5 k) = s1.regs k at hreg
+  have hokd : asmRegOkExact dest arm8ConfigL3 = true ∧
+      asmRegOkExact base arm8ConfigL3 = true := by
+    have h' := hs.2.2.2.2.2.2
+    simp only [asmOkExact, asmInstOkExact, Bool.and_eq_true] at h'
+    exact ⟨h'.1.1, h'.1.2⟩
+  obtain ⟨hdlt, hdav, hd31⟩ := regOk_of_asmL3 hokd.1
+  obtain ⟨hslt, hsav, hs31⟩ := regOk_of_asmL3 hokd.2
+  have hfields := (arm8Ok_iff ms).mp hok
+  obtain ⟨hel, he0, hsa0, htbi1, htbi0, hexc0, halign⟩ := hfields
+  have hal : Aligned (TN := 64) (ms.PC, 4) = true := by
+    rw [Aligned_four_iff]
+    simpa using (holAligned_iff 2 ms.PC).mp halign
+  have hbe : s1.be = false := hs.2.2.1
+  have hupd := hs.2.2.2.2.1
+  simp only [arm8ConfigL3] at hupd
+  have hnotfail : ¬ s2.failed := hs.2.2.2.2.2.1
+  have hspec : memOp (width := 64) .store16 = memStore (width := 64) 2 := rfl
+  have hal1 : Aligned (TN := 64) (s1.regs base + off, 2) = true :=
+    arm8MemStore_aligned_two .store16 dest base off s1 s2 _ hspec hupd hbe hnotfail
+  have hdom : ∀ k, k < 2 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) :=
+    arm8MemStore_domain_two .store16 dest base off s1 s2 _ hspec hupd hbe hnotfail
+  have hast := arm8Ast_store_single16 dest base off hsx
+  have henc : arm8Enc (.inst (.mem .store16 dest (.addr base off))) =
+      arm8Encode (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) := by
+    rw [arm8Enc, hast]
+    simp [hmsb]
+  let w : BitVec 32 := arm8LoadStoreImm12Word (BitVec.ofNat 2 1) (BitVec.ofNat 2 0)
+    (holWordExtract 12 11 0 (off >>> 1)) (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest)
+  have hencw : Encode (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) = MachineCode.ARM8 w :=
+    arm8Encode_loadStoreImm12_store16 off (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest) hoff
+  have hlen : (arm8Enc (.inst (.mem .store16 dest (.addr base off)))).length = 4 :=
+    arm8Enc_store_single16_length dest base off hsx
+  have hb := hs.1
+  simp only [arm8ConfigL3] at hb
+  have hbdom := bytesInMemoryHOL_domain hb
+  have hbms : bytesInMemoryHOL ms.PC (arm8Enc (.inst (.mem .store16 dest (.addr base off))))
+      ms.MEM s1.memDomain := by
+    rw [hpc]
+    exact bytesInMemory_changeMem _ _ _ _ _ ⟨hb, fun n hn => (hmem _ (hbdom n hn)).symm⟩
+  have h0 : ms.MEM ms.PC = BitVec.ofNat 8 ((w >>> 0).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 0 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  have h1 : ms.MEM (ms.PC + 1) = BitVec.ofNat 8 ((w >>> 8).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 1 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  have h2 : ms.MEM (ms.PC + 2) = BitVec.ofNat 8 ((w >>> 16).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 2 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  have h3 : ms.MEM (ms.PC + 3) = BitVec.ofNat 8 ((w >>> 24).toNat) := by
+    have hh := bytesInMemoryHOL_get hbms 3 (by rw [hlen]; omega)
+    rw [henc] at hh
+    simp only [arm8Encode, hencw] at hh
+    simp at hh
+    simpa [w] using hh
+  let ins : instruction := instruction.LoadStore (LoadStore.«LoadStoreImmediate@16»
+    (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+     false, true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))
+  have hdec : Decode w = ins := by
+    have hd := arm8Decode_loadStoreImm12_store16 (holWordExtract 12 11 0 (off >>> 1))
+      (BitVec.ofNat 5 base) (BitVec.ofNat 5 dest)
+    rw [← hoff] at hd
+    simpa [ins, w] using hd
+  have hbase : (BitVec.ofNat 5 base == (BitVec.ofNat 5 31)) = false := by
+    rw [Bool.eq_false_iff]
+    intro hh
+    apply hs31
+    have hto := congrArg BitVec.toNat (beq_iff_eq.mp hh)
+    rw [BitVec.toNat_ofNat, BitVec.toNat_ofNat] at hto
+    have hb32 : base % 2 ^ 5 = base := Nat.mod_eq_of_lt (by omega)
+    have h31 : 31 % 2 ^ 5 = 31 := by decide
+    omega
+  let v : BitVec 64 := s1.regs dest
+  have hXb : X (TN := 64) (BitVec.ofNat 5 base) { ms with branch_hint := none } =
+      s1.regs base := by
+    rw [arm8X_of_valid _ hs31 hslt]
+    exact hreg base ⟨hslt, hsav⟩
+  have hXd : X (TN := 16) (BitVec.ofNat 5 dest) { ms with branch_hint := none } =
+      BitVec.setWidth 16 (s1.regs dest) := by
+    rw [arm8X16_of_valid _ hd31 hdlt]
+    rw [hreg dest ⟨hdlt, hdav⟩]
+  have hrun : Run ins { ms with branch_hint := none } =
+      { ms with
+        branch_hint := none,
+        MEM := («write'Mem» (TN := 16)
+          (BitVec.setWidth 16 (s1.regs dest), ((s1.regs base) + off, (2, .AccType_NORMAL)))
+          { ms with branch_hint := none }).MEM } := by
+    rw [show ins = (.LoadStore (.«LoadStoreImmediate@16»
+        (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false,
+         false, true, off, BitVec.ofNat 5 base, BitVec.ofNat 5 dest))) from rfl]
+    rw [arm8Run_loadStoreImmediate_store16 _ _ _ _ _ hbase]
+    rw [hXb, hXd, arm8WriteMem_only_mem_two _ _ _ _ hal1]
+  have hbr : (Run ins { ms with branch_hint := none }).branch_hint = none := by
+    rw [hrun]
+  have hexc : (Run ins { ms with branch_hint := none }).exception = exception.NoException := by
+    rw [hrun]
+    show ms.exception = exception.NoException
+    exact hexc0
+  have hn := arm8Next_word ms w ins hdec hbr hexc h0 h1 h2 h3 hal he0 hel
+  have hnext : arm8Next ms =
+      { ms with
+        branch_hint := none,
+        MEM := («write'Mem» (TN := 16)
+          (BitVec.setWidth 16 (s1.regs dest), ((s1.regs base) + off, (2, .AccType_NORMAL)))
+          { ms with branch_hint := none }).MEM,
+        PC := ms.PC + 4 } := by
+    unfold arm8Next
+    rw [hn, hrun]
+    rfl
+  have hupd4 : asmUpd (.inst (.mem .store16 dest (.addr base off)))
+      (s1.pc + BitVec.ofNat 64 4) s1 = s2 := by
+    rw [← hupd, hlen]
+  have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 4 := by
+    rw [← hupd4]
+    rfl
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← hupd4]
+    simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+      writeMemWord_memDomain]
+  have hs2regs : ∀ k, s2.regs k = s1.regs k := by
+    intro k
+    rw [← hupd4]
+    simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+      writeMemWord_regs]
+  have hs2mem : ∀ x, s2.mem x =
+      (writeMemWord (valueWidth := 64) (s1.regs base + off) 2 (s1.regs dest) s1).mem x := by
+    intro x
+    rw [← hupd4]
+    simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+      Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false]
+  refine asmCaseOneMem (.mem .store16 dest (.addr base off)) dest v _ s1 s2 ms
+    ⟨hs, ⟨hok, hpc, hmem, hreg, hfp⟩⟩ hnext ?_ ?_ ?_ ?_ ?_ ?_ hs2pc hs2dom ?_
+  · rfl
+  · intro x hx
+    show («write'Mem» (TN := 16)
+      (BitVec.setWidth 16 (s1.regs dest), ((s1.regs base) + off, (2, .AccType_NORMAL)))
+      { ms with branch_hint := none }).MEM x = s2.mem x
+    rw [arm8WriteMem_two { ms with branch_hint := none } (s1.regs base + off)
+      (BitVec.setWidth 16 (s1.regs dest)) .AccType_NORMAL hal1 he0 hel x]
+    rw [writeMemN_two_setWidth16 (memState ms.MEM) (s1.regs base + off) (s1.regs dest) x]
+    rw [← writeMemWord_mem_two s1 ms.MEM (s1.regs base + off) (s1.regs dest) x hbe
+      (hmem x hx).symm]
+    exact (hs2mem x).symm
+  · intro x hx
+    show («write'Mem» (TN := 16)
+      (BitVec.setWidth 16 (s1.regs dest), ((s1.regs base) + off, (2, .AccType_NORMAL)))
+      { ms with branch_hint := none }).MEM x = ms.MEM x
+    exact arm8WriteMem_two_out { ms with branch_hint := none } (s1.regs base + off)
+      (BitVec.setWidth 16 (s1.regs dest)) .AccType_NORMAL hal1 he0 hel x
+      (fun k hk h => hx (h ▸ hdom k hk))
+  · intro k hk hkne
+    show ms.REG (BitVec.ofNat 5 k) = ms.REG (BitVec.ofNat 5 k)
+    rfl
+  · show ms.REG (BitVec.ofNat 5 dest) = v
+    exact hreg dest ⟨hdlt, hdav⟩
+  · rw [arm8Ok_iff]
+    refine ⟨hel, he0, hsa0, htbi1, htbi0, ?_, ?_⟩
+    · show ms.exception = exception.NoException
+      exact hexc0
+    · have h4 : holAligned 2 (4 : BitVec 64) = true := by rw [holAligned_iff]; decide
+      have hal4' : holAligned 2 (ms.PC + 4) = true := by
+        rw [(alignedAddSub 2 ms.PC 4 h4).1, halign]
+      change holAligned 2 (ms.PC + 4) = true
+      exact hal4'
+  · intro k
+    rw [hs2regs k]
+    by_cases hk : k = dest
+    · subst hk
+      rw [if_pos rfl]
+    · rw [if_neg hk]
+
+
 /-- The `.mem .load` constructor of `encoder_correct arm8TargetL3` on the
 unscaled `imm9` path of `e_LoadStoreImmediate`.
 
