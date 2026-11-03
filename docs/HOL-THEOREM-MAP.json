@@ -1916,6 +1916,24 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "remove_ticks_Fn_IMP_mk_Ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateFn.lean",
+    "lean_name": "remove_ticks_Fn_IMP_mk_Ticks",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_fn_ticks_typed and remove_sing_eq_typed: a source expression that removes to a function is that function under leading ticks, with a singleton removal equality on its body. The mlstring name, optional location and capture indices, and natural-number arity are preserved; removeList is the source-proven equivalent traversal. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateFn.lean",
+    "lean_name": "evaluate_remove_ticks_fn",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the first evaluate_remove_ticks_typed conjunct and function case of evaluate_ind_typed in clos_known_syntax_probe.out. The target run, related environments and states, code relation, and existential source clock, result, state and conclusions are retained with no extra premises or induction hypothesis. The proof covers failed arity and capture checks, related closure captures and bodies, and leading source ticks. State refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or the remaining simulation cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "remove_ticks_If_IMP_mk_Ticks",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateIf.lean",
     "lean_name": "remove_ticks_If_IMP_mk_Ticks",
