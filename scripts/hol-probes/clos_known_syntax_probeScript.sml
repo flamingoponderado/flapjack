@@ -18,3 +18,7 @@ val _ = show "get_size_sc_typed=" clos_knownTheory.get_size_sc_def;
 val _ = show "clos_approx_typed=" clos_knownTheory.clos_approx_def;
 val _ = show "get_size_sc_aux_correct_typed=" clos_knownTheory.get_size_sc_aux_correct;
 val _ = show "get_size_sc_some_typed=" clos_knownTheory.get_size_sc_SOME;
+val _ = show "free_typed=" clos_knownTheory.free_def;
+val _ = show "closed_typed=" clos_knownTheory.closed_def;
+val _ = show "decide_inline_typed=" clos_knownTheory.decide_inline_def;
+val _ = show "decide_inline_positive_typed=" clos_knownTheory.decide_inline_LetInline;

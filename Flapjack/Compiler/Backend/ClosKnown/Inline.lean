@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosKnown.Config
+import Flapjack.Compiler.Backend.ClosKnown.Inline.Free
 import Flapjack.Compiler.Backend.ClosCall
 import Flapjack.Compiler.Backend.ClosLang.Budget
 
@@ -180,19 +181,24 @@ def containsClosuresBounded (_fuel : Nat) (e : Exp) : Option Bool :=
 def closApproxFuel (_fuel maxSize loc arity : Nat) (body : Exp) : Option ValApprox :=
   some (closApproxHOL maxSize loc arity body)
 
-/-- Apply the original inlining decision with explicit traversal fuel. -/
-def decideInlineFuel (fuel : Nat) (c : Config) (approx : ValApprox) (loc : Option Nat)
-    (arity : Nat) : Option InliningDecision := do
-  if loc.isSome then return .nothing
+/-- The original inlining decision, including closure and closedness checks. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "decide_inline_def"]
+def decideInlineHOL {L : Type} (c : Config) (approx : ValApprox) (loc : Option L)
+    (arity : Nat) : InliningDecision :=
   match approx with
-  | .closNoInline target n => pure (if arity == n then .annotate target else .nothing)
+  | .closNoInline target n =>
+      if loc.isNone = true ∧ arity = n then .annotate target else .nothing
   | .clos target n body size =>
-      if arity != n then return .nothing
-      if size < c.inlineFactor * (1 + arity) then
-        if !(← containsClosuresBounded fuel body) then
-          if ← ClosCall.closedFuel fuel (.fn (Flapjack.Basis.Pure.MlString.ofString "") none none arity body) then
-            return .letInline body
-      pure (.annotate target)
-  | _ => pure .nothing
+      if loc.isNone = true ∧ arity = n then
+        if size < c.inlineFactor * (1 + arity) ∧ containsClosuresHOL [body] = false ∧
+          closedHOL (.fn (Flapjack.Basis.Pure.MlString.ofString "") none none arity body) = true then
+          .letInline body
+        else .annotate target
+      else .nothing
+  | _ => .nothing
+
+/-- The checked optimizer uses the total source inlining decision. -/
+def decideInlineFuel (_fuel : Nat) (c : Config) (approx : ValApprox) (loc : Option Nat)
+    (arity : Nat) : Option InliningDecision := some (decideInlineHOL c approx loc arity)
 
 end Flapjack.Compiler.Backend.ClosKnown

@@ -1,6 +1,38 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "free_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline/Free.lean",
+    "lean_name": "freeHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared free_typed and every expression/list clause, including annotation reconstruction, ordered unions and shifts, and recursive-group length. The checked freeFuel_correct theorem proves equality of both the annotated syntax and the complete variable-set tree with the existing traversal. The production inlining decision now uses this source traversal via closedHOL."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "closed_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline/Free.lean",
+    "lean_name": "closedHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared closed_typed: the singleton source free-variable tree is materialized as the original sparse set and checked with source isEmpty. closedFuel_correct proves that this structural test agrees with the former list-based check, using the well-formedness of materialized trees. The production inlining decision uses closedHOL."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "decide_inline_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline.lean",
+    "lean_name": "decideInlineHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared decide_inline_typed: the optional location has an independent polymorphic payload type, with no equality instance, and the no-inline, inline, annotation and fallback cases retain the original arity, size, closure and closedness tests. The production checked wrapper uses this source definition; decideInlineFuel_eq_previous proves its result equals the previous checked decision for every input."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "decide_inline_LetInline",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline/DecisionCorrect.lean",
+    "lean_name": "decideInlineLetInline",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared decide_inline_positive_typed: the optional location retains its independent polymorphic payload type, and the original decision equality implies positivity of the same configuration's inline factor."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
     "hol_name": "get_size_sc_aux_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Inline.lean",
     "lean_name": "getSizeScAuxHOL",

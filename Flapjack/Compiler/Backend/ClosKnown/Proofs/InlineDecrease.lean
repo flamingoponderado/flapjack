@@ -1,8 +1,8 @@
 import Flapjack.Compiler.Backend.ClosKnown.Inline
 
 /-! The following facts justify the recursive inlining decrease for the
-fuelled Flapjack implementation. Its option-valued decision function differs
-from HOL's total function, so these are not tagged as HOL theorem ports. -/
+checked Flapjack implementation. The option-valued wrappers are infrastructure;
+the corresponding total source theorem is in `Inline.DecisionCorrect`. -/
 namespace Flapjack.Compiler.Backend.ClosKnown
 
 theorem inlineFactor_positive_of_letInline (fuel : Nat) (c : Config) (approx : ValApprox)
@@ -10,7 +10,7 @@ theorem inlineFactor_positive_of_letInline (fuel : Nat) (c : Config) (approx : V
     (h : decideInlineFuel fuel c approx loc arity = some (.letInline body)) :
     0 < c.inlineFactor := by
   by_cases hz : c.inlineFactor = 0
-  · cases loc <;> cases approx <;> simp [decideInlineFuel, hz] at h <;>
+  · cases loc <;> cases approx <;> simp [decideInlineFuel, decideInlineHOL, hz] at h <;>
       split at h <;> simp_all
   · omega
 

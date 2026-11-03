@@ -247,16 +247,6 @@ theorem closApproxFuel_eq_fullSize (fuel maxSize loc arity : Nat) (body : Exp) :
 /-- An inlining decision cannot fail from closure or free-variable traversal fuel. -/
 theorem decideInlineFuel_succeeds (fuel : Nat) (c : Config) (approx : ValApprox)
     (loc : Option Nat) (arity : Nat) : ∃ result, decideInlineFuel fuel c approx loc arity = some result := by
-  cases loc with
-  | some loc => exact ⟨_, by simp [decideInlineFuel]; rfl⟩
-  | none =>
-    cases approx with
-    | clos target n body size =>
-      obtain ⟨contains, hc⟩ := containsClosuresBounded_succeeds fuel body
-      obtain ⟨closed, hf⟩ := ClosCall.closedFuel_succeeds fuel
-        (.fn (Flapjack.Basis.Pure.MlString.ofString "") none none arity body)
-      cases contains <;> cases closed <;> simp [decideInlineFuel, hc, hf] <;>
-        repeat' (first | split | exact ⟨_, rfl⟩)
-    | _ => simp [decideInlineFuel] <;> repeat' (first | split | exact ⟨_, rfl⟩)
+  exact ⟨decideInlineHOL c approx loc arity, rfl⟩
 
 end Flapjack.Compiler.Backend.ClosKnown

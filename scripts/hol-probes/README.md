@@ -94,7 +94,8 @@ The replay supports source review; it does not prove cross-language equivalence.
 `clos_known_syntax_probe.out` captures the typed known-function syntax
 precondition, HOL's bag-distinctness definition, and the optional-config
 approximation lookup and update definitions, the original closure-detection
-traversal, and the inliner size definitions and their HOL properties. Regenerate with
+traversal, the inliner size definitions and their HOL properties, and the
+free-variable and inlining-decision definitions. Regenerate with
 `HOL_PROBE_ONLY=clos_known_syntax_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `data_to_word_memory_repr_probe.out` captures typed heap representation,
