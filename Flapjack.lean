@@ -2801,6 +2801,7 @@ import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpReg
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Fp
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Compare
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpCmp
+import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddCarry
 import Flapjack.Compiler.Encoders.Arm8.L3.Target
 import Flapjack.Compiler.Encoders.Arm8.L3.Target.State
 import Flapjack.Compiler.Encoders.Arm8.Machine.State
