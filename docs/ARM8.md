@@ -447,8 +447,14 @@ purely over `AsmState`.  The shift counts are pinned to `Nat` because
 `readBytes_eight` uses `Nat` shifts while the L3 side had inferred `BitVec`
 ones.
 
-Still open for #1239: the `Run` memory semantics for `LoadStoreSingle`, the
-two-instruction `AddSubImmediate@64` + `LoadStoreImmediate` constructor, and
-the eight case theorems covering the load/store forms.
+`arm8Run_loadStoreImmediate_load`/`_store` unfold `Run` through
+`LoadStoreSingle` for the L3 fields (no writeback, no post-index, `NORMAL`,
+`TN = 64`), and `arm8Ast_load_single`/`_store_single` pin the one-instruction
+`arm8_ast` branch for an offset that is its own signed nine-bit form.
+
+Still open for #1239: the memory-domain facts a load needs (from
+`¬ s2.failed`), the two-instruction `AddSubImmediate@64` +
+`LoadStoreImmediate` constructor, and the eight case theorems covering the
+load/store forms.
 The assembling
 `encoderCorrect arm8TargetL3` theorem waits on the remaining cases.
