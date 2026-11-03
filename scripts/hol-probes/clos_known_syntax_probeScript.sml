@@ -48,6 +48,17 @@ val _ = show "known_state_rel_update_typed=" clos_knownProofTheory.state_rel_upd
 val _ = show "known_state_rel_get_global_typed=" clos_knownProofTheory.state_rel_get_global_IMP;
 val _ = show "known_state_oracle_safety_typed=" clos_knownProofTheory.oracle_state_sgc_free_def;
 val _ = show "known_state_oracle_safety_shift_typed=" clos_knownProofTheory.oracle_state_sgc_free_shift_seq;
+val _ = show "known_oracle_subspt_typed=" clos_knownProofTheory.oracle_gapprox_subspt_def;
+val _ = show "known_oracle_subspt_add_typed=" clos_knownProofTheory.oracle_gapprox_subspt_add;
+val _ = show "known_oracle_subspt_alt_typed=" clos_knownProofTheory.oracle_gapprox_subspt_alt;
+val _ = show "known_oracle_subspt_shift_typed=" clos_knownProofTheory.oracle_gapprox_subspt_shift_seq;
+val _ = show "known_oracle_subspt_evaluate_typed=" clos_knownProofTheory.oracle_gapprox_subspt_evaluate;
+val _ = show "known_op_subspt_typed=" clos_knownProofTheory.known_op_subspt;
+val _ = show "known_subspt_typed=" clos_knownProofTheory.known_subspt;
+val _ = show "known_state_oracle_disjoint_typed=" clos_knownProofTheory.state_oracle_mglobals_disjoint_def;
+val _ = show "known_state_oracle_disjoint_evaluate_typed=" clos_knownProofTheory.state_oracle_mglobals_disjoint_evaluate_suff;
+val _ = show "known_co_fn_none_typed=" clos_knownProofTheory.co_every_Fn_vs_NONE_def;
+val _ = show "known_co_fn_none_shift_typed=" clos_knownProofTheory.co_every_Fn_vs_NONE_shift_seq;
 val _ = show "known_state_rel_co_globals_typed=" clos_knownProofTheory.state_rel_co_elist_globals;
 val _ = show "known_state_rel_first_n_typed=" clos_knownProofTheory.state_rel_first_n_exps;
 val _ = show "known_state_rel_unique_typed=" clos_knownProofTheory.state_rel_unique_set_globals;

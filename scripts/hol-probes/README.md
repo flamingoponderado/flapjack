@@ -6,6 +6,8 @@
 
 The same probe captures the incremental optimizer and state relation, including a typed replay of the local inline-factor lemma and the oracle-write preservation statements.
 
+It also captures the tree-extension, oracle monotonicity, and global-disjointness statements used when advancing the closure evaluator's compiler oracle. The captured evaluator theorem retains an independently typed unused source binder.
+
 `clos_known_syntax_probe.out` captures the unrestricted evaluator oracle-shift statement and the oracle and uniqueness preservation theorems with inferred types. These captures support source review, not cross-language equivalence.
 
 `clos_known_syntax_probe.out` captures typed oracle-disjointness, finite-prefix bag membership, and optimizer preservation declarations. These support source review, not cross-language equivalence.
