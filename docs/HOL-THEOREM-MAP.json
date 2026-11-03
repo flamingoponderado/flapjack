@@ -1,5 +1,32 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/StateRelation.lean",
+    "lean_name": "stateRel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "BvlSem.State.refs", "f"],
+    "reviewer": "Compared state_rel_typed and all conjuncts with the original: related FFI and globals, global table, finite-map injectivity and domains, related cells, stub lookups, compiler-oracle invariant and compiled installed code. The closure state refs and code, BVL refs and standalone relocation map use canonical finite support; BVL code remains the source sparse tree. The two same-module roundtrips separately name the imported closure and BVL states. Source comparison and the typed probe are not a cross-language equivalence proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "state_rel_clock",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/StateRelation.lean",
+    "lean_name": "stateRel_clock_source",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "BvlSem.State.refs", "f"],
+    "reviewer": "Compared state_rel_clock_typed: each conjunct independently quantifies its compiler and FFI types, relocation map and both states, with a shared replacement clock; both update directions and equivalences match. The named state fields and map use canonical finite support, with separate closure and BVL state roundtrips."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "state_rel_refs_lookup",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/StateRelation.lean",
+    "lean_name": "stateRel_refs_lookup",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "BvlSem.State.refs", "f"],
+    "reviewer": "Compared state_rel_refs_lookup_typed: both states share compiler and FFI types; the related-state, source lookup and relocation lookup premises imply an existential target cell with the same reference and value relations. The named state fields and relocation map use canonical finite support, with separate state roundtrips."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "rel_update_thunk",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/StateRelation.lean",

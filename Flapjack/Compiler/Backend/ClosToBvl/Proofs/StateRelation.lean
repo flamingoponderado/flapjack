@@ -5,6 +5,18 @@ import Flapjack.Compiler.Backend.ClosToBvl.Stubs
 /-! Reference cells and initialization data for the closure-to-BVL state relation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
+/-- Closure-state finite maps roundtrip through their lookup/support view. -/
+theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- BVL reference maps roundtrip through their lookup/support view. -/
+theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
 /-- Related mutable arrays, thunks and byte arrays have the same source shape. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "ref_rel_def"]
 def refRel {α β : Type} (R : α → β → Prop) : ClosSem.Ref α → BvlSem.Ref β → Prop
@@ -37,10 +49,11 @@ def optionValueRel (R : ClosSem.Value → BvlSem.Value → Prop) :
   | some x, some y => R x y
   | _, _ => False
 
-/-- Candidate rendering of the closure-to-BVL state relation. It is not yet
-tagged as the HOL declaration: the source and target state structures both
-have the short name `State`, so the multi-carrier finite-map qualifier cannot
-currently distinguish their `refs` fields. -/
+/-- Closure-to-BVL states agree on relocated references, globals, installed
+code and the compiler oracle. The source and target finite-map fields use the
+canonical finite-support representation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, BvlSem.State.refs, f])]
 def stateRel {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (s : ClosSem.State C F) (t : BvlSem.State C F) : Prop :=
   s.ffi = t.ffi ∧
@@ -66,9 +79,8 @@ def stateRel {C F : Type} (f : HolFiniteMapExact Nat Nat)
       sptLookup (name + numStubs s.maxApp) t.code = some (arity, c2) ∧
       codeInstalled aux2 t.code
 
-/-- The related globals and partial-application table can be extracted from
-the candidate relation. This is local Flapjack proof infrastructure while
-the state-relation carrier qualifier is awaiting review. -/
+/-- Flapjack helper extracting the related globals and partial-application
+table from the state relation. -/
 theorem stateRel_globals {C F : Type} {f : HolFiniteMapExact Nat Nat}
     {s : ClosSem.State C F} {t : BvlSem.State C F} (related : stateRel f s t) :
     ClosSem.getGlobal 0 t.globals = some (some (globalTable s.maxApp)) ∧
@@ -76,18 +88,29 @@ theorem stateRel_globals {C F : Type} {f : HolFiniteMapExact Nat Nat}
         s.globals (t.globals.drop numAddedGlobals) :=
   ⟨related.2.2.1, related.2.1⟩
 
-/-- Clock updates do not change the candidate relation; the clocks are
-handled separately by the evaluator simulation. This is untagged while the
-underlying state relation's finite-map owners await qualification. -/
+/-- Flapjack helper for clock updates at a single pair of state types. The
+source theorem below also quantifies independently over its two conjuncts. -/
 theorem stateRel_clock {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (s : ClosSem.State C F) (t : BvlSem.State C F) (clock : Nat) :
     (stateRel f s { t with clock } ↔ stateRel f s t) ∧
     (stateRel f { s with clock } t ↔ stateRel f s t) := by
   exact ⟨Iff.rfl, Iff.rfl⟩
 
-/-- Lookup preservation for the candidate state relation. This remains
-untagged until the finite-map qualifier can distinguish the closure and BVL
-state carriers in the corresponding HOL theorem. -/
+/-- Clock changes preserve the state relation. HOL independently quantifies
+the state types in the two conjuncts. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "state_rel_clock"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, BvlSem.State.refs, f])]
+theorem stateRel_clock_source {C F D G : Type} (clock : Nat) :
+    (∀ (f : HolFiniteMapExact Nat Nat) (s : ClosSem.State C F) (t : BvlSem.State C F),
+      stateRel f s { t with clock } ↔ stateRel f s t) ∧
+    (∀ (f : HolFiniteMapExact Nat Nat) (s : ClosSem.State D G) (t : BvlSem.State D G),
+      stateRel f { s with clock } t ↔ stateRel f s t) :=
+  ⟨fun f s t => (stateRel_clock f s t clock).1,
+    fun f s t => (stateRel_clock f s t clock).2⟩
+
+/-- A relocated source reference has a related target cell. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "state_rel_refs_lookup"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, BvlSem.State.refs, f])]
 theorem stateRel_refs_lookup {C F : Type} {f : HolFiniteMapExact Nat Nat}
     {s : ClosSem.State C F} {t : BvlSem.State C F} {p p' : Nat}
     {x : ClosSem.Ref ClosSem.Value}

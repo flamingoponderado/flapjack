@@ -58,6 +58,12 @@ flat-to-closure program composition. `clos_interp_semantics_probe.out` captures
 the typed interpreter-attachment observational theorem. These captures support
 source review; they do not establish cross-language equivalence.
 
+`clos_to_bvl_state_relation_probe.out` captures the typed original state
+relation, its clock and reference-lookup lemmas, and the complete expression
+simulation theorem. Regenerate with
+`HOL_PROBE_ONLY=clos_to_bvl_state_relation_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source review, not cross-language equivalence.
+
 `source_to_flat_mapi_probe.out` captures the inferred types and statements of
 `mapi_map` and `FILTER_MAPi_ID` from the pinned source-to-flat proof. Their
 Lean counterparts establish the corresponding indexed-map and filtering

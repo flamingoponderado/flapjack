@@ -422,7 +422,7 @@ NAT_WIDTH_BINDER_RE = re.compile(
     r"[\{\(]\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*Nat\s*[\}\)]"
 )
 RELATION_FIELD_RE = re.compile(
-    r'^\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\.\s*([A-Za-z_][A-Za-z0-9_\']*)\s*$'
+    r'^\s*([A-Za-z_][A-Za-z0-9_\']*(?:\.[A-Za-z_][A-Za-z0-9_\']*)*)\s*\.\s*([A-Za-z_][A-Za-z0-9_\']*)\s*$'
 )
 DECL_RE = re.compile(
     r"^\s*(?:@\[[^\]]*\]\s*)?(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+)*"
@@ -1415,6 +1415,15 @@ def has_fmap_relation_witness(lines: list[str], carrier: str) -> bool:
     return _fmap_relation_witness_in("\n".join(lines), carrier)
 
 
+def relation_carrier_occurs(text: str, carrier: str) -> bool:
+    """A qualified carrier must appear as that complete Lean identifier."""
+    if "." not in carrier:
+        return identifier_token_occurs(text, carrier)
+    return re.search(
+        rf"(?<![A-Za-z0-9_'.]){re.escape(carrier)}(?![A-Za-z0-9_'.])", text
+    ) is not None
+
+
 @lru_cache(maxsize=None)
 def _fmap_relation_witness_in(text: str, carrier: str) -> bool:
     """Cached body of `has_fmap_relation_witness` for one module and carrier."""
@@ -1422,7 +1431,7 @@ def _fmap_relation_witness_in(text: str, carrier: str) -> bool:
     pattern = re.compile(
         rf"^\s*(?:@\[[\s\S]*?\]\s*)?(?:private\s+|protected\s+)?"
         rf"(?:theorem|lemma)\s+"
-        rf"holFmapAsFiniteSupportRelationWitness_{re.escape(carrier)}\b"
+        rf"holFmapAsFiniteSupportRelationWitness_{re.escape(carrier)}(?![A-Za-z0-9_'.])"
         rf"(?P<statement>[\s\S]*?):=",
         re.M,
     )
@@ -1430,7 +1439,7 @@ def _fmap_relation_witness_in(text: str, carrier: str) -> bool:
         if _active_ambient_witness_commands(source, match.start()):
             continue
         statement = match.group("statement")
-        if not identifier_token_occurs(statement, carrier):
+        if not relation_carrier_occurs(statement, carrier):
             continue
         if "=" not in statement and "\u2194" not in statement:
             continue
@@ -1499,19 +1508,58 @@ def fmap_as_finite_support_relation_errors(
                 "approved HolFiniteMapExact carrier; a raw function-backed map is "
                 "ineligible"
             )
+    def resolve_carrier(carrier: str, field: str) -> dict[str, str] | None:
+        leaf = carrier.rsplit(".", 1)[-1]
+        candidates: list[dict[str, str]] = []
+        if "." not in carrier:
+            # Existing unqualified qualifiers can be disambiguated by an
+            # explicit qualified carrier in the declaration.  If it names
+            # two such carriers, a bare leaf cannot select either one.
+            explicit = set(re.findall(
+                rf"(?<![A-Za-z0-9_'.])(?:[A-Za-z_][A-Za-z0-9_']*\.)+{re.escape(leaf)}(?![A-Za-z0-9_'])",
+                declaration_text,
+            ))
+            if len(explicit) > 1:
+                return None
+            if leaf in local_types and not explicit:
+                return local_types[leaf]
+            if explicit:
+                wanted = next(iter(explicit))
+                for source, _names, types in imported.get(leaf, []):
+                    names = _qualified_word_owner_names(source, leaf, str(ROOT))
+                    if len(names) == 1 and any(
+                        name == wanted or name.endswith("." + wanted) for name in names
+                    ):
+                        candidates.append(types)
+                if len(candidates) == 1:
+                    return candidates[0]
+                return None
+            # Retain legacy unqualified resolution for declarations using
+            # opened namespaces; new ambiguous relations must qualify.
+            for _source, _names, types in imported.get(leaf, []):
+                if field in types:
+                    return types
+            return None
+        # Resolve qualified names against the declaration's actual Lean
+        # namespace, never the filename.  A local shadow is ambiguous.
+        if leaf not in local_types:
+            for source, _names, types in imported.get(leaf, []):
+                names = _qualified_word_owner_names(source, leaf, str(ROOT))
+                if len(names) != 1 or not any(
+                    name == carrier or name.endswith("." + carrier)
+                    for name in names
+                ):
+                    continue
+                candidates.append(types)
+        if len(candidates) == 1:
+            return candidates[0]
+        return None
+
     for carrier, field in field_entries:
         if carrier not in own_types:
-            if carrier in local_types:
-                own_types[carrier] = local_types[carrier]
-            else:
-                for name, declarations in imported.items():
-                    if name != carrier:
-                        continue
-                    for _source, _names, types in declarations:
-                        if field in types:
-                            own_types[carrier] = types
-                            break
-                    break
+            resolved = resolve_carrier(carrier, field)
+            if resolved is not None:
+                own_types[carrier] = resolved
         types = own_types.get(carrier)
         if types is None:
             errors.append(
@@ -1519,7 +1567,7 @@ def fmap_as_finite_support_relation_errors(
                 f"structure declared in {module} or its imports"
             )
             continue
-        if declaration_text and not identifier_token_occurs(declaration_text, carrier):
+        if declaration_text and not relation_carrier_occurs(declaration_text, carrier):
             errors.append(
                 f"fmap_as_finite_support_relation carrier `{carrier}` is not "
                 "named in the tagged declaration; the relation must be stated "
