@@ -1089,6 +1089,7 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.SemanticsCorrect
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.VarsNone
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberAndAnnotate
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberKnownSemantics
 import Flapjack.Compiler.Backend.Semantics.ClosSem.InstallGrowth
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateCodeGrowth
 import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtension
