@@ -303,4 +303,23 @@ theorem arm8Mem_eight (ms : arm8_state) (address : BitVec 64)
     rw [h0, h1, h2, h3, h4, h5, h6, h7]
   · exact CheckAlignment_aligned ms address 8 AccType.AccType_NORMAL false hal
 
+
+/-- The little-endian word of eight bytes, in the OR-of-shifts form `readBytes`
+assembles (Flapjack infrastructure; the eight-byte analogue of
+`holV2w_word_bytes` in `Bytes.lean`). -/
+theorem holV2w_eight_bytes (b0 b1 b2 b3 b4 b5 b6 b7 : BitVec 8) :
+    holV2w 64 (holW2v b7 ++ (holW2v b6 ++ (holW2v b5 ++ (holW2v b4 ++
+      (holW2v b3 ++ (holW2v b2 ++ (holW2v b1 ++ holW2v b0))))))) =
+      (BitVec.setWidth 64 b7) <<< 56 ||| (BitVec.setWidth 64 b6) <<< 48 |||
+      (BitVec.setWidth 64 b5) <<< 40 ||| (BitVec.setWidth 64 b4) <<< 32 |||
+      (BitVec.setWidth 64 b3) <<< 24 ||| (BitVec.setWidth 64 b2) <<< 16 |||
+      (BitVec.setWidth 64 b1) <<< 8 ||| (BitVec.setWidth 64 b0) := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  simp only [Flapjack.RiscV.L3.holV2w, holW2v, List.length_append, List.length_map,
+    List.length_range]
+  rw [getLsbD_holFcpWord]
+  simp only [hi, decide_true, Bool.true_and]
+  interval_cases i <;> simp [List.getD_eq_getElem?_getD]
+
 end Flapjack.Compiler.Encoders.Arm8.L3
