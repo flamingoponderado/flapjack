@@ -998,5 +998,234 @@ theorem evaluateChangedGlobalsApp {C F : Type} (trace : BackendCommon.Tra) (loca
               rcases run with ⟨rfl, rfl⟩
               exact ⟨lastSafe, resultSafe, (n + m) + q, fullOracle, fullFrame⟩
 
+
+/-- A primitive expression's write set combines argument and operator writes.
+This helper has no separate HOL declaration. -/
+private theorem opWrites (trace : BackendCommon.Tra) (op : ClosLang.Op) (args : List ClosLang.Exp) :
+    {k | elistGlobals [.op trace op args] k ≠ 0} =
+      {k | elistGlobals args k ≠ 0} ∪ {k | opGlobalBag op k ≠ 0} := by
+  ext k
+  simp [elistGlobals, setGlobals, FlatProps.unionGlobalBag, emptyGlobalBag]
+  omega
+
+/-- Global safety for the ordinary primitive-dispatch branch. The two
+operation exclusions select a branch of the evaluator; this Lean helper has
+no separate HOL declaration. -/
+private theorem evaluateOrdinaryOpGlobals {C F : Type} (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace op args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace op args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace op args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  rcases h with ⟨run, safe, expressionSafe, envSafe⟩
+  have argsSafe : ∀ e ∈ args, esgcFree e := by
+    apply (esgcFreeList_iff args).1
+    simpa [esgcFree] using expressionSafe (.op trace op args) (by simp)
+  rw [evaluate_ordinaryOp_eq trace op args env s0 notInstall notForce] at run
+  cases argsRun : evaluate args env s0 with
+  | mk argsResult next =>
+    have ⟨nextSafe, argsResultSafe, n, nextOracle, argsFrame⟩ :=
+      argsIH argsResult next ⟨argsRun, safe, argsSafe, envSafe⟩
+    have enlarged : mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace op args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) next.globals := by
+      apply mglobalsExtendSubset _ _ _ _ ⟨argsFrame, ?_⟩
+      intro k member
+      rcases member with member | member
+      · left; rw [opWrites]; exact Or.inl member
+      · exact Or.inr member
+    cases argsResult with
+    | err error =>
+      simp [argsRun] at run
+      rcases run with ⟨rfl, rfl⟩
+      exact ⟨nextSafe, argsResultSafe, n, nextOracle, enlarged⟩
+    | val values =>
+      have valuesSafe : ∀ v ∈ values.reverse, vsgcFree v := by
+        simpa [rsgcFree] using argsResultSafe
+      cases doRun : doApp op values.reverse next with
+      | err error =>
+        have primitive := DoAppSafety.doAppSsgc op values.reverse next (.err error) ⟨doRun, valuesSafe, nextSafe⟩
+        simp [argsRun, doRun] at run
+        rcases run with ⟨rfl, rfl⟩
+        refine ⟨nextSafe, ?_, n, nextOracle, enlarged⟩
+        cases error with
+        | abort reason => simp [rsgcFree]
+        | raise value => simpa [rsgcFree] using primitive.2 value rfl
+      | val pair =>
+        rcases pair with ⟨value, last⟩
+        have primitive := DoAppSafety.doAppSsgc op values.reverse next (.val (value, last)) ⟨doRun, valuesSafe, nextSafe⟩
+        have ⟨valueSafe, lastSafe, lastOracle, primitiveFrame⟩ := primitive.1 value last rfl
+        have combined := mglobalsExtendTrans _ _ _ _ _ ⟨argsFrame, primitiveFrame⟩
+        have finalFrame : mglobalsExtend s0.globals
+            ({k | elistGlobals [.op trace op args] k ≠ 0} ∪
+             {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) last.globals := by
+          rw [opWrites]
+          simpa only [Set.union_assoc, Set.union_left_comm, Set.union_comm] using combined
+        simp [argsRun, doRun] at run
+        rcases run with ⟨rfl, rfl⟩
+        refine ⟨lastSafe, ?_, n, ?_, finalFrame⟩
+        · simpa [rsgcFree] using valueSafe
+        · exact lastOracle.trans nextOracle
+
+/-- This primitive operation preserves the source evaluator safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsOpLabel {C F : Type} (trace : BackendCommon.Tra) (label : Nat)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace (.label label) args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace (.label label) args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace (.label label) args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  exact evaluateOrdinaryOpGlobals trace (.label label) args env s0 (by simp) (by simp) argsIH res s h
+
+/-- This primitive operation preserves the source evaluator safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsOpFfi {C F : Type} (trace : BackendCommon.Tra) (name : Flapjack.Basis.Pure.MlString.MlString)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace (.ffi name) args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace (.ffi name) args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace (.ffi name) args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  exact evaluateOrdinaryOpGlobals trace (.ffi name) args env s0 (by simp) (by simp) argsIH res s h
+
+/-- This primitive operation preserves the source evaluator safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsOpInt {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.IntOp)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace (.intOp op) args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace (.intOp op) args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace (.intOp op) args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  exact evaluateOrdinaryOpGlobals trace (.intOp op) args env s0 (by simp) (by simp) argsIH res s h
+
+/-- This primitive operation preserves the source evaluator safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsOpWord {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.WordOp)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace (.wordOp op) args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace (.wordOp op) args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace (.wordOp op) args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  exact evaluateOrdinaryOpGlobals trace (.wordOp op) args env s0 (by simp) (by simp) argsIH res s h
+
+/-- This primitive operation preserves the source evaluator safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsOpBlock {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.BlockOp)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace (.blockOp op) args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace (.blockOp op) args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace (.blockOp op) args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  exact evaluateOrdinaryOpGlobals trace (.blockOp op) args env s0 (by simp) (by simp) argsIH res s h
+
+/-- This primitive operation preserves the source evaluator safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsOpGlobal {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.GlobOp)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace (.globOp op) args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace (.globOp op) args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace (.globOp op) args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  exact evaluateOrdinaryOpGlobals trace (.globOp op) args env s0 (by simp) (by simp) argsIH res s h
+
+/-- This primitive operation preserves the source evaluator safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsOpMemory {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.MemOp)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace (.memOp op) args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace (.memOp op) args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace (.memOp op) args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  exact evaluateOrdinaryOpGlobals trace (.memOp op) args env s0 (by simp) (by simp) argsIH res s h
+
+/-- This primitive operation preserves the source evaluator safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsOpAllocThunk {C F : Type} (trace : BackendCommon.Tra) (mode : Flapjack.AstHOL.ThunkMode)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace (.thunkOp (.allocThunk mode)) args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace (.thunkOp (.allocThunk mode)) args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace (.thunkOp (.allocThunk mode)) args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  exact evaluateOrdinaryOpGlobals trace (.thunkOp (.allocThunk mode)) args env s0 (by simp) (by simp) argsIH res s h
+
+/-- This primitive operation preserves the source evaluator safety result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_changed_globals_0"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateChangedGlobalsOpUpdateThunk {C F : Type} (trace : BackendCommon.Tra) (mode : Flapjack.AstHOL.ThunkMode)
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (s0 : ClosSem.State C F)
+    (argsIH : EvalGlobalsInvariant args env s0)
+    (res : Result (List ClosSem.Value) ClosSem.Value) (s : ClosSem.State C F)
+    (h : evaluate [.op trace (.thunkOp (.updateThunk mode)) args] env s0 = (res, s) ∧ ssgcFree s0 ∧
+      (∀ e ∈ ([.op trace (.thunkOp (.updateThunk mode)) args] : List ClosLang.Exp), esgcFree e) ∧
+      (∀ v ∈ env, vsgcFree v)) :
+    ssgcFree s ∧ rsgcFree res ∧ ∃ n,
+      s.compileOracle = Flapjack.holShiftSeq n s0.compileOracle ∧
+      mglobalsExtend s0.globals
+        ({k | elistGlobals [.op trace (.thunkOp (.updateThunk mode)) args] k ≠ 0} ∪
+         {k | elistGlobals (List.flatten (firstNExps s0.compileOracle n)) k ≠ 0}) s.globals := by
+  exact evaluateOrdinaryOpGlobals trace (.thunkOp (.updateThunk mode)) args env s0 (by simp) (by simp) argsIH res s h
+
 end EvaluateGlobalsPort
 end Flapjack.Compiler.Backend.ClosKnown

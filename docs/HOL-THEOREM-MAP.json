@@ -3,6 +3,123 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "evaluate_changed_globals_0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsOpLabel",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Op case and evaluate_ind_typed in clos_known_syntax_probe.out, specializing the operation to Label. The source argument-expression induction hypothesis and the original execution, safety, state, result, oracle-shift and global-extension assertions are retained; the installation and force-thunk induction branches are unreachable for this constructor. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full mutual theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsOpFfi",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Op case and evaluate_ind_typed in clos_known_syntax_probe.out, specializing the operation to Ffi. The source argument-expression induction hypothesis and the original execution, safety, state, result, oracle-shift and global-extension assertions are retained; the installation and force-thunk induction branches are unreachable for this constructor. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full mutual theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsOpInt",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Op case and evaluate_ind_typed in clos_known_syntax_probe.out, specializing the operation to Int. The source argument-expression induction hypothesis and the original execution, safety, state, result, oracle-shift and global-extension assertions are retained; the installation and force-thunk induction branches are unreachable for this constructor. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full mutual theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsOpWord",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Op case and evaluate_ind_typed in clos_known_syntax_probe.out, specializing the operation to Word. The source argument-expression induction hypothesis and the original execution, safety, state, result, oracle-shift and global-extension assertions are retained; the installation and force-thunk induction branches are unreachable for this constructor. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full mutual theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsOpBlock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Op case and evaluate_ind_typed in clos_known_syntax_probe.out, specializing the operation to Block. The source argument-expression induction hypothesis and the original execution, safety, state, result, oracle-shift and global-extension assertions are retained; the installation and force-thunk induction branches are unreachable for this constructor. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full mutual theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsOpGlobal",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Op case and evaluate_ind_typed in clos_known_syntax_probe.out, specializing the operation to Global. The source argument-expression induction hypothesis and the original execution, safety, state, result, oracle-shift and global-extension assertions are retained; the installation and force-thunk induction branches are unreachable for this constructor. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full mutual theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsOpMemory",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Op case and evaluate_ind_typed in clos_known_syntax_probe.out, specializing the operation to Memory. The source argument-expression induction hypothesis and the original execution, safety, state, result, oracle-shift and global-extension assertions are retained; the installation and force-thunk induction branches are unreachable for this constructor. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full mutual theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsOpAllocThunk",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Op case and evaluate_ind_typed in clos_known_syntax_probe.out, specializing the operation to AllocThunk. The source argument-expression induction hypothesis and the original execution, safety, state, result, oracle-shift and global-extension assertions are retained; the installation and force-thunk induction branches are unreachable for this constructor. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full mutual theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
+  "lean_name": "evaluateChangedGlobalsOpUpdateThunk",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the Op case and evaluate_ind_typed in clos_known_syntax_probe.out, specializing the operation to UpdateThunk. The source argument-expression induction hypothesis and the original execution, safety, state, result, oracle-shift and global-extension assertions are retained; the installation and force-thunk induction branches are unreachable for this constructor. The state uses canonical finite-support refs and code with the local roundtrip witness; the evaluator inherits rational-cut reals. This case alone does not establish the full mutual theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_changed_globals_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/EvaluateGlobals.lean",
   "lean_name": "evaluateChangedGlobalsApp",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
