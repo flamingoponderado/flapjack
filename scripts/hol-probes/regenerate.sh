@@ -340,6 +340,10 @@ run_probe bvl_remove_ticks_probeScript.sml bvl_remove_ticks_probe.out \
   remove_ticks_sing remove_ticks remove_ticks_equivalence nested branches \
   "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
+run_probe clos_known_syntax_probeScript.sml clos_known_syntax_probe.out \
+  syntax_ok_typed bag_all_distinct_typed \
+  "$cake_dir/compiler/backend/proofs/clos_knownProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe clos_to_bvl_state_relation_probeScript.sml clos_to_bvl_state_relation_probe.out \
   state_rel_typed state_rel_clock_typed state_rel_refs_lookup_typed cl_rel_rules_typed v_rel_rules_typed env_rel_typed add_args_typed get_num_args_typed code_installed_typed closure_code_installed_typed code_installed_subspt_typed init_code_rel_typed compile_prog_semantics_typed compile_exps_correct_typed \
   "$cake_dir/compiler/backend/proofs/clos_to_bvlProofScript.sml" "$cake_dir/compiler/backend/proofs"

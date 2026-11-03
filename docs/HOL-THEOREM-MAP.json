@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+    "hol_name": "syntax_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Syntax.lean",
+    "lean_name": "syntaxOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared syntax_ok_typed and bag_all_distinct_typed: the closure expression list must have no function free-variable annotations, each natural-number global multiplicity is at most one, and every expression satisfies esgc_free. HOL bags and the Lean global bag are both functions to natural-number multiplicities. The typed HOL capture supports source review, not cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
     "hol_name": "init_code_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",

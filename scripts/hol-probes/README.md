@@ -91,6 +91,10 @@ inferred types. Regenerate with
 `HOL_PROBE_ONLY=clos_mti_install_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The replay supports source review; it does not prove cross-language equivalence.
 
+`clos_known_syntax_probe.out` captures the typed known-function syntax
+precondition and HOL's bag-distinctness definition. Regenerate with
+`HOL_PROBE_ONLY=clos_known_syntax_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `data_to_word_memory_repr_probe.out` captures typed heap representation,
 pointer projection, byte-header and word-payload definitions and the valid
 payload classification theorem, heap assertions, append theorem, heap/store

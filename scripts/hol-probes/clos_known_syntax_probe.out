@@ -1,0 +1,2 @@
+syntax_ok_typed=∀(xs :closLang$exp list). syntax_ok xs ⇔ every_Fn_vs_NONE xs ∧ BAG_ALL_DISTINCT (elist_globals xs) ∧ EVERY esgc_free xs
+bag_all_distinct_typed=∀(b :α -> num). BAG_ALL_DISTINCT b ⇔ ∀(e :α). b e ≤ (1 :num)
