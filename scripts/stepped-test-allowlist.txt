@@ -1,0 +1,65 @@
+# Test modules that may still reach the stepped modules listed in
+# stepped-modules.txt, directly or transitively (issue #1251).
+#
+# This is a ratchet for scripts/check-stepped-import-closure.py: a test module
+# not listed here must not reach a stepped module, and a listed module that no
+# longer reaches one must be removed. Phase 4 empties this list by moving the
+# stepped tests to stepped-flapjack or dropping their stepped cases.
+#
+# Flapjack.Test.CompilerParity is the root of the FlapjackTest executable
+# (lakefile.toml testDriver and default target), so it stays here until every
+# test it imports is free of stepped modules.
+Flapjack.Test.CompilerParity
+Flapjack.Test.Ffi
+Flapjack.Test.LoopLangExpParity
+Flapjack.Test.LoopLangProgParity
+Flapjack.Test.PanCost
+Flapjack.Test.PanEvaluateParity
+Flapjack.Test.PanMemoryModel
+Flapjack.Test.PanNbOpParity
+Flapjack.Test.PanObservationalSemanticsParity
+Flapjack.Test.PanSemAssignErrorExactParity
+Flapjack.Test.PanSemAssignMemoryParity
+Flapjack.Test.PanSemAssignParity
+Flapjack.Test.PanSemCallErrorExactParity
+Flapjack.Test.PanSemCallExactParity
+Flapjack.Test.PanSemDecCallErrorParity
+Flapjack.Test.PanSemDecErrorExactParity
+Flapjack.Test.PanSemDecParity
+Flapjack.Test.PanSemErrorPropagationParity
+Flapjack.Test.PanSemEvalRoutedParity
+Flapjack.Test.PanSemExtCallErrorParity
+Flapjack.Test.PanSemFuelDecompositionParity
+Flapjack.Test.PanSemIteErrorExactParity
+Flapjack.Test.PanSemIteParity
+Flapjack.Test.PanSemMemStore32HOLParity
+Flapjack.Test.PanSemPrimitiveErrorExactParity
+Flapjack.Test.PanSemPrimitiveParity
+Flapjack.Test.PanSemReturnRaiseErrorParity
+Flapjack.Test.PanSemReturnRaiseMemoryParity
+Flapjack.Test.PanSemSeqParity
+Flapjack.Test.PanSemSkipParity
+Flapjack.Test.PanSemStateEvalParity
+Flapjack.Test.PanSemStore32ErrorExactParity
+Flapjack.Test.PanSemStoreErrorExactParity
+Flapjack.Test.PanSemStoreExactParity
+Flapjack.Test.PanSemTickParity
+Flapjack.Test.PanSemTotalEvalParity
+Flapjack.Test.PanSemTotalParity
+Flapjack.Test.PanSemTotalStepsParity
+Flapjack.Test.PanSemWhileErrorParity
+Flapjack.Test.PanSimpParity
+Flapjack.Test.PanSteppedSemantics
+Flapjack.Test.PanStructsCompileCorrect
+Flapjack.Test.PanToCrepCallExceptionHandlerParity
+Flapjack.Test.PanToCrepCallExceptionParity
+Flapjack.Test.PanValueAcceleratorFfi
+Flapjack.Test.PanValueFfiClockFuel
+Flapjack.Test.PanValueFfiClockLe
+Flapjack.Test.PanValueFfiClockMemoryFfi
+Flapjack.Test.PanValueFfiClockSemantics
+Flapjack.Test.PanValueFfiFuel
+Flapjack.Test.PanValueFfiSemantics
+Flapjack.Test.PanValueMemoryFfi
+Flapjack.Test.Runtime
+Flapjack.Test.WordLangNotCreatedParity

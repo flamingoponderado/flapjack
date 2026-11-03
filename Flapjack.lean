@@ -2333,6 +2333,7 @@ import Flapjack.PanValueFfiClockSemantics
 import Flapjack.PanValueFfiClockFuel
 import Flapjack.PanValueFfiClockCorrectness
 import Flapjack.PanValueFfiClockShift
+import Flapjack.PanValueFfiClockStepsBridge
 import Flapjack.PanValueFfiEventMonotonicity
 import Flapjack.PanValueFfiClockProjection
 import Flapjack.PanCost

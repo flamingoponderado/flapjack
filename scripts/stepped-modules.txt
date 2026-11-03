@@ -1,0 +1,13 @@
+# Step-counted source semantics, moving to stepped-flapjack (issue #1251).
+# scripts/check-stepped-import-closure.py checks that no library module outside
+# Flapjack/Test/ imports these, directly or transitively.
+Flapjack.PanSteppedSemantics
+Flapjack.PanValueFfiSemantics
+Flapjack.PanValueFfiFuel
+Flapjack.PanValueFfiEventMonotonicity
+Flapjack.PanValueFfiClockProjection
+Flapjack.PanValueFfiClockStepsBridge
+Flapjack.PanCost
+Flapjack.PanValueExpCounted
+Flapjack.PanExpressionEvaluator
+Flapjack.Pancake.Semantics.PanSem.EvalExecutedCountedBridge
