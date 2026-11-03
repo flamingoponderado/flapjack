@@ -125,3 +125,5 @@ val _ = show "let_op_correct_typed" clos_letopProofTheory.let_op_correct;
 val _ = show "semantics_let_op_typed" clos_letopProofTheory.semantics_let_op;
 load "clos_knownTheory";
 val _ = show "known_compile_typed" clos_knownTheory.compile_def;
+val _ = show "known_static_conf_typed" clos_knownTheory.known_static_conf_def;
+val _ = show "known_compile_inc_typed" clos_knownTheory.known_compile_inc_def;

@@ -58,4 +58,26 @@ theorem compileFuel_eq_source (fuel : Nat) (config : Option Config) (program : L
     | mk optimized globals =>
       simpa [compile, run] using known_compileFuel_eq fuel c program optimized globals run
 
+/-- For every fuel and incremental input, the executed driver agrees with
+the source optimizer after applying the source static-configuration and
+configuration-update operations. This is Lean-side production agreement. -/
+theorem compileIncFuel_eq_source (fuel : Nat) (config : Option Config)
+    (program : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)) :
+    compileIncFuel fuel config program = some
+      ((fun pair => (optionUpdValSpt pair.1 config, pair.2))
+        (knownCompileInc (knownStaticConf config) (optionValApproxSpt config) program)) := by
+  cases config with
+  | none => rfl
+  | some c =>
+    simp only [compileIncFuel, knownStaticConf, knownCompileInc, ClosFvs.compileInc,
+      compileInc, ClosTicks.compileInc, ClosLetop.compileInc,
+      ClosFvs.compileBounded_eq_source, bind, Option.bind]
+    cases run : knownListTotal (resetInlineFactor { resetInlineFactor c with valApproxSpt := .ln })
+        (ClosFvs.compile program.1) [] (optionValApproxSpt (some c)) with
+    | mk eas globals =>
+      have mapEq := ticks_letop_bounded fuel (eas.map Prod.fst)
+      simp only [bind, Option.bind] at mapEq
+      rw [mapEq]
+      rfl
+
 end Flapjack.Compiler.Backend.ClosKnown

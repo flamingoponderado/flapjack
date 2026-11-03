@@ -123188,5 +123188,21 @@
   "lean_name": "compile",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared known_compile_typed in clos_letop_source_probe.out: disabled optimization returns the unchanged expressions and absent configuration; enabled optimization applies free-variable cleanup, the known traversal from empty environment and tree, tick removal, and let-operation cleanup in order, and updates only the approximation-tree field. The source traversals correspond to the referenced original definitions; compileFuel_eq_source proves the executed bounded traversal agrees for every fuel and input. Source comparison and Lean checking do not establish cross-language equivalence or whole-compiler correctness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Compile.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "known_static_conf_def",
+  "lean_name": "knownStaticConf",
+  "reviewer": "Compared known_static_conf_typed in clos_letop_source_probe.out: NONE remains NONE, while SOME resets the inline factor and clears the approximation tree without changing other configuration fields."
+},
+{
+  "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Compile.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "known_compile_inc_def",
+  "lean_name": "knownCompileInc",
+  "reviewer": "Compared known_compile_inc_typed in clos_letop_source_probe.out: input and output auxiliary lists have the same independently polymorphic element type, the intermediate closure-code list is fixed to natural-number triples containing closure expressions, and NONE returns the original tree and program. SOME runs free-variable cleanup, incremental known optimization, tick removal and let-operation cleanup in order, threading the approximation tree. compileIncFuel_eq_source proves the executed driver agrees at its concrete closure-code carrier after static configuration and configuration update. Source comparison and Lean checking do not establish cross-language equivalence."
 }
 ]

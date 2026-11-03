@@ -30,6 +30,25 @@ def compile : Option Config → List Exp → Option Config × List Exp
       (some { c with valApproxSpt := globals },
         ClosLetop.compileList (ClosTicks.removeList (eas.map Prod.fst)))
 
+/-- Prepare the static settings for incremental known-function optimization. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "known_static_conf_def"]
+def knownStaticConf : Option Config → Option Config
+  | none => none
+  | some c => some { resetInlineFactor c with valApproxSpt := .ln }
+
+/-- Run the original incremental optimizer and thread its approximation tree. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "known_compile_inc_def"]
+def knownCompileInc {α : Type} (config : Option Config) (globals : Spt ValApprox)
+    (program : List Exp × List α) : Spt ValApprox × (List Exp × List α) :=
+  match config with
+  | none => (globals, program)
+  | some c =>
+      let p : List Exp × List (Nat × Nat × Exp) := ClosFvs.compileInc program
+      let (globals, es, aux) := compileInc c globals p
+      let p : List Exp × List (Nat × Nat × Exp) := ClosTicks.compileInc (es, aux)
+      let p : List Exp × List α := ClosLetop.compileInc p
+      (globals, p)
+
 /-- Apply free-variable cleanup, approximation, tick removal and let-op cleanup. -/
 def compileFuel (fuel : Nat) (config : Option Config) (es : List Exp) : Option (Option Config × List Exp) := do
   match config with
