@@ -1,6 +1,24 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_move_list_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalList.lean",
+  "lean_name": "wordGenGcMoveList_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the complete simplified original statement at lines 1571-1600 with word_gen_gc_move_list_thm_typed: original abstract and word runs, success, bounds, empty accumulators, reference classifier and invariant, disjoint root list, and every output equality and assertion are retained. The proof performs the original root-list induction and updates each owned root word."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_heap_parts_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalList.lean",
+  "lean_name": "wordHeapParts",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared all three separated regions and their address calculations with word_heap_parts_typed. The address width and stored-word width remain independently quantified positive widths, as in the inferred HOL type."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "gc_move_with_NIL",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalAccumulator.lean",
   "lean_name": "gcMove_withNil",
