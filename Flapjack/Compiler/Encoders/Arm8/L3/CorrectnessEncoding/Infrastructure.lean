@@ -19,20 +19,8 @@ open Flapjack.Compiler.Encoders.Arm8.L3.Target
 theorem bytesInMemoryHOL_get {width : Nat} [NeZero width]
     {a : BitVec width} {bs : List (BitVec 8)} {m : BitVec width → BitVec 8}
     {d : BitVec width → Prop} (h : bytesInMemoryHOL a bs m d) :
-    ∀ j, j < bs.length → m (a + BitVec.ofNat width j) = bs.getD j 0 := by
-  revert h
-  induction bs generalizing a with
-  | nil => intro _ j hj; simp at hj
-  | cons x xs ih =>
-      intro h j hj
-      obtain ⟨hx, hd, ht⟩ := h
-      cases j with
-      | zero => simpa using hx
-      | succ j =>
-          have hj' : j < xs.length := by simpa using hj
-          have hrec := ih ht j hj'
-          rw [← addOneOffset]
-          simpa using hrec
+    ∀ j, j < bs.length → m (a + BitVec.ofNat width j) = bs.getD j 0 :=
+  fun j hj => Flapjack.Compiler.Encoders.AsmProps.bytesInMemoryHOL_get h j hj
 
 /-- `Aligned` at size four is plain 4-byte alignment (`pc.toNat % 4 = 0`),
 which is what `arm8_ok`'s `aligned 2` requires (Flapjack infrastructure; HOL

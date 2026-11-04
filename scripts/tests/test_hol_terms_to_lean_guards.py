@@ -251,9 +251,31 @@ class ExtraTypesPathTest(unittest.TestCase):
             types = pathlib.Path(d, 'Types.lean')
             types.write_text('')
             saved = dict(M['EXTRA_TYPES_PATH'])
-            M['EXTRA_TYPES_PATH']['arm8'] = pathlib.Path(d, 'missing.lean')
+            M['EXTRA_TYPES_PATH']['arm8'] = (
+                pathlib.Path(d, 'missing.lean'), ('ShiftType', 'MoveWideOp'))
             try:
                 with self.assertRaises(FileNotFoundError):
+                    M['main'](['prog', str(sexp), str(types), '--thy=arm8'])
+            finally:
+                M['EXTRA_TYPES_PATH'].clear()
+                M['EXTRA_TYPES_PATH'].update(saved)
+                M['MODEL_THY'] = 'riscv'
+
+    def test_configured_type_missing_from_extra_file_raises(self):
+        # Only the named types are imported from the hand-written module; a
+        # rename there must fail loudly rather than silently drop the datatype.
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            sexp = pathlib.Path(d, 'defs.sexp')
+            sexp.write_text('')
+            types = pathlib.Path(d, 'Types.lean')
+            types.write_text('')
+            extra = pathlib.Path(d, 'extra.lean')
+            extra.write_text('inductive ShiftType where\n  | LSL\n')
+            saved = dict(M['EXTRA_TYPES_PATH'])
+            M['EXTRA_TYPES_PATH']['arm8'] = (extra, ('ShiftType', 'MoveWideOp'))
+            try:
+                with self.assertRaises(ValueError):
                     M['main'](['prog', str(sexp), str(types), '--thy=arm8'])
             finally:
                 M['EXTRA_TYPES_PATH'].clear()

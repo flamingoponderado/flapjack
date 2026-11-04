@@ -27,11 +27,15 @@ MODEL_THY = 'riscv'
 
 # Datatypes ported outside the model Types module.  ARM8's `ShiftType` and
 # `MoveWideOp` live in Flapjack/Compiler/Encoders/Arm8/Encode.lean; parse that
-# file instead of copying its constructor lists here.  Case arms are matched to
-# constructors by position, so a *reorder* in that file still needs the drift
-# gate (`scripts/l3/check-renderings.py`) to notice; a rename does not.
+# file instead of copying its constructor lists here, and import only the named
+# types: `parse_types` is written for the generated Types.lean and misreads a
+# hand-written inductive's multi-line constructors and payload binders.  Case
+# arms are matched to constructors by position, so a *reorder* in that file
+# still needs the drift gate (`scripts/l3/check-renderings.py`) to notice; a
+# rename does not.
 EXTRA_TYPES_PATH = {
-    'arm8': Path(__file__).resolve().parents[1] / 'Flapjack/Compiler/Encoders/Arm8/Encode.lean',
+    'arm8': (Path(__file__).resolve().parents[1] / 'Flapjack/Compiler/Encoders/Arm8/Encode.lean',
+             ('ShiftType', 'MoveWideOp')),
 }
 
 # ---------------------------------------------------------------------------
@@ -1271,14 +1275,19 @@ def main(argv):
     types = parse_types(Path(types_lean).read_text())
     extra = EXTRA_TYPES_PATH.get(MODEL_THY)
     if extra is not None:
-        if not extra.exists():
+        extra_path, extra_names = extra
+        if not extra_path.exists():
             raise FileNotFoundError(
-                f'configured extra types file for {MODEL_THY} is missing: {extra}')
+                f'configured extra types file for {MODEL_THY} is missing: {extra_path}')
+        parsed = parse_types(extra_path.read_text())
+        missing = [n for n in extra_names if n not in parsed]
+        if missing:
+            raise ValueError(f'configured extra types missing from {extra_path}: {missing}')
         # Only add datatypes the model Types module does not declare: the extra
         # module may carry same-named carriers with different constructor
         # spellings (ARM8 Encode.lean has its own closed-model `MemOp`).
-        for name, info in parse_types(extra.read_text()).items():
-            types.setdefault(name, info)
+        for name in extra_names:
+            types.setdefault(name, parsed[name])
     defined = {}
     order = []
     for rec in data:

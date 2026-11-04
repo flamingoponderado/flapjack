@@ -19,8 +19,8 @@ namespace Flapjack.Compiler.Encoders.X64
 
 /-- Adding one before the `j`-th byte offset is the `(j + 1)`-th byte offset. -/
 theorem x64AddOneOffset (a : BitVec 64) (j : Nat) :
-    (a + 1) + BitVec.ofNat 64 j = a + BitVec.ofNat 64 (j + 1) := by
-  bv_omega
+    (a + 1) + BitVec.ofNat 64 j = a + BitVec.ofNat 64 (j + 1) :=
+  Flapjack.Compiler.Encoders.AsmProps.addOneOffset a j
 
 /-- The `j`-th byte of a byte list in memory lies in the domain, for every `j`
 below the length. -/
@@ -36,19 +36,9 @@ for every `j` below the length. -/
 theorem bytesInMemoryHOL_get :
     ∀ (bs : List (BitVec 8)) (a : BitVec 64) (m : BitVec 64 → BitVec 8)
       (d : BitVec 64 → Prop), bytesInMemoryHOL a bs m d →
-      ∀ j, j < bs.length → m (a + BitVec.ofNat 64 j) = bs.getD j 0
-  | [], _, _, _, _, j, hj => by simp at hj
-  | x :: rest, a, m, d, h, j, hj => by
-      obtain ⟨hx, -, ht⟩ := h
-      cases j with
-      | zero => simpa using hx
-      | succ j =>
-          have hj' : j < rest.length := by simpa using hj
-          have hrec := bytesInMemoryHOL_get rest (a + 1) m d ht j hj'
-          calc m (a + BitVec.ofNat 64 (j + 1))
-              = m ((a + 1) + BitVec.ofNat 64 j) := by rw [x64AddOneOffset]
-            _ = rest.getD j 0 := hrec
-            _ = (x :: rest).getD (j + 1) 0 := rfl
+      ∀ j, j < bs.length → m (a + BitVec.ofNat 64 j) = bs.getD j 0 :=
+  fun _bs _a _m _d h j hj =>
+    Flapjack.Compiler.Encoders.AsmProps.bytesInMemoryHOL_get h j hj
 
 /-- Decoding the byte list and decoding the same bytes from memory agree,
 provided the decoded instruction's length is within the list. -/

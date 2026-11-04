@@ -96,10 +96,12 @@ def render(text: str, HOLPATH: str, only: list[str] | None = None,
     script = Path(HOLPATH).name
     res=[]
     seen=set()
+    emitted_names=set()
     for kind,n,items,start in out:
         seen.add(n)
         if only is not None and n not in only:
             continue
+        emitted_names.add(n)
         tag='@[hol "%s" "%s" %d]'%(HOLPATH,n,start) if False else '@[hol "%s" "%s"]'%(HOLPATH,n)
         if kind=='Record':
             fun=any(hasfun(t) for _,t in items)
@@ -119,7 +121,7 @@ def render(text: str, HOLPATH: str, only: list[str] | None = None,
     unknown=[n for n in (only or ()) if n not in seen]
     if unknown:
         raise ValueError('unknown declaration(s): ' + ', '.join(unknown))
-    unknown=[n for n in beq_only if n not in seen]
+    unknown=[n for n in beq_only if n not in emitted_names]
     if unknown:
         raise ValueError('unknown --beq-only declaration(s): ' + ', '.join(unknown))
     return ''.join(res)

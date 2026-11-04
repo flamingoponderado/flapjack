@@ -74,6 +74,22 @@ class L3TypesToLeanTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             RENDER((ROOT / ARM8_MODEL).read_text(), ARM8_MODEL, ['SCTRLType'])
 
+    def test_beq_only_name_outside_the_selection_is_an_error(self):
+        # `Data` exists in the model but the DECL filter drops it, so the flag
+        # would otherwise pass silently and change nothing.
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / 'scripts' / 'l3_types_to_lean.py'),
+             ARM8_MODEL, ARM8_MODEL, 'ProcState', 'arm8_state',
+             '--beq-only', 'Data'],
+            capture_output=True, text=True)
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn('Data', proc.stderr)
+
+    def test_render_rejects_beq_only_outside_the_selection(self):
+        with self.assertRaises(ValueError):
+            RENDER((ROOT / ARM8_MODEL).read_text(), ARM8_MODEL,
+                   ['ProcState', 'arm8_state'], ('Data',))
+
 
 if __name__ == '__main__':
     unittest.main()

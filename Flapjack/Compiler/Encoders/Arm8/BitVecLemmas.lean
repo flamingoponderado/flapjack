@@ -61,10 +61,8 @@ theorem blockDiv (x k : Nat) (hx : x &&& ((2 ^ 16 - 1) * 2 ^ k) = x) :
 
 /-- Wrapped address reassociation for the byte walk (Flapjack infrastructure). -/
 theorem addOneOffset {width : Nat} (a : BitVec width) (j : Nat) :
-    (a + 1) + BitVec.ofNat width j = a + BitVec.ofNat width (j + 1) := by
-  rw [BitVec.ofNat_add, BitVec.add_assoc]
-  congr 1
-  exact BitVec.add_comm _ _
+    (a + 1) + BitVec.ofNat width j = a + BitVec.ofNat width (j + 1) :=
+  Flapjack.Compiler.Encoders.AsmProps.addOneOffset a j
 
 /-- The `j`-th byte of a byte list in memory lies in the domain, for every `j`
 below the length. -/
