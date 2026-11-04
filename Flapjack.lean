@@ -214,6 +214,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StubLabels
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CodeOracle
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StateRelation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.JumpExcFrames
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.JumpExcBounds
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Skip
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Tick
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Return
