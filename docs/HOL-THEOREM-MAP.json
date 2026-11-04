@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_move_loop_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalLoop.lean",
+  "lean_name": "wordGenGcMoveLoop_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_gen_gc_move_loop_thm_typed and the source proof: the full abstract and concrete loop equations, success, heap and byte bounds, empty intermediate reference lists, classifier, length invariant, separated memory, reference predicate, and all output equalities are retained with a common positive word width. The proof handles completed, data-scan, and reference-scan cases with the original recursive clock."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "LENGTH_LESS_EQ_SUM_el_length",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalLoop.lean",
   "lean_name": "length_le_heapLength",
