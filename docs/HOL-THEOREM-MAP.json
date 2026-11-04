@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_fun_EL_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/DecodedRoots.lean",
+  "lean_name": "wordGcFun_decStack_flat",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6645-6674 and word_gc_fun_EL_lemma_typed after the original SPEC_ALL: the two source/word stack relations, root-kind relation including unchanged locations, successful decoding premise, and complete flat-stack ZIP conclusion match. The source and result stack and root payloads share the same positive HOL word dimension. The five unused binders in the source quotation do not occur in the exported typed theorem. The proof uses the actual wordSem decoder; source comparison and kernel checking do not establish collector memory correctness or cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_fun_IMP",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CollectorStore.lean",
   "lean_name": "wordGcFun_store_invariants",
