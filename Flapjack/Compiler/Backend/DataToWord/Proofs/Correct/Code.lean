@@ -718,6 +718,9 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
   | tick => intro state; exact evaluate_tick_code state
   | move dest src => intro state; exact evaluate_move_code dest src state
   | globalsPtr dest => intro state; exact evaluate_assign_globalsPtr_code dest state
+  | byteOp dest left right op =>
+    intro state
+    exact evaluate_assign_word_code dest (.wordOpw .w8 op) [left, right] none state
   | setGlobalsPtr dest name => intro state; exact evaluate_assign_setGlobalsPtr_code dest name state
   | globalLoad dest index => intro state; exact evaluate_assign_globalLoad_code dest index state
   | globalStore dest index value => intro state; exact evaluate_assign_globalStore_code dest index value state

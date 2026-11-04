@@ -25,6 +25,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Globals
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.GlobalLoad
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.GlobalStore
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.GlobalsSet
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Word8
 
 /-! Inductive simulation for the currently established data-language fragment. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct
@@ -184,6 +185,8 @@ inductive VerifiedFragment : DataLang.Prog → Prop where
   | boolTest (dest left right : Nat) (test : AstHOL.Test) :
       VerifiedFragment (.assign dest (.blockOp (.boolTest test)) [left, right] none)
   | boolNot (dest src : Nat) : VerifiedFragment (.assign dest (.blockOp .boolNot) [src] none)
+  | byteOp (dest left right : Nat) (op : BackendCommon.Opw) :
+      VerifiedFragment (.assign dest (.wordOp (.wordOpw .w8 op)) [left, right] none)
   | intConst (dest : Nat) (i : Int) : VerifiedFragment (.assign dest (.intOp (.const i)) [] none)
   | ret (names : List Nat) : VerifiedFragment (.return names)
   | raise (name : Nat) : VerifiedFragment (.raise name)
@@ -283,6 +286,9 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
   | boolNot dest src =>
     intro label source target locs related safe
     exact Or.inl (assignBoolNot64_of_safe conf secn label l1 l2 source target locs related dest src safe)
+  | byteOp dest left right op =>
+    intro label source target locs related safe
+    exact Or.inl (assignByteOp64_of_safe conf secn label l1 l2 source target locs related dest left right op safe)
   | intConst dest i =>
     intro label source target locs related safe
     exact Or.inl (assignConst64_of_safe conf secn label l1 l2 source target locs related dest i safe)

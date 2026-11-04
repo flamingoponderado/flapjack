@@ -131,6 +131,8 @@ def fragmentCompile64 (conf : Config) (secn label : Nat) : DataLang.Prog → Opt
       some (.seq (.store (.op .add [.lookup .globReal,
         .const (BitVec.ofNat 64 (64 / 8) * BitVec.ofNat 64 (index + 1))]) (adjustVar value))
         (.assign (adjustVar dest) (.const 2)), label)
+  | .assign dest (.wordOp (.wordOpw .w8 op)) [left, right] none =>
+      some (.assign (adjustVar dest) (byteOpExpr64 op left right), label)
   | _ => none
 
 /-- On the verified fragment, the independent source-shaped traversal returns
@@ -145,7 +147,7 @@ theorem fragmentCompile64_agrees (conf : Config) (secn : Nat) (program : DataLan
   | intConst dest i =>
     intro label
     simp [fragmentCompile64, compileControl64, compileControl?, smallnum_eq_inlined]
-  | boolNot | boolTest | lessConst | blockLength | blockBounds | byteBounds | arrayBounds | arrayLength | byteLength | dynamicElement | byteElement | byteStore | arrayStore | element =>
+  | boolNot | boolTest | lessConst | blockLength | blockBounds | byteBounds | arrayBounds | arrayLength | byteLength | dynamicElement | byteElement | byteStore | arrayStore | byteOp | element =>
     intro label
     simp only [fragmentCompile64, compileControl64, compileControl?, Option.getD_some]
     all_goals rfl
