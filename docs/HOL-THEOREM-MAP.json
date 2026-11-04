@@ -1,6 +1,43 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "loc_ok_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MoveRoots.lean",
+  "lean_name": "locOk",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6157-6160 with loc_ok_typed: Loc is valid exactly when its second natural field is zero, while every Word is valid. Both constructors use the same positive word dimension represented by BitVec width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_move_roots_IMP_FILTER",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MoveRoots.lean",
+  "lean_name": "wordGcMoveRoots_imp_filter",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6288-6305 and word_gc_move_roots_IMP_FILTER_typed: all root, memory, domain, counter, configuration and result carriers share the original positive word dimension; the filtered execution and EVERY loc_ok premises imply the original full execution with loc_merge and identical remaining results. The actual tagged collector traversal is used."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_move_roots_IMP_FILTER",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MoveRoots.lean",
+  "lean_name": "wordGenGcMoveRoots_imp_filter",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6307-6323 and word_gen_gc_move_roots_IMP_FILTER_typed: both allocation counters and addresses, memory, domain, roots and all result components use the same positive word dimension; the execution and location-validity premises and merged execution conclusion match. The proof unfolds the actual generational collector traversal."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_partial_move_roots_IMP_FILTER",
+  "hol_line": 6325,
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MoveRoots.lean",
+  "lean_name": "wordGenGcPartialMoveRoots_imp_filter",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6326-6341 and word_gen_gc_partial_move_roots_IMP_FILTER_typed: generation bounds, counters, addresses, memory, domain and roots have the same positive word width; filtered execution and location validity imply the full traversal with the merged roots and unchanged other results. The actual partial collector traversal is used."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "FILTER_enc_stack_lemma",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRoots.lean",
   "lean_name": "filter_encStack",
