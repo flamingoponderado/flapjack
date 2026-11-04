@@ -86,18 +86,21 @@ theorem evaluate_raise_code {C F : Type} (name : Nat) (state : State C F) :
 /-- A sequence preserves the code table if both its components do. -/
 theorem evaluate_seq_code_step {C F : Type} (first second : DataLang.Prog) (state : State C F)
     (firstCode : (evaluate first state).2.code = state.code)
-    (secondCode : ∀ mid : State C F, mid.code = state.code →
+    (secondCode : ∀ mid : State C F, mid.code = state.code → mid.clock ≤ state.clock →
       (evaluate second mid).2.code = mid.code) :
     (evaluate (.seq first second) state).2.code = state.code := by
   have firstClamped : (fixClock state (evaluate first state)).2.code = state.code := by
     simpa [fixClock] using firstCode
+  have clockBound : (fixClock state (evaluate first state)).2.clock ≤ state.clock := by
+    simp [fixClock, Nat.min_le_left]
   rw [evaluate]
   generalize run : fixClock state (evaluate first state) = pair at *
   obtain ⟨result, mid⟩ := pair
   change mid.code = state.code at firstClamped
+  change mid.clock ≤ state.clock at clockBound
   cases result with
   | some value => exact firstClamped
-  | none => exact (secondCode mid firstClamped).trans firstClamped
+  | none => exact (secondCode mid firstClamped clockBound).trans firstClamped
 
 /-- A conditional preserves the code table if both branches do. -/
 theorem evaluate_if_code_step {C F : Type} (name : Nat) (yes no : DataLang.Prog) (state : State C F)
@@ -118,8 +121,13 @@ and handler entered with that table preserves it. Installation is deliberately
 not assumed to preserve code; this is a conditional composition lemma. -/
 theorem evaluate_call_code_step {C F : Type} (ret : Option (List Nat × NumSet)) (dest : Option Nat)
     (names : List Nat) (handler : Option (Nat × DataLang.Prog)) (state : State C F)
-    (bodyCode : ∀ (body : DataLang.Prog) (next : State C F), next.clock < state.clock →
-      next.code = state.code → (evaluate body next).2.code = state.code) :
+    (calleeCode : ∀ (values args : List Value) (body : DataLang.Prog) (size : Option Nat),
+      findCode dest values state.code state.stackFrameSizes = some (args, body, size) →
+      ∀ next : State C F, next.clock < state.clock → next.code = state.code →
+        (evaluate body next).2.code = state.code)
+    (handlerCode : ∀ (name : Nat) (body : DataLang.Prog), handler = some (name, body) →
+      ∀ next : State C F, next.clock < state.clock → next.code = state.code →
+        (evaluate body next).2.code = state.code) :
     (evaluate (.call ret dest names handler) state).2.code = state.code := by
   cases read : getVars names state.locals with
   | none => simp [evaluate, read]
@@ -139,7 +147,7 @@ theorem evaluate_call_code_step {C F : Type} (ret : Option (List Nat × NumSet))
             have smaller : entered.clock < state.clock := by
               simp [entered, callEnv, decClock]
               omega
-            have code := bodyCode body entered smaller rfl
+            have code := calleeCode values args body size found entered smaller rfl
             cases called : evaluate body entered with
             | mk result last =>
               simp only [called] at code
@@ -158,7 +166,7 @@ theorem evaluate_call_code_step {C F : Type} (ret : Option (List Nat × NumSet))
                 simp [entered, callEnv, pushEnv, decClock]
                 omega
               have code : (fixClock entered (evaluate body entered)).2.code = state.code := by
-                simpa [fixClock] using bodyCode body entered smaller rfl
+                simpa [fixClock] using calleeCode values args body size found entered smaller rfl
               have clock : (fixClock entered (evaluate body entered)).2.clock < state.clock := by
                 simp [fixClock, entered, callEnv, pushEnv, decClock]
                 omega
@@ -189,9 +197,9 @@ theorem evaluate_call_code_step {C F : Type} (ret : Option (List Nat × NumSet))
                       | some handler =>
                         obtain ⟨name, handlerBody⟩ := handler
                         simp only [Option.isSome] at called
-                        have handlerCode := bodyCode handlerBody (setVar name value last)
+                        have handledCode := handlerCode name handlerBody rfl (setVar name value last)
                           (by simpa [setVar] using clock) (by simpa [setVar] using code)
-                        simpa [evaluate, read, found, nodup, cut, zero, called] using handlerCode
+                        simpa [evaluate, read, found, nodup, cut, zero, called] using handledCode
         · simp [evaluate, read, found, nodup]
 
 end Flapjack.Compiler.Backend.DataSem

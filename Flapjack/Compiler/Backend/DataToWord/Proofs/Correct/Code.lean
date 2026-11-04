@@ -279,7 +279,7 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
   | raise name => intro state; exact evaluate_raise_code name state
   | @seq first second firstFrag secondFrag firstIH secondIH =>
     intro state
-    exact evaluate_seq_code_step first second state (firstIH state) (fun mid _ => secondIH mid)
+    exact evaluate_seq_code_step first second state (firstIH state) (fun mid _ _ => secondIH mid)
   | @ite name yes no yesFrag noFrag yesIH noIH =>
     intro state
     exact evaluate_if_code_step name yes no state (yesIH state) (noIH state)
