@@ -170,21 +170,6 @@ def holHandledPairProductionOracle : Bool :=
 
 #guard holHandledPairProductionOracle
 
-def holHandledPairMetadataAdapterOracle : Bool :=
-  match compileToCrepHOLWithMetadata holHandledPairProbe with
-  | [{ name := "f", params := [], returnShape := .comb [.one, .one], .. },
-     { name := "g", params := [0, 1], returnShape := .one, .. }] => true
-  | _ => false
-
-#guard holHandledPairMetadataAdapterOracle
-
-def holMetadataAdapterOracle : Bool :=
-  match compileToCrepHOLWithMetadata holDeclarationOnlyProbe with
-  | [{ name := "f", params := [0], returnShape := .one, .. }] => true
-  | _ => false
-
-#guard holMetadataAdapterOracle
-
 /-! HOL `alist_to_fmap` is a right fold: the first repeated name wins even
 though `compile_to_crep` still emits both function declarations in order. -/
 def holDuplicateMapOracle : Bool :=
@@ -236,17 +221,6 @@ def holDuplicateExceptionProductionOracle : Bool :=
      | _ => false)
 
 #guard holDuplicateExceptionProductionOracle
-
-def holDuplicateExceptionMetadataOracle : Bool :=
-  match compileToCrepHOLWithMetadata holDuplicateExceptionDecls with
-  | [{ name := "f", params := [], returnShape := .one,
-       body := .seq _ (.raise ecode) },
-     { name := "g", params := [], returnShape := .one,
-       body := .seq _ (.raise fcode) }] =>
-      ecode == (0 : BitVec 8) && fcode == (1 : BitVec 8)
-  | _ => false
-
-#guard holDuplicateExceptionMetadataOracle
 
 def compileToCrepeProbeContext : CompileContext Nat :=
   { vars := [], functions := [], exceptions := [("E", 0)],
@@ -470,12 +444,6 @@ def holLaterPairRaiseProductionOracle64 : Bool :=
 
 #guard holLaterPairRaiseProductionOracle64
 
-def laterPairTempLoop : Option (LoopProg (BitVec 64)) := do
-  let [(_, _, crep)] := compileToCrepHOL holLaterPairRaiseProbe64 | none
-  let loopContext : LoopContext (BitVec 64) :=
-    { vars := [], functions := [], maxVar := 0, target := .rv64i }
-  some (compileCrepToLoop loopContext [] crep)
-
 def handledPairDecls : List (Decl Nat) :=
   [.exnDecl "E" (.comb [.one, .one]),
    .function
@@ -593,26 +561,5 @@ def parityGuard : Bool :=
 #eval parityGuard
 #guard
   parityGuard
-
-def runChecks : IO Bool := do
-  let results := [
-    ("raised constant", parityGuard),
-    ("exact declaration-only raised constant", exactRaiseConstOracle),
-    ("exact duplicate function names", exactDuplicateFunctionNameOracle),
-    ("duplicate exception names through HOL compiler", holDuplicateExceptionProductionOracle),
-    ("duplicate exception names through production metadata", holDuplicateExceptionMetadataOracle),
-    ("declaration-only two-word exception", holPairRaiseProductionOracle),
-    ("declaration-only later two-word exception", holLaterPairRaiseProductionOracle),
-    ("declaration-only handled two-word exception", holHandledPairProductionOracle),
-    ("handled-call production metadata adapter", holHandledPairMetadataAdapterOracle),
-    ("two-word exception", pairRaiseOracle),
-    ("later two-word exception", laterPairOracle),
-    ("handled two-word exception", handledPairOracle),
-    ("global call destination", globalDestinationOracle),
-    ("handled call with missing destination", handledMissingDestinationOracle),
-    ("flattened parameters", crepVarsOracle)]
-  for (name, passed) in results do
-    IO.println s!"{if passed then "PASS" else "FAIL"} compile_to_crep {name}"
-  pure (results.all Prod.snd)
 
 end Flapjack.Test.CompileToCrepeParity

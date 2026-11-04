@@ -298,22 +298,6 @@ theorem functions_panSimpDecls_names_nodup (declarations : List (Decl α))
     ((functions (panSimpDecls declarations)).map (fun entry => entry.1)).Nodup := by
   simpa only [functions_panSimpDecls, List.map_map, Function.comp_def] using hnames
 
-/-! Counterpart of Cake's `compile_prog_distinct_params`
-    (`pan_simpProofScript.sml:1064-1069`): rewriting function bodies does not
-    alter the parameter names of any function declaration.  Flapjack keeps
-    parameter shapes alongside names, so the invariant is stated for the
-    projected name list. -/
-theorem functions_panSimpDecls_params_nodup (declarations : List (Decl α))
-    (hparams : ∀ entry ∈ functions declarations,
-      (entry.2.1.map Prod.fst).Nodup) :
-    ∀ entry ∈ functions (panSimpDecls declarations),
-      (entry.2.1.map Prod.fst).Nodup := by
-  rw [functions_panSimpDecls]
-  intro entry hentry
-  simp only [List.mem_map] at hentry
-  obtain ⟨source, hsource, rfl⟩ := hentry
-  exact hparams source hsource
-
 /-- Counterpart of the original `ALOOKUP` on the function table
     (`panLangScript.sml:319-326`): first-occurrence lookup of a function name in
     the `(name, params, body, returnShape)` projection `functions` produces. -/
@@ -324,27 +308,6 @@ def lookupFunctionEntry (name : FunName) :
   | entry :: functions =>
       if name == entry.1 then some (entry.2.1, entry.2.2.1, entry.2.2.2)
       else lookupFunctionEntry name functions
-
-/-! Counterpart of the function-table lookup fact used by Cake's
-    `state_rel_imp_semantics` (`pan_simpProofScript.sml:1073-1300`): a
-    successful lookup in the source table succeeds at the same name,
-    parameters, and return shape after `pan_simp`, with only the body
-    transformed. -/
-theorem lookupFunctionEntry_panSimpDecls
-    (declarations : List (Decl α)) (name : FunName)
-    {parameters : List (VarName × Shape)} {body : Prog α} {returnShape : Shape}
-    (hlookup : lookupFunctionEntry name (functions declarations) =
-      some (parameters, body, returnShape)) :
-    lookupFunctionEntry name (functions (panSimpDecls declarations)) =
-      some (parameters, panSimpProg body, returnShape) := by
-  induction declarations with
-  | nil => simp [functions, functionEntries, lookupFunctionEntry] at hlookup
-  | cons declaration declarations ih =>
-      cases declaration with
-      | function declaration =>
-          by_cases hname : name == declaration.name <;>
-            simp_all [functions, functionEntries, panSimpDecls, lookupFunctionEntry]
-      | _ => simpa only [panSimpDecls, functions, functionEntries] using ih hlookup
 
 /-- `lookupFunctionEntry` returns the entry found at a given index whenever the
     function names are distinct. -/
@@ -376,35 +339,6 @@ theorem lookupFunctionEntry_of_getElem?
           simp only [lookupFunctionEntry]
           rw [if_neg (by simpa [beq_iff_eq] using hne)]
           exact ih htail hget
-
-/-- Counterpart of Cake's `el_compile_prog_el_prog_eq`
-    (`pan_simpProofScript.sml:1047-1061`): the compiled function table only
-    rewrites bodies, so an entry at a given index still comes from the source
-    table. -/
-theorem el_functions_panSimpDecls_eq {declarations : List (Decl α)} {n : Nat}
-    {start : FunName} {pprog p : Prog α} {rshape : Shape}
-    (hentry : (functions (panSimpDecls declarations))[n]? =
-      some (start, [], pprog, rshape))
-    (hnodup : ((functions declarations).map (fun entry => entry.1)).Nodup)
-    (_hlen : n < (functions declarations).length)
-    (hlookup : lookupFunctionEntry start (functions declarations) =
-      some ([], p, rshape)) :
-    (functions declarations)[n]? = some (start, [], p, rshape) := by
-  rw [functions_panSimpDecls, List.getElem?_map] at hentry
-  rcases hget : (functions declarations)[n]? with _ | ⟨name, params, body, shape⟩
-  · simp [hget] at hentry
-  · simp only [hget, Option.map_some, Option.some.injEq, Prod.mk.injEq] at hentry
-    obtain ⟨rfl, rfl, _, rfl⟩ := hentry
-    have hp := lookupFunctionEntry_of_getElem? (functions declarations) hnodup hget
-    simp only [hlookup, Option.some.injEq, Prod.mk.injEq, true_and, and_true] at hp
-    simp [hp]
-
-@[simp] theorem smartSeq_skip (program : Prog α) :
-    smartSeq (.skip : Prog α) program = program := by
-  cases program <;> rfl
-
-theorem panSimpProg_skip : panSimpProg (.skip : Prog α) = .skip := by
-  simp [panSimpProg, seqAssoc, retToTail]
 
 /-! `pan_simp` preserves the exception identifiers collected by the source
     program. These are the two local preservation steps used by Cake's
@@ -457,38 +391,6 @@ theorem expIds_panSimpProg (program : Prog α) :
   rw [expIds_retToTail, expIds_seqAssoc]
   simp [expIds]
 
-/-- The exception identifiers reachable from the bodies of the function
-    declarations in a declaration table: the projection that Cake's `get_eids`
-    scans. -/
-def declarationExceptionIds : List (Decl α) → List ExceptionId
-  | [] => []
-  | .function declaration :: declarations =>
-      expIds declaration.body ++ declarationExceptionIds declarations
-  | _ :: declarations => declarationExceptionIds declarations
-
-/-- The declaration-table pass of `pan_simp` preserves the exception
-    identifiers reachable from every function body.  This is the source-side
-    companion of Cake's `get_eids_from_decls` invariance: the finite domain of
-    the exception table cannot change when the bodies are simplified. -/
-theorem declarationExceptionIds_panSimpDecls (declarations : List (Decl α)) :
-    declarationExceptionIds (panSimpDecls declarations) =
-      declarationExceptionIds declarations := by
-  induction declarations with
-  | nil => simp [panSimpDecls, declarationExceptionIds]
-  | cons declaration declarations ih =>
-      cases declaration <;>
-        simp [panSimpDecls, declarationExceptionIds, expIds_panSimpProg, ih]
-
-/-- The function-only projection of the declaration table is exactly the flat
-    map of `expIds` over the function bodies, which is the list that Cake's
-    `get_eids` numbers before removing repeats. -/
-theorem declarationExceptionIds_map_function (functions : List (FunDecl α)) :
-    declarationExceptionIds (functions.map (fun function => Decl.function function)) =
-      functions.flatMap (fun function => expIds function.body) := by
-  induction functions with
-  | nil => simp [declarationExceptionIds]
-  | cons function functions ih => simp [declarationExceptionIds, ih]
-
 /-! ## A linear syntactic size bound for `seqAssoc`
 
 `seqAssoc` only reassociates sequences and never duplicates syntax, so a
@@ -531,9 +433,6 @@ theorem progSize_retToTail_le (program : Prog α) :
       exact Nat.le_trans (progSize_seqCallRet_le _) (by simp only [progSize]; omega)
   | case11 => grind only [retToTail, progSize]
   | _ => simp_all only [retToTail, progSize] <;> omega
-
-theorem progSize_pos (program : Prog α) : 1 ≤ progSize program := by
-  fun_cases progSize program <;> omega
 
 /-- A call-aware structural budget: `progSize` for the ordinary nodes, but each
     `Call`/`DecCall` node reserves a uniform `callBudget` for its callee (and

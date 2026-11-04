@@ -4,14 +4,16 @@ import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.Pancake.PanGlobalsByteRanged
-import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
-import Flapjack.Pancake.PanSimpByteRanged
+import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
+import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.CompileFunctionDistinct
 import Flapjack.Pancake.CrepToLoop
-import Flapjack.Pancake.CrepToLoop.Optimise
+import Flapjack.Pancake.LoopLive
+import Flapjack.Pancake.LoopLang
 import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
-import Flapjack.Pancake.PanToCrep.CompileProgCorrespondence
+import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
+import Flapjack.Pancake.CrepInline.InlineRouteNames
 import Flapjack.Pancake.LoopToWord.CompFuncExact
 import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
 import Flapjack.Word
@@ -28,8 +30,6 @@ import Flapjack.Semantics
 import Flapjack.PanValues
 import Flapjack.PanMemory
 import Flapjack.RiscV.Model
-import Flapjack.Pancake.LoopLang
-import Flapjack.Pancake.LoopLive
 import Flapjack.LoopSemantics
 
 namespace Flapjack

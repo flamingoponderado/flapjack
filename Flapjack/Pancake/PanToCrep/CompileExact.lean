@@ -643,17 +643,14 @@ def compileExtCallExactHOLW {width : Nat} [NeZero width]
                   (maximumVariable + 3) (maximumVariable + 4)))))
   | _, _, _, _, _, _, _, _ => .skip
 
-/-! ### Exact recursive `compile_def`
-
-Every constructor equation below was source-reviewed against
-`cakeml/pancake/pan_to_crepScript.sml:139-307` and its exact helper slice above.
-The only representation qualifier is the exact finite-support carrier for
-HOL's three finite maps; the syntax, positive word width, names, and output
-carrier are otherwise constructor-for-constructor HOL translations. The
-parser-backed `flapjack-compile` route executes this definition through
-`compileProgTopHOLProductionExact` after the byte-range and output-codec
-bridges; arbitrary String-backed callers retain the untagged compatibility
-path. -/
+/-!
+### Exact recursive `compile_def` Every constructor equation below was
+source-reviewed against `cakeml/pancake/pan_to_crepScript.sml:139-307` and
+its exact helper slice above. The only representation qualifier is the
+exact finite-support carrier for HOL's three finite maps; the syntax,
+positive word width, names, and output carrier are otherwise
+constructor-for-constructor HOL translations.
+-/
 
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_def"
   (fmap_as_finite_support := [vars, funcs, eids])
@@ -755,17 +752,15 @@ decreasing_by
     simp_wf
     omega
 
-/-! Exact HOL `comp_func_def` (`pan_to_crepScript.sml:337-343`). The four
-curried arguments, the `make_vmap` result, the parameter-shape maximum, the
-`mk_ctxt` field order, and recursive `compile` call follow the source
+/-!
+Exact HOL `comp_func_def` (`pan_to_crepScript.sml:337-343`). The four
+curried arguments, the `make_vmap` result, the parameter-shape maximum,
+the `mk_ctxt` field order, and recursive `compile` call follow the source
 definition directly. The two input maps are the canonical finite-support
-rendering of HOL `fs` and `eids`; `BitVec width` with `[NeZero width]` is the
-usual positive type-indexed HOL word translation. Names and syntax stay on the
-exact `MlS`/`ShapeHOL`/`ProgHOL`/`CrepProgHOL` carriers. The parser-backed
-`compileProgTopHOLProductionExact` route calls this tagged wrapper; its
-byte-ranged production context/parameter bridge and output-preservation proof
-are recorded beside that route in `CompileProg.lean` under
-`flapjack-pxn.18.3.5.8.25`. -/
+rendering of HOL `fs` and `eids`; `BitVec width` with `[NeZero width]` is
+the usual positive type-indexed HOL word translation. Names and syntax
+stay on the exact `MlS`/`ShapeHOL`/`ProgHOL`/`CrepProgHOL` carriers.
+-/
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "comp_func_def"
   (fmap_as_finite_support_relation := [fs, eids])
   (words_as_type_indexed_bitvec)]
@@ -806,65 +801,6 @@ def compileToCrepExactHOLW {width : Nat} [NeZero width]
   prog.map (fun entry =>
     (entry.1, crepVarsHOL entry.2.1,
       compFuncExactHOLW fs eids entry.2.1 entry.2.2.1))
-
-
-/-! ### Codec helper lemmas for the `compile_exp` production bridge
-
-These untagged Flapjack lemmas are the list-level helpers needed to relate the
-tagged exact `compileExpExactHOLW` (over `ExpHOL`/`CrepExpHOL`) to the executed
-production `compileExpHOL` under the checked codecs `crepExpToHOL` and
-`shapeToHOL`. They are part of the exact `code_rel` boundary work tracked by
-`flapjack-pxn.18.4.3.73.1`. -/
-
-/-- `cexpHeads` commutes with the element codec `crepExpToHOL`: taking heads of
-    a list of expression lists and then decoding is the same as decoding each
-    list first. -/
-theorem cexpHeads_map_crepExpToHOL {width : Nat} [NeZero width]
-    (lists : List (List (CrepExp (BitVec width)))) :
-    cexpHeads (lists.map (List.map crepExpToHOL)) =
-      (cexpHeads lists).map (List.map crepExpToHOL) := by
-  induction lists with
-  | nil => rfl
-  | cons expressions rest ih =>
-      cases expressions with
-      | nil =>
-          simp only [List.map_cons, List.map_nil, cexpHeads]
-          rfl
-      | cons expression expressions =>
-          cases h : cexpHeads rest with
-          | none =>
-              simp only [List.map_cons, cexpHeads, ih, h]
-              rfl
-          | some heads =>
-              simp only [List.map_cons, cexpHeads, ih, h]
-              rfl
-
-/-- Production-to-exact direction of HOL `crepLang$load_shape_def`: the
-    width-indexed production loader `loadShapeBytes` decodes into the tagged
-    exact `loadShapeBytesHOLW`. Dual to `loadShapeBytesHOLW_toProduction`. -/
-theorem loadShapeBytes_map_crepExpToHOL {width : Nat} [NeZero width]
-    (address : BitVec width) (count : Nat) (value : CrepExp (BitVec width)) :
-    (loadShapeBytes address count value).map crepExpToHOL =
-      loadShapeBytesHOLW address count (crepExpToHOL value) := by
-  induction count generalizing address with
-  | zero => simp [loadShapeBytesHOLW, loadShapeBytes]
-  | succ count ih =>
-      simp only [loadShapeBytesHOLW, loadShapeBytes, List.map_cons]
-      rw [ih]
-      congr 1
-      simp only [beq_iff_eq]
-      by_cases hzero : address = 0
-      · rw [if_pos hzero, if_pos hzero]
-        simp [crepExpToHOL]
-      · rw [if_neg hzero, if_neg hzero]
-        simp [crepExpToHOL]
-
-/-- The `loadShapeBytesW` corollary used by the width-indexed compiler path. -/
-theorem loadShapeBytesW_map_crepExpToHOL {width : Nat} [NeZero width]
-    (address : BitVec width) (count : Nat) (value : CrepExp (BitVec width)) :
-    (loadShapeBytesW address count value).map crepExpToHOL =
-      loadShapeBytesHOLW address count (crepExpToHOL value) :=
-  loadShapeBytes_map_crepExpToHOL address count value
 
 /-- HOL `compile_prog_def`: extract inlineable function names from the original
 ordered declarations, compile every function to exact Crep, then inline the
@@ -923,6 +859,5 @@ theorem compileInlProgHOLExactWithSupport_params_nodup {width : Nat} [NeZero wid
   unfold CrepInlineCanonical.compileInlProgHOLExactWithSupport
   simp only [List.all_map]
   rfl
-
 
 end Flapjack

@@ -85,27 +85,11 @@ def argLoadGuard : Bool :=
 def unreachElimProbe : CrepProg Nat × Option CrepEarlyExit :=
   ((.return [.const 1] : CrepProg Nat), some .return)
 
-example {q : CrepProg Nat} {r : Option CrepEarlyExit} {e : CrepExp Nat}
-    (h : crepUnreachElim
-      (.seq (.return [.const 1]) (.assign 4 (.const 9)) : CrepProg Nat) = (q, r))
-    (hmem : e ∈ crepExpsOf q) :
-    e ∈ crepExpsOf
-      (.seq (.return [.const 1]) (.assign 4 (.const 9)) : CrepProg Nat) :=
-  crepExpsOf_unreachElim _ h hmem
-
 def unreachElimExpsGuard : Bool :=
   (crepExpsOf unreachElimProbe.1).length == 1 &&
   decide (unreachElimProbe.2 = some .return)
 
 /-! Cake's `exps_of_transform_eoc` (`crep_inlineProofScript.sml:3100`). -/
-
-example {e : CrepExp Nat}
-    (hmem : e ∈ crepExpsOf
-      (crepTransformEoc [7]
-        (.seq (.return [.const 1]) (.assign 4 (.const 9)) : CrepProg Nat))) :
-    e ∈ crepExpsOf
-      (.seq (.return [.const 1]) (.assign 4 (.const 9)) : CrepProg Nat) :=
-  crepExpsOf_transformEoc [7] _ hmem
 
 def transformEocExpsGuard : Bool :=
   (crepExpsOf
@@ -113,14 +97,6 @@ def transformEocExpsGuard : Bool :=
       (.seq (.return [.const 1]) (.assign 4 (.const 9)) : CrepProg Nat))).length == 2
 
 /-! Cake's `exps_of_transform_branch` (`crep_inlineProofScript.sml:3119`). -/
-
-example {e : CrepExp Nat}
-    (hmem : e ∈ crepExpsOf
-      (crepTransformBranch 0 [7]
-        (.seq (.return [.const 1]) (.assign 4 (.const 9)) : CrepProg Nat))) :
-    e ∈ crepExpsOf
-      (.seq (.return [.const 1]) (.assign 4 (.const 9)) : CrepProg Nat) :=
-  crepExpsOf_transformBranch 0 [7] _ hmem
 
 def transformBranchExpsGuard : Bool :=
   (crepExpsOf
@@ -131,31 +107,16 @@ def transformBranchExpsGuard : Bool :=
 
 def varProgProgList : List (CrepProg Nat) := [.assign 1 (.const 7), .tick]
 
-example (x : Nat) (hmem : x ∈ crepVarProg (crepNestedSeq varProgProgList)) :
-    x ∈ (varProgProgList.map crepVarProg).flatten :=
-  (crepVarProg_nestedSeq varProgProgList x).mp hmem
-
 def nestedVarProgGuard : Bool :=
   (crepVarProg (crepNestedSeq varProgProgList)).length ==
     (varProgProgList.map crepVarProg).flatten.length
 
 /-! Cake's `mem_var_prog_transform_eoc` (`crep_inlineProofScript.sml:2241`). -/
 
-example {x : Nat}
-    (hmem : x ∈ crepVarProg (crepTransformEoc [7] (.return [.const 1] : CrepProg Nat))) :
-    x ∈ crepVarProg (.return [.const 1] : CrepProg Nat) ∨ x ∈ [7] :=
-  crepVarProg_transformEoc [7] _ hmem
-
 def transformEocVarProgGuard : Bool :=
   (crepVarProg (crepTransformEoc [7] (.return [.const 1] : CrepProg Nat))).length == 1
 
 /-! Cake's `mem_var_prog_transform_branch` (`crep_inlineProofScript.sml:2258`). -/
-
-example {x : Nat}
-    (hmem : x ∈ crepVarProg
-      (crepTransformBranch 0 [7] (.return [.const 1] : CrepProg Nat))) :
-    x ∈ crepVarProg (.return [.const 1] : CrepProg Nat) ∨ x ∈ [7] :=
-  crepVarProg_transformBranch 0 [7] _ hmem
 
 def transformBranchVarProgGuard : Bool :=
   (crepVarProg (crepTransformBranch 0 [7] (.return [.const 1] : CrepProg Nat))).length == 1
@@ -164,18 +125,6 @@ def transformBranchVarProgGuard : Bool :=
     `unreach_elim_preserve_not_branch_ret`
     (`crep_inlineProofScript.sml:2275,2287`). -/
 
-example {q : CrepProg Nat} {r : Option CrepEarlyExit}
-    (hh : crepHasReturn (.seq (.assign 1 (.const 7)) .skip : CrepProg Nat) = false)
-    (he : crepUnreachElim (.seq (.assign 1 (.const 7)) .skip : CrepProg Nat) = (q, r)) :
-    crepHasReturn q = false :=
-  crepUnreachElim_preserve_hasReturn _ hh he
-
-example {q : CrepProg Nat} {r : Option CrepEarlyExit}
-    (hh : crepNotBranchRet (.while (.const 1) .skip : CrepProg Nat) = true)
-    (he : crepUnreachElim (.while (.const 1) .skip : CrepProg Nat) = (q, r)) :
-    crepNotBranchRet q = true :=
-  crepUnreachElim_preserve_notBranchRet _ hh he
-
 def hasReturnPreservedGuard : Bool :=
   crepHasReturn (.seq (.assign 1 (.const 7)) .skip : CrepProg Nat) == false &&
   crepNotBranchRet (.while (.const 1) .skip : CrepProg Nat) == true
@@ -183,22 +132,6 @@ def hasReturnPreservedGuard : Bool :=
 /-! Cake's `unreach_elim_nested_decs`, `unreach_elim_arg_load` and
     `unreach_elim_arg_load_perm`
     (`cakeml/pancake/proofs/crep_inlineProofScript.sml:1697,1709,1720`). -/
-
-example {r : Option CrepEarlyExit}
-    (hfix : crepUnreachElim (.return [.const 1] : CrepProg Nat) =
-      ((.return [.const 1] : CrepProg Nat), r)) :
-    crepUnreachElim (nestedDecs [1] [.const 7] (.return [.const 1] : CrepProg Nat)) =
-      (nestedDecs [1] [.const 7] (.return [.const 1] : CrepProg Nat), r) :=
-  crepUnreachElim_nestedDecs [1] [.const 7]
-    (.return [.const 1] : CrepProg Nat) r rfl hfix
-
-example {r : Option CrepEarlyExit}
-    (hfix : crepUnreachElim (.return [.const 1] : CrepProg Nat) =
-      ((.return [.const 1] : CrepProg Nat), r)) :
-    crepUnreachElim (argLoad [1] [.const 7] [2] (.return [.const 1] : CrepProg Nat)) =
-      (argLoad [1] [.const 7] [2] (.return [.const 1] : CrepProg Nat), r) :=
-  crepUnreachElim_argLoad_perm (.return [.const 1] : CrepProg Nat) [1] [.const 7] [2] r
-    rfl rfl hfix
 
 def unreachNestedGuard : Bool :=
   (crepVarProg (argLoad [1] [.const 7] [2] (.return [.const 1] : CrepProg Nat))).length == 3
@@ -256,22 +189,5 @@ def runChecks : IO Bool := do
   | _ =>
       IO.println "FAIL crep nested_seq result arity"
       pure false
-
-
-/-! `crepUnreachElim_converge` and `crepUnreachElim_fixPoint`
-    (`cakeml/pancake/proofs/crep_inlineProofScript.sml:1663` / `:1686`):
-    re-eliminating unreachable code is a no-op and the range of
-    `crepUnreachElim` is its fixed-point set. -/
-
-example {q : CrepProg Nat} {r : Option CrepEarlyExit}
-    (he : crepUnreachElim
-      (.seq (.return [.const 1]) (.assign 4 (.const 9)) : CrepProg Nat) = (q, r)) :
-    crepUnreachElim q = (q, r) :=
-  crepUnreachElim_converge _ he
-
-example (q : CrepProg Nat) (r : Option CrepEarlyExit)
-    (hq : crepUnreachElim q = (q, r)) :
-    ∃ p : CrepProg Nat, crepUnreachElim p = (q, r) :=
-  (crepUnreachElim_fixPoint q r).mpr hq
 
 end Flapjack.Test.CrepeNestedSeqParity

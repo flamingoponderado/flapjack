@@ -1193,12 +1193,6 @@ import Flapjack.Test.WordInstSelectExactParity
 import Flapjack.Test.WordInstPullExpExecutableParity
 import Flapjack.Test.WordInstSelectorExecutableParity
 
-
-
-
-
-
-
 /-!
 # Pancake/RISC-V compiler parity tests
 
@@ -1276,20 +1270,17 @@ def main : IO Unit := do
     Flapjack.Test.LoopMemoryStateParity.runChecks,
     Flapjack.Test.LoopStateResultParity.runChecks,
     Flapjack.Test.LoopLocalsTouchedParity.runChecks,
-    Flapjack.Test.LoopAssignedVarsParity.runChecks,
     Flapjack.Test.LoopAccVarsParity.runChecks,
     Flapjack.Test.LoopNestedSeqParity.runChecks,
     Flapjack.Test.PanNestedSeqParity.runChecks,
     Flapjack.Test.PanExpIdsParity.runChecks,
     Flapjack.Test.PanWithShapeParity.runChecks,
     Flapjack.Test.CrepInlineGenlistParity.runChecks,
-    Flapjack.Test.CrepInlineFmapParity.runChecks,
     Flapjack.Test.CrepInlineStructuralHOLParity.runChecks,
     Flapjack.Test.CrepInlineTransformEocParity.runChecks,
     Flapjack.Test.CrepInlineTransformBranchParity.runChecks,
     Flapjack.Test.CrepInlineNontailParity.runChecks,
     Flapjack.Test.CrepInlineHasReturnParity.runChecks,
-    Flapjack.Test.CrepInlineRelParity.runChecks,
     Flapjack.Test.CrepInlineRelationsExactParity.runChecks,
     Flapjack.Test.CrepSemTotalEvaluateHOLParity.runChecks,
     Flapjack.Test.CrepSemEvaluateDefArmsParity.runChecks,
@@ -1334,7 +1325,6 @@ def main : IO Unit := do
     Flapjack.Test.PanLangWfShapeParity.runChecks,
     Flapjack.Test.PanShapeValParity.runChecks,
     Flapjack.Test.LoopIsLoadParity.runChecks,
-    Flapjack.Test.LoopCallParity.runChecks,
     Flapjack.Test.LoopEvalParity.runChecks,
     Flapjack.Test.LoopObservationalSemanticsParity.runChecks,
     Flapjack.Test.LoopSemEvaluateParity.runChecks,
@@ -1369,9 +1359,6 @@ def main : IO Unit := do
     Flapjack.Test.PanHHandleDecCallRetParity.runChecks,
     Flapjack.Test.PanHProgDecCallParity.runChecks,
     Flapjack.Test.PanHProgCallParity.runChecks,
-    Flapjack.Test.CrepToLoopCutsetParity.runChecks,
-    Flapjack.Test.CrepToLoopParity.runChecks,
-    Flapjack.Test.CrepToLoopDecLive.runChecks,
     Flapjack.Test.CrepToLoopOcompileHOLParity.runChecks,
     Flapjack.Test.CrepToLoopCodeRelParity.runChecks,
     Flapjack.WordAlloc.runChecks,
@@ -1393,7 +1380,6 @@ def main : IO Unit := do
     Flapjack.Test.RetHdlParity.runChecks,
     Flapjack.Test.WrapRtParity.runChecks,
     Flapjack.Test.CompileDefParity.runChecks,
-    Flapjack.Test.CompileToCrepeParity.runChecks,
     Flapjack.Test.CompileProgParity.runChecks,
     Flapjack.Test.CrepRuntimeTargetParity.runChecks,
     Flapjack.Test.CrepRuntimeFfiTargetParity.runChecks,

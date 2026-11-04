@@ -75646,22 +75646,6 @@
     "reviewer": "Flapjack-specific finite-map support: FLOOKUP after FUPDATE_LIST of a reversed association list equals List.lookup on the original list (first occurrence wins), matching HOL alist_to_fmap/ALOOKUP. Not a standalone HOL declaration."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "alookup_compile_prog_code",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "alookupCompileToCrepCode",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Flapjack-specific source-shaped statement (NOT an exact HOL port): keyed by FunName/VarName/ExceptionId = String (or a String-keyed PanToCrepProofContext/PanToCrepHOLContext), while HOL pan_to_crepProofScript.sml keys by funname/varname/eid = mlstring; the exact MlString identifier carrier is tracked by flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2)."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "alookupCompileToCrepCodeGeneral",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Parameter-general companion of the tagged alookupCompileToCrepCode: a source entry with arbitrary parameters compiles to the entry with crep_vars slots and comp_func body. HOL discharges it inside mk_ctxt_code_imp_code_rel; not a standalone HOL declaration."
-  },
-  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
@@ -75892,14 +75876,6 @@
     "hol_name": "compile_def",
     "statement_status": "documented_mismatch",
     "reviewer": "flapjack-luna-c (source comparison, bead flapjack-4ac.2.10, 2026-09-26): compared HOL pan_to_crepScript.sml:139-307 constructor equations and fallbacks with the structurally corresponding compileProgHOL/compileProgRiscV definitions. This bridge is Flapjack-specific, not an exact HOL compile_def port: it uses production Prog/CrepProg/Exp/Shape with String identifiers and permits width 0, while HOL uses positive-width ProgHOL/CrepProgHOL/ExpHOL/ShapeHOL with mlstring identifiers. The names_as_string qualifier does not authorize those carrier and width differences; no NameRanged witness applies because the output is CrepProg. Direct HOL-EVAL rows are in scripts/hol-probes/compile_def_probe.out and reproduced by Flapjack/Test/CompileDefParity.lean. Keep the tag withdrawn; exact-carrier replacement is flapjack-pxn.18.3.5.8.13. No claim is made that this proof-side helper is the executed compiler route."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "compileToCrepHOL_eq_map",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only helper: compileToCrepHOL is the source function list mapped through comp_func/crep_vars with the context built from the same declarations; used to move ALOOKUP over compile_to_crep onto the source table."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -76166,14 +76142,6 @@
     "lean_name": "drop_range_map",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific list support. No HOL original declaration."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "el_compile_prog_el_prog_eq",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "elCompileToCrepElProgEq",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Flapjack-specific source-shaped statement (NOT an exact HOL port): keyed by FunName/VarName/ExceptionId = String (or a String-keyed PanToCrepProofContext/PanToCrepHOLContext), while HOL pan_to_crepProofScript.sml keys by funname/varname/eid = mlstring; the exact MlString identifier carrier is tracked by flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -76472,22 +76440,6 @@
     "lean_name": "mem_zip_getElem?",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific list support (HOL MEM_ZIP analogue): membership in a zip yields aligned indices with l[i]? = some value. No HOL original declaration."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "mk_ctxt_code_imp_code_rel",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "mkCtxtCodeImpCodeRel",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Tag withdrawn; this remains a useful Flapjack-specific source-shaped theorem, not an exact port. The input uses production Decl (BitVec width): String identifiers and production Shape, while the conclusion uses String-keyed PanToCrepProofContext maps and production CrepProg. HOL mk_ctxt_code_imp_code_rel uses the faithful declaration/context/code carriers with mlstring, shape, and crepLang$prog. The production Prog (BitVec width) body does not fix those surrounding carrier differences. The FUPDATE_LIST/reverse finite-map construction and the Nodup/localisedProg hypotheses are source-shaped analogues, but that syntactic correspondence does not make the carriers exact. Faithful identifier/compiler carrier work is tracked by flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2)."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "mkCtxtCodeImpCodeRelW",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (Flapjack bridge lemma for the width-indexed codeRelW exact HOL code_rel_def boundary; no standalone HOL original)"
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",

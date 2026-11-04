@@ -1518,8 +1518,6 @@ import Flapjack.Compiler.Compiler
 import Flapjack.Compiler.Backend.StackNames.ProgramNames
 import Flapjack.Compiler.Backend.StackNames.InstructionNames
 import Flapjack.Compiler.Backend.StackNames.OperandNames
-import Flapjack.Pancake.PanStructs.CompileProgTraversal
-import Flapjack.Pancake.PanStructs.CompileExpProduction
 import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConstFull
@@ -1623,9 +1621,6 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoadByte
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad32
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpBytesInWord
 import Flapjack.Test.PanStructsShapeMapParity
-import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
-import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
-import Flapjack.Pancake.PanStructs.CompileProgProduction
 import Flapjack.Pancake.PanStructs.CompileProgExact
 import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs.OldExpShapeExact
@@ -1753,7 +1748,6 @@ import Flapjack.Pancake.PanLang.Exp
 import Flapjack.Pancake.PanLang.Prog
 import Flapjack.Pancake.PanLang.Prog.FreeVarIdsCodec
 import Flapjack.Pancake.PanGlobals.CallHandlerExact
-import Flapjack.Pancake.PanGlobals.ProgramExactRoute
 import Flapjack.Pancake.PanGlobals.DeclarationProgramRoute
 import Flapjack.Pancake.PanGlobals.CompileTopExact
 import Flapjack.Pancake.PanLang.Decl
@@ -2098,13 +2092,11 @@ import Flapjack.CrepeContextBounds
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileExact
 import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
-import Flapjack.Pancake.PanToCrep.CompileProgCorrespondence
 import Flapjack.Pancake.PanToCrep.CompileExpBridge
 import Flapjack.Pancake.PanToCrep.ExpHdlExact
 import Flapjack.Pancake.PanToCrep.MakeVmapHOL
 import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.PanToCrep.ContextBridge
-import Flapjack.Pancake.PanToCrep.ContextProductionEvidence
 import Flapjack.Pancake.Proofs.CrepArith
 import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Assign
@@ -2280,7 +2272,6 @@ import Flapjack.Pancake.CrepToLoop.Proofs.StateRelImpSemantics
 import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
 import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
 import Flapjack.Pancake.CrepToLoop.Proofs.CallPreserveStateCodeLocalsRel
-import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.WordAllocLiveExpressionParity
 import Flapjack.Test.WordAllocProgramLivenessParity

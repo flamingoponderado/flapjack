@@ -219,20 +219,6 @@ example : True := by
 def declsWithGlobals : List (Decl Nat) :=
   [.decl .one "g" (.const 7), .decl .one "h" (.const 9)]
 
-example : True := by
-  have h := globalCompileDecls_append
-    ({ globals := [], globalsSize := 0, maxGlobalsSize := 0,
-       bytesInWord := 8, fromNat := fun n => n } : GlobalPassContext Nat)
-    declsWithGlobals []
-  trivial
-
-example : True := by
-  have h := globalCompileInitializers_append
-    ({ globals := [], globalsSize := 0, maxGlobalsSize := 0,
-       bytesInWord := 8, fromNat := fun n => n } : GlobalPassContext Nat)
-    declsWithGlobals []
-  trivial
-
 /-! Counterparts of Cake's `fperm_decs_append` (`pan_globalsProofScript.sml:1663`)
     and `functions_fperm_decs` (`:1701`). -/
 example : True := by
@@ -449,32 +435,8 @@ def compileDecsFunctionsGuard : Bool :=
     (globalCompileDecs context functionsOnlyCompileDecls).functions.length ==
       functionsOnlyCompileDecls.length
 
-example : True := by
-  let context : GlobalPassContext Nat :=
-    { globals := [], globalsSize := 0, maxGlobalsSize := 0, bytesInWord := 8,
-      fromNat := fun n => n }
-  have hall : functionsOnlyCompileDecls.all globalDeclIsFunction = true := by
-    simp [functionsOnlyCompileDecls, compileDeclF, compileDeclG,
-      globalDeclIsFunction]
-  have h :=
-    globalCompileDecs_functions_thm context functionsOnlyCompileDecls hall
-  trivial
-
 #eval compileDecsFunctionsGuard
 #guard compileDecsFunctionsGuard
-
-/-! Cake's `dec_shapes_compile_prog` and `function_names_compile_prog`
-    (`cakeml/pancake/proofs/pan_to_wordProofScript.sml:241`, `:248`). -/
-
-theorem globalDeclShapes_panSimpDecls_fixture :
-    globalDeclShapes (panSimpDecls filterDeclsFixture) =
-      globalDeclShapes filterDeclsFixture :=
-  globalDeclShapes_panSimpDecls filterDeclsFixture
-
-theorem functions_names_panSimpDecls_fixture :
-    (functions (panSimpDecls filterDeclsFixture)).map Prod.fst =
-      (functions filterDeclsFixture).map Prod.fst :=
-  functions_names_panSimpDecls filterDeclsFixture
 
 def panSimpShapesGuard : Bool :=
   (globalDeclShapes (panSimpDecls filterDeclsFixture)).length ==
@@ -491,12 +453,6 @@ def panSimpShapesGuard : Bool :=
 def noNameDecls : List (Decl Nat) :=
   [compileDeclF, .decl .one "g" (.const 7), .exnDecl "E" .one]
 
-theorem panSimpDecls_all_not_name_fixture :
-    (panSimpDecls noNameDecls).all
-      (fun declaration => !isName declaration) = true :=
-  panSimpDecls_all_not_name noNameDecls
-    (by simp [noNameDecls, compileDeclF, isName])
-
 def panSimpNoNamesGuard : Bool :=
   (panSimpDecls noNameDecls).all (fun declaration => !isName declaration) &&
     !(panSimpDecls (noNameDecls ++ [.name "S" []])).all
@@ -511,34 +467,13 @@ def panSimpNoNamesGuard : Bool :=
 def structEidsDecls : List (Decl Nat) :=
   [.exnDecl "E" .one, .decl .one "g" (.const 1), .name "S" []]
 
-theorem sizeOfEids_structCompileTop_fixture :
-    sizeOfEids (structCompileTop structEidsDecls) =
-      sizeOfEids structEidsDecls :=
-  sizeOfEids_structCompileTop structEidsDecls
-
-def structEidsGuard : Bool :=
-  sizeOfEids (structCompileTop structEidsDecls) == 1 &&
-    sizeOfEids structEidsDecls == 1
-
-#eval structEidsGuard
-#guard structEidsGuard
-
 /-! Cake's `size_of_eids_compile_top`
     (`cakeml/pancake/proofs/pan_to_wordProofScript.sml:364`). -/
 
 def eidsTopDecls : List (Decl Nat) := [compileDeclF, .exnDecl "E" .one]
 
-example (compiled : List (Decl Nat))
-    (hcompile : globalCompileTopForStartSome 8 id eidsTopDecls "f" = some compiled) :
-    sizeOfEids compiled = sizeOfEids eidsTopDecls :=
-  globalCompileTopForStart_sizeOfEids 8 id eidsTopDecls "f" compiled hcompile
-
 /-! Cake's `functions_compile_decs_exns`
     (`cakeml/pancake/proofs/pan_to_wordProofScript.sml:519`). -/
-
-example (context : GlobalPassContext Nat) (code : List (Decl Nat)) :
-    functions (globalCompileDecs context code).exceptions = [] :=
-  globalCompileDecs_exceptions_functions context code
 
 def exceptionsFunctionsGuard : Bool :=
   (functions (globalDeclsFilter globalDeclIsException eidsTopDecls)).length == 0

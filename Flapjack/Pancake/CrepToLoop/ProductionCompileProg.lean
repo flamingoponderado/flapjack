@@ -67,22 +67,6 @@ theorem compileProgFromProduction_result {width : Nat} [NeZero width]
     exact ⟨boundaries.1, boundaries.2, (Option.some.inj produced).symm⟩
   · contradiction
 
-/-- Every original compile_prog input field roundtrips on the declared source
-boundary. Return-shape metadata is deliberately not part of this payload. -/
-theorem sourcePrograms_roundTrip {width : Nat} [NeZero width]
-    (functions : List (CompiledFunction (BitVec width)))
-    (names : ∀ function ∈ functions, CrepNameRanged function.name)
-    (bodies : ∀ function ∈ functions, CrepProgNameRanged function.body) :
-    (sourcePrograms functions).map (fun (name, params, body) =>
-      (toStringOfBytes name, params, crepProgOfHOL body)) =
-      functions.map (fun function => (function.name, function.params, function.body)) := by
-  simp only [sourcePrograms, List.map_map]
-  apply List.map_congr_left
-  intro function member
-  simp only [Function.comp_apply]
-  rw [toStringOfBytes_ofString_of_bytes function.name (names function member),
-    crepProgOfHOL_crepProgToHOL function.body (bodies function member)]
-
 private theorem zipWith_rowNames {α β : Type}
     (labels : List Nat) (inputs : List α) (compile : Nat → α → β)
     (lengths : labels.length = inputs.length) :
