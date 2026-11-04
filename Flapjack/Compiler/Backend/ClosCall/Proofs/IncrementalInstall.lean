@@ -15455,9 +15455,12 @@ theorem callsListFuel_then_expression_withCoveredOpenClock {C F : Type}
     (bodyRun : callsFuel exprFuel body middle = some (converted, final))
     (distinct : (codeLocations source ++ codeLocationsExp body).Nodup)
     (fresh : LabelsFresh (codeLocations source ++ codeLocationsExp body) initial) (initialWf : wellFormed initial)
+    (sourceLocations : everyFnLocationSome source) (sourceAnnotations : everyFnVarsNone source)
+    (bodyLocations : everyFnLocationSome [body]) (bodyAnnotations : everyFnVarsNone [body])
     (structIH : ∀ depth, depth < max listFuel (exprFuel + 1) → ∀ expression output before after,
       callsFuel depth expression before = some (output, after) →
       (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
     GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final source target ∧
     GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [body] [converted] := by
@@ -15474,10 +15477,10 @@ theorem callsListFuel_then_expression_withCoveredOpenClock {C F : Type}
     · exact (List.nodup_append.mp distinct).2.2 origin inList loc member (Nat.add_right_cancel equal.symm)
   have bodyExt := callsFuel_stateExtends exprFuel body converted middle final bodyRun bodyDistinct bodyFresh middleWf.2
   have listSim : GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler middle source target := by
-    apply callsListFuel_withCoveredOpenClock_from_induction passFuel relationFuel listFuel limit compiler source target
-      initial middle listRun listDistinct listFresh initialWf
-    intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf
-    exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf
+    apply callsListFuel_withCoveredOpenClock_from_annotated_induction passFuel relationFuel listFuel limit compiler source target
+      initial middle listRun listDistinct listFresh initialWf sourceLocations sourceAnnotations
+    intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations
+    exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations
   constructor
   · apply growingExprsSimFromBelowWithCoveredOpenClock_mono_state passFuel relationFuel limit compiler middle final source target bodyExt
     · intro loc member known
@@ -15490,7 +15493,7 @@ theorem callsListFuel_then_expression_withCoveredOpenClock {C F : Type}
       exact callsListBounded_known_reflect_outside (exprFuel + 1) [body] [converted] middle final bodyRunList
         (wellFormed_weak middle middleWf) loc outside known
     · exact listSim
-  · exact structIH exprFuel (by omega) body converted middle final bodyRun bodyDistinct bodyFresh middleWf
+  · exact structIH exprFuel (by omega) body converted middle final bodyRun bodyDistinct bodyFresh middleWf bodyLocations bodyAnnotations
 
 /-- The let case derives both child simulations from structural induction.
 Source evaluation well-formedness remains explicit. This is Flapjack-specific
@@ -15501,9 +15504,11 @@ theorem callsFuel_let_withCoveredOpenClock_from_induction {C F : Type}
     (run : callsFuel (traversalFuel + 1) (.let trace bindings body) initial = some (out, final))
     (distinct : (codeLocationsExp (.let trace bindings body)).Nodup)
     (fresh : LabelsFresh (codeLocationsExp (.let trace bindings body)) initial) (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.let trace bindings body]) (annotations : everyFnVarsNone [.let trace bindings body])
     (structIH : ∀ depth, depth ≤ traversalFuel → ∀ expression output before after,
       callsFuel depth expression before = some (output, after) →
       (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output])
     (bindingsWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
       (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
@@ -15512,11 +15517,15 @@ theorem callsFuel_let_withCoveredOpenClock_from_induction {C F : Type}
     GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [.let trace bindings body] [out] := by
   simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure, Option.some.injEq, Prod.mk.injEq] at run
   obtain ⟨⟨targetBindings, middle⟩, bindingsRun, ⟨targetBody, next⟩, bodyRun, rfl, rfl⟩ := run
+  have locs := locations
+  simp only [everyFnLocationSome, fnLocationSomeExp, and_true] at locs
+  have anns := annotations
+  simp only [everyFnVarsNone, fnVarsNoneExp, and_true] at anns
   have sims := callsListFuel_then_expression_withCoveredOpenClock passFuel relationFuel traversalFuel traversalFuel limit compiler
     bindings targetBindings body targetBody initial middle next bindingsRun bodyRun
-    (by simpa [codeLocationsExp] using distinct) (by simpa [codeLocationsExp] using fresh) initialWf
-    (by intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf
-        exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf)
+    (by simpa [codeLocationsExp] using distinct) (by simpa [codeLocationsExp] using fresh) initialWf locs.2 anns.2 (by simpa [everyFnLocationSome] using locs.1) (by simpa [everyFnVarsNone] using anns.1)
+    (by intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations
+        exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations)
   exact growingExprsSimFromBelowWithCoveredOpenClock_let passFuel relationFuel limit compiler next trace bindings targetBindings
     body targetBody sims.1 bindingsWf sims.2
 
@@ -15529,9 +15538,11 @@ theorem callsFuel_handle_withCoveredOpenClock_from_induction {C F : Type}
     (run : callsFuel (traversalFuel + 1) (.handle trace body handler) initial = some (out, final))
     (distinct : (codeLocationsExp (.handle trace body handler)).Nodup)
     (fresh : LabelsFresh (codeLocationsExp (.handle trace body handler)) initial) (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.handle trace body handler]) (annotations : everyFnVarsNone [.handle trace body handler])
     (structIH : ∀ depth, depth ≤ traversalFuel → ∀ expression output before after,
       callsFuel depth expression before = some (output, after) →
       (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output])
     (bodyWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
       (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
@@ -15542,11 +15553,15 @@ theorem callsFuel_handle_withCoveredOpenClock_from_induction {C F : Type}
   obtain ⟨⟨targetBody, middle⟩, bodyRun, ⟨targetHandler, next⟩, handlerRun, rfl, rfl⟩ := run
   have bodyListRun : callsListFuel (traversalFuel + 1) [body] initial = some ([targetBody], middle) := by
     simp [callsListFuel, bodyRun]
+  have locs := locations
+  simp only [everyFnLocationSome, fnLocationSomeExp, and_true] at locs
+  have anns := annotations
+  simp only [everyFnVarsNone, fnVarsNoneExp, and_true] at anns
   have sims := callsListFuel_then_expression_withCoveredOpenClock passFuel relationFuel (traversalFuel + 1) traversalFuel limit compiler
     [body] [targetBody] handler targetHandler initial middle next bodyListRun handlerRun
-    (by simpa [codeLocations, codeLocationsExp] using distinct) (by simpa [codeLocations, codeLocationsExp] using fresh) initialWf
-    (by intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf
-        exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf)
+    (by simpa [codeLocations, codeLocationsExp] using distinct) (by simpa [codeLocations, codeLocationsExp] using fresh) initialWf (by simpa [everyFnLocationSome] using locs.1) (by simpa [everyFnVarsNone] using anns.1) (by simpa [everyFnLocationSome] using locs.2) (by simpa [everyFnVarsNone] using anns.2)
+    (by intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations
+        exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations)
   exact growingExprsSimFromBelowWithCoveredOpenClock_handle passFuel relationFuel limit compiler next trace body handler
     targetBody targetHandler sims.1 bodyWf sims.2
 
@@ -15558,15 +15573,19 @@ theorem callsFuel_tick_withCoveredOpenClock_from_induction {C F : Type}
     (run : callsFuel (traversalFuel + 1) (.tick trace body) initial = some (out, final))
     (distinct : (codeLocationsExp (.tick trace body)).Nodup)
     (fresh : LabelsFresh (codeLocationsExp (.tick trace body)) initial) (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.tick trace body]) (annotations : everyFnVarsNone [.tick trace body])
     (structIH : ∀ expression output before after,
       callsFuel traversalFuel expression before = some (output, after) →
       (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
     GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [.tick trace body] [out] := by
   apply callsFuel_tick_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler trace body initial final out run
   intro target bodyRun
   exact structIH body target initial final bodyRun (by simpa [codeLocationsExp] using distinct)
     (by simpa [codeLocationsExp] using fresh) initialWf
+    (by simpa [everyFnLocationSome, fnLocationSomeExp] using locations)
+    (by simpa [everyFnVarsNone, fnVarsNoneExp] using annotations)
 
 /-- The raise case derives its body simulation from structural induction.
 This is Flapjack-specific simulation infrastructure. -/
@@ -15576,15 +15595,19 @@ theorem callsFuel_raise_withCoveredOpenClock_from_induction {C F : Type}
     (run : callsFuel (traversalFuel + 1) (.raise trace body) initial = some (out, final))
     (distinct : (codeLocationsExp (.raise trace body)).Nodup)
     (fresh : LabelsFresh (codeLocationsExp (.raise trace body)) initial) (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.raise trace body]) (annotations : everyFnVarsNone [.raise trace body])
     (structIH : ∀ expression output before after,
       callsFuel traversalFuel expression before = some (output, after) →
       (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
     GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [.raise trace body] [out] := by
   apply callsFuel_raise_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler trace body initial final out run
   intro target bodyRun
   exact structIH body target initial final bodyRun (by simpa [codeLocationsExp] using distinct)
     (by simpa [codeLocationsExp] using fresh) initialWf
+    (by simpa [everyFnLocationSome, fnLocationSomeExp] using locations)
+    (by simpa [everyFnVarsNone, fnVarsNoneExp] using annotations)
 
 /-- The conditional case derives all three child simulations from structural
 induction, preserving coverage through the later branch traversals. This is
@@ -15595,9 +15618,11 @@ theorem callsFuel_if_withCoveredOpenClock_from_induction {C F : Type}
     (run : callsFuel (traversalFuel + 1) (.ifThenElse trace condition yes no) initial = some (out, final))
     (distinct : (codeLocationsExp (.ifThenElse trace condition yes no)).Nodup)
     (fresh : LabelsFresh (codeLocationsExp (.ifThenElse trace condition yes no)) initial) (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.ifThenElse trace condition yes no]) (annotations : everyFnVarsNone [.ifThenElse trace condition yes no])
     (structIH : ∀ depth, depth ≤ traversalFuel → ∀ expression output before after,
       callsFuel depth expression before = some (output, after) →
       (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
     GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final
       [.ifThenElse trace condition yes no] [out] := by
@@ -15615,11 +15640,15 @@ theorem callsFuel_if_withCoveredOpenClock_from_induction {C F : Type}
     exact allFresh loc (List.mem_append_left _ member)
   have conditionListRun : callsListFuel (traversalFuel + 1) [condition] initial = some ([targetCondition], middle1) := by
     simp [callsListFuel, conditionRun]
+  have locs := locations
+  simp only [everyFnLocationSome, fnLocationSomeExp, and_true] at locs
+  have anns := annotations
+  simp only [everyFnVarsNone, fnVarsNoneExp, and_true] at anns
   have firstSims := callsListFuel_then_expression_withCoveredOpenClock passFuel relationFuel (traversalFuel + 1) traversalFuel limit compiler
     [condition] [targetCondition] yes targetYes initial middle1 middle2 conditionListRun yesRun
-    (by simpa [codeLocations] using firstDistinct) (by simpa [codeLocations] using firstFresh) initialWf
-    (by intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf
-        exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf)
+    (by simpa [codeLocations] using firstDistinct) (by simpa [codeLocations] using firstFresh) initialWf (by simpa [everyFnLocationSome] using locs.1) (by simpa [everyFnVarsNone] using anns.1) (by simpa [everyFnLocationSome] using locs.2.1) (by simpa [everyFnVarsNone] using anns.2.1)
+    (by intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations
+        exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations)
   have conditionDistinct := List.Nodup.of_append_left firstDistinct
   have yesDistinct := List.Nodup.of_append_right firstDistinct
   have conditionFresh : LabelsFresh (codeLocationsExp condition) initial := by
@@ -15668,6 +15697,7 @@ theorem callsFuel_if_withCoveredOpenClock_from_induction {C F : Type}
       exact List.mem_append_right _ (by simpa [codeLocations] using member)
     · exact firstSims.2
   have noSim := structIH traversalFuel (Nat.le_refl _) no targetNo middle2 next noRun noDistinct noFresh middle2Wf
+    (by simpa [everyFnLocationSome] using locs.2.2) (by simpa [everyFnVarsNone] using anns.2.2)
   exact growingExprsSimFromBelowWithCoveredOpenClock_if passFuel relationFuel limit compiler next trace
     condition yes no targetCondition targetYes targetNo conditionSim yesSim noSim
 
@@ -15686,13 +15716,19 @@ theorem callsFuel_letrec_withCoveredOpenClock_from_induction {C F : Type}
     (structIH : ∀ expression output before after,
       callsFuel traversalFuel expression before = some (output, after) →
       (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
     GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final
       [.letrec names (some loc) none fns body] [out] := by
   apply callsFuel_letrec_growing_below_withCoveredOpenClock passFuel traversalFuel relationFuel limit compiler names loc fns body out
     initial final run ?_ initialWf locations annotations distinct fresh
   intro target middle bodyRun middleWf bodyDistinct bodyFresh
+  have locs := locations
+  simp [everyFnLocationSome, fnLocationSomeExp] at locs
+  have anns := annotations
+  simp [everyFnVarsNone, fnVarsNoneExp] at anns
   exact structIH body target middle final bodyRun bodyDistinct bodyFresh middleWf
+    (by simpa [everyFnLocationSome] using locs.2) (by simpa [everyFnVarsNone] using anns.2)
 
 /-- All primitive-operation traversal cases derive their argument simulation
 from structural induction. Installed programs, smaller-clock closure bodies,
@@ -15705,9 +15741,11 @@ theorem callsFuel_op_withCoveredOpenClock_from_induction {C F : Type}
     (run : callsFuel (traversalFuel + 1) (.op trace op args) initial = some (out, final))
     (distinct : (codeLocationsExp (.op trace op args)).Nodup)
     (fresh : LabelsFresh (codeLocationsExp (.op trace op args)) initial) (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.op trace op args]) (annotations : everyFnVarsNone [.op trace op args])
     (structIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
       callsFuel depth expression before = some (output, after) →
       (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output])
     (bodyIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State) (body converted : ClosLang.Exp),
       callsFuel depth body before = some (converted, after) →
@@ -15726,8 +15764,10 @@ theorem callsFuel_op_withCoveredOpenClock_from_induction {C F : Type}
   have argsIH : ∀ target, callsListFuel traversalFuel args initial = some (target, final) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final args target := by
     intro target argsRun
-    exact callsListFuel_withCoveredOpenClock_from_induction passFuel relationFuel traversalFuel limit compiler args target
-      initial final argsRun (by simpa [codeLocationsExp] using distinct) (by simpa [codeLocationsExp] using fresh) initialWf structIH
+    exact callsListFuel_withCoveredOpenClock_from_annotated_induction passFuel relationFuel traversalFuel limit compiler args target
+      initial final argsRun (by simpa [codeLocationsExp] using distinct) (by simpa [codeLocationsExp] using fresh) initialWf
+      (by simpa [everyFnLocationSome, fnLocationSomeExp] using locations)
+      (by simpa [everyFnVarsNone, fnVarsNoneExp] using annotations) structIH
   classical
   by_cases install : op = .install
   · subst op
@@ -15751,16 +15791,20 @@ theorem callsFuel_call_withCoveredOpenClock_from_induction {C F : Type}
     (run : callsFuel (traversalFuel + 1) (.call trace ticks label args) initial = some (out, final))
     (distinct : (codeLocationsExp (.call trace ticks label args)).Nodup)
     (fresh : LabelsFresh (codeLocationsExp (.call trace ticks label args)) initial) (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.call trace ticks label args]) (annotations : everyFnVarsNone [.call trace ticks label args])
     (structIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
       callsFuel depth expression before = some (output, after) →
       (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
     GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [.call trace ticks label args] [out] := by
   apply callsFuel_call_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler trace ticks label
     args initial final out run
   intro target argsRun
-  exact callsListFuel_withCoveredOpenClock_from_induction passFuel relationFuel traversalFuel limit compiler args target
-    initial final argsRun (by simpa [codeLocationsExp] using distinct) (by simpa [codeLocationsExp] using fresh) initialWf structIH
+  exact callsListFuel_withCoveredOpenClock_from_annotated_induction passFuel relationFuel traversalFuel limit compiler args target
+    initial final argsRun (by simpa [codeLocationsExp] using distinct) (by simpa [codeLocationsExp] using fresh) initialWf
+      (by simpa [everyFnLocationSome, fnLocationSomeExp] using locations)
+      (by simpa [everyFnVarsNone, fnVarsNoneExp] using annotations) structIH
 
 /-- Derive the application child simulations from the structural traversal
 induction. The function starts in the actual argument traversal's state.
@@ -15774,9 +15818,11 @@ theorem callsFuel_app_withCoveredOpenClock_from_induction {C F : Type}
     (distinct : (codeLocationsExp (.app trace location sourceFn sourceArgs)).Nodup)
     (fresh : LabelsFresh (codeLocationsExp (.app trace location sourceFn sourceArgs)) initial)
     (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.app trace location sourceFn sourceArgs]) (annotations : everyFnVarsNone [.app trace location sourceFn sourceArgs])
     (structIH : ∀ depth, depth ≤ traversalFuel → ∀ expression output before after,
       callsFuel depth expression before = some (output, after) →
       (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output])
     (bodyIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State) (body converted : ClosLang.Exp),
       callsFuel depth body before = some (converted, after) →
@@ -15803,10 +15849,14 @@ theorem callsFuel_app_withCoveredOpenClock_from_induction {C F : Type}
     intro loc member
     apply fresh loc
     simpa [codeLocationsExp, List.mem_append, or_comm] using member
+  have locs := locations
+  simp only [everyFnLocationSome, fnLocationSomeExp, and_true] at locs
+  have anns := annotations
+  simp only [everyFnVarsNone, fnVarsNoneExp, and_true] at anns
   have sims := callsListFuel_then_expression_withCoveredOpenClock passFuel relationFuel traversalFuel traversalFuel limit compiler
-    sourceArgs actualArgs sourceFn actualFn initial actualMiddle actualFinal actualArgsRun actualFnRun allDistinct allFresh initialWf
-    (by intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf
-        exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf)
+    sourceArgs actualArgs sourceFn actualFn initial actualMiddle actualFinal actualArgsRun actualFnRun allDistinct allFresh initialWf locs.2 anns.2 (by simpa [everyFnLocationSome] using locs.1) (by simpa [everyFnVarsNone] using anns.1)
+    (by intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations
+        exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf expressionLocations expressionAnnotations)
   apply callsFuel_app_withCoveredOpenClock_of_traversals passFuel relationFuel traversalFuel limit compiler trace location
     sourceFn sourceArgs initial actualFinal out run
   · intro target middle argRun
@@ -15823,6 +15873,102 @@ theorem callsFuel_app_withCoveredOpenClock_from_induction {C F : Type}
     exact sims.2
   · exact bodyIH
   · exact evalWf
+
+/-- Structural traversal simulation for annotated source expressions.
+Smaller-clock closure bodies, installed programs, and source evaluation
+well-formedness remain explicit hypotheses. This is Flapjack-specific
+simulation infrastructure, not a port of the HOL correctness theorem. -/
+theorem callsFuel_withCoveredOpenClock_structural {C F : Type}
+    (passFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (bodyIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State) (body converted : ClosLang.Exp),
+      callsFuel depth body before = some (converted, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before → wellFormed before →
+      everyFnLocationSome [body] → everyFnVarsNone [body] →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel callerClock compiler after [body] [converted])
+    (programIH : ∀ clock, clock < limit → ∀ (middleG : State) program nextKnown converted nextAllowed,
+      compileIncFuel? passFuel middleG.1 (program, []) = some (nextKnown, converted) →
+      (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) →
+      InstalledProgramSimBelowWithOpenClock (C := C) (F := F) passFuel relationFuel clock compiler
+        (nextKnown, converted.2 ++ middleG.2) nextAllowed program converted.1)
+    (evalWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate expressions env state)) :
+    ∀ depth expression output initial final,
+      callsFuel depth expression initial = some (output, final) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) initial → wellFormed initial →
+      everyFnLocationSome [expression] → everyFnVarsNone [expression] →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [expression] [output] := by
+  intro depth
+  induction depth using Nat.strong_induction_on with
+  | h depth ih =>
+    intro expression output initial final run distinct fresh initialWf locations annotations
+    cases depth with
+    | zero => simp [callsFuel] at run
+    | succ depth =>
+      have child : ∀ n, n ≤ depth → ∀ expression output before after,
+          callsFuel n expression before = some (output, after) →
+          (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+          everyFnLocationSome [expression] → everyFnVarsNone [expression] →
+          GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output] := by
+        intro n bound
+        exact ih n (by omega)
+      cases expression with
+      | var trace index =>
+        exact growingExprsSimFromBelowWithOpenClock_covered passFuel relationFuel limit compiler final _ _
+          (callsFuel_var_growing_below_withOpenClock passFuel relationFuel depth limit compiler trace index initial final output run)
+      | ifThenElse trace condition yes no =>
+        exact callsFuel_if_withCoveredOpenClock_from_induction passFuel relationFuel depth limit compiler trace condition yes no
+          initial final output run distinct fresh initialWf locations annotations child
+      | «let» trace bindings body =>
+        apply callsFuel_let_withCoveredOpenClock_from_induction passFuel relationFuel depth limit compiler trace bindings body
+          initial final output run distinct fresh initialWf locations annotations child
+        intro allowed g code env state
+        exact evalWf allowed g code bindings env state
+      | raise trace body =>
+        exact callsFuel_raise_withCoveredOpenClock_from_induction passFuel relationFuel depth limit compiler trace body
+          initial final output run distinct fresh initialWf locations annotations (child depth (Nat.le_refl _))
+      | handle trace body handler =>
+        apply callsFuel_handle_withCoveredOpenClock_from_induction passFuel relationFuel depth limit compiler trace body handler
+          initial final output run distinct fresh initialWf locations annotations child
+        intro allowed g code env state
+        exact evalWf allowed g code [body] env state
+      | tick trace body =>
+        exact callsFuel_tick_withCoveredOpenClock_from_induction passFuel relationFuel depth limit compiler trace body
+          initial final output run distinct fresh initialWf locations annotations (child depth (Nat.le_refl _))
+      | call trace ticks label args =>
+        apply callsFuel_call_withCoveredOpenClock_from_induction passFuel relationFuel depth limit compiler trace ticks label args
+          initial final output run distinct fresh initialWf locations annotations
+        intro n bound
+        exact child n (by omega)
+      | app trace loc fn args =>
+        exact callsFuel_app_withCoveredOpenClock_from_induction passFuel relationFuel depth limit compiler trace loc fn args
+          initial final output run distinct fresh initialWf locations annotations child bodyIH evalWf
+      | fn name loc vars arity body =>
+        cases loc with
+        | none => simp [everyFnLocationSome, fnLocationSomeExp] at locations
+        | some loc =>
+          cases vars with
+          | some vars => simp [everyFnVarsNone, fnVarsNoneExp] at annotations
+          | none =>
+            exact callsFuel_fn_growing_below_withCoveredOpenClock passFuel depth relationFuel limit compiler name loc arity body output
+              initial final run initialWf locations annotations (by simpa [codeLocations] using distinct)
+              (by simpa [codeLocations] using fresh)
+      | letrec names loc vars fns body =>
+        cases loc with
+        | none => simp [everyFnLocationSome, fnLocationSomeExp] at locations
+        | some loc =>
+          cases vars with
+          | some vars => simp [everyFnVarsNone, fnVarsNoneExp] at annotations
+          | none =>
+            exact callsFuel_letrec_withCoveredOpenClock_from_induction passFuel depth relationFuel limit compiler names loc fns body output
+              initial final run initialWf locations annotations (by simpa [codeLocations] using distinct)
+              (by simpa [codeLocations] using fresh) (child depth (Nat.le_refl _))
+      | op trace op args =>
+        apply callsFuel_op_withCoveredOpenClock_from_induction passFuel relationFuel depth limit compiler trace op args
+          initial final output run distinct fresh initialWf locations annotations ?_ bodyIH programIH evalWf
+        intro n bound
+        exact child n (by omega)
 
 /-- The production retry wrapper inherits the simulation above its final
 pass state, whether its initial traversal succeeds or it uses the structural
