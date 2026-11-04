@@ -1029,6 +1029,34 @@ RISC-V program outputs, six backend-option combinations, four complete explorer
 reports, and the generated frontend and option-validation cases listed below.
 This is finite regression evidence, not a general output-equivalence proof.
 
+On 2026-11-04, three fresh-seed comparisons matched the pinned compiler:
+38 complete RISC-V outputs, 265 parser/type-checking cases, 30 S-expression
+outputs, and 650 additional frontend, diagnostic, and arbitrary-byte cases.
+The complete-output sample includes 12 extended stateful, recursive, and
+module programs and 10 composed higher-order, mutable-state, and datatype
+programs. These are sampled comparisons, not a proof of output equivalence.
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 15 --compile-cases 3 --compile-config-cases 0 --rich-cases 3 \
+  --integration-cases 0 --declaration-cases 0 --handler-cases 0 --annotation-cases 0 \
+  --config-cases 0 --config-error-cases 0 --sexp-cases 0 --byte-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --type-seed 47091 --compile-seed 78901
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 0 --compile-cases 0 --compile-config-cases 0 --rich-cases 0 \
+  --extended-cases 12 --composed-cases 10 --integration-cases 0 --declaration-cases 0 \
+  --handler-cases 0 --annotation-cases 0 --config-cases 0 --config-error-cases 0 \
+  --sexp-cases 0 --byte-cases 0 --structured-cases 0 --lex-cases 0 --token-cases 0 \
+  --raw-byte-cases 0 --compile-seed 912367 --timeout 90
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 250 --compile-cases 5 --compile-config-cases 0 --rich-cases 5 \
+  --integration-cases 0 --declaration-cases 100 --handler-cases 100 --annotation-cases 100 \
+  --config-cases 0 --config-error-cases 0 --sexp-cases 30 --byte-cases 0 \
+  --structured-cases 100 --lex-cases 100 --token-cases 100 --raw-byte-cases 50 \
+  --type-seed 749321 --edge-seed 328471 --compile-seed 684033 --timeout 60
+```
+
 On 2026-11-01, compile seed `394793` matched the pinned compiler for 30
 stateful or module-dependent programs and 40 composed higher-order programs.
 Edge seed `933455` matched 675 option-validation cases. The integration corpus
