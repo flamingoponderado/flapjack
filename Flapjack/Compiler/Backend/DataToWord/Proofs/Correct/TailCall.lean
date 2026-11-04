@@ -54,7 +54,7 @@ theorem tailCall64_direct_outcomes {C F : Type} (conf : Config) (secn label l1 l
     (positive : source.clock ≠ 0)
     (safe : (DataSem.evaluate (.call none (some callee) names none) source).1 ≠ some (.err (.abort .typeError)))
     (calleeCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
-      stateRel64 conf l1 l2 s t none locs →
+      s.code = source.code → s.clock < source.clock → stateRel64 conf l1 l2 s t none locs →
       (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
       outcomes64 conf callee 2 l1 l2 body s t locs) :
     outcomes64 conf secn label l1 l2 (.call none (some callee) names none) source target locs := by
@@ -68,7 +68,7 @@ theorem tailCall64_direct_outcomes {C F : Type} (conf : Config) (secn label l1 l
       have resultEq : result = some (.err (.abort .typeError)) := by simpa [run] using bad
       subst result
       simp [DataSem.evaluate, sourceRun, found, positive, run] at safe
-  rcases calleeCorrect _ _ calleeRelated calleeSafe with continued | returned | timeout | raised
+  rcases calleeCorrect (DataSem.callEnv values size (DataSem.decClock source)) _ rfl (by simp [DataSem.callEnv, DataSem.decClock]; omega) calleeRelated calleeSafe with continued | returned | timeout | raised
   · obtain ⟨sourceNext, targetNext, sr, tr, after⟩ := continued
     simp [DataSem.evaluate, sourceRun, found, positive, sr] at safe
   · obtain ⟨result, targetValues, sourceNext, targetNext, lengths, sr, tr, after⟩ := returned
@@ -118,7 +118,7 @@ theorem tailCall64_direct_of_safe {C F : Type} (conf : Config) (secn label l1 l2
     (calleeCorrect : ∀ (body : DataLang.Prog) (args : List DataSem.Value) (frameSize : Option Nat),
       DataSem.findCode (some callee) args source.code source.stackFrameSizes = some (args, body, frameSize) →
       ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
-        stateRel64 conf l1 l2 s t none locs → (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
+        s.code = source.code → s.clock < source.clock → stateRel64 conf l1 l2 s t none locs → (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
         outcomes64 conf callee 2 l1 l2 body s t locs) :
     outcomes64 conf secn label l1 l2 (.call none (some callee) names none) source target locs := by
   cases sourceRun : DataSem.getVars names source.locals with

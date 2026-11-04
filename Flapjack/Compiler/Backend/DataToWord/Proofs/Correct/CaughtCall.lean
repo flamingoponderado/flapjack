@@ -137,7 +137,7 @@ theorem call64_direct_handler_outcomes {C F : Type} (conf : Config) (secn label 
     (cut : DataSem.cutEnv live source.locals = some saved) (distinct : returns.Nodup)
     (safe : (DataSem.evaluate (.call (some (returns, live)) (some callee) names (some (handlerName, handlerBody))) source).1 ≠ some (.err (.abort .typeError)))
     (calleeCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
-      stateRel64 conf secn label s t none ((l1, l2) :: locs) → (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
+      s.code = source.code → s.clock < source.clock → stateRel64 conf secn label s t none ((l1, l2) :: locs) → (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
       outcomes64 conf callee 2 secn label body s t ((l1, l2) :: locs))
     (handlerCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
       stateRel64 conf l1 l2 s t none locs → (DataSem.evaluate handlerBody s).1 ≠ some (.err (.abort .typeError)) →
@@ -157,9 +157,8 @@ theorem call64_direct_handler_outcomes {C F : Type} (conf : Config) (secn label 
         have eq : result = some (.err (.abort .typeError)) := by simpa [run] using bad
         subst result
         simp [DataSem.evaluate, sourceRun, found, distinct, cut, zero, run, DataSem.fixClock] at safe
-    rcases calleeCorrect _ _ entryRelated calleeSafe with continued | returned | timeout | raised
+    rcases calleeCorrect (DataSem.callEnv values size (DataSem.pushEnv saved true (DataSem.decClock source))) _ rfl (by simp [DataSem.callEnv, DataSem.pushEnv, DataSem.decClock]; omega) entryRelated calleeSafe with continued | returned | timeout | raised
     · obtain ⟨sourceLast, targetLast, sr, tr, after⟩ := continued
-      simp only [Option.isSome_some] at sr
       simp only [DataSem.evaluate, sourceRun, found, distinct, cut, zero, ↓reduceIte, Option.isSome_some] at safe
       rw [sr] at safe
       simp [DataSem.fixClock] at safe
@@ -180,7 +179,7 @@ theorem call64_direct_handler_of_safe {C F : Type} (conf : Config) (secn label l
     (calleeCorrect : ∀ (body : DataLang.Prog) (args : List DataSem.Value) (size : Option Nat),
       DataSem.findCode (some callee) args source.code source.stackFrameSizes = some (args, body, size) →
       ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
-        stateRel64 conf secn label s t none ((l1, l2) :: locs) → (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
+        s.code = source.code → s.clock < source.clock → stateRel64 conf secn label s t none ((l1, l2) :: locs) → (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
         outcomes64 conf callee 2 secn label body s t ((l1, l2) :: locs))
     (handlerCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
       stateRel64 conf l1 l2 s t none locs → (DataSem.evaluate handlerBody s).1 ≠ some (.err (.abort .typeError)) →

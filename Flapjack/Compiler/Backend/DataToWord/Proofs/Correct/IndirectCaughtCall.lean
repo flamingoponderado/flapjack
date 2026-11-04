@@ -148,7 +148,7 @@ theorem call64_indirect_handler_outcomes {C F : Type} (conf : Config) (secn labe
     (cut : DataSem.cutEnv live source.locals = some saved) (distinct : returns.Nodup)
     (safe : (DataSem.evaluate (.call (some (returns, live)) none (names ++ [lastName]) (some (handlerName, handlerBody))) source).1 ≠ some (.err (.abort .typeError)))
     (calleeCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
-      stateRel64 conf secn label s t none ((l1, l2) :: locs) → (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
+      s.code = source.code → s.clock < source.clock → stateRel64 conf secn label s t none ((l1, l2) :: locs) → (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
       outcomes64 conf callee 2 secn label body s t ((l1, l2) :: locs))
     (handlerCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
       stateRel64 conf l1 l2 s t none locs → (DataSem.evaluate handlerBody s).1 ≠ some (.err (.abort .typeError)) →
@@ -178,7 +178,7 @@ theorem call64_indirect_handler_outcomes {C F : Type} (conf : Config) (secn labe
         have eq : result = some (.err (.abort .typeError)) := by simpa [run] using bad
         subst result
         simp [DataSem.evaluate, sourceAll, sourceCode', distinct, cut, zero, run, DataSem.fixClock] at safe
-    rcases calleeCorrect _ _ entryRelated' calleeSafe with continued | returned | timeout | raised
+    rcases calleeCorrect (DataSem.callEnv values size (DataSem.pushEnv saved true (DataSem.decClock source))) _ rfl (by simp [DataSem.callEnv, DataSem.pushEnv, DataSem.decClock]; omega) entryRelated' calleeSafe with continued | returned | timeout | raised
     · obtain ⟨sourceLast, targetLast, sr, tr, after⟩ := continued
       simp only [DataSem.evaluate, sourceAll, sourceCode', distinct, cut, zero, ↓reduceIte, Option.isSome_some] at safe
       rw [sr] at safe
@@ -200,7 +200,7 @@ theorem call64_indirect_handler_of_safe {C F : Type} (conf : Config) (secn label
     (calleeCorrect : ∀ (callee arity : Nat) (body : DataLang.Prog),
       sptLookup callee source.code = some (arity, body) →
       ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
-        stateRel64 conf secn label s t none ((l1, l2) :: locs) →
+        s.code = source.code → s.clock < source.clock → stateRel64 conf secn label s t none ((l1, l2) :: locs) →
         (DataSem.evaluate body s).1 ≠ some (.err (.abort .typeError)) →
         outcomes64 conf callee 2 secn label body s t ((l1, l2) :: locs))
     (handlerCorrect : ∀ (s : DataSem.State C F) (t : WordSemStateFiniteExact 64 C F),
