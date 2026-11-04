@@ -200,6 +200,63 @@ theorem letrec_continuation_fresh_after_extraction (fuel : Nat)
       subst origin
       exact separate key (List.mem_append_left _ originMember) key member rfl
 
+/-- Installing the extracted group restores full compiler-state
+well-formedness after its speculative traversal. Label distinctness is supplied
+separately by the enclosing traversal. This is Flapjack-specific induction
+infrastructure. -/
+theorem letrec_extracted_state_wellFormed (fuel loc : Nat) (fns : List (Nat × ClosLang.Exp))
+    (initial afterBodies : State) (bodies : List ClosLang.Exp)
+    (run : callsListFuel fuel (fns.map Prod.snd) (insertEach loc fns.length initial) = some (bodies, afterBodies))
+    (initialWf : wellFormed initial)
+    (distinct : ((codeList loc ((fns.map Prod.fst).zip bodies) afterBodies).2.map Prod.fst).Nodup) :
+    wellFormed (codeList loc ((fns.map Prod.fst).zip bodies) afterBodies) := by
+  have size := convertedFunctions_length fuel fns (insertEach loc fns.length initial) afterBodies bodies run
+  have weak : weaklyWellFormed (codeList loc ((fns.map Prod.fst).zip bodies) afterBodies) := by
+    apply weaklyWellFormed_codeList
+    · exact callsListFuel_weaklyWellFormed fuel (fns.map Prod.snd) _ afterBodies bodies run
+        (weaklyWellFormed_insertEach loc fns.length initial (wellFormed_weak initial initialWf))
+    · intro key member
+      simp only [Set.mem_ofPred_eq, List.mem_map, List.mem_range] at member
+      obtain ⟨i, bound, rfl⟩ := member
+      simp only [size] at bound
+      apply callsListFuel_knownExt fuel _ _ afterBodies bodies run
+      exact (insertEach_domain loc fns.length initial _).mpr (Or.inr ⟨i, bound, rfl⟩)
+  refine ⟨Set.Subset.antisymm weak ?_, distinct⟩
+  intro label member
+  obtain ⟨key, known, eq⟩ := member
+  have known' : sptDomain afterBodies.1 key := by
+    change sptDomain (codeList loc ((fns.map Prod.fst).zip bodies) afterBodies).1 key at known
+    rw [codeList_eq_source, codeListSource_fst] at known
+    exact known
+  rcases callsListFuel_knownBound fuel (fns.map Prod.snd) _ afterBodies bodies run key known' with old | generated
+  · rcases (insertEach_domain loc fns.length initial key).mp old with original | ⟨i, bound, keyEq⟩
+    · have oldLabel : key + 1 ∈ initial.2.map Prod.fst := by
+        have inImage : key + 1 ∈ Set.image Nat.succ (sptDomain initial.1) := ⟨key, original, by omega⟩
+        rw [← initialWf.1] at inImage
+        exact inImage
+      have suffix := callsListFuel_suffix fuel (fns.map Prod.snd) (insertEach loc fns.length initial) afterBodies bodies run
+      obtain ⟨front, suffixEq⟩ := suffix
+      have later : key + 1 ∈ afterBodies.2.map Prod.fst := by
+        rw [← suffixEq, List.map_append]
+        exact List.mem_append_right _ (by simpa [insertEach] using oldLabel)
+      have : key + 1 ∈ (codeList loc ((fns.map Prod.fst).zip bodies) afterBodies).2.map Prod.fst := by
+        rw [codeList_labels]
+        exact List.mem_append_right _ later
+      simpa [← eq] using this
+    · have inCode : key + 1 ∈ (codeList loc ((fns.map Prod.fst).zip bodies) afterBodies).2.map Prod.fst := by
+        rw [codeList_labels]
+        apply List.mem_append_left
+        apply List.mem_reverse.mpr
+        apply List.mem_map.mpr
+        refine ⟨i, List.mem_range.mpr ?_, ?_⟩
+        · simp [size, bound]
+        · omega
+      simpa [← eq] using inCode
+  · have inCode : key + 1 ∈ (codeList loc ((fns.map Prod.fst).zip bodies) afterBodies).2.map Prod.fst := by
+      rw [codeList_labels]
+      exact List.mem_append_right _ generated
+    simpa [← eq] using inCode
+
 /-- A continuation cannot turn an unknown recursive-group location into a
 known location. Thus coverage stated at the final pass state also covers
 unknown group locations at the intermediate state. -/
@@ -645,6 +702,46 @@ theorem callsFuel_letrec_relation (fuel : Nat)
       rfl, continuation,
       (callsFuel_letrec_closed_final fuel names loc fns body targetBody initial afterProbe final' g probeBodies
         allowed code probe closed continuation initialWf locations annotations distinct fresh growth coverage included).2⟩
+
+/-- The actual recursive-binding continuation starts in a fully well-formed
+state with fresh, distinct body locations. This is Flapjack-specific induction
+infrastructure. -/
+theorem callsFuel_letrec_continuation_wellFormed (fuel : Nat)
+    (names : List Basis.Pure.MlString.MlString) (loc : Nat) (fns : List (Nat × ClosLang.Exp))
+    (body out : ClosLang.Exp) (initial final : State)
+    (run : callsFuel (fuel + 1) (.letrec names (some loc) none fns body) initial = some (out, final))
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.letrec names (some loc) none fns body])
+    (annotations : everyFnVarsNone [.letrec names (some loc) none fns body])
+    (distinct : (codeLocations [.letrec names (some loc) none fns body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.letrec names (some loc) none fns body]) initial) :
+    ∃ targetFns targetBody middle,
+      out = .letrec names (some loc) none targetFns targetBody ∧
+      callsFuel fuel body middle = some (targetBody, final) ∧ wellFormed middle ∧
+      (codeLocationsExp body).Nodup ∧ LabelsFresh (codeLocationsExp body) middle := by
+  have finalDistinct : (final.2.map Prod.fst).Nodup :=
+    callsFuel_labelsDistinct (fuel + 1) (.letrec names (some loc) none fns body) initial final out run
+      (by simpa [codeLocations] using distinct) (by simpa [codeLocations] using fresh) initialWf.2
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure] at run
+  obtain ⟨⟨probeBodies, afterProbe⟩, probe, check, _, rest⟩ := run
+  cases check with
+  | false =>
+    simp only [Bool.false_eq_true, ↓reduceIte, Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at rest
+    obtain ⟨⟨retryBodies, afterRetry⟩, retry, ⟨targetBody, final'⟩, continuation, rfl, rfl⟩ := rest
+    obtain ⟨wf, nestedFresh, _⟩ := letrec_source_invariants names loc fns body initial locations annotations distinct fresh
+    have middleWf := callsListFuel_wellFormed fuel (fns.map Prod.snd) initial afterRetry retryBodies retry
+      wf.2.2.2 nestedFresh initialWf
+    obtain ⟨bodyDistinct, bodyFresh⟩ := letrec_continuation_fresh_after_retry fuel names loc fns body initial afterRetry retryBodies retry distinct fresh
+    exact ⟨_, targetBody, afterRetry, rfl, continuation, middleWf, bodyDistinct, bodyFresh⟩
+  | true =>
+    simp only [↓reduceIte, Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at rest
+    obtain ⟨⟨targetBody, final'⟩, continuation, rfl, rfl⟩ := rest
+    have middleDistinct : ((codeList loc ((fns.map Prod.fst).zip probeBodies) afterProbe).2.map Prod.fst).Nodup :=
+      ((callsFuel_suffix fuel body (codeList loc ((fns.map Prod.fst).zip probeBodies) afterProbe) final'
+        targetBody continuation).map Prod.fst).nodup finalDistinct
+    have middleWf := letrec_extracted_state_wellFormed fuel loc fns initial afterProbe probeBodies probe initialWf middleDistinct
+    obtain ⟨bodyDistinct, bodyFresh⟩ := letrec_continuation_fresh_after_extraction fuel names loc fns body initial afterProbe probeBodies probe distinct fresh
+    exact ⟨_, targetBody, _, rfl, continuation, middleWf, bodyDistinct, bodyFresh⟩
 
 /-- The transformed recursive group is related at any relation fuel, not
 only at the traversal fuel used to produce it. This is Flapjack-specific

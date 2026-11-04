@@ -14067,6 +14067,7 @@ theorem callsFuel_letrec_growing_below_withOpenClock_at {C F : Type} (passFuel t
     (loc : Nat) (fns : List (Nat × ClosLang.Exp)) (body out : ClosLang.Exp) (initial passFinal g : State)
     (passRun : callsFuel (traversalFuel + 1) (.letrec names (some loc) none fns body) initial = some (out, passFinal))
     (bodyIH : ∀ targetBody middle, callsFuel traversalFuel body middle = some (targetBody, passFinal) →
+      wellFormed middle → (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) middle →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler passFinal [body] [targetBody])
     (initialWf : wellFormed initial)
     (locations : everyFnLocationSome [.letrec names (some loc) none fns body])
@@ -14103,9 +14104,14 @@ theorem callsFuel_letrec_growing_below_withOpenClock_at {C F : Type} (passFuel t
       final.compile = compileIncFuelCallback passFuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle passFuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
-  obtain ⟨targetFns, targetBody, middle, rfl, bodyPass, closure⟩ :=
-    callsFuel_letrec_relation_atFuel traversalFuel relationFuel names loc fns body out initial passFinal g allowed target.code passRun
+  obtain ⟨targetFns, targetBody, middle, rfl, bodyPass, middleWf, bodyDistinct, bodyFresh⟩ :=
+    callsFuel_letrec_continuation_wellFormed traversalFuel names loc fns body out initial passFinal passRun
+      initialWf locations annotations distinct fresh
+  obtain ⟨relatedFns, relatedBody, _, outputEq, _, closure⟩ :=
+    callsFuel_letrec_relation_atFuel traversalFuel relationFuel names loc fns body _ initial passFinal g allowed target.code passRun
       initialWf locations annotations distinct fresh passGrowth coverage ready.included
+  have equal : targetFns = relatedFns ∧ targetBody = relatedBody := by simpa using outputEq
+  obtain ⟨rfl, rfl⟩ := equal
   have valid : fns.all (fun (arity, _) => arity ≤ source.maxApp && arity != 0) = true := by
     by_contra invalid
     have bad : result = .err (.abort .typeError) := by
@@ -14132,7 +14138,7 @@ theorem callsFuel_letrec_growing_below_withOpenClock_at {C F : Type} (passFuel t
   obtain ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth, finalDisjoint, finalAvoids,
     targetRun, related, finalStates, finalWf, finalReady,
     finalCompiler, targetFinalCompiler, finalOracle, growth⟩ :=
-    bodyIH targetBody middle bodyPass g passGrowth allowed _ _ source target result final bodyCoverage clock bodyRun notType (by simpa using bodyEnv)
+    bodyIH targetBody middle bodyPass middleWf bodyDistinct bodyFresh g passGrowth allowed _ _ source target result final bodyCoverage clock bodyRun notType (by simpa using bodyEnv)
       bodyEnvWf sourceWf states ready disjoint avoids sourceCompiler targetCompiler targetOracle
   refine ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth, finalDisjoint, finalAvoids, ?_, related, finalStates, finalWf, finalReady,
     finalCompiler, targetFinalCompiler, finalOracle, growth⟩
@@ -14145,6 +14151,7 @@ theorem callsFuel_letrec_growing_below_withCoveredOpenClock {C F : Type} (passFu
     (loc : Nat) (fns : List (Nat × ClosLang.Exp)) (body out : ClosLang.Exp) (initial passFinal : State)
     (passRun : callsFuel (traversalFuel + 1) (.letrec names (some loc) none fns body) initial = some (out, passFinal))
     (bodyIH : ∀ targetBody middle, callsFuel traversalFuel body middle = some (targetBody, passFinal) →
+      wellFormed middle → (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) middle →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler passFinal [body] [targetBody])
     (initialWf : wellFormed initial)
     (locations : everyFnLocationSome [.letrec names (some loc) none fns body])
@@ -15596,6 +15603,29 @@ theorem callsFuel_if_withCoveredOpenClock_from_induction {C F : Type}
   have noSim := structIH traversalFuel (Nat.le_refl _) no targetNo middle2 next noRun noDistinct noFresh middle2Wf
   exact growingExprsSimFromBelowWithCoveredOpenClock_if passFuel relationFuel limit compiler next trace
     condition yes no targetCondition targetYes targetNo conditionSim yesSim noSim
+
+/-- Recursive binding derives its continuation simulation from structural
+induction using the actual intermediate-state invariant. This is
+Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_letrec_withCoveredOpenClock_from_induction {C F : Type}
+    (passFuel traversalFuel relationFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (names : List Basis.Pure.MlString.MlString) (loc : Nat) (fns : List (Nat × ClosLang.Exp))
+    (body out : ClosLang.Exp) (initial final : State)
+    (run : callsFuel (traversalFuel + 1) (.letrec names (some loc) none fns body) initial = some (out, final))
+    (initialWf : wellFormed initial) (locations : everyFnLocationSome [.letrec names (some loc) none fns body])
+    (annotations : everyFnVarsNone [.letrec names (some loc) none fns body])
+    (distinct : (codeLocations [.letrec names (some loc) none fns body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.letrec names (some loc) none fns body]) initial)
+    (structIH : ∀ expression output before after,
+      callsFuel traversalFuel expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final
+      [.letrec names (some loc) none fns body] [out] := by
+  apply callsFuel_letrec_growing_below_withCoveredOpenClock passFuel traversalFuel relationFuel limit compiler names loc fns body out
+    initial final run ?_ initialWf locations annotations distinct fresh
+  intro target middle bodyRun middleWf bodyDistinct bodyFresh
+  exact structIH body target middle final bodyRun bodyDistinct bodyFresh middleWf
 
 /-- All primitive-operation traversal cases derive their argument simulation
 from structural induction. Installed programs, smaller-clock closure bodies,
