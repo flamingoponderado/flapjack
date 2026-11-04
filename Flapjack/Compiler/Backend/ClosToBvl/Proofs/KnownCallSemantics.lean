@@ -79,6 +79,38 @@ theorem known_beforeCall_semantics {C F : Type} (ffi : HolFfiState F)
   have result := letopEq.trans (ticksEq.symm.trans (knownEq.trans (fvsEq.trans numberEq)))
   simpa [knownClosureFuture, letopCo, ticksCo, knownCo, co, numberedCo, letopOutput, ticksOutput, outputEq] using result
 
+/-- Initial BVL labels are distinct after known-function optimization and
+direct-call conversion of a numbered source program. -/
+theorem knownCall_prepared_labels_nodup (fuel number : Nat) (knownConfig : ClosKnown.Config)
+    (program : List ClosLang.Exp) (optimized : List (ClosLang.Exp × ValApprox)) (globals : Spt ValApprox)
+    (optimizedOutput called : List ClosLang.Exp) (callState : ClosCall.State)
+    (original current output : Config) (compiled : List (Nat × Nat × Bvl.Exp))
+    (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (numberEven : number % 2 = 0) (numberLower : current.start + max 1 program.length ≤ number)
+    (knownRun : ClosKnown.knownListTotal knownConfig (ClosFvs.compile (ClosNumber.renumberList number program).2)
+      [] .ln = (optimized, globals))
+    (optRun : ((optimized.map Prod.fst).mapM fun e => do
+      let e ← ClosTicks.removeBounded fuel e
+      ClosLetop.compileBounded fuel e) = some optimizedOutput)
+    (callRun : ClosCall.compileFuel fuel true optimizedOutput = some (called, callState))
+    (compile : compilePrepared? original current program
+      (ClosAnnotate.compile (chainExps current.start called ++ callState.2)) = some (output, compiled, names)) :
+    (compiled.map Prod.fst).Nodup := by
+  have labels := numberedKnown_output_labels fuel number knownConfig program optimized globals optimizedOutput knownRun optRun
+  have subset := numberedKnown_output_locations_subset fuel number knownConfig program optimized globals optimizedOutput knownRun optRun
+  have sourceEven : ∀ loc ∈ codeLocations optimizedOutput, loc % 2 = 0 := by
+    intro loc member
+    have parity := ClosNumber.renumberList_location_parity program number loc (subset member)
+    omega
+  have sourceLower : ∀ loc ∈ codeLocations optimizedOutput, current.start + max 1 optimizedOutput.length ≤ loc := by
+    intro loc member
+    have bounds := labels.2.2 loc member
+    omega
+  have rawDistinct := initialCall_annotated_chain_source_nodup fuel current.start optimizedOutput called callState
+    callRun labels.2.1 sourceEven sourceLower
+  exact compilePrepared_labels_nodup_of_source original current output program
+    (ClosAnnotate.compile (chainExps current.start called ++ callState.2)) compiled names compile rawDistinct
+
 /-- Numbering and the known-function pipeline followed by direct-call and
 BVL conversion preserve observations under the source and oracle safety
 conditions. The initial known and direct-call pass results are explicit. -/

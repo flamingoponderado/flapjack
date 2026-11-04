@@ -57,6 +57,28 @@ theorem compileCallMtiFuel_mtiKnownCall_erasure (fuel : Nat) (config output : Co
           current, optimizedOutput, source, next, aligned, output', codeEq] using reference
       exact ⟨output', names', alternate, startEq.symm⟩
 
+/-- The executed driver emits distinct BVL labels with all three closure
+optimizations enabled. -/
+theorem compileCallMtiFuel_mtiKnownCall_labels (fuel : Nat) (config output : Config)
+    (knownConfig : ClosKnown.Config) (expressions called : List ClosLang.Exp) (callState : ClosCall.State)
+    (compiled : List (Nat × Nat × Bvl.Exp)) (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (enabled : config.doMti = true) (calls : config.doCall = true) (known : config.knownConf = some knownConfig)
+    (run : compileCallMtiFuel? fuel config expressions = some (output, compiled, names))
+    (callRun :
+      let transformed := ClosMti.introList config.maxApp expressions
+      let next := config.nextLoc + max 1 transformed.length
+      let aligned := if next % 2 = 0 then next else next + 1
+      let numbered := (ClosNumber.renumberList aligned transformed).2
+      let optimized := (ClosKnown.knownListTotal knownConfig (ClosFvs.compile numbered) [] .ln).1
+      ClosCall.compileFuel fuel true (ClosLetop.compileList (ClosTicks.removeList (optimized.map Prod.fst))) =
+        some (called, callState)) : (compiled.map Prod.fst).Nodup := by
+  obtain ⟨output', names', alternate, _⟩ :=
+    compileCallMtiFuel_mtiKnownCall_erasure fuel config output knownConfig expressions called callState compiled names
+      enabled calls known run callRun
+  exact compileCallMtiFuel_knownCall_labels fuel { config with doMti := false } output' knownConfig
+    (ClosMti.introList config.maxApp expressions) called callState compiled names' rfl
+    (by simpa using calls) (by simpa using known) alternate (by simpa using callRun)
+
 /-- The executed closure driver preserves observations with
 multi-argument introduction, known-function optimization, and direct-call
 conversion enabled, subject to the source and oracle safety premises. -/

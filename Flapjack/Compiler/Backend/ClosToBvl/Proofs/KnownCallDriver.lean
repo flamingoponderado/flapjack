@@ -82,4 +82,41 @@ theorem compileCallMtiFuel_knownCall_semantics {C F : Type} (ffi : HolFfiState F
         (ticks_letop_bounded fuel (optimized.map Prod.fst)) callRun' prepared
       exact result
 
+/-- The executed known-function and direct-call driver emits distinct BVL
+labels when multi-argument introduction is disabled. -/
+theorem compileCallMtiFuel_knownCall_labels (fuel : Nat) (config output : Config)
+    (knownConfig : ClosKnown.Config) (program called : List ClosLang.Exp) (callState : ClosCall.State)
+    (compiled : List (Nat × Nat × Bvl.Exp)) (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (mti : config.doMti = false) (calls : config.doCall = true) (known : config.knownConf = some knownConfig)
+    (run : compileCallMtiFuel? fuel config program = some (output, compiled, names))
+    (callRun :
+      let next := config.nextLoc + max 1 program.length
+      let aligned := if next % 2 = 0 then next else next + 1
+      let numbered := (ClosNumber.renumberList aligned program).2
+      let optimized := (ClosKnown.knownListTotal knownConfig (ClosFvs.compile numbered) [] .ln).1
+      ClosCall.compileFuel fuel true (ClosLetop.compileList (ClosTicks.removeList (optimized.map Prod.fst))) =
+        some (called, callState)) : (compiled.map Prod.fst).Nodup := by
+  let next := config.nextLoc + max 1 program.length
+  let aligned := if next % 2 = 0 then next else next + 1
+  have numberLower : config.nextLoc + max 1 program.length ≤ aligned := by
+    dsimp [aligned, next]
+    split <;> omega
+  have numberEven : aligned % 2 = 0 := by dsimp [aligned]; split <;> omega
+  cases numbered : ClosNumber.renumberList aligned program with
+  | mk nextLoc numberedProgram =>
+    cases knownRun : ClosKnown.knownListTotal knownConfig (ClosFvs.compile numberedProgram) [] .ln with
+    | mk optimized globals =>
+      let optimizedOutput := ClosLetop.compileList (ClosTicks.removeList (optimized.map Prod.fst))
+      let current : Config := { config with start := config.nextLoc, nextLoc := nextLoc, knownConf := some { knownConfig with valApproxSpt := globals }, callState := callState }
+      have callRun' : ClosCall.compileFuel fuel true optimizedOutput = some (called, callState) := by
+        simpa [next, aligned, numbered, knownRun, optimizedOutput] using callRun
+      have prepared : compilePrepared? config current program
+          (ClosAnnotate.compile (chainExps config.nextLoc called ++ callState.2)) = some (output, compiled, names) := by
+        have knownCompiled := known_compileFuel_eq fuel knownConfig numberedProgram optimized globals knownRun
+        simpa [compileCallMtiFuel?, mti, calls, known, ClosMti.compileFuel, numbered,
+          knownCompiled, callRun', current, optimizedOutput, next, aligned] using run
+      exact knownCall_prepared_labels_nodup fuel aligned knownConfig program optimized globals optimizedOutput
+        called callState config current output compiled names numberEven numberLower (by simpa [numbered] using knownRun)
+        (ticks_letop_bounded fuel (optimized.map Prod.fst)) callRun' prepared
+
 end Flapjack.Compiler.Backend.ClosToBvl
