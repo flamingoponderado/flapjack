@@ -1,5 +1,30 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "gc_move_ALT",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/Append.lean",
+  "lean_name": "gcMove_alt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared lines 249-252 and gc_move_ALT_typed. The independent root and heap-payload carriers, arbitrary initial status and complete output tuple match HOL; the only change is expansion of its nested tuple binding."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "gc_move_list_ALT",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/Append.lean",
+  "lean_name": "gcMoveList_alt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared lines 261-265 and gc_move_list_ALT_typed. The six unused quantified values are retained with six independent types, separate from the independently polymorphic root and heap-payload carriers. The arbitrary status, whole output tuple and append order match HOL."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_move_roots_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/RootsSimulation.lean",
+  "lean_name": "wordGcMoveRoots_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared lines 880-898 with word_gc_move_roots_thm_typed, including left-associated separation, the mapped roots, successful abstract execution, heap bound, concrete run, exact list length and all existential postconditions. All word carriers share the same positive width; the proof uses the complete source-shaped single-move theorem and both prefix-independence lemmas."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_move_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Move.lean",
