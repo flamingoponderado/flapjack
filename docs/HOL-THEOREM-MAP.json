@@ -1,5 +1,37 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "gc_move_IMP_isDataElement",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/DataElements.lean",
+  "lean_name": "gcMove_imp_isDataElement",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 645-655 and gc_move_IMP_isDataElement_typed. The original arbitrary-status move and universal data-element predicate on the input copied heap imply the same predicate on the output copied heap. Address and heap-payload carriers remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "gc_move_list_IMP_isDataElement",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/DataElements.lean",
+  "lean_name": "gcMoveList_imp_isDataElement",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 657-669 and gc_move_list_IMP_isDataElement_typed. The original arbitrary-status root-list traversal preserves the data-element predicate on copied heaps, with the same two premises, conclusion and independent address/payload carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "gc_move_loop_IMP_isDataElement",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/DataElements.lean",
+  "lean_name": "gcMoveLoop_imp_isDataElement",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 671-686 and gc_move_loop_IMP_isDataElement_typed. Both initial heap lists contain only data elements and the scan returns true; the conclusion covers every element of the resulting scanned heap. The unused original c' is retained as _unused with its own independent type gamma. The address and payload carriers remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
+  "hol_name": "full_gc_IMP_isDataElement",
+  "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/DataElements.lean",
+  "lean_name": "fullGc_imp_isDataElement",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared source lines 688-696 and full_gc_IMP_isDataElement_typed: a successful full abstract collection produces a heap consisting only of data elements, with independent address and heap-payload carriers. This is an output-shape invariant, not full collector correctness."
+},
+{
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "gc_forward_ptr_ok",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/ForwardPtr.lean",

@@ -2919,6 +2919,7 @@ import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.CopyingGc
 import Flapjack.Compiler.Backend.CopyingGc.Proofs.Progress
+import Flapjack.Compiler.Backend.CopyingGc.Proofs.DataElements
 import Flapjack.Test.CopyingGcParity
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
 import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps

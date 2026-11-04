@@ -8354,7 +8354,7 @@ run_probe data_to_word_memory_repr_probeScript.sml data_to_word_memory_repr_prob
   "$cake_dir/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe copying_gc_probeScript.sml copying_gc_probe.out \
-  gc_forward_ptr_typed gc_move_typed gc_move_list_typed gc_move_loop_typed full_gc_typed gc_move_list_repeat full_gc_data full_gc_pointer gc_forward_ptr_ok_typed gc_move_ok_typed gc_move_list_ok_typed gc_move_loop_ok_typed gc_move_list_IMP_LENGTH_typed full_gc_IMP_LENGTH_typed \
+  gc_forward_ptr_typed gc_move_typed gc_move_list_typed gc_move_loop_typed full_gc_typed gc_move_list_repeat full_gc_data full_gc_pointer gc_forward_ptr_ok_typed gc_move_ok_typed gc_move_list_ok_typed gc_move_loop_ok_typed gc_move_list_IMP_LENGTH_typed full_gc_IMP_LENGTH_typed gc_move_IMP_isDataElement_typed gc_move_list_IMP_isDataElement_typed gc_move_loop_IMP_isDataElement_typed full_gc_IMP_isDataElement_typed \
   "$cake_dir/compiler/backend/gc/copying_gcScript.sml" "$cake_dir/compiler/backend/gc"
 
 run_probe data_to_word_gc_stack_probeScript.sml data_to_word_gc_stack_probe.out \

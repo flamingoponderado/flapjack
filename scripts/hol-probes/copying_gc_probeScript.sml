@@ -22,3 +22,7 @@ val _ = show "gc_move_list_ok_typed" gc_move_list_ok;
 val _ = show "gc_move_loop_ok_typed" gc_move_loop_ok;
 val _ = show "gc_move_list_IMP_LENGTH_typed" gc_move_list_IMP_LENGTH;
 val _ = show "full_gc_IMP_LENGTH_typed" full_gc_IMP_LENGTH;
+val _ = show "gc_move_IMP_isDataElement_typed" gc_move_IMP_isDataElement;
+val _ = show "gc_move_list_IMP_isDataElement_typed" gc_move_list_IMP_isDataElement;
+val _ = show "gc_move_loop_IMP_isDataElement_typed" gc_move_loop_IMP_isDataElement;
+val _ = show "full_gc_IMP_isDataElement_typed" full_gc_IMP_isDataElement;
