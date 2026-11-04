@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
 import Flapjack.SemanticPrimitivesProps.ResultRelation
 
 /-! Observational consequences of same-clock simulations between programs. -/
@@ -101,5 +103,89 @@ theorem semantics_eq_of_related_evaluations {C D F : Type} (ffi : HolFfiState F)
     · simpa [(same clock).2.2] using eq
   unfold semantics
   rw [failureEq, terminatingEq, traceEq]
+
+
+/-- A forward simulation with a target clock allowance preserves whole-program
+behavior when it preserves observable result shape and FFI state. The source
+and target may use different programs, code maps, and compiler carriers. This
+is Flapjack-specific observational infrastructure. -/
+theorem semantics_eq_of_related_clocked_simulation {C D F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+    (sourceCode targetCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (sourceOracle : CompileOracle C) (targetOracle : CompileOracle D)
+    (sourceCompiler : Compiler C) (targetCompiler : Compiler D)
+    (sourceProgram targetProgram : List ClosLang.Exp)
+    (sourceSafe : ∀ clock, (evaluate sourceProgram [] (initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock)).1 ≠ .err (.abort .typeError))
+    (simulation : ∀ clock result final,
+      evaluate sourceProgram [] (initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock) = (result, final) →
+      ∃ extra targetResult targetFinal,
+        evaluate targetProgram [] (initialState ffi maxApp targetCode targetOracle targetCompiler (clock + extra)) =
+          (targetResult, targetFinal) ∧
+        resultOutcome result = resultOutcome targetResult ∧
+        (result = .err (.abort .typeError) ↔ targetResult = .err (.abort .typeError)) ∧
+        final.ffi = targetFinal.ffi) :
+    semantics ffi maxApp sourceCode sourceOracle sourceCompiler sourceProgram =
+      semantics ffi maxApp targetCode targetOracle targetCompiler targetProgram := by
+  classical
+  have targetSafe : ∀ clock, (evaluate targetProgram [] (initialState ffi maxApp targetCode targetOracle targetCompiler clock)).1 ≠ .err (.abort .typeError) := by
+    intro clock targetError
+    cases sourceRun : evaluate sourceProgram [] (initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock) with
+    | mk sourceResult sourceFinal =>
+      obtain ⟨extra, targetResult, targetFinal, targetRun, _, errorEq, _⟩ := simulation clock sourceResult sourceFinal sourceRun
+      cases targetRun0 : evaluate targetProgram [] (initialState ffi maxApp targetCode targetOracle targetCompiler clock) with
+      | mk oldResult oldFinal =>
+        have oldError : oldResult = .err (.abort .typeError) := by simpa [targetRun0] using targetError
+        subst oldResult
+        have shifted := evaluate_initial_addClock ffi maxApp clock extra targetCode targetOracle targetCompiler targetProgram
+          (.err (.abort .typeError)) oldFinal targetRun0 (by simp)
+        rw [targetRun] at shifted
+        have targetEq : targetResult = .err (.abort .typeError) := (Prod.mk.inj shifted).1
+        exact sourceSafe clock (by simpa [sourceRun] using errorEq.mpr targetEq)
+  have terminatingEq : terminatingObservation ffi maxApp sourceCode sourceOracle sourceCompiler sourceProgram =
+      terminatingObservation ffi maxApp targetCode targetOracle targetCompiler targetProgram := by
+    funext behavior
+    apply propext
+    constructor
+    · rintro ⟨clock, result, final, outcome, run, outcomeEq, behaviorEq⟩
+      obtain ⟨extra, targetResult, targetFinal, targetRun, resultEq, _, ffiEq⟩ := simulation clock result final run
+      refine ⟨clock + extra, targetResult, targetFinal, outcome, targetRun, ?_, ?_⟩
+      · exact (outcomeCondition targetResult outcome).mpr (resultEq.symm.trans ((outcomeCondition result outcome).mp outcomeEq))
+      · simpa [ffiEq] using behaviorEq
+    · rintro ⟨clock, result, targetFinal, outcome, targetRun, outcomeEq, behaviorEq⟩
+      have notTimeout : result ≠ .err (.abort .timeoutError) := by
+        intro impossible
+        subst result
+        simp at outcomeEq
+      cases sourceRun : evaluate sourceProgram [] (initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock) with
+      | mk sourceResult sourceFinal =>
+        obtain ⟨extra, simulatedResult, simulatedFinal, simulatedRun, resultEq, _, ffiEq⟩ := simulation clock sourceResult sourceFinal sourceRun
+        have shifted := evaluate_initial_addClock ffi maxApp clock extra targetCode targetOracle targetCompiler targetProgram
+          result targetFinal targetRun notTimeout
+        rw [simulatedRun] at shifted
+        obtain ⟨resultSame, stateSame⟩ := Prod.mk.inj shifted
+        have sourceOutcome : resultOutcome sourceResult = some outcome := by
+          rw [resultEq, resultSame]
+          exact (outcomeCondition result outcome).mp outcomeEq
+        have finalFfi : sourceFinal.ffi = targetFinal.ffi := by rw [ffiEq, stateSame]
+        exact ⟨clock, sourceResult, sourceFinal, outcome, sourceRun,
+          (outcomeCondition sourceResult outcome).mpr sourceOutcome, by simpa [finalFfi] using behaviorEq⟩
+  have tracesEq :
+      HolLList.buildLprefixLub (fun trace => ∃ clock,
+        trace = HolLList.fromList (evaluate sourceProgram [] (initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock)).2.ffi.ioEvents) =
+      HolLList.buildLprefixLub (fun trace => ∃ clock,
+        trace = HolLList.fromList (evaluate targetProgram [] (initialState ffi maxApp targetCode targetOracle targetCompiler clock)).2.ffi.ioEvents) := by
+    apply clocked_traces_lub_eq _ _
+      (evaluate_initial_ioEvents_mono ffi maxApp sourceCode sourceOracle sourceCompiler sourceProgram)
+      (evaluate_initial_ioEvents_mono ffi maxApp targetCode targetOracle targetCompiler targetProgram)
+    intro clock
+    cases sourceRun : evaluate sourceProgram [] (initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock) with
+    | mk result final =>
+      obtain ⟨extra, targetResult, targetFinal, targetRun, _, _, ffiEq⟩ := simulation clock result final sourceRun
+      exact ⟨extra, by simp [targetRun, ffiEq]⟩
+  unfold semantics
+  simp only [show ¬ ∃ clock, (evaluate sourceProgram [] (initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock)).1 = .err (.abort .typeError) from
+    fun ⟨clock, error⟩ => sourceSafe clock error,
+    show ¬ ∃ clock, (evaluate targetProgram [] (initialState ffi maxApp targetCode targetOracle targetCompiler clock)).1 = .err (.abort .typeError) from
+    fun ⟨clock, error⟩ => targetSafe clock error, if_false]
+  rw [terminatingEq, tracesEq]
 
 end Flapjack.Compiler.Backend.ClosSem

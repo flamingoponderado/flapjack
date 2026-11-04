@@ -17,6 +17,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantBodyPureApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantBodyImpureApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateOracleControl
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateOracleAdvance
+import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
 
 /-! Incremental installation under direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall
@@ -26457,5 +26458,99 @@ theorem compileFuel_enabled_preserves_IncrementalCodeInv {C F : Type}
     expressions output (.ln, []) required g traversal syntaxGood.2.2 (by simp [LabelsFresh]) initialWf syntaxGood.1 syntaxGood.2.1
     requiredGrowth allowed sourceEnv targetEnv source final target result coverage run notType envs envWf sourceWf states
     disjoint targetCompiler inv
+
+
+/-- Initial closure states are related regardless of the target code map.
+This is Flapjack-specific bounded-simulation infrastructure. -/
+theorem initialState_stateRelFuel {C F : Type} (fuel : Nat) (g : State) (allowed : Set Nat)
+    (ffi : HolFfiState F) (maxApp clock : Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (sourceOracle : ClosSem.CompileOracle (NumSet × C)) (targetOracle : ClosSem.CompileOracle C)
+    (sourceCompiler : ClosSem.Compiler (NumSet × C)) (targetCompiler : ClosSem.Compiler C) :
+    StateRelFuel fuel g allowed
+      (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler clock)
+      (ClosSem.initialState ffi maxApp code targetOracle targetCompiler clock) := by
+  simp [StateRelFuel, ClosSem.initialState, ClosMti.fmapRel, HolFiniteMapExact.empty]
+
+/-- Source and target initial-state runs of the enabled production closure-call
+pass have related results and equal FFI states after adding a target clock
+allowance. The source-shaped invariant remains an explicit premise; this is
+fuel-indexed Flapjack infrastructure, not a HOL theorem port. -/
+theorem compileFuel_enabled_initial_simulation {C F : Type}
+    (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (expressions output : List ClosLang.Exp) (required g : State)
+    (passRun : compileFuel passFuel true expressions = some (output, required))
+    (syntaxGood : syntaxOk expressions) (requiredGrowth : stateExtends required g) (allowed : Set Nat)
+    (coverage : ∀ loc ∈ codeLocations expressions, ¬ sptDomain required.1 loc → loc ∈ allowed)
+    (disjoint : Disjoint allowed (sptDomain g.1)) (ffi : HolFfiState F) (maxApp clock : Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (sourceOracle : ClosSem.CompileOracle (NumSet × C)) (targetOracle : ClosSem.CompileOracle C)
+    (sourceCompiler : ClosSem.Compiler (NumSet × C))
+    (inv : IncrementalCodeInv passFuel g allowed
+      (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler clock)
+      (ClosSem.initialState ffi maxApp code targetOracle compiler clock))
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (run : evaluate expressions []
+      (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler clock) = (result, final))
+    (notType : result ≠ .err (.abort .typeError)) :
+    ∃ extraClock finalG finalAllowed targetResult targetFinal,
+      evaluate output [] (ClosSem.initialState ffi maxApp code targetOracle compiler (clock + extraClock)) =
+        (targetResult, targetFinal) ∧
+      resultRel (List.Forall₂ (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code))
+        (ValueRelFuel relationFuel finalG finalAllowed targetFinal.code) result targetResult ∧
+      final.ffi = targetFinal.ffi ∧ IncrementalCodeInv passFuel finalG finalAllowed final targetFinal := by
+  let source := ClosSem.initialState ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler clock
+  let target := ClosSem.initialState ffi maxApp code targetOracle compiler clock
+  have envs : EnvRelFuel relationFuel g allowed target.code [] [] 0 (output.map (0, ·)) := by
+    apply (envRelFuel_iff _ _ _ _ _ _ _ _).mpr
+    simp [envRel]
+  obtain ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, _, _, _, targetRun,
+    related, _, states, _, finalInv⟩ :=
+    compileFuel_enabled_preserves_IncrementalCodeInv passFuel relationFuel compiler expressions output required g passRun
+      syntaxGood requiredGrowth allowed [] [] source final target result coverage run notType envs .nil
+      (initialState_wellFormedFuel relationFuel g allowed code ffi maxApp sourceOracle sourceCompiler clock)
+      (initialState_stateRelFuel relationFuel g allowed ffi maxApp clock code sourceOracle targetOracle sourceCompiler compiler)
+      disjoint rfl inv
+  exact ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, by simpa [target, ClosSem.initialState] using targetRun,
+    related, states.1, finalInv⟩
+
+
+/-- The enabled production closure-call pass preserves the proof-side
+whole-program behavior when the source-shaped initial invariant holds and the
+source does not fail. The bounded direct-call representation remains distinct
+from HOL's total pass, so this is not tagged as a HOL theorem port. -/
+theorem compileFuel_enabled_semantics {C F : Type}
+    (passFuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (expressions output : List ClosLang.Exp) (required g : State)
+    (passRun : compileFuel passFuel true expressions = some (output, required))
+    (syntaxGood : syntaxOk expressions) (requiredGrowth : stateExtends required g) (allowed : Set Nat)
+    (coverage : ∀ loc ∈ codeLocations expressions, ¬ sptDomain required.1 loc → loc ∈ allowed)
+    (disjoint : Disjoint allowed (sptDomain g.1)) (ffi : HolFfiState F) (maxApp : Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (sourceOracle : ClosSem.CompileOracle (NumSet × C)) (targetOracle : ClosSem.CompileOracle C)
+    (sourceCompiler : ClosSem.Compiler (NumSet × C))
+    (inv : IncrementalCodeInv passFuel g allowed
+      (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler 0)
+      (ClosSem.initialState ffi maxApp code targetOracle compiler 0))
+    (sourceSafe : ClosSem.semantics ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler expressions ≠ .fail) :
+    ClosSem.semantics ffi maxApp code targetOracle compiler output =
+      ClosSem.semantics ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler expressions := by
+  have safe := (ClosSem.semantics_ne_fail_iff ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler expressions).mp sourceSafe
+  symm
+  apply ClosSem.semantics_eq_of_related_clocked_simulation ffi maxApp HolFiniteMapExact.empty code
+    sourceOracle targetOracle sourceCompiler compiler expressions output safe
+  intro clock result final run
+  have clockInv : IncrementalCodeInv passFuel g allowed
+      (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty sourceOracle sourceCompiler clock)
+      (ClosSem.initialState ffi maxApp code targetOracle compiler clock) := by
+    simpa [IncrementalCodeInv, ClosSem.initialState] using inv
+  have notType : result ≠ .err (.abort .typeError) := by
+    exact fun h => safe clock (by simpa [run] using h)
+  obtain ⟨extra, finalG, finalAllowed, targetResult, targetFinal, targetRun, related, ffiEq, _⟩ :=
+    compileFuel_enabled_initial_simulation passFuel relationFuel compiler expressions output required g passRun syntaxGood
+      requiredGrowth allowed coverage disjoint ffi maxApp clock code sourceOracle targetOracle sourceCompiler clockInv result final run notType
+  exact ⟨extra, targetResult, targetFinal, targetRun, (ClosSem.resultRelOutcome _ _ result targetResult related).1,
+    (ClosSem.resultRelOutcome _ _ result targetResult related).2, ffiEq⟩
 
 end Flapjack.Compiler.Backend.ClosCall
