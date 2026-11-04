@@ -203,6 +203,37 @@ theorem doAppAux_boolTest_code {C F : Type} (test : AstHOL.Test) (args : List Da
             obtain ⟨rfl, rfl⟩ := run
             exact rfl
 
+theorem doAppAux_elemAt_code {C F : Type} (index : Nat) (args : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value)
+    (run : doAppAux (.blockOp (.elemAt index)) args state = .val (value, next)) :
+    next.code = state.code := by
+  cases args with
+  | nil => simp [doAppAux, applyNonFfi] at run
+  | cons first rest =>
+    cases rest with
+    | cons second tail => simp [doAppAux, applyNonFfi] at run
+    | nil =>
+      cases first <;> simp [doAppAux, applyNonFfi] at run
+      case block stamp tag values =>
+        cases found : values[index]? with
+        | none => simp [found] at run
+        | some item =>
+          simp [found] at run
+          obtain ⟨rfl, rfl⟩ := run
+          exact rfl
+      case refPtr flag ptr =>
+        cases found : sptLookup ptr state.refs with
+        | none => simp [found] at run
+        | some entry =>
+          cases entry <;> simp [found] at run
+          case valueArray values =>
+            cases slot : values[index]? with
+            | none => simp [slot] at run
+            | some item =>
+              simp [slot] at run
+              obtain ⟨rfl, rfl⟩ := run
+              exact rfl
+
 /-- A code-preserving block auxiliary gives a code-preserving assignment. -/
 theorem evaluate_assign_block_code_of_aux {C F : Type} (dest : Nat) (op : ClosLang.BlockOp)
     (names : List Nat) (live : Option NumSet) (state : State C F)
@@ -271,6 +302,9 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
     intro state
     exact evaluate_assign_block_code_of_aux dest .lengthBlock [src] none state
       (doAppAux_blockCompare_code .lengthBlock (Or.inr (Or.inr (Or.inr rfl))))
+  | element dest src index =>
+    intro state
+    exact evaluate_assign_block_code_of_aux dest (.elemAt index) [src] none state (doAppAux_elemAt_code index)
   | lessConst dest src n => intro state; exact evaluate_assign_int_code dest (.lessConstSmall n) [src] none state
   | boolTest dest left right test =>
     intro state

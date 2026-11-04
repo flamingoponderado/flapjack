@@ -7,6 +7,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BoolTest
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.LessConst
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockEmpty
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockLength
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockElement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagEmpty
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagOutOfRange
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTag
@@ -153,6 +154,7 @@ inductive VerifiedFragment : DataLang.Prog → Prop where
   | blockTag (dest src tag : Nat) : VerifiedFragment (.assign dest (.blockOp (.tagEq tag)) [src] none)
   | blockEmpty (dest src : Nat) : VerifiedFragment (.assign dest (.blockOp (.lenEq 0)) [src] none)
   | blockLength (dest src : Nat) : VerifiedFragment (.assign dest (.blockOp .lengthBlock) [src] none)
+  | element (dest src index : Nat) : VerifiedFragment (.assign dest (.blockOp (.elemAt index)) [src] none)
   | lessConst (dest src n : Nat) : VerifiedFragment (.assign dest (.intOp (.lessConstSmall n)) [src] none)
   | boolTest (dest left right : Nat) (test : AstHOL.Test) :
       VerifiedFragment (.assign dest (.blockOp (.boolTest test)) [left, right] none)
@@ -208,6 +210,9 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
   | blockLength dest src =>
     intro label source target locs related safe
     exact Or.inl (assignBlockLength64_of_safe conf secn label l1 l2 source target locs related dest src safe)
+  | element dest src index =>
+    intro label source target locs related safe
+    exact Or.inl (assignElement64_of_safe conf secn label l1 l2 source target locs related dest src index safe)
   | lessConst dest src n =>
     intro label source target locs related safe
     exact Or.inl (assignLessConst64_of_safe conf secn label l1 l2 source target locs related dest src n safe)
