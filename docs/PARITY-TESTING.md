@@ -15,6 +15,16 @@ with `python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-p
 This compares complete compiler output, diagnostics, and exit status; it is
 not a general equivalence proof.
 
+After merging `main` at `efc992d38`, the executable also matched 40 generated
+nested programs, 50 structured programs with backend options, and 100
+display mutations:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 116833701 --count 40 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 116833702 --count 50 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --display-mutations --seed 116833703 --count 100 --timeout 90
+```
+
 On 2026-11-04, 40 generated nested-closure programs and 80 structured
 programs with varied backend options matched the pinned executable's complete
 output. All 38 structured templates also matched, including escaping mutual

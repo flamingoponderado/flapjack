@@ -11,7 +11,7 @@ theorem stateRel64_getNumberBounds {C F : Type} (conf : Config) (l1 l2 : Nat)
     (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
     (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
     (name : Nat) (i : Int) (sourceRun : DataSem.getVar name source.locals = some (.number i))
-    (n : Nat) (bound : n < 2305843009213693952) :
+    (n : Nat) (bound : n ≤ 2305843009213693952) :
     ∃ word : BitVec 64, WordSemStateFiniteExact.getVar (adjustVar name) target = some (.word word) ∧
       ((word.rotateRight 2).toNat < n ↔ 0 ≤ i ∧ i < (n : Int)) := by
   obtain ⟨location, wordRun⟩ := stateRel64_getVar conf l1 l2 source target none locs related name (.number i) sourceRun
@@ -37,5 +37,19 @@ theorem stateRel64_getNumberBounds {C F : Type} (conf : Config) (l1 l2 : Nat)
       target.store target.memory target.mdomain i word roots n
     · simpa [encoding] using focused
     · exact bound
+
+/-- Inclusive numeric comparison used for byte-array end positions. -/
+theorem stateRel64_getNumberBoundsLe {C F : Type} (conf : Config) (l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (name : Nat) (i : Int) (sourceRun : DataSem.getVar name source.locals = some (.number i))
+    (n : Nat) (bound : n < 2305843009213693952) :
+    ∃ word : BitVec 64, WordSemStateFiniteExact.getVar (adjustVar name) target = some (.word word) ∧
+      ((word.rotateRight 2).toNat ≤ n ↔ 0 ≤ i ∧ i ≤ (n : Int)) := by
+  obtain ⟨word, run, comparison⟩ := stateRel64_getNumberBounds conf l1 l2 source target locs related
+    name i sourceRun (n + 1) (by omega)
+  refine ⟨word, run, ?_⟩
+  norm_cast at comparison
+  omega
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

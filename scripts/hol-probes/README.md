@@ -168,7 +168,7 @@ identities; the capture supports source review, not pass correctness.
 `data_to_word_fragment_comp_probe.out` captures the inferred type of the
 original `data_to_word$comp` and representative 64-bit results for nested
 control flow, numeric constants, Boolean operations, constructor tag-and-length
-tests (including packed, header, and unencodable queries), block bounds checks,
+tests (including packed, header, and unencodable queries), block and byte-array bounds checks,
 and label/global-pointer assignments. `DataToWordFragmentCompilerParity.lean`
 checks the same results in Lean, and `fragmentCompile64_agrees` proves that the
 source-shaped fragment traversal agrees with the executed compiler for every

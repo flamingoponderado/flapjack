@@ -177,6 +177,42 @@ theorem doAppAux_blockBounds_code {C F : Type} (args : List DataSem.Value)
         all_goals obtain ⟨rfl, rfl⟩ := run
         all_goals rfl
 
+theorem doAppAux_byteBounds_code {C F : Type} (loose : Bool) (args : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value)
+    (run : doAppAux (.memOp (.boundsCheckByte loose)) args state = .val (value, next)) : next.code = state.code := by
+  cases args with
+  | nil => simp [doAppAux, applyNonFfi] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doAppAux, applyNonFfi] at run
+    | cons second tail =>
+      cases tail with
+      | cons third tail => simp [doAppAux, applyNonFfi] at run
+      | nil =>
+        cases first <;> cases second <;> simp [doAppAux, applyNonFfi] at run
+        case refPtr.number flag ptr index =>
+          cases found : sptLookup ptr state.refs with
+          | none => simp [found] at run
+          | some entry =>
+            cases entry <;> simp [found] at run
+            case byteArray mutability bytes =>
+              obtain ⟨rfl, rfl⟩ := run
+              rfl
+
+theorem evaluate_assign_byteBounds_code {C F : Type} (dest : Nat) (loose : Bool)
+    (names : List Nat) (state : State C F) :
+    (evaluate (.assign dest (.memOp (.boundsCheckByte loose)) names none) state).2.code = state.code := by
+  apply evaluate_assign_code_step
+  intro args before after value code run
+  simp only [doApp] at run
+  cases space : doSpace (.memOp (.boundsCheckByte loose)) args before with
+  | none => simp [space] at run
+  | some accounted =>
+    simp only [space] at run
+    have first := (doSpace_code_const (.memOp (.boundsCheckByte loose)) args before accounted space).1
+    have second := doAppAux_byteBounds_code loose args _ after value run
+    simpa [doStack, doLimSafe, first, code] using second
+
 
 theorem doAppAux_boolNot_code {C F : Type} (args : List DataSem.Value)
     (state next : State C F) (value : DataSem.Value)
@@ -321,6 +357,9 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
   | blockBounds dest base index =>
     intro state
     exact evaluate_assign_block_code_of_aux dest .boundsCheckBlock [base, index] none state doAppAux_blockBounds_code
+  | byteBounds dest base index loose =>
+    intro state
+    exact evaluate_assign_byteBounds_code dest loose [base, index] state
   | element dest src index =>
     intro state
     exact evaluate_assign_block_code_of_aux dest (.elemAt index) [src] none state (doAppAux_elemAt_code index)

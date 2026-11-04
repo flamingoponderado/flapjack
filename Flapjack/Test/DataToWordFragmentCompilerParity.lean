@@ -50,6 +50,16 @@ example : fragmentCompile64 conf 5 2 (.assign 3 (.blockOp .boundsCheckBlock) [1,
       (.seq (.assign 3 (shiftN .ror (.var 6) 2))
         (.ite .lower 3 (.reg 1) (.assign 8 (.const 18)) (.assign 8 (.const 2)))), 2) := by rfl
 
+example : fragmentCompile64 conf 5 2 (.assign 3 (.memOp (.boundsCheckByte false)) [1, 2] none) =
+    some (.seq (.assign 1 (.op .sub [shiftN .lsr (.load (realAddr conf 4)) 45, .const 8]))
+      (.seq (.assign 3 (shiftN .ror (.var 6) 2))
+        (.ite .lower 3 (.reg 1) (.assign 8 (.const 18)) (.assign 8 (.const 2)))), 2) := by rfl
+
+example : fragmentCompile64 conf 5 2 (.assign 3 (.memOp (.boundsCheckByte true)) [1, 2] none) =
+    some (.seq (.assign 1 (.op .sub [shiftN .lsr (.load (realAddr conf 4)) 45, .const 8]))
+      (.seq (.assign 3 (shiftN .ror (.var 6) 2))
+        (.ite .notLower 1 (.reg 3) (.assign 8 (.const 18)) (.assign 8 (.const 2)))), 2) := by rfl
+
 example : fragmentCompile64 conf 5 2 (.assign 3 (.blockOp (.cons 17)) [] none) =
     some (.assign 8 (.const 274), 2) := by rfl
 

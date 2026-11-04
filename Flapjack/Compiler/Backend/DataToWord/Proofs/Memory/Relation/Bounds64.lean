@@ -5,7 +5,7 @@ namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend.DataSem
 
 /-- Rotating a small integer gives the original nonnegative index for bounds comparisons. -/
-theorem smallnum_rotateRight_bounds64 (i : Int) (n : Nat) (small : smallInt 64 i) (bound : n < 2305843009213693952) :
+theorem smallnum_rotateRight_bounds64 (i : Int) (n : Nat) (small : smallInt 64 i) (bound : n ≤ 2305843009213693952) :
     (((smallnum i : BitVec 64).rotateRight 2).toNat < n ↔ 0 ≤ i ∧ i < (n : Int)) := by
   have interval : -(2305843009213693952 : Int) ≤ i ∧ i < 2305843009213693952 := by
     simpa [smallInt] using small
@@ -22,8 +22,8 @@ theorem smallnum_rotateRight_bounds64 (i : Int) (n : Nat) (small : smallInt 64 i
     rw [Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.smallnum_i2w, BitVec.ofInt_mul]
     simp only [show BitVec.ofInt 64 4 = 4 by rfl]
     bv_decide
-  have b : (BitVec.ofNat 64 n).ult 2305843009213693952 = true := by
-    simp [BitVec.ult_eq_decide, nNat, bound]
+  have b : (BitVec.ofNat 64 n).ule 2305843009213693952 = true := by
+    simp [BitVec.ule_eq_decide, nNat, bound]
   have l : (BitVec.ofInt 64 i).slt 16140901064495857664 = false := by
     simp [BitVec.slt_eq_decide, vInt, not_lt.mpr interval.1]
   have u : (BitVec.ofInt 64 i).slt 2305843009213693952 = true := by
@@ -35,7 +35,7 @@ theorem smallnum_rotateRight_bounds64 (i : Int) (n : Nat) (small : smallInt 64 i
   simpa [BitVec.ult_eq_decide, BitVec.slt_eq_decide, vInt, nNat, nInt] using final
 /-- A heap pointer rotates its marker bit above any valid bound. -/
 theorem pointer_rotateRight_bounds64 (v n : BitVec 64) (bit : v.getLsbD 0 = true)
-    (bound : n.ult 2305843009213693952 = true) :
+    (bound : n.ule 2305843009213693952 = true) :
     (v.rotateRight 2).ult n = false := by
   bv_decide
 
@@ -48,7 +48,7 @@ theorem memoryRel_numberBounds64 (conf : Config) (bigEndian : Bool)
     (memory : BitVec 64 → WordLocW 64) (domain : BitVec 64 → Bool)
     (i : Int) (word : BitVec 64) (vars : List (Value × WordLocW 64)) (n : Nat)
     (related : memoryRel conf bigEndian next refs space store memory domain ((.number i, .word word) :: vars))
-    (bound : n < 2305843009213693952) :
+    (bound : n ≤ 2305843009213693952) :
     ((word.rotateRight 2).toNat < n ↔ 0 ≤ i ∧ i < (n : Int)) := by
   by_cases small : smallInt 64 i
   · have encoded := memoryRel_numberImp conf bigEndian next refs space store memory domain i (.word word) vars
@@ -66,8 +66,8 @@ theorem memoryRel_numberBounds64 (conf : Config) (bigEndian : Bool)
       apply Nat.mod_eq_of_lt
       norm_num
       omega
-    have b : (BitVec.ofNat 64 n).ult 2305843009213693952 = true := by
-      simp [BitVec.ult_eq_decide, nNat, bound]
+    have b : (BitVec.ofNat 64 n).ule 2305843009213693952 = true := by
+      simp [BitVec.ule_eq_decide, nNat, bound]
     have notBelow := pointer_rotateRight_bounds64 word (BitVec.ofNat 64 n) low b
     have target : ¬ (word.rotateRight 2).toNat < n := by
       simpa [BitVec.ult_eq_decide, nNat] using notBelow
@@ -77,5 +77,19 @@ theorem memoryRel_numberBounds64 (conf : Config) (bigEndian : Bool)
       norm_num [smallInt]
       omega
     exact iff_of_false target source
+
+/-- Inclusive variant for byte operations that admit an index at the end. -/
+theorem memoryRel_numberBoundsLe64 (conf : Config) (bigEndian : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW 64))
+    (memory : BitVec 64 → WordLocW 64) (domain : BitVec 64 → Bool)
+    (i : Int) (word : BitVec 64) (vars : List (Value × WordLocW 64)) (n : Nat)
+    (related : memoryRel conf bigEndian next refs space store memory domain ((.number i, .word word) :: vars))
+    (bound : n < 2305843009213693952) :
+    ((word.rotateRight 2).toNat ≤ n ↔ 0 ≤ i ∧ i ≤ (n : Int)) := by
+  have comparison := memoryRel_numberBounds64 conf bigEndian next refs space store memory domain
+    i word vars (n + 1) related (by omega)
+  norm_cast at comparison
+  omega
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

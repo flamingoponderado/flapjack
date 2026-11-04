@@ -64,7 +64,7 @@ theorem assignBlockBounds64 {C F : Type} (conf : Config) (secn label l1 l2 : Nat
   have lenBound := stateRel64_blockLengthBound conf l1 l2 source target locs related base stamp tag values blockRun
   have bound : values.length < 2305843009213693952 := by norm_num at lenBound; omega
   obtain ⟨w, targetRun, comparison⟩ := stateRel64_getNumberBounds conf l1 l2 source target locs related
-    index i indexRun values.length bound
+    index i indexRun values.length (by omega)
   let result := decide (0 ≤ i ∧ i < (values.length : Int))
   let target1 := WordSemStateFiniteExact.setVar 1 (.word (BitVec.ofNat 64 values.length)) target
   let target2 := WordSemStateFiniteExact.setVar 3 (.word (w.rotateRight 2)) target1
