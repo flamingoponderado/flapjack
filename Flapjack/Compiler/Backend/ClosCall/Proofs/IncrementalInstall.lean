@@ -21146,6 +21146,7 @@ theorem doInstall_nonType_preserves_IncrementalCodeInv {C F : Type} (fuel relati
       doInstall targetValues target =
         (if source.clock = 0 then .err (.abort .timeoutError) else .val converted.1, targetFinal) ∧
       result = (if source.clock = 0 then .err (.abort .timeoutError) else .val expressions) ∧
+      expressions = (source.compileOracle 0).2.1 ∧
       stateExtends g (nextKnown, converted.2 ++ g.2) ∧
       Disjoint (allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc}) (sptDomain nextKnown) ∧
       StateRelFuel relationFuel (nextKnown, converted.2 ++ g.2)
@@ -21192,7 +21193,7 @@ theorem doInstall_nonType_preserves_IncrementalCodeInv {C F : Type} (fuel relati
   have finalStates' := stateRelFuel_mono finalStates (stateExtends_refl _ newReady.well.2) allowedGrowth
   have installedWf := doInstall_wellFormedFuel sourceValues source final result sourceWf (ready.auxEmpty 0) run
   have finalWf := stateWellFormedFuel_mono installedWf extended allowedGrowth codeGrowth
-  refine ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, extended,
+  refine ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq, extended,
     finalDisjoint, finalStates', finalWf, ?_⟩
   refine ⟨finalStates.2.2.2.2.2, ?_, finalOracle, newReady.well, newReady.known, ?_, exactCode, ?_⟩
   · simpa [targetCompiler] using finalCompiler
@@ -22041,5 +22042,236 @@ theorem evaluateApp_sim_with_exactCode {C F : Type}
   exact ⟨extraClock, finalG, finalAllowed, targetResult, targetFinal, extended, allowedGrowth, finalDisjoint,
     finalAvoids, targetRun, related, resultWf, finalStates, finalWf, finalReady, codeEq,
     finalCompiler, targetFinalCompiler, finalOracle, codeGrowth⟩
+
+/-- Every newly open location is drawn from an oracle entry consumed between
+the two source states. This is Flapjack-specific simulation infrastructure. -/
+def OpenLocationOrigin {C F : Type} (allowed : Set Nat) (source : ClosSem.State C F)
+    (nextAllowed : Set Nat) (final : ClosSem.State C F) : Prop :=
+  ∃ count, final.compileOracle = holShiftSeq count source.compileOracle ∧
+    nextAllowed ⊆ allowed ∪ OraclePastLocations source.compileOracle count
+
+/-- Evaluation and its related target run preserve the fuel-indexed code
+invariant when the final open set is bounded by the original open set and the
+consumed source-oracle prefix. The open-location origin premise remains a
+separate simulation obligation. This is Flapjack-specific infrastructure, not
+HOL's unbounded `code_inv` theorem. -/
+theorem evaluate_final_IncrementalCodeInv_of_open_origin {C F : Type} (fuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (g finalG : State) (allowed finalAllowed : Set Nat)
+    (source final : ClosSem.State (NumSet × C) F) (target targetFinal : ClosSem.State C F)
+    (sourceExps targetExps : List ClosLang.Exp) (sourceEnv targetEnv : List ClosSem.Value)
+    (sourceResult targetResult : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (extraClock : Nat) (inv : IncrementalCodeInv fuel g allowed source target)
+    (sourceRun : evaluate sourceExps sourceEnv source = (sourceResult, final))
+    (targetRun : evaluate targetExps targetEnv {target with clock := target.clock + extraClock} = (targetResult, targetFinal))
+    (finalStates : StateRelFuel relationFuel finalG finalAllowed final targetFinal)
+    (readyFinal : IncrementalInstallReady finalG final targetFinal)
+    (finalCompiler : final.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler) (targetFinalCompiler : targetFinal.compile = compiler)
+    (finalOracle : targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle)
+    (openOrigin : OpenLocationOrigin allowed source finalAllowed final) :
+    IncrementalCodeInv fuel finalG finalAllowed final targetFinal := by
+  have sourceCompiler : source.compile = compileIncFuelCallback fuel compiler := by
+    simpa [targetCompiler] using inv.2.1
+  obtain ⟨count, _, sourceShift, _, checked⟩ :=
+    evaluate_compileIncFuel_checkedPrefix fuel compiler sourceExps sourceEnv source final sourceResult sourceCompiler sourceRun
+  have steps : ∀ index, index < count → ∃ converted,
+      compileIncFuel? fuel (source.compileOracle index).1.1 (source.compileOracle index).2 =
+        some ((source.compileOracle (index + 1)).1.1, converted) := by
+    intro index bound
+    obtain ⟨converted, _, _, pass, _⟩ := checked index bound
+    exact ⟨converted, pass⟩
+  have knownOrigin := checkedPrefix_known_origin fuel source.compileOracle count steps
+  have initialOrdered : BackendProps.oracleMonotonic
+      (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain g.1 ∪ allowed) source.compileOracle := inv.2.2.2.2.2.1
+  have orderedPrefix := oracleMonotonic_after_prefix (sptDomain g.1 ∪ allowed) source.compileOracle count initialOrdered
+  rw [← sourceShift] at orderedPrefix
+  obtain ⟨originCount, originShift, originBound⟩ := openOrigin
+  have orderedOpen := oracleMonotonic_after_prefix (sptDomain g.1 ∪ allowed) source.compileOracle originCount initialOrdered
+  rw [← originShift] at orderedOpen
+  have finalOrdered : BackendProps.oracleMonotonic
+      (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain finalG.1 ∪ finalAllowed) final.compileOracle := by
+    constructor
+    · exact orderedPrefix.1
+    · intro index x y member later
+      rcases member with known | openLoc
+      · apply orderedPrefix.2 index x y ?_ later
+        change sptDomain finalG.1 x at known
+        have sourceKnown : sptDomain (source.compileOracle count).1.1 x := by
+          simpa [readyFinal.known, sourceShift, holShiftSeq] using known
+        rcases knownOrigin x sourceKnown with initial | past
+        · apply Or.inl
+          apply Or.inl
+          change sptDomain g.1 x
+          rw [inv.2.2.2.2.1]
+          exact initial
+        · exact Or.inr past
+      · apply orderedOpen.2 index x y ?_ later
+        rcases originBound openLoc with old | past
+        · exact Or.inl (Or.inr old)
+        · exact Or.inr past
+  have finalSyntax : ∀ index, syntaxOk (final.compileOracle index).2.1 ∧ (final.compileOracle index).2.2 = [] := by
+    intro index
+    simpa [sourceShift, holShiftSeq] using inv.2.2.2.2.2.2.2 (index + count)
+  have finalCode := evaluate_finalCode_exact fuel compiler g finalG allowed source final target targetFinal
+    sourceExps targetExps sourceEnv targetEnv sourceResult targetResult extraClock inv sourceCompiler sourceRun targetRun readyFinal finalOracle
+  refine ⟨finalStates.2.2.2.2.2, ?_, finalOracle, readyFinal.well, readyFinal.known, finalOrdered, finalCode, finalSyntax⟩
+  simpa [targetFinalCompiler] using finalCompiler
+
+/-- Related closure applications preserve the fuel-indexed code invariant
+when the final open set is bounded by the original set and consumed source
+prefix. The origin premise remains a separate simulation obligation. This is
+Flapjack-specific infrastructure. -/
+theorem evaluateApp_final_IncrementalCodeInv_of_open_origin {C F : Type} (fuel relationFuel : Nat) (compiler : ClosSem.Compiler C)
+    (g finalG : State) (allowed finalAllowed : Set Nat)
+    (source final : ClosSem.State (NumSet × C) F) (target targetFinal : ClosSem.State C F)
+    (location : Option Nat) (sourceFn targetFn : ClosSem.Value) (sourceArgs targetArgs : List ClosSem.Value)
+    (sourceResult targetResult : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (extraClock : Nat) (inv : IncrementalCodeInv fuel g allowed source target)
+    (sourceRun : evaluateApp location sourceFn sourceArgs source = (sourceResult, final))
+    (targetRun : evaluateApp location targetFn targetArgs {target with clock := target.clock + extraClock} = (targetResult, targetFinal))
+    (finalStates : StateRelFuel relationFuel finalG finalAllowed final targetFinal)
+    (readyFinal : IncrementalInstallReady finalG final targetFinal)
+    (finalCompiler : final.compile = compileIncFuelCallback fuel compiler)
+    (targetCompiler : target.compile = compiler) (targetFinalCompiler : targetFinal.compile = compiler)
+    (finalOracle : targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle)
+    (openOrigin : OpenLocationOrigin allowed source finalAllowed final) :
+    IncrementalCodeInv fuel finalG finalAllowed final targetFinal := by
+  have sourceCompiler : source.compile = compileIncFuelCallback fuel compiler := by
+    simpa [targetCompiler] using inv.2.1
+  obtain ⟨count, _, sourceShift, _, checked⟩ :=
+    evaluateApp_compileIncFuel_checkedPrefix fuel compiler location sourceFn sourceArgs source final sourceResult sourceCompiler sourceRun
+  have steps : ∀ index, index < count → ∃ converted,
+      compileIncFuel? fuel (source.compileOracle index).1.1 (source.compileOracle index).2 =
+        some ((source.compileOracle (index + 1)).1.1, converted) := by
+    intro index bound
+    obtain ⟨converted, _, _, pass, _⟩ := checked index bound
+    exact ⟨converted, pass⟩
+  have knownOrigin := checkedPrefix_known_origin fuel source.compileOracle count steps
+  have initialOrdered : BackendProps.oracleMonotonic
+      (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain g.1 ∪ allowed) source.compileOracle := inv.2.2.2.2.2.1
+  have orderedPrefix := oracleMonotonic_after_prefix (sptDomain g.1 ∪ allowed) source.compileOracle count initialOrdered
+  rw [← sourceShift] at orderedPrefix
+  obtain ⟨originCount, originShift, originBound⟩ := openOrigin
+  have orderedOpen := oracleMonotonic_after_prefix (sptDomain g.1 ∪ allowed) source.compileOracle originCount initialOrdered
+  rw [← originShift] at orderedOpen
+  have finalOrdered : BackendProps.oracleMonotonic
+      (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain finalG.1 ∪ finalAllowed) final.compileOracle := by
+    constructor
+    · exact orderedPrefix.1
+    · intro index x y member later
+      rcases member with known | openLoc
+      · apply orderedPrefix.2 index x y ?_ later
+        change sptDomain finalG.1 x at known
+        have sourceKnown : sptDomain (source.compileOracle count).1.1 x := by
+          simpa [readyFinal.known, sourceShift, holShiftSeq] using known
+        rcases knownOrigin x sourceKnown with initial | past
+        · apply Or.inl
+          apply Or.inl
+          change sptDomain g.1 x
+          rw [inv.2.2.2.2.1]
+          exact initial
+        · exact Or.inr past
+      · apply orderedOpen.2 index x y ?_ later
+        rcases originBound openLoc with old | past
+        · exact Or.inl (Or.inr old)
+        · exact Or.inr past
+  have finalSyntax : ∀ index, syntaxOk (final.compileOracle index).2.1 ∧ (final.compileOracle index).2.2 = [] := by
+    intro index
+    simpa [sourceShift, holShiftSeq] using inv.2.2.2.2.2.2.2 (index + count)
+  have finalCode := evaluateApp_finalCode_exact fuel compiler g finalG allowed source final target targetFinal
+    location sourceFn targetFn sourceArgs targetArgs sourceResult targetResult extraClock inv sourceCompiler sourceRun targetRun readyFinal finalOracle
+  refine ⟨finalStates.2.2.2.2.2, ?_, finalOracle, readyFinal.well, readyFinal.known, finalOrdered, finalCode, finalSyntax⟩
+  simpa [targetFinalCompiler] using finalCompiler
+
+
+/-- Keeping the open set and oracle unchanged creates no new origins. This is
+Flapjack-specific simulation infrastructure. -/
+theorem openLocationOrigin_refl {C F : Type} (allowed : Set Nat) (source : ClosSem.State C F) :
+    OpenLocationOrigin allowed source allowed source := by
+  refine ⟨0, ?_, ?_⟩
+  · funext index; simp [holShiftSeq]
+  · intro loc member
+    exact Or.inl member
+
+/-- Origin bounds compose across consecutive source-oracle advances. This is
+Flapjack-specific simulation infrastructure. -/
+theorem openLocationOrigin_trans {C F : Type} (allowed middleAllowed finalAllowed : Set Nat)
+    (source middle final : ClosSem.State C F)
+    (first : OpenLocationOrigin allowed source middleAllowed middle)
+    (second : OpenLocationOrigin middleAllowed middle finalAllowed final) :
+    OpenLocationOrigin allowed source finalAllowed final := by
+  obtain ⟨n, middleShift, firstBound⟩ := first
+  obtain ⟨m, finalShift, secondBound⟩ := second
+  refine ⟨n + m, ?_, ?_⟩
+  · rw [finalShift, middleShift]
+    funext index
+    simp [holShiftSeq, Nat.add_comm, Nat.add_left_comm]
+  · intro loc member
+    rcases secondBound member with middleMember | ⟨index, bound, current⟩
+    · rcases firstBound middleMember with old | ⟨index, bound, current⟩
+      · exact Or.inl old
+      · exact Or.inr ⟨index, by omega, current⟩
+    · right
+      refine ⟨index + n, by omega, ?_⟩
+      simpa [middleShift, holShiftSeq] using current
+
+/-- A non-type-error installation introduces only locations from its current
+oracle entry. This is Flapjack-specific simulation infrastructure. -/
+theorem doInstall_nonType_openLocationOrigin {C F : Type} (allowed : Set Nat) (nextKnown : NumSet)
+    (values : List ClosSem.Value) (source final : ClosSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List ClosLang.Exp) ClosSem.Value)
+    (run : doInstall values source = (result, final)) (notType : result ≠ .err (.abort .typeError)) :
+    OpenLocationOrigin allowed source
+      (allowed ∪ {loc | loc ∈ codeLocations (source.compileOracle 0).2.1 ∧ ¬ sptDomain nextKnown loc}) final := by
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, finalEq, _⟩ :=
+    doInstall_nonType_parts values source final result run notType
+  refine ⟨1, ?_, ?_⟩
+  · simpa using congrArg ClosSem.State.compileOracle finalEq
+  · intro loc member
+    rcases member with old | ⟨current, _⟩
+    · exact Or.inl old
+    · exact Or.inr ⟨0, by omega, current⟩
+
+/-- A non-type-error installation preserves the full fuel-indexed code
+invariant and records the origin of every newly open location. This is
+Flapjack-specific simulation infrastructure. -/
+theorem doInstall_nonType_preserves_IncrementalCodeInv_with_origin {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value)
+    (result : SemanticPrimitivesHOL.Result (List ClosLang.Exp) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (inv : IncrementalCodeInv fuel g allowed source target)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed target.code source)
+    (disjoint : Disjoint allowed (sptDomain g.1))
+    (run : doInstall sourceValues source = (result, final)) (notType : result ≠ .err (.abort .typeError)) :
+    ∃ expressions converted nextKnown targetFinal,
+      compileIncFuel? fuel g.1 (expressions, []) = some (nextKnown, converted) ∧
+      doInstall targetValues target =
+        (if source.clock = 0 then .err (.abort .timeoutError) else .val converted.1, targetFinal) ∧
+      result = (if source.clock = 0 then .err (.abort .timeoutError) else .val expressions) ∧
+      expressions = (source.compileOracle 0).2.1 ∧
+      stateExtends g (nextKnown, converted.2 ++ g.2) ∧
+      Disjoint (allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc}) (sptDomain nextKnown) ∧
+      StateRelFuel relationFuel (nextKnown, converted.2 ++ g.2)
+        (allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc}) final targetFinal ∧
+      StateWellFormedFuel relationFuel (nextKnown, converted.2 ++ g.2)
+        (allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc}) targetFinal.code final ∧
+      IncrementalCodeInv fuel (nextKnown, converted.2 ++ g.2)
+        (allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc}) final targetFinal ∧
+      OpenLocationOrigin allowed source
+        (allowed ∪ {loc | loc ∈ codeLocations expressions ∧ ¬ sptDomain nextKnown loc}) final := by
+  obtain ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
+    extended, finalDisjoint, finalStates, finalWf, finalInv⟩ :=
+    doInstall_nonType_preserves_IncrementalCodeInv fuel relationFuel g allowed source target sourceValues targetValues
+      result final states values inv sourceWf disjoint run notType
+  refine ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
+    extended, finalDisjoint, finalStates, finalWf, finalInv, ?_⟩
+  simpa [exprEq] using doInstall_nonType_openLocationOrigin allowed nextKnown sourceValues source final result run notType
 
 end Flapjack.Compiler.Backend.ClosCall
