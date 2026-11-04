@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationSafety
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationMultiplicity
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationAccounting
+import Flapjack.Compiler.Backend.ClosCall.Proofs.EntryMarker
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationParity
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
@@ -619,6 +620,123 @@ theorem numberedCallOracle_entries_and_locations_nodup {C : Type} (fuel : Nat)
     have odd := labelsOdd label inLabels
     have even := locationsEven label inLocations
     omega
+
+/-- Numbering followed by incremental direct-call conversion preserves the
+entry marker and one output expression per original source expression. -/
+theorem numberedCallOracle_marker {C : Type} (fuel : Nat)
+    (oracle : Nat → (Nat × (NumSet × C)) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (index : Nat) :
+    ∃ output : List ClosLang.Exp,
+      (ClosCall.compileIncFuelOracle fuel
+        (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2.1 =
+          .op .none (.intOp (.const (Int.ofNat (oracle index).1.1))) [] :: output ∧
+      output.length = (oracle index).2.1.length := by
+  let start := (oracle index).1.1
+  let expressions := (oracle index).2.1
+  let next := start + max expressions.length 1
+  let aligned := if next % 2 = 0 then next else next + 1
+  let numbered := stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle
+  let called := ClosCall.compileIncFuelOracle fuel numbered index
+  cases result : ClosNumber.renumberList aligned expressions with
+  | mk nextLoc numberedExpressions =>
+    have length := ClosNumber.renumberList_length expressions aligned
+    rw [result] at length
+    have marker : (numbered index).2.1 =
+        .op .none (.intOp (.const (Int.ofNat start))) [] :: numberedExpressions := by
+      simp [numbered, stateCo, ClosNumber.ignoreTable, ClosNumber.compileInc,
+        start, expressions, next, aligned, result]
+    obtain ⟨nextKnown, run, _⟩ := ClosCall.compileIncFuelOracle_entry fuel numbered index
+    have run' : ClosCall.compileIncFuel? fuel (numbered index).1.1
+        (.op .none (.intOp (.const (Int.ofNat start))) [] :: numberedExpressions, (numbered index).2.2) =
+        some (nextKnown, called.2) := by
+      cases pair : (numbered index).2 with
+      | mk es aux =>
+        simp only [pair] at marker run ⊢
+        subst es
+        exact run
+    obtain ⟨output, outputMarker, outputLength⟩ := ClosCall.compileIncFuel_entryMarker
+      fuel (numbered index).1.1 nextKnown .none start numberedExpressions (numbered index).2.2 called.2 run'
+    exact ⟨output, outputMarker, outputLength.trans length⟩
+
+/-- The generated and annotated incremental closure program compiles to
+distinct BVL code labels. -/
+theorem numberedCallOracle_bvl_labels_nodup {C : Type} (maxApp fuel : Nat)
+    (oracle : Nat → (Nat × (NumSet × C)) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (state : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) :
+    ∀ index, ((compileInc maxApp (ClosAnnotate.compileInc
+      (ClosCall.compileIncFuelOracle fuel
+        (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2)).map Prod.fst).Nodup := by
+  intro index
+  let start := (oracle index).1.1
+  let expressions := (oracle index).2.1
+  let numbered := stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle
+  let called := ClosCall.compileIncFuelOracle fuel numbered index
+  let program := ClosAnnotate.compileInc called.2
+  obtain ⟨output, marker, outputLength⟩ := numberedCallOracle_marker fuel oracle index
+  have marker' : called.2.1 = .op .none (.intOp (.const (Int.ofNat start))) [] :: output := marker
+  have annotatedMarker : program.1 = .op .none (.intOp (.const (Int.ofNat start))) [] ::
+      ClosAnnotate.annotateList 0 output := by
+    simpa [program, ClosAnnotate.compileInc, marker'] using ClosAnnotate.annotateList_name_marker start output
+  let real := (extractName program.1).2
+  have shape := extractName_numbered_marker start (ClosAnnotate.annotateList 0 output)
+  have startEq : (extractName program.1).1 = start := by simpa [annotatedMarker] using shape.1
+  have lengthEq : real.length = max 1 expressions.length := by
+    have l : real.length = max 1 output.length := by
+      simpa [real, annotatedMarker, ClosAnnotate.annotateList_length] using shape.2.1
+    simpa [expressions, outputLength] using l
+  have extract : extractName program.1 = (start, real) := by
+    cases h : extractName program.1 with
+    | mk first second => simp [real, h] at startEq ⊢; exact startEq
+  have mainEq : codeLocations real = codeLocations program.1 := by
+    rw [show codeLocations real = codeLocations (ClosAnnotate.annotateList 0 output) by
+      simpa [real, annotatedMarker] using shape.2.2]
+    simp [annotatedMarker, codeLocations, codeLocationsExp]
+  have allDistinct : ((program.2.map Prod.fst) ++ (codeLocations real ++
+      codeLocations (program.2.map (fun (_, _, body) => body)))).Nodup := by
+    rw [mainEq]
+    exact numberedCallOracle_entries_and_locations_nodup fuel oracle state index
+  have entriesDistinct := allDistinct.of_append_left
+  have bodyMainDistinct := allDistinct.of_append_right
+  have auxDistinct : ((program.2.map Prod.fst) ++
+      codeLocations (program.2.map (fun (_, _, body) => body))).Nodup := by
+    apply List.Nodup.append entriesDistinct bodyMainDistinct.of_append_right
+    intro label inEntry inBody
+    exact allDistinct.disjoint inEntry (List.mem_append_right _ inBody)
+  have mainAuxDisjoint : ∀ label ∈ codeLocations real,
+      label ∉ (program.2.map Prod.fst) ++ codeLocations (program.2.map (fun (_, _, body) => body)) := by
+    intro label inMain inAux
+    rcases List.mem_append.mp inAux with entry | body
+    · exact allDistinct.disjoint entry (List.mem_append_left _ inMain)
+    · exact bodyMainDistinct.disjoint inMain body
+  have sourceAbove : ∀ label ∈ codeLocations (numbered index).2.1,
+      start + max 1 real.length ≤ label := by
+    intro label member
+    have bound := ClosNumber.compileInc_location_after_entries start label expressions (by
+      simpa [numbered, stateCo, ClosNumber.ignoreTable, start, expressions] using member)
+    simpa [lengthEq] using bound
+  have within := ClosCall.compileIncFuelOracle_locationsWithin fuel numbered index
+  have mainAbove : ∀ label ∈ codeLocations real, start + max 1 real.length ≤ label := by
+    intro label member
+    rw [mainEq] at member
+    exact sourceAbove label (within.1 label ((ClosAnnotate.annotateList_codeLocations_sublist 0 called.2.1).subset member))
+  have auxAbove : ∀ label ∈ (program.2.map Prod.fst) ++
+      codeLocations (program.2.map (fun (_, _, body) => body)), start + max 1 real.length ≤ label := by
+    intro label member
+    rcases List.mem_append.mp member with entry | body
+    · have before : label ∈ called.2.2.map Prod.fst := by simpa [program, ClosAnnotate.compileInc, annotated_labels] using entry
+      obtain ⟨origin, inSource, equal⟩ := callOracle_label_origin fuel numbered index label before
+      have bound := sourceAbove origin inSource
+      omega
+    · have before : label ∈ codeLocations (called.2.2.map (fun (_, _, body) => body)) :=
+        (ClosAnnotate.compile_codeLocations_sublist called.2.2).subset body
+      obtain ⟨sourceBody, bodyMember, locMember⟩ := (mem_codeLocations label _).1 before
+      obtain ⟨entry, entryMember, bodyEq⟩ := List.mem_map.mp bodyMember
+      obtain ⟨name, arity, sourceBody'⟩ := entry
+      simp only at bodyEq
+      subst sourceBody
+      exact sourceAbove label (within.2 name arity sourceBody' entryMember label locMember)
+  exact compileInc_labels_nodup maxApp start program real extract bodyMainDistinct.of_append_left
+    auxDistinct mainAbove auxAbove mainAuxDisjoint
 
 
 /-- Main expressions and auxiliary bodies produced by the direct-call
