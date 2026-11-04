@@ -1,5 +1,9 @@
-import Flapjack.Misc.Max3
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Misc.Max3
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Generic ASM encoder assertion iterations. The intermediate carrier of
 `asserts2` is independent of its initial/iterated state carrier. -/
