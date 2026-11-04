@@ -20965,4 +20965,109 @@ theorem evaluateApp_sim_of_IncrementalCodeInv {C F : Type}
     g allowed function targetFunction args targetArgs source target result final (by omega) run notType functions arguments
     functionWf argsWf sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
 
+/-- If a label is absent from a list, adding that list in front of an
+association-list map leaves its lookup unchanged. This is Flapjack-specific
+map infrastructure. -/
+theorem alistToFmap_append_lookup_of_not_mem {V : Type} (front back : List (Nat × V)) (key : Nat)
+    (absent : key ∉ front.map Prod.fst) :
+    (HolFiniteMapExact.alistToFmap (front ++ back)).lookup key =
+      (HolFiniteMapExact.alistToFmap back).lookup key := by
+  induction front with
+  | nil => rfl
+  | cons entry rest ih =>
+    have different : key ≠ entry.1 := by
+      intro equal
+      apply absent
+      simp [equal]
+    have tailAbsent : key ∉ rest.map Prod.fst := by
+      intro member
+      apply absent
+      simp [member]
+    rw [List.cons_append, HolFiniteMapExact.lookup_alistToFmap_tail entry (rest ++ back) key different]
+    exact ih tailAbsent
+
+/-- Installing distinct generated entries in an association-list code map
+produces the same lookups as prepending those entries to the code list. This
+is Flapjack-specific map infrastructure used to preserve exact target code. -/
+theorem updateListEq_alistToFmap_lookup {V : Type} (oldEntries newEntries : List (Nat × V))
+    (distinct : (newEntries.map Prod.fst).Nodup) (key : Nat) :
+    ((HolFiniteMapExact.alistToFmap oldEntries).updateListEq newEntries).lookup key =
+      (HolFiniteMapExact.alistToFmap (newEntries ++ oldEntries)).lookup key := by
+  by_cases member : key ∈ newEntries.map Prod.fst
+  · obtain ⟨⟨label, value⟩, entryMember, equal⟩ := List.mem_map.mp member
+    dsimp at equal
+    subst label
+    have newLookup := logicalAssocLookup_of_mem newEntries key value distinct entryMember
+    have combinedLookup := logicalAssocLookup_append_hit newEntries oldEntries key value newLookup
+    rw [alistToFmap_lookup_logical, combinedLookup]
+    exact lookup_updateListEq_of_mem_unique (HolFiniteMapExact.alistToFmap oldEntries) newEntries distinct key value entryMember
+  · rw [alistToFmap_append_lookup_of_not_mem newEntries oldEntries key member,
+      HolFiniteMapExact.lookup_updateListEq]
+    exact FLOOKUP_FUPDATE_LIST_HOL_not_mem (HolFiniteMapExact.alistToFmap oldEntries).lookup newEntries key member
+
+/-- Finite-support maps are equal when all their lookups agree. This is
+Flapjack-specific representation infrastructure. -/
+theorem holFiniteMapExact_eq_of_lookup {K V : Type} (left right : HolFiniteMapExact K V)
+    (same : ∀ key, left.lookup key = right.lookup key) : left = right := by
+  cases left with
+  | mk leftLookup leftSupport =>
+    cases right with
+    | mk rightLookup rightSupport =>
+      have equal : leftLookup = rightLookup := funext same
+      cases equal
+      rfl
+
+/-- Installing distinct generated entries in an association-list map yields
+the map of the generated entries followed by the old entries. This is
+Flapjack-specific map infrastructure. -/
+theorem updateListEq_alistToFmap {V : Type} (oldEntries newEntries : List (Nat × V))
+    (distinct : (newEntries.map Prod.fst).Nodup) :
+    (HolFiniteMapExact.alistToFmap oldEntries).updateListEq newEntries =
+      HolFiniteMapExact.alistToFmap (newEntries ++ oldEntries) := by
+  apply holFiniteMapExact_eq_of_lookup
+  exact updateListEq_alistToFmap_lookup oldEntries newEntries distinct
+
+/-- A successful incremental compilation preserves the exact association-list
+code-map shape when its generated labels are distinct. This is Flapjack-specific
+infrastructure for preserving the code invariant. -/
+theorem compileIncFuel_install_exactCode (fuel : Nat) (g : State) (program : ClosSem.Program)
+    (nextKnown : NumSet) (converted : ClosSem.Program)
+    (run : compileIncFuel? fuel g.1 program = some (nextKnown, converted))
+    (distinct : (codeLocations program.1).Nodup) :
+    (HolFiniteMapExact.alistToFmap g.2).updateListEq converted.2 =
+      HolFiniteMapExact.alistToFmap (converted.2 ++ g.2) := by
+  exact updateListEq_alistToFmap g.2 converted.2 (compileIncFuel_generated fuel g.1 program nextKnown converted run distinct).1
+
+/-- A non-type-error installation starting from the source-shaped invariant
+preserves the exact target code-map clause for the newly emitted compiler
+state. This does not yet prove the remaining final code-invariant clauses.
+This is Flapjack-specific simulation infrastructure. -/
+theorem doInstall_nonType_exactCode {C F : Type} (fuel relationFuel : Nat) (g : State)
+    (allowed : Set Nat) (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (sourceValues targetValues : List ClosSem.Value)
+    (result : SemanticPrimitivesHOL.Result (List ClosLang.Exp) ClosSem.Value)
+    (final : ClosSem.State (NumSet × C) F)
+    (states : StateRelFuel relationFuel g allowed source target)
+    (values : List.Forall₂ (ValueRelFuel relationFuel g allowed target.code) sourceValues targetValues)
+    (inv : IncrementalCodeInv fuel g allowed source target)
+    (run : doInstall sourceValues source = (result, final)) (notType : result ≠ .err (.abort .typeError)) :
+    ∃ expressions converted nextKnown targetFinal,
+      compileIncFuel? fuel g.1 (expressions, []) = some (nextKnown, converted) ∧
+      doInstall targetValues target =
+        (if source.clock = 0 then .err (.abort .timeoutError) else .val converted.1, targetFinal) ∧
+      result = (if source.clock = 0 then .err (.abort .timeoutError) else .val expressions) ∧
+      targetFinal.code = HolFiniteMapExact.alistToFmap (converted.2 ++ g.2) := by
+  have ⟨ready, _⟩ := inv.ready
+  obtain ⟨expressions, converted, nextKnown, targetFinal, passRun, targetRun, resultEq, exprEq,
+    _, codeEq, _, _, _, _, _, _⟩ :=
+    doInstall_nonType_incremental fuel relationFuel g allowed target.compile source target sourceValues targetValues
+      result final states values ready.well.2 inv.2.1 rfl inv.2.2.1 (ready.auxEmpty 0)
+      (ready.distinct 0) (ready.fresh 0) run notType
+  have passRun' : compileIncFuel? fuel g.1 (expressions, []) = some (nextKnown, converted) := by
+    simpa [ready.known] using passRun
+  have distinct : (codeLocations expressions).Nodup := by simpa [exprEq] using ready.distinct 0
+  refine ⟨expressions, converted, nextKnown, targetFinal, passRun', targetRun, resultEq, ?_⟩
+  rw [codeEq, inv.2.2.2.2.2.2.1]
+  exact compileIncFuel_install_exactCode fuel g (expressions, []) nextKnown converted passRun' distinct
+
 end Flapjack.Compiler.Backend.ClosCall

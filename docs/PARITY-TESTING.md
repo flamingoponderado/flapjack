@@ -20,6 +20,16 @@ case's complete stdout, stderr, and exit status directly with Flapjack. It
 also passed all 170 cases of `scripts/check-cake-pinned-parity.py` with
 `--check-reference` and the same direct comparison.
 
+On 2026-11-04, further pinned-oracle comparisons matched complete stdout,
+stderr, and exit status for 40 generated programs, 500 byte mutations, and
+120 configuration mutations:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11052731 --count 40 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --byte-mutations --seed 11053011 --count 500 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --config-mutations --seed 11053012 --count 120 --timeout 90
+```
+
 Two further runs against that executable matched complete output, diagnostics,
 and exit status for 350 nested-source mutations and 45 structured programs
 with varied backend options:
