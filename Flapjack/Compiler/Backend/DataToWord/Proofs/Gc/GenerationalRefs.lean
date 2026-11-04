@@ -684,4 +684,144 @@ theorem wordGenGcMoveRefs_empty {width : Nat} [NeZero width] (conf : Config)
   · simpa [genLenInv, empty, List.append_assoc] using invariant
   · simpa [empty, List.append_assoc] using refs
 
+/-- Original major collector reference-scan simulation. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gen_gc_move_refs_thm"
+  (words_as_type_indexed_bitvec)]
+theorem wordGenGcMoveRefs_thm {width : Nat} [NeZero width] (conf : Config)
+    (genConf : GenGc.Config (HeapTag × List (WordLocW width))) (k : Nat)
+    (state state1 : GcState (WordLocW width) (HeapTag × List (WordLocW width)))
+    (memory memory1 : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (curr p : BitVec width) (xs : List (WordLocW width))
+    (pb1 pa1 ib1 i1 p1 : BitVec width)
+    (frame : ((BitVec width × WordLocW width) → Prop) → Prop) (c1 : Bool)
+    (abstractRun : GenGc.gcMoveRefs genConf state = state1) (stateOk : state1.ok = true)
+    (heapBound : heapLength state.heap ≤ 2 ^ width / 2 ^ shiftLength conf)
+    (heapBytesBound : heapLength state.heap * (width / 8) < 2 ^ width)
+    (refClass : ∀ t r, genConf.isRef (t, r) = true ↔ isMutTag t)
+    (lenBound : conf.lenSize + 5 ≤ width)
+    (wordRun : wordGenGcMoveRefs conf k
+      (p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3) + xs.length),
+       p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3 ++ state.r2) + xs.length),
+       BitVec.ofNat width state.a,
+       p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2)),
+       BitVec.ofNat width (state.a + state.n),
+       p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2) + state.n),
+       curr, memory, domain) = (p1, i1, pa1, ib1, pb1, memory1, c1))
+    (countBound : state.r2.length ≤ k) (invariant : genLenInv state)
+    (separated : SetSep.star (SetSep.star (wordHeap curr state.heap conf) (wordHeapParts conf p state xs)) frame
+      (SetSep.fun2Set (memory, fun address => domain address = true)))
+    (refs : (state.r4 ++ state.r3 ++ state.r2 ++ state.r1).all (isRefElement genConf.isRef) = true)
+    (length : xs.length = state.n) (good : goodDimindex width) :
+    ∃ xs1,
+      SetSep.star (SetSep.star (wordHeap curr state1.heap conf) (wordHeapParts conf p state1 xs1)) frame
+        (SetSep.fun2Set (memory1, fun address => domain address = true)) ∧
+      state1.r3 = [] ∧ state1.r2 = [] ∧ heapLength state1.heap = heapLength state.heap ∧
+      c1 = true ∧ i1 = BitVec.ofNat width state1.a ∧ ib1 = BitVec.ofNat width (state1.a + state1.n) ∧
+      state1.n = xs1.length ∧
+      heapLength state.h2 + state.n + heapLength state.r4 =
+        heapLength state1.h2 + state1.n + heapLength state1.r4 ∧
+      pa1 = p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state1.h1 ++ state1.h2)) ∧
+      pb1 = p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state1.h1 ++ state1.h2) + state1.n) ∧
+      p1 = p + wordSemBytesInWord * BitVec.ofNat width
+        (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3 ++ state.r2) + xs.length) ∧
+      genLenInv state1 ∧
+      (state1.r4 ++ state1.r3 ++ state1.r2 ++ state1.r1).all (isRefElement genConf.isRef) = true := by
+  induction k using Nat.strong_induction_on generalizing state state1 memory memory1 xs pb1 pa1 ib1 i1 p1 c1 with
+  | h k ih =>
+    cases pending : state.r2 with
+    | nil =>
+      simpa only [pending] using wordGenGcMoveRefs_empty conf genConf k state state1 memory memory1 domain curr p xs
+        pb1 pa1 ib1 i1 p1 frame c1 abstractRun stateOk heapBound heapBytesBound refClass lenBound
+        wordRun countBound invariant separated refs length good pending
+    | cons head tail =>
+      have headRef := (List.all_eq_true.mp refs) head (by simp [pending])
+      cases head with
+      | unused len => simp [isRefElement] at headRef
+      | forwardPointer addr value len => simp [isRefElement] at headRef
+      | dataElement roots len data =>
+        rcases data with ⟨tag, payload⟩
+        generalize move : GenGc.gcMoveList genConf state roots = moveResult
+        rcases moveResult with ⟨moved, middle⟩
+        obtain ⟨recursive, middleOk, tailBound⟩ :=
+          refScan_abstractStep genConf k state middle state1 roots moved len (tag, payload) tail
+            pending move abstractRun stateOk countBound
+        have step := refScan_wordStep conf genConf k state roots len tag payload tail curr p
+          (BitVec.ofNat width state.a)
+          (p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2)))
+          (BitVec.ofNat width (state.a + state.n))
+          (p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2) + state.n))
+          xs memory domain frame pending refClass refs separated countBound invariant heapBytesBound good
+        rw [step] at wordRun
+        let addr := p + wordSemBytesInWord * BitVec.ofNat width
+          (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3) + xs.length)
+        let last := p + wordSemBytesInWord * BitVec.ofNat width
+          (heapLength (state.h1 ++ state.h2 ++ state.r4 ++ state.r3 ++ state.r2) + xs.length)
+        generalize wordMove : wordGenGcMoveList conf
+          (addr + wordSemBytesInWord, BitVec.ofNat width roots.length, BitVec.ofNat width state.a,
+           p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2)),
+           BitVec.ofNat width (state.a + state.n),
+           p + wordSemBytesInWord * BitVec.ofNat width (heapLength (state.h1 ++ state.h2) + state.n),
+           curr, memory, domain) = wordMoveResult at wordRun
+        rcases wordMoveResult with ⟨nextAddr, midI, midPa, midIb, midPb, midMemory, moveOk⟩
+        dsimp only at wordRun
+        generalize wordTail : wordGenGcMoveRefs conf (k - 1)
+          (nextAddr, last, midI, midPa, midIb, midPb, curr, midMemory, domain) = wordTailResult at wordRun
+        rcases wordTailResult with ⟨lastAddr, lastI, lastPa, lastIb, lastPb, lastMemory, tailOk⟩
+        simp only [Prod.mk.injEq] at wordRun
+        obtain ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩ := wordRun
+        obtain ⟨header, left, right, xsMid, encoded, rootsLen, leftEq, rightEq,
+          memoryResult, heapLen, moveSuccess, indexEq, limitEq, xsLen, accounting,
+          cursorEq, paEq, pbEq, refsOut⟩ :=
+          refScan_moveRoots conf genConf state middle roots moved len tag payload tail curr p
+            nextAddr midI midPa midIb midPb xs memory midMemory domain frame moveOk
+            pending move middleOk heapBound refClass lenBound refs separated length good wordMove
+        subst moveOk
+        simp only [Bool.true_and]
+        obtain ⟨header2, encoded2, _, rootBound, decoded, _, _, _⟩ :=
+          refScan_headRead conf genConf state roots len tag payload tail curr p xs memory domain frame
+            pending refClass refs separated
+        have headerEq : header = header2 := by
+          have h := congrArg Prod.fst (encoded.symm.trans encoded2)
+          simpa using h
+        subst header2
+        let next := { middle with r2 := tail, r3 := middle.r3 ++ [HeapElement.dataElement moved len (tag, payload)] }
+        have nextMemory := refScan_nextMemory conf genConf state middle roots moved len tag payload tail left right
+          header curr p midPa midPb xs xsMid midMemory domain frame move encoded rootsLen rootBound decoded
+          leftEq rightEq paEq pbEq accounting length xsLen memoryResult
+        obtain ⟨nextInvariant, h1Eq, _, nextRefs⟩ :=
+          refScan_advanceInvariant genConf state middle roots moved len (tag, payload) tail right
+            pending move middleOk rightEq invariant refs refsOut
+        obtain ⟨middleH1, _, _, r3Eq⟩ := genMoveList_const genConf roots moved state middle move
+        obtain ⟨nextCursor, nextLast⟩ :=
+          refScan_nextPointers state middle roots moved len (tag, payload) tail left right p nextAddr
+            xs.length xsMid.length pending h1Eq leftEq rightEq r3Eq rootsLen accounting length xsLen cursorEq
+        obtain ⟨nextPa, nextPb, _⟩ :=
+          refScan_regionAddresses state middle left right p midPa midPb xs.length paEq pbEq accounting length
+        have positive : 0 < k := by simp [pending] at countBound; omega
+        dsimp only [last] at wordTail
+        rw [nextCursor, nextLast, indexEq, limitEq, nextPa, nextPb] at wordTail
+        have recursiveWord : wordGenGcMoveRefs conf (k - 1)
+            (p + wordSemBytesInWord * BitVec.ofNat width (heapLength (next.h1 ++ next.h2 ++ next.r4 ++ next.r3) + xsMid.length),
+             p + wordSemBytesInWord * BitVec.ofNat width (heapLength (next.h1 ++ next.h2 ++ next.r4 ++ next.r3 ++ next.r2) + xsMid.length),
+             BitVec.ofNat width next.a,
+             p + wordSemBytesInWord * BitVec.ofNat width (heapLength (next.h1 ++ next.h2)),
+             BitVec.ofNat width (next.a + next.n),
+             p + wordSemBytesInWord * BitVec.ofNat width (heapLength (next.h1 ++ next.h2) + next.n),
+             curr, midMemory, domain) = (lastAddr, lastI, lastPa, lastIb, lastPb, lastMemory, tailOk) := by
+          simpa only [next, middleH1, leftEq, List.append_assoc] using wordTail
+        obtain ⟨xsFinal, finalMemory, finalR3, finalR2, finalHeap, finalOk, finalI, finalIb, finalLen,
+          finalAccounting, finalPa, finalPb, finalLast, finalInvariant, finalRefs⟩ :=
+          ih (k - 1) (by omega) next state1 midMemory lastMemory xsMid lastPb lastPa lastIb lastI lastAddr tailOk
+            recursive stateOk (by simpa [next, heapLen] using heapBound)
+            (by simpa [next, heapLen] using heapBytesBound) recursiveWord tailBound nextInvariant
+            nextMemory nextRefs xsLen.symm
+        refine ⟨xsFinal, finalMemory, finalR3, finalR2, ?_, finalOk, finalI, finalIb, finalLen,
+          ?_, finalPa, finalPb, ?_, finalInvariant, finalRefs⟩
+        · simpa [next, heapLen] using finalHeap
+        · simp only [next, leftEq, rightEq, heapLength_append] at finalAccounting
+          omega
+        · dsimp only [next] at finalLast
+          rw [← nextLast] at finalLast
+          simpa only [pending] using finalLast
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

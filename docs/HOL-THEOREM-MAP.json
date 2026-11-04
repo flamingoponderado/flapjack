@@ -3,6 +3,15 @@
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_move_refs_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalRefs.lean",
+  "lean_name": "wordGenGcMoveRefs_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the complete source statement and word_gen_gc_move_refs_thm_typed: the shared word width, abstract and word executions, success, heap bounds, classifier, fuel, invariant, separated memory, root validity and exact existential postconditions all match. The proof assembles the empty case and nonempty root move by strong induction on the original scan fuel."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_move_refs_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GenerationalRefs.lean",
   "lean_name": "wordGenGcMoveRefs_empty",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
