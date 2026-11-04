@@ -18,6 +18,174 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateOracleAdvance
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack ClosLang ClosSem ClosProps SemanticPrimitivesProps
 
+/-- Compiling a disjoint list cannot make an outside location newly known. -/
+theorem callsListBounded_known_reflect_outside (fuel : Nat) (es target : List ClosLang.Exp)
+    (initial final : State) (run : callsListBounded fuel es initial = some (target, final))
+    (initialWeak : weaklyWellFormed initial) (loc : Nat) (outside : loc ∉ codeLocations es)
+    (known : sptDomain final.1 loc) : sptDomain initial.1 loc := by
+  rcases callsListBounded_knownBound fuel es initial final target run loc known with old | label
+  · exact old
+  · rcases callsListBounded_labelsBound fuel es initial final target run (loc + 1) label with old | ⟨origin, member, equal⟩
+    · have inImage : loc + 1 ∈ Set.image Nat.succ (sptDomain initial.1) := by
+        exact initialWeak old
+      obtain ⟨key, keyKnown, eq⟩ := inImage
+      have : key = loc := by omega
+      subst key
+      exact keyKnown
+    · have : loc = origin := by omega
+      exact (outside (by simpa [this] using member)).elim
+
+/-- A selected expression traversal preserves weak well-formedness and
+extends to the final list state. This also covers speculative
+recursive-group states, which need not be fully well formed. -/
+theorem callsListFuel_lookup_run_weak_with_known_reflection (fuel : Nat) (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListFuel fuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialDistinct : (initial.2.map Prod.fst).Nodup) (initialWeak : weaklyWellFormed initial) (index : Nat) (e out : ClosLang.Exp)
+    (sourceLookup : source[index]? = some e) (targetLookup : target[index]? = some out) :
+    ∃ depth before after, depth < fuel ∧ callsFuel depth e before = some (out, after) ∧
+      (codeLocationsExp e).Nodup ∧ LabelsFresh (codeLocationsExp e) before ∧
+      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧
+      KnownBound initial before ∧ initial.2 <:+ before.2 ∧ stateExtends after final ∧
+      (∀ loc ∈ codeLocationsExp e, sptDomain final.1 loc → sptDomain after.1 loc) := by
+  induction fuel generalizing source target initial final index with
+  | zero =>
+    cases source with
+    | nil => simp at sourceLookup
+    | cons e es => simp [callsListFuel] at run
+  | succ depth ih =>
+    cases source with
+    | nil => simp at sourceLookup
+    | cons head tail =>
+      simp only [callsListFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+        Option.some.injEq, Prod.mk.injEq] at run
+      obtain ⟨⟨headOut, middle⟩, headRun, ⟨tailOut, next⟩, tailRun, rfl, rfl⟩ := run
+      have allDistinct : (codeLocationsExp head ++ codeLocations tail).Nodup := by
+        simpa [codeLocations] using distinct
+      have allFresh : LabelsFresh (codeLocationsExp head ++ codeLocations tail) initial := by
+        simpa [codeLocations] using fresh
+      have headDistinct := List.Nodup.of_append_left allDistinct
+      have tailDistinct := List.Nodup.of_append_right allDistinct
+      have headFresh : LabelsFresh (codeLocationsExp head) initial := by
+        intro loc member
+        exact allFresh loc (List.mem_append_left _ member)
+      have middleFresh : LabelsFresh (codeLocations tail) middle := by
+        have labels := callsFuel_labelsBound depth head initial middle headOut headRun
+        intro loc member labelMember
+        rcases labels (loc + 1) labelMember with old | ⟨origin, originMember, equal⟩
+        · exact allFresh loc (List.mem_append_right _ member) old
+        · have unequal := (List.nodup_append.mp allDistinct).2.2 origin originMember loc member
+          exact unequal (Nat.add_right_cancel equal.symm)
+      have singletonRun : callsListFuel (depth + 1) [head] initial = some ([headOut], middle) := by
+        simp [callsListFuel, headRun]
+      have middleDistinct := callsListFuel_labelsDistinct (depth + 1) [head] initial middle [headOut] singletonRun
+        (by simpa [codeLocations] using headDistinct) (by simpa [codeLocations] using headFresh) initialDistinct
+      have middleWeak := callsFuel_weaklyWellFormed depth head initial middle headOut headRun initialWeak
+      cases index with
+      | zero =>
+        simp only [List.getElem?_cons_zero, Option.some.injEq] at sourceLookup targetLookup
+        subst e
+        subst out
+        have boundedTail : callsListBounded depth tail middle = some (tailOut, next) := by
+          simp [callsListBounded, tailRun]
+        have tailExt := callsListBounded_stateExtends depth tail middle next tailOut boundedTail
+          tailDistinct middleFresh middleDistinct
+        refine ⟨depth, initial, middle, by omega, headRun, headDistinct, headFresh, initialDistinct, initialWeak,
+          (fun _ known => Or.inl known), List.suffix_refl _, tailExt, ?_⟩
+        intro loc member known
+        have outside : loc ∉ codeLocations tail := by
+          intro tailMember
+          exact (List.nodup_append.mp allDistinct).2.2 loc member loc tailMember rfl
+        exact callsListBounded_known_reflect_outside depth tail tailOut middle next boundedTail middleWeak loc outside known
+      | succ index =>
+        simp only [List.getElem?_cons_succ] at sourceLookup targetLookup
+        obtain ⟨n, before, after, depthLt, selected, selectedDistinct, selectedFresh, beforeWf, beforeWeak,
+          known, suffix, extended, reflection⟩ :=
+          ih tail tailOut middle next tailRun tailDistinct middleFresh middleDistinct middleWeak index sourceLookup targetLookup
+        have initialKnown := callsFuel_knownBound depth head initial middle headOut headRun
+        have initialSuffix := callsFuel_suffix depth head initial middle headOut headRun
+        exact ⟨n, before, after, by omega, selected, selectedDistinct, selectedFresh, beforeWf, beforeWeak,
+          knownBound_trans initialKnown known suffix, initialSuffix.trans suffix, extended, reflection⟩
+
+/-- The bounded retry wrapper exposes selected traversals while retaining
+weak well-formedness. This covers speculative recursive groups. -/
+theorem callsListBounded_lookup_run_weak_with_known_reflection (fuel : Nat) (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListBounded fuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialDistinct : (initial.2.map Prod.fst).Nodup) (initialWeak : weaklyWellFormed initial) (index : Nat) (e out : ClosLang.Exp)
+    (sourceLookup : source[index]? = some e) (targetLookup : target[index]? = some out) :
+    ∃ depth before after, depth < max fuel (listBudget source + 1) ∧
+      callsFuel depth e before = some (out, after) ∧
+      (codeLocationsExp e).Nodup ∧ LabelsFresh (codeLocationsExp e) before ∧
+      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧
+      KnownBound initial before ∧ initial.2 <:+ before.2 ∧ stateExtends after final ∧
+      (∀ loc ∈ codeLocationsExp e, sptDomain final.1 loc → sptDomain after.1 loc) := by
+  unfold callsListBounded at run
+  cases first : callsListFuel fuel source initial with
+  | none =>
+    exact callsListFuel_lookup_run_weak_with_known_reflection (max fuel (listBudget source + 1)) source target initial final
+      (by simpa [first] using run) distinct fresh initialDistinct initialWeak index e out sourceLookup targetLookup
+  | some value =>
+    have eq : value = (target, final) := by simpa [first] using run
+    subst value
+    obtain ⟨depth, before, after, depthLt, selected, selectedDistinct, selectedFresh, beforeWf, beforeWeak,
+      known, suffix, extended, reflection⟩ :=
+      callsListFuel_lookup_run_weak_with_known_reflection fuel source target initial final first distinct fresh initialDistinct initialWeak index e out
+        sourceLookup targetLookup
+    exact ⟨depth, before, after, by omega, selected, selectedDistinct, selectedFresh, beforeWf, beforeWeak,
+      known, suffix, extended, reflection⟩
+
+/-- A covered expression list supplies coverage at the selected expression's
+own post-traversal state, even when the initial state is only weakly well
+formed. This is Flapjack-specific proof infrastructure. -/
+theorem callsListBounded_lookup_run_weak_with_coverage (fuel : Nat) (source target : List ClosLang.Exp)
+    (initial final : State) (allowed : Set Nat)
+    (run : callsListBounded fuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialDistinct : (initial.2.map Prod.fst).Nodup) (initialWeak : weaklyWellFormed initial)
+    (coverage : ∀ loc ∈ codeLocations source, ¬ sptDomain final.1 loc → loc ∈ allowed)
+    (index : Nat) (e out : ClosLang.Exp)
+    (sourceLookup : source[index]? = some e) (targetLookup : target[index]? = some out) :
+    ∃ depth before after, depth < max fuel (listBudget source + 1) ∧
+      callsFuel depth e before = some (out, after) ∧
+      (codeLocationsExp e).Nodup ∧ LabelsFresh (codeLocationsExp e) before ∧
+      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧
+      KnownBound initial before ∧ initial.2 <:+ before.2 ∧ stateExtends after final ∧
+      (∀ loc ∈ codeLocationsExp e, ¬ sptDomain after.1 loc → loc ∈ allowed) := by
+  obtain ⟨depth, before, after, bound, selected, selectedDistinct, selectedFresh, beforeDistinct,
+    beforeWeak, known, suffix, extended, reflection⟩ :=
+    callsListBounded_lookup_run_weak_with_known_reflection fuel source target initial final run distinct fresh
+      initialDistinct initialWeak index e out sourceLookup targetLookup
+  refine ⟨depth, before, after, bound, selected, selectedDistinct, selectedFresh, beforeDistinct,
+    beforeWeak, known, suffix, extended, ?_⟩
+  intro loc member unknown
+  apply coverage loc ?_ ?_
+  · exact (mem_codeLocations loc source).mpr ⟨e, List.mem_of_getElem? sourceLookup, member⟩
+  · intro finalKnown
+    exact unknown (reflection loc member finalKnown)
+
+/-- Coverage of a recursive function group supplies coverage for a selected
+body at the state produced by its own traversal. This applies to speculative
+group traversals as well as fully well-formed ones. -/
+theorem callsListBounded_group_body_with_coverage (fuel : Nat) (fns : List (Nat × ClosLang.Exp))
+    (target : List ClosLang.Exp) (initial final : State) (allowed : Set Nat)
+    (run : callsListBounded fuel (fns.map Prod.snd) initial = some (target, final))
+    (distinct : (codeLocations (fns.map Prod.snd)).Nodup)
+    (fresh : LabelsFresh (codeLocations (fns.map Prod.snd)) initial)
+    (initialDistinct : (initial.2.map Prod.fst).Nodup) (initialWeak : weaklyWellFormed initial)
+    (coverage : groupLocationsCovered fns final allowed) (index arity : Nat) (body out : ClosLang.Exp)
+    (sourceLookup : fns[index]? = some (arity, body)) (targetLookup : target[index]? = some out) :
+    ∃ depth before after, depth < max fuel (listBudget (fns.map Prod.snd) + 1) ∧
+      callsFuel depth body before = some (out, after) ∧
+      (codeLocationsExp body).Nodup ∧ LabelsFresh (codeLocationsExp body) before ∧
+      (before.2.map Prod.fst).Nodup ∧ weaklyWellFormed before ∧
+      KnownBound initial before ∧ initial.2 <:+ before.2 ∧ stateExtends after final ∧
+      (∀ loc ∈ codeLocationsExp body, ¬ sptDomain after.1 loc → loc ∈ allowed) := by
+  have sourceIndex : (fns.map Prod.snd)[index]? = some body := by
+    simp [List.getElem?_map, sourceLookup]
+  exact callsListBounded_lookup_run_weak_with_coverage fuel (fns.map Prod.snd) target initial final allowed
+    run distinct fresh initialDistinct initialWeak coverage index body out sourceIndex targetLookup
+
 /-- Extending target code preserves the fixed compiler-state relation. -/
 theorem stateRelFuel_extendCode {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
     {source : ClosSem.State (NumSet × C) F} {target : ClosSem.State C F}
@@ -13484,24 +13652,6 @@ theorem growingExprsSimFromBelowWithCoveredOpenClock_mono_state {C F : Type} (pa
   intro known
   exact unknown (knownReflect loc member known)
 
-/-- Compiling a disjoint list cannot make an outside location newly known. -/
-theorem callsListBounded_known_reflect_outside (fuel : Nat) (es target : List ClosLang.Exp)
-    (initial final : State) (run : callsListBounded fuel es initial = some (target, final))
-    (initialWf : wellFormed initial) (loc : Nat) (outside : loc ∉ codeLocations es)
-    (known : sptDomain final.1 loc) : sptDomain initial.1 loc := by
-  rcases callsListBounded_knownBound fuel es initial final target run loc known with old | label
-  · exact old
-  · rcases callsListBounded_labelsBound fuel es initial final target run (loc + 1) label with old | ⟨origin, member, equal⟩
-    · have inImage : loc + 1 ∈ Set.image Nat.succ (sptDomain initial.1) := by
-        rw [← initialWf.1]
-        exact old
-      obtain ⟨key, keyKnown, eq⟩ := inImage
-      have : key = loc := by omega
-      subst key
-      exact keyKnown
-    · have : loc = origin := by omega
-      exact (outside (by simpa [this] using member)).elim
-
 /-- A successful list traversal composes expression simulations that need
 their own generated pass states, using label freshness to show that each
 intermediate state extends into the final pass state. -/
@@ -13945,7 +14095,7 @@ theorem callsListFuel_growing_below_withCoveredOpenClock {C F : Type} (passFuel 
           have outside : loc ∉ codeLocations es := by
             intro tailMember
             exact (List.nodup_append.mp allDistinct).2.2 loc headMember loc tailMember rfl
-          exact callsListBounded_known_reflect_outside depth es es' middle next boundedTail middleWf loc outside known
+          exact callsListBounded_known_reflect_outside depth es es' middle next boundedTail (wellFormed_weak middle middleWf) loc outside known
         · exact exprIH depth (by omega) e e' initial middle headRun headDistinct headFresh initialWf
             (eligibleIH depth (by omega) e e' initial middle (by simp) headRun)
       · apply ih es es' middle next tailRun tailDistinct middleFresh middleWf
