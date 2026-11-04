@@ -1,5 +1,14 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MoveData.lean",
+  "lean_name": "wordGcMove_data",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the Data constructor case of source lines 786-804 with word_gc_move_thm_typed and both recorded separation-star arguments. This case keeps the original abstract and word executions, heap bound, complete separated memory/frame premise, free-space length and full existential conclusion, with x specialized to Data value and the same positive word dimension across all word carriers. Both Word and Loc data payloads are proved. Pointer cases and the assembling theorem remain open; this case alone is not the collector simulation or compiler correctness."
+},
+{
   "hol_path": "cakeml/compiler/backend/gc/copying_gcScript.sml",
   "hol_name": "gc_move_IMP_isDataElement",
   "lean_path": "Flapjack/Compiler/Backend/CopyingGc/Proofs/DataElements.lean",
