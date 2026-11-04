@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.PanToCrepMaxList
+module
+
+public import Flapjack.HolRef
+public import Flapjack.PanToCrepMaxList
+
+@[expose] public section
 
 /-!
 Exact port of HOL `misc$FOLDR_MAX_0_MAX_LIST`
