@@ -232,6 +232,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Move
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Fragment
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.TailCall
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.IndirectTailCall
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.IndirectUnhandledCall
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ReturningCall
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ReturningCallHandler
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallTimeout

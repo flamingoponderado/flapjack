@@ -102,6 +102,6 @@ theorem stateRel64_findCode_indirect_callEnv {C F : Type} (conf : Config) (l1 l2
     names values words _ sourceRun wordRun⟩
   · simp [List.map_append, WordSemStateFiniteExact.getVars, zero, wordAll]
   · simp [DataSem.findCode, holLast_snoc, lookup]
-  · exact stateRel64_findCode_indirect conf l1 l2 source target locs related label values.length body values words lengths rfl lookup
+  · exact stateRel64_findCode_indirect conf l1 l2 source target locs related l1 l2 label values.length body values words lengths rfl lookup
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

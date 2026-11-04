@@ -83,11 +83,11 @@ same compiled function and removes the pointer from the argument list. -/
 theorem stateRel64_findCode_indirect {C F : Type} (conf : Config) (l1 l2 : Nat)
     (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
     (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
-    (label arity : Nat) (body : DataLang.Prog) (args : List DataSem.Value) (words : List (WordLocW 64))
+    (r1 r2 label arity : Nat) (body : DataLang.Prog) (args : List DataSem.Value) (words : List (WordLocW 64))
     (lengths : args.length = words.length) (arityEq : args.length = arity)
     (lookup : sptLookup label source.code = some (arity, body)) :
-    wordSemFindCode none ((.loc l1 l2 :: words) ++ [.loc label 0]) target.code target.stackSize =
-      some (.loc l1 l2 :: words, (compileControl64 conf label 2 body).1, sptLookup label source.stackFrameSizes) := by
+    wordSemFindCode none ((.loc r1 r2 :: words) ++ [.loc label 0]) target.code target.stackSize =
+      some (.loc r1 r2 :: words, (compileControl64 conf label 2 body).1, sptLookup label source.stackFrameSizes) := by
   have targetLookup := related.2.2.2.2.1.2.2 label arity body lookup
   have sizes := related.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
   have drop : ∀ xs : List (WordLocW 64), (xs ++ [WordLocW.loc label 0]).dropLast = xs := by
@@ -99,6 +99,6 @@ theorem stateRel64_findCode_indirect {C F : Type} (conf : Config) (l1 l2 : Nat)
       | nil => rfl
       | cons y ys => simpa [List.dropLast_cons_cons] using congrArg (List.cons x) ih
   simpa [wordSemFindCode, targetLookup, sizes, ← lengths, arityEq, drop] using
-    drop (.loc l1 l2 :: words)
+    drop (.loc r1 r2 :: words)
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
