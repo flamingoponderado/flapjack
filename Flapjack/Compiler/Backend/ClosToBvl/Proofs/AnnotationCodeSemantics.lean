@@ -633,4 +633,54 @@ theorem compileCallMtiFuel_noOpts_semantics {C F : Type} (ffi : HolFfiState F)
     preprocess _ nonfail numberSafe varsSafe oracleSafe oracleState initialBound
   simpa [← compileCallMtiFuel_noOpts fuel config expressions mti calls known] using compile
 
+
+/-- Chaining and annotating a nonempty closure program preserves behavior
+when previously installed auxiliary functions are present. Freshness,
+oracle ordering, and annotation safety are stated for the actual combined
+code; this is Flapjack-specific composition infrastructure. -/
+theorem source_to_annotatedChain_with_aux_semantics {C F : Type} (ffi : HolFfiState F) (maxApp start : Nat)
+    (expressions : List ClosLang.Exp) (aux : List (Nat × Nat × ClosLang.Exp))
+    (oracle : CompileOracle C) (compiler : Compiler C)
+    (nonempty : expressions ≠ []) (safe : everyFnVarsNone expressions)
+    (auxSafe : ∀ name arity body, (name, arity, body) ∈ aux → everyFnVarsNone [body])
+    (oracleSafe : ∀ n, everyFnVarsNone (oracle n).2.1 ∧
+      everyFnVarsNone ((oracle n).2.2.map (fun (_, _, body) => body)))
+    (fresh : ∀ key, start ≤ key → key < start + expressions.length → (initialSourceCode aux).lookup key = none)
+    (ordered : oracleMonotonic oracleCodeNames (· < ·)
+      ({key | start ≤ key ∧ key < start + expressions.length} ∪ codeDomain (initialSourceCode aux)) oracle)
+    (nonfail : semantics ffi maxApp (initialSourceCode aux) oracle
+      (pureCc ClosAnnotate.compileInc compiler) expressions ≠ .fail) :
+    semantics ffi maxApp (initialSourceCode (ClosAnnotate.compile (chainExps start expressions ++ aux)))
+      (pureCo ClosAnnotate.compileInc ∘ oracle) compiler [.call .none 0 start []] =
+      semantics ffi maxApp (initialSourceCode aux) oracle (pureCc ClosAnnotate.compileInc compiler) expressions := by
+  have chainEq := sourceChain_semantics_eq ffi maxApp start (initialSourceCode aux) oracle
+    (pureCc ClosAnnotate.compileInc compiler) expressions nonempty fresh ordered nonfail
+  have mapEq := initialSourceCode_chain_append start expressions aux
+  have chainNonfail : semantics ffi maxApp (initialSourceCode (chainExps start expressions ++ aux)) oracle
+      (pureCc ClosAnnotate.compileInc compiler) [.call .none 0 start []] ≠ .fail := by
+    rw [mapEq, chainEq]
+    exact nonfail
+  have chainSafe := (chainExps_varsNone start expressions).mpr safe
+  have memberSafe : ∀ (bodies : List ClosLang.Exp) (body : ClosLang.Exp),
+      everyFnVarsNone bodies → body ∈ bodies → everyFnVarsNone [body] := by
+    intro bodies body all member
+    induction bodies with
+    | nil => simp at member
+    | cons first rest ih =>
+      simp only [everyFnVarsNone] at all
+      simp only [List.mem_cons] at member
+      cases member with
+      | inl same => subst body; simpa [everyFnVarsNone] using all.1
+      | inr tail => exact ih all.2 tail
+  have codeSafe : ∀ name arity body, (name, arity, body) ∈ chainExps start expressions ++ aux → everyFnVarsNone [body] := by
+    intro name arity body member
+    rcases List.mem_append.mp member with inChain | inAux
+    · exact memberSafe _ body chainSafe (List.mem_map.mpr ⟨(name, arity, body), inChain, rfl⟩)
+    · exact auxSafe name arity body inAux
+  have eq := annotation_installed_semantics ffi maxApp (chainExps start expressions ++ aux) oracle compiler
+    [.call .none 0 start []] (by simp [everyFnVarsNone, fnVarsNoneExp]) codeSafe oracleSafe chainNonfail
+  rw [mapEq, chainEq] at eq
+  simpa [ClosAnnotate.annotateList, ClosAnnotate.altFreeList, ClosAnnotate.altFreeSing,
+    ClosAnnotate.shiftList, ClosAnnotate.shiftSing] using eq.symm
+
 end Flapjack.Compiler.Backend.ClosToBvl
