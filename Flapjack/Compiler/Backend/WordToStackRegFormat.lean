@@ -29,7 +29,6 @@ FFI field and is not used here. -/
 
 namespace Flapjack.Compiler.Backend.WordToStackRegFormat
 
-open Flapjack.Compiler.Backend.StackCarrier (ProgW)
 open Flapjack.Compiler.Backend.StackLang (ProgM)
 
 /-- Exact port of HOL `wReg1_def`

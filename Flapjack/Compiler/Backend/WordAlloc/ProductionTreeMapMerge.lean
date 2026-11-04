@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCosts
+import Flapjack.Compiler.Backend.WordAlloc.ProductionPreferences
+import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
+import Flapjack.Compiler.Backend.WordAlloc.Heuristics
+import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlyCache
+import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
 import Std.Data.TreeMap.Lemmas
 
 namespace Flapjack.WordAlloc

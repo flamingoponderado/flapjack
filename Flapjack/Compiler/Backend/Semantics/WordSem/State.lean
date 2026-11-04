@@ -30,9 +30,8 @@ Carrier translations, as in the reviewed loopSem `state` port:
 * `'c` (the compiler configuration) and `'ffi` are the universe-0 type
   parameters `C` and `F`, and `ffi` is the exact `HolFfiState F`.
 
-This module does not port the evaluator.  `Flapjack/WordSemantics.lean` is a
-separate call-aware executable analogue over `RiscV.State` and is not related
-to these carriers here.
+This module does not port the evaluator; `evaluate_def` is in
+`Flapjack/Compiler/Backend/Semantics/WordSem/Evaluate.lean`.
 -/
 
 namespace Flapjack

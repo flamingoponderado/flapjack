@@ -55,10 +55,9 @@ def globalExceptionGuard : Bool :=
 
 #guard globalExceptionGuard
 
-/-- The executed parser-path route `globalCompileTopCakeRouted` decodes
-`compileTopExactHOL` on the encoded input (`compileTopExactHOL_decode`). These
-guards replay the same three original HOL rows through that decode and compare
-with the production `globalCompileTopCake`, including output order. -/
+/-- These guards decode `compileTopExactHOL` on the encoded input for the same
+three original HOL rows and compare with the production `globalCompileTopCake`,
+including output order. -/
 def routeGuard (declarations : List (DeclHOL 64)) (start : String) : Bool :=
   let production := declarations.map declOfHOL
   toString (repr ((compileTopExactHOL (production.map declToHOL) (ofString start)).map

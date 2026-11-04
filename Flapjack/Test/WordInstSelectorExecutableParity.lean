@@ -1,6 +1,6 @@
 import Flapjack.Compiler.Backend.WordInst.ExecutableInstSelect
 import Flapjack.Test.WordInstSelectExactParity
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec
+import Flapjack.Pancake.LoopToWord
 
 /-! Fresh original selector regressions. Inputs and complete expected native
 programs are transcribed from word_inst_selector_executable_probe.out. Kernel
@@ -236,57 +236,5 @@ private def expected_nested_call : P := .call (some ([1],(.ln,.ln),.loop .ln (.i
 
 example : instSelectExecutable WordInstSelectExactParity.cfg 100 input_nested_call =
     expected_nested_call := by with_unfolding_all rfl
-
-/-- Runtime comparison cannot pass by collapsing both inputs to codec NONE.
-All fields of the accepted production image are observed through its full Repr. -/
-private def check (input expected : P) : Bool :=
-  match wordLangProgFromHOL (instSelectExecutable WordInstSelectExactParity.cfg 100 input),
-      wordLangProgFromHOL expected with
-  | some actual, some want => reprStr actual == reprStr want
-  | _, _ => false
-
-private def checks : List (String × Bool) := [
-  ("skip", check input_skip expected_skip),
-  ("move", check input_move expected_move),
-  ("assign", check input_assign expected_assign),
-  ("get", check input_get expected_get),
-  ("set", check input_set expected_set),
-  ("store", check input_store expected_store),
-  ("must_terminate", check input_must_terminate expected_must_terminate),
-  ("call_none", check input_call_none expected_call_none),
-  ("call_both", check input_call_both expected_call_both),
-  ("seq", check input_seq expected_seq),
-  ("if", check input_if expected_if),
-  ("loop", check input_loop expected_loop),
-  ("alloc", check input_alloc expected_alloc),
-  ("store_consts", check input_store_consts expected_store_consts),
-  ("raise", check input_raise expected_raise),
-  ("return", check input_return expected_return),
-  ("break", check input_break expected_break),
-  ("continue", check input_continue expected_continue),
-  ("tick", check input_tick expected_tick),
-  ("curr_heap", check input_curr_heap expected_curr_heap),
-  ("loc_value", check input_loc_value expected_loc_value),
-  ("install", check input_install expected_install),
-  ("code_write", check input_code_write expected_code_write),
-  ("data_write", check input_data_write expected_data_write),
-  ("ffi", check input_ffi expected_ffi),
-  ("share_load8", check input_share_load8 expected_share_load8),
-  ("store_hi", check input_store_hi expected_store_hi),
-  ("store_above", check input_store_above expected_store_above),
-  ("store_lo", check input_store_lo expected_store_lo),
-  ("store_below", check input_store_below expected_store_below),
-  ("share_load16", check input_share_load16 expected_share_load16),
-  ("share_load32", check input_share_load32 expected_share_load32),
-  ("share_store", check input_share_store expected_share_store),
-  ("share_above", check input_share_above expected_share_above),
-  ("nested_call", check input_nested_call expected_nested_call)
- ]
-
-def runChecks : IO Bool := do
-  for (label, ok) in checks do
-    unless ok do throw (IO.userError ("original native selector mismatch: " ++ label))
-  IO.println "PASS executable full native inst_select: 37 kernel cases and 35 runtime cases"
-  return true
 
 end Flapjack.Test.WordInstSelectorExecutableParity

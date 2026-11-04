@@ -296,48 +296,4 @@ example : wInstNative (width := 64) (.mem .store32 4 (.addr 6 (BitVec.ofNat 64 8
 example : wInstNative (width := 64) (.mem .store32 4 (.addr 6 (BitVec.ofNat 64 18446744073709551608))) (2,7,9) =
     ((.seq (.stackLoad 2 5) (.seq (.stackLoad 3 6) (.inst (.mem .store32 3 (.addr 2 (BitVec.ofNat 64 18446744073709551608)))))) : HolProg 64) := by rfl
 
-example :
-    let cfg : WordStackConfig := {
-      locations := [(0, .register 4), (1, .stack 2)]
-      scratch := 31
-      addressScratch := 29
-      stackBase := 10 }
-    wordStackCompileLoadNatNested cfg 0 (.op .add [.var 1, .const 0]) = some (.seq (.stackLoad 31 12)
-      (.inst (.memOffset .load 4 31 0))) := by
-  simp [wordStackCompileLoadNatNested, wordStackLoadOffsetInst, wordStackLocation,
-    wordStackOffset, lookupNatInfo]
-
-example :
-    let cfg : WordStackConfig := {
-      locations := [(0, .register 4), (1, .stack 2)]
-      scratch := 31
-      addressScratch := 29
-      stackBase := 10 }
-    wordStackCompileLoadNatNested cfg 0 (.op .sub [.var 1, .const 8]) = some (.seq (.stackLoad 31 12)
-      (.inst (.memOffset .load 4 31 18446744073709551608))) := by
-  simp [wordStackCompileLoadNatNested, wordStackLoadOffsetInst, wordStackLocation,
-    wordStackOffset, lookupNatInfo]
-
-example :
-    let cfg : WordStackConfig := {
-      locations := [(0, .register 4), (1, .stack 2)]
-      scratch := 31
-      addressScratch := 29
-      stackBase := 10 }
-    wordStackCompileStoreNatNested cfg (.op .add [.var 1, .const 0]) (.var 0) = some (.seq (.stackLoad 31 12)
-      (.inst (.memOffset .store 4 31 0))) := by
-  simp [wordStackCompileStoreNatNested, wordStackStoreOffsetInst, wordStackLocation,
-    wordStackOffset, lookupNatInfo]
-
-example :
-    let cfg : WordStackConfig := {
-      locations := [(0, .register 4), (1, .stack 2)]
-      scratch := 31
-      addressScratch := 29
-      stackBase := 10 }
-    wordStackCompileStoreNatNested cfg (.op .sub [.var 1, .const 8]) (.var 0) = some (.seq (.stackLoad 31 12)
-      (.inst (.memOffset .store 4 31 18446744073709551608))) := by
-  simp [wordStackCompileStoreNatNested, wordStackStoreOffsetInst, wordStackLocation,
-    wordStackOffset, lookupNatInfo]
-
 end Flapjack.Test.NativeWordMemoryAddress

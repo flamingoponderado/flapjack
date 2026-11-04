@@ -87,7 +87,6 @@ theorem ssaProgramCanonical {width : Nat} [NeZero width]
     cases output <;> simp_all [WordAllocatorProgramSetsWf]
   all_goals simp_all +zetaDelta [ssaCcTrans, WordAllocatorProgramSetsWf]
 
-
 /-- The complete native setup/body pass has canonical cutset fields on a
 canonical source program. No constraint on the argument count is introduced.
 This is representation infrastructure rather than a HOL semantic port. -/
@@ -97,30 +96,5 @@ theorem fullSsaProgramCanonical {width : Nat} [NeZero width]
     WordAllocatorProgramSetsWf (fullSsaCcTrans count program) := by
   simp [fullSsaCcTrans, WordAllocatorProgramSetsWf, ssaSetupCanonical,
     ssaProgramCanonical, valid]
-
-/-- The actually decoded native SSA body re-encodes as the literal original
-full SSA program. Canonical fields are derived from the source encoder and
-the real SSA producer, so cutset normalization is discharged rather than
-ignored or assumed away. Decoder success identifies the observed tuple;
-its availability is established separately by the existing source domain
-theorem. This production codec has no independent HOL original. -/
-theorem nativeSsaDecodedProgram_literal {width : Nat} [NeZero width]
-    (count : Nat) (source : WordProg (BitVec width))
-    (native : WordLangProgHOL (BitVec width))
-    (encoded : wordLangProgToHOL source = some native)
-    (output : WordSsaState × List Nat × WordProg (BitVec width))
-    (produced : wordFullSsaCcTransNativeWithStateFromHOL count native = some output) :
-    wordLangProgToHOL output.2.2 = some (fullSsaCcTrans count native) := by
-  have valid := fullSsaProgramCanonical count native (productionProgram_setsWf source native encoded)
-  unfold wordFullSsaCcTransNativeWithStateFromHOL at produced
-  cases decoded : wordLangProgFromHOL (fullSsaCcTransWithMetadata count native).program with
-  | none => simp [decoded] at produced
-  | some body =>
-    simp only [decoded, Option.map_some, Option.some.injEq] at produced
-    cases produced
-    have canonical : WordAllocatorProgramSetsWf (fullSsaCcTransWithMetadata count native).program := by
-      simpa only [fullSsaCcTransWithMetadata_program] using valid
-    simpa only [fullSsaCcTransWithMetadata_program] using
-      canonicalProgram_codec (fullSsaCcTransWithMetadata count native).program body canonical decoded
 
 end Flapjack.WordAlloc

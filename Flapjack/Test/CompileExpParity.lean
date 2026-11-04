@@ -92,6 +92,7 @@ def loadByteRecursiveAddressOK : Bool :=
 /-! The remaining probe rows are reproduced through the tagged finite-map
     `compileExpHOL`. These mirror the `compileExp` rows above but exercise the
     HOL-shaped path used by `compileProgHOL`/`compileProgRiscV`. -/
+
 /-! Includes the direct HOL `bytes_in_word` constructor row in
     `compile_exp_probe.out`; the 64-bit value is separately pinned to `8w` by
     the original HOL word-boundary probe and `CrepRuntimeTargetParity`. -/
@@ -345,10 +346,6 @@ def holWParityOK : Bool :=
 example : compileExpHOLW riscvContext (.load32 (.var .local "p")) =
     ([.load32 (.var 5)], .one) := by
   simp [compileExpHOLW, compileExpHOL, riscvContext, FLOOKUP, FUPDATE]
-
-example (context : PanToCrepHOLContext (BitVec 64)) (expression : Exp (BitVec 64)) :
-    compileExpHOLW context expression = compileExpHOL context expression :=
-  compileExpHOLW_eq_compileExpHOL context expression
 
 #eval holWParityOK
 #guard holWParityOK

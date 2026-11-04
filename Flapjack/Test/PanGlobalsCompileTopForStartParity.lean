@@ -1,5 +1,19 @@
 import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pipeline
+import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
+import Flapjack.Pancake.PanGlobalsByteRanged
+import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
+import Flapjack.Pancake.PanStructs.CompileDeclsExact
+import Flapjack.CompileFunctionDistinct
+import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
+import Flapjack.Pancake.CrepInline.InlineRouteNames
+import Flapjack.Pancake.LoopToWord.CompFuncExact
+import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordFuseConditions
+import Flapjack.RiscV.WordUnreach
+import Flapjack.RiscV.Lab
+import Flapjack.Display
 
 namespace Flapjack.Test.PanGlobalsCompileTopForStartParity
 
@@ -52,30 +66,6 @@ def globalPresentParityGuard : Bool :=
 
 /-! The source-facing entry helper carries the tagged HOL definition's result
     into the declarations compiled by the downstream Crep pass. -/
-def sourceEntryUsesCakeGlobalOutput : Bool :=
-  match compileFlapjackEntryCake .rv64i (BitVec.ofNat 64 8)
-      (BitVec.ofNat 64) "main" [word64Global, word64MainFunction] with
-  | none => false
-  | some pipeline =>
-      match pipeline.globals.declarations with
-      | [.function main, .function renamed] =>
-          main.name == "main" && main.params.isEmpty &&
-          (match main.body with
-          | .seq
-              (.seq
-                (.store (.op .sub [.topAddr, .const address]) (.const value))
-                .skip)
-              (.call none "main'" []) =>
-                address == BitVec.ofNat 64 8 && value == BitVec.ofNat 64 7
-          | _ => false) &&
-          renamed.name == "main'" && (match renamed.body with
-            | .skip => true
-            | _ => false)
-      | _ => false
-
-#eval sourceEntryUsesCakeGlobalOutput
-#guard sourceEntryUsesCakeGlobalOutput
-
 def parityGuard : Bool :=
   let missing :=
     globalCompileTopForStart 4 id [mainFunction] "absent"
@@ -155,15 +145,6 @@ def exceptionGuard : Bool :=
 #eval exceptionGuard
 #guard exceptionGuard
 
-example : True := by
-  cases hcompile : globalCompileTopForStartSome 4 id
-      [exceptionDecl, mainFunction] "main" with
-  | none => trivial
-  | some compiled =>
-      have h := globalCompileTopForStart_exceptionEntries 4 id
-        [exceptionDecl, mainFunction] "main" compiled hcompile
-      trivial
-
 def otherFunction : Decl Nat :=
   .function
     { name := "worker"
@@ -180,18 +161,6 @@ def namesNodupGuard : Bool :=
 
 #eval namesNodupGuard
 #guard namesNodupGuard
-
-example : True := by
-  cases hcompile : globalCompileTopForStartSome 4 id
-      [mainFunction, otherFunction] "main" with
-  | none => trivial
-  | some compiled =>
-      have hnodup : ((functions [mainFunction, otherFunction]).map
-          (fun entry => entry.1)).Nodup := by
-        decide
-      have h := globalCompileTopForStart_names_nodup 4 id
-        [mainFunction, otherFunction] "main" compiled hcompile hnodup
-      trivial
 
 /-! ## `nestedSeqHOL`-routed executed global compiler (bead flapjack-4ac.1.31.1)
 
@@ -214,32 +183,5 @@ private theorem word64CompileInputRanged :
       Flapjack.Pancake.PanLang.FunDeclByteRanged, Flapjack.Pancake.PanLang.NameRanged,
       Flapjack.Pancake.PanLang.ListParamByteRanged, Flapjack.Pancake.PanLang.ParamByteRanged,
       Flapjack.Pancake.PanLang.ShapeByteRanged, Flapjack.Pancake.PanLang.ProgByteRanged]
-
-theorem word64CompileTopOfExact_eq :
-    globalCompileTopCakeOfExact [word64Global, word64MainFunction] "main"
-        word64CompileInputRanged =
-      globalCompileTopCake [word64Global, word64MainFunction] "main" :=
-  globalCompileTopCakeOfExact_eq _ _ _
-
-def routedEntryUsesCakeGlobalOutput : Bool :=
-  match globalCompileTopCakeOfExact [word64Global, word64MainFunction] "main"
-      word64CompileInputRanged with
-  | [.function main, .function renamed] =>
-      main.name == "main" && main.params.isEmpty &&
-      (match main.body with
-      | .seq
-          (.seq
-            (.store (.op .sub [.topAddr, .const address]) (.const value))
-            .skip)
-          (.call none "main'" []) =>
-            address == BitVec.ofNat 64 8 && value == BitVec.ofNat 64 7
-      | _ => false) &&
-      renamed.name == "main'" && (match renamed.body with
-        | .skip => true
-        | _ => false)
-  | _ => false
-
-#eval routedEntryUsesCakeGlobalOutput
-#guard routedEntryUsesCakeGlobalOutput
 
 end Flapjack.Test.PanGlobalsCompileTopForStartParity

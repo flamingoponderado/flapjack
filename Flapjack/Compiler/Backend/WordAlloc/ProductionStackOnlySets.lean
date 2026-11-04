@@ -104,33 +104,8 @@ theorem stackInter_nodup (left right : List Nat) (unique : left.Nodup) :
 theorem stackDiff_nodup (left right : List Nat) (unique : left.Nodup) :
     (CakeAlloc.diffSet left right).Nodup := unique.filter _
 
-
 abbrev stackPairTree (pair : List Nat × List Nat) : Spt Unit × Spt Unit :=
   (stackNamesTree pair.1, stackNamesTree pair.2)
-
-theorem stackMove_production (x y : Nat) (temporary fixed : List Nat)
-    (unique : temporary.Nodup) :
-    stackPairTree (CakeAlloc.mergeStackOnly x y temporary fixed) =
-      mergeStackOnly (x, y) (stackNamesTree temporary, stackNamesTree fixed) := by
-  by_cases member : x ∈ temporary <;>
-    by_cases alloc : y % 4 = 1 <;>
-    by_cases physical : y % 2 = 0 <;>
-    by_cases stack : x % 4 = 3 <;>
-    simp [CakeAlloc.mergeStackOnly, mergeStackOnly, stackPairTree,
-      stackNamesTree_lookup, member, alloc, physical, stack, CakeAlloc.isAllocVar,
-      CakeAlloc.isPhyVar, CakeAlloc.isStackVar, isAllocVar, isPhyVar, isStackVar,
-      stackInsert_production, stackDelete_production, unique]
-
-theorem stackMove_nodup (x y : Nat) (temporary fixed : List Nat)
-    (ht : temporary.Nodup) (hf : fixed.Nodup) :
-    (CakeAlloc.mergeStackOnly x y temporary fixed).1.Nodup ∧
-      (CakeAlloc.mergeStackOnly x y temporary fixed).2.Nodup := by
-  unfold CakeAlloc.mergeStackOnly
-  split
-  · split <;> split <;> simp [stackInsert_nodup, ht, hf]
-  · split
-    · split <;> simp [stackInsert_nodup, ht, hf]
-    · exact ⟨stackDelete_nodup _ _ ht, hf⟩
 
 theorem stackMerge_production (initial left right : List Nat × List Nat) :
     stackPairTree (CakeAlloc.mergeStackSets initial.1 initial.2 left.1 left.2 right.1 right.2) =
@@ -145,7 +120,6 @@ theorem stackMerge_nodup (initial left right : List Nat × List Nat)
   exact ⟨stackUnion_nodup _ _ (stackInter_nodup _ _ hr.1)
     (stackUnion_nodup _ _ (stackDiff_nodup _ _ hl.1) (stackDiff_nodup _ _ hr.1)),
     stackUnion_nodup _ _ hl.2 hr.2⟩
-
 
 private theorem deleteFold_nodup (keys names : List Nat) (unique : names.Nodup) :
     (keys.foldr CakeAlloc.deleteSet names).Nodup := by

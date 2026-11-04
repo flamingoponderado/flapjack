@@ -32,25 +32,6 @@ def probeLoadByte : LoopProg Nat := .loadByte 4 9
 #guard loopAssignedVars probeLongDiv == originalLongDiv
 #guard loopAssignedVars probeLoadByte == originalLoadByte
 
-/-! Cake `crep_to_loopProofScript.sml:355` `assigned_vars_MAPi_Assign`. -/
-
-def probeAssignNames : LoopProg Nat :=
-  loopNestedSeq (loopAssignNames (loopTempNames 3 3) (.const 0))
-
-theorem loopAssignedVars_loopTempNames_fixture :
-    loopAssignedVars probeAssignNames = [3, 4, 5] :=
-  loopAssignedVars_loopTempNames 3 3 (.const 0)
-
-/-! Cake `crep_to_loopProofScript.sml:1562` `assigned_vars_nested_seq_assign`. -/
-
-def probeAssignPairs : LoopProg Nat :=
-  loopNestedSeq (loopAssignPairs [3, 4, 5] [.const 0, .const 1, .const 2])
-
-theorem loopAssignedVars_loopAssignPairs_fixture :
-    loopAssignedVars probeAssignPairs = [3, 4, 5] :=
-  loopAssignedVars_loopAssignPairs [3, 4, 5] [.const 0, .const 1, .const 2]
-    (by decide)
-
 /-! Cake `crep_to_loopProofScript.sml:355` `assigned_vars_MAPi_Assign` with
     HOL's `MAPi (λn. Assign (n + offset))` rendered by `List.mapIdx`.  Expected
     observations are the `avma_*` rows of
@@ -61,70 +42,6 @@ def probeMapIdxAssign : LoopProg (BitVec 64) :=
     (([.const 0, .const 1, .const 2] : List (LoopExp (BitVec 64))).mapIdx
       (fun n e => .assign (n + 7) e))
 
-theorem loopAssignedVars_mapIdxAssign_fixture :
-    loopAssignedVars probeMapIdxAssign = [7, 8, 9] := by
-  unfold probeMapIdxAssign
-  rw [loopAssignedVars_mapIdxAssign]
-  decide
-
-theorem loopAssignedVars_mapIdxAssign_nil_fixture :
-    loopAssignedVars
-        (loopNestedSeq
-          (([] : List (LoopExp (BitVec 64))).mapIdx
-            (fun n e => .assign (n + 3) e))) = [] := by
-  rw [loopAssignedVars_mapIdxAssign]
-  decide
-
-/-! Cake `loopPropsScript.sml:890` `assigned_vars_seq_split`, as the
-    width-indexed `loopAssignedVars_seqW`. -/
-
-theorem loopAssignedVars_seqW_fixture :
-    loopAssignedVars
-        ((.seq (.assign 3 (.const 0)) (.assign 4 (.const 1))) :
-          LoopProg (BitVec 64)) =
-      loopAssignedVars (.assign 3 (.const 0) : LoopProg (BitVec 64)) ++
-        loopAssignedVars (.assign 4 (.const 1) : LoopProg (BitVec 64)) :=
-  loopAssignedVars_seqW _ _
-
-/-! Cake `loopPropsScript.sml:880` `assigned_vars_nested_seq_split`, as the
-    width-indexed `loopAssignedVars_nestedSeq_appendW`. -/
-
-theorem loopAssignedVars_nestedSeq_appendW_fixture :
-    loopAssignedVars
-        (loopNestedSeq
-          (([.assign 3 (.const 0)] : List (LoopProg (BitVec 64))) ++
-            [.assign 4 (.const 1)])) =
-      loopAssignedVars
-          (loopNestedSeq ([.assign 3 (.const 0)] : List (LoopProg (BitVec 64)))) ++
-        loopAssignedVars
-          (loopNestedSeq ([.assign 4 (.const 1)] : List (LoopProg (BitVec 64)))) :=
-  loopAssignedVars_nestedSeq_appendW _ _
-
-/-! Cake `loopPropsScript.sml:897` `assigned_vars_nested_assign`, as the
-    width-indexed `loopAssignedVars_loopAssignPairsW`. -/
-
-theorem loopAssignedVars_loopAssignPairsW_fixture :
-    loopAssignedVars
-        (loopNestedSeq
-          (loopAssignPairs [3, 4, 5]
-            ([.const 0, .const 1, .const 2] : List (LoopExp (BitVec 64))))) =
-      [3, 4, 5] :=
-  loopAssignedVars_loopAssignPairsW [3, 4, 5] _ (by decide)
-
-/-! Cake `crep_to_loopProofScript.sml:342` `cut_sets_MAPi_Assign`. -/
-
-theorem loopCutSets_loopAssignPairs_fixture :
-    loopCutSets [9] probeAssignPairs = [3, 4, 5, 9] :=
-  loopCutSets_loopAssignPairs [9] [3, 4, 5] [.const 0, .const 1, .const 2]
-    (by decide)
-
-/-! Cake `crep_to_loopProofScript.sml:368` `survives_MAPi_Assign`. -/
-
-theorem loopSurvives_loopAssignPairs_fixture :
-    loopSurvives 3 probeAssignPairs :=
-  loopSurvives_loopAssignPairs 3 [3, 4, 5] [.const 0, .const 1, .const 2]
-    (by decide)
-
 def checkBool (name : String) (value : Bool) : IO Bool := do
   if value then
     IO.println s!"PASS {name}"
@@ -133,38 +50,9 @@ def checkBool (name : String) (value : Bool) : IO Bool := do
     IO.println s!"FAIL {name}"
     pure false
 
-def survivesStructureGuard : Bool :=
-  (loopAssignPairs [3, 4, 5] [.const 0, .const 1, .const 2]).length == 3
-
-/-! Cake `loopPropsScript.sml:719` `survives_nested_seq_intro`. -/
-
-theorem loopSurvives_nestedSeq_append_fixture :
-    loopSurvives 3
-      (loopNestedSeq
-        (([.assign 3 (.const 0)] : List (LoopProg Nat)) ++
-          [.assign 4 (.const 1)])) :=
-  loopSurvives_nestedSeq_append 3 [.assign 3 (.const 0)]
-    [.assign 4 (.const 1)]
-    (by simp [loopNestedSeq, loopSurvives])
-    (by simp [loopNestedSeq, loopSurvives])
-
 def survivesAppendGuard : Bool :=
   (([.assign 3 (.const 0)] : List (LoopProg Nat)) ++
     ([.assign 4 (.const 1)] : List (LoopProg Nat))).length == 2
-
-/-! Cake `loopPropsScript.sml:767` `cut_sets_nested_seq`. -/
-
-theorem loopCutSets_nestedSeq_append_fixture :
-    loopCutSets [9]
-        (loopNestedSeq
-          (([.assign 3 (.const 0)] : List (LoopProg Nat)) ++
-            [.assign 4 (.const 1)])) =
-      loopCutSets
-        (loopCutSets [9]
-          (loopNestedSeq ([.assign 3 (.const 0)] : List (LoopProg Nat))))
-        (loopNestedSeq ([.assign 4 (.const 1)] : List (LoopProg Nat))) :=
-  loopCutSets_nestedSeq_append [9] [.assign 3 (.const 0)]
-    [.assign 4 (.const 1)]
 
 def cutSetsAppendGuard : Bool :=
   loopCutSets [9]
@@ -173,17 +61,6 @@ def cutSetsAppendGuard : Bool :=
           [.assign 4 (.const 1)])) ==
     [3, 4, 9]
 
-/-! Cake `loopPropsScript.sml:880` `assigned_vars_nested_seq_split`. -/
-
-theorem loopAssignedVars_nestedSeq_append_fixture :
-    loopAssignedVars
-        (loopNestedSeq
-          (([.assign 3 (.const 0)] : List (LoopProg Nat)) ++
-            [.assign 4 (.const 1)])) =
-      loopAssignedVars (loopNestedSeq ([.assign 3 (.const 0)] : List (LoopProg Nat))) ++
-        loopAssignedVars (loopNestedSeq ([.assign 4 (.const 1)] : List (LoopProg Nat))) :=
-  loopAssignedVars_nestedSeq_append [.assign 3 (.const 0)] [.assign 4 (.const 1)]
-
 def assignedVarsSplitGuard : Bool :=
   loopAssignedVars
       (loopNestedSeq
@@ -191,104 +68,19 @@ def assignedVarsSplitGuard : Bool :=
           [.assign 4 (.const 1)])) ==
     [3, 4]
 
-/-! Cake `loopPropsScript.sml:57` `comp_syntax_ok_def` with the
-    `comp_syn_ok_seq2`/`comp_syn_ok_nested_seq`/`comp_syn_ok_nested_seq2`
-    bridges.  `loopCompSyntaxOk` is Prop-valued and has no `Decidable`
-    instance, so the regression is theorem-based. -/
-
-theorem loopCompSyntaxOk_nestedSeq_append_fixture :
-    loopCompSyntaxOk [9]
-      (loopNestedSeq (([.assign 3 (.const 0)] : List (LoopProg Nat)) ++
-        [.assign 4 (.const 1)])) :=
-  loopCompSyntaxOk_nestedSeq_append _ _
-    ([9] : List Nat)
-    (by simp [loopNestedSeq, loopCompSyntaxOk])
-    (by simp [loopNestedSeq, loopCutSets, loopCompSyntaxOk])
-
-theorem loopCompSyntaxOk_nestedSeq_append_elim_fixture :
-    loopCompSyntaxOk [9]
-        (loopNestedSeq ([.assign 3 (.const 0)] : List (LoopProg Nat))) ∧
-      loopCompSyntaxOk
-        (loopCutSets [9] (loopNestedSeq ([.assign 3 (.const 0)] : List (LoopProg Nat))))
-        (loopNestedSeq ([.assign 4 (.const 1)] : List (LoopProg Nat))) :=
-  loopCompSyntaxOk_nestedSeq_append_elim _ _
-    ([9] : List Nat) loopCompSyntaxOk_nestedSeq_append_fixture
-
 def compSyntaxOkGuard : Bool :=
   loopCutSets [9]
       (loopNestedSeq (([.assign 3 (.const 0)] : List (LoopProg Nat)) ++
         [.assign 4 (.const 1)])) ==
     [3, 4, 9]
 
-/-! Cake `loopPropsScript.sml:810` `cut_sets_union_domain_subset` and `:831`
-    `comp_syn_impl_cut_sets_subspt`: every variable live before a
-    syntactically well-formed statement stays live after its cut set. -/
-
-theorem loopCompSyntaxOk_cutSets_subset_fixture :
-    (2 : Nat) ∈ loopCutSets [2, 5]
-      (loopNestedSeq ([.assign 3 (.const 0)] : List (LoopProg Nat))) :=
-  loopCompSyntaxOk_cutSets_subset [2, 5]
-    (loopNestedSeq ([.assign 3 (.const 0)] : List (LoopProg Nat)))
-    (by simp [loopNestedSeq, loopCompSyntaxOk]) 2 (by simp)
-
 def cutSetsSubsetGuard : Bool :=
   (loopCutSets [2, 5]
       (loopNestedSeq ([.assign 3 (.const 0)] : List (LoopProg Nat)))).contains 2
 
-/-! Cake `loopPropsScript.sml:777` `cut_sets_union_accumulate` and `:820`
-    `cut_sets_union_domain_union`: the cut set is the original live set plus a
-    fresh set of names. -/
-
-theorem loopCompSyntaxOk_cutSets_exists_extra_fixture :
-    ∃ extra : List Nat,
-      ∀ x, x ∈ loopCutSets [2, 5] (.assign 3 (.const 0) : LoopProg Nat) ↔
-        x ∈ [2, 5] ∨ x ∈ extra :=
-  loopCompSyntaxOk_cutSets_exists_extra [2, 5] (.assign 3 (.const 0))
-    (by simp [loopCompSyntaxOk])
-
 def cutSetsExtraGuard : Bool :=
   (loopCutSets [2, 5] (.assign 3 (.const 0) : LoopProg Nat)).contains 3 &&
     (loopCutSets [2, 5] (.assign 3 (.const 0) : LoopProg Nat)).contains 2
-
-/-! Cake `loopPropsScript.sml:89` `acc_vars_acc`, in the list-backed
-    membership form used by Flapjack's `loopAccVars`. -/
-
-theorem loopAccVars_mem_fixture :
-    (2 : Nat) ∈ loopAccVars probeAssignPairs [2] ↔
-      (2 : Nat) ∈ [2] ∨ (2 : Nat) ∈ loopAccVars probeAssignPairs [] :=
-  loopAccVars_mem probeAssignPairs [2] 2
-
-def accVarsMemGuard : Bool :=
-  (loopAccVars probeAssignPairs [9]).contains 9 &&
-    (loopAccVars probeAssignPairs [9]).contains 3
-
-/-! Cake `loopPropsScript.sml:10` `every_prog_def`, ported as `loopEveryProg`.
-    `loopEveryProg` is `Prop`-valued (no `Decidable` instance), so the
-    regression is theorem-based. -/
-
-theorem loopEveryProg_seq_fixture :
-    loopEveryProg (fun _ => True) (.seq (.assign 3 (.const 0)) .tick : LoopProg Nat) := by
-  simp [loopEveryProg]
-
-theorem loopEveryProg_ite_fixture :
-    loopEveryProg (fun _ => True)
-      (.ite .notEqual 3 (.imm 1) .tick .skip ([] : List Nat) : LoopProg Nat) := by
-  simp [loopEveryProg]
-
-theorem loopEveryProg_call_fixture :
-    loopEveryProg (fun _ => True)
-      (.call none none ([] : List Nat)
-        (some (1, (.assign 3 (.const 0) : LoopProg Nat), .tick, ([] : List Nat))) :
-        LoopProg Nat) := by
-  simp [loopEveryProg]
-
-theorem loopEveryProg_mark_fixture :
-    loopEveryProg (fun _ => True) (.mark (.assign 3 (.const 0)) : LoopProg Nat) := by
-  simp [loopEveryProg]
-
-theorem loopEveryProg_loop_fixture :
-    loopEveryProg (fun _ => True) (.loop ([] : List Nat) .tick ([] : List Nat) : LoopProg Nat) := by
-  simp [loopEveryProg]
 
 def check (name : String) (actual expected : List Nat) : IO Bool := do
   if actual == expected then
@@ -297,33 +89,5 @@ def check (name : String) (actual expected : List Nat) : IO Bool := do
   else
     IO.println s!"FAIL {name}: expected {repr expected}, got {repr actual}"
     pure false
-
-def runChecks : IO Bool := do
-  let results ← [
-    check "assigned_vars skip" (loopAssignedVars probeSkip) originalSkip,
-    check "assigned_vars assign" (loopAssignedVars probeAssign) originalAssign,
-    check "assigned_vars sequence"
-      (loopAssignedVars probeSequence) originalSequence,
-    check "assigned_vars long division"
-      (loopAssignedVars probeLongDiv) originalLongDiv,
-    check "assigned_vars byte load"
-      (loopAssignedVars probeLoadByte) originalLoadByte,
-    check "assigned_vars MAPi Assign"
-      (loopAssignedVars probeAssignNames) [3, 4, 5],
-    check "assigned_vars MAPi mapIdx Assign"
-      (loopAssignedVars probeMapIdxAssign) [7, 8, 9],
-    check "assigned_vars nested_seq Assign"
-      (loopAssignedVars probeAssignPairs) [3, 4, 5],
-    check "cut_sets MAPi Assign"
-      (loopCutSets [9] probeAssignPairs) [3, 4, 5, 9],
-    checkBool "survives MAPi Assign" survivesStructureGuard,
-    checkBool "survives nested_seq append" survivesAppendGuard,
-    checkBool "cut_sets nested_seq append" cutSetsAppendGuard,
-    checkBool "assigned_vars nested_seq split" assignedVarsSplitGuard,
-    checkBool "comp_syntax_ok nested_seq append" compSyntaxOkGuard,
-    checkBool "cut_sets preserves live" cutSetsSubsetGuard,
-    checkBool "cut_sets only adds" cutSetsExtraGuard,
-    checkBool "acc_vars accumulates" accVarsMemGuard ].mapM id
-  pure (results.all id)
 
 end Flapjack.Test.LoopAssignedVarsParity

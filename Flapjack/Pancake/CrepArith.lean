@@ -32,12 +32,6 @@ def crepDestConstHolWord {width : Nat} [NeZero width] :
   | .const value => some value
   | _ => none
 
-/-- Flapjack-only reduction of the word-valued adapter to the generic helper. -/
-theorem crepDestConstHolWord_eq_production {width : Nat} [NeZero width]
-    (expression : CrepExp (Fin width → Bool)) :
-    crepDestConstHolWord expression = crepDestConst expression := by
-  cases expression <;> rfl
-
 /-- Exact port of CakeML's `crep_arith$dest_const_def`
     (`crep_arithScript.sml:10-12`) over `CrepExpHOL`. Its implicit `width`
     ranges over every positive HOL word dimension; `BitVec width` is the
@@ -300,7 +294,6 @@ theorem crepDest2ExpHOL_lemma {width : Nat} [NeZero width] :
     have h2 : 2 ^ (m + 1) % 2 ^ width = 0 :=
       Nat.mod_eq_zero_of_dvd (Nat.pow_dvd_pow 2 (by omega))
     rw [h1, h2]
-
 
 /-- Exact HOL `dest_2exp_thm` (`crep_arithScript.sml:43-48`):
     `dest_2exp 0n w = SOME n2 ⇒ w = word_lsl 1w n2`. -/

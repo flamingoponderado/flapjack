@@ -14,12 +14,4 @@ open Flapjack
 def cakeEvenList (count : Nat) : List Nat :=
   (List.range count).map (fun index => 2 * index)
 
-def cakeSetupSsa {α : Type u} (parameterCount limit : Nat)
-    (_program : WordProg α) :
-    WordProg α × (WordSsaState × Nat) :=
-  let arguments := cakeEvenList parameterCount
-  let (state, renamed) := wordSsaFreshList
-    ({ current := [], next := limit } : WordSsaState) arguments
-  (.move 1 (renamed.zip arguments), (state, state.next))
-
 end Flapjack.RiscV.CakeRegAlloc

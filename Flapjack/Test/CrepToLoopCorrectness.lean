@@ -1,4 +1,6 @@
-import Flapjack.CrepToLoopCorrectness
+import Flapjack.CrepeSemantics
+import Flapjack.Pancake.Semantics.CrepSem
+import Flapjack.Pancake.CrepToLoop
 
 /-!
 Focused Cake-backed guards for the context lookup boundary.  The old file

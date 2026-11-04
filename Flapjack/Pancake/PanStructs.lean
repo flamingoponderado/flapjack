@@ -343,49 +343,6 @@ where
 termination_by expressions => sizeOf expressions
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial
 
-def structGetNames (context : StructPassContext) (declarations : List (Decl α)) :
-    StructPassContext :=
-  declarations.foldl (fun context declaration =>
-    match declaration with
-    | .name name fields =>
-        { context with structs := (name, { fields := fields, size := 0 }) :: context.structs }
-    | _ => context) context
-
-def structCompileDecls [BEq String] :
-    List (Decl α) → StructPassContext →
-      (compileShape : StructContext → Shape → Shape := structCompileShape) →
-        (oldExpShape : StructPassContext → Exp α → Shape := structOldExpShape) →
-        List (Decl α) × StructPassContext
-  | [], context, _, _ => ([], context)
-  | .decl shape name value :: declarations, context, compileShape, oldExpShape =>
-      let nextContext := { context with globals := (name, shape) :: context.globals }
-      let (compiled, finalContext) := structCompileDecls declarations nextContext compileShape oldExpShape
-      (.decl (compileShape context.structs shape) name
-        (structCompileExp context value compileShape oldExpShape) :: compiled,
-        finalContext)
-  | .function declaration :: declarations, context, compileShape, oldExpShape =>
-      let (compiled, finalContext) := structCompileDecls declarations context compileShape oldExpShape
-      let parameters := declaration.params.map
-        (fun (name, shape) => (name, compileShape context.structs shape))
-      let functionContext := { finalContext with locals := declaration.params }
-      let compiledDeclaration := { declaration with
-        params := parameters
-        body := structCompileProg functionContext declaration.body compileShape oldExpShape
-        returnShape := compileShape context.structs declaration.returnShape }
-      (.function compiledDeclaration :: compiled, finalContext)
-  | .exnDecl exception shape :: declarations, context, compileShape, oldExpShape =>
-      let (compiled, finalContext) := structCompileDecls declarations context compileShape oldExpShape
-      (.exnDecl exception (compileShape context.structs shape) :: compiled, finalContext)
-  | .name _ _ :: declarations, context, compileShape, oldExpShape =>
-      structCompileDecls declarations context compileShape oldExpShape
-
-def structCompileTop (declarations : List (Decl α))
-    (compileShape : StructContext → Shape → Shape := structCompileShape)
-    (oldExpShape : StructPassContext → Exp α → Shape := structOldExpShape) : List (Decl α) :=
-  let initial : StructPassContext :=
-    { structs := [], locals := [], globals := [] }
-  (structCompileDecls declarations (structGetNames initial declarations) compileShape oldExpShape).1
-
 @[simp] theorem structCompileShape_one (context : StructContext) :
     structCompileShape context .one = .one := by
   simp [structCompileShape, structCompileShapeWF]
@@ -394,34 +351,5 @@ def structCompileTop (declarations : List (Decl α))
     (context : StructPassContext) (value : α) :
     structCompileExp context (.const value) = .const value := by
   simp [structCompileExp]
-
-theorem structCompileProg_seq [BEq String] (context : StructPassContext)
-    (first second : Prog α) :
-    structCompileProg context (.seq first second) =
-      .seq (structCompileProg context first) (structCompileProg context second) := by
-  simp [structCompileProg]
-
-/-- Cake's `function_names_structs_compile_decs`
-    (`cakeml/pancake/proofs/pan_to_wordProofScript.sml`): the struct pass keeps
-    the function-name table. -/
-theorem functions_names_structCompileDecls [BEq String]
-    (declarations : List (Decl α)) (context : StructPassContext) :
-    (functions (structCompileDecls declarations context).1).map Prod.fst =
-      (functions declarations).map Prod.fst := by
-  induction declarations generalizing context with
-  | nil => simp [structCompileDecls]
-  | cons declaration declarations ih =>
-      cases declaration <;> simp [structCompileDecls, functions, functionEntries, ih]
-
-/-- Cake's `function_names_structs_compile_top`
-    (`cakeml/pancake/proofs/pan_to_wordProofScript.sml:313`): the struct pass at
-    the declaration list level keeps the function-name table. -/
-theorem functions_names_structCompileTop (declarations : List (Decl α)) :
-    (functions (structCompileTop declarations)).map Prod.fst =
-      (functions declarations).map Prod.fst := by
-  unfold structCompileTop
-  dsimp only
-  exact functions_names_structCompileDecls declarations
-    (structGetNames { structs := [], locals := [], globals := [] } declarations)
 
 end Flapjack

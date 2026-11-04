@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.WordCse.ProductionMemory
+import Flapjack.Compiler.Backend.WordCse.Proofs.WfDataPreservation
 
 namespace Flapjack.Test.WordCseProductionMemoryParity
 open Flapjack RiscV Compiler.Backend.WordCse Compiler.Encoders.Asm
@@ -13,8 +13,6 @@ private structure Fixture where
   destination : Nat
   address : Nat
   expected : Observation
-private def regMap (xs : List (Nat × Nat)) : WordCseRegMap :=
-  xs.foldr (fun entry m => m.insert entry.1 entry.2) ∅
 private def canonicalEntries (mode : Nat) : List (Nat × Nat) :=
   [(3,3),(5,5),(9,if mode = 5 ∨ mode = 6 then 3 else 9)]
 private def factKey {width : Nat} [NeZero width] (mode : Nat)
@@ -28,13 +26,6 @@ private def nativeData {width : Nat} [NeZero width] (mode : Nat)
     getsMem := [(.currHeap,3)]
     instrsMem := Misc.BalancedMap.insert listCmp [99] 3 Misc.BalancedMap.empty
     loadsMem := Misc.BalancedMap.insert listCmp (factKey mode operator offset) 3 Misc.BalancedMap.empty }
-private def executedData {width : Nat} [NeZero width] (mode : Nat)
-    (operator : WordMemOp) (offset : BitVec width) : WordCseKnowledge :=
-  { toCanonical := regMap (canonicalEntries mode)
-    toLatest := regMap [(3,5),(9,9)]
-    getsMem := regMap [(wordCseStoreCode (.currHeap : WordStore (BitVec width)),3)]
-    instrsMem := (∅ : WordCseFactMap).insert [99] 3
-    loadsMem := (∅ : WordCseFactMap).insert (factKey mode operator offset) 3 }
 private def nativeObservation {width : Nat} [NeZero width] (operator : WordMemOp)
     (destination : Nat) (offset : BitVec width)
     (output : Knowledge × WordLangProgHOL (BitVec width)) : Observation :=
@@ -47,22 +38,6 @@ private def nativeObservation {width : Nat} [NeZero width] (operator : WordMemOp
      (fun k => Misc.BalancedMap.lookup listCmp k data.loadsMem),
    match output.2 with
    | .inst (.mem op r (.addr a ofs)) => (1,memOpToNum op,r,a,ofs.toNat)
-   | .move priority [(r,current)] => (0,priority,r,current,0)
-   | _ => (2,0,0,0,0))
-private def executedObservation {width : Nat} [NeZero width] (operator : WordMemOp)
-    (destination : Nat) (offset : BitVec width)
-    (output : WordProg (BitVec width) × WordCseKnowledge) : Observation :=
-  let data := output.2
-  ([destination,3,5,9].map (fun k => data.toCanonical[k]?),
-   [3,destination,9].map (fun k => data.toLatest[k]?),
-   [WordStore.currHeap,WordStore.nextFree].map
-     (fun s => data.getsMem[wordCseStoreCode (s : WordStore (BitVec width))]?),
-   [[99]].map (fun k => data.instrsMem[k]?),
-   [loadToNumList operator 9 offset,loadToNumList operator 3 offset,[99]].map
-     (fun k => data.loadsMem[k]?),
-   match output.1 with
-   | .inst (.mem op r a) => (1,wordCseMemOpToNum op,r,a,0)
-   | .inst (.memOffset op r a ofs) => (1,wordCseMemOpToNum op,r,a,ofs.toNat)
    | .move priority [(r,current)] => (0,priority,r,current,0)
    | _ => (2,0,0,0,0))
 -- Complete numeric tuples transcribed from original memory_0..memory_255.
@@ -334,25 +309,4 @@ private def nativeCheck (fixture : Fixture) : Bool :=
 
 example : fixtures.all nativeCheck = true := by decide +kernel
 
-private def checkExecuted (fixture : Fixture) (positive : fixture.width ≠ 0) : IO Bool :=
-  letI : NeZero fixture.width := ⟨positive⟩
-  do
-    let offset := BitVec.ofNat fixture.width fixture.offset
-    let observed := executedObservation fixture.operator fixture.destination offset
-      (RiscV.wordCseProg (executedData fixture.mode fixture.operator offset)
-        (.inst (executedMemoryInst fixture.operator fixture.destination fixture.address offset)))
-    if observed != fixture.expected then
-      IO.eprintln s!"FAIL executed CSE memory width={fixture.width} mode={fixture.mode} destination={fixture.destination} address={fixture.address} offset={fixture.offset}: {repr observed}"
-      return false
-    return true
-
-def runChecks : IO Bool := do
-  for fixture in fixtures do
-    if h : fixture.width = 0 then
-      IO.eprintln "FAIL CSE memory fixture has invalid zero width"
-      return false
-    else
-      if !(← checkExecuted fixture h) then return false
-  IO.println "PASS executed CSE memory: 256 original/kernel/runtime cases; all eight opcodes, five knowledge fields/full programs, guards, invalidation, hit/miss, canonical addresses and widths1/8/64/80"
-  return true
 end Flapjack.Test.WordCseProductionMemoryParity

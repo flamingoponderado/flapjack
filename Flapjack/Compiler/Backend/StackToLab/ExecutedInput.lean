@@ -59,7 +59,6 @@ theorem supported_postRemoval {width : Nat} [NeZero width]
         PostRemoval.callNoneNone, PostRemoval.callNoneSome,
         PostRemoval.callSomeNone, PostRemoval.callSomeSome]
 
-
 /-- All post-removal grammar trees pass the check, at arbitrary positive width. -/
 theorem postRemoval_supported {width : Nat} [NeZero width]
     {p : HolProg width} (domain : PostRemoval p) : supported p = true := by
@@ -73,31 +72,5 @@ theorem postRemoval_supported {width : Nat} [NeZero width]
   | callNoneSome target _ ih => simp only [supported, ih, Bool.and_self]
   | callSomeNone target _ ih => simp only [supported, ih, Bool.and_self]
   | callSomeSome target _ _ ihp ihq => simp only [supported, ihp, ihq, Bool.and_self]
-
-/-- Literal complete native section lowering, with explicit boundary rejection. -/
-def sectionToExecuted? {width : Nat} [NeZero width] (input : Nat × HolProg width) :
-    Option (Flapjack.LabSection (BitVec width)) :=
-  if supported input.2 then ExecutedCodec.sectionToExecuted? (progToSectionHOL input)
-  else none
-
-/-- Every successful section is exactly the reviewed original output when decoded;
-this is codec recovery, not a source/target evaluator equivalence theorem. -/
-theorem section_recover {width : Nat} [NeZero width]
-    (input : Nat × HolProg width) (output : Flapjack.LabSection (BitVec width))
-    (accepted : sectionToExecuted? input = some output) :
-    ExecutedCodec.sectionFromExecuted? output = some (progToSectionHOL input) := by
-  unfold sectionToExecuted? at accepted
-  split at accepted
-  · exact ExecutedCodec.section_recover _ _ accepted
-  · contradiction
-
-/-- Accepted output guarantees the entire native input lies in the checked grammar. -/
-theorem section_postRemoval {width : Nat} [NeZero width]
-    (input : Nat × HolProg width) (output : Flapjack.LabSection (BitVec width))
-    (accepted : sectionToExecuted? input = some output) : PostRemoval input.2 := by
-  unfold sectionToExecuted? at accepted
-  split at accepted
-  · exact supported_postRemoval _ ‹supported input.2 = true›
-  · contradiction
 
 end Flapjack.Compiler.Backend.StackToLab.ExecutedInput

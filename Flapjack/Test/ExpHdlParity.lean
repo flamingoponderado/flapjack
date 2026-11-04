@@ -19,17 +19,6 @@ open Flapjack
 
 def vars : InfoMap (Shape × List Nat) := [("x", (.one, [3, 4]))]
 
-def missingOK : Bool :=
-  match expHdl (α := Nat) vars "missing" with
-  | .skip => true
-  | _ => false
-
-def knownOK : Bool :=
-  match expHdl (α := Nat) vars "x" with
-  | .seq (.assign 3 (.loadGlob 0))
-      (.seq (.assign 4 (.loadGlob 1)) .skip) => true
-  | _ => false
-
 def threeWordVars : FiniteMap VarName (Shape × List Nat) :=
   FUPDATE FEMPTY ("x", (.one, [3, 4, 5]))
 
@@ -71,24 +60,8 @@ def dupUpdateOK : Bool :=
 def dupListOK : Bool :=
   dupPattern (expHdlFiniteMap (α := Nat) dupListVars "x")
 
-/-! The compiler context stores bindings most-recent-first, so the association
-    list whose finite-map replay is HOL's `FEMPTY |++ [(x,[3,4]); (x,[7])]` is
-    the reversed list `[(x,[7]); (x,[3,4])]`.  The executed adapter must still
-    emit the last-binding code, matching the HOL duplicate oracle. -/
-def execDupVars : InfoMap (Shape × List Nat) :=
-  [("x", (.one, [7])), ("x", (.one, [3, 4]))]
-
-def execDupOK : Bool :=
-  dupPattern (expHdl (α := Nat) execDupVars "x")
-
-/-- The executable adapter's bridged finite map is exactly the HOL duplicate
-    `FUPDATE_LIST` map, so its output equals the faithful port's. -/
-example : expHdl (α := Nat) execDupVars "x" =
-    expHdlFiniteMap (α := Nat) dupListVars "x" := rfl
-
 def parityGuard : Bool :=
-  missingOK && knownOK && threeWordOK && fmMissingOK && fmKnownOK && dupUpdateOK && dupListOK
-    && execDupOK
+  threeWordOK && fmMissingOK && fmKnownOK && dupUpdateOK && dupListOK
 
 #eval parityGuard
 #guard parityGuard

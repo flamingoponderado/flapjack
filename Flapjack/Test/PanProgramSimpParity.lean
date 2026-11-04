@@ -201,15 +201,6 @@ theorem panValueProgramStateRel_evalDeclarations_evalExp_fixture
     relationState_self relationDecls none s' (.const 11) (.word 11) hs
   simp [evalPanValueExp]
 
-/-! Regression for the function-table lookup bridge used by Cake's
-    `state_rel_imp_semantics`: the entry keeps its parameters and return shape,
-    while only its body is replaced by `panSimpProg`. -/
-theorem lookupFunctionEntry_panSimpDecls_fixture :
-    lookupFunctionEntry "f" (functions (panSimpDecls relationDecls)) =
-      some ([], panSimpProg (.seq (.skip : Prog Nat) (.skip : Prog Nat)), .one) := by
-  apply lookupFunctionEntry_panSimpDecls relationDecls "f"
-  simp [relationDecls, functions, functionEntries, lookupFunctionEntry]
-
 /-- Focused regression for `map_snd_f_eq` (`pan_simpProofScript.sml:43`):
     rewriting the body component then projecting it is the same as projecting
     it first and rewriting afterwards. -/

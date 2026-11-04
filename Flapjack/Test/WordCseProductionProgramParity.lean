@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.WordCse.ProductionProgram
+import Flapjack.Compiler.Backend.WordCse.Proofs.WfDataPreservation
 
 namespace Flapjack.Test.WordCseProductionProgramParity
 open Flapjack RiscV Compiler.Backend.WordCse
@@ -23,13 +23,6 @@ private def nativeState (data : Knowledge) : StateObservation :=
    loadKeys.map (fun k => Misc.BalancedMap.lookup listCmp k data.loadsMem),
    sptSize data.toCanonical,sptSize data.toLatest,data.getsMem.length,
    Misc.BalancedMap.size data.instrsMem,Misc.BalancedMap.size data.loadsMem)
-private def actualState (data : WordCseKnowledge) : StateObservation :=
-  (regKeys.map (fun k => data.toCanonical[k]?),
-   regKeys.map (fun k => data.toLatest[k]?),
-   [WordStore.currHeap,WordStore.heapLength].map
-     (fun k => data.getsMem[wordCseStoreCode (k : WordStore (BitVec 64))]?),
-   instKeys.map (fun k => data.instrsMem[k]?),loadKeys.map (fun k => data.loadsMem[k]?),
-   data.toCanonical.size,data.toLatest.size,data.getsMem.size,data.instrsMem.size,data.loadsMem.size)
 -- Complete source programs/expected programs are independently checked by
 -- original EVAL equalitiesT; these state tuples come from original numeric rows.
 private def fixtures : List Fixture := [
@@ -64,27 +57,4 @@ private def stateCoverage (state : StateObservation) : Bool :=
     (loads.filter Option.isSome).length == ms
 example : fixtures.all (fun fixture => stateCoverage fixture.state) = true := by decide +kernel
 
--- Rejection remains visible for native instruction carriers outside the
--- existing partial codec; the wrapper theorem does not assume them away.
-example : wordLangProgFromHOL (.inst .skip : WordLangProgHOL (BitVec 64)) = none := rfl
-example : wordLangProgFromHOL (wordCommonSubexpElim (.inst .skip : WordLangProgHOL (BitVec 64))) = none := by
-  simp [wordCommonSubexpElim,wordCse,Compiler.Backend.WordCse.wordCseInst,Compiler.Encoders.Asm.HolInst.ofWordLangInst,
-    wordLangProgFromHOL,wordLangInstFromHOL,Compiler.Encoders.Asm.HolInst.toWordLangInst]
-
-def runChecks : IO Bool := do
-  for fixture in fixtures do
-    match wordLangProgFromHOL fixture.original, wordLangProgFromHOL fixture.expected with
-    | some original, some expected =>
-      let output := wordCseProg wordCseEmpty original
-      if actualState output.2 != fixture.state || reprStr output.1 != reprStr expected then
-        IO.eprintln s!"FAIL executed whole CSE program {fixture.label}: {repr (actualState output.2)}"
-        return false
-      if reprStr (wordCseProp original) != reprStr expected then
-        IO.eprintln s!"FAIL executed CSE wrapper {fixture.label}"
-        return false
-    | _,_ =>
-      IO.eprintln s!"FAIL unexpected whole CSE fixture codec rejection {fixture.label}"
-      return false
-  IO.println "PASS executed whole CSE: 15 original/kernel/runtime full-program/state cases, Seq/If/Loop/MustTerminate, both Call continuations, all flat controls; state cardinalities and explicit instruction codec rejection"
-  return true
 end Flapjack.Test.WordCseProductionProgramParity

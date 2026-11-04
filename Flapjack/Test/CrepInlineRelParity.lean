@@ -154,37 +154,17 @@ theorem not_localsExtRel_disagree : ¬ crepInlineLocalsExtRel extA extB extA' ex
   have hpoint := congrFun h 1
   simp [crepHolFdiff, crepHolFdom, extA, extA', extB, extBbad'] at hpoint
 
-/-- A finite inline map with one callee `f` whose body is `Skip`. -/
-def codeInlFmap : CrepInlineFmap Nat :=
-  CrepInlineFmap.insert "f" ([7], CrepProg.skip) CrepInlineFmap.empty
-
 def codeInlSource : CrepHolState Nat Unit :=
   { baseState with code := fun _ => some ([7], CrepProg.skip) }
 
-def codeInlTarget : CrepHolState Nat Unit :=
-  { baseState with
-    code := fun _ => some ([7], crepInlineProgFmap codeInlFmap CrepProg.skip) }
-
 def codeInlEmptyTarget : CrepHolState Nat Unit :=
   { baseState with code := fun _ => none }
-
-theorem codeInlRel_positive :
-    crepInlineCodeInlRel codeInlFmap codeInlSource codeInlTarget := by
-  apply crepInlineCodeInlRel_of_code
-  intro fname args prog hcode
-  simp [codeInlSource] at hcode
-  obtain ⟨rfl, rfl⟩ := hcode
-  simp [codeInlTarget]
 
 theorem codeInlRel_negative :
     ¬ crepInlineCodeInlRel codeInlFmap codeInlSource codeInlEmptyTarget :=
   not_crepInlineCodeInlRel_of_target_none codeInlFmap codeInlSource
     codeInlEmptyTarget "f" [7] CrepProg.skip
     (by simp [codeInlSource]) (by simp [codeInlEmptyTarget])
-
-def codeInlGuard : Bool :=
-  (codeInlSource.code "f").isSome && (codeInlTarget.code "f").isSome &&
-    (codeInlEmptyTarget.code "f").isNone
 
 /-! ## Expression-evaluation invariance (`eval_code_inl`) over the canonical word -/
 
@@ -202,9 +182,6 @@ def evalBase : CrepHolState (RiscV.Word 64) Unit :=
     baseAddress := 0
     topAddress := 100 }
 
-/-- The empty inline finite map. -/
-def evalInlineFmap : CrepInlineFmap (RiscV.Word 64) := CrepInlineFmap.empty
-
 theorem evalCodeInl_hcode :
     crepInlineCodeInlRel evalInlineFmap evalBase evalBase := by
   apply crepInlineCodeInlRel_of_code
@@ -213,24 +190,12 @@ theorem evalCodeInl_hcode :
 
 example : crepHolFdom evalBase.code = crepHolFdom evalBase.code := rfl
 
-example (n : FunName) (hn : crepHolFdom evalBase.code n = true) :
-    crepHolFdom evalBase.code n = true :=
-  crepInlineCodeInlRel_fdom_subset evalInlineFmap evalBase evalBase
-    evalCodeInl_hcode n hn
-
 example :
     (∀ n, crepHolFdom (fun _ : Nat => (none : Option Nat)) n = true →
       crepHolFdom (fun _ : Nat => (none : Option Nat)) n = true) ↔
     (∀ n p, (fun _ : Nat => (none : Option Nat)) n = some p →
       ∃ q, (fun _ : Nat => (none : Option Nat)) n = some q) :=
   crepHolFdom_subset_flookup _ _
-
-/-- `eval_code_inl`: a constant evaluates identically in the inlined code. -/
-example : evalCrepHolExp evalBase (.const (7 : RiscV.Word 64)) =
-    some (7 : RiscV.Word 64) :=
-  crepInlineEvalCodeInl evalBase evalBase (.const (7 : RiscV.Word 64))
-    (7 : RiscV.Word 64) evalInlineFmap (by simp only [evalCrepHolExp])
-    ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩ rfl evalCodeInl_hcode
 
 /-- `eval_code_inl` transfers a variable lookup through equal locals. -/
 example : evalCrepHolExp evalBase (.var 0) = some (7 : RiscV.Word 64) := by
@@ -243,12 +208,6 @@ def evalInvarianceGuard : Bool :=
 
 #guard evalInvarianceGuard
 
-/-! ## Nontrivial distinct code maps related by `inline_prog` -/
-
-/-- The inlineable callee `inc` with body `Skip`. -/
-def inlineCalleeFmap : CrepInlineFmap (RiscV.Word 64) :=
-  CrepInlineFmap.insert "inc" ([8], CrepProg.skip) CrepInlineFmap.empty
-
 /-- Source `main` body: a call to the inlineable `inc`. -/
 def inlineSrcMainBody : CrepProg (RiscV.Word 64) := .call none "inc" []
 
@@ -259,68 +218,14 @@ def inlineSrcCode : FunName → Option (List Nat × CrepProg (RiscV.Word 64)) :=
     else if n == "inc" then some ([8], CrepProg.skip)
     else none
 
-/-- Target code: each source body replaced by its `inline_prog` image. -/
-def inlineTgtCode : FunName → Option (List Nat × CrepProg (RiscV.Word 64)) :=
-  fun n =>
-    if n == "main" then
-      some ([7], crepInlineProgFmap inlineCalleeFmap inlineSrcMainBody)
-    else if n == "inc" then
-      some ([8], crepInlineProgFmap inlineCalleeFmap CrepProg.skip)
-    else none
-
 /-- Source state: locals `0 := 7`, nonempty source code. -/
 def inlineSrcState : CrepHolState (RiscV.Word 64) Unit :=
   { evalBase with code := inlineSrcCode }
-
-/-- Target state: same locals and `state_rel_code` fields, different code. -/
-def inlineTgtState : CrepHolState (RiscV.Word 64) Unit :=
-  { evalBase with code := inlineTgtCode }
-
-theorem inlineStates_state_rel_code :
-    crepInlineStateRelCode inlineSrcState inlineTgtState :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-theorem inlineStates_locals_strong :
-    crepInlineLocalsStrongRel inlineSrcState inlineTgtState := rfl
-
-theorem inlineCodeInlRel :
-    crepInlineCodeInlRel inlineCalleeFmap inlineSrcState inlineTgtState := by
-  apply crepInlineCodeInlRel_of_code
-  intro fname args prog hcode
-  cases hmain : fname == "main" with
-  | true =>
-      simp [beq_iff_eq] at hmain
-      subst hmain
-      simp [inlineSrcState, inlineSrcCode] at hcode
-      obtain ⟨rfl, rfl⟩ := hcode
-      simp [inlineTgtState, inlineTgtCode]
-  | false =>
-      cases hinc : fname == "inc" with
-      | true =>
-          simp [beq_iff_eq] at hinc
-          subst hinc
-          simp [inlineSrcState, inlineSrcCode, hmain] at hcode
-          obtain ⟨rfl, rfl⟩ := hcode
-          simp [inlineTgtState, inlineTgtCode, hmain]
-      | false =>
-          simp [inlineSrcState, inlineSrcCode, hmain, hinc] at hcode
 
 theorem inlineSrcVarEval :
     evalCrepHolExp inlineSrcState (.var 0) = some (7 : RiscV.Word 64) := by
   simp only [evalCrepHolExp, inlineSrcState, evalBase]
   decide
-
-/-- `eval_code_inl` on a distinct nonempty code pair: the target still returns 7. -/
-example : evalCrepHolExp inlineTgtState (.var 0) = some (7 : RiscV.Word 64) :=
-  crepInlineEvalCodeInl inlineSrcState inlineTgtState (.var 0)
-    (7 : RiscV.Word 64) inlineCalleeFmap inlineSrcVarEval
-    inlineStates_state_rel_code inlineStates_locals_strong inlineCodeInlRel
-
-def inlineEvalTransferGuard : Bool :=
-  (inlineSrcState.code "main").isSome && (inlineTgtState.code "main").isSome &&
-    (evalCrepHolExp inlineTgtState (.var 0) == some (7 : RiscV.Word 64))
-
-#guard inlineEvalTransferGuard
 
 /-- Nonempty heterogeneous expression list: a constant and a variable. -/
 def inlineHeteroExps : List (CrepExp (RiscV.Word 64)) :=
@@ -333,39 +238,6 @@ theorem inlineSrcMmapEval :
   simp only [evalCrepHolExp, inlineSrcState, evalBase]
   decide
 
-/-- `opt_mmap_eval_code_inl` transfers the whole heterogeneous list: the
-    distinct-code target evaluates it to the same values. -/
-example :
-    inlineHeteroExps.mapM (evalCrepHolExp inlineTgtState) =
-      some [(5 : RiscV.Word 64), 7] :=
-  crepInlineOptMmapEvalCodeInl inlineSrcState inlineTgtState inlineHeteroExps
-    [(5 : RiscV.Word 64), 7] inlineCalleeFmap inlineSrcMmapEval
-    inlineStates_state_rel_code inlineStates_locals_strong inlineCodeInlRel
-
-def inlineMmapTransferGuard : Bool :=
-  (inlineHeteroExps.mapM (evalCrepHolExp inlineTgtState) ==
-    some [(5 : RiscV.Word 64), 7])
-
-#guard inlineMmapTransferGuard
-
-/-! ## `inline_prog_correct` Skip constructor case
-
-The HOL `inline_prog_correct` Skip case: a source run of `Skip` ends in the same
-state, `inline_prog` maps `Skip` to `Skip`, and the target run exists and
-preserves the input relations.  We exercise it over the production fuel-bounded
-evaluator `evalCrepRuntimeResult`; the theorem is untagged because that
-evaluator is fuel-cutoff based rather than HOL's clock-based `evaluate`. -/
-
-/-- The empty inline map relates the (vacuous) code of `globalState` to itself. -/
-theorem skipCodeInlRel :
-    crepInlineRuntimeCodeInlRel CrepInlineFmap.empty
-      Flapjack.Test.CrepGlobalShapeParity.globalState
-      Flapjack.Test.CrepGlobalShapeParity.globalState := by
-  apply crepInlineCodeInlRel_of_code
-  intro fname args prog hcode
-  simp [CrepRuntimeState.toHolState, Flapjack.Test.CrepGlobalShapeParity.globalState,
-    FEMPTY] at hcode
-
 /-- The Skip fixture is `state_rel_code` to itself. -/
 theorem skipStateRel :
     crepInlineRuntimeStateRelCode Flapjack.Test.CrepGlobalShapeParity.globalState
@@ -376,35 +248,6 @@ theorem skipStateRel :
 theorem skipLocalsStrong :
     crepInlineRuntimeLocalsStrongRel Flapjack.Test.CrepGlobalShapeParity.globalState
       Flapjack.Test.CrepGlobalShapeParity.globalState := rfl
-
-/-- Skip-case transfer: the target run is *derived* (existential) and preserves
-    all postrelations, rather than being assumed. -/
-example :
-    ∃ t',
-      evalCrepRuntimeResult Flapjack.Test.CrepGlobalShapeParity.runtimeHandler
-          Flapjack.Test.CrepGlobalShapeParity.noPrimitive 1
-          Flapjack.Test.CrepGlobalShapeParity.globalState
-          (crepInlineProgFmap CrepInlineFmap.empty CrepProg.skip) =
-        some (CrepRuntimeResult.normal, t') ∧
-      crepInlineRuntimeStateRelCode Flapjack.Test.CrepGlobalShapeParity.globalState
-        t' ∧
-      crepInlineRuntimeLocalsStrongRel Flapjack.Test.CrepGlobalShapeParity.globalState
-        t' ∧
-      crepInlineRuntimeCodeInlRel CrepInlineFmap.empty
-        Flapjack.Test.CrepGlobalShapeParity.globalState t' :=
-  crepInlineRuntimeSkip Flapjack.Test.CrepGlobalShapeParity.runtimeHandler
-    Flapjack.Test.CrepGlobalShapeParity.noPrimitive 0
-    Flapjack.Test.CrepGlobalShapeParity.globalState
-    Flapjack.Test.CrepGlobalShapeParity.globalState
-    Flapjack.Test.CrepGlobalShapeParity.globalState CrepInlineFmap.empty
-    (evalCrepRuntimeResult_skip Flapjack.Test.CrepGlobalShapeParity.runtimeHandler
-      Flapjack.Test.CrepGlobalShapeParity.noPrimitive 0
-      Flapjack.Test.CrepGlobalShapeParity.globalState)
-    skipStateRel skipLocalsStrong skipCodeInlRel
-
-/-- The inline transform leaves `Skip` unchanged. -/
-example : crepInlineProgFmap CrepInlineFmap.empty CrepProg.skip = CrepProg.skip :=
-  crepInlineProgFmap_skip CrepInlineFmap.empty
 
 def inlineSkipGuard : Bool :=
   (evalCrepRuntimeResult Flapjack.Test.CrepGlobalShapeParity.runtimeHandler
@@ -434,52 +277,5 @@ example (s t : CrepHolState (BitVec 64) Unit)
     crepInlineLocalsRelW (decCrepHolClockW s) (decCrepHolClockW t) ∧
     crepInlineStateRelW (decCrepHolClockW s) (decCrepHolClockW t) :=
   crepInlineLocalsRel_decClockW s t hl hs
-
-def runChecks : IO Bool := do
-  let relOk ←
-    if baseStateGuard then
-      IO.println "PASS crep_inline state_rel/locals_rel/locals_strong_rel definitions"
-      pure true
-    else
-      IO.println "FAIL crep_inline state_rel/locals_rel/locals_strong_rel definitions"
-      pure false
-  IO.println "PASS crep_inline locals_rel_dec_clock preservation"
-  IO.println "PASS crep_inline locals_ext_rel/state_rel_code definitions"
-  let codeInlOk ←
-    if codeInlGuard then
-      IO.println "PASS crep_inline finite-map code_inl_rel relation"
-      pure true
-    else
-      IO.println "FAIL crep_inline finite-map code_inl_rel relation"
-      pure false
-  let evalOk ←
-    if evalInvarianceGuard then
-      IO.println "PASS crep_inline eval_code_inl expression invariance"
-      pure true
-    else
-      IO.println "FAIL crep_inline eval_code_inl expression invariance"
-      pure false
-  let inlineEvalOk ←
-    if inlineEvalTransferGuard then
-      IO.println "PASS crep_inline eval_code_inl nontrivial distinct-code transfer"
-      pure true
-    else
-      IO.println "FAIL crep_inline eval_code_inl nontrivial distinct-code transfer"
-      pure false
-  let inlineMmapOk ←
-    if inlineMmapTransferGuard then
-      IO.println "PASS crep_inline opt_mmap_eval_code_inl heterogeneous list transfer"
-      pure true
-    else
-      IO.println "FAIL crep_inline opt_mmap_eval_code_inl heterogeneous list transfer"
-      pure false
-  let inlineSkipOk ←
-    if inlineSkipGuard then
-      IO.println "PASS crep_inline inline_prog_correct Skip case"
-      pure true
-    else
-      IO.println "FAIL crep_inline inline_prog_correct Skip case"
-      pure false
-  pure (relOk && codeInlOk && evalOk && inlineEvalOk && inlineMmapOk && inlineSkipOk)
 
 end Flapjack.Test.CrepInlineRelParity

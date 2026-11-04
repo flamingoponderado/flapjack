@@ -21,19 +21,4 @@ private def inputs : List (List Nat × List Nat) :=
    ([10000,2,10000], [9999])]
 private def expected : List Nat := [0,0,7,7,5,9,9,18,1208925819614629174706177,7,9,10000]
 
-example : inputs.map wordCutsetsCakeMaxVar = expected := by decide +kernel
-
-example : inputs.map (fun sets => cutsetsMaxHOL (wordCutsetsToHOL sets)) = expected := by
-  have same : inputs.map wordCutsetsCakeMaxVar =
-      inputs.map (fun sets => cutsetsMaxHOL (wordCutsetsToHOL sets)) := by
-    apply List.map_congr_left
-    intro sets _
-    exact wordCutsetsCakeMaxVar_eq_cutsetsMaxHOL sets
-  rw [← same]
-  decide +kernel
-
-example (sets : List Nat × List Nat) :
-    wordCutsetsCakeMaxVar sets = cutsetsMaxHOL (wordCutsetsToHOL sets) :=
-  wordCutsetsCakeMaxVar_eq_cutsetsMaxHOL sets
-
 end Flapjack.Test.WordToStackCutsetMaximumParity

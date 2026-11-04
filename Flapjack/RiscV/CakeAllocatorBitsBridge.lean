@@ -71,100 +71,11 @@ theorem ofNat_shift_or_one {w : Nat} [NeZero w] (n : Nat) :
   rw [BitVec.ofNat_add (n * 2) 1, ofNat_shift n, shiftLeft_or_one]
   rfl
 
-/-- Executable `bitsToWord` agrees with the tagged `bitsToWordW` after the
-carrier conversion, for arbitrary inputs (including `bits.length > width`, where
-both sides truncate the high bits). -/
-theorem bitsToWord_ofNat_eq {w : Nat} [NeZero w] (bits : List Bool) :
-    BitVec.ofNat w (bitsToWord bits) = bitsToWordW (width := w) bits := by
-  induction bits with
-  | nil => rfl
-  | cons bit bits ih =>
-    cases bit
-    · simp only [bitsToWord, Bool.false_eq_true, ↓reduceIte, Nat.add_zero, bitsToWordW]
-      rw [← ih, ofNat_shift]
-    · simp only [bitsToWord, ↓reduceIte, bitsToWordW]
-      rw [← ih, ofNat_shift_or_one]
-
-/-- Fuel-indexed executable chunking maps onto `wordListW`.  `hfuel` rules out
-exhausting the executable fuel before the bit list is consumed (each chunk
-removes at least one bit). -/
-theorem frameBitmapWordsAux_map {width : Nat} [NeZero width] (chunkSize fuel : Nat)
-    (bits : List Bool) (hfuel : bits.length ≤ fuel) :
-    (frameBitmapWordsAux chunkSize (fuel + 1) bits).map (BitVec.ofNat width) =
-      wordListW (width := width) bits chunkSize := by
-  induction fuel generalizing bits with
-  | zero =>
-    have hnil : bits = [] := List.eq_nil_of_length_eq_zero (Nat.le_zero.mp hfuel)
-    subst hnil
-    rw [frameBitmapWordsAux, wordListW]
-    rw [if_pos (by simp), if_pos (by simp)]
-    simp only [List.map_cons, List.map_nil, bitsToWord_ofNat_eq]
-  | succ fuel ih =>
-    rw [frameBitmapWordsAux, wordListW]
-    by_cases h : bits.length ≤ chunkSize ∨ chunkSize = 0
-    · have hb : (chunkSize = 0 || bits.length ≤ chunkSize) = true := by
-        rw [Bool.or_eq_true]; rcases h with h | h
-        · exact Or.inr (by simp [h])
-        · exact Or.inl (by simp [h])
-      rw [if_pos (by simp [hb]), if_pos h]
-      simp only [List.map_cons, List.map_nil, bitsToWord_ofNat_eq]
-    · have hb : (chunkSize = 0 || bits.length ≤ chunkSize) = false := by
-        rw [Bool.or_eq_false_iff]
-        refine ⟨?_, ?_⟩
-        · simp only [decide_eq_false_iff_not]; exact fun hh => h (Or.inr hh)
-        · simp only [decide_eq_false_iff_not]; exact fun hh => h (Or.inl hh)
-      rw [if_neg (by simp [hb]), if_neg h]
-      simp only [List.map_cons, bitsToWord_ofNat_eq]
-      have hlt : (bits.drop chunkSize).length ≤ fuel := by
-        have h1 : (bits.drop chunkSize).length = bits.length - chunkSize := List.length_drop
-        omega
-      rw [ih (bits.drop chunkSize) hlt]
-
-/-- Executable `frameBitmapWords` maps onto `wordListW`. -/
-theorem frameBitmapWords_map {width : Nat} [NeZero width] (chunkSize : Nat)
-    (bits : List Bool) :
-    (frameBitmapWords chunkSize bits).map (BitVec.ofNat width) =
-      wordListW (width := width) bits chunkSize := by
-  rw [frameBitmapWords]
-  exact frameBitmapWordsAux_map chunkSize bits.length bits (Nat.le_refl _)
-
-/-- Executable `writeBitmap`'s bitmap-word recursion maps onto `wordListW` for the
-bitmap it constructs.  The name-set construction (`names`) is the documented
-remaining mismatch and is left as-is. -/
-theorem writeBitmap_map {width : Nat} [NeZero width] (live : List Nat) (k f' wordBits : Nat) :
-    (writeBitmap live k f' wordBits).map (BitVec.ofNat width) =
-      wordListW (width := width)
-        ((List.range f').map (fun slot =>
-          (live.map (fun r => (f' - 1) - (r / 2 - k))).contains slot) ++ [true])
-        (wordBits - 1) := by
-  dsimp only [writeBitmap]
-  exact frameBitmapWords_map (wordBits - 1) _
-
 /-- Executable `List.contains` equals the decidable-membership bitmap test, the
 form HOL `write_bitmap` uses (`MEM` over `toAList live`). -/
 theorem contains_eq_decide_mem (names : List Nat) (slot : Nat) :
     names.contains slot = decide (slot ∈ names) := by
   unfold List.contains
   rw [List.elem_eq_mem]
-
-/-- The executed bitmap builder `writeBitmap` (with its `List.contains`
-name-set) maps onto the HOL-shaped `writeBitmapHOL` at stride `width`, for every
-input.  This closes the previously-documented gap: the name-set construction is
-now kernel-checked equal on all inputs, not just the word recursion. -/
-theorem writeBitmap_eq_writeBitmapHOL {width : Nat} [NeZero width]
-    (live : List Nat) (k f' : Nat) :
-    (writeBitmap live k f' width).map (BitVec.ofNat width) =
-      writeBitmapHOL (width := width) live k f' := by
-  rw [writeBitmap_map]
-  unfold writeBitmapHOL
-  have hbits :
-      (List.range f').map (fun slot =>
-          (live.map (fun r => (f' - 1) - (r / 2 - k))).contains slot) =
-        (List.range f').map (fun slot =>
-          decide (slot ∈ live.map (fun r => (f' - 1) - (r / 2 - k)))) := by
-    apply List.map_congr_left
-    intro slot _
-    exact contains_eq_decide_mem _ _
-  rw [hbits]
 
 end Flapjack.RiscV.CakeAlloc

@@ -103,9 +103,6 @@ def crepeBitmapCallEntries : List (CompiledFunction α) → Nat
   | function :: functions =>
       crepBitmapCallEntries function.body + crepeBitmapCallEntries functions
 
-def pancakeBitmapData (state : RiscV.WordStackBitmapState) : List Nat :=
-  state.data
-
 /-! Cake's pretty-printer emits at most sixteen bitmap words per `.quad` line.
     Keep the line wrapping in the artifact formatter as well as the word
     values: the assembly frame is itself part of the RISC-V parity boundary. -/
@@ -240,11 +237,5 @@ def pancakeAssemblyFrame (ffiNames : List String) (bytes : List (BitVec 8))
           "cdecl(cake_codebuffer_end):", "     .space 4096"]
       ++ symbolLines
       ++ [""])
-
-def pancakeRuntimeAssembly
-    (crepe : List (CompiledFunction (RiscV.Word 64)))
-    (image : Flapjack.SourceRiscVRuntimeImage 64) : String :=
-  pancakeAssemblyFrame image.ffiNames (image.sections.flatMap (fun entry => entry.bytes))
-    (pancakeBitmapData image.bitmaps) (initializedRuntimeSymbolLines crepe image.sections)
 
 end Flapjack.RiscV

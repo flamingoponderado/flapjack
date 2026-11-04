@@ -1,4 +1,8 @@
-import Flapjack.RiscV.WordDeadCode
+import Flapjack.Compiler.Backend.WordUnreach
+import Flapjack.RiscV.CakeRegAlloc
+import Flapjack.Compiler.Backend.WordCse.ListOrder
+import Flapjack.Compiler.Backend.WordCse.RegisterUses
+import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
 
 /-! Direct Cake/HOL parity for the `remove_dead` global-store state carried by
     `nlive`.  Cake resets `nlive` after a non-variable `Set`, so an earlier
@@ -9,35 +13,5 @@ import Flapjack.RiscV.WordDeadCode
 namespace Flapjack.Test.CakeDeadCodeStateParity
 
 open Flapjack Flapjack.RiscV
-
-def nonVariableGlobalReset : WordProg Nat :=
-  .seq (.set (.globals : WordStore Nat) (.const 1))
-    (.seq (.set (.globals : WordStore Nat) (.var 8)) (.return 0 []))
-
-def nonVariableGlobalResetGuard : Bool :=
-  match wordRemoveDeadProgram nonVariableGlobalReset with
-  | .seq (.set .globals (.const 1))
-      (.seq (.set .globals (.var 8)) (.return 0 [])) => true
-  | _ => false
-
-#guard nonVariableGlobalResetGuard
-
-def parityGuard : Bool := nonVariableGlobalResetGuard
-
-#guard parityGuard
-#eval parityGuard
-
-def runChecks : IO Bool := do
-  let checks : List (String × Bool) :=
-    [ ("remove_dead resets Cake nlive after a non-variable global Set",
-        nonVariableGlobalResetGuard) ]
-  let mut ok := true
-  for (name, result) in checks do
-    if result then
-      IO.println s!"PASS {name}"
-    else
-      IO.println s!"FAIL {name}"
-      ok := false
-  pure ok
 
 end Flapjack.Test.CakeDeadCodeStateParity
