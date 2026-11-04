@@ -118,6 +118,36 @@ theorem evaluate_exception_domain {width : Nat} [NeZero width] {C F : Type}
   rw [localsEq]
   exact savedFrame_domain env1 env2 state.permute gcAfter gcKeys.symm
 
+/-- Catching an exception at the freshly pushed frame restores the previous
+stack keys and handler index. -/
+theorem evaluate_exception_caller_stack {width : Nat} [NeZero width] {C F : Type}
+    (prog handlerBody : WordLangProgHOL (BitVec width)) (state : WordSemStateFiniteExact width C F)
+    (env1 env2 : Spt (WordLocW width)) (args : List (WordLocW width)) (size : Option Nat)
+    (name a b : Nat) (loc value : WordLocW width) (post : WordSemStateFiniteExact width C F)
+    (run : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args size
+        (WordSemStateFiniteExact.pushEnv (env1, env2) (some (name, handlerBody, a, b))
+          (WordSemStateFiniteExact.decClock state))) = (some (.exception loc value), post)) :
+    sKeyEq state.stack post.stack ∧ post.handler = state.handler := by
+  let entered := WordSemStateFiniteExact.callEnv args size
+    (WordSemStateFiniteExact.pushEnv (env1, env2) (some (name, handlerBody, a, b)) (WordSemStateFiniteExact.decClock state))
+  have facts := evaluateStackSwap prog entered
+  change WordSemStateFiniteExact.evaluate prog entered = (some (.exception loc value), post) at run
+  unfold stackSwapPost at facts
+  rw [run] at facts
+  obtain ⟨_, nonGc, gc, saved, rest, frameSize, gcAfter, stackAt, _, _, tailKeys, handlerEq, _⟩ := facts
+  have initialStack : entered.stack =
+      .stackFrame state.localsSize (sptToAList env1) (wordSemEnvToList env2 state.permute).1
+        (some (state.handler, a, b)) :: state.stack := rfl
+  have initialHandler : entered.handler = state.stack.length := rfl
+  rw [initialStack, initialHandler, wordSemLastN_eq_drop] at stackAt
+  simp only [List.length_cons, Nat.sub_self, List.drop_zero, List.cons.injEq,
+    WordSemStackFrame.stackFrame.injEq, Option.some.injEq] at stackAt
+  obtain ⟨⟨_, _, _, savedEq⟩, restEq⟩ := stackAt
+  subst saved
+  subst rest
+  exact ⟨(sKeyEqSym _ _).mp tailKeys, handlerEq⟩
+
 /-- The return-domain result also holds after the caller's clock clamp. -/
 theorem evaluate_fixClock_popEnv_domain {width : Nat} [NeZero width] {C F : Type}
     (prog : WordLangProgHOL (BitVec width)) (state : WordSemStateFiniteExact width C F)
