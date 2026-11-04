@@ -1,6 +1,55 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gen_gc_partial_move_roots_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialRoots.lean",
+  "lean_name": "wordGenGcPartialMoveRoots_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared word_partial_move_roots_typed and the source induction: the complete abstract and concrete traversals, success, empty accumulators, heap and segment bounds, classifier, separated memory, and all existential outputs are retained at the common positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_partial_move_ok_before",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialAccumulator.lean",
+  "lean_name": "partialMove_okBefore",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_move_ok_before_typed: success of the same partial root-move equation implies input-state success with independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_partial_move_list_ok_before",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialAccumulator.lean",
+  "lean_name": "partialMoveList_okBefore",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_move_list_ok_before_typed: success of the same root-list traversal implies input-state success with independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_partial_move_with_NIL",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialAccumulator.lean",
+  "lean_name": "partialMove_withNil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_move_with_nil_typed: the successful root move factors through cleared h2 and r4 fields with the original append order."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_partial_move_list_with_NIL",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialAccumulator.lean",
+  "lean_name": "partialMoveList_withNil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_move_list_with_nil_typed: the successful root traversal factors through cleared h2 and r4 fields with the original append order."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "gc_partial_move_list_with_NIL_LEMMA",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialAccumulator.lean",
+  "lean_name": "partialMoveList_withNilLemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_move_list_with_nil_lemma_typed: the original success premise yields both accumulator decompositions and the same cleared-state traversal equation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gen_gc_partial_move_thm",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/PartialMove.lean",
   "lean_name": "wordGenGcPartialMove_copy",
