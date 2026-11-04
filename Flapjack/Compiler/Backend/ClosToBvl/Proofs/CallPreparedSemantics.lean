@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalInstall
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Syntax
+import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationSafety
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
@@ -534,5 +535,40 @@ theorem numberedCallOracle_aux_distinct_and_range {C : Type} (fuel : Nat)
       ClosNumber.compileInc_codeLocations_nodup (oracle index).1.1 (oracle index).2.1
   · intro index loc member
     exact numberingOracle_location_successor_bounds oracle state index loc member
+
+
+/-- Main expressions and auxiliary bodies produced by the direct-call
+oracle retain the numbered source interval, even after annotation. -/
+theorem numberedCallOracle_nested_location_bounds {C : Type} (fuel : Nat)
+    (oracle : Nat → (Nat × (NumSet × C)) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (state : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) :
+    ∀ index,
+      (∀ loc ∈ codeLocations (ClosAnnotate.annotateList 0
+        (ClosCall.compileIncFuelOracle fuel (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2.1),
+        (oracle index).1.1 ≤ loc ∧ loc + 1 < (oracle (index + 1)).1.1) ∧
+      (∀ loc ∈ codeLocations ((ClosAnnotate.compile
+        (ClosCall.compileIncFuelOracle fuel (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2.2).map
+          (fun (_, _, body) => body)),
+        (oracle index).1.1 ≤ loc ∧ loc + 1 < (oracle (index + 1)).1.1) := by
+  intro index
+  let numbered := stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle
+  let called := ClosCall.compileIncFuelOracle fuel numbered index
+  have within := ClosCall.compileIncFuelOracle_locationsWithin fuel numbered index
+  constructor
+  · intro loc member
+    have sourceLoc : loc ∈ codeLocations (numbered index).2.1 :=
+      within.1 loc ((ClosAnnotate.annotateList_codeLocations_sublist 0 called.2.1).subset member)
+    exact numberingOracle_location_successor_bounds oracle state index loc sourceLoc
+  · intro loc member
+    have before : loc ∈ codeLocations (called.2.2.map (fun (_, _, body) => body)) :=
+      (ClosAnnotate.compile_codeLocations_sublist called.2.2).subset member
+    obtain ⟨body, bodyMember, locMember⟩ := (mem_codeLocations loc _).1 before
+    obtain ⟨entry, entryMember, bodyEq⟩ := List.mem_map.mp bodyMember
+    obtain ⟨name, arity, sourceBody⟩ := entry
+    simp only at bodyEq
+    subst body
+    have sourceLoc : loc ∈ codeLocations (numbered index).2.1 :=
+      within.2 name arity sourceBody entryMember loc locMember
+    exact numberingOracle_location_successor_bounds oracle state index loc sourceLoc
 
 end Flapjack.Compiler.Backend.ClosToBvl
