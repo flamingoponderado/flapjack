@@ -168,6 +168,22 @@ BASIS_CORPUS = [
     'val a = Array.array 1 0; fun f x = (Array.update a 0 (Array.sub a 0 + x); Array.sub a 0); '
     'val _ = print_int (f 3 + f 7);',
     'fun f x = let fun g y = fn z => x + y + z in g end; val _ = print_int (f 1 2 3);',
+    # Interactions between mutation, escaping closures, handlers, and word operations.
+    'fun counter n = let val a = Array.array 1 n in fn k => '
+    '(Array.update a 0 (Array.sub a 0 + k); Array.sub a 0) end; '
+    'val f = counter 3; val g = counter 9; val _ = print_int (f 2 + g 4 + f 1);',
+    'fun map f xs = case xs of [] => [] | x::ys => f x::map f ys; '
+    'val a = Array.fromList (map (fn x => x*x) [1,2,3]); val _ = print_int (Array.sub a 2);',
+    'val a = Array.array 2 0; exception E int; fun step n = '
+    '((Array.update a 0 n; raise E n) handle E x => '
+    '(Array.update a 1 x; Array.sub a 0 + Array.sub a 1)); val _ = print_int (step 17);',
+    'fun pow n x = if n = 0 then x else pow (n-1) (Word64.xorb x (Word64.fromInt n)); '
+    'val _ = print_int (Word64.toInt (pow 7 (Word64.fromInt 0)));',
+    'val a = Word8Array.array 5 (Word8.fromInt 0); val _ = Word8Array.update a 0 (Word8.fromInt 255); '
+    'val _ = Word8Array.copy a 0 4 a 1; val _ = print_int (Word8.toInt (Word8Array.sub a 3));',
+    'fun make x = let val a = Array.array 1 x; '
+    'fun inc y = (Array.update a 0 (Array.sub a 0 + y); Array.sub a 0) '
+    'in (inc, fn z => inc z + inc z) end; val (f,g) = make 4; val _ = print_int (f 3 + g 2);',
 ]
 
 

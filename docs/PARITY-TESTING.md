@@ -8,6 +8,13 @@ source revisions and the resulting executable's embedded version. Set
 `CAKEML_BUILD_DIR` to choose another persistent build directory. The reference
 submodules in this repository remain read-only.
 
+The fixed source corpus includes programs combining array mutation with
+escaping closures and exception handlers, overlapping byte-array copies, and
+64-bit word operations. Run the complete corpus against the pinned compiler
+with `python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus`.
+This compares complete compiler output, diagnostics, and exit status; it is
+not a general equivalence proof.
+
 On 2026-11-04, 40 generated nested-closure programs and 80 structured
 programs with varied backend options matched the pinned executable's complete
 output. All 38 structured templates also matched, including escaping mutual
