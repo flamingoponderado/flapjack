@@ -18,3 +18,4 @@ val _ = show "loc_merge_typed" data_to_word_gcProofTheory.loc_merge_def;
 val _ = show "length_loc_merge_typed" data_to_word_gcProofTheory.LENGTH_loc_merge;
 val _ = show "dec_stack_loc_merge_enc_stack_typed" data_to_word_gcProofTheory.dec_stack_loc_merge_enc_stack;
 val _ = show "stack_rel_dec_stack_IMP_stack_rel_typed" data_to_word_gcProofTheory.stack_rel_dec_stack_IMP_stack_rel;
+val _ = show "FILTER_enc_stack_lemma_typed" data_to_word_gcProofTheory.FILTER_enc_stack_lemma;

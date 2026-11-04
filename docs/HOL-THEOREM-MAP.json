@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "FILTER_enc_stack_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/StackRoots.lean",
+  "lean_name": "filter_encStack",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6573-6587 and FILTER_enc_stack_lemma_typed: the data stack and word stack have the original carriers, the related-stack premise and both filtered root lists match, and the word dimension is shared and positive. The Lean proof first establishes equality of the unfiltered lists. This source comparison and kernel checking do not prove collector correctness or cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "stack_rel_dec_stack_IMP_stack_rel",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/DecStack.lean",
   "lean_name": "stackRel_decStack_locMerge",
