@@ -27,3 +27,4 @@ val _ = show "loc_merge_FILTER_isWord_typed" data_to_word_gcProofTheory.loc_merg
 val _ = show "word_gc_fun_loc_merge_typed" data_to_word_gcProofTheory.word_gc_fun_loc_merge;
 val _ = show "word_gc_fun_IMP_typed" data_to_word_gcProofTheory.word_gc_fun_IMP;
 val _ = show "word_gc_fun_EL_lemma_typed" data_to_word_gcProofTheory.word_gc_fun_EL_lemma;
+val _ = show "word_gc_fun_IMP_FILTER_typed" data_to_word_gcProofTheory.word_gc_fun_IMP_FILTER;

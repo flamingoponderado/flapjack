@@ -1,6 +1,16 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_fun_IMP_FILTER",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/CollectorFilter.lean",
+  "lean_name": "wordGcFun_imp_filter",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": ["store", "store'"],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 6234-6272 and word_gc_fun_IMP_FILTER_typed: successful original collector execution and EVERY loc_ok are the only premises, and the conclusion executes the same collector on filtered input with filtered output and identical memory and store. Both finite-map binders use canonical HolFiniteMapExact carriers; all words, root payloads, memory and domain share the positive word dimension. The proof covers the actual no-collection, simple and generational branches. Source review and Lean kernel checking do not establish collector memory correctness or cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
   "hol_name": "word_gc_fun_EL_lemma",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/DecodedRoots.lean",
   "lean_name": "wordGcFun_decStack_flat",
