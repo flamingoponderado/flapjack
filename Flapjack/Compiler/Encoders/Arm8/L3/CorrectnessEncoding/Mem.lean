@@ -465,13 +465,6 @@ theorem arm8Ast_store_single (dest base : Nat) (off : BitVec 64)
   simp [h1]
 
 
-/-- The one-instruction load lowering encodes to four bytes. -/
-theorem arm8Enc_load_single_length (dest base : Nat) (off : BitVec 64)
-    (hsx : off = BitVec.signExtend 64 (BitVec.ofNat 9 off.toNat)) :
-    (arm8Enc (.inst (.mem .load dest (.addr base off)))).length = 4 := by
-  rw [arm8Enc, arm8Ast_load_single dest base off hsx]
-  simp [arm8Encode_length]
-
 /-- The scaled twelve-bit form of `arm8_load_store_ast` (a zero-extended
  twelve-bit slice shifted into place) is the `hoff` form the case theorems use:
  `setWidth 64` of the low twelve bits of the shifted offset. -/
@@ -726,20 +719,6 @@ theorem arm8Mem_four_eq_readMemWord (ms : arm8_state) (s : AsmState 64) (address
   rw [readMemWord_fst address 4 s hbe]
   rw [readBytes_four]
   exact arm8SetWidth64_four _ _ _ _
-
-
-/-- The L3 eight-byte read is the source's `readMemWord` value, from the state
-relation and the eight-address domain fact alone (Flapjack infrastructure). -/
-theorem arm8Mem_eight_value (ms : arm8_state) (s : AsmState 64) (address : BitVec 64)
-    (hal : Aligned (TN := 64) (address, 8) = true)
-    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
-    (hbe : s.be = false)
-    (hrel : ∀ a, s.memDomain a → ms.MEM a = s.mem a)
-    (hdom : ∀ k, k < 8 → s.memDomain (address + BitVec.ofNat 64 k)) :
-    (Mem (TN := 64) (address, (8, AccType.AccType_NORMAL)) ms).1 =
-      (readMemWord (resultWidth := 64) address 8 s).1 :=
-  arm8Mem_eight_eq_readMemWord ms s address hal he0 hel hbe
-    (fun i hi => hrel _ (hdom i hi))
 
 
 /-- The rendered `Aligned` at eight bytes is `8 ∣ a.toNat`. -/
@@ -1033,27 +1012,6 @@ theorem arm8WriteMem_eight (ms : arm8_state) (address : BitVec 64) (value : BitV
     simpa using arm8HolByte value 7 (by decide)
   rw [hb0, hb1, hb2, hb3, hb4, hb5, hb6, hb7]
   exact holUpdate_eight address ms.MEM _ _ _ _ _ _ _ _ x
-
-
-/-- The L3 eight-byte write leaves memory outside its eight addresses alone
-(Flapjack infrastructure). -/
-theorem arm8WriteMem_eight_out (ms : arm8_state) (address : BitVec 64) (value : BitVec 64)
-    (acctype : AccType)
-    (hal : Aligned (TN := 64) (address, 8) = true)
-    (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
-    (x : BitVec 64) (hx : ∀ k, k < 8 → x ≠ address + BitVec.ofNat 64 k) :
-    («write'Mem» (TN := 64) (value, (address, (8, acctype))) ms).MEM x = ms.MEM x := by
-  rw [arm8WriteMem_eight ms address value acctype hal he0 hel x]
-  have h0 : x ≠ address := by simpa using hx 0 (by omega)
-  have h1 : x ≠ address + 1#64 := by simpa using hx 1 (by omega)
-  have h2 : x ≠ address + 2#64 := by simpa using hx 2 (by omega)
-  have h3 : x ≠ address + 3#64 := by simpa using hx 3 (by omega)
-  have h4 : x ≠ address + 4#64 := by simpa using hx 4 (by omega)
-  have h5 : x ≠ address + 5#64 := by simpa using hx 5 (by omega)
-  have h6 : x ≠ address + 6#64 := by simpa using hx 6 (by omega)
-  have h7 : x ≠ address + 7#64 := by simpa using hx 7 (by omega)
-  simp only [writeMemN, memState]
-  simp [h0, h1, h2, h3, h4, h5, h6, h7]
 
 
 /-- `write'Mem` changes only `MEM` (Flapjack infrastructure). -/

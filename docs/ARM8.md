@@ -512,10 +512,8 @@ ones.
 `TN = 64`), and `arm8Ast_load_single`/`_store_single` pin the one-instruction
 `arm8_ast` branch for an offset that is its own signed nine-bit form.
 
-`arm8Enc_load_single_length`/`_store_single_length` fix the emitted length at
-four bytes, and `arm8Mem_eight_value` derives the L3 read from the state
-relation plus the eight-address domain fact (the latter comes from
-`memLoadDomain` in the non-L3 `MemCase`, reusing `readMemWord_domain`).
+The eight-address domain fact a load needs comes from `memLoadDomain` in the
+non-L3 `MemCase`, reusing `readMemWord_domain`.
 
 The nine-bit `Encode` equations take `unsigned_offset` as a parameter, since
 `arm8_load_store_ast` emits the nine-bit form with the field `false` (a negative
@@ -541,9 +539,10 @@ case hypotheses — the offset is its own signed nine-bit form (`hsx`, what
 `arm8_ast` tests) and `e_LoadStoreImmediate`'s scaled twelve-bit clause does
 not fire (`hfall`) — then emits the single nine-bit word with
 `unsigned_offset = !off.msb`, decodes it back to the same
-`LoadStoreImmediate@64`, runs it through `LoadStoreSingle`, and closes with
-`asmCaseOneMem`.  The loaded value is `(readMemWord (s1.regs base + off) 8 s1).1`,
-matched to `Mem`'s eight-byte read by `arm8Mem_eight_value`.  Two corollaries
+`LoadStoreImmediate@64`, runs it through `LoadStoreSingle`, and closes through
+the shared tail described below.  The loaded value is
+`(readMemWord (s1.regs base + off) 8 s1).1`, matched to `Mem`'s eight-byte read
+by `arm8RunLoad_eight`.  Two corollaries
 discharge `hfall` from the sign: `arm8_encoder_correct_mem_load_neg` (negative,
 so `unsigned_offset` is `false` and the scaled clause cannot fire) and
 `arm8_encoder_correct_mem_load_pos_unscaled` (non-negative, but not the scaled
@@ -556,19 +555,19 @@ It does not need `hsx`: `arm8_load_store_ast`'s one-instruction branch is
 `a = sw2sw ((8 >< 0) a) \/ (unsigned /\ a = scaled)`, so the scaled disjunct
 covers offsets beyond the nine-bit range as well (`arm8ScaledForm_eq` connects
 the `setWidth`/`zeroExtend` forms).  It emits the `imm12` word and reuses the
-same `Run`/`asmCaseOneMem` tail.  The `Run`
+same shared tail.  The `Run`
 equations for both `LoadStoreImmediate@64` forms now take `unsigned` as a
 parameter, because `dfn'LoadStoreImmediate` ignores that encoding field.
 
 `arm8_encoder_correct_mem_store_imm9` and `_mem_store_scaled` are the store
-counterparts on the same two branches.  The store writes memory, so the
-`asmCaseOneMem` obligations are discharged by `arm8WriteMem_eight`: the L3
+counterparts on the same two branches.  The store writes memory; its `Run`
+fact `arm8RunStore_eight` rests on `arm8WriteMem_eight`: the L3
 `write'Mem` rendering stores the byte `holV2w 8 (holField (8i+7) (8i))` at
 `address + i`, while the source's `writeMemWord` shifts the value by eight bits
 per step.  `arm8HolByte` identifies the two byte extractions (through
 `holField`/`holShiftr`/`holFixwidth` list indices), and `holUpdate_eight`
 identifies the eight nested `holUpdate`s with the if-chain `writeMemN` uses.
-`arm8WriteMem_eight_out` covers the outside-domain bytes, and
+`arm8WriteMemN_out` covers the outside-domain bytes, and
 `arm8WriteMem_only_mem` records that `write'Mem` changes only `MEM`.
 
 `arm8Mem_eight_pair` gives the full `Mem` pair (value and unchanged state) from
@@ -591,6 +590,18 @@ window, and `arm8FarLowNeg`/`arm8FarLowPos` instantiate it at
 scaled shifts 2 and 1; the 16-bit offsets are checked by `asmHwOffsetOkExact`,
 which has the same `(-4351, 4350)` window, so
 `arm8FarLowNegOfBounds`/`arm8FarLowPosOfBounds` supply their `hlow` too.
+
+All 28 `Mem` case theorems share one proof tail, as HOL's
+`arm8_encoder_correct` closes every `Mem` branch with one tactic sequence after
+its case split (only `next_tac 0`/`next_tac 1` and the per-width memory lemmas
+differ).  `arm8MemCaseOne` and `arm8MemCaseTwo` simulate a one- or
+two-instruction lowering for an arbitrary register effect and memory effect of
+the `LoadStoreImmediate`; `arm8MemLoadCaseOne`/`Two` and
+`arm8MemStoreCaseOne`/`Two` instantiate them for a `2 ^ size`-byte load or
+store, deriving alignment, domain and the source post-state from `asm_step`;
+and `arm8RunLoad_*`/`arm8RunStore_*` are the per-width `Run` facts.  Each case
+theorem supplies only its `arm8_ast` equation, its `Encode`/`Decode` equations
+and its width.
 
 The 8-bit offsets are bounded by `asmByteOffsetOkExact` at `(-256, 4095)`, so
 the far branch is unreachable there: a negative offset is inside `[-256, -1]`
