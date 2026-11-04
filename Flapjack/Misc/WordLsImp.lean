@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! `miscScript.sml` `WORD_LS_IMP`. HOL's unsigned word orders `<=+`/`<+` are
 Lean's `BitVec` `≤`/`<` (comparison of `toNat`), `n2w` is `BitVec.ofNat`, and

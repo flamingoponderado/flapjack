@@ -1,4 +1,8 @@
-import Flapjack.PanBst
+module
+
+public import Flapjack.PanBst
+
+@[expose] public section
 
 /-!
 # Pancake interaction-tree `empty_locals_def`

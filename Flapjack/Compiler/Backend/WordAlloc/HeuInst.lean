@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

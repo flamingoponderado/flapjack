@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.KeyMaps
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.KeyMaps
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

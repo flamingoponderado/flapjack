@@ -1,6 +1,10 @@
-import Flapjack.Misc.BytesInMemory
-import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.Misc.BytesInMemory
+public import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 /-!
 # Shared ARMv8 bit-vector and byte-walk lemmas

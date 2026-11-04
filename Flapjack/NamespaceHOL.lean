@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Primary counterpart of the source namespace script. The association-list
 alias and recursively nested namespace carrier preserve list order and repeated

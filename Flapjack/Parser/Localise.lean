@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanLang
-import Flapjack.Pancake.PanStatic
+module
+
+public import Flapjack.Pancake.PanLang
+public import Flapjack.Pancake.PanStatic
+
+@[expose] public section
 
 /-!
 The localisation pass.

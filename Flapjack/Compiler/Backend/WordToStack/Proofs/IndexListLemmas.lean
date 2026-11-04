@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
-import Std.Tactic
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
+public import Std.Tactic
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 

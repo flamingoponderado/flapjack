@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.Semantics.PanSem
+module
+
+public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.Semantics.PanSem
+
+@[expose] public section
 
 /-!
 Shape infrastructure for the global pass. The relation between a successful

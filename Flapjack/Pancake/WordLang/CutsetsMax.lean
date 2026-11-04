@@ -1,5 +1,9 @@
-import Flapjack.Pancake.WordLang
-import Flapjack.PanToCrepMaxList
+module
+
+public import Flapjack.Pancake.WordLang
+public import Flapjack.PanToCrepMaxList
+
+@[expose] public section
 
 namespace Flapjack
 

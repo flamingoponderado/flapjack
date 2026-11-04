@@ -1,5 +1,10 @@
-import Flapjack.Pancake.Semantics.PanCommonProps
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+module
+
+public import Flapjack.Pancake.Semantics.PanCommonProps
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+@[expose] public section
+
 namespace Flapjack.Pancake.Proofs.PanStructs.ShapeMap
 open Flapjack
 open Flapjack.Pancake.PanLang

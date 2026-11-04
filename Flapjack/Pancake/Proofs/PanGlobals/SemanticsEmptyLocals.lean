@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CallObservation
-import Flapjack.Pancake.Proofs.PanGlobals.SemanticsCongruence
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CallObservation
+public import Flapjack.Pancake.Proofs.PanGlobals.SemanticsCongruence
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsSemanticsEmptyLocals
 

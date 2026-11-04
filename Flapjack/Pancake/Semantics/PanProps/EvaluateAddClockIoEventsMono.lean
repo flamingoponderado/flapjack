@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.ClockTimeout
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.ClockTimeout
+
+@[expose] public section
 
 /-! Exact counterpart of panPropsScript.sml:881 evaluate_add_clock_io_events_mono. -/
 

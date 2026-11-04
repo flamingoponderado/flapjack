@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.CrepLang
-import Flapjack.Pancake.PanToCrep
-import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.Pancake.PanCommon
-import Flapjack.Pancake.Semantics.PanCommonProps
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.Pancake.PanToCrep
+public import Flapjack.Pancake.PanToCrep.Compile
+public import Flapjack.Pancake.PanCommon
+public import Flapjack.Pancake.Semantics.PanCommonProps
+
+@[expose] public section
 
 /-!
 The exact compiler-expression bound lemma from

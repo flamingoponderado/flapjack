@@ -1,4 +1,8 @@
-import Flapjack.RiscV.Model
+module
+
+public import Flapjack.RiscV.Model
+
+@[expose] public section
 
 /-! Proof-only snapshot of the replaced numeric encoder. All definitions are
 noncomputable so they generate no executable encoder. The migration theorem

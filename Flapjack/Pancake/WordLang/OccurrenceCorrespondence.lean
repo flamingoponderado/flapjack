@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 namespace Flapjack
 

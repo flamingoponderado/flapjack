@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanSimp
-import Flapjack.PanValues
+module
+
+public import Flapjack.Pancake.PanSimp
+public import Flapjack.PanValues
+
+@[expose] public section
 
 /-!
 Evaluator-level correctness of the `pan_simp` sequence-shape helper

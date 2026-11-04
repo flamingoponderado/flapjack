@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! `miscScript.sml` `UPDATE_LIST` (`=++`): iterated function update, and its
 `ALOOKUP` characterisation. HOL `UPDATE a b f = λx. if a = x then b else f x`

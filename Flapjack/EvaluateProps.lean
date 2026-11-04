@@ -1,5 +1,9 @@
-import Flapjack.FfiHOL
-import Mathlib.Logic.Relation
+module
+
+public import Flapjack.FfiHOL
+public import Mathlib.Logic.Relation
+
+@[expose] public section
 
 namespace Flapjack
 
