@@ -36,9 +36,21 @@ def fragmentCompile64 (conf : Config) (secn label : Nat) : DataLang.Prog → Opt
   | .assign dest (.blockOp .lengthBlock) [src] none =>
       some (.ite .test (adjustVar src) (.imm 1) (.assign (adjustVar dest) (.const 0))
         (.assign (adjustVar dest) (shiftN .lsl (shiftN .lsr (.load (realAddr conf (adjustVar src))) (64 - conf.lenSize)) 2)), label)
-  | .assign dest (.blockOp (.lenEq 0)) [src] none =>
-      some (.ite .test (adjustVar src) (.imm 1)
-        (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2)), label)
+  | .assign dest (.blockOp (.lenEq len)) [src] none =>
+      if len = 0 then
+        some (.ite .test (adjustVar src) (.imm 1)
+          (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2)), label)
+      else if len < 2 ^ conf.lenBits - 1 then
+        some (.seq (.assign 1 (.op .and [.var (adjustVar src), .const (BitVec.ofNat 64 (2 ^ (conf.lenBits + 1) - 1))]))
+          (.ite .equal 1 (.imm (pointerBits conf 0 len ||| 1))
+            (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))), label)
+      else if len < 2 ^ 64 then
+        some (wordListSeq [.assign 1 (.const 0),
+          .ite .test (adjustVar src) (.imm 1) .skip
+            (.assign 1 (shiftN .lsr (.load (realAddr conf (adjustVar src))) (64 - conf.lenSize))),
+          .ite .equal 1 (.imm (BitVec.ofNat 64 len))
+            (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))], label)
+      else some (.assign (adjustVar dest) (.const 2), label)
   | .assign dest (.blockOp (.tagLenEq tag 0)) [src] none =>
       if tag < 2 ^ 64 / 16 then
         some (.ite .equal (adjustVar src) (.imm (BitVec.ofNat 64 (16 * tag + 2)))
@@ -72,10 +84,24 @@ theorem fragmentCompile64_agrees (conf : Config) (secn : Nat) (program : DataLan
   | intConst dest i =>
     intro label
     simp [fragmentCompile64, compileControl64, compileControl?, smallnum_eq_inlined]
-  | boolNot | boolTest | lessConst | blockEmpty | blockLength | element =>
+  | boolNot | boolTest | lessConst | blockLength | element =>
     intro label
     simp only [fragmentCompile64, compileControl64, compileControl?, Option.getD_some]
     all_goals rfl
+  | blockLen dest src wanted =>
+    intro label
+    by_cases zero : wanted = 0
+    · simp only [fragmentCompile64, zero, ↓reduceIte, compileControl64, compileControl?, Option.getD_some]
+      rfl
+    · by_cases fast : wanted < 2 ^ conf.lenBits - 1
+      · simp only [fragmentCompile64, zero, fast, ↓reduceIte, compileControl64, compileControl?, Option.getD_some]
+        rfl
+      · by_cases fits : wanted < 2 ^ 64
+        · have fits' : wanted < 18446744073709551616 := by simpa using fits
+          simp [fragmentCompile64, zero, fast, fits', compileControl64, compileControl?]
+          rfl
+        · have fits' : ¬ wanted < 18446744073709551616 := by simpa using fits
+          simp [fragmentCompile64, zero, fast, fits', compileControl64, compileControl?]
   | blockTagEmpty dest src tag =>
     intro label
     by_cases bound : tag < 2 ^ 64 / 16

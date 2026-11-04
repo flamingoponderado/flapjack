@@ -294,10 +294,10 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
     intro state
     exact evaluate_assign_block_code_of_aux dest (.tagEq tag) [src] none state
       (doAppAux_blockCompare_code (.tagEq tag) (Or.inl ⟨tag, rfl⟩))
-  | blockEmpty dest src =>
+  | blockLen dest src wanted =>
     intro state
-    exact evaluate_assign_block_code_of_aux dest (.lenEq 0) [src] none state
-      (doAppAux_blockCompare_code (.lenEq 0) (Or.inr (Or.inl ⟨0, rfl⟩)))
+    exact evaluate_assign_block_code_of_aux dest (.lenEq wanted) [src] none state
+      (doAppAux_blockCompare_code (.lenEq wanted) (Or.inr (Or.inl ⟨wanted, rfl⟩)))
   | blockLength dest src =>
     intro state
     exact evaluate_assign_block_code_of_aux dest .lengthBlock [src] none state
