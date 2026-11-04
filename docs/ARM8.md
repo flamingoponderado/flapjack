@@ -604,7 +604,7 @@ only on `propext`, `Classical.choice` and `Quot.sound`.
 
 ### Carrier and statement comparison with the pinned HOL source
 
-Checked against `/home/zksecurity/HOL` at `a390cbabd3a4521bab4ee20281e3e42933a8a3ae`
+Checked against the `HOL/` submodule at `a390cbabd3a4521bab4ee20281e3e42933a8a3ae`
 and `cakeml/compiler/encoders/arm8/arm8_targetScript.sml`:
 
 - `arm8_state` (`arm8Script.sml:368-375`) has sixteen fields in this order:

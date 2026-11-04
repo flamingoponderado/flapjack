@@ -8,7 +8,7 @@ import tempfile
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-LEAN_DECL_NAMES = runpy.run_path(str(ROOT / 'scripts' / 'l3' / 'check-renderings.py'))['lean_decl_names']
+DECLARED_NAMES = runpy.run_path(str(ROOT / 'scripts' / 'l3' / 'check-renderings.py'))['declared_names']
 
 ARM8_EXPORT = ROOT / 'scripts' / 'l3' / 'arm8_defs.sexp.gz'
 ARM8_TYPES = ROOT / 'Flapjack' / 'Compiler' / 'Encoders' / 'Arm8' / 'L3' / 'Types.lean'
@@ -45,19 +45,22 @@ class ModelTheoryResetTest(unittest.TestCase):
             self.assertFalse(failed)
 
 
-class LeanDeclNamesTest(unittest.TestCase):
-    def test_unique_name_is_kept(self):
-        emitted = [('arm8', 'Fetch', 'Fetch', 'Fetch_def', 'body', None, False)]
-        self.assertEqual(LEAN_DECL_NAMES(emitted), {('arm8', 'Fetch'): 'Fetch'})
+class DeclaredNamesTest(unittest.TestCase):
+    def test_uses_the_name_the_renderer_chose(self):
+        # The gate must key on the emitted Lean name, including the
+        # theory-prefix disambiguation for a constant in two theories.
+        emitted = [('arm8', 'Fetch', 'arm8_Fetch', 'Fetch_def', 'a', None, False)]
+        self.assertEqual(DECLARED_NAMES(emitted), {'arm8_Fetch': ('a', False)})
 
-    def test_name_shared_by_two_theories_is_prefixed(self):
-        # The renderer disambiguates a constant defined in both theories; the
-        # gate must use the same name or it would compare one entry twice.
-        emitted = [('arm8', 'Fetch', 'arm8_Fetch', 'Fetch_def', 'a', None, False),
-                   ('arm8_step', 'Fetch', 'arm8_step_Fetch', 'Fetch_def', 'b', None, False)]
-        names = LEAN_DECL_NAMES(emitted)
-        self.assertEqual(names[('arm8', 'Fetch')], 'arm8_Fetch')
-        self.assertEqual(names[('arm8_step', 'Fetch')], 'arm8_step_Fetch')
+    def test_guillemet_escaped_name_is_unwrapped(self):
+        emitted = [('arm8', 'Fetch', '«Fetch»', 'Fetch_def', 'a', None, False)]
+        self.assertEqual(DECLARED_NAMES(emitted), {'Fetch': ('a', False)})
+
+    def test_collision_is_rejected(self):
+        emitted = [('arm8', 'Fetch', 'Fetch', 'Fetch_def', 'a', None, False),
+                   ('arm8_step', 'Fetch', 'Fetch', 'Fetch_def', 'b', None, False)]
+        with self.assertRaises(ValueError):
+            DECLARED_NAMES(emitted)
 
 
 if __name__ == '__main__':

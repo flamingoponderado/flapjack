@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Encoders.X64.Machine.DecodeCongr
 import Flapjack.Misc.BytesInMemory
+import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
 
 /-!
 # Bridging encoded bytes in memory to the decoder
@@ -26,17 +27,9 @@ below the length. -/
 theorem bytesInMemoryHOL_domain :
     ∀ (bs : List (BitVec 8)) (a : BitVec 64) (m : BitVec 64 → BitVec 8)
       (d : BitVec 64 → Prop), bytesInMemoryHOL a bs m d →
-      ∀ j, j < bs.length → d (a + BitVec.ofNat 64 j)
-  | [], _, _, _, _, j, hj => by simp at hj
-  | _ :: rest, a, m, d, h, j, hj => by
-      obtain ⟨-, hd, ht⟩ := h
-      cases j with
-      | zero => simpa using hd
-      | succ j =>
-          have hj' : j < rest.length := by simpa using hj
-          have hrec := bytesInMemoryHOL_domain rest (a + 1) m d ht j hj'
-          rw [x64AddOneOffset] at hrec
-          exact hrec
+      ∀ j, j < bs.length → d (a + BitVec.ofNat 64 j) :=
+  fun bs a m d h j hj =>
+    Flapjack.Compiler.Encoders.AsmProps.byteOffsetInDomain bs a m d h j hj
 
 /-- The `j`-th byte of a byte list in memory is the `j`-th byte of the list,
 for every `j` below the length. -/

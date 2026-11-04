@@ -134,6 +134,12 @@ def arm8LoadStoreAst16 (ls : MemOp) (r1 r2 : Nat) (a : BitVec 64) : List instruc
        (1, true, ls, .AccType_NORMAL, false, false, false, false, false,
         unsigned, a, r2, r1))]
 
+/-- The signed 20-bit `Loc` range test used by `arm8_ast` (Flapjack
+infrastructure; HOL writes the two `sle` comparisons inline). -/
+def arm8LocInRange (a : BitVec 64) : Bool :=
+  BitVec.sle (BitVec.signExtend 64 (BitVec.ofNat 20 0x80000)) a &&
+  BitVec.sle a (BitVec.signExtend 64 (BitVec.ofNat 20 0x7FFFF))
+
 /-- `arm8_ast` (`arm8_targetScript.sml:138-292`): lower an `asm` instruction to
 the L3 ARMv8 `instruction` forms. -/
 @[hol "cakeml/compiler/encoders/arm8/arm8_targetScript.sml" "arm8_ast_def"]
@@ -260,9 +266,7 @@ def arm8Ast : HolAsm 64 → List instruction
   | .call target => [.Branch (.BranchImmediate (target, .BranchType_CALL))]
   | .jumpReg register => [.Branch (.BranchRegister (register, .BranchType_JMP))]
   | .loc register offset =>
-      let minW : BitVec 64 := BitVec.signExtend 64 (BitVec.ofNat 20 0x80000)
-      let maxW : BitVec 64 := BitVec.signExtend 64 (BitVec.ofNat 20 0x7FFFF)
-      if BitVec.sle minW offset && BitVec.sle offset maxW then
+      if arm8LocInRange offset then
         [.Address (false, offset, register)]
       else
         [.Address (false, 0, register),

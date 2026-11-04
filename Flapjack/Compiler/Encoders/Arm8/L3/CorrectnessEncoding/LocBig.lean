@@ -49,8 +49,8 @@ theorem arm8Ast_loc_big (register : Nat) (offset : BitVec 64)
        arm8LocBigMovInsn 2 offset,
        arm8LocBigMovInsn 3 offset,
        arm8LocBigAddInsn register] := by
-  simp only [arm8Ast, arm8LocInRange] at h ⊢
-  rw [h]
+  simp only [arm8Ast]
+  rw [if_neg (by rw [h]; decide)]
   simp [arm8LocBigAddrInsn, arm8LocBigMovInsn, arm8LocBigAddInsn]
 
 /-- The encoded bytes of the out-of-range `Loc` lowering. -/

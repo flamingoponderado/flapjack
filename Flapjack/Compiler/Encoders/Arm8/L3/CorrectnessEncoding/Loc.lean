@@ -229,9 +229,8 @@ theorem arm8EncodeBytes_address (imm : BitVec 64) (rd : BitVec 5)
 theorem arm8Ast_loc_small (register : Nat) (offset : BitVec 64)
     (h : arm8LocInRange offset = true) :
     arm8Ast (.loc register offset) = [.Address (false, offset, register)] := by
-  simp only [arm8Ast, arm8LocInRange] at h ⊢
-  rw [h]
-  simp
+  simp only [arm8Ast]
+  rw [if_pos h]
 
 /-- The encoded bytes of the in-range `Loc` lowering. -/
 theorem arm8Enc_loc_small (register : Nat) (offset : BitVec 64)

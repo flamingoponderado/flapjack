@@ -19,6 +19,8 @@ exactly the full output, that the ARM8 carriers are exactly the filtered output,
 CLI reproduces both. This is a mechanical transcription aid; it does not establish
 HOL-to-Lean equivalence.
 """
+from __future__ import annotations
+
 import re, sys, runpy
 from pathlib import Path
 

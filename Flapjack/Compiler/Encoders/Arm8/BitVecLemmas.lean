@@ -1,4 +1,5 @@
 import Flapjack.Misc.BytesInMemory
+import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
 import Mathlib.Tactic.IntervalCases
 
 /-!
@@ -7,7 +8,10 @@ import Mathlib.Tactic.IntervalCases
 Carrier-independent facts used by both the closed ARMv8 machine model
 (`Machine/`) and the L3 ARMv8 encoder-correctness chain
 (`L3/CorrectnessEncoding/`).  They mention only `BitVec`, `Nat` and
-`bytesInMemoryHOL`, so they live here rather than being copied into both trees.
+`bytesInMemoryHOL`, so they live here rather than being copied into both
+trees.  The byte-domain walk is proved once in
+`AsmProps/PcCoverage.lean`'s `byteOffsetInDomain` (shared with the X64 model)
+and re-exported below.
 -/
 
 namespace Flapjack.Compiler.Encoders.Arm8
@@ -67,19 +71,7 @@ below the length. -/
 theorem bytesInMemoryHOL_domain {width : Nat} [NeZero width]
     {a : BitVec width} {bs : List (BitVec 8)} {m : BitVec width → BitVec 8}
     {d : BitVec width → Prop} (h : bytesInMemoryHOL a bs m d) :
-    ∀ j, j < bs.length → d (a + BitVec.ofNat width j) := by
-  revert h
-  induction bs generalizing a with
-  | nil => intro _ j hj; simp at hj
-  | cons x xs ih =>
-      intro h j hj
-      obtain ⟨hx, hd, ht⟩ := h
-      cases j with
-      | zero => simpa using hd
-      | succ j =>
-          have hj' : j < xs.length := by simpa using hj
-          have hrec := ih ht j hj'
-          rw [← addOneOffset]
-          simpa using hrec
+    ∀ j, j < bs.length → d (a + BitVec.ofNat width j) :=
+  fun j hj => Flapjack.Compiler.Encoders.AsmProps.byteOffsetInDomain bs a m d h j hj
 
 end Flapjack.Compiler.Encoders.Arm8

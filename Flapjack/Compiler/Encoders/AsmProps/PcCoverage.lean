@@ -56,9 +56,10 @@ theorem allPcs_eq {width : Nat} [NeZero width] (n : Nat)
           · rw [hx, Nat.succ_mul, Nat.add_comm (i * 2 ^ alignment)]
             simp [BitVec.ofNat_add, BitVec.add_assoc]
 
-/-- Local induction infrastructure for the tagged domain-coverage theorem;
-not a separately claimed HOL declaration. -/
-private theorem byteOffsetInDomain {width : Nat} [NeZero width]
+/-- The `j`-th byte of a byte list in memory lies in the domain, for every `j`
+below the length.  Shared by the asmProps coverage proof and the closed
+machine models (X64 and ARM8); Flapjack infrastructure, no HOL original. -/
+theorem byteOffsetInDomain {width : Nat} [NeZero width]
     (xs : List (BitVec 8)) (address : BitVec width)
     (memory : BitVec width → BitVec 8) (domain : BitVec width → Prop)
     (h : bytesInMemoryHOL address xs memory domain)

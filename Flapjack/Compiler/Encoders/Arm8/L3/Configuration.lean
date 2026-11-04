@@ -55,11 +55,6 @@ noncomputable def arm8ConfigL3 : AsmConfigExact 64 where
 named HOL theorem for this definitional field equality. -/
 theorem arm8ConfigL3_encode : arm8ConfigL3.encode = arm8Enc := rfl
 
-/-- The signed 20-bit `Loc` range test used by `arm8_ast`. -/
-def arm8LocInRange (a : BitVec 64) : Bool :=
-  BitVec.sle (BitVec.signExtend 64 (BitVec.ofNat 20 0x80000)) a &&
-  BitVec.sle a (BitVec.signExtend 64 (BitVec.ofNat 20 0x7FFFF))
-
 /-- `arm8LocInRange` is exactly the signed 20-bit range. -/
 theorem arm8LocInRange_iff (a : BitVec 64) :
     arm8LocInRange a = true ↔

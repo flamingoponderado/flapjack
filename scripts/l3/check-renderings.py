@@ -53,44 +53,38 @@ def sources(root=ROOT):
             result[key] = body
     return result
 
-def renderings(root=ROOT):
-    renderer = module("l3_drift_renderer", root / "scripts/hol_terms_to_lean.py")
+def _render(root, module_name, export_name, types_lean, *flags):
+    """Render one committed export with a fresh generator instance."""
+    renderer = module(module_name, root / "scripts/hol_terms_to_lean.py")
     with tempfile.NamedTemporaryFile(mode="w") as export:
-        export.write(gzip.decompress((root / "scripts/l3/riscv_defs.sexp.gz").read_bytes()).decode())
+        export.write(gzip.decompress((root / "scripts/l3" / export_name).read_bytes()).decode())
         export.flush()
-        emitted, failed = renderer.main(["renderer", export.name, str(root / "Flapjack/RiscV/L3/Types.lean")])
+        emitted, failed = renderer.main(["renderer", export.name, str(types_lean), *flags])
     if failed:
         raise ValueError("unrendered original definitions: " + repr(failed))
+    return emitted
+
+
+def renderings(root=ROOT):
+    emitted = _render(root, "l3_drift_renderer", "riscv_defs.sexp.gz",
+                      root / "Flapjack/RiscV/L3/Types.lean")
     return {(thy, name): (body, nc) for thy, name, _, _, body, _, nc in emitted}
 
 
-def lean_decl_names(emitted):
-    """The Lean declaration name each emitted definition was rendered under.
-
-    This is the name `hol_terms_to_lean.main` chose (including its
-    theory-prefix disambiguation for a constant defined in two theories), not a
-    rule re-implemented here.
-    """
-    return {(thy, name): lean for thy, name, lean, *_ in emitted}
+def declared_names(emitted):
+    """The Lean declaration names the renderer emitted, rejecting collisions."""
+    result = {}
+    for thy, name, lean, _, body, _, nc in emitted:
+        key = lean.strip("«»")
+        if key in result:
+            raise ValueError("ambiguous Lean declaration name: " + key)
+        result[key] = (body, nc)
+    return result
 
 
 def arm8_renderings(root=ROOT):
-    renderer = module("l3_drift_renderer_arm8", root / "scripts/hol_terms_to_lean.py")
-    with tempfile.NamedTemporaryFile(mode="w") as export:
-        export.write(gzip.decompress((root / "scripts/l3/arm8_defs.sexp.gz").read_bytes()).decode())
-        export.flush()
-        emitted, failed = renderer.main(["renderer", export.name,
-                                         str(root / ARM8_DIR / "Types.lean"), "--thy=arm8"])
-    if failed:
-        raise ValueError("unrendered original ARM8 definitions: " + repr(failed))
-    names = lean_decl_names(emitted)
-    result = {}
-    for thy, name, _, _, body, _, nc in emitted:
-        key = names[(thy, name)].strip("«»")
-        if key in result:
-            raise ValueError("ambiguous ARM8 Lean declaration name: " + key)
-        result[key] = (body, nc)
-    return result
+    return declared_names(_render(root, "l3_drift_renderer_arm8", "arm8_defs.sexp.gz",
+                                  root / ARM8_DIR / "Types.lean", "--thy=arm8"))
 
 def rendered_for(key, generated):
     path, name = key.split(":", 1)
