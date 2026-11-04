@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.ClosCall.Proofs.ValidatedOracleHistory
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateOracleCodeHistory
 import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 import Flapjack.FiniteMap.AlistExact
@@ -21323,5 +21324,199 @@ theorem evaluateApp_oracleMonotonic_with_consumed_prefix {C F : Type} (initial :
         (initial ∪ OraclePastLocations source.compileOracle offset) final.compileOracle := by
   apply oracleMonotonic_of_advance_with_prefix initial source.compileOracle final.compileOracle ordered
   exact (evaluate_oracle_advance (C := C) (F := F)).2 (source.clock + 1) location function args source final result (by omega) run
+
+/-- Source evaluation using the incremental callback exposes a finite oracle
+prefix in which every compiled program produces the next entry's known
+locations. The source code and compiler fields are tracked at the same
+prefix. This is Flapjack-specific simulation infrastructure. -/
+theorem evaluate_compileIncFuel_checkedPrefix {C F : Type} (fuel : Nat) (compiler : ClosSem.Compiler C)
+    (expressions : List ClosLang.Exp) (env : List ClosSem.Value)
+    (source final : ClosSem.State (NumSet × C) F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (run : evaluate expressions env source = (result, final)) :
+    ∃ count, final.compile = source.compile ∧ final.compileOracle = holShiftSeq count source.compileOracle ∧
+      final.code = ClosSem.installOraclePrefix source.code source.compileOracle count ∧
+      ∀ index, index < count → ∃ converted bytes words,
+        compileIncFuel? fuel (source.compileOracle index).1.1 (source.compileOracle index).2 =
+          some ((source.compileOracle (index + 1)).1.1, converted) ∧
+        compiler (source.compileOracle index).1.2 converted =
+          some (bytes, words, (source.compileOracle (index + 1)).1.2) := by
+  obtain ⟨count, compilerEq, oracleEq, codeEq, checked⟩ := ClosSem.evaluate_checkedPrefix expressions env source final result run
+  refine ⟨count, compilerEq, oracleEq, codeEq, ?_⟩
+  intro index bound
+  obtain ⟨bytes, words, callback⟩ := checked index bound
+  rw [sourceCompiler] at callback
+  obtain ⟨converted, pass, downstream⟩ := compileIncFuelCallback_success fuel compiler
+    (source.compileOracle index).1.1 (source.compileOracle index).1.2 (source.compileOracle index).2
+    bytes words (source.compileOracle (index + 1)).1.1 (source.compileOracle (index + 1)).1.2
+    (by simpa using callback)
+  exact ⟨converted, bytes, words, pass, downstream⟩
+
+/-- Closure application exposes the validated incremental compiler transitions
+for its consumed oracle prefix. This is Flapjack-specific infrastructure. -/
+theorem evaluateApp_compileIncFuel_checkedPrefix {C F : Type} (fuel : Nat) (compiler : ClosSem.Compiler C)
+    (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
+    (source final : ClosSem.State (NumSet × C) F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (run : evaluateApp location function args source = (result, final)) :
+    ∃ count, final.compile = source.compile ∧ final.compileOracle = holShiftSeq count source.compileOracle ∧
+      final.code = ClosSem.installOraclePrefix source.code source.compileOracle count ∧
+      ∀ index, index < count → ∃ converted bytes words,
+        compileIncFuel? fuel (source.compileOracle index).1.1 (source.compileOracle index).2 =
+          some ((source.compileOracle (index + 1)).1.1, converted) ∧
+        compiler (source.compileOracle index).1.2 converted =
+          some (bytes, words, (source.compileOracle (index + 1)).1.2) := by
+  obtain ⟨count, compilerEq, oracleEq, codeEq, checked⟩ := ClosSem.evaluateApp_checkedPrefix location function args source final result run
+  refine ⟨count, compilerEq, oracleEq, codeEq, ?_⟩
+  intro index bound
+  obtain ⟨bytes, words, callback⟩ := checked index bound
+  rw [sourceCompiler] at callback
+  obtain ⟨converted, pass, downstream⟩ := compileIncFuelCallback_success fuel compiler
+    (source.compileOracle index).1.1 (source.compileOracle index).1.2 (source.compileOracle index).2
+    bytes words (source.compileOracle (index + 1)).1.1 (source.compileOracle (index + 1)).1.2
+    (by simpa using callback)
+  exact ⟨converted, bytes, words, pass, downstream⟩
+
+
+/-- If each consumed oracle entry advances its known-location set through the
+incremental compiler, every known location at the end was initially known or
+appeared in the consumed prefix. This is Flapjack-specific infrastructure. -/
+theorem checkedPrefix_known_origin {C : Type} (fuel : Nat)
+    (oracle : ClosSem.CompileOracle (NumSet × C)) (count : Nat)
+    (steps : ∀ index, index < count → ∃ converted,
+      compileIncFuel? fuel (oracle index).1.1 (oracle index).2 =
+        some ((oracle (index + 1)).1.1, converted)) :
+    ∀ loc, sptDomain (oracle count).1.1 loc →
+      sptDomain (oracle 0).1.1 loc ∨ loc ∈ OraclePastLocations oracle count := by
+  induction count with
+  | zero =>
+    intro loc known
+    exact Or.inl known
+  | succ count ih =>
+    intro loc known
+    obtain ⟨converted, pass⟩ := steps count (by omega)
+    have origin := compileIncFuel_known_origin fuel (oracle count).1.1 (oracle count).2
+      (oracle (count + 1)).1.1 converted pass loc (by simpa using known)
+    rcases origin with previous | current
+    · have smallerSteps : ∀ index, index < count → ∃ converted,
+          compileIncFuel? fuel (oracle index).1.1 (oracle index).2 =
+            some ((oracle (index + 1)).1.1, converted) := by
+        intro index bound
+        exact steps index (by omega)
+      rcases ih smallerSteps loc previous with initial | ⟨index, bound, member⟩
+      · exact Or.inl initial
+      · exact Or.inr ⟨index, by omega, member⟩
+    · exact Or.inr ⟨count, by omega, current⟩
+
+/-- The final source-oracle configuration after evaluation contains only
+initially known locations or locations in the consumed prefix. This is
+Flapjack-specific simulation infrastructure. -/
+theorem evaluate_compileIncFuel_known_origin {C F : Type} (fuel : Nat) (compiler : ClosSem.Compiler C)
+    (expressions : List ClosLang.Exp) (env : List ClosSem.Value)
+    (source final : ClosSem.State (NumSet × C) F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (run : evaluate expressions env source = (result, final)) :
+    ∃ count, final.compileOracle = holShiftSeq count source.compileOracle ∧
+      ∀ loc, sptDomain (final.compileOracle 0).1.1 loc →
+        sptDomain (source.compileOracle 0).1.1 loc ∨ loc ∈ OraclePastLocations source.compileOracle count := by
+  obtain ⟨count, _, oracleEq, _, checked⟩ :=
+    evaluate_compileIncFuel_checkedPrefix fuel compiler expressions env source final result sourceCompiler run
+  refine ⟨count, oracleEq, ?_⟩
+  have steps : ∀ index, index < count → ∃ converted,
+      compileIncFuel? fuel (source.compileOracle index).1.1 (source.compileOracle index).2 =
+        some ((source.compileOracle (index + 1)).1.1, converted) := by
+    intro index bound
+    obtain ⟨converted, _, _, pass, _⟩ := checked index bound
+    exact ⟨converted, pass⟩
+  intro loc known
+  apply checkedPrefix_known_origin fuel source.compileOracle count steps loc
+  simpa [oracleEq, holShiftSeq] using known
+
+/-- The final source-oracle configuration after closure application contains
+only initially known or consumed-prefix locations. This is Flapjack-specific
+simulation infrastructure. -/
+theorem evaluateApp_compileIncFuel_known_origin {C F : Type} (fuel : Nat) (compiler : ClosSem.Compiler C)
+    (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
+    (source final : ClosSem.State (NumSet × C) F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (run : evaluateApp location function args source = (result, final)) :
+    ∃ count, final.compileOracle = holShiftSeq count source.compileOracle ∧
+      ∀ loc, sptDomain (final.compileOracle 0).1.1 loc →
+        sptDomain (source.compileOracle 0).1.1 loc ∨ loc ∈ OraclePastLocations source.compileOracle count := by
+  obtain ⟨count, _, oracleEq, _, checked⟩ :=
+    evaluateApp_compileIncFuel_checkedPrefix fuel compiler location function args source final result sourceCompiler run
+  refine ⟨count, oracleEq, ?_⟩
+  have steps : ∀ index, index < count → ∃ converted,
+      compileIncFuel? fuel (source.compileOracle index).1.1 (source.compileOracle index).2 =
+        some ((source.compileOracle (index + 1)).1.1, converted) := by
+    intro index bound
+    obtain ⟨converted, _, _, pass, _⟩ := checked index bound
+    exact ⟨converted, pass⟩
+  intro loc known
+  apply checkedPrefix_known_origin fuel source.compileOracle count steps loc
+  simpa [oracleEq, holShiftSeq] using known
+
+
+/-- Source evaluation preserves oracle ordering above its final known
+locations and the original open set. This is Flapjack-specific infrastructure;
+it does not establish ordering for any additional open locations chosen by a
+simulation. -/
+theorem evaluate_compileIncFuel_finalKnown_ordered {C F : Type} (fuel : Nat) (compiler : ClosSem.Compiler C)
+    (allowed : Set Nat) (expressions : List ClosLang.Exp) (env : List ClosSem.Value)
+    (source final : ClosSem.State (NumSet × C) F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain (source.compileOracle 0).1.1 ∪ allowed) source.compileOracle)
+    (run : evaluate expressions env source = (result, final)) :
+    BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain (final.compileOracle 0).1.1 ∪ allowed) final.compileOracle := by
+  obtain ⟨count, oracleEq, origins⟩ :=
+    evaluate_compileIncFuel_known_origin fuel compiler expressions env source final result sourceCompiler run
+  have later := oracleMonotonic_after_prefix (sptDomain (source.compileOracle 0).1.1 ∪ allowed)
+    source.compileOracle count ordered
+  rw [← oracleEq] at later
+  constructor
+  · exact later.1
+  · intro index x y member future
+    apply later.2 index x y ?_ future
+    rcases member with known | openLoc
+    · rcases origins x known with initial | past
+      · exact Or.inl (Or.inl initial)
+      · exact Or.inr past
+    · exact Or.inl (Or.inr openLoc)
+
+/-- Closure application preserves oracle ordering above its final known
+locations and the original open set. Additional open locations are not covered
+by this Flapjack-specific result. -/
+theorem evaluateApp_compileIncFuel_finalKnown_ordered {C F : Type} (fuel : Nat) (compiler : ClosSem.Compiler C)
+    (allowed : Set Nat) (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
+    (source final : ClosSem.State (NumSet × C) F)
+    (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain (source.compileOracle 0).1.1 ∪ allowed) source.compileOracle)
+    (run : evaluateApp location function args source = (result, final)) :
+    BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain (final.compileOracle 0).1.1 ∪ allowed) final.compileOracle := by
+  obtain ⟨count, oracleEq, origins⟩ :=
+    evaluateApp_compileIncFuel_known_origin fuel compiler location function args source final result sourceCompiler run
+  have later := oracleMonotonic_after_prefix (sptDomain (source.compileOracle 0).1.1 ∪ allowed)
+    source.compileOracle count ordered
+  rw [← oracleEq] at later
+  constructor
+  · exact later.1
+  · intro index x y member future
+    apply later.2 index x y ?_ future
+    rcases member with known | openLoc
+    · rcases origins x known with initial | past
+      · exact Or.inl (Or.inl initial)
+      · exact Or.inr past
+    · exact Or.inl (Or.inr openLoc)
+
 
 end Flapjack.Compiler.Backend.ClosCall
