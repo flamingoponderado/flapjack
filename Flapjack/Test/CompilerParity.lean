@@ -4,6 +4,7 @@ import Flapjack.Test.DataToWordValueEqualityParity
 import Flapjack.Test.DataToWordWordMemoryEqualityParity
 import Flapjack.Test.DataToWordMultiwordCompareParity
 import Flapjack.Test.CakeProgramSemanticsParity
+import Flapjack.Test.BackendConfigDecidableEq
 import Flapjack.Test.RiscVBackendConfigExecutable
 import Flapjack.Test.Mips32Encoding
 import Flapjack.Test.Arm8Parity
@@ -1841,7 +1842,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackEvaluateMonoParity.runChecks,
     Flapjack.Test.BytesInMemoryDomainParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks,
-    Flapjack.Test.PanToWordGoodCodeParity.runChecks
+    Flapjack.Test.PanToWordGoodCodeParity.runChecks,
+    Flapjack.Test.BackendConfigDecidableEq.runChecks
     ].mapM id
   unless results.all id do
     IO.Process.exit 1

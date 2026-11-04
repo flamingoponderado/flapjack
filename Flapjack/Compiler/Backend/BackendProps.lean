@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Mathlib.Data.Set.Lattice
+module
+
+public import Flapjack.HolRef
+public import Mathlib.Data.Set.Lattice
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.BackendProps
 

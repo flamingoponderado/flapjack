@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackLang
-import Flapjack.Compiler.Encoders.Asm
+module
+
+public import Flapjack.Compiler.Backend.StackLang
+public import Flapjack.Compiler.Encoders.Asm
+
+@[expose] public section
 
 /-!
 # StackLang validity predicate port boundary

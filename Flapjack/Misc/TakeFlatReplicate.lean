@@ -1,6 +1,11 @@
-import Flapjack.HolRef
-import Mathlib.Data.List.Flatten
-import Mathlib.Data.List.TakeDrop
+module
+
+public import Flapjack.HolRef
+public import Mathlib.Data.List.Flatten
+public import Mathlib.Data.List.TakeDrop
+
+@[expose] public section
+
 namespace Flapjack.Misc
 
 /-- Retains the original independent length binder and permits empty chunks. -/
