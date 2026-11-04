@@ -321,4 +321,129 @@ theorem call_to_preparedBvl_semantics_of_source_syntax {C F : Type} (ffi : HolFf
     sourceNonempty outputSafe.1.2 auxSafe annotationOracleSafe fresh chainOrdered sourceSafe compile distinct programLocations
     monotone initialBelow futureDistinct ranges futureLocations
 
+
+/-- Every auxiliary label emitted by the initial direct-call pass is the
+successor of a source closure location. -/
+theorem callAux_label_origin (fuel : Nat) (expressions called : List ClosLang.Exp) (state : ClosCall.State)
+    (run : ClosCall.compileFuel fuel true expressions = some (called, state)) :
+    ∀ label ∈ state.2.map Prod.fst, ∃ loc ∈ codeLocations expressions, label = loc + 1 := by
+  have traversal : ClosCall.callsListBounded fuel expressions (.ln, []) = some (called, state) := by
+    simpa [ClosCall.compileFuel] using run
+  have bounds := ClosCall.callsListBounded_labelsBound fuel expressions (.ln, []) state called traversal
+  intro label member
+  rcases bounds label member with old | generated
+  · simp at old
+  · exact generated
+
+/-- Each auxiliary label emitted by an incremental direct-call oracle entry
+is the successor of a closure location from that source entry. -/
+theorem callOracle_label_origin {C : Type} (fuel : Nat) (oracle : CompileOracle (NumSet × C)) (index : Nat) :
+    ∀ label ∈ (ClosCall.compileIncFuelOracle fuel oracle index).2.2.map Prod.fst,
+      ∃ loc ∈ codeLocations (oracle index).2.1, label = loc + 1 := by
+  obtain ⟨nextKnown, pass, _⟩ := ClosCall.compileIncFuelOracle_entry fuel oracle index
+  have traversal := ClosCall.compileIncFuel_traversal fuel (oracle index).1.1 (oracle index).2 nextKnown
+    (ClosCall.compileIncFuelOracle fuel oracle index).2 pass
+  have bounds := ClosCall.callsListBounded_labelsBound fuel (oracle index).2.1 ((oracle index).1.1, [])
+    (nextKnown, (ClosCall.compileIncFuelOracle fuel oracle index).2.2)
+    (ClosCall.compileIncFuelOracle fuel oracle index).2.1 traversal
+  intro label member
+  rcases bounds label member with old | generated
+  · simp at old
+  · exact generated
+
+/-- Source closure locations above the entry-chain interval and monotone
+source oracle locations give the initial auxiliary-code freshness and
+transformed-oracle ordering required by the chain simulation. -/
+theorem call_chain_fresh_and_ordered {C : Type} (fuel start : Nat)
+    (expressions called : List ClosLang.Exp) (state : ClosCall.State)
+    (oracle : CompileOracle (NumSet × C))
+    (run : ClosCall.compileFuel fuel true expressions = some (called, state))
+    (initialLower : ∀ loc ∈ codeLocations expressions, start + expressions.length ≤ loc)
+    (futureLower : ∀ index loc, loc ∈ codeLocations (oracle index).2.1 → start + expressions.length ≤ loc)
+    (ordered : oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      {loc | loc ∈ codeLocations expressions} oracle) :
+    (∀ key, start ≤ key → key < start + called.length → (initialSourceCode state.2).lookup key = none) ∧
+    oracleMonotonic oracleCodeNames (· < ·)
+      ({key | start ≤ key ∧ key < start + called.length} ∪ codeDomain (initialSourceCode state.2))
+      (ClosCall.compileIncFuelOracle fuel oracle) := by
+  have traversal : ClosCall.callsListBounded fuel expressions (.ln, []) = some (called, state) := by
+    simpa [ClosCall.compileFuel] using run
+  have lengths := ClosCall.callsListBounded_length fuel expressions (.ln, []) state called traversal
+  have codeOrigin : ∀ key, (initialSourceCode state.2).lookup key ≠ none →
+      ∃ loc ∈ codeLocations expressions, key = loc + 1 := by
+    intro key found
+    cases lookup : (initialSourceCode state.2).lookup key with
+    | none => exact (found lookup).elim
+    | some entry =>
+      obtain ⟨arity, body⟩ := entry
+      have member := initialSourceCode_lookup_mem state.2 key arity body lookup
+      have label : key ∈ state.2.map Prod.fst := by
+        exact List.mem_map.mpr ⟨(key, arity, body), member, rfl⟩
+      exact callAux_label_origin fuel expressions called state run key label
+  constructor
+  · intro key lower upper
+    by_contra found
+    obtain ⟨loc, member, equal⟩ := codeOrigin key found
+    have bound := initialLower loc member
+    omega
+  · constructor
+    · intro i j x y before xMember yMember
+      obtain ⟨xLoc, xSource, xEq⟩ := callOracle_label_origin fuel oracle i x xMember
+      obtain ⟨yLoc, ySource, yEq⟩ := callOracle_label_origin fuel oracle j y yMember
+      have less := ordered.1 i j xLoc yLoc before xSource ySource
+      omega
+    · intro i x y member yMember
+      obtain ⟨yLoc, ySource, yEq⟩ := callOracle_label_origin fuel oracle i y yMember
+      rcases member with chain | oldCode
+      · change start ≤ x ∧ x < start + called.length at chain
+        have bound := futureLower i yLoc ySource
+        omega
+      · obtain ⟨xLoc, xSource, xEq⟩ := codeOrigin x oldCode
+        have less := ordered.2 i xLoc yLoc xSource ySource
+        omega
+
+
+/-- Direct-call to BVL behavior preservation with chain freshness and
+oracle ordering derived from source-location bounds. The remaining compiled
+label-boundary conditions are explicit Flapjack infrastructure. -/
+theorem call_to_preparedBvl_semantics_of_location_bounds {C F : Type} (ffi : HolFfiState F)
+    (passFuel relationFuel : Nat) (original current output : Config)
+    (targetCompiler : BvlSem.Compiler C) (boundary : Nat → Nat)
+    (expressions called nameExpressions : List ClosLang.Exp) (callState : ClosCall.State)
+    (compiled : List (Nat × Nat × Bvl.Exp)) (names : Spt Flapjack.Basis.Pure.MlString.MlString)
+    (oracle : CompileOracle (NumSet × C))
+    (passRun : ClosCall.compileFuel passFuel true expressions = some (called, callState))
+    (syntaxGood : ClosCall.syntaxOk expressions) (known : callState.1 = (oracle 0).1.1)
+    (callOrdered : oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      {loc | loc ∈ codeLocations expressions} oracle)
+    (syntaxOracle : ∀ n, ClosCall.syntaxOk (oracle n).2.1 ∧ (oracle n).2.2 = [])
+    (sourceNonempty : expressions ≠ [])
+    (initialLower : ∀ loc ∈ codeLocations expressions, current.start + expressions.length ≤ loc)
+    (futureLower : ∀ index loc, loc ∈ codeLocations (oracle index).2.1 → current.start + expressions.length ≤ loc)
+    (sourceSafe : semantics ffi current.maxApp HolFiniteMapExact.empty oracle
+      (ClosCall.compileIncFuelCallback passFuel (pureCc ClosAnnotate.compileInc
+        (pureCc (compileInc current.maxApp) targetCompiler))) expressions ≠ .fail)
+    (compile : compilePrepared? original current nameExpressions
+      (ClosAnnotate.compile (chainExps current.start called ++ callState.2)) = some (output, compiled, names))
+    (distinct : (compiled.map Prod.fst).Nodup)
+    (monotone : ∀ {i j}, i ≤ j → boundary i ≤ boundary j)
+    (initialBelow : ∀ location ∈ compiled.map Prod.fst, location < boundary 0)
+    (futureDistinct : ∀ index, ((compileInc current.maxApp
+      (ClosAnnotate.compileInc (ClosCall.compileIncFuelOracle passFuel oracle index).2)).map Prod.fst).Nodup)
+    (ranges : ∀ index location, location ∈ (compileInc current.maxApp
+      (ClosAnnotate.compileInc (ClosCall.compileIncFuelOracle passFuel oracle index).2)).map Prod.fst →
+      boundary index ≤ location ∧ location < boundary (index + 1))
+    :
+    BvlSem.semantics ffi (sptFromAList compiled)
+      (pureCo (compileInc current.maxApp) ∘ pureCo ClosAnnotate.compileInc ∘ ClosCall.compileIncFuelOracle passFuel oracle)
+      targetCompiler output.start =
+    semantics ffi current.maxApp HolFiniteMapExact.empty oracle
+      (ClosCall.compileIncFuelCallback passFuel (pureCc ClosAnnotate.compileInc
+        (pureCc (compileInc current.maxApp) targetCompiler))) expressions := by
+  obtain ⟨fresh, chainOrdered⟩ := call_chain_fresh_and_ordered passFuel current.start expressions called callState oracle
+    passRun initialLower futureLower callOrdered
+  exact call_to_preparedBvl_semantics_of_source_syntax ffi passFuel relationFuel original current output targetCompiler boundary
+    expressions called nameExpressions callState compiled names oracle passRun syntaxGood known callOrdered syntaxOracle
+    sourceNonempty fresh chainOrdered sourceSafe compile distinct monotone initialBelow futureDistinct ranges
+
 end Flapjack.Compiler.Backend.ClosToBvl
