@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 import Flapjack.FiniteMap.AlistExact
 import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalCode
 import Flapjack.Compiler.Backend.ClosCall.Proofs.AuxiliaryAppend
@@ -20792,5 +20793,92 @@ theorem incrementalInstallReady_of_ordered_alistCode {C F : Type} (g : State) (a
     exact (alistToFmap_codeIncludes_and_domain g.2).1
   · rw [code]
     exact (alistToFmap_codeIncludes_and_domain g.2).2
+
+/-- The ordered-location projection is exactly the existing backend oracle
+monotonicity predicate instantiated with closure-call locations and the union
+of known and open locations. This is Flapjack-specific infrastructure. -/
+theorem oracleLocationsOrdered_iff_oracleMonotonic {C F : Type} (g : State) (allowed : Set Nat)
+    (source : ClosSem.State C F) :
+    OracleLocationsOrdered g allowed source ↔
+      BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+        (sptDomain g.1 ∪ allowed) source.compileOracle := by
+  constructor
+  · intro ordered
+    constructor
+    · exact ordered.1
+    · intro index x y member later
+      apply ordered.2 index x y ?_ later
+      exact member
+  · intro ordered
+    constructor
+    · exact ordered.1
+    · intro index x y member later
+      apply ordered.2 index x y ?_ later
+      exact member
+
+/-- A source-shaped oracle-monotonicity hypothesis supplies the ordering used
+by incremental readiness. This is Flapjack-specific infrastructure. -/
+theorem incrementalInstallReady_of_oracleMonotonic {C F : Type} (g : State) (allowed : Set Nat)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (well : wellFormed g) (code : target.code = HolFiniteMapExact.alistToFmap g.2)
+    (known : g.1 = (source.compileOracle 0).1.1)
+    (auxEmpty : ∀ index, (source.compileOracle index).2.2 = [])
+    (distinct : ∀ index, (codeLocations (source.compileOracle index).2.1).Nodup)
+    (locations : ∀ index, everyFnLocationSome (source.compileOracle index).2.1)
+    (annotations : ∀ index, everyFnVarsNone (source.compileOracle index).2.1)
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain g.1 ∪ allowed) source.compileOracle) :
+    IncrementalInstallReady g source target ∧ OracleLocationsAvoid allowed source := by
+  apply incrementalInstallReady_of_ordered_alistCode g allowed source target well code known auxEmpty distinct locations annotations
+  exact (oracleLocationsOrdered_iff_oracleMonotonic g allowed source).2 ordered
+
+/-- Closure-call source syntax requires function locations, absent
+free-variable annotations, and distinct code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "syntax_ok_def"]
+def syntaxOk (expressions : List ClosLang.Exp) : Prop :=
+  everyFnLocationSome expressions ∧ everyFnVarsNone expressions ∧ (codeLocations expressions).Nodup
+
+/-- Source-shaped syntax and oracle monotonicity conditions establish the
+readiness projections used by the incremental simulation. This is
+Flapjack-specific infrastructure; the remaining `code_inv` clauses are not
+asserted here. -/
+theorem incrementalInstallReady_of_syntax_and_oracleMonotonic {C F : Type}
+    (g : State) (allowed : Set Nat) (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (well : wellFormed g) (code : target.code = HolFiniteMapExact.alistToFmap g.2)
+    (known : g.1 = (source.compileOracle 0).1.1)
+    (syntaxOracle : ∀ index, syntaxOk (source.compileOracle index).2.1 ∧ (source.compileOracle index).2.2 = [])
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (sptDomain g.1 ∪ allowed) source.compileOracle) :
+    IncrementalInstallReady g source target ∧ OracleLocationsAvoid allowed source := by
+  apply incrementalInstallReady_of_oracleMonotonic g allowed source target well code known
+  · intro index; exact (syntaxOracle index).2
+  · intro index; exact (syntaxOracle index).1.2.2
+  · intro index; exact (syntaxOracle index).1.1
+  · intro index; exact (syntaxOracle index).1.2.1
+  · exact ordered
+
+/-- Fuel-indexed specialization of the source code-invariant clauses for a
+known compiler state. The incremental pass is Flapjack's bounded, totalized
+adapter, so this is not tagged as HOL's `code_inv`. -/
+def IncrementalCodeInv {C F : Type} (fuel : Nat) (g : State) (allowed : Set Nat)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F) : Prop :=
+  source.code = HolFiniteMapExact.empty ∧
+  source.compile = compileIncFuelCallback fuel target.compile ∧
+  target.compileOracle = compileIncFuelOracle fuel source.compileOracle ∧
+  wellFormed g ∧ g.1 = (source.compileOracle 0).1.1 ∧
+  BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+    (sptDomain g.1 ∪ allowed) source.compileOracle ∧
+  target.code = HolFiniteMapExact.alistToFmap g.2 ∧
+  ∀ index, syntaxOk (source.compileOracle index).2.1 ∧ (source.compileOracle index).2.2 = []
+
+/-- The source-shaped, fuel-indexed code invariant provides the readiness
+and open-location conditions consumed by the closed simulation. This is
+Flapjack-specific infrastructure. -/
+theorem IncrementalCodeInv.ready {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
+    {source : ClosSem.State (NumSet × C) F} {target : ClosSem.State C F}
+    (inv : IncrementalCodeInv fuel g allowed source target) :
+    IncrementalInstallReady g source target ∧ OracleLocationsAvoid allowed source := by
+  obtain ⟨_, _, _, well, known, ordered, code, syntaxOracle⟩ := inv
+  exact incrementalInstallReady_of_syntax_and_oracleMonotonic g allowed source target well code known syntaxOracle ordered
 
 end Flapjack.Compiler.Backend.ClosCall
