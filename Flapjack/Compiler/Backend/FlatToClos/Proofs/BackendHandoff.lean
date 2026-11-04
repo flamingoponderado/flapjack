@@ -78,6 +78,34 @@ theorem sourceClosure_syntactic (fuel maxApp : Nat) (positive : 0 < maxApp)
     (SourceToFlat.compileTotal sourceConfig (SourceToSource.compile declarations)).2
   exact ⟨properties.2.2 positive, properties.2.1⟩
 
+/-- Source-to-closure compilation always prepends an interpreter initializer,
+so its output is nonempty even for an empty source declaration list. -/
+theorem sourceClosure_nonempty (fuel : Nat)
+    (sourceConfig nextSource : SourceToFlat.Config) (declarations : List AstHOL.Dec)
+    (expressions : List ClosLang.Exp)
+    (run : SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (nextSource, expressions)) :
+    expressions ≠ [] := by
+  have output := congrArg (Option.map Prod.snd) run
+  have same : compileProg (SourceToFlat.compileTotal sourceConfig (SourceToSource.compile declarations)).2 = expressions := by
+    apply Option.some.inj
+    simpa [SourceToFlat.compileCakeToClosFuel, SourceToFlat.compileToClosFuel, SourceToFlat.compile] using output
+  rw [← same]
+  simp [compileProg, ClosInterp.attachInterpreter]
+
+/-- Source-to-closure compilation produces unary functions for the
+multi-argument introduction pass. -/
+theorem sourceClosure_noMti (fuel : Nat)
+    (sourceConfig nextSource : SourceToFlat.Config) (declarations : List AstHOL.Dec)
+    (expressions : List ClosLang.Exp)
+    (run : SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (nextSource, expressions)) :
+    ∀ e ∈ expressions, ClosProps.noMti e := by
+  have output := congrArg (Option.map Prod.snd) run
+  have same : compileProg (SourceToFlat.compileTotal sourceConfig (SourceToSource.compile declarations)).2 = expressions := by
+    apply Option.some.inj
+    simpa [SourceToFlat.compileCakeToClosFuel, SourceToFlat.compileToClosFuel, SourceToFlat.compile] using output
+  rw [← same]
+  exact compileProg_noMti _
+
 /-- Each incremental closure compilation supplies the same invariants and
 does not introduce an auxiliary code list. -/
 theorem sourceClosureOracle_syntactic {C : Type} (config : FlatSem.InstallConfig C)

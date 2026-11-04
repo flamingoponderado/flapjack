@@ -1195,6 +1195,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownCallDriver
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiKnownCallDriver
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiKnownCallLoweringHandoff
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiKnownCallDataHandoff
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.OptimizedBackendHandoff
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.LoweringHandoff
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
