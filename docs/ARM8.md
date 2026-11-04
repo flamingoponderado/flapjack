@@ -205,8 +205,10 @@ the 129-definition HOL closure reachable from `NextStateARM8` and
 `scripts/l3/arm8_defs.sexp.gz` and `scripts/l3/check-renderings.py` compares
 every definition in the file against it (129 definitions, two documented
 handwritten exceptions).  118 declarations carry `@[hol]` tags; all 118 are
-recorded as `reviewed_exact` in `docs/HOL-THEOREM-MAP.json` (117 transition and
-encoding definitions plus `NoOperation`).  Each tagged equation was compared
+reviewed in `docs/HOL-THEOREM-MAP.json` (117 transition and encoding
+definitions plus `NoOperation`): 67 are `reviewed_exact` and 51 carry
+`(words_as_type_indexed_bitvec)` with status
+`reviewed_words_as_type_indexed_bitvec`.  Each tagged equation was compared
 with its pinned HOL definition theorem, and the translation rules are reviewed
 in "Transition review" below: the
 rendering maps FCP to `BitVec`, bitstrings to `List Bool`, sets to predicates,
@@ -272,7 +274,8 @@ configuration and `arm8_next`/`arm8_ok`/`arm8_proj`, and proves
 `arm8TargetL3_targetOk`, the `targetOk` half of `encoderCorrect`.  The record is
 tagged `arm8_target_def` and `reviewed_exact`, as are `arm8Ast`, `arm8Enc` and
 `arm8ValidImmediate`; the rendered `Encode`/`Decode`/`Run`/`NextStateARM8`
-closure it unfolds to is also `reviewed_exact` (see "Transition review" below).
+closure it unfolds to is also reviewed (`reviewed_exact` or
+`reviewed_words_as_type_indexed_bitvec`; see "Transition review" below).
 
 `Flapjack/Compiler/Encoders/Arm8/L3/CorrectnessEncoding/Skip.lean` proves the
 `Skip` constructor case of the L3 `encoder_correct` port
@@ -669,10 +672,12 @@ against its own HOL declaration under the documented representations.  It does
 not certify a formal HOL-to-Lean equivalence proof; it records the source
 comparison required by the project's review policy.  The rendered `Defs.lean`
 closure that these statements unfold to (`Encode`, `Decode`, `Run`,
-`NextStateARM8`) is now also `reviewed_exact`: each of its 117 tagged
-definitions was compared with the pinned HOL definition theorem, and the
-translation rules are recorded under "Transition review" below.  The
-transcription itself is machine-checked.
+`NextStateARM8`) is now also reviewed: each of its 117 tagged definitions was
+compared with the pinned HOL definition theorem, and the translation rules are
+recorded under "Transition review" below.  Of those 117 rows, 66 are
+`reviewed_exact` and 51 carry `(words_as_type_indexed_bitvec)` with status
+`reviewed_words_as_type_indexed_bitvec`; `NoOperation` was already
+`reviewed_exact`.  The transcription itself is machine-checked.
 `scripts/l3/export_arm8_defs.sml` produces the pinned export, committed as
 `scripts/l3/arm8_defs.sexp.gz` (129 definitions), and
 `scripts/l3/check-renderings.py` compares every `Arm8/L3/Defs.lean` definition
@@ -701,9 +706,10 @@ Checked against the same pinned source:
   vectors become `BitVec` at the same dimension, bitstrings become `List Bool`
   (most-significant bit first), sets become predicates, `HD []` becomes
   `false`, and the `num2...` conversions are total with a default arm.  Those
-  choices are recorded beside each declaration and in the `reviewed_exact`
-  manifest rows; each equation was compared clause-for-clause with its pinned
-  HOL definition theorem (see "Transition review" below).
+  choices are recorded beside each declaration and in the reviewed manifest
+  rows (`reviewed_exact` or `reviewed_words_as_type_indexed_bitvec`); each
+  equation was compared clause-for-clause with its pinned HOL definition
+  theorem (see "Transition review" below).
 - `arm8_ast_def` is compared clause by clause with `arm8Ast`.  Every clause
   selects the same `instruction` constructor with the same field order:
   `Skip` -> `[NoOperation]`; `Const` -> `MoveWide@64` Z/N/K or
@@ -750,7 +756,8 @@ Checked against the same pinned source:
   `Ast.lean` definitions (`arm8LoadStoreAst{,32,16}` and `arm8Ast`), the
   assembling `arm8EncoderCorrectL3` and `arm8TargetL3_targetOk`, and all 64
   case theorems.  The rendered `Decode`/`Run`/`Encode` equations those
-  statements rest on are `reviewed_exact`; the `Loc` reformulation
+  statements rest on are reviewed (`reviewed_exact` or
+  `reviewed_words_as_type_indexed_bitvec`); the `Loc` reformulation
   above is reviewed.
 
 ### Transition review
@@ -797,12 +804,13 @@ The per-declaration review of the `Defs.lean` closure was performed on
   default arm is a totalization, and the encoder never emits those indices.
   These are the only out-of-range extensions; they do not change any specified
   clause.
-- **Result.** The 117 tagged `Defs.lean` rows and the two
-  `ShiftBitfieldMasks.lean` rows are `reviewed_exact` in
-  `docs/HOL-THEOREM-MAP.json`, with per-row notes citing the HOL source line
-  and the rendering rules used.  No hypothesis, side condition, or conclusion
-  is added or dropped.  The review is a declaration-level source comparison,
-  not a formal cross-prover equivalence proof.
+- **Result.**  Of the 117 tagged `Defs.lean` rows, 66 are `reviewed_exact`
+  and 51 are `reviewed_words_as_type_indexed_bitvec`; the two
+  `ShiftBitfieldMasks.lean` rows are `reviewed_exact`.  Every row has a
+  reviewer note citing the HOL source line and the rendering rules used.  No
+  hypothesis, side condition, or conclusion is added or dropped.  The review is
+  a declaration-level source comparison, not a formal cross-prover equivalence
+  proof.
 
 ## L3 machine configuration and downstream compiler theorem
 
@@ -837,8 +845,9 @@ Remaining assumptions and open items:
 
 - The carriers, the target record and configuration, the lowering, all 64
   `arm8_encoder_correct` case theorems, the assembling `arm8EncoderCorrectL3`,
-  `arm8TargetL3_targetOk`, the 117 tagged `Defs.lean` definitions and the two
-  `ShiftBitfieldMasks.lean` rows are `reviewed_exact` in
+  `arm8TargetL3_targetOk`, the 118 tagged `Defs.lean` definitions (67
+  `reviewed_exact`, 51 `reviewed_words_as_type_indexed_bitvec`) and the two
+  `ShiftBitfieldMasks.lean` rows (`reviewed_exact`) are reviewed in
   `docs/HOL-THEOREM-MAP.json`.  The `Fetch`/`Decode`/`Run`/`NextStateARM8`
   closure was compared declaration-by-declaration with the pinned L3 model; the
   review and its translation rules are recorded under "Transition review"
@@ -852,9 +861,9 @@ Remaining assumptions and open items:
   review records the generator's translation choices (`HD []` as `false`, the
   total `num2...` default arm, set-as-predicate, FCP-to-`BitVec`); the only
   out-of-range extensions are the documented `HD []` and `num2...` cases, and
-  the encoder never emits the affected words.  `reviewed_exact` here is a
-  declaration-level source comparison, not a formal cross-prover equivalence
-  proof.
+  the encoder never emits the affected words.  `reviewed_exact` and
+  `reviewed_words_as_type_indexed_bitvec` here are declaration-level source
+  comparisons, not formal cross-prover equivalence proofs.
 - The closed-model and L3 proofs of `is_arm8_machine_config ⇒ mc_conf_ok` and
   `backend_config_ok` are near-duplicates that differ only in the target,
   configuration and `valid_imm`; making them generic is recorded as follow-up
@@ -868,5 +877,6 @@ Remaining assumptions and open items:
   compiler on fifteen checked-in cases, and all fifteen pass.  Compiler-output
   parity alone does not establish semantic agreement with the L3 model; the
   semantic chain above is the evidence for that, subject to the
-  declaration-level source comparison recorded by `reviewed_exact` and the
-  documented out-of-range totalizations.
+  declaration-level source comparison recorded by `reviewed_exact` and
+  `reviewed_words_as_type_indexed_bitvec` and the documented out-of-range
+  totalizations.

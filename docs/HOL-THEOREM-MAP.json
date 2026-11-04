@@ -99467,16 +99467,18 @@
     "hol_name": "Align_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "Align",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:596` `Align_def`. The Lean `Align` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:596` `Align_def`. The Lean `Align` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "Aligned_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "Aligned",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:601` `Aligned_def`. The Lean `Aligned` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:601` `Aligned_def`. The Lean `Aligned` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -99515,8 +99517,9 @@
     "hol_name": "Mem_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "Mem",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:678` `Mem_def`. The Lean `Mem` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: uses the reviewed renderer/Support helpers `holFor`, `holV2w`, `holW2v`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:678` `Mem_def`. The Lean `Mem` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -99603,8 +99606,9 @@
     "hol_name": "HighestSetBit_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "HighestSetBit",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:802` `HighestSetBit_def`. The Lean `HighestSetBit` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: uses the reviewed renderer/Support helpers `holWordLog2`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:802` `HighestSetBit_def`. The Lean `HighestSetBit` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -99619,16 +99623,18 @@
     "hol_name": "Replicate_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "Replicate",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:797` `Replicate_def`. The Lean `Replicate` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: uses the reviewed renderer/Support helpers `holReplicate`, `holV2w`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:797` `Replicate_def`. The Lean `Replicate` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "DecodeBitMasks_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "DecodeBitMasks",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:971` `DecodeBitMasks_def`. The Lean `DecodeBitMasks` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: calls an untagged generated `...2num`/`num2...` conversion, whose default arm is documented infrastructure; uses the reviewed renderer/Support helpers `holField`, `holPadLeft`, `holRotate`, `holV2n`, `holV2w`, `holW2v`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:971` `DecodeBitMasks_def`. The Lean `DecodeBitMasks` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'M` is `BitVec TM` with `[NeZero TM]` discharging `dimindex (:'M) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -99739,40 +99745,45 @@
     "hol_name": "X_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "X",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:467` `X_def`. The Lean `X` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:467` `X_def`. The Lean `X` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "Extend_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "Extend",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:929` `Extend_def`. The Lean `Extend` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: `holHd`'s empty-list branch is the documented totalization of HOL's unspecified `HD []`; every model call is on a non-empty list; uses the reviewed renderer/Support helpers `holPadLeft`, `holV2w`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:929` `Extend_def`. The Lean `Extend` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "ExtendValue_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "ExtendValue",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:939` `ExtendValue_def`. The Lean `ExtendValue` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: uses the reviewed renderer/Support helpers `holField`, `holShiftl`, `holW2v`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:939` `ExtendValue_def`. The Lean `ExtendValue` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "ExtendReg_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "ExtendReg",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:962` `ExtendReg_def`. The Lean `ExtendReg` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:962` `ExtendReg_def`. The Lean `ExtendReg` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "SP_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "SP",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:487` `SP_def`. The Lean `SP` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: `holArb` is an arbitrary value, as HOL's `ARB`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:487` `SP_def`. The Lean `SP` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -99787,64 +99798,72 @@
     "hol_name": "write'Mem_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«write'Mem»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:721` `write'Mem_def`. The Lean `«write'Mem»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: uses the reviewed renderer/Support helpers `holField`, `holFor`, `holUpdate`, `holV2w`, `holW2v`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:721` `write'Mem_def`. The Lean `«write'Mem»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "ExtendWord_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "ExtendWord",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:924` `ExtendWord_def`. The Lean `ExtendWord` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:924` `ExtendWord_def`. The Lean `ExtendWord` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimensions are `'M` as `BitVec TM` with `[NeZero TM]` and `'N` as `BitVec TN` with `[NeZero TN]`, discharging their `dimindex` bounds; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "write'X_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«write'X»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:475` `write'X_def`. The Lean `«write'X»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: uses the reviewed renderer/Support helpers `holUpdate`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:475` `write'X_def`. The Lean `«write'X»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "write'SP_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«write'SP»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:499` `write'SP_def`. The Lean `«write'SP»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: `holArb` is an arbitrary value, as HOL's `ARB`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:499` `write'SP_def`. The Lean `«write'SP»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "LoadStoreSingle_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "LoadStoreSingle",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1747` `LoadStoreSingle_def`. The Lean `LoadStoreSingle` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: `holArb` is an arbitrary value, as HOL's `ARB`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1747` `LoadStoreSingle_def`. The Lean `LoadStoreSingle` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'LoadStoreRegister_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'LoadStoreRegister»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1846` `dfn'LoadStoreRegister_def`. The Lean `«dfn'LoadStoreRegister»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1846` `dfn'LoadStoreRegister_def`. The Lean `«dfn'LoadStoreRegister»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'LoadStorePair_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'LoadStorePair»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1866` `dfn'LoadStorePair_def`. The Lean `«dfn'LoadStorePair»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: `holArb` is an arbitrary value, as HOL's `ARB`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1866` `dfn'LoadStorePair_def`. The Lean `«dfn'LoadStorePair»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'LoadStoreImmediate_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'LoadStoreImmediate»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1829` `dfn'LoadStoreImmediate_def`. The Lean `«dfn'LoadStoreImmediate»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1829` `dfn'LoadStoreImmediate_def`. The Lean `«dfn'LoadStoreImmediate»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -99867,24 +99886,27 @@
     "hol_name": "dfn'LoadStoreAcquirePair_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'LoadStoreAcquirePair»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:2094` `dfn'LoadStoreAcquirePair_def`. The Lean `«dfn'LoadStoreAcquirePair»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: `holArb` is an arbitrary value, as HOL's `ARB`; `holWordExtract` implements HOL's `word_extract`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:2094` `dfn'LoadStoreAcquirePair_def`. The Lean `«dfn'LoadStoreAcquirePair»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'LoadStoreAcquire_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'LoadStoreAcquire»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:2018` `dfn'LoadStoreAcquire_def`. The Lean `«dfn'LoadStoreAcquire»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: `holArb` is an arbitrary value, as HOL's `ARB`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:2018` `dfn'LoadStoreAcquire_def`. The Lean `«dfn'LoadStoreAcquire»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'LoadLiteral_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'LoadLiteral»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:2282` `dfn'LoadLiteral_def`. The Lean `«dfn'LoadLiteral»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:2282` `dfn'LoadLiteral_def`. The Lean `«dfn'LoadLiteral»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -99931,32 +99953,36 @@
     "hol_name": "ShiftValue_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "ShiftValue",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:902` `ShiftValue_def`. The Lean `ShiftValue` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:902` `ShiftValue_def`. The Lean `ShiftValue` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "ShiftReg_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "ShiftReg",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:915` `ShiftReg_def`. The Lean `ShiftReg` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:915` `ShiftReg_def`. The Lean `ShiftReg` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'Shift_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'Shift»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1266` `dfn'Shift_def`. The Lean `«dfn'Shift»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1266` `dfn'Shift_def`. The Lean `«dfn'Shift»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'Reverse_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'Reverse»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1571` `dfn'Reverse_def`. The Lean `«dfn'Reverse»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: `holArb` is an arbitrary value, as HOL's `ARB`; `holWordExtract` implements HOL's `word_extract`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1571` `dfn'Reverse_def`. The Lean `«dfn'Reverse»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -99979,16 +100005,18 @@
     "hol_name": "dfn'MultiplyAddSub_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'MultiplyAddSub»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1497` `dfn'MultiplyAddSub_def`. The Lean `«dfn'MultiplyAddSub»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1497` `dfn'MultiplyAddSub_def`. The Lean `«dfn'MultiplyAddSub»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'MoveWide_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'MoveWide»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1287` `dfn'MoveWide_def`. The Lean `«dfn'MoveWide»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: `holBitFieldInsert` implements HOL's `bit_field_insert` under the reviewed in-range bound."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1287` `dfn'MoveWide_def`. The Lean `«dfn'MoveWide»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -100003,56 +100031,63 @@
     "hol_name": "dfn'LogicalShiftedRegister_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'LogicalShiftedRegister»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1228` `dfn'LogicalShiftedRegister_def`. The Lean `«dfn'LogicalShiftedRegister»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1228` `dfn'LogicalShiftedRegister_def`. The Lean `«dfn'LogicalShiftedRegister»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'LogicalImmediate_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'LogicalImmediate»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1193` `dfn'LogicalImmediate_def`. The Lean `«dfn'LogicalImmediate»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1193` `dfn'LogicalImmediate_def`. The Lean `«dfn'LogicalImmediate»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'ExtractRegister_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'ExtractRegister»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1456` `dfn'ExtractRegister_def`. The Lean `«dfn'ExtractRegister»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: uses the reviewed renderer/Support helpers `holShiftr`, `holV2w`, `holW2v`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1456` `dfn'ExtractRegister_def`. The Lean `«dfn'ExtractRegister»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'Division_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'Division»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1478` `dfn'Division_def`. The Lean `«dfn'Division»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1478` `dfn'Division_def`. The Lean `«dfn'Division»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "CountLeadingZeroBits_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "CountLeadingZeroBits",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:807` `CountLeadingZeroBits_def`. The Lean `CountLeadingZeroBits` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:807` `CountLeadingZeroBits_def`. The Lean `CountLeadingZeroBits` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "CountLeadingSignBits_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "CountLeadingSignBits",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:813` `CountLeadingSignBits_def`. The Lean `CountLeadingSignBits` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:813` `CountLeadingSignBits_def`. The Lean `CountLeadingSignBits` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'CountLeading_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'CountLeading»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1438` `dfn'CountLeading_def`. The Lean `«dfn'CountLeading»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1438` `dfn'CountLeading_def`. The Lean `«dfn'CountLeading»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -100075,72 +100110,81 @@
     "hol_name": "dfn'ConditionalSelect_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'ConditionalSelect»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1410` `dfn'ConditionalSelect_def`. The Lean `«dfn'ConditionalSelect»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1410` `dfn'ConditionalSelect_def`. The Lean `«dfn'ConditionalSelect»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "AddWithCarry_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "AddWithCarry",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:844` `AddWithCarry_def`. The Lean `AddWithCarry` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:844` `AddWithCarry_def`. The Lean `AddWithCarry` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'ConditionalCompareRegister_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'ConditionalCompareRegister»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1374` `dfn'ConditionalCompareRegister_def`. The Lean `«dfn'ConditionalCompareRegister»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1374` `dfn'ConditionalCompareRegister_def`. The Lean `«dfn'ConditionalCompareRegister»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'ConditionalCompareImmediate_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'ConditionalCompareImmediate»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1342` `dfn'ConditionalCompareImmediate_def`. The Lean `«dfn'ConditionalCompareImmediate»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1342` `dfn'ConditionalCompareImmediate_def`. The Lean `«dfn'ConditionalCompareImmediate»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'BitfieldMove_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'BitfieldMove»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1309` `dfn'BitfieldMove_def`. The Lean `«dfn'BitfieldMove»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1309` `dfn'BitfieldMove_def`. The Lean `«dfn'BitfieldMove»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'AddSubShiftedRegister_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'AddSubShiftedRegister»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1157` `dfn'AddSubShiftedRegister_def`. The Lean `«dfn'AddSubShiftedRegister»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1157` `dfn'AddSubShiftedRegister_def`. The Lean `«dfn'AddSubShiftedRegister»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'AddSubImmediate_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'AddSubImmediate»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1118` `dfn'AddSubImmediate_def`. The Lean `«dfn'AddSubImmediate»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1118` `dfn'AddSubImmediate_def`. The Lean `«dfn'AddSubImmediate»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'AddSubExtendRegister_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'AddSubExtendRegister»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1072` `dfn'AddSubExtendRegister_def`. The Lean `«dfn'AddSubExtendRegister»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1072` `dfn'AddSubExtendRegister_def`. The Lean `«dfn'AddSubExtendRegister»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'AddSubCarry_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'AddSubCarry»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1041` `dfn'AddSubCarry_def`. The Lean `«dfn'AddSubCarry»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1041` `dfn'AddSubCarry_def`. The Lean `«dfn'AddSubCarry»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -100179,8 +100223,9 @@
     "hol_name": "dfn'CRC_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'CRC»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1634` `dfn'CRC_def`. The Lean `«dfn'CRC»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: uses the reviewed renderer/Support helpers `holBxor`, `holW2v`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1634` `dfn'CRC_def`. The Lean `«dfn'CRC»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -100203,16 +100248,18 @@
     "hol_name": "dfn'TestBitAndBranch_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'TestBitAndBranch»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1730` `dfn'TestBitAndBranch_def`. The Lean `«dfn'TestBitAndBranch»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1730` `dfn'TestBitAndBranch_def`. The Lean `«dfn'TestBitAndBranch»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "dfn'CompareAndBranch_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«dfn'CompareAndBranch»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1715` `dfn'CompareAndBranch_def`. The Lean `«dfn'CompareAndBranch»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:1715` `dfn'CompareAndBranch_def`. The Lean `«dfn'CompareAndBranch»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -100315,8 +100362,9 @@
     "hol_name": "e_sf_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "e_sf",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:7294` `e_sf_def`. The Lean `e_sf` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: uses the reviewed renderer/Support helpers `holV2w`."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:7294` `e_sf_def`. The Lean `e_sf` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
@@ -100331,24 +100379,27 @@
     "hol_name": "CountTrailing_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "CountTrailing",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:7222` `CountTrailing_def`. The Lean `CountTrailing` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: committed as a documented handwritten exception with a two-sided hash (`scripts/l3/rendering-coverage.json`): the committed body annotates the shift as `(1 : Nat)` and names the branch hypothesis (`if h :`); the rendered body writes `>>> 1` and an unnamed `if`. Same guard, same recursive call, same result; the annotations only fix Lean elaboration."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:7222` `CountTrailing_def`. The Lean `CountTrailing` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "EncodeBitMaskAux_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "EncodeBitMaskAux",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:7237` `EncodeBitMaskAux_def`. The Lean `EncodeBitMaskAux` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:7237` `EncodeBitMaskAux_def`. The Lean `EncodeBitMaskAux` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
     "hol_name": "EncodeBitMask_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "EncodeBitMask",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:7268` `EncodeBitMask_def`. The Lean `EncodeBitMask` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:7268` `EncodeBitMask_def`. The Lean `EncodeBitMask` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Sole carrier translation `words_as_type_indexed_bitvec`: HOL's type-indexed word dimension `'N` is `BitVec TN` with `[NeZero TN]` discharging `dimindex (:'N) >= 1`; fixed literal dimensions remain literals.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",

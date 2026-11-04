@@ -16,10 +16,13 @@ The rendering maps HOL `bool ** 'N` (FCP) to `BitVec N` with a `Nat` width and
 `[NeZero N]` discharge, HOL `bitstring` (`bool list`, most-significant bit
 first) to `List Bool` via `Flapjack/Compiler/Encoders/Arm8/L3/Support.lean`,
 and HOL sets (`α -> bool`) to predicates.  The 118 declarations with a
-resolvable HOL source are `@[hol]`-tagged and recorded as `reviewed_exact` in
+resolvable HOL source are `@[hol]`-tagged and recorded in
 `docs/HOL-THEOREM-MAP.json` (117 transition and encoding definitions plus
-`NoOperation`); the ten generated `...2num`/`num2...` conversions and
-`boolify32` are untagged infrastructure.  Each tagged equation was compared
+`NoOperation`): 67 are `reviewed_exact` and 51 carry
+`(words_as_type_indexed_bitvec)` with status
+`reviewed_words_as_type_indexed_bitvec`.  The ten generated
+`...2num`/`num2...` conversions and `boolify32` are untagged infrastructure.
+Each tagged equation was compared
 with its pinned HOL definition theorem, and the translation rules are
 reviewed in `docs/ARM8.md` "Transition review".  This is a declaration-level
 source comparison, not a formal HOL-to-Lean equivalence proof.
@@ -48,14 +51,14 @@ noncomputable def SCTLR (state : arm8_state) : SCTLRType :=
   (((fun (v : (BitVec 2)) => (if ((v == (BitVec.ofNat 2 1))) then state.SCTLR_EL1 else ((if ((v == (BitVec.ofNat 2 2))) then state.SCTLR_EL2 else ((if ((v == (BitVec.ofNat 2 3))) then state.SCTLR_EL3 else ((if ((v == (BitVec.ofNat 2 0))) then (Flapjack.holArb SCTLRType) else (Flapjack.holArb SCTLRType)))))))))) (TranslationRegime state))
 
 /-- HOL `arm8$Align` (`Align_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Align_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Align_def" (words_as_type_indexed_bitvec)]
 def Align {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × Nat)) : (BitVec TN) :=
   match arg0 with
   | (w, n) =>
   (BitVec.ofNat TN ((n * (w.toNat / n))))
 
 /-- HOL `arm8$Aligned` (`Aligned_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Aligned_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Aligned_def" (words_as_type_indexed_bitvec)]
 def Aligned {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × Nat)) : Bool :=
   match arg0 with
   | (w, n) =>
@@ -84,7 +87,7 @@ noncomputable def BigEndian (state : arm8_state) : Bool :=
   (if ((state.PSTATE.EL == (BitVec.ofNat 2 0))) then state.SCTLR_EL1.E0E else ((SCTLR state).EE))
 
 /-- HOL `arm8$Mem` (`Mem_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Mem_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Mem_def" (words_as_type_indexed_bitvec)]
 noncomputable def Mem {TN : Nat} [NeZero TN] (arg0 : ((BitVec 64) × (Nat × AccType))) : (arm8_state → ((BitVec TN) × arm8_state)) :=
   match arg0 with
   | (address, (size, acctype)) =>
@@ -216,7 +219,7 @@ def num2RevOp (arg0 : Nat) : RevOp :=
   | _ => RevOp.RevOp_RBIT
 
 /-- HOL `arm8$HighestSetBit` (`HighestSetBit_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "HighestSetBit_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "HighestSetBit_def" (words_as_type_indexed_bitvec)]
 def HighestSetBit {TN : Nat} [NeZero TN] (w : (BitVec TN)) : Int :=
   (if ((w == (BitVec.ofNat TN 0))) then ((-(Int.ofNat 1))) else ((holWordLog2 w).toInt))
 
@@ -226,12 +229,12 @@ def Ones (n : Nat) : (List Bool) :=
   (holPadLeft true n (([] : (List Bool))))
 
 /-- HOL `arm8$Replicate` (`Replicate_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Replicate_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Replicate_def" (words_as_type_indexed_bitvec)]
 def Replicate {TN : Nat} [NeZero TN] (l : (List Bool)) : (BitVec TN) :=
   (holV2w TN ((holReplicate l ((TN / (l.length))))))
 
 /-- HOL `arm8$DecodeBitMasks` (`DecodeBitMasks_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "DecodeBitMasks_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "DecodeBitMasks_def" (words_as_type_indexed_bitvec)]
 def DecodeBitMasks {TM : Nat} [NeZero TM] (arg0 : ((BitVec 1) × ((BitVec 6) × ((BitVec 6) × Bool)))) : (Option ((BitVec TM) × (BitVec TM))) :=
   match arg0 with
   | (immN, (imms, (immr, immediate))) =>
@@ -324,33 +327,33 @@ noncomputable def «dfn'MemoryBarrier» (arg0 : (MemBarrierOp × (BitVec 4))) : 
   (fun (state : arm8_state) => (((«raise'exception» (Ta := Unit)) ((exception.UNDEFINED_FAULT (((BitVec.ofNat 8 77) :: (((BitVec.ofNat 8 101) :: (((BitVec.ofNat 8 109) :: (((BitVec.ofNat 8 111) :: (((BitVec.ofNat 8 114) :: (((BitVec.ofNat 8 121) :: (((BitVec.ofNat 8 66) :: (((BitVec.ofNat 8 97) :: (((BitVec.ofNat 8 114) :: (((BitVec.ofNat 8 114) :: (((BitVec.ofNat 8 105) :: (((BitVec.ofNat 8 101) :: (((BitVec.ofNat 8 114) :: (([] : (List HolChar))))))))))))))))))))))))))))))) state)).2)
 
 /-- HOL `arm8$X` (`X_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "X_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "X_def" (words_as_type_indexed_bitvec)]
 def X {TN : Nat} [NeZero TN] (n : (BitVec 5)) : (arm8_state → (BitVec TN)) :=
   (fun (state : arm8_state) => (if ((n == (BitVec.ofNat 5 31))) then (BitVec.ofNat TN 0) else ((BitVec.setWidth TN (state.REG n)))))
 
 /-- HOL `arm8$Extend` (`Extend_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Extend_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "Extend_def" (words_as_type_indexed_bitvec)]
 def Extend {TN : Nat} [NeZero TN] (arg0 : ((List Bool) × Bool)) : (BitVec TN) :=
   match arg0 with
   | (l, unsigned) =>
   (if ((unsigned || ((!(holHd l))))) then (holV2w TN l) else ((holV2w TN (holPadLeft true TN l))))
 
 /-- HOL `arm8$ExtendValue` (`ExtendValue_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "ExtendValue_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "ExtendValue_def" (words_as_type_indexed_bitvec)]
 def ExtendValue {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (ExtendType × Nat))) : (BitVec TN) :=
   match arg0 with
   | (value, (ty, sh)) =>
   (match (match ty with | .ExtendType_UXTB => (true, 8) | .ExtendType_UXTH => (true, 16) | .ExtendType_UXTW => (true, 32) | .ExtendType_UXTX => (true, 64) | .ExtendType_SXTB => (false, 8) | .ExtendType_SXTH => (false, 16) | .ExtendType_SXTW => (false, 32) | .ExtendType_SXTX => (false, 64)) with | (unsigned, len) => ((Extend (TN := TN)) ((((holShiftl ((holField ((((min len (TN - sh))) - 1)) 0 (holW2v value))) sh)), unsigned))))
 
 /-- HOL `arm8$ExtendReg` (`ExtendReg_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "ExtendReg_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "ExtendReg_def" (words_as_type_indexed_bitvec)]
 def ExtendReg {TN : Nat} [NeZero TN] (arg0 : ((BitVec 5) × (ExtendType × Nat))) : (arm8_state → (BitVec TN)) :=
   match arg0 with
   | (reg, (ty, sh)) =>
   (fun (state : arm8_state) => ((ExtendValue (TN := TN)) (((((X (TN := TN)) reg state)), (ty, sh)))))
 
 /-- HOL `arm8$SP` (`SP_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "SP_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "SP_def" (words_as_type_indexed_bitvec)]
 noncomputable def SP {TN : Nat} [NeZero TN] (state : arm8_state) : (BitVec TN) :=
   (BitVec.setWidth TN ((if (!state.PSTATE.SPS) then state.SP_EL0 else ((((fun (v : (BitVec 2)) => (if ((v == (BitVec.ofNat 2 0))) then state.SP_EL0 else ((if ((v == (BitVec.ofNat 2 1))) then state.SP_EL1 else ((if ((v == (BitVec.ofNat 2 2))) then state.SP_EL2 else ((if ((v == (BitVec.ofNat 2 3))) then state.SP_EL3 else ((Flapjack.holArb (BitVec 64)))))))))))) state.PSTATE.EL)))))
 
@@ -360,54 +363,54 @@ noncomputable def CheckSPAlignment (state : arm8_state) : arm8_state :=
   (if ((((if ((state.PSTATE.EL == (BitVec.ofNat 2 0))) then state.SCTLR_EL1.SA0 else ((SCTLR state).SA))) && ((!(((Aligned (TN := 64)) (((((SP (TN := 64)) state)), 16)))))))) then ((((«raise'exception» (Ta := Unit)) exception.ALIGNMENT_FAULT state)).2) else state)
 
 /-- HOL `arm8$write'Mem` (`write'Mem_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "write'Mem_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "write'Mem_def" (words_as_type_indexed_bitvec)]
 noncomputable def «write'Mem» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × ((BitVec 64) × (Nat × AccType)))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (value, (address, (size, acctype))) =>
   (fun (state : arm8_state) => (match (let s : arm8_state := (CheckAlignment ((address, ((size, (acctype, true))))) state); ((BigEndian s), s)) with | (v, s) => (((holFor ((0, (((size - 1), ((fun (i : Nat) => (fun (state_1 : arm8_state) => ((), ((let r := state_1; { r with MEM := ((fun (_eta1 : ((BitVec 64) → (BitVec 8))) => ((holUpdate ((address + (BitVec.ofNat 64 i))) ((holV2w 8 ((holField (((8 * i) + 7)) (8 * i) ((if v then ((BigEndianReverse (holW2v value))) else (holW2v value))))))) state_1.MEM)))) r.MEM }))))))))))) s)).2))
 
 /-- HOL `arm8$ExtendWord` (`ExtendWord_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "ExtendWord_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "ExtendWord_def" (words_as_type_indexed_bitvec)]
 def ExtendWord {TN : Nat} [NeZero TN] {TM : Nat} [NeZero TM] (arg0 : ((BitVec TM) × Bool)) : (BitVec TN) :=
   match arg0 with
   | (w, signed) =>
   (if signed then (BitVec.signExtend TN w) else (BitVec.setWidth TN w))
 
 /-- HOL `arm8$write'X` (`write'X_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "write'X_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "write'X_def" (words_as_type_indexed_bitvec)]
 def «write'X» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (BitVec 5))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (value, n) =>
   (fun (state : arm8_state) => (if ((!((n == (BitVec.ofNat 5 31))))) then ((let r := state; { r with REG := ((fun (_eta1 : ((BitVec 5) → (BitVec 64))) => ((holUpdate n (BitVec.setWidth 64 value) state.REG)))) r.REG })) else state))
 
 /-- HOL `arm8$write'SP` (`write'SP_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "write'SP_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "write'SP_def" (words_as_type_indexed_bitvec)]
 noncomputable def «write'SP» {TN : Nat} [NeZero TN] (value : (BitVec TN)) : (arm8_state → arm8_state) :=
   (fun (state : arm8_state) => (let v : (BitVec 64) := (BitVec.setWidth 64 value); (if (!state.PSTATE.SPS) then ((let r := state; { r with SP_EL0 := ((fun (_eta1 : (BitVec 64)) => v)) r.SP_EL0 })) else ((((fun (v1 : (BitVec 2)) => (if ((v1 == (BitVec.ofNat 2 0))) then ((let r := state; { r with SP_EL0 := ((fun (_eta1 : (BitVec 64)) => v)) r.SP_EL0 })) else ((if ((v1 == (BitVec.ofNat 2 1))) then ((let r := state; { r with SP_EL1 := ((fun (_eta1 : (BitVec 64)) => v)) r.SP_EL1 })) else ((if ((v1 == (BitVec.ofNat 2 2))) then ((let r := state; { r with SP_EL2 := ((fun (_eta1 : (BitVec 64)) => v)) r.SP_EL2 })) else ((if ((v1 == (BitVec.ofNat 2 3))) then ((let r := state; { r with SP_EL3 := ((fun (_eta1 : (BitVec 64)) => v)) r.SP_EL3 })) else (Flapjack.holArb arm8_state)))))))))) state.PSTATE.EL)))))
 
 /-- HOL `arm8$LoadStoreSingle` (`LoadStoreSingle_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "LoadStoreSingle_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "LoadStoreSingle_def" (words_as_type_indexed_bitvec)]
 noncomputable def LoadStoreSingle {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × (MemOp × (AccType × (Bool × (Bool × (Bool × (Bool × (Bool × ((BitVec 64) × ((BitVec 5) × (BitVec 5))))))))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_size, (regsize_word, (memop, (acctype, (signed, (wb_unknown, (rt_unknown, (wback, (postindex, (offset, (n, t))))))))))) =>
   (fun (state : arm8_state) => (let s : arm8_state := (if ((((n == (BitVec.ofNat 5 31))) && ((!(memop == MemOp.MemOp_PREFETCH))))) then (CheckSPAlignment state) else state); (let v : (BitVec 64) := (if ((n == (BitVec.ofNat 5 31))) then (((SP (TN := 64)) s)) else (((X (TN := 64)) n s))); (let address : (BitVec 64) := (if postindex then v else (v + offset)); (let s_1 : arm8_state := (match memop with | .MemOp_LOAD => (match ((Mem (TN := TN)) ((address, (((TN / 8), acctype)))) s) with | (v_1, s_1) => (if regsize_word then (((«write'X» (TN := 32)) (((((ExtendWord (TM := TN) (TN := 32)) (v_1, signed))), t)) s_1)) else (((«write'X» (TN := 64)) (((((ExtendWord (TM := TN) (TN := 64)) (v_1, signed))), t)) s_1)))) | .MemOp_STORE => ((«write'Mem» (TN := TN)) ((((if rt_unknown then ((Flapjack.holArb (BitVec TN))) else (((X (TN := TN)) t s)))), ((address, (((TN / 8), acctype)))))) s) | .MemOp_PREFETCH => s); (if wback then ((let address_1 : (BitVec 64) := (if wb_unknown then ((Flapjack.holArb (BitVec 64))) else ((if postindex then (address + offset) else address))); (if ((n == (BitVec.ofNat 5 31))) then (((«write'SP» (TN := 64)) address_1 s_1)) else (((«write'X» (TN := 64)) (address_1, n) s_1))))) else s_1))))))
 
 /-- HOL `arm8$dfn'LoadStoreRegister` (`dfn'LoadStoreRegister_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LoadStoreRegister_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LoadStoreRegister_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'LoadStoreRegister» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × (MemOp × (Bool × ((BitVec 5) × (ExtendType × (Nat × ((BitVec 5) × (BitVec 5)))))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (size, (regsize_word, (memop, (signed, (m, (extend_type, (shift, (n, t)))))))) =>
   (fun (state : arm8_state) => ((LoadStoreSingle (TN := TN)) ((size, ((regsize_word, ((memop, ((AccType.AccType_NORMAL, ((signed, ((false, ((false, ((false, ((false, (((((ExtendReg (TN := 64)) ((m, (extend_type, shift))) state)), (n, t))))))))))))))))))))) state))
 
 /-- HOL `arm8$dfn'LoadStorePair` (`dfn'LoadStorePair_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LoadStorePair_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LoadStorePair_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'LoadStorePair» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (MemOp × (AccType × (Bool × (Bool × (Bool × (Bool × (Bool × ((BitVec 64) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_size, (memop, (acctype, (signed, (wb_unknown, (rt_unknown, (wback, (postindex, (offset, (n, (t, t2))))))))))) =>
   (fun (state : arm8_state) => (let dbytes : Nat := (TN / 8); (let s : arm8_state := (if ((n == (BitVec.ofNat 5 31))) then (CheckSPAlignment state) else state); (let v : (BitVec 64) := (if ((n == (BitVec.ofNat 5 31))) then (((SP (TN := 64)) s)) else (((X (TN := 64)) n s))); (let address : (BitVec 64) := (if postindex then v else (v + offset)); (let s_1 : arm8_state := (match memop with | .MemOp_LOAD => (match (if rt_unknown then ((((Flapjack.holArb ((BitVec TN) × (BitVec TN)))), s)) else ((match ((Mem (TN := TN)) ((address, (dbytes, acctype))) s) with | (v_1, s_1) => (match ((Mem (TN := TN)) ((((address + (BitVec.ofNat 64 dbytes))), (dbytes, acctype))) s_1) with | (v0, s) => ((v_1, v0), s))))) with | (v_1, s_1) => (match v_1 with | (data1, data2) => (if signed then (((«write'X» (TN := 64)) (((((ExtendWord (TM := TN) (TN := 64)) (data2, signed))), t2)) (((«write'X» (TN := 64)) (((((ExtendWord (TM := TN) (TN := 64)) (data1, signed))), t)) s_1)))) else (((«write'X» (TN := TN)) (data2, t2) (((«write'X» (TN := TN)) (data1, t) s_1))))))) | .MemOp_STORE => ((«write'Mem» (TN := TN)) ((((if ((rt_unknown && (t2 == n))) then ((Flapjack.holArb (BitVec TN))) else (((X (TN := TN)) t2 s)))), ((((address + (BitVec.ofNat 64 dbytes))), (dbytes, acctype))))) (((«write'Mem» (TN := TN)) ((((if ((rt_unknown && (t == n))) then ((Flapjack.holArb (BitVec TN))) else (((X (TN := TN)) t s)))), ((address, (dbytes, acctype))))) s))) | .MemOp_PREFETCH => s); (if wback then ((let address_1 : (BitVec 64) := (if wb_unknown then ((Flapjack.holArb (BitVec 64))) else ((if postindex then (address + offset) else address))); (if ((n == (BitVec.ofNat 5 31))) then (((«write'SP» (TN := 64)) address_1 s_1)) else (((«write'X» (TN := 64)) (address_1, n) s_1))))) else s_1)))))))
 
 /-- HOL `arm8$dfn'LoadStoreImmediate` (`dfn'LoadStoreImmediate_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LoadStoreImmediate_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LoadStoreImmediate_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'LoadStoreImmediate» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × (MemOp × (AccType × (Bool × (Bool × (Bool × (Bool × (Bool × (Bool × ((BitVec 64) × ((BitVec 5) × (BitVec 5)))))))))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (size, (regsize_word, (memop, (acctype, (signed, (wb_unknown, (rt_unknown, (wback, (postindex, (_unsigned_offset, (offset, (n, t)))))))))))) =>
@@ -426,21 +429,21 @@ noncomputable def ExclusiveMonitorPass (arg0 : ((BitVec 64) × Nat)) : Bool :=
   (Flapjack.holArb Bool)
 
 /-- HOL `arm8$dfn'LoadStoreAcquirePair` (`dfn'LoadStoreAcquirePair_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LoadStoreAcquirePair_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LoadStoreAcquirePair_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'LoadStoreAcquirePair» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (MemOp × (AccType × (Bool × (Bool × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_size, (memop, (acctype, (rn_unknown, (rt_unknown, (s, (n, (t, t2)))))))) =>
   (fun (state : arm8_state) => (let dbytes : Nat := (TN / 8); (let s0 : arm8_state := (if ((n == (BitVec.ofNat 5 31))) then (CheckSPAlignment state) else state); (let v : (BitVec 64) := (if ((n == (BitVec.ofNat 5 31))) then (((SP (TN := 64)) s0)) else ((if rn_unknown then ((Flapjack.holArb (BitVec 64))) else (((X (TN := 64)) n s0))))); (match memop with | .MemOp_LOAD => (if rt_unknown then ((if (TN == 64) then (((«write'X» (TN := 32)) ((((Flapjack.holArb (BitVec 32))), t)) s0)) else (((«write'X» (TN := 64)) ((((Flapjack.holArb (BitVec 64))), t)) s0)))) else ((if (TN == 64) then ((match ((Mem (TN := TN)) ((v, (dbytes, acctype))) s0) with | (v_1, s_1) => (if (BigEndian s_1) then (((«write'X» (TN := 32)) (((holWordExtract 32 31 0 v_1), t2)) (((«write'X» (TN := 32)) (((holWordExtract 32 63 32 v_1), t)) s_1)))) else (((«write'X» (TN := 32)) (((holWordExtract 32 63 32 v_1), t2)) (((«write'X» (TN := 32)) (((holWordExtract 32 31 0 v_1), t)) s_1))))))) else ((match ((Mem (TN := 64)) ((v, (8, acctype))) ((if ((!(((Aligned (TN := 64)) (v, dbytes))))) then ((((«raise'exception» (Ta := Unit)) exception.ALIGNMENT_FAULT s0)).2) else s0))) with | (v0, s_1) => (match ((Mem (TN := 64)) ((((v + (BitVec.ofNat 64 8))), (8, acctype))) (((«write'X» (TN := 64)) (v0, t) s_1))) with | (v_1, s_2) => ((«write'X» (TN := 64)) (v_1, t2) s_2))))))) | .MemOp_STORE => (if ((ExclusiveMonitorPass (v, dbytes))) then (((«write'X» (TN := 32)) (((BitVec.setWidth 32 ExclusiveMonitorStatus), s)) (((«write'Mem» (TN := TN)) ((((if rt_unknown then ((Flapjack.holArb (BitVec TN))) else ((if (TN == 64) then ((if (BigEndian s0) then ((BitVec.setWidth TN ((BitVec.setWidth 64 ((((X (TN := 32)) t s0)) ++ (((X (TN := 32)) t2 s0))))))) else ((BitVec.setWidth TN ((BitVec.setWidth 64 ((((X (TN := 32)) t2 s0)) ++ (((X (TN := 32)) t s0))))))))) else ((if (BigEndian s0) then ((BitVec.setWidth TN ((BitVec.setWidth 128 ((((X (TN := 64)) t s0)) ++ (((X (TN := 64)) t2 s0))))))) else ((BitVec.setWidth TN ((BitVec.setWidth 128 ((((X (TN := 64)) t2 s0)) ++ (((X (TN := 64)) t s0))))))))))))), ((v, (dbytes, acctype))))) s0)))) else (((«write'X» (TN := 32)) (((BitVec.ofNat 32 1), s)) s0))) | .MemOp_PREFETCH => s0)))))
 
 /-- HOL `arm8$dfn'LoadStoreAcquire` (`dfn'LoadStoreAcquire_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LoadStoreAcquire_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LoadStoreAcquire_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'LoadStoreAcquire» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (MemOp × (AccType × (Bool × (Bool × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_size, (memop, (acctype, (excl, (rn_unknown, (rt_unknown, (s, (n, t)))))))) =>
   (fun (state : arm8_state) => (let dbytes : Nat := (TN / 8); (let s0 : arm8_state := (if ((n == (BitVec.ofNat 5 31))) then (CheckSPAlignment state) else state); (let v : (BitVec 64) := (if ((n == (BitVec.ofNat 5 31))) then (((SP (TN := 64)) s0)) else ((if rn_unknown then ((Flapjack.holArb (BitVec 64))) else (((X (TN := 64)) n s0))))); (match memop with | .MemOp_LOAD => (match ((Mem (TN := TN)) ((v, (dbytes, acctype))) s0) with | (v_1, s_1) => (if (TN == 64) then (((«write'X» (TN := TN)) (v_1, t) s_1)) else (((«write'X» (TN := 32)) (((BitVec.setWidth 32 v_1), t)) s_1)))) | .MemOp_STORE => (let v0 : (BitVec TN) := (if rt_unknown then ((Flapjack.holArb (BitVec TN))) else (((X (TN := TN)) t s0))); (if excl then ((if ((ExclusiveMonitorPass (v, dbytes))) then (((«write'X» (TN := 32)) (((BitVec.setWidth 32 ExclusiveMonitorStatus), s)) (((«write'Mem» (TN := TN)) ((v0, ((v, (dbytes, acctype))))) s0)))) else (((«write'X» (TN := 32)) (((BitVec.ofNat 32 1), s)) s0)))) else (((«write'Mem» (TN := TN)) ((v0, ((v, (dbytes, acctype))))) s0)))) | .MemOp_PREFETCH => s0)))))
 
 /-- HOL `arm8$dfn'LoadLiteral` (`dfn'LoadLiteral_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LoadLiteral_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LoadLiteral_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'LoadLiteral» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (MemOp × (Bool × ((BitVec 64) × (BitVec 5)))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_size, (memop, (signed, (offset, t)))) =>
@@ -472,28 +475,28 @@ noncomputable def «dfn'Breakpoint» (_imm : (BitVec 16)) : (arm8_state → arm8
   (fun (state : arm8_state) => (((«raise'exception» (Ta := Unit)) ((exception.UNDEFINED_FAULT (((BitVec.ofNat 8 66) :: (((BitVec.ofNat 8 114) :: (((BitVec.ofNat 8 101) :: (((BitVec.ofNat 8 97) :: (((BitVec.ofNat 8 107) :: (((BitVec.ofNat 8 112) :: (((BitVec.ofNat 8 111) :: (((BitVec.ofNat 8 105) :: (((BitVec.ofNat 8 110) :: (((BitVec.ofNat 8 116) :: (([] : (List HolChar))))))))))))))))))))))))) state)).2)
 
 /-- HOL `arm8$ShiftValue` (`ShiftValue_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "ShiftValue_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "ShiftValue_def" (words_as_type_indexed_bitvec)]
 def ShiftValue {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (ShiftType × Nat))) : (BitVec TN) :=
   match arg0 with
   | (value, (ty, amount)) =>
   (match ty with | .lsl => (value <<< amount) | .lsr => (value >>> amount) | .asr => (BitVec.sshiftRight value amount) | .ror => (BitVec.rotateRight value amount))
 
 /-- HOL `arm8$ShiftReg` (`ShiftReg_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "ShiftReg_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "ShiftReg_def" (words_as_type_indexed_bitvec)]
 def ShiftReg {TN : Nat} [NeZero TN] (arg0 : ((BitVec 5) × (ShiftType × Nat))) : (arm8_state → (BitVec TN)) :=
   match arg0 with
   | (reg, (ty, amount)) =>
   (fun (state : arm8_state) => ((ShiftValue (TN := TN)) (((((X (TN := TN)) reg state)), (ty, amount)))))
 
 /-- HOL `arm8$dfn'Shift` (`dfn'Shift_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'Shift_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'Shift_def" (words_as_type_indexed_bitvec)]
 def «dfn'Shift» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (ShiftType × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (shift_type, (m, (n, d)))) =>
   (fun (state : arm8_state) => ((«write'X» (TN := TN)) (((((ShiftReg (TN := TN)) ((n, ((shift_type, ((((((X (TN := TN)) m state)).toNat) % TN)))))) state)), d)) state))
 
 /-- HOL `arm8$dfn'Reverse` (`dfn'Reverse_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'Reverse_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'Reverse_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'Reverse» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (RevOp × ((BitVec 5) × (BitVec 5))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (op, (n, d))) =>
@@ -514,14 +517,14 @@ def «dfn'MultiplyAddSubLong» (arg0 : (Bool × (Bool × ((BitVec 5) × ((BitVec
   (fun (state : arm8_state) => (let v1 : (BitVec 64) := ((X (TN := 64)) a state); (let product : (BitVec 64) := ((((ExtendWord (TM := 32) (TN := 64)) (((((X (TN := 32)) n state)), signed)))) * (((ExtendWord (TM := 32) (TN := 64)) (((((X (TN := 32)) m state)), signed))))); ((«write'X» (TN := 64)) ((((if sub_op then (v1 - product) else (v1 + product))), d)) state))))
 
 /-- HOL `arm8$dfn'MultiplyAddSub` (`dfn'MultiplyAddSub_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'MultiplyAddSub_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'MultiplyAddSub_def" (words_as_type_indexed_bitvec)]
 def «dfn'MultiplyAddSub» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (sub_op, (m, (a, (n, d))))) =>
   (fun (state : arm8_state) => (let v : (BitVec TN) := ((X (TN := TN)) n state); (let v0 : (BitVec TN) := ((X (TN := TN)) m state); (let v1 : (BitVec TN) := ((X (TN := TN)) a state); ((«write'X» (TN := TN)) ((((if sub_op then ((v1 - (v * v0))) else ((v1 + (v * v0))))), d)) state)))))
 
 /-- HOL `arm8$dfn'MoveWide` (`dfn'MoveWide_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'MoveWide_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'MoveWide_def" (words_as_type_indexed_bitvec)]
 def «dfn'MoveWide» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (MoveWideOp × ((BitVec 2) × ((BitVec 16) × (BitVec 5)))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (opcode, (hw, (imm, d)))) =>
@@ -535,45 +538,45 @@ def SetTheFlags (arg0 : (Bool × (Bool × (Bool × (Bool × Bool))))) : (arm8_st
   (fun (state : arm8_state) => (if setflags then ((let s : arm8_state := (let r := state; { r with PSTATE := ((fun (_eta1 : ProcState) => ((let r := state.PSTATE; { r with N := ((fun (_eta1 : Bool) => n)) r.N })))) r.PSTATE }); (let s_1 : arm8_state := (let r := s; { r with PSTATE := ((fun (_eta1 : ProcState) => ((let r := s.PSTATE; { r with Z := ((fun (_eta1 : Bool) => z)) r.Z })))) r.PSTATE }); (let s : arm8_state := (let r := s_1; { r with PSTATE := ((fun (_eta1 : ProcState) => ((let r := s_1.PSTATE; { r with C := ((fun (_eta1 : Bool) => c)) r.C })))) r.PSTATE }); (let r := s; { r with PSTATE := ((fun (_eta1 : ProcState) => ((let r := s.PSTATE; { r with V := ((fun (_eta1 : Bool) => v)) r.V })))) r.PSTATE }))))) else state))
 
 /-- HOL `arm8$dfn'LogicalShiftedRegister` (`dfn'LogicalShiftedRegister_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LogicalShiftedRegister_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LogicalShiftedRegister_def" (words_as_type_indexed_bitvec)]
 def «dfn'LogicalShiftedRegister» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (LogicalOp × (Bool × (Bool × (ShiftType × (Nat × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (opc, (invert, (setflags, (shift_type, (shift_amount, (m, (n, d)))))))) =>
   (fun (state : arm8_state) => (let v : (BitVec TN) := ((X (TN := TN)) n state); (let v0 : (BitVec TN) := ((ShiftReg (TN := TN)) ((m, (shift_type, shift_amount))) state); (let operand2 : (BitVec TN) := (if invert then (~~~v0) else v0); (let result : (BitVec TN) := (match opc with | .LogicalOp_AND => (v &&& operand2) | .LogicalOp_ORR => (v ||| operand2) | .LogicalOp_EOR => (v ^^^ operand2)); ((«write'X» (TN := TN)) (result, d) ((SetTheFlags ((setflags, (((BitVec.msb result), ((((result == (BitVec.ofNat TN 0))), (false, false))))))) state))))))))
 
 /-- HOL `arm8$dfn'LogicalImmediate` (`dfn'LogicalImmediate_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LogicalImmediate_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'LogicalImmediate_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'LogicalImmediate» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (LogicalOp × (Bool × ((BitVec TN) × ((BitVec 5) × (BitVec 5))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (opc, (setflags, (imm, (n, d))))) =>
   (fun (state : arm8_state) => (let v : (BitVec TN) := ((X (TN := TN)) n state); (let result : (BitVec TN) := (match opc with | .LogicalOp_AND => (v &&& imm) | .LogicalOp_ORR => (v ||| imm) | .LogicalOp_EOR => (v ^^^ imm)); (let s : arm8_state := (SetTheFlags ((setflags, (((BitVec.msb result), ((((result == (BitVec.ofNat TN 0))), (false, false))))))) state); (if ((((d == (BitVec.ofNat 5 31))) && (!setflags))) then (((«write'SP» (TN := TN)) result s)) else (((«write'X» (TN := TN)) (result, d) s)))))))
 
 /-- HOL `arm8$dfn'ExtractRegister` (`dfn'ExtractRegister_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'ExtractRegister_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'ExtractRegister_def" (words_as_type_indexed_bitvec)]
 def «dfn'ExtractRegister» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × ((BitVec 6) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (imms, (m, (n, d)))) =>
   (fun (state : arm8_state) => ((«write'X» (TN := TN)) ((((holV2w TN ((holShiftr ((((holW2v (((X (TN := TN)) n state)))) ++ ((holW2v (((X (TN := TN)) m state)))))) imms.toNat)))), d)) state))
 
 /-- HOL `arm8$dfn'Division` (`dfn'Division_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'Division_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'Division_def" (words_as_type_indexed_bitvec)]
 def «dfn'Division» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (unsigned, (m, (n, d)))) =>
   (fun (state : arm8_state) => (let v : (BitVec TN) := ((X (TN := TN)) n state); (let v0 : (BitVec TN) := ((X (TN := TN)) m state); ((«write'X» (TN := TN)) ((((if ((v0 == (BitVec.ofNat TN 0))) then (BitVec.ofNat TN 0) else ((if unsigned then (BitVec.udiv v v0) else (BitVec.sdiv v v0))))), d)) state))))
 
 /-- HOL `arm8$CountLeadingZeroBits` (`CountLeadingZeroBits_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "CountLeadingZeroBits_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "CountLeadingZeroBits_def" (words_as_type_indexed_bitvec)]
 def CountLeadingZeroBits {TN : Nat} [NeZero TN] (w : (BitVec TN)) : Nat :=
   ((((((Int.ofNat TN) - (Int.ofNat 1))) - (((HighestSetBit (TN := TN)) w)))).natAbs)
 
 /-- HOL `arm8$CountLeadingSignBits` (`CountLeadingSignBits_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "CountLeadingSignBits_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "CountLeadingSignBits_def" (words_as_type_indexed_bitvec)]
 def CountLeadingSignBits {TN : Nat} [NeZero TN] (w : (BitVec TN)) : Nat :=
   ((((CountLeadingZeroBits (TN := TN)) (((w >>> 1) ^^^ ((w &&& ((~~~((BitVec.rotateRight (BitVec.ofNat TN 1) 1)))))))))) - 1)
 
 /-- HOL `arm8$dfn'CountLeading` (`dfn'CountLeading_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'CountLeading_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'CountLeading_def" (words_as_type_indexed_bitvec)]
 def «dfn'CountLeading» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × ((BitVec 5) × (BitVec 5))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (count_clz, (n, d))) =>
@@ -592,63 +595,63 @@ noncomputable def ConditionHolds (cond : (BitVec 4)) : (arm8_state → Bool) :=
   (fun (state : arm8_state) => (ConditionTest ((cond, ((state.PSTATE.N, ((state.PSTATE.Z, (state.PSTATE.C, state.PSTATE.V)))))))))
 
 /-- HOL `arm8$dfn'ConditionalSelect` (`dfn'ConditionalSelect_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'ConditionalSelect_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'ConditionalSelect_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'ConditionalSelect» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × (Bool × ((BitVec 4) × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (else_inv, (else_inc, (cond, (m, (n, d)))))) =>
   (fun (state : arm8_state) => (let s : ((BitVec TN) × arm8_state) := (if (ConditionHolds cond state) then (((((X (TN := TN)) n state)), state)) else ((let s3 : (BitVec TN) := ((X (TN := TN)) m state); (let s0 : (BitVec TN) := (if else_inv then (~~~s3) else s3); (((if else_inc then ((s0 + (BitVec.ofNat TN 1))) else s0)), state))))); ((«write'X» (TN := TN)) (s.1, d) s.2)))
 
 /-- HOL `arm8$AddWithCarry` (`AddWithCarry_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "AddWithCarry_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "AddWithCarry_def" (words_as_type_indexed_bitvec)]
 def AddWithCarry {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × ((BitVec TN) × Bool))) : ((BitVec TN) × (Bool × (Bool × (Bool × Bool)))) :=
   match arg0 with
   | (x, (y, carry_in)) =>
   (let unsigned_sum : Nat := ((x.toNat + y.toNat) + (if carry_in then 1 else 0)); (let result : (BitVec TN) := (BitVec.ofNat TN unsigned_sum); (result, (((BitVec.msb result), ((((result == (BitVec.ofNat TN 0))), ((((!(result.toNat == unsigned_sum))), ((!((result.toInt == (((x.toInt + y.toInt) + ((if carry_in then (Int.ofNat 1) else (Int.ofNat 0))))))))))))))))))
 
 /-- HOL `arm8$dfn'ConditionalCompareRegister` (`dfn'ConditionalCompareRegister_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'ConditionalCompareRegister_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'ConditionalCompareRegister_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'ConditionalCompareRegister» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × ((BitVec 4) × ((Bool × (Bool × (Bool × Bool))) × ((BitVec 5) × (BitVec 5))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (sub_op, (cond, (nzcv, (m, n))))) =>
   (fun (state : arm8_state) => (let v0 : (BitVec TN) := ((X (TN := TN)) m state); (if (ConditionHolds cond state) then ((match (if sub_op then (((~~~v0), true)) else (v0, false)) with | (operand2, carry_in) => (match ((AddWithCarry (TN := TN)) (((((X (TN := TN)) n state)), (operand2, carry_in)))) with | (_u_, flags) => (SetTheFlags (true, flags) state)))) else ((SetTheFlags (true, nzcv) state)))))
 
 /-- HOL `arm8$dfn'ConditionalCompareImmediate` (`dfn'ConditionalCompareImmediate_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'ConditionalCompareImmediate_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'ConditionalCompareImmediate_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'ConditionalCompareImmediate» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × ((BitVec TN) × ((BitVec 4) × ((Bool × (Bool × (Bool × Bool))) × (BitVec 5))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (sub_op, (imm, (cond, (nzcv, n))))) =>
   (fun (state : arm8_state) => (if (ConditionHolds cond state) then ((match (if sub_op then (((~~~imm), true)) else (imm, false)) with | (operand2, carry_in) => (match ((AddWithCarry (TN := TN)) (((((X (TN := TN)) n state)), (operand2, carry_in)))) with | (_u_, flags) => (SetTheFlags (true, flags) state)))) else ((SetTheFlags (true, nzcv) state))))
 
 /-- HOL `arm8$dfn'BitfieldMove` (`dfn'BitfieldMove_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'BitfieldMove_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'BitfieldMove_def" (words_as_type_indexed_bitvec)]
 def «dfn'BitfieldMove» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × (Bool × ((BitVec TN) × ((BitVec TN) × (Nat × (Nat × ((BitVec 5) × (BitVec 5)))))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (inzero, (extend, (wmask, (tmask, (R, (S, (n, d)))))))) =>
   (fun (state : arm8_state) => (let v : (BitVec TN) := (if inzero then (BitVec.ofNat TN 0) else (((X (TN := TN)) d state))); (let v0 : (BitVec TN) := ((X (TN := TN)) n state); ((«write'X» (TN := TN)) ((((((((if extend then (((Replicate (TN := TN)) (((v0.getLsbD S) :: (([] : (List Bool))))))) else v)) &&& (~~~tmask))) ||| ((((((v &&& (~~~wmask))) ||| (((BitVec.rotateRight v0 R) &&& wmask)))) &&& tmask)))), d)) state))))
 
 /-- HOL `arm8$dfn'AddSubShiftedRegister` (`dfn'AddSubShiftedRegister_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'AddSubShiftedRegister_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'AddSubShiftedRegister_def" (words_as_type_indexed_bitvec)]
 def «dfn'AddSubShiftedRegister» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × (Bool × (ShiftType × ((BitVec 5) × ((BitVec 6) × ((BitVec 5) × (BitVec 5))))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (sub_op, (setflags, (shift_type, (m, (imm, (n, d))))))) =>
   (fun (state : arm8_state) => (let v0 : (BitVec TN) := ((ShiftReg (TN := TN)) ((m, (shift_type, imm.toNat))) state); (match (if sub_op then (((~~~v0), true)) else (v0, false)) with | (operand2, carry_in) => (match ((AddWithCarry (TN := TN)) (((((X (TN := TN)) n state)), (operand2, carry_in)))) with | (result, nzcv) => ((«write'X» (TN := TN)) (result, d) ((SetTheFlags (setflags, nzcv) state)))))))
 
 /-- HOL `arm8$dfn'AddSubImmediate` (`dfn'AddSubImmediate_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'AddSubImmediate_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'AddSubImmediate_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'AddSubImmediate» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × (Bool × ((BitVec TN) × ((BitVec 5) × (BitVec 5))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (sub_op, (setflags, (imm, (n, d))))) =>
   (fun (state : arm8_state) => (match (if sub_op then (((~~~imm), true)) else (imm, false)) with | (operand2, carry_in) => (match ((AddWithCarry (TN := TN)) ((((if ((n == (BitVec.ofNat 5 31))) then (((SP (TN := TN)) state)) else (((X (TN := TN)) n state)))), (operand2, carry_in)))) with | (result, nzcv) => (let s : arm8_state := (SetTheFlags (setflags, nzcv) state); (if ((((d == (BitVec.ofNat 5 31))) && (!setflags))) then (((«write'SP» (TN := TN)) result s)) else (((«write'X» (TN := TN)) (result, d) s)))))))
 
 /-- HOL `arm8$dfn'AddSubExtendRegister` (`dfn'AddSubExtendRegister_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'AddSubExtendRegister_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'AddSubExtendRegister_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'AddSubExtendRegister» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × (Bool × ((BitVec 5) × (ExtendType × ((BitVec 3) × ((BitVec 5) × (BitVec 5))))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (sub_op, (setflags, (m, (extend_type, (imm3, (n, d))))))) =>
   (fun (state : arm8_state) => (let v0 : (BitVec TN) := ((ExtendReg (TN := TN)) ((m, (extend_type, imm3.toNat))) state); (match (if sub_op then (((~~~v0), true)) else (v0, false)) with | (operand2, carry_in) => (match ((AddWithCarry (TN := TN)) ((((if ((n == (BitVec.ofNat 5 31))) then (((SP (TN := TN)) state)) else (((X (TN := TN)) n state)))), (operand2, carry_in)))) with | (result, nzcv) => (let s : arm8_state := (SetTheFlags (setflags, nzcv) state); (if ((((d == (BitVec.ofNat 5 31))) && (!setflags))) then (((«write'SP» (TN := TN)) result s)) else (((«write'X» (TN := TN)) (result, d) s))))))))
 
 /-- HOL `arm8$dfn'AddSubCarry` (`dfn'AddSubCarry_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'AddSubCarry_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'AddSubCarry_def" (words_as_type_indexed_bitvec)]
 def «dfn'AddSubCarry» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (sub_op, (setflags, (m, (n, d))))) =>
@@ -683,7 +686,7 @@ def Poly32Mod2 (arg0 : ((List Bool) × (BitVec 32))) : (BitVec 32) :=
   (holV2w 32 ((holField 31 0 ((Poly32Mod2_loop (((((data.length) - 1)), ((data, (holW2v poly))))))))))
 
 /-- HOL `arm8$dfn'CRC` (`dfn'CRC_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'CRC_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'CRC_def" (words_as_type_indexed_bitvec)]
 def «dfn'CRC» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × ((BitVec 5) × ((BitVec 5) × (BitVec 5)))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sz, (crc32c, (m, (n, d)))) =>
@@ -702,14 +705,14 @@ noncomputable def BranchTo (arg0 : ((BitVec 64) × BranchType)) : (arm8_state �
   (fun (state : arm8_state) => (let s1 : arm8_state := (Hint_Branch branch_type state); (let s : ((BitVec 64) × arm8_state) := (((fun (v : (BitVec 2)) => (if ((v == (BitVec.ofNat 2 0))) then ((let s0 : (BitVec 64) := (if (((target0.getLsbD 55) && s1.TCR_EL1.TBI1)) then ((holBitFieldInsert 63 56 (BitVec.ofNat 8 255) target0)) else target0); (((if ((((!(s0.getLsbD 55))) && s1.TCR_EL1.TBI0)) then ((holBitFieldInsert 63 56 (BitVec.ofNat 8 0) s0)) else s0)), s1))) else ((if ((v == (BitVec.ofNat 2 1))) then ((let s0 : (BitVec 64) := (if (((target0.getLsbD 55) && s1.TCR_EL1.TBI1)) then ((holBitFieldInsert 63 56 (BitVec.ofNat 8 255) target0)) else target0); (((if ((((!(s0.getLsbD 55))) && s1.TCR_EL1.TBI0)) then ((holBitFieldInsert 63 56 (BitVec.ofNat 8 0) s0)) else s0)), s1))) else ((if ((v == (BitVec.ofNat 2 2))) then ((((if s1.TCR_EL2.TBI then ((holBitFieldInsert 63 56 (BitVec.ofNat 8 0) target0)) else target0)), s1)) else ((if ((v == (BitVec.ofNat 2 3))) then ((((if s1.TCR_EL3.TBI then ((holBitFieldInsert 63 56 (BitVec.ofNat 8 0) target0)) else target0)), s1)) else ((Flapjack.holArb ((BitVec 64) × arm8_state)))))))))))) s1.PSTATE.EL); (let r := s.2; { r with PC := ((fun (_eta1 : (BitVec 64)) => s.1)) r.PC }))))
 
 /-- HOL `arm8$dfn'TestBitAndBranch` (`dfn'TestBitAndBranch_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'TestBitAndBranch_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'TestBitAndBranch_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'TestBitAndBranch» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × ((BitVec 6) × (Bool × ((BitVec 64) × (BitVec 5)))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (bit_pos, (bit_val, (offset, t)))) =>
   (fun (state : arm8_state) => (if (((((((X (TN := TN)) t state)).getLsbD bit_pos.toNat)) == bit_val)) then ((BranchTo (((state.PC + offset), BranchType.BranchType_JMP)) state)) else state))
 
 /-- HOL `arm8$dfn'CompareAndBranch` (`dfn'CompareAndBranch_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'CompareAndBranch_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "dfn'CompareAndBranch_def" (words_as_type_indexed_bitvec)]
 noncomputable def «dfn'CompareAndBranch» {TN : Nat} [NeZero TN] (arg0 : ((BitVec TN) × (Bool × ((BitVec 64) × (BitVec 5))))) : (arm8_state → arm8_state) :=
   match arg0 with
   | (_sf, (iszero, (offset, t))) =>
@@ -853,7 +856,7 @@ def RevOp2num (arg0 : RevOp) : Nat :=
   | .RevOp_REV64 => 3
 
 /-- HOL `arm8$e_sf` (`e_sf_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "e_sf_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "e_sf_def" (words_as_type_indexed_bitvec)]
 def e_sf {TN : Nat} [NeZero TN] (_sf : (BitVec TN)) : (BitVec 1) :=
   (holV2w 1 (((TN == 64) :: (([] : (List Bool))))))
 
@@ -865,7 +868,7 @@ def EncodeLogicalOp (arg0 : (LogicalOp × Bool)) : (Option (BitVec 2)) :=
   (match (opc, setflags) with | (v2, v3) => (if v3 then ((match v2 with | .LogicalOp_AND => (some (BitVec.ofNat 2 3)) | .LogicalOp_ORR => (none : (Option (BitVec 2))) | .LogicalOp_EOR => (none : (Option (BitVec 2))))) else ((match v2 with | .LogicalOp_AND => (some (BitVec.ofNat 2 0)) | .LogicalOp_ORR => (some (BitVec.ofNat 2 1)) | .LogicalOp_EOR => (some (BitVec.ofNat 2 2))))))
 
 /-- HOL `arm8$CountTrailing` (`CountTrailing_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "CountTrailing_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "CountTrailing_def" (words_as_type_indexed_bitvec)]
 def CountTrailing {TN : Nat} [NeZero TN] (arg0 : (Bool × (BitVec TN))) : Nat :=
   match arg0 with
   | (b, w) =>
@@ -878,12 +881,12 @@ decreasing_by
   exact Nat.div_lt_self (holCountTrailing_pos b w h) (by decide)
 
 /-- HOL `arm8$EncodeBitMaskAux` (`EncodeBitMaskAux_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "EncodeBitMaskAux_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "EncodeBitMaskAux_def" (words_as_type_indexed_bitvec)]
 def EncodeBitMaskAux {TN : Nat} [NeZero TN] (imm : (BitVec TN)) : (Nat × (Nat × Nat)) :=
   (let pref0 : Nat := ((CountTrailing (TN := TN)) (true, imm)); (if (pref0 == 0) then ((let pref1 : Nat := ((CountTrailing (TN := TN)) (false, imm)); (let run0 : Nat := ((CountTrailing (TN := TN)) ((true, (BitVec.rotateRight imm pref1)))); (let run1 : Nat := ((CountTrailing (TN := TN)) ((false, ((BitVec.rotateRight imm (pref1 + run0)))))); ((run0 + run1), ((run1, (run1 - pref1)))))))) else ((let run1 : Nat := ((CountTrailing (TN := TN)) ((false, (BitVec.rotateRight imm pref0)))); (let run0 : Nat := ((CountTrailing (TN := TN)) ((true, ((BitVec.rotateRight imm (pref0 + run1)))))); ((run0 + run1), ((run1, (((run0 + run1) - pref0))))))))))
 
 /-- HOL `arm8$EncodeBitMask` (`EncodeBitMask_def`), mechanically rendered from the elaborated HOL definition. -/
-@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "EncodeBitMask_def"]
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "EncodeBitMask_def" (words_as_type_indexed_bitvec)]
 def EncodeBitMask {TN : Nat} [NeZero TN] (imm : (BitVec TN)) : (Option ((BitVec 1) × ((BitVec 6) × (BitVec 6)))) :=
   (match ((EncodeBitMaskAux (TN := TN)) imm) with | (e, S, R) => (match (if (e == 64) then (((BitVec.ofNat 1 1), ((((BitVec.ofNat 6 (S - 1))), (BitVec.ofNat 6 R))))) else (((BitVec.ofNat 1 0), ((((((~~~((BitVec.ofNat 6 (((e * 2) - 1)))))) ||| ((BitVec.ofNat 6 (S - 1))))), (BitVec.ofNat 6 R)))))) with | (immN, imms, immr) => (match ((DecodeBitMasks (TM := TN)) ((immN, ((imms, (immr, true)))))) with | none => (none : (Option ((BitVec 1) × ((BitVec 6) × (BitVec 6))))) | some v => (match v with | (imm2, _v2) => (if (imm == imm2) then ((some ((immN, (imms, immr))))) else ((none : (Option ((BitVec 1) × ((BitVec 6) × (BitVec 6)))))))))))
 

@@ -309,8 +309,9 @@ The following are open review or verification obligations:
       target record, configuration, lowering and transition-definition closure
       are ported: `L3/Support.lean` supplies the
       bitstring/FCP/list/set/word/integer helpers, `L3/Defs.lean` renders the
-      129 definitions reachable from `NextStateARM8` (118 tagged, all
-      `reviewed_exact`), `L3/Target.lean` has `arm8_next`, `L3/Ast.lean`
+      129 definitions reachable from `NextStateARM8` (118 tagged: 67
+      `reviewed_exact` and 51 `reviewed_words_as_type_indexed_bitvec`),
+      `L3/Target.lean` has `arm8_next`, `L3/Ast.lean`
       the lowering `arm8_ast`/`arm8_enc`, `L3/Configuration.lean` the exact
       `arm8_config` and `arm8ConfigL3_encOk`, and `L3/Target/State.lean` the
       `arm8TargetL3` record.  `L3/CorrectnessEncoding/` proves all 64
@@ -323,12 +324,16 @@ The following are open review or verification obligations:
       refinement: it is stated over `NextStateARM8` from the start.  The
       `Defs.lean` renderings those statements unfold to were compared
       declaration-by-declaration with the pinned HOL definitions and are
-      `reviewed_exact`; `scripts/l3/check-renderings.py` also drift-checks them
+      reviewed (`reviewed_exact` or `reviewed_words_as_type_indexed_bitvec`);
+      `scripts/l3/check-renderings.py` also drift-checks them
       against the committed `scripts/l3/arm8_defs.sexp.gz` export (with two
       documented handwritten exceptions).  The review is a declaration-level
       source comparison, not a formal cross-prover equivalence proof, and the
       only out-of-range extensions are the documented `HD []` and `num2...`
-      totalizations, which do not affect the emitted subset.  Every declaration
+      totalizations, which do not affect the emitted subset.  The 51
+      `reviewed_words_as_type_indexed_bitvec` rows record the standard
+      translation of HOL's type-indexed word dimension to `BitVec <width>` with
+      `[NeZero <width>]`.  Every declaration
       whose constant closure reaches the FP renderings
       inherits the item 8 real-rendering assumption.  There is no proof about
       arbitrary ARMv8 code, and nothing shows that the model agrees with real
