@@ -10,6 +10,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockLength
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagLength
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockBounds
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ByteBounds
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ArrayBounds
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockElement
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagEmpty
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.BlockTagOutOfRange
@@ -160,6 +161,10 @@ inductive VerifiedFragment : DataLang.Prog → Prop where
   | blockBounds (dest base index : Nat) : VerifiedFragment (.assign dest (.blockOp .boundsCheckBlock) [base, index] none)
   | byteBounds (dest base index : Nat) (loose : Bool) :
       VerifiedFragment (.assign dest (.memOp (.boundsCheckByte loose)) [base, index] none)
+  | arrayBounds (dest base index : Nat) :
+      VerifiedFragment (.assign dest (.memOp .boundsCheckArray) [base, index] none)
+  | arrayLength (dest base : Nat) : VerifiedFragment (.assign dest (.memOp .length) [base] none)
+  | byteLength (dest base : Nat) : VerifiedFragment (.assign dest (.memOp .lengthByte) [base] none)
   | element (dest src index : Nat) : VerifiedFragment (.assign dest (.blockOp (.elemAt index)) [src] none)
   | lessConst (dest src n : Nat) : VerifiedFragment (.assign dest (.intOp (.lessConstSmall n)) [src] none)
   | boolTest (dest left right : Nat) (test : AstHOL.Test) :
@@ -222,6 +227,15 @@ theorem verifiedFragment64 {C F : Type} (conf : Config) (secn l1 l2 : Nat)
   | byteBounds dest base index loose =>
     intro label source target locs related safe
     exact Or.inl (assignByteBounds64_of_safe conf secn label l1 l2 source target locs related dest base index loose safe)
+  | arrayBounds dest base index =>
+    intro label source target locs related safe
+    exact Or.inl (assignArrayBounds64_of_safe conf secn label l1 l2 source target locs related dest base index safe)
+  | arrayLength dest base =>
+    intro label source target locs related safe
+    exact Or.inl (assignArrayLength64_of_safe conf secn label l1 l2 source target locs related dest base safe)
+  | byteLength dest base =>
+    intro label source target locs related safe
+    exact Or.inl (assignByteLength64_of_safe conf secn label l1 l2 source target locs related dest base safe)
   | element dest src index =>
     intro label source target locs related safe
     exact Or.inl (assignElement64_of_safe conf secn label l1 l2 source target locs related dest src index safe)

@@ -117,4 +117,66 @@ theorem assignByteBounds64_of_safe {C F : Type} (conf : Config) (secn label l1 l
           | thunk mode value => simp [found] at safe
           | mutBlock tag flag values => simp [found] at safe
 
+/-- Reading a related byte array's length produces the represented source
+integer. -/
+theorem assignByteLength64 {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (dest base ref : Nat) (bit flag : Bool) (bytes : List (BitVec 8))
+    (baseRun : DataSem.getVar base source.locals = some (.refPtr bit ref))
+    (found : sptLookup ref source.refs = some (.byteArray flag bytes)) :
+    continues64 conf secn label l1 l2 (.assign dest (.memOp .lengthByte) [base] none) source target locs := by
+  let op := ClosLang.Op.memOp .lengthByte
+  let middle := DataSem.doStack op [.refPtr bit ref] (DataSem.doLimSafe source op [.refPtr bit ref])
+  have middleRel : stateRel64 conf l1 l2 middle target none locs :=
+    stateRel64_afterDoStack conf l1 l2 source target locs related op [.refPtr bit ref]
+  obtain ⟨bound, load⟩ := stateRel64_loadByteLength conf l1 l2 source target locs related base bit flag ref bytes baseRun found
+  have small : smallInt 64 (Int.ofNat bytes.length) := by norm_num [smallInt]; omega
+  have offset : 64 - 3 - conf.lenSize = 64 - conf.lenSize - 3 := by omega
+  have lenWord : WordSemStateFiniteExact.wordExp target
+      (shiftN .lsl (.op .sub [shiftN .lsr (.load (realAddr conf (adjustVar base))) (64 - conf.lenSize - 3), .const 8]) 2) =
+      some (.word (smallnum (Int.ofNat bytes.length))) := by
+    rw [shiftN, WordSemStateFiniteExact.wordExp, load]
+    simp [WordSemStateFiniteExact.wordExp, wordShiftHOL, smallnum_eq_inlined]
+    have nonnegative : ¬ ((bytes.length : Int) < 0) := Int.not_lt.mpr (Int.natCast_nonneg _)
+    simp [nonnegative, BitVec.ofNat_mul]
+    bv_decide
+  refine ⟨DataSem.setVar dest (.number bytes.length) middle,
+    WordSemStateFiniteExact.setVar (adjustVar dest) (.word (smallnum (Int.ofNat bytes.length))) target, ?_, ?_, ?_⟩
+  · simp [DataSem.evaluate, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSem.getVars, baseRun,
+      DataSem.cutStateOpt, DataSem.doApp, DataSem.doSpace, DataSpace.opSpaceReq, DataSem.doAppAux,
+      DataSem.applyNonFfi, DataSem.installSfs, DataSem.doStack, DataSem.doLimSafe, found, op, middle]
+  · simp only [compileControl64, compileControl?, Option.getD_some]
+    change WordSemStateFiniteExact.evaluate
+      (.assign (adjustVar dest) (shiftN .lsl (.op .sub [shiftN .lsr
+        (.load (realAddr conf (adjustVar base))) (64 - 3 - conf.lenSize), .const 8]) 2)) target = _
+    rw [offset]
+    simp only [WordSemStateFiniteExact.evaluate, lenWord]
+  · exact stateRel64_setSmallInt conf l1 l2 middle target locs middleRel dest (Int.ofNat bytes.length) small
+
+/-- Source safety supplies a byte-array reference for length. -/
+theorem assignByteLength64_of_safe {C F : Type} (conf : Config) (secn label l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (dest base : Nat)
+    (safe : (DataSem.evaluate (.assign dest (.memOp .lengthByte) [base] none) source).1 ≠
+      some (.err (.abort .typeError))) :
+    continues64 conf secn label l1 l2 (.assign dest (.memOp .lengthByte) [base] none) source target locs := by
+  cases baseRun : DataSem.getVar base source.locals with
+  | none => simp [DataSem.evaluate, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSem.getVars, baseRun] at safe
+  | some baseVal =>
+    cases baseVal <;>
+      simp [DataSem.evaluate, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSem.getVars, baseRun,
+        DataSem.cutStateOpt, DataSem.doApp, DataSem.doSpace, DataSpace.opSpaceReq, DataSem.doAppAux,
+        DataSem.applyNonFfi, DataSem.doStack, DataSem.doLimSafe] at safe
+    case refPtr bit ref =>
+      cases found : sptLookup ref source.refs with
+      | none => simp [found] at safe
+      | some refVal =>
+        cases refVal with
+        | byteArray flag bytes => exact assignByteLength64 conf secn label l1 l2 source target locs related dest base ref bit flag bytes baseRun found
+        | valueArray values => simp [found] at safe
+        | thunk mode value => simp [found] at safe
+        | mutBlock tag flag values => simp [found] at safe
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Correct

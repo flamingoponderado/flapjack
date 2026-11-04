@@ -213,6 +213,108 @@ theorem evaluate_assign_byteBounds_code {C F : Type} (dest : Nat) (loose : Bool)
     have second := doAppAux_byteBounds_code loose args _ after value run
     simpa [doStack, doLimSafe, first, code] using second
 
+theorem doAppAux_arrayBounds_code {C F : Type} (args : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value)
+    (run : doAppAux (.memOp .boundsCheckArray) args state = .val (value, next)) : next.code = state.code := by
+  cases args with
+  | nil => simp [doAppAux, applyNonFfi] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doAppAux, applyNonFfi] at run
+    | cons second tail =>
+      cases tail with
+      | cons third tail => simp [doAppAux, applyNonFfi] at run
+      | nil =>
+        cases first <;> cases second <;> simp [doAppAux, applyNonFfi] at run
+        case refPtr.number flag ptr index =>
+          cases found : sptLookup ptr state.refs with
+          | none => simp [found] at run
+          | some entry =>
+            cases entry <;> simp [found] at run
+            case valueArray values =>
+              obtain ⟨rfl, rfl⟩ := run
+              rfl
+
+theorem evaluate_assign_arrayBounds_code {C F : Type} (dest : Nat)
+    (names : List Nat) (state : State C F) :
+    (evaluate (.assign dest (.memOp .boundsCheckArray) names none) state).2.code = state.code := by
+  apply evaluate_assign_code_step
+  intro args before after value code run
+  simp only [doApp] at run
+  cases space : doSpace (.memOp .boundsCheckArray) args before with
+  | none => simp [space] at run
+  | some accounted =>
+    simp only [space] at run
+    have first := (doSpace_code_const (.memOp .boundsCheckArray) args before accounted space).1
+    have second := doAppAux_arrayBounds_code args _ after value run
+    simpa [doStack, doLimSafe, first, code] using second
+
+theorem doAppAux_arrayLength_code {C F : Type} (args : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value)
+    (run : doAppAux (.memOp .length) args state = .val (value, next)) : next.code = state.code := by
+  cases args with
+  | nil => simp [doAppAux, applyNonFfi] at run
+  | cons first rest =>
+    cases rest with
+    | cons second tail => simp [doAppAux, applyNonFfi] at run
+    | nil =>
+      cases first <;> simp [doAppAux, applyNonFfi] at run
+      case refPtr flag ptr =>
+        cases found : sptLookup ptr state.refs with
+        | none => simp [found] at run
+        | some entry =>
+          cases entry <;> simp [found] at run
+          case valueArray values =>
+            obtain ⟨rfl, rfl⟩ := run
+            rfl
+
+theorem evaluate_assign_arrayLength_code {C F : Type} (dest : Nat)
+    (names : List Nat) (state : State C F) :
+    (evaluate (.assign dest (.memOp .length) names none) state).2.code = state.code := by
+  apply evaluate_assign_code_step
+  intro args before after value code run
+  simp only [doApp] at run
+  cases space : doSpace (.memOp .length) args before with
+  | none => simp [space] at run
+  | some accounted =>
+    simp only [space] at run
+    have first := (doSpace_code_const (.memOp .length) args before accounted space).1
+    have second := doAppAux_arrayLength_code args _ after value run
+    simpa [doStack, doLimSafe, first, code] using second
+
+theorem doAppAux_byteLength_code {C F : Type} (args : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value)
+    (run : doAppAux (.memOp .lengthByte) args state = .val (value, next)) : next.code = state.code := by
+  cases args with
+  | nil => simp [doAppAux, applyNonFfi] at run
+  | cons first rest =>
+    cases rest with
+    | cons second tail => simp [doAppAux, applyNonFfi] at run
+    | nil =>
+      cases first <;> simp [doAppAux, applyNonFfi] at run
+      case refPtr flag ptr =>
+        cases found : sptLookup ptr state.refs with
+        | none => simp [found] at run
+        | some entry =>
+          cases entry <;> simp [found] at run
+          case byteArray flag bytes =>
+            obtain ⟨rfl, rfl⟩ := run
+            rfl
+
+theorem evaluate_assign_byteLength_code {C F : Type} (dest : Nat)
+    (names : List Nat) (state : State C F) :
+    (evaluate (.assign dest (.memOp .lengthByte) names none) state).2.code = state.code := by
+  apply evaluate_assign_code_step
+  intro args before after value code run
+  simp only [doApp] at run
+  cases space : doSpace (.memOp .lengthByte) args before with
+  | none => simp [space] at run
+  | some accounted =>
+    simp only [space] at run
+    have first := (doSpace_code_const (.memOp .lengthByte) args before accounted space).1
+    have second := doAppAux_byteLength_code args _ after value run
+    simpa [doStack, doLimSafe, first, code] using second
+
 
 theorem doAppAux_boolNot_code {C F : Type} (args : List DataSem.Value)
     (state next : State C F) (value : DataSem.Value)
@@ -360,6 +462,15 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
   | byteBounds dest base index loose =>
     intro state
     exact evaluate_assign_byteBounds_code dest loose [base, index] state
+  | arrayBounds dest base index =>
+    intro state
+    exact evaluate_assign_arrayBounds_code dest [base, index] state
+  | arrayLength dest base =>
+    intro state
+    exact evaluate_assign_arrayLength_code dest [base] state
+  | byteLength dest base =>
+    intro state
+    exact evaluate_assign_byteLength_code dest [base] state
   | element dest src index =>
     intro state
     exact evaluate_assign_block_code_of_aux dest (.elemAt index) [src] none state (doAppAux_elemAt_code index)
