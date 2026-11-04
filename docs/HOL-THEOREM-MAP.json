@@ -110413,6 +110413,15 @@
     "reviewer": "Source comparison: the typed HOL capture retains the complete abstract ML invariant, byte-array lookup and equal byte lengths as its premises. Its existential roots, heap prefix and suffix, and word list retain the root equality, original heap split, word-count formula, and updated abstract invariant with the same configuration, roots, space and generation state. Byte arrays use fixed eight-bit elements, while the heap payload and roots share the positive HOL word dimension."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ArrayUpdateStack.lean",
+    "lean_name": "updateRef",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "update_ref_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared update_ref_thm_typed against the Lean statement: both assume the complete abstract ML invariant for a stack prefix followed by the reference pointer, the old value-array lookup, and equal replacement and old lengths. Both conclude the same existential root split and successful heap store of the replacement reference block, followed by the complete abstract invariant for the inserted value array and returned heap. The heap, roots and existential pointer payload share the HOL word dimension, represented by a positive type-indexed BitVec width."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/HeapStore.lean",
     "lean_name": "heapStore",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
