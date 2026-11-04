@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+import Mathlib.Tactic.NormNum
 
 /-! Space monotonicity of the data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -44,5 +45,37 @@ theorem wordMlInv_spLimit {width : Nat} [NeZero width] (heap : ValueHeap width)
   have heapLengthEq := heapOk'.1
   have spaceBound := unused.2.1
   omega
+
+/-- The active heap's free-space interval is represented by the target's
+allocation and collection pointers, and its full length remains a valid
+memory-relation allowance. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_space_max"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_spaceMax {width : Nat} [NeZero width] (conf : Config) (bigEndian : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref Flapjack.Compiler.Backend.DataSem.Value))
+    (space : Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (vars : List (Flapjack.Compiler.Backend.DataSem.Value × WordLocW width)) :
+    memoryRel conf bigEndian next refs space store memory domain vars →
+    ∃ (nextFree triggerGc : BitVec width) (available : Nat),
+      store.lookup .nextFree = some (.word nextFree) ∧ store.lookup .triggerGC = some (.word triggerGc) ∧
+      triggerGc - nextFree = StackRemove.bytesInWord width * BitVec.ofNat width available ∧
+      space ≤ available ∧ memoryRel conf bigEndian next refs available store memory domain vars ∧
+      (goodDimindex width → (width / 8) * available < 2 ^ width) := by
+  rintro ⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, bound, spaceBound⟩
+  have spLimit := wordMlInv_spLimit heap bigEndian a sp sp1 gens limit next conf refs vars wordInv
+  obtain ⟨_, _, _, _, _, _, _, curr, other, currAligned, otherAligned, currStore, otherStore, nextStore,
+    triggerStore, rest⟩ := heapMem
+  refine ⟨curr + StackRemove.bytesInWord width * BitVec.ofNat width a,
+    curr + StackRemove.bytesInWord width * BitVec.ofNat width (a + sp), sp,
+    nextStore, triggerStore, ?_, spaceBound, ?_, ?_⟩
+  · simp only [BitVec.ofNat_add, BitVec.mul_add]
+    rw [← BitVec.add_assoc, BitVec.add_comm (curr + StackRemove.bytesInWord width * BitVec.ofNat width a),
+      BitVec.add_sub_cancel]
+  · refine ⟨heap, limit, a, sp, sp1, gens, ?_, wordInv, bound, Nat.le_refl sp⟩
+    exact ⟨by assumption, by assumption, by assumption, by assumption, by assumption, by assumption,
+      by assumption, curr, other, currAligned, otherAligned, currStore, otherStore, nextStore, triggerStore, rest⟩
+  · intro good
+    rcases good with h | h <;> subst width <;> norm_num at bound ⊢ <;> omega
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

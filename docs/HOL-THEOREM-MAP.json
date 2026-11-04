@@ -111008,6 +111008,16 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Space.lean",
+    "lean_name": "memoryRel_spaceMax",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+    "hol_name": "memory_rel_space_max",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared memory_rel_space_max_typed: both assume the complete memory relation and existentially produce the NextFree and TriggerGC words and available-space natural, retaining their lookups, word subtraction equation, original-space bound, full relation at the available space, and good_dimindex-conditional no-wrap bound. The store is the canonical finite-support map and the memory addresses, store words and locations share the positive HOL word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/Space.lean",
     "lean_name": "memoryRel_zeroSpace",
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
     "hol_name": "memory_rel_zero_space",
