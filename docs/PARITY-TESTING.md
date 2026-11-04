@@ -30,6 +30,15 @@ python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-
 python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --config-mutations --seed 11053012 --count 120 --timeout 90
 ```
 
+Two additional 300-case samples exercised display output and mutated
+S-expression input; both matched the pinned compiler's complete output,
+diagnostics, and exit status:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --display-mutations --seed 11060811 --count 300 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --sexp-mutations --seed 11060812 --count 300 --timeout 60
+```
+
 Two further runs against that executable matched complete output, diagnostics,
 and exit status for 350 nested-source mutations and 45 structured programs
 with varied backend options:

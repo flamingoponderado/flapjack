@@ -21198,4 +21198,129 @@ theorem doInstall_nonType_preserves_IncrementalCodeInv {C F : Type} (fuel relati
   · intro index
     exact ⟨⟨newReady.locations index, newReady.annotations index, newReady.distinct index⟩, newReady.auxEmpty index⟩
 
+/-- A finite source-oracle advance preserves closure-call syntax and ordering
+relative to the same initial locations. This is Flapjack-specific invariant
+infrastructure; it does not account for newly introduced known or open
+locations. -/
+theorem oracleSyntaxAndOrder_of_advance {C : Type} (initial : Set Nat)
+    (oracle next : ClosSem.CompileOracle C)
+    (syntaxOracle : ∀ index, syntaxOk (oracle index).2.1 ∧ (oracle index).2.2 = [])
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·) initial oracle)
+    (advance : OracleAdvance oracle next) :
+    (∀ index, syntaxOk (next index).2.1 ∧ (next index).2.2 = []) ∧
+    BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·) initial next := by
+  obtain ⟨offset, rfl⟩ := advance
+  constructor
+  · intro index
+    simpa [holShiftSeq] using syntaxOracle (index + offset)
+  · constructor
+    · intro earlier later x y before xMember yMember
+      apply ordered.1 (earlier + offset) (later + offset) x y (by omega)
+      · simpa [holShiftSeq] using xMember
+      · simpa [holShiftSeq] using yMember
+    · intro index x y initialMember yMember
+      apply ordered.2 (index + offset) x y initialMember
+      simpa [holShiftSeq] using yMember
+
+/-- Any source expression evaluation preserves syntax and ordering of the
+remaining oracle relative to the original initial set, including error cases.
+This is Flapjack-specific invariant infrastructure. -/
+theorem evaluate_oracleSyntaxAndOrder {C F : Type} (initial : Set Nat)
+    (expressions : List ClosLang.Exp) (env : List ClosSem.Value)
+    (source final : ClosSem.State C F) (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (run : evaluate expressions env source = (result, final))
+    (syntaxOracle : ∀ index, syntaxOk (source.compileOracle index).2.1 ∧ (source.compileOracle index).2.2 = [])
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      initial source.compileOracle) :
+    (∀ index, syntaxOk (final.compileOracle index).2.1 ∧ (final.compileOracle index).2.2 = []) ∧
+    BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      initial final.compileOracle := by
+  exact oracleSyntaxAndOrder_of_advance initial source.compileOracle final.compileOracle syntaxOracle ordered
+    ((evaluate_oracle_advance (C := C) (F := F)).1 expressions env source final result run)
+
+/-- Closure application also preserves syntax and ordering of the remaining
+source oracle relative to the original initial set. This is Flapjack-specific
+invariant infrastructure. -/
+theorem evaluateApp_oracleSyntaxAndOrder {C F : Type} (initial : Set Nat)
+    (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
+    (source final : ClosSem.State C F) (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (run : evaluateApp location function args source = (result, final))
+    (syntaxOracle : ∀ index, syntaxOk (source.compileOracle index).2.1 ∧ (source.compileOracle index).2.2 = [])
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      initial source.compileOracle) :
+    (∀ index, syntaxOk (final.compileOracle index).2.1 ∧ (final.compileOracle index).2.2 = []) ∧
+    BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      initial final.compileOracle := by
+  apply oracleSyntaxAndOrder_of_advance initial source.compileOracle final.compileOracle syntaxOracle ordered
+  exact (evaluate_oracle_advance (C := C) (F := F)).2 (source.clock + 1) location function args source final result (by omega) run
+
+/-- Locations appearing in oracle entries consumed before an offset. This
+Flapjack-specific set supports arbitrary finite oracle advances. -/
+def OraclePastLocations {C : Type} (oracle : ClosSem.CompileOracle C) (offset : Nat) : Set Nat :=
+  {loc | ∃ index, index < offset ∧ loc ∈ codeLocations (oracle index).2.1}
+
+/-- After advancing an ordered oracle, every original initial location and
+every location in the consumed prefix precedes every remaining oracle
+location. This is Flapjack-specific invariant infrastructure. -/
+theorem oracleMonotonic_after_prefix {C : Type} (initial : Set Nat) (oracle : ClosSem.CompileOracle C)
+    (offset : Nat)
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·) initial oracle) :
+    BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      (initial ∪ OraclePastLocations oracle offset) (holShiftSeq offset oracle) := by
+  constructor
+  · intro earlier later x y before xMember yMember
+    apply ordered.1 (earlier + offset) (later + offset) x y (by omega)
+    · simpa [holShiftSeq] using xMember
+    · simpa [holShiftSeq] using yMember
+  · intro index x y member yMember
+    have later : y ∈ codeLocations (oracle (index + offset)).2.1 := by simpa [holShiftSeq] using yMember
+    rcases member with original | ⟨past, before, pastMember⟩
+    · exact ordered.2 (index + offset) x y original later
+    · exact ordered.1 past (index + offset) x y (by omega) pastMember later
+
+/-- Any finite advance preserves oracle ordering when the initial set is
+expanded by locations from the consumed prefix. This is Flapjack-specific
+invariant infrastructure. -/
+theorem oracleMonotonic_of_advance_with_prefix {C : Type} (initial : Set Nat)
+    (oracle next : ClosSem.CompileOracle C)
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·) initial oracle)
+    (advance : OracleAdvance oracle next) :
+    ∃ offset, next = holShiftSeq offset oracle ∧
+      BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+        (initial ∪ OraclePastLocations oracle offset) next := by
+  obtain ⟨offset, equal⟩ := advance
+  refine ⟨offset, equal, ?_⟩
+  rw [equal]
+  exact oracleMonotonic_after_prefix initial oracle offset ordered
+
+/-- Source evaluation retains oracle ordering above both the original set and
+the locations in the oracle prefix that evaluation consumed. This is
+Flapjack-specific invariant infrastructure. -/
+theorem evaluate_oracleMonotonic_with_consumed_prefix {C F : Type} (initial : Set Nat)
+    (expressions : List ClosLang.Exp) (env : List ClosSem.Value)
+    (source final : ClosSem.State C F) (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (run : evaluate expressions env source = (result, final))
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      initial source.compileOracle) :
+    ∃ offset, final.compileOracle = holShiftSeq offset source.compileOracle ∧
+      BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+        (initial ∪ OraclePastLocations source.compileOracle offset) final.compileOracle := by
+  exact oracleMonotonic_of_advance_with_prefix initial source.compileOracle final.compileOracle ordered
+    ((evaluate_oracle_advance (C := C) (F := F)).1 expressions env source final result run)
+
+/-- Closure application preserves ordering above the original locations and
+the consumed source-oracle prefix. This is Flapjack-specific invariant
+infrastructure. -/
+theorem evaluateApp_oracleMonotonic_with_consumed_prefix {C F : Type} (initial : Set Nat)
+    (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
+    (source final : ClosSem.State C F) (result : SemanticPrimitivesHOL.Result (List ClosSem.Value) ClosSem.Value)
+    (run : evaluateApp location function args source = (result, final))
+    (ordered : BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+      initial source.compileOracle) :
+    ∃ offset, final.compileOracle = holShiftSeq offset source.compileOracle ∧
+      BackendProps.oracleMonotonic (fun entry => {loc | loc ∈ codeLocations entry.2.1}) (· < ·)
+        (initial ∪ OraclePastLocations source.compileOracle offset) final.compileOracle := by
+  apply oracleMonotonic_of_advance_with_prefix initial source.compileOracle final.compileOracle ordered
+  exact (evaluate_oracle_advance (C := C) (F := F)).2 (source.clock + 1) location function args source final result (by omega) run
+
 end Flapjack.Compiler.Backend.ClosCall
