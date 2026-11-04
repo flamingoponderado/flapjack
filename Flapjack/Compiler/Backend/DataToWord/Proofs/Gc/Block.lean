@@ -83,4 +83,40 @@ theorem stateRel64_getBlockTagEmpty {C F : Type} (conf : Config) (l1 l2 : Nat)
   have same : w' = w := by rw [wordEq] at equal; exact WordLocW.word.inj equal.symm
   simpa [same] using equivalence
 
+/-- A related nonempty constructor has a readable concrete header whose
+encoded length is the source field count. This lifts the memory relation to
+the local-variable interface used by the compiled block operations. -/
+theorem stateRel64_getBlockHeader {C F : Type} (conf : Config) (l1 l2 : Nat)
+    (source : DataSem.State C F) (target : WordSemStateFiniteExact 64 C F)
+    (locs : List (Nat × Nat)) (related : stateRel64 conf l1 l2 source target none locs)
+    (name stamp tag : Nat) (values : List DataSem.Value)
+    (sourceRun : DataSem.getVar name source.locals = some (.block stamp tag values))
+    (nonempty : values ≠ []) :
+    ∃ (word address header : BitVec 64),
+      WordSemStateFiniteExact.getVar (adjustVar name) target = some (.word word) ∧
+      word.getLsbD 0 = true ∧ Memory.getRealAddr conf target.store word = some address ∧
+      target.memory address = .word header ∧ target.mdomain address = true ∧
+      WordGcFunctions.decodeLength conf header = BitVec.ofNat 64 values.length ∧
+      values.length < 2 ^ (64 - 4) := by
+  obtain ⟨word, wordRun⟩ := stateRel64_getVar conf l1 l2 source target none locs related name (.block stamp tag values) sourceRun
+  have member := localPair_mem_joinEnv source.locals target.locals name (.block stamp tag values) word sourceRun wordRun
+  rcases related with ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, memory⟩
+  let roots := joinEnv source.locals (sptToAList (sptInter target.locals (adjustSet source.locals))) ++
+    [(theGlobal source.global, holFapply target.store .globals)] ++ flatStack source.stack target.stack
+  have focused : Memory.memoryRel conf target.be (holThe source.tstamps) source.refs source.space
+      target.store target.memory target.mdomain ((.block stamp tag values, word) :: roots) := by
+    apply Memory.memoryRel_rearrange conf target.be (holThe source.tstamps) source.refs source.space
+      target.store target.memory target.mdomain roots
+    · intro pair present
+      simp only [List.mem_cons] at present
+      rcases present with rfl | tail
+      · exact List.mem_append_left _ (List.mem_append_left _ member)
+      · exact tail
+    · simpa [roots] using memory
+  obtain ⟨w, encoded, facts⟩ := Memory.memoryRel_blockImp conf target.be (holThe source.tstamps) source.refs source.space
+    target.store target.memory target.mdomain stamp tag values word roots ⟨focused, Or.inr rfl⟩
+  simp only [nonempty, ↓reduceIte] at facts
+  obtain ⟨address, header, bit, _, _, real, mem, domain, decoded, bound, _, _⟩ := facts
+  exact ⟨w, address, header, by simpa [encoded] using wordRun, bit, real, mem, domain, decoded, bound⟩
+
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

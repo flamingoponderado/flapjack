@@ -30,6 +30,9 @@ def fragmentCompile64 (conf : Config) (secn label : Nat) : DataLang.Prog → Opt
   | .assign dest (.blockOp (.boolTest _)) [left, right] none =>
       some (.ite .equal (adjustVar left) (.reg (adjustVar right))
         (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2)), label)
+  | .assign dest (.blockOp .lengthBlock) [src] none =>
+      some (.ite .test (adjustVar src) (.imm 1) (.assign (adjustVar dest) (.const 0))
+        (.assign (adjustVar dest) (shiftN .lsl (shiftN .lsr (.load (realAddr conf (adjustVar src))) (64 - conf.lenSize)) 2)), label)
   | .assign dest (.blockOp (.lenEq 0)) [src] none =>
       some (.ite .test (adjustVar src) (.imm 1)
         (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2)), label)
@@ -59,7 +62,7 @@ theorem fragmentCompile64_agrees (conf : Config) (secn : Nat) (program : DataLan
   | intConst dest i =>
     intro label
     simp [fragmentCompile64, compileControl64, compileControl?, smallnum_eq_inlined]
-  | boolNot | boolTest | lessConst | blockEmpty =>
+  | boolNot | boolTest | lessConst | blockEmpty | blockLength =>
     intro label
     simp only [fragmentCompile64, compileControl64, compileControl?, Option.getD_some]
     all_goals rfl

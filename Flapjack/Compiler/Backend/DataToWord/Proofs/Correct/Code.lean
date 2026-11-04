@@ -267,6 +267,10 @@ theorem verifiedFragment_code {C F : Type} (program : DataLang.Prog) (fragment :
     intro state
     exact evaluate_assign_block_code_of_aux dest (.lenEq 0) [src] none state
       (doAppAux_blockCompare_code (.lenEq 0) (Or.inr (Or.inl ⟨0, rfl⟩)))
+  | blockLength dest src =>
+    intro state
+    exact evaluate_assign_block_code_of_aux dest .lengthBlock [src] none state
+      (doAppAux_blockCompare_code .lengthBlock (Or.inr (Or.inr (Or.inr rfl))))
   | lessConst dest src n => intro state; exact evaluate_assign_int_code dest (.lessConstSmall n) [src] none state
   | boolTest dest left right test =>
     intro state
