@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationSafety
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationMultiplicity
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationAccounting
+import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationParity
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotatedPrepared
@@ -570,6 +571,54 @@ theorem numberedCallOracle_all_locations_nodup {C : Type} (fuel : Nat)
   have distinct := ClosCall.compileIncFuelOracle_all_locations_nodup fuel numbered index sourceDistinct
   exact ((ClosAnnotate.annotateList_codeLocations_sublist 0 called.2.1).append
     (ClosAnnotate.compile_codeLocations_sublist called.2.2)).nodup distinct
+
+/-- Auxiliary entry labels and all nested closure locations are distinct
+together after numbering, direct-call conversion, and annotation. -/
+theorem numberedCallOracle_entries_and_locations_nodup {C : Type} (fuel : Nat)
+    (oracle : Nat → (Nat × (NumSet × C)) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
+    (state : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) :
+    ∀ index,
+      ((ClosAnnotate.compile (ClosCall.compileIncFuelOracle fuel
+        (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2.2).map Prod.fst ++
+      (codeLocations (ClosAnnotate.annotateList 0 (ClosCall.compileIncFuelOracle fuel
+        (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2.1) ++
+       codeLocations ((ClosAnnotate.compile (ClosCall.compileIncFuelOracle fuel
+        (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle) index).2.2).map
+          (fun (_, _, body) => body)))).Nodup := by
+  intro index
+  let numbered := stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) oracle
+  let called := ClosCall.compileIncFuelOracle fuel numbered index
+  have sourceEven : ∀ loc ∈ codeLocations (numbered index).2.1, loc % 2 = 0 := by
+    intro loc member
+    apply ClosNumber.compileInc_location_even (oracle index).1.1 loc (oracle index).2.1
+    simpa [numbered, stateCo, ClosNumber.ignoreTable] using member
+  have labelsOdd : ∀ label ∈ (ClosAnnotate.compile called.2.2).map Prod.fst, label % 2 = 1 := by
+    intro label member
+    have before : label ∈ called.2.2.map Prod.fst := by simpa only [annotated_labels] using member
+    obtain ⟨origin, inSource, equal⟩ := callOracle_label_origin fuel numbered index label before
+    have even := sourceEven origin inSource
+    omega
+  have within := ClosCall.compileIncFuelOracle_locationsWithin fuel numbered index
+  have locationsEven : ∀ loc ∈ codeLocations (ClosAnnotate.annotateList 0 called.2.1) ++
+      codeLocations ((ClosAnnotate.compile called.2.2).map (fun (_, _, body) => body)), loc % 2 = 0 := by
+    intro loc member
+    rcases List.mem_append.mp member with main | auxiliary
+    · exact sourceEven loc (within.1 loc ((ClosAnnotate.annotateList_codeLocations_sublist 0 called.2.1).subset main))
+    · have before : loc ∈ codeLocations (called.2.2.map (fun (_, _, body) => body)) :=
+        (ClosAnnotate.compile_codeLocations_sublist called.2.2).subset auxiliary
+      obtain ⟨body, bodyMember, locMember⟩ := (mem_codeLocations loc _).1 before
+      obtain ⟨entry, entryMember, bodyEq⟩ := List.mem_map.mp bodyMember
+      obtain ⟨name, arity, sourceBody⟩ := entry
+      simp only at bodyEq
+      subst body
+      exact sourceEven loc (within.2 name arity sourceBody entryMember loc locMember)
+  apply List.Nodup.append
+  · exact (numberedCallOracle_aux_distinct_and_range fuel oracle state index).1
+  · exact numberedCallOracle_all_locations_nodup fuel oracle index
+  · intro label inLabels inLocations
+    have odd := labelsOdd label inLabels
+    have even := locationsEven label inLocations
+    omega
 
 
 /-- Main expressions and auxiliary bodies produced by the direct-call
