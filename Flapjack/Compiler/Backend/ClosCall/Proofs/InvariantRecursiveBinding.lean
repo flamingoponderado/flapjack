@@ -141,4 +141,100 @@ theorem callsFuel_letrec_source_wellFormed {C F : Type} (fuel : Nat)
     initial final g allowed code run initialWf locations annotations distinct fresh growth coverage included
   exact evaluate_letrec_state_wellFormedFuel names loc none fns targetFns body env source envWf sourceWf closure bodyWf
 
+/-- Source evaluation of a traversed function preserves well-formedness at
+any independent relation fuel, provided its compiler state is extended and
+its generated code is included. This is Flapjack-specific infrastructure. -/
+theorem callsFuel_fn_source_wellFormed_atFuel {C F : Type} (traversalFuel relationFuel : Nat)
+    (name : Basis.Pure.MlString.MlString) (loc arity : Nat) (body out : ClosLang.Exp)
+    (initial final g : State) (allowed : Set Nat) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (env : List ClosSem.Value) (source : ClosSem.State (NumSet × C) F)
+    (run : callsFuel (traversalFuel + 1) (.fn name (some loc) none arity body) initial = some (out, final))
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.fn name (some loc) none arity body])
+    (annotations : everyFnVarsNone [.fn name (some loc) none arity body])
+    (distinct : (codeLocations [.fn name (some loc) none arity body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.fn name (some loc) none arity body]) initial)
+    (growth : stateExtends final g)
+    (coverage : ∀ k ∈ codeLocations [.fn name (some loc) none arity body], ¬ sptDomain final.1 k → k ∈ allowed)
+    (included : codeIncludes final.2 code)
+    (envWf : ValuesWellFormedFuel relationFuel g allowed code env)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed code source) :
+    EvalWellFormedFuel relationFuel g allowed code (evaluate [.fn name (some loc) none arity body] env source) := by
+  obtain ⟨targetBody, _, closure⟩ := callsFuel_fn_relation_atFuel traversalFuel relationFuel name loc arity body out
+    initial final g allowed code run initialWf locations annotations distinct fresh growth coverage included
+  exact evaluate_fn_state_wellFormedFuel name loc arity none body [(arity, targetBody)] env source envWf sourceWf closure
+
+/-- A traversed recursive binding has well-formed source evaluation at any
+independent relation fuel when its actual continuation does. This is
+Flapjack-specific infrastructure. -/
+theorem callsFuel_letrec_source_wellFormed_atFuel {C F : Type} (traversalFuel relationFuel : Nat)
+    (names : List Basis.Pure.MlString.MlString) (loc : Nat) (fns : List (Nat × ClosLang.Exp))
+    (body out : ClosLang.Exp) (initial final g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (env : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F)
+    (run : callsFuel (traversalFuel + 1) (.letrec names (some loc) none fns body) initial = some (out, final))
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.letrec names (some loc) none fns body])
+    (annotations : everyFnVarsNone [.letrec names (some loc) none fns body])
+    (distinct : (codeLocations [.letrec names (some loc) none fns body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.letrec names (some loc) none fns body]) initial)
+    (growth : stateExtends final g)
+    (coverage : ∀ k ∈ codeLocations [.letrec names (some loc) none fns body], ¬ sptDomain final.1 k → k ∈ allowed)
+    (included : codeIncludes g.2 code)
+    (envWf : ValuesWellFormedFuel relationFuel g allowed code env)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed code source)
+    (bodyWf : ∀ bodyEnv, ValuesWellFormedFuel relationFuel g allowed code bodyEnv →
+      EvalWellFormedFuel relationFuel g allowed code (evaluate [body] bodyEnv source)) :
+    EvalWellFormedFuel relationFuel g allowed code (evaluate [.letrec names (some loc) none fns body] env source) := by
+  obtain ⟨targetFns, _, _, _, _, closure⟩ := callsFuel_letrec_relation_atFuel traversalFuel relationFuel names loc fns body out
+    initial final g allowed code run initialWf locations annotations distinct fresh growth coverage included
+  exact evaluate_letrec_state_wellFormedFuel names loc none fns targetFns body env source envWf sourceWf closure bodyWf
+
+/-- The source well-formedness case for recursive binding uses its actual
+continuation traversal and inherits its syntax and coverage conditions.
+The continuation's well-formedness remains an induction hypothesis. This is
+Flapjack-specific infrastructure. -/
+theorem callsFuel_letrec_source_wellFormed_from_continuation {C F : Type} (traversalFuel relationFuel : Nat)
+    (names : List Basis.Pure.MlString.MlString) (loc : Nat) (fns : List (Nat × ClosLang.Exp))
+    (body out : ClosLang.Exp) (initial final g : State) (allowed : Set Nat)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (env : List ClosSem.Value)
+    (source : ClosSem.State (NumSet × C) F)
+    (run : callsFuel (traversalFuel + 1) (.letrec names (some loc) none fns body) initial = some (out, final))
+    (initialWf : wellFormed initial)
+    (locations : everyFnLocationSome [.letrec names (some loc) none fns body])
+    (annotations : everyFnVarsNone [.letrec names (some loc) none fns body])
+    (distinct : (codeLocations [.letrec names (some loc) none fns body]).Nodup)
+    (fresh : LabelsFresh (codeLocations [.letrec names (some loc) none fns body]) initial)
+    (growth : stateExtends final g)
+    (coverage : ∀ k ∈ codeLocations [.letrec names (some loc) none fns body], ¬ sptDomain final.1 k → k ∈ allowed)
+    (included : codeIncludes g.2 code)
+    (envWf : ValuesWellFormedFuel relationFuel g allowed code env)
+    (sourceWf : StateWellFormedFuel relationFuel g allowed code source)
+    (bodyIH : ∀ targetBody middle, callsFuel traversalFuel body middle = some (targetBody, final) →
+      wellFormed middle → (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) middle →
+      everyFnLocationSome [body] → everyFnVarsNone [body] →
+      (∀ k ∈ codeLocations [body], ¬ sptDomain final.1 k → k ∈ allowed) →
+      ∀ bodyEnv, ValuesWellFormedFuel relationFuel g allowed code bodyEnv →
+        EvalWellFormedFuel relationFuel g allowed code (evaluate [body] bodyEnv source)) :
+    EvalWellFormedFuel relationFuel g allowed code (evaluate [.letrec names (some loc) none fns body] env source) := by
+  obtain ⟨_, targetBody, middle, _, continuation, middleWf, bodyDistinct, bodyFresh⟩ :=
+    callsFuel_letrec_continuation_wellFormed traversalFuel names loc fns body out initial final run
+      initialWf locations annotations distinct fresh
+  have bodyLocations : everyFnLocationSome [body] := by
+    have h := locations
+    simp [everyFnLocationSome, fnLocationSomeExp] at h
+    simpa [everyFnLocationSome] using h.2
+  have bodyAnnotations : everyFnVarsNone [body] := by
+    have h := annotations
+    simp [everyFnVarsNone, fnVarsNoneExp] at h
+    simpa [everyFnVarsNone] using h.2
+  have bodyCoverage : ∀ k ∈ codeLocations [body], ¬ sptDomain final.1 k → k ∈ allowed := by
+    intro k member unknown
+    apply coverage k ?_ unknown
+    simp only [codeLocations, codeLocationsExp, List.append_nil, List.mem_append] at member ⊢
+    tauto
+  apply callsFuel_letrec_source_wellFormed_atFuel traversalFuel relationFuel names loc fns body out
+    initial final g allowed code env source run initialWf locations annotations distinct fresh growth coverage included envWf sourceWf
+  exact bodyIH targetBody middle continuation middleWf bodyDistinct bodyFresh bodyLocations bodyAnnotations bodyCoverage
+
 end Flapjack.Compiler.Backend.ClosCall
