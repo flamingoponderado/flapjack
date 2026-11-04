@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Move.lean",
+  "lean_name": "wordGcMove_thm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared source lines 786-800 with word_gc_move_thm_typed and the captured premise and conclusion separation-star arguments. This assembles all source address and heap-lookup cases, retaining the abstract successful execution, heap bound, complete concrete word execution, free-space length and full existential conclusion with no additional simulation or target-result assumptions. The source and target word carriers use the same positive width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "word_gc_move_thm",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/MoveBlock.lean",
+  "lean_name": "wordGcMove_dataElement",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the DataElement pointer branch of lines 786-880 with word_gc_move_thm_typed and both captured separation-star arguments. The lookup selects the original constructor case; the original abstract run, heap bound, frame, concrete run, free-space length and complete existential conclusion remain unchanged. The proof applies the source-shaped copy theorem, replaces the original header, and reconstructs both heaps and the free-space suffix."
+},
+{
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
   "hol_name": "gc_forward_ptr_thm",
   "lean_path": "Flapjack/Compiler/Backend/GcShared/ForwardPtr.lean",

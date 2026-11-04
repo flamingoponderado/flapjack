@@ -23,7 +23,9 @@ private theorem shiftedForward_isForward {width : Nat} [NeZero width] (value : B
     have bit : (3 : Nat).testBit i = false := Nat.testBit_lt_two_pow (by omega)
     simp [h, BitVec.getLsbD_ofNat, bit]
 
-private theorem updateAddr_forward {width : Nat} [NeZero width] (conf : Config)
+/-- Bit-vector factoring used by the collector move cases; this helper has no
+standalone HOL declaration. -/
+theorem updateAddr_forward {width : Nat} [NeZero width] (conf : Config)
     (index forwarded : Nat) (value : WordLocW width) :
     updateAddr conf ((BitVec.ofNat width forwarded <<< (2 : Nat)) >>> (2 : Nat))
       (getAddr conf index value) = getAddr conf forwarded value := by
