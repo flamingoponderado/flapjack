@@ -1,7 +1,11 @@
-import Flapjack.Misc.Sptree
-import Mathlib.Data.List.Induction
-import Mathlib.Algebra.Group.Nat.Even
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Misc.Sptree
+public import Mathlib.Data.List.Induction
+public import Mathlib.Algebra.Group.Nat.Even
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack
 
