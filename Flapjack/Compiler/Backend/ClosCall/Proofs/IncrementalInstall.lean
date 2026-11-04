@@ -15352,6 +15352,93 @@ theorem callsListFuel_growing_below_withCoveredOpenClock {C F : Type} (passFuel 
         · intro n bound expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
           exact exprIH n (by omega) expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
 
+/-- A list traversal follows from the structural induction for its members.
+This is Flapjack-specific simulation infrastructure. -/
+theorem callsListFuel_withCoveredOpenClock_from_induction {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (source target : List ClosLang.Exp) (initial final : State)
+    (run : callsListFuel traversalFuel source initial = some (target, final))
+    (distinct : (codeLocations source).Nodup) (fresh : LabelsFresh (codeLocations source) initial)
+    (initialWf : wellFormed initial)
+    (structIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final source target := by
+  apply callsListFuel_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler source target
+    initial final run distinct fresh initialWf (fun _ _ => True)
+  · intros; trivial
+  · intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf _
+    exact structIH depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf
+
+/-- All primitive-operation traversal cases derive their argument simulation
+from structural induction. Installed programs, smaller-clock closure bodies,
+and source evaluation well-formedness remain explicit hypotheses. This is
+Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_op_withCoveredOpenClock_from_induction {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (trace : BackendCommon.Tra) (op : ClosLang.Op) (args : List ClosLang.Exp)
+    (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.op trace op args) initial = some (out, final))
+    (distinct : (codeLocationsExp (.op trace op args)).Nodup)
+    (fresh : LabelsFresh (codeLocationsExp (.op trace op args)) initial) (initialWf : wellFormed initial)
+    (structIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output])
+    (bodyIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State) (body converted : ClosLang.Exp),
+      callsFuel depth body before = some (converted, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before → wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel callerClock compiler after [body] [converted])
+    (programIH : ∀ clock, clock < limit → ∀ (middleG : State) program nextKnown converted nextAllowed,
+      compileIncFuel? passFuel middleG.1 (program, []) = some (nextKnown, converted) →
+      (∀ loc ∈ codeLocations program, ¬ sptDomain nextKnown loc → loc ∈ nextAllowed) →
+      InstalledProgramSimBelowWithOpenClock (C := C) (F := F) passFuel relationFuel clock compiler
+        (nextKnown, converted.2 ++ middleG.2) nextAllowed program converted.1)
+    (evalWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate expressions env state)) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [.op trace op args] [out] := by
+  have argsIH : ∀ target, callsListFuel traversalFuel args initial = some (target, final) →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final args target := by
+    intro target argsRun
+    exact callsListFuel_withCoveredOpenClock_from_induction passFuel relationFuel traversalFuel limit compiler args target
+      initial final argsRun (by simpa [codeLocationsExp] using distinct) (by simpa [codeLocationsExp] using fresh) initialWf structIH
+  classical
+  by_cases install : op = .install
+  · subst op
+    exact callsFuel_install_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler trace
+      args initial final out run argsIH programIH
+  · by_cases force : op = .thunkOp .forceThunk
+    · subst op
+      exact callsFuel_force_withCoveredOpenClock_of_traversals passFuel relationFuel traversalFuel limit compiler trace
+        args initial final out run argsIH bodyIH evalWf
+    · apply callsFuel_ordinaryOp_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler trace
+        op args initial final out run install force argsIH
+      intro allowed g code env state
+      exact evalWf allowed g code args env state
+
+/-- A direct-call traversal derives its argument simulation from structural
+induction. This is Flapjack-specific simulation infrastructure. -/
+theorem callsFuel_call_withCoveredOpenClock_from_induction {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (trace : BackendCommon.Tra) (ticks label : Nat) (args : List ClosLang.Exp)
+    (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.call trace ticks label args) initial = some (out, final))
+    (distinct : (codeLocationsExp (.call trace ticks label args)).Nodup)
+    (fresh : LabelsFresh (codeLocationsExp (.call trace ticks label args)) initial) (initialWf : wellFormed initial)
+    (structIH : ∀ depth, depth < traversalFuel → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output]) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [.call trace ticks label args] [out] := by
+  apply callsFuel_call_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler trace ticks label
+    args initial final out run
+  intro target argsRun
+  exact callsListFuel_withCoveredOpenClock_from_induction passFuel relationFuel traversalFuel limit compiler args target
+    initial final argsRun (by simpa [codeLocationsExp] using distinct) (by simpa [codeLocationsExp] using fresh) initialWf structIH
+
 /-- Derive the application child simulations from the structural traversal
 induction. The function starts in the actual argument traversal's state.
 Clock-smaller body simulation and source evaluation well-formedness remain
@@ -15407,11 +15494,10 @@ theorem callsFuel_app_withCoveredOpenClock_from_induction {C F : Type}
     · exact (List.nodup_append.mp allDistinct).2.2 origin inArgs loc member (Nat.add_right_cancel equal.symm)
   have fnExt := callsFuel_stateExtends traversalFuel sourceFn actualFn actualMiddle actualFinal actualFnRun fnDistinct fnFresh middleWf.2
   have argsSim : GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler actualMiddle sourceArgs actualArgs := by
-    apply callsListFuel_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler sourceArgs actualArgs
-      initial actualMiddle actualArgsRun argsDistinct argsFresh initialWf (fun _ _ => True)
-    · intros; trivial
-    · intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf _
-      exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf
+    apply callsListFuel_withCoveredOpenClock_from_induction passFuel relationFuel traversalFuel limit compiler sourceArgs actualArgs
+      initial actualMiddle actualArgsRun argsDistinct argsFresh initialWf
+    intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf
+    exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf
   have argsSimFinal : GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler actualFinal sourceArgs actualArgs := by
     apply growingExprsSimFromBelowWithCoveredOpenClock_mono_state passFuel relationFuel limit compiler actualMiddle actualFinal sourceArgs actualArgs fnExt
     · intro loc member known
