@@ -216,4 +216,186 @@ theorem cakeToAllOptimizedData_semantics {C F : Type} [Nonempty C]
     exact behavior
   · exact BviToData.compileProgBounded_agrees bviFuel final
 
+/-- A successful configured CakeML-to-BVI run supplies all intermediate
+executions needed for the all-optimizations source-to-data composition.
+Source, callback, oracle, and backend state conditions remain explicit. -/
+theorem cakeConfiguredToAllOptimizedData_semantics {C F : Type} [Nonempty C]
+    (fuel relationFuel : Nat) (bvlConfig : BvlToBvi.Config)
+    (interp : Option (SemanticPrimitivesHOL.Value → Option (SourceToFlat.Config × (Nat × (Spt ValApprox × (NumSet × OptimizationConfig C))))))
+    (source : SemanticPrimitivesHOL.State F) (sourceEnv : SemEnv SemanticPrimitivesHOL.Value)
+    (sourceConfig : SourceToFlat.Config)
+    (flatConfig : FlatSem.InstallConfig (Nat × (Spt ValApprox × (NumSet × OptimizationConfig C))))
+    (declarations : List AstHOL.Dec) (config : ClosToBvl.Config) (knownConfig : ClosKnown.Config)
+    (resultSource : SourceToFlat.Config) (resultClosure : ClosToBvl.Config) (resultConfig : BvlToBvi.Config)
+    (resultCode : List (Nat × Nat × Bvi.Exp)) (resultNames : Spt Basis.Pure.MlString.MlString)
+    (compiler : DataSem.Compiler C) (limits : DataSem.Limits) (sizes : Spt Nat)
+    (run : SourceToFlat.compileCakeToBviConfiguredFuel fuel sourceConfig config bvlConfig declarations =
+      some (resultSource, resultClosure, resultConfig, resultCode, resultNames))
+    (enabled : config.doMti = true) (calls : config.doCall = true) (known : config.knownConf = some knownConfig)
+    (positive : 1 ≤ config.maxApp)
+    (precondition : SourceToFlat.SourcePrecondition interp source sourceEnv sourceConfig
+      flatConfig (SourceToSource.compile declarations))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (production : flatConfig.compile = pureCc (incCompileDecs (α := Nat × Nat × ClosLang.Exp))
+      (allClosureCompiler fuel config.maxApp bvlConfig.inlineSizeLimit bvlConfig.expCut
+        bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc knownConfig
+        (fun cfg code => compiler cfg (BviToData.compileProg code))))
+    (knownSafe : ∀ expressions,
+      SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (resultSource, expressions) →
+      let transformed := ClosMti.introList config.maxApp expressions
+      let next := config.nextLoc + max 1 transformed.length
+      let aligned := if next % 2 = 0 then next else next + 1
+      let numbered := (ClosNumber.renumberList aligned transformed).2
+      let globals := (ClosKnown.knownListTotal knownConfig (ClosFvs.compile numbered) [] .ln).2
+      syntaxOracleOk knownConfig numbered (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc)
+        (pureCo (ClosMti.compileInc config.maxApp) ∘ sourceClosureOracle flatConfig)) globals)
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc)
+      (pureCo (ClosMti.compileInc (Output := Nat × Nat × ClosLang.Exp) config.maxApp) ∘ sourceClosureOracle flatConfig))
+    (initialBound : ∀ expressions,
+      SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (resultSource, expressions) →
+      let transformed := ClosMti.introList config.maxApp expressions
+      let next := config.nextLoc + max 1 transformed.length
+      let aligned := if next % 2 = 0 then next else next + 1
+      (ClosNumber.renumberList aligned transformed).1 ≤ ((sourceClosureOracle flatConfig) 0).1.1)
+    (knownState : ∀ expressions called callState,
+      SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (resultSource, expressions) →
+      (let transformed := ClosMti.introList config.maxApp expressions
+       let next := config.nextLoc + max 1 transformed.length
+       let aligned := if next % 2 = 0 then next else next + 1
+       let numbered := (ClosNumber.renumberList aligned transformed).2
+       let optimized := (ClosKnown.knownListTotal knownConfig (ClosFvs.compile numbered) [] .ln).1
+       ClosCall.compileFuel fuel true (ClosLetop.compileList (ClosTicks.removeList (optimized.map Prod.fst))) =
+         some (called, callState)) →
+      callState.1 = (knownClosureFuture knownConfig
+        (pureCo (ClosMti.compileInc config.maxApp) ∘ sourceClosureOracle flatConfig) 0).1.1)
+    (cacheEq : ((pureCo (compileInc config.maxApp) ∘ pureCo ClosAnnotate.compileInc ∘
+      mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig)) 0).1.1 = resultConfig.inlines)
+    (oracleTailBound : ∀ i, bvlNumStubs ≤ (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) i).1.2.2.1)
+    (oracleTailWorker : ∀ i, BviTailrec.inWorkerNamespace (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) i).1.2.2.1)
+    (oracleTmcBound : ∀ i, bvlNumStubs ≤ (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) i).1.2.2.2.1)
+    (oracleTmcWorker : ∀ i, BviTmc.inWorkerNamespace (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) i).1.2.2.2.1)
+    (lowerCounterBound : resultConfig.nextName1 ≤ (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) 0).1.2.1)
+    (tailCounterBound : resultConfig.nextName2 ≤ (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) 0).1.2.2.1)
+    (tmcCounterBound : resultConfig.nextName3 ≤ (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) 0).1.2.2.2.1)
+    (bviCacheEq : (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) 0).1.2.2.2.2.1 = resultConfig.bviInlines) :
+    let bviOracle := mtiKnownCallBviOracle fuel config.maxApp bvlConfig.inlineSizeLimit bvlConfig.expCut
+      bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc knownConfig (sourceClosureOracle flatConfig)
+    Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+      (DataSem.semantics source.ffi (sptFromAList (BviToData.compileProg resultCode))
+        (fun n => let (cfg, code) := bviOracle n; (cfg, BviToData.compileProg code))
+        compiler limits sizes resultClosure.start) ∧
+      (resultCode.mapM fun (name, argc, body) => do
+        pure (name, argc, ← BviToData.compileExpBounded fuel argc body)) =
+        some (BviToData.compileProg resultCode) := by
+  obtain ⟨source', expressions, output, compiled, names, cache, optimized, targetStart, lowered,
+    targetNext, tailLast, beforeTmc, tmcLast, afterTmc, bviCache, sourceRun, closureRun,
+    optimizedRun, lowerRun, tailRun, tmcRun, inlineRun, sourceEq, closureEq, configEq, _⟩ :=
+    SourceToFlat.configured_bvi_all_stage_witnesses fuel sourceConfig config bvlConfig declarations
+      resultSource resultClosure resultConfig resultCode resultNames run
+  subst resultSource
+  subst resultClosure
+  subst resultConfig
+  let transformed := ClosMti.introList config.maxApp expressions
+  let next := config.nextLoc + max 1 transformed.length
+  let aligned := if next % 2 = 0 then next else next + 1
+  let numbered := (ClosNumber.renumberList aligned transformed).2
+  let optimizedClos := (ClosKnown.knownListTotal knownConfig (ClosFvs.compile numbered) [] .ln).1
+  obtain ⟨⟨called, callState⟩, callRun⟩ := ClosCall.compileFuel_succeeds fuel true
+    (ClosLetop.compileList (ClosTicks.removeList (optimizedClos.map Prod.fst)))
+  exact cakeToAllOptimizedData_semantics interp source sourceEnv sourceConfig source' flatConfig declarations
+    fuel relationFuel fuel bvlConfig.inlineSizeLimit bvlConfig.expCut fuel fuel
+    bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc config output knownConfig expressions called callState
+    compiled names compiler limits sizes cache optimized targetStart targetNext lowered beforeTmc afterTmc resultCode
+    tailLast tmcLast bviCache enabled calls known positive precondition safe production sourceRun closureRun optimizedRun
+    lowerRun tailRun tmcRun inlineRun (knownSafe expressions sourceRun) oracleState (initialBound expressions sourceRun)
+    callRun (knownState expressions called callState sourceRun callRun) cacheEq oracleTailBound oracleTailWorker
+    oracleTmcBound oracleTmcWorker lowerCounterBound tailCounterBound tmcCounterBound bviCacheEq
+
+/-- The simulated data program is the one supplied to the configured word
+lowering run. Data-to-word semantic preservation remains separate. -/
+theorem cakeConfiguredAllOptimizedWordRun_data_behavior {C F : Type} [Nonempty C]
+    (fuel relationFuel : Nat) (bvlConfig : BvlToBvi.Config)
+    (interp : Option (SemanticPrimitivesHOL.Value → Option (SourceToFlat.Config × (Nat × (Spt ValApprox × (NumSet × OptimizationConfig C))))))
+    (source : SemanticPrimitivesHOL.State F) (sourceEnv : SemEnv SemanticPrimitivesHOL.Value)
+    (sourceConfig : SourceToFlat.Config)
+    (flatConfig : FlatSem.InstallConfig (Nat × (Spt ValApprox × (NumSet × OptimizationConfig C))))
+    (declarations : List AstHOL.Dec) (config : ClosToBvl.Config) (knownConfig : ClosKnown.Config)
+    (resultSource : SourceToFlat.Config) (resultClosure : ClosToBvl.Config) (resultConfig : BvlToBvi.Config)
+    (wordConfig : DataToWord.Config) (resultWord : List (Nat × Nat × WordLangProgHOL (BitVec 64)))
+    (resultNames : Spt Basis.Pure.MlString.MlString)
+    (compiler : DataSem.Compiler C) (limits : DataSem.Limits) (sizes : Spt Nat)
+    (run : SourceToFlat.compileCakeToWord64ConfiguredFuel fuel sourceConfig config bvlConfig wordConfig declarations =
+      some (resultSource, resultClosure, resultConfig, resultWord, resultNames))
+    (enabled : config.doMti = true) (calls : config.doCall = true) (known : config.knownConf = some knownConfig)
+    (positive : 1 ≤ config.maxApp)
+    (precondition : SourceToFlat.SourcePrecondition interp source sourceEnv sourceConfig
+      flatConfig (SourceToSource.compile declarations))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations .fail)
+    (production : flatConfig.compile = pureCc (incCompileDecs (α := Nat × Nat × ClosLang.Exp))
+      (allClosureCompiler fuel config.maxApp bvlConfig.inlineSizeLimit bvlConfig.expCut
+        bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc knownConfig
+        (fun cfg code => compiler cfg (BviToData.compileProg code))))
+    (knownSafe : ∀ expressions,
+      SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (resultSource, expressions) →
+      let transformed := ClosMti.introList config.maxApp expressions
+      let next := config.nextLoc + max 1 transformed.length
+      let aligned := if next % 2 = 0 then next else next + 1
+      let numbered := (ClosNumber.renumberList aligned transformed).2
+      let globals := (ClosKnown.knownListTotal knownConfig (ClosFvs.compile numbered) [] .ln).2
+      syntaxOracleOk knownConfig numbered (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc)
+        (pureCo (ClosMti.compileInc config.maxApp) ∘ sourceClosureOracle flatConfig)) globals)
+    (oracleState : isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc)
+      (pureCo (ClosMti.compileInc (Output := Nat × Nat × ClosLang.Exp) config.maxApp) ∘ sourceClosureOracle flatConfig))
+    (initialBound : ∀ expressions,
+      SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (resultSource, expressions) →
+      let transformed := ClosMti.introList config.maxApp expressions
+      let next := config.nextLoc + max 1 transformed.length
+      let aligned := if next % 2 = 0 then next else next + 1
+      (ClosNumber.renumberList aligned transformed).1 ≤ ((sourceClosureOracle flatConfig) 0).1.1)
+    (knownState : ∀ expressions called callState,
+      SourceToFlat.compileCakeToClosFuel fuel sourceConfig declarations = some (resultSource, expressions) →
+      (let transformed := ClosMti.introList config.maxApp expressions
+       let next := config.nextLoc + max 1 transformed.length
+       let aligned := if next % 2 = 0 then next else next + 1
+       let numbered := (ClosNumber.renumberList aligned transformed).2
+       let optimized := (ClosKnown.knownListTotal knownConfig (ClosFvs.compile numbered) [] .ln).1
+       ClosCall.compileFuel fuel true (ClosLetop.compileList (ClosTicks.removeList (optimized.map Prod.fst))) =
+         some (called, callState)) →
+      callState.1 = (knownClosureFuture knownConfig
+        (pureCo (ClosMti.compileInc config.maxApp) ∘ sourceClosureOracle flatConfig) 0).1.1)
+    (cacheEq : ((pureCo (compileInc config.maxApp) ∘ pureCo ClosAnnotate.compileInc ∘
+      mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig)) 0).1.1 = resultConfig.inlines)
+    (oracleTailBound : ∀ i, bvlNumStubs ≤ (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) i).1.2.2.1)
+    (oracleTailWorker : ∀ i, BviTailrec.inWorkerNamespace (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) i).1.2.2.1)
+    (oracleTmcBound : ∀ i, bvlNumStubs ≤ (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) i).1.2.2.2.1)
+    (oracleTmcWorker : ∀ i, BviTmc.inWorkerNamespace (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) i).1.2.2.2.1)
+    (lowerCounterBound : resultConfig.nextName1 ≤ (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) 0).1.2.1)
+    (tailCounterBound : resultConfig.nextName2 ≤ (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) 0).1.2.2.1)
+    (tmcCounterBound : resultConfig.nextName3 ≤ (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) 0).1.2.2.2.1)
+    (bviCacheEq : (mtiKnownCallFuture fuel config.maxApp knownConfig (sourceClosureOracle flatConfig) 0).1.2.2.2.2.1 = resultConfig.bviInlines) :
+    let bviOracle := mtiKnownCallBviOracle fuel config.maxApp bvlConfig.inlineSizeLimit bvlConfig.expCut
+      bvlConfig.splitMainAtSeq bvlConfig.doTailrec bvlConfig.doTmc knownConfig (sourceClosureOracle flatConfig)
+    ∃ bviCode lowered fixed bignum,
+      SourceToFlat.compileCakeToBviConfiguredFuel fuel sourceConfig config bvlConfig declarations =
+        some (resultSource, resultClosure, resultConfig, bviCode, resultNames) ∧
+      ((BviToData.compileProg bviCode).mapM fun (name, args, body) => do
+        let (body, _) ← DataToWord.compileControl? (width := 64) wordConfig name 2 body
+        pure (name, args + 1, body)) = some lowered ∧
+      DataToWord.fixedStubs? wordConfig = some fixed ∧
+      WordBignum.generateStubs 64 DataToWord.bignumLocation = some bignum ∧
+      resultWord = fixed ++ bignum ++ lowered ∧
+      Flapjack.SemanticsHOL.semanticsProg source sourceEnv declarations
+        (DataSem.semantics source.ffi (sptFromAList (BviToData.compileProg bviCode))
+          (fun n => let (cfg, code) := bviOracle n; (cfg, BviToData.compileProg code))
+          compiler limits sizes resultClosure.start) := by
+  obtain ⟨bviCode, lowered, fixed, bignum, bviRun, lowerRun, fixedRun, bignumRun, outputEq⟩ :=
+    SourceToFlat.configured_word_stage_witnesses fuel sourceConfig config bvlConfig wordConfig declarations
+      resultSource resultClosure resultConfig resultWord resultNames run
+  have behavior := cakeConfiguredToAllOptimizedData_semantics fuel relationFuel bvlConfig interp source sourceEnv
+    sourceConfig flatConfig declarations config knownConfig resultSource resultClosure resultConfig bviCode resultNames
+    compiler limits sizes bviRun enabled calls known positive precondition safe production knownSafe oracleState
+    initialBound knownState cacheEq oracleTailBound oracleTailWorker oracleTmcBound oracleTmcWorker
+    lowerCounterBound tailCounterBound tmcCounterBound bviCacheEq
+  exact ⟨bviCode, lowered, fixed, bignum, bviRun, lowerRun, fixedRun, bignumRun, outputEq, behavior.1⟩
+
 end Flapjack.Compiler.Backend.FlatToClos
