@@ -63,6 +63,36 @@ theorem gcMoveList_ok {α β : Type} (conf : Config β) (roots roots1 : List (He
     obtain ⟨_, rfl⟩ := run
     exact gcMove_ok conf state middle root root1 headRun (ih (state := middle) (roots1 := tail) (state1 := final) tailRun ok)
 
+/-- Root traversal preserves the number of roots, including failed runs. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_list_length"]
+theorem gcMoveList_length {α β : Type} (conf : Config β) (roots roots1 : List (HeapAddress α))
+    (state state1 : GcState α β) (run : gcMoveList conf state roots = (roots1, state1)) :
+    roots1.length = roots.length := by
+  induction roots generalizing roots1 state state1 with
+  | nil => simp [gcMoveList, Prod.mk.injEq] at run; obtain ⟨rfl, _⟩ := run; rfl
+  | cons root roots ih =>
+    simp only [gcMoveList] at run
+    generalize headRun : gcMove conf state root = headResult at run
+    rcases headResult with ⟨root1, middle⟩
+    generalize tailRun : gcMoveList conf middle roots = tailResult at run
+    rcases tailResult with ⟨tail, final⟩
+    simp only [Prod.mk.injEq] at run
+    obtain ⟨rfl, _⟩ := run
+    simp only [List.length_cons]
+    rw [ih tail middle final tailRun]
+
+/-- A major collection returns one root for each input root. -/
+@[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gen_gc_LENGTH"]
+theorem genGc_length {α β : Type} (conf : Config β) (roots roots1 : List (HeapAddress α))
+    (heap : List (HeapElement α β)) (state : GcState α β)
+    (run : genGc conf (roots, heap) = (roots1, state)) : roots1.length = roots.length := by
+  simp only [genGc] at run
+  generalize moved : gcMoveList conf _ roots = result at run
+  rcases result with ⟨roots2, state2⟩
+  simp only [Prod.mk.injEq] at run
+  obtain ⟨rfl, _⟩ := run
+  exact gcMoveList_length conf roots roots2 _ state2 moved
+
 /-- A successful reference scan started from a successful state. -/
 @[hol "cakeml/compiler/backend/gc/gen_gcScript.sml" "gc_move_refs_ok"]
 theorem gcMoveRefs_ok {α β : Type} (conf : Config β) (state : GcState α β)

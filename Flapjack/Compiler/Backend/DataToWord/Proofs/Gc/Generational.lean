@@ -20,6 +20,36 @@ def genLenInv {α β : Type} (state : GcState α β) : Prop :=
   heapLength state.heap = heapLength (state.h1 ++ state.h2) + state.n +
     heapLength (state.r4 ++ state.r3 ++ state.r2 ++ state.r1)
 
+/-- Header tag bits used for mutable references and thunks. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "muttag_header_def"
+  (words_as_type_indexed_bitvec)]
+def muttagHeader {width : Nat} [NeZero width] : HeapTag → BitVec width
+  | .thunkTag mode => (thunkTagToBits mode <<< (3 : Nat)) ||| 6
+  | _ => 2
+
+/-- A mutable-tag payload encodes its pointers and validity in the source form. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "isMutTag_word_payload_IMP"
+  (words_as_type_indexed_bitvec)]
+theorem isMutTag_wordPayloadImp {headerWidth : Nat} {payloadWidth : Nat} [NeZero headerWidth] [NeZero payloadWidth]
+    (addresses : List (HeapAddress (WordLocW payloadWidth))) (len : Nat) (tag : HeapTag)
+    (payload : List (WordLocW payloadWidth)) (conf : Config) (header : BitVec headerWidth)
+    (words : List (WordLocW payloadWidth)) (valid : Bool)
+    (encoded : wordPayload addresses len tag payload conf = (header, words, valid))
+    (mutable : isMutTag tag) :
+    header = makeHeader conf (muttagHeader tag) addresses.length ∧
+      words = addresses.map (wordAddr conf) ∧
+      (valid = true ↔ payload = [] ∧ addresses.length = len ∧ (tag ≠ .refTag → len = 1)) := by
+  rcases mutable with rfl | ⟨mode, rfl⟩
+  · simp [wordPayload] at encoded
+    obtain ⟨rfl, rfl, rfl⟩ := encoded
+    simp [muttagHeader]
+  · simp [wordPayload] at encoded
+    obtain ⟨rfl, rfl, rfl⟩ := encoded
+    simp [muttagHeader]
+    intro _ h
+    subst len
+    rfl
+
 /-- A reference header has bit 3 set and bit 2 clear. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "is_ref_header_alt"
   (words_as_type_indexed_bitvec)]

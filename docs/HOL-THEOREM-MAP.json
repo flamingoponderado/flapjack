@@ -1,6 +1,40 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gc_move_list_length",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/Progress.lean",
+  "lean_name": "gcMoveList_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gen_gc_move_list_length_typed: the same list execution implies equal output and input lengths, without a success premise and with independent address and payload types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
+  "hol_name": "gen_gc_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/Progress.lean",
+  "lean_name": "genGc_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gen_gc_length_typed: the same full major collection equation implies equal root-list lengths over independent heap types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "muttag_header_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Generational.lean",
+  "lean_name": "muttagHeader",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared muttag_header_typed and all six source tag cases: thunk mode is shifted and ORed with six, and all other tags map to two, at any positive word width."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+  "hol_name": "isMutTag_word_payload_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/Generational.lean",
+  "lean_name": "isMutTag_wordPayloadImp",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared is_mut_tag_word_payload_typed: the original payload equation and mutable-tag hypothesis imply the same header, projected addresses, and Boolean validity equivalence. Header and word-location widths are independently quantified."
+},
+{
+  "hol_path": "cakeml/compiler/backend/gc/gen_gcScript.sml",
   "hol_name": "gc_move_refs_ok",
   "lean_path": "Flapjack/Compiler/Backend/GenGc/Proofs/Progress.lean",
   "lean_name": "gcMoveRefs_ok",
