@@ -1,4 +1,8 @@
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 /-!
 # HOL `pred_set` `LINV`

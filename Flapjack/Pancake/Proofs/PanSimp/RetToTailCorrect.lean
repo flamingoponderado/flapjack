@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanSimp
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+module
+
+public import Flapjack.Pancake.PanSimp
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+@[expose] public section
 
 /-!
 Nonrecursive constructor cases of HOL `ret_to_tail_correct` (the theorem at

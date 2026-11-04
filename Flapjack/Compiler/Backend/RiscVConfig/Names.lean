@@ -1,5 +1,9 @@
-import Flapjack.Misc.Sptree
-import Flapjack.HolRef
+module
+
+public import Flapjack.Misc.Sptree
+public import Flapjack.HolRef
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.RiscVConfig
 
