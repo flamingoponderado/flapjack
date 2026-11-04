@@ -7175,6 +7175,104 @@ theorem growingExprsSimFromBelowWithClock_ordinaryOp {C F : Type} (passFuel rela
             rw [codeEq]
             exact argsGrowth key entry found
 
+/-- Ordinary-operation simulation with growing open locations. This is
+Flapjack-specific simulation infrastructure. -/
+theorem growingExprsSimFromBelowWithOpenClock_ordinaryOp {C F : Type} (passFuel relationFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (required : State) (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (sourceArgs targetArgs : List ClosLang.Exp)
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
+    (argsSim : GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler required sourceArgs targetArgs)
+    (argsWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env →
+      StateWellFormedFuel relationFuel g allowed code state → OracleAuxEmpty state.compileOracle →
+      EvalWellFormedFuel relationFuel g allowed code (evaluate sourceArgs env state)) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler required
+      [.op trace op sourceArgs] [.op trace op targetArgs] := by
+  intro g requiredGrowth allowed sourceEnv targetEnv source target result final clock run notType envs envWf sourceWf states ready
+    disjoint avoids sourceCompiler targetCompiler oracle
+  have argsEnv := envRelFuel_op_args trace op targetArgs (by simpa using envs)
+  have sourceArgsWf := argsWf allowed g target.code sourceEnv source envWf sourceWf ready.auxEmpty
+  rw [evaluate_ordinaryOp_eq trace op sourceArgs sourceEnv source notInstall notForce] at run
+  cases argsRun : evaluate sourceArgs sourceEnv source with
+  | mk argsResult argsFinal =>
+    rw [argsRun] at sourceArgsWf
+    have argsSafe : argsResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst argsResult
+      have eq : result = .err (.abort .typeError) := by simpa [argsRun] using congrArg Prod.fst run.symm
+      exact notType eq
+    obtain ⟨extraClock, argsG, argsAllowed, targetArgsResult, targetArgsFinal, argsExt, argsAllowedGrowth,
+      argsDisjoint, argsAvoids, targetArgsRun, argsRel, argsStates,
+      argsStateWf, argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩ :=
+      argsSim g requiredGrowth allowed sourceEnv targetEnv source target argsResult argsFinal clock argsRun argsSafe argsEnv envWf
+        sourceWf states ready disjoint avoids sourceCompiler targetCompiler oracle
+    cases argsResult with
+    | err error =>
+      cases targetArgsResult with
+      | val values => simp [resultRel] at argsRel
+      | err targetError =>
+        have eq : result = .err error ∧ final = argsFinal := by simpa [argsRun] using run.symm
+        obtain ⟨rfl, rfl⟩ := eq
+        refine ⟨extraClock, argsG, argsAllowed, .err targetError, targetArgsFinal, argsExt, argsAllowedGrowth,
+          argsDisjoint, argsAvoids, ?_, argsRel, argsStates, argsStateWf,
+          argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩
+        simp [evaluate_ordinaryOp_eq trace op targetArgs targetEnv { target with clock := target.clock + extraClock } notInstall notForce, targetArgsRun]
+    | val sourceValues =>
+      cases targetArgsResult with
+      | err error => simp [resultRel] at argsRel
+      | val targetValues =>
+        have valuesRel : List.Forall₂ (ValueRelFuel relationFuel argsG argsAllowed targetArgsFinal.code)
+            sourceValues.reverse targetValues.reverse := List.rel_reverse argsRel
+        have valuesWf : ValuesWellFormedFuel relationFuel argsG argsAllowed targetArgsFinal.code sourceValues := by
+          apply valuesWellFormedFuel_mono _ argsExt argsAllowedGrowth argsGrowth
+          exact sourceArgsWf.1
+        have sim := ClosProps.PrimitiveTotal.simpleValRelDoApp
+          (ValueRelFuel relationFuel argsG argsAllowed targetArgsFinal.code)
+          (fun (s : ClosSem.State (NumSet × C) F) (t : ClosSem.State C F) =>
+            t.code = targetArgsFinal.code ∧ StateRelFuel relationFuel argsG argsAllowed s t)
+          argsFinal targetArgsFinal sourceValues.reverse targetValues.reverse op
+          ⟨valueRelFuel_simple relationFuel argsG argsAllowed targetArgsFinal.code,
+            stateRelFuel_simple relationFuel argsG argsAllowed targetArgsFinal.code⟩ ⟨⟨rfl, argsStates⟩, valuesRel⟩
+        have primWf := doApp_result_wellFormedFuel op sourceValues.reverse argsFinal argsStateWf
+          (valuesWellFormedFuel_reverse valuesWf)
+        cases primRun : doApp op sourceValues.reverse argsFinal with
+        | err error =>
+          simp only [primRun] at sim
+          obtain ⟨targetError, targetPrim, errors⟩ := sim
+          have eq : result = .err error ∧ final = argsFinal := by simpa [argsRun, primRun] using run.symm
+          obtain ⟨rfl, rfl⟩ := eq
+          refine ⟨extraClock, argsG, argsAllowed, .err targetError, targetArgsFinal, argsExt, argsAllowedGrowth,
+          argsDisjoint, argsAvoids, ?_, errors, argsStates, argsStateWf,
+            argsReady, argsCompiler, targetArgsCompiler, argsOracle, argsGrowth⟩
+          simp [evaluate_ordinaryOp_eq trace op targetArgs targetEnv { target with clock := target.clock + extraClock } notInstall notForce, targetArgsRun, targetPrim]
+        | val pair =>
+          obtain ⟨value, sourceFinal⟩ := pair
+          simp only [primRun] at sim primWf
+          obtain ⟨targetValue, targetFinal, valueRel, ⟨codeEq, finalStates⟩, targetPrim⟩ := sim
+          have eq : result = .val [value] ∧ final = sourceFinal := by simpa [argsRun, primRun] using run.symm
+          obtain ⟨rfl, rfl⟩ := eq
+          have finalReady := incrementalInstallReady_doApp argsG argsFinal targetArgsFinal final targetFinal
+            sourceValues.reverse targetValues.reverse value targetValue op argsReady primRun targetPrim
+          have srcFields := ClosInterp.doApp_compilerFields op sourceValues.reverse argsFinal final value primRun
+          have tgtFields := ClosInterp.doApp_compilerFields op targetValues.reverse targetArgsFinal targetFinal targetValue targetPrim
+          refine ⟨extraClock, argsG, argsAllowed, .val [targetValue], targetFinal, argsExt, argsAllowedGrowth,
+            argsDisjoint, ?_, ?_, ?_, ?_, ?_, finalReady, ?_, ?_, ?_, ?_⟩
+          · simpa [OracleLocationsAvoid, srcFields.2.1] using argsAvoids
+          · simp [evaluate_ordinaryOp_eq trace op targetArgs targetEnv { target with clock := target.clock + extraClock } notInstall notForce, targetArgsRun, targetPrim]
+          · change List.Forall₂ (ValueRelFuel relationFuel argsG argsAllowed targetFinal.code) [value] [targetValue]
+            rw [codeEq]
+            exact .cons valueRel .nil
+          · simpa [codeEq] using finalStates
+          · simpa [codeEq, PrimitiveResultWellFormedFuel] using primWf.2
+          · exact srcFields.1.trans argsCompiler
+          · exact tgtFields.1.trans targetArgsCompiler
+          · rw [tgtFields.2.1, srcFields.2.1]
+            exact argsOracle
+          · intro key entry found
+            rw [codeEq]
+            exact argsGrowth key entry found
+
 /-- Clock-bounded let traversal. This is
 Flapjack-specific simulation infrastructure. -/
 theorem callsFuel_let_growing_below {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
@@ -7341,6 +7439,27 @@ theorem callsFuel_ordinaryOp_growing_below_withClock {C F : Type} (passFuel rela
     Option.some.injEq, Prod.mk.injEq] at run
   obtain ⟨⟨targetArgs, next⟩, argsRun, rfl, rfl⟩ := run
   exact growingExprsSimFromBelowWithClock_ordinaryOp passFuel relationFuel limit compiler next allowed trace op args targetArgs
+    notInstall notForce (argsIH targetArgs argsRun) argsWf
+
+/-- The ordinary-operation traversal uses the growing open-location argument
+simulation. Source argument well-formedness remains an explicit premise. -/
+theorem callsFuel_ordinaryOp_growing_below_withOpenClock {C F : Type} (passFuel relationFuel traversalFuel limit : Nat)
+    (compiler : ClosSem.Compiler C) (trace : BackendCommon.Tra)
+    (op : ClosLang.Op) (args : List ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.op trace op args) initial = some (out, final))
+    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
+    (argsIH : ∀ target, callsListFuel traversalFuel args initial = some (target, final) →
+      GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final args target)
+    (argsWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env →
+      StateWellFormedFuel relationFuel g allowed code state → OracleAuxEmpty state.compileOracle →
+      EvalWellFormedFuel relationFuel g allowed code (evaluate args env state)) :
+    GrowingExprsSimFromBelowWithOpenClock (F := F) passFuel relationFuel limit compiler final [.op trace op args] [out] := by
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+    Option.some.injEq, Prod.mk.injEq] at run
+  obtain ⟨⟨targetArgs, next⟩, argsRun, rfl, rfl⟩ := run
+  exact growingExprsSimFromBelowWithOpenClock_ordinaryOp passFuel relationFuel limit compiler next trace op args targetArgs
     notInstall notForce (argsIH targetArgs argsRun) argsWf
 
 /-- Clock-bounded thunk forcing preserves the pass-state requirement.
