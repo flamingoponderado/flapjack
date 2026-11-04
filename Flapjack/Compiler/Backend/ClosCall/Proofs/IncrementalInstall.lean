@@ -10740,7 +10740,8 @@ theorem callsFuel_app_none_growing_below_withCoveredOpenClock {C F : Type} (pass
     (run : callsFuel (traversalFuel + 1) (.app trace none sourceFn sourceArgs) initial = some (out, final))
     (argsIH : ∀ target middle, callsListFuel traversalFuel sourceArgs initial = some (target, middle) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final sourceArgs target)
-    (fnIH : ∀ target middle, callsFuel traversalFuel sourceFn middle = some (target, final) →
+    (fnIH : ∀ targetArgs target middle, callsListFuel traversalFuel sourceArgs initial = some (targetArgs, middle) →
+      callsFuel traversalFuel sourceFn middle = some (target, final) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [sourceFn] [target])
     (argsWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
       (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
@@ -10757,7 +10758,7 @@ theorem callsFuel_app_none_growing_below_withCoveredOpenClock {C F : Type} (pass
   obtain ⟨⟨targetArgs, middle⟩, argsRun, ⟨targetFn, next⟩, fnRun, rfl, rfl⟩ := run
   have length := callsListFuel_length traversalFuel sourceArgs initial middle targetArgs argsRun
   exact growingExprsSimFromBelowWithCoveredOpenClock_app passFuel relationFuel limit compiler next trace none sourceFn targetFn sourceArgs targetArgs
-    length.symm (argsIH targetArgs middle argsRun) (fnIH targetFn middle fnRun) argsWf fnWf appIH
+    length.symm (argsIH targetArgs middle argsRun) (fnIH targetArgs targetFn middle argsRun fnRun) argsWf fnWf appIH
 
 /-- The generated force application follows from a clock-bounded
 application simulation. This is Flapjack-specific infrastructure. -/
@@ -11056,7 +11057,8 @@ theorem callsFuel_app_unknown_growing_below_withCoveredOpenClock {C F : Type} (p
     (unknown : sptLookup loc final.1 = none)
     (argsIH : ∀ target middle, callsListFuel traversalFuel sourceArgs initial = some (target, middle) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final sourceArgs target)
-    (fnIH : ∀ target middle, callsFuel traversalFuel sourceFn middle = some (target, final) →
+    (fnIH : ∀ targetArgs target middle, callsListFuel traversalFuel sourceArgs initial = some (targetArgs, middle) →
+      callsFuel traversalFuel sourceFn middle = some (target, final) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [sourceFn] [target])
     (argsWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
       (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
@@ -11077,7 +11079,7 @@ theorem callsFuel_app_unknown_growing_below_withCoveredOpenClock {C F : Type} (p
     obtain ⟨rfl, rfl⟩ := rest
     have length := callsListFuel_length traversalFuel sourceArgs initial middle targetArgs argsRun
     exact growingExprsSimFromBelowWithCoveredOpenClock_app passFuel relationFuel limit compiler afterFn trace (some loc) sourceFn targetFn sourceArgs targetArgs
-      length.symm (argsIH targetArgs middle argsRun) (fnIH targetFn middle fnRun) argsWf fnWf appIH
+      length.symm (argsIH targetArgs middle argsRun) (fnIH targetArgs targetFn middle argsRun fnRun) argsWf fnWf appIH
 
 /-- A full application uses clock-bounded body simulation and a
 shorter, clock-bounded application hypothesis. This is Flapjack-specific
@@ -12122,7 +12124,8 @@ theorem callsFuel_app_retained_withCoveredOpenClock_of_traversals {C F : Type}
     (unknown : ∀ address, location = some address → sptLookup address final.1 = none)
     (argsIH : ∀ target middle, callsListFuel traversalFuel sourceArgs initial = some (target, middle) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final sourceArgs target)
-    (fnIH : ∀ target middle, callsFuel traversalFuel sourceFn middle = some (target, final) →
+    (fnIH : ∀ targetArgs target middle, callsListFuel traversalFuel sourceArgs initial = some (targetArgs, middle) →
+      callsFuel traversalFuel sourceFn middle = some (target, final) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [sourceFn] [target])
     (exprIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State)
       (body converted : ClosLang.Exp),
@@ -12635,7 +12638,8 @@ theorem callsFuel_app_pure_growing_below_at_withCoveredOpenClock {C F : Type} (p
     (known : (sptLookup address passFinal.1).isSome = true) (pure : ClosLang.pure sourceFn = true)
     (argsIH : ∀ targetArgs middle, callsListFuel traversalFuel sourceArgs initial = some (targetArgs, middle) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler passFinal sourceArgs targetArgs)
-    (fnIH : ∀ targetFn middle, callsFuel traversalFuel sourceFn middle = some (targetFn, passFinal) →
+    (fnIH : ∀ targetArgs targetFn middle, callsListFuel traversalFuel sourceArgs initial = some (targetArgs, middle) →
+      callsFuel traversalFuel sourceFn middle = some (targetFn, passFinal) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler passFinal [sourceFn] [targetFn])
     (argsWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
       (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
@@ -12749,7 +12753,7 @@ theorem callsFuel_app_pure_growing_below_at_withCoveredOpenClock {C F : Type} (p
             obtain ⟨fnG, fnAllowed, targetFnValue, fnExt, fnAllowedGrowth, fnDisjoint, fnAvoids, functionRel, fnStates, fnStateWf, fnReady⟩ :=
               pure_function_growing_witness_below_withCoveredOpenClock passFuel relationFuel limit compiler passFinal argsG requiredArgs argsAllowed sourceFn targetFn sourceEnv
                 argsFinal targetArgsFinal (fun k member unknown => argsAllowedGrowth (fnCoverage k member unknown)) argsClock fnValue sourceFnRun targetPure envWf' argsStateWf argsStates argsReady argsDisjoint argsAvoids
-                argsCompiler targetArgsCompiler argsOracle (fnIH targetFn middle fnTraversal)
+                argsCompiler targetArgsCompiler argsOracle (fnIH targetArgs targetFn middle argsTraversal fnTraversal)
             have valuesRel' : List.Forall₂ (ValueRelFuel relationFuel fnG fnAllowed targetArgsFinal.code) sourceValues targetValues :=
               List.Forall₂.imp (fun _ _ h => valueRelFuel_mono h fnExt fnAllowedGrowth (fun _ _ h => h)) valuesRel
             have appRun : evaluateApp (some address) fnValue sourceValues argsFinal = (result, final) := by
@@ -12828,7 +12832,8 @@ theorem callsFuel_app_pure_withCoveredOpenClock_of_traversals {C F : Type}
     (known : (sptLookup address final.1).isSome = true) (pure : ClosLang.pure sourceFn = true)
     (argsIH : ∀ target middle, callsListFuel traversalFuel sourceArgs initial = some (target, middle) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final sourceArgs target)
-    (fnIH : ∀ target middle, callsFuel traversalFuel sourceFn middle = some (target, final) →
+    (fnIH : ∀ targetArgs target middle, callsListFuel traversalFuel sourceArgs initial = some (targetArgs, middle) →
+      callsFuel traversalFuel sourceFn middle = some (target, final) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [sourceFn] [target])
     (exprIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State)
       (body converted : ClosLang.Exp), callsFuel depth body before = some (converted, after) →
@@ -13302,7 +13307,8 @@ theorem callsFuel_app_impure_growing_below_at_withCoveredOpenClock {C F : Type} 
     (known : (sptLookup address passFinal.1).isSome = true) (impure : ClosLang.pure sourceFn = false)
     (argsIH : ∀ targetArgs middle, callsListFuel traversalFuel sourceArgs initial = some (targetArgs, middle) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler passFinal sourceArgs targetArgs)
-    (fnIH : ∀ targetFn middle, callsFuel traversalFuel sourceFn middle = some (targetFn, passFinal) →
+    (fnIH : ∀ targetArgs targetFn middle, callsListFuel traversalFuel sourceArgs initial = some (targetArgs, middle) →
+      callsFuel traversalFuel sourceFn middle = some (targetFn, passFinal) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler passFinal [sourceFn] [targetFn])
     (argsWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
       (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
@@ -13424,7 +13430,7 @@ theorem callsFuel_app_impure_growing_below_at_withCoveredOpenClock {C F : Type} 
               exact notType eq
             obtain ⟨fnExtra, fnG, fnAllowed, targetFnResult, targetFnFinal, fnExt, fnAllowedGrowth, fnDisjoint, fnAvoids, targetFnRun, fnRel, fnStates, fnStateWf,
               fnReady, fnCompiler, targetFnCompiler, fnOracle, fnGrowth⟩ :=
-              fnIH targetFn middle fnTraversal argsG requiredArgs argsAllowed sourceEnv targetEnv argsFinal targetArgsFinal fnResult fnFinal
+              fnIH targetArgs targetFn middle argsTraversal fnTraversal argsG requiredArgs argsAllowed sourceEnv targetEnv argsFinal targetArgsFinal fnResult fnFinal
                 (fun k member unknown => argsAllowedGrowth (fnCoverage k member unknown)) argsClock
                 sourceFnRun fnSafe (by simpa using fnEnv') fnEnvWf argsStateWf argsStates argsReady argsDisjoint argsAvoids
                 argsCompiler targetArgsCompiler argsOracle
@@ -13551,7 +13557,8 @@ theorem callsFuel_app_known_withCoveredOpenClock_of_traversals {C F : Type}
     (known : (sptLookup address final.1).isSome = true)
     (argsIH : ∀ target middle, callsListFuel traversalFuel sourceArgs initial = some (target, middle) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final sourceArgs target)
-    (fnIH : ∀ target middle, callsFuel traversalFuel sourceFn middle = some (target, final) →
+    (fnIH : ∀ targetArgs target middle, callsListFuel traversalFuel sourceArgs initial = some (targetArgs, middle) →
+      callsFuel traversalFuel sourceFn middle = some (target, final) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [sourceFn] [target])
     (exprIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State)
       (body converted : ClosLang.Exp), callsFuel depth body before = some (converted, after) →
@@ -13609,7 +13616,8 @@ theorem callsFuel_app_withCoveredOpenClock_of_traversals {C F : Type}
     (run : callsFuel (traversalFuel + 1) (.app trace location sourceFn sourceArgs) initial = some (out, final))
     (argsIH : ∀ target middle, callsListFuel traversalFuel sourceArgs initial = some (target, middle) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final sourceArgs target)
-    (fnIH : ∀ target middle, callsFuel traversalFuel sourceFn middle = some (target, final) →
+    (fnIH : ∀ targetArgs target middle, callsListFuel traversalFuel sourceArgs initial = some (targetArgs, middle) →
+      callsFuel traversalFuel sourceFn middle = some (target, final) →
       GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final [sourceFn] [target])
     (exprIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State)
       (body converted : ClosLang.Exp), callsFuel depth body before = some (converted, after) →
@@ -15343,6 +15351,96 @@ theorem callsListFuel_growing_below_withCoveredOpenClock {C F : Type} (passFuel 
           exact eligibleIH n (by omega) expression output before after (by simp [member]) exprRun
         · intro n bound expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
           exact exprIH n (by omega) expression output before after exprRun exprDistinct exprFresh beforeWf eligibleExpr
+
+/-- Derive the application child simulations from the structural traversal
+induction. The function starts in the actual argument traversal's state.
+Clock-smaller body simulation and source evaluation well-formedness remain
+explicit; this is Flapjack-specific infrastructure. -/
+theorem callsFuel_app_withCoveredOpenClock_from_induction {C F : Type}
+    (passFuel relationFuel traversalFuel limit : Nat) (compiler : ClosSem.Compiler C)
+    (trace : BackendCommon.Tra) (location : Option Nat)
+    (sourceFn : ClosLang.Exp) (sourceArgs : List ClosLang.Exp) (initial final : State) (out : ClosLang.Exp)
+    (run : callsFuel (traversalFuel + 1) (.app trace location sourceFn sourceArgs) initial = some (out, final))
+    (distinct : (codeLocationsExp (.app trace location sourceFn sourceArgs)).Nodup)
+    (fresh : LabelsFresh (codeLocationsExp (.app trace location sourceFn sourceArgs)) initial)
+    (initialWf : wellFormed initial)
+    (structIH : ∀ depth, depth ≤ traversalFuel → ∀ expression output before after,
+      callsFuel depth expression before = some (output, after) →
+      (codeLocationsExp expression).Nodup → LabelsFresh (codeLocationsExp expression) before → wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler after [expression] [output])
+    (bodyIH : ∀ callerClock, callerClock < limit → ∀ depth (before after : State) (body converted : ClosLang.Exp),
+      callsFuel depth body before = some (converted, after) →
+      (codeLocationsExp body).Nodup → LabelsFresh (codeLocationsExp body) before → wellFormed before →
+      GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel callerClock compiler after [body] [converted])
+    (evalWf : ∀ (allowed : Set Nat) (g : State) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+      (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State (NumSet × C) F),
+      ValuesWellFormedFuel relationFuel g allowed code env → StateWellFormedFuel relationFuel g allowed code state →
+      OracleAuxEmpty state.compileOracle → EvalWellFormedFuel relationFuel g allowed code (evaluate expressions env state)) :
+    GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler final
+      [.app trace location sourceFn sourceArgs] [out] := by
+  have shape := run
+  simp only [callsFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure] at shape
+  obtain ⟨⟨actualArgs, actualMiddle⟩, actualArgsRun, ⟨actualFn, actualFinal⟩, actualFnRun, rest⟩ := shape
+  have finalEq : actualFinal = final := by
+    cases location <;> simp only at rest
+    all_goals repeat' split at rest
+    all_goals simp_all only [Option.some.injEq, Prod.mk.injEq]
+  subst final
+  have allDistinct : (codeLocations sourceArgs ++ codeLocationsExp sourceFn).Nodup := by
+    apply List.nodup_append_comm.mp
+    simpa [codeLocationsExp] using distinct
+  have allFresh : LabelsFresh (codeLocations sourceArgs ++ codeLocationsExp sourceFn) initial := by
+    intro loc member
+    apply fresh loc
+    simpa [codeLocationsExp, List.mem_append, or_comm] using member
+  have argsDistinct := List.Nodup.of_append_left allDistinct
+  have fnDistinct := List.Nodup.of_append_right allDistinct
+  have argsFresh : LabelsFresh (codeLocations sourceArgs) initial := by
+    intro loc member
+    exact allFresh loc (List.mem_append_left _ member)
+  have middleWf := callsListFuel_wellFormed traversalFuel sourceArgs initial actualMiddle actualArgs
+    actualArgsRun argsDistinct argsFresh initialWf
+  have fnFresh : LabelsFresh (codeLocationsExp sourceFn) actualMiddle := by
+    intro loc member label
+    rcases callsListFuel_labelsBound traversalFuel sourceArgs initial actualMiddle actualArgs actualArgsRun (loc + 1) label with old | ⟨origin, inArgs, equal⟩
+    · exact allFresh loc (List.mem_append_right _ member) old
+    · exact (List.nodup_append.mp allDistinct).2.2 origin inArgs loc member (Nat.add_right_cancel equal.symm)
+  have fnExt := callsFuel_stateExtends traversalFuel sourceFn actualFn actualMiddle actualFinal actualFnRun fnDistinct fnFresh middleWf.2
+  have argsSim : GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler actualMiddle sourceArgs actualArgs := by
+    apply callsListFuel_growing_below_withCoveredOpenClock passFuel relationFuel traversalFuel limit compiler sourceArgs actualArgs
+      initial actualMiddle actualArgsRun argsDistinct argsFresh initialWf (fun _ _ => True)
+    · intros; trivial
+    · intro depth bound expression output before after expressionRun expressionDistinct expressionFresh beforeWf _
+      exact structIH depth (by omega) expression output before after expressionRun expressionDistinct expressionFresh beforeWf
+  have argsSimFinal : GrowingExprsSimFromBelowWithCoveredOpenClock (F := F) passFuel relationFuel limit compiler actualFinal sourceArgs actualArgs := by
+    apply growingExprsSimFromBelowWithCoveredOpenClock_mono_state passFuel relationFuel limit compiler actualMiddle actualFinal sourceArgs actualArgs fnExt
+    · intro loc member known
+      have outside : loc ∉ codeLocations [sourceFn] := by
+        intro inFn
+        have inFn' : loc ∈ codeLocationsExp sourceFn := by simpa [codeLocations] using inFn
+        exact (List.nodup_append.mp allDistinct).2.2 loc member loc inFn' rfl
+      have fnRunList : callsListBounded (traversalFuel + 1) [sourceFn] actualMiddle = some ([actualFn], actualFinal) := by
+        simp [callsListBounded, callsListFuel, actualFnRun]
+      exact callsListBounded_known_reflect_outside (traversalFuel + 1) [sourceFn] [actualFn] actualMiddle actualFinal
+        fnRunList (wellFormed_weak actualMiddle middleWf) loc outside known
+    · exact argsSim
+  have fnSim := structIH traversalFuel (Nat.le_refl _) sourceFn actualFn actualMiddle actualFinal actualFnRun fnDistinct fnFresh middleWf
+  apply callsFuel_app_withCoveredOpenClock_of_traversals passFuel relationFuel traversalFuel limit compiler trace location
+    sourceFn sourceArgs initial actualFinal out run
+  · intro target middle argRun
+    have eq : (target, middle) = (actualArgs, actualMiddle) := Option.some.inj (argRun.symm.trans actualArgsRun)
+    cases eq
+    exact argsSimFinal
+  · intro targetArgs targetFn middle argRun fnRun
+    have eq : (targetArgs, middle) = (actualArgs, actualMiddle) := Option.some.inj (argRun.symm.trans actualArgsRun)
+    cases eq
+    have fnEq : targetFn = actualFn := by
+      have pairEq := Option.some.inj (fnRun.symm.trans actualFnRun)
+      exact congrArg Prod.fst pairEq
+    subst targetFn
+    exact fnSim
+  · exact bodyIH
+  · exact evalWf
 
 /-- The production retry wrapper inherits the simulation above its final
 pass state, whether its initial traversal succeeds or it uses the structural
